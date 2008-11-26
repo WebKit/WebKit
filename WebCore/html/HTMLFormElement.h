@@ -41,7 +41,7 @@ class TextEncoding;
 
 class HTMLFormElement : public HTMLElement {
 public:
-    HTMLFormElement(Document*);
+    HTMLFormElement(const QualifiedName&, Document*);
     virtual ~HTMLFormElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }

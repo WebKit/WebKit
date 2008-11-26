@@ -290,7 +290,7 @@ String RenderFileUploadControl::fileTextValue()
 }
     
 HTMLFileUploadInnerButtonElement::HTMLFileUploadInnerButtonElement(Document* doc, Node* shadowParent)
-    : HTMLInputElement(doc)
+    : HTMLInputElement(inputTag, doc)
     , m_shadowParent(shadowParent)
 {
 }

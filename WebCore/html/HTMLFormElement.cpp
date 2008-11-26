@@ -64,8 +64,8 @@ using namespace HTMLNames;
 
 static const char hexDigits[17] = "0123456789ABCDEF";
 
-HTMLFormElement::HTMLFormElement(Document* doc)
-    : HTMLElement(formTag, doc)
+HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
     , m_elementAliases(0)
     , collectionInfo(0)
     , m_enctype("application/x-www-form-urlencoded")

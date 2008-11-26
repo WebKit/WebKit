@@ -35,8 +35,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLFieldSetElement::HTMLFieldSetElement(Document *doc, HTMLFormElement *f)
-   : HTMLFormControlElement(fieldsetTag, doc, f)
+HTMLFieldSetElement::HTMLFieldSetElement(const QualifiedName& tagName, Document *doc, HTMLFormElement *f)
+   : HTMLFormControlElement(tagName, doc, f)
 {
 }
 

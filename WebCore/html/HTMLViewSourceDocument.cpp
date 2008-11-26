@@ -70,7 +70,7 @@ void HTMLViewSourceDocument::createContainingTable()
     
     // Create a line gutter div that can be used to make sure the gutter extends down the height of the whole
     // document.
-    RefPtr<Element> div = new HTMLDivElement(this);
+    RefPtr<Element> div = new HTMLDivElement(divTag, this);
     RefPtr<NamedMappedAttrMap> attrs = NamedMappedAttrMap::create();
     attrs->insertAttribute(MappedAttribute::create(classAttr, "webkit-line-gutter-backdrop"), true);
     div->setAttributeMap(attrs.release());

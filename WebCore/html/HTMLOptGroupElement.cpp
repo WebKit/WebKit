@@ -37,8 +37,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLOptGroupElement::HTMLOptGroupElement(Document* doc, HTMLFormElement* f)
-    : HTMLFormControlElement(optgroupTag, doc, f)
+HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
+    : HTMLFormControlElement(tagName, doc, f)
     , m_style(0)
 {
 }

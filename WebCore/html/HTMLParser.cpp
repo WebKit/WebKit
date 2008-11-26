@@ -712,7 +712,7 @@ bool HTMLParser::formCreateErrorCheck(Token* t, RefPtr<Node>& result)
     // Only create a new form if we're not already inside one.
     // This is consistent with other browsers' behavior.
     if (!m_currentFormElement) {
-        m_currentFormElement = new HTMLFormElement(document);
+        m_currentFormElement = new HTMLFormElement(formTag, document);
         result = m_currentFormElement;
         pCloserCreateErrorCheck(t, result);
     }
@@ -1505,11 +1505,11 @@ void HTMLParser::createHead()
 
 PassRefPtr<Node> HTMLParser::handleIsindex(Token* t)
 {
-    RefPtr<Node> n = new HTMLDivElement(document);
+    RefPtr<Node> n = new HTMLDivElement(divTag, document);
 
     NamedMappedAttrMap* attrs = t->attrs.get();
 
-    RefPtr<HTMLIsIndexElement> isIndex = new HTMLIsIndexElement(document, m_currentFormElement.get());
+    RefPtr<HTMLIsIndexElement> isIndex = new HTMLIsIndexElement(isindexTag, document, m_currentFormElement.get());
     isIndex->setAttributeMap(attrs);
     isIndex->setAttribute(typeAttr, "khtml_isindex");
 

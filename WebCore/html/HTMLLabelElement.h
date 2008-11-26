@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLLabelElement : public HTMLElement {
 public:
-    HTMLLabelElement(Document*);
+    HTMLLabelElement(const QualifiedName&, Document*);
     virtual ~HTMLLabelElement();
 
     virtual int tagPriority() const { return 5; }

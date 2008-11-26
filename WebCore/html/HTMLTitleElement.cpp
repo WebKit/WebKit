@@ -32,8 +32,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLTitleElement::HTMLTitleElement(Document* doc)
-    : HTMLElement(titleTag, doc)
+HTMLTitleElement::HTMLTitleElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
     , m_title("")
 {
 }

@@ -127,133 +127,133 @@ static PassRefPtr<HTMLElement> metaConstructor(const QualifiedName&, Document* d
 
 static PassRefPtr<HTMLElement> styleConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool createdByParser)
 {
-    RefPtr<HTMLStyleElement> style = new HTMLStyleElement(doc);
+    RefPtr<HTMLStyleElement> style = new HTMLStyleElement(styleTag, doc);
     style->setCreatedByParser(createdByParser);
     return style.release();
 }
 
 static PassRefPtr<HTMLElement> titleConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLTitleElement(doc);
+    return new HTMLTitleElement(titleTag, doc);
 }
 
 static PassRefPtr<HTMLElement> frameConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool createdByParser)
 {
-    RefPtr<HTMLFrameElement> frame = new HTMLFrameElement(doc);
+    RefPtr<HTMLFrameElement> frame = new HTMLFrameElement(frameTag, doc);
     frame->setCreatedByParser(createdByParser);
     return frame.release();    
 }
 
 static PassRefPtr<HTMLElement> framesetConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLFrameSetElement(doc);
+    return new HTMLFrameSetElement(framesetTag, doc);
 }
 
 static PassRefPtr<HTMLElement> iframeConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool createdByParser)
 {
-    RefPtr<HTMLIFrameElement> iFrame = new HTMLIFrameElement(doc);
+    RefPtr<HTMLIFrameElement> iFrame = new HTMLIFrameElement(iframeTag, doc);
     iFrame->setCreatedByParser(createdByParser);
     return iFrame.release();    
 }
 
 static PassRefPtr<HTMLElement> formConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLFormElement(doc);
+    return new HTMLFormElement(formTag, doc);
 }
 
 static PassRefPtr<HTMLElement> buttonConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLButtonElement(doc, form);
+    return new HTMLButtonElement(buttonTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> inputConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLInputElement(doc, form);
+    return new HTMLInputElement(inputTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> isindexConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLIsIndexElement(doc, form);
+    return new HTMLIsIndexElement(isindexTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> fieldsetConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLFieldSetElement(doc, form);
+    return new HTMLFieldSetElement(fieldsetTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> keygenConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLKeygenElement(doc, form);
+    return new HTMLKeygenElement(keygenTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> labelConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLLabelElement(doc);
+    return new HTMLLabelElement(labelTag, doc);
 }
 
 static PassRefPtr<HTMLElement> legendConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLLegendElement(doc, form);
+    return new HTMLLegendElement(legendTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> optgroupConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLOptGroupElement(doc, form);
+    return new HTMLOptGroupElement(optgroupTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> optionConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLOptionElement(doc, form);
+    return new HTMLOptionElement(optionTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> selectConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLSelectElement(doc, form);
+    return new HTMLSelectElement(selectTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> textareaConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLTextAreaElement(doc, form);
+    return new HTMLTextAreaElement(textareaTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> dlConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLDListElement(doc);
+    return new HTMLDListElement(dlTag, doc);
 }
 
 static PassRefPtr<HTMLElement> ulConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLUListElement(doc);
+    return new HTMLUListElement(ulTag, doc);
 }
 
 static PassRefPtr<HTMLElement> olConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLOListElement(doc);
+    return new HTMLOListElement(olTag, doc);
 }
 
 static PassRefPtr<HTMLElement> dirConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLDirectoryElement(doc);
+    return new HTMLDirectoryElement(dirTag, doc);
 }
 
 static PassRefPtr<HTMLElement> menuConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLMenuElement(doc);
+    return new HTMLMenuElement(menuTag, doc);
 }
 
 static PassRefPtr<HTMLElement> liConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLLIElement(doc);
+    return new HTMLLIElement(liTag, doc);
 }
 
 static PassRefPtr<HTMLElement> blockquoteConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLBlockquoteElement(doc);
+    return new HTMLBlockquoteElement(blockquoteTag, doc);
 }
 
 static PassRefPtr<HTMLElement> divConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLDivElement(doc);
+    return new HTMLDivElement(divTag, doc);
 }
 
 static PassRefPtr<HTMLElement> headingConstructor(const QualifiedName& tagName, Document* doc, HTMLFormElement*, bool)

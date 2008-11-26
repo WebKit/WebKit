@@ -35,6 +35,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
+#include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
 #include "MediaPlayer.h"
@@ -145,7 +146,7 @@ void RenderMedia::createPanel()
 {
     ASSERT(!m_panel);
     RenderStyle* style = getCachedPseudoStyle(RenderStyle::MEDIA_CONTROLS_PANEL);
-    m_panel = new HTMLDivElement(document());
+    m_panel = new HTMLDivElement(HTMLNames::divTag, document());
     RenderObject* renderer = m_panel->createRenderer(renderArena(), style);
     if (renderer) {
         m_panel->setRenderer(renderer);
@@ -196,7 +197,7 @@ void RenderMedia::createTimeDisplay()
 {
     ASSERT(!m_timeDisplay);
     RenderStyle* style = getCachedPseudoStyle(RenderStyle::MEDIA_CONTROLS_TIME_DISPLAY);
-    m_timeDisplay = new HTMLDivElement(document());
+    m_timeDisplay = new HTMLDivElement(HTMLNames::divTag, document());
     RenderObject* renderer = m_timeDisplay->createRenderer(renderArena(), style);
     if (renderer) {
         m_timeDisplay->setRenderer(renderer);

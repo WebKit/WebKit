@@ -35,8 +35,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLLabelElement::HTMLLabelElement(Document *doc)
-    : HTMLElement(labelTag, doc)
+HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document *doc)
+    : HTMLElement(tagName, doc)
 {
 }
 

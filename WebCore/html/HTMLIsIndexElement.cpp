@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
@@ -32,8 +30,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLIsIndexElement::HTMLIsIndexElement(Document *doc, HTMLFormElement *f)
-    : HTMLInputElement(isindexTag, doc, f)
+HTMLIsIndexElement::HTMLIsIndexElement(const QualifiedName& tagName, Document *doc, HTMLFormElement *f)
+    : HTMLInputElement(tagName, doc, f)
 {
     m_name = "isindex";
 }

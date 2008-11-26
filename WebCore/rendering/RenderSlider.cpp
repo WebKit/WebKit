@@ -60,7 +60,7 @@ private:
 };
 
 HTMLSliderThumbElement::HTMLSliderThumbElement(Document* doc, Node* shadowParent)
-    : HTMLDivElement(doc)
+    : HTMLDivElement(divTag, doc)
     , m_shadowParent(shadowParent)
     , m_initialClickPoint(IntPoint())
     , m_initialPosition(0)

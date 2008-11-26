@@ -50,7 +50,7 @@ static const float cStepTime = 0.07f;
 static const float cSeekTime = 0.2f;
 
 MediaControlShadowRootElement::MediaControlShadowRootElement(Document* doc, HTMLMediaElement* mediaElement) 
-    : HTMLDivElement(doc)
+    : HTMLDivElement(divTag, doc)
     , m_mediaElement(mediaElement) 
 {
     RefPtr<RenderStyle> rootStyle = RenderStyle::create();
@@ -68,7 +68,7 @@ MediaControlShadowRootElement::MediaControlShadowRootElement(Document* doc, HTML
 // ----------------------------
 
 MediaControlInputElement::MediaControlInputElement(Document* doc, RenderStyle::PseudoId pseudo, const String& type, HTMLMediaElement* mediaElement) 
-    : HTMLInputElement(doc)
+    : HTMLInputElement(inputTag, doc)
     , m_mediaElement(mediaElement)
 {
     setInputType(type);

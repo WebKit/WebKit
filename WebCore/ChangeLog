@@ -1,3 +1,132 @@
+2008-11-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 22441: Bridge the gap between the generated ElementFactory and HTMLElementFactory
+        https://bugs.webkit.org/show_bug.cgi?id=22441
+
+        Make more HTML elements' constructors take a QualifiedName.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        * html/HTMLBlockquoteElement.cpp:
+        (WebCore::HTMLBlockquoteElement::HTMLBlockquoteElement):
+        * html/HTMLBlockquoteElement.h:
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::HTMLButtonElement):
+        * html/HTMLButtonElement.h:
+        * html/HTMLDListElement.cpp:
+        (WebCore::HTMLDListElement::HTMLDListElement):
+        * html/HTMLDListElement.h:
+        * html/HTMLDirectoryElement.cpp:
+        (WebCore::HTMLDirectoryElement::HTMLDirectoryElement):
+        * html/HTMLDirectoryElement.h:
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::HTMLDivElement):
+        * html/HTMLDivElement.h:
+        * html/HTMLElementFactory.cpp:
+        (WebCore::styleConstructor):
+        (WebCore::titleConstructor):
+        (WebCore::frameConstructor):
+        (WebCore::framesetConstructor):
+        (WebCore::iframeConstructor):
+        (WebCore::formConstructor):
+        (WebCore::buttonConstructor):
+        (WebCore::inputConstructor):
+        (WebCore::isindexConstructor):
+        (WebCore::fieldsetConstructor):
+        (WebCore::keygenConstructor):
+        (WebCore::labelConstructor):
+        (WebCore::legendConstructor):
+        (WebCore::optgroupConstructor):
+        (WebCore::optionConstructor):
+        (WebCore::selectConstructor):
+        (WebCore::textareaConstructor):
+        (WebCore::dlConstructor):
+        (WebCore::ulConstructor):
+        (WebCore::olConstructor):
+        (WebCore::dirConstructor):
+        (WebCore::menuConstructor):
+        (WebCore::liConstructor):
+        (WebCore::blockquoteConstructor):
+        (WebCore::divConstructor):
+        (WebCore::headingConstructor):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::HTMLFieldSetElement):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::HTMLFrameElement):
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::HTMLFrameSetElement):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::HTMLIFrameElement):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::HTMLIsIndexElement):
+        * html/HTMLIsIndexElement.h:
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        * html/HTMLKeygenElement.h:
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::HTMLLIElement):
+        * html/HTMLLIElement.h:
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::HTMLLabelElement):
+        * html/HTMLLabelElement.h:
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::HTMLLegendElement):
+        * html/HTMLLegendElement.h:
+        * html/HTMLMenuElement.cpp:
+        (WebCore::HTMLMenuElement::HTMLMenuElement):
+        * html/HTMLMenuElement.h:
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::HTMLOListElement):
+        * html/HTMLOListElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::HTMLOptGroupElement):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        * html/HTMLOptionElement.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::formCreateErrorCheck):
+        (WebCore::HTMLParser::handleIsindex):
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLSelectElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        * html/HTMLStyleElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::HTMLTitleElement):
+        * html/HTMLTitleElement.h:
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::HTMLUListElement):
+        * html/HTMLUListElement.h:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlShadowRootElement::MediaControlShadowRootElement):
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::HTMLFileUploadInnerButtonElement::HTMLFileUploadInnerButtonElement):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createPanel):
+        (WebCore::RenderMedia::createTimeDisplay):
+        * rendering/RenderSlider.cpp:
+        (WebCore::HTMLSliderThumbElement::HTMLSliderThumbElement):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::TextControlInnerElement):
+
 2008-11-26  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Sam Weinig.

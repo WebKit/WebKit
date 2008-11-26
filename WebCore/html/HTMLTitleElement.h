@@ -31,7 +31,7 @@ namespace WebCore {
 class HTMLTitleElement : public HTMLElement
 {
 public:
-    HTMLTitleElement(Document*);
+    HTMLTitleElement(const QualifiedName&, Document*);
     ~HTMLTitleElement();
 
     virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }

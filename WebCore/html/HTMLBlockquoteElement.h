@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *
@@ -30,7 +28,7 @@ namespace WebCore {
 
 class HTMLBlockquoteElement : public HTMLElement {
 public:
-    HTMLBlockquoteElement(Document*);
+    HTMLBlockquoteElement(const QualifiedName&, Document*);
     ~HTMLBlockquoteElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }

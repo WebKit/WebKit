@@ -32,7 +32,7 @@ class Selection;
 
 class HTMLTextAreaElement : public HTMLFormControlElementWithState {
 public:
-    HTMLTextAreaElement(Document*, HTMLFormElement* = 0);
+    HTMLTextAreaElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
     virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
 

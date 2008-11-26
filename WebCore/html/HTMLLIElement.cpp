@@ -32,8 +32,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLLIElement::HTMLLIElement(Document* doc)
-    : HTMLElement(HTMLNames::liTag, doc)
+HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
     , m_requestedValue(0)
 {
 }

@@ -38,8 +38,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLButtonElement::HTMLButtonElement(Document* doc, HTMLFormElement* form)
-    : HTMLFormControlElement(buttonTag, doc, form)
+HTMLButtonElement::HTMLButtonElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* form)
+    : HTMLFormControlElement(tagName, doc, form)
     , m_type(SUBMIT)
     , m_activeSubmit(false)
 {

@@ -37,8 +37,7 @@ class KeyboardEvent;
 
 class HTMLSelectElement : public HTMLFormControlElementWithState {
 public:
-    HTMLSelectElement(Document*, HTMLFormElement* = 0);
-    HTMLSelectElement(const QualifiedName& tagName, Document*, HTMLFormElement* = 0);
+    HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
     virtual int tagPriority() const { return 6; }
     virtual bool checkDTD(const Node* newChild);

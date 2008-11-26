@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
@@ -38,7 +36,7 @@ class HTMLOptionElement : public HTMLFormControlElement {
     friend class RenderMenuList;
 
 public:
-    HTMLOptionElement(Document*, HTMLFormElement* = 0);
+    HTMLOptionElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 2; }

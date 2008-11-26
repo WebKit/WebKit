@@ -32,7 +32,7 @@ class HTMLSelectElement;
 
 class HTMLOptGroupElement : public HTMLFormControlElement {
 public:
-    HTMLOptGroupElement(Document*, HTMLFormElement* = 0);
+    HTMLOptGroupElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
     virtual bool checkDTD(const Node*);
     virtual const AtomicString& type() const;

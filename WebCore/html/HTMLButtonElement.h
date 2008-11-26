@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLButtonElement : public HTMLFormControlElement {
 public:
-    HTMLButtonElement(Document*, HTMLFormElement* = 0);
+    HTMLButtonElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
     virtual ~HTMLButtonElement();
 
     virtual const AtomicString& type() const;

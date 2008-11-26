@@ -35,8 +35,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLFrameElement::HTMLFrameElement(Document* doc)
-    : HTMLFrameElementBase(frameTag, doc)
+HTMLFrameElement::HTMLFrameElement(const QualifiedName& tagName, Document* doc)
+    : HTMLFrameElementBase(tagName, doc)
     , m_frameBorder(true)
     , m_frameBorderSet(false)
 {

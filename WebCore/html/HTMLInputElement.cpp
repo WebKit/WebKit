@@ -100,12 +100,6 @@ static int numCharactersInGraphemeClusters(StringImpl* s, int numGraphemeCluster
     return textBreakCurrent(it);
 }
 
-HTMLInputElement::HTMLInputElement(Document* doc, HTMLFormElement* f)
-    : HTMLFormControlElementWithState(inputTag, doc, f)
-{
-    init();
-}
-
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLFormControlElementWithState(tagName, doc, f)
 {

@@ -33,7 +33,7 @@ namespace WebCore {
 
 class HTMLFrameSetElement : public HTMLElement {
 public:
-    HTMLFrameSetElement(Document*);
+    HTMLFrameSetElement(const QualifiedName&, Document*);
     ~HTMLFrameSetElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }

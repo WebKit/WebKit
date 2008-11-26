@@ -63,21 +63,6 @@ using namespace HTMLNames;
 
 static const DOMTimeStamp typeAheadTimeout = 1000;
 
-HTMLSelectElement::HTMLSelectElement(Document* doc, HTMLFormElement* f)
-    : HTMLFormControlElementWithState(selectTag, doc, f)
-    , m_minwidth(0)
-    , m_size(0)
-    , m_multiple(false)
-    , m_recalcListItems(false)
-    , m_lastOnChangeIndex(-1)
-    , m_activeSelectionAnchorIndex(-1)
-    , m_activeSelectionEndIndex(-1)
-    , m_activeSelectionState(false)
-    , m_repeatingChar(0)
-    , m_lastCharTime(0)
-{
-}
-
 HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLFormControlElementWithState(tagName, doc, f)
     , m_minwidth(0)

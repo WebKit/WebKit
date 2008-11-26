@@ -1,6 +1,4 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *
@@ -32,8 +30,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLOListElement::HTMLOListElement(Document* doc)
-    : HTMLElement(HTMLNames::olTag, doc)
+HTMLOListElement::HTMLOListElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
     , m_start(1)
 {
 }
