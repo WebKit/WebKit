@@ -760,7 +760,7 @@ String RenderThemeQt::extraDefaultStyleSheet()
         return QString::fromUtf8(sheetData.constData(), sheetData.length());
     }
 
-    return String(html4UserAgentStyleSheet, sizeof(html4UserAgentStyleSheet));
+    return String();
 }
 
 #if ENABLE(VIDEO)

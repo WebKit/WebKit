@@ -1,5 +1,14 @@
 2008-11-26  Matt Perry  <mpcomplete@gmail.com>
 
+        Fix Qt bustage.
+
+        See https://bugs.webkit.org/show_bug.cgi?id=22051
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::extraDefaultStyleSheet):
+
+2008-11-26  Matt Perry  <mpcomplete@gmail.com>
+
         Reviewed by Maciej Stachowiak.
 
         Fix https://bugs.webkit.org/show_bug.cgi?id=22051
