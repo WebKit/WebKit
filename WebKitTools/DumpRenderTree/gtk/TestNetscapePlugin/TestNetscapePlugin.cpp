@@ -263,8 +263,6 @@ NP_GetMIMEDescription(void)
 NPError
 NP_Initialize (NPNetscapeFuncs *aMozillaVTable, NPPluginFuncs *aPluginVTable)
 {
-    fprintf(stderr, "WebKitTestPlugIn - NP_Initialize\n");
-
     if (aMozillaVTable == NULL || aPluginVTable == NULL)
         return NPERR_INVALID_FUNCTABLE_ERROR;
 
@@ -295,16 +293,12 @@ NP_Initialize (NPNetscapeFuncs *aMozillaVTable, NPPluginFuncs *aPluginVTable)
         aPluginVTable->getvalue       = webkit_test_plugin_get_value;
         aPluginVTable->setvalue       = webkit_test_plugin_set_value;
 
-    fprintf(stderr, "WebKitTestPlugIn - NP_Initialize succeeded\n");
-
     return NPERR_NO_ERROR;
 }
 
 NPError
 NP_Shutdown(void)
 {
-    fprintf(stderr, "WebKitTestPlugIn - NP_Shutdown\n");
-
     return NPERR_NO_ERROR;
 }
 

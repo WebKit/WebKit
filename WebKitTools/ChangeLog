@@ -1,3 +1,16 @@
+2008-11-26  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] add/remove tests from Skipped and fix netscape plugin test
+        https://bugs.webkit.org/show_bug.cgi?id=22484
+
+        Remove print'ing to stderr
+
+        * DumpRenderTree/gtk/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (NP_Initialize):
+        (NP_Shutdown):
+
 2008-11-25  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
