@@ -8,6 +8,7 @@ anchor
 br interfaceName=WMLBRElement
 card
 go
+noop
 onevent interfaceName=WMLOnEventElement
 p
 prev
@@ -16,31 +17,18 @@ setvar
 
 #if 0
 # These elements don't need a correponsponding WML*Element class.
-b
-big
-em
-i
-small
-strong
-u
+# b, big, em, i, small, strong, u
 #endif
 
 #if 0
-# Not yet implemented
+# These elements have a corresponding HTML*Element class, that we want to share code with.
+# fieldset, head, img, input, meta, optgroup, option, select, table, td, tr
+#endif
+
+#if 0
+# FIXME: Implement these elements
 do
-fieldset
-head
-img interfaceName=WMLImageElement
-input
-meta
-noop
-optgroup
-option
 postfield
-select
-table
-td
 template
 timer
-tr
 #endif

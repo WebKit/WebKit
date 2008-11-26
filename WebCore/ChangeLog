@@ -1,3 +1,16 @@
+2008-11-26  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add <noop> element support, completing the task element support.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * wml/WMLNoopElement.cpp: Added.
+        (WebCore::WMLNoopElement::WMLNoopElement):
+        (WebCore::WMLNoopElement::insertedIntoDocument):
+        * wml/WMLNoopElement.h: Added.
+        * wml/WMLTagNames.in: Reorganize file a bit.
+
 2008-11-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.
