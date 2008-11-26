@@ -13345,6 +13345,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\DOMTimer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\DOMTimer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\GCController.cpp"
 					>
 				</File>

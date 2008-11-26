@@ -234,6 +234,8 @@ IDL_BINDINGS += \
 webcore_sources += \
 	WebCore/WebCorePrefix.h \
 	WebCore/bindings/js/CachedScriptSourceProvider.h \
+	WebCore/bindings/js/DOMTimer.cpp \
+	WebCore/bindings/js/DOMTimer.h \
 	WebCore/bindings/js/GCController.cpp \
 	WebCore/bindings/js/GCController.h \
 	WebCore/bindings/js/JSAttrCustom.cpp \

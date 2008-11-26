@@ -1,3 +1,35 @@
+2008-11-26  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler and Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22469
+
+        Move the class DOMWindowTimer from JSDOMWindowBase into its own file in
+        preparation to making it work for Workers. For now, just move the code and couple
+        of global variables.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::installTimeout):
+        (WebCore::JSDOMWindowBase::pauseTimeouts):
+        (WebCore::JSDOMWindowBase::resumeTimeouts):
+        (WebCore::JSDOMWindowBase::timerFired):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/DOMTimer.cpp: Added.
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::~DOMTimer):
+        (WebCore::DOMTimer::fired):
+        * bindings/js/DOMTimer.h: Added.
+        (WebCore::DOMTimer::timeoutId):
+        (WebCore::DOMTimer::nestingLevel):
+        (WebCore::DOMTimer::setNestingLevel):
+        (WebCore::DOMTimer::action):
+        (WebCore::DOMTimer::takeAction):
+
 2008-11-25  Darin Fisher  <darin@chromium.org>
 
         Fix bustage.

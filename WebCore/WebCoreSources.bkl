@@ -33,6 +33,7 @@ This file contains the list of files needed to build WebCore.
 
 <makefile>
     <set append="1" var="WEBCORE_SOURCES_JS">
+        bindings/js/DOMTimer.cpp
         bindings/js/GCController.cpp
         bindings/js/JSAttrCustom.cpp
         bindings/js/JSAudioConstructor.cpp

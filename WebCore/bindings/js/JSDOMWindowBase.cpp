@@ -25,6 +25,7 @@
 
 #include "CString.h"
 #include "Console.h"
+#include "DOMTimer.h"
 #include "DOMWindow.h"
 #include "Element.h"
 #include "EventListener.h"
@@ -97,44 +98,8 @@ static void setJSDOMWindowBaseXSLTProcessor(ExecState*, JSObject*, JSValue*);
 
 namespace WebCore {
 
-static int lastUsedTimeoutId;
-
-static int timerNestingLevel = 0;
 const int cMaxTimerNestingLevel = 5;
 const double cMinimumTimerInterval = 0.010;
-
-class DOMWindowTimer : public TimerBase {
-public:
-    DOMWindowTimer(int timeoutId, int nestingLevel, JSDOMWindowBase* object, ScheduledAction* action)
-        : m_timeoutId(timeoutId)
-        , m_nestingLevel(nestingLevel)
-        , m_object(object)
-        , m_action(action)
-    {
-    }
-
-    virtual ~DOMWindowTimer()
-    {
-        JSLock lock(false);
-        delete m_action;
-    }
-
-    int timeoutId() const { return m_timeoutId; }
-
-    int nestingLevel() const { return m_nestingLevel; }
-    void setNestingLevel(int n) { m_nestingLevel = n; }
-
-    ScheduledAction* action() const { return m_action; }
-    ScheduledAction* takeAction() { ScheduledAction* a = m_action; m_action = 0; return a; }
-
-private:
-    virtual void fired();
-
-    int m_timeoutId;
-    int m_nestingLevel;
-    JSDOMWindowBase* m_object;
-    ScheduledAction* m_action;
-};
 
 ////////////////////// JSDOMWindowBase Object ////////////////////////
 
@@ -869,21 +834,15 @@ void JSDOMWindowBase::clearAllTimeouts()
 
 int JSDOMWindowBase::installTimeout(ScheduledAction* a, int t, bool singleShot)
 {
-    int timeoutId = ++lastUsedTimeoutId;
-
-    // avoid wraparound going negative on us
-    if (timeoutId <= 0)
-        timeoutId = 1;
-
-    int nestLevel = timerNestingLevel + 1;
-    DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, nestLevel, this, a);
+    DOMTimer* timer = new DOMTimer(this, a);
+    int timeoutId = timer->timeoutId();
     ASSERT(!d()->timeouts.get(timeoutId));
     d()->timeouts.set(timeoutId, timer);
     // Use a minimum interval of 10 ms to match other browsers, but only once we've
     // nested enough to notice that we're repeating.
     // Faster timers might be "better", but they're incompatible.
     double interval = max(0.001, t * 0.001);
-    if (interval < cMinimumTimerInterval && nestLevel >= cMaxTimerNestingLevel)
+    if (interval < cMinimumTimerInterval && timer->nestingLevel() >= cMaxTimerNestingLevel)
         interval = cMinimumTimerInterval;
     if (singleShot)
         timer->startOneShot(interval);
@@ -916,7 +875,7 @@ void JSDOMWindowBase::pauseTimeouts(OwnPtr<PausedTimeouts>& result)
     JSDOMWindowBaseData::TimeoutsMap::iterator it = d()->timeouts.begin();
     for (size_t i = 0; i != timeoutsCount; ++i, ++it) {
         int timeoutId = it->first;
-        DOMWindowTimer* timer = it->second;
+        DOMTimer* timer = it->second;
         t[i].timeoutId = timeoutId;
         t[i].nestingLevel = timer->nestingLevel();
         t[i].nextFireInterval = timer->nextFireInterval();
@@ -937,7 +896,7 @@ void JSDOMWindowBase::resumeTimeouts(OwnPtr<PausedTimeouts>& timeouts)
     PausedTimeout* array = timeouts->takeTimeouts();
     for (size_t i = 0; i != count; ++i) {
         int timeoutId = array[i].timeoutId;
-        DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, array[i].nestingLevel, this, array[i].action);
+        DOMTimer* timer = new DOMTimer(timeoutId, array[i].nestingLevel, this, array[i].action);
         d()->timeouts.set(timeoutId, timer);
         timer->start(array[i].nextFireInterval, array[i].repeatInterval);
     }
@@ -956,14 +915,14 @@ void JSDOMWindowBase::removeTimeout(int timeoutId, bool delAction)
     delete d()->timeouts.take(timeoutId);
 }
 
-void JSDOMWindowBase::timerFired(DOMWindowTimer* timer)
+void JSDOMWindowBase::timerFired(DOMTimer* timer)
 {
     // Simple case for non-one-shot timers.
     if (timer->isActive()) {
         int timeoutId = timer->timeoutId();
 
         timer->action()->execute(shell());
-        // The DOMWindowTimer object may have been deleted or replaced during execution,
+        // The DOMTimer object may have been deleted or replaced during execution,
         // so we re-fetch it.
         timer = d()->timeouts.get(timeoutId);
         if (!timer)
@@ -990,13 +949,6 @@ void JSDOMWindowBase::timerFired(DOMWindowTimer* timer)
 void JSDOMWindowBase::disconnectFrame()
 {
     clearAllTimeouts();
-}
-
-void DOMWindowTimer::fired()
-{
-    timerNestingLevel = m_nestingLevel;
-    m_object->timerFired(this);
-    timerNestingLevel = 0;
 }
 
 JSValue* toJS(ExecState*, DOMWindow* domWindow)

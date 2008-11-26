@@ -387,6 +387,7 @@ IDL_BINDINGS += \
 
 
 SOURCES += \
+    bindings/js/DOMTimer.cpp \
     bindings/js/GCController.cpp \
     bindings/js/JSAttrCustom.cpp \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
