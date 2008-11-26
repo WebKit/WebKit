@@ -1,3 +1,51 @@
+2008-11-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 22441: Bridge the gap between the generated ElementFactory and HTMLElementFactory
+        https://bugs.webkit.org/show_bug.cgi?id=22441
+
+        Element's other than HTML ones take a QualifiedName in their constructors.
+        To make HTMLElementFactory closer to the other ElementFactory, we need
+        to make them take the same arguments.
+        This patch only makes the 5 first one in HTMLElementFactory abide by that. The others
+        will go into the next patch.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::HTMLBaseElement):
+        * html/HTMLBaseElement.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::HTMLBodyElement):
+        * html/HTMLBodyElement.h:
+        * html/HTMLElementFactory.cpp:
+        (WebCore::htmlConstructor):
+        (WebCore::headConstructor):
+        (WebCore::bodyConstructor):
+        (WebCore::baseConstructor):
+        (WebCore::linkConstructor):
+        (WebCore::metaConstructor):
+        * html/HTMLHeadElement.cpp:
+        (WebCore::HTMLHeadElement::HTMLHeadElement):
+        * html/HTMLHeadElement.h:
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::HTMLHtmlElement):
+        * html/HTMLHtmlElement.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        * html/HTMLLinkElement.h:
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::HTMLMetaElement):
+        * html/HTMLMetaElement.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+        (WebCore::HTMLParser::headCreateErrorCheck):
+        (WebCore::HTMLParser::createHead):
+        (WebCore::HTMLParser::finished):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+
 2008-11-25  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler

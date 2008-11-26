@@ -61,10 +61,10 @@ Tokenizer* HTMLViewSourceDocument::createTokenizer()
 
 void HTMLViewSourceDocument::createContainingTable()
 {
-    RefPtr<Element> html = new HTMLHtmlElement(this);
+    RefPtr<Element> html = new HTMLHtmlElement(htmlTag, this);
     addChild(html);
     html->attach();
-    RefPtr<Element> body = new HTMLBodyElement(this);
+    RefPtr<Element> body = new HTMLBodyElement(bodyTag, this);
     html->addChild(body);
     body->attach();
     

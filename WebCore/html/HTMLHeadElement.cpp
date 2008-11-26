@@ -32,8 +32,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLHeadElement::HTMLHeadElement(Document* doc)
-    : HTMLElement(headTag, doc)
+HTMLHeadElement::HTMLHeadElement(const QualifiedName& qName, Document* doc)
+    : HTMLElement(qName, doc)
 {
 }
 

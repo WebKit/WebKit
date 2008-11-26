@@ -488,7 +488,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 elt->hasLocalName(titleTag) || elt->hasLocalName(isindexTag) ||
                 elt->hasLocalName(baseTag))) {
                 if (!head) {
-                    head = new HTMLHeadElement(document);
+                    head = new HTMLHeadElement(headTag, document);
                     e = head;
                     insertNode(e);
                     handled = true;
@@ -500,7 +500,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                         return false;
                 }
                 if (!haveFrameSet) {
-                    e = new HTMLBodyElement(document);
+                    e = new HTMLBodyElement(bodyTag, document);
                     startBody();
                     insertNode(e);
                     handled = true;
@@ -514,7 +514,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 // This means the body starts here...
                 if (!haveFrameSet) {
                     popBlock(currentTagName);
-                    e = new HTMLBodyElement(document);
+                    e = new HTMLBodyElement(bodyTag, document);
                     startBody();
                     insertNode(e);
                     handled = true;
@@ -638,7 +638,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
         }
 
         if (!document->documentElement()) {
-            e = new HTMLHtmlElement(document);
+            e = new HTMLHtmlElement(htmlTag, document);
             insertNode(e);
             handled = true;
         }
@@ -670,7 +670,7 @@ bool HTMLParser::commentCreateErrorCheck(Token* t, RefPtr<Node>& result)
 bool HTMLParser::headCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     if (!head || current->localName() == htmlTag) {
-        head = new HTMLHeadElement(document);
+        head = new HTMLHeadElement(headTag, document);
         result = head;
     } else
         reportError(MisplacedHeadError);
@@ -1489,7 +1489,7 @@ void HTMLParser::createHead()
     if (head || !document->documentElement())
         return;
 
-    head = new HTMLHeadElement(document);
+    head = new HTMLHeadElement(headTag, document);
     HTMLElement* body = document->body();
     ExceptionCode ec = 0;
     document->documentElement()->insertBefore(head, body, ec);
@@ -1545,7 +1545,7 @@ void HTMLParser::finished()
 {
     // In the case of a completely empty document, here's the place to create the HTML element.
     if (current && current->isDocumentNode() && !document->documentElement())
-        insertNode(new HTMLHtmlElement(document));
+        insertNode(new HTMLHtmlElement(htmlTag, document));
 
     // This ensures that "current" is not left pointing to a node when the document is destroyed.
     freeBlock();

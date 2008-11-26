@@ -35,7 +35,7 @@ class KURL;
 
 class HTMLLinkElement : public HTMLElement, public CachedResourceClient {
 public:
-    HTMLLinkElement(Document*);
+    HTMLLinkElement(const QualifiedName&, Document*);
     ~HTMLLinkElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }

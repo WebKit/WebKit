@@ -42,8 +42,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLLinkElement::HTMLLinkElement(Document *doc)
-    : HTMLElement(linkTag, doc)
+HTMLLinkElement::HTMLLinkElement(const QualifiedName& qName, Document *doc)
+    : HTMLElement(qName, doc)
     , m_cachedSheet(0)
     , m_disabledState(0)
     , m_loading(false)

@@ -33,7 +33,7 @@ namespace WebCore {
 class HTMLBodyElement : public HTMLElement
 {
 public:
-    HTMLBodyElement(Document*);
+    HTMLBodyElement(const QualifiedName&, Document*);
     ~HTMLBodyElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }

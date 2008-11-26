@@ -40,8 +40,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLBodyElement::HTMLBodyElement(Document* doc)
-    : HTMLElement(bodyTag, doc)
+HTMLBodyElement::HTMLBodyElement(const QualifiedName& qName, Document* doc)
+    : HTMLElement(qName, doc)
 {
 }
 

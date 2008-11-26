@@ -95,34 +95,34 @@ static FunctionMap* gFunctionMap;
 
 static PassRefPtr<HTMLElement> htmlConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLHtmlElement(doc);
+    return new HTMLHtmlElement(htmlTag, doc);
 }
 
 static PassRefPtr<HTMLElement> headConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLHeadElement(doc);
+    return new HTMLHeadElement(headTag, doc);
 }
 
 static PassRefPtr<HTMLElement> bodyConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLBodyElement(doc);
+    return new HTMLBodyElement(bodyTag, doc);
 }
 
 static PassRefPtr<HTMLElement> baseConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLBaseElement(doc);
+    return new HTMLBaseElement(baseTag, doc);
 }
 
 static PassRefPtr<HTMLElement> linkConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool createdByParser)
 {
-    RefPtr<HTMLLinkElement> link = new HTMLLinkElement(doc);
+    RefPtr<HTMLLinkElement> link = new HTMLLinkElement(linkTag, doc);
     link->setCreatedByParser(createdByParser);
     return link.release();
 }
 
 static PassRefPtr<HTMLElement> metaConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLMetaElement(doc);
+    return new HTMLMetaElement(metaTag, doc);
 }
 
 static PassRefPtr<HTMLElement> styleConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool createdByParser)
