@@ -32,19 +32,12 @@
 #include "HTMLNames.h"
 #include "Page.h"
 #include "RenderWidget.h"
+#include "ScriptController.h"
 #include "Settings.h"
 #include "Widget.h"
-#include "ScriptController.h"
-
-#if USE(JSC)
-#include "runtime.h"
-#endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-#include "JSNode.h"
-#include "NP_jsobject.h"
 #include "npruntime_impl.h"
-#include "runtime_root.h"
 #endif
 
 namespace WebCore {
@@ -61,9 +54,7 @@ HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc
 
 HTMLPlugInElement::~HTMLPlugInElement()
 {
-#if USE(JSC)
     ASSERT(!m_instance); // cleared in detach()
-#endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (m_NPObject) {
@@ -73,14 +64,13 @@ HTMLPlugInElement::~HTMLPlugInElement()
 #endif
 }
 
-#if USE(JSC)
 void HTMLPlugInElement::detach()
 {
     m_instance.clear();
     HTMLFrameOwnerElement::detach();
 }
 
-JSC::Bindings::Instance* HTMLPlugInElement::getInstance() const
+PassScriptInstance HTMLPlugInElement::getInstance() const
 {
     Frame* frame = document()->frame();
     if (!frame)
@@ -89,15 +79,14 @@ JSC::Bindings::Instance* HTMLPlugInElement::getInstance() const
     // If the host dynamically turns off JavaScript (or Java) we will still return
     // the cached allocated Bindings::Instance.  Not supporting this edge-case is OK.
     if (m_instance)
-        return m_instance.get();
+        return m_instance;
 
     RenderWidget* renderWidget = renderWidgetForJSBindings();
     if (renderWidget && renderWidget->widget())
         m_instance = frame->script()->createScriptInstanceForWidget(renderWidget->widget());
 
-    return m_instance.get();
+    return m_instance;
 }
-#endif
 
 String HTMLPlugInElement::align() const
 {

@@ -46,7 +46,8 @@ static Instance* pluginInstance(Node* node)
     if (!(node->hasTagName(objectTag) || node->hasTagName(embedTag) || node->hasTagName(appletTag)))
         return 0;
     HTMLPlugInElement* plugInElement = static_cast<HTMLPlugInElement*>(node);
-    Instance* instance = plugInElement->getInstance();
+    // The plugin element holds an owning reference, so we don't have to.
+    Instance* instance = plugInElement->getInstance().get();
     if (!instance || !instance->rootObject())
         return 0;
     return instance;

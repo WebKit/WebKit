@@ -63,7 +63,7 @@ using namespace JSC::Bindings;
 
 namespace WebCore {
 
-PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
+PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
     NSView* widgetView = widget->platformWidget();
     if (!widgetView)
