@@ -1,3 +1,16 @@
+2008-11-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - include the text direction submenu in context menus when appropriate
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Changed the default
+        textDirectionSubmenuInclusionBehavior to "automatically", which includes
+        the menu when the selection is confined to a single paragraph the either
+        has right-to-left base writing direction or contains right-to-left or
+        embedded text. Left the default for Tiger and Leopard to be "never".
+
 2008-11-24  Darin Fisher  <darin@chromium.org>
 
         Fix bustage.

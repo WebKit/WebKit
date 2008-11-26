@@ -329,7 +329,12 @@ static WebCacheModel cacheModelForMainBundle(void)
         @"0",                           WebKitPDFScaleFactorPreferenceKey,
         @"0",                           WebKitUseSiteSpecificSpoofingPreferenceKey,
         [NSNumber numberWithInt:WebKitEditableLinkDefaultBehavior], WebKitEditableLinkBehaviorPreferenceKey,
-        [NSNumber numberWithInt:WebTextDirectionSubmenuNeverIncluded], WebKitTextDirectionSubmenuInclusionBehaviorPreferenceKey,
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+        [NSNumber numberWithInt:WebTextDirectionSubmenuAutomaticallyIncluded],
+#else
+        [NSNumber numberWithInt:WebTextDirectionSubmenuNeverIncluded],
+#endif
+                                        WebKitTextDirectionSubmenuInclusionBehaviorPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitDOMPasteAllowedPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitUsesPageCachePreferenceKey,
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
