@@ -26,18 +26,21 @@
 
 #define min min
 
-#include <CoreGraphics/CGBitmapContext.h>
-#include <CoreGraphics/CGImage.h>
-#include <ImageIO/CGImageDestination.h>
 #include <stdio.h>
 #include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(WIN)
+#include <winsock2.h>
+#include <windows.h>
 #include <fcntl.h>
 #include <io.h>
 #include <wtf/MathExtras.h>
 #endif
+
+#include <CoreGraphics/CGBitmapContext.h>
+#include <CoreGraphics/CGImage.h>
+#include <ImageIO/CGImageDestination.h>
 
 #if PLATFORM(MAC)
 #include <LaunchServices/UTCoreTypes.h>
