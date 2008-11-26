@@ -99,6 +99,15 @@ fi
 AC_PATH_PROG(BISON, bison)
 if test -z "$BISON"; then
    AC_MSG_ERROR([You need the 'bison' parser generator to compile WebKit])
+else
+    case "$target_cpu" in
+        arm)
+            BISON_VERSION=`$BISON --version | head -1 | sed 's,.*\ \([0-9]*\.[0-9]*\)$,\1,'`
+            AX_COMPARE_VERSION([2.2],[gt],[$BISON_VERSION],
+                AC_MSG_ERROR([You need at least version 2.2 of the 'bison' parser generator to compile WebKit correctly for ARM]))
+        ;;
+        *) ;;
+    esac
 fi
 
 AC_PATH_PROG(FLEX, flex)

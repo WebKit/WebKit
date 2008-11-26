@@ -1,3 +1,15 @@
+2008-11-26  Kalle Vahlman  <kalle.vahlman@movial.com>
+
+        Reviewed by Darin Adler. Landed by Jan Alonzo.
+
+        Bison versions under 2.2 produce crashing CSSGrammar code for ARM
+        https://bugs.webkit.org/show_bug.cgi?id=22456
+
+        Check for bison version 2.2 or greater on ARM. Earlier versions produce
+        code that crashes on ARM devices.
+
+        * configure.ac:
+
 2008-11-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by David Kilzer.
