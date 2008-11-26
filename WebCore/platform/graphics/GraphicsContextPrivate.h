@@ -26,6 +26,7 @@
 #ifndef GraphicsContextPrivate_h
 #define GraphicsContextPrivate_h
 
+#include "AffineTransform.h"
 #include "Font.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
@@ -70,6 +71,8 @@ namespace WebCore {
         float strokeThickness;
 #if PLATFORM(CAIRO)
         float globalAlpha;
+#elif PLATFORM(QT)
+        AffineTransform pathTransform;
 #endif
         ColorSpace strokeColorSpace;
         Color strokeColor;

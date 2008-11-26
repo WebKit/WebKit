@@ -1,3 +1,24 @@
+2008-11-26  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Transformations to the context shouldn't transform the currentPath.
+        Fixed this on Qt.
+
+        [QT] GraphicsContext's currenPath can be transformed
+        https://bugs.webkit.org/show_bug.cgi?id=22163
+
+        * platform/graphics/GraphicsContextPrivate.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::concatCTM):
+
 2008-11-26  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build script minor fixes. Not reviewed.

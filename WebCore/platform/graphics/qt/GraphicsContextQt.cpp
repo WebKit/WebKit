@@ -293,6 +293,11 @@ void GraphicsContext::savePlatformState()
 void GraphicsContext::restorePlatformState()
 {
     m_data->p()->restore();
+
+    if (!m_data->currentPath.isEmpty() && m_common->state.pathTransform.isInvertible()) {
+        QMatrix matrix = m_common->state.pathTransform;
+        m_data->currentPath = m_data->currentPath * matrix;
+    }
 }
 
 /* FIXME: DISABLED WHILE MERGING BACK FROM UNITY
@@ -544,6 +549,7 @@ void GraphicsContext::fillPath()
         p->fillPath(path, QBrush(*gradient));
         break;
     }
+    m_data->currentPath = QPainterPath();
 }
 
 void GraphicsContext::strokePath()
@@ -576,6 +582,7 @@ void GraphicsContext::strokePath()
         break;
     }
     }
+    m_data->currentPath = QPainterPath();
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -599,6 +606,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         p->fillRect(rect, QBrush(*(m_common->state.fillGradient.get()->platformGradient())));
         break;
     }
+    m_data->currentPath = QPainterPath();
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& c)
@@ -920,6 +928,12 @@ void GraphicsContext::translate(float x, float y)
         return;
 
     m_data->p()->translate(x, y);
+
+    if (!m_data->currentPath.isEmpty()) {
+        QMatrix matrix;
+        m_data->currentPath = m_data->currentPath * matrix.translate(-x, -y);
+        m_common->state.pathTransform.translate(x, y);
+    }
 }
 
 IntPoint GraphicsContext::origin()
@@ -936,6 +950,12 @@ void GraphicsContext::rotate(float radians)
         return;
 
     m_data->p()->rotate(180/M_PI*radians);
+
+    if (!m_data->currentPath.isEmpty()) {
+        QMatrix matrix;
+        m_data->currentPath = m_data->currentPath * matrix.rotate(-180/M_PI*radians);
+        m_common->state.pathTransform.rotate(radians);
+    }
 }
 
 void GraphicsContext::scale(const FloatSize& s)
@@ -944,6 +964,12 @@ void GraphicsContext::scale(const FloatSize& s)
         return;
 
     m_data->p()->scale(s.width(), s.height());
+
+    if (!m_data->currentPath.isEmpty()) {
+        QMatrix matrix;
+        m_data->currentPath = m_data->currentPath * matrix.scale(1 / s.width(), 1 / s.height());
+        m_common->state.pathTransform.scale(s.width(), s.height());
+    }
 }
 
 void GraphicsContext::clipOut(const IntRect& rect)
@@ -1007,6 +1033,14 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
         return;
 
     m_data->p()->setMatrix(transform, true);
+
+    // Transformations to the context shouldn't transform the currentPath. 
+    // We have to undo every change made to the context from the currentPath to avoid wrong drawings.
+    if (!m_data->currentPath.isEmpty() && transform.isInvertible()) {
+        QMatrix matrix = transform.inverse();
+        m_data->currentPath = m_data->currentPath * matrix;
+        m_common->state.pathTransform.multiply(transform);
+    }
 }
 
 void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
