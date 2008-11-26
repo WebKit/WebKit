@@ -33,7 +33,7 @@
 namespace WebCore {
 
 WMLPageState::WMLPageState(Page* page)
-    : m_page(0)
+    : m_page(page)
     , m_historyLength(0)
     , m_activeCard(0)
     , m_hasDeckAccess(false)

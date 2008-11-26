@@ -1,3 +1,12 @@
+2008-11-26  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix obvious problem in WMLPageState constructor, m_page was not set to the passed Page pointer.
+
+        * wml/WMLPageState.cpp:
+        (WebCore::WMLPageState::WMLPageState):
+
 2008-11-26  Matt Perry  <mpcomplete@gmail.com>
 
         Fix Qt bustage.
