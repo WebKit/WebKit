@@ -1,3 +1,30 @@
+2008-11-26  Matt Perry  <mpcomplete@gmail.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=22051
+        Renderthemes should be able to supply additional CSS rules to the core
+        ones.
+
+        * DerivedSources.make:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::parseUASheet):
+        (WebCore::loadFullDefaultStyle):
+        (WebCore::loadSimpleDefaultStyle):
+        * css/themeWin.css: Added.
+        * css/themeWinQuirks.css: Added.
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::extraDefaultStyleSheet):
+        * platform/qt/RenderThemeQt.h:
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::extraDefaultStyleSheet):
+        (WebCore::RenderTheme::extraQuirksStyleSheet):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::extraDefaultStyleSheet):
+        (WebCore::RenderThemeWin::extraQuirksStyleSheet):
+        * rendering/RenderThemeWin.h:
+
 2008-11-26  David Kilzer  <ddkilzer@apple.com>
 
         Make CSSStyleSheet::addSubresourceURLStrings() iterative

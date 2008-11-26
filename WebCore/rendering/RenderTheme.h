@@ -50,10 +50,6 @@ public:
     void adjustStyle(CSSStyleSelector*, RenderStyle*, Element*,  bool UAHasAppearance,
                      const BorderData&, const FillLayer&, const Color& backgroundColor);
 
-    // This method is called once, from CSSStyleSelector::loadDefaultStyle(), to let each platform adjust
-    // the default CSS rules in html4.css.
-    static void adjustDefaultStyleSheet(CSSStyleSheet*);
-
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates
     // whether the CSS border/background should also be painted.
@@ -63,6 +59,11 @@ public:
 
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // RenderThemeMac.cpp for Mac OS X.
+
+    // These methods return the theme's extra style sheets rules, to let each
+    // platform adjust the default CSS rules in html4.css or quirks.css.
+    virtual String extraDefaultStyleSheet() { return String(); }
+    virtual String extraQuirksStyleSheet() { return String(); }
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of

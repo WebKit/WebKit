@@ -480,11 +480,16 @@ CSSStyleSelector::~CSSStyleSelector()
     m_keyframesRuleMap.clear();
 }
 
-static CSSStyleSheet* parseUASheet(const char* characters, unsigned size)
+static CSSStyleSheet* parseUASheet(const String& str)
 {
     CSSStyleSheet* sheet = CSSStyleSheet::create().releaseRef(); // leak the sheet on purpose
-    sheet->parseString(String(characters, size));
+    sheet->parseString(str);
     return sheet;
+}
+
+static CSSStyleSheet* parseUASheet(const char* characters, unsigned size)
+{
+    return parseUASheet(String(characters, size));
 }
 
 static void loadFullDefaultStyle()
@@ -503,15 +508,17 @@ static void loadFullDefaultStyle()
     }
 
     // Strict-mode rules.
-    CSSStyleSheet* defaultSheet = parseUASheet(html4UserAgentStyleSheet, sizeof(html4UserAgentStyleSheet));
-    RenderTheme::adjustDefaultStyleSheet(defaultSheet);
+    String defaultRules = String(html4UserAgentStyleSheet, sizeof(html4UserAgentStyleSheet)) + theme()->extraDefaultStyleSheet();
+    CSSStyleSheet* defaultSheet = parseUASheet(defaultRules);
     defaultStyle->addRulesFromSheet(defaultSheet, screenEval());
     defaultPrintStyle->addRulesFromSheet(defaultSheet, printEval());
 
     // Quirks-mode rules.
-    defaultQuirksStyle->addRulesFromSheet(parseUASheet(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet)), screenEval());
+    String quirksRules = String(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet)) + theme()->extraQuirksStyleSheet();
+    CSSStyleSheet* quirksSheet = parseUASheet(quirksRules);
+    defaultQuirksStyle->addRulesFromSheet(quirksSheet, screenEval());
 }
-    
+
 static void loadSimpleDefaultStyle()
 {
     ASSERT(!defaultStyle);
@@ -522,7 +529,6 @@ static void loadSimpleDefaultStyle()
     defaultQuirksStyle = new CSSRuleSet;
 
     simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
-    RenderTheme::adjustDefaultStyleSheet(simpleDefaultStyleSheet);
     defaultStyle->addRulesFromSheet(simpleDefaultStyleSheet, screenEval());
     
     // No need to initialize quirks sheet yet as there are no quirk rules for elements allowed in simple default style.

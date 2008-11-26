@@ -1,0 +1,94 @@
+/*
+ * Copyright (c) 2008, Google Inc. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ * 
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* These styles override the default styling for HTML elements as defined in
+   WebCore/css/html4.css. So far we have used this file exclusively for
+   making our form elements match Firefox's. */
+
+input:not([type]), 
+input[type="text"],
+input[type="password"],
+input[type="search"] {
+    margin:0;
+    padding:1px 0;
+}
+
+input[type="checkbox"] {
+    margin:3px 3px 3px 4px;
+}
+
+input[type="radio"] {
+    margin:3px 3px 0 5px;
+}
+
+/* Not sure this is the right color. #EBEBE4 is what Firefox uses.
+   FIXME: Figure out how to support legacy input rendering. 
+   FIXME: Add input[type="file"] once we figure out our file inputs.
+   FIXME: Add input[type="image"] once we figure out our image inputs.
+   FIXME: We probably do the wrong thing if you put an invalid input type.
+          do we care?
+*/
+textarea:disabled,
+input:not([type]):disabled, 
+input[type="text"]:disabled,
+input[type="password"]:disabled,
+input[type="search"]:disabled {
+    background-color: #EBEBE4; 
+}
+
+/* Windows should render input[type="search"] the same as input with no type.
+   This search thing is an Apple-ism to get mac style search inputs. */
+input[type="search"] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+}
+
+input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {
+    /* Matches Firefox */
+    padding: 0 6px;
+    margin: 0;
+}
+
+/* Windows selects are not rounded. Custom borders for them shouldn't be either. */
+keygen, 
+select, 
+select[size="0"],
+select[size="1"] {
+    -webkit-border-radius: 0;
+    margin: 0;
+}
+
+textarea {
+  font-family: monospace;
+  margin: 1px 0;
+
+  /* Matches IE */
+  padding: 2px;
+}

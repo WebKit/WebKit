@@ -752,13 +752,15 @@ ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
     return result;
 }
 
-void RenderTheme::adjustDefaultStyleSheet(CSSStyleSheet* style)
+String RenderThemeQt::extraDefaultStyleSheet()
 {
     QFile platformStyleSheet(":/webcore/resources/html4-adjustments-qt.css");
     if (platformStyleSheet.open(QFile::ReadOnly)) {
         QByteArray sheetData = platformStyleSheet.readAll();
-        style->parseString(QString::fromUtf8(sheetData.constData(), sheetData.length()));
+        return QString::fromUtf8(sheetData.constData(), sheetData.length());
     }
+
+    return String(html4UserAgentStyleSheet, sizeof(html4UserAgentStyleSheet));
 }
 
 #if ENABLE(VIDEO)

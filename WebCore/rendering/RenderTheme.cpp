@@ -198,12 +198,6 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
     }
 }
 
-#if !PLATFORM(QT)
-void RenderTheme::adjustDefaultStyleSheet(CSSStyleSheet*)
-{
-}
-#endif
-
 bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.

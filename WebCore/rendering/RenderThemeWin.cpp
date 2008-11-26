@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderThemeWin.h"
 
+#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "GraphicsContext.h"
@@ -29,6 +30,7 @@
 #include "Icon.h"
 #include "RenderSlider.h"
 #include "SoftLinking.h"
+#include "UserAgentStyleSheets.h"
 
 #include <tchar.h>
 
@@ -176,6 +178,16 @@ void RenderThemeWin::close()
 void RenderThemeWin::themeChanged()
 {
     close();
+}
+
+String RenderThemeWin::extraDefaultStyleSheet()
+{
+    return String(themeWinUserAgentStyleSheet, sizeof(themeWinUserAgentStyleSheet));
+}
+
+String RenderThemeWin::extraQuirksStyleSheet()
+{
+    return String(themeWinQuirksUserAgentStyleSheet, sizeof(themeWinQuirksUserAgentStyleSheet));
 }
 
 bool RenderThemeWin::supportsHover(const RenderStyle*) const

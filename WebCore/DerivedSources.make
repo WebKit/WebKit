@@ -509,7 +509,7 @@ XPathGrammar.cpp : xml/XPathGrammar.y $(PROJECT_FILE)
 
 # user agent style sheets
 
-USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html4.css $(WebCore)/css/quirks.css $(WebCore)/css/view-source.css $(WebCore)/css/svg.css $(WebCore)/css/wml.css
+USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html4.css $(WebCore)/css/quirks.css $(WebCore)/css/view-source.css $(WebCore)/css/svg.css $(WebCore)/css/wml.css $(WebCore)/css/themeWin.css $(WebCore)/css/themeWinQuirks.css
 UserAgentStyleSheets.h : css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
 	perl $< $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 

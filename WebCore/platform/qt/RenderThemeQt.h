@@ -42,6 +42,8 @@ public:
     RenderThemeQt();
     virtual ~RenderThemeQt();
 
+    virtual String extraDefaultStyleSheet();
+
     virtual bool supportsHover(const RenderStyle*) const;
     virtual bool supportsFocusRing(const RenderStyle* style) const;
 
