@@ -82,7 +82,7 @@ void WMLOnEventElement::registerTask(WMLTaskElement* task)
     eventHandlingElement->createEventHandlerIfNeeded();
 
     RefPtr<WMLIntrinsicEvent> event = WMLIntrinsicEvent::createWithTask(task);
-    eventHandlingElement->eventHandler()->registerIntrinsicEvent(m_type, event.releaseRef());
+    eventHandlingElement->eventHandler()->registerIntrinsicEvent(m_type, event);
 }
 
 }
