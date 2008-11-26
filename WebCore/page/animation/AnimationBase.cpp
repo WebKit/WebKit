@@ -470,7 +470,8 @@ bool AnimationBase::blendProperties(const AnimationBase* anim, int prop, RenderS
 void AnimationBase::setChanged(Node* node)
 {
     ASSERT(!node || (node->document() && !node->document()->inPageCache()));
-    node->setChanged(AnimationStyleChange);
+    if (node)
+        node->setChanged(AnimationStyleChange);
 }
 
 double AnimationBase::duration() const
@@ -645,10 +646,11 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 resumeOverriddenAnimations();
 
                 // Fire off another style change so we can set the final value
-                setChanged(m_object->element());
                 m_animState = AnimationStateDone;
-                m_object->animation()->startUpdateRenderingDispatcher();
-                // |this| may be deleted here when we've been called from timerFired()
+                if (m_object) {
+                    setChanged(m_object->element());
+                    m_object->animation()->startUpdateRenderingDispatcher();
+                }
             } else {
                 // We are pausing while running. Cancel the animation and wait
                 m_pauseTime = currentTime();

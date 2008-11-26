@@ -1,0 +1,54 @@
+<html>
+<head>
+  <title>Destroy Renderer in Animation End Event</title>
+  <style type="text/css" media="screen">
+    #box1 {
+      position: relative;
+      left: 0;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-animation-name: move;
+      -webkit-animation-duration: 0.2s;
+    }
+    
+    @-webkit-keyframes move {
+      from { -webkit-transform: translate(0px, 0px); }
+      to { -webkit-transform: translate(100px, 0px); }
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function transitionEnded()
+    {
+      var box = document.getElementById('box1');
+      box.parentNode.removeChild(box);
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+
+    function startTransition()
+    {
+      var box = document.getElementById('box1');
+      box.addEventListener("webkitAnimationEnd", transitionEnded, false);
+      box.style.webkitAnimationName = 'move';
+    }
+    
+    window.addEventListener('load', startTransition, false);
+  </script>
+</head>
+<body>
+
+<p>Test sets display:none on the element within the webkitAnimationEnd event handler. Should not crash.</p>
+
+<div id="container">
+  <div id="box1" class="box"></div>
+</div>
+
+</body>
+</html>

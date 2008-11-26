@@ -1,0 +1,3 @@
+Test sets display:none on the element within the webkitTransitionEnd event handler. Should not crash.
+
+

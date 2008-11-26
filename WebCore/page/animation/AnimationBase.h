@@ -107,6 +107,8 @@ public:
     virtual ~AnimationBase();
 
     RenderObject* renderer() const { return m_object; }
+    void clearRenderer() { m_object = 0; }
+    
     double startTime() const { return m_startTime; }
     double duration() const;
 

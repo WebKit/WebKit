@@ -101,7 +101,6 @@ bool AnimationControllerPrivate::clear(RenderObject* renderer)
     CompositeAnimation* animation = m_compositeAnimations.take(renderer);
     if (!animation)
         return false;
-    animation->resetTransitions(renderer);
     bool wasSuspended = animation->isSuspended();
     delete animation;
     return !wasSuspended;
