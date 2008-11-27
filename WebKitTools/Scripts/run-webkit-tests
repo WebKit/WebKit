@@ -153,7 +153,7 @@ if (isTiger()) {
 } elsif (isSnowLeopard()) {
     $platform = "mac-snowleopard";
     $tolerance = 0.1;
-} elsif (isOSX()) {
+} elsif (isAppleMacWebKit()) {
     $platform = "mac";
 } elsif (isQt()) {
     $platform = "qt";
@@ -290,7 +290,7 @@ if (!defined($root)) {
     push(@args, "--qt")  if isQt();
     push(@args, "--gtk")  if isGtk();
 
-    if (isOSX()) {
+    if (isAppleMacWebKit()) {
         my $arch = preferredArchitecture();
         push(@args, "ARCHS=$arch");
     }
@@ -634,7 +634,7 @@ for my $test (@tests) {
         close EXPECTED;
     }
     my $expectedMac;
-    if (!isOSX() && $strictTesting && !$isText) {
+    if (!isAppleMacWebKit() && $strictTesting && !$isText) {
       if (!$resetResults && open EXPECTED, "<", "$testDirectory/platform/mac/$expectedFileName") {
         $expectedMac = "";
         while (<EXPECTED>) {
@@ -726,7 +726,7 @@ for my $test (@tests) {
         }
     }
 
-    if (!isOSX() && $strictTesting && !$isText) {
+    if (!isAppleMacWebKit() && $strictTesting && !$isText) {
       if (defined $expectedMac) {
         my $simplified_actual;
         $simplified_actual = $actual;
@@ -1233,7 +1233,7 @@ sub openDumpTool()
 
     my @args = @toolArgs;
     unshift @args, $dumpTool;
-    if (isOSX and !isTiger()) {
+    if (isAppleMacWebKit and !isTiger()) {
         unshift @args, "arch";
     }
     if ($useValgrind) {
@@ -1274,7 +1274,7 @@ sub dumpToolDidCrash()
     return 1 if ($pid == $dumpToolPID);
 
     # On Mac OS X, crashing may be significantly delayed by crash reporter.
-    return 0 unless isOSX();
+    return 0 unless isAppleMacWebKit();
 
     my $tryingToExit = 0;
     open PS, "ps -o state -p $dumpToolPID |";
@@ -1862,7 +1862,7 @@ sub setFileHandleNonBlocking(*$)
 
 sub sampleDumpTool()
 {
-    return unless isOSX();
+    return unless isAppleMacWebKit();
     return unless $runSample;
 
     my $outputDirectory = "$ENV{HOME}/Library/Logs/DumpRenderTree";

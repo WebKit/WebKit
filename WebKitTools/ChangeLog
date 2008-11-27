@@ -1,3 +1,19 @@
+2008-11-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Pre-work for getting build-webkit --chromium to work
+        https://bugs.webkit.org/show_bug.cgi?id=22515
+        Rename isOSX to isAppleMacWebKit to match what the code does, and add isChromium()
+
+        * Scripts/build-dumprendertree:
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+        * Scripts/gdb-safari:
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2008-11-26  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22488: Make DRT smarter about charset encoding when post-processing webarchive content

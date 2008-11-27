@@ -41,7 +41,7 @@ my @options = XcodeOptions();
 # Build
 chdir "WebKitTools/DumpRenderTree" or die;
 my $result;
-if (isOSX()) {
+if (isAppleMacWebKit()) {
     $result = system "xcodebuild", "-project", "DumpRenderTree.xcodeproj", @options, @ARGV;
 } elsif (isCygwin()) {
     $result = buildVisualStudioProject("DumpRenderTree.sln");

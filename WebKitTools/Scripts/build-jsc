@@ -41,7 +41,7 @@ my @options = XcodeOptions();
 
 chdir "JavaScriptCore" or die "Can't find JavaScriptCore directory to build from";
 my $result;
-if (isOSX()) {
+if (isAppleMacWebKit()) {
     $result = system "sh", "-c", 'xcodebuild -project JavaScriptCore.xcodeproj -target jsc "$@" | grep -v setenv && exit ${PIPESTATUS[0]}', "xcodebuild",  @options, @ARGV;
 } elsif (isCygwin()) {
     $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");

@@ -56,8 +56,8 @@ my $xpathSupport = 1;
 my $xsltSupport = 1;
 my $wmlSupport = 0;
 my $coverageSupport = 0;
-my $videoSupport = (isOSX() || isCygwin()); # Enable by default on OSX and Windows
-my $workersSupport = (isOSX() || isCygwin() || isGtk()); # Enable by default on OSX, Windows and Gtk+
+my $videoSupport = (isAppleMacWebKit() || isCygwin()); # Enable by default on OSX and Windows
+my $workersSupport = (isAppleMacWebKit() || isCygwin() || isGtk()); # Enable by default on OSX, Windows and Gtk+
 my $showHelp = 0;
 my $clean = 0;
 my $buildUniversal = 0;
@@ -202,12 +202,12 @@ for my $dir (@projects, @otherDirs) {
 
 my @options = ();
 
-if ($clean && isOSX()) {
+if ($clean && isAppleMacWebKit()) {
     push(@options, "-alltargets");
     push(@options, "clean");
 }
 
-if ($buildSixtyFourBit && isOSX()) {
+if ($buildSixtyFourBit && isAppleMacWebKit()) {
     my $cpuVendor = `sysctl -n machdep.cpu.vendor`;
     chomp $cpuVendor;
 
@@ -218,7 +218,7 @@ if ($buildSixtyFourBit && isOSX()) {
     } else {
         push(@options, "ARCHS=ppc ppc64");
     }
-} elsif ($buildUniversal && isOSX()) {
+} elsif ($buildUniversal && isAppleMacWebKit()) {
     push(@options, "ARCHS=ppc i386");
 }
 
@@ -243,7 +243,7 @@ if (isGtk()) {
     push @options, autotoolsFlag($coverageSupport, "coverage");
 }
 
-if (isOSX()) {
+if (isAppleMacWebKit()) {
 
     push(@options, XcodeOptions());
 
@@ -302,20 +302,17 @@ for my $dir (@projects) {
     chdir $dir or die;
     my $result = 0;
 
-    if (isGtk()) {
-        if ($dir ne "WebKit") {
-            chdir ".." or die;
-            next;
-        }
+    # For Gtk and Qt the WebKit project builds all others
+    if ((isGtk() || isQt()) && $dir ne "WebKit") {
+        chdir ".." or die;
+        next;
+    }
 
+    if (isGtk()) {
         $result = buildGtkProject($dir, $clean,  @options);
     } elsif (isQt()) {
-        if ($dir ne "WebKit") {
-            chdir ".." or die;
-            next;
-        }
         $result = buildQMakeQtProject($dir, $clean, @ARGV);
-    } elsif (isOSX()) {
+    } elsif (isAppleMacWebKit()) {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, $overrideFeatureDefinesString, @coverageSupportOption, @ARGV;
     } elsif (isCygwin()) {
         if ($dir eq "WebKit") {
