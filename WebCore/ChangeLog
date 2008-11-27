@@ -1,3 +1,57 @@
+2008-11-26  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22522
+
+        Catch WML errors (invalid variable name/reference, multiple access elements, etc)
+        while parsing the document, and stop parsing immediately and wrap the document
+        fragment in a XHTML error document, just like it's done from XML parsing errors.
+
+        Until now all card elements were hidden by default (no renderer created), and
+        WMLDocument::finishedParsing() took care of showing the right card (either the first,
+        or any named card in the document, specified by document URL reference). Change this
+        behaviour to support displaying partially parsed WML document fragments: Mark the first
+        WMLCardElement inserted into the document as visible. If the document parsing finishes
+        without problems, WMLDocument::finishedParsing() will be called, which takes care of
+        showing the desired card (common case: first card in the document, which is already
+        visible, so nothing actually has to be done). If an error occours, the document is
+        correctly rendered until the error happened - wrapped in a XHTML document.
+
+        Fixes: fast/wml/err-event-binding-conflict.wml
+               fast/wml/err-invalid-variable-name.wml
+               fast/wml/err-multi-access.wml
+               fast/wml/err-unallowed-task-in-anchor.wml
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * wml/WMLAccessElement.cpp:
+        (WebCore::WMLAccessElement::parseMappedAttribute):
+        (WebCore::WMLAccessElement::insertedIntoDocument):
+        * wml/WMLAccessElement.h:
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::insertedIntoDocument):
+        (WebCore::WMLCardElement::setActiveCardInDocument):
+        * wml/WMLCardElement.h:
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::finishedParsing):
+        * wml/WMLErrorHandling.cpp: Added.
+        (WebCore::reportWMLError):
+        * wml/WMLErrorHandling.h: Added.
+        (WebCore::):
+        * wml/WMLIntrinsicEventHandler.cpp:
+        (WebCore::WMLIntrinsicEventHandler::registerIntrinsicEvent):
+        * wml/WMLIntrinsicEventHandler.h:
+        * wml/WMLNoopElement.cpp:
+        (WebCore::WMLNoopElement::insertedIntoDocument):
+        * wml/WMLOnEventElement.cpp:
+        (WebCore::WMLOnEventElement::parseMappedAttribute):
+        (WebCore::WMLOnEventElement::registerTask):
+        * wml/WMLPageState.cpp:
+        (WebCore::WMLPageState::setNeedCheckDeckAccess):
+        * wml/WMLPageState.h:
+        * wml/WMLSetvarElement.cpp:
+        (WebCore::WMLSetvarElement::parseMappedAttribute):
+
 2008-11-10  Glenn Wilson  <gwilson@chromium.org>
 
         Reviewed by Dan Bernstein.

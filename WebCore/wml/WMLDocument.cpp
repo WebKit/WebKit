@@ -26,6 +26,7 @@
 
 #include "Page.h"
 #include "WMLCardElement.h"
+#include "WMLErrorHandling.h"
 #include "WMLPageState.h"
 
 namespace WebCore {
@@ -52,7 +53,7 @@ void WMLDocument::finishedParsing()
 {
     WMLPageState* wmlPageState = wmlPageStateForDocument(document());
     if (!wmlPageState || !wmlPageState->isDeckAccessible()) {
-        // FIXME: Error reporting
+        reportWMLError(document(), WMLErrorDeckNotAccessible);
         Document::finishedParsing();
         return;
     }
@@ -63,7 +64,7 @@ void WMLDocument::finishedParsing()
     // Set destination card
     WMLCardElement* card = WMLCardElement::setActiveCardInDocument(document(), KURL());
     if (!card) {
-        // FIXME: Error reporting
+        reportWMLError(document(), WMLErrorNoCardInDocument);
         Document::finishedParsing();
         return;
     }

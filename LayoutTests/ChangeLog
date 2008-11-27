@@ -1,3 +1,30 @@
+2008-11-26  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22522
+
+        Catch WML errors (invalid variable name/reference, multiple access elements, etc)
+        while parsing the document, and stop parsing immediately and wrap the document
+        fragment in a XHTML error document, just like it's done from XML parsing errors.
+
+        Update affected layout tests (all fixed).
+
+        * platform/mac/fast/wml/do-shadow-expected.txt:
+        * platform/mac/fast/wml/do-template-expected.txt:
+        * platform/mac/fast/wml/err-event-binding-conflict-expected.checksum:
+        * platform/mac/fast/wml/err-event-binding-conflict-expected.png:
+        * platform/mac/fast/wml/err-event-binding-conflict-expected.txt:
+        * platform/mac/fast/wml/err-invalid-variable-name-expected.checksum:
+        * platform/mac/fast/wml/err-invalid-variable-name-expected.png:
+        * platform/mac/fast/wml/err-invalid-variable-name-expected.txt:
+        * platform/mac/fast/wml/err-multi-access-expected.checksum:
+        * platform/mac/fast/wml/err-multi-access-expected.png:
+        * platform/mac/fast/wml/err-multi-access-expected.txt:
+        * platform/mac/fast/wml/err-unallowed-task-in-anchor-expected.checksum:
+        * platform/mac/fast/wml/err-unallowed-task-in-anchor-expected.png:
+        * platform/mac/fast/wml/err-unallowed-task-in-anchor-expected.txt:
+
 2008-11-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed. Forgot to include this layout test update in the last commit.

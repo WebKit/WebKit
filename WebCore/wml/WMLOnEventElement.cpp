@@ -25,6 +25,7 @@
 #include "WMLOnEventElement.h"
 
 #include "HTMLNames.h"
+#include "WMLErrorHandling.h"
 #include "WMLEventHandlingElement.h"
 #include "WMLIntrinsicEventHandler.h"
 #include "WMLNames.h"
@@ -45,8 +46,7 @@ void WMLOnEventElement::parseMappedAttribute(MappedAttribute* attr)
     if (attr->name() == HTMLNames::typeAttr) {
         const AtomicString& value = attr->value();
         if (containsVariableReference(value)) {
-            // FIXME: error reporting
-            // WMLHelper::tokenizer()->reportError(InvalidVariableReferenceError);
+            reportWMLError(document(), WMLErrorInvalidVariableReference);
             return;
         }
 
@@ -82,7 +82,8 @@ void WMLOnEventElement::registerTask(WMLTaskElement* task)
     eventHandlingElement->createEventHandlerIfNeeded();
 
     RefPtr<WMLIntrinsicEvent> event = WMLIntrinsicEvent::createWithTask(task);
-    eventHandlingElement->eventHandler()->registerIntrinsicEvent(m_type, event);
+    if (!eventHandlingElement->eventHandler()->registerIntrinsicEvent(m_type, event))
+        reportWMLError(document(), WMLErrorConflictingEventBinding);
 }
 
 }

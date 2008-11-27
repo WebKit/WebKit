@@ -58,15 +58,15 @@ void WMLPageState::reset()
     m_historyLength = 1;
 }
 
-void WMLPageState::setNeedCheckDeckAccess(bool need)
+bool WMLPageState::setNeedCheckDeckAccess(bool need)
 {
-    if (m_hasDeckAccess && need) {
-        // FIXME: Report MultiAccessElementsError
-    } else {
-        m_hasDeckAccess = need;
-        m_accessPath = String();
-        m_accessDomain = String();
-    }
+    if (m_hasDeckAccess && need)
+        return false;
+
+    m_hasDeckAccess = need;
+    m_accessPath = String();
+    m_accessDomain = String();
+    return true;
 }
 
 // FIXME: We may want another name, it does far more than just checking wheter the deck is accessable

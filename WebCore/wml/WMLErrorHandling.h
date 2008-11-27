@@ -19,22 +19,29 @@
  *
  */
 
-#ifndef WMLAccessElement_h
-#define WMLAccessElement_h
+#ifndef WMLErrorCodes_h
+#define WMLErrorCodes_h
 
 #if ENABLE(WML)
-#include "WMLElement.h"
-
 namespace WebCore {
 
-class WMLAccessElement : public WMLElement {
-public:
-    WMLAccessElement(const QualifiedName& tagName, Document*);
+    class Document;
 
-    virtual void parseMappedAttribute(MappedAttribute*);
-    virtual void insertedIntoDocument();
-};
+    enum WMLErrorCode {
+        WMLErrorUnknown = 0,
+        WMLErrorConflictingEventBinding,
+        WMLErrorDeckNotAccessible,
+        WMLErrorDuplicatedDoElement,
+        WMLErrorForbiddenTaskInAnchorElement,
+        WMLErrorInvalidColumnsNumberInTable,
+        WMLErrorInvalidVariableName,
+        WMLErrorInvalidVariableReference,
+        WMLErrorMultipleAccessElements,
+        WMLErrorMultipleTimerElements,
+        WMLErrorNoCardInDocument
+    };
 
+    void reportWMLError(Document*, WMLErrorCode);
 }
 
 #endif

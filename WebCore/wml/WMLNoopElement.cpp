@@ -24,6 +24,7 @@
 #if ENABLE(WML)
 #include "WMLNoopElement.h"
 
+#include "WMLErrorHandling.h"
 #include "WMLNames.h"
 
 namespace WebCore {
@@ -53,10 +54,8 @@ void WMLNoopElement::insertedIntoDocument()
     } else
     */
 
-    if (parent->hasTagName(anchorTag)) {
-        // FIXME: Error reporting    
-        // WMLHelper::tokenizer()->reportError(WrongTaskInAnchorElementError);
-    }
+    if (parent->hasTagName(anchorTag))
+        reportWMLError(document(), WMLErrorForbiddenTaskInAnchorElement);
 }
 
 }

@@ -44,6 +44,18 @@ WMLCardElement::~WMLCardElement()
 {
 }
 
+void WMLCardElement::insertedIntoDocument()
+{
+    WMLEventHandlingElement::insertedIntoDocument();
+
+    // The first card inserted into a document, is visible by default.
+    if (!m_isVisible) {
+        RefPtr<NodeList> nodeList = document()->getElementsByTagName("card");
+        if (nodeList && nodeList->length() == 1 && nodeList->item(0) == this)
+            m_isVisible = true;
+    }
+}
+
 RenderObject* WMLCardElement::createRenderer(RenderArena* arena, RenderStyle* style) 
 {
     if (!m_isVisible) {
@@ -68,18 +80,6 @@ WMLCardElement* WMLCardElement::setActiveCardInDocument(Document* doc, const KUR
     if (length < 1)
         return 0;
 
-    // Hide all cards in document
-    for (unsigned i = 0; i < length; ++i) {
-        WMLCardElement* card = static_cast<WMLCardElement*>(nodeList->item(i));
-
-        // Only need to recalculate the card style if the card was visible
-        // before otherwhise we have no associated RenderObject anyway
-        if (card->isVisible())
-            card->setChanged();
-
-        card->setVisible(false);
-    }
-
     // Figure out the new target card
     WMLCardElement* activeCard = 0;
     KURL url = targetUrl.isEmpty() ? doc->url() : targetUrl;
@@ -102,12 +102,25 @@ WMLCardElement* WMLCardElement::setActiveCardInDocument(Document* doc, const KUR
         }
     }
 
-    // Show active card
-    if (!activeCard)
-        activeCard = static_cast<WMLCardElement*>(nodeList->item(0));
+    if (activeCard) {
+        // Hide all cards - except the destination card - in document
+        for (unsigned i = 0; i < length; ++i) {
+            WMLCardElement* card = static_cast<WMLCardElement*>(nodeList->item(i));
+            bool cardShouldBeVisible = (card == activeCard);
 
-    activeCard->setChanged();
-    activeCard->setVisible(true);
+            if (cardShouldBeVisible && !card->isVisible()) {
+                card->setChanged();
+                card->setVisible(true);
+            } else if (!cardShouldBeVisible && card->isVisible()) {
+                card->setChanged();
+                card->setVisible(false);
+            }
+        }
+    } else {
+        // The first card should already be visible.
+        activeCard = static_cast<WMLCardElement*>(nodeList->item(0));
+        ASSERT(activeCard->isVisible());
+    }
 
     // Update the document title
     doc->setTitle(activeCard->title());

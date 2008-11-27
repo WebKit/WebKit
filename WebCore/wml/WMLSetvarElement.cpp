@@ -25,6 +25,7 @@
 #include "WMLSetvarElement.h"
 
 #include "HTMLNames.h"
+#include "WMLErrorHandling.h"
 #include "WMLTaskElement.h"
 #include "WMLVariables.h"
 
@@ -53,10 +54,8 @@ void WMLSetvarElement::parseMappedAttribute(MappedAttribute* attr)
 
         if (isValid)
             m_name = name;
-        else {
-            // FIXME: Error reporting
-            // WMLHelper::tokenizer()->reportError(InvalidVariableNameError);
-        }
+        else
+            reportWMLError(document(), WMLErrorInvalidVariableName);
     } else if (attr->name() == HTMLNames::valueAttr)
         m_value = substituteVariableReferences(attr->value(), document());
     else
