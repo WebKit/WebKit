@@ -287,6 +287,7 @@ env['LIBPATH'] = [build_directory]
 
 if env['PLATFORM'] == 'darwin':
     env.Append(LIBS = ['edit'])
+    env.Append(CPPPATH = 'icu')
 elif building_on_win32:
     env.Append(CPPPATH = [WebKitLibraries('include')])
     env.Prepend(LIBPATH = [WebKitLibraries('lib')])

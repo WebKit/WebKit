@@ -1,3 +1,11 @@
+2008-11-26  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+
+        Fix the JSC Chromium Mac build by adding JavaScriptCore/icu into the include path
+
+        * JavaScriptCore.scons:
+
 2008-11-25  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.
