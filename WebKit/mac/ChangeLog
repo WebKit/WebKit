@@ -1,7 +1,16 @@
+2008-11-26  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Tiger build.
+
+        mig.h does not always define __MigTypeCheck on Tiger, which leads to problems when the generated
+        code is built with -Wundef.
+
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+
 2008-11-26  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
-        
+
         * Configurations/Base.xcconfig:
 
 2008-11-26  Anders Carlsson  <andersca@apple.com>

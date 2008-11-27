@@ -31,4 +31,8 @@ typedef uint8_t* application_name_t;
 
 typedef char* data_t;
 
+#ifndef __MigTypeCheck
+#define __MigTypeCheck 1
+#endif
+
 #endif // WebKitPluginHostTypes_h
