@@ -1,5 +1,25 @@
 2008-11-26  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein, Mark Rowe and Kevin Decker.
+
+        Add the plug-in host manager singleton.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.h: Added.
+        * Plugins/Hosted/NetscapePluginHostManager.mm: Added.
+        
+        (WebKit::NetscapePluginHostManager::hostForPackage):
+        If there's an existing host proxy available, just return it. Otherwise spawn a new plug-in host and
+        create a new plug-in host proxy from the new plug-in host port.
+        
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        Pass the plug-in host path and the preferred CPU type to the plug-in agent. When the plug-in host has
+        finished launching, pass it the path to the plug-in bundle.
+        
+        (WebKit::NetscapePluginHostManager::initializeVendorPort):
+        Check in with the plug-in agent and get the new plug-in vendor port back.
+
+2008-11-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mark Rowe.
 
         * Plugins/Hosted/WebKitPluginHostTypes.h:
