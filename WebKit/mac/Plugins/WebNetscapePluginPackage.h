@@ -77,5 +77,9 @@ typedef enum {
 - (WebExecutableType)executableType;
 - (NPPluginFuncs *)pluginFuncs;
 
+#if USE(PLUGIN_HOST_PROCESS)
+- (cpu_type_t)pluginHostArchitecture;
+#endif
+
 @end
 #endif

@@ -283,6 +283,13 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return WebMachOExecutableType;
 }
 
+#if USE(PLUGIN_HOST_PROCESS)
+- (cpu_type_t)pluginHostArchitecture
+{
+    return pluginHostArchitecture;
+}
+#endif
+
 - (void)launchRealPlayer
 {
     CFURLRef appURL = NULL;

@@ -89,6 +89,8 @@
 
 - (void)stop;
 
+- (void)addWindowObservers;
+- (void)removeWindowObservers;
 @end
 
 #endif

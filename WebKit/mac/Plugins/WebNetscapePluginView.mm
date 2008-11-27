@@ -1303,11 +1303,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 }
 
-- (BOOL)isFlipped
-{
-    return YES;
-}
-
 - (NPObject *)createPluginScriptableObject
 {
     if (![_pluginPackage.get() pluginFuncs]->getvalue || !_isStarted)

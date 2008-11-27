@@ -1,3 +1,23 @@
+2008-11-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe and Kevin Decker.
+
+        Minor plug-in changes.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        Add add/remove observer method declarations.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView isFlipped]):
+        Move this down from WebNetscapePluginView.
+        
+        * Plugins/WebNetscapePluginPackage.h:
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage pluginHostArchitecture]):
+        Getter for the plug-in host architecture.
+        
+        * Plugins/WebNetscapePluginView.mm:
+
 2008-11-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

@@ -105,6 +105,12 @@ using namespace WebCore;
     [super finalize];
 }
 
+
+- (BOOL)isFlipped
+{
+    return YES;
+}
+
 // Methods that subclasses must override
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values
 {
