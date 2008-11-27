@@ -1,3 +1,11 @@
+2008-11-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Add plug-in host related files to the Xcode project.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-11-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
