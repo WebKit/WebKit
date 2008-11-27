@@ -239,7 +239,7 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceS
         codeUnitsLength = 2;
     }
     const SimpleFontData* characterFontData = FontCache::getFontDataForCharacters(*this, codeUnits, codeUnitsLength);
-    if (useSmallCapsFont)
+    if (useSmallCapsFont && characterFontData)
         characterFontData = characterFontData->smallCapsFontData(m_fontDescription);
     if (characterFontData) {
         // Got the fallback glyph and font.

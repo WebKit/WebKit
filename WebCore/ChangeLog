@@ -1,3 +1,20 @@
+2008-11-10  Glenn Wilson  <gwilson@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed bug http://bugs.webkit.org/show_bug.cgi?id=21953
+
+        This fixes the crash when the small-caps font variant is used
+        on a lower-case glyph that does not have a corresponding
+        upper-case glyph defined in the set of available fonts.
+
+        This changes Font.cpp to check if the font being used exists before trying to apply the small-caps variant.
+        
+        Test: fast/css/small-caps-crash.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+
 2008-10-31  Tony Chang  <tony@chromium.org>
 
         Reviewed by Oliver Hunt.

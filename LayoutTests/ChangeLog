@@ -1,3 +1,15 @@
+2008-11-10  Glenn Wilson  <gwilson@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed bug http://bugs.webkit.org/show_bug.cgi?id=21953
+
+        Added layout tests to verify that characters not defined in the default font with the small-caps variant
+        won't cause a crash
+
+        * fast/css/small-caps-crash-expected.txt: Added.
+        * fast/css/small-caps-crash.html: Added.
+
 2008-11-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver Hunt.
