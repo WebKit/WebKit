@@ -1,3 +1,11 @@
+2008-11-26  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        Fix up the references to files under WebKit/mac/Plugins/Hosted.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-11-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark Rowe.

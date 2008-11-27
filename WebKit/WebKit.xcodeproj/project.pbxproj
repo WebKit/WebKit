@@ -327,18 +327,18 @@
 		1A4DF5E20EC8D104006BD4B4 /* WebBaseNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginView.h; sourceTree = "<group>"; };
 		1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebBaseNetscapePluginView.mm; sourceTree = "<group>"; };
 		1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nptextinput.h; sourceTree = "<group>"; };
-		1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = WebKitPluginAgent.defs; path = Hosted/WebKitPluginAgent.defs; sourceTree = "<group>"; };
-		1AAF588B0EDCCEA3008D883D /* WebKitPluginAgentReply.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = WebKitPluginAgentReply.defs; path = Hosted/WebKitPluginAgentReply.defs; sourceTree = "<group>"; };
-		1AAF588C0EDCCEA3008D883D /* WebKitPluginClient.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = WebKitPluginClient.defs; path = Hosted/WebKitPluginClient.defs; sourceTree = "<group>"; };
-		1AAF588D0EDCCEA3008D883D /* WebKitPluginHost.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = WebKitPluginHost.defs; path = Hosted/WebKitPluginHost.defs; sourceTree = "<group>"; };
-		1AAF588E0EDCCEA3008D883D /* WebKitPluginHostTypes.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; name = WebKitPluginHostTypes.defs; path = Hosted/WebKitPluginHostTypes.defs; sourceTree = "<group>"; };
-		1AAF5CE40EDDE1FE008D883D /* NetscapePluginHostManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetscapePluginHostManager.h; path = Hosted/NetscapePluginHostManager.h; sourceTree = "<group>"; };
-		1AAF5CE50EDDE1FE008D883D /* NetscapePluginHostManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetscapePluginHostManager.mm; path = Hosted/NetscapePluginHostManager.mm; sourceTree = "<group>"; };
-		1AAF5CE60EDDE1FE008D883D /* NetscapePluginHostProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetscapePluginHostProxy.h; path = Hosted/NetscapePluginHostProxy.h; sourceTree = "<group>"; };
-		1AAF5CE70EDDE1FE008D883D /* NetscapePluginHostProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetscapePluginHostProxy.mm; path = Hosted/NetscapePluginHostProxy.mm; sourceTree = "<group>"; };
-		1AAF5CE80EDDE1FE008D883D /* NetscapePluginInstanceProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetscapePluginInstanceProxy.h; path = Hosted/NetscapePluginInstanceProxy.h; sourceTree = "<group>"; };
-		1AAF5CE90EDDE1FE008D883D /* NetscapePluginInstanceProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetscapePluginInstanceProxy.mm; path = Hosted/NetscapePluginInstanceProxy.mm; sourceTree = "<group>"; };
-		1AAF5D080EDDE71D008D883D /* WebKitPluginHostTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebKitPluginHostTypes.h; path = Hosted/WebKitPluginHostTypes.h; sourceTree = "<group>"; };
+		1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginAgent.defs; sourceTree = "<group>"; };
+		1AAF588B0EDCCEA3008D883D /* WebKitPluginAgentReply.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginAgentReply.defs; sourceTree = "<group>"; };
+		1AAF588C0EDCCEA3008D883D /* WebKitPluginClient.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginClient.defs; sourceTree = "<group>"; };
+		1AAF588D0EDCCEA3008D883D /* WebKitPluginHost.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginHost.defs; sourceTree = "<group>"; };
+		1AAF588E0EDCCEA3008D883D /* WebKitPluginHostTypes.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginHostTypes.defs; sourceTree = "<group>"; };
+		1AAF5CE40EDDE1FE008D883D /* NetscapePluginHostManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginHostManager.h; sourceTree = "<group>"; };
+		1AAF5CE50EDDE1FE008D883D /* NetscapePluginHostManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapePluginHostManager.mm; sourceTree = "<group>"; };
+		1AAF5CE60EDDE1FE008D883D /* NetscapePluginHostProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginHostProxy.h; sourceTree = "<group>"; };
+		1AAF5CE70EDDE1FE008D883D /* NetscapePluginHostProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapePluginHostProxy.mm; sourceTree = "<group>"; };
+		1AAF5CE80EDDE1FE008D883D /* NetscapePluginInstanceProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginInstanceProxy.h; sourceTree = "<group>"; };
+		1AAF5CE90EDDE1FE008D883D /* NetscapePluginInstanceProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapePluginInstanceProxy.mm; sourceTree = "<group>"; };
+		1AAF5D080EDDE71D008D883D /* WebKitPluginHostTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPluginHostTypes.h; sourceTree = "<group>"; };
 		1AAF5FBD0EDE3A92008D883D /* WebHostedNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHostedNetscapePluginView.h; sourceTree = "<group>"; };
 		1AAF5FBE0EDE3A92008D883D /* WebHostedNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHostedNetscapePluginView.mm; sourceTree = "<group>"; };
 		1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandler.h; sourceTree = "<group>"; };
@@ -728,7 +728,7 @@
 				1AAF588E0EDCCEA3008D883D /* WebKitPluginHostTypes.defs */,
 				1AAF5D080EDDE71D008D883D /* WebKitPluginHostTypes.h */,
 			);
-			name = Hosted;
+			path = Hosted;
 			sourceTree = "<group>";
 		};
 		1A9C78030EBBC455008599D4 /* Events */ = {
