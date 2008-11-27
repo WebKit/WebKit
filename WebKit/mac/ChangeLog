@@ -1,5 +1,11 @@
 2008-11-26  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+        
+        * Configurations/Base.xcconfig:
+
+2008-11-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mark Rowe.
 
         Move WebHostedNetscapePluginView.{h|mm} to Plugins/Hosted.
