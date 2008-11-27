@@ -1,5 +1,12 @@
 2008-11-26  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+        Add copyright headers and fix the spacing around the *'s.
+
+2008-11-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
         
         * Plugins/Hosted/WebKitPluginHost.defs:
