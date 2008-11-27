@@ -66,4 +66,13 @@ const IntSize& DragController::maxDragImageSize()
     return maxDragImageSize;
 }
 
+void DragController::cleanupAfterSystemDrag()
+{
+    // Drag has ended, dragEnded *should* have been called, however it is possible
+    // for the UIDelegate to take over the drag, and fail to send the appropriate
+    // drag termination event.  As dragEnded just resets drag variables, we just
+    // call it anyway to be on the safe side
+    dragEnded();
+}
+
 }

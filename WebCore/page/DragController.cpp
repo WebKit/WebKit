@@ -750,11 +750,7 @@ void DragController::doSystemDrag(DragImageRef image, const IntPoint& dragLoc, c
     m_client->startDrag(image, viewProtector->windowToContents(frame->view()->contentsToWindow(dragLoc)),
         viewProtector->windowToContents(frame->view()->contentsToWindow(eventPos)), clipboard, frameProtector.get(), forLink);
     
-    // Drag has ended, dragEnded *should* have been called, however it is possible  
-    // for the UIDelegate to take over the drag, and fail to send the appropriate
-    // drag termination event.  As dragEnded just resets drag variables, we just 
-    // call it anyway to be on the safe side
-    dragEnded();
+    cleanupAfterSystemDrag();
 }
     
 // Manual drag caret manipulation

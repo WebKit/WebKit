@@ -1,3 +1,27 @@
+2008-10-31  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Add a new platform specific method cleanupAfterSystemDrag
+        that platforms can ue to clean up drag state after a
+        system drag.  Use this method on PLAFORM(MAC).
+        https://bugs.webkit.org/show_bug.cgi?id=21956
+
+        * ChangeLog:
+        * page/DragController.cpp:
+        (WebCore::DragController::doSystemDrag):
+        * page/DragController.h:
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::cleanupAfterSystemDrag):
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::cleanupAfterSystemDrag):
+        * page/qt/DragControllerQt.cpp:
+        (WebCore::DragController::cleanupAfterSystemDrag):
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::cleanupAfterSystemDrag):
+        * page/wx/DragControllerWx.cpp:
+      (WebCore::DragController::cleanupAfterSystemDrag):
+
 2008-11-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver Hunt.

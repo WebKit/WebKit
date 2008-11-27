@@ -107,6 +107,7 @@ namespace WebCore {
         bool doDrag(Frame* src, Clipboard* clipboard, DragImageRef dragImage, const KURL& linkURL, const KURL& imageURL, Node* node, IntPoint& dragLoc, IntPoint& dragImageOffset);
         void doImageDrag(Element*, const IntPoint&, const IntRect&, Clipboard*, Frame*, IntPoint&);
         void doSystemDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool forLink);
+        void cleanupAfterSystemDrag();
         Page* m_page;
         DragClient* m_client;
         
