@@ -1,5 +1,11 @@
 2008-11-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Forgot to include this layout test update in the last commit.
+
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+
+2008-11-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Rubber stamped by Mark Rowe.
 
         Fix nine failing tests on the build bot. Update mac-tiger results.
