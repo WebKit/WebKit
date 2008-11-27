@@ -56,8 +56,8 @@ my $xpathSupport = 1;
 my $xsltSupport = 1;
 my $wmlSupport = 0;
 my $coverageSupport = 0;
-my $videoSupport = (isAppleMacWebKit() || isCygwin()); # Enable by default on OSX and Windows
-my $workersSupport = (isAppleMacWebKit() || isCygwin() || isGtk()); # Enable by default on OSX, Windows and Gtk+
+my $videoSupport = (isAppleMacWebKit() || isAppleWinWebKit()); # Enable by default on OSX and Windows
+my $workersSupport = (isAppleMacWebKit() || isAppleWinWebKit() || isGtk()); # Enable by default on OSX, Windows and Gtk+
 my $showHelp = 0;
 my $clean = 0;
 my $buildUniversal = 0;
@@ -288,7 +288,7 @@ if (isAppleMacWebKit()) {
     }
 }
 
-if (isCygwin()) {
+if (isAppleWinWebKit()) {
     # Copy WebKitSupportLibrary to the correct location in WebKitLibraries so it can be found.
     # Will fail if WebKitSupportLibrary.zip is not in source root.
     (system("perl WebKitTools/Scripts/update-webkit-support-libs") == 0) or die;
@@ -314,14 +314,14 @@ for my $dir (@projects) {
         $result = buildQMakeQtProject($dir, $clean, @ARGV);
     } elsif (isAppleMacWebKit()) {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, $overrideFeatureDefinesString, @coverageSupportOption, @ARGV;
-    } elsif (isCygwin()) {
+    } elsif (isAppleWinWebKit()) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
         }
     }
 
     if (exitStatus($result)) {
-        if (isCygwin()) {
+        if (isAppleWinWebKit()) {
             print "\n\n===== BUILD FAILED ======\n\n";
             my $scriptDir = relativeScriptsDir();
             print "Please ensure you have run $scriptDir/update-webkit to install depenedencies.\n\n";

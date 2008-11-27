@@ -110,7 +110,7 @@ sub determineBaseProductDir
         }
     } else {
         $baseProductDir = $ENV{"WEBKITOUTPUTDIR"};
-        if (isCygwin() && $baseProductDir) {
+        if (isAppleWinWebKit() && $baseProductDir) {
             my $unixBuildPath = `cygpath --unix \"$baseProductDir\"`;
             chomp $unixBuildPath;
             $baseProductDir = $unixBuildPath;
@@ -182,7 +182,7 @@ sub determineConfigurationProductDir
     return if defined $configurationProductDir;
     determineBaseProductDir();
     determineConfiguration();
-    if (isCygwin() && !isWx()) {
+    if (isAppleWinWebKit() && !isWx()) {
         $configurationProductDir = "$baseProductDir/bin";
     } else {
         $configurationProductDir = "$baseProductDir/$configuration";
@@ -319,7 +319,7 @@ sub safariPathFromSafariBundle
     my ($safariBundle) = @_;
 
     return "$safariBundle/Contents/MacOS/Safari" if isAppleMacWebKit();
-    return $safariBundle if isCygwin();
+    return $safariBundle if isAppleWinWebKit();
 }
 
 sub installedSafariPath
@@ -328,7 +328,7 @@ sub installedSafariPath
 
     if (isAppleMacWebKit()) {
         $safariBundle = "/Applications/Safari.app";
-    } elsif (isCygwin()) {
+    } elsif (isAppleWinWebKit()) {
         $safariBundle = `"$configurationProductDir/FindSafari.exe"`;
         $safariBundle =~ s/[\r\n]+$//;
         $safariBundle = `cygpath -u '$safariBundle'`;
@@ -349,7 +349,7 @@ sub safariPath
         # Use Safari.app in product directory if present (good for Safari development team).
         if (isAppleMacWebKit() && -d "$configurationProductDir/Safari.app") {
             $safariBundle = "$configurationProductDir/Safari.app";
-        } elsif (isCygwin() && -x "$configurationProductDir/bin/Safari.exe") {
+        } elsif (isAppleWinWebKit() && -x "$configurationProductDir/bin/Safari.exe") {
             $safariBundle = "$configurationProductDir/bin/Safari.exe";
         } else {
             return installedSafariPath();
@@ -370,7 +370,7 @@ sub builtDylibPathForName
     if (isAppleMacWebKit()) {
         return "$configurationProductDir/$framework.framework/Versions/A/$framework";
     }
-    if (isCygwin()) {
+    if (isAppleWinWebKit()) {
         if ($framework eq "JavaScriptCore") {
                 return "$baseProductDir/lib/$framework.lib";
         } else {
@@ -614,7 +614,7 @@ sub determineOSXVersion()
 {
     return if $osXVersion;
 
-    if (!isAppleMacWebKit()) {
+    if (!isDarwin()) {
         $osXVersion = -1;
         return;
     }
@@ -637,17 +637,17 @@ sub osXVersion()
 
 sub isTiger()
 {
-    return isAppleMacWebKit() && osXVersion()->{"minor"} == 4;
+    return isDarwin() && osXVersion()->{"minor"} == 4;
 }
 
 sub isLeopard()
 {
-    return isAppleMacWebKit() && osXVersion()->{"minor"} == 5;
+    return isDarwin() && osXVersion()->{"minor"} == 5;
 }
 
 sub isSnowLeopard()
 {
-    return isAppleMacWebKit() && osXVersion()->{"minor"} == 6;
+    return isDarwin() && osXVersion()->{"minor"} == 6;
 }
 
 sub relativeScriptsDir()
@@ -664,7 +664,7 @@ sub launcherPath()
     my $relativeScriptsPath = relativeScriptsDir();
     if (isGtk() || isQt()) {
         return "$relativeScriptsPath/run-launcher";
-    } elsif (isAppleMacWebKit() || isCygwin()) {
+    } elsif (isAppleMacWebKit() || isAppleWinWebKit()) {
         return "$relativeScriptsPath/run-safari";
     }
 }
@@ -675,14 +675,14 @@ sub launcherName()
         return "GtkLauncher";
     } elsif (isQt()) {
         return "QtLauncher";
-    } elsif (isAppleMacWebKit() || isCygwin()) {
+    } elsif (isAppleMacWebKit() || isAppleWinWebKit()) {
         return "Safari";
     }
 }
 
 sub checkRequiredSystemConfig
 {
-    if (isAppleMacWebKit()) {
+    if (isDarwin()) {
         chomp(my $productVersion = `sw_vers -productVersion`);
         if ($productVersion lt "10.4") {
             print "*************************************************************\n";
@@ -982,7 +982,7 @@ sub setPathForRunningWebKitApp
 {
     my ($env) = @_;
 
-    return unless isCygwin();
+    return unless isAppleWinWebKit();
 
     $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), $env->{PATH} || "");
 }
@@ -1015,7 +1015,7 @@ sub runSafari
         }
     }
 
-    if (isCygwin()) {
+    if (isAppleWinWebKit()) {
         my $script = "run-webkit-nightly.cmd";
         my $result = system "cp", "$FindBin::Bin/$script", productDir();
         return $result if $result;

@@ -2,6 +2,18 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        More pre-work for adding a build-webkit --chromium which works on Mac and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=22515
+        Change a few calls to isCygwin to isAppleWinWebKit and a few calls to isAppleMacWebKit to isDarwin
+        in preparation for having a chromium cygwin and chromium mac build
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
+2008-11-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         Pre-work for getting build-webkit --chromium to work
         https://bugs.webkit.org/show_bug.cgi?id=22515
         Rename isOSX to isAppleMacWebKit to match what the code does, and add isChromium()
