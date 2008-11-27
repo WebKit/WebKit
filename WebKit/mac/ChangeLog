@@ -1,5 +1,34 @@
 2008-11-26  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Add the plug-in host proxy and plug-in instance proxy objects.
+
+        These are just simple objects that forward their calls to the plug-in host.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.h: Added.
+        (WebKit::NetscapePluginHostProxy::create):
+        (WebKit::NetscapePluginHostProxy::port):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm: Added.
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        (WebKit::NetscapePluginHostProxy::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h: Added.
+        (WebKit::NetscapePluginInstanceProxy::create):
+        (WebKit::NetscapePluginInstanceProxy::renderContextID):
+        (WebKit::NetscapePluginInstanceProxy::useSoftwareRenderer):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm: Added.
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        (WebKit::NetscapePluginInstanceProxy::resize):
+        (WebKit::NetscapePluginInstanceProxy::destroy):
+        (WebKit::NetscapePluginInstanceProxy::focusChanged):
+        (WebKit::NetscapePluginInstanceProxy::windowFocusChanged):
+        (WebKit::NetscapePluginInstanceProxy::windowFrameChanged):
+        (WebKit::NetscapePluginInstanceProxy::startTimers):
+        (WebKit::NetscapePluginInstanceProxy::mouseEvent):
+        (WebKit::NetscapePluginInstanceProxy::stopTimers):
+
+2008-11-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein, Mark Rowe and Kevin Decker.
 
         Add the plug-in host manager singleton.
