@@ -1,5 +1,5 @@
-KCanvasResource {id="clip1" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M200.00,40.00 L220.00,40.00 L220.00,100.00 L240.00,100.00 L240.00,80.00 L180.00,80.00 L180.00,60.00 L260.00,60.00 L260.00,120.00 L200.00,120.00 L200.00,40.00]]]}
-KCanvasResource {id="clip2" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M200.00,170.00 L220.00,170.00 L220.00,230.00 L240.00,230.00 L240.00,210.00 L180.00,210.00 L180.00,190.00 L260.00,190.00 L260.00,250.00 L200.00,250.00 L200.00,170.00]]]}
+KCanvasResource {id="clip1" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M200.00,40.00 L220.00,40.00 L220.00,100.00 L240.00,100.00 L240.00,80.00 L180.00,80.00 L180.00,60.00 L260.00,60.00 L260.00,120.00 L200.00,120.00 L200.00,40.00 Z]]]}
+KCanvasResource {id="clip2" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M200.00,170.00 L220.00,170.00 L220.00,230.00 L240.00,230.00 L240.00,210.00 L180.00,210.00 L180.00,190.00 L260.00,190.00 L260.00,250.00 L200.00,250.00 L200.00,170.00 Z]]]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
@@ -8,15 +8,15 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (150,20) size 164x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-13) size 164x16
           chunk 1 text run 1 at (150.00,20.00) startOffset 0 endOffset 28 width 164.00: "Test for clip-rule property."
-      RenderPath {rect} at (50,30) size 350x100 [fill={[type=SOLID] [color=#FF0000]}] [clip path="clip1"] [data="M50.00,30.00 L400.00,30.00 L400.00,130.00 L50.00,130.00"]
+      RenderPath {rect} at (50,30) size 350x100 [fill={[type=SOLID] [color=#FF0000]}] [clip path="clip1"] [data="M50.00,30.00 L400.00,30.00 L400.00,130.00 L50.00,130.00 Z"]
       RenderSVGText {text} at (100,140) size 99x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 99x14
           chunk 1 text run 1 at (100.00,140.00) startOffset 0 endOffset 17 width 99.00: "clip-rule=evenodd"
-      RenderPath {rect} at (50,160) size 350x100 [fill={[type=SOLID] [color=#0000FF]}] [clip path="clip2"] [data="M50.00,160.00 L400.00,160.00 L400.00,260.00 L50.00,260.00"]
+      RenderPath {rect} at (50,160) size 350x100 [fill={[type=SOLID] [color=#0000FF]}] [clip path="clip2"] [data="M50.00,160.00 L400.00,160.00 L400.00,260.00 L50.00,260.00 Z"]
       RenderSVGText {text} at (100,270) size 92x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 92x14
           chunk 1 text run 1 at (100.00,270.00) startOffset 0 endOffset 16 width 92.00: "cliprule=nonzero"
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.2 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

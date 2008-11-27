@@ -9,6 +9,6 @@ layer at (0,0) size 800x600
         RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
     RenderSVGContainer {mask} at (0,143.90) size 780.49x292.68
-      RenderPath {rect} at (0,143.90) size 780.49x292.68 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#000000)]] [bounding box mode=0] [start=(0,0)] [end=(800,0)]}] [data="M0.00,0.00 L800.00,0.00 L800.00,300.00 L0.00,300.00"]
-    RenderPath {rect} at (0,143.90) size 780.49x292.68 [fill={[type=SOLID] [color=#FF8080]}] [data="M0.00,0.00 L800.00,0.00 L800.00,300.00 L0.00,300.00"]
-    RenderPath {rect} at (0,241.46) size 780.49x97.56 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,100.00 L800.00,100.00 L800.00,200.00 L0.00,200.00"]
+      RenderPath {rect} at (0,143.90) size 780.49x292.68 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#000000)]] [bounding box mode=0] [start=(0,0)] [end=(800,0)]}] [data="M0.00,0.00 L800.00,0.00 L800.00,300.00 L0.00,300.00 Z"]
+    RenderPath {rect} at (0,143.90) size 780.49x292.68 [fill={[type=SOLID] [color=#FF8080]}] [data="M0.00,0.00 L800.00,0.00 L800.00,300.00 L0.00,300.00 Z"]
+    RenderPath {rect} at (0,241.46) size 780.49x97.56 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,100.00 L800.00,100.00 L800.00,200.00 L0.00,200.00 Z"]

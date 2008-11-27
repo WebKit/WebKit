@@ -3,4 +3,4 @@ layer at (0,0) size 800x600
 layer at (0,0) size 75x75
   RenderSVGRoot {svg} at (-1.25,-1.25) size 40.30x40.30
     RenderSVGContainer {g} at (-1.25,-1.25) size 40.30x40.30 [transform={m=((0.50,0.00)(0.00,0.50)) t=(0.00,0.00)}]
-      RenderPath {rect} at (-1.25,-1.25) size 40.30x40.30 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00 L75.59,0.00 L75.59,75.59 L0.00,75.59"]
+      RenderPath {rect} at (-1.25,-1.25) size 40.30x40.30 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00 L75.59,0.00 L75.59,75.59 L0.00,75.59 Z"]

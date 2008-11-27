@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,-28) size 82x36
           chunk 1 text run 1 at (50.00,150.00) startOffset 0 endOffset 6 width 82.00: "Passed"
     RenderSVGContainer {g} at (49.50,141.42) size 70.71x70.71 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,0.00)}]
-      RenderPath {rect} at (49.50,141.42) size 70.71x70.71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [data="M50.00,50.00 L120.00,50.00 L120.00,80.00 L50.00,80.00"]
+      RenderPath {rect} at (49.50,141.42) size 70.71x70.71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [data="M50.00,50.00 L120.00,50.00 L120.00,80.00 L50.00,80.00 Z"]

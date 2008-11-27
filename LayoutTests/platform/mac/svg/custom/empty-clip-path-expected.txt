@@ -1,15 +1,15 @@
-KCanvasResource {id="nothing" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00 L0.00,0.00 L0.00,0.00 L0.00,0.00]]]}
-KCanvasResource {id="emptyrect" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00 L0.00,0.00 L0.00,0.00 L0.00,0.00]]]}
+KCanvasResource {id="nothing" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00 L0.00,0.00 L0.00,0.00 L0.00,0.00 Z]]]}
+KCanvasResource {id="emptyrect" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00 L0.00,0.00 L0.00,0.00 L0.00,0.00 Z]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 452x154
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+    RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGContainer {g} at (0,0) size 100x100 [clip path="nothing"]
-      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGContainer {g} at (0,0) size 100x100 [clip path="emptyrect"]
-      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGContainer {g} at (0,116) size 452x38
       RenderSVGText {text} at (0,130) size 287x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 287x18

@@ -6,4 +6,4 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
       RenderSVGGradientStop {stop} at (0,0) size 0x0
       RenderSVGGradientStop {stop} at (0,0) size 0x0
-    RenderPath {rect} at (0,0) size 100x100 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#008000), (1.00,#FF0000)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=5.00]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+    RenderPath {rect} at (0,0) size 100x100 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#008000), (1.00,#FF0000)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=5.00]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]

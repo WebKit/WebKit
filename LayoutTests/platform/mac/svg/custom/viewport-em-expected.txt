@@ -15,5 +15,5 @@ layer at (0,0) size 800x226
           text run at (0,0) width 75: "Second bar:"
       RenderBlock (anonymous) at (0,158) size 784x44
         RenderSVGRoot {svg} at (8,174) size 160x40
-          RenderPath {rect} at (8,174) size 160x40 [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+          RenderPath {rect} at (8,174) size 160x40 [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
         RenderText {#text} at (0,0) size 0x0

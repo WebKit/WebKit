@@ -1,3 +1,18 @@
+2008-11-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix path to string logic, correctly taking closed (sub-)paths into account.
+        Code was just broken on cg, observed by Dirk Schulze.
+
+        QPainterPath doesn't seem to expose any functionality to detect closed sub paths,
+        using the elementAt() function. There might be a workaround - Dirk will investigate.
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::CGPathToCFStringApplierFunction):
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::debugString):
+
 2008-11-26  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -11,7 +11,7 @@ layer at (0,0) size 450x500
       RenderSVGContainer {use} at (25,149.50) size 400x281
         RenderSVGContainer {g} at (25,149.50) size 400x281
           RenderPath {path} at (25,149.50) size 400x281 [stroke={[type=SOLID] [color=#0000FF]}] [data="M25.00,150.00 L425.00,150.00 M25.00,170.00 L425.00,170.00 M25.00,190.00 L425.00,190.00 M25.00,210.00 L425.00,210.00 M25.00,230.00 L425.00,230.00 M25.00,250.00 L425.00,250.00 M25.00,270.00 L425.00,270.00 M25.00,290.00 L425.00,290.00 M25.00,310.00 L425.00,310.00 M25.00,330.00 L425.00,330.00 M25.00,350.00 L425.00,350.00 M25.00,370.00 L425.00,370.00 M25.00,390.00 L425.00,390.00 M25.00,410.00 L425.00,410.00 M25.00,430.00 L425.00,430.00 M25.00,450.00"]
-      RenderPath {rect} at (20,100) size 205x375 [fill={[type=SOLID] [color=#C8C8FF]}] [data="M20.00,100.00 L225.00,100.00 L225.00,475.00 L20.00,475.00"]
+      RenderPath {rect} at (20,100) size 205x375 [fill={[type=SOLID] [color=#C8C8FF]}] [data="M20.00,100.00 L225.00,100.00 L225.00,475.00 L20.00,475.00 Z"]
       RenderSVGText {text} at (26,150) size 406x263 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 406x263
           RenderSVGInlineText {#text} at (-5,-18) size 406x263

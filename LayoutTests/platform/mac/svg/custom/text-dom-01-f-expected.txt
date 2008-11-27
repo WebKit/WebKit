@@ -4,8 +4,8 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0.50,0.50) size 479x359
     RenderSVGContainer {g} at (30,15) size 405x268
       RenderSVGContainer {g} at (30,15) size 405x268
-        RenderPath {rect} at (125,16) size 8x17 [fill={[type=SOLID] [color=#ADD8E6]}] [data="M125.00,16.00 L133.00,16.00 L133.00,33.00 L125.00,33.00"]
-        RenderPath {rect} at (91.88,20.10) size 14.14x14.14 [fill={[type=SOLID] [color=#ADD8E6]}] [data="M91.88,20.10 L106.02,20.10 L106.02,34.24 L91.88,34.24"]
+        RenderPath {rect} at (125,16) size 8x17 [fill={[type=SOLID] [color=#ADD8E6]}] [data="M125.00,16.00 L133.00,16.00 L133.00,33.00 L125.00,33.00 Z"]
+        RenderPath {rect} at (91.88,20.10) size 14.14x14.14 [fill={[type=SOLID] [color=#ADD8E6]}] [data="M91.88,20.10 L106.02,20.10 L106.02,34.24 L91.88,34.24 Z"]
         RenderPath {line} at (62,29.50) size 356x1 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M62.00,30.00 L418.00,30.00"]
         RenderPath {line} at (132.50,15) size 1x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M133.00,30.00 L133.00,15.00"]
         RenderPath {line} at (124.50,15) size 1x15 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M125.00,30.00 L125.00,15.00"]
@@ -57,6 +57,6 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.1 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
 selection start: position 11 of child 2 {#text} of child 7 {text} of child 3 {g} of child 35 {g} of child 1 {svg} of document
 selection end:   position 14 of child 2 {#text} of child 7 {text} of child 3 {g} of child 35 {g} of child 1 {svg} of document

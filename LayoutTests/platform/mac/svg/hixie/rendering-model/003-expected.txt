@@ -13,4 +13,4 @@ layer at (0,0) size 800x406
             RenderView at (0,0) size 160x160
           layer at (0,0) size 160x160
             RenderSVGRoot {svg} at (0,0) size 160x160
-              RenderPath {rect} at (0,0) size 160x160 [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00 L160.00,0.00 L160.00,160.00 L0.00,160.00"]
+              RenderPath {rect} at (0,0) size 160x160 [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00 L160.00,0.00 L160.00,160.00 L0.00,160.00 Z"]

@@ -1,4 +1,4 @@
-KCanvasResource {id="myclip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M200.00,200.00 L300.00,200.00 L300.00,400.00 L200.00,400.00]]]}
+KCanvasResource {id="myclip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M200.00,200.00 L300.00,200.00 L300.00,400.00 L200.00,400.00 Z]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

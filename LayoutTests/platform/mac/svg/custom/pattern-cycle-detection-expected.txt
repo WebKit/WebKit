@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 482x154
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {pattern} at (-0.50,-0.50) size 51x31
-        RenderPath {rect} at (-0.50,-0.50) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00"]
+        RenderPath {rect} at (-0.50,-0.50) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
       RenderSVGContainer {pattern} at (0,0) size 0x0
-    RenderPath {rect} at (0,0) size 100x100 [fill={[type=PATTERN] [bbox=at (20,20) size 1x1]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+    RenderPath {rect} at (0,0) size 100x100 [fill={[type=PATTERN] [bbox=at (20,20) size 1x1]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGText {text} at (10,150) size 472x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 472x18
         chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 75 width 472.00: "The square above should show a pattern now that fill fallback is supported."

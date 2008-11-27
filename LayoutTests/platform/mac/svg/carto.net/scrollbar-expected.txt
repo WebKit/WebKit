@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (-800,-780) size 4000x4000
-    RenderPath {rect} at (-800,-780) size 4000x4000 [data="M-1000.00,-1000.00 L4000.00,-1000.00 L4000.00,4000.00 L-1000.00,4000.00"]
+    RenderPath {rect} at (-800,-780) size 4000x4000 [data="M-1000.00,-1000.00 L4000.00,-1000.00 L4000.00,4000.00 L-1000.00,4000.00 Z"]
     RenderSVGText {text} at (50,30) size 343x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-18) size 343x22
         chunk 1 text run 1 at (50.00,30.00) startOffset 0 endOffset 34 width 343.00: "Demonstration of the SVG Scrollbar"
@@ -42,19 +42,19 @@ layer at (0,0) size 800x600
               chunk 1 (middle anchor) text run 1 at (963.30,386.50) startOffset 0 endOffset 12 width 81.00: "Zervreilasee"
     RenderSVGContainer {g} at (40,60) size 732.80x172.80
       RenderSVGContainer {g} at (40,220) size 720x12.80
-        RenderPath {rect} at (52,220) size 696x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M65.50,250.50 L934.50,250.50 L934.50,265.50 L65.50,265.50"]
-        RenderPath {rect} at (52,220) size 174.25x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M65.50,250.50 L282.32,250.50 L282.32,265.50 L65.50,265.50"]
-        RenderPath {rect} at (40,220) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.50,250.50 L65.50,250.50 L65.50,265.50 L50.50,265.50"]
-        RenderPath {rect} at (747.20,220) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M934.50,250.50 L949.50,250.50 L949.50,265.50 L934.50,265.50"]
-        RenderPath {path} at (43.60,223.60) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M54.50,258.50 L62.50,254.50 L62.50,262.50"]
-        RenderPath {path} at (750.80,223.60) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M946.50,258.50 L938.50,262.50 L938.50,254.50"]
+        RenderPath {rect} at (52,220) size 696x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M65.50,250.50 L934.50,250.50 L934.50,265.50 L65.50,265.50 Z"]
+        RenderPath {rect} at (52,220) size 174.25x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M65.50,250.50 L282.32,250.50 L282.32,265.50 L65.50,265.50 Z"]
+        RenderPath {rect} at (40,220) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.50,250.50 L65.50,250.50 L65.50,265.50 L50.50,265.50 Z"]
+        RenderPath {rect} at (747.20,220) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M934.50,250.50 L949.50,250.50 L949.50,265.50 L934.50,265.50 Z"]
+        RenderPath {path} at (43.60,223.60) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M54.50,258.50 L62.50,254.50 L62.50,262.50 Z"]
+        RenderPath {path} at (750.80,223.60) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M946.50,258.50 L938.50,262.50 L938.50,254.50 Z"]
       RenderSVGContainer {g} at (760,60) size 12.80x160
-        RenderPath {rect} at (760,72) size 12.80x136 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M950.50,65.50 L965.50,65.50 L965.50,234.50 L950.50,234.50"]
-        RenderPath {rect} at (760,72) size 12.80x65.10 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,65.50 L965.50,65.50 L965.50,145.88 L950.50,145.88"]
-        RenderPath {rect} at (760,60) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,50.50 L965.50,50.50 L965.50,65.50 L950.50,65.50"]
-        RenderPath {rect} at (760,207.20) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,234.50 L965.50,234.50 L965.50,249.50 L950.50,249.50"]
-        RenderPath {path} at (763.60,63.60) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M958.00,54.50 L962.50,62.50 L954.50,62.50"]
-        RenderPath {path} at (763.60,210.80) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M958.00,246.50 L954.50,238.50 L962.50,238.50"]
+        RenderPath {rect} at (760,72) size 12.80x136 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M950.50,65.50 L965.50,65.50 L965.50,234.50 L950.50,234.50 Z"]
+        RenderPath {rect} at (760,72) size 12.80x65.10 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,65.50 L965.50,65.50 L965.50,145.88 L950.50,145.88 Z"]
+        RenderPath {rect} at (760,60) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,50.50 L965.50,50.50 L965.50,65.50 L950.50,65.50 Z"]
+        RenderPath {rect} at (760,207.20) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,234.50 L965.50,234.50 L965.50,249.50 L950.50,249.50 Z"]
+        RenderPath {path} at (763.60,63.60) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M958.00,54.50 L962.50,62.50 L954.50,62.50 Z"]
+        RenderPath {path} at (763.60,210.80) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M958.00,246.50 L954.50,238.50 L962.50,238.50 Z"]
     RenderSVGText {text} at (430,280) size 520x14 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-11) size 520x14
         chunk 1 (end anchor) text run 1 at (430.00,280.00) startOffset 0 endOffset 89 width 520.00: "Panorama Zervreilastausee, Vals, Graub\x{FC}nden, Switzerland, taken 2006-02-04 (\x{A9} A. Neumann)"
@@ -63,35 +63,35 @@ layer at (0,0) size 800x600
         RenderImage {image} at (0,0) size 3560x689
     RenderSVGContainer {g} at (40,300) size 728.80x168.80
       RenderSVGContainer {g} at (40,460) size 720x8.80
-        RenderPath {rect} at (40,460) size 704x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M50.50,550.50 L929.50,550.50 L929.50,560.50 L50.50,560.50"]
-        RenderPath {rect} at (40,460) size 178.57x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.50,550.50 L272.71,550.50 L272.71,560.50 L50.50,560.50"]
-        RenderPath {rect} at (743.20,460) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M929.50,550.50 L939.50,550.50 L939.50,560.50 L929.50,560.50"]
-        RenderPath {rect} at (751.20,460) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M939.50,550.50 L949.50,550.50 L949.50,560.50 L939.50,560.50"]
-        RenderPath {path} at (746,462.80) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M932.50,556.50 L938.50,553.50 L938.50,559.50"]
-        RenderPath {path} at (754,462.80) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M948.50,556.50 L942.50,559.50 L942.50,553.50"]
+        RenderPath {rect} at (40,460) size 704x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M50.50,550.50 L929.50,550.50 L929.50,560.50 L50.50,560.50 Z"]
+        RenderPath {rect} at (40,460) size 178.57x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.50,550.50 L272.71,550.50 L272.71,560.50 L50.50,560.50 Z"]
+        RenderPath {rect} at (743.20,460) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M929.50,550.50 L939.50,550.50 L939.50,560.50 L929.50,560.50 Z"]
+        RenderPath {rect} at (751.20,460) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M939.50,550.50 L949.50,550.50 L949.50,560.50 L939.50,560.50 Z"]
+        RenderPath {path} at (746,462.80) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M932.50,556.50 L938.50,553.50 L938.50,559.50 Z"]
+        RenderPath {path} at (754,462.80) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M948.50,556.50 L942.50,559.50 L942.50,553.50 Z"]
       RenderSVGContainer {g} at (760,300) size 8.80x160
-        RenderPath {rect} at (760,300) size 8.80x144 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M950.50,350.50 L960.50,350.50 L960.50,529.50 L950.50,529.50"]
-        RenderPath {rect} at (760,300) size 8.80x42.37 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,350.50 L960.50,350.50 L960.50,402.46 L950.50,402.46"]
-        RenderPath {rect} at (760,443.20) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,529.50 L960.50,529.50 L960.50,539.50 L950.50,539.50"]
-        RenderPath {rect} at (760,451.20) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,539.50 L960.50,539.50 L960.50,549.50 L950.50,549.50"]
-        RenderPath {path} at (762.80,446) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M955.50,532.50 L959.50,538.50 L953.50,538.50"]
-        RenderPath {path} at (762.80,454) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M955.50,548.50 L953.50,542.50 L959.50,542.50"]
+        RenderPath {rect} at (760,300) size 8.80x144 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M950.50,350.50 L960.50,350.50 L960.50,529.50 L950.50,529.50 Z"]
+        RenderPath {rect} at (760,300) size 8.80x42.37 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,350.50 L960.50,350.50 L960.50,402.46 L950.50,402.46 Z"]
+        RenderPath {rect} at (760,443.20) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,529.50 L960.50,529.50 L960.50,539.50 L950.50,539.50 Z"]
+        RenderPath {rect} at (760,451.20) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,539.50 L960.50,539.50 L960.50,549.50 L950.50,549.50 Z"]
+        RenderPath {path} at (762.80,446) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M955.50,532.50 L959.50,538.50 L953.50,538.50 Z"]
+        RenderPath {path} at (762.80,454) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M955.50,548.50 L953.50,542.50 L959.50,542.50 Z"]
     RenderSVGText {text} at (436,575) size 514x14 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-11) size 514x14
         chunk 1 (end anchor) text run 1 at (436.00,575.00) startOffset 0 endOffset 94 width 514.00: "Panorama Chalchtrittli, Tierfed, Linthal, Glarus, Switzerland, taken 2005-09-03 (\x{A9} A. Neumann)"
     RenderSVGContainer {g} at (39.20,483.20) size 185.60x17.60
       RenderSVGContainer {g} at (39.20,483.20) size 89.60x17.60
-        RenderPath {rect} at (39.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M49.00,579.00 L159.00,579.00 L159.00,599.00 L49.00,599.00"]
-        RenderPath {rect} at (40.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M51.00,581.00 L161.00,581.00 L161.00,601.00 L51.00,601.00"]
-        RenderPath {rect} at (40,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M50.00,580.00 L160.00,580.00 L160.00,600.00 L50.00,600.00"]
+        RenderPath {rect} at (39.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M49.00,579.00 L159.00,579.00 L159.00,599.00 L49.00,599.00 Z"]
+        RenderPath {rect} at (40.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M51.00,581.00 L161.00,581.00 L161.00,601.00 L51.00,601.00 Z"]
+        RenderPath {rect} at (40,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M50.00,580.00 L160.00,580.00 L160.00,600.00 L50.00,600.00 Z"]
         RenderSVGText {text} at (66,595) size 78x15 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 78x15
             RenderSVGInlineText {#text} at (0,-11) size 78x15
               chunk 1 (middle anchor) text run 1 at (66.00,595.40) startOffset 0 endOffset 14 width 78.00: "Hide Scrollbar"
       RenderSVGContainer {g} at (135.20,483.20) size 89.60x17.60
-        RenderPath {rect} at (135.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M169.00,579.00 L279.00,579.00 L279.00,599.00 L169.00,599.00"]
-        RenderPath {rect} at (136.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M171.00,581.00 L281.00,581.00 L281.00,601.00 L171.00,601.00"]
-        RenderPath {rect} at (136,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M170.00,580.00 L280.00,580.00 L280.00,600.00 L170.00,600.00"]
+        RenderPath {rect} at (135.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M169.00,579.00 L279.00,579.00 L279.00,599.00 L169.00,599.00 Z"]
+        RenderPath {rect} at (136.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M171.00,581.00 L281.00,581.00 L281.00,601.00 L171.00,601.00 Z"]
+        RenderPath {rect} at (136,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M170.00,580.00 L280.00,580.00 L280.00,600.00 L170.00,600.00 Z"]
         RenderSVGText {text} at (176,595) size 98x15 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 98x15
             RenderSVGInlineText {#text} at (0,-11) size 98x15

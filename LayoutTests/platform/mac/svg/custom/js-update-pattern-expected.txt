@@ -5,7 +5,7 @@ layer at (0,0) size 450x450
   RenderSVGRoot {svg} at (10,10) size 430x170
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {pattern} at (0,5) size 15x15
-        RenderPath {rect} at (5,5) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00"]
-        RenderPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,10.00 L10.00,10.00 L10.00,20.00 L0.00,20.00"]
-    RenderPath {rect} at (10,10) size 430x80 [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M10.00,10.00 L440.00,10.00 L440.00,90.00 L10.00,90.00"]
-    RenderPath {rect} at (10,100) size 430x80 [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M10.00,100.00 L440.00,100.00 L440.00,180.00 L10.00,180.00"]
+        RenderPath {rect} at (5,5) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00 Z"]
+        RenderPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,10.00 L10.00,10.00 L10.00,20.00 L0.00,20.00 Z"]
+    RenderPath {rect} at (10,10) size 430x80 [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M10.00,10.00 L440.00,10.00 L440.00,90.00 L10.00,90.00 Z"]
+    RenderPath {rect} at (10,100) size 430x80 [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M10.00,100.00 L440.00,100.00 L440.00,180.00 L10.00,180.00 Z"]

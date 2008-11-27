@@ -8,9 +8,9 @@ layer at (0,0) size 800x600
       RenderSVGGradientStop {stop} at (0,0) size 0x0
       RenderSVGGradientStop {stop} at (0,0) size 0x0
       RenderSVGGradientStop {stop} at (0,0) size 0x0
-    RenderPath {rect} at (251.51,151.51) size 296.98x296.98 [transform={m=((0.21,0.21)(-0.21,0.21)) t=(189.39,75.75)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (0.50,#008000), (1.00,#0000FF)]] [start=(0,0)] [end=(0,1)]}] [data="M20.00,0.00 L380.00,0.00 C391.04,0.00,400.00,8.96,400.00,20.00 L400.00,280.00 C400.00,291.04,391.04,300.00,380.00,300.00 L20.00,300.00 C8.96,300.00,0.00,291.04,0.00,280.00 L0.00,20.00 C0.00,8.96,8.96,0.00,20.00,0.00"]
+    RenderPath {rect} at (251.51,151.51) size 296.98x296.98 [transform={m=((0.21,0.21)(-0.21,0.21)) t=(189.39,75.75)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (0.50,#008000), (1.00,#0000FF)]] [start=(0,0)] [end=(0,1)]}] [data="M20.00,0.00 L380.00,0.00 C391.04,0.00,400.00,8.96,400.00,20.00 L400.00,280.00 C400.00,291.04,391.04,300.00,380.00,300.00 L20.00,300.00 C8.96,300.00,0.00,291.04,0.00,280.00 L0.00,20.00 C0.00,8.96,8.96,0.00,20.00,0.00 Z"]
     RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
       RenderSVGGradientStop {stop} at (0,0) size 0x0
       RenderSVGGradientStop {stop} at (0,0) size 0x0
       RenderSVGGradientStop {stop} at (0,0) size 0x0
-    RenderPath {rect} at (3.88,210) size 288.23x180 [transform={m=((0.30,0.00)(0.08,0.30)) t=(1.94,105.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (0.50,#008000), (1.00,#0000FF)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=1.00]}] [data="M0.00,0.00 L400.00,0.00 L400.00,300.00 L0.00,300.00"]
+    RenderPath {rect} at (3.88,210) size 288.23x180 [transform={m=((0.30,0.00)(0.08,0.30)) t=(1.94,105.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (0.50,#008000), (1.00,#0000FF)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=1.00]}] [data="M0.00,0.00 L400.00,0.00 L400.00,300.00 L0.00,300.00 Z"]

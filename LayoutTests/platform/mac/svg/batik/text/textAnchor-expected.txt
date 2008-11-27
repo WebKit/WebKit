@@ -7,12 +7,12 @@ layer at (0,0) size 450x500
         chunk 1 (middle anchor) text run 1 at (144.00,40.00) startOffset 0 endOffset 22 width 162.00: "text-anchor on <tspan>"
     RenderSVGContainer {g} at (48,82.12) size 346.12x375.75 [transform={m=((0.75,0.00)(0.00,0.75)) t=(56.25,82.50)}]
       RenderSVGContainer {g} at (55.88,82.12) size 338.25x375.75
-        RenderPath {rect} at (56.25,82.50) size 337.50x125.25 [opacity=0.10] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L450.00,0.00 L450.00,167.00 L0.00,167.00"]
-        RenderPath {rect} at (56.25,207.75) size 337.50x125.25 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,167.00 L450.00,167.00 L450.00,334.00 L0.00,334.00"]
-        RenderPath {rect} at (56.25,333) size 337.50x124.50 [opacity=0.10] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,334.00 L450.00,334.00 L450.00,500.00 L0.00,500.00"]
+        RenderPath {rect} at (56.25,82.50) size 337.50x125.25 [opacity=0.10] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L450.00,0.00 L450.00,167.00 L0.00,167.00 Z"]
+        RenderPath {rect} at (56.25,207.75) size 337.50x125.25 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,167.00 L450.00,167.00 L450.00,334.00 L0.00,334.00 Z"]
+        RenderPath {rect} at (56.25,333) size 337.50x124.50 [opacity=0.10] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,334.00 L450.00,334.00 L450.00,500.00 L0.00,500.00 Z"]
         RenderPath {line} at (168.38,82.50) size 0.75x375 [stroke={[type=SOLID] [color=#FF0000]}] [data="M150.00,0.00 L150.00,500.00"]
         RenderPath {line} at (295.88,82.50) size 0.75x375 [stroke={[type=SOLID] [color=#FF0000]}] [data="M320.00,0.00 L320.00,500.00"]
-        RenderPath {rect} at (55.88,82.12) size 338.25x375.75 [stroke={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L450.00,0.00 L450.00,500.00 L0.00,500.00"]
+        RenderPath {rect} at (55.88,82.12) size 338.25x375.75 [stroke={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L450.00,0.00 L450.00,500.00 L0.00,500.00 Z"]
       RenderSVGContainer {g} at (48,94.50) size 336x88.50
         RenderSVGContainer {g} at (168.75,94.50) size 215.25x28.50
           RenderSVGText {text} at (150,30) size 287x38 contains 2 chunk(s)

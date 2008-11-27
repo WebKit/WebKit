@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (-0.50,-0.50) size 101x101
     RenderSVGContainer {g} at (-0.50,-0.50) size 101x101
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [filter=ResultImage] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
-      RenderPath {rect} at (-0.50,-0.50) size 101x101 [stroke={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [filter=ResultImage] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      RenderPath {rect} at (-0.50,-0.50) size 101x101 [stroke={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]

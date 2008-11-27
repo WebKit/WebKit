@@ -4,17 +4,17 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0.50,0.50) size 479x359
     RenderSVGContainer {g} at (98.50,18) size 205.50x286
       RenderPath {path} at (98.50,18) size 203x164 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M100.00,100.00 C100.00,20.00,200.00,20.00,200.00,100.00 C200.00,180.00,300.00,180.00,300.00,100.00"]
-      RenderPath {rect} at (100,100) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M100.00,100.00 L104.00,100.00 L104.00,104.00 L100.00,104.00"]
-      RenderPath {rect} at (200,100) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M200.00,100.00 L204.00,100.00 L204.00,104.00 L200.00,104.00"]
-      RenderPath {rect} at (300,100) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M300.00,100.00 L304.00,100.00 L304.00,104.00 L300.00,104.00"]
+      RenderPath {rect} at (100,100) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M100.00,100.00 L104.00,100.00 L104.00,104.00 L100.00,104.00 Z"]
+      RenderPath {rect} at (200,100) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M200.00,100.00 L204.00,100.00 L204.00,104.00 L200.00,104.00 Z"]
+      RenderPath {rect} at (300,100) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M300.00,100.00 L304.00,100.00 L304.00,104.00 L300.00,104.00 Z"]
       RenderPath {path} at (99.33,225.10) size 202.17x76.90 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M100.00,250.00 C100.00,250.00,200.00,200.00,200.00,250.00 C200.00,300.00,300.00,300.00,300.00,250.00"]
-      RenderPath {rect} at (100,250) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M100.00,250.00 L104.00,250.00 L104.00,254.00 L100.00,254.00"]
-      RenderPath {rect} at (200,200) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M200.00,200.00 L204.00,200.00 L204.00,204.00 L200.00,204.00"]
-      RenderPath {rect} at (200,250) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M200.00,250.00 L204.00,250.00 L204.00,254.00 L200.00,254.00"]
-      RenderPath {rect} at (200,300) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M200.00,300.00 L204.00,300.00 L204.00,304.00 L200.00,304.00"]
-      RenderPath {rect} at (300,300) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M300.00,300.00 L304.00,300.00 L304.00,304.00 L300.00,304.00"]
-      RenderPath {rect} at (300,250) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M300.00,250.00 L304.00,250.00 L304.00,254.00 L300.00,254.00"]
+      RenderPath {rect} at (100,250) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M100.00,250.00 L104.00,250.00 L104.00,254.00 L100.00,254.00 Z"]
+      RenderPath {rect} at (200,200) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M200.00,200.00 L204.00,200.00 L204.00,204.00 L200.00,204.00 Z"]
+      RenderPath {rect} at (200,250) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M200.00,250.00 L204.00,250.00 L204.00,254.00 L200.00,254.00 Z"]
+      RenderPath {rect} at (200,300) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M200.00,300.00 L204.00,300.00 L204.00,304.00 L200.00,304.00 Z"]
+      RenderPath {rect} at (300,300) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M300.00,300.00 L304.00,300.00 L304.00,304.00 L300.00,304.00 Z"]
+      RenderPath {rect} at (300,250) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M300.00,250.00 L304.00,250.00 L304.00,254.00 L300.00,254.00 Z"]
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.2 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

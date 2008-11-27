@@ -184,8 +184,8 @@ bool Path::isEmpty() const
 
 static void CGPathToCFStringApplierFunction(void* info, const CGPathElement *element)
 {
-    CFMutableStringRef string = (CFMutableStringRef)info;
-    CFStringRef typeString = CFSTR("");
+    CFMutableStringRef string = static_cast<CFMutableStringRef>(info);
+
     CGPoint* points = element->points;
     switch (element->type) {
     case kCGPathElementMoveToPoint:
@@ -204,7 +204,8 @@ static void CGPathToCFStringApplierFunction(void* info, const CGPathElement *ele
                 points[2].x, points[2].y);
         break;
     case kCGPathElementCloseSubpath:
-        typeString = CFSTR("X"); break;
+        CFStringAppendFormat(string, 0, CFSTR("Z "));
+        break;
     }
 }
 

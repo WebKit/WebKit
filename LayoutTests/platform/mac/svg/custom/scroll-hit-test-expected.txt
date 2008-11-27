@@ -6,6 +6,6 @@ layer at (0,0) size 800x100
 layer at (0,0) size 100x100 scrollX 100 scrollY 100 scrollWidth 200 scrollHeight 204
   RenderBlock {div} at (0,0) size 100x100
     RenderSVGRoot {svg} at (0,0) size 200x200
-      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
-      RenderPath {rect} at (100,100) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M100.00,100.00 L200.00,100.00 L200.00,200.00 L100.00,200.00"]
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FFA500]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      RenderPath {rect} at (100,100) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M100.00,100.00 L200.00,100.00 L200.00,200.00 L100.00,200.00 Z"]
     RenderText {#text} at (0,0) size 0x0

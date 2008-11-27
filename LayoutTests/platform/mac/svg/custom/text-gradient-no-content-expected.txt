@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
       RenderSVGGradientStop {stop} at (0,0) size 0x0
       RenderSVGGradientStop {stop} at (0,0) size 0x0
-    RenderPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L800.00,0.00 L800.00,600.00 L0.00,600.00"]
+    RenderPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L800.00,0.00 L800.00,600.00 L0.00,600.00 Z"]
     RenderSVGText {text}
     RenderSVGText {text}

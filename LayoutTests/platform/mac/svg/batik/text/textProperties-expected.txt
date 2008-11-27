@@ -1,4 +1,4 @@
-KCanvasResource {id="textClip" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00 L0.00,0.00 L0.00,0.00 L0.00,0.00]]]}
+KCanvasResource {id="textClip" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00 L0.00,0.00 L0.00,0.00 L0.00,0.00 Z]]]}
 KRenderingPaintServer {id="gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#008000)]] [bounding box mode=0] [start=(-50,-25)] [end=(50,25)]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
@@ -135,7 +135,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
       RenderSVGContainer {g} at (300,345) size 100x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,370.00)}]
-        RenderPath {rect} at (300,345) size 100x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#008000)]] [bounding box mode=0] [start=(-50,-25)] [end=(50,25)]}] [clip path="textClip"] [data="M-50.00,-25.00 L50.00,-25.00 L50.00,25.00 L-50.00,25.00"]
+        RenderPath {rect} at (300,345) size 100x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#008000)]] [bounding box mode=0] [start=(-50,-25)] [end=(50,25)]}] [clip path="textClip"] [data="M-50.00,-25.00 L50.00,-25.00 L50.00,25.00 L-50.00,25.00 Z"]
         RenderSVGText {text} at (-50,15) size 100x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 100x18
             chunk 1 (middle anchor) text run 1 at (-49.50,15.00) startOffset 0 endOffset 17 width 99.00: "text as clip-path"

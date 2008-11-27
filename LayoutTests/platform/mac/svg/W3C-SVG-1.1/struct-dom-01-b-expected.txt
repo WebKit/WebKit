@@ -3,12 +3,12 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0.50,0.50) size 479x359
     RenderSVGContainer {g} at (40,86) size 276x124
-      RenderPath {rect} at (50,160) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M50.00,160.00 L100.00,160.00 L100.00,210.00 L50.00,210.00"]
-      RenderPath {rect} at (40,150) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M40.00,150.00 L90.00,150.00 L90.00,200.00 L40.00,200.00"]
+      RenderPath {rect} at (50,160) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M50.00,160.00 L100.00,160.00 L100.00,210.00 L50.00,210.00 Z"]
+      RenderPath {rect} at (40,150) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M40.00,150.00 L90.00,150.00 L90.00,200.00 L40.00,200.00 Z"]
       RenderSVGText {text} at (50,100) size 266x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 266x18
           chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 44 width 266.00: "This document's root identifier is: svg-root"
     RenderSVGText {text} at (10,340) size 198x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-28) size 198x36
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 198.00: "$Revision: 1.1 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

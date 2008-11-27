@@ -17,7 +17,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderPath {rect} at (35,80) size 80x40 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DC143C), (1.00,#FFD700), (1.00,#DC143C)]] [start=(0,0)] [end=(0,0.10)]}] [data="M35.00,80.00 L115.00,80.00 L115.00,120.00 L35.00,120.00"]
+        RenderPath {rect} at (35,80) size 80x40 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DC143C), (1.00,#FFD700), (1.00,#DC143C)]] [start=(0,0)] [end=(0,0.10)]}] [data="M35.00,80.00 L115.00,80.00 L115.00,120.00 L35.00,120.00 Z"]
         RenderSVGText {text} at (13,135) size 124x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 124x17
             chunk 1 (middle anchor) text run 1 at (13.50,135.00) startOffset 0 endOffset 17 width 123.00: "Two close offsets"
@@ -29,7 +29,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderPath {rect} at (185,80) size 80x40 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DC143C), (1.00,#FFD700), (1.00,#DC143C)]] [start=(0,0)] [end=(0,0.10)]}] [data="M35.00,80.00 L115.00,80.00 L115.00,120.00 L35.00,120.00"]
+        RenderPath {rect} at (185,80) size 80x40 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DC143C), (1.00,#FFD700), (1.00,#DC143C)]] [start=(0,0)] [end=(0,0.10)]}] [data="M35.00,80.00 L115.00,80.00 L115.00,120.00 L35.00,120.00 Z"]
         RenderSVGText {text} at (-4,135) size 158x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 158x17
             chunk 1 (middle anchor) text run 1 at (-3.50,135.00) startOffset 0 endOffset 22 width 157.00: "Two very close offsets"
@@ -41,7 +41,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderPath {rect} at (35,180) size 80x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#DC143C), (1.00,#FFD700), (1.00,#DC143C)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.10]}] [data="M35.00,80.00 L115.00,80.00 L115.00,120.00 L35.00,120.00"]
+        RenderPath {rect} at (35,180) size 80x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#DC143C), (1.00,#FFD700), (1.00,#DC143C)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.10]}] [data="M35.00,80.00 L115.00,80.00 L115.00,120.00 L35.00,120.00 Z"]
         RenderSVGText {text} at (13,135) size 124x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 124x17
             chunk 1 (middle anchor) text run 1 at (13.50,135.00) startOffset 0 endOffset 17 width 123.00: "Two close offsets"
@@ -53,7 +53,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderPath {rect} at (185,180) size 80x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#DC143C), (1.00,#FFD700), (1.00,#DC143C)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.10]}] [data="M35.00,80.00 L115.00,80.00 L115.00,120.00 L35.00,120.00"]
+        RenderPath {rect} at (185,180) size 80x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#DC143C), (1.00,#FFD700), (1.00,#DC143C)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.10]}] [data="M35.00,80.00 L115.00,80.00 L115.00,120.00 L35.00,120.00 Z"]
         RenderSVGText {text} at (-4,135) size 158x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 158x17
             chunk 1 (middle anchor) text run 1 at (-3.50,135.00) startOffset 0 endOffset 22 width 157.00: "Two very close offsets"
@@ -64,7 +64,7 @@ layer at (0,0) size 450x500
         RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderPath {rect} at (335,80) size 80x40 [transform={m=((100.00,0.00)(0.00,100.00)) t=(0.00,0.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFD700), (1.00,#DC143C)]] [start=(0,0)] [end=(0,0)]}] [data="M0.35,0.80 L1.15,0.80 L1.15,1.20 L0.35,1.20"]
+        RenderPath {rect} at (335,80) size 80x40 [transform={m=((100.00,0.00)(0.00,100.00)) t=(0.00,0.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFD700), (1.00,#DC143C)]] [start=(0,0)] [end=(0,0)]}] [data="M0.35,0.80 L1.15,0.80 L1.15,1.20 L0.35,1.20 Z"]
         RenderSVGText {text} at (4,135) size 142x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 142x17
             chunk 1 (middle anchor) text run 1 at (4.50,135.00) startOffset 0 endOffset 20 width 141.00: "Close control points"
@@ -75,7 +75,7 @@ layer at (0,0) size 450x500
         RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderPath {rect} at (335,180) size 80x40 [transform={m=((100.00,0.00)(0.00,100.00)) t=(0.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FFD700), (1.00,#DC143C)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.00]}] [data="M0.35,0.80 L1.15,0.80 L1.15,1.20 L0.35,1.20"]
+        RenderPath {rect} at (335,180) size 80x40 [transform={m=((100.00,0.00)(0.00,100.00)) t=(0.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FFD700), (1.00,#DC143C)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.00]}] [data="M0.35,0.80 L1.15,0.80 L1.15,1.20 L0.35,1.20 Z"]
         RenderSVGText {text} at (27,135) size 96x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 96x17
             chunk 1 (middle anchor) text run 1 at (27.00,135.00) startOffset 0 endOffset 12 width 96.00: "Small Radius"

@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderImage {image} at (0,0) size 240x150
         RenderSVGViewportContainer {svg} at (240,0) size 240x225
-          RenderPath {rect} at (240,0) size 240x225 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L240.00,0.00 L240.00,225.00 L0.00,225.00"]
+          RenderPath {rect} at (240,0) size 240x225 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L240.00,0.00 L240.00,225.00 L0.00,225.00 Z"]
       RenderSVGContainer {g} at (0,0) size 240x150
         RenderSVGContainer {use} at (0,0) size 240x150
           RenderSVGContainer {g} at (0,0) size 240x150
@@ -15,13 +15,13 @@ layer at (0,0) size 480x360
         RenderSVGContainer {use} at (0,0) size 240x225
           RenderSVGContainer {g} at (0,0) size 240x225
             RenderSVGViewportContainer {svg} at (240,0) size 240x225
-              RenderPath {rect} at (240,0) size 240x225 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L240.00,0.00 L240.00,225.00 L0.00,225.00"]
+              RenderPath {rect} at (240,0) size 240x225 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L240.00,0.00 L240.00,225.00 L0.00,225.00 Z"]
       RenderSVGViewportContainer {svg} at (0,150) size 240x150
         RenderSVGContainer {g} at (0,150) size 240x150
-          RenderPath {rect} at (0,150) size 240x150 [fill={[type=SOLID] [color=#00FFFF]}] [data="M0.00,0.00 L240.00,0.00 L240.00,150.00 L0.00,150.00"]
+          RenderPath {rect} at (0,150) size 240x150 [fill={[type=SOLID] [color=#00FFFF]}] [data="M0.00,0.00 L240.00,0.00 L240.00,150.00 L0.00,150.00 Z"]
       RenderSVGContainer {g} at (0,0) size 0x0
         RenderSVGContainer {switch} at (0,0) size 0x0
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.2 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

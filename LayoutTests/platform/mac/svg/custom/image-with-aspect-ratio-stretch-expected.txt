@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,-50) size 125x200
     RenderSVGContainer {g} at (0,-50) size 125x200 [transform={m=((0.50,0.00)(0.00,1.00)) t=(0.00,0.00)}]
       RenderSVGContainer {g} at (0,-50) size 50x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-100.00,-150.00)}]
-        RenderPath {rect} at (0,0) size 50x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M100.00,150.00 L200.00,150.00 L200.00,250.00 L100.00,250.00"]
+        RenderPath {rect} at (0,0) size 50x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M100.00,150.00 L200.00,150.00 L200.00,250.00 L100.00,250.00 Z"]
         RenderImage {image} at (0,0) size 100x200
       RenderSVGContainer {g} at (25,0) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-50.00,-100.00)}]
-        RenderPath {rect} at (50,0) size 50x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M150.00,100.00 L250.00,100.00 L250.00,200.00 L150.00,200.00"]
+        RenderPath {rect} at (50,0) size 50x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M150.00,100.00 L250.00,100.00 L250.00,200.00 L150.00,200.00 Z"]
         RenderImage {image} at (0,0) size 200x100

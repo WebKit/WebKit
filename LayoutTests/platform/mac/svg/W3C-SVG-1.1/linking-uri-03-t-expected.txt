@@ -7,7 +7,7 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,-11) size 246x14
           chunk 1 text run 1 at (75.00,16.00) startOffset 0 endOffset 55 width 246.00: "Simple exercise of xlink attributes on the 'a' element."
       RenderSVGContainer {a} at (134.19,121.50) size 131.62x131.62
-        RenderPath {path} at (134.19,121.50) size 131.62x131.62 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M135.00,122.00 L265.00,122.00 L200.00,252.00"]
+        RenderPath {path} at (134.19,121.50) size 131.62x131.62 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M135.00,122.00 L265.00,122.00 L200.00,252.00 Z"]
       RenderSVGText {text} at (160,116) size 69x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 69x14
           chunk 1 text run 1 at (160.00,116.00) startOffset 0 endOffset 13 width 69.00: "Click for TOC"
@@ -17,7 +17,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (25,182) size 81x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 81x14
           chunk 1 text run 1 at (25.00,182.00) startOffset 0 endOffset 17 width 81.00: "linkingToc-t.svg."
-      RenderPath {rect} at (18.50,159.50) size 101x27 [stroke={[type=SOLID] [color=#000000]}] [data="M19.00,160.00 L119.00,160.00 L119.00,186.00 L19.00,186.00"]
+      RenderPath {rect} at (18.50,159.50) size 101x27 [stroke={[type=SOLID] [color=#000000]}] [data="M19.00,160.00 L119.00,160.00 L119.00,186.00 L19.00,186.00 Z"]
       RenderSVGText {text} at (275,144) size 82x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-10) size 82x13
           chunk 1 text run 1 at (275.00,144.00) startOffset 0 endOffset 19 width 82.00: "xlink:type=\"simple\""
@@ -42,4 +42,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.8 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

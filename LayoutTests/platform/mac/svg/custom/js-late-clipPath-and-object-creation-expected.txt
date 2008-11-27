@@ -1,4 +1,4 @@
-KCanvasResource {id="dynClip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00]]]}
+KCanvasResource {id="dynClip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

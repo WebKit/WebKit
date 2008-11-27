@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (119,19) size 562x405
     RenderSVGContainer {g} at (119,19) size 202x202 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-      RenderPath {rect} at (119,19) size 202x202 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+      RenderPath {rect} at (119,19) size 202x202 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
       RenderImage {image} at (0,0) size 100x100
     RenderSVGContainer {g} at (479,19) size 202x202 [transform={m=((200.00,0.00)(0.00,200.00)) t=(190.00,10.00)}]
-      RenderPath {rect} at (479,19) size 202x202 [stroke={[type=SOLID] [color=#000000] [stroke width=0.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L0.50,0.00 L0.50,0.50 L0.00,0.50"]
+      RenderPath {rect} at (479,19) size 202x202 [stroke={[type=SOLID] [color=#000000] [stroke width=0.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L0.50,0.00 L0.50,0.50 L0.00,0.50 Z"]
       RenderImage {image} at (0,0) size 0x0
     RenderSVGContainer {g} at (120,224) size 460x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
       RenderSVGText {text} at (0,0) size 230x100 contains 7 chunk(s)

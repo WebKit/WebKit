@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (-25,-25) size 353x100
     RenderSVGViewportContainer {marker} at (-25,-25) size 100x100
-      RenderPath {rect} at (-25,-25) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M-50.00,-50.00 L150.00,-50.00 L150.00,150.00 L-50.00,150.00"]
-      RenderPath {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
-    RenderPath {rect} at (0,0) size 25x25 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,25.00 L0.00,25.00"]
+      RenderPath {rect} at (-25,-25) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M-50.00,-50.00 L150.00,-50.00 L150.00,150.00 L-50.00,150.00 Z"]
+      RenderPath {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderPath {rect} at (0,0) size 25x25 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L25.00,0.00 L25.00,25.00 L0.00,25.00 Z"]
     RenderPath {path} at (100,100) size 0x0 [start marker=marker] [data="M100.00,100.00 L100.00,100.00"]
     RenderSVGText {text} at (30,20) size 298x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 298x18

@@ -4,17 +4,17 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0.50,0.50) size 479x359
     RenderSVGContainer {g} at (5,49.50) size 458x242.50
       RenderSVGContainer {g} at (49.50,49.50) size 380x221
-        RenderPath {rect} at (49.50,49.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M50.00,50.00 L85.00,50.00 L85.00,110.00 L50.00,110.00"]
-        RenderPath {rect} at (49.50,154.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M50.00,155.00 L85.00,155.00 L85.00,215.00 L50.00,215.00"]
-        RenderPath {rect} at (129.50,49.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M130.00,50.00 L165.00,50.00 L165.00,110.00 L130.00,110.00"]
-        RenderPath {rect} at (129.50,154.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M130.00,155.00 L165.00,155.00 L165.00,215.00 L130.00,215.00"]
-        RenderPath {rect} at (209.50,49.50) size 61x61 [stroke={[type=SOLID] [color=#000000]}] [data="M210.00,50.00 L270.00,50.00 L270.00,110.00 L210.00,110.00"]
-        RenderPath {rect} at (209.50,154.50) size 61x61 [stroke={[type=SOLID] [color=#000000]}] [data="M210.00,155.00 L270.00,155.00 L270.00,215.00 L210.00,215.00"]
-        RenderPath {rect} at (314.50,49.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M315.00,50.00 L350.00,50.00 L350.00,110.00 L315.00,110.00"]
-        RenderPath {rect} at (314.50,154.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M315.00,155.00 L350.00,155.00 L350.00,215.00 L315.00,215.00"]
-        RenderPath {rect} at (393.50,49.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M394.00,50.00 L429.00,50.00 L429.00,110.00 L394.00,110.00"]
-        RenderPath {rect} at (393.50,154.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M394.00,155.00 L429.00,155.00 L429.00,215.00 L394.00,215.00"]
-        RenderPath {rect} at (234.50,259.50) size 11x11 [stroke={[type=SOLID] [color=#000000]}] [data="M235.00,260.00 L245.00,260.00 L245.00,270.00 L235.00,270.00"]
+        RenderPath {rect} at (49.50,49.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M50.00,50.00 L85.00,50.00 L85.00,110.00 L50.00,110.00 Z"]
+        RenderPath {rect} at (49.50,154.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M50.00,155.00 L85.00,155.00 L85.00,215.00 L50.00,215.00 Z"]
+        RenderPath {rect} at (129.50,49.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M130.00,50.00 L165.00,50.00 L165.00,110.00 L130.00,110.00 Z"]
+        RenderPath {rect} at (129.50,154.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M130.00,155.00 L165.00,155.00 L165.00,215.00 L130.00,215.00 Z"]
+        RenderPath {rect} at (209.50,49.50) size 61x61 [stroke={[type=SOLID] [color=#000000]}] [data="M210.00,50.00 L270.00,50.00 L270.00,110.00 L210.00,110.00 Z"]
+        RenderPath {rect} at (209.50,154.50) size 61x61 [stroke={[type=SOLID] [color=#000000]}] [data="M210.00,155.00 L270.00,155.00 L270.00,215.00 L210.00,215.00 Z"]
+        RenderPath {rect} at (314.50,49.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M315.00,50.00 L350.00,50.00 L350.00,110.00 L315.00,110.00 Z"]
+        RenderPath {rect} at (314.50,154.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M315.00,155.00 L350.00,155.00 L350.00,215.00 L315.00,215.00 Z"]
+        RenderPath {rect} at (393.50,49.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M394.00,50.00 L429.00,50.00 L429.00,110.00 L394.00,110.00 Z"]
+        RenderPath {rect} at (393.50,154.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M394.00,155.00 L429.00,155.00 L429.00,215.00 L394.00,215.00 Z"]
+        RenderPath {rect} at (234.50,259.50) size 11x11 [stroke={[type=SOLID] [color=#000000]}] [data="M235.00,260.00 L245.00,260.00 L245.00,270.00 L235.00,270.00 Z"]
       RenderSVGContainer {g} at (5,83) size 458x209
         RenderSVGText {text} at (5,90) size 26x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 26x9
@@ -54,4 +54,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.9 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

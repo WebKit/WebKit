@@ -2,29 +2,29 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 400x400
   RenderSVGRoot {svg} at (0,0) size 400x400
-    RenderPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00"]
+    RenderPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
     RenderSVGViewportContainer {svg} at (0,0) size 200x200
-      RenderPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00"]
-      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+      RenderPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGText {text} at (50,100) size 108x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 108x18
         chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 16 width 108.00: "overflow: hidden"
-    RenderPath {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M200.00,0.00 L400.00,0.00 L400.00,200.00 L200.00,200.00"]
+    RenderPath {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M200.00,0.00 L400.00,0.00 L400.00,200.00 L200.00,200.00 Z"]
     RenderSVGViewportContainer {svg} at (200,0) size 200x200
-      RenderPath {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00"]
-      RenderPath {rect} at (200,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+      RenderPath {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
+      RenderPath {rect} at (200,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGText {text} at (250,100) size 99x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 99x18
         chunk 1 text run 1 at (250.00,100.00) startOffset 0 endOffset 16 width 99.00: "overflow: scroll"
-    RenderPath {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,200.00 L200.00,200.00 L200.00,400.00 L0.00,400.00"]
+    RenderPath {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,200.00 L200.00,200.00 L200.00,400.00 L0.00,400.00 Z"]
     RenderSVGViewportContainer {svg} at (0,200) size 200x200
-      RenderPath {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00"]
+      RenderPath {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
     RenderSVGText {text} at (50,300) size 92x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 92x18
         chunk 1 text run 1 at (50.00,300.00) startOffset 0 endOffset 14 width 92.00: "overflow: auto"
-    RenderPath {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M200.00,200.00 L400.00,200.00 L400.00,400.00 L200.00,400.00"]
+    RenderPath {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M200.00,200.00 L400.00,200.00 L400.00,400.00 L200.00,400.00 Z"]
     RenderSVGViewportContainer {svg} at (200,200) size 200x200
-      RenderPath {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00"]
+      RenderPath {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]
     RenderSVGText {text} at (250,300) size 106x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 106x18
         chunk 1 text run 1 at (250.00,300.00) startOffset 0 endOffset 17 width 106.00: "overflow: visible"

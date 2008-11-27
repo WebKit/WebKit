@@ -15,14 +15,14 @@ layer at (0,0) size 800x600
       RenderSVGContainer {pattern} at (0,0) size 0x0
       RenderSVGContainer {pattern} at (0,0) size 0x0
       RenderSVGContainer {pattern} at (-0.50,-0.50) size 51x31
-        RenderPath {rect} at (-0.50,-0.50) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00"]
+        RenderPath {rect} at (-0.50,-0.50) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
       RenderSVGContainer {pattern} at (0,0) size 0x0
       RenderSVGContainer {pattern} at (0,0) size 0x0
       RenderSVGContainer {pattern} at (0,0) size 0x0
       RenderSVGContainer {pattern} at (-0.50,-0.50) size 51x31
-        RenderPath {rect} at (-0.50,-0.50) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00"]
-    RenderPath {rect} at (50,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,10.00)}] [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
-    RenderPath {rect} at (200,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,10.00)}] [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+        RenderPath {rect} at (-0.50,-0.50) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
+    RenderPath {rect} at (50,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,10.00)}] [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderPath {rect} at (200,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,10.00)}] [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGText {text} at (10,150) size 436x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 436x18
         chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 68 width 436.00: "The above two squares should be blue-red patterns and look identical"

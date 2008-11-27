@@ -15,138 +15,138 @@ layer at (0,0) size 450x500
     RenderSVGContainer {g} at (24.50,71) size 471.50x389.50
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (0,0) size 20x20
-          RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00"]
+          RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
           RenderSVGContainer {g} at (0,0) size 10x10
-            RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-            RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+            RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+            RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
           RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-            RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-            RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+            RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+            RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
           RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
-            RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-            RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+            RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+            RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
           RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-            RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-            RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+            RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+            RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
         RenderSVGContainer {pattern} at (0,0) size 20x20
           RenderSVGContainer {use} at (0,0) size 20x20
             RenderSVGContainer {g} at (0,0) size 20x20
               RenderSVGContainer {g} at (0,0) size 20x20
-                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00"]
+                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
                 RenderSVGContainer {g} at (0,0) size 10x10
-                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
-                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
         RenderSVGContainer {pattern} at (0,0) size 20x20
           RenderSVGContainer {use} at (0,0) size 20x20
             RenderSVGContainer {g} at (0,0) size 20x20
               RenderSVGContainer {g} at (0,0) size 20x20
-                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00"]
+                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
                 RenderSVGContainer {g} at (0,0) size 10x10
-                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
-                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
         RenderSVGContainer {pattern} at (0,0) size 20x20
           RenderSVGContainer {use} at (0,0) size 20x20
             RenderSVGContainer {g} at (0,0) size 20x20
               RenderSVGContainer {g} at (0,0) size 20x20
-                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00"]
+                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
                 RenderSVGContainer {g} at (0,0) size 10x10
-                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
-                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
         RenderSVGContainer {pattern} at (0,0) size 20x20
           RenderSVGContainer {use} at (0,0) size 20x20
             RenderSVGContainer {g} at (0,0) size 20x20
               RenderSVGContainer {g} at (0,0) size 20x20
-                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00"]
+                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
                 RenderSVGContainer {g} at (0,0) size 10x10
-                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
-                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
         RenderSVGContainer {pattern} at (0,0) size 20x20
           RenderSVGContainer {use} at (0,0) size 20x20
             RenderSVGContainer {g} at (0,0) size 20x20
               RenderSVGContainer {g} at (0,0) size 20x20
-                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00"]
+                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
                 RenderSVGContainer {g} at (0,0) size 10x10
-                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
-                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
         RenderSVGContainer {pattern} at (0,0) size 20x20
           RenderSVGContainer {use} at (0,0) size 20x20
             RenderSVGContainer {g} at (0,0) size 20x20
               RenderSVGContainer {g} at (0,0) size 20x20
-                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00"]
+                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
                 RenderSVGContainer {g} at (0,0) size 10x10
-                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
-                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
         RenderSVGContainer {pattern} at (0,0) size 20x20
           RenderSVGContainer {use} at (0,0) size 20x20
             RenderSVGContainer {g} at (0,0) size 20x20
               RenderSVGContainer {g} at (0,0) size 20x20
-                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00"]
+                RenderPath {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
                 RenderSVGContainer {g} at (0,0) size 10x10
-                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,0) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (0,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
-                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (0,10) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (5,15) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
                 RenderSVGContainer {g} at (10,10) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                  RenderPath {rect} at (10,10) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                  RenderPath {rect} at (15,15) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
       RenderSVGContainer {g} at (30,71) size 196x99 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,90.00)}]
         RenderSVGText {text} at (0,-5) size 196x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 196x17
@@ -154,61 +154,61 @@ layer at (0,0) size 450x500
         RenderSVGContainer {use} at (30,90) size 80x80 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}]
           RenderSVGContainer {g} at (30,90) size 80x80
             RenderSVGContainer {g} at (30,90) size 80x80
-              RenderPath {rect} at (30,90) size 80x80 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00"]
+              RenderPath {rect} at (30,90) size 80x80 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
               RenderSVGContainer {g} at (30,90) size 40x40
-                RenderPath {rect} at (30,90) size 20x20 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                RenderPath {rect} at (50,110) size 20x20 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                RenderPath {rect} at (30,90) size 20x20 [fill={[type=SOLID] [color=#DC143C]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                RenderPath {rect} at (50,110) size 20x20 [fill={[type=SOLID] [color=#DC143C]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
               RenderSVGContainer {g} at (70,90) size 40x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
-                RenderPath {rect} at (70,90) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                RenderPath {rect} at (90,110) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                RenderPath {rect} at (70,90) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                RenderPath {rect} at (90,110) size 20x20 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
               RenderSVGContainer {g} at (30,130) size 40x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
-                RenderPath {rect} at (30,130) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                RenderPath {rect} at (50,150) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                RenderPath {rect} at (30,130) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                RenderPath {rect} at (50,150) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
               RenderSVGContainer {g} at (70,130) size 40x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-                RenderPath {rect} at (70,130) size 20x20 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00"]
-                RenderPath {rect} at (90,150) size 20x20 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00"]
+                RenderPath {rect} at (70,130) size 20x20 [fill={[type=SOLID] [color=#6464FF]}] [data="M0.00,0.00 L5.00,0.00 L5.00,5.00 L0.00,5.00 Z"]
+                RenderPath {rect} at (90,150) size 20x20 [fill={[type=SOLID] [color=#6464FF]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
       RenderSVGContainer {g} at (24.50,181) size 242.50x279.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,200.00)}]
         RenderSVGContainer {g} at (29.50,181) size 184.50x69.50
           RenderSVGText {text} at (0,-5) size 184x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 184x17
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 26 width 184.00: "Exact Fit in patternRegion"
-          RenderPath {rect} at (29.50,199.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0.20x0.40]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00"]
-          RenderPath {rect} at (29.50,199.50) size 21x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00"]
+          RenderPath {rect} at (29.50,199.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0.20x0.40]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+          RenderPath {rect} at (29.50,199.50) size 21x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
         RenderSVGContainer {g} at (24.50,251) size 216.50x69.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,70.00)}]
           RenderSVGText {text} at (0,-5) size 211x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 211x17
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 32 width 211.00: "patternRegion offset to the left"
-          RenderPath {rect} at (29.50,269.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (-0.05,0) size 0.20x0.40]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00"]
-          RenderPath {rect} at (24.50,269.50) size 21x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M-5.00,0.00 L15.00,0.00 L15.00,20.00 L-5.00,20.00"]
+          RenderPath {rect} at (29.50,269.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (-0.05,0) size 0.20x0.40]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+          RenderPath {rect} at (24.50,269.50) size 21x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M-5.00,0.00 L15.00,0.00 L15.00,20.00 L-5.00,20.00 Z"]
         RenderSVGContainer {g} at (29.50,321) size 212.50x69.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
           RenderSVGText {text} at (0,-5) size 212x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 212x17
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 31 width 212.00: "patternRegion offset to the top"
-          RenderPath {rect} at (29.50,339.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,-0.10) size 0.20x0.40]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00"]
-          RenderPath {rect} at (29.50,334.50) size 21x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,-5.00 L20.00,-5.00 L20.00,15.00 L0.00,15.00"]
+          RenderPath {rect} at (29.50,339.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,-0.10) size 0.20x0.40]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+          RenderPath {rect} at (29.50,334.50) size 21x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,-5.00 L20.00,-5.00 L20.00,15.00 L0.00,15.00 Z"]
         RenderSVGContainer {g} at (29.50,391) size 237.50x69.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
           RenderSVGText {text} at (0,-5) size 237x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 237x17
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 36 width 237.00: "patternRegion offset to the top/left"
-          RenderPath {rect} at (29.50,409.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0.10,0.20) size 0.20x0.40]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00"]
-          RenderPath {rect} at (39.50,419.50) size 21x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M10.00,10.00 L30.00,10.00 L30.00,30.00 L10.00,30.00"]
+          RenderPath {rect} at (29.50,409.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0.10,0.20) size 0.20x0.40]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+          RenderPath {rect} at (39.50,419.50) size 21x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M10.00,10.00 L30.00,10.00 L30.00,30.00 L10.00,30.00 Z"]
       RenderSVGContainer {g} at (254.50,181) size 241.50x209.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,200.00)}]
         RenderSVGContainer {g} at (254.50,181) size 235.50x69.50
           RenderSVGText {text} at (0,-5) size 235x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 235x17
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 32 width 235.00: "patternRegion wider than content"
-          RenderPath {rect} at (254.50,199.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0.40x0.40]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00"]
-          RenderPath {rect} at (254.50,199.50) size 41x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L40.00,0.00 L40.00,20.00 L0.00,20.00"]
+          RenderPath {rect} at (254.50,199.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0.40x0.40]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+          RenderPath {rect} at (254.50,199.50) size 41x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L40.00,0.00 L40.00,20.00 L0.00,20.00 Z"]
         RenderSVGContainer {g} at (254.50,251) size 241.50x69.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,70.00)}]
           RenderSVGText {text} at (0,-5) size 241x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 241x17
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 33 width 241.00: "patternRegion higher than content"
-          RenderPath {rect} at (254.50,269.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0.20x0.80]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00"]
-          RenderPath {rect} at (254.50,269.50) size 21x41 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L20.00,0.00 L20.00,40.00 L0.00,40.00"]
+          RenderPath {rect} at (254.50,269.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0.20x0.80]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+          RenderPath {rect} at (254.50,269.50) size 21x41 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L20.00,0.00 L20.00,40.00 L0.00,40.00 Z"]
         RenderSVGContainer {g} at (254.50,321) size 241.50x69.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
           RenderSVGText {text} at (0,-5) size 241x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 241x17
               chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 33 width 241.00: "patternRegion higher than content"
-          RenderPath {rect} at (254.50,339.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0.40x0.80]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00"]
-          RenderPath {rect} at (254.50,339.50) size 41x41 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L40.00,0.00 L40.00,40.00 L0.00,40.00"]
+          RenderPath {rect} at (254.50,339.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0.40x0.80]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+          RenderPath {rect} at (254.50,339.50) size 41x41 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [data="M0.00,0.00 L40.00,0.00 L40.00,40.00 L0.00,40.00 Z"]
     RenderSVGContainer {use} at (0,0) size 0x0

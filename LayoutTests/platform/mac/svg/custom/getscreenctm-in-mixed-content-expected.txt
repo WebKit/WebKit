@@ -16,5 +16,5 @@ layer at (0,0) size 800x52
 layer at (30,100) size 400x204
   RenderBlock (positioned) {div} at (30,100) size 400x200
     RenderSVGRoot {svg} at (38,108) size 400x200
-      RenderPath {rect} at (38,108) size 400x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,100.00 L0.00,100.00"]
+      RenderPath {rect} at (38,108) size 400x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,100.00 L0.00,100.00 Z"]
     RenderText {#text} at (0,0) size 0x0

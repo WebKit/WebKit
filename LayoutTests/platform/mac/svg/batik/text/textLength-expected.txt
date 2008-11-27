@@ -7,31 +7,31 @@ layer at (0,0) size 450x500
         chunk 1 (middle anchor) text run 1 at (144.00,20.00) startOffset 0 endOffset 22 width 162.00: "textLength with Anchor"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (200,3) size 50x24
-        RenderPath {rect} at (200,5) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+        RenderPath {rect} at (200,5) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
         RenderPath {line} at (224.50,3) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
       RenderSVGContainer {g} at (49.50,-0.50) size 351x46
-        RenderPath {rect} at (49.50,-0.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00"]
+        RenderPath {rect} at (49.50,-0.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00 Z"]
         RenderSVGContainer {use} at (200,3) size 50x24
           RenderSVGContainer {g} at (200,3) size 50x24
             RenderSVGContainer {g} at (200,3) size 50x24
-              RenderPath {rect} at (200,5) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+              RenderPath {rect} at (200,5) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
               RenderPath {line} at (224.50,3) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
       RenderSVGContainer {g} at (49.50,-0.50) size 351x46
-        RenderPath {rect} at (49.50,-0.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00"]
+        RenderPath {rect} at (49.50,-0.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00 Z"]
         RenderSVGContainer {use} at (200,3) size 50x24
           RenderSVGContainer {g} at (200,3) size 50x24
             RenderSVGContainer {g} at (200,3) size 50x24
-              RenderPath {rect} at (200,5) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+              RenderPath {rect} at (200,5) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
               RenderPath {line} at (224.50,3) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
     RenderSVGContainer {g} at (-34,29.50) size 434.50x464.50
       RenderSVGContainer {g} at (49.50,29.50) size 351x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
         RenderSVGContainer {use} at (49.50,29.50) size 351x46
           RenderSVGContainer {g} at (49.50,29.50) size 351x46
             RenderSVGContainer {g} at (49.50,29.50) size 351x46
-              RenderPath {rect} at (49.50,29.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00"]
+              RenderPath {rect} at (49.50,29.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00 Z"]
               RenderSVGContainer {g} at (200,33) size 50x24
                 RenderSVGContainer {g} at (200,33) size 50x24
-                  RenderPath {rect} at (200,35) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+                  RenderPath {rect} at (200,35) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
                   RenderPath {line} at (224.50,33) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
         RenderSVGText {text} at (202,19) size 46x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-11) size 46x14
@@ -43,10 +43,10 @@ layer at (0,0) size 450x500
         RenderSVGContainer {use} at (49.50,74.50) size 351x46
           RenderSVGContainer {g} at (49.50,74.50) size 351x46
             RenderSVGContainer {g} at (49.50,74.50) size 351x46
-              RenderPath {rect} at (49.50,74.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00"]
+              RenderPath {rect} at (49.50,74.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00 Z"]
               RenderSVGContainer {g} at (200,78) size 50x24
                 RenderSVGContainer {g} at (200,78) size 50x24
-                  RenderPath {rect} at (200,80) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+                  RenderPath {rect} at (200,80) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
                   RenderPath {line} at (224.50,78) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
         RenderSVGText {text} at (221,19) size 8x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-11) size 8x14
@@ -58,10 +58,10 @@ layer at (0,0) size 450x500
         RenderSVGContainer {use} at (49.50,119.50) size 351x46
           RenderSVGContainer {g} at (49.50,119.50) size 351x46
             RenderSVGContainer {g} at (49.50,119.50) size 351x46
-              RenderPath {rect} at (49.50,119.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00"]
+              RenderPath {rect} at (49.50,119.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00 Z"]
               RenderSVGContainer {g} at (200,123) size 50x24
                 RenderSVGContainer {g} at (200,123) size 50x24
-                  RenderPath {rect} at (200,125) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+                  RenderPath {rect} at (200,125) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
                   RenderPath {line} at (224.50,123) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
         RenderSVGText {text} at (221,19) size 8x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-11) size 8x14
@@ -73,10 +73,10 @@ layer at (0,0) size 450x500
         RenderSVGContainer {use} at (49.50,164.50) size 351x46
           RenderSVGContainer {g} at (49.50,164.50) size 351x46
             RenderSVGContainer {g} at (49.50,164.50) size 351x46
-              RenderPath {rect} at (49.50,164.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00"]
+              RenderPath {rect} at (49.50,164.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00 Z"]
               RenderSVGContainer {g} at (200,168) size 50x24
                 RenderSVGContainer {g} at (200,168) size 50x24
-                  RenderPath {rect} at (200,170) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+                  RenderPath {rect} at (200,170) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
                   RenderPath {line} at (224.50,168) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
         RenderSVGText {text} at (212,19) size 26x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-11) size 26x14
@@ -88,10 +88,10 @@ layer at (0,0) size 450x500
         RenderSVGContainer {use} at (49.50,209.50) size 351x46
           RenderSVGContainer {g} at (49.50,209.50) size 351x46
             RenderSVGContainer {g} at (49.50,209.50) size 351x46
-              RenderPath {rect} at (49.50,209.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00"]
+              RenderPath {rect} at (49.50,209.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00 Z"]
               RenderSVGContainer {g} at (200,213) size 50x24
                 RenderSVGContainer {g} at (200,213) size 50x24
-                  RenderPath {rect} at (200,215) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+                  RenderPath {rect} at (200,215) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
                   RenderPath {line} at (224.50,213) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
         RenderSVGText {text} at (202,19) size 46x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-11) size 46x14
@@ -103,10 +103,10 @@ layer at (0,0) size 450x500
         RenderSVGContainer {use} at (49.50,254.50) size 351x46
           RenderSVGContainer {g} at (49.50,254.50) size 351x46
             RenderSVGContainer {g} at (49.50,254.50) size 351x46
-              RenderPath {rect} at (49.50,254.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00"]
+              RenderPath {rect} at (49.50,254.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00 Z"]
               RenderSVGContainer {g} at (200,258) size 50x24
                 RenderSVGContainer {g} at (200,258) size 50x24
-                  RenderPath {rect} at (200,260) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+                  RenderPath {rect} at (200,260) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
                   RenderPath {line} at (224.50,258) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
         RenderSVGText {text} at (193,19) size 64x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-11) size 64x14
@@ -118,10 +118,10 @@ layer at (0,0) size 450x500
         RenderSVGContainer {use} at (49.50,299.50) size 351x46
           RenderSVGContainer {g} at (49.50,299.50) size 351x46
             RenderSVGContainer {g} at (49.50,299.50) size 351x46
-              RenderPath {rect} at (49.50,299.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00"]
+              RenderPath {rect} at (49.50,299.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00 Z"]
               RenderSVGContainer {g} at (200,303) size 50x24
                 RenderSVGContainer {g} at (200,303) size 50x24
-                  RenderPath {rect} at (200,305) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+                  RenderPath {rect} at (200,305) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
                   RenderPath {line} at (224.50,303) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
         RenderSVGText {text} at (200,19) size 64x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-11) size 64x14
@@ -133,10 +133,10 @@ layer at (0,0) size 450x500
         RenderSVGContainer {use} at (49.50,344.50) size 351x46
           RenderSVGContainer {g} at (49.50,344.50) size 351x46
             RenderSVGContainer {g} at (49.50,344.50) size 351x46
-              RenderPath {rect} at (49.50,344.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00"]
+              RenderPath {rect} at (49.50,344.50) size 351x46 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,0.00 L400.00,0.00 L400.00,45.00 L50.00,45.00 Z"]
               RenderSVGContainer {g} at (200,348) size 50x24
                 RenderSVGContainer {g} at (200,348) size 50x24
-                  RenderPath {rect} at (200,350) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00"]
+                  RenderPath {rect} at (200,350) size 50x20 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M200.00,5.00 L250.00,5.00 L250.00,25.00 L200.00,25.00 Z"]
                   RenderPath {line} at (224.50,348) size 1x24 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,3.00 L225.00,27.00"]
         RenderSVGText {text} at (189,19) size 72x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-11) size 39x14
@@ -150,8 +150,8 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,-11) size 288x14
             chunk 1 (middle anchor) text run 1 at (81.00,40.00) startOffset 0 endOffset 55 width 288.00: "textLength=\"50\" lengthAdjust=\"spacingAndGlyphs\" (tspan)"
       RenderSVGContainer {g} at (-34,379) size 434.50x115 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,390.00)}]
-        RenderPath {rect} at (49.50,389.50) size 351x96 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,95.00 L50.00,95.00"]
-        RenderPath {rect} at (112.50,395) size 25x80 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M112.50,5.00 L137.50,5.00 L137.50,85.00 L112.50,85.00"]
+        RenderPath {rect} at (49.50,389.50) size 351x96 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.00,0.00 L400.00,0.00 L400.00,95.00 L50.00,95.00 Z"]
+        RenderPath {rect} at (112.50,395) size 25x80 [fill={[type=SOLID] [color=#DDE8FF]}] [data="M112.50,5.00 L137.50,5.00 L137.50,85.00 L112.50,85.00 Z"]
         RenderPath {line} at (124.50,393) size 1x84 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M125.00,3.00 L125.00,87.00"]
         RenderSVGText {text} at (-34,79) size 318x115 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-90) size 318x115

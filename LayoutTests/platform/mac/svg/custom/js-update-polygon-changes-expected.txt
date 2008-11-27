@@ -2,4 +2,4 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x450
   RenderSVGRoot {svg} at (265.20,209.61) size 161.15x104.39
-    RenderPath {polygon} at (265.20,209.61) size 161.15x104.39 [stroke={[type=SOLID] [color=#00FF00] [stroke width=8.00]}] [data="M270.00,255.00 L300.00,275.00 L320.00,255.00 L340.00,275.00 L280.00,310.00 L390.00,310.00 L420.00,270.00 L280.00,215.00"]
+    RenderPath {polygon} at (265.20,209.61) size 161.15x104.39 [stroke={[type=SOLID] [color=#00FF00] [stroke width=8.00]}] [data="M270.00,255.00 L300.00,275.00 L320.00,255.00 L340.00,275.00 L280.00,310.00 L390.00,310.00 L420.00,270.00 L280.00,215.00 Z"]

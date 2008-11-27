@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0.50,0.50) size 479x359
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (240,1) size 239x358
-        RenderPath {rect} at (240,1) size 239x358 [fill={[type=SOLID] [color=#000000]}] [data="M240.00,1.00 L479.00,1.00 L479.00,359.00 L240.00,359.00"]
+        RenderPath {rect} at (240,1) size 239x358 [fill={[type=SOLID] [color=#000000]}] [data="M240.00,1.00 L479.00,1.00 L479.00,359.00 L240.00,359.00 Z"]
         RenderPath {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data=""]
     RenderSVGText {text} at (100,50) size 77x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 77x18
@@ -12,6 +12,6 @@ layer at (0,0) size 800x600
     RenderSVGContainer {use} at (240,1) size 239x358
       RenderSVGContainer {g} at (240,1) size 239x358
         RenderSVGContainer {g} at (240,1) size 239x358
-          RenderPath {rect} at (240,1) size 239x358 [fill={[type=SOLID] [color=#808080]}] [data="M240.00,1.00 L479.00,1.00 L479.00,359.00 L240.00,359.00"]
+          RenderPath {rect} at (240,1) size 239x358 [fill={[type=SOLID] [color=#808080]}] [data="M240.00,1.00 L479.00,1.00 L479.00,359.00 L240.00,359.00 Z"]
           RenderPath {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#808080]}] [data=""]
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

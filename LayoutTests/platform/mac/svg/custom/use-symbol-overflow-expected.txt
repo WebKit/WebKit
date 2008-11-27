@@ -6,4 +6,4 @@ layer at (0,0) size 800x600
     RenderSVGContainer {use} at (0,0) size 100x100
       RenderSVGContainer {g} at (0,0) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
         RenderSVGViewportContainer {svg} at (0,0) size 100x100
-          RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M-50.00,-50.00 L50.00,-50.00 L50.00,50.00 L-50.00,50.00"]
+          RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M-50.00,-50.00 L50.00,-50.00 L50.00,50.00 L-50.00,50.00 Z"]

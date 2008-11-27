@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 300x200
   RenderSVGRoot {svg} at (50,0) size 10800x7000
-    RenderPath {rect} at (50,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L1.00,0.00 L1.00,1.00 L0.00,1.00"]
+    RenderPath {rect} at (50,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L1.00,0.00 L1.00,1.00 L0.00,1.00 Z"]
     RenderSVGText {text} at (10,30) size 44x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-18) size 44x23
         chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 4 width 44.00: "FAIL"

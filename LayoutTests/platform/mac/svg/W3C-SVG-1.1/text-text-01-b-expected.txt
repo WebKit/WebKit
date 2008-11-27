@@ -124,4 +124,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (5,117) size 52x9 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-7) size 52x9
         chunk 1 text run 1 at (5.00,117.00) startOffset 0 endOffset 16 width 52.00: "$Revision: 1.7 $"
-    RenderPath {rect} at (1.50,1.50) size 477x357 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L159.00,1.00 L159.00,119.00 L1.00,119.00"]
+    RenderPath {rect} at (1.50,1.50) size 477x357 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L159.00,1.00 L159.00,119.00 L1.00,119.00 Z"]

@@ -12,9 +12,9 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 291x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 291.00: "Various values for surfaceScale: 1, 10 and -10"
         RenderSVGContainer {g} at (90,50) size 280x30
-          RenderPath {rect} at (90,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00"]
-          RenderPath {rect} at (205,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00"]
-          RenderPath {rect} at (320,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00"]
+          RenderPath {rect} at (90,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00 Z"]
+          RenderPath {rect} at (205,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00 Z"]
+          RenderPath {rect} at (320,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00 Z"]
         RenderImage {image} at (0,0) size 50x30
         RenderImage {image} at (0,0) size 50x30
         RenderImage {image} at (0,0) size 50x30
@@ -23,9 +23,9 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 305x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 305.00: "Various values for specularConstants: 0, 1 and 2"
         RenderSVGContainer {g} at (90,120) size 280x30
-          RenderPath {rect} at (90,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00"]
-          RenderPath {rect} at (205,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00"]
-          RenderPath {rect} at (320,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00"]
+          RenderPath {rect} at (90,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00 Z"]
+          RenderPath {rect} at (205,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00 Z"]
+          RenderPath {rect} at (320,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00 Z"]
         RenderImage {image} at (0,0) size 50x30
         RenderImage {image} at (0,0) size 50x30
         RenderImage {image} at (0,0) size 50x30
@@ -34,9 +34,9 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 310x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 310.00: "Various values for specularExponents: 1, 2 and 4"
         RenderSVGContainer {g} at (90,190) size 280x30
-          RenderPath {rect} at (90,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00"]
-          RenderPath {rect} at (205,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00"]
-          RenderPath {rect} at (320,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00"]
+          RenderPath {rect} at (90,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00 Z"]
+          RenderPath {rect} at (205,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00 Z"]
+          RenderPath {rect} at (320,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00 Z"]
         RenderImage {image} at (0,0) size 50x30
         RenderImage {image} at (0,0) size 50x30
         RenderImage {image} at (0,0) size 50x30
@@ -45,13 +45,13 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 341x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 341.00: "Various values for lighting color: red, yellow and blue"
         RenderSVGContainer {g} at (90,260) size 280x30
-          RenderPath {rect} at (90,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00"]
-          RenderPath {rect} at (205,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00"]
-          RenderPath {rect} at (320,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00"]
+          RenderPath {rect} at (90,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,30.00 L140.00,30.00 L140.00,60.00 L90.00,60.00 Z"]
+          RenderPath {rect} at (205,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M205.00,30.00 L255.00,30.00 L255.00,60.00 L205.00,60.00 Z"]
+          RenderPath {rect} at (320,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [data="M320.00,30.00 L370.00,30.00 L370.00,60.00 L320.00,60.00 Z"]
         RenderImage {image} at (0,0) size 50x30
         RenderImage {image} at (0,0) size 50x30
         RenderImage {image} at (0,0) size 50x30
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.8 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00"]
+    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

@@ -8,14 +8,14 @@ layer at (0,0) size 800x162
           text run at (0,0) width 691: "Below two svg areas are shown. Both should have the text aligned to the paths in the same way (Bug 13052)."
       RenderBlock {div} at (0,34) size 784x104
         RenderSVGRoot {svg} at (18,63) size 63x68
-          RenderPath {path} at (36,63) size 45x68 [fill={[type=SOLID] [color=#337711]}] [data="M38.00,38.00 C38.00,26.00,62.00,23.00,61.00,36.00 C61.00,45.00,45.00,49.00,45.00,59.00 L45.00,66.00 L56.00,66.00 L56.00,62.00 C56.00,53.00,73.00,50.00,73.00,35.00 C71.00,13.00,28.00,13.00,28.00,38.00 M45.00,70.00 L56.00,70.00 L56.00,81.00 L45.00,81.00"]
+          RenderPath {path} at (36,63) size 45x68 [fill={[type=SOLID] [color=#337711]}] [data="M38.00,38.00 C38.00,26.00,62.00,23.00,61.00,36.00 C61.00,45.00,45.00,49.00,45.00,59.00 L45.00,66.00 L56.00,66.00 L56.00,62.00 C56.00,53.00,73.00,50.00,73.00,35.00 C71.00,13.00,28.00,13.00,28.00,38.00 Z M45.00,70.00 L56.00,70.00 L56.00,81.00 L45.00,81.00 Z"]
           RenderSVGText {text} at (10,50) size 39x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 39x18
               chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 4 width 39.00: "PASS"
         RenderText {#text} at (100,86) size 4x18
           text run at (100,86) width 4: " "
         RenderSVGRoot {svg} at (122,63) size 63x68
-          RenderPath {path} at (140,63) size 45x68 [fill={[type=SOLID] [color=#337711]}] [data="M38.00,38.00 C38.00,26.00,62.00,23.00,61.00,36.00 C61.00,45.00,45.00,49.00,45.00,59.00 L45.00,66.00 L56.00,66.00 L56.00,62.00 C56.00,53.00,73.00,50.00,73.00,35.00 C71.00,13.00,28.00,13.00,28.00,38.00 M45.00,70.00 L56.00,70.00 L56.00,81.00 L45.00,81.00"]
+          RenderPath {path} at (140,63) size 45x68 [fill={[type=SOLID] [color=#337711]}] [data="M38.00,38.00 C38.00,26.00,62.00,23.00,61.00,36.00 C61.00,45.00,45.00,49.00,45.00,59.00 L45.00,66.00 L56.00,66.00 L56.00,62.00 C56.00,53.00,73.00,50.00,73.00,35.00 C71.00,13.00,28.00,13.00,28.00,38.00 Z M45.00,70.00 L56.00,70.00 L56.00,81.00 L45.00,81.00 Z"]
           RenderSVGText {text} at (10,50) size 39x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 39x18
               chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 4 width 39.00: "PASS"

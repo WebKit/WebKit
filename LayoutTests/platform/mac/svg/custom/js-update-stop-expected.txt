@@ -7,5 +7,5 @@ layer at (0,0) size 450x450
       RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
-    RenderPath {rect} at (10,10) size 430x80 [fill={[type=LINEAR-GRADIENT] [stops=[(0.30,#0000FF), (1.00,#FF0000)]] [bounding box mode=0] [start=(10,10)] [end=(440,10)]}] [data="M10.00,10.00 L440.00,10.00 L440.00,90.00 L10.00,90.00"]
-    RenderPath {rect} at (10,100) size 430x80 [fill={[type=LINEAR-GRADIENT] [stops=[(0.30,#0000FF), (1.00,#FF0000)]] [bounding box mode=0] [start=(10,10)] [end=(440,10)]}] [data="M10.00,100.00 L440.00,100.00 L440.00,180.00 L10.00,180.00"]
+    RenderPath {rect} at (10,10) size 430x80 [fill={[type=LINEAR-GRADIENT] [stops=[(0.30,#0000FF), (1.00,#FF0000)]] [bounding box mode=0] [start=(10,10)] [end=(440,10)]}] [data="M10.00,10.00 L440.00,10.00 L440.00,90.00 L10.00,90.00 Z"]
+    RenderPath {rect} at (10,100) size 430x80 [fill={[type=LINEAR-GRADIENT] [stops=[(0.30,#0000FF), (1.00,#FF0000)]] [bounding box mode=0] [start=(10,10)] [end=(440,10)]}] [data="M10.00,100.00 L440.00,100.00 L440.00,180.00 L10.00,180.00 Z"]

@@ -2,8 +2,8 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,10.36) size 744x193.64
-    RenderPath {rect} at (30.36,10.36) size 139.27x139.27 [transform={m=((0.82,0.57)(-0.57,0.82)) t=(87.72,10.36)}] [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
-    RenderPath {rect} at (180.36,10.36) size 139.27x139.27 [transform={m=((0.82,0.57)(-0.57,0.82)) t=(237.72,10.36)}] [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+    RenderPath {rect} at (30.36,10.36) size 139.27x139.27 [transform={m=((0.82,0.57)(-0.57,0.82)) t=(87.72,10.36)}] [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderPath {rect} at (180.36,10.36) size 139.27x139.27 [transform={m=((0.82,0.57)(-0.57,0.82)) t=(237.72,10.36)}] [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGContainer {g} at (0,166) size 744x38
       RenderSVGText {text} at (0,180) size 297x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 297x18

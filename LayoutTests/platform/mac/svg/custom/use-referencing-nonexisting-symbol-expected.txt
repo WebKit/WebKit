@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {use} at (146.88,18.75) size 553.12x646.88
       RenderSVGContainer {g} at (146.88,18.75) size 553.12x646.88
         RenderSVGViewportContainer {svg} at (146.88,18.75) size 553.12x646.88
-          RenderPath {rect} at (146.88,46.88) size 553.12x553.12 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,5.00 L64.00,5.00 L64.00,64.00 L5.00,64.00"]
+          RenderPath {rect} at (146.88,46.88) size 553.12x553.12 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,5.00 L64.00,5.00 L64.00,64.00 L5.00,64.00 Z"]
           RenderSVGText {text} at (17,56) size 43x69 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-54) size 43x69
               chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 43.00: "A"

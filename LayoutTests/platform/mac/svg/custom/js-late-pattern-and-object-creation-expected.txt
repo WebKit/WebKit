@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (-250,8.33) size 933.33x370
     RenderSVGContainer {g} at (-250,8.33) size 933.33x370
       RenderSVGContainer {pattern} at (8.33,8.33) size 25x25
-        RenderPath {rect} at (8.33,8.33) size 16.67x16.67 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00"]
-        RenderPath {rect} at (16.67,16.67) size 16.67x16.67 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00"]
+        RenderPath {rect} at (8.33,8.33) size 16.67x16.67 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00 Z"]
+        RenderPath {rect} at (16.67,16.67) size 16.67x16.67 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00 Z"]
       RenderSVGContainer {pattern} at (8.33,8.33) size 25x25
-        RenderPath {rect} at (8.33,8.33) size 16.67x16.67 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00"]
-        RenderPath {rect} at (16.67,16.67) size 16.67x16.67 [fill={[type=SOLID] [color=#0000FF]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00"]
+        RenderPath {rect} at (8.33,8.33) size 16.67x16.67 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00 Z"]
+        RenderPath {rect} at (16.67,16.67) size 16.67x16.67 [fill={[type=SOLID] [color=#0000FF]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00 Z"]
       RenderSVGText {text} at (-150,70) size 375x78 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-61) size 375x78
           chunk 1 text run 1 at (-150.00,70.00) startOffset 0 endOffset 15 width 375.00: "Pattern on fill"

@@ -5,18 +5,18 @@ layer at (0,0) size 450x500
     RenderSVGText {text} at (107,40) size 236x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 236x17
         chunk 1 (middle anchor) text run 1 at (107.00,40.00) startOffset 0 endOffset 34 width 236.00: "Text on Path with trailing <tspan>"
-    RenderPath {rect} at (29.50,49.50) size 391x21 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M30.00,50.00 L420.00,50.00 L420.00,70.00 L30.00,70.00"]
-    RenderPath {rect} at (29.50,69.50) size 391x121 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M30.00,70.00 L420.00,70.00 L420.00,190.00 L30.00,190.00"]
+    RenderPath {rect} at (29.50,49.50) size 391x21 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M30.00,50.00 L420.00,50.00 L420.00,70.00 L30.00,70.00 Z"]
+    RenderPath {rect} at (29.50,69.50) size 391x121 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M30.00,70.00 L420.00,70.00 L420.00,190.00 L30.00,190.00 Z"]
     RenderSVGText {text} at (40,64) size 319x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-13) size 319x17
         chunk 1 text run 1 at (40.00,64.00) startOffset 0 endOffset 55 width 319.00: "Text with embedded textPath and multiple trailing tspan"
-    RenderPath {rect} at (29.50,194.50) size 391x21 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M30.00,195.00 L420.00,195.00 L420.00,215.00 L30.00,215.00"]
-    RenderPath {rect} at (29.50,214.50) size 391x121 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M30.00,215.00 L420.00,215.00 L420.00,335.00 L30.00,335.00"]
+    RenderPath {rect} at (29.50,194.50) size 391x21 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M30.00,195.00 L420.00,195.00 L420.00,215.00 L30.00,215.00 Z"]
+    RenderPath {rect} at (29.50,214.50) size 391x121 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M30.00,215.00 L420.00,215.00 L420.00,335.00 L30.00,335.00 Z"]
     RenderSVGText {text} at (40,209) size 177x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-13) size 177x17
         chunk 1 text run 1 at (40.00,209.00) startOffset 0 endOffset 30 width 177.00: "textPath has startOffset=\"10%\""
-    RenderPath {rect} at (29.50,339.50) size 391x21 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M30.00,340.00 L420.00,340.00 L420.00,360.00 L30.00,360.00"]
-    RenderPath {rect} at (29.50,359.50) size 391x121 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M30.00,360.00 L420.00,360.00 L420.00,480.00 L30.00,480.00"]
+    RenderPath {rect} at (29.50,339.50) size 391x21 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M30.00,340.00 L420.00,340.00 L420.00,360.00 L30.00,360.00 Z"]
+    RenderPath {rect} at (29.50,359.50) size 391x121 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M30.00,360.00 L420.00,360.00 L420.00,480.00 L30.00,480.00 Z"]
     RenderSVGText {text} at (40,354) size 230x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-13) size 230x17
         chunk 1 text run 1 at (40.00,354.00) startOffset 0 endOffset 41 width 230.00: "textPath with startOffset and text-anchor"

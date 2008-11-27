@@ -2,4 +2,4 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 300x200
   RenderSVGRoot {svg} at (50,0) size 200x200
-    RenderPath {rect} at (50,0) size 200x200 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.50,0.50 L1.50,0.50 L1.50,1.50 L0.50,1.50"]
+    RenderPath {rect} at (50,0) size 200x200 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.50,0.50 L1.50,0.50 L1.50,1.50 L0.50,1.50 Z"]

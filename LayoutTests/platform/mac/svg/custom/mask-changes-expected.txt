@@ -4,6 +4,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x300
     RenderSVGContainer {mask} at (0,0) size 800x300
-      RenderPath {rect} at (0,0) size 800x300 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L800.00,0.00 L800.00,300.00 L0.00,300.00"]
+      RenderPath {rect} at (0,0) size 800x300 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L800.00,0.00 L800.00,300.00 L0.00,300.00 Z"]
     RenderSVGContainer {g} at (0,100) size 800x100
-      RenderPath {rect} at (0,100) size 800x100 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,100.00 L800.00,100.00 L800.00,200.00 L0.00,200.00"]
+      RenderPath {rect} at (0,100) size 800x100 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,100.00 L800.00,100.00 L800.00,200.00 L0.00,200.00 Z"]

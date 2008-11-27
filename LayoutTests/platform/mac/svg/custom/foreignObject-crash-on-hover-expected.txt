@@ -3,12 +3,12 @@ layer at (0,0) size 800x800
 layer at (0,0) size 800x800
   RenderSVGRoot {svg} at (49.50,49.50) size 301x301
     RenderSVGContainer {g} at (49.50,49.50) size 301x301 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
-      RenderPath {polygon} at (49.50,49.50) size 301x301 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#ADD8E6]}] [data="M0.00,0.00 L300.00,0.00 L300.00,300.00 L0.00,300.00"]
+      RenderPath {polygon} at (49.50,49.50) size 301x301 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#ADD8E6]}] [data="M0.00,0.00 L300.00,0.00 L300.00,300.00 L0.00,300.00 Z"]
       RenderForeignObject {foreignObject} at (0,0) size 280x280
         RenderInline {html:b} at (0,0) size 108x18
           RenderText {#text} at (0,0) size 108x18
             text run at (0,0) width 108: "Absolute Lineto"
         RenderBR {html:br} at (108,0) size 0x18
         RenderSVGInlineText {#text} at (0,18) size 246x36
-      RenderPath {path} at (99.19,129.50) size 201.62x201.62 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M50.00,80.00 L250.00,80.00 L150.00,280.00"]
+      RenderPath {path} at (99.19,129.50) size 201.62x201.62 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M50.00,80.00 L250.00,80.00 L150.00,280.00 Z"]
 caret: position 7 of child 3 {#text} of child 5 {foreignObject} of child 1 {g} of child 1 {svg} of document

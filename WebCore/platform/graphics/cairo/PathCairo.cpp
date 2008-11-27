@@ -249,37 +249,39 @@ void Path::transform(const AffineTransform& trans)
 
 String Path::debugString() const
 {
-    String string = "";
+    if (isEmpty())
+        return String();
+
+    String pathString;
     cairo_path_t* path = cairo_copy_path(platformPath()->m_cr);
     cairo_path_data_t* data;
-
-    if (!path->num_data )
-        string = "EMPTY";
 
     for (int i = 0; i < path->num_data; i += path->data[i].header.length) {
         data = &path->data[i];
         switch (data->header.type) {
         case CAIRO_PATH_MOVE_TO:
-            string += String::format("M %.2f,%.2f",
+            if (i < (path->num_data - path->data[i].header.length))
+                pathString += String::format("M%.2f,%.2f ",
                                       data[1].point.x, data[1].point.y);
             break;
         case CAIRO_PATH_LINE_TO:
-            string += String::format("L %.2f,%.2f",
+            pathString += String::format("L%.2f,%.2f ",
                                       data[1].point.x, data[1].point.y);
             break;
         case CAIRO_PATH_CURVE_TO:
-            string += String::format("C %.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+            pathString += String::format("C%.2f,%.2f,%.2f,%.2f,%.2f,%.2f ",
                                       data[1].point.x, data[1].point.y,
                                       data[2].point.x, data[2].point.y,
                                       data[3].point.x, data[3].point.y);
             break;
         case CAIRO_PATH_CLOSE_PATH:
-            string += "X";
+            pathString += "Z ";
             break;
         }
     }
+
     cairo_path_destroy(path);
-    return string;
+    return pathString.simplifyWhiteSpace();
 }
 
 } // namespace WebCore
