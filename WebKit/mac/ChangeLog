@@ -1,5 +1,17 @@
 2008-11-26  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Add plug-in host .defs.
+
+        * Plugins/Hosted/WebKitPluginAgent.defs: Added.
+        * Plugins/Hosted/WebKitPluginAgentReply.defs: Added.
+        * Plugins/Hosted/WebKitPluginClient.defs: Added.
+        * Plugins/Hosted/WebKitPluginHost.defs: Added.
+        * Plugins/Hosted/WebKitPluginHostTypes.defs: Added.
+
+2008-11-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mark Rowe and Kevin Decker.
 
         Minor plug-in changes.

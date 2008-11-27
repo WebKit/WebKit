@@ -1,0 +1,61 @@
+#include <WebKit/WebKitPluginHostTypes.defs>
+
+subsystem WebKitPluginHost 300;
+
+serverprefix WKPH;
+userprefix _WKPH;
+
+routine CheckInWithPluginHost(pluginHostPort :mach_port_t;
+                              options :plist_bytes_t;
+                              renderPort :mach_port_copy_send_t);
+
+routine InstantiatePlugin(pluginHostPort :mach_port_t;
+                          options :plist_bytes_t;
+                          out pluginID :uint32_t;
+                          out renderContextID :uint32_t;
+                          out useSoftwareRenderer :boolean_t);
+
+simpleroutine ResizePluginInstance(pluginHostPort :mach_port_t;
+                                   pluginID :uint32_t;
+                                   x :double;
+                                   y :double;
+                                   width :double;
+                                   height :double);
+simpleroutine PluginInstanceFocusChanged(pluginHostPort :mach_port_t;
+                                         pluginID :uint32_t;
+                                         hasFocus :boolean_t);
+simpleroutine PluginInstanceWindowFocusChanged(pluginHostPort :mach_port_t;
+                                         pluginID :uint32_t;
+                                         hasFocus :boolean_t);
+simpleroutine PluginInstanceWindowFrameChanged(pluginHostPort :mach_port_t;
+                                               pluginID :uint32_t;
+                                               x :double;
+                                               y :double;
+                                               width :double;
+                                               height :double;
+                                               maxScreenY :double);
+
+simpleroutine PluginInstanceMouseEvent(pluginHostPort :mach_port_t;
+                                       pluginID :uint32_t;
+                                       timestamp :double;
+                                       eventType :uint32_t;
+                                       modifierFlags :uint32_t;
+                                       pluginX :double;
+                                       pluginY :double;
+                                       screenX :double;
+                                       screenY :double;
+                                       maxScreenY :double;
+                                       buttonNumber :int32_t;
+                                       clickCount :int32_t;
+                                       deltaX :double;
+                                       deltaY :double;
+                                       deltaZ: double);
+
+simpleroutine PluginInstanceStartTimers(pluginHostPort :mach_port_t;
+                                        pluginID :uint32_t;
+                                        throttleTimers :boolean_t);
+simpleroutine PluginInstanceStopTimers(pluginHostPort :mach_port_t;
+                                       pluginID :uint32_t);
+
+simpleroutine DestroyPluginInstance(pluginHostPort :mach_port_t;
+                                    pluginID :uint32_t);
