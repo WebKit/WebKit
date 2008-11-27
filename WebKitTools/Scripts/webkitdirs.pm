@@ -271,7 +271,7 @@ sub determinePassedConfiguration
     return if $searchedForPassedConfiguration;
     $searchedForPassedConfiguration = 1;
 
-    my $isWinCairo = grep(/^--cairo-win32$/i, @ARGV);
+    my $isWinCairo = checkArgv("--cairo-win32");
 
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
@@ -362,19 +362,19 @@ sub safariPath
 
 sub builtDylibPathForName
 {
-    my $framework = shift;
+    my $libraryName = shift;
     determineConfigurationProductDir();
-    if (isQt() or isGtk()) {
-        return "$configurationProductDir/$framework";
+    if (isQt() or isGtk() or isChromium()) {
+        return "$configurationProductDir/$libraryName";
     }
     if (isAppleMacWebKit()) {
-        return "$configurationProductDir/$framework.framework/Versions/A/$framework";
+        return "$configurationProductDir/$libraryName.framework/Versions/A/$libraryName";
     }
     if (isAppleWinWebKit()) {
-        if ($framework eq "JavaScriptCore") {
-                return "$baseProductDir/lib/$framework.lib";
+        if ($libraryName eq "JavaScriptCore") {
+            return "$baseProductDir/lib/$libraryName.lib";
         } else {
-            return "$baseProductDir/$framework.intermediate/$configuration/$framework.intermediate/$framework.lib";
+            return "$baseProductDir/$libraryName.intermediate/$configuration/$libraryName.intermediate/$libraryName.lib";
         }
     }
 
@@ -538,12 +538,7 @@ sub isGtk()
 sub determineIsGtk()
 {
     return if defined($isGtk);
-
-    if (checkArgv("--gtk")) {
-        $isGtk = 1;
-    } else {
-        $isGtk = 0;
-    }
+    $isGtk = checkArgv("--gtk");
 }
 
 sub isWx()
@@ -555,12 +550,7 @@ sub isWx()
 sub determineIsWx()
 {
     return if defined($isWx);
-
-    if (checkArgv("--wx")) {
-        $isWx = 1;
-    } else {
-        $isWx = 0;
-    }
+    $isWx = checkArgv("--wx");
 }
 
 # Determine if this is debian, ubuntu, linspire, or something similar.
@@ -578,12 +568,7 @@ sub isChromium()
 sub determineIsChromium()
 {
     return if defined($isChromium);
-
-    if (checkArgv("--chromium")) {
-        $isChromium = 1;
-    } else {
-        $isChromium = 0;
-    }
+    $isChromium = checkArgv("--chromium");
 }
 
 sub isCygwin()
@@ -596,18 +581,19 @@ sub isDarwin()
     return ($^O eq "darwin") || 0;
 }
 
-# isAppleMacWebKit() only returns true for Apple's port,
-# not for other ports that can be built/run on OS X.
-sub isAppleMacWebKit()
+sub isAppleWebKit()
 {
-    return isDarwin() and !(isQt() or isGtk() or isWx() or isChromium());
+    return !(isQt() or isGtk() or isWx() or isChromium());
 }
 
-# isAppleWinWebKit() only returns true for Apple's port,
-# not for other ports that can be built/run on Windows
+sub isAppleMacWebKit()
+{
+    return isAppleWebKit() && isDarwin();
+}
+
 sub isAppleWinWebKit()
 {
-    return isCygwin() and !(isQt() or isGtk() or isWx() or isChromium());
+    return isAppleWebKit() && isCygwin();
 }
 
 sub determineOSXVersion()
@@ -781,6 +767,16 @@ sub buildVisualStudioProject
 
     print "$vcBuildPath $winProjectPath /build $config\n";
     return system $vcBuildPath, $winProjectPath, $command, $config;
+}
+
+sub buildSconsProject
+{
+    my ($project, $shouldClean) = @_;
+    print "Building from $project/$project.scons\n";
+    if ($shouldClean) {
+        return system "scons", "--clean";
+    }
+    return system "scons";
 }
 
 sub retrieveQMakespecVar

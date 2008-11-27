@@ -68,6 +68,7 @@ my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
   --cairo-win32                 Build using Cairo (rather than CoreGraphics) on Windows
+  --chromium                    Build the Chromium port on Mac/Win/Linux
   --clean                       Cleanup the build directory
   --universal                   Build 2-way universal (PPC and Intel 32-bit)
   --64-bit                      Build 64-bit, combine with --universal to build 4-way universal
@@ -192,7 +193,10 @@ if ($coverageSupport) {
 }
 
 # Check that all the project directories are there.
-my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
+my @projects = ("JavaScriptCore", "WebCore", "WebKit");
+# Only Apple builds JavaScriptGlue, and only on the Mac
+push @projects, "JavaScriptGlue" if isAppleMacWebKit();
+
 my @otherDirs = ("WebKitLibraries");
 for my $dir (@projects, @otherDirs) {
     if (! -d $dir) {
@@ -318,6 +322,8 @@ for my $dir (@projects) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
         }
+    } elsif (isChromium()) {
+        $result = buildSconsProject($dir, $clean);
     }
 
     if (exitStatus($result)) {
