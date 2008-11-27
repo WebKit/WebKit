@@ -48,12 +48,12 @@ namespace WebCore {
 
 PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(WebCore::Widget* widget)
 {
-    if (!widget->isPluginView())
+    if (widget->isPluginView()) {
+        PluginView* pluginView = static_cast<PluginView*>(widget);
+        if (pluginView->isNPAPIPlugin())
+            return pluginView->bindingInstance();
         return 0;
-        
-    PluginView* pluginView = static_cast<PluginView*>(widget);
-    if (pluginView->isNPAPIPlugin())
-        return pluginView->bindingInstance();
+    }
 
     QWidget* platformWidget = widget->platformWidget();
     if (!platformWidget)

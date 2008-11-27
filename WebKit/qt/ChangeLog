@@ -1,3 +1,16 @@
+2008-11-27  Kent Hansen  <khansen@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Added auto tests for making JavaScript bindings for Qt plugin widgets
+        work again.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (PluginPage::PluginPage):
+        (PluginPage::CallInfo::CallInfo):
+        (PluginPage::createPlugin):
+        (tst_QWebPage::createPlugin):
+
 2008-11-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Build fix. Use WebCore::Frame::loader instead of QWebFrame

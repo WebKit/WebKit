@@ -27,9 +27,11 @@
 #include <qwebhistory.h>
 #include <qnetworkrequest.h>
 #include <QDebug>
+#include <QLineEdit>
 #include <QMenu>
 #include <qwebsecurityorigin.h>
 #include <qwebdatabase.h>
+#include <QPushButton>
 
 // Will try to wait for the condition while allowing event processing
 #define QTRY_COMPARE(__expr, __expected) \
@@ -95,6 +97,7 @@ private slots:
     void modified();
     void contextMenuCrash();
     void database();
+    void createPlugin();
 
 private:
 
@@ -356,7 +359,6 @@ void tst_QWebPage::contextMenuCrash()
     delete contextMenu;
 }
 
-
 void tst_QWebPage::database()
 {
     QString path = QDir::currentPath();
@@ -408,6 +410,141 @@ void tst_QWebPage::database()
         QVERIFY(!QFile::exists(filePath));
     }
     QTest::qWait(1000);
+}
+
+class PluginPage : public QWebPage
+{
+public:
+    PluginPage(QObject *parent = 0)
+        : QWebPage(parent) {}
+
+    struct CallInfo
+    {
+        CallInfo(const QString &c, const QUrl &u,
+                 const QStringList &pn, const QStringList &pv,
+                 QObject *r)
+            : classid(c), url(u), paramNames(pn),
+              paramValues(pv), returnValue(r)
+            {}
+        QString classid;
+        QUrl url;
+        QStringList paramNames;
+        QStringList paramValues;
+        QObject *returnValue;
+    };
+
+    QList<CallInfo> calls;
+
+protected:
+    virtual QObject *createPlugin(const QString &classid, const QUrl &url,
+                                  const QStringList &paramNames,
+                                  const QStringList &paramValues)
+    {
+        QObject *result = 0;
+        if (classid == "pushbutton")
+            result = new QPushButton();
+        else if (classid == "lineedit")
+            result = new QLineEdit();
+        if (result)
+            result->setObjectName(classid);
+        calls.append(CallInfo(classid, url, paramNames, paramValues, result));
+        return result;
+    }
+};
+
+void tst_QWebPage::createPlugin()
+{
+    QSignalSpy loadSpy(m_view, SIGNAL(loadFinished(bool)));
+
+    PluginPage* newPage = new PluginPage(m_view);
+    m_view->setPage(newPage);
+
+    // plugins not enabled by default, so the plugin shouldn't be loaded
+    m_view->setHtml(QString("<html><body><object type='application/x-qt-plugin' classid='pushbutton' id='mybutton'/></body></html>"));
+    QTRY_COMPARE(loadSpy.count(), 1);
+    QCOMPARE(newPage->calls.count(), 0);
+
+    m_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+
+    // type has to be application/x-qt-plugin
+    m_view->setHtml(QString("<html><body><object type='application/x-foobarbaz' classid='pushbutton' id='mybutton'/></body></html>"));
+    QTRY_COMPARE(loadSpy.count(), 2);
+    QCOMPARE(newPage->calls.count(), 0);
+
+    m_view->setHtml(QString("<html><body><object type='application/x-qt-plugin' classid='pushbutton' id='mybutton'/></body></html>"));
+    QTRY_COMPARE(loadSpy.count(), 3);
+    QCOMPARE(newPage->calls.count(), 1);
+    {
+        PluginPage::CallInfo ci = newPage->calls.takeFirst();
+        QCOMPARE(ci.classid, QString::fromLatin1("pushbutton"));
+        QCOMPARE(ci.url, QUrl());
+        QCOMPARE(ci.paramNames.count(), 3);
+        QCOMPARE(ci.paramValues.count(), 3);
+        QCOMPARE(ci.paramNames.at(0), QString::fromLatin1("type"));
+        QCOMPARE(ci.paramValues.at(0), QString::fromLatin1("application/x-qt-plugin"));
+        QCOMPARE(ci.paramNames.at(1), QString::fromLatin1("classid"));
+        QCOMPARE(ci.paramValues.at(1), QString::fromLatin1("pushbutton"));
+        QCOMPARE(ci.paramNames.at(2), QString::fromLatin1("id"));
+        QCOMPARE(ci.paramValues.at(2), QString::fromLatin1("mybutton"));
+        QVERIFY(ci.returnValue != 0);
+        QVERIFY(ci.returnValue->inherits("QPushButton"));
+    }
+    // test JS bindings
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("document.getElementById('mybutton').toString()").toString(),
+             QString::fromLatin1("[object HTMLObjectElement]"));
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("mybutton.toString()").toString(),
+             QString::fromLatin1("[object HTMLObjectElement]"));
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("typeof mybutton.objectName").toString(),
+             QString::fromLatin1("string"));
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("mybutton.objectName").toString(),
+             QString::fromLatin1("pushbutton"));
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("typeof mybutton.clicked").toString(),
+             QString::fromLatin1("function"));
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("mybutton.clicked.toString()").toString(),
+             QString::fromLatin1("function clicked() {\n    [native code]\n}"));
+
+    m_view->setHtml(QString("<html><body><table>"
+                            "<tr><object type='application/x-qt-plugin' classid='lineedit' id='myedit'/></tr>"
+                            "<tr><object type='application/x-qt-plugin' classid='pushbutton' id='mybutton'/></tr>"
+                            "</table></body></html>"), QUrl("http://foo.bar.baz"));
+    QTRY_COMPARE(loadSpy.count(), 4);
+    QCOMPARE(newPage->calls.count(), 2);
+    {
+        PluginPage::CallInfo ci = newPage->calls.takeFirst();
+        QCOMPARE(ci.classid, QString::fromLatin1("lineedit"));
+        QCOMPARE(ci.url, QUrl());
+        QCOMPARE(ci.paramNames.count(), 3);
+        QCOMPARE(ci.paramValues.count(), 3);
+        QCOMPARE(ci.paramNames.at(0), QString::fromLatin1("type"));
+        QCOMPARE(ci.paramValues.at(0), QString::fromLatin1("application/x-qt-plugin"));
+        QCOMPARE(ci.paramNames.at(1), QString::fromLatin1("classid"));
+        QCOMPARE(ci.paramValues.at(1), QString::fromLatin1("lineedit"));
+        QCOMPARE(ci.paramNames.at(2), QString::fromLatin1("id"));
+        QCOMPARE(ci.paramValues.at(2), QString::fromLatin1("myedit"));
+        QVERIFY(ci.returnValue != 0);
+        QVERIFY(ci.returnValue->inherits("QLineEdit"));
+    }
+    {
+        PluginPage::CallInfo ci = newPage->calls.takeFirst();
+        QCOMPARE(ci.classid, QString::fromLatin1("pushbutton"));
+        QCOMPARE(ci.url, QUrl());
+        QCOMPARE(ci.paramNames.count(), 3);
+        QCOMPARE(ci.paramValues.count(), 3);
+        QCOMPARE(ci.paramNames.at(0), QString::fromLatin1("type"));
+        QCOMPARE(ci.paramValues.at(0), QString::fromLatin1("application/x-qt-plugin"));
+        QCOMPARE(ci.paramNames.at(1), QString::fromLatin1("classid"));
+        QCOMPARE(ci.paramValues.at(1), QString::fromLatin1("pushbutton"));
+        QCOMPARE(ci.paramNames.at(2), QString::fromLatin1("id"));
+        QCOMPARE(ci.paramValues.at(2), QString::fromLatin1("mybutton"));
+        QVERIFY(ci.returnValue != 0);
+        QVERIFY(ci.returnValue->inherits("QPushButton"));
+    }
+
+    m_view->settings()->setAttribute(QWebSettings::PluginsEnabled, false);
+
+    m_view->setHtml(QString("<html><body><object type='application/x-qt-plugin' classid='pushbutton' id='mybutton'/></body></html>"));
+    QTRY_COMPARE(loadSpy.count(), 5);
+    QCOMPARE(newPage->calls.count(), 0);
 }
 
 QTEST_MAIN(tst_QWebPage)

@@ -1,3 +1,13 @@
+2008-11-27  Kent Hansen  <khansen@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Make JavaScript bindings for Qt plugin widgets work again
+        this was a regression; need to handle non-NPAPI plugins as in 4.4.
+
+        * bindings/js/ScriptControllerQt.cpp:
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+
 2008-11-26  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
