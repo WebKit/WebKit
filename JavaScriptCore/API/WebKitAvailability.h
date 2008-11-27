@@ -43,7 +43,9 @@
 #ifdef __APPLE__
 #import <AvailabilityMacros.h>
 #else
-// For non-Mac platforms, require the newest version.
+/*
+ * For non-Mac platforms, require the newest version.
+ */
 #define WEBKIT_VERSION_MIN_REQUIRED WEBKIT_VERSION_LATEST
 /*
  * only certain compilers support __attribute__((deprecated))
