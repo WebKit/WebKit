@@ -52,7 +52,7 @@
         * wml/WMLSetvarElement.cpp:
         (WebCore::WMLSetvarElement::parseMappedAttribute):
 
-2008-11-10  Glenn Wilson  <gwilson@chromium.org>
+2008-11-26  Glenn Wilson  <gwilson@chromium.org>
 
         Reviewed by Dan Bernstein.
 
@@ -69,7 +69,7 @@
         * platform/graphics/Font.cpp:
         (WebCore::Font::glyphDataForCharacter):
 
-2008-10-31  Tony Chang  <tony@chromium.org>
+2008-11-26  Tony Chang  <tony@chromium.org>
 
         Reviewed by Oliver Hunt.
 
