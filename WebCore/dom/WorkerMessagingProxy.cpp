@@ -250,7 +250,7 @@ void WorkerMessagingProxy::workerObjectDestroyed()
 {
     m_workerObject = 0;
     if (m_workerThread)
-        m_workerThread->stop();
+        terminate();
     else
         workerContextDestroyedInternal(); // It never existed, just do our cleanup.
 }

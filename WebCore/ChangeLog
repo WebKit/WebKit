@@ -1,3 +1,13 @@
+2008-11-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22529
+        Crashes seen on buildbots due to trying to stop a worker thread twice
+
+        * dom/WorkerMessagingProxy.cpp: (WebCore::WorkerMessagingProxy::workerObjectDestroyed):
+        Don't try to stop the thread if it's already stopping.
+
 2008-11-27  Kent Hansen  <khansen@trolltech.com>
 
         Reviewed by Simon Hausmann.
