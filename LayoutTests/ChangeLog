@@ -1,3 +1,19 @@
+2008-11-26  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubber stamped by Mark Rowe.
+
+        Fix nine failing tests on the build bot. Update mac-tiger results.
+
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * platform/mac-tiger/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/mac-tiger/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/mac-tiger/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/mac-tiger/svg/hixie/perf/001-expected.txt:
+        * platform/mac-tiger/svg/hixie/perf/002-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+        * platform/mac-tiger/svg/text/text-path-01-b-expected.txt:
+
 2008-11-10  Glenn Wilson  <gwilson@chromium.org>
 
         Reviewed by Dan Bernstein.

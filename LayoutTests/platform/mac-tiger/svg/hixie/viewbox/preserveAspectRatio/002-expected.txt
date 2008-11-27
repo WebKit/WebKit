@@ -2,9 +2,9 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 600x400
   RenderSVGRoot {svg} at (-300,-400) size 4000x4000
-    RenderPath {rect} at (-300,-400) size 4000x4000 [fill={[type=SOLID] [color=#FF0000]}] [data="M-100.00,-100.00 L900.00,-100.00 L900.00,900.00 L-100.00,900.00"]
-    RenderPath {rect} at (-4,-4) size 608x408 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-26.00,-1.00 L126.00,-1.00 L126.00,101.00 L-26.00,101.00"]
-    RenderPath {rect} at (100,0) size 400x400 [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00"]
+    RenderPath {rect} at (-300,-400) size 4000x4000 [fill={[type=SOLID] [color=#FF0000]}] [data="M-100.00,-100.00 L900.00,-100.00 L900.00,900.00 L-100.00,900.00 Z"]
+    RenderPath {rect} at (-4,-4) size 608x408 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-26.00,-1.00 L126.00,-1.00 L126.00,101.00 L-26.00,101.00 Z"]
+    RenderPath {rect} at (100,0) size 400x400 [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderPath {line} at (98.59,-1.41) size 402.83x402.83 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,100.00"]
     RenderPath {line} at (98.59,-1.41) size 402.83x402.83 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,0.00 L0.00,100.00"]
     RenderSVGText {text} at (9,30) size 82x8 contains 1 chunk(s)
