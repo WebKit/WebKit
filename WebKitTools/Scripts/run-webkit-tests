@@ -1343,6 +1343,7 @@ sub openHTTPDIfNeeded()
     );
 
     # FIXME: Enable this on Windows once <rdar://problem/5345985> is fixed
+    # The version of Apache we use with Cygwin does not support SSL
     push(@args, "-c", "SSLCertificateFile \"$sslCertificate\"") unless isCygwin();
 
     open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, @args);

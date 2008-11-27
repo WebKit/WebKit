@@ -650,7 +650,7 @@ sub launcherPath()
     my $relativeScriptsPath = relativeScriptsDir();
     if (isGtk() || isQt()) {
         return "$relativeScriptsPath/run-launcher";
-    } elsif (isAppleMacWebKit() || isAppleWinWebKit()) {
+    } elsif (isAppleWebKit()) {
         return "$relativeScriptsPath/run-safari";
     }
 }
@@ -661,7 +661,7 @@ sub launcherName()
         return "GtkLauncher";
     } elsif (isQt()) {
         return "QtLauncher";
-    } elsif (isAppleMacWebKit() || isAppleWinWebKit()) {
+    } elsif (isAppleWebKit()) {
         return "Safari";
     }
 }
