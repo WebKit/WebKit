@@ -1,3 +1,12 @@
+2008-11-26  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Enable mouse panning feaure on Windows Cairo build.
+        See http://bugs.webkit.org/show_bug.cgi?id=22525
+
+        * wtf/Platform.h: Enable mouse panning feaure on Windows Cairo build.
+
 2008-11-27  Alp Toker  <alp@nuanti.com>
 
         Change recently introduced C++ comments in Platform.h to C comments to
