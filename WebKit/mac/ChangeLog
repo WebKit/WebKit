@@ -1,6 +1,16 @@
 2008-11-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
+        
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        Add copyright headers.
+        
+        * Plugins/Hosted/WebKitPluginHostTypes.h: Added.
+        Forgot to add this.
+
+2008-11-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
 
         Add plug-in host .defs.
 
