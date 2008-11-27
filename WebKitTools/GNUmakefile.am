@@ -16,6 +16,7 @@ Programs_GtkLauncher_SOURCES = \
 	WebKitTools/GtkLauncher/main.c
 
 Programs_GtkLauncher_CFLAGS = \
+	-ansi \
 	-fno-strict-aliasing \
 	-O2 \
 	$(global_cflags) \

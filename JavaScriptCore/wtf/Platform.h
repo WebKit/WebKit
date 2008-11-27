@@ -79,7 +79,7 @@
 #endif
 
 #if defined (__S60__) || defined (__SYMBIAN32__)
-// we are cross-compiling, it is not really windows
+/* we are cross-compiling, it is not really windows */
 #undef WTF_PLATFORM_WIN_OS
 #undef WTF_PLATFORM_WIN
 #undef WTF_PLATFORM_CAIRO
@@ -421,12 +421,12 @@
 #define ENABLE_GEOLOCATION 0
 #endif
 
-// CTI only supports x86 at the moment, and has only been tested on Mac and Windows.
+/* CTI only supports x86 at the moment, and has only been tested on Mac and Windows. */
 #if !defined(ENABLE_JIT) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
 #define ENABLE_JIT 1
 #endif
 
-// WREC only supports x86 at the moment, and has only been tested on Mac and Windows.
+/* WREC only supports x86 at the moment, and has only been tested on Mac and Windows. */
 #if !defined(ENABLE_WREC) && ENABLE(JIT) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
 #define ENABLE_WREC 1
 #endif
@@ -446,7 +446,7 @@
 #endif
 #endif
 
-// Use "fastcall" calling convention on MSVC
+/* Use "fastcall" calling convention on MSVC */
 #if COMPILER(MSVC)
 #define WTF_USE_FAST_CALL_CTI_ARGUMENT 1
 #define WTF_USE_CTI_ARGUMENT 1

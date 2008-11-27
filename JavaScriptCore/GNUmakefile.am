@@ -450,6 +450,7 @@ Programs_minidom_CPPFLAGS = \
 	$(javascriptcore_cppflags)
 
 Programs_minidom_CFLAGS = \
+	-ansi \
 	-fno-strict-aliasing \
 	-O2 \
 	$(global_cflags) \
