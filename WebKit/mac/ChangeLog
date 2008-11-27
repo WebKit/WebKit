@@ -2,6 +2,44 @@
 
         Reviewed by Mark Rowe.
 
+        Move WebHostedNetscapePluginView.{h|mm} to Plugins/Hosted.
+        
+        (-[WebHostedNetscapePluginView handleMouseMoved:]):
+        (-[WebHostedNetscapePluginView setAttributeKeys:andValues:]):
+        Fix a leak.
+        
+        (-[WebHostedNetscapePluginView createPlugin]):
+        Instantiate the plug-in, store the plug-in proxy in the _proxy ivar.
+        
+        (-[WebHostedNetscapePluginView loadStream]):
+        (-[WebHostedNetscapePluginView shouldStop]):
+        Add stubs for these.
+        
+        (-[WebHostedNetscapePluginView updateAndSetWindow]):
+        (-[WebHostedNetscapePluginView windowFocusChanged:]):
+        (-[WebHostedNetscapePluginView destroyPlugin]):
+        (-[WebHostedNetscapePluginView startTimers]):
+        (-[WebHostedNetscapePluginView stopTimers]):
+        (-[WebHostedNetscapePluginView focusChanged]):
+        (-[WebHostedNetscapePluginView windowFrameDidChange:]):
+        (-[WebHostedNetscapePluginView mouseDown:]):
+        (-[WebHostedNetscapePluginView mouseUp:]):
+        (-[WebHostedNetscapePluginView mouseDragged:]):
+        (-[WebHostedNetscapePluginView mouseEntered:]):
+        (-[WebHostedNetscapePluginView mouseExited:]):
+        Call the proxy.
+        
+        (-[WebHostedNetscapePluginView addWindowObservers]):
+        (-[WebHostedNetscapePluginView removeWindowObservers]):
+        Add/remove observers for when the window frame changes.
+        
+        * Plugins/WebHostedNetscapePluginView.h: Removed.
+        * Plugins/WebHostedNetscapePluginView.mm: Removed.
+
+2008-11-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe.
+
         Add the plug-in host proxy and plug-in instance proxy objects.
 
         These are just simple objects that forward their calls to the plug-in host.
