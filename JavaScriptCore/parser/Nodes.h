@@ -2138,9 +2138,6 @@ namespace JSC {
         void generateBytecode(ScopeChainNode*) JSC_FAST_CALL;
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        Vector<size_t> m_varIndexes; // Storage indexes belonging to the nodes in m_varStack. (Recorded to avoid double lookup.)
-        Vector<size_t> m_functionIndexes; // Storage indexes belonging to the nodes in m_functionStack. (Recorded to avoid double lookup.)
-
         OwnPtr<ProgramCodeBlock> m_code;
     };
 

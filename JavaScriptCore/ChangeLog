@@ -1,4 +1,12 @@
-2008-11-26  Brent Fulgham  <bfulgham@gmail.com>
+2008-11-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Remove unused member variables from ProgramNode.
+
+        * parser/Nodes.h:
+
+2008-11-27  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
 
