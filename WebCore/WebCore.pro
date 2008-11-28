@@ -1145,6 +1145,7 @@ SOURCES += \
         LIBS += -luser32
         LIBS += -lwinmm
     }
+    wince*: LIBS += -lmmtimer
 
     # Files belonging to the Qt 4.3 build
     lessThan(QT_MINOR_VERSION, 4) {
