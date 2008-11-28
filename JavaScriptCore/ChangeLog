@@ -1,3 +1,12 @@
+2008-11-28  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Implement lowResUTCTime() on Windows CE using GetSystemTime as _ftime() is not available.
+
+        * runtime/DateMath.cpp:
+        (JSC::lowResUTCTime):
+
 2008-11-28  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Tor Arne Vestbø.
