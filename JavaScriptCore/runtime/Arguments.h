@@ -106,7 +106,7 @@ namespace JSC {
     {
         function = callFrame->callee();
     
-        CodeBlock* codeBlock = &function->m_body->generatedBytecode();
+        CodeBlock* codeBlock = &function->body()->generatedBytecode();
         int numParameters = codeBlock->numParameters;
         argc = callFrame->argumentCount();
 
@@ -129,7 +129,7 @@ namespace JSC {
         int numArguments;
         getArgumentsData(callFrame, callee, firstParameterIndex, argv, numArguments);
 
-        d->numParameters = callee->m_body->parameterCount();
+        d->numParameters = callee->body()->parameterCount();
         d->firstParameterIndex = firstParameterIndex;
         d->numArguments = numArguments;
 
@@ -160,7 +160,7 @@ namespace JSC {
         : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(new ArgumentsData)
     {
-        ASSERT(!callFrame->callee()->m_body->parameterCount());
+        ASSERT(!callFrame->callee()->body()->parameterCount());
 
         unsigned numArguments = callFrame->argumentCount() - 1;
 

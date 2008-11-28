@@ -1,5 +1,26 @@
 2008-11-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Cameron Zwarich.
+
+        Fix FIXME by adding accessor for JSFunction's m_body property.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::cti_op_call_JSFunction):
+        (JSC::Interpreter::cti_vm_dontLazyLinkCall):
+        (JSC::Interpreter::cti_vm_lazyLinkCall):
+        * profiler/Profiler.cpp:
+        (JSC::createCallIdentifierFromFunctionImp):
+        * runtime/Arguments.h:
+        (JSC::Arguments::getArgumentsData):
+        (JSC::Arguments::Arguments):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::body):
+
+2008-11-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Remove unused member variables from ProgramNode.

@@ -42,7 +42,13 @@ namespace JSC {
         friend class Interpreter;
 
         typedef InternalFunction Base;
-        JSFunction(PassRefPtr<JSC::Structure> st) : InternalFunction(st), m_scopeChain(NoScopeChain()) {}
+
+        JSFunction(PassRefPtr<Structure> structure)
+            : InternalFunction(structure)
+            , m_scopeChain(NoScopeChain())
+        {
+        }
+
     public:
         JSFunction(ExecState*, const Identifier&, FunctionBodyNode*, ScopeChainNode*);
         ~JSFunction();
@@ -57,12 +63,11 @@ namespace JSC {
         void setScope(const ScopeChain& scopeChain) { m_scopeChain = scopeChain; }
         ScopeChain& scope() { return m_scopeChain; }
 
+        FunctionBodyNode* body() const { return m_body.get(); }
+
         virtual void mark();
 
         static const ClassInfo info;
-
-        // FIXME: This should be private
-        RefPtr<FunctionBodyNode> m_body;
 
         static PassRefPtr<Structure> createStructure(JSValue* prototype) 
         { 
@@ -79,6 +84,7 @@ namespace JSC {
         static JSValue* callerGetter(ExecState*, const Identifier&, const PropertySlot&);
         static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
 
+        RefPtr<FunctionBodyNode> m_body;
         ScopeChain m_scopeChain;
     };
 

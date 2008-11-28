@@ -4841,7 +4841,7 @@ void* Interpreter::cti_op_call_JSFunction(CTI_ARGS)
 #endif
 
     ScopeChainNode* callDataScopeChain = asFunction(ARG_src1)->m_scopeChain.node();
-    CodeBlock* newCodeBlock = &asFunction(ARG_src1)->m_body->bytecode(callDataScopeChain);
+    CodeBlock* newCodeBlock = &asFunction(ARG_src1)->body()->bytecode(callDataScopeChain);
 
     if (!newCodeBlock->ctiCode)
         JIT::compile(ARG_globalData, newCodeBlock);
@@ -4901,7 +4901,7 @@ void* Interpreter::cti_vm_dontLazyLinkCall(CTI_ARGS)
     CTI_STACK_HACK();
 
     JSFunction* callee = asFunction(ARG_src1);
-    CodeBlock* codeBlock = &callee->m_body->bytecode(callee->m_scopeChain.node());
+    CodeBlock* codeBlock = &callee->body()->bytecode(callee->m_scopeChain.node());
     if (!codeBlock->ctiCode)
         JIT::compile(ARG_globalData, codeBlock);
 
@@ -4915,7 +4915,7 @@ void* Interpreter::cti_vm_lazyLinkCall(CTI_ARGS)
     CTI_STACK_HACK();
 
     JSFunction* callee = asFunction(ARG_src1);
-    CodeBlock* codeBlock = &callee->m_body->bytecode(callee->m_scopeChain.node());
+    CodeBlock* codeBlock = &callee->body()->bytecode(callee->m_scopeChain.node());
     if (!codeBlock->ctiCode)
         JIT::compile(ARG_globalData, codeBlock);
 
