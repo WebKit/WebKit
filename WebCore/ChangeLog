@@ -1,3 +1,13 @@
+2008-11-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Regression seen on QtWebKit - causes a build failure on Win using MinGW
+
+        https://bugs.webkit.org/show_bug.cgi?id=22536
+
+        * WebCore.pro:
+
 2008-11-28  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

@@ -970,8 +970,6 @@ SOURCES += \
     rendering/style/BindingURI.cpp \
     rendering/style/ContentData.cpp \
     rendering/style/CounterDirectives.cpp \
-    rendering/style/CursorData.h \
-    rendering/style/CursorList.h \
     rendering/style/FillLayer.cpp \
     rendering/style/KeyframeList.cpp \
     rendering/style/MatrixTransformOperation.cpp \
@@ -987,14 +985,10 @@ SOURCES += \
     rendering/style/StyleFlexibleBoxData.cpp \
     rendering/style/StyleGeneratedImage.cpp \
     rendering/style/StyleInheritedData.cpp \
-    rendering/style/StyleInheritedData.h \
     rendering/style/StyleMarqueeData.cpp \
     rendering/style/StyleMultiColData.cpp \
     rendering/style/StyleRareInheritedData.cpp \
-    rendering/style/StyleRareInheritedData.h \
     rendering/style/StyleRareNonInheritedData.cpp \
-    rendering/style/StyleRareNonInheritedData.h \
-    rendering/style/StyleReflection.h \
     rendering/style/StyleSurroundData.cpp \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
@@ -1038,6 +1032,12 @@ HEADERS += \
     $$PWD/../WebKit/qt/Api/qwebpluginfactory.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/platform/network/qt/QNetworkReplyHandler.h \
+    $$PWD/rendering/style/CursorData.h \
+    $$PWD/rendering/style/CursorList.h \
+    $$PWD/rendering/style/StyleInheritedData.h \
+    $$PWD/rendering/style/StyleRareInheritedData.h \
+    $$PWD/rendering/style/StyleRareNonInheritedData.h \
+    $$PWD/rendering/style/StyleReflection.h \
     $$PWD/../WebKit/qt/Api/qwebsecurityorigin.h \
     $$PWD/../WebKit/qt/Api/qwebdatabase.h
 
