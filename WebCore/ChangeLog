@@ -1,3 +1,14 @@
+2008-11-27  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        r38825, was committed without checking whether anything in WebCore
+        uses JSFunction::m_body. Use the appropriate getters and setters
+        instead.
+
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::recompileAllJSFunctions):
+
 2008-11-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.

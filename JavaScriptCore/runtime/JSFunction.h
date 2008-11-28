@@ -63,6 +63,8 @@ namespace JSC {
         void setScope(const ScopeChain& scopeChain) { m_scopeChain = scopeChain; }
         ScopeChain& scope() { return m_scopeChain; }
 
+        void setBody(FunctionBodyNode* body) { m_body = body; }
+        void setBody(PassRefPtr<FunctionBodyNode> body) { m_body = body; }
         FunctionBodyNode* body() const { return m_body.get(); }
 
         virtual void mark();

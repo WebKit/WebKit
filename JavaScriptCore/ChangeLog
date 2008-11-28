@@ -1,3 +1,13 @@
+2008-11-27  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        r38825 made JSFunction::m_body private, but some inspector code in
+        WebCore sets the field. Add setters for it.
+
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::setBody):
+
 2008-11-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.
