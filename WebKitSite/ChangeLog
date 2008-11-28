@@ -1,3 +1,15 @@
+2008-11-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 22468: Coding style: config.h should only be included in implementation files, not in header
+        https://bugs.webkit.org/show_bug.cgi?id=22468
+
+        Clarified the rules about config.h inclusion and added 2 new examples to illustrate it. Also
+        added an explanation about the implementation files.
+
+        * coding/coding-style.html:
+
 2008-11-25  Dean Jackson  <dino@apple.com>
 
         Add a new work-in-progress proposal for pointer-events in

@@ -69,7 +69,7 @@ class Document {
 </pre>
 </li>
 
-<li>In an implementation file, code inside a namespace should <em>not</em> be indented.
+<li>In an implementation file (files with the extension .cpp, .c or .mm), code inside a namespace should <em>not</em> be indented.
 <h4 class="right">Right:</h4>
 <pre class="code">
 // Document.cpp
@@ -598,16 +598,57 @@ Image *SVGStyledElement::doSomething(PaintInfo &amp;paintInfo)
 
 <ol>
 
-<li>All files must #include "config.h" first.
+<li>All implementation files must #include "config.h" first. Header
+files should never include "config.h".
 
-<li>All files must #include the primary header second, just after "config.h".
-So for example, Node.cpp should include Node.h first, before other files.
-This guarantees that each header's completeness is tested, to make sure it
-can be compiled without requiring any other header files be included first.
+<h4 class="right">Right:</h4>
+<pre class="code">
+// RenderLayer.h
+#include "Node.h"
+#include "RenderObject.h"
+#include "RenderView.h"
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// RenderLayer.h
+#include "config.h"
+
+#include "RenderObject.h"
+#include "RenderView.h"
+#include "Node.h"
+</pre>
+
+<li>All implementation files must #include the primary header second,
+just after "config.h". So for example, Node.cpp should include Node.h first,
+before other files. This guarantees that each header's completeness is tested.
+This also assures that each header can be compiled without requiring any other
+header files be included first.
 
 <li>Other #include statements should be in sorted order (case sensitive, as
 done by the command-line sort tool or the Xcode sort selection command).
 Don't bother to organize them in a logical order.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+// HTMLDivElement.cpp
+#include "config.h"
+#include "HTMLDivElement.h"
+
+#include "Attribute.h"
+#include "HTMLElement.h"
+#include "QualifiedName.h"
+
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// HTMLDivElement.cpp
+#include "HTMLElement.h"
+#include "HTMLDivElement.h"
+#include "QualifiedName.h"
+#include "Attribute.h"
+</pre>
 
 </ol>
 
