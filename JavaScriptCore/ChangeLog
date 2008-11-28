@@ -1,3 +1,11 @@
+2008-11-28  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Removed unnecessary inclusion of errno.h, which also fixes compilation on Windows CE.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+
 2008-11-27  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.
