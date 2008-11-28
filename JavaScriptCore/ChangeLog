@@ -1,3 +1,17 @@
+2008-11-28  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix compilation on Windows CE
+
+        Port away from the use of errno after calling strtol(), instead
+        detect conversion errors by checking the result and the stop
+        position.
+
+        * runtime/DateMath.cpp:
+        (JSC::parseLong):
+        (JSC::parseDate):
+
 2008-11-28  Joerg Bornemann  <joerg.bornemann@trolltech.com>
 
         Reviewed by Simon Hausmann.
