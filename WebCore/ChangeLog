@@ -1,3 +1,26 @@
+2008-11-28  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=22524
+
+        Made static initializations in XMLHttpRequest.cpp thread-safe in preparation for usage
+        of XMLHttpRequest by Workers (on threads).
+
+        No observable change in behavior, so no test.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequestStaticData::XMLHttpRequestStaticData):
+        (WebCore::PreflightResultCacheItem::allowsCrossSiteMethod):
+        (WebCore::PreflightResultCacheItem::allowsCrossSiteHeaders):
+        (WebCore::PreflightResultCacheItem::allowsRequest):
+        (WebCore::createXMLHttpRequestStaticData):
+        (WebCore::initializeXMLHttpRequestStaticData):
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::isSafeRequestHeader):
+        (WebCore::XMLHttpRequest::isOnAccessControlResponseHeaderWhitelist):
+        * xml/XMLHttpRequest.h:
+
 2008-11-27  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.

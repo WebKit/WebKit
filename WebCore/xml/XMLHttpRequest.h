@@ -140,6 +140,7 @@ private:
 
     String getRequestHeader(const String& name) const;
     void setRequestHeaderInternal(const String& name, const String& value);
+    bool isSafeRequestHeader(const String&) const;
 
     void changeState(State newState);
     void callReadyStateChangeListener();
@@ -159,6 +160,8 @@ private:
 
     void loadRequestSynchronously(ResourceRequest&, ExceptionCode&);
     void loadRequestAsynchronously(ResourceRequest&);
+
+    bool isOnAccessControlResponseHeaderWhitelist(const String&) const;
 
     bool isSimpleCrossSiteAccessRequest() const;
     String accessControlOrigin() const;

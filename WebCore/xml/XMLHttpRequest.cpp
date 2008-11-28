@@ -58,6 +58,42 @@ namespace WebCore {
 
 typedef HashSet<String, CaseFoldingHash> HeadersSet;
 
+struct XMLHttpRequestStaticData {
+    XMLHttpRequestStaticData();
+    String m_proxyHeaderPrefix;
+    String m_secHeaderPrefix;
+    HashSet<String, CaseFoldingHash> m_forbiddenRequestHeaders;
+    HashSet<String, CaseFoldingHash> m_allowedCrossSiteResponseHeaders;
+};
+
+XMLHttpRequestStaticData::XMLHttpRequestStaticData()
+    : m_proxyHeaderPrefix("proxy-")
+    , m_secHeaderPrefix("sec-")
+{
+    m_forbiddenRequestHeaders.add("accept-charset");
+    m_forbiddenRequestHeaders.add("accept-encoding");
+    m_forbiddenRequestHeaders.add("connection");
+    m_forbiddenRequestHeaders.add("content-length");
+    m_forbiddenRequestHeaders.add("content-transfer-encoding");
+    m_forbiddenRequestHeaders.add("date");
+    m_forbiddenRequestHeaders.add("expect");
+    m_forbiddenRequestHeaders.add("host");
+    m_forbiddenRequestHeaders.add("keep-alive");
+    m_forbiddenRequestHeaders.add("referer");
+    m_forbiddenRequestHeaders.add("te");
+    m_forbiddenRequestHeaders.add("trailer");
+    m_forbiddenRequestHeaders.add("transfer-encoding");
+    m_forbiddenRequestHeaders.add("upgrade");
+    m_forbiddenRequestHeaders.add("via");
+
+    m_allowedCrossSiteResponseHeaders.add("cache-control");
+    m_allowedCrossSiteResponseHeaders.add("content-language");
+    m_allowedCrossSiteResponseHeaders.add("content-type");
+    m_allowedCrossSiteResponseHeaders.add("expires");
+    m_allowedCrossSiteResponseHeaders.add("last-modified");
+    m_allowedCrossSiteResponseHeaders.add("pragma");
+}
+
 class PreflightResultCacheItem : Noncopyable {
 public:
     PreflightResultCacheItem(bool credentials)
@@ -67,9 +103,9 @@ public:
     }
 
     bool parse(const ResourceResponse&);
-    bool allowsCrossSiteMethod(const String&);
-    bool allowsCrossSiteHeaders(const HTTPHeaderMap&);
-    bool allowsRequest(bool includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders);
+    bool allowsCrossSiteMethod(const String&) const;
+    bool allowsCrossSiteHeaders(const HTTPHeaderMap&) const;
+    bool allowsRequest(bool includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders) const;
 
 private:
     template<class HashType>
@@ -103,52 +139,9 @@ private:
     Mutex m_mutex;
 };
 
-static bool isSafeRequestHeader(const String& name)
-{
-    DEFINE_STATIC_LOCAL(HeadersSet, forbiddenHeaders, ());
-    DEFINE_STATIC_LOCAL(String, proxyString, ("proxy-"));
-    DEFINE_STATIC_LOCAL(String, secString, ("sec-"));
-    
-    if (forbiddenHeaders.isEmpty()) {
-        forbiddenHeaders.add("accept-charset");
-        forbiddenHeaders.add("accept-encoding");
-        forbiddenHeaders.add("connection");
-        forbiddenHeaders.add("content-length");
-        forbiddenHeaders.add("content-transfer-encoding");
-        forbiddenHeaders.add("date");
-        forbiddenHeaders.add("expect");
-        forbiddenHeaders.add("host");
-        forbiddenHeaders.add("keep-alive");
-        forbiddenHeaders.add("referer");
-        forbiddenHeaders.add("te");
-        forbiddenHeaders.add("trailer");
-        forbiddenHeaders.add("transfer-encoding");
-        forbiddenHeaders.add("upgrade");
-        forbiddenHeaders.add("via");
-    }
-    
-    return !forbiddenHeaders.contains(name) && !name.startsWith(proxyString, false) &&
-           !name.startsWith(secString, false);
-}
-
 static bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name)
 {
     return equalIgnoringCase(name, "accept") || equalIgnoringCase(name, "accept-language") || equalIgnoringCase(name, "content-type");
-}
-
-static bool isOnAccessControlResponseHeaderWhitelist(const String& name)
-{
-    DEFINE_STATIC_LOCAL(HeadersSet, allowedHeaders, ());
-    if (allowedHeaders.isEmpty()) {
-        allowedHeaders.add("cache-control");
-        allowedHeaders.add("content-language");
-        allowedHeaders.add("content-type");
-        allowedHeaders.add("expires");
-        allowedHeaders.add("last-modified");
-        allowedHeaders.add("pragma");
-    }
-
-    return allowedHeaders.contains(name);
 }
 
 // Determines if a string is a valid token, as defined by
@@ -253,12 +246,12 @@ bool PreflightResultCacheItem::parse(const ResourceResponse& response)
     return true;
 }
 
-bool PreflightResultCacheItem::allowsCrossSiteMethod(const String& method)
+bool PreflightResultCacheItem::allowsCrossSiteMethod(const String& method) const
 {
     return m_methods.contains(method) || method == "GET" || method == "POST";
 }
 
-bool PreflightResultCacheItem::allowsCrossSiteHeaders(const HTTPHeaderMap& requestHeaders)
+bool PreflightResultCacheItem::allowsCrossSiteHeaders(const HTTPHeaderMap& requestHeaders) const
 {
     HTTPHeaderMap::const_iterator end = requestHeaders.end();
     for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
@@ -268,7 +261,7 @@ bool PreflightResultCacheItem::allowsCrossSiteHeaders(const HTTPHeaderMap& reque
     return true;
 }
 
-bool PreflightResultCacheItem::allowsRequest(bool includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders)
+bool PreflightResultCacheItem::allowsRequest(bool includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders) const
 {
     if (m_absoluteExpiryTime < currentTime())
         return false;
@@ -310,6 +303,21 @@ bool PreflightResultCache::canSkipPreflight(const String& origin, const KURL& ur
     return false;
 }
 
+static const XMLHttpRequestStaticData* staticData = 0;
+
+static const XMLHttpRequestStaticData* createXMLHttpRequestStaticData()
+{
+    staticData = new XMLHttpRequestStaticData;
+    return staticData;
+}
+
+static const XMLHttpRequestStaticData* initializeXMLHttpRequestStaticData()
+{
+    // Uses dummy to avoid warnings about an unused variable.
+    AtomicallyInitializedStatic(const XMLHttpRequestStaticData*, dummy = createXMLHttpRequestStaticData());
+    return dummy;
+}
+
 XMLHttpRequest::XMLHttpRequest(Document* doc)
     : ActiveDOMObject(doc, this)
     , m_async(true)
@@ -326,6 +334,7 @@ XMLHttpRequest::XMLHttpRequest(Document* doc)
     , m_lastSendLineNumber(0)
 {
     ASSERT(document());
+    initializeXMLHttpRequestStaticData();
 }
 
 XMLHttpRequest::~XMLHttpRequest()
@@ -1001,6 +1010,12 @@ void XMLHttpRequest::setRequestHeaderInternal(const String& name, const String& 
         result.first->second += ", " + value;
 }
 
+bool XMLHttpRequest::isSafeRequestHeader(const String& name) const
+{
+    return !staticData->m_forbiddenRequestHeaders.contains(name) && !name.startsWith(staticData->m_proxyHeaderPrefix, false)
+        && !name.startsWith(staticData->m_secHeaderPrefix, false);
+}
+
 String XMLHttpRequest::getRequestHeader(const String& name) const
 {
     return m_requestHeaders.get(name);
@@ -1062,6 +1077,11 @@ String XMLHttpRequest::getResponseHeader(const String& name, ExceptionCode& ec) 
     }
 
     return m_response.httpHeaderField(name);
+}
+
+bool XMLHttpRequest::isOnAccessControlResponseHeaderWhitelist(const String& name) const
+{
+    return staticData->m_allowedCrossSiteResponseHeaders.contains(name);
 }
 
 String XMLHttpRequest::responseMIMEType() const
