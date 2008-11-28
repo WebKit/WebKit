@@ -35,9 +35,9 @@ class Document;
 
 class WMLIntrinsicEvent : public RefCounted<WMLIntrinsicEvent> {
 public:
-    static PassRefPtr<WMLIntrinsicEvent> create(Document* document)
+    static PassRefPtr<WMLIntrinsicEvent> create(Document* document, const String& targetURL)
     {
-        return adoptRef(new WMLIntrinsicEvent(document));
+        return adoptRef(new WMLIntrinsicEvent(document, targetURL));
     }
 
     static PassRefPtr<WMLIntrinsicEvent> createWithTask(WMLTaskElement* taskElement)
@@ -48,7 +48,7 @@ public:
     WMLTaskElement* taskElement() const { return m_taskElement.get(); }
 
 private:
-    WMLIntrinsicEvent(Document*);
+    WMLIntrinsicEvent(Document*, const String& targetURL);
     WMLIntrinsicEvent(WMLTaskElement*);
 
     RefPtr<WMLTaskElement> m_taskElement;

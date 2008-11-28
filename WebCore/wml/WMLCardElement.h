@@ -32,6 +32,12 @@ public:
     WMLCardElement(const QualifiedName&, Document*);
     virtual ~WMLCardElement();
 
+    bool isNewContext() const { return m_isNewContext; }
+    bool isOrdered() const { return m_isOrdered; }
+
+    void handleIntrinsicEventIfNeeded();
+
+    virtual void parseMappedAttribute(MappedAttribute*);
     virtual void insertedIntoDocument();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
@@ -43,6 +49,8 @@ private:
     bool isVisible() const { return m_isVisible; }
     void setVisible(bool isVisible) { m_isVisible = isVisible; }
 
+    bool m_isNewContext;
+    bool m_isOrdered;
     bool m_isVisible;
 };
 
