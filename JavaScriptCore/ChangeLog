@@ -1,3 +1,14 @@
+2008-11-29  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        The C++ standard does not automatically grant the friendships of an
+        enclosing class to its nested subclasses, so we should do so explicitly.
+        This fixes the GCC 4.0 build, although both GCC 4.2 and Visual C++ 2005
+        accept the incorrect code as it is.
+
+        * assembler/MacroAssembler.h:
+
 2008-11-29  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Camron Zwarich.
