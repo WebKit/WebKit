@@ -1,3 +1,11 @@
+2008-11-29  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Fix some sorting
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2008-11-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
