@@ -1,3 +1,118 @@
+2008-11-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Camron Zwarich.
+
+        Add the class MacroAssembler to provide some abstraction of code generation,
+        and change WREC to make use of this class, rather than directly accessing
+        the X86Assembler.
+
+        This patch also allows WREC to be compiled without the rest of the JIT enabled.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.h: Added.
+        (JSC::MacroAssembler::):
+        (JSC::MacroAssembler::MacroAssembler):
+        (JSC::MacroAssembler::copyCode):
+        (JSC::MacroAssembler::Address::Address):
+        (JSC::MacroAssembler::ImplicitAddress::ImplicitAddress):
+        (JSC::MacroAssembler::BaseIndex::BaseIndex):
+        (JSC::MacroAssembler::Label::Label):
+        (JSC::MacroAssembler::Jump::Jump):
+        (JSC::MacroAssembler::Jump::link):
+        (JSC::MacroAssembler::Jump::linkTo):
+        (JSC::MacroAssembler::JumpList::link):
+        (JSC::MacroAssembler::JumpList::linkTo):
+        (JSC::MacroAssembler::JumpList::append):
+        (JSC::MacroAssembler::Imm32::Imm32):
+        (JSC::MacroAssembler::add32):
+        (JSC::MacroAssembler::or32):
+        (JSC::MacroAssembler::sub32):
+        (JSC::MacroAssembler::loadPtr):
+        (JSC::MacroAssembler::load32):
+        (JSC::MacroAssembler::load16):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::store32):
+        (JSC::MacroAssembler::pop):
+        (JSC::MacroAssembler::push):
+        (JSC::MacroAssembler::peek):
+        (JSC::MacroAssembler::poke):
+        (JSC::MacroAssembler::move):
+        (JSC::MacroAssembler::compareImm32ForBranch):
+        (JSC::MacroAssembler::compareImm32ForBranchEquality):
+        (JSC::MacroAssembler::jae32):
+        (JSC::MacroAssembler::je32):
+        (JSC::MacroAssembler::je16):
+        (JSC::MacroAssembler::jg32):
+        (JSC::MacroAssembler::jge32):
+        (JSC::MacroAssembler::jl32):
+        (JSC::MacroAssembler::jle32):
+        (JSC::MacroAssembler::jne32):
+        (JSC::MacroAssembler::jump):
+        (JSC::MacroAssembler::breakpoint):
+        (JSC::MacroAssembler::ret):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cmpw_rm):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::assemblerBuffer):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        * wrec/WREC.cpp:
+        (JSC::WREC::Generator::compileRegExp):
+        * wrec/WREC.h:
+        * wrec/WRECFunctors.cpp:
+        (JSC::WREC::GeneratePatternCharacterFunctor::generateAtom):
+        (JSC::WREC::GenerateCharacterClassFunctor::generateAtom):
+        (JSC::WREC::GenerateBackreferenceFunctor::generateAtom):
+        (JSC::WREC::GenerateParenthesesNonGreedyFunctor::generateAtom):
+        * wrec/WRECFunctors.h:
+        (JSC::WREC::GenerateParenthesesNonGreedyFunctor::GenerateParenthesesNonGreedyFunctor):
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateEnter):
+        (JSC::WREC::Generator::generateReturnSuccess):
+        (JSC::WREC::Generator::generateSaveIndex):
+        (JSC::WREC::Generator::generateIncrementIndex):
+        (JSC::WREC::Generator::generateLoadCharacter):
+        (JSC::WREC::Generator::generateJumpIfEndOfInput):
+        (JSC::WREC::Generator::generateJumpIfNotEndOfInput):
+        (JSC::WREC::Generator::generateReturnFailure):
+        (JSC::WREC::Generator::generateBacktrack1):
+        (JSC::WREC::Generator::generateBacktrackBackreference):
+        (JSC::WREC::Generator::generateBackreferenceQuantifier):
+        (JSC::WREC::Generator::generateNonGreedyQuantifier):
+        (JSC::WREC::Generator::generateGreedyQuantifier):
+        (JSC::WREC::Generator::generatePatternCharacter):
+        (JSC::WREC::Generator::generateCharacterClassInvertedRange):
+        (JSC::WREC::Generator::generateCharacterClassInverted):
+        (JSC::WREC::Generator::generateCharacterClass):
+        (JSC::WREC::Generator::generateParentheses):
+        (JSC::WREC::Generator::generateParenthesesNonGreedy):
+        (JSC::WREC::Generator::generateParenthesesResetTrampoline):
+        (JSC::WREC::Generator::generateAssertionBOL):
+        (JSC::WREC::Generator::generateAssertionEOL):
+        (JSC::WREC::Generator::generateAssertionWordBoundary):
+        (JSC::WREC::Generator::generateBackreference):
+        (JSC::WREC::Generator::terminateAlternative):
+        (JSC::WREC::Generator::terminateDisjunction):
+        * wrec/WRECGenerator.h:
+        (JSC::WREC::Generator::Generator):
+        * wrec/WRECParser.cpp:
+        (JSC::WREC::Parser::parsePatternCharacterQualifier):
+        (JSC::WREC::Parser::parseCharacterClassQuantifier):
+        (JSC::WREC::Parser::parseBackreferenceQuantifier):
+        (JSC::WREC::Parser::parseParentheses):
+        (JSC::WREC::Parser::parseCharacterClass):
+        (JSC::WREC::Parser::parseOctalEscape):
+        (JSC::WREC::Parser::parseEscape):
+        (JSC::WREC::Parser::parseTerm):
+        (JSC::WREC::Parser::parseDisjunction):
+        * wrec/WRECParser.h:
+        (JSC::WREC::Parser::Parser):
+        (JSC::WREC::Parser::parsePattern):
+        (JSC::WREC::Parser::parseAlternative):
+        * wtf/Platform.h:
+
 2008-11-28  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

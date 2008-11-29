@@ -31,9 +31,10 @@
 #if ENABLE(WREC)
 
 #include "Quantifier.h"
-#include "X86Assembler.h"
+#include "MacroAssembler.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/unicode/Unicode.h>
+#include "WREC.h"
 
 namespace JSC { namespace WREC {
 
@@ -42,17 +43,19 @@ namespace JSC { namespace WREC {
     class Parser;
     struct CharacterClass;
 
-    class Generator {
+    class Generator : private MacroAssembler {
     public:
-        Generator(Parser& parser, X86Assembler& assembler)
-            : m_parser(parser)
-            , m_assembler(assembler)
+        using MacroAssembler::Jump;
+        using MacroAssembler::JumpList;
+        using MacroAssembler::Label;
+
+        static CompiledRegExp compileRegExp(Interpreter*, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
+    
+        Generator(Parser& parser, AssemblerBuffer* assemblerBuffer)
+            : MacroAssembler(assemblerBuffer)
+            , m_parser(parser)
         {
         }
-
-        typedef X86Assembler::JmpSrc JmpSrc;
-        typedef X86Assembler::JmpDst JmpDst;
-        typedef X86Assembler::RegisterID RegisterID;
 
         static const RegisterID input = X86::eax;
         static const RegisterID length = X86::ecx;
@@ -64,36 +67,35 @@ namespace JSC { namespace WREC {
         void generateEnter();
         void generateSaveIndex();
         void generateIncrementIndex();
-        void generateLoadCharacter(JmpSrcVector& failures);
-        void generateJumpIfEndOfInput(JmpSrcVector& failures);
-        void generateJumpIfNotEndOfInput(JmpDst);
+        void generateLoadCharacter(JumpList& failures);
+        void generateJumpIfEndOfInput(JumpList& failures);
+        void generateJumpIfNotEndOfInput(Label);
         void generateReturnSuccess();
         void generateReturnFailure();
 
-        void generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);
-        void generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);
+        void generateGreedyQuantifier(JumpList& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);
+        void generateNonGreedyQuantifier(JumpList& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);
         void generateBacktrack1();
         void generateBacktrackBackreference(unsigned subpatternId);
-        void generateCharacterClass(JmpSrcVector& failures, const CharacterClass& charClass, bool invert);
-        void generateCharacterClassInverted(JmpSrcVector& failures, const CharacterClass& charClass);
-        void generateCharacterClassInvertedRange(JmpSrcVector& failures, JmpSrcVector& matchDest, const CharacterRange* ranges, unsigned count, unsigned* matchIndex, const UChar* matches, unsigned matchCount);
-        void generatePatternCharacter(JmpSrcVector& failures, int ch);
-        void generateAssertionWordBoundary(JmpSrcVector& failures, bool invert);
-        void generateAssertionBOL(JmpSrcVector& failures);
-        void generateAssertionEOL(JmpSrcVector& failures);
-        void generateBackreference(JmpSrcVector& failures, unsigned subpatternID);
-        void generateBackreferenceQuantifier(JmpSrcVector& failures, Quantifier::Type quantifierType, unsigned subpatternId, unsigned min, unsigned max);
+        void generateCharacterClass(JumpList& failures, const CharacterClass& charClass, bool invert);
+        void generateCharacterClassInverted(JumpList& failures, const CharacterClass& charClass);
+        void generateCharacterClassInvertedRange(JumpList& failures, JumpList& matchDest, const CharacterRange* ranges, unsigned count, unsigned* matchIndex, const UChar* matches, unsigned matchCount);
+        void generatePatternCharacter(JumpList& failures, int ch);
+        void generateAssertionWordBoundary(JumpList& failures, bool invert);
+        void generateAssertionBOL(JumpList& failures);
+        void generateAssertionEOL(JumpList& failures);
+        void generateBackreference(JumpList& failures, unsigned subpatternID);
+        void generateBackreferenceQuantifier(JumpList& failures, Quantifier::Type quantifierType, unsigned subpatternId, unsigned min, unsigned max);
         enum ParenthesesType { capturing, non_capturing, assertion, inverted_assertion }; // order is relied on in generateParentheses()
-        JmpSrc generateParentheses(ParenthesesType type);
-        JmpSrc generateParenthesesResetTrampoline(JmpSrcVector& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter);
-        void generateParenthesesNonGreedy(JmpSrcVector& failures, JmpDst start, JmpSrc success, JmpSrc fail);
+        Jump generateParentheses(ParenthesesType type);
+        Jump generateParenthesesResetTrampoline(JumpList& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter);
+        void generateParenthesesNonGreedy(JumpList& failures, Label start, Jump success, Jump fail);
 
-        void terminateAlternative(JmpSrcVector& successes, JmpSrcVector& failures);
-        void terminateDisjunction(JmpSrcVector& successes);
+        void terminateAlternative(JumpList& successes, JumpList& failures);
+        void terminateDisjunction(JumpList& successes);
 
     private:
         Parser& m_parser;
-        X86Assembler& m_assembler;
     };
 
 } } // namespace JSC::WREC

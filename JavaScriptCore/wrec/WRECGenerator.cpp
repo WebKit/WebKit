@@ -34,114 +34,106 @@
 #include "WRECParser.h"
 #include "pcre_internal.h"
 
-#define __ m_assembler.
-
 using namespace WTF;
 
 namespace JSC { namespace WREC {
 
-#if COMPILER(MSVC)
-// MSVC has 3 extra arguments on the stack because it doesn't use the register calling convention.
-static const int outputParameter = 12 + sizeof(const UChar*) + sizeof(unsigned) + sizeof(unsigned);
-#else
-static const int outputParameter = 12;
-#endif
-
 void Generator::generateEnter()
 {
-    __ convertToFastCall();
-
     // Save callee save registers.
-    __ pushl_r(output);
-    __ pushl_r(character);
+    push(output);
+    push(character);
     
-    // Initialize output register.
-    __ movl_mr(outputParameter, X86::esp, output);
+#if COMPILER(MSVC)
+    // Move the arguments into registers.
+    peek(input, 3);
+    peek(index, 4);
+    peek(length, 5);
+    peek(output, 6);
+#else
+    // Initialize the output register.
+    peek(output, 3);
+#endif
 
 #ifndef NDEBUG
     // ASSERT that the output register is not null.
-    __ testl_rr(output, output);
-    X86Assembler::JmpSrc outputNotNull = __ jne();
-    __ int3();
-    __ link(outputNotNull, __ label());
+    Jump outputNotNull = jne32(Imm32(0), output);
+    breakpoint();
+    outputNotNull.link();
 #endif
 }
 
 void Generator::generateReturnSuccess()
 {
     // Set return value.
-    __ popl_r(X86::eax); // match begin
-    __ movl_rm(X86::eax, output);
-    __ movl_rm(index, 4, output); // match end
+    pop(X86::eax); // match begin
+    store32(X86::eax, output);
+    store32(index, Address(output, 4)); // match end
     
     // Restore callee save registers.
-    __ popl_r(character);
-    __ popl_r(output);
-    __ ret();
+    pop(character);
+    pop(output);
+    ret();
 }
 
 void Generator::generateSaveIndex()
 {
-    __ pushl_r(index);
+    push(index);
 }
 
 void Generator::generateIncrementIndex()
 {
-    __ movl_mr(X86::esp, index);
-    __ addl_i8r(1, index);
-    __ movl_rm(index, X86::esp);
+    peek(index);
+    add32(Imm32(1), index);
+    poke(index);
 }
 
-void Generator::generateLoadCharacter(JmpSrcVector& failures)
+void Generator::generateLoadCharacter(JumpList& failures)
 {
-    __ cmpl_rr(length, index);
-    failures.append(__ je());
-    __ movzwl_mr(input, index, 2, character);
-}
-
-// For the sake of end-of-line assertions, we treat one-past-the-end as if it
-// were part of the input string.
-void Generator::generateJumpIfEndOfInput(JmpSrcVector& failures)
-{
-    __ cmpl_rr(Generator::length, Generator::index);
-    failures.append(__ jg());
+    failures.append(je32(length, index));
+    load16(BaseIndex(input, index, TimesTwo), character);
 }
 
 // For the sake of end-of-line assertions, we treat one-past-the-end as if it
 // were part of the input string.
-void Generator::generateJumpIfNotEndOfInput(JmpDst target)
+void Generator::generateJumpIfEndOfInput(JumpList& failures)
 {
-    __ cmpl_rr(length, index);
-    __ link(__ jle(), target);
+    failures.append(jg32(index, length));
+}
+
+// For the sake of end-of-line assertions, we treat one-past-the-end as if it
+// were part of the input string.
+void Generator::generateJumpIfNotEndOfInput(Label target)
+{
+    jle32(index, length, target);
 }
 
 void Generator::generateReturnFailure()
 {
-    __ addl_i8r(4, X86::esp);
-    __ movl_i32r(-1, X86::eax);
-    __ popl_r(character);
-    __ popl_r(output);
-    __ ret();
+    pop();
+    move(Imm32(-1), X86::eax);
+    pop(character);
+    pop(output);
+    ret();
 }
 
 void Generator::generateBacktrack1()
 {
-    __ subl_i8r(1, index);
+    sub32(Imm32(1), index);
 }
 
 void Generator::generateBacktrackBackreference(unsigned subpatternId)
 {
-    __ subl_mr((2 * subpatternId + 1) * sizeof(int), output, index);
-    __ addl_mr((2 * subpatternId) * sizeof(int), output, index);
+    sub32(Address(output, (2 * subpatternId + 1) * sizeof(int)), index);
+    add32(Address(output, (2 * subpatternId) * sizeof(int)), index);
 }
 
-void Generator::generateBackreferenceQuantifier(JmpSrcVector& failures, Quantifier::Type quantifierType, unsigned subpatternId, unsigned min, unsigned max)
+void Generator::generateBackreferenceQuantifier(JumpList& failures, Quantifier::Type quantifierType, unsigned subpatternId, unsigned min, unsigned max)
 {
     GenerateBackreferenceFunctor functor(subpatternId);
 
-    __ movl_mr((2 * subpatternId) * sizeof(int), output, character);
-    __ cmpl_rm(character, ((2 * subpatternId) + 1) * sizeof(int), output);
-    JmpSrc skipIfEmpty = __ je();
+    load32(Address(output, (2 * subpatternId) * sizeof(int)), character);
+    Jump skipIfEmpty = je32(character, Address(output, ((2 * subpatternId) + 1) * sizeof(int)));
 
     ASSERT(quantifierType == Quantifier::Greedy || quantifierType == Quantifier::NonGreedy);
     if (quantifierType == Quantifier::Greedy)
@@ -149,153 +141,145 @@ void Generator::generateBackreferenceQuantifier(JmpSrcVector& failures, Quantifi
     else
         generateNonGreedyQuantifier(failures, functor, min, max);
 
-    __ link(skipIfEmpty, __ label());
+    skipIfEmpty.link();
 }
 
-void Generator::generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max)
+void Generator::generateNonGreedyQuantifier(JumpList& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max)
 {
     // comment me better!
-    JmpSrcVector newFailures;
+    JumpList newFailures;
 
     // (0) Setup:
     //     init repeatCount
-    __ pushl_r(repeatCount);
-    __ xorl_rr(repeatCount, repeatCount);
-    JmpSrc gotoStart = __ jmp();
+    push(repeatCount);
+    move(Imm32(0), repeatCount);
+    Jump gotoStart = jump();
 
     // (4) Failure case
 
-    JmpDst quantifierFailed = __ label();
+    Label quantifierFailed(this);
     // (4.1) Restore original value of repeatCount from the stack
-    __ popl_r(repeatCount);
-    failures.append(__ jmp()); 
+    pop(repeatCount);
+    failures.append(jump()); 
 
     // (3) We just tried an alternative, and it failed - check we can try more.
     
-    JmpDst alternativeFailed = __ label();
+    Label alternativeFailed(this);
     // (3.1) remove the value pushed prior to testing the alternative
-    __ popl_r(index);
+    pop(index);
     // (3.2) if there is a limit, and we have reached it, game over. 
     if (max != Quantifier::noMaxSpecified) {
-        __ cmpl_i32r(max, repeatCount);
-        __ link(__ je(), quantifierFailed);
+        je32(Imm32(max), repeatCount, quantifierFailed);
     }
 
     // (1) Do a check for the atom
 
     // (1.0) This is where we start, if there is a minimum (then we must read at least one of the atom).
-    JmpDst testQuantifiedAtom = __ label();
+    Label testQuantifiedAtom(this);
     if (min)
-        __ link(gotoStart, testQuantifiedAtom);
+        gotoStart.link();
     // (1.1) Do a check for the atom check.
     functor.generateAtom(this, newFailures);
     // (1.2) If we get here, successful match!
-    __ addl_i8r(1, repeatCount);
+    add32(Imm32(1), repeatCount);
     // (1.3) We needed to read the atom, and we failed - that's terminally  bad news.
-    __ link(newFailures, quantifierFailed);
+    newFailures.linkTo(quantifierFailed);
     // (1.4) If there is a minimum, check we have read enough ...
-    if (min) {
-        // ... except if min was 1 no need to keep checking!
-        if (min != 1) {
-            __ cmpl_i32r(min, repeatCount);
-            __ link(__ jl(), testQuantifiedAtom);
-        }
-    } else
-        __ link(gotoStart, __ label());
     // if there was no minimum, this is where we start.
+    if (!min)
+        gotoStart.link();
+    // if min > 1 we need to keep checking!
+    else if (min != 1)
+        jl32(repeatCount, Imm32(min), testQuantifiedAtom);
 
     // (2) Plant an alternative check for the remainder of the expression
     
     // (2.1) recursively call to parseAlternative, if it falls through, success!
-    __ pushl_r(index);
+    push(index);
     m_parser.parseAlternative(newFailures);
-    __ addl_i8r(4, X86::esp);
-    __ popl_r(repeatCount);
+    pop();
+    pop(repeatCount);
     // (2.2) link failure cases to jump back up to alternativeFailed.
-    __ link(newFailures, alternativeFailed);
+    newFailures.linkTo(alternativeFailed);
 }
 
-void Generator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max)
+void Generator::generateGreedyQuantifier(JumpList& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max)
 {
     if (!max)
         return;
 
     // comment me better!
-    JmpSrcVector newFailures;
+    JumpList newFailures;
 
     // (0) Setup:
     //     init repeatCount
-    __ pushl_r(repeatCount);
-    __ xorl_rr(repeatCount, repeatCount);
+    push(repeatCount);
+    move(Imm32(0), repeatCount);
 
     // (1) Greedily read as many of the atom as possible
 
-    JmpDst readMore = __ label();
+    Label readMore(this);
 
     // (1.1) Do a character class check.
     functor.generateAtom(this, newFailures);
     // (1.2) If we get here, successful match!
-    __ addl_i8r(1, repeatCount);
+    add32(Imm32(1), repeatCount);
     // (1.3) loop, unless we've read max limit.
     if (max != Quantifier::noMaxSpecified) {
-        if (max != 1) {
-            // if there is a limit, only loop while less than limit, otherwise fall throught to...
-            __ cmpl_i32r(max, repeatCount);
-            __ link(__ jne(), readMore);
-        }
+        // if there is a limit, only loop while less than limit, otherwise fall throught to...
+        if (max != 1)
+            jne32(Imm32(max), repeatCount, readMore);
         // ...if there is no min we need jump to the alternative test, if there is we can just fall through to it.
         if (!min)
-            newFailures.append(__ jmp());
+            newFailures.append(jump());
     } else
-        __ link(__ jmp(), readMore);
+        jump(readMore);
     // (1.4) check enough matches to bother trying an alternative...
     if (min) {
         // We will fall through to here if (min && max), after the max check.
         // First, also link a
-        __ link(newFailures, __ label());
-        __ cmpl_i32r(min, repeatCount);
-        newFailures.append(__ jae());
+        newFailures.link();
+        newFailures.append(jae32(repeatCount, Imm32(min)));
     }
 
     // (4) Failure case
 
-    JmpDst quantifierFailed = __ label();
+    Label quantifierFailed(this);
     // (4.1) Restore original value of repeatCount from the stack
-    __ popl_r(repeatCount);
-    failures.append(__ jmp()); 
+    pop(repeatCount);
+    failures.append(jump()); 
 
     // (3) Backtrack
 
-    JmpDst backtrack = __ label();
+    Label backtrack(this);
     // (3.1) this was preserved prior to executing the alternative
-    __ popl_r(index);
+    pop(index);
     // (3.2) check we can retry with fewer matches - backtracking fails if already at the minimum
-    __ cmpl_i32r(min, repeatCount);
-    __ link(__ je(), quantifierFailed);
+    je32(Imm32(min), repeatCount, quantifierFailed);
     // (3.3) roll off one match, and retry.
     functor.backtrack(this);
-    __ subl_i8r(1, repeatCount);
+    sub32(Imm32(1), repeatCount);
 
     // (2) Try an alternative.
 
     // (2.1) point to retry
-    __ link(newFailures, __ label());
+    newFailures.link();
     // (2.2) recursively call to parseAlternative, if it falls through, success!
-    __ pushl_r(index);
+    push(index);
     m_parser.parseAlternative(newFailures);
-    __ addl_i8r(4, X86::esp);
-    __ popl_r(repeatCount);
+    pop();
+    pop(repeatCount);
     // (2.3) link failure cases to here.
-    __ link(newFailures, backtrack);
+    newFailures.linkTo(backtrack);
 }
 
-void Generator::generatePatternCharacter(JmpSrcVector& failures, int ch)
+void Generator::generatePatternCharacter(JumpList& failures, int ch)
 {
     generateLoadCharacter(failures);
 
     // used for unicode case insensitive
     bool hasUpper = false;
-    JmpSrc isUpper;
+    Jump isUpper;
     
     // if case insensitive match
     if (m_parser.ignoreCase()) {
@@ -303,31 +287,29 @@ void Generator::generatePatternCharacter(JmpSrcVector& failures, int ch)
         
         // check for ascii case sensitive characters
         if (isASCIIAlpha(ch)) {
-            __ orl_i32r(32, character);
+            or32(Imm32(32), character);
             ch |= 32;
         } else if ((ch > 0x7f) && ((lower = Unicode::toLower(ch)) != (upper = Unicode::toUpper(ch)))) {
             // handle unicode case sentitive characters - branch to success on upper
-            __ cmpl_i32r(upper, character);
-            isUpper = __ je();
+            isUpper = je32(Imm32(upper), character);
             hasUpper = true;
             ch = lower;
         }
     }
     
     // checks for ch, or lower case version of ch, if insensitive
-    __ cmpl_i32r((unsigned short)ch, character);
-    failures.append(__ jne());
+    failures.append(jne32(Imm32((unsigned short)ch), character));
 
     if (m_parser.ignoreCase() && hasUpper) {
         // for unicode case insensitive matches, branch here if upper matches.
-        __ link(isUpper, __ label());
+        isUpper.link();
     }
     
     // on success consume the char
-    __ addl_i8r(1, index);
+    add32(Imm32(1), index);
 }
 
-void Generator::generateCharacterClassInvertedRange(JmpSrcVector& failures, JmpSrcVector& matchDest, const CharacterRange* ranges, unsigned count, unsigned* matchIndex, const UChar* matches, unsigned matchCount)
+void Generator::generateCharacterClassInvertedRange(JumpList& failures, JumpList& matchDest, const CharacterRange* ranges, unsigned count, unsigned* matchIndex, const UChar* matches, unsigned matchCount)
 {
     do {
         // pick which range we're going to generate
@@ -335,40 +317,36 @@ void Generator::generateCharacterClassInvertedRange(JmpSrcVector& failures, JmpS
         char lo = ranges[which].begin;
         char hi = ranges[which].end;
         
-        __ cmpl_i32r((unsigned short)lo, character);
-
         // check if there are any ranges or matches below lo.  If not, just jl to failure -
         // if there is anything else to check, check that first, if it falls through jmp to failure.
         if ((*matchIndex < matchCount) && (matches[*matchIndex] < lo)) {
-            JmpSrc loOrAbove = __ jge();
+            Jump loOrAbove = jge32(character, Imm32((unsigned short)lo));
             
             // generate code for all ranges before this one
             if (which)
                 generateCharacterClassInvertedRange(failures, matchDest, ranges, which, matchIndex, matches, matchCount);
             
             do {
-                __ cmpl_i32r((unsigned short)matches[*matchIndex], character);
-                matchDest.append(__ je());
+                matchDest.append(je32(Imm32((unsigned short)matches[*matchIndex]), character));
                 ++*matchIndex;
             } while ((*matchIndex < matchCount) && (matches[*matchIndex] < lo));
-            failures.append(__ jmp());
+            failures.append(jump());
 
-            __ link(loOrAbove, __ label());
+            loOrAbove.link();
         } else if (which) {
-            JmpSrc loOrAbove = __ jge();
+            Jump loOrAbove = jge32(character, Imm32((unsigned short)lo));
 
             generateCharacterClassInvertedRange(failures, matchDest, ranges, which, matchIndex, matches, matchCount);
-            failures.append(__ jmp());
+            failures.append(jump());
 
-            __ link(loOrAbove, __ label());
+            loOrAbove.link();
         } else
-            failures.append(__ jl());
+            failures.append(jl32(character, Imm32((unsigned short)lo)));
 
         while ((*matchIndex < matchCount) && (matches[*matchIndex] <= hi))
             ++*matchIndex;
 
-        __ cmpl_i32r((unsigned short)hi, character);
-        matchDest.append(__ jle());
+        matchDest.append(jle32(character, Imm32((unsigned short)hi)));
         // fall through to here, the value is above hi.
 
         // shuffle along & loop around if there are any more matches to handle.
@@ -378,18 +356,16 @@ void Generator::generateCharacterClassInvertedRange(JmpSrcVector& failures, JmpS
     } while (count);
 }
 
-void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const CharacterClass& charClass)
+void Generator::generateCharacterClassInverted(JumpList& matchDest, const CharacterClass& charClass)
 {
-    JmpSrc unicodeFail;
+    Jump unicodeFail;
     if (charClass.numMatchesUnicode || charClass.numRangesUnicode) {
-        __ cmpl_i8r(0x7f, character);
-        JmpSrc isAscii = __ jle();
+        Jump isAscii = jle32(character, Imm32(0x7f));
     
         if (charClass.numMatchesUnicode) {
             for (unsigned i = 0; i < charClass.numMatchesUnicode; ++i) {
                 UChar ch = charClass.matchesUnicode[i];
-                __ cmpl_i32r((unsigned short)ch, character);
-                matchDest.append(__ je());
+                matchDest.append(je32(Imm32(ch), character));
             }
         }
         
@@ -398,28 +374,24 @@ void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const Ch
                 UChar lo = charClass.rangesUnicode[i].begin;
                 UChar hi = charClass.rangesUnicode[i].end;
                 
-                __ cmpl_i32r((unsigned short)lo, character);
-                JmpSrc below = __ jl();
-                __ cmpl_i32r((unsigned short)hi, character);
-                matchDest.append(__ jle());
-                __ link(below, __ label());
+                Jump below = jl32(character, Imm32(lo));
+                matchDest.append(jle32(character, Imm32(hi)));
+                below.link();
             }
         }
 
-        unicodeFail = __ jmp();
-        __ link(isAscii, __ label());
+        unicodeFail = jump();
+        isAscii.link();
     }
 
     if (charClass.numRanges) {
         unsigned matchIndex = 0;
-        JmpSrcVector failures; 
+        JumpList failures; 
         generateCharacterClassInvertedRange(failures, matchDest, charClass.ranges, charClass.numRanges, &matchIndex, charClass.matches, charClass.numMatches);
-        while (matchIndex < charClass.numMatches) {
-            __ cmpl_i32r((unsigned short)charClass.matches[matchIndex], character);
-            matchDest.append(__ je());
-            ++matchIndex;
-        }
-        __ link(failures, __ label());
+        while (matchIndex < charClass.numMatches)
+            matchDest.append(je32(Imm32((unsigned short)charClass.matches[matchIndex++]), character));
+
+        failures.link();
     } else if (charClass.numMatches) {
         // optimization: gather 'a','A' etc back together, can mask & test once.
         Vector<char> matchesAZaz;
@@ -434,42 +406,37 @@ void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const Ch
                 if (isASCIIUpper(ch))
                     continue;
             }
-            __ cmpl_i32r((unsigned short)ch, character);
-            matchDest.append(__ je());
+            matchDest.append(je32(Imm32((unsigned short)ch), character));
         }
 
         if (unsigned countAZaz = matchesAZaz.size()) {
-            __ orl_i32r(32, character);
-
-            for (unsigned i = 0; i < countAZaz; ++i) {
-                char ch = matchesAZaz[i];
-                __ cmpl_i32r((unsigned short)ch, character);
-                matchDest.append(__ je());
-            }
+            or32(Imm32(32), character);
+            for (unsigned i = 0; i < countAZaz; ++i)
+                matchDest.append(je32(Imm32(matchesAZaz[i]), character));
         }
     }
 
     if (charClass.numMatchesUnicode || charClass.numRangesUnicode)
-        __ link(unicodeFail, __ label());
+        unicodeFail.link();
 }
 
-void Generator::generateCharacterClass(JmpSrcVector& failures, const CharacterClass& charClass, bool invert)
+void Generator::generateCharacterClass(JumpList& failures, const CharacterClass& charClass, bool invert)
 {
     generateLoadCharacter(failures);
 
     if (invert)
         generateCharacterClassInverted(failures, charClass);
     else {
-        JmpSrcVector successes;
+        JumpList successes;
         generateCharacterClassInverted(successes, charClass);
-        failures.append(__ jmp());
-        __ link(successes, __ label());
+        failures.append(jump());
+        successes.link();
     }
     
-    __ addl_i8r(1, index);
+    add32(Imm32(1), index);
 }
 
-Generator::JmpSrc Generator::generateParentheses(ParenthesesType type)
+Generator::Jump Generator::generateParentheses(ParenthesesType type)
 {
     if (type == capturing)
         m_parser.recordSubpattern();
@@ -477,132 +444,126 @@ Generator::JmpSrc Generator::generateParentheses(ParenthesesType type)
     unsigned subpatternId = m_parser.numSubpatterns();
 
     // push pos, both to preserve for fail + reloaded in parseDisjunction
-    __ pushl_r(index);
+    push(index);
 
     // Plant a disjunction, wrapped to invert behaviour - 
-    JmpSrcVector newFailures;
+    JumpList newFailures;
     m_parser.parseDisjunction(newFailures);
     
     if (type == capturing) {
-        __ popl_r(character);
-        __ movl_rm(character, (2 * subpatternId) * sizeof(int), output);
-        __ movl_rm(index, (2 * subpatternId + 1) * sizeof(int), output);
+        pop(character);
+        store32(character, Address(output, (2 * subpatternId) * sizeof(int)));
+        store32(index, Address(output, (2 * subpatternId + 1) * sizeof(int)));
     } else if (type == non_capturing)
-        __ addl_i8r(4, X86::esp);
+        pop();
     else
-        __ popl_r(index);
+        pop(index);
 
     // This is a little lame - jump to jump if there is a nested disjunction.
-    // (suggestion to fix: make parseDisjunction populate a JmpSrcVector of
+    // (suggestion to fix: make parseDisjunction populate a JumpList of
     // disjunct successes... this is probably not worth the compile cost in
     // the common case to fix).
-    JmpSrc successfulMatch = __ jmp();
+    Jump successfulMatch = jump();
 
-    __ link(newFailures, __ label());
-    __ popl_r(index);
+    newFailures.link();
+    pop(index);
 
-    JmpSrc jumpToFail;
+    Jump jumpToFail;
     // If this was an inverted assert, fail = success! - just let the failure case drop through,
     // success case goes to failures.  Both paths restore curr pos.
     if (type == inverted_assertion)
         jumpToFail = successfulMatch;
     else {
         // plant a jump so any fail will link off to 'failures',
-        jumpToFail = __ jmp();
+        jumpToFail = jump();
         // link successes to jump here
-        __ link(successfulMatch, __ label());
+        successfulMatch.link();
     }
     return jumpToFail;
 }
 
-void Generator::generateParenthesesNonGreedy(JmpSrcVector& failures, JmpDst start, JmpSrc success, JmpSrc fail)
+void Generator::generateParenthesesNonGreedy(JumpList& failures, Label start, Jump success, Jump fail)
 {
-    __ link(__ jmp(), start);
-    __ link(success, __ label());
-
+    jump(start);
+    success.link();
     failures.append(fail);
 }
 
-Generator::JmpSrc Generator::generateParenthesesResetTrampoline(JmpSrcVector& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter)
+Generator::Jump Generator::generateParenthesesResetTrampoline(JumpList& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter)
 {
-    JmpSrc skip = __ jmp();
-    __ link(newFailures, __ label());
+    Jump skip = jump();
+    newFailures.link();
     for (unsigned i = subpatternIdBefore + 1; i <= subpatternIdAfter; ++i) {
-        __ movl_i32m(-1, (2 * i) * sizeof(int), output);
-        __ movl_i32m(-1, (2 * i + 1) * sizeof(int), output);
+        store32(Imm32(-1), Address(output, (2 * i) * sizeof(int)));
+        store32(Imm32(-1), Address(output, (2 * i + 1) * sizeof(int)));
     }
     
-    JmpSrc newFailJump = __ jmp();
-    __ link(skip, __ label());
+    Jump newFailJump = jump();
+    skip.link();
     
     return newFailJump;
 }
 
-void Generator::generateAssertionBOL(JmpSrcVector& failures)
+void Generator::generateAssertionBOL(JumpList& failures)
 {
     if (m_parser.multiline()) {
-        JmpSrcVector previousIsNewline;
+        JumpList previousIsNewline;
 
         // begin of input == success
-        __ cmpl_i8r(0, index);
-        previousIsNewline.append(__ je());
+        previousIsNewline.append(je32(Imm32(0), index));
 
         // now check prev char against newline characters.
-        __ movzwl_mr(-2, input, index, 2, character);
+        load16(BaseIndex(input, index, TimesTwo, -2), character);
         generateCharacterClassInverted(previousIsNewline, CharacterClass::newline());
 
-        failures.append(__ jmp());
+        failures.append(jump());
 
-        __ link(previousIsNewline, __ label());
-    } else {
-        __ cmpl_i8r(0, index);
-        failures.append(__ jne());
-    }
+        previousIsNewline.link();
+    } else
+        failures.append(jne32(Imm32(0), index));
 }
 
-void Generator::generateAssertionEOL(JmpSrcVector& failures)
+void Generator::generateAssertionEOL(JumpList& failures)
 {
     if (m_parser.multiline()) {
-        JmpSrcVector nextIsNewline;
+        JumpList nextIsNewline;
 
         generateLoadCharacter(nextIsNewline); // end of input == success
         generateCharacterClassInverted(nextIsNewline, CharacterClass::newline());
-        failures.append(__ jmp());
-        __ link(nextIsNewline, __ label());
+        failures.append(jump());
+        nextIsNewline.link();
     } else {
-        __ cmpl_rr(length, index);
-        failures.append(__ jne());
+        failures.append(jne32(length, index));
     }
 }
 
-void Generator::generateAssertionWordBoundary(JmpSrcVector& failures, bool invert)
+void Generator::generateAssertionWordBoundary(JumpList& failures, bool invert)
 {
-    JmpSrcVector wordBoundary;
-    JmpSrcVector notWordBoundary;
+    JumpList wordBoundary;
+    JumpList notWordBoundary;
 
     // (1) Check if the previous value was a word char
 
     // (1.1) check for begin of input
-    __ cmpl_i8r(0, index);
-    JmpSrc atBegin = __ je();
+    Jump atBegin = je32(Imm32(0), index);
     // (1.2) load the last char, and chck if is word character
-    __ movzwl_mr(-2, input, index, 2, character);
-    JmpSrcVector previousIsWord;
+    load16(BaseIndex(input, index, TimesTwo, -2), character);
+    JumpList previousIsWord;
     generateCharacterClassInverted(previousIsWord, CharacterClass::wordchar());
     // (1.3) if we get here, previous is not a word char
-    __ link(atBegin, __ label());
+    atBegin.link();
 
     // (2) Handle situation where previous was NOT a \w
 
     generateLoadCharacter(notWordBoundary);
     generateCharacterClassInverted(wordBoundary, CharacterClass::wordchar());
     // (2.1) If we get here, neither chars are word chars
-    notWordBoundary.append(__ jmp());
+    notWordBoundary.append(jump());
 
     // (3) Handle situation where previous was a \w
 
     // (3.0) link success in first match to here
-    __ link(previousIsWord, __ label());
+    previousIsWord.link();
     generateLoadCharacter(wordBoundary);
     generateCharacterClassInverted(notWordBoundary, CharacterClass::wordchar());
     // (3.1) If we get here, this is an end of a word, within the input.
@@ -611,70 +572,69 @@ void Generator::generateAssertionWordBoundary(JmpSrcVector& failures, bool inver
     
     if (invert) {
         // handle the fall through case
-        wordBoundary.append(__ jmp());
+        wordBoundary.append(jump());
     
         // looking for non word boundaries, so link boundary fails to here.
-        __ link(notWordBoundary, __ label());
+        notWordBoundary.link();
 
-        failures.append(wordBoundary.begin(), wordBoundary.size());
+        failures.append(wordBoundary);
     } else {
         // looking for word boundaries, so link successes here.
-        __ link(wordBoundary, __ label());
+        wordBoundary.link();
         
-        failures.append(notWordBoundary.begin(), notWordBoundary.size());
+        failures.append(notWordBoundary);
     }
 }
 
-void Generator::generateBackreference(JmpSrcVector& failures, unsigned subpatternId)
+void Generator::generateBackreference(JumpList& failures, unsigned subpatternId)
 {
-    __ pushl_r(index);
-    __ pushl_r(repeatCount);
+    push(index);
+    push(repeatCount);
 
     // get the start pos of the backref into repeatCount (multipurpose!)
-    __ movl_mr((2 * subpatternId) * sizeof(int), output, repeatCount);
+    load32(Address(output, (2 * subpatternId) * sizeof(int)), repeatCount);
 
-    JmpSrc skipIncrement = __ jmp();
-    JmpDst topOfLoop = __ label();
-    __ addl_i8r(1, index);
-    __ addl_i8r(1, repeatCount);
-    __ link(skipIncrement, __ label());
+    Jump skipIncrement = jump();
+    Label topOfLoop(this);
+
+    add32(Imm32(1), index);
+    add32(Imm32(1), repeatCount);
+    skipIncrement.link();
 
     // check if we're at the end of backref (if we are, success!)
-    __ cmpl_rm(repeatCount, ((2 * subpatternId) + 1) * sizeof(int), output);
-    JmpSrc endOfBackRef = __ je();
+    Jump endOfBackRef = je32(repeatCount, Address(output, ((2 * subpatternId) + 1) * sizeof(int)));
     
-    __ movzwl_mr(input, repeatCount, 2, character);
+    load16(BaseIndex(input, repeatCount, MacroAssembler::TimesTwo), character);
     
     // check if we've run out of input (this would be a can o'fail)
-    __ cmpl_rr(length, index);
-    JmpSrc endOfInput = __ je();
+    Jump endOfInput = je32(length, index);
+
+    je16(character, BaseIndex(input, index, TimesTwo), topOfLoop);
     
-    __ cmpw_rm(character, input, index, 2);
-    __ link(__ je(), topOfLoop);
-    
-    __ link(endOfInput, __ label());
+    endOfInput.link();
+
     // Failure
-    __ popl_r(repeatCount);
-    __ popl_r(index);
-    failures.append(__ jmp());
+    pop(repeatCount);
+    pop(index);
+    failures.append(jump());
     
     // Success
-    __ link(endOfBackRef, __ label());
-    __ popl_r(repeatCount);
-    __ addl_i8r(4, X86::esp);
+    endOfBackRef.link();
+    pop(repeatCount);
+    pop();
 }
 
-void Generator::terminateAlternative(JmpSrcVector& successes, JmpSrcVector& failures)
+void Generator::terminateAlternative(JumpList& successes, JumpList& failures)
 {
-    successes.append(__ jmp());
+    successes.append(jump());
     
-    __ link(failures, __ label());
-    __ movl_mr(X86::esp, index);
+    failures.link();
+    peek(index);
 }
 
-void Generator::terminateDisjunction(JmpSrcVector& successes)
+void Generator::terminateDisjunction(JumpList& successes)
 {
-    __ link(successes, __ label());
+    successes.link();
 }
 
 } } // namespace JSC::WREC

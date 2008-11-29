@@ -279,9 +279,11 @@ namespace JSC {
         static void* SFX_CALL cti_vm_lazyLinkCall(CTI_ARGS);
         static JSObject* SFX_CALL cti_op_push_activation(CTI_ARGS);
         
-        AssemblerBuffer* assemblerBuffer() const { return m_assemblerBuffer.get(); }
-
 #endif // ENABLE(JIT)
+
+#if ENABLE(ASSEMBLER)
+        AssemblerBuffer* assemblerBuffer() const { return m_assemblerBuffer.get(); }
+#endif
 
         // Default number of ticks before a timeout check should be done.
         static const int initialTickCountThreshold = 1024;
@@ -342,7 +344,9 @@ namespace JSC {
         void* m_ctiVirtualCallPreLink;
         void* m_ctiVirtualCallLink;
         void* m_ctiVirtualCall;
+#endif
 
+#if ENABLE(ASSEMBLER)
         OwnPtr<AssemblerBuffer> m_assemblerBuffer;
 #endif
 

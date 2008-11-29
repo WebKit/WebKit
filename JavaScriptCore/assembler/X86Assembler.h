@@ -204,8 +204,6 @@ public:
         int m_offset;
     };
 
-    typedef Vector<X86Assembler::JmpSrc> JmpSrcVector;
-    
     static const int maxInstructionSize = 16;
 
     X86Assembler(AssemblerBuffer* m_buffer)
@@ -364,6 +362,13 @@ public:
         m_buffer->putByte(PRE_OPERAND_SIZE);
         m_buffer->putByte(OP_CMP_EvGv);
         modRm_rmsib(src, base, index, scale);
+    }
+
+    void cmpw_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_buffer->putByte(PRE_OPERAND_SIZE);
+        m_buffer->putByte(OP_CMP_EvGv);
+        modRm_rmsib(src, base, index, scale, offset);
     }
 
     void sete_r(RegisterID dst)
@@ -935,14 +940,6 @@ public:
         m_buffer->putByte(PRE_PREDICT_BRANCH_NOT_TAKEN);
     }
     
-    void link(JmpSrcVector& vector, JmpDst to)
-    {
-        size_t size = vector.size();
-        for (size_t i = 0; i < size; ++i)
-            link(vector[i], to);
-        vector.clear();
-    }
-
     void link(JmpSrc from, JmpDst to)
     {
         ASSERT(to.m_offset != -1);
@@ -1012,17 +1009,6 @@ public:
         ASSERT(copy);
         return copy;
     }
-
-#if COMPILER(MSVC)
-    void convertToFastCall()
-    {
-        movl_mr(4, X86::esp, X86::eax);
-        movl_mr(8, X86::esp, X86::edx);
-        movl_mr(12, X86::esp, X86::ecx);
-    }
-#else
-    void convertToFastCall() {}
-#endif
 
 #if USE(CTI_ARGUMENT)
     void restoreArgumentReference()
@@ -1167,8 +1153,6 @@ private:
 
     AssemblerBuffer* m_buffer;
 };
-
-typedef X86Assembler::JmpSrcVector JmpSrcVector;
 
 } // namespace JSC
 

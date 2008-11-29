@@ -1,0 +1,577 @@
+/*
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#ifndef MacroAssembler_h
+#define MacroAssembler_h
+
+#include <wtf/Platform.h>
+
+#if ENABLE(ASSEMBLER)
+
+#include "X86Assembler.h"
+
+namespace JSC {
+
+class MacroAssembler {
+protected:
+    X86Assembler m_assembler;
+
+public:
+    typedef X86::RegisterID RegisterID;
+
+    // Note: do not rely on values in this enum, these will change (to 0..3).
+    enum Scale {
+        TimesOne = 1,
+        TimesTwo = 2,
+        TimesFour = 4,
+        TimesEight = 8
+    };
+
+    MacroAssembler(AssemblerBuffer* assemblerBuffer)
+        : m_assembler(assemblerBuffer)
+    {
+    }
+    
+    void* copyCode()
+    {
+        return m_assembler.executableCopy();
+    }
+
+    // Address:
+    //
+    // Describes a simple base-offset address.
+    struct Address {
+        explicit Address(RegisterID base, int32_t offset = 0)
+            : base(base)
+            , offset(offset)
+        {
+        }
+
+        RegisterID base;
+        int32_t offset;
+    };
+
+    // ImplicitAddress:
+    //
+    // This class is used for explicit 'load' and 'store' operations
+    // (as opposed to situations in which a memory operand is provided
+    // to a generic operation, such as an integer arithmetic instruction).
+    //
+    // In the case of a load (or store) operation we want to permit
+    // addresses to be implicitly constructed, e.g. the two calls:
+    //
+    //     load32(Address(addrReg), destReg);
+    //     load32(addrReg, destReg);
+    //
+    // Are equivalent, and the explicit wrapping of the Address in the former
+    // is unnecessary.
+    struct ImplicitAddress {
+        ImplicitAddress(RegisterID base)
+            : base(base)
+            , offset(0)
+        {
+        }
+
+        ImplicitAddress(Address address)
+            : base(address.base)
+            , offset(address.offset)
+        {
+        }
+
+        RegisterID base;
+        int32_t offset;
+    };
+
+    // BaseIndex:
+    //
+    // Describes a complex addressing mode.
+    struct BaseIndex {
+        BaseIndex(RegisterID base, RegisterID index, int32_t offset = 0)
+            : base(base)
+            , index(index)
+            , scale(TimesOne)
+            , offset(offset)
+        {
+        }
+
+        BaseIndex(RegisterID base, RegisterID index, Scale scale, int32_t offset = 0)
+            : base(base)
+            , index(index)
+            , scale(scale)
+            , offset(offset)
+        {
+        }
+
+        RegisterID base;
+        RegisterID index;
+        Scale scale;
+        int32_t offset;
+    };
+
+    // Label:
+    //
+    // A Label records a point in the generated instruction stream, typically such that
+    // it may be used as a destination for a jump.
+    class Label {
+        friend class MacroAssembler;
+
+    public:
+        Label(MacroAssembler* masm)
+            : m_label(masm->m_assembler.label())
+        {
+        }
+
+    private:
+        X86Assembler::JmpDst m_label;
+    };
+    
+    // Jump:
+    //
+    // A jump object is a reference to a jump instruction that has been planted
+    // into the code buffer - it is typically used to link the jump, setting the
+    // relative offset such that when executed it will jump to the desired
+    // destination.
+    //
+    // Jump objects retain a pointer to the assembler for syntactic purposes -
+    // to allow the jump object to be able to link itself, e.g.:
+    //
+    //     Jump forwardsBranch = jne32(Imm32(0), reg1);
+    //     // ...
+    //     forwardsBranch.link();
+    //
+    // Jumps may also be linked to a Label.
+    class Jump {
+    public:
+        Jump()
+            : m_assembler(0)
+        {
+        }
+
+        Jump(X86Assembler& assembler, X86Assembler::JmpSrc jmp)
+            : m_assembler(&assembler)
+            , m_jmp(jmp)
+        {
+        }
+        
+        void link()
+        {
+            ASSERT(m_assembler);
+            m_assembler->link(m_jmp, m_assembler->label());
+        }
+        
+        void linkTo(Label label)
+        {
+            ASSERT(m_assembler);
+            m_assembler->link(m_jmp, label.m_label);
+        }
+
+    private:
+        X86Assembler* m_assembler;
+        X86Assembler::JmpSrc m_jmp;
+    };
+
+    // JumpList:
+    //
+    // A JumpList is a set of Jump objects.
+    // All jumps in the set will be linked to the same destination.
+    class JumpList {
+    public:
+        void link()
+        {
+            size_t size = jumps.size();
+            for (size_t i = 0; i < size; ++i)
+                jumps[i].link();
+            jumps.clear();
+        }
+        
+        void linkTo(Label label)
+        {
+            size_t size = jumps.size();
+            for (size_t i = 0; i < size; ++i)
+                jumps[i].linkTo(label);
+            jumps.clear();
+        }
+        
+        void append(Jump jump)
+        {
+            jumps.append(jump);
+        }
+        
+        void append(JumpList& other)
+        {
+            jumps.append(other.jumps.begin(), other.jumps.size());
+        }
+
+    private:
+        Vector<Jump> jumps;
+    };
+
+    // Imm32:
+    //
+    // A 32bit immediate operand to an instruction - this is wrapped in a
+    // class requiring explicit construction in order to prevent RegisterIDs
+    // (which are implemented as an enum) from accidentally being passed as
+    // immediate values.
+    struct Imm32 {
+        explicit Imm32(int32_t value)
+            : m_value(value)
+        {
+        }
+
+        int32_t m_value;
+    };
+
+
+    // Integer arithmetic operations:
+    //
+    // Operations are typically two operand - operation(source, srcDst)
+    // For many operations the source may be an Imm32, the srcDst operand
+    // may often be a memory location (explictly described using an Address
+    // object).
+
+    void add32(Imm32 imm, RegisterID dest)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
+            m_assembler.addl_i8r(imm.m_value, dest);
+        else
+            m_assembler.addl_i32r(imm.m_value, dest);
+    }
+    
+    void add32(Address src, RegisterID dest)
+    {
+        m_assembler.addl_mr(src.offset, src.base, dest);
+    }
+    
+    void or32(Imm32 imm, RegisterID dest)
+    {
+        m_assembler.orl_i32r(imm.m_value, dest);
+    }
+
+    void sub32(Imm32 imm, RegisterID dest)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
+            m_assembler.subl_i8r(imm.m_value, dest);
+        else
+            m_assembler.subl_i32r(imm.m_value, dest);
+    }
+    
+    void sub32(Address src, RegisterID dest)
+    {
+        m_assembler.subl_mr(src.offset, src.base, dest);
+    }
+
+
+    // Memory access operations:
+    //
+    // Loads are of the form load(address, destination) and stores of the form
+    // store(source, address).  The source for a store may be an Imm32.  Address
+    // operand objects to loads and store will be implicitly constructed if a
+    // register is passed.
+
+    void loadPtr(ImplicitAddress address, RegisterID dest)
+    {
+        if (address.offset)
+            m_assembler.movl_mr(address.offset, address.base, dest);
+        else
+            m_assembler.movl_mr(address.base, dest);
+    }
+
+    void load32(ImplicitAddress address, RegisterID dest)
+    {
+        if (address.offset)
+            m_assembler.movl_mr(address.offset, address.base, dest);
+        else
+            m_assembler.movl_mr(address.base, dest);
+    }
+
+    void load16(BaseIndex address, RegisterID dest)
+    {
+        if (address.offset)
+            m_assembler.movzwl_mr(address.offset, address.base, address.index, address.scale, dest);
+        else
+            m_assembler.movzwl_mr(address.base, address.index, address.scale, dest);
+    }
+
+    void storePtr(RegisterID src, ImplicitAddress address)
+    {
+        if (address.offset)
+            m_assembler.movl_rm(src, address.offset, address.base);
+        else
+            m_assembler.movl_rm(src, address.base);
+    }
+    
+    void store32(RegisterID src, ImplicitAddress address)
+    {
+        if (address.offset)
+            m_assembler.movl_rm(src, address.offset, address.base);
+        else
+            m_assembler.movl_rm(src, address.base);
+    }
+    
+    void store32(Imm32 imm, ImplicitAddress address)
+    {
+        // FIXME: add a version that doesn't take an offset
+        m_assembler.movl_i32m(imm.m_value, address.offset, address.base);
+    }
+
+
+    // Stack manipulation operations:
+    //
+    // The ABI is assumed to provide a stack abstraction to memory,
+    // containing machine word sized units of data.  Push and pop
+    // operations add and remove a single register sized unit of data
+    // to or from the stack.  Peek and poke operations read or write
+    // values on the stack, without moving the current stack position.
+    
+    void pop(RegisterID dest)
+    {
+        m_assembler.popl_r(dest);
+    }
+
+    void push(RegisterID src)
+    {
+        m_assembler.pushl_r(src);
+    }
+
+    void pop()
+    {
+        m_assembler.addl_i8r(sizeof(void*), X86::esp);
+    }
+    
+    void peek(RegisterID dest, int index = 0)
+    {
+        loadPtr(Address(X86::esp, (index * sizeof(void *))), dest);
+    }
+
+    void poke(RegisterID src, int index = 0)
+    {
+        storePtr(src, Address(X86::esp, (index * sizeof(void *))));
+    }
+
+
+    // Register move operations:
+    //
+    // Move values in registers.
+
+    void move(Imm32 imm, RegisterID dest)
+    {
+        if (!imm.m_value)
+            m_assembler.xorl_rr(dest, dest);
+        else
+            m_assembler.movl_i32r(imm.m_value, dest);
+    }
+
+
+    // Forwards / external control flow operations:
+    //
+    // This set of jump and conditional branch operations return a Jump
+    // object which may linked at a later point, allow forwards jump,
+    // or jumps that will require external linkage (after the code has been
+    // relocated).
+    //
+    // For branches, signed <, >, <= and >= are denoted as l, g, le, and ge
+    // respecitvely, for unsigned comparisons the names b, a, be, and ae are
+    // used (representing the names 'below' and 'above').
+    //
+    // Operands to the comparision are provided in the expected order, e.g.
+    // jle32(reg1, Imm32(5)) will branch if the value held in reg1, when
+    // treated as a signed 32bit value, is less than or equal to 5.
+
+private:
+    void compareImm32ForBranch(RegisterID left, int32_t right)
+    {
+        if (CAN_SIGN_EXTEND_8_32(right))
+            m_assembler.cmpl_i8r(right, left);
+        else
+            m_assembler.cmpl_i32r(right, left);
+    }
+
+    void compareImm32ForBranchEquality(RegisterID reg, int32_t imm)
+    {
+        if (!imm)
+            m_assembler.testl_rr(reg, reg);
+        else if (CAN_SIGN_EXTEND_8_32(imm))
+            m_assembler.cmpl_i8r(imm, reg);
+        else
+            m_assembler.cmpl_i32r(imm, reg);
+    }
+
+public:
+    Jump jae32(RegisterID left, Imm32 right)
+    {
+        compareImm32ForBranch(left, right.m_value);
+        return Jump(m_assembler, m_assembler.jae());
+    }
+    
+    Jump je32(RegisterID op1, RegisterID op2)
+    {
+        m_assembler.cmpl_rr(op1, op2);
+        return Jump(m_assembler, m_assembler.je());
+    }
+    
+    Jump je32(RegisterID op1, Address op2)
+    {
+        m_assembler.cmpl_rm(op1, op2.offset, op2.base);
+        return Jump(m_assembler, m_assembler.je());
+    }
+    
+    Jump je32(Imm32 imm, RegisterID reg)
+    {
+        compareImm32ForBranchEquality(reg, imm.m_value);
+        return Jump(m_assembler, m_assembler.je());
+    }
+    
+    Jump je16(RegisterID op1, BaseIndex op2)
+    {
+        if (op2.offset)
+            m_assembler.cmpw_rm(op1, op2.base, op2.index, op2.scale);
+        else
+            m_assembler.cmpw_rm(op1, op2.offset, op2.base, op2.index, op2.scale);
+
+        return Jump(m_assembler, m_assembler.je());
+    }
+    
+    Jump jg32(RegisterID left, RegisterID right)
+    {
+        m_assembler.cmpl_rr(right, left);
+        return Jump(m_assembler, m_assembler.jg());
+    }
+    
+    Jump jge32(RegisterID left, Imm32 right)
+    {
+        compareImm32ForBranch(left, right.m_value);
+        return Jump(m_assembler, m_assembler.jge());
+    }
+    
+    Jump jl32(RegisterID left, Imm32 right)
+    {
+        compareImm32ForBranch(left, right.m_value);
+        return Jump(m_assembler, m_assembler.jl());
+    }
+
+    Jump jle32(RegisterID left, RegisterID right)
+    {
+        m_assembler.cmpl_rr(right, left);
+        return Jump(m_assembler, m_assembler.jle());
+    }
+    
+    Jump jle32(RegisterID left, Imm32 right)
+    {
+        compareImm32ForBranch(left, right.m_value);
+        return Jump(m_assembler, m_assembler.jle());
+    }
+    
+    Jump jne32(RegisterID op1, RegisterID op2)
+    {
+        m_assembler.cmpl_rr(op1, op2);
+        return Jump(m_assembler, m_assembler.jne());
+    }
+
+    Jump jne32(Imm32 imm, RegisterID reg)
+    {
+        compareImm32ForBranchEquality(reg, imm.m_value);
+        return Jump(m_assembler, m_assembler.jne());
+    }
+
+    Jump jump()
+    {
+        return Jump(m_assembler, m_assembler.jmp());
+    }
+
+
+    // Backwards, local control flow operations:
+    //
+    // These operations provide a shorter notation for local
+    // backwards branches, which may be both more convenient
+    // for the user, and for the programmer, and for the
+    // assembler (allowing shorter values to be used in
+    // relative offsets).
+    //
+    // The code sequence:
+    //
+    //     Label topOfLoop(this);
+    //     // ...
+    //     jne32(reg1, reg2, topOfLoop);
+    //
+    // Is equivalent to the longer, potentially less efficient form:
+    //
+    //     Label topOfLoop(this);
+    //     // ...
+    //     jne32(reg1, reg2).linkTo(topOfLoop);
+
+    void je32(Imm32 imm, RegisterID op2, Label target)
+    {
+        je32(imm, op2).linkTo(target);
+    }
+
+    void je16(RegisterID op1, BaseIndex op2, Label target)
+    {
+        je16(op1, op2).linkTo(target);
+    }
+    
+    void jl32(RegisterID left, Imm32 right, Label target)
+    {
+        jl32(left, right).linkTo(target);
+    }
+    
+    void jle32(RegisterID left, RegisterID right, Label target)
+    {
+        jle32(left, right).linkTo(target);
+    }
+    
+    void jne32(RegisterID op1, RegisterID op2, Label target)
+    {
+        jne32(op1, op2).linkTo(target);
+    }
+
+    void jne32(Imm32 imm, RegisterID op2, Label target)
+    {
+        jne32(imm, op2).linkTo(target);
+    }
+
+    void jump(Label target)
+    {
+        m_assembler.link(m_assembler.jmp(), target.m_label);
+    }
+
+
+    // Miscellaneous operations:
+
+    void breakpoint()
+    {
+        m_assembler.int3();
+    }
+
+    void ret()
+    {
+        m_assembler.ret();
+    }
+};
+
+} // namespace JSC
+
+#endif // ENABLE(ASSEMBLER)
+
+#endif // MacroAssembler_h

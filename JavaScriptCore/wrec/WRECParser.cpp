@@ -124,7 +124,7 @@ Quantifier Parser::parseQuantifier()
     return q;
 }
 
-bool Parser::parsePatternCharacterQualifier(JmpSrcVector& failures, int ch)
+bool Parser::parsePatternCharacterQualifier(JumpList& failures, int ch)
 {
     Quantifier q = parseQuantifier();
 
@@ -153,7 +153,7 @@ bool Parser::parsePatternCharacterQualifier(JmpSrcVector& failures, int ch)
     return true;
 }
 
-bool Parser::parseCharacterClassQuantifier(JmpSrcVector& failures, const CharacterClass& charClass, bool invert)
+bool Parser::parseCharacterClassQuantifier(JumpList& failures, const CharacterClass& charClass, bool invert)
 {
     Quantifier q = parseQuantifier();
 
@@ -182,7 +182,7 @@ bool Parser::parseCharacterClassQuantifier(JmpSrcVector& failures, const Charact
     return true;
 }
 
-bool Parser::parseBackreferenceQuantifier(JmpSrcVector& failures, unsigned subpatternId)
+bool Parser::parseBackreferenceQuantifier(JumpList& failures, unsigned subpatternId)
 {
     Quantifier q = parseQuantifier();
 
@@ -204,7 +204,7 @@ bool Parser::parseBackreferenceQuantifier(JmpSrcVector& failures, unsigned subpa
     return true;
 }
 
-bool Parser::parseParentheses(JmpSrcVector&)
+bool Parser::parseParentheses(JumpList&)
 {
     // FIXME: We don't currently backtrack correctly within parentheses in cases such as
     // "c".match(/(.*)c/) so we fall back to PCRE for any regexp containing parentheses.
@@ -213,7 +213,7 @@ bool Parser::parseParentheses(JmpSrcVector&)
     return false;
 }
 
-bool Parser::parseCharacterClass(JmpSrcVector& failures)
+bool Parser::parseCharacterClass(JumpList& failures)
 {
     bool invert = false;
     if (peek() == '^') {
@@ -373,12 +373,12 @@ bool Parser::parseCharacterClass(JmpSrcVector& failures)
     return parseCharacterClassQuantifier(failures, charClass, invert);
 }
 
-bool Parser::parseOctalEscape(JmpSrcVector& failures)
+bool Parser::parseOctalEscape(JumpList& failures)
 {
     return parsePatternCharacterQualifier(failures, consumeOctal());
 }
 
-bool Parser::parseEscape(JmpSrcVector& failures)
+bool Parser::parseEscape(JumpList& failures)
 {
     switch (peek()) {
     case EndOfPattern:
@@ -520,7 +520,7 @@ bool Parser::parseEscape(JmpSrcVector& failures)
     }
 }
 
-bool Parser::parseTerm(JmpSrcVector& failures)
+bool Parser::parseTerm(JumpList& failures)
 {
     switch (peek()) {
     case EndOfPattern:
@@ -572,13 +572,13 @@ bool Parser::parseTerm(JmpSrcVector& failures)
 /*
   TOS holds index.
 */
-void Parser::parseDisjunction(JmpSrcVector& failures)
+void Parser::parseDisjunction(JumpList& failures)
 {
     parseAlternative(failures);
     if (peek() != '|')
         return;
 
-    JmpSrcVector successes;
+    JumpList successes;
     do {
         consume();
         m_generator.terminateAlternative(successes, failures);

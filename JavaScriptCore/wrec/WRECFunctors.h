@@ -27,19 +27,18 @@
 
 #if ENABLE(WREC)
 
-#include "X86Assembler.h"
+#include "WRECGenerator.h"
 #include <wtf/unicode/Unicode.h>
 
 namespace JSC { namespace WREC {
 
-    class Generator;
     struct CharacterClass;
 
     class GenerateAtomFunctor {
     public:
         virtual ~GenerateAtomFunctor() {}
 
-        virtual void generateAtom(Generator*, JmpSrcVector&) = 0;
+        virtual void generateAtom(Generator*, Generator::JumpList&) = 0;
         virtual void backtrack(Generator*) = 0;
     };
 
@@ -50,7 +49,7 @@ namespace JSC { namespace WREC {
         {
         }
 
-        virtual void generateAtom(Generator*, JmpSrcVector&);
+        virtual void generateAtom(Generator*, Generator::JumpList&);
         virtual void backtrack(Generator*);
 
     private:
@@ -65,7 +64,7 @@ namespace JSC { namespace WREC {
         {
         }
 
-        virtual void generateAtom(Generator*, JmpSrcVector&);
+        virtual void generateAtom(Generator*, Generator::JumpList&);
         virtual void backtrack(Generator*);
 
     private:
@@ -80,7 +79,7 @@ namespace JSC { namespace WREC {
         {
         }
 
-        virtual void generateAtom(Generator*, JmpSrcVector&);
+        virtual void generateAtom(Generator*, Generator::JumpList&);
         virtual void backtrack(Generator*);
 
     private:
@@ -89,20 +88,20 @@ namespace JSC { namespace WREC {
 
     class GenerateParenthesesNonGreedyFunctor : public GenerateAtomFunctor {
     public:
-        GenerateParenthesesNonGreedyFunctor(X86Assembler::JmpDst start, X86Assembler::JmpSrc success, X86Assembler::JmpSrc fail)
+        GenerateParenthesesNonGreedyFunctor(Generator::Label start, Generator::Jump success, Generator::Jump fail)
             : m_start(start)
             , m_success(success)
             , m_fail(fail)
         {
         }
 
-        virtual void generateAtom(Generator*, JmpSrcVector&);
+        virtual void generateAtom(Generator*, Generator::JumpList&);
         virtual void backtrack(Generator*);
 
     private:
-        X86Assembler::JmpDst m_start;
-        X86Assembler::JmpSrc m_success;
-        X86Assembler::JmpSrc m_fail;
+        Generator::Label m_start;
+        Generator::Jump m_success;
+        Generator::Jump m_fail;
     };
 
 } } // namespace JSC::WREC

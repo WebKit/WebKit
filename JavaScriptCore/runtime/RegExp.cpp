@@ -23,7 +23,7 @@
 
 #include "JIT.h"
 #include "Lexer.h"
-#include "WREC.h"
+#include "WRECGenerator.h"
 #include <pcre/pcre.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,7 +45,7 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern)
     , m_numSubpatterns(0)
 {
 #if ENABLE(WREC)
-    m_wrecFunction = compileRegExp(globalData->interpreter, pattern, &m_numSubpatterns, &m_constructionError);
+    m_wrecFunction = Generator::compileRegExp(globalData->interpreter, pattern, &m_numSubpatterns, &m_constructionError);
     if (m_wrecFunction)
         return;
     // Fall through to non-WREC case.
@@ -88,7 +88,7 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern, const US
     }
 
 #if ENABLE(WREC)
-    m_wrecFunction = compileRegExp(globalData->interpreter, pattern, &m_numSubpatterns, &m_constructionError, (m_flagBits & IgnoreCase), (m_flagBits & Multiline));
+    m_wrecFunction = Generator::compileRegExp(globalData->interpreter, pattern, &m_numSubpatterns, &m_constructionError, (m_flagBits & IgnoreCase), (m_flagBits & Multiline));
     if (m_wrecFunction)
         return;
     // Fall through to non-WREC case.

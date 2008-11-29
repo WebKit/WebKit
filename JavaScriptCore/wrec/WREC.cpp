@@ -34,8 +34,6 @@
 #include "WRECParser.h"
 #include "pcre_internal.h"
 
-#define __ assembler. 
-
 using namespace WTF;
 
 namespace JSC { namespace WREC {
@@ -43,32 +41,31 @@ namespace JSC { namespace WREC {
 // This limit comes from the limit set in PCRE
 static const int MaxPatternSize = (1 << 16);
 
-CompiledRegExp compileRegExp(Interpreter* interpreter, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase, bool multiline)
+CompiledRegExp Generator::compileRegExp(Interpreter* interpreter, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase, bool multiline)
 {
     if (pattern.size() > MaxPatternSize) {
         *error_ptr = "Regular expression too large.";
         return 0;
     }
 
-    X86Assembler assembler(interpreter->assemblerBuffer());
-    Parser parser(pattern, ignoreCase, multiline, assembler);
+    Parser parser(pattern, ignoreCase, multiline, interpreter->assemblerBuffer());
     Generator& generator = parser.generator();
-    JmpSrcVector failures;
+    MacroAssembler::JumpList failures;
 
     generator.generateEnter();
     generator.generateSaveIndex();
 
-    Generator::JmpDst beginPattern = __ label();
+    Label beginPattern(&generator);
     parser.parsePattern(failures);
     generator.generateReturnSuccess();
 
-    __ link(failures, __ label());
+    failures.link();
     generator.generateIncrementIndex();
     generator.generateJumpIfEndOfInput(failures);
     parser.parsePattern(failures);
     generator.generateReturnSuccess();
 
-    __ link(failures, __ label());
+    failures.link();
     generator.generateIncrementIndex();
     generator.generateJumpIfNotEndOfInput(beginPattern);
     generator.generateReturnFailure();
@@ -79,7 +76,7 @@ CompiledRegExp compileRegExp(Interpreter* interpreter, const UString& pattern, u
     }
 
     *numSubpatterns_ptr = parser.numSubpatterns();
-    return reinterpret_cast<CompiledRegExp>(__ executableCopy());
+    return reinterpret_cast<CompiledRegExp>(generator.copyCode());
 }
 
 } } // namespace JSC::WREC

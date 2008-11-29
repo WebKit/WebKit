@@ -35,13 +35,11 @@
 #include "WRECGenerator.h"
 #include <wtf/ASCIICType.h>
 
-namespace JSC {
-    class X86Assembler;
-}
-
 namespace JSC { namespace WREC {
 
     struct CharacterClass;
+
+    typedef Generator::JumpList JumpList;
 
     class Parser {
     public:
@@ -56,8 +54,8 @@ namespace JSC { namespace WREC {
             UnsupportedParentheses,
         };
 
-        Parser(const UString& pattern, bool ignoreCase, bool multiline, X86Assembler& assembler)
-            : m_generator(*this, assembler)
+        Parser(const UString& pattern, bool ignoreCase, bool multiline, AssemblerBuffer* assemblerBuffer)
+            : m_generator(*this, assemblerBuffer)
             , m_data(pattern.data())
             , m_size(pattern.size())
             , m_ignoreCase(ignoreCase)
@@ -76,7 +74,7 @@ namespace JSC { namespace WREC {
         
         Error error() const { return m_error; }
         
-        void parsePattern(JmpSrcVector& failures)
+        void parsePattern(JumpList& failures)
         {
             reset();
 
@@ -86,20 +84,20 @@ namespace JSC { namespace WREC {
                 m_error = MalformedPattern; // Parsing the pattern should fully consume it.
         }
 
-        void parseAlternative(JmpSrcVector& failures)
+        void parseAlternative(JumpList& failures)
         {
             while (parseTerm(failures)) { }
         }
 
-        void parseDisjunction(JmpSrcVector& failures);
-        bool parseTerm(JmpSrcVector& failures);
-        bool parseEscape(JmpSrcVector& failures);
-        bool parseOctalEscape(JmpSrcVector& failures);
-        bool parseParentheses(JmpSrcVector& failures);
-        bool parseCharacterClass(JmpSrcVector& failures);
-        bool parseCharacterClassQuantifier(JmpSrcVector& failures, const CharacterClass& charClass, bool invert);
-        bool parsePatternCharacterQualifier(JmpSrcVector& failures, int ch);
-        bool parseBackreferenceQuantifier(JmpSrcVector& failures, unsigned subpatternId);
+        void parseDisjunction(JumpList& failures);
+        bool parseTerm(JumpList& failures);
+        bool parseEscape(JumpList& failures);
+        bool parseOctalEscape(JumpList& failures);
+        bool parseParentheses(JumpList& failures);
+        bool parseCharacterClass(JumpList& failures);
+        bool parseCharacterClassQuantifier(JumpList& failures, const CharacterClass& charClass, bool invert);
+        bool parsePatternCharacterQualifier(JumpList& failures, int ch);
+        bool parseBackreferenceQuantifier(JumpList& failures, unsigned subpatternId);
         ALWAYS_INLINE Quantifier parseGreedyQuantifier();
         Quantifier parseQuantifier();
 
