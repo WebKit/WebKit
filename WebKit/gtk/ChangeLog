@@ -1,3 +1,34 @@
+2008-11-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Remove bogus null checks. The WebKitWebView own's a WebCore::Page
+        which is owning a WebCore::ChromeClient. There is no way that a
+        WebCore::ChromeClient is still around when the WebKitWebView is gone.
+
+        m_webView can only be null when a ChromeClient gets constructed with
+        a null WebKitWebView which is not allowed.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::ChromeClient):
+        (WebKit::ChromeClient::windowRect):
+        (WebKit::ChromeClient::setWindowRect):
+        (WebKit::ChromeClient::pageRect):
+        (WebKit::ChromeClient::focus):
+        (WebKit::ChromeClient::unfocus):
+        (WebKit::ChromeClient::show):
+        (WebKit::ChromeClient::setToolbarsVisible):
+        (WebKit::ChromeClient::toolbarsVisible):
+        (WebKit::ChromeClient::setStatusbarVisible):
+        (WebKit::ChromeClient::statusbarVisible):
+        (WebKit::ChromeClient::setScrollbarsVisible):
+        (WebKit::ChromeClient::setMenubarVisible):
+        (WebKit::ChromeClient::menubarVisible):
+        (WebKit::ChromeClient::canTakeFocus):
+        (WebKit::ChromeClient::repaint):
+        (WebKit::ChromeClient::scroll):
+        (WebKit::ChromeClient::platformWindow):
+
 2008-11-28  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed and slightly modified by Holger Freyther.
