@@ -428,7 +428,7 @@ void XMLHttpRequest::removeEventListener(const AtomicString& eventType, EventLis
 bool XMLHttpRequest::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& ec)
 {
     // FIXME: check for other error conditions enumerated in the spec.
-    if (evt->type().isEmpty()) {
+    if (!evt || evt->type().isEmpty()) {
         ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
         return true;
     }

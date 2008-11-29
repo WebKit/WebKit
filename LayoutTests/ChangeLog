@@ -1,3 +1,13 @@
+2008-11-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=21063
+        NULL pointer crash in dispatchEvent(null);
+
+        * fast/events/dispatchEvent-crash-expected.txt: Added.
+        * fast/events/dispatchEvent-crash.html: Added.
+
 2008-11-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

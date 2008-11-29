@@ -1,0 +1,36 @@
+<p>This is a test for https://bugs.webkit.org/show_bug.cgi?id=21063 (NULL pointer crash in dispatchEvent(null)).  It passes if it does not crash.</p>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    // FIXME: this should also test WorkerContext and MessagePort.
+    var eventTargets = [new XMLHttpRequest, (new XMLHttpRequest).upload, window.applicationCache, new Worker("about:blank"), document.body];
+
+    for (var i = 0; i < eventTargets.length; ++i) {
+        eventTarget = eventTargets[i];
+        try {
+            eventTarget.dispatchEvent(null);
+        } catch(e) {
+        }
+    
+        try {
+            eventTarget.dispatchEvent(undefined);
+        } catch(e) {
+        }
+    
+        try {
+            eventTarget.dispatchEvent("string");
+        } catch(e) {
+        }
+    
+        try {
+            eventTarget.dispatchEvent(0);
+        } catch(e) {
+        }
+    
+        try {
+            eventTarget.dispatchEvent({});
+        } catch(e) {
+        }
+    }
+</script>

@@ -1,3 +1,25 @@
+2008-11-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21063
+        NULL pointer crash in dispatchEvent(null);
+
+        Test: fast/events/dispatchEvent-crash.html
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchEvent):
+        * dom/Worker.cpp:
+        (WebCore::Worker::dispatchEvent):
+        * dom/WorkerContext.cpp:
+        (WebCore::WorkerContext::dispatchEvent):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::dispatchEvent):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dispatchEvent):
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::dispatchEvent):
+
 2008-11-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

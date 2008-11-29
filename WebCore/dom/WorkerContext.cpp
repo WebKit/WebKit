@@ -135,7 +135,7 @@ void WorkerContext::removeEventListener(const AtomicString& eventType, EventList
 
 bool WorkerContext::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
 {
-    if (event->type().isEmpty()) {
+    if (!event || event->type().isEmpty()) {
         ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
         return true;
     }
