@@ -61,6 +61,9 @@
 + (void)startIgnoringWebCoreNodeLeaks;
 + (void)stopIgnoringWebCoreNodeLeaks;
 
++ (NSDictionary *)memoryStatistics;
++ (void)returnFreeMemoryToSystem;
+
 // Deprecated, but used by older versions of Safari.
 + (void)emptyCache;
 + (void)setCacheDisabled:(BOOL)disabled;

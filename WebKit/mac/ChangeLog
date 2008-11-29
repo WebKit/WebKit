@@ -1,3 +1,21 @@
+2008-11-29  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22557
+        
+        - Add purgeable memory statistics to cache statistics.
+        - Add method for getting fastMalloc statistics.
+        - Add method to force returning free memory back to system.
+
+        * Misc/WebCache.mm:
+        (+[WebCache statistics]):
+        * Misc/WebCoreStatistics.h:
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics stopIgnoringWebCoreNodeLeaks]):
+        (+[WebCoreStatistics memoryStatistics]):
+        (+[WebCoreStatistics returnFreeMemoryToSystem]):
+
 2008-11-26  Mark Rowe  <mrowe@apple.com>
 
         Fix the Tiger build.

@@ -1,3 +1,18 @@
+2008-11-29  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22557
+        
+        Add function for getting basic statistics from FastMalloc.
+
+        * JavaScriptCore.exp:
+        * wtf/FastMalloc.cpp:
+        (WTF::DLL_Length):
+        (WTF::TCMalloc_PageHeap::ReturnedBytes):
+        (WTF::TCMallocStats::fastMallocStatistics):
+        * wtf/FastMalloc.h:
+
 2008-11-29  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.

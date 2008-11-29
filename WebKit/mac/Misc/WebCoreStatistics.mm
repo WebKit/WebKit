@@ -167,9 +167,24 @@ using namespace WebCore;
     WebCore::Node::startIgnoringLeaks();
 }
 
-+ (void)stopIgnoringWebCoreNodeLeaks;
++ (void)stopIgnoringWebCoreNodeLeaks
 {
     WebCore::Node::stopIgnoringLeaks();
+}
+
++ (NSDictionary *)memoryStatistics
+{
+    WTF::FastMallocStatistics statistics = WTF::fastMallocStatistics();
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+                [NSNumber numberWithInt:statistics.heapSize], @"HeapSize",
+                [NSNumber numberWithInt:statistics.freeSize], @"FreeSize",
+                [NSNumber numberWithInt:statistics.returnedSize], @"ReturnedSize",
+            nil];
+}
+
++ (void)returnFreeMemoryToSystem
+{
+    WTF::releaseFastMallocFreeMemory();
 }
 
 // Deprecated

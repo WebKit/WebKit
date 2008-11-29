@@ -78,6 +78,26 @@
 #endif
             [NSNumber numberWithInt:s.scripts.decodedSize], @"JavaScript",
             nil],
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithInt:s.images.purgeableSize], @"Images",
+            [NSNumber numberWithInt:s.cssStyleSheets.purgeableSize] ,@"CSS",
+#if ENABLE(XSLT)
+            [NSNumber numberWithInt:s.xslStyleSheets.purgeableSize], @"XSL",
+#else
+            [NSNumber numberWithInt:0], @"XSL",
+#endif
+            [NSNumber numberWithInt:s.scripts.purgeableSize], @"JavaScript",
+            nil],
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithInt:s.images.purgedSize], @"Images",
+            [NSNumber numberWithInt:s.cssStyleSheets.purgedSize] ,@"CSS",
+#if ENABLE(XSLT)
+            [NSNumber numberWithInt:s.xslStyleSheets.purgedSize], @"XSL",
+#else
+            [NSNumber numberWithInt:0], @"XSL",
+#endif
+            [NSNumber numberWithInt:s.scripts.purgedSize], @"JavaScript",
+            nil],
         nil];
 }
 
