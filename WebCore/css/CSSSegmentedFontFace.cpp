@@ -82,7 +82,6 @@ bool CSSSegmentedFontFace::isValid() const
 void CSSSegmentedFontFace::fontLoaded(CSSFontFace*)
 {
     pruneTable();
-    m_fontSelector->fontLoaded(this);
 }
 
 void CSSSegmentedFontFace::appendFontFace(PassRefPtr<CSSFontFace> fontFace)

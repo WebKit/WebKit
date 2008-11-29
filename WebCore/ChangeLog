@@ -1,3 +1,26 @@
+2008-11-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22454
+          <rdar://problem/6405550> REGRESSION (3.2-TOT): Crash below FontFallbackList::fontDataAt on jacobian.org
+
+        Test: http/tests/misc/font-face-in-multiple-segmented-faces.html
+
+        The crash happened because style recalculation was invoked by
+        CSSFontSelector after one CSSSegmentedFontFace had pruned its tables but
+        before another CSSSegmentedFontFace using the same CSSFontFace had done
+        so. The fix is to let all CSSSegmentedFontFaces using the CSSFontFace
+        prune their tables before telling the CSSFontSelector to recalc style.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::fontLoaded):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::fontLoaded):
+        * css/CSSFontSelector.h:
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::fontLoaded):
+
 2008-11-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Eric Seidel.

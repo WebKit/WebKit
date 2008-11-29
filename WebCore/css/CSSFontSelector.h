@@ -56,7 +56,7 @@ public:
 
     void addFontFaceRule(const CSSFontFaceRule*);
 
-    void fontLoaded(CSSSegmentedFontFace*);
+    void fontLoaded();
     virtual void fontCacheInvalidated();
 
     bool isEmpty() const;
