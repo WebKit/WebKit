@@ -76,7 +76,7 @@ void reportWMLError(Document* doc, WMLErrorCode error)
         errorMessage = "No card contained in document.";
         break;
     case WMLErrorMultipleTimerElements:
-        errorMessage = "Only one access element is allowed in a card.";
+        errorMessage = "Only one timer element is allowed in a card.";
         break;
     case WMLErrorUnknown: 
     default:

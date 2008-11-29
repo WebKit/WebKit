@@ -34,6 +34,7 @@
 #include "WMLDocument.h"
 #include "WMLErrorHandling.h"
 #include "WMLTaskElement.h"
+#include "WMLTimerElement.h"
 #include "WMLNames.h"
 #include "WMLPageState.h"
 #include "WMLVariables.h"
@@ -76,11 +77,10 @@ void WMLDoElement::defaultEventHandler(Event* event)
         if (!pageState)
             return;
 
-        /* FIXME: Stop the timer of the current card if it is active
+        // Stop the timer of the current card if it is active
         WMLCardElement* card = pageState->activeCard();
         if (card && card->eventTimer())
             card->eventTimer()->stop();
-        */
 
         pageState->page()->goBack();
     } else if (m_type == "reset") {

@@ -1,5 +1,15 @@
 2008-11-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Cameron Zwarich.
+
+        Update WML layout test results after adding <timer> element support.
+
+        * platform/mac/fast/wml/err-multi-timer-expected.checksum:
+        * platform/mac/fast/wml/err-multi-timer-expected.png:
+        * platform/mac/fast/wml/err-multi-timer-expected.txt:
+
+2008-11-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Holger Freyther.
 
         Update WML layout test results after adding <do> element support.

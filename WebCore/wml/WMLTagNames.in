@@ -15,6 +15,7 @@ p
 prev
 refresh
 setvar
+timer
 
 #if 0
 # These elements don't need a correponsponding WML*Element class.
@@ -30,5 +31,4 @@ setvar
 # FIXME: Implement these elements
 postfield
 template
-timer
 #endif

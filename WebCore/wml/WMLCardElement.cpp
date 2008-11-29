@@ -36,6 +36,7 @@
 #include "WMLIntrinsicEventHandler.h"
 #include "WMLNames.h"
 #include "WMLPageState.h"
+#include "WMLTimerElement.h"
 #include "WMLVariables.h"
 
 namespace WebCore {
@@ -47,6 +48,7 @@ WMLCardElement::WMLCardElement(const QualifiedName& tagName, Document* doc)
     , m_isNewContext(false)
     , m_isOrdered(false)
     , m_isVisible(false)
+    , m_eventTimer(0)
 {
 }
 
@@ -68,6 +70,18 @@ void WMLCardElement::registerDoElement(WMLDoElement* doElement)
 
     m_doElements.append(doElement);
     doElement->setActive(true);
+}
+
+void WMLCardElement::setIntrinsicEventTimer(WMLTimerElement* timer)
+{
+    // Only one timer is allowed in a card 
+    if (m_eventTimer) {
+        m_eventTimer = 0;     
+        reportWMLError(document(), WMLErrorMultipleTimerElements);
+        return;
+    }
+
+    m_eventTimer = timer;
 }
 
 void WMLCardElement::handleIntrinsicEventIfNeeded()
@@ -117,11 +131,9 @@ void WMLCardElement::handleIntrinsicEventIfNeeded()
     if (hasIntrinsicEvent)
         eventHandler->triggerIntrinsicEvent(eventType);
 
-    // FIXME Start the timer if it exists in current card
-    /*
-    if (eventTimer)
-        eventTimer->start();
-    */
+    // Start the timer if it exists in current card
+    if (m_eventTimer)
+        m_eventTimer->start();
 
     // FIXME: Initialize input/select  elements in this card
     /*

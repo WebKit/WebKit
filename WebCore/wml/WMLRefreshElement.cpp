@@ -27,8 +27,10 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Page.h"
+#include "WMLCardElement.h"
 #include "WMLDocument.h"
 #include "WMLPageState.h"
+#include "WMLTimerElement.h"
 
 namespace WebCore {
 
@@ -51,27 +53,25 @@ void WMLRefreshElement::executeTask(Event*)
     if (!card)
         return;
 
-/* FIXME
     // Before perform refresh task, we store the current timeout
     // value in the page state and then stop the timer
-    if (WMLTimerElement* timer = card->eventTimer()) {
+    WMLTimerElement* timer = card->eventTimer();
+    if (timer) {
         timer->storeIntervalToPageState();
         timer->stop();
     }
-*/
 
     storeVariableState(pageState);
 
     // Redisplay curremt card with current variable state
-    if (Frame* frame = pageState->page()->mainFrame())
+    if (Frame* frame = pageState->page()->mainFrame()) {
         if (FrameLoader* loader = frame->loader())
             loader->reload();
+    }
 
-/* FIXME
     // After refreshing task, resume the timer if it exsits 
     if (timer)
         timer->start();
-*/
 }
 
 }

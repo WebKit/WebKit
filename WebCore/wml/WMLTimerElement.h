@@ -19,47 +19,38 @@
  *
  */
 
-#include "config.h"
+#ifndef WMLTimerElement_h
+#define WMLTimerElement_h
 
 #if ENABLE(WML)
-#include "WMLPrevElement.h"
-
-#include "Page.h"
-#include "WMLCardElement.h"
-#include "WMLDocument.h"
-#include "WMLPageState.h"
-#include "WMLTimerElement.h"
+#include "Timer.h"
+#include "WMLElement.h"
 
 namespace WebCore {
 
-WMLPrevElement::WMLPrevElement(const QualifiedName& tagName, Document* doc)
-    : WMLTaskElement(tagName, doc)
-{
-}
+class WMLCardElement;
 
-WMLPrevElement::~WMLPrevElement()
-{
-}
+class WMLTimerElement : public WMLElement {
+public:
+    WMLTimerElement(const QualifiedName& tagName, Document*);
 
-void WMLPrevElement::executeTask(Event*)
-{
-    WMLPageState* pageState = wmlPageStateForDocument(document());
-    if (!pageState)
-        return;
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void insertedIntoDocument();
 
-    WMLCardElement* card = pageState->activeCard();
-    if (!card)
-        return;
+    void timerFired(Timer<WMLTimerElement>*);
 
-    storeVariableState(pageState);
+    void start(int interval = -1);
+    void stop();
+    void storeIntervalToPageState();
 
-    // Stop the timer of the current card if it is active
-    if (WMLTimerElement* timer = card->eventTimer())
-        timer->stop();
-
-    pageState->page()->goBack();
-}
+private:
+    WMLCardElement* m_card;
+    String m_name;
+    String m_value;
+    Timer<WMLTimerElement> m_timer;
+};
 
 }
 
+#endif
 #endif

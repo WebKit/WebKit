@@ -47,7 +47,7 @@ public:
     // variables operations 
     void storeVariable(const String& name, const String& value) { m_variables.set(name, value); }
     void storeVariables(WMLVariableMap& variables) { m_variables = variables; }
-    String getVaribale(const String& name) const { return m_variables.get(name); }
+    String getVariable(const String& name) const { return m_variables.get(name); }
     bool hasVariables() const { return m_variables.size(); }
 
     int historyLength() const { return m_historyLength; }

@@ -1,16 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x76
-  RenderBlock {wml} at (0,0) size 800x76
-    RenderBlock {card} at (8,16) size 784x52
-      RenderBlock (anonymous) at (0,0) size 784x0
-        RenderInline {timer} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderInline {timer} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 281x18
-          text run at (0,0) width 281: "Test for error of meta multi-timer in one card"
-      RenderBlock (anonymous) at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 585x18
-          text run at (0,0) width 585: "You should NOT see this text, because of the error that more than one timer exist in one card"
+layer at (0,0) size 800x166
+  RenderBlock {html} at (0,0) size 800x166
+    RenderBody {body} at (8,16) size 784x134
+      RenderBlock {parsererror} at (16,0) size 752x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20) size 716x22
+          RenderText {#text} at (0,0) size 324x22
+            text run at (0,0) width 324: "This page contains the following errors:"
+        RenderBlock {div} at (18,60) size 716x14
+          RenderText {#text} at (0,0) size 518x14
+            text run at (0,0) width 518: "error on line 6 at column 65: Only one timer element is allowed in a card."
+        RenderBlock {h3} at (18,92) size 716x22
+          RenderText {#text} at (0,0) size 429x22
+            text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+      RenderBlock (anonymous) at (0,150) size 784x0
+        RenderInline {wml} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,150) size 784x0
+        RenderBlock {card} at (8,0) size 768x0
+          RenderInline {timer} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {timer} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,150) size 784x0
+        RenderInline {wml} at (0,0) size 0x0
