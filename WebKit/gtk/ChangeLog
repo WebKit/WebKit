@@ -2,6 +2,15 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        Simplify the code. There is no reason to have code like
+        if (true) return false; which is using temporary variables.
+
+        * webkit/webkitwebview.cpp:
+
+2008-11-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         Remove bogus null checks. The WebKitWebView own's a WebCore::Page
         which is owning a WebCore::ChromeClient. There is no way that a
         WebCore::ChromeClient is still around when the WebKitWebView is gone.

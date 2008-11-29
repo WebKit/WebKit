@@ -796,26 +796,22 @@ static void webkit_web_view_finalize(GObject* object)
 
 static gboolean webkit_create_web_view_request_handled(GSignalInvocationHint* ihint, GValue* returnAccu, const GValue* handlerReturn, gpointer dummy)
 {
-  gboolean continueEmission = TRUE;
-  gpointer newWebView = g_value_get_object(handlerReturn);
-  g_value_set_object(returnAccu, newWebView);
+    gpointer newWebView = g_value_get_object(handlerReturn);
+    g_value_set_object(returnAccu, newWebView);
 
-  if (newWebView)
-      continueEmission = FALSE;
-
-  return continueEmission;
+    // Continue if we don't have a newWebView
+    return !newWebView;
 }
 
 static gboolean webkit_navigation_request_handled(GSignalInvocationHint* ihint, GValue* returnAccu, const GValue* handlerReturn, gpointer dummy)
 {
-  gboolean continueEmission = TRUE;
-  int signalHandled = g_value_get_int(handlerReturn);
-  g_value_set_int(returnAccu, signalHandled);
+    int signalHandled = g_value_get_int(handlerReturn);
+    g_value_set_int(returnAccu, signalHandled);
 
-  if (signalHandled != WEBKIT_NAVIGATION_RESPONSE_ACCEPT)
-      continueEmission = FALSE;
+    if (signalHandled != WEBKIT_NAVIGATION_RESPONSE_ACCEPT)
+        return FALSE;
 
-  return continueEmission;
+    return TRUE;
 }
 
 static AtkObject* webkit_web_view_get_accessible(GtkWidget* widget)
