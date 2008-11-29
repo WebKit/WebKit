@@ -1,3 +1,15 @@
+2008-11-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14968
+        document.open() erroneously returns void instead of the new Document
+
+        Test: fast/dom/HTMLDocument/document-open-return-value.html
+
+        * bindings/js/JSHTMLDocumentCustom.cpp: (WebCore::JSHTMLDocument::open):
+        Return the document on which this method was invoked, per HTML5.
+
 2008-11-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Cameron Zwarich.

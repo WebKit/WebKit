@@ -1,3 +1,13 @@
+2008-11-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14968
+        document.open() erroneously returns void instead of the new Document
+
+        * fast/dom/HTMLDocument/document-open-return-value-expected.txt: Added.
+        * fast/dom/HTMLDocument/document-open-return-value.html: Added.
+
 2008-11-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Cameron Zwarich.

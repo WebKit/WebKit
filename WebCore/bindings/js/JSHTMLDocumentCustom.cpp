@@ -120,7 +120,7 @@ JSValue* JSHTMLDocument::open(ExecState* exec, const ArgList& args)
 
     // In the case of two parameters or fewer, do a normal document open.
     static_cast<HTMLDocument*>(impl())->open(activeDocument);
-    return jsUndefined();
+    return this;
 }
 
 static String writeHelper(ExecState* exec, const ArgList& args)
