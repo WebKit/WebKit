@@ -309,6 +309,7 @@ webkitgtk_h_api += \
 	WebKit/gtk/webkit/webkitwebhistoryitem.h \
 	WebKit/gtk/webkit/webkitwebinspector.h \
 	WebKit/gtk/webkit/webkitwebsettings.h \
+	WebKit/gtk/webkit/webkitwebwindowfeatures.h \
 	WebKit/gtk/webkit/webkitwebview.h
 
 webkitgtk_built_sources += \
@@ -341,7 +342,8 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitwebhistoryitem.cpp \
 	WebKit/gtk/webkit/webkitwebinspector.cpp \
 	WebKit/gtk/webkit/webkitwebsettings.cpp \
-	WebKit/gtk/webkit/webkitwebview.cpp
+	WebKit/gtk/webkit/webkitwebview.cpp \
+	WebKit/gtk/webkit/webkitwebwindowfeatures.cpp
 
 webkitgtk_cppflags += \
 	-DBUILDING_WEBKIT \

@@ -4,6 +4,7 @@
  *  Copyright (C) 2007 Xan Lopez <xan@gnome.org>
  *  Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  *  Copyright (C) 2008 Jan Alonzo <jmalonzo@unpluggable.com>
+ *  Copyright (C) 2008 Gustavo Noronha Silva <gns@gnome.org>
  *  Copyright (C) 2008 Nuanti Ltd.
  *  Copyright (C) 2008 Collabora Ltd.
  *
@@ -74,6 +75,8 @@ extern "C" {
 enum {
     /* normal signals */
     NAVIGATION_REQUESTED,
+    CREATE_WEB_VIEW,
+    WEB_VIEW_READY,
     WINDOW_OBJECT_CLEARED,
     LOAD_STARTED,
     LOAD_COMMITTED,
@@ -104,6 +107,7 @@ enum {
     PROP_EDITABLE,
     PROP_SETTINGS,
     PROP_WEB_INSPECTOR,
+    PROP_WINDOW_FEATURES,
     PROP_TRANSPARENT,
     PROP_ZOOM_LEVEL,
     PROP_FULL_CONTENT_ZOOM
@@ -246,6 +250,9 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
     case PROP_WEB_INSPECTOR:
         g_value_set_object(value, webkit_web_view_get_inspector(webView));
         break;
+    case PROP_WINDOW_FEATURES:
+        g_value_set_object(value, webkit_web_view_get_window_features(webView));
+        break;
     case PROP_TRANSPARENT:
         g_value_set_boolean(value, webkit_web_view_get_transparent(webView));
         break;
@@ -270,6 +277,9 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
         break;
     case PROP_SETTINGS:
         webkit_web_view_set_settings(webView, WEBKIT_WEB_SETTINGS(g_value_get_object(value)));
+        break;
+    case PROP_WINDOW_FEATURES:
+        webkit_web_view_set_window_features(webView, WEBKIT_WEB_WINDOW_FEATURES(g_value_get_object(value)));
         break;
     case PROP_TRANSPARENT:
         webkit_web_view_set_transparent(webView, g_value_get_boolean(value));
@@ -605,10 +615,14 @@ static void webkit_web_view_container_forall(GtkContainer* container, gboolean, 
         (*callback)(*current, callbackData);
 }
 
-static WebKitWebView* webkit_web_view_real_create_web_view(WebKitWebView*)
+static WebKitWebView* webkit_web_view_real_create_web_view(WebKitWebView*, WebKitWebFrame*)
 {
-    notImplemented();
     return 0;
+}
+
+static gboolean webkit_web_view_real_web_view_ready(WebKitWebView*)
+{
+    return FALSE;
 }
 
 static WebKitNavigationResponse webkit_web_view_real_navigation_requested(WebKitWebView*, WebKitWebFrame* frame, WebKitNetworkRequest*)
@@ -770,6 +784,7 @@ static void webkit_web_view_finalize(GObject* object)
     g_signal_handlers_disconnect_by_func(priv->webSettings, (gpointer)webkit_web_view_settings_notify, webView);
     g_object_unref(priv->webSettings);
     g_object_unref(priv->webInspector);
+    g_object_unref(priv->webWindowFeatures);
     g_object_unref(priv->mainFrame);
     g_object_unref(priv->imContext);
     gtk_target_list_unref(priv->copy_target_list);
@@ -777,6 +792,18 @@ static void webkit_web_view_finalize(GObject* object)
     delete priv->userAgent;
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
+}
+
+static gboolean webkit_create_web_view_request_handled(GSignalInvocationHint* ihint, GValue* returnAccu, const GValue* handlerReturn, gpointer dummy)
+{
+  gboolean continueEmission = TRUE;
+  gpointer newWebView = g_value_get_object(handlerReturn);
+  g_value_set_object(returnAccu, newWebView);
+
+  if (newWebView)
+      continueEmission = FALSE;
+
+  return continueEmission;
 }
 
 static gboolean webkit_navigation_request_handled(GSignalInvocationHint* ihint, GValue* returnAccu, const GValue* handlerReturn, gpointer dummy)
@@ -820,6 +847,63 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /*
      * Signals
      */
+
+    /**
+     * WebKitWebView::create-web-view:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the #WebKitWebFrame
+     * @return: a newly allocated #WebKitWebView or %NULL
+     *
+     * Emitted when the creation of a new window is requested.
+     * If this signal is handled the signal handler should return the
+     * newly created #WebKitWebView.
+     *
+     * The new #WebKitWebView should not be displayed to the user
+     * until the #WebKitWebView::web-view-ready signal is emitted.
+     *
+     * The signal handlers should not try to deal with the reference
+     * count for the new #WebKitWebView. The widget to which the
+     * widget is added will handle that.
+     *
+     * Since 1.0.3
+     */
+    webkit_web_view_signals[CREATE_WEB_VIEW] = g_signal_new("create-web-view",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            G_STRUCT_OFFSET (WebKitWebViewClass, create_web_view),
+            webkit_create_web_view_request_handled,
+            NULL,
+            webkit_marshal_OBJECT__OBJECT,
+            WEBKIT_TYPE_WEB_VIEW , 1,
+            WEBKIT_TYPE_WEB_FRAME);
+
+    /**
+     * WebKitWebView::web-view-ready:
+     * @web_view: the object on which the signal is emitted
+     * @return: %TRUE to stop other handlers from being invoked for
+     * the event, %FALSE to propagate the event further
+     *
+     * Emitted after #WebKitWebView::create-web-view when the new #WebKitWebView
+     * should be displayed to the user. When this signal is emitted
+     * all the information about how the window should look, including
+     * size, position, whether the location, status and scroll bars
+     * should be displayed, is already set on the
+     * #WebKitWebWindowFeatures object contained by the #WebKitWebView.
+     *
+     * Notice that some of that information may change during the life
+     * time of the window, so you may want to connect to the ::notify
+     * signal of the #WebKitWebWindowFeatures object to handle those.
+     *
+     * Since 1.0.3
+     */
+    webkit_web_view_signals[WEB_VIEW_READY] = g_signal_new("web-view-ready",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST),
+            G_STRUCT_OFFSET (WebKitWebViewClass, web_view_ready),
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__VOID,
+            G_TYPE_BOOLEAN, 0);
 
     webkit_web_view_signals[NAVIGATION_REQUESTED] = g_signal_new("navigation-requested",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1156,6 +1240,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * implementations of virtual methods
      */
     webViewClass->create_web_view = webkit_web_view_real_create_web_view;
+    webViewClass->web_view_ready = webkit_web_view_real_web_view_ready;
     webViewClass->navigation_requested = webkit_web_view_real_navigation_requested;
     webViewClass->window_object_cleared = webkit_web_view_real_window_object_cleared;
     webViewClass->choose_file = webkit_web_view_real_choose_file;
@@ -1285,6 +1370,20 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         "The associated WebKitWebInspector instance",
                                                         WEBKIT_TYPE_WEB_INSPECTOR,
                                                         WEBKIT_PARAM_READABLE));
+
+    /**
+    * WebKitWebView:window-features:
+    *
+    * An associated WebKitWebWindowFeatures instance.
+    *
+    * Since: 1.0.3
+    */
+    g_object_class_install_property(objectClass, PROP_WINDOW_FEATURES,
+                                    g_param_spec_object("window-features",
+                                                        "Window Features",
+                                                        "An associated WebKitWebWindowFeatures instance",
+                                                        WEBKIT_TYPE_WEB_WINDOW_FEATURES,
+                                                        WEBKIT_PARAM_READWRITE));
 
     g_object_class_install_property(objectClass, PROP_EDITABLE,
                                     g_param_spec_boolean("editable",
@@ -1540,6 +1639,8 @@ static void webkit_web_view_init(WebKitWebView* webView)
     webkit_web_view_update_settings(webView);
     g_signal_connect(webView, "screen-changed", G_CALLBACK(webkit_web_view_screen_changed), NULL);
     g_signal_connect(priv->webSettings, "notify", G_CALLBACK(webkit_web_view_settings_notify), webView);
+
+    priv->webWindowFeatures = webkit_web_window_features_new();
 }
 
 GtkWidget* webkit_web_view_new(void)
@@ -1548,6 +1649,16 @@ GtkWidget* webkit_web_view_new(void)
 
     return GTK_WIDGET(webView);
 }
+
+// for internal use only
+void webkit_web_view_notify_ready(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    gboolean isHandled = FALSE;
+    g_signal_emit(webView, webkit_web_view_signals[WEB_VIEW_READY], 0, &isHandled);
+}
+
 
 void webkit_web_view_set_settings(WebKitWebView* webView, WebKitWebSettings* webSettings)
 {
@@ -1594,6 +1705,52 @@ WebKitWebInspector* webkit_web_view_get_inspector(WebKitWebView* webView)
 
     WebKitWebViewPrivate* priv = webView->priv;
     return priv->webInspector;
+}
+
+/**
+ * webkit_web_view_set_window_features
+ * @web_view: a #WebKitWebView
+ * @window_features: a #WebKitWebWindowFeatures
+ *
+ * This will set how the window containing the #WebKitWebView should
+ * look and behave. Applications may want to monitor this property and
+ * apply the settings it carries to the window holding the relevant
+ * #WebKitWebView.
+ *
+ * Since: 1.0.3
+ */
+void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWebWindowFeatures* webWindowFeatures)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(WEBKIT_IS_WEB_WINDOW_FEATURES(webWindowFeatures));
+
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    if(webkit_web_window_features_equal(priv->webWindowFeatures, webWindowFeatures))
+      return;
+
+    g_object_unref(priv->webWindowFeatures);
+    g_object_ref(webWindowFeatures);
+    priv->webWindowFeatures = webWindowFeatures;
+}
+
+/**
+ * webkit_web_view_get_window_features
+ * @web_view: a #WebKitWebView
+ *
+ * Returns the instance of #WebKitWebWindowFeatures held by the given
+ * #WebKitWebView.
+ *
+ * Return value: the #WebKitWebWindowFeatures
+ *
+ * Since: 1.0.3
+ */
+WebKitWebWindowFeatures* webkit_web_view_get_window_features(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    return priv->webWindowFeatures;
 }
 
 /**

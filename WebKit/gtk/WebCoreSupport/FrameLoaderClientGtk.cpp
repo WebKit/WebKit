@@ -44,6 +44,7 @@
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
 #include "webkitwebview.h"
+#include "webkitnetworkrequest.h"
 #include "webkitwebframe.h"
 #include "webkitprivate.h"
 
@@ -258,7 +259,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFuncti
         return;
     // FIXME: I think Qt version marshals this to another thread so when we
     // have multi-threaded download, we might need to do the same
-    (core(m_frame)->loader()->*policyFunction)(PolicyIgnore);
+    (core(m_frame)->loader()->*policyFunction)(PolicyUse);
 }
 
 void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>)
@@ -543,7 +544,8 @@ void FrameLoaderClient::dispatchDidFirstLayout()
 
 void FrameLoaderClient::dispatchShow()
 {
-    notImplemented();
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    webkit_web_view_notify_ready(webView);
 }
 
 void FrameLoaderClient::cancelPolicyCheck()
@@ -716,8 +718,16 @@ bool FrameLoaderClient::canCachePage() const
 
 Frame* FrameLoaderClient::dispatchCreatePage()
 {
-    notImplemented();
-    return 0;
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    WebKitWebView* newWebView = 0;
+
+    g_signal_emit_by_name(webView, "create-web-view", m_frame, &newWebView);
+
+    if (!newWebView)
+        return 0;
+
+    WebKitWebViewPrivate* privateData = WEBKIT_WEB_VIEW_GET_PRIVATE(newWebView);
+    return core(privateData->mainFrame);
 }
 
 void FrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError&)

@@ -1,3 +1,54 @@
+2008-11-28  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed and slightly modified by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19130
+
+        ChromeClient::createWindow and friends need to be implemented
+
+        Code from Gustavo Noronha and Marco Barisione
+        <marco.barisione@collabora.co.uk> in this change set.
+
+        Implemented all the ChromeClient interfaces needed to have new
+        window creation functioning and exposed to client code. We
+        implemented a mirror GObject to the WindowFeatures object provided
+        by WebCore.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::windowRect):
+        (WebKit::ChromeClient::setWindowRect):
+        (WebKit::ChromeClient::unfocus):
+        (WebKit::ChromeClient::createWindow):
+        (WebKit::ChromeClient::show):
+        (WebKit::ChromeClient::setToolbarsVisible):
+        (WebKit::ChromeClient::toolbarsVisible):
+        (WebKit::ChromeClient::setStatusbarVisible):
+        (WebKit::ChromeClient::statusbarVisible):
+        (WebKit::ChromeClient::setScrollbarsVisible):
+        (WebKit::ChromeClient::scrollbarsVisible):
+        (WebKit::ChromeClient::setMenubarVisible):
+        (WebKit::ChromeClient::menubarVisible):
+        (WebKit::ChromeClient::setResizable):
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::FrameLoaderClient::dispatchShow):
+        (WebKit::FrameLoaderClient::dispatchCreatePage):
+        * webkit/webkit.h:
+        * webkit/webkitdefines.h:
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+        * webkit/webkitwebwindowfeatures.cpp: Added.
+        (_WebKitWebWindowFeaturesPrivate::webkit_web_window_features_class_init):
+        (_WebKitWebWindowFeaturesPrivate::webkit_web_window_features_init):
+        (_WebKitWebWindowFeaturesPrivate::webkit_web_window_features_finalize):
+        (_WebKitWebWindowFeaturesPrivate::webkit_web_window_features_set_property):
+        (_WebKitWebWindowFeaturesPrivate::webkit_web_window_features_get_property):
+        (_WebKitWebWindowFeaturesPrivate::webkit_web_window_features_new):
+        (_WebKitWebWindowFeaturesPrivate::webkit_web_window_features_new_from_core_features):
+        (_WebKitWebWindowFeaturesPrivate::webkit_web_window_features_equal):
+        * webkit/webkitwebwindowfeatures.h: Added.
+
 2008-11-24  Darin Fisher  <darin@chromium.org>
 
         Fix bustage.

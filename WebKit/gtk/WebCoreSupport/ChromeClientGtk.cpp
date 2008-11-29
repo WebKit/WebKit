@@ -3,6 +3,7 @@
  * Copyright (C) 2007, 2008 Christian Dywan <christian@imendio.com>
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2008 Gustavo Noronha Silva <gns@gnome.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,12 +26,14 @@
 #include "FileSystem.h"
 #include "FileChooser.h"
 #include "FloatRect.h"
+#include "FrameLoadRequest.h"
 #include "IntRect.h"
 #include "PlatformString.h"
 #include "CString.h"
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "webkitwebview.h"
+#include "webkitnetworkrequest.h"
 #include "webkitprivate.h"
 #include "NotImplemented.h"
 #include "WindowFeatures.h"
@@ -61,7 +64,7 @@ FloatRect ChromeClient::windowRect()
     if (!m_webView)
         return FloatRect();
     GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
-    if (window) {
+    if (GTK_WIDGET_TOPLEVEL(window)) {
         gint left, top, width, height;
         gtk_window_get_position(GTK_WINDOW(window), &left, &top);
         gtk_window_get_size(GTK_WINDOW(window), &width, &height);
@@ -70,9 +73,20 @@ FloatRect ChromeClient::windowRect()
     return FloatRect();
 }
 
-void ChromeClient::setWindowRect(const FloatRect& r)
+void ChromeClient::setWindowRect(const FloatRect& rect)
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    IntRect intrect = IntRect(rect);
+    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_view_get_window_features(m_webView);
+
+    g_object_set(G_OBJECT(webWindowFeatures),
+                 "x", intrect.x(),
+                 "y", intrect.y(),
+                 "width", intrect.width(),
+                 "height", intrect.height(),
+                 NULL);
 }
 
 FloatRect ChromeClient::pageRect()
@@ -101,29 +115,35 @@ void ChromeClient::unfocus()
     if (!m_webView)
         return;
     GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
-    if (window)
+    if (GTK_WIDGET_TOPLEVEL(window))
         gtk_window_set_focus(GTK_WINDOW(window), NULL);
 }
 
-Page* ChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& features)
+Page* ChromeClient::createWindow(Frame* frame, const FrameLoadRequest& frameLoadRequest, const WindowFeatures& coreFeatures)
 {
-    if (features.dialog) {
-        notImplemented();
-        return 0;
-    } else {
-        /* TODO: FrameLoadRequest is not used */
-        WebKitWebView* webView = WEBKIT_WEB_VIEW_GET_CLASS(m_webView)->create_web_view(m_webView);
-        if (!webView)
-            return 0;
+    WebKitWebView* webView = 0;
 
-        WebKitWebViewPrivate* privateData = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
-        return privateData->corePage;
-    }
+    g_signal_emit_by_name(m_webView, "create-web-view", kit(frame), &webView);
+
+    if (!webView)
+        return 0;
+
+    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_window_features_new_from_core_features(coreFeatures);
+    webkit_web_view_set_window_features(webView, webWindowFeatures);
+    g_object_unref(G_OBJECT(webWindowFeatures));
+
+    if (!frameLoadRequest.isEmpty())
+        webkit_web_view_open(webView, frameLoadRequest.resourceRequest().url().string().utf8().data());
+
+    return core(webView);
 }
 
 void ChromeClient::show()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    webkit_web_view_notify_ready(m_webView);
 }
 
 bool ChromeClient::canRunModal()
@@ -137,52 +157,96 @@ void ChromeClient::runModal()
     notImplemented();
 }
 
-void ChromeClient::setToolbarsVisible(bool)
+void ChromeClient::setToolbarsVisible(bool visible)
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_view_get_window_features(m_webView);
+
+    g_object_set(G_OBJECT(webWindowFeatures), "toolbar-visible", visible, NULL);
 }
 
 bool ChromeClient::toolbarsVisible()
 {
-    notImplemented();
-    return false;
+    if (!m_webView)
+        return false;
+
+    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_view_get_window_features(m_webView);
+    gboolean visible;
+
+    g_object_get(G_OBJECT(webWindowFeatures), "toolbar-visible", &visible, NULL);
+    return visible;
 }
 
-void ChromeClient::setStatusbarVisible(bool)
+void ChromeClient::setStatusbarVisible(bool visible)
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_view_get_window_features(m_webView);
+
+    g_object_set(G_OBJECT(webWindowFeatures), "statusbar-visible", visible, NULL);
 }
 
 bool ChromeClient::statusbarVisible()
 {
-    notImplemented();
-    return false;
+    if (!m_webView)
+        return false;
+
+    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_view_get_window_features(m_webView);
+    gboolean visible;
+
+    g_object_get(G_OBJECT(webWindowFeatures), "statusbar-visible", &visible, NULL);
+    return visible;
 }
 
-void ChromeClient::setScrollbarsVisible(bool)
+void ChromeClient::setScrollbarsVisible(bool visible)
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_view_get_window_features(m_webView);
+
+    g_object_set(G_OBJECT(webWindowFeatures), "scrollbar-visible", visible, NULL);
 }
 
 bool ChromeClient::scrollbarsVisible() {
-    notImplemented();
-    return false;
+    if (!m_webView)
+        return false;
+
+    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_view_get_window_features(m_webView);
+    gboolean visible;
+
+    g_object_get(G_OBJECT(webWindowFeatures), "scrollbar-visible", &visible, NULL);
+    return visible;
 }
 
-void ChromeClient::setMenubarVisible(bool)
+void ChromeClient::setMenubarVisible(bool visible)
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_view_get_window_features(m_webView);
+
+    g_object_set(G_OBJECT(webWindowFeatures), "menubar-visible", visible, NULL);
 }
 
 bool ChromeClient::menubarVisible()
 {
-    notImplemented();
-    return false;
+    if (!m_webView)
+        return false;
+
+    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_view_get_window_features(m_webView);
+    gboolean visible;
+
+    g_object_get(G_OBJECT(webWindowFeatures), "menubar-visible", &visible, NULL);
+    return visible;
 }
 
 void ChromeClient::setResizable(bool)
 {
-    notImplemented();
+    // Ignored for now
 }
 
 void ChromeClient::closeWindowSoon()

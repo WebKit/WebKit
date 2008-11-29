@@ -58,6 +58,9 @@ typedef struct _WebKitWebSettingsClass WebKitWebSettingsClass;
 typedef struct _WebKitWebInspector WebKitWebInspector;
 typedef struct _WebKitWebInspectorClass WebKitWebInspectorClass;
 
+typedef struct _WebKitWebWindowFeatures WebKitWebWindowFeatures;
+typedef struct _WebKitWebWindowFeaturesClass WebKitWebWindowFeaturesClass;
+
 typedef struct _WebKitWebView WebKitWebView;
 typedef struct _WebKitWebViewClass WebKitWebViewClass;
 

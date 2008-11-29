@@ -65,11 +65,11 @@ struct _WebKitWebViewClass {
     /*< public >*/
     /*
      * default handler/virtual methods
-     * DISCUSS: create_web_view needs a request and should we make this a signal with default handler? this would
-     * require someone doing a g_signal_stop_emission_by_name
-     * WebUIDelegate has nothing for create_frame, WebPolicyDelegate as well...
      */
-    WebKitWebView            * (* create_web_view)        (WebKitWebView* web_view);
+    WebKitWebView            * (* create_web_view)        (WebKitWebView        *web_view,
+                                                           WebKitWebFrame       *web_frame);
+
+    gboolean                   (* web_view_ready)          (WebKitWebView* web_view);
 
     /*
      * TODO: FIXME: Create something like WebPolicyDecisionListener_Protocol instead
@@ -251,6 +251,13 @@ webkit_web_view_get_settings                    (WebKitWebView        *web_view)
 
 WEBKIT_API WebKitWebInspector *
 webkit_web_view_get_inspector                   (WebKitWebView        *web_view);
+
+WEBKIT_API void
+webkit_web_view_set_window_features             (WebKitWebView        *web_view,
+                                                 WebKitWebWindowFeatures *window_features);
+
+WEBKIT_API WebKitWebWindowFeatures*
+webkit_web_view_get_window_features             (WebKitWebView        *web_view);
 
 WEBKIT_API gboolean
 webkit_web_view_get_transparent                 (WebKitWebView        *web_view);

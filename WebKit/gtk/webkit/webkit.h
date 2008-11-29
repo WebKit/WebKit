@@ -26,6 +26,7 @@
 #include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebsettings.h>
 #include <webkit/webkitwebinspector.h>
+#include <webkit/webkitwebwindowfeatures.h>
 #include <webkit/webkitwebview.h>
 #include <webkit/webkitwebbackforwardlist.h>
 #include <webkit/webkitwebhistoryitem.h>

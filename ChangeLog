@@ -1,3 +1,14 @@
+2008-11-28  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed and slightly modified by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19130
+
+        Added the new WebKitGtk files to be built:
+        WebKit/gtk/webkit/webkitwebwindowfeatures.{cpp,h}
+
+        * GNUmakefile.am:
+
 2008-11-26  Kalle Vahlman  <kalle.vahlman@movial.com>
 
         Reviewed by Darin Adler. Landed by Jan Alonzo.

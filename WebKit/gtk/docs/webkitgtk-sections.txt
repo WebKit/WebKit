@@ -201,6 +201,8 @@ webkit_web_view_target_info_get_type
 webkit_web_view_unmark_text_matches
 webkit_web_view_zoom_in
 webkit_web_view_zoom_out
+webkit_web_view_get_window_features
+webkit_web_view_set_window_features
 <SUBSECTION Standard>
 WEBKIT_WEB_VIEW
 WEBKIT_IS_WEB_VIEW
@@ -214,6 +216,26 @@ WebKitWebViewPrivate
 WebKitWebView
 WebKitWebViewClass
 WEBKIT_WEB_VIEW_GET_PRIVATE
+</SECTION>
+
+<SECTION>
+<FILE>webkitwebwindowfeatures</FILE>
+<TITLE>WebKitWebWindowFeatures</TITLE>
+WebKitWebWindowFeatures
+webkit_web_window_features_equal
+webkit_web_window_features_new
+<SUBSECTION Standard>
+WEBKIT_IS_WEB_WINDOW_FEATURES
+WEBKIT_IS_WEB_WINDOW_FEATURES_CLASS
+WEBKIT_TYPE_WEB_WINDOW_FEATURES
+WEBKIT_WEB_WINDOW_FEATURES
+WEBKIT_WEB_WINDOW_FEATURES_CLASS
+WEBKIT_WEB_WINDOW_FEATURES_GET_CLASS
+<SUBSECTION Private>
+webkit_web_window_features_get_type
+WebKitWebWindowFeatures
+WebKitWebWindowFeaturesClass
+WebKitWebWindowFeaturesPrivate
 </SECTION>
 
 <SECTION>

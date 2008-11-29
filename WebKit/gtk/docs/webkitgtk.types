@@ -8,4 +8,5 @@ webkit_web_settings_get_type
 webkit_web_view_get_type
 webkit_navigation_response_get_type
 webkit_web_view_target_info_get_type
+webkit_web_window_features_get_type
 
