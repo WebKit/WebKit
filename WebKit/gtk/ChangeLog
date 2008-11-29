@@ -1,3 +1,20 @@
+2008-11-29  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17122
+        [GTK] Bad font default settings
+
+        Implement a property "enforce-96-dpi" in WebKitWebSettings
+        that can be enabled to force the view to assume 96 DPI.
+
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_class_init):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_set_property):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_get_property):
+        * webkit/webkitwebview.cpp:
+
 2008-11-28  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Nikolas Zimmermann.

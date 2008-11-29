@@ -45,6 +45,7 @@ struct _WebKitWebSettingsPrivate {
     guint default_monospace_font_size;
     guint minimum_font_size;
     guint minimum_logical_font_size;
+    gboolean enforce_96_dpi;
     gboolean auto_load_images;
     gboolean auto_shrink_images;
     gboolean print_backgrounds;
@@ -72,6 +73,7 @@ enum {
     PROP_DEFAULT_MONOSPACE_FONT_SIZE,
     PROP_MINIMUM_FONT_SIZE,
     PROP_MINIMUM_LOGICAL_FONT_SIZE,
+    PROP_ENFORCE_96_DPI,
     PROP_AUTO_LOAD_IMAGES,
     PROP_AUTO_SHRINK_IMAGES,
     PROP_PRINT_BACKGROUNDS,
@@ -195,6 +197,26 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     "Minimum Logical Font Size",
                                     "The minimum logical font size used to display text.",
                                     1, G_MAXINT, 5,
+                                    flags));
+
+    /**
+    * WebKitWebSettings:enforce-96-dpi:
+    *
+    * Enforce a resolution of 96 DPI. This is meant for compatibility
+    * with web pages which cope badly with different screen resolutions
+    * and for automated testing.
+    * Web browsers and applications that typically display arbitrary
+    * content from the web should provide a preference for this.
+    *
+    * Since: 1.0.3
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENFORCE_96_DPI,
+                                    g_param_spec_boolean(
+                                    "enforce-96-dpi",
+                                    "Enforce 96 DPI",
+                                    "Enforce a resolution of 96 DPI",
+                                    FALSE,
                                     flags));
 
     g_object_class_install_property(gobject_class,
@@ -365,6 +387,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_MINIMUM_LOGICAL_FONT_SIZE:
         priv->minimum_logical_font_size = g_value_get_int(value);
         break;
+    case PROP_ENFORCE_96_DPI:
+        priv->enforce_96_dpi = g_value_get_boolean(value);
+        break;
     case PROP_AUTO_LOAD_IMAGES:
         priv->auto_load_images = g_value_get_boolean(value);
         break;
@@ -437,6 +462,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_MINIMUM_LOGICAL_FONT_SIZE:
         g_value_set_int(value, priv->minimum_logical_font_size);
+        break;
+    case PROP_ENFORCE_96_DPI:
+        g_value_set_boolean(value, priv->enforce_96_dpi);
         break;
     case PROP_AUTO_LOAD_IMAGES:
         g_value_set_boolean(value, priv->auto_load_images);

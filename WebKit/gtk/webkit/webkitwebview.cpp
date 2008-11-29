@@ -1430,6 +1430,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
 static gdouble webViewGetDPI(WebKitWebView* webView)
 {
+    WebKitWebViewPrivate* priv = webView->priv;
+    WebKitWebSettings* webSettings = priv->webSettings;
+    gboolean enforce96DPI;
+    g_object_get(webSettings, "enforce-96-dpi", &enforce96DPI, NULL);
+    if (enforce96DPI)
+        return 96.0;
+
     gdouble DPI = defaultDPI;
 #if GTK_CHECK_VERSION(2,10,0)
     GdkScreen* screen = gtk_widget_has_screen(GTK_WIDGET(webView)) ? gtk_widget_get_screen(GTK_WIDGET(webView)) : gdk_screen_get_default();
@@ -1558,6 +1565,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setMinimumFontSize(pixelsFromSize(webView, g_value_get_int(&value)));
     else if (name == g_intern_string("minimum-logical-font-size"))
         settings->setMinimumLogicalFontSize(pixelsFromSize(webView, g_value_get_int(&value)));
+    else if (name == g_intern_string("enforce-96-dpi"))
+        webkit_web_view_screen_changed(webView, NULL, NULL);
     else if (name == g_intern_string("auto-load-images"))
         settings->setLoadsImagesAutomatically(g_value_get_boolean(&value));
     else if (name == g_intern_string("auto-shrink-images"))
