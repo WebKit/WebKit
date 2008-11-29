@@ -1,20 +1,30 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x84
-  RenderBlock {wml} at (0,0) size 800x84
-    RenderBlock {card} at (8,16) size 784x52
-      RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 231x18
-          text run at (0,0) width 231: "Test for variable reference validation"
-      RenderBlock {p} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 645x18
-          text run at (0,0) width 645: "An error will occur when loading the card because the variable reference is placed in a invalid location"
-      RenderBlock (anonymous) at (0,68) size 784x0
-        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
+layer at (0,0) size 800x260
+  RenderBlock {html} at (0,0) size 800x260
+    RenderBody {body} at (8,16) size 784x236
+      RenderBlock {parsererror} at (16,0) size 752x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20) size 716x22
+          RenderText {#text} at (0,0) size 324x22
+            text run at (0,0) width 324: "This page contains the following errors:"
+        RenderBlock {div} at (18,60) size 716x14
+          RenderText {#text} at (0,0) size 749x14
+            text run at (0,0) width 749: "error on line 9 at column 46: A variable reference uses invalid syntax or is placed in an invalid location."
+        RenderBlock {h3} at (18,92) size 716x22
+          RenderText {#text} at (0,0) size 429x22
+            text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+      RenderBlock (anonymous) at (0,150) size 784x0
+        RenderInline {wml} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {refresh} at (0,0) size 0x0
-            RenderText {#text} at (0,0) size 0x0
-            RenderInline {setvar} at (0,0) size 0x0
-            RenderText {#text} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,150) size 784x86
+        RenderBlock {card} at (8,0) size 768x86
+          RenderBlock {p} at (0,0) size 768x18
+            RenderText {#text} at (0,0) size 231x18
+              text run at (0,0) width 231: "Test for variable reference validation"
+          RenderBlock {p} at (0,34) size 768x18
+            RenderText {#text} at (0,0) size 645x18
+              text run at (0,0) width 645: "An error will occur when loading the card because the variable reference is placed in a invalid location"
+          RenderBlock (anonymous) at (0,68) size 768x18
+            RenderButton {do} at (0,0) size 0x18 [bgcolor=#C0C0C0]
+      RenderBlock (anonymous) at (0,244) size 784x0
+        RenderInline {wml} at (0,0) size 0x0

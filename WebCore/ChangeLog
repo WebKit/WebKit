@@ -1,5 +1,40 @@
 2008-11-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Holger Freyther.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22549
+
+        Add <do> element support. It provides a way to bind a task element to a <template>/<card> element. 
+        Changes numerous of layout tests which contain <do> elements, as they render as buttons now.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updateFromElement):
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::registerDoElement):
+        * wml/WMLCardElement.h:
+        * wml/WMLDoElement.cpp: Added.
+        (WebCore::WMLDoElement::WMLDoElement):
+        (WebCore::WMLDoElement::defaultEventHandler):
+        (WebCore::WMLDoElement::parseMappedAttribute):
+        (WebCore::WMLDoElement::insertedIntoDocument):
+        (WebCore::WMLDoElement::createRenderer):
+        (WebCore::WMLDoElement::recalcStyle):
+        * wml/WMLDoElement.h: Added.
+        (WebCore::WMLDoElement::registerTask):
+        (WebCore::WMLDoElement::isActive):
+        (WebCore::WMLDoElement::label):
+        (WebCore::WMLDoElement::name):
+        (WebCore::WMLDoElement::setActive):
+        (WebCore::WMLDoElement::setNoop):
+        * wml/WMLNoopElement.cpp:
+        (WebCore::WMLNoopElement::insertedIntoDocument):
+        * wml/WMLTagNames.in:
+        * wml/WMLTaskElement.cpp:
+        (WebCore::WMLTaskElement::insertedIntoDocument):
+
+2008-11-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Sam Weinig.
 
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=22545

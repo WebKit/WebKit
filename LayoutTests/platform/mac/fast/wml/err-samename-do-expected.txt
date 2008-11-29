@@ -1,22 +1,27 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x76
-  RenderBlock {wml} at (0,0) size 800x76
-    RenderBlock {card} at (8,16) size 784x52
-      RenderBlock (anonymous) at (0,0) size 784x0
-        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
+layer at (0,0) size 800x192
+  RenderBlock {html} at (0,0) size 800x192
+    RenderBody {body} at (8,16) size 784x168
+      RenderBlock {parsererror} at (16,0) size 752x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20) size 716x22
+          RenderText {#text} at (0,0) size 324x22
+            text run at (0,0) width 324: "This page contains the following errors:"
+        RenderBlock {div} at (18,60) size 716x14
+          RenderText {#text} at (0,0) size 630x14
+            text run at (0,0) width 630: "error on line 8 at column 55: At least two do elements share a name, which is not allowed."
+        RenderBlock {h3} at (18,92) size 716x22
+          RenderText {#text} at (0,0) size 429x22
+            text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+      RenderBlock (anonymous) at (0,150) size 784x0
+        RenderInline {wml} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {refresh} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,150) size 784x18
+        RenderBlock {card} at (8,0) size 768x18
+          RenderButton {do} at (0,14) size 0x0 [bgcolor=#C0C0C0]
+            RenderBlock (anonymous) at (0,0) size 0x0
+              RenderInline {refresh} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
-          RenderText {#text} at (0,0) size 0x0
-          RenderInline {refresh} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 399x18
-          text run at (0,0) width 399: "Test for the error that more than one do element has same name"
-      RenderBlock (anonymous) at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 518x18
-          text run at (0,0) width 518: "You should NOT see this text, because of the error of name-conflict of do element"
+      RenderBlock (anonymous) at (0,176) size 784x0
+        RenderInline {wml} at (0,0) size 0x0

@@ -25,6 +25,7 @@
 #include "WMLTaskElement.h"
 
 #include "WMLAnchorElement.h"
+#include "WMLDoElement.h"
 #include "WMLNames.h"
 #include "WMLOnEventElement.h"
 #include "WMLPageState.h"
@@ -55,10 +56,8 @@ void WMLTaskElement::insertedIntoDocument()
 
     if (parent->hasTagName(anchorTag))
         static_cast<WMLAnchorElement*>(parent)->registerTask(this);
-/* FIXME
     else if (parent->hasTagName(doTag))
         static_cast<WMLDoElement*>(parent)->registerTask(this);
-*/
     else if (parent->hasTagName(oneventTag))
         static_cast<WMLOnEventElement*>(parent)->registerTask(this);
 }

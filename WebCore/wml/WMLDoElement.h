@@ -19,42 +19,47 @@
  *
  */
 
-#include "config.h"
+#ifndef WMLDoElement_h
+#define WMLDoElement_h
 
 #if ENABLE(WML)
-#include "WMLNoopElement.h"
-
-#include "WMLDoElement.h"
-#include "WMLErrorHandling.h"
-#include "WMLNames.h"
+#include "WMLElement.h"
 
 namespace WebCore {
 
-using namespace WMLNames;
+class WMLTaskElement;
 
-WMLNoopElement::WMLNoopElement(const QualifiedName& tagName, Document* doc)
-    : WMLElement(tagName, doc)
-{
+class WMLDoElement : public WMLElement {
+public:
+    WMLDoElement(const QualifiedName& tagName, Document*);
+
+    virtual void defaultEventHandler(Event*);
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void insertedIntoDocument();
+
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void recalcStyle(StyleChange);
+
+    void registerTask(WMLTaskElement* task) { m_task = task; }
+
+    bool isActive() const { return m_isActive; }
+    String label() const { return m_label; }
+    String name() const { return m_name; }
+
+    void setActive(bool active) { m_isActive = active; }
+    void setNoop(bool noop) { m_isNoop = noop;}
+
+private:
+    WMLTaskElement* m_task;
+    bool m_isActive;
+    bool m_isNoop;
+    bool m_isOptional;
+    String m_label;
+    String m_name;
+    String m_type;
+};
+
 }
 
-void WMLNoopElement::insertedIntoDocument()
-{
-    WMLElement::insertedIntoDocument();
-
-    Node* parent = parentNode();
-    ASSERT(parent);
-
-    if (!parent || !parent->isWMLElement())
-        return;
-
-    if (parent->hasTagName(doTag)) {
-        WMLDoElement* doElement = static_cast<WMLDoElement*>(parent);
-        doElement->setNoop(true);
-        doElement->setChanged();
-    } else if (parent->hasTagName(anchorTag))
-        reportWMLError(document(), WMLErrorForbiddenTaskInAnchorElement);
-}
-
-}
-
+#endif
 #endif

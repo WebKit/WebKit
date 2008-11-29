@@ -25,7 +25,11 @@
 #if ENABLE(WML)
 #include "WMLEventHandlingElement.h"
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
+
+class WMLDoElement;
 
 class WMLCardElement : public WMLEventHandlingElement {
 public:
@@ -35,6 +39,7 @@ public:
     bool isNewContext() const { return m_isNewContext; }
     bool isOrdered() const { return m_isOrdered; }
 
+    void registerDoElement(WMLDoElement*);
     void handleIntrinsicEventIfNeeded();
 
     virtual void parseMappedAttribute(MappedAttribute*);
@@ -52,6 +57,8 @@ private:
     bool m_isNewContext;
     bool m_isOrdered;
     bool m_isVisible;
+
+    Vector<WMLDoElement*> m_doElements;
 };
 
 }

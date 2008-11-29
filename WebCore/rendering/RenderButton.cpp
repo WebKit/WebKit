@@ -30,6 +30,11 @@
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
 
+#if ENABLE(WML)
+#include "WMLDoElement.h"
+#include "WMLNames.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -105,6 +110,19 @@ void RenderButton::updateFromElement()
         String value = input->valueWithDefault();
         setText(value);
     }
+
+
+#if ENABLE(WML)
+    else if (element()->hasTagName(WMLNames::doTag)) {
+        WMLDoElement* doElement = static_cast<WMLDoElement*>(element());
+
+        String value = doElement->label();
+        if (value.isEmpty())
+            value = doElement->name();
+
+        setText(value);
+    }
+#endif
 }
 
 bool RenderButton::canHaveChildren() const

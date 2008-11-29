@@ -1,3 +1,22 @@
+2008-11-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Holger Freyther.
+
+        Update WML layout test results after adding <do> element support.
+
+        * platform/mac/fast/wml/do-element-optional-attr-expected.checksum:
+        * platform/mac/fast/wml/do-element-optional-attr-expected.png:
+        * platform/mac/fast/wml/do-element-optional-attr-expected.txt:
+        * platform/mac/fast/wml/do-shadow-expected.txt:
+        * platform/mac/fast/wml/do-template-expected.txt:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.checksum:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.png:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.txt:
+        * platform/mac/fast/wml/err-invalid-variable-name-expected.txt:
+        * platform/mac/fast/wml/err-samename-do-expected.checksum:
+        * platform/mac/fast/wml/err-samename-do-expected.png:
+        * platform/mac/fast/wml/err-samename-do-expected.txt:
+
 2008-11-26  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

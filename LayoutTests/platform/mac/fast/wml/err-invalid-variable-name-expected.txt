@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x200
-  RenderBlock {html} at (0,0) size 800x200
-    RenderBody {body} at (8,16) size 784x168
+layer at (0,0) size 800x226
+  RenderBlock {html} at (0,0) size 800x226
+    RenderBody {body} at (8,16) size 784x202
       RenderBlock {parsererror} at (16,0) size 752x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
         RenderBlock {h3} at (18,20) size 716x22
           RenderText {#text} at (0,0) size 324x22
@@ -16,16 +16,16 @@ layer at (0,0) size 800x200
       RenderBlock (anonymous) at (0,150) size 784x0
         RenderInline {wml} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,150) size 784x18
-        RenderBlock {card} at (8,0) size 768x18
+      RenderBlock (anonymous) at (0,150) size 784x52
+        RenderBlock {card} at (8,0) size 768x52
           RenderBlock {p} at (0,0) size 768x18
             RenderText {#text} at (0,0) size 207x18
               text run at (0,0) width 207: "Test for variable name validation"
-          RenderBlock (anonymous) at (0,34) size 768x0
-            RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
-              RenderText {#text} at (0,0) size 0x0
-              RenderInline {refresh} at (0,0) size 0x0
-                RenderText {#text} at (0,0) size 0x0
-                RenderInline {setvar} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,184) size 784x0
+          RenderBlock (anonymous) at (0,34) size 768x18
+            RenderButton {do} at (0,14) size 0x0 [bgcolor=#C0C0C0]
+              RenderBlock (anonymous) at (0,0) size 0x0
+                RenderInline {refresh} at (0,0) size 0x0
+                  RenderText {#text} at (0,0) size 0x0
+                  RenderInline {setvar} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,210) size 784x0
         RenderInline {wml} at (0,0) size 0x0

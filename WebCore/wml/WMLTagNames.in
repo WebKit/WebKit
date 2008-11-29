@@ -7,6 +7,7 @@ access
 anchor
 br interfaceName=WMLBRElement
 card
+do
 go
 noop
 onevent interfaceName=WMLOnEventElement
@@ -27,7 +28,6 @@ setvar
 
 #if 0
 # FIXME: Implement these elements
-do
 postfield
 template
 timer
