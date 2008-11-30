@@ -1,3 +1,10 @@
+2008-11-30  Antti Koivisto  <antti@apple.com>
+
+        Windows build fix.
+
+        * WebJavaScriptCollector.cpp:
+        (WebJavaScriptCollector::objectCount):
+
 2008-11-29  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
