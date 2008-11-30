@@ -203,32 +203,32 @@ public:
     public:
         void link()
         {
-            size_t size = jumps.size();
+            size_t size = m_jumps.size();
             for (size_t i = 0; i < size; ++i)
-                jumps[i].link();
-            jumps.clear();
+                m_jumps[i].link();
+            m_jumps.clear();
         }
         
         void linkTo(Label label)
         {
-            size_t size = jumps.size();
+            size_t size = m_jumps.size();
             for (size_t i = 0; i < size; ++i)
-                jumps[i].linkTo(label);
-            jumps.clear();
+                m_jumps[i].linkTo(label);
+            m_jumps.clear();
         }
         
         void append(Jump jump)
         {
-            jumps.append(jump);
+            m_jumps.append(jump);
         }
         
         void append(JumpList& other)
         {
-            jumps.append(other.jumps.begin(), other.jumps.size());
+            m_jumps.append(other.m_jumps.begin(), other.m_jumps.size());
         }
 
     private:
-        Vector<Jump> jumps;
+        Vector<Jump> m_jumps;
     };
 
     // Imm32:

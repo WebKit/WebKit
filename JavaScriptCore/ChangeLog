@@ -1,3 +1,14 @@
+2008-11-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Renames jumps to m_jumps in JumpList.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::JumpList::link):
+        (JSC::MacroAssembler::JumpList::linkTo):
+        (JSC::MacroAssembler::JumpList::append):
+
 2008-11-30  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mark Rowe.
