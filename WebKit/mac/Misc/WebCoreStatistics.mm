@@ -174,13 +174,14 @@ using namespace WebCore;
 
 + (NSDictionary *)memoryStatistics
 {
-    WTF::FastMallocStatistics statistics = WTF::fastMallocStatistics();
+    WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
     JSLock lock(false);
     Heap::Statistics jsHeapStatistics = JSDOMWindow::commonJSGlobalData()->heap.statistics();
     return [NSDictionary dictionaryWithObjectsAndKeys:
-                [NSNumber numberWithInt:statistics.heapSize], @"HeapSize",
-                [NSNumber numberWithInt:statistics.freeSize], @"FreeSize",
-                [NSNumber numberWithInt:statistics.returnedSize], @"ReturnedSize",
+                [NSNumber numberWithInt:fastMallocStatistics.heapSize], @"FastMallocHeapSize",
+                [NSNumber numberWithInt:fastMallocStatistics.freeSizeInHeap], @"FastMallocFreeSizeInHeap",
+                [NSNumber numberWithInt:fastMallocStatistics.freeSizeInCaches], @"FastMallocFreeSizeInCaches",
+                [NSNumber numberWithInt:fastMallocStatistics.returnedSize], @"FastMallocReturnedSize",
                 [NSNumber numberWithInt:jsHeapStatistics.size], @"JavaScriptHeapSize",
                 [NSNumber numberWithInt:jsHeapStatistics.free], @"JavaScriptFreeSize",
             nil];

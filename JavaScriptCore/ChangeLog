@@ -1,3 +1,15 @@
+2008-11-30  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22557
+        
+        Report free size in central and thread caches too.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMallocStats::fastMallocStatistics):
+        * wtf/FastMalloc.h:
+
 2008-11-29  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dan Bernstein.

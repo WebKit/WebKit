@@ -53,7 +53,8 @@ namespace WTF {
     
     struct FastMallocStatistics {
         size_t heapSize;
-        size_t freeSize;
+        size_t freeSizeInHeap;
+        size_t freeSizeInCaches;
         size_t returnedSize;
     };
     FastMallocStatistics fastMallocStatistics();
