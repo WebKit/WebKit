@@ -1004,9 +1004,29 @@ bool Heap::collect()
     return numLiveObjects < originalLiveObjects;
 }
 
-size_t Heap::size() 
+size_t Heap::objectCount() 
 {
     return primaryHeap.numLiveObjects + numberHeap.numLiveObjects; 
+}
+
+template <HeapType heapType> 
+static void addToStatistics(Heap::Statistics& statistics, const CollectorHeap& heap)
+{
+    typedef HeapConstants<heapType> HC;
+    for (size_t i = 0; i < heap.usedBlocks; ++i) {
+        if (heap.blocks[i]) {
+            statistics.size += BLOCK_SIZE;
+            statistics.free += (HC::cellsPerBlock - heap.blocks[i]->usedCells) * HC::cellSize;
+        }
+    }
+}
+
+Heap::Statistics Heap::statistics() const
+{
+    Statistics statistics = { 0, 0 };
+    JSC::addToStatistics<PrimaryHeap>(statistics, primaryHeap);
+    JSC::addToStatistics<NumberHeap>(statistics, numberHeap);
+    return statistics;
 }
 
 size_t Heap::globalObjectCount()

@@ -54,7 +54,7 @@ using namespace WebCore;
 + (size_t)javaScriptObjectsCount
 {
     JSLock lock(false);
-    return JSDOMWindow::commonJSGlobalData()->heap.size();
+    return JSDOMWindow::commonJSGlobalData()->heap.objectCount();
 }
 
 + (size_t)javaScriptGlobalObjectsCount
@@ -175,10 +175,14 @@ using namespace WebCore;
 + (NSDictionary *)memoryStatistics
 {
     WTF::FastMallocStatistics statistics = WTF::fastMallocStatistics();
+    JSLock lock(false);
+    Heap::Statistics jsHeapStatistics = JSDOMWindow::commonJSGlobalData()->heap.statistics();
     return [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSNumber numberWithInt:statistics.heapSize], @"HeapSize",
                 [NSNumber numberWithInt:statistics.freeSize], @"FreeSize",
                 [NSNumber numberWithInt:statistics.returnedSize], @"ReturnedSize",
+                [NSNumber numberWithInt:jsHeapStatistics.size], @"JavaScriptHeapSize",
+                [NSNumber numberWithInt:jsHeapStatistics.free], @"JavaScriptFreeSize",
             nil];
 }
 

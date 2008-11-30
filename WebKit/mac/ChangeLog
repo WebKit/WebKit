@@ -1,5 +1,16 @@
 2008-11-29  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22557
+        Add statistics for JavaScript GC heap.
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics javaScriptObjectsCount]):
+        (+[WebCoreStatistics memoryStatistics]):
+
+2008-11-29  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Alexey Proskuryakov.
         
         https://bugs.webkit.org/show_bug.cgi?id=22557
