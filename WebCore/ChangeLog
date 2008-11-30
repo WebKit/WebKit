@@ -1,3 +1,24 @@
+2008-11-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22530
+        Assertion failures seen on buildbot due to uninitialized WorkerThread::m_threadID
+
+        * dom/WorkerThread.cpp:
+        (WebCore::WorkerThread::start): Protect worker startup with a mutex to ensure that this
+        function runs to completion before the thread begins execution.
+        (WebCore::WorkerThread::workerThread): Updated comments.
+        (WebCore::WorkerThread::stop): Ditto.
+        * dom/WorkerThread.h: Renamed m_workerContextMutex to m_threadCreationMutex, because it now
+        protects startup as a whole.
+
+        * storage/DatabaseThread.cpp:
+        * storage/DatabaseThread.h:
+        * storage/LocalStorageThread.cpp:
+        * storage/LocalStorageThread.h:
+        Fixed the same m_threadID problem.
+
 2008-11-29  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -45,6 +45,8 @@ LocalStorageThread::LocalStorageThread()
 
 bool LocalStorageThread::start()
 {
+    MutexLocker lock(m_threadCreationMutex);
+
     if (m_threadID)
         return true;
 
@@ -60,6 +62,11 @@ void* LocalStorageThread::localStorageThreadStart(void* thread)
 
 void* LocalStorageThread::localStorageThread()
 {
+    {
+        // Wait for LocalStorageThread::start() to complete.
+        MutexLocker lock(m_threadCreationMutex);
+    }
+
     while (true) {
         RefPtr<LocalStorageTask> task;
         if (!m_queue.waitForMessage(task))
