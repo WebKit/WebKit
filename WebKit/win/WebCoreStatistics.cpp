@@ -98,7 +98,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptObjectsCount(
         return E_POINTER;
 
     JSLock lock(false);
-    *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap.size();
+    *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap.objectCount();
     return S_OK;
 }
 
