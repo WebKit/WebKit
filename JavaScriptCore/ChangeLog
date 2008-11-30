@@ -1,5 +1,12 @@
 2008-11-29  Antti Koivisto  <antti@apple.com>
 
+        Fix debug build by adding a stub method.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocStatistics):
+
+2008-11-29  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Alexey Proskuryakov.
         
         https://bugs.webkit.org/show_bug.cgi?id=22557

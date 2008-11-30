@@ -232,6 +232,15 @@ void* fastRealloc(void* p, size_t n)
 }
 
 void releaseFastMallocFreeMemory() { }
+    
+FastMallocStatistics fastMallocStatistics()
+{
+    FastMallocStatistics statistics;
+    statistics.heapSize = 0;
+    statistics.freeSize = 0;
+    statistics.returnedSize = 0;
+    return statistics;
+}
 
 #if HAVE(VIRTUALALLOC)
 void* fastMallocExecutable(size_t n)
