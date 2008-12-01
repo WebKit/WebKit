@@ -1,0 +1,33 @@
+<html>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.waitUntilDone();
+}
+
+var target;
+function check_blank() {
+  var x = target.location.private;
+  result.innerHTML = "Test PASSED";
+  if (window.layoutTestController)
+    layoutTestController.notifyDone();
+}
+
+function reload_blank() {
+  target = window.frames[0];
+  target.location = "about:blank";
+  window.setTimeout("check_blank()", 0);
+}
+
+window.setTimeout("reload_blank()", 0);
+
+</script>
+<body>
+This tests the same-origin check on about:blank loaded in a subframe.
+The test passes if the browser does not crash. You should also see
+"Test PASSED" below.
+<br>
+<iframe src="about:blank"></iframe>
+<div id="result">Test FAILED</div>
+</body>
+</html>
