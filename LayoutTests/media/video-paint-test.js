@@ -1,11 +1,12 @@
 function init()
 {
-    var count = document.getElementsByTagName('video').length;
-    document.addEventListener("load", function () {
+    var totalCount = document.getElementsByTagName('video').length;
+    var count = totalCount;
+    document.addEventListener("canplaythrough", function () {
         if (!--count) {
             document.body.offsetLeft;
             if (window.layoutTestController)
-                layoutTestController.notifyDone();
+                setTimeout(function() { layoutTestController.notifyDone(); }, totalCount * 50);
         }
     }, true);
 }

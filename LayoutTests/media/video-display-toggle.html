@@ -14,7 +14,7 @@
             {
                 if (window.layoutTestController)
                     layoutTestController.waitUntilDone();
-                document.getElementById('vid').addEventListener("load", test2);
+                document.getElementById('vid').addEventListener("canplaythrough", test2);
             }
             function test2()
             {
@@ -22,7 +22,7 @@
                 toggleDisplay();
 
                 if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                    setTimeout(function() { layoutTestController.notifyDone(); }, 100);
             }
         </script>
     </head>
@@ -31,4 +31,3 @@
         <video id="vid" controls src="content/test.mp4"></video>
     </body>
 </html>
-

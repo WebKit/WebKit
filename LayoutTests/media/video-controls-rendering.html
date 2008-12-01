@@ -1,3 +1,5 @@
+<script src="video-paint-test.js"></script>
+<body onload="init()">
 <p>Test controls placement. </p>
 <div>
     <video controls src="content/test.mp4"></video>
@@ -8,22 +10,4 @@
 <div>
     <video controls src="content/test.mp4" style="position: absolute; width: 320px;"></video>
 </div>
-<script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    setTimeout(function() { 
-        document.body.appendChild(document.createTextNode('FAIL')); 
-        if (window.layoutTestController)
-                layoutTestController.notifyDone();
-    } , 8000);
-}
-var count = document.getElementsByTagName('video').length;
-document.addEventListener("load", function () {
-    if (!--count) {
-        document.body.offsetLeft;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }
-}, true);
-</script>
-
+</body>

@@ -1,3 +1,5 @@
+<script src="video-paint-test.js"></script>
+<body onload="init()">
 <p>Test video sizing. You should see one bigger image (paused video) and 7 small ones of 1/4 its size. </p>
 <video src="content/test.mp4"></video><br>
 <video src="content/test.mp4" style="width: 160px; height:120px">
@@ -16,21 +18,4 @@
 <video src="content/test.mp4" style="left: 160px; width: 160px; position: absolute;">
 </video>
 </div>
-<script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    setTimeout(function() { 
-        document.body.appendChild(document.createTextNode('FAIL')); 
-        if (window.layoutTestController)
-                layoutTestController.notifyDone();
-    } , 8000);
-}
-var count = document.getElementsByTagName('video').length;
-document.addEventListener("load", function () {
-    if (!--count) {
-        document.body.offsetLeft;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }
-}, true);
-</script>
+</body>
