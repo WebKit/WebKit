@@ -28,7 +28,7 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(ASSEMBLER) && PLATFORM(X86)
+#if ENABLE(ASSEMBLER) && (PLATFORM(X86) || PLATFORM(X86_64))
 
 #include "AssemblerBuffer.h"
 #include <stdint.h>
@@ -87,6 +87,7 @@ public:
         OP_XOR_EvGv                     = 0x31,
         OP_CMP_EvGv                     = 0x39,
         OP_CMP_GvEv                     = 0x3B,
+        REX_W                           = 0x48,
         OP_PUSH_EAX                     = 0x50,
         OP_POP_EAX                      = 0x58,
         PRE_OPERAND_SIZE                = 0x66,
@@ -217,6 +218,17 @@ public:
         m_buffer->putByte(OP_INT3);
     }
     
+#if PLATFORM(X86_64)
+    void pushq_r(RegisterID reg)
+    {
+        m_buffer->putByte(OP_PUSH_EAX + reg);
+    }
+
+    void popq_r(RegisterID reg)
+    {
+        m_buffer->putByte(OP_POP_EAX + reg);
+    }
+#else
     void pushl_r(RegisterID reg)
     {
         m_buffer->putByte(OP_PUSH_EAX + reg);
@@ -244,6 +256,7 @@ public:
         m_buffer->putByte(OP_GROUP1A_Ev);
         modRm_opm(GROUP1A_OP_POP, base, offset);
     }
+#endif
     
     void movl_rr(RegisterID src, RegisterID dst)
     {
@@ -251,23 +264,34 @@ public:
         modRm_rr(src, dst);
     }
     
+#if PLATFORM(X86_64)
+    void movq_rr(RegisterID src, RegisterID dst)
+    {
+        m_buffer->putByte(REX_W);
+        m_buffer->putByte(OP_MOV_EvGv);
+        modRm_rr(src, dst);
+    }
+#endif
+
     void addl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_ADD_EvGv);
         modRm_rr(src, dst);
     }
 
-    void addl_i8r(int imm, RegisterID dst)
-    {
-        m_buffer->putByte(OP_GROUP1_EvIb);
-        modRm_opr(GROUP1_OP_ADD, dst);
-        m_buffer->putByte(imm);
-    }
-
+#if !PLATFORM(X86_64)
     void addl_i8m(int imm, void* addr)
     {
         m_buffer->putByte(OP_GROUP1_EvIb);
         modRm_opm(GROUP1_OP_ADD, addr);
+        m_buffer->putByte(imm);
+    }
+#endif
+
+    void addl_i8r(int imm, RegisterID dst)
+    {
+        m_buffer->putByte(OP_GROUP1_EvIb);
+        modRm_opr(GROUP1_OP_ADD, dst);
         m_buffer->putByte(imm);
     }
 
@@ -277,6 +301,24 @@ public:
         modRm_opr(GROUP1_OP_ADD, dst);
         m_buffer->putInt(imm);
     }
+
+#if PLATFORM(X86_64)
+    void addq_i8r(int imm, RegisterID dst)
+    {
+        m_buffer->putByte(REX_W);
+        m_buffer->putByte(OP_GROUP1_EvIb);
+        modRm_opr(GROUP1_OP_ADD, dst);
+        m_buffer->putByte(imm);
+    }
+
+    void addq_i32r(int imm, RegisterID dst)
+    {
+        m_buffer->putByte(REX_W);
+        m_buffer->putByte(OP_GROUP1_EvIz);
+        modRm_opr(GROUP1_OP_ADD, dst);
+        m_buffer->putInt(imm);
+    }
+#endif
 
     void addl_mr(int offset, RegisterID base, RegisterID dst)
     {
@@ -343,12 +385,14 @@ public:
         m_buffer->putInt(imm);
     }
 
+#if !PLATFORM(X86_64)
     void cmpl_i32m(int imm, void* addr)
     {
         m_buffer->putByte(OP_GROUP1_EvIz);
         modRm_opm(GROUP1_OP_CMP, addr);
         m_buffer->putInt(imm);
     }
+#endif
 
     void cmpl_i8m(int imm, int offset, RegisterID base, RegisterID index, int scale)
     {
@@ -427,12 +471,14 @@ public:
         m_buffer->putByte(imm);
     }
     
+#if !PLATFORM(X86_64)
     void subl_i8m(int imm, void* addr)
     {
         m_buffer->putByte(OP_GROUP1_EvIb);
         modRm_opm(GROUP1_OP_SUB, addr);
         m_buffer->putByte(imm);
     }
+#endif
 
     void subl_i32r(int imm, RegisterID dst)
     {
@@ -568,11 +614,30 @@ public:
         modRm_rm_Unchecked(dst, base, offset);
     }
 
+#if PLATFORM(X86_64)
+    void movq_mr(RegisterID base, RegisterID dst)
+    {
+        m_buffer->putByte(REX_W);
+        m_buffer->putByte(OP_MOV_GvEv);
+        modRm_rm(dst, base);
+    }
+
+    void movq_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_buffer->ensureSpace(maxInstructionSize);
+        m_buffer->putByteUnchecked(REX_W);
+        m_buffer->putByteUnchecked(OP_MOV_GvEv);
+        modRm_rm_Unchecked(dst, base, offset);
+    }
+#endif
+
+#if !PLATFORM(X86_64)
     void movl_mr(void* addr, RegisterID dst)
     {
         m_buffer->putByte(OP_MOV_GvEv);
         modRm_rm(dst, addr);
     }
+#endif
 
     void movl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
@@ -620,7 +685,24 @@ public:
         m_buffer->putByteUnchecked(OP_MOV_EvGv);
         modRm_rm_Unchecked(src, base, offset);
     }
-    
+
+#if PLATFORM(X86_64)
+    void movq_rm(RegisterID src, RegisterID base)
+    {
+        m_buffer->putByte(REX_W);
+        m_buffer->putByte(OP_MOV_EvGv);
+        modRm_rm(src, base);
+    }
+
+    void movq_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_buffer->ensureSpace(maxInstructionSize);
+        m_buffer->putByteUnchecked(REX_W);
+        m_buffer->putByteUnchecked(OP_MOV_EvGv);
+        modRm_rm_Unchecked(src, base, offset);
+    }
+#endif
+
     void movl_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
     {
         m_buffer->putByte(OP_MOV_EvGv);
@@ -642,12 +724,14 @@ public:
         m_buffer->putIntUnchecked(imm);
     }
 
+#if !PLATFORM(X86_64)
     void movl_i32m(int imm, void* addr)
     {
         m_buffer->putByte(OP_GROUP11_EvIz);
         modRm_opm(GROUP11_MOV, addr);
         m_buffer->putInt(imm);
     }
+#endif
 
     void leal_mr(int offset, RegisterID base, RegisterID dst)
     {
@@ -686,6 +770,7 @@ public:
         modRm_rm((RegisterID)dst, base, offset);
     }
 
+#if !PLATFORM(X86_64)
     void xorpd_mr(void* addr, XMMRegisterID dst)
     {
         m_buffer->putByte(PRE_SSE_66);
@@ -693,6 +778,7 @@ public:
         m_buffer->putByte(OP2_XORPD_VsdWsd);
         modRm_rm((RegisterID)dst, addr);
     }
+#endif
 
     void movsd_rm(XMMRegisterID src, int offset, RegisterID base)
     {
@@ -1044,11 +1130,13 @@ private:
         m_buffer->putByteUnchecked(MODRM(3, reg, rm));
     }
 
+#if !PLATFORM(X86_64)
     void modRm_rm(RegisterID reg, void* addr)
     {
         m_buffer->putByte(MODRM(0, reg, X86::noBase));
         m_buffer->putInt((int)addr);
     }
+#endif
 
     void modRm_rm(RegisterID reg, RegisterID base)
     {
@@ -1141,10 +1229,12 @@ private:
         modRm_rm(static_cast<RegisterID>(opcodeID), base, offset);
     }
 
+#if !PLATFORM(X86_64)
     void modRm_opm(OpcodeID opcodeID, void* addr)
     {
         modRm_rm(static_cast<RegisterID>(opcodeID), addr);
     }
+#endif
 
     void modRm_opmsib(OpcodeID opcodeID, RegisterID base, RegisterID index, int scale, int offset)
     {

@@ -32,7 +32,7 @@
 
 #include <wtf/unicode/Unicode.h>
 
-#if COMPILER(GCC)
+#if COMPILER(GCC) && PLATFORM(X86)
 #define WREC_CALL __attribute__ ((regparm (3)))
 #else
 #define WREC_CALL
@@ -46,7 +46,6 @@ namespace JSC {
 namespace JSC { namespace WREC {
 
     typedef int (*CompiledRegExp)(const UChar* input, unsigned start, unsigned length, int* output) WREC_CALL;
-//    CompiledRegExp compileRegExp(Interpreter*, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
 
 } } // namespace JSC::WREC
 

@@ -1,3 +1,43 @@
+2008-11-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Camron Zwarich.
+
+        Enable WREC on PLATFORM(X86_64).  This change predominantly requires changes to the
+        WREC::Generator::generateEnter method to support the x86-64 ABI, and addition of
+        support for a limited number of quadword operations in the X86Assembler.
+
+        This patch will cause the JS heap to be allocated with RWX permissions on 64-bit Mac
+        platforms.  This is a regression with respect to previous 64-bit behaviour, but is no
+        more permissive than on 32-bit builds.  This issue should be addressed at some point.
+        (This is tracked by bug #21783.)
+
+        https://bugs.webkit.org/show_bug.cgi?id=22554
+        Greater than 4x speedup on regexp-dna, on x86-64.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::addPtr):
+        (JSC::MacroAssembler::loadPtr):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::pop):
+        (JSC::MacroAssembler::push):
+        (JSC::MacroAssembler::move):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::movq_rr):
+        (JSC::X86Assembler::addl_i8m):
+        (JSC::X86Assembler::addl_i32r):
+        (JSC::X86Assembler::addq_i8r):
+        (JSC::X86Assembler::addq_i32r):
+        (JSC::X86Assembler::movq_mr):
+        (JSC::X86Assembler::movq_rm):
+        * wrec/WREC.h:
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateEnter):
+        (JSC::WREC::Generator::generateReturnSuccess):
+        (JSC::WREC::Generator::generateReturnFailure):
+        * wtf/Platform.h:
+        * wtf/TCSystemAlloc.cpp:
+
 2008-12-01  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Sam Weinig.

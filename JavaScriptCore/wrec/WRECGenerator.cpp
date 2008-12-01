@@ -40,9 +40,19 @@ namespace JSC { namespace WREC {
 
 void Generator::generateEnter()
 {
-    // Save callee save registers.
-    push(output);
-    push(character);
+#if PLATFORM(X86_64)
+    // On x86-64 edi and esi are caller preserved, so nothing to do here.
+    // The four arguments have been passed in the registers %rdi, %rsi,
+    // %rdx, %rcx - shuffle these into the expected locations.
+    move(X86::edi, input); // (arg 1) edi -> eax
+    move(X86::ecx, output); // (arg 4) ecx -> edi
+    move(X86::edx, length); // (arg 3) edx -> ecx
+    move(X86::esi, index); // (arg 2) esi -> edx
+
+#else
+    // On x86 edi & esi are callee preserved registers.
+    push(X86::edi);
+    push(X86::esi);
     
 #if COMPILER(MSVC)
     // Move the arguments into registers.
@@ -51,8 +61,11 @@ void Generator::generateEnter()
     peek(length, 5);
     peek(output, 6);
 #else
-    // Initialize the output register.
+    // On gcc the function is regparm(3), so the input, index, and length registers
+    // (eax, edx, and ecx respectively) already contain the appropriate values.
+    // Just load the fourth argument (output) into edi
     peek(output, 3);
+#endif
 #endif
 
 #ifndef NDEBUG
@@ -71,8 +84,10 @@ void Generator::generateReturnSuccess()
     store32(index, Address(output, 4)); // match end
     
     // Restore callee save registers.
-    pop(character);
-    pop(output);
+#if !PLATFORM(X86_64)
+    pop(X86::esi);
+    pop(X86::edi);
+#endif
     ret();
 }
 
@@ -112,8 +127,10 @@ void Generator::generateReturnFailure()
 {
     pop();
     move(Imm32(-1), X86::eax);
-    pop(character);
-    pop(output);
+#if !PLATFORM(X86_64)
+    pop(X86::esi);
+    pop(X86::edi);
+#endif
     ret();
 }
 

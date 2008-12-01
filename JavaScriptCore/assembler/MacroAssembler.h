@@ -254,6 +254,21 @@ public:
     // may often be a memory location (explictly described using an Address
     // object).
 
+    void addPtr(Imm32 imm, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
+            m_assembler.addq_i8r(imm.m_value, dest);
+        else
+            m_assembler.addq_i32r(imm.m_value, dest);
+#else
+        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
+            m_assembler.addl_i8r(imm.m_value, dest);
+        else
+            m_assembler.addl_i32r(imm.m_value, dest);
+#endif
+    }
+
     void add32(Imm32 imm, RegisterID dest)
     {
         if (CAN_SIGN_EXTEND_8_32(imm.m_value))
@@ -295,10 +310,17 @@ public:
 
     void loadPtr(ImplicitAddress address, RegisterID dest)
     {
+#if PLATFORM(X86_64)
+        if (address.offset)
+            m_assembler.movq_mr(address.offset, address.base, dest);
+        else
+            m_assembler.movq_mr(address.base, dest);
+#else
         if (address.offset)
             m_assembler.movl_mr(address.offset, address.base, dest);
         else
             m_assembler.movl_mr(address.base, dest);
+#endif
     }
 
     void load32(ImplicitAddress address, RegisterID dest)
@@ -319,10 +341,17 @@ public:
 
     void storePtr(RegisterID src, ImplicitAddress address)
     {
+#if PLATFORM(X86_64)
+        if (address.offset)
+            m_assembler.movq_rm(src, address.offset, address.base);
+        else
+            m_assembler.movq_rm(src, address.base);
+#else
         if (address.offset)
             m_assembler.movl_rm(src, address.offset, address.base);
         else
             m_assembler.movl_rm(src, address.base);
+#endif
     }
     
     void store32(RegisterID src, ImplicitAddress address)
@@ -350,17 +379,25 @@ public:
     
     void pop(RegisterID dest)
     {
+#if PLATFORM(X86_64)
+        m_assembler.popq_r(dest);
+#else
         m_assembler.popl_r(dest);
+#endif
     }
 
     void push(RegisterID src)
     {
+#if PLATFORM(X86_64)
+        m_assembler.pushq_r(src);
+#else
         m_assembler.pushl_r(src);
+#endif
     }
 
     void pop()
     {
-        m_assembler.addl_i8r(sizeof(void*), X86::esp);
+        addPtr(Imm32(sizeof(void*)), X86::esp);
     }
     
     void peek(RegisterID dest, int index = 0)
@@ -380,10 +417,23 @@ public:
 
     void move(Imm32 imm, RegisterID dest)
     {
+        // Note: on 64-bit the Imm32 value is zero extended into the register, it
+        // may be useful to have a separate version that sign extends the value?
         if (!imm.m_value)
             m_assembler.xorl_rr(dest, dest);
         else
             m_assembler.movl_i32r(imm.m_value, dest);
+    }
+
+    void move(RegisterID src, RegisterID dest)
+    {
+        // Note: on 64-bit this is is a full register move; perhaps it would be
+        // useful to have separate move32 & movePtr, with move32 zero extending?
+#if PLATFORM(X86_64)
+        m_assembler.movq_rr(src, dest);
+#else
+        m_assembler.movl_rr(src, dest);
+#endif
     }
 
 
