@@ -1,3 +1,13 @@
+2008-12-01  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22358
+        Add a test for crash on "Copy" after showing a tooltip.
+
+        * editing/pasteboard/copy-crash-expected.txt: Added.
+        * editing/pasteboard/copy-crash.html: Added.
+
 2008-12-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Mark Rowe.
