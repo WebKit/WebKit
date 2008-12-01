@@ -1084,6 +1084,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return YES;
 }
 
+#ifndef BUILDING_ON_TIGER
 - (void)setLayer:(CALayer *)newLayer
 {
     [super setLayer:newLayer];
@@ -1091,6 +1092,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (_pluginLayer)
         [newLayer addSublayer:_pluginLayer.get()];
 }
+#endif
 
 - (void)loadStream
 {

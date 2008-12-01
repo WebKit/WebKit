@@ -1,5 +1,11 @@
 2008-12-01  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the Tiger build.
+
+        * Plugins/WebNetscapePluginView.mm:
+
+2008-12-01  Anders Carlsson  <andersca@apple.com>
+
         Rename _layer to _pluginLayer where I forgot to do so.
         
         * Plugins/Hosted/WebHostedNetscapePluginView.mm:
