@@ -1,3 +1,17 @@
+2008-12-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        NULL-check documentFrameView() and topDocumentFrameView() it's possible
+        for either of these methods to return NULL, and this was seen to cause
+        crashes in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=22572
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accParent):
+        (AccessibleBase::accLocation):
+        (AccessibleBase::accHitTest):
+
 2008-11-30  Antti Koivisto  <antti@apple.com>
 
         Another Windows build fix.

@@ -102,7 +102,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accParent(IDispatch** parent)
 {
     *parent = 0;
 
-    if (!m_object)
+    if (!m_object || !m_object->topDocumentFrameView())
         return E_FAIL;
 
     return WebView::AccessibleObjectFromWindow(m_object->topDocumentFrameView()->hostWindow()->platformWindow(),
@@ -393,6 +393,9 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accLocation(long* left, long* top, lon
     if (FAILED(hr))
         return hr;
 
+    if (!childObj->documentFrameView())
+        return E_FAIL;
+
     IntRect screenRect(childObj->documentFrameView()->contentsToScreen(childObj->boundingBoxRect()));
     *left = screenRect.x();
     *top = screenRect.y();
@@ -465,7 +468,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accHitTest(long x, long y, VARIANT* pv
 
     ::VariantInit(pvChildAtPoint);
 
-    if (!m_object)
+    if (!m_object || !m_object->documentFrameView())
         return E_FAIL;
 
     IntPoint point = m_object->documentFrameView()->screenToContents(IntPoint(x, y));
