@@ -1,3 +1,12 @@
+2008-11-30  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        Try to return free pages in the current thread cache too.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMallocStats::releaseFastMallocFreeMemory):
+
 2008-12-01  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

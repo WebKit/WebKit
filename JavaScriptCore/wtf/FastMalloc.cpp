@@ -3845,6 +3845,14 @@ void FastMallocZone::init()
 #if WTF_CHANGES
 void releaseFastMallocFreeMemory()
 {
+    // Flush free pages in the current thread cache back to the page heap.
+    // Low watermark mechanism in Scavenge() prevents full return on the first pass.
+    // The second pass flushes everything.
+    if (TCMalloc_ThreadCache* threadCache = TCMalloc_ThreadCache::GetCacheIfPresent()) {
+        threadCache->Scavenge();
+        threadCache->Scavenge();
+    }
+
     SpinLockHolder h(&pageheap_lock);
     pageheap->ReleaseFreePages();
 }
