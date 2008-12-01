@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -53,6 +53,7 @@ sub findNearestNightlyIndex(\@$$);
 sub findSafariVersion($);
 sub loadSettings();
 sub makeNightlyList($$$$);
+sub max($$) { return $_[0] > $_[1] ? $_[0] : $_[1]; }
 sub mountAndRunNightly($$$$);
 sub parseRevisions($$;$);
 sub printStatus($$$);
@@ -135,7 +136,7 @@ if ($sanityCheck) {
     my $didReproduceBug;
 
     do {
-        printf "\nChecking starting revision (r%s)...\n",
+        printf "\nChecking starting revision r%s...\n",
             $nightlies[$startIndex]->{rev};
         downloadNightly($nightlies[$startIndex]->{file}, $nightlyFilesURLBase, $nightlyDownloadDirectory);
         mountAndRunNightly($nightlies[$startIndex]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
@@ -148,7 +149,7 @@ if ($sanityCheck) {
         if !$didReproduceBug && $isProgression;
 
     do {
-        printf "\nChecking ending revision (r%s)...\n",
+        printf "\nChecking ending revision r%s...\n",
             $nightlies[$endIndex]->{rev};
         downloadNightly($nightlies[$endIndex]->{file}, $nightlyFilesURLBase, $nightlyDownloadDirectory);
         mountAndRunNightly($nightlies[$endIndex]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
@@ -170,7 +171,9 @@ while (abs($endIndex - $startIndex) > 1) {
     my $didReproduceBug;
     do {
         if (exists $nightlies[$index]) {
-            printf "\nChecking revision (r%s)...\n", $nightlies[$index]->{rev};
+            my $buildsLeft = max(max(0, $endIndex - $index - 1), max(0, $index - $startIndex - 1));
+            my $plural = $buildsLeft == 1 ? "" : "s";
+            printf "\nChecking revision r%s (%d build%s left to test after this)...\n", $nightlies[$index]->{rev}, $buildsLeft, $plural;
             downloadNightly($nightlies[$index]->{file}, $nightlyFilesURLBase, $nightlyDownloadDirectory);
             mountAndRunNightly($nightlies[$index]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
             $didReproduceBug = promptForTest($nightlies[$index]->{rev});
