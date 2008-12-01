@@ -1,5 +1,15 @@
 2008-12-01  Pamela Greene  <pam@chromium.org>
 
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22365
+        Add a test to verify behavior of DOM node constructors.
+
+        * fast/dom/dom-constructors-expected.txt: Added.
+        * fast/dom/dom-constructors.html: Added.
+
+2008-12-01  Pamela Greene  <pam@chromium.org>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=22358

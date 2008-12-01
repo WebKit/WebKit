@@ -1,0 +1,120 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description('This test checks that all but a handful of dom constructors throw exceptions, and the rest return reasonable objects.');
+
+// These objects should throw an exception when their constructor is called
+// with no arguments. (Some of them may have working constructors that require
+// arguments to be valid.)
+var objects_exception = [
+    'Attr', 'CharacterData', 'CDATASection', 'Comment', 'Document',
+    'DocumentFragment', 'DocumentType', 'Element', 'Entity',
+    'EntityReference', 'HTMLDocument', 'Node', 'Notation',
+    'ProcessingInstruction', 'Text', 'HTMLAnchorElement',
+    'HTMLAppletElement', 'HTMLAreaElement', 'HTMLBaseElement',
+    'HTMLBaseFontElement', 'HTMLBlockquoteElement', 'HTMLBodyElement',
+    'HTMLBRElement', 'HTMLButtonElement', 'HTMLCanvasElement',
+    'HTMLDirectoryElement', 'HTMLDivElement', 'HTMLDListElement',
+    'HTMLEmbedElement', 'HTMLFieldSetElement', 'HTMLFontElement',
+    'HTMLFormElement', 'HTMLFrameElement', 'HTMLFrameSetElement',
+    'HTMLHeadingElement', 'HTMLHeadElement', 'HTMLHRElement',
+    'HTMLHtmlElement', 'HTMLIFrameElement', 'HTMLImageElement',
+    'HTMLInputElement', 'HTMLIsIndexElement', 'HTMLLabelElement',
+    'HTMLLegendElement', 'HTMLLIElement', 'HTMLLinkElement',
+    'HTMLMapElement', 'HTMLMarqueeElement', 'HTMLMenuElement',
+    'HTMLMetaElement', 'HTMLModElement', 'HTMLObjectElement',
+    'HTMLOListElement', 'HTMLOptGroupElement', 'HTMLOptionElement',
+    'HTMLParagraphElement', 'HTMLParamElement', 'HTMLPreElement',
+    'HTMLQuoteElement', 'HTMLScriptElement', 'HTMLSelectElement',
+    'HTMLStyleElement', 'HTMLTableCaptionElement',
+    'HTMLTableColElement', 'HTMLTableElement',
+    'HTMLTableSectionElement', 'HTMLTableCellElement',
+    'HTMLTableRowElement', 'HTMLTextAreaElement', 'HTMLTitleElement',
+    'HTMLUListElement', 'HTMLElement', 'CanvasRenderingContext2D',
+    'Clipboard', 'Counter', 'CSSCharsetRule', 'CSSFontFaceRule',
+    'CSSImportRule', 'CSSMediaRule', 'CSSPageRule',
+    'CSSPrimitiveValue', 'CSSRule', 'CSSRuleList',
+    'CSSStyleDeclaration', 'CSSStyleRule', 'CSSStyleSheet',
+    'CSSValue', 'CSSValueList', 'DOMImplementation', 'Event',
+    'HTMLCollection', 'KeyboardEvent', 'MediaList', 'MimeType',
+    'MimeTypeArray', 'MouseEvent', 'MutationEvent', 'NamedNodeMap',
+    'NodeFilter', 'NodeList', 'OverflowEvent', 'Plugin',
+    'PluginArray', 'Range', 'Rect', 'StyleSheet', 'StyleSheetList',
+    'TextEvent', 'UIEvent', 'WheelEvent', 'XPathResult', 'BarInfo',
+    'CanvasGradient', 'CanvasPattern', 'Console', 'DOMSelection',
+    'DOMWindow', 'History', 'HTMLOptionsCollection', 'Location',
+    'Navigator', 'NodeIterator', 'RGBColor', 'Screen', 'TreeWalker',
+    'XPathExpression', 'Worker'
+];
+
+// These objects should have a working constructor.
+var objects_constructor = [
+    'DOMParser', 'XMLHttpRequest', 'XMLSerializer', 'XPathEvaluator',
+    'XSLTProcessor', 'MessageChannel'
+];
+
+// These objects should have no constructor.
+var objects_no_constructor = [
+    'EventTargetNode', 'UndetectableHTMLCollection',
+    'XPathNSResolver', 'EventTarget', 'EventListener', 'NPObject',
+    'HTMLAllCollection'
+];
+
+// These objects should have a working constructor, but their constructed
+// object names differ. This is therefore a map from constructor name to
+// constructed object.
+var objects_different_constructor = {
+    'Audio': 'HTMLAudioElement',
+    'Option': 'HTMLOptionElement',
+    'Image': 'HTMLImageElement'
+}
+
+function TryAllocate(node) {
+    var Cons = this[node];
+    if (!Cons) return 'no constructor';
+    try { return new Cons() + ''; }
+    catch (e) { return 'exception'; }
+}
+
+function check(name, expected) {
+    actual = TryAllocate(node);
+    if (actual == expected) {
+      document.write("PASS: " + name + " '" + expected + "'<br>");
+    } else {
+      document.write("FAIL: " + name + " wanted '" + expected + "', got '" +
+          actual + "'<br>");
+    }
+}
+
+for (var i = 0; i < objects_exception.length; i++) {
+    var obj = objects_exception[i];
+    shouldBe("TryAllocate('" + obj + "')", "'exception'");
+}
+
+for (var i = 0; i < objects_no_constructor.length; i++) {
+    var obj = objects_no_constructor[i];
+    shouldBe("TryAllocate('" + obj + "')", "'no constructor'");
+}
+
+for (var i = 0; i < objects_constructor.length; i++) {
+    var obj = objects_constructor[i];
+    shouldBe("TryAllocate('" + obj + "')", "'[object " + obj + "]'");
+}
+
+for (var obj in objects_different_constructor) {
+    shouldBe("TryAllocate('" + obj + "')",
+             "'[object " + objects_different_constructor[obj] + "]'");
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
