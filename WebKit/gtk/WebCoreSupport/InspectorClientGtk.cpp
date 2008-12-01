@@ -77,7 +77,7 @@ Page* InspectorClient::createPage()
     // close-window and destroy signals still need to be
     // emitted.
     WebKitWebInspector* webInspector;
-    g_object_get(G_OBJECT(m_inspectedWebView), "web-inspector", &webInspector, NULL);
+    g_object_get(m_inspectedWebView, "web-inspector", &webInspector, NULL);
     m_webInspector = webInspector;
 
     g_signal_emit_by_name(m_webInspector, "inspect-web-view", m_inspectedWebView, &m_webView);
@@ -89,7 +89,7 @@ Page* InspectorClient::createPage()
 
     webkit_web_inspector_set_web_view(m_webInspector, m_webView);
 
-    g_signal_connect(G_OBJECT(m_webView), "destroy",
+    g_signal_connect(m_webView, "destroy",
                      G_CALLBACK(notifyWebViewDestroyed), (gpointer)this);
 
     webkit_web_view_open(m_webView, "file://"DATA_DIR"/webkit-1.0/webinspector/inspector.html");

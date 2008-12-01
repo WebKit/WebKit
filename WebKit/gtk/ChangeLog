@@ -1,3 +1,32 @@
+2008-12-01  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=22553
+        Remove unneeded GObject casts.
+
+        Remove unneeded casts to GObject in functions that take a gpointer
+        argument.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::setWindowRect):
+        (WebKit::ChromeClient::createWindow):
+        (WebKit::ChromeClient::setToolbarsVisible):
+        (WebKit::ChromeClient::toolbarsVisible):
+        (WebKit::ChromeClient::setStatusbarVisible):
+        (WebKit::ChromeClient::statusbarVisible):
+        (WebKit::ChromeClient::setScrollbarsVisible):
+        (WebKit::ChromeClient::scrollbarsVisible):
+        (WebKit::ChromeClient::setMenubarVisible):
+        (WebKit::ChromeClient::menubarVisible):
+        (WebKit::ChromeClient::setToolTip):
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::createPage):
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebwindowfeatures.cpp:
+        (_WebKitWebWindowFeaturesPrivate::webkit_web_window_features_new_from_core_features):
+
 2008-11-29  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Holger Freyther.

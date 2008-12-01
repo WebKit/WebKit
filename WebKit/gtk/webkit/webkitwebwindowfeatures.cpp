@@ -353,18 +353,18 @@ WebKitWebWindowFeatures* webkit_web_window_features_new_from_core_features(const
     WebKitWebWindowFeatures *webWindowFeatures = webkit_web_window_features_new();
 
     if(features.xSet)
-        g_object_set(G_OBJECT(webWindowFeatures), "x", static_cast<int>(features.x), NULL);
+        g_object_set(webWindowFeatures, "x", static_cast<int>(features.x), NULL);
 
     if(features.ySet)
-        g_object_set(G_OBJECT(webWindowFeatures), "y", static_cast<int>(features.y), NULL);
+        g_object_set(webWindowFeatures, "y", static_cast<int>(features.y), NULL);
 
     if(features.widthSet)
-        g_object_set(G_OBJECT(webWindowFeatures), "width", static_cast<int>(features.width), NULL);
+        g_object_set(webWindowFeatures, "width", static_cast<int>(features.width), NULL);
 
     if(features.heightSet)
-        g_object_set(G_OBJECT(webWindowFeatures), "height", static_cast<int>(features.height), NULL);
+        g_object_set(webWindowFeatures, "height", static_cast<int>(features.height), NULL);
 
-    g_object_set(G_OBJECT(webWindowFeatures),
+    g_object_set(webWindowFeatures,
                  "toolbar-visible", features.toolBarVisible,
                  "statusbar-visible", features.statusBarVisible,
                  "scrollbar-visible", features.scrollbarsVisible,

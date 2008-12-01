@@ -1460,7 +1460,7 @@ static void webkit_web_view_screen_changed(WebKitWebView* webView, GdkScreen* pr
 
     guint defaultFontSize, defaultMonospaceFontSize, minimumFontSize, minimumLogicalFontSize;
 
-    g_object_get(G_OBJECT(webSettings),
+    g_object_get(webSettings,
                  "default-font-size", &defaultFontSize,
                  "default-monospace-font-size", &defaultMonospaceFontSize,
                  "minimum-font-size", &minimumFontSize,
@@ -1482,7 +1482,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     gchar* defaultEncoding, *cursiveFontFamily, *defaultFontFamily, *fantasyFontFamily, *monospaceFontFamily, *sansSerifFontFamily, *serifFontFamily, *userStylesheetUri;
     gboolean autoLoadImages, autoShrinkImages, printBackgrounds, enableScripts, enablePlugins, enableDeveloperExtras, resizableTextAreas;
 
-    g_object_get(G_OBJECT(webSettings),
+    g_object_get(webSettings,
                  "default-encoding", &defaultEncoding,
                  "cursive-font-family", &cursiveFontFamily,
                  "default-font-family", &defaultFontFamily,

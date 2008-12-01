@@ -560,9 +560,9 @@ void webkit_web_frame_print(WebKitWebFrame* frame)
     PrintContext printContext(coreFrame);
 
     GtkPrintOperation* op = gtk_print_operation_new();
-    g_signal_connect(G_OBJECT(op), "begin-print", G_CALLBACK(begin_print), &printContext);
-    g_signal_connect(G_OBJECT(op), "draw-page", G_CALLBACK(draw_page), &printContext);
-    g_signal_connect(G_OBJECT(op), "end-print", G_CALLBACK(end_print), &printContext);
+    g_signal_connect(op, "begin-print", G_CALLBACK(begin_print), &printContext);
+    g_signal_connect(op, "draw-page", G_CALLBACK(draw_page), &printContext);
+    g_signal_connect(op, "end-print", G_CALLBACK(end_print), &printContext);
     GError *error = NULL;
     gtk_print_operation_run(op, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, GTK_WINDOW(topLevel), &error);
     g_object_unref(op);
