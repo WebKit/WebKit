@@ -427,10 +427,7 @@
 #endif
 
 /* WREC only supports x86 at the moment, and has only been tested on Mac and Windows. */
-#if !defined(ENABLE_WREC) \
-    && ( (PLATFORM(X86) && PLATFORM(MAC)) \
-        || (PLATFORM(X86_64) && PLATFORM(MAC)) \
-        || (PLATFORM(X86) && PLATFORM(WIN)) )
+#if !defined(ENABLE_WREC) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
 #define ENABLE_WREC 1
 #endif
 

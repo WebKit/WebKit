@@ -1,3 +1,13 @@
+2008-12-01  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Disable WREC for x86_64 since memory allocated by the system allocator is not marked executable,
+        which causes 64-bit debug builds to crash.  Once we have a dedicated allocator for executable
+        memory we can turn this back on.
+
+        * wtf/Platform.h:
+
 2008-12-01  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej Stachowiak.
