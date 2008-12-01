@@ -1,3 +1,15 @@
+2008-12-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22531
+        Stack overflow on PowerPC on fast/workers/use-machine-stack.html
+
+        Disabling the test until the problem can be investigated.
+
+        * fast/workers/use-machine-stack.html: Removed.
+        * fast/workers/use-machine-stack.html-disabled: Copied from fast/workers/use-machine-stack.html.
+
 2008-11-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
