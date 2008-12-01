@@ -700,11 +700,14 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
             // We're done. Stay in this state until we are deleted
             break;
     }
-    // |this| may be deleted here if we came out of AnimationStateEnding when we've been called from timerFired()
 }
     
 void AnimationBase::animationTimerCallbackFired(const AtomicString& eventType, double elapsedTime)
 {
+    // We have to make sure to keep a ref to the this pointer, because it could get destroyed
+    // during an animation callback that might get called.
+    RefPtr<AnimationBase> protector(this);
+    
     ASSERT(m_object->document() && !m_object->document()->inPageCache());
 
     // FIXME: use an enum
@@ -714,7 +717,6 @@ void AnimationBase::animationTimerCallbackFired(const AtomicString& eventType, d
         updateStateMachine(AnimationStateInputLoopTimerFired, elapsedTime);
     else if (eventType == eventNames().webkitAnimationEndEvent) {
         updateStateMachine(AnimationStateInputEndTimerFired, elapsedTime);
-        // |this| may be deleted here
     }
 }
 

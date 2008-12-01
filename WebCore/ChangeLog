@@ -1,3 +1,30 @@
+2008-12-01  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22046
+
+        Fixed another case of crashing because the animation object is getting deleted when
+        it's in the middle of a callback. I actually moved where I am retaining the pointer
+        up out of the lower level AnimationBase code and into the timer callback that calls
+        them. So now the pointer is valid throughout the entire sequence of callback code.
+
+        The testcase for https://bugs.webkit.org/show_bug.cgi?id=22052 also exhibits a
+        crash which this patch fixes. 
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::animationTimerCallbackFired):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::setAnimationStartTime):
+        (WebCore::CompositeAnimationPrivate::setTransitionStartTime):
+        (WebCore::CompositeAnimationPrivate::styleAvailable):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        (WebCore::KeyframeAnimation::resumeOverriddenAnimations):
+
 2008-12-01  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon Hausmann.
