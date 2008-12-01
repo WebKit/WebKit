@@ -155,7 +155,7 @@ extern "C" {
         _proxy = 0;
     }
     
-    _layer = 0;
+    _pluginLayer = 0;
 }
 
 - (void)startTimers

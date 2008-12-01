@@ -63,7 +63,7 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 {
     RefPtr<WebNetscapePluginStream> _manualStream;
 #ifndef BUILDING_ON_TIGER
-    RetainPtr<CALayer> _layer;
+    RetainPtr<CALayer> _pluginLayer;
 #endif
     unsigned _dataLengthReceived;
     RetainPtr<NSError> _error;

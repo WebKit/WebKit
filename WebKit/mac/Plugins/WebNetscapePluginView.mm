@@ -1057,12 +1057,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         if ([_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
             
             // The plug-in gives us a retained layer.
-            _layer.adoptNS((CALayer *)value);
+            _pluginLayer.adoptNS((CALayer *)value);
             [self setWantsLayer:YES];
-            LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", _pluginPackage.get(), _layer.get());
+            LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", _pluginPackage.get(), _pluginLayer.get());
         }
 
-        ASSERT(_layer);
+        ASSERT(_pluginLayer);
     }
 #endif
     
@@ -1088,8 +1088,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     [super setLayer:newLayer];
     
-    if (_layer)
-        [newLayer addSublayer:_layer.get()];
+    if (_pluginLayer)
+        [newLayer addSublayer:_pluginLayer.get()];
 }
 
 - (void)loadStream
@@ -1139,7 +1139,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     lastSetWindow.type = (NPWindowType)0;
     
 #ifndef BUILDING_ON_TIGER
-    _layer = 0;
+    _pluginLayer = 0;
 #endif
     
     [self _destroyPlugin];
