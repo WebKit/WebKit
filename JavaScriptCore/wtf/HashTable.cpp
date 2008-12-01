@@ -34,9 +34,17 @@ int HashTableStats::numReinserts;
 
 static HashTableStats logger;
 
+static Mutex& hashTableStatsMutex()
+{
+    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
+    return mutex;
+}
+
 HashTableStats::~HashTableStats()
 {
-    printf("\nkhtml::HashTable statistics\n\n");
+    // Don't lock hashTableStatsMutex here because it can cause deadlocks at shutdown 
+    // if any thread was killed while holding the mutex.
+    printf("\nWTF::HashTable statistics\n\n");
     printf("%d accesses\n", numAccesses);
     printf("%d total collisions, average %.2f probes per access\n", numCollisions, 1.0 * (numAccesses + numCollisions) / numAccesses);
     printf("longest collision chain: %d\n", maxCollisions);
@@ -49,6 +57,7 @@ HashTableStats::~HashTableStats()
 
 void HashTableStats::recordCollisionAtCount(int count)
 {
+    MutexLocker lock(hashTableStatsMutex());
     if (count > maxCollisions)
         maxCollisions = count;
     numCollisions++;
