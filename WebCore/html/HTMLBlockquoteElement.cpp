@@ -31,6 +31,7 @@ using namespace HTMLNames;
 HTMLBlockquoteElement::HTMLBlockquoteElement(const QualifiedName& tagName, Document* doc)
     : HTMLElement(tagName, doc)
 {
+    ASSERT(hasTagName(blockquoteTag));
 }
 
 HTMLBlockquoteElement::~HTMLBlockquoteElement()

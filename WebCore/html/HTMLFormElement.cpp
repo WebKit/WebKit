@@ -77,6 +77,7 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* doc)
     , m_inreset(false)
     , m_malformed(false)
 {
+    ASSERT(hasTagName(formTag));
 }
 
 HTMLFormElement::~HTMLFormElement()

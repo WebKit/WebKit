@@ -37,6 +37,7 @@ using namespace HTMLNames;
 HTMLBaseElement::HTMLBaseElement(const QualifiedName& qName, Document* doc)
     : HTMLElement(qName, doc)
 {
+    ASSERT(hasTagName(baseTag));
 }
 
 HTMLBaseElement::~HTMLBaseElement()

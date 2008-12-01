@@ -1,3 +1,77 @@
+2008-12-01  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Bug 22441: Bridge the gap between the generated ElementFactory and HTMLElementFactory
+        https://bugs.webkit.org/show_bug.cgi?id=22441
+
+        Add an assertion to the modified HTML elements' constructor
+        to check that the QualifiedName parameter is the one that
+        matches the Element's.
+
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::HTMLBaseElement):
+        * html/HTMLBlockquoteElement.cpp:
+        (WebCore::HTMLBlockquoteElement::HTMLBlockquoteElement):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::HTMLBodyElement):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::HTMLButtonElement):
+        * html/HTMLDListElement.cpp:
+        (WebCore::HTMLDListElement::HTMLDListElement):
+        * html/HTMLDirectoryElement.cpp:
+        (WebCore::HTMLDirectoryElement::HTMLDirectoryElement):
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::HTMLDivElement):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::HTMLFieldSetElement):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::HTMLFrameElement):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::HTMLFrameSetElement):
+        * html/HTMLHeadElement.cpp:
+        (WebCore::HTMLHeadElement::HTMLHeadElement):
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::HTMLHtmlElement):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::HTMLIFrameElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::HTMLIsIndexElement):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::HTMLLIElement):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::HTMLLabelElement):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::HTMLLegendElement):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        * html/HTMLMenuElement.cpp:
+        (WebCore::HTMLMenuElement::HTMLMenuElement):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::HTMLMetaElement):
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::HTMLOListElement):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::HTMLOptGroupElement):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement):
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::HTMLTitleElement):
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::HTMLUListElement):
+
 2008-12-01  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.

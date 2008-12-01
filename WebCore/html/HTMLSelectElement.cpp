@@ -76,6 +76,7 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* doc
     , m_repeatingChar(0)
     , m_lastCharTime(0)
 {
+    ASSERT(hasTagName(selectTag) || hasTagName(keygenTag));
 }
 
 bool HTMLSelectElement::checkDTD(const Node* newChild)

@@ -103,6 +103,7 @@ static int numCharactersInGraphemeClusters(StringImpl* s, int numGraphemeCluster
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLFormControlElementWithState(tagName, doc, f)
 {
+    ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
     init();
 }
 

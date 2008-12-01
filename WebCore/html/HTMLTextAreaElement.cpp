@@ -55,6 +55,7 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document*
     , m_cachedSelectionStart(-1)
     , m_cachedSelectionEnd(-1)
 {
+    ASSERT(hasTagName(textareaTag));
     setValueMatchesRenderer();
 }
 

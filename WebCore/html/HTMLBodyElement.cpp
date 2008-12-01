@@ -40,9 +40,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLBodyElement::HTMLBodyElement(const QualifiedName& qName, Document* doc)
-    : HTMLElement(qName, doc)
+HTMLBodyElement::HTMLBodyElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
 {
+    ASSERT(hasTagName(bodyTag));
 }
 
 HTMLBodyElement::~HTMLBodyElement()

@@ -33,6 +33,7 @@ using namespace HTMLNames;
 HTMLIsIndexElement::HTMLIsIndexElement(const QualifiedName& tagName, Document *doc, HTMLFormElement *f)
     : HTMLInputElement(tagName, doc, f)
 {
+    ASSERT(hasTagName(isindexTag));
     m_name = "isindex";
 }
 

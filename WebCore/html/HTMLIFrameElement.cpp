@@ -37,6 +37,7 @@ using namespace HTMLNames;
 HTMLIFrameElement::HTMLIFrameElement(const QualifiedName& tagName, Document* doc)
     : HTMLFrameElementBase(tagName, doc)
 {
+    ASSERT(hasTagName(iframeTag));
 }
 
 bool HTMLIFrameElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

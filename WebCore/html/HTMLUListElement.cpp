@@ -31,6 +31,7 @@ using namespace HTMLNames;
 HTMLUListElement::HTMLUListElement(const QualifiedName& tagName, Document* doc)
     : HTMLElement(tagName, doc)
 {
+    ASSERT(hasTagName(ulTag));
 }
 
 bool HTMLUListElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

@@ -38,6 +38,7 @@ using namespace HTMLNames;
 HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document *doc)
     : HTMLElement(tagName, doc)
 {
+    ASSERT(hasTagName(labelTag));
 }
 
 HTMLLabelElement::~HTMLLabelElement()

@@ -30,6 +30,7 @@ using namespace HTMLNames;
 HTMLMenuElement::HTMLMenuElement(const QualifiedName& tagName, Document* doc)
     : HTMLElement(tagName, doc)
 {
+    ASSERT(hasTagName(menuTag));
 }
 
 bool HTMLMenuElement::compact() const

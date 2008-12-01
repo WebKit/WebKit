@@ -53,6 +53,7 @@ HTMLLinkElement::HTMLLinkElement(const QualifiedName& qName, Document *doc)
     , m_isDNSPrefetch(false)
     , m_createdByParser(false)
 {
+    ASSERT(hasTagName(linkTag));
 }
 
 HTMLLinkElement::~HTMLLinkElement()

@@ -45,6 +45,7 @@ HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document* doc
     , m_selected(false)
     , m_style(0)
 {
+    ASSERT(hasTagName(optionTag));
 }
 
 bool HTMLOptionElement::checkDTD(const Node* newChild)

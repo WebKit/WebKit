@@ -1,6 +1,4 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
@@ -37,6 +35,7 @@ HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document* doc)
     , m_loading(false)
     , m_createdByParser(false)
 {
+    ASSERT(hasTagName(styleTag));
 }
 
 // other stuff...

@@ -41,6 +41,7 @@ HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Document*
     : HTMLFormControlElement(tagName, doc, f)
     , m_style(0)
 {
+    ASSERT(hasTagName(optgroupTag));
 }
 
 bool HTMLOptGroupElement::isFocusable() const
