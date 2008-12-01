@@ -1,3 +1,30 @@
+2008-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Make sure to re-insert layers as needed so they won't be lost when the layer backed
+        view is removed from the view hierarchy.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        Add _layer ivar.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        Don't add the layer here.
+        
+        (-[WebHostedNetscapePluginView setLayer:]):
+        Instead, add it here.
+        
+        (-[WebHostedNetscapePluginView destroyPlugin]):
+        Set _layer to 0.
+        
+        * Plugins/WebNetscapePluginView.mm:        
+        (-[WebNetscapePluginView createPlugin]):
+        Don't add the layer here.
+        
+        (-[WebNetscapePluginView setLayer:]):
+        Do it here.
+
 2008-11-30  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mark Rowe.

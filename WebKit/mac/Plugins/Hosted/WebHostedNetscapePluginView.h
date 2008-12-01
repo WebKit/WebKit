@@ -38,6 +38,8 @@ namespace WebKit {
     RetainPtr<NSArray> _attributeKeys;
     RetainPtr<NSArray> _attributeValues;
     
+    RetainPtr<CALayer> _pluginLayer;
+    
     RefPtr<WebKit::NetscapePluginInstanceProxy> _proxy;
 }
 

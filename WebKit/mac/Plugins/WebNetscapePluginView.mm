@@ -113,8 +113,12 @@ public:
     void start(bool throttle)
     {
         ASSERT(!isActive());
+
+        double timeInterval = m_interval / 1000.0;
         
-        double timeInterval = throttle ? ThrottledTimerInterval : m_interval / 1000.0;
+        if (throttle)
+            timeInterval = max(timeInterval, ThrottledTimerInterval);
+        
         if (m_repeat)
             startRepeating(timeInterval);
         else
@@ -1055,7 +1059,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             // The plug-in gives us a retained layer.
             _layer.adoptNS((CALayer *)value);
             [self setWantsLayer:YES];
-            [self setLayer:_layer.get()];
             LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", _pluginPackage.get(), _layer.get());
         }
 
@@ -1079,6 +1082,14 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
     
     return YES;
+}
+
+- (void)setLayer:(CALayer *)newLayer
+{
+    [super setLayer:newLayer];
+    
+    if (_layer)
+        [newLayer addSublayer:_layer.get()];
 }
 
 - (void)loadStream
@@ -2182,7 +2193,11 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     if (!timers)
         timers = new HashMap<uint32, PluginTimer*>;
     
-    uint32 timerID = ++currentTimerID;
+    uint32 timerID;
+    
+    do {
+        timerID = ++currentTimerID;
+    } while (timers->contains(timerID) || timerID == 0);
     
     PluginTimer* timer = new PluginTimer(plugin, timerID, interval, repeat, timerFunc);
     timers->set(timerID, timer);
@@ -2190,7 +2205,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     if (_shouldFireTimers)
         timer->start(_isCompletelyObscured);
     
-    return 0;
+    return timerID;
 }
 
 - (void)unscheduleTimer:(uint32)timerID

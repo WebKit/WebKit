@@ -99,14 +99,21 @@ extern "C" {
     if (!_proxy) 
         return NO;
     
-    CALayer *layer = WKMakeRenderLayer(_proxy->renderContextID());
+    _pluginLayer = WKMakeRenderLayer(_proxy->renderContextID());
     self.wantsLayer = YES;
-    [self.layer addSublayer:layer];
 
     // Update the window frame.
     _proxy->windowFrameChanged([[self window] frame]);
     
     return YES;
+}
+
+- (void)setLayer:(CALayer *)newLayer
+{
+    [super setLayer:newLayer];
+    
+    if (_pluginLayer)
+        [newLayer addSublayer:_pluginLayer.get()];
 }
 
 - (void)loadStream
@@ -147,6 +154,8 @@ extern "C" {
         _proxy->destroy();
         _proxy = 0;
     }
+    
+    _layer = 0;
 }
 
 - (void)startTimers
