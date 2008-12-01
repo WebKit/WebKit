@@ -6,7 +6,7 @@
         view is removed from the view hierarchy.
 
         * Plugins/Hosted/WebHostedNetscapePluginView.h:
-        Add _layer ivar.
+        Add _pluginLayer ivar.
         
         * Plugins/Hosted/WebHostedNetscapePluginView.mm:
         (-[WebHostedNetscapePluginView createPlugin]):
@@ -16,7 +16,7 @@
         Instead, add it here.
         
         (-[WebHostedNetscapePluginView destroyPlugin]):
-        Set _layer to 0.
+        Set _pluginLayer to 0.
         
         * Plugins/WebNetscapePluginView.mm:        
         (-[WebNetscapePluginView createPlugin]):
