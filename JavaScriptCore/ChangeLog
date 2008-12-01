@@ -1,3 +1,14 @@
+2008-12-01  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Restore inline buffer after vector is shrunk back below its inline capacity.
+
+        * wtf/Vector.h:
+        (WTF::):
+        (WTF::VectorBuffer::restoreInlineBufferIfNeeded):
+        (WTF::::shrinkCapacity):
+
 2008-11-30  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mark Rowe.

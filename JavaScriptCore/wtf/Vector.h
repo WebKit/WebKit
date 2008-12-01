@@ -348,6 +348,8 @@ namespace WTF {
             std::swap(m_buffer, other.m_buffer);
             std::swap(m_capacity, other.m_capacity);
         }
+        
+        void restoreInlineBufferIfNeeded() { }
 
         using Base::allocateBuffer;
         using Base::deallocateBuffer;
@@ -394,6 +396,14 @@ namespace WTF {
             if (bufferToDeallocate == inlineBuffer())
                 return;
             Base::deallocateBuffer(bufferToDeallocate);
+        }
+        
+        void restoreInlineBufferIfNeeded()
+        {
+            if (m_buffer)
+                return;
+            m_buffer = inlineBuffer();
+            m_capacity = inlineCapacity;
         }
 
         using Base::buffer;
@@ -740,6 +750,7 @@ namespace WTF {
         }
 
         m_buffer.deallocateBuffer(oldBuffer);
+        m_buffer.restoreInlineBufferIfNeeded();
     }
 
     // Templatizing these is better than just letting the conversion happen implicitly,
