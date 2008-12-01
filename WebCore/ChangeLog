@@ -1,3 +1,20 @@
+2008-12-01  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt/Mac] Initialize NPAPI plugins before getting their entry points
+
+        The old behavior (calling NP_GetEntryPoints before NP_Initialize) was
+        copied from Windows, but caused Silverlight on Mac to crash when loaded.
+
+        Apparently the call order of NP_Initialize and NP_GetEntryPoints is
+        reversed on Mac. See https://bugzilla.mozilla.org/show_bug.cgi?id=344425
+
+        Reported-by: Peter Johnson <peter@zattoo.com>
+
+        * plugins/mac/PluginPackageMac.cpp:
+        (WebCore::PluginPackage::load):
+
 2008-11-30  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by John Sullivan.

@@ -271,12 +271,7 @@ bool PluginPackage::load()
     memset(&m_pluginFuncs, 0, sizeof(m_pluginFuncs));
     m_pluginFuncs.size = sizeof(m_pluginFuncs);
 
-    npErr = NP_GetEntryPoints(&m_pluginFuncs);
-    LOG_NPERROR(npErr);
-    if (npErr != NPERR_NO_ERROR)
-        goto abort;
-
-    m_browserFuncs.size = sizeof (m_browserFuncs);
+    m_browserFuncs.size = sizeof(m_browserFuncs);
     m_browserFuncs.version = NP_VERSION_MINOR;
     m_browserFuncs.geturl = NPN_GetURL;
     m_browserFuncs.posturl = NPN_PostURL;
@@ -323,6 +318,12 @@ bool PluginPackage::load()
     m_browserFuncs.enumerate = _NPN_Enumerate;
 
     npErr = NP_Initialize(&m_browserFuncs);
+    LOG_NPERROR(npErr);
+    if (npErr != NPERR_NO_ERROR)
+        goto abort;
+
+    npErr = NP_GetEntryPoints(&m_pluginFuncs);
+    LOG_NPERROR(npErr);
     if (npErr != NPERR_NO_ERROR)
         goto abort;
 
