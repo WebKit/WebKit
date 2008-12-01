@@ -6,7 +6,7 @@
         Make HashTable work as expected with respect to threads. Specifically, it has class-level
         thread safety and constant methods work on constant objects without synchronization.
         
-        No observable change in behavior, so no test.
+        No observable change in behavior, so no test. This only affects debug builds.
 
         * wtf/HashTable.cpp:
         (WTF::hashTableStatsMutex):
