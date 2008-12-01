@@ -880,7 +880,7 @@ bool Lexer::scanRegExp()
 
 void Lexer::clear()
 {
-    m_identifiers.resize(0);
+    m_identifiers.clear();
 
     Vector<char> newBuffer8;
     newBuffer8.reserveCapacity(initialReadBufferCapacity);

@@ -85,59 +85,26 @@ namespace JSC {
             return m_segments[index / SegmentSize]->at(index % SegmentSize);
         }
 
-        void resize(size_t size)
+        void reserveCapacity(size_t newCapacity)
         {
-            if (size < m_size)
-                shrink(size);
-            else if (size > m_size)
-                grow(size);
-            ASSERT(size == m_size);
-        }
+            if (newCapacity <= m_size)
+                return;
 
-    private:
-        void shrink(size_t size)
-        {
-            ASSERT(size < m_size);
-            size_t numSegments = size / SegmentSize;
-            size_t extra = size % SegmentSize;
-            if (extra)
-                numSegments++;
-            if (!numSegments) {
-                for (size_t i = 1; i < m_segments.size(); i++)
-                    delete m_segments[i];
-                m_segments.resize(1);
-                m_inlineSegment.resize(0);
-                m_size = size;
+            if (newCapacity <= SegmentSize) {
+                m_inlineSegment.resize(newCapacity);
+                m_size = newCapacity;
                 return;
             }
 
-            for (size_t i = numSegments; i < m_segments.size(); i++)
-                delete m_segments[i];
-
-            m_segments.resize(numSegments);
-            if (extra)
-                m_segments.last()->resize(extra);
-            m_size = size;
-        }
-
-        void grow(size_t size)
-        {
-            ASSERT(size > m_size);
-            if (size <= SegmentSize) {
-                m_inlineSegment.resize(size);
-                m_size = size;
-                return;
-            }
-
-            size_t numSegments = size / SegmentSize;
-            size_t extra = size % SegmentSize;
+            size_t numSegments = newCapacity / SegmentSize;
+            size_t extra = newCapacity % SegmentSize;
             if (extra)
                 numSegments++;
             size_t oldSize = m_segments.size();
 
             if (numSegments == oldSize) {
                 m_segments.last()->resize(extra);
-                m_size = size;
+                m_size = newCapacity;
                 return;
             }
 
@@ -155,9 +122,19 @@ namespace JSC {
             Segment* segment = new Segment;
             segment->resize(extra ? extra : SegmentSize);
             m_segments[numSegments - 1] = segment;
-            m_size = size;
+            m_size = newCapacity;
         }
 
+        void clear()
+        {
+            for (size_t i = 1; i < m_segments.size(); i++)
+                delete m_segments[i];
+            m_segments.resize(1);
+            m_inlineSegment.resize(0);
+            m_size = 0;
+        }
+
+    private:
         typedef Vector<T, SegmentSize> Segment;
         size_t m_size;
         Segment m_inlineSegment;

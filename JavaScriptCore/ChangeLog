@@ -1,3 +1,30 @@
+2008-12-01  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Preliminary work for bug 20340: SegmentedVector segment allocations can lead to unsafe use of temporary registers
+        <https://bugs.webkit.org/show_bug.cgi?id=20340>
+
+        SegmentedVector currently frees segments and reallocates them when used
+        as a stack. This can lead to unsafe use of pointers into freed segments.
+
+        In order to fix this problem, SegmentedVector will be changed to only
+        grow and never shrink, with the sole exception of clearing all of its
+        data, a capability that is required by Lexer. This patch changes the
+        public interface to only allow for these capabilities.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Use reserveCapacity()
+        instead of resize() for m_globals and m_parameters.
+        * bytecompiler/SegmentedVector.h:
+        (JSC::SegmentedVector::resize): Removed.
+        (JSC::SegmentedVector::reserveCapacity): Added.
+        (JSC::SegmentedVector::clear): Added.
+        (JSC::SegmentedVector::shrink): Removed.
+        (JSC::SegmentedVector::grow): Removed.
+        * parser/Lexer.cpp:
+        (JSC::Lexer::clear): Use clear() instead of resize(0).
+
 2008-11-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
