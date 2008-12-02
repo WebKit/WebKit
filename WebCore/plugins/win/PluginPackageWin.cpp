@@ -162,13 +162,14 @@ void PluginPackage::determineQuirks(const String& mimeType)
 bool PluginPackage::fetchInfo()
 {
     DWORD versionInfoSize, zeroHandle;
-    versionInfoSize = GetFileVersionInfoSizeW(m_path.charactersWithNullTermination(), &zeroHandle); 
+    versionInfoSize = GetFileVersionInfoSizeW(const_cast<UChar*>(m_path.charactersWithNullTermination()), &zeroHandle);
     if (versionInfoSize == 0)
         return false;
 
     OwnArrayPtr<char> versionInfoData(new char[versionInfoSize]);
 
-    if (!GetFileVersionInfoW(m_path.charactersWithNullTermination(), 0, versionInfoSize, versionInfoData.get()))
+    if (!GetFileVersionInfoW(const_cast<UChar*>(m_path.charactersWithNullTermination()),
+            0, versionInfoSize, versionInfoData.get()))
         return false;
 
     m_name = getVersionInfo(versionInfoData.get(), "ProductName");
