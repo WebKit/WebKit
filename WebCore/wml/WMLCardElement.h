@@ -55,7 +55,9 @@ public:
 
 private:
     bool isVisible() const { return m_isVisible; }
-    void setVisible(bool isVisible) { m_isVisible = isVisible; }
+
+    void showCard();
+    void hideCard();
 
     bool m_isNewContext;
     bool m_isOrdered;

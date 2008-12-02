@@ -1,3 +1,15 @@
+2008-12-01  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George.
+
+        Fix switching active cards within a document. No way to test, until <go> support is implemented.
+
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::showCard):
+        (WebCore::WMLCardElement::hideCard):
+        (WebCore::WMLCardElement::setActiveCardInDocument):
+        * wml/WMLCardElement.h:
+
 2008-12-01  David Kilzer  <ddkilzer@apple.com>
 
         Fix logic error in LegacyWebArchive::create() from r38884.

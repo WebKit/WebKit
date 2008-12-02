@@ -56,6 +56,44 @@ WMLCardElement::~WMLCardElement()
 {
 }
 
+void WMLCardElement::showCard()
+{
+    ASSERT(attached());
+
+    if (m_isVisible) {
+        ASSERT(renderer());
+        return;
+    }
+
+    m_isVisible = true;
+    ASSERT(!renderer());
+
+    detach();
+    attach();
+
+    ASSERT(attached());
+    ASSERT(renderer());
+}
+
+void WMLCardElement::hideCard()
+{
+    ASSERT(attached());
+
+    if (!m_isVisible) {
+        ASSERT(!renderer());
+        return;
+    }
+
+    m_isVisible = false;
+    ASSERT(renderer());
+
+    detach();
+    attach();
+
+    ASSERT(attached());
+    ASSERT(!renderer());
+}
+
 void WMLCardElement::registerDoElement(WMLDoElement* doElement)
 {
     Vector<WMLDoElement*>::iterator it = m_doElements.begin();
@@ -239,26 +277,28 @@ WMLCardElement* WMLCardElement::setActiveCardInDocument(Document* doc, const KUR
         // Hide all cards - except the destination card - in document
         for (unsigned i = 0; i < length; ++i) {
             WMLCardElement* card = static_cast<WMLCardElement*>(nodeList->item(i));
-            bool cardShouldBeVisible = (card == activeCard);
 
-            if (cardShouldBeVisible && !card->isVisible()) {
-                card->setChanged();
-                card->setVisible(true);
-            } else if (!cardShouldBeVisible && card->isVisible()) {
-                card->setChanged();
-                card->setVisible(false);
-            }
+            if (card == activeCard)
+                card->showCard();
+            else
+                card->hideCard();
         }
     } else {
-        // The first card should already be visible.
+        // If the target URL didn't contain a fragment identifier, activeCard
+        // is 0, and has to be set to the first card element in the deck.
         activeCard = static_cast<WMLCardElement*>(nodeList->item(0));
-        ASSERT(activeCard->isVisible());
+        activeCard->showCard();
     }
+
+    // Assure destination card is visible
+    ASSERT(activeCard->isVisible());
+    ASSERT(activeCard->attached());
+    ASSERT(activeCard->renderer());
 
     // Update the document title
     doc->setTitle(activeCard->title());
 
-    // Set the active activeCard in the WML page state object
+    // Set the active activeCard in the WMLPageState object
     pageState->setActiveCard(activeCard);
     return activeCard;
 }
