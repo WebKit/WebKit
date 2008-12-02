@@ -2,6 +2,20 @@
 
         Reviewed by Dan Bernstein.
 
+        Move instantiatePlugin to NetscapePluginHostManager.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+
+2008-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Pass the plug-in host port directly to the instance proxy.
         
         * Plugins/Hosted/NetscapePluginHostProxy.mm:

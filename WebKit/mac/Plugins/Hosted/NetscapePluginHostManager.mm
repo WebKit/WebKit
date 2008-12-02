@@ -28,6 +28,7 @@
 #import "NetscapePluginHostManager.h"
 
 #import "NetscapePluginHostProxy.h"
+#import "NetscapePluginInstanceProxy.h"
 #import "WebKitSystemInterface.h"
 #import "WebNetscapePluginPackage.h"
 #import <mach/mach_port.h>
@@ -107,7 +108,7 @@ bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *packag
 
     [launchProperties release];
 
-    kern_return_t kr = _WKPASpawnPluginHost(m_pluginVendorPort, (uint8_t*)[data bytes], [data length], &pluginHostPort);
+    kern_return_t kr = _WKPASpawnPluginHost(m_pluginVendorPort, reinterpret_cast<uint8_t*>(const_cast<void*>([data bytes])), [data length], &pluginHostPort);
 
     if (kr != KERN_SUCCESS) {
         // FIXME: Check for invalid dest and try to re-spawn the plug-in agent.
@@ -158,6 +159,40 @@ bool NetscapePluginHostManager::initializeVendorPort()
     return true;
 }
 
+PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(WebNetscapePluginPackage *pluginPackage, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL)
+{
+    NetscapePluginHostProxy* hostProxy = hostForPackage(pluginPackage);
+
+    RetainPtr<NSMutableDictionary> properties(AdoptNS, [[NSMutableDictionary alloc] init]);
+    
+    if (mimeType)
+        [properties.get() setObject:mimeType forKey:@"mimeType"];
+
+    ASSERT_ARG(userAgent, userAgent);
+    [properties.get() setObject:userAgent forKey:@"userAgent"];
+    
+    ASSERT_ARG(attributeKeys, attributeKeys);
+    [properties.get() setObject:attributeKeys forKey:@"attributeKeys"];
+    
+    ASSERT_ARG(attributeValues, attributeValues);
+    [properties.get() setObject:attributeValues forKey:@"attributeValues"];
+
+    if (sourceURL)
+        [properties.get() setObject:[sourceURL absoluteString] forKey:@"sourceURL"];
+    
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList:properties.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
+    ASSERT(data);
+    
+    uint32_t pluginID;
+    uint32_t renderContextID;
+    boolean_t useSoftwareRenderer;
+    
+    if (_WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], &pluginID, &renderContextID, &useSoftwareRenderer) != KERN_SUCCESS)
+        return 0;
+
+    return NetscapePluginInstanceProxy::create(hostProxy->port(), pluginID, renderContextID, useSoftwareRenderer);
+}
+    
 } // namespace WebKit
 
 #endif // USE(PLUGIN_HOST_PROCESS)

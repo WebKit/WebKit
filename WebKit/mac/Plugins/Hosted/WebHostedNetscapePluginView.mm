@@ -88,14 +88,9 @@ extern "C" {
 {
     ASSERT(!_proxy);
 
-    NetscapePluginHostProxy* pluginHost = NetscapePluginHostManager::shared().hostForPackage(_pluginPackage.get());
-    
-    if (!pluginHost)
-        return NO;
-
     NSString *userAgent = [[self webView] userAgentForURL:_baseURL.get()];
 
-    _proxy = pluginHost->instantiatePlugin(_MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get());
+    _proxy = NetscapePluginHostManager::shared().instantiatePlugin(_pluginPackage.get(), _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get());
     if (!_proxy) 
         return NO;
     

@@ -42,8 +42,6 @@ public:
         return adoptRef(new NetscapePluginHostProxy(pluginHostPort));
     }
     
-    PassRefPtr<NetscapePluginInstanceProxy> instantiatePlugin(NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL);
-    
     mach_port_t port() const { return m_pluginHostPort; }
 
 private:

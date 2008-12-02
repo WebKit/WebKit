@@ -29,21 +29,25 @@
 #define NetscapePluginHostManager_h
 
 #import <wtf/HashMap.h>
+#import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 
 @class WebNetscapePluginPackage;
 
 namespace WebKit {
 
+class NetscapePluginInstanceProxy;
 class NetscapePluginHostProxy;
 
 class NetscapePluginHostManager {
 public:
     static NetscapePluginHostManager& shared();
     
-    NetscapePluginHostProxy* hostForPackage(WebNetscapePluginPackage *);
-    
+    PassRefPtr<NetscapePluginInstanceProxy> instantiatePlugin(WebNetscapePluginPackage *, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL);
+
 private:
+    NetscapePluginHostProxy* hostForPackage(WebNetscapePluginPackage *);
+
     NetscapePluginHostManager();
     ~NetscapePluginHostManager();
     
