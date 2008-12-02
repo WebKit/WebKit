@@ -1,6 +1,6 @@
 2008-12-01  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
-        Reviewed by George.
+        Reviewed by George Staikos.
 
         Fix switching active cards within a document. No way to test, until <go> support is implemented.
 
