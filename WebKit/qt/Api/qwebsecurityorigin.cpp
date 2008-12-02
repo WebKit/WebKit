@@ -30,59 +30,118 @@
 
 using namespace WebCore;
 
+/*!
+    \class QWebSecurityOrigin
+    \since 4.5
+    \brief The QWebSecurityOrigin class defines a security boundary for web sites.
+
+    QWebSecurityOrigin provides access to the security domains defined by web sites.
+    An origin is consists of a host name, a scheme, and a port number. Web sites with the same
+    security origin can access each other's resources for client-side scripting or databases.
+
+    ### diagram
+
+    For example the site \c{http://www.example.com/my/page.html} is allowed to share the same
+    database as \c{http://www.example.com/my/overview.html}, or access each other's
+    documents when used in HTML frame sets and JavaScript. At the same time it prevents
+    \c{http://www.malicious.com/evil.html} from accessing \c{http://www.example.com/}'s resources,
+    because they are of a different security origin.
+
+    QWebSecurity also provides access to all databases defined within a security origin.
+
+    For more information refer to the
+    \l{http://en.wikipedia.org/wiki/Same_origin_policy}{"Same origin policy" Wikipedia Article}.
+
+    \sa QWebFrame::securityOrigin()
+*/
+
+/*!
+    Constructs a security origin from \a other.
+*/
 QWebSecurityOrigin::QWebSecurityOrigin(const QWebSecurityOrigin& other) : d(other.d)
 {
 }
 
+/*!
+    Assigns the \a other security origin to this.
+*/
 QWebSecurityOrigin& QWebSecurityOrigin::operator=(const QWebSecurityOrigin& other)
 {
     d = other.d;
     return *this;
 }
 
+/*!
+    Returns the scheme defining the security origin.
+*/
 QString QWebSecurityOrigin::scheme() const
 {
     return d->origin->protocol();
 }
 
+/*!
+    Returns the host name defining the security origin.
+*/
 QString QWebSecurityOrigin::host() const
 {
     return d->origin->host();
 }
 
-
+/*!
+    Returns the port number defining the security origin.
+*/
 int QWebSecurityOrigin::port() const
 {
     return d->origin->port();
 }
 
+/*!
+    Returns the number of bytes all databases in the security origin
+    use on the disk.
+*/
 qint64 QWebSecurityOrigin::databaseUsage() const
 {
     return DatabaseTracker::tracker().usageForOrigin(d->origin.get());
 }
 
+/*!
+    Returns the quota for the databases in the security origin.
+*/
 qint64 QWebSecurityOrigin::databaseQuota() const
 {
     return DatabaseTracker::tracker().quotaForOrigin(d->origin.get());
 }
 
-// Sets the storage quota (in bytes)
-// If the quota is set to a value lower than the current usage, that quota will "stick" but no data will be purged to meet the new quota.
-// This will simply prevent new data from being added to databases in that origin
+/*!
+    Sets the quota for the databases in the security origin to \a quota bytes.
+
+    If the quota is set to a value less than the current usage, the quota will remain
+    and no data will be purged to meet the new quota. However, no new data can be added
+    to databases in this origin.
+*/
 void QWebSecurityOrigin::setDatabaseQuota(qint64 quota)
 {
     DatabaseTracker::tracker().setQuota(d->origin.get(), quota);
 }
 
+/*!
+    Destroys the security origin.
+*/
 QWebSecurityOrigin::~QWebSecurityOrigin()
 {
 }
 
+/*!
+    \internal
+*/
 QWebSecurityOrigin::QWebSecurityOrigin(QWebSecurityOriginPrivate* priv)
 {
     d = priv;
 }
 
+/*!
+    Returns a list of all security origins with a database quota defined.
+*/
 QList<QWebSecurityOrigin> QWebSecurityOrigin::allOrigins()
 {
     Vector<RefPtr<SecurityOrigin> > coreOrigins;
@@ -96,6 +155,9 @@ QList<QWebSecurityOrigin> QWebSecurityOrigin::allOrigins()
     return webOrigins;
 }
 
+/*!
+    Returns a list of all databases defined in the security origin.
+*/
 QList<QWebDatabase> QWebSecurityOrigin::databases() const
 {
     Vector<String> nameVector;

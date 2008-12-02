@@ -944,6 +944,11 @@ QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
     return rc;
 }
 
+/*!
+    \since 4.5
+
+    Returns the frame's security origin.
+*/
 QWebSecurityOrigin QWebFrame::securityOrigin() const
 {
     QWebFrame* that = const_cast<QWebFrame*>(this);

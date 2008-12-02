@@ -27,49 +27,103 @@
 
 using namespace WebCore;
 
+/*!
+    \class QWebDatabase
+    \since 4.5
+    \brief The QWebDatabase class provides access to HTML 5 databases created with JavaScript.
+
+    The upcoming HTML 5 standard includes support for SQL databases that web sites can create and
+    access on a local computer through JavaScript. QWebDatabase is the C++ interface to these databases.
+
+    For more information refer to the \l{http://www.w3.org/html/wg/html5/#sql}{HTML 5 Draft Standard}.
+
+    \sa QWebSecurityOrigin
+*/
+
+/*!
+    Constructs a web database from \a other.
+*/
 QWebDatabase::QWebDatabase(const QWebDatabase& other) : d(other.d)
 {
 }
 
+/*!
+    Assigns the \a other web database to this.
+*/
 QWebDatabase& QWebDatabase::operator=(const QWebDatabase& other)
 {
     d = other.d;
     return *this;
 }
 
+/*!
+    Returns the name of the database.
+*/
 QString QWebDatabase::name() const
 {
     return d->name;
 }
 
+/*!
+    Returns the name of the database as seen by the user.
+*/
 QString QWebDatabase::displayName() const
 {
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(d->name, d->origin.get());
     return details.displayName();
 }
 
+/*!
+    Returns the expected size of the database in bytes as defined by the web author.
+*/
 qint64 QWebDatabase::expectedSize() const
 {
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(d->name, d->origin.get());
     return details.expectedUsage();
 }
 
+/*!
+    Returns the current size of the database in bytes.
+*/
 qint64 QWebDatabase::size() const
 {
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(d->name, d->origin.get());
     return details.currentUsage();
 }
 
+/*!
+    \internal
+*/
 QWebDatabase::QWebDatabase(QWebDatabasePrivate* priv)
 {
     d = priv;
 }
 
+/*!
+    Returns the path to the web database on disk.
+
+    The path can be used to access the database through the QtSql database module, for example:
+    \code
+      QWebDatabase webdb = ...
+      QSqlDatabase sqldb = QSqlDatabase::addDatabase("QSQLITE", "myconnection");
+      sqldb.setDatabaseName(webdb.absoluteFilePath());
+      if (sqldb.open()) {
+          QStringList tables = sqldb.tables();
+          ...
+      }
+    \endcode
+
+    \note Concurrent access to a database from multiple threads or processes
+    is not very efficient because Sqlite is used as WebKit's database backend.
+*/
 QString QWebDatabase::absoluteFilePath() const
 {
     return DatabaseTracker::tracker().fullPathForDatabase(d->origin.get(), d->name, false);
 }
 
+/*!
+    Returns the databases's security origin.
+*/
 QWebSecurityOrigin QWebDatabase::origin() const
 {
     QWebSecurityOriginPrivate* priv = new QWebSecurityOriginPrivate(d->origin.get());
@@ -77,12 +131,18 @@ QWebSecurityOrigin QWebDatabase::origin() const
     return origin;
 }
 
+/*!
+    Removes the database from its security origin. All data stored in this database
+    will be destroyed.
+*/
 void QWebDatabase::remove()
 {
     DatabaseTracker::tracker().deleteDatabase(d->origin.get(), d->name);
 }
 
-
+/*!
+    Destroys the web database object. The data within this database is \b not destroyed.
+*/
 QWebDatabase::~QWebDatabase()
 {
 }

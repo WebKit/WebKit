@@ -1,3 +1,14 @@
+2008-12-02  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Initial API documentation for QWebDatabase, QWebSecurityOrigin and
+        QWebFrame::securityOrigin().
+
+        * Api/qwebdatabase.cpp:
+        * Api/qwebframe.cpp:
+        * Api/qwebsecurityorigin.cpp:
+
 2008-11-27  Kent Hansen  <khansen@trolltech.com>
 
         Reviewed by Simon Hausmann.
