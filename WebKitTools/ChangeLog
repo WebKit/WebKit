@@ -1,3 +1,20 @@
+2008-12-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Hack build-webkit --chromium to use Win32 python instead
+        of using the default cygwin python.  Scons + CYGWIN tries
+        to build with GCC by default, we force MSVC in our file
+        but that just results in errors from Scons.  Until we can fix
+        this latest round of errors, at least make build-webkit --chromium
+        actually "work" under CYGWIN instead of forcing users to use
+        a cmd shell directly.
+        
+        This is working around a Scons bug:
+        http://scons.tigris.org/issues/show_bug.cgi?id=2266
+
+        * Scripts/webkitdirs.pm:
+
 2008-12-01  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22466: REGRESSION (35867): Many resources missing when saving webarchive of webkit.org
