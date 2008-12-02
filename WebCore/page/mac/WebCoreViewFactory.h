@@ -104,6 +104,7 @@
 - (WebCoreTextMarker *)endOfTextMarkerRange:(WebCoreTextMarkerRange *)range;
 
 - (void)accessibilityHandleFocusChanged;
+- (CGRect)accessibilityConvertScreenRect:(CGRect)bounds;
 
 - (AXUIElementRef)AXUIElementForElement:(id)element;
 - (void)unregisterUniqueIdForUIElement:(id)element;

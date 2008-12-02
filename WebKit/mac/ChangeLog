@@ -1,3 +1,15 @@
+2008-12-02  Gregory Hughes  <ghughes@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 22513: ZOOM: text selection does not send correct zoom bounds
+
+        When zoomed, text selection must send the zoom bounds in flipped
+        screen coordinates.
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory accessibilityConvertScreenRect:]):
+
 2008-12-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
