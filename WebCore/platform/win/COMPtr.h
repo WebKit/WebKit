@@ -26,7 +26,9 @@
 #ifndef COMPtr_h
 #define COMPtr_h
 
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 
 #include <guiddef.h>
 #include <unknwn.h>

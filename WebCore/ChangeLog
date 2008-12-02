@@ -1,3 +1,10 @@
+2008-12-02  Adam Roben  <aroben@apple.com>
+
+        Build fix for Windows projects with NOMINMAX defined globally
+
+        * platform/win/COMPtr.h: Don't redefine NOMINMAX if it's already
+        defined.
+
 2008-12-02  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.
