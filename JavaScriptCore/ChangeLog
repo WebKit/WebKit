@@ -1,3 +1,55 @@
+2008-12-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich, with help from Gavin Barraclough.
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=22583.
+
+        Refactored regular expression parsing to parse sequences of characters
+        as a single unit, in preparation for optimizing sequences of characters.
+        
+        SunSpider reports no change.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wrec/Escapes.h: Added. Set of classes for representing an escaped
+        token in a pattern.
+
+        * wrec/Quantifier.h:
+        (JSC::WREC::Quantifier::Quantifier): Simplified this constructor slightly,
+        to match the new Escape constructor.
+
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generatePatternCharacterSequence):
+        * wrec/WRECGenerator.h: Added an interface for generating a sequence
+        of pattern characters at a time. It doesn't do anything special yet.
+
+        * wrec/WRECParser.cpp:
+        (JSC::WREC::Parser::consumeGreedyQuantifier):
+        (JSC::WREC::Parser::consumeQuantifier): Renamed "parse" to "consume" in
+        these functions, to match "consumeEscape."
+
+        (JSC::WREC::Parser::parsePatternCharacterSequence): New function for
+        iteratively aggregating a sequence of characters in a pattern.
+
+        (JSC::WREC::Parser::parseCharacterClassQuantifier):
+        (JSC::WREC::Parser::parseBackreferenceQuantifier): Renamed "parse" to
+        "consume" in these functions, to match "consumeEscape."
+
+        (JSC::WREC::Parser::parseCharacterClass): Refactored to use the common
+        escape processing code in consumeEscape.
+
+        (JSC::WREC::Parser::parseEscape): Refactored to use the common
+        escape processing code in consumeEscape.
+
+        (JSC::WREC::Parser::consumeEscape): Factored escaped token processing
+        into a common function, since we were doing this in a few places.
+
+        (JSC::WREC::Parser::parseTerm): Refactored to use the common
+        escape processing code in consumeEscape.
+
+        * wrec/WRECParser.h:
+        (JSC::WREC::Parser::consumeOctal): Refactored to use a helper function
+        for reading a digit.
+
 2008-12-01  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.

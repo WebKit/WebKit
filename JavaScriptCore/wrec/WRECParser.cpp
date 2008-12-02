@@ -35,7 +35,7 @@ using namespace WTF;
 
 namespace JSC { namespace WREC {
 
-ALWAYS_INLINE Quantifier Parser::parseGreedyQuantifier()
+ALWAYS_INLINE Quantifier Parser::consumeGreedyQuantifier()
 {
     switch (peek()) {
         case '?':
@@ -112,9 +112,9 @@ ALWAYS_INLINE Quantifier Parser::parseGreedyQuantifier()
     }
 }
 
-Quantifier Parser::parseQuantifier()
+Quantifier Parser::consumeQuantifier()
 {
-    Quantifier q = parseGreedyQuantifier();
+    Quantifier q = consumeGreedyQuantifier();
     
     if ((q.type == Quantifier::Greedy) && (peek() == '?')) {
         consume();
@@ -124,38 +124,91 @@ Quantifier Parser::parseQuantifier()
     return q;
 }
 
-bool Parser::parsePatternCharacterQualifier(JumpList& failures, int ch)
+bool Parser::parsePatternCharacterSequence(JumpList& failures, int ch)
 {
-    Quantifier q = parseQuantifier();
+    Vector<int, 8> sequence;
+    sequence.append(ch);
+    Quantifier quantifier;
+    Escape escape;
 
-    switch (q.type) {
-    case Quantifier::None: {
-        m_generator.generatePatternCharacter(failures, ch);
-        break;
+    bool done = false;
+    while (!done) {
+        switch (peek()) {
+            case EndOfPattern:
+            case '^':
+            case '$':
+            case '.':
+            case '(':
+            case ')':
+            case '[':
+            case ']':
+            case '}':
+            case '|': {
+                done = true;
+                continue;
+            }
+            case '*': 
+            case '+': 
+            case '?': 
+            case '{': {
+                quantifier = consumeQuantifier();
+                done = true;
+                continue;
+            }
+            case '\\': {
+                consume();
+                escape = consumeEscape(false);
+                if (escape.type() == Escape::PatternCharacter) {
+                    sequence.append(PatternCharacterEscape::cast(escape).character());
+                    continue;
+                }
+
+                done = true;
+                continue;
+            }
+            default: {
+                // Anything else is a PatternCharacter.
+                sequence.append(consume());
+                continue;
+            }
+        }
     }
 
-    case Quantifier::Greedy: {
-        GeneratePatternCharacterFunctor functor(ch);
-        m_generator.generateGreedyQuantifier(failures, functor, q.min, q.max);
-        break;
+    // Generate the character sequence. If the last character was quantified,
+    // it needs to be parsed separately, in the context of its quantifier.
+    size_t count = quantifier.type == Quantifier::None ? sequence.size() : sequence.size() - 1;
+    m_generator.generatePatternCharacterSequence(failures, sequence.begin(), count);
+
+    switch (quantifier.type) {
+        case Quantifier::None: {
+            break;
+        }
+        case Quantifier::Error: {
+            return false;
+        }
+        case Quantifier::Greedy: {
+            GeneratePatternCharacterFunctor functor(sequence.last());
+            m_generator.generateGreedyQuantifier(failures, functor, quantifier.min, quantifier.max);
+            return true;
+        }
+        case Quantifier::NonGreedy: {
+            GeneratePatternCharacterFunctor functor(sequence.last());
+            m_generator.generateNonGreedyQuantifier(failures, functor, quantifier.min, quantifier.max);
+            return true;
+        }
     }
 
-    case Quantifier::NonGreedy: {
-        GeneratePatternCharacterFunctor functor(ch);
-        m_generator.generateNonGreedyQuantifier(failures, functor, q.min, q.max);
-        break;
-    }
+    // If the last token was not a quantifier, it might have been a non-character
+    // escape. We need to parse it now, since we've consumed it.
+    if (escape.type() != Escape::None && escape.type() != Escape::PatternCharacter)
+        return parseEscape(failures, escape);
 
-    case Quantifier::Error:
-        return false;
-    }
-    
     return true;
 }
 
 bool Parser::parseCharacterClassQuantifier(JumpList& failures, const CharacterClass& charClass, bool invert)
 {
-    Quantifier q = parseQuantifier();
+    Quantifier q = consumeQuantifier();
 
     switch (q.type) {
     case Quantifier::None: {
@@ -184,7 +237,7 @@ bool Parser::parseCharacterClassQuantifier(JumpList& failures, const CharacterCl
 
 bool Parser::parseBackreferenceQuantifier(JumpList& failures, unsigned subpatternId)
 {
-    Quantifier q = parseQuantifier();
+    Quantifier q = consumeQuantifier();
 
     switch (q.type) {
     case Quantifier::None: {
@@ -221,7 +274,7 @@ bool Parser::parseCharacterClass(JumpList& failures)
         invert = true;
     }
 
-    CharacterClassConstructor charClassConstructor(m_ignoreCase);
+    CharacterClassConstructor constructor(m_ignoreCase);
 
     UChar ch;
     while ((ch = peek()) != ']') {
@@ -229,177 +282,129 @@ bool Parser::parseCharacterClass(JumpList& failures)
         case EndOfPattern:
             m_error = MalformedCharacterClass;
             return false;
-            
-        case '\\':
+
+        case '\\': {
             consume();
-            switch (ch = peek()) {
-            case EndOfPattern:
-                m_error = MalformedEscape;
-                return false;
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-                charClassConstructor.put(consumeOctal());
-                break;
+            Escape escape = consumeEscape(true);
 
-            // ControlEscape
-            case 'b':
-                consume();
-                charClassConstructor.put('\b');
-                break;
-            case 'f':
-                consume();
-                charClassConstructor.put('\f');
-                break;
-            case 'n':
-                consume();
-                charClassConstructor.put('\n');
-                break;
-            case 'r':
-                consume();
-                charClassConstructor.put('\r');
-                break;
-            case 't':
-                consume();
-                charClassConstructor.put('\t');
-                break;
-            case 'v':
-                consume();
-                charClassConstructor.put('\v');
-                break;
-
-            // ControlLetter
-            case 'c': {
-                consume();
-                int control = consume();
-                if (!isASCIIAlpha(control)) {
+            switch (escape.type()) {
+                case Escape::PatternCharacter: {
+                    int character = PatternCharacterEscape::cast(escape).character();
+                    if (character == '-')
+                        constructor.flushBeforeEscapedHyphen();
+                    constructor.put(character);
+                    break;
+                }
+                case Escape::CharacterClass: {
+                    const CharacterClassEscape& characterClassEscape = CharacterClassEscape::cast(escape);
+                    ASSERT(!characterClassEscape.invert());
+                    constructor.append(characterClassEscape.characterClass());
+                    break;
+                }
+                case Escape::Error: {
                     m_error = MalformedEscape;
                     return false;
                 }
-                charClassConstructor.put(control&31);
-                break;
-            }
-
-            // HexEscape
-            case 'x': {
-                consume();
-                int x = consumeHex(2);
-                if (x == -1) {
-                    m_error = MalformedEscape;
-                    return false;
+                case Escape::None:
+                case Escape::Backreference:
+                case Escape::WordBoundaryAssertion: {
+                    ASSERT_NOT_REACHED();
+                    break;
                 }
-                charClassConstructor.put(x);
-                break;
-            }
-
-            // UnicodeEscape
-            case 'u': {
-                consume();
-                int x = consumeHex(4);
-                if (x == -1) {
-                    m_error = MalformedEscape;
-                    return false;
-                }
-                charClassConstructor.put(x);
-                break;
-            }
-            
-            // CharacterClassEscape
-            case 'd':
-                consume();
-                charClassConstructor.append(CharacterClass::digits());
-                break;
-            case 's':
-                consume();
-                charClassConstructor.append(CharacterClass::spaces());
-                break;
-            case 'w':
-                consume();
-                charClassConstructor.append(CharacterClass::wordchar());
-                break;
-            case 'D':
-                consume();
-                charClassConstructor.append(CharacterClass::nondigits());
-                break;
-            case 'S':
-                consume();
-                charClassConstructor.append(CharacterClass::nonspaces());
-                break;
-            case 'W':
-                consume();
-                charClassConstructor.append(CharacterClass::nonwordchar());
-                break;
-
-            case '-':
-                consume();
-                charClassConstructor.flushBeforeEscapedHyphen();
-                charClassConstructor.put(ch);
-                break;
-
-            // IdentityEscape
-            default: {
-                // TODO: check this test for IdentifierPart.
-                int ch = consume();
-                if (isASCIIAlphanumeric(ch) || (ch == '_')) {
-                    m_error = MalformedEscape;
-                    return false;
-                }
-                charClassConstructor.put(ch);
-                break;
-            }
             }
             break;
-            
+        }
+
         default:
             consume();
-            charClassConstructor.put(ch);
+            constructor.put(ch);
         }
     }
     consume();
 
     // lazily catch reversed ranges ([z-a])in character classes
-    if (charClassConstructor.isUpsideDown()) {
+    if (constructor.isUpsideDown()) {
         m_error = MalformedCharacterClass;
         return false;
     }
 
-    charClassConstructor.flush();
-    CharacterClass charClass = charClassConstructor.charClass();
+    constructor.flush();
+    CharacterClass charClass = constructor.charClass();
     return parseCharacterClassQuantifier(failures, charClass, invert);
 }
 
-bool Parser::parseOctalEscape(JumpList& failures)
+bool Parser::parseEscape(JumpList& failures, const Escape& escape)
 {
-    return parsePatternCharacterQualifier(failures, consumeOctal());
+    switch (escape.type()) {
+        case Escape::PatternCharacter: {
+            return parsePatternCharacterSequence(failures, PatternCharacterEscape::cast(escape).character());
+        }
+        case Escape::CharacterClass: {
+            return parseCharacterClassQuantifier(failures, CharacterClassEscape::cast(escape).characterClass(), CharacterClassEscape::cast(escape).invert());
+        }
+        case Escape::Backreference: {
+            return parseBackreferenceQuantifier(failures, BackreferenceEscape::cast(escape).subpatternId());
+        }
+        case Escape::WordBoundaryAssertion: {
+            m_generator.generateAssertionWordBoundary(failures, WordBoundaryAssertionEscape::cast(escape).invert());
+            return true;
+        }
+        case Escape::Error: {
+            m_error = MalformedEscape;
+            return false;
+        }
+        case Escape::None: {
+            return false;
+        }
+    }
+    
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
-bool Parser::parseEscape(JumpList& failures)
+Escape Parser::consumeEscape(bool inCharacterClass)
 {
     switch (peek()) {
     case EndOfPattern:
-        m_error = MalformedEscape;
-        return false;
+        return Escape(Escape::Error);
 
     // Assertions
     case 'b':
         consume();
-        m_generator.generateAssertionWordBoundary(failures, false);
-        return true;
-
+        if (inCharacterClass)
+            return PatternCharacterEscape('\b');
+        return WordBoundaryAssertionEscape(false); // do not invert
     case 'B':
         consume();
-        m_generator.generateAssertionWordBoundary(failures, true);
-        return true;
+        if (inCharacterClass)
+            return Escape(Escape::Error);
+        return WordBoundaryAssertionEscape(true); // invert
 
-    // Octal escape
-    case '0':
+    // CharacterClassEscape
+    case 'd':
         consume();
-        return parseOctalEscape(failures);
+        return CharacterClassEscape(CharacterClass::digits(), false);
+    case 's':
+        consume();
+        return CharacterClassEscape(CharacterClass::spaces(), false);
+    case 'w':
+        consume();
+        return CharacterClassEscape(CharacterClass::wordchar(), false);
+    case 'D':
+        consume();
+        return inCharacterClass
+            ? CharacterClassEscape(CharacterClass::nondigits(), false)
+            : CharacterClassEscape(CharacterClass::digits(), true);
+    case 'S':
+        consume();
+        return inCharacterClass
+            ? CharacterClassEscape(CharacterClass::nonspaces(), false)
+            : CharacterClassEscape(CharacterClass::spaces(), true);
+    case 'W':
+        consume();
+        return inCharacterClass
+            ? CharacterClassEscape(CharacterClass::nonwordchar(), false)
+            : CharacterClassEscape(CharacterClass::wordchar(), true);
 
     // DecimalEscape
     case '1':
@@ -408,114 +413,83 @@ bool Parser::parseEscape(JumpList& failures)
     case '4':
     case '5':
     case '6':
-    case '7': {
-        // FIXME: This does not support forward references. It's not clear whether they
-        // should be valid.
-        unsigned value = peekDigit();
-        if (value > m_numSubpatterns)
-            return parseOctalEscape(failures);
-    }
+    case '7':
     case '8':
     case '9': {
-        unsigned value = peekDigit();
-        if (value > m_numSubpatterns) {
-            consume();
-            m_error = MalformedEscape;
-            return false;
+        if (peekDigit() > m_numSubpatterns || inCharacterClass) {
+            // To match Firefox, we parse an invalid backreference in the range [1-7]
+            // as an octal escape.
+            return peekDigit() > 7 ? Escape(Escape::Error) : PatternCharacterEscape(consumeOctal());
         }
-        consume();
 
-        while (peekIsDigit()) {
+        int value = 0;
+        do {
             unsigned newValue = value * 10 + peekDigit();
             if (newValue > m_numSubpatterns)
                 break;
             value = newValue;
             consume();
-        }
+        } while (peekIsDigit());
 
-        parseBackreferenceQuantifier(failures, value);
-        return true;
+        return BackreferenceEscape(value);
     }
-    
+
+    // Octal escape
+    case '0':
+        consume();
+        return PatternCharacterEscape(consumeOctal());
+
     // ControlEscape
     case 'f':
         consume();
-        return parsePatternCharacterQualifier(failures, '\f');
+        return PatternCharacterEscape('\f');
     case 'n':
         consume();
-        return parsePatternCharacterQualifier(failures, '\n');
+        return PatternCharacterEscape('\n');
     case 'r':
         consume();
-        return parsePatternCharacterQualifier(failures, '\r');
+        return PatternCharacterEscape('\r');
     case 't':
         consume();
-        return parsePatternCharacterQualifier(failures, '\t');
+        return PatternCharacterEscape('\t');
     case 'v':
         consume();
-        return parsePatternCharacterQualifier(failures, '\v');
+        return PatternCharacterEscape('\v');
 
     // ControlLetter
     case 'c': {
         consume();
         int control = consume();
-        if (!isASCIIAlpha(control)) {
-            m_error = MalformedEscape;
-            return false;
-        }
-        return parsePatternCharacterQualifier(failures, control&31);
+        if (!isASCIIAlpha(control))
+            return Escape(Escape::Error);
+        return PatternCharacterEscape(control & 31);
     }
 
     // HexEscape
     case 'x': {
         consume();
         int x = consumeHex(2);
-        if (x == -1) {
-            m_error = MalformedEscape;
-            return false;
-        }
-        return parsePatternCharacterQualifier(failures, x);
+        if (x == -1)
+            return Escape(Escape::Error);
+        return PatternCharacterEscape(x);
     }
 
     // UnicodeEscape
     case 'u': {
         consume();
         int x = consumeHex(4);
-        if (x == -1) {
-            m_error = MalformedEscape;
-            return false;
-        }
-        return parsePatternCharacterQualifier(failures, x);
+        if (x == -1)
+            return Escape(Escape::Error);
+        return PatternCharacterEscape(x);
     }
-
-    // CharacterClassEscape
-    case 'd':
-        consume();
-        return parseCharacterClassQuantifier(failures, CharacterClass::digits(), false);
-    case 's':
-        consume();
-        return parseCharacterClassQuantifier(failures, CharacterClass::spaces(), false);
-    case 'w':
-        consume();
-        return parseCharacterClassQuantifier(failures, CharacterClass::wordchar(), false);
-    case 'D':
-        consume();
-        return parseCharacterClassQuantifier(failures, CharacterClass::digits(), true);
-    case 'S':
-        consume();
-        return parseCharacterClassQuantifier(failures, CharacterClass::spaces(), true);
-    case 'W':
-        consume();
-        return parseCharacterClassQuantifier(failures, CharacterClass::wordchar(), true);
 
     // IdentityEscape
     default: {
         // TODO: check this test for IdentifierPart.
         int ch = consume();
-        if (isASCIIAlphanumeric(ch) || (ch == '_')) {
-            m_error = MalformedEscape;
-            return false;
-        }
-        return parsePatternCharacterQualifier(failures, ch);
+        if (isASCIIAlphanumeric(ch) || (ch == '_'))
+            return Escape(Escape::Error);
+        return PatternCharacterEscape(ch);
     }
     }
 }
@@ -532,7 +506,6 @@ bool Parser::parseTerm(JumpList& failures)
     case '{':
     case '}':
     case '|':
-        // Not allowed in a Term!
         return false;
         
     case '^':
@@ -546,16 +519,14 @@ bool Parser::parseTerm(JumpList& failures)
         return true;
 
     case '\\':
-        // b & B are also assertions...
         consume();
-        return parseEscape(failures);
+        return parseEscape(failures, consumeEscape(false));
 
     case '.':
         consume();
         return parseCharacterClassQuantifier(failures, CharacterClass::newline(), true);
 
     case '[':
-        // CharacterClass
         consume();
         return parseCharacterClass(failures);
 
@@ -564,8 +535,8 @@ bool Parser::parseTerm(JumpList& failures)
         return parseParentheses(failures);
 
     default:
-        // Anything else is a PatternCharacter
-        return parsePatternCharacterQualifier(failures, consume());
+        // Anything else is a PatternCharacter.
+        return parsePatternCharacterSequence(failures, consume());
     }
 }
 

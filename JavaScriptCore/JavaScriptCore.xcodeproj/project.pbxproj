@@ -144,6 +144,7 @@
 		969A07990ED1D3AE00F1F681 /* Instruction.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07930ED1D3AE00F1F681 /* Instruction.h */; };
 		969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07940ED1D3AE00F1F681 /* Opcode.cpp */; };
 		969A079B0ED1D3AE00F1F681 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07950ED1D3AE00F1F681 /* Opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		96A746410EDDF70600904779 /* Escapes.h in Headers */ = {isa = PBXBuildFile; fileRef = 96A7463F0EDDF70600904779 /* Escapes.h */; };
 		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */; };
@@ -614,6 +615,7 @@
 		969A07940ED1D3AE00F1F681 /* Opcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Opcode.cpp; sourceTree = "<group>"; };
 		969A07950ED1D3AE00F1F681 /* Opcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Opcode.h; sourceTree = "<group>"; };
 		969A09220ED1E09C00F1F681 /* Completion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Completion.cpp; sourceTree = "<group>"; };
+		96A7463F0EDDF70600904779 /* Escapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Escapes.h; sourceTree = "<group>"; };
 		A72700770DAC605600E548D7 /* JSNotAnObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotAnObject.h; sourceTree = "<group>"; };
 		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionHelpers.h; sourceTree = "<group>"; };
@@ -1314,6 +1316,7 @@
 				1429DADE0ED2645B00B89619 /* WRECGenerator.h */,
 				1429DABE0ED263E700B89619 /* WRECParser.cpp */,
 				1429DABD0ED263E700B89619 /* WRECParser.h */,
+				96A7463F0EDDF70600904779 /* Escapes.h */,
 			);
 			path = wrec;
 			sourceTree = "<group>";
@@ -1619,6 +1622,7 @@
 				1429DA830ED2482900B89619 /* WRECFunctors.h in Headers */,
 				1429DABF0ED263E700B89619 /* WRECParser.h in Headers */,
 				1429DAE00ED2645B00B89619 /* WRECGenerator.h in Headers */,
+				96A746410EDDF70600904779 /* Escapes.h in Headers */,
 				86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
