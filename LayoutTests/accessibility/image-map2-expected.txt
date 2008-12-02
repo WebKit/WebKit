@@ -42,7 +42,7 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
 
 ------------
@@ -65,7 +65,7 @@ AXEndTextMarker: (null)
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
-AXBlockQuoteLevel: (null)
+AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink>
 
 ------------

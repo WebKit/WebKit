@@ -101,6 +101,11 @@ using namespace std;
 #define NSAccessibilityDefinitionListSubrole @"AXDefinitionList"
 #endif
 
+// Miscellaneous
+#ifndef NSAccessibilityBlockQuoteLevelAttribute
+#define NSAccessibilityBlockQuoteLevelAttribute @"AXBlockQuoteLevel"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
 #endif
@@ -359,6 +364,9 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
 
 static int blockquoteLevel(RenderObject* renderer)
 {
+    if (!renderer)
+        return 0;
+    
     int result = 0;
     for (Node* node = renderer->element(); node; node = node->parent()) {
         if (node->hasTagName(blockquoteTag))
@@ -373,9 +381,9 @@ static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrS
     int quoteLevel = blockquoteLevel(renderer);
     
     if (quoteLevel)
-        [attrString addAttribute:@"AXBlockQuoteLevel" value:[NSNumber numberWithInt:quoteLevel] range:range];
+        [attrString addAttribute:NSAccessibilityBlockQuoteLevelAttribute value:[NSNumber numberWithInt:quoteLevel] range:range];
     else
-        [attrString removeAttribute:@"AXBlockQuoteLevel" range:range];
+        [attrString removeAttribute:NSAccessibilityBlockQuoteLevelAttribute range:range];
 }
 
 static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, Node* node, int offset, NSRange range)
@@ -626,7 +634,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
                       @"AXVisited",
                       NSAccessibilityLinkedUIElementsAttribute,
                       NSAccessibilitySelectedAttribute,
-                      @"AXBlockQuoteLevel",
+                      NSAccessibilityBlockQuoteLevelAttribute,
                       NSAccessibilityTopLevelUIElementAttribute,
                       nil];
     }
@@ -1344,8 +1352,15 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if ([attributeName isEqualToString: @"AXEndTextMarker"])
             return textMarkerForVisiblePosition(endOfDocument(renderer->document()));
 
-        if ([attributeName isEqualToString: @"AXBlockQuoteLevel"])
+        if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
             return [NSNumber numberWithInt:blockquoteLevel(renderer)];
+    } else {
+        if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute]) {
+            AccessibilityObject* parent = m_object->parentObjectUnignored();
+            if (!parent)
+                return [NSNumber numberWithInt:0];
+            return [parent->wrapper() accessibilityAttributeValue:NSAccessibilityBlockQuoteLevelAttribute];        
+        }
     }
     
     if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute]) {

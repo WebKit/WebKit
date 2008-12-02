@@ -1,3 +1,16 @@
+2008-12-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Bug 22596: Some elements don't report AXBlockQuoteLevel
+        https://bugs.webkit.org/show_bug.cgi?id=22596
+ 
+        Reviewed by John Sullivan.
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (blockquoteLevel):
+        (AXAttributeStringSetBlockquoteLevel):
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2008-12-02  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Eric Seidel.

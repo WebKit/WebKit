@@ -1,3 +1,13 @@
+2008-12-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Update tests for Bug 22596: Some elements don't report AXBlockQuoteLevel
+
+        Reviewed by John Sullivan.
+
+        * accessibility/document-links-expected.txt:
+        * accessibility/image-map1-expected.txt:
+        * accessibility/image-map2-expected.txt:
+
 2008-12-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
