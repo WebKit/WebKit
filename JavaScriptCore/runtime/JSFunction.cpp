@@ -43,7 +43,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSFunction);
 
-const ClassInfo JSFunction::info = { "Function", 0, 0, 0 };
+const ClassInfo JSFunction::info = { "Function", &InternalFunction::info, 0, 0 };
 
 JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode* body, ScopeChainNode* scopeChainNode)
     : Base(&exec->globalData(), exec->lexicalGlobalObject()->functionStructure(), name)

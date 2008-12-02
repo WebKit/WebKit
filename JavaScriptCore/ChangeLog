@@ -1,3 +1,12 @@
+2008-12-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+        
+        Fix the inheritance chain for JSFunction.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::info): Add InternalFunction::info as parent class
+
 2008-12-02  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

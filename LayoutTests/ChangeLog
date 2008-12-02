@@ -1,3 +1,13 @@
+2008-12-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+        
+        Add Layout test for https://bugs.webkit.org/show_bug.cgi?id=22460,
+        testing ASSERT in console.trace() due to incomplete inheritance chain.
+
+        * fast/dom/Window/console-trace-expected.txt: Added.
+        * fast/dom/Window/console-trace.html: Added.
+
 2008-12-02  Michael Moss  <mmoss@chromium.org>
 
         Reviewed by Eric Seidel.
