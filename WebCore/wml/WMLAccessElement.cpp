@@ -42,20 +42,16 @@ WMLAccessElement::WMLAccessElement(const QualifiedName& tagName, Document* doc)
 void WMLAccessElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == domainAttr) {
-        const AtomicString& value = attr->value();
-        if (containsVariableReference(value)) {
-            reportWMLError(document(), WMLErrorInvalidVariableReference);
+        String value = parseValueForbiddingVariableReferences(attr->value());
+        if (value.isEmpty())
             return;
-        }
-
+            
         if (WMLPageState* pageState = wmlPageStateForDocument(document()))
             pageState->restrictDeckAccessToDomain(value);
     } else if (attr->name() == pathAttr) {
-        const AtomicString& value = attr->value();
-        if (containsVariableReference(value)) {
-            reportWMLError(document(), WMLErrorInvalidVariableReference);
+        String value = parseValueForbiddingVariableReferences(attr->value());
+        if (value.isEmpty())
             return;
-        }
 
         if (WMLPageState* pageState = wmlPageStateForDocument(document()))
             pageState->restrictDeckAccessToPath(value);

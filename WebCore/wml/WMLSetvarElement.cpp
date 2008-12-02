@@ -43,24 +43,17 @@ WMLSetvarElement::~WMLSetvarElement()
 void WMLSetvarElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == HTMLNames::nameAttr) {
-        const AtomicString& value = attr->value();
-        String name;
-
-        bool isValid = isValidVariableName(value, true);
-        if (isValid) {
-            name = substituteVariableReferences(value, document());
-            isValid = isValidVariableName(name, true);
+        String name = parseValueSubstitutingVariableReferences(attr->value());
+        if (!isValidVariableName(name)) {
+            reportWMLError(document(), WMLErrorInvalidVariableName);
+            return;
         }
 
-        if (isValid)
-            m_name = name;
-        else
-            reportWMLError(document(), WMLErrorInvalidVariableName);
+        m_name = name;
     } else if (attr->name() == HTMLNames::valueAttr)
-        m_value = substituteVariableReferences(attr->value(), document());
+        m_value = parseValueSubstitutingVariableReferences(attr->value());
     else
         WMLElement::parseMappedAttribute(attr);
-
 }
 
 void WMLSetvarElement::insertedIntoDocument()

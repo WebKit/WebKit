@@ -67,7 +67,10 @@ void reportWMLError(Document* doc, WMLErrorCode error)
         errorMessage = "A variable name contains invalid characters.";
         break;
     case WMLErrorInvalidVariableReference:
-        errorMessage = "A variable reference uses invalid syntax or is placed in an invalid location.";
+        errorMessage = "A variable reference uses invalid syntax.";
+        break;
+    case WMLErrorInvalidVariableReferenceLocation:
+        errorMessage = "A variable reference is placed in an invalid location.";
         break;
     case WMLErrorMultipleAccessElements:
         errorMessage = "Only one access element is allowed in a deck.";

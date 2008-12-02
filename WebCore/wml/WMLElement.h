@@ -40,6 +40,11 @@ public:
 
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
+protected:
+    // Helper function for derived classes
+    String parseValueSubstitutingVariableReferences(const AtomicString&);
+    String parseValueForbiddingVariableReferences(const AtomicString&);
 };
 
 }

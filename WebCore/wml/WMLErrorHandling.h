@@ -36,6 +36,7 @@ namespace WebCore {
         WMLErrorInvalidColumnsNumberInTable,
         WMLErrorInvalidVariableName,
         WMLErrorInvalidVariableReference,
+        WMLErrorInvalidVariableReferenceLocation,
         WMLErrorMultipleAccessElements,
         WMLErrorMultipleTimerElements,
         WMLErrorNoCardInDocument

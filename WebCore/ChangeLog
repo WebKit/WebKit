@@ -2,6 +2,41 @@
 
         Reviewed by George Staikos.
 
+        Add two new helper functions to WMLElement, parseValueSubstitutingVariableReferences/parseValueForbiddingVariableReferences.
+
+        Convert all elements to parse their attribute values using these new helper functions. This simplifies the
+        actual attribute parsing code in all WMLElement derived classes, as most WML attribute values either report
+        an error if there's a variable reference used in the attribute value, or if it's invalid.
+
+        Split the WMLErrorInvalidVariableReference error which covered both 'invalid syntax' / 'wrong location'
+        in two seperated error codes: WMLErrorInvalidVariableReference / WMLErrorInvalidVariableReferenceLocation.
+
+        * wml/WMLAccessElement.cpp:
+        (WebCore::WMLAccessElement::parseMappedAttribute):
+        * wml/WMLDoElement.cpp:
+        (WebCore::WMLDoElement::defaultEventHandler):
+        (WebCore::WMLDoElement::parseMappedAttribute):
+        * wml/WMLElement.cpp:
+        (WebCore::WMLElement::parseValueSubstitutingVariableReferences):
+        (WebCore::WMLElement::parseValueForbiddingVariableReferences):
+        * wml/WMLElement.h:
+        * wml/WMLErrorHandling.cpp:
+        (WebCore::reportWMLError):
+        * wml/WMLErrorHandling.h:
+        (WebCore::):
+        * wml/WMLOnEventElement.cpp:
+        (WebCore::WMLOnEventElement::parseMappedAttribute):
+        * wml/WMLPrevElement.cpp:
+        (WebCore::WMLPrevElement::executeTask):
+        * wml/WMLSetvarElement.cpp:
+        (WebCore::WMLSetvarElement::parseMappedAttribute):
+        * wml/WMLTimerElement.cpp:
+        (WebCore::WMLTimerElement::parseMappedAttribute):
+
+2008-12-01  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         Fix switching active cards within a document. No way to test, until <go> support is implemented.
 
         * wml/WMLCardElement.cpp:

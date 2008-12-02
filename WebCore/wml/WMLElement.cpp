@@ -27,7 +27,9 @@
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
 #include "RenderObject.h"
+#include "WMLErrorHandling.h"
 #include "WMLNames.h"
+#include "WMLVariables.h"
 
 using std::max;
 using std::min;
@@ -83,6 +85,30 @@ bool WMLElement::rendererIsNeeded(RenderStyle* style)
 RenderObject* WMLElement::createRenderer(RenderArena*, RenderStyle* style)
 {
     return RenderObject::createObject(this, style);
+}
+
+String WMLElement::parseValueSubstitutingVariableReferences(const AtomicString& value)
+{
+    bool isValid = false;
+    if (!containsVariableReference(value, isValid))
+        return value;
+
+    if (!isValid) {
+        reportWMLError(document(), WMLErrorInvalidVariableReference);
+        return String();
+    }
+
+    return substituteVariableReferences(value, document());
+}
+
+String WMLElement::parseValueForbiddingVariableReferences(const AtomicString& value)
+{
+    if (containsVariableReference(value)) {
+        reportWMLError(document(), WMLErrorInvalidVariableReferenceLocation);
+        return String();
+    }
+
+    return value;
 }
 
 }

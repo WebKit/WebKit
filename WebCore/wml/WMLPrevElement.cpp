@@ -54,8 +54,8 @@ void WMLPrevElement::executeTask(Event*)
     storeVariableState(pageState);
 
     // Stop the timer of the current card if it is active
-    if (WMLTimerElement* timer = card->eventTimer())
-        timer->stop();
+    if (WMLTimerElement* eventTimer = card->eventTimer())
+        eventTimer->stop();
 
     pageState->page()->goBack();
 }

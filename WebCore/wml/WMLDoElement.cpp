@@ -32,7 +32,6 @@
 #include "RenderButton.h"
 #include "WMLCardElement.h"
 #include "WMLDocument.h"
-#include "WMLErrorHandling.h"
 #include "WMLTaskElement.h"
 #include "WMLTimerElement.h"
 #include "WMLNames.h"
@@ -78,9 +77,10 @@ void WMLDoElement::defaultEventHandler(Event* event)
             return;
 
         // Stop the timer of the current card if it is active
-        WMLCardElement* card = pageState->activeCard();
-        if (card && card->eventTimer())
-            card->eventTimer()->stop();
+        if (WMLCardElement* card = pageState->activeCard()) {
+            if (WMLTimerElement* eventTimer = card->eventTimer())
+                eventTimer->stop();
+        }
 
         pageState->page()->goBack();
     } else if (m_type == "reset") {
@@ -94,24 +94,12 @@ void WMLDoElement::defaultEventHandler(Event* event)
 
 void WMLDoElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name() == HTMLNames::typeAttr) {
-        const AtomicString& value = attr->value();
-        if (containsVariableReference(value)) {
-            reportWMLError(document(), WMLErrorInvalidVariableReference);
-            return;
-        }
-
-        m_type = value;
-    } else if (attr->name() == HTMLNames::nameAttr) {
-        const AtomicString& value = attr->value();
-        if (containsVariableReference(value)) {
-            reportWMLError(document(), WMLErrorInvalidVariableReference);
-            return;
-        }
-
-        m_name = value;
-    } else if (attr->name() == HTMLNames::labelAttr)
-        m_label = substituteVariableReferences(attr->value(), document());
+    if (attr->name() == HTMLNames::typeAttr)
+        m_type = parseValueForbiddingVariableReferences(attr->value());
+    else if (attr->name() == HTMLNames::nameAttr)
+        m_name = parseValueForbiddingVariableReferences(attr->value());
+    else if (attr->name() == HTMLNames::labelAttr)
+        m_label = parseValueSubstitutingVariableReferences(attr->value());
     else if (attr->name() == optionalAttr)
         m_isOptional = (attr->value() == "true");
     else

@@ -44,19 +44,17 @@ WMLOnEventElement::WMLOnEventElement(const QualifiedName& tagName, Document* doc
 void WMLOnEventElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == HTMLNames::typeAttr) {
-        const AtomicString& value = attr->value();
-        if (containsVariableReference(value)) {
-            reportWMLError(document(), WMLErrorInvalidVariableReference);
+        String parsedValue = parseValueForbiddingVariableReferences(attr->value());
+        if (parsedValue.isEmpty())
             return;
-        }
 
-        if (value == onenterforwardAttr)
+        if (parsedValue == onenterforwardAttr)
             m_type = WMLIntrinsicEventOnEnterForward;
-        else if (value == onenterbackwardAttr)
+        else if (parsedValue == onenterbackwardAttr)
             m_type = WMLIntrinsicEventOnEnterBackward;
-        else if (value == ontimerAttr)
+        else if (parsedValue == ontimerAttr)
             m_type = WMLIntrinsicEventOnTimer;
-        else if (value == onpickAttr)
+        else if (parsedValue == onpickAttr)
             m_type = WMLIntrinsicEventOnPick;
     } else
         WMLElement::parseMappedAttribute(attr);
