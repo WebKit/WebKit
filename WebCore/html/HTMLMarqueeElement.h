@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2007 Apple Inc. All rights reserved.
@@ -31,7 +29,7 @@ namespace WebCore {
 
 class HTMLMarqueeElement : public HTMLElement {
 public:
-    HTMLMarqueeElement(Document*);
+    HTMLMarqueeElement(const QualifiedName&, Document*);
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 3; }

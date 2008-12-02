@@ -37,7 +37,7 @@ class KURL;
 
 class HTMLSourceElement : public HTMLElement {
 public:
-    HTMLSourceElement(Document*);
+    HTMLSourceElement(const QualifiedName&, Document*);
     virtual ~HTMLSourceElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }

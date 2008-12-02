@@ -40,10 +40,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLVideoElement::HTMLVideoElement(Document* doc)
-    : HTMLMediaElement(HTMLNames::videoTag, doc)
+HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document* doc)
+    : HTMLMediaElement(tagName, doc)
     , m_shouldShowPosterImage(false)
 {
+    ASSERT(hasTagName(videoTag));
 }
     
 bool HTMLVideoElement::rendererIsNeeded(RenderStyle* style) 

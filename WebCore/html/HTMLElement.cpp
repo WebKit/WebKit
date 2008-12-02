@@ -431,7 +431,7 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
                     return;
             }
             if (!(c == '\n' && i != 0 && prev == '\r')) {
-                fragment->appendChild(new HTMLBRElement(document()), ec);
+                fragment->appendChild(new HTMLBRElement(brTag, document()), ec);
                 if (ec)
                     return;
             }

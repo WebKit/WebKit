@@ -35,7 +35,7 @@ namespace WebCore {
 class HTMLAudioElement : public HTMLMediaElement
 {
 public:
-    HTMLAudioElement(Document*);
+    HTMLAudioElement(const QualifiedName&, Document*);
     
     virtual int tagPriority() const { return 5; }
 };

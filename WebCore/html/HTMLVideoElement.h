@@ -38,7 +38,7 @@ class HTMLImageLoader;
 class HTMLVideoElement : public HTMLMediaElement
 {
 public:
-    HTMLVideoElement(Document*);
+    HTMLVideoElement(const QualifiedName&, Document*);
     
     virtual int tagPriority() const { return 5; }
     virtual bool rendererIsNeeded(RenderStyle*);

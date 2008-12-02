@@ -331,7 +331,7 @@ void RenderTextControl::updateFromElement()
             ExceptionCode ec = 0;
             m_innerText->setInnerText(value, ec);
             if (value.endsWith("\n") || value.endsWith("\r"))
-                m_innerText->appendChild(new HTMLBRElement(document()), ec);
+                m_innerText->appendChild(new HTMLBRElement(brTag, document()), ec);
             m_dirty = false;
             m_userEdited = false;
         }

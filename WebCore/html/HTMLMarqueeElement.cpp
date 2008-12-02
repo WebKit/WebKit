@@ -1,6 +1,4 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
@@ -37,10 +35,11 @@ using namespace HTMLNames;
  // WinIE uses 60ms as the minimum delay by default.
 const int defaultMinimumDelay = 60;
 
-HTMLMarqueeElement::HTMLMarqueeElement(Document* doc)
-    : HTMLElement(marqueeTag, doc)
+HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
     , m_minimumDelay(defaultMinimumDelay)
 {
+    ASSERT(hasTagName(marqueeTag));
 }
 
 bool HTMLMarqueeElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

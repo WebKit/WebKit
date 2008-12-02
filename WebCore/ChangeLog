@@ -1,5 +1,48 @@
 2008-12-01  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Bug 22564: Make HTML elements' constructors take a QualifiedName
+        https://bugs.webkit.org/show_bug.cgi?id=22564
+
+        - Modified the remaining HTML elements' constructors to take a QualifiedName.
+
+        - Added an assertion that the QualifiedName given corresponds to the element constructed.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::constructAudio):
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::HTMLAudioElement):
+        * html/HTMLAudioElement.h:
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::HTMLBRElement):
+        * html/HTMLBRElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+        * html/HTMLElementFactory.cpp:
+        (WebCore::brConstructor):
+        (WebCore::quoteConstructor):
+        (WebCore::marqueeConstructor):
+        (WebCore::audioConstructor):
+        (WebCore::videoConstructor):
+        (WebCore::sourceConstructor):
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::HTMLMarqueeElement):
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::HTMLQuoteElement):
+        * html/HTMLQuoteElement.h:
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::HTMLSourceElement):
+        * html/HTMLSourceElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::HTMLVideoElement):
+        * html/HTMLVideoElement.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::updateFromElement):
+
+2008-12-01  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Reviewed by Antti Koivisto.
 
         Bug 22441: Bridge the gap between the generated ElementFactory and HTMLElementFactory

@@ -38,9 +38,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLSourceElement::HTMLSourceElement(Document* doc)
-    : HTMLElement(sourceTag, doc)
+HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
 {
+    ASSERT(hasTagName(sourceTag));
 }
 
 HTMLSourceElement::~HTMLSourceElement()
