@@ -52,8 +52,6 @@ static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext* 
 
 static HBITMAP imageFromRect(const Frame* frame, IntRect& ir)
 {
-    frame->document()->updateLayout();
-
     void* bits;
     HDC hdc = CreateCompatibleDC(0);
     int w = ir.width();
@@ -81,6 +79,8 @@ static HBITMAP imageFromRect(const Frame* frame, IntRect& ir)
 
 HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
 {
+    frame->document()->updateLayout();
+
     frame->view()->setPaintRestriction(forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly);
     FloatRect fr = frame->selectionBounds();
     IntRect ir(static_cast<int>(fr.x()), static_cast<int>(fr.y()),
@@ -98,6 +98,8 @@ HBITMAP Frame::nodeImage(Node* node) const
 
     IntRect topLevelRect;
     IntRect paintingRect = renderer->paintingRootRect(topLevelRect);
+
+    frame->document()->updateLayout();
 
     d->m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
     HBITMAP result = imageFromRect(this, paintingRect);

@@ -1,5 +1,17 @@
 2008-12-01  Steve Falkenburg  <sfalken@apple.com>
 
+        Revise node/selection image fix.
+        Moved updateLayout call so selection rect is fetched after the layout.
+        
+        Reviewed by Adam Roben.
+
+        * page/win/FrameCGWin.cpp:
+        (WebCore::imageFromRect):
+        (WebCore::imageFromSelection):
+        (WebCore::Frame::nodeImage):
+
+2008-12-01  Steve Falkenburg  <sfalken@apple.com>
+
         Support needed to implement renderedImage for Windows.
         https://bugs.webkit.org/show_bug.cgi?25648
 
