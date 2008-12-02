@@ -777,8 +777,12 @@ void RenderTextControl::layout()
 void RenderTextControl::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     RenderBlock::paint(paintInfo, tx, ty);
-    if (paintInfo.phase == PaintPhaseBlockBackground && m_shouldDrawCapsLockIndicator)
-        theme()->paintCapsLockIndicator(this, paintInfo, absoluteContentBox());
+    if (paintInfo.phase == PaintPhaseBlockBackground && m_shouldDrawCapsLockIndicator) {
+        IntRect contentsRect = contentBox();
+        // Convert the rect into the coords used for painting the content
+        contentsRect.move(tx + xPos(), ty + yPos());
+        theme()->paintCapsLockIndicator(this, paintInfo, contentsRect);
+    }
 } 
 
 void RenderTextControl::calcPrefWidths()

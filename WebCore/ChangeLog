@@ -1,3 +1,16 @@
+2008-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=22581
+        
+        Fix the painting of the caps lock indicator for transformed text inputs,
+        by replacing a call to absoluteContentBox() with code that computes the
+        painting rect for the input contents.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::paint):
+
 2008-12-01  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
