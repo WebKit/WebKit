@@ -683,10 +683,11 @@ void TextIterator::emitCharacter(UChar c, Node *textNode, Node *offsetBaseNode, 
     m_lastCharacter = c;
 }
 
-void TextIterator::emitText(Node *textNode, int textStartOffset, int textEndOffset)
+void TextIterator::emitText(Node* textNode, int textStartOffset, int textEndOffset)
 {
     RenderText* renderer = static_cast<RenderText*>(m_node->renderer());
     String str = renderer->text();
+    ASSERT(str.characters());
 
     m_positionNode = textNode;
     m_positionOffsetBaseNode = 0;
