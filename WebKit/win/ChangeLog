@@ -1,3 +1,15 @@
+2008-12-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Implement renderedImage for Windows.
+        https://bugs.webkit.org/show_bug.cgi?25648
+        
+        Reviewed by Adam Roben.
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::renderedImage):
+        * DOMCoreClasses.h:
+        * Interfaces/DOMPrivate.idl:
+
 2008-12-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.

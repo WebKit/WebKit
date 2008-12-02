@@ -1,3 +1,18 @@
+2008-12-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Support needed to implement renderedImage for Windows.
+        https://bugs.webkit.org/show_bug.cgi?25648
+
+        Reviewed by Adam Roben.
+
+        * page/Frame.h:
+        * page/win/FrameCGWin.cpp:
+        (WebCore::imageFromRect):
+        (WebCore::imageFromSelection):
+        (WebCore::Frame::nodeImage):
+        * page/win/FrameCairoWin.cpp:
+        (WebCore::imageFromNode):
+
 2008-12-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

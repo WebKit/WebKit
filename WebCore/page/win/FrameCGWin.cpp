@@ -28,6 +28,7 @@
 
 #include <windows.h>
 
+#include "FramePrivate.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "Settings.h"
@@ -49,12 +50,9 @@ static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext* 
     view->paint(gc, rect);
 }
 
-HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
+static HBITMAP imageFromRect(const Frame* frame, IntRect& ir)
 {
-    frame->view()->setPaintRestriction(forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly);
-    FloatRect fr = frame->selectionBounds();
-    IntRect ir(static_cast<int>(fr.x()), static_cast<int>(fr.y()),
-               static_cast<int>(fr.width()), static_cast<int>(fr.height()));
+    frame->document()->updateLayout();
 
     void* bits;
     HDC hdc = CreateCompatibleDC(0);
@@ -72,16 +70,40 @@ HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
 
     GraphicsContext gc(context);
 
-    frame->document()->updateLayout();
     drawRectIntoContext(ir, frame->view(), &gc);
 
     CGContextRelease(context);
     SelectObject(hdc, hbmpOld);
     DeleteDC(hdc);
 
-    frame->view()->setPaintRestriction(PaintRestrictionNone);
-
     return hbmp;
+}
+
+HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
+{
+    frame->view()->setPaintRestriction(forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly);
+    FloatRect fr = frame->selectionBounds();
+    IntRect ir(static_cast<int>(fr.x()), static_cast<int>(fr.y()),
+               static_cast<int>(fr.width()), static_cast<int>(fr.height()));
+    HBITMAP image = imageFromRect(frame, ir);
+    frame->view()->setPaintRestriction(PaintRestrictionNone);
+    return image;
+}
+
+HBITMAP Frame::nodeImage(Node* node) const
+{
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return 0;
+
+    IntRect topLevelRect;
+    IntRect paintingRect = renderer->paintingRootRect(topLevelRect);
+
+    d->m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
+    HBITMAP result = imageFromRect(this, paintingRect);
+    d->m_view->setNodeToDraw(0);
+
+    return result;
 }
 
 } // namespace WebCore

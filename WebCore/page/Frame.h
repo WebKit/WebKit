@@ -43,6 +43,10 @@ typedef int NSWritingDirection;
 #endif
 #endif
 
+#if PLATFORM(WIN)
+typedef struct HBITMAP__* HBITMAP;
+#endif
+
 namespace WebCore {
 
 class Editor;
@@ -304,6 +308,14 @@ private:
 public:
     NSDictionary* fontAttributesForSelectionStart() const;
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
+
+#endif
+
+#if PLATFORM(WIN)
+
+public:
+    // FIXME - We should have a single version of nodeImage instead of using platform types.
+    HBITMAP nodeImage(Node*) const;
 
 #endif
 

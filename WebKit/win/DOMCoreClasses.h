@@ -777,6 +777,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE font(
         WebFontDescription* webFontDescription);
 
+    virtual HRESULT STDMETHODCALLTYPE renderedImage(
+        /* [retval][out] */ HBITMAP* image);
+
     // IDOMElementCSSInlineStyle
     virtual HRESULT STDMETHODCALLTYPE style( 
         /* [retval][out] */ IDOMCSSStyleDeclaration **result);

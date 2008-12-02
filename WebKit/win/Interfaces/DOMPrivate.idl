@@ -46,6 +46,7 @@ interface IDOMElementPrivate : IUnknown
     HRESULT isFocused([out, retval] BOOL* result);
     HRESULT innerText([out, retval] BSTR* result);
     [local] HRESULT font(WebFontDescription* webFontDescription);
+    HRESULT renderedImage([out, retval] HBITMAP* image);
 }
 
 /*

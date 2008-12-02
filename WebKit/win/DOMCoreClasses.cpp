@@ -38,6 +38,7 @@
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
+#include <WebCore/Frame.h>
 #include <WebCore/SimpleFontData.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLInputElement.h>
@@ -1063,6 +1064,27 @@ HRESULT STDMETHODCALLTYPE DOMElement::font(WebFontDescription* webFontDescriptio
     webFontDescription->size = fontDescription.computedSize();
     webFontDescription->bold = fontDescription.weight() >= FontWeight600;
     webFontDescription->italic = fontDescription.italic();
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE DOMElement::renderedImage(HBITMAP* image)
+{
+    if (!image) {
+        ASSERT_NOT_REACHED();
+        return E_POINTER;
+    }
+    *image = 0;
+
+    ASSERT(m_element);
+
+    Frame* frame = m_element->document()->frame();
+    if (!frame)
+        return E_FAIL;
+
+    *image = frame->nodeImage(m_element);
+    if (!*image)
+        return E_FAIL;
 
     return S_OK;
 }
