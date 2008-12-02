@@ -99,7 +99,7 @@ HBITMAP Frame::nodeImage(Node* node) const
     IntRect topLevelRect;
     IntRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
-    frame->document()->updateLayout();
+    document()->updateLayout();
 
     d->m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
     HBITMAP result = imageFromRect(this, paintingRect);
