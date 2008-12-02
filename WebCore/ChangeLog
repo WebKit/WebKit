@@ -1,3 +1,13 @@
+2008-12-02  André Pönitz  <apoenitz@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Disable the creation of debug information for the Qt build when done
+        inside Qt. With 670 mb it was slowing down gdb start significantly
+        for third-party applications that usually don't need it.
+
+        * WebCore.pro:
+
 2008-12-01  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
