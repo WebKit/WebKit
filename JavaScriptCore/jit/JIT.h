@@ -409,7 +409,7 @@ namespace JSC {
         void compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStrictEqType type);
         void putDoubleResultToJSNumberCellOrJSImmediate(XMMRegisterID xmmSource, RegisterID jsNumberCell, unsigned dst, JmpSrc* wroteJSNumberCell,  XMMRegisterID tempXmm, RegisterID tempReg1, RegisterID tempReg2);
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
-        void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
+        void compileBinaryArithOpSlowCase(OpcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
 
         void emitGetVirtualRegister(int src, RegisterID dst, unsigned i);
         void emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2, unsigned i);
@@ -457,18 +457,18 @@ namespace JSC {
         JmpSrc emitNakedCall(unsigned bytecodeIndex, RegisterID);
         JmpSrc emitNakedCall(unsigned bytecodeIndex, void* function);
         JmpSrc emitNakedFastCall(unsigned bytecodeIndex, void*);
-        JmpSrc emitCTICall(Instruction*, unsigned bytecodeIndex, CTIHelper_j);
-        JmpSrc emitCTICall(Instruction*, unsigned bytecodeIndex, CTIHelper_o);
-        JmpSrc emitCTICall(Instruction*, unsigned bytecodeIndex, CTIHelper_p);
-        JmpSrc emitCTICall(Instruction*, unsigned bytecodeIndex, CTIHelper_v);
-        JmpSrc emitCTICall(Instruction*, unsigned bytecodeIndex, CTIHelper_s);
-        JmpSrc emitCTICall(Instruction*, unsigned bytecodeIndex, CTIHelper_b);
-        JmpSrc emitCTICall(Instruction*, unsigned bytecodeIndex, CTIHelper_2);
+        JmpSrc emitCTICall(unsigned bytecodeIndex, CTIHelper_j);
+        JmpSrc emitCTICall(unsigned bytecodeIndex, CTIHelper_o);
+        JmpSrc emitCTICall(unsigned bytecodeIndex, CTIHelper_p);
+        JmpSrc emitCTICall(unsigned bytecodeIndex, CTIHelper_v);
+        JmpSrc emitCTICall(unsigned bytecodeIndex, CTIHelper_s);
+        JmpSrc emitCTICall(unsigned bytecodeIndex, CTIHelper_b);
+        JmpSrc emitCTICall(unsigned bytecodeIndex, CTIHelper_2);
 
         void emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst);
         void emitPutVariableObjectRegister(RegisterID src, RegisterID variableObject, int index);
         
-        void emitSlowScriptCheck(Instruction*, unsigned bytecodeIndex);
+        void emitSlowScriptCheck(unsigned bytecodeIndex);
 #ifndef NDEBUG
         void printBytecodeOperandTypes(unsigned src1, unsigned src2);
 #endif

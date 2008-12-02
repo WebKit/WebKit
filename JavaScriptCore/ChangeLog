@@ -1,3 +1,20 @@
+2008-12-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove unused (sampling only, and derivable) argument to JIT::emitCTICall.
+        https://bugs.webkit.org/show_bug.cgi?id=22587
+
+        * jit/JIT.cpp:
+        (JSC::JIT::emitCTICall):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::emitSlowScriptCheck):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+
 2008-12-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
