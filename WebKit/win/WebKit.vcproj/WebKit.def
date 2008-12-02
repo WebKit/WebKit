@@ -29,10 +29,12 @@ EXPORTS
 	    JSObjectIsConstructor
 	    JSObjectIsFunction
 	    JSObjectMake
+	    JSObjectMakeArray
 	    JSObjectMakeConstructor
-	    JSObjectMakeFunction
+	    JSObjectMakeDate
 	    JSObjectMakeFunction
 	    JSObjectMakeFunctionWithCallback
+	    JSObjectMakeRegExp
 	    JSObjectSetPrivate
 	    JSObjectSetProperty
 	    JSObjectSetPropertyAtIndex

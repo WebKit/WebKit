@@ -1,3 +1,14 @@
+2008-12-02  Adam Roben  <aroben@apple.com>
+
+        Export new-ish JSCore convenience constructor functions
+
+        Reviewed by Jon Honeycutt.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+        Export JSObjectMakeArray, JSObjectMakeDate, and JSObjectMakeRegExp.
+        Remove duplicate export of JSObjectMakeFunction.
+
 2008-12-02  Michael Moss  <mmoss@chromium.org>
 
         Reviewed by Eric Seidel.
