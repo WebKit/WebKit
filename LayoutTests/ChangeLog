@@ -1,3 +1,11 @@
+2008-12-01  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Forgot to include updated layout tests in last commit.
+
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.checksum:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.png:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.txt:
+
 2008-12-01  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Mark Rowe.
