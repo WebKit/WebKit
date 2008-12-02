@@ -1,3 +1,17 @@
+2008-12-02  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove support for 'now' from CSS (was
+        erroneously added to transition and animation delay)
+        https://bugs.webkit.org/show_bug.cgi?id=22571
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseAnimationDelay):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapAnimationDelay):
+        * css/CSSValueKeywords.in:
+
 2008-12-02  Eric Seidel  <eric@webkit.org>
 
         Build fix, no review.

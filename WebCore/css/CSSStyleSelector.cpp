@@ -5233,14 +5233,10 @@ void CSSStyleSelector::mapAnimationDelay(Animation* animation, CSSValue* value)
     }
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    if (primitiveValue->getIdent() == CSSValueNow)
-        animation->setDelay(0);
-    else {
-        if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_S)
-            animation->setDelay(primitiveValue->getFloatValue());
-        else
-            animation->setDelay(primitiveValue->getFloatValue()/1000.0f);
-    }
+    if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_S)
+        animation->setDelay(primitiveValue->getFloatValue());
+    else
+        animation->setDelay(primitiveValue->getFloatValue()/1000.0f);
 }
 
 void CSSStyleSelector::mapAnimationDirection(Animation* layer, CSSValue* value)
