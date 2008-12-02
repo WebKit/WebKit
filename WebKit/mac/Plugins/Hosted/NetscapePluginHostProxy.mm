@@ -68,7 +68,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostProxy::instantiatePlug
     if (_WKPHInstantiatePlugin(m_pluginHostPort, (uint8_t*)[data bytes], [data length], &pluginID, &renderContextID, &useSoftwareRenderer) != KERN_SUCCESS)
         return 0;
 
-    return NetscapePluginInstanceProxy::create(this, pluginID, renderContextID, useSoftwareRenderer);
+    return NetscapePluginInstanceProxy::create(m_pluginHostPort, pluginID, renderContextID, useSoftwareRenderer);
 }
 
 } // namespace WebKit

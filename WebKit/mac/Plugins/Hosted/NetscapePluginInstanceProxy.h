@@ -38,9 +38,9 @@ class NetscapePluginHostProxy;
     
 class NetscapePluginInstanceProxy : public RefCounted<NetscapePluginInstanceProxy> {
 public:
-    static PassRefPtr<NetscapePluginInstanceProxy> create(NetscapePluginHostProxy* pluginHost, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer)
+    static PassRefPtr<NetscapePluginInstanceProxy> create(mach_port_t pluginHostPort, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer)
     {
-        return adoptRef(new NetscapePluginInstanceProxy(pluginHost, pluginID, renderContextID, useSoftwareRenderer));
+        return adoptRef(new NetscapePluginInstanceProxy(pluginHostPort, pluginID, renderContextID, useSoftwareRenderer));
     }
     
     uint32_t renderContextID() const { return m_renderContextID; }
@@ -57,9 +57,9 @@ public:
     void stopTimers();
     
 private:
-    NetscapePluginInstanceProxy(NetscapePluginHostProxy*, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer);
+    NetscapePluginInstanceProxy(mach_port_t pluginHostPort, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer);
 
-    NetscapePluginHostProxy* m_pluginHost;
+    mach_port_t m_pluginHostPort;
     uint32_t m_pluginID;
     uint32_t m_renderContextID;
     boolean_t m_useSoftwareRenderer;
