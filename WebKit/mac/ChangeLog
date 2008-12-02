@@ -1,5 +1,20 @@
 2008-12-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Create a client mach port and pass it to the plug-in host.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::hostForPackage):
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
+2008-12-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Let the plug-in views know if the plug-in host crashes.

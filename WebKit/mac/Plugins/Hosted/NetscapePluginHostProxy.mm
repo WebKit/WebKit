@@ -36,8 +36,9 @@ using namespace std;
 
 namespace WebKit {
 
-NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t pluginHostPort)
-    : m_pluginHostPort(pluginHostPort)
+NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort)
+    : m_clientPort(clientPort)
+    , m_pluginHostPort(pluginHostPort)
 {
     // FIXME: We should use libdispatch for this.
     CFMachPortContext context = { 0, this, 0, 0, 0 };

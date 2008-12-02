@@ -38,7 +38,7 @@ class NetscapePluginInstanceProxy;
 
 class NetscapePluginHostProxy {
 public:
-    NetscapePluginHostProxy(mach_port_t pluginHostPort);
+    NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort);
     
     mach_port_t port() const { return m_pluginHostPort; }
 
@@ -53,6 +53,7 @@ private:
     typedef HashSet<RefPtr<NetscapePluginInstanceProxy> > PluginInstanceSet;
     PluginInstanceSet m_instances;
     
+    mach_port_t m_clientPort;
     mach_port_t m_pluginHostPort;
     RetainPtr<CFMachPortRef> m_deadNameNotificationPort;
 };
