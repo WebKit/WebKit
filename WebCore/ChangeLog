@@ -1,3 +1,20 @@
+2008-12-02  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Remove some CG-specific code from the Windows Cairo build.
+        https://bugs.webkit.org/show_bug.cgi?id=22586
+
+        No new test cases since this update should create no user-visible
+        changes, and should be fully covered by the existing regression
+        tests.
+
+        * WebCore.vcproj/WebCore.vcproj: Remove FontDatabase from
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::focusRingColor): Add stub method
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::populateFontDatabase): Add stub method.
+
 2008-12-01 Laszlo Gombos <laszlo.1.gombos@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
