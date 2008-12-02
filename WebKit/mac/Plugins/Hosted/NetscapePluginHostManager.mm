@@ -172,7 +172,7 @@ void NetscapePluginHostManager::pluginHostDied(NetscapePluginHostProxy* pluginHo
     }
 }
 
-PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(WebNetscapePluginPackage *pluginPackage, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL)
+PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(WebNetscapePluginPackage *pluginPackage, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL)
 {
     NetscapePluginHostProxy* hostProxy = hostForPackage(pluginPackage);
 
@@ -214,7 +214,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     if (kr != KERN_SUCCESS)
         return 0;
 
-    return NetscapePluginInstanceProxy::create(hostProxy->port(), pluginID, renderContextID, useSoftwareRenderer);
+    return NetscapePluginInstanceProxy::create(hostProxy, pluginView, pluginID, renderContextID, useSoftwareRenderer);
 }
     
 } // namespace WebKit

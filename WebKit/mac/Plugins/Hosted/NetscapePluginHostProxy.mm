@@ -32,6 +32,8 @@
 #import "NetscapePluginInstanceProxy.h"
 #import "WebKitPluginHost.h"
 
+using namespace std;
+
 namespace WebKit {
 
 NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t pluginHostPort)
@@ -53,11 +55,32 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t pluginHostPort)
 
 void NetscapePluginHostProxy::pluginHostDied()
 {
+    PluginInstanceSet instances;    
+    m_instances.swap(instances);
+  
+    PluginInstanceSet::const_iterator end = instances.end();
+    for (PluginInstanceSet::const_iterator it = instances.begin(); it != end; ++it)
+        (*it)->pluginHostDied();
+    
     NetscapePluginHostManager::shared().pluginHostDied(this);
     
     delete this;
 }
     
+void NetscapePluginHostProxy::addPluginInstance(PassRefPtr<NetscapePluginInstanceProxy> instance)
+{
+    ASSERT(!m_instances.contains(instance.get()));
+    
+    m_instances.add(instance);
+}
+    
+void NetscapePluginHostProxy::removePluginInstance(NetscapePluginInstanceProxy* instance)
+{
+    ASSERT(!m_instances.contains(instance));
+
+    m_instances.remove(instance);
+}
+
 void NetscapePluginHostProxy::deadNameNotificationCallback(CFMachPortRef port, void *msg, CFIndex size, void *info)
 {
     mach_msg_header_t* header = static_cast<mach_msg_header_t*>(msg);

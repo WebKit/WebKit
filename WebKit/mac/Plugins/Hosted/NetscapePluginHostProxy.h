@@ -30,6 +30,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
     
@@ -41,12 +42,17 @@ public:
     
     mach_port_t port() const { return m_pluginHostPort; }
 
+    void addPluginInstance(PassRefPtr<NetscapePluginInstanceProxy>);
+    void removePluginInstance(NetscapePluginInstanceProxy*);
+
 private:
     void pluginHostDied();
     
     static void deadNameNotificationCallback(CFMachPortRef port, void *msg, CFIndex size, void *info);
 
-    HashSet<NetscapePluginInstanceProxy*> m_instances;
+    typedef HashSet<RefPtr<NetscapePluginInstanceProxy> > PluginInstanceSet;
+    PluginInstanceSet m_instances;
+    
     mach_port_t m_pluginHostPort;
     RetainPtr<CFMachPortRef> m_deadNameNotificationPort;
 };

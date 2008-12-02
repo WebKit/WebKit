@@ -41,6 +41,7 @@ namespace WebKit {
     RetainPtr<CALayer> _pluginLayer;
     
     RefPtr<WebKit::NetscapePluginInstanceProxy> _proxy;
+    BOOL _pluginHostDied;
 }
 
 - (id)initWithFrame:(NSRect)r
@@ -52,6 +53,8 @@ namespace WebKit {
     attributeValues:(NSArray *)values
        loadManually:(BOOL)loadManually
          DOMElement:(DOMElement *)anElement;
+
+- (void)pluginHostDied;
 @end
 
 #endif // USE(PLUGIN_HOST_PROCESS)

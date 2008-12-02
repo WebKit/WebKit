@@ -1,3 +1,43 @@
+2008-12-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Let the plug-in views know if the plug-in host crashes.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::pluginHostDied):
+        (WebKit::NetscapePluginHostProxy::addPluginInstance):
+        (WebKit::NetscapePluginHostProxy::removePluginInstance):
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::create):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        Keep a pointer to the host proxy.
+        
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        Add the instance to the host set.
+        
+        (WebKit::NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy):
+        Remove the instance form the host set.
+        
+        (WebKit::NetscapePluginInstanceProxy::pluginHostDied):
+        Tell the plug-in view that the plug-in died.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        Pass the plug-in view to the instantiatePlugin.
+        
+        (-[WebHostedNetscapePluginView pluginHostDied]):
+        Handle the plug-in host crashing.
+        
+        (-[WebHostedNetscapePluginView drawRect:]):
+        Fill the plug-in view with a nice red shade if the plug-in crashes.
+
 2008-12-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -90,7 +90,8 @@ extern "C" {
 
     NSString *userAgent = [[self webView] userAgentForURL:_baseURL.get()];
 
-    _proxy = NetscapePluginHostManager::shared().instantiatePlugin(_pluginPackage.get(), _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get());
+    NSLog(@"self: %@",self);
+    _proxy = NetscapePluginHostManager::shared().instantiatePlugin(_pluginPackage.get(), self, _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get());
     if (!_proxy) 
         return NO;
     
@@ -229,6 +230,32 @@ extern "C" {
 {
     if (_isStarted && _proxy)
         _proxy->mouseEvent(self, event, NPCocoaEventMouseExited);
+}
+
+- (void)pluginHostDied
+{
+    _pluginHostDied = YES;
+
+    _pluginLayer = nil;
+    _proxy = 0;
+    
+    // No need for us to be layer backed anymore
+    self.wantsLayer = NO;
+    
+    [self setNeedsDisplay:YES];
+}
+
+
+- (void)drawRect:(NSRect)rect
+{
+    if (_proxy)
+        return;
+    
+    if (_pluginHostDied) {
+        // Fill the area with a nice red color for now.
+        [[NSColor redColor] set];
+        NSRectFill(rect);
+    }
 }
 
 @end
