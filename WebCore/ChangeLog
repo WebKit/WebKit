@@ -1,3 +1,19 @@
+2008-12-02  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22538
+        
+        startsWith uses find which searches through the whole string if no match is found.
+        Using reverseFind with an index of 0 has the benefit of only searching for the match
+        at the beginning of the string.  This may only be a small benefit in the overall program,
+        but it may help in some cases when the string is big.
+
+        No observable change in behavior, so no test.
+ 
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::startsWith):
+
 2008-10-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
