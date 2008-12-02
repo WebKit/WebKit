@@ -318,9 +318,9 @@ RenderObject* RenderObject::nextInPreOrderAfterChildren(RenderObject* stayWithin
     if (!(o = nextSibling())) {
         o = parent();
         while (o && !o->nextSibling()) {
-            o = o->parent();
             if (o == stayWithin)
                 return 0;
+            o = o->parent();
         }
         if (o)
             o = o->nextSibling();

@@ -1,3 +1,26 @@
+2008-12-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=13736 REGRESSION 
+        (r19811): Using the down arrow in a textarea gets "stuck" at the 
+        end of a wrapped line
+        And corresponding: <rdar://problem/5347931>
+
+        The basic problem here is that Position::getInlineBoxAndOffset() 
+        failed to look beyond a single renderer. This patch looks for a 
+        better match beyond the first renderer when the affinity is 
+        downstream and we failed to find a "perfect" match. 
+        * dom/Position.cpp:
+        (WebCore::isNonTextLeafChild):
+        (WebCore::searchAheadForBetterMatch):
+        (WebCore::Position::getInlineBoxAndOffset):
+
+        This is a fix I made based on code inspection. It looks like the 
+        old code here and skipped over the parent as a possible match. 
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::nextInPreOrderAfterChildren):
+
 2008-12-01  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adam Roben.

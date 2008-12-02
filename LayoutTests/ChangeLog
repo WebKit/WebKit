@@ -1,3 +1,27 @@
+2008-12-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=13736 REGRESSION 
+        (r19811): Using the down arrow in a textarea gets "stuck" at the 
+        end of a wrapped line
+        And corresponding: <rdar://problem/5347931>
+
+        * editing/selection/wrapped-line-caret-1.html: Added.
+        * editing/selection/wrapped-line-caret-2.html: Added.
+        * platform/mac/editing/selection/wrapped-line-caret-1-
+        expected.checksum: Added.
+        * platform/mac/editing/selection/wrapped-line-caret-1-expected.png: 
+        Added.
+        * platform/mac/editing/selection/wrapped-line-caret-1-expected.txt: 
+        Added.
+        * platform/mac/editing/selection/wrapped-line-caret-2-
+        expected.checksum: Added.
+        * platform/mac/editing/selection/wrapped-line-caret-2-expected.png: 
+        Added.
+        * platform/mac/editing/selection/wrapped-line-caret-2-expected.txt: 
+        Added.
+
 2008-12-01  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Forgot to include updated layout tests in last commit.

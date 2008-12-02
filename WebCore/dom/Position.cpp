@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "Logging.h"
 #include "PositionIterator.h"
+#include "RenderBlock.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
@@ -771,6 +772,41 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, InlineBox*& inlineBox, 
     getInlineBoxAndOffset(affinity, primaryDirection, inlineBox, caretOffset);
 }
 
+static bool isNonTextLeafChild(RenderObject* object)
+{
+    if (object->firstChild())
+        return false;
+    if (object->isText())
+        return false;
+    return true;
+}
+
+static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
+{
+    InlineTextBox* match = 0;
+    int minOffset = INT_MAX;
+    RenderBlock* container = renderer->containingBlock();
+    RenderObject* next = renderer;
+    while ((next = next->nextInPreOrder(container))) {
+        if (next->isRenderBlock())
+            break;
+        if (next->isBR())
+            break;
+        if (isNonTextLeafChild(next))
+            break;
+        if (next->isText()) {
+            for (InlineTextBox* box = static_cast<RenderText*>(next)->firstTextBox(); box; box = box->nextTextBox()) {
+                int caretMinOffset = box->caretMinOffset();
+                if (caretMinOffset < minOffset) {
+                    match = box;
+                    minOffset = caretMinOffset;
+                }
+            }
+        }
+    }
+    return match;
+}
+
 void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const
 {
     caretOffset = offset();
@@ -801,6 +837,11 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
                 break;
 
             candidate = box;
+        }
+        if (candidate && !box && affinity == DOWNSTREAM) {
+            box = searchAheadForBetterMatch(textRenderer);
+            if (box)
+                caretOffset = box->caretMinOffset();
         }
         inlineBox = box ? box : candidate;
     }
