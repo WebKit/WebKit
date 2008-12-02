@@ -31,11 +31,14 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "FrameView.h"
-#include "GCController.h"
 #include "SVGElementInstanceList.h"
 #include "SVGUseElement.h"
 
 #include <wtf/RefCountedLeakCounter.h>
+
+#if USE(JSC)
+#include "GCController.h"
+#endif
 
 namespace WebCore {
 
@@ -88,6 +91,7 @@ void SVGElementInstance::setShadowTreeElement(SVGElement* element)
 
 void SVGElementInstance::forgetWrapper()
 {
+#if USE(JSC)
     // FIXME: This is fragile, as discussed with Sam. Need to find a better solution.
     // Think about the case where JS explicitely holds "var root = useElement.instanceRoot;".
     // We still have to recreate this wrapper somehow. The gc collection below, won't catch it.
@@ -95,7 +99,8 @@ void SVGElementInstance::forgetWrapper()
     // If the use shadow tree has been rebuilt, just the JSSVGElementInstance objects
     // are still holding RefPtrs of SVGElementInstance objects, which prevent us to
     // be deleted (and the shadow tree is not destructed as well). Force JS GC.
-    gcController().garbageCollectNow();    
+    gcController().garbageCollectNow();
+#endif
 }
 
 void SVGElementInstance::appendChild(PassRefPtr<SVGElementInstance> child)

@@ -1,3 +1,13 @@
+2008-10-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Wrap a JSC-only hack in a USE(JSC) block to fix the v8 build.
+        https://bugs.webkit.org/show_bug.cgi?id=21951
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::forgetWrapper):
+
 2008-12-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
