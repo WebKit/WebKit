@@ -1,3 +1,16 @@
+2008-12-02  Eric Seidel  <eric@webkit.org>
+
+        Build fix, no review.
+
+        Fix the Mac and gtk builds:
+        Don't use a float to hold a double.
+        Remove a now duplicate symbol.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionLayoutChanged):
+        * platform/gtk/TemporaryLinkStubs.cpp:
+
 2008-12-02  Chris Fleizach  <cfleizach@apple.com>
 
         Bug 22596: Some elements don't report AXBlockQuoteLevel
