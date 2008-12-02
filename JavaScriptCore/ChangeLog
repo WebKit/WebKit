@@ -1,3 +1,30 @@
+2008-12-01  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 20340: SegmentedVector segment allocations can lead to unsafe use of temporary registers
+        <https://bugs.webkit.org/show_bug.cgi?id=20340>
+
+        SegmentedVector currently frees segments and reallocates them when used
+        as a stack. This can lead to unsafe use of pointers into freed segments.
+
+        In order to fix this problem, SegmentedVector will be changed to only
+        grow and never shrink. Also, rename the reserveCapacity() member
+        function to grow() to match the actual usage in BytecodeGenerator, where
+        this function is used to allocate a group of registers at once, rather
+        than merely saving space for them.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Use grow() instead of 
+        reserveCapacity().
+        * bytecompiler/SegmentedVector.h:
+        (JSC::SegmentedVector::SegmentedVector):
+        (JSC::SegmentedVector::last):
+        (JSC::SegmentedVector::append):
+        (JSC::SegmentedVector::removeLast):
+        (JSC::SegmentedVector::grow): Renamed from reserveCapacity().
+        (JSC::SegmentedVector::clear):
+
 2008-12-01  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Anders Carlsson.
