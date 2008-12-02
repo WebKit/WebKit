@@ -27,15 +27,44 @@
 
 #import "NetscapePluginHostProxy.h"
 
+#import <mach/mach.h>
+#import "NetscapePluginHostManager.h"
 #import "NetscapePluginInstanceProxy.h"
 #import "WebKitPluginHost.h"
-#import <wtf/RetainPtr.h>
 
 namespace WebKit {
 
 NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t pluginHostPort)
     : m_pluginHostPort(pluginHostPort)
 {
+    // FIXME: We should use libdispatch for this.
+    CFMachPortContext context = { 0, this, 0, 0, 0 };
+    m_deadNameNotificationPort.adoptCF(CFMachPortCreate(0, deadNameNotificationCallback, &context, 0));
+
+    mach_port_t previous;
+    mach_port_request_notification(mach_task_self(), pluginHostPort, MACH_NOTIFY_DEAD_NAME, 0, 
+                                   CFMachPortGetPort(m_deadNameNotificationPort.get()), MACH_MSG_TYPE_MAKE_SEND_ONCE, &previous);
+    ASSERT(previous == MACH_PORT_NULL);
+    
+    RetainPtr<CFRunLoopSourceRef> deathPortSource(AdoptCF, CFMachPortCreateRunLoopSource(0, m_deadNameNotificationPort.get(), 0));
+    
+    CFRunLoopAddSource(CFRunLoopGetCurrent(), deathPortSource.get(), kCFRunLoopDefaultMode);
+}
+
+void NetscapePluginHostProxy::pluginHostDied()
+{
+    NetscapePluginHostManager::shared().pluginHostDied(this);
+    
+    delete this;
+}
+    
+void NetscapePluginHostProxy::deadNameNotificationCallback(CFMachPortRef port, void *msg, CFIndex size, void *info)
+{
+    mach_msg_header_t* header = static_cast<mach_msg_header_t*>(msg);
+    
+    ASSERT(header && header->msgh_id == MACH_NOTIFY_DEAD_NAME);
+    
+    static_cast<NetscapePluginHostProxy*>(info)->pluginHostDied();
 }
 
 } // namespace WebKit

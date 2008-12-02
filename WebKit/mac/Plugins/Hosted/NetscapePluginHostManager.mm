@@ -70,18 +70,18 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPackage(WebNetscapePl
     
     // The package was already in the map, just return it.
     if (!result.second)
-        return result.first->second.get();
+        return result.first->second;
         
     mach_port_t pluginHostPort;
     if (!spawnPluginHost(package, pluginHostPort))
         return false;
     
-    RefPtr<NetscapePluginHostProxy> hostProxy = NetscapePluginHostProxy::create(pluginHostPort);
+    NetscapePluginHostProxy* hostProxy = new NetscapePluginHostProxy(pluginHostPort);
     
     CFRetain(package);
-    result.first->second = hostProxy.release();
+    result.first->second = hostProxy;
     
-    return result.first->second.get();
+    return hostProxy;
 }
 
 bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *package, mach_port_t& pluginHostPort)
@@ -159,6 +159,19 @@ bool NetscapePluginHostManager::initializeVendorPort()
     return true;
 }
 
+void NetscapePluginHostManager::pluginHostDied(NetscapePluginHostProxy* pluginHost)
+{
+    PluginHostMap::iterator end = m_pluginHosts.end();
+
+    // This has O(n) complexity but the number of active plug-in hosts is very small so it shouldn't matter.
+    for (PluginHostMap::iterator it = m_pluginHosts.begin(); it != end; ++it) {
+        if (it->second == pluginHost) {
+            m_pluginHosts.remove(it);
+            return;
+        }
+    }
+}
+
 PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(WebNetscapePluginPackage *pluginPackage, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL)
 {
     NetscapePluginHostProxy* hostProxy = hostForPackage(pluginPackage);
@@ -187,7 +200,18 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     uint32_t renderContextID;
     boolean_t useSoftwareRenderer;
     
-    if (_WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], &pluginID, &renderContextID, &useSoftwareRenderer) != KERN_SUCCESS)
+    kern_return_t kr = _WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], &pluginID, &renderContextID, &useSoftwareRenderer);
+    if (kr == MACH_SEND_INVALID_DEST) {
+        // The plug-in host must have died, but we haven't received the death notification yet.
+        pluginHostDied(hostProxy);
+
+        // Try to spawn it again.
+        hostProxy = hostForPackage(pluginPackage);
+        
+        kr = _WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], &pluginID, &renderContextID, &useSoftwareRenderer);
+    }
+    
+    if (kr != KERN_SUCCESS)
         return 0;
 
     return NetscapePluginInstanceProxy::create(hostProxy->port(), pluginID, renderContextID, useSoftwareRenderer);

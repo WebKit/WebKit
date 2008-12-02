@@ -2,6 +2,33 @@
 
         Reviewed by Dan Bernstein.
 
+        Recover if the plug-in host dies and we try to instantiate another plugin before we get the port death notification
+        
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::pluginHostDied):
+        Remove the plug-in host from the map.
+        
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        NetscapePluginHostProxy is no longer refcounted.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        This is no longer refcounted. Add a set of plug-in instances (unused for now).
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        Create a death notification port.
+        
+        (WebKit::NetscapePluginHostProxy::pluginHostDied):
+        Tell the manager that we're gone and delete ourselves.
+        
+        (WebKit::NetscapePluginHostProxy::deathPortCallback):
+        New CFMachPort callback.
+
+2008-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Move instantiatePlugin to NetscapePluginHostManager.
         
         * Plugins/Hosted/NetscapePluginHostManager.h:
