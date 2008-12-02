@@ -1,3 +1,25 @@
+2008-12-02  Dean McNamee  <deanm@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Correctly handle a theme returning a non-blinking interval.  We should
+        not set any timers when the interval is 0 (non-blinking), otherwise we
+        repeatedly set and destroy a blinking timer, causing a paint and timer
+        storm.  This is applicable to GTK and Windows, where a user can set a
+        non-blinking caret in their system preferences.
+
+        Renamed caretBlinkFrequency to the more accurate caretBlinkInterval.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionLayoutChanged):
+        * platform/Theme.h:
+        (WebCore::Theme::caretBlinkInterval):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::caretBlinkInterval):
+        * platform/gtk/RenderThemeGtk.h:
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::caretBlinkInterval):
+
 2008-12-02  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

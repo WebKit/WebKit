@@ -409,7 +409,7 @@ Color RenderThemeGtk::inactiveListBoxSelectionForegroundColor() const
     return widget->style->text[GTK_STATE_ACTIVE];
 }
 
-double RenderThemeGtk::caretBlinkFrequency() const
+double RenderThemeGtk::caretBlinkInterval() const
 {
     GtkSettings* settings = gtk_settings_get_default();
 

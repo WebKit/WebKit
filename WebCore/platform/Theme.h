@@ -73,7 +73,7 @@ public:
     virtual Font systemFont(ThemeFont, FontDescription&) const { return Font(); }
     
     // How fast the caret blinks in text fields.
-    virtual double caretBlinkFrequency() const { return 0.5; }
+    virtual double caretBlinkInterval() const { return 0.5; }
 
     // Notification when the theme has changed
     virtual void themeChanged() { }
