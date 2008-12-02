@@ -1,3 +1,45 @@
+2008-12-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Geoffrey Garen. (Patch by Cameron Zwarich <zwarich@apple.com>.)
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=22482
+        REGRESSION (r37991): Occasionally see "Scene rendered incorrectly"
+        message when running the V8 Raytrace benchmark
+        
+        Rolled out r37991. It didn't properly save xmm0, which is caller-save,
+        before calling helper functions.
+        
+        SunSpider and v8 benchmarks show little change -- possibly a .2%
+        SunSpider regression, possibly a .2% v8 benchmark speedup.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Instruction.h:
+        (JSC::Instruction::):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitUnaryOp):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitToJSNumber):
+        (JSC::BytecodeGenerator::emitTypeOf):
+        (JSC::BytecodeGenerator::emitGetPropertyNames):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * parser/Nodes.cpp:
+        (JSC::UnaryOpNode::emitBytecode):
+        (JSC::BinaryOpNode::emitBytecode):
+        (JSC::EqualNode::emitBytecode):
+        * parser/ResultType.h:
+        (JSC::ResultType::isReusable):
+        (JSC::ResultType::mightBeNumber):
+        * runtime/JSNumberCell.h:
+
 2008-12-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoffrey Garen.

@@ -30,7 +30,6 @@
 #define Instruction_h
 
 #include "Opcode.h"
-#include "ResultType.h"
 #include <wtf/VectorTraits.h>
 
 #define POLYMORPHIC_LIST_CACHE_SIZE 4
@@ -138,7 +137,6 @@ namespace JSC {
             Structure* structure;
             StructureChain* structureChain;
             JSCell* jsCell;
-            ResultType::Type resultType;
             PolymorphicAccessStructureList* polymorphicStructures;
         } u;
     };

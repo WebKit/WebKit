@@ -86,14 +86,6 @@
 
 #define CTI_RETURN_ADDRESS_SLOT (ARGS[-1])
 
-#if COMPILER(MSVC)
-#define FASTCALL __fastcall
-#elif COMPILER(GCC)
-#define FASTCALL  __attribute__ ((fastcall))
-#else
-#error Need to support fastcall calling convention in this compiler
-#endif
-
 namespace JSC {
 
     class CodeBlock;
@@ -448,15 +440,11 @@ namespace JSC {
         void emitFastArithImmToInt(RegisterID);
         void emitFastArithIntToImmOrSlowCase(RegisterID, unsigned bytecodeIndex);
         void emitFastArithIntToImmNoCheck(RegisterID);
-        JmpSrc emitArithIntToImmWithJump(RegisterID reg);
 
         void emitTagAsBoolImmediate(RegisterID reg);
 
-        void emitAllocateNumber(JSGlobalData*, unsigned);
-
         JmpSrc emitNakedCall(unsigned bytecodeIndex, RegisterID);
         JmpSrc emitNakedCall(unsigned bytecodeIndex, void* function);
-        JmpSrc emitNakedFastCall(unsigned bytecodeIndex, void*);
         JmpSrc emitCTICall(unsigned bytecodeIndex, CTIHelper_j);
         JmpSrc emitCTICall(unsigned bytecodeIndex, CTIHelper_o);
         JmpSrc emitCTICall(unsigned bytecodeIndex, CTIHelper_p);

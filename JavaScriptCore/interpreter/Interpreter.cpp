@@ -1873,7 +1873,6 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
             callFrame[dst] = result;
         }
 
-        ++vPC;
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_add) {

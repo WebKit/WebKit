@@ -468,7 +468,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_negate: {
             printUnaryOp(location, it, "negate");
-            ++it;
             break;
         }
         case op_add: {

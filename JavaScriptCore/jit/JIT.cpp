@@ -361,20 +361,6 @@ void JIT::printBytecodeOperandTypes(unsigned src1, unsigned src2)
 
 #endif
 
-extern "C" {
-    static JSValue* FASTCALL allocateNumber(JSGlobalData* globalData) {
-        JSValue* result = new (globalData) JSNumberCell(globalData);
-        ASSERT(result);
-        return result;
-    }
-}
-
-ALWAYS_INLINE void JIT::emitAllocateNumber(JSGlobalData* globalData, unsigned bytecodeIndex)
-{
-    __ movl_i32r(reinterpret_cast<intptr_t>(globalData), X86::ecx);
-    emitNakedFastCall(bytecodeIndex, (void*)allocateNumber);
-}
-
 ALWAYS_INLINE JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, X86::RegisterID r)
 {
     JmpSrc call = __ call(r);
@@ -384,13 +370,6 @@ ALWAYS_INLINE JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, X86::RegisterID 
 }
 
 ALWAYS_INLINE  JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, void* function)
-{
-    JmpSrc call = __ call();
-    m_calls.append(CallRecord(call, reinterpret_cast<CTIHelper_v>(function), bytecodeIndex));
-    return call;
-}
-
-ALWAYS_INLINE  JmpSrc JIT::emitNakedFastCall(unsigned bytecodeIndex, void* function)
 {
     JmpSrc call = __ call();
     m_calls.append(CallRecord(call, reinterpret_cast<CTIHelper_v>(function), bytecodeIndex));
@@ -601,14 +580,6 @@ ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID reg)
 {
     __ addl_rr(reg, reg);
     emitFastArithReTagImmediate(reg);
-}
-
-ALWAYS_INLINE JmpSrc JIT::emitArithIntToImmWithJump(RegisterID reg)
-{
-    __ addl_rr(reg, reg);
-    JmpSrc jmp = __ jo();
-    emitFastArithReTagImmediate(reg);
-    return jmp;
 }
 
 ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
@@ -1596,53 +1567,10 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_negate: {
-            int srcVReg = instruction[i + 2].u.operand;
-            emitGetVirtualRegister(srcVReg, X86::eax, i);
-
-            __ testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
-            JmpSrc notImmediate = __ je();
-
-            __ cmpl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
-            JmpSrc zeroImmediate = __ je();
-            emitFastArithImmToInt(X86::eax);
-            __ negl_r(X86::eax); // This can't overflow as we only have a 31bit int at this point
-            JmpSrc overflow = emitArithIntToImmWithJump(X86::eax);
+            emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
+            emitCTICall(i, Interpreter::cti_op_negate);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
-            JmpSrc immediateNegateSuccess = __ jmp();
-
-            if (!isSSE2Present()) {
-                __ link(zeroImmediate, __ label());
-                __ link(overflow, __ label());
-                __ link(notImmediate, __ label());
-                emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
-                emitCTICall(i, Interpreter::cti_op_negate);
-                emitPutVirtualRegister(instruction[i + 1].u.operand);
-            } else {
-                // Slow case immediates
-                m_slowCases.append(SlowCaseEntry(zeroImmediate, i));
-                m_slowCases.append(SlowCaseEntry(overflow, i));
-                __ link(notImmediate, __ label());
-                ResultType resultType(instruction[i + 3].u.resultType);
-                if (!resultType.definitelyIsNumber()) {
-                    emitJumpSlowCaseIfNotJSCell(X86::eax, i, srcVReg);
-                    Structure* numberStructure = m_globalData->numberStructure.get();
-                    __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
-                    m_slowCases.append(SlowCaseEntry(__ jne(), i));
-                }
-                __ movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), X86::eax, X86::xmm0);
-                // We need 3 copies of the sign bit mask so we can assure alignment and pad for the 128bit load
-                static double doubleSignBit[] = { -0.0, -0.0, -0.0 };
-                __ xorpd_mr((void*)((((uintptr_t)doubleSignBit)+15)&~15), X86::xmm0);
-                JmpSrc wasCell;
-                if (!resultType.isReusableNumber())
-                    emitAllocateNumber(m_globalData, i);
-
-                putDoubleResultToJSNumberCellOrJSImmediate(X86::xmm0, X86::eax, instruction[i + 1].u.operand, &wasCell,
-                                                           X86::xmm1, X86::ecx, X86::edx);
-                __ link(wasCell, __ label());
-            }
-            __ link(immediateNegateSuccess, __ label());
-            i += 4;
+            i += 3;
             break;
         }
         case op_resolve_skip: {
@@ -2483,22 +2411,6 @@ void JIT::privateCompileSlowCases()
         case op_sub: {
             compileBinaryArithOpSlowCase(op_sub, iter, instruction[i + 1].u.operand, instruction[i + 2].u.operand, instruction[i + 3].u.operand, OperandTypes::fromInt(instruction[i + 4].u.operand), i);
             i += 5;
-            break;
-        }
-        case op_negate: {
-            __ link(iter->from, __ label());
-            __ link((++iter)->from, __ label());
-            ResultType resultType(instruction[i + 3].u.resultType);
-            if (!resultType.definitelyIsNumber()) {
-                if (linkSlowCaseIfNotJSCell(++iter, instruction[i + 2].u.operand))
-                    ++iter;
-                __ link(iter->from, __ label());
-            }
-
-            emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
-            emitCTICall(i, Interpreter::cti_op_negate);
-            emitPutVirtualRegister(instruction[i + 1].u.operand);
-            i += 4;
             break;
         }
         case op_rshift: {

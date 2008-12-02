@@ -272,8 +272,6 @@ namespace JSC {
         static JSObject* SFX_CALL cti_op_new_error(CTI_ARGS);
         static void SFX_CALL cti_op_debug(CTI_ARGS);
 
-        static JSValue* SFX_CALL cti_allocate_number(CTI_ARGS);
-
         static JSValue* SFX_CALL cti_vm_throw(CTI_ARGS);
         static void* SFX_CALL cti_vm_dontLazyLinkCall(CTI_ARGS);
         static void* SFX_CALL cti_vm_lazyLinkCall(CTI_ARGS);

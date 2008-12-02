@@ -749,13 +749,11 @@ RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, RegisterID* src)
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src, ResultType type)
+RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src)
 {
     emitOpcode(opcodeID);
     instructions().append(dst->index());
     instructions().append(src->index());
-    if (opcodeID == op_negate)
-        instructions().append(type.toInt());
     return dst;
 }
 
