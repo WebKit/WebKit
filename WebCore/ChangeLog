@@ -1,3 +1,42 @@
+2008-12-02  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22588
+        Move securityOrigin() from Document and WorkerContext into ScriptExecutionContext.
+
+        No observable change in behavior, so no test.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+        (WebCore::Document::domain):
+        (WebCore::Document::setDomain):
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::setSecurityOrigin):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::setSecurityOrigin):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::securityOrigin):
+        * dom/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        * dom/WorkerContext.h:
+        These changes are for the move of securityOrigin().
+        
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::makeSimpleCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight):
+        (WebCore::XMLHttpRequest::handleAsynchronousPreflightResult):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        (WebCore::XMLHttpRequest::processSyncLoadResults):
+        (WebCore::XMLHttpRequest::willSendRequest):
+        (WebCore::XMLHttpRequest::accessControlCheck):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+        Change XMLHttpRequest to use ScriptExecutionContext instead of Document to access securityOrigin().
+
 2008-12-02  André Pönitz  <apoenitz@trolltech.com>
 
         Reviewed by Simon Hausmann.

@@ -630,7 +630,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
             m_upload->dispatchLoadStartEvent();
     }
 
-    m_sameOriginRequest = document()->securityOrigin()->canRequest(m_url);
+    m_sameOriginRequest = scriptExecutionContext()->securityOrigin()->canRequest(m_url);
 
     if (!m_sameOriginRequest) {
         makeCrossSiteAccessRequest(ec);
@@ -696,7 +696,7 @@ void XMLHttpRequest::makeSimpleCrossSiteAccessRequest(ExceptionCode& ec)
     ResourceRequest request(url);
     request.setHTTPMethod(m_method);
     request.setAllowHTTPCookies(m_includeCredentials);
-    request.setHTTPOrigin(document()->securityOrigin()->toString());
+    request.setHTTPOrigin(scriptExecutionContext()->securityOrigin()->toString());
 
     if (m_requestHeaders.size() > 0)
         request.addHTTPHeaderFields(m_requestHeaders);
@@ -709,7 +709,7 @@ void XMLHttpRequest::makeSimpleCrossSiteAccessRequest(ExceptionCode& ec)
 
 void XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight(ExceptionCode& ec)
 {
-    String origin = document()->securityOrigin()->toString();
+    String origin = scriptExecutionContext()->securityOrigin()->toString();
     KURL url = m_url;
     url.setUser(String());
     url.setPass(String());
@@ -786,7 +786,7 @@ void XMLHttpRequest::handleAsynchronousPreflightResult()
     ResourceRequest request(url);
     request.setHTTPMethod(m_method);
     request.setAllowHTTPCookies(m_includeCredentials);
-    request.setHTTPOrigin(document()->securityOrigin()->toString());
+    request.setHTTPOrigin(scriptExecutionContext()->securityOrigin()->toString());
 
     if (m_requestHeaders.size() > 0)
         request.addHTTPHeaderFields(m_requestHeaders);
@@ -995,7 +995,7 @@ void XMLHttpRequest::setRequestHeader(const String& name, const String& value, E
     }
 
     // A privileged script (e.g. a Dashboard widget) can set any headers.
-    if (!document()->securityOrigin()->canLoadLocalResources() && !isSafeRequestHeader(name)) {
+    if (!scriptExecutionContext()->securityOrigin()->canLoadLocalResources() && !isSafeRequestHeader(name)) {
         reportUnsafeUsage(document(), "Refused to set unsafe header \"" + name + "\"");
         return;
     }
@@ -1038,7 +1038,7 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
         //     2) There's no known harm in hiding Set-Cookie header fields entirely; we don't
         //        know any widely used technique that requires access to them.
         //     3) Firefox has implemented this policy.
-        if (isSetCookieHeader(it->first) && !document()->securityOrigin()->canLoadLocalResources())
+        if (isSetCookieHeader(it->first) && !scriptExecutionContext()->securityOrigin()->canLoadLocalResources())
             continue;
 
         if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(it->first))
@@ -1066,7 +1066,7 @@ String XMLHttpRequest::getResponseHeader(const String& name, ExceptionCode& ec) 
         return "";
 
     // See comment in getAllResponseHeaders above.
-    if (isSetCookieHeader(name) && !document()->securityOrigin()->canLoadLocalResources()) {
+    if (isSetCookieHeader(name) && !scriptExecutionContext()->securityOrigin()->canLoadLocalResources()) {
         reportUnsafeUsage(document(), "Refused to get unsafe header \"" + name + "\"");
         return "";
     }
@@ -1134,7 +1134,7 @@ String XMLHttpRequest::statusText(ExceptionCode& ec) const
 
 void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const ResourceResponse& response, ExceptionCode& ec)
 {
-    if (m_sameOriginRequest && !document()->securityOrigin()->canRequest(response.url())) {
+    if (m_sameOriginRequest && !scriptExecutionContext()->securityOrigin()->canRequest(response.url())) {
         abort();
         return;
     }
@@ -1217,7 +1217,7 @@ void XMLHttpRequest::didFinishLoadingPreflight(SubresourceLoader* loader)
 void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
-    if (!document()->securityOrigin()->canRequest(request.url())) {
+    if (!scriptExecutionContext()->securityOrigin()->canRequest(request.url())) {
         internalAbort();
         networkError();
     }
@@ -1247,7 +1247,7 @@ bool XMLHttpRequest::accessControlCheck(const ResourceResponse& response)
         return false;
 
     RefPtr<SecurityOrigin> accessControlOrigin = SecurityOrigin::create(accessControlOriginURL);
-    if (!accessControlOrigin->isSameSchemeHostPort(document()->securityOrigin()))
+    if (!accessControlOrigin->isSameSchemeHostPort(scriptExecutionContext()->securityOrigin()))
         return false;
 
     if (m_includeCredentials) {
@@ -1305,7 +1305,7 @@ void XMLHttpRequest::didReceiveResponsePreflight(SubresourceLoader*, const Resou
         return;
     }
 
-    PreflightResultCache::shared().appendEntry(document()->securityOrigin()->toString(), m_url, preflightResult.release());
+    PreflightResultCache::shared().appendEntry(scriptExecutionContext()->securityOrigin()->toString(), m_url, preflightResult.release());
 }
 
 void XMLHttpRequest::receivedCancellation(SubresourceLoader*, const AuthenticationChallenge& challenge)

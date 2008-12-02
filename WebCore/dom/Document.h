@@ -980,7 +980,6 @@ public:
 #endif
 
     void initSecurityContext();
-    SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
     // Explicitly override the security origin for this document.
     // Note: It is dangerous to change the security origin of a document
@@ -1010,8 +1009,6 @@ private:
     void imageLoadEventTimerFired(Timer<Document>*);
     void updateFocusAppearanceTimerFired(Timer<Document>*);
     void updateBaseURL();
-
-    RefPtr<SecurityOrigin> m_securityOrigin;
 
     RenderObject* m_savedRenderer;
     int m_secureForms;

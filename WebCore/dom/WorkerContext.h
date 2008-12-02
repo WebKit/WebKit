@@ -61,7 +61,6 @@ namespace WebCore {
 
         const KURL& url() const { return m_url; }
         virtual KURL completeURL(const String&) const;
-        virtual SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
         WorkerLocation* location() const { return m_location.get(); }
 
@@ -103,7 +102,6 @@ namespace WebCore {
 
         KURL m_url;
         RefPtr<WorkerLocation> m_location;
-        RefPtr<SecurityOrigin> m_securityOrigin;
 
         OwnPtr<WorkerScriptController> m_script;
         WorkerThread* m_thread;

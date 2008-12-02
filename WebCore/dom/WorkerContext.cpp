@@ -44,10 +44,10 @@ namespace WebCore {
 WorkerContext::WorkerContext(const KURL& url, WorkerThread* thread)
     : m_url(url)
     , m_location(WorkerLocation::create(url))
-    , m_securityOrigin(SecurityOrigin::create(url))
     , m_script(new WorkerScriptController(this))
     , m_thread(thread)
 {
+    setSecurityOrigin(SecurityOrigin::create(url));
 }
 
 WorkerContext::~WorkerContext()
