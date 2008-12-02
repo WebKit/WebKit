@@ -688,6 +688,20 @@ static void convertWebResourceDataToString(NSMutableDictionary *resource)
     }
 }
 
+static void normalizeHTTPResponseHeaderFields(NSMutableDictionary *fields)
+{
+    if ([fields objectForKey:@"Date"])
+        [fields setObject:@"Sun, 16 Nov 2008 17:00:00 GMT" forKey:@"Date"];
+    if ([fields objectForKey:@"Last-Modified"])
+        [fields setObject:@"Sun, 16 Nov 2008 16:55:00 GMT" forKey:@"Last-Modified"];
+    if ([fields objectForKey:@"Keep-Alive"])
+        [fields setObject:@"timeout=15" forKey:@"Keep-Alive"];
+    if ([fields objectForKey:@"Etag"])
+        [fields setObject:@"\"301925-21-45c7d72d3e780\"" forKey:@"Etag"];
+    if ([fields objectForKey:@"Server"])
+        [fields setObject:@"Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6" forKey:@"Server"];
+}
+
 static void normalizeWebResourceURL(NSMutableString *webResourceURL)
 {
     static int fileUrlLength = [(NSString *)@"file://" length];
@@ -709,14 +723,14 @@ static void convertWebResourceResponseToDictionary(NSMutableDictionary *property
         [unarchiver finishDecoding];
         [unarchiver release];
     }        
-    
+
     NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] init];
-    
+
     NSMutableString *urlString = [[[response URL] description] mutableCopy];
     normalizeWebResourceURL(urlString);
     [responseDictionary setObject:urlString forKey:@"URL"];
     [urlString release];
-    
+
     NSMutableString *mimeTypeString = [[response MIMEType] mutableCopy];
     convertMIMEType(mimeTypeString);
     [responseDictionary setObject:mimeTypeString forKey:@"MIMEType"];
@@ -726,14 +740,18 @@ static void convertWebResourceResponseToDictionary(NSMutableDictionary *property
     if (textEncodingName)
         [responseDictionary setObject:textEncodingName forKey:@"textEncodingName"];
     [responseDictionary setObject:[NSNumber numberWithLongLong:[response expectedContentLength]] forKey:@"expectedContentLength"];
-    
+
     if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-        
-        [responseDictionary setObject:[httpResponse allHeaderFields] forKey:@"allHeaderFields"];
+
+        NSMutableDictionary *allHeaderFields = [[httpResponse allHeaderFields] mutableCopy];
+        normalizeHTTPResponseHeaderFields(allHeaderFields);
+        [responseDictionary setObject:allHeaderFields forKey:@"allHeaderFields"];
+        [allHeaderFields release];
+
         [responseDictionary setObject:[NSNumber numberWithInt:[httpResponse statusCode]] forKey:@"statusCode"];
     }
-    
+
     [propertyList setObject:responseDictionary forKey:@"WebResourceResponse"];
     [responseDictionary release];
 }

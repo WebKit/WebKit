@@ -165,6 +165,7 @@ svg/W3C-SVG-1.1/fonts-elem-07-b.svg
 webarchive
 svg/webarchive
 svg/custom/image-with-prefix-in-webarchive.svg
+http/tests/webarchive
 
 # <rdar://problem/5230396> layoutTestController.addFileToPasteboardOnDrag is unimplemented
 fast/forms/dragging-to-file-input.html

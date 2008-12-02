@@ -1,3 +1,19 @@
+2008-12-01  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22466: REGRESSION (35867): Many resources missing when saving webarchive of webkit.org
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22466>
+        <rdar://problem/6403593>
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/webarchive/resources/test-preload-resources.css: Added.
+        * http/tests/webarchive/test-preload-resources-expected.webarchive: Added.
+        * http/tests/webarchive/test-preload-resources.html: Added.
+        * platform/qt/Skipped: Added http/tests/webarchive and grouped the
+        skipped list of other webarchive tests together.
+        * platform/win/Skipped: Added http/tests/webarchive.
+
 2008-12-01  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Darin Adler.

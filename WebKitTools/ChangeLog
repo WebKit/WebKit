@@ -1,3 +1,20 @@
+2008-12-01  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22466: REGRESSION (35867): Many resources missing when saving webarchive of webkit.org
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22466>
+        <rdar://problem/6403593>
+
+        Reviewed by Brady Eidson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (normalizeHTTPResponseHeaderFields): Added.  Normalizes Date, Etag,
+        Keep-Alive, Last-Modified and Server header fields to prevent false
+        positive test failures.
+        (convertWebResourceResponseToDictionary): Call
+        normalizeHTTPResponseHeaderFields() to noramlize HTTP response
+        header fields.
+
 2008-12-01  David D. Kilzer  <ddkilzer@webkit.org>
 
         Bug 22559: Report builds left to test in bisect-builds (like git-bisect)

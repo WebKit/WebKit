@@ -874,6 +874,9 @@ storage
 
 # ------ web archive support
 webarchive
+svg/webarchive
+svg/custom/image-with-prefix-in-webarchive.svg
+http/tests/webarchive
 
 # ----- XSLT currently not supported
 fast/xsl
@@ -1127,7 +1130,6 @@ svg/custom/acid3-test-77.html
 svg/custom/baseval-animval-equality.svg
 svg/custom/frame-getSVGDocument.html
 svg/custom/image-clipped-hit.svg
-svg/custom/image-with-prefix-in-webarchive.svg
 svg/custom/stroke-width-click.svg
 svg/custom/svg-features.html
 svg/custom/text-ctm.svg
@@ -1141,9 +1143,6 @@ svg/dom/font-face-elements.html
 svg/dom/SVGRectElement/rect-modify-rx.svg
 svg/hixie/dynamic/002.xml
 svg/hixie/mixed/007.xml
-svg/webarchive/svg-cursor-subresources.svg
-svg/webarchive/svg-feimage-subresources.svg
-svg/webarchive/svg-script-subresouces.svg
 tables/mozilla/bugs/bug51140.html
 tables/mozilla/bugs/bug103533.html
 tables/mozilla/marvin/backgr_index.html

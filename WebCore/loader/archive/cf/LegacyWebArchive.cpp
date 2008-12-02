@@ -30,6 +30,7 @@
 #include "LegacyWebArchive.h"
 
 #include "CString.h"
+#include "Cache.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -515,13 +516,25 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
             for (unsigned i = 0; i < subresourceURLs.size(); ++i) {
                 if (uniqueSubresources.contains(subresourceURLs[i].string()))
                     continue;
+
                 uniqueSubresources.add(subresourceURLs[i].string());
+
                 RefPtr<ArchiveResource> resource = documentLoader->subresource(subresourceURLs[i]);
-                if (resource)
+                if (resource) {
                     subresources.append(resource.release());
-                else
-                    // FIXME: should do something better than spew to console here
-                    LOG_ERROR("Failed to archive subresource for %s", subresourceURLs[i].string().utf8().data());
+                    continue;
+                }
+
+                CachedResource *cachedResource = cache()->resourceForURL(subresourceURLs[i]);
+                if (cachedResource) {
+                    resource = ArchiveResource::create(cachedResource->data(), subresourceURLs[i], cachedResource->response());
+                    if (resource)
+                        subresources.append(resource.release());
+                    continue;
+                }
+
+                // FIXME: should do something better than spew to console here
+                LOG_ERROR("Failed to archive subresource for %s", subresourceURLs[i].string().utf8().data());
             }
         }
     }
