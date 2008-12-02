@@ -26,6 +26,8 @@
 #include "GraphicsContext.h"
 #include "RenderBlock.h"
 #include "RenderLayer.h"
+#include "RenderTheme.h"
+#include "RenderView.h"
 
 using namespace std;
 
@@ -244,17 +246,8 @@ IntRect RenderReplaced::selectionRect(bool clipToVisibleContent)
 
     if (!isSelected())
         return IntRect();
-    if (!m_inlineBoxWrapper)
-        // We're a block-level replaced element.  Just return our own dimensions.
-        return absoluteBoundingBoxRect();
-
-    RenderBlock* cb =  containingBlock();
-    if (!cb)
-        return IntRect();
     
-    RootInlineBox* root = m_inlineBoxWrapper->root();
-    IntRect rect(0, root->selectionTop() - yPos(), width(), root->selectionHeight());
-    
+    IntRect rect = localSelectionRect();
     if (clipToVisibleContent)
         computeAbsoluteRepaintRect(rect);
     else {
@@ -263,6 +256,23 @@ IntRect RenderReplaced::selectionRect(bool clipToVisibleContent)
     }
     
     return rect;
+}
+
+IntRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
+{
+    if (checkWhetherSelected && !isSelected())
+        return IntRect();
+
+    if (!m_inlineBoxWrapper)
+        // We're a block-level replaced element.  Just return our own dimensions.
+        return IntRect(0, 0, width(), height() + borderTopExtra() + borderBottomExtra());
+
+    RenderBlock* cb =  containingBlock();
+    if (!cb)
+        return IntRect();
+    
+    RootInlineBox* root = m_inlineBoxWrapper->root();
+    return IntRect(0, root->selectionTop() - yPos(), width(), root->selectionHeight());
 }
 
 void RenderReplaced::setSelectionState(SelectionState s)
@@ -374,6 +384,30 @@ IntRect RenderReplaced::overflowRect(bool includeInterior) const
         return gOverflowRectMap->find(this)->second;
 
     return borderBox();
+}
+
+IntRect RenderReplaced::absoluteClippedOverflowRect()
+{
+    if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
+        return IntRect();
+
+    // The selectionRect can project outside of the overflowRect, so use
+    // that for repainting to avoid selection painting glitches
+    IntRect r = localSelectionRect(false);
+
+    RenderView* v = view();
+    if (v)
+        r.move(v->layoutDelta());
+
+    if (style()) {
+        if (style()->hasAppearance())
+            // The theme may wish to inflate the rect used when repainting.
+            theme()->adjustRepaintRect(this, r);
+        if (v)
+            r.inflate(style()->outlineSize());
+    }
+    computeAbsoluteRepaintRect(r);
+    return r;
 }
 
 }

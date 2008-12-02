@@ -1,3 +1,16 @@
+2008-12-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=22472
+        
+        Test for repainting a selected, replaced element.
+        
+        * fast/repaint/selected-replaced.html: Added.
+        * platform/mac/fast/repaint/selected-replaced-expected.checksum: Added.
+        * platform/mac/fast/repaint/selected-replaced-expected.png: Added.
+        * platform/mac/fast/repaint/selected-replaced-expected.txt: Added.
+
 2008-12-02  Chris Fleizach  <cfleizach@apple.com>
 
         Update tests for Bug 22596: Some elements don't report AXBlockQuoteLevel

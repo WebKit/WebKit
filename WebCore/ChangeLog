@@ -1,3 +1,21 @@
+2008-12-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=22472
+        
+        Override absoluteClippedOverflowRect() in RenderReplaced to return a rect
+        that is large enough to encompass the selection, so that the repainting of
+        selected replaced elements works correctly.
+        
+        Test: fast/repaint/selected-replaced.html
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::selectionRect):
+        (WebCore::RenderReplaced::localSelectionRect):
+        (WebCore::RenderReplaced::absoluteClippedOverflowRect):
+        * rendering/RenderReplaced.h:
+
 2008-12-02  Gregory Hughes  <ghughes@apple.com>
 
         Reviewed by Beth Dakin.
