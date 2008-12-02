@@ -1,3 +1,20 @@
+2008-12-02  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Build JavaScriptCore into libQtWebKit.so through a direct build
+        instead of a static library. When linking a static library into
+        a shared library qmake generates an incorrect .prl file, which
+        causes all sorts of different build problems when linking against
+        QtWebKit. Fixing this in qmake requires bigger changes that are
+        currently not possible, so we need to work around this limitation
+        for now. The advantages of the separate build did not outweight the
+        build problems it caused.
+
+        * WebCore.pro: include JavaScriptCore.pri, re-enable prl support
+        and rename the lut generator to domlut to avoid a conflict with
+        JavaScriptCore.pri's lut generator.
+
 2008-12-02  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

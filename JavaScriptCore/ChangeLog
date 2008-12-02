@@ -1,3 +1,13 @@
+2008-12-02  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix ability to include JavaScriptCore.pri from other .pro files.
+
+        * JavaScriptCore.pri: Moved -O3 setting into the .pro files.
+        * JavaScriptCore.pro:
+        * jsc.pro:
+
 2008-12-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich, with help from Gavin Barraclough.

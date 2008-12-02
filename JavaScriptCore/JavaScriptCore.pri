@@ -172,5 +172,3 @@ kjsbison.dependency_type = TYPE_C
 kjsbison.CONFIG = target_predeps
 addExtraCompilerWithHeader(kjsbison)
 
-*-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
-*-g++*:QMAKE_CXXFLAGS_RELEASE += -O3

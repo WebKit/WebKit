@@ -11,7 +11,6 @@ contains(QT_CONFIG, embedded):CONFIG += embedded
 CONFIG(QTDIR_build) {
     GENERATED_SOURCES_DIR = $$PWD/generated
     include($$QT_SOURCE_TREE/src/qbase.pri)
-    !win32-msvc*: CONFIG -= create_prl
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
     DEFINES *= NDEBUG
 }
@@ -108,25 +107,7 @@ INCLUDEPATH += $$PWD $$PWD/../JavaScriptCore $$PWD/../JavaScriptCore/ForwardingH
                $$PWD/../JavaScriptCore/jit \
                $$PWD/../JavaScriptCore/wtf \
 
-contains(CONFIG, debug_and_release_target) {
-    CONFIG(debug, debug|release) {
-        LIBS += -L../JavaScriptCore/debug
-    } else {
-        LIBS += -L../JavaScriptCore/release
-    }
-} else {
-    LIBS += -L../JavaScriptCore
-}
-
-unset(JSCORE_LINKAGE)
-CONFIG(QTDIR_build) {
-    if(!debug_and_release|build_pass):CONFIG(debug, debug|release) {
-        win32:JSCORE_LINKAGE = -lJavaScriptCored
-        mac:JSCORE_LINKAGE = -lJavaScriptCore_debug
-    }
-}
-isEmpty(JSCORE_LINKAGE):JSCORE_LINKAGE += -lJavaScriptCore
-LIBS += $$JSCORE_LINKAGE
+include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
 RESOURCES += \
     $$PWD/../WebCore/inspector/front-end/WebKit.qrc \
@@ -219,7 +200,7 @@ SVGCSSVALUES = $$PWD/css/SVGCSSValueKeywords.in
 
 STYLESHEETS_EMBED = $$PWD/css/html4.css
 
-LUT_FILES += \
+DOMLUT_FILES += \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSRGBColor.cpp \
     bindings/js/JSWorkerContext.cpp
@@ -1858,21 +1839,12 @@ idl.CONFIG += target_predeps
 addExtraCompilerWithHeader(idl)
 
 # GENERATOR 2-A: LUT creator
-lut.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.lut.h
-lut.commands = perl $$PWD/../JavaScriptCore/create_hash_table ${QMAKE_FILE_NAME} -n WebCore > ${QMAKE_FILE_OUT}
-lut.depend = ${QMAKE_FILE_NAME}
-lut.input = LUT_FILES
-lut.CONFIG += no_link
-addExtraCompiler(lut)
-
-# GENERATOR 2-B: like JavaScriptCore/LUT Generator, but rename output
-luttable.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}Table.cpp
-luttable.commands = perl $$PWD/../JavaScriptCore/create_hash_table ${QMAKE_FILE_NAME} -n WebCore > ${QMAKE_FILE_OUT}
-luttable.depend = ${QMAKE_FILE_NAME}
-luttable.input = LUT_TABLE_FILES
-luttable.CONFIG += no_link
-luttable.dependency_type = TYPE_C
-addExtraCompiler(luttable)
+domlut.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.lut.h
+domlut.commands = perl $$PWD/../JavaScriptCore/create_hash_table ${QMAKE_FILE_NAME} -n WebCore > ${QMAKE_FILE_OUT}
+domlut.depend = ${QMAKE_FILE_NAME}
+domlut.input = DOMLUT_FILES
+domlut.CONFIG += no_link
+addExtraCompiler(domlut)
 
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
