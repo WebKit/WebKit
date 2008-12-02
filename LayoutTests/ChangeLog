@@ -1,3 +1,12 @@
+2008-12-02  Michael Moss  <mmoss@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Enable http/tests/navigation/reload-subframe-*frame.html on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=20926
+
+        * platform/win/Skipped:
+
 2008-12-01  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.

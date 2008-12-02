@@ -317,8 +317,6 @@ svg/custom/acid3-test-77.html
 fast/canvas/toDataURL-supportedTypes.html
 
 #<rdar://problem/5829202> new subframe reload tests fail on Windows
-http/tests/navigation/reload-subframe-frame.html 
-http/tests/navigation/reload-subframe-iframe.html 
 http/tests/navigation/reload-subframe-object.html
 
 #<rdar://problem/5829260> REGRESSION: frame-default-enc tests fail on Windows intermittently
