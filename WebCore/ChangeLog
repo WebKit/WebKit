@@ -1,5 +1,14 @@
 2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Adam Roben.
+
+        As Adam Roben noticed, synchronize MessageSource enum with Console.js, and add a comment.
+
+        * inspector/front-end/Console.js:
+        * page/Console.h:
+
+2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Next steps to make LayoutTests work:

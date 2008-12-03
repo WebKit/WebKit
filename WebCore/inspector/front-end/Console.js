@@ -688,6 +688,9 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageSource.HTML:
                 element.addStyleClass("console-html-source");
                 break;
+            case WebInspector.ConsoleMessage.MessageSource.WML:
+                element.addStyleClass("console-wml-source");
+                break;
             case WebInspector.ConsoleMessage.MessageSource.XML:
                 element.addStyleClass("console-xml-source");
                 break;
@@ -766,6 +769,9 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageSource.HTML:
                 sourceString = "HTML";
                 break;
+            case WebInspector.ConsoleMessage.MessageSource.WML:
+                sourceString = "WML";
+                break;
             case WebInspector.ConsoleMessage.MessageSource.XML:
                 sourceString = "XML";
                 break;
@@ -820,13 +826,14 @@ WebInspector.ConsoleMessage.prototype = {
     }
 }
 
-// Note: Keep these constants in sync with the ones in Chrome.h
+// Note: Keep these constants in sync with the ones in Console.h
 WebInspector.ConsoleMessage.MessageSource = {
     HTML: 0,
-    XML: 1,
-    JS: 2,
-    CSS: 3,
-    Other: 4,
+    WML: 1,
+    XML: 2,
+    JS: 3,
+    CSS: 4,
+    Other: 5
 }
 
 WebInspector.ConsoleMessage.MessageLevel = {
