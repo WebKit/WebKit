@@ -1,5 +1,17 @@
 2008-12-03  Adam Roben  <aroben@apple.com>
 
+        Fix a leak in WinLauncher shutdown
+
+        Reviewed by Sam Weinig.
+
+        * WinLauncher/WinLauncher.cpp:
+        (_tWinMain): Replaced a delete with a Release. We can't delete the
+        WebView properly since we only have a pointer to one of its
+        interfaces. We also shouldn't be deleting COM objects directly anyway,
+        for a number of reasons.
+
+2008-12-03  Adam Roben  <aroben@apple.com>
+
         Fix a crash on exit in WinLauncher
 
         Reviewed by Sam Weinig.
