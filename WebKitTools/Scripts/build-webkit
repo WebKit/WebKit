@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Simplified build script for WebKit Open Source Project.
+# Build script wrapper for the WebKit Open Source Project.
 
 use strict;
 use File::Basename;
@@ -124,21 +124,13 @@ if ($showHelp) {
 }
 
 $svgExperimentalSupport = 0 unless $svgSupport;
-$svgAnimationSupport = 0 unless $svgSupport;
-$svgFiltersSupport = 0 unless $svgSupport;
-$svgForeignObjectSupport = 0 unless $svgSupport;
-$svgFontsSupport = 0 unless $svgSupport;
-$svgAsImageSupport = 0 unless $svgSupport;
-$svgUseSupport = 0 unless $svgSupport;
 
-if ($svgExperimentalSupport) {
-    $svgAnimationSupport = 1;
-    $svgFiltersSupport = 1;
-    $svgForeignObjectSupport = 1;
-    $svgFontsSupport = 1;
-    $svgAsImageSupport = 1;
-    $svgUseSupport = 1;
-}
+$svgAnimationSupport = $svgExperimentalSupport;
+$svgFiltersSupport = $svgExperimentalSupport;
+$svgForeignObjectSupport = $svgExperimentalSupport;
+$svgFontsSupport = $svgExperimentalSupport;
+$svgAsImageSupport = $svgExperimentalSupport;
+$svgUseSupport = $svgExperimentalSupport;
 
 checkRequiredSystemConfig();
 setConfiguration();
@@ -183,14 +175,7 @@ push @overrideFeatureDefinesOption, "ENABLE_XSLT" if $xsltSupport;
 push @overrideFeatureDefinesOption, "ENABLE_WML" if $wmlSupport;
 my $overrideFeatureDefinesString = "FEATURE_DEFINES=" . join(" ", @overrideFeatureDefinesOption);
 
-my @coverageSupportOption = ();
-if ($coverageSupport) {
-    push @coverageSupportOption, "GCC_GENERATE_TEST_COVERAGE_FILES=YES";
-    push @coverageSupportOption, "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES";
-    push @coverageSupportOption, "EXTRA_LINK= -ftest-coverage -fprofile-arcs";
-    push @coverageSupportOption, "OTHER_CFLAGS= -MD";
-    push @coverageSupportOption, "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -ftest-coverage -fprofile-arcs -framework AppKit";
-}
+my @coverageSupportOption = ($coverageSupport) ? XcodeCoverageSupportOptions() : ();
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "WebCore", "WebKit");
@@ -205,11 +190,6 @@ for my $dir (@projects, @otherDirs) {
 }
 
 my @options = ();
-
-if ($clean && isAppleMacWebKit()) {
-    push(@options, "-alltargets");
-    push(@options, "clean");
-}
 
 if ($buildSixtyFourBit && isAppleMacWebKit()) {
     my $cpuVendor = `sysctl -n machdep.cpu.vendor`;
@@ -317,7 +297,12 @@ for my $dir (@projects) {
     } elsif (isQt()) {
         $result = buildQMakeQtProject($dir, $clean, @ARGV);
     } elsif (isAppleMacWebKit()) {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, $overrideFeatureDefinesString, @coverageSupportOption, @ARGV;
+        my @xcodeOptions = ();
+        push(@xcodeOptions, @options);
+        push(@xcodeOptions, $overrideFeatureDefinesString);
+        push(@xcodeOptions, @coverageSupportOption);
+        push(@xcodeOptions, @ARGV);
+        $result = buildXCodeProject($dir, $clean, @xcodeOptions);
     } elsif (isAppleWinWebKit()) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);

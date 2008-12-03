@@ -264,6 +264,17 @@ sub XcodeOptionStringNoConfig
     return join " ", @baseProductDirOption;
 }
 
+sub XcodeCoverageSupportOptions()
+{
+    my @coverageSupportOptions = ();
+    push @coverageSupportOptions, "GCC_GENERATE_TEST_COVERAGE_FILES=YES";
+    push @coverageSupportOptions, "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES";
+    push @coverageSupportOptions, "EXTRA_LINK= -ftest-coverage -fprofile-arcs";
+    push @coverageSupportOptions, "OTHER_CFLAGS= -MD";
+    push @coverageSupportOptions, "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -ftest-coverage -fprofile-arcs -framework AppKit";
+    return @coverageSupportOptions;
+}
+
 my $passedConfiguration;
 my $searchedForPassedConfiguration;
 sub determinePassedConfiguration
@@ -749,6 +760,18 @@ sub setupCygwinEnv()
     print "Building results into: ", baseProductDir(), "\n";
     print "WEBKITOUTPUTDIR is set to: ", $ENV{"WEBKITOUTPUTDIR"}, "\n";
     print "WEBKITLIBRARIESDIR is set to: ", $ENV{"WEBKITLIBRARIESDIR"}, "\n";
+}
+
+sub buildXCodeProject($$@)
+{
+    my ($project, $clean, @extraOptions) = @_;
+
+    if ($clean) {
+        push(@extraOptions, "-alltargets");
+        push(@extraOptions, "clean");
+    }
+
+    return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
 }
 
 sub buildVisualStudioProject

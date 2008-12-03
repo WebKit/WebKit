@@ -27,7 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Script to run the Web Kit Open Source Project JavaScriptCore tests (adapted from Mozilla).
+# Script to run the WebKit Open Source Project JavaScriptCore tests (adapted from Mozilla).
 
 use strict;
 use FindBin;
@@ -36,45 +36,41 @@ use lib $FindBin::Bin;
 use webkitdirs;
 use POSIX;
 
-my $coverageSupport = 0;
-GetOptions('coverage!' => \$coverageSupport);
-
-my @coverageSupportOption = ();
-if ($coverageSupport) {
-    push @coverageSupportOption, "GCC_GENERATE_TEST_COVERAGE_FILES=YES";
-    push @coverageSupportOption, "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES";
-    push @coverageSupportOption, "EXTRA_LINK= -ftest-coverage -fprofile-arcs";
-    push @coverageSupportOption, "OTHER_CFLAGS= -MD";
-    push @coverageSupportOption, "OTHER_LDFLAGS= -ftest-coverage -fprofile-arcs -framework AppKit";
-}
-
 # determine configuration
 my $configuration;
 setConfiguration();
 $configuration = configuration();
 
-my @jsArgs;
-my @xcodeArgs;
-my $root;
-my $run64Bit;
+my $jsDriverArgs = "";
+my $root; # intentionally left undefined
+my $run64Bit = 0;
+my $showHelp = 0;
 
-# pre-evaluate arguments.  jsDriver args have - preceding, xcode args do not.
-# special arguments
-#     --root=<path to webkit root> use pre-built root
-#     --gtk build gtk 
-#     --no-64-bit or --64-bit
-foreach my $arg(@ARGV) {
-    print $arg."\n";
-    if( $arg =~ /root=(.*)/ ){
-        $root = $1;
-    } elsif( $arg =~ /^--gtk$/i || $arg =~ /^--qt$/i || $arg =~ /^--wx$/i ){
-    } elsif( $arg =~ /(no-)?64-bit/ ) {
-        $run64Bit = !defined($1);
-    } elsif( $arg =~ /^-/ or !($arg =~/=/)){
-        push( @jsArgs, $arg );
-    } else {
-        push( @xcodeArgs, $arg );
-    }
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options] [options to pass to build system]
+  --help                        Show this help message
+  --64-bit                      Use the 64bit jsc binary
+  --jsDriver-args=              A string of arguments to pass to jsDriver.pl
+  --root=                       Path to pre-built root containing jsc
+EOF
+
+GetOptions(
+    '64-bit' => \$run64Bit,
+    'jsDriver-args=s' => \$jsDriverArgs,
+    'root=s' => \$root,
+    'help' => \$showHelp
+);
+
+# Assume any arguments left over from GetOptions are assumed to be build arguments
+my @buildArgs = @ARGV;
+
+# Arguments passed to --jsDriver-args (if any) are passed to jsDriver.pl
+my @jsArgs = split(" ", $jsDriverArgs);
+
+if ($showHelp) {
+   print STDERR $usage;
+   exit 1;
 }
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
@@ -88,19 +84,14 @@ if (isAppleMacWebKit() && !isTiger()) {
     }
 }
 
-if(!defined($root)){
+if (!defined($root)){
     chdirWebKit();
-    push(@xcodeArgs, "--" . $configuration);
-    
-    # FIXME: These should be stored per-config and ignored here
-    push(@xcodeArgs, "--qt")  if isQt();
-    push(@xcodeArgs, "--gtk")  if isGtk();
-    push(@xcodeArgs, "--wx")  if isWx();
 
     my $arch = preferredArchitecture("JavaScriptCore");
-    push(@xcodeArgs, "ARCHS=$arch") if (isAppleMacWebKit());
+    push(@buildArgs, "ARCHS=$arch") if (isAppleMacWebKit());
     
-    my $buildResult = system "perl", "WebKitTools/Scripts/build-jsc", @xcodeArgs;
+    print "Running: build-jsc " . join(" ", @buildArgs) . "\n";
+    my $buildResult = system "perl", "WebKitTools/Scripts/build-jsc", @buildArgs;
     if ($buildResult) {
         print STDERR "Compiling jsc failed!\n";
         exit exitStatus($buildResult);
@@ -126,6 +117,7 @@ sub jscPath($)
     return "$productDir/$jscName";
 }
 
+printf "Running: jsDriver.pl -e squirrelfish -s %s -f actual.html %s\n", jscPath($productDir), join(" ", @jsArgs);
 my $result = system "perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs;
 exit exitStatus($result)  if $result;
 

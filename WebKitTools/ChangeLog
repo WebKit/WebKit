@@ -1,3 +1,29 @@
+2008-12-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Hyatt (and Mark Rowe).
+        
+        Move --coverage support from build-webkit to webkitdirs.pm to share it with build-jsc
+        Move --coverage support out of run-javascriptcore-tests and into build-jsc
+        
+        Finally add a buildXCodeProject function to webkitdirs.pm and move --clean support
+        there from build-webkit (to allow future sharing with other build-* scripts)
+        
+        Change run-javascriptcore-tests to expect a --jsDriver-args= argument instead of
+        picking through ARGV with a blacklist of what arguments weren't jsDriver args
+        this makes run-javascriptcore-tests transparently support all arguments which
+        webkitdirs.pm gives it support for.
+        
+        Make run-javascriptcore-tests actually print what commands it's running before running them.
+        
+        Add --help support to build-jsc and run-javascriptcore-tests!
+        
+        Make code to support --svg-experimental defaults take up half as many lines.
+
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/webkitdirs.pm:
+
 2008-12-03  Adam Roben  <aroben@apple.com>
 
         Fix a leak in WinLauncher shutdown

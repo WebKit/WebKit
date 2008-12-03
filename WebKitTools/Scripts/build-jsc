@@ -30,19 +30,41 @@
 
 use strict;
 use FindBin;
+use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
 use POSIX;
+
+my $coverageSupport = 0;
+my $showHelp = 0;
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options] [options to pass to build system]
+  --help                        Show this help message
+  --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
+EOF
+
+GetOptions(
+    'coverage!' => \$coverageSupport,
+    'help' => \$showHelp
+);
+
+if ($showHelp) {
+   print STDERR $usage;
+   exit 1;
+}
 
 checkRequiredSystemConfig();
 setConfiguration();
 chdirWebKit();
 my @options = XcodeOptions();
+my @coverageSupportOptions = ($coverageSupport) ? XcodeCoverageSupportOptions() : ();
 
 chdir "JavaScriptCore" or die "Can't find JavaScriptCore directory to build from";
 my $result;
 if (isAppleMacWebKit()) {
-    $result = system "sh", "-c", 'xcodebuild -project JavaScriptCore.xcodeproj -target jsc "$@" | grep -v setenv && exit ${PIPESTATUS[0]}', "xcodebuild",  @options, @ARGV;
+    $result = system "sh", "-c", 'xcodebuild -project JavaScriptCore.xcodeproj -target jsc "$@" | grep -v setenv && exit ${PIPESTATUS[0]}', "xcodebuild",  @options, @ARGV, @coverageSupportOptions;
 } elsif (isAppleWinWebKit()) {
     $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
 } elsif (isQt() or isGtk() or isWx()) {
