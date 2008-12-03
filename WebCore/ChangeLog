@@ -1,3 +1,15 @@
+2008-12-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Cameron Zwarich and Adam Roben.
+
+        Fix a typo: m_executionForbidded.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::forbidExecution):
+        * bindings/js/WorkerScriptController.h:
+
 2008-12-03  Dean McNamee  <deanm@chromium.org>
 
         Bug 22623: Uninitialized memory access in cache parsing code

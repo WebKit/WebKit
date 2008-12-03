@@ -73,7 +73,7 @@ namespace WebCore {
         JSC::ProtectedPtr<JSWorkerContext> m_workerContextWrapper;
 
         Mutex m_sharedDataMutex;
-        bool m_executionForbidded;
+        bool m_executionForbidden;
     };
 
 } // namespace WebCore
