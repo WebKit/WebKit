@@ -1,5 +1,31 @@
 2008-12-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Cleaned up SegmentedVector by abstracting segment access into helper
+        functions.
+        
+        SunSpider reports no change.
+
+        * bytecompiler/SegmentedVector.h:
+        (JSC::SegmentedVector::SegmentedVector):
+        (JSC::SegmentedVector::~SegmentedVector):
+        (JSC::SegmentedVector::size):
+        (JSC::SegmentedVector::at):
+        (JSC::SegmentedVector::operator[]):
+        (JSC::SegmentedVector::last):
+        (JSC::SegmentedVector::append):
+        (JSC::SegmentedVector::removeLast):
+        (JSC::SegmentedVector::grow):
+        (JSC::SegmentedVector::clear):
+        (JSC::SegmentedVector::deleteAllSegments):
+        (JSC::SegmentedVector::segmentFor):
+        (JSC::SegmentedVector::subscriptFor):
+        (JSC::SegmentedVector::ensureSegmentsFor):
+        (JSC::SegmentedVector::ensureSegment):
+
+2008-12-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Geoffrey Garen. (Patch by Cameron Zwarich <zwarich@apple.com>.)
         
         Fixed https://bugs.webkit.org/show_bug.cgi?id=22482
