@@ -1,3 +1,13 @@
+2008-12-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Test for https://bugs.webkit.org/show_bug.cgi?id=22537
+        REGRESSION (r38745): Assertion failure in jsSubstring() at ge.com
+
+        * fast/regex/alternative-length-miscalculation-expected.txt: Added.
+        * fast/regex/alternative-length-miscalculation.html: Added.
+
 2008-12-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

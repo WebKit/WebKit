@@ -113,7 +113,7 @@ void Generator::generateLoadCharacter(JumpList& failures)
 // were part of the input string.
 void Generator::generateJumpIfEndOfInput(JumpList& failures)
 {
-    failures.append(jg32(index, length));
+    failures.append(je32(length, index));
 }
 
 // For the sake of end-of-line assertions, we treat one-past-the-end as if it

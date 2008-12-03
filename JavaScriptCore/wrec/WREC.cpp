@@ -60,8 +60,8 @@ CompiledRegExp Generator::compileRegExp(Interpreter* interpreter, const UString&
     generator.generateReturnSuccess();
 
     failures.link();
-    generator.generateIncrementIndex();
     generator.generateJumpIfEndOfInput(failures);
+    generator.generateIncrementIndex();
     parser.parsePattern(failures);
     generator.generateReturnSuccess();
 

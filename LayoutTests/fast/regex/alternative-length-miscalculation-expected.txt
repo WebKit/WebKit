@@ -1,0 +1,10 @@
+This page tests for a length miscalculation in regular expression processing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS re.exec('a') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
