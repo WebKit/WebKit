@@ -1,3 +1,13 @@
+2008-12-03  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix the build of WebKit inside Qt by making sure that qmake generators
+        that do not produce generated sources (i.e. cpp files) are not
+        included in SOURCES.
+
+        * WebKit.pri:
+
 2008-12-02  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

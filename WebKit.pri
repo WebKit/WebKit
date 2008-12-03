@@ -38,6 +38,8 @@ INCLUDEPATH += $$PWD/WebKit/qt/Api
 defineTest(addExtraCompiler) {
     CONFIG(QTDIR_build) {
         outputRule = $$eval($${1}.output)
+        outVariable = $$eval($${1}.variable_out)
+        !isEqual(outVariable,GENERATED_SOURCES):return(true)
 
         input = $$eval($${1}.input)
         input = $$eval($$input)
