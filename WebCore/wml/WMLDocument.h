@@ -24,10 +24,10 @@
 
 #if ENABLE(WML)
 #include "Document.h"
+#include "WMLErrorHandling.h"
+#include "WMLPageState.h"
 
 namespace WebCore {
-
-class WMLPageState;
 
 class WMLDocument : public Document {
 public:

@@ -24,10 +24,8 @@
 #if ENABLE(WML)
 #include "WMLAccessElement.h"
 
-#include "WMLErrorHandling.h"
 #include "WMLDocument.h"
 #include "WMLNames.h"
-#include "WMLPageState.h"
 #include "WMLVariables.h"
 
 namespace WebCore {
