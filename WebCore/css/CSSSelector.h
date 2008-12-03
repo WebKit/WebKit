@@ -245,7 +245,8 @@ namespace WebCore {
             int m_b; // Used for :nth-*
         };
 
-        void createRareData() { 
+        void createRareData()
+        {
             if (m_hasRareData) 
                 return;
             m_data.m_rareData = new RareData(m_data.m_tagHistory); 
