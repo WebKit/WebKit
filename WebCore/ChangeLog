@@ -1,3 +1,21 @@
+2008-12-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22627
+        fast/workers/worker-terminate.html fails randomly
+
+        The problem is that worker termination uses script timeouts, so an InterruptedExecutionError
+        is raised, and it sometimes reaches the main thread.
+
+        * dom/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerExceptionTask::create):
+        (WebCore::WorkerExceptionTask::WorkerExceptionTask):
+        (WebCore::WorkerExceptionTask::performTask):
+        (WebCore::WorkerMessagingProxy::postWorkerException):
+        * dom/WorkerMessagingProxy.h:
+        Ignore exceptions that happen in terminated workers.
+
 2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov.
