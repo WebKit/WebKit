@@ -47,7 +47,6 @@
 #include "CSSReflectValue.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
-#include "CSSNthSelector.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSUnicodeRangeValue.h"
@@ -4369,13 +4368,6 @@ UChar* CSSParser::text(int *length)
 CSSSelector* CSSParser::createFloatingSelector()
 {
     CSSSelector* selector = new CSSSelector;
-    m_floatingSelectors.add(selector);
-    return selector;
-}
-    
-CSSNthSelector* CSSParser::createFloatingNthSelector()
-{
-    CSSNthSelector* selector = new CSSNthSelector;
     m_floatingSelectors.add(selector);
     return selector;
 }

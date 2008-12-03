@@ -4,6 +4,7 @@
  *               2001 Andreas Schlapbach (schlpbch@iam.unibe.ch)
  *               2001-2003 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2002, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 David Smith (catfish.man@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,9 +25,14 @@
 #include "config.h"
 #include "CSSSelector.h"
 
+#include "wtf/Assertions.h"
+#include "HTMLNames.h"
+
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+    
+using namespace HTMLNames;
 
 unsigned int CSSSelector::specificity()
 {
@@ -52,8 +58,8 @@ unsigned int CSSSelector::specificity()
             break;
     }
 
-    if (m_tagHistory)
-        s += m_tagHistory->specificity();
+    if (CSSSelector* tagHistory = this->tagHistory())
+        s += tagHistory->specificity();
 
     // make sure it doesn't overflow
     return s & 0xffffff;
@@ -324,14 +330,14 @@ bool CSSSelector::operator==(const CSSSelector& other)
     const CSSSelector* sel2 = &other;
 
     while (sel1 && sel2) {
-        if (sel1->m_tag != sel2->m_tag || sel1->m_attr != sel2->m_attr ||
+        if (sel1->m_tag != sel2->m_tag || sel1->attribute() != sel2->attribute() ||
              sel1->relation() != sel2->relation() || sel1->m_match != sel2->m_match ||
              sel1->m_value != sel2->m_value ||
              sel1->pseudoType() != sel2->pseudoType() ||
-             sel1->m_argument != sel2->m_argument)
+             sel1->argument() != sel2->argument())
             return false;
-        sel1 = sel1->m_tagHistory;
-        sel2 = sel2->m_tagHistory;
+        sel1 = sel1->tagHistory();
+        sel2 = sel2->tagHistory();
     }
 
     if (sel1 || sel2)
@@ -365,11 +371,11 @@ String CSSSelector::selectorText() const
             str += ":";
             str += cs->m_value;
             if (cs->pseudoType() == PseudoNot) {
-                if (CSSSelector* subSel = cs->m_simpleSelector)
+                if (CSSSelector* subSel = cs->simpleSelector())
                     str += subSel->selectorText();
                 str += ")";
             } else if (cs->pseudoType() == PseudoLang) {
-                str += cs->m_argument;
+                str += cs->argument();
                 str += ")";
             }
         } else if (cs->m_match == CSSSelector::PseudoElement) {
@@ -377,10 +383,10 @@ String CSSSelector::selectorText() const
             str += cs->m_value;
         } else if (cs->hasAttribute()) {
             str += "[";
-            const AtomicString& prefix = cs->m_attr.prefix();
+            const AtomicString& prefix = cs->attribute().prefix();
             if (!prefix.isNull())
                 str += prefix + "|";
-            str += cs->m_attr.localName();
+            str += cs->attribute().localName();
             switch (cs->m_match) {
                 case CSSSelector::Exact:
                     str += "=";
@@ -413,13 +419,13 @@ String CSSSelector::selectorText() const
                 str += "\"]";
             }
         }
-        if (cs->relation() != CSSSelector::SubSelector || !cs->m_tagHistory)
+        if (cs->relation() != CSSSelector::SubSelector || !cs->tagHistory())
             break;
-        cs = cs->m_tagHistory;
+        cs = cs->tagHistory();
     }
 
-    if (cs->m_tagHistory) {
-        String tagHistoryText = cs->m_tagHistory->selectorText();
+    if (CSSSelector* tagHistory = cs->tagHistory()) {
+        String tagHistoryText = tagHistory->selectorText();
         if (cs->relation() == CSSSelector::DirectAdjacent)
             str = tagHistoryText + " + " + str;
         else if (cs->relation() == CSSSelector::IndirectAdjacent)
@@ -433,5 +439,117 @@ String CSSSelector::selectorText() const
 
     return str;
 }
+    
+void CSSSelector::setTagHistory(CSSSelector* tagHistory) 
+{ 
+    if (m_hasRareData) 
+        m_data.m_rareData->m_tagHistory.set(tagHistory); 
+    else 
+        m_data.m_tagHistory = tagHistory; 
+}
 
+const QualifiedName& CSSSelector::attribute() const
+{ 
+    switch (m_match) {
+    case Id:
+        return idAttr;
+    case Class:
+        return classAttr;
+    default:
+        return m_hasRareData ? m_data.m_rareData->m_attribute : anyQName();
+    }
+}
+
+void CSSSelector::setAttribute(const QualifiedName& value) 
+{ 
+    createRareData(); 
+    m_data.m_rareData->m_attribute = value; 
+}
+    
+void CSSSelector::setArgument(const AtomicString& value) 
+{ 
+    createRareData(); 
+    m_data.m_rareData->m_argument = value; 
+}
+
+void CSSSelector::setSimpleSelector(CSSSelector* value)
+{
+    createRareData(); 
+    m_data.m_rareData->m_simpleSelector.set(value); 
+}
+
+bool CSSSelector::parseNth()
+{
+    if (!m_hasRareData)
+        return false;
+    if (m_parsedNth)
+        return true;
+    m_parsedNth = m_data.m_rareData->parseNth();
+    return m_parsedNth;
+}
+
+bool CSSSelector::matchNth(int count)
+{
+    ASSERT(m_hasRareData);
+    return m_data.m_rareData->matchNth(count);
+}
+
+// a helper function for parsing nth-arguments
+bool CSSSelector::RareData::parseNth()
+{    
+    const String& argument = m_argument;
+    
+    if (argument.isEmpty())
+        return false;
+    
+    m_a = 0;
+    m_b = 0;
+    if (argument == "odd") {
+        m_a = 2;
+        m_b = 1;
+    } else if (argument == "even") {
+        m_a = 2;
+        m_b = 0;
+    } else {
+        int n = argument.find('n');
+        if (n != -1) {
+            if (argument[0] == '-') {
+                if (n == 1)
+                    m_a = -1; // -n == -1n
+                else
+                    m_a = argument.substring(0, n).toInt();
+            } else if (!n)
+                m_a = 1; // n == 1n
+            else
+                m_a = argument.substring(0, n).toInt();
+            
+            int p = argument.find('+', n);
+            if (p != -1)
+                m_b = argument.substring(p + 1, argument.length() - p - 1).toInt();
+            else {
+                p = argument.find('-', n);
+                m_b = -argument.substring(p + 1, argument.length() - p - 1).toInt();
+            }
+        } else
+            m_b = argument.toInt();
+    }
+    return true;
+}
+
+// a helper function for checking nth-arguments
+bool CSSSelector::RareData::matchNth(int count)
+{
+    if (!m_a)
+        return count == m_b;
+    else if (m_a > 0) {
+        if (count < m_b)
+            return false;
+        return (count - m_b) % m_a == 0;
+    } else {
+        if (count > m_b)
+            return false;
+        return (m_b - count) % (-m_a) == 0;
+    }
+}
+    
 } // namespace WebCore

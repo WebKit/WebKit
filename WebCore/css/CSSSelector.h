@@ -32,37 +32,33 @@ namespace WebCore {
     class CSSSelector {
     public:
         CSSSelector()
-            : m_tagHistory(0)
-            , m_simpleSelector(0)
-            , m_nextSelector(0)
-            , m_argument(nullAtom)
-            , m_attr(anyQName())
+            : m_nextSelector(0)
             , m_tag(anyQName())
             , m_relation(Descendant)
             , m_match(None)
             , m_pseudoType(PseudoNotParsed)
             , m_parsedNth(false)
+            , m_hasRareData(false)
         {
         }
 
         CSSSelector(const QualifiedName& qName)
-            : m_tagHistory(0)
-            , m_simpleSelector(0)
-            , m_nextSelector(0)
-            , m_argument(nullAtom)
-            , m_attr(anyQName())
+            : m_nextSelector(0)
             , m_tag(qName)
             , m_relation(Descendant)
             , m_match(None)
             , m_pseudoType(PseudoNotParsed)
             , m_parsedNth(false)
+            , m_hasRareData(false)
         {
         }
 
         ~CSSSelector()
         {
-            delete m_tagHistory;
-            delete m_simpleSelector;
+            if (m_hasRareData)
+                delete m_data.m_rareData;
+            else
+                delete m_data.m_tagHistory;
             delete m_nextSelector;
         }
 
@@ -193,30 +189,74 @@ namespace WebCore {
                 extractPseudoType();
             return static_cast<PseudoType>(m_pseudoType);
         }
+        
+        CSSSelector* tagHistory() const { return m_hasRareData ? m_data.m_rareData->m_tagHistory.get() : m_data.m_tagHistory; }
+        void setTagHistory(CSSSelector* tagHistory);
 
         bool hasTag() const { return m_tag != anyQName(); }
-        bool hasAttribute() const { return m_attr != anyQName(); }
+        bool hasAttribute() const { return m_match == Id || m_match == Class || (m_hasRareData && m_data.m_rareData->m_attribute != anyQName()); }
+        
+        const QualifiedName& attribute() const;
+        const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
+        CSSSelector* simpleSelector() const { return m_hasRareData ? m_data.m_rareData->m_simpleSelector.get() : 0; }
+        
+        void setAttribute(const QualifiedName& value);
+        void setArgument(const AtomicString& value);
+        void setSimpleSelector(CSSSelector* value);
+        
+        bool parseNth();
+        bool matchNth(int count);
 
         Relation relation() const { return static_cast<Relation>(m_relation); }
 
         mutable AtomicString m_value;
-        CSSSelector* m_tagHistory;
-        CSSSelector* m_simpleSelector; // Used for :not.
         CSSSelector* m_nextSelector; // used for ,-chained selectors
-        AtomicString m_argument; // Used for :contains, :lang and :nth-*
-
-        QualifiedName m_attr;
         QualifiedName m_tag;
 
         unsigned m_relation           : 3; // enum Relation
         mutable unsigned m_match      : 4; // enum Match
         mutable unsigned m_pseudoType : 8; // PseudoType
         
-    protected:
-        bool m_parsedNth              : 1; // used in CSSNthSelector
-
     private:
+        bool m_parsedNth              : 1; // Used for :nth-* 
+        bool m_hasRareData            : 1;
+
         void extractPseudoType() const;
+
+        struct RareData {
+            RareData(CSSSelector* tagHistory)
+                : m_tagHistory(tagHistory)
+                , m_simpleSelector(0)
+                , m_attribute(anyQName())
+                , m_argument(nullAtom)
+                , m_a(0)
+                , m_b(0)
+            {
+            }
+
+            bool parseNth();
+            bool matchNth(int count);
+
+            OwnPtr<CSSSelector> m_tagHistory;
+            OwnPtr<CSSSelector> m_simpleSelector; // Used for :not.
+            QualifiedName m_attribute; // used for attribute selector
+            AtomicString m_argument; // Used for :contains, :lang and :nth-*
+            int m_a; // Used for :nth-*
+            int m_b; // Used for :nth-*
+        };
+
+        void createRareData() { 
+            if (m_hasRareData) 
+                return;
+            m_data.m_rareData = new RareData(m_data.m_tagHistory); 
+            m_hasRareData = true;
+        }
+        
+        union DataUnion {
+            DataUnion() : m_tagHistory(0) { }
+            CSSSelector* m_tagHistory;
+            RareData* m_rareData;
+        } m_data;
     };
 
 } // namespace WebCore

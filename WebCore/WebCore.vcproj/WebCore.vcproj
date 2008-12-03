@@ -7358,22 +7358,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSNthSelector.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="true"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\css\CSSNthSelector.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\CSSPageRule.cpp"
 				>
 				<FileConfiguration

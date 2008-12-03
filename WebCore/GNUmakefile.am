@@ -428,8 +428,6 @@ webcore_sources += \
 	WebCore/css/CSSMutableStyleDeclaration.cpp \
 	WebCore/css/CSSMutableStyleDeclaration.h \
 	WebCore/css/CSSNamespace.h \
-	WebCore/css/CSSNthSelector.cpp \
-	WebCore/css/CSSNthSelector.h \
 	WebCore/css/CSSPageRule.cpp \
 	WebCore/css/CSSPageRule.h \
 	WebCore/css/CSSParser.cpp \

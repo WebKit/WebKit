@@ -1,3 +1,50 @@
+2008-12-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dan Bernstein and Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22379
+        Make CSSOM use less memory
+
+        Reduce size of the CSSSelector by 3/8 by moving rarely used fields to a rare data
+        struct. Browsing around with some instrumentation showed that ~0.1% of all selectors
+        encountered had rare data.
+        
+        This also eliminates the CSSNthSelector subclass which will make possible to store
+        CSSSelectors in an array instead of a linked list for futher memory savings.
+
+        * css/CSSGrammar.y:
+        * css/CSSNthSelector.cpp: Removed.
+        * css/CSSNthSelector.h: Removed.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createFloatingSelector):
+        * css/CSSParser.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificity):
+        (WebCore::CSSSelector::operator==):
+        (WebCore::CSSSelector::selectorText):
+        (WebCore::CSSSelector::setTagHistory):
+        (WebCore::CSSSelector::attribute):
+        (WebCore::CSSSelector::setAttribute):
+        (WebCore::CSSSelector::setArgument):
+        (WebCore::CSSSelector::setSimpleSelector):
+        (WebCore::CSSSelector::parseNth):
+        (WebCore::CSSSelector::matchNth):
+        (WebCore::CSSSelector::RareData::parseNth):
+        (WebCore::CSSSelector::RareData::matchNth):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::~CSSSelector):
+        (WebCore::CSSSelector::tagHistory):
+        (WebCore::CSSSelector::hasAttribute):
+        (WebCore::CSSSelector::argument):
+        (WebCore::CSSSelector::simpleSelector):
+        (WebCore::CSSSelector::RareData::RareData):
+        (WebCore::CSSSelector::createRareData):
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+
 2008-12-03  Jian Li  <jianli@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
