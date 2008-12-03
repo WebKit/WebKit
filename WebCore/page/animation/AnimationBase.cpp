@@ -643,11 +643,12 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 // End timer fired, finish up
                 onAnimationEnd(param);
 
-                resumeOverriddenAnimations();
-
-                // Fire off another style change so we can set the final value
                 m_animState = AnimationStateDone;
+                
                 if (m_object) {
+                    resumeOverriddenAnimations();
+
+                    // Fire off another style change so we can set the final value
                     setChanged(m_object->element());
                     m_object->animation()->startUpdateRenderingDispatcher();
                 }

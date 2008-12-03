@@ -1,3 +1,20 @@
+2008-12-03  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=22520
+
+        This is a regression (causes a crash of LayoutTests/animations/transform-animation-event-destroy-element.html).
+        This patch fixes the testcase.
+
+        This is another case of animations getting destroyed in the end animation callback and causing dangling
+        pointers on return. This one involves iterating over the CompositeAnimation, which has been destroyed.
+        So I now check for a null m_object pointer (which is nullified when the CompositeAnimation is destroyed)
+        and skip that call.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+
 2008-12-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.
