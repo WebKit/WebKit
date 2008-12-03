@@ -5791,6 +5791,8 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                         angle = rad2deg(angle);
                     else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
                         angle = grad2deg(angle);
+                    else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_TURN)
+                        angle = turn2deg(angle);
                     
                     operations.operations().append(RotateTransformOperation::create(angle, getTransformOperationType(val->operationType())));
                     break;
@@ -5805,6 +5807,8 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                         angle = rad2deg(angle);
                     else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
                         angle = grad2deg(angle);
+                    else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_TURN)
+                        angle = turn2deg(angle);
                     if (val->operationType() == WebKitCSSTransformValue::SkewYTransformOperation)
                         angleY = angle;
                     else {
@@ -5817,6 +5821,8 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                                     angleY = rad2deg(angleY);
                                 else if (secondValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
                                     angleY = grad2deg(angleY);
+                                else if (secondValue->primitiveType() == CSSPrimitiveValue::CSS_TURN)
+                                    angleY = turn2deg(angleY);
                             }
                         }
                     }

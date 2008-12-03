@@ -9,6 +9,9 @@
                        translateX(10px)
                        translateY(10px)
                        rotate(10deg)
+                       rotate(11rad)
+                       rotate(12grad)
+                       rotate(13turn)
                        scale(2)
                        scaleX(1.2)    /* test uppercase */
                        scaley(1.2)
@@ -63,26 +66,35 @@
   shouldBe("transformRule[3].operationType", "4");        // CSS_ROTATE
   shouldBe("transformRule[3].cssText", "'rotate(10deg)'");
 
-  shouldBe("transformRule[4].operationType", "5");        // CSS_SCALE
-  shouldBe("transformRule[4].cssText", "'scale(2)'");
+  shouldBe("transformRule[4].operationType", "4");        // CSS_ROTATE
+  shouldBe("transformRule[4].cssText", "'rotate(11rad)'");
 
-  shouldBe("transformRule[5].operationType", "6");        // CSS_SCALEX
-  shouldBe("transformRule[5].cssText", "'scaleX(1.2)'");
+  shouldBe("transformRule[5].operationType", "4");        // CSS_ROTATE
+  shouldBe("transformRule[5].cssText", "'rotate(12grad)'");
 
-  shouldBe("transformRule[6].operationType", "7");        // CSS_SCALEY
-  shouldBe("transformRule[6].cssText", "'scaleY(1.2)'");
+  shouldBe("transformRule[6].operationType", "4");        // CSS_ROTATE
+  shouldBe("transformRule[6].cssText", "'rotate(13turn)'");
 
-  shouldBe("transformRule[7].operationType", "8");        // CSS_SKEW
-  shouldBe("transformRule[7].cssText", "'skew(10deg, 10rad)'");
+  shouldBe("transformRule[7].operationType", "5");        // CSS_SCALE
+  shouldBe("transformRule[7].cssText", "'scale(2)'");
 
-  shouldBe("transformRule[8].operationType", "9");        // CSS_SKEWX
-  shouldBe("transformRule[8].cssText", "'skewX(10deg)'");
+  shouldBe("transformRule[8].operationType", "6");        // CSS_SCALEX
+  shouldBe("transformRule[8].cssText", "'scaleX(1.2)'");
 
-  shouldBe("transformRule[9].operationType", "10");        // CSS_SKEWY
-  shouldBe("transformRule[9].cssText", "'skewY(11grad)'");
+  shouldBe("transformRule[9].operationType", "7");        // CSS_SCALEY
+  shouldBe("transformRule[9].cssText", "'scaleY(1.2)'");
 
-  shouldBe("transformRule[10].operationType", "11");        // CSS_MATRIX
-  shouldBe("transformRule[10].cssText", "'matrix(1, 0, 0, 1, 0, 0)'");
+  shouldBe("transformRule[10].operationType", "8");        // CSS_SKEW
+  shouldBe("transformRule[10].cssText", "'skew(10deg, 10rad)'");
+
+  shouldBe("transformRule[11].operationType", "9");        // CSS_SKEWX
+  shouldBe("transformRule[11].cssText", "'skewX(10deg)'");
+
+  shouldBe("transformRule[12].operationType", "10");        // CSS_SKEWY
+  shouldBe("transformRule[12].cssText", "'skewY(11grad)'");
+
+  shouldBe("transformRule[13].operationType", "11");        // CSS_MATRIX
+  shouldBe("transformRule[13].cssText", "'matrix(1, 0, 0, 1, 0, 0)'");
   
   var successfullyParsed = true;
 </script>

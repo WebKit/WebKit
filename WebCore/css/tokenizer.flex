@@ -84,6 +84,7 @@ nth             (-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)
 {num}deg                {yyTok = DEGS; return yyTok;}
 {num}rad                {yyTok = RADS; return yyTok;}
 {num}grad               {yyTok = GRADS; return yyTok;}
+{num}turn               {yyTok = TURNS; return yyTok;}
 {num}ms                 {yyTok = MSECS; return yyTok;}
 {num}s                  {yyTok = SECS; return yyTok;}
 {num}Hz                 {yyTok = HERZ; return yyTok;}

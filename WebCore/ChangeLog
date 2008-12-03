@@ -1,3 +1,25 @@
+2008-12-03  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Implement CSS 3 <angle> turn unit and support it
+        in rotations.
+        https://bugs.webkit.org/show_bug.cgi?id=22497
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validUnit):
+        (WebCore::unitFromString):
+        (WebCore::CSSParser::lex):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText):
+        (WebCore::CSSPrimitiveValue::parserValue):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::createTransformOperations):
+        * css/tokenizer.flex:
+
 2008-12-03  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

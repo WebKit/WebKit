@@ -21,11 +21,15 @@ transform "skewx(12grad)" expected "matrix(1, 0, 0.19076, 1, 0, 0)" : PASS
 transform "skewX(12grad)" expected "matrix(1, 0, 0.19076, 1, 0, 0)" : PASS
 transform "skewy(-12grad)" expected "matrix(1, -0.19076, 0, 1, 0, 0)" : PASS
 transform "skewY(-12grad)" expected "matrix(1, -0.19076, 0, 1, 0, 0)" : PASS
+transform "skewx(0.1turn)" expected "matrix(1, 0, 0.726543, 1, 0, 0)" : PASS
 transform "rotate(45deg)" expected "matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0)" : PASS
 transform "rotate(90deg)" expected "matrix(-4.37114e-08, 1, -1, -4.37114e-08, 0, 0)" : PASS
 transform "rotate(-90deg)" expected "matrix(-4.37114e-08, -1, 1, -4.37114e-08, 0, 0)" : PASS
 transform "rotate(180deg)" expected "matrix(-1, -8.74228e-08, 8.74228e-08, -1, 0, 0)" : PASS
 transform "rotate(1.2rad)" expected "matrix(0.362358, 0.932039, -0.932039, 0.362358, 0, 0)" : PASS
+transform "rotate(0.25turn)" expected "matrix(-4.37114e-08, 1, -1, -4.37114e-08, 0, 0)" : PASS
+transform "rotate(0.5turn)" expected "matrix(-1, -8.74228e-08, 8.74228e-08, -1, 0, 0)" : PASS
+transform "rotate(1.5turn)" expected "matrix(-1, -8.74228e-08, 8.74228e-08, -1, 0, 0)" : PASS
 transform "matrix(1, 0, 0, 1, 0, 0)" expected "matrix(1, 0, 0, 1, 0, 0)" : PASS
 transform "matrix(1, -0.19076, 0, 1, 0, 0)" expected "matrix(1, -0.19076, 0, 1, 0, 0)" : PASS
 transform "matrix(0.2, 0.3, 0.4, 1.1, 1.2, 1.3)" expected "matrix(0.2, 0.3, 0.4, 1.1, 1.2, 1.3)" : PASS
@@ -57,6 +61,7 @@ transform "scale(2, 2smidgens)" expected "none" : PASS
 transform "rotate(10)" expected "none" : PASS
 transform "rotate()" expected "none" : PASS
 transform "rotate(10deg, 20deg)" expected "none" : PASS
+transform "rotate(2turns)" expected "none" : PASS
 transform "rotate(2spins)" expected "none" : PASS
 transform "rotate(2, 2spins)" expected "none" : PASS
 transform "skew(10)" expected "none" : PASS

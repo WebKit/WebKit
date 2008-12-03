@@ -1,3 +1,14 @@
+2008-12-03  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Helper functions for turn -> degrees.
+        https://bugs.webkit.org/show_bug.cgi?id=22497
+
+        * wtf/MathExtras.h:
+        (turn2deg):
+        (deg2turn):
+
 2008-12-02  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

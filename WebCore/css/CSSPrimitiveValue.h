@@ -76,7 +76,10 @@ public:
         CSS_PARSER_HEXCOLOR = 106,
         
         // This is used internally for unknown identifiers 
-        CSS_PARSER_IDENTIFIER = 107
+        CSS_PARSER_IDENTIFIER = 107,
+        
+        // This unit is in CSS 3, but that isn't a finished standard yet
+        CSS_TURN = 108
     };
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int ident)

@@ -437,6 +437,7 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, bool strict)
     case CSSPrimitiveValue::CSS_DEG:
     case CSSPrimitiveValue::CSS_RAD:
     case CSSPrimitiveValue::CSS_GRAD:
+    case CSSPrimitiveValue::CSS_TURN:
         b = (unitflags & FAngle);
         break;
     case CSSPrimitiveValue::CSS_HZ:
@@ -475,6 +476,8 @@ static int unitFromString(CSSParserValue* value)
         return CSSPrimitiveValue::CSS_RAD;
     if (equal(value->string, "grad"))
         return CSSPrimitiveValue::CSS_GRAD;
+    if (equal(value->string, "turn"))
+        return CSSPrimitiveValue::CSS_TURN;
     if (equal(value->string, "ms"))
         return CSSPrimitiveValue::CSS_MS;
     if (equal(value->string, "s"))
@@ -4185,6 +4188,7 @@ int CSSParser::lex(void* yylvalWithoutType)
     case QEMS:
         length--;
     case GRADS:
+    case TURNS:
         length--;
     case DEGS:
     case RADS:

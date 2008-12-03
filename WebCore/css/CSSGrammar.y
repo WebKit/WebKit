@@ -91,7 +91,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 48
+%expect 49
 
 %left UNIMPORTANT_TOK
 
@@ -153,6 +153,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token <number> DEGS
 %token <number> RADS
 %token <number> GRADS
+%token <number> TURNS
 %token <number> MSECS
 %token <number> SECS
 %token <number> HERZ
@@ -1373,6 +1374,7 @@ unary_term:
   | DEGS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DEG; }
   | RADS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_RAD; }
   | GRADS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_GRAD; }
+  | TURNS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_TURN; }
   | MSECS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_MS; }
   | SECS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_S; }
   | HERZ maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_HZ; }

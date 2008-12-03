@@ -665,6 +665,9 @@ String CSSPrimitiveValue::cssText() const
         case CSS_KHZ:
             text = String::format("%.6lgkhz", m_value.num);
             break;
+        case CSS_TURN:
+            text = String::format("%.6lgturn", m_value.num);
+            break;
         case CSS_DIMENSION:
             // FIXME
             break;
@@ -820,6 +823,7 @@ CSSParserValue CSSPrimitiveValue::parserValue() const
         case CSS_HZ:
         case CSS_KHZ:
         case CSS_DIMENSION:
+        case CSS_TURN:
             value.fValue = m_value.num;
             value.unit = m_type;
             break;
