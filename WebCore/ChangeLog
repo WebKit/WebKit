@@ -193,7 +193,6 @@
         Don't use a float to hold a double.
         Remove a now duplicate symbol.
 
-        * WebCore.xcodeproj/project.pbxproj:
         * page/Frame.cpp:
         (WebCore::Frame::selectionLayoutChanged):
         * platform/gtk/TemporaryLinkStubs.cpp:
