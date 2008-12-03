@@ -46,6 +46,7 @@ public:
     }
     ~NetscapePluginInstanceProxy();
     
+    uint32_t pluginID() const { return m_pluginID; }
     uint32_t renderContextID() const { return m_renderContextID; }
     bool useSoftwareRenderer() const { return m_useSoftwareRenderer; }
     
@@ -61,6 +62,8 @@ public:
     void startTimers(bool throttleTimers);
     void stopTimers();
     
+    void status(const char* message);
+
 private:
     NetscapePluginInstanceProxy(NetscapePluginHostProxy*, WebHostedNetscapePluginView *, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer);
 

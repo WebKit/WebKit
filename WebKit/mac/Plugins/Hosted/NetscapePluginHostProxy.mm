@@ -30,16 +30,30 @@
 #import <mach/mach.h>
 #import "NetscapePluginHostManager.h"
 #import "NetscapePluginInstanceProxy.h"
-#import "WebKitPluginHost.h"
+#import <wtf/StdLibExtras.h>
+
+extern "C" {
+#import "WebKitPluginClientServer.h"
+}
 
 using namespace std;
 
 namespace WebKit {
 
+typedef HashMap<mach_port_t, NetscapePluginHostProxy*> PluginProxyMap;
+static PluginProxyMap& pluginProxyMap()
+{
+    DEFINE_STATIC_LOCAL(PluginProxyMap, pluginProxyMap, ());
+    
+    return pluginProxyMap;
+}
+
 NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort)
     : m_clientPort(clientPort)
     , m_pluginHostPort(pluginHostPort)
 {
+    pluginProxyMap().add(m_clientPort, this);
+    
     // FIXME: We should use libdispatch for this.
     CFMachPortContext context = { 0, this, 0, 0, 0 };
     m_deadNameNotificationPort.adoptCF(CFMachPortCreate(0, deadNameNotificationCallback, &context, 0));
@@ -52,34 +66,50 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     RetainPtr<CFRunLoopSourceRef> deathPortSource(AdoptCF, CFMachPortCreateRunLoopSource(0, m_deadNameNotificationPort.get(), 0));
     
     CFRunLoopAddSource(CFRunLoopGetCurrent(), deathPortSource.get(), kCFRunLoopDefaultMode);
+    
+    m_clientPortSource = dispatch_source_mig_create(m_clientPort, WKPCWebKitPluginClient_subsystem.maxsize, 0, 
+                                                    dispatch_get_main_queue(), WebKitPluginClient_server);
+}
+
+NetscapePluginHostProxy::~NetscapePluginHostProxy()
+{
+    pluginProxyMap().remove(m_clientPort);
+    
+    ASSERT(m_clientPortSource);
+    dispatch_source_release(m_clientPortSource);
 }
 
 void NetscapePluginHostProxy::pluginHostDied()
 {
-    PluginInstanceSet instances;    
+    PluginInstanceMap instances;    
     m_instances.swap(instances);
   
-    PluginInstanceSet::const_iterator end = instances.end();
-    for (PluginInstanceSet::const_iterator it = instances.begin(); it != end; ++it)
-        (*it)->pluginHostDied();
+    PluginInstanceMap::const_iterator end = instances.end();
+    for (PluginInstanceMap::const_iterator it = instances.begin(); it != end; ++it)
+        it->second->pluginHostDied();
     
     NetscapePluginHostManager::shared().pluginHostDied(this);
     
     delete this;
 }
     
-void NetscapePluginHostProxy::addPluginInstance(PassRefPtr<NetscapePluginInstanceProxy> instance)
+void NetscapePluginHostProxy::addPluginInstance(NetscapePluginInstanceProxy* instance)
 {
-    ASSERT(!m_instances.contains(instance.get()));
+    ASSERT(!m_instances.contains(instance->pluginID()));
     
-    m_instances.add(instance);
+    m_instances.set(instance->pluginID(), instance);
 }
     
 void NetscapePluginHostProxy::removePluginInstance(NetscapePluginInstanceProxy* instance)
 {
-    ASSERT(!m_instances.contains(instance));
+    ASSERT(m_instances.get(instance->pluginID()) == instance);
 
-    m_instances.remove(instance);
+    m_instances.remove(instance->pluginID());
+}
+
+NetscapePluginInstanceProxy* NetscapePluginHostProxy::pluginInstance(uint32_t pluginID)
+{
+    return m_instances.get(pluginID).get();
 }
 
 void NetscapePluginHostProxy::deadNameNotificationCallback(CFMachPortRef port, void *msg, CFIndex size, void *info)
@@ -92,5 +122,22 @@ void NetscapePluginHostProxy::deadNameNotificationCallback(CFMachPortRef port, v
 }
 
 } // namespace WebKit
+
+using namespace WebKit;
+
+// MiG callbacks
+kern_return_t WKPCStatusText(mach_port_t clientPort, uint32_t pluginID, data_t text, mach_msg_type_number_t textCnt)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+    
+    instanceProxy->status(text);
+    return KERN_SUCCESS;
+}
 
 #endif // USE(PLUGIN_HOST_PROCESS)

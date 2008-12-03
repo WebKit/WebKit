@@ -28,7 +28,8 @@
 #ifndef NetscapePluginHostProxy_h
 #define NetscapePluginHostProxy_h
 
-#include <wtf/HashSet.h>
+#include <dispatch/dispatch.h>
+#include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/PassRefPtr.h>
 
@@ -42,18 +43,23 @@ public:
     
     mach_port_t port() const { return m_pluginHostPort; }
 
-    void addPluginInstance(PassRefPtr<NetscapePluginInstanceProxy>);
+    void addPluginInstance(NetscapePluginInstanceProxy*);
     void removePluginInstance(NetscapePluginInstanceProxy*);
 
+    NetscapePluginInstanceProxy* pluginInstance(uint32_t pluginID);
+    
 private:
+    ~NetscapePluginHostProxy();
     void pluginHostDied();
     
     static void deadNameNotificationCallback(CFMachPortRef port, void *msg, CFIndex size, void *info);
 
-    typedef HashSet<RefPtr<NetscapePluginInstanceProxy> > PluginInstanceSet;
-    PluginInstanceSet m_instances;
+    typedef HashMap<uint32_t, RefPtr<NetscapePluginInstanceProxy> > PluginInstanceMap;
+    PluginInstanceMap m_instances;
     
     mach_port_t m_clientPort;
+    dispatch_source_t m_clientPortSource;
+    
     mach_port_t m_pluginHostPort;
     RetainPtr<CFMachPortRef> m_deadNameNotificationPort;
 };

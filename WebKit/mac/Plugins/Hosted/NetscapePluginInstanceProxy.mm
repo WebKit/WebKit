@@ -30,6 +30,8 @@
 #import "NetscapePluginHostProxy.h"
 #import "WebHostedNetscapePluginView.h"
 #import "WebKitPluginHost.h"
+#import "WebViewInternal.h"
+#import "WebUIDelegate.h"
 
 namespace WebKit {
 
@@ -120,6 +122,17 @@ void NetscapePluginInstanceProxy::mouseEvent(NSView *pluginView, NSEvent *event,
 void NetscapePluginInstanceProxy::stopTimers()
 {
     _WKPHPluginInstanceStopTimers(m_pluginHostProxy->port(), m_pluginID);
+}
+
+void NetscapePluginInstanceProxy::status(const char* message)
+{
+    RetainPtr<CFStringRef> status(AdoptCF, CFStringCreateWithCString(NULL, message, kCFStringEncodingUTF8));
+    
+    if (!status)
+        return;
+    
+    WebView *wv = [m_pluginView webView];
+    [[wv _UIDelegateForwarder] webView:wv setStatusText:(NSString *)status.get()];
 }
 
 } // namespace WebKit

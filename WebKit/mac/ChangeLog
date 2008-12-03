@@ -1,3 +1,26 @@
+2008-12-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Start processing messages sent to the client port.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        Add a map from ports to plug-in proxies. Turn the set of instances into a map from
+        pluginID to instance proxy.
+        
+        (WKPCStatusText):
+        Look up the right instance proxy and call status().
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::pluginID):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::status):
+        Implement this.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Add the plug-in ID to StatusText.
+
 2008-12-02  Gregory Hughes  <ghughes@apple.com>
 
         Reviewed by Beth Dakin.

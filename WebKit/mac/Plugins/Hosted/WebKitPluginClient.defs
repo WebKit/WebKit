@@ -32,4 +32,5 @@ serverprefix WKPC;
 userprefix _WKPC;
 
 simpleroutine StatusText(clientPort :mach_port_t;
+                         pluginID :uint32_t;
                          text :data_t);
