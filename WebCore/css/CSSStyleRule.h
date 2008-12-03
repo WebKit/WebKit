@@ -23,6 +23,7 @@
 #define CSSStyleRule_h
 
 #include "CSSRule.h"
+#include "CSSSelectorList.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -49,10 +50,10 @@ public:
     // Not part of the CSSOM
     virtual bool parseString(const String&, bool = false);
 
-    void setSelector(CSSSelector* selector) { m_selector = selector; }
+    void adoptSelectorVector(Vector<CSSSelector*>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration>);
 
-    CSSSelector* selector() { return m_selector; }
+    const CSSSelectorList& selectorList() const { return m_selectorList; }
     CSSMutableStyleDeclaration* declaration() { return m_style.get(); }
  
 private:
@@ -64,7 +65,7 @@ private:
     virtual unsigned short type() const { return STYLE_RULE; }
 
     RefPtr<CSSMutableStyleDeclaration> m_style;
-    CSSSelector* m_selector;
+    CSSSelectorList m_selectorList;
 };
 
 } // namespace WebCore

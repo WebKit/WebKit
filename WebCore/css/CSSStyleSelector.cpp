@@ -41,6 +41,7 @@
 #include "CSSReflectValue.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
+#include "CSSSelectorList.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
@@ -2579,7 +2580,7 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluat
         StyleBase* item = sheet->item(i);
         if (item->isStyleRule()) {
             CSSStyleRule* rule = static_cast<CSSStyleRule*>(item);
-            for (CSSSelector* s = rule->selector(); s; s = s->next())
+            for (CSSSelector* s = rule->selectorList().first(); s; s = CSSSelectorList::next(s))
                 addRule(rule, s);
         }
         else if (item->isImportRule()) {
@@ -2598,7 +2599,7 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluat
                     if (childItem->isStyleRule()) {
                         // It is a StyleRule, so append it to our list
                         CSSStyleRule* rule = static_cast<CSSStyleRule*>(childItem);
-                        for (CSSSelector* s = rule->selector(); s; s = s->next())
+                        for (CSSSelector* s = rule->selectorList().first(); s; s = CSSSelectorList::next(s))
                             addRule(rule, s);
                     } else if (childItem->isFontFaceRule() && styleSelector) {
                         // Add this font face to our set.

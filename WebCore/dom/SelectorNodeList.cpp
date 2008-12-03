@@ -30,6 +30,7 @@
 #include "SelectorNodeList.h"
 
 #include "CSSSelector.h"
+#include "CSSSelectorList.h"
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Element.h"
@@ -39,25 +40,25 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassRefPtr<StaticNodeList> createSelectorNodeList(Node* rootNode, CSSSelector* querySelector)
+PassRefPtr<StaticNodeList> createSelectorNodeList(Node* rootNode, const CSSSelectorList& querySelectorList)
 {
     Vector<RefPtr<Node> > nodes;
     Document* document = rootNode->document();
-    AtomicString selectorValue = querySelector->m_value;
+    CSSSelector* onlySelector = querySelectorList.hasOneSelector() ? querySelectorList.first() : 0;
     bool strictParsing = !document->inCompatMode();
 
     CSSStyleSelector::SelectorChecker selectorChecker(document, strictParsing);
 
-    if (strictParsing && querySelector->m_match == CSSSelector::Id && rootNode->inDocument() && !querySelector->next() && !document->containsMultipleElementsWithId(selectorValue)) {
-        ASSERT(querySelector->attribute() == idAttr);
-        Element* element = document->getElementById(selectorValue);
-        if (element && (rootNode->isDocumentNode() || element->isDescendantOf(rootNode)) && selectorChecker.checkSelector(querySelector, element))
+    if (strictParsing && rootNode->inDocument() && onlySelector && onlySelector->m_match == CSSSelector::Id && !document->containsMultipleElementsWithId(onlySelector->m_value)) {
+        ASSERT(querySelectorList.first()->attribute() == idAttr);
+        Element* element = document->getElementById(onlySelector->m_value);
+        if (element && (rootNode->isDocumentNode() || element->isDescendantOf(rootNode)) && selectorChecker.checkSelector(onlySelector, element))
             nodes.append(element);
     } else {
         for (Node* n = rootNode->firstChild(); n; n = n->traverseNextNode(rootNode)) {
             if (n->isElementNode()) {
                 Element* element = static_cast<Element*>(n);
-                for (CSSSelector* selector = querySelector; selector; selector = selector->next()) {
+                for (CSSSelector* selector = querySelectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
                     if (selectorChecker.checkSelector(selector, element)) {
                         nodes.append(n);
                         break;

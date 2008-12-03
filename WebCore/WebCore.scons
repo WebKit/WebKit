@@ -32,6 +32,7 @@ sources['css'] = [
     'css/CSSRuleList.cpp',
     'css/CSSSegmentedFontFace.cpp',
     'css/CSSSelector.cpp',
+    'css/CSSSelectorList.cpp',
     'css/CSSStyleDeclaration.cpp',
     'css/CSSStyleRule.cpp',
     'css/CSSStyleSelector.cpp',

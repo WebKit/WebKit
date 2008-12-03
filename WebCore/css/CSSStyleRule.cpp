@@ -29,7 +29,6 @@ namespace WebCore {
 
 CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent)
     : CSSRule(parent)
-    , m_selector(0)
 {
 }
 
@@ -37,21 +36,17 @@ CSSStyleRule::~CSSStyleRule()
 {
     if (m_style)
         m_style->setParent(0);
-    delete m_selector;
 }
 
 String CSSStyleRule::selectorText() const
 {
-    if (m_selector) {
-        String str;
-        for (CSSSelector* s = m_selector; s; s = s->next()) {
-            if (s != m_selector)
-                str += ", ";
-            str += s->selectorText();
-        }
-        return str;
+    String str;
+    for (CSSSelector* s = selectorList().first(); s; s = CSSSelectorList::next(s)) {
+        if (s != selectorList().first())
+            str += ", ";
+        str += s->selectorText();
     }
-    return String();
+    return str;
 }
 
 void CSSStyleRule::setSelectorText(const String& /*selectorText*/, ExceptionCode& /*ec*/)

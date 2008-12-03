@@ -1,3 +1,44 @@
+2008-12-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22379
+        Make CSSOM use less memory
+
+        Reduce size of the CSSSelector by one more pointer by using an array
+        instead of a linked list to store them.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseSelector):
+        (WebCore::CSSParser::createStyleRule):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::reusableSelectorVector):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::~CSSSelector):
+        (WebCore::CSSSelector::isLastInSelectorList):
+        (WebCore::CSSSelector::setLastInSelectorList):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::CSSStyleRule):
+        (WebCore::CSSStyleRule::~CSSStyleRule):
+        (WebCore::CSSStyleRule::selectorText):
+        * css/CSSStyleRule.h:
+        (WebCore::CSSStyleRule::adoptSelectorVector):
+        (WebCore::CSSStyleRule::selectorList):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        * dom/Node.cpp:
+        (WebCore::forEachSelector):
+        (WebCore::selectorNeedsNamespaceResolution):
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+        * dom/SelectorNodeList.cpp:
+        (WebCore::createSelectorNodeList):
+        * dom/SelectorNodeList.h:
+
 2008-12-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

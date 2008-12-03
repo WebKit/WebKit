@@ -25,30 +25,31 @@
 #define CSSSelector_h
 
 #include "QualifiedName.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
     // this class represents a selector for a StyleRule
-    class CSSSelector {
+    class CSSSelector : Noncopyable {
     public:
         CSSSelector()
-            : m_nextSelector(0)
-            , m_tag(anyQName())
+            : m_tag(anyQName())
             , m_relation(Descendant)
             , m_match(None)
             , m_pseudoType(PseudoNotParsed)
             , m_parsedNth(false)
+            , m_isLastInSelectorList(false)
             , m_hasRareData(false)
         {
         }
 
         CSSSelector(const QualifiedName& qName)
-            : m_nextSelector(0)
-            , m_tag(qName)
+            : m_tag(qName)
             , m_relation(Descendant)
             , m_match(None)
             , m_pseudoType(PseudoNotParsed)
             , m_parsedNth(false)
+            , m_isLastInSelectorList(false)
             , m_hasRareData(false)
         {
         }
@@ -59,18 +60,7 @@ namespace WebCore {
                 delete m_data.m_rareData;
             else
                 delete m_data.m_tagHistory;
-            delete m_nextSelector;
         }
-
-        void append(CSSSelector* n)
-        {
-            CSSSelector* end = this;
-            while (end->m_nextSelector)
-                end = end->m_nextSelector;
-            end->m_nextSelector = n;
-        }
-
-        CSSSelector* next() { return m_nextSelector; }
 
         /**
          * Re-create selector text from selector's data
@@ -209,8 +199,10 @@ namespace WebCore {
 
         Relation relation() const { return static_cast<Relation>(m_relation); }
 
+        bool isLastInSelectorList() const { return m_isLastInSelectorList; }
+        void setLastInSelectorList() { m_isLastInSelectorList = true; }
+
         mutable AtomicString m_value;
-        CSSSelector* m_nextSelector; // used for ,-chained selectors
         QualifiedName m_tag;
 
         unsigned m_relation           : 3; // enum Relation
@@ -219,6 +211,7 @@ namespace WebCore {
         
     private:
         bool m_parsedNth              : 1; // Used for :nth-* 
+        bool m_isLastInSelectorList   : 1;
         bool m_hasRareData            : 1;
 
         void extractPseudoType() const;

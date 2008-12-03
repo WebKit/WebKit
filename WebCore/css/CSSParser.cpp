@@ -132,7 +132,6 @@ CSSParser::CSSParser(bool strictParsing)
     , m_mediaQuery(0)
     , m_valueList(0)
     , m_parsedProperties(static_cast<CSSProperty**>(fastMalloc(32 * sizeof(CSSProperty*))))
-    , m_floatingSelector(0)
     , m_numParsedProperties(0)
     , m_maxParsedProperties(32)
     , m_inParseShorthand(0)
@@ -304,17 +303,18 @@ bool CSSParser::parseColor(CSSMutableStyleDeclaration* declaration, const String
     return (m_numParsedProperties && m_parsedProperties[0]->m_id == CSSPropertyColor);
 }
 
-std::auto_ptr<CSSSelector> CSSParser::parseSelector(const String& string, Document* doc)
+void CSSParser::parseSelector(const String& string, Document* doc, CSSSelectorList& selectorList)
 {    
     RefPtr<CSSStyleSheet> dummyStyleSheet = CSSStyleSheet::create(doc);
 
     m_styleSheet = dummyStyleSheet.get();
+    m_selectorListForParseSelector = &selectorList;
 
     setupParser("@-webkit-selector{", string, "}");
 
     cssyyparse(this);
 
-    return std::auto_ptr<CSSSelector>(m_floatingSelector);
+    m_selectorListForParseSelector = 0;
 }
 
 bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration* declaration, const String& string)
@@ -4531,12 +4531,12 @@ WebKitCSSKeyframesRule* CSSParser::createKeyframesRule()
     return rulePtr;
 }
 
-CSSRule* CSSParser::createStyleRule(CSSSelector* selector)
+CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
 {
     CSSStyleRule* result = 0;
-    if (selector) {
+    if (selectors) {
         RefPtr<CSSStyleRule> rule = CSSStyleRule::create(m_styleSheet);
-        rule->setSelector(sinkFloatingSelector(selector));
+        rule->adoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
         rule->setDeclaration(CSSMutableStyleDeclaration::create(rule.get(), m_parsedProperties, m_numParsedProperties));

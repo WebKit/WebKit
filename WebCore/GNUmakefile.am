@@ -451,6 +451,8 @@ webcore_sources += \
 	WebCore/css/CSSSegmentedFontFace.h \
 	WebCore/css/CSSSelector.cpp \
 	WebCore/css/CSSSelector.h \
+	WebCore/css/CSSSelectorList.cpp \
+	WebCore/css/CSSSelectorList.h \
 	WebCore/css/CSSStyleDeclaration.cpp \
 	WebCore/css/CSSStyleDeclaration.h \
 	WebCore/css/CSSStyleRule.cpp \

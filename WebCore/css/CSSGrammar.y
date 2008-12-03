@@ -64,6 +64,7 @@ using namespace HTMLNames;
     CSSRule* rule;
     CSSRuleList* ruleList;
     CSSSelector* selector;
+    Vector<CSSSelector*>* selectorList;
     CSSSelector::Relation relation;
     MediaList* mediaList;
     MediaQuery* mediaQuery;
@@ -226,7 +227,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <selector> specifier_list
 %type <selector> simple_selector
 %type <selector> selector
-%type <selector> selector_list
+%type <selectorList> selector_list
 %type <selector> selector_with_trailing_whitespace
 %type <selector> class
 %type <selector> attrib
@@ -321,8 +322,11 @@ webkit_mediaquery:
 
 webkit_selector:
     WEBKIT_SELECTOR_SYM '{' maybe_space selector_list '}' {
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        p->m_floatingSelector = p->sinkFloatingSelector($4);
+        if ($4) {
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            if (p->m_selectorListForParseSelector)
+                p->m_selectorListForParseSelector->adoptSelectorVector(*$4);
+        }
     }
 ;
 
@@ -789,7 +793,12 @@ ruleset:
 
 selector_list:
     selector %prec UNIMPORTANT_TOK {
-        $$ = $1;
+        if ($1) {
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            $$ = p->reusableSelectorVector();
+            $$->shrink(0);
+            $$->append(p->sinkFloatingSelector($1));
+        }
     }
     | selector_list ',' maybe_space selector %prec UNIMPORTANT_TOK {
         if ($1 && $4) {

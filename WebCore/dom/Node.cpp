@@ -28,6 +28,7 @@
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
+#include "CSSSelectorList.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
@@ -1270,9 +1271,9 @@ static bool forEachTagSelector(Functor& functor, CSSSelector* selector)
 }
 
 template <typename Functor>
-static bool forEachSelector(Functor& functor, CSSSelector* selector)
+static bool forEachSelector(Functor& functor, const CSSSelectorList& selectorList)
 {
-    for (; selector; selector = selector->next()) {
+    for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
         if (forEachTagSelector(functor, selector))
             return true;
     }
@@ -1292,10 +1293,10 @@ public:
     }
 };
 
-static bool selectorNeedsNamespaceResolution(CSSSelector* currentSelector)
+static bool selectorNeedsNamespaceResolution(const CSSSelectorList& selectorList)
 {
     SelectorNeedsNamespaceResolutionFunctor functor;
-    return forEachSelector(functor, currentSelector);
+    return forEachSelector(functor, selectorList);
 }
 
 PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
@@ -1307,14 +1308,16 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
     bool strictParsing = !document()->inCompatMode();
     CSSParser p(strictParsing);
 
-    std::auto_ptr<CSSSelector> querySelector = p.parseSelector(selectors, document());
-    if (!querySelector.get()) {
+    CSSSelectorList querySelectorList;
+    p.parseSelector(selectors, document(), querySelectorList);
+
+    if (!querySelectorList.first()) {
         ec = SYNTAX_ERR;
         return 0;
     }
 
     // throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
-    if (selectorNeedsNamespaceResolution(querySelector.get())) {
+    if (selectorNeedsNamespaceResolution(querySelectorList)) {
         ec = NAMESPACE_ERR;
         return 0;
     }
@@ -1322,10 +1325,10 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
     CSSStyleSelector::SelectorChecker selectorChecker(document(), strictParsing);
 
     // FIXME: we could also optimize for the the [id="foo"] case
-    if (strictParsing && querySelector->m_match == CSSSelector::Id && inDocument() && !querySelector->next()) {
-        ASSERT(querySelector->attribute() == idAttr);
-        Element* element = document()->getElementById(querySelector->m_value);
-        if (element && (isDocumentNode() || element->isDescendantOf(this)) && selectorChecker.checkSelector(querySelector.get(), element))
+    if (strictParsing && inDocument() && querySelectorList.hasOneSelector() && querySelectorList.first()->m_match == CSSSelector::Id) {
+        ASSERT(querySelectorList.first()->attribute() == idAttr);
+        Element* element = document()->getElementById(querySelectorList.first()->m_value);
+        if (element && (isDocumentNode() || element->isDescendantOf(this)) && selectorChecker.checkSelector(querySelectorList.first(), element))
             return element;
         return 0;
     }
@@ -1334,7 +1337,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
     for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
         if (n->isElementNode()) {
             Element* element = static_cast<Element*>(n);
-            for (CSSSelector* selector = querySelector.get(); selector; selector = selector->next()) {
+            for (CSSSelector* selector = querySelectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
                 if (selectorChecker.checkSelector(selector, element))
                     return element;
             }
@@ -1353,20 +1356,21 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
     bool strictParsing = !document()->inCompatMode();
     CSSParser p(strictParsing);
 
-    std::auto_ptr<CSSSelector> querySelector = p.parseSelector(selectors, document());
+    CSSSelectorList querySelectorList;
+    p.parseSelector(selectors, document(), querySelectorList);
 
-    if (!querySelector.get()) {
+    if (!querySelectorList.first()) {
         ec = SYNTAX_ERR;
         return 0;
     }
 
     // Throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
-    if (selectorNeedsNamespaceResolution(querySelector.get())) {
+    if (selectorNeedsNamespaceResolution(querySelectorList)) {
         ec = NAMESPACE_ERR;
         return 0;
     }
 
-    return createSelectorNodeList(this, querySelector.get());
+    return createSelectorNodeList(this, querySelectorList);
 }
 
 Document *Node::ownerDocument() const
