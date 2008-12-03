@@ -2,6 +2,7 @@
 
         Reviewed by Kevin Decker.
         
+        <rdar://problem/6412293>
         Call NPP_SetWindow for CA plug-ins.
         
         * Plugins/WebNetscapePluginView.mm:
