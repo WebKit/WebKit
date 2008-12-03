@@ -35,8 +35,8 @@ public:
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual void insertedIntoDocument();
 
-    String name() const;
-    String value() const;
+    String name() const { return m_name; }
+    String value() const { return m_value; }
 
 private:
     String m_name;

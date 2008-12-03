@@ -2,6 +2,24 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Fix error handling in WMLSetvarElement. If an invalid variable reference is contained
+        in the 'name' attribute of <setvar>, a 'WMLErrorInvalidVariableName' error should be
+        reported, instead of 'WMLErrorInvalidVariableReference'.
+
+        * wml/WMLElement.cpp:
+        (WebCore::WMLElement::parseValueSubstitutingVariableReferences):
+        (WebCore::WMLElement::parseValueForbiddingVariableReferences):
+        * wml/WMLElement.h:
+        * wml/WMLSetvarElement.cpp:
+        (WebCore::WMLSetvarElement::parseMappedAttribute):
+        * wml/WMLSetvarElement.h:
+        (WebCore::WMLSetvarElement::name):
+        (WebCore::WMLSetvarElement::value):
+
+2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
         Preparations to get WML layout tests going.
         Make WMLPageState an OwnPtr to Page, and let Page create it on demand.
 
