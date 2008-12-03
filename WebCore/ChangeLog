@@ -1,5 +1,16 @@
 2008-12-03  Antti Koivisto  <antti@apple.com>
 
+        Forgot to commit these.
+
+        * dom/Node.cpp:
+        (WebCore::forEachTagSelector):
+        (WebCore::SelectorNeedsNamespaceResolutionFunctor::operator()):
+        (WebCore::Node::querySelector):
+        * dom/SelectorNodeList.cpp:
+        (WebCore::createSelectorNodeList):
+
+2008-12-03  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Dan Bernstein and Mark Rowe.
 
         https://bugs.webkit.org/show_bug.cgi?id=22379

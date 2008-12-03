@@ -1260,11 +1260,11 @@ static bool forEachTagSelector(Functor& functor, CSSSelector* selector)
     do {
         if (functor(selector))
             return true;
-        if (CSSSelector* simpleSelector = selector->m_simpleSelector) {
+        if (CSSSelector* simpleSelector = selector->simpleSelector()) {
             if (forEachTagSelector(functor, simpleSelector))
                 return true;
         }
-    } while ((selector = selector->m_tagHistory));
+    } while ((selector = selector->tagHistory()));
 
     return false;
 }
@@ -1286,7 +1286,7 @@ public:
     {
         if (selector->hasTag() && selector->m_tag.prefix() != nullAtom && selector->m_tag.prefix() != starAtom)
             return true;
-        if (selector->hasAttribute() && selector->m_attr.prefix() != nullAtom && selector->m_attr.prefix() != starAtom)
+        if (selector->hasAttribute() && selector->attribute().prefix() != nullAtom && selector->attribute().prefix() != starAtom)
             return true;
         return false;
     }
@@ -1323,7 +1323,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
 
     // FIXME: we could also optimize for the the [id="foo"] case
     if (strictParsing && querySelector->m_match == CSSSelector::Id && inDocument() && !querySelector->next()) {
-        ASSERT(querySelector->m_attr == idAttr);
+        ASSERT(querySelector->attribute() == idAttr);
         Element* element = document()->getElementById(querySelector->m_value);
         if (element && (isDocumentNode() || element->isDescendantOf(this)) && selectorChecker.checkSelector(querySelector.get(), element))
             return element;
