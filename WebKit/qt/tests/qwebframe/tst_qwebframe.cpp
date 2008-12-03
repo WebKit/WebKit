@@ -751,6 +751,19 @@ void tst_QWebFrame::getSetStaticProperty()
     QCOMPARE(evalJS("myObject.stringProperty = 123;"
                     "myObject.stringProperty"), QLatin1String("123"));
     QCOMPARE(m_myObject->stringProperty(), QLatin1String("123"));
+    QCOMPARE(evalJS("myObject.stringProperty = null"), QString());
+    QCOMPARE(evalJS("myObject.stringProperty"), QString());
+    QCOMPARE(m_myObject->stringProperty(), QString());
+    QCOMPARE(evalJS("myObject.stringProperty = undefined"), sUndefined);
+    QCOMPARE(evalJS("myObject.stringProperty"), QString());
+    QCOMPARE(m_myObject->stringProperty(), QString());
+
+    QCOMPARE(evalJS("myObject.variantProperty = null;"
+                    "myObject.variantProperty.valueOf()"), sUndefined);
+    QCOMPARE(m_myObject->variantProperty(), QVariant());
+    QCOMPARE(evalJS("myObject.variantProperty = undefined;"
+                    "myObject.variantProperty.valueOf()"), sUndefined);
+    QCOMPARE(m_myObject->variantProperty(), QVariant());
 
     QCOMPARE(evalJS("myObject.variantProperty = 'foo';"
                     "myObject.variantProperty.valueOf()"), QLatin1String("foo"));
@@ -758,7 +771,6 @@ void tst_QWebFrame::getSetStaticProperty()
     QCOMPARE(evalJS("myObject.variantProperty = 42;"
                     "myObject.variantProperty").toDouble(), 42.0);
     QCOMPARE(m_myObject->variantProperty().toDouble(), 42.0);
-
 
     QCOMPARE(evalJS("myObject.variantListProperty = [1, 'two', true];"
                     "myObject.variantListProperty.length == 3"), sTrue);
@@ -935,6 +947,20 @@ void tst_QWebFrame::callQtInvokable()
     QCOMPARE(m_myObject->qtFunctionActuals().at(0).toString(), QLatin1String("123"));
 
     m_myObject->resetQtFunctionInvoked();
+    QCOMPARE(evalJS("typeof myObject.myInvokableWithStringArg(null)"), sUndefined);
+    QCOMPARE(m_myObject->qtFunctionInvoked(), 5);
+    QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
+    QCOMPARE(m_myObject->qtFunctionActuals().at(0).toString(), QString());
+    QVERIFY(m_myObject->qtFunctionActuals().at(0).toString().isEmpty());
+
+    m_myObject->resetQtFunctionInvoked();
+    QCOMPARE(evalJS("typeof myObject.myInvokableWithStringArg(undefined)"), sUndefined);
+    QCOMPARE(m_myObject->qtFunctionInvoked(), 5);
+    QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
+    QCOMPARE(m_myObject->qtFunctionActuals().at(0).toString(), QString());
+    QVERIFY(m_myObject->qtFunctionActuals().at(0).toString().isEmpty());
+
+    m_myObject->resetQtFunctionInvoked();
     QCOMPARE(evalJS("typeof myObject.myInvokableWithIntArgs(123, 456)"), sUndefined);
     QCOMPARE(m_myObject->qtFunctionInvoked(), 6);
     QCOMPARE(m_myObject->qtFunctionActuals().size(), 2);
@@ -1057,6 +1083,28 @@ void tst_QWebFrame::callQtInvokable()
         QCOMPARE(m_myObject->qtFunctionActuals().at(0), m_myObject->variantProperty());
         QCOMPARE(ret.userType(), int(QMetaType::Double)); // all JS numbers are doubles, even though this started as an int
         QCOMPARE(ret.toInt(),123);
+    }
+
+    m_myObject->resetQtFunctionInvoked();
+    {
+        QString type;
+        QVariant ret = evalJSV("myObject.myInvokableWithVariantArg(null)", type);
+        QCOMPARE(type, sObject);
+        QCOMPARE(m_myObject->qtFunctionInvoked(), 15);
+        QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
+        QCOMPARE(m_myObject->qtFunctionActuals().at(0), QVariant());
+        QVERIFY(!m_myObject->qtFunctionActuals().at(0).isValid());
+    }
+
+    m_myObject->resetQtFunctionInvoked();
+    {
+        QString type;
+        QVariant ret = evalJSV("myObject.myInvokableWithVariantArg(undefined)", type);
+        QCOMPARE(type, sObject);
+        QCOMPARE(m_myObject->qtFunctionInvoked(), 15);
+        QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
+        QCOMPARE(m_myObject->qtFunctionActuals().at(0), QVariant());
+        QVERIFY(!m_myObject->qtFunctionActuals().at(0).isValid());
     }
 
     /* XFAIL - variant support

@@ -149,7 +149,10 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
     }
 
     // check magic pointer values before dereferencing value
-    if (value == jsNaN(exec) || value == jsUndefined()) {
+    if (value == jsNaN(exec)
+        || (value == jsUndefined()
+            && hint != QMetaType::QString
+            && hint != (QMetaType::Type) qMetaTypeId<QVariant>())) {
         if (distance)
             *distance = -1;
         return QVariant();
@@ -192,7 +195,9 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
 
     if (value == jsNull()
         && hint != QMetaType::QObjectStar
-        && hint != QMetaType::VoidStar) {
+        && hint != QMetaType::VoidStar
+        && hint != QMetaType::QString
+        && hint != (QMetaType::Type) qMetaTypeId<QVariant>()) {
         if (distance)
             *distance = -1;
         return QVariant();
@@ -273,12 +278,18 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
             break;
 
         case QMetaType::QString: {
-            UString ustring = value->toString(exec);
-            ret = QVariant(QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size()));
-            if (type == String)
-                dist = 0;
-            else
-                dist = 10;
+            if (value->isUndefinedOrNull()) {
+                if (distance)
+                    *distance = 1;
+                return QString();
+            } else {
+                UString ustring = value->toString(exec);
+                ret = QVariant(QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size()));
+                if (type == String)
+                    dist = 0;
+                else
+                    dist = 10;
+            }
             break;
         }
 
@@ -683,9 +694,15 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                 }
                 break;
             } else if (hint == (QMetaType::Type) qMetaTypeId<QVariant>()) {
-                // Well.. we can do anything... just recurse with the autodetect flag
-                ret = convertValueToQVariant(exec, value, QMetaType::Void, distance, visitedObjects);
-                dist = 10;
+                if (value->isUndefinedOrNull()) {
+                    if (distance)
+                        *distance = 1;
+                    return QVariant();
+                } else {
+                    // Well.. we can do anything... just recurse with the autodetect flag
+                    ret = convertValueToQVariant(exec, value, QMetaType::Void, distance, visitedObjects);
+                    dist = 10;
+                }
                 break;
             }
 
@@ -1110,6 +1127,7 @@ static int findMethodIndex(ExecState* exec,
             }
         }
 
+        // If the native method requires more arguments than what was passed from JavaScript
         if (jsArgs.size() < (types.count() - 1)) {
             qMatchDebug() << "Match:too few args for" << method.signature();
             tooFewArgs.append(index);
@@ -1156,17 +1174,17 @@ static int findMethodIndex(ExecState* exec,
                 chosenIndex = index;
                 break;
             } else {
-                QtMethodMatchData metaArgs(matchDistance, index, types, args);
+                QtMethodMatchData currentMatch(matchDistance, index, types, args);
                 if (candidates.isEmpty()) {
-                    candidates.append(metaArgs);
+                    candidates.append(currentMatch);
                 } else {
-                    QtMethodMatchData otherArgs = candidates.at(0);
-                    if ((args.count() > otherArgs.args.count())
-                        || ((args.count() == otherArgs.args.count())
-                            && (matchDistance <= otherArgs.matchDistance))) {
-                        candidates.prepend(metaArgs);
+                    QtMethodMatchData bestMatchSoFar = candidates.at(0);
+                    if ((args.count() > bestMatchSoFar.args.count())
+                        || ((args.count() == bestMatchSoFar.args.count())
+                            && (matchDistance <= bestMatchSoFar.matchDistance))) {
+                        candidates.prepend(currentMatch);
                     } else {
-                        candidates.append(metaArgs);
+                        candidates.append(currentMatch);
                     }
                 }
             }
@@ -1213,23 +1231,27 @@ static int findMethodIndex(ExecState* exec,
     }
 
     if (chosenIndex == -1 && candidates.count() > 0) {
-        QtMethodMatchData metaArgs = candidates.at(0);
+        QtMethodMatchData bestMatch = candidates.at(0);
         if ((candidates.size() > 1)
-            && (metaArgs.args.count() == candidates.at(1).args.count())
-            && (metaArgs.matchDistance == candidates.at(1).matchDistance)) {
+            && (bestMatch.args.count() == candidates.at(1).args.count())
+            && (bestMatch.matchDistance == candidates.at(1).matchDistance)) {
             // ambiguous call
             QString message = QString::fromLatin1("ambiguous call of overloaded function %0(); candidates were\n")
                                 .arg(QLatin1String(signature));
             for (int i = 0; i < candidates.size(); ++i) {
-                if (i > 0)
-                    message += QLatin1String("\n");
-                QMetaMethod mtd = meta->method(candidates.at(i).index);
-                message += QString::fromLatin1("    %0").arg(QString::fromLatin1(mtd.signature()));
+                // Only candidate for overload if argument count and match distance is same as best match
+                if (candidates.at(i).args.count() == bestMatch.args.count()
+                    || candidates.at(i).matchDistance == bestMatch.matchDistance) {
+                    if (i > 0)
+                        message += QLatin1String("\n");
+                    QMetaMethod mtd = meta->method(candidates.at(i).index);
+                    message += QString::fromLatin1("    %0").arg(QString::fromLatin1(mtd.signature()));
+                }
             }
             *pError = throwError(exec, TypeError, message.toLatin1().constData());
         } else {
-            chosenIndex = metaArgs.index;
-            args = metaArgs.args;
+            chosenIndex = bestMatch.index;
+            args = bestMatch.args;
         }
     }
 

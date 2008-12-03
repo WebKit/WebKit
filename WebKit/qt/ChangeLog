@@ -1,3 +1,18 @@
+2008-12-03  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Allow passing jsNull and jsUndefined to Qt plugins
+
+        Currently limited to functions with QString and QVariant arguments,
+        and properties of these types. Both jsNull and jsUndefined ends up
+        as default-constructed QStrings and QVariants, which means you can
+        check for isEmpty() and isValid() in the native plugin code.
+
+        Based on patches by Jade Han <jade.han@nokia.com>
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2008-12-02  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Tor Arne Vestbø.
