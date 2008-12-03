@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2005 Nokia.  All rights reserved.
+ *               2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +66,12 @@ public:
     {
         return FloatSize(m_width > other.m_width ? m_width : other.m_width,
             m_height > other.m_height ? m_height : other.m_height);
+    }
+
+    FloatSize shrunkTo(const FloatSize& other) const
+    {
+       return FloatSize(m_width < other.m_width ? m_width : other.m_width,
+           m_height < other.m_height ? m_height : other.m_height);
     }
 
 #if PLATFORM(CG)

@@ -1,8 +1,8 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
-
-    This file is part of the KDE project
+                  2008 Eric Seidel <eric@webkit.org>
+                  2008 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -81,18 +81,36 @@ void SVGLinearGradientElement::buildGradient() const
 {
     LinearGradientAttributes attributes = collectGradientProperties();
 
-    // If we didn't find any gradient containing stop elements, ignore the request.
+    RefPtr<SVGPaintServerLinearGradient> linearGradient = WTF::static_pointer_cast<SVGPaintServerLinearGradient>(m_resource);
+
+    FloatPoint startPoint = FloatPoint::narrowPrecision(attributes.x1(), attributes.y1());
+    FloatPoint endPoint = FloatPoint::narrowPrecision(attributes.x2(), attributes.y2());
+
+    RefPtr<Gradient> gradient = Gradient::create(startPoint, endPoint);
+
+    Vector<SVGGradientStop> m_stops = attributes.stops();
+    float previousOffset = 0.0f;
+    for (unsigned i = 0; i < m_stops.size(); ++i) {
+        float offset = std::min(std::max(previousOffset, m_stops[i].first), 1.0f);
+        previousOffset = offset;
+        gradient->addColorStop(offset, m_stops[i].second);
+    }
+
+    linearGradient->setGradient(gradient);
+
     if (attributes.stops().isEmpty())
         return;
 
-    RefPtr<SVGPaintServerLinearGradient> linearGradient = WTF::static_pointer_cast<SVGPaintServerLinearGradient>(m_resource);
-
-    linearGradient->setGradientStops(attributes.stops());
+    // This code should go away.  PaintServers should go away too.
+    // Only this code should care about bounding boxes
     linearGradient->setBoundingBoxMode(attributes.boundingBoxMode());
+    linearGradient->setGradientStops(attributes.stops());
+
+    // These should possibly be supported on Gradient
     linearGradient->setGradientSpreadMethod(attributes.spreadMethod());
     linearGradient->setGradientTransform(attributes.gradientTransform());
-    linearGradient->setGradientStart(FloatPoint::narrowPrecision(attributes.x1(), attributes.y1()));
-    linearGradient->setGradientEnd(FloatPoint::narrowPrecision(attributes.x2(), attributes.y2()));
+    linearGradient->setGradientStart(startPoint);
+    linearGradient->setGradientEnd(endPoint);
 }
 
 LinearGradientAttributes SVGLinearGradientElement::collectGradientProperties() const

@@ -1732,11 +1732,8 @@ contains(DEFINES, ENABLE_SVG=1) {
 
 SOURCES += \
         svg/graphics/qt/RenderPathQt.cpp \
-        svg/graphics/qt/SVGPaintServerGradientQt.cpp \
-        svg/graphics/qt/SVGPaintServerLinearGradientQt.cpp \
         svg/graphics/qt/SVGPaintServerPatternQt.cpp \
         svg/graphics/qt/SVGPaintServerQt.cpp \
-        svg/graphics/qt/SVGPaintServerRadialGradientQt.cpp \
         svg/graphics/qt/SVGResourceFilterQt.cpp \
         svg/graphics/qt/SVGResourceMaskerQt.cpp
 

@@ -3151,7 +3151,6 @@
 		B255992D0D00D8BA00BB825C /* CgSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598910D00D8B800BB825C /* CgSupport.h */; };
 		B255992E0D00D8BA00BB825C /* RenderPathCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598920D00D8B800BB825C /* RenderPathCg.cpp */; };
 		B255992F0D00D8BA00BB825C /* SVGPaintServerCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598930D00D8B800BB825C /* SVGPaintServerCg.cpp */; };
-		B25599300D00D8BA00BB825C /* SVGPaintServerGradientCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598940D00D8B800BB825C /* SVGPaintServerGradientCg.cpp */; };
 		B25599310D00D8BA00BB825C /* SVGPaintServerPatternCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598950D00D8B800BB825C /* SVGPaintServerPatternCg.cpp */; };
 		B25599350D00D8BA00BB825C /* SVGResourceFilterCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */; };
 		B25599370D00D8BA00BB825C /* SVGResourceMaskerCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B255989B0D00D8B800BB825C /* SVGResourceMaskerCg.mm */; };
@@ -7813,7 +7812,6 @@
 		B25598910D00D8B800BB825C /* CgSupport.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CgSupport.h; sourceTree = "<group>"; };
 		B25598920D00D8B800BB825C /* RenderPathCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPathCg.cpp; sourceTree = "<group>"; };
 		B25598930D00D8B800BB825C /* SVGPaintServerCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPaintServerCg.cpp; sourceTree = "<group>"; };
-		B25598940D00D8B800BB825C /* SVGPaintServerGradientCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPaintServerGradientCg.cpp; sourceTree = "<group>"; };
 		B25598950D00D8B800BB825C /* SVGPaintServerPatternCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPaintServerPatternCg.cpp; sourceTree = "<group>"; };
 		B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGResourceFilterCg.mm; sourceTree = "<group>"; };
 		B255989B0D00D8B800BB825C /* SVGResourceMaskerCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGResourceMaskerCg.mm; sourceTree = "<group>"; };
@@ -12695,7 +12693,6 @@
 				B25598910D00D8B800BB825C /* CgSupport.h */,
 				B25598920D00D8B800BB825C /* RenderPathCg.cpp */,
 				B25598930D00D8B800BB825C /* SVGPaintServerCg.cpp */,
-				B25598940D00D8B800BB825C /* SVGPaintServerGradientCg.cpp */,
 				B25598950D00D8B800BB825C /* SVGPaintServerPatternCg.cpp */,
 				B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */,
 				B255989B0D00D8B800BB825C /* SVGResourceMaskerCg.mm */,
@@ -17833,7 +17830,6 @@
 				B25599A60D00D8BA00BB825C /* SVGPaintServer.cpp in Sources */,
 				B255992F0D00D8BA00BB825C /* SVGPaintServerCg.cpp in Sources */,
 				B25599A80D00D8BA00BB825C /* SVGPaintServerGradient.cpp in Sources */,
-				B25599300D00D8BA00BB825C /* SVGPaintServerGradientCg.cpp in Sources */,
 				B25599AA0D00D8BA00BB825C /* SVGPaintServerLinearGradient.cpp in Sources */,
 				B25599AC0D00D8BA00BB825C /* SVGPaintServerPattern.cpp in Sources */,
 				B25599310D00D8BA00BB825C /* SVGPaintServerPatternCg.cpp in Sources */,

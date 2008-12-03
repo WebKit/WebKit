@@ -1,3 +1,13 @@
+2008-12-03  Dirk Schulze  <krit@webkit.org>
+
+        Updated/Correcte the SVG pixel tests.
+        We pass two more SVG tests now.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.png:
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+
 2008-12-03  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

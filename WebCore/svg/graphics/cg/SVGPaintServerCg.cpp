@@ -60,26 +60,12 @@ void SVGPaintServer::strokePath(CGContextRef context, const RenderObject*) const
     CGContextStrokePath(context);
 }
 
-void SVGPaintServer::clipToStrokePath(CGContextRef context, const RenderObject*) const
-{
-    CGContextReplacePathWithStrokedPath(context);
-    CGContextClip(context);
-}
-
 void SVGPaintServer::fillPath(CGContextRef context, const RenderObject* path) const
 {
     if (!path || path->style()->svgStyle()->fillRule() == RULE_EVENODD)
         CGContextEOFillPath(context);
     else
         CGContextFillPath(context);
-}
-
-void SVGPaintServer::clipToFillPath(CGContextRef context, const RenderObject* path) const
-{
-    if (!path || path->style()->svgStyle()->fillRule() == RULE_EVENODD)
-        CGContextEOClip(context);
-    else
-        CGContextClip(context);
 }
 
 } // namespace WebCore

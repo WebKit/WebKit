@@ -1,8 +1,8 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
-
-    This file is part of the KDE project
+                  2008 Eric Seidel <eric@webkit.org>
+                  2008 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -89,19 +89,52 @@ void SVGRadialGradientElement::buildGradient() const
 {
     RadialGradientAttributes attributes = collectGradientProperties();
 
-    // If we didn't find any gradient containing stop elements, ignore the request.
+    RefPtr<SVGPaintServerRadialGradient> radialGradient = WTF::static_pointer_cast<SVGPaintServerRadialGradient>(m_resource);
+
+    double adjustedFocusX = attributes.fx();
+    double adjustedFocusY = attributes.fy();
+
+    double fdx = attributes.fx() - attributes.cx();
+    double fdy = attributes.fy() - attributes.cy();
+
+    // Spec: If (fx, fy) lies outside the circle defined by (cx, cy) and
+    // r, set (fx, fy) to the point of intersection of the line through
+    // (fx, fy) and the circle.
+    if (sqrt(fdx * fdx + fdy * fdy) > attributes.r()) {
+        double angle = atan2(attributes.fy() * 100.0, attributes.fx() * 100.0);
+        adjustedFocusX = cos(angle) * attributes.r();
+        adjustedFocusY = sin(angle) * attributes.r();
+    }
+
+    FloatPoint focalPoint = FloatPoint::narrowPrecision(attributes.fx(), attributes.fy());
+    FloatPoint centerPoint = FloatPoint::narrowPrecision(attributes.cx(), attributes.cy());
+
+    RefPtr<Gradient> gradient = Gradient::create(
+        FloatPoint::narrowPrecision(adjustedFocusX, adjustedFocusY),
+        0.f, // SVG does not support a "focus radius"
+        centerPoint,
+        narrowPrecisionToFloat(attributes.r()));
+
+    Vector<SVGGradientStop> stops = attributes.stops();
+    float previousOffset = 0.0f;
+    for (unsigned i = 0; i < stops.size(); ++i) {
+         float offset = std::min(std::max(previousOffset, stops[i].first), 1.0f);
+         previousOffset = offset;
+         gradient->addColorStop(offset, stops[i].second);
+    }
+
+    radialGradient->setGradient(gradient);
+
     if (attributes.stops().isEmpty())
         return;
 
-    RefPtr<SVGPaintServerRadialGradient> radialGradient = WTF::static_pointer_cast<SVGPaintServerRadialGradient>(m_resource);
-
-    radialGradient->setGradientStops(attributes.stops());
     radialGradient->setBoundingBoxMode(attributes.boundingBoxMode());
     radialGradient->setGradientSpreadMethod(attributes.spreadMethod()); 
     radialGradient->setGradientTransform(attributes.gradientTransform());
-    radialGradient->setGradientCenter(FloatPoint::narrowPrecision(attributes.cx(), attributes.cy()));
-    radialGradient->setGradientFocal(FloatPoint::narrowPrecision(attributes.fx(), attributes.fy()));
+    radialGradient->setGradientCenter(centerPoint);
+    radialGradient->setGradientFocal(focalPoint);
     radialGradient->setGradientRadius(narrowPrecisionToFloat(attributes.r()));
+    radialGradient->setGradientStops(attributes.stops());
 }
 
 RadialGradientAttributes SVGRadialGradientElement::collectGradientProperties() const

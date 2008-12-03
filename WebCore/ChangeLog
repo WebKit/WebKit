@@ -1,3 +1,47 @@
+2008-12-03  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Make use of the gradient code in GraphicsContext and get rid of most of the
+        platform dependent code.
+
+        SVG should use the new Gradient support on GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=20543
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FloatSize.h:
+        (WebCore::FloatSize::shrunkTo):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::buildGradient):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * svg/graphics/SVGPaintServer.h:
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::SVGPaintServerGradient):
+        (WebCore::SVGPaintServerGradient::~SVGPaintServerGradient):
+        (WebCore::SVGPaintServerGradient::gradient):
+        (WebCore::SVGPaintServerGradient::setGradient):
+        (WebCore::findTextRootObject):
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+        (WebCore::SVGPaintServerGradient::setup):
+        (WebCore::SVGPaintServerGradient::renderPath):
+        (WebCore::SVGPaintServerGradient::teardown):
+        * svg/graphics/SVGPaintServerGradient.h:
+        (WebCore::SVGPaintServerGradient::setGradientStops):
+        (WebCore::SVGPaintServerGradient::gradientStops):
+        * svg/graphics/SVGPaintServerLinearGradient.h:
+        * svg/graphics/SVGPaintServerRadialGradient.h:
+        * svg/graphics/cairo/SVGPaintServerGradientCairo.cpp: Removed.
+        * svg/graphics/cg/SVGPaintServerCg.cpp:
+        * svg/graphics/cg/SVGPaintServerGradientCg.cpp: Removed.
+        * svg/graphics/qt/SVGPaintServerGradientQt.cpp: Removed.
+        * svg/graphics/qt/SVGPaintServerLinearGradientQt.cpp: Removed.
+        * svg/graphics/qt/SVGPaintServerRadialGradientQt.cpp: Removed.
+
 2008-12-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
