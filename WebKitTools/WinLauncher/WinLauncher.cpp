@@ -233,6 +233,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 exit:
     delete gWebView;
+    shutDownWebKit();
 #ifdef _CRTDBG_MAP_ALLOC
     _CrtDumpMemoryLeaks();
 #endif

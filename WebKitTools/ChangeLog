@@ -1,5 +1,14 @@
 2008-12-03  Adam Roben  <aroben@apple.com>
 
+        Fix a crash on exit in WinLauncher
+
+        Reviewed by Sam Weinig.
+
+        * WinLauncher/WinLauncher.cpp:
+        (_tWinMain): Call shutDownWebKit before exiting.
+
+2008-12-03  Adam Roben  <aroben@apple.com>
+
         Add a Debug_Internal configuration to WinLauncher
 
         This matches our other projects.
