@@ -1,3 +1,9 @@
+2008-12-03  Dean Jackson  <dino@apple.com>
+
+        Added links to the WebKit and Mozilla bugs for pointer-events.
+
+        * specs/PointerEventsProperty.html:
+
 2008-11-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.
