@@ -34,8 +34,8 @@ namespace WebCore {
         WMLVariableEscapingUnescape
     };
 
-    bool isValidVariableName(const String&, bool isReference);
-    bool containsVariableReference(const String&);
+    bool isValidVariableName(const String&);
+    bool containsVariableReference(const String&, bool& isValid);
 
     String substituteVariableReferences(const String& variableReference,
                                         Document*,

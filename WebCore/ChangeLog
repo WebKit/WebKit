@@ -1,5 +1,26 @@
 2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22636
+
+        Implement WML variable substitution & validation.
+        Created a framework for scriptable WML layout tests, that are able to test variable substiution & validation.
+
+        Tests: wml/variable-reference-invalid-character.html
+               wml/variable-reference-valid.html
+
+        * wml/WMLVariables.cpp:
+        (WebCore::isValidFirstVariableNameCharacter):
+        (WebCore::isValidVariableNameCharacter):
+        (WebCore::isValidVariableEscapingModeString):
+        (WebCore::isValidVariableName):
+        (WebCore::containsVariableReference):
+        (WebCore::substituteVariableReferences):
+        * wml/WMLVariables.h:
+
+2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Cameron Zwarich.
 
         Further preparations for WML layout tests.

@@ -1,3 +1,42 @@
+2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22636
+
+        Add a first set of scriptable WML layout tests.
+        Embed WML documents in an <iframe>, contained in a (X)HTML document, and script
+        the LayoutTestController through XHTML <script> elements. See WMLTestCase.js,
+        which is derived from SVGTestCase.js.
+
+        All wml/*.html files are generated using make-js-test-wrappers.
+
+        Add two tests covering variable substitution.
+
+        * wml: Added.
+        * wml/resources: Added.
+        * wml/resources/TEMPLATE.html: Added.
+        * wml/resources/WMLTestCase.js: Added.
+        (createWMLElement):
+        (createWMLTestCase.iframeElement.onload):
+        (createWMLTestCase):
+        (triggerUpdate):
+        (startTest):
+        (completeTest.script.onload):
+        (completeTest):
+        * wml/resources/variable-reference-invalid-character.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/variable-reference-valid.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/variable-reference-invalid-character-expected.txt: Added.
+        * wml/variable-reference-invalid-character.html: Added.
+        * wml/variable-reference-valid-expected.txt: Added.
+        * wml/variable-reference-valid.html: Added.
+
 2008-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

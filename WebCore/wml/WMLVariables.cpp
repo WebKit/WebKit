@@ -24,73 +24,264 @@
 #if ENABLE(WML)
 #include "WMLVariables.h"
 
-#include "PlatformString.h"
+#include "WMLDocument.h"
 #include <wtf/ASCIICType.h>
 
 namespace WebCore {
 
-static bool isValidVariableCharacter(const UChar& character)
+// WML variables specification, excluding the
+// pre-WML 1.0 deprecated variable syntax
+//
+// varname = ("_" | alpha) ("_" | alpha | digit)* 
+// conv = ":" ("e" ("scape")? | "n" ("oesc")? | "u" ("nesc")?)
+// var = ("$" varname) | ("$(" varname (conv)? ")")
+
+static bool isValidFirstVariableNameCharacter(const UChar& character)
+{
+    return WTF::isASCIIAlpha(character)
+           || character == '_';
+}
+
+static bool isValidVariableNameCharacter(const UChar& character)
 {
     return WTF::isASCIIAlpha(character)
            || WTF::isASCIIDigit(character)
            || character == '_';
 }
 
-static bool isValidVariableReferenceCharacter(const UChar& character)
+static bool isValidVariableEscapingModeString(const String& mode, WMLVariableEscapingMode& escapeMode)
 {
-    return character == '('
-           || character == ')'
-           || character == ':'
-           || character == '$';
+    if (mode == "e" || mode == "escape")
+        escapeMode = WMLVariableEscapingEscape; 
+    else if (mode == "u" || mode == "unesc")
+        escapeMode = WMLVariableEscapingUnescape;
+    else if (mode == "n" || mode == "noesc")
+        escapeMode = WMLVariableEscapingNone;
+    else
+        return false;
+
+    return true;
 }
 
-bool isValidVariableName(const String& name, bool isReference)
+bool isValidVariableName(const String& name)
 {
     if (name.isEmpty())
         return false;
 
     const UChar* characters = name.characters();
-    bool isValid = (characters[0] == '_' || WTF::isASCIIAlpha(characters[0]));
-
-    if (isReference && !isValid)
-        isValid = isValidVariableReferenceCharacter(characters[0]);
-
-    if (!isValid)
+    if (!isValidFirstVariableNameCharacter(characters[0]))
         return false;
 
     unsigned length = name.length();
     for (unsigned i = 1; i < length; ++i) {
-        isValid = isValidVariableCharacter(characters[i]);
+        if (!isValidVariableNameCharacter(characters[i]))
+            return false;
+    }
 
-        if (isReference && !isValid)
-            isValid = isValidVariableReferenceCharacter(characters[i]);
+    return true;
+}
 
+bool containsVariableReference(const String& text, bool& isValid)
+{
+    isValid = true;
+    bool foundReference = false;
+    bool finished = false;
+    int currentPosition = 0;
+    const UChar* characters = text.characters();
+
+    while (!finished) {
+        // Find beginning of variable reference
+        int referenceStartPosition = text.find('$', currentPosition);
+        if (referenceStartPosition == -1) {
+            finished = true;
+            break;
+        }
+
+        foundReference = true;
+
+        int nameStartPosition = referenceStartPosition + 1;
+        int nameEndPosition = -1;
+
+        if (characters[nameStartPosition] == '(') {
+            // If the input string contains an open brace, a close brace must exist as well
+            nameEndPosition = text.find(')', nameStartPosition + 1);
+            if (nameEndPosition == -1) {
+                finished = true;
+                isValid = false;
+                break;
+            }
+
+            ++nameStartPosition;
+        } else {
+            int length = text.length();
+            for (nameEndPosition = nameStartPosition; nameEndPosition < length; ++nameEndPosition) {
+                if (!isValidVariableNameCharacter(text[nameEndPosition]))
+                    break;
+            }
+
+            --nameEndPosition;
+        }
+
+        if (nameEndPosition < nameStartPosition) {
+            finished = true;
+            isValid = false;
+            break;
+        }
+    
+        // Eventually split of conversion string, and check it's syntax afterwards
+        String conversionString;
+        String variableName = text.substring(nameStartPosition, nameEndPosition - nameStartPosition);
+
+        int conversionStringStart = variableName.find(':');
+        if (conversionStringStart != -1) {
+            conversionString = variableName.substring(conversionStringStart + 1, variableName.length() - (conversionStringStart + 1));
+            variableName = variableName.left(conversionStringStart);
+        }
+
+        isValid = isValidVariableName(variableName);
+        if (!isValid) {
+            finished = true;
+            break;
+        }
+
+        if (!conversionString.isEmpty()) {
+            isValid = isValidVariableName(conversionString);
+            if (!isValid) {
+                finished = true;
+                break;
+            }
+
+            WMLVariableEscapingMode escapeMode = WMLVariableEscapingNone;
+            isValid = isValidVariableEscapingModeString(conversionString, escapeMode);
+            if (!isValid) {
+                finished = true;
+                break;
+            }
+        }
+
+        currentPosition = nameEndPosition;
+    }
+
+    return foundReference;
+}
+
+String substituteVariableReferences(const String& reference, Document* document, WMLVariableEscapingMode escapeMode)
+{
+    ASSERT(document);
+
+    if (reference.isEmpty())
+        return reference;
+
+    WMLPageState* pageState = wmlPageStateForDocument(document);
+    if (!pageState)
+        return reference;
+
+    bool isValid = true; 
+    String remainingInput = reference;
+    String result;
+
+    while (!remainingInput.isEmpty()) {
+        ASSERT(isValid);
+
+        int start = remainingInput.find("$");
+        if (start == -1) {
+            // Consume all remaining characters, as there's nothing more to substitute
+            result += remainingInput;
+            break;
+        }
+
+        // Consume all characters until the variable reference beginning
+        result += remainingInput.left(start);
+        remainingInput.remove(0, start);
+
+        // Transform adjacent dollar signs into a single dollar sign as string literal
+        if (remainingInput[1] == '$') {
+            result += "$";
+            remainingInput.remove(0, 2);
+            continue;
+        }
+
+        String variableName;
+        String conversionMode;
+
+        if (remainingInput[1] == '(') {
+            int referenceEndPosition = remainingInput.find(")");
+            if (referenceEndPosition == -1) {
+                isValid = false;
+                break;
+            }
+
+            variableName = remainingInput.substring(2, referenceEndPosition - 2);
+            remainingInput.remove(0, referenceEndPosition + 1);
+
+            // Determine variable conversion mode string
+            int pos = variableName.find(':');
+            if (pos != -1) {
+                conversionMode = variableName.substring(pos + 1, variableName.length() - (pos + 1));
+                variableName = variableName.left(pos);
+            }
+        } else {
+            int length = remainingInput.length();
+            int referenceEndPosition = 1;
+
+            for (; referenceEndPosition < length; ++referenceEndPosition) {
+                if (!isValidVariableNameCharacter(remainingInput[referenceEndPosition]))
+                    break;
+            }
+
+            variableName = remainingInput.substring(1, referenceEndPosition - 1);
+            remainingInput.remove(0, referenceEndPosition);
+        }
+
+        isValid = isValidVariableName(variableName);
         if (!isValid)
-            return false;
+            break;
+
+        ASSERT(!variableName.isEmpty());
+
+        String variableValue = pageState->getVariable(variableName);
+        if (variableValue.isEmpty())
+            continue;
+
+        if (containsVariableReference(variableValue, isValid)) {
+            if (!isValid)
+                break;
+
+            variableValue = substituteVariableReferences(variableValue, document, escapeMode);
+            continue;
+        }
+
+        if (!conversionMode.isEmpty()) {
+            // Override default escape mode, if desired
+            WMLVariableEscapingMode specifiedEscapeMode = WMLVariableEscapingNone; 
+            if (isValid = isValidVariableEscapingModeString(conversionMode, specifiedEscapeMode))
+                escapeMode = specifiedEscapeMode;
+
+            if (!isValid)
+                break;
+        }
+
+        switch (escapeMode) {
+        case WMLVariableEscapingNone:
+            break;
+        case WMLVariableEscapingEscape:
+            variableValue = encodeWithURLEscapeSequences(variableValue); 
+            break;
+        case WMLVariableEscapingUnescape:
+            variableValue = decodeURLEscapeSequences(variableValue);
+            break;
+        }
+
+        result += variableValue;
+        ASSERT(isValid);
     }
 
-    return true;
-}
-
-bool containsVariableReference(const String& text)
-{
-    int startPos = text.find('$');
-    if (startPos == -1)
-        return false;
-
-    unsigned length = text.length();
-    for (unsigned i = startPos + 1; i < length; ++i) {
-        if (!isValidVariableReferenceCharacter(text[i]) && !isValidVariableCharacter(text[i]))
-            return false;
+    if (!isValid) {
+        reportWMLError(document, WMLErrorInvalidVariableReference);
+        return reference;
     }
 
-    return true;
-}
-
-String substituteVariableReferences(const String& variableReference, Document* document, WMLVariableEscapingMode escapeMode)
-{
-    // FIXME!
-    return variableReference;
+    return result;
 }
 
 }

@@ -1,0 +1,29 @@
+WML layout tests - using XHTML scripting
+
+
+Tests valid variable references
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pElement1.textContent is "Result: $var"
+PASS pElement2.textContent is "Result: $(var:e)"
+PASS pElement3.textContent is "Result: $(var2)"
+PASS pElement4.textContent is "Result: $(var2:unesc)"
+PASS pElement1.textContent is "Result: TEST PASSED"
+PASS pElement2.textContent is "Result: TEST%20PASSED"
+PASS pElement3.textContent is "Result: TEST%20PASSED"
+PASS pElement4.textContent is "Result: TEST PASSED"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Start test
+Result: TEST PASSED
+Result: TEST%20PASSED
+Result: TEST%20PASSED
+Result: TEST PASSED
