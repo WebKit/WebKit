@@ -41,6 +41,10 @@ namespace WebCore {
         virtual bool hasPendingActivity() const;
 
         virtual void contextDestroyed();
+
+        virtual bool canSuspend() const;
+        virtual void suspend();
+        virtual void resume();
         virtual void stop();
 
     protected:

@@ -1,3 +1,51 @@
+2008-12-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22543
+        Consolidate ActiveDOMObject page cache interaction
+
+        Test: http/tests/xmlhttprequest/abort-on-leaving-page.html
+
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::canSuspend):
+        (WebCore::ActiveDOMObject::suspend):
+        (WebCore::ActiveDOMObject::resume):
+        * dom/ActiveDOMObject.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        * dom/ScriptExecutionContext.h:
+        Added methods for suspending and resuming active objects.
+
+        * dom/Worker.cpp:
+        (WebCore::Worker::canSuspend):
+        (WebCore::Worker::stop):
+        * dom/Worker.h:
+        Workers cannot be suspended yet. This is a change in behavior, as workers used to keep
+        running until their owner was destroyed.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading): No longer call stopActiveDOMObjects() here, because
+        their activity is not necessarily loading.
+        (WebCore::FrameLoader::canCachePage): Can only cache if all active objects can be suspended.
+        Previously, stopLoading() cancelled outstanding XMLHttpRequests, which made the page
+        uncacheable due to no-null main document error.
+        (WebCore::FrameLoader::commitProvisionalLoad): Suspend or stop active objects, depending on
+        whether the document will be cached.
+        (WebCore::FrameLoader::frameDetached): Stop active objects to let them clean up before their
+        context is destroyed.
+
+        * xml/XMLHttpRequest.h: added canSuspend().
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::canSuspend): Only XHRs that are not loading can be suspended.
+        (WebCore::XMLHttpRequest::stop): Call abort() instead of internalAbort() to dispatch events
+        for Firefox compatibility. This is a change in behavior that helps test that requests do
+        get aborted.
+        (WebCore::XMLHttpRequest::contextDestroyed): The request must have been stopped by now, so
+        assert that.
+
 2008-12-02  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

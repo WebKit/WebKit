@@ -65,6 +65,8 @@ namespace WebCore {
 
         void terminate();
 
+        virtual bool canSuspend() const;
+        virtual void stop();
         virtual bool hasPendingActivity() const;
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);

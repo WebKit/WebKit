@@ -97,6 +97,17 @@ void Worker::terminate()
     m_messagingProxy->terminate();
 }
 
+bool Worker::canSuspend() const
+{
+    // FIXME: It is not currently possible to suspend a worker, so pages with workers can not go into page cache.
+    return false;
+}
+
+void Worker::stop()
+{
+    terminate();
+}
+
 bool Worker::hasPendingActivity() const
 {
     return m_messagingProxy->workerThreadHasPendingActivity() || ActiveDOMObject::hasPendingActivity();

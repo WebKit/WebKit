@@ -1415,15 +1415,21 @@ void XMLHttpRequest::dispatchProgressEvent(long long expectedLength)
                                         static_cast<unsigned>(m_receivedLength), static_cast<unsigned>(expectedLength));
 }
 
+bool XMLHttpRequest::canSuspend() const
+{
+    return !m_loader;
+}
+
 void XMLHttpRequest::stop()
 {
-    internalAbort();
+    if (m_loader)
+        abort();
 }
 
 void XMLHttpRequest::contextDestroyed()
 {
+    ASSERT(!m_loader);
     ActiveDOMObject::contextDestroyed();
-    internalAbort();
 }
 
 ScriptExecutionContext* XMLHttpRequest::scriptExecutionContext() const

@@ -1,3 +1,20 @@
+2008-12-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22543
+        Consolidate ActiveDOMObject page cache interaction
+
+        * http/tests/xmlhttprequest/abort-on-leaving-page-expected.txt: Added.
+        * http/tests/xmlhttprequest/abort-on-leaving-page.html: Added.
+        * http/tests/xmlhttprequest/resources/slow-response.pl: Added.
+        Check that XHR is aborted when navigating to a different page.
+
+        * http/tests/xmlhttprequest/frame-load-cancelled-abort-expected.txt:
+        A readystatechange event is now fired when destroying a subframe that made a request.
+        This matches Firefox, although test output is somewhat different due to window.parent
+        being inaccessible from a detached frame there.
+
 2008-11-28  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.
