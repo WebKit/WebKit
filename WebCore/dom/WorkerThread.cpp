@@ -30,7 +30,6 @@
 
 #include "WorkerThread.h"
 
-#include "JSWorkerContext.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "Worker.h"
