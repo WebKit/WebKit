@@ -1,5 +1,12 @@
 2008-12-03  Anders Carlsson  <andersca@apple.com>
 
+        Fix the release build.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::deadNameNotificationCallback):
+
+2008-12-03  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         <rdar://problem/6412234>
