@@ -1,3 +1,15 @@
+2008-12-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Plant shift right immediate instructions, which are awesome.
+        https://bugs.webkit.org/show_bug.cgi?id=22610
+        ~5% on the v8-crypto test.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+
 2008-12-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

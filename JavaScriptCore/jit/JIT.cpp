@@ -1812,11 +1812,20 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_rshift: {
-            emitGetVirtualRegisters(instruction[i + 2].u.operand, X86::eax, instruction[i + 3].u.operand, X86::ecx, i);
-            emitJumpSlowCaseIfNotImmNum(X86::eax, i);
-            emitJumpSlowCaseIfNotImmNum(X86::ecx, i);
-            emitFastArithImmToInt(X86::ecx);
-            __ sarl_CLr(X86::eax);
+            unsigned src1 = instruction[i + 2].u.operand;
+            unsigned src2 = instruction[i + 3].u.operand;
+            if (JSValue* value = getConstantImmediateNumericArg(src2)) {
+                emitGetVirtualRegister(src1, X86::eax, i);
+                emitJumpSlowCaseIfNotImmNum(X86::eax, i);
+                // Mask with 0x1f as per ecma-262 11.7.2 step 7.
+                __ sarl_i8r(JSImmediate::getTruncatedUInt32(value) & 0x1f, X86::eax);
+            } else {
+                emitGetVirtualRegisters(src1, X86::eax, src2, X86::ecx, i);
+                emitJumpSlowCaseIfNotImmNum(X86::eax, i);
+                emitJumpSlowCaseIfNotImmNum(X86::ecx, i);
+                emitFastArithImmToInt(X86::ecx);
+                __ sarl_CLr(X86::eax);
+            }
             emitFastArithPotentiallyReTagImmediate(X86::eax);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
@@ -2414,10 +2423,16 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_rshift: {
+            unsigned src2 = instruction[i + 3].u.operand;
             __ link(iter->from, __ label());
-            __ link((++iter)->from, __ label());
+            if (getConstantImmediateNumericArg(src2))
+                emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
+            else {
+                __ link((++iter)->from, __ label());
+                emitPutCTIArg(X86::ecx, 4);
+            }
+
             emitPutCTIArg(X86::eax, 0);
-            emitPutCTIArg(X86::ecx, 4);
             emitCTICall(i, Interpreter::cti_op_rshift);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
