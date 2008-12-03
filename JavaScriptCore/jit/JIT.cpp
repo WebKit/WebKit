@@ -561,7 +561,7 @@ ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID reg)
 
 ALWAYS_INLINE void JIT::emitFastArithPotentiallyReTagImmediate(RegisterID reg)
 {
-    __ orl_i32r(JSImmediate::TagBitTypeInteger, reg);
+    __ orl_i8r(JSImmediate::TagBitTypeInteger, reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithImmToInt(RegisterID reg)
@@ -585,7 +585,7 @@ ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID reg)
 ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 {
     __ shl_i8r(JSImmediate::ExtendedPayloadShift, reg);
-    __ orl_i32r(JSImmediate::FullTagTypeBool, reg);
+    __ orl_i8r(JSImmediate::FullTagTypeBool, reg);
 }
 
 JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)

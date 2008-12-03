@@ -284,7 +284,10 @@ public:
     
     void or32(Imm32 imm, RegisterID dest)
     {
-        m_assembler.orl_i32r(imm.m_value, dest);
+        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
+            m_assembler.orl_i8r(imm.m_value, dest);
+        else
+            m_assembler.orl_i32r(imm.m_value, dest);
     }
 
     void sub32(Imm32 imm, RegisterID dest)

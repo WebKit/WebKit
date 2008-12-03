@@ -1,3 +1,25 @@
+2008-12-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt, with help from Gavin Barraclough.
+        
+        orl_i32r was actually coded as an 8bit OR. So, I renamed orl_i32r to
+        orl_i8r, changed all orl_i32r clients to use orl_i8r, and then added
+        a new orl_i32r that actually does a 32bit OR.
+        
+        (32bit OR is currently unused, but a patch I'm working on uses it.)
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::or32): Updated to choose between 8bit and 32bit OR.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::orl_i8r): The old orl_i32r.
+        (JSC::X86Assembler::orl_i32r): The new orl_i32r.
+        
+        * jit/JIT.cpp:
+        (JSC::JIT::emitFastArithPotentiallyReTagImmediate):
+        (JSC::JIT::emitTagAsBoolImmediate): Use orl_i8r, since we're ORing 8bit
+        values.
+
 2008-12-03  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dan Bernstein.

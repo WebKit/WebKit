@@ -449,11 +449,18 @@ public:
         modRm_rm(dst, base, offset);
     }
 
-    void orl_i32r(int imm, RegisterID dst)
+    void orl_i8r(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIb);
         modRm_opr(GROUP1_OP_OR, dst);
         m_buffer->putByte(imm);
+    }
+
+    void orl_i32r(int imm, RegisterID dst)
+    {
+        m_buffer->putByte(OP_GROUP1_EvIz);
+        modRm_opr(GROUP1_OP_OR, dst);
+        m_buffer->putInt(imm);
     }
 
     void subl_rr(RegisterID src, RegisterID dst)
