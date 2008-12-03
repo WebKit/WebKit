@@ -293,7 +293,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (PortState)saveAndSetNewPortStateForUpdate:(BOOL)forUpdate
 {
-    ASSERT(drawingModel != NPDrawingModelCoreAnimation);
     ASSERT([self currentWindow] != nil);
 
     // Use AppKit to convert view coordinates to NSWindow coordinates.
@@ -549,6 +548,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
             break;
         }
+          
+        case NPDrawingModelCoreAnimation:
+            window.window = [self currentWindow];
+            // Just set the port state to a dummy value.
+            portState = (PortState)1;
+            break;
         
         default:
             ASSERT_NOT_REACHED();
@@ -566,9 +571,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)restorePortState:(PortState)portState
 {
-    if (drawingModel == NPDrawingModelCoreAnimation)
-        return;
-
     ASSERT([self currentWindow]);
     ASSERT(portState);
     
@@ -605,6 +607,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             CGContextRestoreGState(nPort.cgPort.context);
             break;
 
+        case NPDrawingModelCoreAnimation:
+            ASSERT(portState == (PortState)1);
+            break;
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -838,8 +843,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (BOOL)isNewWindowEqualToOldWindow
 {
-    ASSERT(drawingModel != NPDrawingModelCoreAnimation);
-        
     if (window.x != lastSetWindow.x)
         return NO;
     if (window.y != lastSetWindow.y)
@@ -878,6 +881,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 return NO;
         break;
                     
+        case NPDrawingModelCoreAnimation:
+          if (window.window != lastSetWindow.window)
+              return NO;
+          break;
         default:
             ASSERT_NOT_REACHED();
         break;
@@ -914,16 +921,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!_isStarted)
         return;
     
-    if (drawingModel == NPDrawingModelCoreAnimation)
-        return;
-    
 #ifdef NP_NO_QUICKDRAW
     if (![self canDraw])
         return;
 #else
     if (drawingModel == NPDrawingModelQuickDraw)
         [self tellQuickTimeToChill];
-    else if (![self canDraw])
+    else if (drawingModel == NPDrawingModelCoreGraphics && ![self canDraw])
         return;
     
 #endif // NP_NO_QUICKDRAW
@@ -942,8 +946,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)setWindowIfNecessary
 {
-    ASSERT(drawingModel != NPDrawingModelCoreAnimation);
-           
     if (!_isStarted) 
         return;
     

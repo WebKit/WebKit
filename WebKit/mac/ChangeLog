@@ -1,5 +1,18 @@
 2008-12-03  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Kevin Decker.
+        
+        Call NPP_SetWindow for CA plug-ins.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebNetscapePluginView restorePortState:]):
+        (-[WebNetscapePluginView isNewWindowEqualToOldWindow]):
+        (-[WebNetscapePluginView updateAndSetWindow]):
+        (-[WebNetscapePluginView setWindowIfNecessary]):
+
+2008-12-03  Anders Carlsson  <andersca@apple.com>
+
         Fix the release build.
 
         * Plugins/Hosted/NetscapePluginHostProxy.mm:
