@@ -1,3 +1,11 @@
+2008-12-03  Trenton Schulz  <trenton.schulz@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the build with Qt for Mac OS X.
+
+        * platform/PurgeableBuffer.h: Use the dummy wrappers for now.
+
 2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov.
