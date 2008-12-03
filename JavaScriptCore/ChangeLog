@@ -1,3 +1,48 @@
+2008-12-02  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 22504: Crashes during code generation occur due to refing of ignoredResult()
+        <https://bugs.webkit.org/show_bug.cgi?id=22504>
+
+        Since ignoredResult() was implemented by casting 1 to a RegisterID*, any
+        attempt to ref ignoredResult() results in a crash. This will occur in
+        code generation of a function body where a node emits another node with
+        the dst that was passed to it, and then refs the returned RegisterID*.
+
+        To fix this problem, make ignoredResult() a member function of
+        BytecodeGenerator that simply returns a pointe to a fixed RegisterID
+        member of BytecodeGenerator.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::ignoredResult):
+        * bytecompiler/RegisterID.h:
+        * parser/Nodes.cpp:
+        (JSC::NullNode::emitBytecode):
+        (JSC::BooleanNode::emitBytecode):
+        (JSC::NumberNode::emitBytecode):
+        (JSC::StringNode::emitBytecode):
+        (JSC::RegExpNode::emitBytecode):
+        (JSC::ThisNode::emitBytecode):
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::ObjectLiteralNode::emitBytecode):
+        (JSC::PostfixResolveNode::emitBytecode):
+        (JSC::PostfixBracketNode::emitBytecode):
+        (JSC::PostfixDotNode::emitBytecode):
+        (JSC::DeleteValueNode::emitBytecode):
+        (JSC::VoidNode::emitBytecode):
+        (JSC::TypeOfResolveNode::emitBytecode):
+        (JSC::TypeOfValueNode::emitBytecode):
+        (JSC::PrefixResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::CommaNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        (JSC::FunctionBodyNode::emitBytecode):
+        (JSC::FuncDeclNode::emitBytecode):
+
 2008-12-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

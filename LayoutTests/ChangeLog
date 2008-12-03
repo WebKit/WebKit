@@ -1,3 +1,14 @@
+2008-11-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Add tests for bug 22504: Crashes during code generation occur due to refing of ignoredResult()
+        <https://bugs.webkit.org/show_bug.cgi?id=22504>
+
+        * fast/js/ignored-result-ref-crash-expected.txt: Added.
+        * fast/js/ignored-result-ref-crash.html: Added.
+        * fast/js/resources/ignored-result-ref-crash.js: Added.
+
 2008-12-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
