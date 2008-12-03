@@ -58,6 +58,37 @@ namespace WebCore {
 #define WXDLLIMPEXP_WEBKIT
 #endif // SWIG
 
+class WXDLLIMPEXP_WEBKIT wxWebViewDOMElementInfo
+{
+public:
+    wxWebViewDOMElementInfo();
+
+    ~wxWebViewDOMElementInfo() { }
+
+    wxString GetTagName() const { return m_tagName; }
+    void SetTagName(const wxString& name) { m_tagName = name; }
+
+    bool IsSelected() const { return m_isSelected; }
+    void SetSelected(bool sel) { m_isSelected = sel; }
+
+    wxString GetText() const { return m_text; }
+    void SetText(const wxString& text) { m_text = text; }
+
+    wxString GetImageSrc() const { return m_imageSrc; }
+    void SetImageSrc(const wxString& src) { m_imageSrc = src; }
+
+    wxString GetLink() const { return m_link; }
+    void SetLink(const wxString& link) { m_link = link; }
+
+private:
+    void* m_domElement;
+    bool m_isSelected;
+    wxString m_tagName;
+    wxString m_text;
+    wxString m_imageSrc;
+    wxString m_link;
+};
+
 class WXDLLIMPEXP_WEBKIT wxWebFrame
 {
     // ChromeClientWx needs to get the Page* stored by the wxWebView
@@ -114,6 +145,8 @@ class WXDLLIMPEXP_WEBKIT wxWebFrame
     void SetPageTitle(const wxString& title) { m_title = title; }
     
     WebCore::Frame* GetFrame();
+
+    wxWebViewDOMElementInfo HitTest(const wxPoint& post) const;
     
 private:
     float m_textMagnifier;

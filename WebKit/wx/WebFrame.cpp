@@ -28,9 +28,11 @@
 #include "Document.h"
 #include "Editor.h"
 #include "Element.h"
+#include "EventHandler.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "HitTestResult.h"
 #include "HTMLFrameOwnerElement.h"
 #include "markup.h"
 #include "Page.h"
@@ -346,3 +348,21 @@ void wxWebFrame::Paste()
         m_impl->frame->editor()->paste();
 
 }
+
+wxWebViewDOMElementInfo wxWebFrame::HitTest(const wxPoint& pos) const
+{
+    wxWebViewDOMElementInfo domInfo;
+
+    if (m_impl->frame->view()) {
+        WebCore::HitTestResult result = m_impl->frame->eventHandler()->hitTestResultAtPoint(m_impl->frame->view()->windowToContents(pos), false);
+        if (result.innerNode()) {
+            domInfo.SetLink(result.absoluteLinkURL().string());
+            domInfo.SetText(result.textContent());
+            domInfo.SetImageSrc(result.absoluteImageURL().string());
+            domInfo.SetSelected(result.isSelected());
+        }
+    }
+
+    return domInfo;
+}
+

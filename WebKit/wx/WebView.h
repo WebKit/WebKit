@@ -33,6 +33,8 @@
     #include "wx/wx.h"
 #endif
 
+#include "WebFrame.h"
+
 class WebViewPrivate;
 class WebViewFrameData;
 class wxWebFrame;
@@ -135,6 +137,8 @@ public:
     
     wxWebFrame* GetMainFrame() { return m_mainFrame; }
 
+    wxWebViewDOMElementInfo HitTest(const wxPoint& post) const;
+
 protected:
 
     // event handlers (these functions should _not_ be virtual)
@@ -186,37 +190,6 @@ enum {
     wxWEBVIEW_NAV_RELOAD = 8,
     wxWEBVIEW_NAV_FORM_RESUBMITTED = 16,
     wxWEBVIEW_NAV_OTHER = 32
-};
-
-class WXDLLIMPEXP_WEBKIT wxWebViewDOMElementInfo
-{
-public: 
-    wxWebViewDOMElementInfo();
-
-    ~wxWebViewDOMElementInfo() { }
-    
-    wxString GetTagName() const { return m_tagName; }
-    void SetTagName(const wxString& name) { m_tagName = name; }
-
-    bool IsSelected() const { return m_isSelected; }
-    void SetSelected(bool sel) { m_isSelected = sel; }
- 
-    wxString GetText() const { return m_text; }
-    void SetText(const wxString& text) { m_text = text; }
- 
-    wxString GetImageSrc() const { return m_imageSrc; }
-    void SetImageSrc(const wxString& src) { m_imageSrc = src; }
- 
-    wxString GetLink() const { return m_link; }
-    void SetLink(const wxString& link) { m_link = link; }
-
-private:
-    void* m_domElement;
-    bool m_isSelected;
-    wxString m_tagName;
-    wxString m_text;
-    wxString m_imageSrc;
-    wxString m_link;
 };
 
 class WXDLLIMPEXP_WEBKIT wxWebViewBeforeLoadEvent : public wxCommandEvent

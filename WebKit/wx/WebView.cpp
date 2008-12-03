@@ -627,3 +627,12 @@ void wxWebView::OnActivate(wxActivateEvent& event)
 
     event.Skip();
 }
+
+wxWebViewDOMElementInfo wxWebView::HitTest(const wxPoint& pos) const
+{
+    if (m_mainFrame)
+        return m_mainFrame->HitTest(pos);
+
+    return wxWebViewDOMElementInfo();
+}
+
