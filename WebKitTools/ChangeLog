@@ -1,3 +1,14 @@
+2008-12-03  Eric Seidel  <eric@webkit.org>
+
+        Build fix only, no review.
+        
+        Remove support for build-webkit --svg-experimental.
+        All of the "experimental" svg features have their own toggles anyway.
+        I broke --svg-experimental in my last commit (which then broke clean builds)
+        I can't find any use of --svg-experimental in our source tree, so removing it.
+
+        * Scripts/build-webkit:
+
 2008-12-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Hyatt (and Mark Rowe).

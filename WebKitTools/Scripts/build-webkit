@@ -45,9 +45,8 @@ my $domStorageSupport = 1;
 my $iconDatabaseSupport = 1;
 my $offlineWebApplicationSupport = 1;
 my $svgSupport = 1;
-my $svgExperimentalSupport = 0;
 my $svgAnimationSupport = 1;
-my $svgFiltersSupport = $svgExperimentalSupport;
+my $svgFiltersSupport = 0;
 my $svgForeignObjectSupport = 1;
 my $svgUseSupport = 1;
 my $svgFontsSupport = 1;
@@ -78,8 +77,6 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]dom-storage            Toggle DOM Storage Support (default: $domStorageSupport)
   --[no-]icon-database          Toggle Icon database support (default: $iconDatabaseSupport)
   --[no-]svg                    Toggle SVG support (default: $svgSupport)
-  --[no-]svg-experimental       Toggle SVG experimental features support (default: $svgExperimentalSupport, 
-                                implies SVG Support)
   --[no-]svg-animation          Toggle SVG animation support (default: $svgAnimationSupport, implies SVG Support)
   --[no-]svg-filters            Toggle SVG filters support (default: $svgFiltersSupport, implies SVG Support)
   --[no-]svg-foreign-object     Toggle SVG foreign object support (default: $svgForeignObjectSupport, implies SVG Support)
@@ -100,7 +97,6 @@ GetOptions('channel-messaging!' => \$channelMessagingSupport,
            'icon-database!' => \$iconDatabaseSupport,
            'offline-web-applications!' => \$offlineWebApplicationSupport,
            'svg!' => \$svgSupport,
-           'svg-experimental!' => \$svgExperimentalSupport,
            'svg-animation!' => \$svgAnimationSupport,
            'svg-filters!' => \$svgFiltersSupport,
            'svg-foreign-object!' => \$svgForeignObjectSupport,
@@ -122,15 +118,6 @@ if ($showHelp) {
    print STDERR $usage;
    exit 1;
 }
-
-$svgExperimentalSupport = 0 unless $svgSupport;
-
-$svgAnimationSupport = $svgExperimentalSupport;
-$svgFiltersSupport = $svgExperimentalSupport;
-$svgForeignObjectSupport = $svgExperimentalSupport;
-$svgFontsSupport = $svgExperimentalSupport;
-$svgAsImageSupport = $svgExperimentalSupport;
-$svgUseSupport = $svgExperimentalSupport;
 
 checkRequiredSystemConfig();
 setConfiguration();
