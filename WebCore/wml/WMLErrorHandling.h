@@ -26,6 +26,7 @@
 namespace WebCore {
 
     class Document;
+    class String;
 
     enum WMLErrorCode {
         WMLErrorUnknown = 0,
@@ -42,6 +43,7 @@ namespace WebCore {
         WMLErrorNoCardInDocument
     };
 
+    String errorMessageForErrorCode(WMLErrorCode);
     void reportWMLError(Document*, WMLErrorCode);
 }
 

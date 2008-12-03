@@ -1,3 +1,28 @@
+2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Next steps to make LayoutTests work:
+        Never access the main frame from WMLRefreshElement/WMLCardElement, but
+        the current documents frame (WML layout tests will run in an <iframe>)
+
+        Prepare WMLErrorHandling for the case that no tokenizer is available anymore
+        -> report errors through Console::addMessage(), so they get logged in the
+           expected layout test results.
+
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::setActiveCardInDocument):
+        * wml/WMLErrorHandling.cpp:
+        (WebCore::reportWMLError):
+        (WebCore::errorMessageForErrorCode):
+        * wml/WMLErrorHandling.h:
+        * wml/WMLRefreshElement.cpp:
+        (WebCore::WMLRefreshElement::executeTask):
+        * page/Console.cpp: Handle WMLMessageSource.
+        (WebCore::printMessageSourceAndLevelPrefix):
+        * page/Console.h: Add WMLMessageSource.
+        (WebCore::):
+
 2008-12-03  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon Hausmann.

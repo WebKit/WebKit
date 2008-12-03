@@ -28,14 +28,11 @@
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "NodeList.h"
-#include "Page.h"
 #include "RenderStyle.h"
 #include "WMLDocument.h"
 #include "WMLDoElement.h"
-#include "WMLErrorHandling.h"
 #include "WMLIntrinsicEventHandler.h"
 #include "WMLNames.h"
-#include "WMLPageState.h"
 #include "WMLTimerElement.h"
 #include "WMLVariables.h"
 
@@ -263,7 +260,7 @@ WMLCardElement* WMLCardElement::setActiveCardInDocument(Document* doc, const KUR
                 continue;
 
             // Force frame loader to load the URL with fragment identifier
-            if (Frame* frame = pageState->page()->mainFrame()) {
+            if (Frame* frame = doc->frame()) {
                 if (FrameLoader* loader = frame->loader())
                     loader->setForceReloadWmlDeck(true);
             }

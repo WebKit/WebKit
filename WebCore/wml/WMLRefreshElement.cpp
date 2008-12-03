@@ -63,7 +63,7 @@ void WMLRefreshElement::executeTask(Event*)
     storeVariableState(pageState);
 
     // Redisplay curremt card with current variable state
-    if (Frame* frame = pageState->page()->mainFrame()) {
+    if (Frame* frame = document()->frame()) {
         if (FrameLoader* loader = frame->loader())
             loader->reload();
     }

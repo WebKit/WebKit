@@ -24,7 +24,11 @@
 #if ENABLE(WML)
 #include "WMLErrorHandling.h"
 
+#include "Console.h"
+#include "CString.h"
+#include "Frame.h"
 #include "Document.h"
+#include "DOMWindow.h"
 #include "XMLTokenizer.h"
 
 namespace WebCore {
@@ -34,60 +38,65 @@ void reportWMLError(Document* doc, WMLErrorCode error)
     if (!doc || error == WMLErrorUnknown)
         return;
 
-    XMLTokenizer* tokenizer = static_cast<XMLTokenizer*>(doc->tokenizer());
-    if (!tokenizer)
-        return;
+    String errorMessage = errorMessageForErrorCode(error);
+    if (XMLTokenizer* tokenizer = static_cast<XMLTokenizer*>(doc->tokenizer())) {
+        // Some errors are reported as result of an insertedIntoDocument() call.
+        // If this happened, parsing has been stopped, and the document fragment
+        // is wrapped in a XHTML error document. That means insertedIntoDocument()
+        // will be called again - do NOT report the error twice, that would result
+        // in an infinite error reporting loop.
+        if (!tokenizer->wellFormed())
+            return;
 
-    // Some errors are reported as result of an insertedIntoDocument() call.
-    // If this happened, parsing has been stopped, and the document fragment
-    // is wrapped in a XHTML error document. That means insertedIntoDocument()
-    // will be called again - do NOT report the error twice, that would result
-    // in an infinite error reporting loop.
-    if (!tokenizer->wellFormed())
-        return;
+        tokenizer->handleError(XMLTokenizer::fatal, errorMessage.latin1().data(), tokenizer->lineNumber(), tokenizer->columnNumber());
+    } else {
+        Frame* frame = doc->frame();
+        if (!frame)
+            return;
 
-    const char* errorMessage = 0;
+        DOMWindow* domWindow = frame->domWindow();
+        if (!domWindow)
+            return;
+
+        Console* console = domWindow->console();
+        if (!console)
+            return;
+
+        console->addMessage(WMLMessageSource, ErrorMessageLevel, errorMessage, 0, String());
+    }
+}
+
+String errorMessageForErrorCode(WMLErrorCode error)
+{
     switch (error) {
     case WMLErrorConflictingEventBinding:
-        errorMessage = "Conflicting event bindings within an element.";
-        break;
+        return "Conflicting event bindings within an element.";
     case WMLErrorDeckNotAccessible:
-        errorMessage = "Deck not accessible.";
-        break;
+        return "Deck not accessible.";
     case WMLErrorDuplicatedDoElement:
-        errorMessage = "At least two do elements share a name, which is not allowed.";
-        break;
+        return "At least two do elements share a name, which is not allowed.";
     case WMLErrorForbiddenTaskInAnchorElement:
-        errorMessage = "Forbidden task contained in anchor element.";
-        break;
+        return "Forbidden task contained in anchor element.";
     case WMLErrorInvalidColumnsNumberInTable:
-        errorMessage = "A table contains an invalid number of columns.";
-        break;
+        return "A table contains an invalid number of columns.";
     case WMLErrorInvalidVariableName:
-        errorMessage = "A variable name contains invalid characters.";
-        break;
+        return "A variable name contains invalid characters.";
     case WMLErrorInvalidVariableReference:
-        errorMessage = "A variable reference uses invalid syntax.";
-        break;
+        return "A variable reference uses invalid syntax.";
     case WMLErrorInvalidVariableReferenceLocation:
-        errorMessage = "A variable reference is placed in an invalid location.";
-        break;
+        return "A variable reference is placed in an invalid location.";
     case WMLErrorMultipleAccessElements:
-        errorMessage = "Only one access element is allowed in a deck.";
-        break;
+        return "Only one access element is allowed in a deck.";
     case WMLErrorNoCardInDocument:
-        errorMessage = "No card contained in document.";
-        break;
+        return "No card contained in document.";
     case WMLErrorMultipleTimerElements:
-        errorMessage = "Only one timer element is allowed in a card.";
-        break;
-    case WMLErrorUnknown: 
-    default:
-        ASSERT_NOT_REACHED();
-        break;
+        return "Only one timer element is allowed in a card.";
+    case WMLErrorUnknown:
+        return String();
     };
 
-    tokenizer->handleError(XMLTokenizer::fatal, errorMessage, tokenizer->lineNumber(), tokenizer->columnNumber());
+    ASSERT_NOT_REACHED();
+    return String();
 }
 
 }
