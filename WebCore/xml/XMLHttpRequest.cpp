@@ -851,6 +851,9 @@ void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
 
 void XMLHttpRequest::abort()
 {
+    // internalAbort() calls dropProtection(), which may release the last reference.
+    RefPtr<XMLHttpRequest> protect(this);
+
     bool sendFlag = m_loader;
 
     internalAbort();
