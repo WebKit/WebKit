@@ -157,7 +157,6 @@ This file contains the list of files needed to build WebCore.
         css/CSSInitialValue.cpp
         css/CSSMediaRule.cpp
         css/CSSMutableStyleDeclaration.cpp
-        css/CSSNthSelector.cpp
         css/CSSPageRule.cpp
         css/CSSParser.cpp
         css/CSSParserValues.cpp

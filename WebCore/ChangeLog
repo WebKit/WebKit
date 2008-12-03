@@ -1,5 +1,11 @@
 2008-12-03  Antti Koivisto  <antti@apple.com>
 
+        Probable build fix.
+
+        * WebCoreSources.bkl:
+
+2008-12-03  Antti Koivisto  <antti@apple.com>
+
         Forgot to commit these.
 
         * dom/Node.cpp:
