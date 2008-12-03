@@ -509,12 +509,15 @@ sub isQt()
     return $isQt;
 }
 
-sub checkArgv($)
+sub checkArgv
 {
     my $argToCheck = shift;
+    my $removeArgumentFromARGV = shift || 0;
     foreach my $opt (@ARGV) {
         if ($opt =~ /^$argToCheck/i ) {
-            @ARGV = grep(!/^$argToCheck/i, @ARGV);
+            if ($removeArgumentFromARGV) {
+                @ARGV = grep(!/^$argToCheck/i, @ARGV);
+            }
             return 1;
         }
     }

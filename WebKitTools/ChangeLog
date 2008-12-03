@@ -9,6 +9,16 @@
 
 2008-12-03  Eric Seidel  <eric@webkit.org>
 
+        Build fix for --gtk and --chromium, no review.
+
+        Fix run-javascriptcore-tests to pass --gtk, --qt, --chromium, etc.
+        through to build-jsc.
+
+        * Scripts/build-jsc:
+        * Scripts/webkitdirs.pm:
+
+2008-12-03  Eric Seidel  <eric@webkit.org>
+
         Build fix only, no review.
         
         Remove support for build-webkit --svg-experimental.
