@@ -1,3 +1,15 @@
+2008-12-03  Dean McNamee  <deanm@chromium.org>
+
+        Bug 22623: Uninitialized memory access in cache parsing code
+        <https://bugs.webkit.org/show_bug.cgi?id=22623>
+
+        Reviewed by David Kilzer.
+
+        Initialize m_haveParsedCacheControlHeader and m_haveParsedPragmaHeader.
+
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+
 2008-12-03  Antti Koivisto  <antti@apple.com>
 
         Probable build fix.

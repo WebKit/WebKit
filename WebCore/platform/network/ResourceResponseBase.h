@@ -91,6 +91,8 @@ class ResourceResponseBase {
         , m_expirationDate(0)
         , m_lastModifiedDate(0)
         , m_isNull(true)
+        , m_haveParsedCacheControlHeader(false)
+        , m_haveParsedPragmaHeader(false)
     {
     }
 
@@ -104,6 +106,8 @@ class ResourceResponseBase {
         , m_expirationDate(0)
         , m_lastModifiedDate(0)
         , m_isNull(false)
+        , m_haveParsedCacheControlHeader(false)
+        , m_haveParsedPragmaHeader(false)
     {
     }
 
