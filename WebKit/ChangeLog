@@ -1,3 +1,11 @@
+2008-12-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Update strings not to be localized.
+
+        Reviewed by Adam Roben.
+
+        * StringsNotToBeLocalized.txt:
+
 2008-11-26  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
