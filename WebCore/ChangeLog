@@ -1,3 +1,13 @@
+2008-12-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't leak selectors in case selector list parsing failed.
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::~CSSParser):
+
 2008-12-03  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -170,6 +170,7 @@ CSSParser::~CSSParser()
     deleteAllValues(m_floatingSelectors);
     deleteAllValues(m_floatingValueLists);
     deleteAllValues(m_floatingFunctions);
+    deleteAllValues(m_reusableSelectorVector);
 }
 
 void CSSParserString::lower()

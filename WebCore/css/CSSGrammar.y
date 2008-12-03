@@ -796,6 +796,7 @@ selector_list:
         if ($1) {
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = p->reusableSelectorVector();
+            deleteAllValues(*$$);
             $$->shrink(0);
             $$->append(p->sinkFloatingSelector($1));
         }
