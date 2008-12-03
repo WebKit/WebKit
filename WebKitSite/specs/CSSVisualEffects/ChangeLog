@@ -1,3 +1,11 @@
+2008-12-03  Dean Jackson  <dino@apple.com>
+
+        CSSTransforms.html +
+        CSSTransforms3D.html:
+        
+        * Use SYNTAX_ERR for exceptions that are
+          parsing errors in CSSMatrix
+
 2008-11-21  Dean Jackson  <dino@apple.com>
 
         CSSAnimation.html:
