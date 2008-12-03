@@ -2048,7 +2048,7 @@ void tst_QWebFrame::setHtmlWithResource()
     // in few seconds, the image should be completey loaded
     QSignalSpy spy(&page, SIGNAL(loadFinished(bool)));
     frame->setHtml(html);
-    QTest::qWait(5);
+    QTest::qWait(200);
     QCOMPARE(spy.count(), 1);
 
     QCOMPARE(frame->evaluateJavaScript("document.images.length").toInt(), 1);
