@@ -1,3 +1,0 @@
-Test sets display:none on the element within the webkitAnimationEnd event handler. Should not crash.
-
-

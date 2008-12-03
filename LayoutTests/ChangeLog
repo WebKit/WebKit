@@ -1,3 +1,20 @@
+2008-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Clean up and unify transition and animation test cases that destroy
+        the renderer in the 'ended' event callback, either through setting display:none,
+        or removing the element.
+        
+        * animations/animation-end-event-destroy-renderer-expected.txt: Added.
+        * animations/animation-end-event-destroy-renderer.html: Added.
+        * animations/transform-animation-event-destroy-element-expected.txt: Removed.
+        * animations/transform-animation-event-destroy-element.html: Removed.
+        * transitions/transform-transition-event-destroy-element-expected.txt: Removed.
+        * transitions/transform-transition-event-destroy-element.html: Removed.
+        * transitions/transition-end-event-destroy-renderer-expected.txt: Added.
+        * transitions/transition-end-event-destroy-renderer.html: Added.
+
 2008-12-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
