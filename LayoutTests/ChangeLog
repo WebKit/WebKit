@@ -1,3 +1,13 @@
+2008-12-03  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add test for https://bugs.webkit.org/show_bug.cgi?id=22600,
+        verifying that timeout callback is executed in the right scope.
+
+        * fast/dom/Window/timeout-callback-scope-expected.txt: Added.
+        * fast/dom/Window/timeout-callback-scope.html: Added.
+
 2008-12-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.
