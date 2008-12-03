@@ -165,7 +165,7 @@ void Console::addMessage(MessageSource source, MessageLevel level, const String&
     if (!page)
         return;
 
-    if (source == JSMessageSource)
+    if (source == JSMessageSource || source == WMLMessageSource)
         page->chrome()->client()->addMessageToConsole(message, lineNumber, sourceURL);
 
     page->inspectorController()->addMessageToConsole(source, level, message, lineNumber, sourceURL);

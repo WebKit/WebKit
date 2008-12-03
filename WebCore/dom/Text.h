@@ -60,6 +60,10 @@ public:
 
     static PassRefPtr<Text> createWithLengthLimit(Document*, const String&, unsigned& charsLeft, unsigned maxChars = cTextNodeLengthLimit);
 
+#if ENABLE(WML)
+    virtual void insertedIntoDocument();
+#endif
+
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;
 #endif

@@ -999,7 +999,11 @@ public:
     
     void setUsingGeolocation(bool f) { m_usingGeolocation = f; }
     bool usingGeolocation() const { return m_usingGeolocation; };
-    
+
+#if ENABLE(WML)
+    void resetWMLPageState();
+#endif
+
 protected:
     void clearXMLVersion() { m_xmlVersion = String(); }
 

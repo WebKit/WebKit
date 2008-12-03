@@ -238,6 +238,11 @@ module core {
             raises(DOMException);
         NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
+
+#if ENABLE_WML
+        // Only used from within WML layout tests, WML doesn't have JS support at all.
+        void resetWMLPageState();
+#endif
     };
 
 }

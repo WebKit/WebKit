@@ -89,6 +89,7 @@ for my $tfile (@templates) {
     for my $file (@files) {
         next if $file =~ /js-test-.*\.js$/;
         next if $file =~ /SVGTestCase\.js/;
+        next if $file =~ /WMLTestCase\.js/;
 
         next if $file =~ m:resources/NSResolver-exceptions\.js$:;
         next if $file =~ m:resources/attr-case-sensitivity\.js$:;

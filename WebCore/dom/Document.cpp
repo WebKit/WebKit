@@ -145,6 +145,7 @@
 #endif
 
 #if ENABLE(WML)
+#include "WMLDocument.h"
 #include "WMLElement.h"
 #include "WMLElementFactory.h"
 #include "WMLNames.h"
@@ -4174,6 +4175,14 @@ void Document::stopDatabases()
         m_databaseThread->requestTermination();
 }
 
+#endif
+
+#if ENABLE(WML)
+void Document::resetWMLPageState()
+{
+    if (WMLPageState* wmlPageState = wmlPageStateForDocument(this))
+        wmlPageState->reset();
+}
 #endif
 
 void Document::attachRange(Range* range)

@@ -1,3 +1,25 @@
+2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Further preparations for WML layout tests.
+        - Enable variable substitution in Text.cpp - if the parent is a WMLElement derived class.
+        - Dump WMLMessageSource messages to the console, just like it's done for JSMessageSource
+        - Add helper method in Document.idl, to reset the WML page state to a well-known default state.
+          (will be used in the upcoming LayoutTests/wml testcases)
+
+         * dom/Document.cpp:
+        (WebCore::Document::resetWMLPageState):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Text.cpp:
+        (WebCore::Text::insertedIntoDocument):
+        * dom/Text.h:
+        * page/Console.cpp:
+        (WebCore::Console::addMessage):
+        * wml/WMLPageState.h: Readd heper function
+        (WebCore::WMLPageState::hasVariables):
+
 2008-12-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Sam Weinig.
