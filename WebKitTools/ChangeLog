@@ -1,3 +1,16 @@
+2008-12-03  Adam Roben  <aroben@apple.com>
+
+        Add a Debug_Internal configuration to WinLauncher
+
+        This matches our other projects.
+
+        Reviewed by Sam Weinig.
+
+        * WinLauncher/WinLauncher.vcproj: Added a Debug_Internal
+        configuration, which is identical to Debug except that it also
+        references debug_internal.vsprops. Also removed some settings that we
+        should be picking up from the .vsprops files.
+
 2008-12-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Kilzer.
