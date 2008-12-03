@@ -1,3 +1,5 @@
 Test for transition shorthand
 
+This test works only in DumpRenderTree. It uses an API exposed only there to jump to a particular time in a running transition. Tests bug 21247
+
 PASS

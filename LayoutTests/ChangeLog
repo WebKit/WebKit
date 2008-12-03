@@ -1,3 +1,16 @@
+2008-12-03  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Clean up some tests for private DRT API.
+        https://bugs.webkit.org/show_bug.cgi?id=22498
+
+        * platform/win/Skipped:
+        * transitions/transition-drt-api-delay-expected.txt:
+        * transitions/transition-drt-api-delay.html:
+        * transitions/transition-shorthand-delay-expected.txt:
+        * transitions/transition-shorthand-delay.html:
+
 2008-12-03  Dirk Schulze  <krit@webkit.org>
 
         Updated/Correcte the SVG pixel tests.
