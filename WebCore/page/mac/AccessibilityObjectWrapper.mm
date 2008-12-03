@@ -612,6 +612,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* tableRowAttrs = nil;
     static NSArray* tableColAttrs = nil;
     static NSArray* tableCellAttrs = nil;
+    static NSArray* groupAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -777,6 +778,12 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         tableCellAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];        
     }
+    if (groupAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        groupAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
     
     if (m_object->isPasswordField())
         return attributes;
@@ -807,6 +814,9 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
     if (m_object->isControl())
         return controlAttrs;
+    
+    if (m_object->isGroup())
+        return groupAttrs;
     
     if (m_object->isMenu())
         return menuAttrs;

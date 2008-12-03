@@ -1,3 +1,24 @@
+2008-12-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 22606: Can <th> serves as the AXTitleUIElement for <td>?
+
+        Test: accessibility/th-as-title-ui.html
+
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isGroup):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isGroup):
+        * page/AccessibilityRenderObject.h:
+        * page/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::rowIndexRange):
+        (WebCore::AccessibilityTableCell::columnIndexRange):
+        (WebCore::AccessibilityTableCell::titleUIElement):
+        * page/AccessibilityTableCell.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2008-12-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

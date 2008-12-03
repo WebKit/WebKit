@@ -13,6 +13,25 @@
 
 2008-12-02  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        Added and modified tests for
+        Bug 22606: Can <th> serves as the AXTitleUIElement for <td>?
+
+        * accessibility/image-map1-expected.txt:
+        * accessibility/image-map2-expected.txt:
+        * accessibility/internal-link-anchors2-expected.txt:
+        * accessibility/lists-expected.txt:
+        * accessibility/plugin-expected.txt:
+        * accessibility/table-detection-expected.txt:
+        * accessibility/table-one-cell-expected.txt:
+        * accessibility/table-with-aria-role-expected.txt:
+        * accessibility/table-with-rules-expected.txt:
+        * accessibility/th-as-title-ui-expected.txt: Added.
+        * accessibility/th-as-title-ui.html: Added.
+
+2008-12-02  Chris Fleizach  <cfleizach@apple.com>
+
         Update tests for Bug 22596: Some elements don't report AXBlockQuoteLevel
 
         Reviewed by John Sullivan.
