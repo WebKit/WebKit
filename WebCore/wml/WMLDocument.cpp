@@ -36,14 +36,6 @@ WMLDocument::WMLDocument(Frame* frame)
     : Document(frame, false) 
 {
     clearXMLVersion();
-
-    Page* page = this->page();
-    ASSERT(page);
-
-    if (page && !page->wmlPageState()) {
-        RefPtr<WMLPageState> pageState = new WMLPageState(page);
-        page->setWMLPageState(pageState);
-    }
 }
 
 WMLDocument::~WMLDocument()
@@ -52,15 +44,16 @@ WMLDocument::~WMLDocument()
 
 void WMLDocument::finishedParsing()
 {
-    WMLPageState* wmlPageState = wmlPageStateForDocument(document());
-    if (!wmlPageState || !wmlPageState->isDeckAccessible()) {
-        reportWMLError(document(), WMLErrorDeckNotAccessible);
-        Document::finishedParsing();
-        return;
+    if (Tokenizer* tokenizer = this->tokenizer()) {
+        if (!tokenizer->wellFormed()) {
+            Document::finishedParsing();
+            return;
+        }
     }
 
-    Tokenizer* tokenizer = this->tokenizer();
-    if (tokenizer && !tokenizer->wellFormed()) {
+    WMLPageState* wmlPageState = wmlPageStateForDocument(this);
+    if (!wmlPageState->isDeckAccessible()) {
+        reportWMLError(this, WMLErrorDeckNotAccessible);
         Document::finishedParsing();
         return;
     }
@@ -69,12 +62,12 @@ void WMLDocument::finishedParsing()
     wmlPageState->setNeedCheckDeckAccess(false);
 
     // FIXME: Notify the existance of templates to all cards of the current deck
-    // WMLTemplateElement::registerTemplatesInDocument(document()));
+    // WMLTemplateElement::registerTemplatesInDocument(this));
 
     // Set destination card
-    WMLCardElement* card = WMLCardElement::setActiveCardInDocument(document(), KURL());
+    WMLCardElement* card = WMLCardElement::setActiveCardInDocument(this, KURL());
     if (!card) {
-        reportWMLError(document(), WMLErrorNoCardInDocument);
+        reportWMLError(this, WMLErrorNoCardInDocument);
         Document::finishedParsing();
         return;
     }
@@ -90,19 +83,11 @@ void WMLDocument::finishedParsing()
 WMLPageState* wmlPageStateForDocument(Document* doc)
 {
     ASSERT(doc);
-    if (!doc)
-        return 0;
 
     Page* page = doc->page();
     ASSERT(page);
 
-    if (!page)
-        return 0;
-
-    WMLPageState* wmlPageState = page->wmlPageState();
-    ASSERT(wmlPageState);
-
-    return wmlPageState;
+    return page->wmlPageState();
 }
 
 }

@@ -1,3 +1,21 @@
+2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Preparations to get WML layout tests going.
+        Make WMLPageState an OwnPtr to Page, and let Page create it on demand.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::wmlPageState):
+        * page/Page.h:
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::WMLDocument):
+        (WebCore::WMLDocument::finishedParsing):
+        (WebCore::wmlPageStateForDocument):
+        * wml/WMLPageState.h: Don't inherit from RefCounted anymore.
+        (WebCore::WMLPageState::hasVariables): Remove helper function.
+
 2008-12-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mark Rowe.

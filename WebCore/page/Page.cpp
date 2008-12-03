@@ -132,9 +132,6 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_pendingBeforeUnloadEventCount(0)
     , m_customHTMLTokenizerTimeDelay(-1)
     , m_customHTMLTokenizerChunkSize(-1)
-#if ENABLE(WML)
-    , m_wmlPageState(0)
-#endif
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -586,13 +583,10 @@ void Page::changePendingBeforeUnloadEventCount(int delta)
 }
 
 #if ENABLE(WML)
-void Page::setWMLPageState(RefPtr<WMLPageState> pageState) 
-{ 
-    m_wmlPageState = pageState; 
-}
-
-WMLPageState* Page::wmlPageState() const 
-{ 
+WMLPageState* Page::wmlPageState()
+{
+    if (!m_wmlPageState)    
+        m_wmlPageState.set(new WMLPageState(this));
     return m_wmlPageState.get(); 
 }
 #endif
