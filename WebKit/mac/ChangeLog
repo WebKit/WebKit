@@ -1,3 +1,13 @@
+2008-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6412234>
+        Don't crash if we can't launch the plug-in host.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+
 2008-12-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

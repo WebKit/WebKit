@@ -181,6 +181,8 @@ void NetscapePluginHostManager::pluginHostDied(NetscapePluginHostProxy* pluginHo
 PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(WebNetscapePluginPackage *pluginPackage, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL)
 {
     NetscapePluginHostProxy* hostProxy = hostForPackage(pluginPackage);
+    if (!hostProxy)
+        return 0;
 
     RetainPtr<NSMutableDictionary> properties(AdoptNS, [[NSMutableDictionary alloc] init]);
     
