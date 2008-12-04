@@ -21,6 +21,8 @@
 		1A4DF5230EC8C74D006BD4B4 /* WebNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4DF5210EC8C74D006BD4B4 /* WebNetscapePluginView.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		1A4DF5E40EC8D104006BD4B4 /* WebBaseNetscapePluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4DF5E20EC8D104006BD4B4 /* WebBaseNetscapePluginView.h */; };
 		1A4DF5E50EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */; };
+		1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */; };
+		1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */; };
 		1A7F9C4C0DD3DDEA0028F8A5 /* nptextinput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AAF58940EDCCF15008D883D /* WebKitPluginAgent.defs in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAF58950EDCCF15008D883D /* WebKitPluginAgentReply.defs in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588B0EDCCEA3008D883D /* WebKitPluginAgentReply.defs */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -326,6 +328,8 @@
 		1A4DF5210EC8C74D006BD4B4 /* WebNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePluginView.mm; sourceTree = "<group>"; };
 		1A4DF5E20EC8D104006BD4B4 /* WebBaseNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginView.h; sourceTree = "<group>"; };
 		1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebBaseNetscapePluginView.mm; sourceTree = "<group>"; };
+		1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginRequest.h; sourceTree = "<group>"; };
+		1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginRequest.m; sourceTree = "<group>"; };
 		1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nptextinput.h; sourceTree = "<group>"; };
 		1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginAgent.defs; sourceTree = "<group>"; };
 		1AAF588B0EDCCEA3008D883D /* WebKitPluginAgentReply.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginAgentReply.defs; sourceTree = "<group>"; };
@@ -948,6 +952,8 @@
 				1A4DF5210EC8C74D006BD4B4 /* WebNetscapePluginView.mm */,
 				226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */,
 				226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */,
+				1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */,
+				1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */,
 			);
 			name = "Netscape Plug-ins";
 			sourceTree = "<group>";
@@ -1368,6 +1374,7 @@
 				1AAF5CEE0EDDE1FE008D883D /* NetscapePluginInstanceProxy.h in Headers */,
 				1AAF5D090EDDE71D008D883D /* WebKitPluginHostTypes.h in Headers */,
 				1AAF5FBF0EDE3A92008D883D /* WebHostedNetscapePluginView.h in Headers */,
+				1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1672,6 +1679,7 @@
 				1AAF5CED0EDDE1FE008D883D /* NetscapePluginHostProxy.mm in Sources */,
 				1AAF5CEF0EDDE1FE008D883D /* NetscapePluginInstanceProxy.mm in Sources */,
 				1AAF5FC00EDE3A92008D883D /* WebHostedNetscapePluginView.mm in Sources */,
+				1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

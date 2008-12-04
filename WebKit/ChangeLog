@@ -1,3 +1,11 @@
+2008-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Move WebPluginRequest to its own file.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-12-03  Steve Falkenburg  <sfalken@apple.com>
 
         Update strings not to be localized.
