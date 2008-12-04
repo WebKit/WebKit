@@ -1,3 +1,12 @@
+2008-12-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Added a test for another input length miscalculation.
+
+        * fast/regex/alternative-length-miscalculation-expected.txt:
+        * fast/regex/resources/alternative-length-miscalculation.js:
+
 2008-12-03  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Darin Adler.

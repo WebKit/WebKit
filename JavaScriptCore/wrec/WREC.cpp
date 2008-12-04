@@ -51,6 +51,7 @@ CompiledRegExp Generator::compileRegExp(const UString& pattern, unsigned* numSub
     Parser parser(pattern, ignoreCase, multiline);
     Generator& generator = parser.generator();
     MacroAssembler::JumpList failures;
+    MacroAssembler::Jump endOfInput;
 
     generator.generateEnter();
     generator.generateSaveIndex();
@@ -60,14 +61,15 @@ CompiledRegExp Generator::compileRegExp(const UString& pattern, unsigned* numSub
     generator.generateReturnSuccess();
 
     failures.link();
-    generator.generateJumpIfEndOfInput(failures);
-    generator.generateIncrementIndex();
+    generator.generateIncrementIndex(&endOfInput);
     parser.parsePattern(failures);
     generator.generateReturnSuccess();
 
     failures.link();
     generator.generateIncrementIndex();
     generator.generateJumpIfNotEndOfInput(beginPattern);
+    
+    endOfInput.link();
     generator.generateReturnFailure();
 
     if (parser.error()) {

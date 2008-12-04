@@ -642,6 +642,12 @@ public:
         modRm_rmsib(dst, base, index, scale, offset);
     }
 
+    void movl_mr(RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        m_buffer.putByte(OP_MOV_GvEv);
+        modRm_rmsib(dst, base, index, scale);
+    }
+
     void movzbl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer.putByte(OP_2BYTE_ESCAPE);

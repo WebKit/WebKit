@@ -65,9 +65,8 @@ namespace JSC { namespace WREC {
         
         void generateEnter();
         void generateSaveIndex();
-        void generateIncrementIndex();
+        void generateIncrementIndex(Jump* failure = 0);
         void generateLoadCharacter(JumpList& failures);
-        void generateJumpIfEndOfInput(JumpList& failures);
         void generateJumpIfNotEndOfInput(Label);
         void generateReturnSuccess();
         void generateReturnFailure();
@@ -95,6 +94,8 @@ namespace JSC { namespace WREC {
         void terminateDisjunction(JumpList& successes);
 
     private:
+        bool generatePatternCharacterPair(JumpList& failures, int ch1, int ch2);
+
         Parser& m_parser;
     };
 

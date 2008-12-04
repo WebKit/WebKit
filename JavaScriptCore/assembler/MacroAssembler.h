@@ -333,6 +333,14 @@ public:
             m_assembler.movl_mr(address.base, dest);
     }
 
+    void load32(BaseIndex address, RegisterID dest)
+    {
+        if (address.offset)
+            m_assembler.movl_mr(address.offset, address.base, address.index, address.scale, dest);
+        else
+            m_assembler.movl_mr(address.base, address.index, address.scale, dest);
+    }
+
     void load16(BaseIndex address, RegisterID dest)
     {
         if (address.offset)
@@ -514,6 +522,12 @@ public:
         return Jump(m_assembler, m_assembler.jg());
     }
     
+    Jump jge32(RegisterID left, RegisterID right)
+    {
+        m_assembler.cmpl_rr(right, left);
+        return Jump(m_assembler, m_assembler.jge());
+    }
+
     Jump jge32(RegisterID left, Imm32 right)
     {
         compareImm32ForBranch(left, right.m_value);

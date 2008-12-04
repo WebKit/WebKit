@@ -1,3 +1,45 @@
+2008-12-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Optimized sequences of characters in regular expressions by comparing
+        two characters at a time.
+        
+        1-2% speedup on SunSpider, 19-25% speedup on regexp-dna.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::load32):
+        (JSC::MacroAssembler::jge32): Filled out a few more macro methods.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movl_mr): Added a verion of movl_mr that operates
+        without an offset, to allow the macro assembler to optmize for that case.
+        
+        * wrec/WREC.cpp:
+        (JSC::WREC::Generator::compileRegExp): Test the saved value of index
+        instead of the index register when checking for "end of input." The
+        index register doesn't increment by 1 in an orderly fashion, so testing
+        it for == "end of input" is not valid.
+        
+        Also, jump all the way to "return failure" upon reaching "end of input,"
+        instead of executing the next alternative. This is more logical, and
+        it's a slight optimization in the case of an expression with many alternatives.
+
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateIncrementIndex): Added support for
+        jumping to a failure label in the case where the index has reached "end
+        of input."
+
+        (JSC::WREC::Generator::generatePatternCharacterSequence):
+        (JSC::WREC::Generator::generatePatternCharacterPair): This is the
+        optmization. It's basically like generatePatternCharacter, but it runs two
+        characters at a time.
+        
+        (JSC::WREC::Generator::generatePatternCharacter): Changed to use isASCII,
+        since it's clearer than comparing to a magic hex value.
+        
+        * wrec/WRECGenerator.h:
+
 2008-12-03  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Camron Zwarich.
