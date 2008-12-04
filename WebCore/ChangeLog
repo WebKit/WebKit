@@ -1,3 +1,26 @@
+2008-12-03  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make ScriptExecutionContextTaskWorkerTask::performTask a pure virtual function.
+        https://bugs.webkit.org/show_bug.cgi?id=22642
+
+        * dom/Document.cpp:
+        (WebCore::ScriptExecutionContextTaskTimer::ScriptExecutionContextTaskTimer):
+        (WebCore::ScriptExecutionContextTaskTimer::fired):
+        (WebCore::PerformTaskContext::PerformTaskContext):
+        (WebCore::performTask):
+        (WebCore::Document::postTask):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        * dom/ScriptExecutionContext.h:
+        * dom/WorkerContext.cpp:
+        (WebCore::ScriptExecutionContextTaskWorkerTask::create):
+        (WebCore::ScriptExecutionContextTaskWorkerTask::ScriptExecutionContextTaskWorkerTask):
+        (WebCore::ScriptExecutionContextTaskWorkerTask::performTask):
+        (WebCore::WorkerContext::postTask):
+        * dom/WorkerContext.h:
+
 2008-12-03  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

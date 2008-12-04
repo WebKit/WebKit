@@ -31,9 +31,7 @@
 #include "Document.h"
 #include "MessagePort.h"
 #include "SecurityOrigin.h"
-#include "Timer.h"
 #include "WorkerContext.h"
-#include "WorkerTask.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -175,83 +173,6 @@ void ScriptExecutionContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securi
 
 ScriptExecutionContext::Task::~Task()
 {
-}
-
-class ScriptExecutionContextTaskTimer : public TimerBase {
-public:
-    ScriptExecutionContextTaskTimer(PassRefPtr<Document> context, PassRefPtr<ScriptExecutionContext::Task> task)
-        : m_context(context)
-        , m_task(task)
-    {
-    }
-
-private:
-    virtual void fired()
-    {
-        m_task->performTask(m_context.get());
-        delete this;
-    }
-
-    RefPtr<Document> m_context;
-    RefPtr<ScriptExecutionContext::Task> m_task;
-};
-
-#if ENABLE(WORKERS)
-class ScriptExecutionContextTaskWorkerTask : public WorkerTask {
-public:
-    static PassRefPtr<ScriptExecutionContextTaskWorkerTask> create(PassRefPtr<ScriptExecutionContext::Task> task)
-    {
-        return adoptRef(new ScriptExecutionContextTaskWorkerTask(task));
-    }
-
-private:
-    ScriptExecutionContextTaskWorkerTask(PassRefPtr<ScriptExecutionContext::Task> task)
-        : m_task(task)
-    {
-    }
-
-    virtual void performTask(WorkerContext* context)
-    {
-        m_task->performTask(context);
-    }
-
-    RefPtr<ScriptExecutionContext::Task> m_task;
-};
-#endif
-
-struct PerformTaskContext {
-    PerformTaskContext(ScriptExecutionContext* scriptExecutionContext, PassRefPtr<ScriptExecutionContext::Task> task)
-        : scriptExecutionContext(scriptExecutionContext)
-        , task(task)
-    {
-    }
-
-    ScriptExecutionContext* scriptExecutionContext; // The context should exist until task execution.
-    RefPtr<ScriptExecutionContext::Task> task;
-};
-
-static void performTask(void* ctx)
-{
-    PerformTaskContext* ptctx = reinterpret_cast<PerformTaskContext*>(ctx);
-    ptctx->task->performTask(ptctx->scriptExecutionContext);
-    delete ptctx;
-}
-
-void ScriptExecutionContext::postTask(PassRefPtr<Task> task)
-{
-    if (isDocument()) {
-        if (isMainThread()) {
-            ScriptExecutionContextTaskTimer* timer = new ScriptExecutionContextTaskTimer(static_cast<Document*>(this), task);
-            timer->startOneShot(0);
-        } else {
-            callOnMainThread(performTask, new PerformTaskContext(this, task));
-        }
-    } else {
-        ASSERT(isWorkerContext());
-#if ENABLE(WORKERS)
-        static_cast<WorkerContext*>(this)->thread()->messageQueue().append(ScriptExecutionContextTaskWorkerTask::create(task));
-#endif
-    }
 }
 
 } // namespace WebCore

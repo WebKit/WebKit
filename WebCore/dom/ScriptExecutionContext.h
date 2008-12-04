@@ -82,7 +82,7 @@ namespace WebCore {
             virtual void performTask(ScriptExecutionContext*) = 0;
         };
 
-        void postTask(PassRefPtr<Task>); // Executes the task on context's thread asynchronously.
+        virtual void postTask(PassRefPtr<Task>) = 0; // Executes the task on context's thread asynchronously.
 
     protected:
         // Explicitly override the security origin for this script context.

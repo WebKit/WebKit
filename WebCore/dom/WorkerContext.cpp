@@ -37,6 +37,7 @@
 #include "SecurityOrigin.h"
 #include "WorkerLocation.h"
 #include "WorkerMessagingProxy.h"
+#include "WorkerTask.h"
 #include "WorkerThread.h"
 
 namespace WebCore {
@@ -148,6 +149,32 @@ bool WorkerContext::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
     }
     
     return !event->defaultPrevented();
+}
+
+class ScriptExecutionContextTaskWorkerTask : public WorkerTask {
+public:
+    static PassRefPtr<ScriptExecutionContextTaskWorkerTask> create(PassRefPtr<ScriptExecutionContext::Task> task)
+    {
+        return adoptRef(new ScriptExecutionContextTaskWorkerTask(task));
+    }
+
+private:
+    ScriptExecutionContextTaskWorkerTask(PassRefPtr<ScriptExecutionContext::Task> task)
+        : m_task(task)
+    {
+    }
+
+    virtual void performTask(WorkerContext* context)
+    {
+        m_task->performTask(context);
+    }
+
+    RefPtr<ScriptExecutionContext::Task> m_task;
+};
+
+void WorkerContext::postTask(PassRefPtr<Task> task)
+{
+    thread()->messageQueue().append(ScriptExecutionContextTaskWorkerTask::create(task));
 }
 
 } // namespace WebCore
