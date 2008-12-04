@@ -42,6 +42,12 @@ namespace WebCore {
 
         virtual void contextDestroyed();
 
+        // canSuspend() is used by the caller if there is a choice between suspending and stopping.
+        // For example, a page won't be suspended and placed in the back/forward cache if it has
+        // the objects that can not be suspended.
+        // However, 'suspend' can be called even if canSuspend() would return 'false'. That
+        // happens in step-by-step JS debugging for example - in this case it would be incorrect
+        // to stop the object. Exact semantics of suspend is up to the object then.
         virtual bool canSuspend() const;
         virtual void suspend();
         virtual void resume();

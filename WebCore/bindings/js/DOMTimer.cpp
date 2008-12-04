@@ -27,17 +27,21 @@
 #include "config.h"
 #include "DOMTimer.h"
 
-#include "JSDOMWindowBase.h"
+#include "Document.h"
+#include "JSDOMWindow.h"
 #include "ScheduledAction.h"
+#include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>
 
 namespace WebCore {
 
 int DOMTimer::m_timerNestingLevel = 0;
 
-DOMTimer::DOMTimer(JSDOMWindowBase* object, ScheduledAction* action)
-    : m_object(object)
+DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action)
+    : ActiveDOMObject(context, this)
     , m_action(action)
+    , m_nextFireInterval(0)
+    , m_repeatInterval(0)
 {
     static int lastUsedTimeoutId = 0;
     ++lastUsedTimeoutId;
@@ -49,16 +53,6 @@ DOMTimer::DOMTimer(JSDOMWindowBase* object, ScheduledAction* action)
     m_nestingLevel = m_timerNestingLevel + 1;
 }
 
-DOMTimer::DOMTimer(int timeoutId, int nestingLevel, JSDOMWindowBase* object, ScheduledAction* action)
-    : m_timeoutId(timeoutId)
-    , m_nestingLevel(nestingLevel)
-    , m_object(object)
-    , m_action(action)
-{
-    ASSERT(timeoutId > 0);
-    ASSERT(nestingLevel > 0);
-}
-
 DOMTimer::~DOMTimer()
 {
     JSC::JSLock lock(false);
@@ -67,9 +61,53 @@ DOMTimer::~DOMTimer()
 
 void DOMTimer::fired()
 {
-    m_timerNestingLevel = m_nestingLevel;
-    m_object->timerFired(this);
-    m_timerNestingLevel = 0;
+    ScriptExecutionContext* context = scriptExecutionContext();
+    // FIXME: make it work with Workers SEC too.
+    if (context->isDocument()) {
+        Document* document = static_cast<Document*>(context);
+        if (JSDOMWindow* window = toJSDOMWindow(document->frame())) {
+            m_timerNestingLevel = m_nestingLevel;
+            window->timerFired(this);
+            m_timerNestingLevel = 0;
+        }
+    }
+}
+
+bool DOMTimer::hasPendingActivity() const
+{
+    return isActive();
+}
+
+void DOMTimer::contextDestroyed()
+{
+    ActiveDOMObject::contextDestroyed();
+    delete this;
+}
+
+void DOMTimer::stop()
+{
+    TimerBase::stop();
+}
+
+void DOMTimer::suspend() 
+{ 
+    ASSERT(m_nextFireInterval == 0 && m_repeatInterval == 0); 
+    m_nextFireInterval = nextFireInterval();
+    m_repeatInterval = repeatInterval();
+    TimerBase::stop();
+} 
+ 
+void DOMTimer::resume() 
+{ 
+    start(m_nextFireInterval, m_repeatInterval);
+    m_nextFireInterval = 0;
+    m_repeatInterval = 0;
+} 
+ 
+ 
+bool DOMTimer::canSuspend() const 
+{ 
+    return true;
 }
 
 } // namespace WebCore

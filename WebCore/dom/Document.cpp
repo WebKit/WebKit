@@ -40,6 +40,7 @@
 #include "Console.h"
 #include "CookieJar.h"
 #include "DOMImplementation.h"
+#include "DOMTimer.h"
 #include "DOMWindow.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
@@ -4237,6 +4238,23 @@ void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
 
     m_isDNSPrefetchEnabled = false;
     m_haveExplicitlyDisabledDNSPrefetch = true;
+}
+
+void Document::addTimeout(int timeoutId, DOMTimer* timer)
+{
+    ASSERT(!m_timeouts.get(timeoutId));
+    m_timeouts.set(timeoutId, timer);
+}
+
+void Document::removeTimeout(int timeoutId)
+{
+    DOMTimer* timer = m_timeouts.take(timeoutId);
+    delete timer;
+}
+
+DOMTimer* Document::findTimeout(int timeoutId)
+{
+    return m_timeouts.get(timeoutId);
 }
 
 void Document::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)

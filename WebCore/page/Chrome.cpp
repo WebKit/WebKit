@@ -466,10 +466,8 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 
 #if !PLATFORM(MAC)
             for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-                OwnPtr<PausedTimeouts> timeouts;
-                frame->script()->pauseTimeouts(timeouts);
-                if (timeouts)
-                    m_pausedTimeouts.append(make_pair(RefPtr<Frame>(frame), timeouts.release()));
+                if (Document* document = frame->document())
+                    document->suspendActiveDOMObjects();
             }
 #endif
         }
@@ -483,17 +481,17 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 
 PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
 {
-    for (size_t i = 0; i < m_deferredFrames.size(); ++i)
+    for (size_t i = 0; i < m_deferredFrames.size(); ++i) {
         if (Page* page = m_deferredFrames[i]->page())
             page->setDefersLoading(false);
 
 #if !PLATFORM(MAC)
-    for (size_t i = 0; i < m_pausedTimeouts.size(); i++) {
-        Frame* frame = m_pausedTimeouts[i].first.get();
-        OwnPtr<PausedTimeouts> timeouts(m_pausedTimeouts[i].second);
-        frame->script()->resumeTimeouts(timeouts);
-    }
+        for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+            if (Document* document = frame->document())
+                document->resumeActiveDOMObjects();
+        }
 #endif
+    }
 }
 
 

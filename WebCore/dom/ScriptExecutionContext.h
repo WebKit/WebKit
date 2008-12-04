@@ -56,6 +56,8 @@ namespace WebCore {
 
         // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.
         bool canSuspendActiveDOMObjects();
+        // Active objects can be asked to suspend even if canSuspendActiveDOMObjects() returns 'false' -
+        // step-by-step JS debugging is one example.
         void suspendActiveDOMObjects();
         void resumeActiveDOMObjects();
         void stopActiveDOMObjects();

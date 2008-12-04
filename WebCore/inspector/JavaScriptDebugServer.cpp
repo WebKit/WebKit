@@ -39,7 +39,6 @@
 #include "JavaScriptDebugListener.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PausedTimeouts.h"
 #include "PluginView.h"
 #include "ScrollView.h"
 #include "Widget.h"
@@ -79,7 +78,6 @@ JavaScriptDebugServer::~JavaScriptDebugServer()
 {
     deleteAllValues(m_pageListenersMap);
     deleteAllValues(m_breakpoints);
-    deleteAllValues(m_pausedTimeouts);
 }
 
 void JavaScriptDebugServer::addListener(JavaScriptDebugListener* listener)
@@ -365,15 +363,11 @@ void JavaScriptDebugServer::setJavaScriptPaused(Frame* frame, bool paused)
 
     frame->script()->setPaused(paused);
 
-    if (JSDOMWindow* window = toJSDOMWindow(frame)) {
-        if (paused) {
-            OwnPtr<PausedTimeouts> timeouts;
-            window->pauseTimeouts(timeouts);
-            m_pausedTimeouts.set(frame, timeouts.release());
-        } else {
-            OwnPtr<PausedTimeouts> timeouts(m_pausedTimeouts.take(frame));
-            window->resumeTimeouts(timeouts);
-        }
+    if (Document* document = frame->document()) {
+        if (paused)
+            document->suspendActiveDOMObjects();
+        else
+            document->resumeActiveDOMObjects();
     }
 
     setJavaScriptPaused(frame->view(), paused);

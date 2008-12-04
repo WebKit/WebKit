@@ -65,6 +65,7 @@ namespace WebCore {
     class Database;
     class DOMImplementation;
     class DOMSelection;
+    class DOMTimer;
     class DOMWindow;
     class DatabaseThread;
     class DocLoader;
@@ -777,6 +778,10 @@ public:
 
     virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL);
 
+    void addTimeout(int timeoutId, DOMTimer*);
+    void removeTimeout(int timeoutId);
+    DOMTimer* findTimeout(int timeoutId);
+    
 protected:
     Document(Frame*, bool isXHTML);
 
@@ -1085,6 +1090,9 @@ private:
 #if USE(LOW_BANDWIDTH_DISPLAY)
     bool m_inLowBandwidthDisplay;
 #endif
+
+    typedef HashMap<int, DOMTimer*> TimeoutsMap;
+    TimeoutsMap m_timeouts;
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const

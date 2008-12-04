@@ -1,3 +1,87 @@
+2008-12-03  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Using ActiveDOMObject as base class for DOMTimer.
+        https://bugs.webkit.org/show_bug.cgi?id=22620
+
+        Using ActiveDOMObject simplifies the code because ActiveDOMObject
+        is wired for stop/pause/resume on loading/unloading/caching the page etc
+        so the timer-specific code that does the same can be removed.
+        In addition, timers can be now paused/resumed 'in place' which
+        makes it unnecessary to 'serialize' them into special PausedTimeouts
+        instance, so pause/resumeTimeouts implementation in JSDOMWindowBase can also be removed.
+        Also, moving TimeoutMap from JSDOMWindowBase to Document matches lifetime
+        of timeouts and makes it possible to not roundtrip them via PausedTimeouts 
+        every time when JSDOMWindow wrapper is destroyed while the page is in the b/f cache.
+
+        Timeouts are now paused with other ActiveDOMObjects:
+        - before creating CachedPage in FrameLoader::commitProvisionalLoad()
+        - in JavaScriptDebugServer::setJavaScriptPaused
+        - during modal UI operations in Chrome::*
+        this is equivalent to previous usage of JSDOMWindowBase::pauseTimeouts()
+
+        Timeouts are stopped to prevent future firing from:
+        - FrameLoader::clear()
+        - FrameLoader::frameDetached()
+        this is equivalent to previous usage of JSDOMWindowBase::clearAllTimeouts()
+
+        This is also one of the steps to having timers in Workers. See the plan of
+        the next steps in the bug above.
+
+        * bindings/js/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::fired):
+        (WebCore::DOMTimer::hasPendingActivity):
+        (WebCore::DOMTimer::contextDestroyed):
+        (WebCore::DOMTimer::stop):
+        (WebCore::DOMTimer::suspend):
+        (WebCore::DOMTimer::resume):
+        (WebCore::DOMTimer::canSuspend): Implemented ActiveDOMObject methods.
+
+        * bindings/js/DOMTimer.h:
+        * bindings/js/JSDOMBinding.cpp: ActiveDOMObject can have no JS wrapper
+        (WebCore::markActiveObjectsForContext): 
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::~JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::clear):
+        (WebCore::JSDOMWindowBase::installTimeout):
+        (WebCore::JSDOMWindowBase::removeTimeout):
+        (WebCore::JSDOMWindowBase::timerFired):
+        (WebCore::JSDOMWindowBase::disconnectFrame):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptController.h:
+
+        * dom/Document.cpp: Document now holds a hash map id->timeout
+        (WebCore::Document::addTimeout):
+        (WebCore::Document::removeTimeout):
+        (WebCore::Document::findTimeout):
+        * dom/Document.h:
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * history/CachedPage.h:
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::~JavaScriptDebugServer):
+        (WebCore::JavaScriptDebugServer::setJavaScriptPaused):
+        * inspector/JavaScriptDebugServer.h:
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad): 
+        removed clearAllTimeouts since all ActiveDOMObjects will be stopped in FrameLoader::clear();
+        I don't see how the old comment can be correct - the code in the same method proceeds to invoke 'onunload'
+        and then calls into client which can be external code and can cause any active object created in onunload
+        to fire. We can stop them all before firing onunload but it does not make a lot of sense.
+        I have a test to go with the next patch which verifies that timers set in onunload do not fire.
+
+        (WebCore::FrameLoader::open):
+        * page/Chrome.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+
 2008-12-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Beth Dakin.

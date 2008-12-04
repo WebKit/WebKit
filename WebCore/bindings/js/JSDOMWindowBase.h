@@ -38,7 +38,6 @@ namespace WebCore {
     class JSEventListener;
     class JSLocation;
     class JSUnprotectedEventListener;
-    class PausedTimeouts;
     class ScheduledAction;
     class SecurityOrigin;
 
@@ -67,10 +66,7 @@ namespace WebCore {
 
         int installTimeout(const JSC::UString& handler, int t, bool singleShot);
         int installTimeout(JSC::ExecState*, JSC::JSValue* function, const JSC::ArgList& args, int t, bool singleShot);
-        void removeTimeout(int timerId, bool delAction = true);
-
-        void pauseTimeouts(OwnPtr<PausedTimeouts>&);
-        void resumeTimeouts(OwnPtr<PausedTimeouts>&);
+        void removeTimeout(int timeoutId);
 
         void timerFired(DOMTimer*);
 
@@ -102,8 +98,6 @@ namespace WebCore {
 
         static JSC::JSGlobalData* commonJSGlobalData();
 
-        void clearAllTimeouts();
-
     private:
         struct JSDOMWindowBaseData : public JSDOMGlobalObjectData {
             JSDOMWindowBaseData(PassRefPtr<DOMWindow>, JSDOMWindowShell*);
@@ -112,9 +106,6 @@ namespace WebCore {
 
             JSC::JSValue** returnValueSlot;
             JSDOMWindowShell* shell;
-
-            typedef HashMap<int, DOMTimer*> TimeoutsMap;
-            TimeoutsMap timeouts;
         };
 
         static JSC::JSValue* childFrameGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);

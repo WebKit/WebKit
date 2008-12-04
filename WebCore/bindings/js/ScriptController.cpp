@@ -351,25 +351,4 @@ void ScriptController::clearScriptObjects()
     clearPlatformScriptObjects();
 }
 
-void ScriptController::pauseTimeouts(OwnPtr<PausedTimeouts>& result)
-{
-    if (!haveWindowShell()) {
-        result.clear();
-        return;
-    }
-
-    windowShell()->window()->pauseTimeouts(result);
-}
-
-void ScriptController::resumeTimeouts(OwnPtr<PausedTimeouts>& pausedTimeouts)
-{
-    if (!haveWindowShell()) {
-        // Callers can assume we will always clear the passed in timeouts
-        pausedTimeouts.clear();
-        return;
-    }
-
-    windowShell()->window()->resumeTimeouts(pausedTimeouts);
-}
-
 } // namespace WebCore
