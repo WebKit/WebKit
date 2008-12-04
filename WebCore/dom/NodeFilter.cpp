@@ -26,16 +26,13 @@
 #include "NodeFilter.h"
 
 #include "Node.h"
-#include <interpreter/CallFrame.h>
-
-using namespace JSC;
 
 namespace WebCore {
 
-short NodeFilter::acceptNode(ExecState* exec, Node* node) const
+short NodeFilter::acceptNode(ScriptState* state, Node* node) const
 {
     // cast to short silences "enumeral and non-enumeral types in return" warning
-    return m_condition ? m_condition->acceptNode(exec, node) : static_cast<short>(FILTER_ACCEPT);
+    return m_condition ? m_condition->acceptNode(state, node) : static_cast<short>(FILTER_ACCEPT);
 }
 
 } // namespace WebCore

@@ -38,7 +38,7 @@ namespace WebCore {
     private:
         JSNodeFilterCondition(JSC::JSValue* filter);
 
-        virtual short acceptNode(JSC::ExecState*, Node*) const;
+        virtual short acceptNode(ScriptState*, Node*) const;
         virtual void mark();
 
         JSC::JSValue* m_filter;

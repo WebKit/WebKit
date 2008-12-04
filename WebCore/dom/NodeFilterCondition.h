@@ -25,11 +25,8 @@
 #ifndef NodeFilterCondition_h
 #define NodeFilterCondition_h
 
+#include "ScriptState.h"
 #include <wtf/RefCounted.h>
-
-namespace JSC {
-    class ExecState;
-}
 
 namespace WebCore {
 
@@ -38,7 +35,7 @@ namespace WebCore {
     class NodeFilterCondition : public RefCounted<NodeFilterCondition> {
     public:
         virtual ~NodeFilterCondition() { }
-        virtual short acceptNode(JSC::ExecState*, Node*) const = 0;
+        virtual short acceptNode(ScriptState*, Node*) const = 0;
         virtual void mark() { }
     };
 

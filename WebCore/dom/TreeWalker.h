@@ -45,22 +45,22 @@ namespace WebCore {
         Node* currentNode() const { return m_current.get(); }
         void setCurrentNode(PassRefPtr<Node>, ExceptionCode&);
 
-        Node* parentNode(JSC::ExecState*);
-        Node* firstChild(JSC::ExecState*);
-        Node* lastChild(JSC::ExecState*);
-        Node* previousSibling(JSC::ExecState*);
-        Node* nextSibling(JSC::ExecState*);
-        Node* previousNode(JSC::ExecState*);
-        Node* nextNode(JSC::ExecState*);
+        Node* parentNode(ScriptState*);
+        Node* firstChild(ScriptState*);
+        Node* lastChild(ScriptState*);
+        Node* previousSibling(ScriptState*);
+        Node* nextSibling(ScriptState*);
+        Node* previousNode(ScriptState*);
+        Node* nextNode(ScriptState*);
 
         // For non-JS bindings. Silently ignores the JavaScript exception if any.
-        Node* parentNode() { return parentNode(execStateFromNode(m_current.get())); }
-        Node* firstChild() { return firstChild(execStateFromNode(m_current.get())); }
-        Node* lastChild() { return lastChild(execStateFromNode(m_current.get())); }
-        Node* previousSibling() { return previousSibling(execStateFromNode(m_current.get())); }
-        Node* nextSibling() { return nextSibling(execStateFromNode(m_current.get())); }
-        Node* previousNode() { return previousNode(execStateFromNode(m_current.get())); }
-        Node* nextNode() { return nextNode(execStateFromNode(m_current.get())); }
+        Node* parentNode() { return parentNode(scriptStateFromNode(m_current.get())); }
+        Node* firstChild() { return firstChild(scriptStateFromNode(m_current.get())); }
+        Node* lastChild() { return lastChild(scriptStateFromNode(m_current.get())); }
+        Node* previousSibling() { return previousSibling(scriptStateFromNode(m_current.get())); }
+        Node* nextSibling() { return nextSibling(scriptStateFromNode(m_current.get())); }
+        Node* previousNode() { return previousNode(scriptStateFromNode(m_current.get())); }
+        Node* nextNode() { return nextNode(scriptStateFromNode(m_current.get())); }
 
     private:
         TreeWalker(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);

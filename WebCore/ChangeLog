@@ -1,3 +1,51 @@
+2008-12-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Geoff Garen.
+
+        Implement ScriptState abstraction (initially, a simple typedef)
+        as means of carrying exception information across bindings boundaries
+        and in a script engine-independent way.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::scriptStateFromNode):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSNodeFilterCondition.h:
+        * bindings/js/ScriptState.h: Added.
+        * dom/NodeFilter.cpp:
+        (WebCore::NodeFilter::acceptNode):
+        * dom/NodeFilter.h:
+        (WebCore::NodeFilter::acceptNode):
+        * dom/NodeFilterCondition.cpp:
+        (WebCore::NodeFilterCondition::acceptNode):
+        * dom/NodeFilterCondition.h:
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::nextNode):
+        (WebCore::NodeIterator::previousNode):
+        * dom/NodeIterator.h:
+        (WebCore::NodeIterator::nextNode):
+        (WebCore::NodeIterator::previousNode):
+        * dom/Traversal.cpp:
+        (WebCore::Traversal::acceptNode):
+        * dom/Traversal.h:
+        * dom/TreeWalker.cpp:
+        (WebCore::TreeWalker::parentNode):
+        (WebCore::TreeWalker::firstChild):
+        (WebCore::TreeWalker::lastChild):
+        (WebCore::TreeWalker::previousSibling):
+        (WebCore::TreeWalker::nextSibling):
+        (WebCore::TreeWalker::previousNode):
+        (WebCore::TreeWalker::nextNode):
+        * dom/TreeWalker.h:
+        (WebCore::TreeWalker::parentNode):
+        (WebCore::TreeWalker::firstChild):
+        (WebCore::TreeWalker::lastChild):
+        (WebCore::TreeWalker::previousSibling):
+        (WebCore::TreeWalker::nextSibling):
+        (WebCore::TreeWalker::previousNode):
+        (WebCore::TreeWalker::nextNode):
+
 2008-12-04  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -28,8 +28,6 @@
 #include "Node.h"
 #include "NodeFilter.h"
 
-using namespace JSC;
-
 namespace WebCore {
 
 Traversal::Traversal(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> nodeFilter, bool expandEntityReferences)
@@ -40,7 +38,7 @@ Traversal::Traversal(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<
 {
 }
 
-short Traversal::acceptNode(ExecState* exec, Node* node) const
+short Traversal::acceptNode(ScriptState* state, Node* node) const
 {
     // FIXME: To handle XML properly we would have to check m_expandEntityReferences.
 
@@ -50,7 +48,7 @@ short Traversal::acceptNode(ExecState* exec, Node* node) const
         return NodeFilter::FILTER_SKIP;
     if (!m_filter)
         return NodeFilter::FILTER_ACCEPT;
-    return m_filter->acceptNode(exec, node);
+    return m_filter->acceptNode(state, node);
 }
 
 } // namespace WebCore
