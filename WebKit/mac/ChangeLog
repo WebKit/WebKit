@@ -1,5 +1,22 @@
 2008-12-03  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Move WebPluginRequest to its own file.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        * Plugins/WebPluginRequest.h: Added.
+        * Plugins/WebPluginRequest.m: Added.
+        (-[WebPluginRequest initWithRequest:frameName:notifyData:sendNotification:didStartFromUserGesture:]):
+        (-[WebPluginRequest dealloc]):
+        (-[WebPluginRequest request]):
+        (-[WebPluginRequest frameName]):
+        (-[WebPluginRequest isCurrentEventUserGesture]):
+        (-[WebPluginRequest sendNotification]):
+        (-[WebPluginRequest notifyData]):
+
+2008-12-03  Anders Carlsson  <andersca@apple.com>
+
         Handle the CA model.
 
         * Plugins/WebNetscapePluginView.mm:

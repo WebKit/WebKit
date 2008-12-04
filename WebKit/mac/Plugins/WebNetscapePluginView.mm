@@ -49,6 +49,7 @@
 #import "WebNetscapePluginEventHandler.h"
 #import "WebNullPluginView.h"
 #import "WebPreferences.h"
+#import "WebPluginRequest.h"
 #import "WebViewInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import <Carbon/Carbon.h>
@@ -165,24 +166,6 @@ typedef struct {
 - (NSTextInputContext *)inputContext;
 @end
 
-@interface WebPluginRequest : NSObject
-{
-    NSURLRequest *_request;
-    NSString *_frameName;
-    void *_notifyData;
-    BOOL _didStartFromUserGesture;
-    BOOL _sendNotification;
-}
-
-- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData sendNotification:(BOOL)sendNotification didStartFromUserGesture:(BOOL)currentEventIsUserGesture;
-
-- (NSURLRequest *)request;
-- (NSString *)frameName;
-- (void *)notifyData;
-- (BOOL)isCurrentEventUserGesture;
-- (BOOL)sendNotification;
-
-@end
 
 @interface NSData (WebPluginDataExtras)
 - (BOOL)_web_startsWithBlankLine;
@@ -2236,53 +2219,6 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     
     [NSMenu popUpContextMenu:(NSMenu *)menu withEvent:currentEvent forView:self];
     return NPERR_NO_ERROR;
-}
-
-@end
-
-@implementation WebPluginRequest
-
-- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData sendNotification:(BOOL)sendNotification didStartFromUserGesture:(BOOL)currentEventIsUserGesture
-{
-    [super init];
-    _didStartFromUserGesture = currentEventIsUserGesture;
-    _request = [request retain];
-    _frameName = [frameName retain];
-    _notifyData = notifyData;
-    _sendNotification = sendNotification;
-    return self;
-}
-
-- (void)dealloc
-{
-    [_request release];
-    [_frameName release];
-    [super dealloc];
-}
-
-- (NSURLRequest *)request
-{
-    return _request;
-}
-
-- (NSString *)frameName
-{
-    return _frameName;
-}
-
-- (BOOL)isCurrentEventUserGesture
-{
-    return _didStartFromUserGesture;
-}
-
-- (BOOL)sendNotification
-{
-    return _sendNotification;
-}
-
-- (void *)notifyData
-{
-    return _notifyData;
 }
 
 @end
