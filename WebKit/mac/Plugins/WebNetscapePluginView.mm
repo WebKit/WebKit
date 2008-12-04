@@ -983,7 +983,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d window.width:%d window.height:%d",
                 npErr, nPort.cgPort.window, nPort.cgPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
             break;
-                        
+
+            case NPDrawingModelCoreAnimation:
+                LOG(Plugins, "NPP_SetWindow (CoreAnimation): %d, window=%p window.x:%d window.y:%d window.width:%d window.height:%d",
+                npErr, window.window, nPort.cgPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
+            break;
+
             default:
                 ASSERT_NOT_REACHED();
             break;
