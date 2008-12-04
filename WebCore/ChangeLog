@@ -1,3 +1,11 @@
+2008-12-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unused Completion.h include.
+
+        * html/CanvasRenderingContext2D.cpp: Removed Completion.h include.
+
 2008-11-13  David Hyatt  <hyatt@apple.com>
 
         Fix a bug in ScrollView's refactoring.  An isVisible check should have been isSelfVisible.
