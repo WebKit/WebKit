@@ -58,6 +58,9 @@ SOURCES += \
     runtime/JSNotAnObject.cpp \
     bytecode/CodeBlock.cpp \
     jit/JIT.cpp \
+    jit/JITCall.cpp \
+    jit/JITArithmetic.cpp \
+    jit/JITPropertyAccess.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     runtime/ExceptionHelpers.cpp \
     runtime/JSPropertyNameIterator.cpp \
