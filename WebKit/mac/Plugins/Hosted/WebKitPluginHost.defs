@@ -85,3 +85,12 @@ simpleroutine PluginInstanceStopTimers(pluginHostPort :mach_port_t;
 
 simpleroutine DestroyPluginInstance(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t);
+
+
+// Replies
+
+simpleroutine LoadURLReply(pluginHostPort :mach_port_t;
+                           pluginID :uint32_t;
+                           resultCode :uint16_t;
+                           streamID :uint32_t);
+

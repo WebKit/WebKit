@@ -1,5 +1,25 @@
 2008-12-04  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Start implementing WKPCLoadURL. Currently this has copied a lot of code from WebNetscapePluginView
+        but once we have a more complete implementation of NPStreams we can start refactoring things so that the
+        implementations can share more code.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCLoadURL):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        (WebKit::NetscapePluginInstanceProxy::loadURL):
+        (WebKit::NetscapePluginInstanceProxy::performRequest):
+        (WebKit::NetscapePluginInstanceProxy::requestTimerFired):
+        (WebKit::NetscapePluginInstanceProxy::loadRequest):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
+2008-12-04  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
         
         Move requestWithURLCString to WebBaseNetscapePluginView.

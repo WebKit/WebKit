@@ -33,6 +33,7 @@
 #import <wtf/StdLibExtras.h>
 
 extern "C" {
+#import "WebKitPluginHost.h"
 #import "WebKitPluginClientServer.h"
 }
 
@@ -136,6 +137,23 @@ kern_return_t WKPCStatusText(mach_port_t clientPort, uint32_t pluginID, data_t t
     
     instanceProxy->status(text);
     return KERN_SUCCESS;
+}
+
+kern_return_t WKPCLoadURL(mach_port_t clientPort, uint32_t pluginID, data_t url, mach_msg_type_number_t urlLength, data_t target, mach_msg_type_number_t targetLength, 
+                          boolean_t post, data_t postData, mach_msg_type_number_t postDataLength, boolean_t postDataIsFile, boolean_t currentEventIsUserGesture)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
+    uint32_t streamID;
+    NPError result = instanceProxy->loadURL(url, target, post, postData, postDataLength, postDataIsFile, streamID, currentEventIsUserGesture);
+    
+    return _WKPHLoadURLReply(hostProxy->port(), pluginID, result, streamID);
 }
 
 #endif // USE(PLUGIN_HOST_PROCESS)

@@ -28,16 +28,30 @@
 #import "NetscapePluginInstanceProxy.h"
 
 #import "NetscapePluginHostProxy.h"
+#import "WebDataSourceInternal.h"
+#import "WebFrameInternal.h"
 #import "WebHostedNetscapePluginView.h"
+#import "WebNSURLExtras.h"
+#import "WebKitNSStringExtras.h"
 #import "WebKitPluginHost.h"
+#import "WebPluginRequest.h"
 #import "WebViewInternal.h"
 #import "WebUIDelegate.h"
+#import "WebUIDelegatePrivate.h"
+
+#import <WebCore/DocumentLoader.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameLoader.h>
+#import <WebCore/FrameTree.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
 NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer)
     : m_pluginHostProxy(pluginHostProxy)
     , m_pluginView(pluginView)
+    , m_requestTimer(this, &NetscapePluginInstanceProxy::requestTimerFired)
     , m_pluginID(pluginID)
     , m_renderContextID(renderContextID)
     , m_useSoftwareRenderer(useSoftwareRenderer)
@@ -133,6 +147,133 @@ void NetscapePluginInstanceProxy::status(const char* message)
     
     WebView *wv = [m_pluginView webView];
     [[wv _UIDelegateForwarder] webView:wv setStatusText:(NSString *)status.get()];
+}
+
+NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target, bool post, const char* postData, uint32_t postLen, bool postDataIsFile, bool currentEventIsUserGesture, uint32_t& streamID)
+{
+    if (!url)
+        return NPERR_INVALID_PARAM;
+ 
+    // FIXME: Support posts.
+    if (post)
+        return NPERR_INVALID_PARAM;
+    
+    NSMutableURLRequest *request = [m_pluginView requestWithURLCString:url];
+    
+    return loadRequest(request, target, currentEventIsUserGesture, streamID);
+}
+
+void NetscapePluginInstanceProxy::performRequest(WebPluginRequest* pluginRequest)
+{
+    NSURLRequest *request = [pluginRequest request];
+    NSString *frameName = [pluginRequest frameName];
+    WebFrame *frame = nil;
+    
+    NSURL *URL = [request URL];
+    NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
+    
+    ASSERT(frameName || JSString);
+    if (frameName) {
+        // FIXME - need to get rid of this window creation which
+        // bypasses normal targeted link handling
+        frame = kit(core([m_pluginView webFrame])->loader()->findFrameForNavigation(frameName));
+        if (!frame) {
+            WebView *currentWebView = [m_pluginView webView];
+            NSDictionary *features = [[NSDictionary alloc] init];
+            WebView *newWebView = [[currentWebView _UIDelegateForwarder] webView:currentWebView
+                                                        createWebViewWithRequest:nil
+                                                                  windowFeatures:features];
+            [features release];
+
+            if (!newWebView)
+                return;
+            
+            frame = [newWebView mainFrame];
+            core(frame)->tree()->setName(frameName);
+            [[newWebView _UIDelegateForwarder] webViewShow:newWebView];
+        }
+    }
+
+    if (JSString) {
+        ASSERT(!frame || [m_pluginView webFrame] == frame);
+        // FIXME: Evaluate the request.
+    } else
+        [frame loadRequest:request];
+}
+
+void NetscapePluginInstanceProxy::requestTimerFired(Timer<NetscapePluginInstanceProxy>*)
+{
+    ASSERT(!m_pluginRequests.isEmpty());
+    
+    RetainPtr<WebPluginRequest> request = m_pluginRequests.first();
+    m_pluginRequests.removeFirst();
+    
+    if (!m_pluginRequests.isEmpty())
+        m_requestTimer.startOneShot(0);
+    
+    performRequest(request.get());
+}
+    
+
+NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const char* cTarget, bool currentEventIsUserGesture, uint32_t& streamID)
+{
+    NSURL *URL = [request URL];
+
+    if (!URL) 
+        return NPERR_INVALID_URL;
+
+    // Don't allow requests to be loaded when the document loader is stopping all loaders.
+    if ([[m_pluginView dataSource] _documentLoader]->isStopping())
+        return NPERR_GENERIC_ERROR;
+    
+    NSString *target = nil;
+    if (cTarget) {
+        // Find the frame given the target string.
+        target = [NSString stringWithCString:cTarget encoding:NSISOLatin1StringEncoding];
+    }
+    WebFrame *frame = [m_pluginView webFrame];
+
+    // don't let a plugin start any loads if it is no longer part of a document that is being 
+    // displayed unless the loads are in the same frame as the plugin.
+    if ([[m_pluginView dataSource] _documentLoader] != core([m_pluginView webFrame])->loader()->activeDocumentLoader() &&
+        (!cTarget || [frame findFrameNamed:target] != frame)) {
+        return NPERR_GENERIC_ERROR; 
+    }
+    
+    NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
+    if (JSString != nil) {
+        if (![[[m_pluginView webView] preferences] isJavaScriptEnabled]) {
+            // Return NPERR_GENERIC_ERROR if JS is disabled. This is what Mozilla does.
+            return NPERR_GENERIC_ERROR;
+        }
+    } else {
+        if (!FrameLoader::canLoad(URL, String(), core([m_pluginView webFrame])->document()))
+            return NPERR_GENERIC_ERROR;
+    }
+        
+    if (cTarget || JSString) {
+        // Make when targetting a frame or evaluating a JS string, perform the request after a delay because we don't
+        // want to potentially kill the plug-in inside of its URL request.
+        
+        if (JSString && target && [frame findFrameNamed:target] != frame) {
+            // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
+            return NPERR_INVALID_PARAM;
+        }
+
+        RetainPtr<WebPluginRequest> pluginRequest(AdoptCF, [[WebPluginRequest alloc] initWithRequest:request 
+                                                                                           frameName:target
+                                                                                          notifyData:0
+                                                                                    sendNotification:NO
+                                                                             didStartFromUserGesture:currentEventIsUserGesture]);
+        m_pluginRequests.append(pluginRequest.get());
+        m_requestTimer.startOneShot(0);
+        streamID = 0;
+    } else {
+        // FIXME: Load the stream.
+        streamID = 0;
+    }
+    
+    return NPERR_NO_ERROR;
 }
 
 } // namespace WebKit

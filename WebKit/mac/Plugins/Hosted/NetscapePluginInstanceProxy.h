@@ -28,11 +28,15 @@
 #ifndef NetscapePluginInstanceProxy_h
 #define NetscapePluginInstanceProxy_h
 
+#include <WebCore/Timer.h>
 #include <WebKit/npapi.h>
+#include <wtf/Deque.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
 
 @class WebHostedNetscapePluginView;
+@class WebPluginRequest;
 
 namespace WebKit {
 
@@ -63,12 +67,20 @@ public:
     void stopTimers();
     
     void status(const char* message);
-
+    NPError loadURL(const char* url, const char* target, bool post, const char* postData, uint32_t postDataLength, bool postDataIsFile, bool currentEventIsUserGesture, uint32_t& streamID);
+    
 private:
+    NPError loadRequest(NSURLRequest *, const char* cTarget, bool currentEventIsUserGesture, uint32_t& streamID);
+    void performRequest(WebPluginRequest*);
+    
     NetscapePluginInstanceProxy(NetscapePluginHostProxy*, WebHostedNetscapePluginView *, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer);
 
     NetscapePluginHostProxy* m_pluginHostProxy;
     WebHostedNetscapePluginView *m_pluginView;
+
+    void requestTimerFired(WebCore::Timer<NetscapePluginInstanceProxy>*);
+    WebCore::Timer<NetscapePluginInstanceProxy> m_requestTimer;
+    Deque<RetainPtr<WebPluginRequest> > m_pluginRequests;
     
     uint32_t m_pluginID;
     uint32_t m_renderContextID;
