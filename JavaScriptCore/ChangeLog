@@ -1,5 +1,12 @@
 2008-12-03  Sam Weinig  <sam@webkit.org>
 
+        Fix build.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::orl_i32r):
+
+2008-12-03  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         Remove shared AssemblerBuffer 1MB buffer and instead give AssemblerBuffer
