@@ -1,3 +1,17 @@
+2008-12-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Implement IPropertyBag2::Read.
+        Fill in dwType for IPropertyBag2::GetPropertyInfo (we always use PROPBAG2_TYPE_DATA).
+        https://bugs.webkit.org/show_bug.cgi?id=22659
+        
+        This fixes <rdar://problem/6419127> REGRESSION: Forms autocomplete is broken for "other forms"
+        
+        Reviewed by Ada Chan, Alice Liu.
+
+        * COMPropertyBag.h:
+        (::Read): Implemented.
+        (::GetPropertyInfo): Set dwType to PROPBAG2_TYPE_DATA.
+
 2008-12-02  Adam Roben  <aroben@apple.com>
 
         Export new-ish JSCore convenience constructor functions
