@@ -74,7 +74,9 @@ javascriptcore_sources += \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/WebKitAvailability.h \
 	JavaScriptCore/JavaScriptCorePrefix.h \
 	JavaScriptCore/jit/JIT.cpp \
+	JavaScriptCore/jit/JITCall.cpp \
 	JavaScriptCore/jit/JIT.h \
+	JavaScriptCore/jit/JITInlineMethods.h \
 	JavaScriptCore/bytecode/CodeBlock.cpp \
 	JavaScriptCore/bytecode/CodeBlock.h \
 	JavaScriptCore/bytecode/EvalCodeCache.h \

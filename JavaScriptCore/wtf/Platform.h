@@ -426,6 +426,7 @@
 /* CTI only supports x86 at the moment, and has only been tested on Mac and Windows. */
 #if !defined(ENABLE_JIT) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
 #define ENABLE_JIT 1
+#define ENABLE_JIT_OPTIMIZE_CALL 1
 #endif
 
 /* WREC only supports x86 at the moment, and has only been tested on Mac and Windows. */

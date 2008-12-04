@@ -1,3 +1,32 @@
+2008-12-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Camron Zwarich.
+
+        Allow JIT to operate without the call-repatching optimization.
+        Controlled by ENABLE(JIT_OPTIMIZE_CALL), defaults on, disabling
+        this leads to significant performance regression.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22639
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp: Copied from jit/JIT.cpp.
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpCallEvalSetupArgs):
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::unreachable):
+        * jit/JITInlineMethods.h: Copied from jit/JIT.cpp.
+        (JSC::JIT::checkStructure):
+        (JSC::JIT::emitFastArithPotentiallyReTagImmediate):
+        (JSC::JIT::emitTagAsBoolImmediate):
+        * wtf/Platform.h:
+
 2008-12-03  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by David Hyatt.
