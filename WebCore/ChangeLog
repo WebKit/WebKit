@@ -1,3 +1,11 @@
+2008-12-03  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix non-Mac build.
+
+        * page/Chrome.cpp: (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+
 2008-12-03  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

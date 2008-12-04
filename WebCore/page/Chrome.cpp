@@ -482,15 +482,16 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
 {
     for (size_t i = 0; i < m_deferredFrames.size(); ++i) {
-        if (Page* page = m_deferredFrames[i]->page())
+        if (Page* page = m_deferredFrames[i]->page()) {
             page->setDefersLoading(false);
 
 #if !PLATFORM(MAC)
-        for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            if (Document* document = frame->document())
-                document->resumeActiveDOMObjects();
-        }
+            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+                if (Document* document = frame->document())
+                    document->resumeActiveDOMObjects();
+            }
 #endif
+        }
     }
 }
 
