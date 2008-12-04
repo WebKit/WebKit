@@ -611,9 +611,6 @@ Interpreter::Interpreter()
     , m_ctiVirtualCallLink(0)
     , m_ctiVirtualCall(0)
 #endif
-#if ENABLE(ASSEMBLER)
-    , m_assemblerBuffer(new AssemblerBuffer(1024 * 1024))
-#endif
     , m_reentryDepth(0)
     , m_timeoutTime(0)
     , m_timeAtLastCheckTimeout(0)

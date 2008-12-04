@@ -49,8 +49,7 @@ public:
         TimesEight = 8
     };
 
-    MacroAssembler(AssemblerBuffer* assemblerBuffer)
-        : m_assembler(assemblerBuffer)
+    MacroAssembler()
     {
     }
     

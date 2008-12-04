@@ -312,7 +312,7 @@ RegisterID* StringNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
 RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegExp> regExp = RegExp::create(generator.globalData(), m_pattern, m_flags);
+    RefPtr<RegExp> regExp = RegExp::create(m_pattern, m_flags);
     if (!regExp->isValid())
         return emitThrowError(generator, SyntaxError, ("Invalid regular expression: " + UString(regExp->errorMessage())).UTF8String().c_str());
     if (dst == generator.ignoredResult())

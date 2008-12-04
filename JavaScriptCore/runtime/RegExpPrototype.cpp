@@ -85,7 +85,7 @@ JSValue* regExpProtoFuncCompile(ExecState* exec, JSObject*, JSValue* thisValue, 
     } else {
         UString pattern = args.isEmpty() ? UString("") : arg0->toString(exec);
         UString flags = arg1->isUndefined() ? UString("") : arg1->toString(exec);
-        regExp = RegExp::create(&exec->globalData(), pattern, flags);
+        regExp = RegExp::create(pattern, flags);
     }
 
     if (!regExp->isValid())

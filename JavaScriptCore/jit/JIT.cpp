@@ -589,8 +589,7 @@ ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 }
 
 JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
-    : m_assembler(globalData->interpreter->assemblerBuffer())
-    , m_interpreter(globalData->interpreter)
+    : m_interpreter(globalData->interpreter)
     , m_globalData(globalData)
     , m_codeBlock(codeBlock)
     , m_labels(codeBlock ? codeBlock->instructions.size() : 0)

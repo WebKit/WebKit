@@ -49,11 +49,10 @@ namespace JSC { namespace WREC {
         using MacroAssembler::JumpList;
         using MacroAssembler::Label;
 
-        static CompiledRegExp compileRegExp(Interpreter*, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
-    
-        Generator(Parser& parser, AssemblerBuffer* assemblerBuffer)
-            : MacroAssembler(assemblerBuffer)
-            , m_parser(parser)
+        static CompiledRegExp compileRegExp(const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
+
+        Generator(Parser& parser)
+            : m_parser(parser)
         {
         }
 

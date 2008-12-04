@@ -412,7 +412,7 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject*, JSValue* thisValue, co
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
          *  replaced with the result of the expression new RegExp(regexp).
          */
-        reg = RegExp::create(&exec->globalData(), a0->toString(exec));
+        reg = RegExp::create(a0->toString(exec));
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
@@ -462,7 +462,7 @@ JSValue* stringProtoFuncSearch(ExecState* exec, JSObject*, JSValue* thisValue, c
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
          *  replaced with the result of the expression new RegExp(regexp).
          */
-        reg = RegExp::create(&exec->globalData(), a0->toString(exec));
+        reg = RegExp::create(a0->toString(exec));
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;

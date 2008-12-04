@@ -37,17 +37,19 @@
 namespace JSC {
 
     class AssemblerBuffer {
+        static const int inlineCapacity = 256;
     public:
-        AssemblerBuffer(int capacity)
-            : m_buffer(static_cast<char*>(fastMalloc(capacity)))
-            , m_capacity(capacity)
+        AssemblerBuffer()
+            : m_buffer(m_inlineBuffer)
+            , m_capacity(inlineCapacity)
             , m_size(0)
         {
         }
 
         ~AssemblerBuffer()
         {
-            fastFree(m_buffer);
+            if (m_buffer != m_inlineBuffer)
+                fastFree(m_buffer);
         }
 
         void ensureSpace(int space)
@@ -112,12 +114,6 @@ namespace JSC {
             return m_size;
         }
 
-        AssemblerBuffer* reset()
-        {
-            m_size = 0;
-            return this;
-        }
-
         void* executableCopy()
         {
             if (!m_size)
@@ -135,9 +131,15 @@ namespace JSC {
         void grow()
         {
             m_capacity += m_capacity / 2;
-            m_buffer = static_cast<char*>(fastRealloc(m_buffer, m_capacity));
+
+            if (m_buffer == m_inlineBuffer) {
+                char* newBuffer = static_cast<char*>(fastMalloc(m_capacity));
+                m_buffer = static_cast<char*>(memcpy(newBuffer, m_buffer, m_size));
+            } else
+                m_buffer = static_cast<char*>(fastRealloc(m_buffer, m_capacity));
         }
 
+        char m_inlineBuffer[inlineCapacity];
         char* m_buffer;
         int m_capacity;
         int m_size;

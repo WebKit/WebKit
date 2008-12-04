@@ -1,3 +1,45 @@
+2008-12-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove shared AssemblerBuffer 1MB buffer and instead give AssemblerBuffer
+        an 256 byte inline capacity.
+
+        1% progression on Sunspider.
+
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::~AssemblerBuffer):
+        (JSC::AssemblerBuffer::grow):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::MacroAssembler):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::X86Assembler):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        * parser/Nodes.cpp:
+        (JSC::RegExpNode::emitBytecode):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::create):
+        * runtime/RegExp.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        * wrec/WREC.cpp:
+        (JSC::WREC::Generator::compileRegExp):
+        * wrec/WRECGenerator.h:
+        (JSC::WREC::Generator::Generator):
+        * wrec/WRECParser.h:
+        (JSC::WREC::Parser::Parser):
+
 2008-12-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt, with help from Gavin Barraclough.

@@ -41,14 +41,14 @@ namespace JSC { namespace WREC {
 // This limit comes from the limit set in PCRE
 static const int MaxPatternSize = (1 << 16);
 
-CompiledRegExp Generator::compileRegExp(Interpreter* interpreter, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase, bool multiline)
+CompiledRegExp Generator::compileRegExp(const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase, bool multiline)
 {
     if (pattern.size() > MaxPatternSize) {
         *error_ptr = "Regular expression too large.";
         return 0;
     }
 
-    Parser parser(pattern, ignoreCase, multiline, interpreter->assemblerBuffer());
+    Parser parser(pattern, ignoreCase, multiline);
     Generator& generator = parser.generator();
     MacroAssembler::JumpList failures;
 
