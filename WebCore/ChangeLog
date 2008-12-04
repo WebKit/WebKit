@@ -1,3 +1,11 @@
+2008-12-04  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+
+        Add file missing from last commit.
+
+        * bindings/js/ScriptState.h: Added.
+
 2008-12-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Geoff Garen.
