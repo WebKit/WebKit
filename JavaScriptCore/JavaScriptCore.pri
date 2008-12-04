@@ -12,7 +12,7 @@ win32-*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
 win32-g++: LIBS += -lwinmm
 
 
-CONFIG(release):isEqual(QT_ARCH,i386):linux-g++*|win32-msvc*: DEFINES += ENABLE_JIT ENABLE_WREC
+CONFIG(release):isEqual(QT_ARCH,i386):linux-g++*|win32-msvc*: DEFINES += ENABLE_JIT ENABLE_WREC ENABLE_JIT_OPTIMIZE_CALL ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS ENABLE_JIT_OPTIMIZE_ARITHMETIC
 
 include(pcre/pcre.pri)
 
