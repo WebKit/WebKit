@@ -12,6 +12,8 @@ win32-*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
 win32-g++: LIBS += -lwinmm
 
 
+CONFIG(release):isEqual(QT_ARCH,i386):linux-g++*|win32-msvc*: DEFINES += ENABLE_JIT ENABLE_WREC
+
 include(pcre/pcre.pri)
 
 LUT_FILES += \
@@ -62,6 +64,12 @@ SOURCES += \
     interpreter/Interpreter.cpp \
     bytecode/Opcode.cpp \
     bytecode/SamplingTool.cpp \
+    wrec/CharacterClass.cpp \
+    wrec/CharacterClassConstructor.cpp \
+    wrec/WREC.cpp \
+    wrec/WRECFunctors.cpp \
+    wrec/WRECGenerator.cpp \
+    wrec/WRECParser.cpp \
     interpreter/RegisterFile.cpp
 
 # AllInOneFile.cpp helps gcc analize and optimize code
