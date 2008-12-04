@@ -42,7 +42,7 @@ String FileChooser::basenameForWidth(const Font& f, int width) const
         string = fm.elidedText(fname, Qt::ElideLeft, width);
     } else {
         int n = m_filenames.size();
-        string = QCoreApplication::translate("QWebPage", "%n files(s)",
+        string = QCoreApplication::translate("QWebPage", "%n file(s)",
                                              "number of chosen file",
                                              QCoreApplication::CodecForTr, n);
     }
