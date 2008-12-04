@@ -166,6 +166,7 @@ This file contains the list of files needed to build WebCore.
         css/CSSRule.cpp
         css/CSSRuleList.cpp
         css/CSSSelector.cpp
+        css/CSSSelectorList.cpp
         css/CSSSegmentedFontFace.cpp
         css/CSSStyleDeclaration.cpp
         css/CSSStyleRule.cpp
