@@ -28,7 +28,7 @@ namespace WebCore {
 
 class HTMLFontElement : public HTMLElement {
 public:
-    HTMLFontElement(Document*);
+    HTMLFontElement(const QualifiedName&, Document*);
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }

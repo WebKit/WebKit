@@ -29,7 +29,7 @@ namespace WebCore {
 
 class HTMLEmbedElement : public HTMLPlugInImageElement {
 public:
-    HTMLEmbedElement(Document*);
+    HTMLEmbedElement(const QualifiedName&, Document*);
     ~HTMLEmbedElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }

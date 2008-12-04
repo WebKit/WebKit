@@ -38,9 +38,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLTableRowElement::HTMLTableRowElement(Document* doc)
-    : HTMLTablePartElement(trTag, doc)
+HTMLTableRowElement::HTMLTableRowElement(const QualifiedName& tagName, Document* doc)
+    : HTMLTablePartElement(tagName, doc)
 {
+    ASSERT(hasTagName(trTag));
 }
 
 bool HTMLTableRowElement::checkDTD(const Node* newChild)

@@ -263,12 +263,12 @@ static PassRefPtr<HTMLElement> headingConstructor(const QualifiedName& tagName, 
 
 static PassRefPtr<HTMLElement> hrConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLHRElement(doc);
+    return new HTMLHRElement(hrTag, doc);
 }
 
 static PassRefPtr<HTMLElement> paragraphConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLParagraphElement(doc);
+    return new HTMLParagraphElement(pTag, doc);
 }
 
 static PassRefPtr<HTMLElement> preConstructor(const QualifiedName& tagName, Document* doc, HTMLFormElement*, bool)
@@ -278,12 +278,12 @@ static PassRefPtr<HTMLElement> preConstructor(const QualifiedName& tagName, Docu
 
 static PassRefPtr<HTMLElement> basefontConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLBaseFontElement(doc);
+    return new HTMLBaseFontElement(basefontTag, doc);
 }
 
 static PassRefPtr<HTMLElement> fontConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLFontElement(doc);
+    return new HTMLFontElement(fontTag, doc);
 }
 
 static PassRefPtr<HTMLElement> modConstructor(const QualifiedName& tagName, Document* doc, HTMLFormElement*, bool)
@@ -293,65 +293,65 @@ static PassRefPtr<HTMLElement> modConstructor(const QualifiedName& tagName, Docu
 
 static PassRefPtr<HTMLElement> anchorConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLAnchorElement(doc);
+    return new HTMLAnchorElement(aTag, doc);
 }
 
 static PassRefPtr<HTMLElement> imageConstructor(const QualifiedName&, Document* doc, HTMLFormElement* form, bool)
 {
-    return new HTMLImageElement(doc, form);
+    return new HTMLImageElement(imgTag, doc, form);
 }
 
 static PassRefPtr<HTMLElement> mapConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLMapElement(doc);
+    return new HTMLMapElement(mapTag, doc);
 }
 
 static PassRefPtr<HTMLElement> areaConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLAreaElement(doc);
+    return new HTMLAreaElement(areaTag, doc);
 }
 
 static PassRefPtr<HTMLElement> canvasConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLCanvasElement(doc);
+    return new HTMLCanvasElement(canvasTag, doc);
 }
 
 static PassRefPtr<HTMLElement> appletConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLAppletElement(doc);
+    return new HTMLAppletElement(appletTag, doc);
 }
 
 static PassRefPtr<HTMLElement> embedConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLEmbedElement(doc);
+    return new HTMLEmbedElement(embedTag, doc);
 }
 
 static PassRefPtr<HTMLElement> objectConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool createdByParser)
 {
-    RefPtr<HTMLObjectElement> object = new HTMLObjectElement(doc, createdByParser);
+    RefPtr<HTMLObjectElement> object = new HTMLObjectElement(objectTag, doc, createdByParser);
     return object.release();
 }
 
 static PassRefPtr<HTMLElement> paramConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLParamElement(doc);
+    return new HTMLParamElement(paramTag, doc);
 }
 
 static PassRefPtr<HTMLElement> scriptConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool createdByParser)
 {
-    RefPtr<HTMLScriptElement> script = new HTMLScriptElement(doc);
+    RefPtr<HTMLScriptElement> script = new HTMLScriptElement(scriptTag, doc);
     script->setCreatedByParser(createdByParser);
     return script.release();
 }
 
 static PassRefPtr<HTMLElement> tableConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLTableElement(doc);
+    return new HTMLTableElement(tableTag, doc);
 }
 
 static PassRefPtr<HTMLElement> tableCaptionConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLTableCaptionElement(doc);
+    return new HTMLTableCaptionElement(captionTag, doc);
 }
 
 static PassRefPtr<HTMLElement> tableColConstructor(const QualifiedName& tagName, Document* doc, HTMLFormElement*, bool)
@@ -361,7 +361,7 @@ static PassRefPtr<HTMLElement> tableColConstructor(const QualifiedName& tagName,
 
 static PassRefPtr<HTMLElement> tableRowConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
-    return new HTMLTableRowElement(doc);
+    return new HTMLTableRowElement(trTag, doc);
 }
 
 static PassRefPtr<HTMLElement> tableCellConstructor(const QualifiedName& tagName, Document* doc, HTMLFormElement*, bool)

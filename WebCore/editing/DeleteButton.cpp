@@ -32,11 +32,12 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 
 DeleteButton::DeleteButton(Document* document)
-    : HTMLImageElement(document)
+    : HTMLImageElement(HTMLNames::imgTag, document)
 {
 }
 

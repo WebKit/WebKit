@@ -32,7 +32,7 @@ namespace WebCore {
 class HTMLScriptElement : public HTMLElement
                         , public ScriptElement {
 public:
-    HTMLScriptElement(Document*);
+    HTMLScriptElement(const QualifiedName&, Document*);
     ~HTMLScriptElement();
 
     void setCreatedByParser(bool);

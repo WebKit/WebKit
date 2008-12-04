@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004 Apple Computer, Inc.
@@ -34,7 +32,7 @@ class HitTestResult;
 
 class HTMLMapElement : public HTMLElement {
 public:
-    HTMLMapElement(Document*);
+    HTMLMapElement(const QualifiedName&, Document*);
     ~HTMLMapElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }

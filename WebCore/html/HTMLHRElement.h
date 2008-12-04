@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *
@@ -30,7 +28,7 @@ namespace WebCore {
 
 class HTMLHRElement : public HTMLElement {
 public:
-    HTMLHRElement(Document*);
+    HTMLHRElement(const QualifiedName&, Document*);
     ~HTMLHRElement();
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }

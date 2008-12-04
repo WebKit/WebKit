@@ -32,7 +32,7 @@ namespace WebCore {
 
 class HTMLTableRowElement : public HTMLTablePartElement {
 public:
-    HTMLTableRowElement(Document*);
+    HTMLTableRowElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 7; }

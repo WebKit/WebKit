@@ -30,9 +30,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLParamElement::HTMLParamElement(Document* doc)
-    : HTMLElement(paramTag, doc)
+HTMLParamElement::HTMLParamElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
 {
+    ASSERT(hasTagName(paramTag));
 }
 
 HTMLParamElement::~HTMLParamElement()

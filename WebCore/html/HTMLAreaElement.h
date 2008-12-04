@@ -33,7 +33,7 @@ class HitTestResult;
 
 class HTMLAreaElement : public HTMLAnchorElement {
 public:
-    HTMLAreaElement(Document*);
+    HTMLAreaElement(const QualifiedName&, Document*);
     ~HTMLAreaElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }

@@ -77,7 +77,7 @@ void HTMLViewSourceDocument::createContainingTable()
     body->addChild(div);
     div->attach();
 
-    RefPtr<Element> table = new HTMLTableElement(this);
+    RefPtr<Element> table = new HTMLTableElement(tableTag, this);
     body->addChild(table);
     table->attach();
     m_tbody = new HTMLTableSectionElement(tbodyTag, this);
@@ -204,7 +204,7 @@ Element* HTMLViewSourceDocument::addSpanWithClassName(const String& className)
 void HTMLViewSourceDocument::addLine(const String& className)
 {
     // Create a table row.
-    RefPtr<Element> trow = new HTMLTableRowElement(this);
+    RefPtr<Element> trow = new HTMLTableRowElement(trTag, this);
     m_tbody->addChild(trow);
     trow->attach();
     

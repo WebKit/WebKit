@@ -32,10 +32,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLScriptElement::HTMLScriptElement(Document* doc)
-    : HTMLElement(scriptTag, doc)
+HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
     , m_data(this, this)
 {
+    ASSERT(hasTagName(scriptTag));
 }
 
 HTMLScriptElement::~HTMLScriptElement()

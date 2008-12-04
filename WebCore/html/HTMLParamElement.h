@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004, 2006 Apple Computer, Inc.
@@ -33,7 +31,7 @@ class HTMLParamElement : public HTMLElement
 {
     friend class HTMLAppletElement;
 public:
-    HTMLParamElement(Document*);
+    HTMLParamElement(const QualifiedName&, Document*);
     ~HTMLParamElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }

@@ -40,10 +40,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLEmbedElement::HTMLEmbedElement(Document* doc)
-    : HTMLPlugInImageElement(embedTag, doc)
+HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document* doc)
+    : HTMLPlugInImageElement(tagName, doc)
     , m_needWidgetUpdate(false)
 {
+    ASSERT(hasTagName(embedTag));
 }
 
 HTMLEmbedElement::~HTMLEmbedElement()

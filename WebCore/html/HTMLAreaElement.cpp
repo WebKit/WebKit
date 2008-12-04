@@ -35,13 +35,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLAreaElement::HTMLAreaElement(Document *doc)
-    : HTMLAnchorElement(areaTag, doc)
+HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document *doc)
+    : HTMLAnchorElement(tagName, doc)
     , m_coords(0)
     , m_coordsLen(0)
     , m_lastSize(-1, -1)
     , m_shape(Unknown)
 {
+    ASSERT(hasTagName(areaTag));
 }
 
 HTMLAreaElement::~HTMLAreaElement()

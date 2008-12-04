@@ -34,8 +34,7 @@ class HTMLFormElement;
 class HTMLImageElement : public HTMLElement {
     friend class HTMLFormElement;
 public:
-    HTMLImageElement(Document*, HTMLFormElement* = 0);
-    HTMLImageElement(const QualifiedName&, Document*);
+    HTMLImageElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
     ~HTMLImageElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }

@@ -36,7 +36,7 @@ class HTMLTableSectionElement;
 
 class HTMLTableElement : public HTMLElement {
 public:
-    HTMLTableElement(Document*);
+    HTMLTableElement(const QualifiedName&, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 9; }

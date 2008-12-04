@@ -31,7 +31,7 @@ class KURL;
 
 class HTMLObjectElement : public HTMLPlugInImageElement {
 public:
-    HTMLObjectElement(Document*, bool createdByParser);
+    HTMLObjectElement(const QualifiedName&, Document*, bool createdByParser);
     ~HTMLObjectElement();
 
     virtual int tagPriority() const { return 5; }

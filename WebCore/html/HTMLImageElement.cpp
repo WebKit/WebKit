@@ -38,24 +38,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLImageElement::HTMLImageElement(Document* doc, HTMLFormElement* f)
-    : HTMLElement(imgTag, doc)
-    , m_imageLoader(this)
-    , ismap(false)
-    , m_form(f)
-    , m_compositeOperator(CompositeSourceOver)
-{
-    if (f)
-        f->registerImgElement(this);
-}
-
-HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document* doc)
+HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* form)
     : HTMLElement(tagName, doc)
     , m_imageLoader(this)
     , ismap(false)
-    , m_form(0)
+    , m_form(form)
     , m_compositeOperator(CompositeSourceOver)
 {
+    ASSERT(hasTagName(imgTag));
+    if (form)
+        form->registerImgElement(this);
 }
 
 HTMLImageElement::~HTMLImageElement()

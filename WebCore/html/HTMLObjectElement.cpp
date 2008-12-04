@@ -44,12 +44,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLObjectElement::HTMLObjectElement(Document* doc, bool createdByParser) 
-    : HTMLPlugInImageElement(objectTag, doc)
+HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document* doc, bool createdByParser) 
+    : HTMLPlugInImageElement(tagName, doc)
     , m_docNamedItem(true)
     , m_needWidgetUpdate(!createdByParser)
     , m_useFallbackContent(false)
 {
+    ASSERT(hasTagName(objectTag));
 }
 
 HTMLObjectElement::~HTMLObjectElement()

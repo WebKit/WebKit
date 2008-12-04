@@ -1,6 +1,4 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
@@ -29,9 +27,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLBaseFontElement::HTMLBaseFontElement(Document *doc)
-    : HTMLElement(basefontTag, doc)
+HTMLBaseFontElement::HTMLBaseFontElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
 {
+    ASSERT(hasTagName(basefontTag));
 }
 
 String HTMLBaseFontElement::color() const

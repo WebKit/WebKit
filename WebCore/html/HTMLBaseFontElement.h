@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
@@ -31,7 +29,7 @@ namespace WebCore {
 class HTMLBaseFontElement : public HTMLElement
 {
 public:
-    HTMLBaseFontElement(Document *doc);
+    HTMLBaseFontElement(const QualifiedName&, Document* doc);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }

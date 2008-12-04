@@ -591,7 +591,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                         e = new HTMLTableSectionElement(tbodyTag, document); 
                     } else {
                         reportError(TablePartRequiredError, &localName, &trTag.localName());
-                        e = new HTMLTableRowElement(document);
+                        e = new HTMLTableRowElement(trTag, document);
                     }
 
                     insertNode(e);
@@ -825,7 +825,7 @@ bool HTMLParser::pCloserStrictCreateErrorCheck(Token* t, RefPtr<Node>& result)
 
 bool HTMLParser::mapCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
-    m_currentMapElement = new HTMLMapElement(document);
+    m_currentMapElement = new HTMLMapElement(mapTag, document);
     result = m_currentMapElement;
     return false;
 }
@@ -1520,10 +1520,10 @@ PassRefPtr<Node> HTMLParser::handleIsindex(Token* t)
         t->attrs = 0;
     }
 
-    n->addChild(new HTMLHRElement(document));
+    n->addChild(new HTMLHRElement(hrTag, document));
     n->addChild(new Text(document, text));
     n->addChild(isIndex.release());
-    n->addChild(new HTMLHRElement(document));
+    n->addChild(new HTMLHRElement(hrTag, document));
 
     return n.release();
 }

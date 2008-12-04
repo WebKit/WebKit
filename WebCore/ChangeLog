@@ -1,3 +1,98 @@
+2008-12-04  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 22564: Make HTML elements' constructors take a QualifiedName
+        https://bugs.webkit.org/show_bug.cgi?id=22564
+
+        Updated the remaining constructors.
+
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::constructImage):
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasElement):
+        * editing/DeleteButton.cpp:
+        (WebCore::DeleteButton::DeleteButton):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::HTMLAppletElement):
+        * html/HTMLAppletElement.h:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::HTMLAreaElement):
+        * html/HTMLAreaElement.h:
+        * html/HTMLBaseFontElement.cpp:
+        (WebCore::HTMLBaseFontElement::HTMLBaseFontElement):
+        * html/HTMLBaseFontElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLElementFactory.cpp:
+        (WebCore::hrConstructor):
+        (WebCore::paragraphConstructor):
+        (WebCore::basefontConstructor):
+        (WebCore::fontConstructor):
+        (WebCore::anchorConstructor):
+        (WebCore::imageConstructor):
+        (WebCore::mapConstructor):
+        (WebCore::areaConstructor):
+        (WebCore::canvasConstructor):
+        (WebCore::appletConstructor):
+        (WebCore::embedConstructor):
+        (WebCore::objectConstructor):
+        (WebCore::paramConstructor):
+        (WebCore::scriptConstructor):
+        (WebCore::tableConstructor):
+        (WebCore::tableCaptionConstructor):
+        (WebCore::tableRowConstructor):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::HTMLEmbedElement):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::HTMLFontElement):
+        * html/HTMLFontElement.h:
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::HTMLHRElement):
+        * html/HTMLHRElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        * html/HTMLImageElement.h:
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::HTMLMapElement):
+        * html/HTMLMapElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+        * html/HTMLObjectElement.h:
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::HTMLParagraphElement):
+        * html/HTMLParagraphElement.h:
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::HTMLParamElement):
+        * html/HTMLParamElement.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+        (WebCore::HTMLParser::mapCreateErrorCheck):
+        (WebCore::HTMLParser::handleIsindex):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::HTMLScriptElement):
+        * html/HTMLScriptElement.h:
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::HTMLTableCaptionElement):
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::HTMLTableElement):
+        (WebCore::HTMLTableElement::createCaption):
+        (WebCore::HTMLTableElement::insertRow):
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::HTMLTableRowElement):
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::insertRow):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        (WebCore::HTMLViewSourceDocument::addLine):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocumentElement::ImageDocumentElement):
+
 2008-12-04  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.

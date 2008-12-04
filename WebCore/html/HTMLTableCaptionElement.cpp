@@ -1,6 +1,4 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
@@ -33,9 +31,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLTableCaptionElement::HTMLTableCaptionElement(Document *doc)
-    : HTMLTablePartElement(captionTag, doc)
+HTMLTableCaptionElement::HTMLTableCaptionElement(const QualifiedName& tagName, Document *doc)
+    : HTMLTablePartElement(tagName, doc)
 {
+    ASSERT(hasTagName(captionTag));
 }
 
 bool HTMLTableCaptionElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

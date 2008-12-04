@@ -36,9 +36,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLAppletElement::HTMLAppletElement(Document* doc)
-    : HTMLPlugInElement(appletTag, doc)
+HTMLAppletElement::HTMLAppletElement(const QualifiedName& tagName, Document* doc)
+    : HTMLPlugInElement(tagName, doc)
 {
+    ASSERT(hasTagName(appletTag));
 }
 
 HTMLAppletElement::~HTMLAppletElement()

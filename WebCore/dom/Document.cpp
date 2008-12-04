@@ -4214,7 +4214,7 @@ HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 {
     RefPtr<HTMLCanvasElement> result = m_cssCanvasElements.get(name).get();
     if (!result) {
-        result = new HTMLCanvasElement(this);
+        result = new HTMLCanvasElement(canvasTag, this);
         m_cssCanvasElements.set(name, result);
     }
     return result.get();
