@@ -129,7 +129,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
         !(shadowAncestorNode && shadowAncestorNode->renderer() && shadowAncestorNode->renderer()->isTextField()) &&
         !(shadowAncestorNode && shadowAncestorNode->renderer() && shadowAncestorNode->renderer()->isTextArea()) &&
         editableRoot->isContentRichlyEditable()) {
-        removeInterchangeNodes(m_fragment->firstChild());
+        removeInterchangeNodes(m_fragment.get());
         return;
     }
 
@@ -153,7 +153,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
         holder = insertFragmentForTestRendering(styleNode);
     }
     
-    removeInterchangeNodes(holder->firstChild());
+    removeInterchangeNodes(holder.get());
     
     removeUnrenderedNodes(holder.get());
     restoreTestRenderingNodesToFragment(holder.get());
@@ -277,24 +277,37 @@ void ReplacementFragment::removeUnrenderedNodes(Node* holder)
         removeNode(unrendered[i]);
 }
 
-void ReplacementFragment::removeInterchangeNodes(Node* startNode)
+void ReplacementFragment::removeInterchangeNodes(Node* container)
 {
-    Node* node = startNode;
-    Node* newlineAtStartNode = 0;
-    Node* newlineAtEndNode = 0;
+    // Interchange newlines at the "start" of the incoming fragment must be
+    // either the first node in the fragment or the first leaf in the fragment.
+    Node* node = container->firstChild();
+    while (node) {
+        if (isInterchangeNewlineNode(node)) {
+            m_hasInterchangeNewlineAtStart = true;
+            removeNode(node);
+            break;
+        }
+        node = node->firstChild();
+    }
+    if (!container->hasChildNodes())
+        return;
+    // Interchange newlines at the "end" of the incoming fragment must be
+    // either the last node in the fragment or the last leaf in the fragment.
+    node = container->lastChild();
+    while (node) {
+        if (isInterchangeNewlineNode(node)) {
+            m_hasInterchangeNewlineAtEnd = true;
+            removeNode(node);
+            break;
+        }
+        node = node->lastChild();
+    }
+    
+    node = container->firstChild();
     while (node) {
         Node *next = node->traverseNextNode();
-        if (isInterchangeNewlineNode(node)) {
-            if (next || node == startNode) {
-                m_hasInterchangeNewlineAtStart = true;
-                newlineAtStartNode = node;
-            }
-            else {
-                m_hasInterchangeNewlineAtEnd = true;
-                newlineAtEndNode = node;
-            }
-        }
-        else if (isInterchangeConvertedSpaceSpan(node)) {
+        if (isInterchangeConvertedSpaceSpan(node)) {
             RefPtr<Node> n = 0;
             while ((n = node->firstChild())) {
                 removeNode(n);
@@ -306,11 +319,6 @@ void ReplacementFragment::removeInterchangeNodes(Node* startNode)
         }
         node = next;
     }
-
-    if (newlineAtStartNode)
-        removeNode(newlineAtStartNode);
-    if (newlineAtEndNode)
-        removeNode(newlineAtEndNode);
 }
 
 ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, PassRefPtr<DocumentFragment> fragment,

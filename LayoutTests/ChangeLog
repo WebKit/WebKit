@@ -1,3 +1,12 @@
+2008-12-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/6018653> Extra blank line when pasting paragraph in plain text
+
+        * editing/pasteboard/6018653-expected.txt: Added.
+        * editing/pasteboard/6018653.html: Added.
+
 2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

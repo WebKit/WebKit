@@ -1,3 +1,25 @@
+2008-12-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/6018653> Extra blank line when pasting paragraph in plain text
+        
+        In SnowLeopard, Mail occasionally adds an empty, unstyled paragraph at the
+        end of pasted content so that users don't get stuck with non-standard pargraph
+        spacing.  This content threw off our handling of interchange newlines.  Any interchange
+        newline, regardless of it's position in the incoming fragment was considered to be
+        "at the start" of the fragment, and would result in us inserting in a newline before 
+        inserted content.  This patch makes the checks for interchange newlines more strict, 
+        and treats interchange newlines found elsewhere as normal <br>s.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplacementFragment::removeInterchangeNodes):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::init):
+        (WebCore::VisiblePosition::canonicalPosition):
+        * editing/VisiblePosition.h:
+
 2008-12-03  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by David Hyatt.
