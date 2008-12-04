@@ -236,7 +236,18 @@ bool PluginPackage::fetchInfo()
         CFBundleCloseBundleResourceMap(m_module, resFile);
     }
 
+    if (isPluginBlacklisted())
+        return false;
+
     return true;
+}
+
+bool PluginPackage::isPluginBlacklisted()
+{
+    if (name() == "Silverlight Plug-In")
+        return true;
+
+    return false;
 }
 
 bool PluginPackage::load()

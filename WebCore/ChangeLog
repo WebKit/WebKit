@@ -1,3 +1,16 @@
+2008-12-04  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Blacklist Silverlight plugin on Qt/Mac until supported
+
+        Currently the plugin crashes with a corrupted stack trace, possibly
+        related to https://bugs.webkit.org/show_bug.cgi?id=20635
+
+        * plugins/mac/PluginPackageMac.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::isPluginBlacklisted):
+
 2008-12-03  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
