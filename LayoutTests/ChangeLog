@@ -1,3 +1,36 @@
+2008-12-03  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add missing test files (utf-16,32 files) and two php files
+        for bug 21635 and enabled utf-7 tests (bug 22492). The patch
+        for bug 21635 was landed in http://trac.webkit.org/changeset/38755,
+        but binary test files (utf-16/32) were omitted in the changeset.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21635
+        https://bugs.webkit.org/show_bug.cgi?id=22492
+
+        * http/tests/misc/resources/check-query-param.php: Added.
+        * http/tests/misc/resources/echo-query-param.php: Added.
+        * http/tests/misc/submit-get-in-utf16be.html: Added.
+        * http/tests/misc/submit-get-in-utf16le.html: Added.
+        * http/tests/misc/submit-get-in-utf32be.html: Added.
+        * http/tests/misc/submit-get-in-utf32le.html: Added.
+        * http/tests/misc/submit-get-in-utf7.html: Copied from http/tests/misc/submit-get-in-utf7.html-disabled.
+        * http/tests/misc/submit-get-in-utf7.html-disabled: Removed.
+        * http/tests/misc/submit-post-in-utf16be.html: Added.
+        * http/tests/misc/submit-post-in-utf16le.html: Added.
+        * http/tests/misc/submit-post-in-utf32be.html: Added.
+        * http/tests/misc/submit-post-in-utf32le.html: Added.
+        * http/tests/misc/submit-post-in-utf7.html: Copied from http/tests/misc/submit-post-in-utf7.html-disabled.
+        * http/tests/misc/submit-post-in-utf7.html-disabled: Removed.
+        * http/tests/misc/url-in-utf16be.html: Added.
+        * http/tests/misc/url-in-utf16le.html: Added.
+        * http/tests/misc/url-in-utf32be.html: Added.
+        * http/tests/misc/url-in-utf32le.html: Added.
+        * http/tests/misc/url-in-utf7.html: Copied from http/tests/misc/url-in-utf7.html-disabled.
+        * http/tests/misc/url-in-utf7.html-disabled: Removed.
+
 2008-12-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Beth Dakin.
