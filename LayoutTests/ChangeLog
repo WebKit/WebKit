@@ -2,6 +2,18 @@
 
         Reviewed by George Staikos.
 
+        Forgot to rerun make-js-test-wrappers, and update some fast/wml results.
+
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.checksum:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.png:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.txt:
+        * wml/resources/variable-reference-invalid-character.js:
+        * wml/resources/variable-reference-valid.js:
+
+2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=22636
 
         Add a first set of scriptable WML layout tests.

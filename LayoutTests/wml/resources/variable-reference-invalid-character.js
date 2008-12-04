@@ -58,3 +58,5 @@ function executeTest() {
 
     completeTest();
 }
+
+var successfullyParsed = true;
