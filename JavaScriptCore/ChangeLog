@@ -1,3 +1,11 @@
+2008-12-03  Eric Seidel  <eric@webkit.org>
+
+        Rubber-stamped by David Hyatt.
+
+        Make HAVE_ACCESSIBILITY only define if !defined
+
+        * wtf/Platform.h:
+
 2008-12-03  Sam Weinig  <sam@webkit.org>
 
         Fix build.

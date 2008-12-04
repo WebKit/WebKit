@@ -316,9 +316,11 @@
 #endif
 #endif
 
+#if !defined(HAVE_ACCESSIBILITY)
 #if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(CHROMIUM)
 #define HAVE_ACCESSIBILITY 1
 #endif
+#endif // !defined(HAVE_ACCESSIBILITY)
 
 #if COMPILER(GCC)
 #define HAVE_COMPUTED_GOTO 1

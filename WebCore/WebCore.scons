@@ -136,7 +136,6 @@ sources['dom'] = [
     'dom/WheelEvent.cpp',
     'dom/XMLTokenizer.cpp',
     'dom/XMLTokenizerLibxml2.cpp',
-    'dom/XMLTokenizerQt.cpp'
 ]
 sources['editing'] = [
     'editing/AppendNodeCommand.cpp',
@@ -166,7 +165,6 @@ sources['editing'] = [
     'editing/MergeIdenticalElementsCommand.cpp',
     'editing/ModifySelectionListLevel.cpp',
     'editing/MoveSelectionCommand.cpp',
-    'editing/qt/EditorQt.cpp',
     'editing/RemoveCSSPropertyCommand.cpp',
     'editing/RemoveFormatCommand.cpp',
     'editing/RemoveNodeAttributeCommand.cpp',
@@ -412,13 +410,6 @@ sources['plugins'] = [
     'plugins/PluginStream.cpp',
     'plugins/PluginView.cpp'
 ]
-sources['plugins/win'] = [
-    'plugins/win/PluginDatabaseWin.cpp',
-    'plugins/win/PluginDataWin.cpp',
-    'plugins/win/PluginMessageThrottlerWin.cpp',
-    'plugins/win/PluginPackageWin.cpp',
-    'plugins/win/PluginViewWin.cpp',
-]
 sources['rendering'] = [
     'rendering/AutoTableLayout.cpp',
     'rendering/bidi.cpp',
@@ -493,8 +484,6 @@ sources['rendering'] = [
     'rendering/RenderTextControl.cpp',
     'rendering/RenderTextFragment.cpp',
     'rendering/RenderTheme.cpp',
-    'rendering/RenderThemeSafari.cpp',
-    'rendering/RenderThemeWin.cpp',
     'rendering/RenderTreeAsText.cpp',
     'rendering/RenderVideo.cpp',
     'rendering/RenderView.cpp',
@@ -594,6 +583,109 @@ sources['xml'] = [
     'xml/XSLTUnicodeSort.cpp'
 ]
 
+# Using JavaScriptCore for now, eventually this needs to be configurable (and in separate file)
+sources['bindings/js'] = [
+    "bindings/js/DOMTimer.cpp",
+    "bindings/js/GCController.cpp",
+    "bindings/js/JSAttrCustom.cpp",
+    "bindings/js/JSAudioConstructor.cpp",
+    "bindings/js/JSCSSRuleCustom.cpp",
+    "bindings/js/JSCSSStyleDeclarationCustom.cpp",
+    "bindings/js/JSCSSValueCustom.cpp",
+    "bindings/js/JSCanvasRenderingContext2DCustom.cpp",
+    "bindings/js/JSClipboardCustom.cpp",
+    "bindings/js/JSConsoleCustom.cpp",
+    "bindings/js/JSCustomPositionCallback.cpp",
+    "bindings/js/JSCustomPositionErrorCallback.cpp",
+    "bindings/js/JSCustomSQLStatementCallback.cpp",
+    "bindings/js/JSCustomSQLStatementErrorCallback.cpp",
+    "bindings/js/JSCustomSQLTransactionCallback.cpp",
+    "bindings/js/JSCustomSQLTransactionErrorCallback.cpp",
+    "bindings/js/JSCustomVoidCallback.cpp",
+    "bindings/js/JSCustomXPathNSResolver.cpp",
+    "bindings/js/JSDOMApplicationCacheCustom.cpp",
+    "bindings/js/JSDOMBinding.cpp",
+    "bindings/js/JSDOMGlobalObject.cpp",
+    "bindings/js/JSDOMWindowBase.cpp",
+    "bindings/js/JSDOMWindowCustom.cpp",
+    "bindings/js/JSDOMWindowShell.cpp",
+    "bindings/js/JSDatabaseCustom.cpp",
+    "bindings/js/JSDocumentCustom.cpp",
+    "bindings/js/JSDocumentFragmentCustom.cpp",
+    "bindings/js/JSElementCustom.cpp",
+    "bindings/js/JSEventCustom.cpp",
+    "bindings/js/JSEventListener.cpp",
+    "bindings/js/JSEventTarget.cpp",
+    "bindings/js/JSEventTargetNodeCustom.cpp",
+    "bindings/js/JSGeolocationCustom.cpp",
+    "bindings/js/JSHTMLAllCollection.cpp",
+    "bindings/js/JSHTMLAppletElementCustom.cpp",
+    "bindings/js/JSHTMLCollectionCustom.cpp",
+    "bindings/js/JSHTMLDocumentCustom.cpp",
+    "bindings/js/JSHTMLElementCustom.cpp",
+    "bindings/js/JSHTMLEmbedElementCustom.cpp",
+    "bindings/js/JSHTMLFormElementCustom.cpp",
+    "bindings/js/JSHTMLFrameElementCustom.cpp",
+    "bindings/js/JSHTMLFrameSetElementCustom.cpp",
+    "bindings/js/JSHTMLIFrameElementCustom.cpp",
+    "bindings/js/JSHTMLInputElementCustom.cpp",
+    "bindings/js/JSHTMLObjectElementCustom.cpp",
+    "bindings/js/JSHTMLOptionsCollectionCustom.cpp",
+    "bindings/js/JSHTMLSelectElementCustom.cpp",
+    "bindings/js/JSHistoryCustom.cpp",
+    "bindings/js/JSImageConstructor.cpp",
+    "bindings/js/JSImageDataCustom.cpp",
+    "bindings/js/JSInspectedObjectWrapper.cpp",
+    "bindings/js/JSInspectorCallbackWrapper.cpp",
+    "bindings/js/JSJavaScriptCallFrameCustom.cpp",
+    "bindings/js/JSLocationCustom.cpp",
+    "bindings/js/JSMessageChannelConstructor.cpp",
+    "bindings/js/JSMessageChannelCustom.cpp",
+    "bindings/js/JSMessagePortCustom.cpp",
+    "bindings/js/JSMimeTypeArrayCustom.cpp",
+    "bindings/js/JSNamedNodeMapCustom.cpp",
+    "bindings/js/JSNamedNodesCollection.cpp",
+    "bindings/js/JSNavigatorCustom.cpp",
+    "bindings/js/JSNodeCustom.cpp",
+    "bindings/js/JSNodeFilterCondition.cpp",
+    "bindings/js/JSNodeFilterCustom.cpp",
+    "bindings/js/JSNodeIteratorCustom.cpp",
+    "bindings/js/JSNodeListCustom.cpp",
+    "bindings/js/JSOptionConstructor.cpp",
+    "bindings/js/JSPluginArrayCustom.cpp",
+    "bindings/js/JSPluginCustom.cpp",
+    "bindings/js/JSPluginElementFunctions.cpp",
+    "bindings/js/JSQuarantinedObjectWrapper.cpp",
+    "bindings/js/JSRGBColor.cpp",
+    "bindings/js/JSSQLResultSetRowListCustom.cpp",
+    "bindings/js/JSSQLTransactionCustom.cpp",
+    "bindings/js/JSSVGElementInstanceCustom.cpp",
+    "bindings/js/JSSVGLengthCustom.cpp",
+    "bindings/js/JSSVGMatrixCustom.cpp",
+    "bindings/js/JSSVGPathSegCustom.cpp",
+    "bindings/js/JSSVGPathSegListCustom.cpp",
+    "bindings/js/JSSVGPointListCustom.cpp",
+    "bindings/js/JSSVGTransformListCustom.cpp",
+    "bindings/js/JSStorageCustom.cpp",
+    "bindings/js/JSStyleSheetCustom.cpp",
+    "bindings/js/JSStyleSheetListCustom.cpp",
+    "bindings/js/JSTextCustom.cpp",
+    "bindings/js/JSTreeWalkerCustom.cpp",
+    "bindings/js/JSWorkerConstructor.cpp",
+    "bindings/js/JSWorkerContext.cpp",
+    "bindings/js/JSWorkerCustom.cpp",
+    "bindings/js/JSXMLHttpRequestConstructor.cpp",
+    "bindings/js/JSXMLHttpRequestCustom.cpp",
+    "bindings/js/JSXMLHttpRequestUploadCustom.cpp",
+    "bindings/js/JSXSLTProcessorConstructor.cpp",
+    "bindings/js/JSXSLTProcessorCustom.cpp",
+    "bindings/js/PausedTimeouts.cpp",
+    "bindings/js/ScheduledAction.cpp",
+    "bindings/js/ScriptController.cpp",
+    "bindings/js/ScriptValue.cpp",
+    "bindings/js/WorkerScriptController.cpp",
+]
+
 # Platform-specific sources, including common files
 # These may eventually move to a separate sources file
 sources['platform'] = [
@@ -656,30 +748,6 @@ sources['platform/graphics'] = [
     'platform/graphics/StringTruncator.cpp',
     'platform/graphics/WidthIterator.cpp',
 ]
-sources['platform/graphics/cg'] = [
-    'platform/graphics/cg/AffineTransformCG.cpp',
-    'platform/graphics/cg/ColorCG.cpp',
-    'platform/graphics/cg/FloatPointCG.cpp',
-    'platform/graphics/cg/FloatRectCG.cpp',
-    'platform/graphics/cg/FloatSizeCG.cpp',
-    'platform/graphics/cg/GradientCG.cpp',
-    'platform/graphics/cg/GraphicsContextCG.cpp',
-    'platform/graphics/cg/ImageBufferCG.cpp',
-    'platform/graphics/cg/ImageCG.cpp',
-    'platform/graphics/cg/ImageSourceCG.cpp',
-    'platform/graphics/cg/IntPointCG.cpp',
-    'platform/graphics/cg/IntRectCG.cpp',
-    'platform/graphics/cg/IntSizeCG.cpp',
-    'platform/graphics/cg/PathCG.cpp',
-    'platform/graphics/cg/PatternCG.cpp',
-    'platform/graphics/cg/PDFDocumentImage.cpp',
-]
-sources['platform/graphics/mac'] = [
-    'platform/graphics/mac/CoreTextController.cpp',
-    'platform/graphics/mac/FontCustomPlatformData.cpp',
-    'platform/graphics/mac/FontMacCoreText.cpp',
-    'platform/graphics/mac/GlyphPageTreeNodeMac.cpp',
-]
 sources['platform/network'] = [
     'platform/network/AuthenticationChallengeBase.cpp',
     'platform/network/Credential.cpp',
@@ -692,24 +760,6 @@ sources['platform/network'] = [
     'platform/network/ResourceHandle.cpp',
     'platform/network/ResourceRequestBase.cpp',
     'platform/network/ResourceResponseBase.cpp'
-]
-sources['platform/network/cf'] = [
-    'platform/network/cf/AuthenticationCF.cpp',
-    'platform/network/cf/DNSCFNet.cpp',
-    'platform/network/cf/FormDataStreamCFNet.cpp',
-    'platform/network/cf/ResourceErrorCF.cpp',
-    'platform/network/cf/ResourceHandleCFNet.cpp',
-    'platform/network/cf/ResourceRequestCFNet.cpp',
-    'platform/network/cf/ResourceResponseCFNet.cpp'
-]
-sources['platform/network/mac'] = [
-    'platform/network/mac/AuthenticationMac.mm',
-    'platform/network/mac/FormDataStreamMac.mm',
-    'platform/network/mac/ResourceErrorMac.mm',
-    'platform/network/mac/ResourceHandleMac.mm',
-    'platform/network/mac/ResourceRequestMac.mm',
-    'platform/network/mac/ResourceResponseMac.mm',
-    'platform/network/mac/WebCoreURLResponse.mm'
 ]
 sources['platform/text'] = [
     'platform/text/AtomicString.cpp',
@@ -737,19 +787,72 @@ sources['platform/text'] = [
     'platform/text/TextStream.cpp',
     'platform/text/UnicodeRange.cpp',
 ]
-sources['platform/text/cf'] = [
-    'platform/text/cf/StringCF.cpp',
-    'platform/text/cf/StringImplCF.cpp'
-]
-sources['platform/text/mac'] = [
-    'platform/text/mac/TextCodecMac.cpp',
-    'platform/text/mac/StringImplMac.mm',
-    'platform/text/mac/StringMac.mm',
-    'platform/text/mac/TextBoundaries.mm',
-    'platform/text/mac/TextBreakIteratorInternalICUMac.mm',
-]
 
 env = Environment()
+
+if env['PLATFORM'] == 'darwin':
+    sources['platform/graphics/cg'] = [
+        'platform/graphics/cg/AffineTransformCG.cpp',
+        'platform/graphics/cg/ColorCG.cpp',
+        'platform/graphics/cg/FloatPointCG.cpp',
+        'platform/graphics/cg/FloatRectCG.cpp',
+        'platform/graphics/cg/FloatSizeCG.cpp',
+        'platform/graphics/cg/GradientCG.cpp',
+        'platform/graphics/cg/GraphicsContextCG.cpp',
+        'platform/graphics/cg/ImageBufferCG.cpp',
+        'platform/graphics/cg/ImageCG.cpp',
+        'platform/graphics/cg/ImageSourceCG.cpp',
+        'platform/graphics/cg/IntPointCG.cpp',
+        'platform/graphics/cg/IntRectCG.cpp',
+        'platform/graphics/cg/IntSizeCG.cpp',
+        'platform/graphics/cg/PathCG.cpp',
+        'platform/graphics/cg/PatternCG.cpp',
+        'platform/graphics/cg/PDFDocumentImage.cpp',
+    ]
+    sources['platform/graphics/mac'] = [
+        'platform/graphics/mac/CoreTextController.cpp',
+        'platform/graphics/mac/FontCustomPlatformData.cpp',
+        'platform/graphics/mac/FontMacCoreText.cpp',
+        'platform/graphics/mac/GlyphPageTreeNodeMac.cpp',
+    ]
+    sources['platform/network/cf'] = [
+        'platform/network/cf/AuthenticationCF.cpp',
+        'platform/network/cf/DNSCFNet.cpp',
+        'platform/network/cf/FormDataStreamCFNet.cpp',
+        'platform/network/cf/ResourceErrorCF.cpp',
+        'platform/network/cf/ResourceHandleCFNet.cpp',
+        'platform/network/cf/ResourceRequestCFNet.cpp',
+        'platform/network/cf/ResourceResponseCFNet.cpp'
+    ]
+    sources['platform/network/mac'] = [
+        'platform/network/mac/AuthenticationMac.mm',
+        'platform/network/mac/FormDataStreamMac.mm',
+        'platform/network/mac/ResourceErrorMac.mm',
+        'platform/network/mac/ResourceHandleMac.mm',
+        'platform/network/mac/ResourceRequestMac.mm',
+        'platform/network/mac/ResourceResponseMac.mm',
+        'platform/network/mac/WebCoreURLResponse.mm'
+    ]
+    sources['platform/text/cf'] = [
+        'platform/text/cf/StringCF.cpp',
+        'platform/text/cf/StringImplCF.cpp'
+    ]
+    sources['platform/text/mac'] = [
+        'platform/text/mac/TextCodecMac.cpp',
+        'platform/text/mac/StringImplMac.mm',
+        'platform/text/mac/StringMac.mm',
+        'platform/text/mac/TextBoundaries.mm',
+        'platform/text/mac/TextBreakIteratorInternalICUMac.mm',
+    ]
+
+sources['platform/chromium'] = [
+]
+
+sources['platform/graphics/chromium'] = [
+]
+
+sources['platform/network/chromium'] = [
+]
 
 derived_sources_path = 'DerivedSources/WebCore/'
 def DerivedSources(path):
@@ -775,16 +878,42 @@ env['CPPDEFINES'] = { 'BUILDING_CHROMIUM__' : 1, 'WTF_USE_V8' : 0 }
 # remove this when we fix Scons to understand GCC precompiled headers
 if env['CC'] == 'gcc':
     env['CCFLAGS'] = '-include WebCorePrefix.h'
-env['PCH'] = 'WebCorePrefix.h'
+# env['PCH'] = 'WebCorePrefix.h'
 
 if env['PLATFORM'] == 'darwin':
     env['FRAMEWORKPATH'] = [
         '/System/Library/Frameworks/Carbon.framework/Frameworks',
-        '/System/Library/Frameworks/ApplicationServices.framework/Frameworks'
+        '/System/Library/Frameworks/ApplicationServices.framework/Frameworks',
+        '/System/Library/Frameworks/CoreServices.framework/Frameworks', # for CFNetwork, eventually we'll move to Chromium's network layer
     ]
-    env['FRAMEWORKS'] = ['JavaScriptCore', 'ApplicationServices', 'Cocoa']
-    env['LIBS'] = []
+    env['FRAMEWORKS'] = ['JavaScriptCore', 'ApplicationServices', 'Cocoa', 'CoreServices']
+    # Temporarily disabling AX support for the Chromium Mac Build until we can fix our AX arch
+    env.Append(CPPDEFINES = {'HAVE_ACCESSIBILITY' : 0})
 
-include_paths = ['.', '..', '../JavaScriptCore', '../JavaScriptCore/runtime', '../JavaScriptCore/kjs', 'ForwardingHeaders', 'icu'] + sources.keys()
-env['CPPPATH'] = include_paths
+env['CPPPATH'] = ['.', '..']
+
+# Includes for JavaScriptCore (the Apple Mac build use JavaScriptCore.framework)
+# Scons doesn't know how to build frameworks yet :( so we have to manually include a bunch of paths
+env.Append(CPPPATH = [
+    '../JavaScriptCore',
+    '../JavaScriptCore/bytecode',
+    '../JavaScriptCore/parser',
+    '../JavaScriptCore/wtf',
+    '../JavaScriptCore/runtime',
+    '../JavaScriptCore/interpreter'
+])
+
+# HACK: Include ForwardingHeaders after ../JavaScriptCore for now to allow JavaScriptCore/wtf includes to work
+env.Append(CPPPATH = ['ForwardingHeaders'])
+
+# For bring-up we're depending on WebKitSystemInterface, this will go away once more of our port is upstreamed
+env.Append(CPPPATH = ['../WebKitLibraries'])
+
+# Mac OS X doesn't include icu headers, so WebKit svn includes icu 3.2 headers
+if env['PLATFORM'] == 'darwin':
+    env.Append(CPPPATH = ['icu', '/usr/include/libxml2'])
+
+# Include headers for all of the directories from which we are compiling source files
+env.Append(CPPPATH = sources.keys())
+
 env.SharedLibrary("WebCore", sources.values())
