@@ -1,5 +1,17 @@
 2008-12-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Holger Freyther.
+
+        Fix crashes in the Qt build on Linux/i386 with non-executable memory
+        by enabling TCSystemAlloc and the PROT_EXEC flag for mmap.
+
+        * JavaScriptCore.pri: Enable the use of TCSystemAlloc if the JIT is
+        enabled.
+        * wtf/TCSystemAlloc.cpp: Extend the PROT_EXEC permissions to
+        PLATFORM(QT).
+
+2008-12-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Tor Arne Vestbø.
 
         Enable ENABLE_JIT_OPTIMIZE_CALL, ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS

@@ -53,7 +53,7 @@
 
 #if HAVE(MMAP)
 static const int cProtFlags = PROT_READ | PROT_WRITE
-#if ENABLE(ASSEMBLER) && (PLATFORM(GTK) || (PLATFORM(MAC) && PLATFORM(X86_64)))
+#if ENABLE(ASSEMBLER) && (PLATFORM(GTK) || (PLATFORM(MAC) && PLATFORM(X86_64)) || PLATFORM(QT))
                               | PROT_EXEC
 #endif
                               ;
