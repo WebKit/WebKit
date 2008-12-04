@@ -75,6 +75,8 @@ javascriptcore_sources += \
 	JavaScriptCore/JavaScriptCorePrefix.h \
 	JavaScriptCore/jit/JIT.cpp \
 	JavaScriptCore/jit/JITCall.cpp \
+	JavaScriptCore/jit/JITPropertyAccess.cpp \
+	JavaScriptCore/jit/JITArithmetic.cpp \
 	JavaScriptCore/jit/JIT.h \
 	JavaScriptCore/jit/JITInlineMethods.h \
 	JavaScriptCore/bytecode/CodeBlock.cpp \

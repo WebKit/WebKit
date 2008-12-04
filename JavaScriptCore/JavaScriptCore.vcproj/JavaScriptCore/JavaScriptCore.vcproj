@@ -1266,6 +1266,30 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\jit\JITPropertyAccess.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="false"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITArithmetic.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="false"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\jit\JIT.h"
 				>
 			</File>

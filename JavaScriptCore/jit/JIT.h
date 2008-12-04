@@ -392,6 +392,10 @@ namespace JSC {
         void privateCompileCTIMachineTrampolines();
         void privateCompilePatchGetArrayLength(void* returnAddress);
 
+        void compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident, unsigned i, unsigned propertyAccessInstructionIndex);
+        void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, unsigned i, Vector<SlowCaseEntry>::iterator& iter, unsigned propertyAccessInstructionIndex);
+        void compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, unsigned i, unsigned propertyAccessInstructionIndex);
+        void compilePutByIdSlowCase(int baseVReg, Identifier* ident, int valueVReg, unsigned i, Vector<SlowCaseEntry>::iterator& iter, unsigned propertyAccessInstructionIndex);
         void compileOpCall(OpcodeID, Instruction* instruction, unsigned i, unsigned callLinkInfoIndex);
         void compileOpCallInitializeCallFrame();
         void compileOpCallSetupArgs(Instruction*);
