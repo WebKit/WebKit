@@ -2,6 +2,21 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Remove uses of document() in XMLHttpRequest where simple.
+        https://bugs.webkit.org/show_bug.cgi?id=22619
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+        Return NULL in the worker case which is according to spec (and avoids using document()).
+
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        (WebCore::XMLHttpRequest::initSend):
+        Use scriptExecutionContext() instead of document().
+
+2008-12-03  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Make ScriptExecutionContextTaskWorkerTask::performTask a pure virtual function.
         https://bugs.webkit.org/show_bug.cgi?id=22642
 
