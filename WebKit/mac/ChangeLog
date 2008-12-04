@@ -1,3 +1,14 @@
+2008-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        Move requestWithURLCString to WebBaseNetscapePluginView.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+        * Plugins/WebNetscapePluginView.mm:
+
 2008-12-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

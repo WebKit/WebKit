@@ -70,6 +70,8 @@
        loadManually:(BOOL)loadManually
          DOMElement:(DOMElement *)anElement;
 
+- (NSMutableURLRequest *)requestWithURLCString:(const char *)URLCString;
+
 // Subclasses must override these.
 - (void)handleMouseMoved:(NSEvent *)event;
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
