@@ -1,3 +1,16 @@
+2008-12-04  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed pauseTransitionAtTimeOnElementWithId() in DRT asserting when passed invalid property name
+        and potential similar issue with pauseAnimationAtTimeOnElementWithId().
+
+        https://bugs.webkit.org/show_bug.cgi?id=22641
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::pauseAnimationAtTime):
+        (WebCore::CompositeAnimationPrivate::pauseTransitionAtTime):
+
 2008-12-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
