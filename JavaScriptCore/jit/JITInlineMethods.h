@@ -345,6 +345,16 @@ ALWAYS_INLINE JmpSrc JIT::checkStructure(RegisterID reg, Structure* structure)
     return jnePtr(structure, Address(reg, FIELD_OFFSET(JSCell, m_structure)));
 }
 
+ALWAYS_INLINE JIT::Jump JIT::emitJumpIfJSCell(RegisterID reg)
+{
+    return jnset32(Imm32(JSImmediate::TagMask), reg);
+}
+
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg, unsigned bytecodeIndex)
+{
+    m_slowCases.append(SlowCaseEntry(emitJumpIfJSCell(reg), bytecodeIndex));
+}
+
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex)
 {
     m_slowCases.append(SlowCaseEntry(jset32(Imm32(JSImmediate::TagMask), reg), bytecodeIndex));

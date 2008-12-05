@@ -261,6 +261,10 @@ namespace JSC {
     void ctiRepatchCallByReturnAddress(void* where, void* what);
 
     class JIT : private MacroAssembler {
+        using MacroAssembler::Jump;
+        using MacroAssembler::JumpList;
+        using MacroAssembler::Label;
+
         typedef X86Assembler::RegisterID RegisterID;
         typedef X86Assembler::XMMRegisterID XMMRegisterID;
         typedef X86Assembler::JmpSrc JmpSrc;
@@ -433,9 +437,11 @@ namespace JSC {
         JSValue* getConstantImmediateNumericArg(unsigned src);
         unsigned getDeTaggedConstantImmediate(JSValue* imm);
 
-        bool linkSlowCaseIfNotJSCell(const Vector<SlowCaseEntry>::iterator&, int vReg);
+        Jump emitJumpIfJSCell(RegisterID reg);
+        void emitJumpSlowCaseIfJSCell(RegisterID reg, unsigned bytecodeIndex);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, unsigned bytecodeIndex);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, unsigned bytecodeIndex, int VReg);
+        bool linkSlowCaseIfNotJSCell(const Vector<SlowCaseEntry>::iterator&, int vReg);
 
         void emitJumpSlowCaseIfNotImmNum(RegisterID, unsigned bytecodeIndex);
         void emitJumpSlowCaseIfNotImmNums(RegisterID, RegisterID, RegisterID, unsigned bytecodeIndex);

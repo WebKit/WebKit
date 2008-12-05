@@ -2,6 +2,24 @@
 
         Reviewed by Geoff Garen.
 
+        Move JIT::compileOpStrictEq to MacroAssembler interface.
+
+        The rewrite also looks like a small (<1%) performance progression.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22697
+
+        * jit/JIT.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpIfJSCell):
+        (JSC::JIT::emitJumpSlowCaseIfJSCell):
+
+2008-12-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Remove m_assembler from MacroAssembler::Jump.
         Keeping a pointer allowed for some syntactic sugar - "link()" looks nicer
         than "link(this)".  But maintaining this doubles the size of Jump, which

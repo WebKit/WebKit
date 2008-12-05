@@ -221,48 +221,35 @@ void JIT::compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStric
 
     emitGetVirtualRegisters(src1, X86::eax, src2, X86::edx, i);
 
-    __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc firstNotImmediate = __ je();
-    __ testl_i32r(JSImmediate::TagMask, X86::edx);
-    JmpSrc secondNotImmediate = __ je();
+    // Check that bot are immediates, if so check if they're equal
+    Jump firstNotImmediate = emitJumpIfJSCell(X86::eax);
+    Jump secondNotImmediate = emitJumpIfJSCell(X86::edx);
+    Jump bothWereImmediatesButNotEqual = jne32(X86::edx, X86::eax);
 
-    __ cmpl_rr(X86::edx, X86::eax);
-    if (negated)
-        __ setne_r(X86::eax);
-    else
-        __ sete_r(X86::eax);
-    __ movzbl_rr(X86::eax, X86::eax);
-    emitTagAsBoolImmediate(X86::eax);
-            
-    JmpSrc bothWereImmediates = __ jmp();
+    // They are equal - set the result to true. (Or false, if negated).
+    move(Imm32(asInteger(jsBoolean(!negated))), X86::eax);
+    Jump bothWereImmediatesAndEqual = jump();
 
-    __ link(firstNotImmediate, __ label());
+    // eax was not an immediate, we haven't yet checked edx.
+    // If edx is also a JSCell, or is 0, then jump to a slow case,
+    // otherwise these values are not equal.
+    firstNotImmediate.link(this);
+    emitJumpSlowCaseIfJSCell(X86::edx, i);
+    m_slowCases.append(SlowCaseEntry(je32(Imm32(asInteger(JSImmediate::zeroImmediate())), X86::edx), i));
+    Jump firstWasNotImmediate = jump();
 
-    // check that edx is immediate but not the zero immediate
-    __ testl_i32r(JSImmediate::TagMask, X86::edx);
-    __ setz_r(X86::ecx);
-    __ movzbl_rr(X86::ecx, X86::ecx); // ecx is now 1 if edx was nonimmediate
-    __ cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::edx);
-    __ sete_r(X86::edx);
-    __ movzbl_rr(X86::edx, X86::edx); // edx is now 1 if edx was the 0 immediate
-    __ orl_rr(X86::ecx, X86::edx);
+    // eax was an immediate, but edx wasn't.
+    // If eax is 0 jump to a slow case, otherwise these values are not equal.
+    secondNotImmediate.link(this);
+    m_slowCases.append(SlowCaseEntry(je32(Imm32(asInteger(JSImmediate::zeroImmediate())), X86::eax), i));
 
-    m_slowCases.append(SlowCaseEntry(__ jnz(), i));
-
-    __ movl_i32r(asInteger(jsBoolean(negated)), X86::eax);
-
-    JmpSrc firstWasNotImmediate = __ jmp();
-
-    __ link(secondNotImmediate, __ label());
-    // check that eax is not the zero immediate (we know it must be immediate)
-    __ cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::eax);
-    m_slowCases.append(SlowCaseEntry(__ je(), i));
-
-    __ movl_i32r(asInteger(jsBoolean(negated)), X86::eax);
-
-    __ link(bothWereImmediates, __ label());
-    __ link(firstWasNotImmediate, __ label());
-
+    // We get here if the two values are different immediates, or one is 0 and the other is a JSCell.
+    // Vaelues are not equal, set the result to false.
+    bothWereImmediatesButNotEqual.link(this);
+    firstWasNotImmediate.link(this);
+    move(Imm32(asInteger(jsBoolean(negated))), X86::eax);
+    
+    bothWereImmediatesAndEqual.link(this);
     emitPutVirtualRegister(dst);
 }
 
@@ -1491,18 +1478,6 @@ void JIT::privateCompileLinkPass()
         i += 4; \
         break; \
     }
-
-#define CTI_COMPILE_BINARY_OP_SLOW_CASE_DOUBLE_ENTRY(name) \
-    case name: { \
-        __ link(iter->from, __ label()); \
-        __ link((++iter)->from, __ label());                \
-        emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx); \
-        emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx); \
-        emitCTICall(i, Interpreter::cti_##name); \
-        emitPutVirtualRegister(instruction[i + 1].u.operand); \
-        i += 4; \
-        break; \
-    }
     
 void JIT::privateCompileSlowCases()
 {
@@ -1892,8 +1867,28 @@ void JIT::privateCompileSlowCases()
             i += 4;
             break;
         }
-        CTI_COMPILE_BINARY_OP_SLOW_CASE_DOUBLE_ENTRY(op_stricteq);
-        CTI_COMPILE_BINARY_OP_SLOW_CASE_DOUBLE_ENTRY(op_nstricteq);
+        case op_stricteq: {
+            __ link(iter->from, __ label());
+            __ link((++iter)->from, __ label());
+            __ link((++iter)->from, __ label());
+            emitPutCTIArg(X86::eax, 0);
+            emitPutCTIArg(X86::edx, 4);
+            emitCTICall(i, Interpreter::cti_op_stricteq);
+            emitPutVirtualRegister(instruction[i + 1].u.operand);
+            i += 4;
+            break;
+        }
+        case op_nstricteq: {
+            __ link(iter->from, __ label());
+            __ link((++iter)->from, __ label());
+            __ link((++iter)->from, __ label());
+            emitPutCTIArg(X86::eax, 0);
+            emitPutCTIArg(X86::edx, 4);
+            emitCTICall(i, Interpreter::cti_op_nstricteq);
+            emitPutVirtualRegister(instruction[i + 1].u.operand);
+            i += 4;
+            break;
+        }
         case op_instanceof: {
             __ link(iter->from, __ label());
             __ link((++iter)->from, __ label());
