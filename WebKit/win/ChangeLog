@@ -1,3 +1,16 @@
+2008-12-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22674
+          Webkit r39005 does not start, an entry point not found
+
+        * WebView.cpp:
+        (findCFNetworkModule): Added.
+        (findCopySharedURLCacheFunction): Added.
+        (WebView::setCacheModel): Call CFURLCacheCopySharedURLCache via dynamic loading
+        instead of compiling based on which version of CFNetwork headers are present.
+
 2008-12-04  Steve Falkenburg  <sfalken@apple.com>
 
         Implement IPropertyBag2::Read.

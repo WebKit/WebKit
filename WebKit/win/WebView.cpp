@@ -125,6 +125,20 @@ static HashSet<WebView*> pendingDeleteBackingStoreSet;
 static String osVersion();
 static String webKitVersion();
 
+typedef CFURLCacheRef (*CopySharedURLCacheFunction)();
+
+static HMODULE findCFNetworkModule()
+{
+    if (HMODULE module = GetModuleHandleA("CFNetwork"))
+        return module;
+    return GetModuleHandleA("CFNetwork_debug");
+}
+
+static CopySharedURLCacheFunction findCopySharedURLCacheFunction()
+{
+    return reinterpret_cast<CopySharedURLCacheFunction>(GetProcAddress(findCFNetworkModule(), "CFURLCacheCopySharedURLCache"));
+}
+
 WebView* kit(Page* page)
 {
     return page ? static_cast<WebChromeClient*>(page->chrome()->client())->webView() : 0;
@@ -367,11 +381,14 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     if (s_didSetCacheModel && cacheModel == s_cacheModel)
         return;
 
-#ifdef CFURLCacheCopySharedURLCachePresent
-    RetainPtr<CFURLCacheRef> cfurlCache(AdoptCF, CFURLCacheCopySharedURLCache());
-#else
-    RetainPtr<CFURLCacheRef> cfurlCache = CFURLCacheSharedURLCache();
-#endif
+    // Once we require a newer version of CFNetwork with the CFURLCacheCopySharedURLCache function,
+    // we can call CFURLCacheCopySharedURLCache directly and eliminate copySharedURLCache.
+    static CopySharedURLCacheFunction copySharedURLCache = findCopySharedURLCacheFunction();
+    RetainPtr<CFURLCacheRef> cfurlCache;
+    if (copySharedURLCache)
+        cfurlCache.adoptCF(copySharedURLCache());
+    else
+        cfurlCache = CFURLCacheSharedURLCache();
 
     RetainPtr<CFStringRef> cfurlCacheDirectory(AdoptCF, wkCopyFoundationCacheDirectory());
     if (!cfurlCacheDirectory)
