@@ -1,3 +1,70 @@
+2008-12-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Start porting the JIT to use the MacroAssembler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22671
+        No change in performance.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::Jump::operator X86Assembler::JmpSrc):
+        (JSC::MacroAssembler::add32):
+        (JSC::MacroAssembler::and32):
+        (JSC::MacroAssembler::lshift32):
+        (JSC::MacroAssembler::rshift32):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::store32):
+        (JSC::MacroAssembler::poke):
+        (JSC::MacroAssembler::move):
+        (JSC::MacroAssembler::compareImm32ForBranchEquality):
+        (JSC::MacroAssembler::jnePtr):
+        (JSC::MacroAssembler::jnset32):
+        (JSC::MacroAssembler::jset32):
+        (JSC::MacroAssembler::jzeroSub32):
+        (JSC::MacroAssembler::joverAdd32):
+        (JSC::MacroAssembler::call):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::shll_i8r):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOp):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::emitPutCTIArg):
+        (JSC::JIT::emitPutCTIArgConstant):
+        (JSC::JIT::emitGetCTIArg):
+        (JSC::JIT::emitPutCTIArgFromVirtualRegister):
+        (JSC::JIT::emitPutCTIParam):
+        (JSC::JIT::emitGetCTIParam):
+        (JSC::JIT::emitPutToCallFrameHeader):
+        (JSC::JIT::emitPutImmediateToCallFrameHeader):
+        (JSC::JIT::emitGetFromCallFrameHeader):
+        (JSC::JIT::emitPutVirtualRegister):
+        (JSC::JIT::emitInitRegister):
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::restoreArgumentReference):
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        (JSC::JIT::emitCTICall):
+        (JSC::JIT::checkStructure):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmNum):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmNums):
+        (JSC::JIT::emitFastArithDeTagImmediate):
+        (JSC::JIT::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::JIT::emitFastArithReTagImmediate):
+        (JSC::JIT::emitFastArithPotentiallyReTagImmediate):
+        (JSC::JIT::emitFastArithImmToInt):
+        (JSC::JIT::emitFastArithIntToImmOrSlowCase):
+        (JSC::JIT::emitFastArithIntToImmNoCheck):
+        (JSC::JIT::emitTagAsBoolImmediate):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+
 2008-12-04  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

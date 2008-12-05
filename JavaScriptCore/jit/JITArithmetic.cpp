@@ -254,7 +254,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         __ link(op1imm, __ label());
         emitJumpSlowCaseIfNotImmNum(X86::edx, i);
     } else
-        emitJumpSlowCaseIfNotImmNums(X86::eax, X86::edx, i);
+        emitJumpSlowCaseIfNotImmNums(X86::eax, X86::edx, X86::ecx, i);
 
     if (opcodeID == op_add) {
         emitFastArithDeTagImmediate(X86::eax);

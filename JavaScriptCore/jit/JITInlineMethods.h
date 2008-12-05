@@ -30,7 +30,7 @@
 
 #if ENABLE(JIT)
 
-#define __ m_assembler. 
+#define __ m_assembler.
 
 #if PLATFORM(WIN)
 #undef FIELD_OFFSET // Fix conflict with winnt.h.
@@ -61,7 +61,7 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst, unsigned
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
     if (m_codeBlock->isConstantRegisterIndex(src)) {
         JSValue* value = m_codeBlock->getConstant(src);
-        __ movl_i32r(asInteger(value), dst);
+        move(value, dst);
         killLastResultRegister();
         return;
     }
@@ -77,13 +77,13 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst, unsigned
         if (!atJumpTarget) {
             // The argument we want is already stored in eax
             if (dst != X86::eax)
-                __ movl_rr(X86::eax, dst);
+                move(X86::eax, dst);
             killLastResultRegister();
             return;
         }
     }
 
-    __ movl_mr(src * sizeof(Register), X86::edi, dst);
+    loadPtr(Address(callFrameRegister, src * sizeof(Register)), dst);
     killLastResultRegister();
 }
 
@@ -98,35 +98,25 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegisters(int src1, RegisterID dst1, int s
     }
 }
 
-// get arg puts an arg from the SF register array onto the stack, as an arg to a context threaded function.
-ALWAYS_INLINE void JIT::emitPutCTIArgFromVirtualRegister(unsigned src, unsigned offset, RegisterID scratch)
-{
-    if (m_codeBlock->isConstantRegisterIndex(src)) {
-        JSValue* value = m_codeBlock->getConstant(src);
-        __ movl_i32m(asInteger(value), offset + sizeof(void*), X86::esp);
-    } else {
-        __ movl_mr(src * sizeof(Register), X86::edi, scratch);
-        __ movl_rm(scratch, offset + sizeof(void*), X86::esp);
-    }
-
-    killLastResultRegister();
-}
-
 // puts an arg onto the stack, as an arg to a context threaded function.
 ALWAYS_INLINE void JIT::emitPutCTIArg(RegisterID src, unsigned offset)
 {
-    __ movl_rm(src, offset + sizeof(void*), X86::esp);
+    poke(src, (offset / sizeof(void*)) + 1);
+}
+
+ALWAYS_INLINE void JIT::emitPutCTIArgConstant(unsigned value, unsigned offset)
+{
+    poke(Imm32(value), (offset / sizeof(void*)) + 1);
+}
+
+ALWAYS_INLINE void JIT::emitPutCTIArgConstant(void* value, unsigned offset)
+{
+    poke(value, (offset / sizeof(void*)) + 1);
 }
 
 ALWAYS_INLINE void JIT::emitGetCTIArg(unsigned offset, RegisterID dst)
 {
-    __ movl_mr(offset + sizeof(void*), X86::esp, dst);
-}
-
-
-ALWAYS_INLINE void JIT::emitPutCTIArgConstant(unsigned value, unsigned offset)
-{
-    __ movl_i32m(value, offset + sizeof(void*), X86::esp);
+    peek(dst, (offset / sizeof(void*)) + 1);
 }
 
 ALWAYS_INLINE JSValue* JIT::getConstantImmediateNumericArg(unsigned src)
@@ -138,190 +128,226 @@ ALWAYS_INLINE JSValue* JIT::getConstantImmediateNumericArg(unsigned src)
     return noValue();
 }
 
+// get arg puts an arg from the SF register array onto the stack, as an arg to a context threaded function.
+ALWAYS_INLINE void JIT::emitPutCTIArgFromVirtualRegister(unsigned src, unsigned offset, RegisterID scratch)
+{
+    if (m_codeBlock->isConstantRegisterIndex(src)) {
+        JSValue* value = m_codeBlock->getConstant(src);
+        emitPutCTIArgConstant(value, offset);
+    } else {
+        loadPtr(Address(callFrameRegister, src * sizeof(Register)), scratch);
+        emitPutCTIArg(scratch, offset);
+    }
+
+    killLastResultRegister();
+}
+
 ALWAYS_INLINE void JIT::emitPutCTIParam(void* value, unsigned name)
 {
-    __ movl_i32m(reinterpret_cast<intptr_t>(value), name * sizeof(void*), X86::esp);
+    poke(value, name);
 }
 
 ALWAYS_INLINE void JIT::emitPutCTIParam(RegisterID from, unsigned name)
 {
-    __ movl_rm(from, name * sizeof(void*), X86::esp);
+    poke(from, name);
 }
 
 ALWAYS_INLINE void JIT::emitGetCTIParam(unsigned name, RegisterID to)
 {
-    __ movl_mr(name * sizeof(void*), X86::esp, to);
+    peek(to, name);
     killLastResultRegister();
 }
 
 ALWAYS_INLINE void JIT::emitPutToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
 {
-    __ movl_rm(from, entry * sizeof(Register), X86::edi);
+    storePtr(from, Address(callFrameRegister, entry * sizeof(Register)));
+}
+
+ALWAYS_INLINE void JIT::emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry)
+{
+    storePtr(value, Address(callFrameRegister, entry * sizeof(Register)));
 }
 
 ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader(RegisterFile::CallFrameHeaderEntry entry, RegisterID to)
 {
-    __ movl_mr(entry * sizeof(Register), X86::edi, to);
+    loadPtr(Address(callFrameRegister, entry * sizeof(Register)), to);
     killLastResultRegister();
 }
 
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(unsigned dst, RegisterID from)
 {
-    __ movl_rm(from, dst * sizeof(Register), X86::edi);
+    storePtr(from, Address(callFrameRegister, dst * sizeof(Register)));
     m_lastResultBytecodeRegister = (from == X86::eax) ? dst : std::numeric_limits<int>::max();
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
 ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
 {
-    __ movl_i32m(asInteger(jsUndefined()), dst * sizeof(Register), X86::edi);
+    storePtr(jsUndefined(), Address(callFrameRegister, dst * sizeof(Register)));
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
 ALWAYS_INLINE JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, X86::RegisterID r)
 {
-    JmpSrc call = __ call(r);
-    m_calls.append(CallRecord(call, bytecodeIndex));
-
-    return call;
+    JmpSrc nakedCall = call(r);
+    m_calls.append(CallRecord(nakedCall, bytecodeIndex));
+    return nakedCall;
 }
 
-ALWAYS_INLINE  JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, void* function)
+ALWAYS_INLINE JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, void* function)
 {
-    JmpSrc call = __ call();
-    m_calls.append(CallRecord(call, reinterpret_cast<CTIHelper_v>(function), bytecodeIndex));
-    return call;
+    JmpSrc nakedCall = call();
+    m_calls.append(CallRecord(nakedCall, reinterpret_cast<CTIHelper_v>(function), bytecodeIndex));
+    return nakedCall;
 }
+
+ALWAYS_INLINE void JIT::restoreArgumentReference()
+{
+#if USE(CTI_ARGUMENT)
+#if USE(FAST_CALL_CTI_ARGUMENT)
+    movl_rr(X86::esp, X86::ecx);
+#else
+    movl_rm(X86::esp, 0, X86::esp);
+#endif
+#endif
+}
+
+ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
+{
+#if USE(CTI_ARGUMENT) && USE(FAST_CALL_CTI_ARGUMENT)
+    movl_rr(X86::esp, X86::ecx);
+    addl_i32r(4, X86::ecx);
+#endif
+}
+
 
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_j helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
-    __ restoreArgumentReference();
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ call();
-    m_calls.append(CallRecord(call, helper, bytecodeIndex));
+    restoreArgumentReference();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    JmpSrc ctiCall = call();
+    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
-    return call;
+    return ctiCall;
 }
 
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_o helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
-    __ restoreArgumentReference();
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ call();
-    m_calls.append(CallRecord(call, helper, bytecodeIndex));
+    restoreArgumentReference();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    JmpSrc ctiCall = call();
+    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
-    return call;
+    return ctiCall;
 }
 
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_p helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
-    __ restoreArgumentReference();
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ call();
-    m_calls.append(CallRecord(call, helper, bytecodeIndex));
+    restoreArgumentReference();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    JmpSrc ctiCall = call();
+    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
-    return call;
+    return ctiCall;
 }
 
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_b helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
-    __ restoreArgumentReference();
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ call();
-    m_calls.append(CallRecord(call, helper, bytecodeIndex));
+    restoreArgumentReference();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    JmpSrc ctiCall = call();
+    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
-    return call;
+    return ctiCall;
 }
 
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_v helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
-    __ restoreArgumentReference();
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ call();
-    m_calls.append(CallRecord(call, helper, bytecodeIndex));
+    restoreArgumentReference();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    JmpSrc ctiCall = call();
+    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
-    return call;
+    return ctiCall;
 }
 
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_s helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
-    __ restoreArgumentReference();
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ call();
-    m_calls.append(CallRecord(call, helper, bytecodeIndex));
+    restoreArgumentReference();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    JmpSrc ctiCall = call();
+    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
-    return call;
+    return ctiCall;
 }
 
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_2 helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
-    __ restoreArgumentReference();
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ call();
-    m_calls.append(CallRecord(call, helper, bytecodeIndex));
+    restoreArgumentReference();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    JmpSrc ctiCall = call();
+    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
-    return call;
+    return ctiCall;
 }
 
 ALWAYS_INLINE JmpSrc JIT::checkStructure(RegisterID reg, Structure* structure)
 {
-    __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), FIELD_OFFSET(JSCell, m_structure), reg);
-    return __ jne();
+    return jnePtr(structure, Address(reg, FIELD_OFFSET(JSCell, m_structure)));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex)
 {
-    __ testl_i32r(JSImmediate::TagMask, reg);
-    m_slowCases.append(SlowCaseEntry(__ jne(), bytecodeIndex));
+    m_slowCases.append(SlowCaseEntry(jset32(Imm32(JSImmediate::TagMask), reg), bytecodeIndex));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex, int vReg)
@@ -343,15 +369,14 @@ ALWAYS_INLINE bool JIT::linkSlowCaseIfNotJSCell(const Vector<SlowCaseEntry>::ite
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNum(RegisterID reg, unsigned bytecodeIndex)
 {
-    __ testl_i32r(JSImmediate::TagBitTypeInteger, reg);
-    m_slowCases.append(SlowCaseEntry(__ je(), bytecodeIndex));
+    m_slowCases.append(SlowCaseEntry(jnset32(Imm32(JSImmediate::TagBitTypeInteger), reg), bytecodeIndex));
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNums(RegisterID reg1, RegisterID reg2, unsigned bytecodeIndex)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNums(RegisterID reg1, RegisterID reg2, RegisterID scratch, unsigned bytecodeIndex)
 {
-    __ movl_rr(reg1, X86::ecx);
-    __ andl_rr(reg2, X86::ecx);
-    emitJumpSlowCaseIfNotImmNum(X86::ecx, bytecodeIndex);
+    move(reg1, scratch);
+    and32(reg2, scratch);
+    emitJumpSlowCaseIfNotImmNum(scratch, bytecodeIndex);
 }
 
 ALWAYS_INLINE unsigned JIT::getDeTaggedConstantImmediate(JSValue* imm)
@@ -362,47 +387,45 @@ ALWAYS_INLINE unsigned JIT::getDeTaggedConstantImmediate(JSValue* imm)
 
 ALWAYS_INLINE void JIT::emitFastArithDeTagImmediate(RegisterID reg)
 {
-    __ subl_i8r(JSImmediate::TagBitTypeInteger, reg);
+    sub32(Imm32(JSImmediate::TagBitTypeInteger), reg);
 }
 
 ALWAYS_INLINE JmpSrc JIT::emitFastArithDeTagImmediateJumpIfZero(RegisterID reg)
 {
-    __ subl_i8r(JSImmediate::TagBitTypeInteger, reg);
-    return __ je();
+    return jzSub32(Imm32(JSImmediate::TagBitTypeInteger), reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID reg)
 {
-    __ addl_i8r(JSImmediate::TagBitTypeInteger, reg);
+    add32(Imm32(JSImmediate::TagBitTypeInteger), reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithPotentiallyReTagImmediate(RegisterID reg)
 {
-    __ orl_i8r(JSImmediate::TagBitTypeInteger, reg);
+    or32(Imm32(JSImmediate::TagBitTypeInteger), reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithImmToInt(RegisterID reg)
 {
-    __ sarl_i8r(1, reg);
+    rshift32(Imm32(1), reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithIntToImmOrSlowCase(RegisterID reg, unsigned bytecodeIndex)
 {
-    __ addl_rr(reg, reg);
-    m_slowCases.append(SlowCaseEntry(__ jo(), bytecodeIndex));
+    m_slowCases.append(SlowCaseEntry(joAdd32(reg, reg), bytecodeIndex));
     emitFastArithReTagImmediate(reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID reg)
 {
-    __ addl_rr(reg, reg);
+    add32(reg, reg);
     emitFastArithReTagImmediate(reg);
 }
 
 ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 {
-    __ shl_i8r(JSImmediate::ExtendedPayloadShift, reg);
-    __ orl_i8r(JSImmediate::FullTagTypeBool, reg);
+    lshift32(Imm32(JSImmediate::ExtendedPayloadShift), reg);
+    or32(Imm32(JSImmediate::FullTagTypeBool), reg);
 }
 
 }

@@ -35,7 +35,7 @@
 #include "Interpreter.h"
 #include "Opcode.h"
 #include "RegisterFile.h"
-#include "X86Assembler.h"
+#include "MacroAssembler.h"
 #include "Profiler.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
@@ -260,11 +260,13 @@ namespace JSC {
     void ctiSetReturnAddress(void** where, void* what);
     void ctiRepatchCallByReturnAddress(void* where, void* what);
 
-    class JIT {
+    class JIT : private MacroAssembler {
         typedef X86Assembler::RegisterID RegisterID;
         typedef X86Assembler::XMMRegisterID XMMRegisterID;
         typedef X86Assembler::JmpSrc JmpSrc;
         typedef X86Assembler::JmpDst JmpDst;
+
+        static const RegisterID callFrameRegister = X86::edi;
 
         static const int repatchGetByIdDefaultStructure = -1;
         // Magic number - initial offset cannot be representable as a signed 8bit value, or the X86Assembler
@@ -415,6 +417,7 @@ namespace JSC {
         void emitPutCTIArg(RegisterID src, unsigned offset);
         void emitPutCTIArgFromVirtualRegister(unsigned src, unsigned offset, RegisterID scratch);
         void emitPutCTIArgConstant(unsigned value, unsigned offset);
+        void emitPutCTIArgConstant(void* value, unsigned offset);
         void emitGetCTIArg(unsigned offset, RegisterID dst);
 
         void emitInitRegister(unsigned dst);
@@ -424,6 +427,7 @@ namespace JSC {
         void emitGetCTIParam(unsigned name, RegisterID to);
 
         void emitPutToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry);
+        void emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry);
         void emitGetFromCallFrameHeader(RegisterFile::CallFrameHeaderEntry entry, RegisterID to);
 
         JSValue* getConstantImmediateNumericArg(unsigned src);
@@ -434,7 +438,7 @@ namespace JSC {
         void emitJumpSlowCaseIfNotJSCell(RegisterID, unsigned bytecodeIndex, int VReg);
 
         void emitJumpSlowCaseIfNotImmNum(RegisterID, unsigned bytecodeIndex);
-        void emitJumpSlowCaseIfNotImmNums(RegisterID, RegisterID, unsigned bytecodeIndex);
+        void emitJumpSlowCaseIfNotImmNums(RegisterID, RegisterID, RegisterID, unsigned bytecodeIndex);
 
         JmpSrc checkStructure(RegisterID reg, Structure* structure);
 
@@ -447,6 +451,9 @@ namespace JSC {
         void emitFastArithIntToImmNoCheck(RegisterID);
 
         void emitTagAsBoolImmediate(RegisterID reg);
+
+        void restoreArgumentReference();
+        void restoreArgumentReferenceForTrampoline();
 
         JmpSrc emitNakedCall(unsigned bytecodeIndex, RegisterID);
         JmpSrc emitNakedCall(unsigned bytecodeIndex, void* function);
@@ -468,7 +475,6 @@ namespace JSC {
 
         void killLastResultRegister();
 
-        X86Assembler m_assembler;
         Interpreter* m_interpreter;
         JSGlobalData* m_globalData;
         CodeBlock* m_codeBlock;

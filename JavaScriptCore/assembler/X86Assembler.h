@@ -114,6 +114,7 @@ public:
         OP_JMP_rel32                    = 0xE9,
         PRE_SSE_F2                      = 0xF2,
         OP_HLT                          = 0xF4,
+        OP_GROUP3_EbIb                  = 0xF6,
         OP_GROUP3_Ev                    = 0xF7,
         OP_GROUP3_EvIz                  = 0xF7, // OP_GROUP3_Ev has an immediate, when instruction is a test. 
         OP_GROUP5_Ev                    = 0xFF,
@@ -390,6 +391,20 @@ public:
     }
 #endif
 
+    void cmpl_i8m(int imm, RegisterID dst)
+    {
+        m_buffer.putByte(OP_GROUP1_EvIb);
+        modRm_opm(GROUP1_OP_CMP, dst);
+        m_buffer.putByte(imm);
+    }
+
+    void cmpl_i8m(int imm, int offset, RegisterID dst)
+    {
+        m_buffer.putByte(OP_GROUP1_EvIb);
+        modRm_opm(GROUP1_OP_CMP, dst, offset);
+        m_buffer.putByte(imm);
+    }
+
     void cmpl_i8m(int imm, int offset, RegisterID base, RegisterID index, int scale)
     {
         m_buffer.putByte(OP_GROUP1_EvIb);
@@ -496,6 +511,14 @@ public:
         modRm_rm(dst, base, offset);
     }
 
+    void testb_i8r(int imm, RegisterID dst)
+    {
+        m_buffer.ensureSpace(maxInstructionSize);
+        m_buffer.putByteUnchecked(OP_GROUP3_EbIb);
+        modRm_opr_Unchecked(GROUP3_OP_TEST, dst);
+        m_buffer.putByteUnchecked(imm);
+    }
+
     void testl_i32r(int imm, RegisterID dst)
     {
         m_buffer.ensureSpace(maxInstructionSize);
@@ -555,7 +578,7 @@ public:
         modRm_opr(GROUP2_OP_SAR, dst);
     }
 
-    void shl_i8r(int imm, RegisterID dst)
+    void shll_i8r(int imm, RegisterID dst)
     {
         if (imm == 1) {
             m_buffer.putByte(OP_GROUP2_Ev1);
@@ -717,6 +740,14 @@ public:
         m_buffer.putByte(OP_GROUP11_EvIz);
         modRm_opr(GROUP11_MOV, dst);
         m_buffer.putInt(imm);
+    }
+
+    void movl_i32m(int imm, RegisterID base)
+    {
+        m_buffer.ensureSpace(maxInstructionSize);
+        m_buffer.putByteUnchecked(OP_GROUP11_EvIz);
+        modRm_opm_Unchecked(GROUP11_MOV, base);
+        m_buffer.putIntUnchecked(imm);
     }
 
     void movl_i32m(int imm, int offset, RegisterID base)
@@ -1089,28 +1120,6 @@ public:
         return copy;
     }
 
-#if USE(CTI_ARGUMENT)
-    void restoreArgumentReference()
-    {
-#if USE(FAST_CALL_CTI_ARGUMENT)
-        movl_rr(X86::esp, X86::ecx);
-#else
-        movl_rm(X86::esp, 0, X86::esp);
-#endif
-    }
-
-    void restoreArgumentReferenceForTrampoline()
-    {
-#if USE(FAST_CALL_CTI_ARGUMENT)
-        movl_rr(X86::esp, X86::ecx);
-        addl_i32r(4, X86::ecx);
-#endif
-    }
-#else
-    void restoreArgumentReference() {}
-    void restoreArgumentReferenceForTrampoline() {}
-#endif
-
 private:
     void modRm_rr(RegisterID reg, RegisterID rm)
     {
@@ -1130,6 +1139,16 @@ private:
         m_buffer.putInt((int)addr);
     }
 #endif
+
+    void modRm_rm_Unchecked(RegisterID reg, RegisterID base)
+    {
+        if (base == X86::esp) {
+            m_buffer.putByteUnchecked(MODRM(0, reg, X86::hasSib));
+            m_buffer.putByteUnchecked(SIB(0, X86::noScale, X86::esp));
+        } else {
+            m_buffer.putByteUnchecked(MODRM(0, reg, base));
+        }
+    }
 
     void modRm_rm(RegisterID reg, RegisterID base)
     {
@@ -1210,6 +1229,11 @@ private:
     void modRm_opm(OpcodeID opcodeID, RegisterID base)
     {
         modRm_rm(static_cast<RegisterID>(opcodeID), base);
+    }
+
+    void modRm_opm_Unchecked(OpcodeID opcodeID, RegisterID base)
+    {
+        modRm_rm_Unchecked(static_cast<RegisterID>(opcodeID), base);
     }
 
     void modRm_opm_Unchecked(OpcodeID opcodeID, RegisterID base, int offset)
