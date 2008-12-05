@@ -271,10 +271,7 @@ void JIT::emitSlowScriptCheck(unsigned bytecodeIndex)
     __ subl_i8r(1, X86::esi);
     JmpSrc skipTimeout = __ jne();
     emitCTICall(bytecodeIndex, Interpreter::cti_timeout_check);
-
-    emitGetCTIParam(CTI_ARGS_globalData, X86::ecx);
-    __ movl_mr(FIELD_OFFSET(JSGlobalData, interpreter), X86::ecx, X86::ecx);
-    __ movl_mr(FIELD_OFFSET(Interpreter, m_ticksUntilNextTimeoutCheck), X86::ecx, X86::esi);
+    __ movl_rr(X86::eax, X86::esi);
     __ link(skipTimeout, __ label());
 
     killLastResultRegister();

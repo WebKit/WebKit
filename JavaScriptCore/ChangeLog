@@ -1,3 +1,16 @@
+2008-12-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Simplify JIT generated checks for timeout code, by moving more work into the C function.
+        https://bugs.webkit.org/show_bug.cgi?id=22688
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::cti_timeout_check):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::emitSlowScriptCheck):
+
 2008-12-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

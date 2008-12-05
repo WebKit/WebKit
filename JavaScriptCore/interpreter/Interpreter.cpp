@@ -4407,14 +4407,17 @@ JSValue* Interpreter::cti_op_pre_inc(CTI_ARGS)
     return result;
 }
 
-void Interpreter::cti_timeout_check(CTI_ARGS)
+int Interpreter::cti_timeout_check(CTI_ARGS)
 {
     CTI_STACK_HACK();
+    Interpreter* interpreter = ARG_globalData->interpreter;
 
-    if (ARG_globalData->interpreter->checkTimeout(ARG_callFrame->dynamicGlobalObject())) {
+    if (interpreter->checkTimeout(ARG_callFrame->dynamicGlobalObject())) {
         ARG_globalData->exception = createInterruptedExecutionException(ARG_globalData);
         VM_THROW_EXCEPTION_AT_END();
     }
+    
+    return interpreter->m_ticksUntilNextTimeoutCheck;
 }
 
 void Interpreter::cti_register_file_check(CTI_ARGS)
