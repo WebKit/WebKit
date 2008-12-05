@@ -1,5 +1,11 @@
 2008-12-05  Brett Wilson  <brettw@chromium.org>
 
+        Fix build bustage from previous patch.
+
+        * css/CSSSelector.h:
+
+2008-12-05  Brett Wilson  <brettw@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Add a missing include for OwnPtr to make CSSSelector compile without
