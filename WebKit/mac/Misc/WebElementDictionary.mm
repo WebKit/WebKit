@@ -41,6 +41,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
+#import <runtime/InitializeThreading.h>
 
 using namespace WebCore;
 
@@ -59,12 +60,13 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 @implementation WebElementDictionary
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 + (void)initializeLookupTable
 {

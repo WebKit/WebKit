@@ -33,6 +33,7 @@
 #import "DOMCSSPrimitiveValue.h"
 #import "DOMInternal.h"
 #import "WebCoreObjCExtras.h"
+#import <runtime/InitializeThreading.h>
 #import <wtf/GetPtr.h>
 
 namespace WebCore {
@@ -67,12 +68,13 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 
 @implementation DOMRGBColor
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 - (void)dealloc
 {

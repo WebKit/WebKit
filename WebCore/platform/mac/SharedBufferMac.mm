@@ -27,6 +27,7 @@
 #include "FoundationExtras.h"
 #include "SharedBuffer.h"
 #include "WebCoreObjCExtras.h"
+#include <runtime/InitializeThreading.h>
 #include <string.h>
 #include <wtf/PassRefPtr.h>
 
@@ -46,12 +47,13 @@ using namespace WebCore;
 
 @implementation WebCoreSharedBufferData
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 - (void)dealloc
 {

@@ -44,6 +44,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
@@ -95,12 +96,13 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 @implementation WebBackForwardList
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 - (id)init
 {

@@ -41,6 +41,7 @@
 #import "runtime_root.h"
 #import <JavaScriptCore/APICast.h>
 #import <interpreter/CallFrame.h>
+#import <runtime/InitializeThreading.h>
 #import <runtime/JSGlobalObject.h>
 #import <runtime/JSLock.h>
 #import <runtime/Completion.h>
@@ -103,12 +104,13 @@ static void addExceptionToConsole(ExecState* exec)
 
 @implementation WebScriptObject
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 + (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject
 {

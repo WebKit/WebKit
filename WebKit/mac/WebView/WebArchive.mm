@@ -37,6 +37,7 @@
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <runtime/InitializeThreading.h>
 
 using namespace WebCore;
 
@@ -63,12 +64,13 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 
 @implementation WebArchivePrivate
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 - (id)init
 {

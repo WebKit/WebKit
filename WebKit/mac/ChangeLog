@@ -1,3 +1,43 @@
+2008-12-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6405599> Tiger Mail crashes when using "Mail Contents of This Page"
+        in Safari before opening a mail message in Mail
+
+        * Carbon/CarbonWindowAdapter.m: Removed.
+        * Carbon/CarbonWindowAdapter.mm: Copied from WebKit/mac/Carbon/CarbonWindowAdapter.m.
+        (+[CarbonWindowAdapter initialize]):
+        * History/WebBackForwardList.mm:
+        (+[WebBackForwardList initialize]):
+        * History/WebHistoryItem.mm:
+        (+[WebHistoryItem initialize]):
+        * Misc/WebElementDictionary.mm:
+        (+[WebElementDictionary initialize]):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (+[WebHostedNetscapePluginView initialize]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebBasePluginPackage.m: Removed.
+        * Plugins/WebBasePluginPackage.mm: Copied from WebKit/mac/Plugins/WebBasePluginPackage.m.
+        (+[WebBasePluginPackage initialize]):
+        * Plugins/WebNetscapePluginView.mm:
+        (+[WebNetscapePluginView initialize]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (+[WebEditCommand initialize]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebArchive.mm:
+        (+[WebArchivePrivate initialize]):
+        * WebView/WebDataSource.mm:
+        (+[WebDataSourcePrivate initialize]):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLViewPrivate initialize]):
+        (+[WebHTMLView initialize]):
+        * WebView/WebResource.mm:
+        (+[WebResourcePrivate initialize]):
+        * WebView/WebView.mm:
+        (+[WebViewPrivate initialize]):
+        Call JSC::initializeThreading();
+
 2008-12-04  Stephanie Lewis  <slewis@apple.com>
 
         Fix build.

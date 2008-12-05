@@ -112,6 +112,7 @@
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 #import <limits>
+#import <runtime/InitializeThreading.h>
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -441,6 +442,7 @@ static NSCellStateValue kit(TriState state)
 
 + (void)initialize
 {
+    JSC::initializeThreading();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif
@@ -2077,6 +2079,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 {
     [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] 
                              returnTypes:[[self class] _insertablePasteboardTypes]];
+    JSC::initializeThreading();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

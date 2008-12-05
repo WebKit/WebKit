@@ -58,6 +58,7 @@
 #import "WebCoreViewFactory.h"
 #import "htmlediting.h"
 #import "visible_units.h"
+#import <runtime/InitializeThreading.h>
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -120,12 +121,13 @@ typedef unsigned NSUInteger;
 
 @implementation AccessibilityObjectWrapper
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 - (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
 {

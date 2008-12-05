@@ -68,6 +68,7 @@
 #import <WebKit/nptextinput.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
+#import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <objc/objc-runtime.h>
 
@@ -181,6 +182,7 @@ typedef struct {
 
 + (void)initialize
 {
+    JSC::initializeThreading();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

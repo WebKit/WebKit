@@ -132,6 +132,7 @@
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>
+#import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashTraits.h>
 #import <wtf/RefCountedLeakCounter.h>
@@ -474,12 +475,13 @@ static BOOL grammarCheckingEnabled;
 
 @implementation WebViewPrivate
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 - init 
 {

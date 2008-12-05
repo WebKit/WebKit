@@ -107,6 +107,7 @@
 #import <WebCore/Widget.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLFormElement.h>
+#import <runtime/InitializeThreading.h>
 #import <wtf/PassRefPtr.h>
 
 #if ENABLE(MAC_JAVA_BRIDGE)
@@ -1548,12 +1549,13 @@ jobject WebFrameLoaderClient::javaApplet(NSView* view)
 
 @implementation WebFramePolicyListener
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 - (id)initWithWebCoreFrame:(Frame*)frame
 {

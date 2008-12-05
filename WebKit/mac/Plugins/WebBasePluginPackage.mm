@@ -33,6 +33,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/Vector.h>
 
@@ -59,12 +60,13 @@
 
 @implementation WebBasePluginPackage
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath
 {

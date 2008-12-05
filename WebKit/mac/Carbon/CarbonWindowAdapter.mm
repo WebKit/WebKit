@@ -73,6 +73,7 @@
 #import <assert.h>
 
 #import <WebCore/WebCoreObjCExtras.h>
+#import <runtime/InitializeThreading.h>
 
 #import "WebKitLogging.h"
 #import "WebNSObjectExtras.h"
@@ -265,12 +266,13 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 	}
 }
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 // Given a reference to a Carbon window that is to be encapsulated, and an indicator of whether or not this object should take responsibility for disposing of the Carbon window, initialize.
 - (id)initWithCarbonWindowRef:(WindowRef)inWindowRef takingOwnership:(BOOL)inWindowRefIsOwned {

@@ -50,6 +50,7 @@
 #import <WebCore/PlatformString.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/StdLibExtras.h>
 
@@ -86,12 +87,13 @@ void WKNotifyHistoryItemChanged()
 
 @implementation WebHistoryItem
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 - (id)init
 {

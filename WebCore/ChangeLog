@@ -2,6 +2,28 @@
 
         Reviewed by Darin Adler.
 
+        <rdar://problem/6405599> Tiger Mail crashes when using "Mail Contents of This Page"
+        in Safari before opening a mail message in Mail
+
+        * platform/mac/WebCoreObjCExtras.mm:
+        (WebCoreObjCFinalizeOnMainThread):
+        Don't call initializeThreading: we now expect the caller to do it, to simplify keeping
+        Tiger and post-Tiger behavior in line.
+
+        * bindings/objc/DOMRGBColor.mm:
+        (+[DOMRGBColor initialize]):
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject initialize]):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (+[AccessibilityObjectWrapper initialize]):
+        * platform/mac/SharedBufferMac.mm:
+        (+[WebCoreSharedBufferData initialize]):
+        Call JSC::initializeThreading();
+
+2008-12-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         <rdar://problem/4072827> Downloaded non-ASCII file name becomes garbled
 
         * platform/network/ResourceRequestBase.cpp:

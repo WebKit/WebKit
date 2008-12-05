@@ -38,6 +38,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 
+#import <runtime/InitializeThreading.h>
 #import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
@@ -62,12 +63,13 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 @implementation WebResourcePrivate
 
-#ifndef BUILDING_ON_TIGER
 + (void)initialize
 {
+    JSC::initializeThreading();
+#ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
-}
 #endif
+}
 
 - (id)init
 {

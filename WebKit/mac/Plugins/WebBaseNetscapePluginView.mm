@@ -46,6 +46,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/Page.h>
 #import <WebKit/DOMPrivate.h>
+#import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
@@ -57,6 +58,7 @@ using namespace WebCore;
 
 + (void)initialize
 {
+    JSC::initializeThreading();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif
