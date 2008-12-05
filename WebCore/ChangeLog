@@ -1,3 +1,25 @@
+2008-12-04  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        wx implementations for Path API.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22661
+
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::~Path):
+        (WebCore::Path::contains):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::transform):
+        (WebCore::Path::isEmpty):
+
 2008-12-04  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.

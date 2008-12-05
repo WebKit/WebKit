@@ -64,7 +64,7 @@ Path::Path()
 }
 
 Path::~Path()
-{ 
+{
 }
 
 Path::Path(const Path& path)
@@ -74,6 +74,9 @@ Path::Path(const Path& path)
 
 bool Path::contains(const FloatPoint& point, const WindRule rule) const
 { 
+    if (m_path) {
+        return m_path->Contains(point.x(), point.y(), getWxWindRuleForWindRule(rule));
+    }
     return false; 
 }
 
@@ -121,49 +124,58 @@ void Path::moveTo(const FloatPoint& point)
 #endif
 }
 
-void Path::addLineTo(const FloatPoint&) 
+void Path::addLineTo(const FloatPoint& point) 
 { 
-    notImplemented(); 
+    if (m_path)
+        m_path->AddLineToPoint(point.x(), point.y());
 }
 
-void Path::addQuadCurveTo(const FloatPoint&, const FloatPoint&) 
+void Path::addQuadCurveTo(const FloatPoint& control, const FloatPoint& end) 
 { 
-    notImplemented(); 
+    if (m_path)
+        m_path->AddQuadCurveToPoint(control.x(), control.y(), end.x(), end.y());
 }
 
-void Path::addBezierCurveTo(const FloatPoint&, const FloatPoint&, const FloatPoint&) 
+void Path::addBezierCurveTo(const FloatPoint& control1, const FloatPoint& control2, const FloatPoint& end) 
 { 
-    notImplemented(); 
+    if (m_path)
+        m_path->AddCurveToPoint(control1.x(), control1.y(), control2.x(), control2.y(), end.x(), end.y());
 }
 
-void Path::addArcTo(const FloatPoint&, const FloatPoint&, float) 
+void Path::addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius) 
 { 
-    notImplemented(); 
+    if (m_path)
+        m_path->AddArcToPoint(point1.x(), point1.y(), point2.x(), point2.y(), radius);
 }
 
 void Path::closeSubpath() 
 { 
-    notImplemented(); 
+    if (m_path)
+        m_path->CloseSubpath();
 }
 
-void Path::addArc(const FloatPoint&, float, float, float, bool) 
+void Path::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, bool clockwise) 
 { 
-    notImplemented(); 
+    if (m_path)
+        m_path->AddArc(point.x(), point.y(), radius, startAngle, endAngle, clockwise);
 }
 
-void Path::addRect(const FloatRect&) 
+void Path::addRect(const FloatRect& rect) 
 { 
-    notImplemented(); 
+    if (m_path)
+        m_path->AddRectangle(rect.x(), rect.y(), rect.width(), rect.height());
 }
 
-void Path::addEllipse(const FloatRect&) 
+void Path::addEllipse(const FloatRect& rect) 
 { 
-    notImplemented(); 
+    if (m_path)
+        m_path->AddEllipse(rect.x(), rect.y(), rect.width(), rect.height());
 }
 
-void Path::transform(const AffineTransform&) 
+void Path::transform(const AffineTransform& transform) 
 { 
-    notImplemented(); 
+    if (m_path)
+        m_path->Transform(transform);
 }
 
 void Path::apply(void* info, PathApplierFunction function) const 
@@ -173,8 +185,12 @@ void Path::apply(void* info, PathApplierFunction function) const
 
 bool Path::isEmpty() const
 {
-    notImplemented();
-    return false;
+    if (m_path) {
+        wxDouble width, height;
+        m_path->GetBox(NULL, NULL, &width, &height);
+        return (width == 0 && height == 0);
+    }
+    return true;
 }
 
 }
