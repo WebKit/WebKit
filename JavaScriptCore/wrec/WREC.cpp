@@ -60,16 +60,16 @@ CompiledRegExp Generator::compileRegExp(const UString& pattern, unsigned* numSub
     parser.parsePattern(failures);
     generator.generateReturnSuccess();
 
-    failures.link();
+    failures.link(&generator);
     generator.generateIncrementIndex(&endOfInput);
     parser.parsePattern(failures);
     generator.generateReturnSuccess();
 
-    failures.link();
+    failures.link(&generator);
     generator.generateIncrementIndex();
     generator.generateJumpIfNotEndOfInput(beginPattern);
     
-    endOfInput.link();
+    endOfInput.link(&generator);
     generator.generateReturnFailure();
 
     if (parser.error()) {

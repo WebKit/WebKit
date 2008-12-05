@@ -167,26 +167,22 @@ public:
     class Jump {
     public:
         Jump()
-            : m_assembler(0)
-        {
-        }
-
-        Jump(X86Assembler& assembler, X86Assembler::JmpSrc jmp)
-            : m_assembler(&assembler)
-            , m_jmp(jmp)
         {
         }
         
-        void link()
+        Jump(X86Assembler::JmpSrc jmp)
+            : m_jmp(jmp)
         {
-            ASSERT(m_assembler);
-            m_assembler->link(m_jmp, m_assembler->label());
         }
         
-        void linkTo(Label label)
+        void link(MacroAssembler* masm)
         {
-            ASSERT(m_assembler);
-            m_assembler->link(m_jmp, label.m_label);
+            masm->m_assembler.link(m_jmp, masm->m_assembler.label());
+        }
+        
+        void linkTo(Label label, MacroAssembler* masm)
+        {
+            masm->m_assembler.link(m_jmp, label.m_label);
         }
         
         // FIXME: transitionary method, while we replace JmpSrces with Jumps.
@@ -196,7 +192,6 @@ public:
         }
 
     private:
-        X86Assembler* m_assembler;
         X86Assembler::JmpSrc m_jmp;
     };
 
@@ -206,19 +201,19 @@ public:
     // All jumps in the set will be linked to the same destination.
     class JumpList {
     public:
-        void link()
+        void link(MacroAssembler* masm)
         {
             size_t size = m_jumps.size();
             for (size_t i = 0; i < size; ++i)
-                m_jumps[i].link();
+                m_jumps[i].link(masm);
             m_jumps.clear();
         }
         
-        void linkTo(Label label)
+        void linkTo(Label label, MacroAssembler* masm)
         {
             size_t size = m_jumps.size();
             for (size_t i = 0; i < size; ++i)
-                m_jumps[i].linkTo(label);
+                m_jumps[i].linkTo(label, masm);
             m_jumps.clear();
         }
         
@@ -563,25 +558,25 @@ public:
     Jump jae32(RegisterID left, Imm32 right)
     {
         compareImm32ForBranch(left, right.m_value);
-        return Jump(m_assembler, m_assembler.jae());
+        return Jump(m_assembler.jae());
     }
     
     Jump je32(RegisterID op1, RegisterID op2)
     {
         m_assembler.cmpl_rr(op1, op2);
-        return Jump(m_assembler, m_assembler.je());
+        return Jump(m_assembler.je());
     }
     
     Jump je32(RegisterID op1, Address op2)
     {
         m_assembler.cmpl_rm(op1, op2.offset, op2.base);
-        return Jump(m_assembler, m_assembler.je());
+        return Jump(m_assembler.je());
     }
     
     Jump je32(Imm32 imm, RegisterID reg)
     {
         compareImm32ForBranchEquality(reg, imm.m_value);
-        return Jump(m_assembler, m_assembler.je());
+        return Jump(m_assembler.je());
     }
     
     Jump je16(RegisterID op1, BaseIndex op2)
@@ -591,63 +586,63 @@ public:
         else
             m_assembler.cmpw_rm(op1, op2.offset, op2.base, op2.index, op2.scale);
 
-        return Jump(m_assembler, m_assembler.je());
+        return Jump(m_assembler.je());
     }
     
     Jump jg32(RegisterID left, RegisterID right)
     {
         m_assembler.cmpl_rr(right, left);
-        return Jump(m_assembler, m_assembler.jg());
+        return Jump(m_assembler.jg());
     }
     
     Jump jge32(RegisterID left, RegisterID right)
     {
         m_assembler.cmpl_rr(right, left);
-        return Jump(m_assembler, m_assembler.jge());
+        return Jump(m_assembler.jge());
     }
 
     Jump jge32(RegisterID left, Imm32 right)
     {
         compareImm32ForBranch(left, right.m_value);
-        return Jump(m_assembler, m_assembler.jge());
+        return Jump(m_assembler.jge());
     }
     
     Jump jl32(RegisterID left, Imm32 right)
     {
         compareImm32ForBranch(left, right.m_value);
-        return Jump(m_assembler, m_assembler.jl());
+        return Jump(m_assembler.jl());
     }
 
     Jump jle32(RegisterID left, RegisterID right)
     {
         m_assembler.cmpl_rr(right, left);
-        return Jump(m_assembler, m_assembler.jle());
+        return Jump(m_assembler.jle());
     }
     
     Jump jle32(RegisterID left, Imm32 right)
     {
         compareImm32ForBranch(left, right.m_value);
-        return Jump(m_assembler, m_assembler.jle());
+        return Jump(m_assembler.jle());
     }
 
 #if !PLATFORM(X86_64)
     Jump jnePtr(void* ptr, Address address)
     {
         compareImm32ForBranchEquality(address, reinterpret_cast<uint32_t>(ptr));
-        return Jump(m_assembler, m_assembler.jne());
+        return Jump(m_assembler.jne());
     }
 #endif
 
     Jump jne32(RegisterID op1, RegisterID op2)
     {
         m_assembler.cmpl_rr(op1, op2);
-        return Jump(m_assembler, m_assembler.jne());
+        return Jump(m_assembler.jne());
     }
 
     Jump jne32(Imm32 imm, RegisterID reg)
     {
         compareImm32ForBranchEquality(reg, imm.m_value);
-        return Jump(m_assembler, m_assembler.jne());
+        return Jump(m_assembler.jne());
     }
 
     Jump jnset32(Imm32 imm, RegisterID reg)
@@ -657,7 +652,7 @@ public:
             m_assembler.testb_i8r(imm.m_value, reg);
         else
             m_assembler.testl_i32r(imm.m_value, reg);
-        return Jump(m_assembler, m_assembler.je());
+        return Jump(m_assembler.je());
     }
 
     Jump jset32(Imm32 imm, RegisterID reg)
@@ -667,12 +662,12 @@ public:
             m_assembler.testb_i8r(imm.m_value, reg);
         else
             m_assembler.testl_i32r(imm.m_value, reg);
-        return Jump(m_assembler, m_assembler.jne());
+        return Jump(m_assembler.jne());
     }
 
     Jump jump()
     {
-        return Jump(m_assembler, m_assembler.jmp());
+        return Jump(m_assembler.jmp());
     }
 
 
@@ -698,32 +693,32 @@ public:
 
     void je32(Imm32 imm, RegisterID op2, Label target)
     {
-        je32(imm, op2).linkTo(target);
+        je32(imm, op2).linkTo(target, this);
     }
 
     void je16(RegisterID op1, BaseIndex op2, Label target)
     {
-        je16(op1, op2).linkTo(target);
+        je16(op1, op2).linkTo(target, this);
     }
     
     void jl32(RegisterID left, Imm32 right, Label target)
     {
-        jl32(left, right).linkTo(target);
+        jl32(left, right).linkTo(target, this);
     }
     
     void jle32(RegisterID left, RegisterID right, Label target)
     {
-        jle32(left, right).linkTo(target);
+        jle32(left, right).linkTo(target, this);
     }
     
     void jne32(RegisterID op1, RegisterID op2, Label target)
     {
-        jne32(op1, op2).linkTo(target);
+        jne32(op1, op2).linkTo(target, this);
     }
 
     void jne32(Imm32 imm, RegisterID op2, Label target)
     {
-        jne32(imm, op2).linkTo(target);
+        jne32(imm, op2).linkTo(target, this);
     }
 
     void jump(Label target)
@@ -748,13 +743,13 @@ public:
             m_assembler.subl_i8r(imm.m_value, dest);
         else
             m_assembler.subl_i32r(imm.m_value, dest);
-        return Jump(m_assembler, m_assembler.je());
+        return Jump(m_assembler.je());
     }
     
     Jump joAdd32(RegisterID src, RegisterID dest)
     {
         m_assembler.addl_rr(src, dest);
-        return Jump(m_assembler, m_assembler.jo());
+        return Jump(m_assembler.jo());
     }
     
 
@@ -767,12 +762,12 @@ public:
 
     Jump call()
     {
-        return Jump(m_assembler, m_assembler.call());
+        return Jump(m_assembler.call());
     }
 
     Jump call(RegisterID target)
     {
-        return Jump(m_assembler, m_assembler.call(target));
+        return Jump(m_assembler.call(target));
     }
 
     void ret()
