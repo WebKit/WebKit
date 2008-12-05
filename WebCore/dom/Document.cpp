@@ -2749,6 +2749,7 @@ void Document::addWindowEventListener(const AtomicString& eventType, PassRefPtr<
     // Remove existing identical listener set with identical arguments.
     // The DOM 2 spec says that "duplicate instances are discarded" in this case.
     removeWindowEventListener(eventType, listener.get(), useCapture);
+    addListenerTypeIfNeeded(eventType);
     m_windowEventListeners.append(RegisteredEventListener::create(eventType, listener, useCapture));
 }
 

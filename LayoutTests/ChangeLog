@@ -1,3 +1,13 @@
+2008-12-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by David Hyatt.
+
+        No longer need to add a fake listener on a document
+        node in order to get events passed up to Window.
+        https://bugs.webkit.org/show_bug.cgi?id=20572
+
+        * transitions/transition-end-event-window.html:
+
 2008-12-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim Hatcher.

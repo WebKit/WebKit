@@ -28,10 +28,6 @@
     {
       var boxes = document.body.getElementsByClassName('box');
       for (var i = 0; i < boxes.length; ++i) {
-        // we have to attach an empty handler here otherwise the event isn't
-        // fired (WebCore looks at the document to see if there are any listeners
-        // and ignores the one on Window) - this should be fixed
-        boxes[i].addEventListener("webkitTransitionEnd", function () {}, false);
         boxes[i].style.left = '200px';
       }
       

@@ -1,3 +1,16 @@
+2008-12-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Make sure Window event listeners also tell the
+        Document about the event type, so noisy events
+        will be dispatched even if nothing in the document
+        is listening.
+        https://bugs.webkit.org/show_bug.cgi?id=20572
+
+        * dom/Document.cpp:
+        (WebCore::Document::addWindowEventListener):
+
 2008-12-05  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r39026
