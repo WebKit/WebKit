@@ -73,10 +73,12 @@ Path::Path(const Path& path)
 }
 
 bool Path::contains(const FloatPoint& point, const WindRule rule) const
-{ 
+{
+#if USE(WXGC)
     if (m_path) {
         return m_path->Contains(point.x(), point.y(), getWxWindRuleForWindRule(rule));
     }
+#endif
     return false; 
 }
 
@@ -125,71 +127,91 @@ void Path::moveTo(const FloatPoint& point)
 }
 
 void Path::addLineTo(const FloatPoint& point) 
-{ 
+{
+#if USE(WXGC)
     if (m_path)
         m_path->AddLineToPoint(point.x(), point.y());
+#endif
 }
 
 void Path::addQuadCurveTo(const FloatPoint& control, const FloatPoint& end) 
-{ 
+{
+#if USE(WXGC)
     if (m_path)
         m_path->AddQuadCurveToPoint(control.x(), control.y(), end.x(), end.y());
+#endif
 }
 
 void Path::addBezierCurveTo(const FloatPoint& control1, const FloatPoint& control2, const FloatPoint& end) 
-{ 
+{
+#if USE(WXGC)
     if (m_path)
         m_path->AddCurveToPoint(control1.x(), control1.y(), control2.x(), control2.y(), end.x(), end.y());
+#endif
 }
 
 void Path::addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius) 
-{ 
+{
+#if USE(WXGC)
     if (m_path)
         m_path->AddArcToPoint(point1.x(), point1.y(), point2.x(), point2.y(), radius);
+#endif
 }
 
 void Path::closeSubpath() 
-{ 
+{
+#if USE(WXGC)
     if (m_path)
         m_path->CloseSubpath();
+#endif
 }
 
 void Path::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, bool clockwise) 
-{ 
+{
+#if USE(WXGC)
     if (m_path)
         m_path->AddArc(point.x(), point.y(), radius, startAngle, endAngle, clockwise);
+#endif
 }
 
 void Path::addRect(const FloatRect& rect) 
-{ 
+{
+#if USE(WXGC)
     if (m_path)
         m_path->AddRectangle(rect.x(), rect.y(), rect.width(), rect.height());
+#endif
 }
 
 void Path::addEllipse(const FloatRect& rect) 
-{ 
+{
+#if USE(WXGC)
     if (m_path)
         m_path->AddEllipse(rect.x(), rect.y(), rect.width(), rect.height());
+#endif
 }
 
 void Path::transform(const AffineTransform& transform) 
-{ 
+{
+#if USE(WXGC)
     if (m_path)
         m_path->Transform(transform);
+#endif
 }
 
 void Path::apply(void* info, PathApplierFunction function) const 
-{ 
+{
     notImplemented(); 
 }
 
 bool Path::isEmpty() const
 {
+#if USE(WXGC)
     if (m_path) {
         wxDouble width, height;
         m_path->GetBox(NULL, NULL, &width, &height);
         return (width == 0 && height == 0);
     }
+#endif
     return true;
 }
 

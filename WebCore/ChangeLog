@@ -1,3 +1,21 @@
+2008-12-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for !USE(WXGC) build config.
+
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::contains):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::transform):
+        (WebCore::Path::apply):
+        (WebCore::Path::isEmpty):
+
 2008-12-04  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
