@@ -1,3 +1,12 @@
+2008-12-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Updating these test results.  On Tiger the fragment created from RTFD data 
+        contained interchange newlines that we incorrectly handled before r38983.
+
+        * platform/mac-tiger/editing/pasteboard/paste-RTFD-expected.checksum:
+        * platform/mac-tiger/editing/pasteboard/paste-RTFD-expected.png:
+        * platform/mac-tiger/editing/pasteboard/paste-RTFD-expected.txt:
+
 2008-12-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

@@ -2,7 +2,7 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of P > DIV > DIV > BODY > HTML > #document to 0 of P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 14 of DIV > BODY > HTML > #document to 14 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -16,26 +16,24 @@ layer at (0,0) size 800x600
           text run at (0,18) width 256: "with extra trailing and leading newlines. "
           text run at (256,18) width 183: "This bug is fixed in Leopard."
       RenderBlock {DIV} at (0,52) size 784x260 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x0
-        RenderBlock {DIV} at (14,14) size 756x28
+        RenderBlock {P} at (14,14) size 756x14
+          RenderBR {BR} at (0,0) size 0x14
+        RenderBlock {P} at (14,28) size 756x14
+          RenderText {#text} at (0,0) size 86x14
+            text run at (0,0) width 86: "this is some text"
+        RenderBlock {P} at (14,42) size 756x14
+          RenderBR {BR} at (0,0) size 0x14
+        RenderBlock {P} at (14,56) size 756x120
+          RenderImage {IMG} at (0,0) size 180x120
+        RenderBlock {P} at (14,176) size 756x14
+          RenderBR {BR} at (0,0) size 0x14
+        RenderBlock {P} at (14,190) size 756x14
+          RenderText {#text} at (0,0) size 117x14
+            text run at (0,0) width 117: "this is some more text"
+        RenderBlock {P} at (14,204) size 756x14
+          RenderBR {BR} at (0,0) size 0x14
+        RenderBlock (anonymous) at (14,218) size 756x28
           RenderBR {BR} at (0,0) size 0x28
-        RenderBlock {DIV} at (14,42) size 756x204
-          RenderBlock {P} at (0,0) size 756x14
-            RenderBR {BR} at (0,0) size 0x14
-          RenderBlock {P} at (0,14) size 756x14
-            RenderText {#text} at (0,0) size 86x14
-              text run at (0,0) width 86: "this is some text"
-          RenderBlock {P} at (0,28) size 756x14
-            RenderBR {BR} at (0,0) size 0x14
-          RenderBlock {P} at (0,42) size 756x120
-            RenderImage {IMG} at (0,0) size 180x120
-          RenderBlock {P} at (0,162) size 756x14
-            RenderBR {BR} at (0,0) size 0x14
-          RenderBlock {P} at (0,176) size 756x14
-            RenderText {#text} at (0,0) size 117x14
-              text run at (0,0) width 117: "this is some more text"
-          RenderBlock {P} at (0,190) size 756x14
-            RenderBR {BR} at (0,0) size 0x14
-          RenderBlock (anonymous) at (0,204) size 756x0
+        RenderBlock {DIV} at (14,246) size 756x0
       RenderBlock {DIV} at (0,312) size 784x0
-caret: position 0 of child 0 {BR} of child 12 {P} of child 4 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 14 {BR} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
