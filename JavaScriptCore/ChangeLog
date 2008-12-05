@@ -1,3 +1,22 @@
+2008-12-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Some refactoring for generateGreedyQuantifier.
+        
+        SunSpider reports no change (possibly a 0.3% speedup).
+
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateGreedyQuantifier): Clarified label
+        meanings and unified some logic to simplify things.
+
+        * wrec/WRECParser.h:
+        (JSC::WREC::Parser::parseAlternative): Added a version of parseAlternative
+        that can jump to a Label, instead of a JumpList, upon failure. (Eventually,
+        when we have a true Label class, this will be redundant.) This makes
+        things easier for generateGreedyQuantifier, because it can avoid
+        explicitly linking things.
+
 2008-12-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Holger Freyther.

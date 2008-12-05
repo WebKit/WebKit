@@ -220,69 +220,46 @@ void Generator::generateGreedyQuantifier(JumpList& failures, GenerateAtomFunctor
     if (!max)
         return;
 
-    // comment me better!
-    JumpList newFailures;
-
-    // (0) Setup:
-    //     init repeatCount
+    // (0) Setup: save, then init repeatCount.
     push(repeatCount);
     move(Imm32(0), repeatCount);
 
-    // (1) Greedily read as many of the atom as possible
+    // (1) Greedily read as many copies of the atom as possible, then jump to (2).
+    JumpList doneReadingAtoms;
 
-    Label readMore(this);
-
-    // (1.1) Do a character class check.
-    functor.generateAtom(this, newFailures);
-    // (1.2) If we get here, successful match!
+    Label readAnAtom(this);
+    functor.generateAtom(this, doneReadingAtoms);
     add32(Imm32(1), repeatCount);
-    // (1.3) loop, unless we've read max limit.
-    if (max != Quantifier::noMaxSpecified) {
-        // if there is a limit, only loop while less than limit, otherwise fall throught to...
-        if (max != 1)
-            jne32(Imm32(max), repeatCount, readMore);
-        // ...if there is no min we need jump to the alternative test, if there is we can just fall through to it.
-        if (!min)
-            newFailures.append(jump());
-    } else
-        jump(readMore);
-    // (1.4) check enough matches to bother trying an alternative...
-    if (min) {
-        // We will fall through to here if (min && max), after the max check.
-        // First, also link a
-        newFailures.link();
-        newFailures.append(jae32(repeatCount, Imm32(min)));
+    if (max == Quantifier::noMaxSpecified)
+        jump(readAnAtom);
+    else if (max == 1)
+        doneReadingAtoms.append(jump());
+    else {
+        jne32(Imm32(max), repeatCount, readAnAtom);
+        doneReadingAtoms.append(jump());
     }
 
-    // (4) Failure case
-
+    // (5) Quantifier failed -- no more backtracking possible.
     Label quantifierFailed(this);
-    // (4.1) Restore original value of repeatCount from the stack
     pop(repeatCount);
     failures.append(jump()); 
 
-    // (3) Backtrack
-
+    // (4) Backtrack, then fall through to (2) to try again.
     Label backtrack(this);
-    // (3.1) this was preserved prior to executing the alternative
     pop(index);
-    // (3.2) check we can retry with fewer matches - backtracking fails if already at the minimum
-    je32(Imm32(min), repeatCount, quantifierFailed);
-    // (3.3) roll off one match, and retry.
     functor.backtrack(this);
     sub32(Imm32(1), repeatCount);
 
-    // (2) Try an alternative.
+    // (2) Verify that we have enough atoms.
+    doneReadingAtoms.link();
+    jl32(repeatCount, Imm32(min), quantifierFailed);
 
-    // (2.1) point to retry
-    newFailures.link();
-    // (2.2) recursively call to parseAlternative, if it falls through, success!
+    // (3) Test the rest of the alternative.
     push(index);
-    m_parser.parseAlternative(newFailures);
+    m_parser.parseAlternative(backtrack);
+
     pop();
     pop(repeatCount);
-    // (2.3) link failure cases to here.
-    newFailures.linkTo(backtrack);
 }
 
 void Generator::generatePatternCharacterSequence(JumpList& failures, int* sequence, size_t count)
