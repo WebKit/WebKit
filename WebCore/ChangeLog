@@ -1,5 +1,11 @@
 2008-12-05  Alexey Proskuryakov  <ap@webkit.org>
 
+        Tiger build fix.
+
+        * platform/network/mac/ResourceRequestMac.mm: Define NSUInteger.
+
+2008-12-05  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin Adler.
 
         <rdar://problem/6405599> Tiger Mail crashes when using "Mail Contents of This Page"

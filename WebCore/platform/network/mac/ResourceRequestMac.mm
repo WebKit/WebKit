@@ -31,6 +31,10 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef BUILDING_ON_TIGER
+typedef unsigned NSUInteger;
+#endif
+
 @interface NSURLRequest (WebCoreContentDispositionEncoding)
 - (NSArray *)contentDispositionEncodingFallbackArray;
 @end
