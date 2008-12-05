@@ -1,3 +1,26 @@
+2008-12-05  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22472
+
+        Revises charset alias map for TextCodecICU.
+        - Uses windows-949 and windows-874 instead of windows-949-2000 and windows-874-2000
+        - Replaces 'windows874' in a couple of place with 'windows-874' (for the canonical name)
+        - Maps 'dos-874' to 'windows-874'. Currently, it's aliases to 'cp874', which is in turn
+          mapped to 'TIS-620'. 'TIS-620' is manually aliased to 'windows-874'. We'd better directly
+          alias 'dos-874' to 'windows-874'.
+        - Replaces 'EUC-CN' with 'GBK' when it's used as the canonical name.
+          Similar to the above case, we're getting rid of indirection that eventually leads to 'GBK' by
+          directly going to 'GBK'.
+        - Adds 'x-uhc' as an alias for 'windows-949'. It's used in some web pages.
+
+        Tests: fast/encoding/char-decoding-mac.html
+               fast/encoding/char-decoding.html
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerExtendedEncodingNames):
+
 2008-12-04  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

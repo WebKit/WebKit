@@ -117,12 +117,12 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
             standardName = "GBK";
         // Similarly, EUC-KR encodings all map to an extended version.
         else if (strcmp(standardName, "KSC_5601") == 0 || strcmp(standardName, "EUC-KR") == 0 || strcmp(standardName, "cp1363") == 0)
-            standardName = "windows-949-2000";
+            standardName = "windows-949";
         // And so on.
         else if (strcasecmp(standardName, "iso-8859-9") == 0) // This name is returned in different case by ICU 3.2 and 3.6.
             standardName = "windows-1254";
         else if (strcmp(standardName, "TIS-620") == 0)
-            standardName = "windows-874-2000";
+            standardName = "windows-874";
 
         registrar(standardName, standardName);
 
@@ -150,19 +150,23 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     registrar("xmacroman", "macintosh");
     registrar("xmacukrainian", "x-mac-cyrillic");
     registrar("cnbig5", "Big5");
-    registrar("cngb", "EUC-CN");
+    registrar("xxbig5", "Big5");
+    registrar("cngb", "GBK");
+    registrar("csgb231280", "GBK");
+    registrar("xeuccn", "GBK");
+    registrar("xgbk", "GBK");
     registrar("csISO88598I", "ISO_8859-8-I");
-    registrar("csgb231280", "EUC-CN");
-    registrar("dos874", "cp874");
     registrar("koi", "KOI8-R");
     registrar("logical", "ISO-8859-8-I");
     registrar("unicode11utf8", "UTF-8");
     registrar("unicode20utf8", "UTF-8");
+    registrar("xunicode20utf8", "UTF-8");
     registrar("visual", "ISO-8859-8");
     registrar("winarabic", "windows-1256");
     registrar("winbaltic", "windows-1257");
     registrar("wincyrillic", "windows-1251");
-    registrar("iso885911", "windows874-2000");
+    registrar("iso885911", "windows-874");
+    registrar("dos874", "windows-874");
     registrar("wingreek", "windows-1253");
     registrar("winhebrew", "windows-1255");
     registrar("winlatin2", "windows-1250");
@@ -171,15 +175,8 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     registrar("xcp1250", "windows-1250");
     registrar("xcp1251", "windows-1251");
     registrar("xeuc", "EUC-JP");
-    registrar("xeuccn", "EUC-CN");
-    registrar("xgbk", "EUC-CN");
-    registrar("xunicode20utf8", "UTF-8");
-    registrar("xwindows949", "windows-949-2000");
-    registrar("xxbig5", "Big5");
-
-    // This alias is present in modern versions of ICU, but it has no standard name,
-    // so we give one to it manually. It is not present in ICU 3.2.
-    registrar("windows874", "windows874-2000");
+    registrar("xwindows949", "windows-949");
+    registrar("xuhc", "windows-949");
 
     // These aliases are present in modern versions of ICU, but use different codecs, and have no standard names.
     // They are not present in ICU 3.2.

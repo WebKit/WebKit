@@ -1,3 +1,32 @@
+2008-12-05  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22472
+
+        Revises charset alias map for TextCodecICU.
+        - Uses windows-949 and windows-874 instead of windows-949-2000 and windows-874-2000
+        - Replaces 'windows874' in a couple of place with 'windows-874' (for the canonical name)
+        - Maps 'dos-874' to 'windows-874'. Currently, it's aliases to 'cp874', which is in turn
+          mapped to 'TIS-620'. 'TIS-620' is manually aliased to 'windows-874'. We'd better directly
+          alias 'dos-874' to 'windows-874'.
+        - Replaces 'EUC-CN' with 'GBK' when it's used as the canonical name.
+          Similar to the above case, we're getting rid of indirection that eventually leads to 'GBK' by
+          directly going to 'GBK'.
+        - Puts Mac encodings in a separate test 'char-decoding-mac.html'. Rename 'char-decoding-mac.html'
+          in platform/mac to 'xnextstep-decoding.html' to avoid the name collision in the result files.
+        - Adds a JS file for common functions used by char-decoding-*.html tests.
+
+        * fast/encoding/char-decoding-expected.txt:
+        * fast/encoding/char-decoding-mac-expected.txt: Added.
+        * fast/encoding/char-decoding-mac.html: Added.
+        * fast/encoding/char-decoding.html:
+        * fast/encoding/resources/char-decoding-utils.js
+        * platform/mac/fast/encoding/char-decoding-mac-expected.txt: Removed.
+        * platform/mac/fast/encoding/char-decoding-mac.html: Removed.
+        * platform/mac/fast/encoding/xnextstep-decoding-expected.txt: Copied from LayoutTests/platform/mac/fast/encoding/char-decoding-mac-expected.txt.
+        * platform/mac/fast/encoding/xnextstep-decoding.html: Copied from LayoutTests/platform/mac/fast/encoding/char-decoding-mac.html.
+
 2008-12-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -2,6 +2,7 @@
 <head>
 <link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
 <script src="../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../fast/encoding/resources/char-decoding-utils.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -9,32 +10,6 @@
 <script>
 
 description("This tests decoding characters in various character sets.");
-
-function hex(number)
-{
-    var hexDigit = "0123456789ABCDEF";
-    var hex = hexDigit.substr(number & 0xf, 1);
-    while (number > 15) {
-        number >>= 4;
-        hex = hexDigit.substr(number & 15, 1) + hex;
-    }
-    return hex;
-}
-
-function decode(charsetName, characterSequence)
-{
-    var req = new XMLHttpRequest;
-    req.open('GET', 'data:text/plain,' + characterSequence, false);
-    req.overrideMimeType('text/plain; charset="' + charsetName + '"');
-    req.send('');
-    var code = hex(req.responseText.charCodeAt(0));
-    return "U+" + ("0000" + code).substr(code.length, 4);
-}
-
-function testDecode(charsetName, characterSequence, unicode)
-{
-    shouldBe("decode('" + charsetName + "', '" + characterSequence + "')", "'" + unicode + "'");
-}
 
 testDecode('x-nextstep', '%E1', 'U+00C6');
 debug('');
