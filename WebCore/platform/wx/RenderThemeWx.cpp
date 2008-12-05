@@ -130,7 +130,12 @@ bool RenderThemeWx::isControlStyled(const RenderStyle* style, const BorderData& 
     if (style->appearance() == TextFieldPart || style->appearance() == TextAreaPart)
         return style->border() != border;
 
-    return RenderTheme::isControlStyled(style, border, background, backgroundColor);
+    // Normally CSS can be used to set properties of form controls (such as adding a background bitmap).
+    // However, for this to work RenderThemeWx needs to adjust uncustomized elements (e.g. buttons) to reflect the
+    // changes made by CSS. Since we don't do that right now, the native parts of form elements appear in odd places. 
+    // Until we have time to implement that support, we return false here, so that we ignore customizations 
+    // and always use the native theme drawing to draw form controls.
+    return false;
 }
 
 void RenderThemeWx::adjustRepaintRect(const RenderObject* o, IntRect& r)
