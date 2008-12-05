@@ -166,6 +166,20 @@ sub determineConfiguration
     }
 }
 
+sub argumentsForConfiguration()
+{
+    determineConfiguration();
+
+    my @args = ();
+    push(@args, '--debug') if $configuration eq "Debug";
+    push(@args, '--release') if $configuration eq "Release";
+    push(@args, '--qt') if isQt();
+    push(@args, '--gtk') if isGtk();
+    push(@args, '--wx') if isWx();
+    push(@args, '--chromium') if isChromium();
+    return @args;
+}
+
 sub determineConfigurationForVisualStudio
 {
     return if defined $configurationForVisualStudio;
@@ -282,7 +296,7 @@ sub determinePassedConfiguration
     return if $searchedForPassedConfiguration;
     $searchedForPassedConfiguration = 1;
 
-    my $isWinCairo = checkArgv("--cairo-win32");
+    my $isWinCairo = checkForArgumentAndRemoveFromARGV("--cairo-win32");
 
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
@@ -509,15 +523,12 @@ sub isQt()
     return $isQt;
 }
 
-sub checkArgv
+sub checkForArgumentAndRemoveFromARGV
 {
     my $argToCheck = shift;
-    my $removeArgumentFromARGV = shift || 0;
     foreach my $opt (@ARGV) {
         if ($opt =~ /^$argToCheck/i ) {
-            if ($removeArgumentFromARGV) {
-                @ARGV = grep(!/^$argToCheck/i, @ARGV);
-            }
+            @ARGV = grep(!/^$argToCheck/i, @ARGV);
             return 1;
         }
     }
@@ -529,7 +540,7 @@ sub determineIsQt()
     return if defined($isQt);
 
     # Allow override in case QTDIR is not set.
-    if (checkArgv("--qt")) {
+    if (checkForArgumentAndRemoveFromARGV("--qt")) {
         $isQt = 1;
         return;
     }
@@ -552,7 +563,7 @@ sub isGtk()
 sub determineIsGtk()
 {
     return if defined($isGtk);
-    $isGtk = checkArgv("--gtk");
+    $isGtk = checkForArgumentAndRemoveFromARGV("--gtk");
 }
 
 sub isWx()
@@ -564,7 +575,7 @@ sub isWx()
 sub determineIsWx()
 {
     return if defined($isWx);
-    $isWx = checkArgv("--wx");
+    $isWx = checkForArgumentAndRemoveFromARGV("--wx");
 }
 
 # Determine if this is debian, ubuntu, linspire, or something similar.
@@ -582,7 +593,7 @@ sub isChromium()
 sub determineIsChromium()
 {
     return if defined($isChromium);
-    $isChromium = checkArgv("--chromium");
+    $isChromium = checkForArgumentAndRemoveFromARGV("--chromium");
 }
 
 sub isCygwin()

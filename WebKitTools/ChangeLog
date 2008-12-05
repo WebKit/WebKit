@@ -1,3 +1,17 @@
+2008-12-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Geoff Garen.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22683
+        Fix gtk and qt builds which depend on --qt and --gtk being removed from ARGV
+        Add a new argumentsForConfiguration() function and clean up some old code to use it.
+        Rename checkArgV to checkForArgumentAndRemoveFromARGV to be more self-documenting.
+
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-launcher:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2008-12-03  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Cameron Zwarich.

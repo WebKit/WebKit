@@ -87,6 +87,8 @@ if (isAppleMacWebKit() && !isTiger()) {
 if (!defined($root)){
     chdirWebKit();
 
+    push(@buildArgs, argumentsForConfiguration());
+
     my $arch = preferredArchitecture("JavaScriptCore");
     push(@buildArgs, "ARCHS=$arch") if (isAppleMacWebKit());
     

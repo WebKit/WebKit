@@ -58,9 +58,6 @@ if (isQt()) {
 
     if (isGtk()) {
         $launcherPath = catdir($launcherPath, "Programs", "GtkLauncher");
-        # Strip --gtk from the arg-list, since otherwise GtkLauncher will try to
-        # interpret it as a URL.
-        @args = grep(!/^(--gtk)$/, @args);
     }
 
     print "Starting webkit launcher.\n";

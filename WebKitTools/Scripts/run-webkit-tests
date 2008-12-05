@@ -262,8 +262,6 @@ my $skippedOnly = $treatSkipped eq "only";
 
 setConfiguration($configuration);
 
-my $configurationOption = "--" . lc($configuration);
-
 $testsPerDumpTool = 1000 if !$testsPerDumpTool;
 
 $verbose = 1 if $testsPerDumpTool == 1;
@@ -285,10 +283,7 @@ chdirWebKit();
 
 if (!defined($root)) {
     # Push the parameters to build-dumprendertree as an array
-    my @args;
-    push(@args, $configurationOption);
-    push(@args, "--qt")  if isQt();
-    push(@args, "--gtk")  if isGtk();
+    my @args = argumentsForConfiguration();
 
     if (isAppleMacWebKit()) {
         my $arch = preferredArchitecture();
@@ -1003,14 +998,14 @@ print HTML "</body>\n";
 print HTML "</html>\n";
 close HTML;
 
-if (isQt()) {
-  system "WebKitTools/Scripts/run-launcher", "--qt", $configurationOption, $testResults if $launchSafari;
-} elsif (isGtk()) {
-  system "WebKitTools/Scripts/run-launcher", "--gtk", $configurationOption, $testResults if $launchSafari;
+my @configurationArgs = argumentsForConfiguration();
+
+if (isQt() || isGtk()) {
+  system "WebKitTools/Scripts/run-launcher", @configurationArgs, $testResults if $launchSafari;
 } elsif (isCygwin()) {
   system "cygstart", $testResults if $launchSafari;
 } else {
-  system "WebKitTools/Scripts/run-safari", $configurationOption, "-NSOpen", $testResults if $launchSafari;
+  system "WebKitTools/Scripts/run-safari", @configurationArgs, "-NSOpen", $testResults if $launchSafari;
 }
 
 closeCygpaths() if isCygwin();
