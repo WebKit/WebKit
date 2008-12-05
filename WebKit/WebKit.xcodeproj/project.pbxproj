@@ -258,7 +258,7 @@
 		939810F80824BF01008DF038 /* WebPreferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5AEBB3D024A527601C1A526 /* WebPreferences.mm */; };
 		939810F90824BF01008DF038 /* WebRenderNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5F81C3A02B67C26018635CA /* WebRenderNode.mm */; };
 		939810FC0824BF01008DF038 /* WebFormDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */; };
-		939810FD0824BF01008DF038 /* CarbonWindowAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEE9103F9DBA103CA0DE6 /* CarbonWindowAdapter.m */; };
+		939810FD0824BF01008DF038 /* CarbonWindowAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEE9103F9DBA103CA0DE6 /* CarbonWindowAdapter.mm */; };
 		939810FE0824BF01008DF038 /* CarbonWindowContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEE9303F9DBA103CA0DE6 /* CarbonWindowContentView.m */; };
 		939810FF0824BF01008DF038 /* CarbonWindowFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEE9503F9DBA103CA0DE6 /* CarbonWindowFrame.m */; };
 		939811000824BF01008DF038 /* HIViewAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEE9B03F9DBA103CA0DE6 /* HIViewAdapter.m */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
@@ -615,7 +615,7 @@
 		F79B974804019934036909D2 /* CarbonUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CarbonUtils.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F79B974904019934036909D2 /* CarbonUtils.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CarbonUtils.m; sourceTree = "<group>"; usesTabs = 0; };
 		F7EBEE9003F9DBA103CA0DE6 /* CarbonWindowAdapter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CarbonWindowAdapter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F7EBEE9103F9DBA103CA0DE6 /* CarbonWindowAdapter.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = CarbonWindowAdapter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F7EBEE9103F9DBA103CA0DE6 /* CarbonWindowAdapter.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CarbonWindowAdapter.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F7EBEE9203F9DBA103CA0DE6 /* CarbonWindowContentView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CarbonWindowContentView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F7EBEE9303F9DBA103CA0DE6 /* CarbonWindowContentView.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = CarbonWindowContentView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F7EBEE9403F9DBA103CA0DE6 /* CarbonWindowFrame.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CarbonWindowFrame.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1156,7 +1156,7 @@
 			isa = PBXGroup;
 			children = (
 				F7EBEE9003F9DBA103CA0DE6 /* CarbonWindowAdapter.h */,
-				F7EBEE9103F9DBA103CA0DE6 /* CarbonWindowAdapter.m */,
+				F7EBEE9103F9DBA103CA0DE6 /* CarbonWindowAdapter.mm */,
 				F7EBEE9203F9DBA103CA0DE6 /* CarbonWindowContentView.h */,
 				F7EBEE9303F9DBA103CA0DE6 /* CarbonWindowContentView.m */,
 				F7EBEE9403F9DBA103CA0DE6 /* CarbonWindowFrame.h */,
@@ -1573,7 +1573,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				939811010824BF01008DF038 /* CarbonUtils.m in Sources */,
-				939810FD0824BF01008DF038 /* CarbonWindowAdapter.m in Sources */,
+				939810FD0824BF01008DF038 /* CarbonWindowAdapter.mm in Sources */,
 				939810FE0824BF01008DF038 /* CarbonWindowContentView.m in Sources */,
 				939810FF0824BF01008DF038 /* CarbonWindowFrame.m in Sources */,
 				939811000824BF01008DF038 /* HIViewAdapter.m in Sources */,
