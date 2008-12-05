@@ -1,0 +1,10 @@
+Requires Java plugin installed and enabled. This tests that calling functions on Java Applet works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+ FAIL document.testapplet.getString() == 'abcdefg' should be true. Threw exception TypeError: Result of expression 'document.testapplet.getString' [undefined] is not a function.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,34 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+
+<APPLET CODEBASE="resources" CODE="TestApplet" WIDTH=1 HEIGHT=1 NAME="testapplet">
+</APPLET>
+
+<div id="console"></div>
+
+<script>
+description('Requires Java plugin installed and enabled.  This tests that calling functions on Java Applet works.');
+
+try {
+    document.testapplet.setString("abcdefg");
+} catch (e) {
+    // Do nothing.
+}
+
+// The applet may return 'abcdefg' as an object rather than a string, so
+// we'll let JavaScript do the comparison before evaluating it.
+shouldBeTrue("document.testapplet.getString() == 'abcdefg'");
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+
+
+
