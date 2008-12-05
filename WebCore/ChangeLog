@@ -2,6 +2,31 @@
 
         Reviewed by Darin Adler.
 
+        <rdar://problem/4072827> Downloaded non-ASCII file name becomes garbled
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::findCFURLRequestSetContentDispositionEncodingFallbackArrayFunction):
+        (WebCore::findCFURLRequestCopyContentDispositionEncodingFallbackArrayFunction):
+        (WebCore::setContentDispositionEncodingFallbackArray):
+        (WebCore::copyContentDispositionEncodingFallbackArray):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        Added a way to specify encoding fallback list for Content-Disposition header.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::addExtraFieldsToRequest): Generate and
+        pass a list of encodings to try when decoding Content-Disposition header, as described
+        in comments.
+
+2008-12-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=22672
         ASSERT(m_table) when xhr.onabort creates another xhr or calls setTimeout
 

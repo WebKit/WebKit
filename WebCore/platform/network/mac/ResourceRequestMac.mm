@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,14 @@
 
 #import <Foundation/Foundation.h>
 
+@interface NSURLRequest (WebCoreContentDispositionEncoding)
+- (NSArray *)contentDispositionEncodingFallbackArray;
+@end
+
+@interface NSMutableURLRequest (WebCoreContentDispositionEncoding)
+- (void)setContentDispositionEncodingFallbackArray:(NSArray *)theEncodingFallbackArray;
+@end
+
 namespace WebCore {
 
 NSURLRequest* ResourceRequest::nsURLRequest() const
@@ -56,12 +64,25 @@ void ResourceRequest::doUpdateResourceRequest()
     NSString *name;
     while ((name = [e nextObject]))
         m_httpHeaderFields.set(name, [headers objectForKey:name]);
-    
+
+    // The below check can be removed once we require a version of Foundation with -[NSURLRequest contentDispositionEncodingFallbackArray] method.
+    static bool supportsContentDispositionEncodingFallbackArray = [NSURLRequest instancesRespondToSelector:@selector(contentDispositionEncodingFallbackArray)];
+    if (supportsContentDispositionEncodingFallbackArray) {
+        m_responseContentDispositionEncodingFallbackArray.clear();
+        NSArray *encodingFallbacks = [m_nsRequest.get() contentDispositionEncodingFallbackArray];
+        NSUInteger count = [encodingFallbacks count];
+        for (NSUInteger i = 0; i < count; ++i) {
+            CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([(NSNumber *)[encodingFallbacks objectAtIndex:i] unsignedLongValue]);
+            if (encoding != kCFStringEncodingInvalidId)
+                m_responseContentDispositionEncodingFallbackArray.append(CFStringGetNameOfEncoding(encoding));
+        }
+    }
+
     if (NSData* bodyData = [m_nsRequest.get() HTTPBody])
         m_httpBody = FormData::create([bodyData bytes], [bodyData length]);
     else if (NSInputStream* bodyStream = [m_nsRequest.get() HTTPBodyStream])
         if (FormData* formData = httpBodyFromStream(bodyStream))
-            m_httpBody = formData;    
+            m_httpBody = formData;
 }
 
 void ResourceRequest::doUpdatePlatformRequest()
@@ -93,7 +114,22 @@ void ResourceRequest::doUpdatePlatformRequest()
     HTTPHeaderMap::const_iterator end = httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != end; ++it)
         [nsRequest setValue:it->second forHTTPHeaderField:it->first];
-    
+
+    // The below check can be removed once we require a version of Foundation with -[NSMutableURLRequest setContentDispositionEncodingFallbackArray] method.
+    static bool supportsContentDispositionEncodingFallbackArray = [NSMutableURLRequest instancesRespondToSelector:@selector(setContentDispositionEncodingFallbackArray)];
+    if (supportsContentDispositionEncodingFallbackArray) {
+        NSMutableArray *encodingFallbacks = [NSMutableArray array];
+        unsigned count = m_responseContentDispositionEncodingFallbackArray.size();
+        for (unsigned i = 0; i != count; ++i) {
+            CFStringRef encodingName = m_responseContentDispositionEncodingFallbackArray[i].createCFString();
+            unsigned long nsEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName));
+            CFRelease(encodingName);
+            if (nsEncoding != kCFStringEncodingInvalidId)
+                [encodingFallbacks addObject:[NSNumber numberWithUnsignedLong:nsEncoding]];
+        }
+        [nsRequest setContentDispositionEncodingFallbackArray:encodingFallbacks];
+    }
+
     RefPtr<FormData> formData = httpBody();
     if (formData && !formData->isEmpty())
         WebCore::setHTTPBody(nsRequest, formData);

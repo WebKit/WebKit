@@ -3420,6 +3420,11 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, bool mainRes
 
     // Make sure we send the Origin header.
     addHTTPOriginIfNeeded(request, String());
+
+    // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.
+    // For a newly opened frame with an empty URL, encoding() should not be used, because this methods asks decoder, which uses ISO-8859-1.
+    Settings* settings = m_frame->settings();
+    request.setResponseContentDispositionEncodingFallbackArray("UTF-8", m_URL.isEmpty() ? m_encoding : encoding(), settings ? settings->defaultTextEncodingName() : String());
 }
 
 void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, String origin)

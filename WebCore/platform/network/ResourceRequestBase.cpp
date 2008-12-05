@@ -150,6 +150,21 @@ void ResourceRequestBase::setHTTPHeaderField(const String& name, const String& v
     m_platformRequestUpdated = false;
 }
 
+void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(const String& encoding1, const String& encoding2, const String& encoding3)
+{
+    updateResourceRequest(); 
+    
+    m_responseContentDispositionEncodingFallbackArray.clear();
+    if (!encoding1.isNull())
+        m_responseContentDispositionEncodingFallbackArray.append(encoding1);
+    if (!encoding2.isNull())
+        m_responseContentDispositionEncodingFallbackArray.append(encoding2);
+    if (!encoding3.isNull())
+        m_responseContentDispositionEncodingFallbackArray.append(encoding3);
+    
+    m_platformRequestUpdated = false;
+}
+
 FormData* ResourceRequestBase::httpBody() const 
 { 
     updateResourceRequest(); 
