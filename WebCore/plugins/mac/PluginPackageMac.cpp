@@ -236,15 +236,18 @@ bool PluginPackage::fetchInfo()
         CFBundleCloseBundleResourceMap(m_module, resFile);
     }
 
-    if (isPluginBlacklisted())
+    LOG(Plugin, "PluginPackage::fetchInfo(): Found plug-in '%s'", m_name.utf8().data());
+    if (isPluginBlacklisted()) {
+        LOG(Plugin, "\tPlug-in is blacklisted!");
         return false;
+    }
 
     return true;
 }
 
 bool PluginPackage::isPluginBlacklisted()
 {
-    if (name() == "Silverlight Plug-In")
+    if (name() == "Silverlight Plug-In" || name().startsWith("QuickTime Plug-in"))
         return true;
 
     return false;

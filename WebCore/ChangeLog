@@ -1,3 +1,13 @@
+2008-12-05  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt/Mac] Blacklist QuickTime plugin until we support the QuickDraw drawing model
+
+        * plugins/mac/PluginPackageMac.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::isPluginBlacklisted):
+
 2008-12-05  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
