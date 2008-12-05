@@ -115,7 +115,8 @@ public:
     virtual bool isActive() const;
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual void valueChanged(Scrollbar*);
-    
+    virtual void getTickmarks(Vector<IntRect>&) const;
+
     virtual IntRect windowResizerRect() const;
 
     virtual void scrollRectIntoViewRecursively(const IntRect&);

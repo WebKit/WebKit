@@ -27,6 +27,7 @@
 #define ScrollbarClient_h
 
 #include "IntRect.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -42,6 +43,8 @@ public:
     virtual bool isActive() const = 0;
     
     virtual bool scrollbarCornerPresent() const = 0;
+
+    virtual void getTickmarks(Vector<IntRect>&) const { }
 };
 
 }

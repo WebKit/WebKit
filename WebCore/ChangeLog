@@ -1,3 +1,17 @@
+2008-12-05  Finnur Thorarinsson  <finnur.webkit@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 22579: Providing a function to ScrollbarClient.h which allows us to get at the tickmarks
+        without relying on high-level WebCore types, as requested by Dave Hyatt.
+        
+        No functional changes, thus no test cases.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::getTickmarks):
+        * page/FrameView.h:
+        * platform/ScrollbarClient.h:
+
 2008-12-05  Dean Jackson  <dino@apple.com>
 
         Reviewed by David Hyatt.
