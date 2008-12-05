@@ -1,3 +1,23 @@
+2008-12-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22672
+        ASSERT(m_table) when xhr.onabort creates another xhr or calls setTimeout
+
+        Test: http/tests/xmlhttprequest/send-on-abort.html
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::stopActiveDOMObjects):
+        Add a comment explaining that ActiveDOMObject methods shouldn't execute arbitrary JS.
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::stop): Don't dispatch events. This
+        reverts a recent change that made the behavior slightly closer to Firefox - but the
+        compatibility effect should be very minor if any, and Firefox itself behaves inconsistently.
+
 2008-12-05  Tobias König <tobias.koenig@nokia.com>
 
         Reviewed by Simon Hausmann.

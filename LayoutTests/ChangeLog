@@ -1,3 +1,19 @@
+2008-12-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22672
+        ASSERT(m_table) when xhr.onabort creates another xhr or calls setTimeout
+
+        * http/tests/xmlhttprequest/send-on-abort-expected.txt: Added.
+        * http/tests/xmlhttprequest/send-on-abort.html: Added.
+
+        * http/tests/xmlhttprequest/abort-on-leaving-page-expected.txt: Removed.
+        * http/tests/xmlhttprequest/abort-on-leaving-page.html: Removed.
+        * http/tests/xmlhttprequest/frame-load-cancelled-abort-expected.txt:
+        * http/tests/xmlhttprequest/resources/slow-response.pl: Removed.
+        Stopping an XHR due to navigation no longer dispatches events.
+
 2008-12-05  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

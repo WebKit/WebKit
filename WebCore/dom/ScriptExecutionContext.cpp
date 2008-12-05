@@ -117,6 +117,7 @@ void ScriptExecutionContext::destroyedMessagePort(MessagePort* port)
 
 bool ScriptExecutionContext::canSuspendActiveDOMObjects()
 {
+    // No protection against m_activeDOMObjects changing during iteration: canSuspend() shouldn't execute arbitrary JS.
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
@@ -128,6 +129,7 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjects()
 
 void ScriptExecutionContext::suspendActiveDOMObjects()
 {
+    // No protection against m_activeDOMObjects changing during iteration: suspend() shouldn't execute arbitrary JS.
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
@@ -137,6 +139,7 @@ void ScriptExecutionContext::suspendActiveDOMObjects()
 
 void ScriptExecutionContext::resumeActiveDOMObjects()
 {
+    // No protection against m_activeDOMObjects changing during iteration: resume() shouldn't execute arbitrary JS.
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);
@@ -146,6 +149,7 @@ void ScriptExecutionContext::resumeActiveDOMObjects()
 
 void ScriptExecutionContext::stopActiveDOMObjects()
 {
+    // No protection against m_activeDOMObjects changing during iteration: stop() shouldn't execute arbitrary JS.
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
         ASSERT(iter->first->scriptExecutionContext() == this);

@@ -1,2 +1,0 @@
-ALERT: SUCCESS
-Should have seen a SUCCESS alert.
