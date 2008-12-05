@@ -87,10 +87,28 @@ simpleroutine DestroyPluginInstance(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t);
 
 
+// Streams
+simpleroutine StartStream(pluginHostPort :mach_port_t;
+                          pluginID :uint32_t;
+                          streamID :uint32_t;
+                          expectedContentLength :int64_t;
+                          lastModifiedTimeInterval :double;
+                          mimeType :data_t;
+                          headers :data_t);
+
+simpleroutine StreamDidReceiveData(pluginHostPort :mach_port_t;
+                                   pluginID :uint32_t;
+                                   streamID :uint32_t;
+                                   data :data_t);
+
+simpleroutine StreamDidFinishLoading(pluginHostPort :mach_port_t;
+                                     pluginID :uint32_t;
+                                     streamID :uint32_t);
+
 // Replies
 
 simpleroutine LoadURLReply(pluginHostPort :mach_port_t;
                            pluginID :uint32_t;
                            resultCode :uint16_t;
-                           streamID :uint32_t);
+                           requestID :uint32_t);
 

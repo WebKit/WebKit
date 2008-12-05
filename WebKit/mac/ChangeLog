@@ -2,6 +2,37 @@
 
         Reviewed by Sam Weinig.
 
+        More work on streams.
+        
+        * Plugins/Hosted/HostedNetscapePluginStream.h: Added.
+        (WebKit::HostedNetscapePluginStream::create):
+        * Plugins/Hosted/HostedNetscapePluginStream.mm: Added.
+        (WebKit::HostedNetscapePluginStream::HostedNetscapePluginStream):
+        (WebKit::HostedNetscapePluginStream::startStreamWithResponse):
+        (WebKit::HostedNetscapePluginStream::startStream):
+        (WebKit::HostedNetscapePluginStream::didReceiveData):
+        (WebKit::HostedNetscapePluginStream::didFinishLoading):
+        (WebKit::HostedNetscapePluginStream::didReceiveResponse):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::pluginView):
+        (WebKit::NetscapePluginInstanceProxy::hostProxy):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::PluginRequest::PluginRequest):
+        (WebKit::NetscapePluginInstanceProxy::PluginRequest::requestID):
+        (WebKit::NetscapePluginInstanceProxy::PluginRequest::request):
+        (WebKit::NetscapePluginInstanceProxy::PluginRequest::frameName):
+        (WebKit::NetscapePluginInstanceProxy::PluginRequest::didStartFromUserGesture):
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        (WebKit::NetscapePluginInstanceProxy::performRequest):
+        (WebKit::NetscapePluginInstanceProxy::evaluateJavaScript):
+        (WebKit::NetscapePluginInstanceProxy::requestTimerFired):
+        (WebKit::NetscapePluginInstanceProxy::loadRequest):
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
+2008-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Start implementing WKPCLoadURL. Currently this has copied a lot of code from WebNetscapePluginView
         but once we have a more complete implementation of NPStreams we can start refactoring things so that the
         implementations can share more code.

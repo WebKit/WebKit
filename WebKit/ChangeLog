@@ -1,3 +1,11 @@
+2008-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add HostedNetscapePluginStream.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-12-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

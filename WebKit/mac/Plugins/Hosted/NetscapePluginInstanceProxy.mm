@@ -27,6 +27,7 @@
 
 #import "NetscapePluginInstanceProxy.h"
 
+#import "HostedNetscapePluginStream.h"
 #import "NetscapePluginHostProxy.h"
 #import "WebDataSourceInternal.h"
 #import "WebFrameInternal.h"
@@ -48,10 +49,33 @@ using namespace WebCore;
 
 namespace WebKit {
 
+class NetscapePluginInstanceProxy::PluginRequest {
+public:
+    PluginRequest(uint32_t requestID, NSURLRequest *request, NSString *frameName, bool didStartFromUserGesture)
+        : m_requestID(requestID)
+        , m_request(request)
+        , m_frameName(frameName)
+        , m_didStartFromUserGesture(didStartFromUserGesture)
+    {
+    }
+    
+    uint32_t requestID() const { return m_requestID; }
+    NSURLRequest *request() const { return m_request.get(); }
+    NSString *frameName() const { return m_frameName.get(); }
+    bool didStartFromUserGesture() const { return m_didStartFromUserGesture; }
+    
+private:
+    uint32_t m_requestID;
+    RetainPtr<NSURLRequest *> m_request;
+    RetainPtr<NSString *> m_frameName;
+    bool m_didStartFromUserGesture;
+};
+    
 NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer)
     : m_pluginHostProxy(pluginHostProxy)
     , m_pluginView(pluginView)
     , m_requestTimer(this, &NetscapePluginInstanceProxy::requestTimerFired)
+    , m_currentRequestID(0)
     , m_pluginID(pluginID)
     , m_renderContextID(renderContextID)
     , m_useSoftwareRenderer(useSoftwareRenderer)
@@ -163,10 +187,10 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
     return loadRequest(request, target, currentEventIsUserGesture, streamID);
 }
 
-void NetscapePluginInstanceProxy::performRequest(WebPluginRequest* pluginRequest)
+void NetscapePluginInstanceProxy::performRequest(PluginRequest* pluginRequest)
 {
-    NSURLRequest *request = [pluginRequest request];
-    NSString *frameName = [pluginRequest frameName];
+    NSURLRequest *request = pluginRequest->request();
+    NSString *frameName = pluginRequest->frameName();
     WebFrame *frame = nil;
     
     NSURL *URL = [request URL];
@@ -196,26 +220,58 @@ void NetscapePluginInstanceProxy::performRequest(WebPluginRequest* pluginRequest
 
     if (JSString) {
         ASSERT(!frame || [m_pluginView webFrame] == frame);
-        // FIXME: Evaluate the request.
+        evaluateJavaScript(pluginRequest);
     } else
         [frame loadRequest:request];
+}
+
+void NetscapePluginInstanceProxy::evaluateJavaScript(PluginRequest* pluginRequest)
+{
+    NSURL *URL = [pluginRequest->request() URL];
+    NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
+    ASSERT(JSString);
+    
+    NSString *result = [[m_pluginView webFrame] _stringByEvaluatingJavaScriptFromString:JSString forceUserGesture:pluginRequest->didStartFromUserGesture()];
+    
+    // Don't continue if stringByEvaluatingJavaScriptFromString caused the plug-in to stop.
+    if (!m_pluginHostProxy)
+        return;
+
+    if (pluginRequest->frameName() != nil)
+        return;
+        
+    if ([result length] > 0) {
+        // Don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
+        NSData *JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
+        
+        RefPtr<HostedNetscapePluginStream> stream = HostedNetscapePluginStream::create(this, pluginRequest->requestID(), pluginRequest->request());
+        
+        RetainPtr<NSURLResponse> response(AdoptNS, [[NSURLResponse alloc] initWithURL:URL 
+                                                                             MIMEType:@"text/plain" 
+                                                                expectedContentLength:[JSData length]
+                                                                     textEncodingName:nil]);
+        stream->startStreamWithResponse(response.get());
+        stream->didReceiveData(0, static_cast<const char*>([JSData bytes]), [JSData length]);
+        stream->didFinishLoading(0);
+    }
 }
 
 void NetscapePluginInstanceProxy::requestTimerFired(Timer<NetscapePluginInstanceProxy>*)
 {
     ASSERT(!m_pluginRequests.isEmpty());
     
-    RetainPtr<WebPluginRequest> request = m_pluginRequests.first();
+    PluginRequest* request = m_pluginRequests.first();
     m_pluginRequests.removeFirst();
     
     if (!m_pluginRequests.isEmpty())
         m_requestTimer.startOneShot(0);
     
-    performRequest(request.get());
+    performRequest(request);
+    delete request;
 }
     
 
-NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const char* cTarget, bool currentEventIsUserGesture, uint32_t& streamID)
+NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const char* cTarget, bool currentEventIsUserGesture, uint32_t& requestID)
 {
     NSURL *URL = [request URL];
 
@@ -250,6 +306,10 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
         if (!FrameLoader::canLoad(URL, String(), core([m_pluginView webFrame])->document()))
             return NPERR_GENERIC_ERROR;
     }
+    
+
+    // FIXME: Handle wraparound
+    requestID = ++m_currentRequestID;
         
     if (cTarget || JSString) {
         // Make when targetting a frame or evaluating a JS string, perform the request after a delay because we don't
@@ -260,17 +320,11 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
             return NPERR_INVALID_PARAM;
         }
 
-        RetainPtr<WebPluginRequest> pluginRequest(AdoptCF, [[WebPluginRequest alloc] initWithRequest:request 
-                                                                                           frameName:target
-                                                                                          notifyData:0
-                                                                                    sendNotification:NO
-                                                                             didStartFromUserGesture:currentEventIsUserGesture]);
-        m_pluginRequests.append(pluginRequest.get());
+        PluginRequest* pluginRequest = new PluginRequest(requestID, request, target, currentEventIsUserGesture);
+        m_pluginRequests.append(pluginRequest);
         m_requestTimer.startOneShot(0);
-        streamID = 0;
     } else {
         // FIXME: Load the stream.
-        streamID = 0;
     }
     
     return NPERR_NO_ERROR;

@@ -24,6 +24,8 @@
 		1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */; };
 		1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */; };
 		1A7F9C4C0DD3DDEA0028F8A5 /* nptextinput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A8DED500EE88B8A00F25022 /* HostedNetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8DED4E0EE88B8A00F25022 /* HostedNetscapePluginStream.h */; };
+		1A8DED510EE88B8A00F25022 /* HostedNetscapePluginStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8DED4F0EE88B8A00F25022 /* HostedNetscapePluginStream.mm */; };
 		1AAF58940EDCCF15008D883D /* WebKitPluginAgent.defs in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAF58950EDCCF15008D883D /* WebKitPluginAgentReply.defs in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588B0EDCCEA3008D883D /* WebKitPluginAgentReply.defs */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAF58960EDCCF15008D883D /* WebKitPluginClient.defs in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588C0EDCCEA3008D883D /* WebKitPluginClient.defs */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -331,6 +333,8 @@
 		1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginRequest.h; sourceTree = "<group>"; };
 		1A77B02D0EE7730500C8A1F9 /* WebPluginRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginRequest.m; sourceTree = "<group>"; };
 		1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nptextinput.h; sourceTree = "<group>"; };
+		1A8DED4E0EE88B8A00F25022 /* HostedNetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostedNetscapePluginStream.h; sourceTree = "<group>"; };
+		1A8DED4F0EE88B8A00F25022 /* HostedNetscapePluginStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HostedNetscapePluginStream.mm; sourceTree = "<group>"; };
 		1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginAgent.defs; sourceTree = "<group>"; };
 		1AAF588B0EDCCEA3008D883D /* WebKitPluginAgentReply.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginAgentReply.defs; sourceTree = "<group>"; };
 		1AAF588C0EDCCEA3008D883D /* WebKitPluginClient.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = WebKitPluginClient.defs; sourceTree = "<group>"; };
@@ -717,6 +721,8 @@
 		1A1F91430ECBB16F006351DA /* Hosted */ = {
 			isa = PBXGroup;
 			children = (
+				1A8DED4E0EE88B8A00F25022 /* HostedNetscapePluginStream.h */,
+				1A8DED4F0EE88B8A00F25022 /* HostedNetscapePluginStream.mm */,
 				1AAF5CE40EDDE1FE008D883D /* NetscapePluginHostManager.h */,
 				1AAF5CE50EDDE1FE008D883D /* NetscapePluginHostManager.mm */,
 				1AAF5CE60EDDE1FE008D883D /* NetscapePluginHostProxy.h */,
@@ -1375,6 +1381,7 @@
 				1AAF5D090EDDE71D008D883D /* WebKitPluginHostTypes.h in Headers */,
 				1AAF5FBF0EDE3A92008D883D /* WebHostedNetscapePluginView.h in Headers */,
 				1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */,
+				1A8DED500EE88B8A00F25022 /* HostedNetscapePluginStream.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1680,6 +1687,7 @@
 				1AAF5CEF0EDDE1FE008D883D /* NetscapePluginInstanceProxy.mm in Sources */,
 				1AAF5FC00EDE3A92008D883D /* WebHostedNetscapePluginView.mm in Sources */,
 				1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */,
+				1A8DED510EE88B8A00F25022 /* HostedNetscapePluginStream.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
