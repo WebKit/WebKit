@@ -1,0 +1,58 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description('This test checks the behavior of DOM operations when called on non-DOM or incompatible receivers with non-DOM or incompatible arguments.');
+
+function trySuspect(fun) {
+  try {
+    result = fun();
+    return '' + result;
+  } catch (e) {
+    return 'threw ' + e;
+  }
+}
+
+function check(a, b) {
+  return 1;
+}
+
+var aDOMImplementation = document.implementation;
+
+var aSelect = document.createElement("select");
+var anOption = document.createElement("option");
+var aNode = document.createElement("div");
+var aSecondNode = document.createElement("div");
+aNode.appendChild(aSecondNode);
+
+shouldThrow("aNode.appendChild(aDOMImplementation)", "'Error: NOT_FOUND_ERR: DOM Exception 8'");
+
+shouldThrow("aNode.appendChild('knort')", "'Error: NOT_FOUND_ERR: DOM Exception 8'");
+
+shouldThrow("aNode.appendChild(void 0)", "'Error: NOT_FOUND_ERR: DOM Exception 8'");
+
+shouldBeFalse("aNode.isSameNode(aDOMImplementation)");
+shouldBeFalse("aNode.isSameNode('foo')");
+shouldBeFalse("aNode.isSameNode(void 0)");
+shouldBe("aNode.lookupPrefix(aDOMImplementation)", "null");
+shouldBe("aNode.lookupPrefix(void 0)", "null");
+shouldBeTrue("aNode.cloneNode(aDOMImplementation) instanceof HTMLDivElement");
+shouldBeUndefined("aSelect.add(aDOMImplementation, aDOMImplementation)");
+shouldBeUndefined("aSelect.add(aDOMImplementation, anOption)");
+shouldBeUndefined("aSelect.add(anOption, aDOMImplementation)");
+shouldBeUndefined("aSelect.add(void 0, void 0)");
+shouldBeUndefined("aSelect.add(void 0, anOption)");
+shouldBeUndefined("aSelect.add(anOption, void 0)");
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -1,3 +1,13 @@
+2008-12-05  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22632
+        Add a test for DOM operations with incompatible receivers or arguments.
+
+        * fast/dom/incompatible-operations-expected.txt: Added.
+        * fast/dom/incompatible-operations.html: Added.
+
 2008-12-05  Justin Garcia  <justin.garcia@apple.com>
 
         Updating these test results.  On Tiger the fragment created from RTFD data 
