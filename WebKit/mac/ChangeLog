@@ -1,3 +1,10 @@
+2008-12-04  Stephanie Lewis  <slewis@apple.com>
+
+        Fix build.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCLoadURL):
+
 2008-12-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

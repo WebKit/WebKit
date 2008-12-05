@@ -150,7 +150,7 @@ kern_return_t WKPCLoadURL(mach_port_t clientPort, uint32_t pluginID, data_t url,
     if (!instanceProxy)
         return KERN_FAILURE;
 
-    uint32_t streamID;
+    uint32_t streamID = 0;
     NPError result = instanceProxy->loadURL(url, target, post, postData, postDataLength, postDataIsFile, streamID, currentEventIsUserGesture);
     
     return _WKPHLoadURLReply(hostProxy->port(), pluginID, result, streamID);
