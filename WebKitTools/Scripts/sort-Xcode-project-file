@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Script to sort "files=(...);" sections in Xcode project.pbxproj files
+# Script to sort "children" and "files" sections in Xcode project.pbxproj files
 
 use strict;
 
@@ -34,7 +34,17 @@ use File::Basename;
 use File::Temp qw(tempfile);
 use Getopt::Long;
 
-sub sortByFileName($$);
+sub sortChildrenByFileName($$);
+sub sortFilesByFileName($$);
+
+# Files (or products) without extensions
+my %isFile = map { $_ => 1 } qw(
+    create_hash_table
+    jsc
+    minidom
+    testapi
+    testjsglue
+);
 
 my $printWarnings = 1;
 my $showHelp;
@@ -90,7 +100,20 @@ for my $projectFile (@ARGV) {
                 }
                 push @files, $fileLine;
             }
-            print $OUT sort sortByFileName @files;
+            print $OUT sort sortFilesByFileName @files;
+            print $OUT $endMarker;
+        } elsif ($line =~ /^(\s*)children = \(\s*$/) {
+            print $OUT $line;
+            my $endMarker = $1 . ");";
+            my @children;
+            while (my $childLine = <IN>) {
+                if ($childLine =~ /^\Q$endMarker\E\s*$/) {
+                    $endMarker = $childLine;
+                    last;
+                }
+                push @children, $childLine;
+            }
+            print $OUT sort sortChildrenByFileName @children;
             print $OUT $endMarker;
         } else {
             print $OUT $line;
@@ -105,7 +128,20 @@ for my $projectFile (@ARGV) {
 
 exit 0;
 
-sub sortByFileName($$)
+sub sortChildrenByFileName($$)
+{
+    my ($a, $b) = @_;
+    my $aFileName = $1 if $a =~ /^\s*[A-Z0-9]{24} \/\* (.+) \*\/,$/;
+    my $bFileName = $1 if $b =~ /^\s*[A-Z0-9]{24} \/\* (.+) \*\/,$/;
+    my $aSuffix = $1 if $aFileName =~ m/\.([^.]+)$/;
+    my $bSuffix = $1 if $bFileName =~ m/\.([^.]+)$/;
+    if ((!$aSuffix && !$isFile{$aFileName} && $bSuffix) || ($aSuffix && !$bSuffix && !$isFile{$bFileName})) {
+        return !$aSuffix ? -1 : 1;
+    }
+    return $aFileName cmp $bFileName;
+}
+
+sub sortFilesByFileName($$)
 {
     my ($a, $b) = @_;
     my $aFileName = $1 if $a =~ /^\s*[A-Z0-9]{24} \/\* (.+) in /;
