@@ -1,3 +1,18 @@
+2008-12-04  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Implement basic text paste support in wx and add notImplemented stubs
+        to catch other methods.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22667
+
+        * platform/wx/PasteboardWx.cpp:
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        (WebCore::Pasteboard::writeImage):
+
 2008-12-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for !USE(WXGC) build config.
