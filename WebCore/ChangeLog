@@ -1,3 +1,12 @@
+2008-12-05  Tobias König <tobias.koenig@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Record required package dependencies for the Qt build for a correct
+        pkg-config file.
+
+        * WebCore.pro:
+
 2008-12-05  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Rubber-stamped by Simon Hausmann.
