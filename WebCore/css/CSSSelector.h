@@ -25,6 +25,7 @@
 #define CSSSelector_h
 
 #include "QualifiedName.h"
+#include "OwnPtr.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
