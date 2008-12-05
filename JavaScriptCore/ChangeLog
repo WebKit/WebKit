@@ -1,3 +1,12 @@
+2008-12-05  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r39020
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReference):
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        Add some apparently-missing __.
+
 2008-12-04  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
