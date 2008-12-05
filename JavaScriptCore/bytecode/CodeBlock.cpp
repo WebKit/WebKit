@@ -304,53 +304,53 @@ void CodeBlock::dump(ExecState* exec) const
         } while (i < exceptionHandlers.size());
     }
     
-    if (immediateSwitchJumpTables.size()) {
+    if (!m_immediateSwitchJumpTables.isEmpty()) {
         printf("Immediate Switch Jump Tables:\n");
         unsigned i = 0;
         do {
             printf("  %1d = {\n", i);
             int entry = 0;
-            Vector<int32_t>::const_iterator end = immediateSwitchJumpTables[i].branchOffsets.end();
-            for (Vector<int32_t>::const_iterator iter = immediateSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
+            Vector<int32_t>::const_iterator end = m_immediateSwitchJumpTables[i].branchOffsets.end();
+            for (Vector<int32_t>::const_iterator iter = m_immediateSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
                 if (!*iter)
                     continue;
-                printf("\t\t%4d => %04d\n", entry + immediateSwitchJumpTables[i].min, *iter);
+                printf("\t\t%4d => %04d\n", entry + m_immediateSwitchJumpTables[i].min, *iter);
             }
             printf("      }\n");
             ++i;
-        } while (i < immediateSwitchJumpTables.size());
+        } while (i < m_immediateSwitchJumpTables.size());
     }
     
-    if (characterSwitchJumpTables.size()) {
+    if (!m_characterSwitchJumpTables.isEmpty()) {
         printf("\nCharacter Switch Jump Tables:\n");
         unsigned i = 0;
         do {
             printf("  %1d = {\n", i);
             int entry = 0;
-            Vector<int32_t>::const_iterator end = characterSwitchJumpTables[i].branchOffsets.end();
-            for (Vector<int32_t>::const_iterator iter = characterSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
+            Vector<int32_t>::const_iterator end = m_characterSwitchJumpTables[i].branchOffsets.end();
+            for (Vector<int32_t>::const_iterator iter = m_characterSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
                 if (!*iter)
                     continue;
-                ASSERT(!((i + characterSwitchJumpTables[i].min) & ~0xFFFF));
-                UChar ch = static_cast<UChar>(entry + characterSwitchJumpTables[i].min);
+                ASSERT(!((i + m_characterSwitchJumpTables[i].min) & ~0xFFFF));
+                UChar ch = static_cast<UChar>(entry + m_characterSwitchJumpTables[i].min);
                 printf("\t\t\"%s\" => %04d\n", UString(&ch, 1).ascii(), *iter);
         }
             printf("      }\n");
             ++i;
-        } while (i < characterSwitchJumpTables.size());
+        } while (i < m_characterSwitchJumpTables.size());
     }
     
-    if (stringSwitchJumpTables.size()) {
+    if (!m_stringSwitchJumpTables.isEmpty()) {
         printf("\nString Switch Jump Tables:\n");
         unsigned i = 0;
         do {
             printf("  %1d = {\n", i);
-            StringJumpTable::StringOffsetTable::const_iterator end = stringSwitchJumpTables[i].offsetTable.end();
-            for (StringJumpTable::StringOffsetTable::const_iterator iter = stringSwitchJumpTables[i].offsetTable.begin(); iter != end; ++iter)
+            StringJumpTable::StringOffsetTable::const_iterator end = m_stringSwitchJumpTables[i].offsetTable.end();
+            for (StringJumpTable::StringOffsetTable::const_iterator iter = m_stringSwitchJumpTables[i].offsetTable.begin(); iter != end; ++iter)
                 printf("\t\t\"%s\" => %04d\n", UString(iter->first).ascii(), iter->second.branchOffset);
             printf("      }\n");
             ++i;
-        } while (i < stringSwitchJumpTables.size());
+        } while (i < m_stringSwitchJumpTables.size());
     }
 
     printf("\n");
@@ -1179,6 +1179,27 @@ int CodeBlock::expressionRangeForVPC(const Instruction* vPC, int& divot, int& st
     endOffset = expressionInfo[low - 1].endOffset;
     divot = expressionInfo[low - 1].divotPoint + sourceOffset;
     return lineNumberForVPC(vPC);
+}
+
+void CodeBlock::shrinkToFit()
+{
+    instructions.shrinkToFit();
+    globalResolveInstructions.shrinkToFit();
+    propertyAccessInstructions.shrinkToFit();
+    callLinkInfos.shrinkToFit();
+    linkedCallerList.shrinkToFit();
+    identifiers.shrinkToFit();
+    functions.shrinkToFit();
+    functionExpressions.shrinkToFit();
+    constantRegisters.shrinkToFit();
+    unexpectedConstants.shrinkToFit();
+    regexps.shrinkToFit();
+    exceptionHandlers.shrinkToFit();
+    expressionInfo.shrinkToFit();
+    lineInfo.shrinkToFit();
+    m_immediateSwitchJumpTables.shrinkToFit();
+    m_characterSwitchJumpTables.shrinkToFit();
+    m_stringSwitchJumpTables.shrinkToFit();
 }
 
 int32_t SimpleJumpTable::offsetForValue(int32_t value, int32_t defaultOffset)

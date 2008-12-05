@@ -1245,7 +1245,7 @@ void JIT::privateCompileMainPass()
             unsigned scrutinee = instruction[i + 3].u.operand;
 
             // create jump table for switch destinations, track this switch statement.
-            SimpleJumpTable* jumpTable = &m_codeBlock->immediateSwitchJumpTables[tableIndex];
+            SimpleJumpTable* jumpTable = &m_codeBlock->immediateSwitchJumpTable(tableIndex);
             m_switches.append(SwitchRecord(jumpTable, i, defaultOffset, SwitchRecord::Immediate));
             jumpTable->ctiOffsets.grow(jumpTable->branchOffsets.size());
 
@@ -1262,7 +1262,7 @@ void JIT::privateCompileMainPass()
             unsigned scrutinee = instruction[i + 3].u.operand;
 
             // create jump table for switch destinations, track this switch statement.
-            SimpleJumpTable* jumpTable = &m_codeBlock->characterSwitchJumpTables[tableIndex];
+            SimpleJumpTable* jumpTable = &m_codeBlock->characterSwitchJumpTable(tableIndex);
             m_switches.append(SwitchRecord(jumpTable, i, defaultOffset, SwitchRecord::Character));
             jumpTable->ctiOffsets.grow(jumpTable->branchOffsets.size());
 
@@ -1279,7 +1279,7 @@ void JIT::privateCompileMainPass()
             unsigned scrutinee = instruction[i + 3].u.operand;
 
             // create jump table for switch destinations, track this switch statement.
-            StringJumpTable* jumpTable = &m_codeBlock->stringSwitchJumpTables[tableIndex];
+            StringJumpTable* jumpTable = &m_codeBlock->stringSwitchJumpTable(tableIndex);
             m_switches.append(SwitchRecord(jumpTable, i, defaultOffset));
 
             emitPutCTIArgFromVirtualRegister(scrutinee, 0, X86::ecx);

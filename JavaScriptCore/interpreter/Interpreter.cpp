@@ -3208,7 +3208,7 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
             vPC += defaultOffset;
         else {
             int32_t value = JSImmediate::getTruncatedInt32(scrutinee);
-            vPC += callFrame->codeBlock()->immediateSwitchJumpTables[tableIndex].offsetForValue(value, defaultOffset);
+            vPC += callFrame->codeBlock()->immediateSwitchJumpTable(tableIndex).offsetForValue(value, defaultOffset);
         }
         NEXT_INSTRUCTION();
     }
@@ -3231,7 +3231,7 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
             if (value->size() != 1)
                 vPC += defaultOffset;
             else
-                vPC += callFrame->codeBlock()->characterSwitchJumpTables[tableIndex].offsetForValue(value->data()[0], defaultOffset);
+                vPC += callFrame->codeBlock()->characterSwitchJumpTable(tableIndex).offsetForValue(value->data()[0], defaultOffset);
         }
         NEXT_INSTRUCTION();
     }
@@ -3250,7 +3250,7 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
         if (!scrutinee->isString())
             vPC += defaultOffset;
         else 
-            vPC += callFrame->codeBlock()->stringSwitchJumpTables[tableIndex].offsetForValue(asString(scrutinee)->value().rep(), defaultOffset);
+            vPC += callFrame->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(asString(scrutinee)->value().rep(), defaultOffset);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_new_func) {
@@ -5970,10 +5970,10 @@ void* Interpreter::cti_op_switch_imm(CTI_ARGS)
 
     if (JSImmediate::isNumber(scrutinee)) {
         int32_t value = JSImmediate::getTruncatedInt32(scrutinee);
-        return codeBlock->immediateSwitchJumpTables[tableIndex].ctiForValue(value);
+        return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(value);
     }
 
-    return codeBlock->immediateSwitchJumpTables[tableIndex].ctiDefault;
+    return codeBlock->immediateSwitchJumpTable(tableIndex).ctiDefault;
 }
 
 void* Interpreter::cti_op_switch_char(CTI_ARGS)
@@ -5985,12 +5985,12 @@ void* Interpreter::cti_op_switch_char(CTI_ARGS)
     CallFrame* callFrame = ARG_callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    void* result = codeBlock->characterSwitchJumpTables[tableIndex].ctiDefault;
+    void* result = codeBlock->characterSwitchJumpTable(tableIndex).ctiDefault;
 
     if (scrutinee->isString()) {
         UString::Rep* value = asString(scrutinee)->value().rep();
         if (value->size() == 1)
-            result = codeBlock->characterSwitchJumpTables[tableIndex].ctiForValue(value->data()[0]);
+            result = codeBlock->characterSwitchJumpTable(tableIndex).ctiForValue(value->data()[0]);
     }
 
     return result;
@@ -6005,11 +6005,11 @@ void* Interpreter::cti_op_switch_string(CTI_ARGS)
     CallFrame* callFrame = ARG_callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    void* result = codeBlock->stringSwitchJumpTables[tableIndex].ctiDefault;
+    void* result = codeBlock->stringSwitchJumpTable(tableIndex).ctiDefault;
 
     if (scrutinee->isString()) {
         UString::Rep* value = asString(scrutinee)->value().rep();
-        result = codeBlock->stringSwitchJumpTables[tableIndex].ctiForValue(value);
+        result = codeBlock->stringSwitchJumpTable(tableIndex).ctiForValue(value);
     }
 
     return result;

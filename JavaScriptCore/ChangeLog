@@ -1,3 +1,34 @@
+2008-12-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Encapsulate access to jump tables in the CodeBlock in preparation
+        of moving them to a rare data structure.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfImmediateSwitchJumpTables):
+        (JSC::CodeBlock::addImmediateSwitchJumpTable):
+        (JSC::CodeBlock::immediateSwitchJumpTable):
+        (JSC::CodeBlock::numberOfCharacterSwitchJumpTables):
+        (JSC::CodeBlock::addCharacterSwitchJumpTable):
+        (JSC::CodeBlock::characterSwitchJumpTable):
+        (JSC::CodeBlock::numberOfStringSwitchJumpTables):
+        (JSC::CodeBlock::addStringSwitchJumpTable):
+        (JSC::CodeBlock::stringSwitchJumpTable):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::endSwitch):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::cti_op_switch_imm):
+        (JSC::Interpreter::cti_op_switch_char):
+        (JSC::Interpreter::cti_op_switch_string):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
 2008-12-05  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r39020

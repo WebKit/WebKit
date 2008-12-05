@@ -139,27 +139,8 @@ void BytecodeGenerator::generate()
         m_codeBlock->dump(globalObject->globalExec());
     }
 #endif
-    
-    m_codeBlock->instructions.shrinkToFit();
-    m_codeBlock->globalResolveInstructions.shrinkToFit();
-    m_codeBlock->propertyAccessInstructions.shrinkToFit();
-    m_codeBlock->callLinkInfos.shrinkToFit();
-    m_codeBlock->linkedCallerList.shrinkToFit();
 
-    m_codeBlock->identifiers.shrinkToFit();
-    m_codeBlock->functions.shrinkToFit();
-    m_codeBlock->functionExpressions.shrinkToFit();
-    m_codeBlock->constantRegisters.shrinkToFit();
-    m_codeBlock->unexpectedConstants.shrinkToFit();
-    m_codeBlock->regexps.shrinkToFit();
-    m_codeBlock->exceptionHandlers.shrinkToFit();
-    m_codeBlock->expressionInfo.shrinkToFit();
-    m_codeBlock->lineInfo.shrinkToFit();
-
-    m_codeBlock->immediateSwitchJumpTables.shrinkToFit();
-    m_codeBlock->characterSwitchJumpTables.shrinkToFit();
-    m_codeBlock->stringSwitchJumpTables.shrinkToFit();
-
+    m_codeBlock->shrinkToFit();
 }
 
 bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, RegisterID*& r0)
@@ -1710,29 +1691,23 @@ void BytecodeGenerator::endSwitch(uint32_t clauseCount, RefPtr<Label>* labels, E
     SwitchInfo switchInfo = m_switchContextStack.last();
     m_switchContextStack.removeLast();
     if (switchInfo.switchType == SwitchInfo::SwitchImmediate) {
-        instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->immediateSwitchJumpTables.size();
+        instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->numberOfImmediateSwitchJumpTables();
         instructions()[switchInfo.bytecodeOffset + 2] = defaultLabel->offsetFrom(switchInfo.bytecodeOffset + 3);
 
-        m_codeBlock->immediateSwitchJumpTables.append(SimpleJumpTable());
-        SimpleJumpTable& jumpTable = m_codeBlock->immediateSwitchJumpTables.last();
-
+        SimpleJumpTable& jumpTable = m_codeBlock->addImmediateSwitchJumpTable();
         prepareJumpTableForImmediateSwitch(jumpTable, switchInfo.bytecodeOffset + 3, clauseCount, labels, nodes, min, max);
     } else if (switchInfo.switchType == SwitchInfo::SwitchCharacter) {
-        instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->characterSwitchJumpTables.size();
+        instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->numberOfCharacterSwitchJumpTables();
         instructions()[switchInfo.bytecodeOffset + 2] = defaultLabel->offsetFrom(switchInfo.bytecodeOffset + 3);
         
-        m_codeBlock->characterSwitchJumpTables.append(SimpleJumpTable());
-        SimpleJumpTable& jumpTable = m_codeBlock->characterSwitchJumpTables.last();
-
+        SimpleJumpTable& jumpTable = m_codeBlock->addCharacterSwitchJumpTable();
         prepareJumpTableForCharacterSwitch(jumpTable, switchInfo.bytecodeOffset + 3, clauseCount, labels, nodes, min, max);
     } else {
         ASSERT(switchInfo.switchType == SwitchInfo::SwitchString);
-        instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->stringSwitchJumpTables.size();
+        instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->numberOfStringSwitchJumpTables();
         instructions()[switchInfo.bytecodeOffset + 2] = defaultLabel->offsetFrom(switchInfo.bytecodeOffset + 3);
 
-        m_codeBlock->stringSwitchJumpTables.append(StringJumpTable());
-        StringJumpTable& jumpTable = m_codeBlock->stringSwitchJumpTables.last();
-
+        StringJumpTable& jumpTable = m_codeBlock->addStringSwitchJumpTable();
         prepareJumpTableForStringSwitch(jumpTable, switchInfo.bytecodeOffset + 3, clauseCount, labels, nodes);
     }
 }

@@ -310,6 +310,20 @@ namespace JSC {
             return *(binaryChop<CallLinkInfo, void*, getCallLinkInfoReturnLocation>(callLinkInfos.begin(), callLinkInfos.size(), returnAddress));
         }
 
+        void shrinkToFit();
+
+        size_t numberOfImmediateSwitchJumpTables() const { return m_immediateSwitchJumpTables.size(); }
+        SimpleJumpTable& addImmediateSwitchJumpTable() { m_immediateSwitchJumpTables.append(SimpleJumpTable()); return m_immediateSwitchJumpTables.last(); }
+        SimpleJumpTable& immediateSwitchJumpTable(int tableIndex) { return m_immediateSwitchJumpTables[tableIndex]; }
+
+        size_t numberOfCharacterSwitchJumpTables() const { return m_characterSwitchJumpTables.size(); }
+        SimpleJumpTable& addCharacterSwitchJumpTable() { m_characterSwitchJumpTables.append(SimpleJumpTable()); return m_characterSwitchJumpTables.last(); }
+        SimpleJumpTable& characterSwitchJumpTable(int tableIndex) { return m_characterSwitchJumpTables[tableIndex]; }
+
+        size_t numberOfStringSwitchJumpTables() const { return m_stringSwitchJumpTables.size(); }
+        StringJumpTable& addStringSwitchJumpTable() { m_stringSwitchJumpTables.append(StringJumpTable()); return m_stringSwitchJumpTables.last(); }
+        StringJumpTable& stringSwitchJumpTable(int tableIndex) { return m_stringSwitchJumpTables[tableIndex]; }
+
         ScopeNode* ownerNode;
         JSGlobalData* globalData;
 #if ENABLE(JIT)
@@ -350,10 +364,6 @@ namespace JSC {
         Vector<ExpressionRangeInfo> expressionInfo;
         Vector<LineInfo> lineInfo;
 
-        Vector<SimpleJumpTable> immediateSwitchJumpTables;
-        Vector<SimpleJumpTable> characterSwitchJumpTables;
-        Vector<StringJumpTable> stringSwitchJumpTables;
-
 #if ENABLE(JIT)
         HashMap<void*, unsigned> ctiReturnAddressVPCMap;
 #endif
@@ -368,6 +378,9 @@ namespace JSC {
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
 #endif
 
+        Vector<SimpleJumpTable> m_immediateSwitchJumpTables;
+        Vector<SimpleJumpTable> m_characterSwitchJumpTables;
+        Vector<StringJumpTable> m_stringSwitchJumpTables;
     };
 
     // Program code is not marked by any function, so we make the global object
