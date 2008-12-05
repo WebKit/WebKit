@@ -75,6 +75,9 @@ function printProfilesDataWithoutTime()
 
 function printProfileNodeWithoutTime(preElement, node, indentLevel)
 {
+    if (node.functionName == "(idle)")
+        return;
+
     if (!node.visible)
         return;
 

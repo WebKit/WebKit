@@ -1,3 +1,55 @@
+2008-12-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - Fix intermittent profiler test failures.  The problem is that idle
+        time only shows up some times, probably dependent on if the system is
+        running a little slow or has a network hiccup.  I've removed this.
+        - I've also added <rdar://problem/6422004> Profiler tests fail because
+        they sometimes don't have (idle) time. This is to investigate whether or
+        not idle time should be showing up at all when running these tests.
+
+        * fast/profiler/anonymous-event-handler-expected.txt:
+        * fast/profiler/anonymous-function-called-from-different-contexts-expected.txt:
+        * fast/profiler/anonymous-function-calls-built-in-functions-expected.txt:
+        * fast/profiler/anonymous-function-calls-eval-expected.txt:
+        * fast/profiler/apply-expected.txt:
+        * fast/profiler/built-in-function-calls-anonymous-expected.txt:
+        * fast/profiler/built-in-function-calls-user-defined-function-expected.txt:
+        * fast/profiler/call-expected.txt:
+        * fast/profiler/call-nodelist-as-function-expected.txt:
+        * fast/profiler/calling-the-function-that-started-the-profiler-from-another-scope-expected.txt:
+        * fast/profiler/compare-multiple-profiles-expected.txt:
+        * fast/profiler/constructor-expected.txt:
+        * fast/profiler/dead-time-expected.txt:
+        * fast/profiler/document-dot-write-expected.txt:
+        * fast/profiler/event-handler-expected.txt:
+        * fast/profiler/execution-context-and-eval-on-same-line-expected.txt:
+        * fast/profiler/heavy-view-expected.txt:
+        * fast/profiler/inline-event-handler-expected.txt:
+        * fast/profiler/many-calls-in-the-same-scope-expected.txt:
+        * fast/profiler/multiple-and-different-scoped-anonymous-function-calls-expected.txt:
+        * fast/profiler/multiple-and-different-scoped-function-calls-expected.txt:
+        * fast/profiler/multiple-frames-expected.txt:
+        * fast/profiler/nested-anonymous-functon-expected.txt:
+        * fast/profiler/nested-start-and-stop-profiler-expected.txt:
+        * fast/profiler/one-execution-context-expected.txt:
+        * fast/profiler/profile-calls-in-included-file-expected.txt:
+        * fast/profiler/profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting-expected.txt:
+        * fast/profiler/profiling-from-a-nested-location-expected.txt:
+        * fast/profiler/resources/profiler-test-JS-resources.js:
+        (printProfileNodeWithoutTime):
+        * fast/profiler/simple-event-call-expected.txt:
+        * fast/profiler/simple-no-level-change-expected.txt:
+        * fast/profiler/start-and-stop-profiler-multiple-times-expected.txt:
+        * fast/profiler/start-and-stop-profiling-in-the-same-function-expected.txt:
+        * fast/profiler/stop-profiling-after-setTimeout-expected.txt:
+        * fast/profiler/stop-then-function-call-expected.txt:
+        * fast/profiler/throw-exception-from-eval-expected.txt:
+        * fast/profiler/two-execution-contexts-expected.txt:
+        * fast/profiler/user-defined-function-calls-built-in-functions-expected.txt:
+        * fast/profiler/window-dot-eval-expected.txt:
+
 2008-12-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

@@ -9,6 +9,5 @@ Thread_1 (no file) (line 0)
          setTimeout (no file) (line 0)
    (program) dead-time.html (line 1)
       endTest profiler-test-JS-resources.js (line 1)
-   (idle) (no file) (line 0)
 
 

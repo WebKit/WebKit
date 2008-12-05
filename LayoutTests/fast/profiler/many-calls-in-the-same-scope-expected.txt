@@ -32,6 +32,5 @@ Thread_1 (no file) (line 0)
       end many-calls-in-the-same-scope.html (line 27)
       endT many-calls-in-the-same-scope.html (line 32)
       endTest profiler-test-JS-resources.js (line 1)
-   (idle) (no file) (line 0)
 
 

@@ -6,14 +6,12 @@ Profile title: Start the profiler the third time.
 Thread_1 (no file) (line 0)
    startTest nested-start-and-stop-profiler.html (line 11)
       endTest profiler-test-JS-resources.js (line 1)
-   (idle) (no file) (line 0)
 
 
 Profile title: Start the profiler the third time.
 Thread_1 (no file) (line 0)
    startTest nested-start-and-stop-profiler.html (line 11)
       endTest profiler-test-JS-resources.js (line 1)
-   (idle) (no file) (line 0)
 
 Profile title: Start the profiler the second time.
 Thread_1 (no file) (line 0)
@@ -38,14 +36,12 @@ Thread_1 (no file) (line 0)
                      appendChild (no file) (line 0)
             getElementById (no file) (line 0)
          notifyDone (no file) (line 0)
-   (idle) (no file) (line 0)
 
 
 Profile title: Start the profiler the third time.
 Thread_1 (no file) (line 0)
    startTest nested-start-and-stop-profiler.html (line 11)
       endTest profiler-test-JS-resources.js (line 1)
-   (idle) (no file) (line 0)
 
 Profile title: Start the profiler the second time.
 Thread_1 (no file) (line 0)
@@ -70,7 +66,6 @@ Thread_1 (no file) (line 0)
                      appendChild (no file) (line 0)
             getElementById (no file) (line 0)
          notifyDone (no file) (line 0)
-   (idle) (no file) (line 0)
 
 Profile title: Start the profiler the first time.
 Thread_1 (no file) (line 0)
@@ -115,6 +110,5 @@ Thread_1 (no file) (line 0)
                                     appendChild (no file) (line 0)
             getElementById (no file) (line 0)
          notifyDone (no file) (line 0)
-   (idle) (no file) (line 0)
 
 
