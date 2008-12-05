@@ -486,50 +486,36 @@ void Generator::generateCharacterClass(JumpList& failures, const CharacterClass&
     add32(Imm32(1), index);
 }
 
-Generator::Jump Generator::generateParentheses(ParenthesesType type)
+void Generator::generateParenthesesAssertion(JumpList& failures)
 {
-    if (type == capturing)
-        m_parser.recordSubpattern();
+    JumpList disjunctionFailed;
 
-    unsigned subpatternId = m_parser.numSubpatterns();
-
-    // push pos, both to preserve for fail + reloaded in parseDisjunction
     push(index);
+    m_parser.parseDisjunction(disjunctionFailed);
+    Jump success = jump();
 
-    // Plant a disjunction, wrapped to invert behaviour - 
-    JumpList newFailures;
-    m_parser.parseDisjunction(newFailures);
-    
-    if (type == capturing) {
-        pop(character);
-        store32(character, Address(output, (2 * subpatternId) * sizeof(int)));
-        store32(index, Address(output, (2 * subpatternId + 1) * sizeof(int)));
-    } else if (type == non_capturing)
-        pop();
-    else
-        pop(index);
-
-    // This is a little lame - jump to jump if there is a nested disjunction.
-    // (suggestion to fix: make parseDisjunction populate a JumpList of
-    // disjunct successes... this is probably not worth the compile cost in
-    // the common case to fix).
-    Jump successfulMatch = jump();
-
-    newFailures.link();
+    disjunctionFailed.link();
     pop(index);
+    failures.append(jump());
 
-    Jump jumpToFail;
-    // If this was an inverted assert, fail = success! - just let the failure case drop through,
-    // success case goes to failures.  Both paths restore curr pos.
-    if (type == inverted_assertion)
-        jumpToFail = successfulMatch;
-    else {
-        // plant a jump so any fail will link off to 'failures',
-        jumpToFail = jump();
-        // link successes to jump here
-        successfulMatch.link();
-    }
-    return jumpToFail;
+    success.link();
+    pop(index);
+}
+
+void Generator::generateParenthesesInvertedAssertion(JumpList& failures)
+{
+    JumpList disjunctionFailed;
+
+    push(index);
+    m_parser.parseDisjunction(disjunctionFailed);
+
+    // If the disjunction succeeded, the inverted assertion failed.
+    pop(index);
+    failures.append(jump());
+
+    // If the disjunction failed, the inverted assertion succeeded.
+    disjunctionFailed.link();
+    pop(index);
 }
 
 void Generator::generateParenthesesNonGreedy(JumpList& failures, Label start, Jump success, Jump fail)

@@ -257,12 +257,52 @@ bool Parser::parseBackreferenceQuantifier(JumpList& failures, unsigned subpatter
     return true;
 }
 
-bool Parser::parseParentheses(JumpList&)
+bool Parser::parseParentheses(JumpList& failures)
 {
-    // FIXME: We don't currently backtrack correctly within parentheses in cases such as
-    // "c".match(/(.*)c/) so we fall back to PCRE for any regexp containing parentheses.
+    ParenthesesType type = consumeParenthesesType();
 
-    m_error = UnsupportedParentheses;
+    // FIXME: WREC originally failed to backtrack correctly in cases such as
+    // "c".match(/(.*)c/). Now, most parentheses handling is disabled. For
+    // unsupported parentheses, we fall back on PCRE.
+
+    switch (type) {
+        case Generator::Assertion:
+            m_generator.generateParenthesesAssertion(failures);
+            break;
+
+        case Generator::InvertedAssertion:
+            m_generator.generateParenthesesInvertedAssertion(failures);
+            break;
+
+        default:
+            m_error = UnsupportedParentheses;
+            return false;
+    }
+
+    if (consume() != ')') {
+        m_error = MalformedParentheses;
+        return false;
+    }
+
+    Quantifier q = consumeQuantifier();
+
+    switch (q.type) {
+        case Quantifier::None:
+            return true;
+
+        case Quantifier::Greedy:
+            m_error = UnsupportedParentheses;
+            return false;
+
+        case Quantifier::NonGreedy:
+            m_error = UnsupportedParentheses;
+            return false;
+
+        case Quantifier::Error:
+            return false;
+    }
+    
+    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -557,6 +597,28 @@ void Parser::parseDisjunction(JumpList& failures)
     } while (peek() == '|');
 
     m_generator.terminateDisjunction(successes);
+}
+
+Generator::ParenthesesType Parser::consumeParenthesesType()
+{
+    if (peek() != '?')
+        return Generator::Capturing;
+    consume();
+
+    switch (consume()) {
+    case ':':
+        return Generator::NonCapturing;
+    
+    case '=':
+        return Generator::Assertion;
+
+    case '!':
+        return Generator::InvertedAssertion;
+
+    default:
+        m_error = MalformedParentheses;
+        return Generator::Error;
+    }
 }
 
 } } // namespace JSC::WREC

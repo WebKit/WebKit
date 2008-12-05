@@ -49,6 +49,8 @@ namespace JSC { namespace WREC {
         using MacroAssembler::JumpList;
         using MacroAssembler::Label;
 
+        enum ParenthesesType { Capturing, NonCapturing, Assertion, InvertedAssertion, Error };
+
         static CompiledRegExp compileRegExp(const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
 
         Generator(Parser& parser)
@@ -85,8 +87,8 @@ namespace JSC { namespace WREC {
         void generateAssertionEOL(JumpList& failures);
         void generateBackreference(JumpList& failures, unsigned subpatternID);
         void generateBackreferenceQuantifier(JumpList& failures, Quantifier::Type quantifierType, unsigned subpatternId, unsigned min, unsigned max);
-        enum ParenthesesType { capturing, non_capturing, assertion, inverted_assertion }; // order is relied on in generateParentheses()
-        Jump generateParentheses(ParenthesesType type);
+        void generateParenthesesAssertion(JumpList& failures);
+        void generateParenthesesInvertedAssertion(JumpList& failures);
         Jump generateParenthesesResetTrampoline(JumpList& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter);
         void generateParenthesesNonGreedy(JumpList& failures, Label start, Jump success, Jump fail);
 
