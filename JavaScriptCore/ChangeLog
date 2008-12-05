@@ -34,6 +34,15 @@
 
 2008-12-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Disable the JIT for the Qt build alltogether again, after observing
+        more miscompilations in a wider range of newer gcc versions.
+
+        * JavaScriptCore.pri:
+
+2008-12-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Tor Arne Vestbø.
 
         Disable the JIT for the Qt build on Linux unless gcc is >= 4.2,
