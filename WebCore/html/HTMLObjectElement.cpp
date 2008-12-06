@@ -437,11 +437,11 @@ bool HTMLObjectElement::containsJavaApplet() const
     return false;
 }
 
-void HTMLObjectElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    urls.append(data().string());
+    addSubresourceURL(urls, data());
     if (useMap().startsWith("#"))
-        urls.append(useMap());
+        addSubresourceURL(urls, document()->completeURL(useMap()));
 }
 
 }

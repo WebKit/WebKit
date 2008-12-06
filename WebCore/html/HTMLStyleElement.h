@@ -64,7 +64,7 @@ public:
 
     virtual void setLoading(bool loading) { m_loading = loading; }
 
-    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
 protected:
     String m_media;

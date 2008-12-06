@@ -25,10 +25,11 @@
 #define Node_h
 
 #include "DocPtr.h"
+#include "KURLHash.h"
 #include "PlatformString.h"
 #include "TreeShared.h"
 #include <wtf/Assertions.h>
-#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
@@ -42,7 +43,6 @@ class Element;
 class Event;
 class EventListener;
 class IntRect;
-class KURL;
 class KeyboardEvent;
 class NSResolver;
 class NamedAttrMap;
@@ -120,7 +120,7 @@ public:
 
     virtual KURL baseURI() const;
     
-    void getSubresourceURLs(Vector<KURL>&) const;
+    void getSubresourceURLs(ListHashSet<KURL>&) const;
 
     // These should all actually return a node, but this is only important for language bindings,
     // which will already know and hold a ref on the right node to return. Returning bool allows
@@ -493,7 +493,7 @@ protected:
     virtual void willMoveToNewOwnerDocument() { }
     virtual void didMoveToNewOwnerDocument() { }
     
-    virtual void getSubresourceAttributeStrings(Vector<String>&) const { }
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const { }
     void setTabIndexExplicitly(short);
     
     bool hasRareData() const { return m_hasRareData; }
@@ -543,6 +543,14 @@ private:
 
     void appendTextContent(bool convertBRsToNewlines, StringBuilder&) const;
 };
+
+// Used in Node::addSubresourceAttributeURLs() and in addSubresourceStyleURLs()
+inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
+{
+    if (!url.isNull())
+        urls.add(url);
+}
+
 } //namespace
 
 #ifndef NDEBUG

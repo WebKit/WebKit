@@ -421,10 +421,10 @@ bool HTMLImageElement::complete() const
     return m_imageLoader.imageComplete();
 }
 
-void HTMLImageElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    urls.append(src().string());
-    urls.append(useMap());
+    addSubresourceURL(urls, src());
+    addSubresourceURL(urls, document()->completeURL(useMap()));
 }
 
 }

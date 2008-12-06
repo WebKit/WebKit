@@ -198,11 +198,11 @@ void CSSStyleSheet::styleSheetChanged()
         documentToUpdate->updateStyleSelector();
 }
 
-void CSSStyleSheet::addSubresourceURLStrings(HashSet<String>& urls, const String& base) const
+void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const KURL& base) const
 {
     typedef HashMap<RefPtr<CSSStyleSheet>, KURL> CSSStyleSheetMap;
     CSSStyleSheetMap styleSheetMap;
-    styleSheetMap.add(const_cast<CSSStyleSheet*>(this), KURL(base));
+    styleSheetMap.add(const_cast<CSSStyleSheet*>(this), base);
 
     while(styleSheetMap.size() > 0) {
         CSSStyleSheetMap::iterator it = styleSheetMap.begin();
@@ -224,8 +224,8 @@ void CSSStyleSheet::addSubresourceURLStrings(HashSet<String>& urls, const String
                 continue;
 
             const KURL fullURL(baseURL, importRule->href());
-            if (!urls.contains(fullURL.string())) {
-                urls.add(fullURL.string());
+            if (!urls.contains(fullURL)) {
+                addSubresourceURL(urls, fullURL);
                 styleSheetMap.add(ruleSheet, fullURL);
             }
         }

@@ -26,6 +26,7 @@
 #include "SVGCursorElement.h"
 
 #include "Attr.h"
+#include "Document.h"
 #include "SVGNames.h"
 #include "SVGLength.h"
 
@@ -89,9 +90,9 @@ void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
-void SVGCursorElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void SVGCursorElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    urls.append(href());
+    addSubresourceURL(urls, document()->completeURL(href()));
 }
 
 }

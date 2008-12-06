@@ -56,7 +56,7 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
  
         virtual const QualifiedName& imageSourceAttributeName() const;       
-        virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+        virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     protected:
         virtual bool haveLoadedRequiredResources();

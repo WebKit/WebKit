@@ -1,3 +1,112 @@
+2008-12-06  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22666: Clean up data structures used when collecting URLs of subresources for webarchives
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22666>
+
+        Reviewed by Darin Adler.
+
+        When creating a webarchive from WebCore::LegacyWebArchive::create(),
+        HashSet<String>, Vector<KURL> and Vector<String> were all used to
+        store a list of URLs for resources found in the document.  Instead
+        use a single ListHashSet<KURL> to store the list and resolve the
+        relative URLs as they're added.  We use a new inline method called
+        WebCore::addSubresourceURL() to add KURL objects to the ListHashSet
+        to prevent "null" KURL objects from crashing in the KURL hashing
+        function.
+
+        * WebCore.base.exp: Changed export of
+        WebCore::Node::getSubresourceURLs() to take a ListHashSet<KURL>
+        argument instead of a Vector<KURL>.
+
+        * WebCore.xcodeproj/project.pbxproj: Marked KURLHash.h as a private
+        header for use in WebKit.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addSubresourceStyleURLs): Renamed from
+        addSubresourceURLStrings().  Changed to use ListHashSet<KURL>
+        instead of HashSet<String>.  Cleaned up code.
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::addSubresourceStyleURLs): Ditto.
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::addSubresourceStyleURLs): Ditto.
+
+        * dom/Node.cpp:
+        (WebCore::Node::getSubresourceURLs): Changed to use
+        ListHashSet<KURL> instead of Vector<KURL>.  Cleaned up code.
+        * dom/Node.h:
+        (WebCore::Node::getSubresourceURLs): Ditto.
+        (WebCore::Node::addSubresourceAttributeURLs): Renamed from
+        getSubresourceAttributeStrings().  Changed to use ListHashSet<KURL>
+        instead of Vector<String>.
+        (WebCore::addSubresourceURL): Added.  Safely adds new KURL objects
+        to a ListHashSet<KURL> object.  A "null" KURL object will cause the
+        hash function to crash since it contains a null StringImpl.  Used in
+        Node::addSubresourceAttributeURLs() and addSubresourceStyleURLs() in
+        the style subsystem.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::addSubresourceAttributeURLs):
+        Renamed from getSubresourceAttributeStrings().  Changed to use
+        ListHashSet<KURL> instead of Vector<String>.  Use
+        WebCore::addSubresourceURL() to add new KURL objects.
+        * dom/ProcessingInstruction.h: Ditto.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLBodyElement.h: Ditto.
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLEmbedElement.h: Ditto.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLImageElement.h: Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLInputElement.h: Ditto.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLLinkElement.h: Ditto.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLObjectElement.h: Ditto.
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLParamElement.h: Ditto.
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLScriptElement.h: Ditto.
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLStyleElement.h: Ditto.
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLTableCellElement.h: Ditto.
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLTableElement.h: Ditto.
+
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create): Changed from using
+        HashSet<String> to ListHashSet<KURL> for tracking unique
+        subresources.  Changed from using Vector<KURL> to ListHashSet<KURL>
+        when calling WebCore::Node::getSubresourceURLs().  Cleaned up code.
+
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::addSubresourceAttributeURLs): Renamed
+        from getSubresourceAttributeStrings().  Changed to use
+        ListHashSet<KURL> instead of Vector<String>.  Use
+        WebCore::addSubresourceURL() to add new KURL objects.
+        * svg/SVGCursorElement.h: Ditto.
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::addSubresourceAttributeURLs): Ditto.
+        * svg/SVGFEImageElement.h: Ditto.
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::addSubresourceAttributeURLs): Ditto.
+        * svg/SVGImageElement.h: Ditto.
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::addSubresourceAttributeURLs): Ditto.
+        * svg/SVGScriptElement.h: Ditto.
+
 2008-12-05  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin Adler.

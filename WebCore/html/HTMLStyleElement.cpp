@@ -134,16 +134,11 @@ void HTMLStyleElement::setType(const AtomicString &value)
     setAttribute(typeAttr, value);
 }
 
-void HTMLStyleElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {    
-    HashSet<String> styleURLs;
     StyleSheet* styleSheet = const_cast<HTMLStyleElement*>(this)->sheet();
     if (styleSheet)
-        styleSheet->addSubresourceURLStrings(styleURLs, ownerDocument()->baseURL());
-    
-    HashSet<String>::iterator end = styleURLs.end();
-    for (HashSet<String>::iterator i = styleURLs.begin(); i != end; ++i)
-        urls.append(*i);
+        styleSheet->addSubresourceStyleURLs(urls, ownerDocument()->baseURL());
 }
 
 }

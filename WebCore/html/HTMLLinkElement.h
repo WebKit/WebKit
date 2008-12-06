@@ -95,7 +95,7 @@ public:
     
     static void tokenizeRelAttribute(const AtomicString& value, bool& stylesheet, bool& alternate, bool& icon, bool& dnsPrefetch);
 
-    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
     virtual void finishParsingChildren();

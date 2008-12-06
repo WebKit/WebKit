@@ -21,9 +21,10 @@
 #ifndef StyleSheet_h
 #define StyleSheet_h
 
-#include "StyleList.h"
+#include "KURLHash.h"
 #include "PlatformString.h"
-#include <wtf/HashSet.h>
+#include "StyleList.h"
+#include <wtf/ListHashSet.h>
 
 namespace WebCore {
 
@@ -50,7 +51,7 @@ public:
     virtual String type() const = 0;
     virtual bool isLoading() = 0;
     virtual void styleSheetChanged() { }
-    virtual void addSubresourceURLStrings(HashSet<String>&, const String& baseURL) const { }
+    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const KURL& baseURL) const { }
 
     virtual bool parseString(const String&, bool strict = true) = 0;
 

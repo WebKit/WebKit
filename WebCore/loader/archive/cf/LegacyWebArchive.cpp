@@ -38,14 +38,14 @@
 #include "FrameTree.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
-#include "KURL.h"
+#include "KURLHash.h"
 #include "Logging.h"
 #include "markup.h"
 #include "Node.h"
 #include "Range.h"
 #include "SelectionController.h"
 #include "SharedBuffer.h"
-
+#include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -489,7 +489,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
 
     Vector<PassRefPtr<LegacyWebArchive> > subframeArchives;
     Vector<PassRefPtr<ArchiveResource> > subresources;
-    HashSet<String> uniqueSubresources;
+    HashSet<KURL> uniqueSubresources;
     
     Vector<Node*>::iterator it = nodes.begin();
     Vector<Node*>::iterator end = nodes.end();
@@ -509,25 +509,27 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
             else
                 LOG_ERROR("Unabled to archive subframe %s", childFrame->tree()->name().string().utf8().data());
         } else {
-            Vector<KURL> subresourceURLs;
+            ListHashSet<KURL> subresourceURLs;
             (*it)->getSubresourceURLs(subresourceURLs);
             
             DocumentLoader* documentLoader = frame->loader()->documentLoader();
-            for (unsigned i = 0; i < subresourceURLs.size(); ++i) {
-                if (uniqueSubresources.contains(subresourceURLs[i].string()))
+            ListHashSet<KURL>::iterator iterEnd = subresourceURLs.end();
+            for (ListHashSet<KURL>::iterator iter = subresourceURLs.begin(); iter != iterEnd; ++iter) {
+                const KURL& subresourceURL = *iter;
+                if (uniqueSubresources.contains(subresourceURL))
                     continue;
 
-                uniqueSubresources.add(subresourceURLs[i].string());
+                uniqueSubresources.add(subresourceURL);
 
-                RefPtr<ArchiveResource> resource = documentLoader->subresource(subresourceURLs[i]);
+                RefPtr<ArchiveResource> resource = documentLoader->subresource(subresourceURL);
                 if (resource) {
                     subresources.append(resource.release());
                     continue;
                 }
 
-                CachedResource *cachedResource = cache()->resourceForURL(subresourceURLs[i]);
+                CachedResource *cachedResource = cache()->resourceForURL(subresourceURL);
                 if (cachedResource) {
-                    resource = ArchiveResource::create(cachedResource->data(), subresourceURLs[i], cachedResource->response());
+                    resource = ArchiveResource::create(cachedResource->data(), subresourceURL, cachedResource->response());
                     if (resource) {
                         subresources.append(resource.release());
                         continue;
@@ -535,7 +537,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
                 }
 
                 // FIXME: should do something better than spew to console here
-                LOG_ERROR("Failed to archive subresource for %s", subresourceURLs[i].string().utf8().data());
+                LOG_ERROR("Failed to archive subresource for %s", subresourceURL.string().utf8().data());
             }
         }
     }

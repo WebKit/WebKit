@@ -102,7 +102,7 @@ public:
     String width() const;
     void setWidth(const String&);
 
-    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
 protected:
     int _row;

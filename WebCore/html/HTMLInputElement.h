@@ -200,7 +200,7 @@ public:
 
     virtual void documentDidBecomeActive();
 
-    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
     
     virtual bool willValidate() const;
 

@@ -187,9 +187,9 @@ String HTMLScriptElement::scriptContent() const
     return m_data.scriptContent();
 }
 
-void HTMLScriptElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void HTMLScriptElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    urls.append(src().string());
+    addSubresourceURL(urls, src());
 }
 
 String HTMLScriptElement::sourceAttributeValue() const

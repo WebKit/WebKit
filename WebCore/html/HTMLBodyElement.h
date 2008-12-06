@@ -70,7 +70,7 @@ public:
     int scrollHeight() const;
     int scrollWidth() const;
     
-    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
     
 protected:
     RefPtr<CSSMutableStyleDeclaration> m_linkDecl;

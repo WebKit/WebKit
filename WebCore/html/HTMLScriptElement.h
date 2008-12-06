@@ -74,7 +74,7 @@ public:
 
     virtual String scriptCharset() const;
     
-    virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
 protected:
     virtual String sourceAttributeValue() const;

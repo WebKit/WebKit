@@ -248,9 +248,9 @@ void HTMLEmbedElement::setType(const String& value)
     setAttribute(typeAttr, value);
 }
 
-void HTMLEmbedElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void HTMLEmbedElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    urls.append(src());
+    addSubresourceURL(urls, document()->completeURL(src()));
 }
 
 }

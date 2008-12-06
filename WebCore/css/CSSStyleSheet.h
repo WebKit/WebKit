@@ -87,7 +87,7 @@ public:
 
     bool loadCompleted() const { return m_loadCompleted; }
     
-    virtual void addSubresourceURLStrings(HashSet<String>&, const String& baseURL) const;
+    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const KURL& baseURL) const;
     
     void setStrictParsing(bool b) { m_strictParsing = b; }
     bool useStrictParsing() const { return m_strictParsing; }

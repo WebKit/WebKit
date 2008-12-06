@@ -99,14 +99,14 @@ void HTMLParamElement::setValueType(const String& value)
     setAttribute(valuetypeAttr, value);
 }
 
-void HTMLParamElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void HTMLParamElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     if (!equalIgnoringCase(name(), "data") &&
         !equalIgnoringCase(name(), "movie") &&
         !equalIgnoringCase(name(), "src"))
         return;
-        
-    urls.append(value());
+    
+    addSubresourceURL(urls, document()->completeURL(value()));
 }
 
 }

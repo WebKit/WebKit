@@ -748,9 +748,9 @@ void HTMLTableElement::setWidth(const String &value)
     setAttribute(widthAttr, value);
 }
 
-void HTMLTableElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void HTMLTableElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    urls.append(getAttribute(HTMLNames::backgroundAttr).string());
+    addSubresourceURL(urls, document()->completeURL(getAttribute(backgroundAttr)));
 }
 
 }

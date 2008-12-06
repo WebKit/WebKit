@@ -67,15 +67,16 @@ using namespace WebCore;
 
 - (NSArray *)_subresourceURLs
 {
-    Vector<KURL> urls;
+    ListHashSet<KURL> urls;
     [self _node]->getSubresourceURLs(urls);
     if (!urls.size())
         return nil;
 
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:urls.size()];
-    for (unsigned i = 0; i < urls.size(); ++i)
-        [array addObject:(NSURL *)urls[i]];
-        
+    ListHashSet<KURL>::iterator end = urls.end();
+    for (ListHashSet<KURL>::iterator it = urls.begin(); it != end; ++it)
+        [array addObject:(NSURL *)*it];
+
     return array;
 }
 

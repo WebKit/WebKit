@@ -1,3 +1,15 @@
+2008-12-06  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22666: Clean up data structures used when collecting URLs of subresources for webarchives
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22666>
+
+        Reviewed by Darin Adler.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode _subresourceURLs]): Changed from using Vector<KURL> to
+        ListHashSet<KURL> when calling WebCore::Node::getSubresourceURLs().
+
 2008-12-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

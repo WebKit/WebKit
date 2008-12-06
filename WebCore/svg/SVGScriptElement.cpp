@@ -25,6 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGScriptElement.h"
 
+#include "Document.h"
 #include "EventNames.h"
 #include "SVGNames.h"
 
@@ -144,9 +145,9 @@ String SVGScriptElement::scriptCharset() const
     return m_data.scriptCharset();
 }
 
-void SVGScriptElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    urls.append(href());
+    addSubresourceURL(urls, document()->completeURL(href()));
 }
 
 bool SVGScriptElement::haveLoadedRequiredResources()

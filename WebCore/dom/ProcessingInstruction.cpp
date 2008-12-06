@@ -239,12 +239,12 @@ int ProcessingInstruction::maxCharacterOffset() const
     return static_cast<int>(m_data.length());
 }
 
-void ProcessingInstruction::getSubresourceAttributeStrings(Vector<String>& urls) const
+void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     if (!sheet())
         return;
-        
-    urls.append(sheet()->href());
+    
+    addSubresourceURL(urls, document()->completeURL(sheet()->href()));
 }
 
 void ProcessingInstruction::insertedIntoDocument()

@@ -154,9 +154,9 @@ const QualifiedName& SVGImageElement::imageSourceAttributeName() const
     return XLinkNames::hrefAttr;
 }
 
-void SVGImageElement::getSubresourceAttributeStrings(Vector<String>& urls) const
+void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    urls.append(href());
+    addSubresourceURL(urls, document()->completeURL(href()));
 }
 
 }
