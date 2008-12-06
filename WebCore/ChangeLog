@@ -1,3 +1,98 @@
+2008-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=15671
+        
+        Fix caret rendering to behave correctly with transforms:
+        * Rename caretRect() methods to localCaretRect() and
+          absoluteCaretBounds() as appropriate
+        * Fix localCaretRect() methods to return a rect in the
+          appropriate coordinates.
+        * Pass tx, ty down through the paintCaret() methods, after fixing them
+          up to account for differences between contents coords, and renderer-local
+          coords (via RenderBlock::offsetForContents()).
+        * Remove m_caretPositionOnLayout from SelectionController, and instead
+          call invalidateSelection() from RenderLayer::scrollToOffset(), because
+          we can no longer assume simple x/y offsets from scrolling with transforms.
+        * Move the logic to compute which RenderObject actually paints the caret into
+          SelectionController::caretRenderer(), rather than having it in RenderBlock.
+        * SelectionController now computes and caches a local caret rect. For invalidation,
+          it computes the absolute bounds of that (possibly transformed) local rect.
+          The local rect is computed in the coordinate system of the RenderObject that
+          will paint the caret (this may require offsetting from the actual renderer
+          at the start of the selection).
+        * Fix LayoutState(RenderObject* root) to take transforms into account
+        * Make offsetFromContainer() a virtual method on RenderObject, and implement
+          the RenderObject version. It's used to map from selection start renderer
+          to caret renderer.
+
+        Test: fast/transforms/transformed-caret.html
+
+        * WebCore.base.exp:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        (WebCore::absoluteCaretY):
+        (WebCore::SelectionController::modify):
+        (WebCore::SelectionController::xPosForVerticalArrowNavigation):
+        (WebCore::SelectionController::layout):
+        (WebCore::SelectionController::caretRenderer):
+        (WebCore::SelectionController::localCaretRect):
+        (WebCore::SelectionController::absoluteCaretBounds):
+        (WebCore::SelectionController::caretRepaintRect):
+        (WebCore::SelectionController::recomputeCaretRect):
+        (WebCore::SelectionController::invalidateCaretRect):
+        (WebCore::SelectionController::paintCaret):
+        (WebCore::SelectionController::caretRendersInsideNode):
+        * editing/SelectionController.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::localCaretRect):
+        (WebCore::VisiblePosition::absoluteCaretBounds):
+        (WebCore::VisiblePosition::xOffsetForVerticalNavigation):
+        * editing/VisiblePosition.h:
+        * editing/mac/SelectionControllerMac.mm:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isContentEditable):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange):
+        * page/Frame.cpp:
+        (WebCore::Frame::firstRectForRange):
+        (WebCore::Frame::selectionLayoutChanged):
+        (WebCore::Frame::paintCaret):
+        (WebCore::Frame::paintDragCaret):
+        (WebCore::Frame::revealSelection):
+        (WebCore::Frame::revealCaret):
+        * page/Frame.h:
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::positionForCoordinates):
+        (WebCore::RenderBlock::offsetForContents):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localCaretRect):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::localCaretRect):
+        * rendering/RenderFlow.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localCaretRect):
+        * rendering/RenderObject.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::localCaretRect):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::localCaretRect):
+        * rendering/RenderText.h:
+
 2008-12-06  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22711: Current svn (build 39065) fails to compile

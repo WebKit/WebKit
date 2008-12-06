@@ -47,7 +47,7 @@ void SelectionController::notifyAccessibilityForSelectionChange()
     if (UAZoomEnabled() && m_sel.isCaret() && m_sel.start().node()) {
         RenderView *renderView = static_cast<RenderView*>(m_sel.start().node()->renderer());
         if (renderView) {
-            IntRect selectionRect = caretRect();
+            IntRect selectionRect = absoluteCaretBounds();
             IntRect viewRect = renderView->viewRect();
             FrameView* frameView = renderView->view()->frameView(); 
             if (frameView) {

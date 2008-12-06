@@ -2463,7 +2463,7 @@ IntSize RenderObject::offsetFromContainer(RenderObject* o) const
     return offset;
 }
 
-IntRect RenderObject::caretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
+IntRect RenderObject::localCaretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
 {
    if (extraWidthToEndOfLine)
        *extraWidthToEndOfLine = 0;

@@ -93,7 +93,7 @@ public:
     virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
     virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
 
-    virtual IntRect caretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
+    virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
     void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine, const IntRect& nextLine);

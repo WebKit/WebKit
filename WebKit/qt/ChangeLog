@@ -1,3 +1,15 @@
+2008-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=15671
+
+        Renderer::caretRect() is now localCaretRect(), which needs
+        converting to absolute coordinates (taking transforms into account).
+
+        * Api/qwebpage.cpp:
+        (QWebPage::inputMethodQuery):
+
 2008-12-03  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon Hausmann.

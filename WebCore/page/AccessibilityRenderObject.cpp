@@ -1630,19 +1630,19 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
     
     // Create a mutable VisiblePositionRange.
     VisiblePositionRange range(visiblePositionRange);
-    IntRect rect1 = range.start.caretRect();
-    IntRect rect2 = range.end.caretRect();
+    IntRect rect1 = range.start.absoluteCaretBounds();
+    IntRect rect2 = range.end.absoluteCaretBounds();
     
     // readjust for position at the edge of a line.  This is to exclude line rect that doesn't need to be accounted in the range bounds
     if (rect2.y() != rect1.y()) {
         VisiblePosition endOfFirstLine = endOfLine(range.start);
         if (range.start == endOfFirstLine) {
             range.start.setAffinity(DOWNSTREAM);
-            rect1 = range.start.caretRect();
+            rect1 = range.start.absoluteCaretBounds();
         }
         if (range.end == endOfFirstLine) {
             range.end.setAffinity(UPSTREAM);
-            rect2 = range.end.caretRect();
+            rect2 = range.end.absoluteCaretBounds();
         }
     }
     

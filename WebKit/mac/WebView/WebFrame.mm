@@ -673,7 +673,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (NSRect)_caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
 {
     VisiblePosition visiblePosition([node _node], offset, static_cast<EAffinity>(affinity));
-    return visiblePosition.caretRect();
+    return visiblePosition.absoluteCaretBounds();
 }
 
 - (NSRect)_firstRectForDOMRange:(DOMRange *)range

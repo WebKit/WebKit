@@ -610,6 +610,8 @@ bool HTMLElement::isContentEditable() const
     if (document()->frame() && document()->frame()->isContentEditable())
         return true;
 
+    // FIXME: this is a terrible thing to do here:
+    // https://bugs.webkit.org/show_bug.cgi?id=21834
     document()->updateRendering();
 
     if (!renderer()) {

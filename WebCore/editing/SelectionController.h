@@ -85,7 +85,13 @@ public:
     Position start() const { return m_sel.start(); }
     Position end() const { return m_sel.end(); }
 
-    IntRect caretRect() const;
+    // Return the renderer that is responsible for painting the caret (in the selection start node)
+    RenderObject* caretRenderer() const;
+
+    // Caret rect local to the caret's renderer
+    IntRect localCaretRect() const;
+    // Bounds of (possibly transformed) caret in absolute coords
+    IntRect absoluteCaretBounds();
     void setNeedsLayout(bool flag = true);
 
     void setLastChangeWasHorizontalExtension(bool b) { m_lastChangeWasHorizontalExtension = b; }
@@ -96,7 +102,6 @@ public:
     bool isRange() const { return m_sel.isRange(); }
     bool isCaretOrRange() const { return m_sel.isCaretOrRange(); }
     bool isInPasswordField() const;
-    bool isInsideNode() const;
     
     PassRefPtr<Range> toRange() const { return m_sel.toRange(); }
 
@@ -106,7 +111,7 @@ public:
 
     bool recomputeCaretRect(); // returns true if caret rect moved
     void invalidateCaretRect();
-    void paintCaret(GraphicsContext*, const IntRect&);
+    void paintCaret(GraphicsContext*, int tx, int ty, const IntRect& clipRect);
 
     // Used to suspend caret blinking while the mouse is down.
     void setCaretBlinkingSuspended(bool suspended) { m_isCaretBlinkingSuspended = suspended; }
@@ -144,25 +149,23 @@ private:
 #endif
 
     void focusedOrActiveStateChanged();
+    bool caretRendersInsideNode(Node*) const;
+
+    Frame* m_frame;
+    int m_xPosForVerticalArrowNavigation;
 
     Selection m_sel;
 
-    IntRect m_caretRect;            // caret coordinates, size, and position
-    
-    // m_caretPositionOnLayout stores the scroll offset on the previous call to SelectionController::layout().
-    // When asked for caretRect(), we correct m_caretRect for offset due to scrolling since the last layout().
-    // This is faster than doing another layout().
-    IntPoint m_caretPositionOnLayout;
+    IntRect m_caretRect;        // caret rect in coords local to the renderer responsible for painting the caret
+    IntRect m_absCaretBounds;   // absolute bounding rect for the caret
     
     bool m_needsLayout : 1;       // true if the caret and expectedVisible rectangles need to be calculated
+    bool m_absCaretBoundsDirty: 1;
     bool m_lastChangeWasHorizontalExtension : 1;
-    Frame* m_frame;
-    bool m_isDragCaretController;
+    bool m_isDragCaretController : 1;
+    bool m_isCaretBlinkingSuspended : 1;
+    bool m_focused : 1;
 
-    bool m_isCaretBlinkingSuspended;
-    
-    int m_xPosForVerticalArrowNavigation;
-    bool m_focused;
 };
 
 inline bool operator==(const SelectionController& a, const SelectionController& b)

@@ -1638,20 +1638,21 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
-void RenderBlock::paintCaret(PaintInfo& paintInfo, CaretType type)
+void RenderBlock::paintCaret(PaintInfo& paintInfo, int tx, int ty, CaretType type)
 {
     SelectionController* selection = type == CursorCaret ? document()->frame()->selection() : document()->frame()->dragCaretController();
-    Node* caretNode = selection->start().node();
-    RenderObject* renderer = caretNode ? caretNode->renderer() : 0;
-    if (!renderer)
-        return;
-    // if caretNode is a block and caret is inside it then caret should be painted by that block
-    bool cursorInsideBlockCaretNode = renderer->isBlockFlow() && selection->isInsideNode();
-    if ((cursorInsideBlockCaretNode ? renderer : renderer->containingBlock()) == this && selection->isContentEditable()) {
+
+    // Ask the SelectionController if the caret should be painted by this block
+    RenderObject* caretPainter = selection->caretRenderer();
+    if (caretPainter == this && selection->isContentEditable()) {
+        // Convert the painting offset into the local coordinate system of this renderer,
+        // to match the localCaretRect computed by the SelectionController
+        offsetForContents(tx, ty);
+
         if (type == CursorCaret)
-            document()->frame()->paintCaret(paintInfo.context, paintInfo.rect);
+            document()->frame()->paintCaret(paintInfo.context, tx, ty, paintInfo.rect);
         else
-            document()->frame()->paintDragCaret(paintInfo.context, paintInfo.rect);
+            document()->frame()->paintDragCaret(paintInfo.context, tx, ty, paintInfo.rect);
     }
 }
 
@@ -1727,8 +1728,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     // If the caret's node's render object's containing block is this block, and the paint action is PaintPhaseForeground,
     // then paint the caret.
     if (!inlineFlow && paintPhase == PaintPhaseForeground) {        
-        paintCaret(paintInfo, CursorCaret);
-        paintCaret(paintInfo, DragCaret);
+        paintCaret(paintInfo, scrolledX, scrolledY, CursorCaret);
+        paintCaret(paintInfo, scrolledX, scrolledY, DragCaret);
     }
 }
 
@@ -3278,15 +3279,8 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     Node* n = element();
     
     int contentsX = x;
-    int contentsY = y - borderTopExtra();
-    if (hasOverflowClip())
-        m_layer->addScrolledContentOffset(contentsX, contentsY);
-    if (m_hasColumns) {
-        IntPoint contentsPoint(contentsX, contentsY);
-        adjustPointToColumnContents(contentsPoint);
-        contentsX = contentsPoint.x();
-        contentsY = contentsPoint.y();
-    }
+    int contentsY = y;
+    offsetForContents(contentsX, contentsY);
 
     if (isReplaced()) {
         if (y < 0 || y < height() && x < 0)
@@ -3384,6 +3378,21 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     }
     
     return RenderFlow::positionForCoordinates(x, y);
+}
+
+void RenderBlock::offsetForContents(int& tx, int& ty) const
+{
+    ty -= borderTopExtra();
+    
+    if (hasOverflowClip())
+        m_layer->addScrolledContentOffset(tx, ty);
+
+    if (m_hasColumns) {
+        IntPoint contentsPoint(tx, ty);
+        adjustPointToColumnContents(contentsPoint);
+        tx = contentsPoint.x();
+        ty = contentsPoint.y();
+    }
 }
 
 int RenderBlock::availableWidth() const

@@ -835,6 +835,11 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
         view->updateWidgetPositions();
     }
 
+    // The caret rect needs to be invalidated after scrolling
+    Frame* frame = renderer()->document()->frame();
+    if (frame)
+        frame->invalidateSelection();
+
     // Just schedule a full repaint of our object.
     if (repaint)
         m_object->repaint();

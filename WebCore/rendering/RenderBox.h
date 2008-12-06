@@ -53,6 +53,8 @@ public:
     virtual FloatPoint absoluteToLocal(FloatPoint containerPoint, bool fixed = false, bool useTransforms = false) const;
     virtual FloatQuad localToAbsoluteQuad(const FloatQuad&, bool fixed = false) const;
 
+    virtual IntSize offsetFromContainer(RenderObject*) const;
+
     virtual int xPos() const { return m_x; }
     virtual int yPos() const { return m_y; }
     virtual void setPos(int x, int y);
@@ -141,7 +143,7 @@ public:
     
     virtual RenderLayer* layer() const { return m_layer; }
 
-    virtual IntRect caretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
+    virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
     virtual void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight,
                                         int tx, int ty, int width, int height, InlineFlowBox* = 0, CompositeOperator = CompositeSourceOver);
@@ -191,8 +193,6 @@ protected:
     
     virtual bool shouldCalculateSizeAsReplaced() const { return isReplaced() && !isInlineBlockOrInlineTable(); }
 
-    virtual IntSize offsetFromContainer(RenderObject*) const;
-    
 private:
     void paintRootBoxDecorations(PaintInfo&, int tx, int ty);
     // Returns true if we did a full repaint

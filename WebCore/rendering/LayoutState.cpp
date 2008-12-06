@@ -79,8 +79,7 @@ LayoutState::LayoutState(RenderObject* root)
     : m_clipped(false)
 {
     RenderObject* container = root->container();
-    // FIXME: this is broken with transforms?
-    FloatPoint absContentPoint = container->localToAbsoluteForContent(FloatPoint());
+    FloatPoint absContentPoint = container->localToAbsoluteForContent(FloatPoint(), false, true);
     m_offset = IntSize(absContentPoint.x(), absContentPoint.y());
     m_next = 0;
 }

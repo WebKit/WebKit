@@ -55,6 +55,8 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
      , m_lastTextBox(0)
      , m_minWidth(-1)
      , m_maxWidth(-1)
+     , m_beginMinWidth(0)
+     , m_endMinWidth(0)
      , m_selectionState(SelectionNone)
      , m_hasTab(false)
      , m_linesDirty(false)
@@ -362,7 +364,7 @@ VisiblePosition RenderText::positionForCoordinates(int x, int y)
     return VisiblePosition(element(), lastBoxAbove ? lastBoxAbove->m_start + lastBoxAbove->m_len : 0, DOWNSTREAM);
 }
 
-IntRect RenderText::caretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
+IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
 {
     if (!inlineBox)
         return IntRect();
@@ -384,21 +386,17 @@ IntRect RenderText::caretRect(InlineBox* inlineBox, int caretOffset, int* extraW
     if (extraWidthToEndOfLine)
         *extraWidthToEndOfLine = (box->root()->width() + rootLeft) - (left + 1);
 
-    // FIXME: broken with transforms
-    FloatPoint absPos = localToAbsoluteForContent(FloatPoint());
-    left += absPos.x();
-    top += absPos.y();
-
     RenderBlock* cb = containingBlock();
     if (style()->autoWrap()) {
         int availableWidth = cb->lineWidth(top);
         if (box->direction() == LTR)
-            left = min(left, static_cast<int>(absPos.x()) + rootLeft + availableWidth - 1);
+            left = min(left, rootLeft + availableWidth - 1);
         else
-            left = max(left, static_cast<int>(absPos.x()) + rootLeft);
+            left = max(left, rootLeft);
     }
 
-    return IntRect(left, top, 1, height);
+    const int caretWidth = 1;
+    return IntRect(left, top, caretWidth, height);
 }
 
 ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, int xPos) const

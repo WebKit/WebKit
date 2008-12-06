@@ -106,7 +106,7 @@ public:
     virtual SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
     virtual void setSelectionState(SelectionState s);
     virtual IntRect selectionRect(bool clipToVisibleContent = true);
-    virtual IntRect caretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
+    virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
     virtual int marginLeft() const { return style()->marginLeft().calcMinValue(0); }
     virtual int marginRight() const { return style()->marginRight().calcMinValue(0); }

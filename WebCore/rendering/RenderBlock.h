@@ -167,7 +167,7 @@ public:
     void paintChildren(PaintInfo&, int tx, int ty);
     void paintEllipsisBoxes(PaintInfo&, int tx, int ty);
     void paintSelection(PaintInfo&, int tx, int ty);
-    void paintCaret(PaintInfo&, CaretType);
+    void paintCaret(PaintInfo&, int tx, int ty, CaretType);
 
     void insertFloatingObject(RenderObject*);
     void removeFloatingObject(RenderObject*);
@@ -323,6 +323,9 @@ protected:
 private:
     Position positionForBox(InlineBox*, bool start = true) const;
     Position positionForRenderer(RenderObject*, bool start = true) const;
+
+    // Adjust tx and ty from painting offsets to the local coords of this renderer
+    void offsetForContents(int& tx, int& ty) const;
 
     int columnGap() const;
     void calcColumnWidth();

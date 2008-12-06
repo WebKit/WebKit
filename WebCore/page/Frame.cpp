@@ -265,15 +265,24 @@ IntRect Frame::firstRectForRange(Range* range) const
     ExceptionCode ec = 0;
     ASSERT(range->startContainer(ec));
     ASSERT(range->endContainer(ec));
+
     InlineBox* startInlineBox;
     int startCaretOffset;
     range->startPosition().getInlineBoxAndOffset(DOWNSTREAM, startInlineBox, startCaretOffset);
-    IntRect startCaretRect = range->startContainer(ec)->renderer()->caretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
+
+    RenderObject* startRenderer = range->startContainer(ec)->renderer();
+    IntRect startCaretRect = startRenderer->localCaretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
+    if (startCaretRect != IntRect())
+        startCaretRect = startRenderer->localToAbsoluteQuad(FloatRect(startCaretRect)).enclosingBoundingBox();
 
     InlineBox* endInlineBox;
     int endCaretOffset;
     range->endPosition().getInlineBoxAndOffset(UPSTREAM, endInlineBox, endCaretOffset);
-    IntRect endCaretRect = range->endContainer(ec)->renderer()->caretRect(endInlineBox, endCaretOffset);
+
+    RenderObject* endRenderer = range->endContainer(ec)->renderer();
+    IntRect endCaretRect = endRenderer->localCaretRect(endInlineBox, endCaretOffset);
+    if (endCaretRect != IntRect())
+        endCaretRect = endRenderer->localToAbsoluteQuad(FloatRect(endCaretRect)).enclosingBoundingBox();
 
     if (startCaretRect.y() == endCaretRect.y()) {
         // start and end are on the same line
@@ -586,14 +595,14 @@ void Frame::selectionLayoutChanged()
         }
     }
 
-    RenderView* canvas = contentRenderer();
-    if (!canvas)
+    RenderView* view = contentRenderer();
+    if (!view)
         return;
 
     Selection selection = this->selection()->selection();
         
     if (!selection.isRange())
-        canvas->clearSelection();
+        view->clearSelection();
     else {
         // Use the rightmost candidate for the start of the selection, and the leftmost candidate for the end of the selection.
         // Example: foo <a>bar</a>.  Imagine that a line wrap occurs after 'foo', and that 'bar' is selected.   If we pass [foo, 3]
@@ -611,7 +620,7 @@ void Frame::selectionLayoutChanged()
         if (startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();
-            canvas->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
+            view->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
         }
     }
 }
@@ -627,18 +636,18 @@ void Frame::caretBlinkTimerFired(Timer<Frame>*)
     selection()->invalidateCaretRect();
 }
 
-void Frame::paintCaret(GraphicsContext* p, const IntRect& rect) const
+void Frame::paintCaret(GraphicsContext* p, int tx, int ty, const IntRect& clipRect) const
 {
     if (d->m_caretPaint && d->m_caretVisible)
-        selection()->paintCaret(p, rect);
+        selection()->paintCaret(p, tx, ty, clipRect);
 }
 
-void Frame::paintDragCaret(GraphicsContext* p, const IntRect& rect) const
+void Frame::paintDragCaret(GraphicsContext* p, int tx, int ty, const IntRect& clipRect) const
 {
     SelectionController* dragCaretController = d->m_page->dragCaretController();
     ASSERT(dragCaretController->selection().isCaret());
     if (dragCaretController->selection().start().node()->document()->frame() == this)
-        dragCaretController->paintCaret(p, rect);
+        dragCaretController->paintCaret(p, tx, ty, clipRect);
 }
 
 float Frame::zoomFactor() const
@@ -1230,7 +1239,7 @@ void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
             return;
             
         case Selection::CARET:
-            rect = selection()->caretRect();
+            rect = selection()->absoluteCaretBounds();
             break;
             
         case Selection::RANGE:
@@ -1257,7 +1266,7 @@ void Frame::revealCaret(const RenderLayer::ScrollAlignment& alignment) const
 
     Position extent = selection()->extent();
     if (extent.node() && extent.node()->renderer()) {
-        IntRect extentRect = VisiblePosition(extent).caretRect();
+        IntRect extentRect = VisiblePosition(extent).absoluteCaretBounds();
         RenderLayer* layer = extent.node()->renderer()->enclosingLayer();
         if (layer)
             layer->scrollRectToVisible(extentRect, false, alignment, alignment);

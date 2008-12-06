@@ -90,8 +90,14 @@ public:
         m_deepPosition.getInlineBoxAndOffset(m_affinity, primaryDirection, inlineBox, caretOffset);
     }
 
-    IntRect caretRect() const;
-
+    // Rect is local to the returned renderer
+    IntRect localCaretRect(RenderObject*&) const;
+    // Bounds of (possibly transformed) caret in absolute coords
+    IntRect absoluteCaretBounds() const;
+    // Abs x position of the caret ignoring transforms.
+    // FIXME: navigation with transforms should be smarter.
+    int xOffsetForVerticalNavigation() const;
+    
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;

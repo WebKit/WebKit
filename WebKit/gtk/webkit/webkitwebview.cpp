@@ -188,18 +188,23 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
         if (!renderer)
             return FALSE;
 
-        // Calculate the rect of the first line of the selection (cribbed from -[WebCoreFrameBridge firstRectForDOMRange:]).
+        // Calculate the rect of the first line of the selection (cribbed from -[WebCoreFrameBridge firstRectForDOMRange:],
+        // now Frame::firstRectForRange(), which perhaps this should call).
         int extraWidthToEndOfLine = 0;
 
         InlineBox* startInlineBox;
         int startCaretOffset;
         start.getInlineBoxAndOffset(DOWNSTREAM, startInlineBox, startCaretOffset);
-        IntRect startCaretRect = renderer->caretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
+        IntRect startCaretRect = renderer->localCaretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
+        if (startCaretRect != IntRect())
+            startCaretRect = renderer->localToAbsoluteQuad(FloatRect(startCaretRect)).enclosingBoundingBox();
 
         InlineBox* endInlineBox;
         int endCaretOffset;
         end.getInlineBoxAndOffset(UPSTREAM, endInlineBox, endCaretOffset);
-        IntRect endCaretRect = renderer->caretRect(endInlineBox, endCaretOffset);
+        IntRect endCaretRect = renderer->localCaretRect(endInlineBox, endCaretOffset);
+        if (endCaretRect != IntRect())
+            endCaretRect = renderer->localToAbsoluteQuad(FloatRect(endCaretRect)).enclosingBoundingBox();
 
         IntRect firstRect;
         if (startCaretRect.y() == endCaretRect.y())

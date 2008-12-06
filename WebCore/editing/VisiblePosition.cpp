@@ -29,6 +29,7 @@
 #include "CString.h"
 #include "Document.h"
 #include "Element.h"
+#include "FloatRect.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
@@ -523,13 +524,15 @@ UChar VisiblePosition::characterAfter() const
     return textNode->data()[offset];
 }
 
-IntRect VisiblePosition::caretRect() const
+IntRect VisiblePosition::localCaretRect(RenderObject*& renderer) const
 {
     Node* node = m_deepPosition.node();
-    if (!node)
+    if (!node) {
+        renderer = 0;
         return IntRect();
-
-    RenderObject* renderer = node->renderer();
+    }
+    
+    renderer = node->renderer();
     if (!renderer)
         return IntRect();
 
@@ -540,7 +543,30 @@ IntRect VisiblePosition::caretRect() const
     if (inlineBox)
         renderer = inlineBox->object();
 
-    return renderer->caretRect(inlineBox, caretOffset);
+    return renderer->localCaretRect(inlineBox, caretOffset);
+}
+
+IntRect VisiblePosition::absoluteCaretBounds() const
+{
+    RenderObject* renderer;
+    IntRect localRect = localCaretRect(renderer);
+    if (localRect.isEmpty() || !renderer)
+        return IntRect();
+
+    return renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
+}
+
+int VisiblePosition::xOffsetForVerticalNavigation() const
+{
+    RenderObject* renderer;
+    IntRect localRect = localCaretRect(renderer);
+    if (localRect.isEmpty() || !renderer)
+        return 0;
+
+    // This ignores transforms on purpose, for now. Vertical navigation is done
+    // without consulting transforms, so that 'up' in transformed text is 'up'
+    // relative to the text, not absolute 'up'.
+    return renderer->localToAbsolute(localRect.location()).x();
 }
 
 void VisiblePosition::debugPosition(const char* msg) const

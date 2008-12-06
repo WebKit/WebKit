@@ -962,7 +962,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     case Qt::ImMicroFocus: {
         Frame *frame = d->page->focusController()->focusedFrame();
         if (frame) {
-            return QVariant(frame->selection()->caretRect());
+            return QVariant(frame->selection()->absoluteCaretBounds());
         }
         return QVariant();
     }

@@ -1,3 +1,21 @@
+2008-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=15671
+        
+        * fast/transforms/transformed-caret.html: Added.
+        * platform/mac/fast/transforms/transformed-caret-expected.checksum: Added.
+        * platform/mac/fast/transforms/transformed-caret-expected.png: Added.
+        * platform/mac/fast/transforms/transformed-caret-expected.txt: Added.
+        
+          New testcase for caret on transformed element.
+          
+        * platform/mac/fast/transforms/transformed-focused-text-input-expected.checksum:
+        * platform/mac/fast/transforms/transformed-focused-text-input-expected.png:
+        
+          Fix expected now that caret rendering works properly.
+
 2008-12-05  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt.
