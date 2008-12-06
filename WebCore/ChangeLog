@@ -1,3 +1,14 @@
+2008-12-06  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX for r39065: Forgot parentheses after "document".
+
+        Bug 22666: Clean up data structures used when collecting URLs of subresources for webarchives
+        <https://bugs.webkit.org/show_bug.cgi?id=22666>
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::addSubresourceAttributeURLs): Changed
+        document to document().
+
 2008-12-06  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
