@@ -42,7 +42,7 @@ public:
     AnimationControllerPrivate(Frame*);
     ~AnimationControllerPrivate();
 
-    CompositeAnimation* accessCompositeAnimation(RenderObject*);
+    PassRefPtr<CompositeAnimation> accessCompositeAnimation(RenderObject*);
     bool clear(RenderObject*);
 
     void animationTimerFired(Timer<AnimationControllerPrivate>*);
@@ -64,7 +64,7 @@ public:
     bool pauseTransitionAtTime(RenderObject*, const String& property, double t);
 
 private:
-    typedef HashMap<RenderObject*, CompositeAnimation*> RenderObjectAnimationMap;
+    typedef HashMap<RenderObject*, RefPtr<CompositeAnimation> > RenderObjectAnimationMap;
 
     RenderObjectAnimationMap m_compositeAnimations;
     Timer<AnimationControllerPrivate> m_animationTimer;
@@ -81,14 +81,13 @@ AnimationControllerPrivate::AnimationControllerPrivate(Frame* frame)
 
 AnimationControllerPrivate::~AnimationControllerPrivate()
 {
-    deleteAllValues(m_compositeAnimations);
 }
 
-CompositeAnimation* AnimationControllerPrivate::accessCompositeAnimation(RenderObject* renderer)
+PassRefPtr<CompositeAnimation> AnimationControllerPrivate::accessCompositeAnimation(RenderObject* renderer)
 {
-    CompositeAnimation* animation = m_compositeAnimations.get(renderer);
+    RefPtr<CompositeAnimation> animation = m_compositeAnimations.get(renderer);
     if (!animation) {
-        animation = new CompositeAnimation(m_frame->animation());
+        animation = CompositeAnimation::create(m_frame->animation());
         m_compositeAnimations.set(renderer, animation);
     }
     return animation;
@@ -98,19 +97,28 @@ bool AnimationControllerPrivate::clear(RenderObject* renderer)
 {
     // Return false if we didn't do anything OR we are suspended (so we don't try to
     // do a setChanged() when suspended).
-    CompositeAnimation* animation = m_compositeAnimations.take(renderer);
+    PassRefPtr<CompositeAnimation> animation = m_compositeAnimations.take(renderer);
     if (!animation)
         return false;
-    bool wasSuspended = animation->isSuspended();
-    delete animation;
-    return !wasSuspended;
+    animation->clearRenderer();
+    return animation->isSuspended();
 }
 
 void AnimationControllerPrivate::styleAvailable()
 {
+    // styleAvailable() can call event handlers which would ultimately delete a CompositeAnimation
+    // from the m_compositeAnimations table. So we can't iterate it directly. We will instead build
+    // a list of CompositeAnimations which need the styleAvailable() call iterate over that.
+    Vector<RefPtr<CompositeAnimation> > list;
+    
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it)
-        it->second->styleAvailable();
+        if (it->second->isWaitingForStyleAvailable())
+            list.append(it->second);
+    
+    Vector<RefPtr<CompositeAnimation> >::const_iterator listEnd = list.end();
+    for (Vector<RefPtr<CompositeAnimation> >::const_iterator it = list.begin(); it != listEnd; ++it)
+        (*it)->styleAvailable();
 }
 
 void AnimationControllerPrivate::updateAnimationTimer()
@@ -119,7 +127,7 @@ void AnimationControllerPrivate::updateAnimationTimer()
 
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
-        CompositeAnimation* compAnim = it->second;
+        RefPtr<CompositeAnimation> compAnim = it->second;
         if (!compAnim->isSuspended() && compAnim->isAnimating()) {
             isAnimating = true;
             break;
@@ -152,7 +160,7 @@ void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPr
     bool isAnimating = false;
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
-        CompositeAnimation* compAnim = it->second;
+        RefPtr<CompositeAnimation> compAnim = it->second;
         if (!compAnim->isSuspended() && compAnim->isAnimating()) {
             isAnimating = true;
             compAnim->setAnimating(false);
@@ -170,7 +178,7 @@ void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPr
 
 bool AnimationControllerPrivate::isAnimatingPropertyOnRenderer(RenderObject* renderer, int property, bool isRunningNow) const
 {
-    CompositeAnimation* animation = m_compositeAnimations.get(renderer);
+    RefPtr<CompositeAnimation> animation = m_compositeAnimations.get(renderer);
     if (!animation)
         return false;
 
@@ -182,7 +190,7 @@ void AnimationControllerPrivate::suspendAnimations(Document* document)
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
         RenderObject* renderer = it->first;
-        CompositeAnimation* compAnim = it->second;
+        RefPtr<CompositeAnimation> compAnim = it->second;
         if (renderer->document() == document)
             compAnim->suspendAnimations();
     }
@@ -195,7 +203,7 @@ void AnimationControllerPrivate::resumeAnimations(Document* document)
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
         RenderObject* renderer = it->first;
-        CompositeAnimation* compAnim = it->second;
+        RefPtr<CompositeAnimation> compAnim = it->second;
         if (renderer->document() == document)
             compAnim->resumeAnimations();
     }
@@ -208,7 +216,7 @@ bool AnimationControllerPrivate::pauseAnimationAtTime(RenderObject* renderer, co
     if (!renderer)
         return false;
 
-    CompositeAnimation* compAnim = accessCompositeAnimation(renderer);
+    RefPtr<CompositeAnimation> compAnim = accessCompositeAnimation(renderer);
     if (!compAnim)
         return false;
 
@@ -225,7 +233,7 @@ bool AnimationControllerPrivate::pauseTransitionAtTime(RenderObject* renderer, c
     if (!renderer)
         return false;
 
-    CompositeAnimation* compAnim = accessCompositeAnimation(renderer);
+    RefPtr<CompositeAnimation> compAnim = accessCompositeAnimation(renderer);
     if (!compAnim)
         return false;
 
@@ -277,7 +285,7 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
     // a new style.
     ASSERT(renderer->element()); // FIXME: We do not animate generated content yet.
 
-    CompositeAnimation* rendererAnimations = m_data->accessCompositeAnimation(renderer);
+    RefPtr<CompositeAnimation> rendererAnimations = m_data->accessCompositeAnimation(renderer);
     RefPtr<RenderStyle> blendedStyle = rendererAnimations->animate(renderer, oldStyle, newStyle);
 
     m_data->updateAnimationTimer();
@@ -294,13 +302,13 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
 
 void AnimationController::setAnimationStartTime(RenderObject* renderer, double t)
 {
-    CompositeAnimation* rendererAnimations = m_data->accessCompositeAnimation(renderer);
+    RefPtr<CompositeAnimation> rendererAnimations = m_data->accessCompositeAnimation(renderer);
     rendererAnimations->setAnimationStartTime(t);
 }
 
 void AnimationController::setTransitionStartTime(RenderObject* renderer, int property, double t)
 {
-    CompositeAnimation* rendererAnimations = m_data->accessCompositeAnimation(renderer);
+    RefPtr<CompositeAnimation> rendererAnimations = m_data->accessCompositeAnimation(renderer);
     rendererAnimations->setTransitionStartTime(property, t);
 }
 

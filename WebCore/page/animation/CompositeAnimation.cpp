@@ -50,7 +50,11 @@ public:
     
     ~CompositeAnimationPrivate();
 
+    void clearRenderer();
+
     PassRefPtr<RenderStyle> animate(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
+
+    AnimationController* animationController()  { return m_animationController; }
 
     void setAnimating(bool);
     bool isAnimating() const;
@@ -74,6 +78,7 @@ public:
     bool isAnimatingProperty(int property, bool isRunningNow) const;
 
     void setWaitingForStyleAvailable(bool);
+    bool isWaitingForStyleAvailable() const     { return m_numStyleAvailableWaiters > 0; }
 
     bool pauseAnimationAtTime(const AtomicString& name, double t);
     bool pauseTransitionAtTime(int property, double t);
@@ -96,6 +101,13 @@ private:
 
 CompositeAnimationPrivate::~CompositeAnimationPrivate()
 {
+    // Toss the refs to all animations
+    m_transitions.clear();
+    m_keyframeAnimations.clear();
+}
+
+void CompositeAnimationPrivate::clearRenderer()
+{
     // Clear the renderers from all running animations, in case we are in the middle of
     // an animation callback (see https://bugs.webkit.org/show_bug.cgi?id=22052)
     CSSPropertyTransitionsMap::const_iterator transitionsEnd = m_transitions.end();
@@ -110,9 +122,7 @@ CompositeAnimationPrivate::~CompositeAnimationPrivate()
         anim->clearRenderer();
     }
     
-    // Toss the refs to all animations
-    m_transitions.clear();
-    m_keyframeAnimations.clear();
+
 }
     
 void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
@@ -561,9 +571,19 @@ CompositeAnimation::~CompositeAnimation()
     delete m_data;
 }
 
+void CompositeAnimation::clearRenderer()
+{
+    m_data->clearRenderer();
+}
+
 PassRefPtr<RenderStyle> CompositeAnimation::animate(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
     return m_data->animate(renderer, currentStyle, targetStyle);
+}
+
+AnimationController* CompositeAnimation::animationController()
+{
+    return m_data->animationController();
 }
 
 bool CompositeAnimation::isAnimating() const
@@ -574,6 +594,11 @@ bool CompositeAnimation::isAnimating() const
 void CompositeAnimation::setWaitingForStyleAvailable(bool b)
 {
     m_data->setWaitingForStyleAvailable(b);
+}
+
+bool CompositeAnimation::isWaitingForStyleAvailable() const
+{
+    return m_data->isWaitingForStyleAvailable();
 }
 
 void CompositeAnimation::suspendAnimations()

@@ -609,8 +609,10 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 primeEventTimers();
 
                 // Trigger a render so we can start the animation
-                setChanged(m_object->element());
-                m_object->animation()->startUpdateRenderingDispatcher();
+                if (m_object) {
+                    setChanged(m_object->element());
+                    m_compAnim->animationController()->startUpdateRenderingDispatcher();
+                }
             } else {
                 // We are pausing while waiting for a start response. Cancel the animation and wait. When 
                 // we unpause, we will act as though the start timer just fired
@@ -706,8 +708,10 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
 void AnimationBase::animationTimerCallbackFired(const AtomicString& eventType, double elapsedTime)
 {
     // We have to make sure to keep a ref to the this pointer, because it could get destroyed
-    // during an animation callback that might get called.
-    RefPtr<AnimationBase> protector(this);
+    // during an animation callback that might get called. Since the owner is a CompositeAnimation
+    // and it ref counts this object, we will keep a ref to that instead. That way the AnimationBase
+    // can still access the resources of its CompositeAnimation as needed.
+    RefPtr<CompositeAnimation> protector(m_compAnim);
     
     ASSERT(m_object->document() && !m_object->document()->inPageCache());
 

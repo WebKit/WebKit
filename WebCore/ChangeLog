@@ -1,3 +1,58 @@
+2008-12-05  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22635
+        For iteration and end events, previous fixes to prevent the deletion of
+        Animation objects (ref counting and hanging onto a ref during event callbacks)
+        was sufficient to prevent dangling pointers. But start events are sent in
+        the styleAvailable() call, which iterates over CompositeAnimation objects,
+        which are not ref counted. So that object can get destroyed in the event
+        handler while still active. So I added refcounting for CompositeAnimations.
+
+        Additionally, when am iterating over the CompositingAnimation list, it can
+        be deleted, which mutates the list. So I now make one pass over the list
+        building a vector of CompositeAnimation objects that need to be called and
+        then iterate over that vector to make the actual calls.
+
+        Finally, to make sure the lifetime of the CompositeAnimation exceeds that of
+        the Animation objects it owns, I now keep a ref to the CompositeAnimation
+        in the timer callback for the iteration and end events. That means I no
+        longer need to keep a ref to the Animation objects themselves in that timer
+        callback, since the CompositeAnimation already has one.
+
+        Tests: animations/animation-iteration-event-destroy-renderer.html
+               animations/animation-start-event-destroy-renderer.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::animationTimerCallbackFired):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::~AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::accessCompositeAnimation):
+        (WebCore::AnimationControllerPrivate::clear):
+        (WebCore::AnimationControllerPrivate::styleAvailable):
+        (WebCore::AnimationControllerPrivate::updateAnimationTimer):
+        (WebCore::AnimationControllerPrivate::animationTimerFired):
+        (WebCore::AnimationControllerPrivate::isAnimatingPropertyOnRenderer):
+        (WebCore::AnimationControllerPrivate::suspendAnimations):
+        (WebCore::AnimationControllerPrivate::resumeAnimations):
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationController::updateAnimations):
+        (WebCore::AnimationController::setAnimationStartTime):
+        (WebCore::AnimationController::setTransitionStartTime):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::animationController):
+        (WebCore::CompositeAnimationPrivate::isWaitingForStyleAvailable):
+        (WebCore::CompositeAnimationPrivate::~CompositeAnimationPrivate):
+        (WebCore::CompositeAnimationPrivate::clearRenderer):
+        (WebCore::CompositeAnimation::clearRenderer):
+        (WebCore::CompositeAnimation::animationController):
+        (WebCore::CompositeAnimation::isWaitingForStyleAvailable):
+        * page/animation/CompositeAnimation.h:
+        (WebCore::CompositeAnimation::create):
+
 2008-12-05  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22609: Provide a build-time choice when generating hash tables for properties of built-in DOM objects
