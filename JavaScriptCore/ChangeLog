@@ -2,6 +2,17 @@
 
         Reviewed by Geoff Garen.
 
+        Remove redundant calls to JIT::emitSlowScriptCheck.
+        This is checked in the hot path, so is not needed on the slow path - and the code
+        was being planted before the start of the slow case, so was completely unreachable!
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+
+2008-12-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Move JIT::compileOpStrictEq to MacroAssembler interface.
 
         The rewrite also looks like a small (<1%) performance progression.
