@@ -1,6 +1,9 @@
 2008-12-05  David Kilzer  <ddkilzer@apple.com>
 
-        <rdar://problem/6331749> Provide a mechanism to disable perfect hashing in the DOM at build time
+        Bug 22609: Provide a build-time choice when generating hash tables for properties of built-in DOM objects
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22609>
+        <rdar://problem/6331749>
 
         Reviewed by Darin Adler.
 
