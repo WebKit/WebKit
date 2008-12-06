@@ -578,7 +578,7 @@ public:
         return Jump(m_assembler.je());
     }
     
-    Jump je32(Imm32 imm, RegisterID reg)
+    Jump je32(RegisterID reg, Imm32 imm)
     {
         compareImm32ForBranchEquality(reg, imm.m_value);
         return Jump(m_assembler.je());
@@ -650,7 +650,7 @@ public:
         return Jump(m_assembler.jne());
     }
 
-    Jump jne32(Imm32 imm, RegisterID reg)
+    Jump jne32(RegisterID reg, Imm32 imm)
     {
         compareImm32ForBranchEquality(reg, imm.m_value);
         return Jump(m_assembler.jne());
@@ -702,9 +702,9 @@ public:
     //     // ...
     //     jne32(reg1, reg2).linkTo(topOfLoop);
 
-    void je32(Imm32 imm, RegisterID op2, Label target)
+    void je32(RegisterID op1, Imm32 imm, Label target)
     {
-        je32(imm, op2).linkTo(target, this);
+        je32(op1, imm).linkTo(target, this);
     }
 
     void je16(RegisterID op1, BaseIndex op2, Label target)
@@ -727,9 +727,9 @@ public:
         jne32(op1, op2).linkTo(target, this);
     }
 
-    void jne32(Imm32 imm, RegisterID op2, Label target)
+    void jne32(RegisterID op1, Imm32 imm, Label target)
     {
-        jne32(imm, op2).linkTo(target, this);
+        jne32(op1, imm).linkTo(target, this);
     }
 
     void jump(Label target)

@@ -235,13 +235,13 @@ void JIT::compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStric
     // otherwise these values are not equal.
     firstNotImmediate.link(this);
     emitJumpSlowCaseIfJSCell(X86::edx, i);
-    m_slowCases.append(SlowCaseEntry(je32(Imm32(asInteger(JSImmediate::zeroImmediate())), X86::edx), i));
+    m_slowCases.append(SlowCaseEntry(je32(X86::edx, Imm32(asInteger(JSImmediate::zeroImmediate()))), i));
     Jump firstWasNotImmediate = jump();
 
     // eax was an immediate, but edx wasn't.
     // If eax is 0 jump to a slow case, otherwise these values are not equal.
     secondNotImmediate.link(this);
-    m_slowCases.append(SlowCaseEntry(je32(Imm32(asInteger(JSImmediate::zeroImmediate())), X86::eax), i));
+    m_slowCases.append(SlowCaseEntry(je32(X86::eax, Imm32(asInteger(JSImmediate::zeroImmediate()))), i));
 
     // We get here if the two values are different immediates, or one is 0 and the other is a JSCell.
     // Vaelues are not equal, set the result to false.

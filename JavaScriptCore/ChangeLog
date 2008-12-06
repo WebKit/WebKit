@@ -1,5 +1,34 @@
 2008-12-05  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Ordering of branch operands in MacroAssembler in unnecessarily  inconsistent.
+
+        je, jg etc take an immediate operand as the second argument, but for the
+        equality branches (je, jne) the immediate operand was the first argument.  This
+        was unnecessarily inconsistent.  Change je, jne methods to take the immediate
+        as the second argument.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22703
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::je32):
+        (JSC::MacroAssembler::jne32):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateEnter):
+        (JSC::WREC::Generator::generateNonGreedyQuantifier):
+        (JSC::WREC::Generator::generateGreedyQuantifier):
+        (JSC::WREC::Generator::generatePatternCharacterPair):
+        (JSC::WREC::Generator::generatePatternCharacter):
+        (JSC::WREC::Generator::generateCharacterClassInvertedRange):
+        (JSC::WREC::Generator::generateCharacterClassInverted):
+        (JSC::WREC::Generator::generateAssertionBOL):
+        (JSC::WREC::Generator::generateAssertionWordBoundary):
+
+2008-12-05  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         Second tranche of porting JIT.cpp to MacroAssembler interface.
