@@ -1,3 +1,13 @@
+2008-12-06  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22710
+        Memory leak due to circular reference Document->DOMTimer->ScheduledAction->[JS objects]->Document
+
+        * bindings/js/DOMTimer.cpp:
+        (WebCore::DOMTimer::stop): Delete ScheduledAction, which contains a protected object.
+
 2008-12-06  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22666: Clean up data structures used when collecting URLs of subresources for webarchives

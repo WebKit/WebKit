@@ -55,8 +55,10 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action)
 
 DOMTimer::~DOMTimer()
 {
-    JSC::JSLock lock(false);
-    delete m_action;
+    if (m_action) {
+        JSC::JSLock lock(false);
+        delete m_action;
+    }
 }
 
 void DOMTimer::fired()
@@ -87,6 +89,12 @@ void DOMTimer::contextDestroyed()
 void DOMTimer::stop()
 {
     TimerBase::stop();
+    // Need to release JS objects potentially protected by ScheduledAction
+    // because they can form circular references back to the ScriptExecutionContext
+    // which will cause a memory leak.
+    JSC::JSLock lock(false);
+    delete m_action;
+    m_action = 0;
 }
 
 void DOMTimer::suspend() 
