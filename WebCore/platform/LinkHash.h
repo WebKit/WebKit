@@ -53,6 +53,9 @@ struct LinkHashHash {
     }
 };
 
+// Returns the has of the string that will be used for visited link coloring.
+LinkHash visitedLinkHash(const UChar* url, unsigned length);
+
 // Resolves the potentially relative URL "attributeURL" relative to the given
 // base URL, and returns the hash of the string that will be used for visited
 // link coloring. It will return the special value of 0 if attributeURL does not

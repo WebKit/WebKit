@@ -27,6 +27,7 @@
 #include "LinkHash.h"
 #include "PlatformString.h"
 #include "StringHash.h"
+#include "StringImpl.h"
 
 namespace WebCore {
 
@@ -146,6 +147,11 @@ static inline bool needsTrailingSlash(const UChar* characters, unsigned length)
     return pos == length;
 }
 
+LinkHash visitedLinkHash(const UChar* url, unsigned length)
+{
+  return AlreadyHashed::avoidDeletedValue(StringImpl::computeHash(url, length));
+}
+
 LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
 {
     const UChar* characters = attributeURL.characters();
@@ -167,7 +173,7 @@ LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
     bool hasColonSlashSlash = containsColonSlashSlash(characters, length);
 
     if (hasColonSlashSlash && !needsTrailingSlash(characters, length))
-        return AlreadyHashed::avoidDeletedValue(attributeURL.string().impl()->hash());
+        return visitedLinkHash(attributeURL.characters(), attributeURL.length());
 
     Vector<UChar, 512> buffer;
 
@@ -176,7 +182,7 @@ LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
         // end of the path, *before* the query or anchor.
         buffer.append(characters, length);
         buffer.append('/');
-        return AlreadyHashed::avoidDeletedValue(StringImpl::computeHash(buffer.data(), buffer.size()));
+        return visitedLinkHash(buffer.data(), buffer.size());
     }
 
     switch (characters[0]) {
@@ -198,7 +204,7 @@ LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
         buffer.append('/');
     }
 
-    return AlreadyHashed::avoidDeletedValue(StringImpl::computeHash(buffer.data(), buffer.size()));
+    return visitedLinkHash(buffer.data(), buffer.size());
 }
 
 }  // namespace WebCore

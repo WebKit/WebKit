@@ -1,3 +1,18 @@
+2008-12-04  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make the page group use the proper link hashing functions rather than
+        calling the string hash functions directly. Add Chromium-specfic ifdefs
+        in the visited link computation functions to allow integration.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::isLinkVisited):
+        (WebCore::PageGroup::addVisitedLink):
+        * platform/LinkHash.cpp:
+        (WebCore::visitedLinkHash):
+        * platform/LinkHash.h:
+
 2008-12-05  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt.

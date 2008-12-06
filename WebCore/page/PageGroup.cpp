@@ -36,6 +36,10 @@
 #include "StorageArea.h"
 #endif
 
+#if PLATFORM(CHROMIUM)
+#include "ChromiumBridge.h"
+#endif
+
 namespace WebCore {
 
 static unsigned getUniqueIdentifier()
@@ -119,21 +123,27 @@ void PageGroup::removePage(Page* page)
 
 bool PageGroup::isLinkVisited(LinkHash visitedLinkHash)
 {
+#if PLATFORM(CHROMIUM)
+    // Use Chromium's built-in visited link database.
+    return ChromiumBridge::isLinkVisited(visitedLinkHash);
+#else
     if (!m_visitedLinksPopulated) {
         m_visitedLinksPopulated = true;
         ASSERT(!m_pages.isEmpty());
         (*m_pages.begin())->chrome()->client()->populateVisitedLinks();
     }
     return m_visitedLinkHashes.contains(visitedLinkHash);
+#endif
 }
 
-inline void PageGroup::addVisitedLink(LinkHash stringHash)
+inline void PageGroup::addVisitedLink(LinkHash hash)
 {
     ASSERT(shouldTrackVisitedLinks);
-    LinkHash visitedLinkHash = LinkHashHash::avoidDeletedValue(stringHash);
-    if (!m_visitedLinkHashes.add(visitedLinkHash).second)
+#if !PLATFORM(CHROMIUM)
+    if (!m_visitedLinkHashes.add(hash).second)
         return;
-    Page::visitedStateChanged(this, visitedLinkHash);
+#endif
+    Page::visitedStateChanged(this, hash);
 }
 
 void PageGroup::addVisitedLink(const KURL& url)
@@ -141,14 +151,14 @@ void PageGroup::addVisitedLink(const KURL& url)
     if (!shouldTrackVisitedLinks)
         return;
     ASSERT(!url.isEmpty());
-    addVisitedLink(url.string().impl()->hash());
+    addVisitedLink(visitedLinkHash(url.string().characters(), url.string().length()));
 }
 
 void PageGroup::addVisitedLink(const UChar* characters, size_t length)
 {
     if (!shouldTrackVisitedLinks)
         return;
-    addVisitedLink(StringImpl::computeHash(characters, length));
+    addVisitedLink(visitedLinkHash(characters, length));
 }
 
 void PageGroup::removeVisitedLinks()
