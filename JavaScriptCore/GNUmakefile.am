@@ -81,6 +81,8 @@ javascriptcore_sources += \
 	JavaScriptCore/jit/JITInlineMethods.h \
 	JavaScriptCore/bytecode/CodeBlock.cpp \
 	JavaScriptCore/bytecode/CodeBlock.h \
+	JavaScriptCore/bytecode/JumpTable.cpp \
+	JavaScriptCore/bytecode/JumpTable.h \
 	JavaScriptCore/bytecode/EvalCodeCache.h \
 	JavaScriptCore/runtime/ExceptionHelpers.cpp \
 	JavaScriptCore/runtime/ExceptionHelpers.h \

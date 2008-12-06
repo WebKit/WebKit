@@ -69,6 +69,7 @@ SOURCES += \
     runtime/JSActivation.cpp \
     runtime/JSNotAnObject.cpp \
     bytecode/CodeBlock.cpp \
+    bytecode/JumpTable.cpp \
     jit/JIT.cpp \
     jit/JITCall.cpp \
     jit/JITArithmetic.cpp \

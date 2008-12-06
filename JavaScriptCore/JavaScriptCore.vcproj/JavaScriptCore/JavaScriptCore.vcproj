@@ -1242,6 +1242,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bytecode\JumpTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\JumpTable.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JIT.cpp"
 				>
 				<FileConfiguration

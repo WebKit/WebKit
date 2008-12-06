@@ -1,3 +1,19 @@
+2008-12-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Split JumpTable code into its own file.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        * bytecode/JumpTable.cpp: Copied from bytecode/CodeBlock.cpp.
+        * bytecode/JumpTable.h: Copied from bytecode/CodeBlock.h.
+
 2008-12-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.
