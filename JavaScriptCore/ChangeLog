@@ -2,7 +2,7 @@
 
         Reviewed by Oliver Hunt.
 
-        Please don't die in a fire while trying to compile Interpreter.cpp on GCC 4.2.
+        Prevent GCC4.2 from hanging when trying to compile Interpreter.cpp.
         Added "-fno-var-tracking" compiler flag.
 
         https://bugs.webkit.org/show_bug.cgi?id=22704
