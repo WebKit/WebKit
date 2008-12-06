@@ -46,9 +46,12 @@ my @hashes = ();
 
 my $inside = 0;
 my $name;
-my $size;
+my $pefectHashSize;
+my $compactSize;
+my $compactHashSizeMask;
 my $banner = 0;
-sub calcSize();
+sub calcPerfectHashSize();
+sub calcCompactHashSize();
 sub output();
 sub jsc_ucfirst($);
 sub hashValue($);
@@ -65,7 +68,8 @@ while (<IN>) {
             print STDERR "WARNING: \@begin without table name, skipping $_\n";
         }
     } elsif (/^\@end\s*$/ && $inside) {
-        calcSize();
+        calcPerfectHashSize();
+        calcCompactHashSize();
         output();
 
         @keys = ();
@@ -116,23 +120,23 @@ sub jsc_ucfirst($)
 
 sub ceilingToPowerOf2
 {
-    my ($size) = @_;
+    my ($pefectHashSize) = @_;
 
     my $powerOf2 = 1;
-    while ($size > $powerOf2) {
+    while ($pefectHashSize > $powerOf2) {
         $powerOf2 <<= 1;
     }
 
     return $powerOf2;
 }
 
-sub calcSize()
+sub calcPerfectHashSize()
 {
 tableSizeLoop:
-    for ($size = ceilingToPowerOf2(scalar @keys); ; $size += $size) {
+    for ($pefectHashSize = ceilingToPowerOf2(scalar @keys); ; $pefectHashSize += $pefectHashSize) {
         my @table = ();
         foreach my $key (@keys) {
-            my $h = hashValue($key) % $size;
+            my $h = hashValue($key) % $pefectHashSize;
             next tableSizeLoop if $table[$h];
             $table[$h] = 1;
         }
@@ -143,6 +147,36 @@ tableSizeLoop:
 sub leftShift($$) {
     my ($value, $distance) = @_;
     return (($value << $distance) & 0xFFFFFFFF);
+}
+
+sub calcCompactHashSize()
+{
+    my @table = ();
+    my @links = ();
+    my $compactHashSize = ceilingToPowerOf2(2 * @keys);
+    $compactHashSizeMask = $compactHashSize - 1;
+    $compactSize = $compactHashSize;
+    my $collisions = 0;
+    my $maxdepth = 0;
+    my $i = 0;
+    foreach my $key (@keys) {
+        my $depth = 0;
+        my $h = hashValue($key) % $compactHashSize;
+        while (defined($table[$h])) {
+            if (defined($links[$h])) {
+                $h = $links[$h];
+                $depth++;
+            } else {
+                $collisions++;
+                $links[$h] = $compactSize;
+                $h = $compactSize;
+                $compactSize++;
+            }
+        }
+        $table[$h] = $i;
+        $i++;
+        $maxdepth = $depth if ( $depth > $maxdepth);
+    }
 }
 
 # Paul Hsieh's SuperFastHash
@@ -236,7 +270,11 @@ sub output() {
     }
     print "   { 0, 0, 0, 0 }\n";
     print "};\n\n";
-    print "extern const struct HashTable $name = ";
-    print "\{ ", $size - 1, ", $nameEntries, 0 \};\n\n";
+    print "extern const struct HashTable $name =\n";
+    print "#if ENABLE(PERFECT_HASH_SIZE)\n";
+    print "    \{ ", $pefectHashSize - 1, ", $nameEntries, 0 \};\n";
+    print "#else\n";
+    print "    \{ $compactSize, $compactHashSizeMask, $nameEntries, 0 \};\n";
+    print "#endif\n\n";
     print "} // namespace\n";
 }

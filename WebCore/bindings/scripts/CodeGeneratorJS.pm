@@ -767,6 +767,7 @@ sub GenerateImplementation
     $numAttributes++ if $dataNode->extendedAttributes->{"GenerateConstructor"};
 
     if ($numAttributes > 0) {
+        my $hashSize = $numAttributes;
         my $hashName = $className . "Table";
 
         my @hashKeys = ();
@@ -806,7 +807,7 @@ sub GenerateImplementation
             push(@hashSpecials, "DontEnum|ReadOnly"); # FIXME: Setting the constructor should be possible.
         }
 
-        $object->GenerateHashTable($hashName,
+        $object->GenerateHashTable($hashName, $hashSize,
                                    \@hashKeys, \@hashSpecials,
                                    \@hashValue1, \@hashValue2);
     }
@@ -816,6 +817,7 @@ sub GenerateImplementation
 
     # - Add all constants
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
+        $hashSize = $numConstants;
         $hashName = $className . "ConstructorTable";
 
         @hashKeys = ();
@@ -832,7 +834,7 @@ sub GenerateImplementation
             push(@hashSpecials, "DontDelete|ReadOnly");
         }
 
-        $object->GenerateHashTable($hashName,
+        $object->GenerateHashTable($hashName, $hashSize,
                                    \@hashKeys, \@hashSpecials,
                                    \@hashValue1, \@hashValue2);
 
@@ -843,6 +845,7 @@ sub GenerateImplementation
     }
 
     # - Add functions and constants to a hashtable definition
+    $hashSize = $numFunctions + $numConstants;
     $hashName = $className . "PrototypeTable";
 
     @hashKeys = ();
@@ -877,7 +880,7 @@ sub GenerateImplementation
         push(@hashSpecials, $special);
     }
 
-    $object->GenerateHashTable($hashName,
+    $object->GenerateHashTable($hashName, $hashSize,
                                \@hashKeys, \@hashSpecials,
                                \@hashValue1, \@hashValue2);
 
@@ -1726,24 +1729,63 @@ sub GenerateHashTable
     my $object = shift;
 
     my $name = shift;
+    my $size = shift;
     my $keys = shift;
     my $specials = shift;
     my $value1 = shift;
     my $value2 = shift;
 
+    # Generate size data for two hash tables
+    # - The 'perfect' size makes a table large enough for perfect hashing
+    # - The 'compact' size uses the legacy table format for smaller table sizes
+
+    # Perfect size
     my @hashes = ();
     foreach my $key (@{$keys}) {
         push @hashes, $object->GenerateHashValue($key);
     }
 
+    # Compact size
+    my @table = ();
+    my @links = ();
+
+    my $compactSize = ceilingToPowerOf2($size * 2);
+
+    my $maxDepth = 0;
+    my $collisions = 0;
+    my $numEntries = $compactSize;
+
+    my $i = 0;
+    foreach (@{$keys}) {
+        my $depth = 0;
+        my $h = $object->GenerateHashValue($_) % $numEntries;
+
+        while (defined($table[$h])) {
+            if (defined($links[$h])) {
+                $h = $links[$h];
+                $depth++;
+            } else {
+                $collisions++;
+                $links[$h] = $compactSize;
+                $h = $compactSize;
+                $compactSize++;
+            }
+        }
+
+        $table[$h] = $i;
+
+        $i++;
+        $maxDepth = $depth if ($depth > $maxDepth);
+    }
+
     # Collect hashtable information
-    my $size;
+    my $perfectSize;
 tableSizeLoop:
-    for ($size = ceilingToPowerOf2(scalar @{$keys}); ; $size += $size) {
+    for ($perfectSize = ceilingToPowerOf2(scalar @{$keys}); ; $perfectSize += $perfectSize) {
         my @table = ();
         my $i = 0;
         foreach my $hash (@hashes) {
-            my $h = $hash % $size;
+            my $h = $hash % $perfectSize;
             next tableSizeLoop if defined $table[$h];
             $table[$h] = $i++;
         }
@@ -1774,15 +1816,21 @@ tableSizeLoop:
     # Dump the hash table
     my $count = scalar @{$keys} + 1;
     push(@implContent, "\nstatic const HashTableValue $nameEntries\[$count\] =\n\{\n");
-    my $i = 0;
+    $i = 0;
     foreach my $key (@{$keys}) {
         push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)@$value1[$i], (intptr_t)@$value2[$i] },\n");
         ++$i;
     }
     push(@implContent, "    { 0, 0, 0, 0 }\n");
     push(@implContent, "};\n\n");
-    my $sizeMask = $size - 1;
-    push(@implContent, "static const HashTable $name = { $sizeMask, $nameEntries, 0 };\n\n");
+    my $perfectSizeMask = $perfectSize - 1;
+    my $compactSizeMask = $numEntries - 1;
+    push(@implContent, "static const HashTable $name =\n");
+    push(@implContent, "#if ENABLE(PERFECT_HASH_SIZE)\n");
+    push(@implContent, "    { $perfectSizeMask, $nameEntries, 0 };\n");
+    push(@implContent, "#else\n");
+    push(@implContent, "    { $compactSize, $compactSizeMask, $nameEntries, 0 };\n");
+    push(@implContent, "#endif\n\n");
 }
 
 # Internal helper

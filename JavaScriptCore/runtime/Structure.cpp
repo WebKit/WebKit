@@ -307,7 +307,11 @@ void Structure::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray& p
             continue;
         table->initializeIfNeeded(exec);
         ASSERT(table->table);
+#if ENABLE(PERFECT_HASH_SIZE)
         int hashSizeMask = table->hashSizeMask;
+#else
+        int hashSizeMask = table->compactSize - 1;
+#endif
         const HashEntry* entry = table->table;
         for (int i = 0; i <= hashSizeMask; ++i, ++entry) {
             if (entry->key() && !(entry->attributes() & DontEnum))

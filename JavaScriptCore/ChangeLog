@@ -1,3 +1,35 @@
+2008-12-05  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/6331749> Provide a mechanism to disable perfect hashing in the DOM at build time
+
+        Reviewed by Darin Adler.
+
+        Initial patch by Yosen Lin.  Adapted for ToT WebKit by David Kilzer.
+
+        Added back the code that generates a "compact" hash (instead of a
+        perfect hash) as a build-time option using the
+        ENABLE(PERFECT_HASH_SIZE) macro as defined in Lookup.h.
+
+        * create_hash_table: Rename variables to differentiate perfect hash
+        values from compact hash values.  Added back code to compute compact
+        hash tables.  Generate both hash table sizes and emit
+        conditionalized code based on ENABLE(PERFECT_HASH_SIZE).
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable): Added version of createTable() for
+        use with compact hash tables.
+        (JSC::HashTable::deleteTable): Updated to work with compact hash
+        tables.
+        * runtime/Lookup.h: Defined ENABLE(PERFECT_HASH_SIZE) macro here.
+        (JSC::HashEntry::initialize): Set m_next to zero when using compact
+        hash tables.
+        (JSC::HashEntry::setNext): Added for compact hash tables.
+        (JSC::HashEntry::next): Added for compact hash tables.
+        (JSC::HashTable::entry): Added version of entry() for use with
+        compact hash tables.
+        * runtime/Structure.cpp:
+        (JSC::Structure::getEnumerablePropertyNames): Updated to work with
+        compact hash tables.
+
 2008-12-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

@@ -1,3 +1,23 @@
+2008-12-05  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/6331749> Provide a mechanism to disable perfect hashing in the DOM at build time
+
+        Reviewed by Darin Adler.
+
+        Initial patch by Yosen Lin.  Adapted for ToT WebKit by David Kilzer.
+
+        Added back the code that generates a "compact" hash (instead of a
+        perfect hash) as a build-time option using the
+        ENABLE(PERFECT_HASH_SIZE) macro as defined in Lookup.h.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Compute the number of elements that will
+        be stored in each hash table and pass it to GenerateHashTable().
+        (GenerateHashTable): Added new second parameter representing the
+        number of elements to store in the compact hash table.  Added back
+        code to compute compact hash tables.  Generate both hash table sizes
+        and emit conditionalized code based on ENABLE(PERFECT_HASH_SIZE).
+
 2008-12-05  Brett Wilson  <brettw@chromium.org>
 
         Fix build bustage from previous patch.
