@@ -1,5 +1,18 @@
 2008-12-06  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Cameron Zwarich,
+
+        Move CodeBlock constructor into the .cpp file.
+
+        Sunspider reports a .7% progression, but I can only assume this
+        is noise.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+
+2008-12-06  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Cameron Zwarich.
 
         Split JumpTable code into its own file.

@@ -954,6 +954,25 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
 
 #endif // !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
 
+CodeBlock::CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
+    : m_numCalleeRegisters(0)
+    , m_numConstants(0)
+    , m_numVars(0)
+    , m_numParameters(0)
+    , m_ownerNode(ownerNode)
+    , m_globalData(0)
+#if ENABLE(JIT)
+    , m_jitCode(0)
+#endif
+    , m_needsFullScopeChain(ownerNode->needsActivation())
+    , m_usesEval(ownerNode->usesEval())
+    , m_codeType(codeType)
+    , m_source(sourceProvider)
+    , m_sourceOffset(sourceOffset)
+{
+    ASSERT(m_source);
+}
+
 CodeBlock::~CodeBlock()
 {
     for (size_t size = m_globalResolveInstructions.size(), i = 0; i < size; ++i)
