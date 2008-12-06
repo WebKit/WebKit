@@ -355,9 +355,14 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg, unsigned byteco
     m_slowCases.append(SlowCaseEntry(emitJumpIfJSCell(reg), bytecodeIndex));
 }
 
+ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotJSCell(RegisterID reg)
+{
+    return jset32(Imm32(JSImmediate::TagMask), reg);
+}
+
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex)
 {
-    m_slowCases.append(SlowCaseEntry(jset32(Imm32(JSImmediate::TagMask), reg), bytecodeIndex));
+    m_slowCases.append(SlowCaseEntry(emitJumpIfNotJSCell(reg), bytecodeIndex));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex, int vReg)

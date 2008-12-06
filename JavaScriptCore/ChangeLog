@@ -1,3 +1,26 @@
+2008-12-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Second tranche of porting JIT.cpp to MacroAssembler interface.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::mul32):
+        (JSC::MacroAssembler::jl32):
+        (JSC::MacroAssembler::jnzSub32):
+        (JSC::MacroAssembler::joAdd32):
+        (JSC::MacroAssembler::joMul32):
+        (JSC::MacroAssembler::jzSub32):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitSlowScriptCheck):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpIfNotJSCell):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+
 2008-12-05  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22609: Provide a build-time choice when generating hash tables for properties of built-in DOM objects

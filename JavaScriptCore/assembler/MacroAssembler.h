@@ -297,6 +297,11 @@ public:
         m_assembler.shll_i8r(imm.m_value, dest);
     }
     
+    void mul32(Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        m_assembler.imull_i32r(src, imm.m_value, dest);
+    }
+    
     void or32(Imm32 imm, RegisterID dest)
     {
         if (CAN_SIGN_EXTEND_8_32(imm.m_value))
@@ -606,6 +611,12 @@ public:
         compareImm32ForBranch(left, right.m_value);
         return Jump(m_assembler.jge());
     }
+
+    Jump jl32(RegisterID left, RegisterID right)
+    {
+        m_assembler.cmpl_rr(right, left);
+        return Jump(m_assembler.jl());
+    }
     
     Jump jl32(RegisterID left, Imm32 right)
     {
@@ -737,19 +748,34 @@ public:
     // * jo operations branch if the (signed) arithmetic
     //   operation caused an overflow to occur.
 
-    Jump jzSub32(Imm32 imm, RegisterID dest)
+    Jump jnzSub32(Imm32 imm, RegisterID dest)
     {
-        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
-            m_assembler.subl_i8r(imm.m_value, dest);
-        else
-            m_assembler.subl_i32r(imm.m_value, dest);
-        return Jump(m_assembler.je());
+        sub32(imm, dest);
+        return Jump(m_assembler.jne());
     }
     
     Jump joAdd32(RegisterID src, RegisterID dest)
     {
-        m_assembler.addl_rr(src, dest);
+        add32(src, dest);
         return Jump(m_assembler.jo());
+    }
+    
+    Jump joAdd32(Imm32 imm, RegisterID dest)
+    {
+        add32(imm, dest);
+        return Jump(m_assembler.jo());
+    }
+    
+    Jump joMul32(Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        mul32(imm, src, dest);
+        return Jump(m_assembler.jo());
+    }
+    
+    Jump jzSub32(Imm32 imm, RegisterID dest)
+    {
+        sub32(imm, dest);
+        return Jump(m_assembler.je());
     }
     
 

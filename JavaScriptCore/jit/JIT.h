@@ -437,8 +437,9 @@ namespace JSC {
         JSValue* getConstantImmediateNumericArg(unsigned src);
         unsigned getDeTaggedConstantImmediate(JSValue* imm);
 
-        Jump emitJumpIfJSCell(RegisterID reg);
-        void emitJumpSlowCaseIfJSCell(RegisterID reg, unsigned bytecodeIndex);
+        Jump emitJumpIfJSCell(RegisterID);
+        void emitJumpSlowCaseIfJSCell(RegisterID, unsigned bytecodeIndex);
+        Jump emitJumpIfNotJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, unsigned bytecodeIndex);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, unsigned bytecodeIndex, int VReg);
         bool linkSlowCaseIfNotJSCell(const Vector<SlowCaseEntry>::iterator&, int vReg);
