@@ -42,14 +42,14 @@ namespace JSC {
 void ScopeSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
 {
     if (!m_samples) {
-        m_size = codeBlock->instructions.size();
+        m_size = codeBlock->instructions().size();
         m_samples = static_cast<int*>(calloc(m_size, sizeof(int)));
         m_codeBlock = codeBlock;
     }
 
     ++m_sampleCount;
 
-    unsigned offest = vPC - codeBlock->instructions.begin();
+    unsigned offest = vPC - codeBlock->instructions().begin();
     // Since we don't read and write codeBlock and vPC atomically, this check
     // can fail if we sample mid op_call / op_ret.
     if (offest < m_size) {
@@ -248,7 +248,7 @@ void SamplingTool::dump(ExecState* exec)
         double blockPercent = (record->m_sampleCount * 100.0) / m_sampleCount;
 
         if (blockPercent >= 1) {
-            Instruction* code = codeBlock->instructions.begin();
+            Instruction* code = codeBlock->instructions().begin();
             printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_scope->sourceURL().UTF8String().c_str(), codeBlock->lineNumberForVPC(code), record->m_sampleCount, m_sampleCount, blockPercent);
             if (i < 10) {
                 HashMap<unsigned,unsigned> lineCounts;

@@ -114,7 +114,7 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier*, unsig
 
     emitGetVirtualRegister(baseVReg, X86::eax, i);
 
-    ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].bytecodeIndex == i);
+    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
 
     emitJumpSlowCaseIfNotJSCell(X86::eax, i, baseVReg);
 
@@ -155,7 +155,7 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
     emitPutVirtualRegister(resultVReg);
 
     // Track the location of the call; this will be used to recover repatch information.
-    ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].bytecodeIndex == i);
+    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 
@@ -167,7 +167,7 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier*, int valueVReg, unsign
 
     emitGetVirtualRegisters(baseVReg, X86::eax, valueVReg, X86::edx, i);
 
-    ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].bytecodeIndex == i);
+    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
 
     // Jump to a slow case if either the base object is an immediate, or if the Structure does not match.
     emitJumpSlowCaseIfNotJSCell(X86::eax, i, baseVReg);
@@ -198,7 +198,7 @@ void JIT::compilePutByIdSlowCase(int baseVReg, Identifier* ident, int, unsigned 
     JmpSrc call = emitCTICall(i, Interpreter::cti_op_put_by_id);
 
     // Track the location of the call; this will be used to recover repatch information.
-    ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].bytecodeIndex == i);
+    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 

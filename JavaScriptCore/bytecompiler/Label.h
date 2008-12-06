@@ -53,7 +53,7 @@ namespace JSC {
             unsigned size = m_unresolvedJumps.size();
             for (unsigned i = 0; i < size; ++i) {
                 unsigned j = m_unresolvedJumps[i];
-                m_codeBlock->instructions[j].u.operand = m_location - j;
+                m_codeBlock->instructions()[j].u.operand = m_location - j;
             }
         }
 

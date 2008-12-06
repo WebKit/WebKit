@@ -107,7 +107,7 @@ namespace JSC {
         function = callFrame->callee();
     
         CodeBlock* codeBlock = &function->body()->generatedBytecode();
-        int numParameters = codeBlock->numParameters;
+        int numParameters = codeBlock->m_numParameters;
         argc = callFrame->argumentCount();
 
         if (argc <= numParameters)
@@ -206,8 +206,8 @@ namespace JSC {
     {
         ASSERT(!d()->registerArray);
 
-        size_t numParametersMinusThis = d()->functionBody->generatedBytecode().numParameters - 1;
-        size_t numVars = d()->functionBody->generatedBytecode().numVars;
+        size_t numParametersMinusThis = d()->functionBody->generatedBytecode().m_numParameters - 1;
+        size_t numVars = d()->functionBody->generatedBytecode().m_numVars;
         size_t numLocals = numVars + numParametersMinusThis;
 
         if (!numLocals)

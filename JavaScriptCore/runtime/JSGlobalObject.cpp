@@ -112,7 +112,7 @@ JSGlobalObject::~JSGlobalObject()
 
     HashSet<ProgramCodeBlock*>::const_iterator end = codeBlocks().end();
     for (HashSet<ProgramCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
-        (*it)->globalObject = 0;
+        (*it)->clearGlobalObject();
         
     RegisterFile& registerFile = globalData()->interpreter->registerFile();
     if (registerFile.globalObject() == this) {

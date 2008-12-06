@@ -55,7 +55,7 @@ void JIT::unlinkCall(CallLinkInfo* callLinkInfo)
 void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, CallLinkInfo* callLinkInfo, int callerArgCount)
 {
     // Currently we only link calls with the exact number of arguments.
-    if (callerArgCount == calleeCodeBlock->numParameters) {
+    if (callerArgCount == calleeCodeBlock->m_numParameters) {
         ASSERT(!callLinkInfo->isLinked());
     
         calleeCodeBlock->addCaller(callLinkInfo);

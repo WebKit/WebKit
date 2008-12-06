@@ -68,8 +68,8 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst, unsigned
 
     if (src == m_lastResultBytecodeRegister && m_codeBlock->isTemporaryRegisterIndex(src)) {
         bool atJumpTarget = false;
-        while (m_jumpTargetsPosition < m_codeBlock->jumpTargets.size() && m_codeBlock->jumpTargets[m_jumpTargetsPosition] <= currentInstructionIndex) {
-            if (m_codeBlock->jumpTargets[m_jumpTargetsPosition] == currentInstructionIndex)
+        while (m_jumpTargetsPosition < m_codeBlock->numberOfJumpTargets() && m_codeBlock->jumpTarget(m_jumpTargetsPosition) <= currentInstructionIndex) {
+            if (m_codeBlock->jumpTarget(m_jumpTargetsPosition) == currentInstructionIndex)
                 atJumpTarget = true;
             ++m_jumpTargetsPosition;
         }
@@ -224,14 +224,14 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_j helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
     restoreArgumentReference();
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     JmpSrc ctiCall = call();
     m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
@@ -241,14 +241,14 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_j helper
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_o helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
     restoreArgumentReference();
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     JmpSrc ctiCall = call();
     m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
@@ -258,14 +258,14 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_o helper
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_p helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
     restoreArgumentReference();
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     JmpSrc ctiCall = call();
     m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
@@ -275,14 +275,14 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_p helper
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_b helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
     restoreArgumentReference();
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     JmpSrc ctiCall = call();
     m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
@@ -292,14 +292,14 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_b helper
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_v helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
     restoreArgumentReference();
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     JmpSrc ctiCall = call();
     m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
@@ -309,14 +309,14 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_v helper
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_s helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
     restoreArgumentReference();
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     JmpSrc ctiCall = call();
     m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
@@ -326,14 +326,14 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_s helper
 ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_2 helper)
 {
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
     restoreArgumentReference();
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     JmpSrc ctiCall = call();
     m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 

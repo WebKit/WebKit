@@ -184,9 +184,9 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     : m_interpreter(globalData->interpreter)
     , m_globalData(globalData)
     , m_codeBlock(codeBlock)
-    , m_labels(codeBlock ? codeBlock->instructions.size() : 0)
-    , m_propertyAccessCompilationInfo(codeBlock ? codeBlock->propertyAccessInstructions.size() : 0)
-    , m_callStructureStubCompilationInfo(codeBlock ? codeBlock->callLinkInfos.size() : 0)
+    , m_labels(codeBlock ? codeBlock->instructions().size() : 0)
+    , m_propertyAccessCompilationInfo(codeBlock ? codeBlock->numberOfPropertyAccessInstructions() : 0)
+    , m_callStructureStubCompilationInfo(codeBlock ? codeBlock->numberOfCallLinkInfos() : 0)
     , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
     , m_jumpTargetsPosition(0)
 {
@@ -265,8 +265,8 @@ void JIT::emitSlowScriptCheck(unsigned bytecodeIndex)
 
 void JIT::privateCompileMainPass()
 {
-    Instruction* instruction = m_codeBlock->instructions.begin();
-    unsigned instructionCount = m_codeBlock->instructions.size();
+    Instruction* instruction = m_codeBlock->instructions().begin();
+    unsigned instructionCount = m_codeBlock->instructions().size();
 
     unsigned propertyAccessInstructionIndex = 0;
     unsigned callLinkInfoIndex = 0;
@@ -319,7 +319,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_end: {
-            if (m_codeBlock->needsFullScopeChain)
+            if (m_codeBlock->needsFullScopeChain())
                 emitCTICall(i, Interpreter::cti_op_end);
             emitGetVirtualRegister(instruction[i + 1].u.operand, X86::eax, i);
             __ pushl_m(RegisterFile::ReturnPC * static_cast<int>(sizeof(Register)), X86::edi);
@@ -393,12 +393,12 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_put_by_id: {
-            compilePutByIdHotPath(instruction[i + 1].u.operand, &(m_codeBlock->identifiers[instruction[i + 2].u.operand]), instruction[i + 3].u.operand, i, propertyAccessInstructionIndex++);
+            compilePutByIdHotPath(instruction[i + 1].u.operand, &(m_codeBlock->identifier(instruction[i + 2].u.operand)), instruction[i + 3].u.operand, i, propertyAccessInstructionIndex++);
             i += 8;
             break;
         }
         case op_get_by_id: {
-            compileGetByIdHotPath(instruction[i + 1].u.operand, instruction[i + 2].u.operand, &(m_codeBlock->identifiers[instruction[i + 3].u.operand]), i, propertyAccessInstructionIndex++);
+            compileGetByIdHotPath(instruction[i + 1].u.operand, instruction[i + 2].u.operand, &(m_codeBlock->identifier(instruction[i + 3].u.operand)), i, propertyAccessInstructionIndex++);
             i += 8;
             break;
         }
@@ -463,7 +463,7 @@ void JIT::privateCompileMainPass()
         }
         case op_del_by_id: {
             emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
-            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
+            Identifier* ident = &(m_codeBlock->identifier(instruction[i + 3].u.operand));
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
             emitCTICall(i, Interpreter::cti_op_del_by_id);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
@@ -500,7 +500,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_new_func: {
-            FuncDeclNode* func = (m_codeBlock->functions[instruction[i + 2].u.operand]).get();
+            FuncDeclNode* func = m_codeBlock->function(instruction[i + 2].u.operand);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(func), 0);
             emitCTICall(i, Interpreter::cti_op_new_func);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
@@ -531,7 +531,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_get_scoped_var: {
-            int skip = instruction[i + 3].u.operand + m_codeBlock->needsFullScopeChain;
+            int skip = instruction[i + 3].u.operand + m_codeBlock->needsFullScopeChain();
 
             emitGetFromCallFrameHeader(RegisterFile::ScopeChain, X86::eax);
             while (skip--)
@@ -544,7 +544,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_put_scoped_var: {
-            int skip = instruction[i + 2].u.operand + m_codeBlock->needsFullScopeChain;
+            int skip = instruction[i + 2].u.operand + m_codeBlock->needsFullScopeChain();
 
             emitGetFromCallFrameHeader(RegisterFile::ScopeChain, X86::edx);
             emitGetVirtualRegister(instruction[i + 3].u.operand, X86::eax, i);
@@ -569,7 +569,7 @@ void JIT::privateCompileMainPass()
         }
         case op_ret: {
             // We could JIT generate the deref, only calling out to C when the refcount hits zero.
-            if (m_codeBlock->needsFullScopeChain)
+            if (m_codeBlock->needsFullScopeChain())
                 emitCTICall(i, Interpreter::cti_op_ret_scopeChain);
 
             // Return the result in %eax.
@@ -598,7 +598,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_resolve: {
-            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
+            Identifier* ident = &(m_codeBlock->identifier(instruction[i + 2].u.operand));
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitCTICall(i, Interpreter::cti_op_resolve);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
@@ -641,7 +641,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_resolve_func: {
-            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
+            Identifier* ident = &(m_codeBlock->identifier(instruction[i + 3].u.operand));
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitCTICall(i, Interpreter::cti_op_resolve_func);
             emitPutVirtualRegister(instruction[i + 2].u.operand, X86::edx);
@@ -704,7 +704,7 @@ void JIT::privateCompileMainPass()
             break;
         };
         case op_resolve_base: {
-            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
+            Identifier* ident = &(m_codeBlock->identifier(instruction[i + 2].u.operand));
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitCTICall(i, Interpreter::cti_op_resolve_base);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
@@ -719,9 +719,9 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_resolve_skip: {
-            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
+            Identifier* ident = &(m_codeBlock->identifier(instruction[i + 2].u.operand));
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
-            emitPutCTIArgConstant(instruction[i + 3].u.operand + m_codeBlock->needsFullScopeChain, 4);
+            emitPutCTIArgConstant(instruction[i + 3].u.operand + m_codeBlock->needsFullScopeChain(), 4);
             emitCTICall(i, Interpreter::cti_op_resolve_skip);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
@@ -730,7 +730,7 @@ void JIT::privateCompileMainPass()
         case op_resolve_global: {
             // Fast case
             unsigned globalObject = asInteger(instruction[i + 2].u.jsCell);
-            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
+            Identifier* ident = &(m_codeBlock->identifier(instruction[i + 3].u.operand));
             void* structureAddress = reinterpret_cast<void*>(instruction + i + 4);
             void* offsetAddr = reinterpret_cast<void*>(instruction + i + 5);
 
@@ -886,7 +886,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_unexpected_load: {
-            JSValue* v = m_codeBlock->unexpectedConstants[instruction[i + 2].u.operand];
+            JSValue* v = m_codeBlock->unexpectedConstant(instruction[i + 2].u.operand);
             __ movl_i32r(asInteger(v), X86::eax);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
@@ -983,7 +983,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_resolve_with_base: {
-            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
+            Identifier* ident = &(m_codeBlock->identifier(instruction[i + 3].u.operand));
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitCTICall(i, Interpreter::cti_op_resolve_with_base);
             emitPutVirtualRegister(instruction[i + 2].u.operand, X86::edx);
@@ -992,7 +992,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_new_func_exp: {
-            FuncExprNode* func = (m_codeBlock->functionExpressions[instruction[i + 2].u.operand]).get();
+            FuncExprNode* func = m_codeBlock->functionExpression(instruction[i + 2].u.operand);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(func), 0);
             emitCTICall(i, Interpreter::cti_op_new_func_exp);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
@@ -1069,7 +1069,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_new_regexp: {
-            RegExp* regExp = m_codeBlock->regexps[instruction[i + 2].u.operand].get();
+            RegExp* regExp = m_codeBlock->regexp(instruction[i + 2].u.operand);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(regExp), 0);
             emitCTICall(i, Interpreter::cti_op_new_regexp);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
@@ -1171,7 +1171,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_push_new_scope: {
-            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
+            Identifier* ident = &(m_codeBlock->identifier(instruction[i + 2].u.operand));
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx);
             emitCTICall(i, Interpreter::cti_op_push_new_scope);
@@ -1262,7 +1262,7 @@ void JIT::privateCompileMainPass()
         }
         case op_put_getter: {
             emitPutCTIArgFromVirtualRegister(instruction[i + 1].u.operand, 0, X86::ecx);
-            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
+            Identifier* ident = &(m_codeBlock->identifier(instruction[i + 2].u.operand));
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 8, X86::ecx);
             emitCTICall(i, Interpreter::cti_op_put_getter);
@@ -1271,7 +1271,7 @@ void JIT::privateCompileMainPass()
         }
         case op_put_setter: {
             emitPutCTIArgFromVirtualRegister(instruction[i + 1].u.operand, 0, X86::ecx);
-            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
+            Identifier* ident = &(m_codeBlock->identifier(instruction[i + 2].u.operand));
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 8, X86::ecx);
             emitCTICall(i, Interpreter::cti_op_put_setter);
@@ -1279,7 +1279,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_new_error: {
-            JSValue* message = m_codeBlock->unexpectedConstants[instruction[i + 3].u.operand];
+            JSValue* message = m_codeBlock->unexpectedConstant(instruction[i + 3].u.operand);
             emitPutCTIArgConstant(instruction[i + 2].u.operand, 0);
             emitPutCTIArgConstant(asInteger(message), 4);
             emitPutCTIArgConstant(m_codeBlock->lineNumberForVPC(&instruction[i]), 8);
@@ -1358,7 +1358,7 @@ void JIT::privateCompileMainPass()
             // Even though CTI doesn't use them, we initialize our constant
             // registers to zap stale pointers, to avoid unnecessarily prolonging
             // object lifetime and increasing GC pressure.
-            size_t count = m_codeBlock->numVars + m_codeBlock->constantRegisters.size();
+            size_t count = m_codeBlock->m_numVars + m_codeBlock->numberOfConstantRegisters();
             for (size_t j = 0; j < count; ++j)
                 emitInitRegister(j);
 
@@ -1369,7 +1369,7 @@ void JIT::privateCompileMainPass()
             // Even though CTI doesn't use them, we initialize our constant
             // registers to zap stale pointers, to avoid unnecessarily prolonging
             // object lifetime and increasing GC pressure.
-            size_t count = m_codeBlock->numVars + m_codeBlock->constantRegisters.size();
+            size_t count = m_codeBlock->m_numVars + m_codeBlock->numberOfConstantRegisters();
             for (size_t j = 0; j < count; ++j)
                 emitInitRegister(j);
 
@@ -1380,7 +1380,7 @@ void JIT::privateCompileMainPass()
             break;
         }
         case op_create_arguments: {
-            emitCTICall(i, (m_codeBlock->numParameters == 1) ? Interpreter::cti_op_create_arguments_no_params : Interpreter::cti_op_create_arguments);
+            emitCTICall(i, (m_codeBlock->m_numParameters == 1) ? Interpreter::cti_op_create_arguments_no_params : Interpreter::cti_op_create_arguments);
             i += 1;
             break;
         }
@@ -1432,8 +1432,8 @@ void JIT::privateCompileMainPass()
         }
     }
 
-    ASSERT(propertyAccessInstructionIndex == m_codeBlock->propertyAccessInstructions.size());
-    ASSERT(callLinkInfoIndex == m_codeBlock->callLinkInfos.size());
+    ASSERT(propertyAccessInstructionIndex == m_codeBlock->numberOfPropertyAccessInstructions());
+    ASSERT(callLinkInfoIndex == m_codeBlock->numberOfCallLinkInfos());
 }
 
 
@@ -1461,7 +1461,7 @@ void JIT::privateCompileSlowCases()
     unsigned propertyAccessInstructionIndex = 0;
     unsigned callLinkInfoIndex = 0;
 
-    Instruction* instruction = m_codeBlock->instructions.begin();
+    Instruction* instruction = m_codeBlock->instructions().begin();
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end(); ++iter) {
         // FIXME: enable peephole optimizations for slow cases when applicable
         killLastResultRegister();
@@ -1604,12 +1604,12 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_put_by_id: {
-            compilePutByIdSlowCase(instruction[i + 1].u.operand, &(m_codeBlock->identifiers[instruction[i + 2].u.operand]), instruction[i + 3].u.operand, i, iter, propertyAccessInstructionIndex++);
+            compilePutByIdSlowCase(instruction[i + 1].u.operand, &(m_codeBlock->identifier(instruction[i + 2].u.operand)), instruction[i + 3].u.operand, i, iter, propertyAccessInstructionIndex++);
             i += 8;
             break;
         }
         case op_get_by_id: {
-            compileGetByIdSlowCase(instruction[i + 1].u.operand, instruction[i + 2].u.operand, &(m_codeBlock->identifiers[instruction[i + 3].u.operand]), i, iter, propertyAccessInstructionIndex++);
+            compileGetByIdSlowCase(instruction[i + 1].u.operand, instruction[i + 2].u.operand, &(m_codeBlock->identifier(instruction[i + 3].u.operand)), i, iter, propertyAccessInstructionIndex++);
             i += 8;
             break;
         }
@@ -1947,8 +1947,8 @@ void JIT::privateCompileSlowCases()
         __ link(__ jmp(), m_labels[i]);
     }
 
-    ASSERT(propertyAccessInstructionIndex == m_codeBlock->propertyAccessInstructions.size());
-    ASSERT(callLinkInfoIndex == m_codeBlock->callLinkInfos.size());
+    ASSERT(propertyAccessInstructionIndex == m_codeBlock->numberOfPropertyAccessInstructions());
+    ASSERT(callLinkInfoIndex == m_codeBlock->numberOfCallLinkInfos());
 }
 
 void JIT::privateCompile()
@@ -1957,7 +1957,7 @@ void JIT::privateCompile()
         __ movl_i32m(reinterpret_cast<unsigned>(m_codeBlock), m_interpreter->sampler()->codeBlockSlot());
 #endif
 #if ENABLE(OPCODE_SAMPLING)
-        __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions.begin()), m_interpreter->sampler()->sampleSlot());
+        __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin()), m_interpreter->sampler()->sampleSlot());
 #endif
 
     // Could use a popl_m, but would need to offset the following instruction if so.
@@ -1966,12 +1966,12 @@ void JIT::privateCompile()
 
     JmpSrc slowRegisterFileCheck;
     JmpDst afterRegisterFileCheck;
-    if (m_codeBlock->codeType == FunctionCode) {
+    if (m_codeBlock->codeType() == FunctionCode) {
         // In the case of a fast linked call, we do not set this up in the caller.
         emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 
         emitGetCTIParam(CTI_ARGS_registerFile, X86::eax);
-        __ leal_mr(m_codeBlock->numCalleeRegisters * sizeof(Register), X86::edi, X86::edx);
+        __ leal_mr(m_codeBlock->m_numCalleeRegisters * sizeof(Register), X86::edi, X86::edx);
         __ cmpl_mr(FIELD_OFFSET(RegisterFile, m_end), X86::eax, X86::edx);
         slowRegisterFileCheck = __ jg();
         afterRegisterFileCheck = __ label();
@@ -1981,7 +1981,7 @@ void JIT::privateCompile()
     privateCompileLinkPass();
     privateCompileSlowCases();
 
-    if (m_codeBlock->codeType == FunctionCode) {
+    if (m_codeBlock->codeType() == FunctionCode) {
         __ link(slowRegisterFileCheck, __ label());
         emitCTICall(0, Interpreter::cti_register_file_check);
         JmpSrc backToBody = __ jmp();
@@ -2020,33 +2020,35 @@ void JIT::privateCompile()
         }
     }
 
-    for (Vector<HandlerInfo>::iterator iter = m_codeBlock->exceptionHandlers.begin(); iter != m_codeBlock->exceptionHandlers.end(); ++iter)
-         iter->nativeCode = __ getRelocatedAddress(code, m_labels[iter->target]);
+    for (size_t i = 0; i < m_codeBlock->numberOfExceptionHandlers(); ++i) {
+        HandlerInfo& handler = m_codeBlock->exceptionHandler(i);
+        handler.nativeCode = __ getRelocatedAddress(code, m_labels[handler.target]);
+    }
 
     for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
         if (iter->to)
             X86Assembler::link(code, iter->from, iter->to);
-        m_codeBlock->ctiReturnAddressVPCMap.add(__ getRelocatedAddress(code, iter->from), iter->bytecodeIndex);
+        m_codeBlock->jitReturnAddressVPCMap().add(__ getRelocatedAddress(code, iter->from), iter->bytecodeIndex);
     }
 
     // Link absolute addresses for jsr
     for (Vector<JSRInfo>::iterator iter = m_jsrSites.begin(); iter != m_jsrSites.end(); ++iter)
         X86Assembler::linkAbsoluteAddress(code, iter->addrPosition, iter->target);
 
-    for (unsigned i = 0; i < m_codeBlock->propertyAccessInstructions.size(); ++i) {
-        StructureStubInfo& info = m_codeBlock->propertyAccessInstructions[i];
+    for (unsigned i = 0; i < m_codeBlock->numberOfPropertyAccessInstructions(); ++i) {
+        StructureStubInfo& info = m_codeBlock->propertyAccessInstruction(i);
         info.callReturnLocation = X86Assembler::getRelocatedAddress(code, m_propertyAccessCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = X86Assembler::getRelocatedAddress(code, m_propertyAccessCompilationInfo[i].hotPathBegin);
     }
-    for (unsigned i = 0; i < m_codeBlock->callLinkInfos.size(); ++i) {
-        CallLinkInfo& info = m_codeBlock->callLinkInfos[i];
+    for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
+        CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
         info.callReturnLocation = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].hotPathBegin);
         info.hotPathOther = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].hotPathOther);
         info.coldPathOther = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].coldPathOther);
     }
 
-    m_codeBlock->ctiCode = code;
+    m_codeBlock->setJITCode(code);
 }
 
 void JIT::privateCompileCTIMachineTrampolines()
@@ -2110,7 +2112,7 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ link(hasCodeBlock1, __ label());
 
     // Check argCount matches callee arity.
-    __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, numParameters), X86::eax);
+    __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, m_numParameters), X86::eax);
     JmpSrc arityCheckOkay1 = __ je();
     __ popl_r(X86::ebx);
     emitPutCTIArg(X86::ebx, 4);
@@ -2152,7 +2154,7 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ link(hasCodeBlock2, __ label());
 
     // Check argCount matches callee arity.
-    __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, numParameters), X86::eax);
+    __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, m_numParameters), X86::eax);
     JmpSrc arityCheckOkay2 = __ je();
     __ popl_r(X86::ebx);
     emitPutCTIArg(X86::ebx, 4);
@@ -2194,7 +2196,7 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ link(hasCodeBlock3, __ label());
 
     // Check argCount matches callee arity.
-    __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, numParameters), X86::eax);
+    __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, m_numParameters), X86::eax);
     JmpSrc arityCheckOkay3 = __ je();
     __ popl_r(X86::ebx);
     emitPutCTIArg(X86::ebx, 4);
@@ -2211,7 +2213,7 @@ void JIT::privateCompileCTIMachineTrampolines()
     compileOpCallInitializeCallFrame();
 
     // load ctiCode from the new codeBlock.
-    __ movl_mr(FIELD_OFFSET(CodeBlock, ctiCode), X86::eax, X86::eax);
+    __ movl_mr(FIELD_OFFSET(CodeBlock, m_jitCode), X86::eax, X86::eax);
 
     __ jmp_r(X86::eax);
 

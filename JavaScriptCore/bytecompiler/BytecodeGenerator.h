@@ -140,7 +140,7 @@ namespace JSC {
 
         RegisterID* destinationForAssignResult(RegisterID* dst)
         {
-            if (dst && dst != ignoredResult() && m_codeBlock->needsFullScopeChain)
+            if (dst && dst != ignoredResult() && m_codeBlock->needsFullScopeChain())
                 return dst->isTemporary() ? dst : newTemporary();
             return 0;
         }
@@ -163,9 +163,9 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
-            if (!m_codeBlock->lineInfo.size() || m_codeBlock->lineInfo.last().lineNumber != n->lineNo()) {
+            if (!m_codeBlock->numberOfLineInfos() || m_codeBlock->lastLineInfo().lineNumber != n->lineNo()) {
                 LineInfo info = { instructions().size(), n->lineNo() };
-                m_codeBlock->lineInfo.append(info);
+                m_codeBlock->addLineInfo(info);
             }
             if (m_emitNodeDepth >= s_maxEmitNodeDepth)
                 return emitThrowExpressionTooDeepException();
@@ -182,7 +182,7 @@ namespace JSC {
 
         void emitExpressionInfo(unsigned divot, unsigned startOffset, unsigned endOffset)
         { 
-            divot -= m_codeBlock->sourceOffset;
+            divot -= m_codeBlock->sourceOffset();
             if (divot > ExpressionRangeInfo::MaxDivot) {
                 // Overflow has occurred, we can only give line number info for errors for this region
                 divot = 0;
@@ -206,12 +206,12 @@ namespace JSC {
             info.divotPoint = divot;
             info.startOffset = startOffset;
             info.endOffset = endOffset;
-            m_codeBlock->expressionInfo.append(info);
+            m_codeBlock->addExpressionInfo(info);
         }
         
         ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsPure)
         {
-            return (m_codeType != FunctionCode || m_codeBlock->needsFullScopeChain || rightHasAssignments) && !rightIsPure;
+            return (m_codeType != FunctionCode || m_codeBlock->needsFullScopeChain() || rightHasAssignments) && !rightIsPure;
         }
 
         ALWAYS_INLINE PassRefPtr<RegisterID> emitNodeForLeftHandSide(ExpressionNode* n, bool rightHasAssignments, bool rightIsPure)
@@ -398,12 +398,11 @@ namespace JSC {
         unsigned addUnexpectedConstant(JSValue*);
         unsigned addRegExp(RegExp*);
 
-        Vector<Instruction>& instructions() { return m_codeBlock->instructions; }
+        Vector<Instruction>& instructions() { return m_codeBlock->instructions(); }
         SymbolTable& symbolTable() { return *m_symbolTable; }
-        Vector<HandlerInfo>& exceptionHandlers() { return m_codeBlock->exceptionHandlers; }
 
         bool shouldOptimizeLocals() { return (m_codeType != EvalCode) && !m_dynamicScopeDepth; }
-        bool canOptimizeNonLocals() { return (m_codeType == FunctionCode) && !m_dynamicScopeDepth && !m_codeBlock->usesEval; }
+        bool canOptimizeNonLocals() { return (m_codeType == FunctionCode) && !m_dynamicScopeDepth && !m_codeBlock->usesEval(); }
 
         RegisterID* emitThrowExpressionTooDeepException();
 

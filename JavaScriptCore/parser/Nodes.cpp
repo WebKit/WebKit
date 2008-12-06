@@ -2465,7 +2465,7 @@ void EvalNode::generateBytecode(ScopeChainNode* scopeChainNode)
 
     m_code.set(new EvalCodeBlock(this, globalObject, source().provider()));
 
-    BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable, m_code.get());
+    BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable(), m_code.get());
     generator.generate();
 
     // Eval code needs to hang on to its declaration stacks to keep declaration info alive until Interpreter::execute time,
@@ -2549,7 +2549,7 @@ void FunctionBodyNode::generateBytecode(ScopeChainNode* scopeChainNode)
 
     m_code.set(new CodeBlock(this, FunctionCode, source().provider(), source().startOffset()));
 
-    BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable, m_code.get());
+    BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable(), m_code.get());
     generator.generate();
 
     destroyData();

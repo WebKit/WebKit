@@ -69,7 +69,7 @@ namespace JSC {
     private:
         struct JSActivationData : public JSVariableObjectData {
             JSActivationData(PassRefPtr<FunctionBodyNode> functionBody, Register* registers)
-                : JSVariableObjectData(&functionBody->generatedBytecode().symbolTable, registers)
+                : JSVariableObjectData(&functionBody->generatedBytecode().symbolTable(), registers)
                 , functionBody(functionBody)
             {
             }

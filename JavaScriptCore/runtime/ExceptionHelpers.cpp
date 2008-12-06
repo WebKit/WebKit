@@ -95,7 +95,7 @@ JSValue* createUndefinedVariableError(ExecState* exec, const Identifier& ident, 
     int line = codeBlock->expressionRangeForVPC(vPC, divotPoint, startOffset, endOffset);
     UString message = "Can't find variable: ";
     message.append(ident.ustring());
-    JSObject* exception = Error::create(exec, ReferenceError, message, line, codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->sourceURL());
+    JSObject* exception = Error::create(exec, ReferenceError, message, line, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());
     exception->putWithAttributes(exec, Identifier(exec, expressionBeginOffsetPropertyName), jsNumber(exec, divotPoint - startOffset), ReadOnly | DontDelete);
     exception->putWithAttributes(exec, Identifier(exec, expressionCaretOffsetPropertyName), jsNumber(exec, divotPoint), ReadOnly | DontDelete);
     exception->putWithAttributes(exec, Identifier(exec, expressionEndOffsetPropertyName), jsNumber(exec, divotPoint + endOffset), ReadOnly | DontDelete);
@@ -106,7 +106,7 @@ bool isStrWhiteSpace(UChar c);
 
 static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, int expressionStart, int expressionStop, JSValue* value, UString error)
 {
-    if (!expressionStop || expressionStart > codeBlock->source->length()) {
+    if (!expressionStop || expressionStart > codeBlock->source()->length()) {
         UString errorText = value->toString(exec);
         errorText.append(" is ");
         errorText.append(error);
@@ -117,14 +117,14 @@ static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, in
     
     if (expressionStart < expressionStop) {
         errorText.append('\'');
-        errorText.append(codeBlock->source->getRange(expressionStart, expressionStop));
+        errorText.append(codeBlock->source()->getRange(expressionStart, expressionStop));
         errorText.append("' [");
         errorText.append(value->toString(exec));
         errorText.append("] is ");
     } else {
         // No range information, so give a few characters of context
-        const UChar* data = codeBlock->source->data();
-        int dataLength = codeBlock->source->length();
+        const UChar* data = codeBlock->source()->data();
+        int dataLength = codeBlock->source()->length();
         int start = expressionStart;
         int stop = expressionStart;
         // Get up to 20 characters of context to the left and right of the divot, clamping to the line.
@@ -138,7 +138,7 @@ static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, in
         while (stop > expressionStart && isStrWhiteSpace(data[stop]))
             stop--;
         errorText.append("near '...");
-        errorText.append(codeBlock->source->getRange(start, stop));
+        errorText.append(codeBlock->source()->getRange(start, stop));
         errorText.append("...' [");
         errorText.append(value->toString(exec));
         errorText.append("] is ");
@@ -159,7 +159,7 @@ JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue* valu
     int divotPoint = 0;
     int line = codeBlock->expressionRangeForVPC(vPC, divotPoint, startOffset, endOffset);
     UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint, divotPoint + endOffset, value, message);
-    JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->sourceURL());
+    JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());
     exception->putWithAttributes(exec, Identifier(exec, expressionBeginOffsetPropertyName), jsNumber(exec, divotPoint - startOffset), ReadOnly | DontDelete);
     exception->putWithAttributes(exec, Identifier(exec, expressionCaretOffsetPropertyName), jsNumber(exec, divotPoint), ReadOnly | DontDelete);
     exception->putWithAttributes(exec, Identifier(exec, expressionEndOffsetPropertyName), jsNumber(exec, divotPoint + endOffset), ReadOnly | DontDelete);
@@ -175,12 +175,12 @@ JSObject* createNotAConstructorError(ExecState* exec, JSValue* value, const Inst
 
     // We're in a "new" expression, so we need to skip over the "new.." part
     int startPoint = divotPoint - (startOffset ? startOffset - 4 : 0); // -4 for "new "
-    const UChar* data = codeBlock->source->data();
+    const UChar* data = codeBlock->source()->data();
     while (startPoint < divotPoint && isStrWhiteSpace(data[startPoint]))
         startPoint++;
     
     UString errorMessage = createErrorMessage(exec, codeBlock, line, startPoint, divotPoint, value, "not a constructor");
-    JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->sourceURL());
+    JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());
     exception->putWithAttributes(exec, Identifier(exec, expressionBeginOffsetPropertyName), jsNumber(exec, divotPoint - startOffset), ReadOnly | DontDelete);
     exception->putWithAttributes(exec, Identifier(exec, expressionCaretOffsetPropertyName), jsNumber(exec, divotPoint), ReadOnly | DontDelete);
     exception->putWithAttributes(exec, Identifier(exec, expressionEndOffsetPropertyName), jsNumber(exec, divotPoint + endOffset), ReadOnly | DontDelete);
@@ -194,7 +194,7 @@ JSValue* createNotAFunctionError(ExecState* exec, JSValue* value, const Instruct
     int divotPoint = 0;
     int line = codeBlock->expressionRangeForVPC(vPC, divotPoint, startOffset, endOffset);
     UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint - startOffset, divotPoint, value, "not a function");
-    JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->sourceURL());    
+    JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());    
     exception->putWithAttributes(exec, Identifier(exec, expressionBeginOffsetPropertyName), jsNumber(exec, divotPoint - startOffset), ReadOnly | DontDelete);
     exception->putWithAttributes(exec, Identifier(exec, expressionCaretOffsetPropertyName), jsNumber(exec, divotPoint), ReadOnly | DontDelete);
     exception->putWithAttributes(exec, Identifier(exec, expressionEndOffsetPropertyName), jsNumber(exec, divotPoint + endOffset), ReadOnly | DontDelete);
@@ -218,7 +218,7 @@ JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error,
     int divotPoint = 0;
     int line = codeBlock->expressionRangeForVPC(vPC, divotPoint, startOffset, endOffset);
     UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint - startOffset, divotPoint, error->isNull() ? jsNull() : jsUndefined(), "not an object");
-    JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->sourceURL());
+    JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());
     exception->putWithAttributes(exec, Identifier(exec, expressionBeginOffsetPropertyName), jsNumber(exec, divotPoint - startOffset), ReadOnly | DontDelete);
     exception->putWithAttributes(exec, Identifier(exec, expressionCaretOffsetPropertyName), jsNumber(exec, divotPoint), ReadOnly | DontDelete);
     exception->putWithAttributes(exec, Identifier(exec, expressionEndOffsetPropertyName), jsNumber(exec, divotPoint + endOffset), ReadOnly | DontDelete);

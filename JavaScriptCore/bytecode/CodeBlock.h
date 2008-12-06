@@ -215,24 +215,26 @@ namespace JSC {
 #endif
     };
 
-    struct CodeBlock {
+    class CodeBlock {
+        friend class JIT;
+    public:
         CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
-            : ownerNode(ownerNode)
-            , globalData(0)
+            : m_numCalleeRegisters(0)
+            , m_numConstants(0)
+            , m_numVars(0)
+            , m_numParameters(0)
+            , m_ownerNode(ownerNode)
+            , m_globalData(0)
 #if ENABLE(JIT)
-            , ctiCode(0)
+            , m_jitCode(0)
 #endif
-            , numCalleeRegisters(0)
-            , numConstants(0)
-            , numVars(0)
-            , numParameters(0)
-            , needsFullScopeChain(ownerNode->needsActivation())
-            , usesEval(ownerNode->usesEval())
-            , codeType(codeType)
-            , source(sourceProvider)
-            , sourceOffset(sourceOffset)
+            , m_needsFullScopeChain(ownerNode->needsActivation())
+            , m_usesEval(ownerNode->usesEval())
+            , m_codeType(codeType)
+            , m_source(sourceProvider)
+            , m_sourceOffset(sourceOffset)
         {
-            ASSERT(source);
+            ASSERT(m_source);
         }
 
         ~CodeBlock();
@@ -244,25 +246,25 @@ namespace JSC {
         void addCaller(CallLinkInfo* caller)
         {
             caller->callee = this;
-            caller->position = linkedCallerList.size();
-            linkedCallerList.append(caller);
+            caller->position = m_linkedCallerList.size();
+            m_linkedCallerList.append(caller);
         }
 
         void removeCaller(CallLinkInfo* caller)
         {
             unsigned pos = caller->position;
-            unsigned lastPos = linkedCallerList.size() - 1;
+            unsigned lastPos = m_linkedCallerList.size() - 1;
 
             if (pos != lastPos) {
-                linkedCallerList[pos] = linkedCallerList[lastPos];
-                linkedCallerList[pos]->position = pos;
+                m_linkedCallerList[pos] = m_linkedCallerList[lastPos];
+                m_linkedCallerList[pos]->position = pos;
             }
-            linkedCallerList.shrink(lastPos);
+            m_linkedCallerList.shrink(lastPos);
         }
 
         inline bool isKnownNotImmediate(int index)
         {
-            if (index == thisRegister)
+            if (index == m_thisRegister)
                 return true;
 
             if (isConstantRegisterIndex(index))
@@ -273,17 +275,17 @@ namespace JSC {
 
         ALWAYS_INLINE bool isConstantRegisterIndex(int index)
         {
-            return index >= numVars && index < numVars + numConstants;
+            return index >= m_numVars && index < m_numVars + m_numConstants;
         }
 
         ALWAYS_INLINE JSValue* getConstant(int index)
         {
-            return constantRegisters[index - numVars].getJSValue();
+            return m_constantRegisters[index - m_numVars].getJSValue();
         }
 
         ALWAYS_INLINE bool isTemporaryRegisterIndex(int index)
         {
-            return index >= numVars + numConstants;
+            return index >= m_numVars + m_numConstants;
         }
 
 #if !defined(NDEBUG) || ENABLE_OPCODE_SAMPLING
@@ -302,15 +304,92 @@ namespace JSC {
 
         StructureStubInfo& getStubInfo(void* returnAddress)
         {
-            return *(binaryChop<StructureStubInfo, void*, getStructureStubInfoReturnLocation>(propertyAccessInstructions.begin(), propertyAccessInstructions.size(), returnAddress));
+            return *(binaryChop<StructureStubInfo, void*, getStructureStubInfoReturnLocation>(m_propertyAccessInstructions.begin(), m_propertyAccessInstructions.size(), returnAddress));
         }
 
         CallLinkInfo& getCallLinkInfo(void* returnAddress)
         {
-            return *(binaryChop<CallLinkInfo, void*, getCallLinkInfoReturnLocation>(callLinkInfos.begin(), callLinkInfos.size(), returnAddress));
+            return *(binaryChop<CallLinkInfo, void*, getCallLinkInfoReturnLocation>(m_callLinkInfos.begin(), m_callLinkInfos.size(), returnAddress));
         }
 
-        void shrinkToFit();
+
+        Vector<Instruction>& instructions() { return m_instructions; }
+#if ENABLE(JIT)
+        void setJITCode(void* jitCode) { m_jitCode = jitCode; }
+        void* jitCode() { return m_jitCode; }
+#endif
+
+        ScopeNode* ownerNode() const { return m_ownerNode; }
+
+        void setGlobalData(JSGlobalData* globalData) { m_globalData = globalData; }
+
+        void setThisRegister(int thisRegister) { m_thisRegister = thisRegister; }
+        int thisRegister() const { return m_thisRegister; }
+
+        void setNeedsFullScopeChain(bool needsFullScopeChain) { m_needsFullScopeChain = needsFullScopeChain; }
+        bool needsFullScopeChain() const { return m_needsFullScopeChain; }
+        void setUsesEval(bool usesEval) { m_usesEval = usesEval; }
+        bool usesEval() const { return m_usesEval; }
+        void setUsesArguments(bool usesArguments) { m_usesArguments = usesArguments; }
+        bool usesArguments() const { return m_usesArguments; }
+
+        CodeType codeType() const { return m_codeType; }
+
+        SourceProvider* source() const { return m_source.get(); }
+        unsigned sourceOffset() const { return m_sourceOffset; }
+
+        void addGlobalResolveInstruction(unsigned globalResolveInstructions) { m_globalResolveInstructions.append(globalResolveInstructions); }
+
+        size_t numberOfPropertyAccessInstructions() const { return m_propertyAccessInstructions.size(); }
+        void addPropertyAccessInstruction(unsigned propertyAccessInstructions) { m_propertyAccessInstructions.append(StructureStubInfo(propertyAccessInstructions)); }
+        StructureStubInfo& propertyAccessInstruction(int index) { return m_propertyAccessInstructions[index]; }
+
+        size_t numberOfCallLinkInfos() const { return m_callLinkInfos.size(); }
+        void addCallLinkInfo() { m_callLinkInfos.append(CallLinkInfo()); }
+        CallLinkInfo& callLinkInfo(int index) { return m_callLinkInfos[index]; }
+
+        size_t numberOfJumpTargets() const { return m_jumpTargets.size(); }
+        void addJumpTarget(unsigned jumpTarget) { m_jumpTargets.append(jumpTarget); }
+        unsigned jumpTarget(int index) const { return m_jumpTargets[index]; }
+        unsigned lastJumpTarget() const { return m_jumpTargets.last(); }
+
+        size_t numberOfExceptionHandlers() const { return m_exceptionHandlers.size(); }
+        void addExceptionHandler(const HandlerInfo& hanler) { return m_exceptionHandlers.append(hanler); }
+        HandlerInfo& exceptionHandler(int index) { return m_exceptionHandlers[index]; }
+
+        void addExpressionInfo(const ExpressionRangeInfo& expressionInfo) { return m_expressionInfo.append(expressionInfo); }
+
+        size_t numberOfLineInfos() const { return m_lineInfo.size(); }
+        void addLineInfo(const LineInfo& lineInfo) { return m_lineInfo.append(lineInfo); }
+        LineInfo& lastLineInfo() { return m_lineInfo.last(); }
+
+#if ENABLE(JIT)
+        HashMap<void*, unsigned>& jitReturnAddressVPCMap() { return m_jitReturnAddressVPCMap; }
+#endif
+
+        // Constant Pool
+
+        size_t numberOfIdentifiers() const { return m_identifiers.size(); }
+        void addIdentifier(const Identifier& i) { return m_identifiers.append(i); }
+        Identifier& identifier(int index) { return m_identifiers[index]; }
+
+        size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
+        void addConstantRegister(const Register& r) { return m_constantRegisters.append(r); }
+        Register& constantRegister(int index) { return m_constantRegisters[index]; }
+
+        unsigned addFunction(FuncDeclNode* n) { unsigned size = m_functions.size(); m_functions.append(n); return size; }
+        FuncDeclNode* function(int index) const { return m_functions[index].get(); }
+
+        unsigned addFunctionExpression(FuncExprNode* n) { unsigned size = m_functionExpressions.size(); m_functionExpressions.append(n); return size; }
+        FuncExprNode* functionExpression(int index) const { return m_functionExpressions[index].get(); }
+
+        unsigned addUnexpectedConstant(JSValue* v) { unsigned size = m_unexpectedConstants.size(); m_unexpectedConstants.append(v); return size; }
+        JSValue* unexpectedConstant(int index) const { return m_unexpectedConstants[index]; }
+
+        unsigned addRegExp(RegExp* r) { unsigned size = m_regexps.size(); m_regexps.append(r); return size; }
+        RegExp* regexp(int index) const { return m_regexps[index].get(); }
+
+        // Jump Tables
 
         size_t numberOfImmediateSwitchJumpTables() const { return m_immediateSwitchJumpTables.size(); }
         SimpleJumpTable& addImmediateSwitchJumpTable() { m_immediateSwitchJumpTables.append(SimpleJumpTable()); return m_immediateSwitchJumpTables.last(); }
@@ -324,86 +403,106 @@ namespace JSC {
         StringJumpTable& addStringSwitchJumpTable() { m_stringSwitchJumpTables.append(StringJumpTable()); return m_stringSwitchJumpTables.last(); }
         StringJumpTable& stringSwitchJumpTable(int tableIndex) { return m_stringSwitchJumpTables[tableIndex]; }
 
-        ScopeNode* ownerNode;
-        JSGlobalData* globalData;
-#if ENABLE(JIT)
-        void* ctiCode;
-#endif
 
-        int numCalleeRegisters;
+        SymbolTable& symbolTable() { return m_symbolTable; }
+        EvalCodeCache& evalCodeCache() { return m_evalCodeCache; }
 
+        void shrinkToFit();
+
+        // FIXME: Make these remaining members private.
+
+        int m_numCalleeRegisters;
         // NOTE: numConstants holds the number of constant registers allocated
         // by the code generator, not the number of constant registers used.
         // (Duplicate constants are uniqued during code generation, and spare
         // constant registers may be allocated.)
-        int numConstants;
-        int numVars;
-        int numParameters;
-        int thisRegister;
-        bool needsFullScopeChain;
-        bool usesEval;
-        bool usesArguments;
-        CodeType codeType;
-        RefPtr<SourceProvider> source;
-        unsigned sourceOffset;
+        int m_numConstants;
+        int m_numVars;
+        int m_numParameters;
 
-        Vector<Instruction> instructions;
-        Vector<unsigned> globalResolveInstructions;
-        Vector<StructureStubInfo> propertyAccessInstructions;
-        Vector<CallLinkInfo> callLinkInfos;
-        Vector<CallLinkInfo*> linkedCallerList;
-
-        // Constant pool
-        Vector<Identifier> identifiers;
-        Vector<RefPtr<FuncDeclNode> > functions;
-        Vector<RefPtr<FuncExprNode> > functionExpressions;
-        Vector<Register> constantRegisters;
-        Vector<JSValue*> unexpectedConstants;
-        Vector<RefPtr<RegExp> > regexps;
-        Vector<HandlerInfo> exceptionHandlers;
-        Vector<ExpressionRangeInfo> expressionInfo;
-        Vector<LineInfo> lineInfo;
-
-#if ENABLE(JIT)
-        HashMap<void*, unsigned> ctiReturnAddressVPCMap;
-#endif
-
-        Vector<unsigned> jumpTargets;
-
-        EvalCodeCache evalCodeCache;
-
-        SymbolTable symbolTable;
     private:
 #if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
 #endif
 
+        ScopeNode* m_ownerNode;
+        JSGlobalData* m_globalData;
+
+        Vector<Instruction> m_instructions;
+#if ENABLE(JIT)
+        void* m_jitCode;
+#endif
+
+        int m_thisRegister;
+
+        bool m_needsFullScopeChain;
+        bool m_usesEval;
+        bool m_usesArguments;
+
+        CodeType m_codeType;
+
+        RefPtr<SourceProvider> m_source;
+        unsigned m_sourceOffset;
+
+        Vector<unsigned> m_globalResolveInstructions;
+        Vector<StructureStubInfo> m_propertyAccessInstructions;
+        Vector<CallLinkInfo> m_callLinkInfos;
+        Vector<CallLinkInfo*> m_linkedCallerList;
+
+        Vector<unsigned> m_jumpTargets;
+
+        Vector<HandlerInfo> m_exceptionHandlers;
+        Vector<ExpressionRangeInfo> m_expressionInfo;
+        Vector<LineInfo> m_lineInfo;
+
+#if ENABLE(JIT)
+        HashMap<void*, unsigned> m_jitReturnAddressVPCMap;
+#endif
+
+        // Constant Pool
+        Vector<Identifier> m_identifiers;
+        Vector<Register> m_constantRegisters;
+        Vector<RefPtr<FuncDeclNode> > m_functions;
+        Vector<RefPtr<FuncExprNode> > m_functionExpressions;
+        Vector<JSValue*> m_unexpectedConstants;
+        Vector<RefPtr<RegExp> > m_regexps;
+
+        // Jump Tables
         Vector<SimpleJumpTable> m_immediateSwitchJumpTables;
         Vector<SimpleJumpTable> m_characterSwitchJumpTables;
         Vector<StringJumpTable> m_stringSwitchJumpTables;
+
+        SymbolTable m_symbolTable;
+
+        EvalCodeCache m_evalCodeCache;
     };
 
     // Program code is not marked by any function, so we make the global object
     // responsible for marking it.
 
-    struct ProgramCodeBlock : public CodeBlock {
+    class ProgramCodeBlock : public CodeBlock {
+    public:
         ProgramCodeBlock(ScopeNode* ownerNode, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider)
             : CodeBlock(ownerNode, codeType, sourceProvider, 0)
-            , globalObject(globalObject)
+            , m_globalObject(globalObject)
         {
-            globalObject->codeBlocks().add(this);
+            m_globalObject->codeBlocks().add(this);
         }
 
         ~ProgramCodeBlock()
         {
-            if (globalObject)
-                globalObject->codeBlocks().remove(this);
+            if (m_globalObject)
+                m_globalObject->codeBlocks().remove(this);
         }
 
-        JSGlobalObject* globalObject; // For program and eval nodes, the global object that marks the constant pool.
+        void clearGlobalObject() { m_globalObject = 0; }
+
+    private:
+        JSGlobalObject* m_globalObject; // For program and eval nodes, the global object that marks the constant pool.
     };
 
-    struct EvalCodeBlock : public ProgramCodeBlock {
+    class EvalCodeBlock : public ProgramCodeBlock {
+    public:
         EvalCodeBlock(ScopeNode* ownerNode, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider)
             : ProgramCodeBlock(ownerNode, EvalCode, globalObject, sourceProvider)
         {

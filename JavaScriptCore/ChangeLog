@@ -1,3 +1,115 @@
+2008-12-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22715
+        Encapsulate more CodeBlock members in preparation
+        of moving some of them to a rare data structure.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::locationForOffset):
+        (JSC::printConditionalJump):
+        (JSC::printGetByIdOp):
+        (JSC::printPutByIdOp):
+        (JSC::CodeBlock::printStructure):
+        (JSC::CodeBlock::printStructures):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::unlinkCallers):
+        (JSC::CodeBlock::derefStructures):
+        (JSC::CodeBlock::refStructures):
+        (JSC::CodeBlock::mark):
+        (JSC::CodeBlock::getHandlerForVPC):
+        (JSC::CodeBlock::nativeExceptionCodeForHandlerVPC):
+        (JSC::CodeBlock::lineNumberForVPC):
+        (JSC::CodeBlock::expressionRangeForVPC):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::addCaller):
+        (JSC::CodeBlock::removeCaller):
+        (JSC::CodeBlock::isKnownNotImmediate):
+        (JSC::CodeBlock::isConstantRegisterIndex):
+        (JSC::CodeBlock::getConstant):
+        (JSC::CodeBlock::isTemporaryRegisterIndex):
+        (JSC::CodeBlock::getStubInfo):
+        (JSC::CodeBlock::getCallLinkInfo):
+        (JSC::CodeBlock::instructions):
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::jitCode):
+        (JSC::CodeBlock::ownerNode):
+        (JSC::CodeBlock::setGlobalData):
+        (JSC::CodeBlock::setThisRegister):
+        (JSC::CodeBlock::thisRegister):
+        (JSC::CodeBlock::setNeedsFullScopeChain):
+        (JSC::CodeBlock::needsFullScopeChain):
+        (JSC::CodeBlock::setUsesEval):
+        (JSC::CodeBlock::usesEval):
+        (JSC::CodeBlock::setUsesArguments):
+        (JSC::CodeBlock::usesArguments):
+        (JSC::CodeBlock::codeType):
+        (JSC::CodeBlock::source):
+        (JSC::CodeBlock::sourceOffset):
+        (JSC::CodeBlock::addGlobalResolveInstruction):
+        (JSC::CodeBlock::numberOfPropertyAccessInstructions):
+        (JSC::CodeBlock::addPropertyAccessInstruction):
+        (JSC::CodeBlock::propertyAccessInstruction):
+        (JSC::CodeBlock::numberOfCallLinkInfos):
+        (JSC::CodeBlock::addCallLinkInfo):
+        (JSC::CodeBlock::callLinkInfo):
+        (JSC::CodeBlock::numberOfJumpTargets):
+        (JSC::CodeBlock::addJumpTarget):
+        (JSC::CodeBlock::jumpTarget):
+        (JSC::CodeBlock::lastJumpTarget):
+        (JSC::CodeBlock::numberOfExceptionHandlers):
+        (JSC::CodeBlock::addExceptionHandler):
+        (JSC::CodeBlock::exceptionHandler):
+        (JSC::CodeBlock::addExpressionInfo):
+        (JSC::CodeBlock::numberOfLineInfos):
+        (JSC::CodeBlock::addLineInfo):
+        (JSC::CodeBlock::lastLineInfo):
+        (JSC::CodeBlock::jitReturnAddressVPCMap):
+        (JSC::CodeBlock::numberOfIdentifiers):
+        (JSC::CodeBlock::addIdentifier):
+        (JSC::CodeBlock::identifier):
+        (JSC::CodeBlock::numberOfConstantRegisters):
+        (JSC::CodeBlock::addConstantRegister):
+        (JSC::CodeBlock::constantRegister):
+        (JSC::CodeBlock::addFunction):
+        (JSC::CodeBlock::function):
+        (JSC::CodeBlock::addFunctionExpression):
+        (JSC::CodeBlock::functionExpression):
+        (JSC::CodeBlock::addUnexpectedConstant):
+        (JSC::CodeBlock::unexpectedConstant):
+        (JSC::CodeBlock::addRegExp):
+        (JSC::CodeBlock::regexp):
+        (JSC::CodeBlock::symbolTable):
+        (JSC::CodeBlock::evalCodeCache):
+        New inline setters/getters.
+
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::ProgramCodeBlock::~ProgramCodeBlock):
+        (JSC::ProgramCodeBlock::clearGlobalObject):
+        * bytecode/SamplingTool.cpp:
+        (JSC::ScopeSampleRecord::sample):
+        (JSC::SamplingTool::dump):
+        * bytecompiler/BytecodeGenerator.cpp:
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/Label.h:
+        * interpreter/CallFrame.cpp:
+        * interpreter/Interpreter.cpp:
+        * jit/JIT.cpp:
+        * jit/JITCall.cpp:
+        * jit/JITInlineMethods.h:
+        * jit/JITPropertyAccess.cpp:
+        * parser/Nodes.cpp:
+        * runtime/Arguments.h:
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSGlobalObject.cpp:
+        Change direct access to use new getter/setters.
+
 2008-12-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
