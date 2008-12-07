@@ -1,3 +1,77 @@
+2008-12-06  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22379
+        Make CSSOM use less memory
+        
+        Use vector instead of a double linked list for properties in CSSMutableStyleDeclaration.
+        
+        Taught setter functions to use existing slots to avoid memory moves, plus some
+        other optimizations.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::operator=):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyCSSValue):
+        (WebCore::CSSMutableStyleDeclaration::removeShorthandProperty):
+        (WebCore::CSSMutableStyleDeclaration::removeProperty):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyPriority):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyShorthand):
+        (WebCore::CSSMutableStyleDeclaration::isPropertyImplicit):
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        (WebCore::CSSMutableStyleDeclaration::setPropertyInternal):
+        (WebCore::CSSMutableStyleDeclaration::setStringProperty):
+        (WebCore::CSSMutableStyleDeclaration::setImageProperty):
+        (WebCore::CSSMutableStyleDeclaration::parseDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperties):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperty):
+        (WebCore::CSSMutableStyleDeclaration::setLengthProperty):
+        (WebCore::CSSMutableStyleDeclaration::length):
+        (WebCore::CSSMutableStyleDeclaration::item):
+        (WebCore::CSSMutableStyleDeclaration::cssText):
+        (WebCore::CSSMutableStyleDeclaration::setCssText):
+        (WebCore::CSSMutableStyleDeclaration::merge):
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet):
+        (WebCore::CSSMutableStyleDeclaration::copy):
+        (WebCore::CSSMutableStyleDeclaration::findPropertyWithId):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclarationConstIterator::operator*):
+        (WebCore::CSSMutableStyleDeclarationConstIterator::operator->):
+        (WebCore::CSSMutableStyleDeclarationConstIterator::operator!=):
+        (WebCore::CSSMutableStyleDeclarationConstIterator::operator==):
+        (WebCore::CSSMutableStyleDeclaration::create):
+        (WebCore::CSSMutableStyleDeclaration::begin):
+        (WebCore::CSSMutableStyleDeclaration::end):
+        (WebCore::CSSMutableStyleDeclarationConstIterator::CSSMutableStyleDeclarationConstIterator):
+        (WebCore::CSSMutableStyleDeclarationConstIterator::~CSSMutableStyleDeclarationConstIterator):
+        (WebCore::CSSMutableStyleDeclarationConstIterator::operator=):
+        (WebCore::CSSMutableStyleDeclarationConstIterator::operator++):
+        (WebCore::CSSMutableStyleDeclarationConstIterator::operator--):
+        * css/CSSProperty.h:
+        (WTF::):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::diff):
+        (WebCore::CSSStyleDeclaration::copyPropertiesInSet):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::resolveVariablesForDeclaration):
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        * dom/EventTarget.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::init):
+        (WebCore::ApplyStyleCommand::isHTMLStyleNode):
+        (WebCore::ApplyStyleCommand::removeHTMLFontStyle):
+        (WebCore::ApplyStyleCommand::removeCSSStyle):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartHasStyle):
+        (WebCore::updateState):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        * editing/markup.cpp:
+        (WebCore::appendStartMarkup):
+
 2008-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

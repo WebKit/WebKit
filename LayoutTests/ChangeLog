@@ -1,3 +1,9 @@
+2008-12-06  Antti Koivisto  <antti@apple.com>
+
+        Reusing property slots changed property ordering in this text.
+
+        * editing/pasteboard/5780697-2-expected.txt:
+
 2008-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Update expected image now that the caret renders in transformed

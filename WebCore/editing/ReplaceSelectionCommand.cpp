@@ -580,8 +580,8 @@ void ReplaceSelectionCommand::handleStyleSpans()
         RefPtr<CSSMutableStyleDeclaration> parentStyle = computedStyle(context->parentNode())->copyInheritableProperties();
         parentStyle->diff(blockquoteStyle.get());
 
-        DeprecatedValueListConstIterator<CSSProperty> end;
-        for (DeprecatedValueListConstIterator<CSSProperty> it = blockquoteStyle->valuesIterator(); it != end; ++it) {
+        CSSMutableStyleDeclaration::const_iterator end = blockquoteStyle->end();
+        for (CSSMutableStyleDeclaration::const_iterator it = blockquoteStyle->begin(); it != end; ++it) {
             const CSSProperty& property = *it;
             sourceDocumentStyle->removeProperty(property.id());
         }        

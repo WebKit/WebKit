@@ -570,8 +570,8 @@ void CSSStyleSelector::resolveVariablesForDeclaration(CSSMutableStyleDeclaration
     // Now iterate over the properties in the original declaration.  As we resolve variables we'll end up
     // mutating the new declaration (possibly expanding shorthands).  The new declaration has no m_node
     // though, so it can't mistakenly call setChanged on anything.
-    DeprecatedValueListConstIterator<CSSProperty> end;
-    for (DeprecatedValueListConstIterator<CSSProperty> it = decl->valuesIterator(); it != end; ++it) {
+    CSSMutableStyleDeclaration::const_iterator end = decl->end();
+    for (CSSMutableStyleDeclaration::const_iterator it = decl->begin(); it != end; ++it) {
         const CSSProperty& current = *it;
         if (!current.value()->isVariableDependentValue()) {
             // We can just add the parsed property directly.
@@ -1257,8 +1257,8 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
             updateFont();
 
         // Add all the animating properties to the list
-        DeprecatedValueListConstIterator<CSSProperty> end;
-        for (DeprecatedValueListConstIterator<CSSProperty> it = kf->style()->valuesIterator(); it != end; ++it)
+        CSSMutableStyleDeclaration::const_iterator end = kf->style()->end();
+        for (CSSMutableStyleDeclaration::const_iterator it = kf->style()->begin(); it != end; ++it)
             list.addProperty((*it).id());
         
         // Add this keyframe style to all the indicated key times
@@ -2656,8 +2656,8 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
 
     for (int i = startIndex; i <= endIndex; i++) {
         CSSMutableStyleDeclaration* decl = m_matchedDecls[i];
-        DeprecatedValueListConstIterator<CSSProperty> end;
-        for (DeprecatedValueListConstIterator<CSSProperty> it = decl->valuesIterator(); it != end; ++it) {
+        CSSMutableStyleDeclaration::const_iterator end = decl->end();
+        for (CSSMutableStyleDeclaration::const_iterator it = decl->begin(); it != end; ++it) {
             const CSSProperty& current = *it;
             // give special priority to font-xxx, color properties
             if (isImportant == current.isImportant()) {

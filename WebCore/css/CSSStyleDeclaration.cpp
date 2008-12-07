@@ -124,22 +124,26 @@ void CSSStyleDeclaration::diff(CSSMutableStyleDeclaration* style) const
     if (!style)
         return;
 
-    Vector<int> properties;
-    DeprecatedValueListConstIterator<CSSProperty> end;
-    for (DeprecatedValueListConstIterator<CSSProperty> it(style->valuesIterator()); it != end; ++it) {
-        const CSSProperty& property = *it;
-        RefPtr<CSSValue> value = getPropertyCSSValue(property.id());
-        if (value && (value->cssText() == property.value()->cssText()))
-            properties.append(property.id());
+    Vector<int> propertiesToRemove;
+    {
+        CSSMutableStyleDeclaration::const_iterator end = style->end();
+        for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
+            const CSSProperty& property = *it;
+            RefPtr<CSSValue> value = getPropertyCSSValue(property.id());
+            if (value && (value->cssText() == property.value()->cssText()))
+                propertiesToRemove.append(property.id());
+        }
     }
 
-    for (unsigned i = 0; i < properties.size(); i++)
-        style->removeProperty(properties[i]);
+    // FIXME: This should use mass removal.
+    for (unsigned i = 0; i < propertiesToRemove.size(); i++)
+        style->removeProperty(propertiesToRemove[i]);
 }
 
 PassRefPtr<CSSMutableStyleDeclaration> CSSStyleDeclaration::copyPropertiesInSet(const int* set, unsigned length) const
 {
-    DeprecatedValueList<CSSProperty> list;
+    Vector<CSSProperty> list;
+    list.reserveCapacity(length);
     unsigned variableDependentValueCount = 0;
     for (unsigned i = 0; i < length; i++) {
         RefPtr<CSSValue> value = getPropertyCSSValue(set[i]);

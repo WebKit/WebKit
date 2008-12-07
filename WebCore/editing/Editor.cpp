@@ -775,8 +775,8 @@ bool Editor::selectionStartHasStyle(CSSStyleDeclaration* style) const
     RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
     
     bool match = true;
-    DeprecatedValueListConstIterator<CSSProperty> end;
-    for (DeprecatedValueListConstIterator<CSSProperty> it = mutableStyle->valuesIterator(); it != end; ++it) {
+    CSSMutableStyleDeclaration::const_iterator end = mutableStyle->end();
+    for (CSSMutableStyleDeclaration::const_iterator it = mutableStyle->begin(); it != end; ++it) {
         int propertyID = (*it).id();
         if (!equalIgnoringCase(mutableStyle->getPropertyValue(propertyID), selectionStyle->getPropertyValue(propertyID))) {
             match = false;
@@ -795,8 +795,8 @@ bool Editor::selectionStartHasStyle(CSSStyleDeclaration* style) const
 
 static void updateState(CSSMutableStyleDeclaration* desiredStyle, CSSComputedStyleDeclaration* computedStyle, bool& atStart, TriState& state)
 {
-    DeprecatedValueListConstIterator<CSSProperty> end;
-    for (DeprecatedValueListConstIterator<CSSProperty> it = desiredStyle->valuesIterator(); it != end; ++it) {
+    CSSMutableStyleDeclaration::const_iterator end = desiredStyle->end();
+    for (CSSMutableStyleDeclaration::const_iterator it = desiredStyle->begin(); it != end; ++it) {
         int propertyID = (*it).id();
         String desiredProperty = desiredStyle->getPropertyValue(propertyID);
         String computedProperty = computedStyle->getPropertyValue(propertyID);

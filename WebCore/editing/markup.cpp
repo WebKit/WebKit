@@ -484,17 +484,19 @@ static void appendStartMarkup(Vector<UChar>& result, const Node *node, const Ran
                     RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = computedStyle(element);
                     RefPtr<CSSMutableStyleDeclaration> fromComputedStyle = CSSMutableStyleDeclaration::create();
                     
-                    DeprecatedValueListConstIterator<CSSProperty> end;
-                    for (DeprecatedValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
-                        const CSSProperty& property = *it;
-                        CSSValue* value = property.value();
-                        // The property value, if it's a percentage, may not reflect the actual computed value.  
-                        // For example: style="height: 1%; overflow: visible;" in quirksmode
-                        // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
-                        if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
-                            if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-                                if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
-                                    fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
+                    {
+                        CSSMutableStyleDeclaration::const_iterator end = style->end();
+                        for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
+                            const CSSProperty& property = *it;
+                            CSSValue* value = property.value();
+                            // The property value, if it's a percentage, may not reflect the actual computed value.  
+                            // For example: style="height: 1%; overflow: visible;" in quirksmode
+                            // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
+                            if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
+                                if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                                    if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
+                                        fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
+                        }
                     }
                     
                     style->merge(fromComputedStyle.get());

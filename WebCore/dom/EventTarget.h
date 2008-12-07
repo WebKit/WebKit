@@ -32,6 +32,7 @@
 #ifndef EventTarget_h
 #define EventTarget_h
 
+#include "DeprecatedValueList.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

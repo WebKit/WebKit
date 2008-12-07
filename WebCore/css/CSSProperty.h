@@ -72,4 +72,9 @@ public:
 
 } // namespace WebCore
 
+namespace WTF {
+    // Properties in Vector can be initialized with memset and moved using memcpy.
+    template<> struct VectorTraits<WebCore::CSSProperty> : SimpleClassVectorTraits { };
+}
+
 #endif // CSSProperty_h
