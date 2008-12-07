@@ -58,7 +58,7 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident,
 #ifdef NDEBUG
     UNUSED_PARAM(propertyAccessInstructionIndex);
 #endif
-    ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].bytecodeIndex == i);
+    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
 
 #ifndef NDEBUG
     JmpDst coldPathBegin = __ label();
@@ -70,7 +70,7 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident,
     emitPutVirtualRegister(resultVReg);
 
     // Track the location of the call; this will be used to recover repatch information.
-    ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].bytecodeIndex == i);
+    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 
@@ -94,7 +94,7 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, 
     JmpSrc call = emitCTICall(i, Interpreter::cti_op_put_by_id_generic);
 
     // Track the location of the call; this will be used to recover repatch information.
-    ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].bytecodeIndex == i);
+    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 

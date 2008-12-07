@@ -1,5 +1,13 @@
 2008-12-06  Sam Weinig  <sam@webkit.org>
 
+        Fix the Gtk build.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+
+2008-12-06  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Cameron Zwarich,
 
         Move CodeBlock constructor into the .cpp file.
