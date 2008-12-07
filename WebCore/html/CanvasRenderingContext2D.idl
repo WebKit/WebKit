@@ -42,6 +42,7 @@ module html {
         void rotate(in float angle);
         void translate(in float tx, in float ty);
         void transform(in float m11, in float m12, in float m21, in float m22, in float dx, in float dy);
+        void setTransform(in float m11, in float m12, in float m21, in float m22, in float dx, in float dy);
 
         attribute float globalAlpha;
         attribute [ConvertNullToNullString] DOMString globalCompositeOperation;

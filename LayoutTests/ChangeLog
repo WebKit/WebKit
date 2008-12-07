@@ -1,3 +1,14 @@
+2008-12-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Added tests for canvas's setTransform() and updated an existing one.
+
+        * fast/canvas/canvas-setTransform-expected.txt: Added.
+        * fast/canvas/canvas-setTransform.html: Added.
+        * fast/canvas/resources/canvas-setTransform.js: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-12-06  Antti Koivisto  <antti@apple.com>
 
         Reusing property slots changed property ordering in this text.

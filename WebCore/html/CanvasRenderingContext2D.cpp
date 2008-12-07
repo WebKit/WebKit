@@ -3,6 +3,7 @@
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +100,7 @@ CanvasRenderingContext2D::State::State()
     , m_shadowColor("black")
     , m_globalAlpha(1)
     , m_globalComposite(CompositeSourceOver)
+    , m_invertibleCTM(true)
     , m_textAlign(StartTextAlign)
     , m_textBaseline(AlphabeticTextBaseline)
     , m_unparsedFont(defaultFont)
@@ -151,6 +153,8 @@ void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> style)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
+    if (!state().m_invertibleCTM)
+        return;
     state().m_strokeStyle->applyStrokeColor(c);
 }
 
@@ -174,6 +178,8 @@ void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> style)
     state().m_fillStyle = style;
     GraphicsContext* c = drawingContext();
     if (!c)
+        return;
+    if (!state().m_invertibleCTM)
         return;
     state().m_fillStyle->applyFillColor(c);
 }
@@ -327,8 +333,18 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
+    if (!state().m_invertibleCTM)
+        return;
+
+    AffineTransform newTransform = state().m_transform;
+    newTransform.scale(sx, sy);
+    if (!newTransform.isInvertible()) {
+        state().m_invertibleCTM = false;
+        return;
+    }
+
+    state().m_transform = newTransform;
     c->scale(FloatSize(sx, sy));
-    state().m_transform.scale(sx, sy);
     m_path.transform(AffineTransform().scale(1.0/sx, 1.0/sy));
 }
 
@@ -337,8 +353,18 @@ void CanvasRenderingContext2D::rotate(float angleInRadians)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
+    if (!state().m_invertibleCTM)
+        return;
+
+    AffineTransform newTransform = state().m_transform;
+    newTransform.rotate(angleInRadians / piDouble * 180.0);
+    if (!newTransform.isInvertible()) {
+        state().m_invertibleCTM = false;
+        return;
+    }
+
+    state().m_transform = newTransform;
     c->rotate(angleInRadians);
-    state().m_transform.rotate(angleInRadians / piDouble * 180.0);
     m_path.transform(AffineTransform().rotate(-angleInRadians / piDouble * 180.0));
 }
 
@@ -347,8 +373,18 @@ void CanvasRenderingContext2D::translate(float tx, float ty)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
+    if (!state().m_invertibleCTM)
+        return;
+
+    AffineTransform newTransform = state().m_transform;
+    newTransform.translate(tx, ty);
+    if (!newTransform.isInvertible()) {
+        state().m_invertibleCTM = false;
+        return;
+    }
+
+    state().m_transform = newTransform;
     c->translate(tx, ty);
-    state().m_transform.translate(tx, ty);
     m_path.transform(AffineTransform().translate(-tx, -ty));
 }
 
@@ -357,15 +393,50 @@ void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float 
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
+    if (!state().m_invertibleCTM)
+        return;
     
     // HTML5 3.14.11.1 -- ignore any calls that pass non-finite numbers
     if (!isfinite(m11) | !isfinite(m21) | !isfinite(dx) | 
         !isfinite(m12) | !isfinite(m22) | !isfinite(dy))
         return;
+
     AffineTransform transform(m11, m12, m21, m22, dx, dy);
+
+    AffineTransform newTransform = state().m_transform;
+    newTransform.multiply(transform);
+    if (!newTransform.isInvertible()) {
+        state().m_invertibleCTM = false;
+        return;
+    }
+
+    state().m_transform = newTransform;
     c->concatCTM(transform);
-    state().m_transform.multiply(transform);
     m_path.transform(transform.inverse());
+}
+
+void CanvasRenderingContext2D::setTransform(float m11, float m12, float m21, float m22, float dx, float dy)
+{
+    GraphicsContext* c = drawingContext();
+    if (!c)
+        return;
+    if (!state().m_invertibleCTM)
+        return;
+    
+    // HTML5 3.14.11.1 -- ignore any calls that pass non-finite numbers
+    if (!isfinite(m11) | !isfinite(m21) | !isfinite(dx) | 
+        !isfinite(m12) | !isfinite(m22) | !isfinite(dy))
+        return;
+
+    AffineTransform ctm = state().m_transform;
+    if (!ctm.isInvertible())
+        return;
+    c->concatCTM(c->getCTM().inverse());
+    c->concatCTM(m_canvas->baseTransform());
+    state().m_transform.multiply(ctm.inverse());
+    m_path.transform(ctm);
+
+    transform(m11, m12, m21, m22, dx, dy);
 }
 
 void CanvasRenderingContext2D::setStrokeColor(const String& color)
@@ -430,17 +501,23 @@ void CanvasRenderingContext2D::setFillColor(float c, float m, float y, float k, 
 
 void CanvasRenderingContext2D::beginPath()
 {
+    if (!state().m_invertibleCTM)
+        return;
     m_path.clear();
 }
 
 void CanvasRenderingContext2D::closePath()
 {
+    if (!state().m_invertibleCTM)
+        return;
     m_path.closeSubpath();
 }
 
 void CanvasRenderingContext2D::moveTo(float x, float y)
 {
     if (!isfinite(x) | !isfinite(y))
+        return;
+    if (!state().m_invertibleCTM)
         return;
     m_path.moveTo(FloatPoint(x, y));
 }
@@ -449,6 +526,8 @@ void CanvasRenderingContext2D::lineTo(float x, float y)
 {
     if (!isfinite(x) | !isfinite(y))
         return;
+    if (!state().m_invertibleCTM)
+        return;
     m_path.addLineTo(FloatPoint(x, y));
 }
 
@@ -456,12 +535,16 @@ void CanvasRenderingContext2D::quadraticCurveTo(float cpx, float cpy, float x, f
 {
     if (!isfinite(cpx) | !isfinite(cpy) | !isfinite(x) | !isfinite(y))
         return;
+    if (!state().m_invertibleCTM)
+        return;
     m_path.addQuadCurveTo(FloatPoint(cpx, cpy), FloatPoint(x, y));
 }
 
 void CanvasRenderingContext2D::bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y)
 {
     if (!isfinite(cp1x) | !isfinite(cp1y) | !isfinite(cp2x) | !isfinite(cp2y) | !isfinite(x) | !isfinite(y))
+        return;
+    if (!state().m_invertibleCTM)
         return;
     m_path.addBezierCurveTo(FloatPoint(cp1x, cp1y), FloatPoint(cp2x, cp2y), FloatPoint(x, y));
 }
@@ -476,7 +559,8 @@ void CanvasRenderingContext2D::arcTo(float x0, float y0, float x1, float y1, flo
         ec = INDEX_SIZE_ERR;
         return;
     }
-    
+    if (!state().m_invertibleCTM)
+        return;
     m_path.addArcTo(FloatPoint(x0, y0), FloatPoint(x1, y1), r);
 }
 
@@ -490,7 +574,8 @@ void CanvasRenderingContext2D::arc(float x, float y, float r, float sa, float ea
         ec = INDEX_SIZE_ERR;
         return;
     }
-    
+    if (!state().m_invertibleCTM)
+        return;
     m_path.addArc(FloatPoint(x, y), r, sa, ea, anticlockwise);
 }
     
@@ -516,7 +601,8 @@ void CanvasRenderingContext2D::rect(float x, float y, float width, float height)
 {
     if (!validateRectForCanvas(x, y, width, height))
         return;
-        
+    if (!state().m_invertibleCTM)
+        return;
     m_path.addRect(FloatRect(x, y, width, height));
 }
 
@@ -533,6 +619,8 @@ void CanvasRenderingContext2D::fill()
 {
     GraphicsContext* c = drawingContext();
     if (!c)
+        return;
+    if (!state().m_invertibleCTM)
         return;
 
     c->beginPath();
@@ -551,6 +639,8 @@ void CanvasRenderingContext2D::stroke()
 {
     GraphicsContext* c = drawingContext();
     if (!c)
+        return;
+    if (!state().m_invertibleCTM)
         return;
     c->beginPath();
     c->addPath(m_path);
@@ -576,6 +666,8 @@ void CanvasRenderingContext2D::clip()
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
+    if (!state().m_invertibleCTM)
+        return;
     c->clip(m_path);
 #if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();
@@ -587,12 +679,11 @@ bool CanvasRenderingContext2D::isPointInPath(const float x, const float y)
     GraphicsContext* c = drawingContext();
     if (!c)
         return false;
-    FloatPoint point(x, y);
-    // We have to invert the current transform to ensure we correctly handle the
-    // transforms applied to the current path.
-    AffineTransform ctm = state().m_transform;
-    if (!ctm.isInvertible())
+    if (!state().m_invertibleCTM)
         return false;
+
+    FloatPoint point(x, y);
+    AffineTransform ctm = state().m_transform;
     FloatPoint transformedPoint = ctm.inverse().mapPoint(point);
     return m_path.contains(transformedPoint);
 }
@@ -603,6 +694,8 @@ void CanvasRenderingContext2D::clearRect(float x, float y, float width, float he
         return;
     GraphicsContext* c = drawingContext();
     if (!c)
+        return;
+    if (!state().m_invertibleCTM)
         return;
     FloatRect rect(x, y, width, height);
     willDraw(rect);
@@ -616,6 +709,8 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
 
     GraphicsContext* c = drawingContext();
     if (!c)
+        return;
+    if (!state().m_invertibleCTM)
         return;
 
     FloatRect rect(x, y, width, height);
@@ -643,6 +738,8 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
 
     GraphicsContext* c = drawingContext();
     if (!c)
+        return;
+    if (!state().m_invertibleCTM)
         return;
 
     FloatRect rect(x, y, width, height);
@@ -887,6 +984,8 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
+    if (!state().m_invertibleCTM)
+        return;
 
     CachedImage* cachedImage = image->cachedImage();
     if (!cachedImage)
@@ -937,6 +1036,8 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
+    if (!state().m_invertibleCTM)
+        return;
         
     FloatRect sourceRect = c->roundToDevicePixels(srcRect);
     FloatRect destRect = c->roundToDevicePixels(dstRect);
@@ -975,6 +1076,8 @@ void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement* image,
 
     GraphicsContext* c = drawingContext();
     if (!c)
+        return;
+    if (!state().m_invertibleCTM)
         return;
 
     CompositeOperator op;
@@ -1060,6 +1163,8 @@ void CanvasRenderingContext2D::willDraw(const FloatRect& r)
 {
     GraphicsContext* c = drawingContext();
     if (!c)
+        return;
+    if (!state().m_invertibleCTM)
         return;
 
     m_canvas->willDraw(c->getCTM().mapRect(r));
@@ -1256,6 +1361,8 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 {
     GraphicsContext* c = drawingContext();
     if (!c)
+        return;
+    if (!state().m_invertibleCTM)
         return;
     
     const Font& font = accessFont();

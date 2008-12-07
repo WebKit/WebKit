@@ -1,3 +1,51 @@
+2008-12-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Add support for setTransform() in canvas.
+
+        <canvas> lacks transform() and setTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=16604
+
+        Test: fast/canvas/canvas-setTransform.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        (WebCore::CanvasRenderingContext2D::scale):
+        (WebCore::CanvasRenderingContext2D::rotate):
+        (WebCore::CanvasRenderingContext2D::translate):
+        (WebCore::CanvasRenderingContext2D::transform):
+        (WebCore::CanvasRenderingContext2D::setTransform):
+        (WebCore::CanvasRenderingContext2D::beginPath):
+        (WebCore::CanvasRenderingContext2D::closePath):
+        (WebCore::CanvasRenderingContext2D::moveTo):
+        (WebCore::CanvasRenderingContext2D::lineTo):
+        (WebCore::CanvasRenderingContext2D::quadraticCurveTo):
+        (WebCore::CanvasRenderingContext2D::bezierCurveTo):
+        (WebCore::CanvasRenderingContext2D::arcTo):
+        (WebCore::CanvasRenderingContext2D::arc):
+        (WebCore::CanvasRenderingContext2D::rect):
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::clip):
+        (WebCore::CanvasRenderingContext2D::isPointInPath):
+        (WebCore::CanvasRenderingContext2D::clearRect):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::CanvasRenderingContext2D::willDraw):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasRenderingContext2D.idl:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::baseTransform):
+        * html/HTMLCanvasElement.h:
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::baseTransform):
+
 2008-12-06  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.

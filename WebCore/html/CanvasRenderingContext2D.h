@@ -105,6 +105,7 @@ namespace WebCore {
         void rotate(float angleInRadians);
         void translate(float tx, float ty);
         void transform(float m11, float m12, float m21, float m22, float dx, float dy);
+        void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
 
         void setStrokeColor(const String& color);
         void setStrokeColor(float grayLevel);
@@ -209,6 +210,7 @@ namespace WebCore {
             float m_globalAlpha;
             CompositeOperator m_globalComposite;
             AffineTransform m_transform;
+            bool m_invertibleCTM;
             
             // Text state.
             TextAlign m_textAlign;

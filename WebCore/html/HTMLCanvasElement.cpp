@@ -267,5 +267,11 @@ ImageBuffer* HTMLCanvasElement::buffer() const
         createImageBuffer();
     return m_imageBuffer.get();
 }
+    
+AffineTransform HTMLCanvasElement::baseTransform() const
+{
+    ASSERT(m_createdImageBuffer);
+    return m_imageBuffer->baseTransform();
+}
 
 }
