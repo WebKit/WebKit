@@ -139,8 +139,11 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
 
     paintReplaced(paintInfo, tx, ty);
     
-    if (drawSelectionTint)
-        paintInfo.context->fillRect(selectionRect(), selectionBackgroundColor());
+    if (drawSelectionTint) {
+        IntRect selectionPaintingRect = localSelectionRect();
+        selectionPaintingRect.move(tx, ty);
+        paintInfo.context->fillRect(selectionPaintingRect, selectionBackgroundColor());
+    }
 }
 
 bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)

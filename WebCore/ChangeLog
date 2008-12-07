@@ -1,5 +1,20 @@
 2008-12-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=15739
+
+        When painting the selection on a replaced element, paint
+        using local coordinates so that the selection is correctly
+        painted for transformed elements.
+
+        Test: fast/replaced/selection-rect-transform.html
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+
+2008-12-06  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt
 
         https://bugs.webkit.org/show_bug.cgi?id=15671

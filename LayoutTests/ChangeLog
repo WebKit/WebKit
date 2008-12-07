@@ -1,5 +1,18 @@
 2008-12-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=15739
+        
+        Testcase for selection painting on a transformed, replaced element.
+        
+        * fast/replaced/selection-rect-transform.html: Added.
+        * platform/mac/fast/replaced/selection-rect-transform-expected.checksum: Added.
+        * platform/mac/fast/replaced/selection-rect-transform-expected.png: Added.
+        * platform/mac/fast/replaced/selection-rect-transform-expected.txt: Added.
+
+2008-12-06  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt
 
         https://bugs.webkit.org/show_bug.cgi?id=15671
