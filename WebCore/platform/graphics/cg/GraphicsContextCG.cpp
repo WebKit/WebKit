@@ -762,7 +762,27 @@ void GraphicsContext::strokeRect(const FloatRect& r, float lineWidth)
 {
     if (paintingDisabled())
         return;
-    CGContextStrokeRectWithWidth(platformContext(), r, lineWidth);
+
+    CGContextRef context = platformContext();
+    switch (m_common->state.strokeColorSpace) {
+    case SolidColorSpace:
+        if (strokeColor().alpha())
+            CGContextStrokeRectWithWidth(context, r, lineWidth);
+        break;
+    case PatternColorSpace:
+        applyStrokePattern(this, m_common->state.strokePattern.get());
+        CGContextStrokeRectWithWidth(context, r, lineWidth);
+        break;
+    case GradientColorSpace:
+        CGContextSaveGState(context);
+        setStrokeThickness(lineWidth);
+        CGContextAddRect(context, r);
+        CGContextReplacePathWithStrokedPath(context);
+        CGContextClip(context);
+        CGContextDrawShading(context, m_common->state.strokeGradient->platformGradient());
+        CGContextRestoreGState(context);
+        break;
+    }
 }
 
 void GraphicsContext::setLineCap(LineCap cap)
