@@ -1,3 +1,13 @@
+2008-12-07  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Cameron Zwarich.
+
+        [GTK] Define ENABLE_JIT_OPTIMIZE_CALL, ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS, ENABLE_JIT_OPTIMIZE_ARITHMETIC
+
+        When building the jit on i*86 also enable the above optimizations.
+
+        * configure.ac:
+
 2008-12-03  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

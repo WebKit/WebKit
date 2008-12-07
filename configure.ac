@@ -582,6 +582,9 @@ if test "$enable_jit" = "yes"; then
         i*86)
             AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
             AC_DEFINE([ENABLE_WREC], [1], [Define to enable WREC])
+            AC_DEFINE([ENABLE_JIT_OPTIMIZE_CALL], [1], [Define to enable optimizing calls])
+            AC_DEFINE([ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS], [1], [Define to enable optimized property access])
+            AC_DEFINE([ENABLE_JIT_OPTIMIZE_ARITHMETIC], [1], [Define to enable optimized arithmetic])
         ;;
         *)
             enable_jit="no (CPU '$target_cpu' not supported)"
