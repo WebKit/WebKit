@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>Transform Repaint Descendants</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <style type="text/css">
+    #box {
+      position:relative;
+      top: 100px;
+      left: 100px;
+      height: 200px;
+      width: 200px;
+      background-color: #CCC;
+      border: 1px solid black;
+    }
+    
+    #box > div {
+      position: absolute;
+      height: 50px;
+      width: 400px;
+      top: 75px;
+      left: 75px;
+      background-color: #555;
+    }
+  </style>
+  <script src="repaint.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+
+    var gAngle = 20;
+    function incrementAngle()
+    {
+      document.getElementById('box').style.webkitTransform = 'rotate(' + gAngle + 'deg)';
+      gAngle += 3;
+    }
+
+    function repaintTest()
+    {
+      incrementAngle();
+    }
+    
+    function startTest()
+    {
+      incrementAngle();
+      window.setTimeout(function() {
+        runRepaintTest();
+        if (window.layoutTestController)
+          layoutTestController.notifyDone();
+      }, 0);
+    }
+  </script>
+</head>
+<body onload="startTest()">
+  <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=22088">https://bugs.webkit.org/show_bug.cgi?id=22088</a>. The rotated box should be correctly redrawn.</p>
+  <div id="box"><div></div></div>
+</body>
+</html>

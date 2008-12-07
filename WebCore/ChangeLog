@@ -83,6 +83,21 @@
 
 2008-12-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Antti Koivisto, Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=22088
+
+        Fix logic related to repainting when transform changes:
+        If an object has a layer, and the transform changes, then we need
+        to do a repaintIncludingDescendants(), not just a repaint.
+        
+        Test: fast/repaint/transform-repaint-descendants.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+
+2008-12-06  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein
 
         https://bugs.webkit.org/show_bug.cgi?id=15739

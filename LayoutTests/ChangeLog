@@ -6,6 +6,19 @@
 
 2008-12-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Antti Koivisto, Dan Bernstein
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22088
+        
+        Testcase for repaint issue when transform changes
+
+        * fast/repaint/transform-repaint-descendants.html: Added.
+        * platform/mac/fast/repaint/transform-repaint-descendants-expected.checksum: Added.
+        * platform/mac/fast/repaint/transform-repaint-descendants-expected.png: Added.
+        * platform/mac/fast/repaint/transform-repaint-descendants-expected.txt: Added.
+
+2008-12-06  Simon Fraser  <simon.fraser@apple.com>
+
         Update expected image now that the caret renders in transformed
         content.
 
