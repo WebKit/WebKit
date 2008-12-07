@@ -1,3 +1,19 @@
+2008-12-07  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Eric Seidel.
+
+        [Gtk+] Use glib's unit test facilities to test the WebKit/Gtk+ API
+
+        https://bugs.webkit.org/show_bug.cgi?id=22491
+
+        Add the skeleton to WebKit/gtk/tests and integrate that into the
+        buildsystem. Testing support was added in glib 2.16. For versions
+        using glib < 2.16 we compile an empty application.
+
+        * tests/main.c: Added. https://bugs.webkit.org/show_bug.cgi?id=21837
+        will be the first consumer.
+        (main):
+
 2008-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
