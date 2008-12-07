@@ -239,28 +239,6 @@ FastMallocStatistics fastMallocStatistics()
     return statistics;
 }
 
-#if HAVE(VIRTUALALLOC)
-void* fastMallocExecutable(size_t n)
-{
-    return VirtualAlloc(0, n, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-}
-
-void fastFreeExecutable(void* p)
-{ 
-    VirtualFree(p, 0, MEM_RELEASE); 
-}
-#else
-void* fastMallocExecutable(size_t n)
-{
-    return fastMalloc(n);
-}
-
-void fastFreeExecutable(void* p)
-{ 
-    fastFree(p);
-}
-#endif
-
 } // namespace WTF
 
 #if PLATFORM(DARWIN)
@@ -3404,16 +3382,6 @@ void* realloc(void* old_ptr, size_t new_size) {
   } else {
     return old_ptr;
   }
-}
-
-void* fastMallocExecutable(size_t n)
-{
-    return malloc<false>(n);
-}
-
-void fastFreeExecutable(void* p)
-{ 
-    free(p);
 }
 
 #ifdef WTF_CHANGES

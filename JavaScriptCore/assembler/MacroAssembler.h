@@ -53,9 +53,10 @@ public:
     {
     }
     
-    void* copyCode()
+    size_t size() { return m_assembler.size(); }
+    void* copyCode(ExecutablePool* allocator)
     {
-        return m_assembler.executableCopy();
+        return m_assembler.executableCopy(allocator);
     }
 
     // Address:

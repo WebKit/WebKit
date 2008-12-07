@@ -333,6 +333,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\interpreter\CallFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\interpreter\CallFrame.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\ClassInfo.h"
 				>
 			</File>
@@ -354,6 +362,10 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\CommonIdentifiers.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Completion.cpp"
 				>
 			</File>
 			<File
@@ -437,14 +449,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\interpreter\CallFrame.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\interpreter\CallFrame.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\FunctionConstructor.cpp"
 				>
 			</File>
@@ -498,10 +502,6 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\InternalFunction.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\Completion.cpp"
 				>
 			</File>
 			<File
@@ -1250,62 +1250,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\jit\JIT.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="false"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\jit\JITCall.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="false"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\jit\JITPropertyAccess.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="false"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\jit\JITArithmetic.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="false"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\jit\JIT.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\jit\JITInlineMethods.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\bytecode\EvalCodeCache.h"
 				>
 			</File>
@@ -1322,19 +1266,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSPropertyNameIterator.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSPropertyNameIterator.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\interpreter\Interpreter.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\interpreter\Interpreter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSPropertyNameIterator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSPropertyNameIterator.h"
 				>
 			</File>
 			<File
@@ -1390,11 +1334,11 @@
 			Name="assembler"
 			>
 			<File
-				RelativePath="..\..\assembler\X86Assembler.h"
+				RelativePath="..\..\assembler\AssemblerBuffer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\assembler\AssemblerBuffer.h"
+				RelativePath="..\..\assembler\X86Assembler.h"
 				>
 			</File>
 		</Filter>
@@ -1405,47 +1349,10 @@
 				RelativePath="..\..\wrec\CharacterClass.cpp"
 				>
 			</File>
-
-			<File
-				RelativePath="..\..\wrec\WRECParser.h"
-				>
-			</File>
-
-			<File
-				RelativePath="..\..\wrec\WRECFunctors.cpp"
-				>
-			</File>
-
-			<File
-				RelativePath="..\..\wrec\WRECGenerator.cpp"
-				>
-			</File>
-
 			<File
 				RelativePath="..\..\wrec\CharacterClass.h"
 				>
 			</File>
-
-			<File
-				RelativePath="..\..\wrec\WRECFunctors.h"
-				>
-			</File>
-
-			<File
-				RelativePath="..\..\wrec\Quantifier.h"
-				>
-			</File>
-
-			<File
-				RelativePath="..\..\wrec\WRECGenerator.h"
-				>
-			</File>
-
-			<File
-				RelativePath="..\..\wrec\WRECParser.cpp"
-				>
-			</File>
-
 			<File
 				RelativePath="..\..\wrec\CharacterClassConstructor.cpp"
 				>
@@ -1455,12 +1362,112 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\wrec\Quantifier.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\wrec\WREC.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\wrec\WREC.h"
 				>
+			</File>
+			<File
+				RelativePath="..\..\wrec\WRECFunctors.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wrec\WRECFunctors.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wrec\WRECGenerator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wrec\WRECGenerator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wrec\WRECParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wrec\WRECParser.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="jit"
+			>
+			<File
+				RelativePath="..\..\jit\JIT.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="false"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\jit\JIT.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\ExecutableAllocator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\ExecutableAllocatorWin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\ExecutableAllocator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITArithmetic.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="false"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITCall.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="false"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITInlineMethods.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITPropertyAccess.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="false"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>

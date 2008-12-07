@@ -30,6 +30,8 @@
 
 #include "CharacterClassConstructor.h"
 #include "Interpreter.h"
+#include "JSGlobalObject.h"
+#include "RegisterFile.h"
 #include "WRECFunctors.h"
 #include "WRECParser.h"
 #include "pcre_internal.h"
@@ -41,7 +43,7 @@ namespace JSC { namespace WREC {
 // This limit comes from the limit set in PCRE
 static const int MaxPatternSize = (1 << 16);
 
-CompiledRegExp Generator::compileRegExp(const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase, bool multiline)
+CompiledRegExp Generator::compileRegExp(JSGlobalData* globalData, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, RefPtr<ExecutablePool>& pool, bool ignoreCase, bool multiline)
 {
     if (pattern.size() > MaxPatternSize) {
         *error_ptr = "Regular expression too large.";
@@ -78,7 +80,8 @@ CompiledRegExp Generator::compileRegExp(const UString& pattern, unsigned* numSub
     }
 
     *numSubpatterns_ptr = parser.numSubpatterns();
-    return reinterpret_cast<CompiledRegExp>(generator.copyCode());
+    pool = globalData->poolForSize(generator.size());
+    return reinterpret_cast<CompiledRegExp>(generator.copyCode(pool.get()));
 }
 
 } } // namespace JSC::WREC

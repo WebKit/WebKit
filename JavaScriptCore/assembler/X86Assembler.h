@@ -210,6 +210,8 @@ public:
     {
     }
 
+    size_t size() const { return m_buffer.size(); }
+    
     void int3()
     {
         m_buffer.putByte(OP_INT3);
@@ -1113,9 +1115,9 @@ public:
         reinterpret_cast<intptr_t*>(where)[-1] = (reinterpret_cast<intptr_t>(destination) - where);
     }
     
-    void* executableCopy()
+    void* executableCopy(ExecutablePool* allocator)
     {
-        void* copy = m_buffer.executableCopy();
+        void* copy = m_buffer.executableCopy(allocator);
         ASSERT(copy);
         return copy;
     }

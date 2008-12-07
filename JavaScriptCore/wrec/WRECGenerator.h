@@ -36,7 +36,11 @@
 #include <wtf/unicode/Unicode.h>
 #include "WREC.h"
 
-namespace JSC { namespace WREC {
+namespace JSC { 
+
+    class JSGlobalData;
+
+    namespace WREC {
 
     class CharacterRange;
     class GenerateAtomFunctor;
@@ -51,8 +55,8 @@ namespace JSC { namespace WREC {
 
         enum ParenthesesType { Capturing, NonCapturing, Assertion, InvertedAssertion, Error };
 
-        static CompiledRegExp compileRegExp(const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
-
+        static CompiledRegExp compileRegExp(JSGlobalData*, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, RefPtr<ExecutablePool>& pool, bool ignoreCase = false, bool multiline = false);
+    
         Generator(Parser& parser)
             : m_parser(parser)
         {

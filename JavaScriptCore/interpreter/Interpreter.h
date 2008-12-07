@@ -333,6 +333,7 @@ namespace JSC {
         SamplingTool* m_sampler;
 
 #if ENABLE(JIT)
+        RefPtr<ExecutablePool> m_executablePool;
         void* m_ctiArrayLengthTrampoline;
         void* m_ctiStringLengthTrampoline;
         void* m_ctiVirtualCallPreLink;

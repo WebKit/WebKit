@@ -1990,7 +1990,9 @@ void JIT::privateCompile()
 
     ASSERT(m_jmpTable.isEmpty());
 
-    void* code = __ executableCopy();
+    RefPtr<ExecutablePool> allocator = m_globalData->poolForSize(__ size());
+    m_codeBlock->setExecutablePool(allocator.get());
+    void* code = __ executableCopy(allocator.get());
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
@@ -2218,8 +2220,8 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ jmp_r(X86::eax);
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-
-    void* code = __ executableCopy();
+    m_interpreter->m_executablePool = m_globalData->poolForSize(__ size());
+    void* code = __ executableCopy(m_interpreter->m_executablePool.get());
 
     X86Assembler::link(code, array_failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_array_fail));
     X86Assembler::link(code, array_failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_array_fail));
@@ -2241,11 +2243,6 @@ void JIT::privateCompileCTIMachineTrampolines()
     m_interpreter->m_ctiVirtualCallPreLink = X86Assembler::getRelocatedAddress(code, virtualCallPreLinkBegin);
     m_interpreter->m_ctiVirtualCallLink = X86Assembler::getRelocatedAddress(code, virtualCallLinkBegin);
     m_interpreter->m_ctiVirtualCall = X86Assembler::getRelocatedAddress(code, virtualCallBegin);
-}
-
-void JIT::freeCTIMachineTrampolines(Interpreter* interpreter)
-{
-    WTF::fastFreeExecutable(interpreter->m_ctiArrayLengthTrampoline);
 }
 
 void JIT::emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst)

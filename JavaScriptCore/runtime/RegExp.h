@@ -23,6 +23,7 @@
 
 #include "UString.h"
 #include "WREC.h"
+#include "ExecutableAllocator.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -34,8 +35,8 @@ namespace JSC {
 
     class RegExp : public RefCounted<RegExp> {
     public:
-        static PassRefPtr<RegExp> create(const UString& pattern);
-        static PassRefPtr<RegExp> create(const UString& pattern, const UString& flags);
+        static PassRefPtr<RegExp> create(JSGlobalData* globalData, const UString& pattern);
+        static PassRefPtr<RegExp> create(JSGlobalData* globalData, const UString& pattern, const UString& flags);
         ~RegExp();
 
         bool global() const { return m_flagBits & Global; }
@@ -52,8 +53,8 @@ namespace JSC {
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
     private:
-        RegExp(const UString& pattern);
-        RegExp(const UString& pattern, const UString& flags);
+        RegExp(JSGlobalData* globalData, const UString& pattern);
+        RegExp(JSGlobalData* globalData, const UString& pattern, const UString& flags);
 
         void compile();
 
@@ -68,6 +69,7 @@ namespace JSC {
 
 #if ENABLE(WREC)
         WREC::CompiledRegExp m_wrecFunction;
+        RefPtr<ExecutablePool> m_executablePool;
 #endif
     };
 

@@ -650,9 +650,6 @@ void Interpreter::initialize(JSGlobalData* globalData)
 
 Interpreter::~Interpreter()
 {
-#if ENABLE(JIT)
-    JIT::freeCTIMachineTrampolines(this);
-#endif
 }
 
 #ifndef NDEBUG

@@ -1,3 +1,98 @@
+2008-12-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich and Sam Weinig
+
+        <rdar://problem/6309878> Need more granular control over allocation of executable memory (21783)
+        <https://bugs.webkit.org/show_bug.cgi?id=21783>
+
+        Add a new allocator for use by the JIT that provides executable pages, so
+        we can get rid of the current hack that makes the entire heap executable.
+
+        1-2% progression on SunSpider-v8, 1% on SunSpider.  Reduces memory usage as well!
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::size):
+        (JSC::AssemblerBuffer::executableCopy):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::size):
+        (JSC::MacroAssembler::copyCode):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::size):
+        (JSC::X86Assembler::executableCopy):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::executablePool):
+        (JSC::CodeBlock::setExecutablePool):
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::derefStructures):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::~Interpreter):
+        * interpreter/Interpreter.h:
+        * jit/ExecutableAllocator.cpp: Added.
+        * jit/ExecutableAllocator.h: Added.
+        (JSC::ExecutablePool::create):
+        (JSC::ExecutablePool::alloc):
+        (JSC::ExecutablePool::~ExecutablePool):
+        (JSC::ExecutablePool::available):
+        (JSC::ExecutablePool::ExecutablePool):
+        (JSC::ExecutablePool::poolAllocate):
+        (JSC::ExecutableAllocator::ExecutableAllocator):
+        (JSC::ExecutableAllocator::poolForSize):
+        (JSC::ExecutablePool::sizeForAllocation):
+        * jit/ExecutableAllocatorMMAP.cpp: Added.
+        (JSC::ExecutableAllocator::intializePageSize):
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+        * jit/ExecutableAllocatorWin.cpp: Added.
+        (JSC::ExecutableAllocator::intializePageSize):
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        (JSC::JIT::compileCTIMachineTrampolines):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePutByIdReplace):
+        * parser/Nodes.cpp:
+        (JSC::RegExpNode::emitBytecode):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::poolForSize):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::create):
+        (JSC::RegExp::~RegExp):
+        * runtime/RegExp.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        * wrec/WREC.cpp:
+        (JSC::WREC::Generator::compileRegExp):
+        * wrec/WRECGenerator.h:
+        * wtf/FastMalloc.cpp:
+        * wtf/FastMalloc.h:
+        * wtf/TCSystemAlloc.cpp:
+        (TryMmap):
+        (TryVirtualAlloc):
+        (TryDevMem):
+        (TCMalloc_SystemRelease):
+
 2008-12-06  Sam Weinig  <sam@webkit.org>
 
         Fix the Gtk build.

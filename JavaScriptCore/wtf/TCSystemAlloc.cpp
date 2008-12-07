@@ -51,14 +51,6 @@
 #include "TCSpinLock.h"
 #include "UnusedParam.h"
 
-#if HAVE(MMAP)
-static const int cProtFlags = PROT_READ | PROT_WRITE
-#if ENABLE(ASSEMBLER) && (PLATFORM(GTK) || (PLATFORM(MAC) && PLATFORM(X86_64)) || PLATFORM(QT))
-                              | PROT_EXEC
-#endif
-                              ;
-#endif
-
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS MAP_ANON
 #endif
@@ -178,7 +170,7 @@ static void* TryMmap(size_t size, size_t *actual_size, size_t alignment) {
     extra = alignment - pagesize;
   }
   void* result = mmap(NULL, size + extra,
-                      cProtFlags,
+                      PROT_READ | PROT_WRITE,
                       MAP_PRIVATE|MAP_ANONYMOUS,
                       -1, 0);
   if (result == reinterpret_cast<void*>(MAP_FAILED)) {
@@ -232,7 +224,7 @@ static void* TryVirtualAlloc(size_t size, size_t *actual_size, size_t alignment)
   }
   void* result = VirtualAlloc(NULL, size + extra,
                               MEM_RESERVE | MEM_COMMIT | MEM_TOP_DOWN, 
-                              PAGE_EXECUTE_READWRITE);
+                              PAGE_READWRITE);
 
   if (result == NULL) {
     VirtualAlloc_failure = true;
@@ -310,7 +302,7 @@ static void* TryDevMem(size_t size, size_t *actual_size, size_t alignment) {
     devmem_failure = true;
     return NULL;
   }
-  void *result = mmap(0, size + extra, cProtFlags,
+  void *result = mmap(0, size + extra, PROT_READ | PROT_WRITE,
                       MAP_SHARED, physmem_fd, physmem_base);
   if (result == reinterpret_cast<void*>(MAP_FAILED)) {
     devmem_failure = true;
@@ -429,7 +421,7 @@ void TCMalloc_SystemRelease(void* start, size_t length)
 #endif
 
 #if HAVE(MMAP)
-  void *newAddress = mmap(start, length, cProtFlags, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
+  void *newAddress = mmap(start, length, PROT_READ | PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
   UNUSED_PARAM(newAddress);
   // If the mmap failed then that's ok, we just won't return the memory to the system.
   ASSERT(newAddress == start || newAddress == reinterpret_cast<void*>(MAP_FAILED));

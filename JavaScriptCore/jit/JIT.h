@@ -358,7 +358,6 @@ namespace JSC {
             JIT jit(globalData);
             jit.privateCompileCTIMachineTrampolines();
         }
-        static void freeCTIMachineTrampolines(Interpreter*);
 
         static void patchGetByIdSelf(CodeBlock* codeBlock, Structure* structure, size_t cachedOffset, void* returnAddress);
         static void patchPutByIdReplace(CodeBlock* codeBlock, Structure* structure, size_t cachedOffset, void* returnAddress);
