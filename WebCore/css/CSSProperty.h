@@ -45,6 +45,7 @@ public:
         m_id = other.m_id;
         m_shorthandID = other.m_shorthandID;
         m_important = other.m_important;
+        m_implicit = other.m_implicit;
         m_value = other.m_value;
         return *this;
     }
