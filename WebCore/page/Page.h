@@ -97,7 +97,10 @@ namespace WebCore {
         bool goBack();
         bool goForward();
         void goToItem(HistoryItem*, FrameLoadType);
-        
+
+        HistoryItem* globalHistoryItem() const { return m_globalHistoryItem.get(); }
+        void setGlobalHistoryItem(HistoryItem*);
+
         void setGroupName(const String&);
         const String& groupName() const;
 
@@ -205,6 +208,8 @@ namespace WebCore {
         
         RefPtr<BackForwardList> m_backForwardList;
         RefPtr<Frame> m_mainFrame;
+
+        RefPtr<HistoryItem> m_globalHistoryItem;
 
         mutable RefPtr<PluginData> m_pluginData;
 

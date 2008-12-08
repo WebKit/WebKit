@@ -1,3 +1,14 @@
+2008-12-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebKit/mac part of tracking the global history item for a WebView
+
+        * WebView/WebView.mm:
+        (-[WebView _globalHistoryItem]): Added. Returns the page's global
+        history item.
+        * WebView/WebViewPrivate.h:
+
 2008-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

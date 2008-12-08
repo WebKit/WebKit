@@ -219,6 +219,11 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
     m_mainFrame->loader()->goToItem(item, type);
 }
 
+void Page::setGlobalHistoryItem(HistoryItem* item)
+{
+    m_globalHistoryItem = item;
+}
+
 void Page::setGroupName(const String& name)
 {
     if (m_group && !m_group->name().isEmpty()) {

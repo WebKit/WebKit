@@ -1,3 +1,26 @@
+2008-12-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebCore part of tracking the global history item for a WebView
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Set the page's
+        global history item to the current back/forward list item, respecting
+        private browsing mode.
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): Ditto in this
+        case.
+        (WebCore::FrameLoader::goToItem): Ditto in this case.
+        (WebCore::FrameLoader::updateHistoryForStandardLoad): If this load
+        creates a new global history item, set the page's global history item
+        to it.
+        (WebCore::FrameLoader::updateHistoryForRedirectWithLockedHistory):
+        Ditto.
+        * page/Page.cpp:
+        (WebCore::Page::setGlobalHistoryItem): Added this setter.
+        * page/Page.h: Added a m_globalHistoryItem data member.
+        (WebCore::Page::globalHistoryItem): Added this getter.
+
 2008-12-08  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Kilzer.

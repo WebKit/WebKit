@@ -1956,6 +1956,13 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     [[self preferences] _postPreferencesChangesNotification];
 }
 
+- (WebHistoryItem *)_globalHistoryItem
+{
+    if (!_private->page)
+        return nil;
+    return kit(_private->page->globalHistoryItem());
+}
+
 - (WebTextIterator *)textIteratorForRect:(NSRect)rect
 {
     IntPoint rectStart(rect.origin.x, rect.origin.y);

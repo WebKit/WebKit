@@ -5066,6 +5066,18 @@ HRESULT STDMETHODCALLTYPE WebView::defersCallbacks(BOOL* defersCallbacks)
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebView::globalHistoryItem(IWebHistoryItem** item)
+{
+    if (!item)
+        return E_POINTER;
+
+    if (!m_page)
+        return E_FAIL;
+
+    *item = WebHistoryItem::createInstance(m_page->globalHistoryItem());
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebView::setAlwaysUsesComplexTextCodePath(BOOL complex)
 {
     WebCoreSetAlwaysUsesComplexTextCodePath(complex);

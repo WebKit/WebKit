@@ -1,3 +1,15 @@
+2008-12-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebKit/win part of tracking the global history item for a WebView
+
+        * Interfaces/IWebViewPrivate.idl: Declared globalHistoryItem()
+        * WebView.cpp:
+        (WebView::globalHistoryItem): Added. Gets the page's global history
+        item.
+        * WebView.h:
+
 2008-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
