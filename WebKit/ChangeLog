@@ -1,3 +1,7 @@
+2008-12-08  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2008-12-05  Dan Bernstein  <mitz@apple.com>
 
         Mac build fix.
