@@ -1,5 +1,18 @@
 2008-12-07  Oliver Hunt  <oliver@apple.com>
 
+        Rubber stamped by Mark Rowe.
+
+        Rename ExecutableAllocatorMMAP to the more sensible ExecutableAllocatorPosix
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorPosix.cpp: Renamed from JavaScriptCore/jit/ExecutableAllocatorMMAP.cpp.
+        (JSC::ExecutableAllocator::intializePageSize):
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+
+2008-12-07  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Cameron Zwarich and Sam Weinig
 
         <rdar://problem/6309878> Need more granular control over allocation of executable memory (21783)
