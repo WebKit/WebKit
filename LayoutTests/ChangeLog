@@ -1,3 +1,12 @@
+2008-12-08  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Disable the WML tests since no platforms build with WML enabled by default and the test failures are annoying.
+
+        * wml/variable-reference-invalid-character.html-disabled: Renamed from LayoutTests/wml/variable-reference-invalid-character.html.
+        * wml/variable-reference-valid.html-disabled: Renamed from LayoutTests/wml/variable-reference-valid.html.
+
 2008-12-08  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Stephanie Lewis.
