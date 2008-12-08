@@ -43,9 +43,16 @@ static const CFStringRef s_cookieCF = CFSTR("Cookie");
 
 typedef Boolean (*IsHTTPOnlyFunction)(CFHTTPCookieRef);
 
+static HMODULE findCFNetworkModule()
+{
+    if (HMODULE module = GetModuleHandleA("CFNetwork"))
+        return module;
+    return GetModuleHandleA("CFNetwork_debug");
+}
+
 static IsHTTPOnlyFunction findIsHTTPOnlyFunction()
 {
-    return reinterpret_cast<IsHTTPOnlyFunction>(GetProcAddress(GetModuleHandleA("CFNetwork"), "CFHTTPCookieIsHTTPOnly"));
+    return reinterpret_cast<IsHTTPOnlyFunction>(GetProcAddress(findCFNetworkModule(), "CFHTTPCookieIsHTTPOnly"));
 }
 
 static bool isHTTPOnly(CFHTTPCookieRef cookie)
