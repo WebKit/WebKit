@@ -30,6 +30,7 @@
 #if ENABLE(ASSEMBLER)
 
 #include <sys/mman.h>
+#include <unistd.h>
 
 namespace JSC {
 

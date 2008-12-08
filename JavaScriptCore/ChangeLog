@@ -1,5 +1,13 @@
 2008-12-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Fix the Linux build with newer gcc/glibc.
+
+        * jit/ExecutableAllocatorPosix.cpp: Include unistd.h for
+        getpagesize(), according to
+        http://opengroup.org/onlinepubs/007908775/xsh/getpagesize.html
+
+2008-12-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Fix the build with Qt on Windows.
 
         * JavaScriptCore.pri: Compile ExecutableAllocatorWin.cpp on Windows.
