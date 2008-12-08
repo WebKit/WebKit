@@ -1,3 +1,11 @@
+2008-12-08  Trenton Schulz <trenton.schulz@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Fix build warning on Mac
+
+        * platform/text/mac/StringImplMac.mm:
+
 2008-12-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix the Qt build.

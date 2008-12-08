@@ -21,6 +21,8 @@
 #include "config.h"
 #include "StringImpl.h"
 
+#include <Foundation/Foundation.h>
+
 namespace WebCore {
 
 StringImpl::operator NSString *()
