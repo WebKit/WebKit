@@ -313,6 +313,12 @@ void FrameView::setCanHaveScrollbars(bool canScroll)
     scrollbarModes(d->m_hmode, d->m_vmode);
 }
 
+PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
+{
+    // FIXME: Custom CSS scrollbar creation code will go here.
+    return ScrollView::createScrollbar(orientation);
+}
+
 void FrameView::adjustViewSize()
 {
     ASSERT(m_frame->view() == this);

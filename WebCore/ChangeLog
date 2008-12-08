@@ -1,3 +1,19 @@
+2008-12-08  David Hyatt  <hyatt@apple.com>
+
+        Make scrollbar creation virtual on ScrollView so that FrameView can have the capability to create
+        custom CSS scrollbars.
+
+        Reviewed by Eric Seidel
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::setHasVerticalScrollbar):
+        (WebCore::ScrollView::createScrollbar):
+        * platform/ScrollView.h:
+
 2008-12-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

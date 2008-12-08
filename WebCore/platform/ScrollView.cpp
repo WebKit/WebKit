@@ -79,7 +79,7 @@ void ScrollView::removeChild(Widget* child)
 void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 {
     if (hasBar && !m_horizontalScrollbar && !platformHasHorizontalAdjustment()) {
-        m_horizontalScrollbar = Scrollbar::createNativeScrollbar(this, HorizontalScrollbar, RegularScrollbar);
+        m_horizontalScrollbar = createScrollbar(HorizontalScrollbar);
         addChild(m_horizontalScrollbar.get());
     } else if (!hasBar && m_horizontalScrollbar) {
         removeChild(m_horizontalScrollbar.get());
@@ -90,12 +90,17 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 void ScrollView::setHasVerticalScrollbar(bool hasBar)
 {
     if (hasBar && !m_verticalScrollbar && !platformHasVerticalAdjustment()) {
-        m_verticalScrollbar = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, RegularScrollbar);
+        m_verticalScrollbar = createScrollbar(VerticalScrollbar);
         addChild(m_verticalScrollbar.get());
     } else if (!hasBar && m_verticalScrollbar) {
         removeChild(m_verticalScrollbar.get());
         m_verticalScrollbar = 0;
     }
+}
+
+PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
+{
+    return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
 }
 
 void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode)
