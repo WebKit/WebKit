@@ -685,23 +685,30 @@ void GraphicsContext::setPlatformShadow(const IntSize& size, int blur, const Col
 {
     if (paintingDisabled())
         return;
+    CGFloat width = size.width();
+    CGFloat height = size.height();
+    CGFloat blurRadius = blur;
     CGContextRef context = platformContext();
-    CGAffineTransform transform = CGContextGetCTM(context);
 
-    CGFloat A = transform.a * transform.a + transform.b * transform.b;
-    CGFloat B = transform.a * transform.c + transform.b * transform.d;
-    CGFloat C = B;
-    CGFloat D = transform.c * transform.c + transform.d * transform.d;
+    if (!m_common->state.shadowsIgnoreTransforms) {
+        CGAffineTransform transform = CGContextGetCTM(context);
 
-    CGFloat smallEigenvalue = narrowPrecisionToCGFloat(sqrt(0.5 * ((A + D) - sqrt(4 * B * C + (A - D) * (A - D)))));
+        CGFloat A = transform.a * transform.a + transform.b * transform.b;
+        CGFloat B = transform.a * transform.c + transform.b * transform.d;
+        CGFloat C = B;
+        CGFloat D = transform.c * transform.c + transform.d * transform.d;
 
-    // Extreme "blur" values can make text drawing crash or take crazy long times, so clamp
-    CGFloat blurRadius = min(blur * smallEigenvalue, narrowPrecisionToCGFloat(1000.0));
+        CGFloat smallEigenvalue = narrowPrecisionToCGFloat(sqrt(0.5 * ((A + D) - sqrt(4 * B * C + (A - D) * (A - D)))));
 
-    CGSize sizeInDeviceSpace = CGSizeApplyAffineTransform(size, transform);
+        // Extreme "blur" values can make text drawing crash or take crazy long times, so clamp
+        blurRadius = min(blur * smallEigenvalue, narrowPrecisionToCGFloat(1000.0));
 
-    CGFloat width = sizeInDeviceSpace.width;
-    CGFloat height = sizeInDeviceSpace.height;
+        CGSize sizeInDeviceSpace = CGSizeApplyAffineTransform(size, transform);
+
+        width = sizeInDeviceSpace.width;
+        height = sizeInDeviceSpace.height;
+
+    }
 
     // Work around <rdar://problem/5539388> by ensuring that the offsets will get truncated
     // to the desired integer.

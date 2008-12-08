@@ -254,6 +254,8 @@ void HTMLCanvasElement::createImageBuffer() const
     if (!size.width() || !size.height())
         return;
     m_imageBuffer.set(ImageBuffer::create(size, false).release());
+
+    m_imageBuffer->context()->setShadowsIgnoreTransforms(true);
 }
 
 GraphicsContext* HTMLCanvasElement::drawingContext() const

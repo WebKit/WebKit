@@ -61,6 +61,7 @@ namespace WebCore {
             , fillColor(Color::black)
             , paintingDisabled(false)
             , shadowBlur(0)
+            , shadowsIgnoreTransforms(false)
         {
         }
 
@@ -91,6 +92,8 @@ namespace WebCore {
         IntSize shadowSize;
         unsigned shadowBlur;
         Color shadowColor;
+
+        bool shadowsIgnoreTransforms;
     };
 
     class GraphicsContextPrivate {

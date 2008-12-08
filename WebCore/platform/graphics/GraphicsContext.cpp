@@ -255,6 +255,11 @@ void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
     m_common->state.fillGradient = gradient;
 }
 
+void GraphicsContext::setShadowsIgnoreTransforms(bool ignoreTransforms)
+{
+    m_common->state.shadowsIgnoreTransforms = ignoreTransforms;
+}
+
 bool GraphicsContext::updatingControlTints() const
 {
     return m_common->m_updatingControlTints;
