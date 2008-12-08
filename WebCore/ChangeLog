@@ -1,3 +1,19 @@
+2008-12-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 22398: r39059: Crash when clearing webkitTransitionDuration in webkitTransitionEnd event handler
+        <rdar://problem/6426245> REGRESSION(r39059): Reproducible crash when clearing webkitTransitionDuration in webkitTransitionEnd event handler (22398)
+
+        This regression was caused by r39059 replacing the protector on the active
+        animation with a protector on just the composition.  It turns out that both
+        protectors are necessary.
+
+        Test: transitions/transition-duration-cleared-in-transitionend-crash.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::animationTimerCallbackFired):
+
 2008-12-08  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

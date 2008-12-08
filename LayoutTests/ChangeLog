@@ -1,3 +1,15 @@
+2008-12-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 22398: r39059: Crash when clearing webkitTransitionDuration in webkitTransitionEnd event handler
+        <rdar://problem/6426245> REGRESSION(r39059): Reproducible crash when clearing webkitTransitionDuration in webkitTransitionEnd event handler (22398)
+
+        Add crash test for this regression -- simply clear the transition duration in the transitionEnd handler.
+
+        * transitions/transition-duration-cleared-in-transitionend-crash-expected.txt: Added.
+        * transitions/transition-duration-cleared-in-transitionend-crash.html: Added.
+
 2008-12-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
