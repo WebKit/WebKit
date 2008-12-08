@@ -2,6 +2,18 @@
 
         Reviewed by NOBODY (Build fix).
 
+        Put ENABLE(ASSEMBLER) guards around use of ExecutableAllocator in global data
+
+        Correct Qt and Gtk project files
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * runtime/JSGlobalData.h:
+
+2008-12-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
         Add new files to other projects.
 
         * GNUmakefile.am:

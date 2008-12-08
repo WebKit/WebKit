@@ -75,7 +75,7 @@ SOURCES += \
     jit/JITArithmetic.cpp \
     jit/JITPropertyAccess.cpp \
     jit/ExecutableAllocator.cpp \
-    jit/ExecutableAllocatorMMAP.cpp \
+    jit/ExecutableAllocatorPosix.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     runtime/ExceptionHelpers.cpp \
     runtime/JSPropertyNameIterator.cpp \

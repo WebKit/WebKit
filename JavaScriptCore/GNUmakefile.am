@@ -78,7 +78,7 @@ javascriptcore_sources += \
 	JavaScriptCore/jit/JITPropertyAccess.cpp \
 	JavaScriptCore/jit/JITArithmetic.cpp \
 	JavaScriptCore/jit/ExecutableAllocator.cpp \
-	JavaScriptCore/jit/ExecutableAllocatorMMAP.cpp \
+	JavaScriptCore/jit/ExecutableAllocatorPosix.cpp \
 	JavaScriptCore/jit/JIT.h \
 	JavaScriptCore/jit/JITInlineMethods.h \
 	JavaScriptCore/bytecode/CodeBlock.cpp \
