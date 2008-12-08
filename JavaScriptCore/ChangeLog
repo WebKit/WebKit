@@ -1,5 +1,15 @@
 2008-12-07  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Add new files to other projects.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.pro:
+
+2008-12-07  Oliver Hunt  <oliver@apple.com>
+
         Rubber stamped by Mark Rowe.
 
         Rename ExecutableAllocatorMMAP to the more sensible ExecutableAllocatorPosix
