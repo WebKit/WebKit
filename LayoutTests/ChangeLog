@@ -1,3 +1,27 @@
+2008-12-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Tests cases for bug 17897: Not Rendering Images Imported from XHTML Document
+        <rdar://problem/5827614>
+
+        - xmlhttprequest-image-not-loaded*: test that an image loaded by an XMLHttpRequest and inserted into a XHTML or SVG Document
+        is properly rendered.
+
+        - image-blocked-src-change.html and image-blocked-src-no-change.html: test that an image that was in error is responding to src attribute change
+          (whether it does really change the url or not).
+
+        * http/tests/misc/image-blocked-src-change-expected.txt: Added.
+        * http/tests/misc/image-blocked-src-change.html: Added.
+        * http/tests/misc/image-blocked-src-no-change-expected.txt: Added.
+        * http/tests/misc/image-blocked-src-no-change.html: Added.
+        * http/tests/xmlhttprequest/resources/load-icon.svg: Added.
+        * http/tests/xmlhttprequest/resources/load-icon.xhtml: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-image-not-loaded-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-image-not-loaded-svg-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-image-not-loaded-svg.svg: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-image-not-loaded.html: Added.
+
 2008-12-08  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Sam Weinig.

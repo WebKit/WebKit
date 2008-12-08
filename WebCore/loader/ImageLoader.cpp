@@ -49,6 +49,7 @@ ImageLoader::~ImageLoader()
 
 void ImageLoader::setImage(CachedImage* newImage)
 {
+    ASSERT(m_failedLoadURL.isEmpty());
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage) {
         setLoadingImage(newImage);
@@ -86,6 +87,9 @@ void ImageLoader::updateFromElement()
 
     AtomicString attr = elem->getAttribute(elem->imageSourceAttributeName());
 
+    if (attr == m_failedLoadURL)
+        return;
+
     // Do not load any image if the 'src' attribute is missing or if it is
     // an empty string referring to a local file. The latter condition is
     // a quirk that preserves old behavior that Dashboard widgets
@@ -100,6 +104,10 @@ void ImageLoader::updateFromElement()
             doc->docLoader()->m_docResources.set(newImage->url(), newImage);
         } else
             newImage = doc->docLoader()->requestImage(sourceURI(attr));
+
+        // If we do not have an image here, it means that a cross-site
+        // violation occurred.
+        m_failedLoadURL = !newImage ? attr : AtomicString();
     }
     
     CachedImage* oldImage = m_image.get();
@@ -119,8 +127,16 @@ void ImageLoader::updateFromElement()
     }
 }
 
+void ImageLoader::updateFromElementIgnoringPreviousError()
+{
+    // Clear previous error.
+    m_failedLoadURL = AtomicString();
+    updateFromElement();
+}
+
 void ImageLoader::notifyFinished(CachedResource *image)
 {
+    ASSERT(m_failedLoadURL.isEmpty());
     m_imageComplete = true;
 
     Element* elem = element();

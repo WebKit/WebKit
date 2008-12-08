@@ -82,7 +82,7 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
         if (renderer() && renderer()->isImage())
             static_cast<RenderImage*>(renderer())->updateAltText();
     } else if (attrName == srcAttr)
-        m_imageLoader.updateFromElement();
+        m_imageLoader.updateFromElementIgnoringPreviousError();
     else if (attrName == widthAttr)
         addCSSLength(attr, CSSPropertyWidth, attr->value());
     else if (attrName == heightAttr)
@@ -185,6 +185,11 @@ void HTMLImageElement::insertedIntoDocument()
         document->addNamedItem(m_name);
         document->addExtraNamedItem(m_id);
     }
+
+    // If we have been inserted from a renderer-less document,
+    // our loader may have not fetched the image, so do it now.
+    if (!m_imageLoader.image())
+        m_imageLoader.updateFromElement();
 
     HTMLElement::insertedIntoDocument();
 }

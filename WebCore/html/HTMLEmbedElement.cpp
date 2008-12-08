@@ -102,7 +102,7 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute* attr)
         if (renderer() && isImageType()) {
             if (!m_imageLoader)
                 m_imageLoader.set(new HTMLImageLoader(this));
-            m_imageLoader->updateFromElement();
+            m_imageLoader->updateFromElementIgnoringPreviousError();
         }
     } else if (attr->name() == hiddenAttr) {
         if (equalIgnoringCase(value.string(), "yes") || equalIgnoringCase(value.string(), "true")) {

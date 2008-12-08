@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004 Apple Computer, Inc.
@@ -25,12 +23,12 @@
 #ifndef ImageLoader_h
 #define ImageLoader_h
 
+#include "AtomicString.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 
 namespace WebCore {
 
-class AtomicString;
 class Element;
 
 class ImageLoader : public CachedResourceClient {
@@ -39,6 +37,11 @@ public:
     virtual ~ImageLoader();
 
     void updateFromElement();
+
+    // This method should be called after the 'src' attribute
+    // is set (even when it is not modified) to force the update
+    // and match Firefox and Opera.
+    void updateFromElementIgnoringPreviousError();
 
     virtual void dispatchLoadEvent() = 0;
     virtual String sourceURI(const AtomicString&) const = 0;
@@ -63,6 +66,7 @@ protected:
 private:
     Element* m_element;
     CachedResourceHandle<CachedImage> m_image;
+    AtomicString m_failedLoadURL;
     bool m_firedLoad : 1;
     bool m_imageComplete : 1;
     bool m_loadManually : 1;

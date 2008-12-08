@@ -644,7 +644,7 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         if (renderer() && inputType() == IMAGE) {
             if (!m_imageLoader)
                 m_imageLoader.set(new HTMLImageLoader(this));
-            m_imageLoader->updateFromElement();
+            m_imageLoader->updateFromElementIgnoringPreviousError();
         }
     } else if (attr->name() == usemapAttr ||
                attr->name() == accesskeyAttr) {

@@ -93,7 +93,7 @@ void HTMLVideoElement::parseMappedAttribute(MappedAttribute* attr)
         if (m_shouldShowPosterImage) {
             if (!m_imageLoader)
                 m_imageLoader.set(new HTMLImageLoader(this));
-            m_imageLoader->updateFromElement();
+            m_imageLoader->updateFromElementIgnoringPreviousError();
         }
     } else if (attrName == widthAttr)
         addCSSLength(attr, CSSPropertyWidth, attr->value());

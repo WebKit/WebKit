@@ -1,3 +1,53 @@
+2008-12-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 17897: Not Rendering Images Imported from XHTML Document
+        <rdar://problem/5827614>
+
+        When we were loading document with XMLHttpRequest that contained images, the images
+        would not be fetched as they would not be displayed. However if we inserted such
+        an image element into a rendered document, we would not fetch the image and thus never
+        display it.
+
+        Now we check if the image has been loaded when we insert an HTMLImageElement into a
+        document.
+        To enable this, the image loader has an error flag. To avoid doing several attempts
+        when we know that the image is in error, we store the failed URL.
+        However Firefox and Opera ignore errors when the 'src' attribute changes and thus
+        we also have an updateFromElementIgnoringPreviousError to match the other browser.
+
+        Tests: http/tests/misc/image-blocked-src-change.html
+               http/tests/misc/image-blocked-src-no-change.html
+               http/tests/xmlhttprequest/xmlhttprequest-image-not-loaded-svg.svg
+               http/tests/xmlhttprequest/xmlhttprequest-image-not-loaded.html
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute): Changed to call updateFromElementIgnoringPreviousError.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute): Ditto.
+        (WebCore::HTMLImageElement::insertedIntoDocument): Call updateFromElement if we do not have
+        an image.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute): Changed to call updateFromElementIgnoringPreviousError.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute): Ditto.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseMappedAttribute): Ditto.
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::setImage): Added an assertion.
+        (WebCore::ImageLoader::updateFromElement): Added a check for load error (to avoid displaying
+        multiple errors in the console for a single image load).
+
+        (WebCore::ImageLoader::updateFromElementIgnoringPreviousError): This method clears previous error
+        before calling updateFromElement.
+
+        (WebCore::ImageLoader::notifyFinished): Added an assertion.
+        * loader/ImageLoader.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged): Changed to call updateFromElementIgnoringPreviousError.
+
 2008-12-08  David Hyatt  <hyatt@apple.com>
 
         Make scrollbar creation virtual on ScrollView so that FrameView can have the capability to create
