@@ -118,7 +118,6 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSPluginElementFunctions.cpp
         bindings/js/ScriptController.cpp
         bindings/js/ScriptValue.cpp
-        bindings/js/PausedTimeouts.cpp
         bindings/js/ScheduledAction.cpp
     </set>
 

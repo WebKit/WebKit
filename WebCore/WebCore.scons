@@ -679,7 +679,6 @@ sources['bindings/js'] = [
     "bindings/js/JSXMLHttpRequestUploadCustom.cpp",
     "bindings/js/JSXSLTProcessorConstructor.cpp",
     "bindings/js/JSXSLTProcessorCustom.cpp",
-    "bindings/js/PausedTimeouts.cpp",
     "bindings/js/ScheduledAction.cpp",
     "bindings/js/ScriptController.cpp",
     "bindings/js/ScriptValue.cpp",
