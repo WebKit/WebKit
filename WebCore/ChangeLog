@@ -1,3 +1,40 @@
+2008-12-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22717
+        Make CSS values use less memory
+
+        Get CSSValues off from the common StyleBase base class. They don't
+        need a parent pointer or anything else there and there is no real
+        reason to have them in same data structures with other CSSOM objects.
+        
+        Disabled (instead of refactoring around the lack of common base) the ability 
+        to have style declaration blocks as CSS variable values. They don't exist in 
+        the spec so I wasn't sure if they have future or not. It would not be hard to 
+        get them back. CSS variables are in any case an experimental feature and 
+        not enabled by default.
+
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::createExplicit):
+        (WebCore::CSSInitialValue::createImplicit):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addVariableDeclarationBlock):
+        * css/CSSParser.h:
+        * css/CSSValue.h:
+        (WebCore::CSSValue::~CSSValue):
+        (WebCore::CSSValue::parserValue):
+        * css/CSSVariablesDeclaration.cpp:
+        (WebCore::CSSVariablesDeclaration::CSSVariablesDeclaration):
+        (WebCore::CSSVariablesDeclaration::getVariableValue):
+        (WebCore::CSSVariablesDeclaration::removeVariable):
+        (WebCore::CSSVariablesDeclaration::addParsedVariable):
+        (WebCore::CSSVariablesDeclaration::getParsedVariable):
+        (WebCore::CSSVariablesDeclaration::getParsedVariableDeclarationBlock):
+        * css/CSSVariablesDeclaration.h:
+        (WebCore::CSSVariablesDeclaration::create):
+        * css/StyleBase.h:
+
 2008-12-07  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

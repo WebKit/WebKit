@@ -30,11 +30,13 @@ class CSSInitialValue : public CSSValue {
 public:
     static PassRefPtr<CSSInitialValue> createExplicit()
     {
-        return adoptRef(new CSSInitialValue(false));
+        static CSSInitialValue* explicitValue = new CSSInitialValue(false);
+        return explicitValue;
     }
     static PassRefPtr<CSSInitialValue> createImplicit()
     {
-        return adoptRef(new CSSInitialValue(true));
+        static CSSInitialValue* explicitValue = new CSSInitialValue(true);
+        return explicitValue;
     }
 
     virtual String cssText() const;
