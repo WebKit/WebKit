@@ -161,6 +161,8 @@ namespace JSC {
         CodeBlock(ScopeNode* ownerNode, CodeType, PassRefPtr<SourceProvider>, unsigned sourceOffset);
         ~CodeBlock();
 
+        static void dumpStatistics();
+
 #if ENABLE(JIT) 
         void unlinkCallers();
 #endif

@@ -37,6 +37,8 @@
 #include <stdio.h>
 #include <wtf/StringExtras.h>
 
+#define DUMP_CODE_BLOCK_STATISTICS 0
+
 namespace JSC {
 
 #if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
@@ -954,6 +956,21 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
 
 #endif // !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
 
+#if DUMP_CODE_BLOCK_STATISTICS
+static HashSet<CodeBlock*> liveCodeBlockSet;
+#endif
+
+void CodeBlock::dumpStatistics()
+{
+#if DUMP_CODE_BLOCK_STATISTICS
+    printf("Number of live CodeBlocks: %d\n", liveCodeBlockSet.size());
+    printf("Size of a single CodeBlock [sizeof(CodeBlock)]: %zu\n", sizeof(CodeBlock));
+#else
+    printf("Dumping CodeBlock statistics is not enabled.\n");
+#endif
+}
+
+
 CodeBlock::CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
     : m_numCalleeRegisters(0)
     , m_numConstants(0)
@@ -971,6 +988,10 @@ CodeBlock::CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceP
     , m_sourceOffset(sourceOffset)
 {
     ASSERT(m_source);
+
+#if DUMP_CODE_BLOCK_STATISTICS
+    liveCodeBlockSet.add(this);
+#endif
 }
 
 CodeBlock::~CodeBlock()
@@ -990,6 +1011,10 @@ CodeBlock::~CodeBlock()
 
 #if ENABLE(JIT) 
     unlinkCallers();
+#endif
+
+#if DUMP_CODE_BLOCK_STATISTICS
+    liveCodeBlockSet.remove(this);
 #endif
 }
 
