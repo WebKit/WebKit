@@ -82,25 +82,14 @@ public:
         CSS_TURN = 108
     };
 
-    static PassRefPtr<CSSPrimitiveValue> createIdentifier(int ident)
-    {
-        return adoptRef(new CSSPrimitiveValue(ident));
-    }
-    static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue)
-    {
-        return adoptRef(new CSSPrimitiveValue(rgbValue));
-    }
+    static PassRefPtr<CSSPrimitiveValue> createIdentifier(int ident);
+    static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue);
+    static PassRefPtr<CSSPrimitiveValue> create(double value, UnitTypes type);
+    static PassRefPtr<CSSPrimitiveValue> create(const String& value, UnitTypes type);
+    
     template<typename T> static PassRefPtr<CSSPrimitiveValue> create(T value)
     {
         return adoptRef(new CSSPrimitiveValue(value));
-    }
-    static PassRefPtr<CSSPrimitiveValue> create(double value, UnitTypes type)
-    {
-        return adoptRef(new CSSPrimitiveValue(value, type));
-    }
-    static PassRefPtr<CSSPrimitiveValue> create(const String& value, UnitTypes type)
-    {
-        return adoptRef(new CSSPrimitiveValue(value, type));
     }
 
     virtual ~CSSPrimitiveValue();

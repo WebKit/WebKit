@@ -41,6 +41,78 @@ using namespace WTF;
 
 namespace WebCore {
 
+// A more stylish solution than sharing would be to turn CSSPrimitiveValue (or CSSValues in general) into non-virtual,
+// non-refcounted simple type with value semantics. In practice these sharing tricks get similar memory benefits 
+// with less need for refactoring.
+
+PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::createIdentifier(int ident)
+{
+    static RefPtr<CSSPrimitiveValue>* identValueCache = new RefPtr<CSSPrimitiveValue>[numCSSValueKeywords];
+    if (ident >= 0 && ident < numCSSValueKeywords) {
+        RefPtr<CSSPrimitiveValue> primitiveValue;
+        if (!(primitiveValue = identValueCache[ident])) {
+            primitiveValue = adoptRef(new CSSPrimitiveValue(ident));
+            identValueCache[ident] = primitiveValue;
+        }
+        return primitiveValue.release();
+    } 
+    return adoptRef(new CSSPrimitiveValue(ident));
+}
+
+PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::createColor(unsigned rgbValue)
+{
+    typedef HashMap<unsigned, RefPtr<CSSPrimitiveValue> > ColorValueCache;
+    static ColorValueCache* colorValueCache = new ColorValueCache;
+    // These are the empty and deleted values of the hash table.
+    if (rgbValue == Color::transparent) {
+        static CSSPrimitiveValue* colorTransparent = new CSSPrimitiveValue(Color::transparent);
+        return colorTransparent;
+    }
+    if (rgbValue == Color::white) {
+        static CSSPrimitiveValue* colorWhite = new CSSPrimitiveValue(Color::white);
+        return colorWhite;
+    }
+    RefPtr<CSSPrimitiveValue> primitiveValue = colorValueCache->get(rgbValue);
+    if (primitiveValue)
+        return primitiveValue.release();
+    primitiveValue = adoptRef(new CSSPrimitiveValue(rgbValue));
+    // Just wipe out the cache and start rebuilding when it gets too big.
+    const int maxColorCacheSize = 512;
+    if (colorValueCache->size() >= maxColorCacheSize)
+        colorValueCache->clear();
+    colorValueCache->add(rgbValue, primitiveValue);
+    
+    return primitiveValue.release();
+}
+
+PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::create(double value, UnitTypes type)
+{
+    // Small integers are very common. Try to share them.
+    const int cachedIntegerCount = 128;
+    // Other common primitive types have UnitTypes smaller than this.
+    const int maxCachedUnitType = CSS_PX;
+    typedef RefPtr<CSSPrimitiveValue>(* IntegerValueCache)[maxCachedUnitType + 1];
+    static IntegerValueCache integerValueCache = new RefPtr<CSSPrimitiveValue>[cachedIntegerCount][maxCachedUnitType + 1];
+    if (type <= CSS_PX && value >= 0 && value < cachedIntegerCount) {
+        int intValue = static_cast<int>(value);
+        if (value == intValue) {
+            RefPtr<CSSPrimitiveValue> primitiveValue;
+            if (!(primitiveValue = integerValueCache[intValue][type])) {
+                primitiveValue = adoptRef(new CSSPrimitiveValue(value, type));
+                integerValueCache[intValue][type] = primitiveValue;
+            }
+            return primitiveValue.release();
+        }
+    }
+
+    return adoptRef(new CSSPrimitiveValue(value, type));
+}
+
+PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::create(const String& value, UnitTypes type)
+{
+    return adoptRef(new CSSPrimitiveValue(value, type));
+}
+
 static const char* valueOrPropertyName(int valueOrPropertyID)
 {
     if (const char* valueName = getValueName(valueOrPropertyID))
