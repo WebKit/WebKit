@@ -1,3 +1,15 @@
+2008-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=22594
+        
+        Testcase for fetching inline style for -webkit-transform-origin
+        and -webkit-transition.
+
+        * fast/css/transform-inline-style-expected.txt: Added.
+        * fast/css/transform-inline-style.html: Added.
+
 2008-12-07  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -2358,9 +2358,9 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationProperty()
     if (result)
         return CSSPrimitiveValue::createIdentifier(result);
     if (equalIgnoringCase(value->string, "all"))
-        return CSSPrimitiveValue::createIdentifier(cAnimateAll); // FIXME: Why not use CSSValueAll instead?
+        return CSSPrimitiveValue::createIdentifier(CSSValueAll);
     if (equalIgnoringCase(value->string, "none"))
-        return CSSPrimitiveValue::createIdentifier(cAnimateNone); // FIXME: Why not use CSSValueNone instead?
+        return CSSPrimitiveValue::createIdentifier(CSSValueNone);
     return 0;
 }
 
