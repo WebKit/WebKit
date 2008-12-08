@@ -49,8 +49,8 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::createIdentifier(int ident)
 {
     static RefPtr<CSSPrimitiveValue>* identValueCache = new RefPtr<CSSPrimitiveValue>[numCSSValueKeywords];
     if (ident >= 0 && ident < numCSSValueKeywords) {
-        RefPtr<CSSPrimitiveValue> primitiveValue;
-        if (!(primitiveValue = identValueCache[ident])) {
+        RefPtr<CSSPrimitiveValue> primitiveValue = identValueCache[ident];
+        if (!primitiveValue) {
             primitiveValue = adoptRef(new CSSPrimitiveValue(ident));
             identValueCache[ident] = primitiveValue;
         }
@@ -93,11 +93,11 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::create(double value, UnitTypes 
     const int maxCachedUnitType = CSS_PX;
     typedef RefPtr<CSSPrimitiveValue>(* IntegerValueCache)[maxCachedUnitType + 1];
     static IntegerValueCache integerValueCache = new RefPtr<CSSPrimitiveValue>[cachedIntegerCount][maxCachedUnitType + 1];
-    if (type <= CSS_PX && value >= 0 && value < cachedIntegerCount) {
+    if (type <= maxCachedUnitType && value >= 0 && value < cachedIntegerCount) {
         int intValue = static_cast<int>(value);
         if (value == intValue) {
-            RefPtr<CSSPrimitiveValue> primitiveValue;
-            if (!(primitiveValue = integerValueCache[intValue][type])) {
+            RefPtr<CSSPrimitiveValue> primitiveValue = integerValueCache[intValue][type];
+            if (!primitiveValue) {
                 primitiveValue = adoptRef(new CSSPrimitiveValue(value, type));
                 integerValueCache[intValue][type] = primitiveValue;
             }

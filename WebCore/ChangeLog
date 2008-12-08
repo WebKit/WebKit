@@ -1,3 +1,13 @@
+2008-12-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        A few stylistic fixes suggested by Dave Kilzer.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::createIdentifier):
+        (WebCore::CSSPrimitiveValue::create):
+
 2008-12-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
