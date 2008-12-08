@@ -1,3 +1,15 @@
+2008-12-08  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22555: Sort "children" sections in Xcode project files
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22555>
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/sort-Xcode-project-file: By popular request, don't sort
+        the mainGroup in the project (the list of items below the top-level
+        project file).
+
 2008-12-05  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22555: Sort "children" sections in Xcode project files

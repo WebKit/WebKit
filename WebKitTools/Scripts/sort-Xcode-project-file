@@ -74,6 +74,14 @@ for my $projectFile (@ARGV) {
         next;
     }
 
+    # Grab the mainGroup for the project file
+    my $mainGroup = "";
+    open(IN, "< $projectFile") || die "Could not open $projectFile: $!";
+    while (my $line = <IN>) {
+        $mainGroup = $2 if $line =~ m#^(\s*)mainGroup = ([0-9A-F]{24} /\* .+ \*/);$#;
+    }
+    close(IN);
+
     my ($OUT, $tempFileName) = tempfile(
         basename($projectFile) . "-XXXXXXXX",
         DIR => dirname($projectFile),
@@ -87,6 +95,7 @@ for my $projectFile (@ARGV) {
         unlink($tempFileName);
     };
 
+    my @lastTwo = ();
     open(IN, "< $projectFile") || die "Could not open $projectFile: $!";
     while (my $line = <IN>) {
         if ($line =~ /^(\s*)files = \(\s*$/) {
@@ -113,11 +122,19 @@ for my $projectFile (@ARGV) {
                 }
                 push @children, $childLine;
             }
-            print $OUT sort sortChildrenByFileName @children;
+            if ($lastTwo[0] =~ m#^\s+\Q$mainGroup\E = \{$#) {
+                # Don't sort mainGroup
+                print $OUT @children;
+            } else {
+                print $OUT sort sortChildrenByFileName @children;
+            }
             print $OUT $endMarker;
         } else {
             print $OUT $line;
         }
+
+        push @lastTwo, $line;
+        shift @lastTwo if scalar(@lastTwo) > 2;
     }
     close(IN);
     close($OUT);
