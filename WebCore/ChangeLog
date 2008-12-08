@@ -1,3 +1,13 @@
+2008-12-08  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Stephanie Lewis.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22301
+        Make dispatchDidFinishLoading() always fire before didFinishLoadForFrame().
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedParsing):
+
 2008-12-08  Trenton Schulz <trenton.schulz@nokia.com>
 
         Rubber-stamped by Tor Arne Vestbø.

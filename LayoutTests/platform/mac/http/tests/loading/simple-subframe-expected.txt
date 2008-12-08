@@ -3,9 +3,9 @@ main frame - didCommitLoadForFrame
 frame "f1" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 frame "f1" - didCommitLoadForFrame
+frame "f1" - didFinishDocumentLoadForFrame
 frame "f1" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
-frame "f1" - didFinishDocumentLoadForFrame
 frame "f1" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
 layer at (0,0) size 800x600

@@ -3,6 +3,7 @@ main frame - didCommitLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
 This test provokes HTMLTokenizer::timerFired to be called and from within timerFired we want to call WebCore::pageDestroyed.
