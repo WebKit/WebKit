@@ -1,5 +1,14 @@
 2008-12-07  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Buildfix).
+
+        Fix non-WREC builds
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+
+2008-12-07  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Build fix).
 
         Put ENABLE(ASSEMBLER) guards around use of ExecutableAllocator in global data
