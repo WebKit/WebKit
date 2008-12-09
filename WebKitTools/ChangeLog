@@ -1,3 +1,9 @@
+2008-12-08  Stephanie Lewis  <slewis@apple.com>
+
+        Fix Tiger build.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+
 2008-12-08  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
