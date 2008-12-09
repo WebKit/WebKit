@@ -678,7 +678,16 @@ void RenderThemeWin::adjustSliderThumbSize(RenderObject* o) const
         o->style()->setWidth(Length(sliderThumbWidth, Fixed));
         o->style()->setHeight(Length(sliderThumbHeight, Fixed));
     }
- }
+}
+
+void RenderThemeWin::adjustButtonInnerStyle(RenderStyle* style) const
+{
+    // This inner padding matches Firefox.
+    style->setPaddingTop(Length(1, Fixed));
+    style->setPaddingRight(Length(3, Fixed));
+    style->setPaddingBottom(Length(1, Fixed));
+    style->setPaddingLeft(Length(3, Fixed));
+}
 
 bool RenderThemeWin::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {

@@ -92,6 +92,8 @@ public:
     virtual bool paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     virtual void adjustSliderThumbSize(RenderObject*) const;
 
+    virtual void adjustButtonInnerStyle(RenderStyle*) const;
+
     virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 

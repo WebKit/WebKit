@@ -53,7 +53,7 @@ void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
         // Create an anonymous block.
         ASSERT(!firstChild());
         m_inner = createAnonymousBlock();
-        m_inner->style()->setBoxFlex(1.0f);
+        setupInnerStyle(m_inner->style());
         RenderFlexibleBox::addChild(m_inner);
     }
     
@@ -88,7 +88,7 @@ void RenderButton::styleDidChange(RenderStyle::Diff diff, const RenderStyle* old
     if (m_buttonText)
         m_buttonText->setStyle(style());
     if (m_inner) // RenderBlock handled updating the anonymous block's style.
-        m_inner->style()->setBoxFlex(1.0f);
+        setupInnerStyle(m_inner->style());
     setReplaced(isInline());
 
     if (!m_default && theme()->isDefault(this)) {
@@ -100,6 +100,16 @@ void RenderButton::styleDidChange(RenderStyle::Diff diff, const RenderStyle* old
         m_default = false;
         m_timer.clear();
     }
+}
+
+void RenderButton::setupInnerStyle(RenderStyle* style) 
+{
+    ASSERT(style->refCount() == 1);
+    // RenderBlock::createAnonymousBlock creates a new RenderStyle, so this is
+    // safe to modify.
+    style->setBoxFlex(1.0f);
+    if (style->appearance() != NoControlPart)
+        theme()->adjustButtonInnerStyle(style);
 }
 
 void RenderButton::updateFromElement()
