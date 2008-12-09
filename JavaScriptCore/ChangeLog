@@ -1,3 +1,14 @@
+2008-12-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add dumping of CodeBlock member structure usage.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpStatistics):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::isEmpty):
+
 2008-12-08  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22555: Sort "children" sections in Xcode project files

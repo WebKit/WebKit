@@ -66,6 +66,8 @@ namespace JSC {
             return evalNode.release();
         }
 
+        bool isEmpty() const { return m_cacheMap.isEmpty(); }
+
     private:
         static const int maxCacheableSourceLength = 256;
         static const int maxCacheEntries = 64;

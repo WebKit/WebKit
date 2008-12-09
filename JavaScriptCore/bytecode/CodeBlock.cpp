@@ -960,11 +960,59 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
 static HashSet<CodeBlock*> liveCodeBlockSet;
 #endif
 
+#define FOR_EACH_MEMBER_VECTOR(macro) \
+    macro(instructions) \
+    macro(globalResolveInstructions) \
+    macro(propertyAccessInstructions) \
+    macro(callLinkInfos) \
+    macro(linkedCallerList) \
+    macro(identifiers) \
+    macro(functionExpressions) \
+    macro(constantRegisters) \
+    macro(expressionInfo) \
+    macro(lineInfo) \
+    macro(regexps) \
+    macro(functions) \
+    macro(unexpectedConstants) \
+    macro(exceptionHandlers) \
+    macro(immediateSwitchJumpTables) \
+    macro(characterSwitchJumpTables) \
+    macro(stringSwitchJumpTables)
+
 void CodeBlock::dumpStatistics()
 {
 #if DUMP_CODE_BLOCK_STATISTICS
+
+    #define DEFINE_VARS(name) size_t name##IsNotEmpty = 0;
+        FOR_EACH_MEMBER_VECTOR(DEFINE_VARS)
+    #undef DEFINE_VARS
+
+    // Non-vector data members
+    size_t jitReturnAddressVPCMapIsNotEmpty = 0;
+    size_t evalCodeCacheIsNotEmpty = 0;
+
+    HashSet<CodeBlock*>::const_iterator end = liveCodeBlockSet.end();
+    for (HashSet<CodeBlock*>::const_iterator it = liveCodeBlockSet.begin(); it != end; ++it) {
+        CodeBlock* codeBlock = *it;
+
+        #define GET_STATS(name) if (!codeBlock->m_##name.isEmpty()) { name##IsNotEmpty++; }
+            FOR_EACH_MEMBER_VECTOR(GET_STATS)
+        #undef GET_STATS
+
+        if (!codeBlock->m_jitReturnAddressVPCMap.isEmpty())
+            jitReturnAddressVPCMapIsNotEmpty++;
+        if (!codeBlock->m_evalCodeCache.isEmpty())
+            evalCodeCacheIsNotEmpty++;
+    }
+
     printf("Number of live CodeBlocks: %d\n", liveCodeBlockSet.size());
     printf("Size of a single CodeBlock [sizeof(CodeBlock)]: %zu\n", sizeof(CodeBlock));
+
+    #define PRINT_STATS(name) printf("Number of CodeBlocks with " #name ": %zu\n", name##IsNotEmpty);
+        FOR_EACH_MEMBER_VECTOR(PRINT_STATS)
+    #undef PRINT_STATS
+    printf("Number of CodeBlocks with jitReturnAddressVPCMap: %zu\n", jitReturnAddressVPCMapIsNotEmpty);
+    printf("Number of CodeBlocks with evalCodeCache: %zu\n", evalCodeCacheIsNotEmpty);
 #else
     printf("Dumping CodeBlock statistics is not enabled.\n");
 #endif
