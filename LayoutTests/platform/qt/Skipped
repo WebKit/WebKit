@@ -12,6 +12,7 @@ fast/events/objc-keyboard-event-creation.html
 
 # ------- failing editing tests
 editing/deleting/delete-to-end-of-paragraph.html
+editing/execCommand/enabling-and-selection-2.html
 editing/execCommand/italicizeByCharacter.html
 editing/execCommand/nsresponder-indent.html
 editing/execCommand/nsresponder-outdent.html

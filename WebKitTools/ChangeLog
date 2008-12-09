@@ -1,3 +1,25 @@
+2008-12-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test machinery for https://bugs.webkit.org/show_bug.cgi?id=22409
+          REGRESSION: cmd-shift-left/right don't switch tabs, instead select text
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (isCommandEnabledCallback): Added.
+        (LayoutTestController::staticFunctions): Added "isCommandEnabled".
+        * DumpRenderTree/LayoutTestController.h: Ditto.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::isCommandEnabled): Ditto.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (-[CommandValidationTarget initWithAction:]): Added. Used to get the
+        command validation system to tell us if a comment is enabled.
+        (-[CommandValidationTarget action]): Ditto.
+        (-[CommandValidationTarget tag]): Ditto.
+        (LayoutTestController::isCommandEnabled): Ditto.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::isCommandEnabled): Ditto.
+
 2008-12-08  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22555: Sort "children" sections in Xcode project files

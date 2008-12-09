@@ -254,6 +254,12 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     // FIXME: implement
 }
 
+bool LayoutTestController::isCommandEnabled(JSStringRef /*name*/)
+{
+    // FIXME: implement
+    return false;
+}
+
 void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
 {
     // FIXME: implement

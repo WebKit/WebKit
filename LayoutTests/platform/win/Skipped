@@ -353,6 +353,9 @@ editing/selection/caret-rtl.html
 # Caret, RenderBlock
 editing/pasteboard/undoable-fragment-removes.html
 
+# Command enabling
+editing/execCommand/enabling-and-selection-2.html
+
 ################################################################################
 ######################### All of above may be related ##########################
 ################################################################################

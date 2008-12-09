@@ -1,3 +1,25 @@
+2008-12-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - tests for https://bugs.webkit.org/show_bug.cgi?id=22409
+          REGRESSION: cmd-shift-left/right don't switch tabs, instead select text
+
+        * editing/execCommand/enabling-and-selection-2-expected.txt: Added.
+        * editing/execCommand/enabling-and-selection-2.html: Added.
+        * editing/execCommand/enabling-and-selection-expected.txt: Added.
+        * editing/execCommand/enabling-and-selection.html: Added.
+        * editing/execCommand/resources: Added.
+        * editing/execCommand/resources/TEMPLATE.html: Copied from LayoutTests/fast/js/resources/TEMPLATE.html.
+        * editing/execCommand/resources/enabling-and-selection-2.js: Added.
+        * editing/execCommand/resources/enabling-and-selection.js: Added.
+
+        * fast/canvas/canvas-setTransform.html: Let make-js-test-wrappers update this.
+        * fast/canvas/canvas-strokeRect.html: Ditto.
+
+        * platform/qt/Skipped: Added enabling-and-selection-2 to the skipped list.
+        * platform/win/Skipped: Ditto.
+
 2008-12-08  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Darin Adler.

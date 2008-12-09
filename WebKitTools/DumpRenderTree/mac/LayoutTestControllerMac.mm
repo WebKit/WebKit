@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,37 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
+
+@interface CommandValidationTarget : NSObject <NSValidatedUserInterfaceItem>
+{
+    SEL _action;
+}
+- (id)initWithAction:(SEL)action;
+@end
+
+@implementation CommandValidationTarget
+
+- (id)initWithAction:(SEL)action
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _action = action;
+    return self;
+}
+
+- (SEL)action
+{
+    return _action;
+}
+
+- (NSInteger)tag
+{
+    return 0;
+}
+
+@end
 
 LayoutTestController::~LayoutTestController()
 {
@@ -315,6 +346,30 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     NSString *valueNS = (NSString *)valueCF.get();
 
     [[mainFrame webView] _executeCoreCommandByName:nameNS value:valueNS];
+}
+
+bool LayoutTestController::isCommandEnabled(JSStringRef name)
+{
+    RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));
+    NSString *nameNS = reinterpret_cast<const NSString *>(nameCF.get());
+
+    // Accept command strings with capital letters for first letter without trailing colon.
+    if (![nameNS hasSuffix:@":"] && [nameNS length]) {
+        nameNS = [[[[nameNS substringToIndex:1] lowercaseString]
+            stringByAppendingString:[nameNS substringFromIndex:1]]
+            stringByAppendingString:@":"];
+    }
+
+    SEL selector = NSSelectorFromString(nameNS);
+    RetainPtr<CommandValidationTarget> target(AdoptNS, [[CommandValidationTarget alloc] initWithAction:selector]);
+    id validator = [NSApp targetForAction:selector to:[mainFrame webView] from:target.get()];
+    if (!validator)
+        return false;
+    if (![validator respondsToSelector:selector])
+        return false;
+    if (![validator respondsToSelector:@selector(validateUserInterfaceItem:)])
+        return true;
+    return [validator validateUserInterfaceItem:target.get()];
 }
 
 bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)

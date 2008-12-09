@@ -1,3 +1,19 @@
+2008-12-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22409
+          REGRESSION: cmd-shift-left/right don't switch tabs, instead select text
+
+        Tests: editing/execCommand/enabling-and-selection-2.html
+               editing/execCommand/enabling-and-selection.html
+
+        * editing/EditorCommand.cpp: Updated table to use these functions by their new names.
+        (WebCore::enabledVisibleSelection): Renamed this to reflect its new algorithm.
+        An invisible selection with a position that selects no characters doesn't count
+        as a visible selection.
+        (WebCore::enabledVisibleSelectionAndMark): Ditto.
+
 2008-12-08  David Kilzer  <ddkilzer@apple.com>
 
         Remove duplicate entries from WebCore project.
