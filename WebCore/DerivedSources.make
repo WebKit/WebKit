@@ -361,6 +361,7 @@ DOM_CLASSES = \
     WheelEvent \
     Worker \
     WorkerLocation \
+    WorkerNavigator \
     XMLHttpRequest \
     XMLHttpRequestException \
     XMLHttpRequestProgressEvent \

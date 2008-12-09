@@ -108,7 +108,7 @@ NetworkStateNotifier::NetworkStateNotifier()
     if (!configSource)
         return;
 
-    CFRunLoopAddSource(CFRunLoopGetCurrent(), configSource.get(), kCFRunLoopCommonModes);
+    CFRunLoopAddSource(CFRunLoopGetMain(), configSource.get(), kCFRunLoopCommonModes);
     
     RetainPtr<CFMutableArrayRef> keys(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
     RetainPtr<CFMutableArrayRef> patterns(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));

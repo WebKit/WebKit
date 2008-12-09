@@ -1,3 +1,57 @@
+2008-12-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22719
+        Implement Navigator object in Workers
+
+        Test: fast/workers/worker-navigator.html
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added WorkerNavigator sources.
+
+        * bindings/js/JSWorkerContext.cpp: (WebCore::jsWorkerContextNavigator):
+        Worker.navigator returns a WoerkerNavigator object (it is named just Navigator in the spec,
+        but it is not the same interface that is available on Windows).
+
+        * dom/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * dom/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        (WebCore::WorkerContext::navigator):
+        * dom/WorkerContext.h:
+        (WebCore::WorkerContext::create):
+        * dom/WorkerThread.cpp:
+        (WebCore::WorkerThread::create):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * dom/WorkerThread.h:
+        Pass a pre-computed user agent string into worker, because it cannot call a client method
+        directly, and pre-computing is easier than sending a synchronous message to the main thread.
+
+        * page/Navigator.cpp:
+        * page/Navigator.h:
+        * page/NavigatorBase.cpp: Added.
+        * page/NavigatorBase.h: Added.
+        Factor out common (and uncommon, but very similar) functionality into a base class.
+
+        * page/WorkerNavigator.cpp: Added.
+        * page/WorkerNavigator.h: Added.
+        * page/WorkerNavigator.idl: Added.
+        Per Web Workers and HTML5, implement a small subset of what we currently have in Window.Navigator.
+
+        * platform/network/NetworkStateNotifier.cpp: (WebCore::networkStateNotifier):
+        Make networkStateNotifier() static constructor thread safe. The object is created on the
+        thread it is first called from, while callbacks are registered on the main thread. Calls to
+        onLine() from other threads are safe, because it is just loading a boolean.
+
+        * platform/network/mac/NetworkStateNotifierMac.cpp: (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        Schedule notifications on main event loop, not the current one.
+
 2008-12-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Rubber-stamped by Alexey Proskuryakov.

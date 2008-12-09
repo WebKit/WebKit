@@ -38,6 +38,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "MessageEvent.h"
 #include "SecurityOrigin.h"
@@ -119,7 +120,8 @@ void Worker::notifyFinished(CachedResource* resource)
     if (m_cachedScript->errorOccurred())
         dispatchErrorEvent();
     else {
-        RefPtr<WorkerThread> thread = WorkerThread::create(m_scriptURL, m_cachedScript->script(), m_messagingProxy);
+        String userAgent = document()->frame() ? document()->frame()->loader()->userAgent(m_scriptURL) : String();
+        RefPtr<WorkerThread> thread = WorkerThread::create(m_scriptURL, userAgent, m_cachedScript->script(), m_messagingProxy);
         m_messagingProxy->workerThreadCreated(thread);
         thread->start();
     }

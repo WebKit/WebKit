@@ -355,6 +355,7 @@ IDL_BINDINGS += \
     page/PositionError.idl \
     page/PositionOptions.idl \
     page/Screen.idl \
+    page/WorkerNavigator.idl \
     plugins/Plugin.idl \
     plugins/MimeType.idl \
     plugins/PluginArray.idl \

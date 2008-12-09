@@ -219,6 +219,7 @@ IDL_BINDINGS += \
 	WebCore/page/PositionError.idl \
 	WebCore/page/PositionOptions.idl \
 	WebCore/page/Screen.idl \
+	WebCore/page/WorkerNavigator.idl \
 	WebCore/plugins/MimeType.idl \
 	WebCore/plugins/MimeTypeArray.idl \
 	WebCore/plugins/Plugin.idl \
@@ -2144,7 +2145,9 @@ webcore_sources += \
 	WebCore/dom/WorkerTask.cpp \
 	WebCore/dom/WorkerTask.h \
 	WebCore/dom/WorkerThread.cpp \
-	WebCore/dom/WorkerThread.h
+	WebCore/dom/WorkerThread.h \
+	WebCore/page/WorkerNavigator.cpp \
+	WebCore/page/WorkerNavigator.h
 endif
 
 # ----

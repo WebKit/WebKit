@@ -1756,6 +1756,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerNavigator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerNavigator.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequest.h"
 				>
 			</File>
@@ -2541,6 +2549,22 @@
 			</File>
 			<File
 				RelativePath="..\page\WindowFeatures.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\WorkerNavigator.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\page\WorkerNavigator.h"
 				>
 			</File>
 			<Filter

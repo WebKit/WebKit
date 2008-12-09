@@ -4206,6 +4206,13 @@
 		E10B9CCD0B747A44003ED890 /* DOMCustomXPathNSResolver.mm in Sources */ = {isa = PBXBuildFile; fileRef = E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */; };
 		E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */; };
+		E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = E12719C60EEEC16800F61213 /* NavigatorBase.h */; };
+		E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12719C90EEEC21300F61213 /* NavigatorBase.cpp */; };
+		E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */; };
+		E1271A140EEEC80400F61213 /* WorkerNavigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1271A130EEEC80400F61213 /* WorkerNavigator.cpp */; };
+		E1271A520EEECD1C00F61213 /* WorkerNavigator.idl in Resources */ = {isa = PBXBuildFile; fileRef = E1271A510EEECD1C00F61213 /* WorkerNavigator.idl */; };
+		E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A560EEECDE400F61213 /* JSWorkerNavigator.h */; };
+		E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1271A570EEECDE400F61213 /* JSWorkerNavigator.cpp */; };
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
 		E14799A70ECDE3A400292BF3 /* WorkerMessagingProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E14799A60ECDE3A400292BF3 /* WorkerMessagingProxy.h */; };
@@ -8901,6 +8908,13 @@
 		E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCustomXPathNSResolver.mm; sourceTree = "<group>"; };
 		E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptExecutionContext.h; sourceTree = "<group>"; };
 		E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptExecutionContext.cpp; sourceTree = "<group>"; };
+		E12719C60EEEC16800F61213 /* NavigatorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorBase.h; sourceTree = "<group>"; };
+		E12719C90EEEC21300F61213 /* NavigatorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorBase.cpp; sourceTree = "<group>"; };
+		E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerNavigator.h; sourceTree = "<group>"; };
+		E1271A130EEEC80400F61213 /* WorkerNavigator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerNavigator.cpp; sourceTree = "<group>"; };
+		E1271A510EEECD1C00F61213 /* WorkerNavigator.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerNavigator.idl; sourceTree = "<group>"; };
+		E1271A560EEECDE400F61213 /* JSWorkerNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerNavigator.h; sourceTree = "<group>"; };
+		E1271A570EEECDE400F61213 /* JSWorkerNavigator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerNavigator.cpp; sourceTree = "<group>"; };
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
 		E14799A60ECDE3A400292BF3 /* WorkerMessagingProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerMessagingProxy.h; sourceTree = "<group>"; };
@@ -9926,6 +9940,8 @@
 				A9C6E5A30D746458006442E9 /* Navigator.cpp */,
 				A9C6E5A40D746458006442E9 /* Navigator.h */,
 				A9C6E65D0D746694006442E9 /* Navigator.idl */,
+				E12719C90EEEC21300F61213 /* NavigatorBase.cpp */,
+				E12719C60EEEC16800F61213 /* NavigatorBase.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
 				65A21467097A329100B9050A /* Page.h */,
 				9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */,
@@ -9948,6 +9964,9 @@
 				F587863A02DE3A1401EA4122 /* Settings.h */,
 				BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */,
 				BC8243E70D0CFD7500460C8F /* WindowFeatures.h */,
+				E1271A130EEEC80400F61213 /* WorkerNavigator.cpp */,
+				E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */,
+				E1271A510EEECD1C00F61213 /* WorkerNavigator.idl */,
 			);
 			path = page;
 			sourceTree = "<group>";
@@ -13500,6 +13519,8 @@
 				E1CAA5C50E8BD23600A73ECA /* JSWorker.h */,
 				E1C362EE0EAF2AA9007410BC /* JSWorkerLocation.cpp */,
 				E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */,
+				E1271A570EEECDE400F61213 /* JSWorkerNavigator.cpp */,
+				E1271A560EEECDE400F61213 /* JSWorkerNavigator.h */,
 			);
 			name = Threads;
 			sourceTree = "<group>";
@@ -16361,6 +16382,9 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
+				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
+				E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */,
+				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16478,6 +16502,7 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				E1271A520EEECD1C00F61213 /* WorkerNavigator.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18299,6 +18324,9 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */,
+				E1271A140EEEC80400F61213 /* WorkerNavigator.cpp in Sources */,
+				E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

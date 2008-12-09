@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -21,29 +21,34 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- */
+*/
 
-#include "config.h"
-#include "NetworkStateNotifier.h"
-
-#include <wtf/Assertions.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/Threading.h>
+#ifndef NavigatorBase_h
+#define NavigatorBase_h
 
 namespace WebCore {
 
-NetworkStateNotifier& networkStateNotifier()
-{
-    AtomicallyInitializedStatic(NetworkStateNotifier*, networkStateNotifier = new NetworkStateNotifier);
-    
-    return *networkStateNotifier;
-}
+    class String;
 
-void NetworkStateNotifier::setNetworkStateChangedFunction(void(*function)())
-{
-    ASSERT(!m_networkStateChangedFunction);
-    
-    m_networkStateChangedFunction = function;
-}
-    
-}
+    class NavigatorBase {
+    public:
+        String appName() const;
+        String appVersion() const;
+        virtual String userAgent() const = 0;
+        String platform() const;
+
+        String appCodeName() const;
+        String product() const;
+        String productSub() const;
+        String vendor() const;
+        String vendorSub() const;
+
+        bool onLine() const;
+
+    protected:
+        virtual ~NavigatorBase();
+    };
+
+} // namespace WebCore
+
+#endif // NavigatorBase_h

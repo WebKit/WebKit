@@ -37,13 +37,15 @@
 #include "SecurityOrigin.h"
 #include "WorkerLocation.h"
 #include "WorkerMessagingProxy.h"
+#include "WorkerNavigator.h"
 #include "WorkerTask.h"
 #include "WorkerThread.h"
 
 namespace WebCore {
 
-WorkerContext::WorkerContext(const KURL& url, WorkerThread* thread)
+WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThread* thread)
     : m_url(url)
+    , m_userAgent(userAgent)
     , m_location(WorkerLocation::create(url))
     , m_script(new WorkerScriptController(this))
     , m_thread(thread)
@@ -77,6 +79,13 @@ KURL WorkerContext::completeURL(const String& url) const
         return KURL();
     // FIXME: does this need to provide a charset, like Document::completeURL does?
     return KURL(m_location->url(), url);
+}
+
+WorkerNavigator* WorkerContext::navigator() const
+{
+    if (!m_navigator)
+        m_navigator = WorkerNavigator::create(m_userAgent);
+    return m_navigator.get();
 }
 
 bool WorkerContext::hasPendingActivity() const
