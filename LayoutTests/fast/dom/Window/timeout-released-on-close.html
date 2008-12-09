@@ -1,0 +1,31 @@
+<script>
+var objectCountBefore;
+
+// The test works by first navigating iframe to a page that allocates a lot of JS objects
+// and then creates a long timeout. Then iframe is navigated to about:blank and the number of JS
+// objects is verified - there should be a significant drop in their number.
+function start()
+{
+    if (window.layoutTestController && window.GCController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+        window.GCController.collect();
+        objectCountBefore = window.GCController.getJSObjectCount();
+        iframeElement = document.getElementById("iframe");
+        iframeElement.setAttribute("onload", "verify()");
+        iframeElement.src = "about:blank";
+    }
+}
+
+function verify()
+{
+    window.GCController.collect();
+    var collectedObjectsCount = objectCountBefore - window.GCController.getJSObjectCount();
+    // long_timeout.html allocates 100 JS strings. They should be gone.
+    document.getElementById("result").innerText = (collectedObjectsCount >= 100 ? "PASS" : "FAIL");
+    layoutTestController.notifyDone();
+}
+</script>
+<p>This test verifies that an active timeout that didn't yet fire does not prevent a Document from releasing (bug https://bugs.webkit.org/show_bug.cgi?id=22710). Test can only run in DumpRenderTree since it needs GCController. Test is successful if it prints 'PASS'.</p>
+<div id="result"></div>
+<iframe onload="start()" id="iframe" src="resources/long_timeout.html"></iframe>
