@@ -1,3 +1,13 @@
+2008-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        (WebKit::NetscapePluginHostProxy::~NetscapePluginHostProxy):
+        Unfortunately we can't use a libdispatch source right now, because of <rdar://problem/6393180>.
+
 2008-12-09  Timothy Hatcher  <timothy@apple.com>
 
         Implement a few methods needed to keep Dictionary.app working on Leopard.

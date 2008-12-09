@@ -33,6 +33,7 @@
 #import "HostedNetscapePluginStream.h"
 #import "NetscapePluginHostManager.h"
 #import "NetscapePluginInstanceProxy.h"
+#import "WebKitSystemInterface.h"
 
 extern "C" {
 #import "WebKitPluginHost.h"
@@ -70,8 +71,14 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     
     CFRunLoopAddSource(CFRunLoopGetCurrent(), deathPortSource.get(), kCFRunLoopDefaultMode);
     
+#ifdef USE_LIBDISPATCH
+    // FIXME: Unfortunately we can't use a dispatch source here until <rdar://problem/6393180> has been resolved.
     m_clientPortSource = dispatch_source_mig_create(m_clientPort, WKPCWebKitPluginClient_subsystem.maxsize, 0, 
                                                     dispatch_get_main_queue(), WebKitPluginClient_server);
+#else
+    m_clientPortSource.adoptCF(WKCreateMIGServerSource((mig_subsystem_t)&WKPCWebKitPluginClient_subsystem, m_clientPort));
+    CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), kCFRunLoopDefaultMode);
+#endif
 }
 
 NetscapePluginHostProxy::~NetscapePluginHostProxy()
@@ -79,7 +86,12 @@ NetscapePluginHostProxy::~NetscapePluginHostProxy()
     pluginProxyMap().remove(m_clientPort);
     
     ASSERT(m_clientPortSource);
+#ifdef USE_LIBDISPATCH
     dispatch_source_release(m_clientPortSource);
+#else
+    CFRunLoopSourceInvalidate(m_clientPortSource.get());
+    m_clientPortSource = 0;
+#endif
 }
 
 void NetscapePluginHostProxy::pluginHostDied()
