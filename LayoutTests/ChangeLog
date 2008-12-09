@@ -1,3 +1,15 @@
+2008-12-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed js-test-pre.js to print a meaningful, complete sentence when
+        exception tests fail.
+
+        * fast/js/const-expected.txt: Updated test for new results.
+
+        * fast/js/resources/js-test-pre.js:
+        (shouldThrow):
+
 2008-12-08  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Dan Bernstein.

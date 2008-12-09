@@ -3,7 +3,7 @@ This test checks that const declarations in JavaScript work and are readonly.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL const redef='a'; const redef='a'; should throw exception undefined. Was undefined.
+FAIL const redef='a'; const redef='a'; should throw an exception. Was undefined.
 PASS x is "RIGHT"
 PASS y is "RIGHT"
 PASS a is 1

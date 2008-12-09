@@ -143,9 +143,9 @@ function shouldThrow(_a, _e)
     if (typeof _e == "undefined" || exception == _ev)
       testPassed(_a + " threw exception " + exception + ".");
     else
-      testFailed(_a + " should throw exception " + _ev + ". Threw exception " + exception + ".");
+      testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Threw exception " + exception + ".");
   } else if (typeof _av == "undefined")
-    testFailed(_a + " should throw exception " + _e + ". Was undefined.");
+    testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was undefined.");
   else
-    testFailed(_a + " should throw exception " + _e + ". Was " + _av + ".");
+    testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
 }
