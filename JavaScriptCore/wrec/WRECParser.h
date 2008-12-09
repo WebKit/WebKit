@@ -85,18 +85,13 @@ namespace JSC { namespace WREC {
                 m_error = MalformedPattern; // Parsing the pattern should fully consume it.
         }
 
-        void parseAlternative(JumpList& failures)
-        {
-            while (parseTerm(failures)) { }
-        }
-
         void parseDisjunction(JumpList& failures);
+        void parseAlternative(JumpList& failures);
         bool parseTerm(JumpList& failures);
-        bool parseEscape(JumpList& failures, const Escape&);
+        bool parseNonCharacterEscape(JumpList& failures, const Escape&);
         bool parseParentheses(JumpList& failures);
         bool parseCharacterClass(JumpList& failures);
         bool parseCharacterClassQuantifier(JumpList& failures, const CharacterClass& charClass, bool invert);
-        bool parsePatternCharacterSequence(JumpList& failures, int ch);
         bool parseBackreferenceQuantifier(JumpList& failures, unsigned subpatternId);
 
     private:

@@ -40,8 +40,8 @@ using namespace WTF;
 
 namespace JSC { namespace WREC {
 
-// This limit comes from the limit set in PCRE
-static const int MaxPatternSize = (1 << 16);
+// Patterns longer than this can hang the compiler.
+static const int MaxPatternSize = (1 << 13);
 
 CompiledRegExp Generator::compileRegExp(JSGlobalData* globalData, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, RefPtr<ExecutablePool>& pool, bool ignoreCase, bool multiline)
 {

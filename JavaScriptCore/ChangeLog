@@ -1,3 +1,41 @@
+2008-12-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Refactored WREC parsing so that only one piece of code needs to know
+        the relaxed and somewhat weird rules for deciding how to interpret a
+        non-pattern-character, in preparation for implementing those rules.
+        
+        Also, implemented the relaxed and somewhat weird rules for '}' and ']'.
+
+        * wrec/WREC.cpp: Reduced the regular expression size limit. Now that
+        WREC handles ']' properly, it compiles fast/js/regexp-charclass-crash.html,
+        which makes it hang at the old limit. (The old limit was based on the
+        misimpression that the same value in PCRE limited the regular expression
+        pattern size; in reality, it limited the expected compiled regular
+        expression size. WREC doesn't have a way to calculate an expected
+        compiled regular expression size, but this should be good enough.)
+
+        * wrec/WRECParser.cpp:
+        (JSC::WREC::parsePatternCharacterSequence): Nixed this function because
+        it contained a second copy of the logic for handling non-pattern-characters,
+        which is about to get a lot more complicated.
+
+        (JSC::WREC::PatternCharacterSequence::PatternCharacterSequence): 
+        (JSC::WREC::PatternCharacterSequence::size):
+        (JSC::WREC::PatternCharacterSequence::append):
+        (JSC::WREC::PatternCharacterSequence::flush): Helper object for generating
+        an optimized sequence of pattern characters.
+
+        (JSC::WREC::Parser::parseNonCharacterEscape): Renamed to reflect the fact
+        that the main parseAlternative loop handles character escapes.
+
+        (JSC::WREC::Parser::parseAlternative): Moved pattern character sequence
+        logic from parsePatternCharacterSequence to here, using
+        PatternCharacterSequence to help with the details.
+
+        * wrec/WRECParser.h: Updated for renames.
+
 2008-12-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.
