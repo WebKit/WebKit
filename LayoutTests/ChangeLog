@@ -1,3 +1,13 @@
+2008-12-08  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22739
+        Test the sequence of keyboard events generated for a keypress.
+
+        * fast/events/special-key-events-in-input-text-expected.txt: Added.
+        * fast/events/special-key-events-in-input-text.html: Added.
+
 2008-12-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

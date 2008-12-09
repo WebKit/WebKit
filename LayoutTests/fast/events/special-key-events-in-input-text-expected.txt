@@ -1,0 +1,53 @@
+To test manually, press keys and compare results to other browsers.
+
+
+target - type - ctrlKey,altKey,shiftKey,metaKey - keyIdentifier - keyCode - charCode
+Ampersand:
+INPUT - keydown - false,false,true,false - U+0037 - 55 - 0. Value: "".
+INPUT - keypress - false,false,true,false - - 55 - 55. Value: "".
+INPUT - textInput - 7. Value: "".
+INPUT - keyup - false,false,true,false - U+0037 - 55 - 0. Value: "7".
+Backspace:
+INPUT - keydown - false,false,false,false - U+0008 - 8 - 0. Value: "7".
+INPUT - keyup - false,false,false,false - U+0008 - 8 - 0. Value: "".
+Percent:
+INPUT - keydown - false,false,true,false - U+0035 - 53 - 0. Value: "".
+INPUT - keypress - false,false,true,false - - 53 - 53. Value: "".
+INPUT - textInput - 5. Value: "".
+INPUT - keyup - false,false,true,false - U+0035 - 53 - 0. Value: "5".
+Backspace:
+INPUT - keydown - false,false,false,false - U+0008 - 8 - 0. Value: "5".
+INPUT - keyup - false,false,false,false - U+0008 - 8 - 0. Value: "".
+Left parentheses:
+INPUT - keydown - false,false,true,false - U+0039 - 57 - 0. Value: "".
+INPUT - keypress - false,false,true,false - - 57 - 57. Value: "".
+INPUT - textInput - 9. Value: "".
+INPUT - keyup - false,false,true,false - U+0039 - 57 - 0. Value: "9".
+Backspace:
+INPUT - keydown - false,false,false,false - U+0008 - 8 - 0. Value: "9".
+INPUT - keyup - false,false,false,false - U+0008 - 8 - 0. Value: "".
+Right parentheses:
+INPUT - keydown - false,false,true,false - U+0030 - 48 - 0. Value: "".
+INPUT - keypress - false,false,true,false - - 48 - 48. Value: "".
+INPUT - textInput - 0. Value: "".
+INPUT - keyup - false,false,true,false - U+0030 - 48 - 0. Value: "0".
+Backspace:
+INPUT - keydown - false,false,false,false - U+0008 - 8 - 0. Value: "0".
+INPUT - keyup - false,false,false,false - U+0008 - 8 - 0. Value: "".
+Left Curly Brace:
+INPUT - keydown - false,false,true,false - U+00DB - 0 - 0. Value: "".
+INPUT - keypress - false,false,true,false - - 219 - 219. Value: "".
+INPUT - textInput - Û. Value: "".
+INPUT - keyup - false,false,true,false - U+00DB - 0 - 0. Value: "Û".
+Backspace:
+INPUT - keydown - false,false,false,false - U+0008 - 8 - 0. Value: "Û".
+INPUT - keyup - false,false,false,false - U+0008 - 8 - 0. Value: "".
+Right Curly Brace:
+INPUT - keydown - false,false,true,false - U+00DD - 0 - 0. Value: "".
+INPUT - keypress - false,false,true,false - - 221 - 221. Value: "".
+INPUT - textInput - Ý. Value: "".
+INPUT - keyup - false,false,true,false - U+00DD - 0 - 0. Value: "Ý".
+Backspace:
+INPUT - keydown - false,false,false,false - U+0008 - 8 - 0. Value: "Ý".
+INPUT - keyup - false,false,false,false - U+0008 - 8 - 0. Value: "".
+
