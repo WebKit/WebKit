@@ -48,11 +48,6 @@
     [super dealloc];
 }
 
-- (void)finalize
-{
-    [super finalize];
-}
-
 - (DOMDocument *)document
 {
     if (!_internal)

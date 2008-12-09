@@ -786,6 +786,7 @@ SOURCES += \
     page/DOMSelection.cpp \
     page/DOMWindow.cpp \
     page/Navigator.cpp \
+    page/NavigatorBase.cpp \
     page/DragController.cpp \
     page/EventHandler.cpp \
     page/FocusController.cpp \

@@ -1,5 +1,19 @@
 2008-12-09  Darin Adler  <darin@apple.com>
 
+        Try to fix non-Mac builds.
+
+        * GNUmakefile.am: Added NavigatorBase.
+        * WebCore.pro: Ditto.
+        * WebCore.scons: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        Unrelated tweak sitting in my tree.
+
+        * bindings/objc/DOMAbstractView.mm: Remove pointless override of finalize method.
+
+2008-12-09  Darin Adler  <darin@apple.com>
+
         Try to fix Tiger build.
 
         * platform/network/mac/NetworkStateNotifierMac.cpp: Declare CFRunLoopGetMain.

@@ -1134,6 +1134,8 @@ webcore_sources += \
 	WebCore/page/MouseEventWithHitTestResults.h \
 	WebCore/page/Navigator.cpp \
 	WebCore/page/Navigator.h \
+	WebCore/page/NavigatorBase.cpp \
+	WebCore/page/NavigatorBase.h \
 	WebCore/page/Page.cpp \
 	WebCore/page/Page.h \
 	WebCore/page/PageGroup.cpp \

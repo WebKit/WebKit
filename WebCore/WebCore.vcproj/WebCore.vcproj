@@ -2448,6 +2448,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\NavigatorBase.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\page\NavigatorBase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\Page.cpp"
 				>
 				<FileConfiguration

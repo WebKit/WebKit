@@ -379,6 +379,7 @@ sources['page'] = [
     'page/Location.cpp',
     'page/MouseEventWithHitTestResults.cpp',
     'page/Navigator.cpp',
+    'page/NavigatorBase.cpp',
     'page/Page.cpp',
     'page/PageGroup.cpp',
     'page/PrintContext.cpp',
