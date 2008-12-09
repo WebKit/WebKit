@@ -57,7 +57,7 @@ EOF
 
 GetOptions(
     '64-bit' => \$run64Bit,
-    'jsDriver-args=s' => \$jsDriverArgs,
+    'j|jsDriver-args=s' => \$jsDriverArgs,
     'root=s' => \$root,
     'help' => \$showHelp
 );
