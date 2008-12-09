@@ -86,7 +86,8 @@ if ($printWrapperFactory) {
 
 sub initializeTagPropertyHash
 {
-    return ('exportString' => 0,
+    return ('constructorNeedsCreatedByParser' => 0,
+            'exportString' => 0,
             'interfaceName' => defaultInterfaceName($_[0]),
             # By default, the JSInterfaceName is the same as the interfaceName.
             'JSInterfaceName' => defaultInterfaceName($_[0]),
@@ -218,7 +219,11 @@ sub printConstructors
 
         print F "static PassRefPtr<$parameters{'namespace'}Element> ${name}Constructor(Document* doc, bool createdByParser)\n";
         print F "{\n";
-        print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, doc);\n";
+        if ($tags{$name}{'constructorNeedsCreatedByParser'}) {
+            print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, doc, createdByParser);\n";
+        } else {
+            print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, doc);\n";
+        }
         print F "}\n\n";
     }
     print F "#endif\n" if $parameters{'guardFactoryWith'};

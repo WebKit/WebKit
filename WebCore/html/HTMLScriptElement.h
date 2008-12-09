@@ -32,10 +32,9 @@ namespace WebCore {
 class HTMLScriptElement : public HTMLElement
                         , public ScriptElement {
 public:
-    HTMLScriptElement(const QualifiedName&, Document*);
+    HTMLScriptElement(const QualifiedName&, Document*, bool createdByParser);
     ~HTMLScriptElement();
 
-    void setCreatedByParser(bool);
     bool shouldExecuteAsJavaScript() const;
     virtual String scriptContent() const;
 

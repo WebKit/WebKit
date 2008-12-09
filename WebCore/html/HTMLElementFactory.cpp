@@ -339,9 +339,7 @@ static PassRefPtr<HTMLElement> paramConstructor(const QualifiedName&, Document* 
 
 static PassRefPtr<HTMLElement> scriptConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool createdByParser)
 {
-    RefPtr<HTMLScriptElement> script = new HTMLScriptElement(scriptTag, doc);
-    script->setCreatedByParser(createdByParser);
-    return script.release();
+    return new HTMLScriptElement(scriptTag, doc, createdByParser);
 }
 
 static PassRefPtr<HTMLElement> tableConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)

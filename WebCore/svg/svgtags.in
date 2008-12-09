@@ -98,7 +98,7 @@ polygon
 polyline
 radialGradient
 rect
-script
+script constructorNeedsCreatedByParser=1
 stop
 style
 svg interfaceName=SVGSVGElement

@@ -85,7 +85,7 @@ pre
 q interfaceName=HTMLQuoteElement
 s JSInterfaceName=HTMLElement
 samp JSInterfaceName=HTMLElement
-script
+script constructorNeedsCreatedByParser=1
 select
 small JSInterfaceName=HTMLElement
 #if ENABLE_VIDEO

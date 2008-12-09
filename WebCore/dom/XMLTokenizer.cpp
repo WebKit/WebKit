@@ -134,13 +134,7 @@ bool XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
 
 void XMLTokenizer::eventuallyMarkAsParserCreated(Element* element)
 {
-    if (element->hasTagName(HTMLNames::scriptTag))
-        static_cast<HTMLScriptElement*>(element)->setCreatedByParser(true);
-#if ENABLE(SVG)
-    else if (element->hasTagName(SVGNames::scriptTag))
-        static_cast<SVGScriptElement*>(element)->setCreatedByParser(true);
-#endif
-    else if (element->hasTagName(HTMLNames::styleTag))
+    if (element->hasTagName(HTMLNames::styleTag))
         static_cast<HTMLStyleElement*>(element)->setCreatedByParser(true);
 #if ENABLE(SVG)
     else if (element->hasTagName(SVGNames::styleTag))

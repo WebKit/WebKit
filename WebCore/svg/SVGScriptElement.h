@@ -36,10 +36,9 @@ namespace WebCore {
                            , public SVGExternalResourcesRequired
                            , public ScriptElement {
     public:
-        SVGScriptElement(const QualifiedName&, Document*);
+        SVGScriptElement(const QualifiedName&, Document*, bool createdByParser);
         virtual ~SVGScriptElement();
 
-        void setCreatedByParser(bool);
         virtual String scriptContent() const;
 
         virtual void parseMappedAttribute(MappedAttribute*);
