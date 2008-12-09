@@ -180,7 +180,7 @@ void Generator::generateNonGreedyQuantifier(JumpList& failures, GenerateAtomFunc
     // (3.1) remove the value pushed prior to testing the alternative
     pop(index);
     // (3.2) if there is a limit, and we have reached it, game over. 
-    if (max != Quantifier::noMaxSpecified) {
+    if (max != Quantifier::Infinity) {
         je32(repeatCount, Imm32(max), quantifierFailed);
     }
 
@@ -230,7 +230,7 @@ void Generator::generateGreedyQuantifier(JumpList& failures, GenerateAtomFunctor
     Label readAnAtom(this);
     functor.generateAtom(this, doneReadingAtoms);
     add32(Imm32(1), repeatCount);
-    if (max == Quantifier::noMaxSpecified)
+    if (max == Quantifier::Infinity)
         jump(readAnAtom);
     else if (max == 1)
         doneReadingAtoms.append(jump());

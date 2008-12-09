@@ -39,7 +39,6 @@ namespace JSC { namespace WREC {
     class Escape {
     public:
         enum Type {
-            None,
             PatternCharacter,
             CharacterClass,
             Backreference,
@@ -47,7 +46,7 @@ namespace JSC { namespace WREC {
             Error,
         };
         
-        Escape(Type type = None)
+        Escape(Type type)
             : m_type(type)
         {
         }

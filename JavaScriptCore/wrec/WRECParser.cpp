@@ -112,69 +112,42 @@ ALWAYS_INLINE Quantifier Parser::consumeGreedyQuantifier()
             return Quantifier(Quantifier::Greedy, 1);
 
         case '{': {
+            SavedState state(*this);
             consume();
-            // a numeric quantifier should always have a lower bound
+
+            // Accept: {n}, {n,}, {n,m}.
+            // Reject: {n,m} where n > m.
+            // Ignore: Anything else, such as {n, m}.
+
             if (!peekIsDigit()) {
+                state.restore();
+                return Quantifier();
+            }
+
+            unsigned min = consumeNumber();
+            unsigned max = min;
+
+            if (peek() == ',') {
+                consume();
+                max = peekIsDigit() ? consumeNumber() : Quantifier::Infinity;
+            }
+
+            if (peek() != '}') {
+                state.restore();
+                return Quantifier();
+            }
+            consume();
+ 
+            if (min > max) {
                 m_error = MalformedQuantifier;
                 return Quantifier(Quantifier::Error);
             }
-            int min = consumeNumber();
-            
-            // this should either be a , or a }
-            switch (peek()) {
-            case '}':
-                // {n} - exactly n times. (technically I think a '?' is valid in the bnf - bit meaningless).
-                consume();
-                return Quantifier(Quantifier::Greedy, min, min);
 
-            case ',':
-                consume();
-                switch (peek()) {
-                case '}':
-                    // {n,} - n to inf times.
-                    consume();
-                    return Quantifier(Quantifier::Greedy, min);
+            return Quantifier(Quantifier::Greedy, min, max);
+         }
 
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9': {
-                    // {n,m} - n to m times.
-                    int max = consumeNumber();
-                    
-                    if (peek() != '}') {
-                        m_error = MalformedQuantifier;
-                        return Quantifier(Quantifier::Error);
-                    }
-                    consume();
-                    
-                    if (min > max) {
-                        m_error = MalformedQuantifier;
-                        return Quantifier(Quantifier::Error);
-                    }
-
-                    return Quantifier(Quantifier::Greedy, min, max);
-                }
-
-                default:
-                    m_error = MalformedQuantifier;
-                    return Quantifier(Quantifier::Error);
-                }
-
-            default:
-                m_error = MalformedQuantifier;
-                return Quantifier(Quantifier::Error);
-            }
-        }
-        // None of the above - no quantifier
-        default:
-            return Quantifier();
+         default:
+            return Quantifier(); // No quantifier.
     }
 }
 
@@ -329,7 +302,6 @@ bool Parser::parseCharacterClass(JumpList& failures)
                     m_error = MalformedEscape;
                     return false;
                 }
-                case Escape::None:
                 case Escape::Backreference:
                 case Escape::WordBoundaryAssertion: {
                     ASSERT_NOT_REACHED();
@@ -376,9 +348,6 @@ bool Parser::parseNonCharacterEscape(JumpList& failures, const Escape& escape)
 
         case Escape::Error:
             m_error = MalformedEscape;
-            return false;
-
-        case Escape::None:
             return false;
     }
 
@@ -508,13 +477,8 @@ Escape Parser::consumeEscape(bool inCharacterClass)
     }
 
     // IdentityEscape
-    default: {
-        // TODO: check this test for IdentifierPart.
-        int ch = consume();
-        if (isASCIIAlphanumeric(ch) || (ch == '_'))
-            return Escape(Escape::Error);
-        return PatternCharacterEscape(ch);
-    }
+    default:
+        return PatternCharacterEscape(consume());
     }
 }
 

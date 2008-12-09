@@ -2,6 +2,44 @@
 
         Reviewed by Oliver Hunt.
         
+        Implemented more of the relaxed and somewhat weird rules for deciding
+        how to interpret a non-pattern-character.
+        
+        * wrec/Escapes.h:
+        (JSC::WREC::Escape::):
+        (JSC::WREC::Escape::Escape): Eliminated Escape::None because it was
+        unused. If you see an '\\', it's either a valid escape or an error.
+
+        * wrec/Quantifier.h:
+        (JSC::WREC::Quantifier::Quantifier):
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateNonGreedyQuantifier):
+        (JSC::WREC::Generator::generateGreedyQuantifier): Renamed "noMaxSpecified"
+        to "Infinity", since that's what it means.
+
+        * wrec/WRECParser.cpp:
+        (JSC::WREC::Parser::consumeGreedyQuantifier): Re-wrote {n,m} parsing rules
+        because they were too strict before. Added support for backtracking
+        in the case where the {n,m} fails to parse as a quantifier, and yet is
+        not a syntax error.
+
+        (JSC::WREC::Parser::parseCharacterClass):
+        (JSC::WREC::Parser::parseNonCharacterEscape): Eliminated Escape::None,
+        as above.
+
+        (JSC::WREC::Parser::consumeEscape): Don't treat ASCII and _ escapes
+        as syntax errors. See fast/regex/non-pattern-characters.html.
+        
+        * wrec/WRECParser.h:
+        (JSC::WREC::Parser::SavedState::SavedState):
+        (JSC::WREC::Parser::SavedState::restore): Added a state backtracker,
+        since parsing {n,m} forms requires backtracking if the form turns out
+        not to be a quantifier.
+
+2008-12-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
         Refactored WREC parsing so that only one piece of code needs to know
         the relaxed and somewhat weird rules for deciding how to interpret a
         non-pattern-character, in preparation for implementing those rules.

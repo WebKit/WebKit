@@ -43,7 +43,7 @@ namespace JSC { namespace WREC {
             Error,
         };
 
-        Quantifier(Type type = None, unsigned min = 0, unsigned max = noMaxSpecified)
+        Quantifier(Type type = None, unsigned min = 0, unsigned max = Infinity)
             : type(type)
             , min(min)
             , max(max)
@@ -56,7 +56,7 @@ namespace JSC { namespace WREC {
         unsigned min;
         unsigned max;
 
-        static const unsigned noMaxSpecified = UINT_MAX;
+        static const unsigned Infinity = UINT_MAX;
     };
 
 } } // namespace JSC::WREC
