@@ -1,3 +1,10 @@
+2008-12-09  Pamela Greene  <pam@chromium.org>
+
+        Submitted without review.
+        Corrected results so the test passes.
+
+        * fast/events/special-key-events-in-input-text-expected.txt:
+
 2008-12-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov.
