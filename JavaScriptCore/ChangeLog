@@ -1,3 +1,9 @@
+2008-12-08  Eric Seidel  <eric@webkit.org>
+        
+        Build fix only, no review.
+
+        * JavaScriptCore.scons: add bytecode/JumpTable.cpp
+
 2008-12-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
