@@ -1,3 +1,13 @@
+2008-11-26  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16814
+        Allow ports to disable ActiveX->NPAPI conversion for Media Player.
+        Improve handling of miscellaneous ActiveX objects.
+
+        * wtf/Platform.h: Add another ENABLE(...).
+
 2008-12-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
