@@ -987,7 +987,7 @@ void CodeBlock::dumpStatistics()
 
     #define DEFINE_VARS(name) size_t name##IsNotEmpty = 0;
         FOR_EACH_MEMBER_VECTOR(DEFINE_VARS)
-        FOR_EACH_MEMBER_VECTOR_RARE_DATA(DEFINE_VARS);
+        FOR_EACH_MEMBER_VECTOR_RARE_DATA(DEFINE_VARS)
     #undef DEFINE_VARS
 
     // Non-vector data members
