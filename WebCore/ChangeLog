@@ -1,3 +1,28 @@
+2008-12-09  Darin Fisher  <darin@chromium.org>
+
+        Fixes bustages.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22631
+        Adding missing files from previous commit.
+
+        * bindings/js/ScriptCallFrame.cpp: Added.
+        (WebCore::ScriptCallFrame::ScriptCallFrame):
+        (WebCore::ScriptCallFrame::~ScriptCallFrame):
+        (WebCore::ScriptCallFrame::argumentAt):
+        * bindings/js/ScriptCallFrame.h: Added.
+        (WebCore::ScriptCallFrame::functionName):
+        (WebCore::ScriptCallFrame::sourceURL):
+        (WebCore::ScriptCallFrame::lineNumber):
+        (WebCore::ScriptCallFrame::argumentCount):
+        * bindings/js/ScriptCallStack.cpp: Added.
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        (WebCore::ScriptCallStack::~ScriptCallStack):
+        (WebCore::ScriptCallStack::at):
+        (WebCore::ScriptCallStack::size):
+        (WebCore::ScriptCallStack::initialize):
+        * bindings/js/ScriptCallStack.h: Added.
+        (WebCore::ScriptCallStack::state):
+
 2008-12-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.
