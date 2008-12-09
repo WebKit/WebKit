@@ -77,12 +77,12 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				A8C006E5089863A100BA5114 /* Viewer */,
 				A8C006E6089863B100BA5114 /* Test Browser */,
-				A8C006CA0898634600BA5114 /* AppDelegate.m */,
+				A8C006E5089863A100BA5114 /* Viewer */,
 				A8C006CB0898634600BA5114 /* AppDelegate.h */,
-				A8C006B20898634600BA5114 /* ScalingImageView.m */,
+				A8C006CA0898634600BA5114 /* AppDelegate.m */,
 				A8C006B30898634600BA5114 /* ScalingImageView.h */,
+				A8C006B20898634600BA5114 /* ScalingImageView.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -90,8 +90,8 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				78662E6C096B4E1600907EA7 /* WebKit.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
+				78662E6C096B4E1600907EA7 /* WebKit.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -138,11 +138,11 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A8C006ED089865E900BA5114 /* DrawTestDocument.nib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
-				A8C006ED089865E900BA5114 /* DrawTestDocument.nib */,
 				A8C006EF089865E900BA5114 /* Inspector.nib */,
+				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				A8C006F1089865E900BA5114 /* TestViewer.nib */,
 			);
 			name = Resources;
@@ -160,12 +160,12 @@
 		A8C006E5089863A100BA5114 /* Viewer */ = {
 			isa = PBXGroup;
 			children = (
+				A8C006B80898634600BA5114 /* DrawTestDocument.h */,
+				A8C006BD0898634600BA5114 /* DrawTestDocument.m */,
 				A8C006BA0898634600BA5114 /* DrawTestToolbarController.h */,
 				A8C006B70898634600BA5114 /* DrawTestToolbarController.m */,
 				A8C006B60898634600BA5114 /* DrawTestView.h */,
 				A8C006B50898634600BA5114 /* DrawTestView.m */,
-				A8C006B80898634600BA5114 /* DrawTestDocument.h */,
-				A8C006BD0898634600BA5114 /* DrawTestDocument.m */,
 			);
 			name = Viewer;
 			sourceTree = "<group>";
@@ -173,14 +173,14 @@
 		A8C006E6089863B100BA5114 /* Test Browser */ = {
 			isa = PBXGroup;
 			children = (
-				A8C006B00898634600BA5114 /* SVGTest.m */,
-				A8C006B10898634600BA5114 /* SVGTest.h */,
-				A8C006BB0898634600BA5114 /* DrawTestInspectorController.m */,
 				A8C006BC0898634600BA5114 /* DrawTestInspectorController.h */,
+				A8C006BB0898634600BA5114 /* DrawTestInspectorController.m */,
+				A8C006B10898634600BA5114 /* SVGTest.h */,
+				A8C006B00898634600BA5114 /* SVGTest.m */,
 				A8C006AF0898634600BA5114 /* TestController.h */,
 				A8C006CE0898634600BA5114 /* TestController.m */,
-				A8C006CC0898634600BA5114 /* TestViewerSplitView.m */,
 				A8C006CD0898634600BA5114 /* TestViewerSplitView.h */,
+				A8C006CC0898634600BA5114 /* TestViewerSplitView.m */,
 			);
 			name = "Test Browser";
 			sourceTree = "<group>";

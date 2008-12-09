@@ -66,9 +66,9 @@
 		08FB77AFFE84173DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				1A624E580DCBC7F6006898C8 /* main.m */,
 				1AAD6A070DD0DC52003985DA /* MenuHandler.h */,
 				1AAD6A080DD0DC52003985DA /* MenuHandler.m */,
+				1A624E580DCBC7F6006898C8 /* main.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -135,8 +135,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A624E590DCBC7F6006898C8 /* main.m in Sources */,
 				1AAD6A090DD0DC52003985DA /* MenuHandler.m in Sources */,
+				1A624E590DCBC7F6006898C8 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

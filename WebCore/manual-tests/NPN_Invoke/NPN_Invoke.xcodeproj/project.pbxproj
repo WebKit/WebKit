@@ -52,9 +52,9 @@
 		089C1671FE841209C02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				2220AF6009A447200030077C /* WebKit.framework */,
 				84226A8D06823C4700780194 /* Carbon.framework */,
 				0AA1909FFE8422F4C02AAC07 /* CoreFoundation.framework */,
+				2220AF6009A447200030077C /* WebKit.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -62,8 +62,8 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2220B04609A459ED0030077C /* Localized.r */,
 				8D576317048677EA00EA77CD /* Info.plist */,
+				2220B04609A459ED0030077C /* Localized.r */,
 			);
 			name = Resources;
 			sourceTree = "<group>";

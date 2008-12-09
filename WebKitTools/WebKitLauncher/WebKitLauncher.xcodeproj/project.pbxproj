@@ -81,9 +81,9 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5D650F7509DB8CB40075E9A8 /* CoreFoundation.framework */,
 				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
 				13E42FB307B3F0F600E4EEF1 /* CoreData.framework */,
+				5D650F7509DB8CB40075E9A8 /* CoreFoundation.framework */,
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
@@ -122,10 +122,10 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5D41141B0A50A9DE00C84CF0 /* VERSION */,
+				8D1107310486CEB800E47090 /* Info.plist */,
 				5D4DF981097F89FB0083D5E5 /* start.html */,
 				5DB70524097B94CD009875EC /* webkit.icns */,
-				8D1107310486CEB800E47090 /* Info.plist */,
-				5D41141B0A50A9DE00C84CF0 /* VERSION */,
 			);
 			name = Resources;
 			sourceTree = "<group>";

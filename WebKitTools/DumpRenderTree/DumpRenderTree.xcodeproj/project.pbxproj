@@ -235,8 +235,8 @@
 				AE8259F308D22463000507AB /* Carbon.framework in Frameworks */,
 				A84F608A08B136DA00E9745F /* Cocoa.framework in Frameworks */,
 				A817090408B164D300CCB9FB /* JavaScriptCore.framework in Frameworks */,
-				9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */,
 				23BCB8900EA57623003C6289 /* OpenGL.framework in Frameworks */,
+				9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,12 +286,12 @@
 		141BF1F5096A439800E0753C /* TestNetscapePlugIn.subproj */ = {
 			isa = PBXGroup;
 			children = (
-				1AC6C77F0D07589B00CD3161 /* main.cpp */,
+				141BF448096A45C800E0753C /* Info.plist */,
 				1AC6C7800D07589B00CD3161 /* PluginObject.cpp */,
 				141BF447096A45C800E0753C /* PluginObject.h */,
 				1AC6C7810D07589B00CD3161 /* TestObject.cpp */,
 				1A8F024C0BB9B056008CFA34 /* TestObject.h */,
-				141BF448096A45C800E0753C /* Info.plist */,
+				1AC6C77F0D07589B00CD3161 /* main.cpp */,
 			);
 			path = TestNetscapePlugIn.subproj;
 			sourceTree = "<group>";
@@ -356,6 +356,7 @@
 		9345229B0BD12B2C0086EDA0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */,
 				375F09710DAC3CB600C8B4E5 /* WebKitWeightWatcher100.ttf */,
 				375F09720DAC3CB600C8B4E5 /* WebKitWeightWatcher200.ttf */,
 				375F09730DAC3CB600C8B4E5 /* WebKitWeightWatcher300.ttf */,
@@ -365,7 +366,6 @@
 				375F09770DAC3CB600C8B4E5 /* WebKitWeightWatcher700.ttf */,
 				375F09780DAC3CB600C8B4E5 /* WebKitWeightWatcher800.ttf */,
 				375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */,
-				AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -377,9 +377,9 @@
 				AE8257EF08D22389000507AB /* Carbon.framework */,
 				A84F608908B136DA00E9745F /* Cocoa.framework */,
 				A817090308B164D300CCB9FB /* JavaScriptCore.framework */,
+				23BCB88F0EA57623003C6289 /* OpenGL.framework */,
 				B5A752A108AF5D1F00138E45 /* QuartzCore.framework */,
 				9335435F03D75502008635CE /* WebKit.framework */,
-				23BCB88F0EA57623003C6289 /* OpenGL.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -387,11 +387,11 @@
 		A8B91AC40CF3B170008F91FF /* ObjCPlugin */ = {
 			isa = PBXGroup;
 			children = (
-				BCA18B250C9B015C00114369 /* WorkQueueItemMac.mm */,
 				BCA18B760C9B08F100114369 /* ObjCPlugin.h */,
 				BCA18B770C9B08F100114369 /* ObjCPlugin.m */,
 				BCA18B780C9B08F100114369 /* ObjCPluginFunction.h */,
 				BCA18B790C9B08F100114369 /* ObjCPluginFunction.m */,
+				BCA18B250C9B015C00114369 /* WorkQueueItemMac.mm */,
 			);
 			name = ObjCPlugin;
 			sourceTree = "<group>";
@@ -447,32 +447,32 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC0E24E00E2D9451001B6BC2 /* AccessibilityUIElement.h in Headers */,
 				BCA18B380C9B021900114369 /* AppleScriptController.h in Headers */,
+				A8B91BFF0CF522B4008F91FF /* CheckedMalloc.h in Headers */,
 				BCA18B7A0C9B08F100114369 /* DumpRenderTreeDraggingInfo.h in Headers */,
 				BCA18C0B0C9B59EF00114369 /* DumpRenderTreeMac.h in Headers */,
+				A8B91AE20CF3B372008F91FF /* DumpRenderTreePasteboard.h in Headers */,
 				9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */,
+				A8B91AE00CF3B372008F91FF /* DumpRenderTreeWindow.h in Headers */,
 				BCA18B610C9B08C200114369 /* EditingDelegate.h in Headers */,
 				BCA18B6F0C9B08DB00114369 /* EventSendingController.h in Headers */,
 				BCA18B630C9B08C200114369 /* FrameLoadDelegate.h in Headers */,
 				14770FE20A22ADF7009342EE /* GCController.h in Headers */,
+				BC47412A0D038A4C0072B006 /* JavaScriptThreading.h in Headers */,
 				BC0131DB0C9772010087317D /* LayoutTestController.h in Headers */,
 				BCA18B710C9B08DB00114369 /* NavigationController.h in Headers */,
 				BCA18B310C9B01B400114369 /* ObjCController.h in Headers */,
 				BCA18B7D0C9B08F100114369 /* ObjCPlugin.h in Headers */,
 				BCA18B7F0C9B08F100114369 /* ObjCPluginFunction.h in Headers */,
+				BCB284C70CFA83C4007E533E /* PixelDumpSupport.h in Headers */,
+				BCB284D00CFA83CC007E533E /* PixelDumpSupportCG.h in Headers */,
 				BCA18B650C9B08C200114369 /* PolicyDelegate.h in Headers */,
 				BCA18B670C9B08C200114369 /* ResourceLoadDelegate.h in Headers */,
 				BCA18B3C0C9B024900114369 /* TextInputController.h in Headers */,
 				BCA18B690C9B08C200114369 /* UIDelegate.h in Headers */,
 				BC9D90250C97472E0099A4A3 /* WorkQueue.h in Headers */,
 				BC9D90260C97472E0099A4A3 /* WorkQueueItem.h in Headers */,
-				A8B91AE00CF3B372008F91FF /* DumpRenderTreeWindow.h in Headers */,
-				A8B91AE20CF3B372008F91FF /* DumpRenderTreePasteboard.h in Headers */,
-				A8B91BFF0CF522B4008F91FF /* CheckedMalloc.h in Headers */,
-				BCB284C70CFA83C4007E533E /* PixelDumpSupport.h in Headers */,
-				BCB284D00CFA83CC007E533E /* PixelDumpSupportCG.h in Headers */,
-				BC47412A0D038A4C0072B006 /* JavaScriptThreading.h in Headers */,
-				BC0E24E00E2D9451001B6BC2 /* AccessibilityUIElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -576,9 +576,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AC6C8490D07638600CD3161 /* main.cpp in Sources */,
 				1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */,
 				1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */,
+				1AC6C8490D07638600CD3161 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -586,36 +586,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BCD08B3A0E1057EF00A7D0C1 /* AccessibilityController.cpp in Sources */,
+				BCD08B710E1059D200A7D0C1 /* AccessibilityControllerMac.mm in Sources */,
+				BC0E24E10E2D9451001B6BC2 /* AccessibilityUIElement.cpp in Sources */,
+				BC0E26150E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm in Sources */,
 				BCA18B390C9B021900114369 /* AppleScriptController.m in Sources */,
+				A8B91BFD0CF522B4008F91FF /* CheckedMalloc.cpp in Sources */,
 				BCA18C470C9B5B9400114369 /* DumpRenderTree.mm in Sources */,
 				BCA18B7B0C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm in Sources */,
+				A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.m in Sources */,
+				A8B91ADC0CF3B32F008F91FF /* DumpRenderTreeWindow.mm in Sources */,
 				BCA18B620C9B08C200114369 /* EditingDelegate.mm in Sources */,
 				BCA18B700C9B08DB00114369 /* EventSendingController.mm in Sources */,
 				BCA18B640C9B08C200114369 /* FrameLoadDelegate.mm in Sources */,
 				BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */,
 				BCA18B230C9B014B00114369 /* GCControllerMac.mm in Sources */,
+				BC4741410D038A570072B006 /* JavaScriptThreadingPthreads.cpp in Sources */,
 				BC0131DA0C9772010087317D /* LayoutTestController.cpp in Sources */,
 				BCA18B240C9B014B00114369 /* LayoutTestControllerMac.mm in Sources */,
 				BCA18B720C9B08DB00114369 /* NavigationController.m in Sources */,
 				BCA18B320C9B01B400114369 /* ObjCController.m in Sources */,
 				BCA18B7E0C9B08F100114369 /* ObjCPlugin.m in Sources */,
 				BCA18B800C9B08F100114369 /* ObjCPluginFunction.m in Sources */,
+				BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */,
+				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
 				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
 				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
 				BCA18B490C9B02C400114369 /* TextInputController.m in Sources */,
 				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
 				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
 				BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */,
-				A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.m in Sources */,
-				A8B91ADC0CF3B32F008F91FF /* DumpRenderTreeWindow.mm in Sources */,
-				A8B91BFD0CF522B4008F91FF /* CheckedMalloc.cpp in Sources */,
-				BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */,
-				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
-				BC4741410D038A570072B006 /* JavaScriptThreadingPthreads.cpp in Sources */,
-				BCD08B3A0E1057EF00A7D0C1 /* AccessibilityController.cpp in Sources */,
-				BCD08B710E1059D200A7D0C1 /* AccessibilityControllerMac.mm in Sources */,
-				BC0E24E10E2D9451001B6BC2 /* AccessibilityUIElement.cpp in Sources */,
-				BC0E26150E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

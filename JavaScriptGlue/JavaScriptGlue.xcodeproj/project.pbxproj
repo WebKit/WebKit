@@ -168,9 +168,6 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				F1EB7EAB02621EAF03CA149D /* JavaScriptGlue.exp */,
-				F11798B20262465703CA149D /* JavaScriptGlue.cpp */,
-				F11798B30262465703CA149D /* JavaScriptGlue.h */,
 				F11798B8026246FD03CA149D /* JSBase.cpp */,
 				F11798B9026246FD03CA149D /* JSBase.h */,
 				F11798BA026246FD03CA149D /* JSObject.cpp */,
@@ -181,6 +178,9 @@
 				F11798B7026246FD03CA149D /* JSUtils.h */,
 				F11798C80262545403CA149D /* JSValueWrapper.cpp */,
 				F11798C90262545403CA149D /* JSValueWrapper.h */,
+				F11798B20262465703CA149D /* JavaScriptGlue.cpp */,
+				F1EB7EAB02621EAF03CA149D /* JavaScriptGlue.exp */,
+				F11798B30262465703CA149D /* JavaScriptGlue.h */,
 				F11798CE0262579C03CA149D /* UserObjectImp.cpp */,
 				F11798CF0262579C03CA149D /* UserObjectImp.h */,
 			);
@@ -192,8 +192,8 @@
 		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DD66F3F508F7401B00C75FD7 /* JavaScriptCore.framework */,
 				F14FC9F30258E9A603CA149D /* CoreServices.framework */,
+				DD66F3F508F7401B00C75FD7 /* JavaScriptCore.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -201,8 +201,8 @@
 		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
+				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
