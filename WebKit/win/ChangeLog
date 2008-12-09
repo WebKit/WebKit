@@ -1,3 +1,12 @@
+ks2008-12-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - Fix nightly builds
+
+        * Interfaces/IWebViewPrivate.idl: Moved globalHistoryItem() to the end,
+        so that it comes after all methods used by Safari 3.2.1.
+
 2008-12-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
