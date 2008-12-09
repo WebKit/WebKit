@@ -1,5 +1,22 @@
 2008-12-08  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Port the op_j?n?eq_null JIT code generation to use the MacroAssembler,
+        and clean up slightly at the same time.  The 'j' forms currently compare,
+        then set a register, then compare again, then branch.  Branch directly on
+        the result of the first compare.
+
+        Around a 1% progression on deltablue, crypto & early boyer, for about 1/2%
+        overall on v8-tests.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdSlowCase):
+
+2008-12-08  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         Expand MacroAssembler to support more operations, required by the JIT.

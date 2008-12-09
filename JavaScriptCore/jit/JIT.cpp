@@ -820,27 +820,19 @@ void JIT::privateCompileMainPass()
             unsigned target = instruction[i + 2].u.operand;
 
             emitGetVirtualRegister(src, X86::eax, i);
-            JmpSrc isImmediate = emitJumpIfNotJSCell(X86::eax);
+            Jump isImmediate = emitJumpIfNotJSCell(X86::eax);
 
-            __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
-            __ testl_i32m(MasqueradesAsUndefined, FIELD_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
-            __ setnz_r(X86::eax);
+            // First, handle JSCell cases - check MasqueradesAsUndefined bit on the structure.
+            loadPtr(Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)), X86::ecx);
+            m_jmpTable.append(JmpTable(jnz32(Address(X86::ecx, FIELD_OFFSET(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined)), i + 2 + target));
+            Jump wasNotImmediate = jump();
 
-            JmpSrc wasNotImmediate = __ jmp();
+            // Now handle the immediate cases - undefined & null
+            isImmediate.link(this);
+            and32(Imm32(~JSImmediate::ExtendedTagBitUndefined), X86::eax);
+            m_jmpTable.append(JmpTable(je32(X86::eax, Imm32(asInteger(jsNull()))), i + 2 + target));            
 
-            __ link(isImmediate, __ label());
-
-            __ movl_i32r(~JSImmediate::ExtendedTagBitUndefined, X86::ecx);
-            __ andl_rr(X86::eax, X86::ecx);
-            __ cmpl_i32r(JSImmediate::FullTagTypeNull, X86::ecx);
-            __ sete_r(X86::eax);
-
-            __ link(wasNotImmediate, __ label());
-
-            __ movzbl_rr(X86::eax, X86::eax);
-            __ cmpl_i32r(0, X86::eax);
-            m_jmpTable.append(JmpTable(__ jnz(), i + 2 + target));            
-
+            wasNotImmediate.link(this);
             i += 3;
             break;
         };
@@ -849,26 +841,19 @@ void JIT::privateCompileMainPass()
             unsigned target = instruction[i + 2].u.operand;
 
             emitGetVirtualRegister(src, X86::eax, i);
-            JmpSrc isImmediate = emitJumpIfNotJSCell(X86::eax);
+            Jump isImmediate = emitJumpIfNotJSCell(X86::eax);
 
-            __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
-            __ testl_i32m(MasqueradesAsUndefined, FIELD_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
-            __ setz_r(X86::eax);
+            // First, handle JSCell cases - check MasqueradesAsUndefined bit on the structure.
+            loadPtr(Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)), X86::ecx);
+            m_jmpTable.append(JmpTable(jz32(Address(X86::ecx, FIELD_OFFSET(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined)), i + 2 + target));
+            Jump wasNotImmediate = jump();
 
-            JmpSrc wasNotImmediate = __ jmp();
+            // Now handle the immediate cases - undefined & null
+            isImmediate.link(this);
+            and32(Imm32(~JSImmediate::ExtendedTagBitUndefined), X86::eax);
+            m_jmpTable.append(JmpTable(jne32(X86::eax, Imm32(asInteger(jsNull()))), i + 2 + target));            
 
-            __ link(isImmediate, __ label());
-
-            __ movl_i32r(~JSImmediate::ExtendedTagBitUndefined, X86::ecx);
-            __ andl_rr(X86::eax, X86::ecx);
-            __ cmpl_i32r(JSImmediate::FullTagTypeNull, X86::ecx);
-            __ setne_r(X86::eax);
-
-            __ link(wasNotImmediate, __ label());
-
-            __ movzbl_rr(X86::eax, X86::eax);
-            __ cmpl_i32r(0, X86::eax);
-            m_jmpTable.append(JmpTable(__ jnz(), i + 2 + target));            
+            wasNotImmediate.link(this);
 
             i += 3;
             break;
@@ -1301,24 +1286,20 @@ void JIT::privateCompileMainPass()
             unsigned src1 = instruction[i + 2].u.operand;
 
             emitGetVirtualRegister(src1, X86::eax, i);
-            JmpSrc isImmediate = emitJumpIfNotJSCell(X86::eax);
+            Jump isImmediate = emitJumpIfNotJSCell(X86::eax);
 
-            __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
-            __ testl_i32m(MasqueradesAsUndefined, FIELD_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
-            __ setnz_r(X86::eax);
+            loadPtr(Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)), X86::ecx);
+            setnz32(Address(X86::ecx, FIELD_OFFSET(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined), X86::eax);
 
-            JmpSrc wasNotImmediate = __ jmp();
+            Jump wasNotImmediate = jump();
 
-            __ link(isImmediate, __ label());
+            isImmediate.link(this);
 
-            __ movl_i32r(~JSImmediate::ExtendedTagBitUndefined, X86::ecx);
-            __ andl_rr(X86::eax, X86::ecx);
-            __ cmpl_i32r(JSImmediate::FullTagTypeNull, X86::ecx);
-            __ sete_r(X86::eax);
+            and32(Imm32(~JSImmediate::ExtendedTagBitUndefined), X86::eax);
+            sete32(Imm32(JSImmediate::FullTagTypeNull), X86::eax);
 
-            __ link(wasNotImmediate, __ label());
+            wasNotImmediate.link(this);
 
-            __ movzbl_rr(X86::eax, X86::eax);
             emitTagAsBoolImmediate(X86::eax);
             emitPutVirtualRegister(dst);
 
@@ -1330,24 +1311,20 @@ void JIT::privateCompileMainPass()
             unsigned src1 = instruction[i + 2].u.operand;
 
             emitGetVirtualRegister(src1, X86::eax, i);
-            JmpSrc isImmediate = emitJumpIfNotJSCell(X86::eax);
+            Jump isImmediate = emitJumpIfNotJSCell(X86::eax);
 
-            __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
-            __ testl_i32m(MasqueradesAsUndefined, FIELD_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
-            __ setz_r(X86::eax);
+            loadPtr(Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)), X86::ecx);
+            setz32(Address(X86::ecx, FIELD_OFFSET(Structure, m_typeInfo.m_flags)), Imm32(MasqueradesAsUndefined), X86::eax);
 
-            JmpSrc wasNotImmediate = __ jmp();
+            Jump wasNotImmediate = jump();
 
-            __ link(isImmediate, __ label());
+            isImmediate.link(this);
 
-            __ movl_i32r(~JSImmediate::ExtendedTagBitUndefined, X86::ecx);
-            __ andl_rr(X86::eax, X86::ecx);
-            __ cmpl_i32r(JSImmediate::FullTagTypeNull, X86::ecx);
-            __ setne_r(X86::eax);
+            and32(Imm32(~JSImmediate::ExtendedTagBitUndefined), X86::eax);
+            setne32(Imm32(JSImmediate::FullTagTypeNull), X86::eax);
 
-            __ link(wasNotImmediate, __ label());
+            wasNotImmediate.link(this);
 
-            __ movzbl_rr(X86::eax, X86::eax);
             emitTagAsBoolImmediate(X86::eax);
             emitPutVirtualRegister(dst);
 

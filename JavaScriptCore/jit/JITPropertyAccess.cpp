@@ -147,7 +147,7 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
 
 #ifndef NDEBUG
     JmpDst coldPathBegin = __ label();
-#endif        
+#endif
     emitPutCTIArg(X86::eax, 0);
     emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
     JmpSrc call = emitCTICall(i, Interpreter::cti_op_get_by_id);
