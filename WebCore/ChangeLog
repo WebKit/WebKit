@@ -1,3 +1,46 @@
+2008-12-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22637
+
+        Implement the GET method for WMLGoElement, and some test covering it's behaviour.
+        Update all build systems supporting WML that haven't been updated since a while.
+
+        Add WMLPostField stub implementation, needed for implementing POST method.
+
+        Tests: wml/go-task-get-method-external-deck-with-href.html
+               wml/go-task-get-method-external-deck.html
+               wml/go-task-get-method-same-deck.html
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::resetWMLPageState):
+        * wml/WMLCardElement.cpp:
+        * wml/WMLCardElement.h:
+        * wml/WMLEventHandlingElement.cpp:
+        (WebCore::WMLCardElement::registerDoElement):
+        * wml/WMLEventHandlingElement.h:
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::WMLGoElement):
+        (WebCore::WMLGoElement::registerPostfieldElement):
+        (WebCore::WMLGoElement::parseMappedAttribute):
+        (WebCore::WMLGoElement::executeTask):
+        (WebCore::WMLGoElement::parseContentType):
+        (WebCore::WMLGoElement::preparePOSTRequest):
+        (WebCore::WMLGoElement::prepareGETRequest):
+        * wml/WMLGoElement.h:
+        * wml/WMLPostfieldElement.cpp: Added.
+        (WebCore::WMLPostfieldElement::WMLPostfieldElement):
+        (WebCore::WMLPostfieldElement::parseMappedAttribute):
+        (WebCore::WMLPostfieldElement::insertedIntoDocument):
+        * wml/WMLPostfieldElement.h: Added.
+        (WebCore::WMLPostfieldElement::name):
+        (WebCore::WMLPostfieldElement::value):
+        * wml/WMLTagNames.in:
+
 2008-11-26  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Anders Carlsson.

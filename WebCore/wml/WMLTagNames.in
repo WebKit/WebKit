@@ -12,6 +12,7 @@ go
 noop
 onevent interfaceName=WMLOnEventElement
 p
+postfield
 prev
 refresh
 setvar
@@ -29,6 +30,5 @@ timer
 
 #if 0
 # FIXME: Implement these elements
-postfield
 template
 #endif

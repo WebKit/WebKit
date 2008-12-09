@@ -30,7 +30,6 @@
 #include "NodeList.h"
 #include "RenderStyle.h"
 #include "WMLDocument.h"
-#include "WMLDoElement.h"
 #include "WMLIntrinsicEventHandler.h"
 #include "WMLNames.h"
 #include "WMLTimerElement.h"
@@ -89,22 +88,6 @@ void WMLCardElement::hideCard()
 
     ASSERT(attached());
     ASSERT(!renderer());
-}
-
-void WMLCardElement::registerDoElement(WMLDoElement* doElement)
-{
-    Vector<WMLDoElement*>::iterator it = m_doElements.begin();
-    Vector<WMLDoElement*>::iterator end = m_doElements.end();
-
-    for (; it != end; ++it) {
-        if ((*it)->name() == doElement->name()) {
-            reportWMLError(document(), WMLErrorDuplicatedDoElement);
-            return;
-        }
-    }
-
-    m_doElements.append(doElement);
-    doElement->setActive(true);
 }
 
 void WMLCardElement::setIntrinsicEventTimer(WMLTimerElement* timer)

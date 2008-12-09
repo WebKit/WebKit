@@ -29,7 +29,6 @@
 
 namespace WebCore {
 
-class WMLDoElement;
 class WMLTimerElement;
 
 class WMLCardElement : public WMLEventHandlingElement {
@@ -41,7 +40,6 @@ public:
     bool isOrdered() const { return m_isOrdered; }
     WMLTimerElement* eventTimer() const { return m_eventTimer; }
 
-    void registerDoElement(WMLDoElement*);
     void setIntrinsicEventTimer(WMLTimerElement*);
     void handleIntrinsicEventIfNeeded();
 
@@ -64,7 +62,6 @@ private:
     bool m_isVisible;
 
     WMLTimerElement* m_eventTimer;
-    Vector<WMLDoElement*> m_doElements;
 };
 
 }

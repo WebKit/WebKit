@@ -16846,6 +16846,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\wml\WMLPostfieldElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLPostfieldElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\wml\WMLPrevElement.cpp"
 				>
 			</File>

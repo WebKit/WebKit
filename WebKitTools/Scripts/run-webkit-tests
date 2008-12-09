@@ -347,6 +347,7 @@ if (checkWebCoreWMLSupport(0)) {
     $supportedFileExtensions{'wml'} = 1;
 } else {
     $ignoredDirectories{'fast/wml'} = 1;
+    $ignoredDirectories{'wml'} = 1;
 }
 
 if (!$testHTTP) {

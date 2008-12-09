@@ -22,42 +22,43 @@
 #include "config.h"
 
 #if ENABLE(WML)
-#include "WMLEventHandlingElement.h"
+#include "WMLPostfieldElement.h"
 
-#include "WMLDoElement.h"
-#include "WMLIntrinsicEventHandler.h"
-#include "WMLTaskElement.h"
+#include "HTMLNames.h"
+#include "WMLDocument.h"
+#include "WMLGoElement.h"
 #include "WMLNames.h"
 
 namespace WebCore {
 
 using namespace WMLNames;
 
-WMLEventHandlingElement::WMLEventHandlingElement(const QualifiedName& tagName, Document* doc)
+WMLPostfieldElement::WMLPostfieldElement(const QualifiedName& tagName, Document* doc)
     : WMLElement(tagName, doc)
 {
 }
 
-void WMLEventHandlingElement::createEventHandlerIfNeeded()
+void WMLPostfieldElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (!m_eventHandler)
-        m_eventHandler.set(new WMLIntrinsicEventHandler);
+    if (attr->name() == HTMLNames::nameAttr)
+        m_name = parseValueSubstitutingVariableReferences(attr->value());
+    else if (attr->name() == HTMLNames::valueAttr)
+        m_value = parseValueSubstitutingVariableReferences(attr->value());
+    else
+        WMLElement::parseMappedAttribute(attr);
 }
 
-void WMLEventHandlingElement::registerDoElement(WMLDoElement* doElement)
+void WMLPostfieldElement::insertedIntoDocument()
 {
-    Vector<WMLDoElement*>::iterator it = m_doElements.begin();
-    Vector<WMLDoElement*>::iterator end = m_doElements.end();
+    WMLElement::insertedIntoDocument();
 
-    for (; it != end; ++it) {
-        if ((*it)->name() == doElement->name()) {
-            reportWMLError(document(), WMLErrorDuplicatedDoElement);
-            return;
-        }
-    }
+    Node* parent = parentNode();
+    ASSERT(parent);
 
-    m_doElements.append(doElement);
-    doElement->setActive(true);
+    if (!parent->hasTagName(goTag))
+        return;
+
+    static_cast<WMLGoElement*>(parent)->registerPostfieldElement(this);
 }
 
 }

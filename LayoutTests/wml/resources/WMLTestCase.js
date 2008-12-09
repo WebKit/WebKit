@@ -9,11 +9,14 @@ function createWMLElement(name) {
     return testDocument.createElementNS(wmlNS, "wml:" + name);
 }
 
-function createWMLTestCase(desc) {
+function createWMLTestCase(desc, substituteVariables) {
+    if (substituteVariables == null)
+        substituteVariables = true;
+
     description(desc);
     bodyElement = document.getElementsByTagName("body")[0];
 
-    // Clear variable state
+    // Clear variable state & history
     document.resetWMLPageState();
 
     if (window.layoutTestController) {
@@ -22,20 +25,38 @@ function createWMLTestCase(desc) {
     }
 
     iframeElement = document.createElementNS(xhtmlNS, "iframe");
-    iframeElement.src = "data:text/vnd.wap.wml,<wml><card/></wml>";
+    iframeElement.src = "resources/test-document.wml";
 
     var loaded = false;
+    var executed = false;
+
     iframeElement.onload = function() {
+        if (executed)
+            return;
+
+        // External deck jumps
+        if (testDocument != null && !substituteVariables) {
+            executeTest();
+            return;
+        }
+
         testDocument = iframeElement.contentDocument;
         setupTestDocument();
 
-        if (loaded) {
+        // Variable refresh
+        if (loaded && substituteVariables) {
             executeTest();
             return;
         }
 
         loaded = true;
         prepareTest();
+
+        // Internal deck jumps
+        if (!substituteVariables) {
+            executed = true;
+            executeTest();
+        }
     }
 
     bodyElement.insertBefore(iframeElement, document.getElementById("description"));
@@ -63,7 +84,7 @@ function completeTest() {
 
     script.onload = function() {
         if (window.layoutTestController)
-            layoutTestController.notifyDone();
+            window.setTimeout("layoutTestController.notifyDone()", 0);
     };
 
     script.src = "../fast/js/resources/js-test-post.js";

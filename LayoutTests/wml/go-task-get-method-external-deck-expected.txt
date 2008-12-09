@@ -1,0 +1,17 @@
+WML layout tests - using XHTML scripting
+
+
+Tests GET method of element - jump to external deck
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+This is the first external card.

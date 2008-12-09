@@ -1,3 +1,42 @@
+2008-12-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22637
+
+        Add new tests covering the WMLGoElement's GET method.
+        Reactive disabled WML tests, as LayoutTests/wml/ is not run anymore if WebCore has been built without WML support.
+
+        * wml/go-task-get-method-external-deck-expected.txt: Added.
+        * wml/go-task-get-method-external-deck-with-href-expected.txt: Added.
+        * wml/go-task-get-method-external-deck-with-href.html: Added.
+        * wml/go-task-get-method-external-deck.html: Added.
+        * wml/go-task-get-method-same-deck-expected.txt: Added.
+        * wml/go-task-get-method-same-deck.html: Added.
+        * wml/resources/WMLTestCase.js:
+        (createWMLTestCase.iframeElement.onload):
+        (createWMLTestCase):
+        (completeTest.script.onload):
+        (completeTest):
+        * wml/resources/external-deck.wml: Added.
+        * wml/resources/go-task-get-method-external-deck-with-href.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/go-task-get-method-external-deck.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/go-task-get-method-same-deck.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/test-document.wml: Added.
+        * wml/variable-reference-invalid-character.html: Copied from LayoutTests/wml/variable-reference-invalid-character.html-disabled.
+        * wml/variable-reference-invalid-character.html-disabled: Removed.
+        * wml/variable-reference-valid.html: Copied from LayoutTests/wml/variable-reference-valid.html-disabled.
+        * wml/variable-reference-valid.html-disabled: Removed.
+
 2008-12-08  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.

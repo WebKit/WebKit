@@ -19,39 +19,29 @@
  *
  */
 
-#ifndef WMLGoElement_h
-#define WMLGoElement_h
+#ifndef WMLPostfieldElement_h
+#define WMLPostfieldElement_h
 
 #if ENABLE(WML)
-#include "WMLTaskElement.h"
+#include "WMLElement.h"
+
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
-class ResourceRequest;
-class WMLPostfieldElement;
-
-class WMLGoElement : public WMLTaskElement {
+class WMLPostfieldElement : public WMLElement {
 public:
-    WMLGoElement(const QualifiedName& tagName, Document*);
-
-    void registerPostfieldElement(WMLPostfieldElement*);
+    WMLPostfieldElement(const QualifiedName& tagName, Document*);
 
     virtual void parseMappedAttribute(MappedAttribute*);
-    virtual void executeTask(Event*);
+    virtual void insertedIntoDocument();
+
+    String name() const { return m_name; }
+    String value() const { return m_value; }
 
 private:
-    void parseContentType(const String&);
-
-    void preparePOSTRequest(ResourceRequest&, bool inSameDeck, const String& cacheControl);
-    void prepareGETRequest(ResourceRequest&, bool inSameDeck, const KURL&);
-
-    HashSet<WMLPostfieldElement*> m_postfieldElements;
-
-    String m_contentType;
-    String m_acceptCharset;
-
-    bool m_isMultiPart;
-    bool m_isPostMethod;
+    String m_name;
+    String m_value;
 };
 
 }
