@@ -70,6 +70,8 @@
        loadManually:(BOOL)loadManually
          DOMElement:(DOMElement *)anElement;
 
+- (WebNetscapePluginPackage *)pluginPackage;
+
 - (NSMutableURLRequest *)requestWithURLCString:(const char *)URLCString;
 
 // Subclasses must override these.

@@ -31,6 +31,7 @@
 #include <WebCore/Timer.h>
 #include <WebKit/npapi.h>
 #include <wtf/Deque.h>
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
@@ -39,6 +40,7 @@
 
 namespace WebKit {
 
+class HostedNetscapePluginStream;
 class NetscapePluginHostProxy;
     
 class NetscapePluginInstanceProxy : public RefCounted<NetscapePluginInstanceProxy> {
@@ -54,7 +56,10 @@ public:
     bool useSoftwareRenderer() const { return m_useSoftwareRenderer; }
     WebHostedNetscapePluginView *pluginView() const { return m_pluginView; }
     NetscapePluginHostProxy* hostProxy() const { return m_pluginHostProxy; }
-
+    
+    HostedNetscapePluginStream *pluginStream(uint32_t streamID);
+    void disconnectStream(HostedNetscapePluginStream*);
+    
     void pluginHostDied();
     
     void resize(NSRect size, NSRect clipRect);
@@ -86,6 +91,8 @@ private:
     WebCore::Timer<NetscapePluginInstanceProxy> m_requestTimer;
     Deque<PluginRequest*> m_pluginRequests;
     
+    HashMap<uint32_t, RefPtr<HostedNetscapePluginStream> > m_streams;
+
     uint32_t m_currentRequestID;
     
     uint32_t m_pluginID;

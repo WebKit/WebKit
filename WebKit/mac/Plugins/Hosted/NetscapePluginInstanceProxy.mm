@@ -97,12 +97,27 @@ void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect)
 
 void NetscapePluginInstanceProxy::destroy()
 {
+    Vector<RefPtr<HostedNetscapePluginStream> > streamsCopy;
+    copyValuesToVector(m_streams, streamsCopy);
+    for (size_t i = 0; i < streamsCopy.size(); i++)
+        streamsCopy[i]->stop();
+    
     _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID);
     
     m_pluginHostProxy->removePluginInstance(this);
     m_pluginHostProxy = 0;
 }
 
+HostedNetscapePluginStream *NetscapePluginInstanceProxy::pluginStream(uint32_t streamID)
+{
+    return m_streams.get(streamID).get();
+}
+
+void NetscapePluginInstanceProxy::disconnectStream(HostedNetscapePluginStream* stream)
+{
+    m_streams.remove(stream->streamID());
+}
+    
 void NetscapePluginInstanceProxy::pluginHostDied()
 {
     m_pluginHostProxy = 0;
@@ -307,7 +322,6 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
             return NPERR_GENERIC_ERROR;
     }
     
-
     // FIXME: Handle wraparound
     requestID = ++m_currentRequestID;
         
@@ -324,7 +338,10 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
         m_pluginRequests.append(pluginRequest);
         m_requestTimer.startOneShot(0);
     } else {
-        // FIXME: Load the stream.
+        RefPtr<HostedNetscapePluginStream> stream = HostedNetscapePluginStream::create(this, requestID, request);
+
+        m_streams.add(requestID, stream);
+        stream->start();
     }
     
     return NPERR_NO_ERROR;

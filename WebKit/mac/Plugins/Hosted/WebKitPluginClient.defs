@@ -43,4 +43,8 @@ simpleroutine LoadURL(clientPort :mach_port_t;
                       postData :data_t;
                       postDataIsFile :boolean_t;
                       currentEventIsUserGesture :boolean_t);
-                      
+
+simpleroutine CancelLoadURL(clientPort :mach_port_t;
+                            pluginID :uint32_t;
+                            streamID :uint32_t;
+                            reason :int16_t);

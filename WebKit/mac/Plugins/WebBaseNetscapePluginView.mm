@@ -111,7 +111,11 @@ using namespace WebCore;
     [super finalize];
 }
 
-
+- (WebNetscapePluginPackage *)pluginPackage
+{
+    return _pluginPackage.get();
+}
+    
 - (BOOL)isFlipped
 {
     return YES;

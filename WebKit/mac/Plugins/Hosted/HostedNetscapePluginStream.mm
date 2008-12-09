@@ -29,10 +29,13 @@
 
 #import "NetscapePluginHostProxy.h"
 #import "NetscapePluginInstanceProxy.h"
+#import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import "WebHostedNetscapePluginView.h"
 #import "WebFrameInternal.h"
+#import "WebKitErrorsPrivate.h"
+#import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebKitPluginHost.h"
 #import "WebKitSystemInterface.h"
@@ -46,6 +49,8 @@ HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstancePro
     , m_streamID(streamID)
     , m_isTerminated(false)
     , m_request(AdoptNS, [request mutableCopy])
+    , m_requestURL([request URL])
+    , m_frameLoader(0)
 {
     if (core([instance->pluginView() webFrame])->loader()->shouldHideReferrer([request URL], core([instance->pluginView() webFrame])->loader()->outgoingReferrer()))
         [m_request.get() _web_setHTTPReferrer:nil];
@@ -56,14 +61,21 @@ void HostedNetscapePluginStream::startStreamWithResponse(NSURLResponse *response
     didReceiveResponse(0, response);
 }
     
-void HostedNetscapePluginStream::startStream(NSURL *, long long expectedContentLength, NSDate *lastModifiedDate, NSString *mimeType, NSData *headers)
+void HostedNetscapePluginStream::startStream(NSURL *responseURL, long long expectedContentLength, NSDate *lastModifiedDate, NSString *mimeType, NSData *headers)
 {
+    m_responseURL = responseURL;
+    m_mimeType = mimeType;
+
     char* mimeTypeUTF8 = const_cast<char*>([mimeType UTF8String]);
     int mimeTypeUTF8Length = mimeTypeUTF8 ? strlen (mimeTypeUTF8) + 1 : 0;
+    
+    const char *url = [responseURL _web_URLCString];
+    int urlLength = url ? strlen(url) + 1 : 0;
     
     _WKPHStartStream(m_instance->hostProxy()->port(),
                      m_instance->pluginID(),
                      m_streamID,
+                     const_cast<char*>(url), urlLength,
                      expectedContentLength,
                      [lastModifiedDate timeIntervalSince1970],
                      mimeTypeUTF8, mimeTypeUTF8Length,
@@ -83,8 +95,8 @@ void HostedNetscapePluginStream::didFinishLoading(WebCore::NetscapePlugInStreamL
     _WKPHStreamDidFinishLoading(m_instance->hostProxy()->port(),
                                 m_instance->pluginID(),
                                 m_streamID);
+    m_instance->disconnectStream(this);
 }
-    
     
 void HostedNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse& response)
 {
@@ -140,6 +152,94 @@ void HostedNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*,
     }
     
     startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);
+}
+
+static NPReason reasonForError(NSError *error)
+{
+    if (!error)
+        return NPRES_DONE;
+
+    if ([[error domain] isEqualToString:NSURLErrorDomain] && [error code] == NSURLErrorCancelled)
+        return NPRES_USER_BREAK;
+
+    return NPRES_NETWORK_ERR;
+}
+
+void HostedNetscapePluginStream::didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError& error)
+{
+    _WKPHStreamDidFail(m_instance->hostProxy()->port(), m_instance->pluginID(), m_streamID, reasonForError(error));
+}
+    
+bool HostedNetscapePluginStream::wantsAllStreams() const
+{
+    // FIXME: Implement.
+    return false;
+}
+
+void HostedNetscapePluginStream::start()
+{
+    ASSERT(m_request);
+    ASSERT(!m_frameLoader);
+    ASSERT(!m_loader);
+    
+    m_loader = NetscapePlugInStreamLoader::create(core([m_instance->pluginView() webFrame]), this);
+    m_loader->setShouldBufferData(false);
+    
+    m_loader->documentLoader()->addPlugInStreamLoader(m_loader.get());
+    m_loader->load(m_request.get());
+}
+
+void HostedNetscapePluginStream::stop()
+{
+    ASSERT(!m_frameLoader);
+    
+    if (!m_loader->isDone())
+        m_loader->cancel(m_loader->cancelledError());
+}
+    
+void HostedNetscapePluginStream::cancelLoad(NPReason reason)
+{
+    cancelLoad(errorForReason(reason));
+}
+
+void HostedNetscapePluginStream::cancelLoad(NSError *error)
+{
+    if (m_frameLoader) {
+        ASSERT(!m_loader);
+        
+        DocumentLoader* documentLoader = m_frameLoader->activeDocumentLoader();
+        ASSERT(documentLoader);
+        
+        if (documentLoader->isLoadingMainResource())
+            documentLoader->cancelMainResourceLoad(error);
+        return;
+    }
+    
+    if (!m_loader->isDone())
+        m_loader->cancel(error);
+    m_instance->disconnectStream(this);
+}        
+
+NSError *HostedNetscapePluginStream::pluginCancelledConnectionError() const
+{
+    return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
+                                           contentURL:m_responseURL ? m_responseURL.get() : m_requestURL.get()
+                                        pluginPageURL:nil
+                                           pluginName:[[m_instance->pluginView() pluginPackage] name]
+                                             MIMEType:m_mimeType.get()] autorelease];
+}
+
+NSError *HostedNetscapePluginStream::errorForReason(NPReason reason) const
+{
+    if (reason == NPRES_DONE)
+        return nil;
+
+    if (reason == NPRES_USER_BREAK)
+        return [NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                          code:NSURLErrorCancelled 
+                                           URL:m_responseURL ? m_responseURL.get() : m_requestURL.get()];
+
+    return pluginCancelledConnectionError();
 }
 
 } // namespace WebKit

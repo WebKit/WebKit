@@ -1,3 +1,62 @@
+2008-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        More work towards getting NPN_GetURL working.
+        
+        * Plugins/Hosted/HostedNetscapePluginStream.h:
+        Inherit from NetscapePlugInStreamLoaderClient.
+        
+        (WebKit::HostedNetscapePluginStream::streamID):
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::startStream):
+        Keep track of the resposne URL and the MIME type. Pass the response URL to the 
+        plug-in host.
+        
+        (WebKit::HostedNetscapePluginStream::didFinishLoading):
+        Disconnect the stream.
+        
+        (WebKit::HostedNetscapePluginStream::start):
+        Create a plug-in stream loader and start loading.
+        
+        (WebKit::HostedNetscapePluginStream::stop):
+        Cancel the load.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCLoadURL):
+        Fix the parameter order.
+        
+        (WKPCCancelLoadURL):
+        New function that cancels a load of a stream with a given reason.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::destroy):
+        Stop the streams.
+        
+        (WebKit::NetscapePluginInstanceProxy::pluginStream):
+        Return a plug-in stream given a stream ID.
+        
+        (WebKit::NetscapePluginInstanceProxy::disconnectStream):
+        Remove the stream from the streams map.
+        
+        (WebKit::NetscapePluginInstanceProxy::loadRequest):
+        Create a stream and load it.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Add CancelLoadURL.
+        
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        Add responseURL to StartStream.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView pluginPackage]):
+        Move this down to the base class from WebNetscapePluginView.
+        
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+
 2008-12-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

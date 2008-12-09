@@ -1154,11 +1154,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return plugin;
 }
 
-- (WebNetscapePluginPackage *)pluginPackage
-{
-    return _pluginPackage.get();
-}
-
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
 {
     ASSERT([keys count] == [values count]);

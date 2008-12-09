@@ -120,7 +120,6 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 
 - (NPP)plugin;
 
-- (WebNetscapePluginPackage *)pluginPackage;
 - (void)disconnectStream:(WebNetscapePluginStream*)stream;
 
 // Returns the NPObject that represents the plugin interface.

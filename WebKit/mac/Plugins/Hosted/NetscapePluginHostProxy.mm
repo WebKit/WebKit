@@ -28,9 +28,11 @@
 #import "NetscapePluginHostProxy.h"
 
 #import <mach/mach.h>
+#import <wtf/StdLibExtras.h>
+
+#import "HostedNetscapePluginStream.h"
 #import "NetscapePluginHostManager.h"
 #import "NetscapePluginInstanceProxy.h"
-#import <wtf/StdLibExtras.h>
 
 extern "C" {
 #import "WebKitPluginHost.h"
@@ -151,9 +153,27 @@ kern_return_t WKPCLoadURL(mach_port_t clientPort, uint32_t pluginID, data_t url,
         return KERN_FAILURE;
 
     uint32_t streamID = 0;
-    NPError result = instanceProxy->loadURL(url, target, post, postData, postDataLength, postDataIsFile, streamID, currentEventIsUserGesture);
+    NPError result = instanceProxy->loadURL(url, target, post, postData, postDataLength, postDataIsFile, currentEventIsUserGesture, streamID);
     
     return _WKPHLoadURLReply(hostProxy->port(), pluginID, result, streamID);
+}
+
+kern_return_t WKPCCancelLoadURL(mach_port_t clientPort, uint32_t pluginID, uint32_t streamID, int16_t reason)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+    
+    HostedNetscapePluginStream* pluginStream = instanceProxy->pluginStream(streamID);
+    if (!pluginStream)
+        return KERN_FAILURE;
+
+    pluginStream->cancelLoad(reason);
+    return KERN_SUCCESS;
 }
 
 #endif // USE(PLUGIN_HOST_PROCESS)
