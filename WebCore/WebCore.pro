@@ -1363,12 +1363,30 @@ contains(DEFINES, ENABLE_XBL=1) {
 contains(DEFINES, ENABLE_WML=1) {
     SOURCES += \
         wml/WMLAElement.cpp \
+        wml/WMLAccessElement.cpp \
+        wml/WMLAnchorElement.cpp \
         wml/WMLBRElement.cpp \
         wml/WMLCardElement.cpp \
-        wml/WMLElement.cpp \
+        wml/WMLDoElement.cpp \
         wml/WMLDocument.cpp \
+        wml/WMLElement.cpp \
+        wml/WMLErrorHandling.cpp \
+        wml/WMLEventHandlingElement.cpp \
+        wml/WMLGoElement.cpp \
+        wml/WMLIntrinsicEvent.cpp \
+        wml/WMLIntrinsicEventHandler.cpp \
+        wml/WMLNoopElement.cpp \
+        wml/WMLOnEventElement.cpp \
+        wml/WMLPElement.cpp \
         wml/WMLPageState.cpp \
-        wml/WMLPElement.cpp
+        wml/WMLPostfieldElement.cpp \
+        wml/WMLPrevElement.cpp \
+        wml/WMLRefreshElement.cpp \
+        wml/WMLSetvarElement.cpp \
+        wml/WMLTaskElement.cpp \
+        wml/WMLTemplateElement.cpp \
+        wml/WMLTimerElement.cpp \
+        wml/WMLVariables.cpp
 
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_WML=1
 

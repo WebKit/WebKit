@@ -1,5 +1,13 @@
 2008-12-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Forgot to update Qt/WML build - add some new files to the build.
+
+        * WebCore.pro:
+
+2008-12-09  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=22637
