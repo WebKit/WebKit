@@ -41,7 +41,7 @@
         (WebCore::WMLPostfieldElement::value):
         * wml/WMLTagNames.in:
 
-2008-11-26  Peter Kasting  <pkasting@google.com>
+2008-12-08  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Anders Carlsson.
 
@@ -54,7 +54,7 @@
         (WebCore::shouldUseChildEmbedOfObject):
         (WebCore::RenderPartObject::updateWidget):
 
-2008-12-03  Darin Adler  <darin@apple.com>
+2008-12-08  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
 
