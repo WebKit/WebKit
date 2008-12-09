@@ -1,3 +1,9 @@
+2008-12-09  Darin Adler  <darin@apple.com>
+
+        Try to fix Tiger build.
+
+        * platform/network/mac/NetworkStateNotifierMac.cpp: Declare CFRunLoopGetMain.
+
 2008-12-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

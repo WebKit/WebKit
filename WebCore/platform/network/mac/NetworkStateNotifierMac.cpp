@@ -28,6 +28,11 @@
 
 #include <SystemConfiguration/SystemConfiguration.h>
 
+#ifdef BUILDING_ON_TIGER
+// This function is available on Tiger, but not declared in the CFRunLoop.h header on Tiger.
+extern "C" CFRunLoopRef CFRunLoopGetMain();
+#endif
+
 namespace WebCore {
 
 static const double StateChangeTimerInterval = 2.0;
