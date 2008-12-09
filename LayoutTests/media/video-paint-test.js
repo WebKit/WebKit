@@ -6,7 +6,7 @@ function init()
         if (!--count) {
             document.body.offsetLeft;
             if (window.layoutTestController)
-                setTimeout(function() { layoutTestController.notifyDone(); }, totalCount * 50);
+                setTimeout(function() { layoutTestController.notifyDone(); }, totalCount * 100);
         }
     }, true);
 }
