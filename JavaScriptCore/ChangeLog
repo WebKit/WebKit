@@ -1,3 +1,13 @@
+2008-12-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22631
+        Allow ScriptCallFrame query names of functions in the call stack.
+
+        * JavaScriptCore.exp: added InternalFunction::name and
+        UString operator==() as exported symbol
+
 2008-12-08  Judit Jasz  <jasy@inf.u-szeged.hu>
 
         Reviewed and tweaked by Cameron Zwarich.

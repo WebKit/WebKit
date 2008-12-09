@@ -443,6 +443,8 @@ SOURCES += \
     bindings/js/JSDOMBinding.cpp \
     bindings/js/JSEventListener.cpp \
     bindings/js/JSPluginElementFunctions.cpp \
+    bindings/js/ScriptCallFrame.cpp \
+    bindings/js/ScriptCallStack.cpp \
     bindings/js/ScriptController.cpp \
     bindings/js/ScriptValue.cpp \
     bindings/js/ScheduledAction.cpp \

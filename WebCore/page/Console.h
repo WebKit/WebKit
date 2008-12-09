@@ -30,22 +30,24 @@
 #define Console_h
 
 #include "PlatformString.h"
+
+#if USE(JSC)
 #include <profiler/Profile.h>
+#endif
+
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 
-namespace JSC {
-    class ExecState;
-    class ArgList;
-}
-
 namespace WebCore {
 
+#if USE(JSC)
     typedef Vector<RefPtr<JSC::Profile> > ProfilesArray;
+#endif
 
     class Frame;
     class Page;
     class String;
+    class ScriptCallStack;
 
     // Keep in sync with inspector/front-end/Console.js
     enum MessageSource {
@@ -77,37 +79,42 @@ namespace WebCore {
 
         void addMessage(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
 
+        void debug(ScriptCallStack*);
+        void error(ScriptCallStack*);
+        void info(ScriptCallStack*);
+        void log(ScriptCallStack*);
+        void warn(ScriptCallStack*);
+        void dir(ScriptCallStack*);
+        void dirxml(ScriptCallStack*);
+        void trace(ScriptCallStack*);
+        void assertCondition(bool condition, ScriptCallStack*);
+        void count(ScriptCallStack*);
 #if USE(JSC)
-        void debug(JSC::ExecState*, const JSC::ArgList&);
-        void error(JSC::ExecState*, const JSC::ArgList&);
-        void info(JSC::ExecState*, const JSC::ArgList&);
-        void log(JSC::ExecState*, const JSC::ArgList&);
-        void warn(JSC::ExecState*, const JSC::ArgList&);
-        void dir(JSC::ExecState*, const JSC::ArgList&);
-        void dirxml(JSC::ExecState*, const JSC::ArgList& arguments);
-        void trace(JSC::ExecState*);
-        void assertCondition(bool condition, JSC::ExecState*, const JSC::ArgList&);
-        void count(JSC::ExecState*, const JSC::ArgList&);
-        void profile(JSC::ExecState*, const JSC::ArgList&);
-        void profileEnd(JSC::ExecState*, const JSC::ArgList&);
-        void time(const JSC::UString& title);
-        void timeEnd(JSC::ExecState*, const JSC::ArgList&);
-        void group(JSC::ExecState*, const JSC::ArgList&);
+        void profile(const JSC::UString&, ScriptCallStack*);
+        void profileEnd(const JSC::UString&, ScriptCallStack*);
+#endif
+        void time(const String&);
+        void timeEnd(const String&, ScriptCallStack*);
+        void group(ScriptCallStack*);
         void groupEnd();
 
         static bool shouldPrintExceptions();
         static void setShouldPrintExceptions(bool);
 
+#if USE(JSC)
         const ProfilesArray& profiles() const { return m_profiles; }
 #endif
 
     private:
         inline Page* page() const;
+        void addMessage(MessageLevel, ScriptCallStack*, bool acceptNoArguments = false);
 
         Console(Frame*);
 
         Frame* m_frame;
+#if USE(JSC)
         ProfilesArray m_profiles;
+#endif
     };
 
 } // namespace WebCore

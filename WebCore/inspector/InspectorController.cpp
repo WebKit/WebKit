@@ -59,6 +59,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "Settings.h"
+#include "ScriptCallStack.h"
 #include "SharedBuffer.h"
 #include "SystemTime.h"
 #include "TextEncoding.h"
@@ -170,18 +171,31 @@ struct ConsoleMessage {
     {
     }
 
-    ConsoleMessage(MessageSource s, MessageLevel l, ExecState* exec, const ArgList& args, unsigned li, const String& u, unsigned g)
+    ConsoleMessage(MessageSource s, MessageLevel l, ScriptCallStack* callStack, unsigned g, bool storeTrace = false)
         : source(s)
         , level(l)
-        , wrappedArguments(args.size())
-        , line(li)
-        , url(u)
+        , wrappedArguments(callStack->at(0).argumentCount())
+        , frames(storeTrace ? callStack->size() : 0)
         , groupLevel(g)
         , repeatCount(1)
     {
+        const ScriptCallFrame& lastCaller = callStack->at(0);
+        line = lastCaller.lineNumber();
+        url = lastCaller.sourceURL().string();
+
+        // FIXME: For now, just store function names as strings.
+        // As ScriptCallStack start storing line number and source URL for all
+        // frames, refactor to use that, as well.
+        if (storeTrace) {
+            unsigned stackSize = callStack->size();
+            for (unsigned i = 0; i < stackSize; ++i)
+                frames[i] = callStack->at(i).functionName();
+        }
+
         JSLock lock(false);
-        for (unsigned i = 0; i < args.size(); ++i)
-            wrappedArguments[i] = JSInspectedObjectWrapper::wrap(exec, args.at(exec, i));
+
+        for (unsigned i = 0; i < lastCaller.argumentCount(); ++i)
+            wrappedArguments[i] = JSInspectedObjectWrapper::wrap(callStack->state(), lastCaller.argumentAt(i).jsValue());
     }
     
     bool isEqual(ExecState* exec, ConsoleMessage* msg) const
@@ -189,10 +203,20 @@ struct ConsoleMessage {
         if (msg->wrappedArguments.size() != this->wrappedArguments.size() ||
            (!exec && msg->wrappedArguments.size()))
             return false;
-        
+
         for (size_t i = 0; i < msg->wrappedArguments.size(); ++i) {
             ASSERT_ARG(exec, exec);
             if (!JSValueIsEqual(toRef(exec), toRef(msg->wrappedArguments[i].get()), toRef(this->wrappedArguments[i].get()), 0))
+                return false;
+        }
+
+        size_t frameCount = msg->frames.size();
+        if (frameCount != this->frames.size())
+            return false;
+        
+        for (size_t i = 0; i < frameCount; ++i) {
+            const ScriptString& myFrameFunctionName = this->frames[i];
+            if (myFrameFunctionName != msg->frames[i])
                 return false;
         }
     
@@ -208,6 +232,7 @@ struct ConsoleMessage {
     MessageLevel level;
     String message;
     Vector<ProtectedPtr<JSValue> > wrappedArguments;
+    Vector<ScriptString> frames;
     unsigned line;
     String url;
     unsigned groupLevel;
@@ -1299,12 +1324,12 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
     m_showAfterVisible = CurrentPanel;
 }
 
-void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, ExecState* exec, const ArgList& arguments, unsigned lineNumber, const String& sourceURL)
+void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, ScriptCallStack* callStack)
 {
     if (!enabled())
         return;
 
-    addConsoleMessage(exec, new ConsoleMessage(source, level, exec, arguments, lineNumber, sourceURL, m_groupLevel));
+    addConsoleMessage(callStack->state(), new ConsoleMessage(source, level, callStack, m_groupLevel, level == TraceMessageLevel));
 }
 
 void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
@@ -1350,11 +1375,11 @@ void InspectorController::toggleRecordButton(bool isProfiling)
     callFunction(m_scriptContext, m_scriptObject, "setRecordingProfile", 1, &isProvingValue, exception);
 }
 
-void InspectorController::startGroup(MessageSource source, ExecState* exec, const ArgList& arguments, unsigned lineNumber, const String& sourceURL)
+void InspectorController::startGroup(MessageSource source, ScriptCallStack* callStack)
 {    
     ++m_groupLevel;
 
-    addConsoleMessage(exec, new ConsoleMessage(source, StartGroupMessageLevel, exec, arguments, lineNumber, sourceURL, m_groupLevel));
+    addConsoleMessage(callStack->state(), new ConsoleMessage(source, StartGroupMessageLevel, callStack, m_groupLevel));
 }
 
 void InspectorController::endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL)
@@ -2185,7 +2210,12 @@ void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
     arguments[argumentCount++] = groupLevelValue;
     arguments[argumentCount++] = repeatCountValue;
 
-    if (!message->wrappedArguments.isEmpty()) {
+    if (!message->frames.isEmpty()) {
+        unsigned remainingSpaceInArguments = maximumMessageArguments - argumentCount;
+        unsigned argumentsToAdd = min(remainingSpaceInArguments, static_cast<unsigned>(message->frames.size()));
+        for (unsigned i = 0; i < argumentsToAdd; ++i)
+            arguments[argumentCount++] = JSValueMakeString(m_scriptContext, jsStringRef(message->frames[i]).get());
+    } else if (!message->wrappedArguments.isEmpty()) {
         unsigned remainingSpaceInArguments = maximumMessageArguments - argumentCount;
         unsigned argumentsToAdd = min(remainingSpaceInArguments, static_cast<unsigned>(message->wrappedArguments.size()));
         for (unsigned i = 0; i < argumentsToAdd; ++i)
@@ -2786,9 +2816,9 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
     drawHighlightForBoxes(context, lineBoxQuads, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad);
 }
 
-void InspectorController::count(const UString& title, unsigned lineNumber, const String& sourceID)
+void InspectorController::count(const String& title, unsigned lineNumber, const String& sourceID)
 {
-    String identifier = String(title) + String::format("@%s:%d", sourceID.utf8().data(), lineNumber);
+    String identifier = title + String::format("@%s:%d", sourceID.utf8().data(), lineNumber);
     HashMap<String, unsigned>::iterator it = m_counts.find(identifier);
     int count;
     if (it == m_counts.end())
@@ -2800,16 +2830,16 @@ void InspectorController::count(const UString& title, unsigned lineNumber, const
 
     m_counts.add(identifier, count);
 
-    String message = String::format("%s: %d", title.UTF8String().c_str(), count);
+    String message = String::format("%s: %d", title.utf8().data(), count);
     addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, sourceID);
 }
 
-void InspectorController::startTiming(const UString& title)
+void InspectorController::startTiming(const String& title)
 {
     m_times.add(title, currentTime() * 1000);
 }
 
-bool InspectorController::stopTiming(const UString& title, double& elapsed)
+bool InspectorController::stopTiming(const String& title, double& elapsed)
 {
     HashMap<String, double>::iterator it = m_times.find(title);
     if (it == m_times.end())

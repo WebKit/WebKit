@@ -40,7 +40,7 @@ namespace WebCore {
 
 bool ScriptValue::getString(String& result) const
 {
-    if (!m_value.get())
+    if (!m_value)
         return false;
     JSLock lock(false);
     UString ustring;
@@ -48,6 +48,20 @@ bool ScriptValue::getString(String& result) const
         return false;
     result = ustring;
     return true;
+}
+
+bool ScriptValue::isNull() const
+{
+    if (!m_value)
+        return false;
+    return m_value->isNull();
+}
+
+bool ScriptValue::isUndefined() const
+{
+    if (!m_value)
+        return false;
+    return m_value->isUndefined();
 }
 
 } // namespace WebCore

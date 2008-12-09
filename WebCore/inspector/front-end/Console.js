@@ -604,7 +604,7 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel, rep
             span.addStyleClass("console-formatted-trace");
             var stack = Array.prototype.slice.call(arguments, 6);
             var funcNames = stack.map(function(f) {
-                return f.name || WebInspector.UIString("(anonymous function)");
+                return f || WebInspector.UIString("(anonymous function)");
             });
             span.appendChild(document.createTextNode(funcNames.join("\n")));
             this.formattedMessage = span;

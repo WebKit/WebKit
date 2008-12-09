@@ -348,6 +348,10 @@ webcore_sources += \
 	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
 	WebCore/bindings/js/ScheduledAction.cpp \
 	WebCore/bindings/js/ScheduledAction.h \
+	WebCore/bindings/js/ScriptCallFrame.cpp \
+	WebCore/bindings/js/ScriptCallFrame.h \
+	WebCore/bindings/js/ScriptCallStack.cpp \
+	WebCore/bindings/js/ScriptCallStack.h \
 	WebCore/bindings/js/ScriptController.cpp \
 	WebCore/bindings/js/ScriptController.h \
 	WebCore/bindings/js/ScriptInstance.h \

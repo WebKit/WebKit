@@ -43,6 +43,8 @@ public:
 
     JSC::JSValue* jsValue() const { return m_value.get(); }
     bool getString(String& result) const;
+    bool isNull() const;
+    bool isUndefined() const;
 
 private:
     JSC::ProtectedPtr<JSC::JSValue> m_value;

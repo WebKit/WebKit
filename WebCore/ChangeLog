@@ -1,3 +1,87 @@
+2008-12-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22631
+        Streamline Console.cpp, abstract out the use of JSC::ExecState and
+        JSC::ArgList by introducing ScriptCallFrame and ScriptCallStack
+        abstractions.
+
+        * GNUmakefile.am: Added ScriptCallFrame and ScriptCallStack to build
+        * WebCore.pro:  Added ScriptCallFrame and ScriptCallStack to build
+        * WebCore.vcproj/WebCore.vcproj: Added ScriptCallFrame and
+        ScriptCallStack to project
+        * WebCore.xcodeproj/project.pbxproj: Added ScriptCallFrame and
+        ScriptCallStack to project
+        * bindings/js/JSConsoleCustom.cpp: Remove custom bindings.
+        * bindings/js/ScriptCallFrame.cpp: Added.
+        (WebCore::ScriptCallFrame::ScriptCallFrame):
+        (WebCore::ScriptCallFrame::~ScriptCallFrame):
+        (WebCore::ScriptCallFrame::argumentAt):
+        * bindings/js/ScriptCallFrame.h: Added.
+        (WebCore::ScriptCallFrame::functionName):
+        (WebCore::ScriptCallFrame::sourceURL):
+        (WebCore::ScriptCallFrame::lineNumber):
+        (WebCore::ScriptCallFrame::argumentCount):
+        * bindings/js/ScriptCallStack.cpp: Added.
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        (WebCore::ScriptCallStack::~ScriptCallStack):
+        (WebCore::ScriptCallStack::at):
+        (WebCore::ScriptCallStack::size):
+        (WebCore::ScriptCallStack::initialize):
+        * bindings/js/ScriptCallStack.h: Added.
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        (WebCore::ScriptCallStack::~ScriptCallStack):
+        (WebCore::ScriptCallStack::state):
+        (WebCore::ScriptCallStack::at):
+        (WebCore::ScriptCallStack::size):
+        (WebCore::ScriptCallStack::initialize):
+        * bindings/js/ScriptString.h: Added missing PlatformString include.
+        (WebCore::ScriptString::ScriptString): Added default constructor.
+        (WebCore::ScriptString::operator==): Added equality operator.
+        (WebCore::ScriptString::operator!=):
+        * bindings/js/ScriptValue.cpp: Added isNull and isUndefined.
+        (WebCore::ScriptValue::isNull):
+        (WebCore::ScriptValue::isUndefined):
+        * bindings/js/ScriptValue.h: Added isNull and isUndefined
+        * bindings/scripts/CodeGeneratorJS.pm: Add handling for
+        CustomArgumentHandling attribute.
+        * inspector/InspectorController.cpp: Refactored to use 
+        ScriptCallFrame and ScriptCallStack.
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::InspectorController::addMessageToConsole):
+        (WebCore::InspectorController::startGroup):
+        (WebCore::InspectorController::addScriptConsoleMessage):
+        (WebCore::InspectorController::count):
+        (WebCore::InspectorController::startTiming):
+        (WebCore::InspectorController::stopTiming):
+        * inspector/InspectorController.h: Refactored to use ScriptCallFrame and
+        ScriptCallStack.
+        * inspector/front-end/Console.js: Modified to use argument value itself
+        rather than f.name for stack trace.
+        * page/Console.cpp: Refactored to use ScriptCallFrame and
+        ScriptCallStack.
+        (WebCore::getFirstArgumentAsString):
+        (WebCore::Console::addMessage):
+        (WebCore::Console::debug):
+        (WebCore::Console::error):
+        (WebCore::Console::info):
+        (WebCore::Console::log):
+        (WebCore::Console::dir):
+        (WebCore::Console::dirxml):
+        (WebCore::Console::trace):
+        (WebCore::Console::assertCondition):
+        (WebCore::Console::count):
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+        (WebCore::Console::time):
+        (WebCore::Console::timeEnd):
+        (WebCore::Console::group):
+        (WebCore::Console::warn):
+        * page/Console.h:
+        * page/Console.idl: Removed Custom attributes, added
+        CustomArgumentHandling attributes, and tweaked argument defs.
+
 2008-12-09  Darin Adler  <darin@apple.com>
 
         Try to fix non-Mac builds.

@@ -13993,6 +13993,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptCallFrame.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptCallFrame.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptCallStack.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptCallStack.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptController.cpp"
 					>
 				</File>

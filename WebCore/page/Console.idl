@@ -29,24 +29,30 @@
 module window {
 
     interface Console {
-        readonly attribute [CustomGetter] Array profiles;        
-    
-        [Custom] void debug();
-        [Custom] void error();
-        [Custom] void info();
-        [Custom] void log();
-        [Custom] void warn();
-        [Custom] void dir();
-        [Custom] void dirxml();
-        [Custom] void trace();
-        [Custom, ImplementationFunction=assertCondition] void assert(in boolean condition);
-        [Custom] void count();
 
-        [Custom] void profile(in DOMString title);
-        [Custom] void profileEnd();
+#if !defined(V8_BINDING)
+        readonly attribute [CustomGetter] Array profiles;
+#endif
+    
+        [CustomArgumentHandling] void debug();
+        [CustomArgumentHandling] void error();
+        [CustomArgumentHandling] void info();
+        [CustomArgumentHandling] void log();
+        [CustomArgumentHandling] void warn();
+        [CustomArgumentHandling] void dir();
+        [CustomArgumentHandling] void dirxml();
+        [CustomArgumentHandling] void trace();
+        [CustomArgumentHandling, ImplementationFunction=assertCondition] void assert(in boolean condition);
+        [CustomArgumentHandling] void count();
+
+#if !defined(V8_BINDING)
+        [CustomArgumentHandling] void profile(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        [CustomArgumentHandling] void profileEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
+#endif
+
         void time(in [ConvertUndefinedOrNullToNullString] DOMString title);
-        [Custom] void timeEnd();
-        [Custom] void group();
+        [CustomArgumentHandling] void timeEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        [CustomArgumentHandling] void group();
         void groupEnd();
     };
 

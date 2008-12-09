@@ -1344,6 +1344,11 @@ sub GenerateImplementation
 
                 my $hasOptionalArguments = 0;
 
+                if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
+                    push(@implContent, "    ScriptCallStack callStack(exec, args, $numParameters);\n");
+                    $implIncludes{"ScriptCallStack.h"} = 1;
+                }
+
                 foreach my $parameter (@{$function->parameters}) {
                     if (!$hasOptionalArguments && $parameter->extendedAttributes->{"Optional"}) {
                         push(@implContent, "\n    int argsCount = args.size();\n");
@@ -1481,6 +1486,12 @@ sub GenerateImplementationFunctionCall()
     my $indent = shift;
     my $podType = shift;
     my $implClassName = shift;
+
+    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
+        $functionString .= ", " if $paramIndex;
+        ++$paramIndex;
+        $functionString .= "&callStack";
+    }
 
     if (@{$function->raisesExceptions}) {
         $functionString .= ", " if $paramIndex;

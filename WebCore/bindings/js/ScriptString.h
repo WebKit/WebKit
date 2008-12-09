@@ -31,6 +31,7 @@
 #ifndef ScriptString_h
 #define ScriptString_h
 
+#include "PlatformString.h"
 #include <runtime/JSLock.h>
 #include <runtime/UString.h>
 
@@ -40,6 +41,7 @@ class String;
 
 class ScriptString {
 public:
+    ScriptString() {}
     ScriptString(const char* s) : m_str(s) {}
     ScriptString(const JSC::UString& s) : m_str(s) {}
 
@@ -60,6 +62,19 @@ public:
         JSC::JSLock lock(false);
         m_str += s;
         return *this;
+    }
+
+    bool operator==(const ScriptString& s) const
+    {
+        JSC::JSLock lock(false);
+        return m_str == s.m_str;
+    }
+
+    bool operator!=(const ScriptString& s) const
+    {
+        JSC::JSLock lock(false);
+        // Avoid exporting an extra symbol by re-using "==" operator.
+        return !(m_str == s.m_str);
     }
 
 private:
