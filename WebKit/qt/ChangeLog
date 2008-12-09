@@ -1,3 +1,11 @@
+2008-12-09  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the documentation of the localStorageDatabasePath setters/getters.
+
+        * Api/qwebsettings.cpp:
+
 2008-12-08  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon Hausmann.
