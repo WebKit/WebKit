@@ -261,22 +261,22 @@ void CodeBlock::dump(ExecState* exec) const
         } while (i < m_constantRegisters.size());
     }
 
-    if (!m_unexpectedConstants.isEmpty()) {
+    if (m_rareData && !m_rareData->m_unexpectedConstants.isEmpty()) {
         printf("\nUnexpected Constants:\n");
         size_t i = 0;
         do {
-            printf("  k%u = %s\n", static_cast<unsigned>(i), valueToSourceString(exec, m_unexpectedConstants[i]).ascii());
+            printf("  k%u = %s\n", static_cast<unsigned>(i), valueToSourceString(exec, m_rareData->m_unexpectedConstants[i]).ascii());
             ++i;
-        } while (i < m_unexpectedConstants.size());
+        } while (i < m_rareData->m_unexpectedConstants.size());
     }
     
-    if (!m_regexps.isEmpty()) {
+    if (m_rareData && !m_rareData->m_regexps.isEmpty()) {
         printf("\nm_regexps:\n");
         size_t i = 0;
         do {
-            printf("  re%u = %s\n", static_cast<unsigned>(i), regexpToSourceString(m_regexps[i].get()).ascii());
+            printf("  re%u = %s\n", static_cast<unsigned>(i), regexpToSourceString(m_rareData->m_regexps[i].get()).ascii());
             ++i;
-        } while (i < m_regexps.size());
+        } while (i < m_rareData->m_regexps.size());
     }
 
     if (!m_globalResolveInstructions.isEmpty() || !m_propertyAccessInstructions.isEmpty())
@@ -297,62 +297,62 @@ void CodeBlock::dump(ExecState* exec) const
         } while (i < m_propertyAccessInstructions.size());
     }
  
-    if (!m_exceptionHandlers.isEmpty()) {
+    if (m_rareData && !m_rareData->m_exceptionHandlers.isEmpty()) {
         printf("\nException Handlers:\n");
         unsigned i = 0;
         do {
-            printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] }\n", i + 1, m_exceptionHandlers[i].start, m_exceptionHandlers[i].end, m_exceptionHandlers[i].target);
+            printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] }\n", i + 1, m_rareData->m_exceptionHandlers[i].start, m_rareData->m_exceptionHandlers[i].end, m_rareData->m_exceptionHandlers[i].target);
             ++i;
-        } while (i < m_exceptionHandlers.size());
+        } while (i < m_rareData->m_exceptionHandlers.size());
     }
     
-    if (!m_immediateSwitchJumpTables.isEmpty()) {
+    if (m_rareData && !m_rareData->m_immediateSwitchJumpTables.isEmpty()) {
         printf("Immediate Switch Jump Tables:\n");
         unsigned i = 0;
         do {
             printf("  %1d = {\n", i);
             int entry = 0;
-            Vector<int32_t>::const_iterator end = m_immediateSwitchJumpTables[i].branchOffsets.end();
-            for (Vector<int32_t>::const_iterator iter = m_immediateSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
+            Vector<int32_t>::const_iterator end = m_rareData->m_immediateSwitchJumpTables[i].branchOffsets.end();
+            for (Vector<int32_t>::const_iterator iter = m_rareData->m_immediateSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
                 if (!*iter)
                     continue;
-                printf("\t\t%4d => %04d\n", entry + m_immediateSwitchJumpTables[i].min, *iter);
+                printf("\t\t%4d => %04d\n", entry + m_rareData->m_immediateSwitchJumpTables[i].min, *iter);
             }
             printf("      }\n");
             ++i;
-        } while (i < m_immediateSwitchJumpTables.size());
+        } while (i < m_rareData->m_immediateSwitchJumpTables.size());
     }
     
-    if (!m_characterSwitchJumpTables.isEmpty()) {
+    if (m_rareData && !m_rareData->m_characterSwitchJumpTables.isEmpty()) {
         printf("\nCharacter Switch Jump Tables:\n");
         unsigned i = 0;
         do {
             printf("  %1d = {\n", i);
             int entry = 0;
-            Vector<int32_t>::const_iterator end = m_characterSwitchJumpTables[i].branchOffsets.end();
-            for (Vector<int32_t>::const_iterator iter = m_characterSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
+            Vector<int32_t>::const_iterator end = m_rareData->m_characterSwitchJumpTables[i].branchOffsets.end();
+            for (Vector<int32_t>::const_iterator iter = m_rareData->m_characterSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
                 if (!*iter)
                     continue;
-                ASSERT(!((i + m_characterSwitchJumpTables[i].min) & ~0xFFFF));
-                UChar ch = static_cast<UChar>(entry + m_characterSwitchJumpTables[i].min);
+                ASSERT(!((i + m_rareData->m_characterSwitchJumpTables[i].min) & ~0xFFFF));
+                UChar ch = static_cast<UChar>(entry + m_rareData->m_characterSwitchJumpTables[i].min);
                 printf("\t\t\"%s\" => %04d\n", UString(&ch, 1).ascii(), *iter);
         }
             printf("      }\n");
             ++i;
-        } while (i < m_characterSwitchJumpTables.size());
+        } while (i < m_rareData->m_characterSwitchJumpTables.size());
     }
     
-    if (!m_stringSwitchJumpTables.isEmpty()) {
+    if (m_rareData && !m_rareData->m_stringSwitchJumpTables.isEmpty()) {
         printf("\nString Switch Jump Tables:\n");
         unsigned i = 0;
         do {
             printf("  %1d = {\n", i);
-            StringJumpTable::StringOffsetTable::const_iterator end = m_stringSwitchJumpTables[i].offsetTable.end();
-            for (StringJumpTable::StringOffsetTable::const_iterator iter = m_stringSwitchJumpTables[i].offsetTable.begin(); iter != end; ++iter)
+            StringJumpTable::StringOffsetTable::const_iterator end = m_rareData->m_stringSwitchJumpTables[i].offsetTable.end();
+            for (StringJumpTable::StringOffsetTable::const_iterator iter = m_rareData->m_stringSwitchJumpTables[i].offsetTable.begin(); iter != end; ++iter)
                 printf("\t\t\"%s\" => %04d\n", UString(iter->first).ascii(), iter->second.branchOffset);
             printf("      }\n");
             ++i;
-        } while (i < m_stringSwitchJumpTables.size());
+        } while (i < m_rareData->m_stringSwitchJumpTables.size());
     }
 
     printf("\n");
@@ -383,7 +383,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         case op_unexpected_load: {
             int r0 = (++it)->u.operand;
             int k0 = (++it)->u.operand;
-            printf("[%4d] unexpected_load\t %s, %s\n", location, registerName(r0).c_str(), constantName(exec, k0, m_unexpectedConstants[k0]).c_str());
+            printf("[%4d] unexpected_load\t %s, %s\n", location, registerName(r0).c_str(), constantName(exec, k0, unexpectedConstant(k0)).c_str());
             break;
         }
         case op_new_object: {
@@ -401,7 +401,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         case op_new_regexp: {
             int r0 = (++it)->u.operand;
             int re0 = (++it)->u.operand;
-            printf("[%4d] new_regexp\t %s, %s\n", location, registerName(r0).c_str(), regexpName(re0, m_regexps[re0].get()).c_str());
+            printf("[%4d] new_regexp\t %s, %s\n", location, registerName(r0).c_str(), regexpName(re0, regexp(re0)).c_str());
             break;
         }
         case op_mov: {
@@ -915,7 +915,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r0 = (++it)->u.operand;
             int errorType = (++it)->u.operand;
             int k0 = (++it)->u.operand;
-            printf("[%4d] new_error\t %s, %d, %s\n", location, registerName(r0).c_str(), errorType, constantName(exec, k0, m_unexpectedConstants[k0]).c_str());
+            printf("[%4d] new_error\t %s, %d, %s\n", location, registerName(r0).c_str(), errorType, constantName(exec, k0, unexpectedConstant(k0)).c_str());
             break;
         }
         case op_jsr: {
@@ -971,6 +971,8 @@ static HashSet<CodeBlock*> liveCodeBlockSet;
     macro(constantRegisters) \
     macro(expressionInfo) \
     macro(lineInfo) \
+
+#define FOR_EACH_MEMBER_VECTOR_RARE_DATA(macro) \
     macro(regexps) \
     macro(functions) \
     macro(unexpectedConstants) \
@@ -985,11 +987,14 @@ void CodeBlock::dumpStatistics()
 
     #define DEFINE_VARS(name) size_t name##IsNotEmpty = 0;
         FOR_EACH_MEMBER_VECTOR(DEFINE_VARS)
+        FOR_EACH_MEMBER_VECTOR_RARE_DATA(DEFINE_VARS);
     #undef DEFINE_VARS
 
     // Non-vector data members
     size_t jitReturnAddressVPCMapIsNotEmpty = 0;
     size_t evalCodeCacheIsNotEmpty = 0;
+
+    size_t hasRareData = 0;
 
     HashSet<CodeBlock*>::const_iterator end = liveCodeBlockSet.end();
     for (HashSet<CodeBlock*>::const_iterator it = liveCodeBlockSet.begin(); it != end; ++it) {
@@ -1001,16 +1006,28 @@ void CodeBlock::dumpStatistics()
 
         if (!codeBlock->m_jitReturnAddressVPCMap.isEmpty())
             jitReturnAddressVPCMapIsNotEmpty++;
-        if (!codeBlock->m_evalCodeCache.isEmpty())
-            evalCodeCacheIsNotEmpty++;
+
+        if (codeBlock->m_rareData) {
+            hasRareData++;
+            #define GET_STATS(name) if (!codeBlock->m_rareData->m_##name.isEmpty()) { name##IsNotEmpty++; }
+                FOR_EACH_MEMBER_VECTOR_RARE_DATA(GET_STATS)
+            #undef GET_STATS
+
+            if (!codeBlock->m_rareData->m_evalCodeCache.isEmpty())
+                evalCodeCacheIsNotEmpty++;
+        }
     }
 
     printf("Number of live CodeBlocks: %d\n", liveCodeBlockSet.size());
     printf("Size of a single CodeBlock [sizeof(CodeBlock)]: %zu\n", sizeof(CodeBlock));
 
+    printf("Number of CodeBlocks with rare data: %zu\n", hasRareData);
+
     #define PRINT_STATS(name) printf("Number of CodeBlocks with " #name ": %zu\n", name##IsNotEmpty);
         FOR_EACH_MEMBER_VECTOR(PRINT_STATS)
+        FOR_EACH_MEMBER_VECTOR_RARE_DATA(PRINT_STATS)
     #undef PRINT_STATS
+
     printf("Number of CodeBlocks with jitReturnAddressVPCMap: %zu\n", jitReturnAddressVPCMapIsNotEmpty);
     printf("Number of CodeBlocks with evalCodeCache: %zu\n", evalCodeCacheIsNotEmpty);
 #else
@@ -1163,21 +1180,27 @@ void CodeBlock::mark()
         if (!m_constantRegisters[i].marked())
             m_constantRegisters[i].mark();
 
-    for (size_t i = 0; i < m_unexpectedConstants.size(); ++i)
-        if (!m_unexpectedConstants[i]->marked())
-            m_unexpectedConstants[i]->mark();
-
-    for (size_t i = 0; i < m_functions.size(); ++i)
-        m_functions[i]->body()->mark();
-
     for (size_t i = 0; i < m_functionExpressions.size(); ++i)
         m_functionExpressions[i]->body()->mark();
+
+    if (m_rareData) {
+        for (size_t i = 0; i < m_rareData->m_functions.size(); ++i)
+            m_rareData->m_functions[i]->body()->mark();
+
+        for (size_t i = 0; i < m_rareData->m_unexpectedConstants.size(); ++i) {
+            if (!m_rareData->m_unexpectedConstants[i]->marked())
+                m_rareData->m_unexpectedConstants[i]->mark();
+        }
+    }
 }
 
 bool CodeBlock::getHandlerForVPC(const Instruction* vPC, Instruction*& target, int& scopeDepth)
 {
-    Vector<HandlerInfo>::iterator ptr = m_exceptionHandlers.begin(); 
-    Vector<HandlerInfo>::iterator end = m_exceptionHandlers.end();
+    if (!m_rareData)
+        return false;
+
+    Vector<HandlerInfo>::iterator ptr = m_rareData->m_exceptionHandlers.begin(); 
+    Vector<HandlerInfo>::iterator end = m_rareData->m_exceptionHandlers.end();
     unsigned addressOffset = vPC - m_instructions.begin();
     ASSERT(addressOffset < m_instructions.size());
     
@@ -1195,8 +1218,11 @@ bool CodeBlock::getHandlerForVPC(const Instruction* vPC, Instruction*& target, i
 
 void* CodeBlock::nativeExceptionCodeForHandlerVPC(const Instruction* handlerVPC)
 {
-    Vector<HandlerInfo>::iterator ptr = m_exceptionHandlers.begin(); 
-    Vector<HandlerInfo>::iterator end = m_exceptionHandlers.end();
+    if (!m_rareData)
+        return 0;
+
+    Vector<HandlerInfo>::iterator ptr = m_rareData->m_exceptionHandlers.begin(); 
+    Vector<HandlerInfo>::iterator end = m_rareData->m_exceptionHandlers.end();
     
     for (; ptr != end; ++ptr) {
         Instruction*target = m_instructions.begin() + ptr->target;
@@ -1275,21 +1301,21 @@ void CodeBlock::shrinkToFit()
     m_propertyAccessInstructions.shrinkToFit();
     m_callLinkInfos.shrinkToFit();
     m_linkedCallerList.shrinkToFit();
-
-    m_exceptionHandlers.shrinkToFit();
     m_expressionInfo.shrinkToFit();
     m_lineInfo.shrinkToFit();
-
     m_identifiers.shrinkToFit();
-    m_functions.shrinkToFit();
     m_functionExpressions.shrinkToFit();
     m_constantRegisters.shrinkToFit();
-    m_unexpectedConstants.shrinkToFit();
-    m_regexps.shrinkToFit();
 
-    m_immediateSwitchJumpTables.shrinkToFit();
-    m_characterSwitchJumpTables.shrinkToFit();
-    m_stringSwitchJumpTables.shrinkToFit();
+    if (m_rareData) {
+        m_rareData->m_exceptionHandlers.shrinkToFit();
+        m_rareData->m_functions.shrinkToFit();
+        m_rareData->m_unexpectedConstants.shrinkToFit();
+        m_rareData->m_regexps.shrinkToFit();
+        m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
+        m_rareData->m_characterSwitchJumpTables.shrinkToFit();
+        m_rareData->m_stringSwitchJumpTables.shrinkToFit();
+    }
 }
 
 } // namespace JSC

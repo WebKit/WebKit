@@ -1,3 +1,43 @@
+2008-12-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=22716
+        <rdar://problem/6428315>
+        Add RareData structure to CodeBlock for infrequently used auxiliary data
+        members.
+
+        Reduces memory on Membuster-head by ~.5MB 
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::dumpStatistics):
+        (JSC::CodeBlock::mark):
+        (JSC::CodeBlock::getHandlerForVPC):
+        (JSC::CodeBlock::nativeExceptionCodeForHandlerVPC):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfExceptionHandlers):
+        (JSC::CodeBlock::addExceptionHandler):
+        (JSC::CodeBlock::exceptionHandler):
+        (JSC::CodeBlock::addFunction):
+        (JSC::CodeBlock::function):
+        (JSC::CodeBlock::addUnexpectedConstant):
+        (JSC::CodeBlock::unexpectedConstant):
+        (JSC::CodeBlock::addRegExp):
+        (JSC::CodeBlock::regexp):
+        (JSC::CodeBlock::numberOfImmediateSwitchJumpTables):
+        (JSC::CodeBlock::addImmediateSwitchJumpTable):
+        (JSC::CodeBlock::immediateSwitchJumpTable):
+        (JSC::CodeBlock::numberOfCharacterSwitchJumpTables):
+        (JSC::CodeBlock::addCharacterSwitchJumpTable):
+        (JSC::CodeBlock::characterSwitchJumpTable):
+        (JSC::CodeBlock::numberOfStringSwitchJumpTables):
+        (JSC::CodeBlock::addStringSwitchJumpTable):
+        (JSC::CodeBlock::stringSwitchJumpTable):
+        (JSC::CodeBlock::evalCodeCache):
+        (JSC::CodeBlock::createRareDataIfNecessary):
+
 2008-11-26  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Anders Carlsson.
