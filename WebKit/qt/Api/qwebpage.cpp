@@ -1980,7 +1980,11 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     This enum describes the types of extensions that the page can support. Before using these extensions, you
     should verify that the extension is supported by calling supportsExtension().
 
-    Currently there are no extensions.
+    \value ChooseMultipleFilesExtension Whether the web page supports multiple file selection.
+    This extension is invoked when the web content requests one or more file names, for example
+    as a result of the user clicking on a "file upload" button in a HTML form where multiple
+    file selection is allowed.
+
 */
 
 /*!
@@ -1992,11 +1996,35 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
 */
 
 /*!
-    \class QWebPage::ExtensionReturn
+    \class QWebPage::ExtensionOption
     \since 4.4
-    \brief The ExtensionOption class provides an extended output argument to QWebPage's extension support.
+    \brief The ExtensionOption class provides an extended input argument to QWebPage's extension support.
 
     \sa QWebPage::extension()
+*/
+
+/*!
+    \class QWebPage::ChooseMultipleFilesExtensionOption
+    \since 4.5
+    \brief The ChooseMultipleFilesExtensionOption class describes the option
+    for the multiple files selection extension.
+
+    The ChooseMultipleFilesExtensionOption class holds the frame originating the request
+    and the suggested filenames which might be provided.
+
+    \sa QWebPage::chooseFile(), QWebPage::ChooseMultipleFilesExtensionReturn
+*/
+
+/*!
+    \class QWebPage::ChooseMultipleFilesExtensionReturn
+    \since 4.5
+    \brief The ChooseMultipleFilesExtensionReturn describes the return value
+    for the multiple files selection extension.
+
+    The ChooseMultipleFilesExtensionReturn class holds the filenames selected by the user
+    when the extension is invoked.
+
+    \sa QWebPage::ChooseMultipleFilesExtensionOption
 */
 
 /*!
@@ -2007,15 +2035,20 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
 
     You can call supportsExtension() to check if an extension is supported by the page.
 
-    By default, no extensions are supported, and this function returns false.
-
     \sa supportsExtension(), Extension
 */
 bool QWebPage::extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output)
 {
-    Q_UNUSED(extension)
-    Q_UNUSED(option)
-    Q_UNUSED(output)
+#ifndef QT_NO_FILEDIALOG
+    if (extension == ChooseMultipleFilesExtension) {
+        // FIXME: do not ignore suggestedFiles
+        QStringList suggestedFiles = reinterpret_cast<const ChooseMultipleFilesExtensionOption*>(option)->suggestedFiles;
+        QStringList names = QFileDialog::getOpenFileNames(d->view, QString::null);
+        reinterpret_cast<ChooseMultipleFilesExtensionReturn*>(output)->files = names;
+        return true;
+    }
+#endif
+
     return false;
 }
 
@@ -2026,8 +2059,12 @@ bool QWebPage::extension(Extension extension, const ExtensionOption *option, Ext
 */
 bool QWebPage::supportsExtension(Extension extension) const
 {
-    Q_UNUSED(extension)
+#ifndef QT_NO_FILEDIALOG
+    return extension == ChooseMultipleFilesExtension;
+#else
+    Q_UNUSED(extension);
     return false;
+#endif
 }
 
 /*!

@@ -1,3 +1,15 @@
+2008-12-08  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Multiple files support for the file chooser.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::chooseFiles):
+        * Api/qwebpage.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::runOpenPanel):
+
 2008-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

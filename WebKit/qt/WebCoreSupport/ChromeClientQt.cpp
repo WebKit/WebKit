@@ -393,15 +393,34 @@ void ChromeClientQt::exceededDatabaseQuota(Frame* frame, const String& databaseN
 
 void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {
-    // FIXME: Support multiple files.
-
     RefPtr<FileChooser> fileChooser = prpFileChooser;
-    QString suggestedFile;
-    if (!fileChooser->filenames().isEmpty())
-        suggestedFile = fileChooser->filenames()[0];
-    QString file = m_webPage->chooseFile(QWebFramePrivate::kit(frame), suggestedFile);
-    if (!file.isEmpty())
-        fileChooser->chooseFile(file);
+    bool supportMulti = m_webPage->supportsExtension(QWebPage::ChooseMultipleFilesExtension);
+
+    if (fileChooser->allowsMultipleFiles() && supportMulti) {
+        QWebPage::ChooseMultipleFilesExtensionOption option;
+        option.parentFrame = QWebFramePrivate::kit(frame);
+
+        if (!fileChooser->filenames().isEmpty())
+            for (int i = 0; i < fileChooser->filenames().size(); ++i)
+                option.suggestedFiles += fileChooser->filenames()[i];
+
+        QWebPage::ChooseMultipleFilesExtensionReturn output;
+        m_webPage->extension(QWebPage::ChooseMultipleFilesExtension, &option, &output);
+
+        if (!output.files.isEmpty()) {
+            Vector<String> names;
+            for (int i = 0; i < output.files.count(); ++i)
+                names.append(output.files[i]);
+            fileChooser->chooseFiles(names);
+        }
+    } else {
+        QString suggestedFile;
+        if (!fileChooser->filenames().isEmpty())
+            suggestedFile = fileChooser->filenames()[0];
+        QString file = m_webPage->chooseFile(QWebFramePrivate::kit(frame), suggestedFile);
+        if (!file.isEmpty())
+            fileChooser->chooseFile(file);
+    }
 }
 
 }
