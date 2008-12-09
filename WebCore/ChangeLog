@@ -1,3 +1,14 @@
+2008-12-09  David Hyatt  <hyatt@apple.com>
+
+        Add code that will create custom CSS scrollbars from the <body>, the document element (<html>) and the owning
+        frame/iframe.  If any of them set a custom style, it will be used.  The scrollbars do not update dynamically
+        yet as you switch from page to page (until they are destroyed and recreated).
+
+        Reviewed by Adele
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+
 2008-12-09  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dave Hyatt.

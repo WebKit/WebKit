@@ -45,6 +45,7 @@
 #include "Page.h"
 #include "RenderPart.h"
 #include "RenderPartObject.h"
+#include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -315,7 +316,27 @@ void FrameView::setCanHaveScrollbars(bool canScroll)
 
 PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
 {
-    // FIXME: Custom CSS scrollbar creation code will go here.
+    // FIXME: We need to update the scrollbar dynamically as documents change (or as doc elements and bodies get discovered that have custom styles).
+    Document* doc = m_frame->document();
+    if (!doc)
+        return ScrollView::createScrollbar(orientation);
+
+    // Try the <body> element first as a scrollbar source.
+    Element* body = doc->body();
+    if (body && body->renderer() && body->renderer()->style()->hasPseudoStyle(RenderStyle::SCROLLBAR))
+        return RenderScrollbar::createCustomScrollbar(this, orientation, body->renderer());
+    
+    // If the <body> didn't have a custom style, then the root element might.
+    Element* docElement = doc->documentElement();
+    if (docElement && docElement->renderer() && docElement->renderer()->style()->hasPseudoStyle(RenderStyle::SCROLLBAR))
+        return RenderScrollbar::createCustomScrollbar(this, orientation, docElement->renderer());
+        
+    // If we have an owning iframe/frame element, then it can set the custom scrollbar also.
+    RenderPart* frameRenderer = m_frame->ownerRenderer();
+    if (frameRenderer && frameRenderer->style()->hasPseudoStyle(RenderStyle::SCROLLBAR))
+        return RenderScrollbar::createCustomScrollbar(this, orientation, frameRenderer);
+    
+    // Nobody set a custom style, so we just use a native scrollbar.
     return ScrollView::createScrollbar(orientation);
 }
 
