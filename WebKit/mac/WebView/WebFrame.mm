@@ -780,9 +780,21 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return TextIterator::rangeFromLocationAndLength(scope, nsrange.location, nsrange.length);
 }
 
+- (DOMRange *)convertNSRangeToDOMRange:(NSRange)nsrange
+{
+    // This method exists to maintain compatibility with Leopard's Dictionary.app. <rdar://problem/6002160>
+    return [self _convertNSRangeToDOMRange:nsrange];
+}
+
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange
 {
     return [DOMRange _wrapRange:[self _convertToDOMRange:nsrange].get()];
+}
+
+- (NSRange)convertDOMRangeToNSRange:(DOMRange *)range
+{
+    // This method exists to maintain compatibility with Leopard's Dictionary.app. <rdar://problem/6002160>
+    return [self _convertDOMRangeToNSRange:range];
 }
 
 - (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range

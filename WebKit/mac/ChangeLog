@@ -1,3 +1,19 @@
+2008-12-09  Timothy Hatcher  <timothy@apple.com>
+
+        Implement a few methods needed to keep Dictionary.app working on Leopard.
+
+        <rdar://problem/6002160> Internal changes to WebKit in Safari 4
+        Developer Preview might break Dictionary
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame convertNSRangeToDOMRange:]): Added. Calls _convertNSRangeToDOMRange.
+        (-[WebFrame convertDOMRangeToNSRange:]): Added. Calls _convertDOMRangeToNSRange.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _bridge]): Added. Returns the WebFrame, which has the methods
+        that Dictionary.app is using.
+
 2008-12-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

@@ -1023,6 +1023,14 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         userInfo:[NSDictionary dictionaryWithObject:fakeEvent forKey:@"NSEvent"]];
 }
 
+- (id)_bridge
+{
+    // This method exists to maintain compatibility with Leopard's Dictionary.app, since it
+    // calls _bridge to get access to convertNSRangeToDOMRange: and convertDOMRangeToNSRange:.
+    // Return the WebFrame, which implements the compatibility methods. <rdar://problem/6002160>
+    return [self _frame];
+}
+
 - (void)_updateMouseoverWithFakeEvent
 {
     [self _cancelUpdateMouseoverTimer];
