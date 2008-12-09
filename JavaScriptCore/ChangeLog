@@ -1,3 +1,15 @@
+2008-12-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/6166088> Give JSGlobalContextCreate a behavior that is concurrency aware,
+        and un-deprecate it
+
+        * API/JSContextRef.cpp: (JSGlobalContextCreate):
+        * API/JSContextRef.h:
+        Use a unique context group for the context, unless the application was linked against old
+        JavaScriptCore.
+
 2008-12-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

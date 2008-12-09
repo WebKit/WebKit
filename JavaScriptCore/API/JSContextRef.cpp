@@ -34,6 +34,12 @@
 #include "JSObject.h"
 #include <wtf/Platform.h>
 
+#if PLATFORM(DARWIN)
+#include <mach-o/dyld.h>
+
+static const int32_t webkitFirstVersionWithConcurrentGlobalContexts = 0x2100500; // 528.5.0
+#endif
+
 using namespace JSC;
 
 JSContextGroupRef JSContextGroupCreate()
@@ -54,8 +60,13 @@ void JSContextGroupRelease(JSContextGroupRef group)
 
 JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 {
-    JSLock lock(true);
-    return JSGlobalContextCreateInGroup(toRef(&JSGlobalData::sharedInstance()), globalObjectClass);
+#if PLATFORM(DARWIN)
+    if (NSVersionOfLinkTimeLibrary("JavaScriptCore") <= webkitFirstVersionWithConcurrentGlobalContexts) {
+        JSLock lock(true);
+        return JSGlobalContextCreateInGroup(toRef(&JSGlobalData::sharedInstance()), globalObjectClass);
+    }
+#endif
+    return JSGlobalContextCreateInGroup(0, globalObjectClass);
 }
 
 JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClassRef globalObjectClass)
