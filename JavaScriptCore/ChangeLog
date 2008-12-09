@@ -1,3 +1,71 @@
+2008-12-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Expand MacroAssembler to support more operations, required by the JIT.
+
+        Generally adds more operations and permutations of operands to the existing
+        interface.  Rename 'jset' to 'jnz' and 'jnset' to 'jz', which seem clearer,
+        and require that immediate pointer operands (though not pointer addresses to
+        load and store instructions) are wrapped in a ImmPtr() type, akin to Imm32().
+
+        No performance impact.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::):
+        (JSC::MacroAssembler::ImmPtr::ImmPtr):
+        (JSC::MacroAssembler::add32):
+        (JSC::MacroAssembler::and32):
+        (JSC::MacroAssembler::or32):
+        (JSC::MacroAssembler::sub32):
+        (JSC::MacroAssembler::xor32):
+        (JSC::MacroAssembler::loadPtr):
+        (JSC::MacroAssembler::load32):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::store32):
+        (JSC::MacroAssembler::poke):
+        (JSC::MacroAssembler::move):
+        (JSC::MacroAssembler::testImm32):
+        (JSC::MacroAssembler::jae32):
+        (JSC::MacroAssembler::jb32):
+        (JSC::MacroAssembler::jePtr):
+        (JSC::MacroAssembler::je32):
+        (JSC::MacroAssembler::jnePtr):
+        (JSC::MacroAssembler::jne32):
+        (JSC::MacroAssembler::jnzPtr):
+        (JSC::MacroAssembler::jnz32):
+        (JSC::MacroAssembler::jzPtr):
+        (JSC::MacroAssembler::jz32):
+        (JSC::MacroAssembler::joSub32):
+        (JSC::MacroAssembler::jump):
+        (JSC::MacroAssembler::sete32):
+        (JSC::MacroAssembler::setne32):
+        (JSC::MacroAssembler::setnz32):
+        (JSC::MacroAssembler::setz32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::addl_mr):
+        (JSC::X86Assembler::andl_i8r):
+        (JSC::X86Assembler::cmpl_rm):
+        (JSC::X86Assembler::cmpl_mr):
+        (JSC::X86Assembler::cmpl_i8m):
+        (JSC::X86Assembler::subl_mr):
+        (JSC::X86Assembler::testl_i32m):
+        (JSC::X86Assembler::xorl_i32r):
+        (JSC::X86Assembler::movl_rm):
+        (JSC::X86Assembler::modRm_opmsib):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::emitPutCTIArgConstant):
+        (JSC::JIT::emitPutCTIParam):
+        (JSC::JIT::emitPutImmediateToCallFrameHeader):
+        (JSC::JIT::emitInitRegister):
+        (JSC::JIT::checkStructure):
+        (JSC::JIT::emitJumpIfJSCell):
+        (JSC::JIT::emitJumpIfNotJSCell):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmNum):
+
 2008-12-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

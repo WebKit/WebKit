@@ -61,7 +61,7 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst, unsigned
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
     if (m_codeBlock->isConstantRegisterIndex(src)) {
         JSValue* value = m_codeBlock->getConstant(src);
-        move(value, dst);
+        move(ImmPtr(value), dst);
         killLastResultRegister();
         return;
     }
@@ -111,7 +111,7 @@ ALWAYS_INLINE void JIT::emitPutCTIArgConstant(unsigned value, unsigned offset)
 
 ALWAYS_INLINE void JIT::emitPutCTIArgConstant(void* value, unsigned offset)
 {
-    poke(value, (offset / sizeof(void*)) + 1);
+    poke(ImmPtr(value), (offset / sizeof(void*)) + 1);
 }
 
 ALWAYS_INLINE void JIT::emitGetCTIArg(unsigned offset, RegisterID dst)
@@ -144,7 +144,7 @@ ALWAYS_INLINE void JIT::emitPutCTIArgFromVirtualRegister(unsigned src, unsigned 
 
 ALWAYS_INLINE void JIT::emitPutCTIParam(void* value, unsigned name)
 {
-    poke(value, name);
+    poke(ImmPtr(value), name);
 }
 
 ALWAYS_INLINE void JIT::emitPutCTIParam(RegisterID from, unsigned name)
@@ -165,7 +165,7 @@ ALWAYS_INLINE void JIT::emitPutToCallFrameHeader(RegisterID from, RegisterFile::
 
 ALWAYS_INLINE void JIT::emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry)
 {
-    storePtr(value, Address(callFrameRegister, entry * sizeof(Register)));
+    storePtr(ImmPtr(value), Address(callFrameRegister, entry * sizeof(Register)));
 }
 
 ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader(RegisterFile::CallFrameHeaderEntry entry, RegisterID to)
@@ -183,7 +183,7 @@ ALWAYS_INLINE void JIT::emitPutVirtualRegister(unsigned dst, RegisterID from)
 
 ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
 {
-    storePtr(jsUndefined(), Address(callFrameRegister, dst * sizeof(Register)));
+    storePtr(ImmPtr(jsUndefined()), Address(callFrameRegister, dst * sizeof(Register)));
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
@@ -342,12 +342,12 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_2 helper
 
 ALWAYS_INLINE JmpSrc JIT::checkStructure(RegisterID reg, Structure* structure)
 {
-    return jnePtr(structure, Address(reg, FIELD_OFFSET(JSCell, m_structure)));
+    return jnePtr(Address(reg, FIELD_OFFSET(JSCell, m_structure)), ImmPtr(structure));
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfJSCell(RegisterID reg)
 {
-    return jnset32(Imm32(JSImmediate::TagMask), reg);
+    return jz32(reg, Imm32(JSImmediate::TagMask));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg, unsigned bytecodeIndex)
@@ -357,7 +357,7 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg, unsigned byteco
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotJSCell(RegisterID reg)
 {
-    return jset32(Imm32(JSImmediate::TagMask), reg);
+    return jnz32(reg, Imm32(JSImmediate::TagMask));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex)
@@ -384,7 +384,7 @@ ALWAYS_INLINE bool JIT::linkSlowCaseIfNotJSCell(const Vector<SlowCaseEntry>::ite
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNum(RegisterID reg, unsigned bytecodeIndex)
 {
-    m_slowCases.append(SlowCaseEntry(jnset32(Imm32(JSImmediate::TagBitTypeInteger), reg), bytecodeIndex));
+    m_slowCases.append(SlowCaseEntry(jz32(reg, Imm32(JSImmediate::TagBitTypeInteger)), bytecodeIndex));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNums(RegisterID reg1, RegisterID reg2, RegisterID scratch, unsigned bytecodeIndex)
