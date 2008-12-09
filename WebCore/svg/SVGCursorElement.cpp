@@ -44,6 +44,9 @@ SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document* doc)
 
 SVGCursorElement::~SVGCursorElement()
 {
+    HashSet<SVGElement*>::iterator end = m_clients.end();
+    for (HashSet<SVGElement*>::iterator it = m_clients.begin(); it != end; ++it)
+        (*it)->setCursorElement(0);
 }
 
 void SVGCursorElement::parseMappedAttribute(MappedAttribute* attr)
@@ -67,11 +70,13 @@ void SVGCursorElement::parseMappedAttribute(MappedAttribute* attr)
 void SVGCursorElement::addClient(SVGElement* element)
 {
     m_clients.add(element);
+    element->setCursorElement(this);
 }
 
 void SVGCursorElement::removeClient(SVGElement* element)
 {
     m_clients.remove(element);
+    element->setCursorElement(0);
 }
 
 void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -70,6 +70,7 @@ CSSCursorImageValue::~CSSCursorImageValue()
 
     for (; it != end; ++it) {
         SVGElement* referencedElement = *it;
+        referencedElement->setCursorImageValue(0);
         if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, referencedElement->document()))
             cursorElement->removeClient(referencedElement);
     }
@@ -98,6 +99,7 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
 
         SVGElement* svgElement = static_cast<SVGElement*>(element);
         m_referencedElements.add(svgElement);
+        svgElement->setCursorImageValue(this);
         cursorElement->addClient(svgElement);
         return true;
     }
@@ -119,5 +121,12 @@ StyleCachedImage* CSSCursorImageValue::cachedImage(DocLoader* loader)
 
     return CSSImageValue::cachedImage(loader, url);
 }
+
+#if ENABLE(SVG)
+void CSSCursorImageValue::removeReferencedElement(SVGElement* element)
+{
+    m_referencedElements.remove(element);
+}
+#endif
 
 } // namespace WebCore

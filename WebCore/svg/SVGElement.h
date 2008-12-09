@@ -31,9 +31,11 @@
 namespace WebCore {
 
     class AffineTransform;
+    class CSSCursorImageValue;
     class Document;
-    class SVGElementInstance;
+    class SVGCursorElement;
     class SVGDocumentExtensions;
+    class SVGElementInstance;
     class SVGSVGElement;
 
     class SVGElement : public StyledElement {
@@ -117,6 +119,9 @@ namespace WebCore {
             m_svgPropertyMap.set(attrName.localName(), &base);
         }
 
+        void setCursorElement(SVGCursorElement* cursorElement) { m_cursorElement = cursorElement; }
+        void setCursorImageValue(CSSCursorImageValue* cursorImageValue) { m_cursorImageValue = cursorImageValue; }
+
     private:
         friend class SVGElementInstance;
 
@@ -127,6 +132,9 @@ namespace WebCore {
 
         Node* m_shadowParent;
         mutable HashMap<String, const SVGAnimatedPropertyBase*> m_svgPropertyMap;
+
+        SVGCursorElement* m_cursorElement;
+        CSSCursorImageValue* m_cursorImageValue;
 
         HashSet<SVGElementInstance*> m_elementInstances;
     };
