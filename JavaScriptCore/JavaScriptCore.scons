@@ -126,6 +126,7 @@ sources['interpreter'] = [
     'interpreter/RegisterFile.cpp',
 ]
 sources['jit'] = [
+    'jit/ExecutableAllocator.cpp',
     'jit/JIT.cpp',
 ]
 sources['wrec'] = [
@@ -183,8 +184,10 @@ if env['PLATFORM'] == 'darwin':
     sources['wtf'].append('wtf/MainThread.cpp')
     sources['wtf/mac'] = ['wtf/mac/MainThreadMac.mm']
     sources['wtf'].append('wtf/TCSystemAlloc.cpp')
+    sources['jit'].append('jit/ExecutableAllocatorPosix.cpp')
 elif building_on_win32:
     sources['wtf'].append('wtf/ThreadingNone.cpp')
+    sources['jit'].append('jit/ExecutableAllocatorWin.cpp')
     env.Append(CPPDEFINES = ['ENABLE_JSC_MULTIPLE_THREADS=0'])
 
 derived_sources_path = 'DerivedSources/JavaScriptCore/'
