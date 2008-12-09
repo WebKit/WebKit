@@ -1,5 +1,14 @@
 2008-12-09  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Make sure to pause null events for hosted plug-ins as well.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pauseNullEventsForAllNetscapePlugins]):
+
+2008-12-09  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         * Plugins/Hosted/NetscapePluginHostProxy.h:

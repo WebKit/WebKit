@@ -2001,7 +2001,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     
     for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
         NSView *subview = [subviews objectAtIndex:subviewIndex]; 
-        if ([subview isKindOfClass:[WebNetscapePluginView class]]) 
+        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]]) 
             [(WebNetscapePluginView *)subview stopTimers];
     } 
 } 
