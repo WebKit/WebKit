@@ -1,3 +1,18 @@
+2008-12-08  Judit Jasz  <jasy@inf.u-szeged.hu>
+
+        Reviewed and tweaked by Cameron Zwarich.
+
+        Bug 22352: Annotate opcodes with their length
+        <https://bugs.webkit.org/show_bug.cgi?id=22352>
+
+        * bytecode/Opcode.cpp:
+        * bytecode/Opcode.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+
 2008-12-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

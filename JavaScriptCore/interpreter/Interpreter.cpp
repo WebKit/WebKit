@@ -1461,11 +1461,11 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
     // here because our labels are only in scope inside this function.
     if (flag == InitializeAndReturn) {
         #if HAVE(COMPUTED_GOTO)
-            #define ADD_BYTECODE(id) m_opcodeTable[id] = &&id;
+            #define ADD_BYTECODE(id, length) m_opcodeTable[id] = &&id;
                 FOR_EACH_OPCODE_ID(ADD_BYTECODE);
             #undef ADD_BYTECODE
 
-            #define ADD_OPCODE_ID(id) m_opcodeIDTable.add(&&id, id);
+            #define ADD_OPCODE_ID(id, length) m_opcodeIDTable.add(&&id, id);
                 FOR_EACH_OPCODE_ID(ADD_OPCODE_ID);
             #undef ADD_OPCODE_ID
             ASSERT(m_opcodeIDTable.size() == numOpcodeIDs);
