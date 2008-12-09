@@ -1,3 +1,18 @@
+2008-12-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed a bug where WREC would allow a quantifier whose minimum was
+        greater than its maximum.
+        
+        * wrec/Quantifier.h:
+        (JSC::WREC::Quantifier::Quantifier): ASSERT that the quantifier is not
+        backwards.
+        
+        * wrec/WRECParser.cpp:
+        (JSC::WREC::Parser::consumeGreedyQuantifier): Verify that the minimum
+        is not greater than the maximum.
+
 2008-12-08  Eric Seidel  <eric@webkit.org>
         
         Build fix only, no review.

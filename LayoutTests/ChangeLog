@@ -1,3 +1,14 @@
+2008-12-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added a test for interesting uses of non-pattern-characters in regular
+        expressions.
+
+        * fast/regex/non-pattern-characters-expected.txt: Added.
+        * fast/regex/non-pattern-characters.html: Added.
+        * fast/regex/resources/non-pattern-characters.js: Added.
+
 2008-12-08  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

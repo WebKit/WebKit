@@ -92,6 +92,11 @@ ALWAYS_INLINE Quantifier Parser::consumeGreedyQuantifier()
                         return Quantifier(Quantifier::Error);
                     }
                     consume();
+                    
+                    if (min > max) {
+                        m_error = MalformedQuantifier;
+                        return Quantifier(Quantifier::Error);
+                    }
 
                     return Quantifier(Quantifier::Greedy, min, max);
                 }

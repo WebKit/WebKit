@@ -30,6 +30,7 @@
 
 #if ENABLE(WREC)
 
+#include <wtf/Assertions.h>
 #include <limits.h>
 
 namespace JSC { namespace WREC {
@@ -47,6 +48,7 @@ namespace JSC { namespace WREC {
             , min(min)
             , max(max)
         {
+            ASSERT(min <= max);
         }
 
         Type type;
