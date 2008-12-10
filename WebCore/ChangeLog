@@ -1,3 +1,24 @@
+2008-12-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig
+
+        https://bugs.webkit.org/show_bug.cgi?id=22793
+
+        Cleanup FloatPoint3D: inline the getters and setters,
+        fix a potential divide-by-zero in normalize(), and add
+        a FloatPoint constructor.
+        
+        * platform/graphics/FloatPoint3D.cpp:
+        (WebCore::FloatPoint3D::FloatPoint3D):
+        (WebCore::FloatPoint3D::normalize):
+        * platform/graphics/FloatPoint3D.h:
+        (WebCore::FloatPoint3D::x):
+        (WebCore::FloatPoint3D::setX):
+        (WebCore::FloatPoint3D::y):
+        (WebCore::FloatPoint3D::setY):
+        (WebCore::FloatPoint3D::z):
+        (WebCore::FloatPoint3D::setZ):
+
 2008-12-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.
