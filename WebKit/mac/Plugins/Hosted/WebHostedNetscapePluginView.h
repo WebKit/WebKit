@@ -26,6 +26,7 @@
 #if USE(PLUGIN_HOST_PROCESS)
 
 #import "WebBaseNetscapePluginView.h"
+#import "WebKitSystemInterface.h"
 
 #import <wtf/RefPtr.h>
 
@@ -39,6 +40,7 @@ namespace WebKit {
     RetainPtr<NSArray> _attributeValues;
     
     RetainPtr<CALayer> _pluginLayer;
+    WKSoftwareCARendererRef _softwareRenderer;
     
     RefPtr<WebKit::NetscapePluginInstanceProxy> _proxy;
     BOOL _pluginHostDied;

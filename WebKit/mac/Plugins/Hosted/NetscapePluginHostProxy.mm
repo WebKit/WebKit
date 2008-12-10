@@ -188,4 +188,19 @@ kern_return_t WKPCCancelLoadURL(mach_port_t clientPort, uint32_t pluginID, uint3
     return KERN_SUCCESS;
 }
 
+kern_return_t WKPCInvalidateRect(mach_port_t clientPort, uint32_t pluginID, double x, double y, double width, double height)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
+    [instanceProxy->pluginView() setNeedsDisplayInRect:NSMakeRect(x, y, width, height)];
+    
+    return KERN_SUCCESS;
+}
+
 #endif // USE(PLUGIN_HOST_PROCESS)

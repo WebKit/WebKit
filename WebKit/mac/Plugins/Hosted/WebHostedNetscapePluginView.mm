@@ -29,7 +29,6 @@
 #import "NetscapePluginInstanceProxy.h"
 #import "NetscapePluginHostManager.h"
 #import "NetscapePluginHostProxy.h"
-#import "WebKitSystemInterface.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import "WebUIDelegate.h"
@@ -94,14 +93,17 @@ extern "C" {
 
     NSString *userAgent = [[self webView] userAgentForURL:_baseURL.get()];
 
-    NSLog(@"self: %@",self);
     _proxy = NetscapePluginHostManager::shared().instantiatePlugin(_pluginPackage.get(), self, _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get());
     if (!_proxy) 
         return NO;
-    
-    _pluginLayer = WKMakeRenderLayer(_proxy->renderContextID());
-    self.wantsLayer = YES;
 
+    if (_proxy->useSoftwareRenderer())
+        _softwareRenderer = WKSoftwareCARendererCreate(_proxy->renderContextID());
+    else {
+        _pluginLayer = WKMakeRenderLayer(_proxy->renderContextID());
+        self.wantsLayer = YES;
+    }
+    
     // Update the window frame.
     _proxy->windowFrameChanged([[self window] frame]);
     
@@ -151,6 +153,11 @@ extern "C" {
 - (void)destroyPlugin
 {
     if (_proxy) {
+        if (_softwareRenderer) {
+            WKSoftwareCARendererDestroy(_softwareRenderer);
+            _softwareRenderer = 0;
+        }
+        
         _proxy->destroy();
         _proxy = 0;
     }
@@ -252,8 +259,11 @@ extern "C" {
 
 - (void)drawRect:(NSRect)rect
 {
-    if (_proxy)
+    if (_proxy) {
+        if (_softwareRenderer)
+            WKSoftwareCARendererRender(_softwareRenderer, (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], NSRectToCGRect(rect));
         return;
+    }
     
     if (_pluginHostDied) {
         // Fill the area with a nice red color for now.

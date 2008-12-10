@@ -1,3 +1,27 @@
+2008-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Implement software rendering of hosted plug-ins.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCInvalidateRect):
+        New MiG function. This is called by the plug-in host when it has drawn something.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        Create a software renderer.
+        
+        (-[WebHostedNetscapePluginView destroyPlugin]):
+        Destroy the software renderer.
+        
+        (-[WebHostedNetscapePluginView drawRect:]):
+        Draw using the software renderer.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Add InvalidateRect.
+
 2008-12-09  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Dave Hyatt.
