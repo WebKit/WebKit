@@ -792,7 +792,7 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue* e
     return true;
 }
 
-NEVER_INLINE Instruction* Interpreter::throwException(CallFrame*& callFrame, JSValue*& exceptionValue, const Instruction* vPC, bool explicitThrow)
+NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSValue*& exceptionValue, const Instruction* vPC, bool explicitThrow)
 {
     // Set up the exception object
     
@@ -852,10 +852,8 @@ NEVER_INLINE Instruction* Interpreter::throwException(CallFrame*& callFrame, JSV
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
 
-    int scopeDepth;
-    Instruction* handlerVPC;
-
-    while (!codeBlock->getHandlerForVPC(vPC, handlerVPC, scopeDepth)) {
+    HandlerInfo* handler = 0;
+    while (!(handler = codeBlock->handlerForVPC(vPC))) {
         if (!unwindCallFrame(callFrame, exceptionValue, vPC, codeBlock))
             return 0;
     }
@@ -863,13 +861,13 @@ NEVER_INLINE Instruction* Interpreter::throwException(CallFrame*& callFrame, JSV
     // Now unwind the scope chain within the exception handler's call frame.
 
     ScopeChain sc(callFrame->scopeChain());
-    int scopeDelta = depth(codeBlock, sc) - scopeDepth;
+    int scopeDelta = depth(codeBlock, sc) - handler->scopeDepth;
     ASSERT(scopeDelta >= 0);
     while (scopeDelta--)
         sc.pop();
     callFrame->setScopeChain(sc.node());
 
-    return handlerVPC;
+    return handler;
 }
 
 class DynamicGlobalObjectScope : Noncopyable {
@@ -1480,7 +1478,7 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
 
     JSGlobalData* globalData = &callFrame->globalData();
     JSValue* exceptionValue = noValue();
-    Instruction* handlerVPC = 0;
+    HandlerInfo* handler = 0;
 
     Instruction* vPC = callFrame->codeBlock()->instructions().begin();
     Profiler** enabledProfilerReference = Profiler::enabledProfilerReference();
@@ -3793,13 +3791,13 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
         int ex = (++vPC)->u.operand;
         exceptionValue = callFrame[ex].jsValue(callFrame);
 
-        handlerVPC = throwException(callFrame, exceptionValue, vPC, true);
-        if (!handlerVPC) {
+        handler = throwException(callFrame, exceptionValue, vPC, true);
+        if (!handler) {
             *exception = exceptionValue;
             return jsNull();
         }
 
-        vPC = handlerVPC;
+        vPC = callFrame->codeBlock()->instructions().begin() + handler->target;
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_unexpected_load) {
@@ -3969,12 +3967,13 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
             // cannot fathom if we don't assign to the exceptionValue before branching)
             exceptionValue = createInterruptedExecutionException(globalData);
         }
-        handlerVPC = throwException(callFrame, exceptionValue, vPC, false);
-        if (!handlerVPC) {
+        handler = throwException(callFrame, exceptionValue, vPC, false);
+        if (!handler) {
             *exception = exceptionValue;
             return jsNull();
         }
-        vPC = handlerVPC;
+
+        vPC = callFrame->codeBlock()->instructions().begin() + handler->target;
         NEXT_INSTRUCTION();
     }
     }
@@ -5753,15 +5752,15 @@ JSValue* Interpreter::cti_op_throw(CTI_ARGS)
     JSValue* exceptionValue = ARG_src1;
     ASSERT(exceptionValue);
 
-    Instruction* handlerVPC = ARG_globalData->interpreter->throwException(callFrame, exceptionValue, codeBlock->instructions().begin() + vPCIndex, true);
+    HandlerInfo* handler = ARG_globalData->interpreter->throwException(callFrame, exceptionValue, codeBlock->instructions().begin() + vPCIndex, true);
 
-    if (!handlerVPC) {
+    if (!handler) {
         *ARG_exception = exceptionValue;
         return JSImmediate::nullImmediate();
     }
 
     ARG_setCallFrame(callFrame);
-    void* catchRoutine = callFrame->codeBlock()->nativeExceptionCodeForHandlerVPC(handlerVPC);
+    void* catchRoutine = handler->nativeCode;
     ASSERT(catchRoutine);
     CTI_SET_RETURN_ADDRESS(catchRoutine);
     return exceptionValue;
@@ -6099,15 +6098,15 @@ JSValue* Interpreter::cti_vm_throw(CTI_ARGS)
     ASSERT(exceptionValue);
     globalData->exception = noValue();
 
-    Instruction* handlerVPC = globalData->interpreter->throwException(callFrame, exceptionValue, codeBlock->instructions().begin() + vPCIndex, false);
+    HandlerInfo* handler = globalData->interpreter->throwException(callFrame, exceptionValue, codeBlock->instructions().begin() + vPCIndex, false);
 
-    if (!handlerVPC) {
+    if (!handler) {
         *ARG_exception = exceptionValue;
         return JSImmediate::nullImmediate();
     }
 
     ARG_setCallFrame(callFrame);
-    void* catchRoutine = callFrame->codeBlock()->nativeExceptionCodeForHandlerVPC(handlerVPC);
+    void* catchRoutine = handler->nativeCode;
     ASSERT(catchRoutine);
     CTI_SET_RETURN_ADDRESS(catchRoutine);
     return exceptionValue;

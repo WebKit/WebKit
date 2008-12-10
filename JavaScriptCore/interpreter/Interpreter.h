@@ -50,6 +50,7 @@ namespace JSC {
     class Register;
     class ScopeChainNode;
     class SamplingTool;
+    struct HandlerInfo;
 
 #if ENABLE(JIT)
 
@@ -301,7 +302,7 @@ namespace JSC {
         NEVER_INLINE ScopeChainNode* createExceptionScope(CallFrame*, const Instruction* vPC);
 
         NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValue*, const Instruction*&, CodeBlock*&);
-        NEVER_INLINE Instruction* throwException(CallFrame*&, JSValue*&, const Instruction*, bool);
+        NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue*&, const Instruction*, bool);
         NEVER_INLINE bool resolveBaseAndFunc(CallFrame*, Instruction*, JSValue*& exceptionValue);
 
         static ALWAYS_INLINE CallFrame* slideRegisterWindowForCall(CodeBlock*, RegisterFile*, CallFrame*, size_t registerOffset, int argc);

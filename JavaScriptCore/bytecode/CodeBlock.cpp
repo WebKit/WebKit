@@ -1194,40 +1194,20 @@ void CodeBlock::mark()
     }
 }
 
-bool CodeBlock::getHandlerForVPC(const Instruction* vPC, Instruction*& target, int& scopeDepth)
-{
-    if (!m_rareData)
-        return false;
-
-    Vector<HandlerInfo>::iterator ptr = m_rareData->m_exceptionHandlers.begin(); 
-    Vector<HandlerInfo>::iterator end = m_rareData->m_exceptionHandlers.end();
-    unsigned addressOffset = vPC - m_instructions.begin();
-    ASSERT(addressOffset < m_instructions.size());
-    
-    for (; ptr != end; ++ptr) {
-        // Handlers are ordered innermost first, so the first handler we encounter
-        // that contains the source address is the correct handler to use.
-        if (ptr->start <= addressOffset && ptr->end >= addressOffset) {
-            scopeDepth = ptr->scopeDepth;
-            target = m_instructions.begin() + ptr->target;
-            return true;
-        }
-    }
-    return false;
-}
-
-void* CodeBlock::nativeExceptionCodeForHandlerVPC(const Instruction* handlerVPC)
+HandlerInfo* CodeBlock::handlerForVPC(const Instruction* vPC)
 {
     if (!m_rareData)
         return 0;
 
-    Vector<HandlerInfo>::iterator ptr = m_rareData->m_exceptionHandlers.begin(); 
-    Vector<HandlerInfo>::iterator end = m_rareData->m_exceptionHandlers.end();
+    unsigned addressOffset = vPC - m_instructions.begin();
+    ASSERT(addressOffset < m_instructions.size());
     
-    for (; ptr != end; ++ptr) {
-        Instruction*target = m_instructions.begin() + ptr->target;
-        if (handlerVPC == target)
-            return ptr->nativeCode;
+    Vector<HandlerInfo>& exceptionHandlers = m_rareData->m_exceptionHandlers;
+    for (size_t i = 0; i < exceptionHandlers.size(); ++i) {
+        // Handlers are ordered innermost first, so the first handler we encounter
+        // that contains the source address is the correct handler to use.
+        if (exceptionHandlers[i].start <= addressOffset && exceptionHandlers[i].end >= addressOffset)
+            return &exceptionHandlers[i];
     }
 
     return 0;

@@ -1,3 +1,25 @@
+2008-12-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove unnecessary extra lookup when throwing an exception.
+        We used to first lookup the target offset using getHandlerForVPC
+        and then we would lookup the native code stub using 
+        nativeExceptionCodeForHandlerVPC.  Instead, we can just pass around
+        the HandlerInfo.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::handlerForVPC): Return the HandlerInfo.
+        * bytecode/CodeBlock.h: Remove nativeExceptionCodeForHandlerVPC.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException): Return a HandlerInfo instead of
+        and Instruction offset.
+        (JSC::Interpreter::privateExecute): Get the offset from HandlerInfo.
+        (JSC::Interpreter::cti_op_throw): Get the native code from the HandleInfo.
+        (JSC::Interpreter::cti_vm_throw): Ditto.
+        * interpreter/Interpreter.h:
+
 2008-12-09  Eric Seidel  <eric@webkit.org>
 
         Build fix only, no review.

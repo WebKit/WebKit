@@ -219,8 +219,7 @@ namespace JSC {
 #endif
         int expressionRangeForVPC(const Instruction*, int& divot, int& startOffset, int& endOffset);
         int lineNumberForVPC(const Instruction* vPC);
-        bool getHandlerForVPC(const Instruction* vPC, Instruction*& target, int& scopeDepth);
-        void* nativeExceptionCodeForHandlerVPC(const Instruction* handlerVPC);
+        HandlerInfo* handlerForVPC(const Instruction* vPC);
 
         void mark();
         void refStructures(Instruction* vPC) const;
