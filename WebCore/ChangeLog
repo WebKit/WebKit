@@ -1,3 +1,12 @@
+2008-12-10   Srinivasa Rao M. Hamse  <msrinirao@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        F1-F12 key mappings for WebKit Gtk Port
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2008-12-10  Enrico Ros  <enrico.ros@m31.com>
 
         Reviewed by Simon Hausmann.
