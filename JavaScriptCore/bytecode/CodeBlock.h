@@ -109,6 +109,7 @@ namespace JSC {
         bool isLinked() { return callee; }
     };
 
+#if ENABLE(JIT)
     struct PC {
         PC(void* nativePC, unsigned bytecodeIndex)
             : nativePC(nativePC)
@@ -119,7 +120,7 @@ namespace JSC {
         void* nativePC;
         unsigned bytecodeIndex;
     };
-
+#endif
 
     // valueAtPosition helpers for the binaryChop algorithm below.
 
@@ -133,10 +134,12 @@ namespace JSC {
         return callLinkInfo->callReturnLocation;
     }
 
+#if ENABLE(JIT)
     inline void* getNativePC(PC* pc)
     {
         return pc->nativePC;
     }
+#endif
 
     // Binary chop algorithm, calls valueAtPosition on pre-sorted elements in array,
     // compares result with key (KeyTypes should be comparable with '--', '<', '>').
@@ -254,10 +257,12 @@ namespace JSC {
             return *(binaryChop<CallLinkInfo, void*, getCallLinkInfoReturnLocation>(m_callLinkInfos.begin(), m_callLinkInfos.size(), returnAddress));
         }
 
+#if ENABLE(JIT)
         unsigned getBytecodeIndex(void* nativePC)
         {
             return binaryChop<PC, void*, getNativePC>(m_pcVector.begin(), m_pcVector.size(), nativePC)->bytecodeIndex;
         }
+#endif
 
         Vector<Instruction>& instructions() { return m_instructions; }
 #if ENABLE(JIT)

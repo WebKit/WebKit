@@ -1,5 +1,11 @@
 2008-12-10  Sam Weinig  <sam@webkit.org>
 
+        Fix non-JIT builds.
+
+        * bytecode/CodeBlock.h:
+
+2008-12-10  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         <rdar://problem/6428332> Remove the CTI return address table from CodeBlock
