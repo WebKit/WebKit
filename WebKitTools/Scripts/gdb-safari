@@ -74,7 +74,7 @@ my ($fh, $path) = mkstemp("/tmp/gdb-safari-XXXX");
 print $fh "set env DYLD_FRAMEWORK_PATH $productDir\n";
 print $fh "set env WEBKIT_UNSET_DYLD_FRAMEWORK_PATH YES\n";
 
-my @architectureFlags = ("-arch", preferredArchitecture()) if isAppleMacWebKit();
+my @architectureFlags = ("-arch", preferredArchitecture()) if isAppleMacWebKit() && !isTiger();
 # Start up Safari.
 print "Start Safari under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
 exec $gdbPath, "-x", $path, @architectureFlags, $safariPath or die;
