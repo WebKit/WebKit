@@ -1,3 +1,14 @@
+2008-12-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Add back ability to end all profiling via console by invoking profileEnd
+        with no arguments.
+
+        * page/Console.cpp:
+        (WebCore::Console::profileEnd): Removed title null-checking and
+            subsequent early exit.
+
 2008-12-10  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Darin Adler.

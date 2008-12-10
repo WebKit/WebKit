@@ -272,9 +272,6 @@ void Console::profileEnd(const JSC::UString& title, ScriptCallStack* callStack)
     if (!page)
         return;
 
-    if (title.isNull())
-        return;
-
     if (!page->inspectorController()->profilerEnabled())
         return;
 
