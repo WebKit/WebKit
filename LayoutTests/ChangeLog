@@ -1,3 +1,13 @@
+2008-12-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam :( Weinig.
+        
+        Added a test for http://trac.webkit.org/changeset/39162.
+
+        * fast/regex/malformed-escapes-expected.txt: Added.
+        * fast/regex/malformed-escapes.html: Added.
+        * fast/regex/resources/malformed-escapes.js: Added.
+
 2008-12-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
