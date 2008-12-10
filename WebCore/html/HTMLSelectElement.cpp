@@ -29,18 +29,22 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "CharacterNames.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "Frame.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
+#include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
 #include <math.h>
@@ -176,6 +180,10 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     // This only gets called with fireOnChange for menu lists. 
     if (fireOnChange && usesMenuList())
         menuListOnChange();
+
+    Frame* frame = document()->frame();
+    if (frame)
+        frame->page()->chrome()->client()->formStateDidChange(this);
 }
 
 int HTMLSelectElement::activeSelectionStartListIndex() const

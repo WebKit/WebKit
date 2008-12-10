@@ -131,6 +131,7 @@ public:
 
     virtual void enableSuddenTermination();
     virtual void disableSuddenTermination();
+    virtual void formStateDidChange(const WebCore::Node*) { }
 
 private:
     WebView *m_webView;

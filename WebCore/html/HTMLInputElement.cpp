@@ -27,6 +27,7 @@
 #include "HTMLInputElement.h"
 
 #include "BeforeTextInsertedEvent.h"
+#include "ChromeClient.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Editor.h"
@@ -98,6 +99,14 @@ static int numCharactersInGraphemeClusters(StringImpl* s, int numGraphemeCluster
         if (textBreakNext(it) == TextBreakDone)
             return s->length();
     return textBreakCurrent(it);
+}
+
+static inline void notifyFormStateChanged(const HTMLInputElement* element)
+{
+    Frame* frame = element->document()->frame();
+    if (!frame)
+        return;
+    frame->page()->chrome()->client()->formStateDidChange(element);
 }
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
@@ -357,6 +366,8 @@ void HTMLInputElement::setInputType(const String& t)
 
             checkedRadioButtons(this).addButton(this);
         }
+
+        notifyFormStateChanged(this);
     }
     m_haveType = true;
 
@@ -418,6 +429,8 @@ const AtomicString& HTMLInputElement::type() const
             DEFINE_STATIC_LOCAL(const AtomicString, text, ("text"));
             return text;
         }
+
+        notifyFormStateChanged(this);
     }
     return emptyAtom;
 }
@@ -777,6 +790,7 @@ void HTMLInputElement::attach()
                 imageObj->setImageSizeForAltText();
         }
     }
+    notifyFormStateChanged(this);
 }
 
 void HTMLInputElement::detach()
@@ -1031,6 +1045,7 @@ void HTMLInputElement::setValue(const String& value)
             cachedSelEnd = max;
         }
     }
+    notifyFormStateChanged(this);
 }
 
 void HTMLInputElement::setValueFromRenderer(const String& value)
@@ -1056,6 +1071,8 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
 
     // Fire the "input" DOM event.
     dispatchEventForType(eventNames().inputEvent, true, false);
+
+    notifyFormStateChanged(this);
 }
 
 void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
@@ -1066,6 +1083,7 @@ void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
         m_fileList->append(File::create(paths[i]));
 
     setValueMatchesRenderer();
+    notifyFormStateChanged(this);
 }
 
 bool HTMLInputElement::storesValueSeparateFromAttribute() const

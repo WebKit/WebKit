@@ -128,6 +128,8 @@ public:
     virtual void exceededDatabaseQuota(Frame*, const String&) { }
 
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) { }
+
+    virtual void formStateDidChange(const Node*) { }
 };
 
 class EmptyFrameLoaderClient : public FrameLoaderClient {

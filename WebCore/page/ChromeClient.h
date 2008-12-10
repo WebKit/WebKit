@@ -148,6 +148,10 @@ namespace WebCore {
 
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
 
+        // Notification that the given form element has changed. This function
+        // will be called frequently, so handling should be very fast.
+        virtual void formStateDidChange(const Node*) = 0;
+
 #if PLATFORM(MAC)
         virtual KeyboardUIMode keyboardUIMode() { return KeyboardAccessDefault; }
 

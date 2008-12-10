@@ -117,6 +117,8 @@ namespace WebCore {
 
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
 
+        virtual void formStateDidChange(Node*) { }
+
         QWebPage* m_webPage;
         WebCore::KURL lastHoverURL;
         WebCore::String lastHoverTitle;

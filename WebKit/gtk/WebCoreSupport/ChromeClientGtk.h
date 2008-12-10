@@ -100,6 +100,8 @@ namespace WebKit {
 
         virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
 
+        virtual void formStateDidChange(const WebCore::Node*) { }
+
     private:
         WebKitWebView* m_webView;
         WebCore::KURL m_hoveredLinkURL;
