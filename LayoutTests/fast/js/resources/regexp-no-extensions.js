@@ -11,7 +11,7 @@ shouldBe('/[\\x1g]/.exec("x").toString()', '"x"');
 shouldBe('/[\\x1g]/.exec("1").toString()', '"1"');
 shouldBe('/\\2147483648/.exec(String.fromCharCode(140) + "7483648").toString()', 'String.fromCharCode(140) + "7483648"');
 shouldBe('/\\4294967296/.exec("\\"94967296").toString()', '"\\"94967296"');
-shouldBe('/\\8589934592/.exec("8589934592").toString()', '"8589934592"');
+shouldBe('/\\8589934592/.exec("\\\\8589934592").toString()', '"\\\\8589934592"');
 shouldBe('"\\nAbc\\n".replace(/(\\n)[^\\n]+$/, "$1")', '"\\nAbc\\n"');
 shouldBe('/x$/.exec("x\\n")', 'null');
 shouldThrow('/x++/');
@@ -36,7 +36,7 @@ shouldBe('/[\\10q]/.exec("y" + String.fromCharCode(8) + "q").toString()', 'Strin
 shouldBe('/\\1q/.exec("y" + String.fromCharCode(1) + "q").toString()', 'String.fromCharCode(1) + "q"');
 shouldBe('/[\\1q]/.exec("y" + String.fromCharCode(1) + "q").toString()', 'String.fromCharCode(1)');
 shouldBe('/[\\1q]/.exec("yq").toString()', '"q"');
-shouldBe('/\\8q/.exec("y8q").toString()', '"8q"');
+shouldBe('/\\8q/.exec("\\\\8q").toString()', '"\\\\8q"');
 shouldBe('/[\\8q]/.exec("y8q").toString()', '"8"');
 shouldBe('/[\\8q]/.exec("yq").toString()', '"q"');
 shouldBe('/(x)\\1q/.exec("xxq").toString()', '"xxq,x"');

@@ -47,16 +47,6 @@ namespace JSC { namespace WREC {
     friend class SavedState;
 
     public:
-        enum Error {
-            NoError,
-            MalformedCharacterClass,
-            MalformedParentheses,
-            MalformedPattern,
-            MalformedQuantifier,
-            MalformedEscape,
-            UnsupportedParentheses,
-        };
-
         Parser(const UString& pattern, bool ignoreCase, bool multiline)
             : m_generator(*this)
             , m_data(pattern.data())
@@ -75,7 +65,8 @@ namespace JSC { namespace WREC {
         void recordSubpattern() { ++m_numSubpatterns; }
         unsigned numSubpatterns() const { return m_numSubpatterns; }
         
-        Error error() const { return m_error; }
+        const char* error() const { return m_error; }
+        const char* syntaxError() const { return m_error == ParenthesesNotSupported ? 0 : m_error; }
         
         void parsePattern(JumpList& failures)
         {
@@ -84,7 +75,7 @@ namespace JSC { namespace WREC {
             parseDisjunction(failures);
 
             if (peek() != EndOfPattern)
-                m_error = MalformedPattern; // Parsing the pattern should fully consume it.
+                setError(ParenthesesUnmatched); // Parsing the pattern should fully consume it.
         }
 
         void parseDisjunction(JumpList& failures);
@@ -119,7 +110,14 @@ namespace JSC { namespace WREC {
         {
             m_index = 0;
             m_numSubpatterns = 0;
-            m_error = NoError;
+            m_error = 0;
+        }
+
+        void setError(const char* error)
+        {
+            if (m_error)
+                return;
+            m_error = error;
         }
 
         int peek()
@@ -189,6 +187,16 @@ namespace JSC { namespace WREC {
 
         static const int EndOfPattern = -1;
 
+        // Error messages.
+        static const char* QuantifierOutOfOrder;
+        static const char* QuantifierWithoutAtom;
+        static const char* ParenthesesUnmatched;
+        static const char* ParenthesesTypeInvalid;
+        static const char* ParenthesesNotSupported;
+        static const char* CharacterClassUnmatched;
+        static const char* CharacterClassOutOfOrder;
+        static const char* EscapeUnterminated;
+
         Generator m_generator;
         const UChar* m_data;
         unsigned m_size;
@@ -196,7 +204,7 @@ namespace JSC { namespace WREC {
         bool m_ignoreCase;
         bool m_multiline;
         unsigned m_numSubpatterns;
-        Error m_error;
+        const char* m_error;
     };
 
 } } // namespace JSC::WREC

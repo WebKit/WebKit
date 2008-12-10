@@ -10,7 +10,7 @@ PASS /[\x1g]/.exec("x").toString() is "x"
 PASS /[\x1g]/.exec("1").toString() is "1"
 PASS /\2147483648/.exec(String.fromCharCode(140) + "7483648").toString() is String.fromCharCode(140) + "7483648"
 PASS /\4294967296/.exec("\"94967296").toString() is "\"94967296"
-PASS /\8589934592/.exec("8589934592").toString() is "8589934592"
+PASS /\8589934592/.exec("\\8589934592").toString() is "\\8589934592"
 PASS "\nAbc\n".replace(/(\n)[^\n]+$/, "$1") is "\nAbc\n"
 PASS /x$/.exec("x\n") is null
 PASS /x++/ threw exception SyntaxError: Invalid regular expression: nothing to repeat.
@@ -33,7 +33,7 @@ PASS /[\10q]/.exec("y" + String.fromCharCode(8) + "q").toString() is String.from
 PASS /\1q/.exec("y" + String.fromCharCode(1) + "q").toString() is String.fromCharCode(1) + "q"
 PASS /[\1q]/.exec("y" + String.fromCharCode(1) + "q").toString() is String.fromCharCode(1)
 PASS /[\1q]/.exec("yq").toString() is "q"
-PASS /\8q/.exec("y8q").toString() is "8q"
+PASS /\8q/.exec("\\8q").toString() is "\\8q"
 PASS /[\8q]/.exec("y8q").toString() is "8"
 PASS /[\8q]/.exec("yq").toString() is "q"
 PASS /(x)\1q/.exec("xxq").toString() is "xxq,x"

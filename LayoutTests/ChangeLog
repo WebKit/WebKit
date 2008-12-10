@@ -1,3 +1,17 @@
+2008-12-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Updated regular expression layout tests to be agnostic between WREC
+        and PCRE quirks. Also, updated results to match new, more web-compatible
+        regular expression parsing.
+
+        * fast/js/regexp-charclass-crash-expected.txt:
+        * fast/js/regexp-charclass-crash.html:
+        * fast/js/regexp-no-extensions-expected.txt:
+        * fast/js/resources/regexp-no-extensions.js:
+        * fast/regex/test1-expected.txt:
+
 2008-12-09  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

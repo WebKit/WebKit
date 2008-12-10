@@ -46,7 +46,7 @@ static const int MaxPatternSize = (1 << 13);
 CompiledRegExp Generator::compileRegExp(JSGlobalData* globalData, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, RefPtr<ExecutablePool>& pool, bool ignoreCase, bool multiline)
 {
     if (pattern.size() > MaxPatternSize) {
-        *error_ptr = "Regular expression too large.";
+        *error_ptr = "regular expression too large";
         return 0;
     }
 
@@ -75,7 +75,7 @@ CompiledRegExp Generator::compileRegExp(JSGlobalData* globalData, const UString&
     generator.generateReturnFailure();
 
     if (parser.error()) {
-        *error_ptr = "Regular expression malformed.";
+        *error_ptr = parser.syntaxError(); // NULL in the case of patterns that WREC doesn't support yet.
         return 0;
     }
 

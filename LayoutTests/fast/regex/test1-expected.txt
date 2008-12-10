@@ -108,7 +108,7 @@ Test 1: main functionality.
     babababc: PASS
 
 /^\ca\cA\c[\c{\c:/
-    \e;z: FAIL. Actual results: "null"
+FAILED TO COMPILE
 
 /^[ab\]cde]/
     athing: PASS

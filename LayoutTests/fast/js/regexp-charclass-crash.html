@@ -11,8 +11,8 @@ for (; i < 10000; ++i) { // >
     try {
         new RegExp(string);
     } catch (exception) {
-        if (/too large/.test(exception)) {
-            document.writeln("<div>Got up to iteration " + i + " and then got this exception: " + exception + ".</div>");
+        if (/too large/.test(exception) && i > 1000) {
+            document.writeln("<div>Got over 1000 iterations and then got this exception: " + exception + ".</div>");
             break;
         }
     }

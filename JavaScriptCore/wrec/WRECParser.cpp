@@ -35,6 +35,16 @@ using namespace WTF;
 
 namespace JSC { namespace WREC {
 
+// These error messages match the error messages used by PCRE.
+const char* Parser::QuantifierOutOfOrder = "numbers out of order in {} quantifier";
+const char* Parser::QuantifierWithoutAtom = "nothing to repeat";
+const char* Parser::ParenthesesUnmatched = "unmatched parentheses";
+const char* Parser::ParenthesesTypeInvalid = "unrecognized character after (?";
+const char* Parser::ParenthesesNotSupported = ""; // Not a user-visible syntax error -- just signals a syntax that WREC doesn't support yet.
+const char* Parser::CharacterClassUnmatched = "missing terminating ] for character class";
+const char* Parser::CharacterClassOutOfOrder = "range out of order in character class";
+const char* Parser::EscapeUnterminated = "\\ at end of pattern";
+
 class PatternCharacterSequence {
 typedef Generator::JumpList JumpList;
 
@@ -139,7 +149,7 @@ ALWAYS_INLINE Quantifier Parser::consumeGreedyQuantifier()
             consume();
  
             if (min > max) {
-                m_error = MalformedQuantifier;
+                setError(QuantifierOutOfOrder);
                 return Quantifier(Quantifier::Error);
             }
 
@@ -232,12 +242,12 @@ bool Parser::parseParentheses(JumpList& failures)
             break;
 
         default:
-            m_error = UnsupportedParentheses;
+            setError(ParenthesesNotSupported);
             return false;
     }
 
     if (consume() != ')') {
-        m_error = MalformedParentheses;
+        setError(ParenthesesUnmatched);
         return false;
     }
 
@@ -248,11 +258,11 @@ bool Parser::parseParentheses(JumpList& failures)
             return true;
 
         case Quantifier::Greedy:
-            m_error = UnsupportedParentheses;
+            setError(ParenthesesNotSupported);
             return false;
 
         case Quantifier::NonGreedy:
-            m_error = UnsupportedParentheses;
+            setError(ParenthesesNotSupported);
             return false;
 
         case Quantifier::Error:
@@ -273,11 +283,11 @@ bool Parser::parseCharacterClass(JumpList& failures)
 
     CharacterClassConstructor constructor(m_ignoreCase);
 
-    UChar ch;
+    int ch;
     while ((ch = peek()) != ']') {
         switch (ch) {
         case EndOfPattern:
-            m_error = MalformedCharacterClass;
+            setError(CharacterClassUnmatched);
             return false;
 
         case '\\': {
@@ -298,10 +308,8 @@ bool Parser::parseCharacterClass(JumpList& failures)
                     constructor.append(characterClassEscape.characterClass());
                     break;
                 }
-                case Escape::Error: {
-                    m_error = MalformedEscape;
+                case Escape::Error:
                     return false;
-                }
                 case Escape::Backreference:
                 case Escape::WordBoundaryAssertion: {
                     ASSERT_NOT_REACHED();
@@ -320,7 +328,7 @@ bool Parser::parseCharacterClass(JumpList& failures)
 
     // lazily catch reversed ranges ([z-a])in character classes
     if (constructor.isUpsideDown()) {
-        m_error = MalformedCharacterClass;
+        setError(CharacterClassOutOfOrder);
         return false;
     }
 
@@ -347,7 +355,6 @@ bool Parser::parseNonCharacterEscape(JumpList& failures, const Escape& escape)
             return true;
 
         case Escape::Error:
-            m_error = MalformedEscape;
             return false;
     }
 
@@ -359,6 +366,7 @@ Escape Parser::consumeEscape(bool inCharacterClass)
 {
     switch (peek()) {
     case EndOfPattern:
+        setError(EscapeUnterminated);
         return Escape(Escape::Error);
 
     // Assertions
@@ -370,7 +378,7 @@ Escape Parser::consumeEscape(bool inCharacterClass)
     case 'B':
         consume();
         if (inCharacterClass)
-            return Escape(Escape::Error);
+            return PatternCharacterEscape('B');
         return WordBoundaryAssertionEscape(true); // invert
 
     // CharacterClassEscape
@@ -412,7 +420,7 @@ Escape Parser::consumeEscape(bool inCharacterClass)
         if (peekDigit() > m_numSubpatterns || inCharacterClass) {
             // To match Firefox, we parse an invalid backreference in the range [1-7]
             // as an octal escape.
-            return peekDigit() > 7 ? Escape(Escape::Error) : PatternCharacterEscape(consumeOctal());
+            return peekDigit() > 7 ? PatternCharacterEscape('\\') : PatternCharacterEscape(consumeOctal());
         }
 
         int value = 0;
@@ -451,28 +459,40 @@ Escape Parser::consumeEscape(bool inCharacterClass)
 
     // ControlLetter
     case 'c': {
+        SavedState state(*this);
         consume();
+        
         int control = consume();
-        if (!isASCIIAlpha(control))
-            return Escape(Escape::Error);
+        if (!isASCIIAlpha(control)) {
+            state.restore();
+            return PatternCharacterEscape('\\');
+        }
         return PatternCharacterEscape(control & 31);
     }
 
     // HexEscape
     case 'x': {
         consume();
+
+        SavedState state(*this);
         int x = consumeHex(2);
-        if (x == -1)
-            return Escape(Escape::Error);
+        if (x == -1) {
+            state.restore();
+            return PatternCharacterEscape('x');
+        }
         return PatternCharacterEscape(x);
     }
 
     // UnicodeEscape
     case 'u': {
         consume();
+
+        SavedState state(*this);
         int x = consumeHex(4);
-        if (x == -1)
-            return Escape(Escape::Error);
+        if (x == -1) {
+            state.restore();
+            return PatternCharacterEscape('u');
+        }
         return PatternCharacterEscape(x);
     }
 
@@ -505,8 +525,11 @@ void Parser::parseAlternative(JumpList& failures)
                 continue;
             }
 
-            if (q.type == Quantifier::Error || !sequence.size()) {
-                m_error = MalformedQuantifier;
+            if (q.type == Quantifier::Error)
+                return;
+
+            if (!sequence.size()) {
+                setError(QuantifierWithoutAtom);
                 return;
             }
 
@@ -610,7 +633,7 @@ Generator::ParenthesesType Parser::consumeParenthesesType()
         return Generator::InvertedAssertion;
 
     default:
-        m_error = MalformedParentheses;
+        setError(ParenthesesTypeInvalid);
         return Generator::Error;
     }
 }

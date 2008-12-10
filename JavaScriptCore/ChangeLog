@@ -1,3 +1,52 @@
+2008-12-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        In preparation for compiling WREC without PCRE:
+        
+        Further relaxed WREC's parsing to be more web-compatible. Fixed PCRE to
+        match in cases where it didn't already.
+        
+        Changed JavaScriptCore to report syntax errors detected by WREC, rather
+        than falling back on PCRE any time WREC sees an error.
+        
+        * pcre/pcre_compile.cpp:
+        (checkEscape): Relaxed parsing of \c and \N escapes to be more
+        web-compatible.
+        
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp): Only fall back on PCRE if WREC has not reported
+        a syntax error.
+
+        * wrec/WREC.cpp:
+        (JSC::WREC::Generator::compileRegExp): Fixed some error reporting to
+        match PCRE.
+
+        * wrec/WRECParser.cpp: Added error messages that match PCRE.
+
+        (JSC::WREC::Parser::consumeGreedyQuantifier):
+        (JSC::WREC::Parser::parseParentheses):
+        (JSC::WREC::Parser::parseCharacterClass):
+        (JSC::WREC::Parser::parseNonCharacterEscape): Updated the above functions to
+        use the new setError API.
+
+        (JSC::WREC::Parser::consumeEscape): Relaxed parsing of \c \N \u \x \B
+        to be more web-compatible.
+
+        (JSC::WREC::Parser::parseAlternative): Distinguish between a malformed
+        quantifier and a quantifier with no prefix, like PCRE does.
+
+        (JSC::WREC::Parser::consumeParenthesesType): Updated to use the new setError API.
+
+        * wrec/WRECParser.h:
+        (JSC::WREC::Parser::error):
+        (JSC::WREC::Parser::syntaxError):
+        (JSC::WREC::Parser::parsePattern):
+        (JSC::WREC::Parser::reset):
+        (JSC::WREC::Parser::setError): Store error messages instead of error codes,
+        to provide for exception messages. Use a setter for reporting errors, so
+        errors detected early are not overwritten by errors detected later.
+
 2008-12-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
