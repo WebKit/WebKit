@@ -1,3 +1,17 @@
+2008-12-10  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Darin Adler.
+
+        KeyframeAnimation::animate() needs to compute the elapsed animation time
+        properly taking into account its paused state.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22773
+
+        Test: animations/animation-drt-api-multiple-keyframes.html
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+
 2008-12-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

@@ -1,3 +1,18 @@
+2008-12-10  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added a test to verify that the DRT API pauseAnimationAtTimeOnElementWithId() does work
+        with animations using multiple keyframes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22773
+
+        * animations/animation-drt-api-multiple-keyframes.html: Added.
+        * platform/mac/animations/animation-drt-api-multiple-keyframes-expected.checksum: Added.
+        * platform/mac/animations/animation-drt-api-multiple-keyframes-expected.png: Added.
+        * platform/mac/animations/animation-drt-api-multiple-keyframes-expected.txt: Added.
+        * platform/win/Skipped:
+
 2008-12-10  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
