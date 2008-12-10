@@ -63,7 +63,7 @@ label
 layer JSInterfaceName=HTMLElement
 legend
 li interfaceName=HTMLLIElement
-link
+link constructorNeedsCreatedByParser=1
 listing JSInterfaceName=HTMLPreElement
 map
 marquee
@@ -94,7 +94,7 @@ source wrapperOnlyIfMediaIsAvailable=1
 span JSInterfaceName=HTMLElement
 strike JSInterfaceName=HTMLElement
 strong JSInterfaceName=HTMLElement
-style
+style constructorNeedsCreatedByParser=1
 sub JSInterfaceName=HTMLElement
 sup JSInterfaceName=HTMLElement
 table

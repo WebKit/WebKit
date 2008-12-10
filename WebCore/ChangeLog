@@ -1,3 +1,35 @@
+2008-12-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 22665: Remove setCreatedByParser(bool) from the few elements that use it
+        https://bugs.webkit.org/show_bug.cgi?id=22665
+
+        - Removed setCreatedByParser from style and link elements.
+
+        - Removed XMLTokenizer::eventuallyMarkAsCreatedByParser.
+
+        * dom/XMLTokenizer.cpp:
+        * dom/XMLTokenizer.h:
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::startElementNs):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::parseStartElement):
+        * html/HTMLElementFactory.cpp:
+        (WebCore::linkConstructor):
+        (WebCore::styleConstructor):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        * html/HTMLLinkElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        * html/HTMLStyleElement.h:
+        * html/HTMLTagNames.in:
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::SVGStyleElement):
+        * svg/SVGStyleElement.h:
+        * svg/svgtags.in:
+
 2008-12-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

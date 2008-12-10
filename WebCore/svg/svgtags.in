@@ -100,7 +100,7 @@ radialGradient
 rect
 script constructorNeedsCreatedByParser=1
 stop
-style
+style constructorNeedsCreatedByParser=1
 svg interfaceName=SVGSVGElement
 switch
 symbol

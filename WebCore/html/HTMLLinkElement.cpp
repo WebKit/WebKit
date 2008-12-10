@@ -42,7 +42,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLLinkElement::HTMLLinkElement(const QualifiedName& qName, Document *doc)
+HTMLLinkElement::HTMLLinkElement(const QualifiedName& qName, Document *doc, bool createdByParser)
     : HTMLElement(qName, doc)
     , m_cachedSheet(0)
     , m_disabledState(0)
@@ -51,7 +51,7 @@ HTMLLinkElement::HTMLLinkElement(const QualifiedName& qName, Document *doc)
     , m_isStyleSheet(false)
     , m_isIcon(false)
     , m_isDNSPrefetch(false)
-    , m_createdByParser(false)
+    , m_createdByParser(createdByParser)
 {
     ASSERT(hasTagName(linkTag));
 }

@@ -540,8 +540,6 @@ void XMLTokenizer::parseStartElement()
         return;
     }
 
-    eventuallyMarkAsParserCreated(newElement.get());
-
     if (isScriptElement(newElement.get()))
         m_scriptStartLine = lineNumber();
 

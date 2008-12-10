@@ -754,7 +754,6 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
         jsProxy->setEventHandlerLineno(0);
 
     newElement->beginParsingChildren();
-    eventuallyMarkAsParserCreated(newElement.get());
 
     if (isScriptElement(newElement.get()))
         m_scriptStartLine = lineNumber();

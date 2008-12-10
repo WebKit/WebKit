@@ -35,7 +35,7 @@ class KURL;
 
 class HTMLLinkElement : public HTMLElement, public CachedResourceClient {
 public:
-    HTMLLinkElement(const QualifiedName&, Document*);
+    HTMLLinkElement(const QualifiedName&, Document*, bool createdByParser);
     ~HTMLLinkElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
@@ -97,7 +97,6 @@ public:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-    void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
     virtual void finishParsingChildren();
 
 protected:

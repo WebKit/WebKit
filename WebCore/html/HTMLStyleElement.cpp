@@ -30,10 +30,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document* doc)
+HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document* doc, bool createdByParser)
     : HTMLElement(tagName, doc)
     , m_loading(false)
-    , m_createdByParser(false)
+    , m_createdByParser(createdByParser)
 {
     ASSERT(hasTagName(styleTag));
 }

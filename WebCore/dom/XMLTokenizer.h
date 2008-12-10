@@ -118,7 +118,6 @@ public:
     private:
         friend bool parseXMLDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* parent);
 
-        static void eventuallyMarkAsParserCreated(Element* element);
         void initializeParserContext(const char* chunk = 0);
         void setCurrentNode(Node*);
 

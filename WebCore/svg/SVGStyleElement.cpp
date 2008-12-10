@@ -36,9 +36,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* doc)
+SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* doc, bool createdByParser)
      : SVGElement(tagName, doc)
-     , m_createdByParser(false)
+     , m_createdByParser(createdByParser)
 {
 }
 

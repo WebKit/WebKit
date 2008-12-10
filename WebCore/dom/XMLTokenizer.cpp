@@ -132,19 +132,6 @@ bool XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
     return false;
 }
 
-void XMLTokenizer::eventuallyMarkAsParserCreated(Element* element)
-{
-    if (element->hasTagName(HTMLNames::styleTag))
-        static_cast<HTMLStyleElement*>(element)->setCreatedByParser(true);
-#if ENABLE(SVG)
-    else if (element->hasTagName(SVGNames::styleTag))
-        static_cast<SVGStyleElement*>(element)->setCreatedByParser(true);
-#endif
-    else if (element->hasTagName(HTMLNames::linkTag))
-        static_cast<HTMLLinkElement*>(element)->setCreatedByParser(true);
-}
-
-
 void XMLTokenizer::handleError(ErrorType type, const char* m, int lineNumber, int columnNumber)
 {
     if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber && m_lastErrorColumn != columnNumber)) {
