@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        https://bugs.webkit.org/show_bug.cgi?id=22512
+
+        Add a test to check for checks when attaching an event to a document created by
+        'document.implementation.createDocument'.
+
+        * fast/events/create-document-crash-on-attach-event-expected.txt: Added.
+        * fast/events/create-document-crash-on-attach-event.html: Added.
+        * fast/events/resources/create-document-crash-on-attach-event.js: Added.
+        (doc.onload):
+
+2008-12-09  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Add a test to check the event order for context clicks on Windows.
 
         https://bugs.webkit.org/show_bug.cgi?id=22505
