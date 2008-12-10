@@ -4261,13 +4261,13 @@ struct StackHack {
     void* savedReturnAddress;
 };
 
-#define CTI_STACK_HACK() StackHack stackHack(&CTI_RETURN_ADDRESS_SLOT)
+#define CTI_STACK_HACK() va_list vl_args; va_start(vl_args, args); StackHack stackHack(&CTI_RETURN_ADDRESS_SLOT)
 #define CTI_SET_RETURN_ADDRESS(address) stackHack.savedReturnAddress = address
 #define CTI_RETURN_ADDRESS stackHack.savedReturnAddress
 
 #else
 
-#define CTI_STACK_HACK() (void)0
+#define CTI_STACK_HACK() va_list vl_args; va_start(vl_args, args)
 #define CTI_SET_RETURN_ADDRESS(address) ctiSetReturnAddress(&CTI_RETURN_ADDRESS_SLOT, address);
 #define CTI_RETURN_ADDRESS CTI_RETURN_ADDRESS_SLOT
 

@@ -59,7 +59,7 @@ namespace JSC {
 #define ARGS (args)
 #else
 #define CTI_ARGS void* args, ...
-#define ARGS (&args)
+#define ARGS (reinterpret_cast<void**>(vl_args) - 1)
 #endif
 
 #if USE(FAST_CALL_CTI_ARGUMENT)

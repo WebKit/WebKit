@@ -1,3 +1,15 @@
+2008-12-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Use va_args to access cti function arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=22774
+
+        This may be a minor regression, but we'll take the hit if so to reduce fragility.
+
+        * interpreter/Interpreter.cpp:
+        * interpreter/Interpreter.h:
+
 2008-12-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed twice by Cameron Zwarich.
