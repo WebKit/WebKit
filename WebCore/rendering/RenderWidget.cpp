@@ -94,7 +94,7 @@ void RenderWidget::destroy()
     RenderArena* arena = renderArena();
 
     if (layer)
-        layer->clearClipRect();
+        layer->clearClipRects();
 
     if (style() && (style()->height().isPercent() || style()->minHeight().isPercent() || style()->maxHeight().isPercent()))
         RenderBlock::removePercentHeightDescendant(this);

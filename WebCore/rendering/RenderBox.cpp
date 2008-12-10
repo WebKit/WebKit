@@ -89,7 +89,7 @@ void RenderBox::destroy()
 
     // This must be done before we destroy the RenderObject.
     if (m_layer)
-        m_layer->clearClipRect();
+        m_layer->clearClipRects();
 
     if (style() && (style()->height().isPercent() || style()->minHeight().isPercent() || style()->maxHeight().isPercent()))
         RenderBlock::removePercentHeightDescendant(this);

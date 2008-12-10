@@ -1,3 +1,28 @@
+2008-12-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Part of
+        https://bugs.webkit.org/show_bug.cgi?id=22570
+        
+        Rename methods on RenderLayer for clarity:
+            clearClipRects -> clearClipRectsIncludingDescendants
+            clearClipRect  -> clearClipRects
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::destroy):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        (WebCore::RenderLayer::insertOnlyThisLayer):
+        (WebCore::RenderLayer::clearClipRectsIncludingDescendants):
+        (WebCore::RenderLayer::clearClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2008-12-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix after the script call stack/frame additions.

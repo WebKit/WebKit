@@ -372,7 +372,7 @@ void RenderLayer::updateVisibilityStatus()
 void RenderLayer::updateLayerPosition()
 {
     // Clear our cached clip rect information.
-    clearClipRect();
+    clearClipRects();
 
     int x = m_object->xPos();
     int y = m_object->yPos() - m_object->borderTopExtra();
@@ -644,7 +644,7 @@ void RenderLayer::removeOnlyThisLayer()
         return;
     
     // Dirty the clip rects.
-    clearClipRects();
+    clearClipRectsIncludingDescendants();
 
     // Remove us from the parent.
     RenderLayer* parent = m_parent;
@@ -683,7 +683,7 @@ void RenderLayer::insertOnlyThisLayer()
         curr->moveLayers(m_parent, this);
         
     // Clear out all the clip rects.
-    clearClipRects();
+    clearClipRectsIncludingDescendants();
 }
 
 void 
@@ -2238,18 +2238,18 @@ IntRect RenderLayer::boundingBox(const RenderLayer* rootLayer) const
     return result;
 }
 
-void RenderLayer::clearClipRects()
+void RenderLayer::clearClipRectsIncludingDescendants()
 {
     if (!m_clipRects)
         return;
 
-    clearClipRect();
+    clearClipRects();
     
     for (RenderLayer* l = firstChild(); l; l = l->nextSibling())
-        l->clearClipRects();
+        l->clearClipRectsIncludingDescendants();
 }
 
-void RenderLayer::clearClipRect()
+void RenderLayer::clearClipRects()
 {
     if (m_clipRects) {
         m_clipRects->deref(m_object->renderArena());

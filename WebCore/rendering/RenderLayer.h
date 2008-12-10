@@ -260,8 +260,8 @@ public:
     void relativePositionOffset(int& relX, int& relY) const { relX += m_relX; relY += m_relY; }
     IntSize relativePositionOffset() const { return IntSize(m_relX, m_relY); }
 
+    void clearClipRectsIncludingDescendants();
     void clearClipRects();
-    void clearClipRect();
 
     // Get the enclosing stacking context for this layer.  A stacking context is a layer
     // that has a non-auto z-index.
