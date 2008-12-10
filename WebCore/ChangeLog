@@ -1,3 +1,9 @@
+2008-12-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix after the script call stack/frame additions.
+        
+        * WebCoreSources.bkl:
+
 2008-12-10   Srinivasa Rao M. Hamse  <msrinirao@gmail.com>
 
         Reviewed by Holger Freyther.
