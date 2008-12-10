@@ -264,7 +264,7 @@ def WebKitLibraries(path):
 include_paths = ['.', '..', 'ForwardingHeaders'] + sources.keys()
 env.Append(CPPPATH = include_paths)
 if building_on_win32:
-    env.Append(CPPPATH = [WebKitLibraries('include')])
+    env.Append(CPPPATH = ['os-win32', WebKitLibraries('include')])
     env.Prepend(LIBPATH = [WebKitLibraries('lib')])
     env.Append(LIBS = ['icuin', 'icuuc', 'user32', 'winmm'])
 
@@ -293,7 +293,7 @@ if env['PLATFORM'] == 'darwin':
     env.Append(LIBS = ['edit'])
     env.Append(CPPPATH = 'icu')
 elif building_on_win32:
-    env.Append(CPPPATH = [WebKitLibraries('include')])
+    env.Append(CPPPATH = ['os-win32', WebKitLibraries('include')])
     env.Prepend(LIBPATH = [WebKitLibraries('lib')])
     env.Append(LIBS = ['icuin', 'icuuc', 'user32', 'winmm'])
 

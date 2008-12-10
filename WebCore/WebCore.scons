@@ -792,6 +792,8 @@ sources['platform/text'] = [
 
 env = Environment()
 
+building_on_win32 = env['PLATFORM'] == 'win32' or env['PLATFORM'] == 'cygwin'
+
 if env['PLATFORM'] == 'darwin':
     sources['platform/graphics/cg'] = [
         'platform/graphics/cg/AffineTransformCG.cpp',
@@ -899,10 +901,11 @@ env['CPPPATH'] = ['.', '..']
 env.Append(CPPPATH = [
     '../JavaScriptCore',
     '../JavaScriptCore/bytecode',
+    '../JavaScriptCore/jit',
+    '../JavaScriptCore/interpreter',
     '../JavaScriptCore/parser',
     '../JavaScriptCore/wtf',
     '../JavaScriptCore/runtime',
-    '../JavaScriptCore/interpreter'
 ])
 
 # HACK: Include ForwardingHeaders after ../JavaScriptCore for now to allow JavaScriptCore/wtf includes to work
@@ -914,6 +917,15 @@ env.Append(CPPPATH = ['../WebKitLibraries'])
 # Mac OS X doesn't include icu headers, so WebKit svn includes icu 3.2 headers
 if env['PLATFORM'] == 'darwin':
     env.Append(CPPPATH = ['icu', '/usr/include/libxml2'])
+
+webkit_libraries_path = "../WebKitLibraries/win/"
+def WebKitLibraries(path):
+    return webkit_libraries_path + path
+
+if building_on_win32:
+    env.Append(CPPPATH = ['os-win32', WebKitLibraries('include')])
+    env.Prepend(LIBPATH = [WebKitLibraries('lib')])
+    env.Append(LIBS = ['icuin', 'icuuc', 'user32', 'winmm'])
 
 # Include headers for all of the directories from which we are compiling source files
 env.Append(CPPPATH = sources.keys())

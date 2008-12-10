@@ -1,5 +1,15 @@
 2008-12-09  Eric Seidel  <eric@webkit.org>
 
+        Build fix only, no review.
+
+        Speculative fix for the Chromium-Windows bot.
+        Add JavaScriptCore/os-win32 to the include path (for stdint.h)
+        Strangely it builds fine on my local windows box (or at least doesn't hit this error)
+
+        * JavaScriptCore.scons:
+
+2008-12-09  Eric Seidel  <eric@webkit.org>
+
         No review, build fix only.
         
         Add ExecutableAllocator files missing from Scons build.

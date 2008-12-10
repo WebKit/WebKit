@@ -1,3 +1,11 @@
+2008-12-09  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+
+        Fix a few config issues to let the Chromium Windows WebCore build get further.
+
+        * WebCore.scons:
+
 2008-12-09  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Dave Hyatt.
