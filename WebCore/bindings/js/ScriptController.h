@@ -103,6 +103,12 @@ public:
     void clearFormerWindow(JSDOMWindow* window) { m_liveFormerWindows.remove(window); }
     void updateDocument();
 
+    // Notifies the ScriptController that the securityOrigin of the current
+    // document was modified.  For example, this method is called when
+    // document.domain is set.  This method is *not* called when a new document
+    // is attached to a frame because updateDocument() is called instead.
+    void updateSecurityOrigin();
+
     void clearScriptObjects();
     void cleanupScriptObjectsForPlugin(void*);
 

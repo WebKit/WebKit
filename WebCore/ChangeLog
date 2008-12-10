@@ -1,3 +1,17 @@
+2008-12-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add ScriptController::updateSecurityOrigin to notify the bindings
+        that a document's securityOrigin has been updated.  This is used by
+        V8 to update its security context.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::updateSecurityOrigin):
+        * bindings/js/ScriptController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setDomain):
+
 2008-12-09  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.
