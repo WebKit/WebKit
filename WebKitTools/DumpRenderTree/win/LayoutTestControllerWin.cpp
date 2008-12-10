@@ -253,8 +253,10 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     prefsPrivate->setAuthorAndUserStylesEnabled(flag);
 }
 
-void LayoutTestController::setCustomPolicyDelegate(bool setDelegate)
+void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
+    // FIXME: Implement the permissive delegate to test http/tests/navigation/post-goback-repost-policy.html
+
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView)))
         return;

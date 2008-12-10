@@ -1,3 +1,20 @@
+2008-12-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        https://bugs.webkit.org/show_bug.cgi?id=22194 and <rdar://problem/6388378> -
+        Dialog when going back to a page from whence you submitted a form
+
+        http://trac.webkit.org/changeset/37317 changed the manner in which headers are added to
+        http requests, which caused the networking layer to have an incomplete set of headers
+        just before consulting the Policy Delegate.  This caused a cache miss and incorrectly made
+        us believe we'd be resubmitting the form.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem):  Being careful to maintain the new behavior required by
+          the Origin header mechanism as discussed in bug 22194, restore the previous behavior of
+          setting all the headers before the networking layer is asked about the cache lookup.
+
 2008-12-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Timothy Hatcher.

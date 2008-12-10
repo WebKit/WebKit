@@ -59,7 +59,7 @@ public:
     void queueScript(JSStringRef url);
     void setAcceptsEditing(bool acceptsEditing);
     void setAuthorAndUserStylesEnabled(bool);
-    void setCustomPolicyDelegate(bool setDelegate);
+    void setCustomPolicyDelegate(bool setDelegate, bool permissive);
     void setDatabaseQuota(unsigned long long quota);
     void setMainFrameIsFirstResponder(bool flag);
     void setPrivateBrowsingEnabled(bool flag);

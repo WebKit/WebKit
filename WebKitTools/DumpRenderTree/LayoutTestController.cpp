@@ -477,9 +477,13 @@ static JSValueRef setCustomPolicyDelegateCallback(JSContextRef context, JSObject
     // Has mac implementation
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
+    
+    bool permissive = false;
+    if (argumentCount >= 2)
+        permissive = JSValueToBoolean(context, arguments[1]);
 
     LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setCustomPolicyDelegate(JSValueToBoolean(context, arguments[0]));
+    controller->setCustomPolicyDelegate(JSValueToBoolean(context, arguments[0]), permissive);
 
     return JSValueMakeUndefined(context);
 }

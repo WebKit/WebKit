@@ -30,6 +30,9 @@
 
 
 @interface PolicyDelegate : NSObject {
+    BOOL permissiveDelegate;
 }
+
+- (void)setPermissive:(BOOL)permissive;
 
 @end

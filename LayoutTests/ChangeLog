@@ -1,3 +1,40 @@
+2008-12-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        New layout tests for testing the fix for https://bugs.webkit.org/show_bug.cgi?id=22194:
+
+        * http/tests/navigation/post-goback-repost-policy-expected.txt: Added.
+        * http/tests/navigation/post-goback-repost-policy.html: Added.
+        * http/tests/navigation/resources/goback-with-policydelegate.html: Added.
+        * http/tests/navigation/resources/post-target-policy-test.html: Added.
+
+        Updated layout test results for the new "custom policy delegate" mechanism:
+
+        * fast/encoding/mailto-always-utf-8-expected.txt:
+        * fast/forms/mailto/advanced-get-expected.txt:
+        * fast/forms/mailto/advanced-put-expected.txt:
+        * fast/forms/mailto/get-multiple-items-expected.txt:
+        * fast/forms/mailto/get-multiple-items-text-plain-expected.txt:
+        * fast/forms/mailto/get-multiple-items-x-www-form-urlencoded-expected.txt:
+        * fast/forms/mailto/get-non-ascii-always-utf-8-expected.txt:
+        * fast/forms/mailto/get-non-ascii-expected.txt:
+        * fast/forms/mailto/get-non-ascii-text-plain-expected.txt:
+        * fast/forms/mailto/get-non-ascii-text-plain-latin-1-expected.txt:
+        * fast/forms/mailto/get-overwrite-query-expected.txt:
+        * fast/forms/mailto/post-append-query-expected.txt:
+        * fast/forms/mailto/post-multiple-items-expected.txt:
+        * fast/forms/mailto/post-multiple-items-multipart-form-data-expected.txt:
+        * fast/forms/mailto/post-multiple-items-text-plain-expected.txt:
+        * fast/forms/mailto/post-multiple-items-x-www-form-urlencoded-expected.txt:
+        * fast/forms/mailto/post-text-plain-expected.txt:
+        * fast/forms/mailto/post-text-plain-with-accept-charset-expected.txt:
+        * http/tests/security/feed-urls-from-remote-expected.txt:
+
+        Skip the new test on Windows until the policy delegate can be enhanced there:
+        * platform/win/Skipped:
+        (It is already implicitly skipped for qt and gtk)
+
 2008-12-10  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Darin Adler.

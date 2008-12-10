@@ -38,8 +38,44 @@
                                                              frame:(WebFrame *)frame
                                                   decisionListener:(id<WebPolicyDecisionListener>)listener
 {
-    printf("Policy delegate: attempt to load %s\n", [[[request URL] absoluteString] UTF8String]);
-    [listener ignore];
+    WebNavigationType navType = (WebNavigationType)[[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+
+    const char* typeDescription;
+    switch (navType) {
+        case WebNavigationTypeLinkClicked:
+            typeDescription = "link clicked";
+            break;
+        case WebNavigationTypeFormSubmitted:
+            typeDescription = "form submitted";
+            break;
+        case WebNavigationTypeBackForward:
+            typeDescription = "back/forward";
+            break;
+        case WebNavigationTypeReload:
+            typeDescription = "reload";
+            break;
+        case WebNavigationTypeFormResubmitted:
+            typeDescription = "form resubmitted";
+            break;
+        case WebNavigationTypeOther:
+            typeDescription = "other";
+            break;
+        default:
+            typeDescription = "illegal value";
+    }
+    
+    printf("Policy delegate: attempt to load %s with navigation type '%s'\n", [[[request URL] absoluteString] UTF8String], typeDescription);
+    
+    if (permissiveDelegate)
+        [listener use];
+    else
+        [listener ignore];
 }
+
+- (void)setPermissive:(BOOL)permissive
+{
+    permissiveDelegate = permissive;
+}
+
 
 @end

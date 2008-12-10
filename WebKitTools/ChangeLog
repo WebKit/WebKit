@@ -1,3 +1,28 @@
+2008-12-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Change the custom policy delegate to actually allow navigation for tests that need it.
+        The new behavior is opt-in and doesn't require any changes in old tests.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setCustomPolicyDelegateCallback):  Allow for a second boolean argument to set the permissive flag on the custom
+          policy delegate, which will be false by default to maintain original behavior.
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setCustomPolicyDelegate):
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):  Partially stubbed out for now.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):  Still stubbed out, but with new param.
+
+        * DumpRenderTree/mac/PolicyDelegate.h:
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (-[PolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):  If the permissive flag
+          is set, allow the navigation.
+        (-[PolicyDelegate setPermissive:]):  Change the behavior between "use" and "ignore" - allowing navigation or not.
+
 2008-12-09  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Ada Chan.

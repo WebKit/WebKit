@@ -30,6 +30,7 @@
 #import "LayoutTestController.h"
 
 #import "EditingDelegate.h"
+#import "PolicyDelegate.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
 #import <Foundation/Foundation.h>
@@ -207,11 +208,12 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     [[[mainFrame webView] preferences] setAuthorAndUserStylesEnabled:flag];
 }
 
-void LayoutTestController::setCustomPolicyDelegate(bool setDelegate)
+void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
-    if (setDelegate)
+    if (setDelegate) {
+        [policyDelegate setPermissive:permissive];
         [[mainFrame webView] setPolicyDelegate:policyDelegate];
-    else
+    } else
         [[mainFrame webView] setPolicyDelegate:nil];
 }
 

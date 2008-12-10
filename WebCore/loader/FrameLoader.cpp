@@ -4359,6 +4359,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
         }
         
         if (!inPageCache) {
+            bool addedExtraFields = false;
             ResourceRequest request(itemURL);
 
             // If this was a repost that failed the page cache, we might try to repost the form.
@@ -4374,6 +4375,11 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                 RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item->formReferrer());
                 addHTTPOriginIfNeeded(request, securityOrigin->toString());
         
+                // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
+                // See https://bugs.webkit.org/show_bug.cgi?id=22194 for more discussion.
+                addExtraFieldsToRequest(request, true, formData);
+                addedExtraFields = true;
+                
                 // FIXME: Slight hack to test if the NSURL cache contains the page we're going to.
                 // We want to know this before talking to the policy delegate, since it affects whether 
                 // we show the DoYouReallyWantToRepost nag.
@@ -4412,8 +4418,10 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
 
                 action = NavigationAction(itemOriginalURL, loadType, false);
             }
+            
+            if (!addedExtraFields)
+                addExtraFieldsToRequest(request, true, formData);
 
-            addExtraFieldsToRequest(request, true, formData);
             loadWithNavigationAction(request, action, loadType, 0);
         }
     }
