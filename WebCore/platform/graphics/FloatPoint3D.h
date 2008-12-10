@@ -24,9 +24,9 @@
 
 #if ENABLE(SVG)
 
-class FloatPoint;
-
 namespace WebCore {
+
+class FloatPoint;
 
 class FloatPoint3D {
 public:
