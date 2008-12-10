@@ -3228,9 +3228,9 @@ done:
     NSFileWrapper *wrapper = nil;
     NSURL *draggingImageURL = nil;
     
-    if (WebCore::CachedResource* tiffResource = [self promisedDragTIFFDataSource]) {
+    if (WebCore::CachedImage* tiffResource = [self promisedDragTIFFDataSource]) {
         
-        SharedBuffer *buffer = tiffResource->data();
+        SharedBuffer *buffer = static_cast<CachedResource*>(tiffResource)->data();
         if (!buffer)
             goto noPromisedData;
         
@@ -3238,7 +3238,11 @@ done:
         NSURLResponse *response = tiffResource->response().nsURLResponse();
         draggingImageURL = [response URL];
         wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
-        [wrapper setPreferredFilename:[response suggestedFilename]];
+        NSString* filename = [response suggestedFilename];
+        String trueExtension = tiffResource->image()->filenameExtension();
+        if (![filename hasSuffix:trueExtension])
+            filename = [[filename stringByAppendingString:@"."] stringByAppendingString:trueExtension];
+        [wrapper setPreferredFilename:filename];
     }
     
 noPromisedData:

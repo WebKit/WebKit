@@ -1,3 +1,20 @@
+2008-12-10  Alice Liu  <alice.liu@apple.com>
+
+        fixed https://bugs.webkit.org/show_bug.cgi?id=20685
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        Ask image for its file extension instead of falling back on MIME type and file path.
+        Also moved this code to before setting the pasteboard data so as not to set any if
+        no extension can be determined.
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+
+        * WebView/WebHTMLView.mm:
+        Fixed a separate but related long-standing bug of how the filename for the promised
+        drag data is determined by asking the image for a proper file extension. 
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+
 2008-12-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

@@ -126,6 +126,12 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     m_decoder->setData(data, allDataReceived);
 }
 
+String ImageSource::filenameExtension() const
+{
+    // not implemented
+    return String();
+}
+
 bool ImageSource::isSizeAvailable()
 {
     if (!m_decoder)

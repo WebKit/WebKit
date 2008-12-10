@@ -263,17 +263,22 @@ CachedImage* imageFromElement(DOMElement *domElement) {
 {
     ASSERT(self == [NSPasteboard pasteboardWithName:NSDragPboard]);
 
+    NSString *extension = @"";
+    if (RenderObject* renderer = core(element)->renderer()) {
+        if (renderer->isImage()) {
+            if (CachedImage* image = static_cast<RenderImage*>(renderer)->cachedImage()) {
+                extension = image->image()->filenameExtension();
+                if (![extension length])
+                    return 0;
+            }
+        }
+    }
+
     NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
     [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];
     [self declareTypes:types owner:source];    
     [self _web_writeImage:nil element:element URL:URL title:title archive:archive types:types source:source];
     [types release];
-
-    NSString *extension = @"";
-    if (RenderObject* renderer = core(element)->renderer())
-        if (renderer->isImage())
-            if (CachedImage* image = static_cast<RenderImage*>(renderer)->cachedImage())
-                extension = WKGetPreferredExtensionForMIMEType(image->response().mimeType());
 
     NSArray *extensions = [[NSArray alloc] initWithObjects:extension, nil];
     [self setPropertyList:extensions forType:NSFilesPromisePboardType];

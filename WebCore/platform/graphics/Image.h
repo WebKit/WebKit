@@ -107,6 +107,8 @@ public:
 
     bool setData(PassRefPtr<SharedBuffer> data, bool allDataReceived);
     virtual bool dataChanged(bool allDataReceived) { return false; }
+    
+    virtual String filenameExtension() const { return String(); } // null string if unknown
 
     virtual void destroyDecodedData(bool incremental = false, bool preserveNearbyFrames = false) = 0;
     virtual unsigned decodedSize() const = 0;

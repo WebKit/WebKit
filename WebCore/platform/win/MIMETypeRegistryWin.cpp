@@ -32,16 +32,6 @@
 namespace WebCore 
 {
 
-String getMIMETypeForUTI(const String & uti)
-{
-    String mimeType;
-    // FIXME: This is an ugly hack: public.type -> image/type mimetype
-    if (int dotLocation = uti.reverseFind('.')) {
-        mimeType = String("image/")+uti.substring(dotLocation + 1);
-    }
-    return mimeType;
-}
-
 static String mimeTypeForExtension(const String& extension)
 {
     String ext = "." + extension;
@@ -59,14 +49,6 @@ static String mimeTypeForExtension(const String& extension)
    
 String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
 {
-    String mimeType;
-    
-    int semiColonPos = type.find(';');
-    if (semiColonPos < 0)
-        mimeType = type;
-    else
-        mimeType = type.substring(0, semiColonPos);
-
     String path = "MIME\\Database\\Content Type\\" + type;
     WCHAR extStr[MAX_PATH];
     DWORD extStrLen = sizeof(extStr);

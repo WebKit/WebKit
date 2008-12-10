@@ -31,16 +31,6 @@
 
 namespace WebCore 
 {
-String getMIMETypeForUTI(const String & uti)
-{
-    CFStringRef utiref = uti.createCFString();
-    CFStringRef mime = UTTypeCopyPreferredTagWithClass(utiref, kUTTagClassMIMEType);
-    String mimeType = mime;
-    if (mime)
-        CFRelease(mime);
-    CFRelease(utiref);
-    return mimeType;
-}
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {

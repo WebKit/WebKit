@@ -1,3 +1,54 @@
+2008-12-10  Alice Liu  <alice.liu@apple.com>
+
+        fixed https://bugs.webkit.org/show_bug.cgi?id=20685
+
+        Reviewed by Darin Adler.
+
+        Manual test case is manual-tests/drag-image-to-desktop.html
+
+        Added new files to projects
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+
+        These changes add a method to obtain the extension for an image
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::filenameExtension):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::filenameExtension):
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::filenameExtension):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::filenameExtension):
+
+        These changes added a utility that returns the preferred extension for a UTI
+        * platform/graphics/cg/ImageSourceCG.h: Added.
+        * platform/graphics/cg/ImageSourceCGMac.mm: Added.
+        (WebCore::MIMETypeForImageSourceType):
+        (WebCore::preferredExtensionForImageSourceType):
+        * platform/graphics/cg/ImageSourceCGWin.cpp: Added.
+        (WebCore::MIMETypeForImageSourceType):
+        (WebCore::preferredExtensionForImageSourceType):
+
+        * platform/mac/MIMETypeRegistryMac.mm:
+        moved getMIMETypeForUTI to ImageSourceCGMac.mm
+
+        Ask image for its file extension instead of relying on MIME type and file path
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::createGlobalImageFileDescriptor):
+
+        Remove extraneous code from getPreferredExtensionForMIMEType.
+        Also moved getMIMETypeForUTI to ImageSourceCGWin.cpp
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+
 2008-12-10  Simon Fraser  <simon.fraser@apple.com>
 
         Potential build fix. The forward declaration of FloatPoint should

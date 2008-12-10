@@ -51,6 +51,7 @@ namespace WebCore {
 
 class IntSize;
 class SharedBuffer;
+class String;
 
 #if PLATFORM(WX)
 class ImageDecoder;
@@ -87,6 +88,7 @@ public:
     bool initialized() const;
     
     void setData(SharedBuffer* data, bool allDataReceived);
+    String filenameExtension() const;
 
     bool isSizeAvailable();
     IntSize size() const;

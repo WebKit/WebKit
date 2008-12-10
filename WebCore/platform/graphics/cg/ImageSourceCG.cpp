@@ -27,8 +27,10 @@
 #include "ImageSource.h"
 
 #if PLATFORM(CG)
+#include "ImageSourceCG.h"
 
 #include "IntSize.h"
+#include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -87,6 +89,14 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 #endif
     CGImageSourceUpdateData(m_decoder, cfData, allDataReceived);
     CFRelease(cfData);
+}
+
+String ImageSource::filenameExtension() const
+{
+    if (!m_decoder)
+        return String();
+    CFStringRef imageSourceType = CGImageSourceGetType(m_decoder);
+    return WebCore::preferredExtensionForImageSourceType(imageSourceType);
 }
 
 bool ImageSource::isSizeAvailable()

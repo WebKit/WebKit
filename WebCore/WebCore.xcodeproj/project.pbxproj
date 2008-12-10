@@ -583,6 +583,8 @@
 		4B3043C90AE0371D00A82647 /* SoundMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B3043C80AE0371D00A82647 /* SoundMac.mm */; };
 		4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B3043CA0AE0373B00A82647 /* Editor.cpp */; };
 		4B3043CD0AE0373B00A82647 /* Editor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043CB0AE0373B00A82647 /* Editor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */; };
+		4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */; };
 		4B5B7C8E0D945CFA00DDF3AB /* AccessibilityObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B5B7C8D0D945CFA00DDF3AB /* AccessibilityObject.cpp */; };
 		4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6FA6F20C39E48C00087011 /* SmartReplace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B6FA6F50C39E48C00087011 /* SmartReplace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6FA6F30C39E48C00087011 /* SmartReplace.cpp */; };
@@ -5410,6 +5412,8 @@
 		4B3043C80AE0371D00A82647 /* SoundMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SoundMac.mm; sourceTree = "<group>"; };
 		4B3043CA0AE0373B00A82647 /* Editor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Editor.cpp; sourceTree = "<group>"; };
 		4B3043CB0AE0373B00A82647 /* Editor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Editor.h; sourceTree = "<group>"; };
+		4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageSourceCGMac.mm; sourceTree = "<group>"; };
+		4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageSourceCG.h; sourceTree = "<group>"; };
 		4B5B7C8D0D945CFA00DDF3AB /* AccessibilityObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityObject.cpp; sourceTree = "<group>"; };
 		4B6FA6F20C39E48C00087011 /* SmartReplace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartReplace.h; sourceTree = "<group>"; };
 		4B6FA6F30C39E48C00087011 /* SmartReplace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartReplace.cpp; sourceTree = "<group>"; };
@@ -12748,7 +12752,9 @@
 				A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */,
 				B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */,
 				B27535300B053814002CE64F /* ImageCG.cpp */,
+				4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */,
 				B27535310B053814002CE64F /* ImageSourceCG.cpp */,
+				4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */,
 				B27535320B053814002CE64F /* IntPointCG.cpp */,
 				B27535330B053814002CE64F /* IntRectCG.cpp */,
 				B27535340B053814002CE64F /* IntSizeCG.cpp */,
@@ -16396,6 +16402,7 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
+				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
 				E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */,
 				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
@@ -18340,6 +18347,7 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */,
 				E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */,
 				E1271A140EEEC80400F61213 /* WorkerNavigator.cpp in Sources */,
 				E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */,

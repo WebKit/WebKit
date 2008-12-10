@@ -177,6 +177,11 @@ bool BitmapImage::dataChanged(bool allDataReceived)
     return isSizeAvailable();
 }
 
+String BitmapImage::filenameExtension() const
+{
+    return m_source.filenameExtension();
+}
+
 size_t BitmapImage::frameCount()
 {
     if (!m_haveFrameCount) {
