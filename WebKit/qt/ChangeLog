@@ -1,3 +1,11 @@
+2008-12-10  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build, added const to Node* parameter after change
+        in signature.
+
+        * WebCoreSupport/ChromeClientQt.h:
+        (WebCore::ChromeClientQt::formStateDidChange):
+
 2008-12-09  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Dave Hyatt.
