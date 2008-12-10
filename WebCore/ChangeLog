@@ -1,3 +1,15 @@
+2008-12-10  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22177
+        Fix the windows build by removing calls to notifyFormStateChanged
+        where they didn't appear in the original reviewed patch.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::type):
+        (WebCore::HTMLInputElement::attach):
+
 2008-12-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

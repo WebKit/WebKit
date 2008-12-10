@@ -50,7 +50,7 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=22512
 
-        Add a test to check for checks when attaching an event to a document created by
+        Add a test to check for crashes when attaching an event to a document created by
         'document.implementation.createDocument'.
 
         * fast/events/create-document-crash-on-attach-event-expected.txt: Added.
