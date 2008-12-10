@@ -1,5 +1,19 @@
 2008-12-09  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Added WREC support for an assertion followed by a quantifier. Fixed
+        PCRE to match.
+
+        * wrec/WRECParser.cpp:
+        (JSC::WREC::Parser::parseParentheses): Throw away the quantifier, since
+        it's meaningless. (Firefox does the same.)
+
+        * pcre/pcre_compile.cpp:
+        (compileBranch): ditto.
+
+2008-12-09  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         In preparation for compiling WREC without PCRE:

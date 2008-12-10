@@ -235,10 +235,28 @@ bool Parser::parseParentheses(JumpList& failures)
     switch (type) {
         case Generator::Assertion:
             m_generator.generateParenthesesAssertion(failures);
+
+            if (consume() != ')') {
+                setError(ParenthesesUnmatched);
+                return false;
+            }
+            
+            // A quantifier after an assertion is meaningless, since assertions
+            // don't move index forward. So, we discard it.
+            consumeQuantifier();
             break;
 
         case Generator::InvertedAssertion:
             m_generator.generateParenthesesInvertedAssertion(failures);
+
+            if (consume() != ')') {
+                setError(ParenthesesUnmatched);
+                return false;
+            }
+            
+            // A quantifier after an assertion is meaningless, since assertions
+            // don't move index forward. So, we discard it.
+            consumeQuantifier();
             break;
 
         default:
@@ -246,31 +264,7 @@ bool Parser::parseParentheses(JumpList& failures)
             return false;
     }
 
-    if (consume() != ')') {
-        setError(ParenthesesUnmatched);
-        return false;
-    }
-
-    Quantifier q = consumeQuantifier();
-
-    switch (q.type) {
-        case Quantifier::None:
-            return true;
-
-        case Quantifier::Greedy:
-            setError(ParenthesesNotSupported);
-            return false;
-
-        case Quantifier::NonGreedy:
-            setError(ParenthesesNotSupported);
-            return false;
-
-        case Quantifier::Error:
-            return false;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return false;
+    return true;
 }
 
 bool Parser::parseCharacterClass(JumpList& failures)

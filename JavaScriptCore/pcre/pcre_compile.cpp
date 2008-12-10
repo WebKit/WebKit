@@ -1058,6 +1058,11 @@ compileBranch(int options, int* brackets, unsigned char** codePtr,
                 
                 reqvary = (repeatMin == repeat_max) ? 0 : REQ_VARY;
                 
+                // A quantifier after an assertion is meaningless, since assertions
+                // don't move index forward. So, we discard it.
+                if (*previous == OP_ASSERT || *previous == OP_ASSERT_NOT)
+                    goto END_REPEAT;
+                
                 opType = 0;                    /* Default single-char op codes */
                 
                 /* Save start of previous item, in case we have to move it up to make space
@@ -1477,12 +1482,12 @@ compileBranch(int options, int* brackets, unsigned char** codePtr,
                         bravalue = OP_BRA + *brackets;
                 }
                 
-                /* Process nested bracketed re. Assertions may not be repeated, but other
-                 kinds can be. We copy code into a non-variable in order to be able
-                 to pass its address because some compilers complain otherwise. Pass in a
-                 new setting for the ims options if they have changed. */
+                /* Process nested bracketed re. We copy code into a non-variable
+                 in order to be able to pass its address because some compilers
+                 complain otherwise. Pass in a new setting for the ims options
+                 if they have changed. */
                 
-                previous = (bravalue >= OP_BRAZERO) ? code : 0;
+                previous = code;
                 *code = bravalue;
                 tempcode = code;
                 tempreqvary = cd.reqVaryOpt;     /* Save value before bracket */
