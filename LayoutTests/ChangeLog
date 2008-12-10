@@ -1,3 +1,14 @@
+2008-12-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        <rdar://problem/5959165> Crash in a number of iExploder tests in WebCore::CachedImage::notifyObservers
+
+        Add a test for a crash that is no longer reproducible.
+
+        * fast/css/mask-missing-image-crash-expected.txt: Added.
+        * fast/css/mask-missing-image-crash.html: Added.
+
 2008-12-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Dan Bernstein.
