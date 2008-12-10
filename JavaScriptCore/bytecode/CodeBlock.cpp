@@ -971,6 +971,7 @@ static HashSet<CodeBlock*> liveCodeBlockSet;
     macro(constantRegisters) \
     macro(expressionInfo) \
     macro(lineInfo) \
+    macro(pcVector)
 
 #define FOR_EACH_MEMBER_VECTOR_RARE_DATA(macro) \
     macro(regexps) \
@@ -981,34 +982,35 @@ static HashSet<CodeBlock*> liveCodeBlockSet;
     macro(characterSwitchJumpTables) \
     macro(stringSwitchJumpTables)
 
+template<typename T>
+static size_t sizeInBytes(const Vector<T>& vector)
+{
+    return vector.capacity() * sizeof(T);
+}
+
 void CodeBlock::dumpStatistics()
 {
 #if DUMP_CODE_BLOCK_STATISTICS
-
-    #define DEFINE_VARS(name) size_t name##IsNotEmpty = 0;
+    #define DEFINE_VARS(name) size_t name##IsNotEmpty = 0; size_t name##TotalSize = 0;
         FOR_EACH_MEMBER_VECTOR(DEFINE_VARS)
         FOR_EACH_MEMBER_VECTOR_RARE_DATA(DEFINE_VARS)
     #undef DEFINE_VARS
 
     // Non-vector data members
-    size_t jitReturnAddressVPCMapIsNotEmpty = 0;
     size_t evalCodeCacheIsNotEmpty = 0;
+
     size_t symbolTableIsNotEmpty = 0;
+    size_t symbolTableTotalSize = 0;
 
     size_t hasRareData = 0;
-
-    size_t symbolTableTotalSize = 0;
 
     HashSet<CodeBlock*>::const_iterator end = liveCodeBlockSet.end();
     for (HashSet<CodeBlock*>::const_iterator it = liveCodeBlockSet.begin(); it != end; ++it) {
         CodeBlock* codeBlock = *it;
 
-        #define GET_STATS(name) if (!codeBlock->m_##name.isEmpty()) { name##IsNotEmpty++; }
+        #define GET_STATS(name) if (!codeBlock->m_##name.isEmpty()) { name##IsNotEmpty++; name##TotalSize += sizeInBytes(codeBlock->m_##name); }
             FOR_EACH_MEMBER_VECTOR(GET_STATS)
         #undef GET_STATS
-
-        if (!codeBlock->m_jitReturnAddressVPCMap.isEmpty())
-            jitReturnAddressVPCMapIsNotEmpty++;
 
         if (!codeBlock->m_symbolTable.isEmpty()) {
             symbolTableIsNotEmpty++;
@@ -1017,7 +1019,7 @@ void CodeBlock::dumpStatistics()
 
         if (codeBlock->m_rareData) {
             hasRareData++;
-            #define GET_STATS(name) if (!codeBlock->m_rareData->m_##name.isEmpty()) { name##IsNotEmpty++; }
+            #define GET_STATS(name) if (!codeBlock->m_rareData->m_##name.isEmpty()) { name##IsNotEmpty++; name##TotalSize += sizeInBytes(codeBlock->m_rareData->m_##name); }
                 FOR_EACH_MEMBER_VECTOR_RARE_DATA(GET_STATS)
             #undef GET_STATS
 
@@ -1031,12 +1033,11 @@ void CodeBlock::dumpStatistics()
 
     printf("Number of CodeBlocks with rare data: %zu\n", hasRareData);
 
-    #define PRINT_STATS(name) printf("Number of CodeBlocks with " #name ": %zu\n", name##IsNotEmpty);
+    #define PRINT_STATS(name) printf("Number of CodeBlocks with " #name ": %zu\n", name##IsNotEmpty); printf("Size of all " #name ": %zu\n", name##TotalSize); 
         FOR_EACH_MEMBER_VECTOR(PRINT_STATS)
         FOR_EACH_MEMBER_VECTOR_RARE_DATA(PRINT_STATS)
     #undef PRINT_STATS
 
-    printf("Number of CodeBlocks with jitReturnAddressVPCMap: %zu\n", jitReturnAddressVPCMapIsNotEmpty);
     printf("Number of CodeBlocks with evalCodeCache: %zu\n", evalCodeCacheIsNotEmpty);
     printf("Number of CodeBlocks with symbolTable: %zu\n", symbolTableIsNotEmpty);
 

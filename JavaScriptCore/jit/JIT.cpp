@@ -2004,10 +2004,11 @@ void JIT::privateCompile()
         handler.nativeCode = __ getRelocatedAddress(code, m_labels[handler.target]);
     }
 
+    m_codeBlock->pcVector().reserveCapacity(m_calls.size());
     for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
         if (iter->to)
             X86Assembler::link(code, iter->from, iter->to);
-        m_codeBlock->jitReturnAddressVPCMap().add(__ getRelocatedAddress(code, iter->from), iter->bytecodeIndex);
+        m_codeBlock->pcVector().append(PC(__ getRelocatedAddress(code, iter->from), iter->bytecodeIndex));
     }
 
     // Link absolute addresses for jsr

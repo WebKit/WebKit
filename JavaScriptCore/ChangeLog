@@ -1,3 +1,40 @@
+2008-12-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        <rdar://problem/6428332> Remove the CTI return address table from CodeBlock
+
+        Step 2:
+
+        Convert the return address table from a HashMap to a sorted Vector.  This
+        reduces the size of the data structure by ~4.5MB on Membuster head.
+
+        SunSpider reports a 0.5% progression.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::sizeInBytes): Generic method to get the cost of a Vector.
+        (JSC::CodeBlock::dumpStatistics): Add dumping of member sizes.
+        * bytecode/CodeBlock.h:
+        (JSC::PC::PC): Struct representing NativePC -> VirtualPC mappings.
+        (JSC::getNativePC): Helper for binary chop.
+        (JSC::CodeBlock::getBytecodeIndex): Used to get the VirtualPC from a
+        NativePC using a binary chop of the pcVector.
+        (JSC::CodeBlock::pcVector): Accessor.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::vPCForPC): Use getBytecodeIndex instead of jitReturnAddressVPCMap().get().
+        (JSC::Interpreter::cti_op_instanceof): Ditto.
+        (JSC::Interpreter::cti_op_resolve): Ditto.
+        (JSC::Interpreter::cti_op_resolve_func): Ditto.
+        (JSC::Interpreter::cti_op_resolve_skip): Ditto.
+        (JSC::Interpreter::cti_op_resolve_with_base): Ditto.
+        (JSC::Interpreter::cti_op_throw): Ditto.
+        (JSC::Interpreter::cti_op_in): Ditto.
+        (JSC::Interpreter::cti_vm_throw): Ditto.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile): Reserve exact capacity and fill the pcVector.
+
 2008-12-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
