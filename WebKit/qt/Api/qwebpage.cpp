@@ -1819,7 +1819,7 @@ bool QWebPage::focusNextPrevChild(bool next)
 }
 
 /*!
-    \property QWebPage::editable
+    \property QWebPage::contentEditable
     \brief whether the content in this QWebPage is editable or not
     \since 4.5
 
@@ -1827,7 +1827,7 @@ bool QWebPage::focusNextPrevChild(bool next)
     cursor. If disabled (the default) only HTML elements in the web page with their
     \c{contenteditable} attribute set are editable.
 */
-void QWebPage::setEditable(bool editable)
+void QWebPage::setContentEditable(bool editable)
 {
     if (d->editable != editable) {
         d->editable = editable;
@@ -1847,7 +1847,7 @@ void QWebPage::setEditable(bool editable)
     }
 }
 
-bool QWebPage::isEditable() const
+bool QWebPage::isContentEditable() const
 {
     return d->editable;
 }
@@ -2042,9 +2042,9 @@ bool QWebPage::extension(Extension extension, const ExtensionOption *option, Ext
 #ifndef QT_NO_FILEDIALOG
     if (extension == ChooseMultipleFilesExtension) {
         // FIXME: do not ignore suggestedFiles
-        QStringList suggestedFiles = reinterpret_cast<const ChooseMultipleFilesExtensionOption*>(option)->suggestedFiles;
+        QStringList suggestedFiles = static_cast<const ChooseMultipleFilesExtensionOption*>(option)->suggestedFileNames;
         QStringList names = QFileDialog::getOpenFileNames(d->view, QString::null);
-        reinterpret_cast<ChooseMultipleFilesExtensionReturn*>(output)->files = names;
+        static_cast<ChooseMultipleFilesExtensionReturn*>(output)->fileNames = names;
         return true;
     }
 #endif
@@ -2471,10 +2471,12 @@ quint64 QWebPage::bytesReceived() const {
 
 /*!
     \fn void QWebPage::contentsChanged()
+    \since 4.5
 
-    This signal is emitted whenever the content changes during editing.
+    This signal is emitted whenever the text in form elements changes
+    as well as other editable content.
 
-    \sa selectedText()
+    \sa contentEditable(), QWebFrame::toHtml(), QWebFrame::toPlainText()
 */
 
 /*!
@@ -2584,7 +2586,8 @@ quint64 QWebPage::bytesReceived() const {
 */
 
 /*!
-    \fn void QWebPage::exceededDatabaseQuota(QWebFrame* frame, QString databaseName);
+    \fn void QWebPage::databaseQuotaExceeded(QWebFrame* frame, QString databaseName);
+    \since 4.5
 
     This signal is emitted whenever a web site is asking to store data to the database \a databaseName
     and the quota allocated to that web site is exceeded.

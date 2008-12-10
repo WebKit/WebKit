@@ -100,13 +100,13 @@ QWebDatabase::QWebDatabase(QWebDatabasePrivate* priv)
 }
 
 /*!
-    Returns the path to the web database on disk.
+    Returns the file name of the web database.
 
-    The path can be used to access the database through the QtSql database module, for example:
+    The name can be used to access the database through the QtSql database module, for example:
     \code
       QWebDatabase webdb = ...
       QSqlDatabase sqldb = QSqlDatabase::addDatabase("QSQLITE", "myconnection");
-      sqldb.setDatabaseName(webdb.absoluteFilePath());
+      sqldb.setDatabaseName(webdb.fileName());
       if (sqldb.open()) {
           QStringList tables = sqldb.tables();
           ...
@@ -116,7 +116,7 @@ QWebDatabase::QWebDatabase(QWebDatabasePrivate* priv)
     \note Concurrent access to a database from multiple threads or processes
     is not very efficient because Sqlite is used as WebKit's database backend.
 */
-QString QWebDatabase::absoluteFilePath() const
+QString QWebDatabase::fileName() const
 {
     return DatabaseTracker::tracker().fullPathForDatabase(d->origin.get(), d->name, false);
 }
@@ -135,9 +135,9 @@ QWebSecurityOrigin QWebDatabase::origin() const
     Removes the database from its security origin. All data stored in this database
     will be destroyed.
 */
-void QWebDatabase::remove()
+void QWebDatabase::removeDatabase(const QWebDatabase &db)
 {
-    DatabaseTracker::tracker().deleteDatabase(d->origin.get(), d->name);
+    DatabaseTracker::tracker().deleteDatabase(db.d->origin.get(), db.d->name);
 }
 
 /*!

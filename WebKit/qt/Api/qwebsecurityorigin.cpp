@@ -36,7 +36,7 @@ using namespace WebCore;
     \brief The QWebSecurityOrigin class defines a security boundary for web sites.
 
     QWebSecurityOrigin provides access to the security domains defined by web sites.
-    An origin is consists of a host name, a scheme, and a port number. Web sites with the same
+    An origin consists of a host name, a scheme, and a port number. Web sites with the same
     security origin can access each other's resources for client-side scripting or databases.
 
     ### diagram

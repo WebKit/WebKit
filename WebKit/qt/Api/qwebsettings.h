@@ -60,7 +60,7 @@ public:
         DeveloperExtrasEnabled,
         LinksIncludedInFocusChain,
         ZoomTextOnly,
-        PrintBackgroundElements,
+        PrintElementBackgrounds,
         OfflineStorageDatabaseEnabled,
         OfflineWebApplicationCacheEnabled,
         LocalStorageDatabaseEnabled

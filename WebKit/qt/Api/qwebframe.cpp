@@ -303,7 +303,7 @@ QString QWebFrame::title() const
             \o "Qt, WebKit, Programming"
     \endtable
 
-    This function returns a multi map to support multiple meta tags with the same name attribute.
+    This function returns a multi map to support multiple meta tags with the same attribute name.
 */
 QMultiMap<QString, QString> QWebFrame::metaData() const
 {
@@ -662,10 +662,10 @@ int QWebFrame::scrollBarMinimum(Qt::Orientation orientation) const
   Scrolls the frame \a dx pixels to the right and \a dy pixels downward. Both
   \a dx and \a dy may be negative.
   
-  \sa QWebFrame::scrollOffset
+  \sa QWebFrame::scrollPosition
 */
 
-void QWebFrame::scroll(int dx, int dy) const
+void QWebFrame::scroll(int dx, int dy)
 {
     if (!d->frame->view())
         return;
@@ -674,11 +674,12 @@ void QWebFrame::scroll(int dx, int dy) const
 }
 
 /*!
-  \property QWebFrame::scrollOffset
-  \brief The offset from the start this frame is currently scrolled to.
+  \property QWebFrame::scrollPosition
+  \since 4.5
+  \brief the position the frame is currently scrolled to.
 */
 
-QPoint QWebFrame::scrollOffset() const
+QPoint QWebFrame::scrollPosition() const
 {
     if (!d->frame->view())
         return QPoint(0,0);
@@ -687,11 +688,11 @@ QPoint QWebFrame::scrollOffset() const
     return QPoint(ofs.width(), ofs.height());
 }
 
-void QWebFrame::setScrollOffset(const QPoint &offset) const
+void QWebFrame::setScrollPosition(const QPoint &pos)
 {
-    QPoint current = scrollOffset();
-    int dx = offset.x() - current.x();
-    int dy = offset.y() - current.y();
+    QPoint current = scrollPosition();
+    int dx = pos.x() - current.x();
+    int dy = pos.y() - current.y();
     scroll(dx, dy);
 }
 
@@ -1027,6 +1028,8 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
   This signal is emitted shortly before the history of navigated pages
   is changed, for example when navigating back in the history.
 
+  The \a item parameter refers to the currently displayed frame.
+
   A potential use-case for this signal is to store custom data in
   the QWebHistoryItem associated to the frame, using QWebHistoryItem::setUserData().
 */
@@ -1146,7 +1149,7 @@ QPoint QWebHitTestResult::pos() const
 
 /*!
     \since 4.5
-    Returns the bounding box of the element.
+    Returns the bounding rect of the element.
 */
 QRect QWebHitTestResult::boundingRect() const
 {

@@ -380,7 +380,7 @@ void tst_QWebPage::database()
         QFile::remove(dbFileName);
 
     qRegisterMetaType<QWebFrame*>("QWebFrame*");
-    QSignalSpy spy(m_page, SIGNAL(exceededDatabaseQuota(QWebFrame *, QString)));
+    QSignalSpy spy(m_page, SIGNAL(databaseQuotaExceeded(QWebFrame *, QString)));
     m_view->setHtml(QString("<html><head><script>var db; db=openDatabase('testdb', '1.0', 'test database API', 50000); </script></head><body><div></div></body></html>"), QUrl("http://www.myexample.com"));
     QTRY_COMPARE(spy.count(), 1);
     m_page->mainFrame()->evaluateJavaScript("var db2; db2=openDatabase('testdb', '1.0', 'test database API', 50000);");
@@ -404,10 +404,10 @@ void tst_QWebPage::database()
     QWebSecurityOrigin origin = m_page->mainFrame()->securityOrigin();
     QList<QWebDatabase> dbs = origin.databases();
     if (dbs.count() > 0) {
-        QString filePath = dbs[0].absoluteFilePath();
-        QVERIFY(QFile::exists(filePath));
-        dbs[0].remove();
-        QVERIFY(!QFile::exists(filePath));
+        QString fileName = dbs[0].fileName();
+        QVERIFY(QFile::exists(fileName));
+        QWebDatabase::removeDatabase(dbs[0]);
+        QVERIFY(!QFile::exists(fileName));
     }
     QTest::qWait(1000);
 }

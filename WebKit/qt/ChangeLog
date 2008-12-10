@@ -1,3 +1,39 @@
+2008-12-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        API changes discussed with Simon Hausmann, Tor Arne
+        Vestbø, Ariya Hidayat...
+
+        * Api/qwebdatabase.cpp:
+        (QWebDatabase::fileName):
+        (QWebDatabase::removeDatabase):
+        * Api/qwebdatabase.h:
+        * Api/qwebframe.cpp:
+        (QWebFrame::scroll):
+        (QWebFrame::scrollPosition):
+        (QWebFrame::setScrollPosition):
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        (QWebPage::setContentEditable):
+        (QWebPage::isContentEditable):
+        (QWebPage::extension):
+        * Api/qwebpage.h:
+        * Api/qwebsecurityorigin.cpp:
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        * Api/qwebsettings.h:
+        * QtLauncher/main.cpp:
+        (MainWindow::setEditable):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::exceededDatabaseQuota):
+        (WebCore::ChromeClientQt::runOpenPanel):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::isEditable):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::database):
+
 2008-12-09  Balazs Kelemen  <Kelemen.Balazs.3@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.

@@ -168,8 +168,8 @@ void QWebSettingsPrivate::apply()
                                  global->attributes.value(QWebSettings::ZoomTextOnly));
         settings->setZoomsTextOnly(value);
 
-        value = attributes.value(QWebSettings::PrintBackgroundElements,
-                                      global->attributes.value(QWebSettings::PrintBackgroundElements));
+        value = attributes.value(QWebSettings::PrintElementBackgrounds,
+                                      global->attributes.value(QWebSettings::PrintElementBackgrounds));
         settings->setShouldPrintBackgrounds(value);
 
         value = attributes.value(QWebSettings::OfflineStorageDatabaseEnabled,
@@ -291,7 +291,7 @@ QWebSettings *QWebSettings::globalSettings()
         included in the keyboard focus chain.
     \value ZoomTextOnly Specifies whether the zoom factor on a frame applies to
         only the text or all content.
-    \value PrintBackgroundElements Specifies whether the background color and images
+    \value PrintElementBackgrounds Specifies whether the background color and images
         are also drawn when the page is printed.
 */
 
@@ -318,7 +318,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::JavascriptEnabled, true);
     d->attributes.insert(QWebSettings::LinksIncludedInFocusChain, true);
     d->attributes.insert(QWebSettings::ZoomTextOnly, false);
-    d->attributes.insert(QWebSettings::PrintBackgroundElements, true);
+    d->attributes.insert(QWebSettings::PrintElementBackgrounds, true);
     d->attributes.insert(QWebSettings::OfflineStorageDatabaseEnabled, true);
     d->attributes.insert(QWebSettings::OfflineWebApplicationCacheEnabled, true);
     d->attributes.insert(QWebSettings::LocalStorageDatabaseEnabled, true);

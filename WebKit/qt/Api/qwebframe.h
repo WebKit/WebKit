@@ -105,7 +105,7 @@ class QWEBKIT_EXPORT QWebFrame : public QObject
     Q_PROPERTY(QUrl url READ url WRITE setUrl)
     Q_PROPERTY(QIcon icon READ icon)
     Q_PROPERTY(QSize contentsSize READ contentsSize)
-    Q_PROPERTY(QPoint scrollOffset READ scrollOffset WRITE setScrollOffset)
+    Q_PROPERTY(QPoint scrollPosition READ scrollPosition WRITE setScrollPosition)
 private:
     QWebFrame(QWebPage *parent, QWebFrameData *frameData);
     QWebFrame(QWebFrame *parent, QWebFrameData *frameData);
@@ -149,9 +149,9 @@ public:
     int scrollBarMinimum(Qt::Orientation orientation) const;
     int scrollBarMaximum(Qt::Orientation orientation) const;
 
-    void scroll(int, int) const;
-    QPoint scrollOffset() const;
-    void setScrollOffset(const QPoint &offset) const;
+    void scroll(int, int);
+    QPoint scrollPosition() const;
+    void setScrollPosition(const QPoint &pos);
 
     void render(QPainter *painter, const QRegion &clip);
     void render(QPainter *painter);
