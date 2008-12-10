@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <script src="../editing.js" language="javascript" type="text/javascript" ></script>
+        <script language="javascript" type="text/javascript">
+        function log(str) {
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(str));
+            var console = document.getElementById("console");
+            console.appendChild(li);
+        }
+        function sendBackwardDeleteKey() {
+            if (window.eventSender)
+                eventSender.keyDown(String.fromCharCode(0x0008), null);
+        }
+        function editingTest() {
+            if (window.layoutTestController)
+                window.layoutTestController.dumpAsText();
+            var textarea = document.getElementById("test");
+            textarea.focus();
+            moveSelectionForwardByCharacterCommand();
+            moveSelectionForwardByCharacterCommand();
+            sendBackwardDeleteKey();
+            execUndoCommand();
+            if (textarea.value == "\u0E27\u0E31")
+                log("Succeeded.");
+            else
+                log("Failed. Actual: \"" + textarea.value + "\", Expected: \"\u0E27\u0E31\"");
+        }
+        </script>
+        <title>Editing Test (Undo deleting a ligature)</title> 
+    </head> 
+    <body>
+        <p>This test tests whether the undo command works when the BackSpace key deletes the last character of a ligature "&#x0E27;&#x0E31;".</p>
+        <p>If this test succeeds, you can see "&#x0E27;&#x0E31;" (U+0E27,U+0E31) and a string "succeeded" below.</p>
+        <textarea id="test" rows="1" cols="40">&#x0E27;&#x0E31;</textarea>
+        <ul id="console"></ul>
+        <script language="javascript" type="text/javascript">
+        runEditingTest();
+        </script>
+    </body>
+</html>

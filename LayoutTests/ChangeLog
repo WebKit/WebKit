@@ -1,3 +1,24 @@
+2008-12-10  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 21820: Unable to enter the Tamil UNICODE Characters via Thamizha Phonetic IME
+        https://bugs.webkit.org/show_bug.cgi?id=21820
+
+        <rdar://problem/5683248> Typing backspace to delete a diacritical mark also deletes the character before (Arabic)
+        <rdar://problem/5702038> Backspace removes Thai Character in wrong sequence
+
+        Added test for verifying if a backspace key deletes only the last character of a ligature which consists of
+        multiple Unicode characters.
+        Also added a test for verifying an undo operation works after deleting the last character of a ligature.
+
+        * editing/deleting/delete-ligature-001-expected.txt: Added.
+        * editing/deleting/delete-ligature-001.html: Added.
+        * editing/deleting/delete-ligature-002-expected.txt: Added.
+        * editing/deleting/delete-ligature-002.html: Added.
+        * editing/deleting/delete-ligature-003-expected.txt: Added.
+        * editing/deleting/delete-ligature-003.html: Added.
+
 2008-12-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Maciej Stachowiak.
