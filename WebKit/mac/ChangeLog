@@ -2,6 +2,15 @@
 
         Reviewed by Darin Adler.
 
+        Fix typecast.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pauseNullEventsForAllNetscapePlugins]):
+
+2008-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
         Implement software rendering of hosted plug-ins.
         
         * Plugins/Hosted/NetscapePluginHostProxy.mm:
