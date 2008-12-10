@@ -1,0 +1,15 @@
+This tests checks the event order for the context click. It should be mousedown, mouseup, and contextmenu with an event.button == 2. Right click on this text to see the results.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.button is 2
+PASS event.type is "mousedown"
+PASS event.button is 2
+PASS event.type is "mouseup"
+PASS event.button is 2
+PASS event.type is "contextmenu"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

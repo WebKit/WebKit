@@ -1,3 +1,20 @@
+2008-12-09  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a test to check the event order for context clicks on Windows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22505
+
+        * platform/win/fast/events/context-click-events-expected.txt: Added.
+        * platform/win/fast/events/context-click-events.html: Added.
+        * platform/win/fast/events/resources: Added.
+        * platform/win/fast/events/resources/TEMPLATE.html: Added.
+        * platform/win/fast/events/resources/context-click-events.js: Added.
+        (clickHandler):
+        (traceMouseEvent):
+
+
 2008-12-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
