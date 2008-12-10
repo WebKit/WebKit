@@ -1,3 +1,14 @@
+2008-12-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19762
+        Crash in svg/webarchive/svg-cursor-subresources.svg
+
+        * svg/webarchive/svg-cursor-subresources.svg: Copied from LayoutTests/svg/webarchive/svg-cursor-subresources.svg-disabled.
+        * svg/webarchive/svg-cursor-subresources.svg-disabled: Removed.
+        Re-enabling the test.
+
 2008-12-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
