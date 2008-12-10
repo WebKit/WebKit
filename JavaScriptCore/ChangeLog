@@ -1,5 +1,21 @@
 2008-12-09  Sam Weinig  <sam@webkit.org>
 
+        Reviewed twice by Cameron Zwarich.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22752
+        Clear SymbolTable after codegen for Function codeblocks that
+        don't require an activation
+
+        This is a ~1.5MB improvement on Membuster-head.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpStatistics): Add logging of non-empty symbol tables
+        and total size used by symbol tables.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate): Clear the symbol table here.
+
+2008-12-09  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         Remove unnecessary extra lookup when throwing an exception.
