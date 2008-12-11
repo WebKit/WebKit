@@ -1,8 +1,7 @@
 <?php
 require_once 'portabilityLayer.php';
 
-$tempDir = sys_get_temp_dir();
-$tmpFile = $tempDir . $_GET['filename'];
+$tmpFile = sys_get_temp_dir() . '/' . $_GET['filename'];
 
 function fail()
 {

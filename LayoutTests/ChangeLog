@@ -1,3 +1,18 @@
+2008-12-08  Dean McNamee  <deanm@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Always append a trailing slash when using PHP's sys_get_temp_dir().
+
+        This allows these tests to run on Linux, where this API returns the
+        directory without a trailing slash.
+
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.php:
+        * http/tests/xmlhttprequest/resources/portabilityLayer.php:
+        * http/tests/xmlhttprequest/resources/reset-temp-file.php:
+
 2008-12-10  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Rubber-stamped by George Staikos.
