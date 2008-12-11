@@ -1,3 +1,14 @@
+2008-12-09  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix memory leak - need to call stopActiveDOMObjects
+        when cached pages get destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=22753
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+
 2008-12-10  Alice Liu  <alice.liu@apple.com>
 
         Manual test for https://bugs.webkit.org/show_bug.cgi?id=20685

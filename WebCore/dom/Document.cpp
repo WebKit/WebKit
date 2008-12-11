@@ -1278,6 +1278,7 @@ void Document::detach()
     ASSERT(!m_inPageCache);
 
     clearAXObjectCache();
+    stopActiveDOMObjects();
     
     RenderObject* render = renderer();
 
