@@ -1,13 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x110
-  RenderBlock {wml} at (0,0) size 800x110
-    RenderBlock (anonymous) at (0,0) size 800x0
-      RenderInline {template} at (0,0) size 0x0
+layer at (0,0) size 800x128
+  RenderBlock {wml} at (0,0) size 800x128
+    RenderBlock (anonymous) at (0,0) size 800x18
+      RenderInline {template} at (0,0) size 83x18
         RenderText {#text} at (0,0) size 0x0
+        RenderButton {do} at (0,0) size 83x18 [bgcolor=#D3D3D3]
+          RenderBlock (anonymous) at (0,0) size 83x18
+            RenderInline {prev} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+            RenderText at (0,0) size 83x18
+              text run at (0,0) width 83: "Template Do"
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-    RenderBlock {card} at (8,16) size 784x86
+    RenderBlock {card} at (8,34) size 784x86
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 182x18
           text run at (0,0) width 182: "Test for do-shadow in WML"

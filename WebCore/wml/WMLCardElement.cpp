@@ -30,8 +30,10 @@
 #include "NodeList.h"
 #include "RenderStyle.h"
 #include "WMLDocument.h"
+#include "WMLDoElement.h"
 #include "WMLIntrinsicEventHandler.h"
 #include "WMLNames.h"
+#include "WMLTemplateElement.h"
 #include "WMLTimerElement.h"
 #include "WMLVariables.h"
 
@@ -45,6 +47,7 @@ WMLCardElement::WMLCardElement(const QualifiedName& tagName, Document* doc)
     , m_isOrdered(false)
     , m_isVisible(false)
     , m_eventTimer(0)
+    , m_template(0)
 {
 }
 
@@ -90,11 +93,21 @@ void WMLCardElement::hideCard()
     ASSERT(!renderer());
 }
 
+void WMLCardElement::setTemplateElement(WMLTemplateElement* temp)
+{
+    // Only one template is allowed to be attached to a card
+    if (m_template) {
+        reportWMLError(document(), WMLErrorMultipleTemplateElements);
+        return;
+    }
+
+    m_template = temp;
+}
+
 void WMLCardElement::setIntrinsicEventTimer(WMLTimerElement* timer)
 {
     // Only one timer is allowed in a card 
     if (m_eventTimer) {
-        m_eventTimer = 0;     
         reportWMLError(document(), WMLErrorMultipleTimerElements);
         return;
     }
@@ -136,14 +149,11 @@ void WMLCardElement::handleIntrinsicEventIfNeeded()
     if (eventType != WMLIntrinsicEventUnknown) {
         if (eventHandler && eventHandler->hasIntrinsicEvent(eventType))
             hasIntrinsicEvent = true;
-
-        /* FIXME: template support
         else if (m_template) {
             eventHandler = m_template->eventHandler();
             if (eventHandler && eventHandler->hasIntrinsicEvent(eventType))
                 hasIntrinsicEvent = true;
         }
-        */
     }
  
     if (hasIntrinsicEvent)
@@ -163,6 +173,33 @@ void WMLCardElement::handleIntrinsicEventIfNeeded()
             static_cast<WMLSelectElement*>(node)->selectInitialOptions();
     }
     */
+}
+
+void WMLCardElement::handleDeckLevelTaskOverridesIfNeeded()
+{
+    // Spec: The event-handling element may appear inside a template element and specify 
+    // event-processing behaviour for all cards in the deck. A deck-level event-handling
+    // element is equivalent to specifying the event-handling element in each card. 
+    if (!m_template) 
+        return;
+
+    Vector<WMLDoElement*>& templateDoElements = m_template->doElements();
+    if (templateDoElements.isEmpty())
+        return;
+
+    Vector<WMLDoElement*>& cardDoElements = doElements();
+    Vector<WMLDoElement*>::iterator it = cardDoElements.begin();
+    Vector<WMLDoElement*>::iterator end = cardDoElements.end();
+
+    HashSet<String> cardDoElementNames;
+    for (; it != end; ++it)
+        cardDoElementNames.add((*it)->name());
+
+    it = templateDoElements.begin();
+    end = templateDoElements.end();
+
+    for (; it != end; ++it)
+        (*it)->setActive(!cardDoElementNames.contains((*it)->name()));
 }
 
 void WMLCardElement::parseMappedAttribute(MappedAttribute* attr)

@@ -1,3 +1,12 @@
+2008-12-10  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Update WML test results after adding <template> support.
+
+        * platform/mac/fast/wml/do-shadow-expected.txt:
+        * platform/mac/fast/wml/do-template-expected.txt:
+
 2008-12-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin

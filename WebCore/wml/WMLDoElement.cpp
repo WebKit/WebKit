@@ -120,13 +120,11 @@ void WMLDoElement::insertedIntoDocument()
     if (!parent || !parent->isWMLElement())
         return;
 
-    /* FIXME
-    if (parent->hasTagName(templateTag))
-        static_cast<WMLTemplateElement*>(parent)->registerDoElement(this);
-    */
+    WMLElement* parentElement = static_cast<WMLElement*>(parent);
+    if (!parentElement->isWMLEventHandlingElement())
+        return;
 
-    if (parent->hasTagName(cardTag))
-        static_cast<WMLCardElement*>(parent)->registerDoElement(this);
+    static_cast<WMLEventHandlingElement*>(parentElement)->registerDoElement(this);
 }
 
 RenderObject* WMLDoElement::createRenderer(RenderArena* arena, RenderStyle* style)

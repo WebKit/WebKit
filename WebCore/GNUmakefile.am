@@ -2193,6 +2193,7 @@ webcore_sources += \
 	WebCore/wml/WMLRefreshElement.cpp \
 	WebCore/wml/WMLSetvarElement.cpp \
 	WebCore/wml/WMLTaskElement.cpp \
+	WebCore/wml/WMLTemplateElement.cpp \
 	WebCore/wml/WMLTimerElement.cpp \
 	WebCore/wml/WMLVariables.cpp
 

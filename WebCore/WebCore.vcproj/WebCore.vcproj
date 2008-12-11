@@ -16982,6 +16982,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\wml\WMLTemplateElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLTemplateElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\wml\WMLTimerElement.cpp"
 				>
 			</File>

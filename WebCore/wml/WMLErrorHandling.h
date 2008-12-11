@@ -39,6 +39,7 @@ namespace WebCore {
         WMLErrorInvalidVariableReference,
         WMLErrorInvalidVariableReferenceLocation,
         WMLErrorMultipleAccessElements,
+        WMLErrorMultipleTemplateElements,
         WMLErrorMultipleTimerElements,
         WMLErrorNoCardInDocument
     };

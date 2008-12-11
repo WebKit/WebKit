@@ -29,6 +29,7 @@
 #include "WMLDocument.h"
 #include "WMLNames.h"
 #include "WMLPageState.h"
+#include "WMLTemplateElement.h"
 #include "WMLVariables.h"
 
 namespace WebCore {
@@ -92,14 +93,11 @@ void WMLTimerElement::timerFired(Timer<WMLTimerElement>*)
     bool hasIntrinsicEvent = false;
     if (eventHandler && eventHandler->hasIntrinsicEvent(eventType))
         hasIntrinsicEvent = true;
-
-/* FIXME
     else if (m_card->templateElement()) {
         eventHandler = m_card->templateElement()->eventHandler();
         if (eventHandler && eventHandler->hasIntrinsicEvent(eventType))
             hasIntrinsicEvent = true;
     }
-*/
 
     if (hasIntrinsicEvent)
         eventHandler->triggerIntrinsicEvent(eventType);

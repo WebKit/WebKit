@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class WMLTemplateElement;
 class WMLTimerElement;
 
 class WMLCardElement : public WMLEventHandlingElement {
@@ -39,9 +40,13 @@ public:
     bool isNewContext() const { return m_isNewContext; }
     bool isOrdered() const { return m_isOrdered; }
     WMLTimerElement* eventTimer() const { return m_eventTimer; }
+    WMLTemplateElement* templateElement() const { return m_template; }
 
+    void setTemplateElement(WMLTemplateElement*);
     void setIntrinsicEventTimer(WMLTimerElement*);
+
     void handleIntrinsicEventIfNeeded();
+    void handleDeckLevelTaskOverridesIfNeeded();
 
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual void insertedIntoDocument();
@@ -62,6 +67,7 @@ private:
     bool m_isVisible;
 
     WMLTimerElement* m_eventTimer;
+    WMLTemplateElement* m_template;
 };
 
 }

@@ -1,13 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x152
-  RenderBlock {wml} at (0,0) size 800x152
-    RenderBlock (anonymous) at (0,0) size 800x0
-      RenderInline {template} at (0,0) size 0x0
+layer at (0,0) size 800x170
+  RenderBlock {wml} at (0,0) size 800x170
+    RenderBlock (anonymous) at (0,0) size 800x18
+      RenderInline {template} at (0,0) size 79x18
         RenderText {#text} at (0,0) size 0x0
+        RenderButton {do} at (0,0) size 79x18 [bgcolor=#D3D3D3]
+          RenderBlock (anonymous) at (0,0) size 79x18
+            RenderInline {go} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+            RenderText at (0,0) size 79x18
+              text run at (0,0) width 79: "Template do"
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-    RenderBlock {card} at (8,16) size 784x120
+    RenderBlock {card} at (8,34) size 784x120
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 254x18
           text run at (0,0) width 254: "Test for do element in template in WML"

@@ -87,6 +87,8 @@ String errorMessageForErrorCode(WMLErrorCode error)
         return "A variable reference is placed in an invalid location.";
     case WMLErrorMultipleAccessElements:
         return "Only one access element is allowed in a deck.";
+    case WMLErrorMultipleTemplateElements:
+        return "Only one template element is allowed in a deck.";
     case WMLErrorNoCardInDocument:
         return "No card contained in document.";
     case WMLErrorMultipleTimerElements:

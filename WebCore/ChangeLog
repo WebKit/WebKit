@@ -1,3 +1,46 @@
+2008-12-10  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Eric Seidel and George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22799
+
+        Add WML <template> support. The <template> element is specified at deck-level
+        and declares a template for all <card> elements in the document.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing): Treat <do> just like a <button>.
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::WMLCardElement):
+        (WebCore::WMLCardElement::setTemplateElement):
+        (WebCore::WMLCardElement::handleIntrinsicEventIfNeeded):
+        (WebCore::WMLCardElement::handleDeckLevelTaskOverridesIfNeeded):
+        * wml/WMLCardElement.h:
+        (WebCore::WMLCardElement::templateElement):
+        * wml/WMLDoElement.cpp:
+        (WebCore::WMLDoElement::insertedIntoDocument):
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::finishedParsing):
+        * wml/WMLErrorHandling.cpp:
+        (WebCore::errorMessageForErrorCode):
+        * wml/WMLErrorHandling.h:
+        (WebCore::):
+        * wml/WMLEventHandlingElement.cpp:
+        (WebCore::WMLEventHandlingElement::~WMLEventHandlingElement):
+        * wml/WMLEventHandlingElement.h:
+        (WebCore::WMLEventHandlingElement::doElements):
+        * wml/WMLTagNames.in:
+        * wml/WMLTemplateElement.cpp: Added.
+        (WebCore::WMLTemplateElement::WMLTemplateElement):
+        (WebCore::WMLTemplateElement::~WMLTemplateElement):
+        (WebCore::WMLTemplateElement::parseMappedAttribute):
+        (WebCore::WMLTemplateElement::registerTemplatesInDocument):
+        * wml/WMLTemplateElement.h: Added.
+        * wml/WMLTimerElement.cpp:
+        (WebCore::WMLTimerElement::timerFired):
+
 2008-12-09  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.
