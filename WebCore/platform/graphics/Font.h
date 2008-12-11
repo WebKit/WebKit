@@ -136,10 +136,9 @@ public:
     const GlyphData& glyphDataForCharacter(UChar32, bool mirror, bool forceSmallCaps = false) const;
     // Used for complex text, and does not utilize the glyph map cache.
     const FontData* fontDataForCharacters(const UChar*, int length) const;
+#endif
 
 private:
-    bool canUseGlyphCache(const TextRun&) const;
-    void drawSimpleText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
 #if ENABLE(SVG_FONTS)
     void drawTextUsingSVGFont(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     float floatWidthUsingSVGFont(const TextRun&) const;
@@ -147,17 +146,23 @@ private:
     FloatRect selectionRectForTextUsingSVGFont(const TextRun&, const IntPoint&, int h, int from, int to) const;
     int offsetForPositionForTextUsingSVGFont(const TextRun&, int position, bool includePartialGlyphs) const;
 #endif
+
+#if USE(FONT_FAST_PATH)
+    bool canUseGlyphCache(const TextRun&) const;
+    void drawSimpleText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     void drawGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const FloatPoint&) const;
-    void drawComplexText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     float floatWidthForSimpleText(const TextRun&, GlyphBuffer*) const;
-    float floatWidthForComplexText(const TextRun&) const;
     int offsetForPositionForSimpleText(const TextRun&, int position, bool includePartialGlyphs) const;
-    int offsetForPositionForComplexText(const TextRun&, int position, bool includePartialGlyphs) const;
     FloatRect selectionRectForSimpleText(const TextRun&, const IntPoint&, int h, int from, int to) const;
+#endif
+
+    void drawComplexText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
+    float floatWidthForComplexText(const TextRun&) const;
+    int offsetForPositionForComplexText(const TextRun&, int position, bool includePartialGlyphs) const;
     FloatRect selectionRectForComplexText(const TextRun&, const IntPoint&, int h, int from, int to) const;
     void cachePrimaryFont() const;
-#endif
+
     friend struct WidthIterator;
 
 public:
@@ -165,6 +170,7 @@ public:
     FontSelector* fontSelector() const { return 0; }
 #else
     // Useful for debugging the different font rendering code paths.
+#if USE(FONT_FAST_PATH)
     enum CodePath { Auto, Simple, Complex };
     static void setCodePath(CodePath);
     static CodePath codePath();
@@ -175,6 +181,7 @@ public:
     {
         return (((c & ~0xFF) == 0 && gRoundingHackCharacterTable[c]));
     }
+#endif
 
     FontSelector* fontSelector() const;
 #endif

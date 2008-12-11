@@ -461,4 +461,8 @@
 #define WTF_USE_CTI_ARGUMENT 1
 #endif
 
+#if !PLATFORM(QT)
+#define WTF_USE_FONT_FAST_PATH 1
+#endif
+
 #endif /* WTF_Platform_h */

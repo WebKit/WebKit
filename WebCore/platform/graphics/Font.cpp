@@ -37,6 +37,7 @@ using namespace Unicode;
 
 namespace WebCore {
 
+#if USE(FONT_FAST_PATH)
 const uint8_t Font::gRoundingHackCharacterTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\t*/, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     1 /*space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*-*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*?*/,
@@ -49,6 +50,7 @@ const uint8_t Font::gRoundingHackCharacterTable[256] = {
 };
 
 Font::CodePath Font::s_codePath = Auto;
+#endif
 
 // ============================================================================================
 // Font Implementation (Cross-Platform Portion)
@@ -227,10 +229,12 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
     }
 #endif
 
+#if USE(FONT_FAST_PATH)
     if (canUseGlyphCache(run))
-        drawSimpleText(context, run, point, from, to);
-    else
-        drawComplexText(context, run, point, from, to);
+        return drawSimpleText(context, run, point, from, to);
+#endif
+
+    return drawComplexText(context, run, point, from, to);
 }
 
 float Font::floatWidth(const TextRun& run) const
@@ -240,8 +244,11 @@ float Font::floatWidth(const TextRun& run) const
         return floatWidthUsingSVGFont(run);
 #endif
 
+#if USE(FONT_FAST_PATH)
     if (canUseGlyphCache(run))
         return floatWidthForSimpleText(run, 0);
+#endif
+
     return floatWidthForComplexText(run);
 }
 
@@ -254,8 +261,12 @@ float Font::floatWidth(const TextRun& run, int extraCharsAvailable, int& charsCo
 
     charsConsumed = run.length();
     glyphName = "";
+
+#if ENABLE(FONT_FAST_PATH)
     if (canUseGlyphCache(run))
         return floatWidthForSimpleText(run, 0);
+#endif
+
     return floatWidthForComplexText(run);
 }
 
@@ -267,8 +278,12 @@ FloatRect Font::selectionRectForText(const TextRun& run, const IntPoint& point, 
 #endif
 
     to = (to == -1 ? run.length() : to);
+
+#if USE(FONT_FAST_PATH)
     if (canUseGlyphCache(run))
         return selectionRectForSimpleText(run, point, h, from, to);
+#endif
+
     return selectionRectForComplexText(run, point, h, from, to);
 }
 
@@ -279,8 +294,11 @@ int Font::offsetForPosition(const TextRun& run, int x, bool includePartialGlyphs
         return offsetForPositionForTextUsingSVGFont(run, x, includePartialGlyphs);
 #endif
 
+#if USE(FONT_FAST_PATH)
     if (canUseGlyphCache(run))
         return offsetForPositionForSimpleText(run, x, includePartialGlyphs);
+#endif
+
     return offsetForPositionForComplexText(run, x, includePartialGlyphs);
 }
 
