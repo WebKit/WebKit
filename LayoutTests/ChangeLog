@@ -1,3 +1,12 @@
+2008-12-11  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix typo in doctype (correct wapforum.org URL)
+
+        * fast/wml/p-align.wml:
+        * fast/wml/p-mode.wml:
+
 2008-12-08  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Darin Adler.
