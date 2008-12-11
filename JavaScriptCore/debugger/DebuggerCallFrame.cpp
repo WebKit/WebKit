@@ -60,7 +60,6 @@ JSObject* DebuggerCallFrame::thisObject() const
     if (!m_callFrame->codeBlock())
         return 0;
 
-    // FIXME: Why is it safe to assume this is an object?
     return asObject(m_callFrame->thisValue());
 }
 

@@ -1,3 +1,21 @@
+2008-12-10  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 22734: Debugger crashes when stepping into a function call in a return statement
+        <https://bugs.webkit.org/show_bug.cgi?id=22734>
+        <rdar://problem/6426796>
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): The DebuggerCallFrame uses
+        the 'this' value stored in a callFrame, so op_convert_this should be
+        emitted at the beginning of a function body when generating bytecode
+        with debug hooks.
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::thisObject): The assertion inherent in the call
+        to asObject() here is valid, because any 'this' value should have been
+        converted to a JSObject*.
+
 2008-12-10  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

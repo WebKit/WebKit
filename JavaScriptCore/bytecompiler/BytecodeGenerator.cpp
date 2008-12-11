@@ -331,7 +331,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     ++m_nextParameterIndex;
     ++m_codeBlock->m_numParameters;
 
-    if (functionBody->usesThis()) {
+    if (functionBody->usesThis() || m_shouldEmitDebugHooks) {
         emitOpcode(op_convert_this);
         instructions().append(m_thisRegister.index());
     }
