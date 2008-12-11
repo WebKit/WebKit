@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        Replaced outdated reference image for svg/webarchive/svg-cursor-subresources.svg
+
+        https://bugs.webkit.org/show_bug.cgi?id=22801
+
+        * platform/mac/svg/webarchive/svg-cursor-subresources-expected.checksum:
+        * platform/mac/svg/webarchive/svg-cursor-subresources-expected.png:
+
+2008-12-10  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Darin Adler.
+
         Rewrote animations/animation-test-helpers.js to take advantage of the pauseAnimationAtTimeOnElementWithId()
         API when available in DRT.
 
