@@ -1,3 +1,26 @@
+2008-12-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Port more of the JIT to use the MacroAssembler interface.
+        
+        Everything in the main pass, bar a few corner cases (operations with required
+        registers, or calling convention code).  Slightly refactors array creation,
+        moving the offset calculation into the callFrame into C code (reducing code
+        planted).
+
+        Overall this appears to be a 1% win on v8-tests, due to the smaller immediates
+        being planted (in jfalse in particular).
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::cti_op_new_array):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateEnter):
+
 2008-12-10  Sam Weinig  <sam@webkit.org>
 
         Fix non-JIT builds.

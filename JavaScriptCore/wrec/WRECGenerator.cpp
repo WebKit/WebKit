@@ -70,7 +70,7 @@ void Generator::generateEnter()
 
 #ifndef NDEBUG
     // ASSERT that the output register is not null.
-    Jump outputNotNull = jne32(output, Imm32(0));
+    Jump outputNotNull = jnzPtr(output);
     breakpoint();
     outputNotNull.link(this);
 #endif

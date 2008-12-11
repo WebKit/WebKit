@@ -72,7 +72,6 @@
 #define ARG_int6 reinterpret_cast<intptr_t>(ARGS[6])
 #define ARG_func1 static_cast<FuncDeclNode*>(ARGS[1])
 #define ARG_funcexp1 static_cast<FuncExprNode*>(ARGS[1])
-#define ARG_registers1 static_cast<Register*>(ARGS[1])
 #define ARG_regexp1 static_cast<RegExp*>(ARGS[1])
 #define ARG_pni1 static_cast<JSPropertyNameIterator*>(ARGS[1])
 #define ARG_instr1 static_cast<Instruction*>(ARGS[1])
