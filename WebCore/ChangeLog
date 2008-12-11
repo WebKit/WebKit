@@ -1,5 +1,13 @@
 2008-12-10  Alice Liu  <alice.liu@apple.com>
 
+        Manual test for https://bugs.webkit.org/show_bug.cgi?id=20685
+
+        Reviewed by Darin Adler.
+
+        * manual-tests/drag-image-to-desktop.html: Added.
+
+2008-12-10  Alice Liu  <alice.liu@apple.com>
+
         fixed https://bugs.webkit.org/show_bug.cgi?id=20685
 
         Reviewed by Darin Adler.

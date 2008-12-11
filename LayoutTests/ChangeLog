@@ -1,3 +1,16 @@
+2008-12-10  Alice Liu  <alice.liu@apple.com>
+
+        Adding tweak to .conf files needed for 
+        WebCore/manual-tests/drag-image-to-desktop.html
+
+        Reviewed by Darin Adler.
+
+        * http/conf/apache2-debian-httpd.conf:
+        * http/conf/apache2-httpd.conf:
+        * http/conf/cygwin-httpd.conf:
+        * http/conf/httpd.conf:
+        * http/tests/misc/resources/generatedimage.bat: Added.
+
 2008-12-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam :( Weinig.

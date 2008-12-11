@@ -1,0 +1,15 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<body>
+<span style="">
+<p>This page tests WebKit's behavior when dragging an image with a file extension that doesn't match its MIME type or actual file type
+<p>Prerequisites:<br>
+<ul><li>run the LayoutTest's webserver (WebKitTools/run-webkit-httpd)</ul>
+<p>Steps to test:<br>
+<ol><li>drag and drop the image below to the desktop</ol>
+<img src="http://127.0.0.1:8000/misc/resources/generatedimage.bat" width="88" height="31">
+<p>Expected results:<br>
+The file should have .gif extension <em>(not .bat or .jpg/.jpeg)</em>
+</body>
+</html>
