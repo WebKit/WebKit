@@ -1,3 +1,15 @@
+2008-12-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22797
+        REGRESSION: Crash at http://news.cnet.com/8301-17939_109-10119149-2.html
+
+        Make sure to protect the stream because destroyStream can otherwise cause it to be deleted.
+        
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::destroyStreamWithReason):
+
 2008-12-10  Glenn Wilson  <gwilson@google.com>
 
         Reviewed by Adam Roben.

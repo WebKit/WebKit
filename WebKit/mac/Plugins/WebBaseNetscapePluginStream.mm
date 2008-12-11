@@ -436,6 +436,8 @@ void WebNetscapePluginStream::destroyStreamWithReason(NPReason reason)
         // There is more data to be streamed, don't destroy the stream now.
         return;
     }
+
+    RefPtr<WebNetscapePluginStream> protect(this);
     destroyStream();
     ASSERT(!m_stream.ndata);
 }

@@ -1,0 +1,19 @@
+<html>
+<body>
+This tests that NPN_GetURLNotify works as expected and does not ASSERT intermittently in debug builds.
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<script>
+    function notify()
+    {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    plg.getURLNotify("resources/load-me-1.txt", null, "notify");
+</script>
+</body>
+</html>
