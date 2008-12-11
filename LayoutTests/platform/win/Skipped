@@ -161,7 +161,7 @@ svg/W3C-SVG-1.1/fonts-elem-03-b.svg
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg
 svg/W3C-SVG-1.1/fonts-elem-07-b.svg
 
-# No support for WebArchives in WebKitWin <rdar://problem/5066490>
+# No support for WebArchives in WebKitWin <rdar://problem/6436020>
 webarchive
 svg/webarchive
 svg/custom/image-with-prefix-in-webarchive.svg
