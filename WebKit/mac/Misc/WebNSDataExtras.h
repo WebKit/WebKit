@@ -28,6 +28,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "WebTypesInternal.h"
+
 #define WEB_GUESS_MIME_TYPE_PEEK_LENGTH 1024
 
 @interface NSData (WebNSDataExtras)
