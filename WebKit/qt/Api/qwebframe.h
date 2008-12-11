@@ -189,8 +189,6 @@ Q_SIGNALS:
 
     void iconChanged();
 
-    void aboutToUpdateHistory(QWebHistoryItem* item);
-
 private:
     friend class QWebPage;
     friend class QWebPagePrivate;

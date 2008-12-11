@@ -1,3 +1,17 @@
+2008-12-11  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Allow applications to save and restore their state between loads.
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::restoreViewState):
+        (WebCore::FrameLoaderClientQt::saveViewStateToItem):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::modified):
+
 2008-12-08  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Darin Adler and Holger Freyther.

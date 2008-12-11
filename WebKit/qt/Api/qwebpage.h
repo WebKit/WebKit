@@ -46,6 +46,7 @@ class QWebFrameData;
 class QWebNetworkInterface;
 class QWebPluginFactory;
 class QWebHitTestResult;
+class QWebHistoryItem;
 
 namespace WebCore {
     class ChromeClientQt;
@@ -288,6 +289,9 @@ Q_SIGNALS:
     void microFocusChanged();
     void contentsChanged();
     void databaseQuotaExceeded(QWebFrame* frame, QString databaseName);
+
+    void saveFrameStateRequested(QWebFrame* frame, QWebHistoryItem* item);
+    void restoreFrameStateRequested(QWebFrame* frame);
 
 protected:
     virtual QWebPage *createWindow(WebWindowType type);

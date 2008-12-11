@@ -2593,5 +2593,23 @@ quint64 QWebPage::bytesReceived() const {
     and the quota allocated to that web site is exceeded.
 */
 
+/*!
+  \since 4.5
+  \fn void QWebPage::saveFrameStateRequested(QWebFrame* frame, QWebHistoryItem* item);
+
+  This signal is emitted shortly before the history of navigated pages
+  is changed, for example when navigating back in the history.
+
+  A potential use-case for this signal is to store custom data in
+  the QWebHistoryItem associated to the frame, using QWebHistoryItem::setUserData().
+*/
+
+/*!
+  \since 4.5
+  \fn void QWebPage::restoreFrameStateRequested(QWebFrame* frame);
+
+  This signal is emitted when the load is finished and the application may now update its state accordingly.
+*/
+
 
 #include "moc_qwebpage.cpp"

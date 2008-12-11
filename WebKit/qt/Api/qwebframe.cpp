@@ -1022,19 +1022,6 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 */
 
 /*!
-  \since 4.5
-  \fn void QWebFrame::aboutToUpdateHistory(QWebHistoryItem* item);
-
-  This signal is emitted shortly before the history of navigated pages
-  is changed, for example when navigating back in the history.
-
-  The \a item parameter refers to the currently displayed frame.
-
-  A potential use-case for this signal is to store custom data in
-  the QWebHistoryItem associated to the frame, using QWebHistoryItem::setUserData().
-*/
-
-/*!
     \class QWebHitTestResult
     \since 4.4
     \brief The QWebHitTestResult class provides information about the web

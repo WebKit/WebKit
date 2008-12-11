@@ -524,7 +524,9 @@ void FrameLoaderClientQt::frameLoadCompleted()
 
 void FrameLoaderClientQt::restoreViewState()
 {
-    notImplemented();
+    if (!m_webFrame)
+        return;
+    emit m_webFrame->page()->restoreFrameStateRequested(m_webFrame);
 }
 
 
@@ -619,7 +621,7 @@ bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *item) cons
 void FrameLoaderClientQt::saveViewStateToItem(WebCore::HistoryItem* item)
 {
     QWebHistoryItem historyItem(new QWebHistoryItemPrivate(item));
-    emit m_webFrame->aboutToUpdateHistory(&historyItem);
+    emit m_webFrame->page()->saveFrameStateRequested(m_webFrame, &historyItem);
 }
 
 bool FrameLoaderClientQt::canCachePage() const

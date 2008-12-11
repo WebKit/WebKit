@@ -341,7 +341,7 @@ void tst_QWebPage::modified()
     m_page->mainFrame()->setUrl(QUrl("data:text/html,<body>This is fourth page"));
     QVERIFY(m_page->history()->count() == 2);
     m_page->mainFrame()->setUrl(QUrl("data:text/html,<body>This is fifth page"));
-    QVERIFY(::waitForSignal(m_page->mainFrame(), SIGNAL(aboutToUpdateHistory(QWebHistoryItem*))));
+    QVERIFY(::waitForSignal(m_page, SIGNAL(saveFrameStateRequested(QWebFrame*, QWebHistoryItem*))));
 }
 
 void tst_QWebPage::contextMenuCrash()
