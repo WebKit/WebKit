@@ -1,3 +1,16 @@
+2008-12-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Crash (null-deref) when using :before pseudoselector with content CSS rule in SVG
+        <rdar://problem/6302405>
+        <https://bugs.webkit.org/show_bug.cgi?id=22804>
+
+        Test to make sure we don't crash, and don't display generated content.
+
+        * svg/css/crash-css-generated-content-expected.txt: Added.
+        * svg/css/crash-css-generated-content.xhtml: Added.
+
 2008-12-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Cameron Zwarich.

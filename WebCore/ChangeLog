@@ -1,3 +1,22 @@
+2008-12-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6302405> Crash (null-deref) when using :before pseudoselector with content CSS rule in SVG
+        <https://bugs.webkit.org/show_bug.cgi?id=22804>
+
+        This issue was caused by css generated content resulting in non-svg flowboxes
+        being injected into SVG content.  As SVG spec does not describe behaviour in
+        this case, and neither Opera nor Firefox displays such generated content, so
+        now we make svg text layout and rendering just ignore any such content.
+
+        Test: svg/css/crash-css-generated-content.xhtml
+
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::buildLayoutInformation):
+        (WebCore::SVGRootInlineBox::layoutInlineBoxes):
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+
 2008-12-11  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Dave Hyatt.

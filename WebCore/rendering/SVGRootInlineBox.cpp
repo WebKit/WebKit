@@ -915,6 +915,9 @@ void SVGRootInlineBox::buildLayoutInformation(InlineFlowBox* start, SVGCharacter
             ASSERT(curr->isInlineFlowBox());
             InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(curr);
 
+            if (!flowBox->object()->element())
+                continue; // Skip generated content.
+
             bool isAnchor = flowBox->object()->element()->hasTagName(SVGNames::aTag);
             bool isTextPath = flowBox->object()->element()->hasTagName(SVGNames::textPathTag);
 
@@ -1062,6 +1065,10 @@ void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::
             int maxY = INT_MIN;
 
             InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(curr);
+            
+            if (!flowBox->object()->element())
+                continue; // Skip generated content.
+    
             layoutInlineBoxes(flowBox, it, minX, maxX, minY, maxY);
 
             curr->setXPos(minX - object()->xPos());
@@ -1516,6 +1523,9 @@ void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, InlineFlowBox*
         } else {
             ASSERT(curr->isInlineFlowBox());
             InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(curr);
+
+            if (!flowBox->object()->element())
+                continue; // Skip generated content.
 
             bool isTextPath = flowBox->object()->element()->hasTagName(SVGNames::textPathTag);
 
