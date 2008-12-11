@@ -1,5 +1,16 @@
 2008-12-10  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Rubber-stamped by George Staikos.
+
+        Update WML pixel test results, after adding <template> support.
+
+        * platform/mac/fast/wml/do-shadow-expected.checksum:
+        * platform/mac/fast/wml/do-shadow-expected.png:
+        * platform/mac/fast/wml/do-template-expected.checksum:
+        * platform/mac/fast/wml/do-template-expected.png:
+
+2008-12-10  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Eric Seidel.
 
         Update WML test results after adding <template> support.
