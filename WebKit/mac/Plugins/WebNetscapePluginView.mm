@@ -167,12 +167,6 @@ typedef struct {
 - (NSTextInputContext *)inputContext;
 @end
 
-
-@interface NSData (WebPluginDataExtras)
-- (BOOL)_web_startsWithBlankLine;
-- (NSInteger)_web_locationAfterFirstBlankLine;
-@end
-
 @interface WebNetscapePluginView (ForwardDeclarations)
 - (void)setWindowIfNecessary;
 - (NPError)loadRequest:(NSMutableURLRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData sendNotification:(BOOL)sendNotification;
@@ -2328,43 +2322,4 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
 
 @end
 
-@implementation NSData (PluginExtras)
-
-- (BOOL)_web_startsWithBlankLine
-{
-    return [self length] > 0 && ((const char *)[self bytes])[0] == '\n';
-}
-
-
-- (NSInteger)_web_locationAfterFirstBlankLine
-{
-    const char *bytes = (const char *)[self bytes];
-    unsigned length = [self length];
-    
-    unsigned i;
-    for (i = 0; i < length - 4; i++) {
-        
-        //  Support for Acrobat. It sends "\n\n".
-        if (bytes[i] == '\n' && bytes[i+1] == '\n') {
-            return i+2;
-        }
-        
-        // Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
-        if (bytes[i] == '\r' && bytes[i+1] == '\n') {
-            i += 2;
-            if (i == 2) {
-                return i;
-            } else if (bytes[i] == '\n') {
-                // Support for Director. It sends "\r\n\n" (3880387).
-                return i+1;
-            } else if (bytes[i] == '\r' && bytes[i+1] == '\n') {
-                // Support for Flash. It sends "\r\n\r\n" (3758113).
-                return i+2;
-            }
-        }
-    }
-    return NSNotFound;
-}
-
-@end
 #endif

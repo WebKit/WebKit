@@ -392,4 +392,39 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
     return headerFields;
 }
 
+- (BOOL)_web_startsWithBlankLine
+{
+    return [self length] > 0 && ((const char *)[self bytes])[0] == '\n';
+}
+
+- (NSInteger)_web_locationAfterFirstBlankLine
+{
+    const char *bytes = (const char *)[self bytes];
+    unsigned length = [self length];
+    
+    unsigned i;
+    for (i = 0; i < length - 4; i++) {
+        
+        //  Support for Acrobat. It sends "\n\n".
+        if (bytes[i] == '\n' && bytes[i+1] == '\n') {
+            return i+2;
+        }
+        
+        // Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
+        if (bytes[i] == '\r' && bytes[i+1] == '\n') {
+            i += 2;
+            if (i == 2) {
+                return i;
+            } else if (bytes[i] == '\n') {
+                // Support for Director. It sends "\r\n\n" (3880387).
+                return i+1;
+            } else if (bytes[i] == '\r' && bytes[i+1] == '\n') {
+                // Support for Flash. It sends "\r\n\r\n" (3758113).
+                return i+2;
+            }
+        }
+    }
+    return NSNotFound;
+}
+
 @end
