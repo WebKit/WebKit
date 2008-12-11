@@ -1,3 +1,10 @@
+2008-12-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build with an empty filenameExtension() implementation.
+
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::filenameExtension):
+
 2008-12-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

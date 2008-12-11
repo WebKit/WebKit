@@ -29,6 +29,7 @@
 #include "config.h"
 #include "ImageSource.h"
 #include "ImageDecoderQt.h"
+#include "NotImplemented.h"
 #include "SharedBuffer.h"
 
 #include <QBuffer>
@@ -84,6 +85,12 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
         return;
 
     m_decoder->setData(data->buffer(), allDataReceived);
+}
+
+String ImageSource::filenameExtension() const
+{
+    notImplemented();
+    return String();
 }
 
 bool ImageSource::isSizeAvailable()
