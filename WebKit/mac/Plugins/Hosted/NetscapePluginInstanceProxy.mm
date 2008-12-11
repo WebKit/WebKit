@@ -32,6 +32,7 @@
 #import "WebDataSourceInternal.h"
 #import "WebFrameInternal.h"
 #import "WebHostedNetscapePluginView.h"
+#import "WebNSDataExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitPluginHost.h"
@@ -44,7 +45,9 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
+#import <utility>
 
+using namespace std;
 using namespace WebCore;
 
 namespace WebKit {
@@ -95,12 +98,17 @@ void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect)
     _WKPHResizePluginInstance(m_pluginHostProxy->port(), m_pluginID, size.origin.x, size.origin.y, size.size.width, size.size.height);
 }
 
-void NetscapePluginInstanceProxy::destroy()
+void NetscapePluginInstanceProxy::stopAllStreams()
 {
     Vector<RefPtr<HostedNetscapePluginStream> > streamsCopy;
     copyValuesToVector(m_streams, streamsCopy);
     for (size_t i = 0; i < streamsCopy.size(); i++)
         streamsCopy[i]->stop();
+}
+
+void NetscapePluginInstanceProxy::destroy()
+{
+    stopAllStreams();
     
     _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID);
     
@@ -120,6 +128,8 @@ void NetscapePluginInstanceProxy::disconnectStream(HostedNetscapePluginStream* s
     
 void NetscapePluginInstanceProxy::pluginHostDied()
 {
+    stopAllStreams();
+
     m_pluginHostProxy = 0;
     
     [m_pluginView pluginHostDied];
@@ -193,11 +203,73 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
     if (!url)
         return NPERR_INVALID_PARAM;
  
-    // FIXME: Support posts.
-    if (post)
-        return NPERR_INVALID_PARAM;
-    
     NSMutableURLRequest *request = [m_pluginView requestWithURLCString:url];
+
+    if (post) {
+        NSData *httpBody = nil;
+
+        if (postDataIsFile) {
+            // If we're posting a file, buf is either a file URL or a path to the file.
+            RetainPtr<CFStringRef> bufString(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, postData, kCFStringEncodingWindowsLatin1));
+            if (!bufString)
+                return NPERR_INVALID_PARAM;
+            
+            NSURL *fileURL = [NSURL _web_URLWithDataAsString:(NSString *)bufString.get()];
+            NSString *path;
+            if ([fileURL isFileURL])
+                path = [fileURL path];
+            else
+                path = (NSString *)bufString.get();
+            httpBody = [NSData dataWithContentsOfFile:[path _webkit_fixedCarbonPOSIXPath]];
+            if (!httpBody)
+                return NPERR_FILE_NOT_FOUND;
+        } else
+            httpBody = [NSData dataWithBytes:postData length:postLen];
+
+        if (![httpBody length])
+            return NPERR_INVALID_PARAM;
+
+        [request setHTTPMethod:@"POST"];
+        
+        // As documented, only allow headers to be specified via NPP_PostURL when using a file.
+        bool allowHeaders = postDataIsFile;
+
+        if (allowHeaders) {
+            if ([httpBody _web_startsWithBlankLine])
+                httpBody = [httpBody subdataWithRange:NSMakeRange(1, [httpBody length] - 1)];
+            else {
+                NSInteger location = [httpBody _web_locationAfterFirstBlankLine];
+                if (location != NSNotFound) {
+                    // If the blank line is somewhere in the middle of postData, everything before is the header.
+                    NSData *headerData = [httpBody subdataWithRange:NSMakeRange(0, location)];
+                    NSMutableDictionary *header = [headerData _webkit_parseRFC822HeaderFields];
+                    unsigned dataLength = [httpBody length] - location;
+
+                    // Sometimes plugins like to set Content-Length themselves when they post,
+                    // but CFNetwork does not like that. So we will remove the header
+                    // and instead truncate the data to the requested length.
+                    NSString *contentLength = [header objectForKey:@"Content-Length"];
+
+                    if (contentLength)
+                        dataLength = min(static_cast<unsigned>([contentLength intValue]), dataLength);
+                    [header removeObjectForKey:@"Content-Length"];
+
+                    if ([header count] > 0)
+                        [request setAllHTTPHeaderFields:header];
+
+                    // Everything after the blank line is the actual content of the POST.
+                    httpBody = [httpBody subdataWithRange:NSMakeRange(location, dataLength)];
+                }
+            }
+        }
+
+        if (![httpBody length])
+            return NPERR_INVALID_PARAM;
+
+        // Plug-ins expect to receive uncached data when doing a POST (3347134).
+        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+        [request setHTTPBody:httpBody];
+    }
     
     return loadRequest(request, target, currentEventIsUserGesture, streamID);
 }

@@ -76,14 +76,16 @@ public:
     NPError loadURL(const char* url, const char* target, bool post, const char* postData, uint32_t postDataLength, bool postDataIsFile, bool currentEventIsUserGesture, uint32_t& requestID);
     
 private:
+    NetscapePluginInstanceProxy(NetscapePluginHostProxy*, WebHostedNetscapePluginView *, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer);
+
     NPError loadRequest(NSURLRequest *, const char* cTarget, bool currentEventIsUserGesture, uint32_t& streamID);
     
     class PluginRequest;
     void performRequest(PluginRequest*);
     void evaluateJavaScript(PluginRequest*);
     
-    NetscapePluginInstanceProxy(NetscapePluginHostProxy*, WebHostedNetscapePluginView *, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer);
-
+    void stopAllStreams();
+    
     NetscapePluginHostProxy* m_pluginHostProxy;
     WebHostedNetscapePluginView *m_pluginView;
 

@@ -2,6 +2,28 @@
 
         Reviewed by Darin Adler.
 
+        Implement support for NPN_PostURL/NPN_PostURLNotify in WebKit.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        Add stopAllStreams.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::stopAllStreams):
+        Factored out this from ::destroy.
+        
+        (WebKit::NetscapePluginInstanceProxy::destroy):
+        Call stopAllStreams().
+        
+        (WebKit::NetscapePluginInstanceProxy::pluginHostDied):
+        Ditto.
+        
+        (WebKit::NetscapePluginInstanceProxy::loadURL):
+        Handle post being true. This code has been copied from WebNetscapePluginView.mm (for now).
+
+2008-12-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
         Move two NSData category methods to WebNSDataExtras.m.
         
         * Misc/WebNSDataExtras.h:
