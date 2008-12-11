@@ -1,3 +1,16 @@
+2008-12-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed and implemented with Tor Arne Vestbø.
+
+        Reimplement RenderTheme::caretBlinkInterval for Qt.
+
+        The QApplication::cursorFlashTime is in milliseconds and describes
+        the whole cycle while WebCore expects half a cycle.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::caretBlinkInterval):
+        * platform/qt/RenderThemeQt.h:
+
 2008-12-09  Trenton Schulz <trenton.schulz@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

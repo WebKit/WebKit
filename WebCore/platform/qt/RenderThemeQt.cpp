@@ -942,6 +942,11 @@ void RenderThemeQt::adjustSliderThumbSize(RenderObject* o) const
     }
 }
 
+double RenderThemeQt::caretBlinkInterval() const
+{
+    return  QApplication::cursorFlashTime() / 1000.0 / 2.0;
+}
+
 }
 
 // vim: ts=4 sw=4 et
