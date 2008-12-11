@@ -3789,10 +3789,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\Font.cpp"
-				>
-				<File
 					RelativePath="..\platform\graphics\FontFastPath.cpp"
+				>
+                </File>
+				<File
+					RelativePath="..\platform\graphics\Font.cpp"
 				>
 					<FileConfiguration
 						Name="Debug|Win32"
