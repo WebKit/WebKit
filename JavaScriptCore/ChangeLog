@@ -1,3 +1,15 @@
+2008-12-11  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler and landed by Holger Freyther.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22648>
+        Fix threading on Qt-port and Gtk-port for Sampling tool.
+
+        * wtf/ThreadingGtk.cpp:
+        (WTF::waitForThreadCompletion):
+        * wtf/ThreadingQt.cpp:
+        (WTF::waitForThreadCompletion):
+
 2008-12-10  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.

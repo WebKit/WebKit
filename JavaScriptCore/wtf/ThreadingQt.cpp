@@ -168,7 +168,8 @@ int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
     bool res = thread->wait();
 
     clearThreadForIdentifier(threadID);
-    *result = static_cast<ThreadPrivate*>(thread)->getReturnValue();
+    if (result)
+        *result = static_cast<ThreadPrivate*>(thread)->getReturnValue();
 
     return !res;
 }

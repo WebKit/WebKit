@@ -140,7 +140,9 @@ int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
 
     GThread* thread = threadForIdentifier(threadID);
 
-    *result = g_thread_join(thread);
+    void* joinResult = g_thread_join(thread);
+    if (result)
+        *result = joinResult;
 
     clearThreadForIdentifier(threadID);
     return 0;
