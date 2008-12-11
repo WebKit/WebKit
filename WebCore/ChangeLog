@@ -1,3 +1,20 @@
+2008-12-11  Robert Carr  <racarr@svn.gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22560
+
+        Code in PlatformScreenGtk for screenDepth and screenRect can not
+        assume that the platformWindow for the widget has a valid "window"
+        member. For example in the case of, a new browser view opening as a
+        child of a GtkNotebook, but never being switched to, or manually
+        realized. Solve by using the toplevel window of the widget, rather
+        than the widget itself.
+
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenRect):
+
 2008-12-08  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Darin Adler and Holger Freyther.

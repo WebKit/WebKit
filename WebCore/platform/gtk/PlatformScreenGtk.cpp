@@ -47,10 +47,20 @@ namespace WebCore {
 int screenDepth(Widget* widget)
 {
     GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformWindow());
+
     if (!container)
         return 24;
 
-    GdkVisual* visual = gdk_drawable_get_visual(GDK_DRAWABLE(GTK_WIDGET(widget->root()->hostWindow()->platformWindow())->window));
+    if (!GTK_WIDGET_REALIZED(container)) {
+        GtkWidget* toplevel = gtk_widget_get_toplevel(container);
+        if (GTK_WIDGET_TOPLEVEL(toplevel))
+            container = toplevel;
+        else
+            return 24;
+    }
+
+
+    GdkVisual* visual = gdk_drawable_get_visual(GDK_DRAWABLE(container->window));
     return visual->depth;
 }
 
@@ -75,8 +85,8 @@ bool screenIsMonochrome(Widget* widget)
 
 FloatRect screenRect(Widget* widget)
 {
-    GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformWindow());
-    if (!container)
+    GtkWidget* container = gtk_widget_get_toplevel(GTK_WIDGET(widget->root()->hostWindow()->platformWindow()));
+    if (!GTK_WIDGET_TOPLEVEL(container))
         return FloatRect();
 
     GdkScreen* screen = gtk_widget_has_screen(container) ? gtk_widget_get_screen(container) : gdk_screen_get_default();
