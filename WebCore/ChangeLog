@@ -1,3 +1,13 @@
+2008-12-09  Trenton Schulz <trenton.schulz@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt/Mac] Don't call HIGetScaleFactor() if we're not on Tiger or better
+
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::tigerOrBetter):
+        (WebCore::PluginView::globalMousePosForPlugin):
+
 2008-12-10  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Eric Seidel and George Staikos.

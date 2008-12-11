@@ -613,6 +613,18 @@ static int modifiersForEvent(UIEventWithKeyState* event)
      return modifiers;
 }
 
+static bool tigerOrBetter()
+{
+    static SInt32 systemVersion = 0;
+
+    if (!systemVersion) {
+        if (Gestalt(gestaltSystemVersion, &systemVersion) != noErr)
+            return false;
+    }
+
+    return systemVersion >= 0x1040;
+}
+
 Point PluginView::globalMousePosForPlugin() const
 {
     Point pos;
@@ -622,8 +634,10 @@ Point PluginView::globalMousePosForPlugin() const
     pos.h -= offset.x();
     pos.v -= offset.y();
 
-    pos.h = static_cast<short>(pos.h * HIGetScaleFactor());
-    pos.v = static_cast<short>(pos.v * HIGetScaleFactor());
+    float scaleFactor = tigerOrBetter() ? HIGetScaleFactor() : 1;
+
+    pos.h = short(pos.h * scaleFactor);
+    pos.v = short(pos.v * scaleFactor);
 
     return pos;
 }
