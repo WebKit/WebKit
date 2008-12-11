@@ -105,7 +105,7 @@ public:
     // Whether or not a scroll view will blit visible contents when it is scrolled.  Blitting is disabled in situations
     // where it would cause rendering glitches (such as with fixed backgrounds or when the view is partially transparent).
     void setCanBlitOnScroll(bool);
-    bool canBlitOnScroll() const { return m_canBlitOnScroll; }
+    bool canBlitOnScroll() const;
 
     // The visible content rect has a location that is the scrolled offset of the document. The width and height are the viewport width
     // and height.  By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them to be
@@ -232,7 +232,11 @@ private:
     bool m_prohibitsScrolling;
 
     HashSet<Widget*> m_children;
+
+    // This bool is unused on Mac OS because we directly ask the platform widget
+    // whether it is safe to blit on scroll.
     bool m_canBlitOnScroll;
+
     IntSize m_scrollOffset; // FIXME: Would rather store this as a position, but we will wait to make this change until more code is shared.
     IntSize m_contentsSize;
 
@@ -256,7 +260,8 @@ private:
     void platformRemoveChild(Widget*);
     void platformSetScrollbarModes();
     void platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode& vertical) const;
-    void platformSetCanBlitOnScroll();
+    void platformSetCanBlitOnScroll(bool);
+    bool platformCanBlitOnScroll() const;
     IntRect platformVisibleContentRect(bool includeScrollbars) const;
     IntSize platformContentsSize() const;
     void platformSetContentsSize();

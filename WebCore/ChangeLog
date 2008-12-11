@@ -1,3 +1,34 @@
+2008-12-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Bug 21256: REGRESSION (r36906): horizontally repeating image leaves ghosts when vertical scrolling
+        <https://bugs.webkit.org/show_bug.cgi?id=21256>
+        <rdar://problem/6362978>
+
+        The ScrollView refactoring in r36906 caused the ScrollView and the
+        platform widget to disagree about whether optimizing scrolling via
+        blitting is allowed. The easiest way to fix this is to make ScrollView
+        simply ask the platform widget whether this is safe on platforms that
+        are affected.
+
+        It is not possible to write a layout test for this bug because it
+        involves the back/forward cache.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::setCanBlitOnScroll):
+        (WebCore::ScrollView::canBlitOnScroll):
+        (WebCore::ScrollView::platformSetCanBlitOnScroll):
+        (WebCore::ScrollView::platformCanBlitOnScroll):
+        * platform/ScrollView.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformSetCanBlitOnScroll):
+        (WebCore::ScrollView::platformCanBlitOnScroll):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformSetCanBlitOnScroll):
+        (WebCore::ScrollView::platformCanBlitOnScroll):
+
 2008-12-11  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adam Roben.
