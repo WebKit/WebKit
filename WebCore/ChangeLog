@@ -1,3 +1,23 @@
+2008-12-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20953
+
+        Split out the font fast path from Fast.cpp into FontFastPath.cpp. This
+        will allow the Qt port to share most of WebCore::Font
+        implementation but the fast path. Qt does not provide the API to get
+        individual Glyphs making the fast path hard to support.
+
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * platform/graphics/Font.cpp:
+        * platform/graphics/FontFastPath.cpp: Added.
+        (WebCore::Font::glyphDataForCharacter):
+
 2008-12-11  Robert Carr  <racarr@svn.gnome.org>
 
         Reviewed by Holger Freyther.
