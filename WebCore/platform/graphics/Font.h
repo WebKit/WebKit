@@ -3,6 +3,7 @@
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003, 2006, 2007 Apple Computer, Inc.
+ * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,8 +30,7 @@
 #include <wtf/HashMap.h>
 
 #if PLATFORM(QT)
-#include <QtGui/qfont.h>
-#include <QtGui/qfontmetrics.h>
+#include <QFont>
 #endif
 
 namespace WebCore {
@@ -54,9 +54,8 @@ class Font {
 public:
     Font();
     Font(const FontDescription&, short letterSpacing, short wordSpacing);
-#if !PLATFORM(QT)
-    Font(const FontPlatformData&, bool isPrinting); // This constructor is only used if the platform wants to start with a native font.
-#endif
+    // This constructor is only used if the platform wants to start with a native font.
+    Font(const FontPlatformData&, bool isPrinting);
     ~Font();
 
     Font(const Font&);
@@ -87,13 +86,8 @@ public:
 
     short wordSpacing() const { return m_wordSpacing; }
     short letterSpacing() const { return m_letterSpacing; }
-#if !PLATFORM(QT)
     void setWordSpacing(short s) { m_wordSpacing = s; }
     void setLetterSpacing(short s) { m_letterSpacing = s; }
-#else
-    void setWordSpacing(short s);
-    void setLetterSpacing(short s);
-#endif
     bool isFixedPitch() const;
     bool isPrinterFont() const { return m_fontDescription.usePrinterFont(); }
     
@@ -105,14 +99,7 @@ public:
     bool italic() const { return m_fontDescription.italic(); }
     FontWeight weight() const { return m_fontDescription.weight(); }
 
-#if !PLATFORM(QT)
     bool isPlatformFont() const { return m_isPlatformFont; }
-#endif
-
-#if PLATFORM(QT)
-    inline const QFont &font() const { return m_font; }
-    inline const QFont &scFont() const { return m_scFont; }
-#endif
 
     // Metrics that we query the FontFallbackList for.
     int ascent() const;
@@ -125,7 +112,6 @@ public:
     int spaceWidth() const;
     int tabWidth() const { return 8 * spaceWidth(); }
 
-#if !PLATFORM(QT)
     const SimpleFontData* primaryFont() const {
         if (!m_cachedPrimaryFont)
             cachePrimaryFont();
@@ -136,6 +122,9 @@ public:
     const GlyphData& glyphDataForCharacter(UChar32, bool mirror, bool forceSmallCaps = false) const;
     // Used for complex text, and does not utilize the glyph map cache.
     const FontData* fontDataForCharacters(const UChar*, int length) const;
+
+#if PLATFORM(QT)
+    QFont font() const;
 #endif
 
 private:
@@ -166,9 +155,6 @@ private:
     friend struct WidthIterator;
 
 public:
-#if PLATFORM(QT)
-    FontSelector* fontSelector() const { return 0; }
-#else
     // Useful for debugging the different font rendering code paths.
 #if USE(FONT_FAST_PATH)
     enum CodePath { Auto, Simple, Complex };
@@ -184,7 +170,6 @@ public:
 #endif
 
     FontSelector* fontSelector() const;
-#endif
     static bool treatAsSpace(UChar c) { return c == ' ' || c == '\t' || c == '\n' || c == 0x00A0; }
     static bool treatAsZeroWidthSpace(UChar c) { return c < 0x20 || (c >= 0x7F && c < 0xA0) || c == 0x200e || c == 0x200f || (c >= 0x202a && c <= 0x202e) || c == 0xFFFC; }
 
@@ -195,21 +180,13 @@ public:
 
 private:
     FontDescription m_fontDescription;
-#if !PLATFORM(QT)
     mutable RefPtr<FontFallbackList> m_fontList;
     mutable HashMap<int, GlyphPageTreeNode*> m_pages;
     mutable GlyphPageTreeNode* m_pageZero;
     mutable const SimpleFontData* m_cachedPrimaryFont;
-#endif
     short m_letterSpacing;
     short m_wordSpacing;
-#if !PLATFORM(QT)
     bool m_isPlatformFont;
-#else
-    QFont m_font;
-    QFont m_scFont;
-    int m_spaceWidth;
-#endif
 };
 
 }

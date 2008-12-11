@@ -33,7 +33,8 @@ class FontPlatformData;
 struct FontCustomPlatformData : Noncopyable {
     ~FontCustomPlatformData();
 
-    int handle; // for use with QFontDatabase::addApplicationFont/removeApplicationFont
+    // for use with QFontDatabase::addApplicationFont/removeApplicationFont
+    int m_handle;
 
     FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);
 };

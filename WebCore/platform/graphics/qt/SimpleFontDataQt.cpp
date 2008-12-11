@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008 Holger Hans Peter Freyther
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -19,37 +20,47 @@
     This class provides all functionality needed for loading images, style sheets and html
     pages from the web. It has a memory cache for these objects.
 */
+
 #include "config.h"
 #include "SimpleFontData.h"
 
-#include "SVGFontData.h"
+#include <QFontMetrics>
 
 namespace WebCore {
 
-SimpleFontData::SimpleFontData(const FontPlatformData& font, bool customFont, bool loading, SVGFontData*)
-    : m_font(font)
-    , m_isCustomFont(customFont)
-    , m_isLoading(loading)
+void SimpleFontData::determinePitch()
 {
+    m_treatAsFixedPitch = m_font.font().fixedPitch();
 }
 
-SimpleFontData::~SimpleFontData()
-{
-}
-
-bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
+bool SimpleFontData::containsCharacters(unsigned short const*, int) const
 {
     return true;
 }
 
-const SimpleFontData* SimpleFontData::fontDataForCharacter(UChar32) const
+void SimpleFontData::platformInit()
 {
-    return this;
+    QFontMetrics fm(m_font.font());
+
+    m_ascent = fm.ascent();
+    m_descent = fm.descent();
+    m_lineSpacing = fm.lineSpacing();
+    m_xHeight = fm.xHeight();
+    m_spaceWidth = fm.width(' ');
+    m_lineGap = fm.leading();
 }
 
-bool SimpleFontData::isSegmented() const
+void SimpleFontData::platformGlyphInit()
 {
-    return false;
+    m_spaceGlyph = 0;
+    m_adjustedSpaceWidth = m_spaceWidth;
+    determinePitch();
+    m_missingGlyphData.fontData = this;
+    m_missingGlyphData.glyph = 0;
+}
+
+void SimpleFontData::platformDestroy()
+{
 }
 
 }

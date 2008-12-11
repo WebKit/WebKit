@@ -6,6 +6,7 @@
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  *               2006 Dirk Mueller <mueller@kde.org>
  *               2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * All rights reserved.
  *
@@ -45,7 +46,9 @@
 #include <QStyleOptionFrameV2>
 
 #include "Color.h"
+#include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
+#include "FontSelector.h"
 #include "Document.h"
 #include "Page.h"
 #include "Font.h"
@@ -398,6 +401,7 @@ void RenderThemeQt::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
     fontFamily.setFamily(m_buttonFontFamily);
     fontDescription.setFamily(fontFamily);
     style->setFontDescription(fontDescription);
+    style->font().update(selector->fontSelector());
     style->setLineHeight(RenderStyle::initialLineHeight());
 
     setButtonSize(style);

@@ -77,7 +77,7 @@ win32-g++ {
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 !contains(DEFINES, ENABLE_WML=.): DEFINES += ENABLE_WML=0
 !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
-#!contains(DEFINES, ENABLE_SVG_FONTS=.): DEFINES += ENABLE_SVG_FONTS=1
+!contains(DEFINES, ENABLE_SVG_FONTS=.): DEFINES += ENABLE_SVG_FONTS=1
 !contains(DEFINES, ENABLE_SVG_FILTERS=.): DEFINES += ENABLE_SVG_FILTERS=1
 !contains(DEFINES, ENABLE_SVG_FOREIGN_OBJECT=.): DEFINES += ENABLE_SVG_FOREIGN_OBJECT=1
 !contains(DEFINES, ENABLE_SVG_ANIMATION=.): DEFINES += ENABLE_SVG_ANIMATION=1
@@ -836,6 +836,7 @@ SOURCES += \
     platform/graphics/FloatRect.cpp \
     platform/graphics/FloatSize.cpp \
     platform/graphics/FontData.cpp \
+    platform/graphics/Font.cpp \
     platform/graphics/GeneratedImage.cpp \
     platform/graphics/Gradient.cpp \
     platform/graphics/GraphicsContext.cpp \
@@ -847,6 +848,7 @@ SOURCES += \
     platform/graphics/Pattern.cpp \
     platform/graphics/Pen.cpp \
     platform/graphics/SegmentedFontData.cpp \
+    platform/graphics/SimpleFontData.cpp \
     platform/KURL.cpp \
     platform/Length.cpp \
     platform/LinkHash.cpp \
@@ -1038,6 +1040,9 @@ SOURCES += \
     page/qt/FrameQt.cpp \
     platform/graphics/qt/AffineTransformQt.cpp \
     platform/graphics/qt/ColorQt.cpp \
+    platform/graphics/qt/FontQt.cpp \
+    platform/graphics/qt/FontQt43.cpp \
+    platform/graphics/qt/FontPlatformDataQt.cpp \
     platform/graphics/qt/FloatPointQt.cpp \
     platform/graphics/qt/FloatRectQt.cpp \
     platform/graphics/qt/GradientQt.cpp \
@@ -1070,7 +1075,7 @@ SOURCES += \
     platform/qt/SharedBufferQt.cpp \
     platform/graphics/qt/FontCacheQt.cpp \
     platform/graphics/qt/FontCustomPlatformData.cpp \
-    platform/graphics/qt/FontQt.cpp \
+    platform/graphics/qt/FontFallbackListQt.cpp \
     platform/graphics/qt/GlyphPageTreeNodeQt.cpp \
     platform/graphics/qt/SimpleFontDataQt.cpp \
     platform/qt/KURLQt.cpp \
@@ -1487,6 +1492,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGGElement.idl \
         svg/SVGGlyphElement.idl \
         svg/SVGGradientElement.idl \
+        svg/SVGHKernElement.idl \
         svg/SVGImageElement.idl \
         svg/SVGLength.idl \
         svg/SVGLengthList.idl \
@@ -1635,6 +1641,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGGElement.cpp \
         svg/SVGGlyphElement.cpp \
         svg/SVGGradientElement.cpp \
+        svg/SVGHKernElement.cpp \
         svg/SVGImageElement.cpp \
         svg/SVGLangSpace.cpp \
         svg/SVGLength.cpp \

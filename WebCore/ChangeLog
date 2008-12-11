@@ -4,6 +4,83 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=20953
 
+        Make the Qt port follow the Win, Mac, Gtk+ port in regard to Font
+        handling. FontQt.cpp from now on is only implementing the complex path. Create
+        FontFallbackListQt.cpp and FontPlatformDataQt.cpp to work within
+        the framework set by the Font code.
+
+        Sharing the Font.cpp implementation allows the Qt port to support
+        the CSS font faces and SVG fonts.
+
+        Split out the Qt4.3 Font handling into FonQt43.cpp to allow to more
+        easily deprecate it.
+
+        This commit is removing a lot of #ifdefs from Font.h as the Qt Font
+        implementation is now in line with the rest of WebCore.
+
+        * WebCore.pro:
+        * platform/graphics/Font.h: Remove #ifdefs
+        (WebCore::Font::letterSpacing):
+        (WebCore::Font::setLetterSpacing):
+        (WebCore::Font::isPlatformFont):
+        * platform/graphics/FontFallbackList.h:
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+        (WebCore::SimpleFontData::platformGlyphInit): There is no GlyphCache
+        on Qt, move the initialisation over.
+        (WebCore::SimpleFontData::~SimpleFontData):
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::getQtFont):
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::getCachedFontPlatformData): Remove unused parameter
+        (WebCore::FontCache::releaseFontData): Add to build
+        * platform/graphics/qt/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/qt/FontCustomPlatformData.h:
+        * platform/graphics/qt/FontFallbackListQt.cpp: Added.
+        (WebCore::FontFallbackList::FontFallbackList):
+        (WebCore::FontFallbackList::invalidate):
+        (WebCore::FontFallbackList::releaseFontData):
+        (WebCore::FontFallbackList::determinePitch):
+        (WebCore::FontFallbackList::fontDataAt):
+        (WebCore::FontFallbackList::fontDataForCharacters):
+        (WebCore::FontFallbackList::setPlatformFont):
+        * platform/graphics/qt/FontPlatformData.h:
+        (WebCore::FontPlatformData::font):
+        (WebCore::FontPlatformData::size):
+        * platform/graphics/qt/FontPlatformDataQt.cpp: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::font):
+        * platform/graphics/qt/FontQt43.cpp: Added. Moved Qt4.3 code from FontQt.cpp
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        * platform/graphics/qt/GlyphPageTreeNodeQt.cpp:
+        (WebCore::GlyphPageTreeNode::pruneTreeCustomFontData):
+        (WebCore::GlyphPageTreeNode::pruneTreeFontData):
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformGlyphInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustButtonStyle): Avoid crashes.
+
+2008-12-11  Holger Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20953
+
         For Qt it is not pratical to have a FontCache and GlyphPageTreeNode
         implementation. This is one of the reasons why the Qt port is currently not
         using WebCore/platform/graphics/Font.cpp. By allowing to not use

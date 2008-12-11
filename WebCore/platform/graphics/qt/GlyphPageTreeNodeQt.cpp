@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008 Holger Hans Peter Freyther
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -24,7 +25,11 @@
 
 namespace WebCore {
 
-void GlyphPageTreeNode::pruneTreeCustomFontData(const FontData* fontData)
+void GlyphPageTreeNode::pruneTreeCustomFontData(const FontData*)
+{
+}
+
+void GlyphPageTreeNode::pruneTreeFontData(const WebCore::SimpleFontData*)
 {
 }
 

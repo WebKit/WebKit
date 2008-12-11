@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008 Holger Hans Peter Freyther
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -22,14 +23,29 @@
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
+#include "FontDescription.h"
+
+#include <QFont>
+
 namespace WebCore {
 
 class FontPlatformData
 {
 public:
-    // this is only used for custom loaded fonts and represents the id handle passed to
-    // QFontDatabase::addApplicationFont/removeApplicationFont
-    int handle;
+#if ENABLE(SVG_FONTS)
+    FontPlatformData(float size, bool bold, bool oblique);
+#endif
+    FontPlatformData();
+    FontPlatformData(const FontDescription&, int wordSpacing = 0, int letterSpacing = 0);
+    FontPlatformData(const QFont&, bool bold);
+
+    QFont font() const { return m_font; }
+    float size() const { return m_size; }
+
+    float m_size;
+    bool m_bold;
+    bool m_oblique;
+    QFont m_font;
 };
 
 } // namespace WebCore
