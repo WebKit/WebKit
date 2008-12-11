@@ -978,6 +978,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [webView _clearMainFrameName];
 
     WebPreferences *preferences = [webView preferences];
+    [preferences resetToDefaults];
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setJavaScriptCanOpenWindowsAutomatically:YES];

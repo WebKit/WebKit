@@ -1095,6 +1095,25 @@ static NSString *classIBCreatorID = nil;
 {
     return [self _boolValueForKey:WebKitEnableFullDocumentTeardownPreferenceKey];
 }
+
+- (void)resetToDefaults
+{
+    if (![self _boolValueForKey:WebKitDefaultPreferencesOverridden])
+        return;
+    [self init];
+
+    [self _setBoolValue:false forKey:WebKitDefaultPreferencesOverridden];
+    [self _postPreferencesChangesNotification];
+}
+
+- (void)overridePreference:(NSString *)key flag:(NSString *)preferenceFlag
+{
+    [self _setStringValue:preferenceFlag forKey:key];
+    [self _setBoolValue:true forKey:WebKitDefaultPreferencesOverridden];
+}
+
+
+
 @end
 
 @implementation WebPreferences (WebInternal)

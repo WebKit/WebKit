@@ -73,6 +73,7 @@ public:
     void setUserStyleSheetLocation(JSStringRef path);
     void setPersistentUserStyleSheetLocation(JSStringRef path);
     void clearPersistentUserStyleSheet();
+    void overridePreference(JSStringRef key, JSStringRef flag);
     int windowCount();
     
     bool elementDoesAutoCompleteForElementWithId(JSStringRef id);

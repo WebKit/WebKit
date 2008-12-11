@@ -656,6 +656,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
 
         COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
         if (prefsPrivate) {
+            prefsPrivate->resetToDefaults();
             prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
             prefsPrivate->setDeveloperExtrasEnabled(FALSE);
         }

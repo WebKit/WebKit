@@ -1,3 +1,17 @@
+2008-12-10  Glenn Wilson  <gwilson@google.com>
+
+        Reviewed by Adam Roben.
+
+        Added new methods for overriding default WebPreference values
+        and for resetting preferences to their defaults.
+        https://bugs.webkit.org/show_bug.cgi?id=20534
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences resetToDefaults]): new method
+        (-[WebPreferences overridePreference:flag:]): new method
+        * WebView/WebPreferencesPrivate.h: new method signatures
+
 2008-12-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

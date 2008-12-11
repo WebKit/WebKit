@@ -1,6 +1,22 @@
+2008-12-10  Glenn Wilson  <gwilson@google.com>
+
+        Reviewed by Adam Roben.
+
+        Changed LayoutTestController and DumpRenderTree to allow for manual
+        overriding of default preferences at test time.  Also added support for
+        resetting the preferences after each test.
+        https://bugs.webkit.org/show_bug.cgi?id=20534
+
+        * DumpRenderTree/LayoutTestController.cpp: Added callback method for overriding preferences
+        * DumpRenderTree/LayoutTestController.h: Added signature for callback
+        * DumpRenderTree/win/DumpRenderTree.cpp: Added calls to reset preferences after each test if necessary
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: Added JS override function
+        * DumpRenderTree/mac/DumpRenderTree.mm: Added calls to reset preferences after each test if necessary
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Added JS override function
+
 2008-12-10  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by Darin
+        Reviewed by Darin Adler.
         
         Implement the new policy delegate (including navigation type and permissive mode) for DRT/win 
 

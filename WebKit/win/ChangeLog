@@ -1,3 +1,18 @@
+2008-12-10  Glenn Wilson  <gwilson@google.com>
+
+        Reviewed by Adam Roben.
+
+        Added support for overriding default preferences per-test.
+        https://bugs.webkit.org/show_bug.cgi?id=20534
+        Two new methods were added: resetToDefaults and overridePreference.
+
+        * Interfaces/IWebPreferencesPrivate.idl: new method signatures
+        * WebPreferenceKeysPrivate.h: added new key for internal state
+        * WebPreferences.cpp: added new methods
+        (WebPreferences::overridePreference): new method
+        (WebPreferences::resetToDefaults): new method
+        * WebPreferences.h: new method signatures
+
 2008-12-08  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Darin Adler and Holger Freyther.
