@@ -76,7 +76,7 @@ ScrollbarGtk::~ScrollbarGtk()
     g_object_unref(G_OBJECT(platformWidget()));
 }
 
-void ScrollbarGtk::frameRectsChanged() const
+void ScrollbarGtk::frameRectsChanged()
 {
     if (!parent() || !parent()->isScrollViewScrollbar(this))
         return;
@@ -112,23 +112,6 @@ void ScrollbarGtk::setFrameRect(const IntRect& rect)
 {
     Widget::setFrameRect(rect);
     frameRectsChanged();
-}
-
-void ScrollbarGtk::frameRectsChanged()
-{
-    if (!parent())
-        return;
-
-    ASSERT(parent()->isFrameView());
-
-    FrameView* frameView = static_cast<FrameView*>(parent());
-    IntRect windowRect = IntRect(frameView->contentsToWindow(frameRect().location()), frameRect().size());
-
-    IntSize sz = frameRect().size();
-    sz.clampNegativeToZero();
-
-    GtkAllocation allocation = { windowRect.x(), windowRect.y(), sz.width(), sz.height() };
-    gtk_widget_size_allocate(platformWidget(), &allocation);
 }
 
 void ScrollbarGtk::gtkValueChanged(GtkAdjustment*, ScrollbarGtk* that)

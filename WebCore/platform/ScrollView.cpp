@@ -589,7 +589,7 @@ void ScrollView::setFrameRect(const IntRect& newRect)
     frameRectsChanged();
 }
 
-void ScrollView::frameRectsChanged() const
+void ScrollView::frameRectsChanged()
 {
     if (platformWidget())
         return;

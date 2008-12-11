@@ -1,3 +1,16 @@
+2008-12-08  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Darin Adler and Holger Freyther.
+
+        Make Widget::frameRectsChanged() and overrides non-const
+
+        This will hopefully allow us to get rid of some of the mutables in
+        the classes that react to the callback by changing their own state.
+
+        * WebCoreSupport/EmbeddedWidget.cpp:
+        (EmbeddedWidget::frameRectsChanged):
+        * WebCoreSupport/EmbeddedWidget.h:
+
 2008-12-09  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Dave Hyatt.

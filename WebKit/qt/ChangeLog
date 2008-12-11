@@ -1,3 +1,15 @@
+2008-12-08  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Darin Adler and Holger Freyther.
+
+        Make Widget::frameRectsChanged() and overrides non-const
+
+        This will hopefully allow us to get rid of some of the mutables in
+        the classes that react to the callback by changing their own state.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::):
+
 2008-12-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

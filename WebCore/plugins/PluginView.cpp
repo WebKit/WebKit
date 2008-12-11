@@ -132,7 +132,7 @@ void PluginView::setFrameRect(const IntRect& rect)
 #endif
 }
 
-void PluginView::frameRectsChanged() const
+void PluginView::frameRectsChanged()
 {
     updatePluginWidget();
 }

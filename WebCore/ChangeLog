@@ -1,3 +1,26 @@
+2008-12-08  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Darin Adler and Holger Freyther.
+
+        Make Widget::frameRectsChanged() and overrides non-const
+
+        This will hopefully allow us to get rid of some of the mutables in
+        the classes that react to the callback by changing their own state.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::frameRectsChanged):
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        (WebCore::Widget::frameRectsChanged):
+        * platform/gtk/ScrollbarGtk.cpp: Remove non-const version since
+        this was more complex and did the same thing, changed const of
+        the leftover frameRectsChanged() method.
+        (ScrollbarGtk::frameRectsChanged):
+        * platform/gtk/ScrollbarGtk.h:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::frameRectsChanged):
+        * plugins/PluginView.h:
+
 2008-12-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed and implemented with Tor Arne Vestbø.

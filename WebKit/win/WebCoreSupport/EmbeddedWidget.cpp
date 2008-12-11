@@ -84,7 +84,7 @@ void EmbeddedWidget::setFrameRect(const IntRect& rect)
     frameRectsChanged();
 }
 
-void EmbeddedWidget::frameRectsChanged() const
+void EmbeddedWidget::frameRectsChanged()
 {
     if (!parent())
         return;
