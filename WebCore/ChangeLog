@@ -1,3 +1,16 @@
+2008-12-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        Fix crash in the cairo implementation of the SVGPaintServer
+
+        For SVGFonts the RenderObject can be zero. The existing SVGFont
+        test cases is exposing this bug. Qt and other ports have fixed
+        this issue by adding null checks as well.
+
+        * svg/graphics/cairo/SVGPaintServerCairo.cpp:
+        (WebCore::SVGPaintServer::renderPath):
+
 2008-12-11  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

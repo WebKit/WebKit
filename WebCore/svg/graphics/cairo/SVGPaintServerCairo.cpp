@@ -47,14 +47,12 @@ void SVGPaintServer::teardown(GraphicsContext*&, const RenderObject*, SVGPaintTa
 void SVGPaintServer::renderPath(GraphicsContext*& context, const RenderObject* path, SVGPaintTargetType type) const
 {
     cairo_t* cr = context->platformContext();
-    const SVGRenderStyle* style = path->style()->svgStyle();
+    const SVGRenderStyle* style = path ? path->style()->svgStyle(): 0;
 
-    cairo_set_fill_rule(cr, style->fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-
-    if ((type & ApplyToFillTargetType) && style->hasFill())
+    if ((type & ApplyToFillTargetType) && (!style || style->hasFill()))
         cairo_fill_preserve(cr);
 
-    if ((type & ApplyToStrokeTargetType) && style->hasStroke())
+    if ((type & ApplyToStrokeTargetType) && (!style || style->hasStroke()))
         cairo_stroke_preserve(cr);
 
     cairo_new_path(cr);
