@@ -86,7 +86,7 @@ volatile bool done;
 // that child frame is the "topmost frame that is loading".
 IWebFrame* topLoadingFrame;     // !nil iff a load is in progress
 static COMPtr<IWebHistoryItem> prevTestBFItem;  // current b/f item at the end of the previous test
-IWebPolicyDelegate* policyDelegate; 
+PolicyDelegate* policyDelegate; 
 COMPtr<FrameLoadDelegate> sharedFrameLoadDelegate;
 COMPtr<UIDelegate> sharedUIDelegate;
 COMPtr<EditingDelegate> sharedEditingDelegate;

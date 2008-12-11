@@ -1,3 +1,11 @@
+2008-12-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Most of these policy delegate related tests will now pass with accompanying DRT changes.
+        
+        * platform/win/Skipped:  
+
 2008-12-10  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Darin Adler.

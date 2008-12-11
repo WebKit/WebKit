@@ -1,6 +1,24 @@
 2008-12-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin
+        
+        Implement the new policy delegate (including navigation type and permissive mode) for DRT/win 
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):
+        
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        (PolicyDelegate::PolicyDelegate):
+        (PolicyDelegate::decidePolicyForNavigationAction):
+        * DumpRenderTree/win/PolicyDelegate.h:
+        (PolicyDelegate::setPermissive):
+
+2008-12-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
 
         Change the custom policy delegate to actually allow navigation for tests that need it.
         The new behavior is opt-in and doesn't require any changes in old tests.

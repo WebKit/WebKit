@@ -37,6 +37,7 @@ using std::wstring;
 
 PolicyDelegate::PolicyDelegate()
     : m_refCount(1)
+    , m_permissiveDelegate(false)
 {
 }
 
@@ -71,7 +72,7 @@ ULONG STDMETHODCALLTYPE PolicyDelegate::Release(void)
 
 HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
     /*[in]*/ IWebView* /*webView*/, 
-    /*[in]*/ IPropertyBag* /*actionInformation*/, 
+    /*[in]*/ IPropertyBag* actionInformation, 
     /*[in]*/ IWebURLRequest* request, 
     /*[in]*/ IWebFrame* frame, 
     /*[in]*/ IWebPolicyDecisionListener* listener)
@@ -79,9 +80,45 @@ HRESULT STDMETHODCALLTYPE PolicyDelegate::decidePolicyForNavigationAction(
     BSTR url;
     request->URL(&url);
 
-    printf("Policy delegate: attempt to load %S\n", url ? url : TEXT(""));
+    int navType = 0;
+    VARIANT var;
+    if (SUCCEEDED(actionInformation->Read(WebActionNavigationTypeKey, &var, 0))) {
+        V_VT(&var) = VT_I4;
+        navType = V_I4(&var);
+    }
+
+    const char* typeDescription;
+    switch (navType) {
+        case WebNavigationTypeLinkClicked:
+            typeDescription = "link clicked";
+            break;
+        case WebNavigationTypeFormSubmitted:
+            typeDescription = "form submitted";
+            break;
+        case WebNavigationTypeBackForward:
+            typeDescription = "back/forward";
+            break;
+        case WebNavigationTypeReload:
+            typeDescription = "reload";
+            break;
+        case WebNavigationTypeFormResubmitted:
+            typeDescription = "form resubmitted";
+            break;
+        case WebNavigationTypeOther:
+            typeDescription = "other";
+            break;
+        default:
+            typeDescription = "illegal value";
+    }
+    
+    printf("Policy delegate: attempt to load %S with navigation type '%s'\n", url ? url : TEXT(""), typeDescription);
+
     SysFreeString(url);
-    listener->ignore();
+
+    if (m_permissiveDelegate)
+        listener->use();
+    else
+        listener->ignore();
 
     return S_OK;
 }

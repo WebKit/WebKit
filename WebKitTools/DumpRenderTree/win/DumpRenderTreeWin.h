@@ -30,14 +30,14 @@
 #define DumpRenderTreeWin_h
 
 struct IWebFrame;
-struct IWebPolicyDelegate;
 struct IWebView;
+struct PolicyDelegate;
 typedef const struct __CFString* CFStringRef;
 typedef struct HWND__* HWND;
 
 extern IWebFrame* topLoadingFrame;
 extern IWebFrame* frame;
-extern IWebPolicyDelegate* policyDelegate;
+extern PolicyDelegate* policyDelegate;
 
 extern HWND webViewWindow;
 
