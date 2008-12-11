@@ -59,6 +59,19 @@
 
 2008-12-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Antti Koivisto
+
+        <rdar://problem/6431224>
+        
+        When updating the value of a slider, don't mark the parents
+        as needing layout, because the size of the slider can never
+        change. This fixes full-page repaints in some cases.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::updateFromElement):
+
+2008-12-10  Simon Fraser  <simon.fraser@apple.com>
+
         Potential build fix. The forward declaration of FloatPoint should
         be inside the WebCore namespace.
         
