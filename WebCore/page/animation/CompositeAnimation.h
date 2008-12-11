@@ -38,6 +38,7 @@ namespace WebCore {
 
 class CompositeAnimationPrivate;
 class AnimationController;
+class KeyframeAnimation;
 class RenderObject;
 class RenderStyle;
 
@@ -55,7 +56,7 @@ public:
     void clearRenderer();
 
     PassRefPtr<RenderStyle> animate(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
-    bool isAnimating() const;
+    double willNeedService() const;
     
     AnimationController* animationController();
 
@@ -69,6 +70,9 @@ public:
     void styleAvailable();
     void setAnimating(bool);
     bool isAnimatingProperty(int property, bool isRunningNow) const;
+    
+    PassRefPtr<KeyframeAnimation> getAnimationForProperty(int property);
+
 
     void setAnimationStartTime(double t);
     void setTransitionStartTime(int property, double t);

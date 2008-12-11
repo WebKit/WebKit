@@ -30,7 +30,6 @@
 #define AnimationBase_h
 
 #include "AtomicString.h"
-#include "Timer.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -45,60 +44,6 @@ class RenderObject;
 class RenderStyle;
 class TimingFunction;
 
-class AnimationTimerBase {
-public:
-    AnimationTimerBase(AnimationBase* anim)
-        : m_timer(this, &AnimationTimerBase::timerFired)
-        , m_anim(anim)
-    {
-        m_timer.startOneShot(0);
-    }
-
-    virtual ~AnimationTimerBase() { }
-
-    void startTimer(double timeout = 0)
-    {
-        m_timer.startOneShot(timeout);
-    }
-
-    void cancelTimer()
-    {
-        m_timer.stop();
-    }
-
-    virtual void timerFired(Timer<AnimationTimerBase>*) = 0;
-
-private:
-    Timer<AnimationTimerBase> m_timer;
-
-protected:
-    AnimationBase* m_anim;
-};
-
-class AnimationTimerCallback : public AnimationTimerBase {
-public:
-    AnimationTimerCallback(AnimationBase* anim) 
-        : AnimationTimerBase(anim)
-        , m_elapsedTime(0)
-    {
-    }
-
-    virtual ~AnimationTimerCallback() { }
-
-    virtual void timerFired(Timer<AnimationTimerBase>*);
-
-    void startTimer(double timeout, const AtomicString& eventType, double elapsedTime)
-    {
-        m_eventType = eventType;
-        m_elapsedTime = elapsedTime;
-        AnimationTimerBase::startTimer(timeout);
-    }
-
-private:
-    AtomicString m_eventType;
-    double m_elapsedTime;
-};
-
 class AnimationBase : public RefCounted<AnimationBase> {
     friend class CompositeAnimationPrivate;
 
@@ -111,11 +56,6 @@ public:
     
     double startTime() const { return m_startTime; }
     double duration() const;
-
-    void cancelTimers()
-    {
-        m_animationTimerCallback.cancelTimer();
-    }
 
     // Animations and Transitions go through the states below. When entering the STARTED state
     // the animation is started. This may or may not require deferred response from the animator.
@@ -178,7 +118,7 @@ public:
     // "animating" means that something is running that requires a timer to keep firing
     // (e.g. a software animation)
     void setAnimating(bool inAnimating = true) { m_isAnimating = inAnimating; }
-    bool isAnimating() const { return m_isAnimating; }
+    double willNeedService() const;
 
     double progress(double scale, double offset, const TimingFunction*) const;
 
@@ -187,7 +127,7 @@ public:
 
     virtual bool shouldFireEvents() const { return false; }
 
-    void animationTimerCallbackFired(const AtomicString& eventType, double elapsedTime);
+    void fireAnimationEventsIfNeeded();
 
     bool animationsMatch(const Animation*) const;
 
@@ -226,7 +166,7 @@ protected:
     virtual bool startAnimation(double beginTime) { return false; }
     virtual void endAnimation(bool reset) { }
 
-    void primeEventTimers();
+    void goIntoEndingOrLoopingState();
 
     static bool propertiesEqual(int prop, const RenderStyle* a, const RenderStyle* b);
     static int getPropertyAtIndex(int);
@@ -244,12 +184,13 @@ protected:
     bool m_waitedForResponse;
     double m_startTime;
     double m_pauseTime;
+    double m_requestedStartTime;
     RenderObject* m_object;
 
-    AnimationTimerCallback m_animationTimerCallback;
     RefPtr<Animation> m_animation;
     CompositeAnimation* m_compAnim;
     bool m_transformFunctionListValid;
+    double m_totalDuration, m_nextIterationDuration;
 };
 
 } // namespace WebCore

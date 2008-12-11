@@ -51,10 +51,9 @@ public:
     int index() const { return m_index; }
     void setIndex(int i) { m_index = i; }
 
-    virtual bool shouldFireEvents() const { return true; }
-    
     bool hasAnimationForProperty(int property) const;
     
+    void setUnanimatedStyle(PassRefPtr<RenderStyle> style) { m_unanimatedStyle = style; }
     RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
 
 protected:

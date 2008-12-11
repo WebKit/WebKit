@@ -30,6 +30,7 @@
 #include "AnimationController.h"
 #include "CompositeAnimation.h"
 #include "CSSParser.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "Timer.h"
 
@@ -46,10 +47,11 @@ public:
     bool clear(RenderObject*);
 
     void animationTimerFired(Timer<AnimationControllerPrivate>*);
-    void updateAnimationTimer();
+    void updateAnimationTimer(bool callSetChanged = false);
 
     void updateRenderingDispatcherFired(Timer<AnimationControllerPrivate>*);
     void startUpdateRenderingDispatcher();
+    void addEventToDispatch(PassRefPtr<Element> element, const AtomicString& eventType, const String& name, double elapsedTime);
 
     bool hasAnimations() const { return !m_compositeAnimations.isEmpty(); }
 
@@ -70,6 +72,16 @@ private:
     Timer<AnimationControllerPrivate> m_animationTimer;
     Timer<AnimationControllerPrivate> m_updateRenderingDispatcher;
     Frame* m_frame;
+    
+    class EventToDispatch {
+    public:
+        RefPtr<Element> element;
+        AtomicString eventType;
+        String name;
+        double elapsedTime;
+    };
+    
+    Vector<EventToDispatch> m_eventsToDispatch;
 };
 
 AnimationControllerPrivate::AnimationControllerPrivate(Frame* frame)
@@ -121,28 +133,67 @@ void AnimationControllerPrivate::styleAvailable()
         (*it)->styleAvailable();
 }
 
-void AnimationControllerPrivate::updateAnimationTimer()
+void AnimationControllerPrivate::updateAnimationTimer(bool callSetChanged/* = false*/)
 {
-    bool isAnimating = false;
+    double needsService = -1;
+    bool calledSetChanged = false;
 
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
         RefPtr<CompositeAnimation> compAnim = it->second;
-        if (!compAnim->isSuspended() && compAnim->isAnimating()) {
-            isAnimating = true;
-            break;
+        if (!compAnim->isSuspended()) {
+            double t = compAnim->willNeedService();
+            if (t != -1 && (t < needsService || needsService == -1))
+                needsService = t;
+            if (needsService == 0) {
+                if (callSetChanged) {
+                    Node* node = it->first->element();
+                    ASSERT(!node || (node->document() && !node->document()->inPageCache()));
+                    node->setChanged(AnimationStyleChange);
+                    calledSetChanged = true;
+                }
+                else
+                    break;
+            }
         }
     }
     
-    if (isAnimating) {
-        if (!m_animationTimer.isActive())
+    if (calledSetChanged)
+        m_frame->document()->updateRendering();
+    
+    // If we want service immediately, we start a repeating timer to reduce the overhead of starting
+    if (needsService == 0) {
+        if (!m_animationTimer.isActive() || m_animationTimer.repeatInterval() == 0)
             m_animationTimer.startRepeating(cAnimationTimerDelay);
-    } else if (m_animationTimer.isActive())
+        return;
+    }
+    
+    // If we don't need service, we want to make sure the timer is no longer running
+    if (needsService < 0) {
+        if (m_animationTimer.isActive())
+            m_animationTimer.stop();
+        return;
+    }
+    
+    // Otherwise, we want to start a one-shot timer so we get here again
+    if (m_animationTimer.isActive())
         m_animationTimer.stop();
+    m_animationTimer.startOneShot(needsService);
 }
 
 void AnimationControllerPrivate::updateRenderingDispatcherFired(Timer<AnimationControllerPrivate>*)
 {
+    // fire all the events
+    Vector<EventToDispatch>::const_iterator end = m_eventsToDispatch.end();
+    for (Vector<EventToDispatch>::const_iterator it = m_eventsToDispatch.begin(); it != end; ++it) {
+        if (it->eventType == eventNames().webkitTransitionEndEvent)
+            it->element->dispatchWebKitTransitionEvent(it->eventType,it->name, it->elapsedTime);
+        else
+            it->element->dispatchWebKitAnimationEvent(it->eventType,it->name, it->elapsedTime);
+    }
+    
+    m_eventsToDispatch.clear();
+    
     if (m_frame && m_frame->document())
         m_frame->document()->updateRendering();
 }
@@ -153,27 +204,23 @@ void AnimationControllerPrivate::startUpdateRenderingDispatcher()
         m_updateRenderingDispatcher.startOneShot(0);
 }
 
+void AnimationControllerPrivate::addEventToDispatch(PassRefPtr<Element> element, const AtomicString& eventType, const String& name, double elapsedTime)
+{
+    m_eventsToDispatch.grow(m_eventsToDispatch.size()+1);
+    EventToDispatch& event = m_eventsToDispatch[m_eventsToDispatch.size()-1];
+    event.element = element;
+    event.eventType = eventType;
+    event.name = name;
+    event.elapsedTime = elapsedTime;
+    
+    startUpdateRenderingDispatcher();
+}
+
 void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPrivate>* timer)
 {
     // When the timer fires, all we do is call setChanged on all DOM nodes with running animations and then do an immediate
     // updateRendering.  It will then call back to us with new information.
-    bool isAnimating = false;
-    RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
-    for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
-        RefPtr<CompositeAnimation> compAnim = it->second;
-        if (!compAnim->isSuspended() && compAnim->isAnimating()) {
-            isAnimating = true;
-            compAnim->setAnimating(false);
-
-            Node* node = it->first->element();
-            ASSERT(!node || (node->document() && !node->document()->inPageCache()));
-            node->setChanged(AnimationStyleChange);
-        }
-    }
-
-    m_frame->document()->updateRendering();
-
-    updateAnimationTimer();
+    updateAnimationTimer(true);
 }
 
 bool AnimationControllerPrivate::isAnimatingPropertyOnRenderer(RenderObject* renderer, int property, bool isRunningNow) const
@@ -340,6 +387,11 @@ void AnimationController::resumeAnimations(Document* document)
 void AnimationController::startUpdateRenderingDispatcher()
 {
     m_data->startUpdateRenderingDispatcher();
+}
+
+void AnimationController::addEventToDispatch(PassRefPtr<Element> element, const AtomicString& eventType, const String& name, double elapsedTime)
+{
+    m_data->addEventToDispatch(element, eventType, name, elapsedTime);
 }
 
 void AnimationController::styleAvailable()

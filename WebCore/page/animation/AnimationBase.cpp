@@ -63,11 +63,6 @@ static inline double solveCubicBezierFunction(double p1x, double p1y, double p2x
     return bezier.solve(t, solveEpsilon(duration));
 }
 
-void AnimationTimerCallback::timerFired(Timer<AnimationTimerBase>*)
-{
-    m_anim->animationTimerCallbackFired(m_eventType, m_elapsedTime);
-}
-
 static inline int blendFunc(const AnimationBase* anim, int from, int to, double progress)
 {  
     return int(from + (to - from) * progress);
@@ -384,12 +379,17 @@ AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer
     , m_waitedForResponse(false)
     , m_startTime(0)
     , m_pauseTime(-1)
+    , m_requestedStartTime(0)
     , m_object(renderer)
-    , m_animationTimerCallback(const_cast<AnimationBase*>(this))
     , m_animation(const_cast<Animation*>(transition))
     , m_compAnim(compAnim)
     , m_transformFunctionListValid(false)
+    , m_nextIterationDuration(-1)
 {
+    // Compute the total duration
+    m_totalDuration = -1;
+    if (m_animation->iterationCount() > 0)
+        m_totalDuration = m_animation->duration() * m_animation->iterationCount();
 }
 
 AnimationBase::~AnimationBase()
@@ -498,18 +498,21 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
         m_animState = AnimationStateNew;
         m_startTime = 0;
         m_pauseTime = -1;
+        m_requestedStartTime = 0;
+        m_nextIterationDuration = -1;
         m_waitedForResponse = false;
         endAnimation(false);
         return;
     }
 
     if (input == AnimationStateInputRestartAnimation) {
-        cancelTimers();
         if (m_animState == AnimationStateStartWaitStyleAvailable)
             m_compAnim->setWaitingForStyleAvailable(false);
         m_animState = AnimationStateNew;
         m_startTime = 0;
         m_pauseTime = -1;
+        m_requestedStartTime = 0;
+        m_nextIterationDuration = -1;
         endAnimation(false);
 
         if (!paused())
@@ -518,7 +521,6 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
     }
 
     if (input == AnimationStateInputEndAnimation) {
-        cancelTimers();
         if (m_animState == AnimationStateStartWaitStyleAvailable)
             m_compAnim->setWaitingForStyleAvailable(false);
         m_animState = AnimationStateDone;
@@ -549,10 +551,9 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
         case AnimationStateNew:
             ASSERT(input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunnning || input == AnimationStateInputPlayStatePaused);
             if (input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunnning) {
-                // Set the start timer to the initial delay (0 if no delay)
                 m_waitedForResponse = false;
+                m_requestedStartTime = currentTime();
                 m_animState = AnimationStateStartWaitTimer;
-                m_animationTimerCallback.startTimer(m_animation->delay(), eventNames().webkitAnimationStartEvent, m_animation->delay());
             }
             break;
         case AnimationStateStartWaitTimer:
@@ -571,7 +572,6 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 ASSERT(!paused());
                 // We're waiting for the start timer to fire and we got a pause. Cancel the timer, pause and wait
                 m_pauseTime = currentTime();
-                cancelTimers();
                 m_animState = AnimationStatePausedWaitTimer;
             }
             break;
@@ -605,8 +605,8 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 if (m_startTime <= 0)
                     m_startTime = param;
 
-                // Decide when the end or loop event needs to fire
-                primeEventTimers();
+                // Decide whether to go into looping or ending state
+                goIntoEndingOrLoopingState();
 
                 // Trigger a render so we can start the animation
                 if (m_object) {
@@ -628,11 +628,12 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 ASSERT(param >= 0);
                 // Loop timer fired, loop again or end.
                 onAnimationIteration(param);
-                primeEventTimers();
+
+                // Decide whether to go into looping or ending state
+                goIntoEndingOrLoopingState();
             } else {
                 // We are pausing while running. Cancel the animation and wait
                 m_pauseTime = currentTime();
-                cancelTimers();
                 endAnimation(false);
                 m_animState = AnimationStatePausedRun;
             }
@@ -657,7 +658,6 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
             } else {
                 // We are pausing while running. Cancel the animation and wait
                 m_pauseTime = currentTime();
-                cancelTimers();
                 endAnimation(false);
                 m_animState = AnimationStatePausedRun;
             }
@@ -705,8 +705,12 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
     }
 }
     
-void AnimationBase::animationTimerCallbackFired(const AtomicString& eventType, double elapsedTime)
+void AnimationBase::fireAnimationEventsIfNeeded()
 {
+    // If we are waiting for the delay time to expire and it has, go to the next state
+    if (m_animState != AnimationStateStartWaitTimer && m_animState != AnimationStateLooping && m_animState != AnimationStateEnding)
+        return;
+
     // We have to make sure to keep a ref to the this pointer, because it could get destroyed
     // during an animation callback that might get called. Since the owner is a CompositeAnimation
     // and it ref counts this object, we will keep a ref to that instead. That way the AnimationBase
@@ -714,15 +718,38 @@ void AnimationBase::animationTimerCallbackFired(const AtomicString& eventType, d
     RefPtr<AnimationBase> protector(this);
     RefPtr<CompositeAnimation> compProtector(m_compAnim);
     
-    ASSERT(m_object->document() && !m_object->document()->inPageCache());
-
-    // FIXME: use an enum
-    if (eventType == eventNames().webkitAnimationStartEvent)
-        updateStateMachine(AnimationStateInputStartTimerFired, elapsedTime);
-    else if (eventType == eventNames().webkitAnimationIterationEvent)
-        updateStateMachine(AnimationStateInputLoopTimerFired, elapsedTime);
-    else if (eventType == eventNames().webkitAnimationEndEvent) {
-        updateStateMachine(AnimationStateInputEndTimerFired, elapsedTime);
+    // Check for start timeout
+    if (m_animState == AnimationStateStartWaitTimer) {
+        if (currentTime() - m_requestedStartTime >= m_animation->delay())
+            updateStateMachine(AnimationStateInputStartTimerFired, 0);
+        return;
+    }
+    
+    double elapsedDuration = currentTime() - m_startTime;
+    ASSERT(elapsedDuration >= 0);
+    
+    // Check for end timeout
+    if (m_totalDuration > 0 && elapsedDuration >= m_totalDuration) {
+        // Fire an end event
+        updateStateMachine(AnimationStateInputEndTimerFired, m_totalDuration);
+    }
+    else {
+        // Check for iteration timeout
+        if (m_nextIterationDuration < 0) {
+            // Hasn't been set yet, set it
+            double durationLeft = m_animation->duration() - fmod(elapsedDuration, m_animation->duration());
+            m_nextIterationDuration = elapsedDuration + durationLeft;
+        }
+        
+        if (elapsedDuration >= m_nextIterationDuration) {
+            // Set to the next iteration
+            double previous = m_nextIterationDuration;
+            double durationLeft = m_animation->duration() - fmod(elapsedDuration, m_animation->duration());
+            m_nextIterationDuration = elapsedDuration + durationLeft;
+            
+            // Send the event
+            updateStateMachine(AnimationStateInputLoopTimerFired, previous);
+        }
     }
 }
 
@@ -730,6 +757,22 @@ void AnimationBase::updatePlayState(bool run)
 {
     if (paused() == run || isNew())
         updateStateMachine(run ? AnimationStateInputPlayStateRunnning : AnimationStateInputPlayStatePaused, -1);
+}
+
+double AnimationBase::willNeedService() const
+{
+    // Returns the time at which next service is required. -1 means no service is required. 0 means 
+    // service is required now, and > 0 means service is required that many seconds in the future.
+    if (paused() || isNew())
+        return -1;
+        
+    if (m_animState == AnimationStateStartWaitTimer) {
+        double timeFromNow = m_animation->delay() - (currentTime() - m_requestedStartTime);
+        return (float) ((timeFromNow > 0) ? timeFromNow : 0);
+    }
+    
+    // In all other cases, we need service right away.
+    return 0;
 }
 
 double AnimationBase::progress(double scale, double offset, const TimingFunction* tf) const
@@ -776,37 +819,30 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
     return result;
 }
 
-void AnimationBase::primeEventTimers()
+void AnimationBase::goIntoEndingOrLoopingState()
 {
     // Decide when the end or loop event needs to fire
-    double ct = currentTime();
-    const double elapsedDuration = ct - m_startTime;
-    ASSERT(elapsedDuration >= 0);
-
     double totalDuration = -1;
     if (m_animation->iterationCount() > 0)
         totalDuration = m_animation->duration() * m_animation->iterationCount();
 
+    const double elapsedDuration = currentTime() - m_startTime;
+    ASSERT(elapsedDuration >= 0);
     double durationLeft = 0;
     double nextIterationTime = totalDuration;
+
     if (totalDuration < 0 || elapsedDuration < totalDuration) {
         durationLeft = m_animation->duration() - fmod(elapsedDuration, m_animation->duration());
         nextIterationTime = elapsedDuration + durationLeft;
     }
 
-    // At this point, we may have 0 durationLeft, if we've gotten the event late and we are already
-    // past totalDuration. In this case we still fire an end timer before processing the end. 
-    // This defers the call to sendAnimationEvents to avoid re-entrant calls that destroy
-    // the RenderObject, and therefore |this| before we're done with it.
     if (totalDuration < 0 || nextIterationTime < totalDuration) {
-        // We are not at the end yet, send a loop event
+        // We are not at the end yet
         ASSERT(nextIterationTime > 0);
         m_animState = AnimationStateLooping;
-        m_animationTimerCallback.startTimer(durationLeft, eventNames().webkitAnimationIterationEvent, nextIterationTime);
     } else {
-        // We are at the end, send an end event
+        // We are at the end
         m_animState = AnimationStateEnding;
-        m_animationTimerCallback.startTimer(durationLeft, eventNames().webkitAnimationEndEvent, nextIterationTime);
     }
 }
   

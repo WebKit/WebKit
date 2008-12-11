@@ -54,8 +54,6 @@ public:
     void setOverridden(bool);
     virtual bool overridden() const { return m_overridden; }
 
-    virtual bool shouldFireEvents() const { return true; }
-
     virtual bool affectsProperty(int) const;
 
     bool hasStyle() const { return m_fromStyle && m_toStyle; }

@@ -1,3 +1,58 @@
+2008-12-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=22738
+
+        This gets rid of the per-animation timers which were used when an animation
+        started, ended and looped. Their job is now done by the main AnimationController's
+        timer. It is now set to fire as needed. For instance, if there is a delay, it will
+        fire after the delay time and then every 30ms to run the animation. The start, loop
+        and end events are generated as needed during the firing of this timer.
+
+        I had to add one more bit of code. When animation timers used to fire the animation events.
+        This would always happen from the RunLoop, so any style changes that happened in the
+        event handler would get picked up on the next updateRendering() call. But now the start
+        event is generated during the styleIsAvailable() call, which is in the middle of the 
+        updateRendering() cycle. And calling an event handler in the middle of updateRendering()
+        is not allowed and causes style changes to get missed. We already have a mechanism in
+        AnimationController to defer updateRendering() calls. So I added logic to defer all
+        event handling to there. Now, I put any request for event handling into a list and ask
+        for a deferred updateRendering() call. When that deferred timer fires, I go through that
+        list, send all the events and then call updateRendering().
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        (WebCore::AnimationBase::willNeedService):
+        (WebCore::AnimationBase::goIntoEndingOrLoopingState):
+        * page/animation/AnimationBase.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateAnimationTimer):
+        (WebCore::AnimationControllerPrivate::updateRenderingDispatcherFired):
+        (WebCore::AnimationControllerPrivate::addEventToDispatch):
+        (WebCore::AnimationControllerPrivate::animationTimerFired):
+        (WebCore::AnimationController::addEventToDispatch):
+        * page/animation/AnimationController.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::updateTransitions):
+        (WebCore::CompositeAnimationPrivate::willNeedService):
+        (WebCore::CompositeAnimationPrivate::getAnimationForProperty):
+        (WebCore::CompositeAnimation::willNeedService):
+        (WebCore::CompositeAnimation::getAnimationForProperty):
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::onAnimationEnd):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        * page/animation/KeyframeAnimation.h:
+        (WebCore::KeyframeAnimation::setUnanimatedStyle):
+
 2008-12-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix the Qt build with an empty filenameExtension() implementation.

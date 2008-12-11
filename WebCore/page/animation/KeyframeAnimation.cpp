@@ -29,6 +29,7 @@
 #include "config.h"
 #include "KeyframeAnimation.h"
 
+#include "AnimationController.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "CompositeAnimation.h"
@@ -62,6 +63,9 @@ KeyframeAnimation::~KeyframeAnimation()
 void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* renderer, const RenderStyle* currentStyle, 
                                     const RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle)
 {
+    // Fire the start timeout if needed
+    fireAnimationEventsIfNeeded();
+    
     // If we have not yet started, we will not have a valid start time, so just start the animation if needed.
     if (isNew() && m_animation->playState() == AnimPlayStatePlaying)
         updateStateMachine(AnimationStateInputStartAnimation, -1);
@@ -200,8 +204,8 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
         if (!element)
             return false;
 
-        // Call the event handler
-        element->dispatchWebKitAnimationEvent(eventType, m_keyframes.animationName(), elapsedTime);
+        // Schedule event handling
+        m_object->animation()->addEventToDispatch(element, eventType, m_keyframes.animationName(), elapsedTime);
 
         // Restore the original (unanimated) style
         if (eventType == eventNames().webkitAnimationEndEvent && element->renderer())
