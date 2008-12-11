@@ -1,3 +1,58 @@
+2008-12-10  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Rewrote animations/animation-test-helpers.js to take advantage of the pauseAnimationAtTimeOnElementWithId()
+        API when available in DRT.
+
+        Updated all animations tests that check for values of animated CSS properties to use these new helper functions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22796
+
+        * animations/animation-test-helpers.js:
+        (isCloseEnough):
+        (checkExpectedValue):
+        (endTest):
+        (startTest):
+        (runAnimationTest):
+        * animations/big-rotation-expected.txt:
+        * animations/big-rotation.html:
+        * animations/change-keyframes-expected.txt:
+        * animations/change-keyframes-name-expected.txt:
+        * animations/change-keyframes-name.html:
+        * animations/change-keyframes.html:
+        * animations/change-one-anim-expected.txt:
+        * animations/change-one-anim.html:
+        * animations/generic-from-to-expected.txt:
+        * animations/generic-from-to.html:
+        * animations/import-expected.txt:
+        * animations/import.html:
+        * animations/keyframe-timing-functions-expected.txt:
+        * animations/keyframe-timing-functions.html:
+        * animations/keyframes-comma-separated-expected.txt:
+        * animations/keyframes-comma-separated.html:
+        * animations/keyframes-expected.txt:
+        * animations/keyframes-from-missing.html:
+        * animations/keyframes-out-of-order-expected.txt:
+        * animations/keyframes-out-of-order.html:
+        * animations/keyframes-to-missing.html:
+        * animations/keyframes.html:
+        * animations/lineheight-animation-expected.txt:
+        * animations/lineheight-animation.html:
+        * animations/matrix-anim-expected.txt:
+        * animations/matrix-anim.html:
+        * animations/multiple-animations-expected.txt:
+        * animations/multiple-animations.html:
+        * animations/multiple-keyframes-expected.txt:
+        * animations/multiple-keyframes.html:
+        * animations/transition-and-animation-1-expected.txt:
+        * animations/transition-and-animation-1.html:
+        * animations/transition-and-animation-2-expected.txt:
+        * animations/transition-and-animation-2.html:
+        * animations/width-using-ems-expected.txt:
+        * animations/width-using-ems.html:
+        * platform/win/Skipped:
+
 2008-12-10  Alice Liu  <alice.liu@apple.com>
 
         Adding tweak to .conf files needed for 

@@ -25,25 +25,14 @@
   <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
 
-    const defaultTolerance = 5;
-    
-    const expected = [
-      // [time, property, element-id, expected-value]
-      [250, "left", "box", 125],
-      [500, "left", "box", 150],
-      [750, "left", "box", 175],
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim", 0.25, "box", "left", 125, 5],
+      ["anim", 0.50, "box", "left", 150, 5],
+      ["anim", 0.75, "box", "left", 175, 5],
     ];
-
-    function start()
-    {
-        setup();
-        window.setTimeout(function() {
-            document.getElementById('box').style.display = "none";
-            cleanup();
-        }, 900);
-    }
     
-    document.addEventListener('webkitAnimationStart', start, false);
+    runAnimationTest(expectedValues);
     
   </script>
 </head>

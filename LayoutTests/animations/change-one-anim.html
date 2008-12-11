@@ -27,24 +27,14 @@
             to { top: 300px; }
          }
     </style>
+    <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
-        }
-    
-        result = "PASS";
-        const defaultTolerance = 15;
-    
-        const expected =  [ 1, 0, 0, 1, 0, 0 ];
-    
-        function isEqual(actual, desired, tolerance)
-        {
-            if (tolerance == undefined || tolerance == 0)
-                tolerance = defaultTolerance;
-            var diff = Math.abs(actual - desired);
-            return diff < tolerance;
-        }
+        
+        const expectedValues = [
+          // [animation-name, time, element-id, property, expected-value, tolerance]
+          [null, 0.75, "box", "left", 150, 15],
+          [null, 0.75, "box", "top", 225, 15],
+        ];
 
         function removeAnim()
         {
@@ -54,39 +44,12 @@
             target.style.left = left;
         }
         
-        function snapshot()
+        function setup()
         {
-            var target = document.getElementById("box");
-            var left = parseInt(window.getComputedStyle(target).left);
-            var top = parseInt(window.getComputedStyle(target).top);
-
-            if (!isEqual(left, 150)) {
-                result = "FAIL('left' was:"+left+", expected:150)";
-                return;
-            }
-            if (!isEqual(top, 225)) {
-                result = "FAIL('top' was:"+top+", expected:225)";
-                return;
-            }
-        }
-
-        function start(event)
-        {
-            // We only want to continue for one of the two animations running
-            if (event.animationName == "horiz")
-                return;
-
             setTimeout("removeAnim()", 500);
-            setTimeout("snapshot()", 750);
-            
-            window.setTimeout(function() {
-                document.getElementById('result').innerHTML = result;
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
-            }, 800);
         }
 
-        document.addEventListener('webkitAnimationStart', start, false);
+        runAnimationTest(expectedValues, setup);
     </script>
 </head>
 <body>

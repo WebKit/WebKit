@@ -1,2 +1,3 @@
 This test has a transition and animation on the same property (-webkit-transform). The animation starts and then the transition is triggered. The transition should start at the position before the animation started (the unanimated position), which is (0,0). If it starts from the start point of the animation (0,100) then there is an error
-PASS
+PASS - "webkitTransform.5" property for "box" element at 0.4s saw something close to: 0
+

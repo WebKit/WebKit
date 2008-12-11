@@ -1,2 +1,4 @@
 This test performs an animation of the left property. It should stop for 100ms at 100px and 200px We test for those values 50ms after it has stopped at each position. The keyframes are out of order and should get correctly sorted.
-PASS
+PASS - "left" property for "box" element at 0.3s saw something close to: 100
+PASS - "left" property for "box" element at 0.7s saw something close to: 200
+

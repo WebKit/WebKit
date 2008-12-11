@@ -43,33 +43,17 @@
   <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
 
-    const defaultTolerance = 2;
-    
-    const expected = [
-      // [time, property, element-id, expected-value]
-      [400, "left", "box1", 20],
-      [500, "left", "box2", 20],
-      [1000, "left", "box2", 30],
-      [1200, "left", "box1", 10],
-      [1500, "left", "box2", 25],
-      [1600, "left", "box1", 15],
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim1", 0.4, "box1", "left", 20, 2],
+      ["anim2", 0.5, "box2", "left", 20, 2],
+      ["anim2", 1.0, "box2", "left", 30, 2],
+      ["anim1", 1.2, "box1", "left", 10, 2],
+      ["anim2", 1.5, "box2", "left", 25, 2],
+      ["anim1", 1.6, "box1", "left", 15, 2],
     ];
 
-    var started = false;
-
-    function start()
-    {
-        if (started) return;
-        started = true;
-        setup();
-        window.setTimeout(function() {
-            document.getElementById('box1').style.display = "none";
-            document.getElementById('box2').style.display = "none";
-            cleanup();
-        }, 2100);
-    }
-    
-    document.addEventListener('webkitAnimationStart', start, false);
+    runAnimationTest(expectedValues);
     
   </script>
 </head>

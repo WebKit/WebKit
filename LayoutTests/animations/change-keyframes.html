@@ -24,33 +24,15 @@
         to   { left: 300px; }
     }
     </style>
+    <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
     
-    result = "PASS";
-    const defaultTolerance = 10;
-    
-    function isEqual(actual, desired, tolerance)
-    {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
-    }
-    
-    function snapshot(property, expected)
-    {
-        if (result != "PASS")
-            return;
-        
-        var prop = parseInt(window.getComputedStyle(document.getElementById('box'))[property]);
-        if (!isEqual(prop, expected))
-            result = "FAIL('"+property+"' property was:"+prop+", expected:"+expected+")";
-    }
-    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      [null, 0.5, "box", "left", 200, 10],
+      [null, 0.5 + 0.5, "box", "top", 100, 10],
+    ];
+
     function findKeyframesRule(rule)
     {
         var ss = document.styleSheets;
@@ -77,14 +59,6 @@
         keyframes.insertRule("60% { top: 100px; }");
         keyframes.insertRule("100% { top: 150px; }");
         document.getElementById('box').style.webkitAnimationName = "anim";
-        
-        setTimeout("snapshot('top', 100)", 500);
-        
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 600);
     }
     
     function startChange()
@@ -92,15 +66,13 @@
         document.getElementById('box').style.webkitAnimationName = "none";
         setTimeout("change()", 0);
     }
-
-    function start()
+    
+    function setup()
     {
-        document.removeEventListener('webkitAnimationStart', start, false);
-        setTimeout("snapshot('left', 200)", 500);
         setTimeout("startChange()", 600);
     }
     
-    document.addEventListener('webkitAnimationStart', start, false);
+    runAnimationTest(expectedValues, setup);
     
   </script>
 </head>

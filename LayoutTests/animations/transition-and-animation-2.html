@@ -25,47 +25,20 @@
         to   { -webkit-transform: translate(400px, 100px) }
     }
     </style>
+    <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
     
-    result = "PASS";
-    const defaultTolerance = 0.1;
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      [null, 0.4, "box", "webkitTransform.5", 0, 0],
+    ];
     
-    function isEqual(actual, desired, tolerance)
-    {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
-    }
-    
-    function snapshot()
-    {
-        var m = window.getComputedStyle(document.getElementById('box')).webkitTransform;
-        var a = m.split("(");
-        a = a[1].split(",");
-        
-        if (!isEqual(parseFloat(a[5]), 0))
-            result = "FAIL(was:"+a[5]+", expected:0)";
-    }
-
-    function start()
+    function setup()
     {
         document.getElementById("box").style.webkitTransform = "translateX(400px)";
-        
-        setTimeout("snapshot()", 400);
-        
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 500);
     }
     
-    document.addEventListener('webkitAnimationStart', start, false);
+    runAnimationTest(expectedValues, setup);
     
   </script>
 </head>

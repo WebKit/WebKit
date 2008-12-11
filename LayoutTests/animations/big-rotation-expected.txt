@@ -1,3 +1,6 @@
 This test shows rotation of > 180 degrees. The box should make one and a half rotations.
 
-PASS
+PASS - "webkitTransform" property for "box" element at 1s saw something close to: -1,0,0,-1
+PASS - "webkitTransform" property for "box" element at 2s saw something close to: 1,0,0,1
+PASS - "webkitTransform" property for "box" element at 3s saw something close to: -1,0,0,-1
+

@@ -34,42 +34,15 @@
     }
     
   </style>
+  <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
-
-    result = "PASS";
-    const kDefaultTolerance = 20;
-
-    function isEqual(actual, desired, tolerance)
-    {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = kDefaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
-    }
-  
-    function snapshot()
-    {
-        var left = parseInt(window.getComputedStyle(document.getElementById('box')).left);
-        var expected = 300;
-        if (!isEqual(left, expected))
-            result = "FAIL (was: " + left + ", expected: " + expected + ")";
-
-        document.getElementById('result').innerHTML = result;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }
-
-    function start()
-    {
-        window.setTimeout(snapshot, 750);
-    }
-  
-    document.addEventListener('webkitAnimationStart', start, false);
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["move", 0.75, "box", "left", 300, 20],
+    ];
+    
+    runAnimationTest(expectedValues);
   </script>
 </head>
 <body>

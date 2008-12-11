@@ -19,53 +19,16 @@
         to   { -webkit-transform: matrix(0.707, 0.707, -0.707, 0.707, 0, 0); }
     }
   </style>
+  <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
-    }
     
-    result = "PASS";
-    const defaultTolerance = 0.1;
     
-    const expected =  [ 1, 0, 0, 1, 0, 0 ];
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim", 0.5, "box", "webkitTransform", [1,0,0,1], 0.1],
+    ];
     
-    function isEqual(actual, desired, tolerance)
-    {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
-    }
-    
-    function snapshot(which)
-    {
-        if (result != "PASS")
-            return;
-            
-        var t = window.getComputedStyle(document.getElementById('box')).getPropertyCSSValue('-webkit-transform');
-
-        for (i = 0; i < 6; ++i) {
-            var val = t[0][i].getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-            if (!isEqual(val, expected[i])) {
-                result = "FAIL(matrix["+i+"] was:"+val+", expected:"+expected[i]+")";
-                return;
-            }
-        }
-    }
-
-    function start()
-    {
-        setTimeout("snapshot(0)", 500);
-        
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 600);
-    }
-    
-    document.addEventListener('webkitAnimationStart', start, false);
+    runAnimationTest(expectedValues);
     
   </script>
 </head>

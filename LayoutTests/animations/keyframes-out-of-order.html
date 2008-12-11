@@ -26,47 +26,16 @@
         60%  { left: 200px; }
     }
     </style>
+    <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
     
-    result = "PASS";
-    const defaultTolerance = 0.2;
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim", 0.3, "box", "left", 100, 1],
+      ["anim", 0.7, "box", "left", 200, 1],
+    ];
     
-    function isEqual(actual, desired, tolerance)
-    {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
-    }
-    
-    function snapshot(which)
-    {
-        if (result != "PASS")
-            return;
-            
-        var left = parseInt(window.getComputedStyle(document.getElementById('box')).left);
-        var expected = which ? 200 : 100;
-        if (!isEqual(left, expected))
-            result = "FAIL(was:"+left+", expected:"+expected+")";
-    }
-
-    function start()
-    {
-        setTimeout("snapshot(0)", 300);
-        setTimeout("snapshot(1)", 700);
-        
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 800);
-    }
-    
-    document.addEventListener('webkitAnimationStart', start, false);
+    runAnimationTest(expectedValues);
     
   </script>
 </head>

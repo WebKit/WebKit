@@ -26,46 +26,19 @@
     }
     </style>
     <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
     
-    result = "PASS";
-    const defaultTolerance = 0.2;
-    
-    function isEqual(actual, desired, tolerance)
-    {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
-    }
-    
-    function snapshot(which)
-    {
-        if (result != "PASS")
-            return;
-            
-        var left = parseInt(window.getComputedStyle(document.getElementById('box')).left);
-        var expected = 0;
-        if (!isEqual(left, expected))
-            result = "FAIL(was:"+left+", expected:"+expected+")";
-    }
-
     function start()
     {
-        setTimeout("snapshot(0)", 300);
-        setTimeout("snapshot(1)", 700);
+        layoutTestController.dumpAsText();
         
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 800);
+        if (layoutTestController.pauseAnimationAtTimeOnElementWithId("anim", 0.5, "box"))
+            document.getElementById('result').innerHTML = "FAIL: animation is running";
+        else
+            document.getElementById('result').innerHTML = "PASS";
     }
     
-    window.addEventListener('load', start, false);
+    if (window.layoutTestController)
+        window.addEventListener('load', start, false);
     
   </script>
 </head>

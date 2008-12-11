@@ -24,33 +24,14 @@
         to   { left: 300px; }
     }
     </style>
+    <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
     
-    result = "PASS";
-    const defaultTolerance = 10;
-    
-    function isEqual(actual, desired, tolerance)
-    {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
-    }
-    
-    function snapshot(expected)
-    {
-        if (result != "PASS")
-            return;
-        
-        var prop = parseInt(window.getComputedStyle(document.getElementById('box')).left);
-        if (!isEqual(prop, expected))
-            result = "FAIL('left' property was:"+prop+", expected:"+expected+")";
-    }
-    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      [null, 0.2 + 0.25, "box", "left", 200, 10],
+    ];
+
     function findKeyframesRule(rule)
     {
         var ss = document.styleSheets;
@@ -72,20 +53,17 @@
         document.getElementById('box').style.webkitAnimationName = "anim";
     }
     
-    function start()
+    function setup()
     {
-        document.removeEventListener('webkitAnimationStart', start, false);
-        setTimeout("snapshot(200)", 250);
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 300);
+        if (layoutTestController.pauseAnimationAtTimeOnElementWithId("bar", 0.5, "box"))
+            document.getElementById("pre-result").innerHTML = "FAIL: animation is running";
+        else
+            document.getElementById("pre-result").innerHTML = "PASS: animation is not running";
+        
+        setTimeout("change()", 200);
     }
     
-    document.addEventListener('webkitAnimationStart', start, false);
-    setTimeout("snapshot(0)", 100);
-    setTimeout("change()", 200);
+    runAnimationTest(expectedValues, setup, "load");
     
   </script>
 </head>
@@ -94,6 +72,8 @@ This test starts by making sure the animation is not running, because the animat
 name of they @keyframes rule do not match. Then it changes the name of the @keyframes rule so they 
 match and makes sure the animation is now running.
 <div id="box">
+</div>
+<div id="pre-result">
 </div>
 <div id="result">
 </div>

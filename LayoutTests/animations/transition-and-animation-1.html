@@ -24,42 +24,15 @@
         to   { -webkit-transform: translateX(300px); }
     }
     </style>
+    <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
     
-    result = "PASS";
-    const defaultTolerance = 0.2;
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      [null, 0.55, "box", "webkitTransform", "none", null],
+    ];
     
-    function isEqual(actual, desired, tolerance)
-    {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
-    }
-    
-    function snapshot(which)
-    {
-        var m = window.getComputedStyle(document.getElementById('box')).webkitTransform;
-        if (m != "none")
-            result = "FAIL(was:"+m+", expected:none)";
-    }
-
-    function start()
-    {
-        setTimeout("snapshot()", 550);
-        
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 600);
-    }
-    
-    document.addEventListener('webkitAnimationStart', start, false);
+    runAnimationTest(expectedValues);
     
   </script>
 </head>

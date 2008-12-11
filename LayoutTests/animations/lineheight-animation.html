@@ -24,46 +24,15 @@
         to   { line-height: 2em; }
     }
     </style>
+    <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
     
-    result = "PASS";
-    const defaultTolerance = 1;
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim", 0.1, "box", "lineHeight", 10, 1],
+    ];
     
-    function isEqual(actual, desired, tolerance)
-    {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
-    }
-    
-    function snapshot()
-    {
-        if (result != "PASS")
-            return;
-            
-        var lineHeight = parseInt(window.getComputedStyle(document.getElementById('box')).lineHeight);
-        var expected = 10;
-        if (!isEqual(lineHeight, expected))
-            result = "FAIL(was:"+lineHeight+", expected:"+expected+")";
-    }
-
-    function start()
-    {
-        setTimeout("snapshot()", 100);
-        
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 300);
-    }
-    
-    document.addEventListener('webkitAnimationStart', start, false);
+    runAnimationTest(expectedValues);
     
   </script>
 </head>
