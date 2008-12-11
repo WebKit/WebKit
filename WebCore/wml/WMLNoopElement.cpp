@@ -37,6 +37,10 @@ WMLNoopElement::WMLNoopElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
+WMLNoopElement::~WMLNoopElement()
+{
+}
+
 void WMLNoopElement::insertedIntoDocument()
 {
     WMLElement::insertedIntoDocument();

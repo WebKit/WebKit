@@ -567,37 +567,43 @@ void HTMLElement::insertAdjacentText(const String& where, const String& text, Ex
 
 void HTMLElement::addHTMLAlignment(MappedAttribute* attr)
 {
+    addHTMLAlignmentToStyledElement(this, attr);
+}
+
+void HTMLElement::addHTMLAlignmentToStyledElement(StyledElement* element, MappedAttribute* attr)
+{
     // vertical alignment with respect to the current baseline of the text
     // right or left means floating images
-    int propfloat = -1;
-    int propvalign = -1;
+    int floatValue = CSSValueInvalid;
+    int verticalAlignValue = CSSValueInvalid;
+
     const AtomicString& alignment = attr->value();
-    if (equalIgnoringCase(alignment, "absmiddle")) {
-        propvalign = CSSValueMiddle;
-    } else if (equalIgnoringCase(alignment, "absbottom")) {
-        propvalign = CSSValueBottom;
-    } else if (equalIgnoringCase(alignment, "left")) {
-        propfloat = CSSValueLeft;
-        propvalign = CSSValueTop;
+    if (equalIgnoringCase(alignment, "absmiddle"))
+        verticalAlignValue = CSSValueMiddle;
+    else if (equalIgnoringCase(alignment, "absbottom"))
+        verticalAlignValue = CSSValueBottom;
+    else if (equalIgnoringCase(alignment, "left")) {
+        floatValue = CSSValueLeft;
+        verticalAlignValue = CSSValueTop;
     } else if (equalIgnoringCase(alignment, "right")) {
-        propfloat = CSSValueRight;
-        propvalign = CSSValueTop;
-    } else if (equalIgnoringCase(alignment, "top")) {
-        propvalign = CSSValueTop;
-    } else if (equalIgnoringCase(alignment, "middle")) {
-        propvalign = CSSValueWebkitBaselineMiddle;
-    } else if (equalIgnoringCase(alignment, "center")) {
-        propvalign = CSSValueMiddle;
-    } else if (equalIgnoringCase(alignment, "bottom")) {
-        propvalign = CSSValueBaseline;
-    } else if (equalIgnoringCase(alignment, "texttop")) {
-        propvalign = CSSValueTextTop;
-    }
-    
-    if ( propfloat != -1 )
-        addCSSProperty( attr, CSSPropertyFloat, propfloat );
-    if ( propvalign != -1 )
-        addCSSProperty( attr, CSSPropertyVerticalAlign, propvalign );
+        floatValue = CSSValueRight;
+        verticalAlignValue = CSSValueTop;
+    } else if (equalIgnoringCase(alignment, "top"))
+        verticalAlignValue = CSSValueTop;
+    else if (equalIgnoringCase(alignment, "middle"))
+        verticalAlignValue = CSSValueWebkitBaselineMiddle;
+    else if (equalIgnoringCase(alignment, "center"))
+        verticalAlignValue = CSSValueMiddle;
+    else if (equalIgnoringCase(alignment, "bottom"))
+        verticalAlignValue = CSSValueBaseline;
+    else if (equalIgnoringCase(alignment, "texttop"))
+        verticalAlignValue = CSSValueTextTop;
+
+    if (floatValue != CSSValueInvalid)
+        element->addCSSProperty(attr, CSSPropertyFloat, floatValue);
+
+    if (verticalAlignValue != CSSValueInvalid)
+        element->addCSSProperty(attr, CSSPropertyVerticalAlign, verticalAlignValue);
 }
 
 bool HTMLElement::isFocusable() const

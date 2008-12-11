@@ -146,37 +146,11 @@ void WMLAElement::defaultEventHandler(Event* event)
             dispatchSimulatedClick(event);
             return;
         }
-
-        String url = parseURL(getAttribute(HTMLNames::hrefAttr));
-
-        ASSERT(event->target());
-        ASSERT(event->target()->toNode());
-        
-        /* FIXME: Enable once WMLImageElement is created.
-        if (event->target()->toNode()->hasTagName(imgTag)) {
-            WMLImageElement* img = static_cast<WMLImageElement*>(event->target()->toNode());
-            if (img && img->isServerMap()) {
-                RenderImage* r = static_cast<RenderImage*>(img->renderer());
-                if (r && e) {
-                    // FIXME: broken with transforms
-                    FloatPoint absPos = r->localToAbsolute();
-                    int x = e->pageX() - absPos.x();
-                    int y = e->pageY() - absPos.y();
-                    url += "?";
-                    url += String::number(x);
-                    url += ",";
-                    url += String::number(y);
-                } else {
-                    event->setDefaultHandled();
-                    WMLElement::defaultEventHandler(event);
-                    return;
-                }
-            }
+ 
+        if (!event->defaultPrevented() && document()->frame()) {
+            KURL url = document()->completeURL(parseURL(getAttribute(HTMLNames::hrefAttr)));
+            document()->frame()->loader()->urlSelected(url, target(), event, false, true);
         }
-        */
-
-        if (!event->defaultPrevented() && document()->frame())
-            document()->frame()->loader()->urlSelected(document()->completeURL(url), getAttribute(HTMLNames::targetAttr), event, false, true);
 
         event->setDefaultHandled();
     }

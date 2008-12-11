@@ -30,6 +30,7 @@ namespace WebCore {
 class WMLNoopElement : public WMLElement {
 public:
     WMLNoopElement(const QualifiedName& tagName, Document*);
+    virtual ~WMLNoopElement();
 
     virtual void insertedIntoDocument();
 };

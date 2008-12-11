@@ -1,3 +1,21 @@
+2008-12-11  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        - Remove some dead, commented-out code from WMLAElement.
+        - Add missing virtual destructor for <noop>, as suggested by Alexey.
+        - Refactor addHTMLAlignment in a static helper function to share with WML.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::addHTMLAlignment):
+        (WebCore::HTMLElement::addHTMLAlignmentToStyledElement):
+        * html/HTMLElement.h:
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::defaultEventHandler):
+        * wml/WMLNoopElement.cpp:
+        (WebCore::WMLNoopElement::~WMLNoopElement):
+        * wml/WMLNoopElement.h:
+
 2008-12-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele Peterson.
