@@ -1,3 +1,36 @@
+2008-12-12  Kai Brüning  <kai@granus.net>
+
+        Reviewed and tweaked by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18205
+          DOMNode objects are garbage collected although there are strong references
+          <rdar://problem/6441200>
+
+        Fixes resurrection bug for wrapper objects by using an NSMapTable with zeroing weak
+        memory for the wrapper reference for DOMWrapperCache (DOMInternal.mm),
+        JSWrapperCache (WebScriptObject.mm) and wrapperCache (DOMRGBColor.mm).
+        BUILDING_ON_TIGER is used to create a Leopard-only NSMapTable or an old-style
+        procedural map table for Tiger systems.
+
+        No regression tests yet since we don't currently run any tests in GC mode.
+
+        * bindings/objc/DOMInternal.h: added WebCore::createWrapperCache for use by all three caches
+        * bindings/objc/DOMInternal.mm:
+        (WebCore::createWrapperCache): Contains the compile-time check for map table creation
+        (WebCore::getDOMWrapper): HashMap -> NSMapTable
+        (WebCore::addDOMWrapper): ditto
+        (WebCore::removeDOMWrapper): ditto
+        * bindings/objc/DOMObject.mm: removed [DOMObject finalize]
+        * bindings/objc/DOMRGBColor.mm: removed [DOMRGBColor finalize]
+        (WebCore::getWrapperForRGB): CFMutableDictionaryRef -> NSMapTable
+        (WebCore::setWrapperForRGB): ditto
+        (WebCore::removeWrapperForRGB): ditto
+        * bindings/objc/WebScriptObject.mm:
+        (WebCore::getJSWrapper): HashMap -> NSMapTable
+        (WebCore::addJSWrapper): ditto
+        (WebCore::removeJSWrapper): ditto
+        (-[WebScriptObject finalize]): removed call of removeJSWrapper()
+
 2008-12-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

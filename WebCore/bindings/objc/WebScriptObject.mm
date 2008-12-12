@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,28 +57,27 @@ using namespace WebCore;
 
 namespace WebCore {
 
-typedef HashMap<JSObject*, NSObject*> JSWrapperMap;
-static JSWrapperMap* JSWrapperCache;
+static NSMapTable* JSWrapperCache;
 
 NSObject* getJSWrapper(JSObject* impl)
 {
     if (!JSWrapperCache)
         return nil;
-    return JSWrapperCache->get(impl);
+    return static_cast<NSObject*>(NSMapGet(JSWrapperCache, impl));
 }
 
 void addJSWrapper(NSObject* wrapper, JSObject* impl)
 {
     if (!JSWrapperCache)
-        JSWrapperCache = new JSWrapperMap;
-    JSWrapperCache->set(impl, wrapper);
+        JSWrapperCache = createWrapperCache();
+    NSMapInsert(JSWrapperCache, impl, wrapper);
 }
 
 void removeJSWrapper(JSObject* impl)
 {
     if (!JSWrapperCache)
         return;
-    JSWrapperCache->remove(impl);
+    NSMapRemove(JSWrapperCache, impl);
 }
 
 id createJSWrapper(JSC::JSObject* object, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> root)
@@ -248,9 +247,6 @@ static void _didExecute(WebScriptObject *obj)
 
 - (void)finalize
 {
-    if (_private->imp)
-        WebCore::removeJSWrapper(_private->imp);
-
     if (_private->rootObject && _private->rootObject->isValid())
         _private->rootObject->gcUnprotect(_private->imp);
 
@@ -433,9 +429,10 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 - (NSString *)stringRepresentation
 {
-    if (![self _isSafeScript])
+    if (![self _isSafeScript]) {
         // This is a workaround for a gcc 3.3 internal compiler error.
         return @"Undefined";
+    }
 
     JSLock lock(false);
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
@@ -562,16 +559,17 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 @implementation WebScriptObject (WebKitCocoaBindings)
 
 #if 0 
-// FIXME: presence of 'count' method on WebScriptObject breaks Democracy player
-//        http://bugs.webkit.org/show_bug.cgi?id=13129
+
+// FIXME: We'd like to add this, but we can't do that until this issue is resolved:
+// http://bugs.webkit.org/show_bug.cgi?id=13129: presence of 'count' method on
+// WebScriptObject breaks Democracy player.
 
 - (unsigned)count
 {
     id length = [self valueForKey:@"length"];
-    if ([length respondsToSelector:@selector(intValue)])
-        return [length intValue];
-    else
+    if (![length respondsToSelector:@selector(intValue)])
         return 0;
+    return [length intValue];
 }
 
 #endif
@@ -644,4 +642,3 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 }
 
 @end
-

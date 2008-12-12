@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,32 +45,54 @@
 
 namespace WebCore {
 
-typedef HashMap<DOMObjectInternal*, NSObject*> DOMWrapperMap;
-static DOMWrapperMap* DOMWrapperCache;
+static NSMapTable* DOMWrapperCache;
+
+NSMapTable* createWrapperCache()
+{
+#ifdef BUILDING_ON_TIGER
+    return NSCreateMapTable(NSNonOwnedPointerMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks, 0);
+#else
+    // NSMapTable with zeroing weak pointers is the recommended way to build caches like this under garbage collection.
+    NSPointerFunctionsOptions keyOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsOpaquePersonality;
+    NSPointerFunctionsOptions valueOptions = NSPointerFunctionsZeroingWeakMemory | NSPointerFunctionsObjectPersonality;
+    return [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
+#endif
+}
+
+NSMapTable* createWrapperCacheWithIntegerKeys()
+{
+#ifdef BUILDING_ON_TIGER
+    return NSCreateMapTable(NSIntMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks, 0);
+#else
+    // NSMapTable with zeroing weak pointers is the recommended way to build caches like this under garbage collection.
+    NSPointerFunctionsOptions keyOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsIntegerPersonality;
+    NSPointerFunctionsOptions valueOptions = NSPointerFunctionsZeroingWeakMemory | NSPointerFunctionsObjectPersonality;
+    return [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
+#endif
+}
 
 NSObject* getDOMWrapper(DOMObjectInternal* impl)
 {
     if (!DOMWrapperCache)
         return nil;
-    return DOMWrapperCache->get(impl);
+    return static_cast<NSObject*>(NSMapGet(DOMWrapperCache, impl));
 }
 
 void addDOMWrapper(NSObject* wrapper, DOMObjectInternal* impl)
 {
     if (!DOMWrapperCache)
-        DOMWrapperCache = new DOMWrapperMap;
-    DOMWrapperCache->set(impl, wrapper);
+        DOMWrapperCache = createWrapperCache();
+    NSMapInsert(DOMWrapperCache, impl, wrapper);
 }
 
 void removeDOMWrapper(DOMObjectInternal* impl)
 {
     if (!DOMWrapperCache)
         return;
-    DOMWrapperCache->remove(impl);
+    NSMapRemove(DOMWrapperCache, impl);
 }
 
 } // namespace WebCore
-
 
 //------------------------------------------------------------------------------------------
 
@@ -94,7 +116,7 @@ void removeDOMWrapper(DOMObjectInternal* impl)
 
 - (void)_initializeScriptDOMNodeImp
 {
-    assert (_private->isCreatedByDOMWrapper);
+    ASSERT(_private->isCreatedByDOMWrapper);
     
     if (![self isKindOfClass:[DOMNode class]]) {
         // DOMObject can't map back to a document, and thus an interpreter,

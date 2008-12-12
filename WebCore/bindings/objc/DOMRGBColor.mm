@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,29 +38,29 @@
 
 namespace WebCore {
 
-static CFMutableDictionaryRef wrapperCache = NULL;
+static NSMapTable* RGBColorWrapperCache;
 
 id getWrapperForRGB(WebCore::RGBA32 value)
 {
-    if (!wrapperCache)
+    if (!RGBColorWrapperCache)
         return nil;
-    return (id)CFDictionaryGetValue(wrapperCache, reinterpret_cast<const void*>(value));
+    return static_cast<id>(NSMapGet(RGBColorWrapperCache, reinterpret_cast<const void*>(value)));
 }
 
 void setWrapperForRGB(id wrapper, WebCore::RGBA32 value)
 {
-    if (!wrapperCache)
+    if (!RGBColorWrapperCache)
         // No need to retain/free either impl key, or id value.  Items will be removed
         // from the cache in dealloc methods.
-        wrapperCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    CFDictionarySetValue(wrapperCache, reinterpret_cast<const void*>(value), wrapper);
+        RGBColorWrapperCache = createWrapperCacheWithIntegerKeys();
+    NSMapInsert(RGBColorWrapperCache, reinterpret_cast<const void*>(value), wrapper);
 }
 
 void removeWrapperForRGB(WebCore::RGBA32 value)
 {
-    if (!wrapperCache)
+    if (!RGBColorWrapperCache)
         return;
-    CFDictionaryRemoveValue(wrapperCache, reinterpret_cast<const void*>(value));
+    NSMapRemove(RGBColorWrapperCache, reinterpret_cast<const void*>(value));
 }
 
 } // namespace WebCore
@@ -84,12 +84,6 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
     WebCore::removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
     _internal = 0;
     [super dealloc];
-}
-
-- (void)finalize
-{
-    WebCore::removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
-    [super finalize];
 }
 
 - (DOMCSSPrimitiveValue *)red
@@ -131,8 +125,8 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 
 @implementation DOMRGBColor (WebPrivate)
 
-// FIXME: this should be removed as soon as all internal Apple uses of it have been replaced with
-// calls to the public method - (NSColor *)color.
+// FIXME: this should be removed once all internal Apple uses of it have been replaced with
+// calls to the public method, color without the leading underscore.
 - (NSColor *)_color
 {
     return [self color];

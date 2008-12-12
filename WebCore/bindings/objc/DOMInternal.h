@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
@@ -335,6 +335,10 @@ namespace WebCore {
 // Helper functions for DOM wrappers and gluing to Objective-C
 
 namespace WebCore {
+
+    // Create an NSMapTable mapping from pointers to ObjC objects held with zeroing weak references.
+    NSMapTable* createWrapperCache();
+    NSMapTable* createWrapperCacheWithIntegerKeys(); // Same, but from integers to ObjC objects.
 
     id createDOMWrapper(JSC::JSObject*, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> current);
 

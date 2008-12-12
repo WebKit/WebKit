@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth <speth@end.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
@@ -54,13 +54,6 @@
     if (_internal)
         WebCore::removeDOMWrapper(_internal);
     [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_internal)
-        WebCore::removeDOMWrapper(_internal);
-    [super finalize];
 }
 
 - (id)copyWithZone:(NSZone *)zone
