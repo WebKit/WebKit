@@ -73,8 +73,8 @@ private:
     bool m_isVisible;
     bool m_attachedToWindow;
         
-    mutable WebCore::IntRect m_clipRect; // The clip rect to apply to an embedded view.
-    mutable WebCore::IntRect m_windowRect; // Our window rect.
+    WebCore::IntRect m_clipRect; // The clip rect to apply to an embedded view.
+    WebCore::IntRect m_windowRect; // Our window rect.
 };
 
 #endif // EmbeddedWidget_h
