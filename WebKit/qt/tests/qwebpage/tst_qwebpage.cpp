@@ -98,6 +98,7 @@ private slots:
     void contextMenuCrash();
     void database();
     void createPlugin();
+    void destroyPlugin();
 
 private:
 
@@ -545,6 +546,42 @@ void tst_QWebPage::createPlugin()
     m_view->setHtml(QString("<html><body><object type='application/x-qt-plugin' classid='pushbutton' id='mybutton'/></body></html>"));
     QTRY_COMPARE(loadSpy.count(), 5);
     QCOMPARE(newPage->calls.count(), 0);
+}
+
+class PluginTrackedPage : public QWebPage
+{
+public:
+
+    int count;
+    QPointer<QWidget> widget;
+
+    PluginTrackedPage(QWidget *parent = 0) : QWebPage(parent), count(0) {
+       settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+    }
+
+    virtual QObject* createPlugin(const QString&, const QUrl&, const QStringList&, const QStringList&) {
+       count++;
+       QWidget *w = new QWidget;
+       widget = w;
+       return w;
+    }
+};
+
+void tst_QWebPage::destroyPlugin()
+{
+    PluginTrackedPage* page = new PluginTrackedPage(m_view);
+    m_view->setPage(page);
+
+    // we create the plugin, so the widget should be constructed
+    QString content("<html><body><object type=\"application/x-qt-plugin\" classid=\"QProgressBar\"></object></body></html>");
+    m_view->setHtml(content);
+    QVERIFY(page->widget != 0);
+    QCOMPARE(page->count, 1);
+
+    // navigate away, the plugin widget should be destructed
+    m_view->setHtml("<html><body>Hi</body></html>");
+    QTestEventLoop::instance().enterLoop(1);
+    QVERIFY(page->widget == 0);
 }
 
 QTEST_MAIN(tst_QWebPage)

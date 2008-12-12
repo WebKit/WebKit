@@ -996,6 +996,11 @@ class QtPluginWidget: public Widget
 {
 public:
     QtPluginWidget(QWidget* w = 0): Widget(w) {}
+    ~QtPluginWidget()
+    {
+        if (platformWidget())
+            platformWidget()->deleteLater();
+    }
     virtual void invalidateRect(const IntRect& r)
     { 
         if (platformWidget())

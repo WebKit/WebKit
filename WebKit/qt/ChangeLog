@@ -1,3 +1,19 @@
+2008-12-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        When the web page is navigated away, delete the instance
+        of the native plugin.
+
+        http://trolltech.com/developer/task-tracker/index_html?id=214946&method=entry
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (PluginTrackedPage::PluginTrackedPage):
+        (PluginTrackedPage::createPlugin):
+        (tst_QWebPage::destroyPlugin):
+
 2008-12-11  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.
