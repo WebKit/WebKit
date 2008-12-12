@@ -30,6 +30,7 @@
 #define Instruction_h
 
 #include "Opcode.h"
+#include "Structure.h"
 #include <wtf/VectorTraits.h>
 
 #define POLYMORPHIC_LIST_CACHE_SIZE 4
@@ -40,11 +41,10 @@ namespace JSC {
     class Structure;
     class StructureChain;
 
-    // Structure used by op_get_by_id_proto_list instruction to hold data off the main opcode stream.
+    // Structure used by op_get_by_id_self_list and op_get_by_id_proto_list instruction to hold data off the main opcode stream.
     struct PolymorphicAccessStructureList {
         struct PolymorphicStubInfo {
-            unsigned cachedOffset : 31;
-            unsigned isChain : 1;
+            bool isChain;
             void* stubRoutine;
             Structure* base;
             union {
@@ -52,27 +52,24 @@ namespace JSC {
                 StructureChain* chain;
             } u;
 
-            void set(int _cachedOffset, void* _stubRoutine, Structure* _base)
+            void set(void* _stubRoutine, Structure* _base)
             {
-                cachedOffset = _cachedOffset;
                 stubRoutine = _stubRoutine;
                 base = _base;
                 u.proto = 0;
                 isChain = false;
             }
             
-            void set(int _cachedOffset, void* _stubRoutine, Structure* _base, Structure* _proto)
+            void set(void* _stubRoutine, Structure* _base, Structure* _proto)
             {
-                cachedOffset = _cachedOffset;
                 stubRoutine = _stubRoutine;
                 base = _base;
                 u.proto = _proto;
                 isChain = false;
             }
             
-            void set(int _cachedOffset, void* _stubRoutine, Structure* _base, StructureChain* _chain)
+            void set(void* _stubRoutine, Structure* _base, StructureChain* _chain)
             {
-                cachedOffset = _cachedOffset;
                 stubRoutine = _stubRoutine;
                 base = _base;
                 u.chain = _chain;
@@ -80,19 +77,19 @@ namespace JSC {
             }
         } list[POLYMORPHIC_LIST_CACHE_SIZE];
         
-        PolymorphicAccessStructureList(int cachedOffset, void* stubRoutine, Structure* firstBase)
+        PolymorphicAccessStructureList(void* stubRoutine, Structure* firstBase)
         {
-            list[0].set(cachedOffset, stubRoutine, firstBase);
+            list[0].set(stubRoutine, firstBase);
         }
 
-        PolymorphicAccessStructureList(int cachedOffset, void* stubRoutine, Structure* firstBase, Structure* firstProto)
+        PolymorphicAccessStructureList(void* stubRoutine, Structure* firstBase, Structure* firstProto)
         {
-            list[0].set(cachedOffset, stubRoutine, firstBase, firstProto);
+            list[0].set(stubRoutine, firstBase, firstProto);
         }
 
-        PolymorphicAccessStructureList(int cachedOffset, void* stubRoutine, Structure* firstBase, StructureChain* firstChain)
+        PolymorphicAccessStructureList(void* stubRoutine, Structure* firstBase, StructureChain* firstChain)
         {
-            list[0].set(cachedOffset, stubRoutine, firstBase, firstChain);
+            list[0].set(stubRoutine, firstBase, firstChain);
         }
 
         void derefStructures(int count)

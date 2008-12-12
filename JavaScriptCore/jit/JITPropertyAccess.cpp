@@ -58,7 +58,6 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident,
 #ifdef NDEBUG
     UNUSED_PARAM(propertyAccessInstructionIndex);
 #endif
-    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
 
 #ifndef NDEBUG
     JmpDst coldPathBegin = __ label();
@@ -70,7 +69,6 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident,
     emitPutVirtualRegister(resultVReg);
 
     // Track the location of the call; this will be used to recover repatch information.
-    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 
@@ -94,7 +92,6 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, 
     JmpSrc call = emitCTICall(i, Interpreter::cti_op_put_by_id_generic);
 
     // Track the location of the call; this will be used to recover repatch information.
-    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 
@@ -113,8 +110,6 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier*, unsig
     // to jump back to if one of these trampolies finds a match.
 
     emitGetVirtualRegister(baseVReg, X86::eax, i);
-
-    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
 
     emitJumpSlowCaseIfNotJSCell(X86::eax, i, baseVReg);
 
@@ -155,7 +150,6 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
     emitPutVirtualRegister(resultVReg);
 
     // Track the location of the call; this will be used to recover repatch information.
-    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 
@@ -166,8 +160,6 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier*, int valueVReg, unsign
     // such that the Structure & offset are always at the same distance from this.
 
     emitGetVirtualRegisters(baseVReg, X86::eax, valueVReg, X86::edx, i);
-
-    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
 
     // Jump to a slow case if either the base object is an immediate, or if the Structure does not match.
     emitJumpSlowCaseIfNotJSCell(X86::eax, i, baseVReg);
@@ -198,7 +190,6 @@ void JIT::compilePutByIdSlowCase(int baseVReg, Identifier* ident, int, unsigned 
     JmpSrc call = emitCTICall(i, Interpreter::cti_op_put_by_id);
 
     // Track the location of the call; this will be used to recover repatch information.
-    ASSERT(m_codeBlock->propertyAccessInstruction(propertyAccessInstructionIndex).bytecodeIndex == i);
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 
@@ -482,7 +473,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     X86Assembler::link(code, success, reinterpret_cast<void*>(successDest));
 
     structure->ref();
-    polymorphicStructures->list[currentIndex].set(cachedOffset, code, structure);
+    polymorphicStructures->list[currentIndex].set(code, structure);
 
     // Finally repatch the jump to slow case back in the hot path to jump here instead.
     intptr_t jmpLocation = reinterpret_cast<intptr_t>(stubInfo->hotPathBegin) + repatchOffsetGetByIdBranchToSlowCase;
@@ -523,7 +514,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
 
     structure->ref();
     prototypeStructure->ref();
-    prototypeStructures->list[currentIndex].set(cachedOffset, code, structure, prototypeStructure);
+    prototypeStructures->list[currentIndex].set(code, structure, prototypeStructure);
 
     // Finally repatch the jump to slow case back in the hot path to jump here instead.
     intptr_t jmpLocation = reinterpret_cast<intptr_t>(stubInfo->hotPathBegin) + repatchOffsetGetByIdBranchToSlowCase;
@@ -573,7 +564,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     // Track the stub we have created so that it will be deleted later.
     structure->ref();
     chain->ref();
-    prototypeStructures->list[currentIndex].set(cachedOffset, code, structure, chain);
+    prototypeStructures->list[currentIndex].set(code, structure, chain);
 
     // Finally repatch the jump to slow case back in the hot path to jump here instead.
     intptr_t jmpLocation = reinterpret_cast<intptr_t>(stubInfo->hotPathBegin) + repatchOffsetGetByIdBranchToSlowCase;

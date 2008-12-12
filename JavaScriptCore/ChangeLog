@@ -1,3 +1,95 @@
+2008-12-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove dependancy on having the Instruction buffer in order to
+        deref Structures used for property access and global resolves.
+        Instead, we put references to the necessary Structures in axillary
+        data structures on the CodeBlock. This is not an ideal solution,
+        as we still pay for having the Structures in two places and we
+        would like to eventually just hold on to offsets into the machine
+        code buffer.
+
+        - Also removes CodeBlock bloat in non-JIT by #ifdefing the JIT
+          only data structures.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.scons:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * bytecode/CodeBlock.cpp:
+        (JSC::isGlobalResolve):
+        (JSC::isPropertyAccess):
+        (JSC::instructionOffsetForNth):
+        (JSC::printGlobalResolveInfo):
+        (JSC::printStructureStubInfo):
+        (JSC::CodeBlock::printStructures):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::GlobalResolveInfo::GlobalResolveInfo):
+        (JSC::getNativePC):
+        (JSC::CodeBlock::instructions):
+        (JSC::CodeBlock::getStubInfo):
+        (JSC::CodeBlock::getBytecodeIndex):
+        (JSC::CodeBlock::addPropertyAccessInstruction):
+        (JSC::CodeBlock::addGlobalResolveInstruction):
+        (JSC::CodeBlock::numberOfStructureStubInfos):
+        (JSC::CodeBlock::addStructureStubInfo):
+        (JSC::CodeBlock::structureStubInfo):
+        (JSC::CodeBlock::addGlobalResolveInfo):
+        (JSC::CodeBlock::globalResolveInfo):
+        (JSC::CodeBlock::numberOfCallLinkInfos):
+        (JSC::CodeBlock::addCallLinkInfo):
+        (JSC::CodeBlock::callLinkInfo):
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        (JSC::PolymorphicAccessStructureList::PolymorphicAccessStructureList):
+        * bytecode/Opcode.h:
+        (JSC::):
+        * bytecode/StructureStubInfo.cpp: Copied from bytecode/CodeBlock.cpp.
+        (JSC::StructureStubInfo::deref):
+        * bytecode/StructureStubInfo.h: Copied from bytecode/CodeBlock.h.
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::initGetByIdProto):
+        (JSC::StructureStubInfo::initGetByIdChain):
+        (JSC::StructureStubInfo::initGetByIdSelfList):
+        (JSC::StructureStubInfo::initGetByIdProtoList):
+        (JSC::StructureStubInfo::initPutByIdTransition):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        (JSC::StructureStubInfo::):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::emitCatch):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCTICachePutByID):
+        (JSC::Interpreter::tryCTICacheGetByID):
+        (JSC::Interpreter::cti_op_get_by_id_self_fail):
+        (JSC::getPolymorphicAccessStructureListSlot):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list):
+        (JSC::Interpreter::cti_op_resolve_global):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::compilePutByIdSlowCase):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+
 2008-12-11  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

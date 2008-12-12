@@ -176,7 +176,7 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     , m_globalData(globalData)
     , m_codeBlock(codeBlock)
     , m_labels(codeBlock ? codeBlock->instructions().size() : 0)
-    , m_propertyAccessCompilationInfo(codeBlock ? codeBlock->numberOfPropertyAccessInstructions() : 0)
+    , m_propertyAccessCompilationInfo(codeBlock ? codeBlock->numberOfStructureStubInfos() : 0)
     , m_callStructureStubCompilationInfo(codeBlock ? codeBlock->numberOfCallLinkInfos() : 0)
     , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
     , m_jumpTargetsPosition(0)
@@ -260,6 +260,7 @@ void JIT::privateCompileMainPass()
     unsigned instructionCount = m_codeBlock->instructions().size();
 
     unsigned propertyAccessInstructionIndex = 0;
+    unsigned globalResolveInfoIndex = 0;
     unsigned callLinkInfoIndex = 0;
 
     for (unsigned i = 0; i < instructionCount; ) {
@@ -698,8 +699,10 @@ void JIT::privateCompileMainPass()
             // Fast case
             void* globalObject = instruction[i + 2].u.jsCell;
             Identifier* ident = &(m_codeBlock->identifier(instruction[i + 3].u.operand));
-            void* structureAddress = reinterpret_cast<void*>(instruction + i + 4);
-            void* offsetAddr = reinterpret_cast<void*>(instruction + i + 5);
+            
+            unsigned currentIndex = globalResolveInfoIndex++;
+            void* structureAddress = &(m_codeBlock->globalResolveInfo(currentIndex).structure);
+            void* offsetAddr = &(m_codeBlock->globalResolveInfo(currentIndex).offset);
 
             // Check Structure of global object
             move(ImmPtr(globalObject), X86::eax);
@@ -717,7 +720,8 @@ void JIT::privateCompileMainPass()
             noMatch.link(this);
             emitPutCTIArgConstant(globalObject, 0);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
-            emitPutCTIArgConstant(reinterpret_cast<unsigned>(instruction + i), 8);
+            emitPutCTIArgConstant(currentIndex, 8);
+            emitPutCTIArgConstant(reinterpret_cast<unsigned>(instruction + i), 12);
             emitCTICall(i, Interpreter::cti_op_resolve_global);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             end.link(this);
@@ -1349,7 +1353,7 @@ void JIT::privateCompileMainPass()
         }
     }
 
-    ASSERT(propertyAccessInstructionIndex == m_codeBlock->numberOfPropertyAccessInstructions());
+    ASSERT(propertyAccessInstructionIndex == m_codeBlock->numberOfStructureStubInfos());
     ASSERT(callLinkInfoIndex == m_codeBlock->numberOfCallLinkInfos());
 }
 
@@ -1873,7 +1877,7 @@ void JIT::privateCompileSlowCases()
         __ link(__ jmp(), m_labels[i]);
     }
 
-    ASSERT(propertyAccessInstructionIndex == m_codeBlock->numberOfPropertyAccessInstructions());
+    ASSERT(propertyAccessInstructionIndex == m_codeBlock->numberOfStructureStubInfos());
     ASSERT(callLinkInfoIndex == m_codeBlock->numberOfCallLinkInfos());
 }
 
@@ -1964,8 +1968,8 @@ void JIT::privateCompile()
     for (Vector<JSRInfo>::iterator iter = m_jsrSites.begin(); iter != m_jsrSites.end(); ++iter)
         X86Assembler::linkAbsoluteAddress(code, iter->addrPosition, iter->target);
 
-    for (unsigned i = 0; i < m_codeBlock->numberOfPropertyAccessInstructions(); ++i) {
-        StructureStubInfo& info = m_codeBlock->propertyAccessInstruction(i);
+    for (unsigned i = 0; i < m_codeBlock->numberOfStructureStubInfos(); ++i) {
+        StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
         info.callReturnLocation = X86Assembler::getRelocatedAddress(code, m_propertyAccessCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = X86Assembler::getRelocatedAddress(code, m_propertyAccessCompilationInfo[i].hotPathBegin);
     }

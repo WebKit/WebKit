@@ -81,6 +81,8 @@ javascriptcore_sources += \
 	JavaScriptCore/jit/ExecutableAllocatorPosix.cpp \
 	JavaScriptCore/jit/JIT.h \
 	JavaScriptCore/jit/JITInlineMethods.h \
+	JavaScriptCore/bytecode/StructureStubInfo.cpp \
+	JavaScriptCore/bytecode/StructureStubInfo.h \
 	JavaScriptCore/bytecode/CodeBlock.cpp \
 	JavaScriptCore/bytecode/CodeBlock.h \
 	JavaScriptCore/bytecode/JumpTable.cpp \

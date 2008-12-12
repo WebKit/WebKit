@@ -147,6 +147,7 @@ Source files for JSCore.
     </set>
     <set append="1" var="JSCORE_VM_SOURCES">
         bytecode/CodeBlock.cpp
+        bytecode/StructureStubInfo.cpp
         bytecode/JumpTable.cpp
         runtime/ExceptionHelpers.cpp
         interpreter/Interpreter.cpp

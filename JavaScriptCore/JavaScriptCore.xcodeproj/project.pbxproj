@@ -306,6 +306,8 @@
 		BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9041470EB9250900FE26FA /* StructureTransitionTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCCF0D080EF0AAB900413C8F /* StructureStubInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF0D070EF0AAB900413C8F /* StructureStubInfo.h */; };
+		BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCF0D0B0EF0B8A500413C8F /* StructureStubInfo.cpp */; };
 		BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */; };
 		BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */; };
 		BCD202D60E170708002C7E82 /* RegExpConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */; };
@@ -711,6 +713,8 @@
 		BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InternalFunction.cpp; sourceTree = "<group>"; };
 		BCA62DFE0E2826230004F30D /* CallData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallData.cpp; sourceTree = "<group>"; };
 		BCA62DFF0E2826310004F30D /* ConstructData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstructData.cpp; sourceTree = "<group>"; };
+		BCCF0D070EF0AAB900413C8F /* StructureStubInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureStubInfo.h; sourceTree = "<group>"; };
+		BCCF0D0B0EF0B8A500413C8F /* StructureStubInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureStubInfo.cpp; sourceTree = "<group>"; };
 		BCD202BD0E1706A7002C7E82 /* RegExpConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpConstructor.cpp; sourceTree = "<group>"; };
 		BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpConstructor.h; sourceTree = "<group>"; };
 		BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpPrototype.cpp; sourceTree = "<group>"; };
@@ -1402,6 +1406,8 @@
 				969A07950ED1D3AE00F1F681 /* Opcode.h */,
 				1429D8830ED21C3D00B89619 /* SamplingTool.cpp */,
 				1429D8840ED21C3D00B89619 /* SamplingTool.h */,
+				BCCF0D0B0EF0B8A500413C8F /* StructureStubInfo.cpp */,
+				BCCF0D070EF0AAB900413C8F /* StructureStubInfo.h */,
 			);
 			path = bytecode;
 			sourceTree = "<group>";
@@ -1654,6 +1660,7 @@
 				BC18C44D0E16F5CD00B34460 /* pcre.h in Headers */,
 				BC18C44E0E16F5CD00B34460 /* pcre_internal.h in Headers */,
 				BC18C4720E16F5CD00B34460 /* ucpinternal.h in Headers */,
+				BCCF0D080EF0AAB900413C8F /* StructureStubInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1999,6 +2006,7 @@
 				930754D008B0F74600AB3056 /* pcre_tables.cpp in Sources */,
 				937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp in Sources */,
 				93E26BD408B1514100F85226 /* pcre_xclass.cpp in Sources */,
+				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

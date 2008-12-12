@@ -1234,6 +1234,14 @@
 			Name="bytecode"
 			>
 			<File
+				RelativePath="..\..\bytecode\StructureStubInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\StructureStubInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\CodeBlock.cpp"
 				>
 			</File>

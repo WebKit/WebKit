@@ -175,6 +175,103 @@ static void printPutByIdOp(int location, Vector<Instruction>::const_iterator& it
     it += 4;
 }
 
+#if ENABLE(JIT)
+static bool isGlobalResolve(OpcodeID opcodeID)
+{
+    return opcodeID == op_resolve_global;
+}
+
+static bool isPropertyAccess(OpcodeID opcodeID)
+{
+    switch (opcodeID) {
+        case op_get_by_id_self:
+        case op_get_by_id_proto:
+        case op_get_by_id_chain:
+        case op_get_by_id_self_list:
+        case op_get_by_id_proto_list:
+        case op_put_by_id_transition:
+        case op_put_by_id_replace:
+        case op_get_by_id:
+        case op_put_by_id:
+        case op_get_by_id_generic:
+        case op_put_by_id_generic:
+        case op_get_array_length:
+        case op_get_string_length:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static unsigned instructionOffsetForNth(ExecState* exec, const Vector<Instruction>& instructions, int nth, bool (*predicate)(OpcodeID))
+{
+    size_t i = 0;
+    while (i < instructions.size()) {
+        OpcodeID currentOpcode = exec->interpreter()->getOpcodeID(instructions[i].u.opcode);
+        if (predicate(exec->interpreter()->getOpcodeID(instructions[i].u.opcode))) {
+            if (!--nth)
+                return i;
+        }
+        i += opcodeLengths[currentOpcode];
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+static void printGlobalResolveInfo(const GlobalResolveInfo& resolveInfo, unsigned instructionOffset)
+{
+    printf("  [%4d] %s: %s\n", instructionOffset, "resolve_global", pointerToSourceString(resolveInfo.structure).UTF8String().c_str());
+}
+
+static void printStructureStubInfo(const StructureStubInfo& stubInfo, unsigned instructionOffset)
+{
+    switch (stubInfo.opcodeID) {
+    case op_get_by_id_self:
+        printf("  [%4d] %s: %s\n", instructionOffset, "get_by_id_self", pointerToSourceString(stubInfo.u.getByIdSelf.baseObjectStructure).UTF8String().c_str());
+        return;
+    case op_get_by_id_proto:
+        printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_proto", pointerToSourceString(stubInfo.u.getByIdProto.baseObjectStructure).UTF8String().c_str(), pointerToSourceString(stubInfo.u.getByIdProto.prototypeStructure).UTF8String().c_str());
+        return;
+    case op_get_by_id_chain:
+        printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_chain", pointerToSourceString(stubInfo.u.getByIdChain.baseObjectStructure).UTF8String().c_str(), pointerToSourceString(stubInfo.u.getByIdChain.chain).UTF8String().c_str());
+        return;
+    case op_get_by_id_self_list:
+        printf("  [%4d] %s: %s (%d)\n", instructionOffset, "op_get_by_id_self_list", pointerToSourceString(stubInfo.u.getByIdSelfList.structureList).UTF8String().c_str(), stubInfo.u.getByIdSelfList.listSize);
+        return;
+    case op_get_by_id_proto_list:
+        printf("  [%4d] %s: %s (%d)\n", instructionOffset, "op_get_by_id_proto_list", pointerToSourceString(stubInfo.u.getByIdProtoList.structureList).UTF8String().c_str(), stubInfo.u.getByIdProtoList.listSize);
+        return;
+    case op_put_by_id_transition:
+        printf("  [%4d] %s: %s, %s, %s\n", instructionOffset, "put_by_id_transition", pointerToSourceString(stubInfo.u.putByIdTransition.previousStructure).UTF8String().c_str(), pointerToSourceString(stubInfo.u.putByIdTransition.structure).UTF8String().c_str(), pointerToSourceString(stubInfo.u.putByIdTransition.chain).UTF8String().c_str());
+        return;
+    case op_put_by_id_replace:
+        printf("  [%4d] %s: %s\n", instructionOffset, "put_by_id_replace", pointerToSourceString(stubInfo.u.putByIdReplace.baseObjectStructure).UTF8String().c_str());
+        return;
+    case op_get_by_id:
+        printf("  [%4d] %s\n", instructionOffset, "get_by_id");
+        return;
+    case op_put_by_id:
+        printf("  [%4d] %s\n", instructionOffset, "put_by_id");
+        return;
+    case op_get_by_id_generic:
+        printf("  [%4d] %s\n", instructionOffset, "op_get_by_id_generic");
+        return;
+    case op_put_by_id_generic:
+        printf("  [%4d] %s\n", instructionOffset, "op_put_by_id_generic");
+        return;
+    case op_get_array_length:
+        printf("  [%4d] %s\n", instructionOffset, "op_get_array_length");
+        return;
+    case op_get_string_length:
+        printf("  [%4d] %s\n", instructionOffset, "op_get_string_length");
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+#endif
+
 void CodeBlock::printStructure(const char* name, const Instruction* vPC, int operand) const
 {
     unsigned instructionOffset = vPC - m_instructions.begin();
@@ -199,7 +296,7 @@ void CodeBlock::printStructures(const Instruction* vPC) const
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
-        printf("  [%4d] %s: %s, %s, %s\n", instructionOffset, "put_by_id_new", pointerToSourceString(vPC[4].u.structure).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structure).UTF8String().c_str(), pointerToSourceString(vPC[6].u.structureChain).UTF8String().c_str());
+        printf("  [%4d] %s: %s, %s, %s\n", instructionOffset, "put_by_id_transition", pointerToSourceString(vPC[4].u.structure).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structure).UTF8String().c_str(), pointerToSourceString(vPC[6].u.structureChain).UTF8String().c_str());
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain)) {
@@ -225,19 +322,18 @@ void CodeBlock::printStructures(const Instruction* vPC) const
 
 void CodeBlock::dump(ExecState* exec) const
 {
-    Vector<Instruction>::const_iterator begin = m_instructions.begin();
-    Vector<Instruction>::const_iterator end = m_instructions.end();
-
     size_t instructionCount = 0;
-    for (Vector<Instruction>::const_iterator it = begin; it != end; ++it)
-        if (exec->interpreter()->isOpcode(it->u.opcode))
-            ++instructionCount;
+
+    for (size_t i = 0; i < m_instructions.size(); i += opcodeLengths[exec->interpreter()->getOpcodeID(m_instructions[i].u.opcode)])
+        ++instructionCount;
 
     printf("%lu m_instructions; %lu bytes at %p; %d parameter(s); %d callee register(s)\n\n",
         static_cast<unsigned long>(instructionCount),
         static_cast<unsigned long>(m_instructions.size() * sizeof(Instruction)),
         this, m_numParameters, m_numCalleeRegisters);
-    
+
+    Vector<Instruction>::const_iterator begin = m_instructions.begin();
+    Vector<Instruction>::const_iterator end = m_instructions.end();
     for (Vector<Instruction>::const_iterator it = begin; it != end; ++it)
         dump(exec, begin, it);
 
@@ -279,6 +375,25 @@ void CodeBlock::dump(ExecState* exec) const
         } while (i < m_rareData->m_regexps.size());
     }
 
+#if ENABLE(JIT)
+    if (!m_globalResolveInfos.isEmpty() || !m_structureStubInfos.isEmpty())
+        printf("\nStructures:\n");
+
+    if (!m_globalResolveInfos.isEmpty()) {
+        size_t i = 0;
+        do {
+             printGlobalResolveInfo(m_globalResolveInfos[i], instructionOffsetForNth(exec, m_instructions, i + 1, isGlobalResolve));
+             ++i;
+        } while (i < m_globalResolveInfos.size());
+    }
+    if (!m_structureStubInfos.isEmpty()) {
+        size_t i = 0;
+        do {
+            printStructureStubInfo(m_structureStubInfos[i], instructionOffsetForNth(exec, m_instructions, i + 1, isPropertyAccess));
+             ++i;
+        } while (i < m_structureStubInfos.size());
+    }
+#else
     if (!m_globalResolveInstructions.isEmpty() || !m_propertyAccessInstructions.isEmpty())
         printf("\nStructures:\n");
 
@@ -292,11 +407,12 @@ void CodeBlock::dump(ExecState* exec) const
     if (!m_propertyAccessInstructions.isEmpty()) {
         size_t i = 0;
         do {
-             printStructures(&m_instructions[m_propertyAccessInstructions[i].bytecodeIndex]);
+            printStructures(&m_instructions[m_propertyAccessInstructions[i]]);
              ++i;
         } while (i < m_propertyAccessInstructions.size());
     }
- 
+#endif
+
     if (m_rareData && !m_rareData->m_exceptionHandlers.isEmpty()) {
         printf("\nException Handlers:\n");
         unsigned i = 0;
@@ -962,8 +1078,8 @@ static HashSet<CodeBlock*> liveCodeBlockSet;
 
 #define FOR_EACH_MEMBER_VECTOR(macro) \
     macro(instructions) \
-    macro(globalResolveInstructions) \
-    macro(propertyAccessInstructions) \
+    macro(globalResolveInfos) \
+    macro(structureStubInfos) \
     macro(callLinkInfos) \
     macro(linkedCallerList) \
     macro(identifiers) \
@@ -1074,12 +1190,20 @@ CodeBlock::CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceP
 
 CodeBlock::~CodeBlock()
 {
+#if !ENABLE(JIT)
     for (size_t size = m_globalResolveInstructions.size(), i = 0; i < size; ++i)
         derefStructures(&m_instructions[m_globalResolveInstructions[i]]);
 
-    for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i) {
-        derefStructures(&m_instructions[m_propertyAccessInstructions[i].bytecodeIndex]);
+    for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
+        derefStructures(&m_instructions[m_propertyAccessInstructions[i]]);
+#else
+    for (size_t size = m_globalResolveInfos.size(), i = 0; i < size; ++i) {
+        if (m_globalResolveInfos[i].structure)
+            m_globalResolveInfos[i].structure->deref();
     }
+
+    for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i)
+        m_structureStubInfos[i].deref();
 
     for (size_t size = m_callLinkInfos.size(), i = 0; i < size; ++i) {
         CallLinkInfo* callLinkInfo = &m_callLinkInfos[i];
@@ -1087,7 +1211,6 @@ CodeBlock::~CodeBlock()
             callLinkInfo->callee->removeCaller(callLinkInfo);
     }
 
-#if ENABLE(JIT) 
     unlinkCallers();
 #endif
 
@@ -1290,12 +1413,19 @@ void CodeBlock::shrinkToFit()
 {
     m_instructions.shrinkToFit();
 
-    m_globalResolveInstructions.shrinkToFit();
+#if !ENABLE(JIT)
     m_propertyAccessInstructions.shrinkToFit();
+    m_globalResolveInstructions.shrinkToFit();
+#else
+    m_structureStubInfos.shrinkToFit();
+    m_globalResolveInfos.shrinkToFit();
     m_callLinkInfos.shrinkToFit();
     m_linkedCallerList.shrinkToFit();
+#endif
+
     m_expressionInfo.shrinkToFit();
     m_lineInfo.shrinkToFit();
+
     m_identifiers.shrinkToFit();
     m_functionExpressions.shrinkToFit();
     m_constantRegisters.shrinkToFit();

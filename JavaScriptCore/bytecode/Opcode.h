@@ -178,6 +178,10 @@ namespace JSC {
     
     #define OPCODE_LENGTH(opcode) opcode##_length
 
+    #define OPCODE_ID_LENGTH_MAP(opcode, length) length,
+        const int opcodeLengths[numOpcodeIDs] = { FOR_EACH_OPCODE_ID(OPCODE_ID_LENGTH_MAP) };
+    #undef OPCODE_ID_LENGTH_MAP
+
     #define VERIFY_OPCODE_ID(id, size) COMPILE_ASSERT(id <= op_end, ASSERT_THAT_JS_OPCODE_IDS_ARE_VALID);
         FOR_EACH_OPCODE_ID(VERIFY_OPCODE_ID);
     #undef VERIFY_OPCODE_ID

@@ -116,6 +116,7 @@ sources['runtime'] = [
 ]
 sources['bytecode'] = [
     'bytecode/CodeBlock.cpp',
+    'bytecode/StructureStubInfo.cpp',
     'bytecode/JumpTable.cpp',
     'bytecode/Opcode.cpp',
     'bytecode/SamplingTool.cpp',

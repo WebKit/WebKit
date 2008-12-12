@@ -980,7 +980,11 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
     }
 
     if (globalObject) {
+#if ENABLE(JIT)
+        m_codeBlock->addGlobalResolveInfo();
+#else
         m_codeBlock->addGlobalResolveInstruction(instructions().size());
+#endif
         emitOpcode(op_resolve_global);
         instructions().append(dst->index());
         instructions().append(globalObject);
@@ -1060,7 +1064,11 @@ RegisterID* BytecodeGenerator::emitResolveFunction(RegisterID* baseDst, Register
 
 RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
+#if ENABLE(JIT)
+    m_codeBlock->addStructureStubInfo(StructureStubInfo(op_get_by_id));
+#else
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
+#endif
 
     emitOpcode(op_get_by_id);
     instructions().append(dst->index());
@@ -1075,7 +1083,11 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, co
 
 RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& property, RegisterID* value)
 {
+#if ENABLE(JIT)
+    m_codeBlock->addStructureStubInfo(StructureStubInfo(op_put_by_id));
+#else
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
+#endif
 
     emitOpcode(op_put_by_id);
     instructions().append(base->index());
@@ -1247,7 +1259,10 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     }
 
     emitExpressionInfo(divot, startOffset, endOffset);
+
+#if ENABLE(JIT)
     m_codeBlock->addCallLinkInfo();
+#endif
 
     // Emit call.
     emitOpcode(opcodeID);
@@ -1326,7 +1341,10 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
         callFrame.append(newTemporary());
 
     emitExpressionInfo(divot, startOffset, endOffset);
+
+#if ENABLE(JIT)
     m_codeBlock->addCallLinkInfo();
+#endif
 
     emitOpcode(op_construct);
     instructions().append(dst->index()); // dst
@@ -1544,7 +1562,12 @@ RegisterID* BytecodeGenerator::emitNextPropertyName(RegisterID* dst, RegisterID*
 
 RegisterID* BytecodeGenerator::emitCatch(RegisterID* targetRegister, Label* start, Label* end)
 {
+#if ENABLE(JIT)
     HandlerInfo info = { start->offsetFrom(0), end->offsetFrom(0), instructions().size(), m_dynamicScopeDepth, 0 };
+#else
+    HandlerInfo info = { start->offsetFrom(0), end->offsetFrom(0), instructions().size(), m_dynamicScopeDepth };
+#endif
+
     m_codeBlock->addExceptionHandler(info);
     emitOpcode(op_catch);
     instructions().append(targetRegister->index());

@@ -4086,35 +4086,26 @@ NEVER_INLINE void Interpreter::tryCTICachePutByID(CallFrame* callFrame, CodeBloc
     }
 
     StructureStubInfo* stubInfo = &codeBlock->getStubInfo(returnAddress);
-    Instruction* vPC = codeBlock->instructions().begin() + stubInfo->bytecodeIndex;
 
     // Cache hit: Specialize instruction and ref Structures.
 
     // Structure transition, cache transition info
     if (slot.type() == PutPropertySlot::NewProperty) {
-        vPC[0] = getOpcode(op_put_by_id_transition);
-        vPC[4] = structure->previousID();
-        vPC[5] = structure;
         StructureChain* chain = structure->cachedPrototypeChain();
         if (!chain) {
             chain = cachePrototypeChain(callFrame, structure);
             if (!chain) {
-                // This happens if someone has manually inserted null into the prototype chain
-                vPC[0] = getOpcode(op_put_by_id_generic);
+                // This happens if someone has manually inserted null into the prototype chain 
+                stubInfo->opcodeID = op_put_by_id_generic;
                 return;
             }
         }
-        vPC[6] = chain;
-        vPC[7] = slot.cachedOffset();
-        codeBlock->refStructures(vPC);
+        stubInfo->initPutByIdTransition(structure->previousID(), structure, chain);
         JIT::compilePutByIdTransition(callFrame->scopeChain()->globalData, codeBlock, stubInfo, structure->previousID(), structure, slot.cachedOffset(), chain, returnAddress);
         return;
     }
     
-    vPC[0] = getOpcode(op_put_by_id_replace);
-    vPC[4] = structure;
-    vPC[5] = slot.cachedOffset();
-    codeBlock->refStructures(vPC);
+    stubInfo->initPutByIdReplace(structure);
 
 #if USE(CTI_REPATCH_PIC)
     UNUSED_PARAM(callFrame);
@@ -4168,16 +4159,12 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
     // *_second method to achieve a similar (but not quite the same) effect.
 
     StructureStubInfo* stubInfo = &codeBlock->getStubInfo(returnAddress);
-    Instruction* vPC = codeBlock->instructions().begin() + stubInfo->bytecodeIndex;
 
     // Cache hit: Specialize instruction and ref Structures.
 
     if (slot.slotBase() == baseValue) {
         // set this up, so derefStructures can do it's job.
-        vPC[0] = getOpcode(op_get_by_id_self);
-        vPC[4] = structure;
-        vPC[5] = slot.cachedOffset();
-        codeBlock->refStructures(vPC);
+        stubInfo->initGetByIdSelf(structure);
         
 #if USE(CTI_REPATCH_PIC)
         JIT::patchGetByIdSelf(stubInfo, structure, slot.cachedOffset(), returnAddress);
@@ -4199,12 +4186,8 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
             slotBaseObject->setStructure(transition.release());
             asObject(baseValue)->structure()->setCachedPrototypeChain(0);
         }
-
-        vPC[0] = getOpcode(op_get_by_id_proto);
-        vPC[4] = structure;
-        vPC[5] = slotBaseObject->structure();
-        vPC[6] = slot.cachedOffset();
-        codeBlock->refStructures(vPC);
+        
+        stubInfo->initGetByIdProto(structure, slotBaseObject->structure());
 
         JIT::compileGetByIdProto(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, slotBaseObject->structure(), slot.cachedOffset(), returnAddress);
         return;
@@ -4212,7 +4195,7 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
 
     size_t count = countPrototypeChainEntriesAndCheckForProxies(callFrame, baseValue, slot);
     if (!count) {
-        vPC[0] = getOpcode(op_get_by_id_generic);
+        stubInfo->opcodeID = op_get_by_id_generic;
         return;
     }
 
@@ -4221,12 +4204,7 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
         chain = cachePrototypeChain(callFrame, structure);
     ASSERT(chain);
 
-    vPC[0] = getOpcode(op_get_by_id_chain);
-    vPC[4] = structure;
-    vPC[5] = chain;
-    vPC[6] = count;
-    vPC[7] = slot.cachedOffset();
-    codeBlock->refStructures(vPC);
+    stubInfo->initGetByIdChain(structure, chain);
 
     JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, chain, count, slot.cachedOffset(), returnAddress);
 }
@@ -4575,25 +4553,20 @@ JSValue* Interpreter::cti_op_get_by_id_self_fail(CTI_ARGS)
 
         CodeBlock* codeBlock = callFrame->codeBlock();
         StructureStubInfo* stubInfo = &codeBlock->getStubInfo(CTI_RETURN_ADDRESS);
-        Instruction* vPC = codeBlock->instructions().begin() + stubInfo->bytecodeIndex;
 
         ASSERT(slot.slotBase()->isObject());
 
         PolymorphicAccessStructureList* polymorphicStructureList;
         int listIndex = 1;
 
-        if (vPC[0].u.opcode == ARG_globalData->interpreter->getOpcode(op_get_by_id_self)) {
+        if (stubInfo->opcodeID == op_get_by_id_self) {
             ASSERT(!stubInfo->stubRoutine);
-            polymorphicStructureList = new PolymorphicAccessStructureList(vPC[5].u.operand, 0, vPC[4].u.structure);
-
-            vPC[0] = ARG_globalData->interpreter->getOpcode(op_get_by_id_self_list);
-            vPC[4] = polymorphicStructureList;
-            vPC[5] = 2;
+            polymorphicStructureList = new PolymorphicAccessStructureList(0, stubInfo->u.getByIdSelf.baseObjectStructure);
+            stubInfo->initGetByIdSelfList(polymorphicStructureList, 2);
         } else {
-            polymorphicStructureList = vPC[4].u.polymorphicStructures;
-            listIndex = vPC[5].u.operand;
-
-            vPC[5] = listIndex + 1;
+            polymorphicStructureList = stubInfo->u.getByIdSelfList.structureList;
+            listIndex = stubInfo->u.getByIdSelfList.listSize;
+            stubInfo->u.getByIdSelfList.listSize++;
         }
 
         JIT::compileGetByIdSelfList(callFrame->scopeChain()->globalData, codeBlock, stubInfo, polymorphicStructureList, listIndex, asCell(baseValue)->structure(), slot.cachedOffset());
@@ -4606,34 +4579,32 @@ JSValue* Interpreter::cti_op_get_by_id_self_fail(CTI_ARGS)
     return result;
 }
 
-static PolymorphicAccessStructureList* getPolymorphicAccessStructureListSlot(Interpreter* interpreter, StructureStubInfo* stubInfo, Instruction* vPC, int& listIndex)
+static PolymorphicAccessStructureList* getPolymorphicAccessStructureListSlot(StructureStubInfo* stubInfo, int& listIndex)
 {
-    PolymorphicAccessStructureList* prototypeStructureList;
+    PolymorphicAccessStructureList* prototypeStructureList = 0;
     listIndex = 1;
 
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto)) {
-        prototypeStructureList = new PolymorphicAccessStructureList(vPC[6].u.operand, stubInfo->stubRoutine, vPC[4].u.structure, vPC[5].u.structure);
+    switch (stubInfo->opcodeID) {
+    case op_get_by_id_proto:
+        prototypeStructureList = new PolymorphicAccessStructureList(stubInfo->stubRoutine, stubInfo->u.getByIdProto.baseObjectStructure, stubInfo->u.getByIdProto.prototypeStructure);
         stubInfo->stubRoutine = 0;
-
-        vPC[0] = interpreter->getOpcode(op_get_by_id_proto_list);
-        vPC[4] = prototypeStructureList;
-        vPC[5] = 2;
-    } else if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain)) {
-        prototypeStructureList = new PolymorphicAccessStructureList(vPC[6].u.operand, stubInfo->stubRoutine, vPC[4].u.structure, vPC[5].u.structureChain);
+        stubInfo->initGetByIdProtoList(prototypeStructureList, 2);
+        break;
+    case op_get_by_id_chain:
+        prototypeStructureList = new PolymorphicAccessStructureList(stubInfo->stubRoutine, stubInfo->u.getByIdChain.baseObjectStructure, stubInfo->u.getByIdChain.chain);
         stubInfo->stubRoutine = 0;
-
-        vPC[0] = interpreter->getOpcode(op_get_by_id_proto_list);
-        vPC[4] = prototypeStructureList;
-        vPC[5] = 2;
-    } else {
-        ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto_list));
-        prototypeStructureList = vPC[4].u.polymorphicStructures;
-        listIndex = vPC[5].u.operand;
-        vPC[5] = listIndex + 1;
-
-        ASSERT(listIndex < POLYMORPHIC_LIST_CACHE_SIZE);
+        stubInfo->initGetByIdProtoList(prototypeStructureList, 2);
+        break;
+    case op_get_by_id_proto_list:
+        prototypeStructureList = stubInfo->u.getByIdProtoList.structureList;
+        listIndex = stubInfo->u.getByIdProtoList.listSize;
+        stubInfo->u.getByIdProtoList.listSize++;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
     }
     
+    ASSERT(listIndex < POLYMORPHIC_LIST_CACHE_SIZE);
     return prototypeStructureList;
 }
 
@@ -4657,7 +4628,6 @@ JSValue* Interpreter::cti_op_get_by_id_proto_list(CTI_ARGS)
     Structure* structure = asCell(baseValue)->structure();
     CodeBlock* codeBlock = callFrame->codeBlock();
     StructureStubInfo* stubInfo = &codeBlock->getStubInfo(CTI_RETURN_ADDRESS);
-    Instruction* vPC = codeBlock->instructions().begin() + stubInfo->bytecodeIndex;
 
     ASSERT(slot.slotBase()->isObject());
     JSObject* slotBaseObject = asObject(slot.slotBase());
@@ -4674,7 +4644,7 @@ JSValue* Interpreter::cti_op_get_by_id_proto_list(CTI_ARGS)
         }
 
         int listIndex;
-        PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(ARG_globalData->interpreter, stubInfo, vPC, listIndex);
+        PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(stubInfo, listIndex);
 
         JIT::compileGetByIdProtoList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, slotBaseObject->structure(), slot.cachedOffset());
 
@@ -4687,7 +4657,7 @@ JSValue* Interpreter::cti_op_get_by_id_proto_list(CTI_ARGS)
         ASSERT(chain);
 
         int listIndex;
-        PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(ARG_globalData->interpreter, stubInfo, vPC, listIndex);
+        PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(stubInfo, listIndex);
 
         JIT::compileGetByIdChainList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, chain, count, slot.cachedOffset());
 
@@ -5357,18 +5327,20 @@ JSValue* Interpreter::cti_op_resolve_global(CTI_ARGS)
     CallFrame* callFrame = ARG_callFrame;
     JSGlobalObject* globalObject = asGlobalObject(ARG_src1);
     Identifier& ident = *ARG_id2;
-    Instruction* vPC = ARG_instr3;
+    unsigned globalResolveInfoIndex = ARG_int3;
+    Instruction* vPC = ARG_instr4;
     ASSERT(globalObject->isGlobalObject());
 
     PropertySlot slot(globalObject);
     if (globalObject->getPropertySlot(callFrame, ident, slot)) {
         JSValue* result = slot.getValue(callFrame, ident);
         if (slot.isCacheable()) {
-            if (vPC[4].u.structure)
-                vPC[4].u.structure->deref();
+            GlobalResolveInfo& globalResolveInfo = callFrame->codeBlock()->globalResolveInfo(globalResolveInfoIndex);
+            if (globalResolveInfo.structure)
+                globalResolveInfo.structure->deref();
             globalObject->structure()->ref();
-            vPC[4] = globalObject->structure();
-            vPC[5] = slot.cachedOffset();
+            globalResolveInfo.structure = globalObject->structure();
+            globalResolveInfo.offset = slot.cachedOffset();
             return result;
         }
 
