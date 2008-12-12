@@ -1086,9 +1086,10 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, Element* el
 
         if (object) {
             QWidget* widget = qobject_cast<QWidget*>(object);
-            QWidget* view = m_webFrame->page()->view();
-            if (widget && view) {
-                widget->setParent(view);
+            if (widget) {
+                QWidget* view = m_webFrame->page()->view();
+                if (view)
+                    widget->setParent(view);
                 QtPluginWidget* w = new QtPluginWidget();
                 w->setPlatformWidget(widget);
                 // Make sure it's invisible until properly placed into the layout

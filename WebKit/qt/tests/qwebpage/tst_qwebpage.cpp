@@ -99,6 +99,7 @@ private slots:
     void database();
     void createPlugin();
     void destroyPlugin();
+    void createViewlessPlugin();
 
 private:
 
@@ -582,6 +583,16 @@ void tst_QWebPage::destroyPlugin()
     m_view->setHtml("<html><body>Hi</body></html>");
     QTestEventLoop::instance().enterLoop(1);
     QVERIFY(page->widget == 0);
+}
+
+void tst_QWebPage::createViewlessPlugin()
+{
+    PluginTrackedPage* page = new PluginTrackedPage;
+    QString content("<html><body><object type=\"application/x-qt-plugin\" classid=\"QProgressBar\"></object></body></html>");
+    page->mainFrame()->setHtml(content);
+    QCOMPARE(page->count, 1);
+    QVERIFY(page->widget != 0);
+    delete page;
 }
 
 QTEST_MAIN(tst_QWebPage)

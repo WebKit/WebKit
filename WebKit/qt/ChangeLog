@@ -1,3 +1,15 @@
+2008-12-12  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Create the plugin widget even though the web page has no associated
+        view. This prevents the plugin to be uselessly constructed more than once.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::createViewlessPlugin):
+
 2008-12-11  Enrico Ros  <enrico.ros@m31.com>
 
         Reviewed by Simon Hausmann.
