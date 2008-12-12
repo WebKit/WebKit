@@ -1,3 +1,25 @@
+2008-12-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22043
+
+        Do not run into the WebCore::DocumentLoader::updateLoading
+        ASSERT on Gtk+/CURL when trying to load tests from our LayoutTests.
+
+        Do not call setPrimaryLoadComplete when the
+        activeDocumentLoader has already been replaced. This can happen
+        when a script executed from within FramerLoader::didFinishLoading will
+        navigate to another URL.
+
+        The assertion is caused by existing tests (e.g.
+        fast/history/clicked-link-is-visited.html) reproducing this with
+        network backends not equal to curl is tough or maybe not
+        even possible.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setPrimaryLoadComplete):
+
 2008-12-11  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Eric Seidel.
