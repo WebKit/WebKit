@@ -618,7 +618,7 @@ void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
 #endif // QT_NO_WHEELEVENT
 
 #ifndef QT_NO_SHORTCUT
-static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event)
+QWebPage::WebAction QWebPagePrivate::editorActionForKeyEvent(QKeyEvent* event)
 {
     static struct {
         QKeySequence::StandardKey standardKey;
@@ -675,20 +675,9 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
     bool handled = false;
     WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
     WebCore::Editor* editor = frame->editor();
-#ifndef QT_NO_SHORTCUT
-    if (editor->canEdit()) {
-        QWebPage::WebAction action = editorActionForKeyEvent(ev);
-        if (action != QWebPage::NoWebAction) {
-            q->triggerAction(action);
-            handled = true;
-        }
-    } else {
-        if (ev == QKeySequence::Copy) {
-            q->triggerAction(QWebPage::Copy);
-            handled = true;
-        }
-    }
-#endif // QT_NO_SHORTCUT
+    // we forward the key event to WebCore first to handle potential DOM
+    // defined event handlers and later on end up in EditorClientQt::handleKeyboardEvent
+    // to trigger editor commands via triggerAction().
     if (!handled)
         handled = frame->eventHandler()->keyEvent(ev);
     if (!handled) {

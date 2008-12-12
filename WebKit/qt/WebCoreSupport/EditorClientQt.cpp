@@ -365,6 +365,12 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
 
     // FIXME: refactor all of this to use Actions or something like them
     if (start->isContentEditable()) {
+#ifndef QT_NO_SHORTCUT
+        QWebPage::WebAction action = QWebPagePrivate::editorActionForKeyEvent(kevent->qtEvent());
+        if (action != QWebPage::NoWebAction) {
+            m_page->triggerAction(action);
+        } else
+#endif // QT_NO_SHORTCUT
         switch (kevent->windowsVirtualKeyCode()) {
 #if QT_VERSION < 0x040500
             case VK_RETURN:
@@ -430,23 +436,8 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
                         case VK_B:
                             frame->editor()->command("ToggleBold").execute();
                             break;
-                        case VK_C:
-                            frame->editor()->command("Copy").execute();
-                            break;
                         case VK_I:
                             frame->editor()->command("ToggleItalic").execute();
-                            break;
-                        case VK_V:
-                            frame->editor()->command("Paste").execute();
-                            break;
-                        case VK_X:
-                            frame->editor()->command("Cut").execute();
-                            break;
-                        case VK_Y:
-                            frame->editor()->command("Redo").execute();
-                            break;
-                        case VK_Z:
-                            frame->editor()->command("Undo").execute();
                             break;
                         default:
                             // catch combination AltGr+key or Ctrl+Alt+key
@@ -459,6 +450,11 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
                 } else return;
         }
     } else {
+#ifndef QT_NO_SHORTCUT
+        if (kevent->qtEvent() == QKeySequence::Copy) {
+            m_page->triggerAction(QWebPage::Copy);
+        } else
+#endif // QT_NO_SHORTCUT
         switch (kevent->windowsVirtualKeyCode()) {
             case VK_UP:
                 frame->editor()->command("MoveUp").execute();
@@ -485,9 +481,6 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
                     switch (kevent->windowsVirtualKeyCode()) {
                         case VK_A:
                             frame->editor()->command("SelectAll").execute();
-                            break;
-                        case VK_C: case VK_X:
-                            frame->editor()->command("Copy").execute();
                             break;
                         default:
                             return;

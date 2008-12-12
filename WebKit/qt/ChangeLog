@@ -1,3 +1,21 @@
+2008-12-12  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix pressing return/enter not triggering any action on web sites
+        that define event handlers, such as the JS console in the web
+        inspector.
+
+        Process the key events in the DOM first and if not handled map them
+        to editor actions.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::editorActionForKeyEvent): Made a class method.
+        (QWebPagePrivate::keyPressEvent): Pass the key event first to the DOM.
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent): Map the key event to
+        actions and trigger them.
+
 2008-12-12  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon Hausmann.

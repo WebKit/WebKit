@@ -112,6 +112,10 @@ public:
     void leaveEvent(QEvent *);
     bool handleScrolling(QKeyEvent*);
 
+#ifndef QT_NO_SHORTCUT
+    static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event);
+#endif
+
     WebCore::ChromeClientQt *chromeClient;
     WebCore::ContextMenuClientQt *contextMenuClient;
     WebCore::EditorClientQt *editorClient;
