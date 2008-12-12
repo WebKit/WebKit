@@ -1,3 +1,17 @@
+2008-12-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION: Canvas is broken in high dpi mode
+        <rdar://problem/6432739> <https://bugs.webkit.org/show_bug.cgi?id=22823>
+
+        Simply made sure that we correctly scale the graphics context to
+        account for the difference between logical and buffer resolution.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        (WebCore::HTMLCanvasElement::baseTransform):
+
 2008-12-12  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Rubber-stamped by Oliver Hunt.
