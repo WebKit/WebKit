@@ -41,6 +41,10 @@
 #include <windows.h>
 #include <mmsystem.h>
 
+#if PLATFORM(WIN)
+#include "PluginView.h"
+#endif
+
 // These aren't in winuser.h with the MSVS 2003 Platform SDK, 
 // so use default values in that case.
 #ifndef USER_TIMER_MINIMUM
@@ -55,10 +59,6 @@
 #define QS_RAWINPUT         0x0400
 #endif
 
-#if PLATFORM(WIN)
-#include "PluginView.h"
-#endif
-
 namespace WebCore {
 
 static UINT timerID;
@@ -68,7 +68,6 @@ static HWND timerWindowHandle = 0;
 static UINT timerFiredMessage = 0;
 static HANDLE timerQueue;
 static HANDLE timer;
-static Mutex timerMutex;
 static bool highResTimerActive;
 static bool processingCustomTimerMessage = false;
 static LONG pendingTimers;
@@ -139,17 +138,8 @@ void setSharedTimerFiredFunction(void (*f)())
     sharedTimerFiredFunction = f;
 }
 
-static void clearTimer()
-{
-    MutexLocker locker(timerMutex);
-    if (timerQueue && timer)
-        DeleteTimerQueueTimer(timerQueue, timer, 0);
-    timer = 0;
-}
-
 static void NTAPI queueTimerProc(PVOID, BOOLEAN)
 {
-    clearTimer();
     if (InterlockedIncrement(&pendingTimers) == 1)
         PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
 }
@@ -196,11 +186,9 @@ void setSharedTimerFireTime(double fireTime)
             // Otherwise, delay the PostMessage via a CreateTimerQueueTimer
             if (!timerQueue)
                 timerQueue = CreateTimerQueue();
-            MutexLocker locker(timerMutex);
             if (timer)
-                timerSet = ChangeTimerQueueTimer(timerQueue, timer, intervalInMS, 0);
-            else
-                timerSet = CreateTimerQueueTimer(&timer, timerQueue, queueTimerProc, 0, intervalInMS, 0, WT_EXECUTEINTIMERTHREAD | WT_EXECUTEONLYONCE);
+                DeleteTimerQueueTimer(timerQueue, timer, 0);
+            timerSet = CreateTimerQueueTimer(&timer, timerQueue, queueTimerProc, 0, intervalInMS, 0, WT_EXECUTEINTIMERTHREAD | WT_EXECUTEONLYONCE);
         }
     }
 
@@ -209,13 +197,19 @@ void setSharedTimerFireTime(double fireTime)
             KillTimer(timerWindowHandle, timerID);
             timerID = 0;
         }
-    } else
+    } else {
         timerID = SetTimer(timerWindowHandle, sharedTimerID, intervalInMS, 0);
+        timer = 0;
+    }
 }
 
 void stopSharedTimer()
 {
-    clearTimer();
+    if (timerQueue && timer) {
+        DeleteTimerQueueTimer(timerQueue, timer, 0);
+        timer = 0;
+    }
+
     if (timerID) {
         KillTimer(timerWindowHandle, timerID);
         timerID = 0;

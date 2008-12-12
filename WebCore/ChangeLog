@@ -1,3 +1,27 @@
+2008-12-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Delete the previous timer-queue timer in the main thread, just prior to scheduling a new timer.
+        The code previously called DeleteTimerQueueTimer in the timer callback proc.
+        
+        The new technique simplifies the code, since we now create and delete timers on the
+        same thread, and don't access the timer queue or timer handles in the callback.
+        This allows us to remove some mutex use, and more importantly, it solves a race
+        condition that was occuring between ChangeTimerQueueTimer and DeleteTimerQueueTimer.
+        
+        Since the timer callback isn't passed the timer handle, we were retrieving that handle
+        via a global. If the timer callback code was entered, but then a new timer was immediately
+        scheduled (prior to the callback acquiring the mutex and calling DeleteTimerQueueTimer),
+        there was a small window where the timer could be re-scheduled via ChangeTimerQueueTimer
+        and then immediately deleted once the already running callback acquired the mutex and
+        then called DeleteTimerQueueTimer. This resulted in the newly scheduled timer never firing.
+        
+        Reviewed by Oliver Hunt.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::queueTimerProc): Don't delete the timer in the callback.
+        (WebCore::setSharedTimerFireTime): Always delete and create the timer instead of using ChangeTimerQueueTimer.
+        (WebCore::stopSharedTimer): Call DeleteTimerQueueTimer directly.
+
 2008-12-12  Kai Brüning  <kai@granus.net>
 
         Reviewed and tweaked by Darin Adler.
