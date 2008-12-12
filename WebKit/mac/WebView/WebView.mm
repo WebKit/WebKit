@@ -1072,8 +1072,10 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 #ifndef NDEBUG
     // Need this to make leak messages accurate.
-    if (applicationIsTerminating)
+    if (applicationIsTerminating) {
         gcController().garbageCollectNow();
+        [WebCache empty];
+    }
 #endif
 }
 

@@ -1,3 +1,13 @@
+2008-12-11  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Empty Web cache before quitting a debug build in order
+        to report accurate CachedResource leaks.
+
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+
 2008-12-11  Anders Carlsson  <andersca@apple.com>
 
         Fix Tiger build.
