@@ -1223,39 +1223,6 @@ HRESULT WebPreferences::zoomsTextOnly(BOOL* zoomsTextOnly)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebPreferences::overridePreference(BSTR key, BSTR value)
-{
-    if (!SysStringLen(key) || !SysStringLen(value))
-        return E_FAIL;
-    RetainPtr<CFStringRef> keyRef(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<UniChar*>(key), SysStringLen(key)));
-    setStringValue(keyRef.get(), value);
-    setBoolValue(CFSTR(WebKitDefaultPreferencesOverridden), true);
-    return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE WebPreferences::resetToDefaults()
-{
-    if (!boolValueForKey(CFSTR(WebKitDefaultPreferencesOverridden)))
-        return S_OK;
-
-    int count = CFDictionaryGetCount(defaultSettings);
-    if (count <= 0)
-        return S_OK;
-
-    OwnArrayPtr<CFTypeRef> keys(new CFTypeRef[count]);
-    OwnArrayPtr<CFTypeRef> values(new CFTypeRef[count]);
-    CFDictionaryGetKeysAndValues(defaultSettings, keys.get(), values.get());
-
-    for (int i = 0; i < count; ++i)
-        setValueForKey(static_cast<CFStringRef>(keys[i]), values[i]);
-
-    setBoolValue(CFSTR(WebKitDefaultPreferencesOverridden), false);
-
-    postPreferencesChangesNotification();
-
-    return S_OK;
-}
-
 void WebPreferences::willAddToWebView()
 {
     ++m_numWebViews;

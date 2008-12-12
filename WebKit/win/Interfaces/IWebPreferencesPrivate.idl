@@ -66,13 +66,4 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setLocalStorageEnabled([in] BOOL enabled);
     HRESULT localStorageEnabled([out, retval] BOOL *enabled);
-
-    // This method is meant for overriding preferences for tests run
-    // with DumpRenderTree only.
-    HRESULT overridePreference([in] BSTR key, [in] BSTR value);
-
-    // This method is meant for resetting overridden preferences for tests run
-    // with DumpRenderTree only.
-    HRESULT resetToDefaults();
-
 }

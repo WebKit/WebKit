@@ -1,3 +1,21 @@
+2008-12-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Roll out r39212 due to assertion failures during layout tests, multiple
+        layout test failures, memory leaks, and obvious incorrectness.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+
 2008-12-10  Glenn Wilson  <gwilson@google.com>
 
         Reviewed by Adam Roben.

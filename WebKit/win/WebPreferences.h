@@ -338,16 +338,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE zoomsTextOnly( 
     /* [retval][out] */ BOOL *zoomsTextOnly);
 
-    // This method is meant for overriding preferences for tests run
-    // with DumpRenderTree only.
-    virtual HRESULT STDMETHODCALLTYPE overridePreference(
-        /* [in] */ BSTR key,
-        /* [in] */ BSTR value);
-
-    // This method is meant for resetting overridden preferences for tests run
-    // with DumpRenderTree only.
-    virtual HRESULT STDMETHODCALLTYPE resetToDefaults();
-
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

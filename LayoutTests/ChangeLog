@@ -1,3 +1,17 @@
+2008-12-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Roll out r39212 due to assertion failures during layout tests, multiple
+        layout test failures, memory leaks, and obvious incorrectness.
+
+        * security/override-preferences-2-expected.txt: Removed.
+        * security/override-preferences-2.html: Removed.
+        * security/override-preferences-expected.txt: Removed.
+        * security/override-preferences.html: Removed.
+        * security/override-zzz-reset-expected.txt: Removed.
+        * security/override-zzz-reset.html: Removed.
+
 2008-12-11  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Holger Freyther.

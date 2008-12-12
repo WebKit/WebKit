@@ -1,3 +1,15 @@
+2008-12-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Roll out r39212 due to assertion failures during layout tests, multiple
+        layout test failures, memory leaks, and obvious incorrectness.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences fullDocumentTeardownEnabled]):
+        * WebView/WebPreferencesPrivate.h:
+
 2008-12-11  Stephanie Lewis  <slewis@apple.com>
 
         Fix build.

@@ -1,3 +1,15 @@
+2008-12-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Roll out r39212 due to assertion failures during layout tests, multiple
+        layout test failures, memory leaks, and obvious incorrectness.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        * WebPreferences.h:
+
 2008-12-10  Glenn Wilson  <gwilson@google.com>
 
         Reviewed by Adam Roben.

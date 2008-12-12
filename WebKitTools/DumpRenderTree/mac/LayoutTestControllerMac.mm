@@ -267,17 +267,6 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
     [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
 }
 
-void LayoutTestController::overridePreference(JSStringRef key, JSStringRef flag)
-{
-    RetainPtr<CFStringRef> keyCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, key));
-    NSString *keyNS = (NSString *)keyCF.get();
-
-    RetainPtr<CFStringRef> flagCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, flag));
-    NSString *flagNS = (NSString *)flagCF.get();
-
-    [[WebPreferences standardPreferences] overridePreference:keyNS flag:flagNS];
-}
-
 void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
 {
     RetainPtr<CFStringRef> urlString(AdoptCF, JSStringCopyCFString(0, jsURL));
