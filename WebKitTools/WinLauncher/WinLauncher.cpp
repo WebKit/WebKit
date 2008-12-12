@@ -387,7 +387,7 @@ static void loadURL(BSTR urlBStr)
     if (FAILED(hr))
         goto exit;
 
-    hr = request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 0);
+    hr = request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 60);
     if (FAILED(hr))
         goto exit;
 

@@ -1,3 +1,15 @@
+2008-12-12  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22809
+
+        Increase timeout in call to initWithURL so that people actually see
+        new web pages when they type URLs rather than a blank screen.
+
+        * WinLauncher/WinLauncher.cpp:
+        (loadURL):  Increase timeout in initWithURL from 0 to 60 seconds.
+
 2008-12-12  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: Add a renaming idea.
