@@ -1,5 +1,23 @@
 2008-12-12  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
+        Rubber-stamped by Oliver Hunt.
+
+        Share PluginView::paintMissingPluginIcon() between ports
+
+        Also, enable this feature for Qt/X11, Qt/Mac and GTK
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::paintMissingPluginIcon):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::paint):
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::paint):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::paint):
+        * plugins/win/PluginViewWin.cpp:
+
+2008-12-12  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
         Reviewed by Simon Hausmann.
 
         [Qt/Mac] Implement PluginView::updatePluginWidget()

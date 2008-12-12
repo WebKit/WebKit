@@ -282,28 +282,6 @@ void PluginView::hide()
     Widget::hide();
 }
 
-void PluginView::paintMissingPluginIcon(GraphicsContext* context, const IntRect& rect)
-{
-    static RefPtr<Image> nullPluginImage;
-    if (!nullPluginImage)
-        nullPluginImage = Image::loadPlatformResource("nullPlugin");
-
-    IntRect imageRect(frameRect().x(), frameRect().y(), nullPluginImage->width(), nullPluginImage->height());
-
-    int xOffset = (frameRect().width() - imageRect.width()) / 2;
-    int yOffset = (frameRect().height() - imageRect.height()) / 2;
-
-    imageRect.move(xOffset, yOffset);
-
-    if (!rect.intersects(imageRect))
-        return;
-
-    context->save();
-    context->clip(windowClipRect());
-    context->drawImage(nullPluginImage.get(), imageRect.location());
-    context->restore();
-}
-
 bool PluginView::dispatchNPEvent(NPEvent& npEvent)
 {
     if (!m_plugin->pluginFuncs()->event)

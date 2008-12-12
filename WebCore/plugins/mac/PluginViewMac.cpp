@@ -414,8 +414,10 @@ void PluginView::updatePluginWidget()
 
 void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 {
-    if (!m_isStarted)
-        return; // TODO: Draw the "missing plugin" image
+    if (!m_isStarted) {
+        paintMissingPluginIcon(context, rect);
+        return;
+    }
 
     if (context->paintingDisabled())
         return;

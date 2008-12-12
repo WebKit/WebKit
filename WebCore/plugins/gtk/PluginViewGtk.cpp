@@ -140,8 +140,7 @@ void PluginView::hide()
 void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (!m_isStarted) {
-        // Draw the "missing plugin" image
-        //paintMissingPluginIcon(context, rect);
+        paintMissingPluginIcon(context, rect);
         return;
     }
 
