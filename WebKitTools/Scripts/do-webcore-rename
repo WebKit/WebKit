@@ -137,6 +137,8 @@ my %renamesContemplatedForTheFuture = (
     "UnicodeIcu" => "UnicodeICU",
     "_KJS_OPERATIONS_H_" => "Operations_h",
     "_KJS_USTRING_H_" => "UString_h",
+
+    "m_invertibleCTM" => "m_transformIsInvertible",
 );
 
 # rename files

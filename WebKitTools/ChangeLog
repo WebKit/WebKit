@@ -1,3 +1,7 @@
+2008-12-12  Darin Adler  <darin@apple.com>
+
+        * Scripts/do-webcore-rename: Add a renaming idea.
+
 2008-12-12  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.
