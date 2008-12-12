@@ -1,3 +1,30 @@
+2008-12-12  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 22828: Do not inspect bytecode instruction stream for op_get_by_id exception information
+        <https://bugs.webkit.org/show_bug.cgi?id=22828>
+
+        In order to remove the bytecode instruction stream after generating
+        native code, all inspection of bytecode instructions at runtime must
+        be removed. One particular instance of this is the special handling of
+        exceptions thrown by the op_get_by_id emitted directly before an
+        op_construct or an op_instanceof. This patch moves that information to
+        an auxiliary data structure in CodeBlock.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::getByIdExceptionInfoForBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addGetByIdExceptionInfo):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitGetByIdExceptionInfo):
+        * parser/Nodes.cpp:
+        (JSC::InstanceOfNode::emitBytecode):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createNotAnObjectError):
+
 2008-12-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

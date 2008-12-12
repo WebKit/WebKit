@@ -1406,6 +1406,30 @@ int CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& di
     return lineNumberForBytecodeOffset(bytecodeOffset);
 }
 
+bool CodeBlock::getByIdExceptionInfoForBytecodeOffset(unsigned bytecodeOffset, OpcodeID& opcodeID)
+{
+    ASSERT(bytecodeOffset < m_instructions.size());
+
+    if (!m_getByIdExceptionInfo.size())
+        return false;
+
+    int low = 0;
+    int high = m_getByIdExceptionInfo.size();
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (m_getByIdExceptionInfo[mid].bytecodeOffset <= bytecodeOffset)
+            low = mid + 1;
+        else
+            high = mid;
+    }
+
+    if (!low)
+        return false;
+
+    opcodeID = m_getByIdExceptionInfo[low - 1].isOpConstruct ? op_construct : op_instanceof;
+    return true;
+}
+
 void CodeBlock::shrinkToFit()
 {
     m_instructions.shrinkToFit();

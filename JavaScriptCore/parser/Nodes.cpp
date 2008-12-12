@@ -1164,6 +1164,7 @@ RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterI
     RefPtr<RegisterID> src2 = generator.emitNode(m_expr2.get());
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
+    generator.emitGetByIdExceptionInfo(op_instanceof);
     RegisterID* src2Prototype = generator.emitGetById(generator.newTemporary(), src2.get(), generator.globalData()->propertyNames->prototype);
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());

@@ -208,6 +208,17 @@ namespace JSC {
             info.endOffset = endOffset;
             m_codeBlock->addExpressionInfo(info);
         }
+
+        void emitGetByIdExceptionInfo(OpcodeID opcodeID)
+        {
+            // Only op_construct and op_instanceof need exception info for
+            // a preceding op_get_by_id.
+            ASSERT(opcodeID == op_construct || opcodeID == op_instanceof);
+            GetByIdExceptionInfo info;
+            info.bytecodeOffset = instructions().size();
+            info.isOpConstruct = (opcodeID == op_construct);
+            m_codeBlock->addGetByIdExceptionInfo(info);
+        }
         
         ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsPure)
         {

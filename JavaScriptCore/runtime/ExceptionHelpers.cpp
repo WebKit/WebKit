@@ -208,10 +208,16 @@ JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState* exec, bool isNull)
 
 JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error, const Instruction* vPC, CodeBlock* codeBlock)
 {
-    if (vPC[8].u.opcode == exec->interpreter()->getOpcode(op_instanceof))
+    // Both op_construct and op_instanceof require a use of op_get_by_id to get
+    // the prototype property from an object. The exception messages for exceptions
+    // thrown by these instances op_get_by_id need to reflect this.
+    OpcodeID followingOpcodeID;
+    if (codeBlock->getByIdExceptionInfoForBytecodeOffset(vPC - codeBlock->instructions().begin(), followingOpcodeID)) {
+        ASSERT(followingOpcodeID == op_construct || followingOpcodeID == op_instanceof);
+        if (followingOpcodeID == op_construct)
+            return createNotAConstructorError(exec, error->isNull() ? jsNull() : jsUndefined(), vPC, codeBlock);
         return createInvalidParamError(exec, "instanceof", error->isNull() ? jsNull() : jsUndefined(), vPC, codeBlock);
-    if (vPC[8].u.opcode == exec->interpreter()->getOpcode(op_construct))
-        return createNotAConstructorError(exec, error->isNull() ? jsNull() : jsUndefined(), vPC, codeBlock);
+    }
 
     int startOffset = 0;
     int endOffset = 0;

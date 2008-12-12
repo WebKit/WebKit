@@ -1333,6 +1333,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
 
     // Load prototype.
     emitExpressionInfo(divot, startOffset, endOffset);
+    emitGetByIdExceptionInfo(op_construct);
     emitGetById(funcProto.get(), func, globalData()->propertyNames->prototype);
 
     // Reserve space for call frame.
