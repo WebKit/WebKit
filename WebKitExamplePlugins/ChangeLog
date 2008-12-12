@@ -1,5 +1,15 @@
 2008-12-12  Anders Carlsson  <andersca@apple.com>
 
+        Revert some accidentally committed changes.
+        
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:
+        * NetscapeCocoaPlugin/main.m:
+        (handleDraw):
+        (handleMouseEvent):
+        (NPP_HandleEvent):
+
+2008-12-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Kevin Decker.
 
         Add a sample Core Animation NPAPI plug-in.

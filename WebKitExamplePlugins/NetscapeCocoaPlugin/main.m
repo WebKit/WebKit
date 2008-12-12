@@ -203,8 +203,9 @@ static void handleDraw(PluginObject *obj)
 
 
     [NSGraphicsContext setCurrentContext:context];
-
+    
     NSRect rect = NSMakeRect(0, 0, obj->window.width, obj->window.height);
+    
     [[NSColor lightGrayColor] set];
     [NSBezierPath fillRect:rect];
 
@@ -263,20 +264,9 @@ static void invalidatePlugin(PluginObject *obj)
 
 static void handleMouseEvent(PluginObject *obj, NPCocoaEvent *event)
 {
-    NSWindow *window = ((NP_CGContext *)obj->window.window)->window;
-    // Convert the event coordinates to screen coordinates.
-    
-    NSPoint windowCoordinates = NSMakePoint(0, 0);//obj->window.x + event->data.mouse.pluginX,
-//                                            obj->window.y + event->data.mouse.pluginY);
-
-    NSPoint screenCoordinates = [window convertBaseToScreen:windowCoordinates];
-    
-    NSLog(@"window: %@", window);
-    
     NSString *string = [NSString stringWithFormat:@"Type: %@\n"
                                                    "Modifier flags: 0x%x\n"
                                                    "Coordinates: (%g, %g)\n"
-                                                   "Screen coordinates: (%g, %g)\n"
                                                    "Button number: %d\n"
                                                    "Click count: %d\n"
                                                    "Delta: (%g, %g, %g)",
@@ -284,7 +274,6 @@ static void handleMouseEvent(PluginObject *obj, NPCocoaEvent *event)
                                                    event->data.mouse.modifierFlags,
                                                    event->data.mouse.pluginX,
                                                    event->data.mouse.pluginY,
-                                                   screenCoordinates.x, screenCoordinates.y,
                                                    event->data.mouse.buttonNumber,
                                                    event->data.mouse.clickCount,
                                                    event->data.mouse.deltaX, event->data.mouse.deltaY, event->data.mouse.deltaZ];
@@ -334,7 +323,6 @@ int16 NPP_HandleEvent(NPP instance, void* event)
     
     switch(cocoaEvent->type) {
         case NPCocoaEventFocusChanged:
-            browser->status(instance, cocoaEvent->data.focus.hasFocus ? "Got focus" : "Lost Focus");
             obj->hasFocus = cocoaEvent->data.focus.hasFocus;
             invalidatePlugin(obj);
             return 1;
