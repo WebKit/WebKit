@@ -549,6 +549,10 @@ void Cache::resourceAccessed(CachedResource* resource)
     // the queue will possibly change.
     removeFromLRUList(resource);
     
+    // If this is the first time the resource has been accessed, adjust the size of the cache to account for its initial size.
+    if (!resource->accessCount())
+        adjustSize(resource->hasClients(), resource->size());
+    
     // Add to our access count.
     resource->increaseAccessCount();
     
@@ -650,7 +654,7 @@ void Cache::TypeStatistic::addResource(CachedResource* o)
 {
     bool purged = o->wasPurged();
     bool purgeable = o->isPurgeable() && !purged; 
-    int pageSize = (o->encodedSize() + 4095) & ~4095;
+    int pageSize = (o->encodedSize() + o->overheadSize() + 4095) & ~4095;
     count++;
     size += purged ? 0 : o->size(); 
     liveSize += o->hasClients() ? o->size() : 0;
@@ -736,7 +740,7 @@ void Cache::dumpLRULists(bool includeLive) const
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
             if (includeLive || !current->hasClients())
-                printf("(%.1fK, %.1fK, %uA, %dR); ", current->decodedSize() / 1024.0f, current->encodedSize() / 1024.0f, current->accessCount(), current->hasClients());
+                printf("(%.1fK, %.1fK, %uA, %dR); ", current->decodedSize() / 1024.0f, (current->encodedSize() + current->overheadSize()) / 1024.0f, current->accessCount(), current->hasClients());
             current = prev;
         }
     }

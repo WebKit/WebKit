@@ -1,3 +1,26 @@
+2008-12-11  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen
+
+        Account for the size of the response and request headers as well as other overhead
+        when calculating the size a resource takes up in the cache.  Halts unbounded 
+        growth in the cache.  Reduced stress test memory high water marks by > 50%.
+
+        Uses estimates gathered from the stress test to set the overhead size.  
+        A version of the patch was created that calculated most of the sizes, but it was 
+        decided that the patch was still at a basic level an estimate.  What gains it made
+        in accuracy was offset by the complexity involved in creating and updating the
+        estimate.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::resourceAccessed):
+        (WebCore::Cache::TypeStatistic::addResource):
+        (WebCore::Cache::dumpLRULists):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::overheadSize):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::size):
+
 2008-12-11  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Holger Freyther.

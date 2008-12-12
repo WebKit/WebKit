@@ -374,4 +374,21 @@ bool CachedResource::wasPurged() const
     return m_purgeableData && m_purgeableData->wasPurged();
 }
 
+unsigned CachedResource::overheadSize() const
+{
+   
+    // FIXME: Find some programmatic lighweight way to calculate response size, and size of the different CachedResource classes.  
+    // This is a rough estimate of resource overhead based on stats collected from the stress test.
+    return sizeof(CachedResource) + 3648;
+    
+    /*  sizeof(CachedResource) + 
+        192 +                        // average size of m_url.
+        384 +                        // average size of m_clients hash map.
+        1280 * 2 +                   // average size of ResourceResponse.  Doubled to account for the WebCore copy and the CF copy. 
+                                     // Mostly due to the size of the hash maps, the Header Map strings and the URL.
+        256 * 2                      // Overhead from ResourceRequest, doubled to account for WebCore copy and CF copy. 
+                                     // Mostly due to the URL and Header Map.
+    */
+}
+
 }

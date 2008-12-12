@@ -104,9 +104,10 @@ public:
 
     Status status() const { return m_status; }
 
-    unsigned size() const { return encodedSize() + decodedSize(); }
+    unsigned size() const { return encodedSize() + decodedSize() + overheadSize(); }
     unsigned encodedSize() const { return m_encodedSize; }
     unsigned decodedSize() const { return m_decodedSize; }
+    unsigned overheadSize() const;
     
     bool isLoaded() const { return !m_loading; }
     void setLoading(bool b) { m_loading = b; }
