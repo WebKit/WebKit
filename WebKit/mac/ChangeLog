@@ -1,5 +1,11 @@
 2008-12-11  Stephanie Lewis  <slewis@apple.com>
 
+        Fix build.
+
+        * WebView/WebView.mm:
+
+2008-12-11  Stephanie Lewis  <slewis@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Empty Web cache before quitting a debug build in order

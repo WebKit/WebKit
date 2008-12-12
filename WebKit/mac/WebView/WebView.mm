@@ -31,6 +31,7 @@
 
 #import "DOMRangeInternal.h"
 #import "WebBackForwardListInternal.h"
+#import "WebCache.h"
 #import "WebChromeClient.h"
 #import "WebContextMenuClient.h"
 #import "WebDOMOperationsPrivate.h"
