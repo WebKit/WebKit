@@ -1212,7 +1212,7 @@ void JIT::privateCompileMainPass()
             JSValue* message = m_codeBlock->unexpectedConstant(instruction[i + 3].u.operand);
             emitPutCTIArgConstant(instruction[i + 2].u.operand, 0);
             emitPutCTIArgConstant(asInteger(message), 4);
-            emitPutCTIArgConstant(m_codeBlock->lineNumberForVPC(&instruction[i]), 8);
+            emitPutCTIArgConstant(m_codeBlock->lineNumberForBytecodeOffset(i), 8);
             emitCTICall(i, Interpreter::cti_op_new_error);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += OPCODE_LENGTH(op_new_error);

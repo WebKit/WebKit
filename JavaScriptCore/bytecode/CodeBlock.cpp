@@ -208,7 +208,7 @@ static unsigned instructionOffsetForNth(ExecState* exec, const Vector<Instructio
     size_t i = 0;
     while (i < instructions.size()) {
         OpcodeID currentOpcode = exec->interpreter()->getOpcodeID(instructions[i].u.opcode);
-        if (predicate(exec->interpreter()->getOpcodeID(instructions[i].u.opcode))) {
+        if (predicate(currentOpcode)) {
             if (!--nth)
                 return i;
         }
@@ -1330,29 +1330,27 @@ void CodeBlock::mark()
     }
 }
 
-HandlerInfo* CodeBlock::handlerForVPC(const Instruction* vPC)
+HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 {
     if (!m_rareData)
         return 0;
 
-    unsigned addressOffset = vPC - m_instructions.begin();
-    ASSERT(addressOffset < m_instructions.size());
+    ASSERT(bytecodeOffset < m_instructions.size());
     
     Vector<HandlerInfo>& exceptionHandlers = m_rareData->m_exceptionHandlers;
     for (size_t i = 0; i < exceptionHandlers.size(); ++i) {
         // Handlers are ordered innermost first, so the first handler we encounter
         // that contains the source address is the correct handler to use.
-        if (exceptionHandlers[i].start <= addressOffset && exceptionHandlers[i].end >= addressOffset)
+        if (exceptionHandlers[i].start <= bytecodeOffset && exceptionHandlers[i].end >= bytecodeOffset)
             return &exceptionHandlers[i];
     }
 
     return 0;
 }
 
-int CodeBlock::lineNumberForVPC(const Instruction* vPC)
+int CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
-    unsigned instructionOffset = vPC - m_instructions.begin();
-    ASSERT(instructionOffset < m_instructions.size());
+    ASSERT(bytecodeOffset < m_instructions.size());
 
     if (!m_lineInfo.size())
         return m_ownerNode->source().firstLine(); // Empty function
@@ -1361,7 +1359,7 @@ int CodeBlock::lineNumberForVPC(const Instruction* vPC)
     int high = m_lineInfo.size();
     while (low < high) {
         int mid = low + (high - low) / 2;
-        if (m_lineInfo[mid].instructionOffset <= instructionOffset)
+        if (m_lineInfo[mid].instructionOffset <= bytecodeOffset)
             low = mid + 1;
         else
             high = mid;
@@ -1372,24 +1370,23 @@ int CodeBlock::lineNumberForVPC(const Instruction* vPC)
     return m_lineInfo[low - 1].lineNumber;
 }
 
-int CodeBlock::expressionRangeForVPC(const Instruction* vPC, int& divot, int& startOffset, int& endOffset)
+int CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset)
 {
-    unsigned instructionOffset = vPC - m_instructions.begin();
-    ASSERT(instructionOffset < m_instructions.size());
+    ASSERT(bytecodeOffset < m_instructions.size());
 
     if (!m_expressionInfo.size()) {
         // We didn't think anything could throw.  Apparently we were wrong.
         startOffset = 0;
         endOffset = 0;
         divot = 0;
-        return lineNumberForVPC(vPC);
+        return lineNumberForBytecodeOffset(bytecodeOffset);
     }
 
     int low = 0;
     int high = m_expressionInfo.size();
     while (low < high) {
         int mid = low + (high - low) / 2;
-        if (m_expressionInfo[mid].instructionOffset <= instructionOffset)
+        if (m_expressionInfo[mid].instructionOffset <= bytecodeOffset)
             low = mid + 1;
         else
             high = mid;
@@ -1400,13 +1397,13 @@ int CodeBlock::expressionRangeForVPC(const Instruction* vPC, int& divot, int& st
         startOffset = 0;
         endOffset = 0;
         divot = 0;
-        return lineNumberForVPC(vPC);
+        return lineNumberForBytecodeOffset(bytecodeOffset);
     }
 
     startOffset = m_expressionInfo[low - 1].startOffset;
     endOffset = m_expressionInfo[low - 1].endOffset;
     divot = m_expressionInfo[low - 1].divotPoint + m_sourceOffset;
-    return lineNumberForVPC(vPC);
+    return lineNumberForBytecodeOffset(bytecodeOffset);
 }
 
 void CodeBlock::shrinkToFit()

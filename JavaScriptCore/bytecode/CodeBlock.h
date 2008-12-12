@@ -224,9 +224,9 @@ namespace JSC {
             return index >= m_numVars + m_numConstants;
         }
 
-        int expressionRangeForVPC(const Instruction*, int& divot, int& startOffset, int& endOffset);
-        int lineNumberForVPC(const Instruction* vPC);
-        HandlerInfo* handlerForVPC(const Instruction* vPC);
+        HandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset);
+        int lineNumberForBytecodeOffset(unsigned bytecodeOffset);
+        int expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset);
 
 #if ENABLE(JIT)
         void addCaller(CallLinkInfo* caller)

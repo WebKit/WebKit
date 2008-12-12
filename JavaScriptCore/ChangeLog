@@ -1,3 +1,32 @@
+2008-12-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Change exception information accessors to take offsets into the bytecode
+        instruction buffer instead of pointers so that they can work even even
+        if the bytecode buffer is purged.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::instructionOffsetForNth):
+        (JSC::CodeBlock::handlerForBytecodeOffset):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::dump):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveLastCaller):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        (JSC::createInvalidParamError):
+        (JSC::createNotAConstructorError):
+        (JSC::createNotAFunctionError):
+        (JSC::createNotAnObjectError):
+
 2008-12-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
