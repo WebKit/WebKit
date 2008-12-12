@@ -47,8 +47,6 @@ lib_LIBRARIES :=
 
 IDL_BINDINGS :=
 
-ACLOCAL_AMFLAGS=-I m4
-
 # Global flags to CPP
 global_cppflags :=
 

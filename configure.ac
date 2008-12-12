@@ -17,7 +17,6 @@ AC_SUBST(WEBKIT_MINOR_VERSION)
 AC_SUBST(WEBKIT_MICRO_VERSION)
 
 AC_CONFIG_SRCDIR([WebCore/config.h])
-AC_CONFIG_MACRO_DIR([m4])
 
 dnl # Libtool library version, not to confuse with API version
 dnl # see http://www.gnu.org/software/libtool/manual.html#Versioning

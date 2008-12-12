@@ -1,3 +1,13 @@
+2008-12-12  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Back out r39222 as this is breaking the build on Gentoo (aclocal-1.10)
+
+        The m4 directory does not exist and we now have a compile issue on
+        Gentoo systems.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-12-11  Daniel Macks  <dmacks@netspace.org>
 
         Reviewed by Darin Adler.
