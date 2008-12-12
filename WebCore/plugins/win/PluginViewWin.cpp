@@ -209,7 +209,7 @@ PluginView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return result;
 }
 
-void PluginView::updatePluginWidget() const
+void PluginView::updatePluginWidget()
 {
     if (!parent())
         return;

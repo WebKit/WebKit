@@ -96,7 +96,7 @@ void PluginView::hide() { Widget::hide(); }
 void PluginView::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
 void PluginView::setParent(ScrollView* view) { Widget::setParent(view); }
 void PluginView::setParentVisible(bool) { notImplemented(); }
-void PluginView::updatePluginWidget() const { notImplemented(); }
+void PluginView::updatePluginWidget() { notImplemented(); }
 void PluginView::handleKeyboardEvent(KeyboardEvent*) { notImplemented(); }
 void PluginView::handleMouseEvent(MouseEvent*) { notImplemented(); }
 NPError PluginView::handlePostReadFile(Vector<char>&, uint32, const char*) { notImplemented(); return NPERR_GENERIC_ERROR; }

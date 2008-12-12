@@ -404,7 +404,7 @@ void PluginView::setNPWindowIfNeeded()
     PluginView::setCurrentPluginView(0);
 }
 
-void PluginView::updatePluginWidget() const
+void PluginView::updatePluginWidget()
 {
     // Nothing to do here. We update the plugin widget
     // in paint(), if the NPWindow struct has changed.

@@ -132,7 +132,7 @@ void PluginView::setParentVisible(bool)
     notImplemented();
 }
 
-void PluginView::updatePluginWidget() const
+void PluginView::updatePluginWidget()
 {
     notImplemented();
 }

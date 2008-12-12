@@ -1,5 +1,28 @@
 2008-12-12  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
+        Rubber-stamped by Oliver Hunt.
+
+        Make PluginView::updatePluginWidget() non-const
+
+        We can do this now since frameRectsChanged() is no longer const. This
+        also allows us to get rid of the mutables in the PluginView.
+
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (PluginView::updatePluginWidget):
+        * plugins/PluginView.h:
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        * plugins/wx/PluginViewWx.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+
+2008-12-12  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
         Reviewed by Simon Hausmann.
 
         Implement ImageSource::filenameExtension() for the Qt port

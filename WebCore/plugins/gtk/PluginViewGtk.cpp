@@ -82,7 +82,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void PluginView::updatePluginWidget() const
+void PluginView::updatePluginWidget()
 {
     if (!parent() || !m_isWindowed)
         return;
