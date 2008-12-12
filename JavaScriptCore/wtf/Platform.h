@@ -455,12 +455,6 @@
 #endif
 #endif
 
-/* Use "fastcall" calling convention on MSVC */
-#if COMPILER(MSVC)
-#define WTF_USE_FAST_CALL_CTI_ARGUMENT 1
-#define WTF_USE_CTI_ARGUMENT 1
-#endif
-
 #if !PLATFORM(QT)
 #define WTF_USE_FONT_FAST_PATH 1
 #endif

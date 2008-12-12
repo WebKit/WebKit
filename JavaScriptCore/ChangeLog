@@ -1,3 +1,22 @@
+2008-12-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Remove CTI_ARGUMENTS mode, use va_start implementation on Windows,
+        unifying JIT callback (cti_*) argument access on OS X & Windows
+
+        No performance impact.
+
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitCTICall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * wtf/Platform.h:
+
 2008-12-11  Holger Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.
