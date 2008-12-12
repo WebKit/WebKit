@@ -1,3 +1,13 @@
+2008-12-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Tiny bit of refactoring in quantifier generation.
+
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateNonGreedyQuantifier):
+        (JSC::WREC::Generator::generateGreedyQuantifier):
+
 2008-12-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

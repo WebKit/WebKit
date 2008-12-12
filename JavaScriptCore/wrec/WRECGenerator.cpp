@@ -158,61 +158,46 @@ void Generator::generateBackreferenceQuantifier(JumpList& failures, Quantifier::
 
 void Generator::generateNonGreedyQuantifier(JumpList& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max)
 {
-    // comment me better!
-    JumpList newFailures;
+    JumpList atomFailedList;
+    JumpList alternativeFailedList;
 
-    // (0) Setup:
-    //     init repeatCount
+    // (0) Setup: Save, then init repeatCount.
     push(repeatCount);
     move(Imm32(0), repeatCount);
-    Jump gotoStart = jump();
+    Jump start = jump();
 
-    // (4) Failure case
-
+    // (4) Quantifier failed: No more atom reading possible.
     Label quantifierFailed(this);
-    // (4.1) Restore original value of repeatCount from the stack
     pop(repeatCount);
     failures.append(jump()); 
 
-    // (3) We just tried an alternative, and it failed - check we can try more.
-    
+    // (3) Alternative failed: If we can, read another atom, then fall through to (2) to try again.
     Label alternativeFailed(this);
-    // (3.1) remove the value pushed prior to testing the alternative
     pop(index);
-    // (3.2) if there is a limit, and we have reached it, game over. 
-    if (max != Quantifier::Infinity) {
+    if (max != Quantifier::Infinity)
         je32(repeatCount, Imm32(max), quantifierFailed);
-    }
 
-    // (1) Do a check for the atom
-
-    // (1.0) This is where we start, if there is a minimum (then we must read at least one of the atom).
-    Label testQuantifiedAtom(this);
+    // (1) Read an atom.
     if (min)
-        gotoStart.link(this);
-    // (1.1) Do a check for the atom check.
-    functor.generateAtom(this, newFailures);
-    // (1.2) If we get here, successful match!
+        start.link(this);
+    Label readAtom(this);
+    functor.generateAtom(this, atomFailedList);
+    atomFailedList.linkTo(quantifierFailed, this);
     add32(Imm32(1), repeatCount);
-    // (1.3) We needed to read the atom, and we failed - that's terminally  bad news.
-    newFailures.linkTo(quantifierFailed, this);
-    // (1.4) If there is a minimum, check we have read enough ...
-    // if there was no minimum, this is where we start.
-    if (!min)
-        gotoStart.link(this);
-    // if min > 1 we need to keep checking!
-    else if (min != 1)
-        jl32(repeatCount, Imm32(min), testQuantifiedAtom);
-
-    // (2) Plant an alternative check for the remainder of the expression
     
-    // (2.1) recursively call to parseAlternative, if it falls through, success!
+    // (2) Keep reading if we're under the minimum.
+    if (min > 1)
+        jl32(repeatCount, Imm32(min), readAtom);
+
+    // (3) Test the rest of the alternative.
+    if (!min)
+        start.link(this);
     push(index);
-    m_parser.parseAlternative(newFailures);
+    m_parser.parseAlternative(alternativeFailedList);
+    alternativeFailedList.linkTo(alternativeFailed, this);
+
     pop();
     pop(repeatCount);
-    // (2.2) link failure cases to jump back up to alternativeFailed.
-    newFailures.linkTo(alternativeFailed, this);
 }
 
 void Generator::generateGreedyQuantifier(JumpList& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max)
@@ -220,45 +205,45 @@ void Generator::generateGreedyQuantifier(JumpList& failures, GenerateAtomFunctor
     if (!max)
         return;
 
-    // (0) Setup: save, then init repeatCount.
+    JumpList doneReadingAtomsList;
+    JumpList alternativeFailedList;
+
+    // (0) Setup: Save, then init repeatCount.
     push(repeatCount);
     move(Imm32(0), repeatCount);
 
     // (1) Greedily read as many copies of the atom as possible, then jump to (2).
-    JumpList doneReadingAtoms;
-
-    Label readAnAtom(this);
-    functor.generateAtom(this, doneReadingAtoms);
+    Label readAtom(this);
+    functor.generateAtom(this, doneReadingAtomsList);
     add32(Imm32(1), repeatCount);
     if (max == Quantifier::Infinity)
-        jump(readAnAtom);
+        jump(readAtom);
     else if (max == 1)
-        doneReadingAtoms.append(jump());
+        doneReadingAtomsList.append(jump());
     else {
-        jne32(repeatCount, Imm32(max), readAnAtom);
-        doneReadingAtoms.append(jump());
+        jne32(repeatCount, Imm32(max), readAtom);
+        doneReadingAtomsList.append(jump());
     }
 
-    // (5) Quantifier failed -- no more backtracking possible.
+    // (5) Quantifier failed: No more backtracking possible.
     Label quantifierFailed(this);
     pop(repeatCount);
     failures.append(jump()); 
 
-    // (4) Backtrack, then fall through to (2) to try again.
-    Label backtrack(this);
+    // (4) Alternative failed: Backtrack, then fall through to (2) to try again.
+    Label alternativeFailed(this);
     pop(index);
     functor.backtrack(this);
     sub32(Imm32(1), repeatCount);
 
     // (2) Verify that we have enough atoms.
-    doneReadingAtoms.link(this);
+    doneReadingAtomsList.link(this);
     jl32(repeatCount, Imm32(min), quantifierFailed);
 
     // (3) Test the rest of the alternative.
     push(index);
-    JumpList newFailures;
-    m_parser.parseAlternative(newFailures);
-    newFailures.linkTo(backtrack, this);
+    m_parser.parseAlternative(alternativeFailedList);
+    alternativeFailedList.linkTo(alternativeFailed, this);
 
     pop();
     pop(repeatCount);
