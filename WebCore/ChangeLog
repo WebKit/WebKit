@@ -1,3 +1,13 @@
+2008-12-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22813
+        Remove unused references to JSDOMBinding, CallFrame, and JSLock.
+
+        * dom/Node.cpp: Removed CallFrame and JSLock header includes.
+        * loader/FrameLoader.cpp: Removed JSDOMBinding header include.
+
 2008-12-12  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

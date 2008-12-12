@@ -65,7 +65,6 @@
 #include "IconDatabase.h"
 #include "IconLoader.h"
 #include "InspectorController.h"
-#include "JSDOMBinding.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MainResourceLoader.h"
