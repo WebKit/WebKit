@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/webkit/inspector">
+    <file>inspector.html</file>
     <file>Breakpoint.js</file>
     <file>BreakpointsSidebarPane.js</file>
     <file>CallStackSidebarPane.js</file>
@@ -13,8 +14,6 @@
     <file>ElementsTreeOutline.js</file>
     <file>FontView.js</file>
     <file>ImageView.js</file>
-    <file>inspector.css</file>
-    <file>inspector.html</file>
     <file>inspector.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>Object.js</file>
@@ -26,8 +25,8 @@
     <file>ProfileView.js</file>
     <file>PropertiesSection.js</file>
     <file>PropertiesSidebarPane.js</file>
-    <file>ResourceCategory.js</file>
     <file>Resource.js</file>
+    <file>ResourceCategory.js</file>
     <file>ResourcesPanel.js</file>
     <file>ResourceView.js</file>
     <file>ScopeChainSidebarPane.js</file>
@@ -43,6 +42,7 @@
     <file>treeoutline.js</file>
     <file>utilities.js</file>
     <file>View.js</file>
+    <file>inspector.css</file>
     <file>Images/back.png</file>
     <file>Images/checker.png</file>
     <file>Images/clearConsoleButtons.png</file>
@@ -56,17 +56,18 @@
     <file>Images/debuggerStepInto.png</file>
     <file>Images/debuggerStepOut.png</file>
     <file>Images/debuggerStepOver.png</file>
-    <file>Images/disclosureTriangleSmallDownBlack.png</file>
     <file>Images/disclosureTriangleSmallDown.png</file>
+    <file>Images/disclosureTriangleSmallDownBlack.png</file>
     <file>Images/disclosureTriangleSmallDownWhite.png</file>
-    <file>Images/disclosureTriangleSmallRightBlack.png</file>
-    <file>Images/disclosureTriangleSmallRightDownBlack.png</file>
-    <file>Images/disclosureTriangleSmallRightDown.png</file>
-    <file>Images/disclosureTriangleSmallRightDownWhite.png</file>
     <file>Images/disclosureTriangleSmallRight.png</file>
+    <file>Images/disclosureTriangleSmallRightBlack.png</file>
+    <file>Images/disclosureTriangleSmallRightDown.png</file>
+    <file>Images/disclosureTriangleSmallRightDownBlack.png</file>
+    <file>Images/disclosureTriangleSmallRightDownWhite.png</file>
     <file>Images/disclosureTriangleSmallRightWhite.png</file>
     <file>Images/dockButtons.png</file>
     <file>Images/elementsIcon.png</file>
+    <file>Images/enableButtons.png</file>
     <file>Images/errorIcon.png</file>
     <file>Images/errorMediumIcon.png</file>
     <file>Images/excludeButtons.png</file>
@@ -81,8 +82,8 @@
     <file>Images/graphLabelCalloutRight.png</file>
     <file>Images/largerResourcesButtons.png</file>
     <file>Images/nodeSearchButtons.png</file>
-    <file>Images/paneBottomGrowActive.png</file>
     <file>Images/paneBottomGrow.png</file>
+    <file>Images/paneBottomGrowActive.png</file>
     <file>Images/paneGrowHandleLine.png</file>
     <file>Images/pauseOnExceptionButtons.png</file>
     <file>Images/percentButtons.png</file>
@@ -90,6 +91,7 @@
     <file>Images/profileIcon.png</file>
     <file>Images/profilesIcon.png</file>
     <file>Images/profileSmallIcon.png</file>
+    <file>Images/profilesSilhouette.png</file>
     <file>Images/recordButtons.png</file>
     <file>Images/reloadButtons.png</file>
     <file>Images/resourceCSSIcon.png</file>
@@ -102,16 +104,17 @@
     <file>Images/resourcesSizeGraphIcon.png</file>
     <file>Images/resourcesTimeGraphIcon.png</file>
     <file>Images/scriptsIcon.png</file>
+    <file>Images/scriptsSilhouette.png</file>
     <file>Images/searchSmallBlue.png</file>
     <file>Images/searchSmallBrightBlue.png</file>
     <file>Images/searchSmallGray.png</file>
     <file>Images/searchSmallWhite.png</file>
-    <file>Images/segmentEnd.png</file>
-    <file>Images/segmentHoverEnd.png</file>
-    <file>Images/segmentHover.png</file>
     <file>Images/segment.png</file>
-    <file>Images/segmentSelectedEnd.png</file>
+    <file>Images/segmentEnd.png</file>
+    <file>Images/segmentHover.png</file>
+    <file>Images/segmentHoverEnd.png</file>
     <file>Images/segmentSelected.png</file>
+    <file>Images/segmentSelectedEnd.png</file>
     <file>Images/splitviewDimple.png</file>
     <file>Images/splitviewDividerBackground.png</file>
     <file>Images/statusbarBackground.png</file>
@@ -121,6 +124,13 @@
     <file>Images/statusbarMenuButtonSelected.png</file>
     <file>Images/statusbarResizerHorizontal.png</file>
     <file>Images/statusbarResizerVertical.png</file>
+    <file>Images/timelineHollowPillBlue.png</file>
+    <file>Images/timelineHollowPillGray.png</file>
+    <file>Images/timelineHollowPillGreen.png</file>
+    <file>Images/timelineHollowPillOrange.png</file>
+    <file>Images/timelineHollowPillPurple.png</file>
+    <file>Images/timelineHollowPillRed.png</file>
+    <file>Images/timelineHollowPillYellow.png</file>
     <file>Images/timelinePillBlue.png</file>
     <file>Images/timelinePillGray.png</file>
     <file>Images/timelinePillGreen.png</file>
@@ -128,8 +138,8 @@
     <file>Images/timelinePillPurple.png</file>
     <file>Images/timelinePillRed.png</file>
     <file>Images/timelinePillYellow.png</file>
-    <file>Images/tipBalloonBottom.png</file>
     <file>Images/tipBalloon.png</file>
+    <file>Images/tipBalloonBottom.png</file>
     <file>Images/tipIcon.png</file>
     <file>Images/tipIconPressed.png</file>
     <file>Images/toolbarItemSelected.png</file>

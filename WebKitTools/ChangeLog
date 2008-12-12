@@ -1,3 +1,15 @@
+2008-12-12  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        Update the WebKit.qrc and add a script to automatically generate the file.
+
+        With the way rcc and qmake work this can not be done at build time
+        as the WebKit.qrc must sit inside the directory that contains the files
+        and at build time we may not change the content of the source directory.
+
+        * Scripts/generate-qt-inspector-resource: Added.
+
 2008-12-11  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Mark Rowe.
