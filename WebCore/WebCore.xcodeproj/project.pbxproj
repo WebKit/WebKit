@@ -90,6 +90,10 @@
 		08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A484750E5272C500C3FE76 /* ScriptElement.cpp */; };
 		08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08A484760E5272C500C3FE76 /* ScriptElement.h */; };
 		08A48A6E0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */; };
+		08C4C5180EF19A4000E4840F /* WMLImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C4C5140EF19A4000E4840F /* WMLImageElement.cpp */; };
+		08C4C5190EF19A4000E4840F /* WMLImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C4C5150EF19A4000E4840F /* WMLImageElement.h */; };
+		08C4C51A0EF19A4000E4840F /* WMLImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */; };
+		08C4C51B0EF19A4000E4840F /* WMLImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C4C5170EF19A4000E4840F /* WMLImageLoader.h */; };
 		08CD61BC0ED3929C002DDF51 /* WMLTaskElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */; };
 		08CD61BD0ED3929C002DDF51 /* WMLTaskElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */; };
 		08E192530EDE0C3A0087B780 /* WMLErrorHandling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E192510EDE0C390087B780 /* WMLErrorHandling.cpp */; };
@@ -4870,6 +4874,10 @@
 		08A484750E5272C500C3FE76 /* ScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptElement.cpp; sourceTree = "<group>"; };
 		08A484760E5272C500C3FE76 /* ScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptElement.h; sourceTree = "<group>"; };
 		08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElementInstanceCustom.cpp; sourceTree = "<group>"; };
+		08C4C5140EF19A4000E4840F /* WMLImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLImageElement.cpp; sourceTree = "<group>"; };
+		08C4C5150EF19A4000E4840F /* WMLImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLImageElement.h; sourceTree = "<group>"; };
+		08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLImageLoader.cpp; sourceTree = "<group>"; };
+		08C4C5170EF19A4000E4840F /* WMLImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLImageLoader.h; sourceTree = "<group>"; };
 		08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLTaskElement.cpp; sourceTree = "<group>"; };
 		08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTaskElement.h; sourceTree = "<group>"; };
 		08E192510EDE0C390087B780 /* WMLErrorHandling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLErrorHandling.cpp; sourceTree = "<group>"; };
@@ -9573,6 +9581,10 @@
 				0818AEE10EDB86BC00647B66 /* WMLEventHandlingElement.h */,
 				08807B6A0ED709AB003F6975 /* WMLGoElement.cpp */,
 				08807B6B0ED709AB003F6975 /* WMLGoElement.h */,
+				08C4C5140EF19A4000E4840F /* WMLImageElement.cpp */,
+				08C4C5150EF19A4000E4840F /* WMLImageElement.h */,
+				08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */,
+				08C4C5170EF19A4000E4840F /* WMLImageLoader.h */,
 				080AEC7D0ED8708A00DF4CCE /* WMLIntrinsicEvent.cpp */,
 				080AEC7E0ED8708B00DF4CCE /* WMLIntrinsicEvent.h */,
 				080AEC7F0ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp */,
@@ -12760,8 +12772,8 @@
 				A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */,
 				B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */,
 				B27535300B053814002CE64F /* ImageCG.cpp */,
-				4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */,
 				B27535310B053814002CE64F /* ImageSourceCG.cpp */,
+				4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */,
 				4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */,
 				B27535320B053814002CE64F /* IntPointCG.cpp */,
 				B27535330B053814002CE64F /* IntRectCG.cpp */,
@@ -13064,10 +13076,10 @@
 				BCE99EC20DCA624100182683 /* JSXSLTProcessorConstructor.h */,
 				BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */,
 				BCA378BB0D15F64200B793D6 /* ScheduledAction.h */,
-				416E75C90EDF90C700360E1D /* ScriptCallFrame.h */,
 				416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */,
-				416E75BC0EDF8FD700360E1D /* ScriptCallStack.h */,
+				416E75C90EDF90C700360E1D /* ScriptCallFrame.h */,
 				416E75BD0EDF8FD700360E1D /* ScriptCallStack.cpp */,
+				416E75BC0EDF8FD700360E1D /* ScriptCallStack.h */,
 				93B70D5309EB0C7C009D8468 /* ScriptController.cpp */,
 				93B70D5409EB0C7C009D8468 /* ScriptController.h */,
 				A83E1C720E49042B00140B9C /* ScriptControllerMac.mm */,
@@ -15364,6 +15376,7 @@
 				089582560E857A7E00F82C83 /* ImageLoader.h in Headers */,
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
 				B27535710B053814002CE64F /* ImageSource.h in Headers */,
+				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
 				DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */,
 				A8CFF5E50A155A05000A4234 /* InlineBox.h in Headers */,
@@ -15714,6 +15727,7 @@
 				E1CA5CD30E8CDE8000E8EF90 /* JSWorkerConstructor.h in Headers */,
 				E1C36D350EB0A094007410BC /* JSWorkerContext.h in Headers */,
 				E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */,
+				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,
 				BC348BEA0DB80354004ABAB9 /* JSXMLHttpRequestConstructor.h in Headers */,
 				BC60DA3A0D2A302800B9918F /* JSXMLHttpRequestException.h in Headers */,
@@ -15792,6 +15806,7 @@
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */,
 				A9C6E5A60D746458006442E9 /* Navigator.h in Headers */,
+				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
 				656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */,
 				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,
 				BCEF43DD0E674012001C1287 /* NinePieceImage.h in Headers */,
@@ -16146,8 +16161,8 @@
 				1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */,
 				5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */,
 				BCEC01BE0C274DAC009F4EC9 /* Screen.h in Headers */,
-				416E75BE0EDF8FD700360E1D /* ScriptCallStack.h in Headers */,
 				416E75CB0EDF90C700360E1D /* ScriptCallFrame.h in Headers */,
+				416E75BE0EDF8FD700360E1D /* ScriptCallStack.h in Headers */,
 				93B70D7009EB0C7C009D8468 /* ScriptController.h in Headers */,
 				08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */,
 				E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */,
@@ -16302,6 +16317,8 @@
 				08E192540EDE0C3A0087B780 /* WMLErrorHandling.h in Headers */,
 				0818AEE30EDB86BC00647B66 /* WMLEventHandlingElement.h in Headers */,
 				08807B770ED709AB003F6975 /* WMLGoElement.h in Headers */,
+				08C4C5190EF19A4000E4840F /* WMLImageElement.h in Headers */,
+				08C4C51B0EF19A4000E4840F /* WMLImageLoader.h in Headers */,
 				080AEC820ED8708B00DF4CCE /* WMLIntrinsicEvent.h in Headers */,
 				080AEC840ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h in Headers */,
 				088C97130ECB6D9D000534BA /* WMLNames.h in Headers */,
@@ -16346,6 +16363,7 @@
 				E1C2C43E0EAD0133007E61FB /* WorkerContext.h in Headers */,
 				E1C363010EAF2CC6007410BC /* WorkerLocation.h in Headers */,
 				E14799A70ECDE3A400292BF3 /* WorkerMessagingProxy.h in Headers */,
+				E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */,
 				E1A643F20EC0972500779668 /* WorkerScriptController.h in Headers */,
 				E108224B0EC3153A00E93953 /* WorkerTask.h in Headers */,
 				E1C2C4240EACE0BC007E61FB /* WorkerThread.h in Headers */,
@@ -16412,10 +16430,6 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
-				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
-				E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */,
-				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16500,6 +16514,7 @@
 				088C97550ECB6E28000534BA /* WMLAttributeNames.in in Resources */,
 				088C977C0ECB6E29000534BA /* WMLTagNames.in in Resources */,
 				E1C362BC0EAF29FB007410BC /* WorkerLocation.idl in Resources */,
+				E1271A520EEECD1C00F61213 /* WorkerNavigator.idl in Resources */,
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
@@ -16533,7 +16548,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				E1271A520EEECD1C00F61213 /* WorkerNavigator.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17178,6 +17192,7 @@
 				B2C3DA670D006CD600EF6F26 /* FontFallbackList.cpp in Sources */,
 				B2C3DA690D006CD600EF6F26 /* FontFamily.cpp in Sources */,
 				A80E6CEC0A1989CA007FB8C5 /* FontFamilyValue.cpp in Sources */,
+				72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */,
 				B2AFFC800D00A5C10030074D /* FontMac.mm in Sources */,
 				3724CA590E68A7E400DB4384 /* FontMacATSUI.mm in Sources */,
 				3724CA7E0E68B20500DB4384 /* FontMacCoreText.cpp in Sources */,
@@ -17308,6 +17323,7 @@
 				089582550E857A7E00F82C83 /* ImageLoader.cpp in Sources */,
 				B275357B0B053814002CE64F /* ImageMac.mm in Sources */,
 				B275355F0B053814002CE64F /* ImageSourceCG.cpp in Sources */,
+				4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */,
 				316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */,
 				DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */,
 				A8CFF5E60A155A05000A4234 /* InlineBox.cpp in Sources */,
@@ -17714,6 +17730,7 @@
 				E1C36D340EB0A094007410BC /* JSWorkerContext.cpp in Sources */,
 				E1CA5CBC0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp in Sources */,
 				E1C362F00EAF2AA9007410BC /* JSWorkerLocation.cpp in Sources */,
+				E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */,
 				BC348BD30DB7F804004ABAB9 /* JSXMLHttpRequest.cpp in Sources */,
 				BC348BE90DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp in Sources */,
 				BC348BBE0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp in Sources */,
@@ -17793,6 +17810,7 @@
 				E10B9B6D0B747599003ED890 /* NativeXPathNSResolver.cpp in Sources */,
 				93CCF0600AF6CA7600018E89 /* NavigationAction.cpp in Sources */,
 				A9C6E5A50D746458006442E9 /* Navigator.cpp in Sources */,
+				E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */,
 				5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */,
 				1A7FA61B0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp in Sources */,
 				1A7FA6490DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp in Sources */,
@@ -18122,8 +18140,8 @@
 				1CE24F970D7CAF0E007E04C2 /* SchedulePairMac.mm in Sources */,
 				5DFE8F560D16477B0076E937 /* ScheduledAction.cpp in Sources */,
 				BCEC01BD0C274DAC009F4EC9 /* Screen.cpp in Sources */,
-				416E75BF0EDF8FD700360E1D /* ScriptCallStack.cpp in Sources */,
 				416E75CC0EDF90C700360E1D /* ScriptCallFrame.cpp in Sources */,
+				416E75BF0EDF8FD700360E1D /* ScriptCallStack.cpp in Sources */,
 				93B70D6F09EB0C7C009D8468 /* ScriptController.cpp in Sources */,
 				A83E1C740E49042C00140B9C /* ScriptControllerMac.mm in Sources */,
 				08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */,
@@ -18259,6 +18277,8 @@
 				08E192530EDE0C3A0087B780 /* WMLErrorHandling.cpp in Sources */,
 				0818AEE20EDB86BC00647B66 /* WMLEventHandlingElement.cpp in Sources */,
 				08807B760ED709AB003F6975 /* WMLGoElement.cpp in Sources */,
+				08C4C5180EF19A4000E4840F /* WMLImageElement.cpp in Sources */,
+				08C4C51A0EF19A4000E4840F /* WMLImageLoader.cpp in Sources */,
 				080AEC810ED8708B00DF4CCE /* WMLIntrinsicEvent.cpp in Sources */,
 				080AEC830ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp in Sources */,
 				088C97120ECB6D92000534BA /* WMLNames.cpp in Sources */,
@@ -18300,6 +18320,7 @@
 				E1C2C4420EAD017B007E61FB /* WorkerContext.cpp in Sources */,
 				E1C363060EAF2D07007410BC /* WorkerLocation.cpp in Sources */,
 				E14799B40ECDE9D800292BF3 /* WorkerMessagingProxy.cpp in Sources */,
+				E1271A140EEEC80400F61213 /* WorkerNavigator.cpp in Sources */,
 				E1A643FD0EC097A000779668 /* WorkerScriptController.cpp in Sources */,
 				E108224F0EC3156700E93953 /* WorkerTask.cpp in Sources */,
 				E1C2C4290EACE0E0007E61FB /* WorkerThread.cpp in Sources */,
@@ -18358,11 +18379,6 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
-				4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */,
-				E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */,
-				E1271A140EEEC80400F61213 /* WorkerNavigator.cpp in Sources */,
-				E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */,
-				72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

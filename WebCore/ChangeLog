@@ -1,3 +1,50 @@
+2008-12-11  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Holger Freyther.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22814
+
+        Add <wml> image element support. Based on HTML/SVGImage{Element/Loader}, with
+        the only difference that WML defines a second source attribute 'localsrc', that
+        takes precedence over the 'src' attribute. If loading the 'localsrc' attribute
+        fails, the user agent should try loading the 'src' attribute. If both fail the
+        'alt' fallback content will be used - just like in HTML.
+
+        Fixes: fast/wml/img-localsrc.wml (<img> and 'localsrc' attribute)
+               fast/wml/img-src-localsrc-alt.wml ('localsrc'/'src' fallback handling)
+               fast/wml/img-src.wml (<img> and 'src' attribute)
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::altDisplayString):
+        (WebCore::HitTestResult::absoluteImageURL):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::updateAltText):
+        * wml/WMLImageElement.cpp: Added.
+        (WebCore::WMLImageElement::WMLImageElement):
+        (WebCore::WMLImageElement::~WMLImageElement):
+        (WebCore::WMLImageElement::mapToEntry):
+        (WebCore::WMLImageElement::parseMappedAttribute):
+        (WebCore::WMLImageElement::attach):
+        (WebCore::WMLImageElement::createRenderer):
+        (WebCore::WMLImageElement::insertedIntoDocument):
+        (WebCore::WMLImageElement::isURLAttribute):
+        (WebCore::WMLImageElement::imageSourceAttributeName):
+        (WebCore::WMLImageElement::altText):
+        * wml/WMLImageElement.h: Added.
+        (WebCore::WMLImageElement::useFallbackAttribute):
+        (WebCore::WMLImageElement::setUseFallbackAttribute):
+        * wml/WMLImageLoader.cpp: Added.
+        (WebCore::WMLImageLoader::WMLImageLoader):
+        (WebCore::WMLImageLoader::~WMLImageLoader):
+        (WebCore::WMLImageLoader::dispatchLoadEvent):
+        (WebCore::WMLImageLoader::sourceURI):
+        (WebCore::WMLImageLoader::notifyFinished):
+        * wml/WMLImageLoader.h: Added.
+        * wml/WMLTagNames.in:
+
 2008-12-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.

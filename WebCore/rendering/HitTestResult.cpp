@@ -37,6 +37,7 @@
 #endif
 
 #if ENABLE(WML)
+#include "WMLImageElement.h"
 #include "WMLNames.h"
 #endif
 
@@ -196,6 +197,13 @@ String HitTestResult::altDisplayString() const
         return displayString(input->alt(), m_innerNonSharedNode.get());
     }
     
+#if ENABLE(WML)
+    if (m_innerNonSharedNode->hasTagName(WMLNames::imgTag)) {
+        WMLImageElement* image = static_cast<WMLImageElement*>(m_innerNonSharedNode.get());
+        return displayString(image->altText(), m_innerNonSharedNode.get());
+    }
+#endif
+
     return String();
 }
 
@@ -230,18 +238,22 @@ KURL HitTestResult::absoluteImageURL() const
         return KURL();
 
     AtomicString urlString;
-    if (m_innerNonSharedNode->hasTagName(imgTag) || m_innerNonSharedNode->hasTagName(inputTag))
-        urlString = static_cast<Element*>(m_innerNonSharedNode.get())->getAttribute(srcAttr);
+    if (m_innerNonSharedNode->hasTagName(embedTag)
+        || m_innerNonSharedNode->hasTagName(imgTag)
+        || m_innerNonSharedNode->hasTagName(inputTag)
+        || m_innerNonSharedNode->hasTagName(objectTag)    
 #if ENABLE(SVG)
-    else if (m_innerNonSharedNode->hasTagName(SVGNames::imageTag))
-        urlString = static_cast<Element*>(m_innerNonSharedNode.get())->getAttribute(XLinkNames::hrefAttr);
+        || m_innerNonSharedNode->hasTagName(SVGNames::imageTag)
 #endif
-    else if (m_innerNonSharedNode->hasTagName(embedTag) || m_innerNonSharedNode->hasTagName(objectTag)) {
+#if ENABLE(WML)
+        || m_innerNonSharedNode->hasTagName(WMLNames::imgTag)
+#endif
+       ) {
         Element* element = static_cast<Element*>(m_innerNonSharedNode.get());
         urlString = element->getAttribute(element->imageSourceAttributeName());
     } else
         return KURL();
-    
+
     return m_innerNonSharedNode->document()->completeURL(parseURL(urlString));
 }
 

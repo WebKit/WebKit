@@ -5,9 +5,9 @@
  <p> Test for img element in WML </p>
  <p> This image is specified by localsrc attribute of img element</p>
  test code:<![CDATA[
- <p>Local<img height="60" width="40" vspace="40" hspace="60" align="middle" localsrc="resources/smile.gif" alt="smile"/>Image</p>
+ <p>Local<img height="60" width="40" vspace="40" hspace="60" align="middle" localsrc="resources/pass.png" alt="smile"/>Image</p>
  ]]>
  <br/>
- <p>Local<img height="60" width="40" vspace="40" hspace="60" align="middle" localsrc="resources/smile.gif" alt="smile"/>Image</p>
+ <p>Local<img height="60" width="40" vspace="40" hspace="60" align="middle" localsrc="resources/pass.png" alt="smile"/>Image</p>
  </card>
 </wml> 

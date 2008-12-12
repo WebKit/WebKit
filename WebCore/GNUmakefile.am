@@ -2183,6 +2183,8 @@ webcore_sources += \
 	WebCore/wml/WMLErrorHandling.cpp \
 	WebCore/wml/WMLEventHandlingElement.cpp \
 	WebCore/wml/WMLGoElement.cpp \
+	WebCore/wml/WMLImageElement.cpp \
+	WebCore/wml/WMLImageLoader.cpp \
 	WebCore/wml/WMLIntrinsicEvent.cpp \
 	WebCore/wml/WMLIntrinsicEventHandler.cpp \
 	WebCore/wml/WMLNoopElement.cpp \

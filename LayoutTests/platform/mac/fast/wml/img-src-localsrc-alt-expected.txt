@@ -1,38 +1,38 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x208
-  RenderBlock {wml} at (0,0) size 800x208
-    RenderBlock {card} at (8,16) size 784x176
+layer at (0,0) size 800x386
+  RenderBlock {wml} at (0,0) size 800x386
+    RenderBlock {card} at (8,16) size 784x354
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 189x18
           text run at (0,0) width 189: "Test for img element in WML"
       RenderBlock {p} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 487x18
           text run at (0,0) width 487: "This image can be specified by both src and localsrc attributes of img element"
-      RenderBlock {p} at (0,68) size 784x108
+      RenderBlock {p} at (0,68) size 784x286
         RenderText {#text} at (0,0) size 289x18
           text run at (0,0) width 289: "1) localsrc takes precedence over src attribute "
         RenderBR {br} at (289,0) size 0x18
-        RenderText {#text} at (0,18) size 39x18
-          text run at (0,18) width 39: "Image"
-        RenderInline {img} at (0,0) size 0x18
-        RenderText {#text} at (39,18) size 43x18
-          text run at (39,18) width 43: "Image "
+        RenderText {#text} at (0,104) size 39x18
+          text run at (0,104) width 39: "Image"
+        RenderImage {img} at (39,18) size 100x100
+        RenderText {#text} at (139,104) size 43x18
+          text run at (139,104) width 43: "Image "
         RenderBR {br} at (0,0) size 0x0
-        RenderText {#text} at (0,36) size 277x18
-          text run at (0,36) width 277: "2) localsrc can't locate the image, src works "
-        RenderBR {br} at (277,36) size 0x18
-        RenderText {#text} at (0,54) size 39x18
-          text run at (0,54) width 39: "Image"
-        RenderInline {img} at (0,0) size 0x18
-        RenderText {#text} at (39,54) size 43x18
-          text run at (39,54) width 43: "Image "
+        RenderText {#text} at (0,122) size 277x18
+          text run at (0,122) width 277: "2) localsrc can't locate the image, src works "
+        RenderBR {br} at (277,122) size 0x18
+        RenderText {#text} at (0,226) size 39x18
+          text run at (0,226) width 39: "Image"
+        RenderImage {img} at (39,140) size 100x100
+        RenderText {#text} at (139,226) size 43x18
+          text run at (139,226) width 43: "Image "
         RenderBR {br} at (0,0) size 0x0
-        RenderText {#text} at (0,72) size 361x18
-          text run at (0,72) width 361: "3) neither localsrc nor src can locate the image, alt works "
-        RenderBR {br} at (361,72) size 0x18
-        RenderText {#text} at (0,90) size 39x18
-          text run at (0,90) width 39: "Image"
-        RenderInline {img} at (0,0) size 0x18
-        RenderText {#text} at (39,90) size 39x18
-          text run at (39,90) width 39: "Image"
+        RenderText {#text} at (0,244) size 361x18
+          text run at (0,244) width 361: "3) neither localsrc nor src can locate the image, alt works "
+        RenderBR {br} at (361,244) size 0x18
+        RenderText {#text} at (0,268) size 39x18
+          text run at (0,268) width 39: "Image"
+        RenderImage {img} at (39,262) size 39x20
+        RenderText {#text} at (78,268) size 39x18
+          text run at (78,268) width 39: "Image"

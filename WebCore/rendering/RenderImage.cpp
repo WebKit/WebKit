@@ -38,6 +38,11 @@
 #include "RenderView.h"
 #include "SystemTime.h"
 
+#if ENABLE(WML)
+#include "WMLImageElement.h"
+#include "WMLNames.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -432,6 +437,10 @@ void RenderImage::updateAltText()
         m_altText = static_cast<HTMLInputElement*>(element())->altText();
     else if (element()->hasTagName(imgTag))
         m_altText = static_cast<HTMLImageElement*>(element())->altText();
+#if ENABLE(WML)
+    else if (element()->hasTagName(WMLNames::imgTag))
+        m_altText = static_cast<WMLImageElement*>(element())->altText();
+#endif
 }
 
 bool RenderImage::isWidthSpecified() const

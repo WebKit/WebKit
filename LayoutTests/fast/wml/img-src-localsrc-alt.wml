@@ -5,13 +5,13 @@
  <p> Test for img element in WML </p>
  <p> This image can be specified by both src and localsrc attributes of img element</p>
  <p> 1) localsrc takes precedence over src attribute <br/>
- Image<img src="http://www.baidu.com/img/baidu.gif" localsrc="resources/smile.gif" alt="IMAGE"/>Image
+ Image<img src="resources/fail.png" localsrc="resources/pass.png" alt="IMAGE"/>Image
  <br/>
  2) localsrc can't locate the image, src works <br/>
- Image<img src="http://www.baidu.com/img/baidu.gif" localsrc="wrongpath/smile.gif" alt="IMAGE"/>Image
+ Image<img src="resources/pass.png" localsrc="wrongpath/fail.png" alt="IMAGE"/>Image
  <br/>
  3) neither localsrc nor src can locate the image, alt works <br/>
- Image<img src="http://www.baidu.com/wrongpath/baidu.gif" localsrc="wrongpath/smile.gif" alt="IMAGE"/>Image
+ Image<img src="wrongpath/fail.png" localsrc="wrongpath/fail.png" alt="PASS"/>Image
  </p>
  </card>
 </wml> 

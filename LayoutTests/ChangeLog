@@ -1,3 +1,26 @@
+2008-12-11  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Holger Freyther.
+
+        Fix WML image layout tests to not rely on external resources.
+        Update results after adding <img> support.
+
+        * fast/wml/img-localsrc.wml:
+        * fast/wml/img-src-localsrc-alt.wml:
+        * fast/wml/img-src.wml:
+        * fast/wml/resources: Added.
+        * fast/wml/resources/fail.png: Added.
+        * fast/wml/resources/pass.png: Added.
+        * platform/mac/fast/wml/img-localsrc-expected.checksum:
+        * platform/mac/fast/wml/img-localsrc-expected.png:
+        * platform/mac/fast/wml/img-localsrc-expected.txt:
+        * platform/mac/fast/wml/img-src-expected.checksum:
+        * platform/mac/fast/wml/img-src-expected.png:
+        * platform/mac/fast/wml/img-src-expected.txt:
+        * platform/mac/fast/wml/img-src-localsrc-alt-expected.checksum:
+        * platform/mac/fast/wml/img-src-localsrc-alt-expected.png:
+        * platform/mac/fast/wml/img-src-localsrc-alt-expected.txt:
+
 2008-12-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele Peterson.

@@ -16898,6 +16898,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\wml\WMLImageElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLImageElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLImageLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLImageLoader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\wml\WMLIntrinsicEvent.cpp"
 				>
 			</File>
