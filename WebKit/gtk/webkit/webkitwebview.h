@@ -252,10 +252,6 @@ webkit_web_view_get_settings                    (WebKitWebView        *web_view)
 WEBKIT_API WebKitWebInspector *
 webkit_web_view_get_inspector                   (WebKitWebView        *web_view);
 
-WEBKIT_API void
-webkit_web_view_set_window_features             (WebKitWebView        *web_view,
-                                                 WebKitWebWindowFeatures *window_features);
-
 WEBKIT_API WebKitWebWindowFeatures*
 webkit_web_view_get_window_features             (WebKitWebView        *web_view);
 

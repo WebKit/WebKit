@@ -1,3 +1,21 @@
+2008-11-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22574
+
+        Make webkit_web_view_set_window_features internal
+
+        Calling this method will not result in a notify::window-features
+        signal being emitted. This would allow replacing a
+        WebKitWebWindowFeature on a WebKitWebView without anyone noticing
+        and the client code would monitor the wrong object.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::createWindow):
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-12-09  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Dave Hyatt.

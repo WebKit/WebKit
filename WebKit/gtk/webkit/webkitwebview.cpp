@@ -118,6 +118,7 @@ static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
 G_DEFINE_TYPE(WebKitWebView, webkit_web_view, GTK_TYPE_CONTAINER)
 
 static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GParamSpec* pspec, WebKitWebView* webView);
+static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWebWindowFeatures* webWindowFeatures);
 
 static void webkit_web_view_context_menu_position_func(GtkMenu*, gint* x, gint* y, gboolean* pushIn, WebKitWebViewPrivate* data)
 {
@@ -1717,23 +1718,9 @@ WebKitWebInspector* webkit_web_view_get_inspector(WebKitWebView* webView)
     return priv->webInspector;
 }
 
-/**
- * webkit_web_view_set_window_features
- * @web_view: a #WebKitWebView
- * @window_features: a #WebKitWebWindowFeatures
- *
- * This will set how the window containing the #WebKitWebView should
- * look and behave. Applications may want to monitor this property and
- * apply the settings it carries to the window holding the relevant
- * #WebKitWebView.
- *
- * Since: 1.0.3
- */
-void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWebWindowFeatures* webWindowFeatures)
+// internal
+static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWebWindowFeatures* webWindowFeatures)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(WEBKIT_IS_WEB_WINDOW_FEATURES(webWindowFeatures));
-
     WebKitWebViewPrivate* priv = webView->priv;
 
     if(webkit_web_window_features_equal(priv->webWindowFeatures, webWindowFeatures))
