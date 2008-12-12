@@ -4,7 +4,7 @@
 
         Remove dependancy on having the Instruction buffer in order to
         deref Structures used for property access and global resolves.
-        Instead, we put references to the necessary Structures in axillary
+        Instead, we put references to the necessary Structures in auxiliary
         data structures on the CodeBlock. This is not an ideal solution,
         as we still pay for having the Structures in two places and we
         would like to eventually just hold on to offsets into the machine
