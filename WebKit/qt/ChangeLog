@@ -1,3 +1,23 @@
+2008-12-11  Enrico Ros  <enrico.ros@m31.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the broken focus behavior that happened when QWebPage lost
+        focus to a popup menu.
+
+        The previous code didn't notify the QWebPage at all when the
+        focus was back in (breaking focus rects, caret blinking, ...).
+        By the way when a popup is show, 2 FocusOut events are delivered
+        to the QWebPage, but this doesn't seem to hurt.
+
+        Added a test to check popup opening, closing a lineedit blinks.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::focusInEvent):
+        (QWebPagePrivate::focusOutEvent):
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::):
+
 2008-12-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Tor Arne Vestbø.

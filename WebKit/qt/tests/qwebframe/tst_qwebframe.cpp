@@ -25,6 +25,9 @@
 #include <qwebview.h>
 #include <qwebframe.h>
 #include <qwebhistory.h>
+#include <QAbstractItemView>
+#include <QApplication>
+#include <QComboBox>
 #include <QRegExp>
 #include <QNetworkRequest>
 //TESTED_CLASS=
@@ -538,6 +541,7 @@ class tst_QWebFrame : public QObject
 public:
     tst_QWebFrame();
     virtual ~tst_QWebFrame();
+    bool eventFilter(QObject* watched, QEvent* event);
 
 public slots:
     void init();
@@ -567,6 +571,7 @@ private slots:
     void setHtmlWithResource();
     void ipv6HostEncoding();
     void metaData();
+    void popupFocus();
 private:
     QString  evalJS(const QString&s) {
         // Convert an undefined return variant to the string "undefined"
@@ -612,6 +617,15 @@ private:
         evalJS("delete retvalue; delete typevalue");
         return ret;
     }
+    QObject* firstChildByClassName(QObject* parent, const char* className) {
+        const QObjectList & children = parent->children();
+        foreach (QObject* child, children) {
+            if (!strcmp(child->metaObject()->className(), className)) {
+                return child;
+            }
+        }
+        return 0;
+    }
 
     const QString sTrue;
     const QString sFalse;
@@ -627,16 +641,28 @@ private:
     QWebView* m_view;
     QWebPage* m_page;
     MyQObject* m_myObject;
+    QWebView* m_popupTestView;
+    int m_popupTestPaintCount;
 };
 
 tst_QWebFrame::tst_QWebFrame()
     : sTrue("true"), sFalse("false"), sUndefined("undefined"), sArray("array"), sFunction("function"), sError("error"),
-        sString("string"), sObject("object"), sNumber("number")
+        sString("string"), sObject("object"), sNumber("number"), m_popupTestView(0), m_popupTestPaintCount(0)
 {
 }
 
 tst_QWebFrame::~tst_QWebFrame()
 {
+}
+
+bool tst_QWebFrame::eventFilter(QObject* watched, QEvent* event)
+{
+    // used on the popupFocus test
+    if (watched == m_popupTestView) {
+        if (event->type() == QEvent::Paint)
+            m_popupTestPaintCount++;
+    }
+    return QObject::eventFilter(watched, event);
 }
 
 void tst_QWebFrame::init()
@@ -2171,6 +2197,52 @@ void tst_QWebFrame::metaData()
     QVERIFY(values.contains("SecondValue"));
 
     QCOMPARE(metaData.value("nonexistant"), QString());
+}
+
+void tst_QWebFrame::popupFocus()
+{
+    QWebView view;
+    view.setHtml("<html>"
+                 "    <body>"
+                 "        <select name=\"select\">"
+                 "            <option>1</option>"
+                 "            <option>2</option>"
+                 "        </select>"
+                 "        <input type=\"text\"> </input>"
+                 "        <textarea name=\"text_area\" rows=\"3\" cols=\"40\">"
+                 "This test checks whether showing and hiding a popup"
+                 "takes the focus away from the webpage."
+                 "        </textarea>"
+                 "    </body>"
+                 "</html>");
+    view.resize(400, 100);
+    view.show();
+    view.setFocus();
+    QTest::qWait(200);
+    QVERIFY2(view.hasFocus(),
+             "The WebView should be created");
+
+    // open the popup by clicking. check if focus is on the popup
+    QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(25, 25));
+    QObject* webpopup = firstChildByClassName(&view, "WebCore::QWebPopup");
+    QComboBox* combo = dynamic_cast<QComboBox*>(webpopup);
+    QTest::qWait(1);
+    QVERIFY2(!view.hasFocus() && combo->view()->hasFocus(),
+             "Focus sould be on the Popup");
+
+    // hide the popup and check if focus is on the page
+    combo->hidePopup();
+    QTest::qWait(1);
+    QVERIFY2(view.hasFocus() && !combo->view()->hasFocus(),
+             "Focus sould be back on the WebView");
+
+    // focus the lineedit and check if it blinks
+    QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(200, 25));
+    m_popupTestView = &view;
+    view.installEventFilter( this );
+    QTest::qWait(2000);
+    QVERIFY2(m_popupTestPaintCount >= 4,
+             "The input field should have a blinking caret");
 }
 
 QTEST_MAIN(tst_QWebFrame)
