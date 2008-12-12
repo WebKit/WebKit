@@ -7,19 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A1BA1760EF2FB3200754486 /* Composition.qtz in Resources */ = {isa = PBXBuildFile; fileRef = 1A1BA1750EF2FB3200754486 /* Composition.qtz */; };
 		1A624E590DCBC7F6006898C8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A624E580DCBC7F6006898C8 /* main.m */; };
 		1A6250420DCBC81B006898C8 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A6250410DCBC81B006898C8 /* Cocoa.framework */; };
-		1AAD6A090DD0DC52003985DA /* MenuHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AAD6A080DD0DC52003985DA /* MenuHandler.m */; };
+		1A8C86AA0EF2FB8F003F6E81 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8C86A90EF2FB8F003F6E81 /* Quartz.framework */; };
+		1A8C87AA0EF2FBB3003F6E81 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8C87A90EF2FBB3003F6E81 /* QuartzCore.framework */; };
 		8D5B49A804867FD3000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D5B49A704867FD3000E48DA /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1A1BA1750EF2FB3200754486 /* Composition.qtz */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Composition.qtz; sourceTree = "<group>"; };
 		1A624E580DCBC7F6006898C8 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1A6250410DCBC81B006898C8 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		1AAD6A070DD0DC52003985DA /* MenuHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuHandler.h; sourceTree = "<group>"; };
-		1AAD6A080DD0DC52003985DA /* MenuHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuHandler.m; sourceTree = "<group>"; };
-		8D576316048677EA00EA77CD /* NetscapeCocoaPlugin.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetscapeCocoaPlugin.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A8C86A90EF2FB8F003F6E81 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = /System/Library/Frameworks/Quartz.framework; sourceTree = "<absolute>"; };
+		1A8C87A90EF2FBB3003F6E81 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		8D576316048677EA00EA77CD /* NetscapeCoreAnimationPlugin.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetscapeCoreAnimationPlugin.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D576317048677EA00EA77CD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -29,13 +32,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A6250420DCBC81B006898C8 /* Cocoa.framework in Frameworks */,
+				1A8C86AA0EF2FB8F003F6E81 /* Quartz.framework in Frameworks */,
+				1A8C87AA0EF2FBB3003F6E81 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		089C166AFE841209C02AAC07 /* NetscapeCocoaPlugin */ = {
+		089C166AFE841209C02AAC07 /* NetscapeCoreAnimationPlugin */ = {
 			isa = PBXGroup;
 			children = (
 				08FB77AFFE84173DC02AAC07 /* Source */,
@@ -43,13 +48,15 @@
 				089C1671FE841209C02AAC07 /* External Frameworks and Libraries */,
 				19C28FB6FE9D52B211CA2CBB /* Products */,
 			);
-			name = NetscapeCocoaPlugin;
+			name = NetscapeCoreAnimationPlugin;
 			sourceTree = "<group>";
 		};
 		089C1671FE841209C02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
 				1A6250410DCBC81B006898C8 /* Cocoa.framework */,
+				1A8C86A90EF2FB8F003F6E81 /* Quartz.framework */,
+				1A8C87A90EF2FBB3003F6E81 /* QuartzCore.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -57,6 +64,7 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1A1BA1750EF2FB3200754486 /* Composition.qtz */,
 				8D576317048677EA00EA77CD /* Info.plist */,
 				8D5B49A704867FD3000E48DA /* InfoPlist.strings */,
 			);
@@ -66,8 +74,6 @@
 		08FB77AFFE84173DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				1AAD6A070DD0DC52003985DA /* MenuHandler.h */,
-				1AAD6A080DD0DC52003985DA /* MenuHandler.m */,
 				1A624E580DCBC7F6006898C8 /* main.m */,
 			);
 			name = Source;
@@ -76,7 +82,7 @@
 		19C28FB6FE9D52B211CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D576316048677EA00EA77CD /* NetscapeCocoaPlugin.plugin */,
+				8D576316048677EA00EA77CD /* NetscapeCoreAnimationPlugin.plugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -84,9 +90,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D57630D048677EA00EA77CD /* NetscapeCocoaPlugin */ = {
+		8D57630D048677EA00EA77CD /* NetscapeCoreAnimationPlugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 149C298308902C53008A9EFC /* Build configuration list for PBXNativeTarget "NetscapeCocoaPlugin" */;
+			buildConfigurationList = 149C298308902C53008A9EFC /* Build configuration list for PBXNativeTarget "NetscapeCoreAnimationPlugin" */;
 			buildPhases = (
 				8D576311048677EA00EA77CD /* Sources */,
 				8D57630F048677EA00EA77CD /* Resources */,
@@ -96,10 +102,10 @@
 			);
 			dependencies = (
 			);
-			name = NetscapeCocoaPlugin;
+			name = NetscapeCoreAnimationPlugin;
 			productInstallPath = "$(HOME)/Library/Bundles";
-			productName = NetscapeCocoaPlugin;
-			productReference = 8D576316048677EA00EA77CD /* NetscapeCocoaPlugin.plugin */;
+			productName = NetscapeCoreAnimationPlugin;
+			productReference = 8D576316048677EA00EA77CD /* NetscapeCoreAnimationPlugin.plugin */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -107,14 +113,14 @@
 /* Begin PBXProject section */
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 149C298708902C53008A9EFC /* Build configuration list for PBXProject "NetscapeCocoaPlugin" */;
+			buildConfigurationList = 149C298708902C53008A9EFC /* Build configuration list for PBXProject "NetscapeCoreAnimationPlugin" */;
 			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
-			mainGroup = 089C166AFE841209C02AAC07 /* NetscapeCocoaPlugin */;
+			mainGroup = 089C166AFE841209C02AAC07 /* NetscapeCoreAnimationPlugin */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D57630D048677EA00EA77CD /* NetscapeCocoaPlugin */,
+				8D57630D048677EA00EA77CD /* NetscapeCoreAnimationPlugin */,
 			);
 		};
 /* End PBXProject section */
@@ -125,6 +131,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D5B49A804867FD3000E48DA /* InfoPlist.strings in Resources */,
+				1A1BA1760EF2FB3200754486 /* Composition.qtz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +142,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AAD6A090DD0DC52003985DA /* MenuHandler.m in Sources */,
 				1A624E590DCBC7F6006898C8 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -165,7 +171,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PRODUCT_NAME = NetscapeCocoaPlugin;
+				PRODUCT_NAME = NetscapeCoreAnimationPlugin;
 				WRAPPER_EXTENSION = plugin;
 				ZERO_LINK = YES;
 			};
@@ -184,7 +190,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PRODUCT_NAME = NetscapeCocoaPlugin;
+				PRODUCT_NAME = NetscapeCoreAnimationPlugin;
 				WRAPPER_EXTENSION = plugin;
 			};
 			name = Release;
@@ -197,7 +203,6 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
 		};
@@ -209,14 +214,13 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		149C298308902C53008A9EFC /* Build configuration list for PBXNativeTarget "NetscapeCocoaPlugin" */ = {
+		149C298308902C53008A9EFC /* Build configuration list for PBXNativeTarget "NetscapeCoreAnimationPlugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				149C298408902C53008A9EFC /* Debug */,
@@ -225,7 +229,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		149C298708902C53008A9EFC /* Build configuration list for PBXProject "NetscapeCocoaPlugin" */ = {
+		149C298708902C53008A9EFC /* Build configuration list for PBXProject "NetscapeCoreAnimationPlugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				149C298808902C53008A9EFC /* Debug */,

@@ -36,8 +36,8 @@
 #import <WebKit/npruntime.h>
 
 #import <Cocoa/Cocoa.h>
-
-#import "MenuHandler.h"
+#import <Quartz/Quartz.h>
+#import <QuartzCore/QuartzCore.h>
 
 // Browser function table
 static NPNetscapeFuncs* browser;
@@ -49,11 +49,9 @@ typedef struct PluginObject
     
     NPWindow window;
     
-    NSString *string;
-    bool hasFocus;
-    bool mouseIsInsidePlugin;
+    QCComposition *composition;
+    CALayer *layer;
     
-    MenuHandler *menuHandler;
 } PluginObject;
 
 NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char* argn[], char* argv[], NPSavedData* saved);
@@ -118,16 +116,16 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
     obj->npp = instance;
     instance->pdata = obj;
     
-    // Ask the browser if it supports the CoreGraphics drawing model
-    NPBool supportsCoreGraphics;
-    if (browser->getvalue(instance, NPNVsupportsCoreGraphicsBool, &supportsCoreGraphics) != NPERR_NO_ERROR)
-        supportsCoreGraphics = FALSE;
+    // Ask the browser if it supports the Core Animation drawing model
+    NPBool supportsCoreAnimation;
+    if (browser->getvalue(instance, NPNVsupportsCoreAnimationBool, &supportsCoreAnimation) != NPERR_NO_ERROR)
+        supportsCoreAnimation = FALSE;
     
-    if (!supportsCoreGraphics)
+    if (!supportsCoreAnimation)
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     
-    // If the browser supports the CoreGraphics drawing model, enable it.
-    browser->setvalue(instance, NPPVpluginDrawingModel, (void *)NPDrawingModelCoreGraphics);
+    // If the browser supports the Core Animation drawing model, enable it.
+    browser->setvalue(instance, NPPVpluginDrawingModel, (void *)NPDrawingModelCoreAnimation);
 
     // If the browser supports the Cocoa event model, enable it.
     NPBool supportsCocoa;
@@ -146,9 +144,9 @@ NPError NPP_Destroy(NPP instance, NPSavedData** save)
 {
     // Free per-instance storage
     PluginObject *obj = instance->pdata;
-    
-    [obj->string release];
-    [obj->menuHandler release];
+
+    [obj->composition release];
+    [obj->layer release];
     
     free(obj);
     
@@ -194,136 +192,8 @@ void NPP_Print(NPP instance, NPPrint* platformPrint)
 
 }
 
-static void handleDraw(PluginObject *obj)
+static void handleMouseClick(PluginObject *obj, NPCocoaEvent *event)
 {
-    NSGraphicsContext *oldContext = [[NSGraphicsContext currentContext] retain];
-    
-    NSGraphicsContext *context = [NSGraphicsContext graphicsContextWithGraphicsPort:((NP_CGContext *)obj->window.window)->context
-                                                                            flipped:YES];
-
-
-    [NSGraphicsContext setCurrentContext:context];
-
-    NSRect rect = NSMakeRect(0, 0, obj->window.width, obj->window.height);
-    [[NSColor lightGrayColor] set];
-    [NSBezierPath fillRect:rect];
-
-    // If the plugin has focus, draw a focus indicator
-    if (obj->hasFocus) {
-        [[NSColor blackColor] set];
-        NSBezierPath *path = [NSBezierPath bezierPathWithRect:rect];
-        [path setLineWidth:5];
-        [path stroke];
-    }
-    
-    [obj->string drawAtPoint:NSMakePoint(10, 10) withAttributes:nil];
-    
-    [NSGraphicsContext setCurrentContext:oldContext];
-}
-
-static NSString *eventType(NPCocoaEventType type)
-{
-    switch (type) {
-        case NPCocoaEventScrollWheel:
-            return @"NPCocoaEventScrollWheel";
-        case NPCocoaEventMouseDown:
-            return @"NPCocoaEventMouseDown";
-        case NPCocoaEventMouseUp:
-            return @"NPCocoaEventMouseUp";            
-        case NPCocoaEventMouseMoved:
-            return @"NPCocoaEventMouseMoved";            
-        case NPCocoaEventMouseDragged:
-            return @"NPCocoaEventMouseDragged";            
-        case NPCocoaEventMouseEntered:
-            return @"NPCocoaEventMouseEntered";            
-        case NPCocoaEventMouseExited:
-            return @"NPCocoaEventMouseExited";
-        case NPCocoaEventKeyDown:
-            return @"NPCocoaEventKeyDown";
-        case NPCocoaEventKeyUp:
-            return @"NPCocoaEventKeyUp";
-        case NPCocoaEventFlagsChanged:
-            return @"NPCocoaEventFlagsChanged";
-        default:
-            return @"unknown";
-    }    
-}
-
-static void invalidatePlugin(PluginObject *obj)
-{
-    NPRect rect;
-    rect.left = 0;
-    rect.top = 0;
-    rect.right = obj->window.width;
-    rect.bottom = obj->window.height;
-    
-    browser->invalidaterect(obj->npp, &rect);    
-}
-
-
-static void handleMouseEvent(PluginObject *obj, NPCocoaEvent *event)
-{
-    NSWindow *window = ((NP_CGContext *)obj->window.window)->window;
-    // Convert the event coordinates to screen coordinates.
-    
-    NSPoint windowCoordinates = NSMakePoint(0, 0);//obj->window.x + event->data.mouse.pluginX,
-//                                            obj->window.y + event->data.mouse.pluginY);
-
-    NSPoint screenCoordinates = [window convertBaseToScreen:windowCoordinates];
-    
-    NSLog(@"window: %@", window);
-    
-    NSString *string = [NSString stringWithFormat:@"Type: %@\n"
-                                                   "Modifier flags: 0x%x\n"
-                                                   "Coordinates: (%g, %g)\n"
-                                                   "Screen coordinates: (%g, %g)\n"
-                                                   "Button number: %d\n"
-                                                   "Click count: %d\n"
-                                                   "Delta: (%g, %g, %g)",
-                                                   eventType(event->type), 
-                                                   event->data.mouse.modifierFlags,
-                                                   event->data.mouse.pluginX,
-                                                   event->data.mouse.pluginY,
-                                                   screenCoordinates.x, screenCoordinates.y,
-                                                   event->data.mouse.buttonNumber,
-                                                   event->data.mouse.clickCount,
-                                                   event->data.mouse.deltaX, event->data.mouse.deltaY, event->data.mouse.deltaZ];
-    
-    
-    [obj->string release];
-    obj->string = [string retain];
- 
-    invalidatePlugin(obj);
-    
-    if (event->data.mouse.buttonNumber == 1) {
-        if (!obj->menuHandler)
-            obj->menuHandler = [[MenuHandler alloc] initWithBrowserFuncs:browser instance:obj->npp];
-        
-        browser->popupcontextmenu(obj->npp, (NPNSMenu *)[obj->menuHandler menu]);
-        NSLog(@"foo");
-    }
-}
-
-static void handleKeyboardEvent(PluginObject *obj, NPCocoaEvent *event)
-{
-    NSString *string = [NSString stringWithFormat:@"Type: %@\n"
-                        "Modifier flags: 0x%x\n"
-                        "Characters: %@\n"
-                        "Characters ignoring modifiers: %@\n"
-                        "Is a repeat: %@\n"
-                        "Key code: %d",
-                        eventType(event->type), 
-                        event->data.key.modifierFlags,
-                        event->data.key.characters,
-                        event->data.key.charactersIgnoringModifiers,
-                        event->data.key.isARepeat ? @"YES" : @"NO",
-                        event->data.key.keyCode];
-    
-    
-    [obj->string release];
-    obj->string = [string retain];
-    
-    invalidatePlugin(obj);
 }
 
 int16 NPP_HandleEvent(NPP instance, void* event)
@@ -333,33 +203,8 @@ int16 NPP_HandleEvent(NPP instance, void* event)
     NPCocoaEvent *cocoaEvent = event;
     
     switch(cocoaEvent->type) {
-        case NPCocoaEventFocusChanged:
-            browser->status(instance, cocoaEvent->data.focus.hasFocus ? "Got focus" : "Lost Focus");
-            obj->hasFocus = cocoaEvent->data.focus.hasFocus;
-            invalidatePlugin(obj);
-            return 1;
-            
-        case NPCocoaEventDrawRect:
-            handleDraw(obj);
-            return 1;
-        
-        case NPCocoaEventKeyDown:
-        case NPCocoaEventKeyUp:
-        case NPCocoaEventFlagsChanged:
-            handleKeyboardEvent(obj, cocoaEvent);
-            return 1;
-            
         case NPCocoaEventMouseDown:
-        case NPCocoaEventMouseUp:
-            
-        // FIXME: NPCocoaEventMouseMoved is currently disabled in order to see other events more clearly
-        // without "drowning" in mouse moved events.
-//        case NPCocoaEventMouseMoved:
-        case NPCocoaEventMouseEntered:
-        case NPCocoaEventMouseExited:
-        case NPCocoaEventMouseDragged:
-        case NPCocoaEventScrollWheel:
-            handleMouseEvent(obj, cocoaEvent);
+            handleMouseClick(obj, cocoaEvent);
             return 1;
     }
     
@@ -373,7 +218,25 @@ void NPP_URLNotify(NPP instance, const char* url, NPReason reason, void* notifyD
 
 NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
 {
-    return NPERR_GENERIC_ERROR;
+    PluginObject *obj = instance->pdata;
+
+    switch (variable) {
+        case NPPVpluginCoreAnimationLayer:
+            if (!obj->layer) {
+                NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.netscapecoreanimationplugin"] pathForResource:@"Composition" ofType:@"qtz"];
+                
+                obj->composition = [[QCComposition compositionWithFile:path] retain];
+                obj->layer = [[QCCompositionLayer compositionLayerWithComposition:obj->composition] retain];
+            }
+            
+            // Make sure to return a retained layer
+            *((CALayer **)value) = [obj->layer retain];
+            
+            return NPERR_NO_ERROR;
+            
+        default:
+            return NPERR_GENERIC_ERROR;
+    }
 }
 
 NPError NPP_SetValue(NPP instance, NPNVariable variable, void *value)

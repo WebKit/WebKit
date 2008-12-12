@@ -1,3 +1,41 @@
+2008-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Add a sample Core Animation NPAPI plug-in.
+        
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:
+        * NetscapeCocoaPlugin/main.m:
+        (handleDraw):
+        (handleMouseEvent):
+        (NPP_HandleEvent):
+        * NetscapeCoreAnimationPlugin: Added.
+        * NetscapeCoreAnimationPlugin/Composition.qtz: Added.
+        * NetscapeCoreAnimationPlugin/English.lproj: Added.
+        * NetscapeCoreAnimationPlugin/English.lproj/InfoPlist.strings: Added.
+        * NetscapeCoreAnimationPlugin/Info.plist: Added.
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj: Added.
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj/project.pbxproj: Added.
+        * NetscapeCoreAnimationPlugin/main.m: Added.
+        (NP_Initialize):
+        (NP_GetEntryPoints):
+        (NP_Shutdown):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_StreamAsFile):
+        (NPP_Print):
+        (handleMouseClick):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+        (NPP_SetValue):
+        * NetscapeCoreAnimationPlugin/test.html: Added.
+
 2008-12-08  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22555: Sort "children" sections in Xcode project files
