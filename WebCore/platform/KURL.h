@@ -46,6 +46,10 @@ class QUrl;
 QT_END_NAMESPACE
 #endif
 
+#if USE(GOOGLEURL)
+#include "GoogleURLPrivate.h"
+#endif
+
 namespace WebCore {
 
 class TextEncoding;
@@ -87,6 +91,14 @@ public:
     KURL(const KURL& base, const String& relative);
     KURL(const KURL& base, const String& relative, const TextEncoding&);
 
+#if USE(GOOGLEURL)
+    // For conversions for other structures that have already parsed and
+    // canonicalized the URL. The input must be exactly what KURL would have
+    // done with the same input.
+    KURL(const char* canonicalSpec, int canonicalSpecLen,
+         const url_parse::Parsed& parsed, bool isValid);
+#endif
+
     // FIXME: The above functions should be harmonized so that passing a
     // base of null or the empty string gives the same result as the
     // standard String constructor.
@@ -96,17 +108,20 @@ public:
     // no other reason to ever prefer copy() over plain old assignment.
     KURL copy() const;
 
-    bool isNull() const { return m_string.isNull(); }
-    bool isEmpty() const { return m_string.isEmpty(); }
-
-    bool isValid() const { return m_isValid; }
+    bool isNull() const;
+    bool isEmpty() const;
+    bool isValid() const;
 
     // Returns true if this URL has a path. Note that "http://foo.com/" has a
     // path of "/", so this function will return true. Only invalid or
     // non-hierarchical (like "javascript:") URLs will have no path.
     bool hasPath() const;
 
+#if USE(GOOGLEURL)
+    const String& string() const { return m_url.string(); }
+#else
     const String& string() const { return m_string; }
+#endif
 
     String protocol() const;
     String host() const;
@@ -150,20 +165,21 @@ public:
 
     void setRef(const String&);
     void removeRef();
-    
+
     friend bool equalIgnoringRef(const KURL&, const KURL&);
 
     friend bool protocolHostAndPortAreEqual(const KURL&, const KURL&);
-    
-    operator const String&() const { return m_string; }
-    operator JSC::UString() const { return m_string; }
 
-    unsigned hostStart() const { return (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1; }
-    unsigned hostEnd() const { return m_hostEnd; }
-    
-    unsigned pathStart() const { return m_portEnd; }
-    unsigned pathEnd() const { return m_pathEnd; }
-    unsigned pathAfterLastSlash() const { return m_pathAfterLastSlash; }
+    unsigned hostStart() const;
+    unsigned hostEnd() const;
+
+    unsigned pathStart() const;
+    unsigned pathEnd() const;
+    unsigned pathAfterLastSlash() const;
+    operator const String&() const { return string(); }
+#ifdef USE(JSC)
+    operator JSC::UString() const { return string(); }
+#endif
 
 #if PLATFORM(CF)
     KURL(CFURLRef);
@@ -175,12 +191,18 @@ public:
     operator NSURL*() const;
 #endif
 #ifdef __OBJC__
-    operator NSString*() const { return m_string; }
+    operator NSString*() const { return string(); }
 #endif
 
 #if PLATFORM(QT)
     KURL(const QUrl&);
     operator QUrl() const;
+#endif
+
+#if USE(GOOGLEURL)
+    // Getters for the parsed structure and its corresponding 8-bit string.
+    const url_parse::Parsed& parsed() const { return m_url.m_parsed; }
+    const CString& utf8String() const { return m_url.utf8String(); }
 #endif
 
 #ifndef NDEBUG
@@ -190,10 +212,16 @@ public:
 private:
     void invalidate();
     bool isHierarchical() const;
-    void init(const KURL&, const String&, const TextEncoding&);
     static bool protocolIs(const String&, const char*);
+#if USE(GOOGLEURL)
+    friend class GoogleURLPrivate;
+    void parse(const char* url, const String* originalString);  // KURLMac calls this.
+    void copyToBuffer(Vector<char, 512>& buffer) const;  // KURLCFNet uses this.
+    GoogleURLPrivate m_url;
+#else  // !USE(GOOGLEURL)
+    void init(const KURL&, const String&, const TextEncoding&);
     void copyToBuffer(Vector<char, 512>& buffer) const;
-    
+
     // Parses the given URL. The originalString parameter allows for an
     // optimization: When the source is the same as the fixed-up string,
     // it will use the passed-in string instead of allocating a new one.
@@ -212,6 +240,7 @@ private:
     int m_pathEnd;
     int m_queryEnd;
     int m_fragmentEnd;
+#endif
 };
 
 bool operator==(const KURL&, const KURL&);
@@ -272,6 +301,53 @@ inline bool operator!=(const String& a, const KURL& b)
 {
     return a != b.string();
 }
+
+#if !USE(GOOGLEURL)
+
+// Inline versions of some non-GoogleURL functions so we can get inlining
+// without having to have a lot of ugly ifdefs in the class definition.
+
+inline bool KURL::isNull() const
+{
+    return m_string.isNull();
+}
+
+inline bool KURL::isEmpty() const
+{
+    return m_string.isEmpty();
+}
+
+inline bool KURL::isValid() const
+{
+    return m_isValid;
+}
+
+inline unsigned KURL::hostStart() const
+{
+    return (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1;
+}
+
+inline unsigned KURL::hostEnd() const
+{
+    return m_hostEnd;
+}
+
+inline unsigned KURL::pathStart() const
+{
+    return m_portEnd;
+}
+
+inline unsigned KURL::pathEnd() const
+{
+    return m_pathEnd;
+}
+
+inline unsigned KURL::pathAfterLastSlash() const
+{
+    return m_pathAfterLastSlash;
+}
+
+#endif  // !USE(GOOGLEURL)
 
 } // namespace WebCore
 

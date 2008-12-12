@@ -1,3 +1,29 @@
+2008-12-12  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add the ability so that Google-URL can optionally be used in a build
+        of WebKit without changing the shared header. The guts of KURL are
+        optionally ifdefed out, and the replacement code goes in a different
+        header to avoid polluting KURL.h
+
+        * platform/KURL.cpp:
+        * platform/KURL.h:
+        (WebCore::KURL::string):
+        (WebCore::KURL::operator const String&):
+        (WebCore::KURL::operator JSC::UString):
+        (WebCore::KURL::operator NSString*):
+        (WebCore::KURL::parsed):
+        (WebCore::KURL::utf8String):
+        (WebCore::KURL::isNull):
+        (WebCore::KURL::isEmpty):
+        (WebCore::KURL::isValid):
+        (WebCore::KURL::hostStart):
+        (WebCore::KURL::hostEnd):
+        (WebCore::KURL::pathStart):
+        (WebCore::KURL::pathEnd):
+        (WebCore::KURL::pathAfterLastSlash):
+
 2008-12-11  Steve Falkenburg  <sfalken@apple.com>
 
         Delete the previous timer-queue timer in the main thread, just prior to scheduling a new timer.
