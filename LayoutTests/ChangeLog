@@ -1,3 +1,19 @@
+2008-12-12  Pierre-Olivier Latour  <pol@apple.com>
+
+        Checked-in new results for failing SVG tests so that the bots are green again.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22824
+
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt:
+        * platform/mac/svg/custom/image-small-width-height-expected.checksum:
+        * platform/mac/svg/custom/image-small-width-height-expected.png:
+        * platform/mac/svg/custom/image-small-width-height-expected.txt:
+        * platform/mac/svg/text/text-tselect-02-f-expected.checksum:
+        * platform/mac/svg/text/text-tselect-02-f-expected.png:
+        * platform/mac/svg/text/text-tselect-02-f-expected.txt:
+
 2008-12-12  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Holger Freyther.
