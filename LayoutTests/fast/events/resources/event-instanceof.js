@@ -52,4 +52,14 @@ shouldBeTrue("messageEvent instanceof window.MessageEvent");
 shouldBeTrue("messageEvent instanceof window.Event");
 shouldBeTrue("messageEvent.constructor === window.MessageEvent");
 
+var animationEvent = document.createEvent("WebKitAnimationEvent");
+shouldBeTrue("animationEvent instanceof window.WebKitAnimationEvent");
+shouldBeTrue("animationEvent instanceof window.Event");
+shouldBeTrue("animationEvent.constructor === window.WebKitAnimationEvent");
+
+var transitionEvent = document.createEvent("WebKitTransitionEvent");
+shouldBeTrue("transitionEvent instanceof window.WebKitTransitionEvent");
+shouldBeTrue("transitionEvent instanceof window.Event");
+shouldBeTrue("transitionEvent.constructor === window.WebKitTransitionEvent");
+
 var successfullyParsed = true;

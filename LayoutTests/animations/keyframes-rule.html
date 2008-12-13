@@ -21,15 +21,25 @@
 
 description("This tests the WebKitCSSKeyframeRule and WebKitCSSKeyframesRule interfaces.");
 
-if (window.CSSRule.WEBKIT_KEYFRAME_RULE)
-    testPassed("WEBKIT_KEYFRAME_RULE exists on Window object");
+if (window.WebKitCSSKeyframeRule)
+    testPassed("WebKitCSSKeyframeRule exists on Window object");
 else
-    testFailed("WEBKIT_KEYFRAME_RULE does not exist on Window object");
+    testFailed("WebKitCSSKeyframeRule does not exist on Window object");
+
+if (window.WebKitCSSKeyframesRule)
+    testPassed("WebKitCSSKeyframesRule exists on Window object");
+else
+    testFailed("WebKitCSSKeyframesRule does not exist on Window object");
+
+if (window.CSSRule.WEBKIT_KEYFRAME_RULE)
+    testPassed("WEBKIT_KEYFRAME_RULE exists on Window.CSSRule object");
+else
+    testFailed("WEBKIT_KEYFRAME_RULE does not exist on Window.CSSRule object");
 
 if (window.CSSRule.WEBKIT_KEYFRAMES_RULE)
-    testPassed("WEBKIT_KEYFRAMES_RULE exists on Window object");
+    testPassed("WEBKIT_KEYFRAMES_RULE exists on Window.CSSRule object");
 else
-    testFailed("WEBKIT_KEYFRAMES_RULE does not exist on Window object");
+    testFailed("WEBKIT_KEYFRAMES_RULE does not exist on Window.CSSRule object");
 
 debug("");
 

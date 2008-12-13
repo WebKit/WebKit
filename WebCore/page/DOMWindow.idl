@@ -217,6 +217,7 @@ module window {
         attribute CSSValueConstructor CSSValue;
         attribute CSSPrimitiveValueConstructor CSSPrimitiveValue;
         attribute CSSValueListConstructor CSSValueList;
+        attribute WebKitCSSTransformValueConstructor WebKitCSSTransformValue;
 
         attribute CSSRuleConstructor CSSRule;
         attribute CSSCharsetRuleConstructor CSSCharsetRule;
@@ -339,9 +340,14 @@ module window {
         attribute ProgressEventConstructor ProgressEvent;
         attribute TextEventConstructor TextEvent;
         attribute UIEventConstructor UIEvent;
+        attribute WebKitAnimationEventConstructor WebKitAnimationEvent;
+        attribute WebKitTransitionEventConstructor WebKitTransitionEvent;
         attribute WheelEventConstructor WheelEvent;
         attribute MessageEventConstructor MessageEvent;
         attribute EventExceptionConstructor EventException;
+
+        attribute WebKitCSSKeyframeRuleConstructor WebKitCSSKeyframeRule;
+        attribute WebKitCSSKeyframesRuleConstructor WebKitCSSKeyframesRule;
 
 #if ENABLE_CHANNEL_MESSAGING
         attribute MessagePortConstructor MessagePort;

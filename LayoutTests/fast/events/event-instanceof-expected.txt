@@ -35,6 +35,12 @@ PASS textEvent.constructor === window.TextEvent is true
 PASS messageEvent instanceof window.MessageEvent is true
 PASS messageEvent instanceof window.Event is true
 PASS messageEvent.constructor === window.MessageEvent is true
+PASS animationEvent instanceof window.WebKitAnimationEvent is true
+PASS animationEvent instanceof window.Event is true
+PASS animationEvent.constructor === window.WebKitAnimationEvent is true
+PASS transitionEvent instanceof window.WebKitTransitionEvent is true
+PASS transitionEvent instanceof window.Event is true
+PASS transitionEvent.constructor === window.WebKitTransitionEvent is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

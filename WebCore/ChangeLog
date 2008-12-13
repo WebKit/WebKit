@@ -1,3 +1,19 @@
+2008-12-12  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Expose WebKitAnimationEvent, WebKitTransitionEvent,
+        WebKitCSSTransformValue, WebKitCSSKeyframeRule and
+        WebKitCSSKeyframesRule to Window object.
+        This required generating constructors for the event
+        interfaces.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20560
+
+        * dom/WebKitAnimationEvent.idl:
+        * dom/WebKitTransitionEvent.idl:
+        * page/DOMWindow.idl:
+
 2008-12-12  Dave Moore  <davemoore@google.com>
 
         Reviewed by Eric Seidel.

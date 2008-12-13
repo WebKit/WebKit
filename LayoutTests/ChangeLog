@@ -1,3 +1,22 @@
+2008-12-12  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Expose WebKitAnimationEvent, WebKitTransitionEvent,
+        WebKitCSSTransformValue, WebKitCSSKeyframeRule and
+        WebKitCSSKeyframesRule to Window object.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20560
+        
+        * animations/keyframes-rule-expected.txt:
+        * animations/keyframes-rule.html:
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/events/event-instanceof-expected.txt:
+        * fast/events/resources/event-instanceof.js:
+        * fast/js/global-constructors-expected.txt:
+        * transforms/transform-value-types-expected.txt:
+        * transforms/transform-value-types.html:
+
 2008-12-12  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.
