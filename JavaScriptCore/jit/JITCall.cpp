@@ -86,10 +86,10 @@ void JIT::compileOpCallSetupArgs(Instruction* instruction)
     int registerOffset = instruction[4].u.operand;
 
     // ecx holds func
-    emitPutCTIArg(X86::ecx, 0);
-    emitPutCTIArgConstant(registerOffset, 4);
-    emitPutCTIArgConstant(argCount, 8);
-    emitPutCTIArgConstant(reinterpret_cast<unsigned>(instruction), 12);
+    emitPutJITStubArg(X86::ecx, 1);
+    emitPutJITStubArgConstant(registerOffset, 2);
+    emitPutJITStubArgConstant(argCount, 3);
+    emitPutJITStubArgConstant(reinterpret_cast<unsigned>(instruction), 4);
 }
 
 void JIT::compileOpCallEvalSetupArgs(Instruction* instruction)
@@ -98,9 +98,9 @@ void JIT::compileOpCallEvalSetupArgs(Instruction* instruction)
     int registerOffset = instruction[4].u.operand;
 
     // ecx holds func
-    emitPutCTIArg(X86::ecx, 0);
-    emitPutCTIArgConstant(registerOffset, 4);
-    emitPutCTIArgConstant(argCount, 8);
+    emitPutJITStubArg(X86::ecx, 1);
+    emitPutJITStubArgConstant(registerOffset, 2);
+    emitPutJITStubArgConstant(argCount, 3);
 }
 
 void JIT::compileOpConstructSetupArgs(Instruction* instruction)
@@ -111,11 +111,11 @@ void JIT::compileOpConstructSetupArgs(Instruction* instruction)
     int thisRegister = instruction[6].u.operand;
 
     // ecx holds func
-    emitPutCTIArg(X86::ecx, 0);
-    emitPutCTIArgConstant(registerOffset, 4);
-    emitPutCTIArgConstant(argCount, 8);
-    emitPutCTIArgFromVirtualRegister(proto, 12, X86::eax);
-    emitPutCTIArgConstant(thisRegister, 16);
+    emitPutJITStubArg(X86::ecx, 1);
+    emitPutJITStubArgConstant(registerOffset, 2);
+    emitPutJITStubArgConstant(argCount, 3);
+    emitPutJITStubArgFromVirtualRegister(proto, 4, X86::eax);
+    emitPutJITStubArgConstant(thisRegister, 5);
 }
 
 #if !ENABLE(JIT_OPTIMIZE_CALL)
@@ -232,8 +232,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         int proto = instruction[5].u.operand;
         int thisRegister = instruction[6].u.operand;
 
-        emitPutCTIArg(X86::ecx, 0);
-        emitPutCTIArgFromVirtualRegister(proto, 12, X86::eax);
+        emitPutJITStubArg(X86::ecx, 1);
+        emitPutJITStubArgFromVirtualRegister(proto, 4, X86::eax);
         emitCTICall(Interpreter::cti_op_construct_JSConstruct);
         emitPutVirtualRegister(thisRegister);
         emitGetVirtualRegister(callee, X86::ecx);

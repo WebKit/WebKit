@@ -1,5 +1,37 @@
 2008-12-12  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Camron Zwarich.
+
+        Replace emitPutCallArg methods with emitPutJITStubArg methods.  Primarily to make the argument numbering
+        more sensible (1-based incrementing by 1, rather than 0-based incrementing by 4).  The CTI name also seems
+        to be being deprecated from the code generally.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpCallEvalSetupArgs):
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitPutJITStubArg):
+        (JSC::JIT::emitPutJITStubArgConstant):
+        (JSC::JIT::emitGetJITStubArg):
+        (JSC::JIT::emitPutJITStubArgFromVirtualRegister):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::compilePutByIdSlowCase):
+
+2008-12-12  Gavin Barraclough  <barraclough@apple.com>
+
         Fix windows builds.
 
         * jit/JIT.cpp:

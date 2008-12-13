@@ -353,11 +353,11 @@ namespace JSC {
         void emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2);
         void emitPutVirtualRegister(unsigned dst, RegisterID from = X86::eax);
 
-        void emitPutCTIArg(RegisterID src, unsigned offset);
-        void emitPutCTIArgFromVirtualRegister(unsigned src, unsigned offset, RegisterID scratch);
-        void emitPutCTIArgConstant(unsigned value, unsigned offset);
-        void emitPutCTIArgConstant(void* value, unsigned offset);
-        void emitGetCTIArg(unsigned offset, RegisterID dst);
+        void emitPutJITStubArg(RegisterID src, unsigned argumentNumber);
+        void emitPutJITStubArgFromVirtualRegister(unsigned src, unsigned argumentNumber, RegisterID scratch);
+        void emitPutJITStubArgConstant(unsigned value, unsigned argumentNumber);
+        void emitPutJITStubArgConstant(void* value, unsigned argumentNumber);
+        void emitGetJITStubArg(unsigned argumentNumber, RegisterID dst);
 
         void emitInitRegister(unsigned dst);
 
