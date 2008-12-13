@@ -663,7 +663,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (portState) {
         if ([self currentWindow])
             [self restorePortState:portState];
-        free(portState);
+        if (portState != (PortState)1)
+            free(portState);
     }
 
     if (!wasDeferring)
@@ -917,7 +918,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (portState) {
         [self setWindowIfNecessary];
         [self restorePortState:portState];
-        free(portState);
+        if (portState != (PortState)1)
+            free(portState);
     }   
     if (didLockFocus)
         [self unlockFocus];

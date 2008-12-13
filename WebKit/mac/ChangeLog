@@ -1,3 +1,13 @@
+2008-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Don't try to free the dummy "1" port state.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+        (-[WebNetscapePluginView updateAndSetWindow]):
+
 2008-12-11  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Mark Rowe.
