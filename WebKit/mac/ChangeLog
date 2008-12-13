@@ -1,3 +1,10 @@
+2008-12-13  Darin Adler  <darin@apple.com>
+
+        - <rdar://problem/6441035> WebTextIterator class not exported in WebKit
+
+        * WebKit.exp: Added the class. We forgot to export it when we added
+        the WebTextIterator SPI.
+
 2008-12-12  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Adam Roben.

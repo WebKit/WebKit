@@ -28,6 +28,7 @@
 .objc_class_name_WebScriptCallFrame
 .objc_class_name_WebSecurityOrigin
 .objc_class_name_WebStringTruncator
+.objc_class_name_WebTextIterator
 .objc_class_name_WebURLsWithTitles
 .objc_class_name_WebView
 _HIWebViewCreate
