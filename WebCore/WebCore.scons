@@ -694,7 +694,6 @@ sources['platform'] = [
     'platform/Arena.cpp',
     'platform/ContextMenu.cpp',
     'platform/DeprecatedPtrListImpl.cpp',
-    'platform/DeprecatedValueListImpl.cpp',
     'platform/DragData.cpp',
     'platform/DragImage.cpp',
     'platform/FileChooser.cpp',

@@ -705,7 +705,6 @@ This file contains the list of files needed to build WebCore.
         platform/text/CString.cpp
         platform/ContextMenu.cpp
         platform/DeprecatedPtrListImpl.cpp
-        platform/DeprecatedValueListImpl.cpp
         platform/DragImage.cpp
         platform/FileChooser.cpp
         platform/GeolocationService.cpp

@@ -1,5 +1,22 @@
 2008-12-13  Darin Adler  <darin@apple.com>
 
+        - file deletion part of https://bugs.webkit.org/show_bug.cgi?id=17497
+          eliminate DeprecatedValueList
+
+        * GNUmakefile.am: Removed references to deleted files.
+        * WebCore.pro: Ditto.
+        * WebCore.scons: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * platform/DeprecatedPtrQueue.h: Removed.
+        * platform/DeprecatedValueList.h: Removed.
+        * platform/DeprecatedValueListImpl.cpp: Removed.
+        * platform/DeprecatedValueListImpl.h: Removed.
+
+2008-12-13  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders Carlsson.
 
         - https://bugs.webkit.org/show_bug.cgi?id=17497

@@ -820,7 +820,6 @@ SOURCES += \
     platform/ContextMenu.cpp \
     platform/text/CString.cpp \
     platform/DeprecatedPtrListImpl.cpp \
-    platform/DeprecatedValueListImpl.cpp \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \

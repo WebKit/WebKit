@@ -1180,10 +1180,6 @@ webcore_sources += \
 	WebCore/platform/DeprecatedPtrList.h \
 	WebCore/platform/DeprecatedPtrListImpl.cpp \
 	WebCore/platform/DeprecatedPtrListImpl.h \
-	WebCore/platform/DeprecatedPtrQueue.h \
-	WebCore/platform/DeprecatedValueList.h \
-	WebCore/platform/DeprecatedValueListImpl.cpp \
-	WebCore/platform/DeprecatedValueListImpl.h \
 	WebCore/platform/DragData.cpp \
 	WebCore/platform/DragData.h \
 	WebCore/platform/DragImage.cpp \

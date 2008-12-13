@@ -3132,22 +3132,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\DeprecatedPtrQueue.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DeprecatedValueList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DeprecatedValueListImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DeprecatedValueListImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\DragData.cpp"
 				>
 			</File>

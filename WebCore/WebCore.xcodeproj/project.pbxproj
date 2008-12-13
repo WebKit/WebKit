@@ -1936,10 +1936,7 @@
 		93F1996308245E59001E9ABC /* SSLKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */; };
 		93F1996D08245E59001E9ABC /* DeprecatedPtrListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F587851502DE375901EA4122 /* DeprecatedPtrListImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F1998208245E59001E9ABC /* DeprecatedPtrList.h in Headers */ = {isa = PBXBuildFile; fileRef = F587869902DE3B8601EA4122 /* DeprecatedPtrList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F1998308245E59001E9ABC /* DeprecatedPtrQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786AD02DE3B8601EA4122 /* DeprecatedPtrQueue.h */; };
 		93F1998C08245E59001E9ABC /* RenderTreeAsText.h in Headers */ = {isa = PBXBuildFile; fileRef = 93955A4103D72932008635CE /* RenderTreeAsText.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F1999D08245E59001E9ABC /* DeprecatedValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C202DE3B8601EA4122 /* DeprecatedValueList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F1999E08245E59001E9ABC /* DeprecatedValueListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F587853B02DE375901EA4122 /* DeprecatedValueListImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854C02DE375901EA4122 /* WebCoreFrameView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199B308245E59001E9ABC /* WebCoreViewFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587855402DE375901EA4122 /* WebCoreViewFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199B808245E59001E9ABC /* Scrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B2AF80450824100A8000F /* Scrollbar.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1955,7 +1952,6 @@
 		93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 5150C2A10702629000AF642C /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784F002DE375901EA4122 /* CursorMac.mm */; };
 		93F19A3C08245E59001E9ABC /* DeprecatedPtrListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587851602DE375901EA4122 /* DeprecatedPtrListImpl.cpp */; };
-		93F19A5608245E59001E9ABC /* DeprecatedValueListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */; };
 		93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F587855502DE375901EA4122 /* WebCoreViewFactory.m */; };
 		93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* HTMLDocument.cpp */; };
 		93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* HTMLElement.cpp */; };
@@ -9083,8 +9079,6 @@
 		F58784F002DE375901EA4122 /* CursorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CursorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851502DE375901EA4122 /* DeprecatedPtrListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrListImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851602DE375901EA4122 /* DeprecatedPtrListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedPtrListImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587853B02DE375901EA4122 /* DeprecatedValueListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedValueListImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedValueListImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854C02DE375901EA4122 /* WebCoreFrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587855402DE375901EA4122 /* WebCoreViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreViewFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587855502DE375901EA4122 /* WebCoreViewFactory.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreViewFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -9093,8 +9087,6 @@
 		F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SSLKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868402DE3B8601EA4122 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Cursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587869902DE3B8601EA4122 /* DeprecatedPtrList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58786AD02DE3B8601EA4122 /* DeprecatedPtrQueue.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrQueue.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58786C202DE3B8601EA4122 /* DeprecatedValueList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedValueList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58EF58E02DFDFB7018635CA /* WebCore.base.exp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.exports; path = WebCore.base.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		F5C2869302846DCD018635CA /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		F5C2869402846DCD018635CA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -13479,10 +13471,6 @@
 				F587869902DE3B8601EA4122 /* DeprecatedPtrList.h */,
 				F587851602DE375901EA4122 /* DeprecatedPtrListImpl.cpp */,
 				F587851502DE375901EA4122 /* DeprecatedPtrListImpl.h */,
-				F58786AD02DE3B8601EA4122 /* DeprecatedPtrQueue.h */,
-				F58786C202DE3B8601EA4122 /* DeprecatedValueList.h */,
-				F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */,
-				F587853B02DE375901EA4122 /* DeprecatedValueListImpl.h */,
 				A79546420B5C4CB4007B438F /* DragData.cpp */,
 				A7B6E69D0B291A9600D0529F /* DragData.h */,
 				A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */,
@@ -15167,9 +15155,6 @@
 				93309DE1099E64920056E581 /* DeleteSelectionCommand.h in Headers */,
 				93F1998208245E59001E9ABC /* DeprecatedPtrList.h in Headers */,
 				93F1996D08245E59001E9ABC /* DeprecatedPtrListImpl.h in Headers */,
-				93F1998308245E59001E9ABC /* DeprecatedPtrQueue.h in Headers */,
-				93F1999D08245E59001E9ABC /* DeprecatedValueList.h in Headers */,
-				93F1999E08245E59001E9ABC /* DeprecatedValueListImpl.h in Headers */,
 				BCB16C2A0979C3BD00467741 /* DocLoader.h in Headers */,
 				93EEC1FA09C2877700C515D1 /* DocPtr.h in Headers */,
 				A8185F4009765766005826D9 /* Document.h in Headers */,
@@ -17121,7 +17106,6 @@
 				93309DDE099E64920056E581 /* DeleteFromTextNodeCommand.cpp in Sources */,
 				93309DE0099E64920056E581 /* DeleteSelectionCommand.cpp in Sources */,
 				93F19A3C08245E59001E9ABC /* DeprecatedPtrListImpl.cpp in Sources */,
-				93F19A5608245E59001E9ABC /* DeprecatedValueListImpl.cpp in Sources */,
 				BCB16C290979C3BD00467741 /* DocLoader.cpp in Sources */,
 				A8185F3C09765766005826D9 /* Document.cpp in Sources */,
 				A8185F3F09765766005826D9 /* DocumentFragment.cpp in Sources */,
