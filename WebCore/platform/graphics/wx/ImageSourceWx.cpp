@@ -30,6 +30,7 @@
 #include "GIFImageDecoder.h"
 #include "ICOImageDecoder.h"
 #include "JPEGImageDecoder.h"
+#include "NotImplemented.h"
 #include "PNGImageDecoder.h"
 #include "SharedBuffer.h"
 #include "XBMImageDecoder.h"
@@ -139,6 +140,12 @@ int ImageSource::repetitionCount()
         return cAnimationNone;
 
     return m_decoder->repetitionCount();
+}
+
+String ImageSource::filenameExtension() const
+{
+    notImplemented();
+    return String();
 }
 
 size_t ImageSource::frameCount() const
