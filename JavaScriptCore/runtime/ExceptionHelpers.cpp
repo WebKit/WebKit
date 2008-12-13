@@ -87,12 +87,12 @@ JSValue* createStackOverflowError(ExecState* exec)
     return createError(exec, RangeError, "Maximum call stack size exceeded.");
 }
 
-JSValue* createUndefinedVariableError(ExecState* exec, const Identifier& ident, const Instruction* vPC, CodeBlock* codeBlock)
+JSValue* createUndefinedVariableError(ExecState* exec, const Identifier& ident, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     int startOffset = 0;
     int endOffset = 0;
     int divotPoint = 0;
-    int line = codeBlock->expressionRangeForBytecodeOffset(vPC - codeBlock->instructions().begin(), divotPoint, startOffset, endOffset);
+    int line = codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset);
     UString message = "Can't find variable: ";
     message.append(ident.ustring());
     JSObject* exception = Error::create(exec, ReferenceError, message, line, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());
@@ -148,7 +148,7 @@ static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, in
     return errorText;
 }
 
-JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue* value, const Instruction* vPC, CodeBlock* codeBlock)
+JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue* value, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     UString message = "not a valid argument for '";
     message.append(op);
@@ -157,7 +157,7 @@ JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue* valu
     int startOffset = 0;
     int endOffset = 0;
     int divotPoint = 0;
-    int line = codeBlock->expressionRangeForBytecodeOffset(vPC - codeBlock->instructions().begin(), divotPoint, startOffset, endOffset);
+    int line = codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset);
     UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint, divotPoint + endOffset, value, message);
     JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());
     exception->putWithAttributes(exec, Identifier(exec, expressionBeginOffsetPropertyName), jsNumber(exec, divotPoint - startOffset), ReadOnly | DontDelete);
@@ -166,12 +166,12 @@ JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue* valu
     return exception;
 }
 
-JSObject* createNotAConstructorError(ExecState* exec, JSValue* value, const Instruction* vPC, CodeBlock* codeBlock)
+JSObject* createNotAConstructorError(ExecState* exec, JSValue* value, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     int startOffset = 0;
     int endOffset = 0;
     int divotPoint = 0;
-    int line = codeBlock->expressionRangeForBytecodeOffset(vPC - codeBlock->instructions().begin(), divotPoint, startOffset, endOffset);
+    int line = codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset);
 
     // We're in a "new" expression, so we need to skip over the "new.." part
     int startPoint = divotPoint - (startOffset ? startOffset - 4 : 0); // -4 for "new "
@@ -187,12 +187,12 @@ JSObject* createNotAConstructorError(ExecState* exec, JSValue* value, const Inst
     return exception;
 }
 
-JSValue* createNotAFunctionError(ExecState* exec, JSValue* value, const Instruction* vPC, CodeBlock* codeBlock)
+JSValue* createNotAFunctionError(ExecState* exec, JSValue* value, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     int startOffset = 0;
     int endOffset = 0;
     int divotPoint = 0;
-    int line = codeBlock->expressionRangeForBytecodeOffset(vPC - codeBlock->instructions().begin(), divotPoint, startOffset, endOffset);
+    int line = codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset);
     UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint - startOffset, divotPoint, value, "not a function");
     JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());    
     exception->putWithAttributes(exec, Identifier(exec, expressionBeginOffsetPropertyName), jsNumber(exec, divotPoint - startOffset), ReadOnly | DontDelete);
@@ -206,23 +206,23 @@ JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState* exec, bool isNull)
     return new (exec) JSNotAnObjectErrorStub(exec, isNull);
 }
 
-JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error, const Instruction* vPC, CodeBlock* codeBlock)
+JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     // Both op_construct and op_instanceof require a use of op_get_by_id to get
     // the prototype property from an object. The exception messages for exceptions
     // thrown by these instances op_get_by_id need to reflect this.
     OpcodeID followingOpcodeID;
-    if (codeBlock->getByIdExceptionInfoForBytecodeOffset(vPC - codeBlock->instructions().begin(), followingOpcodeID)) {
+    if (codeBlock->getByIdExceptionInfoForBytecodeOffset(bytecodeOffset, followingOpcodeID)) {
         ASSERT(followingOpcodeID == op_construct || followingOpcodeID == op_instanceof);
         if (followingOpcodeID == op_construct)
-            return createNotAConstructorError(exec, error->isNull() ? jsNull() : jsUndefined(), vPC, codeBlock);
-        return createInvalidParamError(exec, "instanceof", error->isNull() ? jsNull() : jsUndefined(), vPC, codeBlock);
+            return createNotAConstructorError(exec, error->isNull() ? jsNull() : jsUndefined(), bytecodeOffset, codeBlock);
+        return createInvalidParamError(exec, "instanceof", error->isNull() ? jsNull() : jsUndefined(), bytecodeOffset, codeBlock);
     }
 
     int startOffset = 0;
     int endOffset = 0;
     int divotPoint = 0;
-    int line = codeBlock->expressionRangeForBytecodeOffset(vPC - codeBlock->instructions().begin(), divotPoint, startOffset, endOffset);
+    int line = codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset);
     UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint - startOffset, divotPoint, error->isNull() ? jsNull() : jsUndefined(), "not an object");
     JSObject* exception = Error::create(exec, TypeError, errorMessage, line, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());
     exception->putWithAttributes(exec, Identifier(exec, expressionBeginOffsetPropertyName), jsNumber(exec, divotPoint - startOffset), ReadOnly | DontDelete);

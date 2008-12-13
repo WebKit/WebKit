@@ -721,7 +721,6 @@ void JIT::privateCompileMainPass()
             emitPutCTIArgConstant(globalObject, 0);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
             emitPutCTIArgConstant(currentIndex, 8);
-            emitPutCTIArgConstant(reinterpret_cast<unsigned>(instruction + i), 12);
             emitCTICall(i, Interpreter::cti_op_resolve_global);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             end.link(this);

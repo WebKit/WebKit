@@ -44,12 +44,12 @@ namespace JSC {
 
     JSValue* createInterruptedExecutionException(JSGlobalData*);
     JSValue* createStackOverflowError(ExecState*);
-    JSValue* createUndefinedVariableError(ExecState*, const Identifier&, const Instruction*, CodeBlock*);
+    JSValue* createUndefinedVariableError(ExecState*, const Identifier&, unsigned bytecodeOffset, CodeBlock*);
     JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState*, bool isNull);
-    JSObject* createInvalidParamError(ExecState*, const char* op, JSValue*, const Instruction*, CodeBlock*);
-    JSObject* createNotAConstructorError(ExecState*, JSValue*, const Instruction*, CodeBlock*);
-    JSValue* createNotAFunctionError(ExecState*, JSValue*, const Instruction*, CodeBlock*);
-    JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, const Instruction*, CodeBlock*);
+    JSObject* createInvalidParamError(ExecState*, const char* op, JSValue*, unsigned bytecodeOffset, CodeBlock*);
+    JSObject* createNotAConstructorError(ExecState*, JSValue*, unsigned bytecodeOffset, CodeBlock*);
+    JSValue* createNotAFunctionError(ExecState*, JSValue*, unsigned bytecodeOffset, CodeBlock*);
+    JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, unsigned bytecodeOffset, CodeBlock*);
 
 } // namespace JSC
 

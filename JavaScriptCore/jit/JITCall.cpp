@@ -101,7 +101,6 @@ void JIT::compileOpCallEvalSetupArgs(Instruction* instruction)
     emitPutCTIArg(X86::ecx, 0);
     emitPutCTIArgConstant(registerOffset, 4);
     emitPutCTIArgConstant(argCount, 8);
-    emitPutCTIArgConstant(reinterpret_cast<unsigned>(instruction), 12);
 }
 
 void JIT::compileOpConstructSetupArgs(Instruction* instruction)
@@ -117,7 +116,6 @@ void JIT::compileOpConstructSetupArgs(Instruction* instruction)
     emitPutCTIArgConstant(argCount, 8);
     emitPutCTIArgFromVirtualRegister(proto, 12, X86::eax);
     emitPutCTIArgConstant(thisRegister, 16);
-    emitPutCTIArgConstant(reinterpret_cast<unsigned>(instruction), 20);
 }
 
 #if !ENABLE(JIT_OPTIMIZE_CALL)

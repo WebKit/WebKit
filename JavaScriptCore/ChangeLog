@@ -1,3 +1,52 @@
+2008-12-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        <rdar://problem/6428342> Look into feasibility of discarding bytecode after native codegen
+
+        Move more JIT functionality to using offsets into the Instruction buffer
+        instead of raw pointers. Two to go!
+
+        * interpreter/Interpreter.cpp:
+        (JSC::bytecodeOffsetForPC): Rename from vPCForPC.
+        (JSC::Interpreter::resolve): Pass offset to exception helper.
+        (JSC::Interpreter::resolveSkip): Ditto.
+        (JSC::Interpreter::resolveGlobal): Ditto.
+        (JSC::Interpreter::resolveBaseAndProperty): Ditto.
+        (JSC::Interpreter::resolveBaseAndFunc): Ditto.
+        (JSC::isNotObject): Ditto.
+        (JSC::Interpreter::unwindCallFrame): Call bytecodeOffsetForPC.
+        (JSC::Interpreter::throwException): Use offsets instead of vPCs.
+        (JSC::Interpreter::privateExecute): Pass offset to exception helper.
+        (JSC::Interpreter::retrieveLastCaller): Ditto.
+        (JSC::Interpreter::cti_op_instanceof): Ditto.
+        (JSC::Interpreter::cti_op_call_NotJSFunction): Ditto.
+        (JSC::Interpreter::cti_op_resolve): Pass offset to exception helper.
+        (JSC::Interpreter::cti_op_construct_NotJSConstruct): Ditto.
+        (JSC::Interpreter::cti_op_resolve_func): Ditto.
+        (JSC::Interpreter::cti_op_resolve_skip): Ditto.
+        (JSC::Interpreter::cti_op_resolve_global): Ditto.
+        (JSC::Interpreter::cti_op_resolve_with_base): Ditto.
+        (JSC::Interpreter::cti_op_throw): Ditto.
+        (JSC::Interpreter::cti_op_in): Ditto.
+        (JSC::Interpreter::cti_vm_throw): Ditto.
+        * interpreter/Interpreter.h:
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass): Don't pass unnecessary vPC to stub.
+        * jit/JIT.h: Remove ARG_instr1 - ARG_instr3 and ARG_instr5 - ARG_instr6.
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallEvalSetupArgs): Don't pass unnecessary vPC to stub..
+        (JSC::JIT::compileOpConstructSetupArgs): Ditto.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError): Take an offset instead of vPC.
+        (JSC::createInvalidParamError): Ditto.
+        (JSC::createNotAConstructorError): Ditto.
+        (JSC::createNotAFunctionError): Ditto.
+        (JSC::createNotAnObjectError): Ditto.
+        * runtime/ExceptionHelpers.h:
+
 2008-12-12  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.
