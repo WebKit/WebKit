@@ -275,11 +275,17 @@ String HTMLTextAreaElement::value() const
 void HTMLTextAreaElement::setValue(const String& value)
 {
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
-    // We must normalize line endings coming from JS.
-    m_value = value;
-    m_value.replace("\r\n", "\n");
-    m_value.replace('\r', '\n');
+    // We normalize line endings coming from JavaScript here.
+    String normalizedValue = value.isNull() ? "" : value;
+    normalizedValue.replace("\r\n", "\n");
+    normalizedValue.replace('\r', '\n');
 
+    // Return early because we don't want to move the caret or trigger other side effects
+    // when the value isn't changing. This matches Firefox behavior, at least.
+    if (normalizedValue == this->value())
+        return;
+
+    m_value = normalizedValue;
     setValueMatchesRenderer();
     if (inDocument())
         document()->updateRendering();

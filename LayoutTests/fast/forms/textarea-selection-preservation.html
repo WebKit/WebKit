@@ -1,0 +1,47 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This tests for problems where we'd lose the selection in a textarea when making style and value changes.</p>
+<div id="console"></div>
+<p><textarea id="ta">abc123
+</textarea></p>
+<script type="text/javascript">
+    var ta = document.getElementById('ta');
+    ta.selectionStart = 3;
+    ta.selectionEnd = 4;
+    shouldBe('ta.selectionStart', '3');
+    shouldBe('ta.selectionEnd', '4');
+    debug("- add background style");
+    ta.setAttribute("style", "background-color: yellow");
+    shouldBe('ta.selectionStart', '3');
+    shouldBe('ta.selectionEnd', '4');
+    debug("- set value to same value");
+    ta.value = "abc123\n";
+    shouldBe('ta.selectionStart', '3');
+    shouldBe('ta.selectionEnd', '4');
+    debug("- set value to a different value");
+    ta.value = "abc123";
+    shouldBe('ta.selectionStart', '6');
+    shouldBe('ta.selectionEnd', '6');
+    debug("- set selection so we can test again without a trailing newline");
+    ta.selectionStart = 3;
+    ta.selectionEnd = 4;
+    ta.removeAttribute("style");
+    shouldBe('ta.selectionStart', '3');
+    shouldBe('ta.selectionEnd', '4');
+    debug("- add background style");
+    ta.setAttribute("style", "background-color: yellow");
+    shouldBe('ta.selectionStart', '3');
+    shouldBe('ta.selectionEnd', '4');
+    debug("- set value to same value");
+    ta.value = "abc123";
+    shouldBe('ta.selectionStart', '3');
+    shouldBe('ta.selectionEnd', '4');
+    var successfullyParsed = true;
+</script>
+<script type="text/javascript" src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

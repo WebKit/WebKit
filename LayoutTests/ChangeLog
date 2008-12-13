@@ -1,3 +1,14 @@
+2008-12-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=18734
+          REGRESSION (r31081): Focus problems in Gmail 2/Plain text message text
+          <rdar://problem/5892415>
+
+        * fast/forms/textarea-selection-preservation-expected.txt: Added.
+        * fast/forms/textarea-selection-preservation.html: Added.
+
 2008-12-13  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Dan Bernstein.
