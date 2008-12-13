@@ -1366,24 +1366,13 @@ void JIT::privateCompileLinkPass()
     m_jmpTable.clear();
 }
 
-#define CTI_COMPILE_BINARY_OP_SLOW_CASE(name) \
-    case name: { \
-        __ link(iter->from, __ label()); \
-        emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx); \
-        emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx); \
-        emitCTICall(i, Interpreter::cti_##name); \
-        emitPutVirtualRegister(instruction[i + 1].u.operand); \
-        i += 4; \
-        break; \
-    }
-    
 void JIT::privateCompileSlowCases()
 {
     unsigned propertyAccessInstructionIndex = 0;
     unsigned callLinkInfoIndex = 0;
 
     Instruction* instruction = m_codeBlock->instructions().begin();
-    for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end(); ++iter) {
+    for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
         // FIXME: enable peephole optimizations for slow cases when applicable
         killLastResultRegister();
 
@@ -1394,8 +1383,8 @@ void JIT::privateCompileSlowCases()
 
         switch (OpcodeID opcodeID = m_interpreter->getOpcodeID(instruction[i].u.opcode)) {
         case op_convert_this: {
-            __ link(iter->from, __ label());
-            __ link((++iter)->from, __ label());
+            linkSlowCase(iter);
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_convert_this);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
@@ -1407,37 +1396,35 @@ void JIT::privateCompileSlowCases()
             unsigned src1 = instruction[i + 2].u.operand;
             unsigned src2 = instruction[i + 3].u.operand;
             if (JSValue* value = getConstantImmediateNumericArg(src1)) {
-                JmpSrc notImm = iter->from;
-                __ link((++iter)->from, __ label());
-                __ subl_i32r(getDeTaggedConstantImmediate(value), X86::eax);
-                __ link(notImm, __ label());
+                Jump notImm = getSlowCase(iter);
+                linkSlowCase(iter);
+                sub32(Imm32(getDeTaggedConstantImmediate(value)), X86::eax);
+                notImm.link(this);
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
                 emitPutCTIArg(X86::eax, 4);
                 emitCTICall(i, Interpreter::cti_op_add);
                 emitPutVirtualRegister(dst);
             } else if (JSValue* value = getConstantImmediateNumericArg(src2)) {
-                JmpSrc notImm = iter->from;
-                __ link((++iter)->from, __ label());
-                __ subl_i32r(getDeTaggedConstantImmediate(value), X86::eax);
-                __ link(notImm, __ label());
+                Jump notImm = getSlowCase(iter);
+                linkSlowCase(iter);
+                sub32(Imm32(getDeTaggedConstantImmediate(value)), X86::eax);
+                notImm.link(this);
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
                 emitCTICall(i, Interpreter::cti_op_add);
                 emitPutVirtualRegister(dst);
             } else {
                 OperandTypes types = OperandTypes::fromInt(instruction[i + 4].u.operand);
-                if (types.first().mightBeNumber() && types.second().mightBeNumber())
-                    compileBinaryArithOpSlowCase(op_add, iter, dst, src1, src2, types, i);
-                else
-                    ASSERT_NOT_REACHED();
+                ASSERT(types.first().mightBeNumber() && types.second().mightBeNumber());
+                compileBinaryArithOpSlowCase(op_add, iter, dst, src1, src2, types, i);
             }
 
             i += OPCODE_LENGTH(op_add);
             break;
         }
         case op_construct_verify: {
-            __ link(iter->from, __ label());
-            __ link((++iter)->from, __ label());
+            linkSlowCase(iter);
+            linkSlowCase(iter);
             emitGetVirtualRegister(instruction[i + 2].u.operand, X86::eax, i);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
 
@@ -1446,31 +1433,29 @@ void JIT::privateCompileSlowCases()
         }
         case op_get_by_val: {
             // The slow case that handles accesses to arrays (below) may jump back up to here. 
-            JmpDst beginGetByValSlow = __ label();
+            Label beginGetByValSlow(this);
 
-            JmpSrc notImm = iter->from;
-            __ link((++iter)->from, __ label());
-            __ link((++iter)->from, __ label());
+            Jump notImm = getSlowCase(iter);
+            linkSlowCase(iter);
+            linkSlowCase(iter);
             emitFastArithIntToImmNoCheck(X86::edx);
-            __ link(notImm, __ label());
+            notImm.link(this);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
             emitCTICall(i, Interpreter::cti_op_get_by_val);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
-            __ link(__ jmp(), m_labels[i + 4]);
+            __ link(jump(), m_labels[i + 4]);
 
             // This is slow case that handles accesses to arrays above the fast cut-off.
             // First, check if this is an access to the vector
-            __ link((++iter)->from, __ label());
-            __ cmpl_rm(X86::edx, FIELD_OFFSET(ArrayStorage, m_vectorLength), X86::ecx);
-            __ link(__ jbe(), beginGetByValSlow);
+            linkSlowCase(iter);
+            jae32(X86::edx, Address(X86::ecx, FIELD_OFFSET(ArrayStorage, m_vectorLength)), beginGetByValSlow);
 
             // okay, missed the fast region, but it is still in the vector.  Get the value.
-            __ movl_mr(FIELD_OFFSET(ArrayStorage, m_vector[0]), X86::ecx, X86::edx, sizeof(JSValue*), X86::ecx);
+            loadPtr(BaseIndex(X86::ecx, X86::edx, ScalePtr, FIELD_OFFSET(ArrayStorage, m_vector[0])), X86::ecx);
             // Check whether the value loaded is zero; if so we need to return undefined.
-            __ testl_rr(X86::ecx, X86::ecx);
-            __ link(__ je(), beginGetByValSlow);
-            __ movl_rr(X86::ecx, X86::eax);
+            jzPtr(X86::ecx, beginGetByValSlow);
+            move(X86::ecx, X86::eax);
             emitPutVirtualRegister(instruction[i + 1].u.operand, X86::eax);
 
             i += OPCODE_LENGTH(op_get_by_val);
@@ -1483,11 +1468,11 @@ void JIT::privateCompileSlowCases()
         }
         case op_rshift: {
             unsigned src2 = instruction[i + 3].u.operand;
-            __ link(iter->from, __ label());
+            linkSlowCase(iter);
             if (getConstantImmediateNumericArg(src2))
                 emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
             else {
-                __ link((++iter)->from, __ label());
+                linkSlowCase(iter);
                 emitPutCTIArg(X86::ecx, 4);
             }
 
@@ -1498,12 +1483,12 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_lshift: {
-            JmpSrc notImm1 = iter->from;
-            JmpSrc notImm2 = (++iter)->from;
-            __ link((++iter)->from, __ label());
+            Jump notImm1 = getSlowCase(iter);
+            Jump notImm2 = getSlowCase(iter);
+            linkSlowCase(iter);
             emitGetVirtualRegisters(instruction[i + 2].u.operand, X86::eax, instruction[i + 3].u.operand, X86::ecx, i);
-            __ link(notImm1, __ label());
-            __ link(notImm2, __ label());
+            notImm1.link(this);
+            notImm2.link(this);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::ecx, 4);
             emitCTICall(i, Interpreter::cti_op_lshift);
@@ -1515,20 +1500,18 @@ void JIT::privateCompileSlowCases()
             unsigned target = instruction[i + 3].u.operand;
             JSValue* src2imm = getConstantImmediateNumericArg(instruction[i + 2].u.operand);
             if (src2imm) {
-                __ link(iter->from, __ label());
+                linkSlowCase(iter);
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 4, X86::ecx);
                 emitCTICall(i, Interpreter::cti_op_loop_if_less);
-                __ testl_rr(X86::eax, X86::eax);
-                __ link(__ jne(), m_labels[i + 3 + target]);
+                __ link(jnz32(X86::eax), m_labels[i + 3 + target]);
             } else {
-                __ link(iter->from, __ label());
-                __ link((++iter)->from, __ label());
+                linkSlowCase(iter);
+                linkSlowCase(iter);
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArg(X86::edx, 4);
                 emitCTICall(i, Interpreter::cti_op_loop_if_less);
-                __ testl_rr(X86::eax, X86::eax);
-                __ link(__ jne(), m_labels[i + 3 + target]);
+                __ link(jnz32(X86::eax), m_labels[i + 3 + target]);
             }
             i += OPCODE_LENGTH(op_loop_if_less);
             break;
@@ -1547,30 +1530,28 @@ void JIT::privateCompileSlowCases()
             unsigned target = instruction[i + 3].u.operand;
             JSValue* src2imm = getConstantImmediateNumericArg(instruction[i + 2].u.operand);
             if (src2imm) {
-                __ link(iter->from, __ label());
+                linkSlowCase(iter);
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 4, X86::ecx);
                 emitCTICall(i, Interpreter::cti_op_loop_if_lesseq);
-                __ testl_rr(X86::eax, X86::eax);
-                __ link(__ jne(), m_labels[i + 3 + target]);
+                __ link(jnz32(X86::eax), m_labels[i + 3 + target]);
             } else {
-                __ link(iter->from, __ label());
-                __ link((++iter)->from, __ label());
+                linkSlowCase(iter);
+                linkSlowCase(iter);
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArg(X86::edx, 4);
                 emitCTICall(i, Interpreter::cti_op_loop_if_lesseq);
-                __ testl_rr(X86::eax, X86::eax);
-                __ link(__ jne(), m_labels[i + 3 + target]);
+                __ link(jnz32(X86::eax), m_labels[i + 3 + target]);
             }
             i += OPCODE_LENGTH(op_loop_if_lesseq);
             break;
         }
         case op_pre_inc: {
             unsigned srcDst = instruction[i + 1].u.operand;
-            JmpSrc notImm = iter->from;
-            __ link((++iter)->from, __ label());
-            __ subl_i8r(getDeTaggedConstantImmediate(JSImmediate::oneImmediate()), X86::eax);
-            __ link(notImm, __ label());
+            Jump notImm = getSlowCase(iter);
+            linkSlowCase(iter);
+            sub32(Imm32(getDeTaggedConstantImmediate(JSImmediate::oneImmediate())), X86::eax);
+            notImm.link(this);
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_pre_inc);
             emitPutVirtualRegister(srcDst);
@@ -1579,21 +1560,21 @@ void JIT::privateCompileSlowCases()
         }
         case op_put_by_val: {
             // Normal slow cases - either is not an immediate imm, or is an array.
-            JmpSrc notImm = iter->from;
-            __ link((++iter)->from, __ label());
-            __ link((++iter)->from, __ label());
+            Jump notImm = getSlowCase(iter);
+            linkSlowCase(iter);
+            linkSlowCase(iter);
             emitFastArithIntToImmNoCheck(X86::edx);
-            __ link(notImm, __ label());
+            notImm.link(this);
             emitGetVirtualRegister(instruction[i + 3].u.operand, X86::ecx, i);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
             emitPutCTIArg(X86::ecx, 8);
             emitCTICall(i, Interpreter::cti_op_put_by_val);
-            __ link(__ jmp(), m_labels[i + 4]);
+            __ link(jump(), m_labels[i + 4]);
 
             // slow cases for immediate int accesses to arrays
-            __ link((++iter)->from, __ label());
-            __ link((++iter)->from, __ label());
+            linkSlowCase(iter);
+            linkSlowCase(iter);
             emitGetVirtualRegister(instruction[i + 3].u.operand, X86::ecx, i);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
@@ -1604,21 +1585,20 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_loop_if_true: {
-            __ link(iter->from, __ label());
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_jtrue);
-            __ testl_rr(X86::eax, X86::eax);
             unsigned target = instruction[i + 2].u.operand;
-            __ link(__ jne(), m_labels[i + 2 + target]);
+            __ link(jnz32(X86::eax), m_labels[i + 2 + target]);
             i += OPCODE_LENGTH(op_loop_if_true);
             break;
         }
         case op_pre_dec: {
             unsigned srcDst = instruction[i + 1].u.operand;
-            JmpSrc notImm = iter->from;
-            __ link((++iter)->from, __ label());
-            __ addl_i8r(getDeTaggedConstantImmediate(JSImmediate::oneImmediate()), X86::eax);
-            __ link(notImm, __ label());
+            Jump notImm = getSlowCase(iter);
+            linkSlowCase(iter);
+            add32(Imm32(getDeTaggedConstantImmediate(JSImmediate::oneImmediate())), X86::eax);
+            notImm.link(this);
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_pre_dec);
             emitPutVirtualRegister(srcDst);
@@ -1629,27 +1609,25 @@ void JIT::privateCompileSlowCases()
             unsigned target = instruction[i + 3].u.operand;
             JSValue* src2imm = getConstantImmediateNumericArg(instruction[i + 2].u.operand);
             if (src2imm) {
-                __ link(iter->from, __ label());
+                linkSlowCase(iter);
                 emitPutCTIArg(X86::edx, 0);
                 emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 4, X86::ecx);
                 emitCTICall(i, Interpreter::cti_op_jless);
-                __ testl_rr(X86::eax, X86::eax);
-                __ link(__ je(), m_labels[i + 3 + target]);
+                __ link(jz32(X86::eax), m_labels[i + 3 + target]);
             } else {
-                __ link(iter->from, __ label());
-                __ link((++iter)->from, __ label());
+                linkSlowCase(iter);
+                linkSlowCase(iter);
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArg(X86::edx, 4);
                 emitCTICall(i, Interpreter::cti_op_jless);
-                __ testl_rr(X86::eax, X86::eax);
-                __ link(__ je(), m_labels[i + 3 + target]);
+                __ link(jz32(X86::eax), m_labels[i + 3 + target]);
             }
             i += OPCODE_LENGTH(op_jnless);
             break;
         }
         case op_not: {
-            __ link(iter->from, __ label());
-            __ xorl_i8r(JSImmediate::FullTagTypeBool, X86::eax);
+            linkSlowCase(iter);
+            xor32(Imm32(JSImmediate::FullTagTypeBool), X86::eax);
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_not);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
@@ -1657,19 +1635,18 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_jfalse: {
-            __ link(iter->from, __ label());
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_jtrue);
-            __ testl_rr(X86::eax, X86::eax);
             unsigned target = instruction[i + 2].u.operand;
-            __ link(__ je(), m_labels[i + 2 + target]); // inverted!
+            __ link(jz32(X86::eax), m_labels[i + 2 + target]); // inverted!
             i += OPCODE_LENGTH(op_jfalse);
             break;
         }
         case op_post_inc: {
             unsigned srcDst = instruction[i + 2].u.operand;
-            __ link(iter->from, __ label());
-            __ link((++iter)->from, __ label());
+            linkSlowCase(iter);
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_post_inc);
             emitPutVirtualRegister(srcDst, X86::edx);
@@ -1678,7 +1655,7 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_bitnot: {
-            __ link(iter->from, __ label());
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_bitnot);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
@@ -1686,23 +1663,21 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_bitand: {
+            linkSlowCase(iter);
             unsigned src1 = instruction[i + 2].u.operand;
             unsigned src2 = instruction[i + 3].u.operand;
             unsigned dst = instruction[i + 1].u.operand;
             if (getConstantImmediateNumericArg(src1)) {
-                __ link(iter->from, __ label());
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
                 emitPutCTIArg(X86::eax, 4);
                 emitCTICall(i, Interpreter::cti_op_bitand);
                 emitPutVirtualRegister(dst);
             } else if (getConstantImmediateNumericArg(src2)) {
-                __ link(iter->from, __ label());
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
                 emitCTICall(i, Interpreter::cti_op_bitand);
                 emitPutVirtualRegister(dst);
             } else {
-                __ link(iter->from, __ label());
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
                 emitPutCTIArg(X86::edx, 4);
                 emitCTICall(i, Interpreter::cti_op_bitand);
@@ -1712,19 +1687,18 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_jtrue: {
-            __ link(iter->from, __ label());
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_jtrue);
-            __ testl_rr(X86::eax, X86::eax);
             unsigned target = instruction[i + 2].u.operand;
-            __ link(__ jne(), m_labels[i + 2 + target]);
+            __ link(jnz32(X86::eax), m_labels[i + 2 + target]);
             i += OPCODE_LENGTH(op_jtrue);
             break;
         }
         case op_post_dec: {
             unsigned srcDst = instruction[i + 2].u.operand;
-            __ link(iter->from, __ label());
-            __ link((++iter)->from, __ label());
+            linkSlowCase(iter);
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_post_dec);
             emitPutVirtualRegister(srcDst, X86::edx);
@@ -1733,7 +1707,7 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_bitxor: {
-            __ link(iter->from, __ label());
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
             emitCTICall(i, Interpreter::cti_op_bitxor);
@@ -1742,7 +1716,7 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_bitor: {
-            __ link(iter->from, __ label());
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
             emitCTICall(i, Interpreter::cti_op_bitor);
@@ -1751,7 +1725,7 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_eq: {
-            __ link(iter->from, __ label());
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
             emitCTICall(i, Interpreter::cti_op_eq);
@@ -1760,7 +1734,7 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_neq: {
-            __ link(iter->from, __ label());
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
             emitCTICall(i, Interpreter::cti_op_neq);
@@ -1769,9 +1743,9 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_stricteq: {
-            __ link(iter->from, __ label());
-            __ link((++iter)->from, __ label());
-            __ link((++iter)->from, __ label());
+            linkSlowCase(iter);
+            linkSlowCase(iter);
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
             emitCTICall(i, Interpreter::cti_op_stricteq);
@@ -1780,9 +1754,9 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_nstricteq: {
-            __ link(iter->from, __ label());
-            __ link((++iter)->from, __ label());
-            __ link((++iter)->from, __ label());
+            linkSlowCase(iter);
+            linkSlowCase(iter);
+            linkSlowCase(iter);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
             emitCTICall(i, Interpreter::cti_op_nstricteq);
@@ -1791,9 +1765,9 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_instanceof: {
-            __ link(iter->from, __ label());
-            __ link((++iter)->from, __ label());
-            __ link((++iter)->from, __ label());
+            linkSlowCase(iter);
+            linkSlowCase(iter);
+            linkSlowCase(iter);
             emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx);
             emitPutCTIArgFromVirtualRegister(instruction[i + 4].u.operand, 8, X86::ecx);
@@ -1803,13 +1777,13 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_mod: {
-            JmpSrc notImm1 = iter->from;
-            JmpSrc notImm2 = (++iter)->from;
-            __ link((++iter)->from, __ label());
+            Jump notImm1 = getSlowCase(iter);
+            Jump notImm2 = getSlowCase(iter);
+            linkSlowCase(iter);
             emitFastArithReTagImmediate(X86::eax);
             emitFastArithReTagImmediate(X86::ecx);
-            __ link(notImm1, __ label());
-            __ link(notImm2, __ label());
+            notImm1.link(this);
+            notImm2.link(this);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::ecx, 4);
             emitCTICall(i, Interpreter::cti_op_mod);
@@ -1825,16 +1799,16 @@ void JIT::privateCompileSlowCases()
             JSValue* src2Value = getConstantImmediateNumericArg(src2);
             int32_t value;
             if (src1Value && ((value = JSImmediate::intValue(src1Value)) > 0)) {
-                __ link(iter->from, __ label());
-                __ link((++iter)->from, __ label());
+                linkSlowCase(iter);
+                linkSlowCase(iter);
                 // There is an extra slow case for (op1 * -N) or (-N * op2), to check for 0 since this should produce a result of -0.
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
                 emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
                 emitCTICall(i, Interpreter::cti_op_mul);
                 emitPutVirtualRegister(dst);
             } else if (src2Value && ((value = JSImmediate::intValue(src2Value)) > 0)) {
-                __ link(iter->from, __ label());
-                __ link((++iter)->from, __ label());
+                linkSlowCase(iter);
+                linkSlowCase(iter);
                 // There is an extra slow case for (op1 * -N) or (-N * op2), to check for 0 since this should produce a result of -0.
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
                 emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
@@ -1854,9 +1828,8 @@ void JIT::privateCompileSlowCases()
             break;
         }
         case op_to_jsnumber: {
-            if (linkSlowCaseIfNotJSCell(iter, instruction[i + 2].u.operand))
-                ++iter;
-            __ link(iter->from, __ label());
+            linkSlowCaseIfNotJSCell(iter, instruction[i + 2].u.operand);
+            linkSlowCase(iter);
 
             emitPutCTIArg(X86::eax, 0);
             emitCTICall(i, Interpreter::cti_op_to_jsnumber);
@@ -1871,10 +1844,10 @@ void JIT::privateCompileSlowCases()
             break;
         }
 
-        ASSERT_WITH_MESSAGE((iter + 1) == m_slowCases.end() || firstTo != (iter + 1)->to,"Not enough jumps linked in slow case codegen.");
-        ASSERT_WITH_MESSAGE(firstTo == iter->to, "Too many jumps linked in slow case codegen.");
+        ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo != iter->to,"Not enough jumps linked in slow case codegen.");
+        ASSERT_WITH_MESSAGE(firstTo == (iter - 1)->to, "Too many jumps linked in slow case codegen.");
 
-        __ link(__ jmp(), m_labels[i]);
+        __ link(jump(), m_labels[i]);
     }
 
     ASSERT(propertyAccessInstructionIndex == m_codeBlock->numberOfStructureStubInfos());
@@ -1884,27 +1857,26 @@ void JIT::privateCompileSlowCases()
 void JIT::privateCompile()
 {
 #if ENABLE(CODEBLOCK_SAMPLING)
-        __ movl_i32m(reinterpret_cast<unsigned>(m_codeBlock), m_interpreter->sampler()->codeBlockSlot());
+        storePtr(ImmPtr(m_codeBlock), m_interpreter->sampler()->codeBlockSlot());
 #endif
 #if ENABLE(OPCODE_SAMPLING)
-        __ movl_i32m(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin()), m_interpreter->sampler()->sampleSlot());
+        store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin())), m_interpreter->sampler()->sampleSlot());
 #endif
 
     // Could use a popl_m, but would need to offset the following instruction if so.
     __ popl_r(X86::ecx);
     emitPutToCallFrameHeader(X86::ecx, RegisterFile::ReturnPC);
 
-    JmpSrc slowRegisterFileCheck;
-    JmpDst afterRegisterFileCheck;
+    Jump slowRegisterFileCheck;
+    Label afterRegisterFileCheck;
     if (m_codeBlock->codeType() == FunctionCode) {
         // In the case of a fast linked call, we do not set this up in the caller.
         emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 
         emitGetCTIParam(CTI_ARGS_registerFile, X86::eax);
         __ leal_mr(m_codeBlock->m_numCalleeRegisters * sizeof(Register), X86::edi, X86::edx);
-        __ cmpl_mr(FIELD_OFFSET(RegisterFile, m_end), X86::eax, X86::edx);
-        slowRegisterFileCheck = __ jg();
-        afterRegisterFileCheck = __ label();
+        slowRegisterFileCheck = jg32(X86::edx, Address(X86::eax, FIELD_OFFSET(RegisterFile, m_end)));
+        afterRegisterFileCheck = Label(this);
     }
 
     privateCompileMainPass();
@@ -1912,10 +1884,9 @@ void JIT::privateCompile()
     privateCompileSlowCases();
 
     if (m_codeBlock->codeType() == FunctionCode) {
-        __ link(slowRegisterFileCheck, __ label());
+        slowRegisterFileCheck.link(this);
         emitCTICall(0, Interpreter::cti_register_file_check);
-        JmpSrc backToBody = __ jmp();
-        __ link(backToBody, afterRegisterFileCheck);
+        jump(afterRegisterFileCheck);
     }
 
     ASSERT(m_jmpTable.isEmpty());
@@ -2170,16 +2141,16 @@ void JIT::privateCompileCTIMachineTrampolines()
 
 void JIT::emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst)
 {
-    __ movl_mr(FIELD_OFFSET(JSVariableObject, d), variableObject, dst);
-    __ movl_mr(FIELD_OFFSET(JSVariableObject::JSVariableObjectData, registers), dst, dst);
-    __ movl_mr(index * sizeof(Register), dst, dst);
+    loadPtr(Address(variableObject, FIELD_OFFSET(JSVariableObject, d)), dst);
+    loadPtr(Address(dst, FIELD_OFFSET(JSVariableObject::JSVariableObjectData, registers)), dst);
+    loadPtr(Address(dst, index * sizeof(Register)), dst);
 }
 
 void JIT::emitPutVariableObjectRegister(RegisterID src, RegisterID variableObject, int index)
 {
-    __ movl_mr(FIELD_OFFSET(JSVariableObject, d), variableObject, variableObject);
-    __ movl_mr(FIELD_OFFSET(JSVariableObject::JSVariableObjectData, registers), variableObject, variableObject);
-    __ movl_rm(src, index * sizeof(Register), variableObject);
+    loadPtr(Address(variableObject, FIELD_OFFSET(JSVariableObject, d)), variableObject);
+    loadPtr(Address(variableObject, FIELD_OFFSET(JSVariableObject::JSVariableObjectData, registers)), variableObject);
+    storePtr(src, Address(variableObject, index * sizeof(Register)));
 }
 
 } // namespace JSC

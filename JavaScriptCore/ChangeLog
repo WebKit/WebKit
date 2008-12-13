@@ -1,3 +1,38 @@
+2008-12-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Move slow-cases of JIT code generation over to the MacroAssembler interface.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::Label::Label):
+        (JSC::MacroAssembler::jae32):
+        (JSC::MacroAssembler::jg32):
+        (JSC::MacroAssembler::jzPtr):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::emitGetVariableObjectRegister):
+        (JSC::JIT::emitPutVariableObjectRegister):
+        * jit/JIT.h:
+        (JSC::SlowCaseEntry::SlowCaseEntry):
+        (JSC::JIT::getSlowCase):
+        (JSC::JIT::linkSlowCase):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        (JSC::JIT::linkSlowCaseIfNotJSCell):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::compilePutByIdSlowCase):
+
 2008-12-12  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Sam Weinig.

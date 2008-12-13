@@ -340,19 +340,14 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned byt
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex, int vReg)
 {
-    if (m_codeBlock->isKnownNotImmediate(vReg))
-        return;
-
-    emitJumpSlowCaseIfNotJSCell(reg, bytecodeIndex);
+    if (!m_codeBlock->isKnownNotImmediate(vReg))
+        emitJumpSlowCaseIfNotJSCell(reg, bytecodeIndex);
 }
 
-ALWAYS_INLINE bool JIT::linkSlowCaseIfNotJSCell(const Vector<SlowCaseEntry>::iterator& iter, int vReg)
+ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator& iter, int vReg)
 {
-    if (m_codeBlock->isKnownNotImmediate(vReg))
-        return false;
-    
-    __ link(iter->from, __ label());
-    return true;
+    if (!m_codeBlock->isKnownNotImmediate(vReg))
+        linkSlowCase(iter);
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNum(RegisterID reg, unsigned bytecodeIndex)

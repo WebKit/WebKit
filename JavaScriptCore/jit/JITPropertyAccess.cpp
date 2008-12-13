@@ -46,7 +46,7 @@ namespace JSC {
 
 #if !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
-void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident, unsigned i, unsigned propertyAccessInstructionIndex)
+void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident, unsigned i, unsigned)
 {
     // As for put_by_id, get_by_id requires the offset of the Structure and the offset of the access to be repatched.
     // Additionally, for get_by_id we need repatch the offset of the branch to the slow case (we repatch this to jump
@@ -55,21 +55,10 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident,
 
     emitGetVirtualRegister(baseVReg, X86::eax, i);
 
-#ifdef NDEBUG
-    UNUSED_PARAM(propertyAccessInstructionIndex);
-#endif
-
-#ifndef NDEBUG
-    JmpDst coldPathBegin = __ label();
-#endif        
     emitPutCTIArg(X86::eax, 0);
     emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
-    JmpSrc call = emitCTICall(i, Interpreter::cti_op_get_by_id_generic);
-    ASSERT(X86Assembler::getDifferenceBetweenLabels(coldPathBegin, call) == repatchOffsetGetByIdSlowCaseCall);
+    emitCTICall(i, Interpreter::cti_op_get_by_id_generic);
     emitPutVirtualRegister(resultVReg);
-
-    // Track the location of the call; this will be used to recover repatch information.
-    m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 
 
@@ -78,7 +67,7 @@ void JIT::compileGetByIdSlowCase(int, int, Identifier*, unsigned, Vector<SlowCas
     ASSERT_NOT_REACHED();
 }
 
-void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, unsigned i, unsigned propertyAccessInstructionIndex)
+void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, unsigned i, unsigned)
 {
     // In order to be able to repatch both the Structure, and the object offset, we store one pointer,
     // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code
@@ -89,10 +78,7 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, 
     emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
     emitPutCTIArg(X86::eax, 0);
     emitPutCTIArg(X86::edx, 8);
-    JmpSrc call = emitCTICall(i, Interpreter::cti_op_put_by_id_generic);
-
-    // Track the location of the call; this will be used to recover repatch information.
-    m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
+    emitCTICall(i, Interpreter::cti_op_put_by_id_generic);
 }
 
 void JIT::compilePutByIdSlowCase(int, Identifier*, int, unsigned, Vector<SlowCaseEntry>::iterator&, unsigned)
@@ -136,9 +122,8 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
     // prototype access trampoline fail we want to bail out back to here.  To do so we can subtract back
     // the distance from the call to the head of the slow case.
 
-    if (linkSlowCaseIfNotJSCell(iter, baseVReg))
-        ++iter;
-    __ link(iter->from, __ label());
+    linkSlowCaseIfNotJSCell(iter, baseVReg);
+    linkSlowCase(iter);
 
 #ifndef NDEBUG
     JmpDst coldPathBegin = __ label();
@@ -180,9 +165,8 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier*, int valueVReg, unsign
 
 void JIT::compilePutByIdSlowCase(int baseVReg, Identifier* ident, int, unsigned i, Vector<SlowCaseEntry>::iterator& iter, unsigned propertyAccessInstructionIndex)
 {
-    if (linkSlowCaseIfNotJSCell(iter, baseVReg))
-        ++iter;
-    __ link(iter->from, __ label());
+    linkSlowCaseIfNotJSCell(iter, baseVReg);
+    linkSlowCase(iter);
 
     emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
     emitPutCTIArg(X86::eax, 0);

@@ -193,13 +193,11 @@ namespace JSC {
     };
 
     struct SlowCaseEntry {
-        typedef X86Assembler::JmpSrc JmpSrc;
-
-        JmpSrc from;
+        MacroAssembler::Jump from;
         unsigned to;
         unsigned hint;
         
-        SlowCaseEntry(JmpSrc f, unsigned t, unsigned h = 0)
+        SlowCaseEntry(MacroAssembler::Jump f, unsigned t, unsigned h = 0)
             : from(f)
             , to(t)
             , hint(h)
@@ -433,7 +431,17 @@ namespace JSC {
         Jump emitJumpIfNotJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, unsigned bytecodeIndex);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, unsigned bytecodeIndex, int VReg);
-        bool linkSlowCaseIfNotJSCell(const Vector<SlowCaseEntry>::iterator&, int vReg);
+
+        Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
+        {
+            return iter++->from;
+        }
+        void linkSlowCase(Vector<SlowCaseEntry>::iterator& iter)
+        {
+            iter->from.link(this);
+            ++iter;
+        }
+        void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int vReg);
 
         void emitJumpSlowCaseIfNotImmNum(RegisterID, unsigned bytecodeIndex);
         void emitJumpSlowCaseIfNotImmNums(RegisterID, RegisterID, RegisterID, unsigned bytecodeIndex);

@@ -297,38 +297,31 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
 
 void JIT::compileBinaryArithOpSlowCase(OpcodeID opcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes types, unsigned i)
 {
-    JmpDst here = __ label();
-    __ link(iter->from, here);
+    linkSlowCase(iter);
     if (types.second().isReusable() && isSSE2Present()) {
         if (!types.first().definitelyIsNumber()) {
-            if (linkSlowCaseIfNotJSCell(++iter, src1))
-                ++iter;
-            __ link(iter->from, here);
+            linkSlowCaseIfNotJSCell(iter, src1);
+            linkSlowCase(iter);
         }
         if (!types.second().definitelyIsNumber()) {
-            if (linkSlowCaseIfNotJSCell(++iter, src2))
-                ++iter;
-            __ link(iter->from, here);
+            linkSlowCaseIfNotJSCell(iter, src2);
+            linkSlowCase(iter);
         }
-        __ link((++iter)->from, here);
     } else if (types.first().isReusable() && isSSE2Present()) {
         if (!types.first().definitelyIsNumber()) {
-            if (linkSlowCaseIfNotJSCell(++iter, src1))
-                ++iter;
-            __ link(iter->from, here);
+            linkSlowCaseIfNotJSCell(iter, src1);
+            linkSlowCase(iter);
         }
         if (!types.second().definitelyIsNumber()) {
-            if (linkSlowCaseIfNotJSCell(++iter, src2))
-                ++iter;
-            __ link(iter->from, here);
+            linkSlowCaseIfNotJSCell(iter, src2);
+            linkSlowCase(iter);
         }
-        __ link((++iter)->from, here);
-    } else
-        __ link((++iter)->from, here);
+    }
+    linkSlowCase(iter);
 
     // additional entry point to handle -0 cases.
     if (opcodeID == op_mul)
-        __ link((++iter)->from, here);
+        linkSlowCase(iter);
 
     emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
     emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
