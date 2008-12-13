@@ -416,14 +416,12 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
 
         // Object cache capacities (in bytes)
         if (memSize >= 2048)
-            cacheTotalCapacity = 128 * 1024 * 1024;
+            cacheTotalCapacity = 96 * 1024 * 1024;
         else if (memSize >= 1536)
-            cacheTotalCapacity = 86 * 1024 * 1024;
-        else if (memSize >= 1024)
             cacheTotalCapacity = 64 * 1024 * 1024;
-        else if (memSize >= 512)
+        else if (memSize >= 1024)
             cacheTotalCapacity = 32 * 1024 * 1024;
-        else if (memSize >= 256)
+        else if (memSize >= 512)
             cacheTotalCapacity = 16 * 1024 * 1024; 
 
         cacheMinDeadCapacity = 0;
@@ -450,14 +448,12 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
 
         // Object cache capacities (in bytes)
         if (memSize >= 2048)
-            cacheTotalCapacity = 128 * 1024 * 1024;
+            cacheTotalCapacity = 96 * 1024 * 1024;
         else if (memSize >= 1536)
-            cacheTotalCapacity = 86 * 1024 * 1024;
-        else if (memSize >= 1024)
             cacheTotalCapacity = 64 * 1024 * 1024;
-        else if (memSize >= 512)
+        else if (memSize >= 1024)
             cacheTotalCapacity = 32 * 1024 * 1024;
-        else if (memSize >= 256)
+        else if (memSize >= 512)
             cacheTotalCapacity = 16 * 1024 * 1024; 
 
         cacheMinDeadCapacity = cacheTotalCapacity / 8;
@@ -504,14 +500,12 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
         // browsing pattern. Even growth above 128MB can have substantial 
         // value / MB for some content / browsing patterns.)
         if (memSize >= 2048)
-            cacheTotalCapacity = 256 * 1024 * 1024;
-        else if (memSize >= 1536)
-            cacheTotalCapacity = 172 * 1024 * 1024;
-        else if (memSize >= 1024)
             cacheTotalCapacity = 128 * 1024 * 1024;
-        else if (memSize >= 512)
+        else if (memSize >= 1536)
+            cacheTotalCapacity = 96 * 1024 * 1024;
+        else if (memSize >= 1024)
             cacheTotalCapacity = 64 * 1024 * 1024;
-        else if (memSize >= 256)
+        else if (memSize >= 512)
             cacheTotalCapacity = 32 * 1024 * 1024; 
 
         cacheMinDeadCapacity = cacheTotalCapacity / 4;
