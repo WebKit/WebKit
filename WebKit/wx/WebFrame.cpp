@@ -183,6 +183,14 @@ wxString wxWebFrame::RunScript(const wxString& javascript)
     return returnValue;
 }
 
+bool wxWebFrame::FindString(const wxString& string, bool forward, bool caseSensitive, bool wrapSelection, bool startInSelection)
+{
+    if (m_impl->frame)
+        return m_impl->frame->findString(string, forward, caseSensitive, wrapSelection, startInSelection);
+
+    return false;
+}
+
 void wxWebFrame::LoadURL(const wxString& url)
 {
     if (m_impl->frame && m_impl->frame->loader()) {

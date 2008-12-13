@@ -463,6 +463,14 @@ void wxWebView::OnPaint(wxPaintEvent& event)
     }
 }
 
+bool wxWebView::FindString(const wxString& string, bool forward, bool caseSensitive, bool wrapSelection, bool startInSelection)
+{
+    if (m_mainFrame)
+        return m_mainFrame->FindString(string, forward, caseSensitive, wrapSelection, startInSelection);
+
+    return false;
+}
+
 void wxWebView::OnSize(wxSizeEvent& event)
 { 
     if (m_isInitialized && m_mainFrame) {

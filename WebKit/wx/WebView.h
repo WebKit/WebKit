@@ -124,6 +124,10 @@ public:
     bool IsTransparent() const;
     
     wxString RunScript(const wxString& javascript);
+
+    bool FindString(const wxString& string, bool forward = true,
+        bool caseSensitive = false, bool wrapSelection = true,
+        bool startInSelection = true);
     
     bool CanIncreaseTextSize() const;
     void IncreaseTextSize();
