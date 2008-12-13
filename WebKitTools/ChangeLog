@@ -1,3 +1,15 @@
+2008-12-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22039
+
+        Implement animation and transition pausing.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+
 2008-12-12  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adam Roben.
