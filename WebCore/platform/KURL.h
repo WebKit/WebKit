@@ -177,7 +177,7 @@ public:
     unsigned pathEnd() const;
     unsigned pathAfterLastSlash() const;
     operator const String&() const { return string(); }
-#ifdef USE(JSC)
+#if USE(JSC)
     operator JSC::UString() const { return string(); }
 #endif
 

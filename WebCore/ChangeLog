@@ -1,3 +1,11 @@
+2008-12-12  Beth Dakin  <bdakin@apple.com>
+
+        Rubber Stamped by Steve Falkenburg.
+
+        Build fix.
+
+        * platform/KURL.h:
+
 2008-12-12  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin Adler.
