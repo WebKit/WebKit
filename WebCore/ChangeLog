@@ -1,3 +1,16 @@
+2008-12-13  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22824
+
+        Change ENABLE(FONT_FAST_PATH) to USE(FONT_FAST_PATH). With r39206
+        floatWidth always used the complex path causing a regression
+        in the pixel tests.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::floatWidth): Use the fast path again
+
 2008-12-13  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.
