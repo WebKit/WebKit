@@ -211,7 +211,7 @@ Node::~Node()
         m_next->setPreviousSibling(0);
 }
 
-inline NodeRareData* Node::rareData() const
+NodeRareData* Node::rareData() const
 {
     ASSERT(hasRareData());
     return NodeRareData::rareDataFromMap(this);
