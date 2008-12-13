@@ -1,3 +1,17 @@
+2008-12-12  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Adam Roben.
+
+        - fix <rdar://problem/5648301> Can't tab around to text fields in Safari
+          login sheet after clicking static text, due to AppKit key loop change
+
+        * Panels/English.lproj/WebAuthenticationPanel.nib/classes.nib: Removed.
+        * Panels/English.lproj/WebAuthenticationPanel.nib/designable.nib: Added.
+        * Panels/English.lproj/WebAuthenticationPanel.nib/info.nib: Removed.
+        * Panels/English.lproj/WebAuthenticationPanel.nib/keyedobjects.nib:
+        Set nextKeyView of the selectable static texts to the editable text.
+        Updated nib format.
+
 2008-12-12  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.
