@@ -623,12 +623,12 @@ void CanvasRenderingContext2D::fill()
     if (!state().m_invertibleCTM)
         return;
 
-    c->beginPath();
-    c->addPath(m_path);
-    if (!m_path.isEmpty())
+    if (!m_path.isEmpty()) {
+        c->beginPath();
+        c->addPath(m_path);
         willDraw(m_path.boundingRect());
-
-    c->fillPath();
+        c->fillPath();
+    }
 
 #if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();
@@ -642,19 +642,20 @@ void CanvasRenderingContext2D::stroke()
         return;
     if (!state().m_invertibleCTM)
         return;
-    c->beginPath();
-    c->addPath(m_path);
 
     if (!m_path.isEmpty()) {
+        c->beginPath();
+        c->addPath(m_path);
+
         // FIXME: This is insufficient, need to use CGContextReplacePathWithStrokedPath to expand to required bounds
         float lineWidth = state().m_lineWidth;
         float inset = lineWidth / 2;
         FloatRect boundingRect = m_path.boundingRect();
         boundingRect.inflate(inset);
         willDraw(boundingRect);
-    }
 
-    c->strokePath();
+        c->strokePath();
+    }
 
 #if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();

@@ -1,3 +1,18 @@
+2008-12-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fixes behavior of gradients on empty path in canvas/Cg
+
+        https://bugs.webkit.org/show_bug.cgi?id=22844
+        [Cg] Canvas fill() draws gradients even without a path
+
+        Test: fast/canvas/canvas-gradient-without-path.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+
 2008-12-13  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix.

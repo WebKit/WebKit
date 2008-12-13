@@ -1,3 +1,13 @@
+2008-12-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Checks behavior of gradients on an empty path in canvas.
+
+        * fast/canvas/canvas-gradient-without-path-expected.txt: Added.
+        * fast/canvas/canvas-gradient-without-path.html: Added.
+        * fast/canvas/resources/canvas-gradient-without-path.js: Added.
+
 2008-12-12  Dean Jackson  <dino@apple.com>
 
         Reviewed by Darin Adler.
