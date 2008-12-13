@@ -31,7 +31,11 @@ namespace WebCore {
 class ElementRareData : public NodeRareData {
 public:
     ElementRareData(Element*);
+
     void resetComputedStyle(Element*);
+
+    using NodeRareData::needsFocusAppearanceUpdateSoonAfterAttach;
+    using NodeRareData::setNeedsFocusAppearanceUpdateSoonAfterAttach;
 
     IntSize m_minimumSizeForResizing;
     RefPtr<RenderStyle> m_computedStyle;

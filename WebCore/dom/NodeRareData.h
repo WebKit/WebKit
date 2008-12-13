@@ -1,6 +1,5 @@
-/**
- *
- * Copyright (C) 2008 Apple Computer, Inc.
+/*
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Smith <catfish.man@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -24,6 +23,8 @@
 #define NodeRareData_h
 
 #include "DynamicNodeList.h"
+#include "EventListener.h"
+#include "RegisteredEventListener.h"
 #include "StringHash.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -54,9 +55,9 @@ struct NodeListsNodeData {
 class NodeRareData {
 public:    
     NodeRareData()
-        : m_focused(false)
-        , m_tabIndex(0)
-        , m_tabIndexSetExplicitly(false)
+        : m_tabIndex(0)
+        , m_tabIndexWasSetExplicitly(false)
+        , m_isFocused(false)
         , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
     {
     }
@@ -79,18 +80,34 @@ public:
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
     
     short tabIndex() const { return m_tabIndex; }
-    void setTabIndexExplicitly(short index) { m_tabIndex = index; m_tabIndexSetExplicitly = true; }
-    bool tabIndexSetExplicitly() const { return m_tabIndexSetExplicitly; }
-        
-    bool m_focused : 1;
+    void setTabIndexExplicitly(short index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
+    bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
+
+    RegisteredEventListenerVector* listeners() { return m_eventListeners.get(); }
+    RegisteredEventListenerVector& ensureListeners()
+    {
+        if (!m_eventListeners)
+            m_eventListeners.set(new RegisteredEventListenerVector);
+        return *m_eventListeners;
+    }
+
+    bool isFocused() const { return m_isFocused; }
+    void setFocused(bool focused) { m_isFocused = focused; }
+
+protected:
+    // for ElementRareData
+    bool needsFocusAppearanceUpdateSoonAfterAttach() const { return m_needsFocusAppearanceUpdateSoonAfterAttach; }
+    void setNeedsFocusAppearanceUpdateSoonAfterAttach(bool needs) { m_needsFocusAppearanceUpdateSoonAfterAttach = needs; }
 
 private:
     OwnPtr<NodeListsNodeData> m_nodeLists;
+    OwnPtr<RegisteredEventListenerVector > m_eventListeners;
     short m_tabIndex;
-    bool m_tabIndexSetExplicitly : 1;
-public:
-    bool m_needsFocusAppearanceUpdateSoonAfterAttach : 1; //for ElementRareData
+    bool m_tabIndexWasSetExplicitly : 1;
+    bool m_isFocused : 1;
+    bool m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
 };
+
 } //namespace
 
 #endif

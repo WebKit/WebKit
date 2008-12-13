@@ -58,6 +58,8 @@
 #include "htmlediting.h"
 #include <wtf/RefCountedLeakCounter.h>
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -262,7 +264,7 @@ PassRefPtr<NodeList> Node::childNodes()
 {
     NodeRareData* data = ensureRareData();
     if (!data->nodeLists()) {
-        data->setNodeLists(std::auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
+        data->setNodeLists(auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
         document()->addNodeListCache();
     }
 
@@ -475,13 +477,13 @@ bool Node::canLazyAttach()
 void Node::setFocus(bool b)
 { 
     if (b || hasRareData())
-        ensureRareData()->m_focused = b;
+        ensureRareData()->setFocused(b);
 }
 
 bool Node::rareDataFocused() const
 {
     ASSERT(hasRareData());
-    return rareData()->m_focused;
+    return rareData()->isFocused();
 }
     
 bool Node::isFocusable() const
@@ -512,7 +514,7 @@ void Node::registerDynamicNodeList(DynamicNodeList* list)
 {
     NodeRareData* data = ensureRareData();
     if (!data->nodeLists()) {
-        data->setNodeLists(std::auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
+        data->setNodeLists(auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
         document()->addNodeListCache();
     } else if (!m_document->hasNodeListCaches()) {
         // We haven't been receiving notifications while there were no registered lists, so the cache is invalid now.
@@ -1225,7 +1227,7 @@ PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 {
     NodeRareData* data = ensureRareData();
     if (!data->nodeLists()) {
-        data->setNodeLists(std::auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
+        data->setNodeLists(auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
         document()->addNodeListCache();
     }
 
@@ -1240,7 +1242,7 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
 {
     NodeRareData* data = ensureRareData();
     if (!data->nodeLists()) {
-        data->setNodeLists(std::auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
+        data->setNodeLists(auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
         document()->addNodeListCache();
     }
 
@@ -1765,7 +1767,7 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
     // Walk the two chains backwards and look for the first difference.
     unsigned index1 = chain1.size();
     unsigned index2 = chain2.size();
-    for (unsigned i = std::min(index1, index2); i; --i) {
+    for (unsigned i = min(index1, index2); i; --i) {
         Node* child1 = chain1[--index1];
         Node* child2 = chain2[--index2];
         if (child1 != child2) {

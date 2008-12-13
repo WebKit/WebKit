@@ -35,6 +35,7 @@
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
+#include "NodeRareData.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
@@ -62,17 +63,13 @@ static HashSet<EventTargetNode*>* gNodesDispatchingSimulatedClicks = 0;
 
 EventTargetNode::EventTargetNode(Document* doc, bool isElement, bool isContainer)
     : Node(doc, isElement, isContainer)
-    , m_regdListeners(0)
 {
 }
 
 EventTargetNode::~EventTargetNode()
 {
-    if (m_regdListeners && !m_regdListeners->isEmpty() && !inDocument())
+    if (!eventListeners().isEmpty() && !inDocument())
         document()->unregisterDisconnectedNodeWithEventListeners(this);
-
-    delete m_regdListeners;
-    m_regdListeners = 0;
 }
 
 ScriptExecutionContext* EventTargetNode::scriptExecutionContext() const
@@ -80,9 +77,19 @@ ScriptExecutionContext* EventTargetNode::scriptExecutionContext() const
     return document();
 }
 
+const RegisteredEventListenerVector& EventTargetNode::eventListeners() const
+{
+    if (hasRareData()) {
+        if (RegisteredEventListenerVector* listeners = rareData()->listeners())
+            return *listeners;
+    }
+    static const RegisteredEventListenerVector* emptyListenersVector = new RegisteredEventListenerVector;
+    return *emptyListenersVector;
+}
+
 void EventTargetNode::insertedIntoDocument()
 {
-    if (m_regdListeners && !m_regdListeners->isEmpty())
+    if (!eventListeners().isEmpty())
         document()->unregisterDisconnectedNodeWithEventListeners(this);
 
     Node::insertedIntoDocument();
@@ -90,7 +97,7 @@ void EventTargetNode::insertedIntoDocument()
 
 void EventTargetNode::removedFromDocument()
 {
-    if (m_regdListeners && !m_regdListeners->isEmpty())
+    if (!eventListeners().isEmpty())
         document()->registerDisconnectedNodeWithEventListeners(this);
 
     Node::removedFromDocument();
@@ -98,7 +105,7 @@ void EventTargetNode::removedFromDocument()
 
 void EventTargetNode::willMoveToNewOwnerDocument()
 {
-    if (m_regdListeners && !m_regdListeners->isEmpty())
+    if (!eventListeners().isEmpty())
         document()->unregisterDisconnectedNodeWithEventListeners(this);
 
     Node::willMoveToNewOwnerDocument();
@@ -106,7 +113,7 @@ void EventTargetNode::willMoveToNewOwnerDocument()
 
 void EventTargetNode::didMoveToNewOwnerDocument()
 {
-    if (m_regdListeners && !m_regdListeners->isEmpty())
+    if (!eventListeners().isEmpty())
         document()->registerDisconnectedNodeWithEventListeners(this);
 
     Node::didMoveToNewOwnerDocument();
@@ -138,41 +145,44 @@ static inline void updateSVGElementInstancesAfterEventListenerChange(EventTarget
 
 void EventTargetNode::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
-    Document* doc = document();
-    if (!doc->attached())
+    Document* document = this->document();
+    if (!document->attached())
         return;
 
-    doc->addListenerTypeIfNeeded(eventType);
+    document->addListenerTypeIfNeeded(eventType);
 
-    if (!m_regdListeners)
-        m_regdListeners = new RegisteredEventListenerList;
+    RegisteredEventListenerVector& listeners = ensureRareData()->ensureListeners();
 
     // Remove existing identical listener set with identical arguments.
     // The DOM2 spec says that "duplicate instances are discarded" in this case.
     removeEventListener(eventType, listener.get(), useCapture);
 
     // adding the first one
-    if (m_regdListeners->isEmpty() && !inDocument())
-        doc->registerDisconnectedNodeWithEventListeners(this);
+    if (listeners.isEmpty() && !inDocument())
+        document->registerDisconnectedNodeWithEventListeners(this);
 
-    m_regdListeners->append(RegisteredEventListener::create(eventType, listener, useCapture));
+    listeners.append(RegisteredEventListener::create(eventType, listener, useCapture));
     updateSVGElementInstancesAfterEventListenerChange(this);
 }
 
 void EventTargetNode::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
 {
-    if (!m_regdListeners)
+    if (!hasRareData())
         return;
 
-    RegisteredEventListenerList::Iterator end = m_regdListeners->end();
-    for (RegisteredEventListenerList::Iterator it = m_regdListeners->begin(); it != end; ++it) {
-        RegisteredEventListener& r = **it;
+    RegisteredEventListenerVector* listeners = rareData()->listeners();
+    if (!listeners)
+        return;
+
+    size_t size = listeners->size();
+    for (size_t i = 0; i < size; ++i) {
+        RegisteredEventListener& r = *listeners->at(i);
         if (r.eventType() == eventType && r.listener() == listener && r.useCapture() == useCapture) {
-            (*it)->setRemoved(true);
-            it = m_regdListeners->remove(it);
+            r.setRemoved(true);
+            listeners->remove(i);
 
             // removed last
-            if (m_regdListeners->isEmpty() && !inDocument())
+            if (listeners->isEmpty() && !inDocument())
                 document()->unregisterDisconnectedNodeWithEventListeners(this);
 
             updateSVGElementInstancesAfterEventListenerChange(this);
@@ -183,24 +193,30 @@ void EventTargetNode::removeEventListener(const AtomicString& eventType, EventLi
 
 void EventTargetNode::removeAllEventListeners()
 {
-    delete m_regdListeners;
-    m_regdListeners = 0;
+    if (!hasRareData())
+        return;
+
+    RegisteredEventListenerVector* listeners = rareData()->listeners();
+    if (!listeners)
+        return;
+
+    size_t size = listeners->size();
+    for (size_t i = 0; i < size; ++i)
+        listeners->at(i)->setRemoved(true);
+    listeners->clear();
 }
 
-void EventTargetNode::handleLocalEvents(Event *evt, bool useCapture)
+void EventTargetNode::handleLocalEvents(Event* event, bool useCapture)
 {
-    if (disabled() && evt->isMouseEvent())
+    if (disabled() && event->isMouseEvent())
         return;
 
-    if (!m_regdListeners || m_regdListeners->isEmpty())
-        return;
-
-    RegisteredEventListenerList listenersCopy = *m_regdListeners;
-    RegisteredEventListenerList::Iterator end = listenersCopy.end();
-
-    for (RegisteredEventListenerList::Iterator it = listenersCopy.begin(); it != end; ++it) {
-        if ((*it)->eventType() == evt->type() && (*it)->useCapture() == useCapture && !(*it)->removed())
-            (*it)->listener()->handleEvent(evt, false);
+    RegisteredEventListenerVector listenersCopy = eventListeners();
+    size_t size = listenersCopy.size();
+    for (size_t i = 0; i < size; ++i) {
+        const RegisteredEventListener& r = *listenersCopy[i];
+        if (r.eventType() == event->type() && r.useCapture() == useCapture && !r.removed())
+            r.listener()->handleEvent(event, false);
     }
 }
 
@@ -269,13 +285,12 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode& e
     DeprecatedPtrList<Node> nodeChain;
 
     if (inDocument()) {
-            for (Node* n = this; n; n = n->eventParentNode()) {
+        for (Node* n = this; n; n = n->eventParentNode()) {
 #if ENABLE(SVG)
             // Skip <use> shadow tree elements    
             if (n->isSVGElement() && n->isShadowNode())
                 continue;
 #endif
-
             n->ref();
             nodeChain.prepend(n);
         }
@@ -673,19 +688,24 @@ void EventTargetNode::dispatchStorageEvent(const AtomicString &eventType, const 
 
 void EventTargetNode::removeInlineEventListenerForType(const AtomicString& eventType)
 {
-    if (!m_regdListeners) // nothing to remove
+    if (!hasRareData())
         return;
-    
-    RegisteredEventListenerList::Iterator end = m_regdListeners->end();
-    for (RegisteredEventListenerList::Iterator it = m_regdListeners->begin(); it != end; ++it) {
-        EventListener* listener = (*it)->listener();
-        if ((*it)->eventType() != eventType || !listener->isInline())
+
+    RegisteredEventListenerVector* listeners = rareData()->listeners();
+    if (!listeners)
+        return;
+
+    size_t size = listeners->size();
+    for (size_t i = 0; i < size; ++i) {
+        RegisteredEventListener& r = *listeners->at(i);
+        if (r.eventType() != eventType || !r.listener()->isInline())
             continue;
 
-        it = m_regdListeners->remove(it);
+        r.setRemoved(true);
+        listeners->remove(i);
 
         // removed last
-        if (m_regdListeners->isEmpty() && !inDocument())
+        if (listeners->isEmpty() && !inDocument())
             document()->unregisterDisconnectedNodeWithEventListeners(this);
 
         updateSVGElementInstancesAfterEventListenerChange(this);
@@ -708,13 +728,13 @@ void EventTargetNode::setInlineEventListenerForTypeAndAttribute(const AtomicStri
 
 EventListener* EventTargetNode::inlineEventListenerForType(const AtomicString& eventType) const
 {
-    if (!m_regdListeners)
-        return 0;
-    
-    RegisteredEventListenerList::Iterator end = m_regdListeners->end();
-    for (RegisteredEventListenerList::Iterator it = m_regdListeners->begin(); it != end; ++it)
-        if ((*it)->eventType() == eventType && (*it)->listener()->isInline())
-            return (*it)->listener();
+    const RegisteredEventListenerVector& listeners = eventListeners();
+    size_t size = listeners.size();
+    for (size_t i = 0; i < size; ++i) {
+        const RegisteredEventListener& r = *listeners[i];
+        if (r.eventType() == eventType && r.listener()->isInline())
+            return r.listener();
+    }
     return 0;
 }
 

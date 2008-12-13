@@ -35,9 +35,4 @@ RegisteredEventListener::RegisteredEventListener(const AtomicString& eventType, 
 {
 }
 
-bool operator==(const RegisteredEventListener& a, const RegisteredEventListener& b)
-{
-    return a.eventType() == b.eventType() && a.listener() == b.listener() && a.useCapture() == b.useCapture();
-}
-
 } // namespace WebCore

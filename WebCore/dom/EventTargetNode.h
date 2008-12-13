@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -32,6 +32,9 @@ namespace WebCore {
 
 class Attribute;
 class Frame;
+class RegisteredEventListener;
+
+typedef Vector<RefPtr<RegisteredEventListener> > RegisteredEventListenerVector;
 
 class EventTargetNode : public Node, public EventTarget {
 public:
@@ -95,7 +98,7 @@ public:
      */
     virtual bool disabled() const;
 
-    RegisteredEventListenerList* localEventListeners() const { return m_regdListeners; }
+    const RegisteredEventListenerVector& eventListeners() const;
 
     EventListener* onabort() const;
     void setOnabort(PassRefPtr<EventListener>);
@@ -181,10 +184,6 @@ public:
     using Node::ref;
     using Node::deref;
  
-protected:
-    friend class EventTarget;
-    RegisteredEventListenerList* m_regdListeners;
-
 private:
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }

@@ -188,13 +188,12 @@ static bool hasLoadListener(SVGElement* node)
 {
     Node* currentNode = node;
     while (currentNode && currentNode->isElementNode()) {
-        RegisteredEventListenerList *list = static_cast<Element*>(currentNode)->localEventListeners();
-        if (list) {
-            RegisteredEventListenerList::Iterator end = list->end();
-            for (RegisteredEventListenerList::Iterator it = list->begin(); it != end; ++it)
-                if ((*it)->eventType() == eventNames().loadEvent &&
-                    (*it)->useCapture() == true || currentNode == node)
-                    return true;
+        const RegisteredEventListenerVector& listeners = static_cast<Element*>(currentNode)->eventListeners();
+        size_t size = listeners.size();
+        for (size_t i = 0; i < size; ++i) {
+            const RegisteredEventListener& r = *listeners[i];
+            if (r.eventType() == eventNames().loadEvent && r.useCapture() || currentNode == node)
+                return true;
         }
         currentNode = currentNode->parentNode();
     }

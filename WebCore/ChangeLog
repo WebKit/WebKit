@@ -1,3 +1,93 @@
+2008-12-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=17497
+          eliminate DeprecatedValueList
+
+        * css/CSSStyleDeclaration.cpp: Removed unneeded include.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeAllEventListenersFromAllNodes):
+        Set the removed flag on the window event listeners in case we
+        are in the middle of dispatching events on this window.
+        (WebCore::Document::clear): Ditto.
+        (WebCore::Document::handleWindowEvent): Changed to use a vector
+        instead of a DeprecatedPtrList.
+        (WebCore::Document::windowInlineEventListenerForType): Ditto.
+        (WebCore::Document::removeWindowInlineEventListenerForType): Ditto.
+        Also added a call to setRemoved, which is needed here just as in
+        other functions that remove.
+        (WebCore::Document::removeWindowEventListener): Ditto.
+        (WebCore::Document::hasWindowEventListener): Ditto.
+
+        * dom/Document.h: Changed RegisteredEventListenerList to
+        RegisteredEventListeners.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach): Use a function to access rare data instead
+        of getting directly at the data field.
+        (WebCore::Element::focus): Ditto.
+        (WebCore::Element::cancelFocusAppearanceUpdate): Ditto.
+
+        * dom/ElementRareData.h: Use "using" to make things that are protected
+        in NodeRareData be public here.
+
+        * dom/EventTarget.h: Removed include of DeprecatedValueList and
+        related declearations that weren't needed. Tweaked the definitions
+        of the forbidEventDispatch functions too.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::EventTargetNode): Eliminated code that
+        was used to initialized m_regdListeners.
+        (WebCore::EventTargetNode::~EventTargetNode): Elminated delete of
+        m_regdListeners. Changed code to use eventListeners() instead of
+        m_regdListeners.
+        (WebCore::EventTargetNode::eventListeners): Added.
+        (WebCore::EventTargetNode::insertedIntoDocument): Use eventListeners.
+        (WebCore::EventTargetNode::removedFromDocument): Ditto.
+        (WebCore::EventTargetNode::willMoveToNewOwnerDocument): Ditto.
+        (WebCore::EventTargetNode::didMoveToNewOwnerDocument): Ditto.
+        (WebCore::EventTargetNode::addEventListener): Ditto.
+        (WebCore::EventTargetNode::removeEventListener): Ditto.
+        (WebCore::EventTargetNode::removeAllEventListeners): Ditto.
+        Also added code to call setRemoved on all the listeners.
+        (WebCore::EventTargetNode::handleLocalEvents): Ditto.
+        (WebCore::EventTargetNode::dispatchGenericEvent): Fixed indentation.
+        (WebCore::EventTargetNode::removeInlineEventListenerForType): Use
+        the new event listeners vector. Also added missing call to setRemoved.
+        (WebCore::EventTargetNode::inlineEventListenerForType): Ditto.
+
+        * dom/EventTargetNode.h: Added a new RegisteredEventListenerVector
+        type and replaced the old localEventListeners function with a new
+        eventListeners function. Removed m_regdListeners.
+
+        * dom/Node.cpp:
+        (WebCore::Node::childNodes): Removed unneeded std prefix.
+        (WebCore::Node::setFocus): Use function instead of going directly
+        at rare data.
+        (WebCore::Node::rareDataFocused): Ditto.
+        (WebCore::Node::registerDynamicNodeList): Removed unneeded std prefix.
+        (WebCore::Node::getElementsByName): Ditto.
+        (WebCore::Node::getElementsByClassName): Ditto.
+        (WebCore::Node::compareDocumentPosition): Ditto.
+
+        * dom/Node.h: Removed unneeded forward declaration of
+        RegisteredEventListener. This is now in EventTargetNode.
+
+        * dom/NodeRareData.h: Renamed m_focused to m_isFocused and made it
+        private. Made m_needsFocusAppearanceUpdateSoonAfterAttach private.
+        Added listeners and ensureListeners functions as well as isFocused,
+        setFocused, and focus-appearance functions. Made all data members private.
+
+        * dom/RegisteredEventListener.cpp: Removed operator ==.
+        * dom/RegisteredEventListener.h: Removed operator == and !=.
+
+        * svg/SVGElement.cpp:
+        (WebCore::hasLoadListener): Rewrote to work with the vector.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::transferEventListenersToShadowTree): Ditto.
+
 2008-12-13  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Dan Bernstein.

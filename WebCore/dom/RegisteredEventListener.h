@@ -53,10 +53,6 @@ namespace WebCore {
         bool m_removed;
     };
 
-
-    bool operator==(const RegisteredEventListener&, const RegisteredEventListener&);
-    inline bool operator!=(const RegisteredEventListener& a, const RegisteredEventListener& b) { return !(a == b); }
-
 } // namespace WebCore
 
 #endif // RegisteredEventListener_h

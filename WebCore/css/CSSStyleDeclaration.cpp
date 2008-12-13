@@ -26,7 +26,6 @@
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSRule.h"
-#include "DeprecatedValueList.h"
 #include <wtf/ASCIICType.h>
 
 using namespace WTF;

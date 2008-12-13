@@ -51,7 +51,6 @@ class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
 class QualifiedName;
-class RegisteredEventListener;
 class RenderArena;
 class RenderObject;
 class RenderStyle;
