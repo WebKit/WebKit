@@ -506,6 +506,7 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
         }
 
         data.extraCharsAvailable = 0;
+        data.charsConsumed = 0;
 
         SVGTextRunWalker<SVGTextRunWalkerDrawTextData> runWalker(fontData, fontElement, data, drawTextUsingSVGFontCallback, drawTextMissingGlyphCallback);
         runWalker.walk(run, isVerticalText, language, from, to);

@@ -1,3 +1,21 @@
+2008-12-12  Dave Moore  <davemoore@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=22798
+
+        In Font::drawTextUsingSVGFont() a variable of type SVGTextRunWalkerDrawTextData
+        is created on the stack (called data). One of its fields, charsConsumed, is
+        unitialized, leading to random values after calling walk() on the
+        SVGTextRunWalker created with it. I now initialize the variable
+
+        This bug was revealed in our Purify run. I don't know of any specific incorrect
+        behavior caused by it but it would lead to the charsConsumed field having a
+        a wrong value.
+
+        * svg/SVGFont.cpp:
+        (WebCore::Font::drawTextUsingSVGFont):
+
 2008-12-12  Beth Dakin  <bdakin@apple.com>
 
         Rubber Stamped by Steve Falkenburg.
