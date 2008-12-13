@@ -1,3 +1,46 @@
+2008-12-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Remove loop counter 'i' from the JIT generation passes, replace with a member m_bytecodeIndex.
+
+        No impact on performance.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emitSlowScriptCheck):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::CallRecord::CallRecord):
+        (JSC::JmpTable::JmpTable):
+        (JSC::JIT::emitCTICall):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::emitGetVirtualRegisters):
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::emitCTICall_internal):
+        (JSC::JIT::emitJumpSlowCaseIfJSCell):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmNum):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmNums):
+        (JSC::JIT::emitFastArithIntToImmOrSlowCase):
+        (JSC::JIT::addSlowCase):
+        (JSC::JIT::addJump):
+        (JSC::JIT::emitJumpSlowToHot):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::compilePutByIdSlowCase):
+
 2008-12-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

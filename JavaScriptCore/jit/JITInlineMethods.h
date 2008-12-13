@@ -56,8 +56,10 @@ ALWAYS_INLINE void JIT::killLastResultRegister()
 }
 
 // get arg puts an arg from the SF register array into a h/w register
-ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst, unsigned currentInstructionIndex)
+ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
 {
+    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
     if (m_codeBlock->isConstantRegisterIndex(src)) {
         JSValue* value = m_codeBlock->getConstant(src);
@@ -68,8 +70,8 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst, unsigned
 
     if (src == m_lastResultBytecodeRegister && m_codeBlock->isTemporaryRegisterIndex(src)) {
         bool atJumpTarget = false;
-        while (m_jumpTargetsPosition < m_codeBlock->numberOfJumpTargets() && m_codeBlock->jumpTarget(m_jumpTargetsPosition) <= currentInstructionIndex) {
-            if (m_codeBlock->jumpTarget(m_jumpTargetsPosition) == currentInstructionIndex)
+        while (m_jumpTargetsPosition < m_codeBlock->numberOfJumpTargets() && m_codeBlock->jumpTarget(m_jumpTargetsPosition) <= m_bytecodeIndex) {
+            if (m_codeBlock->jumpTarget(m_jumpTargetsPosition) == m_bytecodeIndex)
                 atJumpTarget = true;
             ++m_jumpTargetsPosition;
         }
@@ -87,14 +89,14 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst, unsigned
     killLastResultRegister();
 }
 
-ALWAYS_INLINE void JIT::emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2, unsigned i)
+ALWAYS_INLINE void JIT::emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2)
 {
     if (src2 == m_lastResultBytecodeRegister) {
-        emitGetVirtualRegister(src2, dst2, i);
-        emitGetVirtualRegister(src1, dst1, i);
+        emitGetVirtualRegister(src2, dst2);
+        emitGetVirtualRegister(src1, dst1);
     } else {
-        emitGetVirtualRegister(src1, dst1, i);
-        emitGetVirtualRegister(src2, dst2, i);
+        emitGetVirtualRegister(src1, dst1);
+        emitGetVirtualRegister(src2, dst2);
     }
 }
 
@@ -187,126 +189,36 @@ ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
-ALWAYS_INLINE JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, X86::RegisterID r)
+ALWAYS_INLINE JmpSrc JIT::emitNakedCall(X86::RegisterID r)
 {
+    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+
     JmpSrc nakedCall = call(r);
-    m_calls.append(CallRecord(nakedCall, bytecodeIndex));
+    m_calls.append(CallRecord(nakedCall, m_bytecodeIndex));
     return nakedCall;
 }
 
-ALWAYS_INLINE JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, void* function)
+ALWAYS_INLINE JmpSrc JIT::emitNakedCall(void* function)
 {
+    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+
     JmpSrc nakedCall = call();
-    m_calls.append(CallRecord(nakedCall, reinterpret_cast<CTIHelper_v>(function), bytecodeIndex));
+    m_calls.append(CallRecord(nakedCall, m_bytecodeIndex, function));
     return nakedCall;
 }
 
-ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_j helper)
+ALWAYS_INLINE JmpSrc JIT::emitCTICall_internal(void* helper)
 {
+    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + m_bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
 #endif
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     JmpSrc ctiCall = call();
-    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
+    m_calls.append(CallRecord(ctiCall, m_bytecodeIndex, helper));
 #if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
-#endif
-    killLastResultRegister();
-
-    return ctiCall;
-}
-
-ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_o helper)
-{
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
-#endif
-    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
-    JmpSrc ctiCall = call();
-    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
-#endif
-    killLastResultRegister();
-
-    return ctiCall;
-}
-
-ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_p helper)
-{
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
-#endif
-    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
-    JmpSrc ctiCall = call();
-    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
-#endif
-    killLastResultRegister();
-
-    return ctiCall;
-}
-
-ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_b helper)
-{
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
-#endif
-    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
-    JmpSrc ctiCall = call();
-    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
-#endif
-    killLastResultRegister();
-
-    return ctiCall;
-}
-
-ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_v helper)
-{
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
-#endif
-    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
-    JmpSrc ctiCall = call();
-    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
-#endif
-    killLastResultRegister();
-
-    return ctiCall;
-}
-
-ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_s helper)
-{
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
-#endif
-    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
-    JmpSrc ctiCall = call();
-    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
-#endif
-    killLastResultRegister();
-
-    return ctiCall;
-}
-
-ALWAYS_INLINE JmpSrc JIT::emitCTICall(unsigned bytecodeIndex, CTIHelper_2 helper)
-{
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, true)), m_interpreter->sampler()->sampleSlot());
-#endif
-    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
-    JmpSrc ctiCall = call();
-    m_calls.append(CallRecord(ctiCall, helper, bytecodeIndex));
-#if ENABLE(OPCODE_SAMPLING)
-    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
+    store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin() + m_bytecodeIndex, false)), m_interpreter->sampler()->sampleSlot());
 #endif
     killLastResultRegister();
 
@@ -323,9 +235,9 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfJSCell(RegisterID reg)
     return jz32(reg, Imm32(JSImmediate::TagMask));
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg, unsigned bytecodeIndex)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg)
 {
-    m_slowCases.append(SlowCaseEntry(emitJumpIfJSCell(reg), bytecodeIndex));
+    addSlowCase(emitJumpIfJSCell(reg));
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotJSCell(RegisterID reg)
@@ -333,15 +245,15 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotJSCell(RegisterID reg)
     return jnz32(reg, Imm32(JSImmediate::TagMask));
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg)
 {
-    m_slowCases.append(SlowCaseEntry(emitJumpIfNotJSCell(reg), bytecodeIndex));
+    addSlowCase(emitJumpIfNotJSCell(reg));
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex, int vReg)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, int vReg)
 {
     if (!m_codeBlock->isKnownNotImmediate(vReg))
-        emitJumpSlowCaseIfNotJSCell(reg, bytecodeIndex);
+        emitJumpSlowCaseIfNotJSCell(reg);
 }
 
 ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator& iter, int vReg)
@@ -350,16 +262,16 @@ ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&
         linkSlowCase(iter);
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNum(RegisterID reg, unsigned bytecodeIndex)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNum(RegisterID reg)
 {
-    m_slowCases.append(SlowCaseEntry(jz32(reg, Imm32(JSImmediate::TagBitTypeInteger)), bytecodeIndex));
+    addSlowCase(jz32(reg, Imm32(JSImmediate::TagBitTypeInteger)));
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNums(RegisterID reg1, RegisterID reg2, RegisterID scratch, unsigned bytecodeIndex)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNums(RegisterID reg1, RegisterID reg2, RegisterID scratch)
 {
     move(reg1, scratch);
     and32(reg2, scratch);
-    emitJumpSlowCaseIfNotImmNum(scratch, bytecodeIndex);
+    emitJumpSlowCaseIfNotImmNum(scratch);
 }
 
 ALWAYS_INLINE unsigned JIT::getDeTaggedConstantImmediate(JSValue* imm)
@@ -393,9 +305,9 @@ ALWAYS_INLINE void JIT::emitFastArithImmToInt(RegisterID reg)
     rshift32(Imm32(1), reg);
 }
 
-ALWAYS_INLINE void JIT::emitFastArithIntToImmOrSlowCase(RegisterID reg, unsigned bytecodeIndex)
+ALWAYS_INLINE void JIT::emitFastArithIntToImmOrSlowCase(RegisterID reg)
 {
-    m_slowCases.append(SlowCaseEntry(joAdd32(reg, reg), bytecodeIndex));
+    addSlowCase(joAdd32(reg, reg));
     emitFastArithReTagImmediate(reg);
 }
 
@@ -409,6 +321,27 @@ ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 {
     lshift32(Imm32(JSImmediate::ExtendedPayloadShift), reg);
     or32(Imm32(JSImmediate::FullTagTypeBool), reg);
+}
+
+ALWAYS_INLINE void JIT::addSlowCase(JmpSrc jump)
+{
+    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+
+    m_slowCases.append(SlowCaseEntry(jump, m_bytecodeIndex));
+}
+
+ALWAYS_INLINE void JIT::addJump(JmpSrc jump, int relativeOffset)
+{
+    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+
+    m_jmpTable.append(JmpTable(jump, m_bytecodeIndex + relativeOffset));
+}
+
+ALWAYS_INLINE void JIT::emitJumpSlowToHot(JmpSrc jump, int relativeOffset)
+{
+    ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+
+    __ link(jump, m_labels[m_bytecodeIndex + relativeOffset]);
 }
 
 }
