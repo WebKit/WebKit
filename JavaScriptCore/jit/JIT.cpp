@@ -1237,7 +1237,7 @@ void JIT::privateCompileMainPass()
 
 #ifndef NDEBUG
     // reset this, in order to guard it's use with asserts
-    m_bytecodeIndex = -1;
+    m_bytecodeIndex = (unsigned)-1;
 #endif
 }
 
@@ -1713,7 +1713,7 @@ void JIT::privateCompileSlowCases()
 
 #ifndef NDEBUG
     // reset this, in order to guard it's use with asserts
-    m_bytecodeIndex = -1;
+    m_bytecodeIndex = (unsigned)-1;
 #endif
 }
 
@@ -1739,7 +1739,7 @@ void JIT::privateCompile()
         emitGetCTIParam(CTI_ARGS_registerFile, X86::eax);
         __ leal_mr(m_codeBlock->m_numCalleeRegisters * sizeof(Register), X86::edi, X86::edx);
         slowRegisterFileCheck = jg32(X86::edx, Address(X86::eax, FIELD_OFFSET(RegisterFile, m_end)));
-        afterRegisterFileCheck = Label(this);
+        afterRegisterFileCheck = MacroAssembler::Label(this);
     }
 
     privateCompileMainPass();
@@ -1752,7 +1752,7 @@ void JIT::privateCompile()
         emitCTICall(Interpreter::cti_register_file_check);
 #ifndef NDEBUG
         // reset this, in order to guard it's use with asserts
-        m_bytecodeIndex = -1;
+        m_bytecodeIndex = (unsigned)-1;
 #endif
         jump(afterRegisterFileCheck);
     }

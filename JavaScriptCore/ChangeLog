@@ -1,5 +1,14 @@
 2008-12-12  Gavin Barraclough  <barraclough@apple.com>
 
+        Fix windows builds.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+
+2008-12-12  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         Remove loop counter 'i' from the JIT generation passes, replace with a member m_bytecodeIndex.
