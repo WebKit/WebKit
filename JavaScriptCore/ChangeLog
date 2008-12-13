@@ -1,3 +1,18 @@
+2008-12-12  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 22835: Crash during bytecode generation when comparing to null
+        <https://bugs.webkit.org/show_bug.cgi?id=22835>
+        <rdar://problem/6286749>
+
+        Change the special cases in bytecode generation for comparison to null
+        to use tempDestination().
+
+        * parser/Nodes.cpp:
+        (JSC::BinaryOpNode::emitBytecode):
+        (JSC::EqualNode::emitBytecode):
+
 2008-12-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
