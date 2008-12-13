@@ -1,3 +1,14 @@
+2008-12-13  Adam Bergkvist <adam.bergkvist@ericsson.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22779
+
+        Check for GTK version >= 2.14.0 before using gtk_test_init.
+
+        * tests/main.c:
+        (main):
+
 2008-12-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Darin Adler.
