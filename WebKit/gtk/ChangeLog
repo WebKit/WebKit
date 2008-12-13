@@ -1,3 +1,18 @@
+2008-12-13  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Cameron Zwarich.
+
+        [GTK] Fix crash with LayoutTests/fast/loader/frame-creation-removal.html
+
+        Call WebCore::Frame::init after the frame has been given
+        a name and been added to the FrameTree of the parent.
+
+        Removing the call to init is fine as FrameLoaderClientGtk::createFrame
+        is the only user of webkit_web_frame_init_with_web_view and is already
+        calling WebCore::Frame::init.
+
+        * webkit/webkitwebframe.cpp:
+
 2008-12-13  Adam Bergkvist <adam.bergkvist@ericsson.com>
 
         Reviewed by Holger Freyther.
