@@ -40,6 +40,8 @@
 #include <stdio.h>
 #endif
 
+#define __ m_assembler.
+
 using namespace std;
 
 namespace JSC {
@@ -236,7 +238,7 @@ void JIT::privateCompileMainPass()
             store32(m_interpreter->sampler()->encodeSample(currentInstruction), m_interpreter->sampler()->sampleSlot());
 #endif
 
-        m_labels[m_bytecodeIndex] = __ label();
+        m_labels[m_bytecodeIndex] = label();
         OpcodeID opcodeID = m_interpreter->getOpcodeID(currentInstruction->u.opcode);
 
         switch (opcodeID) {
@@ -277,7 +279,7 @@ void JIT::privateCompileMainPass()
             if (m_codeBlock->needsFullScopeChain())
                 emitCTICall(Interpreter::cti_op_end);
             emitGetVirtualRegister(currentInstruction[1].u.operand, X86::eax);
-            __ pushl_m(RegisterFile::ReturnPC * static_cast<int>(sizeof(Register)), X86::edi);
+            __ pushl_m(RegisterFile::ReturnPC * static_cast<int>(sizeof(Register)), callFrameRegister);
             __ ret();
             NEXT_OPCODE(op_end);
         }
@@ -513,7 +515,7 @@ void JIT::privateCompileMainPass()
             emitGetFromCallFrameHeader(RegisterFile::ReturnPC, X86::edx);
 
             // Restore our caller's "r".
-            emitGetFromCallFrameHeader(RegisterFile::CallerFrame, X86::edi);
+            emitGetFromCallFrameHeader(RegisterFile::CallerFrame, callFrameRegister);
 
             // Return.
             __ pushl_r(X86::edx);
@@ -767,15 +769,13 @@ void JIT::privateCompileMainPass()
         case op_jsr: {
             int retAddrDst = currentInstruction[1].u.operand;
             int target = currentInstruction[2].u.operand;
-            __ movl_i32m(0, sizeof(Register) * retAddrDst, X86::edi);
-            JmpDst addrPosition = __ label();
-            addJump(__ jmp(), target + 2);
-            JmpDst sretTarget = __ label();
-            m_jsrSites.append(JSRInfo(addrPosition, sretTarget));
+            DataLabelPtr storeLocation = storePtrWithRepatch(Address(callFrameRegister, sizeof(Register) * retAddrDst));
+            addJump(jump(), target + 2);
+            m_jsrSites.append(JSRInfo(storeLocation, label()));
             NEXT_OPCODE(op_jsr);
         }
         case op_sret: {
-            __ jmp_m(sizeof(Register) * currentInstruction[1].u.operand, X86::edi);
+            jump(Address(callFrameRegister, sizeof(Register) * currentInstruction[1].u.operand));
             NEXT_OPCODE(op_sret);
         }
         case op_eq: {
@@ -792,7 +792,7 @@ void JIT::privateCompileMainPass()
             emitJumpSlowCaseIfNotImmNum(X86::ecx);
             emitFastArithImmToInt(X86::eax);
             emitFastArithImmToInt(X86::ecx);
-            __ shll_CLr(X86::eax);
+            lshift32(X86::ecx, X86::eax);
             emitFastArithIntToImmOrSlowCase(X86::eax);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_lshift);
@@ -832,7 +832,7 @@ void JIT::privateCompileMainPass()
                 emitJumpSlowCaseIfNotImmNum(X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::ecx);
                 emitFastArithImmToInt(X86::ecx);
-                __ sarl_CLr(X86::eax);
+                rshift32(X86::ecx, X86::eax);
             }
             emitFastArithPotentiallyReTagImmediate(X86::eax);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
@@ -866,8 +866,7 @@ void JIT::privateCompileMainPass()
             emitJumpSlowCaseIfNotImmNum(X86::ecx);
             emitFastArithDeTagImmediate(X86::eax);
             addSlowCase(emitFastArithDeTagImmediateJumpIfZero(X86::ecx));
-            __ cdq();
-            __ idivl_r(X86::ecx);
+            mod32(X86::ecx, X86::eax, X86::edx);
             emitFastArithReTagImmediate(X86::edx);
             move(X86::edx, X86::eax);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
@@ -1005,7 +1004,7 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_push_new_scope);
         }
         case op_catch: {
-            emitGetCTIParam(CTI_ARGS_callFrame, X86::edi); // edi := r
+            emitGetCTIParam(CTI_ARGS_callFrame, callFrameRegister);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_catch);
         }
@@ -1199,21 +1198,19 @@ void JIT::privateCompileMainPass()
         }
         case op_profile_will_call: {
             emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
-            __ cmpl_i32m(0, X86::eax);
-            JmpSrc noProfiler = __ je();
+            Jump noProfiler = jzPtr(Address(X86::eax));
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, X86::eax);
             emitCTICall(Interpreter::cti_op_profile_will_call);
-            __ link(noProfiler, __ label());
+            noProfiler.link(this);
 
             NEXT_OPCODE(op_profile_will_call);
         }
         case op_profile_did_call: {
             emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
-            __ cmpl_i32m(0, X86::eax);
-            JmpSrc noProfiler = __ je();
+            Jump noProfiler = jzPtr(Address(X86::eax));
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, X86::eax);
             emitCTICall(Interpreter::cti_op_profile_did_call);
-            __ link(noProfiler, __ label());
+            noProfiler.link(this);
 
             NEXT_OPCODE(op_profile_did_call);
         }
@@ -1246,7 +1243,7 @@ void JIT::privateCompileLinkPass()
 {
     unsigned jmpTableCount = m_jmpTable.size();
     for (unsigned i = 0; i < jmpTableCount; ++i)
-        __ link(m_jmpTable[i].from, m_labels[m_jmpTable[i].to]);
+        m_jmpTable[i].from.linkTo(m_labels[m_jmpTable[i].toBytecodeIndex], this);
     m_jmpTable.clear();
 }
 
@@ -1737,9 +1734,10 @@ void JIT::privateCompile()
         emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 
         emitGetCTIParam(CTI_ARGS_registerFile, X86::eax);
-        __ leal_mr(m_codeBlock->m_numCalleeRegisters * sizeof(Register), X86::edi, X86::edx);
+        addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, X86::edx);
+        
         slowRegisterFileCheck = jg32(X86::edx, Address(X86::eax, FIELD_OFFSET(RegisterFile, m_end)));
-        afterRegisterFileCheck = MacroAssembler::Label(this);
+        afterRegisterFileCheck = label();
     }
 
     privateCompileMainPass();
@@ -1759,9 +1757,11 @@ void JIT::privateCompile()
 
     ASSERT(m_jmpTable.isEmpty());
 
-    RefPtr<ExecutablePool> allocator = m_globalData->poolForSize(__ size());
-    m_codeBlock->setExecutablePool(allocator.get());
-    void* code = __ executableCopy(allocator.get());
+    RefPtr<ExecutablePool> allocator = m_globalData->poolForSize(m_assembler.size());
+    void* code = m_assembler.executableCopy(allocator.get());
+    JITCodeRef codeRef(code, allocator);
+ 
+    RepatchBuffer repatchBuffer(code);
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
@@ -1772,40 +1772,40 @@ void JIT::privateCompile()
             ASSERT(record.type == SwitchRecord::Immediate || record.type == SwitchRecord::Character); 
             ASSERT(record.jumpTable.simpleJumpTable->branchOffsets.size() == record.jumpTable.simpleJumpTable->ctiOffsets.size());
 
-            record.jumpTable.simpleJumpTable->ctiDefault = __ getRelocatedAddress(code, m_labels[bytecodeIndex + 3 + record.defaultOffset]);
+            record.jumpTable.simpleJumpTable->ctiDefault = repatchBuffer.addressOf(m_labels[bytecodeIndex + 3 + record.defaultOffset]);
 
             for (unsigned j = 0; j < record.jumpTable.simpleJumpTable->branchOffsets.size(); ++j) {
                 unsigned offset = record.jumpTable.simpleJumpTable->branchOffsets[j];
-                record.jumpTable.simpleJumpTable->ctiOffsets[j] = offset ? __ getRelocatedAddress(code, m_labels[bytecodeIndex + 3 + offset]) : record.jumpTable.simpleJumpTable->ctiDefault;
+                record.jumpTable.simpleJumpTable->ctiOffsets[j] = offset ? repatchBuffer.addressOf(m_labels[bytecodeIndex + 3 + offset]) : record.jumpTable.simpleJumpTable->ctiDefault;
             }
         } else {
             ASSERT(record.type == SwitchRecord::String);
 
-            record.jumpTable.stringJumpTable->ctiDefault = __ getRelocatedAddress(code, m_labels[bytecodeIndex + 3 + record.defaultOffset]);
+            record.jumpTable.stringJumpTable->ctiDefault = repatchBuffer.addressOf(m_labels[bytecodeIndex + 3 + record.defaultOffset]);
 
             StringJumpTable::StringOffsetTable::iterator end = record.jumpTable.stringJumpTable->offsetTable.end();            
             for (StringJumpTable::StringOffsetTable::iterator it = record.jumpTable.stringJumpTable->offsetTable.begin(); it != end; ++it) {
                 unsigned offset = it->second.branchOffset;
-                it->second.ctiOffset = offset ? __ getRelocatedAddress(code, m_labels[bytecodeIndex + 3 + offset]) : record.jumpTable.stringJumpTable->ctiDefault;
+                it->second.ctiOffset = offset ? repatchBuffer.addressOf(m_labels[bytecodeIndex + 3 + offset]) : record.jumpTable.stringJumpTable->ctiDefault;
             }
         }
     }
 
     for (size_t i = 0; i < m_codeBlock->numberOfExceptionHandlers(); ++i) {
         HandlerInfo& handler = m_codeBlock->exceptionHandler(i);
-        handler.nativeCode = __ getRelocatedAddress(code, m_labels[handler.target]);
+        handler.nativeCode = repatchBuffer.addressOf(m_labels[handler.target]);
     }
 
     m_codeBlock->pcVector().reserveCapacity(m_calls.size());
     for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
         if (iter->to)
-            X86Assembler::link(code, iter->from, iter->to);
-        m_codeBlock->pcVector().append(PC(__ getRelocatedAddress(code, iter->from), iter->bytecodeIndex));
+            repatchBuffer.link(iter->from, iter->to);
+        m_codeBlock->pcVector().append(PC(repatchBuffer.addressOf(iter->from), iter->bytecodeIndex));
     }
 
     // Link absolute addresses for jsr
     for (Vector<JSRInfo>::iterator iter = m_jsrSites.begin(); iter != m_jsrSites.end(); ++iter)
-        X86Assembler::linkAbsoluteAddress(code, iter->addrPosition, iter->target);
+        repatchBuffer.setPtr(iter->storeLocation, repatchBuffer.addressOf(iter->target));
 
     for (unsigned i = 0; i < m_codeBlock->numberOfStructureStubInfos(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
@@ -1820,7 +1820,7 @@ void JIT::privateCompile()
         info.coldPathOther = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].coldPathOther);
     }
 
-    m_codeBlock->setJITCode(code);
+    m_codeBlock->setJITCode(codeRef);
 }
 
 void JIT::privateCompileCTIMachineTrampolines()
@@ -1828,16 +1828,16 @@ void JIT::privateCompileCTIMachineTrampolines()
     // (1) The first function provides fast property access for array length
     
     // Check eax is an array
-    JmpSrc array_failureCases1 = emitJumpIfNotJSCell(X86::eax);
+    X86Assembler::JmpSrc array_failureCases1 = emitJumpIfNotJSCell(X86::eax);
     __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsArrayVptr), X86::eax);
-    JmpSrc array_failureCases2 = __ jne();
+    X86Assembler::JmpSrc array_failureCases2 = __ jne();
 
     // Checks out okay! - get the length from the storage
     __ movl_mr(FIELD_OFFSET(JSArray, m_storage), X86::eax, X86::eax);
     __ movl_mr(FIELD_OFFSET(ArrayStorage, m_length), X86::eax, X86::eax);
 
     __ cmpl_i32r(JSImmediate::maxImmediateInt, X86::eax);
-    JmpSrc array_failureCases3 = __ ja();
+    X86Assembler::JmpSrc array_failureCases3 = __ ja();
 
     __ addl_rr(X86::eax, X86::eax);
     __ addl_i8r(1, X86::eax);
@@ -1846,19 +1846,19 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // (2) The second function provides fast property access for string length
     
-    JmpDst stringLengthBegin = __ align(16);
+    X86Assembler::JmpDst stringLengthBegin = __ align(16);
 
     // Check eax is a string
-    JmpSrc string_failureCases1 = emitJumpIfNotJSCell(X86::eax);
+    X86Assembler::JmpSrc string_failureCases1 = emitJumpIfNotJSCell(X86::eax);
     __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsStringVptr), X86::eax);
-    JmpSrc string_failureCases2 = __ jne();
+    X86Assembler::JmpSrc string_failureCases2 = __ jne();
 
     // Checks out okay! - get the length from the Ustring.
     __ movl_mr(FIELD_OFFSET(JSString, m_value) + FIELD_OFFSET(UString, m_rep), X86::eax, X86::eax);
     __ movl_mr(FIELD_OFFSET(UString::Rep, len), X86::eax, X86::eax);
 
     __ cmpl_i32r(JSImmediate::maxImmediateInt, X86::eax);
-    JmpSrc string_failureCases3 = __ ja();
+    X86Assembler::JmpSrc string_failureCases3 = __ ja();
 
     __ addl_rr(X86::eax, X86::eax);
     __ addl_i8r(1, X86::eax);
@@ -1867,16 +1867,16 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // (3) Trampolines for the slow cases of op_call / op_call_eval / op_construct.
     
-    JmpDst virtualCallPreLinkBegin = __ align(16);
+    X86Assembler::JmpDst virtualCallPreLinkBegin = __ align(16);
 
     // Load the callee CodeBlock* into eax
     __ movl_mr(FIELD_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
     __ movl_mr(FIELD_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
     __ testl_rr(X86::eax, X86::eax);
-    JmpSrc hasCodeBlock1 = __ jne();
+    X86Assembler::JmpSrc hasCodeBlock1 = __ jne();
     __ popl_r(X86::ebx);
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callJSFunction1 = __ call();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callJSFunction1 = __ call();
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
     __ pushl_r(X86::ebx);
@@ -1884,13 +1884,13 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // Check argCount matches callee arity.
     __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, m_numParameters), X86::eax);
-    JmpSrc arityCheckOkay1 = __ je();
+    X86Assembler::JmpSrc arityCheckOkay1 = __ je();
     __ popl_r(X86::ebx);
     emitPutJITStubArg(X86::ebx, 2);
     emitPutJITStubArg(X86::eax, 4);
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callArityCheck1 = __ call();
-    __ movl_rr(X86::edx, X86::edi);
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callArityCheck1 = __ call();
+    __ movl_rr(X86::edx, callFrameRegister);
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
     __ pushl_r(X86::ebx);
@@ -1900,22 +1900,22 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     __ popl_r(X86::ebx);
     emitPutJITStubArg(X86::ebx, 2);
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callDontLazyLinkCall = __ call();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callDontLazyLinkCall = __ call();
     __ pushl_r(X86::ebx);
 
     __ jmp_r(X86::eax);
 
-    JmpDst virtualCallLinkBegin = __ align(16);
+    X86Assembler::JmpDst virtualCallLinkBegin = __ align(16);
 
     // Load the callee CodeBlock* into eax
     __ movl_mr(FIELD_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
     __ movl_mr(FIELD_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
     __ testl_rr(X86::eax, X86::eax);
-    JmpSrc hasCodeBlock2 = __ jne();
+    X86Assembler::JmpSrc hasCodeBlock2 = __ jne();
     __ popl_r(X86::ebx);
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callJSFunction2 = __ call();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callJSFunction2 = __ call();
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
     __ pushl_r(X86::ebx);
@@ -1923,13 +1923,13 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // Check argCount matches callee arity.
     __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, m_numParameters), X86::eax);
-    JmpSrc arityCheckOkay2 = __ je();
+    X86Assembler::JmpSrc arityCheckOkay2 = __ je();
     __ popl_r(X86::ebx);
     emitPutJITStubArg(X86::ebx, 2);
     emitPutJITStubArg(X86::eax, 4);
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callArityCheck2 = __ call();
-    __ movl_rr(X86::edx, X86::edi);
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callArityCheck2 = __ call();
+    __ movl_rr(X86::edx, callFrameRegister);
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
     __ pushl_r(X86::ebx);
@@ -1939,22 +1939,22 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     __ popl_r(X86::ebx);
     emitPutJITStubArg(X86::ebx, 2);
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callLazyLinkCall = __ call();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callLazyLinkCall = __ call();
     __ pushl_r(X86::ebx);
 
     __ jmp_r(X86::eax);
 
-    JmpDst virtualCallBegin = __ align(16);
+    X86Assembler::JmpDst virtualCallBegin = __ align(16);
 
     // Load the callee CodeBlock* into eax
     __ movl_mr(FIELD_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
     __ movl_mr(FIELD_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
     __ testl_rr(X86::eax, X86::eax);
-    JmpSrc hasCodeBlock3 = __ jne();
+    X86Assembler::JmpSrc hasCodeBlock3 = __ jne();
     __ popl_r(X86::ebx);
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callJSFunction3 = __ call();
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callJSFunction3 = __ call();
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
     __ pushl_r(X86::ebx);
@@ -1962,13 +1962,13 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // Check argCount matches callee arity.
     __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, m_numParameters), X86::eax);
-    JmpSrc arityCheckOkay3 = __ je();
+    X86Assembler::JmpSrc arityCheckOkay3 = __ je();
     __ popl_r(X86::ebx);
     emitPutJITStubArg(X86::ebx, 2);
     emitPutJITStubArg(X86::eax, 4);
-    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callArityCheck3 = __ call();
-    __ movl_rr(X86::edx, X86::edi);
+    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callArityCheck3 = __ call();
+    __ movl_rr(X86::edx, callFrameRegister);
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
     __ pushl_r(X86::ebx);

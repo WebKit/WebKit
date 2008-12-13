@@ -62,6 +62,23 @@ namespace JSC {
 #endif
     };
 
+    // The code, and the associated pool from which it was allocated.
+    struct JITCodeRef {
+        void* code;
+        RefPtr<ExecutablePool> executablePool;
+        
+        JITCodeRef()
+            : code(0)
+        {
+        }
+        
+        JITCodeRef(void* code, PassRefPtr<ExecutablePool> executablePool)
+            : code(code)
+            , executablePool(executablePool)
+        {
+        }
+    };
+
     struct ExpressionRangeInfo {
         enum {
             MaxOffset = (1 << 7) - 1, 
@@ -276,10 +293,9 @@ namespace JSC {
         Vector<Instruction>& instructions() { return m_instructions; }
 
 #if ENABLE(JIT)
-        void setJITCode(void* jitCode) { m_jitCode = jitCode; }
-        void* jitCode() { return m_jitCode; }
-        ExecutablePool* executablePool() { return m_executablePool.get(); }
-        void setExecutablePool(ExecutablePool* pool) { m_executablePool = pool; }
+        void setJITCode(JITCodeRef& jitCode) { m_jitCode = jitCode; }
+        void* jitCode() { return m_jitCode.code; }
+        ExecutablePool* executablePool() { return m_jitCode.executablePool.get(); }
 #endif
 
         ScopeNode* ownerNode() const { return m_ownerNode; }
@@ -407,8 +423,7 @@ namespace JSC {
 
         Vector<Instruction> m_instructions;
 #if ENABLE(JIT)
-        void* m_jitCode;
-        RefPtr<ExecutablePool> m_executablePool;
+        JITCodeRef m_jitCode;
 #endif
 
         int m_thisRegister;

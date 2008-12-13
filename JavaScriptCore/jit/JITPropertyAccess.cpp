@@ -40,9 +40,14 @@
 #include <stdio.h>
 #endif
 
+#define __ m_assembler.
+
 using namespace std;
 
 namespace JSC {
+
+typedef X86Assembler::JmpSrc JmpSrc;
+typedef X86Assembler::JmpDst JmpDst;
 
 #if !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
@@ -512,7 +517,8 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     Vector<JmpSrc> bucketsOfFail;
 
     // Check eax is an object of the right Structure.
-    bucketsOfFail.append(checkStructure(X86::eax, structure));
+    JmpSrc baseObjectCheck = checkStructure(X86::eax, structure);
+    bucketsOfFail.append(baseObjectCheck);
 
     Structure* currStructure = structure;
     RefPtr<Structure>* chainEntries = chain->head();
@@ -567,7 +573,8 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     Vector<JmpSrc> bucketsOfFail;
 
     // Check eax is an object of the right Structure.
-    bucketsOfFail.append(checkStructure(X86::eax, structure));
+    JmpSrc baseObjectCheck = checkStructure(X86::eax, structure);
+    bucketsOfFail.append(baseObjectCheck);
 
     Structure* currStructure = structure;
     RefPtr<Structure>* chainEntries = chain->head();

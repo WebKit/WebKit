@@ -1172,9 +1172,6 @@ CodeBlock::CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceP
     , m_numParameters(0)
     , m_ownerNode(ownerNode)
     , m_globalData(0)
-#if ENABLE(JIT)
-    , m_jitCode(0)
-#endif
     , m_needsFullScopeChain(ownerNode->needsActivation())
     , m_usesEval(ownerNode->usesEval())
     , m_codeType(codeType)

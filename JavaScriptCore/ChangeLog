@@ -1,3 +1,62 @@
+2008-12-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Port the remainder of the JIT, bar calling convention related code, and code
+        implementing optimizations which can be disabled, to use the MacroAssembler.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::DataLabelPtr::DataLabelPtr):
+        (JSC::MacroAssembler::RepatchBuffer::RepatchBuffer):
+        (JSC::MacroAssembler::RepatchBuffer::link):
+        (JSC::MacroAssembler::RepatchBuffer::addressOf):
+        (JSC::MacroAssembler::RepatchBuffer::setPtr):
+        (JSC::MacroAssembler::addPtr):
+        (JSC::MacroAssembler::lshift32):
+        (JSC::MacroAssembler::mod32):
+        (JSC::MacroAssembler::rshift32):
+        (JSC::MacroAssembler::storePtrWithRepatch):
+        (JSC::MacroAssembler::jnzPtr):
+        (JSC::MacroAssembler::jzPtr):
+        (JSC::MacroAssembler::jump):
+        (JSC::MacroAssembler::label):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::xchgl_rr):
+        (JSC::X86Assembler::jmp_m):
+        (JSC::X86Assembler::repatchAddress):
+        (JSC::X86Assembler::getRelocatedAddress):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::JITCodeRef::JITCodeRef):
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::jitCode):
+        (JSC::CodeBlock::executablePool):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileLinkPass):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        (JSC::CallRecord::CallRecord):
+        (JSC::JumpTable::JumpTable):
+        (JSC::JIT::emitCTICall):
+        (JSC::JIT::JSRInfo::JSRInfo):
+        * jit/JITArithmetic.cpp:
+        * jit/JITCall.cpp:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::emitCTICall_internal):
+        (JSC::JIT::checkStructure):
+        (JSC::JIT::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::JIT::addSlowCase):
+        (JSC::JIT::addJump):
+        (JSC::JIT::emitJumpSlowToHot):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+
 2008-12-12  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Sam Weinig.
@@ -17,7 +76,7 @@
 
 2008-12-12  Gavin Barraclough  <barraclough@apple.com>
 
-        Reviewed by Camron Zwarich.
+        Reviewed by Cameron Zwarich.
 
         Replace emitPutCallArg methods with emitPutJITStubArg methods.  Primarily to make the argument numbering
         more sensible (1-based incrementing by 1, rather than 0-based incrementing by 4).  The CTI name also seems
@@ -1739,7 +1798,7 @@
 
 2008-12-03  Gavin Barraclough  <barraclough@apple.com>
 
-        Reviewed by Camron Zwarich.
+        Reviewed by Cameron Zwarich.
 
         Allow JIT to operate without the call-repatching optimization.
         Controlled by ENABLE(JIT_OPTIMIZE_CALL), defaults on, disabling
@@ -2180,7 +2239,7 @@
 
 2008-11-29  Gavin Barraclough  <barraclough@apple.com>
 
-        Reviewed by Camron Zwarich.
+        Reviewed by Cameron Zwarich.
 
         Enable WREC on PLATFORM(X86_64).  This change predominantly requires changes to the
         WREC::Generator::generateEnter method to support the x86-64 ABI, and addition of
@@ -2317,7 +2376,7 @@
 
 2008-11-29  Gavin Barraclough  <barraclough@apple.com>
 
-        Reviewed by Camron Zwarich.
+        Reviewed by Cameron Zwarich.
 
         Add the class MacroAssembler to provide some abstraction of code generation,
         and change WREC to make use of this class, rather than directly accessing
@@ -2671,7 +2730,7 @@
 
 2008-11-24  Gavin Barraclough  <barraclough@apple.com>
 
-        Reviewed by Camron Zwarich.
+        Reviewed by Cameron Zwarich.
 
         Implement repatching for get by id chain.
         Previously the access is performed in a function stub, in the repatch form
@@ -2711,7 +2770,7 @@
 
 2008-11-22  Gavin Barraclough  <barraclough@apple.com>
 
-        Reviewed by Camron Zwarich.
+        Reviewed by Cameron Zwarich.
 
         Replace accidentally deleted immediate check from get by id chain trampoline.
         https://bugs.webkit.org/show_bug.cgi?id=22413
@@ -7257,7 +7316,7 @@
 
 2008-11-10  Gavin Barraclough  <barraclough@apple.com>
 
-        Reviewed by Camron Zwarich.
+        Reviewed by Cameron Zwarich.
 
         Batch compile the set of static trampolines at the point Machine is constructed, using a single allocation.
         Refactor out m_callFrame from CTI, since this is only needed to access the global data (instead store a
@@ -15851,7 +15910,7 @@
 
 2008-09-23  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Camron Zwarich.
+        Reviewed by Cameron Zwarich.
 
         - inline the fast case of instanceof
         https://bugs.webkit.org/show_bug.cgi?id=20818

@@ -107,7 +107,7 @@ namespace JSC {
     typedef VoidPtrPair (SFX_CALL *CTIHelper_2)(CTI_ARGS);
 
     struct CallRecord {
-        X86Assembler::JmpSrc from;
+        MacroAssembler::Jump from;
         unsigned bytecodeIndex;
         void* to;
 
@@ -115,7 +115,7 @@ namespace JSC {
         {
         }
 
-        CallRecord(X86Assembler::JmpSrc from, unsigned bytecodeIndex, void* to = 0)
+        CallRecord(MacroAssembler::Jump from, unsigned bytecodeIndex, void* to = 0)
             : from(from)
             , bytecodeIndex(bytecodeIndex)
             , to(to)
@@ -123,13 +123,13 @@ namespace JSC {
         }
     };
 
-    struct JmpTable {
-        X86Assembler::JmpSrc from;
-        unsigned to;
-        
-        JmpTable(X86Assembler::JmpSrc f, unsigned t)
+    struct JumpTable {
+        MacroAssembler::Jump from;
+        unsigned toBytecodeIndex;
+
+        JumpTable(MacroAssembler::Jump f, unsigned t)
             : from(f)
-            , to(t)
+            , toBytecodeIndex(t)
         {
         }
     };
@@ -182,13 +182,10 @@ namespace JSC {
     };
 
     struct StructureStubCompilationInfo {
-        typedef X86Assembler::JmpSrc JmpSrc;
-        typedef X86Assembler::JmpDst JmpDst;
-
-        JmpSrc callReturnLocation;
-        JmpDst hotPathBegin;
-        JmpSrc hotPathOther;
-        JmpDst coldPathOther;
+        X86Assembler::JmpSrc callReturnLocation;
+        X86Assembler::JmpDst hotPathBegin;
+        X86Assembler::JmpSrc hotPathOther;
+        X86Assembler::JmpDst coldPathOther;
     };
 
     extern "C" {
@@ -203,11 +200,6 @@ namespace JSC {
         using MacroAssembler::Jump;
         using MacroAssembler::JumpList;
         using MacroAssembler::Label;
-
-        typedef X86Assembler::RegisterID RegisterID;
-        typedef X86Assembler::XMMRegisterID XMMRegisterID;
-        typedef X86Assembler::JmpSrc JmpSrc;
-        typedef X86Assembler::JmpDst JmpDst;
 
         static const RegisterID callFrameRegister = X86::edi;
 
@@ -329,9 +321,9 @@ namespace JSC {
         void privateCompileCTIMachineTrampolines();
         void privateCompilePatchGetArrayLength(void* returnAddress);
 
-        void addSlowCase(JmpSrc);
-        void addJump(JmpSrc, int);
-        void emitJumpSlowToHot(JmpSrc, int);
+        void addSlowCase(Jump);
+        void addJump(Jump, int);
+        void emitJumpSlowToHot(Jump, int);
 
         void compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident, unsigned propertyAccessInstructionIndex);
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, unsigned propertyAccessInstructionIndex);
@@ -345,7 +337,7 @@ namespace JSC {
         void compileOpConstructSetupArgs(Instruction*);
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, CompileOpStrictEqType type);
-        void putDoubleResultToJSNumberCellOrJSImmediate(XMMRegisterID xmmSource, RegisterID jsNumberCell, unsigned dst, JmpSrc* wroteJSNumberCell, XMMRegisterID tempXmm, RegisterID tempReg1, RegisterID tempReg2);
+        void putDoubleResultToJSNumberCellOrJSImmediate(X86Assembler::XMMRegisterID xmmSource, RegisterID jsNumberCell, unsigned dst, X86Assembler::JmpSrc* wroteJSNumberCell, X86Assembler::XMMRegisterID tempXmm, RegisterID tempReg1, RegisterID tempReg2);
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);
         void compileBinaryArithOpSlowCase(OpcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);
 
@@ -392,10 +384,10 @@ namespace JSC {
         void emitJumpSlowCaseIfNotImmNum(RegisterID);
         void emitJumpSlowCaseIfNotImmNums(RegisterID, RegisterID, RegisterID);
 
-        JmpSrc checkStructure(RegisterID reg, Structure* structure);
+        Jump checkStructure(RegisterID reg, Structure* structure);
 
         void emitFastArithDeTagImmediate(RegisterID);
-        JmpSrc emitFastArithDeTagImmediateJumpIfZero(RegisterID);
+        Jump emitFastArithDeTagImmediateJumpIfZero(RegisterID);
         void emitFastArithReTagImmediate(RegisterID);
         void emitFastArithPotentiallyReTagImmediate(RegisterID);
         void emitFastArithImmToInt(RegisterID);
@@ -404,16 +396,16 @@ namespace JSC {
 
         void emitTagAsBoolImmediate(RegisterID reg);
 
-        JmpSrc emitNakedCall(RegisterID);
-        JmpSrc emitNakedCall(void* function);
-        JmpSrc emitCTICall_internal(void*);
-        JmpSrc emitCTICall(CTIHelper_j helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        JmpSrc emitCTICall(CTIHelper_o helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        JmpSrc emitCTICall(CTIHelper_p helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        JmpSrc emitCTICall(CTIHelper_v helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        JmpSrc emitCTICall(CTIHelper_s helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        JmpSrc emitCTICall(CTIHelper_b helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        JmpSrc emitCTICall(CTIHelper_2 helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Jump emitNakedCall(RegisterID);
+        Jump emitNakedCall(void* function);
+        Jump emitCTICall_internal(void*);
+        Jump emitCTICall(CTIHelper_j helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Jump emitCTICall(CTIHelper_o helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Jump emitCTICall(CTIHelper_p helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Jump emitCTICall(CTIHelper_v helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Jump emitCTICall(CTIHelper_s helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Jump emitCTICall(CTIHelper_b helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Jump emitCTICall(CTIHelper_2 helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
 
         void emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst);
         void emitPutVariableObjectRegister(RegisterID src, RegisterID variableObject, int index);
@@ -430,17 +422,17 @@ namespace JSC {
         CodeBlock* m_codeBlock;
 
         Vector<CallRecord> m_calls;
-        Vector<JmpDst> m_labels;
+        Vector<Label> m_labels;
         Vector<StructureStubCompilationInfo> m_propertyAccessCompilationInfo;
         Vector<StructureStubCompilationInfo> m_callStructureStubCompilationInfo;
-        Vector<JmpTable> m_jmpTable;
+        Vector<JumpTable> m_jmpTable;
 
         struct JSRInfo {
-            JmpDst addrPosition;
-            JmpDst target;
+            DataLabelPtr storeLocation;
+            Label target;
 
-            JSRInfo(const JmpDst& storeLocation, const JmpDst& targetLocation)
-                : addrPosition(storeLocation)
+            JSRInfo(DataLabelPtr storeLocation, Label targetLocation)
+                : storeLocation(storeLocation)
                 , target(targetLocation)
             {
             }
