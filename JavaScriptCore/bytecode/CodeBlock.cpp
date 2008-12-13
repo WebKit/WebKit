@@ -1423,7 +1423,7 @@ bool CodeBlock::getByIdExceptionInfoForBytecodeOffset(unsigned bytecodeOffset, O
             high = mid;
     }
 
-    if (!low)
+    if (!low || m_getByIdExceptionInfo[low - 1].bytecodeOffset != bytecodeOffset)
         return false;
 
     opcodeID = m_getByIdExceptionInfo[low - 1].isOpConstruct ? op_construct : op_instanceof;

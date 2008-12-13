@@ -1,3 +1,20 @@
+2008-12-12  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix the failures of the following layout tests, which regressed in
+        r39255:
+
+        fast/dom/StyleSheet/ownerNode-lifetime-2.html
+        fast/xsl/transform-xhr-doc.xhtml
+
+        The binary search in CodeBlock::getByIdExceptionInfoForBytecodeOffset()
+        doesn't guarantee that it actually finds a match, so add an explicit check
+        for this.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::getByIdExceptionInfoForBytecodeOffset):
+
 2008-12-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Camron Zwarich.
