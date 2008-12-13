@@ -29,25 +29,170 @@
 #include "CachedImage.h"
 #include "GraphicsContext.h"
 #include "Image.h"
-#include "NotImplemented.h"
 #include "RetainPtr.h"
+
+#include <cairo-win32.h>
+#include "GraphicsContextPlatformPrivateCairo.h"
 
 #include <windows.h>
 
+extern "C" {
+typedef struct _cairo* CairoContextRef;
+}
+
 namespace WebCore {
+
+void deallocContext(CairoContextRef target)
+{
+    cairo_destroy(target);
+}
+
+HBITMAP allocImage(HDC dc, IntSize size, CairoContextRef* targetRef)
+{
+    BITMAPINFO bmpInfo = {0};
+    bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmpInfo.bmiHeader.biWidth = size.width();
+    bmpInfo.bmiHeader.biHeight = size.height(); // Must be positive!
+    bmpInfo.bmiHeader.biPlanes = 1;
+    bmpInfo.bmiHeader.biBitCount = 32;
+    bmpInfo.bmiHeader.biCompression = BI_RGB;
+    bmpInfo.bmiHeader.biClrUsed = 0; // unused
+    bmpInfo.bmiHeader.biClrImportant = 0;
+
+    LPVOID bits;
+    HBITMAP hbmp = CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0);
+
+    // At this point, we have a Cairo surface that points to a Windows DIB.  The DIB interprets
+    // with the opposite meaning of positive Y axis, so everything we draw into this cairo
+    // context is going to be upside down.
+    if (!targetRef)
+        return hbmp;
+
+    cairo_surface_t* bitmapContext = cairo_image_surface_create_for_data((unsigned char*)bits,
+                                               CAIRO_FORMAT_ARGB32,
+                                               bmpInfo.bmiHeader.biWidth,
+                                               bmpInfo.bmiHeader.biHeight,
+                                               bmpInfo.bmiHeader.biWidth * 4);
+
+    if (!bitmapContext) {
+        DeleteObject(hbmp);
+        return 0;
+    }
+
+    *targetRef = cairo_create (bitmapContext);
+    cairo_surface_destroy (bitmapContext);
+
+    // At this point, we have a Cairo surface that points to a Windows DIB.  The DIB interprets
+    // with the opposite meaning of positive Y axis, so everything we draw into this cairo
+    // context is going to be upside down.
+    //
+    // So, we must invert the CTM for the context so that drawing commands will be flipped
+    // before they get written to the internal buffer.
+    cairo_matrix_t matrix;
+    cairo_matrix_init(&matrix, 1.0, 0.0, 0.0, -1.0, 0.0, size.height());
+    cairo_set_matrix(*targetRef, &matrix);
+
+    return hbmp;
+}
+
+static cairo_surface_t* createCairoContextFromBitmap(HBITMAP bitmap)
+{
+    BITMAP info;
+    GetObject(bitmap, sizeof(info), &info);
+    ASSERT(info.bmBitsPixel == 32);
+
+    // At this point, we have a Cairo surface that points to a Windows BITMAP.  The BITMAP
+    // has the opposite meaning of positive Y axis, so everything we draw into this cairo
+    // context is going to be upside down.
+    return cairo_image_surface_create_for_data((unsigned char*)info.bmBits,
+                                               CAIRO_FORMAT_ARGB32,
+                                               info.bmWidth,
+                                               info.bmHeight,
+                                               info.bmWidthBytes);
+}
 
 DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
 {
-    notImplemented();
+    // FIXME: due to the way drag images are done on windows we need 
+    // to preprocess the alpha channel <rdar://problem/5015946>
+    if (!image)
+        return 0;
 
-    return image;
+    IntSize srcSize = dragImageSize(image);
+    IntSize dstSize(static_cast<int>(srcSize.width() * scale.width()), static_cast<int>(srcSize.height() * scale.height()));
+
+    HBITMAP hbmp = 0;
+    HDC dc = GetDC(0);
+    HDC dstDC = CreateCompatibleDC(dc);
+
+    if (!dstDC)
+        goto exit;
+
+    CairoContextRef targetContext;
+    hbmp = allocImage(dstDC, dstSize, &targetContext);
+    if (!hbmp)
+        goto exit;
+
+    cairo_surface_t* srcImage = createCairoContextFromBitmap(image);
+
+    // Scale the target surface to the new image size, and flip it
+    // so that when we set the srcImage as the surface it will draw
+    // right-side-up.
+    cairo_translate(targetContext, 0, dstSize.height());
+    cairo_scale(targetContext, scale.width(), -scale.height());
+    cairo_set_source_surface (targetContext, srcImage, 0.0, 0.0);
+
+    // Now we can paint and get the correct result
+    cairo_paint(targetContext);
+
+    cairo_surface_destroy (srcImage);
+    cairo_destroy(targetContext);
+    ::DeleteObject(image);
+    image = 0;
+
+exit:
+    if (!hbmp)
+        hbmp = image;
+    if (dstDC)
+        DeleteDC(dstDC);
+    ReleaseDC(0, dc);
+    return hbmp;
 }
     
 DragImageRef createDragImageFromImage(Image* img)
 {
-    notImplemented();
+    HBITMAP hbmp = 0;
+    HDC dc = GetDC(0);
+    HDC workingDC = CreateCompatibleDC(dc);
+    if (!workingDC)
+        goto exit;
 
-    return 0;
+    CairoContextRef drawContext = 0;
+    hbmp = allocImage(workingDC, img->size(), &drawContext);
+    if (!hbmp)
+        goto exit;
+
+    if (!drawContext) {
+        ::DeleteObject(hbmp);
+        hbmp = 0;
+    }
+
+    cairo_set_source_rgb (drawContext, 1.0, 0.0, 1.0);
+    cairo_fill_preserve (drawContext);
+
+    cairo_surface_t* srcImage = img->nativeImageForCurrentFrame();
+
+    // Draw the image.
+    cairo_set_source_surface(drawContext, srcImage, 0.0, 0.0);
+    cairo_paint(drawContext);
+
+    cairo_destroy (drawContext);
+
+exit:
+    if (workingDC)
+        DeleteDC(workingDC);
+    ReleaseDC(0, dc);
+    return hbmp;
 }
     
 }

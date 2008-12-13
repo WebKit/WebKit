@@ -1,3 +1,25 @@
+2008-12-12  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22805
+
+        Provides implementation of image dragging logic for Windows Cairo
+        back-end.
+
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::deallocContext): Add a generic CGContextRef destructor.
+        * platform/win/DragImageCairoWin.cpp:
+        (WebCore::deallocContext): Add a generic cairo_* destructor. 
+        (WebCore::allocImage):  New implementation to allocate a Cairo
+        surface of a specified size.
+        (WebCore::createCairoContextFromBitmap): New implementation to
+        create a Cairo surface from a Windows BITMAP.
+        (WebCore::scaleDragImage): Replace stub with implementation to
+        actually create a scaled image.
+        (WebCore::createDragImageFromImage): Replace stub with implementation
+        to actually create an image.
+
 2008-12-12  Dean Jackson  <dino@apple.com>
 
         Reviewed by Darin Adler.

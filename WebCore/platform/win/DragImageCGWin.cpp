@@ -37,6 +37,11 @@
 
 namespace WebCore {
 
+void deallocContext(CGContextRef target)
+{
+    CGContextRelease(target);
+}
+
 HBITMAP allocImage(HDC dc, IntSize size, CGContextRef *targetRef)
 {
     HBITMAP hbmp;
