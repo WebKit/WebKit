@@ -1,5 +1,18 @@
 2008-12-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        There's no need to hold on to the QCComposition. Also, toggle between a gold and silver compass 
+        when a mouse button is pressed.
+        
+        * NetscapeCoreAnimationPlugin/Composition.qtz:
+        * NetscapeCoreAnimationPlugin/main.m:
+        (NPP_Destroy):
+        (handleMouseClick):
+        (NPP_GetValue):
+
+2008-12-12  Anders Carlsson  <andersca@apple.com>
+
         Revert some accidentally committed changes.
         
         * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:

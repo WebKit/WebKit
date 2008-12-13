@@ -49,9 +49,8 @@ typedef struct PluginObject
     
     NPWindow window;
     
-    QCComposition *composition;
-    CALayer *layer;
-    
+    QCCompositionLayer *layer;
+    bool gold;
 } PluginObject;
 
 NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char* argn[], char* argv[], NPSavedData* saved);
@@ -145,7 +144,6 @@ NPError NPP_Destroy(NPP instance, NPSavedData** save)
     // Free per-instance storage
     PluginObject *obj = instance->pdata;
 
-    [obj->composition release];
     [obj->layer release];
     
     free(obj);
@@ -194,6 +192,9 @@ void NPP_Print(NPP instance, NPPrint* platformPrint)
 
 static void handleMouseClick(PluginObject *obj, NPCocoaEvent *event)
 {
+    obj->gold = !obj->gold;
+    
+    [obj->layer setValue:[NSNumber numberWithBool:obj->gold] forInputKey:@"gold"];
 }
 
 int16 NPP_HandleEvent(NPP instance, void* event)
@@ -224,9 +225,9 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
         case NPPVpluginCoreAnimationLayer:
             if (!obj->layer) {
                 NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.netscapecoreanimationplugin"] pathForResource:@"Composition" ofType:@"qtz"];
-                
-                obj->composition = [[QCComposition compositionWithFile:path] retain];
-                obj->layer = [[QCCompositionLayer compositionLayerWithComposition:obj->composition] retain];
+
+                QCComposition *composition = [QCComposition compositionWithFile:path];
+                obj->layer = [[QCCompositionLayer compositionLayerWithComposition:composition] retain];
             }
             
             // Make sure to return a retained layer
