@@ -17,7 +17,7 @@ worker.postMessage("eval typeof navigator");
 worker.postMessage("eval navigator");
 worker.postMessage("eval navigator.appName");
 worker.postMessage("eval navigator.appVersion.indexOf('WebKit') != 0");
-worker.postMessage("eval navigator.platform.length > 0");
+worker.postMessage("eval typeof navigator.platform");
 worker.postMessage("eval navigator.userAgent.indexOf('WebKit') != 0");
 worker.postMessage("eval typeof navigator.onLine");
 worker.postMessage("eval foo//bar");
