@@ -431,8 +431,10 @@
 #define ENABLE_JIT_OPTIMIZE_ARITHMETIC 1
 #endif
 
-/* WREC only supports x86 at the moment, and has only been tested on Mac and Windows. */
-#if !defined(ENABLE_WREC) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
+/* WREC supports x86 & x86-64, and has been tested on Mac and Windows ('cept on 64-bit on Mac). */
+#if (!defined(ENABLE_WREC) && PLATFORM(X86) && PLATFORM(MAC)) \
+ || (!defined(ENABLE_WREC) && PLATFORM(X86_64) && PLATFORM(MAC)) \
+ || (!defined(ENABLE_WREC) && PLATFORM(X86) && PLATFORM(WIN))
 #define ENABLE_WREC 1
 #endif
 

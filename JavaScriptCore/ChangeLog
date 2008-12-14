@@ -1,5 +1,22 @@
 2008-12-13  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        Re-enable WREC on 64-bit.
+        Implements one of the MacroAssembler::jnzPtr methods, previously only implemented for 32-bit x86.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22849
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::testImm64):
+        (JSC::MacroAssembler::jnzPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::testq_i32r):
+        (JSC::X86Assembler::testq_rr):
+        * wtf/Platform.h:
+
+2008-12-13  Gavin Barraclough  <barraclough@apple.com>
+
         Fix PPC builds.
 
         * assembler/MacroAssembler.h:

@@ -602,6 +602,24 @@ public:
         modRm_rr(src, dst);
     }
     
+#if PLATFORM(X86_64)
+    void testq_i32r(int imm, RegisterID dst)
+    {
+        m_buffer.ensureSpace(maxInstructionSize);
+        m_buffer.putByteUnchecked(REX_W);
+        m_buffer.putByteUnchecked(OP_GROUP3_EvIz);
+        modRm_opr_Unchecked(GROUP3_OP_TEST, dst);
+        m_buffer.putIntUnchecked(imm);
+    }
+
+    void testq_rr(RegisterID src, RegisterID dst)
+    {
+        m_buffer.putByte(REX_W);
+        m_buffer.putByte(OP_TEST_EvGv);
+        modRm_rr(src, dst);
+    }
+#endif 
+
     void xorl_i8r(int imm, RegisterID dst)
     {
         m_buffer.putByte(OP_GROUP1_EvIb);

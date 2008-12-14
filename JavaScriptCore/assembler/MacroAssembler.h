@@ -848,6 +848,19 @@ private:
         }
     }
 
+#if PLATFORM(X86_64)
+    void testImm64(RegisterID reg, Imm32 mask)
+    {
+        // if we are only interested in the low seven bits, this can be tested with a testb
+        if (mask.m_value == -1)
+            m_assembler.testq_rr(reg, reg);
+        else if ((mask.m_value & ~0x7f) == 0)
+            m_assembler.testb_i8r(mask.m_value, reg);
+        else
+            m_assembler.testq_i32r(mask.m_value, reg);
+    }
+#endif
+
 public:
     Jump jae32(RegisterID left, Imm32 right)
     {
@@ -1017,12 +1030,17 @@ public:
         return Jump(m_assembler.jne());
     }
     
-#if !PLATFORM(X86_64)
     Jump jnzPtr(RegisterID reg, Imm32 mask = Imm32(-1))
     {
+#if PLATFORM(X86_64)
+        testImm64(reg, mask);
+        return Jump(m_assembler.jne());
+#else
         return jnz32(reg, mask);
+#endif
     }
 
+#if !PLATFORM(X86_64)
     Jump jnzPtr(Address address, Imm32 mask = Imm32(-1))
     {
         return jnz32(address, mask);
