@@ -1,3 +1,23 @@
+2008-12-14  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Add a new WML testcase covering <timer> and <go> combinations: wml/go-task-animation.html
+
+        * wml/go-task-animation-expected.txt: Added.
+        * wml/go-task-animation.html: Added.
+        * wml/resources/WMLTestCase.js:
+        (createWMLTestCase.iframeElement.onload):
+        (createWMLTestCase):
+        * wml/resources/animation.wml: Added.
+        * wml/resources/go-task-animation.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/go-task-get-method-same-deck.js:
+        (setupTestDocument):
+        * wml/resources/test-document.wml:
+
 2008-12-14  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -253,7 +253,31 @@ RenderObject* WMLCardElement::createRenderer(RenderArena* arena, RenderStyle* st
     return WMLElement::createRenderer(arena, style);
 }
 
-WMLCardElement* WMLCardElement::setActiveCardInDocument(Document* doc, const KURL& targetUrl)
+WMLCardElement* WMLCardElement::findNamedCardInDocument(Document* doc, const String& cardName)
+{
+    if (cardName.isEmpty())
+        return 0;
+
+    RefPtr<NodeList> nodeList = doc->getElementsByTagName("card");
+    if (!nodeList)
+        return 0;
+
+    unsigned length = nodeList->length();
+    if (length < 1)
+        return 0;
+
+    for (unsigned i = 0; i < length; ++i) {
+        WMLCardElement* card = static_cast<WMLCardElement*>(nodeList->item(i));
+        if (card->getIDAttribute() != cardName)
+            continue;
+
+        return card;
+    }
+
+    return 0;
+}
+
+WMLCardElement* WMLCardElement::determineActiveCard(Document* doc)
 {
     WMLPageState* pageState = wmlPageStateForDocument(doc);
     if (!pageState)
@@ -268,28 +292,9 @@ WMLCardElement* WMLCardElement::setActiveCardInDocument(Document* doc, const KUR
         return 0;
 
     // Figure out the new target card
-    WMLCardElement* activeCard = 0;
-    KURL url = targetUrl.isEmpty() ? doc->url() : targetUrl;
+    String cardName = doc->url().ref();
 
-    if (url.hasRef()) {
-        String ref = url.ref();
-
-        for (unsigned i = 0; i < length; ++i) {
-            WMLCardElement* card = static_cast<WMLCardElement*>(nodeList->item(i));
-            if (card->getIDAttribute() != ref)
-                continue;
-
-            // Force frame loader to load the URL with fragment identifier
-            if (Frame* frame = doc->frame()) {
-                if (FrameLoader* loader = frame->loader())
-                    loader->setForceReloadWmlDeck(true);
-            }
-
-            activeCard = card;
-            break;
-        }
-    }
-
+    WMLCardElement* activeCard = findNamedCardInDocument(doc, cardName);
     if (activeCard) {
         // Hide all cards - except the destination card - in document
         for (unsigned i = 0; i < length; ++i) {

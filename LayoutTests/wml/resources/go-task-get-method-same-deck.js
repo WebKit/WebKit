@@ -12,14 +12,6 @@ function setupTestDocument() {
     var goElement = createWMLElement("go");
     goElement.setAttribute("href", "#card2");
     anchorElement.appendChild(goElement);
-
-    var targetCardElement = createWMLElement("card");
-    targetCardElement.setAttribute("id", "card2");
-    cardElement.parentNode.appendChild(targetCardElement);
-
-    var pElement = createWMLElement("p");
-    pElement.textContent = "Test passed";
-    targetCardElement.appendChild(pElement);
 }
 
 function prepareTest() {

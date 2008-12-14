@@ -103,16 +103,20 @@ void WMLGoElement::executeTask(Event* event)
     // Stop the timer of the current card if it is active
     if (WMLTimerElement* eventTimer = card->eventTimer())
         eventTimer->stop();
- 
-    // If the 'newcontext' attribute of the destination card
-    // is set to 'true', reinitialize the WMLPageState context
-    if (WMLCardElement* newCard = WMLCardElement::setActiveCardInDocument(doc, url)) {
-        if (newCard->isNewContext())
-            pageState->reset();
+
+    // FIXME: 'newcontext' handling not implemented for external cards
+    bool inSameDeck = doc->url().path() == url.path();
+    if (inSameDeck && url.hasRef()) {
+        // Force frame loader to load the URL with fragment identifier
+        loader->setForceReloadWmlDeck(true);
+
+        if (WMLCardElement* card = WMLCardElement::findNamedCardInDocument(doc, url.ref())) {
+            if (card->isNewContext())
+                pageState->reset();
+        }
     }
 
     // Prepare loading the destination url
-    bool inSameDeck = doc->url().path() == url.path();
     ResourceRequest request(url);
 
     if (getAttribute(sendrefererAttr) == "true")
@@ -127,7 +131,7 @@ void WMLGoElement::executeTask(Event* event)
         if (m_isMultiPart)
             return;
 
-        prepareGETRequest(request, inSameDeck, url);
+        prepareGETRequest(request, url);
     }
 
     // Set HTTP cache-control header if needed
@@ -180,15 +184,8 @@ void WMLGoElement::preparePOSTRequest(ResourceRequest& request, bool inSameDeck,
     */
 }
 
-void WMLGoElement::prepareGETRequest(ResourceRequest& request, bool inSameDeck, const KURL& url)
+void WMLGoElement::prepareGETRequest(ResourceRequest& request, const KURL& url)
 {
-    request.setHTTPMethod("GET");
-
-    if (inSameDeck) {
-        request.setCachePolicy(ReturnCacheDataDontLoad);
-        return;
-    }
-
     String queryString;
 
     HashSet<WMLPostfieldElement*>::iterator it = m_postfieldElements.begin();
@@ -206,7 +203,11 @@ void WMLGoElement::prepareGETRequest(ResourceRequest& request, bool inSameDeck, 
 
     KURL remoteURL(url);
     remoteURL.setQuery(queryString);
+
     request.setURL(remoteURL);
+    request.setHTTPMethod("GET");
+
+
 }
 
 }

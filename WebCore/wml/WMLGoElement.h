@@ -43,7 +43,7 @@ private:
     void parseContentType(const String&);
 
     void preparePOSTRequest(ResourceRequest&, bool inSameDeck, const String& cacheControl);
-    void prepareGETRequest(ResourceRequest&, bool inSameDeck, const KURL&);
+    void prepareGETRequest(ResourceRequest&, const KURL&);
 
     HashSet<WMLPostfieldElement*> m_postfieldElements;
 

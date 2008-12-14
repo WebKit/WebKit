@@ -1,3 +1,31 @@
+2008-12-14  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22857
+
+        Jumps within a WML deck using <go> task elements fail. Manual reloading
+        is necessary to display the page - fix cache-policy in WMLGoElement::executeTask
+        to prevent the problem.
+
+        Refactor setActiveCardInDocument in two new functions: findNamedCardInDocument
+        and determineActiveCard, to fix a side-effect of executing a <go> task:
+        when switching cards within a deck the active card was changed before the load
+        was fired which resulted in a flash effect on the screen, and doing unnecessary work.
+
+        Test: wml/go-task-animation.html
+
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::findNamedCardInDocument):
+        (WebCore::WMLCardElement::determineActiveCard):
+        * wml/WMLCardElement.h:
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::finishedParsing):
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::executeTask):
+        (WebCore::WMLGoElement::prepareGETRequest):
+        * wml/WMLGoElement.h:
+
 2008-12-14  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

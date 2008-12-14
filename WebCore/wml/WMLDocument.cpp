@@ -66,7 +66,7 @@ void WMLDocument::finishedParsing()
     WMLTemplateElement::registerTemplatesInDocument(this);
 
     // Set destination card
-    WMLCardElement* card = WMLCardElement::setActiveCardInDocument(this, KURL());
+    WMLCardElement* card = WMLCardElement::determineActiveCard(this);
     if (!card) {
         reportWMLError(this, WMLErrorNoCardInDocument);
         Document::finishedParsing();

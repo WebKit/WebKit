@@ -9,9 +9,15 @@ function createWMLElement(name) {
     return testDocument.createElementNS(wmlNS, "wml:" + name);
 }
 
-function createWMLTestCase(desc, substituteVariables) {
+function createWMLTestCase(desc, substituteVariables, testName) {
     if (substituteVariables == null)
         substituteVariables = true;
+
+    var defaultTest = true;
+    if (testName == null) {
+        defaultTest = false;
+        testName = "resources/test-document.wml";
+    }
 
     description(desc);
     bodyElement = document.getElementsByTagName("body")[0];
@@ -25,13 +31,13 @@ function createWMLTestCase(desc, substituteVariables) {
     }
 
     iframeElement = document.createElementNS(xhtmlNS, "iframe");
-    iframeElement.src = "resources/test-document.wml";
+    iframeElement.src = testName;
 
     var loaded = false;
     var executed = false;
 
     iframeElement.onload = function() {
-        if (executed)
+        if (executed && !defaultTest)
             return;
 
         // External deck jumps
