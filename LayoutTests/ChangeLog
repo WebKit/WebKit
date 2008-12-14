@@ -4,7 +4,7 @@
 
         * fast/workers/worker-navigator-expected.txt:
         * fast/workers/worker-navigator.html:
-        navigator.platform.length is intentionally zero on Gtk+, changed to check for uts type.
+        navigator.platform.length is intentionally zero on Gtk+, changed to check for its type.
 
 2008-12-13  Alexey Proskuryakov  <ap@webkit.org>
 
