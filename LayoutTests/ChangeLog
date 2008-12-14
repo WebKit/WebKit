@@ -1,3 +1,15 @@
+2008-12-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        This test is wrong. We shouldn't fill something with a gradient, if the
+        path is empty.
+
+        * fast/canvas/gradient-empty-path.html: Removed.
+        * platform/mac/fast/canvas/gradient-empty-path-expected.checksum: Removed.
+        * platform/mac/fast/canvas/gradient-empty-path-expected.png: Removed.
+        * platform/mac/fast/canvas/gradient-empty-path-expected.txt: Removed.
+
 2008-12-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
