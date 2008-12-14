@@ -1,3 +1,19 @@
+2008-12-14  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fixes an issue in cairo. A fully transparent color can cause wrong
+        drawings on canvas' composite.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22846
+        [CAIRO] Canvas: transparent color and composite
+
+        Test: fast/canvas/canvas-transparency-and-composite.html
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+
 2008-12-13  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

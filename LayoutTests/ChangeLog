@@ -1,3 +1,13 @@
+2008-12-14  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Ensure correct behaviour of composite on a fully transparent color.
+
+        * fast/canvas/canvas-transparency-and-composite-expected.txt: Added.
+        * fast/canvas/canvas-transparency-and-composite.html: Added.
+        * fast/canvas/resources/canvas-transparency-and-composite.js: Added.
+
 2008-12-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Suggested by Holger Freyther.
