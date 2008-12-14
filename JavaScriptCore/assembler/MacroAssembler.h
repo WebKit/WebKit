@@ -147,6 +147,7 @@ public:
     // repatched after the code has been generated.
     class DataLabelPtr {
         friend class MacroAssembler;
+        friend class RepatchBuffer;
 
     public:
         DataLabelPtr()
