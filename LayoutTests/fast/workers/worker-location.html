@@ -23,6 +23,7 @@ if (window.layoutTestController) {
 }
 
 var worker = new Worker('resources/worker-common.js');
+worker.postMessage("eval WorkerLocation");
 worker.postMessage("eval typeof location");
 worker.postMessage("eval location");
 worker.postMessage("eval location.href");

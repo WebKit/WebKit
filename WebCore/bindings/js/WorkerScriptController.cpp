@@ -68,7 +68,9 @@ void WorkerScriptController::initScript()
 
     JSLock lock(false);
 
-    m_workerContextWrapper = new (m_globalData.get()) JSWorkerContext(m_workerContext);
+    RefPtr<Structure> prototypeStructure = JSWorkerContextPrototype::createStructure(jsNull());
+    RefPtr<Structure> structure = JSWorkerContext::createStructure(new (m_globalData.get()) JSWorkerContextPrototype(prototypeStructure.release()));
+    m_workerContextWrapper = new (m_globalData.get()) JSWorkerContext(structure.release(), m_workerContext);
 }
 
 ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)

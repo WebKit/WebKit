@@ -78,7 +78,6 @@ sources['dom'] = [
     'dom/Comment.cpp',
     'dom/ContainerNode.cpp',
     'dom/CSSMappedAttributeDeclaration.cpp',
-    'dom/DedicatedWorker.cpp',
     'dom/Document.cpp',
     'dom/DocumentFragment.cpp',
     'dom/DocumentType.cpp',
@@ -134,6 +133,9 @@ sources['dom'] = [
     'dom/WebKitAnimationEvent.cpp',
     'dom/WebKitTransitionEvent.cpp',
     'dom/WheelEvent.cpp',
+    'dom/Worker.cpp',
+    'dom/WorkerContext.cpp',
+    'dom/WorkerLocation.cpp',
     'dom/XMLTokenizer.cpp',
     'dom/XMLTokenizerLibxml2.cpp',
 ]
@@ -387,6 +389,7 @@ sources['page'] = [
     'page/SecurityOrigin.cpp',
     'page/Settings.cpp',
     'page/WindowFeatures.cpp',
+    'page/WorkerNavigator.cpp',
 ]
 sources['page/animation'] = [
     'page/animation/AnimationBase.cpp',
@@ -673,7 +676,8 @@ sources['bindings/js'] = [
     "bindings/js/JSTextCustom.cpp",
     "bindings/js/JSTreeWalkerCustom.cpp",
     "bindings/js/JSWorkerConstructor.cpp",
-    "bindings/js/JSWorkerContext.cpp",
+    "bindings/js/JSWorkerContextBase.cpp",
+    "bindings/js/JSWorkerContextCustom.cpp",
     "bindings/js/JSWorkerCustom.cpp",
     "bindings/js/JSXMLHttpRequestConstructor.cpp",
     "bindings/js/JSXMLHttpRequestCustom.cpp",

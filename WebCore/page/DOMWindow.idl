@@ -38,6 +38,7 @@ module window {
         CustomMarkFunction,
         CustomNativeConverter,
         CustomPutFunction,
+        ExtendsDOMGlobalObject,
         GenerateNativeConverter,
         LegacyParent=JSDOMWindowBase
     ] DOMWindow {

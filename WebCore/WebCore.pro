@@ -204,7 +204,7 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 DOMLUT_FILES += \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSRGBColor.cpp \
-    bindings/js/JSWorkerContext.cpp
+    bindings/js/JSWorkerContextBase.cpp
 
 IDL_BINDINGS += \
     css/Counter.idl \
@@ -273,6 +273,7 @@ IDL_BINDINGS += \
     dom/WebKitTransitionEvent.idl \
     dom/WheelEvent.idl \
     dom/Worker.idl \
+    dom/WorkerContext.idl \
     dom/WorkerLocation.idl \
     html/CanvasGradient.idl \
     html/CanvasPattern.idl \

@@ -1744,7 +1744,15 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerContext.lut.h"
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerContext.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerContextBase.lut.h"
 				>
 			</File>
 			<File
@@ -13973,11 +13981,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSWorkerContext.cpp"
+					RelativePath="..\bindings\js\JSWorkerContextBase.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSWorkerContext.h"
+					RelativePath="..\bindings\js\JSWorkerContextBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSWorkerContextCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSWorkerContextCustom.h"
 					>
 				</File>
 				<File

@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef JSWorkerContext_h
-#define JSWorkerContext_h
+#ifndef JSWorkerContextBase_h
+#define JSWorkerContextBase_h
 
 #if ENABLE(WORKERS)
 
@@ -35,47 +35,25 @@ namespace WebCore {
 
     class WorkerContext;
 
-    class JSWorkerContext : public JSDOMGlobalObject {
+    class JSWorkerContextBase : public JSDOMGlobalObject {
         typedef JSDOMGlobalObject Base;
     public:
-        JSWorkerContext(PassRefPtr<WorkerContext>);
-        virtual ~JSWorkerContext();
+        JSWorkerContextBase(PassRefPtr<JSC::Structure>, PassRefPtr<WorkerContext>);
+        virtual ~JSWorkerContextBase();
 
-        static JSC::JSObject* createPrototype(JSC::ExecState*);
         virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue*, JSC::PutPropertySlot&);
-        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue* prototype)
-        {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType));
-        }
 
         WorkerContext* impl() const { return m_impl.get(); }
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-        virtual void mark();
-
     private:
         RefPtr<WorkerContext> m_impl;
-    };
-
-    class JSWorkerContextPrototype : public JSC::JSObject {
-    public:
-        static JSC::JSObject* self(JSC::ExecState*);
-        JSWorkerContextPrototype(PassRefPtr<JSC::Structure> structure) : JSC::JSObject(structure) { }
-
-        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
-        static const JSC::ClassInfo s_info;
-        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue* prototype)
-        {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType));
-        }
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)
 
-#endif // JSWorkerContext_h
+#endif // JSWorkerContextBase_h

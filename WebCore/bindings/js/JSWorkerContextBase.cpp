@@ -28,22 +28,57 @@
 
 #if ENABLE(WORKERS)
 
-#include "WorkerNavigator.h"
+#include "JSWorkerContextBase.h"
+
+#include "Event.h"
+#include "JSDOMBinding.h"
+#include "JSEventListener.h"
+#include "JSMessageChannelConstructor.h"
+#include "JSMessageEvent.h"
+#include "JSMessagePort.h"
+#include "JSWorkerLocation.h"
+#include "JSWorkerNavigator.h"
+#include "WorkerContext.h"
+#include "WorkerLocation.h"
+
+using namespace JSC;
+
+/*
+@begin JSWorkerContextBaseTable
+@end
+*/
+
+#include "JSWorkerContextBase.lut.h"
 
 namespace WebCore {
 
-WorkerNavigator::WorkerNavigator(const String& userAgent)
-    : m_userAgent(userAgent)
+ASSERT_CLASS_FITS_IN_CELL(JSWorkerContextBase)
+
+JSWorkerContextBase::JSWorkerContextBase(PassRefPtr<JSC::Structure> structure, PassRefPtr<WorkerContext> impl)
+    : JSDOMGlobalObject(structure, new JSDOMGlobalObjectData, this)
+    , m_impl(impl)
 {
 }
 
-WorkerNavigator::~WorkerNavigator()
+JSWorkerContextBase::~JSWorkerContextBase()
 {
 }
 
-String WorkerNavigator::userAgent() const
+ScriptExecutionContext* JSWorkerContextBase::scriptExecutionContext() const
 {
-    return m_userAgent;
+    return m_impl.get();
+}
+
+static const HashTable* getJSWorkerContextBaseTable(ExecState* exec)
+{
+    return getHashTableForGlobalData(exec->globalData(), &JSWorkerContextBaseTable);
+}
+
+const ClassInfo JSWorkerContextBase::s_info = { "WorkerContext", 0, 0, getJSWorkerContextBaseTable };
+
+void JSWorkerContextBase::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
+{
+    lookupPut<JSWorkerContextBase, Base>(exec, propertyName, value, getJSWorkerContextBaseTable(exec), this, slot);
 }
 
 } // namespace WebCore

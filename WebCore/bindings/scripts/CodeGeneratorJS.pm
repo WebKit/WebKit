@@ -438,7 +438,7 @@ sub GenerateHeader
     push(@headerContent, "    virtual ~$className();\n") if (!$hasParent or $interfaceName eq "Document");
 
     # Prototype
-    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*);\n") if $interfaceName ne "DOMWindow";
+    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*);\n") unless ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"});
 
     $implIncludes{"${className}Custom.h"} = 1 if $dataNode->extendedAttributes->{"CustomHeader"} || $dataNode->extendedAttributes->{"CustomPutFunction"};
 
@@ -661,6 +661,8 @@ sub GenerateHeader
     push(@headerContent, "public:\n");
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    void* operator new(size_t);\n");
+    } elsif ($interfaceName eq "WorkerContext") {
+        push(@headerContent, "    void* operator new(size_t, JSC::JSGlobalData*);\n");
     } else {
         push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*);\n");
     }
@@ -893,16 +895,20 @@ sub GenerateImplementation
     } else {
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", 0, &${className}PrototypeTable, 0 };\n\n");
     }
-    if ($interfaceName ne "DOMWindow") {
-        push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return getDOMPrototype<${className}>(exec);\n");
-        push(@implContent, "}\n\n");
-    }
     if ($interfaceName eq "DOMWindow") {
         push(@implContent, "void* ${className}Prototype::operator new(size_t size)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return JSDOMWindow::commonJSGlobalData()->heap.allocate(size);\n");
+        push(@implContent, "}\n\n");
+    } elsif ($interfaceName eq "WorkerContext") {
+        push(@implContent, "void* ${className}Prototype::operator new(size_t size, JSGlobalData* globalData)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    return globalData->heap.allocate(size);\n");
+        push(@implContent, "}\n\n");
+    } else {
+        push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    return getDOMPrototype<${className}>(exec);\n");
         push(@implContent, "}\n\n");
     }
     if ($numConstants > 0 || $numFunctions > 0) {
@@ -999,7 +1005,7 @@ sub GenerateImplementation
         push(@implContent, "{\n    forgetDOMObject(*Heap::heap(this)->globalData(), static_cast<${implClassName}*>(impl()));\n}\n\n");
     }
 
-    if ($interfaceName ne "DOMWindow") {
+    if (!$dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
         push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
@@ -1213,8 +1219,8 @@ sub GenerateImplementation
                             } else {
                                 $listenerType = "JSUnprotectedEventListener";
                             }
-                            if ($interfaceName eq "DOMWindow") {
-                                push(@implContent, "    JSDOMGlobalObject* globalObject = static_cast<JSDOMWindow*>(thisObject);\n");
+                            if ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
+                                push(@implContent, "    JSDOMGlobalObject* globalObject = static_cast<$className*>(thisObject);\n");
                             } else {
                                 $implIncludes{"Frame.h"} = 1;
                                 $implIncludes{"JSDOMGlobalObject.h"} = 1;

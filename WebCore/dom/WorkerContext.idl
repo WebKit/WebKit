@@ -24,28 +24,38 @@
  *
  */
 
-#include "config.h"
+module threads {
 
-#if ENABLE(WORKERS)
+    interface [
+        Conditional=WORKERS,
+        CustomGetOwnPropertySlot,
+        CustomMarkFunction,
+        ExtendsDOMGlobalObject,
+        LegacyParent=JSWorkerContextBase,
+        NoStaticTables
+    ] WorkerContext {
+#if defined(LANGUAGE_JAVASCRIPT)
+        attribute [Custom] WorkerContext self;
+#endif
 
-#include "WorkerNavigator.h"
+        attribute EventListener onmessage;
+        void postMessage(in DOMString message);
 
-namespace WebCore {
+        attribute [Replaceable] WorkerLocation location;
+        attribute [Replaceable] WorkerNavigator navigator;
+        
+        attribute MessageEventConstructor MessageEvent;
+        attribute WorkerLocationConstructor WorkerLocation;
 
-WorkerNavigator::WorkerNavigator(const String& userAgent)
-    : m_userAgent(userAgent)
-{
+        // EventTarget interface
+        [Custom] void addEventListener(in DOMString type, 
+                                       in EventListener listener, 
+                                       in boolean useCapture);
+        [Custom] void removeEventListener(in DOMString type, 
+                                          in EventListener listener, 
+                                          in boolean useCapture);
+        boolean dispatchEvent(in Event evt)
+            raises(EventException);
+    };
+
 }
-
-WorkerNavigator::~WorkerNavigator()
-{
-}
-
-String WorkerNavigator::userAgent() const
-{
-    return m_userAgent;
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(WORKERS)

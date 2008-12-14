@@ -137,6 +137,7 @@ IDL_BINDINGS += \
 	WebCore/dom/WebKitTransitionEvent.idl \
 	WebCore/dom/WheelEvent.idl \
 	WebCore/dom/Worker.idl \
+	WebCore/dom/WorkerContext.idl \
 	WebCore/dom/WorkerLocation.idl \
 	WebCore/html/CanvasGradient.idl \
 	WebCore/html/CanvasPattern.idl \
@@ -2127,13 +2128,14 @@ webcore_cppflags += \
 	-DENABLE_WORKERS=1
 
 webcore_built_nosources += \
-	WebCore/bindings/js/JSWorkerContext.lut.h
+	WebCore/bindings/js/JSWorkerContextBase.lut.h
 
 webcore_sources += \
 	WebCore/bindings/js/JSWorkerConstructor.cpp \
 	WebCore/bindings/js/JSWorkerConstructor.h \
-	WebCore/bindings/js/JSWorkerContext.cpp \
-	WebCore/bindings/js/JSWorkerContext.h \
+	WebCore/bindings/js/JSWorkerContextBase.cpp \
+	WebCore/bindings/js/JSWorkerContextBase.h \
+	WebCore/bindings/js/JSWorkerContextCustom.cpp \
 	WebCore/bindings/js/JSWorkerCustom.cpp \
 	WebCore/bindings/js/WorkerScriptController.cpp \
 	WebCore/bindings/js/WorkerScriptController.h \
