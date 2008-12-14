@@ -1,5 +1,11 @@
 2008-12-13  Gavin Barraclough  <barraclough@apple.com>
 
+        Build fix only, no review.
+
+        * bytecode/CodeBlock.h:
+
+2008-12-13  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Port the remainder of the JIT, bar calling convention related code, and code

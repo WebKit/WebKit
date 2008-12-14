@@ -62,6 +62,7 @@ namespace JSC {
 #endif
     };
 
+#if ENABLE(JIT)
     // The code, and the associated pool from which it was allocated.
     struct JITCodeRef {
         void* code;
@@ -78,6 +79,7 @@ namespace JSC {
         {
         }
     };
+#endif
 
     struct ExpressionRangeInfo {
         enum {
