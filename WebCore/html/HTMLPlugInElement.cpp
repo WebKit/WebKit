@@ -45,7 +45,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc)
-    : HTMLFrameOwnerElement(tagName, doc)
+    // FIXME: Always passing false as createdByParser is odd (see bug22851).
+    : HTMLFrameOwnerElement(tagName, doc, false)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_NPObject(0)
 #endif

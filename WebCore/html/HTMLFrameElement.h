@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
@@ -38,7 +36,7 @@ class RenderStyle;
 class HTMLFrameElement : public HTMLFrameElementBase
 {
 public:
-    HTMLFrameElement(const QualifiedName&, Document*);
+    HTMLFrameElement(const QualifiedName&, Document*, bool createdByParser);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }

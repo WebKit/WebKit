@@ -1,3 +1,33 @@
+2008-12-13  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 22665: Remove setCreatedByParser(bool) from the few elements that use it
+        https://bugs.webkit.org/show_bug.cgi?id=22665
+
+        Remove setCreatedByParser from frame and iframe.
+
+        * html/HTMLElementFactory.cpp:
+        (WebCore::frameConstructor):
+        (WebCore::iframeConstructor):
+        (WebCore::objectConstructor):
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::HTMLFrameElement):
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase):
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::HTMLFrameOwnerElement):
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::HTMLFrameOwnerElement::createdByParser):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::HTMLIFrameElement):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement):
+        * html/HTMLTagNames.in:
+
 2008-12-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

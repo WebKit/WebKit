@@ -35,7 +35,7 @@ class SVGDocument;
 
 class HTMLFrameOwnerElement : public HTMLElement {
 protected:
-    HTMLFrameOwnerElement(const QualifiedName& tagName, Document*);
+    HTMLFrameOwnerElement(const QualifiedName& tagName, Document*, bool createdByParser);
 
 public:
     virtual ~HTMLFrameOwnerElement();
@@ -50,7 +50,6 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const { return m_contentFrame; }
     
     bool createdByParser() const { return m_createdByParser; }
-    void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
 
     virtual ScrollbarMode scrollingMode() const { return ScrollbarAuto; }
 
