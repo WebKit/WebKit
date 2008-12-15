@@ -33,6 +33,7 @@
 namespace WebCore {
     
     class CachedPagePlatformData;
+    class DOMWindow;
     class Document;
     class DocumentLoader;
     class FrameView;
@@ -46,10 +47,13 @@ public:
     ~CachedPage();
     
     void clear();
+
     Document* document() const { return m_document.get(); }
     FrameView* view() const { return m_view.get(); }
     Node* mousePressNode() const { return m_mousePressNode.get(); }
     const KURL& url() const { return m_URL; }
+    DOMWindow* domWindow() const;
+
     void restore(Page*);
         
     void setTimeStamp(double);

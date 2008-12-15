@@ -99,6 +99,11 @@ CachedPage::~CachedPage()
     clear();
 }
 
+DOMWindow* CachedPage::domWindow() const
+{
+    return m_window ? m_window->impl() : 0;
+}
+
 void CachedPage::restore(Page* page)
 {
     ASSERT(m_document->view() == m_view);

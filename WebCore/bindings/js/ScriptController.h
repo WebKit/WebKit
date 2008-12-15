@@ -112,6 +112,8 @@ public:
     void clearScriptObjects();
     void cleanupScriptObjectsForPlugin(void*);
 
+    void updatePlatformScriptObjects();
+
     PassScriptInstance createScriptInstanceForWidget(Widget*);
     JSC::Bindings::RootObject* bindingRootObject();
 
@@ -137,7 +139,6 @@ private:
     }
     void initScript();
 
-    void clearPlatformScriptObjects();
     void disconnectPlatformScriptObjects();
 
     JSC::ProtectedPtr<JSDOMWindowShell> m_windowShell;

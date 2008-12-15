@@ -117,7 +117,7 @@ WebScriptObject* ScriptController::windowScriptObject()
     return m_windowScriptObject.get();
 }
 
-void ScriptController::clearPlatformScriptObjects()
+void ScriptController::updatePlatformScriptObjects()
 {
     if (m_windowScriptObject) {
         JSC::Bindings::RootObject* root = bindingRootObject();

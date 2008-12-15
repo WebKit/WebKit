@@ -1620,6 +1620,15 @@ FrameTree* Frame::tree() const
     return &d->m_treeNode;
 }
 
+void Frame::setDOMWindow(DOMWindow* domWindow)
+{
+    if (d->m_domWindow) {
+        d->m_liveFormerWindows.add(d->m_domWindow.get());
+        d->m_domWindow->clear();
+    }
+    d->m_domWindow = domWindow;
+}
+
 DOMWindow* Frame::domWindow() const
 {
     if (!d->m_domWindow)
@@ -1660,6 +1669,7 @@ void Frame::pageDestroyed()
         script()->windowShell()->disconnectFrame();
 
     script()->clearScriptObjects();
+    script()->updatePlatformScriptObjects();
 
     d->m_page = 0;
 }

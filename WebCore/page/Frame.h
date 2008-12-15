@@ -86,8 +86,10 @@ public:
     Document* document() const;
     FrameView* view() const;
 
+    void setDOMWindow(DOMWindow*);
     DOMWindow* domWindow() const;
     void clearFormerDOMWindow(DOMWindow*);
+
     Editor* editor() const;
     EventHandler* eventHandler() const;
     FrameLoader* loader() const;

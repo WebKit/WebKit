@@ -1,3 +1,49 @@
+2008-12-15  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 22562: REGRESSION (r37971): events not firing after going back in back/forward cache
+        <https://bugs.webkit.org/show_bug.cgi?id=22562>
+        <rdar://problem/6414593>
+
+        Restore the Frame's DOMWindow to its previous value when going back in
+        the back/forward cache. The fact that it was not getting set before may
+        have always caused some subtle bugs with the back/forward cache, but
+        after r37971, it causes no events to fire after restoring a page.
+
+        Previously, ScriptController::clearScriptObjects() was calling
+        clearPlatformScriptObjects(), which was not actually clearing any
+        objects, only updating them to reflect some change in state. Since the
+        window shell was not updated until after the call to clearScriptObjects(),
+        this didn't actually make that much sense.
+
+        We rename clearPlatformScriptObjects() to reflect its actual purpose and
+        call it after the window shell has been updated rather than before.
+
+        Unfortunately, there is no way to test this with a layout test because
+        it involves the back/forward cache.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::updatePlatformScriptObjects): Renamed from
+        clearPlatformScriptObjects(), because the only nonempty implementation
+        doesn't actually clear any objects, it updates them. Also made public.
+        (WebCore::ScriptController::clearScriptObjects): Remove the call to
+        clearPlatformScriptObjects().
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::updatePlatformScriptObjects):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::domWindow): Added.
+        * history/CachedPage.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::cancelAndClear): Added call to updatePlatformScriptObjects().
+        (WebCore::FrameLoader::begin): Added call to updatePlatformScriptObjects().
+        (WebCore::FrameLoader::open): Added call to updatePlatformScriptObjects().
+        * page/Frame.cpp:
+        (WebCore::Frame::setDOMWindow): Added.
+        (WebCore::Frame::pageDestroyed): Added call to updatePlatformScriptObjects().
+        * page/Frame.h:
+
 2008-12-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.
