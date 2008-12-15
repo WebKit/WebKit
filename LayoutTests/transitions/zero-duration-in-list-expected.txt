@@ -1,0 +1,3 @@
+Tests that with a zero duration transition on top, it does not animate
+
+PASS

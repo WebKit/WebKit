@@ -1,0 +1,3 @@
+Interrupted hardware transition should not jump back to pre-transtion transform
+
+PASS

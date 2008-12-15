@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Combined transform translate() scale()</title>
+  <style type="text/css" media="screen">
+    #box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: "anim";
+    }
+    @-webkit-keyframes "anim" {
+        from { -webkit-transform: translate(0,0) scale(1,1); }
+        to   { -webkit-transform: translate(100px, 200px) scale(2,4); }
+    }
+  </style>
+  <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim", 0.5, "box", "webkitTransform", [1.25,0,0,1.75,25,50], 0.2],
+      ["anim", 1.0, "box", "webkitTransform", [1.5,0,0,2.5,50,100], 0.2],
+    ];
+    
+    runAnimationTest(expectedValues);
+    
+  </script>
+</head>
+<body>
+This test performs an animation of the translate() and scale() operators. It animates over 2 seconds. 
+At 0.5 and 1 second it takes a snapshot and expects the result to be within range.
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

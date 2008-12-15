@@ -1,0 +1,6 @@
+box1: within 5% of 200: PASSED
+box2: within 5% of 320: PASSED
+box3: within 5% of 125: PASSED
+box4: within 5% of 272: PASSED
+box5: within 5% of 200: PASSED
+

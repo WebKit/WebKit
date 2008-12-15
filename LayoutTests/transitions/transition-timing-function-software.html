@@ -1,0 +1,83 @@
+<html>
+<head>
+  <title>Transitions</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      left: 0;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-transition-duration: 5s;
+      -webkit-transition-timing-function: linear;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var kExpecteds = {
+      'box1' : 200,
+      'box2' : 320,
+      'box3' : 125,
+      'box4' : 272,
+      'box5' : 200
+    }
+    
+    function measurePosition()
+    {
+      var boxes = document.body.getElementsByClassName('box');
+
+      var result = '';
+      for (var i = 0; i < boxes.length; ++i)
+      {
+        var curBox = boxes[i];
+        var curLeft = parseInt(window.getComputedStyle(curBox).left);
+        
+        var expected = kExpecteds[curBox.id];
+        var passed = (Math.abs(curLeft - expected) / expected) < 0.05;
+        var thisResult;
+        if (passed)
+          thisResult = curBox.id + ': within 5% of ' + expected + ': PASSED';
+        else
+          thisResult = curBox.id + ': expected ' + expected + ', got ' + curLeft + '; outside 5%: FAIL';
+
+        result += thisResult + '<br>';
+      }
+
+      document.body.removeChild(document.getElementById('container'));
+
+      document.getElementById('result').innerHTML = result;
+
+      if (window.layoutTestController)
+          layoutTestController.notifyDone();
+    }
+
+    function startTransition()
+    {
+      var boxes = document.body.getElementsByClassName('box');
+      for (var i = 0; i < boxes.length; ++i)
+        boxes[i].style.left = '400px';
+      
+      window.setTimeout(measurePosition, 2500);
+    }
+    window.addEventListener('load', startTransition, false);
+  </script>
+</head>
+<body>
+
+<div id="container">
+  <div id="box1" class="box" style="-webkit-transition-timing-function: linear;"></div>
+  <div id="box2" class="box" style="-webkit-transition-timing-function: ease;"></div>
+  <div id="box3" class="box" style="-webkit-transition-timing-function: ease-in;"></div>
+  <div id="box4" class="box" style="-webkit-transition-timing-function: ease-out;"></div>
+  <div id="box5" class="box" style="-webkit-transition-timing-function: ease-in-out;"></div>
+</div>
+
+<div id="result"></div>
+
+</body>
+</html>

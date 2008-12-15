@@ -1,3 +1,33 @@
+2008-12-15  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add new layout tests for transforms, animations & transitions.
+        Also move a couple transform layout tests to the proper subdirectory.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22836
+
+        * animations/combo-transform-translate+scale-expected.txt: Added.
+        * animations/combo-transform-translate+scale.html: Added.
+        * transforms/2d/computed-style-origin-expected.txt: Copied from LayoutTests/transforms/computed-style-origin-expected.txt.
+        * transforms/2d/computed-style-origin.html: Copied from LayoutTests/transforms/computed-style-origin.html.
+        * transforms/2d/transform-value-types-expected.txt: Copied from LayoutTests/transforms/transform-value-types-expected.txt.
+        * transforms/2d/transform-value-types.html: Copied from LayoutTests/transforms/transform-value-types.html.
+        * transforms/computed-style-origin-expected.txt: Removed.
+        * transforms/computed-style-origin.html: Removed.
+        * transforms/transform-value-types-expected.txt: Removed.
+        * transforms/transform-value-types.html: Removed.
+        * transitions/interrupt-transform-transition-expected.txt: Added.
+        * transitions/interrupt-transform-transition.html: Added.
+        * transitions/start-transform-transition-expected.txt: Added.
+        * transitions/start-transform-transition.html: Added.
+        * transitions/transition-timing-function-software-expected.txt: Added.
+        * transitions/transition-timing-function-software.html: Added.
+        * transitions/zero-duration-in-list-expected.txt: Added.
+        * transitions/zero-duration-in-list.html: Added.
+        * transitions/zero-duration-without-units-expected.txt: Added.
+        * transitions/zero-duration-without-units.html: Added.
+
 2008-12-15  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.
@@ -142,6 +172,7 @@
         * fast/js/ignored-result-null-comparison-crash.html: Added.
         * fast/js/resources/ignored-result-null-comparison-crash.js: Added.
 
+>>>>>>> .r39306
 2008-12-12  Pierre-Olivier Latour  <pol@apple.com>
 
         Checked-in new results for failing SVG tests so that the bots are green again.
