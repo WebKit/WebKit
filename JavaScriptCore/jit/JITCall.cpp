@@ -217,14 +217,14 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         compileOpCallEvalSetupArgs(instruction);
 
         emitCTICall(Interpreter::cti_op_call_eval);
-        __ cmpl_i32r(asInteger(JSImmediate::impossibleValue()), X86::eax);
+        __ cmpl_ir(asInteger(JSImmediate::impossibleValue()), X86::eax);
         wasEval = __ jne();
     }
 
     // This plants a check for a cached JSFunction value, so we can plant a fast link to the callee.
     // This deliberately leaves the callee in ecx, used when setting up the stack frame below
     emitGetVirtualRegister(callee, X86::ecx);
-    __ cmpl_i32r(asInteger(JSImmediate::impossibleValue()), X86::ecx);
+    __ cmpl_ir_force32(asInteger(JSImmediate::impossibleValue()), X86::ecx);
     JmpDst addressOfLinkedFunctionCheck = __ label();
     addSlowCase(__ jne());
     ASSERT(X86Assembler::getDifferenceBetweenLabels(addressOfLinkedFunctionCheck, __ label()) == repatchOffsetOpCallCall);
@@ -252,7 +252,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     __ movl_i32m(argCount, (registerOffset + RegisterFile::ArgumentCount) * static_cast<int>(sizeof(Register)), X86::edi);
     __ movl_rm(X86::edi, (registerOffset + RegisterFile::CallerFrame) * static_cast<int>(sizeof(Register)), X86::edi);
     __ movl_rm(X86::edx, (registerOffset + RegisterFile::ScopeChain) * static_cast<int>(sizeof(Register)), X86::edi);
-    __ addl_i32r(registerOffset * sizeof(Register), X86::edi);
+    __ addl_ir(registerOffset * sizeof(Register), X86::edi);
 
     // Call to the callee
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall(reinterpret_cast<void*>(unreachable));
@@ -286,7 +286,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     // Fast check for JS function.
     __ testl_i32r(JSImmediate::TagMask, X86::ecx);
     JmpSrc callLinkFailNotObject = __ jne();
-    __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsFunctionVptr), X86::ecx);
+    __ cmpl_im(reinterpret_cast<unsigned>(m_interpreter->m_jsFunctionVptr), 0, X86::ecx);
     JmpSrc callLinkFailNotJSFunction = __ jne();
 
     // First, in the case of a construct, allocate the new object.
@@ -300,7 +300,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
     __ movl_rm(X86::edi, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register)), X86::edi);
-    __ addl_i32r(registerOffset * static_cast<int>(sizeof(Register)), X86::edi);
+    __ addl_ir(registerOffset * static_cast<int>(sizeof(Register)), X86::edi);
 
     m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation =
         emitNakedCall(m_interpreter->m_ctiVirtualCallPreLink);
@@ -319,7 +319,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     // Check for JSFunctions.
     __ testl_i32r(JSImmediate::TagMask, X86::ecx);
     JmpSrc isNotObject = __ jne();
-    __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsFunctionVptr), X86::ecx);
+    __ cmpl_im(reinterpret_cast<unsigned>(m_interpreter->m_jsFunctionVptr), 0, X86::ecx);
     JmpSrc isJSFunction = __ je();
 
     // This handles host functions
@@ -342,7 +342,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
     __ movl_rm(X86::edi, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register)), X86::edi);
-    __ addl_i32r(registerOffset * static_cast<int>(sizeof(Register)), X86::edi);
+    __ addl_ir(registerOffset * static_cast<int>(sizeof(Register)), X86::edi);
     __ movl_i32r(argCount, X86::edx);
 
     emitNakedCall(m_interpreter->m_ctiVirtualCall);

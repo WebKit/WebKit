@@ -1,3 +1,176 @@
+2008-12-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Add support to X86Assembler emitting instructions that access all 16 registers on x86-64.
+        Add a new formating class, that is reponsible for both emitting the opcode bytes and the
+        ModRm  bytes of an instruction in a single call; this can insert the REX byte as necessary
+        before the opcode, but has access to the register numbers to build the REX.
+
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::isAligned):
+        (JSC::AssemblerBuffer::data):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::addPtr):
+        (JSC::MacroAssembler::add32):
+        (JSC::MacroAssembler::and32):
+        (JSC::MacroAssembler::or32):
+        (JSC::MacroAssembler::sub32):
+        (JSC::MacroAssembler::xor32):
+        (JSC::MacroAssembler::loadPtr):
+        (JSC::MacroAssembler::load32):
+        (JSC::MacroAssembler::load16):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::storePtrWithRepatch):
+        (JSC::MacroAssembler::store32):
+        (JSC::MacroAssembler::pop):
+        (JSC::MacroAssembler::push):
+        (JSC::MacroAssembler::compareImm32ForBranch):
+        (JSC::MacroAssembler::compareImm32ForBranchEquality):
+        (JSC::MacroAssembler::testImm32):
+        (JSC::MacroAssembler::jae32):
+        (JSC::MacroAssembler::jb32):
+        (JSC::MacroAssembler::je16):
+        (JSC::MacroAssembler::jg32):
+        (JSC::MacroAssembler::jnePtr):
+        (JSC::MacroAssembler::jne32):
+        (JSC::MacroAssembler::jump):
+        * assembler/X86Assembler.h:
+        (JSC::X86::):
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::size):
+        (JSC::X86Assembler::push_r):
+        (JSC::X86Assembler::pop_r):
+        (JSC::X86Assembler::push_i32):
+        (JSC::X86Assembler::push_m):
+        (JSC::X86Assembler::pop_m):
+        (JSC::X86Assembler::addl_rr):
+        (JSC::X86Assembler::addl_mr):
+        (JSC::X86Assembler::addl_ir):
+        (JSC::X86Assembler::addq_ir):
+        (JSC::X86Assembler::addl_im):
+        (JSC::X86Assembler::andl_rr):
+        (JSC::X86Assembler::andl_ir):
+        (JSC::X86Assembler::orl_rr):
+        (JSC::X86Assembler::orl_mr):
+        (JSC::X86Assembler::orl_ir):
+        (JSC::X86Assembler::subl_rr):
+        (JSC::X86Assembler::subl_mr):
+        (JSC::X86Assembler::subl_ir):
+        (JSC::X86Assembler::subl_im):
+        (JSC::X86Assembler::xorl_rr):
+        (JSC::X86Assembler::xorl_ir):
+        (JSC::X86Assembler::sarl_i8r):
+        (JSC::X86Assembler::sarl_CLr):
+        (JSC::X86Assembler::shll_i8r):
+        (JSC::X86Assembler::shll_CLr):
+        (JSC::X86Assembler::imull_rr):
+        (JSC::X86Assembler::imull_i32r):
+        (JSC::X86Assembler::idivl_r):
+        (JSC::X86Assembler::cmpl_rr):
+        (JSC::X86Assembler::cmpl_rm):
+        (JSC::X86Assembler::cmpl_mr):
+        (JSC::X86Assembler::cmpl_ir):
+        (JSC::X86Assembler::cmpl_ir_force32):
+        (JSC::X86Assembler::cmpl_im):
+        (JSC::X86Assembler::cmpl_im_force32):
+        (JSC::X86Assembler::cmpw_rm):
+        (JSC::X86Assembler::testl_rr):
+        (JSC::X86Assembler::testl_i32r):
+        (JSC::X86Assembler::testl_i32m):
+        (JSC::X86Assembler::testq_rr):
+        (JSC::X86Assembler::testq_i32r):
+        (JSC::X86Assembler::testb_i8r):
+        (JSC::X86Assembler::sete_r):
+        (JSC::X86Assembler::setz_r):
+        (JSC::X86Assembler::setne_r):
+        (JSC::X86Assembler::setnz_r):
+        (JSC::X86Assembler::cdq):
+        (JSC::X86Assembler::xchgl_rr):
+        (JSC::X86Assembler::movl_rr):
+        (JSC::X86Assembler::movl_rm):
+        (JSC::X86Assembler::movl_mr):
+        (JSC::X86Assembler::movl_i32r):
+        (JSC::X86Assembler::movl_i32m):
+        (JSC::X86Assembler::movq_rr):
+        (JSC::X86Assembler::movq_rm):
+        (JSC::X86Assembler::movq_mr):
+        (JSC::X86Assembler::movzwl_mr):
+        (JSC::X86Assembler::movzbl_rr):
+        (JSC::X86Assembler::leal_mr):
+        (JSC::X86Assembler::call):
+        (JSC::X86Assembler::jmp):
+        (JSC::X86Assembler::jmp_r):
+        (JSC::X86Assembler::jmp_m):
+        (JSC::X86Assembler::jne):
+        (JSC::X86Assembler::jnz):
+        (JSC::X86Assembler::je):
+        (JSC::X86Assembler::jl):
+        (JSC::X86Assembler::jb):
+        (JSC::X86Assembler::jle):
+        (JSC::X86Assembler::jbe):
+        (JSC::X86Assembler::jge):
+        (JSC::X86Assembler::jg):
+        (JSC::X86Assembler::ja):
+        (JSC::X86Assembler::jae):
+        (JSC::X86Assembler::jo):
+        (JSC::X86Assembler::jp):
+        (JSC::X86Assembler::js):
+        (JSC::X86Assembler::addsd_rr):
+        (JSC::X86Assembler::addsd_mr):
+        (JSC::X86Assembler::cvtsi2sd_rr):
+        (JSC::X86Assembler::cvttsd2si_rr):
+        (JSC::X86Assembler::movd_rr):
+        (JSC::X86Assembler::movsd_rm):
+        (JSC::X86Assembler::movsd_mr):
+        (JSC::X86Assembler::mulsd_rr):
+        (JSC::X86Assembler::mulsd_mr):
+        (JSC::X86Assembler::pextrw_irr):
+        (JSC::X86Assembler::subsd_rr):
+        (JSC::X86Assembler::subsd_mr):
+        (JSC::X86Assembler::ucomis_rr):
+        (JSC::X86Assembler::int3):
+        (JSC::X86Assembler::ret):
+        (JSC::X86Assembler::predictNotTaken):
+        (JSC::X86Assembler::label):
+        (JSC::X86Assembler::align):
+        (JSC::X86Assembler::link):
+        (JSC::X86Assembler::executableCopy):
+        (JSC::X86Assembler::X86InstructionFormater::prefix):
+        (JSC::X86Assembler::X86InstructionFormater::oneByteOp):
+        (JSC::X86Assembler::X86InstructionFormater::twoByteOp):
+        (JSC::X86Assembler::X86InstructionFormater::oneByteOp64):
+        (JSC::X86Assembler::X86InstructionFormater::oneByteOp8):
+        (JSC::X86Assembler::X86InstructionFormater::twoByteOp8):
+        (JSC::X86Assembler::X86InstructionFormater::instructionImmediate8):
+        (JSC::X86Assembler::X86InstructionFormater::instructionImmediate32):
+        (JSC::X86Assembler::X86InstructionFormater::instructionRel32):
+        (JSC::X86Assembler::X86InstructionFormater::size):
+        (JSC::X86Assembler::X86InstructionFormater::isAligned):
+        (JSC::X86Assembler::X86InstructionFormater::data):
+        (JSC::X86Assembler::X86InstructionFormater::executableCopy):
+        (JSC::X86Assembler::X86InstructionFormater::registerModRM):
+        (JSC::X86Assembler::X86InstructionFormater::memoryModRM):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::JIT::compileBinaryArithOp):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+
 2008-12-15  Darin Adler  <darin@apple.com>
 
         * interpreter/RegisterFile.h: Tweak include formatting.

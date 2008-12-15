@@ -363,15 +363,9 @@ public:
     void addPtr(Imm32 imm, RegisterID srcDest)
     {
 #if PLATFORM(X86_64)
-        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
-            m_assembler.addq_i8r(imm.m_value, srcDest);
-        else
-            m_assembler.addq_i32r(imm.m_value, srcDest);
+        m_assembler.addq_ir(imm.m_value, srcDest);
 #else
-        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
-            m_assembler.addl_i8r(imm.m_value, srcDest);
-        else
-            m_assembler.addl_i32r(imm.m_value, srcDest);
+        m_assembler.addl_ir(imm.m_value, srcDest);
 #endif
     }
 
@@ -388,18 +382,12 @@ public:
 
     void add32(Imm32 imm, RegisterID dest)
     {
-        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
-            m_assembler.addl_i8r(imm.m_value, dest);
-        else
-            m_assembler.addl_i32r(imm.m_value, dest);
+        m_assembler.addl_ir(imm.m_value, dest);
     }
     
     void add32(Address src, RegisterID dest)
     {
-        if (src.offset)
-            m_assembler.addl_mr(src.offset, src.base, dest);
-        else
-            m_assembler.addl_mr(src.base, dest);
+        m_assembler.addl_mr(src.offset, src.base, dest);
     }
     
     void and32(RegisterID src, RegisterID dest)
@@ -409,10 +397,7 @@ public:
 
     void and32(Imm32 imm, RegisterID dest)
     {
-        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
-            m_assembler.andl_i8r(imm.m_value, dest);
-        else
-            m_assembler.andl_i32r(imm.m_value, dest);
+        m_assembler.andl_ir(imm.m_value, dest);
     }
 
     void lshift32(Imm32 imm, RegisterID dest)
@@ -425,7 +410,7 @@ public:
         // On x86 we can only shift by ecx; if asked to shift by another register we'll
         // need rejig the shift amount into ecx first, and restore the registers afterwards.
         if (shift_amount != X86::ecx) {
-            m_assembler.xchgl_rr(shift_amount, X86::ecx);
+            swap(shift_amount, X86::ecx);
 
             // E.g. transform "shll %eax, %eax" -> "xchgl %eax, %ecx; shll %ecx, %ecx; xchgl %eax, %ecx"
             if (dest == shift_amount)
@@ -437,7 +422,7 @@ public:
             else
                 m_assembler.shll_CLr(dest);
         
-            m_assembler.xchgl_rr(shift_amount, X86::ecx);
+            swap(shift_amount, X86::ecx);
         } else
             m_assembler.shll_CLr(dest);
     }
@@ -473,10 +458,7 @@ public:
 
     void or32(Imm32 imm, RegisterID dest)
     {
-        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
-            m_assembler.orl_i8r(imm.m_value, dest);
-        else
-            m_assembler.orl_i32r(imm.m_value, dest);
+            m_assembler.orl_ir(imm.m_value, dest);
     }
 
     void rshift32(Imm32 imm, RegisterID dest)
@@ -489,7 +471,7 @@ public:
         // On x86 we can only shift by ecx; if asked to shift by another register we'll
         // need rejig the shift amount into ecx first, and restore the registers afterwards.
         if (shift_amount != X86::ecx) {
-            m_assembler.xchgl_rr(shift_amount, X86::ecx);
+            swap(shift_amount, X86::ecx);
 
             // E.g. transform "shll %eax, %eax" -> "xchgl %eax, %ecx; shll %ecx, %ecx; xchgl %eax, %ecx"
             if (dest == shift_amount)
@@ -501,25 +483,19 @@ public:
             else
                 m_assembler.sarl_CLr(dest);
         
-            m_assembler.xchgl_rr(shift_amount, X86::ecx);
+            swap(shift_amount, X86::ecx);
         } else
             m_assembler.sarl_CLr(dest);
     }
 
     void sub32(Imm32 imm, RegisterID dest)
     {
-        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
-            m_assembler.subl_i8r(imm.m_value, dest);
-        else
-            m_assembler.subl_i32r(imm.m_value, dest);
+        m_assembler.subl_ir(imm.m_value, dest);
     }
     
     void sub32(Address src, RegisterID dest)
     {
-        if (src.offset)
-            m_assembler.subl_mr(src.offset, src.base, dest);
-        else
-            m_assembler.subl_mr(src.base, dest);
+        m_assembler.subl_mr(src.offset, src.base, dest);
     }
 
     void xor32(RegisterID src, RegisterID dest)
@@ -529,10 +505,7 @@ public:
 
     void xor32(Imm32 imm, RegisterID dest)
     {
-        if (CAN_SIGN_EXTEND_8_32(imm.m_value))
-            m_assembler.xorl_i8r(imm.m_value, dest);
-        else
-            m_assembler.xorl_i32r(imm.m_value, dest);
+        m_assembler.xorl_ir(imm.m_value, dest);
     }
     
 
@@ -546,10 +519,7 @@ public:
     void loadPtr(ImplicitAddress address, RegisterID dest)
     {
 #if PLATFORM(X86_64)
-        if (address.offset)
-            m_assembler.movq_mr(address.offset, address.base, dest);
-        else
-            m_assembler.movq_mr(address.base, dest);
+        m_assembler.movq_mr(address.offset, address.base, dest);
 #else
     load32(address, dest);
 #endif
@@ -569,18 +539,12 @@ public:
 
     void load32(ImplicitAddress address, RegisterID dest)
     {
-        if (address.offset)
-            m_assembler.movl_mr(address.offset, address.base, dest);
-        else
-            m_assembler.movl_mr(address.base, dest);
+        m_assembler.movl_mr(address.offset, address.base, dest);
     }
 
     void load32(BaseIndex address, RegisterID dest)
     {
-        if (address.offset)
-            m_assembler.movl_mr(address.offset, address.base, address.index, address.scale, dest);
-        else
-            m_assembler.movl_mr(address.base, address.index, address.scale, dest);
+        m_assembler.movl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
 #if !PLATFORM(X86_64)
@@ -592,34 +556,22 @@ public:
 
     void load16(BaseIndex address, RegisterID dest)
     {
-        if (address.offset)
-            m_assembler.movzwl_mr(address.offset, address.base, address.index, address.scale, dest);
-        else
-            m_assembler.movzwl_mr(address.base, address.index, address.scale, dest);
+        m_assembler.movzwl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
     void storePtr(RegisterID src, ImplicitAddress address)
     {
 #if PLATFORM(X86_64)
-        if (address.offset)
-            m_assembler.movq_rm(src, address.offset, address.base);
-        else
-            m_assembler.movq_rm(src, address.base);
+        m_assembler.movq_rm(src, address.offset, address.base);
 #else
-        if (address.offset)
-            m_assembler.movl_rm(src, address.offset, address.base);
-        else
-            m_assembler.movl_rm(src, address.base);
+        m_assembler.movl_rm(src, address.offset, address.base);
 #endif
     }
     
 #if !PLATFORM(X86_64)
     void storePtr(ImmPtr imm, ImplicitAddress address)
     {
-        if (address.offset)
-            m_assembler.movl_i32m(reinterpret_cast<unsigned>(imm.m_value), address.offset, address.base);
-        else
-            m_assembler.movl_i32m(reinterpret_cast<unsigned>(imm.m_value), address.base);
+        m_assembler.movl_i32m(reinterpret_cast<unsigned>(imm.m_value), address.offset, address.base);
     }
 
     void storePtr(RegisterID src, BaseIndex address)
@@ -629,36 +581,24 @@ public:
 
     DataLabelPtr storePtrWithRepatch(Address address)
     {
-        if (address.offset)
-            m_assembler.movl_i32m(0, address.offset, address.base);
-        else
-            m_assembler.movl_i32m(0, address.base);
+        m_assembler.movl_i32m(0, address.offset, address.base);
         return DataLabelPtr(this);
     }
 #endif
 
     void store32(RegisterID src, ImplicitAddress address)
     {
-        if (address.offset)
-            m_assembler.movl_rm(src, address.offset, address.base);
-        else
-            m_assembler.movl_rm(src, address.base);
+        m_assembler.movl_rm(src, address.offset, address.base);
     }
 
     void store32(RegisterID src, BaseIndex address)
     {
-        if (address.offset)
-            m_assembler.movl_rm(src, address.offset, address.base, address.index, address.scale);
-        else
-            m_assembler.movl_rm(src, address.base, address.index, address.scale);
+        m_assembler.movl_rm(src, address.offset, address.base, address.index, address.scale);
     }
 
     void store32(Imm32 imm, ImplicitAddress address)
     {
-        if (address.offset)
-            m_assembler.movl_i32m(imm.m_value, address.offset, address.base);
-        else
-            m_assembler.movl_i32m(imm.m_value, address.base);
+        m_assembler.movl_i32m(imm.m_value, address.offset, address.base);
     }
     
 #if !PLATFORM(X86_64)
@@ -679,20 +619,12 @@ public:
     
     void pop(RegisterID dest)
     {
-#if PLATFORM(X86_64)
-        m_assembler.popq_r(dest);
-#else
-        m_assembler.popl_r(dest);
-#endif
+        m_assembler.pop_r(dest);
     }
 
     void push(RegisterID src)
     {
-#if PLATFORM(X86_64)
-        m_assembler.pushq_r(src);
-#else
-        m_assembler.pushl_r(src);
-#endif
+        m_assembler.push_r(src);
     }
 
     void pop()
@@ -754,6 +686,15 @@ public:
     }
 #endif
 
+    void swap(RegisterID reg1, RegisterID reg2)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.xchgq_rr(reg1, reg2);
+#else
+        m_assembler.xchgl_rr(reg1, reg2);
+#endif
+    }
+
 
     // Forwards / external control flow operations:
     //
@@ -776,35 +717,20 @@ public:
 private:
     void compareImm32ForBranch(RegisterID left, int32_t right)
     {
-        if (CAN_SIGN_EXTEND_8_32(right))
-            m_assembler.cmpl_i8r(right, left);
-        else
-            m_assembler.cmpl_i32r(right, left);
+        m_assembler.cmpl_ir(right, left);
     }
 
     void compareImm32ForBranchEquality(RegisterID reg, int32_t imm)
     {
         if (!imm)
             m_assembler.testl_rr(reg, reg);
-        else if (CAN_SIGN_EXTEND_8_32(imm))
-            m_assembler.cmpl_i8r(imm, reg);
         else
-            m_assembler.cmpl_i32r(imm, reg);
+            m_assembler.cmpl_ir(imm, reg);
     }
 
     void compareImm32ForBranchEquality(Address address, int32_t imm)
     {
-        if (CAN_SIGN_EXTEND_8_32(imm)) {
-            if (address.offset)
-                m_assembler.cmpl_i8m(imm, address.offset, address.base);
-            else
-                m_assembler.cmpl_i8m(imm, address.base);
-        } else {
-            if (address.offset)
-                m_assembler.cmpl_i32m(imm, address.offset, address.base);
-            else
-                m_assembler.cmpl_i32m(imm, address.base);
-        }
+        m_assembler.cmpl_im(imm, address.offset, address.base);
     }
 
     void testImm32(RegisterID reg, Imm32 mask)
@@ -820,32 +746,18 @@ private:
 
     void testImm32(Address address, Imm32 mask)
     {
-        if (address.offset) {
-            if (mask.m_value == -1)
-                m_assembler.cmpl_i8m(0, address.offset, address.base);
-            else
-                m_assembler.testl_i32m(mask.m_value, address.offset, address.base);
-        } else {
-            if (mask.m_value == -1)
-                m_assembler.cmpl_i8m(0, address.base);
-            else
-                m_assembler.testl_i32m(mask.m_value, address.base);
-        }
+        if (mask.m_value == -1)
+            m_assembler.cmpl_im(0, address.offset, address.base);
+        else
+            m_assembler.testl_i32m(mask.m_value, address.offset, address.base);
     }
 
     void testImm32(BaseIndex address, Imm32 mask)
     {
-        if (address.offset) {
-            if (mask.m_value == -1)
-                m_assembler.cmpl_i8m(0, address.offset, address.base, address.index, address.scale);
-            else
-                m_assembler.testl_i32m(mask.m_value, address.offset, address.base, address.index, address.scale);
-        } else {
-            if (mask.m_value == -1)
-                m_assembler.cmpl_i8m(0, address.base, address.index, address.scale);
-            else
-                m_assembler.testl_i32m(mask.m_value, address.base, address.index, address.scale);
-        }
+        if (mask.m_value == -1)
+            m_assembler.cmpl_im(0, address.offset, address.base, address.index, address.scale);
+        else
+            m_assembler.testl_i32m(mask.m_value, address.offset, address.base, address.index, address.scale);
     }
 
 #if PLATFORM(X86_64)
@@ -870,28 +782,19 @@ public:
     
     Jump jae32(RegisterID left, Address right)
     {
-        if (right.offset)
-            m_assembler.cmpl_mr(right.offset, right.base, left);
-        else
-            m_assembler.cmpl_mr(right.base, left);
+        m_assembler.cmpl_mr(right.offset, right.base, left);
         return Jump(m_assembler.jae());
     }
     
     Jump jae32(Address left, RegisterID right)
     {
-        if (left.offset)
-            m_assembler.cmpl_rm(right, left.offset, left.base);
-        else
-            m_assembler.cmpl_rm(right, left.base);
+        m_assembler.cmpl_rm(right, left.offset, left.base);
         return Jump(m_assembler.jae());
     }
     
     Jump jb32(RegisterID left, Address right)
     {
-        if (right.offset)
-            m_assembler.cmpl_mr(right.offset, right.base, left);
-        else
-            m_assembler.cmpl_mr(right.base, left);
+        m_assembler.cmpl_mr(right.offset, right.base, left);
         return Jump(m_assembler.jb());
     }
     
@@ -928,11 +831,7 @@ public:
     
     Jump je16(RegisterID op1, BaseIndex op2)
     {
-        if (op2.offset)
-            m_assembler.cmpw_rm(op1, op2.base, op2.index, op2.scale);
-        else
-            m_assembler.cmpw_rm(op1, op2.offset, op2.base, op2.index, op2.scale);
-
+        m_assembler.cmpw_rm(op1, op2.offset, op2.base, op2.index, op2.scale);
         return Jump(m_assembler.je());
     }
     
@@ -944,10 +843,7 @@ public:
 
     Jump jg32(RegisterID reg, Address address)
     {
-        if (address.offset)
-            m_assembler.cmpl_mr(address.offset, address.base, reg);
-        else
-            m_assembler.cmpl_mr(address.base, reg);
+        m_assembler.cmpl_mr(address.offset, address.base, reg);
         return Jump(m_assembler.jg());
     }
 
@@ -990,10 +886,7 @@ public:
 #if !PLATFORM(X86_64)
     Jump jnePtr(RegisterID reg, Address address)
     {
-        if (address.offset)
-            m_assembler.cmpl_rm(reg, address.offset, address.base);
-        else
-            m_assembler.cmpl_rm(reg, address.base);
+        m_assembler.cmpl_rm(reg, address.offset, address.base);
         return Jump(m_assembler.jne());
     }
 
@@ -1023,10 +916,7 @@ public:
     
     Jump jne32(Address address, RegisterID reg)
     {
-        if (address.offset)
-            m_assembler.cmpl_rm(reg, address.offset, address.base);
-        else
-            m_assembler.cmpl_rm(reg, address.base);
+        m_assembler.cmpl_rm(reg, address.offset, address.base);
         return Jump(m_assembler.jne());
     }
     
@@ -1175,10 +1065,7 @@ public:
     // Address is a memory location containing the address to jump to
     void jump(Address address)
     {
-        if (address.offset)
-            m_assembler.jmp_m(address.offset, address.base);
-        else
-            m_assembler.jmp_m(address.base);
+        m_assembler.jmp_m(address.offset, address.base);
     }
 
 

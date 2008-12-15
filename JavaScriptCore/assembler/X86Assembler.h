@@ -37,8 +37,6 @@
 
 namespace JSC {
 
-#define MODRM(type, reg, rm) ((type << 6) | (reg << 3) | (rm))
-#define SIB(type, reg, rm) MODRM(type, reg, rm)
 #define CAN_SIGN_EXTEND_8_32(value) (value == ((int)(signed char)value))
 
 namespace X86 {
@@ -52,9 +50,16 @@ namespace X86 {
         esi,
         edi,
 
-        noBase = ebp,
-        hasSib = esp,
-        noScale = esp,
+#if PLATFORM(X86_64)
+        r8,
+        r9,
+        r10,
+        r11,
+        r12,
+        r13,
+        r14,
+        r15,
+#endif
     } RegisterID;
 
     typedef enum {
@@ -87,7 +92,9 @@ public:
         OP_XOR_EvGv                     = 0x31,
         OP_CMP_EvGv                     = 0x39,
         OP_CMP_GvEv                     = 0x3B,
-        REX_W                           = 0x48,
+#if PLATFORM(X86_64)
+        PRE_REX                         = 0x40,
+#endif
         OP_PUSH_EAX                     = 0x50,
         OP_POP_EAX                      = 0x58,
         PRE_OPERAND_SIZE                = 0x66,
@@ -103,8 +110,6 @@ public:
         OP_LEA                          = 0x8D,
         OP_GROUP1A_Ev                   = 0x8F,
         OP_CDQ                          = 0x99,
-        OP_SETE                         = 0x94,
-        OP_SETNE                        = 0x95,
         OP_GROUP2_EvIb                  = 0xC1,
         OP_RET                          = 0xC3,
         OP_GROUP11_EvIz                 = 0xC7,
@@ -119,7 +124,9 @@ public:
         OP_GROUP3_Ev                    = 0xF7,
         OP_GROUP3_EvIz                  = 0xF7, // OP_GROUP3_Ev has an immediate, when instruction is a test. 
         OP_GROUP5_Ev                    = 0xFF,
+    } OneByteOpcodeID;
 
+    typedef enum {
         OP2_MOVSD_VsdWsd    = 0x10,
         OP2_MOVSD_WsdVsd    = 0x11,
         OP2_CVTSI2SD_VsdEd  = 0x2A,
@@ -142,11 +149,15 @@ public:
         OP2_JGE_rel32       = 0x8D,
         OP2_JLE_rel32       = 0x8E,
         OP2_JG_rel32        = 0x8F,
+        OP_SETE             = 0x94,
+        OP_SETNE            = 0x95,
         OP2_IMUL_GvEv       = 0xAF,
         OP2_MOVZX_GvEb      = 0xB6,
         OP2_MOVZX_GvEw      = 0xB7,
         OP2_PEXTRW_GdUdIb   = 0xC5,
+    } TwoByteOpcodeID;
 
+    typedef enum {
         GROUP1_OP_ADD = 0,
         GROUP1_OP_OR  = 1,
         GROUP1_OP_AND = 4,
@@ -167,12 +178,15 @@ public:
         GROUP5_OP_PUSH  = 6,
 
         GROUP11_MOV = 0,
-    } OpcodeID;
+    } GroupOpcodeID;
     
     // Opaque label types
     
+    class X86InstructionFormatter;
+
     class JmpSrc {
         friend class X86Assembler;
+        friend class X86InstructionFormatter;
     public:
         JmpSrc()
             : m_offset(-1)
@@ -190,6 +204,7 @@ public:
     
     class JmpDst {
         friend class X86Assembler;
+        friend class X86InstructionFormatter;
     public:
         JmpDst()
             : m_offset(-1)
@@ -205,267 +220,346 @@ public:
         int m_offset;
     };
 
-    static const int maxInstructionSize = 16;
-
     X86Assembler()
     {
     }
 
-    size_t size() const { return m_buffer.size(); }
-    
-    void int3()
+    size_t size() const { return m_formatter.size(); }
+
+    // Stack operations:
+
+    void push_r(RegisterID reg)
     {
-        m_buffer.putByte(OP_INT3);
-    }
-    
-#if PLATFORM(X86_64)
-    void pushq_r(RegisterID reg)
-    {
-        m_buffer.putByte(OP_PUSH_EAX + reg);
+        m_formatter.oneByteOp(OP_PUSH_EAX, reg);
     }
 
-    void popq_r(RegisterID reg)
+    void pop_r(RegisterID reg)
     {
-        m_buffer.putByte(OP_POP_EAX + reg);
-    }
-#else
-    void pushl_r(RegisterID reg)
-    {
-        m_buffer.putByte(OP_PUSH_EAX + reg);
-    }
-    
-    void pushl_m(int offset, RegisterID base)
-    {
-        m_buffer.putByte(OP_GROUP5_Ev);
-        modRm_opm(GROUP5_OP_PUSH, base, offset);
+        m_formatter.oneByteOp(OP_POP_EAX, reg);
     }
 
-    void pushl_i32(int imm)
+    void push_i32(int imm)
     {
-        m_buffer.putByte(OP_PUSH_Iz);
-        m_buffer.putInt(imm);
-    }
-    
-    void popl_r(RegisterID reg)
-    {
-        m_buffer.putByte(OP_POP_EAX + reg);
+        m_formatter.oneByteOp(OP_PUSH_Iz);
+        m_formatter.immediate32(imm);
     }
 
-    void popl_m(int offset, RegisterID base)
+    void push_m(int offset, RegisterID base)
     {
-        m_buffer.putByte(OP_GROUP1A_Ev);
-        modRm_opm(GROUP1A_OP_POP, base, offset);
+        m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_PUSH, base, offset);
     }
-#endif
-    
-    void movl_rr(RegisterID src, RegisterID dst)
+
+    void pop_m(int offset, RegisterID base)
     {
-        m_buffer.putByte(OP_MOV_EvGv);
-        modRm_rr(src, dst);
+        m_formatter.oneByteOp(OP_GROUP1A_Ev, GROUP1A_OP_POP, base, offset);
     }
-    
-#if PLATFORM(X86_64)
-    void movq_rr(RegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(REX_W);
-        m_buffer.putByte(OP_MOV_EvGv);
-        modRm_rr(src, dst);
-    }
-#endif
+
+    // Arithmetic operations:
 
     void addl_rr(RegisterID src, RegisterID dst)
     {
-        m_buffer.putByte(OP_ADD_EvGv);
-        modRm_rr(src, dst);
-    }
-
-#if !PLATFORM(X86_64)
-    void addl_i8m(int imm, void* addr)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opm(GROUP1_OP_ADD, addr);
-        m_buffer.putByte(imm);
-    }
-#endif
-
-    void addl_i8r(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opr(GROUP1_OP_ADD, dst);
-        m_buffer.putByte(imm);
-    }
-
-    void addl_i32r(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIz);
-        modRm_opr(GROUP1_OP_ADD, dst);
-        m_buffer.putInt(imm);
-    }
-
-#if PLATFORM(X86_64)
-    void addq_i8r(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(REX_W);
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opr(GROUP1_OP_ADD, dst);
-        m_buffer.putByte(imm);
-    }
-
-    void addq_i32r(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(REX_W);
-        m_buffer.putByte(OP_GROUP1_EvIz);
-        modRm_opr(GROUP1_OP_ADD, dst);
-        m_buffer.putInt(imm);
-    }
-#endif
-
-    void addl_mr(RegisterID base, RegisterID dst)
-    {
-        m_buffer.putByte(OP_ADD_GvEv);
-        modRm_rm(dst, base);
+        m_formatter.oneByteOp(OP_ADD_EvGv, src, dst);
     }
 
     void addl_mr(int offset, RegisterID base, RegisterID dst)
     {
-        m_buffer.putByte(OP_ADD_GvEv);
-        modRm_rm(dst, base, offset);
+        m_formatter.oneByteOp(OP_ADD_GvEv, dst, base, offset);
     }
+
+    void addl_ir(int imm, RegisterID dst)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_ADD, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_ADD, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+
+#if PLATFORM(X86_64)
+    void addq_ir(int imm, RegisterID dst)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_ADD, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_ADD, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+#else
+    void addl_im(int imm, void* addr)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_ADD, addr);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_ADD, addr);
+            m_formatter.immediate32(imm);
+        }
+    }
+#endif
 
     void andl_rr(RegisterID src, RegisterID dst)
     {
-        m_buffer.putByte(OP_AND_EvGv);
-        modRm_rr(src, dst);
+        m_formatter.oneByteOp(OP_AND_EvGv, src, dst);
     }
 
-    void andl_i8r(int imm, RegisterID dst)
+    void andl_ir(int imm, RegisterID dst)
     {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opr(GROUP1_OP_AND, dst);
-        m_buffer.putByte(imm);
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_AND, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_AND, dst);
+            m_formatter.immediate32(imm);
+        }
     }
 
-    void andl_i32r(int imm, RegisterID dst)
+    void orl_rr(RegisterID src, RegisterID dst)
     {
-        m_buffer.putByte(OP_GROUP1_EvIz);
-        modRm_opr(GROUP1_OP_AND, dst);
-        m_buffer.putInt(imm);
+        m_formatter.oneByteOp(OP_OR_EvGv, src, dst);
     }
 
-    void cmpl_i8r(int imm, RegisterID dst)
+    void orl_mr(int offset, RegisterID base, RegisterID dst)
     {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opr(GROUP1_OP_CMP, dst);
-        m_buffer.putByte(imm);
+        m_formatter.oneByteOp(OP_OR_GvEv, dst, base, offset);
     }
+
+    void orl_ir(int imm, RegisterID dst)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_OR, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_OR, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+
+    void subl_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_SUB_EvGv, src, dst);
+    }
+
+    void subl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_SUB_GvEv, dst, base, offset);
+    }
+
+    void subl_ir(int imm, RegisterID dst)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_SUB, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_SUB, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+    
+#if !PLATFORM(X86_64)
+    void subl_im(int imm, void* addr)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_SUB, addr);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_SUB, addr);
+            m_formatter.immediate32(imm);
+        }
+    }
+#endif
+
+    void xorl_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_XOR_EvGv, src, dst);
+    }
+
+    void xorl_ir(int imm, RegisterID dst)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_XOR, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_XOR, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+
+    void sarl_i8r(int imm, RegisterID dst)
+    {
+        if (imm == 1)
+            m_formatter.oneByteOp(OP_GROUP2_Ev1, GROUP2_OP_SAR, dst);
+        else {
+            m_formatter.oneByteOp(OP_GROUP2_EvIb, GROUP2_OP_SAR, dst);
+            m_formatter.immediate8(imm);
+        }
+    }
+
+    void sarl_CLr(RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP2_EvCL, GROUP2_OP_SAR, dst);
+    }
+
+    void shll_i8r(int imm, RegisterID dst)
+    {
+        if (imm == 1)
+            m_formatter.oneByteOp(OP_GROUP2_Ev1, GROUP2_OP_SHL, dst);
+        else {
+            m_formatter.oneByteOp(OP_GROUP2_EvIb, GROUP2_OP_SHL, dst);
+            m_formatter.immediate8(imm);
+        }
+    }
+
+    void shll_CLr(RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP2_EvCL, GROUP2_OP_SHL, dst);
+    }
+
+    void imull_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_IMUL_GvEv, dst, src);
+    }
+    
+    void imull_i32r(RegisterID src, int32_t value, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_IMUL_GvEvIz, dst, src);
+        m_formatter.immediate32(value);
+    }
+
+    void idivl_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP3_Ev, GROUP3_OP_IDIV, dst);
+    }
+
+    // Comparisons:
 
     void cmpl_rr(RegisterID src, RegisterID dst)
     {
-        m_buffer.putByte(OP_CMP_EvGv);
-        modRm_rr(src, dst);
-    }
-
-    void cmpl_rm(RegisterID src, RegisterID base)
-    {
-        m_buffer.putByte(OP_CMP_EvGv);
-        modRm_rm(src, base);
+        m_formatter.oneByteOp(OP_CMP_EvGv, src, dst);
     }
 
     void cmpl_rm(RegisterID src, int offset, RegisterID base)
     {
-        m_buffer.putByte(OP_CMP_EvGv);
-        modRm_rm(src, base, offset);
+        m_formatter.oneByteOp(OP_CMP_EvGv, src, base, offset);
     }
 
-    void cmpl_mr(RegisterID base, RegisterID dst)
+    void cmpl_mr(int offset, RegisterID base, RegisterID src)
     {
-        m_buffer.putByte(OP_CMP_GvEv);
-        modRm_rm(dst, base);
+        m_formatter.oneByteOp(OP_CMP_GvEv, src, base, offset);
     }
 
-    void cmpl_mr(int offset, RegisterID base, RegisterID dst)
+    void cmpl_ir(int imm, RegisterID dst)
     {
-        m_buffer.putByte(OP_CMP_GvEv);
-        modRm_rm(dst, base, offset);
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_CMP, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, dst);
+            m_formatter.immediate32(imm);
+        }
     }
 
-    void cmpl_i32r(int imm, RegisterID dst)
+    void cmpl_ir_force32(int imm, RegisterID dst)
     {
-        m_buffer.putByte(OP_GROUP1_EvIz);
-        modRm_opr(GROUP1_OP_CMP, dst);
-        m_buffer.putInt(imm);
+        m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, dst);
+        m_formatter.immediate32(imm);
     }
 
-    void cmpl_i32m(int imm, RegisterID dst)
+    void cmpl_im(int imm, int offset, RegisterID base)
     {
-        m_buffer.putByte(OP_GROUP1_EvIz);
-        modRm_opm(GROUP1_OP_CMP, dst);
-        m_buffer.putInt(imm);
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_CMP, base, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, base, offset);
+            m_formatter.immediate32(imm);
+        }
     }
 
-    void cmpl_i32m(int imm, int offset, RegisterID dst)
+    void cmpl_im(int imm, int offset, RegisterID base, RegisterID index, int scale)
     {
-        m_buffer.putByte(OP_GROUP1_EvIz);
-        modRm_opm(GROUP1_OP_CMP, dst, offset);
-        m_buffer.putInt(imm);
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_CMP, base, index, scale, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, base, index, scale, offset);
+            m_formatter.immediate32(imm);
+        }
+    }
+
+    void cmpl_im_force32(int imm, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, base, offset);
+        m_formatter.immediate32(imm);
     }
 
 #if !PLATFORM(X86_64)
-    void cmpl_i32m(int imm, void* addr)
+    void cmpl_im(int imm, void* addr)
     {
-        m_buffer.putByte(OP_GROUP1_EvIz);
-        modRm_opm(GROUP1_OP_CMP, addr);
-        m_buffer.putInt(imm);
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_CMP, addr);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, addr);
+            m_formatter.immediate32(imm);
+        }
     }
 #endif
 
-    void cmpl_i8m(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opm(GROUP1_OP_CMP, dst);
-        m_buffer.putByte(imm);
-    }
-
-    void cmpl_i8m(int imm, int offset, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opm(GROUP1_OP_CMP, dst, offset);
-        m_buffer.putByte(imm);
-    }
-
-    void cmpl_i8m(int imm, RegisterID base, RegisterID index, int scale)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opmsib(GROUP1_OP_CMP, base, index, scale);
-        m_buffer.putByte(imm);
-    }
-
-    void cmpl_i8m(int imm, int offset, RegisterID base, RegisterID index, int scale)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opmsib(GROUP1_OP_CMP, base, index, scale, offset);
-        m_buffer.putByte(imm);
-    }
-
-    void cmpw_rm(RegisterID src, RegisterID base, RegisterID index, int scale)
-    {
-        m_buffer.putByte(PRE_OPERAND_SIZE);
-        m_buffer.putByte(OP_CMP_EvGv);
-        modRm_rmsib(src, base, index, scale);
-    }
-
     void cmpw_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
     {
-        m_buffer.putByte(PRE_OPERAND_SIZE);
-        m_buffer.putByte(OP_CMP_EvGv);
-        modRm_rmsib(src, base, index, scale, offset);
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp(OP_CMP_EvGv, src, base, index, scale, offset);
+    }
+
+    void testl_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_TEST_EvGv, src, dst);
+    }
+    
+    void testl_i32r(int imm, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP3_EvIz, GROUP3_OP_TEST, dst);
+        m_formatter.immediate32(imm);
+    }
+
+    void testl_i32m(int imm, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_GROUP3_EvIz, GROUP3_OP_TEST, base, offset);
+        m_formatter.immediate32(imm);
+    }
+
+    void testl_i32m(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.oneByteOp(OP_GROUP3_EvIz, GROUP3_OP_TEST, base, index, scale, offset);
+        m_formatter.immediate32(imm);
+    }
+
+#if PLATFORM(X86_64)
+    void testq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_TEST_EvGv, src, dst);
+    }
+
+    void testq_i32r(int imm, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP3_OP_TEST, dst);
+        m_formatter.immediate32(imm);
+    }
+#endif 
+
+    void testb_i8r(int imm, RegisterID dst)
+    {
+        m_formatter.oneByteOp8(OP_GROUP3_EbIb, GROUP3_OP_TEST, dst);
+        m_formatter.immediate8(imm);
     }
 
     void sete_r(RegisterID dst)
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP_SETE);
-        m_buffer.putByte(MODRM(3, 0, dst));
+        m_formatter.twoByteOp8(OP_SETE, (GroupOpcodeID)0, dst);
     }
 
     void setz_r(RegisterID dst)
@@ -475,9 +569,7 @@ public:
 
     void setne_r(RegisterID dst)
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP_SETNE);
-        m_buffer.putByte(MODRM(3, 0, dst));
+        m_formatter.twoByteOp8(OP_SETNE, (GroupOpcodeID)0, dst);
     }
 
     void setnz_r(RegisterID dst)
@@ -485,560 +577,147 @@ public:
         setne_r(dst);
     }
 
-    void orl_rr(RegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(OP_OR_EvGv);
-        modRm_rr(src, dst);
-    }
+    // Various move ops:
 
-    void orl_mr(int offset, RegisterID base, RegisterID dst)
+    void cdq()
     {
-        m_buffer.putByte(OP_OR_GvEv);
-        modRm_rm(dst, base, offset);
-    }
-
-    void orl_i8r(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opr(GROUP1_OP_OR, dst);
-        m_buffer.putByte(imm);
-    }
-
-    void orl_i32r(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIz);
-        modRm_opr(GROUP1_OP_OR, dst);
-        m_buffer.putInt(imm);
-    }
-
-    void subl_rr(RegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(OP_SUB_EvGv);
-        modRm_rr(src, dst);
-    }
-
-    void subl_i8r(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opr(GROUP1_OP_SUB, dst);
-        m_buffer.putByte(imm);
-    }
-    
-#if !PLATFORM(X86_64)
-    void subl_i8m(int imm, void* addr)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opm(GROUP1_OP_SUB, addr);
-        m_buffer.putByte(imm);
-    }
-#endif
-
-    void subl_i32r(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIz);
-        modRm_opr(GROUP1_OP_SUB, dst);
-        m_buffer.putInt(imm);
-    }
-
-    void subl_mr(RegisterID base, RegisterID dst)
-    {
-        m_buffer.putByte(OP_SUB_GvEv);
-        modRm_rm(dst, base);
-    }
-
-    void subl_mr(int offset, RegisterID base, RegisterID dst)
-    {
-        m_buffer.putByte(OP_SUB_GvEv);
-        modRm_rm(dst, base, offset);
-    }
-
-    void testb_i8r(int imm, RegisterID dst)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        m_buffer.putByteUnchecked(OP_GROUP3_EbIb);
-        modRm_opr_Unchecked(GROUP3_OP_TEST, dst);
-        m_buffer.putByteUnchecked(imm);
-    }
-
-    void testl_i32r(int imm, RegisterID dst)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        m_buffer.putByteUnchecked(OP_GROUP3_EvIz);
-        modRm_opr_Unchecked(GROUP3_OP_TEST, dst);
-        m_buffer.putIntUnchecked(imm);
-    }
-
-    void testl_i32m(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP3_EvIz);
-        modRm_opm(GROUP3_OP_TEST, dst);
-        m_buffer.putInt(imm);
-    }
-
-    void testl_i32m(int imm, int offset, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP3_EvIz);
-        modRm_opm(GROUP3_OP_TEST, dst, offset);
-        m_buffer.putInt(imm);
-    }
-
-    void testl_i32m(int imm, RegisterID base, RegisterID index, int scale)
-    {
-        m_buffer.putByte(OP_GROUP3_EvIz);
-        modRm_opmsib(GROUP3_OP_TEST, base, index, scale);
-        m_buffer.putInt(imm);
-    }
-
-    void testl_i32m(int imm, int offset, RegisterID base, RegisterID index, int scale)
-    {
-        m_buffer.putByte(OP_GROUP3_EvIz);
-        modRm_opmsib(GROUP3_OP_TEST, base, index, scale, offset);
-        m_buffer.putInt(imm);
-    }
-
-    void testl_rr(RegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(OP_TEST_EvGv);
-        modRm_rr(src, dst);
-    }
-    
-#if PLATFORM(X86_64)
-    void testq_i32r(int imm, RegisterID dst)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        m_buffer.putByteUnchecked(REX_W);
-        m_buffer.putByteUnchecked(OP_GROUP3_EvIz);
-        modRm_opr_Unchecked(GROUP3_OP_TEST, dst);
-        m_buffer.putIntUnchecked(imm);
-    }
-
-    void testq_rr(RegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(REX_W);
-        m_buffer.putByte(OP_TEST_EvGv);
-        modRm_rr(src, dst);
-    }
-#endif 
-
-    void xorl_i8r(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIb);
-        modRm_opr(GROUP1_OP_XOR, dst);
-        m_buffer.putByte(imm);
-    }
-
-    void xorl_i32r(int imm, RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP1_EvIz);
-        modRm_opr(GROUP1_OP_XOR, dst);
-        m_buffer.putInt(imm);
-    }
-
-    void xorl_rr(RegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(OP_XOR_EvGv);
-        modRm_rr(src, dst);
-    }
-
-    void sarl_i8r(int imm, RegisterID dst)
-    {
-        if (imm == 1) {
-            m_buffer.putByte(OP_GROUP2_Ev1);
-            modRm_opr(GROUP2_OP_SAR, dst);
-        } else {
-            m_buffer.putByte(OP_GROUP2_EvIb);
-            modRm_opr(GROUP2_OP_SAR, dst);
-            m_buffer.putByte(imm);
-        }
-    }
-
-    void sarl_CLr(RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP2_EvCL);
-        modRm_opr(GROUP2_OP_SAR, dst);
-    }
-
-    void shll_i8r(int imm, RegisterID dst)
-    {
-        if (imm == 1) {
-            m_buffer.putByte(OP_GROUP2_Ev1);
-            modRm_opr(GROUP2_OP_SHL, dst);
-        } else {
-            m_buffer.putByte(OP_GROUP2_EvIb);
-            modRm_opr(GROUP2_OP_SHL, dst);
-            m_buffer.putByte(imm);
-        }
-    }
-
-    void shll_CLr(RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP2_EvCL);
-        modRm_opr(GROUP2_OP_SHL, dst);
+        m_formatter.oneByteOp(OP_CDQ);
     }
 
     void xchgl_rr(RegisterID src, RegisterID dst)
     {
-        m_buffer.putByte(OP_XCHG_EvGv);
-        modRm_rr(src, dst);
-    }
-
-    void imull_rr(RegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_IMUL_GvEv);
-        modRm_rr(dst, src);
-    }
-    
-    void imull_i32r(RegisterID src, int32_t value, RegisterID dst)
-    {
-        m_buffer.putByte(OP_IMUL_GvEvIz);
-        modRm_rr(dst, src);
-        m_buffer.putInt(value);
-    }
-
-    void idivl_r(RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP3_Ev);
-        modRm_opr(GROUP3_OP_IDIV, dst);
-    }
-
-    void cdq()
-    {
-        m_buffer.putByte(OP_CDQ);
-    }
-
-    void movl_mr(RegisterID base, RegisterID dst)
-    {
-        m_buffer.putByte(OP_MOV_GvEv);
-        modRm_rm(dst, base);
-    }
-
-    void movl_mr(int offset, RegisterID base, RegisterID dst)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        m_buffer.putByteUnchecked(OP_MOV_GvEv);
-        modRm_rm_Unchecked(dst, base, offset);
+        m_formatter.oneByteOp(OP_XCHG_EvGv, src, dst);
     }
 
 #if PLATFORM(X86_64)
-    void movq_mr(RegisterID base, RegisterID dst)
+    void xchgq_rr(RegisterID src, RegisterID dst)
     {
-        m_buffer.putByte(REX_W);
-        m_buffer.putByte(OP_MOV_GvEv);
-        modRm_rm(dst, base);
-    }
-
-    void movq_mr(int offset, RegisterID base, RegisterID dst)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        m_buffer.putByteUnchecked(REX_W);
-        m_buffer.putByteUnchecked(OP_MOV_GvEv);
-        modRm_rm_Unchecked(dst, base, offset);
+        m_formatter.oneByteOp64(OP_XCHG_EvGv, src, dst);
     }
 #endif
 
-#if !PLATFORM(X86_64)
-    void movl_mr(void* addr, RegisterID dst)
+    void movl_rr(RegisterID src, RegisterID dst)
     {
-        m_buffer.putByte(OP_MOV_GvEv);
-        modRm_rm(dst, addr);
+        m_formatter.oneByteOp(OP_MOV_EvGv, src, dst);
     }
-#endif
+    
+    void movl_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_MOV_EvGv, src, base, offset);
+    }
+
+    void movl_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.oneByteOp(OP_MOV_EvGv, src, base, index, scale, offset);
+    }
+    
+    void movl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_MOV_GvEv, dst, base, offset);
+    }
 
     void movl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
-        m_buffer.putByte(OP_MOV_GvEv);
-        modRm_rmsib(dst, base, index, scale, offset);
+        m_formatter.oneByteOp(OP_MOV_GvEv, dst, base, index, scale, offset);
     }
 
-    void movl_mr(RegisterID base, RegisterID index, int scale, RegisterID dst)
-    {
-        m_buffer.putByte(OP_MOV_GvEv);
-        modRm_rmsib(dst, base, index, scale);
-    }
-
-    void movzbl_rr(RegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_MOVZX_GvEb);
-        modRm_rr(dst, src);
-    }
-
-    void movzwl_mr(int offset, RegisterID base, RegisterID dst)
-    {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_MOVZX_GvEw);
-        modRm_rm(dst, base, offset);
-    }
-
-    void movzwl_mr(RegisterID base, RegisterID index, int scale, RegisterID dst)
-    {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_MOVZX_GvEw);
-        modRm_rmsib(dst, base, index, scale);
-    }
-
-    void movzwl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
-    {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_MOVZX_GvEw);
-        modRm_rmsib(dst, base, index, scale, offset);
-    }
-
-    void movl_rm(RegisterID src, RegisterID base)
-    {
-        m_buffer.putByte(OP_MOV_EvGv);
-        modRm_rm(src, base);
-    }
-
-    void movl_rm(RegisterID src, int offset, RegisterID base)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        m_buffer.putByteUnchecked(OP_MOV_EvGv);
-        modRm_rm_Unchecked(src, base, offset);
-    }
-
-#if PLATFORM(X86_64)
-    void movq_rm(RegisterID src, RegisterID base)
-    {
-        m_buffer.putByte(REX_W);
-        m_buffer.putByte(OP_MOV_EvGv);
-        modRm_rm(src, base);
-    }
-
-    void movq_rm(RegisterID src, int offset, RegisterID base)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        m_buffer.putByteUnchecked(REX_W);
-        m_buffer.putByteUnchecked(OP_MOV_EvGv);
-        modRm_rm_Unchecked(src, base, offset);
-    }
-#endif
-
-    void movl_rm(RegisterID src, RegisterID base, RegisterID index, int scale)
-    {
-        m_buffer.putByte(OP_MOV_EvGv);
-        modRm_rmsib(src, base, index, scale);
-    }
-    
-    void movl_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
-    {
-        m_buffer.putByte(OP_MOV_EvGv);
-        modRm_rmsib(src, base, index, scale, offset);
-    }
-    
     void movl_i32r(int imm, RegisterID dst)
     {
-        m_buffer.putByte(OP_GROUP11_EvIz);
-        modRm_opr(GROUP11_MOV, dst);
-        m_buffer.putInt(imm);
-    }
-
-    void movl_i32m(int imm, RegisterID base)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        m_buffer.putByteUnchecked(OP_GROUP11_EvIz);
-        modRm_opm_Unchecked(GROUP11_MOV, base);
-        m_buffer.putIntUnchecked(imm);
+        m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, dst);
+        m_formatter.immediate32(imm);
     }
 
     void movl_i32m(int imm, int offset, RegisterID base)
     {
-        m_buffer.ensureSpace(maxInstructionSize);
-        m_buffer.putByteUnchecked(OP_GROUP11_EvIz);
-        modRm_opm_Unchecked(GROUP11_MOV, base, offset);
-        m_buffer.putIntUnchecked(imm);
+        m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, base, offset);
+        m_formatter.immediate32(imm);
     }
 
-#if !PLATFORM(X86_64)
+#if PLATFORM(X86_64)
+    void movq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_MOV_EvGv, src, dst);
+    }
+
+    void movq_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp64(OP_MOV_EvGv, src, base, offset);
+    }
+
+    void movq_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_MOV_GvEv, dst, base, offset);
+    }
+#else
+    void movl_mr(void* addr, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_MOV_GvEv, dst, addr);
+    }
+
     void movl_i32m(int imm, void* addr)
     {
-        m_buffer.putByte(OP_GROUP11_EvIz);
-        modRm_opm(GROUP11_MOV, addr);
-        m_buffer.putInt(imm);
+        m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, addr);
+        m_formatter.immediate32(imm);
     }
 #endif
 
+    void movzwl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_MOVZX_GvEw, dst, base, offset);
+    }
+
+    void movzwl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_MOVZX_GvEw, dst, base, index, scale, offset);
+    }
+
+    void movzbl_rr(RegisterID src, RegisterID dst)
+    {
+        // In 64-bit, this may cause an unnecessary REX to be planted (if the dst register
+        // is in the range ESP-EDI, and the src would not have required a REX).  Unneeded
+        // REX prefixes are defined to be silently ignored by the processor.
+        m_formatter.twoByteOp8(OP2_MOVZX_GvEb, dst, src);
+    }
+
     void leal_mr(int offset, RegisterID base, RegisterID dst)
     {
-        m_buffer.putByte(OP_LEA);
-        modRm_rm(dst, base, offset);
+        m_formatter.oneByteOp(OP_LEA, dst, base, offset);
     }
 
-    void leal_mr(int offset, RegisterID index, int scale, RegisterID dst)
-    {
-        m_buffer.putByte(OP_LEA);
-        modRm_rmsib(dst, X86::noBase, index, scale, offset);
-    }
-
-    void ret()
-    {
-        m_buffer.putByte(OP_RET);
-    }
-    
-    void jmp_r(RegisterID dst)
-    {
-        m_buffer.putByte(OP_GROUP5_Ev);
-        modRm_opr(GROUP5_OP_JMPN, dst);
-    }
-    
-    void jmp_m(RegisterID base)
-    {
-        m_buffer.putByte(OP_GROUP5_Ev);
-        modRm_opm(GROUP5_OP_JMPN, base);
-    }
-    
-    void jmp_m(int offset, RegisterID base)
-    {
-        m_buffer.putByte(OP_GROUP5_Ev);
-        modRm_opm(GROUP5_OP_JMPN, base, offset);
-    }
-    
-    void movsd_mr(int offset, RegisterID base, XMMRegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_F2);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_MOVSD_VsdWsd);
-        modRm_rm((RegisterID)dst, base, offset);
-    }
-
-    void movsd_rm(XMMRegisterID src, int offset, RegisterID base)
-    {
-        m_buffer.putByte(PRE_SSE_F2);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_MOVSD_WsdVsd);
-        modRm_rm((RegisterID)src, base, offset);
-    }
-
-    void movd_rr(XMMRegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_66);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_MOVD_EdVd);
-        modRm_rr((RegisterID)src, dst);
-    }
-
-    void cvtsi2sd_rr(RegisterID src, XMMRegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_F2);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_CVTSI2SD_VsdEd);
-        modRm_rr((RegisterID)dst, src);
-    }
-
-    void cvttsd2si_rr(XMMRegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_F2);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_CVTTSD2SI_GdWsd);
-        modRm_rr(dst, (RegisterID)src);
-    }
-
-    void addsd_mr(int offset, RegisterID base, XMMRegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_F2);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_ADDSD_VsdWsd);
-        modRm_rm((RegisterID)dst, base, offset);
-    }
-
-    void subsd_mr(int offset, RegisterID base, XMMRegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_F2);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_SUBSD_VsdWsd);
-        modRm_rm((RegisterID)dst, base, offset);
-    }
-
-    void mulsd_mr(int offset, RegisterID base, XMMRegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_F2);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_MULSD_VsdWsd);
-        modRm_rm((RegisterID)dst, base, offset);
-    }
-
-    void addsd_rr(XMMRegisterID src, XMMRegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_F2);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_ADDSD_VsdWsd);
-        modRm_rr((RegisterID)dst, (RegisterID)src);
-    }
-
-    void subsd_rr(XMMRegisterID src, XMMRegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_F2);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_SUBSD_VsdWsd);
-        modRm_rr((RegisterID)dst, (RegisterID)src);
-    }
-
-    void mulsd_rr(XMMRegisterID src, XMMRegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_F2);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_MULSD_VsdWsd);
-        modRm_rr((RegisterID)dst, (RegisterID)src);
-    }
-
-    void ucomis_rr(XMMRegisterID src, XMMRegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_66);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_UCOMISD_VsdWsd);
-        modRm_rr((RegisterID)dst, (RegisterID)src);
-    }
-
-    void pextrw_irr(int whichWord, XMMRegisterID src, RegisterID dst)
-    {
-        m_buffer.putByte(PRE_SSE_66);
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_PEXTRW_GdUdIb);
-        modRm_rr(dst, (RegisterID)src);
-        m_buffer.putByte(whichWord);
-    }
+    // Flow control:
 
     JmpSrc call()
     {
-        m_buffer.putByte(OP_CALL_rel32);
-        m_buffer.putInt(0); // FIXME: make this point to a global label, linked later.
-        return JmpSrc(m_buffer.size());
+        m_formatter.oneByteOp(OP_CALL_rel32);
+        return m_formatter.immediateRel32();
     }
     
     JmpSrc call(RegisterID dst)
     {
-        m_buffer.putByte(OP_GROUP5_Ev);
-        modRm_opr(GROUP5_OP_CALLN, dst);
-        return JmpSrc(m_buffer.size());
-    }
-
-    JmpDst label()
-    {
-        return JmpDst(m_buffer.size());
-    }
-    
-    JmpDst align(int alignment)
-    {
-        while (!m_buffer.isAligned(alignment))
-            m_buffer.putByte(OP_HLT);
-
-        return label();
+        m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_CALLN, dst);
+        return JmpSrc(m_formatter.size());
     }
 
     JmpSrc jmp()
     {
-        m_buffer.putByte(OP_JMP_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.oneByteOp(OP_JMP_rel32);
+        return m_formatter.immediateRel32();
     }
     
+    void jmp_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_JMPN, dst);
+    }
+    
+    void jmp_m(int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_JMPN, base, offset);
+    }
+
     JmpSrc jne()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JNE_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JNE_rel32);
+        return m_formatter.immediateRel32();
     }
     
     JmpSrc jnz()
@@ -1048,112 +727,197 @@ public:
 
     JmpSrc je()
     {
-        m_buffer.ensureSpace(maxInstructionSize);
-        m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-        m_buffer.putByteUnchecked(OP2_JE_rel32);
-        m_buffer.putIntUnchecked(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JE_rel32);
+        return m_formatter.immediateRel32();
     }
     
     JmpSrc jl()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JL_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JL_rel32);
+        return m_formatter.immediateRel32();
     }
     
     JmpSrc jb()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JB_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JB_rel32);
+        return m_formatter.immediateRel32();
     }
     
     JmpSrc jle()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JLE_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JLE_rel32);
+        return m_formatter.immediateRel32();
     }
     
     JmpSrc jbe()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JBE_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JBE_rel32);
+        return m_formatter.immediateRel32();
     }
     
     JmpSrc jge()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JGE_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JGE_rel32);
+        return m_formatter.immediateRel32();
     }
 
     JmpSrc jg()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JG_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JG_rel32);
+        return m_formatter.immediateRel32();
     }
 
     JmpSrc ja()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JA_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JA_rel32);
+        return m_formatter.immediateRel32();
     }
     
     JmpSrc jae()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JAE_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JAE_rel32);
+        return m_formatter.immediateRel32();
     }
     
     JmpSrc jo()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JO_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JO_rel32);
+        return m_formatter.immediateRel32();
     }
 
     JmpSrc jp()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JP_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JP_rel32);
+        return m_formatter.immediateRel32();
     }
     
     JmpSrc js()
     {
-        m_buffer.putByte(OP_2BYTE_ESCAPE);
-        m_buffer.putByte(OP2_JS_rel32);
-        m_buffer.putInt(0);
-        return JmpSrc(m_buffer.size());
+        m_formatter.twoByteOp(OP2_JS_rel32);
+        return m_formatter.immediateRel32();
+    }
+
+    // SSE operations:
+
+    void addsd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    void addsd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void cvtsi2sd_rr(RegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, src);
+    }
+
+    void cvttsd2si_rr(XMMRegisterID src, RegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_CVTTSD2SI_GdWsd, dst, (RegisterID)src);
+    }
+
+    void movd_rr(XMMRegisterID src, RegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_MOVD_EdVd, (RegisterID)src, dst);
+    }
+
+    void movsd_rm(XMMRegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MOVSD_WsdVsd, (RegisterID)src, base, offset);
+    }
+
+    void movsd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void mulsd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MULSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    void mulsd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MULSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void pextrw_irr(int whichWord, XMMRegisterID src, RegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_PEXTRW_GdUdIb, (RegisterID)dst, (RegisterID)src);
+        m_formatter.immediate8(whichWord);
+    }
+
+    void subsd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    void subsd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void ucomis_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_UCOMISD_VsdWsd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    // Misc instructions:
+
+    void int3()
+    {
+        m_formatter.oneByteOp(OP_INT3);
     }
     
+    void ret()
+    {
+        m_formatter.oneByteOp(OP_RET);
+    }
+
     void predictNotTaken()
     {
-        m_buffer.putByte(PRE_PREDICT_BRANCH_NOT_TAKEN);
+        m_formatter.prefix(PRE_PREDICT_BRANCH_NOT_TAKEN);
+    }
+
+    // Assembler admin methods:
+
+    JmpDst label()
+    {
+        return JmpDst(m_formatter.size());
     }
     
+    JmpDst align(int alignment)
+    {
+        while (!m_formatter.isAligned(alignment))
+            m_formatter.oneByteOp(OP_HLT);
+
+        return label();
+    }
+
+    // Linking & repatching:
+
     void link(JmpSrc from, JmpDst to)
     {
         ASSERT(to.m_offset != -1);
         ASSERT(from.m_offset != -1);
         
-        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(m_buffer.data()) + from.m_offset)[-1] = to.m_offset - from.m_offset;
+        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(m_formatter.data()) + from.m_offset)[-1] = to.m_offset - from.m_offset;
     }
     
     static void repatchAddress(void* code, JmpDst position, void* value)
@@ -1214,155 +978,382 @@ public:
     
     void* executableCopy(ExecutablePool* allocator)
     {
-        void* copy = m_buffer.executableCopy(allocator);
+        void* copy = m_formatter.executableCopy(allocator);
         ASSERT(copy);
         return copy;
     }
 
 private:
-    void modRm_rr(RegisterID reg, RegisterID rm)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        modRm_rr_Unchecked(reg, rm);
-    }
 
-    void modRm_rr_Unchecked(RegisterID reg, RegisterID rm)
-    {
-        m_buffer.putByteUnchecked(MODRM(3, reg, rm));
-    }
+    class X86InstructionFormatter {
+
+        static const int maxInstructionSize = 16;
+
+    public:
+
+        // Legacy prefix bytes:
+        //
+        // These are emmitted prior to the instruction.
+
+        void prefix(OneByteOpcodeID pre)
+        {
+            m_buffer.putByte(pre);
+        }
+
+        // Word-sized operands / no operand instruction formatters.
+        //
+        // In addition to the opcode, the following operand permutations are supported:
+        //   * None - instruction takes no operands.
+        //   * One register - the low three bits of the RegisterID are added into the opcode.
+        //   * Two registers - encode a register form ModRm (for all ModRm formats, the reg field is passed first, and a GroupOpcodeID may be passed in its place).
+        //   * Three argument ModRM - a register, and a register and an offset describing a memory operand.
+        //   * Five argument ModRM - a register, and a base register, an index, scale, and offset describing a memory operand.
+        //
+        // For 32-bit x86 targets, the address operand may also be provided as a void*.
+        // On 64-bit targets REX prefixes will be planted as necessary, where high numbered registers are used.
+        //
+        // The twoByteOp methods plant two-byte Intel instructions sequences (first opcode byte 0x0F).
+
+        void oneByteOp(OneByteOpcodeID opcode)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            m_buffer.putByteUnchecked(opcode);
+        }
+
+        void oneByteOp(OneByteOpcodeID opcode, RegisterID reg)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, 0, 0);
+            m_buffer.putByteUnchecked(opcode + reg);
+        }
+
+        void oneByteOp(OneByteOpcodeID opcode, int reg, RegisterID rm)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, 0, rm);
+            m_buffer.putByteUnchecked(opcode);
+            registerModRM(reg, rm);
+        }
+
+        void oneByteOp(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, 0, base);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, offset);
+        }
+
+        void oneByteOp(OneByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, index, base);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, index, scale, offset);
+        }
 
 #if !PLATFORM(X86_64)
-    void modRm_rm(RegisterID reg, void* addr)
-    {
-        m_buffer.putByte(MODRM(0, reg, X86::noBase));
-        m_buffer.putInt((int)addr);
-    }
+        void oneByteOp(OneByteOpcodeID opcode, int reg, void* address)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, address);
+        }
 #endif
 
-    void modRm_rm_Unchecked(RegisterID reg, RegisterID base)
-    {
-        if (base == X86::esp) {
-            m_buffer.putByteUnchecked(MODRM(0, reg, X86::hasSib));
-            m_buffer.putByteUnchecked(SIB(0, X86::noScale, X86::esp));
-        } else {
-            m_buffer.putByteUnchecked(MODRM(0, reg, base));
+        void twoByteOp(TwoByteOpcodeID opcode)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(opcode);
         }
-    }
 
-    void modRm_rm(RegisterID reg, RegisterID base)
-    {
-        if (base == X86::esp) {
-            m_buffer.putByte(MODRM(0, reg, X86::hasSib));
-            m_buffer.putByte(SIB(0, X86::noScale, X86::esp));
-        } else
-            m_buffer.putByte(MODRM(0, reg, base));
-    }
+        void twoByteOp(TwoByteOpcodeID opcode, int reg, RegisterID rm)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, 0, rm);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(opcode);
+            registerModRM(reg, rm);
+        }
 
-    void modRm_rm_Unchecked(RegisterID reg, RegisterID base, int offset)
-    {
-        if (base == X86::esp) {
-            if (CAN_SIGN_EXTEND_8_32(offset)) {
-                m_buffer.putByteUnchecked(MODRM(1, reg, X86::hasSib));
-                m_buffer.putByteUnchecked(SIB(0, X86::noScale, X86::esp));
+        void twoByteOp(TwoByteOpcodeID opcode, int reg, RegisterID base, int offset)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, 0, base);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, offset);
+        }
+
+        void twoByteOp(TwoByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, index, base);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, index, scale, offset);
+        }
+
+#if PLATFORM(X86_64)
+        // Quad-word-sized operands:
+        //
+        // Used to format 64-bit operantions, planting a REX.w prefix.
+        // When planting d64 or f64 instructions, not requiring a REX.w prefix,
+        // the normal (non-'64'-postfixed) formatters should be used.
+
+        void oneByteOp64(OneByteOpcodeID opcode, int reg, RegisterID rm)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexW(reg, 0, rm);
+            m_buffer.putByteUnchecked(opcode);
+            registerModRM(reg, rm);
+        }
+
+        void oneByteOp64(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexW(reg, 0, base);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, offset);
+        }
+
+        void oneByteOp64(OneByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexW(reg, index, base);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, index, scale, offset);
+        }
+#endif
+
+        // Byte-operands:
+        //
+        // These methods format byte operations.  Byte operations differ from the normal
+        // formatters in the circumstances under which they will decide to emit REX prefixes.
+        // These should be used where any register operand signifies a byte register.
+        //
+        // The disctinction is due to the handling of register numbers in the range 4..7 on
+        // x86-64.  These register numbers may either represent the second byte of the first
+        // four registers (ah..bh) or the first byte of the second four registers (spl..dil).
+        //
+        // Since ah..bh cannot be used in all permutations of operands (specifically cannot
+        // be accessed where a REX prefix is present), these are likely best treated as
+        // deprecated.  In order to ensure the correct registers spl..dil are selected a
+        // REX prefix will be emitted for any byte register operand in the range 4..15.
+        //
+        // These formatters may be used in instructions where a mix of operand sizes, in which
+        // case an unnecessary REX will be emitted, for example:
+        //     movzbl %al, %edi
+        // In this case a REX will be planted since edi is 7 (and were this a byte operand
+        // a REX would be required to specify dil instead of bh).  Unneeded REX prefixes will
+        // be silently ignored by the processor.
+        //
+        // Address operands should still be checked using regRequiresRex(), while byteRegRequiresRex()
+        // is provided to check byte register operands.
+
+        void oneByteOp8(OneByteOpcodeID opcode, GroupOpcodeID groupOp, RegisterID rm)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIf(byteRegRequiresRex(rm), 0, 0, rm);
+            m_buffer.putByteUnchecked(opcode);
+            registerModRM(groupOp, rm);
+        }
+
+        void twoByteOp8(TwoByteOpcodeID opcode, RegisterID reg, RegisterID rm)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIf(byteRegRequiresRex(reg)|byteRegRequiresRex(rm), reg, 0, rm);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(opcode);
+            registerModRM(reg, rm);
+        }
+
+        void twoByteOp8(TwoByteOpcodeID opcode, GroupOpcodeID groupOp, RegisterID rm)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIf(byteRegRequiresRex(rm), 0, 0, rm);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(opcode);
+            registerModRM(groupOp, rm);
+        }
+
+        // Immediates:
+        //
+        // An immedaite should be appended where appropriate after an op has been emitted.
+        // The writes are unchecked since the opcode formatters above will have ensured space.
+
+        void immediate8(int imm)
+        {
+            m_buffer.putByteUnchecked(imm);
+        }
+
+        void immediate32(int imm)
+        {
+            m_buffer.putIntUnchecked(imm);
+        }
+
+        JmpSrc immediateRel32()
+        {
+            m_buffer.putIntUnchecked(0);
+            return JmpSrc(m_buffer.size());
+        }
+
+        // Administrative methods:
+
+        size_t size() const { return m_buffer.size(); }
+        bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
+        void* data() const { return m_buffer.data(); }
+        void* executableCopy(ExecutablePool* allocator) { return m_buffer.executableCopy(allocator); }
+
+    private:
+
+        // Internals; ModRm and REX formatters.
+
+        static const RegisterID noBase = X86::ebp;
+        static const RegisterID hasSib = X86::esp;
+        static const RegisterID noIndex = X86::esp;
+#if PLATFORM(X86_64)
+        static const RegisterID noBase2 = X86::r13;
+        static const RegisterID hasSib2 = X86::r12;
+
+        // Registers r8 & above require a REX prefixe.
+        inline bool regRequiresRex(int reg)
+        {
+            return (reg >= X86::r8);
+        }
+
+        // Byte operand register spl & above require a REX prefix (to prevent the 'H' registers be accessed).
+        inline bool byteRegRequiresRex(int reg)
+        {
+            return (reg >= X86::esp);
+        }
+
+        // Format a REX prefix byte.
+        inline void emitRex(bool w, int r, int x, int b)
+        {
+            m_buffer.putByteUnchecked(PRE_REX | ((int)w << 3) | ((r>>3)<<2) | ((x>>3)<<1) | (b>>3));
+        }
+
+        // Used to plant a REX byte with REX.w set (for 64-bit operations).
+        inline void emitRexW(int r, int x, int b)
+        {
+            emitRex(true, r, x, b);
+        }
+
+        // Used for operations with byte operands - use byteRegRequiresRex() to check register operands,
+        // regRequiresRex() to check other registers (i.e. address base & index).
+        inline void emitRexIf(bool condition, int r, int x, int b)
+        {
+            if (condition) emitRex(false, r, x, b);
+        }
+
+        // Used for word sized operations, will plant a REX prefix if necessary (if any register is r8 or above).
+        inline void emitRexIfNeeded(int r, int x, int b)
+        {
+            emitRexIf(regRequiresRex(r) || regRequiresRex(x) || regRequiresRex(b), r, x, b);
+        }
+#else
+        // No REX prefix bytes on 32-bit x86.
+        inline bool regRequiresRex(int) { return false; }
+        inline bool byteRegRequiresRex(int) { return false; }
+        inline void emitRexIf(bool, int, int, int) {}
+        inline void emitRexIfNeeded(int, int, int) {}
+#endif
+
+        enum ModRmMode {
+            ModRmMemoryNoDisp,
+            ModRmMemoryDisp8,
+            ModRmMemoryDisp32,
+            ModRmRegister,
+        };
+
+        void putModRm(ModRmMode mode, int reg, RegisterID rm)
+        {
+            m_buffer.putByteUnchecked((mode << 6) | ((reg & 7) << 3) | (rm & 7));
+        }
+
+        void putModRmSib(ModRmMode mode, int reg, RegisterID base, RegisterID index, int scale)
+        {
+            ASSERT(mode != ModRmRegister);
+
+            // Encode sacle of (1,2,4,8) -> (0,1,2,3)
+            int shift = 0;
+            while (scale >>= 1)
+                shift++;
+
+            putModRm(mode, reg, hasSib);
+            m_buffer.putByteUnchecked((shift << 6) | ((index & 7) << 3) | (base & 7));
+        }
+
+        void registerModRM(int reg, RegisterID rm)
+        {
+            putModRm(ModRmRegister, reg, rm);
+        }
+
+        void memoryModRM(int reg, RegisterID base, int offset)
+        {
+            // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
+#if PLATFORM(X86_64)
+            if ((base == hasSib) || (base == hasSib2)) {
+#else
+            if (base == hasSib) {
+#endif
+                if (!offset) // No need to check if the base is noBase, since we know it is hasSib!
+                    putModRmSib(ModRmMemoryNoDisp, reg, base, noIndex, 0);
+                else if (CAN_SIGN_EXTEND_8_32(offset)) {
+                    putModRmSib(ModRmMemoryDisp8, reg, base, noIndex, 0);
+                    m_buffer.putByteUnchecked(offset);
+                } else {
+                    putModRmSib(ModRmMemoryDisp32, reg, base, noIndex, 0);
+                    m_buffer.putIntUnchecked(offset);
+                }
+            } else {
+#if PLATFORM(X86_64)
+                if (!offset && (base != noBase) && (base != noBase2))
+#else
+                if (!offset && (base != noBase))
+#endif
+                    putModRm(ModRmMemoryNoDisp, reg, base);
+                else if (CAN_SIGN_EXTEND_8_32(offset)) {
+                    putModRm(ModRmMemoryDisp8, reg, base);
+                    m_buffer.putByteUnchecked(offset);
+                } else {
+                    putModRm(ModRmMemoryDisp32, reg, base);
+                    m_buffer.putIntUnchecked(offset);
+                }
+            }
+        }
+    
+        void memoryModRM(int reg, RegisterID base, RegisterID index, int scale, int offset)
+        {
+            ASSERT(index != noIndex);
+
+#if PLATFORM(X86_64)
+            if (!offset && (base != noBase) && (base != noBase2))
+#else
+            if (!offset && (base != noBase))
+#endif
+                putModRmSib(ModRmMemoryNoDisp, reg, base, index, scale);
+            else if (CAN_SIGN_EXTEND_8_32(offset)) {
+                putModRmSib(ModRmMemoryDisp8, reg, base, index, scale);
                 m_buffer.putByteUnchecked(offset);
             } else {
-                m_buffer.putByteUnchecked(MODRM(2, reg, X86::hasSib));
-                m_buffer.putByteUnchecked(SIB(0, X86::noScale, X86::esp));
-                m_buffer.putIntUnchecked(offset);
-            }
-        } else {
-            if (CAN_SIGN_EXTEND_8_32(offset)) {
-                m_buffer.putByteUnchecked(MODRM(1, reg, base));
-                m_buffer.putByteUnchecked(offset);
-            } else {
-                m_buffer.putByteUnchecked(MODRM(2, reg, base));
+                putModRmSib(ModRmMemoryDisp32, reg, base, index, scale);
                 m_buffer.putIntUnchecked(offset);
             }
         }
-    }
-
-    void modRm_rm(RegisterID reg, RegisterID base, int offset)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        modRm_rm_Unchecked(reg, base, offset);
-    }
-
-    void modRm_rmsib(RegisterID reg, RegisterID base, RegisterID index, int scale)
-    {
-        int shift = 0;
-        while (scale >>= 1)
-            shift++;
-    
-        m_buffer.putByte(MODRM(0, reg, X86::hasSib));
-        m_buffer.putByte(SIB(shift, index, base));
-    }
-
-    void modRm_rmsib(RegisterID reg, RegisterID base, RegisterID index, int scale, int offset)
-    {
-        int shift = 0;
-        while (scale >>= 1)
-            shift++;
-    
-        if (CAN_SIGN_EXTEND_8_32(offset)) {
-            m_buffer.putByte(MODRM(1, reg, X86::hasSib));
-            m_buffer.putByte(SIB(shift, index, base));
-            m_buffer.putByte(offset);
-        } else {
-            m_buffer.putByte(MODRM(2, reg, X86::hasSib));
-            m_buffer.putByte(SIB(shift, index, base));
-            m_buffer.putInt(offset);
-        }
-    }
-
-    void modRm_opr(OpcodeID opcodeID, RegisterID rm)
-    {
-        m_buffer.ensureSpace(maxInstructionSize);
-        modRm_opr_Unchecked(opcodeID, rm);
-    }
-
-    void modRm_opr_Unchecked(OpcodeID opcodeID, RegisterID rm)
-    {
-        modRm_rr_Unchecked(static_cast<RegisterID>(opcodeID), rm);
-    }
-
-    void modRm_opm(OpcodeID opcodeID, RegisterID base)
-    {
-        modRm_rm(static_cast<RegisterID>(opcodeID), base);
-    }
-
-    void modRm_opm_Unchecked(OpcodeID opcodeID, RegisterID base)
-    {
-        modRm_rm_Unchecked(static_cast<RegisterID>(opcodeID), base);
-    }
-
-    void modRm_opm_Unchecked(OpcodeID opcodeID, RegisterID base, int offset)
-    {
-        modRm_rm_Unchecked(static_cast<RegisterID>(opcodeID), base, offset);
-    }
-
-    void modRm_opm(OpcodeID opcodeID, RegisterID base, int offset)
-    {
-        modRm_rm(static_cast<RegisterID>(opcodeID), base, offset);
-    }
 
 #if !PLATFORM(X86_64)
-    void modRm_opm(OpcodeID opcodeID, void* addr)
-    {
-        modRm_rm(static_cast<RegisterID>(opcodeID), addr);
-    }
+        void memoryModRM(int reg, void* address)
+        {
+            // noBase + ModRmMemoryNoDisp means noBase + ModRmMemoryDisp32!
+            putModRm(ModRmMemoryNoDisp, reg, noBase);
+            m_buffer.putIntUnchecked(reinterpret_cast<int32_t>(address));
+        }
 #endif
 
-    void modRm_opmsib(OpcodeID opcodeID, RegisterID base, RegisterID index, int scale, int offset)
-    {
-        modRm_rmsib(static_cast<RegisterID>(opcodeID), base, index, scale, offset);
-    }
-
-    void modRm_opmsib(OpcodeID opcodeID, RegisterID base, RegisterID index, int scale)
-    {
-        modRm_rmsib(static_cast<RegisterID>(opcodeID), base, index, scale);
-    }
-
-    AssemblerBuffer m_buffer;
+        AssemblerBuffer m_buffer;
+    } m_formatter;
 };
 
 } // namespace JSC

@@ -59,7 +59,7 @@ namespace JSC {
                 grow();
         }
 
-        bool isAligned(int alignment)
+        bool isAligned(int alignment) const
         {
             return !(m_size & (alignment - 1));
         }
@@ -105,7 +105,7 @@ namespace JSC {
             putIntUnchecked(value);
         }
 
-        void* data()
+        void* data() const
         {
             return m_buffer;
         }

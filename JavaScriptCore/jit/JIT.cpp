@@ -279,7 +279,7 @@ void JIT::privateCompileMainPass()
             if (m_codeBlock->needsFullScopeChain())
                 emitCTICall(Interpreter::cti_op_end);
             emitGetVirtualRegister(currentInstruction[1].u.operand, X86::eax);
-            __ pushl_m(RegisterFile::ReturnPC * static_cast<int>(sizeof(Register)), callFrameRegister);
+            __ push_m(RegisterFile::ReturnPC * static_cast<int>(sizeof(Register)), callFrameRegister);
             __ ret();
             NEXT_OPCODE(op_end);
         }
@@ -518,7 +518,7 @@ void JIT::privateCompileMainPass()
             emitGetFromCallFrameHeader(RegisterFile::CallerFrame, callFrameRegister);
 
             // Return.
-            __ pushl_r(X86::edx);
+            __ push_r(X86::edx);
             __ ret();
 
             NEXT_OPCODE(op_ret);
@@ -932,10 +932,10 @@ void JIT::privateCompileMainPass()
         case op_throw: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, X86::ecx);
             emitCTICall(Interpreter::cti_op_throw);
-            __ addl_i8r(0x20, X86::esp);
-            __ popl_r(X86::ebx);
-            __ popl_r(X86::edi);
-            __ popl_r(X86::esi);
+            __ addl_ir(0x20, X86::esp);
+            __ pop_r(X86::ebx);
+            __ pop_r(X86::edi);
+            __ pop_r(X86::esi);
             __ ret();
             NEXT_OPCODE(op_throw);
         }
@@ -1723,8 +1723,8 @@ void JIT::privateCompile()
         store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin())), m_interpreter->sampler()->sampleSlot());
 #endif
 
-    // Could use a popl_m, but would need to offset the following instruction if so.
-    __ popl_r(X86::ecx);
+    // Could use a pop_m, but would need to offset the following instruction if so.
+    __ pop_r(X86::ecx);
     emitPutToCallFrameHeader(X86::ecx, RegisterFile::ReturnPC);
 
     Jump slowRegisterFileCheck;
@@ -1829,18 +1829,18 @@ void JIT::privateCompileCTIMachineTrampolines()
     
     // Check eax is an array
     X86Assembler::JmpSrc array_failureCases1 = emitJumpIfNotJSCell(X86::eax);
-    __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsArrayVptr), X86::eax);
+    __ cmpl_im(reinterpret_cast<unsigned>(m_interpreter->m_jsArrayVptr), 0, X86::eax);
     X86Assembler::JmpSrc array_failureCases2 = __ jne();
 
     // Checks out okay! - get the length from the storage
     __ movl_mr(FIELD_OFFSET(JSArray, m_storage), X86::eax, X86::eax);
     __ movl_mr(FIELD_OFFSET(ArrayStorage, m_length), X86::eax, X86::eax);
 
-    __ cmpl_i32r(JSImmediate::maxImmediateInt, X86::eax);
+    __ cmpl_ir(JSImmediate::maxImmediateInt, X86::eax);
     X86Assembler::JmpSrc array_failureCases3 = __ ja();
 
     __ addl_rr(X86::eax, X86::eax);
-    __ addl_i8r(1, X86::eax);
+    __ addl_ir(1, X86::eax);
     
     __ ret();
 
@@ -1850,18 +1850,18 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // Check eax is a string
     X86Assembler::JmpSrc string_failureCases1 = emitJumpIfNotJSCell(X86::eax);
-    __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsStringVptr), X86::eax);
+    __ cmpl_im(reinterpret_cast<unsigned>(m_interpreter->m_jsStringVptr), 0, X86::eax);
     X86Assembler::JmpSrc string_failureCases2 = __ jne();
 
     // Checks out okay! - get the length from the Ustring.
     __ movl_mr(FIELD_OFFSET(JSString, m_value) + FIELD_OFFSET(UString, m_rep), X86::eax, X86::eax);
     __ movl_mr(FIELD_OFFSET(UString::Rep, len), X86::eax, X86::eax);
 
-    __ cmpl_i32r(JSImmediate::maxImmediateInt, X86::eax);
+    __ cmpl_ir(JSImmediate::maxImmediateInt, X86::eax);
     X86Assembler::JmpSrc string_failureCases3 = __ ja();
 
     __ addl_rr(X86::eax, X86::eax);
-    __ addl_i8r(1, X86::eax);
+    __ addl_ir(1, X86::eax);
     
     __ ret();
 
@@ -1874,18 +1874,18 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ movl_mr(FIELD_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
     __ testl_rr(X86::eax, X86::eax);
     X86Assembler::JmpSrc hasCodeBlock1 = __ jne();
-    __ popl_r(X86::ebx);
+    __ pop_r(X86::ebx);
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     X86Assembler::JmpSrc callJSFunction1 = __ call();
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
-    __ pushl_r(X86::ebx);
+    __ push_r(X86::ebx);
     __ link(hasCodeBlock1, __ label());
 
     // Check argCount matches callee arity.
     __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, m_numParameters), X86::eax);
     X86Assembler::JmpSrc arityCheckOkay1 = __ je();
-    __ popl_r(X86::ebx);
+    __ pop_r(X86::ebx);
     emitPutJITStubArg(X86::ebx, 2);
     emitPutJITStubArg(X86::eax, 4);
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
@@ -1893,16 +1893,16 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ movl_rr(X86::edx, callFrameRegister);
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
-    __ pushl_r(X86::ebx);
+    __ push_r(X86::ebx);
     __ link(arityCheckOkay1, __ label());
 
     compileOpCallInitializeCallFrame();
 
-    __ popl_r(X86::ebx);
+    __ pop_r(X86::ebx);
     emitPutJITStubArg(X86::ebx, 2);
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     X86Assembler::JmpSrc callDontLazyLinkCall = __ call();
-    __ pushl_r(X86::ebx);
+    __ push_r(X86::ebx);
 
     __ jmp_r(X86::eax);
 
@@ -1913,18 +1913,18 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ movl_mr(FIELD_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
     __ testl_rr(X86::eax, X86::eax);
     X86Assembler::JmpSrc hasCodeBlock2 = __ jne();
-    __ popl_r(X86::ebx);
+    __ pop_r(X86::ebx);
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     X86Assembler::JmpSrc callJSFunction2 = __ call();
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
-    __ pushl_r(X86::ebx);
+    __ push_r(X86::ebx);
     __ link(hasCodeBlock2, __ label());
 
     // Check argCount matches callee arity.
     __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, m_numParameters), X86::eax);
     X86Assembler::JmpSrc arityCheckOkay2 = __ je();
-    __ popl_r(X86::ebx);
+    __ pop_r(X86::ebx);
     emitPutJITStubArg(X86::ebx, 2);
     emitPutJITStubArg(X86::eax, 4);
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
@@ -1932,16 +1932,16 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ movl_rr(X86::edx, callFrameRegister);
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
-    __ pushl_r(X86::ebx);
+    __ push_r(X86::ebx);
     __ link(arityCheckOkay2, __ label());
 
     compileOpCallInitializeCallFrame();
 
-    __ popl_r(X86::ebx);
+    __ pop_r(X86::ebx);
     emitPutJITStubArg(X86::ebx, 2);
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     X86Assembler::JmpSrc callLazyLinkCall = __ call();
-    __ pushl_r(X86::ebx);
+    __ push_r(X86::ebx);
 
     __ jmp_r(X86::eax);
 
@@ -1952,18 +1952,18 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ movl_mr(FIELD_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
     __ testl_rr(X86::eax, X86::eax);
     X86Assembler::JmpSrc hasCodeBlock3 = __ jne();
-    __ popl_r(X86::ebx);
+    __ pop_r(X86::ebx);
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
     X86Assembler::JmpSrc callJSFunction3 = __ call();
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
-    __ pushl_r(X86::ebx);
+    __ push_r(X86::ebx);
     __ link(hasCodeBlock3, __ label());
 
     // Check argCount matches callee arity.
     __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, m_numParameters), X86::eax);
     X86Assembler::JmpSrc arityCheckOkay3 = __ je();
-    __ popl_r(X86::ebx);
+    __ pop_r(X86::ebx);
     emitPutJITStubArg(X86::ebx, 2);
     emitPutJITStubArg(X86::eax, 4);
     emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
@@ -1971,7 +1971,7 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ movl_rr(X86::edx, callFrameRegister);
     emitGetJITStubArg(1, X86::ecx);
     emitGetJITStubArg(3, X86::edx);
-    __ pushl_r(X86::ebx);
+    __ push_r(X86::ebx);
     __ link(arityCheckOkay3, __ label());
 
     compileOpCallInitializeCallFrame();

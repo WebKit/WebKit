@@ -143,7 +143,7 @@ void JIT::putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSourc
     // ucomi will report that (0 == -0), and will report true if either input in NaN (result is unordered).
     __ link(__ jp(), resultLookedLikeImmButActuallyIsnt); // Actually was a NaN
     __ pextrw_irr(3, xmmSource, tempReg2);
-    __ cmpl_i32r(0x8000, tempReg2);
+    __ cmpl_ir(0x8000, tempReg2);
     __ link(__ je(), resultLookedLikeImmButActuallyIsnt); // Actually was -0
     // Yes it really really really is representable as a JSImmediate.
     emitFastArithIntToImmNoCheck(tempReg1);
@@ -170,7 +170,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         JmpSrc op2imm = __ jne();
         if (!types.second().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::edx, src2);
-            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::edx);
+            __ cmpl_im(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::edx);
             addSlowCase(__ jne());
         }
 
@@ -180,7 +180,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         JmpSrc op1imm = __ jne();
         if (!types.first().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::eax, src1);
-            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
+            __ cmpl_im(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
             addSlowCase(__ jne());
         }
 
@@ -217,7 +217,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         JmpSrc op1imm = __ jne();
         if (!types.first().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::eax, src1);
-            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
+            __ cmpl_im(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
             addSlowCase(__ jne());
         }
 
@@ -227,7 +227,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         JmpSrc op2imm = __ jne();
         if (!types.second().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::edx, src2);
-            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::edx);
+            __ cmpl_im(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::edx);
             addSlowCase(__ jne());
         }
 
