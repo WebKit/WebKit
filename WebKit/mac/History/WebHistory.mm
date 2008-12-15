@@ -79,6 +79,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 - (BOOL)containsURL:(NSURL *)URL;
 - (WebHistoryItem *)itemForURL:(NSURL *)URL;
 - (WebHistoryItem *)itemForURLString:(NSString *)URLString;
+- (NSArray *)allItems;
 
 - (BOOL)loadFromURL:(NSURL *)URL collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error;
 - (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error;
@@ -409,6 +410,11 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     return [self itemForURLString:[URL _web_originalDataAsString]];
 }
 
+- (NSArray *)allItems
+{
+    return [_entriesByURL allValues];
+}
+
 #pragma mark ARCHIVING/UNARCHIVING
 
 - (void)setHistoryAgeInDaysLimit:(int)limit
@@ -682,11 +688,9 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 - (void)removeAllItems
 {
-    if ([_historyPrivate removeAllItems]) {
-        [[NSNotificationCenter defaultCenter]
-            postNotificationName:WebHistoryAllItemsRemovedNotification
-                          object:self];
-    }
+    NSArray *entries = [_historyPrivate allItems];
+    if ([_historyPrivate removeAllItems])
+        [self _sendNotification:WebHistoryAllItemsRemovedNotification entries:entries];
 }
 
 - (void)addItems:(NSArray *)newEntries

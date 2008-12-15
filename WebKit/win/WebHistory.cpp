@@ -454,11 +454,18 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
 {
     CFArrayRemoveAllValues(m_entriesByDate.get());
     CFArrayRemoveAllValues(m_datesWithEntries.get());
+
+    CFIndex itemCount = CFDictionaryGetCount(m_entriesByURL.get());
+    Vector<IWebHistoryItem*> itemsVector(itemCount);
+    CFDictionaryGetKeysAndValues(m_entriesByURL.get(), 0, (const void**)itemsVector.data());
+    RetainPtr<CFArrayRef> allItems(AdoptCF, CFArrayCreate(kCFAllocatorDefault, (const void**)itemsVector.data(), itemCount, &MarshallingHelpers::kIUnknownArrayCallBacks));
+
     CFDictionaryRemoveAllValues(m_entriesByURL.get());
 
     PageGroup::removeAllVisitedLinks();
 
-    return postNotification(kWebHistoryAllItemsRemovedNotification);
+    CFDictionaryPropertyBag* userInfo = createUserInfoFromArray(getNotificationString(kWebHistoryAllItemsRemovedNotification), allItems.get());
+    return postNotification(kWebHistoryAllItemsRemovedNotification, userInfo);
 }
 
 HRESULT STDMETHODCALLTYPE WebHistory::orderedLastVisitedDays( 

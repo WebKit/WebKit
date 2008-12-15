@@ -1,3 +1,16 @@
+2008-12-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/3258561> WebHistoryAllItemsRemovedNotification
+          should add items to userInfo
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate allItems]): Added this helper method, which returns
+        all values in the _entriesByURL dictionary.
+        (-[WebHistory removeAllItems]): Changed to send the array of all items
+        in the notification.
+
 2008-12-13  Darin Adler  <darin@apple.com>
 
         - <rdar://problem/6441035> WebTextIterator class not exported in WebKit
