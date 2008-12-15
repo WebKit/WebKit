@@ -1,3 +1,11 @@
+2008-12-15  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Add worker tests to the skip list for the Qt DRT as the feature is not enabled.
+
+        * platform/qt/Skipped:
+
 2008-12-14  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
