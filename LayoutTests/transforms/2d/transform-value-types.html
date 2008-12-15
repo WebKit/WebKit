@@ -54,46 +54,46 @@
   
   test("transformRule[0]", "WebKitCSSTransformValue");
 
-  shouldBe("transformRule[0].operationType", "1");        // CSS_TRANSLATE
+  shouldBe("transformRule[0].operationType", "WebKitCSSTransformValue.CSS_TRANSLATE");
   shouldBe("transformRule[0].cssText", "'translate(10px)'");
 
-  shouldBe("transformRule[1].operationType", "2");        // CSS_TRANSLATEX
+  shouldBe("transformRule[1].operationType", "WebKitCSSTransformValue.CSS_TRANSLATEX");
   shouldBe("transformRule[1].cssText", "'translateX(10px)'");
 
-  shouldBe("transformRule[2].operationType", "3");        // CSS_TRANSLATEY
+  shouldBe("transformRule[2].operationType", "WebKitCSSTransformValue.CSS_TRANSLATEY");
   shouldBe("transformRule[2].cssText", "'translateY(10px)'");
 
-  shouldBe("transformRule[3].operationType", "4");        // CSS_ROTATE
+  shouldBe("transformRule[3].operationType", "WebKitCSSTransformValue.CSS_ROTATE");
   shouldBe("transformRule[3].cssText", "'rotate(10deg)'");
 
-  shouldBe("transformRule[4].operationType", "4");        // CSS_ROTATE
+  shouldBe("transformRule[4].operationType", "WebKitCSSTransformValue.CSS_ROTATE");
   shouldBe("transformRule[4].cssText", "'rotate(11rad)'");
 
-  shouldBe("transformRule[5].operationType", "4");        // CSS_ROTATE
+  shouldBe("transformRule[5].operationType", "WebKitCSSTransformValue.CSS_ROTATE");
   shouldBe("transformRule[5].cssText", "'rotate(12grad)'");
 
-  shouldBe("transformRule[6].operationType", "4");        // CSS_ROTATE
+  shouldBe("transformRule[6].operationType", "WebKitCSSTransformValue.CSS_ROTATE");
   shouldBe("transformRule[6].cssText", "'rotate(13turn)'");
 
-  shouldBe("transformRule[7].operationType", "5");        // CSS_SCALE
+  shouldBe("transformRule[7].operationType", "WebKitCSSTransformValue.CSS_SCALE");
   shouldBe("transformRule[7].cssText", "'scale(2)'");
 
-  shouldBe("transformRule[8].operationType", "6");        // CSS_SCALEX
+  shouldBe("transformRule[8].operationType", "WebKitCSSTransformValue.CSS_SCALEX");
   shouldBe("transformRule[8].cssText", "'scaleX(1.2)'");
 
-  shouldBe("transformRule[9].operationType", "7");        // CSS_SCALEY
+  shouldBe("transformRule[9].operationType", "WebKitCSSTransformValue.CSS_SCALEY");
   shouldBe("transformRule[9].cssText", "'scaleY(1.2)'");
 
-  shouldBe("transformRule[10].operationType", "8");        // CSS_SKEW
+  shouldBe("transformRule[10].operationType", "WebKitCSSTransformValue.CSS_SKEW");
   shouldBe("transformRule[10].cssText", "'skew(10deg, 10rad)'");
 
-  shouldBe("transformRule[11].operationType", "9");        // CSS_SKEWX
+  shouldBe("transformRule[11].operationType", "WebKitCSSTransformValue.CSS_SKEWX");
   shouldBe("transformRule[11].cssText", "'skewX(10deg)'");
 
-  shouldBe("transformRule[12].operationType", "10");        // CSS_SKEWY
+  shouldBe("transformRule[12].operationType", "WebKitCSSTransformValue.CSS_SKEWY");
   shouldBe("transformRule[12].cssText", "'skewY(11grad)'");
 
-  shouldBe("transformRule[13].operationType", "11");        // CSS_MATRIX
+  shouldBe("transformRule[13].operationType", "WebKitCSSTransformValue.CSS_MATRIX");
   shouldBe("transformRule[13].cssText", "'matrix(1, 0, 0, 1, 0, 0)'");
   
   var successfullyParsed = true;
