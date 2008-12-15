@@ -234,18 +234,18 @@ esac
 AC_MSG_RESULT([$unicode_backend])
 
 if test "$unicode_backend" = "icu"; then
-	if test "$os_darwin" = "yes"; then
-		UNICODE_CFLAGS="-I\$(srcdir)/JavaScriptCore/icu -I\$(srcdir)/WebCore/icu"
-		UNICODE_LIBS="-licucore"
-	elif test "$os_win32" = "yes"; then
-		UNICODE_CFLAGS=""
-		UNICODE_LIBS="-licuin -licuuc"
-	else
-		AC_PATH_PROG(icu_config, icu-config, no)
-		if test "$icu_config" = "no"; then
+	AC_PATH_PROG(icu_config, icu-config, no)
+	if test "$icu_config" = "no"; then
+		if test "$os_darwin" = "yes"; then
+			UNICODE_CFLAGS="-I\$(srcdir)/JavaScriptCore/icu -I\$(srcdir)/WebCore/icu"
+			UNICODE_LIBS="-licucore"
+		elif test "$os_win32" = "yes"; then
+			UNICODE_CFLAGS=""
+			UNICODE_LIBS="-licuin -licuuc"
+		else
 			AC_MSG_ERROR([Cannot find icu-config. The ICU library is needed.])
 		fi
-
+	else
 		# We don't use --cflags as this gives us a lot of things that we don't
 		# necessarily want, like debugging and optimization flags
 		# See man (1) icu-config for more info.
