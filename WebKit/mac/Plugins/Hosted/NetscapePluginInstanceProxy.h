@@ -45,15 +45,19 @@ class NetscapePluginHostProxy;
     
 class NetscapePluginInstanceProxy : public RefCounted<NetscapePluginInstanceProxy> {
 public:
-    static PassRefPtr<NetscapePluginInstanceProxy> create(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer)
+    static PassRefPtr<NetscapePluginInstanceProxy> create(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView)
     {
-        return adoptRef(new NetscapePluginInstanceProxy(pluginHostProxy, pluginView, pluginID, renderContextID, useSoftwareRenderer));
+        return adoptRef(new NetscapePluginInstanceProxy(pluginHostProxy, pluginView));
     }
     ~NetscapePluginInstanceProxy();
     
     uint32_t pluginID() const { return m_pluginID; }
     uint32_t renderContextID() const { return m_renderContextID; }
+    void setRenderContextID(uint32_t renderContextID) { m_renderContextID = renderContextID; }
+    
     bool useSoftwareRenderer() const { return m_useSoftwareRenderer; }
+    void setUseSoftwareRenderer(bool useSoftwareRenderer) { m_useSoftwareRenderer = useSoftwareRenderer; }
+    
     WebHostedNetscapePluginView *pluginView() const { return m_pluginView; }
     NetscapePluginHostProxy* hostProxy() const { return m_pluginHostProxy; }
     
@@ -76,7 +80,7 @@ public:
     NPError loadURL(const char* url, const char* target, bool post, const char* postData, uint32_t postDataLength, bool postDataIsFile, bool currentEventIsUserGesture, uint32_t& requestID);
     
 private:
-    NetscapePluginInstanceProxy(NetscapePluginHostProxy*, WebHostedNetscapePluginView *, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer);
+    NetscapePluginInstanceProxy(NetscapePluginHostProxy*, WebHostedNetscapePluginView *);
 
     NPError loadRequest(NSURLRequest *, const char* cTarget, bool currentEventIsUserGesture, uint32_t& streamID);
     

@@ -204,11 +204,11 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:properties.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
     ASSERT(data);
     
-    uint32_t pluginID;
     uint32_t renderContextID;
     boolean_t useSoftwareRenderer;
     
-    kern_return_t kr = _WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], &pluginID, &renderContextID, &useSoftwareRenderer);
+    RefPtr<NetscapePluginInstanceProxy> instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView);
+    kern_return_t kr = _WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], instance->pluginID(), &renderContextID, &useSoftwareRenderer);
     if (kr == MACH_SEND_INVALID_DEST) {
         // The plug-in host must have died, but we haven't received the death notification yet.
         pluginHostDied(hostProxy);
@@ -216,13 +216,16 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
         // Try to spawn it again.
         hostProxy = hostForPackage(pluginPackage);
         
-        kr = _WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], &pluginID, &renderContextID, &useSoftwareRenderer);
+        kr = _WKPHInstantiatePlugin(hostProxy->port(), (uint8_t*)[data bytes], [data length], instance->pluginID(), &renderContextID, &useSoftwareRenderer);
     }
     
     if (kr != KERN_SUCCESS)
         return 0;
 
-    return NetscapePluginInstanceProxy::create(hostProxy, pluginView, pluginID, renderContextID, useSoftwareRenderer);
+    instance->setRenderContextID(renderContextID);
+    instance->setUseSoftwareRenderer(useSoftwareRenderer);
+
+    return instance.release();
 }
     
 } // namespace WebKit

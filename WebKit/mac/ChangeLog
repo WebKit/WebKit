@@ -1,5 +1,23 @@
 2008-12-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Let WebKit generate a plug-in ID instead of having the plug-in host do it.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        Create the plug-in proxy before instantiating the plug-in.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::create):
+        (WebKit::NetscapePluginInstanceProxy::setRenderContextID):
+        (WebKit::NetscapePluginInstanceProxy::setUseSoftwareRenderer):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
+2008-12-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         LoadURL doesn't need to be asynchronous.

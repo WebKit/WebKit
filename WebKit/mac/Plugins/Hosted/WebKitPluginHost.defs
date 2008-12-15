@@ -37,7 +37,7 @@ routine CheckInWithPluginHost(pluginHostPort :mach_port_t;
 
 routine InstantiatePlugin(pluginHostPort :mach_port_t;
                           options :plist_bytes_t;
-                          out pluginID :uint32_t;
+                          pluginID :uint32_t;
                           out renderContextID :uint32_t;
                           out useSoftwareRenderer :boolean_t);
 

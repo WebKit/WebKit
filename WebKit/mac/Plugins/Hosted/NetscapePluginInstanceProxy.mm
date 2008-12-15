@@ -73,17 +73,23 @@ private:
     RetainPtr<NSString *> m_frameName;
     bool m_didStartFromUserGesture;
 };
-    
-NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView, uint32_t pluginID, uint32_t renderContextID, boolean_t useSoftwareRenderer)
+
+static uint32_t pluginIDCounter;
+
+NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy* pluginHostProxy, WebHostedNetscapePluginView *pluginView)
     : m_pluginHostProxy(pluginHostProxy)
     , m_pluginView(pluginView)
     , m_requestTimer(this, &NetscapePluginInstanceProxy::requestTimerFired)
     , m_currentRequestID(0)
-    , m_pluginID(pluginID)
-    , m_renderContextID(renderContextID)
-    , m_useSoftwareRenderer(useSoftwareRenderer)
+    , m_renderContextID(0)
+    , m_useSoftwareRenderer(false)
 {
     ASSERT(m_pluginView);
+    
+    // Assign a plug-in ID.
+    do {
+        m_pluginID = ++pluginIDCounter;
+    } while (pluginHostProxy->pluginInstance(m_pluginID) || !m_pluginID);
     
     pluginHostProxy->addPluginInstance(this);
 }
