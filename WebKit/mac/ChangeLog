@@ -1,3 +1,14 @@
+2008-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        LoadURL doesn't need to be asynchronous.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCLoadURL):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
 2008-12-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.

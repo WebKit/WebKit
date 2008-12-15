@@ -154,7 +154,8 @@ kern_return_t WKPCStatusText(mach_port_t clientPort, uint32_t pluginID, data_t t
 }
 
 kern_return_t WKPCLoadURL(mach_port_t clientPort, uint32_t pluginID, data_t url, mach_msg_type_number_t urlLength, data_t target, mach_msg_type_number_t targetLength, 
-                          boolean_t post, data_t postData, mach_msg_type_number_t postDataLength, boolean_t postDataIsFile, boolean_t currentEventIsUserGesture)
+                          boolean_t post, data_t postData, mach_msg_type_number_t postDataLength, boolean_t postDataIsFile, boolean_t currentEventIsUserGesture,
+                          uint16_t *outResult, uint32_t *outStreamID)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
@@ -167,7 +168,9 @@ kern_return_t WKPCLoadURL(mach_port_t clientPort, uint32_t pluginID, data_t url,
     uint32_t streamID = 0;
     NPError result = instanceProxy->loadURL(url, target, post, postData, postDataLength, postDataIsFile, currentEventIsUserGesture, streamID);
     
-    return _WKPHLoadURLReply(hostProxy->port(), pluginID, result, streamID);
+    *outResult = result;
+    *outStreamID = streamID;
+    return KERN_SUCCESS;
 }
 
 kern_return_t WKPCCancelLoadURL(mach_port_t clientPort, uint32_t pluginID, uint32_t streamID, int16_t reason)

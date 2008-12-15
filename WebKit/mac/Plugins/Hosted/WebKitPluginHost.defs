@@ -112,9 +112,3 @@ simpleroutine StreamDidFail(pluginHostPort :mach_port_t;
                             reason :int16_t);
 
 // Replies
-
-simpleroutine LoadURLReply(pluginHostPort :mach_port_t;
-                           pluginID :uint32_t;
-                           resultCode :uint16_t;
-                           requestID :uint32_t);
-

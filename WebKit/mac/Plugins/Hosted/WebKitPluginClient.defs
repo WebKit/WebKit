@@ -35,14 +35,16 @@ simpleroutine StatusText(clientPort :mach_port_t;
                          pluginID :uint32_t;
                          text :data_t);
 
-simpleroutine LoadURL(clientPort :mach_port_t;
+routine LoadURL(clientPort :mach_port_t;
                       pluginID :uint32_t;
                       url :data_t;
                       target :data_t;
                       post :boolean_t;
                       postData :data_t;
                       postDataIsFile :boolean_t;
-                      currentEventIsUserGesture :boolean_t);
+                      currentEventIsUserGesture :boolean_t;
+                      out resultCode :uint16_t;
+                      out requestID :uint32_t);
 
 simpleroutine CancelLoadURL(clientPort :mach_port_t;
                             pluginID :uint32_t;
