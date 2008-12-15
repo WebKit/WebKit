@@ -2847,32 +2847,36 @@ void Document::removeImage(ImageLoader* image)
 {
     // Remove instances of this image from both lists.
     // Use loops because we allow multiple instances to get into the lists.
-    while (m_imageLoadEventDispatchSoonList.removeRef(image)) { }
-    while (m_imageLoadEventDispatchingList.removeRef(image)) { }
+    size_t size = m_imageLoadEventDispatchSoonList.size();
+    for (size_t i = 0; i < size; ++i) {
+        if (m_imageLoadEventDispatchSoonList[i] == image)
+            m_imageLoadEventDispatchSoonList[i] = 0;
+    }
+    size = m_imageLoadEventDispatchingList.size();
+    for (size_t i = 0; i < size; ++i) {
+        if (m_imageLoadEventDispatchingList[i] == image)
+            m_imageLoadEventDispatchingList[i] = 0;
+    }
     if (m_imageLoadEventDispatchSoonList.isEmpty())
         m_imageLoadEventTimer.stop();
 }
 
 void Document::dispatchImageLoadEventsNow()
 {
-    // need to avoid re-entering this function; if new dispatches are
+    // Need to avoid re-entering this function; if new dispatches are
     // scheduled before the parent finishes processing the list, they
-    // will set a timer and eventually be processed
+    // will set a timer and eventually be processed.
     if (!m_imageLoadEventDispatchingList.isEmpty())
         return;
 
     m_imageLoadEventTimer.stop();
-    
+
     m_imageLoadEventDispatchingList = m_imageLoadEventDispatchSoonList;
     m_imageLoadEventDispatchSoonList.clear();
-    for (DeprecatedPtrListIterator<ImageLoader> it(m_imageLoadEventDispatchingList); it.current();) {
-        ImageLoader* image = it.current();
-        // Must advance iterator *before* dispatching call.
-        // Otherwise, it might be advanced automatically if dispatching the call had a side effect
-        // of destroying the current ImageLoader, and then we would advance past the *next* item,
-        // missing one altogether.
-        ++it;
-        image->dispatchLoadEvent();
+    size_t size = m_imageLoadEventDispatchingList.size();
+    for (size_t i = 0; i < size; ++i) {
+        if (ImageLoader* image = m_imageLoadEventDispatchingList[i])
+            image->dispatchLoadEvent();
     }
     m_imageLoadEventDispatchingList.clear();
 }

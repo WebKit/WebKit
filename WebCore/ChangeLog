@@ -1,3 +1,54 @@
+2008-12-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - half of https://bugs.webkit.org/show_bug.cgi?id=17425
+          eliminate DeprecatedPtrList
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeImage): Change to set slots in the vector
+        to 0 rather than removing items from a list.
+        (WebCore::Document::dispatchImageLoadEventsNow): Rewrite to process
+        the list. Since we now use a "set to zero" design, we don't need to
+        be careful about where the iterator points while iterating the list,
+        instead we just have to skip zeros.
+
+        * dom/Document.h: Use Vector instead of DeprecatedPtrList.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent): Use a Vector instead
+        of a DeprecatedPtrList for the list of nodes to handle. Also streamlined
+        the logic a bit and used goto in a couple key places.
+
+        * dom/Node.cpp:
+        (WebCore::Node::eventParentNode): Moved this function into this file
+        because it's a virtual function so already can't be inlined. Also updated
+        to return a ContainerNode, so it needs to be in a place where the
+        definition of ContainerNode is visible, not the header file.
+
+        * dom/Node.h: Changed return type of eventParentNode to ContainerNode
+        and moved its definition into the cpp file.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::PendingCallbacks::~PendingCallbacks): Added a call to
+        deleteAllValues here instead of setAutoDelete in the constructor, since
+        we're using Deque instead of DeprecatedPtrList.
+        (WebCore::PendingCallbacks::callAndRemoveFirstCallback): Changed the
+        code to use an OwnPtr since the deque won't delete the callback object.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Use a
+        Vector instead of a DeprecatedPtrList.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::eventParentNode): Moved this function into this file
+        because it's a virtual function so already can't be inlined. Also updated
+        to return a ContainerNode.
+
+        * svg/SVGElement.h: Changed setShadowParentNode to take a ContainerNode*,
+        made eventParentNode return a ContainerNode*, and made m_shadowParent a
+        ContainerNode*.
+
 2008-12-14  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
@@ -1116,7 +1167,7 @@
 
 2008-12-10  Simon Fraser  <simon.fraser@apple.com>
 
-        Reviewed by Sam Weinig
+        Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=22793
 

@@ -61,16 +61,15 @@
 #include <libxslt/xslt.h>
 #endif
 
-
 using namespace std;
 
 namespace WebCore {
 
-class PendingCallbacks {
+class PendingCallbacks : Noncopyable {
 public:
-    PendingCallbacks()
+    ~PendingCallbacks()
     {
-        m_callbacks.setAutoDelete(true);
+        deleteAllValues(m_callbacks);
     }
     
     void appendStartElementNSCallback(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,
@@ -87,7 +86,7 @@ public:
             callback->namespaces[i] = xmlStrdup(namespaces[i]);
         callback->nb_attributes = nb_attributes;
         callback->nb_defaulted = nb_defaulted;
-        callback->attributes =  reinterpret_cast<xmlChar**>(xmlMalloc(sizeof(xmlChar*) * nb_attributes * 5));
+        callback->attributes = reinterpret_cast<xmlChar**>(xmlMalloc(sizeof(xmlChar*) * nb_attributes * 5));
         for (int i = 0; i < nb_attributes; i++) {
             // Each attribute has 5 elements in the array:
             // name, prefix, uri, value and an end pointer.
@@ -118,7 +117,7 @@ public:
         callback->s = xmlStrndup(s, len);
         callback->len = len;
         
-        m_callbacks.append(callback);        
+        m_callbacks.append(callback);
     }
     
     void appendProcessingInstructionCallback(const xmlChar* target, const xmlChar* data)
@@ -175,23 +174,20 @@ public:
 
     void callAndRemoveFirstCallback(XMLTokenizer* tokenizer)
     {
-        PendingCallback* cb = m_callbacks.getFirst();
-            
-        cb->call(tokenizer);
+        OwnPtr<PendingCallback> callback(m_callbacks.first());
         m_callbacks.removeFirst();
+        callback->call(tokenizer);
     }
     
     bool isEmpty() const { return m_callbacks.isEmpty(); }
     
 private:    
-    struct PendingCallback {        
-        
-        virtual ~PendingCallback() { } 
-
+    struct PendingCallback {  
+        virtual ~PendingCallback() { }
         virtual void call(XMLTokenizer* tokenizer) = 0;
     };  
     
-    struct PendingStartElementNSCallback : public PendingCallback {        
+    struct PendingStartElementNSCallback : public PendingCallback {
         virtual ~PendingStartElementNSCallback() {
             xmlFree(xmlLocalName);
             xmlFree(xmlPrefix);
@@ -323,8 +319,7 @@ private:
         int columnNumber;
     };
     
-public:
-    DeprecatedPtrList<PendingCallback> m_callbacks;
+    Deque<PendingCallback*> m_callbacks;
 };
 // --------------------------------
 
@@ -1352,5 +1347,3 @@ HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
 }
 
 }
-
-

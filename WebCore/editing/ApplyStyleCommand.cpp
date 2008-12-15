@@ -515,30 +515,30 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
         startingFontSizes.set(node, computedFontSize(node));
 
     // These spans were added by us. If empty after font size changes, they can be removed.
-    DeprecatedPtrList<Node> unstyledSpans;
+    Vector<RefPtr<HTMLElement> > unstyledSpans;
     
-    Node *lastStyledNode = 0;
-    for (Node *node = startNode; node != beyondEnd; node = node->traverseNextNode()) {
-        HTMLElement *elem = 0;
+    Node* lastStyledNode = 0;
+    for (Node* node = startNode; node != beyondEnd; node = node->traverseNextNode()) {
+        RefPtr<HTMLElement> element;
         if (node->isHTMLElement()) {
             // Only work on fully selected nodes.
             if (!nodeFullySelected(node, start, end))
                 continue;
-            elem = static_cast<HTMLElement *>(node);
+            element = static_cast<HTMLElement*>(node);
         } else if (node->isTextNode() && node->renderer() && node->parentNode() != lastStyledNode) {
             // Last styled node was not parent node of this text node, but we wish to style this
             // text node. To make this possible, add a style span to surround this text node.
             RefPtr<HTMLElement> span = createStyleSpanElement(document());
             insertNodeBefore(span.get(), node);
             surroundNodeRangeWithElement(node, node, span.get());
-            elem = span.get();
+            element = span.release();
         }  else {
             // Only handle HTML elements and text nodes.
             continue;
         }
         lastStyledNode = node;
-        
-        CSSMutableStyleDeclaration* inlineStyleDecl = elem->getInlineStyleDecl();
+
+        CSSMutableStyleDeclaration* inlineStyleDecl = element->getInlineStyleDecl();
         float currentFontSize = computedFontSize(node);
         float desiredFontSize = max(MinimumFontSize, startingFontSizes.get(node) + adjustment);
         RefPtr<CSSValue> value = inlineStyleDecl->getPropertyCSSValue(CSSPropertyFontSize);
@@ -548,17 +548,18 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
         }
         if (currentFontSize != desiredFontSize) {
             inlineStyleDecl->setProperty(CSSPropertyFontSize, String::number(desiredFontSize) + "px", false, false);
-            setNodeAttribute(elem, styleAttr, inlineStyleDecl->cssText());
+            setNodeAttribute(element.get(), styleAttr, inlineStyleDecl->cssText());
         }
         if (inlineStyleDecl->length() == 0) {
-            removeNodeAttribute(elem, styleAttr);
-            if (isUnstyledStyleSpan(elem))
-                unstyledSpans.append(elem);
+            removeNodeAttribute(element.get(), styleAttr);
+            if (isUnstyledStyleSpan(element.get()))
+                unstyledSpans.append(element.release());
         }
     }
 
-    for (DeprecatedPtrListIterator<Node> it(unstyledSpans); it.current(); ++it)
-        removeNodePreservingChildren(it.current());
+    size_t size = unstyledSpans.size();
+    for (size_t i = 0; i < size; ++i)
+        removeNodePreservingChildren(unstyledSpans[i].get());
 }
 
 #undef NoFontDelta

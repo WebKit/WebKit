@@ -184,7 +184,7 @@ public:
     bool isInShadowTree();
 
     // The node's parent for the purpose of event capture and bubbling.
-    virtual Node* eventParentNode() { return parentNode(); }
+    virtual ContainerNode* eventParentNode();
 
     bool isBlockFlow() const;
     bool isBlockFlowOrBlockTable() const;

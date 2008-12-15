@@ -288,6 +288,11 @@ void SVGElement::setSynchronizedSVGAttributes(bool value) const
     m_areSVGAttributesValid = value;
 }
 
+ContainerNode* SVGElement::eventParentNode()
+{
+    return m_shadowParent ? m_shadowParent : StyledElement::eventParentNode();
+}
+
 }
 
 #endif // ENABLE(SVG)
