@@ -1,3 +1,64 @@
+2008-12-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+
+        When a resource is cached locally, WebKit should follow RFC 2616 "Specific end-to-end revalidation" instead of "Unspecified end-to-end revalidation"
+        https://bugs.webkit.org/show_bug.cgi?id=17998 
+        
+        - Enable conditional revalidation for reloads by default. 
+        - Add a parameter to FrameLoader::reload() for forcing end-to-end reload.
+        - To avoid duplicating state remove m_cachePolicy variables from FrameLoader and DocLoader. 
+          Instead synthezise the policy on demand.
+        
+        This speeds up reloads and makes them use way less bandwidth.
+
+        * WebCore.base.exp:
+        * loader/CachePolicy.h: Rename CachePolicyRefresh to CachePolicyRevalidate.
+        (WebCore::):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::DocLoader):
+        (WebCore::DocLoader::checkForReload): Support CachePolicyRevalidate.
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::cachePolicy):
+        * loader/DocLoader.h: Get rid of m_cachePolicy member. 
+        * loader/FrameLoader.cpp:
+        (WebCore::ScheduledRedirection::ScheduledRedirection): 
+            Add parameter to differentiate refresh from other types of redirects. 
+            m_cachePolicy was used for signaling this before.
+        (WebCore::isBackForwardLoadType):
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::write):
+        (WebCore::FrameLoader::startIconLoader):
+        (WebCore::FrameLoader::restoreDocumentState):
+        (WebCore::FrameLoader::scheduleHTTPRedirection):
+        (WebCore::FrameLoader::scheduleLocationChange):
+        (WebCore::FrameLoader::scheduleRefresh):
+        (WebCore::FrameLoader::redirectionTimerFired):
+        (WebCore::FrameLoader::canCachePage):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::reload): 
+            Differentiate between revalidation and reload.
+            No need to use setHTTPHeaderField here, addExtraFieldsToRequest will set the headers.
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::cachePolicy): Determine the cache policy based on current load type. 
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::addExtraFieldsToRequest): Set Cache-control: no-cache for FrameLoadTypeReloadFromOrigin
+        (WebCore::FrameLoader::shouldScrollToAnchor):
+        (WebCore::FrameLoader::loadItem):
+        (WebCore::FrameLoader::updateHistoryForReload):
+        (WebCore::FrameLoader::updateHistoryForCommit):
+        (WebCore::FrameLoader::switchOutLowBandwidthDisplayIfReady):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h: Add FrameLoadTypeReloadFromOrigin
+        (WebCore::):
+        * loader/NavigationAction.cpp: 
+        (WebCore::navigationType):  Support FrameLoadTypeReloadFromOrigin
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::servePendingRequests):
+
 2008-12-15  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

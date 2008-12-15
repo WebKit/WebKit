@@ -106,7 +106,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     else
         newRequest.setCachePolicy(fl->originalRequest().cachePolicy());
 
-    fl->addExtraFieldsToRequest(newRequest, false, false);
+    fl->addExtraFieldsToSubresourceRequest(newRequest);
 
     RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, client, sendResourceLoadCallbacks, shouldContentSniff)));
     if (!subloader->load(newRequest))

@@ -802,7 +802,7 @@ bool DocumentLoader::startLoadingMainResource(unsigned long identifier)
 
     // FIXME: Is there any way the extra fields could have not been added by now?
     // If not, it would be great to remove this line of code.
-    frameLoader()->addExtraFieldsToRequest(m_request, true, false);
+    frameLoader()->addExtraFieldsToMainResourceRequest(m_request);
 
     if (!m_mainResourceLoader->load(m_request, m_substituteData)) {
         // FIXME: If this should really be caught, we should just ASSERT this doesn't happen;

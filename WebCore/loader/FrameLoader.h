@@ -189,7 +189,6 @@ namespace WebCore {
         bool frameHasLoaded() const;
 
         int numPendingOrLoadingRequests(bool recurse) const;
-        bool isReloading() const;
         String referrer() const;
         String outgoingReferrer() const;
         String outgoingOrigin() const;
@@ -241,7 +240,7 @@ namespace WebCore {
         void checkContentPolicy(const String& MIMEType, ContentPolicyDecisionFunction, void* argument);
         void cancelContentPolicyCheck();
 
-        void reload();
+        void reload(bool endToEndReload = false);
         void reloadAllowingStaleData(const String& overrideEncoding);
 
         void didReceiveServerRedirectForProvisionalLoadForFrame();
@@ -257,6 +256,7 @@ namespace WebCore {
         void didChangeTitle(DocumentLoader*);
 
         FrameLoadType loadType() const;
+        CachePolicy cachePolicy() const;
 
         void didFirstLayout();
         bool firstLayoutDone() const;
@@ -279,15 +279,17 @@ namespace WebCore {
         void detachFromParent();
         void detachChildren();
 
-        void addExtraFieldsToRequest(ResourceRequest&, bool isMainResource, bool alwaysFromRequest);
+        void addExtraFieldsToSubresourceRequest(ResourceRequest&);
+        void addExtraFieldsToMainResourceRequest(ResourceRequest&);
+        
         static void addHTTPOriginIfNeeded(ResourceRequest&, String origin);
 
         FrameLoaderClient* client() const;
 
         void setDefersLoading(bool);
 
-        void changeLocation(const String& url, const String& referrer, bool lockHistory = true, bool userGesture = false);
-        void changeLocation(const KURL&, const String& referrer, bool lockHistory = true, bool userGesture = false);
+        void changeLocation(const String& url, const String& referrer, bool lockHistory = true, bool userGesture = false, bool refresh = false);
+        void changeLocation(const KURL&, const String& referrer, bool lockHistory = true, bool userGesture = false, bool refresh = false);
         void urlSelected(const ResourceRequest&, const String& target, Event*, bool lockHistory, bool userGesture);
         void urlSelected(const FrameLoadRequest&, Event*, bool lockHistory);
       
@@ -505,6 +507,8 @@ namespace WebCore {
 
         void updatePolicyBaseURL();
         void setPolicyBaseURL(const KURL&);
+        
+        void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType loadType, bool isMainResource, bool cookiePolicyURLFromRequest);
 
         // Also not cool.
         void stopLoadingSubframes();
@@ -611,8 +615,6 @@ namespace WebCore {
         bool m_navigationDuringLoad;
 
         String m_outgoingReferrer;
-
-        CachePolicy m_cachePolicy;
 
         HashSet<String> m_urlsClientKnowsAbout;
 
