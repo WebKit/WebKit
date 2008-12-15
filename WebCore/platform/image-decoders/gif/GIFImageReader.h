@@ -47,6 +47,8 @@
 #define MAX_COLORS           256
 #define MAX_HOLD_SIZE        256
 
+const int cLoopCountNotSeen = -2;
+
 /* gif2.h  
    The interface for the GIF87/89a decoder. 
 */
@@ -187,7 +189,7 @@ struct GIFImageReader {
         screen_bgcolor = version = 0;
         screen_width = screen_height = 0;
         global_colormap_size = images_decoded = images_count = 0;
-        loop_count = -1;
+        loop_count = cLoopCountNotSeen;
         count = 0;
     }
 

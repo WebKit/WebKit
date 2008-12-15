@@ -38,14 +38,10 @@
 
 namespace WebCore {
 
-// Animated images >5MB are considered large enough that we'll only hang on to
-// one frame at a time.
-const unsigned cLargeAnimationCutoff = 5242880;
-
-// When an animated image is more than five minutes out of date, don't try to
-// resync on repaint, so we don't waste CPU cycles on an edge case the user
-// doesn't care about.
-const double cAnimationResyncCutoff = 5 * 60;
+static int frameBytes(const IntSize& frameSize)
+{
+    return frameSize.width() * frameSize.height() * 4;
+}
 
 BitmapImage::BitmapImage(ImageObserver* observer)
     : Image(observer)
@@ -75,38 +71,48 @@ BitmapImage::~BitmapImage()
     stopAnimation();
 }
 
-void BitmapImage::destroyDecodedData(bool incremental, bool preserveNearbyFrames)
+void BitmapImage::destroyDecodedData(bool destroyAll)
 {
-    // Destroy the cached images and release them.
-    if (m_frames.size()) {
-        int sizeChange = 0;
-        int frameSize = m_size.width() * m_size.height() * 4;
-        const size_t nextFrame = (preserveNearbyFrames && frameCount()) ? ((m_currentFrame + 1) % frameCount()) : 0;
-        for (unsigned i = incremental ? m_frames.size() - 1 : 0; i < m_frames.size(); i++) {
-            if (m_frames[i].m_frame && (!preserveNearbyFrames || (i != m_currentFrame && i != nextFrame))) {
-                sizeChange -= frameSize;
-                m_frames[i].clear();
-            }
-        }
+    int framesCleared = 0;
+    const size_t clearBeforeFrame = destroyAll ? m_frames.size() : m_currentFrame;
+    for (size_t i = 0; i < clearBeforeFrame; ++i)
+        framesCleared += clearFrame(i);
 
-        // We just always invalidate our platform data, even in the incremental case.
-        // This could be better, but it's not a big deal.
-        m_isSolidColor = false;
-        invalidatePlatformData();
-        
-        if (sizeChange) {
-            m_decodedSize += sizeChange;
-            if (imageObserver())
-                imageObserver()->decodedSizeChanged(this, sizeChange);
-        }
-    }
-    if (!incremental) {
-        // Reset the image source, since Image I/O has an underlying cache that it uses
-        // while animating that it seems to never clear.
-        m_source.clear();
-        if (m_data) 
-            m_source.setData(m_data.get(), m_allDataReceived);
-    }    
+    destroyMetadataAndNotify(framesCleared);
+
+    m_source.clear(destroyAll, clearBeforeFrame);
+    if (m_data)
+        m_source.setData(m_data.get(), m_allDataReceived);
+    return;
+}
+
+void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
+{
+    // Animated images >5MB are considered large enough that we'll only hang on
+    // to one frame at a time.
+    static const unsigned cLargeAnimationCutoff = 5242880;
+    if (frameCount() * frameBytes(m_size) > cLargeAnimationCutoff)
+        destroyDecodedData(destroyAll);
+}
+
+void BitmapImage::destroyMetadataAndNotify(int framesCleared)
+{
+    m_isSolidColor = false;
+    invalidatePlatformData();
+
+    const int deltaBytes = framesCleared * -frameBytes(m_size);
+    m_decodedSize += deltaBytes;
+    if (deltaBytes && imageObserver())
+        imageObserver()->decodedSizeChanged(this, deltaBytes);
+}
+
+int BitmapImage::clearFrame(size_t frame)
+{
+    if (!m_frames[frame].m_frame)
+        return 0;
+
+    m_frames[frame].clear();
+    return 1;
 }
 
 void BitmapImage::cacheFrame(size_t index)
@@ -127,19 +133,14 @@ void BitmapImage::cacheFrame(size_t index)
         m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
     m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
 
-    int sizeChange;
-    if (index) {
-        IntSize frameSize = m_source.frameSizeAtIndex(index);
-        if (frameSize != m_size)
-            m_hasUniformFrameSize = false;
-        sizeChange = m_frames[index].m_frame ? frameSize.width() * frameSize.height() * 4 : 0;
-    } else
-        sizeChange = m_frames[index].m_frame ? m_size.width() * m_size.height() * 4 : 0;
-
-    if (sizeChange) {
-        m_decodedSize += sizeChange;
+    const IntSize frameSize(index ? m_source.frameSizeAtIndex(index) : m_size);
+    if (frameSize != m_size)
+        m_hasUniformFrameSize = false;
+    if (m_frames[index].m_frame) {
+        const int deltaBytes = frameBytes(frameSize);
+        m_decodedSize += deltaBytes;
         if (imageObserver())
-            imageObserver()->decodedSizeChanged(this, sizeChange);
+            imageObserver()->decodedSizeChanged(this, deltaBytes);
     }
 }
 
@@ -161,7 +162,7 @@ IntSize BitmapImage::currentFrameSize() const
 
 bool BitmapImage::dataChanged(bool allDataReceived)
 {
-    destroyDecodedData(true);
+    destroyMetadataAndNotify(m_frames.isEmpty() ? 0 : clearFrame(m_frames.size() - 1));
     
     // Feed all the data we've seen so far to the image decoder.
     m_allDataReceived = allDataReceived;
@@ -277,9 +278,11 @@ void BitmapImage::startAnimation(bool catchUpIfNecessary)
         m_desiredFrameStartTime = time + currentDuration;
     } else {
         m_desiredFrameStartTime += currentDuration;
-        // If we're too far behind, the user probably doesn't care about
-        // resyncing and we could burn a lot of time looping through frames
-        // below.  Just reset the timings.
+
+        // When an animated image is more than five minutes out of date, the
+        // user probably doesn't care about resyncing and we could burn a lot of
+        // time looping through frames below.  Just reset the timings.
+        const double cAnimationResyncCutoff = 5 * 60;
         if ((time - m_desiredFrameStartTime) > cAnimationResyncCutoff)
             m_desiredFrameStartTime = time + currentDuration;
     }
@@ -372,11 +375,9 @@ void BitmapImage::resetAnimation()
     m_repetitionsComplete = 0;
     m_desiredFrameStartTime = 0;
     m_animationFinished = false;
-    int frameSize = m_size.width() * m_size.height() * 4;
     
     // For extremely large animations, when the animation is reset, we just throw everything away.
-    if (frameCount() * frameSize > cLargeAnimationCutoff)
-        destroyDecodedData();
+    destroyDecodedDataIfNecessary(true);
 }
 
 void BitmapImage::advanceAnimation(Timer<BitmapImage>* timer)
@@ -397,45 +398,32 @@ bool BitmapImage::internalAdvanceAnimation(bool skippingFrames)
     if (!skippingFrames && imageObserver()->shouldPauseAnimation(this))
         return false;
 
-    m_currentFrame++;
+    ++m_currentFrame;
+    bool advancedAnimation = true;
+    bool destroyAll = false;
     if (m_currentFrame >= frameCount()) {
         ++m_repetitionsComplete;
+
         // Get the repetition count again.  If we weren't able to get a
         // repetition count before, we should have decoded the whole image by
         // now, so it should now be available.
         if (repetitionCount(true) && m_repetitionsComplete >= m_repetitionCount) {
             m_animationFinished = true;
             m_desiredFrameStartTime = 0;
-            m_currentFrame--;
-            if (skippingFrames) {
-                // Uh oh.  We tried to skip past the end of the animation.  We'd
-                // better draw this last frame.
-                notifyObserverAndTrimDecodedData();
-            }
-            return false;
+            --m_currentFrame;
+            advancedAnimation = false;
+        } else {
+            m_currentFrame = 0;
+            destroyAll = true;
         }
-        m_currentFrame = 0;
     }
+    destroyDecodedDataIfNecessary(destroyAll);
 
-    if (!skippingFrames)
-        notifyObserverAndTrimDecodedData();
-
-    return true;
-}
-
-void BitmapImage::notifyObserverAndTrimDecodedData()
-{
-    // Notify our observer that the animation has advanced.
-    imageObserver()->animationAdvanced(this);
-
-    // For large animated images, go ahead and throw away frames as we go to
-    // save footprint.
-    int frameSize = m_size.width() * m_size.height() * 4;
-    if (frameCount() * frameSize > cLargeAnimationCutoff) {
-        // Destroy all of our frames and just redecode every time.  We save the
-        // current frame since we'll need it in draw() anyway.
-        destroyDecodedData(false, true);
-    }
+    // We need to draw this frame if we advanced to it while not skipping, or if
+    // while trying to skip frames we hit the last frame and thus had to stop.
+    if (skippingFrames != advancedAnimation)
+        imageObserver()->animationAdvanced(this);
+    return advancedAnimation;
 }
 
 }

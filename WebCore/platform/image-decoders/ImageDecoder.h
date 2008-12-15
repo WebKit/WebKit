@@ -54,6 +54,16 @@ public:
                      m_disposalMethod(DisposeNotSpecified), m_hasAlpha(false)
     {} 
 
+    void clear() {
+      m_bytes.clear();
+      m_rect = IntRect();
+      m_height = 0;
+      m_status = FrameEmpty;
+      m_duration = 0;
+      m_disposalMethod = DisposeNotSpecified;
+      m_hasAlpha = false;
+    }
+
     const RGBA32Array& bytes() const { return m_bytes; }
     RGBA32Array& bytes() { return m_bytes; }
     const IntRect& rect() const { return m_rect; }
@@ -134,6 +144,14 @@ public:
 
     bool failed() const { return m_failed; }
     void setFailed() { m_failed = true; }
+
+    // Wipe out frames in the frame buffer cache before |clearBeforeFrame|,
+    // assuming this can be done without breaking decoding.  Different decoders
+    // place different restrictions on what frames are safe to destroy, so this
+    // is left to them to implement.
+    // For convenience's sake, we provide a default (empty) implementation,
+    // since in practice only GIFs will ever use this.
+    virtual void clearFrameBufferCache(size_t clearBeforeFrame) { }
 
 protected:
     RefPtr<SharedBuffer> m_data; // The encoded data.

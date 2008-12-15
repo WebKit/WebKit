@@ -168,18 +168,26 @@ protected:
     // Decodes and caches a frame. Never accessed except internally.
     void cacheFrame(size_t index);
 
-    // Called to invalidate all our cached data.  If an image is loading
-    // incrementally, we only invalidate the last cached frame.  For large
-    // animated images, where we throw away the decoded data after every frame,
-    // |preserveNearbyFrames| can be set to preserve the current frame's data
-    // and eliminate some unnecessary duplicated decoding work.  This also
-    // preserves the next frame's data, if available.  In most cases this has no
-    // effect; either that frame isn't decoded yet, or it's already been
-    // destroyed by a previous call.  But when we fall behind on the very first
-    // animation loop and startAnimation() needs to "catch up" one or more
-    // frames, this briefly preserves some of that decoding work, to ease CPU
-    // load and make it less likely that we'll keep falling behind.
-    virtual void destroyDecodedData(bool incremental = false, bool preserveNearbyFrames = false);
+    // Called to invalidate cached data.  When |destroyAll| is true, we wipe out
+    // the entire frame buffer cache and tell the image source to destroy
+    // everything; this is used when e.g. we want to free some room in the image
+    // cache.  If |destroyAll| is false, we only delete frames up to the current
+    // one; this is used while animating large images to keep memory footprint
+    // low without redecoding the whole image on every frame.
+    virtual void destroyDecodedData(bool destroyAll = true);
+
+    // If the image is large enough, calls destroyDecodedData() and passes
+    // |destroyAll| along.
+    void destroyDecodedDataIfNecessary(bool destroyAll);
+
+    // Generally called by destroyDecodedData(), destroys whole-image metadata
+    // and notifies observers that the memory footprint has (hopefully)
+    // decreased by |framesCleared| times the size (in bytes) of a frame.
+    void destroyMetadataAndNotify(int framesCleared);
+
+    // If frame |frame| is cached, clears the cache handle.  Returns the number
+    // of frames actually cleared.
+    int clearFrame(size_t frame);
 
     // Whether or not size is available yet.    
     bool isSizeAvailable();
@@ -196,9 +204,6 @@ protected:
     // one or notify our observers.
     // Returns whether the animation was advanced.
     bool internalAdvanceAnimation(bool skippingFrames);
-
-    // Helper for internalAdvanceAnimation().
-    void notifyObserverAndTrimDecodedData();
 
     // Handle platform-specific data
     void initPlatformData();

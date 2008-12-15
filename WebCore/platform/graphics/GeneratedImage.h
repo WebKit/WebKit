@@ -53,7 +53,7 @@ public:
     virtual IntSize size() const { return m_size; }
 
     // Assume that generated content has no decoded data we need to worry about
-    virtual void destroyDecodedData(bool incremental = false, bool preserveNearbyFrames = false) { }
+    virtual void destroyDecodedData(bool destroyAll = true) { }
     virtual unsigned decodedSize() const { return 0; }
 
 protected:

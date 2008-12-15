@@ -1,3 +1,67 @@
+2008-12-15  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22108
+        Large animated GIFs weren't always animating.  The code that deleted
+        the entire decoder after each frame of a large image was resulting in
+        us forgetting the loop count, breaking animations intermittently.
+
+        Instead of throwing the whole decoder away, we're more careful to just
+        delete frames we don't care about.  This additionally addresses
+        problems in the Cairo and Chromium ports with excessive peak memory
+        use and CPU use when decoding large animated GIFs because it leads to
+        much less redecoding (O(n) instead of O(n^2) CPU, and O(1) instead of
+        O(n) memory).
+
+        This change has less impact on the CG decoder, which seems to throw
+        away frames automatically when their external references are dropped;
+        this means the CG decoder didn't suffer from the peak memory usage
+        issue before (and still doesn't), but it also still burns excessive
+        CPU redecoding earlier frames, that in theory it wouldn't need to
+        redecode if it would judiciously save the most recent frames.  At
+        least this patch plumbs some useful info to the ImageSource so it can
+        help guide the CG decoder heuristics in the future.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::frameBytes):
+        (WebCore::BitmapImage::destroyDecodedData):
+        (WebCore::BitmapImage::destroyDecodedDataIfNecessary):
+        (WebCore::BitmapImage::destroyMetadataAndNotify):
+        (WebCore::BitmapImage::clearFrame):
+        (WebCore::BitmapImage::cacheFrame):
+        (WebCore::BitmapImage::dataChanged):
+        (WebCore::BitmapImage::startAnimation):
+        (WebCore::BitmapImage::resetAnimation):
+        (WebCore::BitmapImage::internalAdvanceAnimation):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GeneratedImage.h:
+        (WebCore::GeneratedImage::destroyDecodedData):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::clear):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::clear):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        (WebCore::PDFDocumentImage::destroyDecodedData):
+        * platform/graphics/qt/StillImageQt.h:
+        (WebCore::StillImage::destroyDecodedData):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::clear):
+        (WebCore::ImageDecoder::clearFrameBufferCache):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::repetitionCount):
+        (WebCore::GIFImageDecoder::clearFrameBufferCache):
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.h:
+        (GIFImageReader::GIFImageReader):
+        * svg/graphics/SVGImage.h:
+        (WebCore::SVGImage::destroyDecodedData):
+
 2008-12-15  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Darin Adler.

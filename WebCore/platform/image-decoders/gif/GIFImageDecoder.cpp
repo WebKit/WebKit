@@ -156,9 +156,18 @@ int GIFImageDecoder::repetitionCount() const
     // packets sent back by the webserver) not always.  Our caller is
     // responsible for waiting until image decoding has finished to ask this if
     // it needs an authoritative answer.  In the meantime, we should default to
-    // "loop once", both in the reader and here.
-    if (m_reader)
-        m_repetitionCount = m_reader->repetitionCount();
+    // "loop once".
+    if (m_reader) {
+        // Added wrinkle: ImageSource::clear() may destroy the reader, making
+        // the result from the reader _less_ authoritative on future calls.  To
+        // detect this, the reader returns cLoopCountNotSeen (-2) instead of
+        // cAnimationLoopOnce (-1) when its current incarnation hasn't actually
+        // seen a loop count yet; in this case we return our previously-cached
+        // value.
+        const int repetitionCount = m_reader->repetitionCount();
+        if (repetitionCount != cLoopCountNotSeen)
+            m_repetitionCount = repetitionCount;
+    }
     return m_repetitionCount;
 }
 
@@ -172,6 +181,40 @@ RGBA32Buffer* GIFImageDecoder::frameBufferAtIndex(size_t index)
         // Decode this frame.
         decode(GIFFullQuery, index+1);
     return &frame;
+}
+
+void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
+{
+    // In some cases, like if the decoder was destroyed while animating, we
+    // can be asked to clear more frames than we currently have.
+    if (m_frameBufferCache.isEmpty())
+        return;  // Nothing to do.
+    // The "-1" here is tricky.  It does not mean that |clearBeforeFrame| is the
+    // last frame we wish to preserve, but rather that we never want to clear
+    // the very last frame in the cache: it's empty (so clearing it is
+    // pointless), it's partial (so we don't want to clear it anyway), or the
+    // cache could be enlarged with a future setData() call and it could be
+    // needed to construct the next frame (see comments below).  Callers can
+    // always use ImageSource::clear(true, ...) to completely free the memory in
+    // this case.
+    clearBeforeFrame = std::min(clearBeforeFrame, m_frameBufferCache.size() - 1);
+    const Vector<RGBA32Buffer>::iterator end(m_frameBufferCache.begin() + clearBeforeFrame);
+    for (Vector<RGBA32Buffer>::iterator i(m_frameBufferCache.begin()); i != end; ++i) {
+        if (i->status() == RGBA32Buffer::FrameEmpty)
+            continue;  // Nothing to do.
+
+        // The layout of frames is:
+        // [empty frames][complete frames][partial frame][empty frames]
+        // ...where each of these groups may be empty.  We should not clear a
+        // partial frame since that's what's being decoded right now, and we
+        // also should not clear the last complete frame, since it may be needed
+        // when constructing the next frame.  Note that "i + 1" is safe since
+        // i < end < m_frameBufferCache.end().
+        if ((i->status() == RGBA32Buffer::FramePartial) || ((i + 1)->status() != RGBA32Buffer::FrameComplete))
+            break;
+
+        i->clear();
+    }
 }
 
 // Feed data to the GIF reader.
@@ -228,6 +271,7 @@ void GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
         // first frame specifies this method, it will get treated like
         // DisposeOverwriteBgcolor below and reset to a completely empty image.)
         const RGBA32Buffer* prevBuffer = &m_frameBufferCache[--frameIndex];
+        ASSERT(prevBuffer->status() == RGBA32Buffer::FrameComplete);
         RGBA32Buffer::FrameDisposalMethod prevMethod =
             prevBuffer->disposalMethod();
         while ((frameIndex > 0) &&
