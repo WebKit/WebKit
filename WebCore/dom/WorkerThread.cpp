@@ -94,6 +94,8 @@ void* WorkerThread::workerThread()
         task->performTask(m_workerContext.get());
     }
 
+    ThreadIdentifier threadID = m_threadID;
+
     m_workerContext->clearScript();
     ASSERT(m_workerContext->hasOneRef());
     // The below assignment will destroy the context, which will in turn notify messaging proxy.
@@ -101,6 +103,7 @@ void* WorkerThread::workerThread()
     m_workerContext = 0;
     
     // The thread object may be already destroyed from notification now, don't try to access "this".
+    detachThread(threadID);
 
     return 0;
 }

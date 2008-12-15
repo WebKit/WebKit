@@ -1,3 +1,12 @@
+2008-12-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6444455> Worker Thread crash running multiple workers for a moderate amount of time
+
+        * interpreter/RegisterFile.h: (JSC::RegisterFile::RegisterFile):
+        Improve error handling: if mmap fails, crash immediately, and print out the reason.
+
 2008-12-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Cameron Zwarich.

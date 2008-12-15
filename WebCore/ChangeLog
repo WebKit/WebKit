@@ -1,3 +1,13 @@
+2008-12-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6444455> Worker Thread crash running multiple workers for a moderate amount of time
+
+        * dom/WorkerThread.cpp: (WebCore::WorkerThread::workerThread):
+        Detach the thread. Without this, one page of its stack was never unmmaped, and fragmentation
+        made RegisterFile allocaiton fail after a while.
+
 2008-12-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

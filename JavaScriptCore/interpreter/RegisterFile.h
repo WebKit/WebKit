@@ -32,6 +32,7 @@
 #include "Register.h"
 #include "Collector.h"
 #if HAVE(MMAP)
+#include <errno.h>
 #include <sys/mman.h>
 #endif
 #include <wtf/Noncopyable.h>
@@ -121,7 +122,10 @@ namespace JSC {
             size_t bufferLength = (capacity + maxGlobals) * sizeof(Register);
 #if HAVE(MMAP)
             m_buffer = static_cast<Register*>(mmap(0, bufferLength, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANON, -1, 0));
-            ASSERT(reinterpret_cast<intptr_t>(m_buffer) != -1);
+            if (m_buffer == MAP_FAILED) {
+                fprintf(stderr, "Could not allocate register file: %d\n", errno);
+                CRASH();
+            }
 #elif HAVE(VIRTUALALLOC)
             // FIXME: Use VirtualAlloc, and commit pages as we go.
             m_buffer = static_cast<Register*>(fastMalloc(bufferLength));
