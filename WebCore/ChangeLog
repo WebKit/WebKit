@@ -1,3 +1,19 @@
+2008-12-15  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add null checks to PlatformScreenQt
+
+        The other ports do the null checks and JSDOMWindowBase is
+        at least one caller that is passing 0.
+
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+
 2008-12-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.
