@@ -33,6 +33,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "IconDatabase.h"
+#include "InspectorController.h"
 #include "Page.h"
 #include "PutPropertySlot.h"
 #include "ResourceRequest.h"
@@ -91,6 +92,18 @@ using namespace WebCore;
 QT_BEGIN_NAMESPACE
 extern Q_GUI_EXPORT int qt_defaultDpi();
 QT_END_NAMESPACE
+
+void QWEBKIT_EXPORT qt_drt_setJavaScriptProfilingEnabled(QWebFrame* qframe, bool enabled)
+{
+    Frame* frame = QWebFramePrivate::core(qframe);
+    InspectorController* controller = frame->page()->inspectorController();
+    if (!controller)
+        return;
+    if (enabled)
+        controller->enableProfiler();
+    else
+        controller->disableProfiler();
+}
 
 void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebFrameData *frameData)
 {

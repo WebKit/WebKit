@@ -1,3 +1,13 @@
+2008-12-15  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Implement setJavaScriptProfilingEnabled in the Qt DRT to pass fast/profiler.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::setJavaScriptProfilingEnabled):
+        * DumpRenderTree/qt/jsobjects.h:
+
 2008-12-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Darin Adler.

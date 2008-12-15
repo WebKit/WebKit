@@ -1,3 +1,12 @@
+2008-12-15  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Implement setJavaScriptProfilingEnabled in the Qt DRT to pass fast/profiler.
+
+        * Api/qwebframe.cpp:
+        (qt_drt_setJavaScriptProfilingEnabled):
+
 2008-12-12  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.
