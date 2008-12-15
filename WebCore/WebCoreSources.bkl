@@ -332,7 +332,6 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSPlugin.cpp
         DerivedSources/WebCore/JSPluginArray.cpp
         DerivedSources/WebCore/JSPositionError.cpp
-        DerivedSources/WebCore/JSPositionOptions.cpp
         DerivedSources/WebCore/JSProcessingInstruction.cpp
         DerivedSources/WebCore/JSProgressEvent.cpp
         DerivedSources/WebCore/JSRange.cpp

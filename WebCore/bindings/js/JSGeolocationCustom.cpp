@@ -33,11 +33,35 @@
 #include "JSCustomPositionCallback.h"
 #include "JSCustomPositionErrorCallback.h"
 #include "JSDOMWindow.h"
-#include "JSPositionOptions.h"
+#include "PositionOptions.h"
 
 using namespace JSC;
 
 namespace WebCore {
+
+static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue* value)
+{
+    if (!value->isObject())
+        return 0;
+
+    JSObject* object = asObject(value);
+
+    JSValue* enableHighAccuracyValue = object->get(exec, Identifier(exec, "enableHighAccuracy"));
+    if (exec->hadException())
+        return 0;
+    bool enableHighAccuracy = enableHighAccuracyValue->toBoolean(exec);
+    if (exec->hadException())
+        return 0;
+
+    JSValue* timeoutValue = object->get(exec, Identifier(exec, "timeout"));
+    if (exec->hadException())
+        return 0;
+    unsigned timeout = timeoutValue->toUInt32(exec);
+    if (exec->hadException())
+        return 0;
+
+    return PositionOptions::create(enableHighAccuracy, timeout);
+}
 
 JSValue* JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& args)
 {
@@ -67,9 +91,12 @@ JSValue* JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& args)
     }
     
     RefPtr<PositionOptions> positionOptions;
-    if (!args.at(exec, 2)->isUndefinedOrNull())
-        positionOptions = toPositionOptions(args.at(exec, 2));
-    
+    if (!args.at(exec, 2)->isUndefinedOrNull()) {
+        positionOptions = createPositionOptions(exec, args.at(exec, 2));
+        if (exec->hadException())
+            return jsUndefined();
+    }
+
     m_impl->getCurrentPosition(positionCallback.release(), positionErrorCallback.release(), positionOptions.get());
     
     return jsUndefined();
@@ -103,9 +130,12 @@ JSValue* JSGeolocation::watchPosition(ExecState* exec, const ArgList& args)
     }
     
     RefPtr<PositionOptions> positionOptions;
-    if (!args.at(exec, 2)->isUndefinedOrNull())
-        positionOptions = toPositionOptions(args.at(exec, 2));
-    
+    if (!args.at(exec, 2)->isUndefinedOrNull()) {
+        positionOptions = createPositionOptions(exec, args.at(exec, 2));
+        if (exec->hadException())
+            return jsUndefined();
+    }
+
     int watchID = m_impl->watchPosition(positionCallback.release(), positionErrorCallback.release(), positionOptions.get());
     return jsNumber(exec, watchID);
 }

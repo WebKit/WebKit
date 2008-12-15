@@ -1,3 +1,29 @@
+2008-12-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22847
+        Geolocation PositionOptions cannot be an arbitrary object.
+
+        Allow the PositionOptions to be a vanilla JS object and parse it
+        appropriately.
+
+        * DerivedSources.make: Remove PositionOptions.
+        * GNUmakefile.am: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::createPositionOptions): Added. Extracts the enableHighAccuracy
+        and timeout fields from a vanilla JS object in order to create the 
+        PositionOptions object, checking for exceptions as necessary.
+        (WebCore::JSGeolocation::getCurrentPosition): Use createPositionOptions
+        instead of toPositionOptions.
+        (WebCore::JSGeolocation::watchPosition): Ditto.
+        * page/PositionOptions.idl: Removed
+
 2008-12-15  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.

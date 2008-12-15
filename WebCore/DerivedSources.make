@@ -185,7 +185,6 @@ DOM_CLASSES = \
     PositionCallback \
     PositionError \
     PositionErrorCallback \
-    PositionOptions \
     ProcessingInstruction \
     ProgressEvent \
     RGBColor \

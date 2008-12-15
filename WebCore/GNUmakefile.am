@@ -218,7 +218,6 @@ IDL_BINDINGS += \
 	WebCore/page/Location.idl \
 	WebCore/page/Navigator.idl \
 	WebCore/page/PositionError.idl \
-	WebCore/page/PositionOptions.idl \
 	WebCore/page/Screen.idl \
 	WebCore/page/WorkerNavigator.idl \
 	WebCore/plugins/MimeType.idl \

@@ -4363,8 +4363,6 @@
 		FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA620E9C4703000D6F75 /* JSGeoposition.h */; };
 		FE80DA710E9C472F000D6F75 /* JSPositionError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */; };
 		FE80DA720E9C472F000D6F75 /* JSPositionError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */; };
-		FE80DA730E9C472F000D6F75 /* JSPositionOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA6F0E9C472F000D6F75 /* JSPositionOptions.cpp */; };
-		FE80DA740E9C472F000D6F75 /* JSPositionOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA700E9C472F000D6F75 /* JSPositionOptions.h */; };
 		FEAB90120EA51B9C006348C3 /* GeolocationService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */; };
 		FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = FEAB90110EA51B9C006348C3 /* GeolocationService.h */; };
 /* End PBXBuildFile section */
@@ -9132,8 +9130,6 @@
 		FE80DA620E9C4703000D6F75 /* JSGeoposition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeoposition.h; sourceTree = "<group>"; };
 		FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPositionError.cpp; sourceTree = "<group>"; };
 		FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPositionError.h; sourceTree = "<group>"; };
-		FE80DA6F0E9C472F000D6F75 /* JSPositionOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPositionOptions.cpp; sourceTree = "<group>"; };
-		FE80DA700E9C472F000D6F75 /* JSPositionOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPositionOptions.h; sourceTree = "<group>"; };
 		FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationService.cpp; sourceTree = "<group>"; };
 		FEAB90110EA51B9C006348C3 /* GeolocationService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationService.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -12070,8 +12066,6 @@
 				65DF31EA09D1CC60000BE325 /* JSNotation.h */,
 				FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */,
 				FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */,
-				FE80DA6F0E9C472F000D6F75 /* JSPositionOptions.cpp */,
-				FE80DA700E9C472F000D6F75 /* JSPositionOptions.h */,
 				65DF31EB09D1CC60000BE325 /* JSProcessingInstruction.cpp */,
 				65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */,
 				E4B423850CBFB73C00AF2ECE /* JSProgressEvent.cpp */,
@@ -15559,7 +15553,6 @@
 				A9D248010D757E6900FDF959 /* JSPluginArray.h in Headers */,
 				93B70D6C09EB0C7C009D8468 /* JSPluginElementFunctions.h in Headers */,
 				FE80DA720E9C472F000D6F75 /* JSPositionError.h in Headers */,
-				FE80DA740E9C472F000D6F75 /* JSPositionOptions.h in Headers */,
 				65DF320009D1CC60000BE325 /* JSProcessingInstruction.h in Headers */,
 				E44613EE0CD681BB00FADA75 /* JSProgressEvent.h in Headers */,
 				C091588F0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h in Headers */,
@@ -17550,7 +17543,6 @@
 				A9C6E64D0D7465E7006442E9 /* JSPluginCustom.cpp in Sources */,
 				93B70D6B09EB0C7C009D8468 /* JSPluginElementFunctions.cpp in Sources */,
 				FE80DA710E9C472F000D6F75 /* JSPositionError.cpp in Sources */,
-				FE80DA730E9C472F000D6F75 /* JSPositionOptions.cpp in Sources */,
 				65DF31FF09D1CC60000BE325 /* JSProcessingInstruction.cpp in Sources */,
 				E44613ED0CD681BA00FADA75 /* JSProgressEvent.cpp in Sources */,
 				C091588E0DB4209200E55AF4 /* JSQuarantinedObjectWrapper.cpp in Sources */,
