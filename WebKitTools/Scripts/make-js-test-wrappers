@@ -92,6 +92,7 @@ for my $tfile (@templates) {
         next if $file =~ /WMLTestCase\.js/;
 
         next if $file =~ m:resources/NSResolver-exceptions\.js$:;
+        next if $file =~ m:resources/WindowProperties\.js$:;
         next if $file =~ m:resources/attr-case-sensitivity\.js$:;
         next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-1\.js$:;
         next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-2\.js$:;
