@@ -1,3 +1,18 @@
+2008-12-15  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        Change the order of sub frame initialisation to avoid crashes
+
+        Add the newly created frame to the FrameTree before calling
+        WebCore::Frame::init to not segfault on
+        LayoutTests/fast/loader/frame-creation-removal.html.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createFrame):
+
 2008-12-15  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.

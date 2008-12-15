@@ -116,9 +116,17 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebF
     frameLoaderClient = new FrameLoaderClientQt();
     RefPtr<Frame> newFrame = Frame::create(webcorePage, frameData->ownerElement, frameLoaderClient);
     frame = newFrame.get();
-    if (frameData->ownerElement)
-        frame->ref(); // balanced by adoptRef in FrameLoaderClientQt::createFrame
     frameLoaderClient->setFrame(qframe, frame);
+
+    // FIXME: All of the below should probably be moved over into WebCore
+    frame->tree()->setName(frameData->name);
+    if (QWebFrame* _parentFrame = parentFrame())
+        QWebFramePrivate::core(_parentFrame)->tree()->appendChild(frame);
+
+    // balanced by adoptRef in FrameLoaderClientQt::createFrame
+    if (frameData->ownerElement)
+        frame->ref();
+
     frame->init();
 }
 
