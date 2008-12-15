@@ -1,3 +1,20 @@
+2008-12-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - Add [WebFrame reloadFromOrigin] for performing end-to-end reload.
+        - Add corresponding IBAction to WebView.
+        - Temporarily make [WebFrame reload] trigger end-to-end reload if shift modifier is pressed when it is called.
+
+        * WebView/WebFrame.h:
+        * WebView/WebFrame.mm:
+        (-[WebFrame reload]):
+        (-[WebFrame reloadFromOrigin]): 
+        * WebView/WebFramePrivate.h: Match the FrameLoadType enum in WebCore.
+        * WebView/WebView.h:
+        * WebView/WebView.mm:
+        (-[WebView reloadFromOrigin:]):
+
 2008-12-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

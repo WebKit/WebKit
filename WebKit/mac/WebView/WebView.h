@@ -670,6 +670,7 @@ extern NSString *WebViewProgressFinishedNotification;
 - (IBAction)takeStringURLFrom:(id)sender;
 - (IBAction)stopLoading:(id)sender;
 - (IBAction)reload:(id)sender;
+- (IBAction)reloadFromOrigin:(id)sender;
 - (BOOL)canGoBack;
 - (IBAction)goBack:(id)sender;
 - (BOOL)canGoForward;

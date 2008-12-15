@@ -1374,7 +1374,16 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)reload
 {
-    _private->coreFrame->loader()->reload();
+    // FIXME: Add WebKitLinkedOnOrAfter check to disable this hack when the browser knows about origin reloads.
+    if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"])
+        _private->coreFrame->loader()->reload(GetCurrentKeyModifiers() & shiftKey);
+    else
+        _private->coreFrame->loader()->reload(false);
+}
+
+- (void)reloadFromOrigin
+{
+    _private->coreFrame->loader()->reload(true);
 }
 
 - (WebFrame *)findFrameNamed:(NSString *)name

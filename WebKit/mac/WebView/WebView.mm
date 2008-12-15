@@ -3339,6 +3339,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [[self mainFrame] reload];
 }
 
+- (IBAction)reloadFromOrigin:(id)sender
+{
+    [[self mainFrame] reloadFromOrigin];
+}
+
 // FIXME: This code should move into WebCore so that it is not duplicated in each WebKit.
 // (This includes canMakeTextSmaller/Larger, makeTextSmaller/Larger, and canMakeTextStandardSize/makeTextStandardSize)
 - (BOOL)canMakeTextSmaller
