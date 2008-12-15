@@ -31,12 +31,13 @@
 
 #include "Register.h"
 #include "Collector.h"
+#include <wtf/Noncopyable.h>
+
 #if HAVE(MMAP)
 #include <errno.h>
 #include <stdio.h>
 #include <sys/mman.h>
 #endif
-#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
