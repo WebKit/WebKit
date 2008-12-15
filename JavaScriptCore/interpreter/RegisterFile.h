@@ -33,6 +33,7 @@
 #include "Collector.h"
 #if HAVE(MMAP)
 #include <errno.h>
+#include <stdio.h>
 #include <sys/mman.h>
 #endif
 #include <wtf/Noncopyable.h>

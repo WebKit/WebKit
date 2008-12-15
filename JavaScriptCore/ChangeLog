@@ -1,3 +1,9 @@
+2008-12-15  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Build fix for Gtk+.
+
+        * interpreter/RegisterFile.h: Include stdio.h for fprintf
+
 2008-12-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.
