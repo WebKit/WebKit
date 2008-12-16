@@ -1,3 +1,20 @@
+2008-12-16  Kalle Vahlman  <kalle.vahlman@movial.com>
+
+        Reviewed by Holger Freyther.
+
+        [CURL] memory leak of ResouceHandles
+        http://bugs.webkit.org/show_bug.cgi?id=20777
+
+        Fix ResourceHandle ref management to be consistent and correct.
+        Original patch from Marco Barisione.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::start):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::removeFromCurl):
+        (WebCore::ResourceHandleManager::add):
+        (WebCore::ResourceHandleManager::removeScheduledJob):
+
 2008-12-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix the Qt build.

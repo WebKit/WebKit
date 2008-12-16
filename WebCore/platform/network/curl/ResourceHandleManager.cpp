@@ -350,6 +350,7 @@ void ResourceHandleManager::removeFromCurl(ResourceHandle* job)
     curl_multi_remove_handle(m_curlMultiHandle, d->m_handle);
     curl_easy_cleanup(d->m_handle);
     d->m_handle = 0;
+    job->deref();
 }
 
 void ResourceHandleManager::setupPUT(ResourceHandle*, struct curl_slist**)
@@ -443,6 +444,7 @@ void ResourceHandleManager::add(ResourceHandle* job)
 {
     // we can be called from within curl, so to avoid re-entrancy issues
     // schedule this job to be added the next time we enter curl download loop
+    job->ref();
     m_resourceHandleList.append(job);
     if (!m_downloadTimer.isActive())
         m_downloadTimer.startOneShot(pollTimeSeconds);
@@ -454,6 +456,7 @@ bool ResourceHandleManager::removeScheduledJob(ResourceHandle* job)
     for (int i = 0; i < size; i++) {
         if (job == m_resourceHandleList[i]) {
             m_resourceHandleList.remove(i);
+            job->deref();
             return true;
         }
     }
