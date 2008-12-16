@@ -40,6 +40,7 @@
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 
+#import <mach/mach.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>

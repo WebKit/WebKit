@@ -1,3 +1,9 @@
+2008-12-15  Stephanie Lewis  <slewis@apple.com>
+
+        Fix build.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+
 2008-12-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
