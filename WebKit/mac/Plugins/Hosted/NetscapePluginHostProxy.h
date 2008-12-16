@@ -42,6 +42,7 @@ public:
     NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort);
     
     mach_port_t port() const { return m_pluginHostPort; }
+    mach_port_t clientPort() const { return m_clientPort; }
 
     void addPluginInstance(NetscapePluginInstanceProxy*);
     void removePluginInstance(NetscapePluginInstanceProxy*);

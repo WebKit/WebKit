@@ -206,4 +206,18 @@ kern_return_t WKPCInvalidateRect(mach_port_t clientPort, uint32_t pluginID, doub
     return KERN_SUCCESS;
 }
 
+kern_return_t WKPCInstantiatePluginReply(mach_port_t clientPort, uint32_t pluginID, kern_return_t result, uint32_t renderContextID, boolean_t useSoftwareRenderer)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
+    instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::InstantiatePluginReply(result, renderContextID, useSoftwareRenderer));
+    return KERN_SUCCESS;
+}
+
 #endif // USE(PLUGIN_HOST_PROCESS)

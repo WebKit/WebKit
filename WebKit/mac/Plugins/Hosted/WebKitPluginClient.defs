@@ -57,3 +57,14 @@ simpleroutine InvalidateRect(clientPort :mach_port_t;
                              y :double;
                              width :double;
                              height :double);
+
+// Replies
+
+simpleroutine InstantiatePluginReply(clientPort :mach_port_t;
+                                     pluginID :uint32_t;
+                                     result :kern_return_t;
+                                     renderContextID :uint32_t;
+                                     useSoftwareRenderer :boolean_t);
+
+
+

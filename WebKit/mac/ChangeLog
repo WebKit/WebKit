@@ -1,5 +1,31 @@
 2008-12-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Change InstantiatePlugin to be asynchronous so we won't deadlock if the plug-in tries to call
+        back into us while it's being instantiated.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        (WebKit::NetscapePluginHostProxy::clientPort):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCInstantiatePluginReply):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::Reply::):
+        (WebKit::NetscapePluginInstanceProxy::Reply::Reply):
+        (WebKit::NetscapePluginInstanceProxy::Reply::~Reply):
+        (WebKit::NetscapePluginInstanceProxy::InstantiatePluginReply::InstantiatePluginReply):
+        (WebKit::NetscapePluginInstanceProxy::setCurrentReply):
+        (WebKit::NetscapePluginInstanceProxy::waitForReply):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        (WebKit::NetscapePluginInstanceProxy::processRequestsAndWaitForReply):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
+2008-12-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Let WebKit generate a plug-in ID instead of having the plug-in host do it.

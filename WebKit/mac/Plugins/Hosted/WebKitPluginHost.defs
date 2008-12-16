@@ -35,12 +35,10 @@ routine CheckInWithPluginHost(pluginHostPort :mach_port_t;
                               clientPort :mach_port_make_send_t;
                               renderPort :mach_port_copy_send_t);
 
-routine InstantiatePlugin(pluginHostPort :mach_port_t;
-                          options :plist_bytes_t;
-                          pluginID :uint32_t;
-                          out renderContextID :uint32_t;
-                          out useSoftwareRenderer :boolean_t);
-
+simpleroutine InstantiatePlugin(pluginHostPort :mach_port_t;
+                                options :plist_bytes_t;
+                                pluginID :uint32_t);
+                                
 simpleroutine ResizePluginInstance(pluginHostPort :mach_port_t;
                                    pluginID :uint32_t;
                                    x :double;
