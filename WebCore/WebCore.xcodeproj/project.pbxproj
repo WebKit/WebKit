@@ -67,6 +67,8 @@
 		08807B7F0ED709AB003F6975 /* WMLRefreshElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08807B730ED709AB003F6975 /* WMLRefreshElement.h */; };
 		08807B800ED709AB003F6975 /* WMLSetvarElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08807B740ED709AB003F6975 /* WMLSetvarElement.cpp */; };
 		08807B810ED709AB003F6975 /* WMLSetvarElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08807B750ED709AB003F6975 /* WMLSetvarElement.h */; };
+		08820BDE0EF5D381009099A8 /* WMLTableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08820BDC0EF5D381009099A8 /* WMLTableElement.cpp */; };
+		08820BDF0EF5D381009099A8 /* WMLTableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08820BDD0EF5D381009099A8 /* WMLTableElement.h */; };
 		088C97120ECB6D92000534BA /* WMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3AB490E556F2400E9C0C0 /* WMLNames.cpp */; };
 		088C97130ECB6D9D000534BA /* WMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CA3AB480E556F2400E9C0C0 /* WMLNames.h */; };
 		088C97510ECB6E28000534BA /* WMLAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B99180E52E37300487BB7 /* WMLAElement.cpp */; };
@@ -4864,6 +4866,8 @@
 		08807B730ED709AB003F6975 /* WMLRefreshElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLRefreshElement.h; sourceTree = "<group>"; };
 		08807B740ED709AB003F6975 /* WMLSetvarElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLSetvarElement.cpp; sourceTree = "<group>"; };
 		08807B750ED709AB003F6975 /* WMLSetvarElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLSetvarElement.h; sourceTree = "<group>"; };
+		08820BDC0EF5D381009099A8 /* WMLTableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLTableElement.cpp; sourceTree = "<group>"; };
+		08820BDD0EF5D381009099A8 /* WMLTableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTableElement.h; sourceTree = "<group>"; };
 		0893E4650ECB68F400A28563 /* WMLPageState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLPageState.cpp; sourceTree = "<group>"; };
 		0893E4660ECB68F400A28563 /* WMLPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLPageState.h; sourceTree = "<group>"; };
 		089582530E857A7E00F82C83 /* ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageLoader.cpp; sourceTree = "<group>"; };
@@ -9603,6 +9607,8 @@
 				08807B730ED709AB003F6975 /* WMLRefreshElement.h */,
 				08807B740ED709AB003F6975 /* WMLSetvarElement.cpp */,
 				08807B750ED709AB003F6975 /* WMLSetvarElement.h */,
+				08820BDC0EF5D381009099A8 /* WMLTableElement.cpp */,
+				08820BDD0EF5D381009099A8 /* WMLTableElement.h */,
 				4C6B99430E52E37300487BB7 /* WMLTagNames.in */,
 				08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */,
 				08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */,
@@ -13549,9 +13555,9 @@
 			children = (
 				E1C8BE5C0E8BD15A0064CB7D /* JSWorker.cpp */,
 				E1CAA5C50E8BD23600A73ECA /* JSWorker.h */,
-				E18259E60EF3E34B00933242 /* JSWorkerContextBase.lut.h */,
 				E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */,
 				E182568E0EF2B02D00933242 /* JSWorkerContext.h */,
+				E18259E60EF3E34B00933242 /* JSWorkerContextBase.lut.h */,
 				E1C362EE0EAF2AA9007410BC /* JSWorkerLocation.cpp */,
 				E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */,
 				E1271A570EEECDE400F61213 /* JSWorkerNavigator.cpp */,
@@ -15718,7 +15724,9 @@
 				65DF320609D1CC60000BE325 /* JSWheelEvent.h in Headers */,
 				E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */,
 				E1CA5CD30E8CDE8000E8EF90 /* JSWorkerConstructor.h in Headers */,
+				E18256900EF2B02D00933242 /* JSWorkerContext.h in Headers */,
 				E1C36D350EB0A094007410BC /* JSWorkerContextBase.h in Headers */,
+				E18259E70EF3E34B00933242 /* JSWorkerContextBase.lut.h in Headers */,
 				E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */,
 				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,
@@ -16423,8 +16431,7 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				E18256900EF2B02D00933242 /* JSWorkerContext.h in Headers */,
-				E18259E70EF3E34B00933242 /* JSWorkerContextBase.lut.h in Headers */,
+				08820BDF0EF5D381009099A8 /* WMLTableElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16508,6 +16515,7 @@
 				B255996E0D00D8BA00BB825C /* WKTableTransferFilter.cikernel in Resources */,
 				088C97550ECB6E28000534BA /* WMLAttributeNames.in in Resources */,
 				088C977C0ECB6E29000534BA /* WMLTagNames.in in Resources */,
+				E18256500EF2ACE600933242 /* WorkerContext.idl in Resources */,
 				E1C362BC0EAF29FB007410BC /* WorkerLocation.idl in Resources */,
 				E1271A520EEECD1C00F61213 /* WorkerNavigator.idl in Resources */,
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
@@ -16543,7 +16551,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				E18256500EF2ACE600933242 /* WorkerContext.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17721,7 +17728,9 @@
 				65DF320509D1CC60000BE325 /* JSWheelEvent.cpp in Sources */,
 				E1C8BE5D0E8BD15A0064CB7D /* JSWorker.cpp in Sources */,
 				E1CA5CD60E8CDEE900E8EF90 /* JSWorkerConstructor.cpp in Sources */,
+				E182568F0EF2B02D00933242 /* JSWorkerContext.cpp in Sources */,
 				E1C36D340EB0A094007410BC /* JSWorkerContextBase.cpp in Sources */,
+				E18258AC0EF3CD7000933242 /* JSWorkerContextCustom.cpp in Sources */,
 				E1CA5CBC0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp in Sources */,
 				E1C362F00EAF2AA9007410BC /* JSWorkerLocation.cpp in Sources */,
 				E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */,
@@ -18373,8 +18382,7 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
-				E182568F0EF2B02D00933242 /* JSWorkerContext.cpp in Sources */,
-				E18258AC0EF3CD7000933242 /* JSWorkerContextCustom.cpp in Sources */,
+				08820BDE0EF5D381009099A8 /* WMLTableElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

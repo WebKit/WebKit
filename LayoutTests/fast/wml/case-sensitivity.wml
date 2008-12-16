@@ -4,7 +4,7 @@
  <card id='card1'>
  <p> Test for Case sensitivity in WML </p>
  <p> compare the result of inserting &lt;br/&gt; and &lt;BR/&gt; into the same text, <br/>the former should work, and the latter doesn't.</p>
- <table border="1">
+ <table columns="1">
  <tr><td>Test case <br/>sensitivity in WML </td></tr>
  <tr><td>Test case <BR/>sensitivity in WML </td></tr>
  </table>

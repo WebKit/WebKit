@@ -1,3 +1,38 @@
+2008-12-15  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add several testcases covering WML table element handling.
+        Fixed fast/wml/case-sensitivity.wml - which used HTML style tables, that now raise errors (missing 'columns' attribute).
+
+        * fast/wml/case-sensitivity.wml:
+        * fast/wml/table-element-align-attribute-invalid.wml: Added.
+        * fast/wml/table-element-columns-attribute-invalid-number.wml: Added.
+        * fast/wml/table-element-columns-attribute-invalid.wml: Added.
+        * fast/wml/table-element-columns-attribute-missing.wml: Added.
+        * fast/wml/table-element-columns-attribute.wml: Added.
+        * platform/mac/fast/wml/err-invalid-tablecolumn-number-expected.checksum:
+        * platform/mac/fast/wml/err-invalid-tablecolumn-number-expected.png:
+        * platform/mac/fast/wml/err-invalid-tablecolumn-number-expected.txt:
+        * platform/mac/fast/wml/table-element-align-attribute-invalid-expected.checksum: Added.
+        * platform/mac/fast/wml/table-element-align-attribute-invalid-expected.png: Added.
+        * platform/mac/fast/wml/table-element-align-attribute-invalid-expected.txt: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-expected.checksum: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-expected.png: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-expected.txt: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-invalid-expected.checksum: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-invalid-expected.png: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-invalid-expected.txt: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-invalid-number-expected.checksum: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-invalid-number-expected.png: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-invalid-number-expected.txt: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-missing-expected.checksum: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-missing-expected.png: Added.
+        * platform/mac/fast/wml/table-element-columns-attribute-missing-expected.txt: Added.
+        * platform/mac/fast/wml/table-element-expected.checksum:
+        * platform/mac/fast/wml/table-element-expected.png:
+        * platform/mac/fast/wml/table-element-expected.txt:
+
 2008-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

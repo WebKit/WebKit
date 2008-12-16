@@ -33,12 +33,12 @@ layer at (0,0) size 800x230
                 RenderText {#text} at (0,0) size 53x18
                   text run at (0,0) width 53: "Cell one"
               RenderTableCell {td} at (57,2) size 24x54 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 11x18
-                  text run at (0,0) width 11: "C"
-                RenderBR {br} at (11,0) size 0x18
-                RenderText {#text} at (0,18) size 15x18
-                  text run at (0,18) width 15: "ell"
-                RenderBR {br} at (15,18) size 0x18
+                RenderText {#text} at (13,0) size 11x18
+                  text run at (13,0) width 11: "C"
+                RenderBR {br} at (24,0) size 0x18
+                RenderText {#text} at (9,18) size 15x18
+                  text run at (9,18) width 15: "ell"
+                RenderBR {br} at (24,18) size 0x18
                 RenderText {#text} at (0,36) size 24x18
                   text run at (0,36) width 24: "two"
               RenderTableCell {td} at (83,20) size 61x18 [r=0 c=2 rs=1 cs=1]
@@ -50,5 +50,5 @@ layer at (0,0) size 800x230
                   text run at (0,0) width 23: "one"
               RenderTableCell {td} at (57,67) size 24x0 [r=1 c=1 rs=1 cs=1]
               RenderTableCell {td} at (83,58) size 61x18 [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 46x18
-                  text run at (0,0) width 46: "C three"
+                RenderText {#text} at (15,0) size 46x18
+                  text run at (15,0) width 46: "C three"

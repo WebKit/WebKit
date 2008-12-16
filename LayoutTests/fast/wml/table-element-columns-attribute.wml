@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card>
+    <p>Test for table element and columns attribute</p>
+    <p>The first and second row of all tests should look equal</p>
+
+    <p>Test 1: Join superflous columns, left cell left aligned, right cell right aligned</p>
+    <table columns="2" align="LR">
+    <tr>
+        <td>First column</td>
+        <td>Second</td>
+        <td>column</td>
+    </tr>
+    <tr>
+        <td>First column</td>
+        <td>Second column</td>
+    </tr>
+    </table>
+
+    <p>Test 2: Join superflous columns with 'br' elements inside, table is center aligned</p>
+    <table columns="2" align="CC">
+    <tr>
+        <td>First<br/>column</td>
+        <td>Second</td>
+        <td><br/></td>
+        <td>column</td>
+    </tr>
+    <tr>
+        <td>First<br/>column</td>
+        <td>Second<br/>column</td>
+    </tr>
+    </table>
+
+    <p>Test 3: Join superflous columns with 'br' and 'img' elements inside, table is center aligned</p>
+    <table columns="2" align="CC">
+    <tr>
+        <td>First column</td>
+        <td>Second</td>
+        <td>column with</td>
+        <td>image </td>
+        <td><img width="20" height="20" src="resources/pass.png"/> and</td>
+        <td>trailing text</td>
+    </tr>
+    <tr>
+        <td>First column</td>
+        <td>Second column with image <img width="20" height="20" src="resources/pass.png"/> and trailing text</td>
+    </tr>
+    </table>
+
+	<p>Test 4: Join superflous columns with 'br' and 'img' elements inside, table is right aligned</p>
+    <table columns="2" align="RR">
+    <tr>
+        <td>First column</td>
+        <td>Second</td>
+        <td>column with</td>
+        <td>image <img width="20" height="20" src="resources/pass.png"/></td>
+        <td>and trailing text</td>
+    </tr>
+    <tr>
+        <td>First column</td>
+        <td>Second column with image <img width="20" height="20" src="resources/pass.png"/>and trailing text</td>
+    </tr>
+    </table>
+
+    <p>Test 5: Pad with empty columns, if there are not enough 'td' elements</p>
+    <table columns="2" align="LL">
+    <tr>
+        <td>First column</td>
+    </tr>
+    <tr>
+        <td>First column</td>
+        <td/>
+    </tr>
+    </table>
+</card>
+</wml> 

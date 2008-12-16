@@ -1391,6 +1391,7 @@ contains(DEFINES, ENABLE_WML=1) {
         wml/WMLPrevElement.cpp \
         wml/WMLRefreshElement.cpp \
         wml/WMLSetvarElement.cpp \
+        wml/WMLTableElement.cpp \
         wml/WMLTaskElement.cpp \
         wml/WMLTemplateElement.cpp \
         wml/WMLTimerElement.cpp \

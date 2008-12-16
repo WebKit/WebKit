@@ -16990,6 +16990,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\wml\WMLTableElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLTableElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\wml\WMLTaskElement.cpp"
 				>
 			</File>

@@ -1,29 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x242
-  RenderBlock {html} at (0,0) size 800x242
-    RenderBody {body} at (8,16) size 784x218
+layer at (0,0) size 800x208
+  RenderBlock {html} at (0,0) size 800x208
+    RenderBody {body} at (8,16) size 784x184
       RenderBlock {parsererror} at (16,0) size 752x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
         RenderBlock {h3} at (18,20) size 716x22
           RenderText {#text} at (0,0) size 324x22
             text run at (0,0) width 324: "This page contains the following errors:"
         RenderBlock {div} at (18,60) size 716x14
           RenderText {#text} at (0,0) size 532x14
-            text run at (0,0) width 532: "error on line 9 at column 47: A table contains an invalid number of columns."
+            text run at (0,0) width 532: "error on line 6 at column 32: A table contains an invalid number of columns."
         RenderBlock {h3} at (18,92) size 716x22
           RenderText {#text} at (0,0) size 429x22
             text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
       RenderBlock (anonymous) at (0,150) size 784x0
         RenderInline {wml} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,150) size 784x68
-        RenderBlock {card} at (8,0) size 768x68
+      RenderBlock (anonymous) at (0,150) size 784x34
+        RenderBlock {card} at (8,0) size 768x34
           RenderBlock {p} at (0,0) size 768x18
-            RenderText {#text} at (0,0) size 252x18
-              text run at (0,0) width 252: "Test for table column number validation"
-          RenderBlock {p} at (0,34) size 768x18
-            RenderText {#text} at (0,0) size 538x18
-              text run at (0,0) width 538: "The table won't be displayed because of the invalid columns attruibte of table element"
-          RenderTable {table} at (0,68) size 4x0
-      RenderBlock (anonymous) at (0,226) size 784x0
+            RenderText {#text} at (0,0) size 322x18
+              text run at (0,0) width 322: "Test for table element and invalid columns attribute"
+          RenderTable {table} at (0,34) size 4x0
+      RenderBlock (anonymous) at (0,192) size 784x0
         RenderInline {wml} at (0,0) size 0x0

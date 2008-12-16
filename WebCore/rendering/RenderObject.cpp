@@ -64,6 +64,10 @@
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>
 
+#if ENABLE(WML)
+#include "WMLNames.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -557,9 +561,22 @@ RenderObject* RenderObject::offsetParent() const
     RenderObject* curr = parent();
     while (curr && (!curr->element() ||
                     (!curr->isPositioned() && !curr->isRelPositioned() && !curr->isBody()))) {
-        if (!skipTables && curr->element() && (curr->element()->hasTagName(tableTag) || 
-                                               curr->element()->hasTagName(tdTag) || curr->element()->hasTagName(thTag)))
-            break;
+        Node* element = curr->element();
+        if (!skipTables && element) {
+            bool isTableElement = element->hasTagName(tableTag) ||
+                                  element->hasTagName(tdTag) ||
+                                  element->hasTagName(thTag);
+
+#if ENABLE(WML)
+            if (!isTableElement && element->isWMLElement())
+                isTableElement = element->hasTagName(WMLNames::tableTag) ||
+                                 element->hasTagName(WMLNames::tdTag);
+#endif
+
+            if (isTableElement)
+                break;
+        }
+
         float newZoom = curr->style()->effectiveZoom();
         if (currZoom != newZoom)
             break;

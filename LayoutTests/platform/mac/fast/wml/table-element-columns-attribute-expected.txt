@@ -1,0 +1,126 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x596
+  RenderBlock {wml} at (0,0) size 800x596
+    RenderBlock {card} at (8,16) size 784x572
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 275x18
+          text run at (0,0) width 275: "Test for table element and columns attribute"
+      RenderBlock {p} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 340x18
+          text run at (0,0) width 340: "The first and second row of all tests should look equal"
+      RenderBlock {p} at (0,68) size 784x18
+        RenderText {#text} at (0,0) size 473x18
+          text run at (0,0) width 473: "Test 1: Join superflous columns, left cell left aligned, right cell right aligned"
+      RenderTable {table} at (0,102) size 183x42
+        RenderTableSection (anonymous) at (0,0) size 183x42
+          RenderTableRow {tr} at (0,2) size 183x18
+            RenderTableCell {td} at (2,2) size 79x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 79x18
+                text run at (0,0) width 79: "First column"
+            RenderTableCell {td} at (83,2) size 98x18 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 98x18
+                text run at (0,0) width 98: "Second column"
+          RenderTableRow {tr} at (0,22) size 183x18
+            RenderTableCell {td} at (2,22) size 79x18 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 79x18
+                text run at (0,0) width 79: "First column"
+            RenderTableCell {td} at (83,22) size 98x18 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 98x18
+                text run at (0,0) width 98: "Second column"
+      RenderBlock {p} at (0,160) size 784x18
+        RenderText {#text} at (0,0) size 498x18
+          text run at (0,0) width 498: "Test 2: Join superflous columns with 'br' elements inside, table is center aligned"
+      RenderTable {table} at (0,194) size 100x78
+        RenderTableSection (anonymous) at (0,0) size 100x78
+          RenderTableRow {tr} at (0,2) size 100x36
+            RenderTableCell {td} at (2,2) size 47x36 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (9,0) size 28x18
+                text run at (9,0) width 28: "First"
+              RenderBR {br} at (37,0) size 0x18
+              RenderText {#text} at (0,18) size 47x18
+                text run at (0,18) width 47: "column"
+            RenderTableCell {td} at (51,2) size 47x36 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 47x18
+                text run at (0,0) width 47: "Second"
+              RenderBR {br} at (47,0) size 0x18
+              RenderText {#text} at (0,18) size 47x18
+                text run at (0,18) width 47: "column"
+          RenderTableRow {tr} at (0,40) size 100x36
+            RenderTableCell {td} at (2,40) size 47x36 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (9,0) size 28x18
+                text run at (9,0) width 28: "First"
+              RenderBR {br} at (37,0) size 0x18
+              RenderText {#text} at (0,18) size 47x18
+                text run at (0,18) width 47: "column"
+            RenderTableCell {td} at (51,40) size 47x36 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 47x18
+                text run at (0,0) width 47: "Second"
+              RenderBR {br} at (47,0) size 0x18
+              RenderText {#text} at (0,18) size 47x18
+                text run at (0,18) width 47: "column"
+      RenderBlock {p} at (0,288) size 784x18
+        RenderText {#text} at (0,0) size 559x18
+          text run at (0,0) width 559: "Test 3: Join superflous columns with 'br' and 'img' elements inside, table is center aligned"
+      RenderTable {table} at (0,322) size 383x54
+        RenderTableSection (anonymous) at (0,0) size 383x54
+          RenderTableRow {tr} at (0,2) size 383x24
+            RenderTableCell {td} at (2,5) size 79x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 79x18
+                text run at (0,0) width 79: "First column"
+            RenderTableCell {td} at (83,2) size 298x24 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,6) size 176x18
+                text run at (0,6) width 176: "Second column with image "
+              RenderImage {img} at (176,0) size 20x20
+              RenderText {#text} at (196,6) size 102x18
+                text run at (196,6) width 102: " and trailing text"
+          RenderTableRow {tr} at (0,28) size 383x24
+            RenderTableCell {td} at (2,31) size 79x18 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 79x18
+                text run at (0,0) width 79: "First column"
+            RenderTableCell {td} at (83,28) size 298x24 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,6) size 176x18
+                text run at (0,6) width 176: "Second column with image "
+              RenderImage {img} at (176,0) size 20x20
+              RenderText {#text} at (196,6) size 102x18
+                text run at (196,6) width 102: " and trailing text"
+      RenderBlock {p} at (0,392) size 784x18
+        RenderText {#text} at (0,0) size 550x18
+          text run at (0,0) width 550: "Test 4: Join superflous columns with 'br' and 'img' elements inside, table is right aligned"
+      RenderTable {table} at (0,426) size 379x54
+        RenderTableSection (anonymous) at (0,0) size 379x54
+          RenderTableRow {tr} at (0,2) size 379x24
+            RenderTableCell {td} at (2,5) size 79x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 79x18
+                text run at (0,0) width 79: "First column"
+            RenderTableCell {td} at (83,2) size 294x24 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,6) size 176x18
+                text run at (0,6) width 176: "Second column with image "
+              RenderImage {img} at (176,0) size 20x20
+              RenderText {#text} at (196,6) size 98x18
+                text run at (196,6) width 98: "and trailing text"
+          RenderTableRow {tr} at (0,28) size 379x24
+            RenderTableCell {td} at (2,31) size 79x18 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 79x18
+                text run at (0,0) width 79: "First column"
+            RenderTableCell {td} at (83,28) size 294x24 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,6) size 176x18
+                text run at (0,6) width 176: "Second column with image "
+              RenderImage {img} at (176,0) size 20x20
+              RenderText {#text} at (196,6) size 98x18
+                text run at (196,6) width 98: "and trailing text"
+      RenderBlock {p} at (0,496) size 784x18
+        RenderText {#text} at (0,0) size 434x18
+          text run at (0,0) width 434: "Test 5: Pad with empty columns, if there are not enough 'td' elements"
+      RenderTable {table} at (0,530) size 86x42
+        RenderTableSection (anonymous) at (0,0) size 86x42
+          RenderTableRow {tr} at (0,2) size 86x18
+            RenderTableCell {td} at (2,2) size 80x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 79x18
+                text run at (0,0) width 79: "First column"
+            RenderTableCell {td} at (84,11) size 0x0 [r=0 c=1 rs=1 cs=1]
+          RenderTableRow {tr} at (0,22) size 86x18
+            RenderTableCell {td} at (2,22) size 80x18 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 79x18
+                text run at (0,0) width 79: "First column"
+            RenderTableCell {td} at (84,31) size 0x0 [r=1 c=1 rs=1 cs=1]
