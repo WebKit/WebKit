@@ -211,7 +211,7 @@ JSValue* mathProtoFuncPow(ExecState* exec, JSObject*, JSValue*, const ArgList& a
 
 JSValue* mathProtoFuncRandom(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 {
-    return jsNumber(exec, randomNumber());
+    return jsNumber(exec, WTF::randomNumber());
 }
 
 JSValue* mathProtoFuncRound(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
