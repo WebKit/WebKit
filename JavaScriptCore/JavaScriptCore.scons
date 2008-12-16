@@ -142,6 +142,7 @@ sources['wtf'] = [
     'wtf/Assertions.cpp',
     'wtf/FastMalloc.cpp',
     'wtf/HashTable.cpp',
+    'wtf/RandomNumber.cpp',
     'wtf/RefCountedLeakCounter.cpp',
     'wtf/dtoa.cpp',
 ]

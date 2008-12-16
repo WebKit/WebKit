@@ -1,3 +1,50 @@
+2008-12-16  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22876
+
+        Unify random number generation in JavaScriptCore & WebCore, by introducing
+        wtf/RandomNumber.h and moving wtf_random/wtf_random_init out of MathExtras.h.
+
+        wtf_random_init() has been renamed to initializeRandomNumberGenerator() and
+        lives in it's own private header: wtf/RandomNumberSeed.h, only intended to
+        be used from within JavaScriptCore.
+
+        wtf_random() has been renamed to randomNumber() and lives in a public header
+        wtf/RandomNumber.h, usable from within JavaScriptCore & WebCore. It encapsulates
+        the code taking care of initializing the random number generator (only when
+        building without ENABLE(JSC_MULTIPLE_THREADS), otherwhise initializeThreading()
+        already took care of that).
+
+        Functional change on darwin: Use random() instead of rand(), as it got a larger
+        period (more randomness). HTMLFormElement already contains this implementation
+        and I just moved it in randomNumber(), as  special case for PLATFORM(DARWIN).
+
+        * GNUmakefile.am: Add RandomNumber.(cpp/h) / RandomNumberSeed.h.
+        * JavaScriptCore.exp: Ditto.
+        * JavaScriptCore.pri: Ditto.
+        * JavaScriptCore.scons: Ditto.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * JavaScriptCoreSources.bkl: Ditto.
+        * runtime/MathObject.cpp: Use new WTF::randomNumber() functionality.
+        (JSC::mathProtoFuncRandom):
+        * wtf/MathExtras.h: Move wtf_random / wtf_random_init to new files.
+        * wtf/RandomNumber.cpp: Added.
+        (WTF::randomNumber):
+        * wtf/RandomNumber.h: Added.
+        * wtf/RandomNumberSeed.h: Added. Internal usage within JSC only.
+        (WTF::initializeRandomNumberGenerator):
+        * wtf/ThreadingGtk.cpp: Rename wtf_random_init() to initializeRandomNumberGenerator().
+        (WTF::initializeThreading):
+        * wtf/ThreadingPthreads.cpp: Ditto.
+        (WTF::initializeThreading):
+        * wtf/ThreadingQt.cpp: Ditto.
+        (WTF::initializeThreading):
+        * wtf/ThreadingWin.cpp: Ditto.
+        (WTF::initializeThreading):
+
 2008-12-16 Yael Aharon <yael.aharon@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

@@ -34,7 +34,7 @@
 
 #include "HashMap.h"
 #include "MainThread.h"
-#include "MathExtras.h"
+#include "RandomNumberSeed.h"
 
 #include <glib.h>
 
@@ -59,7 +59,7 @@ void initializeThreading()
     if (!atomicallyInitializedStaticMutex) {
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
-        wtf_random_init();
+        initializeRandomNumberGenerator();
         mainThreadIdentifier = currentThread();
         initializeMainThread();
     }

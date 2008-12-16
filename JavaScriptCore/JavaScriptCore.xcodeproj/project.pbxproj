@@ -36,6 +36,9 @@
 /* Begin PBXBuildFile section */
 		06D358B30DAADAA4003B174E /* MainThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 06D358A20DAAD9C4003B174E /* MainThread.cpp */; };
 		06D358B40DAADAAA003B174E /* MainThreadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06D358A10DAAD9C4003B174E /* MainThreadMac.mm */; };
+		088FA5BB0EF76D4300578E6F /* RandomNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088FA5B90EF76D4300578E6F /* RandomNumber.cpp */; };
+		088FA5BC0EF76D4300578E6F /* RandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 088FA5BA0EF76D4300578E6F /* RandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		08E279E90EF83B10007DB523 /* RandomNumberSeed.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E279E80EF83B10007DB523 /* RandomNumberSeed.h */; };
 		140B7D1D0DC69AF7009C42B8 /* JSActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */; };
 		140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141211310A48794D00480255 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
@@ -408,6 +411,9 @@
 		06D358A10DAAD9C4003B174E /* MainThreadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainThreadMac.mm; sourceTree = "<group>"; };
 		06D358A20DAAD9C4003B174E /* MainThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainThread.cpp; sourceTree = "<group>"; };
 		06D358A30DAAD9C4003B174E /* MainThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThread.h; sourceTree = "<group>"; };
+		088FA5B90EF76D4300578E6F /* RandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomNumber.cpp; sourceTree = "<group>"; };
+		088FA5BA0EF76D4300578E6F /* RandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumber.h; sourceTree = "<group>"; };
+		08E279E80EF83B10007DB523 /* RandomNumberSeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberSeed.h; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
 		141211020A48780900480255 /* minidom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minidom.c; path = tests/minidom.c; sourceTree = "<group>"; };
 		1412110D0A48788700480255 /* minidom.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = minidom.js; path = tests/minidom.js; sourceTree = "<group>"; };
@@ -1089,6 +1095,9 @@
 				9303F567099118FA00AD71B8 /* OwnPtr.h */,
 				6580F795094070560082C219 /* PassRefPtr.h */,
 				65D6D87E09B5A32E0002E4D7 /* Platform.h */,
+				088FA5B90EF76D4300578E6F /* RandomNumber.cpp */,
+				088FA5BA0EF76D4300578E6F /* RandomNumber.h */,
+				08E279E80EF83B10007DB523 /* RandomNumberSeed.h */,
 				1419D32C0CEA7CDE00FF507A /* RefCounted.h */,
 				905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */,
 				90D3469B0E285280009492EE /* RefCountedLeakCounter.h */,
@@ -1598,6 +1607,8 @@
 				BC257DF40E1F53740016B6C9 /* PrototypeFunction.h in Headers */,
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
 				1429DA4A0ED245EC00B89619 /* Quantifier.h in Headers */,
+				088FA5BC0EF76D4300578E6F /* RandomNumber.h in Headers */,
+				08E279E90EF83B10007DB523 /* RandomNumberSeed.h in Headers */,
 				BC18C4570E16F5CD00B34460 /* RefCounted.h in Headers */,
 				90D3469C0E285280009492EE /* RefCountedLeakCounter.h in Headers */,
 				BC18C4580E16F5CD00B34460 /* RefPtr.h in Headers */,
@@ -1628,6 +1639,7 @@
 				BC18C5260E16FCA700B34460 /* StringPrototype.lut.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
+				BCCF0D080EF0AAB900413C8F /* StructureStubInfo.h in Headers */,
 				BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */,
 				BC18C46B0E16F5CD00B34460 /* SymbolTable.h in Headers */,
 				BC18C46C0E16F5CD00B34460 /* TCPackedCache.h in Headers */,
@@ -1660,7 +1672,6 @@
 				BC18C44D0E16F5CD00B34460 /* pcre.h in Headers */,
 				BC18C44E0E16F5CD00B34460 /* pcre_internal.h in Headers */,
 				BC18C4720E16F5CD00B34460 /* ucpinternal.h in Headers */,
-				BCCF0D080EF0AAB900413C8F /* StructureStubInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1989,11 +2000,13 @@
 				95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */,
 				95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */,
 				1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */,
+				088FA5BB0EF76D4300578E6F /* RandomNumber.cpp in Sources */,
 				905B02AE0E28640F006DF882 /* RefCountedLeakCounter.cpp in Sources */,
 				1429D8850ED21C3D00B89619 /* SamplingTool.cpp in Sources */,
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
 				BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */,
 				7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */,
+				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
 				E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */,
 				95CD41B30E1BF6560085358E /* TreeProfile.cpp in Sources */,
 				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
@@ -2006,7 +2019,6 @@
 				930754D008B0F74600AB3056 /* pcre_tables.cpp in Sources */,
 				937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp in Sources */,
 				93E26BD408B1514100F85226 /* pcre_xclass.cpp in Sources */,
-				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

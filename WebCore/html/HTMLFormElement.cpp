@@ -44,10 +44,9 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "RenderTextControl.h"
+#include <wtf/RandomNumber.h>
 
-#if PLATFORM(QT)
-#include <QtCore/QFileInfo>
-#endif
+#include <limits>
 
 #if PLATFORM(WX)
 #include <wx/defs.h>
@@ -193,26 +192,6 @@ static void appendEncodedString(Vector<char>& buffer, const CString& string)
             buffer.append(hexDigits[c & 0xF]);
         }
     }
-}
-
-// FIXME: Move to platform directory?
-static int randomNumber()
-{
-    static bool randomSeeded = false;
-
-#if PLATFORM(DARWIN)
-    if (!randomSeeded) {
-        srandomdev();
-        randomSeeded = true;
-    }
-    return random();
-#else
-    if (!randomSeeded) {
-        srand(static_cast<unsigned>(time(0)));
-        randomSeeded = true;
-    }
-    return rand();
-#endif
 }
 
 TextEncoding HTMLFormElement::dataEncoding() const
@@ -418,7 +397,7 @@ static void getUniqueBoundaryString(Vector<char>& boundary)
     Vector<char> randomBytes;
 
     for (int i = 0; i < 4; ++i) {
-        int randomness = randomNumber();
+        unsigned randomness = static_cast<unsigned>(WTF::randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0));
         randomBytes.append(AlphaNumericEncMap[(randomness >> 24) & 0x3F]);
         randomBytes.append(AlphaNumericEncMap[(randomness >> 16) & 0x3F]);
         randomBytes.append(AlphaNumericEncMap[(randomness >> 8) & 0x3F]);

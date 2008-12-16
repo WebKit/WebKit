@@ -31,7 +31,7 @@
 
 #include "HashMap.h"
 #include "MainThread.h"
-#include "MathExtras.h"
+#include "RandomNumberSeed.h"
 
 #include <QCoreApplication>
 #include <QMutex>
@@ -125,7 +125,7 @@ void initializeThreading()
     if (!atomicallyInitializedStaticMutex) {
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
-        wtf_random_init();
+        initializeRandomNumberGenerator();
         QThread* mainThread = QCoreApplication::instance()->thread();
         mainThreadIdentifier = identifierByQthreadHandle(mainThread);
         if (!mainThreadIdentifier)

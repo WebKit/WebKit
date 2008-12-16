@@ -359,6 +359,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\RandomNumber.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\RandomNumber.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\RandomNumberSeed.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\RefCounted.h"
 			>
 		</File>

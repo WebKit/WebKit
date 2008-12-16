@@ -68,6 +68,7 @@
 #include <windows.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RandomNumberSeed.h>
 
 #if PLATFORM(WIN) && USE(PTHREADS)
 // Currently, Apple's Windows port uses a mixture of native and pthreads functions in FastMalloc.
@@ -133,7 +134,7 @@ void initializeThreading()
     if (!atomicallyInitializedStaticMutex) {
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
-        wtf_random_init();
+        initializeRandomNumberGenerator();
         initializeMainThread();
         mainThreadIdentifier = currentThread();
         setThreadName(mainThreadIdentifier, "Main Thread");

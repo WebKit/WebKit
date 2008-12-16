@@ -35,7 +35,7 @@
 
 #include "HashMap.h"
 #include "MainThread.h"
-#include "MathExtras.h"
+#include "RandomNumberSeed.h"
 
 #include <errno.h>
 #include <sys/time.h>
@@ -61,7 +61,7 @@ void initializeThreading()
     if (!atomicallyInitializedStaticMutex) {
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
-        wtf_random_init();
+        initializeRandomNumberGenerator();
 #if !PLATFORM(DARWIN)
         mainThreadIdentifier = currentThread();
 #endif

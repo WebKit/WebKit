@@ -28,7 +28,6 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include <time.h>
 
 #if PLATFORM(SOLARIS)
 #include <ieeefp.h>
@@ -158,40 +157,7 @@ inline double wtf_pow(double x, double y) { return y == 0 ? 1 : pow(x, y); }
 #define fmod(x, y) wtf_fmod(x, y)
 #define pow(x, y) wtf_pow(x, y)
 
-#if defined(_CRT_RAND_S)
-// Initializes the random number generator.
-inline void wtf_random_init()
-{
-    // No need to initialize for rand_s.
-}
-
-// Returns a pseudo-random number in the range [0, 1).
-inline double wtf_random()
-{
-    unsigned u;
-    rand_s(&u);
-
-    return static_cast<double>(u) / (static_cast<double>(UINT_MAX) + 1.0);
-}
-#endif // _CRT_RAND_S
-
 #endif // COMPILER(MSVC)
-
-#if !COMPILER(MSVC) || !defined(_CRT_RAND_S)
-
-// Initializes the random number generator.
-inline void wtf_random_init()
-{
-    srand(static_cast<unsigned>(time(0)));
-}
-
-// Returns a pseudo-random number in the range [0, 1).
-inline double wtf_random()
-{
-    return static_cast<double>(rand()) / (static_cast<double>(RAND_MAX) + 1.0);
-}
-
-#endif // #if COMPILER(MSVC)
 
 inline double deg2rad(double d)  { return d * piDouble / 180.0; }
 inline double rad2deg(double r)  { return r * 180.0 / piDouble; }

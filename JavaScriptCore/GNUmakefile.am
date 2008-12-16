@@ -218,6 +218,9 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/OwnPtr.h \
 	JavaScriptCore/wtf/PassRefPtr.h \
 	JavaScriptCore/wtf/Platform.h \
+	JavaScriptCore/wtf/RandomNumber.cpp \
+	JavaScriptCore/wtf/RandomNumber.h \
+	JavaScriptCore/wtf/RandomNumberSeed.h \
 	JavaScriptCore/wtf/RefCounted.h \
 	JavaScriptCore/wtf/RefCountedLeakCounter.cpp \
 	JavaScriptCore/wtf/RefCountedLeakCounter.h \
