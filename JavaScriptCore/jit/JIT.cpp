@@ -60,17 +60,20 @@ COMPILE_ASSERT(CTI_ARGS_callFrame == 0xE, CTI_ARGS_callFrame_is_E);
 asm(
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
+    "pushl %ebp" "\n"
+    "movl %esp, %ebp" "\n"
     "pushl %esi" "\n"
     "pushl %edi" "\n"
     "pushl %ebx" "\n"
-    "subl $0x20, %esp" "\n"
+    "subl $0x1c, %esp" "\n"
     "movl $512, %esi" "\n"
     "movl 0x38(%esp), %edi" "\n" // Ox38 = 0x0E * 4, 0x0E = CTI_ARGS_callFrame (see assertion above)
     "call *0x30(%esp)" "\n" // Ox30 = 0x0C * 4, 0x0C = CTI_ARGS_code (see assertion above)
-    "addl $0x20, %esp" "\n"
+    "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
     "popl %edi" "\n"
     "popl %esi" "\n"
+    "popl %ebp" "\n"
     "ret" "\n"
 );
 
@@ -87,10 +90,11 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 #else
     "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPvz) "\n"
 #endif
-    "addl $0x20, %esp" "\n"
+    "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
     "popl %edi" "\n"
     "popl %esi" "\n"
+    "popl %ebp" "\n"
     "ret" "\n"
 );
     
@@ -101,18 +105,21 @@ extern "C" {
     __declspec(naked) JSValue* ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValue** exception, Profiler**, JSGlobalData*)
     {
         __asm {
+            push ebp;
+            mov ebp, esp;
             push esi;
             push edi;
             push ebx;
-            sub esp, 0x20;
+            sub esp, 0x1c;
             mov esi, 512;
             mov ecx, esp;
             mov edi, [esp + 0x38];
             call [esp + 0x30]; // Ox30 = 0x0C * 4, 0x0C = CTI_ARGS_code (see assertion above)
-            add esp, 0x20;
+            add esp, 0x1c;
             pop ebx;
             pop edi;
             pop esi;
+            pop ebp;
             ret;
         }
     }
@@ -122,10 +129,11 @@ extern "C" {
         __asm {
             mov ecx, esp;
             call JSC::Interpreter::cti_vm_throw;
-            add esp, 0x20;
+            add esp, 0x1c;
             pop ebx;
             pop edi;
             pop esi;
+            pop ebp;
             ret;
         }
     }
@@ -941,10 +949,11 @@ void JIT::privateCompileMainPass()
         case op_throw: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, X86::ecx);
             emitCTICall(Interpreter::cti_op_throw);
-            __ addl_ir(0x20, X86::esp);
+            __ addl_ir(0x1c, X86::esp);
             __ pop_r(X86::ebx);
             __ pop_r(X86::edi);
             __ pop_r(X86::esi);
+            __ pop_r(X86::ebp);
             __ ret();
             NEXT_OPCODE(op_throw);
         }

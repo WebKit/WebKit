@@ -1,3 +1,14 @@
+2008-12-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Construct stack frames in JIT code, so that backtracing can still work.
+        <rdar://problem/6447870> JIT should play nice with attempts to take stack traces
+
+        * jit/JIT.cpp:
+        (JSC::):
+        (JSC::JIT::privateCompileMainPass):
+
 2008-12-15  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Gavin Barraclough.
