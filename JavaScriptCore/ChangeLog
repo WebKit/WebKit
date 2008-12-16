@@ -2,6 +2,14 @@
 
         Reviewed by Darin Adler.
 
+        Don't use unique context group in JSGlobalContextCreate() on Tiger or Leopard.
+
+        * API/JSContextRef.cpp: (JSGlobalContextCreate):
+
+2008-12-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         <rdar://problem/6445089> Mach ports leak from worker threads
 
         * interpreter/Interpreter.cpp: (JSC::getCPUTime):
