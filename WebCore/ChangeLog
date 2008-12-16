@@ -1,3 +1,10 @@
+2008-12-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build.
+
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::clear): Adjust to new signature.
+
 2008-12-15  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Cameron Zwarich.

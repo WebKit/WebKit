@@ -152,10 +152,16 @@ bool ImageSource::frameIsCompleteAtIndex(size_t index)
     return (m_decoder && m_decoder->imageAtIndex(index) != 0);
 }
 
-void ImageSource::clear()
+void ImageSource::clear(bool destroyAll, size_t clearBeforeFrame)
 {
-    delete  m_decoder;
-    m_decoder = 0;
+    if (destroyAll) {
+        delete  m_decoder;
+        m_decoder = 0;
+        return;
+    }
+
+    if (m_decoder)
+        m_decoder->clearFrameBufferCache(clearBeforeFrame);
 }
 
 
