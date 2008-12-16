@@ -1137,7 +1137,9 @@ static inline unsigned getCPUTime()
     thread_basic_info_data_t info;
 
     // Get thread information
-    thread_info(mach_thread_self(), THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&info), &infoCount);
+    mach_port_t threadPort = mach_thread_self();
+    thread_info(threadPort, THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&info), &infoCount);
+    mach_port_deallocate(mach_task_self(), threadPort);
     
     unsigned time = info.user_time.seconds * 1000 + info.user_time.microseconds / 1000;
     time += info.system_time.seconds * 1000 + info.system_time.microseconds / 1000;
