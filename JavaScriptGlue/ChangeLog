@@ -1,3 +1,12 @@
+2008-12-15  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Cameron Zwarich.
+
+        <rdar://problem/6289933> Change WebKit-related projects to build with GCC 4.2 on Leopard.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2008-12-08  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22555: Sort "children" sections in Xcode project files

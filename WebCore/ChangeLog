@@ -1,3 +1,12 @@
+2008-12-15  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Cameron Zwarich.
+
+        <rdar://problem/6289933> Change WebKit-related projects to build with GCC 4.2 on Leopard.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2008-12-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

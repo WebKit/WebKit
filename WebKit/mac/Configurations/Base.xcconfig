@@ -41,6 +41,10 @@ STRIP_INSTALLED_PRODUCT_normal = YES;
 STRIP_INSTALLED_PRODUCT_debug = NO;
 
 
+GCC_VERSION = $(GCC_VERSION_$(XCODE_VERSION_ACTUAL));
+GCC_VERSION_0310 = 4.2;
+
+
 // <rdar://problem/5488678>: Production builds on 10.4 PowerPC need to have debugging symbols disabled to prevent a huge STABS section being generated.
 //                           Xcode on 10.4 does not define MAC_OS_X_VERSION_MAJOR, so the default Mac OS X version is treated as 10.4.
 GCC_GENERATE_DEBUGGING_SYMBOLS = $(GCC_GENERATE_DEBUGGING_SYMBOLS_$(CURRENT_ARCH));
