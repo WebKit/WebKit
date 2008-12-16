@@ -1,3 +1,35 @@
+2008-12-15  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22865
+
+        Add complete WML <table> / <tr> / <td> element support.
+        Proper handling of all table related attributes, including tests.
+
+        Tests: fast/wml/table-element-align-attribute-invalid.wml (variable reference in 'align' attribute, raises error)
+               fast/wml/table-element-columns-attribute-invalid-number.wml (columns='0', raises error)
+               fast/wml/table-element-columns-attribute-invalid.wml (non-numeric 'columns' attribute value, raises error)
+               fast/wml/table-element-columns-attribute-missing.wml (missing 'columns')
+               fast/wml/table-element-columns-attribute.wml (test 'columns' attribute and <td> count mismatches)
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetParent):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        * wml/WMLTableElement.cpp: Added.
+        (WebCore::WMLTableElement::WMLTableElement):
+        (WebCore::WMLTableElement::~WMLTableElement):
+        (WebCore::WMLTableElement::mapToEntry):
+        (WebCore::WMLTableElement::parseMappedAttribute):
+        (WebCore::WMLTableElement::finishParsingChildren):
+        * wml/WMLTableElement.h: Added.
+        * wml/WMLTagNames.in:
+
 2008-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
