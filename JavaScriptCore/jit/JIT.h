@@ -208,6 +208,13 @@ namespace JSC {
         // will compress the displacement, and we may not be able to fit a repatched offset.
         static const int repatchGetByIdDefaultOffset = 256;
 
+#if USE(FAST_CALL_CTI_ARGUMENT)
+        static const int ctiArgumentInitSize = 2;
+#elif USE(CTI_ARGUMENT)
+        static const int ctiArgumentInitSize = 4;
+#else
+        static const int ctiArgumentInitSize = 0;
+#endif
         // These architecture specific value are used to enable repatching - see comment on op_put_by_id.
         static const int repatchOffsetPutByIdStructure = 7;
         static const int repatchOffsetPutByIdPropertyMapOffset = 22;
@@ -216,9 +223,9 @@ namespace JSC {
         static const int repatchOffsetGetByIdBranchToSlowCase = 13;
         static const int repatchOffsetGetByIdPropertyMapOffset = 22;
 #if ENABLE(OPCODE_SAMPLING)
-        static const int repatchOffsetGetByIdSlowCaseCall = 27 + 4;
+        static const int repatchOffsetGetByIdSlowCaseCall = 27 + 4 + ctiArgumentInitSize;
 #else
-        static const int repatchOffsetGetByIdSlowCaseCall = 17 + 4;
+        static const int repatchOffsetGetByIdSlowCaseCall = 17 + 4 + ctiArgumentInitSize;
 #endif
         static const int repatchOffsetOpCallCall = 6;
 
@@ -395,6 +402,9 @@ namespace JSC {
         void emitFastArithIntToImmNoCheck(RegisterID);
 
         void emitTagAsBoolImmediate(RegisterID reg);
+
+        void restoreArgumentReference();
+        void restoreArgumentReferenceForTrampoline();
 
         Jump emitNakedCall(RegisterID);
         Jump emitNakedCall(void* function);

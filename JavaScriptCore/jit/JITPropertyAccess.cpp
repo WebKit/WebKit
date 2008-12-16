@@ -261,6 +261,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     if (failureCases.size()) {
         for (unsigned i = 0; i < failureCases.size(); ++i)
             __ link(failureCases[i], __ label());
+        restoreArgumentReferenceForTrampoline();
         failureJump = __ jmp();
     }
 

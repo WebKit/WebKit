@@ -1,3 +1,23 @@
+2008-12-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Mark Rowe.
+
+        Revert r39226 / Bug 22818: Unify JIT callback argument access OS X / Windows
+        This causes Acid3 failures – reverting for now & will revisit later.
+        https://bugs.webkit.org/show_bug.cgi?id=22873
+
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReference):
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        (JSC::JIT::emitCTICall_internal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * wtf/Platform.h:
+
 2008-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -54,9 +54,33 @@ namespace JSC {
 
 #if ENABLE(JIT)
 
+#if USE(CTI_ARGUMENT)
+#define CTI_ARGS void** args
+#define ARGS (args)
+#else
 #define CTI_ARGS void* args, ...
 #define ARGS (reinterpret_cast<void**>(vl_args) - 1)
+#endif
+
+#if USE(FAST_CALL_CTI_ARGUMENT)
+
+#if COMPILER(MSVC)
+#define SFX_CALL __fastcall
+#elif COMPILER(GCC)
+#define SFX_CALL  __attribute__ ((fastcall))
+#else
+#error Need to support fastcall calling convention in this compiler
+#endif
+
+#else
+
+#if COMPILER(MSVC)
+#define SFX_CALL __cdecl
+#else
 #define SFX_CALL
+#endif
+
+#endif
 
     typedef uint64_t VoidPtrPair;
 
