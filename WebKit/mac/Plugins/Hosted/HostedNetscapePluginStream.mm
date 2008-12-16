@@ -147,8 +147,8 @@ void HostedNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*,
         NSString *contentEncoding = (NSString *)[[(NSHTTPURLResponse *)r allHeaderFields] objectForKey:@"Content-Encoding"];
         if (contentEncoding && ![contentEncoding isEqualToString:@"identity"])
             expectedContentLength = -1;
-        
-        // startStreamResponseURL:... will null-terminate.
+
+        [theHeaders appendBytes:"\0" length:1];
     }
     
     startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);

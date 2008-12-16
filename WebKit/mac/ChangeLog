@@ -1,3 +1,12 @@
+2008-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Add trailing null to headers to avoid a crash in the plug-in host.
+        
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::didReceiveResponse):
+
 2008-12-15  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Cameron Zwarich.
