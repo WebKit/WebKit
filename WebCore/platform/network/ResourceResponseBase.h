@@ -65,8 +65,8 @@ class ResourceResponseBase {
     const String& httpStatusText() const;
     void setHTTPStatusText(const String&);
     
-    String httpHeaderField(const String& name) const;
-    void setHTTPHeaderField(const String& name, const String& value);
+    String httpHeaderField(const AtomicString& name) const;
+    void setHTTPHeaderField(const AtomicString& name, const String& value);
     const HTTPHeaderMap& httpHeaderFields() const;
 
     const PragmaDirectiveMap& parsePragmaDirectives() const;

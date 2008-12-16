@@ -503,7 +503,7 @@ static inline void parseHeader(const UChar* header, size_t headerLength, Resourc
     int pos = find(header, headerLength, ':');
     ASSERT(pos != -1);
     
-    String headerName = String(header, pos);
+    AtomicString headerName = AtomicString(header, pos);
     String headerValue = String(header + pos + 1, headerLength - pos - 1);
     
     response.setHTTPHeaderField(headerName, headerValue);

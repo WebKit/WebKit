@@ -1,3 +1,37 @@
+2008-12-16  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Change HTTPHeaderMap to use an AtomicString as its key.  
+        Shaves ~1MB off of the Mozilla Memory Test
+        No functionality difference    
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorController.cpp:
+        (WebCore::addHeaders):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::parseHeader):
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::httpHeaderField):
+        (WebCore::ResourceRequestBase::setHTTPHeaderField):
+        (WebCore::ResourceRequestBase::addHTTPHeaderField):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::httpHeaderField):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        * platform/network/ResourceResponseBase.h:
+        * platform/text/StringHash.h:
+        (WebCore::CaseFoldingHash::hash):
+        (WebCore::CaseFoldingHash::equal):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::isSetCookieHeader):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::setRequestHeaderInternal):
+        (WebCore::XMLHttpRequest::getRequestHeader):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        * xml/XMLHttpRequest.h:
+
 2008-12-16  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Darin Adler.

@@ -69,10 +69,10 @@ public:
     void send(const String&, ExceptionCode&);
     void send(File*, ExceptionCode&);
     void abort();
-    void setRequestHeader(const String& name, const String& value, ExceptionCode&);
+    void setRequestHeader(const AtomicString& name, const String& value, ExceptionCode&);
     void overrideMimeType(const String& override);
     String getAllResponseHeaders(ExceptionCode&) const;
-    String getResponseHeader(const String& name, ExceptionCode&) const;
+    String getResponseHeader(const AtomicString& name, ExceptionCode&) const;
     const ScriptString& responseText() const;
     Document* responseXML() const;
     void setLastSendLineNumber(unsigned lineNumber) { m_lastSendLineNumber = lineNumber; }
@@ -139,8 +139,8 @@ private:
 
     bool initSend(ExceptionCode&);
 
-    String getRequestHeader(const String& name) const;
-    void setRequestHeaderInternal(const String& name, const String& value);
+    String getRequestHeader(const AtomicString& name) const;
+    void setRequestHeaderInternal(const AtomicString& name, const String& value);
     bool isSafeRequestHeader(const String&) const;
 
     void changeState(State newState);

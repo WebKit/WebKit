@@ -145,14 +145,14 @@ void ResourceResponseBase::setHTTPStatusText(const String& statusText)
     m_httpStatusText = statusText; 
 }
 
-String ResourceResponseBase::httpHeaderField(const String& name) const
+String ResourceResponseBase::httpHeaderField(const AtomicString& name) const
 {
     lazyInit();
 
     return m_httpHeaderFields.get(name); 
 }
 
-void ResourceResponseBase::setHTTPHeaderField(const String& name, const String& value)
+void ResourceResponseBase::setHTTPHeaderField(const AtomicString& name, const String& value)
 {
     lazyInit();
 

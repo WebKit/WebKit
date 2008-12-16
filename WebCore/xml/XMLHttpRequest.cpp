@@ -173,7 +173,7 @@ static bool isValidHeaderValue(const String& name)
     return !name.contains('\r') && !name.contains('\n');
 }
 
-static bool isSetCookieHeader(const String& name)
+static bool isSetCookieHeader(const AtomicString& name)
 {
     return equalIgnoringCase(name, "set-cookie") || equalIgnoringCase(name, "set-cookie2");
 }
@@ -979,7 +979,7 @@ static void reportUnsafeUsage(Document* document, const String& message)
     frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 1, String());
 }
 
-void XMLHttpRequest::setRequestHeader(const String& name, const String& value, ExceptionCode& ec)
+void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& value, ExceptionCode& ec)
 {
     if (m_state != OPENED || m_loader) {
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -1006,7 +1006,7 @@ void XMLHttpRequest::setRequestHeader(const String& name, const String& value, E
     setRequestHeaderInternal(name, value);
 }
 
-void XMLHttpRequest::setRequestHeaderInternal(const String& name, const String& value)
+void XMLHttpRequest::setRequestHeaderInternal(const AtomicString& name, const String& value)
 {
     pair<HTTPHeaderMap::iterator, bool> result = m_requestHeaders.add(name, value); 
     if (!result.second)
@@ -1019,7 +1019,7 @@ bool XMLHttpRequest::isSafeRequestHeader(const String& name) const
         && !name.startsWith(staticData->m_secHeaderPrefix, false);
 }
 
-String XMLHttpRequest::getRequestHeader(const String& name) const
+String XMLHttpRequest::getRequestHeader(const AtomicString& name) const
 {
     return m_requestHeaders.get(name);
 }
@@ -1058,7 +1058,7 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
     return String::adopt(stringBuilder);
 }
 
-String XMLHttpRequest::getResponseHeader(const String& name, ExceptionCode& ec) const
+String XMLHttpRequest::getResponseHeader(const AtomicString& name, ExceptionCode& ec) const
 {
     if (m_state < LOADING) {
         ec = INVALID_STATE_ERR;

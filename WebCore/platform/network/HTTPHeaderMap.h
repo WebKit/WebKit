@@ -26,12 +26,14 @@
 #ifndef HTTPHeaderMap_h
 #define HTTPHeaderMap_h
 
+#include "AtomicString.h"
+#include "AtomicStringHash.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
-    typedef HashMap<String, String, CaseFoldingHash> HTTPHeaderMap;
+    typedef HashMap<AtomicString, String, CaseFoldingHash> HTTPHeaderMap;
 
 } // namespace WebCore
 

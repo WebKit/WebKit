@@ -1791,7 +1791,7 @@ static void addHeaders(JSContextRef context, JSObjectRef object, const HTTPHeade
     HTTPHeaderMap::const_iterator end = headers.end();
     for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it) {
         JSValueRef value = JSValueMakeString(context, jsStringRef(it->second).get());
-        JSObjectSetProperty(context, object, jsStringRef(it->first).get(), value, kJSPropertyAttributeNone, exception);
+        JSObjectSetProperty(context, object, jsStringRef((it->first).string()).get(), value, kJSPropertyAttributeNone, exception);
         if (exception && *exception)
             return;
     }

@@ -21,7 +21,7 @@
 #ifndef StringHash_h
 #define StringHash_h
 
-#include "AtomicStringImpl.h"
+#include "AtomicString.h"
 #include "PlatformString.h"
 #include <wtf/HashTraits.h>
 #include <wtf/unicode/Unicode.h>
@@ -199,9 +199,17 @@ namespace WebCore {
         {
             return hash(key.impl());
         }
+        static unsigned hash(const AtomicString& key)
+        {
+            return hash(key.impl());
+        }
         static bool equal(const String& a, const String& b)
         {
             return equal(a.impl(), b.impl());
+        }
+        static bool equal(const AtomicString& a, const AtomicString& b)
+        {
+            return (a == b) || equal(a.impl(), b.impl());
         }
 
         static const bool safeToCompareToEmptyOrDeleted = false;

@@ -66,9 +66,9 @@ namespace WebCore {
         void setHTTPMethod(const String& httpMethod);
         
         const HTTPHeaderMap& httpHeaderFields() const;
-        String httpHeaderField(const String& name) const;
-        void setHTTPHeaderField(const String& name, const String& value);
-        void addHTTPHeaderField(const String& name, const String& value);
+        String httpHeaderField(const AtomicString& name) const;
+        void setHTTPHeaderField(const AtomicString& name, const String& value);
+        void addHTTPHeaderField(const AtomicString& name, const String& value);
         void addHTTPHeaderFields(const HTTPHeaderMap& headerFields);
         
         String httpContentType() const { return httpHeaderField("Content-Type");  }
