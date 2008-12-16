@@ -1,3 +1,26 @@
+2008-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/6427048> crash due to infinite recursion after setting window.__proto__ = window
+
+        Replaced toGlobalObject with the more generally useful unwrappedObject and used it to
+        fix the cycle detection code in put(__proto__).
+
+        * JavaScriptCore.exp: Updated.
+
+        * runtime/JSGlobalObject.cpp: Removed toGlobalObject. We now use unwrappedObject instead.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::isGlobalObject): Ditto.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval): Use unwrappedObject and isGlobalObject here rather than toGlobalObject.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put): Rewrote prototype cycle checking loop. Use unwrappedObject in the loop now.
+        (JSC::JSObject::unwrappedObject): Replaced toGlobalObject with this new function.
+        * runtime/JSObject.h: More of the same.
+
 2008-12-15  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

@@ -407,11 +407,6 @@ void JSGlobalObject::mark()
     }
 }
 
-JSGlobalObject* JSGlobalObject::toGlobalObject(ExecState*) const
-{
-    return const_cast<JSGlobalObject*>(this);
-}
-
 ExecState* JSGlobalObject::globalExec()
 {
     return CallFrame::create(d()->globalCallFrame + RegisterFile::CallFrameHeaderSize);

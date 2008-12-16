@@ -1,3 +1,16 @@
+2008-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test for <rdar://problem/6427048> crash due to infinite recursion after setting window.__proto__ = window
+
+        * fast/canvas/canvas-gradient-without-path.html: Let make-js-test-wrappers update this one.
+
+        * fast/dom/Window/resources/TEMPLATE.html: Copied from LayoutTests/fast/js/resources/TEMPLATE.html.
+        * fast/dom/Window/resources/window-custom-prototype.js: Added.
+        * fast/dom/Window/window-custom-prototype-expected.txt: Added.
+        * fast/dom/Window/window-custom-prototype.html: Added.
+
 2008-12-15  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Dan Bernstein.

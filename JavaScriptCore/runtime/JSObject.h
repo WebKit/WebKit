@@ -117,7 +117,7 @@ namespace JSC {
         virtual JSObject* toObject(ExecState*) const;
 
         virtual JSObject* toThisObject(ExecState*) const;
-        virtual JSGlobalObject* toGlobalObject(ExecState*) const;
+        virtual JSObject* unwrappedObject();
 
         virtual bool getPropertyAttributes(ExecState*, const Identifier& propertyName, unsigned& attributes) const;
 

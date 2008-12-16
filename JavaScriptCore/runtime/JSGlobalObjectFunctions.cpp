@@ -271,8 +271,8 @@ static double parseFloat(const UString& s)
 JSValue* globalFuncEval(ExecState* exec, JSObject* function, JSValue* thisValue, const ArgList& args)
 {
     JSObject* thisObject = thisValue->toThisObject(exec);
-    JSGlobalObject* globalObject = thisObject->toGlobalObject(exec);
-    if (!globalObject || globalObject->evalFunction() != function)
+    JSObject* unwrappedObject = thisObject->unwrappedObject();
+    if (!unwrappedObject->isGlobalObject() || static_cast<JSGlobalObject*>(unwrappedObject)->evalFunction() != function)
         return throwError(exec, EvalError, "The \"this\" value passed to eval must be the global object from which eval originated");
 
     JSValue* x = args.at(exec, 0);
@@ -290,7 +290,7 @@ JSValue* globalFuncEval(ExecState* exec, JSObject* function, JSValue* thisValue,
     if (!evalNode)
         return throwError(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), NULL);
 
-    return exec->interpreter()->execute(evalNode.get(), exec, thisObject, globalObject->globalScopeChain().node(), exec->exceptionSlot());
+    return exec->interpreter()->execute(evalNode.get(), exec, thisObject, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node(), exec->exceptionSlot());
 }
 
 JSValue* globalFuncParseInt(ExecState* exec, JSObject*, JSValue*, const ArgList& args)

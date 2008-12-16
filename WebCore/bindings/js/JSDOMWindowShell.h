@@ -78,7 +78,7 @@ namespace WebCore {
         virtual void defineSetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* setterFunction);
         virtual JSC::JSValue* lookupGetter(JSC::ExecState*, const JSC::Identifier& propertyName);
         virtual JSC::JSValue* lookupSetter(JSC::ExecState*, const JSC::Identifier& propertyName);
-        virtual JSC::JSGlobalObject* toGlobalObject(JSC::ExecState*) const;
+        virtual JSC::JSObject* unwrappedObject();
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
 
         JSDOMWindow* m_window;

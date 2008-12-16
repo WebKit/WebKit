@@ -127,7 +127,7 @@ JSValue* JSDOMWindowShell::lookupSetter(ExecState* exec, const Identifier& prope
     return m_window->lookupSetter(exec, propertyName);
 }
 
-JSGlobalObject* JSDOMWindowShell::toGlobalObject(ExecState*) const
+JSObject* JSDOMWindowShell::unwrappedObject()
 {
     return m_window;
 }

@@ -36,7 +36,8 @@ namespace WebCore {
 
         virtual ~JSQuarantinedObjectWrapper();
 
-        JSC::JSObject* unwrappedObject() const { return m_unwrappedObject; }
+        virtual JSC::JSObject* unwrappedObject() { return m_unwrappedObject; }
+
         JSC::JSGlobalObject* unwrappedGlobalObject() const { return m_unwrappedGlobalObject; };
         JSC::ExecState* unwrappedExecState() const;
 

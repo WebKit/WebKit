@@ -1,3 +1,19 @@
+2008-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/6427048> crash due to infinite recursion after setting window.__proto__ = window
+
+        Test: fast/dom/Window/window-custom-prototype.html
+
+        Replaced toGlobalObject with the more generally useful unwrappedObject.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::unwrappedObject): Added.
+        * bindings/js/JSDOMWindowShell.h: Declared unwrappedObject.
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        (WebCore::JSQuarantinedObjectWrapper::unwrappedObject): Ditto.
+
 2008-12-15  Gustavo Noronha Silva  <kov@kov.eti.br>
 
         Reviewed by Mark Rowe.
