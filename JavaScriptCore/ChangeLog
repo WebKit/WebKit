@@ -1,3 +1,30 @@
+2008-12-16  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 22869: REGRESSION (r38407): http://news.cnet.com/8301-13579_3-9953533-37.html crashes
+        <https://bugs.webkit.org/show_bug.cgi?id=22869>
+        <rdar://problem/6402499>
+
+        Before r38407, Structure::m_nameInPrevious was ref'd due to it being
+        stored in a PropertyMap. However, PropertyMaps are created lazily after
+        r38407, so Structure::m_nameInPrevious is not necessarily ref'd while
+        it is being used. Making it a RefPtr instead of a raw pointer fixes
+        the problem.
+
+        Unfortunately, the crash in the bug is rather intermittent, and it is
+        impossible to add an assertion in UString::Ref::ref() to catch this bug
+        because some users of UString::Rep deliberately zero out the reference
+        count. Therefore, there is no layout test accompanying this bug fix.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::~Structure): Use get().
+        (JSC::Structure::materializePropertyMap): Use get().
+        (JSC::Structure::addPropertyTransitionToExistingStructure): Use get().
+        (JSC::Structure::addPropertyTransition): Use get().
+        * runtime/Structure.h: Make Structure::m_nameInPrevious a RefPtr instead
+        of a raw pointer.
+
 2008-12-16  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Attempt to fix win build. No 'using namespace WTF' in this file, needs manual WTF:: prefix.
