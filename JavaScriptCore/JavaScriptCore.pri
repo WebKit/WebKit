@@ -8,9 +8,10 @@ DEFINES += BUILDING_QT__
 
 isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
 GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR/
-win32-*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
-win32-g++: LIBS += -lwinmm
-
+win32-* {
+    GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
+    LIBS += -lwinmm
+}
 
 # Disable the JIT due to numerous observed miscompilations :(
 #CONFIG(release):isEqual(QT_ARCH,i386) {

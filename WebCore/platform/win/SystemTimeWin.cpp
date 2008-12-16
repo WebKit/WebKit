@@ -29,7 +29,7 @@
 #include <DateMath.h>
 #include <windows.h>
 
-#if COMPILER(MINGW)
+#if COMPILER(MINGW) || (PLATFORM(QT) && COMPILER(MSVC))
 #include <float.h>
 #define FLOAT_MAX FLT_MAX
 #endif
