@@ -1,3 +1,11 @@
+2008-12-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/6402262> JavaScriptCore needs exception handling tables in order to get stack traces without frame pointers
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2008-12-15  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Mark Rowe.
