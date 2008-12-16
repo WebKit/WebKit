@@ -182,7 +182,9 @@ public:
     
     // Opaque label types
     
+private:
     class X86InstructionFormatter;
+public:
 
     class JmpSrc {
         friend class X86Assembler;

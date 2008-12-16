@@ -1,3 +1,11 @@
+2008-12-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+        
+        Visual Studio requires visibility of forward declarations to match class declaration.
+
+        * assembler/X86Assembler.h:
+
 2008-12-15  Gustavo Noronha Silva  <kov@kov.eti.br>
 
         Reviewed by Mark Rowe.
