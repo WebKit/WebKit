@@ -1,3 +1,13 @@
+2008-12-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22871
+        <rdar://problem/6417316> RenderThemeWin buttons are too short/thin
+
+        * rendering/RenderButton.cpp: (WebCore::RenderButton::setupInnerStyle): 
+        Check if the button's style (not the new inner style) has appearance set to determine whether we should set padding on the inner style.
+
 2008-12-15  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Oliver Hunt.

@@ -102,14 +102,14 @@ void RenderButton::styleDidChange(RenderStyle::Diff diff, const RenderStyle* old
     }
 }
 
-void RenderButton::setupInnerStyle(RenderStyle* style) 
+void RenderButton::setupInnerStyle(RenderStyle* innerStyle) 
 {
-    ASSERT(style->refCount() == 1);
+    ASSERT(innerStyle->refCount() == 1);
     // RenderBlock::createAnonymousBlock creates a new RenderStyle, so this is
     // safe to modify.
-    style->setBoxFlex(1.0f);
-    if (style->appearance() != NoControlPart)
-        theme()->adjustButtonInnerStyle(style);
+    innerStyle->setBoxFlex(1.0f);
+    if (style()->hasAppearance())
+        theme()->adjustButtonInnerStyle(innerStyle);
 }
 
 void RenderButton::updateFromElement()
