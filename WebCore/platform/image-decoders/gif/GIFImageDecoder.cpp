@@ -404,7 +404,12 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
 
 void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod)
 {
+    // Initialize the frame if necessary.  Some GIFs insert do-nothing frames,
+    // in which case we never reach haveDecodedRow() before getting here.
     RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
+    if (buffer.status() == RGBA32Buffer::FrameEmpty)
+        initFrameBuffer(frameIndex);
+
     buffer.ensureHeight(m_size.height());
     buffer.setStatus(RGBA32Buffer::FrameComplete);
     buffer.setDuration(frameDuration);

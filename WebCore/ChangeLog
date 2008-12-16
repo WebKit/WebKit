@@ -1,3 +1,13 @@
+2008-12-16  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22885
+        Fix memory corruption in GIFImageDecoder.cpp with certain GIFs.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameComplete):
+
 2008-12-16  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.
