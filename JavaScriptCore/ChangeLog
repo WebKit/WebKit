@@ -1,5 +1,14 @@
 2008-12-15  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        Fix the build with GCC 4.0.
+
+        * Configurations/JavaScriptCore.xcconfig:  GCC 4.0 appears to have a bug when compiling with -funwind-tables on,
+        so don't use it with that compiler version.
+
+2008-12-15  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Cameron Zwarich.
 
         <rdar://problem/6289933> Change WebKit-related projects to build with GCC 4.2 on Leopard.
