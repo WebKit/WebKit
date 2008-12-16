@@ -128,6 +128,7 @@ javascriptcore_sources += \
 	JavaScriptCore/icu/unicode/uversion.h \
 	JavaScriptCore/assembler/X86Assembler.h \
 	JavaScriptCore/assembler/AssemblerBuffer.h \
+	JavaScriptCore/assembler/MacroAssembler.h \
 	JavaScriptCore/os-win32/stdbool.h \
 	JavaScriptCore/os-win32/stdint.h \
 	JavaScriptCore/pcre/pcre.h \
@@ -175,6 +176,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wrec/CharacterClass.h \
 	JavaScriptCore/wrec/CharacterClassConstructor.cpp \
 	JavaScriptCore/wrec/CharacterClassConstructor.h \
+	JavaScriptCore/wrec/Escapes.h \
 	JavaScriptCore/wrec/Quantifier.h \
 	JavaScriptCore/wrec/WREC.cpp \
 	JavaScriptCore/wrec/WREC.h \

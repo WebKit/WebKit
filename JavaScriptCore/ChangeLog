@@ -1,3 +1,13 @@
+2008-12-15  Gustavo Noronha Silva  <kov@kov.eti.br>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22686
+
+        GTK+ build fix.
+
+        * GNUmakefile.am:
+
 2008-12-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

@@ -355,6 +355,9 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptController.cpp \
 	WebCore/bindings/js/ScriptController.h \
 	WebCore/bindings/js/ScriptInstance.h \
+	WebCore/bindings/js/ScriptSourceCode.h \
+	WebCore/bindings/js/ScriptState.h \
+	WebCore/bindings/js/ScriptString.h \
 	WebCore/bindings/js/ScriptValue.cpp \
 	WebCore/bindings/js/ScriptValue.h \
 	WebCore/bindings/js/StringSourceProvider.h \
@@ -1217,6 +1220,7 @@ webcore_sources += \
 	WebCore/platform/PopupMenu.h \
 	WebCore/platform/PopupMenuClient.h \
 	WebCore/platform/PopupMenuStyle.h \
+	WebCore/platform/PurgeableBuffer.h \
 	WebCore/platform/SSLKeyGenerator.h \
 	WebCore/platform/ScrollTypes.h \
 	WebCore/platform/ScrollView.cpp \
@@ -1772,7 +1776,8 @@ webcore_sources += \
 	WebCore/platform/network/soup/ResourceError.h \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
-	WebCore/platform/network/soup/ResourceResponse.h
+	WebCore/platform/network/soup/ResourceResponse.h \
+	WebCore/platform/network/soup/CookieJarSoup.h
 endif
 
 # ---
