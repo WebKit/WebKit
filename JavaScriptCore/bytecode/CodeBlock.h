@@ -306,9 +306,12 @@ namespace JSC {
 #endif
 
         Vector<Instruction>& instructions() { return m_instructions; }
+#ifndef NDEBUG
+        void setInstructionCount(unsigned instructionCount) { m_instructionCount = instructionCount; }
+#endif
 
 #if ENABLE(JIT)
-        void setJITCode(JITCodeRef& jitCode) { m_jitCode = jitCode; }
+        void setJITCode(JITCodeRef& jitCode);
         void* jitCode() { return m_jitCode.code; }
         ExecutablePool* executablePool() { return m_jitCode.executablePool.get(); }
 #endif
@@ -439,6 +442,9 @@ namespace JSC {
         JSGlobalData* m_globalData;
 
         Vector<Instruction> m_instructions;
+#ifndef NDEBUG
+        unsigned m_instructionCount;
+#endif
 #if ENABLE(JIT)
         JITCodeRef m_jitCode;
 #endif

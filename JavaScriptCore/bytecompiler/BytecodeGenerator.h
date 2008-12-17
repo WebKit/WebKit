@@ -66,6 +66,7 @@ namespace JSC {
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
         static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
+        static bool dumpsGeneratedCode();
 
         BytecodeGenerator(ProgramNode*, const Debugger*, const ScopeChain&, SymbolTable*, ProgramCodeBlock*);
         BytecodeGenerator(FunctionBodyNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*);

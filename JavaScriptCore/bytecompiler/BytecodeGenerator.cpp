@@ -127,6 +127,15 @@ void BytecodeGenerator::setDumpsGeneratedCode(bool dumpsGeneratedCode)
 #endif
 }
 
+bool BytecodeGenerator::dumpsGeneratedCode()
+{
+#ifndef NDEBUG
+    return s_dumpsGeneratedCode;
+#else
+    return false;
+#endif
+}
+
 void BytecodeGenerator::generate()
 {
     m_codeBlock->setThisRegister(m_thisRegister.index());
@@ -134,6 +143,8 @@ void BytecodeGenerator::generate()
     m_scopeNode->emitBytecode(*this);
 
 #ifndef NDEBUG
+    m_codeBlock->setInstructionCount(m_codeBlock->instructions().size());
+
     if (s_dumpsGeneratedCode) {
         JSGlobalObject* globalObject = m_scopeChain->globalObject();
         m_codeBlock->dump(globalObject->globalExec());

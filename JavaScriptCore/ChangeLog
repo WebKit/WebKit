@@ -1,3 +1,35 @@
+2008-12-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22897
+        <rdar://problem/6428342>
+        Look into feasibility of discarding bytecode after native codegen
+
+        Clear the bytecode Instruction vector at the end JIT generation.
+
+        Saves 4.8 MB on Membuster head.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump): Add logging for the case that someone tries
+        to dump the instructions of a CodeBlock that has had its bytecode
+        vector cleared.
+        (JSC::CodeBlock::CodeBlock): Initialize the instructionCount
+        (JSC::CodeBlock::handlerForBytecodeOffset): Use instructionCount instead
+        of the size of the instruction vector in the assertion.
+        (JSC::CodeBlock::lineNumberForBytecodeOffset): Ditto.
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset): Ditto.
+        (JSC::CodeBlock::getByIdExceptionInfoForBytecodeOffset): Ditto.
+        (JSC::CodeBlock::functionRegisterForBytecodeOffset): Ditto.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setInstructionCount): Store the instruction vector size
+        in debug builds for assertions.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile): Clear the bytecode vector unless we
+        have compiled with Opcode sampling where we will continue to require it
+
 2008-12-17  Cary Clark  <caryclark@google.com>
 
         Reviewed by Darin Adler.
