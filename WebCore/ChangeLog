@@ -1,3 +1,11 @@
+2008-12-16  Stephanie Lewis  <slewis@apple.com>
+
+        Windows Build Fix.
+
+        * platform/text/AtomicString.h:
+        (WebCore::AtomicString::AtomicString):
+        (WebCore::AtomicString::createCFString):
+
 2008-12-16  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.
