@@ -98,6 +98,12 @@ namespace JSC {
             m_size += 4;
         }
 
+        void putInt64Unchecked(int64_t value)
+        {
+            *reinterpret_cast<int64_t*>(&m_buffer[m_size]) = value;
+            m_size += 8;
+        }
+
         void putInt(int value)
         {
             if (m_size > m_capacity - 4)

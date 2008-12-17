@@ -61,7 +61,7 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident,
     emitGetVirtualRegister(baseVReg, X86::eax);
 
     emitPutJITStubArg(X86::eax, 1);
-    emitPutJITStubArgConstant(reinterpret_cast<unsigned>(ident), 2);
+    emitPutJITStubArgConstant(ident, 2);
     emitCTICall(Interpreter::cti_op_get_by_id_generic);
     emitPutVirtualRegister(resultVReg);
 }
@@ -80,7 +80,7 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, 
 
     emitGetVirtualRegisters(baseVReg, X86::eax, valueVReg, X86::edx);
 
-    emitPutJITStubArgConstant(reinterpret_cast<unsigned>(ident), 2);
+    emitPutJITStubArgConstant(ident, 2);
     emitPutJITStubArg(X86::eax, 1);
     emitPutJITStubArg(X86::edx, 3);
     emitCTICall(Interpreter::cti_op_put_by_id_generic);
@@ -181,8 +181,6 @@ void JIT::compilePutByIdSlowCase(int baseVReg, Identifier* ident, int, Vector<Sl
     // Track the location of the call; this will be used to recover repatch information.
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
-
-#endif
 
 static JSObject* resizePropertyStorage(JSObject* baseObject, size_t oldSize, size_t newSize)
 {
@@ -675,6 +673,8 @@ void JIT::privateCompilePutByIdReplace(StructureStubInfo* stubInfo, Structure* s
     
     ctiRepatchCallByReturnAddress(returnAddress, code);
 }
+
+#endif
 
 } // namespace JSC
 

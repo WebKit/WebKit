@@ -4051,6 +4051,8 @@ CallFrame* Interpreter::findFunctionCallFrame(CallFrame* callFrame, InternalFunc
 
 #if ENABLE(JIT)
 
+#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
+
 NEVER_INLINE void Interpreter::tryCTICachePutByID(CallFrame* callFrame, CodeBlock* codeBlock, void* returnAddress, JSValue* baseValue, const PutPropertySlot& slot)
 {
     // The interpreter checks for recursion here; I do not believe this can occur in CTI.
@@ -4201,6 +4203,8 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
 
     JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, chain, count, slot.cachedOffset(), returnAddress);
 }
+
+#endif
 
 #ifndef NDEBUG
 
@@ -4430,6 +4434,32 @@ JSObject* Interpreter::cti_op_new_object(CTI_ARGS)
     return constructEmptyObject(ARG_callFrame);
 }
 
+void Interpreter::cti_op_put_by_id_generic(CTI_ARGS)
+{
+    CTI_STACK_HACK();
+
+    PutPropertySlot slot;
+    ARG_src1->put(ARG_callFrame, *ARG_id2, ARG_src3, slot);
+    CHECK_FOR_EXCEPTION_AT_END();
+}
+
+JSValue* Interpreter::cti_op_get_by_id_generic(CTI_ARGS)
+{
+    CTI_STACK_HACK();
+
+    CallFrame* callFrame = ARG_callFrame;
+    Identifier& ident = *ARG_id2;
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(callFrame, ident, slot);
+
+    CHECK_FOR_EXCEPTION_AT_END();
+    return result;
+}
+
+#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
+
 void Interpreter::cti_op_put_by_id(CTI_ARGS)
 {
     CTI_STACK_HACK();
@@ -4452,15 +4482,6 @@ void Interpreter::cti_op_put_by_id_second(CTI_ARGS)
     PutPropertySlot slot;
     ARG_src1->put(ARG_callFrame, *ARG_id2, ARG_src3, slot);
     ARG_globalData->interpreter->tryCTICachePutByID(ARG_callFrame, ARG_callFrame->codeBlock(), CTI_RETURN_ADDRESS, ARG_src1, slot);
-    CHECK_FOR_EXCEPTION_AT_END();
-}
-
-void Interpreter::cti_op_put_by_id_generic(CTI_ARGS)
-{
-    CTI_STACK_HACK();
-
-    PutPropertySlot slot;
-    ARG_src1->put(ARG_callFrame, *ARG_id2, ARG_src3, slot);
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
@@ -4506,21 +4527,6 @@ JSValue* Interpreter::cti_op_get_by_id_second(CTI_ARGS)
     JSValue* result = baseValue->get(callFrame, ident, slot);
 
     ARG_globalData->interpreter->tryCTICacheGetByID(callFrame, callFrame->codeBlock(), CTI_RETURN_ADDRESS, baseValue, ident, slot);
-
-    CHECK_FOR_EXCEPTION_AT_END();
-    return result;
-}
-
-JSValue* Interpreter::cti_op_get_by_id_generic(CTI_ARGS)
-{
-    CTI_STACK_HACK();
-
-    CallFrame* callFrame = ARG_callFrame;
-    Identifier& ident = *ARG_id2;
-
-    JSValue* baseValue = ARG_src1;
-    PropertySlot slot(baseValue);
-    JSValue* result = baseValue->get(callFrame, ident, slot);
 
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
@@ -4709,6 +4715,8 @@ JSValue* Interpreter::cti_op_get_by_id_string_fail(CTI_ARGS)
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
+
+#endif
 
 JSValue* Interpreter::cti_op_instanceof(CTI_ARGS)
 {

@@ -110,6 +110,9 @@ public:
         OP_LEA                          = 0x8D,
         OP_GROUP1A_Ev                   = 0x8F,
         OP_CDQ                          = 0x99,
+        OP_MOV_EAXOv                    = 0xA1,
+        OP_MOV_OvEAX                    = 0xA3,
+        OP_MOV_EAXIv                    = 0xB8,
         OP_GROUP2_EvIb                  = 0xC1,
         OP_RET                          = 0xC3,
         OP_GROUP11_EvIz                 = 0xC7,
@@ -498,7 +501,39 @@ public:
         m_formatter.immediate32(imm);
     }
 
-#if !PLATFORM(X86_64)
+#if PLATFORM(X86_64)
+    void cmpq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_CMP_EvGv, src, dst);
+    }
+
+    void cmpq_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp64(OP_CMP_EvGv, src, base, offset);
+    }
+
+    void cmpq_im(int imm, int offset, RegisterID base)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_CMP, base, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_CMP, base, offset);
+            m_formatter.immediate32(imm);
+        }
+    }
+
+    void cmpq_im(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_CMP, base, index, scale, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_CMP, base, index, scale, offset);
+            m_formatter.immediate32(imm);
+        }
+    }
+#else
     void cmpl_im(int imm, void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -549,6 +584,18 @@ public:
     void testq_i32r(int imm, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP3_OP_TEST, dst);
+        m_formatter.immediate32(imm);
+    }
+
+    void testq_i32m(int imm, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp64(OP_GROUP3_EvIz, GROUP3_OP_TEST, base, offset);
+        m_formatter.immediate32(imm);
+    }
+
+    void testq_i32m(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.oneByteOp64(OP_GROUP3_EvIz, GROUP3_OP_TEST, base, index, scale, offset);
         m_formatter.immediate32(imm);
     }
 #endif 
@@ -613,6 +660,16 @@ public:
         m_formatter.oneByteOp(OP_MOV_EvGv, src, base, index, scale, offset);
     }
     
+    void movl_mEAX(void* addr)
+    {
+        m_formatter.oneByteOp(OP_MOV_EAXOv);
+#if PLATFORM(X86_64)
+        m_formatter.immediate64(reinterpret_cast<int64_t>(addr));
+#else
+        m_formatter.immediate32(reinterpret_cast<int>(addr));
+#endif
+    }
+
     void movl_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_formatter.oneByteOp(OP_MOV_GvEv, dst, base, offset);
@@ -625,7 +682,7 @@ public:
 
     void movl_i32r(int imm, RegisterID dst)
     {
-        m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, dst);
+        m_formatter.oneByteOp(OP_MOV_EAXIv, dst);
         m_formatter.immediate32(imm);
     }
 
@@ -633,6 +690,16 @@ public:
     {
         m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, base, offset);
         m_formatter.immediate32(imm);
+    }
+
+    void movl_EAXm(void* addr)
+    {
+        m_formatter.oneByteOp(OP_MOV_OvEAX);
+#if PLATFORM(X86_64)
+        m_formatter.immediate64(reinterpret_cast<int64_t>(addr));
+#else
+        m_formatter.immediate32(reinterpret_cast<int>(addr));
+#endif
     }
 
 #if PLATFORM(X86_64)
@@ -646,14 +713,39 @@ public:
         m_formatter.oneByteOp64(OP_MOV_EvGv, src, base, offset);
     }
 
+    void movq_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.oneByteOp64(OP_MOV_EvGv, src, base, index, scale, offset);
+    }
+
+    void movq_mEAX(void* addr)
+    {
+        m_formatter.oneByteOp64(OP_MOV_EAXOv);
+        m_formatter.immediate64(reinterpret_cast<int64_t>(addr));
+    }
+
     void movq_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_MOV_GvEv, dst, base, offset);
     }
+
+    void movq_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_MOV_GvEv, dst, base, index, scale, offset);
+    }
+
+    void movq_i64r(int64_t imm, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_MOV_EAXIv, dst);
+        m_formatter.immediate64(imm);
+    }
 #else
     void movl_mr(void* addr, RegisterID dst)
     {
-        m_formatter.oneByteOp(OP_MOV_GvEv, dst, addr);
+        if (dst == X86::eax)
+            movl_mEAX(addr);
+        else
+            m_formatter.oneByteOp(OP_MOV_GvEv, dst, addr);
     }
 
     void movl_i32m(int imm, void* addr)
@@ -1103,6 +1195,20 @@ private:
         // When planting d64 or f64 instructions, not requiring a REX.w prefix,
         // the normal (non-'64'-postfixed) formatters should be used.
 
+        void oneByteOp64(OneByteOpcodeID opcode)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexW(0, 0, 0);
+            m_buffer.putByteUnchecked(opcode);
+        }
+
+        void oneByteOp64(OneByteOpcodeID opcode, RegisterID reg)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexW(reg, 0, 0);
+            m_buffer.putByteUnchecked(opcode + reg);
+        }
+
         void oneByteOp64(OneByteOpcodeID opcode, int reg, RegisterID rm)
         {
             m_buffer.ensureSpace(maxInstructionSize);
@@ -1192,6 +1298,11 @@ private:
         void immediate32(int imm)
         {
             m_buffer.putIntUnchecked(imm);
+        }
+
+        void immediate64(int64_t imm)
+        {
+            m_buffer.putInt64Unchecked(imm);
         }
 
         JmpSrc immediateRel32()

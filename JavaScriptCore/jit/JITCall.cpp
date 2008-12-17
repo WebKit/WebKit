@@ -91,7 +91,7 @@ void JIT::compileOpCallSetupArgs(Instruction* instruction)
     emitPutJITStubArg(X86::ecx, 1);
     emitPutJITStubArgConstant(registerOffset, 2);
     emitPutJITStubArgConstant(argCount, 3);
-    emitPutJITStubArgConstant(reinterpret_cast<unsigned>(instruction), 4);
+    emitPutJITStubArgConstant(instruction, 4);
 }
 
 void JIT::compileOpCallEvalSetupArgs(Instruction* instruction)
@@ -136,7 +136,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
         compileOpCallEvalSetupArgs(instruction);
 
         emitCTICall(Interpreter::cti_op_call_eval);
-        wasEval = jnePtr(ImmPtr(JSImmediate::impossibleValue()), X86::eax);
+        wasEval = jnePtr(X86::eax, ImmPtr(JSImmediate::impossibleValue()));
     }
 
     emitGetVirtualRegister(callee, X86::ecx);

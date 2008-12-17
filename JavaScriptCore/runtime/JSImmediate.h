@@ -88,23 +88,23 @@ namespace JSC {
     private:
         friend class JIT;
     
-        static const uintptr_t TagMask           = 0x3u; // primary tag is 2 bits long
-        static const uintptr_t TagBitTypeInteger = 0x1u; // bottom bit set indicates integer, this dominates the following bit
-        static const uintptr_t TagBitTypeOther   = 0x2u; // second bit set indicates immediate other than an integer
+        static const uint32_t TagMask           = 0x3u; // primary tag is 2 bits long
+        static const uint32_t TagBitTypeInteger = 0x1u; // bottom bit set indicates integer, this dominates the following bit
+        static const uint32_t TagBitTypeOther   = 0x2u; // second bit set indicates immediate other than an integer
 
-        static const uintptr_t ExtendedTagMask         = 0xCu; // extended tag holds a further two bits
-        static const uintptr_t ExtendedTagBitBool      = 0x4u;
-        static const uintptr_t ExtendedTagBitUndefined = 0x8u;
+        static const uint32_t ExtendedTagMask         = 0xCu; // extended tag holds a further two bits
+        static const uint32_t ExtendedTagBitBool      = 0x4u;
+        static const uint32_t ExtendedTagBitUndefined = 0x8u;
 
-        static const uintptr_t FullTagTypeMask      = TagMask | ExtendedTagMask;
-        static const uintptr_t FullTagTypeBool      = TagBitTypeOther | ExtendedTagBitBool;
-        static const uintptr_t FullTagTypeUndefined = TagBitTypeOther | ExtendedTagBitUndefined;
-        static const uintptr_t FullTagTypeNull      = TagBitTypeOther;
+        static const uint32_t FullTagTypeMask      = TagMask | ExtendedTagMask;
+        static const uint32_t FullTagTypeBool      = TagBitTypeOther | ExtendedTagBitBool;
+        static const uint32_t FullTagTypeUndefined = TagBitTypeOther | ExtendedTagBitUndefined;
+        static const uint32_t FullTagTypeNull      = TagBitTypeOther;
 
         static const uint32_t IntegerPayloadShift  = 1u;
         static const uint32_t ExtendedPayloadShift = 4u;
 
-        static const uintptr_t ExtendedPayloadBitBoolValue = 1 << ExtendedPayloadShift;
+        static const uint32_t ExtendedPayloadBitBoolValue = 1 << ExtendedPayloadShift;
  
     public:
         static ALWAYS_INLINE bool isImmediate(JSValue* v)
@@ -266,7 +266,9 @@ namespace JSC {
 
         static ALWAYS_INLINE JSValue* makeInt(int32_t value)
         {
-            return makeValue((value << IntegerPayloadShift) | TagBitTypeInteger);
+            // FIXME: Why does the result of this need be a 64-bit value?
+            // Integer immediates are still only 31-bit on x86-64.
+            return makeValue((value << IntegerPayloadShift) | static_cast<uintptr_t>(TagBitTypeInteger));
         }
         
         static ALWAYS_INLINE JSValue* makeBool(bool b)

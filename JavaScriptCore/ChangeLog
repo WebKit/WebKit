@@ -1,3 +1,67 @@
+2008-12-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Make the JIT compile on x86-64.
+        This largely involves populting the missing calls in MacroAssembler.h.
+        In addition some reinterpret_casts need removing from the JIT, and the
+        repatching property access code will need to be fully compiled out for
+        now.  The changes in interpret.cpp are to reorder the functions so that
+        the _generic forms come before all other property access methods, and
+        then to place all property access methods other than the generic forms
+        under control of the ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS macro.
+
+        No performance impact.
+
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::putInt64Unchecked):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::loadPtr):
+        (JSC::MacroAssembler::load32):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::storePtrWithRepatch):
+        (JSC::MacroAssembler::store32):
+        (JSC::MacroAssembler::poke):
+        (JSC::MacroAssembler::move):
+        (JSC::MacroAssembler::testImm64):
+        (JSC::MacroAssembler::jePtr):
+        (JSC::MacroAssembler::jnePtr):
+        (JSC::MacroAssembler::jnzPtr):
+        (JSC::MacroAssembler::jzPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::cmpq_rr):
+        (JSC::X86Assembler::cmpq_rm):
+        (JSC::X86Assembler::cmpq_im):
+        (JSC::X86Assembler::testq_i32m):
+        (JSC::X86Assembler::movl_mEAX):
+        (JSC::X86Assembler::movl_i32r):
+        (JSC::X86Assembler::movl_EAXm):
+        (JSC::X86Assembler::movq_rm):
+        (JSC::X86Assembler::movq_mEAX):
+        (JSC::X86Assembler::movq_mr):
+        (JSC::X86Assembler::movq_i64r):
+        (JSC::X86Assembler::movl_mr):
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp64):
+        (JSC::X86Assembler::X86InstructionFormatter::immediate64):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::cti_op_put_by_id_generic):
+        (JSC::Interpreter::cti_op_get_by_id_generic):
+        (JSC::Interpreter::cti_op_put_by_id):
+        (JSC::Interpreter::cti_op_put_by_id_second):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        * runtime/JSImmediate.h:
+        (JSC::JSImmediate::makeInt):
+
 2008-12-16  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Darin Adler.
