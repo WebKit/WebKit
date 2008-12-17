@@ -2,6 +2,20 @@
 
         Reviewed by Kevin Decker.
 
+        Instead of passing a gazillion booleans to WKPCLoadURL, pass a single set of flags.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCLoadURL):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::loadURL):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+
+2008-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
         Add trailing null to headers to avoid a crash in the plug-in host.
         
         * Plugins/Hosted/HostedNetscapePluginStream.mm:

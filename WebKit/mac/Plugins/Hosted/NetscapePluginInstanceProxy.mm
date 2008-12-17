@@ -210,17 +210,17 @@ void NetscapePluginInstanceProxy::status(const char* message)
     [[wv _UIDelegateForwarder] webView:wv setStatusText:(NSString *)status.get()];
 }
 
-NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target, bool post, const char* postData, uint32_t postLen, bool postDataIsFile, bool currentEventIsUserGesture, uint32_t& streamID)
+NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target, const char* postData, uint32_t postLen, LoadURLFlags flags, uint32_t& streamID)
 {
     if (!url)
         return NPERR_INVALID_PARAM;
  
     NSMutableURLRequest *request = [m_pluginView requestWithURLCString:url];
 
-    if (post) {
+    if (flags & IsPost) {
         NSData *httpBody = nil;
 
-        if (postDataIsFile) {
+        if (flags & PostDataIsFile) {
             // If we're posting a file, buf is either a file URL or a path to the file.
             RetainPtr<CFStringRef> bufString(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, postData, kCFStringEncodingWindowsLatin1));
             if (!bufString)
@@ -243,10 +243,7 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
 
         [request setHTTPMethod:@"POST"];
         
-        // As documented, only allow headers to be specified via NPP_PostURL when using a file.
-        bool allowHeaders = postDataIsFile;
-
-        if (allowHeaders) {
+        if (flags & AllowHeadersInPostData) {
             if ([httpBody _web_startsWithBlankLine])
                 httpBody = [httpBody subdataWithRange:NSMakeRange(1, [httpBody length] - 1)];
             else {
@@ -283,7 +280,7 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
         [request setHTTPBody:httpBody];
     }
     
-    return loadRequest(request, target, currentEventIsUserGesture, streamID);
+    return loadRequest(request, target, flags & CurrentEventIsUserGesture, streamID);
 }
 
 void NetscapePluginInstanceProxy::performRequest(PluginRequest* pluginRequest)

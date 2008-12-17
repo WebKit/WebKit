@@ -35,4 +35,11 @@ typedef char* data_t;
 #define __MigTypeCheck 1
 #endif
 
+enum LoadURLFlags {
+    IsPost,
+    PostDataIsFile,
+    AllowHeadersInPostData,
+    CurrentEventIsUserGesture
+};
+    
 #endif // WebKitPluginHostTypes_h
