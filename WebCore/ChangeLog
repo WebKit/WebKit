@@ -1,3 +1,15 @@
+2008-12-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22827
+        <rdar://problem/6247724> RenderThemeWin buttons have weird heavy text
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::fillFontDescription): Add version that takes a font size.
+        (WebCore::RenderThemeWin::systemFont): Use the default GUI font for control fonts, but specify the size.
+        This will match Firefox.
+
 2008-12-16  Stephanie Lewis  <slewis@apple.com>
 
         Another build fix.

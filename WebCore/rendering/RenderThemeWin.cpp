@@ -88,6 +88,9 @@ static const int dropDownButtonWidth = 17;
 
 static const int shell32MagnifierIconIndex = 22;
 
+// Default font size to match Firefox.
+static const float defaultControlFontPixelSize = 13;
+
 SOFT_LINK_LIBRARY(uxtheme)
 SOFT_LINK(uxtheme, OpenThemeData, HANDLE, WINAPI, (HWND hwnd, LPCWSTR pszClassList), (hwnd, pszClassList))
 SOFT_LINK(uxtheme, CloseThemeData, HRESULT, WINAPI, (HANDLE hTheme), (hTheme))
@@ -219,19 +222,25 @@ Color RenderThemeWin::platformInactiveSelectionForegroundColor() const
     return Color::white;
 }
 
-static void fillFontDescription(FontDescription& fontDescription, LOGFONT& logFont)
+static void fillFontDescription(FontDescription& fontDescription, LOGFONT& logFont, float fontSize)
 {    
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setGenericFamily(FontDescription::NoFamily);
     fontDescription.firstFamily().setFamily(String(logFont.lfFaceName));
-    fontDescription.setSpecifiedSize(abs(logFont.lfHeight));
+    fontDescription.setSpecifiedSize(fontSize);
     fontDescription.setWeight(logFont.lfWeight >= 700 ? FontWeightBold : FontWeightNormal); // FIXME: Use real weight.
     fontDescription.setItalic(logFont.lfItalic);
+}
+
+static void fillFontDescription(FontDescription& fontDescription, LOGFONT& logFont)
+{   
+    fillFontDescription(fontDescription, logFont, abs(logFont.lfHeight));
 }
 
 void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) const
 {
     static FontDescription captionFont;
+    static FontDescription controlFont;
     static FontDescription smallCaptionFont;
     static FontDescription menuFont;
     static FontDescription iconFont;
@@ -279,12 +288,22 @@ void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) co
             fontDescription = captionFont;
             break;
         case CSSValueSmallCaption:
-        case CSSValueWebkitSmallControl: // Equivalent to small-caption.
-        case CSSValueWebkitMiniControl: // Just map to small.
-        case CSSValueWebkitControl: // Just map to small.
             if (!smallCaptionFont.isAbsoluteSize())
                 fillFontDescription(smallCaptionFont, ncm.lfSmCaptionFont);
             fontDescription = smallCaptionFont;
+            break;
+        case CSSValueWebkitSmallControl:
+        case CSSValueWebkitMiniControl: // Just map to small.
+        case CSSValueWebkitControl: // Just map to small.
+            if (!controlFont.isAbsoluteSize()) {
+                HGDIOBJ hGDI = ::GetStockObject(DEFAULT_GUI_FONT);
+                if (hGDI) {
+                    LOGFONT logFont;
+                    if (::GetObject(hGDI, sizeof(logFont), &logFont) > 0)
+                        fillFontDescription(controlFont, logFont, defaultControlFontPixelSize);
+                }
+            }
+            fontDescription = controlFont;
             break;
         default: { // Everything else uses the stock GUI font.
             if (!systemFont.isAbsoluteSize()) {
