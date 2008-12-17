@@ -1,5 +1,11 @@
 2008-12-16  Gavin Barraclough  <barraclough@apple.com>
 
+        Build fix for 'doze.
+
+        * assembler/AssemblerBuffer.h:
+
+2008-12-16  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Make the JIT compile on x86-64.

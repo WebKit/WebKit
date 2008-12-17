@@ -30,6 +30,7 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "stdint.h"
 #include <string.h>
 #include <jit/ExecutableAllocator.h>
 #include <wtf/Assertions.h>
