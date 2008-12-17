@@ -36,10 +36,10 @@ typedef char* data_t;
 #endif
 
 enum LoadURLFlags {
-    IsPost,
-    PostDataIsFile,
-    AllowHeadersInPostData,
-    CurrentEventIsUserGesture
+    IsPost = 1 << 0,
+    PostDataIsFile = 1 << 1, 
+    AllowHeadersInPostData = 1 << 2,
+    CurrentEventIsUserGesture = 1 << 3,
 };
     
 #endif // WebKitPluginHostTypes_h

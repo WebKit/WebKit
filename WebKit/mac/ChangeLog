@@ -2,6 +2,16 @@
 
         Reviewed by Kevin Decker.
 
+        <rdar://problem/6450538>
+        
+        Fix flag enumeration.
+        
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+
+2008-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
         Instead of passing a gazillion booleans to WKPCLoadURL, pass a single set of flags.
         
         * Plugins/Hosted/NetscapePluginHostProxy.mm:
