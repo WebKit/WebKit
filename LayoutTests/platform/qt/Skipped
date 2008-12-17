@@ -1181,6 +1181,9 @@ fast/images/animated-background-image-crash.html
 # See also http://trolltech.com/developer/task-tracker/index_html?id=212870&method=entry
 fast/css/case-transform.html
 
+# Skip mac API specific tests
+fast/loader/stop-provisional-loads.html
+
 # Skip tests with metrics for now
 css1/basic/class_as_selector.html
 css1/basic/comments.html
