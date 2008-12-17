@@ -212,7 +212,7 @@ extern "C" {
     [notificationCenter removeObserver:self name:NSWindowDidMoveNotification object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidResizeNotification object:nil];
 }
-    
+
 - (void)mouseDown:(NSEvent *)event
 {
     if (_isStarted && _proxy)
@@ -241,6 +241,18 @@ extern "C" {
 {
     if (_isStarted && _proxy)
         _proxy->mouseEvent(self, event, NPCocoaEventMouseExited);
+}
+
+- (void)keyDown:(NSEvent *)event
+{
+    if (_isStarted && _proxy)
+        _proxy->keyEvent(self, event, NPCocoaEventKeyDown);
+}
+
+- (void)keyUp:(NSEvent *)event
+{
+    if (_isStarted && _proxy)
+        _proxy->keyEvent(self, event, NPCocoaEventKeyUp);
 }
 
 - (void)pluginHostDied

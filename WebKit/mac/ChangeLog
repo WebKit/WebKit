@@ -1,5 +1,19 @@
 2008-12-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Start sending keyboard events to the plug-in host.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::keyEvent):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView keyDown:]):
+        (-[WebHostedNetscapePluginView keyUp:]):
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
+2008-12-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Kevin Decker.
 
         <rdar://problem/6450538>

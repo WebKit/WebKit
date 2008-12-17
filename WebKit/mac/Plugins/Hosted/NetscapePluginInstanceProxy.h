@@ -74,6 +74,7 @@ public:
     void windowFrameChanged(NSRect frame);
     
     void mouseEvent(NSView *pluginView, NSEvent *, NPCocoaEventType);
+    void keyEvent(NSView *pluginView, NSEvent *, NPCocoaEventType);
     void startTimers(bool throttleTimers);
     void stopTimers();
     

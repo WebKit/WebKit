@@ -75,6 +75,16 @@ simpleroutine PluginInstanceMouseEvent(pluginHostPort :mach_port_t;
                                        deltaY :double;
                                        deltaZ: double);
 
+simpleroutine PluginInstanceKeyboardEvent(pluginHostPort :mach_port_t;
+                                          pluginID :uint32_t;
+                                          timestamp :double;
+                                          eventType :uint32_t;
+                                          modifierFlags :uint32_t;
+                                          characters :data_t;
+                                          charactersIgnoringModifiers :data_t;
+                                          isARepeat :boolean_t;
+                                          keyCode :uint16_t);
+                                          
 simpleroutine PluginInstanceStartTimers(pluginHostPort :mach_port_t;
                                         pluginID :uint32_t;
                                         throttleTimers :boolean_t);

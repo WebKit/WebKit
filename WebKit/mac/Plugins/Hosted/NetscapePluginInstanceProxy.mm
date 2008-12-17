@@ -193,6 +193,18 @@ void NetscapePluginInstanceProxy::mouseEvent(NSView *pluginView, NSEvent *event,
                                   [event deltaX], [event deltaY], [event deltaZ]);
 }
     
+void NetscapePluginInstanceProxy::keyEvent(NSView *pluginView, NSEvent *event, NPCocoaEventType type)
+{
+    NSData *charactersData = [[event characters] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *charactersIgnoringModifiersData = [[event charactersIgnoringModifiers] dataUsingEncoding:NSUTF8StringEncoding];
+    
+    _WKPHPluginInstanceKeyboardEvent(m_pluginHostProxy->port(), m_pluginID,
+                                     [event timestamp], 
+                                     type, [event modifierFlags], 
+                                     const_cast<char*>(reinterpret_cast<const char*>([charactersData bytes])), [charactersData length], 
+                                     const_cast<char*>(reinterpret_cast<const char*>([charactersIgnoringModifiersData bytes])), [charactersIgnoringModifiersData length], 
+                                     [event isARepeat], [event keyCode]);
+}
 
 void NetscapePluginInstanceProxy::stopTimers()
 {
