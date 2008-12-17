@@ -1,6 +1,6 @@
 // [Name] go-task-get-method-external-deck.js
 
-createWMLTestCase("Tests GET method of <go> element - jump to external deck", false);
+createWMLTestCase("Tests GET method of &lt;go&gt; element - jump to external deck", false);
 
 function setupTestDocument() {
     var cardElement = testDocument.documentElement.firstChild;

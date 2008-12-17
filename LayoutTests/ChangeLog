@@ -1,3 +1,19 @@
+2008-12-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Rubber-stamped by Timothy Hatcher.
+
+        Fix wml/ tests, by doing s/</\&lt;/ and s/>/\&gt;/.
+        Not sure why this problem wasn't visible before, something has changed.
+
+        * wml/go-task-animation-expected.txt:
+        * wml/go-task-get-method-external-deck-expected.txt:
+        * wml/go-task-get-method-external-deck-with-href-expected.txt:
+        * wml/go-task-get-method-same-deck-expected.txt:
+        * wml/resources/go-task-animation.js:
+        * wml/resources/go-task-get-method-external-deck-with-href.js:
+        * wml/resources/go-task-get-method-external-deck.js:
+        * wml/resources/go-task-get-method-same-deck.js:
+
 2008-12-16  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.

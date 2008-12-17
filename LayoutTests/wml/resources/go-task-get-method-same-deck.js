@@ -1,6 +1,6 @@
 // [Name] go-task-get-method-same-deck.js
 
-createWMLTestCase("Tests GET method of <go> element - jump within deck", false);
+createWMLTestCase("Tests GET method of &lt;go&gt; element - jump within deck", false);
 
 function setupTestDocument() {
     var cardElement = testDocument.documentElement.firstChild;

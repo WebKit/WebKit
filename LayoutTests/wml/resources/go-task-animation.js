@@ -1,6 +1,6 @@
 /// [Name] go-task-animation.js
 
-createWMLTestCase("Tests <timer> and <go> element combinations", false, "resources/animation.wml");
+createWMLTestCase("Tests &lt;timer&gt; and &lt;go&gt; element combinations", false, "resources/animation.wml");
 
 var counter = 0;
 
