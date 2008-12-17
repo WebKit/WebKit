@@ -1,3 +1,30 @@
+2008-12-17  Yury Semikhatsky <yurys@google.com>
+
+        Reviewed by Timothy Hatcher.
+        Landed by Adam Barth.
+
+        Added more checks that WebInspector.panels.{resources,scripts} are
+        defined where they are accessed from other panels and WebInspector
+        (some panels are not yet supported in Chrome).
+
+        * inspector/front-end/Console.js:
+        (WebInspector.Console.prototype.addMessage):
+        (WebInspector.Console.prototype.clearMessages):
+        (WebInspector.Console.prototype.completions):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.evaluateExpression):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.get searchableViews):
+        (WebInspector.ScriptsPanel.prototype._sourceViewForScriptOrResource):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameForScriptOrResource):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._addBreakpoint):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addResource):
+        (WebInspector.removeResource):
+        (WebInspector.showResourceForURL):
+
 2008-12-17  Cary Clark  < caryclark@google.com>
 
         Reviewed by Darin Adler.

@@ -220,7 +220,7 @@ WebInspector.ScriptsPanel.prototype = {
         for (var sourceID in this._sourceIDMap) {
             var scriptOrResource = this._sourceIDMap[sourceID];
             var view = this._sourceViewForScriptOrResource(scriptOrResource);
-            if (!view.performSearch || view.alreadySearching)
+            if (!view || !view.performSearch || view.alreadySearching)
                 continue;
 
             view.alreadySearching = true;
@@ -470,16 +470,22 @@ WebInspector.ScriptsPanel.prototype = {
 
     _sourceViewForScriptOrResource: function(scriptOrResource)
     {
-        if (scriptOrResource instanceof WebInspector.Resource)
+        if (scriptOrResource instanceof WebInspector.Resource) {
+            if (!WebInspector.panels.resources)
+                return null;
             return WebInspector.panels.resources.resourceViewForResource(scriptOrResource);
+        }
         if (scriptOrResource instanceof WebInspector.Script)
             return this.scriptViewForScript(scriptOrResource);
     },
 
     _sourceFrameForScriptOrResource: function(scriptOrResource)
     {
-        if (scriptOrResource instanceof WebInspector.Resource)
+        if (scriptOrResource instanceof WebInspector.Resource) {
+            if (!WebInspector.panels.resources)
+                return null;
             return WebInspector.panels.resources.sourceFrameForResource(scriptOrResource);
+        }
         if (scriptOrResource instanceof WebInspector.Script)
             return this.sourceFrameForScript(scriptOrResource);
     },
@@ -491,6 +497,8 @@ WebInspector.ScriptsPanel.prototype = {
 
         var view;
         if (scriptOrResource instanceof WebInspector.Resource) {
+            if (!WebInspector.panels.resources)
+                return null;
             view = WebInspector.panels.resources.resourceViewForResource(scriptOrResource);
             view.headersVisible = false;
 

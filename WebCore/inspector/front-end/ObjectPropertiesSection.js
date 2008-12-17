@@ -218,7 +218,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
     {
         // Evaluate in the currently selected call frame if the debugger is paused.
         // Otherwise evaluate in against the inspected window.
-        if (WebInspector.panels.scripts.paused && this.treeOutline.section.editInSelectedCallFrameWhenPaused)
+        if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused && this.treeOutline.section.editInSelectedCallFrameWhenPaused)
             return WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false);
         return InspectorController.inspectedWindow().eval(expression);
     },

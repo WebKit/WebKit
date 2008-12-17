@@ -180,7 +180,8 @@ WebInspector.Console.prototype = {
             // Add message to the resource panel
             if (msg.url in WebInspector.resourceURLMap) {
                 msg.resource = WebInspector.resourceURLMap[msg.url];
-                WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
+                if (WebInspector.panels.resources)
+                    WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
             }
 
             this.commandSincePreviousMessage = false;
@@ -223,7 +224,8 @@ WebInspector.Console.prototype = {
     {
         if (clearInspectorController)
             InspectorController.clearMessages();
-        WebInspector.panels.resources.clearMessages();
+        if (WebInspector.panels.resources)
+            WebInspector.panels.resources.clearMessages();
 
         this.messages = [];
 
@@ -267,7 +269,7 @@ WebInspector.Console.prototype = {
         } else {
             // There is no expressionString, so the completion should happen against global properties.
             // Or if the debugger is paused, against properties in scope of the selected call frame.
-            if (WebInspector.panels.scripts.paused)
+            if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
                 result = WebInspector.panels.scripts.variablesInScopeForSelectedCallFrame();
             else
                 result = InspectorController.inspectedWindow();
@@ -394,7 +396,7 @@ WebInspector.Console.prototype = {
 
     _evalInInspectedWindow: function(expression)
     {
-        if (WebInspector.panels.scripts.paused)
+        if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
             return WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression);
 
         var inspectedWindow = InspectorController.inspectedWindow();

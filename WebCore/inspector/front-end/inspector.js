@@ -775,7 +775,8 @@ WebInspector.addResource = function(resource)
         this.panels.elements.reset();
     }
 
-    this.panels.resources.addResource(resource);
+    if (this.panels.resources)
+        this.panels.resources.addResource(resource);
 }
 
 WebInspector.removeResource = function(resource)
@@ -785,7 +786,8 @@ WebInspector.removeResource = function(resource)
 
     this.resources.remove(resource, true);
 
-    this.panels.resources.removeResource(resource);
+    if (this.panels.resources)
+        this.panels.resources.removeResource(resource);
 }
 
 WebInspector.addDatabase = function(database)
@@ -963,6 +965,8 @@ WebInspector.showResourceForURL = function(url, line, preferredPanel)
     }
 
     this.currentPanel = panel || this.panels.resources;
+    if (!this.currentPanel)
+        return false;
     this.currentPanel.showResource(resource, line);
     return true;
 }
