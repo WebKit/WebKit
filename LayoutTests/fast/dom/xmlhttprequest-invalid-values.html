@@ -6,7 +6,7 @@ function testInvalidMethod() {
     var req = new XMLHttpRequest();
 
     try {
-        req.open('test\r\nfoobar', 'http://localhost', true)
+        req.open('test\r\nfoobar', window.location, true)
     } catch (e) {
         if (e.code == DOMException.SYNTAX_ERR)
             result = 'SUCCESS';
@@ -19,7 +19,7 @@ function testInvalidHeaderName() {
     var result = 'FAILURE';
 
     var req = new XMLHttpRequest();
-    req.open('GET', 'http://localhost', true)
+    req.open('GET', window.location, true)
     
     try {
         req.setRequestHeader("host:", "example.com");
@@ -36,7 +36,7 @@ function testInvalidHeaderValues() {
     var successCount = 0;
 
     var req = new XMLHttpRequest();
-    req.open('GET', 'http://localhost', true)
+    req.open('GET', window.location, true)
     
     try {
         req.setRequestHeader("X-Hack", "Test\r\nHost: www.example.com\r\n\r\nGET / HTTP/1.1");

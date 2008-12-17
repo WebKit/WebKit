@@ -14,7 +14,7 @@ function test()
 {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function(event) { if (event.target.readyState == 1) parent.pass(); };
-    request.open("GET", "about:blank");
+    request.open("GET", window.location);
 }
 
 function pass()

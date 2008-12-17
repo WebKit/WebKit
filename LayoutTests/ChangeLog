@@ -1,3 +1,15 @@
+2008-12-17  Feng Qian <feng@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+        Landed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21948
+        Change two tests to use the host url in XMLHttpRequest so that
+        it does not fail because of Chrome's file URL security policy.
+        It does not affect the expected behaviors of tests.
+        * fast/dom/null-document-xmlhttprequest-open.html:
+        * fast/dom/xmlhttprequest-invalid-values.html:
+
 2008-12-17  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Darin Adler.
