@@ -1,5 +1,26 @@
 2008-12-16  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoffrey Garen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22838
+        Remove dependency on the bytecode Instruction buffer in Interpreter::throwException
+        Part of <rdar://problem/6428342>
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::functionRegisterForBytecodeOffset): Added. Function to get
+        a function Register index in a callFrame for a bytecode offset.
+        (JSC::CodeBlock::shrinkToFit): Shrink m_getByIdExceptionInfo and m_functionRegisterInfos.
+        * bytecode/CodeBlock.h:
+        (JSC::FunctionRegisterInfo::FunctionRegisterInfo): Added.
+        (JSC::CodeBlock::addFunctionRegisterInfo):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException): Use functionRegisterForBytecodeOffset in JIT
+        mode.
+
+2008-12-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Gavin Barraclough.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=22837

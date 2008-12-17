@@ -1427,6 +1427,32 @@ bool CodeBlock::getByIdExceptionInfoForBytecodeOffset(unsigned bytecodeOffset, O
     return true;
 }
 
+#if ENABLE(JIT)
+bool CodeBlock::functionRegisterForBytecodeOffset(unsigned bytecodeOffset, int& functionRegisterIndex)
+{
+    ASSERT(bytecodeOffset < m_instructions.size());
+
+    if (!m_rareData || !m_rareData->m_functionRegisterInfos.size())
+        return false;
+
+    int low = 0;
+    int high = m_rareData->m_functionRegisterInfos.size();
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (m_rareData->m_functionRegisterInfos[mid].bytecodeOffset <= bytecodeOffset)
+            low = mid + 1;
+        else
+            high = mid;
+    }
+
+    if (!low || m_rareData->m_functionRegisterInfos[low - 1].bytecodeOffset != bytecodeOffset)
+        return false;
+
+    functionRegisterIndex = m_rareData->m_functionRegisterInfos[low - 1].functionRegisterIndex;
+    return true;
+}
+#endif
+
 void CodeBlock::shrinkToFit()
 {
     m_instructions.shrinkToFit();
@@ -1443,6 +1469,7 @@ void CodeBlock::shrinkToFit()
 
     m_expressionInfo.shrinkToFit();
     m_lineInfo.shrinkToFit();
+    m_getByIdExceptionInfo.shrinkToFit();
 
     m_identifiers.shrinkToFit();
     m_functionExpressions.shrinkToFit();
@@ -1456,6 +1483,9 @@ void CodeBlock::shrinkToFit()
         m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
         m_rareData->m_characterSwitchJumpTables.shrinkToFit();
         m_rareData->m_stringSwitchJumpTables.shrinkToFit();
+#if ENABLE(JIT)
+        m_rareData->m_functionRegisterInfos.shrinkToFit();
+#endif
     }
 }
 

@@ -832,10 +832,16 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     // the profiler manually that the call instruction has returned, since
     // we'll never reach the relevant op_profile_did_call.
     if (Profiler* profiler = *Profiler::enabledProfilerReference()) {
+#if !ENABLE(JIT)
         if (isCallBytecode(codeBlock->instructions()[bytecodeOffset].u.opcode))
             profiler->didExecute(callFrame, callFrame[codeBlock->instructions()[bytecodeOffset + 2].u.operand].jsValue(callFrame));
         else if (codeBlock->instructions()[bytecodeOffset + 8].u.opcode == getOpcode(op_construct))
             profiler->didExecute(callFrame, callFrame[codeBlock->instructions()[bytecodeOffset + 10].u.operand].jsValue(callFrame));
+#else
+        int functionRegisterIndex;
+        if (codeBlock->functionRegisterForBytecodeOffset(bytecodeOffset, functionRegisterIndex))
+            profiler->didExecute(callFrame, callFrame[functionRegisterIndex].jsValue(callFrame));
+#endif
     }
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.

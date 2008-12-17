@@ -1256,6 +1256,10 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_will_call);
         instructions().append(func->index());
+
+#if ENABLE(JIT)
+        m_codeBlock->addFunctionRegisterInfo(instructions().size(), func->index());
+#endif
     }
 
     emitExpressionInfo(divot, startOffset, endOffset);
