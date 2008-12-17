@@ -60,12 +60,19 @@ void JSContextGroupRelease(JSContextGroupRef group)
 
 JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 {
-#if PLATFORM(DARWIN) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(DARWIN)
+    // When running on Tiger or Leopard, or if the application was linked before JSGlobalContextCreate was changed
+    // to use a unique JSGlobalData, we use a shared one for compatibility.
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     if (NSVersionOfLinkTimeLibrary("JavaScriptCore") <= webkitFirstVersionWithConcurrentGlobalContexts) {
+#else
+    {
+#endif
         JSLock lock(true);
         return JSGlobalContextCreateInGroup(toRef(&JSGlobalData::sharedInstance()), globalObjectClass);
     }
-#endif
+#endif // PLATFORM(DARWIN)
+
     return JSGlobalContextCreateInGroup(0, globalObjectClass);
 }
 

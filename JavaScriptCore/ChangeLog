@@ -1,3 +1,12 @@
+2008-12-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Don't use unique context group in JSGlobalContextCreate() on Tiger or Leopard, take two.
+
+        * API/JSContextRef.cpp: The previous patch that claimed to do this was making Tiger and
+        Leopard always use unique context group instead.
+
 2008-12-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
