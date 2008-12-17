@@ -45,6 +45,7 @@
 #import "WebHTMLViewInternal.h"
 #import "WebIconFetcherInternal.h"
 #import "WebKitStatisticsPrivate.h"
+#import "WebKitVersionChecks.h"
 #import "WebNSURLExtras.h"
 #import "WebScriptDebugger.h"
 #import "WebViewInternal.h"
@@ -1374,8 +1375,8 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)reload
 {
-    // FIXME: Add WebKitLinkedOnOrAfter check to disable this hack when the browser knows about origin reloads.
-    if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"])
+    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_RELOAD_FROM_ORIGIN) &&
+        [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"])
         _private->coreFrame->loader()->reload(GetCurrentKeyModifiers() & shiftKey);
     else
         _private->coreFrame->loader()->reload(false);
