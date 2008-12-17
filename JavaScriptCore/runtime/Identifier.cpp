@@ -96,8 +96,7 @@ bool Identifier::equal(const UString::Rep* r, const UChar* s, int length)
     return true;
 }
 
-struct CStringTranslator
-{
+struct CStringTranslator {
     static unsigned hash(const char* c)
     {
         return UString::Rep::computeHash(c);
@@ -116,7 +115,6 @@ struct CStringTranslator
             d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
         
         UString::Rep* r = UString::Rep::create(d, static_cast<int>(length)).releaseRef();
-        r->rc = 0;
         r->_hash = hash;
 
         location = r;
@@ -143,10 +141,15 @@ PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const char* c
     if (iter != literalIdentifierTable.end())
         return iter->second;
 
-    UString::Rep* addedString = *identifierTable.add<const char*, CStringTranslator>(c).first;
-    literalIdentifierTable.add(c, addedString);
+    pair<HashSet<UString::Rep*>::iterator, bool> addResult = identifierTable.add<const char*, CStringTranslator>(c);
 
-    return addedString;
+    // If the string is newly-translated, then we need to adopt it.
+    // The boolean in the pair tells us if that is so.
+    RefPtr<UString::Rep> addedString = addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+
+    literalIdentifierTable.add(c, addedString.get());
+
+    return addedString.release();
 }
 
 PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const char* c)
@@ -159,8 +162,7 @@ struct UCharBuffer {
     unsigned int length;
 };
 
-struct UCharBufferTranslator
-{
+struct UCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)
     {
         return UString::Rep::computeHash(buf.s, buf.length);
@@ -178,7 +180,6 @@ struct UCharBufferTranslator
             d[i] = buf.s[i];
         
         UString::Rep* r = UString::Rep::create(d, buf.length).releaseRef();
-        r->rc = 0;
         r->_hash = hash;
         
         location = r; 
@@ -197,7 +198,11 @@ PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const UChar* 
         return &UString::Rep::empty;
     }
     UCharBuffer buf = {s, length}; 
-    return *globalData->identifierTable->add<UCharBuffer, UCharBufferTranslator>(buf).first;
+    pair<HashSet<UString::Rep*>::iterator, bool> addResult = globalData->identifierTable->add<UCharBuffer, UCharBufferTranslator>(buf);
+
+    // If the string is newly-translated, then we need to adopt it.
+    // The boolean in the pair tells us if that is so.
+    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
 }
 
 PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const UChar* s, int length)

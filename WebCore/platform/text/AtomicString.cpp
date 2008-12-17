@@ -192,9 +192,10 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s, int length)
     
     UCharBuffer buf = { s, length }; 
     pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable()->add<UCharBuffer, UCharBufferTranslator>(buf);
-    if (!addResult.second)
-        return *addResult.first;
-    return adoptRef(*addResult.first);
+
+    // If the string is newly-translated, then we need to adopt it.
+    // The boolean in the pair tells us if that is so.
+    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
 }
 
 PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
@@ -211,9 +212,10 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
 
     UCharBuffer buf = {s, length}; 
     pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable()->add<UCharBuffer, UCharBufferTranslator>(buf);
-    if (!addResult.second)
-        return *addResult.first;
-    return adoptRef(*addResult.first);
+
+    // If the string is newly-translated, then we need to adopt it.
+    // The boolean in the pair tells us if that is so.
+    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
 }
 
 PassRefPtr<StringImpl> AtomicString::add(StringImpl* r)

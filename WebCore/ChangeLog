@@ -1,3 +1,12 @@
+2008-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed and landed by Cameron Zwarich.
+
+        Change the style of AtomicString::add() to match Identifier:add().
+
+        * platform/text/AtomicString.cpp:
+        (WebCore::AtomicString::add):
+
 2008-12-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

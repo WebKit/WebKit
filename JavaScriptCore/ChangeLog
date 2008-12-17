@@ -1,3 +1,20 @@
+2008-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed and landed by Cameron Zwarich.
+
+        Preparatory work for fixing
+
+        Bug 22887: Make UString::Rep use RefCounted rather than implementing its own ref counting
+        <https://bugs.webkit.org/show_bug.cgi?id=22887>
+
+        Change the various string translators used by Identifier:add() so that
+        they never zero the ref count of a newly created UString::Rep.
+
+        * runtime/Identifier.cpp:
+        (JSC::CStringTranslator::translate):
+        (JSC::Identifier::add):
+        (JSC::UCharBufferTranslator::translate):
+
 2008-12-16  Gavin Barraclough  <barraclough@apple.com>
 
         Build fix for 'doze.
