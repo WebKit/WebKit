@@ -165,6 +165,8 @@ public:
     QAction *actions[QWebPage::WebActionCount];
 
     QWebPluginFactory *pluginFactory;
+
+    static bool drtRun;
 };
 
 #endif

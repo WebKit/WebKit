@@ -96,6 +96,12 @@
 
 using namespace WebCore;
 
+bool QWebPagePrivate::drtRun = false;
+void QWEBKIT_EXPORT qt_drt_run(bool b)
+{
+    QWebPagePrivate::drtRun = b;
+}
+
 // Lookup table mapping QWebPage::WebActions to the associated Editor commands
 static const char* editorCommandWebActions[] = 
 {

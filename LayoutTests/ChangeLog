@@ -2,6 +2,15 @@
 
         Reviewed by Holger Freyther.
 
+        Unskip some tests that pass with the Qt DRT fixed for unload event
+        counting.
+
+        * platform/qt/Skipped:
+
+2008-12-16  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
         Added mac API specific loader test to the skip list for the Qt DRT.
 
         * platform/qt/Skipped:

@@ -53,15 +53,10 @@
 #define methodDebug() qDebug("EditorClientQt: %s", __FUNCTION__);
 
 static bool dumpEditingCallbacks = false;
-static bool drt_run = false;
 static bool acceptsEditing = true;
 void QWEBKIT_EXPORT qt_dump_editing_callbacks(bool b)
 {
     dumpEditingCallbacks = b;
-}
-void QWEBKIT_EXPORT qt_drt_run(bool b)
-{
-    drt_run = b;
 }
 
 void QWEBKIT_EXPORT qt_dump_set_accepts_editing(bool b)
@@ -109,7 +104,7 @@ bool EditorClientQt::shouldDeleteRange(Range* range)
 
 bool EditorClientQt::shouldShowDeleteInterface(HTMLElement* element)
 {
-    if (drt_run)
+    if (QWebPagePrivate::drtRun)
         return element->className() == "needsDeletionUI";
     return false;
 }

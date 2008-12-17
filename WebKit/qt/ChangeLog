@@ -1,3 +1,19 @@
+2008-12-16  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Added support for unload event counting to the Qt DRT.
+
+        * Api/qwebpage.cpp:
+        (qt_drt_run): Moved function here.
+        * Api/qwebpage_p.h: Moved drt run boolean here.
+        * WebCoreSupport/EditorClientQt.cpp: Moved drt run boolean.
+        (WebCore::EditorClientQt::shouldShowDeleteInterface): Use the new drt
+        run variable.
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishDocumentLoad): Add DRT
+        output for unload event handler counting.
+
 2008-12-15  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

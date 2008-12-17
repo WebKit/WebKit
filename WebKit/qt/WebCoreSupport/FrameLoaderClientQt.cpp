@@ -353,6 +353,12 @@ void FrameLoaderClientQt::dispatchDidFinishDocumentLoad()
     if (dumpFrameLoaderCallbacks)
         printf("%s - didFinishDocumentLoadForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
+    if (QWebPagePrivate::drtRun) {
+        int unloadEventCount = m_frame->eventHandler()->pendingFrameUnloadEventCount();
+        if (unloadEventCount)
+            printf("%s - has %u onunload handler(s)\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)), unloadEventCount);
+    }
+
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
 

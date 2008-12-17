@@ -1103,7 +1103,6 @@ fast/loader/local-CSS-from-local.html
 fast/loader/local-JavaScript-from-local.html
 fast/loader/local-iFrame-source-from-local.html
 fast/loader/local-image-from-local.html
-fast/loader/onunload-form-submit-crash-2.html
 fast/loader/redirect-with-open-subframe.html
 fast/loader/text-document-wrapping.html
 fast/media/mq-js-stylesheet-media-03.html
@@ -2998,7 +2997,6 @@ fast/frames/onload-remove-iframe-crash.html
 fast/frames/viewsource-attribute.html
 fast/frames/viewsource-plain-text-tags.html
 fast/gradients/crash-on-remove.html
-fast/history/history_reload.html
 fast/html/listing.html
 fast/images/animated-gif-with-offsets.html
 fast/images/imagemap-case.html
@@ -4632,7 +4630,6 @@ fast/forms/autofocus-opera-008.html
 fast/forms/button-click-DOM.html
 fast/forms/button-enter-click.html
 fast/forms/button-in-forms-collection.html
-fast/forms/button-state-restore.html
 fast/forms/cursor-position.html
 fast/forms/document-write.html
 fast/forms/domstring-replace-crash.html
@@ -4975,7 +4972,6 @@ fast/encoding/css-charset-dom.html
 fast/events/autoscroll-in-textfield.html
 fast/events/caller-access-from-event-listener.html
 fast/events/init-event-after-dispatch.html
-fast/events/onunload-clears-onbeforeunload.html
 fast/events/window-load-capture.html
 fast/forms/autofocus-opera-006.html
 fast/forms/check-box-enter-key.html
