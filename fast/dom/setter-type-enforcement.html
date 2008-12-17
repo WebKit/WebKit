@@ -1,0 +1,52 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Tests type enforcement on DOM setters.");
+
+// NodeList is not a Node, so document.body can't be set to one.
+var nodelist = document.getElementsByName('sillypants');
+shouldThrow("document.body = nodelist;");
+
+// NodeList is also not an HTMLTableSectionElement.
+var table = document.createElement('table');
+shouldThrow("table.tHead = nodelist;");
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Tests type enforcement on DOM setters.");
+
+// NodeList is not a Node, so document.body can't be set to one.
+var nodelist = document.getElementsByName('sillypants');
+shouldThrow("document.body = nodelist;");
+
+// NodeList is also not an HTMLTableSectionElement.
+var table = document.createElement('table');
+shouldThrow("table.tHead = nodelist;");
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

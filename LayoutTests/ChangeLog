@@ -1,3 +1,14 @@
+2008-12-17  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+        Landed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22612
+        Add test to verify type enforcement in DOM setters.
+
+        * fast/dom/setter-type-enforcement-expected.txt: Added.
+        * fast/dom/setter-type-enforcement.html: Added.
+
 2008-12-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Rubber-stamped by Timothy Hatcher.
