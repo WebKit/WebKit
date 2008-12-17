@@ -3,6 +3,18 @@
         Reviewed by Darin Adler.
         Landed by Adam Barth.
 
+        https://bugs.webkit.org/show_bug.cgi?id=22577
+        Add a test to ensure that checkboxes and radio buttons with duplicate
+        names map to a collection.
+
+        * fast/dom/HTMLInputElement/duplicate-element-names-expected.txt: Added.
+        * fast/dom/HTMLInputElement/duplicate-element-names.html: Added.
+
+2008-12-17  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+        Landed by Adam Barth.
+
         https://bugs.webkit.org/show_bug.cgi?id=22612
         Add test to verify type enforcement in DOM setters.
 
