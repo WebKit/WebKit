@@ -1,3 +1,23 @@
+2008-12-16  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+        
+        Reviewed by Stephanie Lewis.
+
+        * COMPropertyBag.h:
+        (::createInstance):
+        (::adopt):
+        (::QueryInterface):
+        (::AddRef):
+        (::Release):
+        (::Read):
+        (::Write):
+        (::CountProperties):
+        (::GetPropertyInfo):
+        (::LoadObject):
+        * WebURLResponse.cpp:
+        (WebURLResponse::allHeaderFields):
+
 2008-12-16  Stephanie Lewis  <slewis@apple.com>
 
         Another Windows Build Fix.

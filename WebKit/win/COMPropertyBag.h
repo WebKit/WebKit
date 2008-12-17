@@ -34,10 +34,10 @@
 
 #include "COMVariantSetter.h"
 
-template<typename ValueType, typename HashType = typename WebCore::StringHash>
+template<typename ValueType, typename KeyType = typename WebCore::String, typename HashType = typename WebCore::StringHash>
 class COMPropertyBag : public IPropertyBag, public IPropertyBag2, Noncopyable {
 public:
-    typedef HashMap<WebCore::String, ValueType, HashType> HashMapType;
+    typedef HashMap<KeyType, ValueType, HashType> HashMapType;
 
     static COMPropertyBag* createInstance(const HashMapType&);
     static COMPropertyBag* adopt(HashMapType&);
@@ -77,16 +77,16 @@ private:
 };
 
 // COMPropertyBag ------------------------------------------------------------------
-template<typename ValueType, typename HashType>
-COMPropertyBag<ValueType, HashType>* COMPropertyBag<typename ValueType, HashType>::createInstance(const HashMapType& hashMap)
+template<typename ValueType, typename KeyType, typename HashType>
+COMPropertyBag<ValueType, KeyType, HashType>* COMPropertyBag<typename ValueType, typename KeyType, HashType>::createInstance(const HashMapType& hashMap)
 {
     COMPropertyBag* instance = new COMPropertyBag(hashMap);
     instance->AddRef();
     return instance;
 }
 
-template<typename ValueType, typename HashType>
-COMPropertyBag<ValueType, HashType>* COMPropertyBag<typename ValueType, HashType>::adopt(HashMapType& hashMap)
+template<typename ValueType, typename KeyType, typename HashType>
+COMPropertyBag<ValueType, KeyType, HashType>* COMPropertyBag<typename ValueType, typename KeyType, HashType>::adopt(HashMapType& hashMap)
 {
     COMPropertyBag* instance = new COMPropertyBag;
     instance->m_hashMap.swap(hashMap);
@@ -95,8 +95,8 @@ COMPropertyBag<ValueType, HashType>* COMPropertyBag<typename ValueType, HashType
 }
 
 // IUnknown ------------------------------------------------------------------------
-template<typename ValueType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::QueryInterface(REFIID riid, void** ppvObject)
+template<typename ValueType, typename KeyType, typename HashType>
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
@@ -112,14 +112,14 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::QueryInterface(RE
     return S_OK;
 }
 
-template<typename ValueType, typename HashType>
-ULONG STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::AddRef()
+template<typename ValueType, typename KeyType, typename HashType>
+ULONG STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::AddRef()
 {
     return ++m_refCount;
 }
 
-template<typename ValueType, typename HashType>
-ULONG STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::Release()
+template<typename ValueType, typename KeyType, typename HashType>
+ULONG STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -130,8 +130,8 @@ ULONG STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::Release()
 
 // IPropertyBag --------------------------------------------------------------------
 
-template<typename ValueType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::Read(LPCOLESTR pszPropName, VARIANT* pVar, IErrorLog* pErrorLog)
+template<typename ValueType, typename KeyType, typename HashType>
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(LPCOLESTR pszPropName, VARIANT* pVar, IErrorLog* pErrorLog)
 {
     if (!pszPropName)
         return E_POINTER;
@@ -151,14 +151,14 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::Read(LPCOLESTR ps
     return S_OK;
 }
 
-template<typename ValueType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::Write(LPCOLESTR pszPropName, VARIANT* pVar)
+template<typename ValueType, typename KeyType, typename HashType>
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Write(LPCOLESTR pszPropName, VARIANT* pVar)
 {
     return E_FAIL;
 }
 
-template<typename ValueType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::Read(ULONG cProperties, PROPBAG2* pPropBag, IErrorLog* pErrorLog, VARIANT* pvarValue, HRESULT* phrError)
+template<typename ValueType, typename KeyType, typename HashType>
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(ULONG cProperties, PROPBAG2* pPropBag, IErrorLog* pErrorLog, VARIANT* pvarValue, HRESULT* phrError)
 {
     if (!pPropBag || !pvarValue || !phrError)
         return E_POINTER;
@@ -176,14 +176,14 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::Read(ULONG cPrope
     return hr;
 }
 
-template<typename ValueType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::Write(ULONG cProperties, PROPBAG2*, VARIANT*)
+template<typename ValueType, typename KeyType, typename HashType>
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Write(ULONG cProperties, PROPBAG2*, VARIANT*)
 {
     return E_NOTIMPL;
 }
 
-template<typename ValueType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::CountProperties(ULONG* pcProperties)
+template<typename ValueType, typename KeyType, typename HashType>
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::CountProperties(ULONG* pcProperties)
 {
     if (!pcProperties)
         return E_POINTER;
@@ -192,8 +192,8 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::CountProperties(U
     return S_OK;
 }
 
-template<typename ValueType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::GetPropertyInfo(ULONG iProperty, ULONG cProperties, PROPBAG2* pPropBag, ULONG* pcProperties)
+template<typename ValueType, typename KeyType, typename HashType>
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPropertyInfo(ULONG iProperty, ULONG cProperties, PROPBAG2* pPropBag, ULONG* pcProperties)
 {
     if (!pPropBag || !pcProperties)
         return E_POINTER;
@@ -224,8 +224,8 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::GetPropertyInfo(U
     return S_OK;
 }
 
-template<typename ValueType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::LoadObject(LPCOLESTR pstrName, DWORD dwHint, IUnknown*, IErrorLog*)
+template<typename ValueType, typename KeyType, typename HashType>
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::LoadObject(LPCOLESTR pstrName, DWORD dwHint, IUnknown*, IErrorLog*)
 {
     return E_NOTIMPL;
 }
