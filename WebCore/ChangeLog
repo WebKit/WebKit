@@ -1,3 +1,21 @@
+2008-12-17  Cary Clark  < caryclark@google.com>
+
+        Reviewed by Darin Adler.
+        Landed by Adam Barth.
+
+        Add ENABLE_TEXT_CARET to permit the ANDROID platform
+        to invalidate and draw the caret in a separate thread.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::clearCaretRectIfNeeded): Body of
+        function does nothing if text caret is disabled.
+        (WebCore::Frame::selectionLayoutChanged): Do nothing
+        if text caret is disabled and the caret only blinked.
+        (WebCore::Frame::caretBlinkTimerFired):
+        (WebCore::Frame::paintCaret):
+        (WebCore::Frame::paintDragCaret): Body of
+        functions does nothing if text caret is disabled.
+
 2008-12-16  Darin Adler  <darin@apple.com>
 
         Reviewed and landed by Cameron Zwarich.

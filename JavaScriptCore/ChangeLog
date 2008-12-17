@@ -1,3 +1,14 @@
+2008-12-17  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Darin Adler.
+        Landed by Adam Barth.
+
+        Add ENABLE_TEXT_CARET to permit the ANDROID platform
+        to invalidate and draw the caret in a separate thread.
+
+        * wtf/Platform.h:
+        Default ENABLE_TEXT_CARET to 1.
+
 2008-12-17  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

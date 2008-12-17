@@ -525,10 +525,12 @@ void Frame::setCaretVisible(bool flag)
 
 void Frame::clearCaretRectIfNeeded()
 {
+#if ENABLE(TEXT_CARET)
     if (d->m_caretPaint) {
         d->m_caretPaint = false;
         selection()->invalidateCaretRect();
     }
+#endif
 }
 
 // Helper function that tells whether a particular node is an element that has an entire
@@ -575,6 +577,7 @@ void Frame::selectionLayoutChanged()
 {
     bool caretRectChanged = selection()->recomputeCaretRect();
 
+#if ENABLE(TEXT_CARET)
     bool shouldBlink = d->m_caretVisible
         && selection()->isCaret() && selection()->isContentEditable();
 
@@ -594,6 +597,10 @@ void Frame::selectionLayoutChanged()
             selection()->invalidateCaretRect();
         }
     }
+#else
+    if (!caretRectChanged)
+        return;
+#endif
 
     RenderView* view = contentRenderer();
     if (!view)
@@ -627,6 +634,7 @@ void Frame::selectionLayoutChanged()
 
 void Frame::caretBlinkTimerFired(Timer<Frame>*)
 {
+#if ENABLE(TEXT_CARET)
     ASSERT(d->m_caretVisible);
     ASSERT(selection()->isCaret());
     bool caretPaint = d->m_caretPaint;
@@ -634,20 +642,25 @@ void Frame::caretBlinkTimerFired(Timer<Frame>*)
         return;
     d->m_caretPaint = !caretPaint;
     selection()->invalidateCaretRect();
+#endif
 }
 
 void Frame::paintCaret(GraphicsContext* p, int tx, int ty, const IntRect& clipRect) const
 {
+#if ENABLE(TEXT_CARET)
     if (d->m_caretPaint && d->m_caretVisible)
         selection()->paintCaret(p, tx, ty, clipRect);
+#endif
 }
 
 void Frame::paintDragCaret(GraphicsContext* p, int tx, int ty, const IntRect& clipRect) const
 {
+#if ENABLE(TEXT_CARET)
     SelectionController* dragCaretController = d->m_page->dragCaretController();
     ASSERT(dragCaretController->selection().isCaret());
     if (dragCaretController->selection().start().node()->document()->frame() == this)
         dragCaretController->paintCaret(p, tx, ty, clipRect);
+#endif
 }
 
 float Frame::zoomFactor() const
