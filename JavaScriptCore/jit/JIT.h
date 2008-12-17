@@ -74,7 +74,6 @@
 #define ARG_funcexp1 static_cast<FuncExprNode*>(ARGS[1])
 #define ARG_regexp1 static_cast<RegExp*>(ARGS[1])
 #define ARG_pni1 static_cast<JSPropertyNameIterator*>(ARGS[1])
-#define ARG_instr4 static_cast<Instruction*>(ARGS[4])
 #define ARG_returnAddress2 static_cast<void*>(ARGS[2])
 #define ARG_codeBlock4 static_cast<CodeBlock*>(ARGS[4])
 

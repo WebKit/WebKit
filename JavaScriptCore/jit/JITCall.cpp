@@ -91,7 +91,6 @@ void JIT::compileOpCallSetupArgs(Instruction* instruction)
     emitPutJITStubArg(X86::ecx, 1);
     emitPutJITStubArgConstant(registerOffset, 2);
     emitPutJITStubArgConstant(argCount, 3);
-    emitPutJITStubArgConstant(instruction, 4);
 }
 
 void JIT::compileOpCallEvalSetupArgs(Instruction* instruction)

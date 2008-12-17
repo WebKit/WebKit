@@ -99,7 +99,7 @@ namespace JSC {
             CodeBlock = -8,
             ScopeChain = -7,
             CallerFrame = -6,
-            ReturnPC = -5,
+            ReturnPC = -5, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
             ReturnValueRegister = -4,
             ArgumentCount = -3,
             Callee = -2,

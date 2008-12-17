@@ -1,3 +1,24 @@
+2008-12-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22837
+        Remove dependency on the bytecode Instruction buffer in Interpreter::cti_op_call_NotJSFunction
+        Part of <rdar://problem/6428342>
+
+        * interpreter/CallFrame.h: Added comment regarding returnPC storing a void*.
+        * interpreter/Interpreter.cpp:
+        (JSC::bytecodeOffsetForPC): We no longer have any cases of the PC
+        being in the instruction stream for JIT, so we can remove the check.
+        (JSC::Interpreter::cti_op_call_NotJSFunction): Use the CTI_RETURN_ADDRESS
+        as the call frame returnPC as it is only necessary for looking up when
+        throwing an exception.
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::): Added comment regarding returnPC storing a void*.
+        * jit/JIT.h: Remove ARG_instr4.
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSetupArgs): Don't pass the instruction pointer.
+
 2008-12-16  Darin Adler  <darin@apple.com>
 
         Reviewed and landed by Cameron Zwarich.

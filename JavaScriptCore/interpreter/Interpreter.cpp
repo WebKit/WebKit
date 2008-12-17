@@ -91,8 +91,6 @@ static const int preferredScriptCheckTimeInterval = 1000;
 static ALWAYS_INLINE unsigned bytecodeOffsetForPC(CodeBlock* codeBlock, void* pc)
 {
 #if ENABLE(JIT)
-    if (pc >= codeBlock->instructions().begin() && pc < codeBlock->instructions().end())
-        return static_cast<Instruction*>(pc) - codeBlock->instructions().begin();
     return codeBlock->getBytecodeIndex(pc);
 #else
     return static_cast<Instruction*>(pc) - codeBlock->instructions().begin();
@@ -4915,7 +4913,7 @@ JSValue* Interpreter::cti_op_call_NotJSFunction(CTI_ARGS)
         CallFrame* previousCallFrame = ARG_callFrame;
         CallFrame* callFrame = CallFrame::create(previousCallFrame->registers() + registerOffset);
 
-        callFrame->init(0, ARG_instr4 + 1, previousCallFrame->scopeChain(), previousCallFrame, 0, argCount, 0);
+        callFrame->init(0, static_cast<Instruction*>(CTI_RETURN_ADDRESS), previousCallFrame->scopeChain(), previousCallFrame, 0, argCount, 0);
         ARG_setCallFrame(callFrame);
 
         Register* argv = ARG_callFrame->registers() - RegisterFile::CallFrameHeaderSize - argCount;

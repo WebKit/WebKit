@@ -124,7 +124,7 @@ namespace JSC  {
             setCodeBlock(codeBlock);
             setScopeChain(scopeChain);
             setCallerFrame(callerFrame);
-            this[RegisterFile::ReturnPC] = vPC;
+            this[RegisterFile::ReturnPC] = vPC; // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
             this[RegisterFile::ReturnValueRegister] = returnValueRegister;
             setArgumentCount(argc); // original argument count (for the sake of the "arguments" object)
             setCallee(function);
