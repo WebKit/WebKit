@@ -1,5 +1,12 @@
 2008-12-16  Stephanie Lewis  <slewis@apple.com>
 
+        Another build fix.
+
+        * platform/text/AtomicString.h:
+        (WebCore::AtomicString::AtomicString):
+
+2008-12-16  Stephanie Lewis  <slewis@apple.com>
+
         Windows Build Fix.
 
         * platform/text/AtomicString.h:
