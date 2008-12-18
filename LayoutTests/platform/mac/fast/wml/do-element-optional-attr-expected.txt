@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x110
-  RenderBlock {wml} at (0,0) size 800x110
-    RenderBlock {card} at (8,16) size 784x86
+layer at (0,0) size 800x111
+  RenderBlock {wml} at (0,0) size 800x111
+    RenderBlock {card} at (8,16) size 784x87
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 181x18
           text run at (0,0) width 181: "Test for do element in WML"
       RenderBlock {p} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 731x18
           text run at (0,0) width 731: "There are two do element in this card, the first one will display, the second won't because its optional attribute is true"
-      RenderBlock (anonymous) at (0,68) size 784x18
-        RenderButton {do} at (0,0) size 32x18 [bgcolor=#D3D3D3]
-          RenderBlock (anonymous) at (0,0) size 32x18
-            RenderInline {go} at (0,0) size 0x0
-            RenderText {#text} at (0,0) size 0x0
-            RenderText at (0,0) size 32x18
-              text run at (0,0) width 32: "Do 1"
+      RenderBlock (anonymous) at (0,68) size 784x19
+        RenderButton {do} at (0,1) size 41x18 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,2) size 25x13
+            RenderBlock {go} at (0,0) size 25x0
+            RenderBlock (anonymous) at (0,0) size 25x13
+              RenderText at (0,0) size 25x13
+                text run at (0,0) width 25: "Do 1"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

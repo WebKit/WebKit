@@ -1,3 +1,31 @@
+2008-12-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Update results after fixing wml.css, to be more in-line with html4.css.
+
+        Fixes all <do> related tests, to correctly appear as buttons,
+        not just text with gray background, as it used to be.
+
+        * platform/mac/fast/wml/do-element-optional-attr-expected.checksum:
+        * platform/mac/fast/wml/do-element-optional-attr-expected.png:
+        * platform/mac/fast/wml/do-element-optional-attr-expected.txt:
+        * platform/mac/fast/wml/do-shadow-expected.checksum:
+        * platform/mac/fast/wml/do-shadow-expected.png:
+        * platform/mac/fast/wml/do-shadow-expected.txt:
+        * platform/mac/fast/wml/do-template-expected.checksum:
+        * platform/mac/fast/wml/do-template-expected.png:
+        * platform/mac/fast/wml/do-template-expected.txt:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.checksum:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.png:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.txt:
+        * platform/mac/fast/wml/err-invalid-variable-name-expected.checksum:
+        * platform/mac/fast/wml/err-invalid-variable-name-expected.png:
+        * platform/mac/fast/wml/err-invalid-variable-name-expected.txt:
+        * platform/mac/fast/wml/err-samename-do-expected.checksum:
+        * platform/mac/fast/wml/err-samename-do-expected.png:
+        * platform/mac/fast/wml/err-samename-do-expected.txt:
+
 2008-12-17  Feng Qian <feng@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

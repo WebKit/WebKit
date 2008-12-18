@@ -1,3 +1,16 @@
+2008-12-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22866
+
+        wml.css is based on an older copy of html4.css. Synchronize them.
+        Remove all entries, that are irrelevant for WML.
+
+        Fix <do> appearance: should behave like HTMLs <button>.
+
+        * css/wml.css:
+
 2008-12-17  Yury Semikhatsky <yurys@google.com>
 
         Reviewed by Timothy Hatcher.

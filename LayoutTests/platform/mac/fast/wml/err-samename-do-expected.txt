@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x192
-  RenderBlock {html} at (0,0) size 800x192
-    RenderBody {body} at (8,16) size 784x168
+layer at (0,0) size 800x193
+  RenderBlock {html} at (0,0) size 800x193
+    RenderBody {body} at (8,16) size 784x169
       RenderBlock {parsererror} at (16,0) size 752x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
         RenderBlock {h3} at (18,20) size 716x22
           RenderText {#text} at (0,0) size 324x22
@@ -16,12 +16,12 @@ layer at (0,0) size 800x192
       RenderBlock (anonymous) at (0,150) size 784x0
         RenderInline {wml} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,150) size 784x18
-        RenderBlock {card} at (8,0) size 768x18
-          RenderButton {do} at (0,14) size 0x0 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,150) size 784x19
+        RenderBlock {card} at (8,0) size 768x19
+          RenderButton {do} at (0,0) size 16x15 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,7) size 0x0
               RenderInline {refresh} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,176) size 784x0
+      RenderBlock (anonymous) at (0,177) size 784x0
         RenderInline {wml} at (0,0) size 0x0
