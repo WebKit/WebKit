@@ -203,33 +203,35 @@ ALWAYS_INLINE JIT::Jump JIT::emitNakedCall(void* function)
     return nakedCall;
 }
 
+#if USE(JIT_STUB_ARGUMENT_REGISTER)
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
 #if PLATFORM(X86_64)
-#if USE(FAST_CALL_CTI_ARGUMENT) || !USE(CTI_ARGUMENT)
-#error "CTI_ARGUMENT configuration not supported."
-#endif
     move(X86::esp, X86::edi);
 #else
-#if USE(CTI_ARGUMENT)
-#if USE(FAST_CALL_CTI_ARGUMENT)
     move(X86::esp, X86::ecx);
-#else
-    storePtr(X86::esp, X86::esp);
 #endif
-#endif
-#endif
-    emitPutCTIParam(callFrameRegister, CTI_ARGS_callFrame);
+    emitPutCTIParam(callFrameRegister, STUB_ARGS_callFrame);
 }
-
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {
-#if USE(CTI_ARGUMENT) && USE(FAST_CALL_CTI_ARGUMENT)
     move(X86::esp, X86::ecx);
-    addPtr(Imm32(4), X86::ecx);
-#endif
+    addPtr(Imm32(sizeof(void*)), X86::ecx);
 }
-
+#elif USE(JIT_STUB_ARGUMENT_STACK)
+ALWAYS_INLINE void JIT::restoreArgumentReference()
+{
+    storePtr(X86::esp, X86::esp);
+    emitPutCTIParam(callFrameRegister, STUB_ARGS_callFrame);
+}
+ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
+#else // JIT_STUB_ARGUMENT_VA_LIST
+ALWAYS_INLINE void JIT::restoreArgumentReference()
+{
+    emitPutCTIParam(callFrameRegister, STUB_ARGS_callFrame);
+}
+ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
+#endif
 
 ALWAYS_INLINE JIT::Jump JIT::emitCTICall_internal(void* helper)
 {

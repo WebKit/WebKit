@@ -427,16 +427,36 @@
 #define ENABLE_TEXT_CARET 1
 #endif
 
-/* CTI only supports x86 at the moment, and has only been tested on Mac and Windows. */
-#if !defined(ENABLE_JIT) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
-#define ENABLE_JIT 1
-#define ENABLE_JIT_OPTIMIZE_CALL 1
-#define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
-#define ENABLE_JIT_OPTIMIZE_ARITHMETIC 1
+#if !defined(ENABLE_JIT)
+// x86-64 support is under development.
+#if PLATFORM(X86_64) && PLATFORM(MAC)
+    #define ENABLE_JIT 0
+    #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 0
+// The JIT is tested & working on x86 Mac
+#elif PLATFORM(X86) && PLATFORM(MAC)
+    #define ENABLE_JIT 1
+    #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
+    #define ENABLE_JIT_OPTIMIZE_CALL 1
+    #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
+    #define ENABLE_JIT_OPTIMIZE_ARITHMETIC 1
+// The JIT is tested & working on x86 Windows
+#elif PLATFORM(X86) && PLATFORM(WIN)
+    #define ENABLE_JIT 1
+    #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
+    #define ENABLE_JIT_OPTIMIZE_CALL 1
+    #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
+    #define ENABLE_JIT_OPTIMIZE_ARITHMETIC 1
 #endif
-#if !defined(ENABLE_JIT) && PLATFORM(X86_64) && PLATFORM(MAC)
-#define ENABLE_JIT 0
-#define WTF_USE_CTI_ARGUMENT 0
+#endif
+
+#if ENABLE(JIT)
+#if !(USE(JIT_STUB_ARGUMENT_VA_LIST) || USE(JIT_STUB_ARGUMENT_REGISTER) || USE(JIT_STUB_ARGUMENT_STACK))
+#error Please define one of the JIT_STUB_ARGUMENT settings.
+#elif (USE(JIT_STUB_ARGUMENT_VA_LIST) && USE(JIT_STUB_ARGUMENT_REGISTER)) \
+   || (USE(JIT_STUB_ARGUMENT_VA_LIST) && USE(JIT_STUB_ARGUMENT_STACK)) \
+   || (USE(JIT_STUB_ARGUMENT_REGISTER) && USE(JIT_STUB_ARGUMENT_STACK))
+#error Please don't define more than one of the JIT_STUB_ARGUMENT settings.
+#endif
 #endif
 
 /* WREC supports x86 & x86-64, and has been tested on Mac and Windows ('cept on 64-bit on Mac). */
@@ -463,12 +483,6 @@
 #if !ENABLE(XSLT)
 #define WTF_USE_QXMLSTREAM 1
 #endif
-#endif
-
-/* Use "fastcall" calling convention on MSVC */
-#if COMPILER(MSVC)
-#define WTF_USE_FAST_CALL_CTI_ARGUMENT 1
-#define WTF_USE_CTI_ARGUMENT 1
 #endif
 
 #if !PLATFORM(QT)

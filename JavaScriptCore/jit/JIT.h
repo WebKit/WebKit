@@ -40,20 +40,20 @@
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
 
-#define CTI_ARGS_code 0x0C
-#define CTI_ARGS_registerFile 0x0D
-#define CTI_ARGS_callFrame 0x0E
-#define CTI_ARGS_exception 0x0F
-#define CTI_ARGS_profilerReference 0x10
-#define CTI_ARGS_globalData 0x11
+#define STUB_ARGS_code 0x0C
+#define STUB_ARGS_registerFile 0x0D
+#define STUB_ARGS_callFrame 0x0E
+#define STUB_ARGS_exception 0x0F
+#define STUB_ARGS_profilerReference 0x10
+#define STUB_ARGS_globalData 0x11
 
-#define ARG_callFrame static_cast<CallFrame*>(ARGS[CTI_ARGS_callFrame])
-#define ARG_registerFile static_cast<RegisterFile*>(ARGS[CTI_ARGS_registerFile])
-#define ARG_exception static_cast<JSValue**>(ARGS[CTI_ARGS_exception])
-#define ARG_profilerReference static_cast<Profiler**>(ARGS[CTI_ARGS_profilerReference])
-#define ARG_globalData static_cast<JSGlobalData*>(ARGS[CTI_ARGS_globalData])
+#define ARG_callFrame static_cast<CallFrame*>(ARGS[STUB_ARGS_callFrame])
+#define ARG_registerFile static_cast<RegisterFile*>(ARGS[STUB_ARGS_registerFile])
+#define ARG_exception static_cast<JSValue**>(ARGS[STUB_ARGS_exception])
+#define ARG_profilerReference static_cast<Profiler**>(ARGS[STUB_ARGS_profilerReference])
+#define ARG_globalData static_cast<JSGlobalData*>(ARGS[STUB_ARGS_globalData])
 
-#define ARG_setCallFrame(newCallFrame) (ARGS[CTI_ARGS_callFrame] = (newCallFrame))
+#define ARG_setCallFrame(newCallFrame) (ARGS[STUB_ARGS_callFrame] = (newCallFrame))
 
 #define ARG_src1 static_cast<JSValue*>(ARGS[1])
 #define ARG_src2 static_cast<JSValue*>(ARGS[2])
@@ -77,7 +77,7 @@
 #define ARG_returnAddress2 static_cast<void*>(ARGS[2])
 #define ARG_codeBlock4 static_cast<CodeBlock*>(ARGS[4])
 
-#define CTI_RETURN_ADDRESS_SLOT (ARGS[-1])
+#define STUB_RETURN_ADDRESS_SLOT (ARGS[-1])
 
 namespace JSC {
 
@@ -97,13 +97,13 @@ namespace JSC {
     struct PolymorphicAccessStructureList;
     struct StructureStubInfo;
 
-    typedef JSValue* (SFX_CALL *CTIHelper_j)(CTI_ARGS);
-    typedef JSObject* (SFX_CALL *CTIHelper_o)(CTI_ARGS);
-    typedef JSPropertyNameIterator* (SFX_CALL *CTIHelper_p)(CTI_ARGS);
-    typedef void (SFX_CALL *CTIHelper_v)(CTI_ARGS);
-    typedef void* (SFX_CALL *CTIHelper_s)(CTI_ARGS);
-    typedef int (SFX_CALL *CTIHelper_b)(CTI_ARGS);
-    typedef VoidPtrPair (SFX_CALL *CTIHelper_2)(CTI_ARGS);
+    typedef JSValue* (JIT_STUB *CTIHelper_j)(STUB_ARGS);
+    typedef JSObject* (JIT_STUB *CTIHelper_o)(STUB_ARGS);
+    typedef JSPropertyNameIterator* (JIT_STUB *CTIHelper_p)(STUB_ARGS);
+    typedef void (JIT_STUB *CTIHelper_v)(STUB_ARGS);
+    typedef void* (JIT_STUB *CTIHelper_s)(STUB_ARGS);
+    typedef int (JIT_STUB *CTIHelper_b)(STUB_ARGS);
+    typedef VoidPtrPair (JIT_STUB *CTIHelper_2)(STUB_ARGS);
 
     struct CallRecord {
         MacroAssembler::Jump from;
@@ -219,13 +219,18 @@ namespace JSC {
         // will compress the displacement, and we may not be able to fit a repatched offset.
         static const int repatchGetByIdDefaultOffset = 256;
 
-#if USE(FAST_CALL_CTI_ARGUMENT)
-        static const int ctiArgumentInitSize = 2;
-#elif USE(CTI_ARGUMENT)
-        static const int ctiArgumentInitSize = 4;
+#if USE(JIT_STUB_ARGUMENT_REGISTER)
+#if PLATFORM(X86_64)
+        static const int ctiArgumentInitSize = 3;
 #else
+        static const int ctiArgumentInitSize = 2;
+#endif
+#elif USE(JIT_STUB_ARGUMENT_STACK)
+        static const int ctiArgumentInitSize = 4;
+#else // JIT_STUB_ARGUMENT_VA_LIST
         static const int ctiArgumentInitSize = 0;
 #endif
+
         // These architecture specific value are used to enable repatching - see comment on op_put_by_id.
         static const int repatchOffsetPutByIdStructure = 7;
         static const int repatchOffsetPutByIdPropertyMapOffset = 22;

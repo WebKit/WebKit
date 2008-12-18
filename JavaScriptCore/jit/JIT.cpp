@@ -46,8 +46,8 @@ using namespace std;
 
 namespace JSC {
 
-COMPILE_ASSERT(CTI_ARGS_code == 0xC, CTI_ARGS_code_is_C);
-COMPILE_ASSERT(CTI_ARGS_callFrame == 0xE, CTI_ARGS_callFrame_is_E);
+COMPILE_ASSERT(STUB_ARGS_code == 0xC, STUB_ARGS_code_is_C);
+COMPILE_ASSERT(STUB_ARGS_callFrame == 0xE, STUB_ARGS_callFrame_is_E);
 
 #if COMPILER(GCC) && PLATFORM(X86)
 
@@ -67,8 +67,8 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushl %ebx" "\n"
     "subl $0x1c, %esp" "\n"
     "movl $512, %esi" "\n"
-    "movl 0x38(%esp), %edi" "\n" // Ox38 = 0x0E * 4, 0x0E = CTI_ARGS_callFrame (see assertion above)
-    "call *0x30(%esp)" "\n" // Ox30 = 0x0C * 4, 0x0C = CTI_ARGS_code (see assertion above)
+    "movl 0x38(%esp), %edi" "\n" // Ox38 = 0x0E * 4, 0x0E = STUB_ARGS_callFrame (see assertion above)
+    "call *0x30(%esp)" "\n" // Ox30 = 0x0C * 4, 0x0C = STUB_ARGS_code (see assertion above)
     "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
     "popl %edi" "\n"
@@ -80,15 +80,15 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 asm(
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-#if USE(CTI_ARGUMENT)
-#if USE(FAST_CALL_CTI_ARGUMENT)
-    "movl %esp, %ecx" "\n"
+#if USE(JIT_STUB_ARGUMENT_VA_LIST)
+    "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPvz) "\n"
 #else
+#if USE(JIT_STUB_ARGUMENT_REGISTER)
+    "movl %esp, %ecx" "\n"
+#else // JIT_STUB_ARGUMENT_STACK
     "movl %esp, 0(%esp)" "\n"
 #endif
     "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPPv) "\n"
-#else
-    "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPvz) "\n"
 #endif
     "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
@@ -116,8 +116,8 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushq %rbx" "\n"
     "subq $0x38, %rsp" "\n"
     "movq $512, %r12" "\n"
-    "movq 0x70(%rsp), %r13" "\n" // Ox70 = 0x0E * 8, 0x0E = CTI_ARGS_callFrame (see assertion above)
-    "call *0x60(%rsp)" "\n" // Ox60 = 0x0C * 8, 0x0C = CTI_ARGS_code (see assertion above)
+    "movq 0x70(%rsp), %r13" "\n" // Ox70 = 0x0E * 8, 0x0E = STUB_ARGS_callFrame (see assertion above)
+    "call *0x60(%rsp)" "\n" // Ox60 = 0x0C * 8, 0x0C = STUB_ARGS_code (see assertion above)
     "addq $0x38, %rsp" "\n"
     "popq %rbx" "\n"
     "popq %r13" "\n"
@@ -129,11 +129,11 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 asm(
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-#if USE(CTI_ARGUMENT) && !USE(FAST_CALL_CTI_ARGUMENT)
+#if USE(JIT_STUB_ARGUMENT_REGISTER)
     "movq %rsp, %rdi" "\n"
     "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPPv) "\n"
-#else
-#error "CTI_ARGUMENT configuration not supported."
+#else // JIT_STUB_ARGUMENT_VA_LIST or JIT_STUB_ARGUMENT_STACK
+#error "JIT_STUB_ARGUMENT configuration not supported."
 #endif
     "addq $0x38, %rsp" "\n"
     "popq %rbx" "\n"
@@ -159,7 +159,7 @@ extern "C" {
             mov esi, 512;
             mov ecx, esp;
             mov edi, [esp + 0x38];
-            call [esp + 0x30]; // Ox30 = 0x0C * 4, 0x0C = CTI_ARGS_code (see assertion above)
+            call [esp + 0x30]; // Ox30 = 0x0C * 4, 0x0C = STUB_ARGS_code (see assertion above)
             add esp, 0x1c;
             pop ebx;
             pop edi;
@@ -172,7 +172,11 @@ extern "C" {
     __declspec(naked) void ctiVMThrowTrampoline()
     {
         __asm {
+#if USE(JIT_STUB_ARGUMENT_REGISTER)
             mov ecx, esp;
+#else // JIT_STUB_ARGUMENT_VA_LIST or JIT_STUB_ARGUMENT_STACK
+#error "JIT_STUB_ARGUMENT configuration not supported."
+#endif
             call JSC::Interpreter::cti_vm_throw;
             add esp, 0x1c;
             pop ebx;
@@ -1076,7 +1080,7 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_push_new_scope);
         }
         case op_catch: {
-            emitGetCTIParam(CTI_ARGS_callFrame, callFrameRegister);
+            emitGetCTIParam(STUB_ARGS_callFrame, callFrameRegister);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_catch);
         }
@@ -1269,7 +1273,7 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_convert_this);
         }
         case op_profile_will_call: {
-            emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
+            emitGetCTIParam(STUB_ARGS_profilerReference, X86::eax);
             Jump noProfiler = jzPtr(Address(X86::eax));
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, X86::eax);
             emitCTICall(Interpreter::cti_op_profile_will_call);
@@ -1278,7 +1282,7 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_profile_will_call);
         }
         case op_profile_did_call: {
-            emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
+            emitGetCTIParam(STUB_ARGS_profilerReference, X86::eax);
             Jump noProfiler = jzPtr(Address(X86::eax));
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, X86::eax);
             emitCTICall(Interpreter::cti_op_profile_did_call);
@@ -1805,7 +1809,7 @@ void JIT::privateCompile()
         // In the case of a fast linked call, we do not set this up in the caller.
         emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 
-        emitGetCTIParam(CTI_ARGS_registerFile, X86::eax);
+        emitGetCTIParam(STUB_ARGS_registerFile, X86::eax);
         addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, X86::edx);
         
         slowRegisterFileCheck = jg32(X86::edx, Address(X86::eax, FIELD_OFFSET(RegisterFile, m_end)));

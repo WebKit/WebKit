@@ -1,3 +1,125 @@
+2008-12-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Just a tidy up - rename & refactor some the #defines configuring the JIT.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::cti_op_convert_this):
+        (JSC::Interpreter::cti_op_end):
+        (JSC::Interpreter::cti_op_add):
+        (JSC::Interpreter::cti_op_pre_inc):
+        (JSC::Interpreter::cti_timeout_check):
+        (JSC::Interpreter::cti_register_file_check):
+        (JSC::Interpreter::cti_op_loop_if_less):
+        (JSC::Interpreter::cti_op_loop_if_lesseq):
+        (JSC::Interpreter::cti_op_new_object):
+        (JSC::Interpreter::cti_op_put_by_id_generic):
+        (JSC::Interpreter::cti_op_get_by_id_generic):
+        (JSC::Interpreter::cti_op_put_by_id):
+        (JSC::Interpreter::cti_op_put_by_id_second):
+        (JSC::Interpreter::cti_op_put_by_id_fail):
+        (JSC::Interpreter::cti_op_get_by_id):
+        (JSC::Interpreter::cti_op_get_by_id_second):
+        (JSC::Interpreter::cti_op_get_by_id_self_fail):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list_full):
+        (JSC::Interpreter::cti_op_get_by_id_proto_fail):
+        (JSC::Interpreter::cti_op_get_by_id_array_fail):
+        (JSC::Interpreter::cti_op_get_by_id_string_fail):
+        (JSC::Interpreter::cti_op_instanceof):
+        (JSC::Interpreter::cti_op_del_by_id):
+        (JSC::Interpreter::cti_op_mul):
+        (JSC::Interpreter::cti_op_new_func):
+        (JSC::Interpreter::cti_op_call_JSFunction):
+        (JSC::Interpreter::cti_op_call_arityCheck):
+        (JSC::Interpreter::cti_vm_dontLazyLinkCall):
+        (JSC::Interpreter::cti_vm_lazyLinkCall):
+        (JSC::Interpreter::cti_op_push_activation):
+        (JSC::Interpreter::cti_op_call_NotJSFunction):
+        (JSC::Interpreter::cti_op_create_arguments):
+        (JSC::Interpreter::cti_op_create_arguments_no_params):
+        (JSC::Interpreter::cti_op_tear_off_activation):
+        (JSC::Interpreter::cti_op_tear_off_arguments):
+        (JSC::Interpreter::cti_op_profile_will_call):
+        (JSC::Interpreter::cti_op_profile_did_call):
+        (JSC::Interpreter::cti_op_ret_scopeChain):
+        (JSC::Interpreter::cti_op_new_array):
+        (JSC::Interpreter::cti_op_resolve):
+        (JSC::Interpreter::cti_op_construct_JSConstruct):
+        (JSC::Interpreter::cti_op_construct_NotJSConstruct):
+        (JSC::Interpreter::cti_op_get_by_val):
+        (JSC::Interpreter::cti_op_resolve_func):
+        (JSC::Interpreter::cti_op_sub):
+        (JSC::Interpreter::cti_op_put_by_val):
+        (JSC::Interpreter::cti_op_put_by_val_array):
+        (JSC::Interpreter::cti_op_lesseq):
+        (JSC::Interpreter::cti_op_loop_if_true):
+        (JSC::Interpreter::cti_op_negate):
+        (JSC::Interpreter::cti_op_resolve_base):
+        (JSC::Interpreter::cti_op_resolve_skip):
+        (JSC::Interpreter::cti_op_resolve_global):
+        (JSC::Interpreter::cti_op_div):
+        (JSC::Interpreter::cti_op_pre_dec):
+        (JSC::Interpreter::cti_op_jless):
+        (JSC::Interpreter::cti_op_not):
+        (JSC::Interpreter::cti_op_jtrue):
+        (JSC::Interpreter::cti_op_post_inc):
+        (JSC::Interpreter::cti_op_eq):
+        (JSC::Interpreter::cti_op_lshift):
+        (JSC::Interpreter::cti_op_bitand):
+        (JSC::Interpreter::cti_op_rshift):
+        (JSC::Interpreter::cti_op_bitnot):
+        (JSC::Interpreter::cti_op_resolve_with_base):
+        (JSC::Interpreter::cti_op_new_func_exp):
+        (JSC::Interpreter::cti_op_mod):
+        (JSC::Interpreter::cti_op_less):
+        (JSC::Interpreter::cti_op_neq):
+        (JSC::Interpreter::cti_op_post_dec):
+        (JSC::Interpreter::cti_op_urshift):
+        (JSC::Interpreter::cti_op_bitxor):
+        (JSC::Interpreter::cti_op_new_regexp):
+        (JSC::Interpreter::cti_op_bitor):
+        (JSC::Interpreter::cti_op_call_eval):
+        (JSC::Interpreter::cti_op_throw):
+        (JSC::Interpreter::cti_op_get_pnames):
+        (JSC::Interpreter::cti_op_next_pname):
+        (JSC::Interpreter::cti_op_push_scope):
+        (JSC::Interpreter::cti_op_pop_scope):
+        (JSC::Interpreter::cti_op_typeof):
+        (JSC::Interpreter::cti_op_is_undefined):
+        (JSC::Interpreter::cti_op_is_boolean):
+        (JSC::Interpreter::cti_op_is_number):
+        (JSC::Interpreter::cti_op_is_string):
+        (JSC::Interpreter::cti_op_is_object):
+        (JSC::Interpreter::cti_op_is_function):
+        (JSC::Interpreter::cti_op_stricteq):
+        (JSC::Interpreter::cti_op_nstricteq):
+        (JSC::Interpreter::cti_op_to_jsnumber):
+        (JSC::Interpreter::cti_op_in):
+        (JSC::Interpreter::cti_op_push_new_scope):
+        (JSC::Interpreter::cti_op_jmp_scopes):
+        (JSC::Interpreter::cti_op_put_by_index):
+        (JSC::Interpreter::cti_op_switch_imm):
+        (JSC::Interpreter::cti_op_switch_char):
+        (JSC::Interpreter::cti_op_switch_string):
+        (JSC::Interpreter::cti_op_del_by_val):
+        (JSC::Interpreter::cti_op_put_getter):
+        (JSC::Interpreter::cti_op_put_setter):
+        (JSC::Interpreter::cti_op_new_error):
+        (JSC::Interpreter::cti_op_debug):
+        (JSC::Interpreter::cti_vm_throw):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReference):
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        * wtf/Platform.h:
+
 2008-12-18  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.
