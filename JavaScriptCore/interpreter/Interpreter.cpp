@@ -1314,11 +1314,11 @@ NEVER_INLINE void Interpreter::uncachePutByID(CodeBlock* codeBlock, Instruction*
 
 static size_t countPrototypeChainEntriesAndCheckForProxies(CallFrame* callFrame, JSValue* baseValue, const PropertySlot& slot)
 {
-    JSObject* o = asObject(baseValue);
+    JSCell* cell = asCell(baseValue);
     size_t count = 0;
 
-    while (slot.slotBase() != o) {
-        JSValue* v = o->structure()->prototypeForLookup(callFrame);
+    while (slot.slotBase() != cell) {
+        JSValue* v = cell->structure()->prototypeForLookup(callFrame);
 
         // If we didn't find slotBase in baseValue's prototype chain, then baseValue
         // must be a proxy for another object.
@@ -1326,14 +1326,14 @@ static size_t countPrototypeChainEntriesAndCheckForProxies(CallFrame* callFrame,
         if (v->isNull())
             return 0;
 
-        o = asObject(v);
+        cell = asCell(v);
 
-        // Heavy access to a prototype is a good indication that it's not being
-        // used as a dictionary.
-        if (o->structure()->isDictionary()) {
-            RefPtr<Structure> transition = Structure::fromDictionaryTransition(o->structure());
-            o->setStructure(transition.release());
-            asObject(baseValue)->structure()->setCachedPrototypeChain(0);
+        // Since we're accessing a prototype in a loop, it's a good bet that it
+        // should not be treated as a dictionary.
+        if (cell->structure()->isDictionary()) {
+            RefPtr<Structure> transition = Structure::fromDictionaryTransition(cell->structure());
+            asObject(cell)->setStructure(transition.release());
+            cell->structure()->setCachedPrototypeChain(0);
         }
 
         ++count;
@@ -1407,8 +1407,8 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
 
         JSObject* baseObject = asObject(slot.slotBase());
 
-        // Heavy access to a prototype is a good indication that it's not being
-        // used as a dictionary.
+        // Since we're accessing a prototype in a loop, it's a good bet that it
+        // should not be treated as a dictionary.
         if (baseObject->structure()->isDictionary()) {
             RefPtr<Structure> transition = Structure::fromDictionaryTransition(baseObject->structure());
             baseObject->setStructure(transition.release());
@@ -4178,12 +4178,12 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
 
         JSObject* slotBaseObject = asObject(slot.slotBase());
 
-        // Heavy access to a prototype is a good indication that it's not being
-        // used as a dictionary.
+        // Since we're accessing a prototype in a loop, it's a good bet that it
+        // should not be treated as a dictionary.
         if (slotBaseObject->structure()->isDictionary()) {
             RefPtr<Structure> transition = Structure::fromDictionaryTransition(slotBaseObject->structure());
             slotBaseObject->setStructure(transition.release());
-            asObject(baseValue)->structure()->setCachedPrototypeChain(0);
+            asCell(baseValue)->structure()->setCachedPrototypeChain(0);
         }
         
         stubInfo->initGetByIdProto(structure, slotBaseObject->structure());
@@ -4554,7 +4554,7 @@ JSValue* Interpreter::cti_op_get_by_id_self_fail(CTI_ARGS)
 
     CHECK_FOR_EXCEPTION();
 
-    if (baseValue->isObject()
+    if (!JSImmediate::isImmediate(baseValue)
         && slot.isCacheable()
         && !asCell(baseValue)->structure()->isDictionary()
         && slot.slotBase() == baseValue) {
@@ -4628,7 +4628,7 @@ JSValue* Interpreter::cti_op_get_by_id_proto_list(CTI_ARGS)
 
     CHECK_FOR_EXCEPTION();
 
-    if (!baseValue->isObject() || !slot.isCacheable() || asCell(baseValue)->structure()->isDictionary()) {
+    if (JSImmediate::isImmediate(baseValue) || !slot.isCacheable() || asCell(baseValue)->structure()->isDictionary()) {
         ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_fail));
         return result;
     }
@@ -4643,12 +4643,12 @@ JSValue* Interpreter::cti_op_get_by_id_proto_list(CTI_ARGS)
     if (slot.slotBase() == baseValue)
         ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_fail));
     else if (slot.slotBase() == asCell(baseValue)->structure()->prototypeForLookup(callFrame)) {
-        // Heavy access to a prototype is a good indication that it's not being
-        // used as a dictionary.
+        // Since we're accessing a prototype in a loop, it's a good bet that it
+        // should not be treated as a dictionary.
         if (slotBaseObject->structure()->isDictionary()) {
             RefPtr<Structure> transition = Structure::fromDictionaryTransition(slotBaseObject->structure());
             slotBaseObject->setStructure(transition.release());
-            asObject(baseValue)->structure()->setCachedPrototypeChain(0);
+            asCell(baseValue)->structure()->setCachedPrototypeChain(0);
         }
 
         int listIndex;
