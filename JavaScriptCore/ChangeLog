@@ -1,3 +1,27 @@
+2008-12-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        print("Hello, 64-bit jitted world!");
+        Get hello-world working through the JIT, on x86-64.
+
+        * assembler/X86Assembler.h:
+            Fix encoding of opcode + RegisterID format instructions for 64-bit.
+        * interpreter/Interpreter.cpp:
+        * interpreter/Interpreter.h:
+            Make VoidPtrPair actually be a pair of void*s.
+            (Possibly should make this change for 32-bit Mac platforms, too - but won't change 32-bit behaviour in this patch).
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+            Provide names for the timeoutCheckRegister & callFrameRegister on x86-64,
+            force x86-64 ctiTrampoline arguments onto the stack,
+            implement the asm trampolines for x86-64,
+            implement the restoreArgumentReference methods for x86-64 calling conventions.
+        * jit/JITCall.cpp:
+        * jit/JITInlineMethods.h:
+        * wtf/Platform.h:
+            Add switch settings to ENABLE(JIT), on PLATFORM(X86_64) (currently still disabled).
+
 2008-12-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

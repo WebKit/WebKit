@@ -4210,6 +4210,12 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
 
 #endif
 
+#if USE(CTI_ARGUMENT)
+#define SETUP_VL_ARGS
+#else
+#define SETUP_VL_ARGS va_list vl_args; va_start(vl_args, args)
+#endif
+
 #ifndef NDEBUG
 
 extern "C" {
@@ -4239,13 +4245,13 @@ struct StackHack {
     void* savedReturnAddress;
 };
 
-#define CTI_STACK_HACK() va_list vl_args; va_start(vl_args, args); StackHack stackHack(&CTI_RETURN_ADDRESS_SLOT)
+#define CTI_STACK_HACK() SETUP_VL_ARGS; StackHack stackHack(&CTI_RETURN_ADDRESS_SLOT)
 #define CTI_SET_RETURN_ADDRESS(address) stackHack.savedReturnAddress = address
 #define CTI_RETURN_ADDRESS stackHack.savedReturnAddress
 
 #else
 
-#define CTI_STACK_HACK() va_list vl_args; va_start(vl_args, args)
+#define CTI_STACK_HACK() SETUP_VL_ARGS
 #define CTI_SET_RETURN_ADDRESS(address) ctiSetReturnAddress(&CTI_RETURN_ADDRESS_SLOT, address);
 #define CTI_RETURN_ADDRESS CTI_RETURN_ADDRESS_SLOT
 
@@ -4276,8 +4282,7 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
 #define VM_THROW_EXCEPTION_2() \
     do { \
         VM_THROW_EXCEPTION_AT_END(); \
-        VoidPtrPairValue pair = {{ 0, 0 }}; \
-        return pair.i; \
+        RETURN_PAIR(0, 0); \
     } while (0)
 #define VM_THROW_EXCEPTION_AT_END() \
     returnToThrowTrampoline(ARG_globalData, CTI_RETURN_ADDRESS, CTI_RETURN_ADDRESS)
@@ -4848,8 +4853,7 @@ VoidPtrPair Interpreter::cti_op_call_arityCheck(CTI_ARGS)
             // moved the call frame forward.
             ARG_setCallFrame(oldCallFrame);
             throwStackOverflowError(oldCallFrame, ARG_globalData, ARG_returnAddress2, CTI_RETURN_ADDRESS);
-            VoidPtrPairValue pair = {{ 0, 0 }};
-            return pair.i;
+            RETURN_PAIR(0, 0);
         }
 
         Register* argv = r - RegisterFile::CallFrameHeaderSize - omittedArgCount;
@@ -4860,8 +4864,7 @@ VoidPtrPair Interpreter::cti_op_call_arityCheck(CTI_ARGS)
         callFrame->setCallerFrame(oldCallFrame);
     }
 
-    VoidPtrPairValue pair = {{ newCodeBlock, callFrame }};
-    return pair.i;
+    RETURN_PAIR(newCodeBlock, callFrame);
 }
 
 void* Interpreter::cti_vm_dontLazyLinkCall(CTI_ARGS)
@@ -5160,8 +5163,7 @@ VoidPtrPair Interpreter::cti_op_resolve_func(CTI_ARGS)
             JSValue* result = slot.getValue(callFrame, ident);
             CHECK_FOR_EXCEPTION_AT_END();
 
-            VoidPtrPairValue pair = {{ thisObj, asPointer(result) }};
-            return pair.i;
+            RETURN_PAIR(thisObj, asPointer(result));
         }
         ++iter;
     } while (iter != end);
@@ -5441,8 +5443,7 @@ VoidPtrPair Interpreter::cti_op_post_inc(CTI_ARGS)
     JSValue* number = v->toJSNumber(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
 
-    VoidPtrPairValue pair = {{ asPointer(number), asPointer(jsNumber(ARG_globalData, number->uncheckedGetNumber() + 1)) }};
-    return pair.i;
+    RETURN_PAIR(asPointer(number), asPointer(jsNumber(ARG_globalData, number->uncheckedGetNumber() + 1)));
 }
 
 JSValue* Interpreter::cti_op_eq(CTI_ARGS)
@@ -5557,8 +5558,7 @@ VoidPtrPair Interpreter::cti_op_resolve_with_base(CTI_ARGS)
             JSValue* result = slot.getValue(callFrame, ident);
             CHECK_FOR_EXCEPTION_AT_END();
 
-            VoidPtrPairValue pair = {{ base, asPointer(result) }};
-            return pair.i;
+            RETURN_PAIR(base, asPointer(result));
         }
         ++iter;
     } while (iter != end);
@@ -5626,8 +5626,7 @@ VoidPtrPair Interpreter::cti_op_post_dec(CTI_ARGS)
     JSValue* number = v->toJSNumber(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
 
-    VoidPtrPairValue pair = {{ asPointer(number), asPointer(jsNumber(ARG_globalData, number->uncheckedGetNumber() - 1)) }};
-    return pair.i;
+    RETURN_PAIR(asPointer(number), asPointer(jsNumber(ARG_globalData, number->uncheckedGetNumber() - 1)));
 }
 
 JSValue* Interpreter::cti_op_urshift(CTI_ARGS)

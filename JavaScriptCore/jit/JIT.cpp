@@ -109,13 +109,38 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 asm(
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
-    "int3" "\n"
+    "pushq %rbp" "\n"
+    "movq %rsp, %rbp" "\n"
+    "pushq %r12" "\n"
+    "pushq %r13" "\n"
+    "pushq %rbx" "\n"
+    "subq $0x38, %rsp" "\n"
+    "movq $512, %r12" "\n"
+    "movq 0x70(%rsp), %r13" "\n" // Ox70 = 0x0E * 8, 0x0E = CTI_ARGS_callFrame (see assertion above)
+    "call *0x60(%rsp)" "\n" // Ox60 = 0x0C * 8, 0x0C = CTI_ARGS_code (see assertion above)
+    "addq $0x38, %rsp" "\n"
+    "popq %rbx" "\n"
+    "popq %r13" "\n"
+    "popq %r12" "\n"
+    "popq %rbp" "\n"
+    "ret" "\n"
 );
 
 asm(
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-    "int3" "\n"
+#if USE(CTI_ARGUMENT) && !USE(FAST_CALL_CTI_ARGUMENT)
+    "movq %rsp, %rdi" "\n"
+    "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPPv) "\n"
+#else
+#error "CTI_ARGUMENT configuration not supported."
+#endif
+    "addq $0x38, %rsp" "\n"
+    "popq %rbx" "\n"
+    "popq %r13" "\n"
+    "popq %r12" "\n"
+    "popq %rbp" "\n"
+    "ret" "\n"
 );
     
 #elif COMPILER(MSVC)
@@ -228,9 +253,9 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
 
 void JIT::emitSlowScriptCheck()
 {
-    Jump skipTimeout = jnzSub32(Imm32(1), X86::esi);
+    Jump skipTimeout = jnzSub32(Imm32(1), timeoutCheckRegister);
     emitCTICall(Interpreter::cti_timeout_check);
-    move(X86::eax, X86::esi);
+    move(X86::eax, timeoutCheckRegister);
     skipTimeout.link(this);
 
     killLastResultRegister();
@@ -969,12 +994,21 @@ void JIT::privateCompileMainPass()
         case op_throw: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, X86::ecx);
             emitCTICall(Interpreter::cti_op_throw);
-            __ addl_ir(0x1c, X86::esp);
-            __ pop_r(X86::ebx);
-            __ pop_r(X86::edi);
-            __ pop_r(X86::esi);
-            __ pop_r(X86::ebp);
-            __ ret();
+#if PLATFORM(X86_64)
+            addPtr(Imm32(0x38), X86::esp);
+            pop(X86::ebx);
+            pop(X86::r13);
+            pop(X86::r12);
+            pop(X86::ebp);
+            ret();
+#else
+            addPtr(Imm32(0x1c), X86::esp);
+            pop(X86::ebx);
+            pop(X86::edi);
+            pop(X86::esi);
+            pop(X86::ebp);
+            ret();
+#endif
             NEXT_OPCODE(op_throw);
         }
         case op_get_pnames: {
@@ -1852,6 +1886,7 @@ void JIT::privateCompile()
         info.hotPathBegin = X86Assembler::getRelocatedAddress(code, m_propertyAccessCompilationInfo[i].hotPathBegin);
     }
 #endif
+#if ENABLE(JIT_OPTIMIZE_CALL)
     for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
         info.callReturnLocation = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].callReturnLocation);
@@ -1859,6 +1894,7 @@ void JIT::privateCompile()
         info.hotPathOther = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].hotPathOther);
         info.coldPathOther = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].coldPathOther);
     }
+#endif
 
     m_codeBlock->setJITCode(codeRef);
 }

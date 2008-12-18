@@ -434,6 +434,10 @@
 #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
 #define ENABLE_JIT_OPTIMIZE_ARITHMETIC 1
 #endif
+#if !defined(ENABLE_JIT) && PLATFORM(X86_64) && PLATFORM(MAC)
+#define ENABLE_JIT 0
+#define WTF_USE_CTI_ARGUMENT 0
+#endif
 
 /* WREC supports x86 & x86-64, and has been tested on Mac and Windows ('cept on 64-bit on Mac). */
 #if (!defined(ENABLE_WREC) && PLATFORM(X86) && PLATFORM(MAC)) \

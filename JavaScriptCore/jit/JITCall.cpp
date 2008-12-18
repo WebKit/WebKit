@@ -73,13 +73,13 @@ void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode
 
 void JIT::compileOpCallInitializeCallFrame()
 {
-    store32(X86::edx, Address(X86::edi, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
+    store32(X86::edx, Address(callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
 
     loadPtr(Address(X86::ecx, FIELD_OFFSET(JSFunction, m_scopeChain) + FIELD_OFFSET(ScopeChain, m_node)), X86::edx); // newScopeChain
 
-    storePtr(ImmPtr(noValue()), Address(X86::edi, RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register))));
-    storePtr(X86::ecx, Address(X86::edi, RegisterFile::Callee * static_cast<int>(sizeof(Register))));
-    storePtr(X86::edx, Address(X86::edi, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register))));
+    storePtr(ImmPtr(noValue()), Address(callFrameRegister, RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register))));
+    storePtr(X86::ecx, Address(callFrameRegister, RegisterFile::Callee * static_cast<int>(sizeof(Register))));
+    storePtr(X86::edx, Address(callFrameRegister, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register))));
 }
 
 void JIT::compileOpCallSetupArgs(Instruction* instruction)
@@ -157,8 +157,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
     }
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
-    storePtr(X86::edi, Address(X86::edi, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));
-    addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), X86::edi);
+    storePtr(callFrameRegister, Address(callFrameRegister, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));
+    addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
     move(Imm32(argCount), X86::edx);
 
     emitNakedCall(m_interpreter->m_ctiVirtualCall);

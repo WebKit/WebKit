@@ -80,16 +80,26 @@ namespace JSC {
 #define SFX_CALL
 #endif
 
-#endif
+#endif // USE(FAST_CALL_CTI_ARGUMENT)
 
+
+// FIXME: Could this be #if COMPILER(MSVC)? - or #if !PLATFORM(MAC)?
+#if !PLATFORM(X86_64)
     typedef uint64_t VoidPtrPair;
-
-    typedef union
-    {
+    union VoidPtrPairValue {
         struct { void* first; void* second; } s;
         VoidPtrPair i;
-    } VoidPtrPairValue;
+    };
+#define RETURN_PAIR(a,b) VoidPtrPairValue pair = {{ a, b }}; return pair.i
+#else
+    struct VoidPtrPair {
+        void* first;
+        void* second;
+    };
+#define RETURN_PAIR(a,b) VoidPtrPair pair = { a, b }; return pair
 #endif
+
+#endif // ENABLE(JIT)
 
     enum DebugHookID {
         WillExecuteProgram,

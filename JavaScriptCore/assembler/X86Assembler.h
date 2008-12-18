@@ -1117,8 +1117,8 @@ private:
         void oneByteOp(OneByteOpcodeID opcode, RegisterID reg)
         {
             m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, 0, 0);
-            m_buffer.putByteUnchecked(opcode + reg);
+            emitRexIfNeeded(0, 0, reg);
+            m_buffer.putByteUnchecked(opcode + (reg & 7));
         }
 
         void oneByteOp(OneByteOpcodeID opcode, int reg, RegisterID rm)
@@ -1205,8 +1205,8 @@ private:
         void oneByteOp64(OneByteOpcodeID opcode, RegisterID reg)
         {
             m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(reg, 0, 0);
-            m_buffer.putByteUnchecked(opcode + reg);
+            emitRexW(0, 0, reg);
+            m_buffer.putByteUnchecked(opcode + (reg & 7));
         }
 
         void oneByteOp64(OneByteOpcodeID opcode, int reg, RegisterID rm)
