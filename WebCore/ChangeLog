@@ -1,3 +1,57 @@
+2008-12-18  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22888
+
+        To avoid future dependency issues, all the TransformOperations and Animation related files need to be moved to platform
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/animation: Added.
+        * platform/animation/Animation.cpp: Copied from WebCore/rendering/style/Animation.cpp.
+        * platform/animation/Animation.h: Copied from WebCore/rendering/style/Animation.h.
+        * platform/animation/AnimationList.cpp: Copied from WebCore/rendering/style/AnimationList.cpp.
+        * platform/animation/AnimationList.h: Copied from WebCore/rendering/style/AnimationList.h.
+        * platform/animation/TimingFunction.h: Copied from WebCore/rendering/style/TimingFunction.h.
+        * platform/graphics/AffineTransform.cpp: Removed.
+        * platform/graphics/AffineTransform.h: Removed.
+        * platform/graphics/transforms: Added.
+        * platform/graphics/transforms/AffineTransform.cpp: Copied from WebCore/platform/graphics/AffineTransform.cpp.
+        * platform/graphics/transforms/AffineTransform.h: Copied from WebCore/platform/graphics/AffineTransform.h.
+        * platform/graphics/transforms/IdentityTransformOperation.h: Copied from WebCore/rendering/style/IdentityTransformOperation.h.
+        * platform/graphics/transforms/MatrixTransformOperation.cpp: Copied from WebCore/rendering/style/MatrixTransformOperation.cpp.
+        * platform/graphics/transforms/MatrixTransformOperation.h: Copied from WebCore/rendering/style/MatrixTransformOperation.h.
+        * platform/graphics/transforms/RotateTransformOperation.cpp: Copied from WebCore/rendering/style/RotateTransformOperation.cpp.
+        * platform/graphics/transforms/RotateTransformOperation.h: Copied from WebCore/rendering/style/RotateTransformOperation.h.
+        * platform/graphics/transforms/ScaleTransformOperation.cpp: Copied from WebCore/rendering/style/ScaleTransformOperation.cpp.
+        * platform/graphics/transforms/ScaleTransformOperation.h: Copied from WebCore/rendering/style/ScaleTransformOperation.h.
+        * platform/graphics/transforms/SkewTransformOperation.cpp: Copied from WebCore/rendering/style/SkewTransformOperation.cpp.
+        * platform/graphics/transforms/SkewTransformOperation.h: Copied from WebCore/rendering/style/SkewTransformOperation.h.
+        * platform/graphics/transforms/TransformOperation.h: Copied from WebCore/rendering/style/TransformOperation.h.
+        * platform/graphics/transforms/TransformOperations.cpp: Copied from WebCore/rendering/style/TransformOperations.cpp.
+        * platform/graphics/transforms/TransformOperations.h: Copied from WebCore/rendering/style/TransformOperations.h.
+        * platform/graphics/transforms/TranslateTransformOperation.cpp: Copied from WebCore/rendering/style/TranslateTransformOperation.cpp.
+        * platform/graphics/transforms/TranslateTransformOperation.h: Copied from WebCore/rendering/style/TranslateTransformOperation.h.
+        * rendering/style/Animation.cpp: Removed.
+        * rendering/style/Animation.h: Removed.
+        * rendering/style/AnimationList.cpp: Removed.
+        * rendering/style/AnimationList.h: Removed.
+        * rendering/style/IdentityTransformOperation.h: Removed.
+        * rendering/style/MatrixTransformOperation.cpp: Removed.
+        * rendering/style/MatrixTransformOperation.h: Removed.
+        * rendering/style/RotateTransformOperation.cpp: Removed.
+        * rendering/style/RotateTransformOperation.h: Removed.
+        * rendering/style/ScaleTransformOperation.cpp: Removed.
+        * rendering/style/ScaleTransformOperation.h: Removed.
+        * rendering/style/SkewTransformOperation.cpp: Removed.
+        * rendering/style/SkewTransformOperation.h: Removed.
+        * rendering/style/TimingFunction.h: Removed.
+        * rendering/style/TransformOperation.h: Removed.
+        * rendering/style/TransformOperations.cpp: Removed.
+        * rendering/style/TransformOperations.h: Removed.
+        * rendering/style/TranslateTransformOperation.cpp: Removed.
+        * rendering/style/TranslateTransformOperation.h: Removed.
+
 2008-12-18  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

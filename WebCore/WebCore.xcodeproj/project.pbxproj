@@ -580,6 +580,27 @@
 		46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DA0B0D60170028EE36 /* aliasCursor.png */; };
 		46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DB0B0D60170028EE36 /* noDropCursor.png */; };
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
+		49E911C30EF86D47009D0CAF /* AffineTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911B30EF86D47009D0CAF /* AffineTransform.cpp */; };
+		49E911C40EF86D47009D0CAF /* AffineTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911B40EF86D47009D0CAF /* AffineTransform.h */; };
+		49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */; };
+		49E911C60EF86D47009D0CAF /* MatrixTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911B60EF86D47009D0CAF /* MatrixTransformOperation.cpp */; };
+		49E911C70EF86D47009D0CAF /* MatrixTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911B70EF86D47009D0CAF /* MatrixTransformOperation.h */; };
+		49E911C80EF86D47009D0CAF /* RotateTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911B80EF86D47009D0CAF /* RotateTransformOperation.cpp */; };
+		49E911C90EF86D47009D0CAF /* RotateTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911B90EF86D47009D0CAF /* RotateTransformOperation.h */; };
+		49E911CA0EF86D47009D0CAF /* ScaleTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911BA0EF86D47009D0CAF /* ScaleTransformOperation.cpp */; };
+		49E911CB0EF86D47009D0CAF /* ScaleTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911BB0EF86D47009D0CAF /* ScaleTransformOperation.h */; };
+		49E911CC0EF86D47009D0CAF /* SkewTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911BC0EF86D47009D0CAF /* SkewTransformOperation.cpp */; };
+		49E911CD0EF86D47009D0CAF /* SkewTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911BD0EF86D47009D0CAF /* SkewTransformOperation.h */; };
+		49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911BE0EF86D47009D0CAF /* TransformOperation.h */; };
+		49E911CF0EF86D47009D0CAF /* TransformOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911BF0EF86D47009D0CAF /* TransformOperations.cpp */; };
+		49E911D00EF86D47009D0CAF /* TransformOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911C00EF86D47009D0CAF /* TransformOperations.h */; };
+		49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911C10EF86D47009D0CAF /* TranslateTransformOperation.cpp */; };
+		49E911D20EF86D47009D0CAF /* TranslateTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911C20EF86D47009D0CAF /* TranslateTransformOperation.h */; };
+		49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E912A50EFAC906009D0CAF /* Animation.cpp */; };
+		49E912AB0EFAC906009D0CAF /* Animation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E912A60EFAC906009D0CAF /* Animation.h */; };
+		49E912AC0EFAC906009D0CAF /* AnimationList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E912A70EFAC906009D0CAF /* AnimationList.cpp */; };
+		49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E912A80EFAC906009D0CAF /* AnimationList.h */; };
+		49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E912A90EFAC906009D0CAF /* TimingFunction.h */; };
 		4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */; };
 		4B17CBC90D945B370053F183 /* AccessibilityObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B17CBC80D945B370053F183 /* AccessibilityObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B17CBCC0D945B910053F183 /* AccessibilityObjectWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B17CBCA0D945B910053F183 /* AccessibilityObjectWrapper.mm */; };
@@ -3277,8 +3298,6 @@
 		B26554EB0B80D74900A50EC3 /* RenderSVGTextPath.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554E90B80D74900A50EC3 /* RenderSVGTextPath.h */; };
 		B266CD4D0C3AEC6500EB08D2 /* JSSVGException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */; };
 		B266CD4E0C3AEC6500EB08D2 /* JSSVGException.h in Headers */ = {isa = PBXBuildFile; fileRef = B266CD4C0C3AEC6500EB08D2 /* JSSVGException.h */; };
-		B27535560B053814002CE64F /* AffineTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535270B053814002CE64F /* AffineTransform.cpp */; };
-		B27535570B053814002CE64F /* AffineTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535280B053814002CE64F /* AffineTransform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535580B053814002CE64F /* AffineTransformCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352A0B053814002CE64F /* AffineTransformCG.cpp */; };
 		B27535590B053814002CE64F /* FloatPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352B0B053814002CE64F /* FloatPointCG.cpp */; };
 		B275355A0B053814002CE64F /* FloatRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352C0B053814002CE64F /* FloatRectCG.cpp */; };
@@ -3747,8 +3766,6 @@
 		BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1DEA4F0E268EB60083A73F /* JSDocumentFragmentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1DEA4E0E268EB60083A73F /* JSDocumentFragmentCustom.cpp */; };
 		BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */; };
-		BC2271D90E82407300E7F975 /* AnimationList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2271D70E82407300E7F975 /* AnimationList.cpp */; };
-		BC2271DA0E82407300E7F975 /* AnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2271D80E82407300E7F975 /* AnimationList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2272870E82E70700E7F975 /* StyleReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272860E82E70700E7F975 /* StyleReflection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272A10E82E87C00E7F975 /* CursorData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272AC0E82E8F300E7F975 /* CursorList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3860,20 +3877,6 @@
 		BC5EB72A0E81DE8100B25965 /* StyleMarqueeData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB7280E81DE8100B25965 /* StyleMarqueeData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB74D0E81E06700B25965 /* StyleMultiColData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB74B0E81E06700B25965 /* StyleMultiColData.cpp */; };
 		BC5EB74E0E81E06700B25965 /* StyleMultiColData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB74C0E81E06700B25965 /* StyleMultiColData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC5EB77E0E81EBA600B25965 /* TransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB77D0E81EBA600B25965 /* TransformOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC5EB7810E81EC5B00B25965 /* IdentityTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB7800E81EC5B00B25965 /* IdentityTransformOperation.h */; settings = {ATTRIBUTES = (); }; };
-		BC5EB7830E81ECF200B25965 /* ScaleTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB7820E81ECF200B25965 /* ScaleTransformOperation.h */; settings = {ATTRIBUTES = (); }; };
-		BC5EB79D0E81ED5F00B25965 /* RotateTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB79C0E81ED5F00B25965 /* RotateTransformOperation.h */; settings = {ATTRIBUTES = (); }; };
-		BC5EB79F0E81EDD200B25965 /* SkewTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB79E0E81EDD200B25965 /* SkewTransformOperation.h */; settings = {ATTRIBUTES = (); }; };
-		BC5EB7A30E81EEAF00B25965 /* RotateTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB7A00E81EEAF00B25965 /* RotateTransformOperation.cpp */; };
-		BC5EB7A40E81EEAF00B25965 /* ScaleTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB7A10E81EEAF00B25965 /* ScaleTransformOperation.cpp */; };
-		BC5EB7A50E81EEAF00B25965 /* SkewTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB7A20E81EEAF00B25965 /* SkewTransformOperation.cpp */; };
-		BC5EB7CC0E81EF5D00B25965 /* TranslateTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB7CA0E81EF5D00B25965 /* TranslateTransformOperation.cpp */; };
-		BC5EB7CD0E81EF5D00B25965 /* TranslateTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB7CB0E81EF5D00B25965 /* TranslateTransformOperation.h */; settings = {ATTRIBUTES = (); }; };
-		BC5EB7F70E81F05700B25965 /* MatrixTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB7F50E81F05700B25965 /* MatrixTransformOperation.cpp */; };
-		BC5EB7F80E81F05700B25965 /* MatrixTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB7F60E81F05700B25965 /* MatrixTransformOperation.h */; settings = {ATTRIBUTES = (); }; };
-		BC5EB80A0E81F11200B25965 /* TransformOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB8080E81F11200B25965 /* TransformOperations.cpp */; };
-		BC5EB80B0E81F11200B25965 /* TransformOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB8090E81F11200B25965 /* TransformOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB80F0E81F2CE00B25965 /* StyleTransformData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB80D0E81F2CE00B25965 /* StyleTransformData.cpp */; };
 		BC5EB8100E81F2CE00B25965 /* StyleTransformData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB80E0E81F2CE00B25965 /* StyleTransformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB8B80E8201BD00B25965 /* StyleFlexibleBoxData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB8B60E8201BD00B25965 /* StyleFlexibleBoxData.cpp */; };
@@ -3887,9 +3890,6 @@
 		BC5EB9790E82069200B25965 /* CounterContent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB9780E82069200B25965 /* CounterContent.h */; };
 		BC5EB9800E82072500B25965 /* ContentData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB97E0E82072500B25965 /* ContentData.cpp */; };
 		BC5EB9810E82072500B25965 /* ContentData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB97F0E82072500B25965 /* ContentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC5EB9B80E820CA000B25965 /* TimingFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB9B70E820CA000B25965 /* TimingFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC5EBA0C0E823A1C00B25965 /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EBA0A0E823A1C00B25965 /* Animation.cpp */; };
-		BC5EBA0D0E823A1C00B25965 /* Animation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EBA0B0E823A1C00B25965 /* Animation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EBA100E823E4700B25965 /* KeyframeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EBA0E0E823E4700B25965 /* KeyframeList.cpp */; };
 		BC5EBA110E823E4700B25965 /* KeyframeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EBA0F0E823E4700B25965 /* KeyframeList.h */; };
 		BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6049CB0DB560C200204739 /* CSSCanvasValue.h */; };
@@ -5417,6 +5417,27 @@
 		46F9D5DA0B0D60170028EE36 /* aliasCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aliasCursor.png; sourceTree = "<group>"; };
 		46F9D5DB0B0D60170028EE36 /* noDropCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noDropCursor.png; sourceTree = "<group>"; };
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
+		49E911B30EF86D47009D0CAF /* AffineTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AffineTransform.cpp; path = transforms/AffineTransform.cpp; sourceTree = "<group>"; };
+		49E911B40EF86D47009D0CAF /* AffineTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AffineTransform.h; path = transforms/AffineTransform.h; sourceTree = "<group>"; };
+		49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IdentityTransformOperation.h; path = transforms/IdentityTransformOperation.h; sourceTree = "<group>"; };
+		49E911B60EF86D47009D0CAF /* MatrixTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MatrixTransformOperation.cpp; path = transforms/MatrixTransformOperation.cpp; sourceTree = "<group>"; };
+		49E911B70EF86D47009D0CAF /* MatrixTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MatrixTransformOperation.h; path = transforms/MatrixTransformOperation.h; sourceTree = "<group>"; };
+		49E911B80EF86D47009D0CAF /* RotateTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RotateTransformOperation.cpp; path = transforms/RotateTransformOperation.cpp; sourceTree = "<group>"; };
+		49E911B90EF86D47009D0CAF /* RotateTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RotateTransformOperation.h; path = transforms/RotateTransformOperation.h; sourceTree = "<group>"; };
+		49E911BA0EF86D47009D0CAF /* ScaleTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScaleTransformOperation.cpp; path = transforms/ScaleTransformOperation.cpp; sourceTree = "<group>"; };
+		49E911BB0EF86D47009D0CAF /* ScaleTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScaleTransformOperation.h; path = transforms/ScaleTransformOperation.h; sourceTree = "<group>"; };
+		49E911BC0EF86D47009D0CAF /* SkewTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkewTransformOperation.cpp; path = transforms/SkewTransformOperation.cpp; sourceTree = "<group>"; };
+		49E911BD0EF86D47009D0CAF /* SkewTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkewTransformOperation.h; path = transforms/SkewTransformOperation.h; sourceTree = "<group>"; };
+		49E911BE0EF86D47009D0CAF /* TransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformOperation.h; path = transforms/TransformOperation.h; sourceTree = "<group>"; };
+		49E911BF0EF86D47009D0CAF /* TransformOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformOperations.cpp; path = transforms/TransformOperations.cpp; sourceTree = "<group>"; };
+		49E911C00EF86D47009D0CAF /* TransformOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformOperations.h; path = transforms/TransformOperations.h; sourceTree = "<group>"; };
+		49E911C10EF86D47009D0CAF /* TranslateTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TranslateTransformOperation.cpp; path = transforms/TranslateTransformOperation.cpp; sourceTree = "<group>"; };
+		49E911C20EF86D47009D0CAF /* TranslateTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TranslateTransformOperation.h; path = transforms/TranslateTransformOperation.h; sourceTree = "<group>"; };
+		49E912A50EFAC906009D0CAF /* Animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Animation.cpp; path = animation/Animation.cpp; sourceTree = "<group>"; };
+		49E912A60EFAC906009D0CAF /* Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Animation.h; path = animation/Animation.h; sourceTree = "<group>"; };
+		49E912A70EFAC906009D0CAF /* AnimationList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationList.cpp; path = animation/AnimationList.cpp; sourceTree = "<group>"; };
+		49E912A80EFAC906009D0CAF /* AnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationList.h; path = animation/AnimationList.h; sourceTree = "<group>"; };
+		49E912A90EFAC906009D0CAF /* TimingFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimingFunction.h; path = animation/TimingFunction.h; sourceTree = "<group>"; };
 		4A8C96EA0BE69032004EEFF0 /* SelectionControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SelectionControllerMac.mm; path = mac/SelectionControllerMac.mm; sourceTree = "<group>"; };
 		4B17CBC80D945B370053F183 /* AccessibilityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObject.h; sourceTree = "<group>"; };
 		4B17CBCA0D945B910053F183 /* AccessibilityObjectWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectWrapper.mm; sourceTree = "<group>"; };
@@ -7966,8 +7987,6 @@
 		B26554E90B80D74900A50EC3 /* RenderSVGTextPath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGTextPath.h; sourceTree = "<group>"; };
 		B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGException.cpp; sourceTree = "<group>"; };
 		B266CD4C0C3AEC6500EB08D2 /* JSSVGException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGException.h; sourceTree = "<group>"; };
-		B27535270B053814002CE64F /* AffineTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AffineTransform.cpp; sourceTree = "<group>"; };
-		B27535280B053814002CE64F /* AffineTransform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AffineTransform.h; sourceTree = "<group>"; };
 		B275352A0B053814002CE64F /* AffineTransformCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AffineTransformCG.cpp; sourceTree = "<group>"; };
 		B275352B0B053814002CE64F /* FloatPointCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPointCG.cpp; sourceTree = "<group>"; };
 		B275352C0B053814002CE64F /* FloatRectCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRectCG.cpp; sourceTree = "<group>"; };
@@ -8445,8 +8464,6 @@
 		BC1A37AA097C715F0019F3D8 /* DOMViews.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMViews.h; sourceTree = "<group>"; };
 		BC1DEA4E0E268EB60083A73F /* JSDocumentFragmentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentFragmentCustom.cpp; sourceTree = "<group>"; };
 		BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValueCustom.cpp; sourceTree = "<group>"; };
-		BC2271D70E82407300E7F975 /* AnimationList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationList.cpp; path = style/AnimationList.cpp; sourceTree = "<group>"; };
-		BC2271D80E82407300E7F975 /* AnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationList.h; path = style/AnimationList.h; sourceTree = "<group>"; };
 		BC2272860E82E70700E7F975 /* StyleReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleReflection.h; path = style/StyleReflection.h; sourceTree = "<group>"; };
 		BC2272A10E82E87C00E7F975 /* CursorData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorData.h; path = style/CursorData.h; sourceTree = "<group>"; };
 		BC2272AC0E82E8F300E7F975 /* CursorList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorList.h; path = style/CursorList.h; sourceTree = "<group>"; };
@@ -8560,20 +8577,6 @@
 		BC5EB7280E81DE8100B25965 /* StyleMarqueeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleMarqueeData.h; path = style/StyleMarqueeData.h; sourceTree = "<group>"; };
 		BC5EB74B0E81E06700B25965 /* StyleMultiColData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleMultiColData.cpp; path = style/StyleMultiColData.cpp; sourceTree = "<group>"; };
 		BC5EB74C0E81E06700B25965 /* StyleMultiColData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleMultiColData.h; path = style/StyleMultiColData.h; sourceTree = "<group>"; };
-		BC5EB77D0E81EBA600B25965 /* TransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformOperation.h; path = style/TransformOperation.h; sourceTree = "<group>"; };
-		BC5EB7800E81EC5B00B25965 /* IdentityTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IdentityTransformOperation.h; path = style/IdentityTransformOperation.h; sourceTree = "<group>"; };
-		BC5EB7820E81ECF200B25965 /* ScaleTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScaleTransformOperation.h; path = style/ScaleTransformOperation.h; sourceTree = "<group>"; };
-		BC5EB79C0E81ED5F00B25965 /* RotateTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RotateTransformOperation.h; path = style/RotateTransformOperation.h; sourceTree = "<group>"; };
-		BC5EB79E0E81EDD200B25965 /* SkewTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkewTransformOperation.h; path = style/SkewTransformOperation.h; sourceTree = "<group>"; };
-		BC5EB7A00E81EEAF00B25965 /* RotateTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RotateTransformOperation.cpp; path = style/RotateTransformOperation.cpp; sourceTree = "<group>"; };
-		BC5EB7A10E81EEAF00B25965 /* ScaleTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScaleTransformOperation.cpp; path = style/ScaleTransformOperation.cpp; sourceTree = "<group>"; };
-		BC5EB7A20E81EEAF00B25965 /* SkewTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkewTransformOperation.cpp; path = style/SkewTransformOperation.cpp; sourceTree = "<group>"; };
-		BC5EB7CA0E81EF5D00B25965 /* TranslateTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TranslateTransformOperation.cpp; path = style/TranslateTransformOperation.cpp; sourceTree = "<group>"; };
-		BC5EB7CB0E81EF5D00B25965 /* TranslateTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TranslateTransformOperation.h; path = style/TranslateTransformOperation.h; sourceTree = "<group>"; };
-		BC5EB7F50E81F05700B25965 /* MatrixTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MatrixTransformOperation.cpp; path = style/MatrixTransformOperation.cpp; sourceTree = "<group>"; };
-		BC5EB7F60E81F05700B25965 /* MatrixTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MatrixTransformOperation.h; path = style/MatrixTransformOperation.h; sourceTree = "<group>"; };
-		BC5EB8080E81F11200B25965 /* TransformOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformOperations.cpp; path = style/TransformOperations.cpp; sourceTree = "<group>"; };
-		BC5EB8090E81F11200B25965 /* TransformOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformOperations.h; path = style/TransformOperations.h; sourceTree = "<group>"; };
 		BC5EB80D0E81F2CE00B25965 /* StyleTransformData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleTransformData.cpp; path = style/StyleTransformData.cpp; sourceTree = "<group>"; };
 		BC5EB80E0E81F2CE00B25965 /* StyleTransformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleTransformData.h; path = style/StyleTransformData.h; sourceTree = "<group>"; };
 		BC5EB8B60E8201BD00B25965 /* StyleFlexibleBoxData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleFlexibleBoxData.cpp; path = style/StyleFlexibleBoxData.cpp; sourceTree = "<group>"; };
@@ -8587,9 +8590,6 @@
 		BC5EB9780E82069200B25965 /* CounterContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CounterContent.h; path = style/CounterContent.h; sourceTree = "<group>"; };
 		BC5EB97E0E82072500B25965 /* ContentData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentData.cpp; path = style/ContentData.cpp; sourceTree = "<group>"; };
 		BC5EB97F0E82072500B25965 /* ContentData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentData.h; path = style/ContentData.h; sourceTree = "<group>"; };
-		BC5EB9B70E820CA000B25965 /* TimingFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimingFunction.h; path = style/TimingFunction.h; sourceTree = "<group>"; };
-		BC5EBA0A0E823A1C00B25965 /* Animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Animation.cpp; path = style/Animation.cpp; sourceTree = "<group>"; };
-		BC5EBA0B0E823A1C00B25965 /* Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Animation.h; path = style/Animation.h; sourceTree = "<group>"; };
 		BC5EBA0E0E823E4700B25965 /* KeyframeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyframeList.cpp; path = style/KeyframeList.cpp; sourceTree = "<group>"; };
 		BC5EBA0F0E823E4700B25965 /* KeyframeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyframeList.h; path = style/KeyframeList.h; sourceTree = "<group>"; };
 		BC5EC1760A507E3E006007F5 /* view-source.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "view-source.css"; sourceTree = "<group>"; };
@@ -9553,6 +9553,41 @@
 				316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */,
 				316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */,
 				316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */,
+			);
+			name = animation;
+			sourceTree = "<group>";
+		};
+		49E911B20EF86D27009D0CAF /* transforms */ = {
+			isa = PBXGroup;
+			children = (
+				49E911B30EF86D47009D0CAF /* AffineTransform.cpp */,
+				49E911B40EF86D47009D0CAF /* AffineTransform.h */,
+				49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */,
+				49E911B60EF86D47009D0CAF /* MatrixTransformOperation.cpp */,
+				49E911B70EF86D47009D0CAF /* MatrixTransformOperation.h */,
+				49E911B80EF86D47009D0CAF /* RotateTransformOperation.cpp */,
+				49E911B90EF86D47009D0CAF /* RotateTransformOperation.h */,
+				49E911BA0EF86D47009D0CAF /* ScaleTransformOperation.cpp */,
+				49E911BB0EF86D47009D0CAF /* ScaleTransformOperation.h */,
+				49E911BC0EF86D47009D0CAF /* SkewTransformOperation.cpp */,
+				49E911BD0EF86D47009D0CAF /* SkewTransformOperation.h */,
+				49E911BE0EF86D47009D0CAF /* TransformOperation.h */,
+				49E911BF0EF86D47009D0CAF /* TransformOperations.cpp */,
+				49E911C00EF86D47009D0CAF /* TransformOperations.h */,
+				49E911C10EF86D47009D0CAF /* TranslateTransformOperation.cpp */,
+				49E911C20EF86D47009D0CAF /* TranslateTransformOperation.h */,
+			);
+			name = transforms;
+			sourceTree = "<group>";
+		};
+		49E912A40EFAC8E6009D0CAF /* animation */ = {
+			isa = PBXGroup;
+			children = (
+				49E912A50EFAC906009D0CAF /* Animation.cpp */,
+				49E912A60EFAC906009D0CAF /* Animation.h */,
+				49E912A70EFAC906009D0CAF /* AnimationList.cpp */,
+				49E912A80EFAC906009D0CAF /* AnimationList.h */,
+				49E912A90EFAC906009D0CAF /* TimingFunction.h */,
 			);
 			name = animation;
 			sourceTree = "<group>";
@@ -12826,8 +12861,7 @@
 				B27535290B053814002CE64F /* cg */,
 				A75E8B7F0E1DE2B0007F2481 /* filters */,
 				B27535490B053814002CE64F /* mac */,
-				B27535270B053814002CE64F /* AffineTransform.cpp */,
-				B27535280B053814002CE64F /* AffineTransform.h */,
+				49E911B20EF86D27009D0CAF /* transforms */,
 				A89943270B42338700D7C802 /* BitmapImage.cpp */,
 				A89943260B42338700D7C802 /* BitmapImage.h */,
 				B27535380B053814002CE64F /* Color.cpp */,
@@ -13237,10 +13271,6 @@
 		BC8C8FAA0DDCD2F200B592F4 /* style */ = {
 			isa = PBXGroup;
 			children = (
-				BC5EBA0A0E823A1C00B25965 /* Animation.cpp */,
-				BC5EBA0B0E823A1C00B25965 /* Animation.h */,
-				BC2271D70E82407300E7F975 /* AnimationList.cpp */,
-				BC2271D80E82407300E7F975 /* AnimationList.h */,
 				BC5EB91D0E82040800B25965 /* BindingURI.cpp */,
 				BC5EB91E0E82040800B25965 /* BindingURI.h */,
 				BC5EB5E00E81BE8700B25965 /* BorderData.h */,
@@ -13256,29 +13286,20 @@
 				BC22746E0E83664500E7F975 /* DataRef.h */,
 				BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */,
 				BC5EB69D0E81DAEB00B25965 /* FillLayer.h */,
-				BC5EB7800E81EC5B00B25965 /* IdentityTransformOperation.h */,
 				BC5EBA0E0E823E4700B25965 /* KeyframeList.cpp */,
 				BC5EBA0F0E823E4700B25965 /* KeyframeList.h */,
-				BC5EB7F50E81F05700B25965 /* MatrixTransformOperation.cpp */,
-				BC5EB7F60E81F05700B25965 /* MatrixTransformOperation.h */,
 				BCEF43DF0E674110001C1287 /* NinePieceImage.cpp */,
 				BCEF43DC0E674012001C1287 /* NinePieceImage.h */,
 				BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */,
 				BC8C8FAB0DDCD31B00B592F4 /* RenderStyle.cpp */,
 				BC8C8FAC0DDCD31B00B592F4 /* RenderStyle.h */,
 				BC5EB6670E81CB7100B25965 /* RenderStyleConstants.h */,
-				BC5EB7A00E81EEAF00B25965 /* RotateTransformOperation.cpp */,
-				BC5EB79C0E81ED5F00B25965 /* RotateTransformOperation.h */,
 				BC2274740E8366E200E7F975 /* SVGRenderStyle.cpp */,
 				BC2274750E8366E200E7F975 /* SVGRenderStyle.h */,
 				BC2274760E8366E200E7F975 /* SVGRenderStyleDefs.cpp */,
 				BC2274770E8366E200E7F975 /* SVGRenderStyleDefs.h */,
-				BC5EB7A10E81EEAF00B25965 /* ScaleTransformOperation.cpp */,
-				BC5EB7820E81ECF200B25965 /* ScaleTransformOperation.h */,
 				BC5EB8C10E82031B00B25965 /* ShadowData.cpp */,
 				BC5EB8C20E82031B00B25965 /* ShadowData.h */,
-				BC5EB7A20E81EEAF00B25965 /* SkewTransformOperation.cpp */,
-				BC5EB79E0E81EDD200B25965 /* SkewTransformOperation.h */,
 				BC5EB6A00E81DC4F00B25965 /* StyleBackgroundData.cpp */,
 				BC5EB6A10E81DC4F00B25965 /* StyleBackgroundData.h */,
 				BC5EB67C0E81D42000B25965 /* StyleBoxData.cpp */,
@@ -13308,12 +13329,6 @@
 				BC5EB80E0E81F2CE00B25965 /* StyleTransformData.h */,
 				BC5EB6970E81DA6300B25965 /* StyleVisualData.cpp */,
 				BC5EB6980E81DA6300B25965 /* StyleVisualData.h */,
-				BC5EB9B70E820CA000B25965 /* TimingFunction.h */,
-				BC5EB77D0E81EBA600B25965 /* TransformOperation.h */,
-				BC5EB8080E81F11200B25965 /* TransformOperations.cpp */,
-				BC5EB8090E81F11200B25965 /* TransformOperations.h */,
-				BC5EB7CA0E81EF5D00B25965 /* TranslateTransformOperation.cpp */,
-				BC5EB7CB0E81EF5D00B25965 /* TranslateTransformOperation.h */,
 			);
 			name = style;
 			sourceTree = "<group>";
@@ -13463,6 +13478,7 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				49E912A40EFAC8E6009D0CAF /* animation */,
 				1AE42F670AA4B8CB00C8612D /* cf */,
 				B2A015910AF6CD53006BCE0E /* graphics */,
 				6582A14809999D6C00BEEB6D /* mac */,
@@ -14271,11 +14287,8 @@
 				29AAC51F0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h in Headers */,
 				29800C950E524C8B00025536 /* AccessibilityTableRow.h in Headers */,
 				E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */,
-				B27535570B053814002CE64F /* AffineTransform.h in Headers */,
-				BC5EBA0D0E823A1C00B25965 /* Animation.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
 				316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */,
-				BC2271DA0E82407300E7F975 /* AnimationList.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				1A8F6BBD0DB55CDC001DB794 /* ApplicationCache.h in Headers */,
 				1A8F6BBF0DB55CDC001DB794 /* ApplicationCacheGroup.h in Headers */,
@@ -15368,7 +15381,6 @@
 				1A2D753D0DE47FAB00F0A648 /* IconFetcher.h in Headers */,
 				513F14540AB634C400094DDF /* IconLoader.h in Headers */,
 				51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */,
-				BC5EB7810E81EC5B00B25965 /* IdentityTransformOperation.h in Headers */,
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
 				A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */,
@@ -15776,7 +15788,6 @@
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
 				A8C4A80509D563270003AC8D /* MappedAttribute.h in Headers */,
 				A8C4A84C09D5649D0003AC8D /* MappedAttributeEntry.h in Headers */,
-				BC5EB7F80E81F05700B25965 /* MatrixTransformOperation.h in Headers */,
 				ABFE7E130D32FAF60066F4D2 /* MediaControlElements.h in Headers */,
 				AB40484E0E083FA8007D6920 /* MediaDocument.h in Headers */,
 				E44613AD0CD6331000FADA75 /* MediaError.h in Headers */,
@@ -15961,7 +15972,6 @@
 				514C76540CE9234E007EF3CD /* ResourceResponse.h in Headers */,
 				514C767F0CE923A1007EF3CD /* ResourceResponseBase.h in Headers */,
 				A8CFF5E10A155A05000A4234 /* RootInlineBox.h in Headers */,
-				BC5EB79D0E81ED5F00B25965 /* RotateTransformOperation.h in Headers */,
 				E4AFD00C0DAF335400F5F55C /* SMILTime.h in Headers */,
 				E4AFD00E0DAF335500F5F55C /* SMILTimeContainer.h in Headers */,
 				51EC92590CE90DB400F90308 /* SQLError.h in Headers */,
@@ -16158,7 +16168,6 @@
 				B2227AF30D00BF220071B782 /* SVGViewSpec.h in Headers */,
 				B2227AF60D00BF220071B782 /* SVGZoomAndPan.h in Headers */,
 				B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */,
-				BC5EB7830E81ECF200B25965 /* ScaleTransformOperation.h in Headers */,
 				1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */,
 				5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */,
 				BCEC01BE0C274DAC009F4EC9 /* Screen.h in Headers */,
@@ -16197,7 +16206,6 @@
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
 				B2C3DA650D006CD600EF6F26 /* SimpleFontData.h in Headers */,
-				BC5EB79F0E81EDD200B25965 /* SkewTransformOperation.h in Headers */,
 				4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */,
 				0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */,
 				4B3043C70AE0370300A82647 /* Sound.h in Headers */,
@@ -16274,11 +16282,7 @@
 				51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */,
 				E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */,
 				9305B24D098F1B6B00C28855 /* Timer.h in Headers */,
-				BC5EB9B80E820CA000B25965 /* TimingFunction.h in Headers */,
 				BCCFBAE80B5152ED0001F1D7 /* Tokenizer.h in Headers */,
-				BC5EB77E0E81EBA600B25965 /* TransformOperation.h in Headers */,
-				BC5EB80B0E81F11200B25965 /* TransformOperations.h in Headers */,
-				BC5EB7CD0E81EF5D00B25965 /* TranslateTransformOperation.h in Headers */,
 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
 				1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */,
 				854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */,
@@ -16432,6 +16436,18 @@
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
 				08820BDF0EF5D381009099A8 /* WMLTableElement.h in Headers */,
+				49E911C40EF86D47009D0CAF /* AffineTransform.h in Headers */,
+				49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */,
+				49E911C70EF86D47009D0CAF /* MatrixTransformOperation.h in Headers */,
+				49E911C90EF86D47009D0CAF /* RotateTransformOperation.h in Headers */,
+				49E911CB0EF86D47009D0CAF /* ScaleTransformOperation.h in Headers */,
+				49E911CD0EF86D47009D0CAF /* SkewTransformOperation.h in Headers */,
+				49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */,
+				49E911D00EF86D47009D0CAF /* TransformOperations.h in Headers */,
+				49E911D20EF86D47009D0CAF /* TranslateTransformOperation.h in Headers */,
+				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
+				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
+				49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16717,12 +16733,9 @@
 				29AAC5200E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp in Sources */,
 				29800C960E524C8B00025536 /* AccessibilityTableRow.cpp in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,
-				B27535560B053814002CE64F /* AffineTransform.cpp in Sources */,
 				B27535580B053814002CE64F /* AffineTransformCG.cpp in Sources */,
-				BC5EBA0C0E823A1C00B25965 /* Animation.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
 				316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */,
-				BC2271D90E82407300E7F975 /* AnimationList.cpp in Sources */,
 				93309DD6099E64920056E581 /* AppendNodeCommand.cpp in Sources */,
 				1A8F6BBC0DB55CDC001DB794 /* ApplicationCache.cpp in Sources */,
 				1A8F6BBE0DB55CDC001DB794 /* ApplicationCacheGroup.cpp in Sources */,
@@ -17784,7 +17797,6 @@
 				93E227E10AF589AD00D48324 /* MainResourceLoader.cpp in Sources */,
 				1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */,
 				A8C4A80609D563270003AC8D /* MappedAttribute.cpp in Sources */,
-				BC5EB7F70E81F05700B25965 /* MatrixTransformOperation.cpp in Sources */,
 				ABFE7E120D32FAF60066F4D2 /* MediaControlElements.cpp in Sources */,
 				AB40484D0E083FA8007D6920 /* MediaDocument.cpp in Sources */,
 				4E1959210A39DABA00220FE5 /* MediaFeatureNames.cpp in Sources */,
@@ -17948,7 +17960,6 @@
 				514C767E0CE923A1007EF3CD /* ResourceResponseBase.cpp in Sources */,
 				514C76550CE9234F007EF3CD /* ResourceResponseMac.mm in Sources */,
 				A8CFF5E70A155A05000A4234 /* RootInlineBox.cpp in Sources */,
-				BC5EB7A30E81EEAF00B25965 /* RotateTransformOperation.cpp in Sources */,
 				E4AFD00B0DAF335400F5F55C /* SMILTime.cpp in Sources */,
 				E4AFD00D0DAF335500F5F55C /* SMILTimeContainer.cpp in Sources */,
 				519611730CAC56570010A80C /* SQLResultSet.cpp in Sources */,
@@ -18138,7 +18149,6 @@
 				B2227AF20D00BF220071B782 /* SVGViewSpec.cpp in Sources */,
 				B2227AF50D00BF220071B782 /* SVGZoomAndPan.cpp in Sources */,
 				B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */,
-				BC5EB7A40E81EEAF00B25965 /* ScaleTransformOperation.cpp in Sources */,
 				1CEFC9BA0D78DC8C007D2579 /* SchedulePair.cpp in Sources */,
 				1CE24F970D7CAF0E007E04C2 /* SchedulePairMac.mm in Sources */,
 				5DFE8F560D16477B0076E937 /* ScheduledAction.cpp in Sources */,
@@ -18176,7 +18186,6 @@
 				93309EA2099EB78C0056E581 /* SharedTimerMac.mm in Sources */,
 				B2C3DA640D006CD600EF6F26 /* SimpleFontData.cpp in Sources */,
 				B2AFFC7F0D00A5C10030074D /* SimpleFontDataMac.mm in Sources */,
-				BC5EB7A50E81EEAF00B25965 /* SkewTransformOperation.cpp in Sources */,
 				4B6FA6F50C39E48C00087011 /* SmartReplace.cpp in Sources */,
 				4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */,
 				4B3043C90AE0371D00A82647 /* SoundMac.mm in Sources */,
@@ -18242,8 +18251,6 @@
 				51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */,
 				E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */,
 				93309EA4099EB78C0056E581 /* Timer.cpp in Sources */,
-				BC5EB80A0E81F11200B25965 /* TransformOperations.cpp in Sources */,
-				BC5EB7CC0E81EF5D00B25965 /* TranslateTransformOperation.cpp in Sources */,
 				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,
 				854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */,
 				93309E19099E64920056E581 /* TypingCommand.cpp in Sources */,
@@ -18383,6 +18390,15 @@
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
 				08820BDE0EF5D381009099A8 /* WMLTableElement.cpp in Sources */,
+				49E911C30EF86D47009D0CAF /* AffineTransform.cpp in Sources */,
+				49E911C60EF86D47009D0CAF /* MatrixTransformOperation.cpp in Sources */,
+				49E911C80EF86D47009D0CAF /* RotateTransformOperation.cpp in Sources */,
+				49E911CA0EF86D47009D0CAF /* ScaleTransformOperation.cpp in Sources */,
+				49E911CC0EF86D47009D0CAF /* SkewTransformOperation.cpp in Sources */,
+				49E911CF0EF86D47009D0CAF /* TransformOperations.cpp in Sources */,
+				49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */,
+				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
+				49E912AC0EFAC906009D0CAF /* AnimationList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
