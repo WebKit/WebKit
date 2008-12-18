@@ -1,3 +1,11 @@
+2008-12-18  Pamela Greene  <pam@chromium.org>
+
+        Submitted without review.
+        Moving layout test into LayoutTests where it belongs.
+
+        * fast/dom/setter-type-enforcement-expected.txt: Removed.
+        * fast/dom/setter-type-enforcement.html: Removed.
+
 2008-12-15  Daniel Macks  <dmacks@netspace.org>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,11 @@
+2008-12-18  Pamela Greene  <pam@chromium.org>
+
+        Submitted without review.
+        Moving layout test from root level into LayoutTests where it belongs.
+
+        * fast/dom/setter-type-enforcement-expected.txt: Copied from fast/dom/setter-type-enforcement-expected.txt.
+        * fast/dom/setter-type-enforcement.html: Copied from fast/dom/setter-type-enforcement.html.
+
 2008-12-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.
