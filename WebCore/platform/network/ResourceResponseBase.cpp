@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "ResourceResponseBase.h"
+
 #include "ResourceResponse.h"
 
 namespace WebCore {
@@ -157,10 +158,7 @@ void ResourceResponseBase::setHTTPHeaderField(const AtomicString& name, const St
     lazyInit();
 
     if (equalIgnoringCase(name, "cache-control"))
-        m_haveParsedCacheControlHeader = false;
-    else if (equalIgnoringCase(name, "pragma"))
-        m_haveParsedPragmaHeader = false;
-
+        m_haveParsedCacheControl = false;
     m_httpHeaderFields.set(name, value);
 }
 
@@ -168,73 +166,42 @@ const HTTPHeaderMap& ResourceResponseBase::httpHeaderFields() const
 {
     lazyInit();
 
-    return m_httpHeaderFields; 
+    return m_httpHeaderFields;
 }
 
-const PragmaDirectiveMap& ResourceResponseBase::parsePragmaDirectives() const
+void ResourceResponseBase::parseCacheControlDirectives() const
 {
+    ASSERT(!m_haveParsedCacheControl);
+
     lazyInit();
 
-    if (m_haveParsedPragmaHeader)
-        return m_pragmaDirectiveMap;
+    m_haveParsedCacheControl = true;
+    m_cacheControlContainsMustRevalidate = false;
+    m_cacheControlContainsNoCache = false;
 
-    m_pragmaDirectiveMap.clear();
-    m_haveParsedPragmaHeader = true;
+    String cacheControlValue = httpHeaderField("cache-control");
+    if (cacheControlValue.isEmpty())
+        return;
 
-    const String pragmaHeader = httpHeaderField("Pragma");
-    if (pragmaHeader.isEmpty())
-        return m_pragmaDirectiveMap;
-
-    Vector<pair<String, String> > directives;
-    parseCacheHeader(pragmaHeader, directives);
-
-    unsigned max = directives.size();
-    for (unsigned i = 0; i < max; ++i)
-        m_pragmaDirectiveMap.set(directives[i].first, directives[i].second);
-
-    return m_pragmaDirectiveMap;
-}
-
-const CacheControlDirectiveMap& ResourceResponseBase::parseCacheControlDirectives() const
-{
-    lazyInit();
-
-    if (m_haveParsedCacheControlHeader)
-        return m_cacheControlDirectiveMap;
-
-    m_cacheControlDirectiveMap.clear();
-    m_haveParsedCacheControlHeader = true;
-
-    const String cacheControlHeader = httpHeaderField("Cache-Control");
-    if (cacheControlHeader.isEmpty())
-        return m_cacheControlDirectiveMap;
+    // FIXME: It would probably be much more efficient to parse this without creating all these data structures.
 
     Vector<pair<String, String> > directives;
-    parseCacheHeader(cacheControlHeader, directives);
+    parseCacheHeader(cacheControlValue, directives);
 
-    unsigned iMax = directives.size();
-    for (unsigned i = 0; i < iMax; ++i) {
+    size_t directivesSize = directives.size();
+    for (size_t i = 0; i < directivesSize; ++i) {
         Vector<String> directiveValues;
         if ((equalIgnoringCase(directives[i].first, "private") || equalIgnoringCase(directives[i].first, "no-cache")) && !directives[i].second.isEmpty())
             parseCacheControlDirectiveValues(directives[i].second, directiveValues);
         else
             directiveValues.append(directives[i].second);
-
-        if (m_cacheControlDirectiveMap.contains(directives[i].first)) {
-            CacheControlDirectiveMap::iterator entry = m_cacheControlDirectiveMap.find(directives[i].first);
-            unsigned jMax = directiveValues.size();
-            for (unsigned j = 0; j < jMax; ++j)
-                entry->second.add(directiveValues[j]);
-        } else {
-            HashSet<String> values;
-            unsigned jMax = directiveValues.size();
-            for (unsigned j = 0; j < jMax; ++j)
-                values.add(directiveValues[j]);
-            m_cacheControlDirectiveMap.set(directives[i].first, values);
+        for (size_t i = 0; i < directiveValues.size(); ++i) {
+            if (equalIgnoringCase(directiveValues[i], "no-cache"))
+                m_cacheControlContainsNoCache = true;
+            else if (equalIgnoringCase(directiveValues[i], "must-revalidate"))
+                m_cacheControlContainsMustRevalidate = true;
         }
     }
-
-    return m_cacheControlDirectiveMap;
 }
 
 bool ResourceResponseBase::isAttachment() const

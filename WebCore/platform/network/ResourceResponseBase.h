@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,15 +31,11 @@
 
 namespace WebCore {
 
-typedef HashMap<String, HashSet<String>, CaseFoldingHash> CacheControlDirectiveMap;
-typedef HashMap<String, String, CaseFoldingHash> PragmaDirectiveMap;
-
 class ResourceResponse;
 
 // Do not use this class directly, use the class ResponseResponse instead
 class ResourceResponseBase {
- public:
-
+public:
     bool isNull() const { return m_isNull; }
     bool isHTTP() const;
 
@@ -69,9 +65,6 @@ class ResourceResponseBase {
     void setHTTPHeaderField(const AtomicString& name, const String& value);
     const HTTPHeaderMap& httpHeaderFields() const;
 
-    const PragmaDirectiveMap& parsePragmaDirectives() const;
-    const CacheControlDirectiveMap& parseCacheControlDirectives() const;
-
     bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }
 
     bool isAttachment() const;
@@ -82,17 +75,29 @@ class ResourceResponseBase {
     void setLastModifiedDate(time_t);
     time_t lastModifiedDate() const;
 
+    bool cacheControlContainsNoCache() const
+    {
+        if (!m_haveParsedCacheControl)
+            parseCacheControlDirectives();
+        return m_cacheControlContainsMustRevalidate;
+    }
+    bool cacheControlContainsMustRevalidate() const
+    {
+        if (!m_haveParsedCacheControl)
+            parseCacheControlDirectives();
+        return m_cacheControlContainsMustRevalidate;
+    }
+
     static bool compare(const ResourceResponse& a, const ResourceResponse& b);
 
- protected:
+protected:
     ResourceResponseBase()  
         : m_expectedContentLength(0)
         , m_httpStatusCode(0)
         , m_expirationDate(0)
         , m_lastModifiedDate(0)
         , m_isNull(true)
-        , m_haveParsedCacheControlHeader(false)
-        , m_haveParsedPragmaHeader(false)
+        , m_haveParsedCacheControl(false)
     {
     }
 
@@ -106,15 +111,14 @@ class ResourceResponseBase {
         , m_expirationDate(0)
         , m_lastModifiedDate(0)
         , m_isNull(false)
-        , m_haveParsedCacheControlHeader(false)
-        , m_haveParsedPragmaHeader(false)
+        , m_haveParsedCacheControl(false)
     {
     }
 
     void lazyInit() const;
 
     // The ResourceResponse subclass may "shadow" this method to lazily initialize platform specific fields
-    void platformLazyInit() {}
+    void platformLazyInit() { }
 
     // The ResourceResponse subclass may "shadow" this method to compare platform specific fields
     static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b) { return true; }
@@ -129,11 +133,14 @@ class ResourceResponseBase {
     HTTPHeaderMap m_httpHeaderFields;
     time_t m_expirationDate;
     time_t m_lastModifiedDate;
-    bool m_isNull:1;
-    mutable bool m_haveParsedCacheControlHeader:1;
-    mutable bool m_haveParsedPragmaHeader:1;
-    mutable CacheControlDirectiveMap m_cacheControlDirectiveMap;
-    mutable PragmaDirectiveMap m_pragmaDirectiveMap;
+    bool m_isNull : 1;
+
+private:
+    void parseCacheControlDirectives() const;
+
+    mutable bool m_haveParsedCacheControl : 1;
+    mutable bool m_cacheControlContainsMustRevalidate : 1;
+    mutable bool m_cacheControlContainsNoCache : 1;
 };
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }

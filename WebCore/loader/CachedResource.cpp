@@ -3,7 +3,7 @@
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
-    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -310,12 +310,10 @@ bool CachedResource::mustRevalidate(CachePolicy cachePolicy) const
     if (m_loading)
         return false;
 
-    const CacheControlDirectiveMap& cacheControlDirectives = m_response.parseCacheControlDirectives();
-
     // FIXME: Also look at max-age, min-fresh, max-stale in Cache-Control
     if (cachePolicy == CachePolicyCache)
-        return !cacheControlDirectives.isEmpty() && (cacheControlDirectives.contains("no-cache") || (isExpired() && cacheControlDirectives.contains("must-revalidate")));
-    return isExpired() || cacheControlDirectives.contains("no-cache");
+        return m_response.cacheControlContainsNoCache() || (isExpired() && m_response.cacheControlContainsMustRevalidate());
+    return isExpired() || m_response.cacheControlContainsNoCache();
 }
 
 bool CachedResource::makePurgeable(bool purgeable) 

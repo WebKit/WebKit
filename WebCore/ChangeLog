@@ -1,3 +1,33 @@
+2008-12-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/6449841> reduce memory use of ResourceResponseBase by removing two maps
+
+        We were parsing the cache-control and pragma header field values into maps.
+        I changed that so instead we only cache two bits with the data we were actually
+        using. Later we might want to move this responsibility out of this class entirely;
+        we can cache it at the higher level instead.
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::mustRevalidate): Changed to call a specific API to get at
+        the bits in quest instead of a general "cache control directives" API.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::setHTTPHeaderField): Remove the logic for the
+        pragma header field since no one is using this for now.
+        (WebCore::ResourceResponseBase::parseCacheControlDirectives): Eliminated the return
+        value and made this function have side effects only. Changed it so it's the caller's
+        responsibility to check m_haveParsedCacheControl. Set m_cacheControlContainsNoCache
+        and m_cacheControlContainsMustRevalidate rather than keeping a map around.
+
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::cacheControlContainsNoCache): Added.
+        (WebCore::ResourceResponseBase::cacheControlContainsMustRevalidate): Added.
+        (WebCore::ResourceResponseBase::ResourceResponseBase): Updated since I removed
+        m_haveParsedCacheControl and renamed m_haveParsedCacheControlHeader to remove
+        the imprecise use of the term "header".
+
 2008-12-18  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.
