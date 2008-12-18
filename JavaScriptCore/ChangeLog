@@ -1,5 +1,23 @@
 2008-12-17  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        Fixes for Sunspider failures with the JIT enabled on x86-64.
+
+        * assembler/MacroAssembler.h:
+            Switch the order of the RegisterID & Address form of je32, to keep it consistent with jne32.
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+            Port the m_ctiVirtualCall tramopline generation to use the MacroAssembler interface.
+        * jit/JITCall.cpp:
+            Fix bug in the non-optimizing code path, vptr check should have been to the memory address pointer
+            to by the register, not to the register itself.
+        * wrec/WRECGenerator.cpp:
+            See assembler/MacroAssembler.h, above.
+
+2008-12-17  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         print("Hello, 64-bit jitted world!");

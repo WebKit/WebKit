@@ -147,7 +147,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
 
     // Check for JSFunctions.
     emitJumpSlowCaseIfNotJSCell(X86::ecx);
-    addSlowCase(jnePtr(X86::ecx, ImmPtr(m_interpreter->m_jsFunctionVptr)));
+    addSlowCase(jnePtr(Address(X86::ecx), ImmPtr(m_interpreter->m_jsFunctionVptr)));
 
     // First, in the case of a construct, allocate the new object.
     if (opcodeID == op_construct) {

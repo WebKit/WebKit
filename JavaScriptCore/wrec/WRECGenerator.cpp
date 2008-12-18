@@ -145,7 +145,7 @@ void Generator::generateBackreferenceQuantifier(JumpList& failures, Quantifier::
     GenerateBackreferenceFunctor functor(subpatternId);
 
     load32(Address(output, (2 * subpatternId) * sizeof(int)), character);
-    Jump skipIfEmpty = je32(character, Address(output, ((2 * subpatternId) + 1) * sizeof(int)));
+    Jump skipIfEmpty = je32(Address(output, ((2 * subpatternId) + 1) * sizeof(int)), character);
 
     ASSERT(quantifierType == Quantifier::Greedy || quantifierType == Quantifier::NonGreedy);
     if (quantifierType == Quantifier::Greedy)
@@ -625,22 +625,22 @@ void Generator::generateBackreference(JumpList& failures, unsigned subpatternId)
     skipIncrement.link(this);
 
     // check if we're at the end of backref (if we are, success!)
-    Jump endOfBackRef = je32(repeatCount, Address(output, ((2 * subpatternId) + 1) * sizeof(int)));
-    
+    Jump endOfBackRef = je32(Address(output, ((2 * subpatternId) + 1) * sizeof(int)), repeatCount);
+
     load16(BaseIndex(input, repeatCount, MacroAssembler::TimesTwo), character);
-    
+
     // check if we've run out of input (this would be a can o'fail)
     Jump endOfInput = je32(length, index);
 
     je16(character, BaseIndex(input, index, TimesTwo), topOfLoop);
-    
+
     endOfInput.link(this);
 
     // Failure
     pop(repeatCount);
     pop(index);
     failures.append(jump());
-    
+
     // Success
     endOfBackRef.link(this);
     pop(repeatCount);
