@@ -1,3 +1,30 @@
+2008-12-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+        Delete 2nd copy of code in these files.
+
+        * platform/animation/Animation.cpp:
+        * platform/animation/Animation.h:
+        * platform/animation/AnimationList.cpp:
+        * platform/animation/AnimationList.h:
+        * platform/animation/TimingFunction.h:
+        * platform/graphics/transforms/AffineTransform.cpp:
+        * platform/graphics/transforms/AffineTransform.h:
+        * platform/graphics/transforms/IdentityTransformOperation.h:
+        * platform/graphics/transforms/MatrixTransformOperation.cpp:
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        * platform/graphics/transforms/ScaleTransformOperation.cpp:
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        * platform/graphics/transforms/SkewTransformOperation.cpp:
+        * platform/graphics/transforms/SkewTransformOperation.h:
+        * platform/graphics/transforms/TransformOperation.h:
+        * platform/graphics/transforms/TransformOperations.cpp:
+        * platform/graphics/transforms/TransformOperations.h:
+        * platform/graphics/transforms/TranslateTransformOperation.cpp:
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+
 2008-12-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Geoffrey Garen.
