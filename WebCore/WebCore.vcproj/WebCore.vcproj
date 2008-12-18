@@ -14033,6 +14033,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptCachedPageData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptCachedPageData.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptCallFrame.cpp"
 					>
 				</File>

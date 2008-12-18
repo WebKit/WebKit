@@ -1,3 +1,31 @@
+2008-12-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22859
+        Abstract away the use of JSDOMWindow in CachedPage and introduce
+        ScriptCachedPageData abstraction.
+
+        * GNUmakefile.am: Added ScriptCachedPageData to project.
+        * WebCore.pro: Added ScriptCachedPageData to project.
+        * WebCore.vcproj/WebCore.vcproj: Added ScriptCachedPageData to project.
+        * WebCore.xcodeproj/project.pbxproj: Added ScriptCachedPageData to
+            project.
+        * bindings/js/ScriptCachedPageData.cpp: Added.
+        (WebCore::ScriptCachedPageData::ScriptCachedPageData):
+        (WebCore::ScriptCachedPageData::~ScriptCachedPageData):
+        (WebCore::ScriptCachedPageData::restore):
+        (WebCore::ScriptCachedPageData::clear):
+        * bindings/js/ScriptCachedPageData.h: Added.
+        * history/CachedPage.cpp: Replaced JSDOMWindow and ProtectedPtr with
+            ScriptCachedPageData.
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::domWindow):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * history/CachedPage.h: Replaced JSDOMWindow and ProtectedPtr with
+            ScriptCachedPageData.
+
 2008-12-18  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt.

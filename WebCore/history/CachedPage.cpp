@@ -36,15 +36,10 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
-#include "GCController.h"
-#include "JSDOMWindow.h"
-#include "JSDOMWindowShell.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "SystemTime.h"
-#include "ScriptController.h"
-#include <runtime/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 #if ENABLE(SVG)
@@ -70,6 +65,7 @@ CachedPage::CachedPage(Page* page)
     , m_view(page->mainFrame()->view())
     , m_mousePressNode(page->mainFrame()->eventHandler()->mousePressNode())
     , m_URL(page->mainFrame()->loader()->url())
+    , m_cachedPageScriptData(page)
 {
 #ifndef NDEBUG
     cachedPageCounter.increment();
@@ -79,13 +75,6 @@ CachedPage::CachedPage(Page* page)
     
     Frame* mainFrame = page->mainFrame();
     mainFrame->clearTimers();
-
-    JSLock lock(false);
-
-    ScriptController* proxy = mainFrame->script();
-    if (proxy->haveWindowShell()) {
-        m_window = proxy->windowShell()->window();
-    }
 
     m_document->setInPageCache(true);
 }
@@ -101,7 +90,7 @@ CachedPage::~CachedPage()
 
 DOMWindow* CachedPage::domWindow() const
 {
-    return m_window ? m_window->impl() : 0;
+    return m_cachedPageScriptData.domWindow();
 }
 
 void CachedPage::restore(Page* page)
@@ -110,19 +99,7 @@ void CachedPage::restore(Page* page)
 
     Frame* mainFrame = page->mainFrame();
 
-    JSLock lock(false);
-
-    ScriptController* proxy = mainFrame->script();
-    if (proxy->haveWindowShell()) {
-        JSDOMWindowShell* windowShell = proxy->windowShell();
-        if (m_window) {
-            windowShell->setWindow(m_window.get());
-        } else {
-            windowShell->setWindow(mainFrame->domWindow());
-            proxy->attachDebugger(page->debugger());
-            windowShell->window()->setProfileGroup(page->group().identifier());
-        }
-    }
+    m_cachedPageScriptData.restore(page);
 
 #if ENABLE(SVG)
     if (m_document && m_document->svgExtensions())
@@ -171,12 +148,9 @@ void CachedPage::clear()
     m_mousePressNode = 0;
     m_URL = KURL();
 
-    JSLock lock(false);
-    m_window = 0;
-
     m_cachedPagePlatformData.clear();
 
-    gcController().garbageCollectSoon();
+    m_cachedPageScriptData.clear();
 }
 
 void CachedPage::setDocumentLoader(PassRefPtr<DocumentLoader> loader)
