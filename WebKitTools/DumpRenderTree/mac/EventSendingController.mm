@@ -121,6 +121,7 @@ BOOL replayingSavedEvents;
     if (aSelector == @selector(mouseDown:)
             || aSelector == @selector(mouseUp:)
             || aSelector == @selector(contextClick)
+            || aSelector == @selector(scheduleAsynchronousClick)
             || aSelector == @selector(mouseMoveToX:Y:)
             || aSelector == @selector(leapForward:)
             || aSelector == @selector(keyDown:withModifiers:)
@@ -401,6 +402,12 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView)
         [subView menuForEvent:event];
+}
+
+- (void)scheduleAsynchronousClick
+{
+    [self performSelector:@selector(mouseDown:) withObject:nil afterDelay:0];
+    [self performSelector:@selector(mouseUp:) withObject:nil afterDelay:0];
 }
 
 + (void)saveEvent:(NSInvocation *)event

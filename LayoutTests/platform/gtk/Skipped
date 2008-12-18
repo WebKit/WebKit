@@ -2131,6 +2131,9 @@ transitions
 traversal
 webarchive
 
+# Needs scheduleAsynchronousClick method for EventSender
+fast/events/popup-blocking-click-in-iframe.html
+
 # Tests in plugins/ directory
 # Tests that need ObjC plugin
 plugins/call-as-function-test.html

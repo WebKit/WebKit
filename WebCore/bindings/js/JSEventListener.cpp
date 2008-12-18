@@ -95,6 +95,12 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
         Event* savedEvent = globalObject->currentEvent();
         globalObject->setCurrentEvent(event);
 
+        // If this event handler is the first JavaScript to execute, then the
+        // dynamic global object should be set to the global object of the
+        // window in which the event occurred.
+        JSGlobalData* globalData = globalObject->globalData();
+        DynamicGlobalObjectScope globalObjectScope(exec, globalData->dynamicGlobalObject ? globalData->dynamicGlobalObject : globalObject);
+
         JSValue* retval;
         if (handleEventFunction) {
             globalObject->startTimeoutCheck();

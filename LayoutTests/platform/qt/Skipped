@@ -6,6 +6,7 @@ editing/selection/5109817.html
 editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 editing/selection/caret-and-focus-ring.html
+fast/events/popup-blocking-click-in-iframe.html
 
 # -------- crashes
 fast/events/objc-keyboard-event-creation.html

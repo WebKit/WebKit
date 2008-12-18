@@ -355,7 +355,26 @@ namespace JSC {
         ASSERT(globalData().dynamicGlobalObject);
         return globalData().dynamicGlobalObject;
     }
-    
+
+    class DynamicGlobalObjectScope : Noncopyable {
+    public:
+        DynamicGlobalObjectScope(CallFrame* callFrame, JSGlobalObject* dynamicGlobalObject) 
+            : m_dynamicGlobalObjectSlot(callFrame->globalData().dynamicGlobalObject)
+            , m_savedDynamicGlobalObject(m_dynamicGlobalObjectSlot)
+        {
+            m_dynamicGlobalObjectSlot = dynamicGlobalObject;
+        }
+
+        ~DynamicGlobalObjectScope()
+        {
+            m_dynamicGlobalObjectSlot = m_savedDynamicGlobalObject;
+        }
+
+    private:
+        JSGlobalObject*& m_dynamicGlobalObjectSlot;
+        JSGlobalObject* m_savedDynamicGlobalObject;
+    };
+
 } // namespace JSC
 
 #endif // JSGlobalObject_h

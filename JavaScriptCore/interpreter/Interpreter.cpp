@@ -864,25 +864,6 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     return handler;
 }
 
-class DynamicGlobalObjectScope : Noncopyable {
-public:
-    DynamicGlobalObjectScope(CallFrame* callFrame, JSGlobalObject* dynamicGlobalObject) 
-        : m_dynamicGlobalObjectSlot(callFrame->globalData().dynamicGlobalObject)
-        , m_savedDynamicGlobalObject(m_dynamicGlobalObjectSlot)
-    {
-        m_dynamicGlobalObjectSlot = dynamicGlobalObject;
-    }
-
-    ~DynamicGlobalObjectScope()
-    {
-        m_dynamicGlobalObjectSlot = m_savedDynamicGlobalObject;
-    }
-
-private:
-    JSGlobalObject*& m_dynamicGlobalObjectSlot;
-    JSGlobalObject* m_savedDynamicGlobalObject;
-};
-
 JSValue* Interpreter::execute(ProgramNode* programNode, CallFrame* callFrame, ScopeChainNode* scopeChain, JSObject* thisObj, JSValue** exception)
 {
     ASSERT(!scopeChain->globalData->exception);
