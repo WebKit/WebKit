@@ -1,3 +1,14 @@
+2008-12-17  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22618
+
+        Fix MinGW QtWebKit linking problems and also make the 
+        QtWebKit build system more robust.
+
+        * WebCore.pro:
+
 2008-12-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Maciej Stachowiak.

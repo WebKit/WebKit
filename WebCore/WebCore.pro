@@ -48,7 +48,6 @@ freebsd-*: DEFINES += HAVE_PTHREAD_NP_H
 
 DEFINES += BUILD_WEBKIT
 
-!CONFIG(QTDIR_build):win32-*: DEFINES += ENABLE_ICONDATABASE=0 ENABLE_DATABASE=0
 win32-*: DEFINES += _HAS_TR1=0
 wince* {
 #    DEFINES += ENABLE_SVG=0 ENABLE_XPATH=0 ENABLE_XBL=0 \
@@ -67,12 +66,36 @@ win32-g++ {
     QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
 }
 
+# Try to locate sqlite3 source
+CONFIG(QTDIR_build) {
+    SQLITE3SRCDIR = $$QT_SOURCE_TREE/src/3rdparty/sqlite/
+} else {
+    SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
+    isEmpty(SQLITE3SRCDIR) {
+        SQLITE3SRCDIR = $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
+    } 
+}
+
 # Optional components (look for defs in config.h and included files!)
-!contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
+
+# turn off database support if we do not have sqlite3 support 
+!CONFIG(QTDIR_build):win32-*:!exists( $${SQLITE3SRCDIR}/sqlite3.c ): DEFINES += ENABLE_DATABASE=0 ENABLE_ICONDATABASE=0 ENABLE_OFFLINE_WEB_APPLICATIONS=0 ENABLE_DOM_STORAGE=0
+
 !contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=.): DEFINES += ENABLE_OFFLINE_WEB_APPLICATIONS=1
 !contains(DEFINES, ENABLE_DOM_STORAGE=.): DEFINES += ENABLE_DOM_STORAGE=1
-!contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
+
+# turn on database support if any of the dependent features are turned on
+!contains(DEFINES, ENABLE_DATABASE=1) {
+  contains(DEFINES, ENABLE_ICONDATABASE=1)|(DEFINES, ENABLE_DOM_STORAGE=1)|(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=1) {
+    DEFINES += ENABLE_DATABASE=1
+  }
+}
+
+# if database support is not on by now, turn it off 
+!contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=0
+
+!contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 !contains(DEFINES, ENABLE_WML=.): DEFINES += ENABLE_WML=0
@@ -1199,25 +1222,21 @@ contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=0) {
 contains(DEFINES, ENABLE_DATABASE=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATABASE=1
 
-    CONFIG(QTDIR_build) {
-        # some what copied from src/plugins/sqldrivers/sqlite/sqlite.pro
-        system-sqlite {
-            LIBS *= $$QT_LFLAGS_SQLITE
-            QMAKE_CXXFLAGS *= $$QT_CFLAGS_SQLITE
-        } else {
-            CONFIG(release, debug|release):DEFINES *= NDEBUG
-            INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/sqlite/
-            SOURCES += $$QT_SOURCE_TREE/src/3rdparty/sqlite/sqlite3.c
-        }
+    # somewhat copied from src/plugins/sqldrivers/sqlite/sqlite.pro
+    CONFIG(QTDIR_build):system-sqlite {
+        LIBS *= $$QT_LFLAGS_SQLITE
+        QMAKE_CXXFLAGS *= $$QT_CFLAGS_SQLITE
     } else {
-        SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
-        isEmpty(SQLITE3SRCDIR) {
-            INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
-            LIBS += -lsqlite3
-        } else {
+        exists( $${SQLITE3SRCDIR}/sqlite3.c )  {
+            # we have source - use it
             CONFIG(release, debug|release):DEFINES *= NDEBUG
+            DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE 
             INCLUDEPATH += $${SQLITE3SRCDIR}
             SOURCES += $${SQLITE3SRCDIR}/sqlite3.c
+        } else {
+            # fall back to platform library
+            INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
+            LIBS += -lsqlite3
         }
     }
 
