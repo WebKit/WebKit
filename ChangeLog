@@ -1,6 +1,14 @@
 2008-12-18  Pamela Greene  <pam@chromium.org>
 
         Submitted without review.
+        Right, remove the whole misplaced directory, not just the tests.
+
+        * fast: Removed.
+        * fast/dom: Removed.
+
+2008-12-18  Pamela Greene  <pam@chromium.org>
+
+        Submitted without review.
         Moving layout test into LayoutTests where it belongs.
 
         * fast/dom/setter-type-enforcement-expected.txt: Removed.
