@@ -1,5 +1,14 @@
 2008-12-17  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Gavin Barraclough.
+
+        Add more CodeBlock statistics.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpStatistics):
+
+2008-12-17  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=22897

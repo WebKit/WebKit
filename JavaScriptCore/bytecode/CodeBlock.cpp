@@ -1093,6 +1093,7 @@ static HashSet<CodeBlock*> liveCodeBlockSet;
     macro(constantRegisters) \
     macro(expressionInfo) \
     macro(lineInfo) \
+    macro(getByIdExceptionInfo) \
     macro(pcVector)
 
 #define FOR_EACH_MEMBER_VECTOR_RARE_DATA(macro) \
@@ -1102,7 +1103,8 @@ static HashSet<CodeBlock*> liveCodeBlockSet;
     macro(exceptionHandlers) \
     macro(immediateSwitchJumpTables) \
     macro(characterSwitchJumpTables) \
-    macro(stringSwitchJumpTables)
+    macro(stringSwitchJumpTables) \
+    macro(functionRegisterInfos)
 
 template<typename T>
 static size_t sizeInBytes(const Vector<T>& vector)
@@ -1150,8 +1152,20 @@ void CodeBlock::dumpStatistics()
         }
     }
 
+    size_t totalSize = 0;
+
+    #define GET_TOTAL_SIZE(name) totalSize += name##TotalSize;
+            FOR_EACH_MEMBER_VECTOR(GET_TOTAL_SIZE)
+            FOR_EACH_MEMBER_VECTOR_RARE_DATA(GET_TOTAL_SIZE)
+    #undef GET_TOTAL_SIZE
+
+    totalSize += symbolTableTotalSize;
+    totalSize += (liveCodeBlockSet.size() * sizeof(CodeBlock));
+
     printf("Number of live CodeBlocks: %d\n", liveCodeBlockSet.size());
     printf("Size of a single CodeBlock [sizeof(CodeBlock)]: %zu\n", sizeof(CodeBlock));
+    printf("Size of all CodeBlocks: %zu\n", totalSize);
+    printf("Average size of a CodeBlock: %zu\n", totalSize / liveCodeBlockSet.size());
 
     printf("Number of CodeBlocks with rare data: %zu\n", hasRareData);
 
