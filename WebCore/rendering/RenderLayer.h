@@ -69,6 +69,12 @@ struct HitTestRequest;
 
 class ClipRects {
 public:
+    ClipRects()
+        : m_refCnt(0)
+        , m_fixed(false)
+    {
+    }
+
     ClipRects(const IntRect& r)
         : m_overflowClipRect(r)
         , m_fixedClipRect(r)
@@ -78,19 +84,34 @@ public:
     {
     }
 
-    ClipRects(const IntRect& overflowRect, const IntRect& fixedRect, const IntRect& posRect, bool fixed)
-        : m_overflowClipRect(overflowRect)
-        , m_fixedClipRect(fixedRect)
-        , m_posClipRect(posRect)
+    ClipRects(const ClipRects& other)
+        : m_overflowClipRect(other.overflowClipRect())
+        , m_fixedClipRect(other.fixedClipRect())
+        , m_posClipRect(other.posClipRect())
         , m_refCnt(0)
-        , m_fixed(fixed)
+        , m_fixed(other.fixed())
     {
     }
 
-    const IntRect& overflowClipRect() { return m_overflowClipRect; }
-    const IntRect& fixedClipRect() { return m_fixedClipRect; }
-    const IntRect& posClipRect() { return m_posClipRect; }
+    void reset(const IntRect& r)
+    {
+        m_overflowClipRect = r;
+        m_fixedClipRect = r;
+        m_posClipRect = r;
+        m_fixed = false;
+    }
+    
+    const IntRect& overflowClipRect() const { return m_overflowClipRect; }
+    void setOverflowClipRect(const IntRect& r) { m_overflowClipRect = r; }
+
+    const IntRect& fixedClipRect() const { return m_fixedClipRect; }
+    void setFixedClipRect(const IntRect&r) { m_fixedClipRect = r; }
+
+    const IntRect& posClipRect() const { return m_posClipRect; }
+    void setPosClipRect(const IntRect& r) { m_posClipRect = r; }
+
     bool fixed() const { return m_fixed; }
+    void setFixed(bool fixed) { m_fixed = fixed; }
 
     void ref() { m_refCnt++; }
     void deref(RenderArena* renderArena) { if (--m_refCnt == 0) destroy(renderArena); }
@@ -102,6 +123,23 @@ public:
 
     // Overridden to prevent the normal delete from being called.
     void operator delete(void*, size_t);
+
+    bool operator==(const ClipRects& other) const
+    {
+        return m_overflowClipRect == other.overflowClipRect() &&
+               m_fixedClipRect == other.fixedClipRect() &&
+               m_posClipRect == other.posClipRect() &&
+               m_fixed == other.fixed();
+    }
+
+    ClipRects& operator=(const ClipRects& other)
+    {
+        m_overflowClipRect = other.overflowClipRect();
+        m_fixedClipRect = other.fixedClipRect();
+        m_posClipRect = other.posClipRect();
+        m_fixed = other.fixed();
+        return *this;
+    }
         
 private:
     // The normal operator new is disallowed on all render objects.
@@ -302,9 +340,15 @@ public:
     // |rootLayer}.  It also computes our background and foreground clip rects
     // for painting/event handling.
     void calculateRects(const RenderLayer* rootLayer, const IntRect& paintDirtyRect, IntRect& layerBounds,
-                        IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect) const;
-    void calculateClipRects(const RenderLayer* rootLayer);
+                        IntRect& backgroundRect, IntRect& foregroundRect, IntRect& outlineRect, bool temporaryClipRects = false) const;
+
+    // Compute and cache clip rects computed with the given layer as the root
+    void updateClipRects(const RenderLayer* rootLayer);
+    // Compute and return the clip rects. If useCached is true, will used previously computed clip rects on ancestors
+    // (rather than computing them all from scratch up the parent chain).
+    void calculateClipRects(const RenderLayer* rootLayer, ClipRects&, bool useCached = false) const;
     ClipRects* clipRects() const { return m_clipRects; }
+
     IntRect childrenClipRect() const; // Returns the foreground clip rect of the layer in the document's coordinate space.
     IntRect selfClipRect() const; // Returns the background clip rect of the layer in the document's coordinate space.
 
@@ -349,7 +393,8 @@ private:
     void collectLayers(Vector<RenderLayer*>*&, Vector<RenderLayer*>*&);
 
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
-                    bool haveTransparency, PaintRestriction, RenderObject* paintingRoot, bool appliedTransform = false);
+                    bool haveTransparency, PaintRestriction, RenderObject* paintingRoot,
+                    bool appliedTransform = false, bool temporaryClipRects = false);
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&, const IntRect& hitTestRect, const IntPoint& hitTestPoint, bool appliedTransform = false);
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
 

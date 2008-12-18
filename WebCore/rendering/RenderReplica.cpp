@@ -66,8 +66,13 @@ void RenderReplica::paint(PaintInfo& paintInfo, int tx, int ty)
     ty += m_y;
 
     if (paintInfo.phase == PaintPhaseForeground)
-        // Turn around and paint the parent layer.
-        layer()->parent()->paintLayer(layer()->transform() ? layer()->parent() : layer()->enclosingTransformedAncestor(), paintInfo.context, paintInfo.rect, true, PaintRestrictionNone, 0, true);
+        // Turn around and paint the parent layer. Use temporary clipRects, so that the layer doesn't end up caching clip rects
+        // computing using the wrong rootLayer
+        layer()->parent()->paintLayer(layer()->transform() ? layer()->parent() : layer()->enclosingTransformedAncestor(),
+                                      paintInfo.context, paintInfo.rect,
+                                      true, PaintRestrictionNone, 0,
+                                      true,     // appliedTransform
+                                      true);    // temporaryClipRects
     else if (paintInfo.phase == PaintPhaseMask)
         paintMask(paintInfo, tx, ty);
 }

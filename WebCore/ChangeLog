@@ -1,3 +1,38 @@
+2008-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=22570
+        
+        Add the ability to compute clip rects independently from
+        caching them on the RenderLayer. When painting reflections, use 
+        such temporarily computed clipRects, otherwise the layer may cache
+        clipRects which are invalid, since they have been computed with
+        a rootLayer that is not the one usually used to paint.
+        
+        Test: fast/reflections/reflection-overflow-hidden.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateClipRects):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRects::ClipRects):
+        (WebCore::ClipRects::reset):
+        (WebCore::ClipRects::overflowClipRect):
+        (WebCore::ClipRects::setOverflowClipRect):
+        (WebCore::ClipRects::fixedClipRect):
+        (WebCore::ClipRects::setFixedClipRect):
+        (WebCore::ClipRects::posClipRect):
+        (WebCore::ClipRects::setPosClipRect):
+        (WebCore::ClipRects::setFixed):
+        (WebCore::ClipRects::operator==):
+        (WebCore::ClipRects::operator=):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint):
+
 2008-12-17  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

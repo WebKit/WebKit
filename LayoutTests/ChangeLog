@@ -1,3 +1,16 @@
+2008-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22570
+        
+        Add testcase for reflection on an element with overflow: hidden
+
+        * fast/reflections/reflection-overflow-hidden.html: Added.
+        * platform/mac/fast/reflections/reflection-overflow-hidden-expected.checksum: Added.
+        * platform/mac/fast/reflections/reflection-overflow-hidden-expected.png: Added.
+        * platform/mac/fast/reflections/reflection-overflow-hidden-expected.txt: Added.
+
 2008-12-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Maciej Stachowiak.
