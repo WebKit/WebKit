@@ -1,3 +1,13 @@
+2008-12-18  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        When Web Inspector is launched without an associated node,
+        call show() instead of inspect().
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+
 2008-12-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
