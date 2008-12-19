@@ -1,3 +1,11 @@
+2008-12-19  Dean Jackson  <dino@apple.com>
+
+        Media queries that return <integer> but are really boolean
+        are restricted to 0 and 1. This is in line with other
+        media features.
+
+        * specs/MediaQueriesExtensions.html:
+
 2008-12-03  Dean Jackson  <dino@apple.com>
 
         Added links to the WebKit and Mozilla bugs for pointer-events.
