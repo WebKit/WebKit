@@ -562,7 +562,7 @@ void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-    if (implementations->didFirstLayoutInFrameFunc)
+    if (implementations->didFirstVisuallyNonEmptyLayoutInFrameFunc)
         CallFrameLoadDelegate(implementations->didFirstVisuallyNonEmptyLayoutInFrameFunc, webView, @selector(webView:didFirstVisuallyNonEmptyLayoutInFrame:), m_webFrame.get());
 }
 
