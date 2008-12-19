@@ -1,3 +1,26 @@
+2008-12-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Alder.
+
+        Implement ImageSource::filenameExtension for Cario
+          https://bugs.webkit.org/show_bug.cgi?id=22905
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::filenameExtension):
+        * platform/image-decoders/ImageDecoder.h:
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        (WebCore::BMPImageDecoder::filenameExtension):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        (WebCore::GIFImageDecoder::filenameExtension):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        (WebCore::ICOImageDecoder::filenameExtension):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        (WebCore::JPEGImageDecoder::filenameExtension):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        (WebCore::PNGImageDecoder::filenameExtension):
+        * platform/image-decoders/xbm/XBMImageDecoder.h:
+        (WebCore::XBMImageDecoder::filenameExtension):
+
 2008-12-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

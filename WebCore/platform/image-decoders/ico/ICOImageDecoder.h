@@ -36,6 +36,8 @@ class ICOImageReader;
 class ICOImageDecoder : public ImageDecoder
 {
 public:
+    virtual String filenameExtension() const { return "ico"; }
+
     // Whether or not the size information has been decoded yet.
     virtual bool isSizeAvailable() const;
 

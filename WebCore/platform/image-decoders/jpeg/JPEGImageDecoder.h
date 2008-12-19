@@ -39,6 +39,8 @@ public:
     JPEGImageDecoder();
     ~JPEGImageDecoder();
 
+    virtual String filenameExtension() const { return "jpg"; }
+
     // Take the data and store it.
     virtual void setData(SharedBuffer* data, bool allDataReceived);
 

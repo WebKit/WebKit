@@ -39,6 +39,8 @@ public:
     GIFImageDecoder();
     ~GIFImageDecoder();
 
+    virtual String filenameExtension() const { return "gif"; }
+
     // Take the data and store it.
     virtual void setData(SharedBuffer* data, bool allDataReceived);
 
