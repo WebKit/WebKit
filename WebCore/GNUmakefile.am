@@ -1593,7 +1593,6 @@ webcore_sources += \
 	WebCore/rendering/style/DataRef.h \
 	WebCore/rendering/style/FillLayer.cpp \
 	WebCore/rendering/style/FillLayer.h \
-	WebCore/rendering/style/IdentityTransformOperation.h \
 	WebCore/rendering/style/KeyframeList.cpp \
 	WebCore/rendering/style/KeyframeList.h \
 	WebCore/rendering/style/NinePieceImage.cpp \
@@ -1633,7 +1632,6 @@ webcore_sources += \
 	WebCore/rendering/style/StyleTransformData.h \
 	WebCore/rendering/style/StyleVisualData.cpp \
 	WebCore/rendering/style/StyleVisualData.h \
-	WebCore/rendering/style/TimingFunction.h \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/DOMParser.h \
 	WebCore/xml/XMLHttpRequest.cpp \
