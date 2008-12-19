@@ -1,3 +1,12 @@
+2008-12-19  Adam Roben  <aroben@apple.com>
+
+        Windows build fix on older versions of CFNetwork after r39393
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::highestSupportedCFURLConnectionClientVersion): Changed
+        preprocessor directives not to leave in unreachable code on old
+        versions of CFNetwork.
+
 2008-12-19  Antti Koivisto  <antti@apple.com>
 
         Comment fix.

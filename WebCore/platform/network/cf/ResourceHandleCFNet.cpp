@@ -82,18 +82,20 @@ static CFIndex highestSupportedCFURLConnectionClientVersion()
 
 #ifndef _CFURLConnectionClientV2Present
     return 1;
-#endif
+#else
 
     DWORD version = cfNetworkVersion();
     if (version < firstCFNetworkVersionWithConnectionClientV2)
         return 1;
 #ifndef _CFURLConnectionClientV3Present
     return 2;
-#endif
+#else
 
     if (version < firstCFNetworkVersionWithConnectionClientV3)
         return 2;
     return 3;
+#endif // _CFURLConnectionClientV3Present
+#endif // _CFURLConnectionClientV2Present
 }
 
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
