@@ -298,7 +298,7 @@ bool ResourceHandle::startHttp(String urlString)
     if (!customHeaders.isEmpty()) {
         HTTPHeaderMap::const_iterator end = customHeaders.end();
         for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it)
-            soup_message_headers_append(msg->request_headers, it->first.utf8().data(), it->second.utf8().data());
+            soup_message_headers_append(msg->request_headers, it->first.string().utf8().data(), it->second.utf8().data());
     }
 
     FormData* httpBody = d->m_request.httpBody();
