@@ -1,3 +1,13 @@
+2008-12-19  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Antti Koivisto.
+
+        Build fix when building JS API tests with a c89 c compiler
+
+        Do not use C++ style comments and convert them to C comments.
+
+        * wtf/Platform.h:
+
 2008-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
