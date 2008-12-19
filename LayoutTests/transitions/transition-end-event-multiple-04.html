@@ -38,29 +38,27 @@
     }
 
   </style>
-  <script src="end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script src="transition-end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
-  
-    var expected = [
-      ["-webkit-transform", "box1", "webkitTransitionEnd", 0.5],
-      ["-webkit-transform", "box2", "webkitTransitionEnd", 0.55],
-      ["-webkit-transform", "box4", "webkitTransitionEnd", 0.4]
+    
+    var expectedEndEvents = [
+      // [property-name, element-id, elapsed-time, listen]
+      ["-webkit-transform", "box1", 0.5, false],
+      ["-webkit-transform", "box2", 0.55, false],
+      ["-webkit-transform", "box4", 0.4, false]
     ];
   
-    function transitionElement(index) {
+    function transitionElement(index)
+    {
       var boxes = document.body.getElementsByClassName('box');
       boxes[index-1].className = "box box" + index;
     }
 
-    function startTransitions()
+    function setupTest()
     {
       var boxes = document.body.getElementsByClassName('box');
       for (var i = 0; i < boxes.length; ++i) {
-        boxes[i].addEventListener("webkitTransitionEnd", recordEvent, false);
+        boxes[i].addEventListener("webkitTransitionEnd", recordTransitionEndEvent, false);
       }
 
       window.setTimeout(function() { transitionElement(1); }, 100);
@@ -68,11 +66,10 @@
       window.setTimeout(function() { transitionElement(3); }, 200);
       window.setTimeout(function() { transitionElement(4); }, 50);
       window.setTimeout(function() { transitionElement(5); }, 150);
-      
-      window.setTimeout(cleanup, 1000);
     }
     
-    window.addEventListener('load', startTransitions, false);
+    runTransitionTest(expectedEndEvents, 1.0, setupTest);
+    
   </script>
 </head>
 <body>

@@ -41,19 +41,21 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-    }
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
 
     function runTest()
     {
       var container = document.getElementById('first');
       container.style.opacity = 1;
+      
       // dump the tree in the middle of the transition
-      window.setTimeout(function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-      }, 2500);
+      if (window.layoutTestController) {
+        if (layoutTestController.pauseTransitionAtTimeOnElementWithId)
+          window.setTimeout(function() { layoutTestController.pauseTransitionAtTimeOnElementWithId("opacity", 2.5, "first"); layoutTestController.notifyDone(); }, 0);
+        else
+          window.setTimeout(function() { layoutTestController.notifyDone(); }, 2500);
+      }
     }
     
     window.addEventListener('load', runTest, false);

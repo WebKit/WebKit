@@ -16,50 +16,24 @@
       -webkit-transition-property: top, left;
     }
   </style>
+  <script src="transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
-    }
     
-    result = "PASS";
-    const defaultTolerance = 10;
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.25, "box", "left", 50, 10],
+      [0.25, "box", "top", 100, 10],
+    ];
     
-    function isEqual(actual, desired, tolerance)
+    function setupTest()
     {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
+      var box = document.getElementById('box');
+      box.style.top = '100px';
+      box.style.left = '100px';
     }
     
-    function check()
-    {
-        var style = window.getComputedStyle(document.getElementById('box'));
-        if (!isEqual(parseInt(style.left), 50, defaultTolerance))
-            result = "FAIL (left was:" + style.left + ", should be 50)";
-        else if (!isEqual(parseInt(style.top), 100, defaultTolerance))
-            result = "FAIL (top was:" + style.top + ", should be 100)";
-
-        document.getElementById('result').innerHTML = result;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }
+    runTransitionTest(expectedValues, setupTest);
     
-    function startTimeout()
-    {
-        setTimeout(check, 250);
-    }
-
-    function start()
-    {
-        var box = document.getElementById('box');
-        box.style.top = '100px';
-        box.style.left = '100px';
-        setTimeout(startTimeout, 0);    // this gives the style time to resolve
-    }
-    
-    window.addEventListener('load', start, false);
   </script>
 </head>
 <body>

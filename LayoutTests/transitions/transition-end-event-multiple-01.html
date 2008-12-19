@@ -13,35 +13,29 @@
       -webkit-transition-duration: 0.5s;
     }
   </style>
-  <script src="end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script src="transition-end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
     
-    var expected = [
-      ["background-color", "box1", "webkitTransitionEnd", 0.5],
-      ["height", "box1", "webkitTransitionEnd", 0.5],
-      ["left", "box1", "webkitTransitionEnd", 0.5],
-      ["width", "box1", "webkitTransitionEnd", 0.5],
+    var expectedEndEvents = [
+      // [property-name, element-id, elapsed-time, listen]
+      ["background-color", "box1", 0.5, false],
+      ["height", "box1", 0.5, false],
+      ["left", "box1", 0.5, false],
+      ["width", "box1", 0.5, false],
     ];
     
-    function startTransition()
+    function setupTest()
     {
-      var boxes = document.body.getElementsByClassName('box');
-      for (var i = 0; i < boxes.length; ++i) {
-        boxes[i].addEventListener("webkitTransitionEnd", recordEvent, false);
-        boxes[i].style.width = "150px";
-        boxes[i].style.left = '200px';
-        boxes[i].style.backgroundColor = 'red';
-        boxes[i].style.height = '80px';
-      }
-      
-      window.setTimeout(cleanup, 700);
+      var box = document.getElementById("box1");
+      box.addEventListener("webkitTransitionEnd", recordTransitionEndEvent, false);
+      box.style.width = "150px";
+      box.style.left = '200px';
+      box.style.backgroundColor = 'red';
+      box.style.height = '80px';
     }
     
-    window.addEventListener('load', startTransition, false);
+    runTransitionTest(expectedEndEvents, 0.7, setupTest);
+    
   </script>
 </head>
 <body>

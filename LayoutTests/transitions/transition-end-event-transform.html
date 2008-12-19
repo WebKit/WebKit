@@ -14,29 +14,22 @@
       -webkit-transform: translate(100px);
     }
   </style>
-  <script src="end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script src="transition-end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
-
-    var expected = [
-      ["-webkit-transform", "box1", "webkitTransitionEnd", 0.5]
+    
+    var expectedEndEvents = [
+      // [property-name, element-id, elapsed-time, listen]
+      ["-webkit-transform", "box1", 0.5, true]
     ];
     
-    function startTransition()
+    function setupTest()
     {
-      var boxes = document.body.getElementsByClassName('box');
-      for (var i = 0; i < boxes.length; ++i) {
-        boxes[i].addEventListener("webkitTransitionEnd", recordEvent, false);
-        boxes[i].style.webkitTransform = 'translate(200px)';
-      }
-      
-      window.setTimeout(cleanup, 700);
+      var box = document.getElementById('box1');
+      box.style.webkitTransform = 'translate(200px)';
     }
     
-    window.addEventListener('load', startTransition, false);
+    runTransitionTest(expectedEndEvents, 0.7, setupTest);
+    
   </script>
 </head>
 <body>

@@ -1,3 +1,5 @@
 Box should spin only 180 degrees even though the operation specifies a 0 to 540 degree animation. This is because the operation lists don't match, so it falls back to matrix animation, which normalizes the angle to between 0 and 360 degrees.
 
-PASS
+PASS - "-webkit-transform.0" property for "box" element at 0.5s saw something close to: 0.7071067811865476
+PASS - "-webkit-transform.0" property for "box" element at 1s saw something close to: 6.123233995736766e-17
+

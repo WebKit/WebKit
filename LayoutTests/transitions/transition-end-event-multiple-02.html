@@ -31,34 +31,31 @@
     }
     
   </style>
-  <script src="end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script src="transition-end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
-    var expected = [
-      ["background-color", "box2", "webkitTransitionEnd", 0.5],
-      ["background-color", "box3", "webkitTransitionEnd", 0.7],
-      ["height", "box3", "webkitTransitionEnd", 0.7],
-      ["left", "box1", "webkitTransitionEnd", 0.5],
-      ["left", "box2", "webkitTransitionEnd", 0.5],
-      ["left", "box3", "webkitTransitionEnd", 0.7],
-      ["width", "box3", "webkitTransitionEnd", 0.7],
+    
+    var expectedEndEvents = [
+      // [property-name, element-id, elapsed-time, listen]
+      ["background-color", "box2", 0.5, false],
+      ["background-color", "box3", 0.7, false],
+      ["height", "box3", 0.7, false],
+      ["left", "box1", 0.5, false],
+      ["left", "box2", 0.5, false],
+      ["left", "box3", 0.7, false],
+      ["width", "box3", 0.7, false],
     ];
 
-    function startTransition()
+    function setupTest()
     {
       var boxes = document.body.getElementsByClassName('box');
       for (var i = 0; i < boxes.length; ++i) {
-        boxes[i].addEventListener("webkitTransitionEnd", recordEvent, false);
+        boxes[i].addEventListener("webkitTransitionEnd", recordTransitionEndEvent, false);
         boxes[i].className = "box box" + (i+1);
       }
-      
-      window.setTimeout(cleanup, 1000);
     }
     
-    window.addEventListener('load', startTransition, false);
+    runTransitionTest(expectedEndEvents, 1.0, setupTest);
+    
   </script>
 </head>
 <body>

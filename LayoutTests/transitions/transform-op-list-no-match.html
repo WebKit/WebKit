@@ -16,62 +16,27 @@
       -webkit-transition-property: -webkit-transform;
     }
   </style>
+  <script src="transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
-    }
     
-    result = "PASS";
-    const defaultTolerance = 10;
-    
-    function isEqual(actual, desired, tolerance)
+    function DegreesToRotation(angle)
     {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
-        var diff = Math.abs(actual - desired);
-        return diff < tolerance;
+      return Math.cos(angle * Math.PI / 180);
     }
     
-    function changeValues()
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, "box", "-webkit-transform.0", DegreesToRotation(45), DegreesToRotation(10)],
+      [1.0, "box", "-webkit-transform.0", DegreesToRotation(90), DegreesToRotation(10)],
+    ];
+    
+    function setupTest()
     {
-        var box = document.getElementById('box');
-        box.style.webkitTransitionDuration = "0.1s";
+      var box = document.getElementById('box');
+      box.style.webkitTransform = 'rotate(540deg)';
     }
     
-    function check(expected)
-    {
-        if (result != "PASS")
-            return;
-            
-        var t = window.getComputedStyle(document.getElementById('box')).webkitTransform;
-        var a = t.split("(");
-        a = a[1].split(",");
-        var angle = Math.acos(a[0]) * 180 / Math.PI;
-        if (!isEqual(angle, expected))
-            result = "FAIL(was:"+t.m41+", s/b:0)";
-    }
-    
-    function startTimeout()
-    {
-        setTimeout("check(45)", 500);
-        setTimeout("check(90)", 1000);
-        
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 1100);
-    }
-    
-    function start()
-    {
-        var box = document.getElementById('box');
-        box.style.webkitTransform = 'rotate(540deg)';
-        window.setTimeout("startTimeout()", 0);
-    }
-    
-    window.addEventListener('load', start, false);
+    runTransitionTest(expectedValues, setupTest);
     
   </script>
 </head>

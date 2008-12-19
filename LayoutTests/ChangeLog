@@ -1,3 +1,70 @@
+2008-12-18  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Rewrote some of the transition layout tests that were using setTimeout() to use the transition pause API in DRT when available.
+
+        Rewrote the transition layout tests that were specifically testing the transition end event to use common JS code from transition-end-event-helpers.js.
+
+        Fixed some typos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22890
+
+        * transitions/end-event-helpers.js: Removed.
+        * transitions/interrupt-transform-transition-expected.txt:
+        * transitions/interrupt-transform-transition.html:
+        * transitions/opacity-transition-zindex.html:
+        * transitions/start-transform-transition.html:
+        * transitions/transform-op-list-match-expected.txt:
+        * transitions/transform-op-list-match.html:
+        * transitions/transform-op-list-no-match-expected.txt:
+        * transitions/transform-op-list-no-match.html:
+        * transitions/transition-end-event-all-properties-expected.txt:
+        * transitions/transition-end-event-all-properties.html:
+        * transitions/transition-end-event-attributes-expected.txt:
+        * transitions/transition-end-event-attributes.html:
+        * transitions/transition-end-event-container-expected.txt:
+        * transitions/transition-end-event-container.html:
+        * transitions/transition-end-event-helpers.js: Copied from LayoutTests/transitions/end-event-helpers.js.
+        (recordTransitionEndEvent):
+        (runTransitionTest.processEndEvents.compareEventInfo):
+        (runTransitionTest.processEndEvents.examineResults):
+        (runTransitionTest.processEndEvents):
+        (runTransitionTest.startTest):
+        (runTransitionTest.window):
+        (runTransitionTest):
+        * transitions/transition-end-event-left-expected.txt:
+        * transitions/transition-end-event-left.html:
+        * transitions/transition-end-event-multiple-01-expected.txt:
+        * transitions/transition-end-event-multiple-01.html:
+        * transitions/transition-end-event-multiple-02-expected.txt:
+        * transitions/transition-end-event-multiple-02.html:
+        * transitions/transition-end-event-multiple-03-expected.txt:
+        * transitions/transition-end-event-multiple-03.html:
+        * transitions/transition-end-event-multiple-04-expected.txt:
+        * transitions/transition-end-event-multiple-04.html:
+        * transitions/transition-end-event-nested-expected.txt:
+        * transitions/transition-end-event-nested.html:
+        * transitions/transition-end-event-set-none-expected.txt:
+        * transitions/transition-end-event-set-none.html:
+        * transitions/transition-end-event-transform-expected.txt:
+        * transitions/transition-end-event-transform.html:
+        * transitions/transition-end-event-window-expected.txt:
+        * transitions/transition-end-event-window.html:
+        * transitions/transition-test-helpers.js: Added.
+        (runTransitionTest.isCloseEnough):
+        (runTransitionTest.checkExpectedValue):
+        (runTransitionTest.endTest):
+        (runTransitionTest.runTest):
+        (runTransitionTest.startTest):
+        (runTransitionTest.if):
+        * transitions/transition-timing-function-expected.txt: Copied from LayoutTests/transitions/transition-timing-function-software-expected.txt.
+        * transitions/transition-timing-function-software-expected.txt: Removed.
+        * transitions/transition-timing-function-software.html: Removed.
+        * transitions/transition-timing-function.html: Copied from LayoutTests/transitions/transition-timing-function-software.html.
+        * transitions/zero-duration-in-list-expected.txt:
+        * transitions/zero-duration-in-list.html:
+
 2008-12-18  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.
@@ -399,7 +466,6 @@
         * fast/js/ignored-result-null-comparison-crash.html: Added.
         * fast/js/resources/ignored-result-null-comparison-crash.js: Added.
 
->>>>>>> .r39306
 2008-12-12  Pierre-Olivier Latour  <pol@apple.com>
 
         Checked-in new results for failing SVG tests so that the bots are green again.

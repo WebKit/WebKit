@@ -13,29 +13,24 @@
       -webkit-transition-duration: 0.5s;
     }
   </style>
-  <script src="end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script src="transition-end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
-
-    var expected = [
-      ["left", "box1", "webkitTransitionEnd", 0.5]
+    
+    var expectedEndEvents = [
+      // [property-name, element-id, elapsed-time, listen]
+      ["left", "box1", 0.5, false]
     ];
     
-    function startTransition()
+    function setupTest()
     {
-      var boxes = document.body.getElementsByClassName('box');
-      for (var i = 0; i < boxes.length; ++i) {
-        boxes[i].style.left = '200px';
-      }
+      window.onwebkittransitionend = recordTransitionEndEvent;
       
-      window.setTimeout(cleanup, 700);
+      var box = document.getElementById('box1');
+      box.style.left = '200px';
     }
     
-    window.addEventListener('load', startTransition, false);
-    window.onwebkittransitionend = recordEvent;
+    runTransitionTest(expectedEndEvents, 0.7, setupTest);
+    
   </script>
 </head>
 <body>

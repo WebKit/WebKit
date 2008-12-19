@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>Interrupted hardware transition</title>
+  <title>Interrupted Transition</title>
   <style type="text/css" media="screen">
     .box {
       position: relative;
@@ -12,10 +12,6 @@
       -webkit-transition-property: -webkit-transform;
       -webkit-transition-duration: 2s;
       -webkit-transform: translate(0, 0);
-    }
-
-    .moved {
-/*      -webkit-transform: translateX(300px);*/
     }
   </style>
   <script type="text/javascript" charset="utf-8">
@@ -51,7 +47,7 @@
   </script>
 </head>
 <body onload="startTest()">
-  <p>Interrupted hardware transition should not jump back to pre-transtion transform</p>
+  <p>Interrupted transition should not jump back to pre-transition transform</p>
   <div id="box" class="box">
   </div>
   <div id="result">
