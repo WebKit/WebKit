@@ -1,3 +1,18 @@
+2008-12-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Temporary band-aide fix for <rdar://problem/6372481> In Gmail, a 
+        crash occurs at 
+        AccessibilityTable::isTableExposableThroughAccessibility() when 
+        attempting to create a link in a rich text message
+
+        We need to disable Accessibility Tables until we get this fixed for 
+        real to prevent rampant crashing.
+
+        * page/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::AccessibilityTable):
+
 2008-12-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

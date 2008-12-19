@@ -53,8 +53,8 @@ AccessibilityTable::AccessibilityTable(RenderObject* renderer)
     : AccessibilityRenderObject(renderer),
     m_headerContainer(0)
 {
-    // AXTables should not appear in tiger or leopard, on the mac
-#if PLATFORM(MAC) && (defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD))
+    // FIXME: We need to disable Accessibility Tables entirely on the Mac until <rdar://problem/6372481> is resolved.
+#if PLATFORM(MAC)
     m_isAccessibilityTable = false;
 #else    
     m_isAccessibilityTable = isTableExposableThroughAccessibility();
