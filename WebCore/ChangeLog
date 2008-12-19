@@ -1,3 +1,9 @@
+2008-12-19  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        [GTK] Build fix by adding the new files.
+
+        * GNUmakefile.am:
+
 2008-12-19  Jade Han <jade.han@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

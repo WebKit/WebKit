@@ -26,8 +26,10 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/page \
 	-I$(srcdir)/WebCore/page/animation \
 	-I$(srcdir)/WebCore/platform \
+	-I$(srcdir)/WebCore/platform/animation \
 	-I$(srcdir)/WebCore/platform/graphics \
 	-I$(srcdir)/WebCore/platform/graphics/filters \
+	-I$(srcdir)/WebCore/platform/graphics/transforms \
 	-I$(srcdir)/WebCore/platform/image-decoders \
 	-I$(srcdir)/WebCore/platform/image-decoders/bmp \
 	-I$(srcdir)/WebCore/platform/image-decoders/gif \
@@ -1247,8 +1249,11 @@ webcore_sources += \
 	WebCore/platform/TreeShared.h \
 	WebCore/platform/Widget.cpp \
 	WebCore/platform/Widget.h \
-	WebCore/platform/graphics/AffineTransform.cpp \
-	WebCore/platform/graphics/AffineTransform.h \
+	WebCore/platform/animation/Animation.cpp \
+	WebCore/platform/animation/Animation.h \
+	WebCore/platform/animation/AnimationList.cpp \
+	WebCore/platform/animation/AnimationList.h \
+	WebCore/platform/animation/TimingFunction.h \
 	WebCore/platform/graphics/BitmapImage.cpp \
 	WebCore/platform/graphics/BitmapImage.h \
 	WebCore/platform/graphics/Color.cpp \
@@ -1329,6 +1334,22 @@ webcore_sources += \
 	WebCore/platform/graphics/filters/FEColorMatrix.h \
 	WebCore/platform/graphics/filters/FEComponentTransfer.h \
 	WebCore/platform/graphics/filters/FEComposite.h \
+	WebCore/platform/graphics/transforms/AffineTransform.cpp \
+	WebCore/platform/graphics/transforms/AffineTransform.h \
+	WebCore/platform/graphics/transforms/IdentityTransformOperation.h \
+	WebCore/platform/graphics/transforms/MatrixTransformOperation.cpp \
+	WebCore/platform/graphics/transforms/MatrixTransformOperation.h \
+	WebCore/platform/graphics/transforms/RotateTransformOperation.cpp \
+	WebCore/platform/graphics/transforms/RotateTransformOperation.h \
+	WebCore/platform/graphics/transforms/ScaleTransformOperation.cpp \
+	WebCore/platform/graphics/transforms/ScaleTransformOperation.h \
+	WebCore/platform/graphics/transforms/SkewTransformOperation.cpp \
+	WebCore/platform/graphics/transforms/SkewTransformOperation.h \
+	WebCore/platform/graphics/transforms/TransformOperation.h \
+	WebCore/platform/graphics/transforms/TransformOperations.cpp \
+	WebCore/platform/graphics/transforms/TransformOperations.h \
+	WebCore/platform/graphics/transforms/TranslateTransformOperation.cpp \
+	WebCore/platform/graphics/transforms/TranslateTransformOperation.h \
 	WebCore/platform/network/AuthenticationChallengeBase.cpp \
 	WebCore/platform/network/AuthenticationChallengeBase.h \
 	WebCore/platform/network/Credential.cpp \
@@ -1557,10 +1578,6 @@ webcore_sources += \
 	WebCore/rendering/bidi.h \
 	WebCore/rendering/break_lines.cpp \
 	WebCore/rendering/break_lines.h \
-	WebCore/rendering/style/Animation.cpp \
-	WebCore/rendering/style/Animation.h \
-	WebCore/rendering/style/AnimationList.cpp \
-	WebCore/rendering/style/AnimationList.h \
 	WebCore/rendering/style/BindingURI.cpp \
 	WebCore/rendering/style/BindingURI.h \
 	WebCore/rendering/style/BorderData.h \
@@ -1579,22 +1596,14 @@ webcore_sources += \
 	WebCore/rendering/style/IdentityTransformOperation.h \
 	WebCore/rendering/style/KeyframeList.cpp \
 	WebCore/rendering/style/KeyframeList.h \
-	WebCore/rendering/style/MatrixTransformOperation.cpp \
-	WebCore/rendering/style/MatrixTransformOperation.h \
 	WebCore/rendering/style/NinePieceImage.cpp \
 	WebCore/rendering/style/NinePieceImage.h \
 	WebCore/rendering/style/OutlineValue.h \
 	WebCore/rendering/style/RenderStyle.cpp \
 	WebCore/rendering/style/RenderStyle.h \
 	WebCore/rendering/style/RenderStyleConstants.h \
-	WebCore/rendering/style/RotateTransformOperation.cpp \
-	WebCore/rendering/style/RotateTransformOperation.h \
-	WebCore/rendering/style/ScaleTransformOperation.cpp \
-	WebCore/rendering/style/ScaleTransformOperation.h \
 	WebCore/rendering/style/ShadowData.cpp \
 	WebCore/rendering/style/ShadowData.h \
-	WebCore/rendering/style/SkewTransformOperation.cpp \
-	WebCore/rendering/style/SkewTransformOperation.h \
 	WebCore/rendering/style/StyleBackgroundData.cpp \
 	WebCore/rendering/style/StyleBackgroundData.h \
 	WebCore/rendering/style/StyleBoxData.cpp \
@@ -1625,11 +1634,6 @@ webcore_sources += \
 	WebCore/rendering/style/StyleVisualData.cpp \
 	WebCore/rendering/style/StyleVisualData.h \
 	WebCore/rendering/style/TimingFunction.h \
-	WebCore/rendering/style/TransformOperation.h \
-	WebCore/rendering/style/TransformOperations.cpp \
-	WebCore/rendering/style/TransformOperations.h \
-	WebCore/rendering/style/TranslateTransformOperation.cpp \
-	WebCore/rendering/style/TranslateTransformOperation.h \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/DOMParser.h \
 	WebCore/xml/XMLHttpRequest.cpp \
