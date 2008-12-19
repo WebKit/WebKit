@@ -1,3 +1,15 @@
+2008-12-18  David Kilzer  <ddkilzer@apple.com>
+
+        Reset role to "Private" on 6 header files to fix clean builds after r39378
+
+        Reviewed by BUILD FIX.
+
+        * WebCore.xcodeproj/project.pbxproj: Added back "Private" role
+        that was lost on 6 headers when they were "moved":
+        AffineTransform.h, Animation.h, AnimationList.h,
+        TimingFunction.h, TransformOperation.h and
+        TransformOperations.h.
+
 2008-12-18  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Dan Bernstein.
