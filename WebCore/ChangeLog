@@ -1,3 +1,70 @@
+2008-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - avoid using the ResourceHandle-level credential storage, if any,
+          unless the client opts to use it; when use of the credential
+          storage is disallowed, all authentication challenges are sent to
+          the client.
+        - let the FrameLoaderClient decide whether to use the credential
+          storage. 
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::shouldUseCredentialStorage): Added.
+        Returns false.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldUseCredentialStorage): Added. Calls through
+        to the FrameLoaderClient.
+        * loader/FrameLoader.h: Declared shouldUseCredentialStorage().
+        * loader/FrameLoaderClient.h: Declared shouldUseCredentialStorage().
+        * loader/ResourceLoader.cpp: 
+        (WebCore::ResourceLoader::shouldUseCredentialStorage): Added. Calls
+        through to the FrameLoader.
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::shouldUseCredentialStorage): Implemented this
+        ResourceHandleClient method.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::shouldUseCredentialStorage): Added.
+        Overrides the ResourceLoader implementation by letting the client
+        supply the return value. If the client does not do this, continues
+        with the ResourceLoader behavior of asking the FrameLoader.
+        * loader/SubresourceLoader.h: Removed an unused #include and declared
+        shouldUseCredentialStorage().
+        * loader/SubresourceLoaderClient.h:
+        (WebCore::SubresourceLoaderClient::getShouldUseCredentialStorage):
+        Added a default implementation which returns false, meaning the client
+        does not wish to decide whether the credential storage should be used.
+        * platform/network/ResourceHandle.h: Removed unused forward declarations.
+        Declared a new member function, shouldUseCredentialStorage(), on Mac and
+        CFNetwork-using builds.
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::shouldUseCredentialStorage): Added this
+        default implementation that returns false.
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::findCFNetworkModule): Added. Returns a handle to the CFNetwork
+        module.
+        (WebCore::cfNetworkVersion): Added. Returns the high word of the
+        CFNetwork library's product version.
+        (WebCore::highestSupportedCFURLConnectionClientVersion): Added. Returns
+        the highest version of the CFURLConnectionClient structure supported by
+        the CFNetwork library. The only reason to check this at runtime is
+        that WebKit may be linking at runtime against an older version of
+        CFNetwork than the one it was built with, as is the case with nightly
+        builds.
+        (WebCore::shouldUseCredentialStorageCallback): Added this
+        CFURLConnection callback which calls through to
+        ResourceHandle::shouldUseCredentialStorage().
+        (WebCore::ResourceHandle::start): Pass a version 3 CFURLConnectionClient
+        including the shouldUseCredentialStorage callback. At runtime, clamp the
+        client structure version down to the highest supported by CFNetwork.
+        (WebCore::ResourceHandle::shouldUseCredentialStorage): Added. Calls through
+        to the client if there is one. Otherwise returns false.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::shouldUseCredentialStorage): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connectionShouldUseCredentialStorage:]):
+        Added this delegate method which callls through to
+        ResourceHandle::shouldUseCredentialStorage().
+
 2008-12-18  David Kilzer  <ddkilzer@apple.com>
 
         Reset role to "Private" on 6 header files to fix clean builds after r39378

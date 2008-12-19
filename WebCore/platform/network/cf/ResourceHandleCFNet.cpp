@@ -53,6 +53,49 @@
 
 namespace WebCore {
 
+static HMODULE findCFNetworkModule()
+{
+    if (HMODULE module = GetModuleHandleA("CFNetwork"))
+        return module;
+    return GetModuleHandleA("CFNetwork_debug");
+}
+
+static DWORD cfNetworkVersion()
+{
+    HMODULE cfNetworkModule = findCFNetworkModule();
+    WCHAR filename[MAX_PATH];
+    GetModuleFileName(cfNetworkModule, filename, MAX_PATH);
+    DWORD handle;
+    DWORD versionInfoSize = GetFileVersionInfoSize(filename, &handle);
+    Vector<BYTE> versionInfo(versionInfoSize);
+    GetFileVersionInfo(filename, handle, versionInfoSize, versionInfo.data());
+    VS_FIXEDFILEINFO* fixedFileInfo;
+    UINT fixedFileInfoLength;
+    VerQueryValue(versionInfo.data(), TEXT("\\"), reinterpret_cast<LPVOID*>(&fixedFileInfo), &fixedFileInfoLength);
+    return fixedFileInfo->dwProductVersionMS;
+}
+
+static CFIndex highestSupportedCFURLConnectionClientVersion()
+{
+    const DWORD firstCFNetworkVersionWithConnectionClientV2 = 0x000101a8; // 1.424
+    const DWORD firstCFNetworkVersionWithConnectionClientV3 = 0x000101ad; // 1.429
+
+#ifndef _CFURLConnectionClientV2Present
+    return 1;
+#endif
+
+    DWORD version = cfNetworkVersion();
+    if (version < firstCFNetworkVersionWithConnectionClientV2)
+        return 1;
+#ifndef _CFURLConnectionClientV3Present
+    return 2;
+#endif
+
+    if (version < firstCFNetworkVersionWithConnectionClientV3)
+        return 2;
+    return 3;
+}
+
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
 {
     static HashSet<String> hosts;
@@ -116,6 +159,20 @@ static void didSendBodyData(CFURLConnectionRef conn, CFIndex bytesWritten, CFInd
     if (!handle || !handle->client())
         return;
     handle->client()->didSendData(handle, totalBytesWritten, totalBytesExpectedToWrite);
+}
+#endif
+
+#ifdef _CFURLConnectionClientV3Present
+static Boolean shouldUseCredentialStorageCallback(CFURLConnectionRef conn, const void* clientInfo)
+{
+    ResourceHandle* handle = const_cast<ResourceHandle*>(static_cast<const ResourceHandle*>(clientInfo));
+
+    LOG(Network, "CFNet - shouldUseCredentialStorage(conn=%p, handle=%p) (%s)", conn, handle, handle->request().url().string().utf8().data());
+
+    if (!handle)
+        return false;
+
+    return handle->shouldUseCredentialStorage();
 }
 #endif
 
@@ -289,10 +346,13 @@ bool ResourceHandle::start(Frame* frame)
 
     RetainPtr<CFURLRequestRef> request(AdoptCF, makeFinalRequest(d->m_request, d->m_shouldContentSniff));
 
+    static CFIndex clientVersion = highestSupportedCFURLConnectionClientVersion();
     CFURLConnectionClient* client;
-#ifdef _CFURLConnectionClientV2Present
-    // CFURLConnection Callback API currently at version 2
-    CFURLConnectionClient_V2 client_V2 = {2, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData};
+#if defined(_CFURLConnectionClientV3Present)
+    CFURLConnectionClient_V3 client_V3 = {clientVersion, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0};
+    client = reinterpret_cast<CFURLConnectionClient*>(&client_V3);
+#elif defined(_CFURLConnectionClientV2Present)
+    CFURLConnectionClient_V2 client_V2 = {clientVersion, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData};
     client = reinterpret_cast<CFURLConnectionClient*>(&client_V2);
 #else
     CFURLConnectionClient client_V1 = {1, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge};
@@ -326,6 +386,15 @@ PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
 
 bool ResourceHandle::supportsBufferedData()
 {
+    return false;
+}
+
+bool ResourceHandle::shouldUseCredentialStorage()
+{
+    LOG(Network, "CFNet - shouldUseCredentialStorage()");
+    if (client())
+        return client()->shouldUseCredentialStorage(this);
+
     return false;
 }
 

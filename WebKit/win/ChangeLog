@@ -1,3 +1,19 @@
+2008-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - implement FrameLoaderClient::shouldUseCredentialStorage() by calling
+          a new resource load delegae method.
+
+        * Interfaces/IWebResourceLoadDelegatePrivate.idl: Added
+        a ne interface, IWebResourceLoadDelegatePrivate2, including a new
+        method, shouldUseCredentialStorage().
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::shouldUseCredentialStorage): Added. Calls the
+        delegate method. If the method is unimplemented, returns true for
+        backwards compatibility.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2008-12-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by John Sullivan.

@@ -358,6 +358,14 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     error = nsError;
 }
 
+bool ResourceHandle::shouldUseCredentialStorage()
+{
+    if (client())
+        return client()->shouldUseCredentialStorage(this);
+
+    return false;
+}
+
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
     ASSERT(!d->m_currentMacChallenge);
@@ -476,6 +484,15 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     }
 
     return request.nsURLRequest();
+}
+
+- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection
+{
+    if (!m_handle)
+        return NO;
+
+    CallbackGuard guard;
+    return m_handle->shouldUseCredentialStorage();
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge

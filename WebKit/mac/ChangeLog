@@ -1,3 +1,23 @@
+2008-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - implement FrameLoaderClient::shouldUseCredentialStorage() by calling
+          a new resource load delegae method.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::shouldUseCredentialStorage): Added. Calls the
+        delegate method. If the method is unimplemented, returns true for
+        backwards compatibility.
+        * WebView/WebView.mm: 
+        (-[WebView _cacheResourceLoadDelegateImplementations]): Initialize the
+        shouldUseCredentialStorageFunc member.
+        (CallResourceLoadDelegateReturningBoolean): Added.
+        * WebView/WebViewInternal.h:
+        * WebView/WebResourceLoadDelegatePrivate.h: Declared the delegate method
+        -webView:resource:shouldUseCredentialStorageForDataSource:.
+
 2008-12-18  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Jonathan Honeycutt.

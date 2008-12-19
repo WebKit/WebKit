@@ -200,7 +200,8 @@ namespace WebCore {
         DocumentLoader* provisionalDocumentLoader() const;
         FrameState state() const;
         static double timeOfLastCompletedLoad();
-        
+
+        bool shouldUseCredentialStorage(ResourceLoader*);
         void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
         void didCancelAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
         

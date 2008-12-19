@@ -780,6 +780,13 @@ void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsi
     //qDebug() << "FrameLoaderClientQt::dispatchWillSendRequest" << request.isNull() << request.url().string`();
 }
 
+bool
+FrameLoaderClientQt::shouldUseCredentialStorage(DocumentLoader*, unsigned long)
+{
+    notImplemented();
+    return false;
+}
+
 void FrameLoaderClientQt::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&)
 {
     notImplemented();

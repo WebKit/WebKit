@@ -59,3 +59,14 @@ interface IWebResourceLoadDelegatePrivate : IUnknown
     */
     HRESULT didLoadResourceFromMemoryCache([in] IWebView* webView, [in] IWebURLRequest* request, [in] IWebURLResponse* response, [in] UINT length, [in] IWebDataSource* dataSource);
 }
+
+[
+    object,
+    oleautomation,
+    uuid(E7B724A4-F0E5-4e11-9AC5-5F60AC09301E),
+    pointer_default(unique)
+]
+interface IWebResourceLoadDelegatePrivate2 : IWebResourceLoadDelegatePrivate
+{
+    HRESULT shouldUseCredentialStorage([in] IWebView* webView, [in] unsigned long identifier, [in] IWebDataSource* dataSource, [out, retval] BOOL* shouldUse);
+}

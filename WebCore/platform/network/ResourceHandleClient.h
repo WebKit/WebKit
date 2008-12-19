@@ -75,6 +75,7 @@ namespace WebCore {
 
         virtual void willCacheResponse(ResourceHandle*, CacheStoragePolicy&) { }
 
+        virtual bool shouldUseCredentialStorage(ResourceHandle*) { return false; }
         virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
         virtual void receivedCredential(ResourceHandle*, const AuthenticationChallenge&, const Credential&) { }

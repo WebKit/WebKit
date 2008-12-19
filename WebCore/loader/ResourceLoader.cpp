@@ -413,6 +413,12 @@ void ResourceLoader::cannotShowURL(ResourceHandle*)
     didFail(cannotShowURLError());
 }
 
+bool ResourceLoader::shouldUseCredentialStorage()
+{
+    RefPtr<ResourceLoader> protector(this);
+    return frameLoader()->shouldUseCredentialStorage(this);
+}
+
 void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
     // Protect this in this delegate method since the additional processing can do

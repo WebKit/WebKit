@@ -29,7 +29,6 @@
 #ifndef SubresourceLoader_h
 #define SubresourceLoader_h
  
-#include "ResourceHandleClient.h"
 #include "ResourceLoader.h"
 #include <wtf/PassRefPtr.h>
  
@@ -55,6 +54,7 @@ namespace WebCore {
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
+        virtual bool shouldUseCredentialStorage();
         virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
         virtual void receivedCancellation(const AuthenticationChallenge&);
         

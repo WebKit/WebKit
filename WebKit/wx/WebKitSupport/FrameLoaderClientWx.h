@@ -170,6 +170,7 @@ namespace WebCore {
         virtual void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
         
         virtual void dispatchWillSendRequest(DocumentLoader*, unsigned long, ResourceRequest&, const ResourceResponse&);
+        virtual bool shouldUseCredentialStorage(DocumentLoader*, unsigned long identifier);
         virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&);
         virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&);
         virtual void dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse&);

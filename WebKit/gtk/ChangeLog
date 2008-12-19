@@ -1,3 +1,13 @@
+2008-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - stub out FrameLoaderClient::shouldUseCredentialStorage().
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::shouldUseCredentialStorage):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2008-12-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by John Sullivan.

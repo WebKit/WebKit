@@ -83,8 +83,6 @@ class ResourceRequest;
 class ResourceResponse;
 class SchedulePair;
 class SharedBuffer;
-class SubresourceLoader;
-class SubresourceLoaderClient;
 
 template <typename T> class Timer;
 
@@ -109,6 +107,9 @@ public:
 
     ~ResourceHandle();
 
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    bool shouldUseCredentialStorage();
+#endif
 #if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL)
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
     void receivedCredential(const AuthenticationChallenge&, const Credential&);
