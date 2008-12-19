@@ -141,6 +141,7 @@ INCLUDEPATH += \
     $$PWD/platform/qt \
     $$PWD/platform/network/qt \
     $$PWD/platform/graphics/filters \
+    $$PWD/platform/graphics/transforms \
     $$PWD/platform/graphics/qt \
     $$PWD/svg/graphics/qt \
     $$PWD/loader \
@@ -158,6 +159,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/ForwardingHeaders \
                 $$PWD/.. \
                 $$PWD/platform \
+                $$PWD/platform/animation \
                 $$PWD/platform/network \
                 $$PWD/platform/graphics \
                 $$PWD/svg/animation \
@@ -837,6 +839,8 @@ SOURCES += \
     plugins/PluginMainThreadScheduler.cpp \
     plugins/MimeType.cpp \
     plugins/MimeTypeArray.cpp \
+    platform/animation/Animation.cpp \
+    platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
     platform/text/AtomicString.cpp \
     platform/text/Base64.cpp \
@@ -850,7 +854,6 @@ SOURCES += \
     platform/GeolocationService.cpp \
     platform/graphics/FontDescription.cpp \
     platform/graphics/FontFamily.cpp \
-    platform/graphics/AffineTransform.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
     platform/graphics/FloatPoint3D.cpp \
@@ -872,6 +875,13 @@ SOURCES += \
     platform/graphics/Pen.cpp \
     platform/graphics/SegmentedFontData.cpp \
     platform/graphics/SimpleFontData.cpp \
+    platform/graphics/transforms/AffineTransform.cpp \
+    platform/graphics/transforms/MatrixTransformOperation.cpp \
+    platform/graphics/transforms/RotateTransformOperation.cpp \
+    platform/graphics/transforms/ScaleTransformOperation.cpp \
+    platform/graphics/transforms/SkewTransformOperation.cpp \
+    platform/graphics/transforms/TransformOperations.cpp \
+    platform/graphics/transforms/TranslateTransformOperation.cpp \
     platform/KURL.cpp \
     platform/Length.cpp \
     platform/LinkHash.cpp \
@@ -975,20 +985,14 @@ SOURCES += \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
     rendering/TextControlInnerElements.cpp \
-    rendering/style/Animation.cpp \
-    rendering/style/AnimationList.cpp \
     rendering/style/BindingURI.cpp \
     rendering/style/ContentData.cpp \
     rendering/style/CounterDirectives.cpp \
     rendering/style/FillLayer.cpp \
     rendering/style/KeyframeList.cpp \
-    rendering/style/MatrixTransformOperation.cpp \
     rendering/style/NinePieceImage.cpp \
     rendering/style/RenderStyle.cpp \
-    rendering/style/RotateTransformOperation.cpp \
-    rendering/style/ScaleTransformOperation.cpp \
     rendering/style/ShadowData.cpp \
-    rendering/style/SkewTransformOperation.cpp \
     rendering/style/StyleBackgroundData.cpp \
     rendering/style/StyleBoxData.cpp \
     rendering/style/StyleCachedImage.cpp \
@@ -1002,8 +1006,6 @@ SOURCES += \
     rendering/style/StyleSurroundData.cpp \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
-    rendering/style/TransformOperations.cpp \
-    rendering/style/TranslateTransformOperation.cpp \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \
