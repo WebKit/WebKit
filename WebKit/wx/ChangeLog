@@ -1,3 +1,9 @@
+2008-12-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes after recent changes.
+
+        * presets/wxwebkit.bkl:
+
 2008-12-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

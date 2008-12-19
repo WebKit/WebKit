@@ -117,7 +117,9 @@ and WebCore. Include this file to use these settings.
         <include>$(WK_ROOT)/WebCore/loader/icon</include>
         <include>$(WK_ROOT)/WebCore/page</include>
         <include>$(WK_ROOT)/WebCore/platform</include>
+        <include>$(WK_ROOT)/WebCore/platform/animation</include>
         <include>$(WK_ROOT)/WebCore/platform/graphics</include>
+        <include>$(WK_ROOT)/WebCore/platform/graphics/transforms</include>
         <include>$(WK_ROOT)/WebCore/platform/image-decoders</include>
         <include>$(WK_ROOT)/WebCore/platform/image-decoders/gif</include>
         <include>$(WK_ROOT)/WebCore/platform/image-decoders/jpeg</include>

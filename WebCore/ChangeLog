@@ -1,3 +1,12 @@
+2008-12-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes after recent changes.
+
+        * WebCoreSources.bkl:
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::ImageSource::clear):
+        * webcore-base.bkl:
+
 2008-12-19  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Sam Weinig.

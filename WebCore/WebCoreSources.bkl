@@ -116,6 +116,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSDOMBinding.cpp
         bindings/js/JSEventListener.cpp
         bindings/js/JSPluginElementFunctions.cpp
+        bindings/js/ScriptCachedPageData.cpp
         bindings/js/ScriptCallFrame.cpp
         bindings/js/ScriptCallStack.cpp
         bindings/js/ScriptController.cpp
@@ -698,6 +699,8 @@ This file contains the list of files needed to build WebCore.
 
     <set append="1" var="WEBCORE_SOURCES_PLATFORM">
         platform/Arena.cpp
+        platform/animation/Animation.cpp
+        platform/animation/AnimationList.cpp
         platform/text/AtomicString.cpp
         platform/text/Base64.cpp
         platform/text/BidiContext.cpp
@@ -745,7 +748,6 @@ This file contains the list of files needed to build WebCore.
         platform/text/TextStream.cpp
         platform/Timer.cpp
         platform/Widget.cpp
-        platform/graphics/AffineTransform.cpp
         platform/graphics/BitmapImage.cpp
         platform/graphics/Color.cpp
         platform/graphics/FloatPoint.cpp
@@ -762,6 +764,13 @@ This file contains the list of files needed to build WebCore.
         platform/graphics/PathTraversalState.cpp
         platform/graphics/Pattern.cpp
         platform/graphics/Pen.cpp
+        platform/graphics/transforms/AffineTransform.cpp
+        platform/graphics/transforms/MatrixTransformOperation.cpp
+        platform/graphics/transforms/RotateTransformOperation.cpp
+        platform/graphics/transforms/ScaleTransformOperation.cpp
+        platform/graphics/transforms/SkewTransformOperation.cpp
+        platform/graphics/transforms/TransformOperations.cpp
+        platform/graphics/transforms/TranslateTransformOperation.cpp
         platform/network/AuthenticationChallengeBase.cpp
         platform/network/Credential.cpp
         platform/network/HTTPParsers.cpp
@@ -897,20 +906,14 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderWordBreak.cpp
         rendering/RootInlineBox.cpp
         rendering/TextControlInnerElements.cpp
-        rendering/style/Animation.cpp
-        rendering/style/AnimationList.cpp
         rendering/style/BindingURI.cpp
         rendering/style/ContentData.cpp
         rendering/style/CounterDirectives.cpp
         rendering/style/FillLayer.cpp
         rendering/style/KeyframeList.cpp
-        rendering/style/MatrixTransformOperation.cpp
         rendering/style/NinePieceImage.cpp
         rendering/style/RenderStyle.cpp
-        rendering/style/RotateTransformOperation.cpp
-        rendering/style/ScaleTransformOperation.cpp
         rendering/style/ShadowData.cpp
-        rendering/style/SkewTransformOperation.cpp
         rendering/style/StyleBackgroundData.cpp
         rendering/style/StyleBoxData.cpp
         rendering/style/StyleCachedImage.cpp
@@ -924,8 +927,6 @@ This file contains the list of files needed to build WebCore.
         rendering/style/StyleSurroundData.cpp
         rendering/style/StyleTransformData.cpp
         rendering/style/StyleVisualData.cpp
-        rendering/style/TransformOperations.cpp
-        rendering/style/TranslateTransformOperation.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_STORAGE">

@@ -80,8 +80,9 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/page</include>
         <include>$(SRCDIR)/page/animation</include>
         <include>$(SRCDIR)/platform</include>
+        <include>$(SRCDIR)/platform/animation</include>
         <include>$(SRCDIR)/platform/graphics</include>
-        <include>$(SRCDIR)/platform/graphics/gdk</include>
+        <include>$(SRCDIR)/platform/graphics/transforms</include>
         <include>$(SRCDIR)/platform/image-decoders</include>
         <include>$(SRCDIR)/platform/image-decoders/bmp</include>
         <include>$(SRCDIR)/platform/image-decoders/gif</include>
