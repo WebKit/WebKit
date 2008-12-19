@@ -359,6 +359,10 @@ public:
         const_cast<MyQObject*>(this)->m_qtFunctionInvoked = 51;
         m_actuals << qVariantFromValue(arg);
     }
+    Q_INVOKABLE void myInvokableWithBoolArg(bool arg) {
+        m_qtFunctionInvoked = 52;
+        m_actuals << arg;
+    }
 
     void emitMySignal() {
         emit mySignal();
@@ -784,6 +788,14 @@ void tst_QWebFrame::getSetStaticProperty()
     QCOMPARE(evalJS("myObject.stringProperty"), QString());
     QCOMPARE(m_myObject->stringProperty(), QString());
 
+    QCOMPARE(evalJS("myObject.variantProperty = new Number(1234);"
+                    "myObject.variantProperty").toDouble(), 1234.0);
+    QCOMPARE(m_myObject->variantProperty().toDouble(), 1234.0);
+
+    QCOMPARE(evalJS("myObject.variantProperty = new Boolean(1234);"
+                    "myObject.variantProperty"), sTrue);
+    QCOMPARE(m_myObject->variantProperty().toBool(), true);
+
     QCOMPARE(evalJS("myObject.variantProperty = null;"
                     "myObject.variantProperty.valueOf()"), sUndefined);
     QCOMPARE(m_myObject->variantProperty(), QVariant());
@@ -959,6 +971,18 @@ void tst_QWebFrame::callQtInvokable()
     QCOMPARE(m_myObject->qtFunctionInvoked(), 4);
     QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
     QCOMPARE(m_myObject->qtFunctionActuals().at(0).toDouble(), 123.5);
+
+    m_myObject->resetQtFunctionInvoked();
+    QCOMPARE(evalJS("typeof myObject.myInvokableWithDoubleArg(new Number(1234.5))"), sUndefined);
+    QCOMPARE(m_myObject->qtFunctionInvoked(), 4);
+    QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
+    QCOMPARE(m_myObject->qtFunctionActuals().at(0).toDouble(), 1234.5);
+
+    m_myObject->resetQtFunctionInvoked();
+    QCOMPARE(evalJS("typeof myObject.myInvokableWithBoolArg(new Boolean(true))"), sUndefined);
+    QCOMPARE(m_myObject->qtFunctionInvoked(), 52);
+    QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
+    QCOMPARE(m_myObject->qtFunctionActuals().at(0).toBool(), true);
 
     m_myObject->resetQtFunctionInvoked();
     QCOMPARE(evalJS("typeof myObject.myInvokableWithStringArg('ciao')"), sUndefined);

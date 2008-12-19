@@ -1,3 +1,14 @@
+2008-12-19  Jade Han <jade.han@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Allow conversion of JavaScript Number and Boolean types to Qt types
+
+        https://bugs.webkit.org/show_bug.cgi?id=22880
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+
 2008-12-19  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Holger Freyther.
