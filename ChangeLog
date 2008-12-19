@@ -1,3 +1,13 @@
+2008-12-19  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        [GTK] Build fix by defining WTF_USE_JIT_STUB_ARGUMENT_VA_LIST
+
+        Fix the jit compilation on i*686 on Linux by using the va_list
+        to pass arguments to the CTI. This is done on the MAC as well
+        and sunspider and javascriptcore seem to work with that.
+
+        * configure.ac:
+
 2008-12-18  Pamela Greene  <pam@chromium.org>
 
         Submitted without review.
