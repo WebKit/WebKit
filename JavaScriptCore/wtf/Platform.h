@@ -455,7 +455,7 @@
 #elif (USE(JIT_STUB_ARGUMENT_VA_LIST) && USE(JIT_STUB_ARGUMENT_REGISTER)) \
    || (USE(JIT_STUB_ARGUMENT_VA_LIST) && USE(JIT_STUB_ARGUMENT_STACK)) \
    || (USE(JIT_STUB_ARGUMENT_REGISTER) && USE(JIT_STUB_ARGUMENT_STACK))
-#error Please don't define more than one of the JIT_STUB_ARGUMENT settings.
+#error Please do not define more than one of the JIT_STUB_ARGUMENT settings.
 #endif
 #endif
 
