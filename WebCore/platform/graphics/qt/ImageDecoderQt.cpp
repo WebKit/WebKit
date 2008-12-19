@@ -290,10 +290,10 @@ int ImageDecoderQt::duration(size_t index) const
     return  m_imageList[index].m_duration;
 }
 
-QString ImageDecoderQt::imageFormat() const
+String ImageDecoderQt::filenameExtension() const
 {
     if (debugImageDecoderQt)
-           qDebug() << " ImageDecoderQt::imageFormat() returns" << m_imageFormat;
+           qDebug() << " ImageDecoderQt::filenameExtension() returns" << m_imageFormat;
     return m_imageFormat;
 };
 

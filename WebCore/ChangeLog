@@ -1,3 +1,15 @@
+2008-12-19  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Holger Freyther.
+
+        Implement ImageDecoder::filenameExtension() for Qt
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::filenameExtension):
+        * platform/graphics/qt/ImageDecoderQt.h:
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::filenameExtension):
+
 2008-12-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Alder.

@@ -73,7 +73,7 @@ String ImageSource::filenameExtension() const
     if (!m_decoder)
         return String();
 
-    return m_decoder->imageFormat();
+    return m_decoder->filenameExtension();
 }
 
 bool ImageSource::isSizeAvailable()
