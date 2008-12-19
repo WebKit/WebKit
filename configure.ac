@@ -23,7 +23,7 @@ dnl # see http://www.gnu.org/software/libtool/manual.html#Versioning
 LIBWEBKITGTK_VERSION=1:0:0
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
-AM_INIT_AUTOMAKE([foreign subdir-objects])
+AM_INIT_AUTOMAKE([foreign subdir-objects tar-ustar])
 
 # host checking - inspired by the GTK+ configure.in
 # TODO: os_mac, os_bsd

@@ -1,3 +1,12 @@
+2008-12-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        Use ustar tar format for WebKit/GTK+'s make dist target, so that
+        storing files whose filenames are > 99 is possible.
+
+        * configure.ac:
+
 2008-12-19  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         [GTK] Build fix by defining WTF_USE_JIT_STUB_ARGUMENT_VA_LIST
