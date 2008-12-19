@@ -169,6 +169,12 @@ void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
     paintObject(paintInfo, tx, ty);
 }
 
+static inline bool rendererObscuresBackground(RenderObject* object)
+{
+    // FIXME: this should test opacity too.
+    return object && object->style()->visibility() == VISIBLE && !object->style()->hasTransform();
+}
+    
 void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
     // Check to see if we are enclosed by a layer that requires complex painting rules.  If so, we cannot blit
@@ -185,10 +191,12 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         }
     }
 
-    if (elt || (firstChild() && firstChild()->style()->visibility() == VISIBLE) || !view())
+    // If painting will entirely fill the view, no need to fill the background.
+    if (elt || rendererObscuresBackground(firstChild()) || !view())
         return;
 
-    // This code typically only executes if the root element's visibility has been set to hidden.
+    // This code typically only executes if the root element's visibility has been set to hidden,
+    // or there is a transform on the <html>.
     // Only fill with the base background color (typically white) if we're the root document, 
     // since iframes/frames with no background in the child document should show the parent's background.
     if (view()->isTransparent()) // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being transparent.
