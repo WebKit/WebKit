@@ -97,6 +97,9 @@ public:
 #endif
         OP_PUSH_EAX                     = 0x50,
         OP_POP_EAX                      = 0x58,
+#if PLATFORM(X86_64)
+        OP_MOVSXD_GvEv                  = 0x63,
+#endif
         PRE_OPERAND_SIZE                = 0x66,
         PRE_SSE_66                      = 0x66,
         OP_PUSH_Iz                      = 0x68,
@@ -322,6 +325,24 @@ public:
         }
     }
 
+#if PLATFORM(X86_64)
+    void andq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_AND_EvGv, src, dst);
+    }
+
+    void andq_ir(int imm, RegisterID dst)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_AND, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_AND, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+#endif
+
     void orl_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp(OP_OR_EvGv, src, dst);
@@ -342,6 +363,13 @@ public:
             m_formatter.immediate32(imm);
         }
     }
+
+#if PLATFORM(X86_64)
+    void orq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_OR_EvGv, src, dst);
+    }
+#endif
 
     void subl_rr(RegisterID src, RegisterID dst)
     {
@@ -392,6 +420,19 @@ public:
             m_formatter.immediate32(imm);
         }
     }
+
+#if PLATFORM(X86_64)
+    void xorq_ir(int imm, RegisterID dst)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_XOR, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_XOR, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+#endif
 
     void sarl_i8r(int imm, RegisterID dst)
     {
@@ -739,6 +780,13 @@ public:
         m_formatter.oneByteOp64(OP_MOV_EAXIv, dst);
         m_formatter.immediate64(imm);
     }
+    
+    void movsxd_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_MOVSXD_GvEv, dst, src);
+    }
+    
+    
 #else
     void movl_mr(void* addr, RegisterID dst)
     {

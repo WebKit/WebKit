@@ -2,6 +2,49 @@
 
         Reviewed by Sam Weinig.
 
+        Fixes for the JIT's handling of JSImmediate values on x86-64.
+        On 64-bit systems, the code in JSImmediate.h relies on the upper
+        bits of a JSImmediate being a sign extension of the low 32-bits.
+        This was not being enforced by the JIT, since a number of inline
+        operations were being performed on 32-bit values in registers, and
+        when a 32-bit result is written to a register on x86-64 the value
+        is zero-extended to 64-bits.
+        
+        This fix honors previous behavoir.  A better fix in the long run
+        (when the JIT is enabled by default) may be to change JSImmediate.h
+        so it no longer relies on the upper bits of the pointer,... though
+        if we're going to change JSImmediate.h for 64-bit, we probably may
+        as well change the format so that the full range of 32-bit ints can
+        be stored, rather than just 31-bits.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22925
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::addPtr):
+        (JSC::MacroAssembler::andPtr):
+        (JSC::MacroAssembler::orPtr):
+        (JSC::MacroAssembler::or32):
+        (JSC::MacroAssembler::xor32):
+        (JSC::MacroAssembler::xorPtr):
+        (JSC::MacroAssembler::signExtend32ToPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::andq_rr):
+        (JSC::X86Assembler::andq_ir):
+        (JSC::X86Assembler::orq_rr):
+        (JSC::X86Assembler::xorq_ir):
+        (JSC::X86Assembler::movsxd_rr):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitFastArithReTagImmediate):
+        (JSC::JIT::emitFastArithPotentiallyReTagImmediate):
+        (JSC::JIT::emitFastArithImmToInt):
+
+2008-12-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Just a tidy up - rename & refactor some the #defines configuring the JIT.
 
         * interpreter/Interpreter.cpp:

@@ -319,16 +319,18 @@ ALWAYS_INLINE JIT::Jump JIT::emitFastArithDeTagImmediateJumpIfZero(RegisterID re
 ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID reg)
 {
     add32(Imm32(JSImmediate::TagBitTypeInteger), reg);
+    signExtend32ToPtr(reg, reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithPotentiallyReTagImmediate(RegisterID reg)
 {
     or32(Imm32(JSImmediate::TagBitTypeInteger), reg);
+    signExtend32ToPtr(reg, reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithImmToInt(RegisterID reg)
 {
-    rshift32(Imm32(1), reg);
+    rshift32(Imm32(JSImmediate::IntegerPayloadShift), reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithIntToImmOrSlowCase(RegisterID reg)

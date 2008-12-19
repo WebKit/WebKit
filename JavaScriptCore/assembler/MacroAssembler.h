@@ -369,10 +369,9 @@ public:
 #if PLATFORM(X86_64)
         m_assembler.addq_ir(imm.m_value, srcDest);
 #else
-        m_assembler.addl_ir(imm.m_value, srcDest);
+        add32(imm, srcDest);
 #endif
     }
-
 
     void addPtr(Imm32 imm, RegisterID src, RegisterID dest)
     {
@@ -402,6 +401,24 @@ public:
     void and32(Imm32 imm, RegisterID dest)
     {
         m_assembler.andl_ir(imm.m_value, dest);
+    }
+
+    void andPtr(RegisterID src, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.andq_rr(src, dest);
+#else
+        and32(src, dest);
+#endif
+    }
+
+    void andPtr(Imm32 imm, RegisterID srcDest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.andq_ir(imm.m_value, srcDest);
+#else
+        and32(imm, srcDest);
+#endif
     }
 
     void lshift32(Imm32 imm, RegisterID dest)
@@ -460,9 +477,18 @@ public:
         m_assembler.orl_rr(src, dest);
     }
 
+    void orPtr(RegisterID src, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.orq_rr(src, dest);
+#else
+        or32(src, dest);
+#endif
+    }
+
     void or32(Imm32 imm, RegisterID dest)
     {
-            m_assembler.orl_ir(imm.m_value, dest);
+        m_assembler.orl_ir(imm.m_value, dest);
     }
 
     void rshift32(Imm32 imm, RegisterID dest)
@@ -507,11 +533,20 @@ public:
         m_assembler.xorl_rr(src, dest);
     }
 
-    void xor32(Imm32 imm, RegisterID dest)
+    void xor32(Imm32 imm, RegisterID srcDest)
     {
-        m_assembler.xorl_ir(imm.m_value, dest);
+        m_assembler.xorl_ir(imm.m_value, srcDest);
     }
     
+    void xorPtr(Imm32 imm, RegisterID srcDest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.xorq_ir(imm.m_value, srcDest);
+#else
+        xor32(imm, srcDest);
+#endif
+    }
+
 
     // Memory access operations:
     //
@@ -737,6 +772,17 @@ public:
         m_assembler.xchgl_rr(reg1, reg2);
 #endif
     }
+
+    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.movsxd_rr(src, dest);
+#else
+        if (src != dest)
+            move(src, dest);
+#endif
+    }
+
 
 
     // Forwards / external control flow operations:
