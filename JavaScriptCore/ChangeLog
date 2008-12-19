@@ -1,3 +1,15 @@
+2008-12-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22686
+
+        Added file which was missing to the javascriptcore_sources
+        variable, so that it shows up in the tarball created by `make
+        dist'.
+
+        * GNUmakefile.am:
+
 2008-12-19  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Antti Koivisto.

@@ -73,6 +73,7 @@ javascriptcore_sources += \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/OpaqueJSString.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/WebKitAvailability.h \
 	JavaScriptCore/JavaScriptCorePrefix.h \
+	JavaScriptCore/jit/ExecutableAllocator.h \
 	JavaScriptCore/jit/JIT.cpp \
 	JavaScriptCore/jit/JITCall.cpp \
 	JavaScriptCore/jit/JITPropertyAccess.cpp \

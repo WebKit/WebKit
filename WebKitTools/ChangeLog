@@ -1,3 +1,15 @@
+2008-12-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22686
+
+        Added files which were missing from the TestNetscapePlugin
+        directory to the SOURCES variable, so that they will be
+        distributed in a make dist.
+
+        * GNUMakefile.am:
+
 2008-12-18  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

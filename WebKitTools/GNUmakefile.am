@@ -87,6 +87,9 @@ TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
 	$(javascriptcore_cppflags)
 
 TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
+	WebKitTools/DumpRenderTree/gtk/TestNetscapePlugin/ForwardingHeaders/WebKit/npapi.h \
+	WebKitTools/DumpRenderTree/gtk/TestNetscapePlugin/ForwardingHeaders/WebKit/npfunctions.h \
+	WebKitTools/DumpRenderTree/gtk/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h \
 	WebKitTools/DumpRenderTree/gtk/TestNetscapePlugin/TestNetscapePlugin.cpp \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h \
