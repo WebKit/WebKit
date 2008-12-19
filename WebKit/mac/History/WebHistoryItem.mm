@@ -382,6 +382,11 @@ static WebWindowWatcher *_windowWatcher = nil;
     core(_private)->visited(title, [NSDate timeIntervalSinceReferenceDate]);
 }
 
+- (void)_setVisitCount:(int)count
+{
+    core(_private)->setVisitCount(count);
+}
+
 @end
 
 @implementation WebHistoryItem (WebPrivate)

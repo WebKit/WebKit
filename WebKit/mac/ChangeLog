@@ -1,3 +1,17 @@
+2008-12-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan
+
+        Initial visit to a website creates history items that start with a visit count of
+        zero instead of one
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate visitedURL:withTitle:]): Set the visit count on new items
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem _setVisitCount:]): Call through to the WebCore item
+        * History/WebHistoryItemInternal.h:
+
 2008-12-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by John Sullivan.
