@@ -385,6 +385,10 @@ void FrameLoaderClientQt::dispatchDidFirstLayout()
         emit m_webFrame->initialLayoutCompleted();
 }
 
+void FrameLoaderClientQt::dispatchDidFirstVisuallyNonEmptyLayout()
+{
+    notImplemented();
+}
 
 void FrameLoaderClientQt::dispatchShow()
 {

@@ -3272,6 +3272,11 @@ void FrameLoader::didFirstLayout()
     m_client->dispatchDidFirstLayout();
 }
 
+void FrameLoader::didFirstVisuallyNonEmptyLayout()
+{
+    m_client->dispatchDidFirstVisuallyNonEmptyLayout();
+}
+
 void FrameLoader::frameLoadCompleted()
 {
     m_client->frameLoadCompleted();

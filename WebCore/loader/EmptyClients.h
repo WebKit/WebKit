@@ -184,6 +184,7 @@ public:
     virtual void dispatchDidFinishDocumentLoad() { }
     virtual void dispatchDidFinishLoad() { }
     virtual void dispatchDidFirstLayout() { }
+    virtual void dispatchDidFirstVisuallyNonEmptyLayout() { }
 
     virtual Frame* dispatchCreatePage() { return 0; }
     virtual void dispatchShow() { }

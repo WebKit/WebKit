@@ -113,6 +113,7 @@ namespace WebCore {
         virtual void dispatchDidFinishDocumentLoad();
         virtual void dispatchDidFinishLoad();
         virtual void dispatchDidFirstLayout();
+        virtual void dispatchDidFirstVisuallyNonEmptyLayout();
 
         virtual WebCore::Frame* dispatchCreatePage();
         virtual void dispatchShow();

@@ -261,6 +261,8 @@ namespace WebCore {
         void didFirstLayout();
         bool firstLayoutDone() const;
 
+        void didFirstVisuallyNonEmptyLayout();
+
         void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
         void clientRedirected(const KURL&, double delay, double fireDate, bool lockHistory, bool isJavaScriptFormAction);
         bool shouldReload(const KURL& currentURL, const KURL& destinationURL);

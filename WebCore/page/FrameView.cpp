@@ -108,6 +108,8 @@ public:
         m_repaintRects.clear();
         m_paintRestriction = PaintRestrictionNone;
         m_isPainting = false;
+        m_isVisuallyNonEmpty = false;
+        m_firstVisuallyNonEmptyLayoutCallbackPending = true;
     }
 
     bool m_doFullRepaint;
@@ -160,6 +162,9 @@ public:
     RefPtr<Node> m_nodeToDraw;
     PaintRestriction m_paintRestriction;
     bool m_isPainting;
+
+    bool m_isVisuallyNonEmpty;
+    bool m_firstVisuallyNonEmptyLayoutCallbackPending;
 };
 
 FrameView::FrameView(Frame* frame)
@@ -543,7 +548,7 @@ void FrameView::layout(bool allowSubtree)
         if (oldSize != m_size)
             d->m_doFullRepaint = true;
     }
-    
+
     RenderLayer* layer = root->enclosingLayer();
 
     pauseScheduledEvents();
@@ -960,7 +965,12 @@ void FrameView::performPostLayoutTasks()
         d->m_firstLayoutCallbackPending = false;
         m_frame->loader()->didFirstLayout();
     }
-    
+
+    if (d->m_isVisuallyNonEmpty && d->m_firstVisuallyNonEmptyLayoutCallbackPending) {
+        d->m_firstVisuallyNonEmptyLayoutCallbackPending = false;
+        m_frame->loader()->didFirstVisuallyNonEmptyLayout();
+    }
+
     RenderView* root = m_frame->contentRenderer();
 
     root->updateWidgetPositions();
@@ -1269,4 +1279,9 @@ void FrameView::layoutIfNeededRecursive()
             static_cast<FrameView*>(*current)->layoutIfNeededRecursive();
 }
 
+void FrameView::setIsVisuallyNonEmpty()
+{
+    d->m_isVisuallyNonEmpty = true;
 }
+
+} // namespace WebCore

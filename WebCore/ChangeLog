@@ -1,3 +1,31 @@
+2008-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        Add new FrameLoaderClient method to indicate the first visually 
+        non-empty layout based on an heuristic.  Right now that heuristic
+        is the first layout after an image, text or plugin has been added
+        to the render tree, but I can imagine it becoming much smarter.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didFirstVisuallyNonEmptyLayout):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::setIsVisuallyNonEmpty):
+        * page/FrameView.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::RenderPartObject):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+
 2008-12-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

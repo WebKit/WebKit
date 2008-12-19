@@ -1,3 +1,15 @@
+2008-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        Implement FrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout() by calling
+        a new private frame load delegate method.
+
+        * Interfaces/IWebFrameLoadDelegatePrivate.idl:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2008-12-16  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

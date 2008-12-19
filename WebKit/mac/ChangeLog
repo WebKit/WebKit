@@ -1,3 +1,18 @@
+2008-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        Implement FrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout() by calling
+        a new private frame load delegate method.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout):
+        * WebView/WebView.mm:
+        (-[WebView _cacheFrameLoadDelegateImplementations]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2008-12-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by John Sullivan.

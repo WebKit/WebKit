@@ -26,11 +26,13 @@
 #include "RenderText.h"
 
 #include "CharacterNames.h"
+#include "FrameView.h"
 #include "InlineTextBox.h"
 #include "Range.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
 #include "RenderLayer.h"
+#include "RenderView.h"
 #include "Text.h"
 #include "TextBreakIterator.h"
 #include "break_lines.h"
@@ -66,6 +68,8 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
     ASSERT(m_text);
     setRenderText();
     m_text = m_text->replace('\\', backslashAsCurrencySymbol());
+
+    view()->frameView()->setIsVisuallyNonEmpty();
 }
 
 #ifndef NDEBUG

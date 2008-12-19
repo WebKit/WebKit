@@ -542,6 +542,11 @@ void FrameLoaderClient::dispatchDidFirstLayout()
     notImplemented();
 }
 
+void FrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
+{
+    notImplemented();
+}
+
 void FrameLoaderClient::dispatchShow()
 {
     WebKitWebView* webView = getViewFromFrame(m_frame);

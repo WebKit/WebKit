@@ -455,6 +455,8 @@ Could be worth adding to the API.
 // Addresses 4192534.  SPI for now.
 - (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame;
 
+- (void)webView:(WebView *)sender didFirstVisuallyNonEmptyLayoutInFrame:(WebFrame *)frame;
+
 @end
 
 @interface NSObject (WebResourceLoadDelegatePrivate)

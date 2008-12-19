@@ -28,6 +28,7 @@
 
 #include "BitmapImage.h"
 #include "Document.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -182,6 +183,8 @@ RenderImage::RenderImage(Node* node)
     , m_cachedImage(0)
 {
     updateAltText();
+
+    view()->frameView()->setIsVisuallyNonEmpty();
 }
 
 RenderImage::~RenderImage()

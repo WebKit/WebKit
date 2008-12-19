@@ -51,3 +51,14 @@ interface IWebFrameLoadDelegatePrivate : IUnknown
     //- (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame;
     HRESULT didHandleOnloadEventsForFrame([in] IWebView* sender, [in] IWebFrame* frame);
 }
+
+[
+    object,
+    oleautomation,
+    uuid(5566CB49-6E87-4075-80CE-9BAC374C52DE),
+    pointer_default(unique)
+]
+interface IWebFrameLoadDelegatePrivate2 : IWebFrameLoadDelegatePrivate
+{
+    HRESULT didFirstVisuallyNonEmptyLayoutInFrame([in] IWebView* sender, [in] IWebFrame* frame);
+}

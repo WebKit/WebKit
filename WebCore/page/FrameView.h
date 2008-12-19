@@ -162,6 +162,8 @@ public:
     
     void layoutIfNeededRecursive();
 
+    void setIsVisuallyNonEmpty();
+
 private:
     void init();
 

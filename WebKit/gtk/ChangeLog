@@ -1,3 +1,13 @@
+2008-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        Stub out FrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2008-12-13  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Cameron Zwarich.

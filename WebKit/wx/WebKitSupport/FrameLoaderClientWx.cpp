@@ -330,6 +330,10 @@ void FrameLoaderClientWx::dispatchDidFirstLayout()
     notImplemented();
 }
 
+void FrameLoaderClientWx::dispatchDidFirstVisuallyNonEmptyLayout()
+{
+    notImplemented();
+}
 
 void FrameLoaderClientWx::dispatchShow()
 {

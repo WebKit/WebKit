@@ -37,6 +37,7 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "PluginData.h"
+#include "RenderView.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -49,6 +50,9 @@ RenderPartObject::RenderPartObject(HTMLFrameOwnerElement* element)
     // init RenderObject attributes
     setInline(true);
     m_hasFallbackContent = false;
+    
+    if (element->hasTagName(embedTag) || element->hasTagName(objectTag))
+        view()->frameView()->setIsVisuallyNonEmpty();
 }
 
 RenderPartObject::~RenderPartObject()

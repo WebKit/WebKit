@@ -177,6 +177,7 @@ typedef struct _WebFrameLoadDelegateImplementationCache {
     IMP didFailLoadWithErrorForFrameFunc;
     IMP didFinishLoadForFrameFunc;
     IMP didFirstLayoutInFrameFunc;
+    IMP didFirstVisuallyNonEmptyLayoutInFrameFunc;
     IMP didReceiveIconForFrameFunc;
     IMP didFinishDocumentLoadForFrameFunc;
 } WebFrameLoadDelegateImplementationCache;

@@ -298,6 +298,17 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
         frameLoadDelegatePriv->didFirstLayoutInFrame(webView, m_webFrame);
 }
 
+void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePrivate;
+    if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePrivate)) && frameLoadDelegatePrivate) {
+        COMPtr<IWebFrameLoadDelegatePrivate2> frameLoadDelegatePrivate2(Query, frameLoadDelegatePrivate);
+        if (frameLoadDelegatePrivate2)
+            frameLoadDelegatePrivate2->didFirstVisuallyNonEmptyLayoutInFrame(webView, m_webFrame);
+    }
+}
+
 Frame* WebFrameLoaderClient::dispatchCreatePage()
 {
     WebView* webView = m_webFrame->webView();
