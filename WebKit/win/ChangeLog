@@ -1,5 +1,12 @@
 2008-12-19  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix.
+
+        * WebHistory.cpp:
+        (WebHistory::allItems):
+
+2008-12-19  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler, Adele Peterson, Brady Eidson.
         
         Added SPI for getting an unsorted vector of all items in history.

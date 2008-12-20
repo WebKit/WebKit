@@ -551,7 +551,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::allItems(
     }
 
     *count = entriesByURLCount;
-    CFDictionaryGetKeysAndValues(m_entriesByURL.get(), 0, items);
+    CFDictionaryGetKeysAndValues(m_entriesByURL.get(), 0, (const void**)items);
     for (int i = 0; i < entriesByURLCount; i++)
         items[i]->AddRef();
 
