@@ -1,3 +1,17 @@
+2008-12-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Ada Chan.
+
+        - expose the new allItems() method via a new IWebHistoryPrivate
+          interface
+
+        * Interfaces/IWebHistoryPrivate.idl: Added.
+        * Interfaces/WebKit.idl: Added IWebHistoryPrivate.idl.
+        * WebHistory.cpp:
+        (WebHistory::QueryInterface): Added IWebHistoryPrivate.
+        (WebHistory::allItems):
+        * WebHistory.h:
+
 2008-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

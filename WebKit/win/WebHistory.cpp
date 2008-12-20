@@ -148,6 +148,8 @@ HRESULT STDMETHODCALLTYPE WebHistory::QueryInterface(REFIID riid, void** ppvObje
         *ppvObject = static_cast<IWebHistory*>(this);
     else if (IsEqualGUID(riid, IID_IWebHistory))
         *ppvObject = static_cast<IWebHistory*>(this);
+    else if (IsEqualGUID(riid, IID_IWebHistoryPrivate))
+        *ppvObject = static_cast<IWebHistoryPrivate*>(this);
     else
         return E_NOINTERFACE;
 
@@ -536,7 +538,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::orderedItemsLastVisitedOnDay(
 
 HRESULT STDMETHODCALLTYPE WebHistory::allItems( 
     /* [out][in] */ int* count,
-    /* [in] */ IWebHistoryItem** items)
+    /* [out][retval] */ IWebHistoryItem** items)
 {
     int entriesByURLCount = CFDictionaryGetCount(m_entriesByURL.get());
 
