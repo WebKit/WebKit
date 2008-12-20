@@ -24,8 +24,8 @@
  */
 
 #include "config.h"
-#include "FoundationExtras.h"
 #include "SharedBuffer.h"
+
 #include "WebCoreObjCExtras.h"
 #include <runtime/InitializeThreading.h>
 #include <string.h>
@@ -115,7 +115,7 @@ CFDataRef SharedBuffer::createCFData()
         return m_cfData.get();
     }
     
-    return (CFDataRef)HardRetainWithNSRelease([[WebCoreSharedBufferData alloc] initWithSharedBuffer:this]);
+    return (CFDataRef)RetainPtr<WebCoreSharedBufferData>(AdoptNS, [[WebCoreSharedBufferData alloc] initWithSharedBuffer:this]).releaseRef();
 }
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)

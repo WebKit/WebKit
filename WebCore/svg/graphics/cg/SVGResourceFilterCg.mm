@@ -30,7 +30,6 @@
 #include "SVGResourceFilter.h"
 
 #include "AffineTransform.h"
-#include "FoundationExtras.h"
 #include "GraphicsContext.h"
 
 #include "SVGResourceFilterPlatformDataMac.h"
@@ -63,7 +62,7 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect
     // <http://bugs.webkit.org/show_bug.cgi?id=6947>
     // <rdar://problem/4647735>
     NSAutoreleasePool* filterContextPool = [[NSAutoreleasePool alloc] init];
-    platform->m_filterCIContext = HardRetain([CIContext contextWithCGContext:cgContext options:nil]);
+    platform->m_filterCIContext = [CIContext contextWithCGContext:cgContext options:nil];
     [filterContextPool drain];
 
     FloatRect filterRect = filterBBoxForItemBBox(bbox);
@@ -73,7 +72,7 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect
     float width = filterRect.width();
     float height = filterRect.height();
 
-    platform->m_filterCGLayer = [platform->m_filterCIContext createCGLayerWithSize:CGSizeMake(width, height) info:NULL];
+    platform->m_filterCGLayer = [platform->m_filterCIContext.get() createCGLayerWithSize:CGSizeMake(width, height) info:NULL];
 
     context = new GraphicsContext(CGLayerGetContext(platform->m_filterCGLayer));
     context->save();
@@ -126,14 +125,13 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& 
             FloatPoint destOrigin = filterRect.location();
             filterRect.setLocation(FloatPoint(0.0f, 0.0f));
 
-            [platform->m_filterCIContext drawImage:outputImage atPoint:CGPoint(destOrigin) fromRect:filterRect];
+            [platform->m_filterCIContext.get() drawImage:outputImage atPoint:CGPoint(destOrigin) fromRect:filterRect];
         }
     }
 
     CGLayerRelease(platform->m_filterCGLayer);
     platform->m_filterCGLayer = 0;
 
-    HardRelease(platform->m_filterCIContext);
     platform->m_filterCIContext = 0;
 
     delete context;

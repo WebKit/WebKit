@@ -30,7 +30,6 @@
 #import "KURL.h"
 #import "PlatformString.h"
 #import "ResourceResponse.h"
-#import <FoundationExtras.h>
 
 namespace WebCore {
 

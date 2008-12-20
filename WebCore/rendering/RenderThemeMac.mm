@@ -25,7 +25,6 @@
 #import "CSSValueKeywords.h"
 #import "Document.h"
 #import "Element.h"
-#import "FoundationExtras.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"
 #import "HTMLInputElement.h"

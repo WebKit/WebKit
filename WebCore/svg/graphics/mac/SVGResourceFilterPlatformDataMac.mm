@@ -34,8 +34,7 @@ namespace WebCore {
 static const char* const SVGPreviousFilterOutputName = "__previousOutput__";
 
 SVGResourceFilterPlatformDataMac::SVGResourceFilterPlatformDataMac(SVGResourceFilter* filter)
-    : m_filterCIContext(0)
-    , m_filterCGLayer(0)
+    : m_filterCGLayer(0)
     , m_imagesByName(AdoptNS, [[NSMutableDictionary alloc] init])
     , m_filter(filter)
 {

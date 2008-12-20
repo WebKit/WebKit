@@ -1,3 +1,20 @@
+2008-12-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Replace some uses of HardRetain etc with RetainPtr.
+
+        * platform/mac/DragImageMac.mm:
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createCFData):
+        * rendering/RenderThemeMac.mm:
+        * svg/graphics/cg/SVGResourceFilterCg.mm:
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        * svg/graphics/mac/SVGResourceFilterPlatformDataMac.h:
+        * svg/graphics/mac/SVGResourceFilterPlatformDataMac.mm:
+        (WebCore::SVGResourceFilterPlatformDataMac::SVGResourceFilterPlatformDataMac):
+
 2008-12-19  miggilin  <mr.diggilin@gmail.com>
 
         Reviewed by Kevin Ollivier.
