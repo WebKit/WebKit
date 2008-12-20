@@ -1,3 +1,13 @@
+2008-12-19  David Levin  <levin@chromium.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22930
+
+        Make the git diff command used for preparing the change log avoid using any external diff tools.
+
+        * Scripts/prepare-ChangeLog:
+
 2008-12-19  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.
