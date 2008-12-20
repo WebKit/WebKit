@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007, 2008 Holger Hans Peter Freyther
  * Copyright (C) 2008 Jan Michael C. Alonzo
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +30,8 @@
 #include <webkit/webkitdefines.h>
 #include <webkit/webkitwebview.h>
 #include <webkit/webkitwebframe.h>
+#include <webkit/webkitwebpolicydecision.h>
+#include <webkit/webkitwebnavigationaction.h>
 #include <webkit/webkitwebsettings.h>
 #include <webkit/webkitwebwindowfeatures.h>
 #include <webkit/webkitwebbackforwardlist.h>
@@ -57,6 +60,9 @@ namespace WebKit {
     WebKitWebHistoryItem* kit(WebCore::HistoryItem*);
 
     WebCore::BackForwardList* core(WebKitWebBackForwardList*);
+
+    WebKitWebNavigationReason kit(WebCore::NavigationType type);
+    WebCore::NavigationType core(WebKitWebNavigationReason reason);
 }
 
 extern "C" {
@@ -129,6 +135,12 @@ extern "C" {
 
     void
     webkit_web_view_notify_ready (WebKitWebView* web_view);
+
+    WebKitWebPolicyDecision*
+    webkit_web_policy_decision_new (WebKitWebFrame*, WebCore::FramePolicyFunction);
+
+    void
+    webkit_web_policy_decision_cancel (WebKitWebPolicyDecision* decision);
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
 

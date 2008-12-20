@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -71,9 +72,6 @@ struct _WebKitWebViewClass {
 
     gboolean                   (* web_view_ready)          (WebKitWebView* web_view);
 
-    /*
-     * TODO: FIXME: Create something like WebPolicyDecisionListener_Protocol instead
-     */
     WebKitNavigationResponse   (* navigation_requested)   (WebKitWebView        *web_view,
                                                            WebKitWebFrame       *frame,
                                                            WebKitNetworkRequest *request);
@@ -254,6 +252,10 @@ webkit_web_view_get_inspector                   (WebKitWebView        *web_view)
 
 WEBKIT_API WebKitWebWindowFeatures*
 webkit_web_view_get_window_features             (WebKitWebView        *web_view);
+
+WEBKIT_API gboolean
+webkit_web_view_can_show_mime_type              (WebKitWebView        *web_view,
+                                                 const gchar          *mime_type);
 
 WEBKIT_API gboolean
 webkit_web_view_get_transparent                 (WebKitWebView        *web_view);

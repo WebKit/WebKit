@@ -46,6 +46,8 @@
 #include "webkitwebview.h"
 #include "webkitnetworkrequest.h"
 #include "webkitwebframe.h"
+#include "webkitwebnavigationaction.h"
+#include "webkitwebpolicydecision.h"
 #include "webkitprivate.h"
 
 #include <JavaScriptCore/APICast.h>
@@ -61,10 +63,17 @@ namespace WebKit {
 FrameLoaderClient::FrameLoaderClient(WebKitWebFrame* frame)
     : m_frame(frame)
     , m_userAgent("")
+    , m_policyDecision(0)
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
 {
     ASSERT(m_frame);
+}
+
+FrameLoaderClient::~FrameLoaderClient()
+{
+    if (m_policyDecision)
+        g_object_unref(m_policyDecision);
 }
 
 static String agentPlatform()
@@ -250,16 +259,35 @@ void FrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader*, unsigned lon
     m_response = response;
 }
 
-void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction policyFunction, const String&, const ResourceRequest&)
+void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction policyFunction, const String& mimeType, const ResourceRequest& resourceRequest)
 {
-    // FIXME: we need to call directly here (comment copied from Qt version)
     ASSERT(policyFunction);
     if (!policyFunction)
         return;
-    (core(m_frame)->loader()->*policyFunction)(PolicyUse);
+
+    WebKitWebView* page = getViewFromFrame(m_frame);
+    WebKitNetworkRequest* request = webkit_network_request_new(resourceRequest.url().string().utf8().data());
+
+    WebKitWebPolicyDecision* policyDecision = webkit_web_policy_decision_new(m_frame, policyFunction);
+    if (m_policyDecision)
+        g_object_unref(m_policyDecision);
+    m_policyDecision = policyDecision;
+
+    gboolean isHandled = false;
+    g_signal_emit_by_name(page, "mime-type-policy-decision-requested", m_frame, request, mimeType.utf8().data(), policyDecision, &isHandled);
+
+    g_object_unref(request);
+
+    if (isHandled)
+        return;
+
+    if (canShowMIMEType(mimeType))
+        webkit_web_policy_decision_use (policyDecision);
+    else
+        webkit_web_policy_decision_download (policyDecision);
 }
 
-void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&)
+void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String& s)
 {
     ASSERT(policyFunction);
     if (!policyFunction)
@@ -278,17 +306,41 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
     WebKitWebView* webView = getViewFromFrame(m_frame);
     WebKitNetworkRequest* request = webkit_network_request_new(resourceRequest.url().string().utf8().data());
     WebKitNavigationResponse response;
-
+    /*
+     * We still support the deprecated navigation-requested signal, if the
+     * application doesn't ignore the navigation then the new signal is
+     * emitted.
+     * navigation-policy-decision-requested must be emitted after
+     * navigation-requested as the policy decision can be async.
+     */
     g_signal_emit_by_name(webView, "navigation-requested", m_frame, request, &response);
-
-    g_object_unref(request);
 
     if (response == WEBKIT_NAVIGATION_RESPONSE_IGNORE) {
         (core(m_frame)->loader()->*policyFunction)(PolicyIgnore);
+        g_object_unref(request);
         return;
     }
 
-    (core(m_frame)->loader()->*policyFunction)(PolicyUse);
+    WebKitWebPolicyDecision* policyDecision = webkit_web_policy_decision_new(m_frame, policyFunction);
+    if (m_policyDecision)
+        g_object_unref(m_policyDecision);
+    m_policyDecision = policyDecision;
+
+    // TODO: use action.event().
+    GObject* navigationAction = G_OBJECT(g_object_new(WEBKIT_TYPE_WEB_NAVIGATION_ACTION,
+                                                     "reason", kit(action.type()),
+                                                      "original-uri", action.url().string().utf8().data(),
+                                                      NULL));
+
+    gboolean isHandled = false;
+    g_signal_emit_by_name(webView, "navigation-policy-decision-requested", m_frame, request, navigationAction, policyDecision, &isHandled);
+
+    g_object_unref(navigationAction);
+    g_object_unref(request);
+
+    // FIXME Implement default behavior when we can query the backend what protocols it supports
+    if (!isHandled)
+        webkit_web_policy_decision_use(m_policyDecision);
 }
 
 Widget* FrameLoaderClient::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
@@ -562,7 +614,9 @@ void FrameLoaderClient::dispatchShow()
 
 void FrameLoaderClient::cancelPolicyCheck()
 {
-    notImplemented();
+    //FIXME Add support for more than one policy decision at once
+    if (m_policyDecision)
+        webkit_web_policy_decision_cancel(m_policyDecision);
 }
 
 void FrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*)
@@ -591,10 +645,10 @@ bool FrameLoaderClient::canHandleRequest(const ResourceRequest&) const
     return true;
 }
 
-bool FrameLoaderClient::canShowMIMEType(const String&) const
+bool FrameLoaderClient::canShowMIMEType(const String& type) const
 {
-    notImplemented();
-    return true;
+    return MIMETypeRegistry::isSupportedImageMIMEType(type) || MIMETypeRegistry::isSupportedNonImageMIMEType(type) ||
+        PluginDatabase::installedPlugins()->isMIMETypeRegistered(type);
 }
 
 bool FrameLoaderClient::representationExistsForURLScheme(const String&) const

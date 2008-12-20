@@ -1,3 +1,60 @@
+2008-12-19  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16562
+        [gtk] Implement WebPolicyDelegate methods
+
+        Original work by Pierre-Luc Beaudoin. Final touches by Gustavo
+        Noronha.
+
+        This implements the delegates methods of WebPolicyDelegate.
+        Since Gtk+/C doesn't have delegate methods, they are replaced with
+        signals.
+
+        A new object WebKitWebPolicyDecision allows the browser to delay its
+        response in certain cases. WebKitWebNavigationAction contains the
+        information about what caused a navigation request.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::FrameLoaderClient):
+        (WebKit::FrameLoaderClient::~FrameLoaderClient):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::FrameLoaderClient::cancelPolicyCheck):
+        (WebKit::FrameLoaderClient::canShowMIMEType):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        * webkit/webkit.h:
+        * webkit/webkitdefines.h:
+        * webkit/webkitprivate.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebnavigationaction.cpp: Added.
+        (_WebKitWebNavigationActionPrivate::):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_get_property):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_set_property):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_init):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_finalize):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_class_init):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_get_reason):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_set_reason):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_get_original_uri):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_set_original_uri):
+        * webkit/webkitwebnavigationaction.h: Added.
+        * webkit/webkitwebpolicydecision.cpp: Added.
+        (_WebKitWebPolicyDecisionPrivate::webkit_web_policy_decision_class_init):
+        (_WebKitWebPolicyDecisionPrivate::webkit_web_policy_decision_init):
+        (_WebKitWebPolicyDecisionPrivate::webkit_web_policy_decision_new):
+        (_WebKitWebPolicyDecisionPrivate::webkit_web_policy_decision_use):
+        (_WebKitWebPolicyDecisionPrivate::webkit_web_policy_decision_ignore):
+        (_WebKitWebPolicyDecisionPrivate::webkit_web_policy_decision_download):
+        (_WebKitWebPolicyDecisionPrivate::webkit_web_policy_decision_cancel):
+        * webkit/webkitwebpolicydecision.h: Added.
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-12-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

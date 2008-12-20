@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "webkitwebview.h"
+#include "webkitenumtypes.h"
 #include "webkitmarshal.h"
 #include "webkitprivate.h"
 #include "webkitwebinspector.h"
@@ -75,6 +76,8 @@ extern "C" {
 enum {
     /* normal signals */
     NAVIGATION_REQUESTED,
+    NAVIGATION_POLICY_DECISION_REQUESTED,
+    MIME_TYPE_POLICY_DECISION_REQUESTED,
     CREATE_WEB_VIEW,
     WEB_VIEW_READY,
     WINDOW_OBJECT_CLEARED,
@@ -631,9 +634,8 @@ static gboolean webkit_web_view_real_web_view_ready(WebKitWebView*)
     return FALSE;
 }
 
-static WebKitNavigationResponse webkit_web_view_real_navigation_requested(WebKitWebView*, WebKitWebFrame* frame, WebKitNetworkRequest*)
+static WebKitNavigationResponse webkit_web_view_real_navigation_requested(WebKitWebView*, WebKitWebFrame*, WebKitNetworkRequest*)
 {
-    notImplemented();
     return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
 }
 
@@ -811,10 +813,10 @@ static gboolean webkit_create_web_view_request_handled(GSignalInvocationHint* ih
 
 static gboolean webkit_navigation_request_handled(GSignalInvocationHint* ihint, GValue* returnAccu, const GValue* handlerReturn, gpointer dummy)
 {
-    int signalHandled = g_value_get_int(handlerReturn);
-    g_value_set_int(returnAccu, signalHandled);
+    WebKitNavigationResponse navigationResponse = (WebKitNavigationResponse)g_value_get_enum(handlerReturn);
+    g_value_set_enum(returnAccu, navigationResponse);
 
-    if (signalHandled != WEBKIT_NAVIGATION_RESPONSE_ACCEPT)
+    if (navigationResponse != WEBKIT_NAVIGATION_RESPONSE_ACCEPT)
         return FALSE;
 
     return TRUE;
@@ -907,16 +909,88 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             webkit_marshal_BOOLEAN__VOID,
             G_TYPE_BOOLEAN, 0);
 
+    /**
+     * WebKitWebView::navigation-requested:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the #WebKitWebFrame that required the navigation
+     * @request: a #WebKitNetworkRequest
+     * @return: a WebKitNavigationResponse
+     *
+     * Emitted when @frame requests a navigation to another page.
+     *
+     * Deprecated: Use WebKitWebView::navigation-policy-decision-requested
+     * instead
+     */
     webkit_web_view_signals[NAVIGATION_REQUESTED] = g_signal_new("navigation-requested",
             G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             G_STRUCT_OFFSET (WebKitWebViewClass, navigation_requested),
             webkit_navigation_request_handled,
             NULL,
-            webkit_marshal_INT__OBJECT_OBJECT,
-            G_TYPE_INT, 2,
-            G_TYPE_OBJECT,
-            G_TYPE_OBJECT);
+            webkit_marshal_ENUM__OBJECT_OBJECT,
+            WEBKIT_TYPE_NAVIGATION_RESPONSE, 2,
+            WEBKIT_TYPE_WEB_FRAME,
+            WEBKIT_TYPE_NETWORK_REQUEST);
+
+    /**
+     * WebKitWebView::navigation-policy-decision-requested:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the #WebKitWebFrame that required the navigation
+     * @request: a #WebKitNetworkRequest
+     * @navigation_action: a #WebKitWebNavigation
+     * @policy_decision: a #WebKitWebPolicyDecision
+     * @return: TRUE if the signal will be handled, FALSE to have the
+     *          default behavior apply
+     *
+     * Emitted when @frame requests a navigation to another page.
+     * If this signal is not handled, the default behavior is to allow the
+     * navigation.
+     *
+     * Since: 1.0.3
+     */
+    webkit_web_view_signals[NAVIGATION_POLICY_DECISION_REQUESTED] = g_signal_new("navigation-policy-decision-requested",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__OBJECT_OBJECT_OBJECT_OBJECT,
+            G_TYPE_BOOLEAN, 4,
+            WEBKIT_TYPE_WEB_FRAME,
+            WEBKIT_TYPE_NETWORK_REQUEST,
+            WEBKIT_TYPE_WEB_NAVIGATION_ACTION,
+            WEBKIT_TYPE_WEB_POLICY_DECISION);
+
+    /**
+     * WebKitWebView::mime-type-policy-decision-requested:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the #WebKitWebFrame that required the policy decision
+     * @request: a WebKitNetworkRequest
+     * @mimetype: the MIME type attempted to load
+     * @policy_decision: a #WebKitWebPolicyDecision
+     * @return: TRUE if the signal will be handled, FALSE to have the
+     *          default behavior apply
+     *
+     * Decide whether or not to display the given MIME type.  If this
+     * signal is not handled, the default behavior is to show the
+     * content of the requested URI if WebKit can show this MIME
+     * type; if WebKit is not able to show the MIME type nothing
+     * happens.
+     *
+     * Since: 1.0.3
+     */
+    webkit_web_view_signals[MIME_TYPE_POLICY_DECISION_REQUESTED] = g_signal_new("mime-type-policy-decision-requested",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__OBJECT_OBJECT_STRING_OBJECT,
+            G_TYPE_BOOLEAN, 4,
+            WEBKIT_TYPE_WEB_FRAME,
+            WEBKIT_TYPE_NETWORK_REQUEST,
+            G_TYPE_STRING,
+            WEBKIT_TYPE_WEB_POLICY_DECISION);
 
     /**
      * WebKitWebView::window-object-cleared:
@@ -2312,6 +2386,29 @@ GtkTargetList* webkit_web_view_get_paste_target_list(WebKitWebView* webView)
 
     WebKitWebViewPrivate* priv = webView->priv;
     return priv->paste_target_list;
+}
+
+/**
+ * webkit_web_view_can_show_mime_type:
+ * @web_view: a #WebKitWebView
+ * @mime_type: a MIME type
+ *
+ * This functions returns whether or not a MIME type can be displayed using this view.
+ *
+ * Return value: a #gboolean indicating if the MIME type can be displayed
+ *
+ * Since: 1.0.3
+ **/
+
+gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const gchar* mimeType)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    Frame* frame = core(webkit_web_view_get_main_frame(webView));
+    if (FrameLoader* loader = frame->loader())
+        return loader->canShowMIMEType(String::fromUTF8(mimeType));
+    else
+        return FALSE;
 }
 
 /**

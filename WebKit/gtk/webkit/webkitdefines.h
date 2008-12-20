@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,6 +52,9 @@ typedef struct _WebKitWebHistoryItemClass WebKitWebHistoryItemClass;
 
 typedef struct _WebKitWebFrame WebKitWebFrame;
 typedef struct _WebKitWebFrameClass WebKitWebFrameClass;
+
+typedef struct _WebKitWebPolicyDecision WebKitWebPolicyDecision;
+typedef struct _WebKitWebPolicyDecisionClass WebKitWebPolicyDecisionClass;
 
 typedef struct _WebKitWebSettings WebKitWebSettings;
 typedef struct _WebKitWebSettingsClass WebKitWebSettingsClass;

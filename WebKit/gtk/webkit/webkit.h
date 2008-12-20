@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,6 +31,8 @@
 #include <webkit/webkitwebview.h>
 #include <webkit/webkitwebbackforwardlist.h>
 #include <webkit/webkitwebhistoryitem.h>
+#include <webkit/webkitwebpolicydecision.h>
+#include <webkit/webkitwebnavigationaction.h>
 #include <webkit/webkitenumtypes.h>
 
 #endif /* __WEBKIT_H__ */
