@@ -140,6 +140,11 @@ namespace JSC {
 
         void clearEnumerationCache();
 
+        void* addressOfCount()
+        {
+            return &m_refCount;
+        }
+
         static const unsigned emptyEntryIndex = 0;
     
         static const size_t s_maxTransitionLength = 64;

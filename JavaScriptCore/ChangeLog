@@ -1,3 +1,61 @@
+2008-12-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Port optimized property access generation to the MacroAssembler.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::AbsoluteAddress::AbsoluteAddress):
+        (JSC::MacroAssembler::DataLabelPtr::repatch):
+        (JSC::MacroAssembler::DataLabel32::DataLabel32):
+        (JSC::MacroAssembler::DataLabel32::repatch):
+        (JSC::MacroAssembler::Label::operator X86Assembler::JmpDst):
+        (JSC::MacroAssembler::Jump::repatch):
+        (JSC::MacroAssembler::JumpList::empty):
+        (JSC::MacroAssembler::RepatchBuffer::link):
+        (JSC::MacroAssembler::add32):
+        (JSC::MacroAssembler::and32):
+        (JSC::MacroAssembler::sub32):
+        (JSC::MacroAssembler::loadPtrWithAddressRepatch):
+        (JSC::MacroAssembler::storePtrWithAddressRepatch):
+        (JSC::MacroAssembler::push):
+        (JSC::MacroAssembler::ja32):
+        (JSC::MacroAssembler::jePtr):
+        (JSC::MacroAssembler::jnePtr):
+        (JSC::MacroAssembler::jnePtrWithRepatch):
+        (JSC::MacroAssembler::align):
+        (JSC::MacroAssembler::differenceBetween):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movl_rm_disp32):
+        (JSC::X86Assembler::movl_mr_disp32):
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp_disp32):
+        (JSC::X86Assembler::X86InstructionFormatter::memoryModRM):
+        * jit/JIT.cpp:
+        (JSC::ctiRepatchCallByReturnAddress):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::compilePutByIdSlowCase):
+        (JSC::resizePropertyStorage):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePutByIdReplace):
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::addressOfCount):
+
 2008-12-19  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.
