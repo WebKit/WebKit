@@ -37,6 +37,9 @@
 #include "Logging.h"
 #include "markup.h"
 #include "Page.h"
+#include "ContextMenu.h"
+#include "ContextMenuItem.h"
+#include "ContextMenuController.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformString.h"
@@ -172,6 +175,8 @@ BEGIN_EVENT_TABLE(wxWebView, wxWindow)
     EVT_PAINT(wxWebView::OnPaint)
     EVT_SIZE(wxWebView::OnSize)
     EVT_MOUSE_EVENTS(wxWebView::OnMouseEvents)
+    EVT_CONTEXT_MENU(wxWebView::OnContextMenuEvents)
+    EVT_MENU(wxID_ANY, wxWebView::OnMenuSelectEvents)
     EVT_KEY_DOWN(wxWebView::OnKeyEvents)
     EVT_KEY_UP(wxWebView::OnKeyEvents)
     EVT_CHAR(wxWebView::OnKeyEvents)
@@ -515,6 +520,49 @@ void wxWebView::OnMouseEvents(wxMouseEvent& event)
 
     else if (type == wxEVT_MOTION)
         frame->eventHandler()->mouseMoved(wkEvent);
+}
+
+void wxWebView::OnContextMenuEvents(wxContextMenuEvent& event)
+{
+    m_impl->page->contextMenuController()->clearContextMenu();
+    wxPoint localEventPoint = ScreenToClient(event.GetPosition());
+
+    if (!m_mainFrame)
+        return;
+        
+    WebCore::Frame* focusedFrame = m_mainFrame->GetFrame();
+    if (!focusedFrame->view())
+        return;
+
+    //Create WebCore mouse event from the wxContextMenuEvent
+    wxMouseEvent mouseEvent(wxEVT_RIGHT_DOWN);
+    mouseEvent.m_x = localEventPoint.x;
+    mouseEvent.m_y = localEventPoint.y;
+    WebCore::PlatformMouseEvent wkEvent(mouseEvent, event.GetPosition());
+
+    bool handledEvent = focusedFrame->eventHandler()->sendContextMenuEvent(wkEvent);
+    if (!handledEvent)
+        return;
+
+    WebCore::ContextMenu* coreMenu = m_impl->page->contextMenuController()->contextMenu();
+    if (!coreMenu)
+        return;
+
+    WebCore::PlatformMenuDescription menuWx = coreMenu->platformDescription();
+    if (!menuWx)
+        return;
+
+    PopupMenu(menuWx, localEventPoint);
+}
+
+void wxWebView::OnMenuSelectEvents(wxCommandEvent& event)
+{
+    WebCore::ContextMenuItem* item = WebCore::ContextMenu::itemWithId (event.GetId());
+    if (!item)
+        return;
+
+    m_impl->page->contextMenuController()->contextMenuItemSelected(item);
+    delete item;
 }
 
 bool wxWebView::CanCopy()

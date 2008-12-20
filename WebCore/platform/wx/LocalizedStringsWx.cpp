@@ -68,182 +68,182 @@ String fileButtonNoFileSelectedLabel()
 
 String contextMenuItemTagOpenLinkInNewWindow() 
 { 
-    return String(); 
+    return String("Open Link in New Window"); 
 }
 
 String contextMenuItemTagDownloadLinkToDisk() 
 { 
-    return String(); 
+    return String("Download Link to Disk"); 
 }
 
 String contextMenuItemTagCopyLinkToClipboard() 
 { 
-    return String(); 
+    return String("Copy Link to Clipboard"); 
 }
 
 String contextMenuItemTagOpenImageInNewWindow() 
 { 
-    return String(); 
+    return String("Open Image in New Window"); 
 }
 
 String contextMenuItemTagDownloadImageToDisk() 
 { 
-    return String(); 
+    return String("Download Image to Disk"); 
 }
 
 String contextMenuItemTagCopyImageToClipboard() 
 { 
-    return String(); 
+    return String("Copy Image to Clipboard"); 
 }
 
 String contextMenuItemTagOpenFrameInNewWindow() 
 { 
-    return String(); 
+    return String("Open Frame in New Window"); 
 }
 
 String contextMenuItemTagCopy() 
 {
-    return String();
+    return String("Copy");
 }
 
 String contextMenuItemTagGoBack() 
 {
-    return String();
+    return String("Go Back");
 }
 
 String contextMenuItemTagGoForward() 
 {
-    return String();
+    return String("Go Forward");
 }
 
 String contextMenuItemTagStop() 
 {
-    return String();
+    return String("Stop");
 }
 
 String contextMenuItemTagReload() 
 {
-    return String();
+    return String("Reload");
 }
 
 String contextMenuItemTagCut() 
 {
-    return String();
+    return String("Cut");
 }
 
 String contextMenuItemTagPaste() 
 {
-    return String();
+    return String("Paste");
 }
 
 String contextMenuItemTagNoGuessesFound() 
 {
-    return String();
+    return String("No Guesses Found");
 }
 
 String contextMenuItemTagIgnoreSpelling() 
 {
-    return String();
+    return String("Ignore Spelling");
 }
 
 String contextMenuItemTagLearnSpelling() 
 {
-    return String();
+    return String("Learn Spelling");
 }
 
 String contextMenuItemTagSearchWeb() 
 {
-    return String();
+    return String("Search Web");
 }
 
 String contextMenuItemTagLookUpInDictionary() 
 {
-    return String();
+    return String("Look Up in Dictionary");
 }
 
 String contextMenuItemTagOpenLink() 
 {
-    return String();
+    return String("Open Link");
 }
 
 String contextMenuItemTagIgnoreGrammar() 
 {
-    return String();
+    return String("Ignore Grammar");
 }
 
 String contextMenuItemTagSpellingMenu() 
 {
-    return String();
+    return String("Spelling");
 }
 
 String contextMenuItemTagShowSpellingPanel(bool show) 
 {
-    return String();
+    return String("Show Spelling Panel");
 }
 
 String contextMenuItemTagCheckSpelling() 
 {
-    return String();
+    return String("Check Spelling");
 }
 
 String contextMenuItemTagCheckSpellingWhileTyping() 
 {
-    return String();
+    return String("Check Spelling While Typing");
 }
 
 String contextMenuItemTagCheckGrammarWithSpelling() 
 {
-    return String();
+    return String("Check Grammar with Spelling");
 }
 
 String contextMenuItemTagFontMenu() 
 {
-    return String();
+    return String("Font");
 }
 
 String contextMenuItemTagBold() 
 {
-    return String();
+    return String("Bold");
 }
 
 String contextMenuItemTagItalic() 
 {
-    return String();
+    return String("Italic");
 }
 
 String contextMenuItemTagUnderline() 
 {
-    return String();
+    return String("Underline");
 }
 
 String contextMenuItemTagOutline() 
 {
-    return String();
+    return String("Outline");
 }
 
 String contextMenuItemTagWritingDirectionMenu() 
 {
-    return String();
+    return String("Writing Direction");
 }
 
 String contextMenuItemTagTextDirectionMenu()
 {
-    return String();
+    return String("Text Direction");
 }
 
 String contextMenuItemTagDefaultDirection() 
 {
-    return String();
+    return String("Default Direction");
 }
 
 String contextMenuItemTagLeftToRight() 
 {
-    return String();
+    return String("Left to Right");
 }
 
 String contextMenuItemTagRightToLeft() 
 {
-    return String();
+    return String("Right to Left");
 }
 
 String searchMenuNoRecentSearchesText() 

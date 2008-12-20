@@ -91,6 +91,8 @@ wxWebCore port Bakefile project file.
             platform/text/wx/StringWx.cpp
             platform/wx/SystemTimeWx.cpp
             platform/wx/WidgetWx.cpp
+            platform/wx/ContextMenuWx.cpp
+            platform/wx/ContextMenuItemWx.cpp
            
             <!-- files from other ports we currently rely on -->
             platform/network/curl/FormDataStreamCurl.cpp

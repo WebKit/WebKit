@@ -136,27 +136,6 @@ PassRefPtr<Icon> Icon::createIconForFile(const String& filename) { notImplemente
 PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames) { notImplemented(); return 0; }
 void Icon::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
 
-ContextMenu::ContextMenu(const HitTestResult& result) : m_hitTestResult(result) { notImplemented(); }
-ContextMenu::~ContextMenu() { notImplemented(); }
-void ContextMenu::appendItem(ContextMenuItem&) { notImplemented(); }
-void ContextMenu::setPlatformDescription(PlatformMenuDescription) { notImplemented(); }
-
-ContextMenuItem::ContextMenuItem(PlatformMenuItemDescription) { notImplemented(); }
-ContextMenuItem::ContextMenuItem(ContextMenu*) { notImplemented(); }
-ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu) { notImplemented(); }
-ContextMenuItem::~ContextMenuItem() { notImplemented(); }
-PlatformMenuItemDescription ContextMenuItem::releasePlatformDescription() { notImplemented(); return m_platformDescription; }
-ContextMenuItemType ContextMenuItem::type() const { notImplemented(); return ActionType; }
-void ContextMenuItem::setType(ContextMenuItemType) { notImplemented(); }
-ContextMenuAction ContextMenuItem::action() const { notImplemented(); return ContextMenuItemTagNoAction; }
-void ContextMenuItem::setAction(ContextMenuAction) { notImplemented(); }
-String ContextMenuItem::title() const { notImplemented(); return String(); }
-void ContextMenuItem::setTitle(const String&) { notImplemented(); }
-//PlatformMenuDescription ContextMenuItem::platformSubMenu() const { notImplemented(); return 0; }
-void ContextMenuItem::setSubMenu(ContextMenu*) { notImplemented(); }
-void ContextMenuItem::setChecked(bool) { notImplemented(); }
-void ContextMenuItem::setEnabled(bool) { notImplemented(); }
-
 void Editor::showColorPanel() { notImplemented(); }
 void Editor::showFontPanel() { notImplemented(); }
 void Editor::showStylesPanel() { notImplemented(); }

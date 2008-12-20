@@ -69,10 +69,11 @@ class MenuEventProxy;
         void setPlatformDescription(PlatformMenuDescription);
 
         PlatformMenuDescription releasePlatformDescription();
-
+#if PLATFORM(WX)
+        static ContextMenuItem* itemWithId(int);
+#endif
     private:
         HitTestResult m_hitTestResult;
-
 #if PLATFORM(MAC)
         // Keep this in sync with the PlatformMenuDescription typedef
         RetainPtr<NSMutableArray> m_platformDescription;

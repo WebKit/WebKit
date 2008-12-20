@@ -1,3 +1,21 @@
+2008-12-19  miggilin  <mr.diggilin@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Add Context Menu support to wx bindings.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22675
+
+        * WebKitSupport/ContextMenuClientWx.cpp:
+        (WebCore::ContextMenuClientWx::contextMenuDestroyed):
+        (WebCore::ContextMenuClientWx::getCustomMenuFromDefaultItems):
+        * WebView.cpp:
+        (wxWebView::OnMouseEvents):
+        (wxWebView::OnContextMenuEvents):
+        (wxWebView::OnMenuSelectEvents):
+        * WebView.h:
+
+
 2008-12-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes after recent changes.
