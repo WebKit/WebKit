@@ -785,6 +785,11 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     return [_historyPrivate itemForURLString:URLString];
 }
 
+- (NSArray *)allItems
+{
+    return [_historyPrivate allItems];
+}
+
 @end
 
 @implementation WebHistory (WebInternal)

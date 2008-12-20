@@ -41,4 +41,10 @@ extern NSString *WebHistoryItemsDiscardedWhileLoadingNotification;
 // FIXME: The following SPI is used by Safari. Should it be made into public API?
 - (WebHistoryItem *)_itemForURLString:(NSString *)URLString;
 
+/*!
+    @method allItems
+    @result Returns an array of all WebHistoryItems in WebHistory, in an undefined order.
+*/
+- (NSArray *)allItems;
+
 @end
