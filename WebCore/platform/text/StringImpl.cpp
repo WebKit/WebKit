@@ -35,7 +35,12 @@
 #include "TextEncoding.h"
 #include <wtf/dtoa.h>
 #include <wtf/Assertions.h>
+#include <wtf/Threading.h>
 #include <wtf/unicode/Unicode.h>
+
+#if ENABLE(WORKERS)
+#include <wtf/ThreadSpecific.h>
+#endif
 
 using namespace WTF;
 using namespace Unicode;
@@ -164,8 +169,16 @@ StringImpl::~StringImpl()
 
 StringImpl* StringImpl::empty()
 {
+#if ENABLE(WORKERS)
+    // String::empty() is called on main thread to initialize emptyAtom, so no need to protect static constructor.
+    // FIXME: Does WebCore ever use the empty string if workers are disabled? Some ports do not implement WTF::ThreadSpecific,
+    // so we cannot just use it unconditionally.
+    static ThreadSpecific<StringImpl>* threadEmptyString = new ThreadSpecific<StringImpl>;
+    return *threadEmptyString;
+#else
     static StringImpl* e = new StringImpl;
     return e;
+#endif
 }
 
 bool StringImpl::containsOnlyWhitespace()

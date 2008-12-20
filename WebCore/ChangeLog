@@ -1,3 +1,16 @@
+2008-12-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/6454076> Random crashes on JS raytracer
+
+        No test, because the crash is not readily reproducible.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::empty):
+        * platform/text/StringImpl.h:
+        Made empty string per-thread.
+
 2008-12-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
