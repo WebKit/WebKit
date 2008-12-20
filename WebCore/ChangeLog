@@ -1,3 +1,12 @@
+2008-12-20  David Kilzer  <ddkilzer@apple.com>
+
+        Fix typo "CSSAferRuleValue" to "CSSAfterRuleValue"
+
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::tokenizeCSS):
+        * html/PreloadScanner.h:
+        (WebCore::PreloadScanner::CSSState):
+
 2008-12-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

@@ -772,14 +772,14 @@ inline void PreloadScanner::tokenizeCSS(UChar c)
         break;
     case CSSRuleValue:
         if (isWhitespace(c))
-            m_cssState = CSSAferRuleValue;
+            m_cssState = CSSAfterRuleValue;
         else if (c == ';') {
             emitCSSRule();
             m_cssState = CSSInitial;
         } else 
             m_cssRuleValue.append(c);
         break;
-    case CSSAferRuleValue:
+    case CSSAfterRuleValue:
         if (isWhitespace(c))
             ;
         else if (c == ';') {

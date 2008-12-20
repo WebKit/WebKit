@@ -127,7 +127,7 @@ namespace WebCore {
             CSSRule,
             CSSAfterRule,
             CSSRuleValue,
-            CSSAferRuleValue
+            CSSAfterRuleValue
         };
         CSSState m_cssState;
         Vector<UChar, 16> m_cssRule;
