@@ -1,3 +1,23 @@
+2008-12-21  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16092
+        [GTK] Middle-mouse click should allow opening a URL in a new tab
+
+        Add mouse button and keyboard state modifiers info to navigation action.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * webkit/webkitwebnavigationaction.cpp:
+        (_WebKitWebNavigationActionPrivate::):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_get_property):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_set_property):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_class_init):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_get_button):
+        (_WebKitWebNavigationActionPrivate::webkit_web_navigation_action_get_modifier_state):
+        * webkit/webkitwebnavigationaction.h:
+
 2008-12-19  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Holger Freyther.

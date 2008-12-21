@@ -34,6 +34,7 @@
 #include "JSDOMWindow.h"
 #include "Language.h"
 #include "MIMETypeRegistry.h"
+#include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "PluginDatabase.h"
@@ -326,10 +327,34 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
         g_object_unref(m_policyDecision);
     m_policyDecision = policyDecision;
 
-    // TODO: use action.event().
+    gint button = -1;
+    gint modifierFlags = 0;
+
+    const Event* event = action.event();
+    if (event && event->isMouseEvent()) {
+        const MouseEvent* mouseEvent = static_cast<const MouseEvent*>(event);
+        // DOM button values are 0, 1 and 2 for left, middle and right buttons.
+        // GTK+ uses 1, 2 and 3, so let's add 1 to remain consistent.
+        button = mouseEvent->button() + 1;
+    }
+
+    UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(event));
+    if (keyStateEvent) {
+        if (keyStateEvent->shiftKey())
+            modifierFlags |= GDK_SHIFT_MASK;
+        if (keyStateEvent->ctrlKey())
+            modifierFlags |= GDK_CONTROL_MASK;
+        if (keyStateEvent->altKey())
+            modifierFlags |= GDK_MOD1_MASK;
+        if (keyStateEvent->metaKey())
+            modifierFlags |= GDK_MOD2_MASK;
+    }
+
     GObject* navigationAction = G_OBJECT(g_object_new(WEBKIT_TYPE_WEB_NAVIGATION_ACTION,
                                                      "reason", kit(action.type()),
                                                       "original-uri", action.url().string().utf8().data(),
+                                                      "button", button,
+                                                      "modifier-state", modifierFlags,
                                                       NULL));
 
     gboolean isHandled = false;

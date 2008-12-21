@@ -33,6 +33,8 @@ extern "C" {
 struct _WebKitWebNavigationActionPrivate {
     WebKitWebNavigationReason reason;
     gchar* originalUri;
+    gint button;
+    gint modifier_state;
 };
 
 #define WEBKIT_WEB_NAVIGATION_ACTION_GET_PRIVATE(obj)(G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_NAVIGATION_ACTION, WebKitWebNavigationActionPrivate))
@@ -41,7 +43,9 @@ enum  {
     PROP_0,
 
     PROP_REASON,
-    PROP_ORIGINAL_URI
+    PROP_ORIGINAL_URI,
+    PROP_BUTTON,
+    PROP_MODIFIER_STATE
 };
 
 G_DEFINE_TYPE(WebKitWebNavigationAction, webkit_web_navigation_action, G_TYPE_OBJECT)
@@ -58,6 +62,12 @@ static void webkit_web_navigation_action_get_property(GObject* object, guint pro
     case PROP_ORIGINAL_URI:
         g_value_set_string(value, webkit_web_navigation_action_get_original_uri(navigationAction));
         break;
+    case PROP_BUTTON:
+        g_value_set_int(value, webkit_web_navigation_action_get_button(navigationAction));
+        break;
+    case PROP_MODIFIER_STATE:
+        g_value_set_int(value, webkit_web_navigation_action_get_modifier_state(navigationAction));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
@@ -67,6 +77,7 @@ static void webkit_web_navigation_action_get_property(GObject* object, guint pro
 static void webkit_web_navigation_action_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     WebKitWebNavigationAction* navigationAction = WEBKIT_WEB_NAVIGATION_ACTION(object);
+    WebKitWebNavigationActionPrivate* priv = navigationAction->priv;
 
     switch(propertyId) {
     case PROP_REASON:
@@ -74,6 +85,12 @@ static void webkit_web_navigation_action_set_property(GObject* object, guint pro
         break;
     case PROP_ORIGINAL_URI:
         webkit_web_navigation_action_set_original_uri(navigationAction, g_value_get_string(value));
+        break;
+    case PROP_BUTTON:
+        priv->button = g_value_get_int(value);
+        break;
+    case PROP_MODIFIER_STATE:
+        priv->modifier_state = g_value_get_int(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -141,6 +158,39 @@ static void webkit_web_navigation_action_class_init(WebKitWebNavigationActionCla
                                                         "The URI that was requested as the target for the navigation",
                                                         "",
                                                         (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT)));
+    /**
+     * WebKitWebNavigationAction:button:
+     *
+     * The button used to click if the action was a mouse event.
+     *
+     * Since: 1.0.3
+     */
+    g_object_class_install_property(objectClass, PROP_BUTTON,
+                                    g_param_spec_int("button",
+                                                     "Button",
+                                                     "The button used to click",
+                                                     -1,
+                                                     G_MAXINT,
+                                                     -1,
+                                                     (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitWebNavigationAction:modifier-state:
+     *
+     * The state of the modifier keys when the action was requested.
+     * 
+     * Since: 1.0.3
+     */
+    g_object_class_install_property(objectClass, PROP_MODIFIER_STATE,
+                                    g_param_spec_int("modifier-state",
+                                                     "Modifier state",
+                                                     "A bitmask representing the state of the modifier keys",
+                                                     0,
+                                                     G_MAXINT,
+                                                     0,
+                                                     (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+
 
     g_type_class_add_private(requestClass, sizeof(WebKitWebNavigationActionPrivate));
 }
@@ -224,4 +274,39 @@ void webkit_web_navigation_action_set_original_uri(WebKitWebNavigationAction* na
     g_object_notify(G_OBJECT(navigationAction), "original-uri");
 }
 
+/**
+ * webkit_web_navigation_action_get_button:
+ * @navigationAction: a #WebKitWebNavigationAction
+ *
+ * Returns the mouse button used to click if the action was a mouse event.
+ * Otherwise returns -1.
+ *
+ * Return value: the mouse button used to click
+ *
+ * Since: 1.0.3
+ */
+gint webkit_web_navigation_action_get_button(WebKitWebNavigationAction* navigationAction)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_NAVIGATION_ACTION(navigationAction), -1);
+
+    return navigationAction->priv->button;
+}
+
+/**
+ * webkit_web_navigation_action_get_modifier_state:
+ * @navigationAction: a #WebKitWebNavigationAction
+ *
+ * Returns a bitmask with the the state of the modifier keys.
+ *
+ * Return value: a bitmask with the state of the modifier keys
+ *
+ * Since: 1.0.3
+ */
+gint webkit_web_navigation_action_get_modifier_state(WebKitWebNavigationAction* navigationAction)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_NAVIGATION_ACTION(navigationAction), 0);
+
+    return navigationAction->priv->modifier_state;
+}
+    
 }

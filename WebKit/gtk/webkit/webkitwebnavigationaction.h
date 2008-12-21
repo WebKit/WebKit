@@ -76,6 +76,12 @@ webkit_web_navigation_action_get_original_uri(WebKitWebNavigationAction* navigat
 WEBKIT_API void
 webkit_web_navigation_action_set_original_uri(WebKitWebNavigationAction* navigationAction, const gchar* originalUri);
 
+WEBKIT_API gint
+webkit_web_navigation_action_get_button(WebKitWebNavigationAction* navigationAction);
+
+WEBKIT_API gint
+webkit_web_navigation_action_get_modifier_state(WebKitWebNavigationAction* navigationAction);
+
 G_END_DECLS
 
 #endif
