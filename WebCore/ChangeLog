@@ -1,3 +1,38 @@
+2008-12-21  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler, Nikolas Zimmermann.
+
+        Move the the platform dependent strokeBBox functionality out of RenderPath
+        into Path with strokeBoundingRect.
+
+        RenderPath clean-up for strokeBoundingBox
+        [https://bugs.webkit.org/show_bug.cgi?id=22902]
+
+        * GNUmakefile.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/StrokeStyleApplier.h: Added.
+        (WebCore::StrokeStyleApplier::~StrokeStyleApplier):
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::strokeBoundingRect):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::createScratchContext):
+        (WebCore::scratchContext):
+        (WebCore::Path::strokeBoundingRect):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::pen):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::strokeBoundingRect):
+        * rendering/RenderPath.cpp:
+        (WebCore::StrokeBoundingRectStyleApplier::StrokeBoundingRectStyleApplier):
+        (WebCore::StrokeBoundingRectStyleApplier::strokeStyle):
+        (WebCore::RenderPath::relativeBBox):
+        * rendering/RenderPath.h:
+        * svg/graphics/cairo/RenderPathCairo.cpp:
+        * svg/graphics/cg/RenderPathCg.cpp:
+        * svg/graphics/qt/RenderPathQt.cpp:
+
 2008-12-20  David Kilzer  <ddkilzer@apple.com>
 
         Fix typo "CSSAferRuleValue" to "CSSAfterRuleValue"

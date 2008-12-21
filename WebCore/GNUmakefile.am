@@ -1326,6 +1326,7 @@ webcore_sources += \
 	WebCore/platform/graphics/SimpleFontData.h \
 	WebCore/platform/graphics/StringTruncator.cpp \
 	WebCore/platform/graphics/StringTruncator.h \
+	WebCore/platform/graphics/StrokeStyleApplier.h \
 	WebCore/platform/graphics/TextRun.h \
 	WebCore/platform/graphics/UnitBezier.h \
 	WebCore/platform/graphics/WidthIterator.cpp \

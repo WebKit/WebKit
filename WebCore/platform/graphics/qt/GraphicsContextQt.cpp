@@ -525,6 +525,15 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     p->restore();
 }
 
+QPen GraphicsContext::pen()
+{
+    if (paintingDisabled())
+        return QPen();
+
+    QPainter *p = m_data->p();
+    return p->pen();
+}
+
 void GraphicsContext::fillPath()
 {
     if (paintingDisabled())

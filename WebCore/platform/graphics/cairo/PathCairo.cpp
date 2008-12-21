@@ -27,8 +27,10 @@
 #include "AffineTransform.h"
 #include "CairoPath.h"
 #include "FloatRect.h"
+#include "GraphicsContext.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include "StrokeStyleApplier.h"
 
 #include <cairo.h>
 #include <math.h>
@@ -185,6 +187,18 @@ FloatRect Path::boundingRect() const
 #else
     cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);
 #endif
+    return FloatRect(x0, y0, x1 - x0, y1 - y0);
+}
+
+FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
+{
+    cairo_t* cr = platformPath()->m_cr;
+    GraphicsContext gc(cr);
+    if (applier)
+        applier->strokeStyle(&gc);
+
+    double x0, x1, y0, y1;
+    cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);
     return FloatRect(x0, y0, x1 - x0, y1 - y0);
 }
 

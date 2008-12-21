@@ -312,6 +312,7 @@ namespace WebCore {
 #if PLATFORM(QT)
         bool inTransparencyLayer() const;
         PlatformPath* currentPath();
+        QPen pen();
 #endif
 
 #if PLATFORM(GTK)

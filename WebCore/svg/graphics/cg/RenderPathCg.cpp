@@ -40,15 +40,6 @@
 
 namespace WebCore {
 
-FloatRect RenderPath::strokeBBox() const
-{
-    if (style()->svgStyle()->hasStroke())
-        return strokeBoundingBox(path(), style(), this);
-
-    return path().boundingRect();
-}
-
-
 bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) const
 {
     if (path().isEmpty())

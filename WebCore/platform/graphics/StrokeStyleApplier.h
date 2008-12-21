@@ -1,9 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric.seidel@kdemail.net>
-
-    This file is part of the KDE project
+    Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -16,32 +12,27 @@
     Library General Public License for more details.
 
     You should have received a copy of the GNU Library General Public License
-    aint with this library; see the file COPYING.LIB.  If not, write to
+    along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
 
-#include "config.h"
-#include "RenderPath.h"
-#include "SVGRenderStyle.h"
-#include "SVGPaintServer.h"
-
-#include <QDebug>
-#include <QPainterPathStroker>
+#ifndef StrokeStyleApplier_h
+#define StrokeStyleApplier_h
 
 namespace WebCore {
-    
-bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) const
-{
-    if (path().isEmpty())
-        return false;
 
-    if (requiresStroke && !SVGPaintServer::strokePaintServer(style(), this))
-        return false;
+    class GraphicsContext;
 
-    return false;
+    class StrokeStyleApplier {
+    public:
+        virtual void strokeStyle(GraphicsContext*) = 0;
+
+    protected:
+        StrokeStyleApplier() {}
+        virtual ~StrokeStyleApplier() {}
+    };
 }
 
-}
+#endif
 
-// vim:ts=4:noet

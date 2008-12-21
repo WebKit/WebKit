@@ -56,7 +56,9 @@ namespace WebCore {
     class FloatPoint;
     class FloatSize;
     class FloatRect;
+    class GraphicsContext;
     class String;
+    class StrokeStyleApplier;
 
     enum WindRule {
         RULE_NONZERO = 0,
@@ -88,6 +90,7 @@ namespace WebCore {
 
         bool contains(const FloatPoint&, WindRule rule = RULE_NONZERO) const;
         FloatRect boundingRect() const;
+        FloatRect strokeBoundingRect(StrokeStyleApplier* applier = 0);
         
         float length();
         FloatPoint pointAtLength(float length, bool& ok);

@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGContainer.h"
+#include "StrokeStyleApplier.h"
 #include "SVGPaintServer.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourceFilter.h"
@@ -44,6 +45,26 @@
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
+
+class BoundingRectStrokeStyleApplier : public StrokeStyleApplier {
+public:
+    BoundingRectStrokeStyleApplier(const RenderObject* object, RenderStyle* style)
+        : m_object(object)
+        , m_style(style)
+    {
+        ASSERT(style);
+        ASSERT(object);
+    }
+
+    void strokeStyle(GraphicsContext* gc)
+    {
+        applyStrokeStyleToContext(gc, m_style, m_object);
+    }
+
+private:
+    const RenderObject* m_object;
+    RenderStyle* m_style;
+};
 
 // RenderPath
 RenderPath::RenderPath(RenderStyle* style, SVGStyledTransformableElement* node)
@@ -89,8 +110,17 @@ FloatRect RenderPath::relativeBBox(bool includeStroke) const
         return FloatRect();
 
     if (includeStroke) {
-        if (m_strokeBbox.isEmpty())
-            m_strokeBbox = strokeBBox();
+        if (m_strokeBbox.isEmpty()) {
+            if (style()->svgStyle()->hasStroke()) {
+                BoundingRectStrokeStyleApplier strokeStyle(this, style());
+                m_strokeBbox = m_path.strokeBoundingRect(&strokeStyle);
+            } else {
+                if (m_fillBBox.isEmpty())
+                    m_fillBBox = m_path.boundingRect();
+
+                m_strokeBbox = m_fillBBox;
+            }
+        }
 
         return m_strokeBbox;
     }
