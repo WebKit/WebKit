@@ -1,5 +1,47 @@
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Alexey Proskuryakov & George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22961
+
+        Add WML <fieldset> element support.
+        Unlike HTML's <fieldset> element, WML doesn't provide a <legend> child element
+        to describe the <fieldset>. WML instead offers a 'title' attribute on the <fieldset>
+        element. To integrate within the existing RenderFieldset code, we just create an
+        internal <insertedLegend> element as first child for a WML <fieldset> element, containing
+        the title attribute value.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * css/wml.css:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::RenderFieldset):
+        (WebCore::RenderFieldset::findLegend):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderLegend.cpp:
+        (WebCore::RenderLegend::RenderLegend):
+        * rendering/RenderLegend.h:
+        * wml/WMLFieldSetElement.cpp: Added.
+        (WebCore::WMLFieldSetElement::WMLFieldSetElement):
+        (WebCore::WMLFieldSetElement::~WMLFieldSetElement):
+        (WebCore::WMLFieldSetElement::parseMappedAttribute):
+        (WebCore::WMLFieldSetElement::insertedIntoDocument):
+        (WebCore::WMLFieldSetElement::removedFromDocument):
+        (WebCore::WMLFieldSetElement::createRenderer):
+        * wml/WMLFieldSetElement.h: Added.
+        * wml/WMLInsertedLegendElement.cpp: Added.
+        (WebCore::WMLInsertedLegendElement::WMLInsertedLegendElement):
+        (WebCore::WMLInsertedLegendElement::~WMLInsertedLegendElement):
+        (WebCore::WMLInsertedLegendElement::createRenderer):
+        * wml/WMLInsertedLegendElement.h: Added.
+        * wml/WMLTagNames.in:
+
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Not reviewed. Try to fix clean Mac builds, set role=private for FormDataBuilder.h
 
         * WebCore.xcodeproj/project.pbxproj:

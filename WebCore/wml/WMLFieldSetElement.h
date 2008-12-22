@@ -1,10 +1,5 @@
-/*
- * This file is part of the DOM implementation for KDE.
- *
- * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+/**
+ * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,14 +18,31 @@
  *
  */
 
-#include "config.h"
-#include "RenderLegend.h"
+#ifndef WMLFieldSetElement_h
+#define WMLFieldSetElement_h
+
+#if ENABLE(WML)
+#include "WMLElement.h"
 
 namespace WebCore {
 
-RenderLegend::RenderLegend(Node* element)
-    : RenderBlock(element)
-{
+class WMLFieldSetElement : public WMLElement {
+public:
+    WMLFieldSetElement(const QualifiedName& tagName, Document*);
+    virtual ~WMLFieldSetElement();
+
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
+private:
+    String m_title;
+    RefPtr<WMLElement> m_insertedLegendElement;
+};
+
 }
 
-} // namespace WebCore
+#endif
+#endif

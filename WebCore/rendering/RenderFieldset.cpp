@@ -26,9 +26,12 @@
 #include "config.h"
 #include "RenderFieldset.h"
 
-#include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "GraphicsContext.h"
+
+#if ENABLE(WML)
+#include "WMLNames.h"
+#endif
 
 using std::min;
 using std::max;
@@ -37,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderFieldset::RenderFieldset(HTMLFormControlElement* element)
+RenderFieldset::RenderFieldset(Node* element)
     : RenderBlock(element)
 {
 }
@@ -105,7 +108,11 @@ RenderObject* RenderFieldset::findLegend() const
 {
     for (RenderObject* legend = firstChild(); legend; legend = legend->nextSibling()) {
         if (!legend->isFloatingOrPositioned() && legend->element() &&
-            legend->element()->hasTagName(legendTag))
+            legend->element()->hasTagName(legendTag)
+#if ENABLE(WML)
+            || legend->element()->hasTagName(WMLNames::insertedLegendTag)
+#endif
+           )
             return legend;
     }
     return 0;

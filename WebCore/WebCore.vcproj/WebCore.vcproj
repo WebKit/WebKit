@@ -17278,6 +17278,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\wml\WMLFieldSetElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLFieldSetElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\wml\WMLGoElement.cpp"
 				>
 			</File>
@@ -17299,6 +17307,14 @@
 			</File>
 			<File
 				RelativePath="..\wml\WMLImageLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLInsertedLegendElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLInsertedLegendElement.h"
 				>
 			</File>
 			<File

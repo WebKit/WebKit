@@ -1,3 +1,14 @@
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov & George Staikos.
+
+        Add simple testcase covering WML <fieldset> element support.
+
+        * fast/wml/fieldset.wml: Added.
+        * platform/mac/fast/wml/fieldset-expected.checksum: Added.
+        * platform/mac/fast/wml/fieldset-expected.png: Added.
+        * platform/mac/fast/wml/fieldset-expected.txt: Added.
+
 2008-12-21  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

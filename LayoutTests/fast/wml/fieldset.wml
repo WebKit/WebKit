@@ -1,0 +1,11 @@
+<wml> 
+<card> 
+<p> 
+<fieldset title="Name"> 
+First name: 
+<br/> 
+Last name: 
+</fieldset> 
+</p> 
+</card> 
+</wml> 

@@ -85,6 +85,13 @@ go {
     margin-top: 0__qem
 }
 
+insertedLegend {
+    display: block;
+    padding-left: 2px;
+    padding-right: 2px;
+    border: none
+}
+
 fieldset {
     display: block;
     margin-left: 2px;

@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x103
+  RenderBlock {wml} at (0,0) size 800x103
+    RenderBlock {card} at (8,16) size 784x71
+      RenderBlock {p} at (0,0) size 784x71
+        RenderFieldSet {fieldset} at (2,0) size 780x71 [border: (2px groove #C0C0C0)]
+          RenderLegend {insertedLegend} at (14,0) size 42x18
+            RenderText {#text} at (2,0) size 38x18
+              text run at (2,0) width 38: "Name"
+          RenderBlock (anonymous) at (14,23) size 752x36
+            RenderText {#text} at (0,0) size 74x18
+              text run at (0,0) width 74: "First name: "
+            RenderBR {br} at (0,0) size 0x0
+            RenderText {#text} at (0,18) size 69x18
+              text run at (0,18) width 69: "Last name:"
