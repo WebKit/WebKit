@@ -1,5 +1,11 @@
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Not reviewed. Try to fix clean Mac builds, set role=private for FormDataBuilder.h
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Rubber-stamped by George Staikos.
 
         Unify all TorchMobile copyright lines. Consolidate in a single line, as requested by Mark Rowe, some time ago.
