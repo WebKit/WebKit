@@ -1,3 +1,10 @@
+2008-12-22  Adam Roben  <aroben@apple.com>
+
+        Build fix after r39428
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSlowCase): Added a missing MacroAssembler::
+
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Rubber-stamped by George Staikos.
