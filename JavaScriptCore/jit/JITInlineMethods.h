@@ -215,8 +215,11 @@ ALWAYS_INLINE void JIT::restoreArgumentReference()
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {
+    // In the trampoline on x86-64, the first argument register is not overwritten.
+#if !PLATFORM(X86_64)
     move(X86::esp, X86::ecx);
     addPtr(Imm32(sizeof(void*)), X86::ecx);
+#endif
 }
 #elif USE(JIT_STUB_ARGUMENT_STACK)
 ALWAYS_INLINE void JIT::restoreArgumentReference()

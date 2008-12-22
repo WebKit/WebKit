@@ -168,13 +168,11 @@ public:
         {
         }
 
-#if !PLATFORM(X86_64)
         static void repatch(void* address, void* value)
         {
-            X86Assembler::repatchImmediate(reinterpret_cast<intptr_t>(address), reinterpret_cast<uint32_t>(value));
+            X86Assembler::repatchPointer(reinterpret_cast<intptr_t>(address), reinterpret_cast<intptr_t>(value));
         }
-#endif
-
+        
     private:
         X86Assembler::JmpDst m_label;
     };
@@ -197,12 +195,10 @@ public:
         {
         }
 
-#if !PLATFORM(X86_64)
         static void repatch(void* address, int32_t value)
         {
             X86Assembler::repatchImmediate(reinterpret_cast<intptr_t>(address), value);
         }
-#endif
 
     private:
         X86Assembler::JmpDst m_label;
@@ -382,6 +378,16 @@ public:
             return X86Assembler::getRelocatedAddress(m_code, label.m_label);
         }
 
+        void* addressOf(DataLabelPtr label)
+        {
+            return X86Assembler::getRelocatedAddress(m_code, label.m_label);
+        }
+
+        void* addressOf(DataLabel32 label)
+        {
+            return X86Assembler::getRelocatedAddress(m_code, label.m_label);
+        }
+
         void setPtr(DataLabelPtr label, void* value)
         {
             X86Assembler::repatchAddress(m_code, label.m_label, value);
@@ -448,17 +454,25 @@ public:
         m_assembler.addl_rr(src, dest);
     }
 
+    void add32(Imm32 imm, Address address)
+    {
+        m_assembler.addl_im(imm.m_value, address.offset, address.base);
+    }
+
     void add32(Imm32 imm, RegisterID dest)
     {
         m_assembler.addl_ir(imm.m_value, dest);
     }
     
-#if !PLATFORM(X86_64)
     void add32(Imm32 imm, AbsoluteAddress address)
     {
+#if PLATFORM(X86_64)
+        move(ImmPtr(address.m_ptr), scratchRegister);
+        add32(imm, Address(scratchRegister));
+#else
         m_assembler.addl_im(imm.m_value, address.m_ptr);
-    }
 #endif
+    }
     
     void add32(Address src, RegisterID dest)
     {
@@ -595,13 +609,21 @@ public:
         m_assembler.subl_ir(imm.m_value, dest);
     }
     
-#if !PLATFORM(X86_64)
+    void sub32(Imm32 imm, Address address)
+    {
+        m_assembler.subl_im(imm.m_value, address.offset, address.base);
+    }
+
     void sub32(Imm32 imm, AbsoluteAddress address)
     {
+#if PLATFORM(X86_64)
+        move(ImmPtr(address.m_ptr), scratchRegister);
+        sub32(imm, Address(scratchRegister));
+#else
         m_assembler.subl_im(imm.m_value, address.m_ptr);
-    }
 #endif
-    
+    }
+
     void sub32(Address src, RegisterID dest)
     {
         m_assembler.subl_mr(src.offset, src.base, dest);
@@ -643,13 +665,16 @@ public:
 #endif
     }
 
-#if !PLATFORM(X86_64)
-    DataLabel32 loadPtrWithAddressRepatch(Address address, RegisterID dest)
+    DataLabel32 loadPtrWithAddressOffsetRepatch(Address address, RegisterID dest)
     {
+#if PLATFORM(X86_64)
+        m_assembler.movq_mr_disp32(address.offset, address.base, dest);
+        return DataLabel32(this);
+#else
         m_assembler.movl_mr_disp32(address.offset, address.base, dest);
         return DataLabel32(this);
-    }
 #endif
+    }
 
     void loadPtr(BaseIndex address, RegisterID dest)
     {
@@ -714,13 +739,16 @@ public:
 #endif
     }
 
-#if !PLATFORM(X86_64)
-    DataLabel32 storePtrWithAddressRepatch(RegisterID src, Address address)
+    DataLabel32 storePtrWithAddressOffsetRepatch(RegisterID src, Address address)
     {
+#if PLATFORM(X86_64)
+        m_assembler.movq_rm_disp32(src, address.offset, address.base);
+        return DataLabel32(this);
+#else
         m_assembler.movl_rm_disp32(src, address.offset, address.base);
         return DataLabel32(this);
-    }
 #endif
+    }
 
     void storePtr(RegisterID src, BaseIndex address)
     {
@@ -1024,6 +1052,16 @@ public:
 #endif
     }
 
+    Jump jePtr(RegisterID reg, Address address)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.cmpq_rm(reg, address.offset, address.base);
+#else
+        m_assembler.cmpl_rm(reg, address.offset, address.base);
+#endif
+        return Jump(m_assembler.je());
+    }
+
     Jump jePtr(RegisterID reg, ImmPtr imm)
     {
 #if PLATFORM(X86_64)
@@ -1031,6 +1069,16 @@ public:
         return jePtr(scratchRegister, reg);
 #else
         return je32(reg, Imm32(reinterpret_cast<int32_t>(imm.m_value)));
+#endif
+    }
+
+    Jump jePtr(Address address, ImmPtr imm)
+    {
+#if PLATFORM(X86_64)
+        move(imm, scratchRegister);
+        return jePtr(scratchRegister, address);
+#else
+        return je32(address, Imm32(reinterpret_cast<int32_t>(imm.m_value)));
 #endif
     }
 
@@ -1132,6 +1180,17 @@ public:
         return Jump(m_assembler.jne());
     }
 
+    Jump jnePtr(RegisterID reg, AbsoluteAddress address)
+    {
+#if PLATFORM(X86_64)
+        move(ImmPtr(address.m_ptr), scratchRegister);
+        return jnePtr(reg, Address(scratchRegister));
+#else
+        m_assembler.cmpl_rm(reg, address.m_ptr);
+        return Jump(m_assembler.jne());
+#endif
+    }
+
     Jump jnePtr(RegisterID reg, ImmPtr imm)
     {
 #if PLATFORM(X86_64)
@@ -1160,14 +1219,31 @@ public:
     }
 #endif
 
-#if !PLATFORM(X86_64)
+    Jump jnePtrWithRepatch(RegisterID reg, DataLabelPtr& dataLabel, ImmPtr initialValue = ImmPtr(0))
+    {
+#if PLATFORM(X86_64)
+        m_assembler.movq_i64r(reinterpret_cast<int64_t>(initialValue.m_value), scratchRegister);
+        dataLabel = DataLabelPtr(this);
+        return jnePtr(scratchRegister, reg);
+#else
+        m_assembler.cmpl_ir_force32(reinterpret_cast<int32_t>(initialValue.m_value), reg);
+        dataLabel = DataLabelPtr(this);
+        return Jump(m_assembler.jne());
+#endif
+    }
+
     Jump jnePtrWithRepatch(Address address, DataLabelPtr& dataLabel, ImmPtr initialValue = ImmPtr(0))
     {
+#if PLATFORM(X86_64)
+        m_assembler.movq_i64r(reinterpret_cast<int64_t>(initialValue.m_value), scratchRegister);
+        dataLabel = DataLabelPtr(this);
+        return jnePtr(scratchRegister, address);
+#else
         m_assembler.cmpl_im_force32(reinterpret_cast<int32_t>(initialValue.m_value), address.offset, address.base);
         dataLabel = DataLabelPtr(this);
         return Jump(m_assembler.jne());
-    }
 #endif
+    }
 
     Jump jne32(RegisterID op1, RegisterID op2)
     {
@@ -1459,6 +1535,11 @@ public:
     ptrdiff_t differenceBetween(Label from, DataLabel32 to)
     {
         return X86Assembler::getDifferenceBetweenLabels(from.m_label, to.m_label);
+    }
+
+    ptrdiff_t differenceBetween(DataLabelPtr from, Jump to)
+    {
+        return X86Assembler::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
     }
 
     void ret()

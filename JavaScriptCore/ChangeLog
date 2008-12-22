@@ -1,3 +1,56 @@
+2008-12-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt & Cameron Zwarich.
+
+        Add support for call and property access repatching on x86-64.
+
+        No change in performance on current configurations (2x impovement on v8-tests with JIT enabled on x86-64).
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::DataLabelPtr::repatch):
+        (JSC::MacroAssembler::DataLabelPtr::operator X86Assembler::JmpDst):
+        (JSC::MacroAssembler::DataLabel32::repatch):
+        (JSC::MacroAssembler::RepatchBuffer::addressOf):
+        (JSC::MacroAssembler::add32):
+        (JSC::MacroAssembler::sub32):
+        (JSC::MacroAssembler::loadPtrWithAddressOffsetRepatch):
+        (JSC::MacroAssembler::storePtrWithAddressOffsetRepatch):
+        (JSC::MacroAssembler::jePtr):
+        (JSC::MacroAssembler::jnePtr):
+        (JSC::MacroAssembler::jnePtrWithRepatch):
+        (JSC::MacroAssembler::differenceBetween):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::addl_im):
+        (JSC::X86Assembler::subl_im):
+        (JSC::X86Assembler::cmpl_rm):
+        (JSC::X86Assembler::movq_rm_disp32):
+        (JSC::X86Assembler::movq_mr_disp32):
+        (JSC::X86Assembler::repatchPointer):
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp64_disp32):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::unlinkCall):
+        (JSC::JIT::linkCall):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::compilePutByIdSlowCase):
+        (JSC::resizePropertyStorage):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * wtf/Platform.h:
+
 2008-12-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

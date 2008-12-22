@@ -180,11 +180,16 @@ namespace JSC {
         }
     };
 
+    struct PropertyStubCompilationInfo {
+        MacroAssembler::Jump callReturnLocation;
+        MacroAssembler::Label hotPathBegin;
+    };
+
     struct StructureStubCompilationInfo {
-        X86Assembler::JmpSrc callReturnLocation;
-        X86Assembler::JmpDst hotPathBegin;
-        X86Assembler::JmpSrc hotPathOther;
-        X86Assembler::JmpDst coldPathOther;
+        MacroAssembler::DataLabelPtr hotPathBegin;
+        MacroAssembler::Jump hotPathOther;
+        MacroAssembler::Jump callReturnLocation;
+        MacroAssembler::Label coldPathOther;
     };
 
     extern "C" {
@@ -231,6 +236,22 @@ namespace JSC {
         static const int ctiArgumentInitSize = 0;
 #endif
 
+#if PLATFORM(X86_64)
+        // These architecture specific value are used to enable repatching - see comment on op_put_by_id.
+        static const int repatchOffsetPutByIdStructure = 10;
+        static const int repatchOffsetPutByIdPropertyMapOffset = 31;
+        // These architecture specific value are used to enable repatching - see comment on op_get_by_id.
+        static const int repatchOffsetGetByIdStructure = 10;
+        static const int repatchOffsetGetByIdBranchToSlowCase = 20;
+        static const int repatchOffsetGetByIdPropertyMapOffset = 31;
+        static const int repatchOffsetGetByIdPutResult = 31;
+#if ENABLE(OPCODE_SAMPLING)
+        static const int repatchOffsetGetByIdSlowCaseCall = 40 + ctiArgumentInitSize;
+#else
+        static const int repatchOffsetGetByIdSlowCaseCall = 30 + ctiArgumentInitSize;
+#endif
+        static const int repatchOffsetOpCallCompareToJump = 9;
+#else
         // These architecture specific value are used to enable repatching - see comment on op_put_by_id.
         static const int repatchOffsetPutByIdStructure = 7;
         static const int repatchOffsetPutByIdPropertyMapOffset = 22;
@@ -240,11 +261,12 @@ namespace JSC {
         static const int repatchOffsetGetByIdPropertyMapOffset = 22;
         static const int repatchOffsetGetByIdPutResult = 22;
 #if ENABLE(OPCODE_SAMPLING)
-        static const int repatchOffsetGetByIdSlowCaseCall = 27 + 4 + ctiArgumentInitSize;
+        static const int repatchOffsetGetByIdSlowCaseCall = 31 + ctiArgumentInitSize;
 #else
-        static const int repatchOffsetGetByIdSlowCaseCall = 17 + 4 + ctiArgumentInitSize;
+        static const int repatchOffsetGetByIdSlowCaseCall = 21 + ctiArgumentInitSize;
 #endif
-        static const int repatchOffsetOpCallCall = 6;
+        static const int repatchOffsetOpCallCompareToJump = 6;
+#endif
 
     public:
         static void compile(JSGlobalData* globalData, CodeBlock* codeBlock)
@@ -454,7 +476,7 @@ namespace JSC {
 
         Vector<CallRecord> m_calls;
         Vector<Label> m_labels;
-        Vector<StructureStubCompilationInfo> m_propertyAccessCompilationInfo;
+        Vector<PropertyStubCompilationInfo> m_propertyAccessCompilationInfo;
         Vector<StructureStubCompilationInfo> m_callStructureStubCompilationInfo;
         Vector<JumpTable> m_jmpTable;
 
