@@ -1,0 +1,22 @@
+WML http navigation layout tests - using XHTML scripting
+
+
+Tests GET method of <go> element - accept-charset attribute
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+This page was requested with an HTTP GET
+
+The query parameters are: var1=Text%20with%20whitespace;var2=Text%20with%20non-latin1%20characters%3A%20Sch%C3%B6n%2C%20da%C3%9F%20es%20%C3%84%26Ouml%3B%C3%9C%20gibt%21
+Form content var1: 'Text with whitespace'
+Form content var2: 'Text with non-latin1 characters: Schön, daß es ÄÖÜ gibt!'
+

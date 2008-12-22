@@ -24,10 +24,13 @@
 #if ENABLE(WML)
 #include "WMLGoElement.h"
 
+#include "CString.h"
+#include "FormData.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "ResourceRequest.h"
+#include "TextEncoding.h"
 #include "WMLCardElement.h"
 #include "WMLDocument.h"
 #include "WMLNames.h"
@@ -42,30 +45,22 @@ using namespace WMLNames;
 
 WMLGoElement::WMLGoElement(const QualifiedName& tagName, Document* doc)
     : WMLTaskElement(tagName, doc)
-    , m_contentType("application/x-www-form-urlencoded")
-    , m_isMultiPart(false)
-    , m_isPostMethod(false)
 {
 }
  
 void WMLGoElement::registerPostfieldElement(WMLPostfieldElement* postfield)
 {
-    m_postfieldElements.add(postfield);
+    m_postfieldElements.append(postfield);
 }
 
 void WMLGoElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name() == HTMLNames::methodAttr) {
-        const AtomicString& value = attr->value();
-
-        if (value == "POST")
-            m_isPostMethod = true;
-        else if (value == "GET")
-            m_isPostMethod = false;
-    } else if (attr->name() == HTMLNames::enctypeAttr)
-        parseContentType(parseValueSubstitutingVariableReferences(attr->value()));
+    if (attr->name() == HTMLNames::methodAttr)
+        m_formDataBuilder.parseMethodType(attr->value());
+    else if (attr->name() == HTMLNames::enctypeAttr)
+        m_formDataBuilder.parseEncodingType(parseValueSubstitutingVariableReferences(attr->value()));
     else if (attr->name() == HTMLNames::accept_charsetAttr)
-        m_acceptCharset = parseValueForbiddingVariableReferences(attr->value());
+        m_formDataBuilder.setAcceptCharset(parseValueForbiddingVariableReferences(attr->value()));
     else
         WMLTaskElement::parseMappedAttribute(attr);
 }
@@ -124,15 +119,10 @@ void WMLGoElement::executeTask(Event* event)
 
     String cacheControl = getAttribute(cache_controlAttr);
 
-    if (m_isPostMethod)
+    if (m_formDataBuilder.isPostMethod())
         preparePOSTRequest(request, inSameDeck, cacheControl);
-    else {
-        // Eventually display error message?
-        if (m_isMultiPart)
-            return;
-
+    else
         prepareGETRequest(request, url);
-    }
 
     // Set HTTP cache-control header if needed
     if (!cacheControl.isEmpty()) {
@@ -145,17 +135,6 @@ void WMLGoElement::executeTask(Event* event)
     loader->load(request);
 }
 
-void WMLGoElement::parseContentType(const String& type)
-{
-    if (type.contains("multipart", false) || type.contains("form-data", false)) {
-        m_contentType = "multipart/form-data";
-        m_isMultiPart = true;
-    } else {
-        m_contentType = "application/x-www-form-urlencoded";
-        m_isMultiPart = false;
-    }
-}
-
 void WMLGoElement::preparePOSTRequest(ResourceRequest& request, bool inSameDeck, const String& cacheControl)
 {
     request.setHTTPMethod("POST");
@@ -165,49 +144,70 @@ void WMLGoElement::preparePOSTRequest(ResourceRequest& request, bool inSameDeck,
         return;
     }
 
-    // FIXME: Implement POST method.
-    /*
     RefPtr<FormData> data;
 
-    if (m_isMultiPart) { // multipart/form-data
-        Vector<char> boundary;
-        getUniqueBoundaryString(boundary);
-        data = createFormData(loader, boundary.data());
-        request.setHTTPContentType(m_contentType + "; boundary=" + boundary.data());
+    if (m_formDataBuilder.isMultiPartForm()) { // multipart/form-data
+        Vector<char> boundary = m_formDataBuilder.generateUniqueBoundaryString();
+        data = createFormData(boundary.data());
+        request.setHTTPContentType(m_formDataBuilder.encodingType() + "; boundary=" + boundary.data());
     } else {
         // text/plain or application/x-www-form-urlencoded
-        data = createFormData(loader, 0);
-        request.setHTTPContentType(m_contentType);
+        data = createFormData(CString());
+        request.setHTTPContentType(m_formDataBuilder.encodingType());
     }
 
     request.setHTTPBody(data.get());
-    */
 }
 
 void WMLGoElement::prepareGETRequest(ResourceRequest& request, const KURL& url)
 {
-    String queryString;
-
-    HashSet<WMLPostfieldElement*>::iterator it = m_postfieldElements.begin();
-    HashSet<WMLPostfieldElement*>::iterator end = m_postfieldElements.end();
-
-    for (; it != end; ++it) {
-        WMLPostfieldElement* postfield = (*it);
-
-        if (!queryString.isEmpty())
-            queryString += "&";
-
-        queryString += encodeWithURLEscapeSequences(postfield->name()) + "m" +
-                       encodeWithURLEscapeSequences(postfield->value());
-    }
-
-    KURL remoteURL(url);
-    remoteURL.setQuery(queryString);
-
-    request.setURL(remoteURL);
     request.setHTTPMethod("GET");
 
+    // Eventually display error message?
+    if (m_formDataBuilder.isMultiPartForm())
+        return;
 
+    RefPtr<FormData> data = createFormData(CString());
+
+    KURL remoteURL(url);
+    remoteURL.setQuery(data->flattenToString());
+    request.setURL(remoteURL);
+}
+
+PassRefPtr<FormData> WMLGoElement::createFormData(const CString& boundary)
+{
+    CString key;
+    CString value;
+
+    Vector<char> encodedData;
+    TextEncoding encoding = m_formDataBuilder.dataEncoding(document()).encodingForFormSubmission();
+
+    Vector<WMLPostfieldElement*>::iterator it = m_postfieldElements.begin();
+    Vector<WMLPostfieldElement*>::iterator end = m_postfieldElements.end();
+
+    RefPtr<FormData> result = FormData::create();
+    for (; it != end; ++it) {
+        (*it)->encodeData(encoding, key, value);
+
+        if (m_formDataBuilder.isMultiPartForm()) {
+            Vector<char> header;
+            m_formDataBuilder.beginMultiPartHeader(header, boundary, key);
+            m_formDataBuilder.finishMultiPartHeader(header);
+            result->appendData(header.data(), header.size());
+
+            if (size_t dataSize = value.length())
+                result->appendData(value.data(), dataSize);
+
+            result->appendData("\r\n", 2);
+        } else
+            m_formDataBuilder.addKeyValuePairAsFormData(encodedData, key, value);
+    }
+
+    if (m_formDataBuilder.isMultiPartForm())
+        m_formDataBuilder.addBoundaryToMultiPartHeader(encodedData, boundary, true);
+
+    result->appendData(encodedData.data(), encodedData.size());
+    return result;
 }
 
 }

@@ -1,3 +1,12 @@
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Ignore http/tests/wml, if no WML support is present.
+        Add http/tests/wml to list of HTTP tests, allowed to access local resources.
+
+        * Scripts/run-webkit-tests:
+
 2008-12-19  David Levin  <levin@chromium.org>
 
         Reviewed by Mark Rowe.

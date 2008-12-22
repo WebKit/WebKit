@@ -1,3 +1,37 @@
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Add WML HTTP layout tests and an initital set of results.
+        Allow to reuse the existing WMLTestCase.js framework from another
+        LayoutTests/ top-level directory - modify TEMPLATE.html & WMLTestCase.js.
+
+        * http/tests/wml: Added.
+        * http/tests/wml/go-task-get-method-accept-charset-expected.txt: Added.
+        * http/tests/wml/go-task-get-method-accept-charset.html: Added.
+        * http/tests/wml/go-task-get-method-expected.txt: Added.
+        * http/tests/wml/go-task-get-method.html: Added.
+        * http/tests/wml/go-task-post-method-accept-charset-expected.txt: Added.
+        * http/tests/wml/go-task-post-method-accept-charset.html: Added.
+        * http/tests/wml/go-task-post-method-expected.txt: Added.
+        * http/tests/wml/go-task-post-method.html: Added.
+        * http/tests/wml/resources: Added.
+        * http/tests/wml/resources/TEMPLATE.html: Added.
+        * http/tests/wml/resources/answer-utf8.cgi: Added.
+        * http/tests/wml/resources/answer.cgi: Added.
+        * http/tests/wml/resources/go-task-get-method-accept-charset.js: Added.
+        * http/tests/wml/resources/go-task-get-method.js: Added.
+        * http/tests/wml/resources/go-task-post-method-accept-charset.js: Added.
+        * http/tests/wml/resources/go-task-post-method.js: Added.
+        * wml/go-task-animation.html:
+        * wml/go-task-get-method-external-deck-with-href.html:
+        * wml/go-task-get-method-external-deck.html:
+        * wml/go-task-get-method-same-deck.html:
+        * wml/resources/TEMPLATE.html:
+        * wml/resources/WMLTestCase.js:
+        * wml/variable-reference-invalid-character.html:
+        * wml/variable-reference-valid.html:
+
 2008-12-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Holger Freyther.

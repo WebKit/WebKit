@@ -1,0 +1,22 @@
+WML http navigation layout tests - using XHTML scripting
+
+
+Tests GET method of <go> element
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+This page was requested with an HTTP GET
+
+The query parameters are: var1=Text%20with%20whitespace;var2=Text%20with%20entities%3A%20%26auml%3B%20and%20%26ouml%3B
+Form content var1: 'Text with whitespace'
+Form content var2: 'Text with entities: ä and ö'
+

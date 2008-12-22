@@ -346,6 +346,7 @@ if (checkWebCoreSVGSupport(0)) {
 if (checkWebCoreWMLSupport(0)) { 
     $supportedFileExtensions{'wml'} = 1;
 } else {
+    $ignoredDirectories{'http/tests/wml'} = 1;
     $ignoredDirectories{'fast/wml'} = 1;
     $ignoredDirectories{'wml'} = 1;
 }
@@ -571,7 +572,7 @@ for my $test (@tests) {
         print OUT "$testPath$suffixExpectedHash\n";
     } else {
         openHTTPDIfNeeded();
-        if ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\// && $test !~ /^http\/tests\/media\//) {
+        if ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\// && $test !~ /^http\/tests\/wml\// && $test !~ /^http\/tests\/media\//) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
             print OUT "http://127.0.0.1:$httpdPort/$path$suffixExpectedHash\n";

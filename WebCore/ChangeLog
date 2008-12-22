@@ -1,4 +1,32 @@
-2008-12-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22638
+
+        Add POST method support to WMLGoElement. GET & POST over HTTP
+        covered by a new set of WML HTTP layout tests.
+
+        Tests: http/tests/wml/go-task-get-method-accept-charset.html
+               http/tests/wml/go-task-get-method.html
+               http/tests/wml/go-task-post-method-accept-charset.html
+               http/tests/wml/go-task-post-method.html
+
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::WMLGoElement):
+        (WebCore::WMLGoElement::registerPostfieldElement):
+        (WebCore::WMLGoElement::parseMappedAttribute):
+        (WebCore::WMLGoElement::executeTask):
+        (WebCore::WMLGoElement::preparePOSTRequest):
+        (WebCore::WMLGoElement::prepareGETRequest):
+        (WebCore::WMLGoElement::createFormData):
+        * wml/WMLGoElement.h:
+        * wml/WMLPostfieldElement.cpp:
+        (WebCore::encodedString):
+        (WebCore::WMLPostfieldElement::encodeData):
+        * wml/WMLPostfieldElement.h:
+
+2008-12-21  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Darin Adler and George Staikos.
 

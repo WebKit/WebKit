@@ -25,8 +25,6 @@
 #if ENABLE(WML)
 #include "WMLElement.h"
 
-#include <wtf/HashSet.h>
-
 namespace WebCore {
 
 class WMLPostfieldElement : public WMLElement {
@@ -38,6 +36,9 @@ public:
 
     String name() const { return m_name; }
     String value() const { return m_value; }
+
+    // Encode name() and value() in a CString using the passed encoding
+    void encodeData(const TextEncoding&, CString& name, CString& value);
 
 private:
     String m_name;

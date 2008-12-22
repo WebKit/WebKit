@@ -16,7 +16,7 @@ function createWMLTestCase(desc, substituteVariables, testName) {
     var defaultTest = true;
     if (testName == null) {
         defaultTest = false;
-        testName = "resources/test-document.wml";
+        testName = relativePathToLayoutTests + "/wml/resources/test-document.wml";
     }
 
     description(desc);
@@ -93,7 +93,7 @@ function completeTest() {
             window.setTimeout("layoutTestController.notifyDone()", 0);
     };
 
-    script.src = "../fast/js/resources/js-test-post.js";
+    script.src = relativePathToLayoutTests + "/fast/js/resources/js-test-post.js";
     successfullyParsed = true;
 
     bodyElement.appendChild(script);
