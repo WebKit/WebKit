@@ -1,3 +1,59 @@
+2008-12-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Rename all uses of the term "repatch" to "patch".
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::DataLabelPtr::patch):
+        (JSC::MacroAssembler::DataLabel32::patch):
+        (JSC::MacroAssembler::Jump::patch):
+        (JSC::MacroAssembler::PatchBuffer::PatchBuffer):
+        (JSC::MacroAssembler::PatchBuffer::setPtr):
+        (JSC::MacroAssembler::loadPtrWithAddressOffsetPatch):
+        (JSC::MacroAssembler::storePtrWithAddressOffsetPatch):
+        (JSC::MacroAssembler::storePtrWithPatch):
+        (JSC::MacroAssembler::jnePtrWithPatch):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::patchAddress):
+        (JSC::X86Assembler::patchImmediate):
+        (JSC::X86Assembler::patchPointer):
+        (JSC::X86Assembler::patchBranchOffset):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCTICachePutByID):
+        (JSC::Interpreter::tryCTICacheGetByID):
+        (JSC::Interpreter::cti_op_put_by_id):
+        (JSC::Interpreter::cti_op_get_by_id):
+        (JSC::Interpreter::cti_op_get_by_id_self_fail):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list):
+        (JSC::Interpreter::cti_vm_dontLazyLinkCall):
+        * jit/JIT.cpp:
+        (JSC::ctiPatchCallByReturnAddress):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::unlinkCall):
+        (JSC::JIT::linkCall):
+        (JSC::JIT::compileOpCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::compilePutByIdSlowCase):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePutByIdReplace):
+
 2008-12-22  Adam Roben  <aroben@apple.com>
 
         Build fix after r39428

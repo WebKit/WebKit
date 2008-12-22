@@ -204,7 +204,7 @@ namespace JSC {
     };
 
     void ctiSetReturnAddress(void** where, void* what);
-    void ctiRepatchCallByReturnAddress(void* where, void* what);
+    void ctiPatchCallByReturnAddress(void* where, void* what);
 
     class JIT : private MacroAssembler {
         using MacroAssembler::Jump;
@@ -219,10 +219,10 @@ namespace JSC {
         static const RegisterID callFrameRegister = X86::edi;
 #endif
 
-        static const int repatchGetByIdDefaultStructure = -1;
+        static const int patchGetByIdDefaultStructure = -1;
         // Magic number - initial offset cannot be representable as a signed 8bit value, or the X86Assembler
-        // will compress the displacement, and we may not be able to fit a repatched offset.
-        static const int repatchGetByIdDefaultOffset = 256;
+        // will compress the displacement, and we may not be able to fit a patched offset.
+        static const int patchGetByIdDefaultOffset = 256;
 
 #if USE(JIT_STUB_ARGUMENT_REGISTER)
 #if PLATFORM(X86_64)
@@ -237,35 +237,35 @@ namespace JSC {
 #endif
 
 #if PLATFORM(X86_64)
-        // These architecture specific value are used to enable repatching - see comment on op_put_by_id.
-        static const int repatchOffsetPutByIdStructure = 10;
-        static const int repatchOffsetPutByIdPropertyMapOffset = 31;
-        // These architecture specific value are used to enable repatching - see comment on op_get_by_id.
-        static const int repatchOffsetGetByIdStructure = 10;
-        static const int repatchOffsetGetByIdBranchToSlowCase = 20;
-        static const int repatchOffsetGetByIdPropertyMapOffset = 31;
-        static const int repatchOffsetGetByIdPutResult = 31;
+        // These architecture specific value are used to enable patching - see comment on op_put_by_id.
+        static const int patchOffsetPutByIdStructure = 10;
+        static const int patchOffsetPutByIdPropertyMapOffset = 31;
+        // These architecture specific value are used to enable patching - see comment on op_get_by_id.
+        static const int patchOffsetGetByIdStructure = 10;
+        static const int patchOffsetGetByIdBranchToSlowCase = 20;
+        static const int patchOffsetGetByIdPropertyMapOffset = 31;
+        static const int patchOffsetGetByIdPutResult = 31;
 #if ENABLE(OPCODE_SAMPLING)
-        static const int repatchOffsetGetByIdSlowCaseCall = 40 + ctiArgumentInitSize;
+        static const int patchOffsetGetByIdSlowCaseCall = 40 + ctiArgumentInitSize;
 #else
-        static const int repatchOffsetGetByIdSlowCaseCall = 30 + ctiArgumentInitSize;
+        static const int patchOffsetGetByIdSlowCaseCall = 30 + ctiArgumentInitSize;
 #endif
-        static const int repatchOffsetOpCallCompareToJump = 9;
+        static const int patchOffsetOpCallCompareToJump = 9;
 #else
-        // These architecture specific value are used to enable repatching - see comment on op_put_by_id.
-        static const int repatchOffsetPutByIdStructure = 7;
-        static const int repatchOffsetPutByIdPropertyMapOffset = 22;
-        // These architecture specific value are used to enable repatching - see comment on op_get_by_id.
-        static const int repatchOffsetGetByIdStructure = 7;
-        static const int repatchOffsetGetByIdBranchToSlowCase = 13;
-        static const int repatchOffsetGetByIdPropertyMapOffset = 22;
-        static const int repatchOffsetGetByIdPutResult = 22;
+        // These architecture specific value are used to enable patching - see comment on op_put_by_id.
+        static const int patchOffsetPutByIdStructure = 7;
+        static const int patchOffsetPutByIdPropertyMapOffset = 22;
+        // These architecture specific value are used to enable patching - see comment on op_get_by_id.
+        static const int patchOffsetGetByIdStructure = 7;
+        static const int patchOffsetGetByIdBranchToSlowCase = 13;
+        static const int patchOffsetGetByIdPropertyMapOffset = 22;
+        static const int patchOffsetGetByIdPutResult = 22;
 #if ENABLE(OPCODE_SAMPLING)
-        static const int repatchOffsetGetByIdSlowCaseCall = 31 + ctiArgumentInitSize;
+        static const int patchOffsetGetByIdSlowCaseCall = 31 + ctiArgumentInitSize;
 #else
-        static const int repatchOffsetGetByIdSlowCaseCall = 21 + ctiArgumentInitSize;
+        static const int patchOffsetGetByIdSlowCaseCall = 21 + ctiArgumentInitSize;
 #endif
-        static const int repatchOffsetOpCallCompareToJump = 6;
+        static const int patchOffsetOpCallCompareToJump = 6;
 #endif
 
     public:

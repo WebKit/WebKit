@@ -194,9 +194,9 @@ void ctiSetReturnAddress(void** where, void* what)
     *where = what;
 }
 
-void ctiRepatchCallByReturnAddress(void* where, void* what)
+void ctiPatchCallByReturnAddress(void* where, void* what)
 {
-    MacroAssembler::Jump::repatch(where, what);
+    MacroAssembler::Jump::patch(where, what);
 }
 
 JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
@@ -838,7 +838,7 @@ void JIT::privateCompileMainPass()
         case op_jsr: {
             int retAddrDst = currentInstruction[1].u.operand;
             int target = currentInstruction[2].u.operand;
-            DataLabelPtr storeLocation = storePtrWithRepatch(Address(callFrameRegister, sizeof(Register) * retAddrDst));
+            DataLabelPtr storeLocation = storePtrWithPatch(Address(callFrameRegister, sizeof(Register) * retAddrDst));
             addJump(jump(), target + 2);
             m_jsrSites.append(JSRInfo(storeLocation, label()));
             NEXT_OPCODE(op_jsr);
@@ -1841,7 +1841,7 @@ void JIT::privateCompile()
     void* code = m_assembler.executableCopy(allocator.get());
     JITCodeRef codeRef(code, allocator);
  
-    RepatchBuffer repatchBuffer(code);
+    PatchBuffer patchBuffer(code);
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
@@ -1852,46 +1852,46 @@ void JIT::privateCompile()
             ASSERT(record.type == SwitchRecord::Immediate || record.type == SwitchRecord::Character); 
             ASSERT(record.jumpTable.simpleJumpTable->branchOffsets.size() == record.jumpTable.simpleJumpTable->ctiOffsets.size());
 
-            record.jumpTable.simpleJumpTable->ctiDefault = repatchBuffer.addressOf(m_labels[bytecodeIndex + 3 + record.defaultOffset]);
+            record.jumpTable.simpleJumpTable->ctiDefault = patchBuffer.addressOf(m_labels[bytecodeIndex + 3 + record.defaultOffset]);
 
             for (unsigned j = 0; j < record.jumpTable.simpleJumpTable->branchOffsets.size(); ++j) {
                 unsigned offset = record.jumpTable.simpleJumpTable->branchOffsets[j];
-                record.jumpTable.simpleJumpTable->ctiOffsets[j] = offset ? repatchBuffer.addressOf(m_labels[bytecodeIndex + 3 + offset]) : record.jumpTable.simpleJumpTable->ctiDefault;
+                record.jumpTable.simpleJumpTable->ctiOffsets[j] = offset ? patchBuffer.addressOf(m_labels[bytecodeIndex + 3 + offset]) : record.jumpTable.simpleJumpTable->ctiDefault;
             }
         } else {
             ASSERT(record.type == SwitchRecord::String);
 
-            record.jumpTable.stringJumpTable->ctiDefault = repatchBuffer.addressOf(m_labels[bytecodeIndex + 3 + record.defaultOffset]);
+            record.jumpTable.stringJumpTable->ctiDefault = patchBuffer.addressOf(m_labels[bytecodeIndex + 3 + record.defaultOffset]);
 
             StringJumpTable::StringOffsetTable::iterator end = record.jumpTable.stringJumpTable->offsetTable.end();            
             for (StringJumpTable::StringOffsetTable::iterator it = record.jumpTable.stringJumpTable->offsetTable.begin(); it != end; ++it) {
                 unsigned offset = it->second.branchOffset;
-                it->second.ctiOffset = offset ? repatchBuffer.addressOf(m_labels[bytecodeIndex + 3 + offset]) : record.jumpTable.stringJumpTable->ctiDefault;
+                it->second.ctiOffset = offset ? patchBuffer.addressOf(m_labels[bytecodeIndex + 3 + offset]) : record.jumpTable.stringJumpTable->ctiDefault;
             }
         }
     }
 
     for (size_t i = 0; i < m_codeBlock->numberOfExceptionHandlers(); ++i) {
         HandlerInfo& handler = m_codeBlock->exceptionHandler(i);
-        handler.nativeCode = repatchBuffer.addressOf(m_labels[handler.target]);
+        handler.nativeCode = patchBuffer.addressOf(m_labels[handler.target]);
     }
 
     m_codeBlock->pcVector().reserveCapacity(m_calls.size());
     for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
         if (iter->to)
-            repatchBuffer.link(iter->from, iter->to);
-        m_codeBlock->pcVector().append(PC(repatchBuffer.addressOf(iter->from), iter->bytecodeIndex));
+            patchBuffer.link(iter->from, iter->to);
+        m_codeBlock->pcVector().append(PC(patchBuffer.addressOf(iter->from), iter->bytecodeIndex));
     }
 
     // Link absolute addresses for jsr
     for (Vector<JSRInfo>::iterator iter = m_jsrSites.begin(); iter != m_jsrSites.end(); ++iter)
-        repatchBuffer.setPtr(iter->storeLocation, repatchBuffer.addressOf(iter->target));
+        patchBuffer.setPtr(iter->storeLocation, patchBuffer.addressOf(iter->target));
 
     for (unsigned i = 0; i < m_codeBlock->numberOfStructureStubInfos(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-        info.callReturnLocation = repatchBuffer.addressOf(m_propertyAccessCompilationInfo[i].callReturnLocation);
-        info.hotPathBegin = repatchBuffer.addressOf(m_propertyAccessCompilationInfo[i].hotPathBegin);
+        info.callReturnLocation = patchBuffer.addressOf(m_propertyAccessCompilationInfo[i].callReturnLocation);
+        info.hotPathBegin = patchBuffer.addressOf(m_propertyAccessCompilationInfo[i].hotPathBegin);
 #else
         info.callReturnLocation = 0;
         info.hotPathBegin = 0;
@@ -1900,10 +1900,10 @@ void JIT::privateCompile()
     for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
 #if ENABLE(JIT_OPTIMIZE_CALL)
-        info.callReturnLocation = repatchBuffer.addressOf(m_callStructureStubCompilationInfo[i].callReturnLocation);
-        info.hotPathBegin = repatchBuffer.addressOf(m_callStructureStubCompilationInfo[i].hotPathBegin);
-        info.hotPathOther = repatchBuffer.addressOf(m_callStructureStubCompilationInfo[i].hotPathOther);
-        info.coldPathOther = repatchBuffer.addressOf(m_callStructureStubCompilationInfo[i].coldPathOther);
+        info.callReturnLocation = patchBuffer.addressOf(m_callStructureStubCompilationInfo[i].callReturnLocation);
+        info.hotPathBegin = patchBuffer.addressOf(m_callStructureStubCompilationInfo[i].hotPathBegin);
+        info.hotPathOther = patchBuffer.addressOf(m_callStructureStubCompilationInfo[i].hotPathOther);
+        info.coldPathOther = patchBuffer.addressOf(m_callStructureStubCompilationInfo[i].coldPathOther);
 #else
         info.callReturnLocation = 0;
         info.hotPathBegin = 0;
@@ -2068,31 +2068,31 @@ void JIT::privateCompileCTIMachineTrampolines()
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
     m_interpreter->m_executablePool = m_globalData->poolForSize(m_assembler.size());
     void* code = m_assembler.executableCopy(m_interpreter->m_executablePool.get());
-    RepatchBuffer repatchBuffer(code);
+    PatchBuffer patchBuffer(code);
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    repatchBuffer.link(array_failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_array_fail));
-    repatchBuffer.link(array_failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_array_fail));
-    repatchBuffer.link(array_failureCases3, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_array_fail));
-    repatchBuffer.link(string_failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_string_fail));
-    repatchBuffer.link(string_failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_string_fail));
-    repatchBuffer.link(string_failureCases3, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_string_fail));
+    patchBuffer.link(array_failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_array_fail));
+    patchBuffer.link(array_failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_array_fail));
+    patchBuffer.link(array_failureCases3, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_array_fail));
+    patchBuffer.link(string_failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_string_fail));
+    patchBuffer.link(string_failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_string_fail));
+    patchBuffer.link(string_failureCases3, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_string_fail));
 
-    m_interpreter->m_ctiArrayLengthTrampoline = repatchBuffer.addressOf(arrayLengthBegin);
-    m_interpreter->m_ctiStringLengthTrampoline = repatchBuffer.addressOf(stringLengthBegin);
+    m_interpreter->m_ctiArrayLengthTrampoline = patchBuffer.addressOf(arrayLengthBegin);
+    m_interpreter->m_ctiStringLengthTrampoline = patchBuffer.addressOf(stringLengthBegin);
 #endif
-    repatchBuffer.link(callArityCheck1, reinterpret_cast<void*>(Interpreter::cti_op_call_arityCheck));
-    repatchBuffer.link(callArityCheck2, reinterpret_cast<void*>(Interpreter::cti_op_call_arityCheck));
-    repatchBuffer.link(callArityCheck3, reinterpret_cast<void*>(Interpreter::cti_op_call_arityCheck));
-    repatchBuffer.link(callJSFunction1, reinterpret_cast<void*>(Interpreter::cti_op_call_JSFunction));
-    repatchBuffer.link(callJSFunction2, reinterpret_cast<void*>(Interpreter::cti_op_call_JSFunction));
-    repatchBuffer.link(callJSFunction3, reinterpret_cast<void*>(Interpreter::cti_op_call_JSFunction));
-    repatchBuffer.link(callDontLazyLinkCall, reinterpret_cast<void*>(Interpreter::cti_vm_dontLazyLinkCall));
-    repatchBuffer.link(callLazyLinkCall, reinterpret_cast<void*>(Interpreter::cti_vm_lazyLinkCall));
+    patchBuffer.link(callArityCheck1, reinterpret_cast<void*>(Interpreter::cti_op_call_arityCheck));
+    patchBuffer.link(callArityCheck2, reinterpret_cast<void*>(Interpreter::cti_op_call_arityCheck));
+    patchBuffer.link(callArityCheck3, reinterpret_cast<void*>(Interpreter::cti_op_call_arityCheck));
+    patchBuffer.link(callJSFunction1, reinterpret_cast<void*>(Interpreter::cti_op_call_JSFunction));
+    patchBuffer.link(callJSFunction2, reinterpret_cast<void*>(Interpreter::cti_op_call_JSFunction));
+    patchBuffer.link(callJSFunction3, reinterpret_cast<void*>(Interpreter::cti_op_call_JSFunction));
+    patchBuffer.link(callDontLazyLinkCall, reinterpret_cast<void*>(Interpreter::cti_vm_dontLazyLinkCall));
+    patchBuffer.link(callLazyLinkCall, reinterpret_cast<void*>(Interpreter::cti_vm_lazyLinkCall));
 
-    m_interpreter->m_ctiVirtualCallPreLink = repatchBuffer.addressOf(virtualCallPreLinkBegin);
-    m_interpreter->m_ctiVirtualCallLink = repatchBuffer.addressOf(virtualCallLinkBegin);
-    m_interpreter->m_ctiVirtualCall = repatchBuffer.addressOf(virtualCallBegin);
+    m_interpreter->m_ctiVirtualCallPreLink = patchBuffer.addressOf(virtualCallPreLinkBegin);
+    m_interpreter->m_ctiVirtualCallLink = patchBuffer.addressOf(virtualCallLinkBegin);
+    m_interpreter->m_ctiVirtualCall = patchBuffer.addressOf(virtualCallBegin);
 }
 
 void JIT::emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst)

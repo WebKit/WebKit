@@ -49,7 +49,7 @@ void JIT::unlinkCall(CallLinkInfo* callLinkInfo)
     // When the JSFunction is deleted the pointer embedded in the instruction stream will no longer be valid
     // (and, if a new JSFunction happened to be constructed at the same location, we could get a false positive
     // match).  Reset the check so it no longer matches.
-    DataLabelPtr::repatch(callLinkInfo->hotPathBegin, JSImmediate::impossibleValue());
+    DataLabelPtr::patch(callLinkInfo->hotPathBegin, JSImmediate::impossibleValue());
 }
 
 void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, CallLinkInfo* callLinkInfo, int callerArgCount)
@@ -60,13 +60,13 @@ void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode
     
         calleeCodeBlock->addCaller(callLinkInfo);
     
-        DataLabelPtr::repatch(callLinkInfo->hotPathBegin, callee);
-        Jump::repatch(callLinkInfo->hotPathOther, ctiCode);
+        DataLabelPtr::patch(callLinkInfo->hotPathBegin, callee);
+        Jump::patch(callLinkInfo->hotPathOther, ctiCode);
     }
 
-    // repatch the instruction that jumps out to the cold path, so that we only try to link once.
-    void* repatchCheck = reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(callLinkInfo->hotPathBegin) + repatchOffsetOpCallCompareToJump);
-    Jump::repatch(repatchCheck, callLinkInfo->coldPathOther);
+    // patch the instruction that jumps out to the cold path, so that we only try to link once.
+    void* patchCheck = reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(callLinkInfo->hotPathBegin) + patchOffsetOpCallCompareToJump);
+    Jump::patch(patchCheck, callLinkInfo->coldPathOther);
 }
 
 void JIT::compileOpCallInitializeCallFrame()
@@ -218,9 +218,9 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     // This deliberately leaves the callee in ecx, used when setting up the stack frame below
     emitGetVirtualRegister(callee, X86::ecx);
     DataLabelPtr addressOfLinkedFunctionCheck;
-    Jump jumpToSlow = jnePtrWithRepatch(X86::ecx, addressOfLinkedFunctionCheck, ImmPtr(JSImmediate::impossibleValue()));
+    Jump jumpToSlow = jnePtrWithPatch(X86::ecx, addressOfLinkedFunctionCheck, ImmPtr(JSImmediate::impossibleValue()));
     addSlowCase(jumpToSlow);
-    ASSERT(differenceBetween(addressOfLinkedFunctionCheck, jumpToSlow) == repatchOffsetOpCallCompareToJump);
+    ASSERT(differenceBetween(addressOfLinkedFunctionCheck, jumpToSlow) == patchOffsetOpCallCompareToJump);
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
 
     // The following is the fast case, only used whan a callee can be linked.

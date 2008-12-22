@@ -1099,7 +1099,7 @@ public:
         return label();
     }
 
-    // Linking & repatching:
+    // Linking & patching:
 
     void link(JmpSrc from, JmpDst to)
     {
@@ -1109,7 +1109,7 @@ public:
         reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(m_formatter.data()) + from.m_offset)[-1] = to.m_offset - from.m_offset;
     }
     
-    static void repatchAddress(void* code, JmpDst position, void* value)
+    static void patchAddress(void* code, JmpDst position, void* value)
     {
         ASSERT(position.m_offset != -1);
         
@@ -1150,17 +1150,17 @@ public:
         return dst.m_offset - src.m_offset;
     }
     
-    static void repatchImmediate(intptr_t where, int32_t value)
+    static void patchImmediate(intptr_t where, int32_t value)
     {
         reinterpret_cast<int32_t*>(where)[-1] = value;
     }
     
-    static void repatchPointer(intptr_t where, intptr_t value)
+    static void patchPointer(intptr_t where, intptr_t value)
     {
         reinterpret_cast<intptr_t*>(where)[-1] = value;
     }
     
-    static void repatchBranchOffset(intptr_t where, void* destination)
+    static void patchBranchOffset(intptr_t where, void* destination)
     {
         intptr_t offset = reinterpret_cast<intptr_t>(destination) - where;
         ASSERT(offset == static_cast<int32_t>(offset));
