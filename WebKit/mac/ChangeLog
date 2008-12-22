@@ -1,3 +1,12 @@
+2008-12-22  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/6449588> REGRESSION (r38279-r38280): Minimize them remaximize a window with a flash plugin, plugin doesn't resume at full speed
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView windowDidDeminiaturize:]): Deminiaturizing should restart timers, not stop timers.
+
 2008-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler, Adele Peterson, Brady Eidson.

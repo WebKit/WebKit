@@ -488,7 +488,7 @@ using namespace WebCore;
 
 - (void)windowDidDeminiaturize:(NSNotification *)notification
 {
-    [self stopTimers];
+    [self restartTimers];
 }
 
 - (void)loginWindowDidSwitchFromUser:(NSNotification *)notification
