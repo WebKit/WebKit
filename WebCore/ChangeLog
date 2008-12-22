@@ -1,3 +1,18 @@
+2008-12-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6277060> ASSERTION FAILED: !m_cacheBeingUpdated if the manifest is not available
+
+        Tests: http/tests/appcache/404-manifest.html
+               http/tests/appcache/fail-on-update.html
+
+        * loader/appcache/ApplicationCacheGroup.cpp: (WebCore::ApplicationCacheGroup::stopLoading):
+        Removed the incorrect assertion.
+
+        * loader/appcache/ApplicationCacheGroup.h: Added an explanation of somewhat nonintuitive
+        m_currentHandle handling.
+
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov & George Staikos.

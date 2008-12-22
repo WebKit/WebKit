@@ -244,10 +244,9 @@ void ApplicationCacheGroup::failedLoadingMainResource(DocumentLoader* loader)
 }
 
 void ApplicationCacheGroup::stopLoading()
-{    
+{
     if (m_manifestHandle) {
         ASSERT(!m_currentHandle);
-        ASSERT(!m_cacheBeingUpdated);
 
         m_manifestHandle->setClient(0);
         m_manifestHandle->cancel();

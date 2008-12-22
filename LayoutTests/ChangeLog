@@ -1,3 +1,18 @@
+2008-12-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6277060> ASSERTION FAILED: !m_cacheBeingUpdated if the manifest is not available
+
+        Cover both the failing case, and its opposite, demonstrating that the assertion couldn't be
+        just negated.
+
+        * http/tests/appcache/404-manifest-expected.txt: Added.
+        * http/tests/appcache/404-manifest.html: Added.
+        * http/tests/appcache/fail-on-update-expected.txt: Added.
+        * http/tests/appcache/fail-on-update.html: Added.
+        * http/tests/appcache/resources/fail-on-update.php: Added.
+
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov & George Staikos.

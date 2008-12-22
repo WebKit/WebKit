@@ -1,0 +1,23 @@
+<html manifest="resources/fail-on-update.php">
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function test()
+{
+    applicationCache.update();
+    window.location = 'data:text/html,<p>SUCCESS: No crash.</p>' + 
+        '<script>' +
+            'if (window.layoutTestController) layoutTestController.notifyDone();' +
+        '</scri' + 'pt>';
+}
+
+applicationCache.addEventListener('noupdate', function() { test() }, false);
+applicationCache.addEventListener('cached', function() { test() }, false);
+
+</script>
+<p>Test for a particular incorrect assertion failure.</p>
+
+</html>

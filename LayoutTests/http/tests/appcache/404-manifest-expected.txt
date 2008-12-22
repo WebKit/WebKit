@@ -1,0 +1,4 @@
+Test that subresources can be loaded if manifest is not available. Should say SUCCESS.
+
+SUCCESS
+
