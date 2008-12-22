@@ -1,3 +1,13 @@
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Rubber-stamped by George Staikos.
+
+        Unify all TorchMobile copyright lines. Consolidate in a single line, as requested by Mark Rowe, some time ago.
+
+        * wtf/RandomNumber.cpp:
+        * wtf/RandomNumber.h:
+        * wtf/RandomNumberSeed.h:
+
 2008-12-21  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Rubber-stamped by George Staikos.

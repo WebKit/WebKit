@@ -4,8 +4,7 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Torch Mobile Inc.  All rights reserved.
- *               http://www.torchmobile.com/
+ * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008 David Levin (levin@chromium.org)
  *
  * This library is free software; you can redistribute it and/or

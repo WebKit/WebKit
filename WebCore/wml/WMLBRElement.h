@@ -1,6 +1,5 @@
 /**
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved.
- *               http://www.torchmobile.com/
+ * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
