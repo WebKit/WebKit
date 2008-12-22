@@ -1,3 +1,13 @@
+2008-12-22  Dhananjoy Chutia  <dhanrd@gmail.com>
+
+        Reviewed by David Kilzer.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22959
+        Memory leak fixes for WebKit+soup
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::finishedCallback):
+
 2008-12-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

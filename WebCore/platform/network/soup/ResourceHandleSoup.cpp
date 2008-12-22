@@ -163,8 +163,6 @@ static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer da
         return;
 
     ResourceHandleInternal* d = handle->getInternal();
-    // The message has been handled.
-    d->m_msg = NULL;
 
     ResourceHandleClient* client = handle->client();
     if (!client)
