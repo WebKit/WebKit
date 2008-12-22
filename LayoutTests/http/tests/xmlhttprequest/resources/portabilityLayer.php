@@ -29,4 +29,10 @@ if (!function_exists('file_put_contents')) {
     }
 }
 
+function ensureTrailingSlash($path)
+{
+    if ($path[strlen($path) - 1] == '/')
+        return $path;
+    return $path . '/';
+}
 ?>

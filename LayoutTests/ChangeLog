@@ -1,3 +1,21 @@
+2008-12-21  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22950
+
+        Attempted fix for 4 failing XMLHttpReuqest tests on Tiger:
+         access-control-basic-allow-preflight-cache-invalidation-by-header.html
+         access-control-basic-allow-preflight-cache-invalidation-by-method.html
+         access-control-basic-allow-preflight-cache-timeout.html
+         access-control-basic-allow-preflight-cache.html
+
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.php:
+        * http/tests/xmlhttprequest/resources/portabilityLayer.php:
+        * http/tests/xmlhttprequest/resources/reset-temp-file.php:
+
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
