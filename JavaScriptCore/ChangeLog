@@ -1,3 +1,13 @@
+2008-12-21  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Rubber-stamped by George Staikos.
+
+        Fix copyright of the new RandomNumber* files.
+
+        * wtf/RandomNumber.cpp:
+        * wtf/RandomNumber.h:
+        * wtf/RandomNumberSeed.h:
+
 2008-12-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt & Cameron Zwarich.
