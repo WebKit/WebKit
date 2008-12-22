@@ -1,3 +1,62 @@
+2008-12-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Darin Adler and George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22949
+
+        Refactor HTMLFormElement to share a maximum level of code between HTMLFormElement & WMLGoElement.
+        Create a new helper class 'FormDataBuilder', which is hold as member variable in those classes.
+        It encapsulates all functionality needed to generate a FormData object, usable for HTML/WML form
+        submission, including boundary string generation, multi-part form handling etc.
+
+        No functional changes, no test cases affected.
+        WMLGoElement will be converted in a follow-up patch.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        (WebCore::HTMLFormElement::dataEncoding):
+        (WebCore::HTMLFormElement::createFormData):
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        * html/HTMLFormElement.h:
+        (WebCore::HTMLFormElement::enctype):
+        (WebCore::HTMLFormElement::encoding):
+        (WebCore::HTMLFormElement::setEncoding):
+        (WebCore::HTMLFormElement::acceptCharset):
+        * platform/network/FormDataBuilder.cpp: Added.
+        (WebCore::FormDataBuilder::FormDataBuilder):
+        (WebCore::FormDataBuilder::~FormDataBuilder):
+        (WebCore::FormDataBuilder::parseEncodingType):
+        (WebCore::FormDataBuilder::parseMethodType):
+        (WebCore::FormDataBuilder::dataEncoding):
+        (WebCore::appendString):
+        (WebCore::FormDataBuilder::beginMultiPartHeader):
+        (WebCore::FormDataBuilder::addBoundaryToMultiPartHeader):
+        (WebCore::FormDataBuilder::addFileNameToMultiPartHeader):
+        (WebCore::FormDataBuilder::addContentTypeToMultiPartHeader):
+        (WebCore::FormDataBuilder::finishMultiPartHeader):
+        (WebCore::FormDataBuilder::clear):
+        (WebCore::FormDataBuilder::addKeyValuePairAsFormData):
+        (WebCore::FormDataBuilder::encodeStringAsFormData):
+        (WebCore::FormDataBuilder::generateUniqueBoundaryString):
+        * platform/network/FormDataBuilder.h: Added.
+        (WebCore::FormDataBuilder::isPostMethod):
+        (WebCore::FormDataBuilder::setIsPostMethod):
+        (WebCore::FormDataBuilder::isMultiPartForm):
+        (WebCore::FormDataBuilder::setIsMultiPartForm):
+        (WebCore::FormDataBuilder::encodingType):
+        (WebCore::FormDataBuilder::setEncodingType):
+        (WebCore::FormDataBuilder::acceptCharset):
+        (WebCore::FormDataBuilder::setAcceptCharset):
+        (WebCore::FormDataBuilder::encodedData):
+        (WebCore::FormDataBuilder::multiPartData):
+
 2008-12-21  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler, Nikolas Zimmermann.

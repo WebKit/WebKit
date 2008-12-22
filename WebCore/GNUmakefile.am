@@ -1358,6 +1358,8 @@ webcore_sources += \
 	WebCore/platform/network/DNS.h \
 	WebCore/platform/network/FormData.cpp \
 	WebCore/platform/network/FormData.h \
+	WebCore/platform/network/FormDataBuilder.cpp \
+	WebCore/platform/network/FormDataBuilder.h \
 	WebCore/platform/network/HTTPHeaderMap.h \
 	WebCore/platform/network/HTTPParsers.cpp \
 	WebCore/platform/network/HTTPParsers.h \

@@ -890,6 +890,7 @@ SOURCES += \
     platform/network/AuthenticationChallengeBase.cpp \
     platform/network/Credential.cpp \
     platform/network/FormData.cpp \
+    platform/network/FormDataBuilder.cpp \
     platform/network/HTTPParsers.cpp \
     platform/network/NetworkStateNotifier.cpp \
     platform/network/ProtectionSpace.cpp \

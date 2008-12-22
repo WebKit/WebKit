@@ -775,6 +775,7 @@ This file contains the list of files needed to build WebCore.
         platform/network/Credential.cpp
         platform/network/HTTPParsers.cpp
         platform/network/FormData.cpp
+        platform/network/FormDataBuilder.cpp
         platform/network/NetworkStateNotifier.cpp
         platform/network/ProtectionSpace.cpp
         platform/network/ResourceErrorBase.cpp

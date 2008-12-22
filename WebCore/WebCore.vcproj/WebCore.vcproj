@@ -5821,6 +5821,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\FormDataBuilder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\FormDataBuilder.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\HTTPHeaderMap.h"
 					>
 				</File>
