@@ -1,5 +1,14 @@
 2008-12-22  David Kilzer  <ddkilzer@apple.com>
 
+        <rdar://problem/6438298> Bump schema version for app cache
+
+        Reviewed by Alexey Proskuryakov.
+
+        * loader/appcache/ApplicationCacheStorage.cpp: Increment
+        SchemaVersion from 2 to 3.
+
+2008-12-22  David Kilzer  <ddkilzer@apple.com>
+
         Use Deque in CSSStyleSheet::addSubresourceStyleURLs()
 
         Reviewed by Darin Adler.

@@ -231,7 +231,7 @@ bool ApplicationCacheStorage::executeSQLCommand(const String& sql)
     return result;
 }
 
-static const int SchemaVersion = 2;
+static const int SchemaVersion = 3;
     
 void ApplicationCacheStorage::verifySchemaVersion()
 {
