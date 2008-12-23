@@ -208,7 +208,6 @@ PassRefPtr<FormData> HTMLFormElement::createFormData(const CString& boundary)
                         }
 
                         // We have to include the filename=".." part in the header, even if the filename is empty
-                        // Covered by LayoutTests/http/tests/misc/empty-file-formdata.html
                         m_formDataBuilder.addFilenameToMultiPartHeader(header, encoding, fileName);
 
                         if (!fileName.isEmpty()) {
