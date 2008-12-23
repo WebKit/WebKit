@@ -1,3 +1,17 @@
+2008-12-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Save a word in all Elements by moving the 5 loose bits to Node,
+        where we had 16 spare.
+
+        * dom/Element.cpp:
+        (WebCore::Element::Element):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        * dom/Node.h:
+
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

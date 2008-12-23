@@ -56,13 +56,6 @@ using namespace XMLNames;
 Element::Element(const QualifiedName& tagName, Document* doc)
     : ContainerNode(doc, true)
     , m_tagName(tagName)
-    , m_isStyleAttributeValid(true)
-    , m_synchronizingStyleAttribute(false)
-#if ENABLE(SVG)
-    , m_areSVGAttributesValid(true)
-    , m_synchronizingSVGAttributes(false)
-#endif
-    , m_parsingChildrenFinished(true)
 {
 }
 

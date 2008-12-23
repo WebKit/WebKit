@@ -513,13 +513,15 @@ private:
     virtual const AtomicString& virtualPrefix() const;
     virtual const AtomicString& virtualLocalName() const;
     virtual const AtomicString& virtualNamespaceURI() const;
-    
+
+    Element* ancestorElement() const;
+
+    void appendTextContent(bool convertBRsToNewlines, StringBuilder&) const;
+
     DocPtr<Document> m_document;
     Node* m_previous;
     Node* m_next;
     RenderObject* m_renderer;
-
-    // make sure we don't use more than 16 bits here -- adding more would increase the size of all Nodes
 
     unsigned m_styleChange : 2;
     bool m_hasId : 1;
@@ -536,11 +538,22 @@ private:
     bool m_hasRareData : 1;
     const bool m_isElement : 1;
     const bool m_isContainer : 1;
-    // no bits left   
 
-    Element* ancestorElement() const;
+protected:
+    // These two bits are really used by the StyledElement subclass, but they are pulled up here in order to be shared with other
+    // Node bits.
+    mutable bool m_isStyleAttributeValid : 1;
+    mutable bool m_synchronizingStyleAttribute : 1;
 
-    void appendTextContent(bool convertBRsToNewlines, StringBuilder&) const;
+#if ENABLE(SVG)
+    // These bits are used by the SVGElement subclasses, and it lives here for the same reason as above.
+    mutable bool m_areSVGAttributesValid : 1;
+    mutable bool m_synchronizingSVGAttributes : 1;
+#endif
+
+    // This bit is used by the ELement subclasses, and it lives here for the same reason as above.
+    bool m_parsingChildrenFinished : 1;
+    // 11 bits remaining
 };
 
 // Used in Node::addSubresourceAttributeURLs() and in addSubresourceStyleURLs()

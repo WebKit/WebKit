@@ -220,20 +220,6 @@ protected:
     ElementRareData* ensureRareData();
     
     mutable RefPtr<NamedAttrMap> namedAttrMap;
-
-    // These two bits are really used by the StyledElement subclass, but they are pulled up here in order to be shared with other
-    // Element bits.
-    mutable bool m_isStyleAttributeValid : 1;
-    mutable bool m_synchronizingStyleAttribute : 1;
-
-#if ENABLE(SVG)
-    // These bit is are used by SVGElement subclasses, and it lives here for the same reason as above.
-    mutable bool m_areSVGAttributesValid : 1;
-    mutable bool m_synchronizingSVGAttributes : 1;
-#endif
-
-private:
-    bool m_parsingChildrenFinished : 1;
 };
     
 inline bool Node::hasTagName(const QualifiedName& name) const
