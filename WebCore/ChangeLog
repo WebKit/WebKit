@@ -1,3 +1,11 @@
+2008-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        * dom/Node.h: Tweak comments and order of bits that Sam moved
+        here last night.
+        * dom/Node.cpp: Ditto.
+
 2008-12-22  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

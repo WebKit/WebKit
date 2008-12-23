@@ -540,19 +540,24 @@ private:
     const bool m_isContainer : 1;
 
 protected:
-    // These two bits are really used by the StyledElement subclass, but they are pulled up here in order to be shared with other
-    // Node bits.
+    // These bits are used by the Element derived class, pulled up here so they can
+    // be stored in the same memory word as the Node bits above.
+    bool m_parsingChildrenFinished : 1;
+#if ENABLE(SVG)
+    mutable bool m_areSVGAttributesValid : 1;
+#endif
+
+    // These bits are used by the StyledElement derived class, and live here for the
+    // same reason as above.
     mutable bool m_isStyleAttributeValid : 1;
     mutable bool m_synchronizingStyleAttribute : 1;
 
 #if ENABLE(SVG)
-    // These bits are used by the SVGElement subclasses, and it lives here for the same reason as above.
-    mutable bool m_areSVGAttributesValid : 1;
+    // This bit is used by the SVGElement derived class, and lives here for the same
+    // reason as above.
     mutable bool m_synchronizingSVGAttributes : 1;
 #endif
 
-    // This bit is used by the ELement subclasses, and it lives here for the same reason as above.
-    bool m_parsingChildrenFinished : 1;
     // 11 bits remaining
 };
 
