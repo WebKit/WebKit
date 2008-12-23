@@ -1,3 +1,30 @@
+2008-12-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix rounding / bounds / signed comparison bug in ExecutableAllocator.
+
+        ExecutableAllocator::alloc assumed that m_freePtr would be aligned.  This was
+        not always true, since the first allocation from an additional pool would not
+        be rounded up.  Subsequent allocations would be unaligned, and too much memory
+        could be erroneously allocated from the pool, when the size requested was
+        available, but the size rounded up to word granularity was not available in the
+        pool.  This may result in the value of m_freePtr being greater than m_end.
+
+        Under these circumstances, the unsigned check for space will always pass,
+        resulting in pointers to memory outside of the arena being returned, and
+        ultimately segfaulty goodness when attempting to memcpy the hot freshly jitted
+        code from the AssemblerBuffer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22974
+        ... and probably many, many more.
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutablePool::alloc):
+        (JSC::ExecutablePool::roundUpAllocationSize):
+        (JSC::ExecutablePool::ExecutablePool):
+        (JSC::ExecutablePool::poolAllocate):
+
 2008-12-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

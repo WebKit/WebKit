@@ -35,7 +35,7 @@
 
 #include <limits>
 
-#define JIT_ALLOCATOR_PAGE_MASK (ExecutableAllocator::pageSize - 1)
+#define JIT_ALLOCATOR_PAGE_SIZE (ExecutableAllocator::pageSize)
 #define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (ExecutableAllocator::pageSize * 4)
 
 namespace JSC {
@@ -56,10 +56,15 @@ public:
 
     void* alloc(size_t n)
     {
-        if (n < static_cast<size_t>(m_end - m_freePtr)) {
-            char* result = m_freePtr;
-            // ensure m_freePtr is word aligned.
-            m_freePtr += n + (sizeof(void*) - n & (sizeof(void*) - 1));
+        ASSERT(m_freePtr <= m_end);
+
+        // Round 'n' up to a multiple of word size; if all allocations are of
+        // word sized quantities, then all subsequent allocations will be aligned.
+        n = roundUpAllocationSize(n, sizeof(void*));
+
+        if (static_cast<ptrdiff_t>(n) < (m_end - m_freePtr)) {
+            void* result = m_freePtr;
+            m_freePtr += n;
             return result;
         }
 
@@ -81,37 +86,21 @@ private:
     static Allocation systemAlloc(size_t n);
     static void systemRelease(const Allocation& alloc);
 
-    ExecutablePool(size_t n)
+    inline size_t roundUpAllocationSize(size_t request, size_t granularity)
     {
-        size_t allocSize = sizeForAllocation(n);
-        Allocation mem = systemAlloc(allocSize);
-        m_pools.append(mem);
-        m_freePtr = mem.pages;
-        if (!m_freePtr)
-            CRASH(); // Failed to allocate
-        m_end = m_freePtr + allocSize;
+        if ((std::numeric_limits<size_t>::max() - granularity) <= request)
+            CRASH(); // Allocation is too large
+        
+        // Round up to next page boundary
+        size_t size = request + (granularity - 1);
+        size = size & ~(granularity - 1);
+        ASSERT(size >= request);
+        return size;
     }
 
-    static inline size_t sizeForAllocation(size_t request);
+    ExecutablePool(size_t n);
 
-    void* poolAllocate(size_t n)
-    {
-        size_t allocSize = sizeForAllocation(n);
-        
-        Allocation result = systemAlloc(allocSize);
-        if (!result.pages)
-            CRASH(); // Failed to allocate
-        
-        ASSERT(m_end >= m_freePtr);
-        if ((allocSize - n) > static_cast<size_t>(m_end - m_freePtr)) {
-            // Replace allocation pool
-            m_freePtr = result.pages + n;
-            m_end = result.pages + allocSize;
-        }
-
-        m_pools.append(result);
-        return result.pages;
-    }
+    void* poolAllocate(size_t n);
 
     char* m_freePtr;
     char* m_end;
@@ -153,16 +142,34 @@ private:
     static void intializePageSize();
 };
 
-inline size_t ExecutablePool::sizeForAllocation(size_t request)
+inline ExecutablePool::ExecutablePool(size_t n)
 {
-    if ((std::numeric_limits<size_t>::max() - ExecutableAllocator::pageSize) <= request)
-        CRASH(); // Allocation is too large
+    size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
+    Allocation mem = systemAlloc(allocSize);
+    m_pools.append(mem);
+    m_freePtr = mem.pages;
+    if (!m_freePtr)
+        CRASH(); // Failed to allocate
+    m_end = m_freePtr + allocSize;
+}
+
+inline void* ExecutablePool::poolAllocate(size_t n)
+{
+    size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
     
-    // Round up to next page boundary
-    size_t size = request + JIT_ALLOCATOR_PAGE_MASK;
-    size = size & ~JIT_ALLOCATOR_PAGE_MASK;
-    ASSERT(size >= request);
-    return size;
+    Allocation result = systemAlloc(allocSize);
+    if (!result.pages)
+        CRASH(); // Failed to allocate
+    
+    ASSERT(m_end >= m_freePtr);
+    if ((allocSize - n) > static_cast<size_t>(m_end - m_freePtr)) {
+        // Replace allocation pool
+        m_freePtr = result.pages + n;
+        m_end = result.pages + allocSize;
+    }
+
+    m_pools.append(result);
+    return result.pages;
 }
 
 }
