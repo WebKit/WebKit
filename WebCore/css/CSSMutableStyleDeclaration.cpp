@@ -815,6 +815,14 @@ void CSSMutableStyleDeclaration::merge(CSSMutableStyleDeclaration* other, bool a
     // a notifyChanged argument to this function to follow the model of other functions in this class.
 }
 
+void CSSMutableStyleDeclaration::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
+{
+    CSSStyleSheet* sheet = static_cast<CSSStyleSheet*>(stylesheet());
+    size_t size = m_properties.size();
+    for (size_t i = 0; i < size; ++i)
+        m_properties[i].value()->addSubresourceStyleURLs(urls, sheet);
+}
+
 // This is the list of properties we want to copy in the copyBlockProperties() function.
 // It is the list of CSS properties that apply specially to block-level elements.
 static const int blockProperties[] = {

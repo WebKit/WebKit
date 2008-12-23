@@ -1,3 +1,39 @@
+2008-12-22  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 11850: Webarchive fails to save images referenced in CSS
+
+        <https://bugs.webkit.org/show_bug.cgi?id=11850>
+
+        Reviewed by Darin Adler.
+
+        The first set of files below tests that URLs are encoded properly
+        based on the charset of the stylesheet.  Normally this behavior may
+        only be tested by looking at web server logs with manual tests, but
+        webarchives represent this information in such a way that they may
+        be tested by DumpRenderTree.  Note that these tests depend on Bug
+        11850 being fixed, so it's not possible to separate them.
+
+        The second set of files below tests that all types of resources
+        referenced by url() in CSS stylesheets are now saved in webarchives.
+
+        * http/tests/webarchive/resources/.htaccess: Added.
+        * http/tests/webarchive/resources/apple.gif: Copied from LayoutTests/fast/canvas/resources/apple.gif.
+        * http/tests/webarchive/resources/test-no-charset.css: Added.
+        * http/tests/webarchive/resources/test-shift-jis.css: Added.
+        * http/tests/webarchive/resources/test-utf-8.css: Added.
+        * http/tests/webarchive/test-css-url-encoding-expected.webarchive: Added.
+        * http/tests/webarchive/test-css-url-encoding-shift-jis-expected.webarchive: Added.
+        * http/tests/webarchive/test-css-url-encoding-shift-jis.html: Added.
+        * http/tests/webarchive/test-css-url-encoding-utf-8-expected.webarchive: Added.
+        * http/tests/webarchive/test-css-url-encoding-utf-8.html: Added.
+        * http/tests/webarchive/test-css-url-encoding.html: Added.
+
+        * webarchive/resources/Ahem.ttf: Copied from LayoutTests/fast/css/resources/Ahem.ttf.
+        * webarchive/test-css-url-resources-in-stylesheets-expected.webarchive: Added.
+        * webarchive/test-css-url-resources-in-stylesheets.html: Added.
+        * webarchive/test-css-url-resources-inline-styles-expected.webarchive: Added.
+        * webarchive/test-css-url-resources-inline-styles.html: Added.
+
 2008-12-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

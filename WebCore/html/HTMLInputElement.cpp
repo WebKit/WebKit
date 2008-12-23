@@ -1677,6 +1677,8 @@ void HTMLInputElement::didMoveToNewOwnerDocument()
     
 void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
+    HTMLFormControlElementWithState::addSubresourceAttributeURLs(urls);
+
     addSubresourceURL(urls, src());
 }
 

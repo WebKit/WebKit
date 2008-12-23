@@ -39,7 +39,9 @@ public:
     virtual String cssText() const;
 
     CSSValue* imageValue() const { return m_image.get(); }
- 
+
+    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
+
     // The border image.
     RefPtr<CSSValue> m_image;
 

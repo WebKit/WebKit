@@ -499,4 +499,10 @@ void StyledElement::copyNonAttributeProperties(const Element *sourceElement)
     Element::copyNonAttributeProperties(sourceElement);
 }
 
+void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+{
+    if (CSSMutableStyleDeclaration* style = inlineStyleDecl())
+        style->addSubresourceStyleURLs(urls);
+}
+
 }

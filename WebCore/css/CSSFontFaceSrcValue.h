@@ -66,6 +66,8 @@ public:
 
     virtual String cssText() const;
 
+    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
+
 private:
     CSSFontFaceSrcValue(const String& resource, bool local)
         : m_resource(resource)

@@ -136,9 +136,10 @@ void HTMLStyleElement::setType(const AtomicString &value)
 
 void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {    
-    StyleSheet* styleSheet = const_cast<HTMLStyleElement*>(this)->sheet();
-    if (styleSheet)
-        styleSheet->addSubresourceStyleURLs(urls, ownerDocument()->baseURL());
+    HTMLElement::addSubresourceAttributeURLs(urls);
+
+    if (StyleSheet* styleSheet = const_cast<HTMLStyleElement*>(this)->sheet())
+        styleSheet->addSubresourceStyleURLs(urls);
 }
 
 }

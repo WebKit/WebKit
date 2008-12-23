@@ -382,6 +382,8 @@ void HTMLLinkElement::setType(const String& value)
 
 void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
+    HTMLElement::addSubresourceAttributeURLs(urls);
+
     if (m_isIcon) {
         addSubresourceURL(urls, href());
         return;
@@ -394,9 +396,8 @@ void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
     addSubresourceURL(urls, href());
     
     // Walk the URLs linked by the linked-to stylesheet.
-    StyleSheet* styleSheet = const_cast<HTMLLinkElement*>(this)->sheet();
-    if (styleSheet)
-        styleSheet->addSubresourceStyleURLs(urls, href());
+    if (StyleSheet* styleSheet = const_cast<HTMLLinkElement*>(this)->sheet())
+        styleSheet->addSubresourceStyleURLs(urls);
 }
 
 }

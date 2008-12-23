@@ -123,4 +123,10 @@ String CSSImportRule::cssText() const
     return result;
 }
 
+void CSSImportRule::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
+{
+    if (m_styleSheet)
+        addSubresourceURL(urls, m_styleSheet->baseURL());
+}
+
 } // namespace WebCore

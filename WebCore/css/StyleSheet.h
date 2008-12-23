@@ -51,7 +51,9 @@ public:
     virtual String type() const = 0;
     virtual bool isLoading() = 0;
     virtual void styleSheetChanged() { }
-    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const KURL& baseURL) const { }
+
+    virtual KURL completeURL(const String& url) const;
+    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&) { }
 
     virtual bool parseString(const String&, bool strict = true) = 0;
 

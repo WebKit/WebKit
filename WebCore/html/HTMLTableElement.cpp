@@ -750,6 +750,8 @@ void HTMLTableElement::setWidth(const String &value)
 
 void HTMLTableElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
+    HTMLElement::addSubresourceAttributeURLs(urls);
+
     addSubresourceURL(urls, document()->completeURL(getAttribute(backgroundAttr)));
 }
 

@@ -143,6 +143,8 @@ String SVGScriptElement::scriptCharset() const
 
 void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
+    SVGElement::addSubresourceAttributeURLs(urls);
+
     addSubresourceURL(urls, document()->completeURL(href()));
 }
 

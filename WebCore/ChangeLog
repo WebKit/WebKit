@@ -1,3 +1,199 @@
+2008-12-22  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 11850: Webarchive fails to save images referenced in CSS
+
+        <https://bugs.webkit.org/show_bug.cgi?id=11850>
+
+        Reviewed by Darin Adler.
+
+        This entry contains two parts since the tests for adding a
+        completeURL() method to StyleSheet and CSSStyleSheet (part 1) depend
+        on Bug 11850 being fixed (part 2).
+
+        --
+
+        Tests: http/tests/webarchive/test-css-url-encoding-shift-jis.html
+               http/tests/webarchive/test-css-url-encoding-utf-8.html
+               http/tests/webarchive/test-css-url-encoding.html
+
+        Added completeURL() methods to StyleSheet and CSSStyleSheet that
+        match the behavior of Document::completeURL().  Most notably,
+        CSSStyleSheet::completeURL() uses the charset of the stylesheet
+        (if it exists) to construct URLs, just like Document::completeURL().
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Use CSSStyleSheet::completeURL().
+        (WebCore::CSSParser::parseContent): Ditto.
+        (WebCore::CSSParser::parseFillImage): Ditto.
+        (WebCore::CSSParser::parseFontFaceSrc): Ditto.
+        (WebCore::CSSParser::parseBorderImage): Ditto.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::completeURL): Added.
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::completeURL): Added declaration.
+
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::completeURL): Added.
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::completeURL): Added declaration.
+
+        * dom/Document.cpp:
+        (WebCore::Document::completeURL): Added comment referring to the new
+        completeURL() methods in StyleSheet and CSSStyleSheet.
+
+        --
+
+        Tests: webarchive/test-css-url-resources-in-stylesheets.html
+               webarchive/test-css-url-resources-inline-styles.html
+
+        Walk stylesheets and inline style attributes for url() references
+        when building a list of URLs to include in a webarchive.  Note that
+        not all URLs found this way will be included in the webarchive if
+        they were not used (and thus not downloaded) when laying out the
+        page.
+
+        The key method for CSS stylesheets is
+        CSSStyleSheet::addSubresourceStyleURLs() which iterates over all
+        CSSStyleSheet objects recursively referenced from its own stylesheet
+        through @import rules.  Starting with the CSSRule objects in each
+        sheet and continuing down through the CSSMutableStyleDeclaration and
+        CSSValue objects, addSubresourceStyleURLs() methods are called to
+        gather URLs.
+
+        For inline style attributes in HTML DOM elements,
+        StyledElement::addSubresourceAttributeURLs() calls
+        CSSMutableStyleDeclaration::addSubresourceStyleURLs() to gather URLs
+        from each element, hence the need to call
+        addSubresourceAttributeURLs() on superclasses when the method is
+        implemented on the element class itself.
+
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::addSubresourceStyleURLs): Added.
+        * css/CSSBorderImageValue.h:
+        (WebCore::CSSBorderImageValue::addSubresourceStyleURLs): Added
+        declaration.
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::addSubresourceStyleURLs): Added.
+        * css/CSSFontFaceRule.h:
+        (WebCore::CSSFontFaceRule::addSubresourceStyleURLs): Added
+        declaration.
+
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::addSubresourceStyleURLs): Added.
+        * css/CSSFontFaceSrcValue.h:
+        (WebCore::CSSFontFaceSrcValue::addSubresourceStyleURLs): Added
+        declaration.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::addSubresourceStyleURLs): Added.
+        * css/CSSImportRule.h:
+        (WebCore::CSSImportRule::addSubresourceStyleURLs): Added
+        declaration.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::addSubresourceStyleURLs): Added.
+        Iterates over m_properties vector of CSSProperty objects calling
+        addSubresourceStyleURLs() on each property's CSSValue object.
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::addSubresourceStyleURLs): Added
+        declaration.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::addSubresourceStyleURLs): Added.
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::addSubresourceStyleURLs): Added
+        declaration.
+
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::addSubresourceStyleURLs): Added.
+        * css/CSSReflectValue.h:
+        (WebCore::CSSReflectValue::addSubresourceStyleURLs): Added
+        declaration.
+
+        * css/CSSRule.h:
+        (WebCore::CSSRule::addSubresourceStyleURLs): Added.  Virtual
+        method with empty implementation that's overridden by subclasses
+        as needed.
+
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::addSubresourceStyleURLs): Added.
+        * css/CSSStyleRule.h:
+        (WebCore::CSSStyleRule::addSubresourceStyleURLs): Added
+        declaration.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addSubresourceStyleURLs): Updated to
+        call CSSRule::addSubresourceStyleURLs on each rule to extract
+        URLs.  Removed unneeded baseURL parameter now that the
+        completeURL() method exists.
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::addSubresourceStyleURLs): Updated
+        declaration.
+
+        * css/CSSValue.h:
+        (WebCore::CSSValue::addSubresourceStyleURLs): Added.  Virtual
+        method with empty implementation that's overridden by subclasses
+        as needed.
+
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::addSubresourceStyleURLs): Added.
+        Iterates over m_values vector of CSSValue objects calling
+        addSubresourceStyleURLs() on each.
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::addSubresourceStyleURLs): Added
+        declaration.
+
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::addSubresourceStyleURLs): Updated
+        declaration to remove unneeded baseURL parameter.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::addSubresourceAttributeURLs):
+        Fixed to use the StyleBase::baseURL() method to get the
+        stylesheet's URL instead of calling Document::completeURL().
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addSubresourceAttributeURLs): Added method
+        to extract URLs from inline style declarations.
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::addSubresourceAttributeURLs): Added
+        declaration.
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::addSubresourceAttributeURLs): Call
+        addSubresourceAttributeURLs() in superclass to extract URLs
+        from inline style declarations.
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::addSubresourceAttributeURLs): Ditto.
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::addSubresourceAttributeURLs): Ditto.
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::addSubresourceAttributeURLs): Ditto.
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::addSubresourceAttributeURLs): Ditto.
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::addSubresourceAttributeURLs): Ditto.
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::addSubresourceAttributeURLs): Ditto.
+
 2008-12-22  Dhananjoy Chutia  <dhanrd@gmail.com>
 
         Reviewed by David Kilzer.

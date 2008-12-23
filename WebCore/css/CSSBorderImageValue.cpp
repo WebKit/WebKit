@@ -58,4 +58,9 @@ String CSSBorderImageValue::cssText() const
     return text;
 }
 
+void CSSBorderImageValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSheet* styleSheet)
+{
+    m_image->addSubresourceStyleURLs(urls, styleSheet);
+}
+
 } // namespace WebCore

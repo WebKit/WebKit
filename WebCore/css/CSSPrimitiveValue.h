@@ -164,6 +164,8 @@ public:
 
     virtual CSSParserValue parserValue() const;
 
+    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
+
 protected:
     // FIXME: int vs. unsigned overloading is too subtle to distinguish the color and identifier cases.
     CSSPrimitiveValue(int ident);

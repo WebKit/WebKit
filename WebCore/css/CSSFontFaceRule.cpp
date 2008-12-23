@@ -49,4 +49,10 @@ String CSSFontFaceRule::cssText() const
     return result;
 }
 
+void CSSFontFaceRule::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
+{
+    if (m_style)
+        m_style->addSubresourceStyleURLs(urls);
+}
+
 } // namespace WebCore

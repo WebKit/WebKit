@@ -99,4 +99,11 @@ CSSParserValueList* CSSValueList::createParserValueList() const
     return result;
 }
 
+void CSSValueList::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSheet* styleSheet)
+{
+    size_t size = m_values.size();
+    for (size_t i = 0; i < size; ++i)
+        m_values[i]->addSubresourceStyleURLs(urls, styleSheet);
+}
+
 } // namespace WebCore

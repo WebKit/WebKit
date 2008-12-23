@@ -1,0 +1,49 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpDOMAsWebArchive();
+    layoutTestController.waitUntilDone();
+}
+
+function notifyDone()
+{
+    if (window.layoutTestController) {
+        // FIXME: Web fonts are loaded asynchronously, and there is
+        // no way to know when they're done, so just wait a bit.
+        setTimeout("layoutTestController.notifyDone()", 1000);
+    }
+}
+</script>
+<style>
+@font-face {
+    font-family: webkit-ahem;
+    font-style: normal;
+    src: url(firstInvalidURL), url(secondInvalidURL), url(resources/Ahem.ttf);
+}
+</style>
+</head>
+<body onload="notifyDone()">
+<div><p>This page tests that url() resources referenced in CSS stylesheets are saved in webarchives.</p></div>
+<div style="border: solid black 1px; height: 64px; background: url(resources/apple.gif?background) no-repeat top left;">This element should have one Apple logo in the background at the top left.</div>
+<div style="border: solid black 1px; height: 125px; background-image: url(resources/apple.gif?background-image);">This element should have repeated Apple logos in both x- and y-dimensions in the background.</div>
+<div style="border: solid black 1px; height: 64px;"><img style="content: url(resources/apple.gif?content);">This element should contain an img element that draws an Apple logo.</div>
+<div style="border: solid black 1px; height: 100px; cursor: url(resources/apple.gif?cursor), auto;">The cursor should change to an Apple logo inside this element.</div>
+<div style="border: solid black 1px; height: 25px;">This element contains "Ahem" written in the Ahem font: <span style="font-family: webkit-ahem;">Ahem</span></div>
+<div style="border: solid black 1px; list-style: square inside url(resources/apple.gif?list-style-image);">
+<ul>
+  <li>These items</li>
+  <li>should have</li>
+  <li>Apple logos</li>
+  <li>as bullets.</li>
+</ul>
+</div>
+<div style="border: solid black 1px; display: inline-block; height: 100px; width: 200px; border-color: transparent; border-style: solid; -webkit-box-sizing: border-box; -webkit-border-fit: lines; border-width: 20px 15px 10px 15px; -webkit-border-image: url(resources/apple.gif?webkit-border-image) 20 15 10 15;">This content should be inside a strectched Apple logo.</div>
+<div style="border: solid black 1px; height: 130px; background-color: white;"><img src="resources/apple.gif?webkit-box-reflect-image" style="-webkit-box-reflect: below 2px url(resources/apple.gif?webkit-box-reflect) 75 75 75 75 stretch stretch;">This element should have an image of an Apple logo with a full reflection below it.</div>
+<div style="border: solid black 1px; background-color: pink; height: 100px; -webkit-mask: url(resources/apple.gif?mask) repeat scroll center top;"><br>This element should have solid pink Apple logos as its mask.</div>
+<div style="border: solid black 1px; height: 125px; padding: 50px; color: white; background-color: maroon; -webkit-mask-box-image: url(resources/apple.gif?mask-box-image) 75 75 75 75;"><br>This element should have maroon Apple logos for "borders" with a maroon background.</div>
+<div style="border: solid black 1px; height: 100px; margin: 6px; border: 1px dotted green; color: white; background-color: black; -webkit-mask-image: url(resources/apple.gif?mask-image); -webkit-mask-origin: padding; -webkit-mask-size: 25px 25px;">This element should have black Apple logos for its background.</div>
+<div style="border: solid black 1px; height: 140px; border: 10px solid black; background-color: lime; -webkit-mask-image: url(resources/apple.gif?mask-top-left), url(resources/apple.gif?mask-top-right), url(resources/apple.gif?mask-bottom-left), url(resources/apple.gif?mask-bottom-right), url(resources/apple.gif?mask-top), url(resources/apple.gif?mask-right), url(resources/apple.gif?mask-bottom), url(resources/apple.gif?mask-left), url(resources/apple.gif?mask-center); -webkit-mask-position: top left, top right, bottom left, bottom right, top center, center right, bottom center, center left, center; -webkit-mask-origin: border; -webkit-mask-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat-x, repeat-y, repeat-x, repeat-y, repeat; -webkit-mask-composite: copy;"><br>This element should have lime Apple logos for its background and borders with a black outer border.</div>
+<div></div>
+</body>
+</html>

@@ -101,6 +101,8 @@ void HTMLParamElement::setValueType(const String& value)
 
 void HTMLParamElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
+    HTMLElement::addSubresourceAttributeURLs(urls);
+
     if (!equalIgnoringCase(name(), "data") &&
         !equalIgnoringCase(name(), "movie") &&
         !equalIgnoringCase(name(), "src"))

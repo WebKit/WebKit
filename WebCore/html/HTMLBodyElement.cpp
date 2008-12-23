@@ -298,6 +298,8 @@ int HTMLBodyElement::scrollWidth() const
 
 void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
+    HTMLElement::addSubresourceAttributeURLs(urls);
+
     addSubresourceURL(urls, document()->completeURL(background()));
 }
 

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "CSSFontFaceSrcValue.h"
+#include "CSSStyleSheet.h"
 
 namespace WebCore {
 
@@ -65,6 +66,12 @@ String CSSFontFaceSrcValue::cssText() const
     if (!m_format.isEmpty())
         result += " format(" + m_format + ")";
     return result;
+}
+
+void CSSFontFaceSrcValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSheet* styleSheet)
+{
+    if (!isLocal())
+        addSubresourceURL(urls, styleSheet->completeURL(m_resource));
 }
 
 }

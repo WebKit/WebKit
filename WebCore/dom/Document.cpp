@@ -3127,6 +3127,7 @@ KURL Document::completeURL(const String& url) const
 {
     // Always return a null URL when passed a null string.
     // FIXME: Should we change the KURL constructor to have this behavior?
+    // See also [CSS]StyleSheet::completeURL(const String&)
     if (url.isNull())
         return KURL();
     if (!m_decoder)

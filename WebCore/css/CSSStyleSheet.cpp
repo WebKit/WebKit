@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Node.h"
+#include "TextEncoding.h"
 
 namespace WebCore {
 
@@ -198,36 +199,37 @@ void CSSStyleSheet::styleSheetChanged()
         documentToUpdate->updateStyleSelector();
 }
 
-void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const KURL& base) const
+KURL CSSStyleSheet::completeURL(const String& url) const
 {
-    typedef HashMap<RefPtr<CSSStyleSheet>, KURL> CSSStyleSheetMap;
-    CSSStyleSheetMap styleSheetMap;
-    styleSheetMap.add(const_cast<CSSStyleSheet*>(this), base);
+    // Always return a null URL when passed a null string.
+    // FIXME: Should we change the KURL constructor to have this behavior?
+    // See also Document::completeURL(const String&)
+    if (url.isNull() || m_charset.isEmpty())
+        return StyleSheet::completeURL(url);
+    const TextEncoding encoding = TextEncoding(m_charset);
+    return KURL(baseURL(), url, encoding);
+}
 
-    while(styleSheetMap.size() > 0) {
-        CSSStyleSheetMap::iterator it = styleSheetMap.begin();
-        RefPtr<CSSStyleSheet> styleSheet = it->first;
-        const KURL baseURL = it->second;
-        styleSheetMap.remove(it);
+void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
+{
+    typedef ListHashSet<CSSStyleSheet*> CSSStyleSheetList;
+    CSSStyleSheetList styleSheetList;
+    styleSheetList.add(this);
+
+    while (styleSheetList.size() > 0) {
+        CSSStyleSheetList::iterator it = styleSheetList.begin();
+        CSSStyleSheet* styleSheet = *it;
+        styleSheetList.remove(it);
 
         RefPtr<CSSRuleList> ruleList = styleSheet->cssRules();
 
-        // Add the URLs for each child import rule to styleSheetMap for processing
         for (unsigned i = 0; i < ruleList->length(); ++i) {
             CSSRule* rule = ruleList->item(i);
-            if (rule->type() != CSSRule::IMPORT_RULE)
-                continue;
-
-            CSSImportRule* importRule = static_cast<CSSImportRule*>(rule);
-            RefPtr<CSSStyleSheet> ruleSheet = importRule->styleSheet();
-            if (!ruleSheet)
-                continue;
-
-            const KURL fullURL(baseURL, importRule->href());
-            if (!urls.contains(fullURL)) {
-                addSubresourceURL(urls, fullURL);
-                styleSheetMap.add(ruleSheet, fullURL);
+            if (rule->isImportRule()) {
+                if (CSSStyleSheet* ruleStyleSheet = static_cast<CSSImportRule*>(rule)->styleSheet())
+                    styleSheetList.add(ruleStyleSheet);
             }
+            rule->addSubresourceStyleURLs(urls);
         }
     }
 }

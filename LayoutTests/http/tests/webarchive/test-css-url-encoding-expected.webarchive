@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+&lt;link rel="stylesheet" type="text/css" href="resources/test-no-charset.css"&gt;
+&lt;link rel="stylesheet" type="text/css" href="resources/test-shift-jis.css"&gt;
+&lt;link rel="stylesheet" type="text/css" href="resources/test-utf-8.css"&gt;
+&lt;script&gt;
+if (window.layoutTestController)
+    layoutTestController.dumpDOMAsWebArchive();
+&lt;/script&gt;
+&lt;/head&gt;&lt;body&gt;
+&lt;div&gt;
+Test for &lt;a href="https://bugs.webkit.org/show_bug.cgi?id=11850"&gt;Bug 11850:
+Webarchive fails to save images referenced in CSS&lt;/a&gt;
+&lt;/div&gt;
+&lt;div&gt;&lt;p&gt;This test makes sure that the URL in the shift-jis encoded CSS file is encoded properly in the webarchive.&lt;/p&gt;&lt;/div&gt;
+&lt;div&gt;Expected &lt;tt&gt;?img-src-no-charset-%88%9F&lt;/tt&gt; query string for &amp;lt;img&amp;gt; tag with no document charset: &lt;div class="styled"&gt;&lt;img src="resources/apple.gif?img-src-no-charset-ˆŸ"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div&gt;Expected &lt;tt&gt;?css-url-no-charset-%88%9F&lt;/tt&gt; query string for CSS url() with no CSS charset: &lt;div class="styled background-no-charset"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div&gt;Expected &lt;tt&gt;?css-url-shift-jis-%88%9F&lt;/tt&gt; query string for CSS url() with shift-jis CSS charset: &lt;div class="styled background-shift-jis"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div&gt;Expected &lt;tt&gt;?css-url-utf-8-%E4%BA%9C&lt;/tt&gt; query string for CSS url() with utf-8 CSS charset: &lt;div class="styled background-utf-8"&gt;&lt;/div&gt;&lt;/div&gt;
+
+
+&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>http://127.0.0.1:8000/webarchive/test-css-url-encoding.html</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<data>
+			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
+			</data>
+			<key>WebResourceMIMEType</key>
+			<string>image/gif</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>image/gif</string>
+				<key>URL</key>
+				<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?css-url-no-charset-%88%9F</string>
+				<key>allHeaderFields</key>
+				<dict>
+					<key>Accept-Ranges</key>
+					<string>bytes</string>
+					<key>Connection</key>
+					<string>Keep-Alive</string>
+					<key>Content-Length</key>
+					<string>1476</string>
+					<key>Content-Type</key>
+					<string>image/gif</string>
+					<key>Date</key>
+					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
+					<key>Etag</key>
+					<string>"301925-21-45c7d72d3e780"</string>
+					<key>Keep-Alive</key>
+					<string>timeout=15</string>
+					<key>Last-Modified</key>
+					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
+					<key>Server</key>
+					<string>Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6</string>
+				</dict>
+				<key>expectedContentLength</key>
+				<integer>1476</integer>
+				<key>statusCode</key>
+				<integer>200</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?css-url-no-charset-%88%9F</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<data>
+			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
+			</data>
+			<key>WebResourceMIMEType</key>
+			<string>image/gif</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>image/gif</string>
+				<key>URL</key>
+				<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?css-url-shift-jis-%88%9F</string>
+				<key>allHeaderFields</key>
+				<dict>
+					<key>Accept-Ranges</key>
+					<string>bytes</string>
+					<key>Connection</key>
+					<string>Keep-Alive</string>
+					<key>Content-Length</key>
+					<string>1476</string>
+					<key>Content-Type</key>
+					<string>image/gif</string>
+					<key>Date</key>
+					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
+					<key>Etag</key>
+					<string>"301925-21-45c7d72d3e780"</string>
+					<key>Keep-Alive</key>
+					<string>timeout=15</string>
+					<key>Last-Modified</key>
+					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
+					<key>Server</key>
+					<string>Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6</string>
+				</dict>
+				<key>expectedContentLength</key>
+				<integer>1476</integer>
+				<key>statusCode</key>
+				<integer>200</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?css-url-shift-jis-%88%9F</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<data>
+			R0lGODlhNABAAMQfAGJiYvLz9ImKitvb2/39/cnJyaSkpOPj49TU
+			1MHBwbW1terq7Lu7u/X19uXm5+3u7+fo6eDg4e/w8t7e3/n5+RcX
+			F87Oz/f398fHx9fX16+vr9HR0fDw8Pj4+MzMzAAAACH5BAEAAB8A
+			LAAAAAA0AEAAQAX/4CeOZGme5iFUlYC+cCwKD7FAxxElAiTDnATA
+			cCEYj8aABiBIDCIbjQCgqBEojUCjQSEEpoXTAUCQLB4PiZoTaG/f
+			jcuFgj1kBrnIZDLoDzIIgRsTAgYmBk8TEQ4OEGdpbBQLDAUQEA55
+			e32AGxsWHh4FBRgJCQgFAhQoCwIDlgsSFxyFOnt8foAInp+jpQkM
+			wArCGsQaCg0KBgEoDwAAHoHRgroW1aEYpL7A28LDxcUGGgalhi8I
+			AAgYoOvrn5/soL2lwcThEBQAAz/7JxYAXVcCPNjggp/BEwIYOHNm
+			wMHBErMSEMgCR47FC3EwwnlzocOFBxMy3NHkp88EBwU///gjcKCR
+			o0cPOEhwM6fDgUGWMuHKtQvUBgBhThhQ4CBCSwhoJDToQKxljlq4
+			BPHCNo+bggXEXnwZMNMAupJ/ckm9RvUXg27dvqllkEFADxMQAKir
+			Zs3Du1CiRpX1ZfasN3EGAlsYIIADv3MCDnBowKEAQwSGSRzAMEVA
+			BIwTmCB4yHkEQQMACQDY0LmzgAlXZF0ac6D0QwUJOAxAkMArgAyu
+			T3gQ5zYwBh8jBmhgoG9EBgYG3BbSQHpfBAEKjHSYTt3jxQ4BH3DB
+			2EaLnAYLIgC6EyGuBhMDyDSI2X3jlu8Vay7480TPrU250p8n0SrA
+			SzQxsTGTFu9hF4B45WESgf8e+EWzy0/NlTBOeDk0AtNMcVAQQCcH
+			5LTgLSJJ9c4ooQiwjFAI7GGUhWkE0AFWv+GQB4N/6OJJPNnMY0EA
+			ACyAgmMSLIKUBBxQgEoGRX0IIk8j5hiMNwxQkBAKDAhgxgMdeCBX
+			BGCJFGInvMhj1V/fJMCjmSVEAEBcAFiQS4jS9HSNNk+mpZZaBmAw
+			WgmZUeNJJ4DWJUqOdI6JZ2DjEHKiCRwEBg88BbCTl15O+lUPoo3u
+			94MCAERAijrx+NQHBuIo4EGNgBRQigcRdAFAArl9EAAbBnWgRayl
+			ObCEiQQIECGu+2i5gBEaxgUcsDJk1sAVtp4xJbIy6JkdJhBAB63/
+			DCstoOAGXhV3LQxeubWQZd/+kBBDuF17AKcAaDDAAuEp1G4GDZiA
+			gBRMYODAAgdYYBsD+zjgFUAUVGedERf8NO49AQ2YkX85ZNDuCyoU
+			cEVGBlunEUVbuBHHdBwcMNtIfkwQFwYlUMDDRA5v9B18FRUMHn22
+			gBUWIZp+QEGeBKShRnceu5cRHbLdodNO0aSngAlV2vCIBD4PSOB7
+			c0hidCb31TgNDyfEdcElLz3Cwdgt07HAHY0crbWN7iiQUgluN7Di
+			K2eQ3cYcFwywQYcy0ggnmLx48FNrQllQ1FGvxIQhBQ+o0wgmUIU1
+			Fl7YbEBZByggskeFjiQVAAUQKFDJ/2p5REUNjlSx1dYFmWOgh5Bi
+			azhcTlhvMpZedMIm2q8kuE1h5zNRkMxJM97HJI65D7NBBz2ekNkD
+			LZ0hQQeEJZAkjbafPmdVdhKDQAMAEC5hAg8g9XlyeNRs+o1kVeWX
+			AncywDwD9ZKQmSMBLDAEl13ydCPu3CPTnRKgPwP4aARVuoBjEBGW
+			8fivSdkYE/zudCcPCMADvUOXNOIEJtQVCi0CxFN6HlCCKgFqA4II
+			1F0A6L46kQlRgRkDBk0ghV3Q5YYQxAahtvGkb8DQgM94gWPuAoq6
+			xCMvGKDUDl8YmOigIwYyjNSjpriOQUXQUpfilwAc8gMhZCABc8Hh
+			NSJlgTkOgoIUZykG+UQTFIMohBEIKGN9BmCbQgRmCq+awAIwgh0b
+			vMo1C6hNZfJ0wBdMwG29KQAJy/WtEAAAO1BvbG9udXMK
+			</data>
+			<key>WebResourceMIMEType</key>
+			<string>image/gif</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>image/gif</string>
+				<key>URL</key>
+				<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?css-url-utf-8-%E4%BA%9C</string>
+				<key>allHeaderFields</key>
+				<dict>
+					<key>Accept-Ranges</key>
+					<string>bytes</string>
+					<key>Connection</key>
+					<string>Keep-Alive</string>
+					<key>Content-Length</key>
+					<string>1476</string>
+					<key>Content-Type</key>
+					<string>image/gif</string>
+					<key>Date</key>
+					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
+					<key>Etag</key>
+					<string>"301925-21-45c7d72d3e780"</string>
+					<key>Keep-Alive</key>
+					<string>timeout=15</string>
+					<key>Last-Modified</key>
+					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
+					<key>Server</key>
+					<string>Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6</string>
+				</dict>
+				<key>expectedContentLength</key>
+				<integer>1476</integer>
+				<key>statusCode</key>
+				<integer>200</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?css-url-utf-8-%E4%BA%9C</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<data>
+			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
+			</data>
+			<key>WebResourceMIMEType</key>
+			<string>image/gif</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>image/gif</string>
+				<key>URL</key>
+				<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?img-src-no-charset-%88%9F</string>
+				<key>allHeaderFields</key>
+				<dict>
+					<key>Accept-Ranges</key>
+					<string>bytes</string>
+					<key>Connection</key>
+					<string>Keep-Alive</string>
+					<key>Content-Length</key>
+					<string>1476</string>
+					<key>Content-Type</key>
+					<string>image/gif</string>
+					<key>Date</key>
+					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
+					<key>Etag</key>
+					<string>"301925-21-45c7d72d3e780"</string>
+					<key>Keep-Alive</key>
+					<string>timeout=15</string>
+					<key>Last-Modified</key>
+					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
+					<key>Server</key>
+					<string>Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6</string>
+				</dict>
+				<key>expectedContentLength</key>
+				<integer>1476</integer>
+				<key>statusCode</key>
+				<integer>200</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?img-src-no-charset-%88%9F</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<data>
+			ZGl2LnN0eWxlZCB7CiAgICBib3JkZXI6IDFweCBzb2xpZCBibGFj
+			azsKICAgIGRpc3BsYXk6IGlubGluZS1ibG9jazsKICAgIGhlaWdo
+			dDogNjRweDsKfQpkaXYuYmFja2dyb3VuZC1uby1jaGFyc2V0IHsK
+			ICAgIHdpZHRoOiA1MnB4OwogICAgYmFja2dyb3VuZC1pbWFnZTog
+			dXJsKGFwcGxlLmdpZj9jc3MtdXJsLW5vLWNoYXJzZXQtiJ8pOwp9
+			Cg==
+			</data>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>http://127.0.0.1:8000/webarchive/resources/test-no-charset.css</string>
+				<key>allHeaderFields</key>
+				<dict>
+					<key>Accept-Ranges</key>
+					<string>bytes</string>
+					<key>Connection</key>
+					<string>Keep-Alive</string>
+					<key>Content-Length</key>
+					<string>196</string>
+					<key>Content-Type</key>
+					<string>text/css</string>
+					<key>Date</key>
+					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
+					<key>Etag</key>
+					<string>"301925-21-45c7d72d3e780"</string>
+					<key>Keep-Alive</key>
+					<string>timeout=15</string>
+					<key>Last-Modified</key>
+					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
+					<key>Server</key>
+					<string>Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6</string>
+				</dict>
+				<key>expectedContentLength</key>
+				<integer>196</integer>
+				<key>statusCode</key>
+				<integer>200</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>http://127.0.0.1:8000/webarchive/resources/test-no-charset.css</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<string>div.styled {
+    border: 1px solid black;
+    display: inline-block;
+    height: 64px;
+}
+div.background-shift-jis {
+    width: 52px;
+    background-image: url(apple.gif?css-url-shift-jis-亜);
+}
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>http://127.0.0.1:8000/webarchive/resources/test-shift-jis.css</string>
+				<key>allHeaderFields</key>
+				<dict>
+					<key>Accept-Ranges</key>
+					<string>bytes</string>
+					<key>Connection</key>
+					<string>Keep-Alive</string>
+					<key>Content-Length</key>
+					<string>194</string>
+					<key>Content-Type</key>
+					<string>text/css;charset=shift-jis</string>
+					<key>Date</key>
+					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
+					<key>Etag</key>
+					<string>"301925-21-45c7d72d3e780"</string>
+					<key>Keep-Alive</key>
+					<string>timeout=15</string>
+					<key>Last-Modified</key>
+					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
+					<key>Server</key>
+					<string>Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6</string>
+				</dict>
+				<key>expectedContentLength</key>
+				<integer>194</integer>
+				<key>statusCode</key>
+				<integer>200</integer>
+				<key>textEncodingName</key>
+				<string>shift-jis</string>
+			</dict>
+			<key>WebResourceTextEncodingName</key>
+			<string>shift-jis</string>
+			<key>WebResourceURL</key>
+			<string>http://127.0.0.1:8000/webarchive/resources/test-shift-jis.css</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<string>div.styled {
+    border: 1px solid black;
+    display: inline-block;
+    height: 64px;
+}
+div.background-utf-8 {
+    width: 52px;
+    background-image: url(apple.gif?css-url-utf-8-亜);
+}
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>http://127.0.0.1:8000/webarchive/resources/test-utf-8.css</string>
+				<key>allHeaderFields</key>
+				<dict>
+					<key>Accept-Ranges</key>
+					<string>bytes</string>
+					<key>Connection</key>
+					<string>Keep-Alive</string>
+					<key>Content-Length</key>
+					<string>190</string>
+					<key>Content-Type</key>
+					<string>text/css;charset=utf-8</string>
+					<key>Date</key>
+					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
+					<key>Etag</key>
+					<string>"301925-21-45c7d72d3e780"</string>
+					<key>Keep-Alive</key>
+					<string>timeout=15</string>
+					<key>Last-Modified</key>
+					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
+					<key>Server</key>
+					<string>Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6</string>
+				</dict>
+				<key>expectedContentLength</key>
+				<integer>190</integer>
+				<key>statusCode</key>
+				<integer>200</integer>
+				<key>textEncodingName</key>
+				<string>utf-8</string>
+			</dict>
+			<key>WebResourceTextEncodingName</key>
+			<string>utf-8</string>
+			<key>WebResourceURL</key>
+			<string>http://127.0.0.1:8000/webarchive/resources/test-utf-8.css</string>
+		</dict>
+	</array>
+</dict>
+</plist>

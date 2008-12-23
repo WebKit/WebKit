@@ -24,13 +24,15 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
+#include "KURLHash.h"
 #include "PlatformString.h"
+#include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Node;
-    
+
 class CSSMutableStyleDeclarationConstIterator {
 public:
     CSSMutableStyleDeclarationConstIterator(const CSSMutableStyleDeclaration* decl, CSSProperty* current);
@@ -129,7 +131,9 @@ public:
     
     void setStrictParsing(bool b) { m_strictParsing = b; }
     bool useStrictParsing() const { return m_strictParsing; }
-    
+
+    void addSubresourceStyleURLs(ListHashSet<KURL>&);
+
 protected:
     CSSMutableStyleDeclaration(CSSRule* parentRule);
 
@@ -149,11 +153,12 @@ private:
     
     void setPropertyInternal(const CSSProperty&, CSSProperty* slot = 0);
     bool removeShorthandProperty(int propertyID, bool notifyChanged);
-    
+
     Vector<CSSProperty>::const_iterator findPropertyWithId(int propertyId) const;
     Vector<CSSProperty>::iterator findPropertyWithId(int propertyId);
- 
+
     Vector<CSSProperty> m_properties;
+
     Node* m_node;
     unsigned m_variableDependentValueCount : 24;
     bool m_strictParsing : 1;

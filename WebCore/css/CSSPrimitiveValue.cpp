@@ -23,10 +23,12 @@
 
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
+#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include "Counter.h"
 #include "ExceptionCode.h"
+#include "Node.h"
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderStyle.h"
@@ -942,6 +944,12 @@ CSSParserValue CSSPrimitiveValue::parserValue() const
     }
     
     return value;
+}
+
+void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSheet* styleSheet)
+{
+    if (m_type == CSS_URI)
+        addSubresourceURL(urls, styleSheet->completeURL(m_value.string));
 }
 
 } // namespace WebCore

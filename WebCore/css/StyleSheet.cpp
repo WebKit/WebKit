@@ -71,4 +71,14 @@ void StyleSheet::setMedia(PassRefPtr<MediaList> media)
     m_media->setParent(this);
 }
 
+KURL StyleSheet::completeURL(const String& url) const
+{
+    // Always return a null URL when passed a null string.
+    // FIXME: Should we change the KURL constructor to have this behavior?
+    // See also Document::completeURL(const String&)
+    if (url.isNull())
+        return KURL();
+    return KURL(baseURL(), url);
+}
+
 }

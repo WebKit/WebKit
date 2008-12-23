@@ -24,9 +24,13 @@
 #include "StyleBase.h"
 
 #include "CSSParserValues.h"
+#include "KURLHash.h"
+#include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class CSSStyleSheet;
 
 typedef int ExceptionCode;
 
@@ -65,6 +69,8 @@ public:
 
     virtual bool isVariableDependentValue() const { return false; }
     virtual CSSParserValue parserValue() const { ASSERT_NOT_REACHED(); return CSSParserValue(); }
+
+    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*) { }
 };
 
 } // namespace WebCore

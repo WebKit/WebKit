@@ -57,6 +57,8 @@ public:
 
     CSSParserValueList* createParserValueList() const;
 
+    virtual void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
+
 protected:
     CSSValueList(bool isSpaceSeparated);
     CSSValueList(CSSParserValueList*);
