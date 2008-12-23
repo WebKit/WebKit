@@ -2,6 +2,18 @@
 
         Reviewed by George Staikos.
 
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22965
+
+        Add WML <head> element support. Doesn't require a WMLHeadElement.
+        No functional behaviour, as we already created a WMLElement for headTag, by default.
+        It's just cleaner to list <head> in WMLTagNames, forwarding to a WMLElement constructor.
+
+        * wml/WMLTagNames.in:
+
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=22971
 
         Fix regression caused by the HTMLFormElement refactorization.
