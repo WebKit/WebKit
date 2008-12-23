@@ -47,7 +47,6 @@ private:
 
     RefPtr<Text> m_text1;
     RefPtr<Text> m_text2;
-    unsigned m_offset;
 };
 
 } // namespace WebCore

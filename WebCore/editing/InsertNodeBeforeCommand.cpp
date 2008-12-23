@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008 Apple Computer, Inc. All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,36 +31,32 @@
 namespace WebCore {
 
 InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild)
-    : SimpleEditCommand(refChild->document()), m_insertChild(insertChild), m_refChild(refChild)
+    : SimpleEditCommand(refChild->document())
+    , m_insertChild(insertChild)
+    , m_refChild(refChild)
 {
     ASSERT(m_insertChild);
+    ASSERT(!m_insertChild->parentNode());
     ASSERT(m_refChild);
+    ASSERT(m_refChild->parentNode());
+
+    ASSERT(enclosingNodeOfType(Position(m_refChild->parentNode(), 0), isContentEditable) || !m_refChild->parentNode()->attached());
 }
 
 void InsertNodeBeforeCommand::doApply()
 {
-    ASSERT(m_insertChild);
-    ASSERT(m_refChild);
-    ASSERT(m_refChild->parentNode());
-    // If the child to insert is already in a tree, inserting it will remove it from it's old location
-    // in an non-undoable way.  We might eventually find it useful to do an undoable remove in this case.
-    ASSERT(!m_insertChild->parent());
-    ASSERT(enclosingNodeOfType(Position(m_refChild->parentNode(), 0), &isContentEditable) || !m_refChild->parentNode()->attached());
+    Node* parent = m_refChild->parentNode();
+    if (!parent)
+        return;
 
-    ExceptionCode ec = 0;
-    m_refChild->parentNode()->insertBefore(m_insertChild.get(), m_refChild.get(), ec);
-    ASSERT(ec == 0);
+    ExceptionCode ec;
+    parent->insertBefore(m_insertChild.get(), m_refChild.get(), ec);
 }
 
 void InsertNodeBeforeCommand::doUnapply()
 {
-    ASSERT(m_insertChild);
-    ASSERT(m_refChild);
-    ASSERT(m_refChild->parentNode());
-
-    ExceptionCode ec = 0;
-    m_refChild->parentNode()->removeChild(m_insertChild.get(), ec);
-    ASSERT(ec == 0);
+    ExceptionCode ec;
+    m_insertChild->remove(ec);
 }
 
 }

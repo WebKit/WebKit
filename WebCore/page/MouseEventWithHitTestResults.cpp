@@ -27,16 +27,6 @@
 
 namespace WebCore {
 
-static inline Element* targetElement(Node* node)
-{
-    if (!node)
-        return 0;
-    Node* parent = node->parent();
-    if (!parent || !parent->isElementNode())
-        return 0;
-    return static_cast<Element*>(parent);
-}
-
 MouseEventWithHitTestResults::MouseEventWithHitTestResults(const PlatformMouseEvent& event, const HitTestResult& hitTestResult)
     : m_event(event)
     , m_hitTestResult(hitTestResult)
@@ -46,10 +36,12 @@ MouseEventWithHitTestResults::MouseEventWithHitTestResults(const PlatformMouseEv
 Node* MouseEventWithHitTestResults::targetNode() const
 {
     Node* node = m_hitTestResult.innerNode();
-    if (node && node->inDocument())
+    if (!node)
+        return 0;
+    if (node->inDocument())
         return node;
 
-    Element* element = targetElement(node);
+    Element* element = node->parentElement();
     if (element && element->inDocument())
         return element;
 

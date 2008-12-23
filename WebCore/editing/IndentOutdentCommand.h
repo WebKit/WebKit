@@ -49,7 +49,7 @@ private:
     void indentRegion();
     void outdentRegion();
     void outdentParagraph();
-    Node* prepareBlockquoteLevelForInsertion(VisiblePosition&, Node**);
+    PassRefPtr<Element> prepareBlockquoteLevelForInsertion(VisiblePosition&, RefPtr<Element>&);
 
     EIndentType m_typeOfAction;
     int m_marginInPixels;

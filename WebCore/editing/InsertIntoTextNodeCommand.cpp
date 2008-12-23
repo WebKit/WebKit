@@ -30,29 +30,27 @@
 
 namespace WebCore {
 
-InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(PassRefPtr<Text> node, int offset, const String& text)
+InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(PassRefPtr<Text> node, unsigned offset, const String& text)
     : SimpleEditCommand(node->document())
     , m_node(node)
     , m_offset(offset)
     , m_text(text)
 {
     ASSERT(m_node);
-    ASSERT(offset >= 0);
-    ASSERT(!text.isEmpty());
+    ASSERT(m_offset <= m_node->length());
+    ASSERT(!m_text.isEmpty());
 }
 
 void InsertIntoTextNodeCommand::doApply()
 {
-    ExceptionCode ec = 0;
+    ExceptionCode ec;
     m_node->insertData(m_offset, m_text, ec);
-    ASSERT(ec == 0);
 }
 
 void InsertIntoTextNodeCommand::doUnapply()
 {
-    ExceptionCode ec = 0;
+    ExceptionCode ec;
     m_node->deleteData(m_offset, m_text.length(), ec);
-    ASSERT(ec == 0);
 }
 
 } // namespace WebCore

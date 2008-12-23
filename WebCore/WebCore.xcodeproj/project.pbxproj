@@ -799,7 +799,7 @@
 		6550B6A6099DF0270090D781 /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B69C099DF0270090D781 /* Text.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65653F2D0D9727D200CA9723 /* SVGAltGlyphElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65653F2A0D9727D200CA9723 /* SVGAltGlyphElement.cpp */; };
 		65653F2E0D9727D200CA9723 /* SVGAltGlyphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 65653F2B0D9727D200CA9723 /* SVGAltGlyphElement.h */; };
-		656580F409D12B20000E61D7 /* CSSPropertyNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656580EF09D12B20000E61D7 /* CSSPropertyNames.h */; };
+		656580F409D12B20000E61D7 /* CSSPropertyNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656580EF09D12B20000E61D7 /* CSSPropertyNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */ = {isa = PBXBuildFile; fileRef = 6565814809D13043000E61D7 /* CSSValueKeywords.h */; };
 		656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */; };
 		656581FE09D1508D000E61D7 /* SVGElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581E709D1508D000E61D7 /* SVGElementFactory.h */; };

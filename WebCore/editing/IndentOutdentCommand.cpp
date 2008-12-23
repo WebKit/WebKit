@@ -24,17 +24,18 @@
  */
 
 #include "config.h"
-#include "Element.h"
 #include "IndentOutdentCommand.h"
-#include "InsertListCommand.h"
+
 #include "Document.h"
-#include "htmlediting.h"
-#include "HTMLElement.h"
+#include "Element.h"
+#include "HTMLBlockquoteElement.h"
 #include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
+#include "InsertListCommand.h"
 #include "Range.h"
 #include "SplitElementCommand.h"
 #include "TextIterator.h"
+#include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
 
@@ -48,12 +49,12 @@ static String indentBlockquoteString()
     return string;
 }
 
-static PassRefPtr<Element> createIndentBlockquoteElement(Document* document)
+static PassRefPtr<HTMLBlockquoteElement> createIndentBlockquoteElement(Document* document)
 {
-    RefPtr<Element> indentBlockquoteElement = createElement(document, "blockquote");
-    indentBlockquoteElement->setAttribute(classAttr, indentBlockquoteString());
-    indentBlockquoteElement->setAttribute(styleAttr, "margin: 0 0 0 40px; border: none; padding: 0px;");
-    return indentBlockquoteElement.release();
+    RefPtr<HTMLBlockquoteElement> element = new HTMLBlockquoteElement(blockquoteTag, document);
+    element->setAttribute(classAttr, indentBlockquoteString());
+    element->setAttribute(styleAttr, "margin: 0 0 0 40px; border: none; padding: 0px;");
+    return element.release();
 }
 
 static bool isIndentBlockquote(const Node* node)
@@ -72,32 +73,33 @@ static bool isListOrIndentBlockquote(const Node* node)
 
 IndentOutdentCommand::IndentOutdentCommand(Document* document, EIndentType typeOfAction, int marginInPixels)
     : CompositeEditCommand(document), m_typeOfAction(typeOfAction), m_marginInPixels(marginInPixels)
-{}
+{
+}
 
 // This function is a workaround for moveParagraph's tendency to strip blockquotes. It updates lastBlockquote to point to the
 // correct level for the current paragraph, and returns a pointer to a placeholder br where the insertion should be performed.
-Node* IndentOutdentCommand::prepareBlockquoteLevelForInsertion(VisiblePosition& currentParagraph, Node** lastBlockquote)
+PassRefPtr<Element> IndentOutdentCommand::prepareBlockquoteLevelForInsertion(VisiblePosition& currentParagraph, RefPtr<Element>& lastBlockquote)
 {
     int currentBlockquoteLevel = 0;
     int lastBlockquoteLevel = 0;
     Node* node = currentParagraph.deepEquivalent().node();
     while ((node = enclosingNodeOfType(Position(node->parentNode(), 0), &isIndentBlockquote)))
         currentBlockquoteLevel++;
-    node = *lastBlockquote;
+    node = lastBlockquote.get();
     while ((node = enclosingNodeOfType(Position(node->parentNode(), 0), &isIndentBlockquote)))
         lastBlockquoteLevel++;
     while (currentBlockquoteLevel > lastBlockquoteLevel) {
-        RefPtr<Node> newBlockquote = createIndentBlockquoteElement(document());
-        appendNode(newBlockquote.get(), *lastBlockquote);
-        *lastBlockquote = newBlockquote.get();
+        RefPtr<Element> newBlockquote = createIndentBlockquoteElement(document());
+        appendNode(newBlockquote, lastBlockquote);
+        lastBlockquote = newBlockquote;
         lastBlockquoteLevel++;
     }
     while (currentBlockquoteLevel < lastBlockquoteLevel) {
-        *lastBlockquote = enclosingNodeOfType(Position((*lastBlockquote)->parentNode(), 0), &isIndentBlockquote);
+        lastBlockquote = static_cast<Element*>(enclosingNodeOfType(Position(lastBlockquote->parentNode(), 0), isIndentBlockquote));
         lastBlockquoteLevel--;
     }
-    RefPtr<Node> placeholder = createBreakElement(document());
-    appendNode(placeholder.get(), *lastBlockquote);
+    RefPtr<Element> placeholder = createBreakElement(document());
+    appendNode(placeholder, lastBlockquote);
     // Add another br before the placeholder if it collapsed.
     VisiblePosition visiblePos(Position(placeholder.get(), 0));
     if (!isStartOfParagraph(visiblePos))
@@ -120,57 +122,57 @@ void IndentOutdentCommand::indentRegion()
     // and there's nothing to move.
     Position start = startOfSelection.deepEquivalent().downstream();
     if (start.node() == editableRootForPosition(start)) {
-        RefPtr<Node> blockquote = createIndentBlockquoteElement(document());
-        insertNodeAt(blockquote.get(), start);
-        RefPtr<Node> placeholder = createBreakElement(document());
-        appendNode(placeholder.get(), blockquote.get());
+        RefPtr<Element> blockquote = createIndentBlockquoteElement(document());
+        insertNodeAt(blockquote, start);
+        RefPtr<Element> placeholder = createBreakElement(document());
+        appendNode(placeholder, blockquote);
         setEndingSelection(Selection(Position(placeholder.get(), 0), DOWNSTREAM));
         return;
     }
     
-    Node* previousListNode = 0;
-    Node* newListNode = 0;
-    Node* newBlockquote = 0;
+    RefPtr<Element> previousListNode;
+    RefPtr<Element> newListNode;
+    RefPtr<Element> newBlockquote;
     VisiblePosition endOfCurrentParagraph = endOfParagraph(startOfSelection);
     VisiblePosition endAfterSelection = endOfParagraph(endOfParagraph(endOfSelection).next());
     while (endOfCurrentParagraph != endAfterSelection) {
         // Iterate across the selected paragraphs...
         VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
-        Node* listNode = enclosingList(endOfCurrentParagraph.deepEquivalent().node());
-        Node* insertionPoint;
+        RefPtr<Element> listNode = enclosingList(endOfCurrentParagraph.deepEquivalent().node());
+        RefPtr<Element> insertionPoint;
         if (listNode) {
-            RefPtr<Node> placeholder = createBreakElement(document());
-            insertionPoint = placeholder.get();
+            RefPtr<Element> placeholder = createBreakElement(document());
+            insertionPoint = placeholder;
             newBlockquote = 0;
-            RefPtr<Node> listItem = createListItemElement(document());
+            RefPtr<Element> listItem = createListItemElement(document());
             if (listNode == previousListNode) {
                 // The previous paragraph was inside the same list, so add this list item to the list we already created
-                appendNode(listItem.get(), newListNode);
-                appendNode(placeholder.get(), listItem.get());
+                appendNode(listItem, newListNode);
+                appendNode(placeholder, listItem);
             } else {
                 // Clone the list element, insert it before the current paragraph, and move the paragraph into it.
-                RefPtr<Node> clonedList = static_cast<Element*>(listNode)->cloneNode(false);
-                insertNodeBefore(clonedList.get(), enclosingListChild(endOfCurrentParagraph.deepEquivalent().node()));
-                appendNode(listItem.get(), clonedList.get());
-                appendNode(placeholder.get(), listItem.get());
-                newListNode = clonedList.get();
+                RefPtr<Element> clonedList = listNode->cloneElement();
+                insertNodeBefore(clonedList, enclosingListChild(endOfCurrentParagraph.deepEquivalent().node()));
+                appendNode(listItem, clonedList);
+                appendNode(placeholder, listItem);
+                newListNode = clonedList;
                 previousListNode = listNode;
             }
         } else if (newBlockquote)
             // The previous paragraph was put into a new blockquote, so move this paragraph there as well
-            insertionPoint = prepareBlockquoteLevelForInsertion(endOfCurrentParagraph, &newBlockquote);
+            insertionPoint = prepareBlockquoteLevelForInsertion(endOfCurrentParagraph, newBlockquote);
         else {
             // Create a new blockquote and insert it as a child of the root editable element. We accomplish
             // this by splitting all parents of the current paragraph up to that point.
-            RefPtr<Node> blockquote = createIndentBlockquoteElement(document());
+            RefPtr<Element> blockquote = createIndentBlockquoteElement(document());
             Position start = startOfParagraph(endOfCurrentParagraph).deepEquivalent();
             
             Node* enclosingCell = enclosingNodeOfType(start, &isTableCell);
             Node* nodeToSplitTo = enclosingCell ? enclosingCell : editableRootForPosition(start);
             RefPtr<Node> startOfNewBlock = splitTreeToNode(start.node(), nodeToSplitTo);
-            insertNodeBefore(blockquote.get(), startOfNewBlock.get());
-            newBlockquote = blockquote.get();
-            insertionPoint = prepareBlockquoteLevelForInsertion(endOfCurrentParagraph, &newBlockquote);
+            insertNodeBefore(blockquote, startOfNewBlock);
+            newBlockquote = blockquote;
+            insertionPoint = prepareBlockquoteLevelForInsertion(endOfCurrentParagraph, newBlockquote);
             // Don't put the next paragraph in the blockquote we just created for this paragraph unless 
             // the next paragraph is in the same cell.
             if (enclosingCell && enclosingCell != enclosingNodeOfType(endOfNextParagraph.deepEquivalent(), &isTableCell))
@@ -223,9 +225,9 @@ void IndentOutdentCommand::outdentParagraph()
         visibleStartOfParagraph = VisiblePosition(visibleStartOfParagraph.deepEquivalent());
         visibleEndOfParagraph = VisiblePosition(visibleEndOfParagraph.deepEquivalent());
         if (visibleStartOfParagraph.isNotNull() && !isStartOfParagraph(visibleStartOfParagraph))
-            insertNodeAt(createBreakElement(document()).get(), visibleStartOfParagraph.deepEquivalent());
+            insertNodeAt(createBreakElement(document()), visibleStartOfParagraph.deepEquivalent());
         if (visibleEndOfParagraph.isNotNull() && !isEndOfParagraph(visibleEndOfParagraph))
-            insertNodeAt(createBreakElement(document()).get(), visibleEndOfParagraph.deepEquivalent());
+            insertNodeAt(createBreakElement(document()), visibleEndOfParagraph.deepEquivalent());
         return;
     }
     Node* enclosingBlockFlow = enclosingBlockFlowElement(visibleStartOfParagraph);
@@ -233,7 +235,7 @@ void IndentOutdentCommand::outdentParagraph()
     if (enclosingBlockFlow != enclosingNode)
         splitBlockquoteNode = splitTreeToNode(enclosingBlockFlowElement(visibleStartOfParagraph), enclosingNode, true);
     RefPtr<Node> placeholder = createBreakElement(document());
-    insertNodeBefore(placeholder.get(), splitBlockquoteNode.get());
+    insertNodeBefore(placeholder, splitBlockquoteNode);
     moveParagraph(startOfParagraph(visibleStartOfParagraph), endOfParagraph(visibleEndOfParagraph), VisiblePosition(Position(placeholder.get(), 0)), true);
 }
 

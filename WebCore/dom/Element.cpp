@@ -99,6 +99,11 @@ PassRefPtr<Node> Element::cloneNode(bool deep)
     return clone.release();
 }
 
+PassRefPtr<Element> Element::cloneElement()
+{
+    return static_pointer_cast<Element>(cloneNode(false));
+}
+
 void Element::removeAttribute(const QualifiedName& name, ExceptionCode& ec)
 {
     if (namedAttrMap) {

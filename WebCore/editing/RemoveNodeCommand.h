@@ -43,7 +43,7 @@ private:
     virtual void doApply();
     virtual void doUnapply();
 
-    RefPtr<Node> m_removeChild;
+    RefPtr<Node> m_node;
     RefPtr<Node> m_parent;
     RefPtr<Node> m_refChild;    
 };

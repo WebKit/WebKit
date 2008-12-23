@@ -39,11 +39,17 @@ RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(PassRef
 
 void RemoveNodePreservingChildrenCommand::doApply()
 {
-    while (Node* curr = m_node->firstChild()) {
-        removeNode(curr);
-        insertNodeBefore(curr, m_node.get());
+    Vector<RefPtr<Node> > children;
+    for (Node* child = m_node->firstChild(); child; child = child->nextSibling())
+        children.append(child);
+
+    size_t size = children.size();
+    for (size_t i = 0; i < size; ++i) {
+        RefPtr<Node> child = children[i].release();
+        removeNode(child);
+        insertNodeBefore(child.release(), m_node);
     }
-    removeNode(m_node.get());
+    removeNode(m_node);
 }
 
 }

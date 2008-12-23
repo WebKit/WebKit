@@ -42,35 +42,33 @@ JoinTextNodesCommand::JoinTextNodesCommand(PassRefPtr<Text> text1, PassRefPtr<Te
 
 void JoinTextNodesCommand::doApply()
 {
-    ASSERT(m_text1);
-    ASSERT(m_text2);
-    ASSERT(m_text1->nextSibling() == m_text2);
+    if (m_text1->nextSibling() != m_text2)
+        return;
 
     ExceptionCode ec = 0;
     m_text2->insertData(0, m_text1->data(), ec);
-    ASSERT(ec == 0);
+    if (ec)
+        return;
 
-    m_text2->parentNode()->removeChild(m_text1.get(), ec);
-    ASSERT(ec == 0);
-
-    m_offset = m_text1->length();
+    m_text1->remove(ec);
 }
 
 void JoinTextNodesCommand::doUnapply()
 {
-    ASSERT(m_text2);
-    ASSERT(m_offset > 0);
+    if (m_text1->parentNode())
+        return;
+
+    Node* parent = m_text2->parentNode();
+    if (!parent)
+        return;
 
     ExceptionCode ec = 0;
 
-    m_text2->deleteData(0, m_offset, ec);
-    ASSERT(ec == 0);
+    parent->insertBefore(m_text1.get(), m_text2.get(), ec);
+    if (ec)
+        return;
 
-    m_text2->parentNode()->insertBefore(m_text1.get(), m_text2.get(), ec);
-    ASSERT(ec == 0);
-        
-    ASSERT(m_text2->previousSibling()->isTextNode());
-    ASSERT(m_text2->previousSibling() == m_text1);
+    m_text2->deleteData(0, m_text1->length(), ec);
 }
 
 } // namespace WebCore

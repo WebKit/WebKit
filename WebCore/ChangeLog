@@ -1,5 +1,232 @@
 2008-12-23  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - improve robustness of undo/redo in HTML editing to fix the following bugs
+          <https://bugs.webkit.org/show_bug.cgi?id=19703> Crash in WebCore::InsertNodeBeforeCommand::doUnapply()
+          <rdar://problem/4059423> DOM operations performed on editable HTML can cause a crash later during Undo
+
+        Major categories of improvements:
+
+            1) Added null checks.
+            2) Eliminated type casts without corresponding type checks.
+            3) Avoided possible infinite loops by building up lists of nodes to operate on
+               before starting to make DOM changes.
+            4) Use more RefPtr.
+
+        No test at this time, but test cases should follow in separate patches.
+
+        * WebCore.xcodeproj/project.pbxproj: Set the role of CSSPropertyNames.h to Private so it
+        can be used in other Private headers, specifically editing ones.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::locateCousinList): Adopt parentElement.
+        (WebCore::CSSStyleSelector::locateSharedStyle): Ditto.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Ditto.
+
+        * dom/Element.cpp: (WebCore::Element::cloneElement): Added.
+        * dom/Element.h: Added cloneElement and an implementation of parentElement.
+        * dom/Node.h: Moved parentElement from here to Element.h and changed its
+        implementation so it will return 0 when the parent is not an element
+        (document, document fragment, etc.).
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::AppendNodeCommand): Made parent be an Element.
+        Moved assertions from doApply in here.
+        (WebCore::AppendNodeCommand::doApply): Simplified to just a single unchecked
+        appendChild call.
+        (WebCore::AppendNodeCommand::doUnapply): Simplified to just a single remove call.
+        * editing/AppendNodeCommand.h: Updated.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::createStyleSpanElement): Eliminate casting by creating an element in a more
+        direct way with new instead of createElementNS.
+        (WebCore::ApplyStyleCommand::ApplyStyleCommand): Use PassRefPtr.
+        (WebCore::ApplyStyleCommand::removeCSSStyle): Use CSSPropertyID.
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded): Use cloneElement.
+        * editing/ApplyStyleCommand.h:
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): Use Element* and cloneElement.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::applyStyledElement): Use PassRefPtr and unsigned.
+        (WebCore::CompositeEditCommand::removeStyledElement): Ditto.
+        (WebCore::CompositeEditCommand::insertNodeBefore): Ditto.
+        (WebCore::CompositeEditCommand::insertNodeAfter): Ditto.
+        (WebCore::CompositeEditCommand::insertNodeAt): Ditto.
+        (WebCore::CompositeEditCommand::appendNode): Ditto.
+        (WebCore::CompositeEditCommand::removeChildrenInRange): Ditto. Also use a vector to
+        make the list of children in case removing them has side effects.
+        (WebCore::CompositeEditCommand::removeNode): Ditto.
+        (WebCore::CompositeEditCommand::removeNodePreservingChildren): Ditto.
+        (WebCore::CompositeEditCommand::removeNodeAndPruneAncestors): Ditto.
+        (WebCore::CompositeEditCommand::splitTextNode): Ditto.
+        (WebCore::CompositeEditCommand::splitElement): Ditto.
+        (WebCore::CompositeEditCommand::mergeIdenticalElements): Ditto.
+        (WebCore::CompositeEditCommand::wrapContentsInDummySpan): Ditto.
+        (WebCore::CompositeEditCommand::splitTextNodeContainingElement): Ditto.
+        (WebCore::CompositeEditCommand::joinTextNodes): Ditto.
+        (WebCore::CompositeEditCommand::inputText): Ditto.
+        (WebCore::CompositeEditCommand::insertTextIntoNode): Ditto.
+        (WebCore::CompositeEditCommand::deleteTextFromNode): Ditto.
+        (WebCore::CompositeEditCommand::replaceTextInNode): Ditto.
+        (WebCore::CompositeEditCommand::insertNodeAtTabSpanPosition): Ditto.
+        (WebCore::CompositeEditCommand::removeCSSProperty): Ditto.
+        (WebCore::CompositeEditCommand::removeNodeAttribute): Ditto. Implement by calling
+        setNodeAttribute instead of with its own SimpleEditCommand.
+        (WebCore::CompositeEditCommand::setNodeAttribute): Ditto.
+        (WebCore::CompositeEditCommand::deleteInsignificantText): Ditto.
+        (WebCore::CompositeEditCommand::appendBlockPlaceholder): Ditto.
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded): Ditto.
+        (WebCore::CompositeEditCommand::insertNewDefaultParagraphElementAt): Ditto. Don't
+        bother using an undoable operation to put the break element into the paragraph
+        element because there's no need to split them and redo this when doing undo/redo.
+        (WebCore::CompositeEditCommand::moveParagraphs): Ditto.
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem): Ditto.
+        * editing/CompositeEditCommand.h: Ditto.
+
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::DeleteFromTextNodeCommand): Use unsigned.
+        (WebCore::DeleteFromTextNodeCommand::doApply): Eliminated inappropriate assertions.
+        (WebCore::DeleteFromTextNodeCommand::doUnapply): Ditto.
+        * editing/DeleteFromTextNodeCommand.h:
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeNode): Use PassRefPtr.
+        (WebCore::DeleteSelectionCommand::deleteTextFromNode): Ditto.
+        * editing/DeleteSelectionCommand.h:
+
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::FormatBlockCommand): Use AtomicString.
+        (WebCore::FormatBlockCommand::doApply): Use Element.
+        * editing/FormatBlockCommand.h:
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::createIndentBlockquoteElement): Use new to create the element
+        instead of calling a function so we have a more specific type.
+        (WebCore::IndentOutdentCommand::prepareBlockquoteLevelForInsertion):
+        Use RefPtr and Element.
+        (WebCore::IndentOutdentCommand::indentRegion): Ditto.
+        (WebCore::IndentOutdentCommand::outdentParagraph): Ditto.
+        * editing/IndentOutdentCommand.h:
+
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::InsertIntoTextNodeCommand):
+        Use unsigned. Added an assertion.
+        (WebCore::InsertIntoTextNodeCommand::doApply): Eliminated inappropriate assertions.
+        (WebCore::InsertIntoTextNodeCommand::doUnapply): Ditto.
+        * editing/InsertIntoTextNodeCommand.h:
+
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::insertNodeAfterPosition): Use Element.
+        (WebCore::InsertLineBreakCommand::insertNodeBeforePosition): Ditto.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Use Element.
+
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::InsertNodeBeforeCommand): Moved assertions
+        here from doApply.
+        (WebCore::InsertNodeBeforeCommand::doApply): Eliminated inappropriate assertions.
+        Added a null check.
+        (WebCore::InsertNodeBeforeCommand::doUnapply): Simplified to just a single remove call.
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Use Element and cloneElement.
+
+        * editing/JoinTextNodesCommand.cpp:
+        (WebCore::JoinTextNodesCommand::doApply): Eliminated inappropriate assertions.
+        Added some runtime checks. Don't store anything in m_offset.
+        (WebCore::JoinTextNodesCommand::doUnapply): Ditto.
+        * editing/JoinTextNodesCommand.h:
+
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::MergeIdenticalElementsCommand): Moved
+        an assertion here from doApply.
+        (WebCore::MergeIdenticalElementsCommand::doApply): Eliminated inappropriate assertions.
+        Added a null check. Changed implementation to use remove to avoid null parent issue.
+        Use a vector of nodes to avoid possible infinite loop if mutation happens while iterating.
+        (WebCore::MergeIdenticalElementsCommand::doUnapply): Ditto.
+
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::ModifySelectionListLevelCommand::appendSiblingNodeRange): Use Element*.
+        (WebCore::IncreaseSelectionListLevelCommand::doApply): Ditto.
+        * editing/ModifySelectionListLevel.h:
+
+        * editing/RemoveCSSPropertyCommand.cpp:
+        (WebCore::RemoveCSSPropertyCommand::RemoveCSSPropertyCommand): Use PassRefPtr and
+        CSSPropertyID. Also renamed m_decl to m_style.
+        (WebCore::RemoveCSSPropertyCommand::doApply): Eliminated inappropriate assertions.
+        (WebCore::RemoveCSSPropertyCommand::doUnapply): Ditto.
+
+        * editing/RemoveNodeAttributeCommand.cpp: Removed contents of this file. To be deleted.
+        Use SetNodeAttributeCommand instead.
+        * editing/RemoveNodeAttributeCommand.h: Ditto.
+
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::RemoveNodeCommand): Moved assertions here from doApply.
+        Don't initialize m_refChild here; rather do it in doApply.
+        (WebCore::RemoveNodeCommand::doApply): Eliminated inappropriate assertions. Added
+        checks and streamlined implementation.
+        (WebCore::RemoveNodeCommand::doUnapply): Ditto.
+        * editing/RemoveNodeCommand.h:
+
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::doApply): Use a vector.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering): Removed now-unneeded cast.
+
+        * editing/SetNodeAttributeCommand.cpp:
+        (WebCore::SetNodeAttributeCommand::SetNodeAttributeCommand): Use AtomicString.
+        Removed assertion that prevents us from using this to remove an attribute.
+        (WebCore::SetNodeAttributeCommand::doApply): Eliminated inappropriate assertions.
+        (WebCore::SetNodeAttributeCommand::doUnapply): Ditto.
+        * editing/SetNodeAttributeCommand.h:
+
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::SplitElementCommand): Moved assertion here from doApply.
+        (WebCore::SplitElementCommand::doApply): Check some more invariants and use a vector
+        to avoid possible infinite loops.
+        (WebCore::SplitElementCommand::doUnapply): Ditto.
+
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::SplitTextNodeCommand): Moved assertions and comment
+        here from doApply.
+        (WebCore::SplitTextNodeCommand::doApply): Check for null and failures when applying.
+        (WebCore::SplitTextNodeCommand::doUnapply): Ditto.
+
+        * editing/SplitTextNodeContainingElementCommand.cpp:
+        (WebCore::SplitTextNodeContainingElementCommand::doApply): Use Element.
+
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::doApply): Check for null and ignore failures.
+        Don't reuse the dummy span. Simplified logic.
+        (WebCore::WrapContentsInDummySpanCommand::doUnapply): Ditto.
+
+        * editing/htmlediting.cpp:
+        (WebCore::isBlock): Make sure this returns true only for elements.
+        (WebCore::enclosingBlock): Return an Element*.
+        (WebCore::enclosingTableCell): Ditto.
+        (WebCore::enclosingList): Return an HTMLElement*.
+        (WebCore::outermostEnclosingList): Return an HTMLElement*.
+        (WebCore::createDefaultParagraphElement): Return an HTMLElement*.
+        (WebCore::createBreakElement): Return an HTMLElement*.
+        (WebCore::createOrderedListElement): Return an HTMLElement*.
+        (WebCore::createUnorderedListElement): Return an HTMLElement*.
+        (WebCore::createListItemElement): Return an HTMLElement*.
+        (WebCore::createHTMLElement): Return an HTMLElement*.
+        * editing/htmlediting.h:
+
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText): Use createBreakElement and use Element*.
+
+        * page/MouseEventWithHitTestResults.cpp:
+        (WebCore::MouseEventWithHitTestResults::targetNode): Use parentElement.
+
+2008-12-23  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         * dom/Node.h: Tweak comments and order of bits that Sam moved

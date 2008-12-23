@@ -37,19 +37,19 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassRefPtr<Node> InsertListCommand::insertList(Document* document, Type type)
+PassRefPtr<HTMLElement> InsertListCommand::insertList(Document* document, Type type)
 {
     RefPtr<InsertListCommand> insertCommand = new InsertListCommand(document, type, "");
     insertCommand->apply();
     return insertCommand->m_listElement;
 }
 
-Node* InsertListCommand::fixOrphanedListChild(Node* node)
+HTMLElement* InsertListCommand::fixOrphanedListChild(Node* node)
 {
-    RefPtr<Element> listElement = createUnorderedListElement(document());
-    insertNodeBefore(listElement.get(), node);
+    RefPtr<HTMLElement> listElement = createUnorderedListElement(document());
+    insertNodeBefore(listElement, node);
     removeNode(node);
-    appendNode(node, listElement.get());
+    appendNode(node, listElement);
     m_listElement = listElement;
     return listElement.get();
 }
@@ -137,7 +137,7 @@ void InsertListCommand::doApply()
     bool switchListType = false;
     if (listChildNode) {
         // Remove the list chlild.
-        Node* listNode = enclosingList(listChildNode);
+        HTMLElement* listNode = enclosingList(listChildNode);
         if (!listNode)
             listNode = fixOrphanedListChild(listChildNode);
         if (!listNode->hasTagName(listTag))
@@ -168,12 +168,12 @@ void InsertListCommand::doApply()
         // When removing a list, we must always create a placeholder to act as a point of insertion
         // for the list content being removed.
         RefPtr<Element> placeholder = createBreakElement(document());
-        RefPtr<Node> nodeToInsert = placeholder;
+        RefPtr<Element> nodeToInsert = placeholder;
         // If the content of the list item will be moved into another list, put it in a list item
         // so that we don't create an orphaned list child.
         if (enclosingList(listNode)) {
             nodeToInsert = createListItemElement(document());
-            appendNode(placeholder.get(), nodeToInsert.get());
+            appendNode(placeholder, nodeToInsert);
         }
         
         if (nextListChild && previousListChild) {
@@ -184,18 +184,18 @@ void InsertListCommand::doApply()
             // FIXME: We appear to split at nextListChild as opposed to listChildNode so that when we remove
             // listChildNode below in moveParagraphs, previousListChild will be removed along with it if it is 
             // unrendered. But we ought to remove nextListChild too, if it is unrendered.
-            splitElement(static_cast<Element*>(listNode), splitTreeToNode(nextListChild, listNode).get());
-            insertNodeBefore(nodeToInsert.get(), listNode);
+            splitElement(listNode, splitTreeToNode(nextListChild, listNode));
+            insertNodeBefore(nodeToInsert, listNode);
         } else if (nextListChild || listChildNode->parentNode() != listNode) {
             // Just because listChildNode has no previousListChild doesn't mean there isn't any content
             // in listNode that comes before listChildNode, as listChildNode could have ancestors
             // between it and listNode. So, we split up to listNode before inserting the placeholder
             // where we're about to move listChildNode to.
             if (listChildNode->parentNode() != listNode)
-                splitElement(static_cast<Element *>(listNode), splitTreeToNode(listChildNode, listNode).get());
-            insertNodeBefore(nodeToInsert.get(), listNode);
+                splitElement(listNode, splitTreeToNode(listChildNode, listNode).get());
+            insertNodeBefore(nodeToInsert, listNode);
         } else
-            insertNodeAfter(nodeToInsert.get(), listNode);
+            insertNodeAfter(nodeToInsert, listNode);
         
         VisiblePosition insertionPoint = VisiblePosition(Position(placeholder.get(), 0));
         moveParagraphs(start, end, insertionPoint, true);
@@ -208,11 +208,11 @@ void InsertListCommand::doApply()
         // Check for adjoining lists.
         VisiblePosition previousPosition = start.previous(true);
         VisiblePosition nextPosition = end.next(true);
-        RefPtr<Element> listItemElement = createListItemElement(document());
-        RefPtr<Element> placeholder = createBreakElement(document());
-        appendNode(placeholder.get(), listItemElement.get());
-        Node* previousList = outermostEnclosingList(previousPosition.deepEquivalent().node());
-        Node* nextList = outermostEnclosingList(nextPosition.deepEquivalent().node());
+        RefPtr<HTMLElement> listItemElement = createListItemElement(document());
+        RefPtr<HTMLElement> placeholder = createBreakElement(document());
+        appendNode(placeholder, listItemElement);
+        Element* previousList = outermostEnclosingList(previousPosition.deepEquivalent().node());
+        Element* nextList = outermostEnclosingList(nextPosition.deepEquivalent().node());
         Node* startNode = start.deepEquivalent().node();
         Node* previousCell = enclosingTableCell(previousPosition.deepEquivalent());
         Node* nextCell = enclosingTableCell(nextPosition.deepEquivalent());
@@ -223,16 +223,16 @@ void InsertListCommand::doApply()
             nextList = 0;
         // Place list item into adjoining lists.
         if (previousList)
-            appendNode(listItemElement.get(), previousList);
+            appendNode(listItemElement, previousList);
         else if (nextList)
-            insertNodeAt(listItemElement.get(), Position(nextList, 0));
+            insertNodeAt(listItemElement, Position(nextList, 0));
         else {
             // Create the list.
-            RefPtr<Element> listElement = m_type == OrderedList ? createOrderedListElement(document()) : createUnorderedListElement(document());
+            RefPtr<HTMLElement> listElement = m_type == OrderedList ? createOrderedListElement(document()) : createUnorderedListElement(document());
             m_listElement = listElement;
             if (!m_id.isEmpty())
-                static_cast<HTMLElement*>(listElement.get())->setId(m_id);
-            appendNode(listItemElement.get(), listElement.get());
+                listElement->setId(m_id);
+            appendNode(listItemElement, listElement);
             
             if (start == end && isBlock(start.deepEquivalent().node())) {
                 // Inserting the list into an empty paragraph that isn't held open 
@@ -254,7 +254,7 @@ void InsertListCommand::doApply()
             if (listChild && listChild->hasTagName(liTag))
                 insertionPos = positionBeforeNode(listChild);
                 
-            insertNodeAt(listElement.get(), insertionPos);
+            insertNodeAt(listElement, insertionPos);
         }
         moveParagraph(start, end, VisiblePosition(Position(placeholder.get(), 0)), true);
         if (nextList && previousList)

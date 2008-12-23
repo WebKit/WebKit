@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class HTMLElement;
+
 class WrapContentsInDummySpanCommand : public SimpleEditCommand {
 public:
     static PassRefPtr<WrapContentsInDummySpanCommand> create(PassRefPtr<Element> element)
@@ -44,7 +46,7 @@ private:
     virtual void doUnapply();
 
     RefPtr<Element> m_element;
-    RefPtr<Element> m_dummySpan;
+    RefPtr<HTMLElement> m_dummySpan;
 };
 
 } // namespace WebCore

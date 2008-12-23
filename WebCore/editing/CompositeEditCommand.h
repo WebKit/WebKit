@@ -27,6 +27,7 @@
 #define CompositeEditCommand_h
 
 #include "EditCommand.h"
+#include "CSSPropertyNames.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -44,50 +45,50 @@ protected:
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
     //
-    void appendNode(Node* appendChild, Node* parentNode);
+    void appendNode(PassRefPtr<Node>, PassRefPtr<Element> parent);
     void applyCommandToComposite(PassRefPtr<EditCommand>);
     void applyStyle(CSSStyleDeclaration*, EditAction = EditActionChangeAttributes);
     void applyStyle(CSSStyleDeclaration*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes);
-    void applyStyledElement(Element*);
-    void removeStyledElement(Element*);
+    void applyStyledElement(PassRefPtr<Element>);
+    void removeStyledElement(PassRefPtr<Element>);
     void deleteSelection(bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
     void deleteSelection(const Selection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
-    virtual void deleteTextFromNode(Text* node, int offset, int count);
+    virtual void deleteTextFromNode(PassRefPtr<Text>, unsigned offset, unsigned count);
     void inputText(const String&, bool selectInsertedText = false);
-    void insertNodeAfter(Node* insertChild, Node* refChild);
-    void insertNodeAt(Node* insertChild, const Position&);
-    void insertNodeBefore(Node* insertChild, Node* refChild);
+    void insertNodeAfter(PassRefPtr<Node>, PassRefPtr<Node> refChild);
+    void insertNodeAt(PassRefPtr<Node>, const Position&);
+    void insertNodeAtTabSpanPosition(PassRefPtr<Node>, const Position&);
+    void insertNodeBefore(PassRefPtr<Node>, PassRefPtr<Node> refChild);
     void insertParagraphSeparator(bool useDefaultParagraphElement = false);
     void insertLineBreak();
-    void insertTextIntoNode(Text* node, int offset, const String& text);
-    void joinTextNodes(Text*, Text*);
+    void insertTextIntoNode(PassRefPtr<Text>, unsigned offset, const String& text);
+    void joinTextNodes(PassRefPtr<Text>, PassRefPtr<Text>);
+    void mergeIdenticalElements(PassRefPtr<Element>, PassRefPtr<Element>);
     void rebalanceWhitespace();
     void rebalanceWhitespaceAt(const Position&);
-    void prepareWhitespaceAtPositionForSplit(Position& position);
-    void removeCSSProperty(CSSStyleDeclaration*, int property);
-    void removeNodeAttribute(Element*, const QualifiedName& attribute);
-    void removeChildrenInRange(Node*, int from, int to);
-    virtual void removeNode(Node*);
-    void removeNodePreservingChildren(Node*);
-    void removeNodeAndPruneAncestors(Node*);
+    void prepareWhitespaceAtPositionForSplit(Position&);
+    void removeCSSProperty(PassRefPtr<CSSMutableStyleDeclaration>, CSSPropertyID);
+    void removeNodeAttribute(PassRefPtr<Element>, const QualifiedName& attribute);
+    void removeChildrenInRange(PassRefPtr<Node>, unsigned from, unsigned to);
+    virtual void removeNode(PassRefPtr<Node>);
+    void removeNodePreservingChildren(PassRefPtr<Node>);
+    void removeNodeAndPruneAncestors(PassRefPtr<Node>);
     void prune(PassRefPtr<Node>);
-    void replaceTextInNode(Text* node, int offset, int count, const String& replacementText);
+    void replaceTextInNode(PassRefPtr<Text>, unsigned offset, unsigned count, const String& replacementText);
     Position positionOutsideTabSpan(const Position&);
-    void insertNodeAtTabSpanPosition(Node*, const Position&);
-    void setNodeAttribute(Element*, const QualifiedName& attribute, const String& value);
-    void splitTextNode(Text*, int offset);
-    void splitElement(Element*, Node* atChild);
-    void mergeIdenticalElements(Element*, Element*);
-    void wrapContentsInDummySpan(Element*);
-    void splitTextNodeContainingElement(Text*, int offset);
+    void setNodeAttribute(PassRefPtr<Element>, const QualifiedName& attribute, const AtomicString& value);
+    void splitElement(PassRefPtr<Element>, PassRefPtr<Node> atChild);
+    void splitTextNode(PassRefPtr<Text>, unsigned offset);
+    void splitTextNodeContainingElement(PassRefPtr<Text>, unsigned offset);
+    void wrapContentsInDummySpan(PassRefPtr<Element>);
 
-    void deleteInsignificantText(Text*, int start, int end);
+    void deleteInsignificantText(PassRefPtr<Text>, unsigned start, unsigned end);
     void deleteInsignificantText(const Position& start, const Position& end);
     void deleteInsignificantTextDownstream(const Position&);
 
-    PassRefPtr<Node> appendBlockPlaceholder(Node*);
+    PassRefPtr<Node> appendBlockPlaceholder(PassRefPtr<Element>);
     PassRefPtr<Node> insertBlockPlaceholder(const Position&);
-    PassRefPtr<Node> addBlockPlaceholderIfNeeded(Node*);
+    PassRefPtr<Node> addBlockPlaceholderIfNeeded(Element*);
     void removePlaceholderAt(const VisiblePosition&);
 
     PassRefPtr<Node> insertNewDefaultParagraphElementAt(const Position&);

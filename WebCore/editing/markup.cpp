@@ -1104,9 +1104,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
         fragment->appendChild(document->createTextNode(string), ec);
         ASSERT(ec == 0);
         if (string.endsWith("\n")) {
-            RefPtr<Element> element;
-            element = document->createElementNS(xhtmlNamespaceURI, "br", ec);
-            ASSERT(ec == 0);
+            RefPtr<Element> element = createBreakElement(document);
             element->setAttribute(classAttr, AppleInterchangeNewline);            
             fragment->appendChild(element.release(), ec);
             ASSERT(ec == 0);
@@ -1121,8 +1119,13 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     }
 
     // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
-    Node* block = enclosingBlock(context->firstNode());
-    bool useClonesOfEnclosingBlock = block && !block->hasTagName(bodyTag) && !block->hasTagName(htmlTag) && block != editableRootForPosition(context->startPosition());
+    Node* blockNode = enclosingBlock(context->firstNode());
+    Element* block = static_cast<Element*>(blockNode);
+    bool useClonesOfEnclosingBlock = blockNode
+        && blockNode->isElementNode()
+        && !block->hasTagName(bodyTag)
+        && !block->hasTagName(htmlTag)
+        && block != editableRootForPosition(context->startPosition());
     
     Vector<String> list;
     string.split('\n', true, list); // true gets us empty strings in the list
@@ -1133,11 +1136,13 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
         RefPtr<Element> element;
         if (s.isEmpty() && i + 1 == numLines) {
             // For last line, use the "magic BR" rather than a P.
-            element = document->createElementNS(xhtmlNamespaceURI, "br", ec);
-            ASSERT(ec == 0);
+            element = createBreakElement(document);
             element->setAttribute(classAttr, AppleInterchangeNewline);            
         } else {
-            element = useClonesOfEnclosingBlock ? static_cast<Element*>(block->cloneNode(false).get()) : createDefaultParagraphElement(document);
+            if (useClonesOfEnclosingBlock)
+                element = block->cloneElement();
+            else
+                element = createDefaultParagraphElement(document);
             fillContainerFromString(element.get(), s);
         }
         fragment->appendChild(element.release(), ec);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,14 +46,21 @@ void SplitTextNodeContainingElementCommand::doApply()
     ASSERT(m_offset > 0);
 
     splitTextNode(m_text.get(), m_offset);
-    
-    Node *parentNode = m_text->parentNode();
-    if (!parentNode->renderer() || !parentNode->renderer()->isInline()) {
-        wrapContentsInDummySpan(static_cast<Element *>(parentNode));
-        parentNode = parentNode->firstChild();
+
+    Element* parent = m_text->parentElement();
+    if (!parent)
+        return;
+
+    RenderObject* parentRenderer = parent->renderer();
+    if (!parentRenderer || !parentRenderer->isInline()) {
+        wrapContentsInDummySpan(parent);
+        Node* firstChild = parent->firstChild();
+        if (!firstChild || !firstChild->isElementNode())
+            return;
+        parent = static_cast<Element*>(firstChild);
     }
 
-    splitElement(static_cast<Element *>(parentNode), m_text.get());
+    splitElement(parent, m_text);
 }
 
 }

@@ -116,6 +116,8 @@ public:
     virtual void removedFromDocument();
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
+    PassRefPtr<Element> cloneElement();
+
     void normalizeAttributes();
 
     virtual bool isInputTypeHidden() const { return false; }
@@ -235,6 +237,12 @@ inline bool Node::hasAttributes() const
 inline NamedAttrMap* Node::attributes() const
 {
     return isElementNode() ? static_cast<const Element*>(this)->attributes() : 0;
+}
+
+inline Element* Node::parentElement() const
+{
+    Node* parent = parentNode();
+    return parent && parent->isElementNode() ? static_cast<Element*>(parent) : 0;
 }
 
 } //namespace

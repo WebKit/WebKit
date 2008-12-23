@@ -221,7 +221,7 @@ PassRefPtr<Node> ReplacementFragment::insertFragmentForTestRendering(Node* conte
     if (!body)
         return 0;
 
-    RefPtr<StyledElement> holder = static_pointer_cast<StyledElement>(createDefaultParagraphElement(m_document.get()));
+    RefPtr<StyledElement> holder = createDefaultParagraphElement(m_document.get());
     
     ExceptionCode ec = 0;
 

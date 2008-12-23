@@ -46,7 +46,7 @@ public:
     {
         return adoptRef(new ApplyStyleCommand(document, style, start, end, action, level));
     }
-    static PassRefPtr<ApplyStyleCommand> create(Element* element, bool removeOnly = false, EditAction action = EditActionChangeAttributes)
+    static PassRefPtr<ApplyStyleCommand> create(PassRefPtr<Element> element, bool removeOnly = false, EditAction action = EditActionChangeAttributes)
     {
         return adoptRef(new ApplyStyleCommand(element, removeOnly, action));
     }
@@ -54,7 +54,7 @@ public:
 private:
     ApplyStyleCommand(Document*, CSSStyleDeclaration*, EditAction, EPropertyLevel);
     ApplyStyleCommand(Document*, CSSStyleDeclaration*, const Position& start, const Position& end, EditAction, EPropertyLevel);
-    ApplyStyleCommand(Element*, bool removeOnly, EditAction);
+    ApplyStyleCommand(PassRefPtr<Element>, bool removeOnly, EditAction);
 
     virtual void doApply();
     virtual EditAction editingAction() const;

@@ -25,39 +25,33 @@
 
 #include "config.h"
 #include "AppendNodeCommand.h"
+
 #include "htmlediting.h"
 
 namespace WebCore {
 
-AppendNodeCommand::AppendNodeCommand(PassRefPtr<Node> parentNode, PassRefPtr<Node> childToAppend)
-    : SimpleEditCommand(parentNode->document()), m_parentNode(parentNode), m_childToAppend(childToAppend)
+AppendNodeCommand::AppendNodeCommand(PassRefPtr<Element> parent, PassRefPtr<Node> node)
+    : SimpleEditCommand(parent->document())
+    , m_parent(parent)
+    , m_node(node)
 {
-    ASSERT(m_childToAppend);
-    ASSERT(m_parentNode);
+    ASSERT(m_parent);
+    ASSERT(m_node);
+    ASSERT(!m_node->parent());
+
+    ASSERT(enclosingNodeOfType(Position(m_parent.get(), 0), isContentEditable) || !m_parent->attached());
 }
 
 void AppendNodeCommand::doApply()
 {
-    ASSERT(m_childToAppend);
-    ASSERT(m_parentNode);
-    // If the child to append is already in a tree, appending it will remove it from it's old location
-    // in an non-undoable way.  We might eventually find it useful to do an undoable remove in this case.
-    ASSERT(!m_childToAppend->parent());
-    ASSERT(enclosingNodeOfType(Position(m_parentNode.get(), 0), &isContentEditable) || !m_parentNode->attached());
-
-    ExceptionCode ec = 0;
-    m_parentNode->appendChild(m_childToAppend.get(), ec);
-    ASSERT(ec == 0);
+    ExceptionCode ec;
+    m_parent->appendChild(m_node.get(), ec);
 }
 
 void AppendNodeCommand::doUnapply()
 {
-    ASSERT(m_childToAppend);
-    ASSERT(m_parentNode);
-
-    ExceptionCode ec = 0;
-    m_parentNode->removeChild(m_childToAppend.get(), ec);
-    ASSERT(ec == 0);
+    ExceptionCode ec;
+    m_node->remove(ec);
 }
 
 } // namespace WebCore

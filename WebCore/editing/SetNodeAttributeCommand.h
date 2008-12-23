@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    SetNodeAttributeCommand(PassRefPtr<Element>, const QualifiedName& attribute, const String& value);
+    SetNodeAttributeCommand(PassRefPtr<Element>, const QualifiedName& attribute, const AtomicString& value);
 
     virtual void doApply();
     virtual void doUnapply();

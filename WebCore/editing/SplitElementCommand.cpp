@@ -32,59 +32,60 @@
 namespace WebCore {
 
 SplitElementCommand::SplitElementCommand(PassRefPtr<Element> element, PassRefPtr<Node> atChild)
-    : SimpleEditCommand(element->document()), m_element2(element), m_atChild(atChild)
-{
-    ASSERT(m_element2);
-    ASSERT(m_atChild);
-}
-
-void SplitElementCommand::doApply()
+    : SimpleEditCommand(element->document())
+    , m_element2(element)
+    , m_atChild(atChild)
 {
     ASSERT(m_element2);
     ASSERT(m_atChild);
     ASSERT(m_atChild->parentNode() == m_element2);
+}
+
+void SplitElementCommand::doApply()
+{
+    RefPtr<Element> prefixElement = m_element2->cloneElement();
+
+    if (m_atChild->parentNode() != m_element2)
+        return;
+
+    Vector<RefPtr<Node> > children;
+    for (Node* node = m_element2->firstChild(); node != m_atChild; node = node->nextSibling())
+        children.append(node);
 
     ExceptionCode ec = 0;
 
-    if (!m_element1) {
-        // create only if needed.
-        // if reapplying, this object will already exist.
-        m_element1 = static_pointer_cast<Element>(m_element2->cloneNode(false));
-        ASSERT(m_element1);
-    }
-
-    m_element2->parent()->insertBefore(m_element1.get(), m_element2.get(), ec);
-    ASSERT(ec == 0);
-    
-    // Bail if we were asked to split at a bogus child, to avoid hanging below.
-    if (!m_atChild || m_atChild->parentNode() != m_element2)
+    Node* parent = m_element2->parentNode();
+    if (!parent)
         return;
-    
-    while (m_element2->firstChild() != m_atChild) {
-        ASSERT(m_element2->firstChild());
-        m_element1->appendChild(m_element2->firstChild(), ec);
-        ASSERT(ec == 0);
-    }
+    parent->insertBefore(prefixElement.get(), m_element2.get(), ec);
+    if (ec)
+        return;
+    m_element1 = prefixElement.release();
+
+    size_t size = children.size();
+    for (size_t i = 0; i < size; ++i)
+        m_element1->appendChild(children[i], ec);
 }
 
 void SplitElementCommand::doUnapply()
 {
-    ASSERT(m_element1);
-    ASSERT(m_element2);
-    ASSERT(m_atChild);
+    if (!m_element1)
+        return;
 
-    ASSERT(m_element1->nextSibling() == m_element2);
-    ASSERT(m_element2->firstChild() && m_element2->firstChild() == m_atChild);
+    Vector<RefPtr<Node> > children;
+    for (Node* node = m_element1->firstChild(); node; node = node->nextSibling())
+        children.append(node);
+
+    RefPtr<Node> refChild = m_element2->firstChild();
 
     ExceptionCode ec = 0;
 
-    while (m_element1->lastChild()) {
-        m_element2->insertBefore(m_element1->lastChild(), m_element2->firstChild(), ec);
-        ASSERT(ec == 0);
-    }
+    size_t size = children.size();
+    for (size_t i = 0; i < size; ++i)
+        m_element2->insertBefore(children[i].get(), refChild.get(), ec);
 
-    m_element2->parentNode()->removeChild(m_element1.get(), ec);
-    ASSERT(ec == 0);
+    m_element1->remove(ec);
+    m_element1 = 0;
 }
 
 } // namespace WebCore

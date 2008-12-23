@@ -36,7 +36,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-FormatBlockCommand::FormatBlockCommand(Document* document, const String& tagName) 
+FormatBlockCommand::FormatBlockCommand(Document* document, const AtomicString& tagName) 
     : CompositeEditCommand(document), m_tagName(tagName)
 {
 }
@@ -107,21 +107,21 @@ void FormatBlockCommand::doApply()
     VisiblePosition paragraphEnd = endOfParagraph(endingSelection().visibleStart());
     VisiblePosition blockStart = startOfBlock(endingSelection().visibleStart());
     VisiblePosition blockEnd = endOfBlock(endingSelection().visibleStart());
-    RefPtr<Node> blockNode = createElement(document(), m_tagName);
-    RefPtr<Node> placeholder = createBreakElement(document());
+    RefPtr<Element> blockNode = createHTMLElement(document(), m_tagName);
+    RefPtr<Element> placeholder = createBreakElement(document());
     
     Node* root = endingSelection().start().node()->rootEditableElement();
     if (validBlockTag(refNode->nodeName().lower()) && 
         paragraphStart == blockStart && paragraphEnd == blockEnd && 
         refNode != root && !root->isDescendantOf(refNode))
         // Already in a valid block tag that only contains the current paragraph, so we can swap with the new tag
-        insertNodeBefore(blockNode.get(), refNode);
+        insertNodeBefore(blockNode, refNode);
     else {
         // Avoid inserting inside inline elements that surround paragraphStart with upstream().
         // This is only to avoid creating bloated markup.
-        insertNodeAt(blockNode.get(), paragraphStart.deepEquivalent().upstream());
+        insertNodeAt(blockNode, paragraphStart.deepEquivalent().upstream());
     }
-    appendNode(placeholder.get(), blockNode.get());
+    appendNode(placeholder, blockNode);
     
     VisiblePosition destination(Position(placeholder.get(), 0));
     if (paragraphStart == paragraphEnd && !lineBreakExistsAtPosition(paragraphStart)) {

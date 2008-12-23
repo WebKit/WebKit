@@ -59,10 +59,10 @@ void BreakBlockquoteCommand::doApply()
     // startNode is the first node that we need to move to the new blockquote.
     Node* startNode = pos.node();
     // Find the top-most blockquote from the start.
-    Node* topBlockquote = 0;
+    Element* topBlockquote = 0;
     for (Node *node = startNode->parentNode(); node; node = node->parentNode()) {
         if (isMailBlockquote(node))
-            topBlockquote = node;
+            topBlockquote = static_cast<Element*>(node);
     }
     if (!topBlockquote || !topBlockquote->parentNode())
         return;
@@ -102,21 +102,21 @@ void BreakBlockquoteCommand::doApply()
     }
     
     // Build up list of ancestors in between the start node and the top blockquote.
-    Vector<Node*> ancestors;    
-    for (Node* node = startNode->parentNode(); node != topBlockquote; node = node->parentNode())
+    Vector<Element*> ancestors;    
+    for (Element* node = startNode->parentElement(); node && node != topBlockquote; node = node->parentElement())
         ancestors.append(node);
     
     // Insert a clone of the top blockquote after the break.
-    RefPtr<Node> clonedBlockquote = topBlockquote->cloneNode(false);
+    RefPtr<Element> clonedBlockquote = topBlockquote->cloneElement();
     insertNodeAfter(clonedBlockquote.get(), breakNode.get());
     
     // Clone startNode's ancestors into the cloned blockquote.
     // On exiting this loop, clonedAncestor is the lowest ancestor
     // that was cloned (i.e. the clone of either ancestors.last()
     // or clonedBlockquote if ancestors is empty).
-    RefPtr<Node> clonedAncestor = clonedBlockquote;
+    RefPtr<Element> clonedAncestor = clonedBlockquote;
     for (size_t i = ancestors.size(); i != 0; --i) {
-        RefPtr<Node> clonedChild = ancestors[i - 1]->cloneNode(false); // shallow clone
+        RefPtr<Element> clonedChild = ancestors[i - 1]->cloneElement(); // shallow clone
         // Preserve list item numbering in cloned lists.
         if (clonedChild->isElementNode() && clonedChild->hasTagName(olTag)) {
             Node* listChildNode = i > 1 ? ancestors[i - 2] : startNode;
@@ -149,11 +149,11 @@ void BreakBlockquoteCommand::doApply()
         // Throughout this loop, clonedParent is the clone of ancestor's parent.
         // This is so we can clone ancestor's siblings and place the clones
         // into the clone corresponding to the ancestor's parent.
-        Node* ancestor;
-        Node* clonedParent;
-        for (ancestor = ancestors.first(), clonedParent = clonedAncestor->parentNode();
+        Element* ancestor;
+        Element* clonedParent;
+        for (ancestor = ancestors.first(), clonedParent = clonedAncestor->parentElement();
              ancestor && ancestor != topBlockquote;
-             ancestor = ancestor->parentNode(), clonedParent = clonedParent->parentNode()) {
+             ancestor = ancestor->parentElement(), clonedParent = clonedParent->parentElement()) {
             moveNode = ancestor->nextSibling();
             while (moveNode) {
                 Node *next = moveNode->nextSibling();

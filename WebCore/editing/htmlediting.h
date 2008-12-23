@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@ namespace WebCore {
 
 class Document;
 class Element;
+class HTMLElement;
 class Node;
 class Position;
 class Range;
@@ -76,12 +77,12 @@ Selection avoidIntersectionWithNode(const Selection&, Node*);
 bool isSpecialElement(const Node*);
 bool validBlockTag(const String&);
 
-PassRefPtr<Element> createDefaultParagraphElement(Document*);
-PassRefPtr<Element> createBreakElement(Document*);
-PassRefPtr<Element> createOrderedListElement(Document*);
-PassRefPtr<Element> createUnorderedListElement(Document*);
-PassRefPtr<Element> createListItemElement(Document*);
-PassRefPtr<Element> createElement(Document*, const String&);
+PassRefPtr<HTMLElement> createDefaultParagraphElement(Document*);
+PassRefPtr<HTMLElement> createBreakElement(Document*);
+PassRefPtr<HTMLElement> createOrderedListElement(Document*);
+PassRefPtr<HTMLElement> createUnorderedListElement(Document*);
+PassRefPtr<HTMLElement> createListItemElement(Document*);
+PassRefPtr<HTMLElement> createHTMLElement(Document*, const AtomicString&);
 
 bool isTabSpanNode(const Node*);
 bool isTabSpanTextNode(const Node*);
@@ -118,8 +119,8 @@ Node* enclosingTableCell(const Position&);
 Node* enclosingEmptyListItem(const VisiblePosition&);
 Node* enclosingAnchorElement(const Position&);
 bool isListElement(Node*);
-Node* enclosingList(Node*);
-Node* outermostEnclosingList(Node*);
+HTMLElement* enclosingList(Node*);
+HTMLElement* outermostEnclosingList(Node*);
 Node* enclosingListChild(Node*);
 Node* highestAncestor(Node*);
 bool isTableElement(Node*);

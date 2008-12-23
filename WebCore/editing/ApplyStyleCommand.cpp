@@ -274,11 +274,9 @@ static PassRefPtr<Element> createFontElement(Document* document)
 
 PassRefPtr<HTMLElement> createStyleSpanElement(Document* document)
 {
-    ExceptionCode ec = 0;
-    RefPtr<Element> styleElement = document->createElementNS(xhtmlNamespaceURI, "span", ec);
-    ASSERT(ec == 0);
+    RefPtr<HTMLElement> styleElement = new HTMLElement(spanTag, document);
     styleElement->setAttribute(classAttr, styleSpanClassString());
-    return static_pointer_cast<HTMLElement>(styleElement.release());
+    return styleElement.release();
 }
 
 ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* style, EditAction editingAction, EPropertyLevel propertyLevel)
@@ -307,7 +305,7 @@ ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* st
 {
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Element* element, bool removeOnly, EditAction editingAction)
+ApplyStyleCommand::ApplyStyleCommand(PassRefPtr<Element> element, bool removeOnly, EditAction editingAction)
     : CompositeEditCommand(element->document())
     , m_style(CSSMutableStyleDeclaration::create())
     , m_editingAction(editingAction)
@@ -995,7 +993,7 @@ void ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration *style, HTMLEl
 
     CSSMutableStyleDeclaration::const_iterator end = style->end();
     for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-        int propertyID = (*it).id();
+        CSSPropertyID propertyID = static_cast<CSSPropertyID>((*it).id());
         RefPtr<CSSValue> value = decl->getPropertyCSSValue(propertyID);
         if (value && (propertyID != CSSPropertyWhiteSpace || !isTabSpanNode(elem))) {
             removeCSSProperty(decl, propertyID);
@@ -1553,7 +1551,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
     }
     
     if (m_styledInlineElement) {
-        RefPtr<Element> clonedElement = static_pointer_cast<Element>(m_styledInlineElement->cloneNode(false));
+        RefPtr<Element> clonedElement = m_styledInlineElement->cloneElement();
         insertNodeBefore(clonedElement.get(), startNode);
         surroundNodeRangeWithElement(startNode, endNode, clonedElement.get());
     }

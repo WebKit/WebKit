@@ -32,35 +32,26 @@
 namespace WebCore {
 
 SetNodeAttributeCommand::SetNodeAttributeCommand(PassRefPtr<Element> element, 
-        const QualifiedName& attribute, const String &value)
-    : SimpleEditCommand(element->document()), m_element(element), m_attribute(attribute), m_value(value)
+        const QualifiedName& attribute, const AtomicString& value)
+    : SimpleEditCommand(element->document())
+    , m_element(element)
+    , m_attribute(attribute)
+    , m_value(value)
 {
     ASSERT(m_element);
-    ASSERT(!m_value.isNull());
 }
 
 void SetNodeAttributeCommand::doApply()
 {
-    ASSERT(m_element);
-    ASSERT(!m_value.isNull());
-
-    ExceptionCode ec = 0;
     m_oldValue = m_element->getAttribute(m_attribute);
-    m_element->setAttribute(m_attribute, m_value.impl(), ec);
-    ASSERT(ec == 0);
+    m_element->setAttribute(m_attribute, m_value);
 }
 
 void SetNodeAttributeCommand::doUnapply()
 {
-    ASSERT(m_element);
-
-    ExceptionCode ec = 0;
-    if (m_oldValue.isNull())
-        m_element->removeAttribute(m_attribute, ec);
-    else
-        m_element->setAttribute(m_attribute, m_oldValue.impl(), ec);
-    ASSERT(ec == 0);
+    m_element->setAttribute(m_attribute, m_oldValue);
+    AtomicStringImpl* nullString = 0;
+    m_oldValue = nullString;
 }
 
 } // namespace WebCore
-

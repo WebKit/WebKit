@@ -33,58 +33,60 @@
 namespace WebCore {
 
 SplitTextNodeCommand::SplitTextNodeCommand(PassRefPtr<Text> text, int offset)
-    : SimpleEditCommand(text->document()), m_text2(text), m_offset(offset)
+    : SimpleEditCommand(text->document())
+    , m_text2(text)
+    , m_offset(offset)
 {
-    ASSERT(m_text2);
-    ASSERT(m_text2->length() > 0);
-}
-
-void SplitTextNodeCommand::doApply()
-{
-    ASSERT(m_text2);
-    ASSERT(m_offset > 0);
-
-    ExceptionCode ec = 0;
-
     // NOTE: Various callers rely on the fact that the original node becomes
     // the second node (i.e. the new node is inserted before the existing one).
     // That is not a fundamental dependency (i.e. it could be re-coded), but
     // rather is based on how this code happens to work.
-    if (!m_text1) {
-        // create only if needed.
-        // if reapplying, this object will already exist.
-        m_text1 = document()->createTextNode(m_text2->substringData(0, m_offset, ec));
-        ASSERT(ec == 0);
-        ASSERT(m_text1);
-    }
+    ASSERT(m_text2);
+    ASSERT(m_text2->length() > 0);
+    ASSERT(m_offset > 0);
+    ASSERT(m_offset < m_text2->length());
+}
 
-    document()->copyMarkers(m_text2.get(), 0, m_offset, m_text1.get(), 0);
+void SplitTextNodeCommand::doApply()
+{
+    ExceptionCode ec = 0;
+
+    String prefixText = m_text2->substringData(0, m_offset, ec);
+    if (prefixText.isEmpty())
+        return;
+
+    RefPtr<Text> prefixTextNode = new Text(document(), prefixText);
+    ASSERT(prefixTextNode);
+    document()->copyMarkers(m_text2.get(), 0, m_offset, prefixTextNode.get(), 0);
+
+    Node* parent = m_text2->parentNode();
+    if (!parent)
+        return;
+    parent->insertBefore(prefixTextNode.get(), m_text2.get(), ec);
+    if (ec)
+        return;
+
     m_text2->deleteData(0, m_offset, ec);
-    ASSERT(ec == 0);
-
-    m_text2->parentNode()->insertBefore(m_text1.get(), m_text2.get(), ec);
-    ASSERT(ec == 0);
-        
-    ASSERT(m_text2->previousSibling()->isTextNode());
-    ASSERT(m_text2->previousSibling() == m_text1);
+    m_text1 = prefixTextNode.release();
 }
 
 void SplitTextNodeCommand::doUnapply()
 {
-    ASSERT(m_text1);
-    ASSERT(m_text2);
-    ASSERT(m_text1->nextSibling() == m_text2);
-        
+    if (!m_text1)
+        return;
+
+    ASSERT(m_text1->document() == document());
+
+    RefPtr<Text> prefixTextNode = m_text1.release();
+    String prefixText = prefixTextNode->data();
+
     ExceptionCode ec = 0;
-    m_text2->insertData(0, m_text1->data(), ec);
-    ASSERT(ec == 0);
+    m_text2->insertData(0, prefixText, ec);
+    if (ec)
+        return;
 
-    document()->copyMarkers(m_text1.get(), 0, m_offset, m_text2.get(), 0);
-
-    m_text2->parentNode()->removeChild(m_text1.get(), ec);
-    ASSERT(ec == 0);
-
-    m_offset = m_text1->length();
+    document()->copyMarkers(prefixTextNode.get(), 0, prefixText.length(), m_text2.get(), 0);
+    prefixTextNode->remove(ec);
 }
 
 } // namespace WebCore

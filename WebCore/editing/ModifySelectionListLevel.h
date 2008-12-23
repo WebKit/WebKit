@@ -37,7 +37,7 @@ class ModifySelectionListLevelCommand : public CompositeEditCommand {
 protected:
     ModifySelectionListLevelCommand(Document*);
     
-    void appendSiblingNodeRange(Node* startNode, Node* endNode, Node* newParent);
+    void appendSiblingNodeRange(Node* startNode, Node* endNode, Element* newParent);
     void insertSiblingNodeRangeBefore(Node* startNode, Node* endNode, Node* refNode);
     void insertSiblingNodeRangeAfter(Node* startNode, Node* endNode, Node* refNode);
 

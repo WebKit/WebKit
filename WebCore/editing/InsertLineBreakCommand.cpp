@@ -51,24 +51,24 @@ bool InsertLineBreakCommand::preservesTypingStyle() const
     return true;
 }
 
-void InsertLineBreakCommand::insertNodeAfterPosition(Node *node, const Position &pos)
+void InsertLineBreakCommand::insertNodeAfterPosition(Node* node, const Position& pos)
 {
     // Insert the BR after the caret position. In the case the
     // position is a block, do an append. We don't want to insert
     // the BR *after* the block.
-    Node *cb = pos.node()->enclosingBlockFlowElement();
+    Element* cb = pos.node()->enclosingBlockFlowElement();
     if (cb == pos.node())
         appendNode(node, cb);
     else
         insertNodeAfter(node, pos.node());
 }
 
-void InsertLineBreakCommand::insertNodeBeforePosition(Node *node, const Position &pos)
+void InsertLineBreakCommand::insertNodeBeforePosition(Node* node, const Position& pos)
 {
     // Insert the BR after the caret position. In the case the
     // position is a block, do an append. We don't want to insert
     // the BR *before* the block.
-    Node *cb = pos.node()->enclosingBlockFlowElement();
+    Element* cb = pos.node()->enclosingBlockFlowElement();
     if (cb == pos.node())
         appendNode(node, cb);
     else
