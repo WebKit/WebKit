@@ -1,5 +1,25 @@
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22972
+
+        Add WML <meta> element support. All needed functionality is present
+        in Document::processHttpEquiv, already covered by tests.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * wml/WMLMetaElement.cpp: Added.
+        (WebCore::WMLMetaElement::WMLMetaElement):
+        (WebCore::WMLMetaElement::parseMappedAttribute):
+        (WebCore::WMLMetaElement::insertedIntoDocument):
+        * wml/WMLMetaElement.h: Added.
+        * wml/WMLTagNames.in:
+
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Rubber-stamped by Darin Adler.
 
         Don't reference specific layout tests in comments.

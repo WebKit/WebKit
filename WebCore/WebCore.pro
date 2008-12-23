@@ -1410,6 +1410,7 @@ contains(DEFINES, ENABLE_WML=1) {
         wml/WMLInsertedLegendElement.cpp \
         wml/WMLIntrinsicEvent.cpp \
         wml/WMLIntrinsicEventHandler.cpp \
+        wml/WMLMetaElement.cpp \
         wml/WMLNoopElement.cpp \
         wml/WMLOnEventElement.cpp \
         wml/WMLPElement.cpp \

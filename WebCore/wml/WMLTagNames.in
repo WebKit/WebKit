@@ -14,6 +14,7 @@ head interfaceName=WMLElement
 img interfaceName=WMLImageElement
 # Note: 'insertedLegend' is not an official WML element - internal purpose only!
 insertedLegend interfaceName=WMLInsertedLegendElement
+meta
 noop
 onevent interfaceName=WMLOnEventElement
 p
@@ -29,5 +30,5 @@ tr interfaceName=WMLElement
 
 #if 0
 # These elements have a corresponding HTML*Element class, that we want to share code with.
-# input, meta, optgroup, option, select
+# input, optgroup, option, select
 #endif

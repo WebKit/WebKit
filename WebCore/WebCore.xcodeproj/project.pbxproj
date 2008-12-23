@@ -93,6 +93,8 @@
 		089582560E857A7E00F82C83 /* ImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 089582540E857A7E00F82C83 /* ImageLoader.h */; };
 		0897C14C0ED2EBA500AE06DB /* WMLBRElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0897C14A0ED2EBA400AE06DB /* WMLBRElement.cpp */; };
 		0897C14D0ED2EBA500AE06DB /* WMLBRElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 0897C14B0ED2EBA400AE06DB /* WMLBRElement.h */; };
+		0897D97A0F007A4600411BB3 /* WMLMetaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0897D9780F007A4600411BB3 /* WMLMetaElement.cpp */; };
+		0897D97B0F007A4600411BB3 /* WMLMetaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 0897D9790F007A4600411BB3 /* WMLMetaElement.h */; };
 		08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A484750E5272C500C3FE76 /* ScriptElement.cpp */; };
 		08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08A484760E5272C500C3FE76 /* ScriptElement.h */; };
 		08A48A6E0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */; };
@@ -4887,6 +4889,8 @@
 		089582540E857A7E00F82C83 /* ImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageLoader.h; sourceTree = "<group>"; };
 		0897C14A0ED2EBA400AE06DB /* WMLBRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLBRElement.cpp; sourceTree = "<group>"; };
 		0897C14B0ED2EBA400AE06DB /* WMLBRElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLBRElement.h; sourceTree = "<group>"; };
+		0897D9780F007A4600411BB3 /* WMLMetaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLMetaElement.cpp; sourceTree = "<group>"; };
+		0897D9790F007A4600411BB3 /* WMLMetaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLMetaElement.h; sourceTree = "<group>"; };
 		08A484750E5272C500C3FE76 /* ScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptElement.cpp; sourceTree = "<group>"; };
 		08A484760E5272C500C3FE76 /* ScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptElement.h; sourceTree = "<group>"; };
 		08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElementInstanceCustom.cpp; sourceTree = "<group>"; };
@@ -9649,6 +9653,8 @@
 				080AEC7E0ED8708B00DF4CCE /* WMLIntrinsicEvent.h */,
 				080AEC7F0ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp */,
 				080AEC800ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h */,
+				0897D9780F007A4600411BB3 /* WMLMetaElement.cpp */,
+				0897D9790F007A4600411BB3 /* WMLMetaElement.h */,
 				0865CCE40EDDF51B00DF9EC3 /* WMLNoopElement.cpp */,
 				0865CCE50EDDF51B00DF9EC3 /* WMLNoopElement.h */,
 				08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */,
@@ -16370,6 +16376,7 @@
 				087FFA100EFF3ED3009DBD88 /* WMLInsertedLegendElement.h in Headers */,
 				080AEC820ED8708B00DF4CCE /* WMLIntrinsicEvent.h in Headers */,
 				080AEC840ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h in Headers */,
+				0897D97B0F007A4600411BB3 /* WMLMetaElement.h in Headers */,
 				088C97130ECB6D9D000534BA /* WMLNames.h in Headers */,
 				0865CCE70EDDF51B00DF9EC3 /* WMLNoopElement.h in Headers */,
 				08744BAE0EDB7D92004C9E63 /* WMLOnEventElement.h in Headers */,
@@ -18336,6 +18343,7 @@
 				087FFA0F0EFF3ED3009DBD88 /* WMLInsertedLegendElement.cpp in Sources */,
 				080AEC810ED8708B00DF4CCE /* WMLIntrinsicEvent.cpp in Sources */,
 				080AEC830ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp in Sources */,
+				0897D97A0F007A4600411BB3 /* WMLMetaElement.cpp in Sources */,
 				088C97120ECB6D92000534BA /* WMLNames.cpp in Sources */,
 				0865CCE60EDDF51B00DF9EC3 /* WMLNoopElement.cpp in Sources */,
 				08744BAA0EDB7D86004C9E63 /* WMLOnEventElement.cpp in Sources */,

@@ -2198,6 +2198,7 @@ webcore_sources += \
 	WebCore/wml/WMLInsertedLegendElement.cpp \
 	WebCore/wml/WMLIntrinsicEvent.cpp \
 	WebCore/wml/WMLIntrinsicEventHandler.cpp \
+	WebCore/wml/WMLMetaElement.cpp \
 	WebCore/wml/WMLNoopElement.cpp \
 	WebCore/wml/WMLOnEventElement.cpp \
 	WebCore/wml/WMLPElement.cpp \
