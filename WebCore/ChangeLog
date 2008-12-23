@@ -1,3 +1,19 @@
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22971
+
+        Fix regression caused by the HTMLFormElement refactorization.
+        File form elements without a name have to be included in multipart/form-data
+        submission. Cover this behaviour with a new test case.
+
+        Test: http/tests/misc/empty-file-formdata.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::createFormData):
+        * wml/WMLTagNames.in:
+
 2008-12-22  David Kilzer  <ddkilzer@apple.com>
 
         <rdar://problem/6438298> Bump schema version for app cache
