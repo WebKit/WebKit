@@ -1,3 +1,12 @@
+2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix obvious crash fix for WML enabled builds.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+
 2008-12-22  David Kilzer  <ddkilzer@apple.com>
 
         Bug 11850: Webarchive fails to save images referenced in CSS
