@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,13 +63,11 @@ extern WTFLogChannel WebKitLogTextInput;
 
 void WebKitInitializeLoggingChannelsIfNecessary(void);
 
-BOOL WebKitRunningOnMainThread(void);
-
-// The ASSERT_MAIN_THREAD() check should be on by default in DEBUG builds
-// To disable it, even in a debug build, define DISABLE_THREAD_CHECK in your project file (or elsewhere globally)
+// FIXME: Why is this in the "logging" header file?
+// Use WebCoreThreadViolationCheck instead for checks that throw an exception even in production builds.
 #if !defined(NDEBUG) && !defined(DISABLE_THREAD_CHECK)
 #define ASSERT_MAIN_THREAD() do \
-    if (!WebKitRunningOnMainThread()) { \
+    if (!pthread_main_np()) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "<not running on main thread>"); \
         CRASH(); \
     } \

@@ -26,20 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebResourcePrivate.h"
+#import "WebResourceInternal.h"
 
 #import "WebFrameInternal.h"
+#import "WebKitLogging.h"
+#import "WebKitVersionChecks.h"
 #import "WebNSDictionaryExtras.h"
+#import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
-
+#import <JavaScriptCore/InitializeThreading.h>
+#import <JavaScriptCore/PassRefPtr.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/TextEncoding.h>
+#import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
-
-#import <runtime/InitializeThreading.h>
-#import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
 
@@ -50,14 +52,10 @@ static NSString * const WebResourceURLKey =               @"WebResourceURL";
 static NSString * const WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
 static NSString * const WebResourceResponseKey =          @"WebResourceResponse";
 
-#define WebResourceVersion 1
-
-@interface WebResourcePrivate : NSObject
-{
+@interface WebResourcePrivate : NSObject {
 @public
     ArchiveResource* coreResource;
 }
-
 - (id)initWithCoreResource:(PassRefPtr<ArchiveResource>)coreResource;
 @end
 
@@ -80,11 +78,9 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
     self = [super init];
     if (!self)
-        return self;
-    
+        return nil;
     // Acquire the PassRefPtr<>'s ref as our own manual ref
     coreResource = passedResource.releaseRef();
-
     return self;
 }
 
@@ -125,6 +121,8 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
+    WebCoreThreadViolationCheck();
+
     self = [super init];
     if (!self)
         return nil;
@@ -202,29 +200,78 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSData *)data
 {
-    if (_private->coreResource && _private->coreResource->data())
-        return [_private->coreResource->data()->createNSData() autorelease];
-    return 0;
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
+    if (!_private->coreResource)
+        return nil;
+    if (!_private->coreResource->data())
+        return nil;
+    return [_private->coreResource->data()->createNSData() autorelease];
 }
 
 - (NSURL *)URL
 {
-    return _private->coreResource ? (NSURL *)_private->coreResource->url() : 0;
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
+    if (!_private->coreResource)
+        return nil;
+    NSURL *url = _private->coreResource->url();
+    return url;
 }
 
 - (NSString *)MIMEType
 {
-    return _private->coreResource ? (NSString *)_private->coreResource->mimeType() : 0;
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
+    if (!_private->coreResource)
+        return nil;
+    NSString *mimeType = _private->coreResource->mimeType();
+    return mimeType;
 }
 
 - (NSString *)textEncodingName
 {
-    return _private->coreResource ? (NSString *)_private->coreResource->textEncoding() : 0;
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
+    if (!_private->coreResource)
+        return nil;
+    NSString *textEncodingName = _private->coreResource->textEncoding();
+    return textEncodingName;
 }
 
 - (NSString *)frameName
 {
-    return _private->coreResource ? (NSString *)_private->coreResource->frameName() : 0;
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
+    if (!_private->coreResource)
+        return nil;
+    NSString *frameName = _private->coreResource->frameName();
+    return frameName;
 }
 
 - (id)description
@@ -269,8 +316,18 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 // FIXME: This "ignoreWhenUnarchiving" concept is an ugly one - can we find a cleaner solution for those who need this SPI?
 - (void)_ignoreWhenUnarchiving
 {
-    if (_private->coreResource)
-        _private->coreResource->ignoreWhenUnarchiving();
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround()) {
+        [self performSelectorOnMainThread:@selector(_ignoreWhenUnarchiving) withObject:nil waitUntilDone:TRUE];
+        return;
+    }
+#endif
+
+    WebCoreThreadViolationCheck();
+
+    if (!_private->coreResource)
+        return;
+    _private->coreResource->ignoreWhenUnarchiving();
 }
 
 - (id)_initWithData:(NSData *)data 
@@ -281,6 +338,36 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
            response:(NSURLResponse *)response
            copyData:(BOOL)copyData
 {
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround()) {
+        // Maybe this could be done more cleanly with NSInvocation.
+        NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
+        if (data)
+            [arguments setObject:data forKey:@"data"];
+        if (URL)
+            [arguments setObject:URL forKey:@"URL"];
+        if (MIMEType)
+            [arguments setObject:MIMEType forKey:@"MIMEType"];
+        if (textEncodingName)
+            [arguments setObject:textEncodingName forKey:@"textEncodingName"];
+        if (frameName)
+            [arguments setObject:frameName forKey:@"frameName"];
+        if (response)
+            [arguments setObject:response forKey:@"response"];
+        if (copyData)
+            [arguments setObject:[NSNumber numberWithBool:YES] forKey:@"copyData"];
+        [self performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments waitUntilDone:TRUE];
+        NSException *exception = [[[arguments objectForKey:@"exception"] retain] autorelease];
+        id result = [[[arguments objectForKey:@"result"] retain] autorelease];
+        [arguments release];
+        if (exception)
+            [exception raise];
+        return result;
+    }
+#endif
+
+    WebCoreThreadViolationCheck();
+
     self = [super init];
     if (!self)
         return nil;
@@ -308,41 +395,96 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
                       copyData:NO];    
 }
 
+- (NSString *)_suggestedFilename
+{
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
+    if (!_private->coreResource)
+        return nil;
+    NSString *suggestedFilename = _private->coreResource->response().suggestedFilename();
+    return suggestedFilename;
+}
+
 - (NSFileWrapper *)_fileWrapperRepresentation
 {
-    SharedBuffer* coreData = _private->coreResource ? _private->coreResource->data() : 0;
-    NSData *data = coreData ? [coreData->createNSData() autorelease] : nil;
-    
-    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
-    NSString *preferredFilename = _private->coreResource ? (NSString *)_private->coreResource->response().suggestedFilename() : nil;
-    if (!preferredFilename || ![preferredFilename length]) {
-        NSURL *url = _private->coreResource ? (NSURL *)_private->coreResource->url() : nil;
-        NSString *mimeType = _private->coreResource ? (NSString *)_private->coreResource->mimeType() : nil;
-        preferredFilename = [url _webkit_suggestedFilenameWithMIMEType:mimeType];
-    }
-    
-    [wrapper setPreferredFilename:preferredFilename];
+    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[self data]] autorelease];
+    NSString *filename = [self _suggestedFilename];
+    if (!filename || ![filename length])
+        filename = [[self URL] _webkit_suggestedFilenameWithMIMEType:[self MIMEType]];
+    [wrapper setPreferredFilename:filename];
     return wrapper;
 }
 
 - (NSURLResponse *)_response
 {
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
     NSURLResponse *response = nil;
     if (_private->coreResource)
         response = _private->coreResource->response().nsURLResponse();
-    
     return response ? response : [[[NSURLResponse alloc] init] autorelease];        
 }
 
 - (NSString *)_stringValue
 {
-    WebCore::TextEncoding encoding(_private->coreResource ? (NSString *)_private->coreResource->textEncoding() : nil);
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
+    WebCore::TextEncoding encoding;
+    if (_private->coreResource)
+        encoding = _private->coreResource->textEncoding();
     if (!encoding.isValid())
         encoding = WindowsLatin1Encoding();
     
     SharedBuffer* coreData = _private->coreResource ? _private->coreResource->data() : 0;
-    
     return encoding.decode(reinterpret_cast<const char*>(coreData ? coreData->data() : 0), coreData ? coreData->size() : 0);
 }
 
 @end
+
+#ifdef MAIL_THREAD_WORKAROUND
+
+@implementation WebResource (WebMailThreadWorkaround)
+
++ (BOOL)_needMailThreadWorkaroundIfCalledOffMainThread
+{
+    static BOOL isOldMail = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_MAIL_THREAD_WORKAROUND)
+        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
+    return isOldMail;
+}
+
+- (void)_initWithArguments:(NSMutableDictionary *)arguments
+{
+    NSData *data = [arguments objectForKey:@"data"];
+    NSURL *URL = [arguments objectForKey:@"URL"];
+    NSString *MIMEType = [arguments objectForKey:@"MIMEType"];
+    NSString *textEncodingName = [arguments objectForKey:@"textEncodingName"];
+    NSString *frameName = [arguments objectForKey:@"frameName"];
+    NSURLResponse *response = [arguments objectForKey:@"response"];
+    bool copyData = [arguments objectForKey:@"copyData"];
+    @try {
+        id result = [self _initWithData:data URL:URL MIMEType:MIMEType textEncodingName:textEncodingName frameName:frameName response:response copyData:copyData];
+        if (result)
+            [arguments setObject:result forKey:@"result"];
+    } @catch(NSException *exception) {
+        [arguments setObject:exception forKey:@"exception"];
+    }
+}
+
+@end
+
+#endif

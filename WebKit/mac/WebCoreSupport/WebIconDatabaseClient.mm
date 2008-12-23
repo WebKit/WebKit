@@ -30,7 +30,6 @@
 
 #import "WebIconDatabaseInternal.h"
 
-#import <WebCore/FoundationExtras.h>
 #import <WebCore/PlatformString.h>
 
 

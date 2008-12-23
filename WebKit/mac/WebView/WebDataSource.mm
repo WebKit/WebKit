@@ -46,7 +46,6 @@
 #import "WebPDFRepresentation.h"
 #import "WebResourceInternal.h"
 #import "WebResourceLoadDelegate.h"
-#import "WebResourcePrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/FrameLoader.h>

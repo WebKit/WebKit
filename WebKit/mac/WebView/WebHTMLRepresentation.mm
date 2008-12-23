@@ -39,7 +39,6 @@
 #import "WebKitStatisticsPrivate.h"
 #import "WebNSAttributedStringExtras.h"
 #import "WebNSObjectExtras.h"
-#import "WebResourcePrivate.h"
 #import "WebView.h"
 #import <Foundation/NSURLResponse.h>
 #import <WebCore/Document.h>

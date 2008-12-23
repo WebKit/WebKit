@@ -26,31 +26,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebResourcePrivate.h"
-#import <wtf/PassRefPtr.h>
+#import "WebNSObjectExtras.h"
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
-#define MAIL_THREAD_WORKAROUND 1
-#endif
+@implementation NSObject (WebNSObjectExtras)
 
-namespace WebCore {
-    class ArchiveResource;
-}
-
-@interface WebResource (WebResourceInternal)
-- (id)_initWithCoreResource:(PassRefPtr<WebCore::ArchiveResource>)coreResource;
-- (WebCore::ArchiveResource*)_coreResource;
-@end
-
-#ifdef MAIL_THREAD_WORKAROUND
-
-@interface WebResource (WebMailThreadWorkaround)
-+ (BOOL)_needMailThreadWorkaroundIfCalledOffMainThread;
-@end
-
-inline bool needMailThreadWorkaround()
+- (void)_webkit_getPropertyWithArguments:(NSMutableDictionary *)arguments
 {
-    return !pthread_main_np() && [WebResource _needMailThreadWorkaroundIfCalledOffMainThread];
+    SEL selector = static_cast<SEL>([[arguments objectForKey:@"selector"] pointerValue]);
+    @try {
+        id result = [self performSelector:selector];
+        if (result)
+            [arguments setObject:result forKey:@"value"];
+    } @catch(NSException *exception) {
+        [arguments setObject:exception forKey:@"exception"];
+    }
 }
 
-#endif
+- (id)_webkit_getPropertyOnMainThread:(SEL)selector
+{
+    NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
+    [arguments setObject:[NSValue valueWithPointer:selector] forKey:@"selector"];
+    [self performSelectorOnMainThread:@selector(_webkit_getPropertyWithArguments:) withObject:arguments waitUntilDone:TRUE];
+    NSException *exception = [[[arguments objectForKey:@"exception"] retain] autorelease];
+    id value = [[[arguments objectForKey:@"value"] retain] autorelease];
+    [arguments release];
+    if (exception)
+        [exception raise];
+    return value;
+}
+
+@end

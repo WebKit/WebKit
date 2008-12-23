@@ -1,5 +1,75 @@
 2008-12-23  Darin Adler  <darin@apple.com>
 
+        Reviewed by Alexey Proskuryakov (a slightly earlier version).
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22976
+          crash due to Mail's use of WebArchive and WebResource on non-main thread
+
+        * Misc/WebKitLogging.h: Improved comments for ASSERT_MAIN_THREAD. Got rid of
+        WebKitRunningOnMainThread function, which was just a cover for pthread_main_np.
+        * Misc/WebKitLogging.m: Ditto.
+
+        * Misc/WebKitVersionChecks.h: Added a version after which we won't do the
+        main thread workaround.
+
+        * Misc/WebNSObjectExtras.h: Added a new method, _webkit_getPropertyOnMainThread:,
+        which performs a selector on the main thread, waits for it to complete, and then
+        returns the value on the caller thread.
+        * Misc/WebNSObjectExtras.mm: Added.
+
+        * WebView/WebArchive.mm:
+        (-[WebArchive init]): Added WebCoreThreadViolationCheck.
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]): Perform
+        initialization on main thread if needMailThreadWorkaround is true.
+        Also added WebCoreThreadViolationCheck.
+        (-[WebArchive initWithData:]): Added WebCoreThreadViolationCheck.
+        (-[WebArchive mainResource]): Get property on main thread if
+        needMailThreadWorkaround is true. Also added WebCoreThreadViolationCheck.
+        (-[WebArchive subresources]): Ditto.
+        (-[WebArchive subframeArchives]): Ditto.
+        (-[WebArchive data]): Ditto.
+        (-[WebArchive _initWithCoreLegacyWebArchive:]): Added WebCoreThreadViolationCheck.
+        (-[WebArchive _coreLegacyWebArchive]): Ditto.
+        (-[WebArchive _initWithArguments:]): Added. Used to implement the cross-thread
+        version of initWithMainResource above.
+
+        * WebView/WebResource.mm:
+        (-[WebResource initWithCoder:]): Added WebCoreThreadViolationCheck.
+        (-[WebResource data]): Get property on main thread if
+        needMailThreadWorkaround is true. Also added WebCoreThreadViolationCheck.
+        (-[WebResource URL]): Ditto.
+        (-[WebResource MIMEType]): Ditto.
+        (-[WebResource textEncodingName]): Ditto.
+        (-[WebResource frameName]): Ditto.
+        (-[WebResource _ignoreWhenUnarchiving]): Ditto.
+        (-[WebResource _initWithData:URL:MIMEType:textEncodingName:frameName:response:copyData:]):
+        Perform initialization on main thread if needMailThreadWorkaround is true.
+        Also added WebCoreThreadViolationCheck.
+        (-[WebResource _suggestedFilename]): Added. Helper for _fileWrapperRepresentation.
+        (-[WebResource _fileWrapperRepresentation]): Rewrote to use methods instead of
+        getting at coreResource directly.
+        (-[WebResource _response]): Get property on main thread if
+        needMailThreadWorkaround is true. Also added WebCoreThreadViolationCheck.
+        (-[WebResource _stringValue]): Ditto.
+        (+[WebResource _needMailThreadWorkaroundIfCalledOffMainThread]): Added.
+        (-[WebResource _initWithArguments:]): Added. Used to implement the cross-thread
+        version of _initWithData above.
+
+        * WebView/WebResourceInternal.h: Changed to include WebResourcePrivate.h since internal
+        clients have access to the SPI as well as the API. Added definition of MAIL_THREAD_WORKAROUND
+        and the needMainThreadWorkaround helper function.
+
+        * Misc/WebIconDatabase.mm: Removed include of now-defunct FoundationExtras.h
+        file. This probably fixes clean builds.
+        * WebCoreSupport/WebIconDatabaseClient.mm: Ditto.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: Removed include of WebResourcePrivate.h,
+        since it's not actually used.
+        * WebView/WebDataSource.mm: Ditto.
+        * WebView/WebHTMLRepresentation.mm: Ditto.
+
+2008-12-23  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=22979

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,14 @@
 #import "WebArchiveInternal.h"
 
 #import "WebKitLogging.h"
+#import "WebNSObjectExtras.h"
 #import "WebResourceInternal.h"
-#import "WebResourcePrivate.h"
 #import "WebTypesInternal.h"
-
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <runtime/InitializeThreading.h>
 
 using namespace WebCore;
 
@@ -47,8 +47,7 @@ static NSString * const WebMainResourceKey = @"WebMainResource";
 static NSString * const WebSubresourcesKey = @"WebSubresources";
 static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 
-@interface WebArchivePrivate : NSObject
-{
+@interface WebArchivePrivate : NSObject {
 @public
     WebResource *cachedMainResource;
     NSArray *cachedSubresources;
@@ -75,8 +74,9 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 - (id)init
 {
     self = [super init];
-    if (self)
-        coreArchive = LegacyWebArchive::create().releaseRef();
+    if (!self)
+        return nil;
+    coreArchive = LegacyWebArchive::create().releaseRef();
     return self;
 }
 
@@ -87,9 +87,7 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
         [self release];
         return nil;
     }
-    
     coreArchive = _coreArchive.releaseRef();
-    
     return self;
 }
 
@@ -137,6 +135,8 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 
 - (id)init
 {
+    WebCoreThreadViolationCheck();
+
     self = [super init];
     if (!self)
         return nil;
@@ -158,6 +158,28 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
 {
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround()) {
+        // Maybe this could be done more cleanly with NSInvocation.
+        NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
+        if (mainResource)
+            [arguments setObject:mainResource forKey:@"mainResource"];
+        if (subresources)
+            [arguments setObject:subresources forKey:@"subresources"];
+        if (subframeArchives)
+            [arguments setObject:subframeArchives forKey:@"subframeArchives"];
+        [self performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments waitUntilDone:TRUE];
+        NSException *exception = [[[arguments objectForKey:@"exception"] retain] autorelease];
+        id result = [[[arguments objectForKey:@"result"] retain] autorelease];
+        [arguments release];
+        if (exception)
+            [exception raise];
+        return result;
+    }
+#endif
+
+    WebCoreThreadViolationCheck();
+
     self = [super init];
     if (!self)
         return nil;
@@ -209,6 +231,8 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (id)initWithData:(NSData *)data
 {
+    WebCoreThreadViolationCheck();
+
     self = [super init];
     if (!self)
         return nil;
@@ -273,6 +297,13 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (WebResource *)mainResource
 {
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
     // Currently from WebKit API perspective, WebArchives are entirely immutable once created
     // If they ever become mutable, we'll need to rethink this. 
     if (!_private->cachedMainResource) {
@@ -286,6 +317,13 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (NSArray *)subresources
 {
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
     // Currently from WebKit API perspective, WebArchives are entirely immutable once created
     // If they ever become mutable, we'll need to rethink this.     
     if (!_private->cachedSubresources) {
@@ -311,6 +349,13 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (NSArray *)subframeArchives
 {
+#ifdef MAIL_THREAD_WORKAROUND
+    if (needMailThreadWorkaround())
+        return [self _webkit_getPropertyOnMainThread:_cmd];
+#endif
+
+    WebCoreThreadViolationCheck();
+
     // Currently from WebKit API perspective, WebArchives are entirely immutable once created
     // If they ever become mutable, we'll need to rethink this.  
     if (!_private->cachedSubframeArchives) {
@@ -334,6 +379,8 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (NSData *)data
 {
+    WebCoreThreadViolationCheck();
+
 #if !LOG_DISABLED
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
 #endif
@@ -355,6 +402,8 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (id)_initWithCoreLegacyWebArchive:(PassRefPtr<WebCore::LegacyWebArchive>)coreLegacyWebArchive
 {
+    WebCoreThreadViolationCheck();
+
     self = [super init];
     if (!self)
         return nil;
@@ -370,7 +419,31 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (WebCore::LegacyWebArchive *)_coreLegacyWebArchive
 {
+    WebCoreThreadViolationCheck();
+
     return [_private coreArchive];
 }
 
 @end
+
+#ifdef MAIL_THREAD_WORKAROUND
+
+@implementation WebArchive (WebMailThreadWorkaround)
+
+- (void)_initWithArguments:(NSMutableDictionary *)arguments
+{
+    WebResource *mainResource = [arguments objectForKey:@"mainResource"];
+    NSArray *subresources = [arguments objectForKey:@"subresources"];
+    NSArray *subframeArchives = [arguments objectForKey:@"subframeArchives"];
+    @try {
+        id result = [self initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives];
+        if (result)
+            [arguments setObject:result forKey:@"result"];
+    } @catch(NSException *exception) {
+        [arguments setObject:exception forKey:@"exception"];
+    }
+}
+
+@end
+
+#endif

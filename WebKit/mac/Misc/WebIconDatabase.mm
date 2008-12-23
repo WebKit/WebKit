@@ -37,7 +37,6 @@
 #import "WebNSURLExtras.h"
 #import "WebPreferences.h"
 #import "WebTypesInternal.h"
-#import <WebCore/FoundationExtras.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/Image.h>
 #import <WebCore/IntSize.h>

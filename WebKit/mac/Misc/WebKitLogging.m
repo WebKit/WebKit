@@ -99,11 +99,6 @@ void WebKitInitializeLoggingChannelsIfNecessary()
     initializeLogChannel(&WebKitLogTextInput);
 }
 
-BOOL WebKitRunningOnMainThread()
-{
-    return pthread_main_np() != 0;
-}
-
 void ReportDiscardedDelegateException(SEL delegateSelector, id exception)
 {
     if ([exception isKindOfClass:[NSException class]])
