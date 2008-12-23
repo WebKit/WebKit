@@ -65,10 +65,14 @@ ScriptExecutionContext* WorkerContext::scriptExecutionContext() const
     return const_cast<WorkerContext*>(this);
 }
 
-
 const KURL& WorkerContext::virtualURL() const
 {
     return m_url;
+}
+
+KURL WorkerContext::virtualCompleteURL(const String& url) const
+{
+    return completeURL(url);
 }
 
 KURL WorkerContext::completeURL(const String& url) const

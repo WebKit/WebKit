@@ -27,6 +27,7 @@
 #ifndef ScriptExecutionContext_h
 #define ScriptExecutionContext_h
 
+#include "KURL.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
@@ -36,7 +37,6 @@ namespace WebCore {
 
     class ActiveDOMObject;
     class MessagePort;
-    class KURL;
     class SecurityOrigin;
     class String;
 
@@ -49,6 +49,7 @@ namespace WebCore {
         virtual bool isWorkerContext() const { return false; }
 
         const KURL& url() const { return virtualURL(); }
+        KURL completeURL(const String& url) const { return virtualCompleteURL(url); }
 
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
@@ -92,6 +93,7 @@ namespace WebCore {
 
     private:
         virtual const KURL& virtualURL() const = 0;
+        virtual KURL virtualCompleteURL(const String&) const = 0;
 
         RefPtr<SecurityOrigin> m_securityOrigin;
 

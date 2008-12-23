@@ -1,3 +1,37 @@
+2008-12-22  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test case for bug 11106: Some XMLHttpRequest URI resolving tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=11106
+
+        These tests are borrowed from Opera's test case suite (http://tc.labs.opera.com/apis/XMLHttpRequest).
+        They correspond to open/004.html - open/010.html which were previously failing.
+
+        * http/tests/xmlhttprequest/resources/test-uri-resolution.txt: Added.
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-004-iframe.html: Added.
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-005-iframe.html: Added.
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-006-iframe.html: Added.
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-007-iframe.html: Added.
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-008-iframe.html: Added.
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-009-iframe.html: Added.
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-010-iframe.html: Added.
+        * http/tests/xmlhttprequest/test-uri-resolution.txt: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-004-expected.txt: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-004.html: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-005-expected.txt: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-005.html: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-006-expected.txt: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-006.html: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-007-expected.txt: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-007.html: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-008-expected.txt: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-008.html: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-009-expected.txt: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-009.html: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-010-expected.txt: Added.
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-010.html: Added.
+
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

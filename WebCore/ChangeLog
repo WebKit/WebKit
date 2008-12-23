@@ -1,3 +1,38 @@
+2008-12-22  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 11106: Some XMLHttpRequest URI resolving tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=11106
+
+        Use the ScriptExecutionContext to resolve the URI when calling open in JavaScript.
+        The previous code was using the containing DOMWindow to do so which would fail for
+        XMLHttpRequest object being passed between iframe.
+
+        Tests: http/tests/xmlhttprequest/uri-resolution-opera-open-004.html
+               http/tests/xmlhttprequest/uri-resolution-opera-open-005.html
+               http/tests/xmlhttprequest/uri-resolution-opera-open-006.html
+               http/tests/xmlhttprequest/uri-resolution-opera-open-007.html
+               http/tests/xmlhttprequest/uri-resolution-opera-open-008.html
+               http/tests/xmlhttprequest/uri-resolution-opera-open-009.html
+               http/tests/xmlhttprequest/uri-resolution-opera-open-010.html
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open): Use the ScriptExecutionContext
+        to resolve the URL.
+
+        * dom/Document.cpp:
+        (WebCore::Document::virtualCompleteURL): Virtual method added to
+        avoid performance hit on completeURL call.
+
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::completeURL): Non-virtual method
+        that wrap the call to the virtual call.
+        * dom/WorkerContext.cpp:
+        (WebCore::WorkerContext::virtualCompleteURL): Pure virtual method.
+        * dom/WorkerContext.h:
+
 2008-12-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

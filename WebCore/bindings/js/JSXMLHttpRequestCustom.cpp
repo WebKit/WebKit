@@ -94,18 +94,13 @@ JSValue* JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
     if (args.size() < 2)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    if (!frame)
-        return jsUndefined();
-    const KURL& url = frame->loader()->completeURL(args.at(exec, 1)->toString(exec));
-
-    ExceptionCode ec = 0;
-
+    const KURL& url = impl()->scriptExecutionContext()->completeURL(args.at(exec, 1)->toString(exec));
     String method = args.at(exec, 0)->toString(exec);
     bool async = true;
     if (args.size() >= 3)
         async = args.at(exec, 2)->toBoolean(exec);
 
+    ExceptionCode ec = 0;
     if (args.size() >= 4 && !args.at(exec, 3)->isUndefined()) {
         String user = valueToStringWithNullCheck(exec, args.at(exec, 3));
 

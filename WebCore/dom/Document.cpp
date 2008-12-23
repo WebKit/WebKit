@@ -1733,6 +1733,11 @@ const KURL& Document::virtualURL() const
     return m_url;
 }
 
+KURL Document::virtualCompleteURL(const String& url) const
+{
+    return completeURL(url);
+}
+
 void Document::setURL(const KURL& url)
 {
     const KURL& newURL = url.isEmpty() ? blankURL() : url;

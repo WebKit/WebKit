@@ -32,7 +32,6 @@
 #include "AtomicStringHash.h"
 #include "EventListener.h"
 #include "EventTarget.h"
-#include "KURL.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerScriptController.h"
 #include <wtf/OwnPtr.h>
@@ -61,7 +60,7 @@ namespace WebCore {
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
         const KURL& url() const { return m_url; }
-        virtual KURL completeURL(const String&) const;
+        KURL completeURL(const String&) const;
 
         WorkerLocation* location() const { return m_location.get(); }
         WorkerNavigator* navigator() const;
@@ -102,6 +101,7 @@ namespace WebCore {
         WorkerContext(const KURL&, const String&, WorkerThread*);
 
         virtual const KURL& virtualURL() const;
+        virtual KURL virtualCompleteURL(const String&) const;
 
         KURL m_url;
         String m_userAgent;
