@@ -29,6 +29,7 @@
 #include "ExceptionCode.h"
 #include "Node.h"
 #include "TextEncoding.h"
+#include <wtf/Deque.h>
 
 namespace WebCore {
 
@@ -212,14 +213,12 @@ KURL CSSStyleSheet::completeURL(const String& url) const
 
 void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
 {
-    typedef ListHashSet<CSSStyleSheet*> CSSStyleSheetList;
-    CSSStyleSheetList styleSheetList;
-    styleSheetList.add(this);
+    Deque<CSSStyleSheet*> styleSheetQueue;
+    styleSheetQueue.append(this);
 
-    while (styleSheetList.size() > 0) {
-        CSSStyleSheetList::iterator it = styleSheetList.begin();
-        CSSStyleSheet* styleSheet = *it;
-        styleSheetList.remove(it);
+    while (!styleSheetQueue.isEmpty()) {
+        CSSStyleSheet* styleSheet = styleSheetQueue.first();
+        styleSheetQueue.removeFirst();
 
         RefPtr<CSSRuleList> ruleList = styleSheet->cssRules();
 
@@ -227,7 +226,7 @@ void CSSStyleSheet::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
             CSSRule* rule = ruleList->item(i);
             if (rule->isImportRule()) {
                 if (CSSStyleSheet* ruleStyleSheet = static_cast<CSSImportRule*>(rule)->styleSheet())
-                    styleSheetList.add(ruleStyleSheet);
+                    styleSheetQueue.append(ruleStyleSheet);
             }
             rule->addSubresourceStyleURLs(urls);
         }

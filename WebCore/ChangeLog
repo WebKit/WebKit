@@ -1,3 +1,13 @@
+2008-12-22  David Kilzer  <ddkilzer@apple.com>
+
+        Use Deque in CSSStyleSheet::addSubresourceStyleURLs()
+
+        Reviewed by Darin Adler.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addSubresourceStyleURLs): Replaced
+        use of ListHashSet with more efficient Deque.
+
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Sam Weinig.
