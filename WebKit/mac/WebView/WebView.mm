@@ -3266,7 +3266,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)drawsBackground
 {
-    return _private->drawsBackground;
+    // This method can be called beneath -[NSView dealloc] after we have cleared _private,
+    // indirectly via -[WebFrameView viewDidMoveToWindow].
+    return !_private || _private->drawsBackground;
 }
 
 - (void)setShouldUpdateWhileOffscreen:(BOOL)updateWhileOffscreen
