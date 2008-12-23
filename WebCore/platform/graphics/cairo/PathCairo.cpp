@@ -193,9 +193,10 @@ FloatRect Path::boundingRect() const
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
 {
     cairo_t* cr = platformPath()->m_cr;
-    GraphicsContext gc(cr);
-    if (applier)
+    if (applier) {
+        GraphicsContext gc(cr);
         applier->strokeStyle(&gc);
+    }
 
     double x0, x1, y0, y1;
     cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);

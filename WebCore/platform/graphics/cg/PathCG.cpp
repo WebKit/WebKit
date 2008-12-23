@@ -41,6 +41,31 @@
 
 namespace WebCore {
 
+static size_t putBytesNowhere(void*, const void*, size_t count)
+{
+    return count;
+}
+
+static CGContextRef createScratchContext()
+{
+    CGDataConsumerCallbacks callbacks = { putBytesNowhere, 0 };
+    CGDataConsumerRef consumer = CGDataConsumerCreate(0, &callbacks);
+    CGContextRef context = CGPDFContextCreate(consumer, 0, 0);
+    CGDataConsumerRelease(consumer);
+
+    CGFloat black[4] = { 0, 0, 0, 1 };
+    CGContextSetFillColor(context, black);
+    CGContextSetStrokeColor(context, black);
+
+    return context;
+}
+
+static inline CGContextRef scratchContext()
+{
+    static CGContextRef context = createScratchContext();
+    return context;
+}
+
 Path::Path()
     : m_path(CGPathCreateMutable())
 {
@@ -62,26 +87,6 @@ Path& Path::operator=(const Path& other)
     CGPathRelease(m_path);
     m_path = path;
     return *this;
-}
-
-static CGContextRef createScratchContext()
-{
-    CFMutableDataRef empty = CFDataCreateMutable(NULL, 0);
-    CGDataConsumerRef consumer = CGDataConsumerCreateWithCFData(empty);
-    CGContextRef contextRef = CGPDFContextCreate(consumer, NULL, NULL);
-    CGDataConsumerRelease(consumer);
-    CFRelease(empty);
-
-    CGFloat black[4] = {0, 0, 0, 1};
-    CGContextSetFillColor(contextRef, black);
-    CGContextSetStrokeColor(contextRef, black);
-    return contextRef;
-}
-
-static inline CGContextRef scratchContext()
-{
-    static CGContextRef context = createScratchContext();
-    return context;
 }
 
 static void copyClosingSubpathsApplierFunction(void* info, const CGPathElement* element)
@@ -152,16 +157,13 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
     CGContextBeginPath(context);
     CGContextAddPath(context, platformPath());
 
-    GraphicsContext gc(context);
-    if (applier)
-        applier->strokeStyle(&gc);
+    if (applier) {
+        GraphicsContext graphicsContext(context);
+        applier->strokeStyle(&graphicsContext);
+    }
 
     CGContextReplacePathWithStrokedPath(context);
-    if (CGContextIsPathEmpty(context)) {
-        CGContextRestoreGState(context);
-        return FloatRect();
-    }
-    CGRect box = CGContextGetPathBoundingBox(context);
+    CGRect box = CGContextIsPathEmpty(context) ? CGRectZero : CGContextGetPathBoundingBox(context);
     CGContextRestoreGState(context);
 
     return box;
