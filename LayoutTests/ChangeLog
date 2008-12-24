@@ -1,3 +1,26 @@
+2008-12-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=21910
+        
+        Re-create expected images after fixing painting issue with SVGImage.
+
+        * platform/mac/fast/backgrounds/svg-as-background-1-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-1-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-2-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-2-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-3-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-3-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-mask-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-mask-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-05-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-05-b-expected.png:
+
 2008-12-22  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

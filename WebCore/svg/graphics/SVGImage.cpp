@@ -150,7 +150,9 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
         context->beginTransparencyLayer(1.0f);
     context->translate(dstRect.location().x(), dstRect.location().y());
     context->scale(FloatSize(dstRect.width()/srcRect.width(), dstRect.height()/srcRect.height()));
-    
+
+    m_frame->view()->resize(size());
+
     if (m_frame->view()->needsLayout())
         m_frame->view()->layout();
     m_frame->view()->paint(context, enclosingIntRect(srcRect));

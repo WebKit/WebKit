@@ -1,3 +1,15 @@
+2008-12-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=21910
+        
+        Fix SVGImage painting by ensuring that the SVGImage resizes its FrameView correctly.
+        Otherwise the FrameView is left at 0x0, and nothing paints.
+        
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+
 2008-12-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
