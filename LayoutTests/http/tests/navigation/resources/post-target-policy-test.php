@@ -20,7 +20,7 @@ function loaded()
 </script>
 </head>
 <body onload="loaded();">
-<form id="testform" action="goback-with-policydelegate.html" method="post">
+<form id="testform" action="goback-with-policydelegate.php" method="post">
 <input id="somefield" type="text" value="form data">
 </form>
 
