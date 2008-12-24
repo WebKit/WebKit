@@ -23,20 +23,7 @@
 #include "config.h"
 #include "EventNames.h"
 
-#include <wtf/Threading.h>
-
-#if ENABLE(WORKERS)
-#include <wtf/ThreadSpecific.h>
-using namespace WTF;
-#endif
-
 namespace WebCore {
-
-#if ENABLE(WORKERS)
-static ThreadSpecific<EventNames>* staticEventNames;
-#else
-static EventNames* staticEventNames;
-#endif
 
 #define INITIALIZE_EVENT_NAME(name) \
     , name##Event(#name)
@@ -44,31 +31,6 @@ EventNames::EventNames()
     : dummy(0)
 DOM_EVENT_NAMES_FOR_EACH(INITIALIZE_EVENT_NAME)
 {
-}
-
-EventNames& eventNames()
-{
-#if ENABLE(WORKERS)
-    return **staticEventNames;
-#else
-    return *staticEventNames;
-#endif
-}
-
-void EventNames::init()
-{
-    if (!staticEventNames) {
-        // Initialization is not thread safe, so this function must be called from the main thread first.
-        ASSERT(isMainThread());
-
-        AtomicString::init();
-
-#if ENABLE(WORKERS)
-        staticEventNames = new ThreadSpecific<EventNames>;
-#else
-        staticEventNames = new EventNames;
-#endif
-    }
 }
 
 }

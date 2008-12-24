@@ -31,11 +31,10 @@
 #include "CharacterNames.h"
 #include "CharsetData.h"
 #include "PlatformString.h"
+#include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>
 #include <wtf/Threading.h>
-#include <wtf/ThreadSpecific.h>
 
-using namespace WTF;
 using std::auto_ptr;
 using std::min;
 
@@ -46,23 +45,9 @@ namespace WebCore {
 
 const size_t ConversionBufferSize = 16384;
 
-struct TECConverterWrapper {
-    TECConverterWrapper() : converter(0), encoding(invalidEncoding) { }
-    ~TECConverterWrapper() { if (converter) TECDisposeConverter(converter); }
-
-    TECObjectRef converter;
-    TECTextEncodingID encoding;
-};
-
 static TECConverterWrapper& cachedConverterTEC()
 {
-#if ENABLE(WORKERS)
-    AtomicallyInitializedStatic(ThreadSpecific<TECConverterWrapper>*, cachedConverter = new ThreadSpecific<TECConverterWrapper>);
-    return **cachedConverter;
-#else
-    TECConverterWrapper* cachedConverter = new TECConverterWrapper;
-    return *cachedConverter;
-#endif
+    return threadGlobalData().cachedConverterTEC();
 }
 
 void TextCodecMac::registerEncodingNames(EncodingNameRegistrar registrar)

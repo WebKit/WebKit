@@ -3372,6 +3372,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\ThreadGlobalData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ThreadGlobalData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Timer.cpp"
 				>
 			</File>

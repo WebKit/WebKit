@@ -114,7 +114,6 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
     : d(new FramePrivate(page, parentFromOwnerElement(ownerElement), this, ownerElement, frameLoaderClient))
 {
     AtomicString::init();
-    EventNames::init();
     HTMLNames::init();
     QualifiedName::init();
     MediaFeatureNames::init();

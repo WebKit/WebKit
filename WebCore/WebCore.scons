@@ -711,6 +711,7 @@ sources['platform'] = [
     'platform/ScrollView.cpp',
     'platform/SharedBuffer.cpp',
     'platform/Theme.cpp',
+    'platform/ThreadGlobalData.cpp',
     'platform/Timer.cpp',
     'platform/Widget.cpp'
 ]

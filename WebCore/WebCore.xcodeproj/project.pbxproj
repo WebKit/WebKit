@@ -4295,6 +4295,8 @@
 		E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */; };
 		E1F1E82F0C3C2BB9006DB391 /* XSLTExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */; };
 		E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */; };
+		E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */; };
 		E415F1690D9A165D0033CE97 /* DOMElementTimeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */; };
 		E415F1840D9A1A830033CE97 /* ElementTimeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E415F1830D9A1A830033CE97 /* ElementTimeControl.h */; };
 		E44613A10CD6331000FADA75 /* HTMLAudioElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */; };
@@ -9028,6 +9030,8 @@
 		E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValueMappings.h; sourceTree = "<group>"; };
 		E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTExtensions.cpp; sourceTree = "<group>"; };
 		E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTExtensions.h; sourceTree = "<group>"; };
+		E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGlobalData.h; sourceTree = "<group>"; };
+		E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGlobalData.cpp; sourceTree = "<group>"; };
 		E415F10C0D9A05870033CE97 /* ElementTimeControl.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ElementTimeControl.idl; sourceTree = "<group>"; };
 		E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMElementTimeControl.h; sourceTree = "<group>"; };
 		E415F1830D9A1A830033CE97 /* ElementTimeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementTimeControl.h; sourceTree = "<group>"; };
@@ -13590,6 +13594,8 @@
 				BCE658FE0EA9248A007E4533 /* Theme.h */,
 				BCE659A80EA927B9007E4533 /* ThemeTypes.h */,
 				51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */,
+				E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */,
+				E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */,
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
 				1419D2C40CEA6F6100FF507A /* TreeShared.h */,
@@ -16489,6 +16495,7 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
+				E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18445,6 +18452,7 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

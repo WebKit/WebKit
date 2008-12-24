@@ -30,17 +30,13 @@
 #include "CharacterNames.h"
 #include "CString.h"
 #include "PlatformString.h"
+#include "ThreadGlobalData.h"
 #include <unicode/ucnv.h>
 #include <unicode/ucnv_cb.h>
 #include <wtf/Assertions.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 
-#if ENABLE(WORKERS)
-#include <wtf/ThreadSpecific.h>
-#endif
-
-using namespace WTF;
 using std::auto_ptr;
 using std::min;
 
@@ -48,22 +44,15 @@ namespace WebCore {
 
 const size_t ConversionBufferSize = 16384;
 
-struct ICUConverterWrapper {
-    ICUConverterWrapper() : converter(0) { }
-    ~ICUConverterWrapper() { if (converter) ucnv_close(converter); }
-
-    UConverter* converter;
-};
+ICUConverterWrapper::~ICUConverterWrapper()
+{
+    if (converter)
+        ucnv_close(converter);
+}
 
 static UConverter*& cachedConverterICU()
 {
-#if ENABLE(WORKERS)
-    AtomicallyInitializedStatic(ThreadSpecific<ICUConverterWrapper>*, cachedConverter = new ThreadSpecific<ICUConverterWrapper>);
-    return (**cachedConverter).converter;
-#else
-    static UConverter* cachedConverter;
-    return cachedConverter;
-#endif
+    return threadGlobalData().cachedConverterICU().converter;
 }
 
 static auto_ptr<TextCodec> newTextCodecICU(const TextEncoding& encoding, const void*)

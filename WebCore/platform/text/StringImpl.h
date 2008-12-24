@@ -37,10 +37,6 @@ typedef const struct __CFString * CFStringRef;
 @class NSString;
 #endif
 
-namespace WTF {
-    template<typename> class ThreadSpecific;
-}
-
 namespace WebCore {
 
 class AtomicString;
@@ -59,7 +55,7 @@ class StringImpl : public RefCounted<StringImpl> {
     friend struct HashAndCharactersTranslator;
     friend struct UCharBufferTranslator;
 private:
-    friend class WTF::ThreadSpecific<StringImpl>;
+    friend class ThreadGlobalData;
     StringImpl();
     StringImpl(const UChar*, unsigned length);
     StringImpl(const char*, unsigned length);

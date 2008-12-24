@@ -1,3 +1,53 @@
+2008-12-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22980
+        WebCore uses more thread specific keys than it really needs
+
+        Consolidated ThreadSpecific data into a single ThreadGlobalData structure.
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * dom/EventNames.cpp:
+        * dom/EventNames.h:
+        (WebCore::eventNames):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * platform/ThreadGlobalData.cpp: Added.
+        (WebCore::threadGlobalData):
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::~ThreadGlobalData):
+        * platform/ThreadGlobalData.h: Added.
+        (WebCore::ThreadGlobalData::eventNames):
+        (WebCore::ThreadGlobalData::emptyString):
+        (WebCore::ThreadGlobalData::atomicStringTable):
+        (WebCore::ThreadGlobalData::cachedConverterICU):
+        (WebCore::ThreadGlobalData::cachedConverterTEC):
+        * platform/text/AtomicString.cpp:
+        (WebCore::stringTable):
+        (WebCore::AtomicString::add):
+        (WebCore::AtomicString::remove):
+        (WebCore::AtomicString::find):
+        (WebCore::AtomicString::init):
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::empty):
+        * platform/text/StringImpl.h:
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::ICUConverterWrapper::~ICUConverterWrapper):
+        (WebCore::cachedConverterICU):
+        * platform/text/TextCodecICU.h:
+        (WebCore::ICUConverterWrapper::ICUConverterWrapper):
+        * platform/text/mac/TextCodecMac.cpp:
+        (WebCore::cachedConverterTEC):
+        * platform/text/mac/TextCodecMac.h:
+        (WebCore::TECConverterWrapper::TECConverterWrapper):
+        (WebCore::TECConverterWrapper::~TECConverterWrapper):
+
 2008-12-23  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

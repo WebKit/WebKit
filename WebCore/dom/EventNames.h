@@ -23,10 +23,7 @@
 #define EventNames_h
 
 #include "AtomicString.h"
-
-namespace WTF {
-    template<typename> class ThreadSpecific;
-}
+#include "ThreadGlobalData.h"
 
 namespace WebCore {
 
@@ -132,20 +129,20 @@ namespace WebCore {
 // end of DOM_EVENT_NAMES_FOR_EACH
 
     class EventNames {
-        friend class WTF::ThreadSpecific<EventNames>;
-
-        EventNames();
         int dummy; // Needed to make initialization macro work.
 
     public:
-        static void init();
+        EventNames();
 
         #define DOM_EVENT_NAMES_DECLARE(name) AtomicString name##Event;
         DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_DECLARE)
         #undef DOM_EVENT_NAMES_DECLARE
     };
 
-    EventNames& eventNames();
+    inline EventNames& eventNames()
+    {
+        return threadGlobalData().eventNames();
+    }
 
 }
 

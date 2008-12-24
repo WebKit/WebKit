@@ -64,6 +64,16 @@ namespace WebCore {
         mutable bool m_needsGBKFallbacks;
     };
 
+    struct ICUConverterWrapper {
+        ICUConverterWrapper()
+            : converter(0)
+        {
+        }
+        ~ICUConverterWrapper();
+
+        UConverter* converter;
+    };
+
 } // namespace WebCore
 
 #endif // TextCodecICU_h
