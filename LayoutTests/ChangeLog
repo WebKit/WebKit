@@ -5,7 +5,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=22982
         http/tests/navigation/post-goback-repost-policy.html fails on Tiger
 
-        Change resources that are accessed with POST form .html to .php. I don't know why Apache 2.0
+        Change resources that are accessed with POST from .html to .php. I don't know why Apache 2.0
         had no problem with this.
 
         * http/tests/navigation/post-goback-repost-policy.html:
