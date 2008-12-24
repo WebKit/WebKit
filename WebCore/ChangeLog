@@ -1,3 +1,11 @@
+2008-12-24  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix to find addSubresourceURL
+
+        This is needed to compile on WebKit/Gtk+
+
+        * css/CSSFontFaceSrcValue.cpp:
+
 2008-12-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
