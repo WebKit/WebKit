@@ -1,3 +1,20 @@
+2008-12-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Oliver Hunt
+
+        https://bugs.webkit.org/show_bug.cgi?id=21910
+        
+        Update more svg-as-image test results affected by the fix
+        for SVGImage drawing.
+        
+        * platform/mac/fast/images/svg-as-background-expected.checksum:
+        * platform/mac/fast/images/svg-as-background-expected.png:
+        * platform/mac/fast/images/svg-as-image-expected.checksum:
+        * platform/mac/fast/images/svg-as-image-expected.png:
+        * platform/mac/fast/images/svg-as-relative-image-expected.checksum:
+        * platform/mac/fast/images/svg-as-relative-image-expected.png:
+        * transforms/2d/compound-transforms-vs-containers.html:
+
 2008-12-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.
