@@ -1,3 +1,11 @@
+2008-12-23  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * WebCore.xcodeproj/project.pbxproj: CSSPropertyNames.h is a generated file so it needs to be explicitly copied
+        into the PrivateHeaders directory, rather than relying on the automatic copying of headers which runs before the
+        derived sources are generated.
+
 2008-12-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
