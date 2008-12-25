@@ -55,7 +55,7 @@ ApplicationCache* DOMApplicationCache::associatedCache() const
     if (!m_frame)
         return 0;
  
-    return m_frame->loader()->documentLoader()->topLevelApplicationCache();
+    return m_frame->loader()->documentLoader()->applicationCache();
 }
 
 unsigned short DOMApplicationCache::status() const

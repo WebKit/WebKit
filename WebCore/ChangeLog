@@ -1,3 +1,33 @@
+2008-12-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22993
+        Application cache shouldn't be inherited by subframes
+
+        <rdar://problem/6284708> AppCache crashes in ApplicationCacheResource::addType()
+        This crash happened because main resource for subframe was looked up in top frame's
+        appcache. If not for the spec change, it could have been fixed by preventing the load
+        altogether.
+
+        Test: http/tests/appcache/foreign-iframe-main.html
+        I intend to write additional tests for the behavior change.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::shouldLoadResourceFromApplicationCache):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::applicationCache):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::load):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::associatedCache):
+        Removed DocumentLoader::topLevelApplicationCache(), and changed callers accordingly.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        Removed checks for the frame being top-level one, now that subframes are cached independently.
+
 2008-12-25  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver Hunt.

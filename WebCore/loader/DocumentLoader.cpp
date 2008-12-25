@@ -852,20 +852,6 @@ void DocumentLoader::setApplicationCache(PassRefPtr<ApplicationCache> applicatio
     m_applicationCache = applicationCache;
 }
 
-ApplicationCache* DocumentLoader::topLevelApplicationCache() const
-{
-    if (!m_frame)
-        return 0;
-    
-    if (m_applicationCache)
-        return m_applicationCache.get();
-    
-    if (Page* page = m_frame->page())
-        return page->mainFrame()->loader()->documentLoader()->applicationCache();
-    
-    return 0;
-}
-
 ApplicationCache* DocumentLoader::mainResourceApplicationCache() const
 {
     if (m_mainResourceApplicationCache)
@@ -877,7 +863,7 @@ ApplicationCache* DocumentLoader::mainResourceApplicationCache() const
 
 bool DocumentLoader::shouldLoadResourceFromApplicationCache(const ResourceRequest& request, ApplicationCacheResource*& resource)
 {
-    ApplicationCache* cache = topLevelApplicationCache();    
+    ApplicationCache* cache = applicationCache();
     if (!cache)
         return false;
     

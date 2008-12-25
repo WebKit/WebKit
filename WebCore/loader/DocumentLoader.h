@@ -205,7 +205,6 @@ namespace WebCore {
         
         void setApplicationCache(PassRefPtr<ApplicationCache> applicationCache);
         ApplicationCache* applicationCache() const { return m_applicationCache.get(); }
-        ApplicationCache* topLevelApplicationCache() const;
 
         ApplicationCache* mainResourceApplicationCache() const;
 #endif

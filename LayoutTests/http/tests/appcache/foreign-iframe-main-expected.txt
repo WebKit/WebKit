@@ -1,0 +1,5 @@
+Test for <rdar://problem/6284708> AppCache crashes in ApplicationCacheResource::addType().
+
+cached
+SUCCESS
+

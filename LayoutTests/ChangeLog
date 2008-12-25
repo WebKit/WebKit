@@ -1,3 +1,18 @@
+2008-12-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22993
+        Application cache shouldn't be inherited by subframes
+
+        <rdar://problem/6284708> AppCache crashes in ApplicationCacheResource::addType()
+
+        * http/tests/appcache/foreign-iframe-main-expected.txt: Added.
+        * http/tests/appcache/foreign-iframe-main.html: Added.
+        * http/tests/appcache/resources/foreign-iframe-subresource.js: Added.
+        * http/tests/appcache/resources/foreign-iframe.html: Added.
+        * http/tests/appcache/resources/foreign-iframe.manifest: Added.
+
 2008-12-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Oliver Hunt
