@@ -58,7 +58,8 @@ void CachedCSSStyleSheet::addClient(CachedResourceClient *c)
     
 void CachedCSSStyleSheet::allClientsRemoved()
 {
-    makePurgeable(true);
+    if (isSafeToMakePurgeable())
+        makePurgeable(true);
 }
 
 void CachedCSSStyleSheet::setEncoding(const String& chs)

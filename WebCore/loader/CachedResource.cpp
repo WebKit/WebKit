@@ -316,10 +316,15 @@ bool CachedResource::mustRevalidate(CachePolicy cachePolicy) const
     return isExpired() || m_response.cacheControlContainsNoCache();
 }
 
+bool CachedResource::isSafeToMakePurgeable() const
+{ 
+    return !hasClients() && !m_isBeingRevalidated && !m_resourceToRevalidate; 
+}
+
 bool CachedResource::makePurgeable(bool purgeable) 
 { 
     if (purgeable) {
-        ASSERT(!hasClients());
+        ASSERT(isSafeToMakePurgeable());
 
         if (m_purgeableData) {
             ASSERT(!m_data);

@@ -1,3 +1,24 @@
+2008-12-25  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6465669> Frequent !isPurgeable() assertion in WebCore::CachedResource::addClient
+        
+        Disallow turning resources that are being revalidated to purgable state.
+        
+        No test, the condition is difficult to produce in DRT.
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::allClientsRemoved):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::destroyDecodedData):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::isSafeToMakePurgeable):
+        (WebCore::CachedResource::makePurgeable):
+        * loader/CachedResource.h:
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::destroyDecodedData):
+
 2008-12-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Qt build fix.
