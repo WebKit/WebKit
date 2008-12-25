@@ -1,3 +1,13 @@
+2008-12-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Move the guts of determineCurrentSVNRevision to VCSUtils as svnRevisionForDirectory,
+        and make it work for git too.
+
+        * Scripts/VCSUtils.pm:
+        * Scripts/webkitdirs.pm:
+
 2008-12-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

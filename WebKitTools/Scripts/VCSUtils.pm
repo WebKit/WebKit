@@ -104,6 +104,22 @@ sub isSVN()
     return $isSVN;
 }
 
+sub svnRevisionForDirectory($)
+{
+    my ($dir) = @_;
+    my $revision;
+
+    if (isSVNDirectory($dir)) {
+        my $svnInfo = `LC_ALL=C svn info $dir | grep Revision:`;
+        ($revision) = ($svnInfo =~ m/Revision: (\d+).*/g);
+    } elsif (isGitDirectory($dir)) {
+        my $gitLog = `cd $dir && LC_ALL=C git log --grep='git-svn-id: ' -n 1 | grep git-svn-id:`;
+        ($revision) = ($gitLog =~ m/ +git-svn-id: .+@(\d+) /g);
+    }
+    die "Unable to determine current SVN revision in $dir" unless (defined $revision);
+    return $revision;
+}
+
 my $gitRoot;
 sub makeFilePathRelative($)
 {

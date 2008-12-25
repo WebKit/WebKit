@@ -212,9 +212,7 @@ sub determineCurrentSVNRevision
 {
     return if defined $currentSVNRevision;
     determineSourceDir();
-    my $svnInfo = `LC_ALL=C svn info $sourceDir | grep Revision:`;
-    ($currentSVNRevision) = ($svnInfo =~ m/Revision: (\d+).*/g);
-    die "Unable to determine current SVN revision in $sourceDir" unless (defined $currentSVNRevision);
+    $currentSVNRevision = svnRevisionForDirectory($sourceDir);
     return $currentSVNRevision;
 }
 
