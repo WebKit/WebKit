@@ -916,6 +916,7 @@ SOURCES += \
     platform/text/TextEncoding.cpp \
     platform/text/TextEncodingRegistry.cpp \
     platform/text/TextStream.cpp \
+    platform/ThreadGlobalData.cpp \
     platform/Timer.cpp \
     platform/text/UnicodeRange.cpp \
     platform/Widget.cpp \

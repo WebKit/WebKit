@@ -1,3 +1,9 @@
+2008-12-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Qt build fix.
+
+        * WebCore.pro: Added ThreadGlobalData.cpp.
+
 2008-12-24  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
