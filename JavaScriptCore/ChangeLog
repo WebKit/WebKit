@@ -1,3 +1,11 @@
+2008-12-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove unused method.
+
+        * runtime/Structure.h: Remove mutableTypeInfo.
+
 2008-12-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
