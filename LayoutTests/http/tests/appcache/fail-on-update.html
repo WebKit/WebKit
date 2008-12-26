@@ -14,8 +14,8 @@ function test()
         '</scri' + 'pt>';
 }
 
-applicationCache.addEventListener('noupdate', function() { test() }, false);
-applicationCache.addEventListener('cached', function() { test() }, false);
+applicationCache.addEventListener('noupdate', function() { setTimeout(test, 0) }, false);
+applicationCache.addEventListener('cached', function() { setTimeout(test, 0) }, false);
 
 </script>
 <p>Test for a particular incorrect assertion failure.</p>
