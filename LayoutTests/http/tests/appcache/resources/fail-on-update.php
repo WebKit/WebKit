@@ -1,7 +1,7 @@
 <?php
 require_once '../../xmlhttprequest/resources/portabilityLayer.php';
 
-$tmpFile = ensureTrailingSlash(sys_get_temp_dir()) . "abort_update_state";
+$tmpFile = sys_get_temp_dir() . "/" . "abort_update_state";
 
 function setState($newState, $file)
 {

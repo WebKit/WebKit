@@ -4,6 +4,16 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=22950
 
+        Remove ensureTrailingSlash from appcache test.
+
+        * http/tests/appcache/resources/fail-on-update.php:
+
+2008-12-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22950
+
         Attempt to fix the failiing XHR tests on tiger buildbot.
         Remove the no longer needed ensureTrailingSlash function.
 
