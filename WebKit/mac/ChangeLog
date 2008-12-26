@@ -1,3 +1,14 @@
+2008-12-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/6467608> lastVisitWasFailure flag persists in
+          global history after a successful visit
+
+        * History/WebHistory.mm:
+        (-[WebHistory _visitedURL:withTitle:wasFailure:]): Changed to always
+        update the wasFailure flag on the HistoryItem.
+
 2008-12-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov (a slightly earlier version).

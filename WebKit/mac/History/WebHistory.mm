@@ -797,8 +797,7 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 - (void)_visitedURL:(NSURL *)URL withTitle:(NSString *)title wasFailure:(BOOL)wasFailure
 {
     WebHistoryItem *entry = [_historyPrivate visitedURL:URL withTitle:title];
-    if (wasFailure)
-        core(entry)->setLastVisitWasFailure(true);
+    core(entry)->setLastVisitWasFailure(wasFailure);
 
     NSArray *entries = [[NSArray alloc] initWithObjects:entry, nil];
     [self _sendNotification:WebHistoryItemsAddedNotification entries:entries];
