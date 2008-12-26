@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23001
+        A call to applicationCache.update() from a cached event listener should be ignored
+
+        Test: http/tests/appcache/idempotent-update.html
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete): Only reset m_status after
+        dispatching events.
+
+2008-12-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=22997
         ASSERTION FAILED: !m_resources.contains(url) in ApplicationCache::addResource()
 

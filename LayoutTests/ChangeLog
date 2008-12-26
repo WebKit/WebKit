@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23001
+        A call to applicationCache.update() from a cached event listener should be ignored
+
+        * http/tests/appcache/idempotent-update-expected.txt: Added.
+        * http/tests/appcache/idempotent-update.html: Added.
+        * http/tests/appcache/resources/idempotent-update.manifest: Added.
+
+2008-12-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=22997
         ASSERTION FAILED: !m_resources.contains(url) in ApplicationCache::addResource()
 

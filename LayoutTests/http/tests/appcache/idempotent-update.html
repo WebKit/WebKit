@@ -1,0 +1,60 @@
+<html manifest="resources/idempotent-update.manifest">
+<body>
+<p>Test what applicationCache.update() does if update is already in progess.</p>
+<p>Should say DONE, with no failures:</p>
+<div id=result></div>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+// Both cached and noupdate events are dispatched while the status is still Checking or Downloading,
+// so update() should be a no-op (the spec says that fake checking and downloading events need to
+// be dispatched, bu that's only when the update algorithm is invoked with a browsing context).
+
+function test1()
+{
+    applicationCache.onnoupdate = function() { log("FAIL: received unexpected noupdate event") }
+    applicationCache.oncached = function() { log("FAIL: received unexpected cached event") }
+    applicationCache.onchecking = function() { log("FAIL: received unexpected checking event") }
+
+    applicationCache.update();
+
+    setTimeout(function() {
+        applicationCache.onnoupdate = function() { test2() }
+        applicationCache.onchecking = function() { log("checking") }
+        applicationCache.update();
+    }, 10);
+}
+
+function test2()
+{
+    applicationCache.onnoupdate = function() { log("FAIL: received unexpected noupdate event") }
+    applicationCache.oncached = function() { log("FAIL: received unexpected cached event") }
+    applicationCache.onchecking = function() { log("FAIL: received unexpected checking event") }
+
+    applicationCache.update();
+
+    setTimeout(function() {
+        log("DONE");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 10);
+}
+
+applicationCache.onnoupdate = function() { test1() }
+applicationCache.oncached = function() { test1() }
+
+applicationCache.onupdateready = function() { log("FAIL: received unexpected updateready event") }
+applicationCache.onerror = function() { log("FAIL: received unexpected error event") }
+
+</script>
+</body>
+</html>
