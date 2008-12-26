@@ -245,8 +245,10 @@ void CompositeEditCommand::splitElement(PassRefPtr<Element> element, PassRefPtr<
     applyCommandToComposite(SplitElementCommand::create(element, atChild));
 }
 
-void CompositeEditCommand::mergeIdenticalElements(PassRefPtr<Element> first, PassRefPtr<Element> second)
+void CompositeEditCommand::mergeIdenticalElements(PassRefPtr<Element> prpFirst, PassRefPtr<Element> prpSecond)
 {
+    RefPtr<Element> first = prpFirst;
+    RefPtr<Element> second = prpSecond;
     ASSERT(!first->isDescendantOf(second.get()) && second != first);
     if (first->nextSibling() != second) {
         removeNode(second);
