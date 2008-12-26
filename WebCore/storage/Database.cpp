@@ -182,6 +182,8 @@ Database::~Database()
 
 bool Database::openAndVerifyVersion(ExceptionCode& e)
 {
+    if (!m_document->databaseThread())
+        return false;
     m_databaseAuthorizer = DatabaseAuthorizer::create();
 
     RefPtr<DatabaseOpenTask> task = DatabaseOpenTask::create(this);
@@ -282,7 +284,7 @@ bool Database::versionMatchesExpected() const
 
 void Database::markAsDeletedAndClose()
 {
-    if (m_deleted)
+    if (m_deleted || !m_document->databaseThread())
         return;
 
     LOG(StorageAPI, "Marking %s (%p) as deleted", stringIdentifier().ascii().data(), this);
@@ -293,7 +295,7 @@ void Database::markAsDeletedAndClose()
         return;
     }
 
-    document()->databaseThread()->unscheduleDatabaseTasks(this);
+    m_document->databaseThread()->unscheduleDatabaseTasks(this);
 
     RefPtr<DatabaseCloseTask> task = DatabaseCloseTask::create(this);
 
@@ -565,6 +567,8 @@ void Database::deliverPendingCallback(void* context)
 
 Vector<String> Database::tableNames()
 {
+    if (!m_document->databaseThread())
+        return Vector<String>();
     RefPtr<DatabaseTableNamesTask> task = DatabaseTableNamesTask::create(this);
 
     task->lockForSynchronousScheduling();
