@@ -1,0 +1,10 @@
+Test that a subframe with manifest that matches top frame manifest works correctly.
+
+In this case, the subframe resource is listed in manifest explicitly.
+
+Should say SUCCESS:
+
+checking
+checking
+SUCCESS
+

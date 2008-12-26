@@ -80,11 +80,6 @@ ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceReque
 {
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return 0;
- 
-    ASSERT(loader->frame());
-    ASSERT(loader->frame()->page());
-    if (loader->frame() != loader->frame()->page()->mainFrame())
-        return 0;
 
     if (ApplicationCacheGroup* group = cacheStorage().cacheGroupForURL(request.url())) {
         ASSERT(group->newestCache());

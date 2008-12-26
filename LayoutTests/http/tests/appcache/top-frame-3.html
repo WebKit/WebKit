@@ -1,0 +1,60 @@
+<html manifest="resources/subframes-3.manifest">
+<body>
+<p>Test that a subframe with manifest that matches top frame manifest works correctly.</p>
+<p>In this case, the subframe resource is NOT listed in manifest explicitly.</p>
+<p>Should say SUCCESS:</p>
+<div id=result></div>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+function test()
+{
+    applicationCache.onnoupdate = null;
+    applicationCache.oncached = null;
+
+    // When a new main resource is associated with the cache, an update should be started.
+    applicationCache.onchecking = function() { log("checking") }
+
+    var ifr = document.createElement("iframe");
+    ifr.setAttribute("src", "resources/subframe-3.html");
+    document.body.appendChild(ifr);
+}
+
+function test2()
+{
+    window.removeEventListener("message", test2, false);
+    window.addEventListener("message", test3, false);
+
+    // Add an identical frame, to test that loading its resources from appcache works.
+    var ifr = document.createElement("iframe");
+    ifr.setAttribute("src", "resources/subframe-3.html");
+    document.body.appendChild(ifr);
+}
+
+function test3()
+{
+    log("SUCCESS");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+applicationCache.onnoupdate = function() { test() }
+applicationCache.oncached = function() { test() }
+
+applicationCache.onupdateready = function() { log("FAIL: received unexpected updateready event") }
+applicationCache.onerror = function() { log("FAIL: received unexpected error event") }
+
+window.addEventListener("message", test2, false);
+
+</script>
+</body>
+</html>
