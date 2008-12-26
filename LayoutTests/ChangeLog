@@ -1,3 +1,21 @@
+2008-12-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22950
+
+        Attempt to fix the failiing XHR tests on tiger buildbot.
+        Remove the no longer needed ensureTrailingSlash function.
+
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.php:
+
+        * http/tests/xmlhttprequest/resources/portabilityLayer.php:
+          Make sys_get_temp_dir() return "/tmp" when it can't find the temp directory through other means.
+
+        * http/tests/xmlhttprequest/resources/reset-temp-file.php:
+
 2008-12-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders Carlsson.

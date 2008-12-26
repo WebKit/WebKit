@@ -6,11 +6,10 @@ if (!sys_get_temp_dir()) {
     exit();
 }
 
-$tmpFile = ensureTrailingSlash(sys_get_temp_dir()) . $_GET['filename'];
-
+$tmpFile = sys_get_temp_dir() . "/" . $_GET['filename'];
 
 if (!file_put_contents($tmpFile, "test")) {
-    echo "FAIL: unable to write to file" . $tmpFile . "\n";
+    echo "FAIL: unable to write to file: " . $tmpFile . "\n";
     exit();
 }
 if (!unlink($tmpFile)) {
