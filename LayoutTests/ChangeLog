@@ -1,3 +1,15 @@
+2008-12-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22950
+        Added more logging to reset-temp-file to help expose potential issues that could cause test failures (on the tiger buildbot).
+
+        If there are issues in reset-temp-file, they are printed from the test access-control-basic-allow-preflight-cache.html
+
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html:
+        * http/tests/xmlhttprequest/resources/reset-temp-file.php:
+
 2008-12-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

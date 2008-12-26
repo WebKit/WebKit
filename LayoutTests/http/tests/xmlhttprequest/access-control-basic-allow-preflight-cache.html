@@ -26,6 +26,10 @@ xhr.onerror = errorHandler;
 
 start = function()
 {
+    // reset-temp-file.php reports an error on failure, for debugging problems with BuildBot setup.
+    if (xhr.responseText.length > 0)
+       log(xhr.responseText);
+
     // Temp file removed.  We can start the test now.
     if (xhr.readyState == xhr.DONE) {
         firstRequest();
