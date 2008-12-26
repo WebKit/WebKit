@@ -1,3 +1,15 @@
+2008-12-26  Simon Fraser  <simon.fraser@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=22981
+
+        Update more svg-as-image test results affected by the fix
+        for SVGImage drawing.
+
+        * platform/mac/fast/borders/svg-as-border-image-2-expected.checksum:
+        * platform/mac/fast/borders/svg-as-border-image-2-expected.png:
+        * platform/mac/fast/borders/svg-as-border-image-expected.checksum:
+        * platform/mac/fast/borders/svg-as-border-image-expected.png:
+
 2008-12-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
