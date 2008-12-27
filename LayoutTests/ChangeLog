@@ -1,3 +1,14 @@
+2008-12-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Suggested by Dave Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22950
+
+        Another attempt to fix the failing XHR tests on Tiger buildbot: make file_put_contents
+        portable implementation return a result.
+
+        * http/tests/xmlhttprequest/resources/portabilityLayer.php:
+
 2008-12-26  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
@@ -14,7 +25,7 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=22950
 
-        Attempt to fix the failiing XHR tests on tiger buildbot.
+        Attempt to fix the failiing XHR tests on Tiger buildbot.
         Remove the no longer needed ensureTrailingSlash function.
 
         * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.php:
@@ -92,7 +103,7 @@
         Reviewed by Alexey Proskuryakov.
 
         https://bugs.webkit.org/show_bug.cgi?id=22950
-        Added more logging to reset-temp-file to help expose potential issues that could cause test failures (on the tiger buildbot).
+        Added more logging to reset-temp-file to help expose potential issues that could cause test failures (on the Tiger buildbot).
 
         If there are issues in reset-temp-file, they are printed from the test access-control-basic-allow-preflight-cache.html
 

@@ -23,8 +23,12 @@ if (!function_exists('file_put_contents')) {
     function file_put_contents($filename, $data)
     {
         $handle = fopen($filename, "w");
-        fwrite($handle, $data);
-        fclose($handle);
+        if (!$handle)
+            return FALSE;
+        $bytesWritten = fwrite($handle, $data);
+        if (!fclose($handle))
+            return FALSE;
+        return $bytesWritten;
     }
 }
 
