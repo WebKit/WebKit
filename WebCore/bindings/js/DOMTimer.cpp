@@ -121,7 +121,8 @@ void DOMTimer::fired()
     ScheduledAction* action = m_action.release();
 
     // No access to member variables after this point.
-    delete this;
+    ASSERT(context->isDocument());
+    static_cast<Document*>(context)->removeTimeout(m_timeoutId);
 
     action->execute(context);
     delete action;
