@@ -1188,6 +1188,8 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
         if (n->elision())
             break;
         argv.append(newTemporary());
+        // op_new_array requires the initial values to be a sequential range of registers
+        ASSERT(argv.size() == 1 || argv[argv.size() - 1]->index() == argv[argv.size() - 2]->index() + 1);
         emitNode(argv.last().get(), n->value());
     }
     emitOpcode(op_new_array);
@@ -1236,13 +1238,14 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
 {
     ASSERT(opcodeID == op_call || opcodeID == op_call_eval);
     ASSERT(func->refCount());
+    ASSERT(thisRegister->refCount());
 
+    RegisterID* originalFunc = func;
     if (m_shouldEmitProfileHooks) {
         // If codegen decided to recycle func as this call's destination register,
         // we need to undo that optimization here so that func will still be around
         // for the sake of op_profile_did_call.
         if (dst == func) {
-            RefPtr<RegisterID> protect = thisRegister;
             RefPtr<RegisterID> movedThisRegister = emitMove(newTemporary(), thisRegister);
             RefPtr<RegisterID> movedFunc = emitMove(thisRegister, func);
             
@@ -1256,6 +1259,8 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     argv.append(thisRegister);
     for (ArgumentListNode* n = argumentsNode->m_listNode.get(); n; n = n->m_next.get()) {
         argv.append(newTemporary());
+        // op_call requires the arguments to be a sequential range of registers
+        ASSERT(argv[argv.size() - 1]->index() == argv[argv.size() - 2]->index() + 1);
         emitNode(argv.last().get(), n);
     }
 
@@ -1290,7 +1295,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
         emitOpcode(op_profile_did_call);
         instructions().append(func->index());
 
-        if (dst == func) {
+        if (dst == originalFunc) {
             thisRegister->deref();
             func->deref();
         }
@@ -1321,6 +1326,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
 {
     ASSERT(func->refCount());
 
+    RegisterID* originalFunc = func;
     if (m_shouldEmitProfileHooks) {
         // If codegen decided to recycle func as this call's destination register,
         // we need to undo that optimization here so that func will still be around
@@ -1338,6 +1344,8 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     argv.append(newTemporary()); // reserve space for "this"
     for (ArgumentListNode* n = argumentsNode ? argumentsNode->m_listNode.get() : 0; n; n = n->m_next.get()) {
         argv.append(newTemporary());
+        // op_construct requires the arguments to be a sequential range of registers
+        ASSERT(argv[argv.size() - 1]->index() == argv[argv.size() - 2]->index() + 1);
         emitNode(argv.last().get(), n);
     }
 
@@ -1378,7 +1386,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
         emitOpcode(op_profile_did_call);
         instructions().append(func->index());
         
-        if (dst == func)
+        if (dst == originalFunc)
             func->deref();
     }
 

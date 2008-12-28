@@ -1,0 +1,105 @@
+<body>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
+
+function log(s)
+{
+    if (this.document)
+        document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+    else
+        print(s + "\n");
+}
+
+function shouldBe(a, aDescription, b)
+{
+    if (a === b)
+        log("PASS: " + aDescription + " should be " + b + " and is.\n");
+    else
+        log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".\n");
+}
+
+function localCallTest(a, b)
+{
+    function localCall(o)
+    {
+        return o.toString();
+    }
+    return [localCall(a), b][1];
+}
+
+function globalCall(o)
+{
+    return o.toString();
+}
+
+function globalCallTest(a, b)
+{
+    return [globalCall(a), b][1];
+}
+
+function scopedCallTest(a, b)
+{
+    function scopedCall(o)
+    {
+        return o.toString();
+    }
+
+    function f()
+    {
+        return [scopedCall(a), b][1];
+    }
+
+    return f();
+}
+
+function resolveCallTest(a, b)
+{
+    o = { resolvedCall: function(o) { return o.toString(); }};
+    with (o) {
+        return [resolvedCall(o), b][1];
+    }
+}
+
+function bracketCallTest(a, b)
+{
+    return [a["toString"](), b][1];
+}
+
+function dotCallTest(a, b)
+{
+    return [a.toString(), b][1];
+}
+
+function testConstructor(o)
+{
+    return o.toString();
+}
+
+function newTest(a, b)
+{
+    return [new testConstructor(a), b][1];
+}
+
+function startTest()
+{
+    shouldBe(localCallTest(1, 2), "localCallTest(1, 2)", 2);
+    shouldBe(globalCallTest(1, 2), "globalCallTest(1, 2)", 2);
+    shouldBe(scopedCallTest(1, 2), "scopedCallTest(1, 2)", 2);
+    shouldBe(resolveCallTest(1, 2), "resolveCallTest(1, 2)", 2);
+    shouldBe(bracketCallTest(1, 2), "bracketCallTest(1, 2)", 2);
+    shouldBe(dotCallTest(1, 2), "dotCallTest(1, 2)", 2);
+    shouldBe(newTest(1, 2), "newTest(1, 2)", 2);
+}
+</script>
+</head>
+<body onload="startTest()">
+<p>
+This page tests that the generation of bytecode allocates registers correctly when profiling is enabled. To run the test manually, enable profiling in the web inspector and reload this page.
+</p>
+<pre id="console"></pre>
+</body>
+</html>

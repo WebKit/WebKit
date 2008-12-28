@@ -1,3 +1,14 @@
+2008-12-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add tests for bug 22840: REGRESSION (r38349): Gmail doesn't load with profiling enabled
+        <https://bugs.webkit.org/show_bug.cgi?id=22840>
+        <rdar://problem/6468077>
+
+        * fast/profiler/call-register-leak-expected.txt: Added.
+        * fast/profiler/call-register-leak.html: Added.
+
 2008-12-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Suggested by Dave Levin.
