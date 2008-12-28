@@ -36,7 +36,7 @@
 #include "HTMLNames.h"
 #include "Page.h"
 #include "RenderStyle.h"
-#include "RenderTextControl.h"
+#include "RenderTextControlMultiLine.h"
 #include "Selection.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
@@ -192,7 +192,7 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute* attr)
 
 RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderTextControl(this, true);
+    return new (arena) RenderTextControlMultiLine(this);
 }
 
 bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
@@ -245,7 +245,7 @@ void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
 void HTMLTextAreaElement::defaultEventHandler(Event* event)
 {
     if (renderer() && (event->isMouseEvent() || event->isDragEvent() || event->isWheelEvent() || event->type() == eventNames().blurEvent))
-        static_cast<RenderTextControl*>(renderer())->forwardEvent(event);
+        static_cast<RenderTextControlMultiLine*>(renderer())->forwardEvent(event);
 
     HTMLFormControlElementWithState::defaultEventHandler(event);
 }

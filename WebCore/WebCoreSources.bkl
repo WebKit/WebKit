@@ -900,6 +900,8 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderTableSection.cpp
         rendering/RenderText.cpp
         rendering/RenderTextControl.cpp
+        rendering/RenderTextControlMultiLine.cpp
+        rendering/RenderTextControlSingleLine.cpp
         rendering/RenderTextFragment.cpp
         rendering/RenderTheme.cpp
         rendering/RenderTreeAsText.cpp

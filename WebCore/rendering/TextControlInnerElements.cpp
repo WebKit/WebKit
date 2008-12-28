@@ -35,7 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "MouseEvent.h"
-#include "RenderTextControl.h"
+#include "RenderTextControlSingleLine.h"
 
 namespace WebCore {
 
@@ -48,9 +48,13 @@ public:
 
 bool RenderTextControlInnerBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
-    RenderTextControl* renderer = static_cast<RenderTextControl*>(node()->shadowAncestorNode()->renderer());
-    
-    return RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, renderer->placeholderIsVisible() ? HitTestBlockBackground : hitTestAction);
+    RenderObject* renderer = node()->shadowAncestorNode()->renderer();
+
+    bool placeholderIsVisible = false;
+    if (renderer->isTextField())
+        placeholderIsVisible = static_cast<RenderTextControlSingleLine*>(renderer)->placeholderIsVisible();
+
+    return RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, placeholderIsVisible ? HitTestBlockBackground : hitTestAction);
 }
 
 TextControlInnerElement::TextControlInnerElement(Document* doc, Node* shadowParent)
@@ -124,10 +128,11 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* evt)
     if (evt->type() == eventNames().mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         input->focus();
         input->select();
-        if (input && input->renderer() && static_cast<RenderTextControl*>(input->renderer())->popupIsVisible())
-            static_cast<RenderTextControl*>(input->renderer())->hidePopup();
+        RenderTextControlSingleLine* renderer = static_cast<RenderTextControlSingleLine*>(input->renderer());
+        if (renderer->popupIsVisible())
+            renderer->hidePopup();
         else if (input->maxResults() > 0)
-            static_cast<RenderTextControl*>(input->renderer())->showPopup();
+            renderer->showPopup();
         evt->setDefaultHandled();
     }
     if (!evt->defaultHandled())

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.s
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ *           (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/) 
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,45 +22,31 @@
 #ifndef RenderTextControl_h
 #define RenderTextControl_h
 
-#include "PopupMenuClient.h"
 #include "RenderBlock.h"
-#include "Timer.h"
 
 namespace WebCore {
 
-class FontSelector;
-class SearchFieldCancelButtonElement;
-class SearchFieldResultsButtonElement;
-class SearchPopupMenu;
 class Selection;
 class TextControlInnerElement;
 class TextControlInnerTextElement;
 
-class RenderTextControl : public RenderBlock, private PopupMenuClient {
+class RenderTextControl : public RenderBlock {
 public:
-    RenderTextControl(Node*, bool multiLine);
     virtual ~RenderTextControl();
 
     virtual const char* renderName() const { return "RenderTextControl"; }
-
-    virtual bool hasControlClip() const { return m_cancelButton; }
+    virtual bool hasControlClip() const { return false; }
     virtual IntRect controlClipRect(int tx, int ty) const;
     virtual void calcHeight();
     virtual void calcPrefWidths();
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual void updateFromElement();
     virtual bool canHaveChildren() const { return false; }
-    virtual int baselinePosition(bool firstLine, bool isRootLineBox) const;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    virtual void layout();
     virtual bool avoidsFloats() const { return true; }
-    virtual void paint(PaintInfo&, int tx, int ty);
     
-    virtual bool isEdited() const { return m_dirty; }
-    virtual void setEdited(bool isEdited) { m_dirty = isEdited; }
-    virtual bool isTextField() const { return !m_multiLine; }
-    virtual bool isTextArea() const { return m_multiLine; }
-    
+    virtual bool isEdited() const { return m_edited; }
+    virtual void setEdited(bool isEdited) { m_edited = isEdited; }
+
     bool isUserEdited() const { return m_userEdited; }
     void setUserEdited(bool isUserEdited);
 
@@ -71,10 +58,9 @@ public:
     void setSelectionRange(int start, int end);
     Selection selection(int start, int end) const;
 
-    void subtreeHasChanged();
+    virtual void subtreeHasChanged();
     String text();
     String textWithHardLineBreaks();
-    void forwardEvent(Event*);
     void selectionChanged(bool userTriggered);
 
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
@@ -95,76 +81,36 @@ public:
     VisiblePosition visiblePositionForIndex(int index);
     int indexForVisiblePosition(const VisiblePosition&);
 
-    void addSearchResult();
-
-    bool popupIsVisible() const { return m_searchPopupIsVisible; }
-    void showPopup();
-    void hidePopup();
-
-    void stopSearchEventTimer();
-    
-    bool placeholderIsVisible() const { return m_placeholderVisible; }
-    void updatePlaceholderVisibility();
-
-    virtual void capsLockStateMayHaveChanged();
-
 protected:
+    RenderTextControl(Node*);
+
+    int scrollbarThickness() const;
+    void adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const;
+    void setInnerTextValue(const String&);
+
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
 
-private:
-    // PopupMenuClient methods
-    virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
-    virtual String itemText(unsigned listIndex) const;
-    virtual bool itemIsEnabled(unsigned listIndex) const;
-    virtual PopupMenuStyle itemStyle(unsigned listIndex) const;
-    virtual PopupMenuStyle menuStyle() const;
-    virtual int clientInsetLeft() const;
-    virtual int clientInsetRight() const;
-    virtual int clientPaddingLeft() const;
-    virtual int clientPaddingRight() const;
-    virtual int listSize() const;
-    virtual int selectedIndex() const;
-    virtual bool itemIsSeparator(unsigned listIndex) const;
-    virtual bool itemIsLabel(unsigned listIndex) const;
-    virtual bool itemIsSelected(unsigned listIndex) const;
-    virtual void setTextFromItem(unsigned listIndex);
-    virtual bool shouldPopOver() const { return false; }
-    virtual bool valueShouldChangeOnHotTrack() const { return false; }
-    virtual FontSelector* fontSelector() const;
-    virtual HostWindow* hostWindow() const;
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+    void createSubtreeIfNeeded(TextControlInnerElement* innerBlock);
+    void hitInnerTextBlock(HitTestResult&, int x, int y, int tx, int ty);
+    void forwardEvent(Event*);
 
-    PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle);
-    PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle);
-    PassRefPtr<RenderStyle> createCancelButtonStyle(const RenderStyle* startStyle);
-    PassRefPtr<RenderStyle> createResultsButtonStyle(const RenderStyle* startStyle);
+    int textBlockWidth() const;
+    int textBlockHeight() const;
 
-    void createSubtreeIfNeeded();
-    void updateCancelButtonVisibility(RenderStyle*);
-    const AtomicString& autosaveName() const;
-    void startSearchEventTimer();
-    void searchEventTimerFired(Timer<RenderTextControl>*);
-    String finishText(Vector<UChar>&) const;
+    virtual int preferredContentWidth(float charWidth) const = 0;
+    virtual void adjustControlHeightBasedOnLineHeight(int lineHeight) = 0;
+    virtual void cacheSelection(int start, int end) = 0;
+    virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
     friend class TextIterator;
     HTMLElement* innerTextElement() const;
 
-    RefPtr<TextControlInnerElement> m_innerBlock;
-    RefPtr<TextControlInnerTextElement> m_innerText;
-    RefPtr<SearchFieldResultsButtonElement> m_resultsButton;
-    RefPtr<SearchFieldCancelButtonElement> m_cancelButton;
+private:
+    String finishText(Vector<UChar>&) const;
 
-    bool m_dirty;
-    bool m_multiLine;
-    bool m_placeholderVisible;
+    bool m_edited;
     bool m_userEdited;
-    bool m_shouldDrawCapsLockIndicator;
-    
-    RefPtr<SearchPopupMenu> m_searchPopup;
-    bool m_searchPopupIsVisible;
-    mutable Vector<String> m_recentSearches;
-
-    Timer<RenderTextControl> m_searchEventTimer;
+    RefPtr<TextControlInnerTextElement> m_innerText;
 };
 
 } // namespace WebCore

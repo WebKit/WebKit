@@ -977,6 +977,8 @@ SOURCES += \
     rendering/RenderTableRow.cpp \
     rendering/RenderTableSection.cpp \
     rendering/RenderTextControl.cpp \
+    rendering/RenderTextControlMultiLine.cpp \
+    rendering/RenderTextControlSingleLine.cpp \
     rendering/RenderText.cpp \
     rendering/RenderTextFragment.cpp \
     rendering/RenderTheme.cpp \

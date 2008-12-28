@@ -1562,6 +1562,10 @@ webcore_sources += \
 	WebCore/rendering/RenderText.h \
 	WebCore/rendering/RenderTextControl.cpp \
 	WebCore/rendering/RenderTextControl.h \
+	WebCore/rendering/RenderTextControlMultiLine.cpp \
+	WebCore/rendering/RenderTextControlMultiLine.h \
+	WebCore/rendering/RenderTextControlSingleLine.cpp \
+	WebCore/rendering/RenderTextControlSingleLine.h \
 	WebCore/rendering/RenderTextFragment.cpp \
 	WebCore/rendering/RenderTextFragment.h \
 	WebCore/rendering/RenderTheme.cpp \

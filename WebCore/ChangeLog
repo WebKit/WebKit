@@ -1,3 +1,135 @@
+2008-12-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22996
+
+        RenderTextControl heavily depends on HTMLInputElement & HTMLTextAreaElement.
+        It handles multi & single line text control rendering in one class. Split up
+        in two new classes: RenderTextControlSingleLine & RenderTextControlMultiLine.
+
+        This has several benefits - code is more readable now, the memory usage
+        for RenderTextControlMultiLine is reduced, as all stuff related to search fields
+        lives in RenderTextControlSingleLine, and it's easier to introduce an
+        abstraction for input/textarea-like elements for other HTML flavours like WML.
+
+        * GNUmakefile.am:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createRenderer):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        (WebCore::HTMLInputElement::updatePlaceholderVisibility):
+        (WebCore::HTMLInputElement::addSearchResult):
+        (WebCore::HTMLInputElement::onSearch):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createRenderer):
+        (WebCore::HTMLTextAreaElement::defaultEventHandler):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        (WebCore::RenderTextControl::~RenderTextControl):
+        (WebCore::RenderTextControl::styleDidChange):
+        (WebCore::RenderTextControl::adjustInnerTextStyle):
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+        (WebCore::RenderTextControl::textBlockHeight):
+        (WebCore::RenderTextControl::textBlockWidth):
+        (WebCore::RenderTextControl::updateFromElement):
+        (WebCore::RenderTextControl::setInnerTextValue):
+        (WebCore::RenderTextControl::setSelectionRange):
+        (WebCore::RenderTextControl::visiblePositionForIndex):
+        (WebCore::RenderTextControl::indexForVisiblePosition):
+        (WebCore::RenderTextControl::subtreeHasChanged):
+        (WebCore::RenderTextControl::scrollbarThickness):
+        (WebCore::RenderTextControl::calcHeight):
+        (WebCore::RenderTextControl::hitInnerTextBlock):
+        (WebCore::RenderTextControl::forwardEvent):
+        (WebCore::RenderTextControl::calcPrefWidths):
+        (WebCore::RenderTextControl::selectionChanged):
+        (WebCore::RenderTextControl::innerTextElement):
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::hasControlClip):
+        (WebCore::RenderTextControl::canHaveChildren):
+        (WebCore::RenderTextControl::avoidsFloats):
+        (WebCore::RenderTextControl::isEdited):
+        (WebCore::RenderTextControl::setEdited):
+        * rendering/RenderTextControlMultiLine.cpp: Added.
+        (WebCore::RenderTextControlMultiLine::RenderTextControlMultiLine):
+        (WebCore::RenderTextControlMultiLine::~RenderTextControlMultiLine):
+        (WebCore::RenderTextControlMultiLine::subtreeHasChanged):
+        (WebCore::RenderTextControlMultiLine::layout):
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+        (WebCore::RenderTextControlMultiLine::forwardEvent):
+        (WebCore::RenderTextControlMultiLine::preferredContentWidth):
+        (WebCore::RenderTextControlMultiLine::adjustControlHeightBasedOnLineHeight):
+        (WebCore::RenderTextControlMultiLine::baselinePosition):
+        (WebCore::RenderTextControlMultiLine::updateFromElement):
+        (WebCore::RenderTextControlMultiLine::cacheSelection):
+        (WebCore::RenderTextControlMultiLine::createInnerTextStyle):
+        * rendering/RenderTextControlMultiLine.h: Added.
+        (WebCore::RenderTextControlMultiLine::isTextArea):
+        * rendering/RenderTextControlSingleLine.cpp: Added.
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::placeholderShouldBeVisible):
+        (WebCore::RenderTextControlSingleLine::updatePlaceholderVisibility):
+        (WebCore::RenderTextControlSingleLine::addSearchResult):
+        (WebCore::RenderTextControlSingleLine::stopSearchEventTimer):
+        (WebCore::RenderTextControlSingleLine::showPopup):
+        (WebCore::RenderTextControlSingleLine::hidePopup):
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        (WebCore::RenderTextControlSingleLine::paint):
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        (WebCore::RenderTextControlSingleLine::capsLockStateMayHaveChanged):
+        (WebCore::RenderTextControlSingleLine::textBlockWidth):
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        (WebCore::RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight):
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        (WebCore::RenderTextControlSingleLine::cacheSelection):
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        (WebCore::RenderTextControlSingleLine::createInnerBlockStyle):
+        (WebCore::RenderTextControlSingleLine::createResultsButtonStyle):
+        (WebCore::RenderTextControlSingleLine::createCancelButtonStyle):
+        (WebCore::RenderTextControlSingleLine::updateCancelButtonVisibility):
+        (WebCore::RenderTextControlSingleLine::autosaveName):
+        (WebCore::RenderTextControlSingleLine::startSearchEventTimer):
+        (WebCore::RenderTextControlSingleLine::searchEventTimerFired):
+        (WebCore::RenderTextControlSingleLine::valueChanged):
+        (WebCore::RenderTextControlSingleLine::itemText):
+        (WebCore::RenderTextControlSingleLine::itemIsEnabled):
+        (WebCore::RenderTextControlSingleLine::itemStyle):
+        (WebCore::RenderTextControlSingleLine::menuStyle):
+        (WebCore::RenderTextControlSingleLine::clientInsetLeft):
+        (WebCore::RenderTextControlSingleLine::clientInsetRight):
+        (WebCore::RenderTextControlSingleLine::clientPaddingLeft):
+        (WebCore::RenderTextControlSingleLine::clientPaddingRight):
+        (WebCore::RenderTextControlSingleLine::listSize):
+        (WebCore::RenderTextControlSingleLine::selectedIndex):
+        (WebCore::RenderTextControlSingleLine::itemIsSeparator):
+        (WebCore::RenderTextControlSingleLine::itemIsLabel):
+        (WebCore::RenderTextControlSingleLine::itemIsSelected):
+        (WebCore::RenderTextControlSingleLine::setTextFromItem):
+        (WebCore::RenderTextControlSingleLine::fontSelector):
+        (WebCore::RenderTextControlSingleLine::hostWindow):
+        (WebCore::RenderTextControlSingleLine::createScrollbar):
+        * rendering/RenderTextControlSingleLine.h: Added.
+        (WebCore::RenderTextControlSingleLine::hasControlClip):
+        (WebCore::RenderTextControlSingleLine::isTextField):
+        (WebCore::RenderTextControlSingleLine::placeholderIsVisible):
+        (WebCore::RenderTextControlSingleLine::popupIsVisible):
+        (WebCore::RenderTextControlSingleLine::shouldPopOver):
+        (WebCore::RenderTextControlSingleLine::valueShouldChangeOnHotTrack):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::RenderTextControlInnerBlock::nodeAtPoint):
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+
 2008-12-28  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.
