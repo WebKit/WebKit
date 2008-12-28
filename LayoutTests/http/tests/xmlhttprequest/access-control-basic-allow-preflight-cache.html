@@ -36,7 +36,7 @@ start = function()
     }
 }
 
-xhr.open("GET", "resources/reset-temp-file.php?" + filename, true);
+xhr.open("GET", "/resources/reset-temp-file.php?" + filename, true);
 xhr.onreadystatechange = start;
 xhr.send();
 

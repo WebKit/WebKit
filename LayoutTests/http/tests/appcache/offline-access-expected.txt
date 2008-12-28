@@ -1,0 +1,27 @@
+Test that offline applications work when there is no network access (simulated).
+
+Should say SUCCESS:
+
+SUCCESS
+  
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+cached
+error
+noupdate
+
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+error
+noupdate
+
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+noupdate
+

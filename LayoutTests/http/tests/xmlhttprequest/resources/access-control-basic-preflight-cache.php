@@ -1,5 +1,5 @@
 <?php
-require_once 'portabilityLayer.php';
+require_once '../../resources/portabilityLayer.php';
 
 $tmpFile = sys_get_temp_dir() . "/" . $_GET['filename'];
 

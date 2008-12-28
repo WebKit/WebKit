@@ -1,3 +1,35 @@
+2008-12-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23009
+        Add a test for application cache offline operation
+
+        * http/tests/resources/network-simulator.php: A proxy script to simulate a network connection
+        that can go offline, using an infinite redirect loop in offline mode to generate an error.
+
+        * http/tests/appcache/offline-access-expected.txt: Added.
+        * http/tests/appcache/offline-access.html: Added.
+        * http/tests/appcache/resources/offline-access-frame.html: Added.
+        * http/tests/appcache/resources/offline-access.js: Added.
+        * http/tests/appcache/resources/offline-access.manifest: Added.
+        Test that an application loads successfully from cache.
+
+        * http/tests/resources: Added.
+        * http/tests/resources/portabilityLayer.php: Copied from LayoutTests/http/tests/xmlhttprequest/resources/portabilityLayer.php.
+        * http/tests/resources/reset-temp-file.php: Copied from LayoutTests/http/tests/xmlhttprequest/resources/reset-temp-file.php.
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-header.html:
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html:
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html:
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.php:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.php:
+        * http/tests/xmlhttprequest/resources/portabilityLayer.php: Removed.
+        * http/tests/xmlhttprequest/resources/reset-temp-file.php: Removed.
+        * http/tests/appcache/resources/fail-on-update.php:
+        Moved some common scripts from xmlhttprequest/resources/ to resources/
+
 2008-12-28  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.
