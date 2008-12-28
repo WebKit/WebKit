@@ -65,9 +65,27 @@ namespace WebCore {
             void servePendingRequests(Priority minimumPriority = Low);
             void cancelRequests(DocLoader*);
             bool hasRequests() const;
-            bool processingResource() const { return m_processingResource; }
-        
+
+            bool processingResource() const { return m_numResourcesProcessing != 0; }
+
         private:
+            class ProcessingResource {
+            public:
+                ProcessingResource(Host* host)
+                    : m_host(host)
+                {
+                    m_host->m_numResourcesProcessing++;
+                }
+
+                ~ProcessingResource()
+                {
+                    m_host->m_numResourcesProcessing--;
+                }
+
+            private:
+                Host* m_host;
+            };
+
             virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
             virtual void didReceiveData(SubresourceLoader*, const char*, int);
             virtual void didFinishLoading(SubresourceLoader*);
@@ -83,7 +101,7 @@ namespace WebCore {
             RequestMap m_requestsLoading;
             const AtomicString m_name;
             const int m_maxRequestsInFlight;
-            bool m_processingResource;
+            int m_numResourcesProcessing;
         };
         typedef HashMap<AtomicStringImpl*, Host*> HostMap;
         HostMap m_hosts;

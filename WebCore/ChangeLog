@@ -1,3 +1,40 @@
+2008-12-28  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin Adler.
+
+        Bug 23006: Many Loader::Host member functions are not safe to use reentrantly
+        <https://bugs.webkit.org/show_bug.cgi?id=23006>
+        <rdar://problem/6216106>
+
+        Many Loader::Host member functions set m_processingResource to true when they
+        begin processing a resource and set it to false when they are done. Thanks to
+        JavaScript and the web inspector, almost anything can happen during the
+        processing of a resource, including these functions being called reentrantly,
+        which is unsafe due to this way of using m_processingResource.
+
+        This can theoretically cause a Loader::Host to be used after it is freed,
+        because when Loader::servedPendingRequests() is called, it will free Hosts
+        that have m_processingResource set to false.
+
+        To fix this, we replace m_processingResource with m_numResourcesProcessing,
+        which is incremented and decremented using a helper object, ProcessingResource.
+
+        There are no occurrences of crashes caused by this bug that are reproducible
+        by multiple people, but this fixes the problem of m_processingResource being
+        set to false while a Host is still alive.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::Host):
+        (WebCore::Loader::Host::didFinishLoading): Change to use ProcessingResource
+        instead of manually setting m_processingResource.
+        (WebCore::Loader::Host::didFail): Ditto.
+        (WebCore::Loader::Host::didReceiveData): Ditto.
+        * loader/loader.h:
+        (WebCore::Loader::Host::ProcessingResource::ProcessingResource): Added.
+        (WebCore::Loader::Host::ProcessingResource::~ProcessingResource): Added.
+        (WebCore::Loader::Host::processingResource): Change to use m_numResourcesProcessing
+        instead of just getting m_processingResource.
+
 2008-12-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
