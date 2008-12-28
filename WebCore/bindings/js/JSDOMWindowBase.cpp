@@ -97,9 +97,6 @@ static void setJSDOMWindowBaseXSLTProcessor(ExecState*, JSObject*, JSValue*);
 
 namespace WebCore {
 
-const int cMaxTimerNestingLevel = 5;
-const double cMinimumTimerInterval = 0.010;
-
 ////////////////////// JSDOMWindowBase Object ////////////////////////
 
 const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable, 0 };
@@ -824,23 +821,7 @@ void JSDOMWindowBase::setReturnValueSlot(JSValue** slot)
 
 int JSDOMWindowBase::installTimeout(ScheduledAction* a, int t, bool singleShot)
 {
-    DOMTimer* timer = new DOMTimer(scriptExecutionContext(), a);
-    int timeoutId = timer->timeoutId();
-
-    ASSERT(d()->impl->document());
-    d()->impl->document()->addTimeout(timeoutId, timer);
-    
-    // Use a minimum interval of 10 ms to match other browsers, but only once we've
-    // nested enough to notice that we're repeating.
-    // Faster timers might be "better", but they're incompatible.
-    double interval = max(0.001, t * 0.001);
-    if (interval < cMinimumTimerInterval && timer->nestingLevel() >= cMaxTimerNestingLevel)
-        interval = cMinimumTimerInterval;
-    if (singleShot)
-        timer->startOneShot(interval);
-    else
-        timer->startRepeating(interval);
-    return timeoutId;
+    return DOMTimer::install(scriptExecutionContext(), a, t, singleShot);
 }
 
 int JSDOMWindowBase::installTimeout(const UString& handler, int t, bool singleShot)
@@ -855,45 +836,7 @@ int JSDOMWindowBase::installTimeout(ExecState* exec, JSValue* func, const ArgLis
 
 void JSDOMWindowBase::removeTimeout(int timeoutId)
 {
-    // timeout IDs have to be positive, and 0 and -1 are unsafe to
-    // even look up since they are the empty and deleted value
-    // respectively
-    if (timeoutId <= 0)
-        return;
-
-    ASSERT(d()->impl->document());
-    d()->impl->document()->removeTimeout(timeoutId);
-}
-
-void JSDOMWindowBase::timerFired(DOMTimer* timer)
-{
-    // Simple case for non-one-shot timers.
-    if (timer->isActive()) {
-        int timeoutId = timer->timeoutId();
-
-        timer->action()->execute(shell());
-        // The DOMTimer object may have been deleted or replaced during execution,
-        // so we re-fetch it.
-        ASSERT(d()->impl->document());
-        timer = d()->impl->document()->findTimeout(timeoutId);
-        if (!timer)
-            return;
-
-        if (timer->repeatInterval() && timer->repeatInterval() < cMinimumTimerInterval) {
-            timer->setNestingLevel(timer->nestingLevel() + 1);
-            if (timer->nestingLevel() >= cMaxTimerNestingLevel)
-                timer->augmentRepeatInterval(cMinimumTimerInterval - timer->repeatInterval());
-        }
-        return;
-    }
-
-    // Delete timer before executing the action for one-shot timers.
-    ScheduledAction* action = timer->takeAction();
-    removeTimeout(timer->timeoutId());
-    action->execute(shell());
-
-    JSLock lock(false);
-    delete action;
+    DOMTimer::removeById(scriptExecutionContext(), timeoutId);
 }
 
 void JSDOMWindowBase::disconnectFrame()

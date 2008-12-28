@@ -29,25 +29,19 @@
 
 #include "ActiveDOMObject.h"
 #include "Timer.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class JSDOMWindowBase;
 class ScheduledAction;
 
 class DOMTimer : public TimerBase, public ActiveDOMObject {
 public:
-    // Creates a new timer with the next id and nesting level.
-    DOMTimer(ScriptExecutionContext*, ScheduledAction*);
     virtual ~DOMTimer();
-
-    int timeoutId() const { return m_timeoutId; }
-
-    int nestingLevel() const { return m_nestingLevel; }
-    void setNestingLevel(int n) { m_nestingLevel = n; }
-
-    ScheduledAction* action() const { return m_action; }
-    ScheduledAction* takeAction() { ScheduledAction* a = m_action; m_action = 0; return a; }
+    // Creates a new timer owned by specified ScriptExecutionContext, starts it
+    // and returns its Id.
+    static int install(ScriptExecutionContext*, ScheduledAction*, int timeout, bool singleShot);
+    static void removeById(ScriptExecutionContext*, int timeoutId);
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const;
@@ -58,12 +52,12 @@ public:
     virtual void resume();
 
 private:
+    DOMTimer(ScriptExecutionContext*, ScheduledAction*, int timeout, bool singleShot);
     virtual void fired();
 
     int m_timeoutId;
     int m_nestingLevel;
-    ScheduledAction* m_action;
-    static int m_timerNestingLevel;
+    OwnPtr<ScheduledAction> m_action;
     double m_nextFireInterval;
     double m_repeatInterval;
 };

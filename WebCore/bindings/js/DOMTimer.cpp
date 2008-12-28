@@ -28,16 +28,22 @@
 #include "DOMTimer.h"
 
 #include "Document.h"
-#include "JSDOMWindow.h"
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
-#include <runtime/JSLock.h>
+#include <wtf/HashSet.h>
+#include <wtf/StdLibExtras.h>
+
+using namespace std;
 
 namespace WebCore {
 
-int DOMTimer::m_timerNestingLevel = 0;
+static const int maxTimerNestingLevel = 5;
+static const double oneMillisecond = 0.001;
+static const double minTimerInterval = 0.010; // 10 milliseconds
 
-DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action)
+static int timerNestingLevel = 0;
+
+DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action, int timeout, bool singleShot)
     : ActiveDOMObject(context, this)
     , m_action(action)
     , m_nextFireInterval(0)
@@ -50,29 +56,76 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action)
         lastUsedTimeoutId = 1;
     m_timeoutId = lastUsedTimeoutId;
     
-    m_nestingLevel = m_timerNestingLevel + 1;
+    m_nestingLevel = timerNestingLevel + 1;
+
+    // FIXME: Move the timeout map and API to ScriptExecutionContext to be able
+    // to create timeouts from Workers.
+    ASSERT(scriptExecutionContext() && scriptExecutionContext()->isDocument());
+    static_cast<Document*>(scriptExecutionContext())->addTimeout(m_timeoutId, this);
+
+    double intervalMilliseconds = max(oneMillisecond, timeout * oneMillisecond);
+
+    // Use a minimum interval of 10 ms to match other browsers, but only once we've
+    // nested enough to notice that we're repeating.
+    // Faster timers might be "better", but they're incompatible.
+    if (intervalMilliseconds < minTimerInterval && m_nestingLevel >= maxTimerNestingLevel)
+        intervalMilliseconds = minTimerInterval;
+    if (singleShot)
+        startOneShot(intervalMilliseconds);
+    else
+        startRepeating(intervalMilliseconds);
 }
 
 DOMTimer::~DOMTimer()
 {
-    if (m_action) {
-        JSC::JSLock lock(false);
-        delete m_action;
-    }
+}
+    
+int DOMTimer::install(ScriptExecutionContext* context, ScheduledAction* action, int timeout, bool singleShot)
+{
+    // DOMTimer constructor links the new timer into a list of ActiveDOMObjects held by the 'context'.
+    // The timer is deleted when context is deleted (DOMTimer::contextDestroyed) or explicitly via DOMTimer::removeById().
+    DOMTimer* timer = new DOMTimer(context, action, timeout, singleShot);
+    return timer->m_timeoutId;
+}
+
+void DOMTimer::removeById(ScriptExecutionContext* context, int timeoutId)
+{
+    // timeout IDs have to be positive, and 0 and -1 are unsafe to
+    // even look up since they are the empty and deleted value
+    // respectively
+    if (timeoutId <= 0)
+        return;
+    ASSERT(context && context->isDocument());
+    static_cast<Document*>(context)->removeTimeout(timeoutId);
 }
 
 void DOMTimer::fired()
 {
     ScriptExecutionContext* context = scriptExecutionContext();
-    // FIXME: make it work with Workers SEC too.
-    if (context->isDocument()) {
-        Document* document = static_cast<Document*>(context);
-        if (JSDOMWindow* window = toJSDOMWindow(document->frame())) {
-            m_timerNestingLevel = m_nestingLevel;
-            window->timerFired(this);
-            m_timerNestingLevel = 0;
+    timerNestingLevel = m_nestingLevel;
+
+    // Simple case for non-one-shot timers.
+    if (isActive()) {
+        if (repeatInterval() && repeatInterval() < minTimerInterval) {
+            m_nestingLevel++;
+            if (m_nestingLevel >= maxTimerNestingLevel)
+                augmentRepeatInterval(minTimerInterval - repeatInterval());
         }
+        
+        // No access to member variables after this point, it can delete the timer.
+        m_action->execute(context);
+        return;
     }
+
+    // Delete timer before executing the action for one-shot timers.
+    ScheduledAction* action = m_action.release();
+
+    // No access to member variables after this point.
+    delete this;
+
+    action->execute(context);
+    delete action;
+    timerNestingLevel = 0;
 }
 
 bool DOMTimer::hasPendingActivity() const
@@ -92,9 +145,7 @@ void DOMTimer::stop()
     // Need to release JS objects potentially protected by ScheduledAction
     // because they can form circular references back to the ScriptExecutionContext
     // which will cause a memory leak.
-    JSC::JSLock lock(false);
-    delete m_action;
-    m_action = 0;
+    m_action.clear();
 }
 
 void DOMTimer::suspend() 

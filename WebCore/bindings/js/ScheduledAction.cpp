@@ -31,6 +31,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "ScriptController.h"
+#include "ScriptExecutionContext.h"
 #include "ScriptValue.h"
 #include <runtime/JSLock.h>
 
@@ -44,6 +45,15 @@ ScheduledAction::ScheduledAction(ExecState* exec, JSValue* function, const ArgLi
     ArgList::const_iterator end = args.end();
     for (ArgList::const_iterator it = args.begin(); it != end; ++it)
         m_args.append((*it).jsValue(exec));
+}
+
+void ScheduledAction::execute(ScriptExecutionContext* context)
+{
+    // FIXME: make it work with Workers SEC too.
+    ASSERT(context->isDocument());
+    Document* document = static_cast<Document*>(context);
+    if (JSDOMWindow* window = toJSDOMWindow(document->frame()))
+        execute(window->shell());
 }
 
 void ScheduledAction::execute(JSDOMWindowShell* windowShell)

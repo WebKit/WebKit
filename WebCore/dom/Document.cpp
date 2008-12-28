@@ -4273,7 +4273,7 @@ void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
 
 void Document::addTimeout(int timeoutId, DOMTimer* timer)
 {
-    ASSERT(!m_timeouts.get(timeoutId));
+    ASSERT(!m_timeouts.contains(timeoutId));
     m_timeouts.set(timeoutId, timer);
 }
 
