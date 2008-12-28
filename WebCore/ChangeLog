@@ -1,3 +1,18 @@
+2008-12-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23012
+        Bring application cache manifest parsing up to date
+
+        Test: http/tests/appcache/manifest-parsing.html
+
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::Mode): Added a constant for unknown sections, which are ignored when parsing. This
+        is necessary for future extensions.
+        (WebCore::parseManifest): Parse unknown sections correctly. Ignore trailing tokens in
+        supported sections.
+
 2008-12-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Darin Adler.
