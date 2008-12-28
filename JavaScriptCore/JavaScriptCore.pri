@@ -174,6 +174,7 @@ SOURCES += \
     profiler/Profiler.cpp \
     profiler/TreeProfile.cpp \
     wtf/FastMalloc.cpp \
+    wtf/Threading.cpp \
     wtf/ThreadingQt.cpp \
     wtf/qt/MainThreadQt.cpp
 

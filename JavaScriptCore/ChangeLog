@@ -1,3 +1,45 @@
+2008-12-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/6467376> Race condition in WTF::currentThread can lead to a thread using two different identifiers during its lifetime
+
+        If a newly-created thread calls WTF::currentThread() before WTF::createThread calls establishIdentifierForPthreadHandle
+        then more than one identifier will be used for the same thread.  We can avoid this by adding some extra synchronization
+        during thread creation that delays the execution of the thread function until the thread identifier has been set up, and
+        an assertion to catch this problem should it reappear in the future.
+
+        * wtf/Threading.cpp: Added.
+        (WTF::NewThreadContext::NewThreadContext):
+        (WTF::threadEntryPoint):
+        (WTF::createThread): Add cross-platform createThread function that delays the execution of the thread function until
+        after the thread identifier has been set up.
+        * wtf/Threading.h:
+        * wtf/ThreadingGtk.cpp:
+        (WTF::establishIdentifierForThread):
+        (WTF::createThreadInternal):
+        * wtf/ThreadingNone.cpp:
+        (WTF::createThreadInternal):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::establishIdentifierForPthreadHandle):
+        (WTF::createThreadInternal):
+        * wtf/ThreadingQt.cpp:
+        (WTF::identifierByQthreadHandle):
+        (WTF::establishIdentifierForThread):
+        (WTF::createThreadInternal):
+        * wtf/ThreadingWin.cpp:
+        (WTF::storeThreadHandleByIdentifier):
+        (WTF::createThreadInternal):
+
+        Add Threading.cpp to the build.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.scons:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+
 2008-12-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

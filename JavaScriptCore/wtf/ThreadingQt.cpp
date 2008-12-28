@@ -80,8 +80,23 @@ static HashMap<ThreadIdentifier, QThread*>& threadMap()
     return map;
 }
 
+static ThreadIdentifier identifierByQthreadHandle(QThread*& thread)
+{
+    MutexLocker locker(threadMapMutex());
+
+    HashMap<ThreadIdentifier, QThread*>::iterator i = threadMap().begin();
+    for (; i != threadMap().end(); ++i) {
+        if (i->second == thread)
+            return i->first;
+    }
+
+    return 0;
+}
+
 static ThreadIdentifier establishIdentifierForThread(QThread*& thread)
 {
+    ASSERT(!identifierByQthreadHandle(thread));
+
     MutexLocker locker(threadMapMutex());
 
     static ThreadIdentifier identifierCount = 1;
@@ -98,19 +113,6 @@ static void clearThreadForIdentifier(ThreadIdentifier id)
     ASSERT(threadMap().contains(id));
 
     threadMap().remove(id);
-}
-
-static ThreadIdentifier identifierByQthreadHandle(QThread*& thread)
-{
-    MutexLocker locker(threadMapMutex());
-
-    HashMap<ThreadIdentifier, QThread*>::iterator i = threadMap().begin();
-    for (; i != threadMap().end(); ++i) {
-        if (i->second == thread)
-            return i->first;
-    }
-
-    return 0;
 }
 
 static QThread* threadForIdentifier(ThreadIdentifier id)
@@ -145,7 +147,7 @@ void unlockAtomicallyInitializedStaticMutex()
     atomicallyInitializedStaticMutex->unlock();
 }
 
-ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*)
+ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
 {
     ThreadPrivate* thread = new ThreadPrivate(entryPoint, data);
     if (!thread) {

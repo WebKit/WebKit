@@ -86,17 +86,6 @@ static ThreadMap& threadMap()
     return map;
 }
 
-static ThreadIdentifier establishIdentifierForPthreadHandle(pthread_t& pthreadHandle)
-{
-    MutexLocker locker(threadMapMutex());
-
-    static ThreadIdentifier identifierCount = 1;
-
-    threadMap().add(identifierCount, pthreadHandle);
-    
-    return identifierCount++;
-}
-
 static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle)
 {
     MutexLocker locker(threadMapMutex());
@@ -108,6 +97,19 @@ static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle
     }
 
     return 0;
+}
+
+static ThreadIdentifier establishIdentifierForPthreadHandle(pthread_t& pthreadHandle)
+{
+    ASSERT(!identifierByPthreadHandle(pthreadHandle));
+
+    MutexLocker locker(threadMapMutex());
+
+    static ThreadIdentifier identifierCount = 1;
+
+    threadMap().add(identifierCount, pthreadHandle);
+    
+    return identifierCount++;
 }
 
 static pthread_t pthreadHandleForIdentifier(ThreadIdentifier id)
@@ -126,7 +128,7 @@ static void clearPthreadHandleForIdentifier(ThreadIdentifier id)
     threadMap().remove(id);
 }
 
-ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*)
+ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
 {
     pthread_t threadHandle;
     if (pthread_create(&threadHandle, NULL, entryPoint, data)) {
@@ -134,18 +136,8 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*
         return 0;
     }
 
-    ThreadIdentifier threadID = establishIdentifierForPthreadHandle(threadHandle);
-    return threadID;
+    return establishIdentifierForPthreadHandle(threadHandle);
 }
-
-#if PLATFORM(MAC)
-// This function is deprecated but needs to be kept around for backward
-// compatibility. Use the 3-argument version of createThread above instead.
-ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
-{
-    return createThread(entryPoint, data, 0);
-}
-#endif
 
 int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
 {
@@ -223,7 +215,7 @@ void Mutex::unlock()
     if (pthread_mutex_unlock(&m_mutex) != 0)
         ASSERT(false);
 }
-                
+
 ThreadCondition::ThreadCondition()
 { 
     pthread_cond_init(&m_condition, NULL);

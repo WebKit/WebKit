@@ -423,6 +423,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\Threading.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\ThreadingWin.cpp"
 			>
 		</File>

@@ -163,6 +163,7 @@ Source files for JSCore.
         wtf/RandomNumber.cpp
         wtf/RefCountedLeakCounter.cpp
         wtf/TCSystemAlloc.cpp
+        wtf/Threading.cpp
         wtf/ThreadingNone.cpp
         wtf/wx/MainThreadWx.cpp
         wtf/unicode/CollatorDefault.cpp
