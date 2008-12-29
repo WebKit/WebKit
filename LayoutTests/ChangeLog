@@ -1,3 +1,17 @@
+2008-12-29  Glenn Wilson  <gwilson@chromium.org>
+
+        Reviewed by Darin Adler.
+        Landed by Pamela Greene.
+
+        Added new layout tests verifying that using a locally-scoped
+        variable in an event handler of a form takes precedence over
+        names of items in that form.
+
+        See: https://bugs.webkit.org/show_bug.cgi?id=22977
+
+        * fast/forms/var-name-conflict-in-form-event-handler-expected.txt: Added.
+        * fast/forms/var-name-conflict-in-form-event-handler.html: Added.
+
 2008-12-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
