@@ -1,3 +1,12 @@
+2008-12-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix Windows svn update - replace a file with a colon in its name with an Apache rewrite.
+
+        * http/tests/appcache/resources/.htaccess: Added.
+        * http/tests/appcache/resources/UNKNOWN_SECTION:: Removed.
+
 2008-12-29  Glenn Wilson  <gwilson@chromium.org>
 
         Reviewed by Darin Adler.

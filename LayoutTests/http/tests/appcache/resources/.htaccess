@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^UNKNOWN_SECTION: simple.txt [L,NS]
