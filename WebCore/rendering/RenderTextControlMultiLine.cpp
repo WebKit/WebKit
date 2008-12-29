@@ -24,18 +24,14 @@
 
 #include "EventNames.h"
 #include "Frame.h"
-#include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "HTMLTextAreaElement.h"
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
 RenderTextControlMultiLine::RenderTextControlMultiLine(Node* node)
     : RenderTextControl(node)
 {
-    ASSERT(node->hasTagName(textareaTag));
 }
 
 RenderTextControlMultiLine::~RenderTextControlMultiLine()
