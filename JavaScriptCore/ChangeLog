@@ -1,3 +1,13 @@
+2008-12-29  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Change code using m_body.get() as a boolean to take advantage of the 
+        implicit conversion of RefPtr to boolean.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::~JSFunction):
+
 2008-12-28  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.
