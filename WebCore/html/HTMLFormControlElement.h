@@ -24,6 +24,7 @@
 #ifndef HTMLFormControlElement_h
 #define HTMLFormControlElement_h
 
+#include "FormControlElement.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -31,7 +32,7 @@ namespace WebCore {
 class FormDataList;
 class HTMLFormElement;
 
-class HTMLFormControlElement : public HTMLElement {
+class HTMLFormControlElement : public HTMLElement, public FormControlElement {
 public:
     HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*);
     virtual ~HTMLFormControlElement();
@@ -53,8 +54,8 @@ public:
 
     virtual void reset() {}
 
-    bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
-    void setValueMatchesRenderer(bool b = true) const { m_valueMatchesRenderer = b; }
+    virtual bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
+    virtual void setValueMatchesRenderer(bool b = true) { m_valueMatchesRenderer = b; }
 
     void onChange();
 
@@ -106,7 +107,7 @@ private:
     HTMLFormElement* m_form;
     bool m_disabled;
     bool m_readOnly;
-    mutable bool m_valueMatchesRenderer;
+    bool m_valueMatchesRenderer;
 };
 
 class HTMLFormControlElementWithState : public HTMLFormControlElement {

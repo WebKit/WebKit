@@ -24,14 +24,18 @@
 
 #include "EventNames.h"
 #include "Frame.h"
+#include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "HTMLTextAreaElement.h"
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 RenderTextControlMultiLine::RenderTextControlMultiLine(Node* node)
     : RenderTextControl(node)
 {
+    ASSERT(node->hasTagName(textareaTag));
 }
 
 RenderTextControlMultiLine::~RenderTextControlMultiLine()
@@ -43,14 +47,13 @@ RenderTextControlMultiLine::~RenderTextControlMultiLine()
 void RenderTextControlMultiLine::subtreeHasChanged()
 {
     RenderTextControl::subtreeHasChanged();
+    formControlElement()->setValueMatchesRenderer(false);
 
-    HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(node());
-    element->setValueMatchesRenderer(false);
+    if (!node()->focused())
+        return;
 
-    if (element->focused()) {
-        if (Frame* frame = document()->frame())
-            frame->textDidChangeInTextArea(element);
-    }
+    if (Frame* frame = document()->frame())
+        frame->textDidChangeInTextArea(static_cast<Element*>(node()));
 }
 
 void RenderTextControlMultiLine::layout()

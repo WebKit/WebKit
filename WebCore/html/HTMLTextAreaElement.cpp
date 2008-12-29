@@ -262,7 +262,7 @@ void HTMLTextAreaElement::updateValue() const
 
     ASSERT(renderer());
     m_value = static_cast<RenderTextControl*>(renderer())->text();
-    setValueMatchesRenderer();
+    const_cast<HTMLTextAreaElement*>(this)->setValueMatchesRenderer();
     notifyFormStateChanged(this);
 }
 

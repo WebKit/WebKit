@@ -40,7 +40,7 @@
 #include "Settings.h"
 #include "TextControlInnerElements.h"
 
-using std::max;
+using namespace std;
 
 namespace WebCore {
 
@@ -54,6 +54,7 @@ RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node)
     , m_searchEventTimer(this, &RenderTextControlSingleLine::searchEventTimerFired)
     , m_searchPopup(0)
 {
+    ASSERT(node->hasTagName(inputTag));
 }
 
 RenderTextControlSingleLine::~RenderTextControlSingleLine()
@@ -475,7 +476,7 @@ void RenderTextControlSingleLine::updateFromElement()
         ExceptionCode ec = 0;
         innerTextElement()->setInnerText(element->getAttribute(placeholderAttr), ec);
         ASSERT(ec == 0);
-    } else if (!element->valueMatchesRenderer() || placeholderVisibilityShouldChange)
+    } else if (!formControlElement()->valueMatchesRenderer() || placeholderVisibilityShouldChange)
         setInnerTextValue(element->value());
 
     if (m_searchPopupIsVisible)

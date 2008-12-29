@@ -1,3 +1,44 @@
+2008-12-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Antti Koivisto.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=23015
+
+        Don't rely on HTMLFormControlElement in RenderTextControl.
+
+        Introduce an abstract FormControlElement class, containing the
+        valueMatchesRenderer/setValueMatchesRenderer, the only HTMLFormControlElement
+        specific methods that RenderTextControl relies on.
+
+        This makes it possible for WML to reuse RenderTextControl.
+        RenderTextControlSingleLine still relies on HTMLInputElement,
+        this will change if WMLInputElement is introduced.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/FormControlElement.h: Added.
+        (WebCore::FormControlElement::~FormControlElement):
+        (WebCore::FormControlElement::FormControlElement):
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::valueMatchesRenderer):
+        (WebCore::HTMLFormControlElement::setValueMatchesRenderer):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updateValue):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::adjustInnerTextStyle):
+        (WebCore::RenderTextControl::updateFromElement):
+        (WebCore::RenderTextControl::setInnerTextValue):
+        (WebCore::RenderTextControl::selectionChanged):
+        (WebCore::RenderTextControl::formControlElement):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::RenderTextControlMultiLine):
+        (WebCore::RenderTextControlMultiLine::subtreeHasChanged):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+
 2008-12-28  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin Adler.

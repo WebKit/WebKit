@@ -11342,6 +11342,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\FormControlElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\KeyboardEvent.cpp"
 				>
 				<FileConfiguration

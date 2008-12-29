@@ -26,6 +26,7 @@
 
 namespace WebCore {
 
+class FormControlElement;
 class Selection;
 class TextControlInnerElement;
 class TextControlInnerTextElement;
@@ -104,6 +105,8 @@ protected:
 
     friend class TextIterator;
     HTMLElement* innerTextElement() const;
+
+    FormControlElement* formControlElement() const;
 
 private:
     String finishText(Vector<UChar>&) const;

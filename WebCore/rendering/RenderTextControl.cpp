@@ -103,14 +103,12 @@ void RenderTextControl::styleDidChange(RenderStyle::Diff diff, const RenderStyle
 
 void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const
 {
-    HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(node());
-
     // The inner block, if present, always has its direction set to LTR,
     // so we need to inherit the direction from the element.
     textBlockStyle->setDirection(style()->direction());
-    textBlockStyle->setUserModify(element->isReadOnlyControl() || element->disabled() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+    textBlockStyle->setUserModify((node()->isReadOnlyControl() || !node()->isEnabled()) ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
 
-    if (!element->isEnabled())
+    if (!node()->isEnabled())
         textBlockStyle->setColor(disabledTextColor(textBlockStyle->color(), startStyle->backgroundColor()));
 }
 
@@ -139,8 +137,7 @@ int RenderTextControl::textBlockWidth() const
 
 void RenderTextControl::updateFromElement()
 {
-    HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(node());
-    m_innerText->renderer()->style()->setUserModify(element->isReadOnlyControl() || element->disabled() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+    m_innerText->renderer()->style()->setUserModify((node()->isReadOnlyControl() || !node()->isEnabled()) ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY); 
 }
 
 void RenderTextControl::setInnerTextValue(const String& innerTextValue)
@@ -173,7 +170,7 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
         m_userEdited = false;
     }
 
-    static_cast<HTMLFormControlElement*>(node())->setValueMatchesRenderer();
+    formControlElement()->setValueMatchesRenderer();
 }
 
 void RenderTextControl::setUserEdited(bool isUserEdited)
@@ -505,10 +502,8 @@ void RenderTextControl::selectionChanged(bool userTriggered)
     cacheSelection(selectionStart(), selectionEnd());
 
     if (Frame* frame = document()->frame()) {
-        if (frame->selection()->isRange() && userTriggered) {
-            HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(node());
-            element->dispatchEventForType(eventNames().selectEvent, true, false);
-        }
+        if (frame->selection()->isRange() && userTriggered)
+            static_cast<EventTargetNode*>(node())->dispatchEventForType(eventNames().selectEvent, true, false);
     }
 }
 
@@ -582,6 +577,15 @@ bool RenderTextControl::isScrollable() const
 HTMLElement* RenderTextControl::innerTextElement() const
 {
     return m_innerText.get();
+}
+
+FormControlElement* RenderTextControl::formControlElement() const
+{
+    if (node()->isHTMLElement())
+        return static_cast<HTMLFormControlElement*>(node());
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 } // namespace WebCore
