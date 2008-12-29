@@ -1,3 +1,17 @@
+2008-12-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21797
+        <rdar://problem/6310682> REGRESSION: Crash in CFHTTPCookieStorageCopy beneath WebCore::cookies() when 
+        running fast/dom/document-attribute-js-null.html and http/tests/security/cookies/create-document.html
+        
+        Return early if the document is trying to get or set a cookie with an empty cookie url.
+
+        * dom/Document.cpp:
+        (WebCore::Document::cookie):
+        (WebCore::Document::setCookie):
+
 2008-12-28  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Sam Weinig.

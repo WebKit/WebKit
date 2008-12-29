@@ -2902,7 +2902,11 @@ String Document::cookie() const
     if (page() && !page()->cookieEnabled())
         return String();
 
-    return cookies(this, cookieURL());
+    KURL cookieURL = this->cookieURL();
+    if (cookieURL.isEmpty())
+        return String();
+
+    return cookies(this, cookieURL);
 }
 
 void Document::setCookie(const String& value)
@@ -2910,7 +2914,11 @@ void Document::setCookie(const String& value)
     if (page() && !page()->cookieEnabled())
         return;
 
-    setCookies(this, cookieURL(), policyBaseURL(), value);
+    KURL cookieURL = this->cookieURL();
+    if (cookieURL.isEmpty())
+        return;
+
+    setCookies(this, cookieURL, policyBaseURL(), value);
 }
 
 String Document::referrer() const
