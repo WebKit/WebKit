@@ -1,3 +1,19 @@
+2008-12-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        First step of Bug 3781: Animation via canvas could be faster
+
+        Amortise the cost of calling repaint by coalescing repaint rects
+        while the canvas is drawn to.  In a later step we'll stop calling
+        repaint() directly, and instead have all dirty canvases repaint
+        at the end of JS execution.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::willDraw):
+        (WebCore::HTMLCanvasElement::paint):
+        * html/HTMLCanvasElement.h:
+
 2008-12-30  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Antti Koivisto.

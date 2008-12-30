@@ -28,6 +28,7 @@
 #define HTMLCanvasElement_h
 
 #include "AffineTransform.h"
+#include "FloatRect.h"
 #include "HTMLElement.h"
 #include "IntSize.h"
 
@@ -42,7 +43,6 @@ class GraphicsContext;
 class HTMLCanvasElement;
 class ImageBuffer;
 class IntPoint;
-class InttRect;
 class IntSize;
 
 class CanvasObserver {
@@ -119,6 +119,7 @@ private:
 
     bool m_originClean;
     bool m_ignoreReset;
+    FloatRect m_dirtyRect;
 
     // m_createdImageBuffer means we tried to malloc the buffer.  We didn't necessarily get it.
     mutable bool m_createdImageBuffer;
