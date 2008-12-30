@@ -49,6 +49,8 @@ double randomNumber()
     rand_s(&u);
 
     return static_cast<double>(u) / (static_cast<double>(UINT_MAX) + 1.0);
+#elif PLATFORM(DARWIN)
+    return static_cast<double>(random()) / (static_cast<double>(RAND_MAX) + 1.0);
 #else
     return static_cast<double>(rand()) / (static_cast<double>(RAND_MAX) + 1.0);
 #endif

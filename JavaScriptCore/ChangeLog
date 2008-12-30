@@ -1,3 +1,18 @@
+2008-12-29  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt and Sam Weinig.
+
+        Bug 23029: REGRESSION (r39337): jsfunfuzz generates identical test files
+        <https://bugs.webkit.org/show_bug.cgi?id=23029>
+        <rdar://problem/6469185>
+
+        The unification of random number generation in r39337 resulted in random()
+        being initialized on Darwin, but rand() actually being used. Fix this by
+        making randomNumber() use random() instead of rand() on Darwin.
+
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber):
+
 2008-12-29  Sam Weinig  <sam@webkit.org>
 
         Fix buildbots.
