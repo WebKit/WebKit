@@ -1,3 +1,18 @@
+2008-12-30  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Antti Koivisto.
+
+        Bug 22931: Using the inspector with purgeable resources leads to assertion failures
+        <https://bugs.webkit.org/show_bug.cgi?id=22931>
+
+        Change InspectorResource::sourceString() so that it doesn't attempt to
+        unsafely get the data of a purgeable CachedResource.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorResource::sourceString): Attempt to make a purgeable
+        resource unpurgeable, and if this not possible, return an empty string.
+        * loader/CachedResource.h: Make InspectorResource a friend of CachedResource.
+
 2008-12-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

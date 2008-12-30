@@ -39,6 +39,7 @@ class Cache;
 class CachedResourceClient;
 class CachedResourceHandleBase;
 class DocLoader;
+class InspectorResource;
 class Request;
 class PurgeableBuffer;
 
@@ -47,6 +48,7 @@ class PurgeableBuffer;
 // This class also does the actual communication with the loader to obtain the resource from the network.
 class CachedResource {
     friend class Cache;
+    friend class InspectorResource;
     
 public:
     enum Type {
