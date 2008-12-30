@@ -1,3 +1,11 @@
+2008-12-29  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Revert r39509, because kjsyydebug is used in the generated code if YYDEBUG is 1.
+
+        * parser/Grammar.y:
+
 2008-12-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
