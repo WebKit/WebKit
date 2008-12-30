@@ -893,7 +893,6 @@ bool DocumentLoader::scheduleApplicationCacheLoad(ResourceLoader* loader, const 
 
     ApplicationCacheResource* resource;
     if (!shouldLoadResourceFromApplicationCache(request, resource))
-        // FIXME: Handle opportunistic caching namespaces
         return false;
     
     m_pendingSubstituteResources.set(loader, resource);

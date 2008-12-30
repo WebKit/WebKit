@@ -468,8 +468,6 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
         return;
     }
         
-    // FIXME: Add the opportunistic caching namespaces and their fallbacks.
-    
     // We have the manifest, now download the resources.
     m_status = Downloading;
     
@@ -492,7 +490,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
         ApplicationCache::ResourceMap::const_iterator end = m_newestCache->end();
         for (ApplicationCache::ResourceMap::const_iterator it = m_newestCache->begin(); it != end; ++it) {
             unsigned type = it->second->type();
-            if (type & (ApplicationCacheResource::Opportunistic | ApplicationCacheResource::Implicit | ApplicationCacheResource::Dynamic))
+            if (type & (ApplicationCacheResource::Implicit | ApplicationCacheResource::Dynamic))
                 addEntry(it->first, type);
         }
     }

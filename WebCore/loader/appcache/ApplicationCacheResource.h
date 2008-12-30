@@ -40,7 +40,7 @@ public:
         Explicit = 1 << 2,
         Foreign = 1 << 3,
         Fallback = 1 << 4,
-        Opportunistic = 1 << 5,
+        // Bit 5 was used for opportunistic entries, which were removed from the spec.
         Dynamic = 1 << 6
     };
         

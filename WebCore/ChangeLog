@@ -1,3 +1,23 @@
+2008-12-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23023
+        Remove incomplete support for opportunistic appcache entries
+
+        No change in behavior, thus no test.
+
+        * loader/appcache/ApplicationCacheResource.h:
+        (WebCore::ApplicationCacheResource::Type): Removed Opportunistic bit, will re-use when schema
+        version changes.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::scheduleApplicationCacheLoad):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        * loader/appcache/ApplicationCacheResource.cpp:
+        (WebCore::ApplicationCacheResource::dumpType):
+
 2008-12-29  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.
