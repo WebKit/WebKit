@@ -1,3 +1,11 @@
+2008-12-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Tiger build fix (correct this time)
+
+        * wtf/RandomNumber.cpp:
+
 2008-12-29  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Rubber-stamped by Alexey Proskuryakov.
