@@ -38,7 +38,7 @@
 #include <wtf/Threading.h>
 #endif
 
-#define DUMP_STRUCTURE_ID_STATISTICS 1
+#define DUMP_STRUCTURE_ID_STATISTICS 0
 
 #ifndef NDEBUG
 #define DO_PROPERTYMAP_CONSTENCY_CHECK 0
