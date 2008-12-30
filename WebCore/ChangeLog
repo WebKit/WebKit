@@ -1,3 +1,17 @@
+2008-12-29  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Add arcTo support for Cairo. This is needed by Canvas.
+        Cairo has no native support for arcTo. We have to make our
+        own implementation.
+
+        [Canvas] Cairo needs arcTo
+        https://bugs.webkit.org/show_bug.cgi?id=23003
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::addArcTo):
+
 2008-12-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.
