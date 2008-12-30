@@ -1,3 +1,17 @@
+2008-12-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 23030: Cannot setTransform with a non-invertible ctm
+
+        Tests to ensure correct behaviour when the canvas context does not
+        have an invertible CTM.
+
+        * fast/canvas/canvas-set-properties-with-non-invertible-ctm-expected.txt: Added.
+        * fast/canvas/canvas-set-properties-with-non-invertible-ctm.html: Added.
+        * fast/canvas/resources/canvas-set-properties-with-non-invertible-ctm.js: Added.
+        (testPixel):
+
 2008-12-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mark Rowe.

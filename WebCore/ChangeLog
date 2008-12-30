@@ -1,3 +1,30 @@
+2008-12-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 23030: Cannot setTransform with a non-invertible ctm
+
+        Removed a series of unnecessary and incorrect checks for an invertible
+        transform.
+
+        Test: fast/canvas/canvas-set-properties-with-non-invertible-ctm.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+            These properties are not effected by the current CTM, so there
+            is no need to prevent them from being assigned.
+
+        (WebCore::CanvasRenderingContext2D::setTransform):
+            The whole point of tracking whether the current CTM was expected to be
+            non-invertible was to allow setTransform to be used when the CTM had become
+            non-invertible.
+
+        (WebCore::CanvasRenderingContext2D::beginPath):
+        (WebCore::CanvasRenderingContext2D::closePath):
+            beginPath and closePath change the state of the path, but not any of
+            its coordinates so there is no need prevent them from being called.
+
 2008-12-29  Josh Roesslein  <jroesslein@gmail.com>
 
         Reviewed by Oliver Hunt.

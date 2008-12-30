@@ -1,0 +1,23 @@
+Tests to make sure we can assign to non-ctm effected properties with a non-invertible ctm set
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.fillStyle is "green"
+PASS imageData.data[0] is 0
+PASS imageData.data[1] is 128
+PASS imageData.data[2] is 0
+PASS ctx.strokeStyle is "green"
+PASS imageData.data[0] is 0
+PASS imageData.data[1] is 128
+PASS imageData.data[2] is 0
+PASS imageData.data[0] is 0
+PASS imageData.data[1] is 128
+PASS imageData.data[2] is 0
+PASS imageData.data[0] is 0
+PASS imageData.data[1] is 128
+PASS imageData.data[2] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
