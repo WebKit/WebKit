@@ -1,3 +1,16 @@
+2008-12-30  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Darin Adler.
+        Landed by Pamela Greene.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22908.
+        Update website so that newbies are told they must set the
+        WebKitOutputDir to get a valid build.
+
+        * building/build.html: Add language (and link) indicating the
+        importance of setting the WebKitOutputDir variable, as well
+        as a link to instructions on how to do so.
+
 2008-12-19  Dean Jackson  <dino@apple.com>
 
         Media queries that return <integer> but are really boolean
