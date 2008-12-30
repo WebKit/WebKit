@@ -35,8 +35,10 @@ namespace WTF {
 inline void initializeRandomNumberGenerator()
 {
 #if PLATFORM(DARWIN)
-    srandomdev();
-#elif !COMPILER(MSVC) || !defined(_CRT_RAND_S)
+    // On Darwin we use arc4random which initialises itself.
+#elif COMPILER(MSVC) && defined(_CRT_RAND_S)
+    // On Windows we use rand_s which intialises itself
+#else
     srand(static_cast<unsigned>(time(0)));
 #endif
 }

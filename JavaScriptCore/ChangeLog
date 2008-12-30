@@ -1,3 +1,24 @@
+2008-12-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6358108> Insecure randomness in Math.random() leads to user tracking
+
+        Switch to arc4random on PLATFORM(DARWIN), this is ~1.5x slower than random(), but the
+        it is still so fast that there is no fathomable way it could be a bottleneck for anything.
+
+        randomNumber is called in two places
+          * During form submission where it is called once per form
+          * Math.random in JSC.  For this difference to show up you have to be looping on
+            a cached local copy of random, for a large (>10000) calls.
+
+        No change in SunSpider.
+
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber):
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeRandomNumberGenerator):
+
 2008-12-29  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Rubber-stamped by Sam Weinig.
