@@ -1,5 +1,13 @@
 2008-12-29  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Tiger build fix.
+
+        * wtf/RandomNumber.cpp:
+
+2008-12-29  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Mark Rowe.
 
         <rdar://problem/6358108> Insecure randomness in Math.random() leads to user tracking
