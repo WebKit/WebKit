@@ -1,5 +1,13 @@
 2008-12-29  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Rubber-stamped by Sam Weinig.
+
+        Remove unused kjsyydebug #define.
+
+        * parser/Grammar.y:
+
+2008-12-29  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Oliver Hunt and Sam Weinig.
 
         Bug 23029: REGRESSION (r39337): jsfunfuzz generates identical test files

@@ -43,7 +43,6 @@
 
 /* default values for bison */
 #define YYDEBUG 0 // Set to 1 to debug a parse error.
-#define kjsyydebug 0 // Set to 1 to debug a parse error.
 #if !PLATFORM(DARWIN)
     // avoid triggering warnings in older bison
 #define YYERROR_VERBOSE
