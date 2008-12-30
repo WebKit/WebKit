@@ -58,17 +58,168 @@
 #include "htmlediting.h"
 #include <wtf/RefCountedLeakCounter.h>
 
+#define DUMP_NODE_STATISTICS 0
+
 using namespace std;
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-// --------
-
 bool Node::isSupported(const String& feature, const String& version)
 {
     return DOMImplementation::hasFeature(feature, version);
+}
+
+#if DUMP_NODE_STATISTICS
+static HashSet<Node*> liveNodeSet;
+#endif
+
+void Node::dumpStatistics()
+{
+#if DUMP_NODE_STATISTICS
+    size_t nodesWithRareData = 0;
+
+    size_t elementNodes = 0;
+    size_t attrNodes = 0;
+    size_t textNodes = 0;
+    size_t cdataNodes = 0;
+    size_t commentNodes = 0;
+    size_t entityReferenceNodes = 0;
+    size_t entityNodes = 0;
+    size_t piNodes = 0;
+    size_t documentNodes = 0;
+    size_t docTypeNodes = 0;
+    size_t fragmentNodes = 0;
+    size_t notationNodes = 0;
+    size_t xpathNSNodes = 0;
+
+    HashMap<String, size_t> perTagCount;
+
+    size_t attributes = 0;
+    size_t mappedAttributes = 0;
+    size_t mappedAttributesWithStyleDecl = 0;
+    size_t attributesWithAttr = 0;
+    size_t attrMaps = 0;
+    size_t mappedAttrMaps = 0;
+
+    for (HashSet<Node*>::const_iterator it = liveNodeSet.begin(); it != liveNodeSet.end(); ++it) {
+        Node* node = *it;
+
+        if (node->hasRareData())
+            ++nodesWithRareData;
+
+        switch (node->nodeType()) {
+            case ELEMENT_NODE: {
+                ++elementNodes;
+
+                // Tag stats
+                Element* element = static_cast<Element*>(node);
+                pair<HashMap<String, size_t>::iterator, bool> result = perTagCount.add(element->tagName(), 1);
+                if (!result.second)
+                    result.first->second++;
+
+                // AttributeMap stats
+                if (NamedAttrMap* attrMap = element->attributes(true)) {
+                    attributes += attrMap->length();
+                    ++attrMaps;
+                    if (attrMap->isMappedAttributeMap())
+                        ++mappedAttrMaps;
+                    for (unsigned i = 0; i < attrMap->length(); ++i) {
+                        Attribute* attr = attrMap->attributeItem(i);
+                        if (attr->attr())
+                            ++attributesWithAttr;
+                        if (attr->isMappedAttribute()) {
+                            ++mappedAttributes;
+                            if (attr->style())
+                                ++mappedAttributesWithStyleDecl;
+                        }
+                    }
+                }
+                break;
+            }
+            case ATTRIBUTE_NODE: {
+                ++attrNodes;
+                break;
+            }
+            case TEXT_NODE: {
+                ++textNodes;
+                break;
+            }
+            case CDATA_SECTION_NODE: {
+                ++cdataNodes;
+                break;
+            }
+            case COMMENT_NODE: {
+                ++commentNodes;
+                break;
+            }
+            case ENTITY_REFERENCE_NODE: {
+                ++entityReferenceNodes;
+                break;
+            }
+            case ENTITY_NODE: {
+                ++entityNodes;
+                break;
+            }
+            case PROCESSING_INSTRUCTION_NODE: {
+                ++piNodes;
+                break;
+            }
+            case DOCUMENT_NODE: {
+                ++documentNodes;
+                break;
+            }
+            case DOCUMENT_TYPE_NODE: {
+                ++docTypeNodes;
+                break;
+            }
+            case DOCUMENT_FRAGMENT_NODE: {
+                ++fragmentNodes;
+                break;
+            }
+            case NOTATION_NODE: {
+                ++notationNodes;
+                break;
+            }
+            case XPATH_NAMESPACE_NODE: {
+                ++xpathNSNodes;
+                break;
+            }
+        }
+            
+    }
+
+    printf("Number of Nodes: %d\n\n", liveNodeSet.size());
+    printf("Number of Nodes with RareData: %zu\n\n", nodesWithRareData);
+
+    printf("NodeType distrubution:\n");
+    printf("  Number of Element nodes: %zu\n", elementNodes);
+    printf("  Number of Attribute nodes: %zu\n", attrNodes);
+    printf("  Number of Text nodes: %zu\n", textNodes);
+    printf("  Number of CDATASection nodes: %zu\n", cdataNodes);
+    printf("  Number of Comment nodes: %zu\n", commentNodes);
+    printf("  Number of EntityReference nodes: %zu\n", entityReferenceNodes);
+    printf("  Number of Entity nodes: %zu\n", entityNodes);
+    printf("  Number of ProcessingInstruction nodes: %zu\n", piNodes);
+    printf("  Number of Document nodes: %zu\n", documentNodes);
+    printf("  Number of DocumentType nodes: %zu\n", docTypeNodes);
+    printf("  Number of DocumentFragment nodes: %zu\n", fragmentNodes);
+    printf("  Number of Notation nodes: %zu\n", notationNodes);
+    printf("  Number of XPathNS nodes: %zu\n", xpathNSNodes);
+
+    printf("Element tag name distibution:\n");
+    for (HashMap<String, size_t>::const_iterator it = perTagCount.begin(); it != perTagCount.end(); ++it)
+        printf("  Number of <%s> tags: %zu\n", it->first.utf8().data(), it->second);
+
+    printf("Attribute Maps:\n");
+    printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
+    printf("  Number of MappedAttributes: %zu [%zu]\n", mappedAttributes, sizeof(MappedAttribute));
+    printf("  Number of MappedAttributes with a StyleDeclaration: %zu\n", mappedAttributesWithStyleDecl);
+    printf("  Number of Attributes with an Attr: %zu\n", attributesWithAttr);
+    printf("  Number of NamedAttrMaps: %zu\n", attrMaps);
+    printf("  Number of NamedMappedAttrMap: %zu\n", mappedAttrMaps);
+#endif
 }
 
 #ifndef NDEBUG
@@ -172,20 +323,9 @@ Node::Node(Document* doc, bool isElement, bool isContainer)
     else
         nodeCounter.increment();
 #endif
-}
-
-void Node::setDocument(Document* doc)
-{
-    if (inDocument() || m_document == doc)
-        return;
-
-    willMoveToNewOwnerDocument();
-
-    updateDOMNodeDocument(this, m_document.get(), doc);
-
-    m_document = doc;
-
-    didMoveToNewOwnerDocument();
+#if DUMP_NODE_STATISTICS
+    liveNodeSet.add(this);
+#endif
 }
 
 Node::~Node()
@@ -197,7 +337,11 @@ Node::~Node()
     else
         nodeCounter.decrement();
 #endif
-    
+
+#if DUMP_NODE_STATISTICS
+    liveNodeSet.remove(this);
+#endif
+
     if (!hasRareData())
         ASSERT(!NodeRareData::rareDataMap().contains(this));
     else {
@@ -218,6 +362,20 @@ Node::~Node()
         m_previous->setNextSibling(0);
     if (m_next)
         m_next->setPreviousSibling(0);
+}
+
+void Node::setDocument(Document* doc)
+{
+    if (inDocument() || m_document == doc)
+        return;
+
+    willMoveToNewOwnerDocument();
+
+    updateDOMNodeDocument(this, m_document.get(), doc);
+
+    m_document = doc;
+
+    didMoveToNewOwnerDocument();
 }
 
 NodeRareData* Node::rareData() const

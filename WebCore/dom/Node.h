@@ -94,6 +94,8 @@ public:
     static void startIgnoringLeaks();
     static void stopIgnoringLeaks();
 
+    static void dumpStatistics();
+
     enum StyleChange { NoChange, NoInherit, Inherit, Detach, Force };    
     static StyleChange diff(RenderStyle*, RenderStyle*);
 
