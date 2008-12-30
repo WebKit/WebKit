@@ -2,6 +2,15 @@
 
         Reviewed by NOBODY (Build fix).
 
+        Yet another attempt to fix Tiger.
+
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber):
+
+2008-12-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
         Tiger build fix (correct this time)
 
         * wtf/RandomNumber.cpp:
