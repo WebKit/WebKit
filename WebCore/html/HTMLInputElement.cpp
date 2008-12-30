@@ -700,9 +700,10 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
             attach();
         }
         setChanged();
-    } else if (attr->name() == placeholderAttr)
-        updatePlaceholderVisibility(true);
-    else if (attr->name() == autosaveAttr ||
+    } else if (attr->name() == placeholderAttr) {
+        if (isTextField())
+            updatePlaceholderVisibility(true);
+    } else if (attr->name() == autosaveAttr ||
                attr->name() == incrementalAttr ||
                attr->name() == minAttr ||
                attr->name() == maxAttr ||

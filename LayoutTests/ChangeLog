@@ -1,3 +1,12 @@
+2008-12-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - test for <rdar://problem/6469944> REGRESSION(3.2.1-ToT): Repro crash in WebCore::HTMLInputElement::updatePlaceholderVisibility opening http://billshrink.com
+
+        * fast/forms/placeholder-non-textfield-expected.txt: Added.
+        * fast/forms/placeholder-non-textfield.html: Added.
+
 2008-12-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.
