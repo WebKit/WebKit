@@ -38,7 +38,7 @@
 #include <wtf/Threading.h>
 #endif
 
-#define DUMP_STRUCTURE_ID_STATISTICS 0
+#define DUMP_STRUCTURE_ID_STATISTICS 1
 
 #ifndef NDEBUG
 #define DO_PROPERTYMAP_CONSTENCY_CHECK 0
@@ -101,6 +101,8 @@ void Structure::dumpStatistics()
         if (structure->m_propertyTable) {
             ++numberWithPropertyMaps;
             totalPropertyMapsSize += PropertyMapHashTable::allocationSize(structure->m_propertyTable->size);
+            if (structure->m_propertyTable->deletedOffsets)
+                totalPropertyMapsSize += (structure->m_propertyTable->deletedOffsets->capacity() * sizeof(unsigned)); 
         }
     }
 
@@ -378,7 +380,6 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
 {
     ASSERT(!structure->m_isDictionary);
     ASSERT(structure->typeInfo().type() == ObjectType);
-    ASSERT(structure->m_deletedOffsets.isEmpty());
     ASSERT(!Structure::addPropertyTransitionToExistingStructure(structure, propertyName, attributes, offset));
 
     if (structure->m_transitionCount > s_maxTransitionLength) {
@@ -450,7 +451,6 @@ PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure,
     RefPtr<Structure> transition = create(prototype, structure->typeInfo());
 
     transition->m_transitionCount = structure->m_transitionCount + 1;
-    transition->m_deletedOffsets = structure->m_deletedOffsets;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
 
@@ -467,7 +467,6 @@ PassRefPtr<Structure> Structure::getterSetterTransition(Structure* structure)
 {
     RefPtr<Structure> transition = create(structure->storedPrototype(), structure->typeInfo());
     transition->m_transitionCount = structure->m_transitionCount + 1;
-    transition->m_deletedOffsets = structure->m_deletedOffsets;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = transition->m_hasGetterSetterProperties;
 
@@ -486,7 +485,6 @@ PassRefPtr<Structure> Structure::toDictionaryTransition(Structure* structure)
 
     RefPtr<Structure> transition = create(structure->m_prototype, structure->typeInfo());
     transition->m_isDictionary = true;
-    transition->m_deletedOffsets = structure->m_deletedOffsets;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
 
@@ -507,7 +505,7 @@ PassRefPtr<Structure> Structure::fromDictionaryTransition(Structure* structure)
 
     // FIMXE: We can make this more efficient by canonicalizing the Structure (draining the
     // deleted offsets vector) before transitioning from dictionary. 
-    if (structure->m_deletedOffsets.isEmpty())
+    if (!structure->m_propertyTable || !structure->m_propertyTable->deletedOffsets || structure->m_propertyTable->deletedOffsets->isEmpty())
         structure->m_isDictionary = false;
 
     return structure;
@@ -602,6 +600,10 @@ PropertyMapHashTable* Structure::copyPropertyTable()
         if (UString::Rep* key = newTable->entries()[i].key)
             key->ref();
     }
+
+    // Copy the deletedOffsets vector.
+    if (m_propertyTable->deletedOffsets)
+        newTable->deletedOffsets = new Vector<unsigned>(*m_propertyTable->deletedOffsets);
 
     return newTable;
 }
@@ -728,9 +730,9 @@ size_t Structure::put(const Identifier& propertyName, unsigned attributes)
     m_propertyTable->entries()[entryIndex - 1].index = ++m_propertyTable->lastIndexUsed;
 
     unsigned newOffset;
-    if (!m_deletedOffsets.isEmpty()) {
-        newOffset = m_deletedOffsets.last();
-        m_deletedOffsets.removeLast();
+    if (m_propertyTable->deletedOffsets && !m_propertyTable->deletedOffsets->isEmpty()) {
+        newOffset = m_propertyTable->deletedOffsets->last();
+        m_propertyTable->deletedOffsets->removeLast();
     } else
         newOffset = m_propertyTable->keyCount;
     m_propertyTable->entries()[entryIndex - 1].offset = newOffset;
@@ -798,7 +800,10 @@ size_t Structure::remove(const Identifier& propertyName)
     m_propertyTable->entries()[entryIndex - 1].key = 0;
     m_propertyTable->entries()[entryIndex - 1].attributes = 0;
     m_propertyTable->entries()[entryIndex - 1].offset = 0;
-    m_deletedOffsets.append(offset);
+
+    if (!m_propertyTable->deletedOffsets)
+        m_propertyTable->deletedOffsets = new Vector<unsigned>;
+    m_propertyTable->deletedOffsets->append(offset);
 
     ASSERT(m_propertyTable->keyCount >= 1);
     --m_propertyTable->keyCount;
@@ -903,6 +908,7 @@ void Structure::rehashPropertyMapHashTable(unsigned newTableSize)
         }
     }
     m_propertyTable->lastIndexUsed = lastIndexUsed;
+    m_propertyTable->deletedOffsets = oldTable->deletedOffsets;
 
     fastFree(oldTable);
 
