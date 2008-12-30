@@ -49,14 +49,11 @@ CSSRuleList::CSSRuleList(StyleList* list, bool omitCharsetRules)
 
 CSSRuleList::~CSSRuleList()
 {
-    CSSRule* rule;
-    while (!m_lstCSSRules.isEmpty() && (rule = m_lstCSSRules.take(0)))
-        rule->deref();
 }
 
 unsigned CSSRuleList::length() const
 {
-    return m_list ? m_list->length() : m_lstCSSRules.count();
+    return m_list ? m_list->length() : m_lstCSSRules.size();
 }
 
 CSSRule* CSSRuleList::item(unsigned index)
@@ -66,33 +63,50 @@ CSSRule* CSSRuleList::item(unsigned index)
         ASSERT(!rule || rule->isRule());
         return static_cast<CSSRule*>(rule);
     }
-    return m_lstCSSRules.at(index);
+
+    if (index < m_lstCSSRules.size())
+        return m_lstCSSRules[index].get();
+    return 0;
 }
 
 void CSSRuleList::deleteRule(unsigned index)
 {
     ASSERT(!m_list);
-    CSSRule* rule = m_lstCSSRules.take(index);
-    if (rule)
-        rule->deref();
-    // FIXME: Throw INDEX_SIZE_ERR exception here if !rule
+
+    if (index >= m_lstCSSRules.size()) {
+        // FIXME: Should we throw an INDEX_SIZE_ERR exception here?
+        return;
+    }
+
+    m_lstCSSRules.remove(index);
 }
 
 void CSSRuleList::append(CSSRule* rule)
 {
-    insertRule(rule, m_lstCSSRules.count()) ;
+    ASSERT(!m_list);
+    if (!rule) {
+        // FIXME: Should we throw an exception?
+        return;
+    }
+
+    m_lstCSSRules.append(rule);
 }
 
 unsigned CSSRuleList::insertRule(CSSRule* rule, unsigned index)
 {
     ASSERT(!m_list);
-    if (rule && m_lstCSSRules.insert(index, rule)) {
-        rule->ref();
-        return index;
+    if (!rule) {
+        // FIXME: Should we throw an exception?
+        return 0;
     }
 
-    // FIXME: Should throw INDEX_SIZE_ERR exception instead!
-    return 0;
+    if (index > m_lstCSSRules.size()) {
+        // FIXME: Should we throw an INDEX_SIZE_ERR exception here?
+        return 0;
+    }
+
+    m_lstCSSRules.insert(index, rule);
+    return index;
 }
 
 } // namespace WebCore

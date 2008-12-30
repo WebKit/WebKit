@@ -24,10 +24,10 @@
 #ifndef CSSRuleList_h
 #define CSSRuleList_h
 
-#include "DeprecatedPtrList.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -60,7 +60,7 @@ private:
     CSSRuleList(StyleList*, bool omitCharsetRules);
 
     RefPtr<StyleList> m_list;
-    DeprecatedPtrList<CSSRule> m_lstCSSRules; // FIXME: Want to eliminate, but used by IE rules() extension and still used by media rules.
+    Vector<RefPtr<CSSRule> > m_lstCSSRules; // FIXME: Want to eliminate, but used by IE rules() extension and still used by media rules.
 };
 
 } // namespace WebCore

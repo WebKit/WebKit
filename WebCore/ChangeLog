@@ -1,3 +1,20 @@
+2008-12-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove one use of DeprecatedPtrList.
+
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::~CSSRuleList):
+        (WebCore::CSSRuleList::length):
+        (WebCore::CSSRuleList::item):
+        (WebCore::CSSRuleList::deleteRule):
+        (WebCore::CSSRuleList::append):
+        (WebCore::CSSRuleList::insertRule):
+        * css/CSSRuleList.h: Change m_lstCSSRules from using DeprecatedPtrList to a Vector.
+        I measured no performance change and was comforted by the fact that we use a Vector
+        for StyleList, which serves the exact same purpose.
+
 2008-12-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady Eidson.
