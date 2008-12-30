@@ -86,9 +86,13 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
     IntPoint point = IntPoint(mouseEvent->pageX(), mouseEvent->pageY());
     HitTestResult result(point);
 
-    if (Frame* frame = event->target()->toNode()->document()->frame())
+    if (Frame* frame = event->target()->toNode()->document()->frame()) {
+        float zoomFactor = frame->pageZoomFactor();
+        point.setX(static_cast<int>(point.x() * zoomFactor));
+        point.setY(static_cast<int>(point.y() * zoomFactor));
         result = frame->eventHandler()->hitTestResultAtPoint(point, false);
-    
+    }
+
     if (!result.innerNonSharedNode())
         return;
 

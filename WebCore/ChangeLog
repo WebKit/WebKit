@@ -1,3 +1,14 @@
+2008-12-29  Josh Roesslein  <jroesslein@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22968
+
+        Context menu rendering error when full page zoomed
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+
 2008-12-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
