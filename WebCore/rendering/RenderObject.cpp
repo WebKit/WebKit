@@ -3245,6 +3245,30 @@ int RenderObject::reflectionOffset() const
     return m_style->boxReflect()->offset().calcValue(borderBox().height());
 }
 
+IntRect RenderObject::reflectedRect(const IntRect& r) const
+{
+    if (!m_style->boxReflect())
+        return IntRect();
+
+    IntRect box = borderBox();
+    IntRect result = r;
+    switch (m_style->boxReflect()->direction()) {
+        case ReflectionBelow:
+            result.setY(box.bottom() + reflectionOffset() + (box.bottom() - r.bottom()));
+            break;
+        case ReflectionAbove:
+            result.setY(box.y() - reflectionOffset() - box.height() + (box.bottom() - r.bottom()));
+            break;
+        case ReflectionLeft:
+            result.setX(box.x() - reflectionOffset() - box.width() + (box.right() - r.right()));
+            break;
+        case ReflectionRight:
+            result.setX(box.right() + reflectionOffset() + (box.right() - r.right()));
+            break;
+    }
+    return result;
+}
+
 #if ENABLE(SVG)
 
 FloatRect RenderObject::relativeBBox(bool) const
