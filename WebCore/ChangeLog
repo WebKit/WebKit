@@ -1,3 +1,20 @@
+2008-12-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        More work on Bug 3781: Animation via canvas could be faster
+        <https://bugs.webkit.org/show_bug.cgi?id=3781>
+
+        Make use of the fast path parsing of color strings that Color
+        uses.  This improves performance of '#rgb', '#rrggbb', etc and
+        named (eg. 'green') colors.
+
+        Improves frame rate of test by around 40%
+
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+
 2008-12-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

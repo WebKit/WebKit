@@ -105,12 +105,22 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
         return;
     switch (m_type) {
         case ColorString: {
+            Color c = Color(m_color);
+            if (c.isValid()) {
+                context->setStrokeColor(c.rgb());
+                break;
+            }
             RGBA32 color = 0; // default is transparant black
             if (CSSParser::parseColor(color, m_color))
                 context->setStrokeColor(color);
             break;
         }
         case ColorStringWithAlpha: {
+            Color c = Color(m_color);
+            if (c.isValid()) {
+                context->setStrokeColor(colorWithOverrideAlpha(c.rgb(), m_alpha));
+                break;
+            }
             RGBA32 color = 0; // default is transparant black
             if (CSSParser::parseColor(color, m_color))
                 context->setStrokeColor(colorWithOverrideAlpha(color, m_alpha));
@@ -156,12 +166,22 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
         return;
     switch (m_type) {
         case ColorString: {
+            Color c = Color(m_color);
+            if (c.isValid()){
+                context->setFillColor(c.rgb());
+                break;
+            }
             RGBA32 rgba = 0; // default is transparant black
             if (CSSParser::parseColor(rgba, m_color))
                 context->setFillColor(rgba);
             break;
         }
         case ColorStringWithAlpha: {
+            Color c = Color(m_color);
+            if (c.isValid()){
+                context->setFillColor(colorWithOverrideAlpha(c.rgb(), m_alpha));
+                break;
+            }
             RGBA32 color = 0; // default is transparant black
             if (CSSParser::parseColor(color, m_color))
                 context->setFillColor(colorWithOverrideAlpha(color, m_alpha));
