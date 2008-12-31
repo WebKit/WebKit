@@ -1,3 +1,14 @@
+2008-12-31  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22964
+
+        MinGW build failure.
+
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::containsCharacters):
+
 2008-12-31  Alexander V. Butenko  <alex@digiqube.com>
 
         Reviewed by Holger Freyther.
