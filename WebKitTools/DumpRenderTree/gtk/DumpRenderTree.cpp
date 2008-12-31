@@ -147,15 +147,8 @@ void dump()
         gLayoutTestController->setDumpAsText(dumpAsText);
         if (gLayoutTestController->dumpAsText())
             result = dumpFramesAsText(mainFrame);
-        else {
-            bool isSVGW3CTest = (gLayoutTestController->testPathOrURL().find("svg/W3C-SVG-1.1") != string::npos);
-            GtkAllocation size;
-            size.width = isSVGW3CTest ? 480 : maxViewWidth;
-            size.height = isSVGW3CTest ? 360 : maxViewHeight;
-            gtk_widget_size_allocate(GTK_WIDGET(webView), &size);
-
+        else
             result = webkit_web_frame_dump_render_tree(mainFrame);
-        }
 
         if (!result) {
             const char* errorMessage;
@@ -246,6 +239,12 @@ static void runTest(const string& testPathOrURL)
 
     WorkQueue::shared()->clear();
     WorkQueue::shared()->setFrozen(false);
+
+    bool isSVGW3CTest = (gLayoutTestController->testPathOrURL().find("svg/W3C-SVG-1.1") != string::npos);
+    GtkAllocation size;
+    size.width = isSVGW3CTest ? 480 : maxViewWidth;
+    size.height = isSVGW3CTest ? 360 : maxViewHeight;
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &size);
 
     webkit_web_view_open(webView, url);
 
