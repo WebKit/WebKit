@@ -1,3 +1,14 @@
+2008-12-31  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Add a test for bug 23054: Caching of global lookups occurs even when the global object has become a dictionary
+        <https://bugs.webkit.org/show_bug.cgi?id=23054>
+        <rdar://problem/6469905>
+
+        * fast/js/pic/delete-global-object-expected.txt: Added.
+        * fast/js/pic/delete-global-object.html: Added.
+
 2008-12-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

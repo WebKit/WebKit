@@ -1,3 +1,17 @@
+2008-12-31  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 23054: Caching of global lookups occurs even when the global object has become a dictionary
+        <https://bugs.webkit.org/show_bug.cgi?id=23054>
+        <rdar://problem/6469905>
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveGlobal): Do not cache lookup if the global
+        object has transitioned to a dictionary.
+        (JSC::Interpreter::cti_op_resolve_global): Do not cache lookup if the
+        global object has transitioned to a dictionary.
+
 2008-12-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

@@ -390,7 +390,7 @@ NEVER_INLINE bool Interpreter::resolveGlobal(CallFrame* callFrame, Instruction* 
     PropertySlot slot(globalObject);
     if (globalObject->getPropertySlot(callFrame, ident, slot)) {
         JSValue* result = slot.getValue(callFrame, ident);
-        if (slot.isCacheable()) {
+        if (slot.isCacheable() && !globalObject->structure()->isDictionary()) {
             if (vPC[4].u.structure)
                 vPC[4].u.structure->deref();
             globalObject->structure()->ref();
@@ -5327,7 +5327,7 @@ JSValue* Interpreter::cti_op_resolve_global(STUB_ARGS)
     PropertySlot slot(globalObject);
     if (globalObject->getPropertySlot(callFrame, ident, slot)) {
         JSValue* result = slot.getValue(callFrame, ident);
-        if (slot.isCacheable()) {
+        if (slot.isCacheable() && !globalObject->structure()->isDictionary()) {
             GlobalResolveInfo& globalResolveInfo = callFrame->codeBlock()->globalResolveInfo(globalResolveInfoIndex);
             if (globalResolveInfo.structure)
                 globalResolveInfo.structure->deref();
