@@ -116,6 +116,11 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
 
 void SimpleFontData::determinePitch()
 {
+    if (isCustomFont()) {
+        m_treatAsFixedPitch = false;
+        return;
+    }
+
     m_treatAsFixedPitch = m_font.isFixedPitch();
 }
 

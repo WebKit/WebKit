@@ -1,3 +1,13 @@
+2008-12-31  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18310
+
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::determinePitch): Do not invoke
+        isFixedPitch() when the font is a custom font.
+
 2008-12-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.
