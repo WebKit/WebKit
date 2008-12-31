@@ -1,3 +1,14 @@
+2008-12-31  Alexander V. Butenko  <alex@digiqube.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22750
+        [gtk] webkit up to r39121 crash on image urls like
+        http:///sitename.com
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::start):
+
 2008-12-31  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
         Reviewed by Holger Freyther.

@@ -335,7 +335,7 @@ bool ResourceHandle::start(Frame* frame)
 
     if (equalIgnoringCase(protocol, "data"))
         return startData(urlString);
-    else if (equalIgnoringCase(protocol, "http") || equalIgnoringCase(protocol, "https"))
+    else if ((equalIgnoringCase(protocol, "http") || equalIgnoringCase(protocol, "https")) && SOUP_URI_VALID_FOR_HTTP(soup_uri_new(urlString.utf8().data())))
         return startHttp(urlString);
     else if (equalIgnoringCase(protocol, "file") || equalIgnoringCase(protocol, "ftp") || equalIgnoringCase(protocol, "ftps"))
         // FIXME: should we be doing any other protocols here?
