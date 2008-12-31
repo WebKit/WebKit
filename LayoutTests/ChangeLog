@@ -1,5 +1,17 @@
 2008-12-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix spurious test failures by rounding floating point values to
+        mask math differences between machines.
+
+        * transitions/transform-op-list-match-expected.txt:
+        * transitions/transform-op-list-match.html:
+        * transitions/transform-op-list-no-match-expected.txt:
+        * transitions/transform-op-list-no-match.html:
+        * transitions/transition-test-helpers.js:
+        (roundNumber):
+
+2008-12-30  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler
 
         https://bugs.webkit.org/show_bug.cgi?id=23042

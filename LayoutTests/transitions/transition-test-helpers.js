@@ -20,6 +20,12 @@ Function parameters:
     If the CSS property name is "-webkit-transform.N", expected value must be a number corresponding to the Nth element of the matrix
 
 */
+
+function roundNumber(num, decimalPlaces)
+{
+  return Math.round(num * Math.pow(10, decimalPlaces)) / Math.pow(10, decimalPlaces);
+}
+
 function runTransitionTest(expected, callback)
 {
     var result = "";

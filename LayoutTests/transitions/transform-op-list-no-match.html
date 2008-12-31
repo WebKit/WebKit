@@ -21,7 +21,7 @@
     
     function DegreesToRotation(angle)
     {
-      return Math.cos(angle * Math.PI / 180);
+      return roundNumber(Math.cos(angle * Math.PI / 180), 5);
     }
     
     const expectedValues = [
