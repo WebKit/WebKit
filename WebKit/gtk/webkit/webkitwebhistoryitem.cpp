@@ -29,6 +29,25 @@
 #include "HistoryItem.h"
 #include "PlatformString.h"
 
+/**
+ * SECTION:webkitwebhistoryitem
+ * @short_description: One item of the #WebKitWebBackForwardList and or global history
+ * @see_also: #WebKitWebBackForwardList
+ *
+ * A history item consists out of a title and a uri. It can be part of the
+ * #WebKitWebBackForwardList and the global history. The global history is used
+ * for coloring the links of visited sites.  #WebKitHistoryItem's constructed with
+ * #webkit_web_history_item_new and #webkit_web_history_item_new_with_data are
+ * automatically added to the global history.
+ *
+ * <informalexample><programlisting>
+ * /<!-- -->* Inject a visited page into the global history *<!-- -->/
+ * webkit_web_history_item_new_with_data("http://www.gnome.org/", "GNOME: The Free Software Desktop Project");
+ * webkit_web_history_item_new_with_data("http://www.webkit.org/", "The WebKit Open Source Project");
+ * </programlisting></informalexample>
+ *
+ */
+
 using namespace WebKit;
 
 extern "C" {

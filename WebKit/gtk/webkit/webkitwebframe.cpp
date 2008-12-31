@@ -46,6 +46,24 @@
 
 #include <JavaScriptCore/APICast.h>
 
+/**
+ * SECTION:webkitwebframe
+ * @short_description: The content of a #WebKitWebView
+ *
+ * A #WebKitWebView contains a main #WebKitWebFrame. A #WebKitWebFrame
+ * contains the content of one URI. The URI and name of the frame can
+ * be retrieved, the load status and progress can be observed using the
+ * signals and can be controlled using the methods of the #WebKitWebFrame.
+ * A #WebKitWebFrame can have any number of children and one child can
+ * be found by using #webkit_web_frame_find_frame.
+ *
+ * <informalexample><programlisting>
+ * /<!-- -->* Get the frame from the #WebKitWebView *<!-- -->/
+ * WebKitWebFrame *frame = webkit_web_view_get_main_frame (WEBKIT_WEB_VIEW(my_view));
+ * g_print("The URI of this frame is '%s'", webkit_web_frame_get_uri (frame));
+ * </programlisting></informalexample>
+ */
+
 using namespace WebKit;
 using namespace WebCore;
 using namespace std;

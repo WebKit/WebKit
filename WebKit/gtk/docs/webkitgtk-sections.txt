@@ -132,8 +132,6 @@ WebKitWebInspectorClass
 <TITLE>WebKitNetworkRequest</TITLE>
 WebKitNetworkRequest
 webkit_network_request_get_uri
-webkit_network_request_new
-webkit_network_request_set_uri
 <SUBSECTION Standard>
 WEBKIT_NETWORK_REQUEST
 WEBKIT_IS_NETWORK_REQUEST
@@ -143,6 +141,8 @@ WEBKIT_IS_NETWORK_REQUEST_CLASS
 WEBKIT_NETWORK_REQUEST_GET_CLASS
 <SUBSECTION Private>
 webkit_network_request_get_type
+webkit_network_request_new
+webkit_network_request_set_uri
 WebKitNetworkRequestPrivate
 WebKitNetworkRequest
 WebKitNetworkRequestClass
@@ -202,7 +202,6 @@ webkit_web_view_unmark_text_matches
 webkit_web_view_zoom_in
 webkit_web_view_zoom_out
 webkit_web_view_get_window_features
-webkit_web_view_set_window_features
 <SUBSECTION Standard>
 WEBKIT_WEB_VIEW
 WEBKIT_IS_WEB_VIEW
@@ -211,6 +210,7 @@ WEBKIT_WEB_VIEW_CLASS
 WEBKIT_IS_WEB_VIEW_CLASS
 WEBKIT_WEB_VIEW_GET_CLASS
 <SUBSECTION Private>
+webkit_web_view_set_window_features
 webkit_web_view_get_type
 WebKitWebViewPrivate
 WebKitWebView

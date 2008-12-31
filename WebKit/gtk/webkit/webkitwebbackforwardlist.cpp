@@ -29,6 +29,26 @@
 #include "BackForwardList.h"
 #include "HistoryItem.h"
 
+/**
+ * SECTION:webkitwebbackforwardlist
+ * @short_description: The history of a #WebKitWebView
+ * @see_also: #WebKitWebView, #WebKitWebHistoryItem
+ *
+ * <informalexample><programlisting>
+ * /<!-- -->* Get the WebKitWebBackForwardList from the WebKitWebView *<!-- -->/
+ * WebKitWebBackForwardList *back_forward_list = webkit_web_view_get_back_forward_list (my_web_view);
+ * WebKitWebHistoryItem *item = webkit_web_back_forward_list_get_current_item (back_forward_list);
+ *
+ * /<!-- -->* Do something with a WebKitWebHistoryItem *<!-- -->/
+ * g_print("%p", item);
+ *
+ * /<!-- -->* Control some parameters *<!-- -->/
+ * WebKitWebBackForwardList *back_forward_list = webkit_web_view_get_back_forward_list (my_web_view);
+ * webkit_web_back_forward_list_set_limit (back_forward_list, 30);
+ * </programlisting></informalexample>
+ *
+ */
+
 using namespace WebKit;
 
 extern "C" {

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2007 Holger Hans Peter Freyther
+ *  Copyright (C) 2007, 2008 Holger Hans Peter Freyther
  *  Copyright (C) 2007, 2008 Christian Dywan <christian@imendio.com>
  *  Copyright (C) 2007 Xan Lopez <xan@gnome.org>
  *  Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
@@ -65,6 +65,39 @@
 #include <wtf/GOwnPtr.h>
 
 #include <gdk/gdkkeysyms.h>
+
+/**
+ * SECTION:webkitwebview
+ * @short_description: The central class of the WebKit/Gtk+ API
+ * @see_also: #WebKitWebSettings, #WebKitWebFrame
+ *
+ * #WebKitWebView is the central class of the WebKit/Gtk+ API. It is a
+ * #GtkWidget implementing the scrolling interface which means you can
+ * embed in a #GtkScrolledWindow. It is responsible for managing the
+ * drawing of the content, forwarding of events. You can load any URI
+ * into the #WebKitWebView or any kind of data string. With #WebKitWebSettings
+ * you can control various aspects of the rendering and loading of the content.
+ * Each #WebKitWebView has exactly one #WebKitWebFrame as main frame. A
+ * #WebKitWebFrame can have n children.
+ *
+ * <programlisting>
+ * /<!-- -->* Create the widgets *<!-- -->/
+ * GtkWidget *main_window = gtk_window_new (GTK_WIDGET_TOPLEVEL);
+ * GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+ * GtkWidget *web_view = webkit_web_view_new ();
+ *
+ * /<!-- -->* Place the WebKitWebView in the GtkScrolledWindow *<!-- -->/
+ * gtk_container_add (GTK_CONTAINER (scrolled_window), web_view);
+ * gtk_container_add (GTK_CONTAINER (main_window), scrolled_window);
+ *
+ * /<!-- -->* Open a webpage *<!-- -->/
+ * webkit_web_view_open (WEBKIT_WEB_VIEW (web_view), "http://www.gnome.org");
+ *
+ * /<!-- -->* Show the result *<!-- -->/
+ * gtk_window_set_default_size (GTK_WINDOW (main_window), 800, 600);
+ * gtk_widget_show_all (main_window);
+ * </programlisting>
+ */
 
 static const double defaultDPI = 96.0;
 

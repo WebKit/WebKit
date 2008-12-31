@@ -1,3 +1,28 @@
+2008-12-31  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17045
+
+        Add section information for View, Frame, Settings, HistoryItem, BackForwardList, WindowFeatures and Inspector
+
+        Add section information and informal examples for WebKitWebView,
+        WebKitWebFrame, WebKitWebSettings, WebKitWebNetworkRequest,
+        WebKitWebWindowFeatures, WebKitWebHistoryItem,
+        WebKitWebBackForwardList and WebKitWebInspector.
+
+        * docs/webkitgtk-sections.txt: Decide to not document some bits
+        * webkit/webkitnetworkrequest.cpp:
+        * webkit/webkitwebbackforwardlist.cpp:
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebhistoryitem.cpp:
+        * webkit/webkitwebhistoryitem.h:
+        * webkit/webkitwebinspector.cpp:
+        * webkit/webkitwebsettings.cpp:
+        * webkit/webkitwebsettings.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebwindowfeatures.cpp:
+
 2008-12-21  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.

@@ -2,6 +2,7 @@
  * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2008 Collabora Ltd.
+ * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +27,24 @@
 
 #include "FileSystem.h"
 #include "PluginDatabase.h"
+
+/**
+ * SECTION:webkitwebsettings
+ * @short_description: Control the behaviour of a #WebKitWebView
+ *
+ * #WebKitWebSettings can be applied to a #WebKitWebView to control
+ * the to be used text encoding, color, font sizes, printing mode,
+ * script support, loading of images and various other things.
+ *
+ * <informalexample><programlisting>
+ * /<!-- -->* Create a new websettings and disable java script *<!-- -->/
+ * WebKitWebSettings *settings = webkit_web_settings_new ();
+ * g_object_set (G_OBJECT(settings), "enable-scripts", FALSE, NULL);
+ *
+ * /<!-- -->* Apply the result *<!-- -->/
+ * webkit_web_view_set_settings (WEBKIT_WEB_VIEW(my_webview), settings);
+ * </programlisting></informalexample>
+ */
 
 using namespace WebCore;
 

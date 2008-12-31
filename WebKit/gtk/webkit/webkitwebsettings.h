@@ -38,6 +38,7 @@ typedef struct _WebKitWebSettingsPrivate WebKitWebSettingsPrivate;
 struct _WebKitWebSettings {
     GObject parent_instance;
 
+    /*< private >*/
     WebKitWebSettingsPrivate *priv;
 };
 

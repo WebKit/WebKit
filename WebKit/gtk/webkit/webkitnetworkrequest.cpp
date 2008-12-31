@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007, 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +20,19 @@
 #include "config.h"
 
 #include "webkitnetworkrequest.h"
+
+/**
+ * SECTION:webkitnetworkrequest
+ * @short_description: The target of a navigation request
+ * @see_also: #WebKitWebView::navigation-requested
+ *
+ * This class represents the network related aspects of a navigation
+ * request. Currently this is only the uri of the target. In the future
+ * the state of the web form might be added.
+ * Currently this object is only used along with the
+ * #WebKitWebView::navigation-requested signal.
+ *
+ */
 
 extern "C" {
 
@@ -77,6 +90,14 @@ void webkit_network_request_set_uri(WebKitNetworkRequest* request, const gchar* 
     priv->uri = g_strdup(uri);
 }
 
+/**
+ * webkit_network_request_get_uri:
+ * @request: a #WebKitNetworkRequest
+ *
+ * Returns: the uri of the #WebKitNetworkRequest
+ *
+ * Since: 1.0.0
+ */
 G_CONST_RETURN gchar* webkit_network_request_get_uri(WebKitNetworkRequest* request)
 {
     g_return_val_if_fail(WEBKIT_IS_NETWORK_REQUEST(request), NULL);

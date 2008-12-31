@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Gustavo Noronha Silva <gns@gnome.org>
+ * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +23,36 @@
 #include "WindowFeatures.h"
 #include "webkitwebwindowfeatures.h"
 #include "webkitprivate.h"
+
+/**
+ * SECTION:webkitwebwindowfeatures
+ * @short_description: Window properties of a #WebKitWebView
+ * @see_also: #WebKitWebView::web-view-ready
+ *
+ * The content of a #WebKitWebView can request to change certain
+ * properties of a #WebKitWebView. This can include the x, y position
+ * of the window, the width and height but also if a toolbar,
+ * scrollbar, statusbar, locationbar should be visible to the user,
+ * the request to show the #WebKitWebView fullscreen.
+ *
+ * In the normal case one will use #webkit_web_view_get_window_features
+ * to get the #WebKitWebWindowFeatures and then monitor the property
+ * changes. Be aware that the #WebKitWebWindowFeatures might change
+ * change before #WebKitWebView::web-view-ready signal is emitted.
+ * To be safe listen to the notify::window-features signal of the #WebKitWebView
+ * and reconnect the signals whenever the #WebKitWebWindowFeatures of
+ * a #WebKitWebView changes.
+ *
+ * <informalexample><programlisting>
+ * /<!-- -->* Get the current WebKitWebWindowFeatures *<!-- -->/
+ * WebKitWebWindowFeatures *features = webkit_web_view_get_window_features (my_webview);
+ *
+ * /<!-- -->* Connect to the property changes *<!-- -->/
+ * g_signal_connect (G_OBJECT(features), "notify::menubar-visible", G_CALLBACK(make_menu_bar_visible), NULL);
+ * g_signal_connect (G_OBJECT(features), "notify::statusbar-visible", G_CALLBACK(make_status_bar_visible), NULL);
+ *
+ * </programlisting></informalexample>
+ */
 
 extern "C" {
 
