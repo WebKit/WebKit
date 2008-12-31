@@ -1395,6 +1395,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
 
 RegisterID* BytecodeGenerator::emitPushScope(RegisterID* scope)
 {
+    ASSERT(scope->isTemporary());
     ControlFlowContext context;
     context.isFinallyBlock = false;
     m_scopeContextStack.append(context);

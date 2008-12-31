@@ -255,7 +255,7 @@ namespace JSC {
         static JSValue* JIT_STUB cti_op_throw(STUB_ARGS);
         static JSPropertyNameIterator* JIT_STUB cti_op_get_pnames(STUB_ARGS);
         static JSValue* JIT_STUB cti_op_next_pname(STUB_ARGS);
-        static void JIT_STUB cti_op_push_scope(STUB_ARGS);
+        static JSObject* JIT_STUB cti_op_push_scope(STUB_ARGS);
         static void JIT_STUB cti_op_pop_scope(STUB_ARGS);
         static JSValue* JIT_STUB cti_op_typeof(STUB_ARGS);
         static JSValue* JIT_STUB cti_op_is_undefined(STUB_ARGS);

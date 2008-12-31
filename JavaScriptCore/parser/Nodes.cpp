@@ -2038,7 +2038,8 @@ void WithNode::releaseNodes(NodeReleaser& releaser)
 
 RegisterID* WithNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> scope = generator.emitNode(m_expr.get()); // scope must be protected until popped
+    RefPtr<RegisterID> scope = generator.newTemporary();
+    generator.emitNode(scope.get(), m_expr.get()); // scope must be protected until popped
     generator.emitExpressionInfo(m_divot, m_expressionLength, 0);
     generator.emitPushScope(scope.get());
     RegisterID* result = generator.emitNode(dst, m_statement.get());

@@ -1038,6 +1038,7 @@ void JIT::privateCompileMainPass()
         case op_push_scope: {
             emitPutJITStubArgFromVirtualRegister(currentInstruction[1].u.operand, 1, X86::ecx);
             emitCTICall(Interpreter::cti_op_push_scope);
+            emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_push_scope);
         }
         case op_pop_scope: {
