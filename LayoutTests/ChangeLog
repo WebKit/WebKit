@@ -1,3 +1,15 @@
+2008-12-30  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Sam Weinig.
+
+        Add tests for bug 23037: Parsing and reparsing disagree on automatic semicolon insertion
+        <https://bugs.webkit.org/show_bug.cgi?id=23037>
+        <rdar://problem/6467124>
+
+        * fast/js/reparsing-semicolon-insertion-expected.txt: Added.
+        * fast/js/reparsing-semicolon-insertion.html: Added.
+        * fast/js/resources/reparsing-semicolon-insertion.js: Added.
+
 2008-12-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

@@ -71,8 +71,10 @@ void Parser::reparse(JSGlobalData* globalData, FunctionBodyNode* functionBodyNod
     ASSERT(!functionBodyNode->data());
 
     m_source = &functionBodyNode->source();
+    globalData->lexer->setIsReparsing();
     parse(globalData, 0, 0);
     ASSERT(m_sourceElements);
+
     functionBodyNode->adoptData(std::auto_ptr<ScopeNodeData>(new ScopeNodeData(m_sourceElements.get(),
                                                                                m_varDeclarations ? &m_varDeclarations->data : 0, 
                                                                                m_funcDeclarations ? &m_funcDeclarations->data : 0,

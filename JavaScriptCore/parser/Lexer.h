@@ -36,6 +36,7 @@ namespace JSC {
     class Lexer : Noncopyable {
     public:
         void setCode(const SourceCode&);
+        void setIsReparsing() { m_isReparsing = true; }
         int lex(void* lvalp, void* llocp);
 
         int lineNo() const { return yylineno; }
@@ -141,6 +142,7 @@ namespace JSC {
         const SourceCode* m_source;
         const UChar* m_code;
         unsigned int m_length;
+        bool m_isReparsing;
         int m_atLineStart;
         bool m_error;
 

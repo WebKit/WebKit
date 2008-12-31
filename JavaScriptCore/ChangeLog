@@ -1,3 +1,42 @@
+2008-12-30  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23037: Parsing and reparsing disagree on automatic semicolon insertion
+        <https://bugs.webkit.org/show_bug.cgi?id=23037>
+        <rdar://problem/6467124>
+
+        Parsing and reparsing disagree about automatic semicolon insertion, so that a
+        function like
+
+        function() { a = 1, }
+
+        is parsed as being syntactically valid but gets a syntax error upon reparsing.
+        This leads to an assertion failure in Parser::reparse(). It is not that big of
+        an issue in practice, because in a Release build such a function will return
+        'undefined' when called.
+
+        In this case, we are not following the spec and it should be a syntax error.
+        However, unless there is a newline separating the ',' and the '}', WebKit would
+        not treat it as a syntax error in the past either. It would be a bit of work to
+        make the automatic semicolon insertion match the spec exactly, so this patch
+        changes it to match our past behaviour.
+
+        The problem is that even during reparsing, the Lexer adds a semicolon at the
+        end of the input, which confuses allowAutomaticSemicolon(), because it is
+        expecting either a '}', the end of input, or a terminator like a newline.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::Lexer): Initialize m_isReparsing to false.
+        (JSC::Lexer::lex): Do not perform automatic semicolon insertion in the Lexer if
+        we are in the middle of reparsing.
+        (JSC::Lexer::clear): Set m_isReparsing to false.
+        * parser/Lexer.h:
+        (JSC::Lexer::setIsReparsing): Added.
+        * parser/Parser.cpp:
+        (JSC::Parser::reparse): Call Lexer::setIsReparsing() to notify the Lexer of
+        reparsing.
+
 2008-12-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
