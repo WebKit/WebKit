@@ -2,7 +2,7 @@ noinst_PROGRAMS += \
 	Programs/GtkLauncher \
 	Programs/DumpRenderTree
 
-lib_LTLIBRARIES += \
+noinst_LTLIBRARIES += \
 	TestNetscapePlugin/libtestnetscapeplugin.la
 
 # GtkLauncher
@@ -95,6 +95,12 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.h
+
+TestNetscapePlugin_libtestnetscapeplugin_la_LDFLAGS = \
+	-rpath ${shell pwd}/$(top_builddir)/TestNetscapePlugin/.libs \
+	$(no_undefined) \
+	-avoid-version \
+	-module
 
 # clean target
 CLEANFILES += \
