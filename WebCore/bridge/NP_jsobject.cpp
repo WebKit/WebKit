@@ -120,9 +120,10 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         
         ArgList argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
-        rootObject->globalObject()->startTimeoutCheck();
+        ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
+        globalObject->startTimeoutCheck();
         JSValue* resultV = call(exec, function, callType, callData, function, argList);
-        rootObject->globalObject()->stopTimeoutCheck();
+        globalObject->stopTimeoutCheck();
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);
@@ -169,9 +170,10 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         // Call the function object.
         ArgList argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
-        rootObject->globalObject()->startTimeoutCheck();
+        ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
+        globalObject->startTimeoutCheck();
         JSValue* resultV = call(exec, function, callType, callData, obj->imp, argList);
-        rootObject->globalObject()->stopTimeoutCheck();
+        globalObject->stopTimeoutCheck();
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);
@@ -196,12 +198,12 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
             return false;
 
         ExecState* exec = rootObject->globalObject()->globalExec();
-        
         JSLock lock(false);
         String scriptString = convertNPStringToUTF16(s);
-        rootObject->globalObject()->startTimeoutCheck();
-        Completion completion = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(scriptString));
-        rootObject->globalObject()->stopTimeoutCheck();
+        ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
+        globalObject->startTimeoutCheck();
+        Completion completion = JSC::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(scriptString));
+        globalObject->stopTimeoutCheck();
         ComplType type = completion.complType();
         
         JSValue* result;
@@ -438,9 +440,10 @@ bool _NPN_Construct(NPP npp, NPObject* o, const NPVariant* args, uint32_t argCou
         
         ArgList argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
-        rootObject->globalObject()->startTimeoutCheck();
+        ProtectedPtr<JSGlobalObject> globalObject = rootObject->globalObject();
+        globalObject->startTimeoutCheck();
         JSValue* resultV = construct(exec, constructor, constructType, constructData, argList);
-        rootObject->globalObject()->stopTimeoutCheck();
+        globalObject->stopTimeoutCheck();
         
         // Convert and return the result.
         convertValueToNPVariant(exec, resultV, result);

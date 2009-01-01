@@ -1,3 +1,20 @@
+2009-01-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        CrashTracer: [REGRESSION] 1090 crashes in Safari at com.apple.JavaScriptCore: KJS::JSGlobalObject::stopTimeoutCheck + 0
+        <rdar://problem/5821130>
+
+        This was caused by a plugin instance calling into JS code that removed the plugin
+        object.  This fix is to cache the global object locally in a ProtectedPtr so we don't
+        need to rely on the continued existence of the plugin instance.
+
+        * bridge/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_Construct):
+
 2008-12-31  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Holger Freyther.
