@@ -57,4 +57,17 @@ try {
 shouldBe("typeof e.sourceURL", '"string"');
 shouldBe("e.line", '5');
 
+realEval = eval;
+delete eval;
+(function(){
+    try {
+        eval("");
+    } catch(exception) {
+        e = exception;
+    }
+})();
+eval = realEval;
+shouldBe("typeof e.sourceURL", '"string"');
+shouldBe("e.line", '64');
+
 var successfullyParsed = true;

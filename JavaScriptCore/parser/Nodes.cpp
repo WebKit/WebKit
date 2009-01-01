@@ -587,6 +587,7 @@ RegisterID* EvalFunctionCallNode::emitBytecode(BytecodeGenerator& generator, Reg
 {
     RefPtr<RegisterID> func = generator.tempDestination(dst);
     RefPtr<RegisterID> thisRegister = generator.newTemporary();
+    generator.emitExpressionInfo(divot() - startOffset() + 4, 4, 0);
     generator.emitResolveWithBase(thisRegister.get(), func.get(), generator.propertyNames().eval);
     return generator.emitCallEval(generator.finalDestination(dst, func.get()), func.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
 }

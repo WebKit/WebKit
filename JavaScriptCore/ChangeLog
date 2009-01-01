@@ -1,3 +1,21 @@
+2008-12-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [jsfunfuzz] Computed exception offset wrong when first instruction is attempt to resolve deleted eval
+        <https://bugs.webkit.org/show_bug.cgi?id=23062>
+
+        This was caused by the expression information for the initial resolve of
+        eval not being emitted.  If this resolve was the first instruction that
+        could throw an exception the information search would fail leading to an
+        assertion failure.  If it was not the first throwable opcode the wrong
+        expression information would used.
+
+        Fix is simply to emit the expression info.
+
+        * parser/Nodes.cpp:
+        (JSC::EvalFunctionCallNode::emitBytecode):
+
 2008-12-31  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.
