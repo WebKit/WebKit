@@ -2331,7 +2331,13 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         RefPtr<Label> handlerEndLabel = generator.newLabel();
         generator.emitJump(handlerEndLabel.get());
         RefPtr<RegisterID> exceptionRegister = generator.emitCatch(generator.newTemporary(), tryStartLabel.get(), tryEndLabel.get());
-        generator.emitPushNewScope(exceptionRegister.get(), m_exceptionIdent, exceptionRegister.get());
+        if (m_catchHasEval) {
+            RefPtr<RegisterID> dynamicScopeObject = generator.emitNewObject(generator.newTemporary());
+            generator.emitPutById(dynamicScopeObject.get(), m_exceptionIdent, exceptionRegister.get());
+            generator.emitMove(exceptionRegister.get(), dynamicScopeObject.get());
+            generator.emitPushScope(exceptionRegister.get());
+        } else
+            generator.emitPushNewScope(exceptionRegister.get(), m_exceptionIdent, exceptionRegister.get());
         generator.emitNode(dst, m_catchBlock.get());
         generator.emitPopScope();
         generator.emitLabel(handlerEndLabel.get());

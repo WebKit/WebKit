@@ -2015,12 +2015,13 @@ namespace JSC {
 
     class TryNode : public StatementNode {
     public:
-        TryNode(JSGlobalData* globalData, StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, StatementNode* finallyBlock) JSC_FAST_CALL
+        TryNode(JSGlobalData* globalData, StatementNode* tryBlock, const Identifier& exceptionIdent, bool catchHasEval, StatementNode* catchBlock, StatementNode* finallyBlock) JSC_FAST_CALL
             : StatementNode(globalData)
             , m_tryBlock(tryBlock)
             , m_exceptionIdent(exceptionIdent)
             , m_catchBlock(catchBlock)
             , m_finallyBlock(finallyBlock)
+            , m_catchHasEval(catchHasEval)
         {
         }
 
@@ -2034,6 +2035,7 @@ namespace JSC {
         Identifier m_exceptionIdent;
         RefPtr<StatementNode> m_catchBlock;
         RefPtr<StatementNode> m_finallyBlock;
+        bool m_catchHasEval;
     };
 
     class ParameterNode : public ParserRefCounted {

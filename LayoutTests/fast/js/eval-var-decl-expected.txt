@@ -7,6 +7,7 @@ PASS hasOwnProperty("foo") is true
 PASS hasOwnProperty("bar") is true
 PASS firstEvalResult is true
 PASS secondEvalResult is false
+PASS thirdEvalResult is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

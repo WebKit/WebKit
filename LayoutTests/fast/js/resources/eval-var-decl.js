@@ -15,4 +15,12 @@ shouldBeTrue("firstEvalResult");
 var secondEvalResult = eval('delete x; var result = hasOwnProperty("x"); var x = 3; result');
 shouldBeFalse("secondEvalResult");
 
+var thirdEvalResult = false;
+try {
+    thirdEvalResult = (function(){ var x=false; try { throw ""; } catch (e) { eval("var x = true;"); } return x; })();
+} catch (e) {
+    thirdEvalResult = "Threw exception!";
+}
+shouldBeTrue("thirdEvalResult");
+
 var successfullyParsed = true;

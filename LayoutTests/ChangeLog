@@ -1,5 +1,18 @@
 2008-12-31  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        [jsfunfuzz] Assertion + incorrect behaviour with dynamically created local variable in a catch block
+        <https://bugs.webkit.org/show_bug.cgi?id=23063>
+
+        Add tests for variable declaration inside eval inside a catch block.
+
+        * fast/js/eval-var-decl-expected.txt:
+        * fast/js/resources/eval-var-decl.js:
+        (try.thirdEvalResult):
+
+2008-12-31  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         [jsfunfuzz] Computed exception offset wrong when first instruction is attempt to resolve deleted eval
