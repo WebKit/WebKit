@@ -1,3 +1,59 @@
+2009-01-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 23051: web page searching should use ICU's search so it can ignore diacritical differences
+        https://bugs.webkit.org/show_bug.cgi?id=23051
+        rdar://problem/3574497
+
+        Test: editing/execCommand/findString-diacriticals.html
+
+        * editing/TextIterator.cpp: Changed the CircularSearchBuffer class to have a new
+        name, since it doesn't always use a circular buffer any more. Changed the interface
+        so it can work well in the new chunky comparison mode for ICU search, and also
+        added private data members for both the ICU-search and non-ICU-search code paths.
+        (WebCore::TextIterator::TextIterator): Use the versions of the Range functions
+        that don't take an exception code.
+        (WebCore::TextIterator::handleTextBox): Added a special case to handle the position
+        of a collapsed-away space better. This is not needed for search mechanism, but was
+        helpful in an earlier version of this patch, and is still an improvement.
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator): Use the
+        versions of the Range functions that don't take an exception code.
+        (WebCore::CharacterIterator::range): Ditto.
+        (WebCore::characterSubrange): Added. Helper function used in both places below where
+        we want to convert a range and character offsets into a subrange.
+        (WebCore::WordAwareIterator::advance): Use the versions of the Range functions that
+        don't take an exception code.
+        (WebCore::createSearcher): Added.
+        (WebCore::searcher): Added.
+        (WebCore::lockSearcher): Added.
+        (WebCore::unlockSearcher): Added.
+        (WebCore::SearchBuffer::SearchBuffer): Added.
+        (WebCore::SearchBuffer::~SearchBuffer): Added.
+        (WebCore::SearchBuffer::append): Added.
+        (WebCore::SearchBuffer::atBreak): Added.
+        (WebCore::SearchBuffer::reachedBreak): Added.
+        (WebCore::SearchBuffer::search): Added.
+        (WebCore::SearchBuffer::length): Added.
+        (WebCore::TextIterator::subrange): Changed to call the characterSubrange
+        function above.
+        (WebCore::TextIterator::rangeFromLocationAndLength): Use the versions of the
+        Range functions that don't take an exception code. Also tweak some other details
+        of the code.
+        (WebCore::isAllCollapsibleWhitespace): Added.
+        (WebCore::collapsedToBoundary): Added.
+        (WebCore::findPlainText): Rewrote to use new interface and streamline the
+        logic a bit.
+
+        Add the relevant files in the icu directory. As icu/README says, the "icu"
+        directory is really just for Mac OS X, where we have the ICU library but not
+        the headers installed. It should be moved inside platform/mac at some point
+        to make this more clear (and the copy in JavaScriptCore should be moved
+        somewhere similar for the same reason).
+
+        * icu/unicode/ucoleitr.h: Added.
+        * icu/unicode/usearch.h: Added.
+
 2009-01-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.
