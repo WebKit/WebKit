@@ -870,7 +870,10 @@ bool DocumentLoader::shouldLoadResourceFromApplicationCache(const ResourceReques
     // If the resource is not a HTTP/HTTPS GET, then abort
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return false;
-    
+
+    if (cache->urlMatchesFallbackNamespace(request.url()))
+        return false;
+
     if (cache->isURLInOnlineWhitelist(request.url()))
         return false;
     
@@ -880,6 +883,28 @@ bool DocumentLoader::shouldLoadResourceFromApplicationCache(const ResourceReques
     if (resource && (resource->type() & ApplicationCacheResource::Foreign))
         resource = 0;
     
+    return true;
+}
+
+bool DocumentLoader::getApplicationCacheFallbackResource(const ResourceRequest& request, ApplicationCacheResource*& resource, ApplicationCache* cache)
+{
+    if (!cache) {
+        cache = applicationCache();
+        if (!cache)
+            return false;
+    }
+    
+    // If the resource is not a HTTP/HTTPS GET, then abort
+    if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
+        return false;
+
+    KURL fallbackURL;
+    if (!cache->urlMatchesFallbackNamespace(request.url(), &fallbackURL))
+        return false;
+
+    resource = cache->resourceForURL(fallbackURL);
+    ASSERT(resource);
+
     return true;
 }
 
@@ -895,6 +920,21 @@ bool DocumentLoader::scheduleApplicationCacheLoad(ResourceLoader* loader, const 
     if (!shouldLoadResourceFromApplicationCache(request, resource))
         return false;
     
+    m_pendingSubstituteResources.set(loader, resource);
+    deliverSubstituteResourcesAfterDelay();
+        
+    return true;
+}
+
+bool DocumentLoader::scheduleLoadFallbackResourceFromApplicationCache(ResourceLoader* loader, const ResourceRequest& request, ApplicationCache* cache)
+{
+    if (!frameLoader()->frame()->settings() || !frameLoader()->frame()->settings()->offlineWebApplicationCacheEnabled())
+        return false;
+
+    ApplicationCacheResource* resource;
+    if (!getApplicationCacheFallbackResource(request, resource, cache))
+        return false;
+
     m_pendingSubstituteResources.set(loader, resource);
     deliverSubstituteResourcesAfterDelay();
         

@@ -58,12 +58,17 @@ if ($state == "Offline") {
     if ($requestedPath[0] == '/')
         $requestedPath = '..' . $requestedPath;
 
-    header("Last-Modified: " . gmdate("D, d M Y H:i:s T", filemtime($requestedPath)));
-    header("Content-Type: " . contentType($requestedPath));
     header("Expires: Thu, 01 Dec 2003 16:00:00 GMT");
     header("Cache-Control: no-cache, must-revalidate");
     header("Pragma: no-cache");
 
-    print file_get_contents($requestedPath);
+    if (file_exists($requestedPath)) {
+        header("Last-Modified: " . gmdate("D, d M Y H:i:s T", filemtime($requestedPath)));
+        header("Content-Type: " . contentType($requestedPath));
+    
+        print file_get_contents($requestedPath);
+    } else {
+        header('HTTP/1.1 404 Not Found');
+    }
 }
 ?>

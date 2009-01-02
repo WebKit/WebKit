@@ -3595,9 +3595,25 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
                 data.append(resource->data()->data(), resource->data()->size());
             } else
                 error = cannotShowURLError(newRequest);
-        } else 
+        } else {
 #endif
             ResourceHandle::loadResourceSynchronously(newRequest, error, response, data, m_frame);
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+            // If normal loading results in a redirect to a resource with another origin (indicative of a captive portal), or a 4xx or 5xx status code or equivalent,
+            // or if there were network errors (but not if the user canceled the download), then instead get, from the cache, the resource of the fallback entry
+            // corresponding to the matched namespace.
+            if ((!error.isNull() && !error.isCancellation())
+                 || response.httpStatusCode() / 100 == 4 || response.httpStatusCode() / 100 == 5
+                 || !protocolHostAndPortAreEqual(newRequest.url(), response.url())) {
+                if (documentLoader()->getApplicationCacheFallbackResource(newRequest, resource)) {
+                    response = resource->response();
+                    data.clear();
+                    data.append(resource->data()->data(), resource->data()->size());
+                }
+            }
+        }
+#endif
     }
     
     sendRemainingDelegateMessages(identifier, response, data.size(), error);

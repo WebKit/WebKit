@@ -1,3 +1,68 @@
+2008-12-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23036
+        <rdar://problem/6451666> Implement AppCache fallback entries (23036)
+
+        Test: http/tests/appcache/fallback.html
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::loadResourceSynchronously): Use fallback
+        entries if normal loading fails.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::shouldLoadResourceFromApplicationCache): Do not prevent normal
+        loading for resources that match fallback namespaces - they are only loaded from the cache
+        if that fails.
+        (WebCore::DocumentLoader::getApplicationCacheFallbackResource): Get a fallback entry for
+        resource from associated appcache, or from passed in one, if any.
+        (WebCore::DocumentLoader::scheduleLoadFallbackResourceFromApplicationCache): If a fallback
+        entry for resourse exists, add it to pending substitute loads.
+
+        * loader/DocumentLoader.h: Added new functions for loading fallback data for resources.
+
+        * loader/ResourceLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::scheduleLoadFallbackResourceFromApplicationCache): This function
+        is called when normal loading fails (which includes network failures, 4xx and 5xx responses,
+        and cross-origin redirects) to load appcache fallback data instead. It can use either the
+        cache that is associated with the browsing context, or a custom one if association is yet
+        to take place.
+        (WebCore::ResourceLoader::willSendRequest): Try using fallback data.
+        (WebCore::ResourceLoader::didReceiveResponse): Ditto.
+        (WebCore::ResourceLoader::didFail): Ditto.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse): Locate an appropriate cache and load
+        fallback data from it if loading fails. The browsing context may still be associated with
+        its previous document here, so the cache to load from must be passed explicitly.
+        (WebCore::MainResourceLoader::didFail): Ditto.
+        (WebCore::MainResourceLoader::load): Remove unnecessary check and FIXME.
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::setFallbackURLs):
+        (WebCore::ApplicationCache::urlMatchesFallbackNamespace):
+        * loader/appcache/ApplicationCache.h:
+        (WebCore::ApplicationCache::fallbackURLs):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::loadCache):
+        (WebCore::ApplicationCacheStorage::storeCopyOfCache):
+        * loader/appcache/ApplicationCacheStorage.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::fallbackCacheForMainRequest):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        * loader/appcache/ApplicationCacheGroup.h:
+        Implement fallback map saving and loading, pass it to the cache.
+
+        * loader/appcache/ManifestParser.h: Use a correct data structure for fallback map - keys
+        are matched by prefix, so HAshMap cannot be used.
+
+        * loader/appcache/ManifestParser.cpp: (WebCore::parseManifest): Fix bugs in fallback section
+        parsing.
+
 2009-01-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dan Bernstein.

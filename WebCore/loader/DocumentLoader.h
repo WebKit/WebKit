@@ -198,7 +198,9 @@ namespace WebCore {
         
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         bool scheduleApplicationCacheLoad(ResourceLoader*, const ResourceRequest&, const KURL& originalURL);
+        bool scheduleLoadFallbackResourceFromApplicationCache(ResourceLoader*, const ResourceRequest&, ApplicationCache* = 0);
         bool shouldLoadResourceFromApplicationCache(const ResourceRequest&, ApplicationCacheResource*&);
+        bool getApplicationCacheFallbackResource(const ResourceRequest&, ApplicationCacheResource*&, ApplicationCache* = 0);
         
         void setCandidateApplicationCacheGroup(ApplicationCacheGroup* group);
         ApplicationCacheGroup* candidateApplicationCacheGroup() const { return m_candidateApplicationCacheGroup; }

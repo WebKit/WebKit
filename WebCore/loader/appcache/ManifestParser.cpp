@@ -32,6 +32,8 @@
 #include "KURL.h"
 #include "TextEncoding.h"
 
+using namespace std;
+
 namespace WebCore {
 
 enum Mode { Explicit, Fallback, OnlineWhitelist, Unknown };
@@ -148,8 +150,9 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
             KURL namespaceURL(manifestURL, String(line.characters(), p - line.characters()));
             if (!namespaceURL.isValid())
                 continue;
-            
-            // Check that the namespace URL has the same scheme/host/port as the manifest URL.
+            if (namespaceURL.hasRef())
+                namespaceURL.setRef(String());
+
             if (!protocolHostAndPortAreEqual(manifestURL, namespaceURL))
                 continue;
                                    
@@ -162,15 +165,16 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
             while (p < lineEnd && *p != '\t' && *p != ' ') 
                 p++;
 
-            KURL fallbackURL(String(fallbackStart, fallbackStart - p));
-
+            KURL fallbackURL(manifestURL, String(fallbackStart, p - fallbackStart));
             if (!fallbackURL.isValid())
                 continue;
-            
-            if (!equalIgnoringCase(fallbackURL.protocol(), manifestURL.protocol()))
+            if (fallbackURL.hasRef())
+                fallbackURL.setRef(String());
+
+            if (!protocolHostAndPortAreEqual(manifestURL, fallbackURL))
                 continue;
-            
-            manifest.fallbackURLs.add(namespaceURL, fallbackURL);            
+
+            manifest.fallbackURLs.append(make_pair(namespaceURL, fallbackURL));            
         } else 
             ASSERT_NOT_REACHED();
     }

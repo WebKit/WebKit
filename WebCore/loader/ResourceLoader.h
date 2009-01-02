@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+    class ApplicationCache;
     class DocumentLoader;
     class Frame;
     class FrameLoader;
@@ -113,6 +114,10 @@ namespace WebCore {
 
     protected:
         ResourceLoader(Frame*, bool sendResourceLoadCallbacks, bool shouldContentSniff);
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        bool scheduleLoadFallbackResourceFromApplicationCache(ApplicationCache* = 0);
+#endif
 
         virtual void didCancel(const ResourceError&);
         void didFinishLoadingOnePart();

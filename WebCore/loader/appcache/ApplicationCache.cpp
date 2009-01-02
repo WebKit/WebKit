@@ -165,7 +165,26 @@ bool ApplicationCache::isURLInOnlineWhitelist(const KURL& url)
     copy.setRef(String());
     return m_onlineWhitelist.contains(copy);
 }
-    
+
+void ApplicationCache::setFallbackURLs(const FallbackURLVector& fallbackURLs)
+{
+    ASSERT(m_fallbackURLs.isEmpty());
+    m_fallbackURLs = fallbackURLs;
+}
+
+bool ApplicationCache::urlMatchesFallbackNamespace(const KURL& url, KURL* fallbackURL)
+{
+    size_t fallbackCount = m_fallbackURLs.size();
+    for (size_t i = 0; i < fallbackCount; ++i) {
+        if (protocolHostAndPortAreEqual(url, m_fallbackURLs[i].first) && url.string().startsWith(m_fallbackURLs[i].first.string())) {
+            if (fallbackURL)
+                *fallbackURL = m_fallbackURLs[i].second;
+            return true;
+        }
+    }
+    return false;
+}
+
 void ApplicationCache::clearStorageID()
 {
     m_storageID = 0;

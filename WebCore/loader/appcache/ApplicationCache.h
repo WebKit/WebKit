@@ -28,13 +28,12 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include "PlatformString.h"
+#include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-
-#include "StringHash.h"
-#include "PlatformString.h"
 
 namespace WebCore {
 
@@ -43,7 +42,9 @@ class ApplicationCacheResource;
 class DocumentLoader;
 class KURL;
 class ResourceRequest;
-    
+
+typedef Vector<std::pair<KURL, KURL> > FallbackURLVector;
+
 class ApplicationCache : public RefCounted<ApplicationCache> {
 public:
     static PassRefPtr<ApplicationCache> create() { return adoptRef(new ApplicationCache); }
@@ -70,6 +71,10 @@ public:
     void setOnlineWhitelist(const HashSet<String>& onlineWhitelist);
     const HashSet<String>& onlineWhitelist() const { return m_onlineWhitelist; }
     bool isURLInOnlineWhitelist(const KURL&);
+
+    void setFallbackURLs(const FallbackURLVector&);
+    const FallbackURLVector& fallbackURLs() const { return m_fallbackURLs; }
+    bool urlMatchesFallbackNamespace(const KURL&, KURL* fallbackURL = 0);
     
 #ifndef NDEBUG
     void dump();
@@ -92,6 +97,7 @@ private:
     ApplicationCacheResource* m_manifest;
     
     HashSet<String> m_onlineWhitelist;
+    FallbackURLVector m_fallbackURLs;
     
     unsigned m_storageID;
 };
