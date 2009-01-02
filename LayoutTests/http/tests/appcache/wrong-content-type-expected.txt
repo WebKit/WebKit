@@ -1,0 +1,6 @@
+Test that a manifest served with a wrong content-type isn't treated as such.
+
+Should say SUCCESS:
+
+SUCCESS
+
