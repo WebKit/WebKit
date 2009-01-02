@@ -1,3 +1,28 @@
+2009-01-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=23043
+
+        Pull media controls css out of html4.css into separate file. Don't generate
+        wml, svg, or media css globals unless the feature is enabled.
+
+        * DerivedSources.make:
+            Don't include css for unused features.
+
+        * WebCore.xcodeproj/project.pbxproj:
+            include mediaControls.css
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+            don't parse or add media css unless VIDEO feature is enabled and the target
+            element is video or audio
+
+        * css/html4.css:
+            moved media controls css to mediaControls.css
+
+        * css/mediaControls.css: Added.
+
 2009-01-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

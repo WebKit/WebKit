@@ -1088,6 +1088,16 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     }
 #endif
 
+#if ENABLE(VIDEO)
+    static bool loadedMediaStyleSheet;
+    if (!loadedMediaStyleSheet && (e->hasTagName(videoTag) || e->hasTagName(audioTag))) {
+        loadedMediaStyleSheet = true;
+        CSSStyleSheet* mediaControlsSheet = parseUASheet(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet));
+        defaultStyle->addRulesFromSheet(mediaControlsSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(mediaControlsSheet, printEval());
+    }
+#endif
+
     int firstUARule = -1, lastUARule = -1;
     int firstUserRule = -1, lastUserRule = -1;
     int firstAuthorRule = -1, lastAuthorRule = -1;

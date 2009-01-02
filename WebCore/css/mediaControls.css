@@ -1,0 +1,102 @@
+/*
+ * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+/* media controls */
+
+audio {
+    width: 200px;
+    height: 16px;
+}
+
+audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-user-select: none;
+}
+
+video:-webkit-full-page-media::-webkit-media-controls-panel {
+    bottom: -16px;
+}
+
+audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
+    -webkit-appearance: media-mute-button;
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 17px;
+    height: 16px;
+}
+
+audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
+    -webkit-appearance: media-play-button;
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    left: 16px;
+    width: 17px;
+    height: 16px;
+}
+
+audio::-webkit-media-controls-time-display, video::-webkit-media-controls-time-display {
+    display: none;
+}
+
+audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
+    -webkit-appearance: media-slider;
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    left: 32px;
+    right: 32px;
+    height: 16px;
+    padding: 0px 2px;
+}
+
+audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
+    -webkit-appearance: media-seek-back-button;
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    right: 16px;
+    width: 17px;
+    height: 16px;
+}
+
+
+audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
+    -webkit-appearance: media-seek-forward-button;
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    right: 0;
+    width: 17px;
+    height: 16px;
+}
+
+audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
+    display: none;
+}
