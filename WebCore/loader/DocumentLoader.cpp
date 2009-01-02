@@ -866,23 +866,27 @@ bool DocumentLoader::shouldLoadResourceFromApplicationCache(const ResourceReques
     ApplicationCache* cache = applicationCache();
     if (!cache)
         return false;
-    
+
     // If the resource is not a HTTP/HTTPS GET, then abort
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return false;
 
-    if (cache->urlMatchesFallbackNamespace(request.url()))
-        return false;
-
-    if (cache->isURLInOnlineWhitelist(request.url()))
-        return false;
-    
+    // If the resource's URL is an master entry, the manifest, an explicit entry, a fallback entry, or a dynamic entry
+    // in the application cache, then get the resource from the cache (instead of fetching it).
     resource = cache->resourceForURL(request.url());
-    
+
     // Don't load foreign resources.
+    // FIXME: This check should not be here. Foreign resources are only to be ignored when navigating, not during other kinds of loads.
     if (resource && (resource->type() & ApplicationCacheResource::Foreign))
         resource = 0;
-    
+
+    // Resources that match fallback namespaces or online whitelist entries are fetched from the network,
+    // unless they are also cached.
+    if (!resource && (cache->urlMatchesFallbackNamespace(request.url()) || cache->isURLInOnlineWhitelist(request.url())))
+        return false;
+
+    // Resources that are not present in the manifest will always fail to load (at least, after the
+    // cache has been primed the first time), making the testing of offline applications simpler.
     return true;
 }
 

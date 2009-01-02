@@ -132,7 +132,7 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
             if (mode == Explicit)
                 manifest.explicitURLs.add(url.string());
             else
-                manifest.onlineWhitelistedURLs.add(url.string());
+                manifest.onlineWhitelistedURLs.append(url);
             
         } else if (mode == Fallback) {
             const UChar* p = line.characters();

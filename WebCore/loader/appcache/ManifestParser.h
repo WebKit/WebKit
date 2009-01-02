@@ -35,7 +35,7 @@ namespace WebCore {
     class KURL;
 
     struct Manifest {
-        HashSet<String> onlineWhitelistedURLs;
+        Vector<KURL> onlineWhitelistedURLs;
         HashSet<String> explicitURLs;
         FallbackURLVector fallbackURLs;
     };

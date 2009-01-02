@@ -150,7 +150,7 @@ void ApplicationCache::removeDynamicEntry(const String& url)
     // FIXME: Implement
 }
 
-void ApplicationCache::setOnlineWhitelist(const HashSet<String>& onlineWhitelist)
+void ApplicationCache::setOnlineWhitelist(const Vector<KURL>& onlineWhitelist)
 {
     ASSERT(m_onlineWhitelist.isEmpty());
     m_onlineWhitelist = onlineWhitelist; 
@@ -158,12 +158,12 @@ void ApplicationCache::setOnlineWhitelist(const HashSet<String>& onlineWhitelist
 
 bool ApplicationCache::isURLInOnlineWhitelist(const KURL& url)
 {
-    if (!url.hasRef())
-        return m_onlineWhitelist.contains(url);
-    
-    KURL copy(url);
-    copy.setRef(String());
-    return m_onlineWhitelist.contains(copy);
+    size_t whitelistSize = m_onlineWhitelist.size();
+    for (size_t i = 0; i < whitelistSize; ++i) {
+        if (protocolHostAndPortAreEqual(url, m_onlineWhitelist[i]) && url.string().startsWith(m_onlineWhitelist[i].string()))
+            return true;
+    }
+    return false;
 }
 
 void ApplicationCache::setFallbackURLs(const FallbackURLVector& fallbackURLs)

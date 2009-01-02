@@ -426,14 +426,14 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache)
     }
     
     // Store the online whitelist
-    const HashSet<String>& onlineWhitelist = cache->onlineWhitelist();
+    const Vector<KURL>& onlineWhitelist = cache->onlineWhitelist();
     {
-        HashSet<String>::const_iterator end = onlineWhitelist.end();
-        for (HashSet<String>::const_iterator it = onlineWhitelist.begin(); it != end; ++it) {
+        size_t whitelistSize = onlineWhitelist.size();
+        for (size_t i = 0; i < whitelistSize; ++i) {
             SQLiteStatement statement(m_database, "INSERT INTO CacheWhitelistURLs (url, cache) VALUES (?, ?)");
             statement.prepare();
 
-            statement.bindText(1, *it);
+            statement.bindText(1, onlineWhitelist[i]);
             statement.bindInt64(2, cacheStorageID);
 
             if (!executeStatement(statement))
@@ -659,9 +659,9 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
         return 0;
     whitelistStatement.bindInt64(1, storageID);
     
-    HashSet<String> whitelist;
+    Vector<KURL> whitelist;
     while ((result = whitelistStatement.step()) == SQLResultRow) 
-        whitelist.add(whitelistStatement.getColumnText(0));
+        whitelist.append(whitelistStatement.getColumnText(0));
 
     if (result != SQLResultDone)
         LOG_ERROR("Could not load cache online whitelist, error \"%s\"", m_database.lastErrorMsg());
