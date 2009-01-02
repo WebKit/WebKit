@@ -1,3 +1,14 @@
+2009-01-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6450530> WebCore::FontPlatformData should not leak
+
+        Make sure we only adopt the new font, rather than re-referencing (and so leaking).
+
+        * platform/graphics/mac/FontPlatformDataMac.mm:
+        (WebCore::FontPlatformData::setFont):
+
 2009-01-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
