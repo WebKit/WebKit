@@ -1,3 +1,22 @@
+2009-01-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 23071: REGRESSION (r39536): New test failures after committing patch in bug 23051 (ICU search)
+        https://bugs.webkit.org/show_bug.cgi?id=23071
+
+        Also fix some things that Dan suggested during review of the ICU search patch that I forgot
+        the first time around.
+
+        * editing/TextIterator.cpp: Use ICU search on all platforms that use ICU, now that
+        we've double checked it works everywhere, removing HAVE_ICU_SEARCH entirely.
+        Removed unused m_atBreak data member from the non-ICU code path.
+        (WebCore::TextIterator::TextIterator): Move null check up.
+        (WebCore::TextIterator::handleTextBox): Fix mistake that made the iterator include
+        collapsed whitespace. This was left over from an earlier version of the patch.
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        Move null check up.
+
 2009-01-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler, Oliver Hunt

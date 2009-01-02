@@ -1,3 +1,14 @@
+2009-01-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Turn on the regression test for ICU search on Mac OS X Tiger too.
+        It was already on for Windows (by accident, failing), but now WebCore has been changed
+        so it should work fine on all platforms using ICU, which includes both of those.
+
+        * platform/mac-tiger/editing/execCommand: Removed.
+        * platform/mac-tiger/editing/execCommand/findString-diacriticals-expected.txt: Removed.
+
 2009-01-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler, Oliver Hunt
