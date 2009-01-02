@@ -194,6 +194,9 @@ namespace WebCore {
         void strokeText(const String& text, float x, float y, float maxWidth);
         PassRefPtr<TextMetrics> measureText(const String& text);
 
+        LineCap getLineCap() const { return state().m_lineCap; }
+        LineJoin getLineJoin() const { return state().m_lineJoin; }
+
     private:
         struct State {
             State();
@@ -227,7 +230,14 @@ namespace WebCore {
 
         void applyShadow();
 
-        void willDraw(const FloatRect&);
+        enum CanvasWillDrawOption {
+            CanvasWillDrawApplyTransform = 1,
+            CanvasWillDrawApplyShadow = 1 << 1,
+            CanvasWillDrawApplyClip = 1 << 2,
+            CanvasWillDrawApplyAll = 0xffffffff
+        };
+        
+        void willDraw(const FloatRect&, unsigned options = CanvasWillDrawApplyAll);
 
         GraphicsContext* drawingContext() const;
 

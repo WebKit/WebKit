@@ -1,3 +1,16 @@
+2009-01-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler, Oliver Hunt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23065
+
+        Repaint test for incremental painting in canvas.
+        
+        * fast/canvas/canvas-incremental-repaint.html: Added.
+        * platform/mac/fast/canvas/canvas-incremental-repaint-expected.checksum: Added.
+        * platform/mac/fast/canvas/canvas-incremental-repaint-expected.png: Added.
+        * platform/mac/fast/canvas/canvas-incremental-repaint-expected.txt: Added.
+
 2009-01-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

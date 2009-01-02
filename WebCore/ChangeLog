@@ -1,3 +1,29 @@
+2009-01-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler, Oliver Hunt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23065
+        
+        Enable incremental painting of canvas. This turns incremental painting
+        back on, and fixes issues with stroke width and miters, calling willDraw()
+        for strokeText and fillText, and taking shadows into account.
+        
+        Test: fast/canvas/canvas-incremental-repaint.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasStrokeStyleApplier::CanvasStrokeStyleApplier):
+        (WebCore::CanvasStrokeStyleApplier::strokeStyle):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::willDraw):
+        (WebCore::CanvasRenderingContext2D::putImageData):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/CanvasRenderingContext2D.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::willDraw):
+        * platform/graphics/FloatRect.h:
+        (WebCore::mapRect): new method to map a rect contained
+        in one rect to an equivalent rect inside another rect.
+
 2008-12-29  Konstantin Käfer  <kkaefer@gmail.com>
 
         Reviewed by Tim Hatcher.

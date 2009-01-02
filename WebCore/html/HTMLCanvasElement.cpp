@@ -156,14 +156,9 @@ void HTMLCanvasElement::willDraw(const FloatRect& rect)
     m_imageBuffer->clearImage();
     
     if (RenderObject* ro = renderer()) {
-#ifdef CANVAS_INCREMENTAL_REPAINT
-        // Handle CSS triggered scaling
-        float widthScale = static_cast<float>(ro->width()) / static_cast<float>(m_size.width());
-        float heightScale = static_cast<float>(ro->height()) / static_cast<float>(m_size.height());
-        FloatRect r(rect.x() * widthScale, rect.y() * heightScale, rect.width() * widthScale, rect.height() * heightScale);
-#else
-        FloatRect r(0, 0, ro->width(), ro->height());  
-#endif
+        FloatRect destRect = ro->contentBox();
+        FloatRect r = mapRect(rect, FloatRect(0, 0, m_size.width(), m_size.height()), destRect);
+        r.intersect(destRect);
         if (m_dirtyRect.contains(r))
             return;
 

@@ -167,6 +167,7 @@ inline FloatRect unionRect(const FloatRect& a, const FloatRect& b)
     return c;
 }
 
+
 inline bool operator==(const FloatRect& a, const FloatRect& b)
 {
     return a.location() == b.location() && a.size() == b.size();
@@ -178,6 +179,9 @@ inline bool operator!=(const FloatRect& a, const FloatRect& b)
 }
 
 IntRect enclosingIntRect(const FloatRect&);
+
+// Map rect r from srcRect to an equivalent rect in destRect.
+FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect& destRect);
 
 }
 

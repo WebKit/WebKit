@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x598
+  RenderBlock {HTML} at (0,0) size 800x598
+    RenderBody {BODY} at (8,8) size 784x582
+      RenderHTMLCanvas {CANVAS} at (0,0) size 240x190 [border: (20px solid #000000)]
+      RenderText {#text} at (240,176) size 4x18
+        text run at (240,176) width 4: " "
+      RenderHTMLCanvas {CANVAS} at (244,0) size 240x190 [border: (20px solid #000000)]
+      RenderText {#text} at (484,176) size 4x18
+        text run at (484,176) width 4: " "
+      RenderHTMLCanvas {CANVAS} at (488,0) size 240x190 [border: (20px solid #000000)]
+      RenderBR {BR} at (728,176) size 0x18
+      RenderHTMLCanvas {CANVAS} at (0,194) size 240x190 [border: (20px solid #000000)]
+      RenderText {#text} at (240,370) size 4x18
+        text run at (240,370) width 4: " "
+      RenderHTMLCanvas {CANVAS} at (244,194) size 240x190 [border: (20px solid #000000)]
+      RenderText {#text} at (484,370) size 4x18
+        text run at (484,370) width 4: " "
+      RenderHTMLCanvas {CANVAS} at (488,194) size 240x190 [border: (20px solid #000000)]
+      RenderBR {BR} at (728,370) size 0x18
+      RenderHTMLCanvas {CANVAS} at (0,388) size 240x190 [border: (20px solid #000000)]
+      RenderText {#text} at (240,564) size 4x18
+        text run at (240,564) width 4: " "
+      RenderHTMLCanvas {CANVAS} at (244,388) size 240x190 [border: (20px solid #000000)]
+      RenderText {#text} at (484,564) size 4x18
+        text run at (484,564) width 4: " "
+      RenderHTMLCanvas {CANVAS} at (488,388) size 240x190 [border: (20px solid #000000)]
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

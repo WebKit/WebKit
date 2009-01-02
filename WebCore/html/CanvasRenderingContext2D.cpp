@@ -55,6 +55,7 @@
 #include "RenderHTMLCanvas.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "StrokeStyleApplier.h"
 #include "TextMetrics.h"
 #include <stdio.h>
 #include <wtf/MathExtras.h>
@@ -65,7 +66,29 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const char* defaultFont = "10px sans-serif";
+static const char* const defaultFont = "10px sans-serif";
+
+
+class CanvasStrokeStyleApplier : public StrokeStyleApplier {
+public:
+    CanvasStrokeStyleApplier(CanvasRenderingContext2D* canvasContext)
+        : m_canvasContext(canvasContext)
+    {
+    }
+    
+    virtual void strokeStyle(GraphicsContext* c)
+    {
+        c->setStrokeThickness(m_canvasContext->lineWidth());
+        c->setLineCap(m_canvasContext->getLineCap());
+        c->setLineJoin(m_canvasContext->getLineJoin());
+        c->setMiterLimit(m_canvasContext->miterLimit());
+    }
+
+private:
+    CanvasRenderingContext2D* m_canvasContext;
+};
+
+
 
 CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas)
     : m_canvas(canvas)
@@ -638,11 +661,8 @@ void CanvasRenderingContext2D::stroke()
         c->beginPath();
         c->addPath(m_path);
 
-        // FIXME: This is insufficient, need to use CGContextReplacePathWithStrokedPath to expand to required bounds
-        float lineWidth = state().m_lineWidth;
-        float inset = lineWidth / 2;
-        FloatRect boundingRect = m_path.boundingRect();
-        boundingRect.inflate(inset);
+        CanvasStrokeStyleApplier strokeApplier(this);
+        FloatRect boundingRect = m_path.strokeBoundingRect(&strokeApplier);
         willDraw(boundingRect);
 
         c->strokePath();
@@ -1113,7 +1133,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
     return CanvasPattern::create(canvas->buffer()->image(), repeatX, repeatY, canvas->originClean());
 }
 
-void CanvasRenderingContext2D::willDraw(const FloatRect& r)
+void CanvasRenderingContext2D::willDraw(const FloatRect& r, unsigned options)
 {
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1121,7 +1141,27 @@ void CanvasRenderingContext2D::willDraw(const FloatRect& r)
     if (!state().m_invertibleCTM)
         return;
 
-    m_canvas->willDraw(c->getCTM().mapRect(r));
+    FloatRect dirtyRect = r;
+    if (options & CanvasWillDrawApplyTransform) {
+        AffineTransform ctm = state().m_transform;
+        dirtyRect = ctm.mapRect(r);
+    }
+    
+    if (options & CanvasWillDrawApplyShadow) {
+        // The shadow gets applied after transformation
+        FloatRect shadowRect(dirtyRect);
+        shadowRect.move(state().m_shadowOffset);
+        shadowRect.inflate(state().m_shadowBlur);
+        dirtyRect.unite(shadowRect);
+    }
+    
+    if (options & CanvasWillDrawApplyClip) {
+        // FIXME: apply the current clip to the rectangle. Unfortunately we can't get the clip
+        // back out of the GraphicsContext, so to take clip into account for incremental painting,
+        // we'd have to keep the clip path around.
+    }
+    
+    m_canvas->willDraw(dirtyRect);
 }
 
 GraphicsContext* CanvasRenderingContext2D::drawingContext() const
@@ -1211,7 +1251,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy,
     sourceRect.intersect(IntRect(IntPoint(), buffer->size()));
     if (sourceRect.isEmpty())
         return;
-    willDraw(sourceRect);
+    willDraw(sourceRect, 0);  // ignore transform, shadow and clip
     sourceRect.move(-destOffset);
     IntPoint destPoint(destOffset.width(), destOffset.height());
     
@@ -1375,9 +1415,18 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
                                    width + font.height(), font.lineSpacing());
     if (!fill)
         textRect.inflate(c->strokeThickness() / 2);
-        
+
+    if (fill)
+        m_canvas->willDraw(textRect);
+    else {
+        // When stroking text, pointy miters can extend outside of textRect, so we
+        // punt and dirty the whole canvas.
+        m_canvas->willDraw(FloatRect(0, 0, m_canvas->width(), m_canvas->height()));
+    }
+    
     CanvasStyle* drawStyle = fill ? state().m_fillStyle.get() : state().m_strokeStyle.get();
     if (drawStyle->canvasGradient() || drawStyle->canvasPattern()) {
+        // FIXME: The rect is not big enough for miters on stroked text.
         IntRect maskRect = enclosingIntRect(textRect);
 
         auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size(), false);
