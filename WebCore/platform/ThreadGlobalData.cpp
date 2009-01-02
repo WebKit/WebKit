@@ -85,7 +85,7 @@ ThreadGlobalData::~ThreadGlobalData()
     delete m_eventNames;
     delete m_atomicStringTable;
 
-    ASSERT(m_emptyString->hasOneRef());
+    ASSERT(isMainThread() || m_emptyString->hasOneRef()); // We intentionally don't clean up static data on application quit, so there will be many strings remaining on the main thread.
     delete m_emptyString;
 }
 

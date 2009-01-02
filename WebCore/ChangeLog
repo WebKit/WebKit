@@ -1,3 +1,12 @@
+2009-01-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6471356> Failed assertion on quit
+
+        * platform/ThreadGlobalData.cpp: (WebCore::ThreadGlobalData::~ThreadGlobalData):
+        Only assert that empty string are all removed on secondary threads.
+
 2009-01-02  David Kilzer  <ddkilzer@apple.com>
 
         Bug 23081: These files are no longer part of the KDE libraries
