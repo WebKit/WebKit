@@ -1,3 +1,100 @@
+2009-01-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Allow 32-bit integers to be stored in JSImmediates, on x64-bit.
+        Presently the top 32-bits of a 64-bit JSImmediate serve as a sign extension of a 31-bit
+        int stored in the low word (shifted left by one, to make room for a tag).  In the new
+        format, the top 31-bits serve as a sign extension of a 32-bit int, still shifted left by
+        one.
+
+        The new behavior is enabled using a flag in Platform.h, 'WTF_USE_ALTERNATE_JSIMMEDIATE'.
+        When this is set the constants defining the range of ints allowed to be stored as
+        JSImmediate values is extended.  The code in JSImmediate.h can safely operate on either
+        format.  This patch updates the JIT so that it can also operate with the new format.
+
+        ~2% progression on x86-64, with & without the JIT, on sunspider & v8 tests.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::addPtr):
+        (JSC::MacroAssembler::orPtr):
+        (JSC::MacroAssembler::or32):
+        (JSC::MacroAssembler::rshiftPtr):
+        (JSC::MacroAssembler::rshift32):
+        (JSC::MacroAssembler::subPtr):
+        (JSC::MacroAssembler::xorPtr):
+        (JSC::MacroAssembler::xor32):
+        (JSC::MacroAssembler::move):
+        (JSC::MacroAssembler::compareImm64ForBranch):
+        (JSC::MacroAssembler::compareImm64ForBranchEquality):
+        (JSC::MacroAssembler::jePtr):
+        (JSC::MacroAssembler::jgePtr):
+        (JSC::MacroAssembler::jlPtr):
+        (JSC::MacroAssembler::jlePtr):
+        (JSC::MacroAssembler::jnePtr):
+        (JSC::MacroAssembler::jnzSubPtr):
+        (JSC::MacroAssembler::joAddPtr):
+        (JSC::MacroAssembler::jzSubPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::addq_rr):
+        (JSC::X86Assembler::orq_ir):
+        (JSC::X86Assembler::subq_ir):
+        (JSC::X86Assembler::xorq_rr):
+        (JSC::X86Assembler::sarq_CLr):
+        (JSC::X86Assembler::sarq_i8r):
+        (JSC::X86Assembler::cmpq_ir):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_lshift):
+        (JSC::JIT::compileFastArithSlow_op_lshift):
+        (JSC::JIT::compileFastArith_op_rshift):
+        (JSC::JIT::compileFastArithSlow_op_rshift):
+        (JSC::JIT::compileFastArith_op_bitand):
+        (JSC::JIT::compileFastArithSlow_op_bitand):
+        (JSC::JIT::compileFastArith_op_mod):
+        (JSC::JIT::compileFastArithSlow_op_mod):
+        (JSC::JIT::compileFastArith_op_add):
+        (JSC::JIT::compileFastArithSlow_op_add):
+        (JSC::JIT::compileFastArith_op_mul):
+        (JSC::JIT::compileFastArithSlow_op_mul):
+        (JSC::JIT::compileFastArith_op_post_inc):
+        (JSC::JIT::compileFastArithSlow_op_post_inc):
+        (JSC::JIT::compileFastArith_op_post_dec):
+        (JSC::JIT::compileFastArithSlow_op_post_dec):
+        (JSC::JIT::compileFastArith_op_pre_inc):
+        (JSC::JIT::compileFastArithSlow_op_pre_inc):
+        (JSC::JIT::compileFastArith_op_pre_dec):
+        (JSC::JIT::compileFastArithSlow_op_pre_dec):
+        (JSC::JIT::compileBinaryArithOp):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::getConstantOperand):
+        (JSC::JIT::getConstantOperandImmediateInt):
+        (JSC::JIT::isOperandConstantImmediateInt):
+        (JSC::JIT::isOperandConstant31BitImmediateInt):
+        (JSC::JIT::emitFastArithDeTagImmediate):
+        (JSC::JIT::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::JIT::emitFastArithReTagImmediate):
+        (JSC::JIT::emitFastArithImmToInt):
+        (JSC::JIT::emitFastArithIntToImmNoCheck):
+        * runtime/JSImmediate.h:
+        (JSC::JSImmediate::isPositiveNumber):
+        (JSC::JSImmediate::isNegative):
+        (JSC::JSImmediate::rightShiftImmediateNumbers):
+        (JSC::JSImmediate::canDoFastAdditiveOperations):
+        (JSC::JSImmediate::makeValue):
+        (JSC::JSImmediate::makeInt):
+        (JSC::JSImmediate::makeBool):
+        (JSC::JSImmediate::intValue):
+        (JSC::JSImmediate::rawValue):
+        (JSC::JSImmediate::toBoolean):
+        (JSC::JSImmediate::from):
+        * wtf/Platform.h:
+
 2008-12-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

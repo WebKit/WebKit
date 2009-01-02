@@ -398,6 +398,26 @@ public:
     };
  
 
+    // ImmPtr:
+    //
+    // A pointer sized immediate operand to an instruction - this is wrapped
+    // in a class requiring explicit construction in order to differentiate
+    // from pointers used as absolute addresses to memory operations
+    struct ImmPtr {
+        explicit ImmPtr(void* value)
+            : m_value(value)
+        {
+        }
+
+        intptr_t asIntptr()
+        {
+            return reinterpret_cast<intptr_t>(m_value);
+        }
+
+        void* m_value;
+    };
+
+
     // Imm32:
     //
     // A 32bit immediate operand to an instruction - this is wrapped in a
@@ -410,23 +430,15 @@ public:
         {
         }
 
-        int32_t m_value;
-    };
-
-    // ImmPtr:
-    //
-    // A pointer sized immediate operand to an instruction - this is wrapped
-    // in a class requiring explicit construction in order to differentiate
-    // from pointers used as absolute addresses to memory operations
-    struct ImmPtr {
-        explicit ImmPtr(void* value)
-            : m_value(value)
+#if PLATFORM(X86)
+        explicit Imm32(ImmPtr ptr)
+            : m_value(ptr.asIntptr())
         {
         }
+#endif
 
-        void* m_value;
+        int32_t m_value;
     };
-
 
     // Integer arithmetic operations:
     //
@@ -434,6 +446,15 @@ public:
     // For many operations the source may be an Imm32, the srcDst operand
     // may often be a memory location (explictly described using an Address
     // object).
+
+    void addPtr(RegisterID src, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.addq_rr(src, dest);
+#else
+        add32(src, dest);
+#endif
+    }
 
     void addPtr(Imm32 imm, RegisterID srcDest)
     {
@@ -558,11 +579,6 @@ public:
         m_assembler.imull_i32r(src, imm.m_value, dest);
     }
     
-    void or32(RegisterID src, RegisterID dest)
-    {
-        m_assembler.orl_rr(src, dest);
-    }
-
     void orPtr(RegisterID src, RegisterID dest)
     {
 #if PLATFORM(X86_64)
@@ -572,14 +588,58 @@ public:
 #endif
     }
 
+    void orPtr(Imm32 imm, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.orq_ir(imm.m_value, dest);
+#else
+        or32(imm, dest);
+#endif
+    }
+
+    void or32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.orl_rr(src, dest);
+    }
+
     void or32(Imm32 imm, RegisterID dest)
     {
         m_assembler.orl_ir(imm.m_value, dest);
     }
 
-    void rshift32(Imm32 imm, RegisterID dest)
+    void rshiftPtr(RegisterID shift_amount, RegisterID dest)
     {
-        m_assembler.sarl_i8r(imm.m_value, dest);
+#if PLATFORM(X86_64)
+        // On x86 we can only shift by ecx; if asked to shift by another register we'll
+        // need rejig the shift amount into ecx first, and restore the registers afterwards.
+        if (shift_amount != X86::ecx) {
+            swap(shift_amount, X86::ecx);
+
+            // E.g. transform "shll %eax, %eax" -> "xchgl %eax, %ecx; shll %ecx, %ecx; xchgl %eax, %ecx"
+            if (dest == shift_amount)
+                m_assembler.sarq_CLr(X86::ecx);
+            // E.g. transform "shll %eax, %ecx" -> "xchgl %eax, %ecx; shll %ecx, %eax; xchgl %eax, %ecx"
+            else if (dest == X86::ecx)
+                m_assembler.sarq_CLr(shift_amount);
+            // E.g. transform "shll %eax, %ebx" -> "xchgl %eax, %ecx; shll %ecx, %ebx; xchgl %eax, %ecx"
+            else
+                m_assembler.sarq_CLr(dest);
+        
+            swap(shift_amount, X86::ecx);
+        } else
+            m_assembler.sarq_CLr(dest);
+#else
+        rshift32(shift_amount, dest);
+#endif
+    }
+
+    void rshiftPtr(Imm32 imm, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.sarq_i8r(imm.m_value, dest);
+#else
+        rshift32(imm, dest);
+#endif
     }
 
     void rshift32(RegisterID shift_amount, RegisterID dest)
@@ -604,6 +664,20 @@ public:
             m_assembler.sarl_CLr(dest);
     }
 
+    void rshift32(Imm32 imm, RegisterID dest)
+    {
+        m_assembler.sarl_i8r(imm.m_value, dest);
+    }
+
+    void subPtr(Imm32 imm, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.subq_ir(imm.m_value, dest);
+#else
+        sub32(imm, dest);
+#endif
+    }
+    
     void sub32(Imm32 imm, RegisterID dest)
     {
         m_assembler.subl_ir(imm.m_value, dest);
@@ -629,6 +703,24 @@ public:
         m_assembler.subl_mr(src.offset, src.base, dest);
     }
 
+    void xorPtr(RegisterID src, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.xorq_rr(src, dest);
+#else
+        xor32(src, dest);
+#endif
+    }
+
+    void xorPtr(Imm32 imm, RegisterID srcDest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.xorq_ir(imm.m_value, srcDest);
+#else
+        xor32(imm, srcDest);
+#endif
+    }
+
     void xor32(RegisterID src, RegisterID dest)
     {
         m_assembler.xorl_rr(src, dest);
@@ -639,15 +731,6 @@ public:
         m_assembler.xorl_ir(imm.m_value, srcDest);
     }
     
-    void xorPtr(Imm32 imm, RegisterID srcDest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.xorq_ir(imm.m_value, srcDest);
-#else
-        xor32(imm, srcDest);
-#endif
-    }
-
 
     // Memory access operations:
     //
@@ -765,7 +848,7 @@ public:
         move(imm, scratchRegister);
         storePtr(scratchRegister, address);
 #else
-        m_assembler.movl_i32m(reinterpret_cast<unsigned>(imm.m_value), address.offset, address.base);
+        m_assembler.movl_i32m(imm.asIntptr(), address.offset, address.base);
 #endif
     }
 
@@ -891,9 +974,12 @@ public:
     void move(ImmPtr imm, RegisterID dest)
     {
 #if PLATFORM(X86_64)
-        m_assembler.movq_i64r(reinterpret_cast<int64_t>(imm.m_value), dest);
+        if (CAN_SIGN_EXTEND_U32_64(imm.asIntptr()))
+            m_assembler.movl_i32r(static_cast<int32_t>(imm.asIntptr()), dest);
+        else
+            m_assembler.movq_i64r(imm.asIntptr(), dest);
 #else
-        m_assembler.movl_i32r(reinterpret_cast<int32_t>(imm.m_value), dest);
+        m_assembler.movl_i32r(imm.asIntptr(), dest);
 #endif
     }
 
@@ -983,6 +1069,19 @@ private:
     }
 
 #if PLATFORM(X86_64)
+    void compareImm64ForBranch(RegisterID left, int32_t right)
+    {
+        m_assembler.cmpq_ir(right, left);
+    }
+
+    void compareImm64ForBranchEquality(RegisterID reg, int32_t imm)
+    {
+        if (!imm)
+            m_assembler.testq_rr(reg, reg);
+        else
+            m_assembler.cmpq_ir(imm, reg);
+    }
+
     void testImm64(RegisterID reg, Imm32 mask)
     {
         // if we are only interested in the low seven bits, this can be tested with a testb
@@ -1062,13 +1161,19 @@ public:
         return Jump(m_assembler.je());
     }
 
-    Jump jePtr(RegisterID reg, ImmPtr imm)
+    Jump jePtr(RegisterID reg, ImmPtr ptr)
     {
 #if PLATFORM(X86_64)
-        move(imm, scratchRegister);
-        return jePtr(scratchRegister, reg);
+        intptr_t imm = ptr.asIntptr();
+        if (CAN_SIGN_EXTEND_32_64(imm)) {
+            compareImm64ForBranchEquality(reg, imm);
+            return Jump(m_assembler.je());
+        } else {
+            move(ptr, scratchRegister);
+            return jePtr(scratchRegister, reg);
+        }
 #else
-        return je32(reg, Imm32(reinterpret_cast<int32_t>(imm.m_value)));
+        return je32(reg, Imm32(ptr));
 #endif
     }
 
@@ -1078,7 +1183,7 @@ public:
         move(imm, scratchRegister);
         return jePtr(scratchRegister, address);
 #else
-        return je32(address, Imm32(reinterpret_cast<int32_t>(imm.m_value)));
+        return je32(address, Imm32(imm));
 #endif
     }
 
@@ -1124,6 +1229,32 @@ public:
         return Jump(m_assembler.jg());
     }
 
+    Jump jgePtr(RegisterID left, RegisterID right)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.cmpq_rr(right, left);
+        return Jump(m_assembler.jge());
+#else
+        return jge32(left, right);
+#endif
+    }
+
+    Jump jgePtr(RegisterID reg, ImmPtr ptr)
+    {
+#if PLATFORM(X86_64)
+        intptr_t imm = ptr.asIntptr();
+        if (CAN_SIGN_EXTEND_32_64(imm)) {
+            compareImm64ForBranch(reg, imm);
+            return Jump(m_assembler.jge());
+        } else {
+            move(ptr, scratchRegister);
+            return jgePtr(reg, scratchRegister);
+        }
+#else
+        return jge32(reg, Imm32(ptr));
+#endif
+    }
+
     Jump jge32(RegisterID left, RegisterID right)
     {
         m_assembler.cmpl_rr(right, left);
@@ -1136,6 +1267,32 @@ public:
         return Jump(m_assembler.jge());
     }
 
+    Jump jlPtr(RegisterID left, RegisterID right)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.cmpq_rr(right, left);
+        return Jump(m_assembler.jl());
+#else
+        return jl32(left, right);
+#endif
+    }
+
+    Jump jlPtr(RegisterID reg, ImmPtr ptr)
+    {
+#if PLATFORM(X86_64)
+        intptr_t imm = ptr.asIntptr();
+        if (CAN_SIGN_EXTEND_32_64(imm)) {
+            compareImm64ForBranch(reg, imm);
+            return Jump(m_assembler.jl());
+        } else {
+            move(ptr, scratchRegister);
+            return jlPtr(reg, scratchRegister);
+        }
+#else
+        return jl32(reg, Imm32(ptr));
+#endif
+    }
+
     Jump jl32(RegisterID left, RegisterID right)
     {
         m_assembler.cmpl_rr(right, left);
@@ -1146,6 +1303,32 @@ public:
     {
         compareImm32ForBranch(left, right.m_value);
         return Jump(m_assembler.jl());
+    }
+
+    Jump jlePtr(RegisterID left, RegisterID right)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.cmpq_rr(right, left);
+        return Jump(m_assembler.jle());
+#else
+        return jle32(left, right);
+#endif
+    }
+
+    Jump jlePtr(RegisterID reg, ImmPtr ptr)
+    {
+#if PLATFORM(X86_64)
+        intptr_t imm = ptr.asIntptr();
+        if (CAN_SIGN_EXTEND_32_64(imm)) {
+            compareImm64ForBranch(reg, imm);
+            return Jump(m_assembler.jle());
+        } else {
+            move(ptr, scratchRegister);
+            return jlePtr(reg, scratchRegister);
+        }
+#else
+        return jle32(reg, Imm32(ptr));
+#endif
     }
 
     Jump jle32(RegisterID left, RegisterID right)
@@ -1191,13 +1374,19 @@ public:
 #endif
     }
 
-    Jump jnePtr(RegisterID reg, ImmPtr imm)
+    Jump jnePtr(RegisterID reg, ImmPtr ptr)
     {
 #if PLATFORM(X86_64)
-        move(imm, scratchRegister);
-        return jnePtr(scratchRegister, reg);
+        intptr_t imm = ptr.asIntptr();
+        if (CAN_SIGN_EXTEND_32_64(imm)) {
+            compareImm64ForBranchEquality(reg, imm);
+            return Jump(m_assembler.jne());
+        } else {
+            move(ptr, scratchRegister);
+            return jnePtr(scratchRegister, reg);
+        }
 #else
-        return jne32(reg, Imm32(reinterpret_cast<int32_t>(imm.m_value)));
+        return jne32(reg, Imm32(ptr));
 #endif
     }
 
@@ -1207,14 +1396,14 @@ public:
         move(imm, scratchRegister);
         return jnePtr(scratchRegister, address);
 #else
-        return jne32(address, Imm32(reinterpret_cast<int32_t>(imm.m_value)));
+        return jne32(address, Imm32(imm));
 #endif
     }
 
 #if !PLATFORM(X86_64)
     Jump jnePtr(AbsoluteAddress address, ImmPtr imm)
     {
-        m_assembler.cmpl_im(reinterpret_cast<uint32_t>(imm.m_value), address.m_ptr);
+        m_assembler.cmpl_im(imm.asIntptr(), address.m_ptr);
         return Jump(m_assembler.jne());
     }
 #endif
@@ -1222,11 +1411,11 @@ public:
     Jump jnePtrWithPatch(RegisterID reg, DataLabelPtr& dataLabel, ImmPtr initialValue = ImmPtr(0))
     {
 #if PLATFORM(X86_64)
-        m_assembler.movq_i64r(reinterpret_cast<int64_t>(initialValue.m_value), scratchRegister);
+        m_assembler.movq_i64r(initialValue.asIntptr(), scratchRegister);
         dataLabel = DataLabelPtr(this);
         return jnePtr(scratchRegister, reg);
 #else
-        m_assembler.cmpl_ir_force32(reinterpret_cast<int32_t>(initialValue.m_value), reg);
+        m_assembler.cmpl_ir_force32(initialValue.asIntptr(), reg);
         dataLabel = DataLabelPtr(this);
         return Jump(m_assembler.jne());
 #endif
@@ -1235,11 +1424,11 @@ public:
     Jump jnePtrWithPatch(Address address, DataLabelPtr& dataLabel, ImmPtr initialValue = ImmPtr(0))
     {
 #if PLATFORM(X86_64)
-        m_assembler.movq_i64r(reinterpret_cast<int64_t>(initialValue.m_value), scratchRegister);
+        m_assembler.movq_i64r(initialValue.asIntptr(), scratchRegister);
         dataLabel = DataLabelPtr(this);
         return jnePtr(scratchRegister, address);
 #else
-        m_assembler.cmpl_im_force32(reinterpret_cast<int32_t>(initialValue.m_value), address.offset, address.base);
+        m_assembler.cmpl_im_force32(initialValue.asIntptr(), address.offset, address.base);
         dataLabel = DataLabelPtr(this);
         return Jump(m_assembler.jne());
 #endif
@@ -1400,6 +1589,11 @@ public:
         jle32(left, right).linkTo(target, this);
     }
     
+    void jnePtr(RegisterID op1, ImmPtr imm, Label target)
+    {
+        jnePtr(op1, imm).linkTo(target, this);
+    }
+
     void jne32(RegisterID op1, RegisterID op2, Label target)
     {
         jne32(op1, op2).linkTo(target, this);
@@ -1442,10 +1636,22 @@ public:
     // * jo operations branch if the (signed) arithmetic
     //   operation caused an overflow to occur.
 
+    Jump jnzSubPtr(Imm32 imm, RegisterID dest)
+    {
+        subPtr(imm, dest);
+        return Jump(m_assembler.jne());
+    }
+    
     Jump jnzSub32(Imm32 imm, RegisterID dest)
     {
         sub32(imm, dest);
         return Jump(m_assembler.jne());
+    }
+    
+    Jump joAddPtr(RegisterID src, RegisterID dest)
+    {
+        addPtr(src, dest);
+        return Jump(m_assembler.jo());
     }
     
     Jump joAdd32(RegisterID src, RegisterID dest)
@@ -1470,6 +1676,12 @@ public:
     {
         sub32(imm, dest);
         return Jump(m_assembler.jo());
+    }
+    
+    Jump jzSubPtr(Imm32 imm, RegisterID dest)
+    {
+        subPtr(imm, dest);
+        return Jump(m_assembler.je());
     }
     
     Jump jzSub32(Imm32 imm, RegisterID dest)

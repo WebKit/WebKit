@@ -434,6 +434,7 @@
     #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 0
     #define ENABLE_JIT_OPTIMIZE_CALL 0
     #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 0
+    #define WTF_USE_ALTERNATE_JSIMMEDIATE 1
 /* The JIT is tested & working on x86 Mac */
 #elif PLATFORM(X86) && PLATFORM(MAC)
     #define ENABLE_JIT 1

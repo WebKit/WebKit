@@ -37,7 +37,11 @@
 
 namespace JSC {
 
-#define CAN_SIGN_EXTEND_8_32(value) (value == ((int)(signed char)value))
+inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(signed char)value; }
+#if PLATFORM(X86_64)
+inline bool CAN_SIGN_EXTEND_32_64(intptr_t value) { return value == (intptr_t)(int32_t)value; }
+inline bool CAN_SIGN_EXTEND_U32_64(intptr_t value) { return value == (intptr_t)(uint32_t)value; }
+#endif
 
 namespace X86 {
     typedef enum {
@@ -297,6 +301,11 @@ public:
     }
 
 #if PLATFORM(X86_64)
+    void addq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_ADD_EvGv, src, dst);
+    }
+
     void addq_ir(int imm, RegisterID dst)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -380,6 +389,17 @@ public:
     {
         m_formatter.oneByteOp64(OP_OR_EvGv, src, dst);
     }
+
+    void orq_ir(int imm, RegisterID dst)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_OR, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_OR, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
 #endif
 
     void subl_rr(RegisterID src, RegisterID dst)
@@ -414,7 +434,18 @@ public:
         }
     }
 
-#if !PLATFORM(X86_64)
+#if PLATFORM(X86_64)
+    void subq_ir(int imm, RegisterID dst)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_SUB, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_SUB, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+#else
     void subl_im(int imm, void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -444,6 +475,11 @@ public:
     }
 
 #if PLATFORM(X86_64)
+    void xorq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_XOR_EvGv, src, dst);
+    }
+
     void xorq_ir(int imm, RegisterID dst)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -485,6 +521,23 @@ public:
     {
         m_formatter.oneByteOp(OP_GROUP2_EvCL, GROUP2_OP_SHL, dst);
     }
+
+#if PLATFORM(X86_64)
+    void sarq_CLr(RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP2_EvCL, GROUP2_OP_SAR, dst);
+    }
+
+    void sarq_i8r(int imm, RegisterID dst)
+    {
+        if (imm == 1)
+            m_formatter.oneByteOp64(OP_GROUP2_Ev1, GROUP2_OP_SAR, dst);
+        else {
+            m_formatter.oneByteOp64(OP_GROUP2_EvIb, GROUP2_OP_SAR, dst);
+            m_formatter.immediate8(imm);
+        }
+    }
+#endif
 
     void imull_rr(RegisterID src, RegisterID dst)
     {
@@ -573,6 +626,17 @@ public:
     void cmpq_rm(RegisterID src, int offset, RegisterID base)
     {
         m_formatter.oneByteOp64(OP_CMP_EvGv, src, base, offset);
+    }
+
+    void cmpq_ir(int imm, RegisterID dst)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_CMP, dst);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_CMP, dst);
+            m_formatter.immediate32(imm);
+        }
     }
 
     void cmpq_im(int imm, int offset, RegisterID base)

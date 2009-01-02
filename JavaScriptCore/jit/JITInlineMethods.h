@@ -41,11 +41,6 @@
 
 namespace JSC {
 
-static ALWAYS_INLINE uintptr_t asInteger(JSValue* value)
-{
-    return reinterpret_cast<uintptr_t>(value);
-}
-
 ALWAYS_INLINE void JIT::killLastResultRegister()
 {
     m_lastResultBytecodeRegister = std::numeric_limits<int>::max();
@@ -124,6 +119,40 @@ ALWAYS_INLINE JSValue* JIT::getConstantImmediateNumericArg(unsigned src)
         return JSImmediate::isNumber(value) ? value : noValue();
     }
     return noValue();
+}
+
+ALWAYS_INLINE JSValue* JIT::getConstantOperand(unsigned src)
+{
+    ASSERT(m_codeBlock->isConstantRegisterIndex(src));
+    return m_codeBlock->getConstant(src);
+}
+
+ALWAYS_INLINE int32_t JIT::getConstantOperandImmediateInt(unsigned src)
+{
+    return static_cast<int32_t>(JSImmediate::intValue(getConstantOperand(src)));
+}
+
+ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(unsigned src)
+{
+    return m_codeBlock->isConstantRegisterIndex(src) && JSImmediate::isNumber(getConstantOperand(src));
+}
+
+ALWAYS_INLINE bool JIT::isOperandConstant31BitImmediateInt(unsigned src)
+{
+    if (!m_codeBlock->isConstantRegisterIndex(src))
+        return false;
+
+    JSValue* value = getConstantOperand(src);
+
+#if USE(ALTERNATE_JSIMMEDIATE)
+    if (!JSImmediate::isNumber(value))
+        return false;
+
+    int32_t imm = JSImmediate::intValue(value);
+    return (imm == ((imm << 1) >> 1));
+#else
+    return JSImmediate::isNumber(value);
+#endif
 }
 
 // get arg puts an arg from the SF register array onto the stack, as an arg to a context threaded function.
@@ -303,48 +332,30 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNums(RegisterID reg1, RegisterID
     emitJumpSlowCaseIfNotImmNum(scratch);
 }
 
-ALWAYS_INLINE unsigned JIT::getDeTaggedConstantImmediate(JSValue* imm)
-{
-    ASSERT(JSImmediate::isNumber(imm));
-    return asInteger(imm) & ~JSImmediate::TagBitTypeInteger;
-}
-
 ALWAYS_INLINE void JIT::emitFastArithDeTagImmediate(RegisterID reg)
 {
-    sub32(Imm32(JSImmediate::TagBitTypeInteger), reg);
+    subPtr(Imm32(JSImmediate::TagBitTypeInteger), reg);
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitFastArithDeTagImmediateJumpIfZero(RegisterID reg)
 {
-    return jzSub32(Imm32(JSImmediate::TagBitTypeInteger), reg);
+    return jzSubPtr(Imm32(JSImmediate::TagBitTypeInteger), reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID reg)
 {
-    add32(Imm32(JSImmediate::TagBitTypeInteger), reg);
-    signExtend32ToPtr(reg, reg);
-}
-
-ALWAYS_INLINE void JIT::emitFastArithPotentiallyReTagImmediate(RegisterID reg)
-{
-    or32(Imm32(JSImmediate::TagBitTypeInteger), reg);
-    signExtend32ToPtr(reg, reg);
+    addPtr(Imm32(JSImmediate::TagBitTypeInteger), reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithImmToInt(RegisterID reg)
 {
-    rshift32(Imm32(JSImmediate::IntegerPayloadShift), reg);
-}
-
-ALWAYS_INLINE void JIT::emitFastArithIntToImmOrSlowCase(RegisterID reg)
-{
-    addSlowCase(joAdd32(reg, reg));
-    emitFastArithReTagImmediate(reg);
+    rshiftPtr(Imm32(JSImmediate::IntegerPayloadShift), reg);
 }
 
 ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID reg)
 {
-    add32(reg, reg);
+    signExtend32ToPtr(reg, reg);
+    addPtr(reg, reg);
     emitFastArithReTagImmediate(reg);
 }
 
