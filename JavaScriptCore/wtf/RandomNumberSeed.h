@@ -38,6 +38,11 @@ inline void initializeRandomNumberGenerator()
     // On Darwin we use arc4random which initialises itself.
 #elif COMPILER(MSVC) && defined(_CRT_RAND_S)
     // On Windows we use rand_s which intialises itself
+#elif PLATFORM(UNIX)
+    // srandomdev is not guaranteed to exist on linux so we use this poor seed, this should be improved
+    timeval time;
+    gettimeofday(&time, 0);
+    srandom(static_cast<unsigned>(time.tv_usec * getpid()));
 #else
     srand(static_cast<unsigned>(time(0)));
 #endif

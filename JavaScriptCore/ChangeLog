@@ -1,3 +1,12 @@
+2009-01-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make randomNumber generate 2^53 values instead of 2^32 (or 2^31 for rand() platforms)
+
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber):
+
 2009-01-02  David Kilzer  <ddkilzer@apple.com>
 
         Remove declaration for JSC::Identifier::initializeIdentifierThreading()
