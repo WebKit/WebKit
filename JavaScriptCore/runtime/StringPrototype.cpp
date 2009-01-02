@@ -162,7 +162,7 @@ static inline UString substituteBackreferences(const UString& replacement, const
         } else if (ref == '\'') {
             backrefStart = ovector[1];
             backrefLength = source.size() - backrefStart;
-        } else if (ref >= '0' && ref <= '9') {
+        } else if (reg && ref >= '0' && ref <= '9') {
             // 1- and 2-digit back references are allowed
             unsigned backrefIndex = ref - '0';
             if (backrefIndex > reg->numSubpatterns())
@@ -177,6 +177,8 @@ static inline UString substituteBackreferences(const UString& replacement, const
                         advance = 1;
                 }
             }
+            if (!backrefIndex)
+                continue;
             backrefStart = ovector[2 * backrefIndex];
             backrefLength = ovector[2 * backrefIndex + 1] - backrefStart;
         } else
@@ -302,7 +304,10 @@ JSValue* stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue* thisValue, 
         replacementString = call(exec, replacement, callType, callData, exec->globalThisValue(), args)->toString(exec);
     }
 
-    return jsString(exec, source.substr(0, matchPos) + replacementString + source.substr(matchPos + matchLen));
+    int ovector[2] = { matchPos, matchPos + matchLen };
+    return jsString(exec, source.substr(0, matchPos)
+        + substituteBackreferences(replacementString, source, ovector, 0)
+        + source.substr(matchPos + matchLen));
 }
 
 JSValue* stringProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)

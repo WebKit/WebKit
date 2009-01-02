@@ -1,5 +1,17 @@
 2009-01-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        String.replace does not support $& replacement metacharacter when search term is not a RegExp
+        <https://bugs.webkit.org/show_bug.cgi?id=21431>
+        <rdar://problem/6274993>
+
+        * fast/js/resources/string-replace-3.js: Added test cases to cover replace with non-regexp and
+        to cover "$0" and "$00".
+        * fast/js/string-replace-3-expected.txt: Added new results.
+
+2009-01-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Turn on the regression test for ICU search on Mac OS X Tiger too.

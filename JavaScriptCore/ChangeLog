@@ -1,3 +1,19 @@
+2009-01-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        String.replace does not support $& replacement metacharacter when search term is not a RegExp
+        <https://bugs.webkit.org/show_bug.cgi?id=21431>
+        <rdar://problem/6274993>
+
+        Test: fast/js/string-replace-3.html
+
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferences): Added a null check here so we won't try to handle $$-$9
+        backreferences when the search term is a string, not a RegExp. Added a check for 0 so we
+        won't try to handle $0 or $00 as a backreference.
+        (JSC::stringProtoFuncReplace): Added a call to substituteBackreferences.
+
 2009-01-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.
