@@ -29,6 +29,15 @@
 #include <stdlib.h>
 #include <time.h>
 
+#if HAVE(SYS_TIME_H)
+#include <sys/time.h>
+#endif
+
+#if PLATFORM(UNIX)
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
 // Internal JavaScriptCore usage only
 namespace WTF {
 

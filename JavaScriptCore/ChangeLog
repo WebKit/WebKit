@@ -1,5 +1,12 @@
 2009-01-02  David Kilzer  <ddkilzer@apple.com>
 
+        Attempt to fix Qt Linux build after r39553
+
+        * wtf/RandomNumberSeed.h: Include <sys/time.h> for gettimeofday().
+        Include <sys/types.h> and <unistd.h> for getpid().
+
+2009-01-02  David Kilzer  <ddkilzer@apple.com>
+
         Bug 23081: These files are no longer part of the KDE libraries
 
         <https://bugs.webkit.org/show_bug.cgi?id=23081>
