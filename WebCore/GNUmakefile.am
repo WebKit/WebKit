@@ -2945,7 +2945,8 @@ USER_AGENT_STYLE_SHEETS = \
 	$(WebCore)/css/quirks.css \
 	$(WebCore)/css/view-source.css \
 	$(WebCore)/css/svg.css \
-	$(WebCore)/css/wml.css
+	$(WebCore)/css/wml.css \
+	$(WebCore)/css/mediaControls.css
 
 # new-style JavaScript bindings
 SCRIPTS_BINDINGS = \
@@ -3061,6 +3062,7 @@ webcore_dist += \
 	WebCore/css/view-source.css \
 	WebCore/css/svg.css \
 	WebCore/css/wml.css \
+	WebCore/css/mediaControls.css \
 	WebCore/css/CSSGrammar.y \
 	WebCore/css/CSSValueKeywords.in \
 	WebCore/css/SVGCSSPropertyNames.in \

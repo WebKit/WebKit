@@ -1,5 +1,13 @@
 2009-01-02  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX (r39552): Add mediaControls.css to other build files
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+
+2009-01-02  David Kilzer  <ddkilzer@apple.com>
+
         Try to fix Wx build after r39427
 
         * platform/graphics/wx/PathWx.cpp:

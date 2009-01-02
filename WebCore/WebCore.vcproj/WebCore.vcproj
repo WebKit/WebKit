@@ -8366,6 +8366,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\mediaControls.css"
+				>
+			</File>
+			<File
 				RelativePath="..\css\MediaFeatureNames.cpp"
 				>
 				<FileConfiguration
