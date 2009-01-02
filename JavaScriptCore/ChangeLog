@@ -1,5 +1,21 @@
 2009-01-02  David Kilzer  <ddkilzer@apple.com>
 
+        Bug 23081: These files are no longer part of the KDE libraries
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23081>
+
+        Reviewed by Darin Adler.
+
+        Removed "This file is part of the KDE libraries" comment from
+        source files.  Added or updated Apple copyrights as well.
+
+        * parser/Lexer.h:
+        * wtf/HashCountedSet.h:
+        * wtf/RetainPtr.h:
+        * wtf/VectorTraits.h:
+
+2009-01-02  David Kilzer  <ddkilzer@apple.com>
+
         Bug 23080: Remove last vestiges of KJS references
 
         <https://bugs.webkit.org/show_bug.cgi?id=23080>
