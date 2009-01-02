@@ -1,5 +1,13 @@
 2009-01-01  Darin Adler  <darin@apple.com>
 
+        Add one more String.replace test case that I should have included in that last check-in.
+
+        * fast/js/resources/string-replace-3.js: Added test case that covers more of the cases where
+        $0-$99 are used but are actually valid.
+        * fast/js/string-replace-3-expected.txt: Added new result.
+
+2009-01-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver Hunt.
 
         String.replace does not support $& replacement metacharacter when search term is not a RegExp
