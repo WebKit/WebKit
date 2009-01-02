@@ -1,3 +1,10 @@
+2009-01-02  David Kilzer  <ddkilzer@apple.com>
+
+        Try to fix Wx build after r39427
+
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::strokeBoundingRect): Added stub.
+
 2009-01-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adele Peterson.
