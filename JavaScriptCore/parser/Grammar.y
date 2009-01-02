@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -43,14 +43,14 @@
 
 /* default values for bison */
 #define YYDEBUG 0 // Set to 1 to debug a parse error.
-#define kjsyydebug 0 // Set to 1 to debug a parse error.
+#define jscyydebug 0 // Set to 1 to debug a parse error.
 #if !PLATFORM(DARWIN)
     // avoid triggering warnings in older bison
 #define YYERROR_VERBOSE
 #endif
 
-int kjsyylex(void* lvalp, void* llocp, void* globalPtr);
-int kjsyyerror(const char*);
+int jscyylex(void* lvalp, void* llocp, void* globalPtr);
+int jscyyerror(const char*);
 static inline bool allowAutomaticSemicolon(JSC::Lexer&, int);
 
 #define GLOBAL_DATA static_cast<JSGlobalData*>(globalPtr)

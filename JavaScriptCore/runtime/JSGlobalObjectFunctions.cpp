@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -420,7 +420,7 @@ JSValue* globalFuncUnescape(ExecState* exec, JSObject*, JSValue*, const ArgList&
 }
 
 #ifndef NDEBUG
-JSValue* globalFuncKJSPrint(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
+JSValue* globalFuncJSCPrint(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     CStringBuffer string;
     args.at(exec, 0)->toString(exec).getCString(string);

@@ -8,7 +8,7 @@
 # 
 #                  Originally written by Philip Hazel
 #            Copyright (c) 1997-2006 University of Cambridge
-#  Copyright (C) 2002, 2004, 2006, 2007, 2008 Apple Inc.  All rights reserved.
+#  Copyright (C) 2002, 2004, 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
 # 
 # -----------------------------------------------------------------------------
 # Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@ printf(OUT
     "This file contains the default tables for characters with codes less than\n" .
     "128 (ASCII characters). These tables are used when no external tables are\n" .
     "passed to PCRE. */\n\n" .
-    "const unsigned char kjs_pcre_default_tables[%d] = {\n\n" .
+    "const unsigned char jsc_pcre_default_tables[%d] = {\n\n" .
     "/* This table is a lower casing table. */\n\n", $pcre_internal{tables_length});
 
 if ($pcre_internal{lcc_offset} != 0) {

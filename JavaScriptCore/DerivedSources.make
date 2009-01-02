@@ -1,4 +1,4 @@
-# Copyright (C) 2006 Apple Computer, Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ Lexer.lut.h: create_hash_table Keywords.table
 # JavaScript language grammar
 
 Grammar.cpp: Grammar.y
-	bison -d -p kjsyy $< -o $@ > bison_out.txt 2>&1
+	bison -d -p jscyy $< -o $@ > bison_out.txt 2>&1
 	perl -p -e 'END { if ($$conflict) { unlink "Grammar.cpp"; die; } } $$conflict ||= /conflict/' < bison_out.txt
 	touch Grammar.cpp.h
 	touch Grammar.hpp

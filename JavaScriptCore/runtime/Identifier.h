@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef KJS_IDENTIFIER_H
-#define KJS_IDENTIFIER_H
+#ifndef Identifier_h
+#define Identifier_h
 
 #include "JSGlobalData.h"
 #include "UString.h"
@@ -141,4 +141,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // KJS_IDENTIFIER_H
+#endif // Identifier_h

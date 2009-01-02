@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef KJS_REGEXP_H
-#define KJS_REGEXP_H
+#ifndef RegExp_h
+#define RegExp_h
 
 #include "UString.h"
 #include "WREC.h"
@@ -75,4 +75,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // KJS_REGEXP_H
+#endif // RegExp_h

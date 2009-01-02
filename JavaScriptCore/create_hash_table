@@ -5,9 +5,7 @@
 # (c) 2000-2002 by Harri Porten <porten@kde.org> and
 #                  David Faure <faure@kde.org>
 # Modified (c) 2004 by Nikolas Zimmermann <wildfox@kde.org>
-# Copyright (C) 2007 Apple Inc. All rights reserved.
-#
-# Part of the KJS library.
+# Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public

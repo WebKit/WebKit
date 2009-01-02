@@ -6,7 +6,7 @@ needed by JavaScriptCore and the rest of WebKit.
 
                  Originally written by Philip Hazel
            Copyright (c) 1997-2006 University of Cambridge
-    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2002, 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
     Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 
 -----------------------------------------------------------------------------
@@ -486,7 +486,7 @@ static bool getOthercaseRange(int* cptr, int d, int* ocptr, int* odptr)
     int c, othercase = 0;
     
     for (c = *cptr; c <= d; c++) {
-        if ((othercase = kjs_pcre_ucp_othercase(c)) >= 0)
+        if ((othercase = jsc_pcre_ucp_othercase(c)) >= 0)
             break;
     }
     
@@ -497,7 +497,7 @@ static bool getOthercaseRange(int* cptr, int d, int* ocptr, int* odptr)
     int next = othercase + 1;
     
     for (++c; c <= d; c++) {
-        if (kjs_pcre_ucp_othercase(c) != next)
+        if (jsc_pcre_ucp_othercase(c) != next)
             break;
         next++;
     }
@@ -525,15 +525,15 @@ static bool getOthercaseRange(int* cptr, int d, int* ocptr, int* odptr)
 static int encodeUTF8(int cvalue, unsigned char *buffer)
 {
     int i;
-    for (i = 0; i < kjs_pcre_utf8_table1_size; i++)
-        if (cvalue <= kjs_pcre_utf8_table1[i])
+    for (i = 0; i < jsc_pcre_utf8_table1_size; i++)
+        if (cvalue <= jsc_pcre_utf8_table1[i])
             break;
     buffer += i;
     for (int j = i; j > 0; j--) {
         *buffer-- = 0x80 | (cvalue & 0x3f);
         cvalue >>= 6;
     }
-    *buffer = kjs_pcre_utf8_table2[i] | cvalue;
+    *buffer = jsc_pcre_utf8_table2[i] | cvalue;
     return i + 1;
 }
 
@@ -909,7 +909,7 @@ compileBranch(int options, int* brackets, unsigned char** codePtr,
                         
                         if (options & IgnoreCaseOption) {
                             int othercase;
-                            if ((othercase = kjs_pcre_ucp_othercase(c)) >= 0) {
+                            if ((othercase = jsc_pcre_ucp_othercase(c)) >= 0) {
                                 *class_utf8data++ = XCL_SINGLE;
                                 class_utf8data += encodeUTF8(othercase, class_utf8data);
                             }
@@ -2055,8 +2055,8 @@ static int calculateCompiledPatternLength(const UChar* pattern, int patternLengt
                     
                     if (c > 127) {
                         int i;
-                        for (i = 0; i < kjs_pcre_utf8_table1_size; i++)
-                            if (c <= kjs_pcre_utf8_table1[i]) break;
+                        for (i = 0; i < jsc_pcre_utf8_table1_size; i++)
+                            if (c <= jsc_pcre_utf8_table1[i]) break;
                         length += i;
                         lastitemlength += i;
                     }
@@ -2509,8 +2509,8 @@ static int calculateCompiledPatternLength(const UChar* pattern, int patternLengt
 
                 if (c > 127) {
                     int i;
-                    for (i = 0; i < kjs_pcre_utf8_table1_size; i++)
-                        if (c <= kjs_pcre_utf8_table1[i])
+                    for (i = 0; i < jsc_pcre_utf8_table1_size; i++)
+                        if (c <= jsc_pcre_utf8_table1[i])
                             break;
                     length += i;
                     lastitemlength += i;

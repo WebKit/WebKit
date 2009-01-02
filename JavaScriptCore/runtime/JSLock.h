@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef KJS_JSLock_h
-#define KJS_JSLock_h
+#ifndef JSLock_h
+#define JSLock_h
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
@@ -99,4 +99,4 @@ namespace JSC {
 
 } // namespace
 
-#endif // KJS_JSLock_h
+#endif // JSLock_h

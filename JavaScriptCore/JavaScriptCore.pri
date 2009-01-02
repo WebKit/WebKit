@@ -41,7 +41,7 @@ LUT_FILES += \
 KEYWORDLUT_FILES += \
     parser/Keywords.table
 
-KJSBISON += \
+JSCBISON += \
     parser/Grammar.y
 
 SOURCES += \
@@ -195,12 +195,12 @@ keywordlut.CONFIG += no_link
 addExtraCompiler(keywordlut)
 
 # GENERATOR 2: bison grammar
-kjsbison.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
-kjsbison.commands = bison -d -p kjsyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && $(MOVE) ${QMAKE_FILE_BASE}.tab.c ${QMAKE_FILE_OUT} && $(MOVE) ${QMAKE_FILE_BASE}.tab.h $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
-kjsbison.depend = ${QMAKE_FILE_NAME}
-kjsbison.input = KJSBISON
-kjsbison.variable_out = GENERATED_SOURCES
-kjsbison.dependency_type = TYPE_C
-kjsbison.CONFIG = target_predeps
-addExtraCompilerWithHeader(kjsbison)
+jscbison.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
+jscbison.commands = bison -d -p jscyy ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_BASE}.tab.c && $(MOVE) ${QMAKE_FILE_BASE}.tab.c ${QMAKE_FILE_OUT} && $(MOVE) ${QMAKE_FILE_BASE}.tab.h $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
+jscbison.depend = ${QMAKE_FILE_NAME}
+jscbison.input = JSCBISON
+jscbison.variable_out = GENERATED_SOURCES
+jscbison.dependency_type = TYPE_C
+jscbison.CONFIG = target_predeps
+addExtraCompilerWithHeader(jscbison)
 

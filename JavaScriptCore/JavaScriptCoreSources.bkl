@@ -48,7 +48,7 @@ Source files for JSCore.
         debugger/Debugger.cpp
         debugger/DebuggerCallFrame.cpp
     </set>
-    <set append="1" var="JSCORE_KJS_SOURCES">
+    <set append="1" var="JSCORE_JSC_SOURCES">
         DerivedSources/JavaScriptCore/Grammar.cpp
         wtf/dtoa.cpp
     </set>

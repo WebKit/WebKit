@@ -6,7 +6,7 @@ needed by JavaScriptCore and the rest of WebKit.
 
                  Originally written by Philip Hazel
            Copyright (c) 1997-2006 University of Cambridge
-    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2002, 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -340,36 +340,36 @@ struct JSRegExp {
  but are not part of the PCRE public API. The data for these tables is in the
  pcre_tables.c module. */
 
-#define kjs_pcre_utf8_table1_size 6
+#define jsc_pcre_utf8_table1_size 6
 
-extern const int    kjs_pcre_utf8_table1[6];
-extern const int    kjs_pcre_utf8_table2[6];
-extern const int    kjs_pcre_utf8_table3[6];
-extern const unsigned char kjs_pcre_utf8_table4[0x40];
+extern const int    jsc_pcre_utf8_table1[6];
+extern const int    jsc_pcre_utf8_table2[6];
+extern const int    jsc_pcre_utf8_table3[6];
+extern const unsigned char jsc_pcre_utf8_table4[0x40];
 
-extern const unsigned char kjs_pcre_default_tables[tables_length];
+extern const unsigned char jsc_pcre_default_tables[tables_length];
 
 static inline unsigned char toLowerCase(unsigned char c)
 {
-    static const unsigned char* lowerCaseChars = kjs_pcre_default_tables + lcc_offset;
+    static const unsigned char* lowerCaseChars = jsc_pcre_default_tables + lcc_offset;
     return lowerCaseChars[c];
 }
 
 static inline unsigned char flipCase(unsigned char c)
 {
-    static const unsigned char* flippedCaseChars = kjs_pcre_default_tables + fcc_offset;
+    static const unsigned char* flippedCaseChars = jsc_pcre_default_tables + fcc_offset;
     return flippedCaseChars[c];
 }
 
 static inline unsigned char classBitmapForChar(unsigned char c)
 {
-    static const unsigned char* charClassBitmaps = kjs_pcre_default_tables + cbits_offset;
+    static const unsigned char* charClassBitmaps = jsc_pcre_default_tables + cbits_offset;
     return charClassBitmaps[c];
 }
 
 static inline unsigned char charTypeForChar(unsigned char c)
 {
-    const unsigned char* charTypeMap = kjs_pcre_default_tables + ctypes_offset;
+    const unsigned char* charTypeMap = jsc_pcre_default_tables + ctypes_offset;
     return charTypeMap[c];
 }
 
@@ -413,8 +413,8 @@ static inline void advanceToEndOfBracket(const unsigned char*& opcodePtr)
 that one of the source files. They have to have external linkage, but
 but are not part of the public API and so not exported from the library. */
 
-extern int kjs_pcre_ucp_othercase(unsigned);
-extern bool kjs_pcre_xclass(int, const unsigned char*);
+extern int jsc_pcre_ucp_othercase(unsigned);
+extern bool jsc_pcre_xclass(int, const unsigned char*);
 
 #endif
 

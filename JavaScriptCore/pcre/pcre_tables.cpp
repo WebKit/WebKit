@@ -6,7 +6,7 @@ needed by JavaScriptCore and the rest of WebKit.
 
                  Originally written by Philip Hazel
            Copyright (c) 1997-2006 University of Cambridge
-    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2002, 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
 
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
@@ -50,20 +50,20 @@ PCRE code modules. */
 /* These are the breakpoints for different numbers of bytes in a UTF-8
 character. */
 
-const int kjs_pcre_utf8_table1[6] =
+const int jsc_pcre_utf8_table1[6] =
   { 0x7f, 0x7ff, 0xffff, 0x1fffff, 0x3ffffff, 0x7fffffff};
 
 /* These are the indicator bits and the mask for the data bits to set in the
 first byte of a character, indexed by the number of additional bytes. */
 
-const int kjs_pcre_utf8_table2[6] = { 0,    0xc0, 0xe0, 0xf0, 0xf8, 0xfc};
-const int kjs_pcre_utf8_table3[6] = { 0xff, 0x1f, 0x0f, 0x07, 0x03, 0x01};
+const int jsc_pcre_utf8_table2[6] = { 0,    0xc0, 0xe0, 0xf0, 0xf8, 0xfc};
+const int jsc_pcre_utf8_table3[6] = { 0xff, 0x1f, 0x0f, 0x07, 0x03, 0x01};
 
 /* Table of the number of extra characters, indexed by the first character
 masked with 0x3f. The highest number for a valid UTF-8 character is in fact
 0x3d. */
 
-const unsigned char kjs_pcre_utf8_table4[0x40] = {
+const unsigned char jsc_pcre_utf8_table4[0x40] = {
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
   2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,

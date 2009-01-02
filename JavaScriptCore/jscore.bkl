@@ -40,7 +40,7 @@ JavaScriptCore Bakefile project file.
             $(JSCORE_API_SOURCES)
             $(JSCORE_BYTECOMPILER_SOURCES)
             $(JSCORE_DEBUGGER_SOURCES)
-            $(JSCORE_KJS_SOURCES)
+            $(JSCORE_JSC_SOURCES)
             $(JSCORE_PCRE_SOURCES)
             $(JSCORE_PARSER_SOURCES)
             $(JSCORE_PROFILER_SOURCES)

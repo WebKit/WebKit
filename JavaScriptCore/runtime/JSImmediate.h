@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef KJS_JS_IMMEDIATE_H
-#define KJS_JS_IMMEDIATE_H
+#ifndef JSImmediate_h
+#define JSImmediate_h
 
 #include <wtf/Assertions.h>
 #include <wtf/AlwaysInline.h>
@@ -477,4 +477,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif
+#endif // JSImmediate_h

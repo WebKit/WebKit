@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -330,7 +330,7 @@ void JSGlobalObject::reset(JSValue* prototype)
     putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "encodeURI"), globalFuncEncodeURI), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "encodeURIComponent"), globalFuncEncodeURIComponent), DontEnum);
 #ifndef NDEBUG
-    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "kjsprint"), globalFuncKJSPrint), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "jscprint"), globalFuncJSCPrint), DontEnum);
 #endif
 
     resetPrototype(prototype);

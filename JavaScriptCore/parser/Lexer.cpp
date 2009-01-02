@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2006, 2007, 2008 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  *  This library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ using namespace JSC;
 #include "Lexer.lut.h"
 
 // a bridge for yacc from the C world to C++
-int kjsyylex(void* lvalp, void* llocp, void* globalData)
+int jscyylex(void* lvalp, void* llocp, void* globalData)
 {
     return static_cast<JSGlobalData*>(globalData)->lexer->lex(lvalp, llocp);
 }
@@ -466,7 +466,7 @@ int Lexer::lex(void* p1, void* p2)
     // terminate string
     m_buffer8.append('\0');
 
-#ifdef KJS_DEBUG_LEX
+#ifdef JSC_DEBUG_LEX
     fprintf(stderr, "line: %d ", lineNo());
     fprintf(stderr, "yytext (%x): ", m_buffer8[0]);
     fprintf(stderr, "%s ", m_buffer8.data());
@@ -499,7 +499,7 @@ int Lexer::lex(void* p1, void* p2)
         m_state = Number;
     }
 
-#ifdef KJS_DEBUG_LEX
+#ifdef JSC_DEBUG_LEX
     switch (m_state) {
         case Eof:
             printf("(EOF)\n");
@@ -573,7 +573,7 @@ int Lexer::lex(void* p1, void* p2)
             token = NUMBER;
             break;
         case Bad:
-#ifdef KJS_DEBUG_LEX
+#ifdef JSC_DEBUG_LEX
             fprintf(stderr, "yylex: ERROR.\n");
 #endif
             m_error = true;

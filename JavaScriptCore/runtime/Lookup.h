@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef KJS_lookup_h
-#define KJS_lookup_h
+#ifndef Lookup_h
+#define Lookup_h
 
 #include "CallFrame.h"
 #include "Identifier.h"
@@ -273,4 +273,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // KJS_lookup_h
+#endif // Lookup_h

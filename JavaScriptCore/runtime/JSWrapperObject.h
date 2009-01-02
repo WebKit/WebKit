@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2006 Maks Orlovich
- *  Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef KJS_JSWrapperObject_h
-#define KJS_JSWrapperObject_h
+#ifndef JSWrapperObject_h
+#define JSWrapperObject_h
 
 #include "JSObject.h"
 
@@ -57,4 +57,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // KJS_JSWrapperObject_h
+#endif // JSWrapperObject_h

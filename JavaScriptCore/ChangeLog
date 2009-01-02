@@ -1,3 +1,90 @@
+2009-01-02  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 23080: Remove last vestiges of KJS references
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23080>
+
+        Reviewed by Darin Adler.
+
+        Also updated Apple copyright statements.
+
+        * DerivedSources.make: Changed bison "kjsyy" prefix to "jscyy".
+        * GNUmakefile.am: Ditto.
+        * JavaScriptCore.pri: Ditto.  Also changed KJSBISON to JSCBISON
+        and kjsbison to jscbison.
+
+        * JavaScriptCoreSources.bkl: Changed JSCORE_KJS_SOURCES to
+        JSCORE_JSC_SOURCES.
+        * jscore.bkl: Ditto.
+
+        * create_hash_table: Updated copyright and removed old comment.
+
+        * parser/Grammar.y: Changed "kjsyy" prefix to "jscyy" prefix.
+        * parser/Lexer.cpp: Ditto.  Also changed KJS_DEBUG_LEX to
+        JSC_DEBUG_LEX.
+        (jscyylex):
+        (JSC::Lexer::lex):
+        * parser/Parser.cpp: Ditto.
+        (JSC::Parser::parse):
+
+        * pcre/dftables: Changed "kjs_pcre_" prefix to "jsc_pcre_".
+        * pcre/pcre_compile.cpp: Ditto.
+        (getOthercaseRange):
+        (encodeUTF8):
+        (compileBranch):
+        (calculateCompiledPatternLength):
+        * pcre/pcre_exec.cpp: Ditto.
+        (matchRef):
+        (getUTF8CharAndIncrementLength):
+        (match):
+        * pcre/pcre_internal.h: Ditto.
+        (toLowerCase):
+        (flipCase):
+        (classBitmapForChar):
+        (charTypeForChar):
+        * pcre/pcre_tables.cpp: Ditto.
+        * pcre/pcre_ucp_searchfuncs.cpp: Ditto.
+        (jsc_pcre_ucp_othercase):
+        * pcre/pcre_xclass.cpp: Ditto.
+        (getUTF8CharAndAdvancePointer):
+        (jsc_pcre_xclass):
+
+        * runtime/Collector.h: Updated header guards using the
+        clean-header-guards script.
+        * runtime/CollectorHeapIterator.h: Added missing header guard.
+        * runtime/Identifier.h: Updated header guards.
+        * runtime/JSFunction.h: Fixed end-of-namespace comment.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset): Renamed "kjsprint" debug function
+        to "jscprint".  Changed implementation method from
+        globalFuncKJSPrint() to globalFuncJSCPrint().
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncJSCPrint): Renamed from globalFuncKJSPrint().
+        * runtime/JSGlobalObjectFunctions.h: Ditto.
+
+        * runtime/JSImmediate.h: Updated header guards.
+        * runtime/JSLock.h: Ditto.
+        * runtime/JSType.h: Ditto.
+        * runtime/JSWrapperObject.h: Ditto.
+        * runtime/Lookup.h: Ditto.
+        * runtime/Operations.h: Ditto.
+        * runtime/Protect.h: Ditto.
+        * runtime/RegExp.h: Ditto.
+        * runtime/UString.h: Ditto.
+
+        * tests/mozilla/js1_5/Array/regress-157652.js: Changed "KJS"
+        reference in comment to "JSC".
+
+        * wrec/CharacterClassConstructor.cpp: Change "kjs_pcre_" function
+        prefixes to "jsc_pcre_".
+        (JSC::WREC::CharacterClassConstructor::put):
+        (JSC::WREC::CharacterClassConstructor::flush):
+
+        * wtf/unicode/Unicode.h: Change "KJS_" header guard to "WTF_".
+        * wtf/unicode/icu/UnicodeIcu.h: Ditto.
+        * wtf/unicode/qt4/UnicodeQt4.h: Ditto.
+
 2009-01-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
