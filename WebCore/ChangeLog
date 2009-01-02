@@ -1,3 +1,26 @@
+2008-12-29  Konstantin Käfer  <kkaefer@gmail.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=17229
+        <rdar://problem/5732829> Inspector should show properties of all JS objects in Console
+
+        Prints objects not as plain text but makes them expandable so that
+        they can be inspected.
+
+        * inspector/front-end/Console.js:
+        (): added a parameter "inline" to the WebInspector.Console._format function which indicates
+            whether the object is printed in the context of another string (with console.log()) or
+            as sole element.
+        (.): objects and DOM nodes are now printed in an expandable form when they are printed alone
+            (i.e. not in the context of a console.log() string) so that they can be inspected.
+        * inspector/front-end/PropertiesSection.js:
+        (WebInspector.PropertiesSection.prototype.set title): Allow DOM Nodes as title instead of strings
+            in that case, the Node is inserted into the title instead of the string value of the passed
+            object. This is used for displaying linkified titles, for example when inspecting DOM nodes,
+            the syntax highlighted HTML representation is shown instead of the plain source code.
+        * inspector/front-end/inspector.css: correct the offsetParent for the expandable object inspector.
+
 2009-01-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

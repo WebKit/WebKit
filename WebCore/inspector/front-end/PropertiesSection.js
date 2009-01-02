@@ -69,7 +69,12 @@ WebInspector.PropertiesSection.prototype = {
         if (this._title === x)
             return;
         this._title = x;
-        this.titleElement.textContent = x;
+
+        if (x instanceof Node) {
+            this.titleElement.removeChildren();
+            this.titleElement.appendChild(x);
+        } else
+          this.titleElement.textContent = x;
     },
 
     get subtitle()

@@ -618,6 +618,10 @@ body.console-visible #console {
     margin-top: -1px;
 }
 
+.console-formatted-object .section, .console-formatted-node .section {
+    position: static;
+}
+
 .auto-complete-text {
     color: rgb(128, 128, 128);
     -webkit-user-select: none;
