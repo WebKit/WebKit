@@ -1,3 +1,24 @@
+2009-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 23072: REGRESSION (r37371): In the Dictionary application, scroll bar appears inside its web view when resizing its window
+        https://bugs.webkit.org/show_bug.cgi?id=23072
+        rdar://problem/6368028
+
+        * WebCore.base.exp: Updated.
+        * WebCore.xcodeproj/project.pbxproj: Mark HTMLHeadElement.h Private so it can be used in WebKit.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize m_frameElementsShouldIgnoreScrolling to false.
+        * dom/Document.h: Added setFrameElementsShouldIgnoreScrolling, frameElementsShouldIgnoreScrolling,
+        and m_frameElementsShouldIgnoreScrolling.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute): Don't allow changes to the scrolling attribute
+        to affect the scrolling mode if frameElementsShouldIgnoreScrolling() returns true. This is only
+        triggered on Mac OS X when running the Dictionary application.
+
 2008-12-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

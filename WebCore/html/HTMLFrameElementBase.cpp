@@ -129,6 +129,8 @@ void HTMLFrameElementBase::parseMappedAttribute(MappedAttribute *attr)
         m_noResize = true;
         // FIXME: If we are already attached, this has no effect.
     } else if (attr->name() == scrollingAttr) {
+        if (document()->frameElementsShouldIgnoreScrolling())
+            return;
         // Auto and yes both simply mean "allow scrolling." No means "don't allow scrolling."
         if (equalIgnoringCase(attr->value(), "auto") || equalIgnoringCase(attr->value(), "yes"))
             m_scrolling = ScrollbarAuto;
