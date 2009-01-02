@@ -1,0 +1,50 @@
+<html>
+  <head>
+   <style>
+     div {
+       width:600px;
+       height:500px;
+       border:2px solid black;
+       content: -webkit-canvas(squares);
+     }
+   </style>
+ 
+  <script type="application/x-javascript">
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+
+    var canvasContext;
+    function runRepaintTest()
+    {
+      canvasContext = document.getCSSCanvasContext("2d", "squares", 300, 300);
+      if (window.layoutTestController) {
+        document.body.offsetTop;
+        layoutTestController.display();
+        repaintTest();
+        layoutTestController.notifyDone();
+      } else {
+        setTimeout(repaintTest, 2000);
+      }
+    }
+
+    function repaintTest()
+    {
+      draw();
+    }
+
+    function draw()
+    {
+      var ctx = canvasContext;
+
+      ctx.fillStyle = "rgb(200,0,0)";
+      ctx.fillRect (10, 10, 100, 100);
+
+      ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+      ctx.fillRect (50, 50, 100, 100);
+    }
+  </script>
+</head>
+<body onload="runRepaintTest()">
+   <div></div>
+</body>
+</html>

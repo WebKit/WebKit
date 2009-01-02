@@ -101,7 +101,7 @@ public:
     int outerBorderRight() const { return m_outerBorderRight; }
 
     virtual void paint(PaintInfo&, int tx, int ty);
-    virtual void imageChanged(WrappedImagePtr);
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     int numRows() const { return m_gridRows; }
     int numColumns() const;

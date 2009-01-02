@@ -885,8 +885,8 @@ public:
     virtual int previousOffset(int current) const;
     virtual int nextOffset(int current) const;
 
-    virtual void imageChanged(CachedImage* image);
-    virtual void imageChanged(WrappedImagePtr data) { };
+    virtual void imageChanged(CachedImage* image, const IntRect* = 0);
+    virtual void imageChanged(WrappedImagePtr data, const IntRect* = 0) { };
     virtual bool willRenderImage(CachedImage*);
 
     virtual void selectionStartEnd(int& spos, int& epos) const;

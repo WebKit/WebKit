@@ -210,7 +210,7 @@ void RenderTableRow::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
-void RenderTableRow::imageChanged(WrappedImagePtr image)
+void RenderTableRow::imageChanged(WrappedImagePtr image, const IntRect*)
 {
     // FIXME: Examine cells and repaint only the rect the image paints in.
     repaint();

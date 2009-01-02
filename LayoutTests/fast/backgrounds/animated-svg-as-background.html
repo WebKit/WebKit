@@ -1,0 +1,31 @@
+<html>
+<head>
+  <style type="text/css" media="screen">
+    div {
+      background: red;
+      background-repeat: no-repeat;
+      background-image: url(resources/animated-rect-relative-size.svg);
+      height: 600px;
+      width: 800px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+    
+    function pageLoaded() 
+    {
+      window.setTimeout(function() {
+        if (window.layoutTestController)
+          layoutTestController.notifyDone();
+      }, 400);    // empirically determined delay. SVG animation has 100ms duration.
+    }
+
+    window.addEventListener('load', pageLoaded, false);
+  </script>
+  </script>
+</head>
+<body style='margin: 0px'>
+<div>&nbsp;</div>
+</body>
+</html>

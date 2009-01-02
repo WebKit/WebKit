@@ -1,0 +1,28 @@
+<html>
+<head>
+  <style type="text/css" media="screen">
+    img {
+      margin: 10px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+    
+    function pageLoaded() 
+    {
+      window.setTimeout(function() {
+        if (window.layoutTestController)
+          layoutTestController.notifyDone();
+      }, 400);    // empirically determined delay. SVG animation has 100ms duration.
+    }
+
+    window.addEventListener('load', pageLoaded, false);
+  </script>
+</head>
+<body>
+  <p>Images should redraw correctly when SVG animation runs</p>
+  <img height="250px" width="350px" border="2" src="resources/animated-rect-fixed-size.svg"><br>
+  <img height="250px" width="350px" border="2" src="resources/animated-rect-relative-size.svg">
+</body>
+</html>

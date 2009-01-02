@@ -1,3 +1,40 @@
+2009-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=22981
+
+        Add tests for animated svg-as-image, animated svg-as-background,
+        and canvas-as-image.
+        
+        * fast/backgrounds/animated-svg-as-background.html: Added.
+        * fast/backgrounds/animated-svg-as-mask.html: Added.
+        * fast/backgrounds/resources/animated-rect-fixed-size.svg: Added.
+        * fast/backgrounds/resources/animated-rect-relative-size.svg: Added.
+        * fast/backgrounds/svg-as-background-5.html:
+        * fast/canvas/canvas-as-image-incremental-repaint.html: Added.
+        * fast/canvas/canvas-as-image.html: Added.
+        * fast/images/animated-svg-as-image.html: Added.
+        * fast/images/resources/animated-rect-fixed-size.svg: Added.
+        * fast/images/resources/animated-rect-relative-size.svg: Added.
+        * platform/mac/fast/backgrounds/animated-svg-as-background-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/animated-svg-as-background-expected.png: Added.
+        * platform/mac/fast/backgrounds/animated-svg-as-background-expected.txt: Added.
+        * platform/mac/fast/backgrounds/animated-svg-as-mask-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/animated-svg-as-mask-expected.png: Added.
+        * platform/mac/fast/backgrounds/animated-svg-as-mask-expected.txt: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.png:
+        * platform/mac/fast/canvas/canvas-as-image-expected.checksum: Added.
+        * platform/mac/fast/canvas/canvas-as-image-expected.png: Added.
+        * platform/mac/fast/canvas/canvas-as-image-expected.txt: Added.
+        * platform/mac/fast/canvas/canvas-as-image-incremental-repaint-expected.checksum: Added.
+        * platform/mac/fast/canvas/canvas-as-image-incremental-repaint-expected.png: Added.
+        * platform/mac/fast/canvas/canvas-as-image-incremental-repaint-expected.txt: Added.
+        * platform/mac/fast/images/animated-svg-as-image-expected.checksum: Added.
+        * platform/mac/fast/images/animated-svg-as-image-expected.png: Added.
+        * platform/mac/fast/images/animated-svg-as-image-expected.txt: Added.
+
 2009-01-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

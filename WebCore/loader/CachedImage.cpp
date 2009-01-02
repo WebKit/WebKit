@@ -216,11 +216,11 @@ IntRect CachedImage::imageRect(float multiplier) const
     return IntRect(x, y, width, height);
 }
 
-void CachedImage::notifyObservers()
+void CachedImage::notifyObservers(const IntRect* changeRect)
 {
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient* c = w.next())
-        c->imageChanged(this);
+        c->imageChanged(this, changeRect);
 }
 
 void CachedImage::clear()
@@ -287,6 +287,8 @@ void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
             return;
         }
         
+        // It would be nice to only redraw the decoded band of the image, but with the current design
+        // (decoding delayed until painting) that seems hard.
         notifyObservers();
 
         if (m_image)
@@ -369,6 +371,12 @@ void CachedImage::animationAdvanced(const Image* image)
 {
     if (image == m_image)
         notifyObservers();
+}
+
+void CachedImage::changedInRect(const Image* image, const IntRect& rect)
+{
+    if (image == m_image)
+        notifyObservers(&rect);
 }
 
 } //namespace WebCore

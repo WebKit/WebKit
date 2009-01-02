@@ -558,7 +558,7 @@ IntSize RenderBox::calculateBackgroundSize(const FillLayer* bgLayer, int scaledW
         return bg->imageSize(this, style()->effectiveZoom());
 }
 
-void RenderBox::imageChanged(WrappedImagePtr image)
+void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 {
     if (isInlineFlow() ||
         style()->borderImage().image() && style()->borderImage().image()->data() == image ||

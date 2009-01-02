@@ -39,6 +39,7 @@ namespace WebCore {
     class Frame;
     class FrameView;
     class Page;
+    class SVGImageChromeClient;
     
     class SVGImage : public Image {
     public:
@@ -71,6 +72,7 @@ private:
         virtual NativeImagePtr nativeImageForCurrentFrame();
         
         SVGDocument* m_document;
+        SVGImageChromeClient* m_chromeClient;
         OwnPtr<Page> m_page;
         RefPtr<Frame> m_frame;
         RefPtr<FrameView> m_frameView;

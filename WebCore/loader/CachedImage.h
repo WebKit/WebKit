@@ -85,11 +85,13 @@ public:
 
     virtual bool shouldPauseAnimation(const Image*);
     virtual void animationAdvanced(const Image*);
+    virtual void changedInRect(const Image*, const IntRect&);
 
 private:
     void createImage();
     size_t maximumDecodedImageSize();
-    void notifyObservers();
+    // If not null, changeRect is the changed part of the image.
+    void notifyObservers(const IntRect* changeRect = 0);
     void decodedDataDeletionTimerFired(Timer<CachedImage>*);
 
     RefPtr<Image> m_image;

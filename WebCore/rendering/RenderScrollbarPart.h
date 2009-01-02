@@ -49,7 +49,7 @@ public:
     
 protected:
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
-    virtual void imageChanged(WrappedImagePtr);
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
 private:
     void layoutHorizontalPart();

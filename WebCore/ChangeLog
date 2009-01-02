@@ -1,3 +1,74 @@
+2009-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=22981
+
+        Repaints inside of an SVGImage were thrown on the floor,
+        which broke incremental painting due to loading, or SVG animation.
+        Fix this by assigning the SVGImage a ChromeClient subclass that passes
+        along repaints via a new method on ImageObserver, which also takes
+        a rect parameter for the changed rect, allowing incremental repaints.
+        Fix RenderImage::imageChanged to take advantage of this changedRect to
+        only repaint the changed parts of the image.
+        
+        This also enables incremental painting for canvas-as-image, so
+        add tests for that too.
+
+        Tests: fast/backgrounds/animated-svg-as-background.html
+               fast/backgrounds/animated-svg-as-mask.html
+               fast/canvas/canvas-as-image-incremental-repaint.html
+               fast/canvas/canvas-as-image.html
+               fast/images/animated-svg-as-image.html
+
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::canvasChanged):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::notifyObservers):
+        (WebCore::CachedImage::data):
+        (WebCore::CachedImage::changedInRect):
+        * loader/CachedImage.h:
+        * loader/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::imageChanged):
+        * platform/graphics/ImageObserver.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::imageChanged):
+        * rendering/RenderBox.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderImage.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::imageChanged):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::imageChanged):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::imageChanged):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::imageChanged):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::imageChanged):
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::imageChanged):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::imageChanged):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::imageChanged):
+        * rendering/RenderTableSection.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImageChromeClient::SVGImageChromeClient):
+        (WebCore::SVGImageChromeClient::image):
+        (WebCore::SVGImageChromeClient::chromeDestroyed):
+        (WebCore::SVGImageChromeClient::repaint):
+        (WebCore::SVGImage::SVGImage):
+        (WebCore::SVGImage::~SVGImage):
+        (WebCore::SVGImage::dataChanged):
+        * svg/graphics/SVGImage.h:
+
 2009-01-02  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler

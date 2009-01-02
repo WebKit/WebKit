@@ -56,8 +56,8 @@ namespace WebCore {
         virtual ~CachedResourceClient() { }
 
         // Called whenever a frame of an image changes, either because we got more data from the network or
-        // because we are animating.
-        virtual void imageChanged(CachedImage*) { };
+        // because we are animating. If not null, the IntRect is the changed rect of the image.
+        virtual void imageChanged(CachedImage*, const IntRect* = 0) { };
         
         // Called to find out if this client wants to actually display the image.  Used to tell when we
         // can halt animation.  Content nodes that hold image refs for example would not render the image,

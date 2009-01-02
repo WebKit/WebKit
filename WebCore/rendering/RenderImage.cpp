@@ -252,13 +252,13 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
     return true;
 }
 
-void RenderImage::imageChanged(WrappedImagePtr newImage)
+void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 {
     if (documentBeingDestroyed())
         return;
 
     if (hasBoxDecorations() || hasMask())
-        RenderReplaced::imageChanged(newImage);
+        RenderReplaced::imageChanged(newImage, rect);
     
     if (newImage != imagePtr() || !newImage)
         return;
@@ -299,10 +299,19 @@ void RenderImage::imageChanged(WrappedImagePtr newImage)
         }
     }
 
-    if (shouldRepaint)
-        // FIXME: We always just do a complete repaint, since we always pass in the full image
-        // rect at the moment anyway.
-        repaintRectangle(contentBox());
+    if (shouldRepaint) {
+        IntRect repaintRect;
+        if (rect) {
+            // The image changed rect is in source image coordinates (pre-zooming),
+            // so map from the bounds of the image to the contentsBox.
+            repaintRect = enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), imageSize(1.0f)), contentBox()));
+            // Guard against too-large changed rects.
+            repaintRect.intersect(contentBox());
+        } else
+            repaintRect = contentBox();
+        
+        repaintRectangle(repaintRect);
+    }
 }
 
 void RenderImage::resetAnimation()

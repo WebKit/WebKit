@@ -47,7 +47,7 @@ public:
     virtual void layout();
     virtual void calcPrefWidths();
 
-    virtual void imageChanged(WrappedImagePtr);
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual InlineBox* createInlineBox(bool, bool, bool);
 
