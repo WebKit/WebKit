@@ -72,7 +72,7 @@ private:
         virtual NativeImagePtr nativeImageForCurrentFrame();
         
         SVGDocument* m_document;
-        SVGImageChromeClient* m_chromeClient;
+        OwnPtr<SVGImageChromeClient> m_chromeClient;
         OwnPtr<Page> m_page;
         RefPtr<Frame> m_frame;
         RefPtr<FrameView> m_frameView;

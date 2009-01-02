@@ -96,7 +96,6 @@ SVGImage::~SVGImage()
     
     // Verify that page teardown destroyed the Chrome
     ASSERT(!m_chromeClient->image());
-    delete m_chromeClient;
 }
 
 void SVGImage::setContainerSize(const IntSize& containerSize)
@@ -227,11 +226,11 @@ bool SVGImage::dataChanged(bool allDataReceived)
         static DragClient* dummyDragClient = new EmptyDragClient;
         static InspectorClient* dummyInspectorClient = new EmptyInspectorClient;
 
-        m_chromeClient = new SVGImageChromeClient(this);
+        m_chromeClient.set(new SVGImageChromeClient(this));
         
         // FIXME: If this SVG ends up loading itself, we'll leak this Frame (and associated DOM & render trees).
         // The Cache code does not know about CachedImages holding Frames and won't know to break the cycle.
-        m_page.set(new Page(m_chromeClient, dummyContextMenuClient, dummyEditorClient, dummyDragClient, dummyInspectorClient));
+        m_page.set(new Page(m_chromeClient.get(), dummyContextMenuClient, dummyEditorClient, dummyDragClient, dummyInspectorClient));
         m_page->settings()->setJavaScriptEnabled(false);
         m_page->settings()->setPluginsEnabled(false);
 
