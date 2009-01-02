@@ -1,3 +1,13 @@
+2009-01-02  David Kilzer  <ddkilzer@apple.com>
+
+        Remove declaration for JSC::Identifier::initializeIdentifierThreading()
+
+        Reviewed by Alexey Proskuryakov.
+
+        * runtime/Identifier.h:
+        (JSC::Identifier::initializeIdentifierThreading): Removed
+        declaration since the implementation was removed in r34412.
+
 2009-01-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
