@@ -1,3 +1,21 @@
+2009-01-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin Adler.
+
+        Bug 23060: REGRESSION (r38629): Cannot scroll a WebHTMLView using Home/End/Page up/Page down
+        <https://bugs.webkit.org/show_bug.cgi?id=23060>
+        <rdar://problem/6467830>
+
+        After r38629, all keyboard events get sent by Editor to the EditorClient, even
+        if the selection is not editable. If the event's command is unsupported by
+        WebHTMLView, WebHTMLView mistakenly thinks that the event was handled when it
+        was not. When using the page up / page down keys, the events generated are of
+        the form scrollPageUp rather than movePageUp, so they are unsupported by
+        WebHTMLView and cause this bug to occur.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView doCommandBySelector:]):
+
 2009-01-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
