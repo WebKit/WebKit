@@ -78,12 +78,17 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action, int
 
 DOMTimer::~DOMTimer()
 {
+    if (scriptExecutionContext()) {
+        ASSERT(scriptExecutionContext()->isDocument());
+        static_cast<Document*>(scriptExecutionContext())->removeTimeout(m_timeoutId);
+    }
 }
     
 int DOMTimer::install(ScriptExecutionContext* context, ScheduledAction* action, int timeout, bool singleShot)
 {
     // DOMTimer constructor links the new timer into a list of ActiveDOMObjects held by the 'context'.
-    // The timer is deleted when context is deleted (DOMTimer::contextDestroyed) or explicitly via DOMTimer::removeById().
+    // The timer is deleted when context is deleted (DOMTimer::contextDestroyed) or explicitly via DOMTimer::removeById(),
+    // or if it is a one-time timer and it has fired (DOMTimer::fired).
     DOMTimer* timer = new DOMTimer(context, action, timeout, singleShot);
     return timer->m_timeoutId;
 }
@@ -96,7 +101,7 @@ void DOMTimer::removeById(ScriptExecutionContext* context, int timeoutId)
     if (timeoutId <= 0)
         return;
     ASSERT(context && context->isDocument());
-    static_cast<Document*>(context)->removeTimeout(timeoutId);
+    delete static_cast<Document*>(context)->findTimeout(timeoutId);
 }
 
 void DOMTimer::fired()
@@ -121,9 +126,8 @@ void DOMTimer::fired()
     ScheduledAction* action = m_action.release();
 
     // No access to member variables after this point.
-    ASSERT(context->isDocument());
-    static_cast<Document*>(context)->removeTimeout(m_timeoutId);
-
+    delete this;
+    
     action->execute(context);
     delete action;
     timerNestingLevel = 0;

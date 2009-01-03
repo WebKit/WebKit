@@ -4286,8 +4286,7 @@ void Document::addTimeout(int timeoutId, DOMTimer* timer)
 
 void Document::removeTimeout(int timeoutId)
 {
-    DOMTimer* timer = m_timeouts.take(timeoutId);
-    delete timer;
+    m_timeouts.remove(timeoutId);
 }
 
 DOMTimer* Document::findTimeout(int timeoutId)

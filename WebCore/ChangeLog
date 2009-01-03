@@ -1,3 +1,22 @@
+2009-01-02  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed and landed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23025
+        DOMTimer lifetime cleanup: timeoutMap methods on Document now do not delete the timer.
+        Instead, all 3 places that delete timers do it directly calling 'delete' and then timer's dtor removes the ID from the timeoutMap.
+        Note that in case the context is destroyed and timers are deleted at once, the check in ~DOMTimer() prevents 
+        unnecessary HashMap remove in case the Document is being destroyed.
+
+        * bindings/js/DOMTimer.cpp:
+        (WebCore::DOMTimer::~DOMTimer): removes the id from the timeoutMap.
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::removeById): simply uses 'delete this'.
+        (WebCore::DOMTimer::fired): same.
+        (WebCore::DOMTimer::contextDestroyed): same.
+        * dom/Document.cpp:
+        (WebCore::Document::removeTimeout): now it only removes the id from the map, does not delete the timer.
+
 2009-01-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
