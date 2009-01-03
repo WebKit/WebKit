@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ScopeChain.h"
 
+#include "JSActivation.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "PropertyNameArray.h"

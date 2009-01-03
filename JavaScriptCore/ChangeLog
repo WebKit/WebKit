@@ -1,5 +1,11 @@
 2009-01-02  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+        
+        * runtime/ScopeChain.cpp:
+
+2009-01-02  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         [jsfunfuzz] unwind logic for exceptions in eval fails to account for dynamic scope external to the eval
