@@ -440,6 +440,7 @@ namespace JSC {
         RefPtr<RegisterID> m_lastConstant;
         int m_finallyDepth;
         int m_dynamicScopeDepth;
+        int m_baseScopeDepth;
         CodeType m_codeType;
 
         Vector<ControlFlowContext> m_scopeContextStack;
