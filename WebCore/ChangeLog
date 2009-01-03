@@ -1,3 +1,18 @@
+2009-01-03  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22660
+        SVG elements that are moved are nor fully invalidated/earsed
+
+        Mark the SVG root as needing a layout when its position changes.
+
+        Tests: svg/custom/circle-move-invalidation.svg
+
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::position):
+        * rendering/RenderSVGRoot.h:
+
 2009-01-03  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

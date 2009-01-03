@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2007, 2008 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007, 2008, 2009 Rob Buis <buis@kde.org>
                   2007 Eric Seidel <eric@webkit.org>
 
     This file is part of the KDE project
@@ -331,6 +331,13 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     // Spec: Only graphical elements can be targeted by the mouse, period.
     // 16.4: "If there are no graphics elements whose relevant graphics content is under the pointer (i.e., there is no target element), the event is not dispatched."
     return false;
+}
+
+void RenderSVGRoot::position(InlineBox* box)
+{
+    RenderContainer::position(box);
+    if (m_absoluteBounds.isEmpty())
+        setNeedsLayout(true, false);
 }
 
 }

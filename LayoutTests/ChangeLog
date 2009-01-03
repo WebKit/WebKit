@@ -1,3 +1,16 @@
+2009-01-03  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Darin.
+ 
+        Testcase for:
+        https://bugs.webkit.org/show_bug.cgi?id=22660
+        SVG elements that are moved are nor fully invalidated/earsed
+  
+        * platform/mac/svg/custom/circle-move-invalidation-expected.checksum: Added.
+        * platform/mac/svg/custom/circle-move-invalidation-expected.png: Added.
+        * platform/mac/svg/custom/circle-move-invalidation-expected.txt: Added.
+        * svg/custom/circle-move-invalidation.svg: Added.
+
 2009-01-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
