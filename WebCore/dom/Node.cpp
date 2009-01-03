@@ -1383,11 +1383,22 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const String& namespaceURI, co
 {
     if (localName.isNull())
         return 0;
+    
+    NodeRareData* data = ensureRareData();
+    if (!data->nodeLists()) {
+        data->setNodeLists(auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
+        document()->addNodeListCache();
+    }
 
     String name = localName;
     if (document()->isHTMLDocument())
         name = localName.lower();
-    return TagNodeList::create(this, namespaceURI.isEmpty() ? nullAtom : AtomicString(namespaceURI), name);
+        
+    pair<NodeListsNodeData::TagCacheMap::iterator, bool> result = data->nodeLists()->m_tagNodeListCaches.add(QualifiedName(nullAtom, name, namespaceURI), 0);
+    if (result.second)
+        result.first->second = new DynamicNodeList::Caches;
+    
+    return TagNodeList::create(this, namespaceURI.isEmpty() ? nullAtom : AtomicString(namespaceURI), name, result.first->second);
 }
 
 PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
@@ -2041,6 +2052,9 @@ void Node::formatForDebugger(char* buffer, unsigned length) const
 void NodeListsNodeData::invalidateCaches()
 {
     m_childNodeListCaches.reset();
+    TagCacheMap::const_iterator tagCachesEnd = m_tagNodeListCaches.end();
+    for (TagCacheMap::const_iterator it = m_tagNodeListCaches.begin(); it != tagCachesEnd; ++it)
+        it->second->reset();
     invalidateCachesThatDependOnAttributes();
 }
 
@@ -2062,6 +2076,12 @@ bool NodeListsNodeData::isEmpty() const
 
     if (m_childNodeListCaches.refCount)
         return false;
+    
+    TagCacheMap::const_iterator tagCachesEnd = m_tagNodeListCaches.end();
+    for (TagCacheMap::const_iterator it = m_tagNodeListCaches.begin(); it != tagCachesEnd; ++it) {
+        if (it->second->refCount)
+            return false;
+    }
 
     CacheMap::const_iterator classCachesEnd = m_classNodeListCaches.end();
     for (CacheMap::const_iterator it = m_classNodeListCaches.begin(); it != classCachesEnd; ++it) {

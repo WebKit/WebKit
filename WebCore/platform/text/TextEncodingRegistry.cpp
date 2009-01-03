@@ -32,6 +32,7 @@
 #include "TextCodecUTF16.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
@@ -59,10 +60,6 @@ const size_t maxEncodingNameLength = 63;
 // it will properly skip those characters too.
 struct TextEncodingNameHash {
 
-    // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
-    // or anything like that.
-    static const unsigned PHI = 0x9e3779b9U;
-
     static bool equal(const char* s1, const char* s2)
     {
         char c1;
@@ -85,7 +82,7 @@ struct TextEncodingNameHash {
     // http://burtleburtle.net/bob/hash/doobs.html
     static unsigned hash(const char* s)
     {
-        unsigned h = PHI;
+        unsigned h = WTF::stringHashingStartValue;
         for (;;) {
             char c;
             do {

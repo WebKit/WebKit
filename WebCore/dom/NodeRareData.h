@@ -26,6 +26,7 @@
 #include "EventListener.h"
 #include "RegisteredEventListener.h"
 #include "StringHash.h"
+#include "QualifiedName.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
@@ -41,10 +42,14 @@ struct NodeListsNodeData {
     CacheMap m_classNodeListCaches;
     CacheMap m_nameNodeListCaches;
     
+    typedef HashMap<QualifiedName, DynamicNodeList::Caches*> TagCacheMap;
+    TagCacheMap m_tagNodeListCaches;
+    
     ~NodeListsNodeData()
     {
         deleteAllValues(m_classNodeListCaches);
         deleteAllValues(m_nameNodeListCaches);
+        deleteAllValues(m_tagNodeListCaches);
     }
     
     void invalidateCaches();

@@ -29,6 +29,7 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include <wtf/HashFunctions.h>
 
 using namespace std;
 
@@ -424,15 +425,11 @@ void StyledElement::createMappedDecl(MappedAttribute* attr)
     decl->setStrictParsing(false); // Mapped attributes are just always quirky.
 }
 
-// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
-// or anything like that.
-const unsigned PHI = 0x9e3779b9U;
-
 // Paul Hsieh's SuperFastHash
 // http://www.azillionmonkeys.com/qed/hash.html
 unsigned MappedAttributeHash::hash(const MappedAttributeKey& key)
 {
-    uint32_t hash = PHI;
+    uint32_t hash = WTF::stringHashingStartValue;
     uint32_t tmp;
 
     const uint16_t* p;

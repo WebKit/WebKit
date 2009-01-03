@@ -34,60 +34,7 @@
 
 namespace WebCore {
 
-struct QualifiedNameComponents {
-    StringImpl* m_prefix;
-    StringImpl* m_localName;
-    StringImpl* m_namespace;
-};
-
-// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
-static const unsigned PHI = 0x9e3779b9U;
-    
-static inline unsigned hashComponents(const QualifiedNameComponents& buf)
-{
-    ASSERT(sizeof(QualifiedNameComponents) % (sizeof(uint16_t) * 2) == 0);
-
-    unsigned l = sizeof(QualifiedNameComponents) / (sizeof(uint16_t) * 2);
-    const uint16_t* s = reinterpret_cast<const uint16_t*>(&buf);
-    uint32_t hash = PHI;
-
-    // Main loop
-    for (; l > 0; l--) {
-        hash += s[0];
-        uint32_t tmp = (s[1] << 11) ^ hash;
-        hash = (hash << 16) ^ tmp;
-        s += 2;
-        hash += hash >> 11;
-    }
-        
-    // Force "avalanching" of final 127 bits
-    hash ^= hash << 3;
-    hash += hash >> 5;
-    hash ^= hash << 2;
-    hash += hash >> 15;
-    hash ^= hash << 10;
-
-    // this avoids ever returning a hash code of 0, since that is used to
-    // signal "hash not computed yet", using a value that is likely to be
-    // effectively the same as 0 when the low bits are masked
-    if (hash == 0)
-        hash = 0x80000000;
-
-    return hash;
-}
-
-struct QNameHash {
-    static unsigned hash(const QualifiedName::QualifiedNameImpl* name) {    
-        QualifiedNameComponents c = { name->m_prefix.impl(), name->m_localName.impl(), name->m_namespace.impl() };
-        return hashComponents(c);
-    }
-
-    static bool equal(const QualifiedName::QualifiedNameImpl* a, const QualifiedName::QualifiedNameImpl* b) { return a == b; }
-
-    static const bool safeToCompareToEmptyOrDeleted = false;
-};
-
-typedef HashSet<QualifiedName::QualifiedNameImpl*, QNameHash> QNameSet;
+typedef HashSet<QualifiedName::QualifiedNameImpl*, QualifiedNameHash> QNameSet;
 
 struct QNameComponentsTranslator {
     static unsigned hash(const QualifiedNameComponents& components) { 
