@@ -106,8 +106,7 @@ extern "C" {
     #define WEBKIT_WEB_FRAME_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_FRAME, WebKitWebFramePrivate))
     typedef struct _WebKitWebFramePrivate WebKitWebFramePrivate;
     struct _WebKitWebFramePrivate {
-        WTF::RefPtr<WebCore::Frame> coreFrame;
-        WebCore::FrameLoaderClient* client;
+        WebCore::Frame* coreFrame;
         WebKitWebView* webView;
 
         gchar* name;
@@ -115,8 +114,11 @@ extern "C" {
         gchar* uri;
     };
 
-    WebKitWebFrame*
+    PassRefPtr<WebCore::Frame>
     webkit_web_frame_init_with_web_view(WebKitWebView*, WebCore::HTMLFrameOwnerElement*);
+
+    void
+    webkit_web_frame_core_frame_gone(WebKitWebFrame*);
 
     WebKitWebHistoryItem*
     webkit_web_history_item_new_with_core_item(WebCore::HistoryItem*);

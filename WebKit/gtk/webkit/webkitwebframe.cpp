@@ -111,13 +111,24 @@ static void webkit_web_frame_get_property(GObject* object, guint prop_id, GValue
     }
 }
 
+// Called from the FrameLoaderClient when it is destroyed. Normally
+// the unref in the FrameLoaderClient is destroying this object as
+// well but due reference counting a user might have added a reference...
+void webkit_web_frame_core_frame_gone(WebKitWebFrame* frame)
+{
+    ASSERT(WEBKIT_IS_WEB_FRAME(frame));
+    frame->priv->coreFrame = 0;
+}
+
 static void webkit_web_frame_finalize(GObject* object)
 {
     WebKitWebFrame* frame = WEBKIT_WEB_FRAME(object);
     WebKitWebFramePrivate* priv = frame->priv;
 
-    priv->coreFrame->loader()->cancelAndClear();
-    priv->coreFrame = 0;
+    if (priv->coreFrame) {
+        priv->coreFrame->loader()->cancelAndClear();
+        priv->coreFrame = 0;
+    }
 
     g_free(priv->name);
     g_free(priv->title);
@@ -243,24 +254,26 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
     WebKitWebViewPrivate* viewPriv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
 
     priv->webView = webView;
-    priv->client = new WebKit::FrameLoaderClient(frame);
-    priv->coreFrame = Frame::create(viewPriv->corePage, 0, priv->client).get();
+    WebKit::FrameLoaderClient* client = new WebKit::FrameLoaderClient(frame);
+    priv->coreFrame = Frame::create(viewPriv->corePage, 0, client).get();
     priv->coreFrame->init();
 
     return frame;
 }
 
-WebKitWebFrame* webkit_web_frame_init_with_web_view(WebKitWebView* webView, HTMLFrameOwnerElement* element)
+PassRefPtr<Frame> webkit_web_frame_init_with_web_view(WebKitWebView* webView, HTMLFrameOwnerElement* element)
 {
     WebKitWebFrame* frame = WEBKIT_WEB_FRAME(g_object_new(WEBKIT_TYPE_WEB_FRAME, NULL));
     WebKitWebFramePrivate* priv = frame->priv;
     WebKitWebViewPrivate* viewPriv = WEBKIT_WEB_VIEW_GET_PRIVATE(webView);
 
     priv->webView = webView;
-    priv->client = new WebKit::FrameLoaderClient(frame);
-    priv->coreFrame = Frame::create(viewPriv->corePage, element, priv->client).releaseRef();
+    WebKit::FrameLoaderClient* client = new WebKit::FrameLoaderClient(frame);
 
-    return frame;
+    RefPtr<Frame> coreFrame = Frame::create(viewPriv->corePage, element, client);
+    priv->coreFrame = coreFrame.get();
+
+    return coreFrame.release();
 }
 
 /**
@@ -332,7 +345,8 @@ G_CONST_RETURN gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
         return priv->name;
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return "";
 
     String string = coreFrame->tree()->name();
     priv->name = g_strdup(string.utf8().data());
@@ -352,7 +366,8 @@ WebKitWebFrame* webkit_web_frame_get_parent(WebKitWebFrame* frame)
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return NULL;
 
     return kit(coreFrame->tree()->parent());
 }
@@ -374,7 +389,8 @@ void webkit_web_frame_load_request(WebKitWebFrame* frame, WebKitNetworkRequest* 
     g_return_if_fail(WEBKIT_IS_NETWORK_REQUEST(request));
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return;
 
     // TODO: Use the ResourceRequest carried by WebKitNetworkRequest when it is implemented.
     String string = String::fromUTF8(webkit_network_request_get_uri(request));
@@ -392,7 +408,8 @@ void webkit_web_frame_stop_loading(WebKitWebFrame* frame)
     g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return;
 
     coreFrame->loader()->stopAllLoaders();
 }
@@ -408,7 +425,8 @@ void webkit_web_frame_reload(WebKitWebFrame* frame)
     g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return;
 
     coreFrame->loader()->reload();
 }
@@ -436,7 +454,8 @@ WebKitWebFrame* webkit_web_frame_find_frame(WebKitWebFrame* frame, const gchar* 
     g_return_val_if_fail(name, NULL);
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return NULL;
 
     String nameString = String::fromUTF8(name);
     return kit(coreFrame->tree()->find(AtomicString(nameString)));
@@ -456,7 +475,8 @@ JSGlobalContextRef webkit_web_frame_get_global_context(WebKitWebFrame* frame)
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return NULL;
 
     return toGlobalRef(coreFrame->script()->globalObject()->globalExec());
 }
@@ -472,7 +492,8 @@ GSList* webkit_web_frame_get_children(WebKitWebFrame* frame)
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return NULL;
 
     GSList* children = NULL;
     for (Frame* child = coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
@@ -496,7 +517,8 @@ gchar* webkit_web_frame_get_inner_text(WebKitWebFrame* frame)
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return g_strdup("");
 
     FrameView* view = coreFrame->view();
 
@@ -519,7 +541,8 @@ gchar* webkit_web_frame_dump_render_tree(WebKitWebFrame* frame)
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return g_strdup("");
 
     FrameView* view = coreFrame->view();
 
@@ -573,7 +596,8 @@ void webkit_web_frame_print(WebKitWebFrame* frame)
         topLevel = NULL;
 
     Frame* coreFrame = core(frame);
-    ASSERT(coreFrame);
+    if (!coreFrame)
+        return;
 
     PrintContext printContext(coreFrame);
 
@@ -609,6 +633,7 @@ void webkit_web_frame_print(WebKitWebFrame*)
 
 bool webkit_web_frame_pause_animation(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element)
 {
+    ASSERT(core(frame));
     Element* coreElement = core(frame)->document()->getElementById(AtomicString(element));
     if (!coreElement || !coreElement->renderer())
         return false;
@@ -617,6 +642,7 @@ bool webkit_web_frame_pause_animation(WebKitWebFrame* frame, const gchar* name, 
 
 bool webkit_web_frame_pause_transition(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element)
 {
+    ASSERT(core(frame));
     Element* coreElement = core(frame)->document()->getElementById(AtomicString(element));
     if (!coreElement || !coreElement->renderer())
         return false;

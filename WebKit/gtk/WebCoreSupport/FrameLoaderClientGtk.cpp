@@ -251,6 +251,7 @@ void FrameLoaderClient::postProgressFinishedNotification()
 
 void FrameLoaderClient::frameLoaderDestroyed()
 {
+    webkit_web_frame_core_frame_gone(m_frame);
     g_object_unref(m_frame);
     m_frame = 0;
     delete this;
@@ -385,8 +386,8 @@ PassRefPtr<Frame> FrameLoaderClient::createFrame(const KURL& url, const String& 
     Frame* coreFrame = core(webFrame());
 
     ASSERT(core(getViewFromFrame(webFrame())) == coreFrame->page());
-    WebKitWebFrame* gtkFrame = WEBKIT_WEB_FRAME(webkit_web_frame_init_with_web_view(getViewFromFrame(webFrame()), ownerElement));
-    RefPtr<Frame> childFrame(adoptRef(core(gtkFrame)));
+
+    RefPtr<Frame> childFrame = webkit_web_frame_init_with_web_view(getViewFromFrame(webFrame()), ownerElement);
 
     coreFrame->tree()->appendChild(childFrame);
 

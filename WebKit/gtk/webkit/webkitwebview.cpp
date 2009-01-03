@@ -826,7 +826,6 @@ static void webkit_web_view_finalize(GObject* object)
     g_object_unref(priv->webSettings);
     g_object_unref(priv->webInspector);
     g_object_unref(priv->webWindowFeatures);
-    g_object_unref(priv->mainFrame);
     g_object_unref(priv->imContext);
     gtk_target_list_unref(priv->copy_target_list);
     gtk_target_list_unref(priv->paste_target_list);
