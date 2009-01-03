@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -804,10 +804,6 @@ void FrameLoader::cancelAndClear()
 
 void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects)
 {
-    // FIXME: Commenting out the below line causes <http://bugs.webkit.org/show_bug.cgi?id=11212>, but putting it
-    // back causes a measurable performance regression which we will need to fix to restore the correct behavior
-    // urlsBridgeKnowsAbout.clear();
-
     m_frame->editor()->clear();
 
     if (!m_needsClear)
@@ -3385,16 +3381,6 @@ void FrameLoader::tokenizerProcessedData()
     checkCompleted();
 }
 
-void FrameLoader::didTellClientAboutLoad(const String& url)
-{
-    m_urlsClientKnowsAbout.add(url);
-}
-
-bool FrameLoader::haveToldClientAboutLoad(const String& url)
-{
-    return m_urlsClientKnowsAbout.contains(url);
-}
-
 void FrameLoader::handledOnloadEvents()
 {
     m_client->dispatchDidHandleOnloadEvents();
@@ -3585,7 +3571,6 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
 
     if (error.isNull()) {
         ASSERT(!newRequest.isNull());
-        didTellClientAboutLoad(newRequest.url().string());
         
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         ApplicationCacheResource* resource;
@@ -4037,11 +4022,11 @@ void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
     if (Page* page = m_frame->page())
         page->inspectorController()->didLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length);
 
-    if (!resource->sendResourceLoadCallbacks() || haveToldClientAboutLoad(resource->url()))
+    if (!resource->sendResourceLoadCallbacks() || m_documentLoader->haveToldClientAboutLoad(request.url()))
         return;
 
     if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length)) {
-        didTellClientAboutLoad(resource->url());
+        m_documentLoader->didTellClientAboutLoad(request.url());
         return;
     }
 
@@ -4050,8 +4035,6 @@ void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
     ResourceRequest r(request);
     requestFromDelegate(r, identifier, error);
     sendRemainingDelegateMessages(identifier, response, length, error);
-
-    didTellClientAboutLoad(resource->url());
 }
 
 void FrameLoader::applyUserAgent(ResourceRequest& request)
@@ -5125,7 +5108,9 @@ void FrameLoader::dispatchAssignIdentifierToInitialRequest(unsigned long identif
 
 void FrameLoader::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+    m_documentLoader->didTellClientAboutLoad(request.url());
     m_client->dispatchWillSendRequest(loader, identifier, request, redirectResponse);
+    m_documentLoader->didTellClientAboutLoad(request.url());
 
     if (Page* page = m_frame->page())
         page->inspectorController()->willSendRequest(loader, identifier, request, redirectResponse);

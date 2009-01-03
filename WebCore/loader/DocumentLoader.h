@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,38 +29,28 @@
 #ifndef DocumentLoader_h
 #define DocumentLoader_h
 
-#include "IconDatabase.h"
 #include "NavigationAction.h"
-#include <wtf/RefCounted.h>
-#include "PlatformString.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SubstituteData.h"
-#include <wtf/HashSet.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
+#include "Timer.h"
 
 namespace WebCore {
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     class ApplicationCache;
     class ApplicationCacheGroup;
     class ApplicationCacheResource;
-#endif
     class Archive;
     class ArchiveResource;
     class ArchiveResourceCollection;
     class CachedPage;
     class Frame;
     class FrameLoader;
-    class HistoryItem;
-    class KURL;
     class MainResourceLoader;
     class ResourceLoader;
     class SchedulePair;
     class SharedBuffer;
-    class SubstituteData;
     class SubstituteResource;
 
     typedef HashSet<RefPtr<ResourceLoader> > ResourceLoaderSet;
@@ -196,6 +186,9 @@ namespace WebCore {
         void setDeferMainResourceDataLoad(bool defer) { m_deferMainResourceDataLoad = defer; }
         bool deferMainResourceDataLoad() const { return m_deferMainResourceDataLoad; }
         
+        void didTellClientAboutLoad(const String& url) { m_resourcesClientKnowsAbout.add(url); }
+        bool haveToldClientAboutLoad(const String& url) { return m_resourcesClientKnowsAbout.contains(url); }
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         bool scheduleApplicationCacheLoad(ResourceLoader*, const ResourceRequest&, const KURL& originalURL);
         bool scheduleLoadFallbackResourceFromApplicationCache(ResourceLoader*, const ResourceRequest&, ApplicationCache* = 0);
@@ -289,7 +282,9 @@ namespace WebCore {
                 
         OwnPtr<ArchiveResourceCollection> m_archiveResourceCollection;
         RefPtr<SharedBuffer> m_parsedArchiveData;
-        
+
+        HashSet<String> m_resourcesClientKnowsAbout;
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)  
         // The application cache that the document loader is associated with (if any).
         RefPtr<ApplicationCache> m_applicationCache;

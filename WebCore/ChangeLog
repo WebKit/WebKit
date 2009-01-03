@@ -1,3 +1,57 @@
+2009-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23072: REGRESSION (r37371): In the Dictionary application, scroll bar appears
+        inside its web view when resizing its window
+        https://bugs.webkit.org/show_bug.cgi?id=23072
+        rdar://problem/6368028
+
+        The first attempt at fixing this did not work.
+        This time I was able to reproduce the bug and test the fix.
+
+        Bug 11212: REGRESSION: Activity window doesn't always list all files until refresh
+        https://bugs.webkit.org/show_bug.cgi?id=11212
+        rdar://problem/4959702
+
+        I had to fix this second bug because otherwise the WebKit code to trigger the first
+        fix didn't run.
+
+        Also fixes memory use that kept growing as we maintained a set of all URLs loaded in
+        a particular frame. Bad idea! It's bad enough that we do it for each document, but
+        the old version kept the set around forever as you moved from one document to the next.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute): Change this so that we allow
+        turning off scrolling when the quirk is enabled. We just don't allow turning it on.
+        This fixes one of the two problems with the initial patch; the other fix is in WebKit.
+
+        * loader/DocumentLoader.h: Moved didTellClientAboutLoad and haveToldClientAboutLoad
+        here from FrameLoader. The old way meant that a given frame would forever remember
+        the URL of any resources loaded in that frame and never send any "loaded from cache"
+        client calls about those URLs.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously): Removed call to didTellCientAboutLoad.
+        This is now handled by dispatchWillSendRequest, which is safer since that's the actual
+        function that tells the client about the load.
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache): Changed calls to
+        haveToldClientAboutLoad and didTellClientAboutLoad to call the document loader.
+        Also removed the call in the case where we don't load from the cache, since
+        dispatchWillSendRequest now takes care of it.
+        (WebCore::FrameLoader::dispatchWillSendRequest): Put calls to didTellClientAboutLoad
+        here. Call it both on the URL we pass in and the URL the client returns; we won't
+        tell the client about either if it's loaded from the memory cache.
+
+        * loader/FrameLoader.h: Removed didTellClientAboutLoad, haveToldClientAboutLoad, and
+        m_urlsClientKnowsAbout.
+
+        * loader/SubresourceLoader.cpp: Removed unneeded load function that called
+        didTellClientAboutLoad. That's now taken care of in dispatchWillSendRequest.
+
+        * loader/SubresourceLoader.h: Removed load function. Also made all members private
+        except for create and clearClient.
+
 2009-01-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

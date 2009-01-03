@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,20 +30,11 @@
 #ifndef FrameLoader_h
 #define FrameLoader_h
 
-#include "CachedResource.h"
 #include "CachePolicy.h"
-#include "FormState.h"
 #include "FrameLoaderTypes.h"
-#include "KURL.h"
-#include "StringHash.h"
-#include "Timer.h"
-#include <wtf/Forward.h>
-#include <wtf/HashSet.h>
-#include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
 #include "ResourceRequest.h"
+#include "Timer.h"
+
 #if USE(LOW_BANDWIDTH_DISPLAY)
 #include "CachedResourceClient.h"
 #endif
@@ -51,14 +42,15 @@
 namespace WebCore {
 
     class Archive;
-    class ArchiveResource;
     class AuthenticationChallenge;
     class CachedPage;
+    class CachedResource;
     class Document;
     class DocumentLoader;
     class Element;
     class Event;
     class FormData;
+    class FormState;
     class Frame;
     class FrameLoaderClient;
     class HistoryItem;
@@ -67,12 +59,9 @@ namespace WebCore {
     class IconLoader;
     class IntSize;
     class NavigationAction;
-    class Node;
-    class Page;
     class RenderPart;
     class ResourceError;
     class ResourceLoader;
-    class ResourceRequest;
     class ResourceResponse;
     class ScriptSourceCode;
     class ScriptValue;
@@ -126,7 +115,7 @@ namespace WebCore {
 
     class FrameLoader : Noncopyable
 #if USE(LOW_BANDWIDTH_DISPLAY)
-    , private CachedResourceClient
+        , private CachedResourceClient
 #endif
     {
     public:
@@ -404,9 +393,6 @@ namespace WebCore {
 
         KURL completeURL(const String& url);
 
-        void didTellClientAboutLoad(const String& url);
-        bool haveToldClientAboutLoad(const String& url);
-
         KURL originalRequestURL() const;
 
         void cancelAndClear();
@@ -617,8 +603,6 @@ namespace WebCore {
         bool m_navigationDuringLoad;
 
         String m_outgoingReferrer;
-
-        HashSet<String> m_urlsClientKnowsAbout;
 
         OwnPtr<FormSubmission> m_deferredFormSubmission;
 

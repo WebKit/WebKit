@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,18 +156,13 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 // attribute needs to be ignored to avoid showing extra scroll bars in the window.
 // This quirk can be removed when Apple Dictionary is fixed (see <rdar://problem/6471058>).
 
-static bool isAppleDictionaryApplication()
-{
-    return [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Dictionary"];
-}
-
-static void applyAppleDictionaryApplicationQuirk(WebFrame *webFrame, const ResourceRequest& request)
+static void applyAppleDictionaryApplicationQuirkNonInlinePart(WebFrameLoaderClient* client, const ResourceRequest& request)
 {
     if (!request.url().isLocalFile())
         return;
     if (!request.url().string().endsWith("MainPageJavaScript.js"))
         return;
-    Frame* frame = core(webFrame);
+    Frame* frame = core(client->webFrame());
     if (!frame)
         return;
     if (frame->tree()->parent())
@@ -184,6 +179,15 @@ static void applyAppleDictionaryApplicationQuirk(WebFrame *webFrame, const Resou
             return;
         }
     }
+}
+
+static inline void applyAppleDictionaryApplicationQuirk(WebFrameLoaderClient* client, const ResourceRequest& request)
+{
+    // Use a one-time-initialized global variable so we can quickly determine there's nothing to do in
+    // all applications other than Apple Dictionary.
+    static bool isAppleDictionary = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Dictionary"];
+    if (isAppleDictionary)
+        applyAppleDictionaryApplicationQuirkNonInlinePart(client, request);
 }
 
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
@@ -318,6 +322,8 @@ void WebFrameLoaderClient::setOriginalURLForDownload(WebDownload *download, cons
 
 bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
 {
+    applyAppleDictionaryApplicationQuirk(this, request);
+
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
     if (!implementations->didLoadResourceFromMemoryCacheFunc)
@@ -349,9 +355,7 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
 
 void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    static bool isDictionary = isAppleDictionaryApplication();
-    if (isDictionary)
-        applyAppleDictionaryApplicationQuirk(m_webFrame.get(), request);
+    applyAppleDictionaryApplicationQuirk(this, request);
 
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,15 +29,11 @@
 #include "config.h"
 #include "SubresourceLoader.h"
 
-#include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "Logging.h"
 #include "ResourceHandle.h"
-#include "ResourceRequest.h"
 #include "SubresourceLoaderClient.h"
-#include "SharedBuffer.h"
 #include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {
@@ -62,13 +58,6 @@ SubresourceLoader::~SubresourceLoader()
 #ifndef NDEBUG
     subresourceLoaderCounter.decrement();
 #endif
-}
-
-bool SubresourceLoader::load(const ResourceRequest& r)
-{
-    m_frame->loader()->didTellClientAboutLoad(r.url().string());
-    
-    return ResourceLoader::load(r);
 }
 
 PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, bool skipCanLoadCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff)
