@@ -24,6 +24,7 @@
 
 #include "Color.h"
 #include "DocumentLoader.h"
+#include "FormState.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "FrameTree.h"
