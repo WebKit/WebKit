@@ -1350,11 +1350,11 @@ void* IconDatabase::syncThreadMainLoop()
         
         bool didAnyWork = true;
         while (didAnyWork) {
-            didAnyWork = readFromDatabase();
+            bool didWrite = writeToDatabase();
             if (shouldStopThreadActivity())
                 break;
                 
-            bool didWrite = writeToDatabase();
+            didAnyWork = readFromDatabase();
             if (shouldStopThreadActivity())
                 break;
                 

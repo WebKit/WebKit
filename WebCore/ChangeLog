@@ -1,3 +1,18 @@
+2009-01-02  Cary Clark  <caryclark@google.com>
+
+        Reviewed and landed by Darin Adler.
+
+        Bug 22963: write icons before reading them
+        https://bugs.webkit.org/show_bug.cgi?id=22963
+
+        Reverse the order in the icon database main thread loop to
+        write the pending icons to the database before trying
+        to read any requested icons. This ensures that a requested icon 
+        has the correct data when read.
+        
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::syncThreadMainLoop):
+
 2009-01-02  Darin Adler  <darin@apple.com>
 
         * loader/FrameLoader.cpp:
@@ -6,7 +21,7 @@
 
 2009-01-02  Dmitry Titov  <dimich@chromium.org>
 
-        Reviewed and landed by Darin.
+        Reviewed and landed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=23025
         DOMTimer lifetime cleanup: timeoutMap methods on Document now do not delete the timer.
