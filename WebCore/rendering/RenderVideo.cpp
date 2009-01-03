@@ -174,7 +174,7 @@ int RenderVideo::calcReplacedWidth(bool includeMaxWidth) const
     if (isWidthSpecified())
         width = calcReplacedWidthUsing(style()->width());
     else
-        width = calcAspectRatioWidth();
+        width = calcAspectRatioWidth() * style()->effectiveZoom();
 
     int minW = calcReplacedWidthUsing(style()->minWidth());
     int maxW = !includeMaxWidth || style()->maxWidth().isUndefined() ? width : calcReplacedWidthUsing(style()->maxWidth());
@@ -188,7 +188,7 @@ int RenderVideo::calcReplacedHeight() const
     if (isHeightSpecified())
         height = calcReplacedHeightUsing(style()->height());
     else
-        height = calcAspectRatioHeight();
+        height = calcAspectRatioHeight() * style()->effectiveZoom();
 
     int minH = calcReplacedHeightUsing(style()->minHeight());
     int maxH = style()->maxHeight().isUndefined() ? height : calcReplacedHeightUsing(style()->maxHeight());

@@ -1,0 +1,34 @@
+<html>
+<head>
+    <style> video { zoom: 150%; border: 3px solid red; } </style>
+    <script>
+        function init()
+        {
+            var totalCount = document.getElementsByTagName('video').length;
+            var count = totalCount;
+            document.addEventListener("canplaythrough", function () {
+                if (!--count) {
+                    if (window.layoutTestController)
+                        setTimeout(function() { layoutTestController.notifyDone(); }, totalCount * 150);
+                }
+            }, true);
+
+            if (window.layoutTestController) {
+                layoutTestController.waitUntilDone();
+                setTimeout(function() { 
+                    document.body.appendChild(document.createTextNode('FAIL')); 
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                }, 1500);
+            }
+        }
+    </script>
+
+</head>
+<body onload="init()">
+    <p>150% zoom, with width and height attributes </p>
+    &nbsp;<video src="content/test.mp4" width=320 height=240></video><br>
+    <p>150% zoom, without width and height attributes </p>
+    &nbsp;<video src="content/test.mp4" ></video><br>
+</body>
+</html>

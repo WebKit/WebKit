@@ -1,3 +1,14 @@
+2009-01-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23066 & <rdar://problem/6028417> 
+        Full Page Zoom: a <video> element that doesn't include width/height attribute does not scale
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::calcReplacedWidth): Multiply aspect ratio width by style()->effectiveZoom()
+        (WebCore::RenderVideo::calcReplacedHeight): Multiply aspect ratio height by style()->effectiveZoom()
+
 2009-01-02  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r39552): Add mediaControls.css to other build files
