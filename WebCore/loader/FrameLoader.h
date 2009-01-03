@@ -31,6 +31,7 @@
 #define FrameLoader_h
 
 #include "CachePolicy.h"
+#include "FormState.h"
 #include "FrameLoaderTypes.h"
 #include "ResourceRequest.h"
 #include "Timer.h"
@@ -50,7 +51,6 @@ namespace WebCore {
     class Element;
     class Event;
     class FormData;
-    class FormState;
     class Frame;
     class FrameLoaderClient;
     class HistoryItem;
