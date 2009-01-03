@@ -5108,9 +5108,14 @@ void FrameLoader::dispatchAssignIdentifierToInitialRequest(unsigned long identif
 
 void FrameLoader::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+    StringImpl* oldRequestURL = request.url().string().impl();
     m_documentLoader->didTellClientAboutLoad(request.url());
+
     m_client->dispatchWillSendRequest(loader, identifier, request, redirectResponse);
-    m_documentLoader->didTellClientAboutLoad(request.url());
+
+    // If the URL changed, then we want to put that new URL in the "did tell client" set too.
+    if (oldRequestURL != request.url().string().impl())
+        m_documentLoader->didTellClientAboutLoad(request.url());
 
     if (Page* page = m_frame->page())
         page->inspectorController()->willSendRequest(loader, identifier, request, redirectResponse);

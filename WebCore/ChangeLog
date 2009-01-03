@@ -1,3 +1,9 @@
+2009-01-02  Darin Adler  <darin@apple.com>
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem): One small thing I forgot in my last check-in.
+        This cuts down on the number of hash table operations during loading.
+
 2009-01-02  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed and landed by Darin.
