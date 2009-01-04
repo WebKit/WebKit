@@ -1,3 +1,20 @@
+2008-12-30  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Make the qt port build and work with the new fixedLayoutSize feature
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::fixedLayoutSize):
+        (QWebPage::setFixedLayoutSize):
+        (QWebPage::useFixedLayout):
+        (QWebPage::setUseFixedLayout):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
 2008-12-19  Jade Han <jade.han@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

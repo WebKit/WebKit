@@ -1,3 +1,12 @@
+2009-01-02  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Add layout test for new fixedLayoutSize feature of qt port
+
+        * platform/qt/view/fixed-layout-size-expected.txt: Added.
+        * platform/qt/view/fixed-layout-size.html: Added.
+
 2009-01-04  Darin Adler  <darin@apple.com>
 
         Suggested by Dan Bernstein.

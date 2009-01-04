@@ -1,3 +1,14 @@
+2009-01-02  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Add support for fixedLayoutSize to the qt DRT
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::setFixedLayoutSize):
+        (LayoutTestController::setUseFixedLayout):
+        * DumpRenderTree/qt/jsobjects.h:
+
 2009-01-03  David D. Kilzer  <ddkilzer@webkit.org>
 
         Bug 23091: Some webarchive http tests intermittently fail due to Connection/Keep-Alive header differences

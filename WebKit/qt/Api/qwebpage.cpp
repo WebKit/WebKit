@@ -253,6 +253,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     insideOpenCall = false;
     forwardUnsupportedContent = false;
     editable = false;
+    useFixedLayout = false;
     linkPolicy = QWebPage::DontDelegateLinks;
 #ifndef QT_NO_CONTEXTMENU
     currentContextMenu = 0;
@@ -1462,6 +1463,54 @@ void QWebPage::setViewportSize(const QSize &size) const
     }
 }
 
+QSize QWebPage::fixedLayoutSize() const
+{
+    if (d->mainFrame && d->mainFrame->d->frame->view())
+        return d->mainFrame->d->frame->view()->fixedLayoutSize();
+
+    return d->fixedLayoutSize;
+}
+
+/*!
+    \property QWebPage::fixedLayoutSize
+    \brief the size of the fixed layout
+
+    The size affects the layout of the page in the viewport.  If set to a fixed size of
+    1024x768 for example then webkit will layout the page as if the viewport were that size
+    rather than something different.
+*/
+void QWebPage::setFixedLayoutSize(const QSize &size) const
+{
+    d->fixedLayoutSize = size;
+
+    QWebFrame *frame = mainFrame();
+    if (frame->d->frame && frame->d->frame->view()) {
+        WebCore::FrameView* view = frame->d->frame->view();
+        view->setFixedLayoutSize(size);
+        frame->d->frame->forceLayout();
+    }
+}
+
+bool QWebPage::useFixedLayout() const
+{
+    return d->useFixedLayout;
+}
+
+/*!
+    \property QWebPage::usedFixedLayout
+    \brief whether to use a fixed layout size
+*/
+void QWebPage::setUseFixedLayout(bool useFixedLayout)
+{
+    d->useFixedLayout = useFixedLayout;
+
+    QWebFrame *frame = mainFrame();
+    if (frame->d->frame && frame->d->frame->view()) {
+        WebCore::FrameView* view = frame->d->frame->view();
+        view->setUseFixedLayout(useFixedLayout);
+        frame->d->frame->forceLayout();
+    }
+}
 
 /*!
     \fn bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type)
