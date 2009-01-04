@@ -1,3 +1,18 @@
+2009-01-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=23090
+        
+        If an object gets a Layout hint, and the style change will result in
+        the creation of a RenderLayer, then we need to repaint the old position
+        of the object. This was done for transform, but we have to test opacity too.
+
+        Test: fast/repaint/create-layer-repaint.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+
 2009-01-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

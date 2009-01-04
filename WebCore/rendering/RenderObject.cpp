@@ -2303,9 +2303,9 @@ void RenderObject::styleWillChange(RenderStyle::Diff diff, const RenderStyle* ne
                     m_style->opacity() != newStyle->opacity() ||
                     m_style->transform() != newStyle->transform())
                 layer()->repaintIncludingDescendants();
-            } else if (m_style->transform() != newStyle->transform()) {
-                // If we don't have a layer yet, but we are going to get one because of a transform change, then
-                // we need to repaint the old position of the object
+            } else if (newStyle->hasTransform() || newStyle->opacity() < 1) {
+                // If we don't have a layer yet, but we are going to get one because of transform or opacity,
+                //  then we need to repaint the old position of the object.
                 repaint();
             }
         }
