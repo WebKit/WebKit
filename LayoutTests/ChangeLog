@@ -1,3 +1,14 @@
+2009-01-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 23095: REGRESSION: fast/text/find-case-folding.html regression test failing when ICU used for text search
+        https://bugs.webkit.org/show_bug.cgi?id=23095
+
+        * fast/text/find-case-folding.html: Work around this ICU bug in the test for now.
+        Later we might want to work around it in our search code instead, or in addition,
+        if we can figure out how to do that.
+
 2009-01-03  David D. Kilzer  <ddkilzer@webkit.org>
 
         Bug 23091: Some webarchive http tests intermittently fail due to Connection/Keep-Alive header differences

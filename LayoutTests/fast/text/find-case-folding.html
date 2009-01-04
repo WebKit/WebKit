@@ -27,7 +27,9 @@
                 message += " Cannot find small sharp s when searching for small sharp s.";
             }
 
-            if (!canFind("Strasse", "Stra" + smallSharpS + "e")) {
+            // Added an "x" to the start of the target string to work around an ICU bug.
+            // See <http://bugs.icu-project.org/trac/ticket/6671> for details.
+            if (!canFind("Strasse", "xStra" + smallSharpS + "e")) {
                 success = false;
                 message += " Cannot find small sharp s when searching for ss.";
             }
