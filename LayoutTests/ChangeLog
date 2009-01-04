@@ -1,5 +1,12 @@
 2009-01-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the expected image to account for a typo fix done on 2008-12-23.
+
+        * platform/mac/fast/transforms/identity-matrix-expected.checksum:
+        * platform/mac/fast/transforms/identity-matrix-expected.png:
+
+2009-01-04  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler
 
         https://bugs.webkit.org/show_bug.cgi?id=23090
