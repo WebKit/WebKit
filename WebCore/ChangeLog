@@ -1,3 +1,14 @@
+2009-01-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 23103: Safari's auto-fill no longer works for <select> elements
+        https://bugs.webkit.org/show_bug.cgi?id=23103
+        rdar://problem/6472061
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLSelectElement _activateItemAtIndex:]): Implemented this.
+
 2008-01-04  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.

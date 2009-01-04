@@ -36,6 +36,7 @@
 #import "HTMLDocument.h"
 #import "HTMLInputElement.h"
 #import "HTMLObjectElement.h"
+#import "HTMLSelectElement.h"
 #import "Range.h"
 #import "RenderTextControl.h"
 #import "markup.h"
@@ -155,11 +156,12 @@
 
 @end
 
-@implementation DOMHTMLSelectElement(FormAutoFillTransition)
+@implementation DOMHTMLSelectElement (FormAutoFillTransition)
 
 - (void)_activateItemAtIndex:(int)index
 {
-    // FIXME: Needs implementation for non-NSView <select>!
+    if (WebCore::HTMLSelectElement* select = [self _HTMLSelectElement])
+        select->setSelectedIndex(index);
 }
 
 @end
