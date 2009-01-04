@@ -82,7 +82,6 @@
 		088C97130ECB6D9D000534BA /* WMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CA3AB480E556F2400E9C0C0 /* WMLNames.h */; };
 		088C97510ECB6E28000534BA /* WMLAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B99180E52E37300487BB7 /* WMLAElement.cpp */; };
 		088C97520ECB6E28000534BA /* WMLAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6B99190E52E37300487BB7 /* WMLAElement.h */; };
-		088C97550ECB6E28000534BA /* WMLAttributeNames.in in Resources */ = {isa = PBXBuildFile; fileRef = 4C6B991C0E52E37300487BB7 /* WMLAttributeNames.in */; };
 		088C97560ECB6E28000534BA /* WMLCardElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B991F0E52E37300487BB7 /* WMLCardElement.cpp */; };
 		088C97570ECB6E28000534BA /* WMLCardElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6B99200E52E37300487BB7 /* WMLCardElement.h */; };
 		088C97580ECB6E28000534BA /* WMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B99210E52E37300487BB7 /* WMLDocument.cpp */; };
@@ -93,7 +92,6 @@
 		088C976D0ECB6E29000534BA /* WMLPageState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0893E4660ECB68F400A28563 /* WMLPageState.h */; };
 		088C976E0ECB6E29000534BA /* WMLPElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B99350E52E37300487BB7 /* WMLPElement.cpp */; };
 		088C976F0ECB6E29000534BA /* WMLPElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6B99360E52E37300487BB7 /* WMLPElement.h */; };
-		088C977C0ECB6E29000534BA /* WMLTagNames.in in Resources */ = {isa = PBXBuildFile; fileRef = 4C6B99430E52E37300487BB7 /* WMLTagNames.in */; };
 		089582550E857A7E00F82C83 /* ImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 089582530E857A7E00F82C83 /* ImageLoader.cpp */; };
 		089582560E857A7E00F82C83 /* ImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 089582540E857A7E00F82C83 /* ImageLoader.h */; };
 		0897C14C0ED2EBA500AE06DB /* WMLBRElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0897C14A0ED2EBA400AE06DB /* WMLBRElement.cpp */; };
@@ -4238,7 +4236,6 @@
 		E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12719C90EEEC21300F61213 /* NavigatorBase.cpp */; };
 		E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */; };
 		E1271A140EEEC80400F61213 /* WorkerNavigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1271A130EEEC80400F61213 /* WorkerNavigator.cpp */; };
-		E1271A520EEECD1C00F61213 /* WorkerNavigator.idl in Resources */ = {isa = PBXBuildFile; fileRef = E1271A510EEECD1C00F61213 /* WorkerNavigator.idl */; };
 		E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A560EEECDE400F61213 /* JSWorkerNavigator.h */; };
 		E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1271A570EEECDE400F61213 /* JSWorkerNavigator.cpp */; };
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4248,7 +4245,6 @@
 		E17A4A1B0D97991D00FC10C6 /* DOMSVGAltGlyphElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */; };
 		E17A4A1C0D97991D00FC10C6 /* DOMSVGAltGlyphElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */; };
 		E182504F0ED2F20200499A8F /* FrameLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182504E0ED2F20200499A8F /* FrameLoaderClient.cpp */; };
-		E18256500EF2ACE600933242 /* WorkerContext.idl in Resources */ = {isa = PBXBuildFile; fileRef = E182564F0EF2ACE600933242 /* WorkerContext.idl */; };
 		E182568F0EF2B02D00933242 /* JSWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */; };
 		E18256900EF2B02D00933242 /* JSWorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E182568E0EF2B02D00933242 /* JSWorkerContext.h */; };
 		E18258AC0EF3CD7000933242 /* JSWorkerContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */; };
@@ -4274,7 +4270,6 @@
 		E1C2C4290EACE0E0007E61FB /* WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C2C4280EACE0E0007E61FB /* WorkerThread.cpp */; };
 		E1C2C43E0EAD0133007E61FB /* WorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C2C43D0EAD0133007E61FB /* WorkerContext.h */; };
 		E1C2C4420EAD017B007E61FB /* WorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C2C4410EAD017B007E61FB /* WorkerContext.cpp */; };
-		E1C362BC0EAF29FB007410BC /* WorkerLocation.idl in Resources */ = {isa = PBXBuildFile; fileRef = E1C362BB0EAF29FB007410BC /* WorkerLocation.idl */; };
 		E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */; };
 		E1C362F00EAF2AA9007410BC /* JSWorkerLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C362EE0EAF2AA9007410BC /* JSWorkerLocation.cpp */; };
 		E1C363010EAF2CC6007410BC /* WorkerLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C363000EAF2CC6007410BC /* WorkerLocation.h */; };
@@ -16597,11 +16592,6 @@
 				B25599680D00D8BA00BB825C /* WKSpecularLightingFilter.cikernel in Resources */,
 				B255996B0D00D8BA00BB825C /* WKSpotLightFilter.cikernel in Resources */,
 				B255996E0D00D8BA00BB825C /* WKTableTransferFilter.cikernel in Resources */,
-				088C97550ECB6E28000534BA /* WMLAttributeNames.in in Resources */,
-				088C977C0ECB6E29000534BA /* WMLTagNames.in in Resources */,
-				E18256500EF2ACE600933242 /* WorkerContext.idl in Resources */,
-				E1C362BC0EAF29FB007410BC /* WorkerLocation.idl in Resources */,
-				E1271A520EEECD1C00F61213 /* WorkerNavigator.idl in Resources */,
 				46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */,
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,

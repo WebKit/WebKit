@@ -1,3 +1,18 @@
+2009-01-04  David Kilzer  <ddkilzer@apple.com>
+
+        Don't install *.idl and *.in files as resources
+
+        Reviewed by Oliver Hunt.
+
+        Don't install these files as resources in the WebCore framework:
+        - WMLAttributeNames.in
+        - WMLTagNames.in
+        - WorkerContext.idl
+        - WorkerLocation.idl
+        - WorkerNavigator.idl
+
+        * WebCore.xcodeproj/project.pbxproj: Removed resources.
+
 2009-01-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
