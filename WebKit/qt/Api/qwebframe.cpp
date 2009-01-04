@@ -44,6 +44,7 @@
 #include "SubstituteData.h"
 
 #include "markup.h"
+#include "htmlediting.h"
 #include "RenderTreeAsText.h"
 #include "Element.h"
 #include "Document.h"
@@ -1074,6 +1075,7 @@ QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult 
     linkTitle = hitTest.titleDisplayString();
     alternateText = hitTest.altDisplayString();
     imageUrl = hitTest.absoluteImageURL();
+    innerNode = hitTest.innerNode();
     innerNonSharedNode = hitTest.innerNonSharedNode();
     WebCore::Image *img = hitTest.image();
     if (img) {
@@ -1091,6 +1093,15 @@ QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult 
     if (innerNonSharedNode && innerNonSharedNode->document()
         && innerNonSharedNode->document()->frame())
         frame = QWebFramePrivate::kit(innerNonSharedNode->document()->frame());
+
+    if (Node *block = WebCore::enclosingBlock(innerNode.get())) {
+        RenderObject *renderBlock = block->renderer();
+        while (renderBlock && renderBlock->isListItem())
+            renderBlock = renderBlock->containingBlock();
+
+        if (renderBlock)
+            enclosingBlock = renderBlock->absoluteClippedOverflowRect();
+    }
 }
 
 /*!
@@ -1164,6 +1175,17 @@ QRect QWebHitTestResult::boundingRect() const
     if (!d)
         return QRect();
     return d->boundingRect;
+}
+
+/*!
+    \since 4.5
+    Returns the rect of the smallest enclosing block element.
+*/
+QRect QWebHitTestResult::enclosingBlock() const
+{
+    if (!d)
+        return QRect();
+    return d->enclosingBlock;
 }
 
 /*!

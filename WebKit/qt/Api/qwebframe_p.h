@@ -99,6 +99,7 @@ public:
 
     QPoint pos;
     QRect boundingRect;
+    QRect enclosingBlock;
     QString title;
     QString linkText;
     QUrl linkUrl;
@@ -110,6 +111,7 @@ public:
     bool isContentEditable;
     bool isContentSelected;
     QPointer<QWebFrame> frame;
+    RefPtr<WebCore::Node> innerNode;
     RefPtr<WebCore::Node> innerNonSharedNode;
 };
 

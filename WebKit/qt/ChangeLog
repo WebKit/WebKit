@@ -2,6 +2,19 @@
 
         Reviewed by George Staikos.
 
+        Add new API to QWebHitTestResult to return a rect for the smallest enclosing
+        block element of the hit test
+
+        * Api/qwebframe.cpp:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+        (QWebHitTestResult::enclosingBlock):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+
+2008-12-30  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
         Make the qt port build and work with the new fixedLayoutSize feature
 
         * Api/qwebpage.cpp:
