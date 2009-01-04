@@ -1,3 +1,18 @@
+2009-01-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Change the pcVector from storing native code pointers to storing offsets
+        from the base pointer. This will allow us to generate the pcVector on demand
+        for exceptions.
+
+        * bytecode/CodeBlock.h:
+        (JSC::PC::PC):
+        (JSC::getNativePCOffset):
+        (JSC::CodeBlock::getBytecodeIndex):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
 2009-01-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

@@ -151,13 +151,13 @@ namespace JSC {
     };
 
     struct PC {
-        PC(void* nativePC, unsigned bytecodeIndex)
-            : nativePC(nativePC)
+        PC(ptrdiff_t nativePCOffset, unsigned bytecodeIndex)
+            : nativePCOffset(nativePCOffset)
             , bytecodeIndex(bytecodeIndex)
         {
         }
-        
-        void* nativePC;
+
+        ptrdiff_t nativePCOffset;
         unsigned bytecodeIndex;
     };
 
@@ -173,9 +173,9 @@ namespace JSC {
         return callLinkInfo->callReturnLocation;
     }
 
-    inline void* getNativePC(PC* pc)
+    inline ptrdiff_t getNativePCOffset(PC* pc)
     {
-        return pc->nativePC;
+        return pc->nativePCOffset;
     }
 
     // Binary chop algorithm, calls valueAtPosition on pre-sorted elements in array,
@@ -299,7 +299,8 @@ namespace JSC {
 
         unsigned getBytecodeIndex(void* nativePC)
         {
-            return binaryChop<PC, void*, getNativePC>(m_pcVector.begin(), m_pcVector.size(), nativePC)->bytecodeIndex;
+            ptrdiff_t nativePCOffset = reinterpret_cast<void**>(nativePC) - reinterpret_cast<void**>(m_jitCode.code);
+            return binaryChop<PC, ptrdiff_t, getNativePCOffset>(m_pcVector.begin(), m_pcVector.size(), nativePCOffset)->bytecodeIndex;
         }
 
         bool functionRegisterForBytecodeOffset(unsigned bytecodeOffset, int& functionRegisterIndex);

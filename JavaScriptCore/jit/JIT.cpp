@@ -1638,7 +1638,7 @@ void JIT::privateCompile()
     for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
         if (iter->to)
             patchBuffer.link(iter->from, iter->to);
-        m_codeBlock->pcVector().append(PC(patchBuffer.addressOf(iter->from), iter->bytecodeIndex));
+        m_codeBlock->pcVector().append(PC(reinterpret_cast<void**>(patchBuffer.addressOf(iter->from)) - reinterpret_cast<void**>(code), iter->bytecodeIndex));
     }
 
     // Link absolute addresses for jsr
