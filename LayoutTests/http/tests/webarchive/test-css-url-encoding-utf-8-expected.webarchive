@@ -93,8 +93,6 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>1476</string>
 					<key>Content-Type</key>
@@ -103,8 +101,6 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -172,8 +168,6 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>1476</string>
 					<key>Content-Type</key>
@@ -182,8 +176,6 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -251,8 +243,6 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>1476</string>
 					<key>Content-Type</key>
@@ -261,8 +251,6 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -330,8 +318,6 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>1476</string>
 					<key>Content-Type</key>
@@ -340,8 +326,6 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -377,8 +361,6 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>196</string>
 					<key>Content-Type</key>
@@ -387,8 +369,6 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -426,8 +406,6 @@ div.background-shift-jis {
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>194</string>
 					<key>Content-Type</key>
@@ -436,8 +414,6 @@ div.background-shift-jis {
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -479,8 +455,6 @@ div.background-utf-8 {
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>190</string>
 					<key>Content-Type</key>
@@ -489,8 +463,6 @@ div.background-utf-8 {
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>

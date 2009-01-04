@@ -55,8 +55,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>33</string>
 					<key>Content-Type</key>
@@ -65,8 +63,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -96,8 +92,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>33</string>
 					<key>Content-Type</key>
@@ -106,8 +100,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -137,8 +129,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>33</string>
 					<key>Content-Type</key>
@@ -147,8 +137,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -178,8 +166,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>33</string>
 					<key>Content-Type</key>
@@ -188,8 +174,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -219,8 +203,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>33</string>
 					<key>Content-Type</key>
@@ -229,8 +211,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -260,8 +240,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>33</string>
 					<key>Content-Type</key>
@@ -270,8 +248,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>
@@ -301,8 +277,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 				<dict>
 					<key>Accept-Ranges</key>
 					<string>bytes</string>
-					<key>Connection</key>
-					<string>Keep-Alive</string>
 					<key>Content-Length</key>
 					<string>33</string>
 					<key>Content-Type</key>
@@ -311,8 +285,6 @@ REGRESSION (35867): Many resources missing when saving webarchive of webkit.org&
 					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
 					<key>Etag</key>
 					<string>"301925-21-45c7d72d3e780"</string>
-					<key>Keep-Alive</key>
-					<string>timeout=15</string>
 					<key>Last-Modified</key>
 					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
 					<key>Server</key>

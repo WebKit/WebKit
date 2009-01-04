@@ -690,16 +690,21 @@ static void convertWebResourceDataToString(NSMutableDictionary *resource)
 
 static void normalizeHTTPResponseHeaderFields(NSMutableDictionary *fields)
 {
+    // Normalize headers
     if ([fields objectForKey:@"Date"])
         [fields setObject:@"Sun, 16 Nov 2008 17:00:00 GMT" forKey:@"Date"];
     if ([fields objectForKey:@"Last-Modified"])
         [fields setObject:@"Sun, 16 Nov 2008 16:55:00 GMT" forKey:@"Last-Modified"];
-    if ([fields objectForKey:@"Keep-Alive"])
-        [fields setObject:@"timeout=15" forKey:@"Keep-Alive"];
     if ([fields objectForKey:@"Etag"])
         [fields setObject:@"\"301925-21-45c7d72d3e780\"" forKey:@"Etag"];
     if ([fields objectForKey:@"Server"])
         [fields setObject:@"Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6" forKey:@"Server"];
+
+    // Remove headers
+    if ([fields objectForKey:@"Connection"])
+        [fields removeObjectForKey:@"Connection"];
+    if ([fields objectForKey:@"Keep-Alive"])
+        [fields removeObjectForKey:@"Keep-Alive"];
 }
 
 static void normalizeWebResourceURL(NSMutableString *webResourceURL)

@@ -1,3 +1,15 @@
+2009-01-03  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Bug 23091: Some webarchive http tests intermittently fail due to Connection/Keep-Alive header differences
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23091>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (normalizeHTTPResponseHeaderFields): Remove Keep-Alive and
+        Connection headers from webarchive results.
+
 2008-12-31  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Holger Freyther.

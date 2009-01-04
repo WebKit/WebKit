@@ -1,3 +1,19 @@
+2009-01-03  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Bug 23091: Some webarchive http tests intermittently fail due to Connection/Keep-Alive header differences
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23091>
+
+        Reviewed by Darin Adler.
+
+        Updated test results after removing Keep-Alive and Connection
+        headers from webarchive tests.
+
+        * http/tests/webarchive/test-css-url-encoding-expected.webarchive:
+        * http/tests/webarchive/test-css-url-encoding-shift-jis-expected.webarchive:
+        * http/tests/webarchive/test-css-url-encoding-utf-8-expected.webarchive:
+        * http/tests/webarchive/test-preload-resources-expected.webarchive:
+
 2009-01-03  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Darin.
