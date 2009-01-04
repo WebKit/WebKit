@@ -85,9 +85,7 @@ Test 14, RTL:
   Moving right:  "ABC123DEFabcGHI456JLM\n    "[21, 20, 19, 18, 16, 17, 15, 14, 13, 12, 10, 11, 9, 8, 7, 6, 4, 5, 3, 2, 1, 0]
 Test 15, LTR:
   Moving right: "\n        before    AHYJ AQWJXMFUDJE\n    "[9, 10, 11, 12, 13, 14, 15, 16, 22, 21, 20, 23, 24, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 35]
-WARNING: Moved in the wrong direction in step 13: from (117, 551) to (49, 551).
   Moving left:  "\n        before    AHYJ AQWJXMFUDJE\n    "[35, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 24, 23, 20, 21, 22, 16, 15, 14, 13, 12, 11, 10, 9]
-WARNING: Moved in the wrong direction in step 11: from (49, 551) to (117, 551).
 Test 15, RTL:
   Moving left: "\n        before    AHYJ AQWJXMFUDJE\n    "[9, 14, 13, 12, 11, 10, 15, 16, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
   Moving right:  "\n        before    AHYJ AQWJXMFUDJE\n    "[35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 16, 15, 10, 11, 12, 13, 14, 9]
@@ -96,9 +94,7 @@ Test 16, LTR:
   Moving left:  "\n        MUQJ    after encyclopedia\n    "[35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 14, 13, 10, 11, 12, 9]
 Test 16, RTL:
   Moving left: "\n        MUQJ    after encyclopedia\n    "[9, 10, 11, 12, 13, 14, 21, 20, 19, 18, 22, 23, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 35]
-WARNING: Moved in the wrong direction in step 12: from (65, 551) to (148, 551).
   Moving right:  "\n        MUQJ    after encyclopedia\n    "[35, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 23, 22, 18, 19, 20, 21, 14, 13, 12, 11, 10, 9]
-WARNING: Moved in the wrong direction in step 12: from (148, 551) to (65, 551).
 Test 17, LTR:
   Moving right: "\n        before    AHYJ AQWJXMFUDJE\n    "[9, 10, 11, 12, 13, 14, 15, 16, 22, 21, 20, 23, 24, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 35]
   Moving left:  "\n        before    AHYJ AQWJXMFUDJE\n    "[35, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 24, 23, 20, 21, 22, 16, 15, 14, 13, 12, 11, 10, 9]
@@ -113,14 +109,10 @@ Test 18, RTL:
   Moving right:  "\n        MUQJ    after encyclopedia\n    "[35, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 23, 22, 18, 19, 20, 21, 14, 13, 12, 11, 10, 9]
 Test 19, LTR:
   Moving right: "\n        This is JF[Y WY OJ[Y the boxes. \n    "[9, 10, 11, 12, 13, 14, 15, 16, 17, 20, 19, 18, 21, 22, 28, 27, 26, 25, 24, 23, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
-WARNING: Moved in the wrong direction in step 14: from (87, 551) to (46, 551).
   Moving left:  "\n        This is JF[Y WY OJ[Y the boxes. \n    "[40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 23, 24, 25, 26, 27, 28, 22, 21, 18, 19, 20, 17, 16, 15, 14, 13, 12, 11, 10, 9]
-WARNING: Moved in the wrong direction in step 18: from (46, 551) to (87, 551).
 Test 19, RTL:
   Moving left: "\n        This is JF[Y WY OJ[Y the boxes. \n    "[9, 15, 14, 13, 12, 11, 10, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 31, 33, 34, 38, 37, 36, 35, 39, 40]
-WARNING: Moved in the wrong direction in step 26: from (100, 533) to (129, 533).
   Moving right:  "\n        This is JF[Y WY OJ[Y the boxes. \n    "[40, 39, 35, 36, 37, 38, 34, 33, 31, 32, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 10, 11, 12, 13, 14, 15, 9]
-WARNING: Moved in the wrong direction in step 6: from (129, 533) to (100, 533).
 Test 20, LTR:
   Moving right: "\n        This is JF[Y WY OJ[Y the boxes. \n    "[9, 10, 11, 12, 13, 14, 15, 16, 17, 20, 19, 18, 21, 22, 28, 27, 26, 25, 24, 23, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
   Moving left:  "\n        This is JF[Y WY OJ[Y the boxes. \n    "[40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 23, 24, 25, 26, 27, 28, 22, 21, 18, 19, 20, 17, 16, 15, 14, 13, 12, 11, 10, 9]

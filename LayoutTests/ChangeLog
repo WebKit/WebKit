@@ -1,3 +1,11 @@
+2009-01-04  Darin Adler  <darin@apple.com>
+
+        Suggested by Dan Bernstein.
+
+        * platform/mac/editing/selection/move-left-right-expected.txt: Remove WARNING lines that are no
+        longer showing up. Dan said he didn't know why we were seeing those before and why they're gone
+        now, but it's good that they're gone.
+
 2009-01-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
