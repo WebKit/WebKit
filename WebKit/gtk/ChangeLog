@@ -1,3 +1,12 @@
+2008-12-30  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Make the gtk port build with the new fixedLayoutSize feature
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::transitionToCommittedForNewPage):
+
 2009-01-03  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.
