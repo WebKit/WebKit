@@ -340,7 +340,7 @@ int Element::clientWidth()
     if ((!inCompatMode && document()->documentElement() == this) ||
         (inCompatMode && isHTMLElement() && document()->body() == this)) {
         if (FrameView* view = document()->view())
-            return view->visibleWidth();
+            return view->layoutWidth();
     }
     
 
@@ -360,7 +360,7 @@ int Element::clientHeight()
     if ((!inCompatMode && document()->documentElement() == this) ||
         (inCompatMode && isHTMLElement() && document()->body() == this)) {
         if (FrameView* view = document()->view())
-            return view->visibleHeight();
+            return view->layoutHeight();
     }
     
     if (RenderObject* rend = renderer())

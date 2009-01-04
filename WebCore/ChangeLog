@@ -1,3 +1,35 @@
+2008-12-30  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Add fixedLayoutSize feature to ScrollView to allow for controlling the
+        layout beyond the constraint of the current viewports dynamic size
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::heightMediaFeatureEval):
+        (WebCore::widthMediaFeatureEval):
+        * dom/Element.cpp:
+        (WebCore::Element::clientWidth):
+        (WebCore::Element::clientHeight):
+        * loader/FrameLoaderClient.cpp:
+        (WebCore::FrameLoaderClient::transitionToCommittedForNewPage):
+        * loader/FrameLoaderClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::layoutWidth):
+        (WebCore::ScrollView::layoutHeight):
+        (WebCore::ScrollView::fixedLayoutSize):
+        (WebCore::ScrollView::setFixedLayoutSize):
+        (WebCore::ScrollView::useFixedLayout):
+        (WebCore::ScrollView::setUseFixedLayout):
+        * platform/ScrollView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::viewHeight):
+        (WebCore::RenderView::viewWidth):
+        * rendering/RenderView.h:
+
 2009-01-03  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Darin.

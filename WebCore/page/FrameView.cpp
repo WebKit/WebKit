@@ -422,7 +422,7 @@ void FrameView::layout(bool allowSubtree)
     if (!m_frame) {
         // FIXME: Do we need to set m_size.width here?
         // FIXME: Should we set m_size.height here too?
-        m_size.setWidth(visibleWidth());
+        m_size.setWidth(layoutWidth());
         return;
     }
     
@@ -446,7 +446,7 @@ void FrameView::layout(bool allowSubtree)
     Document* document = m_frame->document();
     if (!document) {
         // FIXME: Should we set m_size.height here too?
-        m_size.setWidth(visibleWidth());
+        m_size.setWidth(layoutWidth());
         return;
     }
 
@@ -499,7 +499,7 @@ void FrameView::layout(bool allowSubtree)
                 vMode = ScrollbarAlwaysOff;
                 hMode = ScrollbarAlwaysOff;
             } else if (body->hasTagName(bodyTag)) {
-                if (!d->m_firstLayout && m_size.height() != visibleHeight()
+                if (!d->m_firstLayout && m_size.height() != layoutHeight()
                         && static_cast<RenderBox*>(body->renderer())->stretchesToViewHeight())
                     body->renderer()->setChildNeedsLayout(true);
                 // It's sufficient to just check the X overflow,
@@ -543,7 +543,7 @@ void FrameView::layout(bool allowSubtree)
 
         IntSize oldSize = m_size;
 
-        m_size = IntSize(visibleWidth(), visibleHeight());
+        m_size = IntSize(layoutWidth(), layoutHeight());
 
         if (oldSize != m_size)
             d->m_doFullRepaint = true;
@@ -593,8 +593,8 @@ void FrameView::layout(bool allowSubtree)
     setCanBlitOnScroll(!useSlowRepaints());
 
     if (document->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
-        updateOverflowStatus(visibleWidth() < contentsWidth(),
-                             visibleHeight() < contentsHeight());
+        updateOverflowStatus(layoutWidth() < contentsWidth(),
+                             layoutHeight() < contentsHeight());
 
     if (!d->m_postLayoutTasksTimer.isActive()) {
         // Calls resumeScheduledEvents()

@@ -51,7 +51,7 @@ public:
     int docHeight() const;
     int docWidth() const;
 
-    // The same as the FrameView's visibleHeight/visibleWidth but with null check guards.
+    // The same as the FrameView's layoutHeight/layoutWidth but with null check guards.
     int viewHeight() const;
     int viewWidth() const;
     

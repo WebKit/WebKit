@@ -559,16 +559,20 @@ int RenderView::docWidth() const
 int RenderView::viewHeight() const
 {
     int height = 0;
-    if (!printing() && m_frameView)
-        height = m_frameView->visibleHeight();
+    if (!printing() && m_frameView) {
+        height = m_frameView->layoutHeight();
+        height = m_frameView->useFixedLayout() ? ceilf(style()->effectiveZoom() * float(height)) : height;
+    }
     return height;
 }
 
 int RenderView::viewWidth() const
 {
     int width = 0;
-    if (!printing() && m_frameView)
-        width = m_frameView->visibleWidth();
+    if (!printing() && m_frameView) {
+        width = m_frameView->layoutWidth();
+        width = m_frameView->useFixedLayout() ? ceilf(style()->effectiveZoom() * float(width)) : width;
+    }
     return width;
 }
 

@@ -291,9 +291,9 @@ static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* f
     FrameView* view = frame->view();
     
     if (value)
-        return value->isPrimitiveValue() && compareValue(view->visibleHeight(), static_cast<CSSPrimitiveValue*>(value)->computeLengthInt(style), op);
+        return value->isPrimitiveValue() && compareValue(view->layoutHeight(), static_cast<CSSPrimitiveValue*>(value)->computeLengthInt(style), op);
 
-    return view->visibleHeight() != 0;
+    return view->layoutHeight() != 0;
 }
 
 static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
@@ -301,9 +301,9 @@ static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* fr
     FrameView* view = frame->view();
     
     if (value)
-        return value->isPrimitiveValue() && compareValue(view->visibleWidth(), static_cast<CSSPrimitiveValue*>(value)->computeLengthInt(style), op);
+        return value->isPrimitiveValue() && compareValue(view->layoutWidth(), static_cast<CSSPrimitiveValue*>(value)->computeLengthInt(style), op);
 
-    return view->visibleWidth() != 0;
+    return view->layoutWidth() != 0;
 }
 
 // rest of the functions are trampolines which set the prefix according to the media feature expression used

@@ -42,7 +42,10 @@ namespace WebCore {
 FrameLoaderClient::~FrameLoaderClient()
 {}
 
-void FrameLoaderClient::transitionToCommittedForNewPage(Frame* frame, const IntSize& size, const Color& backgroundColor, bool transparent)
+void FrameLoaderClient::transitionToCommittedForNewPage(Frame* frame,
+                                                        const IntSize& viewportSize,
+                                                        const Color& backgroundColor, bool transparent,
+                                                        const IntSize& fixedLayoutSize, bool useFixedLayout)
 {
     ASSERT(frame);
 
@@ -58,9 +61,12 @@ void FrameLoaderClient::transitionToCommittedForNewPage(Frame* frame, const IntS
 
     FrameView* frameView;
     if (isMainFrame)
-        frameView = new FrameView(frame, size);
+        frameView = new FrameView(frame, viewportSize);
     else
         frameView = new FrameView(frame);
+
+    frameView->setFixedLayoutSize(fixedLayoutSize);
+    frameView->setUseFixedLayout(useFixedLayout);
 
     frame->setView(frameView);
     // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.

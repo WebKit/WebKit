@@ -210,7 +210,7 @@ namespace WebCore {
 #endif
 
     protected:
-        static void transitionToCommittedForNewPage(Frame*, const IntSize&, const Color&, bool);
+        static void transitionToCommittedForNewPage(Frame*, const IntSize&, const Color&, bool, const IntSize &, bool);
     };
 
 } // namespace WebCore
