@@ -66,7 +66,7 @@
 		226E9E6A09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */; };
 		226E9E6B09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = 226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		441793A60E34EE150055E1AE /* WebHTMLRepresentationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 441793A50E34EE150055E1AE /* WebHTMLRepresentationInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		441793A60E34EE150055E1AE /* WebHTMLRepresentationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 441793A50E34EE150055E1AE /* WebHTMLRepresentationInternal.h */; };
 		4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */; settings = {ATTRIBUTES = (); }; };
 		4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */; };
 		51079D170CED11B00077247D /* WebSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51079D140CED11B00077247D /* WebSecurityOrigin.mm */; };
@@ -171,7 +171,7 @@
 		9398105E0824BF01008DF038 /* WebPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9CAE9D070252A4130ECA16EA /* WebPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398105F0824BF01008DF038 /* WebRenderNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F81C3902B67C26018635CA /* WebRenderNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810600824BF01008DF038 /* WebResourceLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 513D422E034CF55A00CA2ACD /* WebResourceLoadDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		939810630824BF01008DF038 /* WebHistoryItemInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 516F296F03A6C45A00CA2D3A /* WebHistoryItemInternal.h */; settings = {ATTRIBUTES = (); }; };
+		939810630824BF01008DF038 /* WebHistoryItemInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 516F296F03A6C45A00CA2D3A /* WebHistoryItemInternal.h */; };
 		939810640824BF01008DF038 /* WebFormDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */; };
 		939810650824BF01008DF038 /* CarbonWindowAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEE9003F9DBA103CA0DE6 /* CarbonWindowAdapter.h */; };
 		939810660824BF01008DF038 /* CarbonWindowContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEE9203F9DBA103CA0DE6 /* CarbonWindowContentView.h */; };
@@ -305,7 +305,7 @@
 		BCDFA9130C10B93E00D3A10C /* WebKitPluginContainerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */; };
 		C0167BF80D7F5DD00028696E /* WebScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = C0167BF60D7F5DD00028696E /* WebScriptDebugger.h */; };
 		C0167BF90D7F5DD00028696E /* WebScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0167BF70D7F5DD00028696E /* WebScriptDebugger.mm */; };
-		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
 		ED6BE2E7088C32B50044DEDC /* WebNSAttributedStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */; };

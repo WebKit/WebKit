@@ -1,4 +1,4 @@
-HEADER_SEARCH_PATHS = ForwardingHeaders
+HEADER_SEARCH_PATHS = ForwardingHeaders mac/InternalHeaders;
 FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(MAC_OS_X_VERSION_MAJOR));
 FRAMEWORK_SEARCH_PATHS_ = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks
 FRAMEWORK_SEARCH_PATHS_1040 = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks

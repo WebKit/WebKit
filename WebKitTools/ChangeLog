@@ -1,3 +1,21 @@
+2009-01-04  David Kilzer  <ddkilzer@apple.com>
+
+        Don't install internal headers in WebKit framework
+
+        Reviewed by Darin Adler.
+
+        Since WebHTMLRepresentationInternal.h and WebTypesInternal.h are
+        no longer installed in WebKit.framework/PrivateHeaders, use the
+        special relationship of DumpRenderTree within the WebKit source
+        tree to include the internal headers through relative paths.
+        Created the concept of mac/InternalHeaders to hide the ugly
+        paths.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Added
+        mac/InternalHeaders to HEADER_SEARCH_PATHS.
+        * DumpRenderTree/mac/InternalHeaders/WebKit/WebHTMLRepresentationInternal.h: Added.
+        * DumpRenderTree/mac/InternalHeaders/WebKit/WebTypesInternal.h: Added.
+
 2009-01-02  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.

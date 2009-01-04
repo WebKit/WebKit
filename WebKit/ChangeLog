@@ -1,3 +1,12 @@
+2009-01-04  David Kilzer  <ddkilzer@apple.com>
+
+        Don't install internal headers in WebKit framework
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove roles from internal
+        headers so they're not installed.
+
 2009-01-02  Darin Adler  <darin@apple.com>
 
         * StringsNotToBeLocalized.txt: Updated.
