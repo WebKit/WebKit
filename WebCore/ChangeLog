@@ -39,7 +39,7 @@
         * bindings/objc/DOMHTML.mm:
         (-[DOMHTMLSelectElement _activateItemAtIndex:]): Implemented this.
 
-2008-01-04  Adam Treat  <treat@kde.org>
+2009-01-04  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.
 
