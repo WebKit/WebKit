@@ -40,6 +40,7 @@
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/LocalizedStrings.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/WindowFeatures.h>
 #pragma warning(pop)
