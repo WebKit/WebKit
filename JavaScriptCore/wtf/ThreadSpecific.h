@@ -97,8 +97,11 @@ template<typename T>
 inline void ThreadSpecific<T>::destroy(void* ptr)
 {
     Data* data = static_cast<Data*>(ptr);
+    data->value->~T();
+    fastFree(data->value);
+    // Only reset the pointer after value destructor finishes - otherwise, code in destructor could trigger
+    // re-creation of the object.
     pthread_setspecific(data->owner->m_key, 0);
-    delete data->value;
     delete data;
 }
 
@@ -111,8 +114,11 @@ inline ThreadSpecific<T>::operator T*()
 {
     T* ptr = static_cast<T*>(get());
     if (!ptr) {
-        ptr = new T();
+        // Set up thread-specific value's memory pointer before invoking constructor, in case any function it calls
+        // needs to access the value, to avoid recursion.
+        ptr = static_cast<T*>(fastMalloc(sizeof(T)));
         set(ptr);
+        new (ptr) T;
     }
     return ptr;
 }

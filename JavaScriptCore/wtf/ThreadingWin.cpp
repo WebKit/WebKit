@@ -70,12 +70,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/RandomNumberSeed.h>
 
-#if PLATFORM(WIN) && USE(PTHREADS)
-// Currently, Apple's Windows port uses a mixture of native and pthreads functions in FastMalloc.
-// To ensure that thread-specific data is properly destroyed, we need to end each thread with pthread_exit().
-#include <pthread.h>
-#endif
-
 namespace WTF {
 
 // MS_VC_EXCEPTION, THREADNAME_INFO, and setThreadName all come from <http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx>.
@@ -180,11 +174,6 @@ static unsigned __stdcall wtfThreadEntryPoint(void* param)
     delete static_cast<ThreadFunctionInvocation*>(param);
 
     void* result = invocation.function(invocation.data);
-
-#if PLATFORM(WIN) && USE(PTHREADS)
-    // pthreads-win32 knows how to work with threads created with Win32 or CRT functions, so it's OK to mix APIs.
-    pthread_exit(result);
-#endif
 
     return reinterpret_cast<unsigned>(result);
 }

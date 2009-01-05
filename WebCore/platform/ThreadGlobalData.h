@@ -42,7 +42,7 @@ namespace WebCore {
         ThreadGlobalData();
         ~ThreadGlobalData();
 
-        EventNames& eventNames();
+        EventNames& eventNames() { return *m_eventNames; }
         StringImpl* emptyString() { return m_emptyString; }
         HashSet<StringImpl*>& atomicStringTable() { return *m_atomicStringTable; }
 

@@ -2,6 +2,24 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23073
+        <rdar://problem/6471129> Workers crash on Windows Release builds
+
+        * wtf/ThreadSpecific.h:
+        (WTF::ThreadSpecific::destroy): Changed to clear the pointer only after data object
+        destruction is finished - otherwise, WebCore::ThreadGlobalData destructor was re-creating
+        the object in order to access atomic string table.
+        (WTF::ThreadSpecific::operator T*): Symmetrically, set up the per-thread pointer before
+        data constructor is called.
+
+        * wtf/ThreadingWin.cpp: (WTF::wtfThreadEntryPoint): Remove a Windows-only hack to finalize
+        a thread - pthreadVC2 is a DLL, so it gets thread detached messages, and cleans up thread
+        specific data automatically. Besides, this code wasn't even compiled in for some time now.
+
+2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=23115
         Create a version of ASSERT for use with otherwise unused variables
 
