@@ -1,3 +1,18 @@
+2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23077
+        Make application cache use SQLite built-in user_version
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion): Changed to track versions with
+        PRAGMA user_version.
+
+        * loader/appcache/ApplicationCacheResource.h: (WebCore::ApplicationCacheResource::):
+        Used the occasion to get rid of the hole in bitmask that was a leftover from opportunistic
+        cache entries.
+
 2009-01-04  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Oliver Hunt.

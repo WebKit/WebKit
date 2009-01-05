@@ -298,30 +298,31 @@ bool ApplicationCacheStorage::executeSQLCommand(const String& sql)
     return result;
 }
 
-static const int SchemaVersion = 3;
+static const int schemaVersion = 3;
     
 void ApplicationCacheStorage::verifySchemaVersion()
 {
-    if (m_database.tableExists("SchemaVersion")) {
-        int version = SQLiteStatement(m_database, "SELECT version from SchemaVersion").getColumnInt(0);
-        
-        if (version == SchemaVersion)
-            return;
-    }
-    
+    int version = SQLiteStatement(m_database, "PRAGMA user_version").getColumnInt(0);
+    if (version == schemaVersion)
+        return;
+
     m_database.clearAllTables();
 
-    SQLiteTransaction createSchemaVersionTable(m_database);
-    createSchemaVersionTable.begin();
+    // Update user version.
+    SQLiteTransaction setDatabaseVersion(m_database);
+    setDatabaseVersion.begin();
 
-    executeSQLCommand("CREATE TABLE SchemaVersion (version INTEGER NOT NULL)");
-    SQLiteStatement statement(m_database, "INSERT INTO SchemaVersion (version) VALUES (?)");
+    char userVersionSQL[32];
+    int numBytes = snprintf(userVersionSQL, sizeof(userVersionSQL), "PRAGMA user_version=%d", schemaVersion);
+    if (static_cast<int>(sizeof(userVersionSQL)) < numBytes)
+        ASSERT_NOT_REACHED();
+
+    SQLiteStatement statement(m_database, userVersionSQL);
     if (statement.prepare() != SQLResultOk)
         return;
     
-    statement.bindInt64(1, SchemaVersion);
     executeStatement(statement);
-    createSchemaVersionTable.commit();
+    setDatabaseVersion.commit();
 }
     
 void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
