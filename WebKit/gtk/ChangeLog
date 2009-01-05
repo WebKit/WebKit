@@ -1,5 +1,11 @@
 2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
+        Fix build
+
+        * WebCoreSupport/ChromeClientGtk.h:
+
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
+
         Reviewed by George Staikos.
 
         Build fix for contentsSizeChanged
