@@ -1,3 +1,15 @@
+2009-01-05  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Fixes QWebFrame::setScrollBarPolicy(..) to actually work.  Also happens
+        to fix 192 layout tests that were previously failing for Qt.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setScrollBarPolicy):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
 2009-01-04  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.

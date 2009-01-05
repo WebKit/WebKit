@@ -275,6 +275,11 @@ void FrameView::initScrollbars()
     if (!d->m_needToInitScrollbars)
         return;
     d->m_needToInitScrollbars = false;
+    updateDefaultScrollbarState();
+}
+
+void FrameView::updateDefaultScrollbarState()
+{
     d->m_hmode = horizontalScrollbarMode();
     d->m_vmode = verticalScrollbarMode();
     setScrollbarModes(d->m_hmode, d->m_vmode);

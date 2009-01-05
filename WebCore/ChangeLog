@@ -1,3 +1,18 @@
+2009-01-05  Adam Treat  <treat@kde.org>
+
+        Reviewed by George Staikos.
+
+        Fixes FrameView to respect the state of scrollbarmode when it is explicitly
+        set programatically via a webkit API.
+
+        * loader/FrameLoaderClient.cpp:
+        (WebCore::FrameLoaderClient::transitionToCommittedForNewPage):
+        * loader/FrameLoaderClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::initScrollbars):
+        (WebCore::FrameView::updateDefaultScrollbarState):
+        * page/FrameView.h:
+
 2009-01-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -217,7 +217,9 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     WebCore::FrameLoaderClient::transitionToCommittedForNewPage(m_frame, m_webFrame->page()->viewportSize(),
                                                                 backgroundColor, !backgroundColor.alpha(),
                                                                 m_webFrame->page()->fixedLayoutSize(),
-                                                                m_webFrame->page()->useFixedLayout());
+                                                                m_webFrame->page()->useFixedLayout(),
+                                                                (ScrollbarMode)m_webFrame->scrollBarPolicy(Qt::Horizontal),
+                                                                (ScrollbarMode)m_webFrame->scrollBarPolicy(Qt::Vertical));
 }
 
 

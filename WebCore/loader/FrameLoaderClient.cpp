@@ -45,7 +45,8 @@ FrameLoaderClient::~FrameLoaderClient()
 void FrameLoaderClient::transitionToCommittedForNewPage(Frame* frame,
                                                         const IntSize& viewportSize,
                                                         const Color& backgroundColor, bool transparent,
-                                                        const IntSize& fixedLayoutSize, bool useFixedLayout)
+                                                        const IntSize& fixedLayoutSize, bool useFixedLayout,
+                                                        ScrollbarMode horizontalScrollbarMode, ScrollbarMode verticalScrollbarMode)
 {
     ASSERT(frame);
 
@@ -67,6 +68,8 @@ void FrameLoaderClient::transitionToCommittedForNewPage(Frame* frame,
 
     frameView->setFixedLayoutSize(fixedLayoutSize);
     frameView->setUseFixedLayout(useFixedLayout);
+    frameView->setScrollbarModes(horizontalScrollbarMode, verticalScrollbarMode);
+    frameView->updateDefaultScrollbarState();
 
     frame->setView(frameView);
     // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.

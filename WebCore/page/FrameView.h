@@ -110,6 +110,7 @@ public:
 
     void adjustViewSize();
     void initScrollbars();
+    void updateDefaultScrollbarState();
     
     virtual IntRect windowClipRect(bool clipToContents = true) const;
     IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
