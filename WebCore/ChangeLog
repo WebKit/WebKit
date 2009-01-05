@@ -1,3 +1,17 @@
+2009-01-04  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Avoid redundant AtomicString conversions
+
+        * dom/Node.cpp:
+        (WebCore::Node::getElementsByTagName): Pass starAtom instead of "*"
+        (WebCore::Node::getElementsByTagNameNS): Take an AtomicString for the namespace URI
+        (WebCore::Node::isDefaultNamespace): Ditto
+        (WebCore::Node::lookupPrefix): Ditto
+        (WebCore::Node::lookupNamespacePrefix): Ditto
+        * dom/Node.h: Ditto
+
 2009-01-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

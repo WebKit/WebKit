@@ -142,10 +142,10 @@ public:
 
     bool isSameNode(Node* other) const { return this == other; }
     bool isEqualNode(Node*) const;
-    bool isDefaultNamespace(const String& namespaceURI) const;
-    String lookupPrefix(const String& namespaceURI) const;
+    bool isDefaultNamespace(const AtomicString& namespaceURI) const;
+    String lookupPrefix(const AtomicString& namespaceURI) const;
     String lookupNamespaceURI(const String& prefix) const;
-    String lookupNamespacePrefix(const String& namespaceURI, const Element* originalElement) const;
+    String lookupNamespacePrefix(const AtomicString& namespaceURI, const Element* originalElement) const;
     
     String textContent(bool convertBRsToNewlines = false) const;
     void setTextContent(const String&, ExceptionCode&);
@@ -481,7 +481,7 @@ public:
     void notifyLocalNodeListsAttributeChanged();
     
     PassRefPtr<NodeList> getElementsByTagName(const String&);
-    PassRefPtr<NodeList> getElementsByTagNameNS(const String& namespaceURI, const String& localName);
+    PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const String& localName);
     PassRefPtr<NodeList> getElementsByName(const String& elementName);
     PassRefPtr<NodeList> getElementsByClassName(const String& classNames);
 
