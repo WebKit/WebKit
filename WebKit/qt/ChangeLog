@@ -1,4 +1,4 @@
-2009-01-05  Adam Treat  <treat@kde.org>
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
 
@@ -10,7 +10,7 @@
         * WebCoreSupport/FrameLoaderClientQt.cpp:
         (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
 
-2009-01-04  Adam Treat  <treat@kde.org>
+2009-01-04  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
 
@@ -23,7 +23,7 @@
         * Api/qwebframe.h:
         * Api/qwebframe_p.h:
 
-2008-12-30  Adam Treat  <treat@kde.org>
+2008-12-30  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
 
@@ -4416,7 +4416,7 @@
 
         * Api/qwebhistoryinterface.h:
 
-2008-01-21  Adam Treat  <treat@kde.org>
+2008-01-21  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Simon.
 
@@ -5787,7 +5787,7 @@
         * Api/qwebframe.cpp:
         (QWebFramePrivate::init):
 
-2007-11-21  Adam Treat  <treat@kde.org>
+2007-11-21  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Simon.
 
@@ -5800,7 +5800,7 @@
 
 2007-11-20  Simon Hausmann  <hausmann@kde.org>
 
-        Reviewed by Adam Treat <treat@kde.org>.
+        Reviewed by Adam Treat <adam.treat@torchmobile.com>.
 
         Remove static linkage of QtWebKit against the ICO image format plugin.
         
@@ -5831,7 +5831,7 @@
         (QWebPage::mouseMoveEvent):
         * Api/qwebpage.h:
 
-2007-11-20  Adam Treat  <treat@kde.org>
+2007-11-20  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Simon and George.
 
@@ -5840,7 +5840,7 @@
         * WebCoreSupport/FrameLoaderClientQt.cpp:
         (WebCore::FrameLoaderClientQt::representationExistsForURLScheme):
 
-2007-11-19  Adam Treat  <treat@kde.org>
+2007-11-19  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Simon.
 
@@ -7591,7 +7591,7 @@
         * WebKitPart/WebKitPartInterface.h: Renamed from WebKitQt/WebKitPart/WebKitPartInterface.h.
         * WebKitPart/org.kde.WebKitPart.xml: Renamed from WebKitQt/WebKitPart/org.kde.WebKitPart.xml.
 
-2007-10-02  Adam Treat  <treat@kde.org>
+2007-10-02  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Eric Seidel.
 
@@ -7693,7 +7693,7 @@
         * WebCoreSupport/EditCommandQt.cpp:
         * WebCoreSupport/EditCommandQt.h:
 
-2007-09-25  Adam Treat  <treat@kde.org>
+2007-09-25  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Simon and Lars.
 
@@ -7930,7 +7930,7 @@
         * WebCoreSupport/FrameLoaderClientQt.cpp:
         (WebCore::FrameLoaderClientQt::userAgent):
 
-2007-08-01  Adam Treat  <treat@kde.org>
+2007-08-01  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
 
@@ -7945,7 +7945,7 @@
         (QWebHistoryInterface::QWebHistoryInterface):
         * Api/qwebhistoryinterface.h: Added.
 
-2007-07-30  Adam Treat  <treat@kde.org>
+2007-07-30  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix build.
 
@@ -7961,7 +7961,7 @@
 
         * QtLauncher/QtLauncher.pro:
 
-2007-07-29  Adam Treat  <treat@kde.org>
+2007-07-29  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
 
@@ -7979,7 +7979,7 @@
         * WebCoreSupport/ChromeClientQt.cpp:
         (WebCore::ChromeClientQt::addToDirtyRegion):
 
-2007-07-29  Adam Treat  <treat@kde.org>
+2007-07-29  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov.
 
@@ -8020,7 +8020,7 @@
         * Api/qwebpage.h:
         * WebCoreSupport/FrameLoaderClientQt.cpp:
 
-2007-07-24  Adam Treat  <treat@kde.org>
+2007-07-24  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Niko and Lars.
 
@@ -8045,7 +8045,7 @@
         (WebCore::FrameLoaderClientQt::dispatchDidFirstLayout):
         (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
 
-2007-07-19  Adam Treat  <treat@kde.org>
+2007-07-19  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George.
 
@@ -8090,7 +8090,7 @@
         (QWebFrame::horizontalScrollBarPolicy):
         * Api/qwebframe.h:
 
-2007-07-17  Adam Treat <treat@kde.org>
+2007-07-17  Adam Treat <adam.treat@torchmobile.com>
 
         Build fix.
 

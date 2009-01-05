@@ -13,7 +13,7 @@
         (WebCore::PluginView::didFail):
         * plugins/PluginView.h:
 
-2009-01-05  Adam Treat  <treat@kde.org>
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
 
@@ -46,7 +46,7 @@
         again because we want to find the last match. We need to try again without
         adding any more text or handling the break before moving on.
 
-2009-01-05  Adam Treat  <treat@kde.org>
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix the Qt build
 
@@ -220,7 +220,7 @@
 
         * loader/appcache/ApplicationCacheStorage.cpp: Include wtf/StringExtras.h for snprintf.
 
-2009-01-05  Adam Treat  <treat@kde.org>
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
 
@@ -323,7 +323,7 @@
         * bindings/objc/DOMHTML.mm:
         (-[DOMHTMLSelectElement _activateItemAtIndex:]): Implemented this.
 
-2009-01-04  Adam Treat  <treat@kde.org>
+2009-01-04  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
 

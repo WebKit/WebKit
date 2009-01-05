@@ -13,7 +13,7 @@
         (WebFrameLoaderClient::redirectDataToPlugin):
         * WebCoreSupport/WebFrameLoaderClient.h:
 
-2009-01-04  Adam Treat  <treat@kde.org>
+2009-01-04  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
 
