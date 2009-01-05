@@ -1,3 +1,20 @@
+2009-01-04  Alice Liu  <alice.liu@apple.com>
+
+        <rdar://problem/6341776> Merge m_transitionCount and m_offset in Structure.
+
+        Reviewed by Darin Adler.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure): Remove m_transitionCount
+        (JSC::Structure::addPropertyTransitionToExistingStructure): No need to wait until after the assignment to offset to assert if it's notFound; move it up.
+        (JSC::Structure::addPropertyTransition): Use method for transitionCount instead of m_transitionCount. Remove line that maintains the m_transitionCount.
+        (JSC::Structure::changePrototypeTransition): Remove line that maintains the m_transitionCount.
+        (JSC::Structure::getterSetterTransition): Remove line that maintains the m_transitionCount.
+        * runtime/Structure.h:
+        Changed s_maxTransitionLength and m_offset from size_t to signed char.  m_offset will never become greater than 64 
+        because the structure transitions to a dictionary at that time.
+        (JSC::Structure::transitionCount): method to replace the data member
+
 2009-01-04  Darin Adler  <darin@apple.com>
 
         Reviewed by David Kilzer.

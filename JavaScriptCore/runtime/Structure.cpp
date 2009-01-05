@@ -47,7 +47,7 @@
 #endif
 
 using namespace std;
-using WTF::doubleHash;
+using namespace WTF;
 
 namespace JSC {
 
@@ -126,10 +126,9 @@ Structure::Structure(JSValue* prototype, const TypeInfo& typeInfo)
     , m_cachedPrototypeChain(0)
     , m_previous(0)
     , m_nameInPrevious(0)
-    , m_transitionCount(0)
     , m_propertyTable(0)
     , m_propertyStorageCapacity(JSObject::inlineStorageCapacity)
-    , m_offset(WTF::notFound)
+    , m_offset(noOffset)
     , m_isDictionary(false)
     , m_isPinnedPropertyTable(false)
     , m_hasGetterSetterProperties(false)
@@ -237,7 +236,7 @@ static unsigned nextPowerOf2(unsigned v)
 
 static unsigned sizeForKeyCount(size_t keyCount)
 {
-    if (keyCount == WTF::notFound)
+    if (keyCount == notFound)
         return newTableSize;
 
     if (keyCount < 8)
@@ -361,14 +360,14 @@ PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Struct
     if (structure->m_usingSingleTransitionSlot) {
         Structure* existingTransition = structure->m_transitions.singleTransition;
         if (existingTransition && existingTransition->m_nameInPrevious.get() == propertyName.ustring().rep() && existingTransition->m_attributesInPrevious == attributes) {
+            ASSERT(structure->m_transitions.singleTransition->m_offset != noOffset);
             offset = structure->m_transitions.singleTransition->m_offset;
-            ASSERT(offset != WTF::notFound);
             return existingTransition;
         }
     } else {
         if (Structure* existingTransition = structure->m_transitions.table->get(make_pair(propertyName.ustring().rep(), attributes))) {
+            ASSERT(existingTransition->m_offset != noOffset);
             offset = existingTransition->m_offset;
-            ASSERT(offset != WTF::notFound);
             return existingTransition;
         }
     }
@@ -382,7 +381,7 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
     ASSERT(structure->typeInfo().type() == ObjectType);
     ASSERT(!Structure::addPropertyTransitionToExistingStructure(structure, propertyName, attributes, offset));
 
-    if (structure->m_transitionCount > s_maxTransitionLength) {
+    if (structure->transitionCount() > s_maxTransitionLength) {
         RefPtr<Structure> transition = toDictionaryTransition(structure);
         offset = transition->put(propertyName, attributes);
         if (transition->propertyStorageSize() > transition->propertyStorageCapacity())
@@ -395,7 +394,6 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
     transition->m_previous = structure;
     transition->m_nameInPrevious = propertyName.ustring().rep();
     transition->m_attributesInPrevious = attributes;
-    transition->m_transitionCount = structure->m_transitionCount + 1;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
 
@@ -450,7 +448,6 @@ PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure,
 {
     RefPtr<Structure> transition = create(prototype, structure->typeInfo());
 
-    transition->m_transitionCount = structure->m_transitionCount + 1;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
 
@@ -466,7 +463,6 @@ PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure,
 PassRefPtr<Structure> Structure::getterSetterTransition(Structure* structure)
 {
     RefPtr<Structure> transition = create(structure->storedPrototype(), structure->typeInfo());
-    transition->m_transitionCount = structure->m_transitionCount + 1;
     transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = transition->m_hasGetterSetterProperties;
 
@@ -614,7 +610,7 @@ size_t Structure::get(const Identifier& propertyName, unsigned& attributes)
 
     materializePropertyMapIfNecessary();
     if (!m_propertyTable)
-        return WTF::notFound;
+        return notFound;
 
     UString::Rep* rep = propertyName._ustring.rep();
 
@@ -626,7 +622,7 @@ size_t Structure::get(const Identifier& propertyName, unsigned& attributes)
 
     unsigned entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
     if (entryIndex == emptyEntryIndex)
-        return WTF::notFound;
+        return notFound;
 
     if (rep == m_propertyTable->entries()[entryIndex - 1].key) {
         attributes = m_propertyTable->entries()[entryIndex - 1].attributes;
@@ -648,7 +644,7 @@ size_t Structure::get(const Identifier& propertyName, unsigned& attributes)
 
         entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
         if (entryIndex == emptyEntryIndex)
-            return WTF::notFound;
+            return notFound;
 
         if (rep == m_propertyTable->entries()[entryIndex - 1].key) {
             attributes = m_propertyTable->entries()[entryIndex - 1].attributes;
@@ -660,7 +656,7 @@ size_t Structure::get(const Identifier& propertyName, unsigned& attributes)
 size_t Structure::put(const Identifier& propertyName, unsigned attributes)
 {
     ASSERT(!propertyName.isNull());
-    ASSERT(get(propertyName) == WTF::notFound);
+    ASSERT(get(propertyName) == notFound);
 
     checkConsistency();
 
@@ -755,7 +751,7 @@ size_t Structure::remove(const Identifier& propertyName)
     UString::Rep* rep = propertyName._ustring.rep();
 
     if (!m_propertyTable)
-        return WTF::notFound;
+        return notFound;
 
 #if DUMP_PROPERTYMAP_STATS
     ++numProbes;
@@ -770,7 +766,7 @@ size_t Structure::remove(const Identifier& propertyName)
     while (1) {
         entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
         if (entryIndex == emptyEntryIndex)
-            return WTF::notFound;
+            return notFound;
 
         key = m_propertyTable->entries()[entryIndex - 1].key;
         if (rep == key)

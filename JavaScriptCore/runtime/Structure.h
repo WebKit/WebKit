@@ -106,7 +106,7 @@ namespace JSC {
         bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
         void setHasGetterSetterProperties(bool hasGetterSetterProperties) { m_hasGetterSetterProperties = hasGetterSetterProperties; }
 
-        bool isEmpty() const { return m_propertyTable ? !m_propertyTable->keyCount : m_offset == WTF::notFound; }
+        bool isEmpty() const { return m_propertyTable ? !m_propertyTable->keyCount : m_offset == noOffset; }
 
     private:
         Structure(JSValue* prototype, const TypeInfo&);
@@ -139,9 +139,17 @@ namespace JSC {
             return &m_refCount;
         }
 
+        signed char transitionCount() const
+        {
+            // Since the number of transitions is always the same as m_offset, we keep the size of Structure down by not storing both.
+            return m_offset == noOffset ? 0 : m_offset + 1;
+        }
+
         static const unsigned emptyEntryIndex = 0;
     
-        static const size_t s_maxTransitionLength = 64;
+        static const signed char s_maxTransitionLength = 64;
+
+        static const signed char noOffset = -1;
 
         TypeInfo m_typeInfo;
 
@@ -151,7 +159,6 @@ namespace JSC {
         RefPtr<Structure> m_previous;
         RefPtr<UString::Rep> m_nameInPrevious;
 
-        size_t m_transitionCount;
         union {
             Structure* singleTransition;
             StructureTransitionTable* table;
@@ -162,7 +169,7 @@ namespace JSC {
         PropertyMapHashTable* m_propertyTable;
 
         size_t m_propertyStorageCapacity;
-        size_t m_offset;
+        signed char m_offset;
 
         bool m_isDictionary : 1;
         bool m_isPinnedPropertyTable : 1;
