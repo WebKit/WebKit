@@ -31,12 +31,13 @@
 #include "ApplicationCache.h"
 #include "ApplicationCacheGroup.h"
 #include "ApplicationCacheResource.h"
-#include "FileSystem.h"
 #include "CString.h"
+#include "FileSystem.h"
 #include "KURL.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/StringExtras.h>
 
 using namespace std;
 
