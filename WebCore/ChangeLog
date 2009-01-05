@@ -25,6 +25,16 @@
 
 2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        Fix platforms that don't have Workers enabled.
+
+        * platform/ThreadGlobalData.cpp: (WebCore::threadGlobalData): Create ThreadGlobalData in
+        two stages, so that EventNames constructor can access the just-created atomic string table.
+        This matches what happens in ThreadSpecific case.
+
+2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
+
         Suggested by Dave Levin.
 
         Mac release build fix.
