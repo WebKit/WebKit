@@ -1,5 +1,22 @@
 2009-01-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Bug 23105: canvas setFillColor function ignores alpha argument
+        https://bugs.webkit.org/show_bug.cgi?id=23105
+
+        Test: fast/canvas/set-colors.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFillColor): Pass alpha value through instead
+        of ignoring it and always passing 1.
+
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor): Fix spelling of transparent in comments.
+        (WebCore::CanvasStyle::applyFillColor): Ditto.
+
+2009-01-04  Darin Adler  <darin@apple.com>
+
         Bug 23086: REGRESSION(r39540/r39541): Windows build fails due to ICU errors
         https://bugs.webkit.org/show_bug.cgi?id=23086
 

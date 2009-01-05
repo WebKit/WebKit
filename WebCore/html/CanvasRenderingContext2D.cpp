@@ -499,7 +499,7 @@ void CanvasRenderingContext2D::setFillColor(float grayLevel)
 
 void CanvasRenderingContext2D::setFillColor(const String& color, float alpha)
 {
-    setFillStyle(CanvasStyle::create(color, 1));
+    setFillStyle(CanvasStyle::create(color, alpha));
 }
 
 void CanvasRenderingContext2D::setFillColor(float grayLevel, float alpha)

@@ -1,3 +1,14 @@
+2009-01-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 23105: canvas setFillColor function ignores alpha argument
+        https://bugs.webkit.org/show_bug.cgi?id=23105
+
+        * fast/canvas/resources/set-colors.js: Added.
+        * fast/canvas/set-colors-expected.txt: Added.
+        * fast/canvas/set-colors.html: Added.
+
 2009-01-04  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the expected image to account for a typo fix done on 2008-12-23.
