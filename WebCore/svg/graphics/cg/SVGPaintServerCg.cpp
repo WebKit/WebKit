@@ -38,7 +38,7 @@ void SVGPaintServer::draw(GraphicsContext*& context, const RenderObject* path, S
     teardown(context, path, type);
 }
 
-void SVGPaintServer::teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const
+void SVGPaintServer::teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool) const
 {
     // no-op
 }

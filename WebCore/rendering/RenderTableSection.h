@@ -47,9 +47,6 @@ public:
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
 
-    virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const { return 0; }
-    virtual void position(InlineBox*) { }
-
     virtual int getBaselineOfFirstLineBox() const;
 
     void addCell(RenderTableCell*, RenderObject* row);
@@ -126,6 +123,9 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
 private:
+    virtual int lineHeight(bool, bool) const { return 0; }
+    virtual void position(InlineBox*) { }
+
     bool ensureRows(int);
     void clearGrid();
 

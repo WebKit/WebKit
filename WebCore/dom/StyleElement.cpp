@@ -40,7 +40,7 @@ StyleSheet* StyleElement::sheet(Element* e)
     return m_sheet.get();
 }
 
-void StyleElement::insertedIntoDocument(Document* document, Element* element)
+void StyleElement::insertedIntoDocument(Document*, Element* element)
 {
     process(element);
 }

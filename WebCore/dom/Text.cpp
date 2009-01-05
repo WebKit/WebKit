@@ -231,12 +231,12 @@ bool Text::rendererIsNeeded(RenderStyle *style)
     return true;
 }
 
-RenderObject *Text::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject *Text::createRenderer(RenderArena* arena, RenderStyle*)
 {
 #if ENABLE(SVG)
     if (parentNode()->isSVGElement())
         return new (arena) RenderSVGInlineText(this, m_data);
-#endif // ENABLE(SVG)
+#endif
     
     return new (arena) RenderText(this, m_data);
 }

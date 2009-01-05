@@ -36,6 +36,7 @@ public:
         return adoptRef(new MatrixTransformOperation(a, b, c, d, e, f));
     }
 
+private:
     virtual bool isIdentity() const { return m_a == 1 && m_b == 0 && m_c == 0 && m_d == 1 && m_e == 0 && m_f == 0; }
     virtual OperationType getOperationType() const { return MATRIX; }
     virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == MATRIX; }
@@ -49,7 +50,7 @@ public:
         return m_a == m->m_a && m_b == m->m_b && m_c == m->m_c && m_d == m->m_d && m_e == m->m_e && m_f == m->m_f;
     }
 
-    virtual bool apply(AffineTransform& transform, const IntSize& borderBoxSize) const
+    virtual bool apply(AffineTransform& transform, const IntSize&) const
     {
         AffineTransform matrix(m_a, m_b, m_c, m_d, m_e, m_f);
         transform = matrix * transform;
@@ -58,7 +59,6 @@ public:
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
     
-private:
     MatrixTransformOperation(double a, double b, double c, double d, double e, double f)
         : m_a(a)
         , m_b(b)

@@ -71,7 +71,7 @@ String StorageArea::internalGetItem(const String& key) const
     return m_storageMap->getItem(key);
 }
 
-void StorageArea::internalSetItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
+void StorageArea::internalSetItem(const String& key, const String& value, ExceptionCode&, Frame* frame)
 {
     ASSERT(!value.isNull());
     

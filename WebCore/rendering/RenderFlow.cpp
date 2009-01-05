@@ -310,7 +310,7 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
     }
 }
 
-int RenderFlow::lineHeight(bool firstLine, bool isRootLineBox) const
+int RenderFlow::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
 {
     if (firstLine) {
         RenderStyle* s = style(firstLine);
@@ -346,7 +346,7 @@ void RenderFlow::dirtyLineBoxes(bool fullLayout, bool isRootLineBox)
     }
 }
 
-InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun)
+InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool /*isOnlyRun*/)
 {
     checkConsistency();
 

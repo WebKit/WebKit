@@ -76,7 +76,7 @@ ApplicationCacheGroup::~ApplicationCacheGroup()
     cacheStorage().cacheGroupDestroyed(this);
 }
     
-ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceRequest& request, DocumentLoader* loader)
+ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceRequest& request, DocumentLoader*)
 {
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return 0;
@@ -90,7 +90,7 @@ ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceReque
     return 0;
 }
     
-ApplicationCache* ApplicationCacheGroup::fallbackCacheForMainRequest(const ResourceRequest& request, DocumentLoader* loader)
+ApplicationCache* ApplicationCacheGroup::fallbackCacheForMainRequest(const ResourceRequest& request, DocumentLoader*)
 {
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return 0;
@@ -376,7 +376,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
     m_currentResource = ApplicationCacheResource::create(url, response, type);
 }
 
-void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* data, int length, int lengthReceived)
+void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* data, int length, int)
 {
     if (handle == m_manifestHandle) {
         didReceiveManifestData(data, length);

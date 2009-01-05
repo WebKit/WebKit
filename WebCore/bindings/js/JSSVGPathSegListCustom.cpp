@@ -35,7 +35,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue* JSSVGPathSegList::clear(ExecState* exec, const ArgList& args)
+JSValue* JSSVGPathSegList::clear(ExecState* exec, const ArgList&)
 {
     ExceptionCode ec = 0;
 

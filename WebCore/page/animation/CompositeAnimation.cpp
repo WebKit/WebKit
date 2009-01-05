@@ -352,7 +352,7 @@ PassRefPtr<KeyframeAnimation> CompositeAnimationPrivate::getAnimationForProperty
     return retval;
 }
 
-void CompositeAnimationPrivate::cleanupFinishedAnimations(RenderObject* renderer)
+void CompositeAnimationPrivate::cleanupFinishedAnimations(RenderObject*)
 {
     if (isSuspended())
         return;

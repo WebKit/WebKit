@@ -247,7 +247,7 @@ void RenderText::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigne
     }
 }
 
-void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool)
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
         quads.append(localToAbsoluteQuad(FloatRect(box->xPos(), box->yPos(), box->width(), box->height())));

@@ -80,7 +80,7 @@ namespace WebCore {
         // Handlers to do/undo actions on the target node before an event is dispatched to it and after the event
         // has been dispatched.  The data pointer is handed back by the preDispatch and passed to postDispatch.
         virtual void* preDispatchEventHandler(Event*) { return 0; }
-        virtual void postDispatchEventHandler(Event*, void* dataFromPreDispatch) { }
+        virtual void postDispatchEventHandler(Event*, void* /*dataFromPreDispatch*/) { }
 
     protected:
         virtual ~EventTarget();

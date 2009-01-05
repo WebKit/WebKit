@@ -31,7 +31,7 @@ using namespace JSC;
 
 namespace WebCore {
     
-    inline JSValue* JSCanvasPixelArray::getByIndex(ExecState* exec, unsigned index)
+    inline JSValue* JSCanvasPixelArray::getByIndex(ExecState*, unsigned index)
     {
         unsigned char result;
         if (!impl()->get(index, result))

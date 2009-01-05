@@ -83,7 +83,7 @@ IntRect RenderTableCol::absoluteClippedOverflowRect()
     return IntRect();
 }
 
-void RenderTableCol::imageChanged(WrappedImagePtr image, const IntRect*)
+void RenderTableCol::imageChanged(WrappedImagePtr, const IntRect*)
 {
     // FIXME: Repaint only the rect the image paints in.
     repaint();

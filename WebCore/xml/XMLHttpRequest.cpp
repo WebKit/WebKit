@@ -1154,7 +1154,7 @@ void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const Reso
         ec = XMLHttpRequestException::NETWORK_ERR;
 }
 
-void XMLHttpRequest::didFail(SubresourceLoader* loader, const ResourceError& error)
+void XMLHttpRequest::didFail(SubresourceLoader*, const ResourceError& error)
 {
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)
@@ -1204,7 +1204,7 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
         dropProtection();
 }
 
-void XMLHttpRequest::didFinishLoadingPreflight(SubresourceLoader* loader)
+void XMLHttpRequest::didFinishLoadingPreflight(SubresourceLoader*)
 {
     ASSERT(m_inPreflight);
     ASSERT(!m_sameOriginRequest);
@@ -1217,7 +1217,7 @@ void XMLHttpRequest::didFinishLoadingPreflight(SubresourceLoader* loader)
         unsetPendingActivity(this);
 }
 
-void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse&)
 {
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
     if (!scriptExecutionContext()->securityOrigin()->canRequest(request.url())) {

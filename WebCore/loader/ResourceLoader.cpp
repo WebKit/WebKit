@@ -227,7 +227,7 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     m_request = request;
 }
 
-void ResourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+void ResourceLoader::didSendData(unsigned long long, unsigned long long)
 {
 }
 

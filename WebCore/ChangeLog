@@ -1,3 +1,15 @@
+2009-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23102: turn on unused parameter warnings in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=23102
+
+        First step: Fix the simple cases where we can just remove an argument name.
+        Also made a few more things protected and private.
+
+        * many files
+
 2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
@@ -8,6 +20,12 @@
         * loader/appcache/ApplicationCacheStorage.cpp:
         (WebCore::ApplicationCacheStorage::verifySchemaVersion): Use the new ASSERT_UNUSED macro.
 
+2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Non-Mac build fix.
+
+        * loader/appcache/ApplicationCacheStorage.cpp: Include wtf/StringExtras.h for snprintf.
+
 2009-01-05  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.
@@ -15,12 +33,6 @@
         Remove unnecessary methods from EmptyFrameLoaderClient
 
         * loader/EmptyClients.h:
-
-2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
-
-        Non-Mac build fix.
-
-        * loader/appcache/ApplicationCacheStorage.cpp: Include wtf/StringExtras.h for snprintf.
 
 2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
 

@@ -52,7 +52,7 @@ public:
 
 protected:
     // The AuthenticationChallenge subclass may "shadow" this method to compare platform specific fields
-    static bool platformCompare(const AuthenticationChallengeBase& a, const AuthenticationChallengeBase& b) { return true; }
+    static bool platformCompare(const AuthenticationChallengeBase&, const AuthenticationChallengeBase&) { return true; }
 
     bool m_isNull;
     ProtectionSpace m_protectionSpace;

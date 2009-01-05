@@ -56,11 +56,6 @@ public:
     virtual InlineTextBox* createInlineTextBox();
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootInlineBox = false);
 
-    virtual void paint(PaintInfo&, int tx, int ty) { ASSERT_NOT_REACHED(); }
-    virtual void layout() { ASSERT_NOT_REACHED(); }
-
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction) { ASSERT_NOT_REACHED(); return false; }
-
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
 
@@ -143,6 +138,10 @@ private:
     // will use the more efficient textLength() instead, while
     // callers with a RenderObject* can continue to use length().
     virtual unsigned length() const { return textLength(); }
+
+    virtual void paint(PaintInfo&, int, int) { ASSERT_NOT_REACHED(); }
+    virtual void layout() { ASSERT_NOT_REACHED(); }
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction) { ASSERT_NOT_REACHED(); return false; }
 
     void deleteTextBoxes();
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;

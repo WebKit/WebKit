@@ -304,7 +304,7 @@ void MessagePort::addEventListener(const AtomicString& eventType, PassRefPtr<Eve
     }    
 }
 
-void MessagePort::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool useCapture)
+void MessagePort::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
 {
     EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end())

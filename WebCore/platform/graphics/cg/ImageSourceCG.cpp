@@ -48,7 +48,7 @@ ImageSource::~ImageSource()
     clear(true);
 }
 
-void ImageSource::clear(bool destroyAll, size_t clearBeforeFrame)
+void ImageSource::clear(bool destroyAll, size_t)
 {
     if (destroyAll) {
         if (m_decoder) {
@@ -231,7 +231,7 @@ float ImageSource::frameDurationAtIndex(size_t index)
     return duration;
 }
 
-bool ImageSource::frameHasAlphaAtIndex(size_t index)
+bool ImageSource::frameHasAlphaAtIndex(size_t)
 {
     // Might be interesting to do this optimization on Mac some day, but for now we're just using this
     // for the Cairo source, since it uses our decoders, and our decoders can answer this question.

@@ -121,7 +121,7 @@ protected:
     void platformLazyInit() { }
 
     // The ResourceResponse subclass may "shadow" this method to compare platform specific fields
-    static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b) { return true; }
+    static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }
 
     KURL m_url;
     String m_mimeType;

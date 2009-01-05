@@ -416,7 +416,7 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
     return false;
 }
 
-bool _NPN_Construct(NPP npp, NPObject* o, const NPVariant* args, uint32_t argCount, NPVariant* result)
+bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = reinterpret_cast<JavaScriptObject*>(o);

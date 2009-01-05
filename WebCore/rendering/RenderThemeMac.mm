@@ -607,7 +607,7 @@ void RenderThemeMac::setSizeFromFont(RenderStyle* style, const IntSize* sizes) c
         style->setHeight(Length(size.height(), Fixed));
 }
 
-void RenderThemeMac::setFontFromControlSize(CSSStyleSelector* selector, RenderStyle* style, NSControlSize controlSize) const
+void RenderThemeMac::setFontFromControlSize(CSSStyleSelector*, RenderStyle* style, NSControlSize controlSize) const
 {
     FontDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
@@ -646,7 +646,7 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Eleme
 {
 }
 
-bool RenderThemeMac::paintCapsLockIndicator(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintCapsLockIndicator(RenderObject*, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     if (paintInfo.context->paintingDisabled())
         return true;
@@ -747,7 +747,7 @@ const int styledPopupPaddingLeft = 8;
 const int styledPopupPaddingTop = 1;
 const int styledPopupPaddingBottom = 2;
 
-static void TopGradientInterpolate(void* info, const CGFloat* inData, CGFloat* outData)
+static void TopGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
     static float dark[4] = { 1.0f, 1.0f, 1.0f, 0.4f };
     static float light[4] = { 1.0f, 1.0f, 1.0f, 0.15f };
@@ -757,7 +757,7 @@ static void TopGradientInterpolate(void* info, const CGFloat* inData, CGFloat* o
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
 
-static void BottomGradientInterpolate(void* info, const CGFloat* inData, CGFloat* outData)
+static void BottomGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
     static float dark[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
     static float light[4] = { 1.0f, 1.0f, 1.0f, 0.3f };
@@ -767,7 +767,7 @@ static void BottomGradientInterpolate(void* info, const CGFloat* inData, CGFloat
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
 
-static void MainGradientInterpolate(void* info, const CGFloat* inData, CGFloat* outData)
+static void MainGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
     static float dark[4] = { 0.0f, 0.0f, 0.0f, 0.15f };
     static float light[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -777,7 +777,7 @@ static void MainGradientInterpolate(void* info, const CGFloat* inData, CGFloat* 
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
 
-static void TrackGradientInterpolate(void* info, const CGFloat* inData, CGFloat* outData)
+static void TrackGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
     static float dark[4] = { 0.0f, 0.0f, 0.0f, 0.678f };
     static float light[4] = { 0.0f, 0.0f, 0.0f, 0.13f };
@@ -986,7 +986,7 @@ int RenderThemeMac::popupInternalPaddingBottom(RenderStyle* style) const
     return 0;
 }
 
-void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     float fontScale = style->fontSize() / baseFontSize;
 
@@ -1027,7 +1027,7 @@ int RenderThemeMac::minimumMenuListSize(RenderStyle* style) const
 const int trackWidth = 5;
 const int trackRadius = 2;
 
-void RenderThemeMac::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(0);
 }
@@ -1071,7 +1071,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const RenderObject::Paint
     return false;
 }
 
-void RenderThemeMac::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(0);
 }
@@ -1193,7 +1193,7 @@ bool RenderThemeMac::paintSearchField(RenderObject* o, const RenderObject::Paint
     return false;
 }
 
-void RenderThemeMac::setSearchCellState(RenderObject* o, const IntRect& r)
+void RenderThemeMac::setSearchCellState(RenderObject* o, const IntRect&)
 {
     NSSearchFieldCell* search = this->search();
 
@@ -1220,7 +1220,7 @@ void RenderThemeMac::setSearchFieldSize(RenderStyle* style) const
     setSizeFromFont(style, searchFieldSizes());
 }
 
-void RenderThemeMac::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element*) const
 {
     // Override border.
     style->resetBorder();
@@ -1289,7 +1289,7 @@ const IntSize* RenderThemeMac::cancelButtonSizes() const
     return sizes;
 }
 
-void RenderThemeMac::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, cancelButtonSizes());
     style->setWidth(Length(size.width(), Fixed));
@@ -1304,7 +1304,7 @@ const IntSize* RenderThemeMac::resultsButtonSizes() const
 }
 
 const int emptyResultsOffset = 9;
-void RenderThemeMac::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width() - emptyResultsOffset, Fixed));
@@ -1312,12 +1312,12 @@ void RenderThemeMac::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector
     style->setBoxShadow(0);
 }
 
-bool RenderThemeMac::paintSearchFieldDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintSearchFieldDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&)
 {
     return false;
 }
 
-void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width(), Fixed));
@@ -1325,7 +1325,7 @@ void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* s
     style->setBoxShadow(0);
 }
 
-bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
 {
     Node* input = o->node()->shadowAncestorNode();
     setSearchCellState(input->renderer(), r);
@@ -1344,7 +1344,7 @@ bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const Re
 }
 
 const int resultsArrowWidth = 5;
-void RenderThemeMac::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width() + resultsArrowWidth, Fixed));

@@ -133,7 +133,7 @@ DocLoader* XSLStyleSheet::docLoader()
     return m_ownerDocument->docLoader();
 }
 
-bool XSLStyleSheet::parseString(const String& string, bool strict)
+bool XSLStyleSheet::parseString(const String& string, bool)
 {
     // Parse in a single chunk into an xmlDocPtr
     const UChar BOM = 0xFEFF;

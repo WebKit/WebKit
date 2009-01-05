@@ -483,11 +483,11 @@ public:
     void paintBoxShadow(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool begin = true, bool end = true);
 
     // RenderBox implements this.
-    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty) { }
-    virtual void paintMask(PaintInfo&, int tx, int ty) { }
+    virtual void paintBoxDecorations(PaintInfo&, int /*tx*/, int /*ty*/) { }
+    virtual void paintMask(PaintInfo&, int /*tx*/, int /*ty*/) { }
     virtual void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*,
-                                        int clipy, int cliph, int tx, int ty, int width, int height,
-                                        InlineFlowBox* box = 0, CompositeOperator = CompositeSourceOver) { }
+                                        int /*clipY*/, int /*clipH*/, int /*tx*/, int /*ty*/, int /*width*/, int /*height*/,
+                                        InlineFlowBox* = 0, CompositeOperator = CompositeSourceOver) { }
 
     
     /*
@@ -885,8 +885,8 @@ public:
     virtual int previousOffset(int current) const;
     virtual int nextOffset(int current) const;
 
-    virtual void imageChanged(CachedImage* image, const IntRect* = 0);
-    virtual void imageChanged(WrappedImagePtr data, const IntRect* = 0) { };
+    virtual void imageChanged(CachedImage*, const IntRect* = 0);
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) { }
     virtual bool willRenderImage(CachedImage*);
 
     virtual void selectionStartEnd(int& spos, int& epos) const;

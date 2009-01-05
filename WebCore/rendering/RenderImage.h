@@ -72,7 +72,7 @@ public:
     void highQualityRepaintTimerFired(Timer<RenderImage>*);
 
 protected:
-    virtual Image* image(int w = 0, int h = 0) { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
+    virtual Image* image(int /*w*/ = 0, int /*h*/ = 0) { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
     virtual bool errorOccurred() const { return m_cachedImage && m_cachedImage->errorOccurred(); }
     virtual bool usesImageContainerSize() const { return m_cachedImage ? m_cachedImage->usesImageContainerSize() : false; }
     virtual void setImageContainerSize(const IntSize& size) const { if (m_cachedImage) m_cachedImage->setImageContainerSize(size); }

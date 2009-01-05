@@ -58,7 +58,7 @@ void RenderSVGInlineText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
     rects.append(computeAbsoluteRectForRange(0, textLength()));
 }
 
-void RenderSVGInlineText::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+void RenderSVGInlineText::absoluteQuads(Vector<FloatQuad>& quads, bool)
 {
     quads.append(FloatRect(computeAbsoluteRectForRange(0, textLength())));
 }

@@ -65,7 +65,7 @@ void JSWorkerContext::mark()
     }
 }
 
-JSValue* JSWorkerContext::self(ExecState* exec) const
+JSValue* JSWorkerContext::self(ExecState*) const
 {
     return asValue();
 }

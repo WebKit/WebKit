@@ -84,7 +84,7 @@ void StyleCachedImage::removeClient(RenderObject* renderer)
     return m_image->removeClient(renderer);
 }
 
-Image* StyleCachedImage::image(RenderObject* renderer, const IntSize&) const
+Image* StyleCachedImage::image(RenderObject*, const IntSize&) const
 {
     return m_image->image();
 }

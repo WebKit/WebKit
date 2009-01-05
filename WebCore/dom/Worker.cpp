@@ -165,7 +165,7 @@ void Worker::addEventListener(const AtomicString& eventType, PassRefPtr<EventLis
     }    
 }
 
-void Worker::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool useCapture)
+void Worker::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
 {
     EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end())

@@ -53,7 +53,7 @@ IconRecord::~IconRecord()
     LOG(IconDatabase, "Destroying IconRecord for icon url %s", m_iconURL.ascii().data());
 }
 
-Image* IconRecord::image(const IntSize& size)
+Image* IconRecord::image(const IntSize&)
 {
     // FIXME rdar://4680377 - For size right now, we are returning our one and only image and the Bridge
     // is resizing it in place.  We need to actually store all the original representations here and return a native

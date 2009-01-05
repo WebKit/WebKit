@@ -79,7 +79,7 @@ FixedTableLayout::FixedTableLayout(RenderTable* table)
 {
 }
 
-int FixedTableLayout::calcWidthArray(int tableWidth)
+int FixedTableLayout::calcWidthArray(int)
 {
     int usedWidth = 0;
 

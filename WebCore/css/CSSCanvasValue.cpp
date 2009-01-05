@@ -44,7 +44,7 @@ String CSSCanvasValue::cssText() const
     return result;
 }
 
-void CSSCanvasValue::canvasChanged(HTMLCanvasElement* element, const FloatRect& changedRect)
+void CSSCanvasValue::canvasChanged(HTMLCanvasElement*, const FloatRect& changedRect)
 {
     IntRect imageChangeRect = enclosingIntRect(changedRect);
     HashMap<RenderObject*, IntSize>::const_iterator end = m_clients.end();
@@ -52,7 +52,7 @@ void CSSCanvasValue::canvasChanged(HTMLCanvasElement* element, const FloatRect& 
         curr->first->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
 }
 
-void CSSCanvasValue::canvasResized(HTMLCanvasElement* element)
+void CSSCanvasValue::canvasResized(HTMLCanvasElement*)
 {
     HashMap<RenderObject*, IntSize>::const_iterator end = m_clients.end();
     for (HashMap<RenderObject*, IntSize>::const_iterator curr = m_clients.begin(); curr != end; ++curr)

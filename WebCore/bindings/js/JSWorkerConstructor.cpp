@@ -47,7 +47,7 @@ JSWorkerConstructor::JSWorkerConstructor(ExecState* exec)
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructWorker(ExecState* exec, JSObject* constructor, const ArgList& args)
+static JSObject* constructWorker(ExecState* exec, JSObject*, const ArgList& args)
 {
     if (args.size() == 0)
         return throwError(exec, SyntaxError, "Not enough arguments");

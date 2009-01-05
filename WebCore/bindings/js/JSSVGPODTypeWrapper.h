@@ -191,7 +191,7 @@ public:
         return (m_parent.get()->*m_getter)();
     }
 
-    virtual void commitChange(PODType type, SVGElement* context)
+    virtual void commitChange(PODType type, SVGElement*)
     {
         (m_parent.get()->*m_setter)(type);
     }

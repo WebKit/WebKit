@@ -37,13 +37,16 @@ namespace WebCore {
 typedef HashSet<QualifiedName::QualifiedNameImpl*, QualifiedNameHash> QNameSet;
 
 struct QNameComponentsTranslator {
-    static unsigned hash(const QualifiedNameComponents& components) { 
+    static unsigned hash(const QualifiedNameComponents& components)
+    {
         return hashComponents(components); 
     }
-    static bool equal(QualifiedName::QualifiedNameImpl* name, const QualifiedNameComponents& c) {
+    static bool equal(QualifiedName::QualifiedNameImpl* name, const QualifiedNameComponents& c)
+    {
         return c.m_prefix == name->m_prefix.impl() && c.m_localName == name->m_localName.impl() && c.m_namespace == name->m_namespace.impl();
     }
-    static void translate(QualifiedName::QualifiedNameImpl*& location, const QualifiedNameComponents& components, unsigned hash) {
+    static void translate(QualifiedName::QualifiedNameImpl*& location, const QualifiedNameComponents& components, unsigned)
+    {
         location = QualifiedName::QualifiedNameImpl::create(components.m_prefix, components.m_localName, components.m_namespace).releaseRef();
     }
 };

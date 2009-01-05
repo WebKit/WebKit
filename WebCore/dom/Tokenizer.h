@@ -31,12 +31,6 @@ namespace WebCore {
 
     class Tokenizer {
     public:
-        Tokenizer(bool viewSourceMode = false) 
-            : m_parserStopped(false)
-            , m_inViewSourceMode(viewSourceMode)
-        {
-        }
-
         virtual ~Tokenizer() { }
 
         // Script output must be prepended, while new data
@@ -51,7 +45,7 @@ namespace WebCore {
         virtual int executingScript() const { return 0; }
 
         virtual bool wantsRawData() const { return false; }
-        virtual bool writeRawData(const char* data, int len) { return false; }
+        virtual bool writeRawData(const char* /*data*/, int /*length*/) { return false; }
 
         bool inViewSourceMode() const { return m_inViewSourceMode; }
         void setInViewSourceMode(bool mode) { m_inViewSourceMode = mode; }
@@ -66,6 +60,12 @@ namespace WebCore {
         virtual bool isHTMLTokenizer() const { return false; }
 
     protected:
+        Tokenizer(bool viewSourceMode = false) 
+            : m_parserStopped(false)
+            , m_inViewSourceMode(viewSourceMode)
+        {
+        }
+
         // The tokenizer has buffers, so parsing may continue even after
         // it stops receiving data. We use m_parserStopped to stop the tokenizer
         // even when it has buffered data.

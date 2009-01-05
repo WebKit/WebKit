@@ -655,7 +655,7 @@ bool RenderTextControlSingleLine::itemIsEnabled(unsigned listIndex) const
     return true;
 }
 
-PopupMenuStyle RenderTextControlSingleLine::itemStyle(unsigned listIndex) const
+PopupMenuStyle RenderTextControlSingleLine::itemStyle(unsigned) const
 {
     return menuStyle();
 }

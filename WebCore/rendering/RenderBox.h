@@ -76,7 +76,7 @@ public:
     int calcContentBoxWidth(int width) const;
     int calcContentBoxHeight(int height) const;
 
-    virtual void borderFitAdjust(int& x, int& w) const {}; // Shrink the box in which the border paints if border-fit is set.
+    virtual void borderFitAdjust(int& /*x*/, int& /*w*/) const { } // Shrink the box in which the border paints if border-fit is set.
 
     // This method is now public so that centered objects like tables that are
     // shifted right by left-aligned floats can recompute their left and

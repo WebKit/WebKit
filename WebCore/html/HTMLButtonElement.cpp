@@ -50,7 +50,7 @@ HTMLButtonElement::~HTMLButtonElement()
 {
 }
 
-RenderObject* HTMLButtonElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* HTMLButtonElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderButton(this);
 }

@@ -219,7 +219,7 @@ bool InlineTextBox::isLineBreak() const
     return object()->isBR() || (object()->style()->preserveNewline() && len() == 1 && (*textObject()->text())[start()] == '\n');
 }
 
-bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
+bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, int x, int y, int tx, int ty)
 {
     if (isLineBreak())
         return false;
@@ -493,7 +493,7 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
     ePos = min(endPos - m_start, (int)m_len);
 }
 
-void InlineTextBox::paintSelection(GraphicsContext* context, int tx, int ty, RenderStyle* style, const Font* f)
+void InlineTextBox::paintSelection(GraphicsContext* context, int tx, int ty, RenderStyle* style, const Font*)
 {
     // See if we have a selection to paint at all.
     int sPos, ePos;
@@ -521,7 +521,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, int tx, int ty, Ren
     context->restore();
 }
 
-void InlineTextBox::paintCompositionBackground(GraphicsContext* context, int tx, int ty, RenderStyle* style, const Font* f, int startPos, int endPos)
+void InlineTextBox::paintCompositionBackground(GraphicsContext* context, int tx, int ty, RenderStyle* style, const Font*, int startPos, int endPos)
 {
     int offset = m_start;
     int sPos = max(startPos - offset, 0);

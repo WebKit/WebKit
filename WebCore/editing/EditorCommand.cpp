@@ -306,7 +306,7 @@ static bool executeDeleteBackwardByDecomposingPreviousCharacter(Frame* frame, Ev
     return true;
 }
 
-static bool executeDeleteForward(Frame* frame, Event*, EditorCommandSource source, const String&)
+static bool executeDeleteForward(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     frame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, false, true);
     return true;
@@ -540,7 +540,7 @@ static bool executeJustifyRight(Frame* frame, Event*, EditorCommandSource source
     return executeApplyParagraphStyle(frame, source, EditActionAlignRight, CSSPropertyTextAlign, "right");
 }
 
-static bool executeMakeTextWritingDirectionLeftToRight(Frame* frame, Event*, EditorCommandSource source, const String&)
+static bool executeMakeTextWritingDirectionLeftToRight(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
     style->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
@@ -549,7 +549,7 @@ static bool executeMakeTextWritingDirectionLeftToRight(Frame* frame, Event*, Edi
     return true;
 }
 
-static bool executeMakeTextWritingDirectionNatural(Frame* frame, Event*, EditorCommandSource source, const String&)
+static bool executeMakeTextWritingDirectionNatural(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
     style->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
@@ -557,7 +557,7 @@ static bool executeMakeTextWritingDirectionNatural(Frame* frame, Event*, EditorC
     return true;
 }
 
-static bool executeMakeTextWritingDirectionRightToLeft(Frame* frame, Event*, EditorCommandSource source, const String&)
+static bool executeMakeTextWritingDirectionRightToLeft(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
     style->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);

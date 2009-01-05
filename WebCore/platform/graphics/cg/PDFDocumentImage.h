@@ -42,7 +42,9 @@ namespace WebCore {
         {
             return adoptRef(new PDFDocumentImage);
         }
-        ~PDFDocumentImage();
+
+    private:
+        virtual ~PDFDocumentImage();
 
         virtual bool hasSingleSecurityOrigin() const { return true; }
 
@@ -50,12 +52,11 @@ namespace WebCore {
 
         // FIXME: PDF Images are underreporting decoded sizes and will be unable
         // to prune because these functions are not implemented yet.
-        virtual void destroyDecodedData(bool destroyAll = true) { }
+        virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
         virtual unsigned decodedSize() const { return 0; }
 
         virtual IntSize size() const;
 
-    private:
         PDFDocumentImage();
         virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
         

@@ -216,7 +216,7 @@ void AnimationControllerPrivate::addEventToDispatch(PassRefPtr<Element> element,
     startUpdateRenderingDispatcher();
 }
 
-void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPrivate>* timer)
+void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPrivate>*)
 {
     // When the timer fires, all we do is call setChanged on all DOM nodes with running animations and then do an immediate
     // updateRendering.  It will then call back to us with new information.

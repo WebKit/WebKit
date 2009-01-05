@@ -59,18 +59,18 @@ public:
 
     SVGImage* image() const { return m_image; }
     
+private:
     virtual void chromeDestroyed()
     {
         m_image = 0;
     }
 
-    virtual void repaint(const IntRect& r, bool contentChanged, bool immediate, bool repaintContentOnly)
+    virtual void repaint(const IntRect& r, bool, bool, bool)
     {
         if (m_image && m_image->imageObserver())
             m_image->imageObserver()->changedInRect(m_image, r);
     }
 
-private:
     SVGImage* m_image;
 };
 

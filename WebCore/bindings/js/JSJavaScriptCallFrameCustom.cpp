@@ -44,7 +44,7 @@ JSValue* JSJavaScriptCallFrame::evaluate(ExecState* exec, const ArgList& args)
     return result;
 }
 
-JSValue* JSJavaScriptCallFrame::thisObject(ExecState* exec) const
+JSValue* JSJavaScriptCallFrame::thisObject(ExecState*) const
 {
     return impl()->thisObject() ? impl()->thisObject() : jsNull();
 }

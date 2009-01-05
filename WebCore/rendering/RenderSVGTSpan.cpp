@@ -57,7 +57,7 @@ void RenderSVGTSpan::absoluteRects(Vector<IntRect>& rects, int, int, bool)
     }
 }
 
-void RenderSVGTSpan::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+void RenderSVGTSpan::absoluteQuads(Vector<FloatQuad>& quads, bool)
 {
     InlineRunBox* firstBox = firstLineBox();
 

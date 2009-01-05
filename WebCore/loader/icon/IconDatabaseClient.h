@@ -41,8 +41,9 @@ public:
     virtual ~IconDatabaseClient() { }
     virtual bool performImport() { return true; }
     virtual void dispatchDidRemoveAllIcons() { }
-    virtual void dispatchDidAddIconForPageURL(const String& pageURL) { }
+    virtual void dispatchDidAddIconForPageURL(const String& /*pageURL*/) { }
 };
  
 } // namespace WebCore 
+
 #endif

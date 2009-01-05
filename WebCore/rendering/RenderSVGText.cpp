@@ -111,7 +111,7 @@ void RenderSVGText::layout()
     setNeedsLayout(false);
 }
 
-InlineBox* RenderSVGText::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun)
+InlineBox* RenderSVGText::createInlineBox(bool, bool, bool)
 {
     ASSERT(!isInlineFlow());
     InlineFlowBox* flowBox = new (renderArena()) SVGRootInlineBox(this);
@@ -170,7 +170,7 @@ void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
     }
 }
 
-void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads, bool)
 {
     RenderSVGRoot* root = findSVGRootObject(parent());
     if (!root)

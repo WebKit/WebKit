@@ -154,8 +154,7 @@ static void initializeATSUStyle(const SimpleFontData* fontData)
     fontData->m_ATSUStyleInitialized = true;
 }
 
-static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOperation, ATSULineRef iLineRef, URefCon iRefCon,
-                                        void *iOperationCallbackParameterPtr, ATSULayoutOperationCallbackStatus *oCallbackStatus)
+static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector, ATSULineRef iLineRef, URefCon iRefCon, void*, ATSULayoutOperationCallbackStatus* oCallbackStatus)
 {
     ATSULayoutParameters* params = reinterpret_cast<ATSULayoutParameters*>(iRefCon);
     OSStatus status;
@@ -592,7 +591,7 @@ float Font::floatWidthForComplexText(const TextRun& run) const
            MIN(FixedToFloat(firstGlyphBounds.upperLeft.x), FixedToFloat(firstGlyphBounds.lowerLeft.x));
 }
 
-int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includePartialGlyphs) const
+int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool /*includePartialGlyphs*/) const
 {
     OwnArrayPtr<UChar> charactersWithOverride;
     TextRun adjustedRun = copyRunForDirectionalOverrideIfNecessary(run, charactersWithOverride);

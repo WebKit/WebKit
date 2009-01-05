@@ -131,7 +131,7 @@ RenderSlider::~RenderSlider()
         m_thumb->detach();
 }
 
-int RenderSlider::baselinePosition(bool b, bool isRootLineBox) const
+int RenderSlider::baselinePosition(bool, bool) const
 {
     return height() + marginTop();
 }

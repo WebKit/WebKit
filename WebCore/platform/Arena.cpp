@@ -90,8 +90,7 @@ static int CeilingLog2(unsigned int i) {
     return log2;
 }
 
-void InitArenaPool(ArenaPool *pool, const char *name, 
-                   unsigned int size, unsigned int align)
+void InitArenaPool(ArenaPool* pool, const char*, unsigned size, unsigned align)
 {
      if (align == 0)
          align = ARENA_DEFAULT_ALIGN;

@@ -53,12 +53,12 @@ RenderSVGRoot::~RenderSVGRoot()
 {
 }
 
-int RenderSVGRoot::lineHeight(bool b, bool isRootLineBox) const
+int RenderSVGRoot::lineHeight(bool, bool) const
 {
     return height() + marginTop() + marginBottom();
 }
 
-int RenderSVGRoot::baselinePosition(bool b, bool isRootLineBox) const
+int RenderSVGRoot::baselinePosition(bool, bool) const
 {
     return height() + marginTop() + marginBottom();
 }
@@ -259,7 +259,7 @@ void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, int, int)
         current->absoluteRects(rects, 0, 0);
 }
 
-void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool)
 {
     for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
         current->absoluteQuads(quads);

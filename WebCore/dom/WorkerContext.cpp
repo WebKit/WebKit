@@ -132,7 +132,7 @@ void WorkerContext::addEventListener(const AtomicString& eventType, PassRefPtr<E
     }    
 }
 
-void WorkerContext::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool useCapture)
+void WorkerContext::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
 {
     EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end())

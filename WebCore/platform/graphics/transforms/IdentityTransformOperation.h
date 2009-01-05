@@ -36,6 +36,7 @@ public:
         return adoptRef(new IdentityTransformOperation());
     }
         
+private:
     virtual bool isIdentity() const { return true; }
     virtual OperationType getOperationType() const { return IDENTITY; }
     virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == IDENTITY; }
@@ -45,17 +46,16 @@ public:
         return isSameType(o);
     }
 
-    virtual bool apply(AffineTransform& transform, const IntSize& borderBoxSize) const
+    virtual bool apply(AffineTransform&, const IntSize&) const
     {
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false)
+    virtual PassRefPtr<TransformOperation> blend(const TransformOperation*, double, bool = false)
     {
         return this;
     }
 
-private:
     IdentityTransformOperation()
     {
     }

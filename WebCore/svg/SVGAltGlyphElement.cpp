@@ -42,7 +42,7 @@ SVGAltGlyphElement::~SVGAltGlyphElement()
 {
 }
 
-void SVGAltGlyphElement::setGlyphRef(const AtomicString& type, ExceptionCode& ec)
+void SVGAltGlyphElement::setGlyphRef(const AtomicString&, ExceptionCode& ec)
 {
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }
@@ -52,7 +52,7 @@ const AtomicString& SVGAltGlyphElement::glyphRef() const
     return getAttribute(SVGNames::glyphRefAttr);
 }
 
-void SVGAltGlyphElement::setFormat(const AtomicString& type, ExceptionCode& ec)
+void SVGAltGlyphElement::setFormat(const AtomicString&, ExceptionCode& ec)
 {
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }

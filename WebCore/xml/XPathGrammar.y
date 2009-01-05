@@ -69,7 +69,7 @@ using namespace XPath;
 %{
 
 int xpathyylex(YYSTYPE* yylval) { return Parser::current()->lex(yylval); }
-void xpathyyerror(const char* str) { }
+void xpathyyerror(const char*) { }
     
 %}
 

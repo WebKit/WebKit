@@ -134,7 +134,6 @@ private:
             context->reportException(m_errorMessage, m_lineNumber, m_sourceURL);
     }
 
-private:
     String m_errorMessage;
     int m_lineNumber;
     String m_sourceURL;
@@ -154,12 +153,11 @@ private:
     {
     }
 
-    virtual void performTask(ScriptExecutionContext* context)
+    virtual void performTask(ScriptExecutionContext*)
     {
         m_messagingProxy->workerContextDestroyedInternal();
     }
 
-private:
     WorkerMessagingProxy* m_messagingProxy;
 };
 
@@ -178,12 +176,11 @@ private:
     {
     }
 
-    virtual void performTask(ScriptExecutionContext* context)
+    virtual void performTask(ScriptExecutionContext*)
     {
         m_messagingProxy->reportWorkerThreadActivityInternal(m_confirmingMessage, m_hasPendingActivity);
     }
 
-private:
     WorkerMessagingProxy* m_messagingProxy;
     bool m_confirmingMessage;
     bool m_hasPendingActivity;

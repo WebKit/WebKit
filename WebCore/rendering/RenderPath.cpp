@@ -200,12 +200,12 @@ bool RenderPath::requiresLayer()
     return false;
 }
 
-int RenderPath::lineHeight(bool b, bool isRootLineBox) const
+int RenderPath::lineHeight(bool, bool) const
 {
     return relativeBBox(true).height();
 }
 
-int RenderPath::baselinePosition(bool b, bool isRootLineBox) const
+int RenderPath::baselinePosition(bool, bool) const
 {
     return relativeBBox(true).height();
 }
@@ -269,12 +269,12 @@ void RenderPath::absoluteRects(Vector<IntRect>& rects, int, int, bool)
     rects.append(absoluteClippedOverflowRect());
 }
 
-void RenderPath::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+void RenderPath::absoluteQuads(Vector<FloatQuad>& quads, bool)
 {
     quads.append(absoluteClippedOverflowRect());
 }
 
-bool RenderPath::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int, int, HitTestAction hitTestAction)
+bool RenderPath::nodeAtPoint(const HitTestRequest&, HitTestResult& result, int _x, int _y, int, int, HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.
     if (hitTestAction != HitTestForeground)
@@ -417,7 +417,7 @@ static void drawStartAndMidMarkers(void* info, const PathElement* element)
     data.elementIndex++;
 }
 
-FloatRect RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& rect, const Path& path) const
+FloatRect RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect&, const Path& path) const
 {
     Document* doc = document();
 

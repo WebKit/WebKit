@@ -120,7 +120,7 @@ void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)
     appendChild(new Text(document(), text), ec);
 }
 
-void HTMLOptionElement::accessKeyAction(bool sendToAnyElement)
+void HTMLOptionElement::accessKeyAction(bool)
 {
     HTMLSelectElement* select = ownerSelectElement();
     if (select)

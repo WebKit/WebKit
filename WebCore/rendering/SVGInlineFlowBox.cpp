@@ -32,18 +32,18 @@ namespace WebCore {
 
 using namespace SVGNames;
 
-void SVGInlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
+void SVGInlineFlowBox::paint(RenderObject::PaintInfo&, int, int)
 {
     ASSERT_NOT_REACHED();
 }
 
-int SVGInlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing)
+int SVGInlineFlowBox::placeBoxesHorizontally(int, int&, int&, bool&)
 {
     // no-op
     return 0;
 }
 
-void SVGInlineFlowBox::verticallyAlignBoxes(int& heightOfBlock)
+void SVGInlineFlowBox::verticallyAlignBoxes(int&)
 {
     // no-op
 }

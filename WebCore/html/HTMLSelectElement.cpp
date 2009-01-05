@@ -413,7 +413,7 @@ void HTMLSelectElement::selectAll()
     listBoxOnChange();
 }
 
-RenderObject *HTMLSelectElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     if (usesMenuList())
         return new (arena) RenderMenuList(this);

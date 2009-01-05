@@ -63,17 +63,17 @@ static inline double solveCubicBezierFunction(double p1x, double p1y, double p2x
     return bezier.solve(t, solveEpsilon(duration));
 }
 
-static inline int blendFunc(const AnimationBase* anim, int from, int to, double progress)
+static inline int blendFunc(const AnimationBase*, int from, int to, double progress)
 {  
     return int(from + (to - from) * progress);
 }
 
-static inline double blendFunc(const AnimationBase* anim, double from, double to, double progress)
+static inline double blendFunc(const AnimationBase*, double from, double to, double progress)
 {  
     return from + (to - from) * progress;
 }
 
-static inline float blendFunc(const AnimationBase* anim, float from, float to, double progress)
+static inline float blendFunc(const AnimationBase*, float from, float to, double progress)
 {  
     return narrowPrecisionToFloat(from + (to - from) * progress);
 }
@@ -86,7 +86,7 @@ static inline Color blendFunc(const AnimationBase* anim, const Color& from, cons
                  blendFunc(anim, from.alpha(), to.alpha(), progress));
 }
 
-static inline Length blendFunc(const AnimationBase* anim, const Length& from, const Length& to, double progress)
+static inline Length blendFunc(const AnimationBase*, const Length& from, const Length& to, double progress)
 {  
     return to.blend(from, progress);
 }

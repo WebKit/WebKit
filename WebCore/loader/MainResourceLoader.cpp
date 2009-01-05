@@ -120,7 +120,7 @@ void MainResourceLoader::callContinueAfterNavigationPolicy(void* argument, const
     static_cast<MainResourceLoader*>(argument)->continueAfterNavigationPolicy(request, shouldContinue);
 }
 
-void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
+void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue)
 {
     if (!shouldContinue)
         stopLoadingForPolicyChange();

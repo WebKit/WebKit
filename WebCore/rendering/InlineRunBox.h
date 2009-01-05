@@ -41,8 +41,8 @@ public:
     void setNextLineBox(InlineRunBox* n) { m_nextLine = n; }
     void setPreviousLineBox(InlineRunBox* p) { m_prevLine = p; }
 
-    virtual void paintBoxDecorations(RenderObject::PaintInfo&, int tx, int ty) { }
-    virtual void paintTextDecorations(RenderObject::PaintInfo&, int tx, int ty, bool paintedChildren = false) { }
+    virtual void paintBoxDecorations(RenderObject::PaintInfo&, int /*tx*/, int /*ty*/) { }
+    virtual void paintTextDecorations(RenderObject::PaintInfo&, int /*tx*/, int /*ty*/, bool /*paintedChildren*/ = false) { }
     
 protected:
     InlineRunBox* m_prevLine;  // The previous box that also uses our RenderObject

@@ -88,12 +88,12 @@ Color SVGColor::colorFromRGBColorString(const String& colorString)
     return Color();
 }
 
-void SVGColor::setRGBColorICCColor(const String& /* rgbColor */, const String& /* iccColor */, ExceptionCode& ec)
+void SVGColor::setRGBColorICCColor(const String& /* rgbColor */, const String& /* iccColor */, ExceptionCode&)
 {
     // TODO: implement me!
 }
 
-void SVGColor::setColor(unsigned short colorType, const String& /* rgbColor */ , const String& /* iccColor */, ExceptionCode& ec)
+void SVGColor::setColor(unsigned short colorType, const String& /* rgbColor */ , const String& /* iccColor */, ExceptionCode&)
 {
     // TODO: implement me!
     m_colorType = colorType;

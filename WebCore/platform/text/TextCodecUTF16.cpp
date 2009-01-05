@@ -65,7 +65,7 @@ void TextCodecUTF16::registerCodecs(TextCodecRegistrar registrar)
     registrar("UTF-16BE", newStreamingTextDecoderUTF16BE, 0);
 }
 
-String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool stopOnError, bool& sawError)
+String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool, bool&)
 {
     if (!length)
         return String();
@@ -89,18 +89,19 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool stopO
         numChars -= 1;
     }
 
-    if (m_littleEndian)
+    if (m_littleEndian) {
         for (size_t i = 0; i < numChars; ++i) {
             UChar c = p[0] | (p[1] << 8);
             p += 2;
             *q++ = c;
         }
-    else
+    } else {
         for (size_t i = 0; i < numChars; ++i) {
             UChar c = (p[0] << 8) | p[1];
             p += 2;
             *q++ = c;
         }
+    }
 
     if (numBytes & 1) {
         ASSERT(!m_haveBufferedByte);

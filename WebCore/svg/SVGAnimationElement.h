@@ -99,7 +99,7 @@ namespace WebCore {
         virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
         virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
         virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement) = 0;
-        virtual float calculateDistance(const String& fromString, const String& toString) { return -1.f; }
+        virtual float calculateDistance(const String& /*fromString*/, const String& /*toString*/) { return -1.f; }
         virtual Path animationPath() const { return Path(); }
         
         void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to) const;

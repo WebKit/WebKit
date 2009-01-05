@@ -653,7 +653,7 @@ bool RenderObject::scroll(ScrollDirection direction, ScrollGranularity granulari
     return false;
 }
     
-bool RenderObject::canBeProgramaticallyScrolled(bool scrollToAnchor) const
+bool RenderObject::canBeProgramaticallyScrolled(bool) const
 {
     if (!layer())
         return false;
@@ -1702,7 +1702,7 @@ void RenderObject::paintBoxShadow(GraphicsContext* context, int tx, int ty, int 
     }
 }
 
-void RenderObject::addLineBoxRects(Vector<IntRect>&, unsigned startOffset, unsigned endOffset, bool useSelectionHeight)
+void RenderObject::addLineBoxRects(Vector<IntRect>&, unsigned, unsigned, bool)
 {
 }
 
@@ -1751,7 +1751,7 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)
     return result;
 }
 
-void RenderObject::collectAbsoluteLineBoxQuads(Vector<FloatQuad>& quads, unsigned startOffset, unsigned endOffset, bool useSelectionHeight)
+void RenderObject::collectAbsoluteLineBoxQuads(Vector<FloatQuad>&, unsigned, unsigned, bool)
 {
 }
 
@@ -1998,11 +1998,11 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
     return false;
 }
 
-void RenderObject::repaintDuringLayoutIfMoved(const IntRect& rect)
+void RenderObject::repaintDuringLayoutIfMoved(const IntRect&)
 {
 }
 
-void RenderObject::repaintOverhangingFloats(bool paintAllDescendants)
+void RenderObject::repaintOverhangingFloats(bool)
 {
 }
 
@@ -2066,7 +2066,7 @@ void RenderObject::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
     }
 }
 
-void RenderObject::dirtyLinesFromChangedChild(RenderObject* child)
+void RenderObject::dirtyLinesFromChangedChild(RenderObject*)
 {
 }
 
@@ -2379,7 +2379,7 @@ void RenderObject::styleWillChange(RenderStyle::Diff diff, const RenderStyle* ne
     }
 }
 
-void RenderObject::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderObject::styleDidChange(RenderStyle::Diff diff, const RenderStyle*)
 {
     setHasBoxDecorations(m_style->hasBorder() || m_style->hasBackground() || m_style->hasAppearance() || m_style->boxShadow());
 
@@ -2481,7 +2481,7 @@ IntSize RenderObject::offsetFromContainer(RenderObject* o) const
     return offset;
 }
 
-IntRect RenderObject::localCaretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
+IntRect RenderObject::localCaretRect(InlineBox*, int, int* extraWidthToEndOfLine)
 {
    if (extraWidthToEndOfLine)
        *extraWidthToEndOfLine = 0;
@@ -2676,7 +2676,7 @@ void RenderObject::arenaDelete(RenderArena* arena, void* base)
     arena->free(*(size_t*)base, base);
 }
 
-VisiblePosition RenderObject::positionForCoordinates(int x, int y)
+VisiblePosition RenderObject::positionForCoordinates(int, int)
 {
     return VisiblePosition(element(), caretMinOffset(), DOWNSTREAM);
 }

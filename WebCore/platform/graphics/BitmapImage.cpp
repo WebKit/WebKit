@@ -380,7 +380,7 @@ void BitmapImage::resetAnimation()
     destroyDecodedDataIfNecessary(true);
 }
 
-void BitmapImage::advanceAnimation(Timer<BitmapImage>* timer)
+void BitmapImage::advanceAnimation(Timer<BitmapImage>*)
 {
     internalAdvanceAnimation(false);
     // At this point the image region has been marked dirty, and if it's

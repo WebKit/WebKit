@@ -269,8 +269,7 @@ void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const Fl
     drawGlyphBuffer(context, glyphBuffer, run, startPoint);
 }
 
-void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuffer, 
-                           const TextRun& run, const FloatPoint& point) const
+void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuffer, const TextRun&, const FloatPoint& point) const
 {   
     // Draw each contiguous run of glyphs that use the same font data.
     const SimpleFontData* fontData = glyphBuffer.fontDataAt(0);

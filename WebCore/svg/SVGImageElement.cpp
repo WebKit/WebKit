@@ -118,7 +118,7 @@ bool SVGImageElement::hasRelativeValues() const
             y().isRelative() || height().isRelative());
 }
 
-RenderObject* SVGImageElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* SVGImageElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGImage(this);
 }

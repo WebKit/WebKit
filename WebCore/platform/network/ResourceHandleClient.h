@@ -63,11 +63,11 @@ namespace WebCore {
         virtual ~ResourceHandleClient() { }
 
         // request may be modified
-        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse) { }
-        virtual void didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) { }
+        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& /*redirectResponse*/) { }
+        virtual void didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
-        virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived) { }
+        virtual void didReceiveData(ResourceHandle*, const char*, int, int /*lengthReceived*/) { }
         virtual void didFinishLoading(ResourceHandle*) { }
         virtual void didFail(ResourceHandle*, const ResourceError&) { }
         virtual void wasBlocked(ResourceHandle*) { }

@@ -66,7 +66,7 @@ public:
             m_eventBase->removeEventListener(m_condition->m_name, this, false);
     }
 
-    virtual void handleEvent(Event* event, bool isWindowEvent) 
+    virtual void handleEvent(Event* event, bool) 
     {
         m_animation->handleConditionEvent(event, m_condition);
     }
@@ -876,7 +876,7 @@ void SVGSMILElement::notifyDependentsIntervalChanged(NewOrExistingInterval newOr
     loopBreaker.remove(this);
 }
     
-void SVGSMILElement::createInstanceTimesFromSyncbase(SVGSMILElement* syncbase, NewOrExistingInterval newOrExisting)
+void SVGSMILElement::createInstanceTimesFromSyncbase(SVGSMILElement* syncbase, NewOrExistingInterval)
 {
     // FIXME: To be really correct, this should handle updating exising interval by changing 
     // the associated times instead of creating new ones.
@@ -911,7 +911,7 @@ void SVGSMILElement::removeTimeDependent(SVGSMILElement* animation)
     m_timeDependents.remove(animation);
 }
     
-void SVGSMILElement::handleConditionEvent(Event* event, Condition* condition)
+void SVGSMILElement::handleConditionEvent(Event*, Condition* condition)
 {
     if (condition->m_beginOrEnd == Begin)
         addBeginTime(elapsed() + condition->m_offset);

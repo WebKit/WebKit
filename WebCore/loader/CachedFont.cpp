@@ -65,7 +65,7 @@ CachedFont::~CachedFont()
 #endif
 }
 
-void CachedFont::load(DocLoader* docLoader)
+void CachedFont::load(DocLoader*)
 {
     // Don't load the file yet.  Wait for an access before triggering the load.
     m_loading = true;

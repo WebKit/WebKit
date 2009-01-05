@@ -120,8 +120,8 @@ public:
     static EFillRepeat initialFillRepeat(EFillLayerType) { return RepeatFill; }
     static CompositeOperator initialFillComposite(EFillLayerType) { return CompositeSourceOver; }
     static LengthSize initialFillSize(EFillLayerType) { return LengthSize(); }
-    static Length initialFillXPosition(EFillLayerType type) { return Length(0.0, Percent); }
-    static Length initialFillYPosition(EFillLayerType type) { return Length(0.0, Percent); }
+    static Length initialFillXPosition(EFillLayerType) { return Length(0.0, Percent); }
+    static Length initialFillYPosition(EFillLayerType) { return Length(0.0, Percent); }
     static StyleImage* initialFillImage(EFillLayerType) { return 0; }
 
 private:

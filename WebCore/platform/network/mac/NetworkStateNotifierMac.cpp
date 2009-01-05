@@ -76,7 +76,7 @@ void NetworkStateNotifier::updateState()
     }
 }
 
-void NetworkStateNotifier::dynamicStoreCallback(SCDynamicStoreRef store, CFArrayRef changedKeys, void *info) 
+void NetworkStateNotifier::dynamicStoreCallback(SCDynamicStoreRef, CFArrayRef, void* info) 
 {
     NetworkStateNotifier* notifier = static_cast<NetworkStateNotifier*>(info);
     

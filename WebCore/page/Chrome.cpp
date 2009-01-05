@@ -436,8 +436,8 @@ void ChromeClient::enableSuddenTermination()
 }
 
 bool ChromeClient::paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize, 
-                                        ScrollbarControlState, ScrollbarPart, bool vertical,
-                                        float value, float proportion, ScrollbarControlPartMask)
+                                        ScrollbarControlState, ScrollbarPart, bool,
+                                        float, float, ScrollbarControlPartMask)
 {
     return false;
 }

@@ -51,7 +51,7 @@ static ProfileNodeMap& profileNodeCache()
     return staticProfileNodes;
 }
 
-static JSValueRef getFunctionName(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getFunctionName(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -61,7 +61,7 @@ static JSValueRef getFunctionName(JSContextRef ctx, JSObjectRef thisObject, JSSt
     return JSValueMakeString(ctx, functionNameString.get());
 }
 
-static JSValueRef getURL(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getURL(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -71,7 +71,7 @@ static JSValueRef getURL(JSContextRef ctx, JSObjectRef thisObject, JSStringRef p
     return JSValueMakeString(ctx, urlString.get());
 }
 
-static JSValueRef getLineNumber(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getLineNumber(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -80,7 +80,7 @@ static JSValueRef getLineNumber(JSContextRef ctx, JSObjectRef thisObject, JSStri
     return JSValueMakeNumber(ctx, profileNode->lineNumber());
 }
 
-static JSValueRef getTotalTime(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getTotalTime(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     JSC::JSLock lock(false);
 
@@ -91,7 +91,7 @@ static JSValueRef getTotalTime(JSContextRef ctx, JSObjectRef thisObject, JSStrin
     return JSValueMakeNumber(ctx, profileNode->totalTime());
 }
 
-static JSValueRef getSelfTime(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getSelfTime(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     JSC::JSLock lock(false);
 
@@ -102,7 +102,7 @@ static JSValueRef getSelfTime(JSContextRef ctx, JSObjectRef thisObject, JSString
     return JSValueMakeNumber(ctx, profileNode->selfTime());
 }
 
-static JSValueRef getTotalPercent(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getTotalPercent(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     JSC::JSLock lock(false);
 
@@ -113,7 +113,7 @@ static JSValueRef getTotalPercent(JSContextRef ctx, JSObjectRef thisObject, JSSt
     return JSValueMakeNumber(ctx, profileNode->totalPercent());
 }
 
-static JSValueRef getSelfPercent(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getSelfPercent(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     JSC::JSLock lock(false);
 
@@ -124,7 +124,7 @@ static JSValueRef getSelfPercent(JSContextRef ctx, JSObjectRef thisObject, JSStr
     return JSValueMakeNumber(ctx, profileNode->selfPercent());
 }
 
-static JSValueRef getNumberOfCalls(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getNumberOfCalls(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     JSC::JSLock lock(false);
 
@@ -135,7 +135,7 @@ static JSValueRef getNumberOfCalls(JSContextRef ctx, JSObjectRef thisObject, JSS
     return JSValueMakeNumber(ctx, profileNode->numberOfCalls());
 }
 
-static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
 {
     JSC::JSLock lock(false);
 
@@ -181,7 +181,7 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
     return result;
 }
 
-static JSValueRef getVisible(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getVisible(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
     JSC::JSLock lock(false);
 

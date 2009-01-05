@@ -41,13 +41,13 @@ HTMLFrameElement::HTMLFrameElement(const QualifiedName& tagName, Document* doc, 
     ASSERT(hasTagName(frameTag));
 }
 
-bool HTMLFrameElement::rendererIsNeeded(RenderStyle* style)
+bool HTMLFrameElement::rendererIsNeeded(RenderStyle*)
 {
     // For compatibility, frames render even when display: none is set.
     return isURLAllowed(m_URL);
 }
 
-RenderObject* HTMLFrameElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* HTMLFrameElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderFrame(this);
 }

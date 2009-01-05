@@ -49,7 +49,7 @@ static JSValue* toJS(ExecState* exec, CanvasStyle* style)
     return jsString(exec, style->color());
 }
 
-static PassRefPtr<CanvasStyle> toHTMLCanvasStyle(ExecState* exec, JSValue* value)
+static PassRefPtr<CanvasStyle> toHTMLCanvasStyle(ExecState*, JSValue* value)
 {
     if (value->isString())
         return CanvasStyle::create(asString(value)->value());

@@ -183,7 +183,7 @@ SVGResource* SVGMarkerElement::canvasResource()
     return m_marker.get();
 }
 
-RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     RenderSVGViewportContainer* markerContainer = new (arena) RenderSVGViewportContainer(this);
     markerContainer->setDrawsContents(false); // Marker contents will be explicitly drawn.

@@ -106,7 +106,7 @@ public:
     int height() const;
 
     bool setData(PassRefPtr<SharedBuffer> data, bool allDataReceived);
-    virtual bool dataChanged(bool allDataReceived) { return false; }
+    virtual bool dataChanged(bool /*allDataReceived*/) { return false; }
     
     virtual String filenameExtension() const { return String(); } // null string if unknown
 
@@ -159,7 +159,7 @@ protected:
     virtual bool mayFillWithSolidColor() const { return false; }
     virtual Color solidColor() const { return Color(); }
     
-    virtual void startAnimation(bool catchUpIfNecessary = true) { }
+    virtual void startAnimation(bool /*catchUpIfNecessary*/ = true) { }
     
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
                              const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);

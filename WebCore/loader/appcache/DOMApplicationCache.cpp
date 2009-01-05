@@ -198,7 +198,7 @@ void DOMApplicationCache::addEventListener(const AtomicString& eventType, PassRe
     }    
 }
 
-void DOMApplicationCache::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool useCapture)
+void DOMApplicationCache::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
 {
     EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end())

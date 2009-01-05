@@ -151,7 +151,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
         renderer()->setNeedsLayout(true);
 }
 
-RenderObject* SVGForeignObjectElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* SVGForeignObjectElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderForeignObject(this);
 }

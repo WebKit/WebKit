@@ -36,6 +36,7 @@ public:
         return adoptRef(new ScaleTransformOperation(sx, sy, type));
     }
 
+private:
     virtual bool isIdentity() const { return m_x == 1 &&  m_y == 1; }
     virtual OperationType getOperationType() const { return m_type; }
     virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == m_type; }
@@ -48,7 +49,7 @@ public:
         return m_x == s->m_x && m_y == s->m_y;
     }
 
-    virtual bool apply(AffineTransform& transform, const IntSize& borderBoxSize) const
+    virtual bool apply(AffineTransform& transform, const IntSize&) const
     {
         transform.scale(m_x, m_y);
         return false;
@@ -56,7 +57,6 @@ public:
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
 
-private:
     ScaleTransformOperation(double sx, double sy, OperationType type)
         : m_x(sx)
         , m_y(sy)

@@ -34,7 +34,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSHTMLFormElement::canGetItemsForName(ExecState* exec, HTMLFormElement* form, const Identifier& propertyName)
+bool JSHTMLFormElement::canGetItemsForName(ExecState*, HTMLFormElement* form, const Identifier& propertyName)
 {
     Vector<RefPtr<Node> > namedItems;
     form->getNamedElements(propertyName, namedItems);

@@ -268,7 +268,7 @@ void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderO
         context->strokePath();
 }
 
-void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
+void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType, bool isPaintingText) const
 {
 #if PLATFORM(CG)
     // renderPath() is not used when painting text, so we paint the gradient during teardown()

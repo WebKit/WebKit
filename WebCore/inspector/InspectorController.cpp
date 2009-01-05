@@ -895,7 +895,7 @@ static JSValueRef localizedStrings(JSContextRef ctx, JSObjectRef /*function*/, J
     return JSValueMakeString(ctx, jsStringRef(url).get());
 }
 
-static JSValueRef platform(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
+static JSValueRef platform(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
 {
 #if PLATFORM(MAC)
 #ifdef BUILDING_ON_TIGER
@@ -960,7 +960,7 @@ static JSValueRef setAttachedWindowHeight(JSContextRef ctx, JSObjectRef /*functi
     return JSValueMakeUndefined(ctx);
 }
 
-static JSValueRef wrapCallback(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef wrapCallback(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
     if (!controller)
@@ -1471,7 +1471,7 @@ void InspectorController::toggleSearchForNodeInPage()
         hideHighlight();
 }
 
-void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
+void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
 {
     if (!enabled() || !m_searchingForNode)
         return;
@@ -2431,7 +2431,7 @@ void InspectorController::identifierForInitialRequest(unsigned long identifier, 
         addAndUpdateScriptResource(resource.get());
 }
 
-void InspectorController::willSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void InspectorController::willSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (!enabled())
         return;
@@ -2494,7 +2494,7 @@ void InspectorController::didReceiveContentLength(DocumentLoader*, unsigned long
         updateScriptResource(resource, resource->length);
 }
 
-void InspectorController::didFinishLoading(DocumentLoader* loader, unsigned long identifier)
+void InspectorController::didFinishLoading(DocumentLoader*, unsigned long identifier)
 {
     if (!enabled())
         return;
@@ -2516,7 +2516,7 @@ void InspectorController::didFinishLoading(DocumentLoader* loader, unsigned long
     }
 }
 
-void InspectorController::didFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& /*error*/)
+void InspectorController::didFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError& /*error*/)
 {
     if (!enabled())
         return;
@@ -2889,9 +2889,10 @@ bool InspectorController::handleException(JSContextRef context, JSValueRef excep
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+
 // JavaScriptDebugListener functions
 
-void InspectorController::didParseSource(ExecState* exec, const SourceCode& source)
+void InspectorController::didParseSource(ExecState*, const SourceCode& source)
 {
     JSValueRef sourceIDValue = JSValueMakeNumber(m_scriptContext, source.provider()->asID());
     JSValueRef sourceURLValue = JSValueMakeString(m_scriptContext, jsStringRef(source.provider()->url()).get());
@@ -2903,7 +2904,7 @@ void InspectorController::didParseSource(ExecState* exec, const SourceCode& sour
     callFunction(m_scriptContext, m_scriptObject, "parsedScriptSource", 4, arguments, exception);
 }
 
-void InspectorController::failedToParseSource(ExecState* exec, const SourceCode& source, int errorLine, const UString& errorMessage)
+void InspectorController::failedToParseSource(ExecState*, const SourceCode& source, int errorLine, const UString& errorMessage)
 {
     JSValueRef sourceURLValue = JSValueMakeString(m_scriptContext, jsStringRef(source.provider()->url()).get());
     JSValueRef sourceValue = JSValueMakeString(m_scriptContext, jsStringRef(source.data()).get());
@@ -2921,6 +2922,7 @@ void InspectorController::didPause()
     JSValueRef exception = 0;
     callFunction(m_scriptContext, m_scriptObject, "pausedScript", 0, 0, exception);
 }
+
 #endif
 
 } // namespace WebCore

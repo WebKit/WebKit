@@ -59,7 +59,7 @@ const AtomicString& HTMLFieldSetElement::type() const
     return fieldset;
 }
 
-RenderObject* HTMLFieldSetElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* HTMLFieldSetElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderFieldset(this);
 }

@@ -180,7 +180,7 @@ HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
     return static_cast<HTMLSelectElement*>(select);
 }
 
-void HTMLOptGroupElement::accessKeyAction(bool sendToAnyElement)
+void HTMLOptGroupElement::accessKeyAction(bool)
 {
     HTMLSelectElement* select = ownerSelectElement();
     // send to the parent to bring focus to the list box

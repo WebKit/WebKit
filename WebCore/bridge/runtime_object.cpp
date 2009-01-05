@@ -47,7 +47,7 @@ RuntimeObjectImp::RuntimeObjectImp(ExecState* exec, PassRefPtr<Instance> i)
     instance->rootObject()->addRuntimeObject(this);
 }
     
-RuntimeObjectImp::RuntimeObjectImp(ExecState* exec, PassRefPtr<Structure> structure, PassRefPtr<Instance> i)
+RuntimeObjectImp::RuntimeObjectImp(ExecState*, PassRefPtr<Structure> structure, PassRefPtr<Instance> i)
     : JSObject(structure)
     , instance(i)
 {
@@ -172,7 +172,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
     return false;
 }
 
-void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
+void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot&)
 {
     if (!instance) {
         throwInvalidAccessError(exec);

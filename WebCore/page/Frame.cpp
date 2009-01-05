@@ -1285,7 +1285,7 @@ void Frame::revealCaret(const RenderLayer::ScrollAlignment& alignment) const
     }
 }
 
-void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
+void Frame::adjustPageHeight(float* newBottom, float oldTop, float oldBottom, float /*bottomLimit*/)
 {
     RenderView* root = contentRenderer();
     if (root) {

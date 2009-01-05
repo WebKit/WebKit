@@ -56,7 +56,7 @@ int RenderBR::baselinePosition(bool firstLine, bool isRootLineBox) const
     return RenderText::baselinePosition(firstLine, isRootLineBox);
 }
 
-int RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const
+int RenderBR::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
 {
     if (firstTextBox() && !firstTextBox()->isText())
         return 0;

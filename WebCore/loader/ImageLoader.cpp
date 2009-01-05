@@ -134,7 +134,7 @@ void ImageLoader::updateFromElementIgnoringPreviousError()
     updateFromElement();
 }
 
-void ImageLoader::notifyFinished(CachedResource *image)
+void ImageLoader::notifyFinished(CachedResource*)
 {
     ASSERT(m_failedLoadURL.isEmpty());
     m_imageComplete = true;

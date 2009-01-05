@@ -48,6 +48,7 @@ class PluginTokenizer : public Tokenizer {
 public:
     PluginTokenizer(Document* doc) : m_doc(doc), m_embedElement(0) {}
         
+private:
     virtual bool write(const SegmentedString&, bool appendData);
     virtual void stopParsing();
     virtual void finish();
@@ -57,12 +58,12 @@ public:
     virtual bool writeRawData(const char* data, int len);
         
     void createDocumentStructure();
-private:
+
     Document* m_doc;
     HTMLEmbedElement* m_embedElement;
 };
     
-bool PluginTokenizer::write(const SegmentedString& s, bool appendData)
+bool PluginTokenizer::write(const SegmentedString&, bool)
 {
     ASSERT_NOT_REACHED();
     return false;
@@ -94,7 +95,7 @@ void PluginTokenizer::createDocumentStructure()
     body->appendChild(embedElement, ec);    
 }
     
-bool PluginTokenizer::writeRawData(const char* data, int len)
+bool PluginTokenizer::writeRawData(const char*, int)
 {
     ASSERT(!m_embedElement);
     if (m_embedElement)

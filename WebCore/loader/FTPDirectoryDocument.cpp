@@ -399,7 +399,7 @@ void FTPDirectoryTokenizer::createBasicDocument()
     bodyElement->appendChild(m_tableElement, ec);
 }
 
-bool FTPDirectoryTokenizer::write(const SegmentedString& s, bool appendData)
+bool FTPDirectoryTokenizer::write(const SegmentedString& s, bool /*appendData*/)
 {    
     // Make sure we have the table element to append to by loading the template set in the pref, or
     // creating a very basic document with the appropriate table

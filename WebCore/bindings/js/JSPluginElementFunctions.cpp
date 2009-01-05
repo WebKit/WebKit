@@ -61,7 +61,7 @@ static RuntimeObjectImp* getRuntimeObject(ExecState* exec, Node* node)
     return JSC::Bindings::Instance::createRuntimeObject(exec, instance);
 }
 
-JSValue* runtimeObjectGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* runtimeObjectGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(asObject(slot.slotBase()));
     HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());

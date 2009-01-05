@@ -47,7 +47,7 @@ JSXSLTProcessorConstructor::JSXSLTProcessorConstructor(ExecState* exec)
     putDirect(exec->propertyNames().prototype, JSXSLTProcessorPrototype::self(exec), None);
 }
 
-static JSObject* constructXSLTProcessor(ExecState* exec, JSObject*, const ArgList& args)
+static JSObject* constructXSLTProcessor(ExecState* exec, JSObject*, const ArgList&)
 {
     return CREATE_DOM_OBJECT_WRAPPER(exec, XSLTProcessor, XSLTProcessor::create().get());
 }

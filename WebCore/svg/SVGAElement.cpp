@@ -96,7 +96,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
-RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     if (static_cast<SVGElement*>(parent())->isTextContent())
         return new (arena) RenderSVGInline(this);

@@ -171,7 +171,7 @@ bool RenderImageScaleObserver::shouldImagePaintAtLowQuality(RenderImage* image, 
 
 HashMap<RenderImage*, RenderImageScaleData*>* RenderImageScaleObserver::gImages = 0;
 
-void RenderImage::highQualityRepaintTimerFired(Timer<RenderImage>* timer)
+void RenderImage::highQualityRepaintTimerFired(Timer<RenderImage>*)
 {
     RenderImageScaleObserver::highQualityRepaintTimerFired(this);
 }

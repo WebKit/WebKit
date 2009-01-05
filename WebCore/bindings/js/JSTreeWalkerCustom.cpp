@@ -37,7 +37,7 @@ void JSTreeWalker::mark()
     DOMObject::mark();
 }
     
-JSValue* JSTreeWalker::parentNode(ExecState* exec, const ArgList& args)
+JSValue* JSTreeWalker::parentNode(ExecState* exec, const ArgList&)
 {
     Node* node = impl()->parentNode(exec);
     if (exec->hadException())
@@ -45,7 +45,7 @@ JSValue* JSTreeWalker::parentNode(ExecState* exec, const ArgList& args)
     return toJS(exec, node);
 }
     
-JSValue* JSTreeWalker::firstChild(ExecState* exec, const ArgList& args)
+JSValue* JSTreeWalker::firstChild(ExecState* exec, const ArgList&)
 {
     Node* node = impl()->firstChild(exec);
     if (exec->hadException())
@@ -53,7 +53,7 @@ JSValue* JSTreeWalker::firstChild(ExecState* exec, const ArgList& args)
     return toJS(exec, node);
 }
     
-JSValue* JSTreeWalker::lastChild(ExecState* exec, const ArgList& args)
+JSValue* JSTreeWalker::lastChild(ExecState* exec, const ArgList&)
 {
     Node* node = impl()->lastChild(exec);
     if (exec->hadException())
@@ -61,7 +61,7 @@ JSValue* JSTreeWalker::lastChild(ExecState* exec, const ArgList& args)
     return toJS(exec, node);
 }
     
-JSValue* JSTreeWalker::nextSibling(ExecState* exec, const ArgList& args)
+JSValue* JSTreeWalker::nextSibling(ExecState* exec, const ArgList&)
 {
     Node* node = impl()->nextSibling(exec);
     if (exec->hadException())
@@ -69,7 +69,7 @@ JSValue* JSTreeWalker::nextSibling(ExecState* exec, const ArgList& args)
     return toJS(exec, node);
 }
     
-JSValue* JSTreeWalker::previousSibling(ExecState* exec, const ArgList& args)
+JSValue* JSTreeWalker::previousSibling(ExecState* exec, const ArgList&)
 {
     Node* node = impl()->previousSibling(exec);
     if (exec->hadException())
@@ -77,7 +77,7 @@ JSValue* JSTreeWalker::previousSibling(ExecState* exec, const ArgList& args)
     return toJS(exec, node);
 }
     
-JSValue* JSTreeWalker::previousNode(ExecState* exec, const ArgList& args)
+JSValue* JSTreeWalker::previousNode(ExecState* exec, const ArgList&)
 {
     Node* node = impl()->previousNode(exec);
     if (exec->hadException())
@@ -85,7 +85,7 @@ JSValue* JSTreeWalker::previousNode(ExecState* exec, const ArgList& args)
     return toJS(exec, node);
 }
     
-JSValue* JSTreeWalker::nextNode(ExecState* exec, const ArgList& args)
+JSValue* JSTreeWalker::nextNode(ExecState* exec, const ArgList&)
 {
     Node* node = impl()->nextNode(exec);
     if (exec->hadException())

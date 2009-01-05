@@ -124,8 +124,8 @@ public:
                               int& topPosition, int& bottomPosition, int& selectionTop, int& selectionBottom);
     void shrinkBoxesWithNoTextChildren(int topPosition, int bottomPosition);
     
-    virtual void setVerticalOverflowPositions(int top, int bottom) { }
-    virtual void setVerticalSelectionPositions(int top, int bottom) { }
+    virtual void setVerticalOverflowPositions(int /*top*/, int /*bottom*/) { }
+    virtual void setVerticalSelectionPositions(int /*top*/, int /*bottom*/) { }
     int maxHorizontalVisualOverflow() const { return m_maxHorizontalVisualOverflow; }
 
     void removeChild(InlineBox* child);

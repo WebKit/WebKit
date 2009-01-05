@@ -134,9 +134,10 @@ void ScriptController::disconnectPlatformScriptObjects()
 }
 
 #if ENABLE(MAC_JAVA_BRIDGE)
+
 static pthread_t mainThread;
 
-static void updateRenderingForBindings(JSC::ExecState* exec, JSC::JSObject* rootObject)
+static void updateRenderingForBindings(JSC::ExecState*, JSC::JSObject* rootObject)
 {
     if (pthread_self() != mainThread)
         return;
@@ -165,6 +166,7 @@ void ScriptController::initJavaJSBindings()
     JSC::Bindings::JavaJSObject::initializeJNIThreading();
     JSC::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
 }
+
 #endif
 
 }

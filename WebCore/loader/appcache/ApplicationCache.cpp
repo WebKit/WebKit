@@ -129,7 +129,7 @@ unsigned ApplicationCache::numDynamicEntries() const
     return 0;
 }
     
-String ApplicationCache::dynamicEntry(unsigned index) const
+String ApplicationCache::dynamicEntry(unsigned) const
 {
     // FIXME: Implement
     return String();
@@ -137,15 +137,14 @@ String ApplicationCache::dynamicEntry(unsigned index) const
     
 bool ApplicationCache::addDynamicEntry(const String& url)
 {
-    if (!equalIgnoringCase(m_group->manifestURL().protocol(),
-                           KURL(url).protocol()))
+    if (!equalIgnoringCase(m_group->manifestURL().protocol(), KURL(url).protocol()))
         return false;
 
     // FIXME: Implement
     return true;
 }
     
-void ApplicationCache::removeDynamicEntry(const String& url)
+void ApplicationCache::removeDynamicEntry(const String&)
 {
     // FIXME: Implement
 }
