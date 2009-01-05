@@ -72,7 +72,7 @@ static WebDataSource* getWebDataSource(DocumentLoader* loader)
 
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
     : m_webFrame(webFrame)
-    , m_pluginView(0) 
+    , m_manualLoader(0) 
     , m_hasSentResponseToPlugin(false) 
 {
     ASSERT_ARG(webFrame, webFrame);
@@ -361,12 +361,11 @@ void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*)
 
 void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError& error)
 {
-    if (!m_pluginView)
+    if (!m_manualLoader)
         return;
 
-    if (m_pluginView->status() == PluginStatusLoadedSuccessfully)
-        m_pluginView->didFail(error);
-    m_pluginView = 0;
+    m_manualLoader->didFail(error);
+    m_manualLoader = 0;
     m_hasSentResponseToPlugin = false;
 }
 
@@ -396,22 +395,22 @@ void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* dat
     // FIXME: This should probably go through the data source.
     const String& textEncoding = loader->response().textEncodingName();
 
-    if (!m_pluginView)
+    if (!m_manualLoader)
         receivedData(data, length, textEncoding);
 
-    if (!m_pluginView || m_pluginView->status() != PluginStatusLoadedSuccessfully)
+    if (!m_manualLoader)
         return;
 
     if (!m_hasSentResponseToPlugin) {
-        m_pluginView->didReceiveResponse(core(m_webFrame)->loader()->documentLoader()->response());
+        m_manualLoader->didReceiveResponse(core(m_webFrame)->loader()->documentLoader()->response());
         // didReceiveResponse sets up a new stream to the plug-in. on a full-page plug-in, a failure in
-        // setting up this stream can cause the main document load to be cancelled, setting m_pluginView
+        // setting up this stream can cause the main document load to be cancelled, setting m_manualLoader
         // to null
-        if (!m_pluginView)
+        if (!m_manualLoader)
             return;
         m_hasSentResponseToPlugin = true;
     }
-    m_pluginView->didReceiveData(data, length);
+    m_manualLoader->didReceiveData(data, length);
 }
 
 void WebFrameLoaderClient::receivedData(const char* data, int length, const String& textEncoding)
@@ -435,14 +434,13 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
     // Telling the frame we received some data and passing 0 as the data is our
     // way to get work done that is normally done when the first bit of data is
     // received, even for the case of a document with no data (like about:blank)
-    if (!m_pluginView) {
+    if (!m_manualLoader) {
         committedLoad(loader, 0, 0);
         return;
     }
 
-    if (m_pluginView->status() == PluginStatusLoadedSuccessfully)
-        m_pluginView->didFinishLoading();
-    m_pluginView = 0;
+    m_manualLoader->didFinishLoading();
+    m_manualLoader = 0;
     m_hasSentResponseToPlugin = false;
 }
 
@@ -695,7 +693,8 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
     // Ideally, this function shouldn't be necessary, see <rdar://problem/4852889>
 
-    m_pluginView = static_cast<PluginView*>(pluginWidget);
+    if (pluginWidget->isPluginView())
+        m_manualLoader = static_cast<PluginView*>(pluginWidget);
 }
 
 WebHistory* WebFrameLoaderClient::webHistory() const

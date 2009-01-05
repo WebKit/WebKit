@@ -1,3 +1,18 @@
+2009-01-05  Anders Carlsson  <andersca@apple.com> 
+
+        Reviewed by Kevin Decker.
+
+        Use the ManualLoader class instead of assuming that the manual loader
+        is a plug-in view.
+        
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebFrameLoaderClient::setMainDocumentError):
+        (WebFrameLoaderClient::committedLoad):
+        (WebFrameLoaderClient::finishedLoading):
+        (WebFrameLoaderClient::redirectDataToPlugin):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2009-01-04  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.
