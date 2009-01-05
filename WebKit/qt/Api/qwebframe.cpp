@@ -834,6 +834,8 @@ QRect QWebFrame::geometry() const
 /*!
     \property QWebFrame::contentsSize
     \brief the size of the contents in this frame
+
+    \sa contentsSizeChanged
 */
 QSize QWebFrame::contentsSize() const
 {
@@ -1045,6 +1047,14 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
   has been loaded.
 
   \sa icon()
+*/
+
+/*!
+  \fn void QWebFrame::contentsSizeChanged(const QSize &size)
+
+  This signal is emitted when the frame's contents size changes.
+
+  \sa contentsSize()
 */
 
 /*!

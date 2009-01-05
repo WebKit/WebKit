@@ -344,6 +344,11 @@ PlatformWidget ChromeClientQt::platformWindow() const
     return m_webPage->view();
 }
 
+void ChromeClientQt::contentsSizeChanged(Frame* frame, const IntSize& size) const
+{
+    emit QWebFramePrivate::kit(frame)->contentsSizeChanged(size);
+}
+
 void ChromeClientQt::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     if (result.absoluteLinkURL() != lastHoverURL

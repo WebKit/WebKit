@@ -2,6 +2,18 @@
 
         Reviewed by George Staikos.
 
+        Add Qt API for QWebFrame::contentsSizeChanged signal
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::contentsSizeChanged):
+        * WebCoreSupport/ChromeClientQt.h:
+
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         Fixes QWebFrame::setScrollBarPolicy(..) to actually work.  Also happens
         to fix 192 layout tests that were previously failing for Qt.
 

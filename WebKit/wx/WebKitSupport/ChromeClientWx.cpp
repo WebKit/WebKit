@@ -314,6 +314,11 @@ PlatformWidget ChromeClientWx::platformWindow() const
     return 0;
 }
 
+void ChromeClientWx::contentsSizeChanged(Frame*, const IntSize&) const
+{
+    notImplemented();
+}
+
 void ChromeClientWx::scrollBackingStore(int dx, int dy, 
                     const IntRect& scrollViewRect, 
                     const IntRect& clipRect)

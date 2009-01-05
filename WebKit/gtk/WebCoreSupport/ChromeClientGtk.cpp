@@ -351,6 +351,11 @@ PlatformWidget ChromeClient::platformWindow() const
     return GTK_WIDGET(m_webView);
 }
 
+void ChromeClient::contentsSizeChanged(Frame*, const IntSize&) const
+{
+    notImplemented();
+}
+
 void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
 {
     // check if the element is a link...

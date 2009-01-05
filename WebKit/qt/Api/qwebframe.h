@@ -190,6 +190,8 @@ Q_SIGNALS:
 
     void iconChanged();
 
+    void contentsSizeChanged(const QSize &size);
+
 private:
     friend class QWebPage;
     friend class QWebPagePrivate;

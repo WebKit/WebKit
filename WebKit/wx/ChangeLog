@@ -1,3 +1,13 @@
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Build fix for contentsSizeChanged
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::contentsSizeChanged):
+        * WebKitSupport/ChromeClientWx.h:
+
 2008-12-19  miggilin  <mr.diggilin@gmail.com>
 
         Reviewed by Kevin Ollivier.

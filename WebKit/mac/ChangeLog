@@ -1,3 +1,13 @@
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Build fix for contentsSizeChanged
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::contentsSizeChanged):
+
 2009-01-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

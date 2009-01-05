@@ -94,6 +94,7 @@ public:
     virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const;
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const;
     virtual PlatformWidget platformWindow() const;
+    virtual void contentsSizeChanged(Frame*, const IntSize&) const;
 
     virtual void setStatusbarText(const WebCore::String&);
 

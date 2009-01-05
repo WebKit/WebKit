@@ -115,6 +115,7 @@ namespace WebCore {
         virtual IntPoint screenToWindow(const IntPoint&) const = 0;
         virtual IntRect windowToScreen(const IntRect&) const = 0;
         virtual PlatformWidget platformWindow() const = 0;
+        virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
         // End methods used by HostWindow.
 
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;

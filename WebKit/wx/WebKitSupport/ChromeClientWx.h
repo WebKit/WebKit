@@ -102,6 +102,7 @@ public:
     virtual IntPoint screenToWindow(const IntPoint&) const;
     virtual IntRect windowToScreen(const IntRect&) const;
     virtual PlatformWidget platformWindow() const;
+    virtual void contentsSizeChanged(Frame*, const IntSize&) const;
 
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 

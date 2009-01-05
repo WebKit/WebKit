@@ -97,6 +97,7 @@ public:
     virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint& p) const;
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect& r) const;
     virtual PlatformWidget platformWindow() const;
+    virtual void contentsSizeChanged(Frame*, const IntSize&) const;
 
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);
 
