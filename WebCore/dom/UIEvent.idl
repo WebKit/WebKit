@@ -32,7 +32,7 @@ module events {
                                         in DOMWindow view, 
                                         in long detail);
 
-        // extentsions
+        // extensions
         readonly attribute long                 keyCode;
         readonly attribute long                 charCode;
         readonly attribute long                 layerX;

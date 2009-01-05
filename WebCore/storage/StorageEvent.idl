@@ -33,7 +33,7 @@ module storage {
         readonly attribute [ConvertNullStringTo=Null] DOMString newValue;
         readonly attribute DOMString uri;
         readonly attribute DOMWindow source;
-        void initStorageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString uriArg, in DOMWindow sourceArg);
+        void initStorageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in [ConvertNullToNullString] DOMString oldValueArg, in [ConvertNullToNullString] DOMString newValueArg, in DOMString uriArg, in DOMWindow sourceArg);
 
         // Needed once we support init<blank>EventNS
         // void initStorageEventNS(in DOMString namespaceURI, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString uriArg, in Window sourceArg);

@@ -1,3 +1,14 @@
+2009-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Bug 23104: minor mistakes in init functions for animation and transition events
+        https://bugs.webkit.org/show_bug.cgi?id=23104
+
+        * fast/events/init-events-expected.txt: Added.
+        * fast/events/init-events.html: Added.
+        * fast/events/resources/init-events.js: Added.
+
 2009-01-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -101,6 +101,7 @@
 #include "SegmentedString.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "StorageEvent.h"
 #include "StyleSheetList.h"
 #include "SystemTime.h"
 #include "TextEvent.h"
@@ -2637,22 +2638,30 @@ DOMWindow* Document::domWindow() const
 
 PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)
 {
-    if (eventType == "UIEvents" || eventType == "UIEvent")
-        return UIEvent::create();
-    if (eventType == "MouseEvents" || eventType == "MouseEvent")
-        return MouseEvent::create();
-    if (eventType == "MutationEvents" || eventType == "MutationEvent")
-        return MutationEvent::create();
-    if (eventType == "KeyboardEvents" || eventType == "KeyboardEvent")
-        return KeyboardEvent::create();
-    if (eventType == "HTMLEvents" || eventType == "Event" || eventType == "Events")
+    if (eventType == "Event" || eventType == "Events" || eventType == "HTMLEvents")
         return Event::create();
-    if (eventType == "ProgressEvent")
-        return ProgressEvent::create();
-    if (eventType == "TextEvent")
-        return TextEvent::create();
+    if (eventType == "KeyboardEvent" || eventType == "KeyboardEvents")
+        return KeyboardEvent::create();
+    if (eventType == "MessageEvent")
+        return MessageEvent::create();
+    if (eventType == "MouseEvent" || eventType == "MouseEvents")
+        return MouseEvent::create();
+    if (eventType == "MutationEvent" || eventType == "MutationEvents")
+        return MutationEvent::create();
     if (eventType == "OverflowEvent")
         return OverflowEvent::create();
+    if (eventType == "ProgressEvent")
+        return ProgressEvent::create();
+    if (eventType == "StorageEvent")
+        return StorageEvent::create();
+    if (eventType == "TextEvent")
+        return TextEvent::create();
+    if (eventType == "UIEvent" || eventType == "UIEvents")
+        return UIEvent::create();
+    if (eventType == "WebKitAnimationEvent")
+        return WebKitAnimationEvent::create();
+    if (eventType == "WebKitTransitionEvent")
+        return WebKitTransitionEvent::create();
     if (eventType == "WheelEvent")
         return WheelEvent::create();
 #if ENABLE(SVG)
@@ -2661,12 +2670,6 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
     if (eventType == "SVGZoomEvents")
         return SVGZoomEvent::create();
 #endif
-    if (eventType == "MessageEvent")
-        return MessageEvent::create();
-    if (eventType == "WebKitAnimationEvent")
-        return WebKitAnimationEvent::create();
-    if (eventType == "WebKitTransitionEvent")
-        return WebKitTransitionEvent::create();
     ec = NOT_SUPPORTED_ERR;
     return 0;
 }

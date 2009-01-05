@@ -1,5 +1,35 @@
 2009-01-05  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        Bug 23104: minor mistakes in init functions for animation and transition events
+        https://bugs.webkit.org/show_bug.cgi?id=23104
+
+        Test: fast/events/init-events.html
+
+        Also fixed two StorageEvent problems the test case uncovered:
+
+            Made document.createEvent("StorageEvent") work.
+            Allow null values for StorageEvent.oldValue and StorageEvent.newValue.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent): Sorted alphabetically by the name of the event
+        class. Added StorageEvent.
+
+        * dom/UIEvent.idl: Fixed typo in a comment.
+
+        * dom/WebKitAnimationEvent.cpp:
+        (WebCore::WebKitAnimationEvent::initWebKitAnimationEvent): Use all the arguments.
+        * dom/WebKitTransitionEvent.cpp:
+        (WebCore::WebKitTransitionEvent::initWebKitTransitionEvent): Ditto.
+
+        * storage/StorageEvent.idl: Use the ConvertNullToNullString keyword on the
+        arguments to initStorageEvent so it can create events with null values for the
+        oldValue and newValue, just like the real storage events. Note that the properties
+        already had ConvertNullStringTo=Null, so this is just the other half of that.
+
+2009-01-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Bug 23102: turn on unused parameter warnings in WebCore
