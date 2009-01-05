@@ -99,6 +99,7 @@ namespace WebCore {
 
     class PluginManualLoader {
     public:
+        virtual ~PluginManualLoader() {}
         virtual void didReceiveResponse(const ResourceResponse&) = 0;
         virtual void didReceiveData(const char*, int) = 0;
         virtual void didFinishLoading() = 0;

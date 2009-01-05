@@ -1,5 +1,12 @@
 2009-01-05  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+        
+        * plugins/PluginView.h:
+        (WebCore::PluginManualLoader::~PluginManualLoader):
+
+2009-01-05  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Kevin Decker.
         
         Add an abstract PluginManualLoader class and make PluginView inherit from it. 
