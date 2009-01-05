@@ -143,15 +143,6 @@ public:
     virtual void forceLayout() { }
     virtual void forceLayoutForNonHTML() { }
 
-    virtual void updateHistoryForCommit() { }
-
-    virtual void updateHistoryForBackForwardNavigation() { }
-    virtual void updateHistoryForReload() { }
-    virtual void updateHistoryForStandardLoad() { }
-    virtual void updateHistoryForInternalLoad() { }
-
-    virtual void updateHistoryAfterClientRedirect() { }
-
     virtual void setCopiesOnScroll() { }
 
     virtual void detachedFromParent2() { }
@@ -239,7 +230,6 @@ public:
     virtual void restoreViewState() { }
     virtual void provisionalLoadStarted() { }
     virtual bool shouldTreatURLAsSameAsCurrent(const KURL&) const { return false; }
-    virtual void addHistoryItemForFragmentScroll() { }
     virtual void didFinishLoad() { }
     virtual void prepareForDataSourceReplacement() { }
 
