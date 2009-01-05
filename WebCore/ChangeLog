@@ -2,6 +2,72 @@
 
         Reviewed by Anders Carlsson.
 
+        Bug 23106: HTMLFormCollection::namedItem ignores caseSensitive argument
+        https://bugs.webkit.org/show_bug.cgi?id=23106
+
+        This led me to a bunch of dead code. It turns out that HTML collections
+        were carrying the case-insensitive code just so they could be used to
+        find anchors, something we can do more simply and efficiently without
+        creating a DOM HTMLCollection object.
+
+        No behavior change. Just adding a new function findAnchor function and
+        removing some dead code.
+
+        * dom/Document.cpp:
+        (WebCore::Document::findAnchor): Added.
+        * dom/Document.h: Ditto.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::accessKey): Take and return AtomicString
+        references for better efficiency.
+        (WebCore::HTMLAnchorElement::setAccessKey): Ditto.
+        (WebCore::HTMLAnchorElement::charset): Ditto.
+        (WebCore::HTMLAnchorElement::setCharset): Ditto.
+        (WebCore::HTMLAnchorElement::coords): Ditto.
+        (WebCore::HTMLAnchorElement::setCoords): Ditto.
+        (WebCore::HTMLAnchorElement::setHref): Ditto.
+        (WebCore::HTMLAnchorElement::hreflang): Ditto.
+        (WebCore::HTMLAnchorElement::setHreflang): Ditto.
+        (WebCore::HTMLAnchorElement::name): Ditto.
+        (WebCore::HTMLAnchorElement::setName): Ditto.
+        (WebCore::HTMLAnchorElement::rel): Ditto.
+        (WebCore::HTMLAnchorElement::setRel): Ditto.
+        (WebCore::HTMLAnchorElement::rev): Ditto.
+        (WebCore::HTMLAnchorElement::setRev): Ditto.
+        (WebCore::HTMLAnchorElement::shape): Ditto.
+        (WebCore::HTMLAnchorElement::setShape): Ditto.
+        (WebCore::HTMLAnchorElement::setTarget): Ditto.
+        (WebCore::HTMLAnchorElement::type): Ditto.
+        (WebCore::HTMLAnchorElement::setType): Ditto.
+        * html/HTMLAnchorElement.h: Ditto.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::checkForNameMatch): Changed argument to an
+        AtomicString and removed the caseSensitive boolean, since we're now always
+        case sensitive.
+        (WebCore::HTMLCollection::namedItem): Ditto.
+        (WebCore::HTMLCollection::nextNamedItem): Ditto.
+        * html/HTMLCollection.h: Ditto.
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::getNamedItem): Ditto.
+        (WebCore::HTMLFormCollection::getNamedFormItem): Ditto.
+        (WebCore::HTMLFormCollection::nextNamedItemInternal): Ditto.
+        (WebCore::HTMLFormCollection::namedItem): Ditto.
+        (WebCore::HTMLFormCollection::nextNamedItem): Ditto.
+        * html/HTMLFormCollection.h: Ditto.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::namedItem): Ditto.
+        * html/HTMLSelectElement.h: Ditto.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::gotoAnchor): Use the new findAnchor function.
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::internalLinkElement): Ditto.
+
+2009-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Bug 23104: minor mistakes in init functions for animation and transition events
         https://bugs.webkit.org/show_bug.cgi?id=23104
 

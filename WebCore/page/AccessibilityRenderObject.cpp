@@ -994,12 +994,9 @@ AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
     if (m_renderer->document()->url() != linkURL)
         return 0;
     
-    Node* linkedNode = m_renderer->document()->getElementById(ref);
-    if (!linkedNode) {
-        linkedNode = m_renderer->document()->anchors()->namedItem(ref, !m_renderer->document()->inCompatMode());
-        if (!linkedNode)
-            return 0;
-    }
+    Node* linkedNode = m_renderer->document()->findAnchor(ref);
+    if (!linkedNode)
+        return 0;
     
     // the element we find may not be accessible, keep searching until we find a good one
     AccessibilityObject* linkedAXElement = m_renderer->document()->axObjectCache()->get(linkedNode->renderer());

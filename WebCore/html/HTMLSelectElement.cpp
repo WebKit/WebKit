@@ -1049,9 +1049,9 @@ void HTMLSelectElement::setSize(int size)
     setAttribute(sizeAttr, String::number(size));
 }
 
-Node* HTMLSelectElement::namedItem(const String &name, bool caseSensitive)
+Node* HTMLSelectElement::namedItem(const AtomicString& name)
 {
-    return options()->namedItem(name, caseSensitive);
+    return options()->namedItem(name);
 }
 
 Node* HTMLSelectElement::item(unsigned index)

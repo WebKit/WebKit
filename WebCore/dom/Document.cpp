@@ -58,6 +58,7 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLDocument.h"
@@ -4348,6 +4349,29 @@ void Document::postTask(PassRefPtr<Task> task)
     } else {
         callOnMainThread(performTask, new PerformTaskContext(this, task));
     }
+}
+
+Element* Document::findAnchor(const String& name)
+{
+    if (name.isEmpty())
+        return 0;
+    if (Element* element = getElementById(name))
+        return element;
+    for (Node* node = this; node; node = traverseNextNode()) {
+        if (node->hasTagName(aTag)) {
+            HTMLAnchorElement* anchor = static_cast<HTMLAnchorElement*>(node);
+            if (inCompatMode()) {
+                // Quirks mode, case insensitive comparison of names.
+                if (equalIgnoringCase(anchor->name(), name))
+                    return anchor;
+            } else {
+                // Strict mode, names need to match exactly.
+                if (anchor->name() == name)
+                    return anchor;
+            }
+        }
+    }
+    return 0;
 }
 
 } // namespace WebCore

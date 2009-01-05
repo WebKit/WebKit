@@ -272,6 +272,13 @@ public:
     PassRefPtr<HTMLCollection> windowNamedItems(const String& name);
     PassRefPtr<HTMLCollection> documentNamedItems(const String& name);
 
+    // Find first anchor with the given name.
+    // First searches for an element with the given ID, but if that fails, then looks
+    // for an anchor with the given name. ID matching is always case sensitive, but
+    // Anchor name matching is case sensitive in strict mode and not case sensitive in
+    // quirks mode for historical compatibility reasons.
+    Element* findAnchor(const String& name);
+
     HTMLCollection::CollectionInfo* collectionInfo(HTMLCollection::Type type)
     {
         ASSERT(type >= HTMLCollection::FirstUnnamedDocumentCachedType);

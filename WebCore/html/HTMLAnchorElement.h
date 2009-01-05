@@ -49,40 +49,40 @@ public:
 
     virtual bool canStartSelection() const;
 
-    String accessKey() const;
-    void setAccessKey(const String&);
+    const AtomicString& accessKey() const;
+    void setAccessKey(const AtomicString&);
 
-    String charset() const;
-    void setCharset(const String&);
+    const AtomicString& charset() const;
+    void setCharset(const AtomicString&);
 
-    String coords() const;
-    void setCoords(const String&);
+    const AtomicString& coords() const;
+    void setCoords(const AtomicString&);
 
     KURL href() const;
-    void setHref(const String&);
+    void setHref(const AtomicString&);
 
-    String hreflang() const;
-    void setHreflang(const String&);
+    const AtomicString& hreflang() const;
+    void setHreflang(const AtomicString&);
 
-    String name() const;
-    void setName(const String&);
+    const AtomicString& name() const;
+    void setName(const AtomicString&);
 
-    String rel() const;
-    void setRel(const String&);
+    const AtomicString& rel() const;
+    void setRel(const AtomicString&);
 
-    String rev() const;
-    void setRev(const String&);
+    const AtomicString& rev() const;
+    void setRev(const AtomicString&);
 
-    String shape() const;
-    void setShape(const String&);
+    const AtomicString& shape() const;
+    void setShape(const AtomicString&);
 
     virtual short tabIndex() const;
 
     virtual String target() const;
-    void setTarget(const String&);
+    void setTarget(const AtomicString&);
 
-    String type() const;
-    void setType(const String&);
+    const AtomicString& type() const;
+    void setType(const AtomicString&);
 
     String hash() const;
     String host() const;

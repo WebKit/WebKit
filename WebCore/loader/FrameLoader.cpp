@@ -55,6 +55,7 @@
 #include "FramePrivate.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLNames.h"
@@ -1611,9 +1612,7 @@ bool FrameLoader::gotoAnchor(const String& name)
 
     m_frame->document()->setGotoAnchorNeededAfterStylesheetsLoad(false);
 
-    Node* anchorNode = m_frame->document()->getElementById(AtomicString(name));
-    if (!anchorNode && !name.isEmpty())
-        anchorNode = m_frame->document()->anchors()->namedItem(name, !m_frame->document()->inCompatMode());
+    Element* anchorNode = m_frame->document()->findAnchor(name);
 
 #if ENABLE(SVG)
     if (m_frame->document()->isSVGDocument()) {

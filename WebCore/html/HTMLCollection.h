@@ -84,8 +84,8 @@ public:
     virtual Node* item(unsigned index) const;
     virtual Node* nextItem() const;
 
-    virtual Node* namedItem(const String& name, bool caseSensitive = true) const;
-    virtual Node* nextNamedItem(const String& name) const; // In case of multiple items named the same way
+    virtual Node* namedItem(const AtomicString& name) const;
+    virtual Node* nextNamedItem(const AtomicString& name) const; // In case of multiple items named the same way
 
     Node* firstItem() const;
 
@@ -145,7 +145,7 @@ private:
     virtual unsigned calcLength() const;
     virtual void updateNameCache() const;
 
-    bool checkForNameMatch(Element*, bool checkName, const String &name, bool caseSensitive) const;
+    bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
     RefPtr<Node> m_base;
     Type m_type;

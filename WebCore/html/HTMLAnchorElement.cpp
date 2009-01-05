@@ -310,32 +310,32 @@ bool HTMLAnchorElement::canStartSelection() const
     return isContentEditable();
 }
 
-String HTMLAnchorElement::accessKey() const
+const AtomicString& HTMLAnchorElement::accessKey() const
 {
     return getAttribute(accesskeyAttr);
 }
 
-void HTMLAnchorElement::setAccessKey(const String &value)
+void HTMLAnchorElement::setAccessKey(const AtomicString& value)
 {
     setAttribute(accesskeyAttr, value);
 }
 
-String HTMLAnchorElement::charset() const
+const AtomicString& HTMLAnchorElement::charset() const
 {
     return getAttribute(charsetAttr);
 }
 
-void HTMLAnchorElement::setCharset(const String &value)
+void HTMLAnchorElement::setCharset(const AtomicString& value)
 {
     setAttribute(charsetAttr, value);
 }
 
-String HTMLAnchorElement::coords() const
+const AtomicString& HTMLAnchorElement::coords() const
 {
     return getAttribute(coordsAttr);
 }
 
-void HTMLAnchorElement::setCoords(const String &value)
+void HTMLAnchorElement::setCoords(const AtomicString& value)
 {
     setAttribute(coordsAttr, value);
 }
@@ -345,57 +345,57 @@ KURL HTMLAnchorElement::href() const
     return document()->completeURL(getAttribute(hrefAttr));
 }
 
-void HTMLAnchorElement::setHref(const String &value)
+void HTMLAnchorElement::setHref(const AtomicString& value)
 {
     setAttribute(hrefAttr, value);
 }
 
-String HTMLAnchorElement::hreflang() const
+const AtomicString& HTMLAnchorElement::hreflang() const
 {
     return getAttribute(hreflangAttr);
 }
 
-void HTMLAnchorElement::setHreflang(const String &value)
+void HTMLAnchorElement::setHreflang(const AtomicString& value)
 {
     setAttribute(hreflangAttr, value);
 }
 
-String HTMLAnchorElement::name() const
+const AtomicString& HTMLAnchorElement::name() const
 {
     return getAttribute(nameAttr);
 }
 
-void HTMLAnchorElement::setName(const String &value)
+void HTMLAnchorElement::setName(const AtomicString& value)
 {
     setAttribute(nameAttr, value);
 }
 
-String HTMLAnchorElement::rel() const
+const AtomicString& HTMLAnchorElement::rel() const
 {
     return getAttribute(relAttr);
 }
 
-void HTMLAnchorElement::setRel(const String &value)
+void HTMLAnchorElement::setRel(const AtomicString& value)
 {
     setAttribute(relAttr, value);
 }
 
-String HTMLAnchorElement::rev() const
+const AtomicString& HTMLAnchorElement::rev() const
 {
     return getAttribute(revAttr);
 }
 
-void HTMLAnchorElement::setRev(const String &value)
+void HTMLAnchorElement::setRev(const AtomicString& value)
 {
     setAttribute(revAttr, value);
 }
 
-String HTMLAnchorElement::shape() const
+const AtomicString& HTMLAnchorElement::shape() const
 {
     return getAttribute(shapeAttr);
 }
 
-void HTMLAnchorElement::setShape(const String &value)
+void HTMLAnchorElement::setShape(const AtomicString& value)
 {
     setAttribute(shapeAttr, value);
 }
@@ -411,17 +411,17 @@ String HTMLAnchorElement::target() const
     return getAttribute(targetAttr);
 }
 
-void HTMLAnchorElement::setTarget(const String &value)
+void HTMLAnchorElement::setTarget(const AtomicString& value)
 {
     setAttribute(targetAttr, value);
 }
 
-String HTMLAnchorElement::type() const
+const AtomicString& HTMLAnchorElement::type() const
 {
     return getAttribute(typeAttr);
 }
 
-void HTMLAnchorElement::setType(const String &value)
+void HTMLAnchorElement::setType(const AtomicString& value)
 {
     setAttribute(typeAttr, value);
 }
