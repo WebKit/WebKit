@@ -532,10 +532,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCanvasPixelArray.h"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCanvasRenderingContext2D.h"
 				>
 			</File>
@@ -12494,22 +12490,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\CanvasPixelArray.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="true"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\html\CanvasPixelArray.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\CanvasRenderingContext2D.cpp"
 				>
 				<FileConfiguration
@@ -13954,10 +13934,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSAudioConstructor.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSCanvasPixelArrayCustom.h"
 					>
 				</File>
 				<File

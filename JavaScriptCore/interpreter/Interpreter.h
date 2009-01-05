@@ -292,6 +292,7 @@ namespace JSC {
 
         bool isJSArray(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsArrayVptr; }
         bool isJSString(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringVptr; }
+        bool isJSByteArray(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsByteArrayVptr; }
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
@@ -359,6 +360,7 @@ namespace JSC {
         RegisterFile m_registerFile;
         
         void* m_jsArrayVptr;
+        void* m_jsByteArrayVptr;
         void* m_jsStringVptr;
         void* m_jsFunctionVptr;
 

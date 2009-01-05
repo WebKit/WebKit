@@ -29,8 +29,9 @@
 #ifndef ImageData_h
 #define ImageData_h
 
-#include "CanvasPixelArray.h"
+#include <runtime/ByteArray.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -40,13 +41,13 @@ namespace WebCore {
 
         unsigned width() const { return m_width; }
         unsigned height() const { return m_height; }
-        CanvasPixelArray* data() const { return m_data.get(); }
+        JSC::ByteArray* data() const { return m_data.get(); }
 
     private:
         ImageData(unsigned width, unsigned height);
         unsigned m_width;
         unsigned m_height;
-        RefPtr<CanvasPixelArray> m_data;
+        RefPtr<JSC::ByteArray> m_data;
     };
 
 } // namespace WebCore

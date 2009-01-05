@@ -308,7 +308,6 @@ IDL_BINDINGS += \
     dom/WorkerLocation.idl \
     html/CanvasGradient.idl \
     html/CanvasPattern.idl \
-    html/CanvasPixelArray.idl \
     html/CanvasRenderingContext2D.idl \
     html/File.idl \
     html/FileList.idl \
@@ -672,7 +671,6 @@ SOURCES += \
     history/PageCache.cpp \
     html/CanvasGradient.cpp \
     html/CanvasPattern.cpp \
-    html/CanvasPixelArray.cpp \
     html/CanvasRenderingContext2D.cpp \
     html/CanvasStyle.cpp \
     html/File.cpp \

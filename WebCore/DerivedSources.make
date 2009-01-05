@@ -65,7 +65,6 @@ DOM_CLASSES = \
     CSSVariablesDeclaration \
     CanvasGradient \
     CanvasPattern \
-    CanvasPixelArray \
     CanvasRenderingContext2D \
     CharacterData \
     Clipboard \

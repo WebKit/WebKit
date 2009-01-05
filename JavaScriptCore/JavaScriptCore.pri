@@ -105,6 +105,7 @@ SOURCES += \
     runtime/BooleanConstructor.cpp \
     runtime/BooleanObject.cpp \
     runtime/BooleanPrototype.cpp \
+    runtime/ByteArray.cpp \
     runtime/CallData.cpp \
     runtime/Collector.cpp \
     runtime/CommonIdentifiers.cpp \
@@ -129,6 +130,7 @@ SOURCES += \
     runtime/InternalFunction.cpp \
     runtime/Completion.cpp \
     runtime/JSArray.cpp \
+    runtime/JSByteArray.cpp \
     runtime/JSCell.cpp \
     runtime/JSFunction.cpp \
     runtime/JSGlobalObjectFunctions.cpp \

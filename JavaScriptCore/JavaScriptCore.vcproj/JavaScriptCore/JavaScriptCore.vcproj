@@ -325,6 +325,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\ByteArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\ByteArray.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\CallData.cpp"
 				>
 			</File>
@@ -522,6 +530,14 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\JSArray.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSByteArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSByteArray.h"
 				>
 			</File>
 			<File

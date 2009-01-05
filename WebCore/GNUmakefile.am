@@ -143,7 +143,6 @@ IDL_BINDINGS += \
 	WebCore/dom/WorkerLocation.idl \
 	WebCore/html/CanvasGradient.idl \
 	WebCore/html/CanvasPattern.idl \
-	WebCore/html/CanvasPixelArray.idl \
 	WebCore/html/CanvasRenderingContext2D.idl \
 	WebCore/html/File.idl \
 	WebCore/html/FileList.idl \
@@ -246,7 +245,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.h \
 	WebCore/bindings/js/JSCSSValueCustom.cpp \
-	WebCore/bindings/js/JSCanvasPixelArrayCustom.h \
 	WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
 	WebCore/bindings/js/JSClipboardCustom.cpp \
 	WebCore/bindings/js/JSConsoleCustom.cpp \
@@ -790,8 +788,6 @@ webcore_sources += \
 	WebCore/html/CanvasGradient.h \
 	WebCore/html/CanvasPattern.cpp \
 	WebCore/html/CanvasPattern.h \
-	WebCore/html/CanvasPixelArray.cpp \
-	WebCore/html/CanvasPixelArray.h \
 	WebCore/html/CanvasRenderingContext2D.cpp \
 	WebCore/html/CanvasRenderingContext2D.h \
 	WebCore/html/CanvasStyle.cpp \

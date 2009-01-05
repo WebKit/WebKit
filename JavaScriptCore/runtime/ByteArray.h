@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,39 +20,51 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSImageData.h"
+#ifndef ByteArray_h
+#define ByteArray_h
 
-#include "ImageData.h"
-#include "PlatformString.h"
+#include "wtf/PassRefPtr.h"
+#include "wtf/RefCounted.h"
 
-#include <runtime/JSByteArray.h>
-#include <wtf/StdLibExtras.h>
+namespace JSC {
+    class ByteArray : public RefCounted<ByteArray> {
+    public:
+        unsigned length() const { return m_size; }
 
-using namespace JSC;
+        void set(unsigned index, double value)
+        {
+            if (index >= m_size)
+                return;
+            if (!(value > 0)) // Clamp NaN to 0
+                value = 0;
+            else if (value > 255)
+                value = 255;
+            m_data[index] = static_cast<unsigned char>(value + 0.5);
+        }
 
-namespace WebCore {
+        bool get(unsigned index, unsigned char& result) const
+        {
+            if (index >= m_size)
+                return false;
+            result = m_data[index];
+            return true;
+        }
 
-JSValue* toJS(ExecState* exec, ImageData* imageData)
-{
-    if (!imageData)
-        return jsNull();
-    
-    DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), imageData);
-    if (wrapper)
-        return wrapper;
-    
-    wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, ImageData, imageData);
-    Identifier dataName(exec, "data");
-    DEFINE_STATIC_LOCAL(RefPtr<Structure>, cpaStructure, (JSByteArray::createStructure(jsNull())));
-    static const ClassInfo cpaClassInfo = { "CanvasPixelArray", 0, 0, 0 };
-    wrapper->putDirect(dataName, new (exec) JSByteArray(exec, cpaStructure, imageData->data(), &cpaClassInfo), DontDelete | ReadOnly);
-    exec->heap()->reportExtraMemoryCost(imageData->data()->length());
-    
-    return wrapper;
+        unsigned char* data() { return m_data; }
+
+        static PassRefPtr<ByteArray> create(size_t size);
+
+    private:
+        ByteArray(size_t size)
+            : m_size(size)
+        {
+        }
+        size_t m_size;
+        unsigned char m_data[0];
+    };
 }
 
-}
+#endif

@@ -35,7 +35,6 @@
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
-#include "CanvasPixelArray.h"
 #include "CanvasStyle.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
@@ -58,6 +57,8 @@
 #include "StrokeStyleApplier.h"
 #include "TextMetrics.h"
 #include <stdio.h>
+
+#include <runtime/ByteArray.h>
 #include <wtf/MathExtras.h>
 
 using namespace std;
@@ -1172,7 +1173,7 @@ GraphicsContext* CanvasRenderingContext2D::drawingContext() const
 static PassRefPtr<ImageData> createEmptyImageData(const IntSize& size)
 {
     PassRefPtr<ImageData> data = ImageData::create(size.width(), size.height());
-    memset(data->data()->data().data(), 0, data->data()->length());
+    memset(data->data()->data(), 0, data->data()->length());
     return data;
 }
 

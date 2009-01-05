@@ -29,8 +29,6 @@
 #include "config.h"
 #include "ImageData.h"
 
-#include "CanvasPixelArray.h"
-
 namespace WebCore {
 
 PassRefPtr<ImageData> ImageData::create(unsigned width, unsigned height)
@@ -41,7 +39,7 @@ PassRefPtr<ImageData> ImageData::create(unsigned width, unsigned height)
 ImageData::ImageData(unsigned width, unsigned height)
     : m_width(width)
     , m_height(height)
-    , m_data(CanvasPixelArray::create(width * height * 4))
+    , m_data(JSC::ByteArray::create(width * height * 4))
 {
 }
 

@@ -1,3 +1,56 @@
+2009-01-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        CanvasPixelArray performance is too slow 
+        <https://bugs.webkit.org/show_bug.cgi?id=23123>
+
+        The fix to this is to devirtualise get and put in a manner similar to
+        JSString and JSArray.  To do this I've added a ByteArray implementation
+        and JSByteArray wrapper to JSC.  We can then do vptr comparisons to
+        devirtualise the calls.
+
+        This devirtualisation improves performance by 1.5-2x in my somewhat ad
+        hoc tests.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.scons:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::cti_op_get_by_val):
+        (JSC::Interpreter::cti_op_put_by_val):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::isJSByteArray):
+        * runtime/ByteArray.cpp: Added.
+        (JSC::ByteArray::create):
+        * runtime/ByteArray.h: Added.
+        (JSC::ByteArray::length):
+        (JSC::ByteArray::set):
+        (JSC::ByteArray::get):
+        (JSC::ByteArray::data):
+        (JSC::ByteArray::ByteArray):
+        * runtime/JSByteArray.cpp: Added.
+        (JSC::):
+        (JSC::JSByteArray::JSByteArray):
+        (JSC::JSByteArray::createStructure):
+        (JSC::JSByteArray::getOwnPropertySlot):
+        (JSC::JSByteArray::put):
+        (JSC::JSByteArray::getPropertyNames):
+        * runtime/JSByteArray.h: Added.
+        (JSC::JSByteArray::canAccessIndex):
+        (JSC::JSByteArray::getIndex):
+        (JSC::JSByteArray::setIndex):
+        (JSC::JSByteArray::classInfo):
+        (JSC::JSByteArray::length):
+        (JSC::JSByteArray::):
+        (JSC::JSByteArray::JSByteArray):
+        (JSC::asByteArray):
+
 2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

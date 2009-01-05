@@ -40,6 +40,7 @@
 #include "GlobalEvalFunction.h"
 #include "JSActivation.h"
 #include "JSArray.h"
+#include "JSByteArray.h"
 #include "JSFunction.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
@@ -606,6 +607,10 @@ Interpreter::Interpreter()
     JSCell* jsArray = new (storage) JSArray(JSArray::createStructure(jsNull()));
     m_jsArrayVptr = jsArray->vptr();
     jsArray->~JSCell();
+
+    JSByteArray* jsByteArray = new (storage) JSByteArray(JSByteArray::VPtrStealingHack);
+    m_jsByteArrayVptr = jsByteArray->vptr();
+    jsByteArray->~JSCell();
 
     JSCell* jsString = new (storage) JSString(JSString::VPtrStealingHack);
     m_jsStringVptr = jsString->vptr();
@@ -2853,6 +2858,8 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
                     result = jsArray->JSArray::get(callFrame, i);
             } else if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
                 result = asString(baseValue)->getIndex(&callFrame->globalData(), i);
+            else if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i))
+                result = asByteArray(baseValue)->getIndex(i);
             else
                 result = baseValue->get(callFrame, i);
         } else {
@@ -2893,6 +2900,16 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
                     jsArray->setIndex(i, callFrame[value].jsValue(callFrame));
                 else
                     jsArray->JSArray::put(callFrame, i, callFrame[value].jsValue(callFrame));
+            } else if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
+                JSByteArray* jsByteArray = asByteArray(baseValue);
+                double dValue = 0;
+                JSValue* jsValue = callFrame[value].jsValue(callFrame);
+                if (JSImmediate::isNumber(jsValue))
+                    jsByteArray->setIndex(i, JSImmediate::getTruncatedInt32(jsValue));
+                else if (fastIsNumber(jsValue, dValue))
+                    jsByteArray->setIndex(i, dValue);
+                else
+                    baseValue->put(callFrame, i, jsValue);
             } else
                 baseValue->put(callFrame, i, callFrame[value].jsValue(callFrame));
         } else {
@@ -5094,7 +5111,9 @@ JSValue* Interpreter::cti_op_get_by_val(STUB_ARGS)
             else
                 result = jsArray->JSArray::get(callFrame, i);
         } else if (interpreter->isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
-            result = asString(baseValue)->getIndex(ARG_globalData, i);
+            return asString(baseValue)->getIndex(ARG_globalData, i);
+        else if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i))
+            return asByteArray(baseValue)->getIndex(i);
         else
             result = baseValue->get(callFrame, i);
     } else {
@@ -5187,6 +5206,17 @@ void Interpreter::cti_op_put_by_val(STUB_ARGS)
                 jsArray->setIndex(i, value);
             else
                 jsArray->JSArray::put(callFrame, i, value);
+        } else if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
+            JSByteArray* jsByteArray = asByteArray(baseValue);
+            double dValue = 0;
+            if (JSImmediate::isNumber(value)) {
+                jsByteArray->setIndex(i, JSImmediate::getTruncatedInt32(value));
+                return;
+            } else if (fastIsNumber(value, dValue)) {
+                jsByteArray->setIndex(i, dValue);
+                return;
+            } else
+                baseValue->put(callFrame, i, value);
         } else
             baseValue->put(callFrame, i, value);
     } else {

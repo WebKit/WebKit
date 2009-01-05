@@ -1,3 +1,40 @@
+2009-01-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        CanvasPixelArray performance is too slow 
+        <https://bugs.webkit.org/show_bug.cgi?id=23123>
+
+        Remove the WebCore CanvasPixelArray implementation and replace
+        CPA usage with JSC::ByteArray.  Replace the JSCanvasPixelArray
+        wrapper with an explicitly instantiated JSByteArray put on the
+        JSImageData object as an ordinary ReadOnly, DontDelete property.
+
+        * DerivedSources.make:
+        * ForwardingHeaders/runtime/ByteArray.h: Added.
+        * ForwardingHeaders/runtime/JSByteArray.h: Added.
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCanvasPixelArrayCustom.h: Removed.
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * html/CanvasPixelArray.cpp: Removed.
+        * html/CanvasPixelArray.h: Removed.
+        * html/CanvasPixelArray.idl: Removed.
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::createEmptyImageData):
+        * html/ImageData.cpp:
+        (WebCore::ImageData::ImageData):
+        * html/ImageData.h:
+        (WebCore::ImageData::data):
+        * html/ImageData.idl:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+
 2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.

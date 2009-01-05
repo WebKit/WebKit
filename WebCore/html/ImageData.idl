@@ -34,7 +34,6 @@ module html {
     ] ImageData {
         readonly attribute long width;
         readonly attribute long height;
-        readonly attribute CanvasPixelArray data;
     };
 
 }
