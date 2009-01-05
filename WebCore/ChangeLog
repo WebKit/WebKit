@@ -1,3 +1,18 @@
+2009-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+        
+        Add an abstract PluginManualLoader class and make PluginView inherit from it. 
+        
+        Add some error checking that currently exists in WebKit (but not for long!)
+        
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::didReceiveResponse):
+        (WebCore::PluginView::didReceiveData):
+        (WebCore::PluginView::didFinishLoading):
+        (WebCore::PluginView::didFail):
+        * plugins/PluginView.h:
+
 2009-01-05  Adam Treat  <treat@kde.org>
 
         Reviewed by George Staikos.
