@@ -1,5 +1,17 @@
 2009-01-05  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Fix failing set-colors test.
+
+        * fast/canvas/resources/set-colors.js: Change the CMYK test cases to use the
+        black channel only.
+        * fast/canvas/set-colors-expected.txt: Updated. The old version I checked in
+        accidentally expected failure for the bug I fixed. Also need new results for
+        the CMYK test cases.
+
+2009-01-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Bug 23109: REGRESSION: Backwards search in a long document matches incorrectly

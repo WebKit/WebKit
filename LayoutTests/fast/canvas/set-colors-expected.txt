@@ -26,14 +26,14 @@ PASS testSetFillColor('"rgb(255, 0, 0)"') is red
 PASS testSetFillColor('"rgba(255, 0, 0, 1)"') is red
 PASS testSetFillColor('"rgba(255, 0, 0, 0.8)"') is translucentRed
 PASS testSetFillColor('"rgba(255, 0, 0, 0)"') is transparent
-FAIL testSetFillColor('"blue", 0.8') should be rgba(0, 0, 255, 0.8). Was #0000ff.
+PASS testSetFillColor('"blue", 0.8') is translucentBlue
 PASS testSetFillColor('1') is white
 PASS testSetFillColor('1, 0.8') is translucentWhite
 PASS testSetFillColor('0, 1, 0, 1') is green
 PASS testSetFillColor('0, 1, 0, 0.8') is translucentGreen
-PASS testSetFillColor('0, 1, 0, 0, 1') is '#c9006c'
-PASS testSetFillColor('0, 1, 0, 0, 0.8') is 'rgba(200, 0, 107, 0.8)'
-PASS testSetFillColor('0, 1, 0, 0, 0') is transparent
+PASS testSetFillColor('0, 0, 0, 1, 1') is '#141414'
+PASS testSetFillColor('0, 0, 0, 1, 0.8') is 'rgba(20, 20, 20, 0.8)'
+PASS testSetFillColor('0, 0, 0, 1, 0') is transparent
 PASS testStrokeStyle('transparent') is transparent
 PASS testStrokeStyle('blue') is blue
 PASS testStrokeStyle('#FF0000') is red
@@ -62,9 +62,9 @@ PASS testSetStrokeColor('1') is white
 PASS testSetStrokeColor('1, 0.8') is translucentWhite
 PASS testSetStrokeColor('0, 1, 0, 1') is green
 PASS testSetStrokeColor('0, 1, 0, 0.8') is translucentGreen
-PASS testSetStrokeColor('0, 1, 0, 0, 1') is '#c9006c'
-PASS testSetStrokeColor('0, 1, 0, 0, 0.8') is 'rgba(200, 0, 107, 0.8)'
-PASS testSetStrokeColor('0, 1, 0, 0, 0') is transparent
+PASS testSetStrokeColor('0, 0, 0, 1, 1') is '#141414'
+PASS testSetStrokeColor('0, 0, 0, 1, 0.8') is 'rgba(20, 20, 20, 0.8)'
+PASS testSetStrokeColor('0, 0, 0, 1, 0') is transparent
 PASS successfullyParsed is true
 
 TEST COMPLETE
