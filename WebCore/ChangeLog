@@ -1,3 +1,10 @@
+2009-01-05  Adam Treat  <treat@kde.org>
+
+        Fix the Qt build
+
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::put):
+
 2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Suggested by Dave Levin.

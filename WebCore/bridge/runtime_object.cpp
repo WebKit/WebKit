@@ -172,7 +172,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
     return false;
 }
 
-void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot&)
+void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
 {
     if (!instance) {
         throwInvalidAccessError(exec);
@@ -190,7 +190,7 @@ void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSVa
         instance->setValueOfUndefinedField(exec, propertyName, value);
 #if PLATFORM(QT)
     else if (instance->getBindingLanguage() == Instance::QtLanguage)
-        JSObject::put(exec,  propertyName, value, slot);
+        JSObject::put(exec, propertyName, value, slot);
 #endif
 
     instance->end();
