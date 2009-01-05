@@ -1,4 +1,4 @@
-/*
+n /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
@@ -4357,7 +4357,7 @@ Element* Document::findAnchor(const String& name)
         return 0;
     if (Element* element = getElementById(name))
         return element;
-    for (Node* node = this; node; node = traverseNextNode()) {
+    for (Node* node = this; node; node = node->traverseNextNode()) {
         if (node->hasTagName(aTag)) {
             HTMLAnchorElement* anchor = static_cast<HTMLAnchorElement*>(node);
             if (inCompatMode()) {

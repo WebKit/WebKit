@@ -1,3 +1,12 @@
+2009-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix hang whenever following an anchor.
+
+        * dom/Document.cpp:
+        (WebCore::Document::findAnchor): Oops!
+
 2009-01-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
