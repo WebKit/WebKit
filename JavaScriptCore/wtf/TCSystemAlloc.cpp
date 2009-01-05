@@ -421,10 +421,9 @@ void TCMalloc_SystemRelease(void* start, size_t length)
 #endif
 
 #if HAVE(MMAP)
-  void *newAddress = mmap(start, length, PROT_READ | PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
-  UNUSED_PARAM(newAddress);
+  void* newAddress = mmap(start, length, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
   // If the mmap failed then that's ok, we just won't return the memory to the system.
-  ASSERT(newAddress == start || newAddress == reinterpret_cast<void*>(MAP_FAILED));
+  ASSERT_UNUSED(newAddress, newAddress == start || newAddress == reinterpret_cast<void*>(MAP_FAILED));
   return;
 #endif
 }

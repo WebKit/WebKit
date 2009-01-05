@@ -39,36 +39,31 @@ ASSERT_CLASS_FITS_IN_CELL(JSNotAnObject);
 // JSValue methods
 JSValue* JSNotAnObject::toPrimitive(ExecState* exec, PreferredPrimitiveType) const
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
     return m_exception;
 }
 
 bool JSNotAnObject::getPrimitiveNumber(ExecState* exec, double&, JSValue*&)
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
     return false;
 }
 
 bool JSNotAnObject::toBoolean(ExecState* exec) const
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
     return false;
 }
 
 double JSNotAnObject::toNumber(ExecState* exec) const
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
     return NaN;
 }
 
 UString JSNotAnObject::toString(ExecState* exec) const
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
     return "";
 }
 
@@ -90,48 +85,41 @@ void JSNotAnObject::mark()
 // JSObject methods
 bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, const Identifier&, PropertySlot&)
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
     return false;
 }
 
 bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, unsigned, PropertySlot&)
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
     return false;
 }
 
 void JSNotAnObject::put(ExecState* exec, const Identifier& , JSValue*, PutPropertySlot&)
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
 }
 
 void JSNotAnObject::put(ExecState* exec, unsigned, JSValue*)
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
 }
 
 bool JSNotAnObject::deleteProperty(ExecState* exec, const Identifier&)
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
     return false;
 }
 
 bool JSNotAnObject::deleteProperty(ExecState* exec, unsigned)
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
     return false;
 }
 
 void JSNotAnObject::getPropertyNames(ExecState* exec, PropertyNameArray&)
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
 }
 
 } // namespace JSC

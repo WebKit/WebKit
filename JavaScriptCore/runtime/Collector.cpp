@@ -161,11 +161,8 @@ void Heap::destroy()
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
     if (m_currentThreadRegistrar) {
-#ifndef NDEBUG
-        int error =
-#endif
-            pthread_key_delete(m_currentThreadRegistrar);
-        ASSERT(!error);
+        int error = pthread_key_delete(m_currentThreadRegistrar);
+        ASSERT_UNUSED(error, !error);
     }
 
     MutexLocker registeredThreadsLock(m_registeredThreadsMutex);
@@ -277,8 +274,7 @@ template <HeapType heapType> ALWAYS_INLINE void* Heap::heapAllocate(size_t s)
     CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
     ASSERT(JSLock::lockCount() > 0);
     ASSERT(JSLock::currentThreadIsHoldingLock());
-    ASSERT(s <= HeapConstants<heapType>::cellSize);
-    UNUSED_PARAM(s); // s is now only used for the above assert
+    ASSERT_UNUSED(s, s <= HeapConstants<heapType>::cellSize);
 
     ASSERT(heap.operationInProgress == NoOperation);
     ASSERT(heapType == PrimaryHeap || heap.extraCost == 0);
