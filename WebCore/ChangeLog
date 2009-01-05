@@ -1,5 +1,9 @@
 2009-01-05  Darin Adler  <darin@apple.com>
 
+        * dom/Document.cpp: Fix build. Oops again.
+
+2009-01-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Fix hang whenever following an anchor.
