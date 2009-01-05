@@ -1,5 +1,17 @@
 2009-01-05  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Bug 23109: REGRESSION: Backwards search in a long document matches incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=23109
+
+        * fast/text/find-backwards-expected.txt: Added.
+        * fast/text/find-backwards.html: Added.
+        * fast/text/resources/TEMPLATE.html: Copied from fast/js/resources/TEMPLATE.html.
+        * fast/text/resources/find-backwards.js: Added.
+
+2009-01-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Bug 23104: minor mistakes in init functions for animation and transition events

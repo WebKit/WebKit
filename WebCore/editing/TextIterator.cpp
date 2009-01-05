@@ -1259,7 +1259,7 @@ inline size_t SearchBuffer::append(const UChar* characters, size_t length)
         m_buffer.shrink(0);
         m_atBreak = false;
     } else if (m_buffer.size() == m_buffer.capacity()) {
-        memcpy(m_buffer.data(), m_buffer.data() + m_buffer.size() - m_overlap, m_overlap);
+        memcpy(m_buffer.data(), m_buffer.data() + m_buffer.size() - m_overlap, m_overlap * sizeof(UChar));
         m_buffer.shrink(m_overlap);
     }
 
@@ -1282,8 +1282,13 @@ inline void SearchBuffer::reachedBreak()
 inline size_t SearchBuffer::search(size_t& start)
 {
     size_t size = m_buffer.size();
-    if (!m_atBreak && size < m_buffer.capacity())
-        return 0;
+    if (m_atBreak) {
+        if (!size)
+            return 0;
+    } else {
+        if (size != m_buffer.capacity())
+            return 0;
+    }
 
     UStringSearch* searcher = WebCore::searcher();
 
@@ -1302,13 +1307,13 @@ inline size_t SearchBuffer::search(size_t& start)
     // The same match may appear later, matching more characters,
     // possibly including a combining character that's not yet in the buffer.
     if (!m_atBreak && static_cast<size_t>(matchStart) >= size - m_overlap) {
-        memcpy(m_buffer.data(), m_buffer.data() + size - m_overlap, m_overlap);
+        memcpy(m_buffer.data(), m_buffer.data() + size - m_overlap, m_overlap * sizeof(UChar));
         m_buffer.shrink(m_overlap);
         return 0;
     }
 
     size_t newSize = size - (matchStart + 1);
-    memmove(m_buffer.data(), m_buffer.data() + matchStart + 1, newSize);
+    memmove(m_buffer.data(), m_buffer.data() + matchStart + 1, newSize * sizeof(UChar));
     m_buffer.shrink(newSize);
 
     start = size - matchStart;
@@ -1628,6 +1633,7 @@ tryAgain:
             // If searching backward, don't stop, so we end up with the last match.
             if (forward)
                 break;
+            goto tryAgain;
         }
         if (it.atBreak() && !buffer.atBreak()) {
             buffer.reachedBreak();

@@ -1,3 +1,21 @@
+2009-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 23109: REGRESSION: Backwards search in a long document matches incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=23109
+
+        Test: fast/text/find-backwards.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::append): Fix incorrect size passed to memcpy.
+        (WebCore::SearchBuffer::search): Handle case where we have an empty buffer but
+        we're at a break; must not try to search because ICU will give us an error.
+        Fix incorrect size passed to memcpy and memmove.
+        (WebCore::findPlainText): Fix case where we found a match and need to search
+        again because we want to find the last match. We need to try again without
+        adding any more text or handling the break before moving on.
+
 2009-01-05  Adam Treat  <treat@kde.org>
 
         Fix the Qt build
