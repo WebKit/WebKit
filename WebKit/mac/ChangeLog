@@ -1,5 +1,11 @@
 2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
+        Blind mac build fix
+
+        * WebCoreSupport/WebChromeClient.mm:
+
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
+
         Fix mac build
 
         * WebCoreSupport/WebChromeClient.h:
