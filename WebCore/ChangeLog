@@ -1,3 +1,11 @@
+2009-01-04  Darin Adler  <darin@apple.com>
+
+        Bug 23086: REGRESSION(r39540/r39541): Windows build fails due to ICU errors
+        https://bugs.webkit.org/show_bug.cgi?id=23086
+
+        * editing/TextIterator.cpp: Check UCONFIG_NO_COLLATION and don't compile
+        in the new search path if it's 0.
+
 2009-01-04  David Kilzer  <ddkilzer@apple.com>
 
         Don't install *.idl and *.in files as resources
