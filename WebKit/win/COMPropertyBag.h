@@ -145,7 +145,7 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(LPC
     V_VT(pVar) = VT_EMPTY;
     COMVariantSetter<ValueType>::setVariant(pVar, it->second);
 
-    if (requestedType != COMVariantSetter<ValueType>::VariantType && requestedType != VT_EMPTY)
+    if (requestedType != COMVariantSetter<ValueType>::variantType(it->second) && requestedType != VT_EMPTY)
         return ::VariantChangeType(pVar, pVar, VARIANT_NOUSEROVERRIDE | VARIANT_ALPHABOOL, requestedType);
 
     return S_OK;
@@ -213,7 +213,7 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPrope
         //pPropBag[j].clsid;    // (CLSID) CLSID of the object. This member is valid only if dwType is PROPBAG2_TYPE_OBJECT.
 
         pPropBag[j].dwType = PROPBAG2_TYPE_DATA;
-        pPropBag[j].vt = COMVariantSetter<ValueType>::VariantType;
+        pPropBag[j].vt = COMVariantSetter<ValueType>::variantType(current->second);
         pPropBag[j].dwHint = iProperty + j;
         pPropBag[j].pstrName = (LPOLESTR)CoTaskMemAlloc(sizeof(wchar_t)*(current->first.length()+1));
         if (!pPropBag[j].pstrName)

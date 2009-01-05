@@ -1,3 +1,21 @@
+2009-01-05  Anders Carlsson  <andersca@apple.com> 
+
+        Reviewed by Adam Roben.
+
+        Make it possible to have per value variant types.
+        
+        * COMPropertyBag.h:
+        (::Read):
+        Call variantType here, passing in the value.
+        
+        (::GetPropertyInfo):
+        Ditto.
+        
+        * COMVariantSetter.h:
+        (COMVariantSetterBase::variantType):
+        Add COMVariantSetterBase, whose variantType implementation just returns the
+        VariantType variable. Make all existing classes inherit from COMVariantSetterBase.
+
 2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix win build

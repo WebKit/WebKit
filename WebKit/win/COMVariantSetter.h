@@ -36,7 +36,15 @@ namespace WebCore {
 
 template<typename T> struct COMVariantSetter {};
 
-template<> struct COMVariantSetter<WebCore::String>
+template<typename T> struct COMVariantSetterBase
+{
+    static inline VARENUM variantType(const T&)
+    {
+        return COMVariantSetter<T>::VariantType;
+    }
+};
+
+template<> struct COMVariantSetter<WebCore::String> : COMVariantSetterBase<WebCore::String>
 {
     static const VARENUM VariantType = VT_BSTR;
 
@@ -49,7 +57,7 @@ template<> struct COMVariantSetter<WebCore::String>
     }
 };
 
-template<> struct COMVariantSetter<unsigned long long>
+template<> struct COMVariantSetter<unsigned long long> : COMVariantSetterBase<unsigned long long>
 {
     static const VARENUM VariantType = VT_UI8;
 
@@ -62,7 +70,7 @@ template<> struct COMVariantSetter<unsigned long long>
     }
 };
 
-template<> struct COMVariantSetter<int>
+template<> struct COMVariantSetter<int> : COMVariantSetterBase<int>
 {
     static const VARENUM VariantType = VT_I4;
 
@@ -75,7 +83,7 @@ template<> struct COMVariantSetter<int>
     }
 };
 
-template<typename T> struct COMVariantSetter<COMPtr<T> >
+template<typename T> struct COMVariantSetter<COMPtr<T> > : COMVariantSetterBase<COMPtr<T> >
 {
     static const VARENUM VariantType = VT_UNKNOWN;
 
@@ -90,7 +98,7 @@ template<typename T> struct COMVariantSetter<COMPtr<T> >
 };
 
 template<typename COMType, typename UnderlyingType>
-struct COMIUnknownVariantSetter
+struct COMIUnknownVariantSetter : COMVariantSetterBase<UnderlyingType>
 {
     static const VARENUM VariantType = VT_UNKNOWN;
 
