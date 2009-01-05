@@ -54,7 +54,6 @@
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
-#import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
@@ -453,7 +452,6 @@ PlatformWidget WebChromeClient::platformWindow() const
 
 void WebChromeClient::contentsSizeChanged(Frame*, const IntSize&) const
 {
-    notImplemented();
 }
 // End host window methods.
 

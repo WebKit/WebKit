@@ -1,5 +1,12 @@
 2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
+        Another blind mac build fix
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::contentsSizeChanged):
+
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
+
         Blind mac build fix
 
         * WebCoreSupport/WebChromeClient.mm:
