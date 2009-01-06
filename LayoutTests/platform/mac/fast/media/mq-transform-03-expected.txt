@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x18 [color=#008000]
+        RenderText {#text} at (0,0) size 626x18
+          text run at (0,0) width 626: "This text should be green if running in a build of WebKit with support for 2d but not 3d transforms."

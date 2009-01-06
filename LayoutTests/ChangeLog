@@ -1,3 +1,25 @@
+2009-01-06  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Tests for Media Query extensions covering transitions,
+        animations, transform-2d and transform-3d
+        http://webkit.org/specs/MediaQueriesExtensions.html
+        https://bugs.webkit.org/show_bug.cgi?id=22494
+
+        * fast/media/mq-animation.html: Added.
+        * fast/media/mq-transform-01.html: Added.
+        * fast/media/mq-transform-02.html: Added.
+        * fast/media/mq-transform-03.html: Added.
+        * fast/media/mq-transform-04.html: Added.
+        * fast/media/mq-transition.html: Added.
+        * platform/mac/fast/media/mq-animation-expected.txt: Added.
+        * platform/mac/fast/media/mq-transform-01-expected.txt: Added.
+        * platform/mac/fast/media/mq-transform-02-expected.txt: Added.
+        * platform/mac/fast/media/mq-transform-03-expected.txt: Added.
+        * platform/mac/fast/media/mq-transform-04-expected.txt: Added.
+        * platform/mac/fast/media/mq-transition-expected.txt: Added.
+
 2009-01-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.

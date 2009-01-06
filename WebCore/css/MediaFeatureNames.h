@@ -53,6 +53,10 @@ namespace WebCore {
     macro(min_height, "min-height") \
     macro(min_monochrome, "min-monochrome") \
     macro(min_width, "min-width") \
+    macro(transform_2d, "-webkit-transform-2d") \
+    macro(transform_3d, "-webkit-transform-3d") \
+    macro(transition, "-webkit-transition") \
+    macro(animation, "-webkit-animation") \
 // end of macro
 
 #ifndef CSS_MEDIAQUERY_NAMES_HIDE_GLOBALS

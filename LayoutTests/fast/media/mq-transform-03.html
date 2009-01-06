@@ -1,0 +1,14 @@
+<html>
+<head>
+<title>CSS3 media query test: media query testing transform feature.</title>
+<link rel="help" href="http://www.webkit.org/specs/MediaQueriesExtensions.html" />
+<style type="text/css">
+@media all and (-webkit-transform-2d) and (-webkit-transform-3d: 0) {
+p { color: green }
+}
+</style>
+</head>
+<body>
+<p>This text should be green if running in a build of WebKit with support for 2d but not 3d transforms.</p>
+</body>
+</html>

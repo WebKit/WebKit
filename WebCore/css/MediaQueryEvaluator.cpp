@@ -388,6 +388,42 @@ static bool max_device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style
     return device_widthMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
+static bool animationMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
+{
+    if (value) {
+        float number;
+        return numberValue(value, number) && compareValue(1, static_cast<int>(number), op);
+    }
+    return true;
+}
+
+static bool transitionMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
+{
+    if (value) {
+        float number;
+        return numberValue(value, number) && compareValue(1, static_cast<int>(number), op);
+    }
+    return true;
+}
+
+static bool transform_2dMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
+{
+    if (value) {
+        float number;
+        return numberValue(value, number) && compareValue(1, static_cast<int>(number), op);
+    }
+    return true;
+}
+
+static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
+{
+    if (value) {
+        float number;
+        return numberValue(value, number) && compareValue(0, static_cast<int>(number), op);
+    }
+    return false;
+}
+
 static void createFunctionMap()
 {
     // Create the table.
