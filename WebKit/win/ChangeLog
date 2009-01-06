@@ -1,3 +1,10 @@
+2009-01-06  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r39641): Remove STDMETHODCALLTYPE from method declarations in IWebIconDatabase.idl
+
+        * Interfaces/IWebIconDatabase.idl: Removed "STDMETHODCALLTYPE"
+        from silly copy-paste error in two method declarations.
+
 2009-01-05  David Kilzer  <ddkilzer@apple.com>
 
         Add API to enable, disable and check state of WebIconDatabase

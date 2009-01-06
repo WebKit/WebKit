@@ -155,7 +155,7 @@ interface IWebIconDatabase : IUnknown
         is disabled.
         - (BOOL)isEnabled;
     */
-    HRESULT STDMETHODCALLTYPE isEnabled([out, retval] BOOL *result);
+    HRESULT isEnabled([out, retval] BOOL* result);
 
     /*!
         @method setEnabled:
@@ -163,5 +163,5 @@ interface IWebIconDatabase : IUnknown
         @param flag Pass true to enable the icon database, or false to disable it.
         - (void)setEnabled:(BOOL)flag;
     */
-    HRESULT STDMETHODCALLTYPE setEnabled([in] BOOL flag);
+    HRESULT setEnabled([in] BOOL flag);
 }
