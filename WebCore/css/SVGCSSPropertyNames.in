@@ -14,7 +14,7 @@ flood-opacity
 lighting-color
 stop-color
 stop-opacity
-pointer-events
+# pointer-events
 color-interpolation
 color-interpolation-filters
 color-profile

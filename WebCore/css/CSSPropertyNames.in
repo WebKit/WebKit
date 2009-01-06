@@ -94,6 +94,7 @@ page
 page-break-after
 page-break-before
 page-break-inside
+pointer-events
 position
 quotes
 resize
