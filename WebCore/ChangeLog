@@ -1,3 +1,13 @@
+2009-01-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Lars Knoll.
+
+        Added support for HTTP-only cookies to the Qt build.
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::setCookies): Don't set HTTP-only cookies through the DOM.
+        (WebCore::cookies): Don't return HTTP-only cookies to the DOM.
+
 2009-01-05  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Oliver Hunt.
