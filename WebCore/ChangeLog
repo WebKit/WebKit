@@ -1,3 +1,14 @@
+2009-01-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed build fix.
+
+        Fix the Qt build with Qt 4.4.x, the HTTP-only cookie support was
+        added in Qt 4.5.
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+
 2009-01-06  Zalan Bujtas  <zbujtas@gmail.com>
 
         Reviewed by David Kilzer.
