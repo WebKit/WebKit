@@ -110,6 +110,12 @@ sub initializeParametersHash
             'exportStrings' => 0);
 }
 
+sub defaultInterfaceName
+{
+    die "No namespace found" if !$parameters{'namespace'};
+    return $parameters{'namespace'} . upperCaseName($_[0]) . "Element"
+}
+
 ### Parsing handlers
 
 sub tagsHandler
@@ -436,23 +442,28 @@ print F "\nvoid init()
 sub printJSElementIncludes
 {
     my $F = shift;
-    for my $name (sort keys %tags) {
-        next if hasCustomJSInterfaceName($name);
 
-        my $ucName = $tags{$name}{"JSInterfaceName"};
-        print F "#include \"JS${ucName}.h\"\n";
+    my %tagsSeen;
+    for my $tagName (sort keys %tags) {
+        my $JSInterfaceName = $tags{$tagName}{"JSInterfaceName"};
+        next if defined($tagsSeen{$JSInterfaceName}) || usesDefaultJSWrapper($tagName);
+        $tagsSeen{$JSInterfaceName} = 1;
+
+        print F "#include \"JS${JSInterfaceName}.h\"\n";
     }
 }
 
 sub printElementIncludes
 {
-    my ($F, $shouldSkipCustomMappings) = @_;
+    my $F = shift;
 
-    for my $name (sort keys %tags) {
-        next if ($shouldSkipCustomMappings && hasCustomJSInterfaceName($name));
+    my %tagsSeen;
+    for my $tagName (sort keys %tags) {
+        my $interfaceName = $tags{$tagName}{"interfaceName"};
+        next if defined($tagsSeen{$interfaceName});
+        $tagsSeen{$interfaceName} = 1;
 
-        my $ucName = $tags{$name}{"interfaceName"};
-        print F "#include \"${ucName}.h\"\n";
+        print F "#include \"${interfaceName}.h\"\n";
     }
 }
 
@@ -524,7 +535,7 @@ print F <<END
 END
 ;
 
-printElementIncludes($F, 0);
+printElementIncludes($F);
 
 print F <<END
 #include <wtf/HashMap.h>
@@ -656,23 +667,7 @@ END
 
 ## Wrapper Factory routines
 
-sub defaultInterfaceName
-{
-    die "No namespace found" if !$parameters{'namespace'};
-    return $parameters{'namespace'} . upperCaseName($_[0]) . "Element"
-}
-
-sub hasCustomJSInterfaceName
-{
-    my $tag = shift;
-
-    # We have a custom JSInterface if the JSInterfaceName is not the same as the interfaceName.
-    # FIXME: The 'img' tag matches completely the 'image' tag and cannot be distinguished
-    # so we have to check for it.
-    return !($tags{$tag}{'JSInterfaceName'} eq $tags{$tag}{'interfaceName'}) || $tag eq "img";
-}
-
-sub usesDefaultWrapper
+sub usesDefaultJSWrapper
 {
     my $name = shift;
 
@@ -684,28 +679,30 @@ sub printWrapperFunctions
 {
     my $F = shift;
 
-    for my $name (sort keys %tags) {
-        # A custom JSInterface means that we reuse another tag's constructor.
-        next if hasCustomJSInterfaceName($name) || usesDefaultWrapper($name);
+    my %tagsSeen;
+    for my $tagName (sort keys %tags) {
+        # Avoid defining the same wrapper method twice.
+        my $JSInterfaceName = $tags{$tagName}{"JSInterfaceName"};
+        next if defined($tagsSeen{$JSInterfaceName}) || usesDefaultJSWrapper($tagName);
+        $tagsSeen{$JSInterfaceName} = 1;
 
-        my $ucName = $tags{$name}{"JSInterfaceName"};
         # Hack for the media tags
-        if ($tags{$name}{"wrapperOnlyIfMediaIsAvailable"}) {
+        if ($tags{$tagName}{"wrapperOnlyIfMediaIsAvailable"}) {
             print F <<END
-static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
+static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
 {
     if (!MediaPlayer::isAvailable())
         return CREATE_DOM_NODE_WRAPPER(exec, $parameters{'namespace'}Element, element.get());
-    return CREATE_DOM_NODE_WRAPPER(exec, ${ucName}, element.get());
+    return CREATE_DOM_NODE_WRAPPER(exec, ${JSInterfaceName}, element.get());
 }
 
 END
 ;
         } else {
             print F <<END
-static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
+static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
 {
-    return CREATE_DOM_NODE_WRAPPER(exec, ${ucName}, element.get());
+    return CREATE_DOM_NODE_WRAPPER(exec, ${JSInterfaceName}, element.get());
 }
 
 END
@@ -732,7 +729,7 @@ sub printWrapperFactoryCppFile
 
     print F "\n#include \"$parameters{'namespace'}Names.h\"\n\n";
 
-    printElementIncludes($F, 1);
+    printElementIncludes($F);
 
     print F "\n#include <wtf/StdLibExtras.h>\n\n";
     
@@ -761,7 +758,7 @@ END
 
     for my $tag (sort keys %tags) {
         # Do not add the name to the map if it does not have a JS wrapper constructor or uses the default wrapper.
-        next if usesDefaultWrapper($tag, \%tags);
+        next if usesDefaultJSWrapper($tag, \%tags);
 
         my $ucTag = $tags{$tag}{"JSInterfaceName"};
         print F "       map.set(${tag}Tag.localName().impl(), create${ucTag}Wrapper);\n";

@@ -1,3 +1,24 @@
+2009-01-06  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Bug 22858: Simplify make_names.pl code for avoiding multiple definitions or inclusions
+        https://bugs.webkit.org/show_bug.cgi?id=22858
+
+        I had introduced an awkward situation using hasCustomJSWrapper and
+        sometimes boolean parameter in order to ensure JS wrapper generated once
+        or header included once.
+
+        Simplified the code by using a %seenTag hash to detect multiple definitions
+        or inclusions and skipping it.
+
+        Also cleaned up a bit make_names.pl by using more explicit names and moving
+        code to where it belongs.
+
+        * dom/make_names.pl:
+        * html/HTMLTagNames.in: Necessary changes that were not detected by
+        the previous syntax but will be required for autogenerating HTMLElementFactory.
+
 2009-01-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

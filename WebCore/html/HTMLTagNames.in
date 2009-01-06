@@ -3,38 +3,38 @@ namespacePrefix="xhtml"
 namespaceURI="http://www.w3.org/1999/xhtml"
 
 a interfaceName=HTMLAnchorElement
-abbr JSInterfaceName=HTMLElement
-acronym JSInterfaceName=HTMLElement
-address JSInterfaceName=HTMLElement
+abbr interfaceName=HTMLElement
+acronym interfaceName=HTMLElement
+address interfaceName=HTMLElement
 applet
 area
 #if ENABLE_VIDEO
 audio wrapperOnlyIfMediaIsAvailable=1
 #endif
-b JSInterfaceName=HTMLElement
+b interfaceName=HTMLElement
 base
 basefont interfaceName=HTMLBaseFontElement
-bdo JSInterfaceName=HTMLElement
-big JSInterfaceName=HTMLElement
+bdo interfaceName=HTMLElement
+big interfaceName=HTMLElement
 blockquote
 body
 br interfaceName=HTMLBRElement
 button
 canvas
 caption interfaceName=HTMLTableCaptionElement
-center JSInterfaceName=HTMLElement
-cite JSInterfaceName=HTMLElement
-code JSInterfaceName=HTMLElement
+center interfaceName=HTMLElement
+cite interfaceName=HTMLElement
+code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
-colgroup JSInterfaceName=HTMLTableColElement
-dd JSInterfaceName=HTMLElement
+colgroup interfaceName=HTMLTableColElement
+dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
-dfn JSInterfaceName=HTMLElement
+dfn interfaceName=HTMLElement
 dir interfaceName=HTMLDirectoryElement
 div
 dl interfaceName=HTMLDListElement
-dt JSInterfaceName=HTMLElement
-em JSInterfaceName=HTMLElement
+dt interfaceName=HTMLElement
+em interfaceName=HTMLElement
 embed
 fieldset interfaceName=HTMLFieldSetElement
 font
@@ -43,75 +43,75 @@ frame constructorNeedsCreatedByParser=1
 frameset interfaceName=HTMLFrameSetElement
 head
 h1 interfaceName=HTMLHeadingElement
-h2 JSInterfaceName=HTMLHeadingElement
-h3 JSInterfaceName=HTMLHeadingElement
-h4 JSInterfaceName=HTMLHeadingElement
-h5 JSInterfaceName=HTMLHeadingElement
-h6 JSInterfaceName=HTMLHeadingElement
+h2 interfaceName=HTMLHeadingElement
+h3 interfaceName=HTMLHeadingElement
+h4 interfaceName=HTMLHeadingElement
+h5 interfaceName=HTMLHeadingElement
+h6 interfaceName=HTMLHeadingElement
 hr interfaceName=HTMLHRElement
 html
-i JSInterfaceName=HTMLElement
+i interfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement, constructorNeedsCreatedByParser=1
 image
 img interfaceName=HTMLImageElement
 input
-ins JSInterfaceName=HTMLModElement
+ins interfaceName=HTMLModElement
 isindex interfaceName=HTMLIsIndexElement
-kbd JSInterfaceName=HTMLElement
+kbd interfaceName=HTMLElement
 keygen JSInterfaceName=HTMLSelectElement
 label
-layer JSInterfaceName=HTMLElement
+layer interfaceName=HTMLElement
 legend
 li interfaceName=HTMLLIElement
 link constructorNeedsCreatedByParser=1
-listing JSInterfaceName=HTMLPreElement
+listing interfaceName=HTMLPreElement
 map
 marquee
 menu
 meta
-nobr JSInterfaceName=HTMLElement
-noembed JSInterfaceName=HTMLElement
-noframes JSInterfaceName=HTMLElement
-nolayer JSInterfaceName=HTMLElement
-noscript JSInterfaceName=HTMLElement
+nobr interfaceName=HTMLElement
+noembed interfaceName=HTMLElement
+noframes interfaceName=HTMLElement
+nolayer interfaceName=HTMLElement
+noscript interfaceName=HTMLElement
 object
 ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement
 option
 p interfaceName=HTMLParagraphElement
 param
-plaintext JSInterfaceName=HTMLElement
+plaintext interfaceName=HTMLElement
 pre
 q interfaceName=HTMLQuoteElement
-s JSInterfaceName=HTMLElement
-samp JSInterfaceName=HTMLElement
+s interfaceName=HTMLElement
+samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser=1
 select
-small JSInterfaceName=HTMLElement
+small interfaceName=HTMLElement
 #if ENABLE_VIDEO
 source wrapperOnlyIfMediaIsAvailable=1
 #endif
-span JSInterfaceName=HTMLElement
-strike JSInterfaceName=HTMLElement
-strong JSInterfaceName=HTMLElement
+span interfaceName=HTMLElement
+strike interfaceName=HTMLElement
+strong interfaceName=HTMLElement
 style constructorNeedsCreatedByParser=1
-sub JSInterfaceName=HTMLElement
-sup JSInterfaceName=HTMLElement
+sub interfaceName=HTMLElement
+sup interfaceName=HTMLElement
 table
 tbody interfaceName=HTMLTableSectionElement
 td interfaceName=HTMLTableCellElement
 textarea interfaceName=HTMLTextAreaElement
-tfoot JSInterfaceName=HTMLTableSectionElement
-th JSInterfaceName=HTMLTableCellElement
-thead JSInterfaceName=HTMLTableSectionElement
+tfoot interfaceName=HTMLTableSectionElement
+th interfaceName=HTMLTableCellElement
+thead interfaceName=HTMLTableSectionElement
 title
 tr interfaceName=HTMLTableRowElement
-tt JSInterfaceName=HTMLElement
-u JSInterfaceName=HTMLElement
+tt interfaceName=HTMLElement
+u interfaceName=HTMLElement
 ul interfaceName=HTMLUListElement
-var JSInterfaceName=HTMLElement
+var interfaceName=HTMLElement
 #if ENABLE_VIDEO
 video wrapperOnlyIfMediaIsAvailable=1
 #endif
-wbr JSInterfaceName=HTMLElement
-xmp JSInterfaceName=HTMLPreElement
+wbr interfaceName=HTMLElement
+xmp interfaceName=HTMLPreElement
