@@ -31,6 +31,10 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/RenderObject.h>
 
+#include "MemoryStream.h"
+#include "WebError.h"
+#include "WebURLResponse.h"
+
 using namespace WebCore;
 
 EmbeddedWidget* EmbeddedWidget::create(IWebEmbeddedView* view, Element* element, HWND parentWindow, const IntSize& size)
@@ -206,4 +210,31 @@ void EmbeddedWidget::detachFromWindow()
     if (m_isVisible && m_window)
         ShowWindow(m_window, SW_HIDE);
     m_attachedToWindow = false;
+}
+
+void EmbeddedWidget::didReceiveResponse(const ResourceResponse& response)
+{
+    ASSERT(m_view);
+
+    COMPtr<IWebURLResponse> urlResponse(AdoptCOM, WebURLResponse::createInstance(response));
+    m_view->didReceiveResponse(urlResponse.get());
+}
+
+void EmbeddedWidget::didReceiveData(const char* data, int length)
+{
+    RefPtr<SharedBuffer> buffer(SharedBuffer::create(data, length));
+
+    COMPtr<IStream> stream(AdoptCOM, MemoryStream::createInstance(buffer.release()));
+    m_view->didReceiveData(stream.get());
+}
+
+void EmbeddedWidget::didFinishLoading()
+{
+    m_view->didFinishLoading();
+}
+
+void EmbeddedWidget::didFail(const ResourceError& error)
+{
+    COMPtr<IWebError> webError(AdoptCOM, WebError::createInstance(error));
+    m_view->didFail(webError.get());
 }

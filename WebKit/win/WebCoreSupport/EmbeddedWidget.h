@@ -28,7 +28,7 @@
 
 #include <WebCore/COMPtr.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/Widget.h>
+#include <WebCore/PluginView.h>
 
 namespace WebCore {
     class Element;
@@ -37,7 +37,7 @@ namespace WebCore {
 
 interface IWebEmbeddedView;
 
-class EmbeddedWidget : public WebCore::Widget {
+class EmbeddedWidget : public WebCore::Widget, public WebCore::PluginManualLoader {
 public:
     static EmbeddedWidget* create(IWebEmbeddedView*, WebCore::Element* element, HWND parentWindow, const WebCore::IntSize&);
     ~EmbeddedWidget();
@@ -53,6 +53,11 @@ private:
     }
 
     bool createWindow(HWND parentWindow, const WebCore::IntSize& size);
+
+    virtual void didReceiveResponse(const WebCore::ResourceResponse&);
+    virtual void didReceiveData(const char*, int);
+    virtual void didFinishLoading();
+    virtual void didFail(const WebCore::ResourceError&);
 
     virtual void invalidateRect(const WebCore::IntRect&);
     virtual void setFrameRect(const WebCore::IntRect&);

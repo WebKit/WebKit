@@ -101,6 +101,8 @@ public:
     virtual WebCore::Widget* createPlugin(const WebCore::IntSize&, WebCore::Element*, const WebCore::KURL&, const Vector<WebCore::String>&, const Vector<WebCore::String>&, const WebCore::String&, bool loadManually);
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget);
 
+    virtual bool shouldUsePluginDocument(const WebCore::String& mimeType) const;
+
 protected:
     WebFrameLoaderClient(WebFrame*);
     ~WebFrameLoaderClient();

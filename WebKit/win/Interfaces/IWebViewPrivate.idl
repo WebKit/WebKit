@@ -153,4 +153,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT clearMainFrameName();
 
     HRESULT globalHistoryItem([out, retval] IWebHistoryItem**);
+
+    HRESULT registerEmbeddedViewMIMEType([in] BSTR mimeType);
 }

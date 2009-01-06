@@ -2080,7 +2080,8 @@ HRESULT STDMETHODCALLTYPE WebView::canShowMIMEType(
 
     *canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeTypeStr) ||
         MIMETypeRegistry::isSupportedNonImageMIMEType(mimeTypeStr) ||
-        PluginInfoStore::supportsMIMEType(mimeTypeStr);
+        PluginInfoStore::supportsMIMEType(mimeTypeStr) ||
+        shouldUseEmbeddedView(mimeTypeStr);
     
     return S_OK;
 }
@@ -5086,6 +5087,26 @@ HRESULT STDMETHODCALLTYPE WebView::alwaysUsesComplexTextCodePath(BOOL* complex)
 
     *complex = WebCoreAlwaysUsesComplexTextCodePath();
     return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::registerEmbeddedViewMIMEType(BSTR mimeType)
+{
+    if (!mimeType)
+        return E_POINTER;
+
+    if (!m_embeddedViewMIMETypes)
+        m_embeddedViewMIMETypes.set(new HashSet<String>);
+
+    m_embeddedViewMIMETypes->add(String(mimeType, ::SysStringLen(mimeType)));
+    return S_OK;
+}
+
+bool WebView::shouldUseEmbeddedView(const WebCore::String& mimeType) const
+{
+    if (!m_embeddedViewMIMETypes)
+        return false;
+
+    return m_embeddedViewMIMETypes->contains(mimeType);
 }
 
 bool WebView::onGetObject(WPARAM wParam, LPARAM lParam, LRESULT& lResult) const

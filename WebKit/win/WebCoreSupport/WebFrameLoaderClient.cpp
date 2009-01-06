@@ -701,6 +701,8 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 
     if (pluginWidget->isPluginView())
         m_manualLoader = static_cast<PluginView*>(pluginWidget);
+    else 
+        m_manualLoader = static_cast<EmbeddedWidget*>(pluginWidget);
 }
 
 WebHistory* WebFrameLoaderClient::webHistory() const
@@ -709,4 +711,13 @@ WebHistory* WebFrameLoaderClient::webHistory() const
         return 0;
 
     return WebHistory::sharedHistory();
+}
+
+bool WebFrameLoaderClient::shouldUsePluginDocument(const String& mimeType) const
+{
+    WebView* webView = m_webFrame->webView();
+    if (!webView)
+        return false;
+
+    return webView->shouldUseEmbeddedView(mimeType);
 }

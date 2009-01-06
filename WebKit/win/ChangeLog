@@ -1,3 +1,42 @@
+2009-01-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a way for application to provide custom, full frame, views for certain MIME types.
+        
+        * Interfaces/IWebEmbeddedView.idl:
+        Add loading related methods.
+        
+        * Interfaces/IWebViewPrivate.idl:
+        Add new registerEmbeddedViewMIMEType method.
+        
+        * WebCoreSupport/EmbeddedWidget.cpp:
+        (EmbeddedWidget::didReceiveResponse):
+        (EmbeddedWidget::didReceiveData):
+        (EmbeddedWidget::didFinishLoading):
+        (EmbeddedWidget::didFail):
+        Implement these and call the IEmbeddedView methods.
+        
+        * WebCoreSupport/EmbeddedWidget.h:
+        Inherit from PluginManualLoader.
+        
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::redirectDataToPlugin):
+        Handle the case where the widget is an EnbeddedWidget.
+        
+        (WebFrameLoaderClient::shouldUsePluginDocument):
+        Have this call WebView::shouldUseEmbeddedView.
+        
+        * WebView.cpp:
+        (WebView::canShowMIMEType):
+        Have this call WebView::shouldUseEmbeddedView.
+        
+        (WebView::registerEmbeddedViewMIMEType):
+        Add the MIME type to the set.
+        
+        (WebView::shouldUseEmbeddedView):
+        Given a MIME type, returns whether an embedded view should be used or not.
+        
 2009-01-06  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r39641): Try to fix WebIconDatabase build errors #4
