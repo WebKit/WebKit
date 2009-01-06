@@ -1,3 +1,12 @@
+2009-01-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Fix Cairo/Gtk build
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::putImageData):
+
 2009-01-05  Dean Jackson  <dino@apple.com>
 
         Reviewed by Darin Adler.
