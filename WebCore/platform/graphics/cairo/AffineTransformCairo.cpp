@@ -44,7 +44,7 @@ TransformationMatrix::TransformationMatrix(double a, double b, double c, double 
     cairo_matrix_init(&m_transform, a, b, c, d, tx, ty);
 }
 
-TransformationMatrix::TransformationMatrix(const PlatformAffineTransform& matrix)
+TransformationMatrix::TransformationMatrix(const PlatformTransformationMatrix& matrix)
 {
     m_transform = matrix;
 }
