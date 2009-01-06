@@ -140,6 +140,9 @@ RenderLayer::RenderLayer(RenderObject* object)
     , m_negZOrderList(0)
     , m_overflowList(0)
     , m_clipRects(0) 
+#ifndef NDEBUG    
+    , m_clipRectsRoot(0)
+#endif
     , m_scrollDimensionsDirty(true)
     , m_zOrderListsDirty(true)
     , m_overflowListDirty(true)
@@ -1712,7 +1715,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (m_reflection && !m_paintingInsideReflection && (!m_transform || appliedTransform)) {
         // Mark that we are now inside replica painting.
         m_paintingInsideReflection = true;
-        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot);
+        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot, false, temporaryClipRects);
         m_paintingInsideReflection = false;
     }
 
@@ -2002,20 +2005,28 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
 
 void RenderLayer::updateClipRects(const RenderLayer* rootLayer)
 {
-    if (m_clipRects)
+    if (m_clipRects) {
+        ASSERT(rootLayer == m_clipRectsRoot);
         return; // We have the correct cached value.
-
-    if (parent())
-        parent()->updateClipRects(rootLayer);
+    }
+    
+    // For transformed layers, the root layer was shifted to be us, so there is no need to
+    // examine the parent.  We want to cache clip rects with us as the root.
+    RenderLayer* parentLayer = rootLayer != this ? parent() : 0;
+    if (parentLayer)
+        parentLayer->updateClipRects(rootLayer);
 
     ClipRects clipRects;
     calculateClipRects(rootLayer, clipRects, true);
 
-    if (parent() && parent()->clipRects() && clipRects == *parent()->clipRects())
-        m_clipRects = parent()->clipRects();
+    if (parentLayer && parentLayer->clipRects() && clipRects == *parentLayer->clipRects())
+        m_clipRects = parentLayer->clipRects();
     else
         m_clipRects = new (m_object->renderArena()) ClipRects(clipRects);
     m_clipRects->ref();
+#ifndef NDEBUG
+    m_clipRectsRoot = rootLayer;
+#endif
 }
 
 void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, ClipRects& clipRects, bool useCached) const
@@ -2269,6 +2280,9 @@ void RenderLayer::clearClipRects()
     if (m_clipRects) {
         m_clipRects->deref(m_object->renderArena());
         m_clipRects = 0;
+#ifndef NDEBUG
+        m_clipRectsRoot = 0;
+#endif    
     }
 }
 

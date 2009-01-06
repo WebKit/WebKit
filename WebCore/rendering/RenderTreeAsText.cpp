@@ -416,7 +416,7 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
 {
     // Calculate the clip rects we should use.
     IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
-    l->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
+    l->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, true);
 
     // Ensure our lists are up-to-date.
     l->updateZOrderLists();

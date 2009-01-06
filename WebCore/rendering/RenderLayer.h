@@ -478,6 +478,9 @@ protected:
     Vector<RenderLayer*>* m_overflowList;
 
     ClipRects* m_clipRects;      // Cached clip rects used when painting and hit testing.
+#ifndef NDEBUG
+    const RenderLayer* m_clipRectsRoot;   // Root layer used to compute clip rects.
+#endif
 
     bool m_scrollDimensionsDirty : 1;
     bool m_zOrderListsDirty : 1;

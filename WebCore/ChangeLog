@@ -1,3 +1,33 @@
+2009-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=22985
+        
+        Add an assertion that clip rects are being used when painting with the same
+        rootLayer that they were computed with.
+        
+        Fix two issues detected by the assertion:
+
+        RenderLayer::updateClipRects() should not unconditionally update the clip rects
+        on its parent, but stop when reaching rootLayer (just like calculateClipRects()).
+        
+        We need to pass the temporaryClipRects flag down through reflection painting
+        to handle the case of nested reflections.
+        
+        Also use temporary clip rects in RenderTreeAsText, since that code does not
+        reset the painting root for transformed layers, so cached clip rects will not
+        match those used for painting.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::updateClipRects):
+        (WebCore::RenderLayer::clearClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
 2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix the Qt build
