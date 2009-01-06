@@ -1,3 +1,13 @@
+2009-01-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Jon Honeycutt
+
+        Expose setting the last-visit-was-failure flag on a history items in preparation for <rdar://problem/6173319>
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem _setLastVisitWasFailure:]):
+        * History/WebHistoryItemPrivate.h:
+
 2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Another blind mac build fix

@@ -37,6 +37,7 @@
 - (NSURL *)URL;
 - (int)visitCount;
 - (BOOL)lastVisitWasFailure;
+- (void)_setLastVisitWasFailure:(BOOL)failure;
 
 - (NSString *)RSSFeedReferrer;
 - (void)setRSSFeedReferrer:(NSString *)referrer;

@@ -534,6 +534,11 @@ static WebWindowWatcher *_windowWatcher = nil;
     return core(_private)->lastVisitWasFailure();
 }
 
+- (void)_setLastVisitWasFailure:(BOOL)failure
+{
+    core(_private)->setLastVisitWasFailure(failure);
+}
+
 @end
 
 
