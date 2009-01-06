@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -148,4 +148,20 @@ interface IWebIconDatabase : IUnknown
         - (NSString *)iconURLForURL:(NSString *)URL;
     */
     HRESULT iconURLForURL([in] BSTR url, [out, retval] BSTR* iconURL);
+
+    /*!
+        @method isEnabled
+        @discussion Returns true if the icon database is currently enabled, or false if it
+        is disabled.
+        - (BOOL)isEnabled;
+    */
+    HRESULT STDMETHODCALLTYPE isEnabled([out, retval] BOOL *result);
+
+    /*!
+        @method setEnabled:
+        @discussion Enables or disables the icon database based on the flag passed in.
+        @param flag Pass true to enable the icon database, or false to disable it.
+        - (void)setEnabled:(BOOL)flag;
+    */
+    HRESULT STDMETHODCALLTYPE setEnabled([in] BOOL flag);
 }

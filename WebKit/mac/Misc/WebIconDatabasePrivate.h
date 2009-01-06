@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,21 @@ extern NSString *WebIconDatabaseImportDirectoryDefaultsKey;
 @interface WebIconDatabase (WebPendingPublic)
 
 /*!
-   @method removeAllIcons:
+   @method isEnabled
+   @discussion Returns true if the icon database is currently enabled, or false if it
+   is disabled.
+*/
+- (BOOL)isEnabled;
+
+/*!
+   @method setEnabled:
+   @discussion Enables or disables the icon database based on the flag passed in.
+   @param flag Pass true to enable the icon database, or false to disable it.
+*/
+- (void)setEnabled:(BOOL)flag;
+
+/*!
+   @method removeAllIcons
    @discussion Causes the icon database to delete all of the images that it has stored,
    and to send out the notification WebIconDatabaseDidRemoveAllIconsNotification.
 */

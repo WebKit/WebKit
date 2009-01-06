@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,8 @@ namespace WebCore {
 @interface WebIconDatabase (WebInternal)
 - (void)_sendNotificationForURL:(NSString *)URL;
 - (void)_sendDidRemoveAllIconsNotification;
+- (void)_shutDownIconDatabase;
+- (void)_startUpIconDatabase;
 @end
 
 extern bool importToWebCoreFormat();

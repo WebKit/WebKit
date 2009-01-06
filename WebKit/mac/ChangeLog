@@ -1,3 +1,35 @@
+2009-01-05  David Kilzer  <ddkilzer@apple.com>
+
+        Add SPI to enable, disable and check state of WebIconDatabase
+
+        Reviewed by Darin Adler & Timothy Hatcher.
+
+        Add -[WebIconDatabase isEnabled] and -[WebIconDatabase setEnabled:]
+        SPI to make it possible to enable, disable and check the state of
+        the icon database.
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase init]): Extracted code into -_startUpIconDatabase.
+        (-[WebIconDatabase iconForURL:withSize:cache:]): Switched to use
+        -isEnabled instead of -_isEnabled.
+        (-[WebIconDatabase iconURLForURL:]): Ditto.
+        (-[WebIconDatabase retainIconForURL:]): Ditto.
+        (-[WebIconDatabase releaseIconForURL:]): Ditto.
+        (-[WebIconDatabase isEnabled]): Renamed from -_isEnabled in
+        WebInternal category.
+        (-[WebIconDatabase setEnabled:]): Added.  Takes care of changing
+        the enabled/disabled state of the icon database.
+        (-[WebIconDatabase removeAllIcons]): Switched to use -isEnabled
+        instead of -_isEnabled.
+        (-[WebIconDatabase _startUpIconDatabase]): Added.  Extrated from
+        -init.
+        (-[WebIconDatabase _shutDownIconDatabase]): Added.  Remove
+        observers when the icon database is disabled.
+        * Misc/WebIconDatabaseInternal.h: Added declarations for
+        -_startUpIconDatabase and -_shutDownIconDatabase.
+        * Misc/WebIconDatabasePrivate.h: Added declarations for
+        -isEnabled and -setEnabled:.
+
 2009-01-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Jon Honeycutt

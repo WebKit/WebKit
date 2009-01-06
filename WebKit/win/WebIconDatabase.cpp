@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,14 @@ void WebIconDatabase::init()
         LOG_ERROR("Unable to get icon database enabled preference");
     }
     iconDatabase()->setEnabled(!!enabled);
+    if (!(!!enabled))
+        return;
 
+    startUpIconDatabase();
+}
+
+void WebIconDatabase::startUpIconDatabase()
+{
     iconDatabase()->setClient(this);
 
     BSTR prefDatabasePath = 0;
@@ -89,6 +96,10 @@ void WebIconDatabase::init()
 
     if (!iconDatabase()->open(databasePath))
             LOG_ERROR("Failed to open icon database path");
+}
+
+void WebIconDatabase::shutDownIconDatabase()
+{
 }
 
 WebIconDatabase* WebIconDatabase::createInstance()
@@ -222,6 +233,28 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::iconURLForURL(
         return E_POINTER;
     BString iconURLBSTR(iconDatabase()->iconURLForPageURL(String(url, SysStringLen(url))));
     *iconURL = iconURLBSTR.release();
+    return S_OK;
+}
+
+virtual HRESULT STDMETHODCALLTYPE isEnabled( 
+        /* [retval][out] */ BOOL *result)
+{
+    *result = iconDatabase()->isEnabled();
+    return S_OK;
+}
+
+virtual HRESULT STDMETHODCALLTYPE setEnabled( 
+        /* [in] */ BOOL flag)
+{
+    BOOL currentlyEnabled;
+    isEnabled(&currentlyEnabled);
+    if (currentlyEnabled && !flag) {
+        iconDatabase()->setEnabled(false);
+        shutDownIconDatabase();
+    } else if (!currentlyEnabled && flag) {
+        iconDatabase()->setEnabled(true);
+        startUpIconDatabase();
+    }
     return S_OK;
 }
 

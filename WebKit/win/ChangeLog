@@ -1,3 +1,25 @@
+2009-01-05  David Kilzer  <ddkilzer@apple.com>
+
+        Add API to enable, disable and check state of WebIconDatabase
+
+        Reviewed by Darin Adler & Timothy Hatcher.
+
+        Add WebIconDatabase::isEnabled() and WebIconDatabase::setEnabled()
+        API to make it possible to enable, disable and check the state of
+        the icon database.
+
+        * Interfaces/IWebIconDatabase.idl: Declared isEnabled() and
+        setEnabled() methods.
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::init): Extracted code into startUpIconDatabase().
+        (WebIconDatabase::startUpIconDatabase): Added.  Extracted from
+        init().
+        (WebIconDatabase::shutDownIconDatabase): Added.  Method is empty
+        since there is nothing to do yet on Windows.
+        (isEnabled): Added.
+        (setEnabled): Added.
+        * WebIconDatabase.h: Added method declarations.
+
 2009-01-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon Honeycutt.

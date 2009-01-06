@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,6 @@ static WebIconDatabaseClient* defaultClient()
 }
 
 @interface WebIconDatabase (WebReallyInternal)
-- (BOOL)_isEnabled;
 - (void)_sendNotificationForURL:(NSString *)URL;
 - (void)_sendDidRemoveAllIconsNotification;
 - (NSImage *)_iconForFileURL:(NSString *)fileURL withSize:(NSSize)size;
@@ -108,37 +107,8 @@ static WebIconDatabaseClient* defaultClient()
     [initialDefaults release];
     BOOL enabled = [defaults boolForKey:WebIconDatabaseEnabledDefaultsKey];
     iconDatabase()->setEnabled(enabled);
-    if (!enabled)
-        return self;
-    iconDatabase()->setClient(defaultClient());
-    
-    // Figure out the directory we should be using for the icon.db
-    NSString *databaseDirectory = [self _databaseDirectory];
-    
-    // Rename legacy icon database files to the new icon database name
-    BOOL isDirectory = NO;
-    NSString *legacyDB = [databaseDirectory stringByAppendingPathComponent:@"icon.db"];
-    NSFileManager *defaultManager = [NSFileManager defaultManager];
-    if ([defaultManager fileExistsAtPath:legacyDB isDirectory:&isDirectory] && !isDirectory) {
-        NSString *newDB = [databaseDirectory stringByAppendingPathComponent:iconDatabase()->defaultDatabaseFilename()];
-        if (![defaultManager fileExistsAtPath:newDB])
-            rename([legacyDB fileSystemRepresentation], [newDB fileSystemRepresentation]);
-    }
-    
-    // Set the private browsing pref then open the WebCore icon database
-    iconDatabase()->setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
-    if (!iconDatabase()->open(databaseDirectory))
-        LOG_ERROR("Unable to open icon database");
-    
-    // Register for important notifications
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(_applicationWillTerminate:)
-                                                 name:NSApplicationWillTerminateNotification
-                                               object:NSApp];
-    [[NSNotificationCenter defaultCenter] 
-            addObserver:self selector:@selector(_resetCachedWebPreferences:) 
-                   name:WebPreferencesChangedNotification object:nil];
-
+    if (enabled)
+        [self _startUpIconDatabase];
     return self;
 }
 
@@ -148,7 +118,7 @@ static WebIconDatabaseClient* defaultClient()
     ASSERT(size.width);
     ASSERT(size.height);
 
-    if (!URL || ![self _isEnabled])
+    if (!URL || ![self isEnabled])
         return [self defaultIconForURL:URL withSize:size];
 
     // FIXME - <rdar://problem/4697934> - Move the handling of FileURLs to WebCore and implement in ObjC++
@@ -168,7 +138,7 @@ static WebIconDatabaseClient* defaultClient()
 
 - (NSString *)iconURLForURL:(NSString *)URL
 {
-    if (![self _isEnabled])
+    if (![self isEnabled])
         return nil;
     ASSERT_MAIN_THREAD();
 
@@ -196,7 +166,7 @@ static WebIconDatabaseClient* defaultClient()
 {
     ASSERT_MAIN_THREAD();
     ASSERT(URL);
-    if (![self _isEnabled])
+    if (![self isEnabled])
         return;
 
     iconDatabase()->retainIconForPageURL(URL);
@@ -206,7 +176,7 @@ static WebIconDatabaseClient* defaultClient()
 {
     ASSERT_MAIN_THREAD();
     ASSERT(pageURL);
-    if (![self _isEnabled])
+    if (![self isEnabled])
         return;
 
     iconDatabase()->releaseIconForPageURL(pageURL);
@@ -242,10 +212,27 @@ static WebIconDatabaseClient* defaultClient()
 
 @implementation WebIconDatabase (WebPendingPublic)
 
+- (BOOL)isEnabled
+{
+    return iconDatabase()->isEnabled();
+}
+
+- (void)setEnabled:(BOOL)flag
+{
+    BOOL currentlyEnabled = [self isEnabled];
+    if (currentlyEnabled && !flag) {
+        iconDatabase()->setEnabled(false);
+        [self _shutDownIconDatabase];
+    } else if (!currentlyEnabled && flag) {
+        iconDatabase()->setEnabled(true);
+        [self _startUpIconDatabase];
+    }
+}
+
 - (void)removeAllIcons
 {
     ASSERT_MAIN_THREAD();
-    if (![self _isEnabled])
+    if (![self isEnabled])
         return;
 
     // Via the IconDatabaseClient interface, removeAllIcons() will send the WebIconDatabaseDidRemoveAllIconsNotification
@@ -265,11 +252,6 @@ static WebIconDatabaseClient* defaultClient()
 
 @implementation WebIconDatabase (WebInternal)
 
-- (BOOL)_isEnabled
-{
-    return iconDatabase()->isEnabled();
-}
-
 - (void)_sendNotificationForURL:(NSString *)URL
 {
     ASSERT(URL);
@@ -287,6 +269,50 @@ static WebIconDatabaseClient* defaultClient()
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadWithName:WebIconDatabaseDidRemoveAllIconsNotification
                                                         object:self
                                                       userInfo:nil];
+}
+
+- (void)_startUpIconDatabase
+{
+    iconDatabase()->setClient(defaultClient());
+    
+    // Figure out the directory we should be using for the icon.db
+    NSString *databaseDirectory = [self _databaseDirectory];
+    
+    // Rename legacy icon database files to the new icon database name
+    BOOL isDirectory = NO;
+    NSString *legacyDB = [databaseDirectory stringByAppendingPathComponent:@"icon.db"];
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    if ([defaultManager fileExistsAtPath:legacyDB isDirectory:&isDirectory] && !isDirectory) {
+        NSString *newDB = [databaseDirectory stringByAppendingPathComponent:iconDatabase()->defaultDatabaseFilename()];
+        if (![defaultManager fileExistsAtPath:newDB])
+            rename([legacyDB fileSystemRepresentation], [newDB fileSystemRepresentation]);
+    }
+    
+    // Set the private browsing pref then open the WebCore icon database
+    iconDatabase()->setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
+    if (!iconDatabase()->open(databaseDirectory))
+        LOG_ERROR("Unable to open icon database");
+    
+    // Register for important notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_applicationWillTerminate:)
+                                                 name:NSApplicationWillTerminateNotification
+                                               object:NSApp];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_resetCachedWebPreferences:)
+                                                 name:WebPreferencesChangedNotification
+                                               object:nil];
+}
+
+- (void)_shutDownIconDatabase
+{
+    // Unregister for important notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSApplicationWillTerminateNotification
+                                                  object:NSApp];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:WebPreferencesChangedNotification
+                                                  object:nil];
 }
 
 - (void)_applicationWillTerminate:(NSNotification *)notification

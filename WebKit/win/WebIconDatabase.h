@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,8 @@ private:
     WebIconDatabase();
     ~WebIconDatabase();
     void init();
+    void startUpIconDatabase();
+    void shutDownIconDatabase();
 public:
 
     // IUnknown
@@ -93,6 +95,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE iconURLForURL( 
         /* [in] */ BSTR url,
         /* [retval][out] */ BSTR *iconURL);
+
+    virtual HRESULT STDMETHODCALLTYPE isEnabled( 
+        /* [retval][out] */ BOOL *result);
+
+    virtual HRESULT STDMETHODCALLTYPE setEnabled( 
+        /* [in] */ BOOL /*flag*/);
 
     // IconDatabaseClient
     virtual void dispatchDidRemoveAllIcons();
