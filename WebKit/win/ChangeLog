@@ -1,10 +1,23 @@
+2009-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add a simple, memory managed, wrapper around a VARIANT struuct.
+        
+        * COMVariantSetter.h:
+        (COMVariant::COMVariant):
+        (COMVariant::~COMVariant):
+        (COMVariant::operator=):
+        (COMVariant::copyTo):
+        (COMVariant::variantType):
+
 2009-01-05  Adele Peterson  <adele@apple.com>
 
         Windows build fix.
 
         * WebCoreSupport/WebChromeClient.cpp:
 
-2009-01-05  Anders Carlsson  <andersca@apple.com> 
+2009-01-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
 

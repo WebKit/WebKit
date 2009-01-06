@@ -111,4 +111,39 @@ struct COMIUnknownVariantSetter : COMVariantSetterBase<UnderlyingType>
     }
 };
 
+class COMVariant {
+public:
+    COMVariant()
+    {
+        ::VariantInit(&m_variant);
+    }
+
+    ~COMVariant()
+    {
+        ::VariantClear(&m_variant);
+    }
+
+    COMVariant(const COMVariant& other)
+    {
+        ::VariantInit(&m_variant);
+        other.copyTo(&m_variant);
+    }
+
+    COMVariant& operator=(const COMVariant& other)
+    {
+        other.copyTo(&m_variant);
+        return *this;
+    }
+
+    void copyTo(VARIANT* dest) const
+    {
+        ::VariantCopy(dest, const_cast<VARIANT*>(&m_variant));
+    }
+
+    VARENUM variantType() const { return static_cast<VARENUM>(V_VT(&m_variant)); }
+
+private:
+    VARIANT m_variant;
+};
+
 #endif // COMVariantSetter
