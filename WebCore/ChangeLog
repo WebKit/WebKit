@@ -1,3 +1,14 @@
+2009-01-05  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23084
+        Avoid redundant AtomicString conversions
+
+        * dom/Node.cpp: Create an AtomicString early to avoid converting twice
+        (WebCore::Node::getElementsByTagNameNS):
+        * dom/QualifiedName.h: Use the appropriate AtomicString constructor instead of converting from a String
+
 2009-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
@@ -473,6 +484,7 @@
 
         Reviewed by Oliver Hunt.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23084
         Avoid redundant AtomicString conversions
 
         * dom/Node.cpp:

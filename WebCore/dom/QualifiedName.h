@@ -161,7 +161,7 @@ namespace WTF {
     template<> struct HashTraits<WebCore::QualifiedName> : GenericHashTraits<WebCore::QualifiedName> {
         static const bool emptyValueIsZero = false;
         static WebCore::QualifiedName emptyValue() { return WebCore::QualifiedName(WebCore::nullAtom, WebCore::nullAtom, WebCore::nullAtom); }
-        static void constructDeletedValue(WebCore::QualifiedName& slot) { new (&slot) WebCore::QualifiedName(WebCore::nullAtom, WebCore::String(HashTableDeletedValue), WebCore::nullAtom); }
+        static void constructDeletedValue(WebCore::QualifiedName& slot) { new (&slot) WebCore::QualifiedName(WebCore::nullAtom, WebCore::AtomicString(HashTableDeletedValue), WebCore::nullAtom); }
         static bool isDeletedValue(const WebCore::QualifiedName& slot) { return slot.localName().isHashTableDeletedValue(); }
     };
 }

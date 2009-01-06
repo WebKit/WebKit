@@ -1391,12 +1391,14 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceU
     String name = localName;
     if (document()->isHTMLDocument())
         name = localName.lower();
+    
+    AtomicString localNameAtom = name;
         
-    pair<NodeListsNodeData::TagCacheMap::iterator, bool> result = data->nodeLists()->m_tagNodeListCaches.add(QualifiedName(nullAtom, name, namespaceURI), 0);
+    pair<NodeListsNodeData::TagCacheMap::iterator, bool> result = data->nodeLists()->m_tagNodeListCaches.add(QualifiedName(nullAtom, localNameAtom, namespaceURI), 0);
     if (result.second)
         result.first->second = new DynamicNodeList::Caches;
     
-    return TagNodeList::create(this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, name, result.first->second);
+    return TagNodeList::create(this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localNameAtom, result.first->second);
 }
 
 PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
