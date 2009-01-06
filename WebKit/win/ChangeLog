@@ -1,5 +1,17 @@
 2009-01-06  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX (r39641): Try to fix WebIconDatabase build errors #4
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::isEnabled): Added 'WebIconDatabase::' to method
+        signature.  (Another copy-paste error.)
+        (WebIconDatabase::setEnabled): Ditto.
+        * WebIconDatabase.h:
+        (WebIconDatabase::startUpIconDatabase): Make private again.
+        (WebIconDatabase::shutDownIconDatabase): Ditto.
+
+2009-01-06  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX (r39641): Try to fix build errors #3
 
         Try to fix the following (more specific) build errors:

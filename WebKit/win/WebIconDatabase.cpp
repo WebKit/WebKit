@@ -238,24 +238,24 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::iconURLForURL(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE isEnabled( 
+HRESULT STDMETHODCALLTYPE WebIconDatabase::isEnabled( 
         /* [retval][out] */ BOOL *result)
 {
     *result = iconDatabase()->isEnabled();
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE setEnabled( 
+HRESULT STDMETHODCALLTYPE WebIconDatabase::setEnabled( 
         /* [in] */ BOOL flag)
 {
     BOOL currentlyEnabled;
     isEnabled(&currentlyEnabled);
     if (currentlyEnabled && !flag) {
         iconDatabase()->setEnabled(false);
-        sharedWebIconDatabase()->shutDownIconDatabase();
+        shutDownIconDatabase();
     } else if (!currentlyEnabled && flag) {
         iconDatabase()->setEnabled(true);
-        sharedWebIconDatabase()->startUpIconDatabase();
+        startUpIconDatabase();
     }
     return S_OK;
 }
