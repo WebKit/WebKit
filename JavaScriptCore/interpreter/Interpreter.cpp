@@ -850,12 +850,13 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 
     // Now unwind the scope chain within the exception handler's call frame.
 
-    ScopeChain sc(callFrame->scopeChain());
+    ScopeChainNode* scopeChain = callFrame->scopeChain();
+    ScopeChain sc(scopeChain);
     int scopeDelta = depth(codeBlock, sc) - handler->scopeDepth;
     ASSERT(scopeDelta >= 0);
     while (scopeDelta--)
-        sc.pop();
-    callFrame->setScopeChain(sc.node());
+        scopeChain = scopeChain->pop();
+    callFrame->setScopeChain(scopeChain);
 
     return handler;
 }
