@@ -252,10 +252,10 @@ HRESULT STDMETHODCALLTYPE setEnabled(
     isEnabled(&currentlyEnabled);
     if (currentlyEnabled && !flag) {
         iconDatabase()->setEnabled(false);
-        WebIconDatabase::shutDownIconDatabase();
+        sharedWebIconDatabase()->shutDownIconDatabase();
     } else if (!currentlyEnabled && flag) {
         iconDatabase()->setEnabled(true);
-        WebIconDatabase::startUpIconDatabase();
+        sharedWebIconDatabase()->startUpIconDatabase();
     }
     return S_OK;
 }

@@ -57,6 +57,7 @@ private:
     WebIconDatabase();
     ~WebIconDatabase();
     void init();
+protected:
     void startUpIconDatabase();
     void shutDownIconDatabase();
 public:

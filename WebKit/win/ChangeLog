@@ -1,5 +1,30 @@
 2009-01-06  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX (r39641): Try to fix build errors #3
+
+        Try to fix the following (more specific) build errors:
+
+            WebIconDatabase.cpp
+            ..\WebIconDatabase.cpp(255) : error C2248: 'WebIconDatabase::shutDownIconDatabase' : cannot access private member declared in class 'WebIconDatabase'
+                    ...\webkit\win\WebIconDatabase.h(61) : see declaration of 'WebIconDatabase::shutDownIconDatabase'
+                    ...\webkit\win\WebIconDatabase.h(51) : see declaration of 'WebIconDatabase'
+            ..\WebIconDatabase.cpp(255) : error C2352: 'WebIconDatabase::shutDownIconDatabase' : illegal call of non-static member function
+                    ...\webkit\win\WebIconDatabase.h(61) : see declaration of 'WebIconDatabase::shutDownIconDatabase'
+            ..\WebIconDatabase.cpp(258) : error C2248: 'WebIconDatabase::startUpIconDatabase' : cannot access private member declared in class 'WebIconDatabase'
+                    ...\webkit\win\WebIconDatabase.h(60) : see declaration of 'WebIconDatabase::startUpIconDatabase'
+                    ...\webkit\win\WebIconDatabase.h(51) : see declaration of 'WebIconDatabase'
+            ..\WebIconDatabase.cpp(258) : error C2352: 'WebIconDatabase::startUpIconDatabase' : illegal call of non-static member function
+                    ...\webkit\win\WebIconDatabase.h(60) : see declaration of 'WebIconDatabase::startUpIconDatabase'
+
+        * WebIconDatabase.cpp:
+        (setEnabled): Get instance of shared WebIconDatabase, then call
+        startUp/shutDown methods on it.
+        * WebIconDatabase.h:
+        (WebIconDatabase::startUpIconDatabase): Make protected again.
+        (WebIconDatabase::shutDownIconDatabase): Ditto.
+
+2009-01-06  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX (r39641): Try to fix build errors again
 
         Try to fix the following build errors:
