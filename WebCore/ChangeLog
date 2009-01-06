@@ -1,5 +1,14 @@
 2009-01-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Fix Cairo/Gtk build
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::getImageData):
+
+2009-01-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         CanvasPixelArray performance is too slow 

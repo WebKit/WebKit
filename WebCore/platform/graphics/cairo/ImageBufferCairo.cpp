@@ -94,7 +94,7 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
 
     PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
     unsigned char* dataSrc = cairo_image_surface_get_data(m_data.m_surface);
-    unsigned char* dataDst = result->data()->data().data();
+    unsigned char* dataDst = result->data()->data();
 
     if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > m_size.width() || (rect.y() + rect.height()) > m_size.height())
         memset(dataSrc, 0, result->data()->length());
