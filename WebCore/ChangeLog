@@ -1,3 +1,17 @@
+2009-01-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6474973> REGRESSION: PLT ~2% slower due to 39465 (consolidate thread data)
+
+        I could not reproduce the slowdown on my PowerPC test machine, but the change should bring
+        performance back.
+
+        * platform/ThreadGlobalData.cpp: (WebCore::threadGlobalData): Don't use AtomicallyInitializedStatic.
+        Prior to r39465, it was only used for cached converters, which was necessary because the
+        first access to ICU or TEC one could happen on a secondary thread, but now they are all
+        initialized from ThreadGlobalData constructor.
+
 2009-01-06  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Darin Adler.
