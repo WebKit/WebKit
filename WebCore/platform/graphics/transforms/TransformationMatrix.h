@@ -23,25 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AffineTransform_h
-#define AffineTransform_h
+#ifndef TransformationMatrix_h
+#define TransformationMatrix_h
 
 #if PLATFORM(CG)
 #include <CoreGraphics/CGAffineTransform.h>
-typedef CGAffineTransform PlatformAffineTransform;
+typedef CGAffineTransform PlatformTransformationMatrix;
 #elif PLATFORM(QT)
 #include <QMatrix>
-typedef QMatrix PlatformAffineTransform;
+typedef QMatrix PlatformTransformationMatrix;
 #elif PLATFORM(CAIRO)
 #include <cairo.h>
-typedef cairo_matrix_t PlatformAffineTransform;
+typedef cairo_matrix_t PlatformTransformationMatrix;
 #elif PLATFORM(SKIA)
 #include "SkMatrix.h"
-typedef SkMatrix PlatformAffineTransform;
+typedef SkMatrix PlatformTransformationMatrix;
 #elif PLATFORM(WX) && USE(WXGC)
 #include <wx/defs.h>
 #include <wx/graphics.h>
-typedef wxGraphicsMatrix PlatformAffineTransform;
+typedef wxGraphicsMatrix PlatformTransformationMatrix;
 #endif
 
 namespace WebCore {
@@ -52,12 +52,12 @@ class FloatPoint;
 class FloatRect;
 class FloatQuad;
 
-class AffineTransform {
+class TransformationMatrix {
 public:
-    AffineTransform();
-    AffineTransform(double a, double b, double c, double d, double e, double f);
+    TransformationMatrix();
+    TransformationMatrix(double a, double b, double c, double d, double e, double f);
 #if !PLATFORM(WX) || USE(WXGC)
-    AffineTransform(const PlatformAffineTransform&);
+    TransformationMatrix(const PlatformTransformationMatrix&);
 #endif
 
     void setMatrix(double a, double b, double c, double d, double e, double f);
@@ -98,43 +98,43 @@ public:
 
     void reset();
 
-    AffineTransform& multiply(const AffineTransform&);
-    AffineTransform& scale(double); 
-    AffineTransform& scale(double sx, double sy); 
-    AffineTransform& scaleNonUniform(double sx, double sy);
-    AffineTransform& rotate(double d);
-    AffineTransform& rotateFromVector(double x, double y);
-    AffineTransform& translate(double tx, double ty);
-    AffineTransform& shear(double sx, double sy);
-    AffineTransform& flipX();
-    AffineTransform& flipY();
-    AffineTransform& skew(double angleX, double angleY);
-    AffineTransform& skewX(double angle);
-    AffineTransform& skewY(double angle);
+    TransformationMatrix& multiply(const TransformationMatrix&);
+    TransformationMatrix& scale(double); 
+    TransformationMatrix& scale(double sx, double sy); 
+    TransformationMatrix& scaleNonUniform(double sx, double sy);
+    TransformationMatrix& rotate(double d);
+    TransformationMatrix& rotateFromVector(double x, double y);
+    TransformationMatrix& translate(double tx, double ty);
+    TransformationMatrix& shear(double sx, double sy);
+    TransformationMatrix& flipX();
+    TransformationMatrix& flipY();
+    TransformationMatrix& skew(double angleX, double angleY);
+    TransformationMatrix& skewX(double angle);
+    TransformationMatrix& skewY(double angle);
  
     double det() const;
     bool isInvertible() const;
-    AffineTransform inverse() const;
+    TransformationMatrix inverse() const;
 
-    void blend(const AffineTransform& from, double progress);
+    void blend(const TransformationMatrix& from, double progress);
 
 #if !PLATFORM(WX) || USE(WXGC)
-    operator PlatformAffineTransform() const;
+    operator PlatformTransformationMatrix() const;
 #endif
 
-    bool operator==(const AffineTransform&) const;
-    bool operator!=(const AffineTransform& other) const { return !(*this == other); }
-    AffineTransform& operator*=(const AffineTransform&);
-    AffineTransform operator*(const AffineTransform&);
+    bool operator==(const TransformationMatrix&) const;
+    bool operator!=(const TransformationMatrix& other) const { return !(*this == other); }
+    TransformationMatrix& operator*=(const TransformationMatrix&);
+    TransformationMatrix operator*(const TransformationMatrix&);
     
 private:
 #if !PLATFORM(WX) || USE(WXGC)
-    PlatformAffineTransform m_transform;
+    PlatformTransformationMatrix m_transform;
 #endif
 };
 
-AffineTransform makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
+TransformationMatrix makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
 
 } // namespace WebCore
 
-#endif // AffineTransform_h
+#endif // TransformationMatrix_h

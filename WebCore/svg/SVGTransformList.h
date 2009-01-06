@@ -37,7 +37,7 @@ namespace WebCore {
         static PassRefPtr<SVGTransformList> create(const QualifiedName& attributeName) { return adoptRef(new SVGTransformList(attributeName)); }
         virtual ~SVGTransformList();
 
-        SVGTransform createSVGTransformFromMatrix(const AffineTransform&) const;
+        SVGTransform createSVGTransformFromMatrix(const TransformationMatrix&) const;
         SVGTransform consolidate();
 
         // Internal use only

@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class AffineTransform;
+class TransformationMatrix;
 class AnimationController;
 class Color;
 class Document;
@@ -312,8 +312,8 @@ public:
 
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
 
-    virtual AffineTransform localTransform() const;
-    virtual AffineTransform absoluteTransform() const;
+    virtual TransformationMatrix localTransform() const;
+    virtual TransformationMatrix absoluteTransform() const;
 #endif
 
     virtual bool isEditable() const;

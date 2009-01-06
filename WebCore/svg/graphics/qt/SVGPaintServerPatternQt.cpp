@@ -23,7 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGPaintServerPattern.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Pattern.h"
@@ -58,7 +58,7 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::NoBrush);
 
-    AffineTransform affine;
+    TransformationMatrix affine;
     affine.translate(patternBoundaries().x(), patternBoundaries().y());
     affine.multiply(patternTransform());
 

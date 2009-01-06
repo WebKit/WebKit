@@ -25,7 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGRenderSupport.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "ImageBuffer.h"
 #include "RenderObject.h"
 #include "RenderSVGContainer.h"

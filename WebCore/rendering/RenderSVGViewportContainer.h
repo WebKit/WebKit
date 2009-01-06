@@ -40,8 +40,8 @@ public:
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
-    virtual AffineTransform absoluteTransform() const;
-    virtual AffineTransform viewportTransform() const;
+    virtual TransformationMatrix absoluteTransform() const;
+    virtual TransformationMatrix viewportTransform() const;
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 

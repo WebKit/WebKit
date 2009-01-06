@@ -55,8 +55,8 @@ namespace WebCore {
         virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
         virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
         
-        virtual AffineTransform absoluteTransform() const;
-        virtual AffineTransform localTransform() const;
+        virtual TransformationMatrix absoluteTransform() const;
+        virtual TransformationMatrix localTransform() const;
 
         virtual FloatRect relativeBBox(bool includeStroke = true) const;
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);

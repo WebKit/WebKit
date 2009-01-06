@@ -34,7 +34,7 @@
 #include "FloatRect.h"
 #include "PlatformString.h"
 #include "GraphicsContext.h"
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "NotImplemented.h"
 #include "StillImageQt.h"
 #include "qwebsettings.h"
@@ -91,7 +91,7 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 }
 
     
-void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
+void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
                         const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
 {
     notImplemented();
@@ -136,7 +136,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     ctxt->restore();
 }
 
-void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
+void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
                               const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
 {
     QPixmap* framePixmap = nativeImageForCurrentFrame();

@@ -28,7 +28,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatConversion.h"
 #include "GraphicsContextPrivate.h"
 #include "GraphicsContextPlatformPrivateCG.h"
@@ -890,7 +890,7 @@ void GraphicsContext::translate(float x, float y)
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::concatCTM(const AffineTransform& transform)
+void GraphicsContext::concatCTM(const TransformationMatrix& transform)
 {
     if (paintingDisabled())
         return;
@@ -899,7 +899,7 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-AffineTransform GraphicsContext::getCTM() const
+TransformationMatrix GraphicsContext::getCTM() const
 {
     return CGContextGetCTM(platformContext());
 }

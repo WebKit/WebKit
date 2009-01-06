@@ -33,8 +33,8 @@ PassRefPtr<TransformOperation> MatrixTransformOperation::blend(const TransformOp
 
     // convert the TransformOperations into matrices
     IntSize size;
-    AffineTransform fromT;
-    AffineTransform toT(m_a, m_b, m_c, m_d, m_e, m_f);
+    TransformationMatrix fromT;
+    TransformationMatrix toT(m_a, m_b, m_c, m_d, m_e, m_f);
     if (from) {
         const MatrixTransformOperation* m = static_cast<const MatrixTransformOperation*>(from);
         fromT.setMatrix(m->m_a, m->m_b, m->m_c, m->m_d, m->m_e, m->m_f);

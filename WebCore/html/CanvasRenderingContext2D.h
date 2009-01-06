@@ -26,7 +26,7 @@
 #ifndef CanvasRenderingContext2D_h
 #define CanvasRenderingContext2D_h
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatSize.h"
 #include "Font.h"
 #include "GraphicsTypes.h"
@@ -212,7 +212,7 @@ namespace WebCore {
             String m_shadowColor;
             float m_globalAlpha;
             CompositeOperator m_globalComposite;
-            AffineTransform m_transform;
+            TransformationMatrix m_transform;
             bool m_invertibleCTM;
             
             // Text state.

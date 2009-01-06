@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 
 #include "FloatRect.h"
 #include "FloatQuad.h"
@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-static void affineTransformDecompose(const AffineTransform& matrix, double sr[9])
+static void affineTransformDecompose(const TransformationMatrix& matrix, double sr[9])
 {
-    AffineTransform m(matrix);
+    TransformationMatrix m(matrix);
 
     // Compute scaling factors
     double sx = sqrt(m.a() * m.a() + m.b() * m.b());
@@ -74,7 +74,7 @@ static void affineTransformDecompose(const AffineTransform& matrix, double sr[9]
     sr[7] = m.e(); sr[8] = m.f();
 }
 
-static void affineTransformCompose(AffineTransform& m, const double sr[9])
+static void affineTransformCompose(TransformationMatrix& m, const double sr[9])
 {
     m.setA(sr[3]);
     m.setB(sr[4]);
@@ -86,65 +86,65 @@ static void affineTransformCompose(AffineTransform& m, const double sr[9])
     m.scale(sr[0], sr[1]);
 }
 
-bool AffineTransform::isInvertible() const
+bool TransformationMatrix::isInvertible() const
 {
     return det() != 0.0;
 }
 
-AffineTransform& AffineTransform::multiply(const AffineTransform& other)
+TransformationMatrix& TransformationMatrix::multiply(const TransformationMatrix& other)
 {
     return (*this) *= other;
 }
 
-AffineTransform& AffineTransform::scale(double s)
+TransformationMatrix& TransformationMatrix::scale(double s)
 {
     return scale(s, s);
 }
 
-AffineTransform& AffineTransform::scaleNonUniform(double sx, double sy)
+TransformationMatrix& TransformationMatrix::scaleNonUniform(double sx, double sy)
 {
     return scale(sx, sy);
 }
 
-AffineTransform& AffineTransform::rotateFromVector(double x, double y)
+TransformationMatrix& TransformationMatrix::rotateFromVector(double x, double y)
 {
     return rotate(rad2deg(atan2(y, x)));
 }
 
-AffineTransform& AffineTransform::flipX()
+TransformationMatrix& TransformationMatrix::flipX()
 {
     return scale(-1.0f, 1.0f);
 }
 
-AffineTransform& AffineTransform::flipY()
+TransformationMatrix& TransformationMatrix::flipY()
 {
     return scale(1.0f, -1.0f);
 }
 
-AffineTransform& AffineTransform::skew(double angleX, double angleY)
+TransformationMatrix& TransformationMatrix::skew(double angleX, double angleY)
 {
     return shear(tan(deg2rad(angleX)), tan(deg2rad(angleY)));
 }
 
-AffineTransform& AffineTransform::skewX(double angle)
+TransformationMatrix& TransformationMatrix::skewX(double angle)
 {
     return shear(tan(deg2rad(angle)), 0.0f);
 }
 
-AffineTransform& AffineTransform::skewY(double angle)
+TransformationMatrix& TransformationMatrix::skewY(double angle)
 {
     return shear(0.0f, tan(deg2rad(angle)));
 }
 
-AffineTransform makeMapBetweenRects(const FloatRect& source, const FloatRect& dest)
+TransformationMatrix makeMapBetweenRects(const FloatRect& source, const FloatRect& dest)
 {
-    AffineTransform transform;
+    TransformationMatrix transform;
     transform.translate(dest.x() - source.x(), dest.y() - source.y());
     transform.scale(dest.width() / source.width(), dest.height() / source.height());
     return transform;
 }
 
-IntPoint AffineTransform::mapPoint(const IntPoint& point) const
+IntPoint TransformationMatrix::mapPoint(const IntPoint& point) const
 {
     double x2, y2;
     map(point.x(), point.y(), &x2, &y2);
@@ -153,7 +153,7 @@ IntPoint AffineTransform::mapPoint(const IntPoint& point) const
     return IntPoint(lround(x2), lround(y2));
 }
 
-FloatPoint AffineTransform::mapPoint(const FloatPoint& point) const
+FloatPoint TransformationMatrix::mapPoint(const FloatPoint& point) const
 {
     double x2, y2;
     map(point.x(), point.y(), &x2, &y2);
@@ -161,7 +161,7 @@ FloatPoint AffineTransform::mapPoint(const FloatPoint& point) const
     return FloatPoint(static_cast<float>(x2), static_cast<float>(y2));
 }
 
-FloatQuad AffineTransform::mapQuad(const FloatQuad& quad) const
+FloatQuad TransformationMatrix::mapQuad(const FloatQuad& quad) const
 {
     // FIXME: avoid 4 seperate library calls. Point mapping really needs
     // to be platform-independent code.
@@ -171,7 +171,7 @@ FloatQuad AffineTransform::mapQuad(const FloatQuad& quad) const
                      mapPoint(quad.p4()));
 }
 
-void AffineTransform::blend(const AffineTransform& from, double progress)
+void TransformationMatrix::blend(const TransformationMatrix& from, double progress)
 {
     double srA[9], srB[9];
 

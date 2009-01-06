@@ -647,7 +647,7 @@ sub AddIncludesForType
     }
 
     if ($type eq "SVGMatrix") {
-        $implIncludes{"AffineTransform.h"} = 1;
+        $implIncludes{"TransformationMatrix.h"} = 1;
         $implIncludes{"DOM$type.h"} = 1;
         $implIncludes{"SVGException.h"} = 1;
         return;
@@ -1444,8 +1444,8 @@ sub GenerateImplementation
             }
 
             # FIXME! We need [Custom] support for ObjC, to move these hacks into DOMSVGLength/MatrixCustom.mm
-            my $svgMatrixRotateFromVector = ($podType and $podType eq "AffineTransform" and $functionName eq "rotateFromVector");
-            my $svgMatrixInverse = ($podType and $podType eq "AffineTransform" and $functionName eq "inverse");
+            my $svgMatrixRotateFromVector = ($podType and $podType eq "TransformationMatrix" and $functionName eq "rotateFromVector");
+            my $svgMatrixInverse = ($podType and $podType eq "TransformationMatrix" and $functionName eq "inverse");
             my $svgLengthConvertToSpecifiedUnits = ($podType and $podType eq "SVGLength" and $functionName eq "convertToSpecifiedUnits");
 
             push(@parameterNames, "ec") if $raisesExceptions and !($svgMatrixRotateFromVector || $svgMatrixInverse);

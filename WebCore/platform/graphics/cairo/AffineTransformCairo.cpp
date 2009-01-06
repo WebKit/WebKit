@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 
 #include "IntRect.h"
 #include "FloatRect.h"
@@ -34,34 +34,34 @@ namespace WebCore {
 
 static const double deg2rad = 0.017453292519943295769; // pi/180
 
-AffineTransform::AffineTransform()
+TransformationMatrix::TransformationMatrix()
 {
     cairo_matrix_init_identity(&m_transform);
 }
 
-AffineTransform::AffineTransform(double a, double b, double c, double d, double tx, double ty)
+TransformationMatrix::TransformationMatrix(double a, double b, double c, double d, double tx, double ty)
 {
     cairo_matrix_init(&m_transform, a, b, c, d, tx, ty);
 }
 
-AffineTransform::AffineTransform(const PlatformAffineTransform& matrix)
+TransformationMatrix::TransformationMatrix(const PlatformAffineTransform& matrix)
 {
     m_transform = matrix;
 }
 
-void AffineTransform::setMatrix(double a, double b, double c, double d, double tx, double ty)
+void TransformationMatrix::setMatrix(double a, double b, double c, double d, double tx, double ty)
 {
     cairo_matrix_init(&m_transform, a, b, c, d, tx, ty);
 }
 
-void AffineTransform::map(double x, double y, double* x2, double* y2) const
+void TransformationMatrix::map(double x, double y, double* x2, double* y2) const
 {
     *x2 = x;
     *y2 = y;
     cairo_matrix_transform_point(&m_transform, x2, y2);
 }
 
-IntRect AffineTransform::mapRect(const IntRect &rect) const
+IntRect TransformationMatrix::mapRect(const IntRect &rect) const
 {
     FloatRect floatRect(rect);
     FloatRect enclosingFloatRect = this->mapRect(floatRect);
@@ -69,7 +69,7 @@ IntRect AffineTransform::mapRect(const IntRect &rect) const
     return enclosingIntRect(enclosingFloatRect);
 }
 
-FloatRect AffineTransform::mapRect(const FloatRect &rect) const
+FloatRect TransformationMatrix::mapRect(const FloatRect &rect) const
 {
     double rectMinX = rect.x();
     double rectMaxX = rect.x() + rect.width();
@@ -128,97 +128,97 @@ FloatRect AffineTransform::mapRect(const FloatRect &rect) const
     return FloatRect(enclosingRectMinX, enclosingRectMinY, enclosingRectWidth, enclosingRectHeight);
 }
 
-bool AffineTransform::isIdentity() const
+bool TransformationMatrix::isIdentity() const
 {
     return ((m_transform.xx == 1) && (m_transform.yy == 1)
          && (m_transform.xy == 0) && (m_transform.yx == 0)
          && (m_transform.x0 == 0) && (m_transform.y0 == 0));
 }
 
-double AffineTransform::a() const
+double TransformationMatrix::a() const
 {
     return m_transform.xx;
 }
 
-void AffineTransform::setA(double a)
+void TransformationMatrix::setA(double a)
 {
     m_transform.xx = a;
 }
 
-double AffineTransform::b() const
+double TransformationMatrix::b() const
 {
     return m_transform.yx;
 }
 
-void AffineTransform::setB(double b)
+void TransformationMatrix::setB(double b)
 {
     m_transform.yx = b;
 }
 
-double AffineTransform::c() const
+double TransformationMatrix::c() const
 {
     return m_transform.xy;
 }
 
-void AffineTransform::setC(double c)
+void TransformationMatrix::setC(double c)
 {
     m_transform.xy = c;
 }
 
-double AffineTransform::d() const
+double TransformationMatrix::d() const
 {
     return m_transform.yy;
 }
 
-void AffineTransform::setD(double d)
+void TransformationMatrix::setD(double d)
 {
     m_transform.yy = d;
 }
 
-double AffineTransform::e() const
+double TransformationMatrix::e() const
 {
     return m_transform.x0;
 }
 
-void AffineTransform::setE(double e)
+void TransformationMatrix::setE(double e)
 {
     m_transform.x0 = e;
 }
 
-double AffineTransform::f() const
+double TransformationMatrix::f() const
 {
     return m_transform.y0;
 }
 
-void AffineTransform::setF(double f)
+void TransformationMatrix::setF(double f)
 {
     m_transform.y0 = f;
 }
 
-void AffineTransform::reset()
+void TransformationMatrix::reset()
 {
     cairo_matrix_init_identity(&m_transform);
 }
 
-AffineTransform &AffineTransform::scale(double sx, double sy)
+TransformationMatrix &TransformationMatrix::scale(double sx, double sy)
 {
     cairo_matrix_scale(&m_transform, sx, sy);
     return *this;
 }
 
-AffineTransform &AffineTransform::rotate(double d)
+TransformationMatrix &TransformationMatrix::rotate(double d)
 {
     cairo_matrix_rotate(&m_transform, d * deg2rad);
     return *this;
 }
 
-AffineTransform &AffineTransform::translate(double tx, double ty)
+TransformationMatrix &TransformationMatrix::translate(double tx, double ty)
 {
     cairo_matrix_translate(&m_transform, tx, ty);
     return *this;
 }
 
-AffineTransform &AffineTransform::shear(double sx, double sy)
+TransformationMatrix &TransformationMatrix::shear(double sx, double sy)
 {
     cairo_matrix_t shear;
     cairo_matrix_init(&shear, 1, sy, sx, 1, 0, 0);
@@ -230,26 +230,26 @@ AffineTransform &AffineTransform::shear(double sx, double sy)
     return *this;
 }
 
-double AffineTransform::det() const
+double TransformationMatrix::det() const
 {
     return m_transform.xx * m_transform.yy - m_transform.xy * m_transform.yx;
 }
 
-AffineTransform AffineTransform::inverse() const
+TransformationMatrix TransformationMatrix::inverse() const
 {
-    if (!isInvertible()) return AffineTransform();
+    if (!isInvertible()) return TransformationMatrix();
 
     cairo_matrix_t result = m_transform;
     cairo_matrix_invert(&result);
-    return AffineTransform(result);
+    return TransformationMatrix(result);
 }
 
-AffineTransform::operator cairo_matrix_t() const
+TransformationMatrix::operator cairo_matrix_t() const
 {
     return m_transform;
 }
 
-bool AffineTransform::operator== (const AffineTransform &m2) const
+bool TransformationMatrix::operator== (const TransformationMatrix &m2) const
 {
     return ((m_transform.xx == m2.m_transform.xx)
          && (m_transform.yy == m2.m_transform.yy)
@@ -260,7 +260,7 @@ bool AffineTransform::operator== (const AffineTransform &m2) const
 
 }
 
-AffineTransform &AffineTransform::operator*= (const AffineTransform &m2)
+TransformationMatrix &TransformationMatrix::operator*= (const TransformationMatrix &m2)
 {
     cairo_matrix_t result;
     cairo_matrix_multiply(&result, &m_transform, &m2.m_transform);
@@ -269,7 +269,7 @@ AffineTransform &AffineTransform::operator*= (const AffineTransform &m2)
     return *this;
 }
 
-AffineTransform AffineTransform::operator* (const AffineTransform &m2)
+TransformationMatrix TransformationMatrix::operator* (const TransformationMatrix &m2)
 {
     cairo_matrix_t result;
     cairo_matrix_multiply(&result, &m_transform, &m2.m_transform);

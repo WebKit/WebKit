@@ -29,7 +29,7 @@
 #include "config.h"
 #include "Path.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -291,7 +291,7 @@ void Path::apply(void* info, PathApplierFunction function) const
     }
 }
 
-void Path::transform(const AffineTransform& transform)
+void Path::transform(const TransformationMatrix& transform)
 {
     if (m_path) {
         QMatrix mat = transform;

@@ -198,7 +198,7 @@ void RenderSVGContainer::setDrawsContents(bool drawsContents)
     m_drawsContents = drawsContents;
 }
 
-AffineTransform RenderSVGContainer::localTransform() const
+TransformationMatrix RenderSVGContainer::localTransform() const
 {
     return m_localTransform;
 }
@@ -358,9 +358,9 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
         paintOutline(paintInfo.context, m_absoluteBounds.x(), m_absoluteBounds.y(), m_absoluteBounds.width(), m_absoluteBounds.height(), style());
 }
 
-AffineTransform RenderSVGContainer::viewportTransform() const
+TransformationMatrix RenderSVGContainer::viewportTransform() const
 {
-     return AffineTransform();
+     return TransformationMatrix();
 }
 
 IntRect RenderSVGContainer::absoluteClippedOverflowRect()

@@ -30,7 +30,7 @@
 
 namespace WebCore {
     
-    class AffineTransform;
+    class TransformationMatrix;
     class AtomicString;
     class SVGTransform;
     class QualifiedName;
@@ -44,10 +44,10 @@ namespace WebCore {
         static bool parseTransformAttribute(SVGTransformList*, const UChar*& ptr, const UChar* end);
         static bool parseTransformValue(unsigned type, const UChar*& ptr, const UChar* end, SVGTransform&);
         
-        AffineTransform getCTM(const SVGElement*) const;
-        AffineTransform getScreenCTM(const SVGElement*) const;
+        TransformationMatrix getCTM(const SVGElement*) const;
+        TransformationMatrix getScreenCTM(const SVGElement*) const;
         
-        virtual AffineTransform animatedLocalTransform() const = 0;
+        virtual TransformationMatrix animatedLocalTransform() const = 0;
 
         bool isKnownAttribute(const QualifiedName&);
     };

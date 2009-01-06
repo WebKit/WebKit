@@ -26,7 +26,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimateTransformElement.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "RenderObject.h"
 #include "SVGAngle.h"
 #include "SVGElementInstance.h"

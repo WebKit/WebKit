@@ -58,7 +58,7 @@ public:
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
-    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
+    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
                              const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);
     
     GeneratedImage(PassRefPtr<Generator> generator, const IntSize& size)

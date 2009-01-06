@@ -25,7 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGTextElement.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatRect.h"
 #include "RenderSVGText.h"
 #include "SVGLengthList.h"
@@ -80,25 +80,25 @@ FloatRect SVGTextElement::getBBox() const
     return SVGTransformable::getBBox(this);
 }
 
-AffineTransform SVGTextElement::getScreenCTM() const
+TransformationMatrix SVGTextElement::getScreenCTM() const
 {
     return SVGTransformable::getScreenCTM(this);
 }
 
-AffineTransform SVGTextElement::getCTM() const
+TransformationMatrix SVGTextElement::getCTM() const
 {
     return SVGTransformable::getCTM(this);
 }
 
-AffineTransform SVGTextElement::animatedLocalTransform() const
+TransformationMatrix SVGTextElement::animatedLocalTransform() const
 {
     return m_supplementalTransform ? transform()->concatenate().matrix() * *m_supplementalTransform : transform()->concatenate().matrix();
 }
 
-AffineTransform* SVGTextElement::supplementalTransform()
+TransformationMatrix* SVGTextElement::supplementalTransform()
 {
     if (!m_supplementalTransform)
-        m_supplementalTransform.set(new AffineTransform());
+        m_supplementalTransform.set(new TransformationMatrix());
     return m_supplementalTransform.get();
 }
 

@@ -299,7 +299,7 @@ namespace WebCore {
     class NodeFilter;
 
 #if ENABLE(SVG)
-    class AffineTransform;
+    class TransformationMatrix;
     class FloatPoint;
     class FloatRect;
 #endif // ENABLE(SVG)

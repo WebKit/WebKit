@@ -52,7 +52,7 @@ namespace WebCore
         SVGLength height() const { return m_height; }
         bool boundingBoxMode() const { return m_boundingBoxMode; }
         bool boundingBoxModeContent() const { return m_boundingBoxModeContent; }
-        AffineTransform patternTransform() const { return m_patternTransform; }
+        TransformationMatrix patternTransform() const { return m_patternTransform; }
         const SVGPatternElement* patternContentElement() const { return m_patternContentElement; }
 
         void setX(const SVGLength& value) { m_x = value; m_xSet = true; }
@@ -61,7 +61,7 @@ namespace WebCore
         void setHeight(const SVGLength& value) { m_height = value; m_heightSet = true; }
         void setBoundingBoxMode(bool value) { m_boundingBoxMode = value; m_boundingBoxModeSet = true; }
         void setBoundingBoxModeContent(bool value) { m_boundingBoxModeContent = value; m_boundingBoxModeContentSet = true; }
-        void setPatternTransform(const AffineTransform& value) { m_patternTransform = value; m_patternTransformSet = true; }
+        void setPatternTransform(const TransformationMatrix& value) { m_patternTransform = value; m_patternTransformSet = true; }
         void setPatternContentElement(const SVGPatternElement* value) { m_patternContentElement = value; m_patternContentElementSet = true; }
 
         bool hasX() const { return m_xSet; }
@@ -81,7 +81,7 @@ namespace WebCore
         SVGLength m_height;
         bool m_boundingBoxMode;
         bool m_boundingBoxModeContent;
-        AffineTransform m_patternTransform;
+        TransformationMatrix m_patternTransform;
         const SVGPatternElement* m_patternContentElement;
 
         // Property states

@@ -39,12 +39,12 @@ namespace WebCore
 
         GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
         bool boundingBoxMode() const { return m_boundingBoxMode; }
-        AffineTransform gradientTransform() const { return m_gradientTransform; }
+        TransformationMatrix gradientTransform() const { return m_gradientTransform; }
         const Vector<SVGGradientStop>& stops() const { return m_stops; }
 
         void setSpreadMethod(GradientSpreadMethod value) { m_spreadMethod = value; m_spreadMethodSet = true; }
         void setBoundingBoxMode(bool value) { m_boundingBoxMode = value; m_boundingBoxModeSet = true; }
-        void setGradientTransform(const AffineTransform& value) { m_gradientTransform = value; m_gradientTransformSet = true; }
+        void setGradientTransform(const TransformationMatrix& value) { m_gradientTransform = value; m_gradientTransformSet = true; }
         void setStops(const Vector<SVGGradientStop>& value) { m_stops = value; m_stopsSet = true; } 
 
         bool hasSpreadMethod() const { return m_spreadMethodSet; }
@@ -56,7 +56,7 @@ namespace WebCore
         // Properties
         GradientSpreadMethod m_spreadMethod;
         bool m_boundingBoxMode;
-        AffineTransform m_gradientTransform;
+        TransformationMatrix m_gradientTransform;
         Vector<SVGGradientStop> m_stops;
 
         // Property states

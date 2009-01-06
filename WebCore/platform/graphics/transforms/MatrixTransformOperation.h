@@ -50,9 +50,9 @@ private:
         return m_a == m->m_a && m_b == m->m_b && m_c == m->m_c && m_d == m->m_d && m_e == m->m_e && m_f == m->m_f;
     }
 
-    virtual bool apply(AffineTransform& transform, const IntSize&) const
+    virtual bool apply(TransformationMatrix& transform, const IntSize&) const
     {
-        AffineTransform matrix(m_a, m_b, m_c, m_d, m_e, m_f);
+        TransformationMatrix matrix(m_a, m_b, m_c, m_d, m_e, m_f);
         transform = matrix * transform;
         return false;
     }

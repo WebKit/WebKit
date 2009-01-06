@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-    class AffineTransform;
+    class TransformationMatrix;
     class CSSCursorImageValue;
     class Document;
     class SVGCursorElement;
@@ -84,7 +84,7 @@ namespace WebCore {
 
         void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
         
-        virtual AffineTransform* supplementalTransform() { return 0; }
+        virtual TransformationMatrix* supplementalTransform() { return 0; }
 
         virtual void updateAnimatedSVGAttribute(const String&) const;
         virtual void setSynchronizedSVGAttributes(bool) const;

@@ -29,7 +29,7 @@
 
 #if PLATFORM(CAIRO)
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
@@ -139,7 +139,7 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
         imageObserver()->didDraw(this);
 }
 
-void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, const AffineTransform& patternTransform,
+void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
                         const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
 {
     cairo_surface_t* image = nativeImageForCurrentFrame();

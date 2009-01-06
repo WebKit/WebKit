@@ -122,12 +122,12 @@ void SVGPaintServerGradient::setBoundingBoxMode(bool mode)
     m_boundingBoxMode = mode;
 }
 
-AffineTransform SVGPaintServerGradient::gradientTransform() const
+TransformationMatrix SVGPaintServerGradient::gradientTransform() const
 {
     return m_gradientTransform;
 }
 
-void SVGPaintServerGradient::setGradientTransform(const AffineTransform& transform)
+void SVGPaintServerGradient::setGradientTransform(const TransformationMatrix& transform)
 {
     m_gradientTransform = transform;
 }
@@ -181,7 +181,7 @@ static inline void clipToTextMask(GraphicsContext* context,
     FloatRect maskBBox = const_cast<RenderObject*>(findTextRootObject(object))->relativeBBox(false);
 
     // Fixup transformations to be able to clip to mask
-    AffineTransform transform = object->absoluteTransform();
+    TransformationMatrix transform = object->absoluteTransform();
     FloatRect textBoundary = transform.mapRect(maskBBox);
 
     IntSize maskSize(lroundf(textBoundary.width()), lroundf(textBoundary.height()));

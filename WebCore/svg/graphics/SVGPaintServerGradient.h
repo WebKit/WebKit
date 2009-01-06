@@ -29,7 +29,7 @@
 
 #if ENABLE(SVG)
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "Color.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
@@ -61,8 +61,8 @@ namespace WebCore {
         bool boundingBoxMode() const;
         void setBoundingBoxMode(bool mode = true);
 
-        AffineTransform gradientTransform() const;
-        void setGradientTransform(const AffineTransform&);
+        TransformationMatrix gradientTransform() const;
+        void setGradientTransform(const TransformationMatrix&);
 
         void setGradientStops(const Vector<SVGGradientStop>& stops) { m_stops = stops; }
         const Vector<SVGGradientStop>& gradientStops() const { return m_stops; }
@@ -81,7 +81,7 @@ namespace WebCore {
         RefPtr<Gradient> m_gradient;
         GradientSpreadMethod m_spreadMethod;
         bool m_boundingBoxMode;
-        AffineTransform m_gradientTransform;
+        TransformationMatrix m_gradientTransform;
         const SVGGradientElement* m_ownerElement;
 
 #if PLATFORM(CG)

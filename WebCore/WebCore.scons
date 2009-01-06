@@ -724,7 +724,7 @@ sources['platform/sql'] = [
     'platform/sql/SQLValue.cpp'
 ]
 sources['platform/graphics'] = [
-    'platform/graphics/AffineTransform.cpp',
+    'platform/graphics/TransformationMatrix.cpp',
     'platform/graphics/BitmapImage.cpp',
     'platform/graphics/Color.cpp',
     'platform/graphics/FloatPoint.cpp',

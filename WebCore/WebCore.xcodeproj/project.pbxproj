@@ -593,8 +593,8 @@
 		46F9D5DD0B0D60170028EE36 /* aliasCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DA0B0D60170028EE36 /* aliasCursor.png */; };
 		46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DB0B0D60170028EE36 /* noDropCursor.png */; };
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
-		49E911C30EF86D47009D0CAF /* AffineTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911B30EF86D47009D0CAF /* AffineTransform.cpp */; };
-		49E911C40EF86D47009D0CAF /* AffineTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911B40EF86D47009D0CAF /* AffineTransform.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911B30EF86D47009D0CAF /* TransformationMatrix.cpp */; };
+		49E911C40EF86D47009D0CAF /* TransformationMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911B40EF86D47009D0CAF /* TransformationMatrix.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */; };
 		49E911C60EF86D47009D0CAF /* MatrixTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911B60EF86D47009D0CAF /* MatrixTransformOperation.cpp */; };
 		49E911C70EF86D47009D0CAF /* MatrixTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911B70EF86D47009D0CAF /* MatrixTransformOperation.h */; };
@@ -5443,8 +5443,8 @@
 		46F9D5DA0B0D60170028EE36 /* aliasCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aliasCursor.png; sourceTree = "<group>"; };
 		46F9D5DB0B0D60170028EE36 /* noDropCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noDropCursor.png; sourceTree = "<group>"; };
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
-		49E911B30EF86D47009D0CAF /* AffineTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AffineTransform.cpp; path = transforms/AffineTransform.cpp; sourceTree = "<group>"; };
-		49E911B40EF86D47009D0CAF /* AffineTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AffineTransform.h; path = transforms/AffineTransform.h; sourceTree = "<group>"; };
+		49E911B30EF86D47009D0CAF /* TransformationMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformationMatrix.cpp; path = transforms/TransformationMatrix.cpp; sourceTree = "<group>"; };
+		49E911B40EF86D47009D0CAF /* TransformationMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformationMatrix.h; path = transforms/TransformationMatrix.h; sourceTree = "<group>"; };
 		49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IdentityTransformOperation.h; path = transforms/IdentityTransformOperation.h; sourceTree = "<group>"; };
 		49E911B60EF86D47009D0CAF /* MatrixTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MatrixTransformOperation.cpp; path = transforms/MatrixTransformOperation.cpp; sourceTree = "<group>"; };
 		49E911B70EF86D47009D0CAF /* MatrixTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MatrixTransformOperation.h; path = transforms/MatrixTransformOperation.h; sourceTree = "<group>"; };
@@ -9583,8 +9583,8 @@
 		49E911B20EF86D27009D0CAF /* transforms */ = {
 			isa = PBXGroup;
 			children = (
-				49E911B30EF86D47009D0CAF /* AffineTransform.cpp */,
-				49E911B40EF86D47009D0CAF /* AffineTransform.h */,
+				49E911B30EF86D47009D0CAF /* TransformationMatrix.cpp */,
+				49E911B40EF86D47009D0CAF /* TransformationMatrix.h */,
 				49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */,
 				49E911B60EF86D47009D0CAF /* MatrixTransformOperation.cpp */,
 				49E911B70EF86D47009D0CAF /* MatrixTransformOperation.h */,
@@ -14323,7 +14323,7 @@
 				29AAC51F0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h in Headers */,
 				29800C950E524C8B00025536 /* AccessibilityTableRow.h in Headers */,
 				E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */,
-				49E911C40EF86D47009D0CAF /* AffineTransform.h in Headers */,
+				49E911C40EF86D47009D0CAF /* TransformationMatrix.h in Headers */,
 				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
 				316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */,
@@ -16771,7 +16771,7 @@
 				29AAC5200E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp in Sources */,
 				29800C960E524C8B00025536 /* AccessibilityTableRow.cpp in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,
-				49E911C30EF86D47009D0CAF /* AffineTransform.cpp in Sources */,
+				49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */,
 				B27535580B053814002CE64F /* AffineTransformCG.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,

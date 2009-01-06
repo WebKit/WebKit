@@ -1334,8 +1334,8 @@ webcore_sources += \
 	WebCore/platform/graphics/filters/FEColorMatrix.h \
 	WebCore/platform/graphics/filters/FEComponentTransfer.h \
 	WebCore/platform/graphics/filters/FEComposite.h \
-	WebCore/platform/graphics/transforms/AffineTransform.cpp \
-	WebCore/platform/graphics/transforms/AffineTransform.h \
+	WebCore/platform/graphics/transforms/TransformationMatrix.cpp \
+	WebCore/platform/graphics/transforms/TransformationMatrix.h \
 	WebCore/platform/graphics/transforms/IdentityTransformOperation.h \
 	WebCore/platform/graphics/transforms/MatrixTransformOperation.cpp \
 	WebCore/platform/graphics/transforms/MatrixTransformOperation.h \

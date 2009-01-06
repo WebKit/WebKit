@@ -84,8 +84,8 @@ public:
     FloatRect relativeBBox(bool includeStroke = true) const;
 
     virtual bool calculateLocalTransform();
-    virtual AffineTransform localTransform() const;
-    virtual AffineTransform viewportTransform() const;
+    virtual TransformationMatrix localTransform() const;
+    virtual TransformationMatrix viewportTransform() const;
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
@@ -111,7 +111,7 @@ private:
     
 protected:    
     IntRect m_absoluteBounds;
-    AffineTransform m_localTransform;
+    TransformationMatrix m_localTransform;
 };
   
 } // namespace WebCore

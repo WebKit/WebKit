@@ -39,7 +39,7 @@
 #include <windows.h>
 #endif
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "Color.h"
 #include "FloatConversion.h"
 #include "Font.h"
@@ -280,7 +280,7 @@ PlatformGraphicsContext* GraphicsContext::platformContext() const
     return m_data->p();
 }
 
-AffineTransform GraphicsContext::getCTM() const
+TransformationMatrix GraphicsContext::getCTM() const
 {
     return platformContext()->combinedMatrix();
 }
@@ -548,7 +548,7 @@ void GraphicsContext::fillPath()
             p->fillPath(path, p->brush());
         break;
     case PatternColorSpace: {
-        AffineTransform affine;
+        TransformationMatrix affine;
         p->fillPath(path, QBrush(m_common->state.fillPattern->createPlatformPattern(affine)));
         break;
     }
@@ -576,7 +576,7 @@ void GraphicsContext::strokePath()
             p->strokePath(path, pen);
         break;
     case PatternColorSpace: {
-        AffineTransform affine;
+        TransformationMatrix affine;
         pen.setBrush(QBrush(m_common->state.strokePattern->createPlatformPattern(affine)));
         p->setPen(pen);
         p->strokePath(path, pen);
@@ -607,7 +607,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
             p->fillRect(rect, p->brush());
         break;
     case PatternColorSpace: {
-        AffineTransform affine;
+        TransformationMatrix affine;
         p->fillRect(rect, QBrush(m_common->state.fillPattern->createPlatformPattern(affine)));
         break;
     }
@@ -1036,7 +1036,7 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect,
     m_data->p()->setClipPath(path, Qt::IntersectClip);
 }
 
-void GraphicsContext::concatCTM(const AffineTransform& transform)
+void GraphicsContext::concatCTM(const TransformationMatrix& transform)
 {
     if (paintingDisabled())
         return;

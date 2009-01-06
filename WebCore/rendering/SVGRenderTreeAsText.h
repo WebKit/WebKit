@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-    class AffineTransform;
+    class TransformationMatrix;
     class Color;
     class FloatPoint;
     class FloatRect;
@@ -56,7 +56,7 @@ void write(TextStream&, const RenderSVGText&, int ident = 0);
 void writeRenderResources(TextStream&, Node* parent);
 
 // helper operators defined used in various classes to dump the render tree.
-TextStream& operator<<(TextStream&, const AffineTransform&);
+TextStream& operator<<(TextStream&, const TransformationMatrix&);
 TextStream& operator<<(TextStream&, const IntRect&);
 TextStream& operator<<(TextStream&, const Color&);
 TextStream& operator<<(TextStream&, const IntPoint&);

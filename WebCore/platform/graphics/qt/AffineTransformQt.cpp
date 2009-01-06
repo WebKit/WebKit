@@ -24,34 +24,34 @@
  */
 
 #include "config.h"
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 
 #include "IntRect.h"
 #include "FloatRect.h"
 
 namespace WebCore {
 
-AffineTransform::AffineTransform()
+TransformationMatrix::TransformationMatrix()
     : m_transform()
 {
 }
 
-AffineTransform::AffineTransform(double a, double b, double c, double d, double tx, double ty)
+TransformationMatrix::TransformationMatrix(double a, double b, double c, double d, double tx, double ty)
     : m_transform(a, b, c, d, tx, ty)
 {
 }
 
-AffineTransform::AffineTransform(const PlatformAffineTransform& matrix)
+TransformationMatrix::TransformationMatrix(const PlatformAffineTransform& matrix)
     : m_transform(matrix)
 {
 }
 
-void AffineTransform::setMatrix(double a, double b, double c, double d, double tx, double ty)
+void TransformationMatrix::setMatrix(double a, double b, double c, double d, double tx, double ty)
 {
     m_transform.setMatrix(a, b, c, d, tx, ty);
 }
 
-void AffineTransform::map(double x, double y, double* x2, double* y2) const
+void TransformationMatrix::map(double x, double y, double* x2, double* y2) const
 {
     qreal tx2, ty2;
     m_transform.map(qreal(x), qreal(y), &tx2, &ty2);
@@ -59,140 +59,140 @@ void AffineTransform::map(double x, double y, double* x2, double* y2) const
     *y2 = ty2;
 }
 
-IntRect AffineTransform::mapRect(const IntRect& rect) const
+IntRect TransformationMatrix::mapRect(const IntRect& rect) const
 {
     return m_transform.mapRect(rect);
 }
 
-FloatRect AffineTransform::mapRect(const FloatRect& rect) const
+FloatRect TransformationMatrix::mapRect(const FloatRect& rect) const
 {
     return m_transform.mapRect(rect);
 }
 
-bool AffineTransform::isIdentity() const
+bool TransformationMatrix::isIdentity() const
 {
     return m_transform.isIdentity();
 }
 
-double AffineTransform::a() const
+double TransformationMatrix::a() const
 {
     return m_transform.m11();
 }
 
-void AffineTransform::setA(double a)
+void TransformationMatrix::setA(double a)
 {
     m_transform.setMatrix(a, b(), c(), d(), e(), f());
 }
 
-double AffineTransform::b() const
+double TransformationMatrix::b() const
 {
     return m_transform.m12();
 }
 
-void AffineTransform::setB(double b)
+void TransformationMatrix::setB(double b)
 {
     m_transform.setMatrix(a(), b, c(), d(), e(), f());
 }
 
-double AffineTransform::c() const
+double TransformationMatrix::c() const
 {
     return m_transform.m21();
 }
 
-void AffineTransform::setC(double c)
+void TransformationMatrix::setC(double c)
 {
     m_transform.setMatrix(a(), b(), c, d(), e(), f());
 }
 
-double AffineTransform::d() const
+double TransformationMatrix::d() const
 {
     return m_transform.m22();
 }
 
-void AffineTransform::setD(double d)
+void TransformationMatrix::setD(double d)
 {
     m_transform.setMatrix(a(), b(), c(), d, e(), f());
 }
 
-double AffineTransform::e() const
+double TransformationMatrix::e() const
 {
     return m_transform.dx();
 }
 
-void AffineTransform::setE(double e)
+void TransformationMatrix::setE(double e)
 {
     m_transform.setMatrix(a(), b(), c(), d(), e, f());
 }
 
-double AffineTransform::f() const
+double TransformationMatrix::f() const
 {
     return m_transform.dy();
 }
 
-void AffineTransform::setF(double f)
+void TransformationMatrix::setF(double f)
 {
     m_transform.setMatrix(a(), b(), c(), d(), e(), f);
 }
 
-void AffineTransform::reset()
+void TransformationMatrix::reset()
 {
     m_transform.reset();
 }
 
-AffineTransform& AffineTransform::scale(double sx, double sy)
+TransformationMatrix& TransformationMatrix::scale(double sx, double sy)
 {
     m_transform.scale(sx, sy);
     return *this;
 }
 
-AffineTransform& AffineTransform::rotate(double d)
+TransformationMatrix& TransformationMatrix::rotate(double d)
 {
     m_transform.rotate(d);
     return *this;
 }
 
-AffineTransform& AffineTransform::translate(double tx, double ty)
+TransformationMatrix& TransformationMatrix::translate(double tx, double ty)
 {
     m_transform.translate(tx, ty);
     return *this;
 }
 
-AffineTransform& AffineTransform::shear(double sx, double sy)
+TransformationMatrix& TransformationMatrix::shear(double sx, double sy)
 {
     m_transform.shear(sx, sy);
     return *this;
 }
 
-double AffineTransform::det() const
+double TransformationMatrix::det() const
 {
     return m_transform.det();
 }
 
-AffineTransform AffineTransform::inverse() const
+TransformationMatrix TransformationMatrix::inverse() const
 {
     if(!isInvertible())
-        return AffineTransform();
+        return TransformationMatrix();
 
     return m_transform.inverted();
 }
 
-AffineTransform::operator QMatrix() const
+TransformationMatrix::operator QMatrix() const
 {
     return m_transform;
 }
 
-bool AffineTransform::operator==(const AffineTransform& other) const
+bool TransformationMatrix::operator==(const TransformationMatrix& other) const
 {
     return m_transform == other.m_transform;
 }
 
-AffineTransform& AffineTransform::operator*=(const AffineTransform& other)
+TransformationMatrix& TransformationMatrix::operator*=(const TransformationMatrix& other)
 {
     m_transform *= other.m_transform;
     return *this;
 }
 
-AffineTransform AffineTransform::operator*(const AffineTransform& other)
+TransformationMatrix TransformationMatrix::operator*(const TransformationMatrix& other)
 {
     return m_transform * other.m_transform;
 }

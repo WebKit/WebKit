@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "NotImplemented.h"
 #include "Path.h"
 
@@ -102,7 +102,7 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     cairo_surface_mark_dirty(surface);
 }
 
-void GraphicsContextPlatformPrivate::concatCTM(const AffineTransform& transform)
+void GraphicsContextPlatformPrivate::concatCTM(const TransformationMatrix& transform)
 {
     cairo_surface_t* surface = cairo_get_target(cr);
     HDC hdc = cairo_win32_surface_get_dc(surface);   

@@ -32,7 +32,7 @@ namespace WebCore {
 
     extern char SVGStyledTransformableElementIdentifier[];
 
-    class AffineTransform;
+    class TransformationMatrix;
 
     class SVGStyledTransformableElement : public SVGStyledLocatableElement,
                                           public SVGTransformable {
@@ -42,13 +42,13 @@ namespace WebCore {
         
         virtual bool isStyledTransformable() const { return true; }
 
-        virtual AffineTransform getCTM() const;
-        virtual AffineTransform getScreenCTM() const;
+        virtual TransformationMatrix getCTM() const;
+        virtual TransformationMatrix getScreenCTM() const;
         virtual SVGElement* nearestViewportElement() const;
         virtual SVGElement* farthestViewportElement() const;
         
-        virtual AffineTransform animatedLocalTransform() const;
-        virtual AffineTransform* supplementalTransform();
+        virtual TransformationMatrix animatedLocalTransform() const;
+        virtual TransformationMatrix* supplementalTransform();
 
         virtual FloatRect getBBox() const;
 
@@ -66,7 +66,7 @@ namespace WebCore {
 
     private:
         // Used by <animateMotion>
-        OwnPtr<AffineTransform> m_supplementalTransform;
+        OwnPtr<TransformationMatrix> m_supplementalTransform;
     };
 
 } // namespace WebCore

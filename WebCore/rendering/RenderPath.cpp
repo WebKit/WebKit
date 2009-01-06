@@ -78,7 +78,7 @@ RenderPath::~RenderPath()
 {
 }
 
-AffineTransform RenderPath::localTransform() const
+TransformationMatrix RenderPath::localTransform() const
 {
     return m_localTransform;
 }
@@ -145,7 +145,7 @@ const Path& RenderPath::path() const
 
 bool RenderPath::calculateLocalTransform()
 {
-    AffineTransform oldTransform = m_localTransform;
+    TransformationMatrix oldTransform = m_localTransform;
     m_localTransform = static_cast<SVGStyledTransformableElement*>(element())->animatedLocalTransform();
     return (m_localTransform != oldTransform);
 }

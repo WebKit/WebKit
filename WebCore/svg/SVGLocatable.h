@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-    class AffineTransform;
+    class TransformationMatrix;
     class FloatRect;
     class SVGElement;
 
@@ -43,17 +43,17 @@ namespace WebCore {
         virtual SVGElement* farthestViewportElement() const = 0;
 
         virtual FloatRect getBBox() const = 0;
-        virtual AffineTransform getCTM() const = 0;
-        virtual AffineTransform getScreenCTM() const = 0;
-        AffineTransform getTransformToElement(SVGElement*, ExceptionCode&) const;
+        virtual TransformationMatrix getCTM() const = 0;
+        virtual TransformationMatrix getScreenCTM() const = 0;
+        TransformationMatrix getTransformToElement(SVGElement*, ExceptionCode&) const;
 
         static SVGElement* nearestViewportElement(const SVGElement*);
         static SVGElement* farthestViewportElement(const SVGElement*);
 
     protected:
         static FloatRect getBBox(const SVGElement*);
-        static AffineTransform getCTM(const SVGElement*);
-        static AffineTransform getScreenCTM(const SVGElement*);
+        static TransformationMatrix getCTM(const SVGElement*);
+        static TransformationMatrix getScreenCTM(const SVGElement*);
     };
 
 } // namespace WebCore

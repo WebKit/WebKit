@@ -29,7 +29,7 @@
 #include "RegularExpression.h"
 #include "RenderPath.h"
 #include "SVGDocument.h"
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"
 
@@ -48,25 +48,25 @@ SVGStyledTransformableElement::~SVGStyledTransformableElement()
 {
 }
 
-AffineTransform SVGStyledTransformableElement::getCTM() const
+TransformationMatrix SVGStyledTransformableElement::getCTM() const
 {
     return SVGTransformable::getCTM(this);
 }
 
-AffineTransform SVGStyledTransformableElement::getScreenCTM() const
+TransformationMatrix SVGStyledTransformableElement::getScreenCTM() const
 {
     return SVGTransformable::getScreenCTM(this);
 }
 
-AffineTransform SVGStyledTransformableElement::animatedLocalTransform() const
+TransformationMatrix SVGStyledTransformableElement::animatedLocalTransform() const
 {
     return m_supplementalTransform ? transform()->concatenate().matrix() * *m_supplementalTransform : transform()->concatenate().matrix();
 }
     
-AffineTransform* SVGStyledTransformableElement::supplementalTransform()
+TransformationMatrix* SVGStyledTransformableElement::supplementalTransform()
 {
     if (!m_supplementalTransform)
-        m_supplementalTransform.set(new AffineTransform());
+        m_supplementalTransform.set(new TransformationMatrix());
     return m_supplementalTransform.get();
 }
 

@@ -5408,11 +5408,11 @@
 					Name="transforms"
 					>
 					<File
-						RelativePath="..\platform\graphics\transforms\AffineTransform.cpp"
+						RelativePath="..\platform\graphics\transforms\TransformationMatrix.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\transforms\AffineTransform.h"
+						RelativePath="..\platform\graphics\transforms\TransformationMatrix.h"
 						>
 					</File>
 					<File

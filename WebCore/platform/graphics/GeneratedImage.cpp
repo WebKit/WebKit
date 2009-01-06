@@ -47,7 +47,7 @@ void GeneratedImage::draw(GraphicsContext* context, const FloatRect& dstRect, co
     context->restore();
 }
 
-void GeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
+void GeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
                                  const FloatPoint& phase, CompositeOperator compositeOp, const FloatRect& destRect)
 {
     // Create a BitmapImage and call drawPattern on it.

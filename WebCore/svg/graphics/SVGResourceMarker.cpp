@@ -28,7 +28,7 @@
 #if ENABLE(SVG)
 #include "SVGResourceMarker.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "GraphicsContext.h"
 #include "RenderSVGViewportContainer.h"
 #include "TextStream.h"
@@ -74,13 +74,13 @@ void SVGResourceMarker::draw(GraphicsContext* context, const FloatRect& rect, do
 
     currentlyDrawingMarkers.add(this);
 
-    AffineTransform transform;
+    TransformationMatrix transform;
     transform.translate(x, y);
     transform.rotate(m_angle > -1 ? m_angle : angle);
 
     // refX and refY are given in coordinates relative to the viewport established by the marker, yet they affect
     // the translation performed on the viewport itself.
-    AffineTransform viewportTransform;
+    TransformationMatrix viewportTransform;
     if (m_useStrokeWidth)
         viewportTransform.scale(strokeWidth, strokeWidth);
     viewportTransform *= m_marker->viewportTransform();

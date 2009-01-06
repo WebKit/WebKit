@@ -27,7 +27,7 @@
 
 #include "RenderPath.h"
 #include "SVGElement.h"
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {
@@ -57,12 +57,12 @@ FloatRect SVGStyledLocatableElement::getBBox() const
     return SVGLocatable::getBBox(this);
 }
 
-AffineTransform SVGStyledLocatableElement::getCTM() const
+TransformationMatrix SVGStyledLocatableElement::getCTM() const
 {
     return SVGLocatable::getCTM(this);
 }
 
-AffineTransform SVGStyledLocatableElement::getScreenCTM() const
+TransformationMatrix SVGStyledLocatableElement::getScreenCTM() const
 {
     return SVGLocatable::getScreenCTM(this);
 }

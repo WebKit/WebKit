@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class SVGStyledElement;
-class AffineTransform;
+class TransformationMatrix;
 
 class RenderSVGRoot : public RenderContainer {
 public:
@@ -52,13 +52,13 @@ public:
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
-    virtual AffineTransform absoluteTransform() const;
+    virtual TransformationMatrix absoluteTransform() const;
 
     bool fillContains(const FloatPoint&) const;
     bool strokeContains(const FloatPoint&) const;
     FloatRect relativeBBox(bool includeStroke = true) const;
     
-    virtual AffineTransform localTransform() const;
+    virtual TransformationMatrix localTransform() const;
    
     FloatRect viewport() const;
 

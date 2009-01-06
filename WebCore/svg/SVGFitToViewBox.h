@@ -31,7 +31,7 @@ namespace WebCore {
 
     extern char SVGFitToViewBoxIdentifier[];
 
-    class AffineTransform;
+    class TransformationMatrix;
 
     class SVGFitToViewBox {
     public:
@@ -39,7 +39,7 @@ namespace WebCore {
         virtual ~SVGFitToViewBox();
 
         bool parseViewBox(const UChar*& start, const UChar* end, float& x, float& y, float& w, float& h, bool validate = true);
-        virtual AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
+        virtual TransformationMatrix viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
         bool parseMappedAttribute(MappedAttribute*);
         bool isKnownAttribute(const QualifiedName&);

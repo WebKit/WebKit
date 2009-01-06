@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "NotImplemented.h"
 #include "Path.h"
 
@@ -231,7 +231,7 @@ void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& po
     CGContextDrawImage(m_data->m_cgContext, CGRectMake(point.x(), point.y(), image->size().width(), image->size().height()), cgImage.get());   
 }
 
-void GraphicsContextPlatformPrivate::concatCTM(const AffineTransform& transform)
+void GraphicsContextPlatformPrivate::concatCTM(const TransformationMatrix& transform)
 {
     if (!m_hdc)
         return;

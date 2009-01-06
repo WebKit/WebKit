@@ -23,7 +23,7 @@
 #include "config.h"
 #include "RenderThemeGtk.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
 #include "RenderObject.h"
@@ -161,7 +161,7 @@ static bool paintMozWidget(RenderTheme* theme, GtkThemeWidgetType type, RenderOb
             break;
     }
 
-    AffineTransform ctm = i.context->getCTM();
+    TransformationMatrix ctm = i.context->getCTM();
 
     IntPoint pos = ctm.mapPoint(rect.location());
     GdkRectangle gdkRect = IntRect(pos.x(), pos.y(), rect.width(), rect.height());

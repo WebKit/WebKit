@@ -24,7 +24,7 @@
 #if ENABLE(SVG)
 #include "SVGSVGElement.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
@@ -122,7 +122,7 @@ FloatRect SVGSVGElement::viewport() const
     }
     float w = width().value(this);
     float h = height().value(this);
-    AffineTransform viewBox = viewBoxToViewTransform(w, h);
+    TransformationMatrix viewBox = viewBoxToViewTransform(w, h);
     double wDouble = w;
     double hDouble = h;
     viewBox.map(_x, _y, &_x, &_y);
@@ -361,9 +361,9 @@ FloatPoint SVGSVGElement::createSVGPoint()
     return FloatPoint();
 }
 
-AffineTransform SVGSVGElement::createSVGMatrix()
+TransformationMatrix SVGSVGElement::createSVGMatrix()
 {
-    return AffineTransform();
+    return TransformationMatrix();
 }
 
 FloatRect SVGSVGElement::createSVGRect()
@@ -376,26 +376,26 @@ SVGTransform SVGSVGElement::createSVGTransform()
     return SVGTransform();
 }
 
-SVGTransform SVGSVGElement::createSVGTransformFromMatrix(const AffineTransform& matrix)
+SVGTransform SVGSVGElement::createSVGTransformFromMatrix(const TransformationMatrix& matrix)
 {
     return SVGTransform(matrix);
 }
 
-AffineTransform SVGSVGElement::getCTM() const
+TransformationMatrix SVGSVGElement::getCTM() const
 {
-    AffineTransform mat;
+    TransformationMatrix mat;
     if (!isOutermostSVG())
         mat.translate(x().value(this), y().value(this));
 
     if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
-        AffineTransform viewBox = viewBoxToViewTransform(width().value(this), height().value(this));
+        TransformationMatrix viewBox = viewBoxToViewTransform(width().value(this), height().value(this));
         mat = viewBox * mat;
     }
 
     return mat;
 }
 
-AffineTransform SVGSVGElement::getScreenCTM() const
+TransformationMatrix SVGSVGElement::getScreenCTM() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
     FloatPoint rootLocation;    
@@ -411,11 +411,11 @@ AffineTransform SVGSVGElement::getScreenCTM() const
             rootLocation.move(x().value(this), y().value(this));
     }
     
-    AffineTransform mat = SVGStyledLocatableElement::getScreenCTM();
+    TransformationMatrix mat = SVGStyledLocatableElement::getScreenCTM();
     mat.translate(rootLocation.x(), rootLocation.y());
 
     if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
-        AffineTransform viewBox = viewBoxToViewTransform(width().value(this), height().value(this));
+        TransformationMatrix viewBox = viewBoxToViewTransform(width().value(this), height().value(this));
         mat = viewBox * mat;
     }
 
@@ -481,7 +481,7 @@ bool SVGSVGElement::isOutermostSVG() const
     return !parentNode()->isSVGElement();
 }
 
-AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const
+TransformationMatrix SVGSVGElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const
 {
     FloatRect viewBoxRect;
     if (useCurrentView()) {
@@ -490,9 +490,9 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
     } else
         viewBoxRect = viewBox();
     if (!viewBoxRect.width() || !viewBoxRect.height())
-        return AffineTransform();
+        return TransformationMatrix();
 
-    AffineTransform ctm = preserveAspectRatio()->getCTM(viewBoxRect.x(),
+    TransformationMatrix ctm = preserveAspectRatio()->getCTM(viewBoxRect.x(),
             viewBoxRect.y(), viewBoxRect.width(), viewBoxRect.height(),
             0, 0, viewWidth, viewHeight);
 

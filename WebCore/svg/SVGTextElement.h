@@ -41,10 +41,10 @@ namespace WebCore {
         virtual SVGElement* farthestViewportElement() const;
 
         virtual FloatRect getBBox() const;
-        virtual AffineTransform getCTM() const;
-        virtual AffineTransform getScreenCTM() const;
-        virtual AffineTransform animatedLocalTransform() const;
-        virtual AffineTransform* supplementalTransform();
+        virtual TransformationMatrix getCTM() const;
+        virtual TransformationMatrix getScreenCTM() const;
+        virtual TransformationMatrix animatedLocalTransform() const;
+        virtual TransformationMatrix* supplementalTransform();
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual bool childShouldCreateRenderer(Node*) const;
@@ -55,7 +55,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGTextElement, SVGNames::textTagString, SVGNames::transformAttrString, SVGTransformList, Transform, transform)
        
        // Used by <animateMotion>
-       OwnPtr<AffineTransform> m_supplementalTransform;
+       OwnPtr<TransformationMatrix> m_supplementalTransform;
     };
 
 } // namespace WebCore

@@ -27,7 +27,7 @@
 #ifndef HTMLCanvasElement_h
 #define HTMLCanvasElement_h
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatRect.h"
 #include "HTMLElement.h"
 #include "IntSize.h"
@@ -106,7 +106,7 @@ public:
 
     void setObserver(CanvasObserver* o) { m_observer = o; }
 
-    AffineTransform baseTransform() const;
+    TransformationMatrix baseTransform() const;
 private:
     void createImageBuffer() const;
     void reset();

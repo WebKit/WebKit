@@ -24,7 +24,7 @@
 #define SVGTransform_h
 
 #if ENABLE(SVG)
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatPoint.h"
 #include "SVGNames.h"
 
@@ -46,18 +46,18 @@ namespace WebCore {
  
         SVGTransform();
         SVGTransform(SVGTransformType);
-        explicit SVGTransform(const AffineTransform&);
+        explicit SVGTransform(const TransformationMatrix&);
         virtual ~SVGTransform();
                
         SVGTransformType type() const;
 
-        AffineTransform matrix() const;
+        TransformationMatrix matrix() const;
     
         float angle() const;
         FloatPoint rotationCenter() const;
 
-//        void setMatrix(const AffineTransform&);
-        void setMatrix(AffineTransform);
+//        void setMatrix(const TransformationMatrix&);
+        void setMatrix(TransformationMatrix);
 
         void setTranslate(float tx, float ty);
         void setScale(float sx, float sy);
@@ -78,7 +78,7 @@ namespace WebCore {
         SVGTransformType m_type;
         float m_angle;
         FloatPoint m_center;
-        AffineTransform m_matrix;
+        TransformationMatrix m_matrix;
     };
 
     inline bool operator==(const SVGTransform& a, const SVGTransform& b)

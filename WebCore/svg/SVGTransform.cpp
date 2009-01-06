@@ -43,11 +43,11 @@ SVGTransform::SVGTransform(SVGTransformType type)
     : m_type(type)
     , m_angle(0)
     , m_center(FloatPoint())
-    , m_matrix(AffineTransform())
+    , m_matrix(TransformationMatrix())
 {
 }
 
-SVGTransform::SVGTransform(const AffineTransform& matrix)
+SVGTransform::SVGTransform(const TransformationMatrix& matrix)
     : m_type(SVG_TRANSFORM_MATRIX)
     , m_angle(0)
     , m_matrix(matrix)
@@ -68,7 +68,7 @@ SVGTransform::SVGTransformType SVGTransform::type() const
     return m_type;
 }
 
-AffineTransform SVGTransform::matrix() const
+TransformationMatrix SVGTransform::matrix() const
 {
     return m_matrix;
 }
@@ -83,7 +83,7 @@ FloatPoint SVGTransform::rotationCenter() const
     return m_center;
 }
 
-void SVGTransform::setMatrix(AffineTransform matrix) //const AffineTransform& matrix)
+void SVGTransform::setMatrix(TransformationMatrix matrix) //const TransformationMatrix& matrix)
 {
     m_type = SVG_TRANSFORM_MATRIX;
     m_angle = 0;

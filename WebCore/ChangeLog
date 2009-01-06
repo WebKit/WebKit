@@ -1,3 +1,24 @@
+2009-01-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Rename AffineTransform to TransformationMatrix in
+        preparation for future enhancements (non-affine matrices)
+
+        https://bugs.webkit.org/show_bug.cgi?id=22943
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * platform/graphics/transforms/AffineTransform.cpp: Removed.
+        * platform/graphics/transforms/AffineTransform.h: Removed.
+        * platform/graphics/transforms/TransformationMatrix.cpp: Copied from WebCore/platform/graphics/transforms/AffineTransform.cpp.
+        * platform/graphics/transforms/TransformationMatrix.h: Copied from WebCore/platform/graphics/transforms/AffineTransform.h.
+        * lots of other files with s/AffineTransform/TransformationMatrix/g
+
 2008-01-05  Dean Jackson  <dino@apple.com>
 
         Reviewed by David Hyatt.

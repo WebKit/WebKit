@@ -27,7 +27,7 @@
 #include "config.h"
 #include "Pattern.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "GraphicsContext.h"
 
 #include <ApplicationServices/ApplicationServices.h>
@@ -50,11 +50,11 @@ static void patternReleaseCallback(void* info)
     static_cast<Image*>(info)->deref();
 }
 
-CGPatternRef Pattern::createPlatformPattern(const AffineTransform& transform) const
+CGPatternRef Pattern::createPlatformPattern(const TransformationMatrix& transform) const
 {
     IntRect tileRect = tileImage()->rect();
 
-    AffineTransform patternTransform = transform;
+    TransformationMatrix patternTransform = transform;
     patternTransform.scale(1, -1);
     patternTransform.translate(0, -tileRect.height());
 

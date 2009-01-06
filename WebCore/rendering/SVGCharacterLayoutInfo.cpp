@@ -512,9 +512,9 @@ bool SVGChar::isHidden() const
     return pathData && pathData->hidden;
 }
 
-AffineTransform SVGChar::characterTransform() const
+TransformationMatrix SVGChar::characterTransform() const
 {
-    AffineTransform ctm;
+    TransformationMatrix ctm;
 
     // Rotate character around angle, and possibly scale.
     ctm.translate(x, y);

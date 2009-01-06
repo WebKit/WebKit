@@ -405,7 +405,7 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer)
     
     IntRect box = sizingBox(renderer);
 
-    AffineTransform transform;
+    TransformationMatrix transform;
     renderer->style()->applyTransform(transform, box.size(), false);
 
     RefPtr<WebKitCSSTransformValue> transformVal = WebKitCSSTransformValue::create(WebKitCSSTransformValue::MatrixTransformOperation);

@@ -38,7 +38,7 @@ SVGTransformDistance::SVGTransformDistance()
 {
 }
 
-SVGTransformDistance::SVGTransformDistance(SVGTransform::SVGTransformType type, float angle, float cx, float cy, const AffineTransform& transform)
+SVGTransformDistance::SVGTransformDistance(SVGTransform::SVGTransformType type, float angle, float cx, float cy, const TransformationMatrix& transform)
     : m_type(type)
     , m_angle(angle)
     , m_cx(cx)
@@ -95,20 +95,20 @@ SVGTransformDistance SVGTransformDistance::scaledDistance(float scaleFactor) con
     case SVGTransform::SVG_TRANSFORM_UNKNOWN:
         return SVGTransformDistance();
     case SVGTransform::SVG_TRANSFORM_ROTATE:
-        return SVGTransformDistance(m_type, m_angle * scaleFactor, m_cx * scaleFactor, m_cy * scaleFactor, AffineTransform());
+        return SVGTransformDistance(m_type, m_angle * scaleFactor, m_cx * scaleFactor, m_cy * scaleFactor, TransformationMatrix());
     case SVGTransform::SVG_TRANSFORM_SCALE:
     case SVGTransform::SVG_TRANSFORM_MATRIX:
-        return SVGTransformDistance(m_type, m_angle * scaleFactor, m_cx * scaleFactor, m_cy * scaleFactor, AffineTransform(m_transform).scale(scaleFactor));
+        return SVGTransformDistance(m_type, m_angle * scaleFactor, m_cx * scaleFactor, m_cy * scaleFactor, TransformationMatrix(m_transform).scale(scaleFactor));
     case SVGTransform::SVG_TRANSFORM_TRANSLATE:
     {
-        AffineTransform newTransform(m_transform);
+        TransformationMatrix newTransform(m_transform);
         newTransform.setE(m_transform.e() * scaleFactor);
         newTransform.setF(m_transform.f() * scaleFactor);
         return SVGTransformDistance(m_type, 0, 0, 0, newTransform);
     }
     case SVGTransform::SVG_TRANSFORM_SKEWX:
     case SVGTransform::SVG_TRANSFORM_SKEWY:
-        return SVGTransformDistance(m_type, m_angle * scaleFactor, m_cx * scaleFactor, m_cy * scaleFactor, AffineTransform());
+        return SVGTransformDistance(m_type, m_angle * scaleFactor, m_cx * scaleFactor, m_cy * scaleFactor, TransformationMatrix());
     }
     
     ASSERT_NOT_REACHED();
@@ -249,7 +249,7 @@ SVGTransform SVGTransformDistance::addToSVGTransform(const SVGTransform& transfo
 
 bool SVGTransformDistance::isZero() const
 {
-    return (m_transform == AffineTransform() && m_angle == 0);
+    return (m_transform == TransformationMatrix() && m_angle == 0);
 }
 
 float SVGTransformDistance::distance() const

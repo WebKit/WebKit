@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <float.h>
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "AXObjectCache.h"
 #include "BitmapImage.h"
 #include "CachedResource.h"
@@ -125,7 +125,7 @@ void GraphicsContext::setAlpha(float) { notImplemented(); }
 
 Color WebCore::focusRingColor() { return 0xFF0000FF; }
 
-void Image::drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator, const FloatRect& destRect) { notImplemented(); } 
+void Image::drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform, const FloatPoint& phase, CompositeOperator, const FloatRect& destRect) { notImplemented(); } 
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme() { notImplemented(); static ScrollbarTheme theme; return &theme; }
 

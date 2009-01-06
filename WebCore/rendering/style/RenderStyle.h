@@ -25,7 +25,7 @@
 #ifndef RenderStyle_h
 #define RenderStyle_h
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "AnimationList.h"
 #include "BorderData.h"
 #include "BorderValue.h"
@@ -628,7 +628,7 @@ public:
     Length transformOriginX() const { return rareNonInheritedData->m_transform->m_x; }
     Length transformOriginY() const { return rareNonInheritedData->m_transform->m_y; }
     bool hasTransform() const { return !rareNonInheritedData->m_transform->m_operations.operations().isEmpty(); }
-    void applyTransform(AffineTransform&, const IntSize& borderBoxSize, bool includeTransformOrigin = true) const;
+    void applyTransform(TransformationMatrix&, const IntSize& borderBoxSize, bool includeTransformOrigin = true) const;
     bool hasMask() const { return rareNonInheritedData->m_mask.hasImage() || rareNonInheritedData->m_maskBoxImage.hasImage(); }
     // End CSS3 Getters
 

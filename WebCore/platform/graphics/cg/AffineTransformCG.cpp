@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 
 #if PLATFORM(CG)
 
@@ -36,12 +36,12 @@
 
 namespace WebCore {
 
-AffineTransform::AffineTransform()
+TransformationMatrix::TransformationMatrix()
     : m_transform(CGAffineTransformIdentity)
 {
 }
 
-AffineTransform::AffineTransform(double a, double b, double c, double d, double tx, double ty)
+TransformationMatrix::TransformationMatrix(double a, double b, double c, double d, double tx, double ty)
 {
     m_transform = CGAffineTransformMake(narrowPrecisionToCGFloat(a),
                                         narrowPrecisionToCGFloat(b),
@@ -51,12 +51,12 @@ AffineTransform::AffineTransform(double a, double b, double c, double d, double 
                                         narrowPrecisionToCGFloat(ty));
 }
 
-AffineTransform::AffineTransform(const PlatformAffineTransform& t)
+TransformationMatrix::TransformationMatrix(const PlatformTransformationMatrix& t)
     : m_transform(t)
 {
 }
 
-void AffineTransform::setMatrix(double a, double b, double c, double d, double tx, double ty)
+void TransformationMatrix::setMatrix(double a, double b, double c, double d, double tx, double ty)
 {
     m_transform = CGAffineTransformMake(narrowPrecisionToCGFloat(a),
                                         narrowPrecisionToCGFloat(b),
@@ -66,147 +66,147 @@ void AffineTransform::setMatrix(double a, double b, double c, double d, double t
                                         narrowPrecisionToCGFloat(ty));
 }
 
-void AffineTransform::map(double x, double y, double *x2, double *y2) const
+void TransformationMatrix::map(double x, double y, double *x2, double *y2) const
 {
     CGPoint result = CGPointApplyAffineTransform(CGPointMake(narrowPrecisionToCGFloat(x), narrowPrecisionToCGFloat(y)), m_transform);
     *x2 = result.x;
     *y2 = result.y;
 }
 
-IntRect AffineTransform::mapRect(const IntRect &rect) const
+IntRect TransformationMatrix::mapRect(const IntRect &rect) const
 {
     return enclosingIntRect(CGRectApplyAffineTransform(CGRect(rect), m_transform));
 }
 
-FloatRect AffineTransform::mapRect(const FloatRect &rect) const
+FloatRect TransformationMatrix::mapRect(const FloatRect &rect) const
 {
     return FloatRect(CGRectApplyAffineTransform(CGRect(rect), m_transform));
 }
 
-bool AffineTransform::isIdentity() const
+bool TransformationMatrix::isIdentity() const
 {
     return CGAffineTransformIsIdentity(m_transform);
 }
 
-double AffineTransform::a() const
+double TransformationMatrix::a() const
 {
     return m_transform.a;
 }
 
-void AffineTransform::setA(double a)
+void TransformationMatrix::setA(double a)
 {
     m_transform.a = narrowPrecisionToCGFloat(a);
 }
 
-double AffineTransform::b() const
+double TransformationMatrix::b() const
 {
     return m_transform.b;
 }
 
-void AffineTransform::setB(double b)
+void TransformationMatrix::setB(double b)
 {
     m_transform.b = narrowPrecisionToCGFloat(b);
 }
 
-double AffineTransform::c() const
+double TransformationMatrix::c() const
 {
     return m_transform.c;
 }
 
-void AffineTransform::setC(double c)
+void TransformationMatrix::setC(double c)
 {
     m_transform.c = narrowPrecisionToCGFloat(c);
 }
 
-double AffineTransform::d() const
+double TransformationMatrix::d() const
 {
     return m_transform.d;
 }
 
-void AffineTransform::setD(double d)
+void TransformationMatrix::setD(double d)
 {
     m_transform.d = narrowPrecisionToCGFloat(d);
 }
 
-double AffineTransform::e() const
+double TransformationMatrix::e() const
 {
     return m_transform.tx;
 }
 
-void AffineTransform::setE(double e)
+void TransformationMatrix::setE(double e)
 {
     m_transform.tx = narrowPrecisionToCGFloat(e);
 }
 
-double AffineTransform::f() const
+double TransformationMatrix::f() const
 {
     return m_transform.ty;
 }
 
-void AffineTransform::setF(double f)
+void TransformationMatrix::setF(double f)
 {
     m_transform.ty = narrowPrecisionToCGFloat(f);
 }
 
-void AffineTransform::reset()
+void TransformationMatrix::reset()
 {
     m_transform = CGAffineTransformIdentity;
 }
 
-AffineTransform &AffineTransform::scale(double sx, double sy)
+TransformationMatrix &TransformationMatrix::scale(double sx, double sy)
 {
     m_transform = CGAffineTransformScale(m_transform, narrowPrecisionToCGFloat(sx), narrowPrecisionToCGFloat(sy));
     return *this;
 }
 
-AffineTransform &AffineTransform::rotate(double d)
+TransformationMatrix &TransformationMatrix::rotate(double d)
 {
     m_transform = CGAffineTransformRotate(m_transform, narrowPrecisionToCGFloat(deg2rad(d)));
     return *this;
 }
 
-AffineTransform &AffineTransform::translate(double tx, double ty)
+TransformationMatrix &TransformationMatrix::translate(double tx, double ty)
 {
     m_transform = CGAffineTransformTranslate(m_transform, narrowPrecisionToCGFloat(tx), narrowPrecisionToCGFloat(ty));
     return *this;
 }
 
-AffineTransform &AffineTransform::shear(double sx, double sy)
+TransformationMatrix &TransformationMatrix::shear(double sx, double sy)
 {
     CGAffineTransform shear = CGAffineTransformMake(1.0f, narrowPrecisionToCGFloat(sy), narrowPrecisionToCGFloat(sx), 1.0f, 0.0f, 0.0f);
     m_transform = CGAffineTransformConcat(shear, m_transform);
     return *this;
 }
 
-double AffineTransform::det() const
+double TransformationMatrix::det() const
 {
     return m_transform.a * m_transform.d - m_transform.b * m_transform.c;
 }
 
-AffineTransform AffineTransform::inverse() const
+TransformationMatrix TransformationMatrix::inverse() const
 {
     if (isInvertible())
-        return AffineTransform(CGAffineTransformInvert(m_transform));
-    return AffineTransform();
+        return TransformationMatrix(CGAffineTransformInvert(m_transform));
+    return TransformationMatrix();
 }
 
-AffineTransform::operator PlatformAffineTransform() const
+TransformationMatrix::operator PlatformTransformationMatrix() const
 {
     return m_transform;
 }
 
-bool AffineTransform::operator== (const AffineTransform &m2) const
+bool TransformationMatrix::operator== (const TransformationMatrix &m2) const
 {
     return CGAffineTransformEqualToTransform(m_transform, CGAffineTransform(m2));
 }
 
-AffineTransform &AffineTransform::operator*= (const AffineTransform &m2)
+TransformationMatrix &TransformationMatrix::operator*= (const TransformationMatrix &m2)
 {
     m_transform = CGAffineTransformConcat(m_transform, CGAffineTransform(m2));
     return *this;
 }
 
-AffineTransform AffineTransform::operator* (const AffineTransform &m2)
+TransformationMatrix TransformationMatrix::operator* (const TransformationMatrix &m2)
 {
     return CGAffineTransformConcat(m_transform, CGAffineTransform(m2));
 }

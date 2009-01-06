@@ -29,7 +29,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGResourceFilter.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "GraphicsContext.h"
 
 #include "SVGResourceFilterPlatformDataMac.h"

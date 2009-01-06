@@ -26,7 +26,7 @@
 #include "RenderObject.h"
 
 #include "AXObjectCache.h"
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "AnimationController.h"
 #include "CSSStyleSelector.h"
 #include "CachedImage.h"
@@ -3276,12 +3276,12 @@ FloatRect RenderObject::relativeBBox(bool) const
     return FloatRect();
 }
 
-AffineTransform RenderObject::localTransform() const
+TransformationMatrix RenderObject::localTransform() const
 {
-    return AffineTransform(1, 0, 0, 1, xPos(), yPos());
+    return TransformationMatrix(1, 0, 0, 1, xPos(), yPos());
 }
 
-AffineTransform RenderObject::absoluteTransform() const
+TransformationMatrix RenderObject::absoluteTransform() const
 {
     if (parent())
         return localTransform() * parent()->absoluteTransform();

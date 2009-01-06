@@ -49,7 +49,7 @@ private:
         return m_x == s->m_x && m_y == s->m_y;
     }
 
-    virtual bool apply(AffineTransform& transform, const IntSize&) const
+    virtual bool apply(TransformationMatrix& transform, const IntSize&) const
     {
         transform.scale(m_x, m_y);
         return false;

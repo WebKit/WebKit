@@ -38,10 +38,10 @@ RenderForeignObject::RenderForeignObject(SVGForeignObjectElement* node)
 {
 }
 
-AffineTransform RenderForeignObject::translationForAttributes()
+TransformationMatrix RenderForeignObject::translationForAttributes()
 {
     SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(element());
-    return AffineTransform().translate(foreign->x().value(foreign), foreign->y().value(foreign));
+    return TransformationMatrix().translate(foreign->x().value(foreign), foreign->y().value(foreign));
 }
 
 void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
@@ -50,7 +50,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
         return;
 
     paintInfo.context->save();
-    paintInfo.context->concatCTM(AffineTransform().translate(parentX, parentY));
+    paintInfo.context->concatCTM(TransformationMatrix().translate(parentX, parentY));
     paintInfo.context->concatCTM(localTransform());
     paintInfo.context->concatCTM(translationForAttributes());
     paintInfo.context->clip(getClipRect(parentX, parentY));
@@ -72,7 +72,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
 void RenderForeignObject::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
-    AffineTransform transform = translationForAttributes() * localTransform();
+    TransformationMatrix transform = translationForAttributes() * localTransform();
     r = transform.mapRect(r);
 
     RenderBlock::computeAbsoluteRepaintRect(r, f);
@@ -85,7 +85,7 @@ bool RenderForeignObject::requiresLayer()
 
 bool RenderForeignObject::calculateLocalTransform()
 {
-    AffineTransform oldTransform = m_localTransform;
+    TransformationMatrix oldTransform = m_localTransform;
     m_localTransform = static_cast<SVGForeignObjectElement*>(element())->animatedLocalTransform();
     return (oldTransform != m_localTransform);
 }
@@ -120,7 +120,7 @@ void RenderForeignObject::layout()
 
 bool RenderForeignObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
-    AffineTransform totalTransform = absoluteTransform();
+    TransformationMatrix totalTransform = absoluteTransform();
     totalTransform *= translationForAttributes();
     double localX, localY;
     totalTransform.inverse().map(x, y, &localX, &localY);

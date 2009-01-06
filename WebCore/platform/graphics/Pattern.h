@@ -54,7 +54,7 @@ typedef wxBrush* PlatformPatternPtr;
 #endif
 
 namespace WebCore {
-    class AffineTransform;
+    class TransformationMatrix;
     class Image;
 
     class Pattern : public RefCounted<Pattern> {
@@ -67,7 +67,7 @@ namespace WebCore {
 
         Image* tileImage() const { return m_tileImage.get(); }
 
-        PlatformPatternPtr createPlatformPattern(const AffineTransform& patternTransform) const;
+        PlatformPatternPtr createPlatformPattern(const TransformationMatrix& patternTransform) const;
 
     private:
         Pattern(Image*, bool repeatX, bool repeatY);

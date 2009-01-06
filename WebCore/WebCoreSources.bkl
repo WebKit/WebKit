@@ -763,7 +763,7 @@ This file contains the list of files needed to build WebCore.
         platform/graphics/PathTraversalState.cpp
         platform/graphics/Pattern.cpp
         platform/graphics/Pen.cpp
-        platform/graphics/transforms/AffineTransform.cpp
+        platform/graphics/transforms/TransformationMatrix.cpp
         platform/graphics/transforms/MatrixTransformOperation.cpp
         platform/graphics/transforms/RotateTransformOperation.cpp
         platform/graphics/transforms/ScaleTransformOperation.cpp

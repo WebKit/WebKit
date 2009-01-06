@@ -27,7 +27,7 @@
 #include "config.h"
 #include "FloatPoint.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatConversion.h"
 #include "IntPoint.h"
 
@@ -37,7 +37,7 @@ FloatPoint::FloatPoint(const IntPoint& p) : m_x(p.x()), m_y(p.y())
 {
 }
 
-FloatPoint FloatPoint::matrixTransform(const AffineTransform& transform) const
+FloatPoint FloatPoint::matrixTransform(const TransformationMatrix& transform) const
 {
     double newX, newY;
     transform.map(static_cast<double>(m_x), static_cast<double>(m_y), &newX, &newY);

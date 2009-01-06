@@ -28,7 +28,7 @@
 
 #if PLATFORM(CG)
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -207,7 +207,7 @@ void Image::drawPatternCallback(void* info, CGContextRef context)
     CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(0, 0, CGImageGetWidth(image), CGImageGetHeight(image))), image);
 }
 
-void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
+void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
                         const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
 {
     if (!nativeImageForCurrentFrame())

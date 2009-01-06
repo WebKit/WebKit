@@ -273,12 +273,12 @@ ImageBuffer* HTMLCanvasElement::buffer() const
     return m_imageBuffer.get();
 }
     
-AffineTransform HTMLCanvasElement::baseTransform() const
+TransformationMatrix HTMLCanvasElement::baseTransform() const
 {
     ASSERT(m_createdImageBuffer);
     FloatSize unscaledSize(width(), height());
     IntSize size = convertLogicalToDevice(unscaledSize);
-    AffineTransform transform;
+    TransformationMatrix transform;
     if (size.width() && size.height())
         transform.scale(size.width() / unscaledSize.width(), size.height() / unscaledSize.height());
     transform.multiply(m_imageBuffer->baseTransform());

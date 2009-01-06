@@ -49,7 +49,7 @@ public:
         return m_x == t->m_x && m_y == t->m_y;
     }
 
-    virtual bool apply(AffineTransform& transform, const IntSize& borderBoxSize) const
+    virtual bool apply(TransformationMatrix& transform, const IntSize& borderBoxSize) const
     {
         transform.translate(m_x.calcFloatValue(borderBoxSize.width()), m_y.calcFloatValue(borderBoxSize.height()));
         return m_x.type() == Percent || m_y.type() == Percent;

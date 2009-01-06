@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Font.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatConversion.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
@@ -227,7 +227,7 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
 
         XFORM xform;
         GetWorldTransform(hdc, &xform);
-        AffineTransform hdcTransform(xform.eM11, xform.eM21, xform.eM12, xform.eM22, xform.eDx, xform.eDy);
+        TransformationMatrix hdcTransform(xform.eM11, xform.eM21, xform.eM12, xform.eM22, xform.eDx, xform.eDy);
         CGAffineTransform initialGlyphTransform = hdcTransform.isInvertible() ? hdcTransform.inverse() : CGAffineTransformIdentity;
         if (font->platformData().syntheticOblique())
             initialGlyphTransform = CGAffineTransformConcat(initialGlyphTransform, CGAffineTransformMake(1, 0, tanf(syntheticObliqueAngle * piFloat / 180.0f), 1, 0, 0));
