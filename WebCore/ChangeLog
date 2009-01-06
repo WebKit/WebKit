@@ -1,3 +1,10 @@
+2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix the Qt build
+
+        * platform/graphics/qt/AffineTransformQt.cpp:
+        (WebCore::TransformationMatrix::TransformationMatrix):
+
 2009-01-05  Mark Rowe  <mrowe@apple.com>
 
         Fix the build some more.

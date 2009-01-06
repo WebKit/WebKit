@@ -41,7 +41,7 @@ TransformationMatrix::TransformationMatrix(double a, double b, double c, double 
 {
 }
 
-TransformationMatrix::TransformationMatrix(const PlatformAffineTransform& matrix)
+TransformationMatrix::TransformationMatrix(const PlatformTransformationMatrix& matrix)
     : m_transform(matrix)
 {
 }
