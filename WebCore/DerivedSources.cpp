@@ -29,7 +29,6 @@
 #include "JSBarInfo.cpp"
 #include "JSCanvasGradient.cpp"
 #include "JSCanvasPattern.cpp"
-#include "JSCanvasPixelArray.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
 #include "JSCDATASection.cpp"
 #include "JSCharacterData.cpp"
