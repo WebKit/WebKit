@@ -716,6 +716,10 @@ sources['platform'] = [
     'platform/Timer.cpp',
     'platform/Widget.cpp'
 ]
+sources['platform/animation'] = [
+    'platform/animation/Animation.cpp',
+    'platform/animation/AnimationList.cpp',
+]
 sources['platform/sql'] = [
     'platform/sql/SQLiteAuthorizer.cpp',
     'platform/sql/SQLiteDatabase.cpp',
@@ -724,7 +728,6 @@ sources['platform/sql'] = [
     'platform/sql/SQLValue.cpp'
 ]
 sources['platform/graphics'] = [
-    'platform/graphics/TransformationMatrix.cpp',
     'platform/graphics/BitmapImage.cpp',
     'platform/graphics/Color.cpp',
     'platform/graphics/FloatPoint.cpp',
@@ -754,6 +757,15 @@ sources['platform/graphics'] = [
     'platform/graphics/SimpleFontData.cpp',
     'platform/graphics/StringTruncator.cpp',
     'platform/graphics/WidthIterator.cpp',
+]
+sources['platform/graphics/transforms'] = [
+    'platform/graphics/transforms/MatrixTransformOperation.cpp',
+    'platform/graphics/transforms/RotateTransformOperation.cpp',
+    'platform/graphics/transforms/ScaleTransformOperation.cpp',
+    'platform/graphics/transforms/SkewTransformOperation.cpp',
+    'platform/graphics/transforms/TransformOperations.cpp',
+    'platform/graphics/transforms/TransformationMatrix.cpp',
+    'platform/graphics/transforms/TranslateTransformOperation.cpp',
 ]
 sources['platform/network'] = [
     'platform/network/AuthenticationChallengeBase.cpp',
