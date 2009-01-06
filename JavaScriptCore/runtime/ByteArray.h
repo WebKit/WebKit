@@ -63,7 +63,7 @@ namespace JSC {
         {
         }
         size_t m_size;
-        unsigned char m_data[0];
+        unsigned char m_data[sizeof(size_t)];
     };
 }
 

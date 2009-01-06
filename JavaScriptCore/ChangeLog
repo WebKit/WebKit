@@ -1,5 +1,17 @@
 2009-01-05  Oliver Hunt  <oliver@apple.com>
 
+        Windows build fixes
+
+        Rubber-stamped by Alice Liu.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        * runtime/ByteArray.cpp:
+        (JSC::ByteArray::create):
+        * runtime/ByteArray.h:
+
+2009-01-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         CanvasPixelArray performance is too slow 
