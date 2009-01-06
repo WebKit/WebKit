@@ -1,3 +1,17 @@
+2009-01-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Tests for:
+        <rdar://problem/4059423> DOM operations performed on editable HTML can cause a crash later during Undo (19703)
+        
+        A few more may able to be written after <rdar://problem/6468156> is fixed.
+
+        * editing/undo/4059423-1-expected.txt: Added.
+        * editing/undo/4059423-1.html: Added.
+        * editing/undo/4059423-2-expected.txt: Added.
+        * editing/undo/4059423-2.html: Added.
+
 2009-01-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.
