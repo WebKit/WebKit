@@ -692,6 +692,21 @@ sources['bindings/js'] = [
     "bindings/js/ScriptValue.cpp",
     "bindings/js/WorkerScriptController.cpp",
 ]
+sources['bridge'] = [
+    'bridge/NP_jsobject.cpp',
+    'bridge/npruntime.cpp',
+    'bridge/runtime.cpp',
+    'bridge/runtime_array.cpp',
+    'bridge/runtime_method.cpp',
+    'bridge/runtime_object.cpp',
+    'bridge/runtime_root.cpp',
+]
+sources['bridge/c'] = [
+    'bridge/c/c_class.cpp',
+    'bridge/c/c_instance.cpp',
+    'bridge/c/c_runtime.cpp',
+    'bridge/c/c_utility.cpp',
+]
 
 # Platform-specific sources, including common files
 # These may eventually move to a separate sources file

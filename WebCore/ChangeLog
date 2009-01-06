@@ -1,5 +1,16 @@
 2009-01-06  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Bring the Chromium-WebCore build closer to building
+        by upstreaming PlatformWidget.h add adding the JSC
+        plugin bridge files to the build.
+
+        * WebCore.scons:
+        * platform/chromium/PlatformWidget.h: Added.
+
+2009-01-06  Eric Seidel  <eric@webkit.org>
+
         Build fix only, no review.
 
         Bring the Chromium-WebCore build back closer to building
