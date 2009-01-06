@@ -1662,6 +1662,72 @@ template<> inline CSSPrimitiveValue::operator TextDirection() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPointerEvents e)
+    : m_type(CSS_IDENT)
+{
+    switch (e) {
+        case PE_NONE:
+            m_value.ident = CSSValueNone;
+            break;
+        case PE_STROKE:
+            m_value.ident = CSSValueStroke;
+            break;
+        case PE_FILL:
+            m_value.ident = CSSValueFill;
+            break;
+        case PE_PAINTED:
+            m_value.ident = CSSValuePainted;
+            break;
+        case PE_VISIBLE:
+            m_value.ident = CSSValueVisible;
+            break;
+        case PE_VISIBLE_STROKE:
+            m_value.ident = CSSValueVisiblestroke;
+            break;
+        case PE_VISIBLE_FILL:
+            m_value.ident = CSSValueVisiblefill;
+            break;
+        case PE_VISIBLE_PAINTED:
+            m_value.ident = CSSValueVisiblepainted;
+            break;
+        case PE_AUTO:
+            m_value.ident = CSSValueAuto;
+            break;
+        case PE_ALL:
+            m_value.ident = CSSValueAll;
+            break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EPointerEvents() const
+{
+    switch (m_value.ident) {
+        case CSSValueAll:
+            return PE_ALL;
+        case CSSValueAuto:
+            return PE_AUTO;
+        case CSSValueNone:
+            return PE_NONE;
+        case CSSValueVisiblepainted:
+            return PE_VISIBLE_PAINTED;
+        case CSSValueVisiblefill:
+            return PE_VISIBLE_FILL;
+        case CSSValueVisiblestroke:
+            return PE_VISIBLE_STROKE;
+        case CSSValueVisible:
+            return PE_VISIBLE;
+        case CSSValuePainted:
+            return PE_PAINTED;
+        case CSSValueFill:
+            return PE_FILL;
+        case CSSValueStroke:
+            return PE_STROKE;
+        default:
+            ASSERT_NOT_REACHED();
+            return PE_ALL;
+    }
+}
+
 #if ENABLE(SVG)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineCap e)
@@ -1995,72 +2061,6 @@ template<> inline CSSPrimitiveValue::operator EImageRendering() const
         default:
             ASSERT_NOT_REACHED();
             return IR_AUTO;
-    }
-}
-
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPointerEvents e)
-    : m_type(CSS_IDENT)
-{
-    switch (e) {
-        case PE_NONE:
-            m_value.ident = CSSValueNone;
-            break;
-        case PE_STROKE:
-            m_value.ident = CSSValueStroke;
-            break;
-        case PE_FILL:
-            m_value.ident = CSSValueFill;
-            break;
-        case PE_PAINTED:
-            m_value.ident = CSSValuePainted;
-            break;
-        case PE_VISIBLE:
-            m_value.ident = CSSValueVisible;
-            break;
-        case PE_VISIBLE_STROKE:
-            m_value.ident = CSSValueVisiblestroke;
-            break;
-        case PE_VISIBLE_FILL:
-            m_value.ident = CSSValueVisiblefill;
-            break;
-        case PE_VISIBLE_PAINTED:
-            m_value.ident = CSSValueVisiblepainted;
-            break;
-        case PE_AUTO:
-            m_value.ident = CSSValueAuto;
-            break;
-        case PE_ALL:
-            m_value.ident = CSSValueAll;
-            break;
-    }
-}
-
-template<> inline CSSPrimitiveValue::operator EPointerEvents() const
-{
-    switch (m_value.ident) {
-        case CSSValueAll:
-            return PE_ALL;
-        case CSSValueAuto:
-            return PE_AUTO;
-        case CSSValueNone:
-            return PE_NONE;
-        case CSSValueVisiblepainted:
-            return PE_VISIBLE_PAINTED;
-        case CSSValueVisiblefill:
-            return PE_VISIBLE_FILL;
-        case CSSValueVisiblestroke:
-            return PE_VISIBLE_STROKE;
-        case CSSValueVisible:
-            return PE_VISIBLE;
-        case CSSValuePainted:
-            return PE_PAINTED;
-        case CSSValueFill:
-            return PE_FILL;
-        case CSSValueStroke:
-            return PE_STROKE;
-        default:
-            ASSERT_NOT_REACHED();
-            return PE_ALL;
     }
 }
 
