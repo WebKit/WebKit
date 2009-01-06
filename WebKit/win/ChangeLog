@@ -1,5 +1,28 @@
 2009-01-06  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX (r39641): Fix more silly errors
+
+        Fixes the following compilation errors:
+
+            WebIconDatabase.cpp
+            ..\WebIconDatabase.cpp(85) : error C2065: 'standardPrefs' : undeclared identifier
+            ..\WebIconDatabase.cpp(85) : error C2227: left of '->iconDatabaseLocation' must point to class/struct/union/generic type
+                    type is ''unknown-type''
+            ..\WebIconDatabase.cpp(241) : error C2575: 'isEnabled' : only member functions and bases can be virtual
+            ..\WebIconDatabase.cpp(248) : error C2575: 'setEnabled' : only member functions and bases can be virtual
+            ..\WebIconDatabase.cpp(253) : error C3861: 'shutDownIconDatabase': identifier not found
+            ..\WebIconDatabase.cpp(256) : error C3861: 'startUpIconDatabase': identifier not found
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::startUpIconDatabase): Redeclare standardPrefs
+        since this was in init() but not in this method after it was
+        extracted from init().
+        (isEnabled): Don't use "virtual" in method implementation
+        (silly copy-paste error).
+        (setEnabled): Ditto.
+
+2009-01-06  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX (r39641): Remove STDMETHODCALLTYPE from method declarations in IWebIconDatabase.idl
 
         * Interfaces/IWebIconDatabase.idl: Removed "STDMETHODCALLTYPE"

@@ -79,6 +79,8 @@ void WebIconDatabase::init()
 
 void WebIconDatabase::startUpIconDatabase()
 {
+    WebPreferences* standardPrefs = WebPreferences::sharedStandardPreferences();
+
     iconDatabase()->setClient(this);
 
     BSTR prefDatabasePath = 0;
@@ -236,14 +238,14 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::iconURLForURL(
     return S_OK;
 }
 
-virtual HRESULT STDMETHODCALLTYPE isEnabled( 
+HRESULT STDMETHODCALLTYPE isEnabled( 
         /* [retval][out] */ BOOL *result)
 {
     *result = iconDatabase()->isEnabled();
     return S_OK;
 }
 
-virtual HRESULT STDMETHODCALLTYPE setEnabled( 
+HRESULT STDMETHODCALLTYPE setEnabled( 
         /* [in] */ BOOL flag)
 {
     BOOL currentlyEnabled;
