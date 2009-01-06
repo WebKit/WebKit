@@ -1051,6 +1051,7 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 
 /*!
   \fn void QWebFrame::contentsSizeChanged(const QSize &size)
+  \since 4.6
 
   This signal is emitted when the frame's contents size changes.
 
@@ -1192,7 +1193,7 @@ QRect QWebHitTestResult::boundingRect() const
 }
 
 /*!
-    \since 4.5
+    \since 4.6
     Returns the rect of the smallest enclosing block element.
 */
 QRect QWebHitTestResult::enclosingBlock() const

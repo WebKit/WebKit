@@ -1,3 +1,13 @@
+2009-01-06  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Simon Hausmann.
+
+        Update the documentation to reflect when these API changes will land in
+        upstream Qt
+
+        * Api/qwebframe.cpp:
+        * Api/qwebpage.cpp:
+
 2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
