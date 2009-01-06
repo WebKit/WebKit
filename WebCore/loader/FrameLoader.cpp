@@ -72,6 +72,7 @@
 #include "PageCache.h"
 #include "PageGroup.h"
 #include "PluginData.h"
+#include "PluginDocument.h"
 #include "ProgressTracker.h"
 #include "RenderPart.h"
 #include "RenderView.h"
@@ -928,7 +929,12 @@ void FrameLoader::begin(const KURL& url, bool dispatch, SecurityOrigin* origin)
     m_outgoingReferrer = ref.string();
     m_URL = url;
 
-    RefPtr<Document> document = DOMImplementation::createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
+    RefPtr<Document> document;
+    
+    if (!m_isDisplayingInitialEmptyDocument && m_client->shouldUsePluginDocument(m_responseMIMEType))
+        document = PluginDocument::create(m_frame);
+    else
+        document = DOMImplementation::createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
     m_frame->setDocument(document);
 
     document->setURL(m_URL);
@@ -1704,6 +1710,11 @@ bool FrameLoader::requestObject(RenderPart* renderer, const String& url, const A
 
 bool FrameLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback)
 {
+    if (m_client->shouldUsePluginDocument(mimeType)) {
+        useFallback = false;
+        return true;
+    }
+
     // Allow other plug-ins to win over QuickTime because if the user has installed a plug-in that
     // can handle TIFF (which QuickTime can also handle) they probably intended to override QT.
     if (m_frame->page() && (mimeType == "image/tiff" || mimeType == "image/tif" || mimeType == "image/x-tiff")) {

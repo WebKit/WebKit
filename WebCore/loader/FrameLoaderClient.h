@@ -210,6 +210,8 @@ namespace WebCore {
         virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const = 0;
 #endif
 
+        virtual bool shouldUsePluginDocument(const String& mimeType) const { return false; }
+
     protected:
         static void transitionToCommittedForNewPage(Frame*, const IntSize&, const Color&, bool, const IntSize &, bool,
                                                     ScrollbarMode = ScrollbarAuto, ScrollbarMode = ScrollbarAuto);
