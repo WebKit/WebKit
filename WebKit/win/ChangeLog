@@ -1,3 +1,15 @@
+2009-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler, Jon Honeycutt.
+
+        Add a templatized COMVariant constructor so we can make COMVariants out of
+        everything that has a COMVariantSetter specialization.
+        
+        Add a COMVariantSetter specialization for COMVariant.
+        
+        * COMVariantSetter.h:
+        (COMVariant::COMVariant):
+
 2009-01-05  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Oliver Hunt.

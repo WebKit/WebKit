@@ -118,6 +118,13 @@ public:
         ::VariantInit(&m_variant);
     }
 
+    template<typename UnderlyingType>
+    COMVariant(UnderlyingType value)
+    {
+        ::VariantInit(&m_variant);
+        COMVariantSetter<UnderlyingType>::setVariant(&m_variant, value);
+    }
+
     ~COMVariant()
     {
         ::VariantClear(&m_variant);
@@ -144,6 +151,21 @@ public:
 
 private:
     VARIANT m_variant;
+};
+
+template<> struct COMVariantSetter<COMVariant>
+{
+    static inline VARENUM variantType(const COMVariant& value)
+    {
+        return value.variantType();
+    }
+
+    static void setVariant(VARIANT* variant, const COMVariant& value)
+    {
+        ASSERT(V_VT(variant) == VT_EMPTY);
+
+        value.copyTo(variant);
+    }
 };
 
 #endif // COMVariantSetter
