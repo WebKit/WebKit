@@ -1,5 +1,18 @@
 2009-01-05  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Jon Honeycutt.
+
+        Pass more information in the property bag passed to embeddedViewWithArguments.
+        
+        * Interfaces/IWebUIDelegatePrivate.idl:
+        Declare new keys.
+        
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createPlugin):
+        Pass the base URL, MIME type and the containing element to embeddedViewWithArguments.
+
+2009-01-05  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler, Jon Honeycutt.
 
         Add a templatized COMVariant constructor so we can make COMVariants out of

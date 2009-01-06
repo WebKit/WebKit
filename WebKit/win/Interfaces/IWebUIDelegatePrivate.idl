@@ -31,6 +31,9 @@ import "IWebView.idl";
 #endif
 
 cpp_quote("#define WebEmbeddedViewAttributesKey TEXT(\"WebEmbeddedViewAttributesKey\")")
+cpp_quote("#define WebEmbeddedViewBaseURLKey TEXT(\"WebEmbeddedViewBaseURLKey\")")
+cpp_quote("#define WebEmbeddedViewContainingElementKey TEXT(\"WebEmbeddedViewContainingElementKey\")")
+cpp_quote("#define WebEmbeddedViewMIMETypeKey TEXT(\"WebEmbeddedViewMIMETypeKey\")")
 
 interface IWebEmbeddedView;
 interface IWebFrame;
