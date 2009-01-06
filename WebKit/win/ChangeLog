@@ -1,5 +1,22 @@
 2009-01-06  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX (r39641): Try to fix build errors again
+
+        Try to fix the following build errors:
+
+            WebIconDatabase.cpp
+            ..\WebIconDatabase.cpp(255) : error C3861: 'shutDownIconDatabase': identifier not found
+            ..\WebIconDatabase.cpp(258) : error C3861: 'startUpIconDatabase': identifier not found
+
+        * WebIconDatabase.cpp:
+        (setEnabled): Add class prefix to startUpIconDatabase() and
+        shutDownIconDatabase().
+        * WebIconDatabase.h:
+        (WebIconDatabase::startUpIconDatabase): Make private again.
+        (WebIconDatabase::shutDownIconDatabase): Ditto.
+
+2009-01-06  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX (r39641): Try to fix build error
 
         Try to fix the following build errors:
