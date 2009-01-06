@@ -181,17 +181,6 @@ new
 
 # CSS_PROP_STOP_COLOR
 # CSS_PROP_STOP_OPACITY
-# CSS_PROP_POINTER_EVENTS
-visiblePainted
-visibleFill
-visibleStroke
-#visible
-painted
-fill
-stroke
-#all
-#none
-
 # CSS_PROP_COLOR_INTERPOLATION
 #auto
 sRGB

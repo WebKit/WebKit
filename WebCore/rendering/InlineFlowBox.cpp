@@ -597,7 +597,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
     // Now check ourselves.
     IntRect rect(tx + m_x, ty + m_y, m_width, m_height);
-    if (object()->style()->visibility() == VISIBLE && rect.contains(x, y)) {
+    if (visibleToHitTesting() && rect.contains(x, y)) {
         object()->updateHitTestResult(result, IntPoint(x - tx, y - ty)); // Don't add in m_x or m_y here, we want coords in the containing block's space.
         return true;
     }

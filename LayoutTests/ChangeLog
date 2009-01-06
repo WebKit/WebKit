@@ -1,3 +1,35 @@
+2008-01-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by David Hyatt.
+        
+        Implement 'pointer-events' for HTML content. This involved
+        adding a new value 'auto' which behaves as 'visiblePainted'
+        in SVG content. The new tests exercise 'auto' and 'none'
+        on HTML content. The SVG tests have been updated to include
+        'auto'
+        
+        https://bugs.webkit.org/show_bug.cgi?id=11395
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * fast/events/pointer-events-2-expected.txt: Added.
+        * fast/events/pointer-events-2.html: Added.
+        * fast/events/pointer-events-expected.txt: Added.
+        * fast/events/pointer-events.html: Added.
+        * platform/mac/svg/custom/pointer-events-image-expected.checksum:
+        * platform/mac/svg/custom/pointer-events-image-expected.png:
+        * platform/mac/svg/custom/pointer-events-image-expected.txt:
+        * platform/mac/svg/custom/pointer-events-path-expected.checksum:
+        * platform/mac/svg/custom/pointer-events-path-expected.png:
+        * platform/mac/svg/custom/pointer-events-path-expected.txt:
+        * platform/mac/svg/custom/pointer-events-text-expected.checksum:
+        * platform/mac/svg/custom/pointer-events-text-expected.png:
+        * platform/mac/svg/custom/pointer-events-text-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * svg/custom/pointer-events-image.svg:
+        * svg/custom/pointer-events-path.svg:
+        * svg/custom/pointer-events-text.svg:
+
 2009-01-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

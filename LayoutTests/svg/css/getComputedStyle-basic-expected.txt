@@ -120,6 +120,8 @@ rect: style.getPropertyValue(page-break-before) : auto
 rect: style.getPropertyCSSValue(page-break-before) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(page-break-inside) : auto
 rect: style.getPropertyCSSValue(page-break-inside) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(pointer-events) : auto
+rect: style.getPropertyCSSValue(pointer-events) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(position) : static
 rect: style.getPropertyCSSValue(position) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(resize) : none
@@ -328,8 +330,6 @@ rect: style.getPropertyValue(stop-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(stop-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(stop-opacity) : 1
 rect: style.getPropertyCSSValue(stop-opacity) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(pointer-events) : visiblepainted
-rect: style.getPropertyCSSValue(pointer-events) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(color-interpolation) : srgb
 rect: style.getPropertyCSSValue(color-interpolation) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(color-interpolation-filters) : linearrgb
@@ -508,6 +508,8 @@ g: style.getPropertyValue(page-break-before) : auto
 g: style.getPropertyCSSValue(page-break-before) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(page-break-inside) : auto
 g: style.getPropertyCSSValue(page-break-inside) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(pointer-events) : auto
+g: style.getPropertyCSSValue(pointer-events) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(position) : static
 g: style.getPropertyCSSValue(position) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(resize) : none
@@ -716,8 +718,6 @@ g: style.getPropertyValue(stop-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(stop-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(stop-opacity) : 1
 g: style.getPropertyCSSValue(stop-opacity) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(pointer-events) : visiblepainted
-g: style.getPropertyCSSValue(pointer-events) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(color-interpolation) : srgb
 g: style.getPropertyCSSValue(color-interpolation) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(color-interpolation-filters) : linearrgb

@@ -237,6 +237,8 @@ public:
 
     int toAdd() const { return m_toAdd; }
     
+    bool visibleToHitTesting() const { return object()->style()->visibility() == VISIBLE && object()->style()->pointerEvents() != PE_NONE; }
+    
 public:
     RenderObject* m_object;
 

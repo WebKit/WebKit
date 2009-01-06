@@ -282,7 +282,7 @@ bool RenderPath::nodeAtPoint(const HitTestRequest&, HitTestResult& result, int _
     
     IntPoint absolutePoint(_x, _y);
 
-    PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_PATH_HITTESTING, style()->svgStyle()->pointerEvents());
+    PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_PATH_HITTESTING, style()->pointerEvents());
 
     bool isVisible = (style()->visibility() == VISIBLE);
     if (isVisible || !hitRules.requireVisible) {

@@ -153,13 +153,13 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
         input->focus();
         input->select();
         evt->setDefaultHandled();
-        if (renderer() && renderer()->style()->visibility() == VISIBLE)
+        if (renderer() && renderer()->visibleToHitTesting())
             if (Frame* frame = document()->frame()) {
                 frame->eventHandler()->setCapturingMouseEventsNode(this);
                 m_capturing = true;
             }
     } else if (evt->type() == eventNames().mouseupEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
-        if (m_capturing && renderer() && renderer()->style()->visibility() == VISIBLE) {
+        if (m_capturing && renderer() && renderer()->visibleToHitTesting()) {
             if (hovered()) {
                 input->setValue("");
                 input->onSearch();

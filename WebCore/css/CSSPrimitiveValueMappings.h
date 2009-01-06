@@ -2026,6 +2026,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPointerEvents e)
         case PE_VISIBLE_PAINTED:
             m_value.ident = CSSValueVisiblepainted;
             break;
+        case PE_AUTO:
+            m_value.ident = CSSValueAuto;
+            break;
         case PE_ALL:
             m_value.ident = CSSValueAll;
             break;
@@ -2037,6 +2040,8 @@ template<> inline CSSPrimitiveValue::operator EPointerEvents() const
     switch (m_value.ident) {
         case CSSValueAll:
             return PE_ALL;
+        case CSSValueAuto:
+            return PE_AUTO;
         case CSSValueNone:
             return PE_NONE;
         case CSSValueVisiblepainted:

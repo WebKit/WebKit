@@ -1,559 +1,618 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,4) size 552x605
-    RenderSVGText {text} at (110,90) size 107x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-14) size 107x18
-        chunk 1 text run 1 at (110.00,90.00) startOffset 0 endOffset 19 width 107.00: "Visibility: visible"
-    RenderSVGText {text} at (340,90) size 109x18 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,-14) size 109x18
-        chunk 1 text run 1 at (340.00,90.00) startOffset 0 endOffset 18 width 109.00: "Visibility: hidden"
-    RenderSVGText {text} at (10,18) size 60x18 contains 1 chunk(s)
+  RenderSVGRoot {svg} at (0,4) size 730x592
+    RenderSVGText {text} at (610,18) size 60x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 60x18
-        chunk 1 text run 1 at (10.00,18.00) startOffset 0 endOffset 8 width 60.00: "Example:"
-    RenderSVGText {text} at (5,40) size 49x18 contains 1 chunk(s)
+        chunk 1 text run 1 at (610.00,18.00) startOffset 0 endOffset 8 width 60.00: "Example:"
+    RenderSVGText {text} at (605,40) size 49x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 49x18
-        chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 9 width 49.00: "Hit Fill:"
-    RenderSVGText {text} at (5,60) size 69x18 contains 1 chunk(s)
+        chunk 1 text run 1 at (605.00,40.00) startOffset 0 endOffset 9 width 49.00: "Hit Fill:"
+    RenderSVGText {text} at (605,60) size 69x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 69x18
-        chunk 1 text run 1 at (5.00,60.00) startOffset 0 endOffset 11 width 69.00: "Hit Stroke:"
-    RenderSVGContainer {g} at (0,20) size 552x589
-      RenderPath {rect} at (80,20) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M80.00,20.00 L130.00,20.00 L130.00,70.00 L80.00,70.00 Z"]
-      RenderSVGText {text} at (85,40) size 27x18 contains 1 chunk(s)
+        chunk 1 text run 1 at (605.00,60.00) startOffset 0 endOffset 11 width 69.00: "Hit Stroke:"
+    RenderSVGText {text} at (110,20) size 107x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 107x18
+        chunk 1 text run 1 at (110.00,20.00) startOffset 0 endOffset 19 width 107.00: "Visibility: visible"
+    RenderSVGText {text} at (340,20) size 109x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-14) size 109x18
+        chunk 1 text run 1 at (340.00,20.00) startOffset 0 endOffset 18 width 109.00: "Visibility: hidden"
+    RenderSVGContainer {g} at (0,20) size 730x576
+      RenderPath {rect} at (680,20) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M680.00,20.00 L730.00,20.00 L730.00,70.00 L680.00,70.00 Z"]
+      RenderSVGText {text} at (685,40) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (85.00,40.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (85,60) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (685.00,40.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (685,60) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (85.00,60.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (0,130) size 88x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (685.00,60.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (0,60) size 27x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 27x18
+          chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 4 width 27.00: "auto"
+      RenderPath {rect} at (100,30) size 50x50 [data="M100.00,30.00 L150.00,30.00 L150.00,80.00 L100.00,80.00 Z"]
+      RenderSVGText {text} at (105,50) size 28x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 28x18
+          chunk 1 text run 1 at (105.00,50.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (105,70) size 28x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 28x18
+          chunk 1 text run 1 at (105.00,70.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (154,27) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,30.00 L207.00,30.00 L207.00,80.00 L157.00,80.00 Z"]
+      RenderSVGText {text} at (162,50) size 27x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 27x18
+          chunk 1 text run 1 at (162.00,50.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (162,70) size 27x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 27x18
+          chunk 1 text run 1 at (162.00,70.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (214,30) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,30.00 L264.00,30.00 L264.00,80.00 L214.00,80.00 Z"]
+      RenderSVGText {text} at (219,50) size 27x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 27x18
+          chunk 1 text run 1 at (219.00,50.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (219,70) size 27x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 27x18
+          chunk 1 text run 1 at (219.00,70.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (268,27) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,30.00 L321.00,30.00 L321.00,80.00 L271.00,80.00 Z"]
+      RenderSVGText {text} at (276,50) size 27x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 27x18
+          chunk 1 text run 1 at (276.00,50.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (276,70) size 27x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 27x18
+          chunk 1 text run 1 at (276.00,70.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (328,30) size 50x50 [data="M328.00,30.00 L378.00,30.00 L378.00,80.00 L328.00,80.00 Z"]
+      RenderSVGText {text} at (333,50) size 28x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 28x18
+          chunk 1 text run 1 at (333.00,50.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (333,70) size 28x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 28x18
+          chunk 1 text run 1 at (333.00,70.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (382,27) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,30.00 L435.00,30.00 L435.00,80.00 L385.00,80.00 Z"]
+      RenderSVGText {text} at (390,50) size 28x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 28x18
+          chunk 1 text run 1 at (390.00,50.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (390,70) size 28x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 28x18
+          chunk 1 text run 1 at (390.00,70.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (442,30) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,30.00 L492.00,30.00 L492.00,80.00 L442.00,80.00 Z"]
+      RenderSVGText {text} at (447,50) size 28x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 28x18
+          chunk 1 text run 1 at (447.00,50.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (447,70) size 28x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 28x18
+          chunk 1 text run 1 at (447.00,70.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (496,27) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,30.00 L549.00,30.00 L549.00,80.00 L499.00,80.00 Z"]
+      RenderSVGText {text} at (504,50) size 28x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 28x18
+          chunk 1 text run 1 at (504.00,50.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (504,70) size 28x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 28x18
+          chunk 1 text run 1 at (504.00,70.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (0,117) size 88x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 88x18
-          chunk 1 text run 1 at (0.00,130.00) startOffset 0 endOffset 14 width 88.00: "visiblePainted"
-      RenderPath {rect} at (100,100) size 50x50 [data="M100.00,100.00 L150.00,100.00 L150.00,150.00 L100.00,150.00 Z"]
-      RenderSVGText {text} at (105,120) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (0.00,117.00) startOffset 0 endOffset 14 width 88.00: "visiblePainted"
+      RenderPath {rect} at (100,87) size 50x50 [data="M100.00,87.00 L150.00,87.00 L150.00,137.00 L100.00,137.00 Z"]
+      RenderSVGText {text} at (105,107) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (105.00,120.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (105,140) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,107.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (105,127) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (105.00,140.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (154,97) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,100.00 L207.00,100.00 L207.00,150.00 L157.00,150.00 Z"]
-      RenderSVGText {text} at (162,120) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,127.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (154,84) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,87.00 L207.00,87.00 L207.00,137.00 L157.00,137.00 Z"]
+      RenderSVGText {text} at (162,107) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,120.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (162,140) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,107.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (162,127) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,140.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (214,100) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,100.00 L264.00,100.00 L264.00,150.00 L214.00,150.00 Z"]
-      RenderSVGText {text} at (219,120) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,127.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (214,87) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,87.00 L264.00,87.00 L264.00,137.00 L214.00,137.00 Z"]
+      RenderSVGText {text} at (219,107) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,120.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (219,140) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,107.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (219,127) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,140.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (268,97) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,100.00 L321.00,100.00 L321.00,150.00 L271.00,150.00 Z"]
-      RenderSVGText {text} at (276,120) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,127.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (268,84) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,87.00 L321.00,87.00 L321.00,137.00 L271.00,137.00 Z"]
+      RenderSVGText {text} at (276,107) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,120.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (276,140) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,107.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (276,127) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,140.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (328,100) size 50x50 [data="M328.00,100.00 L378.00,100.00 L378.00,150.00 L328.00,150.00 Z"]
-      RenderSVGText {text} at (333,120) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,127.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (328,87) size 50x50 [data="M328.00,87.00 L378.00,87.00 L378.00,137.00 L328.00,137.00 Z"]
+      RenderSVGText {text} at (333,107) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,120.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (333,140) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,107.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (333,127) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,140.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (382,97) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,100.00 L435.00,100.00 L435.00,150.00 L385.00,150.00 Z"]
-      RenderSVGText {text} at (390,120) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,127.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (382,84) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,87.00 L435.00,87.00 L435.00,137.00 L385.00,137.00 Z"]
+      RenderSVGText {text} at (390,107) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (390.00,120.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (390,140) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,107.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (390,127) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (390.00,140.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (442,100) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,100.00 L492.00,100.00 L492.00,150.00 L442.00,150.00 Z"]
-      RenderSVGText {text} at (447,120) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,127.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (442,87) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,87.00 L492.00,87.00 L492.00,137.00 L442.00,137.00 Z"]
+      RenderSVGText {text} at (447,107) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (447.00,120.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (447,140) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,107.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (447,127) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (447.00,140.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (496,97) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,100.00 L549.00,100.00 L549.00,150.00 L499.00,150.00 Z"]
-      RenderSVGText {text} at (504,120) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,127.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (496,84) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,87.00 L549.00,87.00 L549.00,137.00 L499.00,137.00 Z"]
+      RenderSVGText {text} at (504,107) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (504.00,120.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (504,140) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,107.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (504,127) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (504.00,140.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (0,187) size 62x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,127.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (0,174) size 62x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 62x18
-          chunk 1 text run 1 at (0.00,187.00) startOffset 0 endOffset 11 width 62.00: "visibleFill"
-      RenderPath {rect} at (100,157) size 50x50 [data="M100.00,157.00 L150.00,157.00 L150.00,207.00 L100.00,207.00 Z"]
-      RenderSVGText {text} at (105,177) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (0.00,174.00) startOffset 0 endOffset 11 width 62.00: "visibleFill"
+      RenderPath {rect} at (100,144) size 50x50 [data="M100.00,144.00 L150.00,144.00 L150.00,194.00 L100.00,194.00 Z"]
+      RenderSVGText {text} at (105,164) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,177.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (105,197) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,164.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (105,184) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,197.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (154,154) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,157.00 L207.00,157.00 L207.00,207.00 L157.00,207.00 Z"]
-      RenderSVGText {text} at (162,177) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,184.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (154,141) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,144.00 L207.00,144.00 L207.00,194.00 L157.00,194.00 Z"]
+      RenderSVGText {text} at (162,164) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,177.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (162,197) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,164.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (162,184) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,197.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (214,157) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,157.00 L264.00,157.00 L264.00,207.00 L214.00,207.00 Z"]
-      RenderSVGText {text} at (219,177) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,184.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (214,144) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,144.00 L264.00,144.00 L264.00,194.00 L214.00,194.00 Z"]
+      RenderSVGText {text} at (219,164) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,177.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (219,197) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,164.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (219,184) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,197.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (268,154) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,157.00 L321.00,157.00 L321.00,207.00 L271.00,207.00 Z"]
-      RenderSVGText {text} at (276,177) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,184.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (268,141) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,144.00 L321.00,144.00 L321.00,194.00 L271.00,194.00 Z"]
+      RenderSVGText {text} at (276,164) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,177.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (276,197) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,164.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (276,184) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,197.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (328,157) size 50x50 [data="M328.00,157.00 L378.00,157.00 L378.00,207.00 L328.00,207.00 Z"]
-      RenderSVGText {text} at (333,177) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,184.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (328,144) size 50x50 [data="M328.00,144.00 L378.00,144.00 L378.00,194.00 L328.00,194.00 Z"]
+      RenderSVGText {text} at (333,164) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,177.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (333,197) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,164.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (333,184) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,197.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (382,154) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,157.00 L435.00,157.00 L435.00,207.00 L385.00,207.00 Z"]
-      RenderSVGText {text} at (390,177) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,184.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (382,141) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,144.00 L435.00,144.00 L435.00,194.00 L385.00,194.00 Z"]
+      RenderSVGText {text} at (390,164) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (390.00,177.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (390,197) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,164.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (390,184) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (390.00,197.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (442,157) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,157.00 L492.00,157.00 L492.00,207.00 L442.00,207.00 Z"]
-      RenderSVGText {text} at (447,177) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,184.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (442,144) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,144.00 L492.00,144.00 L492.00,194.00 L442.00,194.00 Z"]
+      RenderSVGText {text} at (447,164) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (447.00,177.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (447,197) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,164.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (447,184) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (447.00,197.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (496,154) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,157.00 L549.00,157.00 L549.00,207.00 L499.00,207.00 Z"]
-      RenderSVGText {text} at (504,177) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,184.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (496,141) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,144.00 L549.00,144.00 L549.00,194.00 L499.00,194.00 Z"]
+      RenderSVGText {text} at (504,164) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (504.00,177.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (504,197) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,164.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (504,184) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (504.00,197.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (0,244) size 82x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,184.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (0,231) size 82x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 82x18
-          chunk 1 text run 1 at (0.00,244.00) startOffset 0 endOffset 13 width 82.00: "visibleStroke"
-      RenderPath {rect} at (100,214) size 50x50 [data="M100.00,214.00 L150.00,214.00 L150.00,264.00 L100.00,264.00 Z"]
-      RenderSVGText {text} at (105,234) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (0.00,231.00) startOffset 0 endOffset 13 width 82.00: "visibleStroke"
+      RenderPath {rect} at (100,201) size 50x50 [data="M100.00,201.00 L150.00,201.00 L150.00,251.00 L100.00,251.00 Z"]
+      RenderSVGText {text} at (105,221) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,234.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (105,254) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,221.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (105,241) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,254.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (154,211) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,214.00 L207.00,214.00 L207.00,264.00 L157.00,264.00 Z"]
-      RenderSVGText {text} at (162,234) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,241.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (154,198) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,201.00 L207.00,201.00 L207.00,251.00 L157.00,251.00 Z"]
+      RenderSVGText {text} at (162,221) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,234.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (162,254) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,221.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (162,241) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,254.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (214,214) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,214.00 L264.00,214.00 L264.00,264.00 L214.00,264.00 Z"]
-      RenderSVGText {text} at (219,234) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,241.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (214,201) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,201.00 L264.00,201.00 L264.00,251.00 L214.00,251.00 Z"]
+      RenderSVGText {text} at (219,221) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,234.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (219,254) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,221.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (219,241) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,254.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (268,211) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,214.00 L321.00,214.00 L321.00,264.00 L271.00,264.00 Z"]
-      RenderSVGText {text} at (276,234) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,241.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (268,198) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,201.00 L321.00,201.00 L321.00,251.00 L271.00,251.00 Z"]
+      RenderSVGText {text} at (276,221) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,234.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (276,254) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,221.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (276,241) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,254.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (328,214) size 50x50 [data="M328.00,214.00 L378.00,214.00 L378.00,264.00 L328.00,264.00 Z"]
-      RenderSVGText {text} at (333,234) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,241.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (328,201) size 50x50 [data="M328.00,201.00 L378.00,201.00 L378.00,251.00 L328.00,251.00 Z"]
+      RenderSVGText {text} at (333,221) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,234.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (333,254) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,221.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (333,241) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,254.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (382,211) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,214.00 L435.00,214.00 L435.00,264.00 L385.00,264.00 Z"]
-      RenderSVGText {text} at (390,234) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,241.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (382,198) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,201.00 L435.00,201.00 L435.00,251.00 L385.00,251.00 Z"]
+      RenderSVGText {text} at (390,221) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (390.00,234.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (390,254) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,221.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (390,241) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (390.00,254.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (442,214) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,214.00 L492.00,214.00 L492.00,264.00 L442.00,264.00 Z"]
-      RenderSVGText {text} at (447,234) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,241.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (442,201) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,201.00 L492.00,201.00 L492.00,251.00 L442.00,251.00 Z"]
+      RenderSVGText {text} at (447,221) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (447.00,234.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (447,254) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,221.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (447,241) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (447.00,254.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (496,211) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,214.00 L549.00,214.00 L549.00,264.00 L499.00,264.00 Z"]
-      RenderSVGText {text} at (504,234) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,241.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (496,198) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,201.00 L549.00,201.00 L549.00,251.00 L499.00,251.00 Z"]
+      RenderSVGText {text} at (504,221) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (504.00,234.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (504,254) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,221.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (504,241) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (504.00,254.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (0,301) size 41x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,241.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (0,288) size 41x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 41x18
-          chunk 1 text run 1 at (0.00,301.00) startOffset 0 endOffset 7 width 41.00: "visible"
-      RenderPath {rect} at (100,271) size 50x50 [data="M100.00,271.00 L150.00,271.00 L150.00,321.00 L100.00,321.00 Z"]
-      RenderSVGText {text} at (105,291) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (0.00,288.00) startOffset 0 endOffset 7 width 41.00: "visible"
+      RenderPath {rect} at (100,258) size 50x50 [data="M100.00,258.00 L150.00,258.00 L150.00,308.00 L100.00,308.00 Z"]
+      RenderSVGText {text} at (105,278) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,291.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (105,311) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,278.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (105,298) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,311.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (154,268) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,271.00 L207.00,271.00 L207.00,321.00 L157.00,321.00 Z"]
-      RenderSVGText {text} at (162,291) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,298.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (154,255) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,258.00 L207.00,258.00 L207.00,308.00 L157.00,308.00 Z"]
+      RenderSVGText {text} at (162,278) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,291.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (162,311) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,278.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (162,298) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,311.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (214,271) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,271.00 L264.00,271.00 L264.00,321.00 L214.00,321.00 Z"]
-      RenderSVGText {text} at (219,291) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,298.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (214,258) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,258.00 L264.00,258.00 L264.00,308.00 L214.00,308.00 Z"]
+      RenderSVGText {text} at (219,278) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,291.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (219,311) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,278.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (219,298) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,311.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (268,268) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,271.00 L321.00,271.00 L321.00,321.00 L271.00,321.00 Z"]
-      RenderSVGText {text} at (276,291) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,298.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (268,255) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,258.00 L321.00,258.00 L321.00,308.00 L271.00,308.00 Z"]
+      RenderSVGText {text} at (276,278) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,291.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (276,311) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,278.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (276,298) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,311.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (328,271) size 50x50 [data="M328.00,271.00 L378.00,271.00 L378.00,321.00 L328.00,321.00 Z"]
-      RenderSVGText {text} at (333,291) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,298.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (328,258) size 50x50 [data="M328.00,258.00 L378.00,258.00 L378.00,308.00 L328.00,308.00 Z"]
+      RenderSVGText {text} at (333,278) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,291.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (333,311) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,278.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (333,298) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,311.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (382,268) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,271.00 L435.00,271.00 L435.00,321.00 L385.00,321.00 Z"]
-      RenderSVGText {text} at (390,291) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,298.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (382,255) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,258.00 L435.00,258.00 L435.00,308.00 L385.00,308.00 Z"]
+      RenderSVGText {text} at (390,278) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (390.00,291.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (390,311) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,278.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (390,298) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (390.00,311.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (442,271) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,271.00 L492.00,271.00 L492.00,321.00 L442.00,321.00 Z"]
-      RenderSVGText {text} at (447,291) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,298.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (442,258) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,258.00 L492.00,258.00 L492.00,308.00 L442.00,308.00 Z"]
+      RenderSVGText {text} at (447,278) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (447.00,291.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (447,311) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,278.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (447,298) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (447.00,311.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (496,268) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,271.00 L549.00,271.00 L549.00,321.00 L499.00,321.00 Z"]
-      RenderSVGText {text} at (504,291) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,298.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (496,255) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,258.00 L549.00,258.00 L549.00,308.00 L499.00,308.00 Z"]
+      RenderSVGText {text} at (504,278) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (504.00,291.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (504,311) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,278.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (504,298) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (504.00,311.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (0,358) size 46x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,298.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (0,345) size 46x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 46x18
-          chunk 1 text run 1 at (0.00,358.00) startOffset 0 endOffset 7 width 46.00: "painted"
-      RenderPath {rect} at (100,328) size 50x50 [data="M100.00,328.00 L150.00,328.00 L150.00,378.00 L100.00,378.00 Z"]
-      RenderSVGText {text} at (105,348) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (0.00,345.00) startOffset 0 endOffset 7 width 46.00: "painted"
+      RenderPath {rect} at (100,315) size 50x50 [data="M100.00,315.00 L150.00,315.00 L150.00,365.00 L100.00,365.00 Z"]
+      RenderSVGText {text} at (105,335) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (105.00,348.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (105,368) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,335.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (105,355) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (105.00,368.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (154,325) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,328.00 L207.00,328.00 L207.00,378.00 L157.00,378.00 Z"]
-      RenderSVGText {text} at (162,348) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,355.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (154,312) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,315.00 L207.00,315.00 L207.00,365.00 L157.00,365.00 Z"]
+      RenderSVGText {text} at (162,335) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,348.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (162,368) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,335.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (162,355) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,368.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (214,328) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,328.00 L264.00,328.00 L264.00,378.00 L214.00,378.00 Z"]
-      RenderSVGText {text} at (219,348) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,355.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (214,315) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,315.00 L264.00,315.00 L264.00,365.00 L214.00,365.00 Z"]
+      RenderSVGText {text} at (219,335) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,348.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (219,368) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,335.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (219,355) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,368.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (268,325) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,328.00 L321.00,328.00 L321.00,378.00 L271.00,378.00 Z"]
-      RenderSVGText {text} at (276,348) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,355.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (268,312) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,315.00 L321.00,315.00 L321.00,365.00 L271.00,365.00 Z"]
+      RenderSVGText {text} at (276,335) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,348.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (276,368) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,335.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (276,355) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,368.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (328,328) size 50x50 [data="M328.00,328.00 L378.00,328.00 L378.00,378.00 L328.00,378.00 Z"]
-      RenderSVGText {text} at (333,348) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,355.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (328,315) size 50x50 [data="M328.00,315.00 L378.00,315.00 L378.00,365.00 L328.00,365.00 Z"]
+      RenderSVGText {text} at (333,335) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,348.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (333,368) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,335.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (333,355) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,368.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (382,325) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,328.00 L435.00,328.00 L435.00,378.00 L385.00,378.00 Z"]
-      RenderSVGText {text} at (390,348) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,355.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (382,312) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,315.00 L435.00,315.00 L435.00,365.00 L385.00,365.00 Z"]
+      RenderSVGText {text} at (390,335) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (390.00,348.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (390,368) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,335.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (390,355) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (390.00,368.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (442,328) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,328.00 L492.00,328.00 L492.00,378.00 L442.00,378.00 Z"]
-      RenderSVGText {text} at (447,348) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,355.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (442,315) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,315.00 L492.00,315.00 L492.00,365.00 L442.00,365.00 Z"]
+      RenderSVGText {text} at (447,335) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (447.00,348.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (447,368) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,335.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (447,355) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (447.00,368.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (496,325) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,328.00 L549.00,328.00 L549.00,378.00 L499.00,378.00 Z"]
-      RenderSVGText {text} at (504,348) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,355.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (496,312) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,315.00 L549.00,315.00 L549.00,365.00 L499.00,365.00 Z"]
+      RenderSVGText {text} at (504,335) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (504.00,348.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (504,368) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,335.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (504,355) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (504.00,368.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (0,415) size 17x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,355.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (0,402) size 17x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 17x18
-          chunk 1 text run 1 at (0.00,415.00) startOffset 0 endOffset 4 width 17.00: "fill"
-      RenderPath {rect} at (100,385) size 50x50 [data="M100.00,385.00 L150.00,385.00 L150.00,435.00 L100.00,435.00 Z"]
-      RenderSVGText {text} at (105,405) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (0.00,402.00) startOffset 0 endOffset 4 width 17.00: "fill"
+      RenderPath {rect} at (100,372) size 50x50 [data="M100.00,372.00 L150.00,372.00 L150.00,422.00 L100.00,422.00 Z"]
+      RenderSVGText {text} at (105,392) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,405.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (105,425) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,392.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (105,412) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,425.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (154,382) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,385.00 L207.00,385.00 L207.00,435.00 L157.00,435.00 Z"]
-      RenderSVGText {text} at (162,405) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,412.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (154,369) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,372.00 L207.00,372.00 L207.00,422.00 L157.00,422.00 Z"]
+      RenderSVGText {text} at (162,392) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,405.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (162,425) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,392.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (162,412) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,425.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (214,385) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,385.00 L264.00,385.00 L264.00,435.00 L214.00,435.00 Z"]
-      RenderSVGText {text} at (219,405) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,412.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (214,372) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,372.00 L264.00,372.00 L264.00,422.00 L214.00,422.00 Z"]
+      RenderSVGText {text} at (219,392) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,405.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (219,425) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,392.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (219,412) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,425.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (268,382) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,385.00 L321.00,385.00 L321.00,435.00 L271.00,435.00 Z"]
-      RenderSVGText {text} at (276,405) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,412.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (268,369) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,372.00 L321.00,372.00 L321.00,422.00 L271.00,422.00 Z"]
+      RenderSVGText {text} at (276,392) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,405.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (276,425) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,392.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (276,412) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,425.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (328,385) size 50x50 [data="M328.00,385.00 L378.00,385.00 L378.00,435.00 L328.00,435.00 Z"]
-      RenderSVGText {text} at (333,405) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,412.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (328,372) size 50x50 [data="M328.00,372.00 L378.00,372.00 L378.00,422.00 L328.00,422.00 Z"]
+      RenderSVGText {text} at (333,392) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (333.00,405.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (333,425) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,392.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (333,412) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (333.00,425.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (382,382) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,385.00 L435.00,385.00 L435.00,435.00 L385.00,435.00 Z"]
-      RenderSVGText {text} at (390,405) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,412.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (382,369) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,372.00 L435.00,372.00 L435.00,422.00 L385.00,422.00 Z"]
+      RenderSVGText {text} at (390,392) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (390.00,405.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (390,425) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,392.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (390,412) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (390.00,425.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (442,385) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,385.00 L492.00,385.00 L492.00,435.00 L442.00,435.00 Z"]
-      RenderSVGText {text} at (447,405) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,412.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (442,372) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,372.00 L492.00,372.00 L492.00,422.00 L442.00,422.00 Z"]
+      RenderSVGText {text} at (447,392) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (447.00,405.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (447,425) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,392.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (447,412) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (447.00,425.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (496,382) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,385.00 L549.00,385.00 L549.00,435.00 L499.00,435.00 Z"]
-      RenderSVGText {text} at (504,405) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,412.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (496,369) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,372.00 L549.00,372.00 L549.00,422.00 L499.00,422.00 Z"]
+      RenderSVGText {text} at (504,392) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (504.00,405.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (504,425) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,392.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (504,412) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (504.00,425.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (0,472) size 38x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,412.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (0,459) size 38x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 38x18
-          chunk 1 text run 1 at (0.00,472.00) startOffset 0 endOffset 6 width 38.00: "stroke"
-      RenderPath {rect} at (100,442) size 50x50 [data="M100.00,442.00 L150.00,442.00 L150.00,492.00 L100.00,492.00 Z"]
-      RenderSVGText {text} at (105,462) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (0.00,459.00) startOffset 0 endOffset 6 width 38.00: "stroke"
+      RenderPath {rect} at (100,429) size 50x50 [data="M100.00,429.00 L150.00,429.00 L150.00,479.00 L100.00,479.00 Z"]
+      RenderSVGText {text} at (105,449) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,462.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (105,482) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,449.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (105,469) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,482.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (154,439) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,442.00 L207.00,442.00 L207.00,492.00 L157.00,492.00 Z"]
-      RenderSVGText {text} at (162,462) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,469.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (154,426) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,429.00 L207.00,429.00 L207.00,479.00 L157.00,479.00 Z"]
+      RenderSVGText {text} at (162,449) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,462.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (162,482) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,449.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (162,469) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,482.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (214,442) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,442.00 L264.00,442.00 L264.00,492.00 L214.00,492.00 Z"]
-      RenderSVGText {text} at (219,462) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,469.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (214,429) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,429.00 L264.00,429.00 L264.00,479.00 L214.00,479.00 Z"]
+      RenderSVGText {text} at (219,449) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,462.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (219,482) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,449.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (219,469) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,482.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (268,439) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,442.00 L321.00,442.00 L321.00,492.00 L271.00,492.00 Z"]
-      RenderSVGText {text} at (276,462) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,469.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (268,426) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,429.00 L321.00,429.00 L321.00,479.00 L271.00,479.00 Z"]
+      RenderSVGText {text} at (276,449) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,462.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (276,482) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,449.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (276,469) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,482.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (328,442) size 50x50 [data="M328.00,442.00 L378.00,442.00 L378.00,492.00 L328.00,492.00 Z"]
-      RenderSVGText {text} at (333,462) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,469.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (328,429) size 50x50 [data="M328.00,429.00 L378.00,429.00 L378.00,479.00 L328.00,479.00 Z"]
+      RenderSVGText {text} at (333,449) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (333.00,462.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (333,482) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,449.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (333,469) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (333.00,482.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (382,439) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,442.00 L435.00,442.00 L435.00,492.00 L385.00,492.00 Z"]
-      RenderSVGText {text} at (390,462) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,469.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (382,426) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,429.00 L435.00,429.00 L435.00,479.00 L385.00,479.00 Z"]
+      RenderSVGText {text} at (390,449) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (390.00,462.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (390,482) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,449.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (390,469) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (390.00,482.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (442,442) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,442.00 L492.00,442.00 L492.00,492.00 L442.00,492.00 Z"]
-      RenderSVGText {text} at (447,462) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,469.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (442,429) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,429.00 L492.00,429.00 L492.00,479.00 L442.00,479.00 Z"]
+      RenderSVGText {text} at (447,449) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (447.00,462.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (447,482) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,449.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (447,469) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (447.00,482.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (496,439) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,442.00 L549.00,442.00 L549.00,492.00 L499.00,492.00 Z"]
-      RenderSVGText {text} at (504,462) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,469.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (496,426) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,429.00 L549.00,429.00 L549.00,479.00 L499.00,479.00 Z"]
+      RenderSVGText {text} at (504,449) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (504.00,462.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (504,482) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,449.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (504,469) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (504.00,482.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (0,529) size 15x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,469.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (0,516) size 15x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 15x18
-          chunk 1 text run 1 at (0.00,529.00) startOffset 0 endOffset 3 width 15.00: "all"
-      RenderPath {rect} at (100,499) size 50x50 [data="M100.00,499.00 L150.00,499.00 L150.00,549.00 L100.00,549.00 Z"]
-      RenderSVGText {text} at (105,519) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (0.00,516.00) startOffset 0 endOffset 3 width 15.00: "all"
+      RenderPath {rect} at (100,486) size 50x50 [data="M100.00,486.00 L150.00,486.00 L150.00,536.00 L100.00,536.00 Z"]
+      RenderSVGText {text} at (105,506) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,519.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (105,539) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,506.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (105,526) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (105.00,539.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (154,496) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,499.00 L207.00,499.00 L207.00,549.00 L157.00,549.00 Z"]
-      RenderSVGText {text} at (162,519) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,526.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (154,483) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,486.00 L207.00,486.00 L207.00,536.00 L157.00,536.00 Z"]
+      RenderSVGText {text} at (162,506) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,519.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (162,539) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,506.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (162,526) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (162.00,539.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (214,499) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,499.00 L264.00,499.00 L264.00,549.00 L214.00,549.00 Z"]
-      RenderSVGText {text} at (219,519) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,526.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (214,486) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,486.00 L264.00,486.00 L264.00,536.00 L214.00,536.00 Z"]
+      RenderSVGText {text} at (219,506) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,519.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (219,539) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,506.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (219,526) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (219.00,539.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (268,496) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,499.00 L321.00,499.00 L321.00,549.00 L271.00,549.00 Z"]
-      RenderSVGText {text} at (276,519) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,526.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (268,483) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,486.00 L321.00,486.00 L321.00,536.00 L271.00,536.00 Z"]
+      RenderSVGText {text} at (276,506) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,519.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (276,539) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,506.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (276,526) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (276.00,539.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (328,499) size 50x50 [data="M328.00,499.00 L378.00,499.00 L378.00,549.00 L328.00,549.00 Z"]
-      RenderSVGText {text} at (333,519) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,526.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (328,486) size 50x50 [data="M328.00,486.00 L378.00,486.00 L378.00,536.00 L328.00,536.00 Z"]
+      RenderSVGText {text} at (333,506) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (333.00,519.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (333,539) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,506.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (333,526) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (333.00,539.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (382,496) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,499.00 L435.00,499.00 L435.00,549.00 L385.00,549.00 Z"]
-      RenderSVGText {text} at (390,519) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,526.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (382,483) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,486.00 L435.00,486.00 L435.00,536.00 L385.00,536.00 Z"]
+      RenderSVGText {text} at (390,506) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (390.00,519.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (390,539) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,506.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (390,526) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (390.00,539.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (442,499) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,499.00 L492.00,499.00 L492.00,549.00 L442.00,549.00 Z"]
-      RenderSVGText {text} at (447,519) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,526.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (442,486) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,486.00 L492.00,486.00 L492.00,536.00 L442.00,536.00 Z"]
+      RenderSVGText {text} at (447,506) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (447.00,519.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (447,539) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,506.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (447,526) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (447.00,539.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderPath {rect} at (496,496) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,499.00 L549.00,499.00 L549.00,549.00 L499.00,549.00 Z"]
-      RenderSVGText {text} at (504,519) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,526.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderPath {rect} at (496,483) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,486.00 L549.00,486.00 L549.00,536.00 L499.00,536.00 Z"]
+      RenderSVGText {text} at (504,506) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (504.00,519.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (504,539) size 27x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,506.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (504,526) size 27x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 27x18
-          chunk 1 text run 1 at (504.00,539.00) startOffset 0 endOffset 3 width 27.00: "HIT"
-      RenderSVGText {text} at (0,586) size 31x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,526.00) startOffset 0 endOffset 3 width 27.00: "HIT"
+      RenderSVGText {text} at (0,573) size 31x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 31x18
-          chunk 1 text run 1 at (0.00,586.00) startOffset 0 endOffset 4 width 31.00: "none"
-      RenderPath {rect} at (100,556) size 50x50 [data="M100.00,556.00 L150.00,556.00 L150.00,606.00 L100.00,606.00 Z"]
-      RenderSVGText {text} at (105,576) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (0.00,573.00) startOffset 0 endOffset 4 width 31.00: "none"
+      RenderPath {rect} at (100,543) size 50x50 [data="M100.00,543.00 L150.00,543.00 L150.00,593.00 L100.00,593.00 Z"]
+      RenderSVGText {text} at (105,563) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (105.00,576.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (105,596) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,563.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (105,583) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (105.00,596.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (154,553) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,556.00 L207.00,556.00 L207.00,606.00 L157.00,606.00 Z"]
-      RenderSVGText {text} at (162,576) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (105.00,583.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (154,540) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M157.00,543.00 L207.00,543.00 L207.00,593.00 L157.00,593.00 Z"]
+      RenderSVGText {text} at (162,563) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (162.00,576.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (162,596) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,563.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (162,583) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (162.00,596.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (214,556) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,556.00 L264.00,556.00 L264.00,606.00 L214.00,606.00 Z"]
-      RenderSVGText {text} at (219,576) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (162.00,583.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (214,543) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M214.00,543.00 L264.00,543.00 L264.00,593.00 L214.00,593.00 Z"]
+      RenderSVGText {text} at (219,563) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (219.00,576.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (219,596) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,563.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (219,583) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (219.00,596.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (268,553) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,556.00 L321.00,556.00 L321.00,606.00 L271.00,606.00 Z"]
-      RenderSVGText {text} at (276,576) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (219.00,583.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (268,540) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M271.00,543.00 L321.00,543.00 L321.00,593.00 L271.00,593.00 Z"]
+      RenderSVGText {text} at (276,563) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (276.00,576.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (276,596) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,563.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (276,583) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (276.00,596.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (328,556) size 50x50 [data="M328.00,556.00 L378.00,556.00 L378.00,606.00 L328.00,606.00 Z"]
-      RenderSVGText {text} at (333,576) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (276.00,583.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (328,543) size 50x50 [data="M328.00,543.00 L378.00,543.00 L378.00,593.00 L328.00,593.00 Z"]
+      RenderSVGText {text} at (333,563) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,576.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (333,596) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,563.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (333,583) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (333.00,596.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (382,553) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,556.00 L435.00,556.00 L435.00,606.00 L385.00,606.00 Z"]
-      RenderSVGText {text} at (390,576) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (333.00,583.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (382,540) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [data="M385.00,543.00 L435.00,543.00 L435.00,593.00 L385.00,593.00 Z"]
+      RenderSVGText {text} at (390,563) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (390.00,576.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (390,596) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,563.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (390,583) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (390.00,596.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (442,556) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,556.00 L492.00,556.00 L492.00,606.00 L442.00,606.00 Z"]
-      RenderSVGText {text} at (447,576) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (390.00,583.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (442,543) size 50x50 [fill={[type=SOLID] [color=#FFA500]}] [data="M442.00,543.00 L492.00,543.00 L492.00,593.00 L442.00,593.00 Z"]
+      RenderSVGText {text} at (447,563) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (447.00,576.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (447,596) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,563.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (447,583) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (447.00,596.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderPath {rect} at (496,553) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,556.00 L549.00,556.00 L549.00,606.00 L499.00,606.00 Z"]
-      RenderSVGText {text} at (504,576) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (447.00,583.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderPath {rect} at (496,540) size 56x56 [stroke={[type=SOLID] [color=#0000FF] [stroke width=6.00]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M499.00,543.00 L549.00,543.00 L549.00,593.00 L499.00,593.00 Z"]
+      RenderSVGText {text} at (504,563) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (504.00,576.00) startOffset 0 endOffset 4 width 28.00: "miss"
-      RenderSVGText {text} at (504,596) size 28x18 contains 1 chunk(s)
+          chunk 1 text run 1 at (504.00,563.00) startOffset 0 endOffset 4 width 28.00: "miss"
+      RenderSVGText {text} at (504,583) size 28x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 28x18
-          chunk 1 text run 1 at (504.00,596.00) startOffset 0 endOffset 4 width 28.00: "miss"
-caret: position 19 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
+          chunk 1 text run 1 at (504.00,583.00) startOffset 0 endOffset 4 width 28.00: "miss"
+caret: position 11 of child 0 {#text} of child 9 {text} of child 0 {svg} of document

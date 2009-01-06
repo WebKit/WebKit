@@ -74,7 +74,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         }
     }
 
-    if (object()->style()->visibility() == VISIBLE && IntRect(tx, ty, m_width, m_height).contains(x, y)) {
+    if (visibleToHitTesting() && IntRect(tx, ty, m_width, m_height).contains(x, y)) {
         object()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
         return true;
     }

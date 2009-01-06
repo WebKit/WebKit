@@ -225,7 +225,7 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, in
         return false;
 
     IntRect rect(tx + m_x, ty + m_y, m_width, m_height);
-    if (m_truncation != cFullTruncation && object()->style()->visibility() == VISIBLE && rect.contains(x, y)) {
+    if (m_truncation != cFullTruncation && visibleToHitTesting() && rect.contains(x, y)) {
         object()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
         return true;
     }

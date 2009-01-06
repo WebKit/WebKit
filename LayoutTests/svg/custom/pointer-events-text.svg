@@ -10,10 +10,10 @@
     var fillValues = ['none', 'orange' ];
     var strokeValues = ['none', 'blue' ];
   
-    var pointerEventsValues = ['visiblePainted', 'visibleFill', 'visibleStroke', 'visible', 'painted', 'fill', 'stroke', 'all', 'none'];
+    var pointerEventsValues = ['auto', 'visiblePainted', 'visibleFill', 'visibleStroke', 'visible', 'painted', 'fill', 'stroke', 'all', 'none'];
   
     var leftEdge = 100;
-    var topEdge = 100;
+    var topEdge = 30;
     
     var rectSpacing = 57;
   
@@ -84,7 +84,7 @@
   ]]>
   </script>
   
-  <text x="110" y="90">Visibility: visible</text>
-  <text x="340" y="90">Visibility: hidden</text>
+  <text x="110" y="20">Visibility: visible</text>
+  <text x="340" y="20">Visibility: hidden</text>
   <g id="test-content"/>
 </svg>

@@ -20,12 +20,11 @@
 */
 
 #include "config.h"
-#if ENABLE(SVG)
 #include "PointerEventsHitRules.h"
 
 namespace WebCore {
 
-PointerEventsHitRules::PointerEventsHitRules(ESVGHitTesting hitTesting, EPointerEvents pointerEvents)
+PointerEventsHitRules::PointerEventsHitRules(EHitTesting hitTesting, EPointerEvents pointerEvents)
     : requireVisible(false)
     , requireFill(false)
     , requireStroke(false)
@@ -36,6 +35,7 @@ PointerEventsHitRules::PointerEventsHitRules(ESVGHitTesting hitTesting, EPointer
         switch (pointerEvents)
         {
             case PE_VISIBLE_PAINTED:
+            case PE_AUTO: // "auto" is like "visiblePainted" when in SVG content
                 requireFill = true;
                 requireStroke = true;
             case PE_VISIBLE:
@@ -72,6 +72,7 @@ PointerEventsHitRules::PointerEventsHitRules(ESVGHitTesting hitTesting, EPointer
         switch (pointerEvents)
         {
             case PE_VISIBLE_PAINTED:
+            case PE_AUTO: // "auto" is like "visiblePainted" when in SVG content
                 requireVisible = true;
                 requireFill = true;
                 requireStroke = true;
@@ -107,4 +108,3 @@ PointerEventsHitRules::PointerEventsHitRules(ESVGHitTesting hitTesting, EPointer
 }
 
 // vim:ts=4:noet
-#endif // ENABLE(SVG)

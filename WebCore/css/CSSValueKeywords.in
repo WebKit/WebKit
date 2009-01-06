@@ -585,3 +585,16 @@ ease-in-out
 # CSS_PROP_ZOOM
 #
 reset
+
+#
+# CSS_PROP_POINTER_EVENTS
+#
+visiblePainted
+visibleFill
+visibleStroke
+#visible
+painted
+fill
+stroke
+#all
+#none

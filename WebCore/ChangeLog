@@ -1,3 +1,83 @@
+2008-01-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Implement 'pointer-events' for HTML content. This involved
+        adding a new value 'auto' which behaves as 'visiblePainted'
+        in SVG content. 
+        
+        Moved the property out of the SVG CSS code and into
+        the general CSS (both parsing and RenderStyle). 
+        
+        Changes to the hit testing functionality of the Render tree,
+        specifically the nodeAtPoint methods. Where they used to 
+        test for visibility, they now use a helper function defined
+        on base classes (RenderObject and InlineBox) that checks both
+        visibility and pointer-events.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=11395
+
+        Tests: fast/events/pointer-events-2.html
+               fast/events/pointer-events.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EPointerEvents):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * manual-tests/pointer-events.html: Added.
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::visibleToHitTesting):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint):
+        * rendering/PointerEventsHitRules.cpp:
+        (WebCore::PointerEventsHitRules::PointerEventsHitRules):
+        * rendering/PointerEventsHitRules.h:
+        (WebCore::PointerEventsHitRules::):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::visibleToHitTesting):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::nodeAtPoint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtPoint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtPoint):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::nodeAtPoint):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler):
+        * rendering/style/RenderStyle.h:
+        (WebCore::):
+        (WebCore::InheritedFlags::setBitDefaults):
+        (WebCore::InheritedFlags::pointerEvents):
+        (WebCore::InheritedFlags::setPointerEvents):
+        (WebCore::InheritedFlags::initialPointerEvents):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::InheritedFlags::operator==):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * css/CSSValueKeywords.in:
+        * css/SVGCSSValueKeywords.in:
+
 2009-01-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

@@ -60,6 +60,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     page-break-after: auto
     page-break-before: auto
     page-break-inside: auto
+    pointer-events: auto
     position: static
     resize: none
     right: auto
@@ -164,7 +165,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     lighting-color: rgb(255, 255, 255)
     stop-color: rgb(0, 0, 0)
     stop-opacity: 1
-    pointer-events: visiblepainted
     color-interpolation: srgb
     color-interpolation-filters: linearrgb
     color-rendering: auto

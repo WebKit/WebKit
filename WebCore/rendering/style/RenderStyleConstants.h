@@ -258,6 +258,11 @@ enum EDisplay {
     TABLE_CAPTION, BOX, INLINE_BOX, NONE
 };
 
+enum EPointerEvents {
+    PE_NONE, PE_AUTO, PE_STROKE, PE_FILL, PE_PAINTED, PE_VISIBLE,
+    PE_VISIBLE_STROKE, PE_VISIBLE_FILL, PE_VISIBLE_PAINTED, PE_ALL
+};
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

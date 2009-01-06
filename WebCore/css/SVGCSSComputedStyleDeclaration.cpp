@@ -70,8 +70,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(int pro
             return CSSPrimitiveValue::create(svgStyle->floodOpacity(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyStopOpacity:
             return CSSPrimitiveValue::create(svgStyle->stopOpacity(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSSPropertyPointerEvents:
-            return CSSPrimitiveValue::create(svgStyle->pointerEvents());
         case CSSPropertyColorInterpolation:
             return CSSPrimitiveValue::create(svgStyle->colorInterpolation());
         case CSSPropertyColorInterpolationFilters:

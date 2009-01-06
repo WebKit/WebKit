@@ -63,7 +63,6 @@ namespace WebCore {
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(WindRule, FillRule, fillRule, RULE_NONZERO)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EImageRendering, ImageRendering, imageRendering, IR_AUTO)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(LineJoin, JoinStyle, joinStyle, MiterJoin)
-        SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EPointerEvents, PointerEvents, pointerEvents, PE_VISIBLE_PAINTED)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EShapeRendering, ShapeRendering, shapeRendering, SR_AUTO)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(ETextAnchor, TextAnchor, textAnchor, TA_START)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(ETextRendering, TextRendering, textRendering, TR_AUTO)
@@ -122,7 +121,6 @@ namespace WebCore {
                        (_textAnchor == other._textAnchor) &&
                        (_colorInterpolation == other._colorInterpolation) &&
                        (_colorInterpolationFilters == other._colorInterpolationFilters) &&
-                       (_pointerEvents == other._pointerEvents) &&
                        (_writingMode == other._writingMode) &&
                        (_glyphOrientationHorizontal == other._glyphOrientationHorizontal) &&
                        (_glyphOrientationVertical == other._glyphOrientationVertical);
@@ -144,7 +142,6 @@ namespace WebCore {
             unsigned _textAnchor : 2; // ETextAnchor
             unsigned _colorInterpolation : 2; // EColorInterpolation
             unsigned _colorInterpolationFilters : 2; // EColorInterpolation
-            unsigned _pointerEvents : 4; // EPointerEvents
             unsigned _writingMode : 3; // EWritingMode
             unsigned _glyphOrientationHorizontal : 3; // EGlyphOrientation
             unsigned _glyphOrientationVertical : 3; // EGlyphOrientation
@@ -199,7 +196,6 @@ namespace WebCore {
             svg_inherited_flags._joinStyle = initialJoinStyle();
             svg_inherited_flags._colorInterpolation = initialColorInterpolation();
             svg_inherited_flags._colorInterpolationFilters = initialColorInterpolationFilters();
-            svg_inherited_flags._pointerEvents = initialPointerEvents();
             svg_inherited_flags._writingMode = initialWritingMode();
             svg_inherited_flags._glyphOrientationHorizontal = initialGlyphOrientationHorizontal();
             svg_inherited_flags._glyphOrientationVertical = initialGlyphOrientationVertical();

@@ -4995,6 +4995,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTransitionTimingFunction:
         HANDLE_TRANSITION_VALUE(timingFunction, TimingFunction, value)
         return;
+    case CSSPropertyPointerEvents:
+    {
+        HANDLE_INHERIT_AND_INITIAL(pointerEvents, PointerEvents)
+        if (!primitiveValue)
+            return;
+        m_style->setPointerEvents(*primitiveValue);
+        return;
+    }
     case CSSPropertyInvalid:
         return;
     case CSSPropertyFontStretch:

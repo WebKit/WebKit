@@ -319,7 +319,7 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
 
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
-    if (style()->visibility() == VISIBLE && action == HitTestForeground && IntRect(tx, ty, m_width, m_height).contains(x, y)) {
+    if (visibleToHitTesting() && action == HitTestForeground && IntRect(tx, ty, m_width, m_height).contains(x, y)) {
         updateHitTestResult(result, IntPoint(x - tx, y - ty));
         return true;
     }

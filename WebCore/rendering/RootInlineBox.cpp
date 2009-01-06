@@ -187,7 +187,7 @@ void RootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 
 bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
 {
-    if (m_hasEllipsisBox && object()->style()->visibility() == VISIBLE) {
+    if (m_hasEllipsisBox && visibleToHitTesting()) {
         if (ellipsisBox()->nodeAtPoint(request, result, x, y, tx, ty)) {
             object()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
             return true;

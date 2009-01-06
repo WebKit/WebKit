@@ -180,15 +180,6 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             svgstyle->setKerning(primitiveValue);
             break;
         }
-        case CSSPropertyPointerEvents:
-        {
-            HANDLE_INHERIT_AND_INITIAL(pointerEvents, PointerEvents)
-            if (!primitiveValue)
-                break;
-            
-            svgstyle->setPointerEvents(*primitiveValue);
-            break;
-        }
         case CSSPropertyDominantBaseline:
         {
             HANDLE_INHERIT_AND_INITIAL(dominantBaseline, DominantBaseline)

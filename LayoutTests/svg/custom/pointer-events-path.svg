@@ -15,10 +15,10 @@
     var fillValues = ['none', 'orange' ];
     var strokeValues = ['none', 'blue' ];
   
-    var pointerEventsValues = ['visiblePainted', 'visibleFill', 'visibleStroke', 'visible', 'painted', 'fill', 'stroke', 'all', 'none'];
+    var pointerEventsValues = ['auto', 'visiblePainted', 'visibleFill', 'visibleStroke', 'visible', 'painted', 'fill', 'stroke', 'all', 'none'];
   
     var leftEdge = 100;
-    var topEdge = 100;
+    var topEdge = 30;
     
     var rectSpacing = 57;
   
@@ -106,17 +106,18 @@
     }
   ]]>
   </script>
+
+  <text x="610" y="18">Example:</text>
   
-  <text x="110" y="90">Visibility: visible</text>
-  <text x="340" y="90">Visibility: hidden</text>
+  <text x="605" y="40">Hit Fill:</text>
+  <text x="605" y="60">Hit Stroke:</text>
   
-  <text x="10" y="18">Example:</text>
+  <text x="110" y="20">Visibility: visible</text>
+  <text x="340" y="20">Visibility: hidden</text>
   
-  <text x="5" y="40">Hit Fill:</text>
-  <text x="5" y="60">Hit Stroke:</text>
   <g id="test-content">
-    <rect x="80" y="20" width="50" height="50" fill="orange" />
-    <text x="85" y="40">HIT</text>
-    <text x="85" y="60">miss</text>
+    <rect x="680" y="20" width="50" height="50" fill="orange" />
+    <text x="685" y="40">HIT</text>
+    <text x="685" y="60">miss</text>
   </g>
 </svg>
