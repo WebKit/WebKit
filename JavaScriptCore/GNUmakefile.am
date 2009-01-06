@@ -428,6 +428,8 @@ javascriptcore_built_nosources += \
 	DerivedSources/Grammar.h
 
 javascriptcore_sources += \
+	JavaScriptCore/runtime/ByteArray.cpp \
+	JavaScriptCore/runtime/ByteArray.h \
 	JavaScriptCore/runtime/JSByteArray.cpp \
 	JavaScriptCore/runtime/JSByteArray.h \
 	JavaScriptCore/AllInOneFile.cpp

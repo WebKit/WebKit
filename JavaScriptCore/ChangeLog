@@ -1,5 +1,11 @@
 2009-01-06  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by NOBODY (Build fix).
+
+        * GNUmakefile.am:Add ByteArray.cpp too
+
+2009-01-06  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by NOBODY (Speculative build fix).
 
         AllInOneFile.cpp does not include the JSByteArray.cpp include it...
