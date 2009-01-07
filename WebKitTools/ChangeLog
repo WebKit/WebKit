@@ -1,3 +1,12 @@
+2009-01-07  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement numberOfActiveAnimations to fix the build
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::numberOfActiveAnimations):
+
 2009-01-07  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.

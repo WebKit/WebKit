@@ -1,3 +1,13 @@
+2009-01-07  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add private API to get the number of active animations of
+        a frame. This is required by the DumpRenderTree utility.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+
 2009-01-05  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix build

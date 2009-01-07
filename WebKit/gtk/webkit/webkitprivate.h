@@ -164,6 +164,9 @@ extern "C" {
     WEBKIT_API bool
     webkit_web_frame_pause_transition(WebKitWebFrame* frame, const gchar* name, double time, const gchar* element);
 
+    WEBKIT_API unsigned int
+    webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame);
+
     WEBKIT_API gchar*
     webkit_web_view_get_selected_text (WebKitWebView* web_view);
 
