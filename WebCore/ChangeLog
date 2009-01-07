@@ -1,3 +1,9 @@
+2009-01-07  Anders Carlsson  <andersca@apple.com>
+
+        Another build fix.
+        
+        * WebCore.LP64.exp:
+
 2008-12-16  David Hyatt  <hyatt@apple.com>
 
         Make Safari RSS behave nicely with full page zoom.  Need to add a new value to enable resetting of zoom
