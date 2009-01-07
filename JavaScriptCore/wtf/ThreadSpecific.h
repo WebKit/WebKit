@@ -97,10 +97,12 @@ template<typename T>
 inline void ThreadSpecific<T>::destroy(void* ptr)
 {
     Data* data = static_cast<Data*>(ptr);
+
+    // We want get() to keep working while data destructor works, because it can be called indirectly by the destructor.
+    // Some pthreads implementations zero out the pointer before calling destroy(), so we temporarily reset it.
+    pthread_setspecific(data->owner->m_key, ptr);
     data->value->~T();
     fastFree(data->value);
-    // Only reset the pointer after value destructor finishes - otherwise, code in destructor could trigger
-    // re-creation of the object.
     pthread_setspecific(data->owner->m_key, 0);
     delete data;
 }
