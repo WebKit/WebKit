@@ -1,3 +1,20 @@
+2009-01-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Upstream 3 more files to get the WebCore-Chromium build a bit further.
+
+        * WebCore.scons:
+        * page/chromium/AccessibilityObjectChromium.cpp: Added.
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
+        * page/chromium/AccessibilityObjectWrapper.h: Added.
+        (WebCore::AccessibilityObjectWrapper::~AccessibilityObjectWrapper):
+        (WebCore::AccessibilityObjectWrapper::attached):
+        (WebCore::AccessibilityObjectWrapper::accessibilityObject):
+        (WebCore::AccessibilityObjectWrapper::AccessibilityObjectWrapper):
+        * platform/chromium/PasteboardPrivate.h: Added.
+        (WebCore::PasteboardPrivate::):
+
 2009-01-06  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by David Hyatt.

@@ -188,7 +188,6 @@ sources['editing'] = [
     'editing/visible_units.cpp',
     'editing/VisiblePosition.cpp',
     'editing/WrapContentsInDummySpanCommand.cpp',
-    'editing/wx/EditorWx.cpp'
 ]
 sources['history'] = [
     'history/BackForwardList.cpp',
@@ -396,6 +395,9 @@ sources['page/animation'] = [
     'page/animation/CompositeAnimation.cpp',
     'page/animation/ImplicitAnimation.cpp',
     'page/animation/KeyframeAnimation.cpp',
+]
+sources['page/chromium'] = [
+    'page/chromium/AccessibilityObjectChromium.cpp',
 ]
 # platform/ sources are in a separate section below
 # and may eventually be moved to another file
