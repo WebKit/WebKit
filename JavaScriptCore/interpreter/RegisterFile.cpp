@@ -36,8 +36,7 @@ RegisterFile::~RegisterFile()
 #if HAVE(MMAP)
     munmap(m_buffer, ((m_max - m_start) + m_maxGlobals) * sizeof(Register));
 #elif HAVE(VIRTUALALLOC)
-    // FIXME: Use VirtualFree.
-    fastFree(m_buffer);
+    VirtualFree(m_buffer, 0, MEM_RELEASE);
 #else
     #error "Don't know how to release virtual memory on this platform."
 #endif

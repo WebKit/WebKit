@@ -111,6 +111,8 @@ namespace JSC {
 
         static const size_t defaultCapacity = 524288;
         static const size_t defaultMaxGlobals = 8192;
+        static const size_t allocationSize = 1 << 14;
+        static const size_t allocationSizeMask = allocationSize - 1;
 
         RegisterFile(size_t capacity = defaultCapacity, size_t maxGlobals = defaultMaxGlobals)
             : m_numGlobals(0)
@@ -129,8 +131,20 @@ namespace JSC {
                 CRASH();
             }
 #elif HAVE(VIRTUALALLOC)
-            // FIXME: Use VirtualAlloc, and commit pages as we go.
-            m_buffer = static_cast<Register*>(fastMalloc(bufferLength));
+            // Ensure bufferLength is a multiple of allocation size
+            bufferLength = (bufferLength + allocationSizeMask) & ~allocationSizeMask;
+            m_buffer = static_cast<Register*>(VirtualAlloc(0, bufferLength, MEM_RESERVE, PAGE_READWRITE));
+            if (!m_buffer) {
+                fprintf(stderr, "Could not allocate register file: %d\n", errno);
+                CRASH();
+            }
+            int initialAllocation = (maxGlobals * sizeof(Register) + allocationSizeMask) & ~allocationSizeMask;
+            void* commitCheck = VirtualAlloc(m_buffer, initialAllocation, MEM_COMMIT, PAGE_READWRITE);
+            if (commitCheck != m_buffer) {
+                fprintf(stderr, "Could not allocate register file: %d\n", errno);
+                CRASH();
+            }
+            m_maxCommitted = reinterpret_cast<Register*>(reinterpret_cast<char*>(m_buffer) + initialAllocation);
 #else
             #error "Don't know how to reserve virtual memory on this platform."
 #endif
@@ -160,7 +174,14 @@ namespace JSC {
                 if (newEnd > m_max)
                     return false;
 #if !HAVE(MMAP) && HAVE(VIRTUALALLOC)
-                // FIXME: Use VirtualAlloc, and commit pages as we go.
+                if (newEnd > m_maxCommitted) {
+                    ptrdiff_t additionalAllocation = ((reinterpret_cast<char*>(newEnd)  - reinterpret_cast<char*>(m_maxCommitted)) + allocationSizeMask) & ~allocationSizeMask;
+                    if (!VirtualAlloc(m_maxCommitted, additionalAllocation, MEM_COMMIT, PAGE_READWRITE)) {
+                        fprintf(stderr, "Could not allocate register file: %d\n", errno);
+                        CRASH();
+                    }
+                    m_maxCommitted = reinterpret_cast<Register*>(reinterpret_cast<char*>(m_maxCommitted) + additionalAllocation);
+                }
 #endif
                 m_end = newEnd;
             }
@@ -183,6 +204,10 @@ namespace JSC {
         Register* m_end;
         Register* m_max;
         Register* m_buffer;
+#if HAVE(VIRTUALALLOC)
+        Register* m_maxCommitted;
+#endif
+
         JSGlobalObject* m_globalObject; // The global object whose vars are currently stored in the register file.
     };
 
