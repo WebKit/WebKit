@@ -226,6 +226,12 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
                                         CSSPropertyWebkitTransitionTimingFunction, CSSPropertyWebkitTransitionDelay };
             return getLayeredShorthandValue(properties, 4);
         }
+        case CSSPropertyWebkitAnimation: {
+            const int properties[6] = { CSSPropertyWebkitAnimationName, CSSPropertyWebkitAnimationDuration,
+                                        CSSPropertyWebkitAnimationTimingFunction, CSSPropertyWebkitAnimationDelay,
+                                        CSSPropertyWebkitAnimationIterationCount, CSSPropertyWebkitAnimationDirection };
+            return getLayeredShorthandValue(properties, 6);
+        }
 #if ENABLE(SVG)
         case CSSPropertyMarker: {
             RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyMarkerStart);
@@ -523,6 +529,30 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
         CSSPropertyWebkitMaskRepeat,
     };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitMask, maskProperties);
+
+    static const int animationProperties[] = {
+        CSSPropertyWebkitAnimationName,
+        CSSPropertyWebkitAnimationDuration,
+        CSSPropertyWebkitAnimationTimingFunction,
+        CSSPropertyWebkitAnimationDelay,
+        CSSPropertyWebkitAnimationIterationCount,
+        CSSPropertyWebkitAnimationDirection
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitAnimation, animationProperties);
+
+    static const int transitionProperties[] = {
+        CSSPropertyWebkitTransitionProperty,
+        CSSPropertyWebkitTransitionDuration,
+        CSSPropertyWebkitTransitionTimingFunction,
+        CSSPropertyWebkitTransitionDelay
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitTransition, transitionProperties);
+
+    static const int transformOriginProperties[] = {
+        CSSPropertyWebkitTransformOriginX,
+        CSSPropertyWebkitTransformOriginY
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitTransformOrigin, transformOriginProperties);
     
     #undef SET_SHORTHAND_MAP_ENTRY
 }
