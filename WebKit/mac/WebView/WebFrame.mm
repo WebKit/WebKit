@@ -82,6 +82,7 @@
 #import <WebCore/markup.h>
 #import <WebCore/visible_units.h>
 #import <runtime/JSLock.h>
+#import <runtime/JSValue.h>
 
 using namespace std;
 using namespace WebCore;
@@ -89,7 +90,7 @@ using namespace HTMLNames;
 
 using JSC::JSGlobalObject;
 using JSC::JSLock;
-using JSC::JSValue;
+using JSC::JSValuePtr;
 
 /*
 Here is the current behavior matrix for four types of navigations:
@@ -656,7 +657,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     ASSERT(_private->coreFrame->document());
     
-    JSValue* result = _private->coreFrame->loader()->executeScript(string, forceUserGesture).jsValue();
+    JSValuePtr result = _private->coreFrame->loader()->executeScript(string, forceUserGesture).jsValue();
 
     if (!_private->coreFrame) // In case the script removed our frame from the page.
         return @"";

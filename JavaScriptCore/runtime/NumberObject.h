@@ -36,11 +36,11 @@ namespace JSC {
     private:
         virtual const ClassInfo* classInfo() const { return &info; }
 
-        virtual JSValue* getJSNumber();
+        virtual JSValuePtr getJSNumber();
     };
 
     NumberObject* constructNumber(ExecState*, JSNumberCell*);
-    NumberObject* constructNumberFromImmediateNumber(ExecState*, JSValue*);
+    NumberObject* constructNumberFromImmediateNumber(ExecState*, JSValuePtr);
 
 } // namespace JSC
 

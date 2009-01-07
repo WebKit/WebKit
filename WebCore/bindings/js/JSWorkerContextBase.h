@@ -41,7 +41,7 @@ namespace WebCore {
         JSWorkerContextBase(PassRefPtr<JSC::Structure>, PassRefPtr<WorkerContext>);
         virtual ~JSWorkerContextBase();
 
-        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue*, JSC::PutPropertySlot&);
+        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValuePtr, JSC::PutPropertySlot&);
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
 

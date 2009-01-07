@@ -33,13 +33,13 @@ namespace JSC {
         explicit JSWrapperObject(PassRefPtr<Structure>);
 
     public:
-        JSValue* internalValue() const { return m_internalValue; }
-        void setInternalValue(JSValue*);
+        JSValuePtr internalValue() const { return m_internalValue; }
+        void setInternalValue(JSValuePtr);
         
         virtual void mark();
         
     private:
-        JSValue* m_internalValue;
+        JSValuePtr m_internalValue;
     };
     
     inline JSWrapperObject::JSWrapperObject(PassRefPtr<Structure> structure)
@@ -48,7 +48,7 @@ namespace JSC {
     {
     }
     
-    inline void JSWrapperObject::setInternalValue(JSValue* value)
+    inline void JSWrapperObject::setInternalValue(JSValuePtr value)
     {
         ASSERT(value);
         ASSERT(!value->isObject());

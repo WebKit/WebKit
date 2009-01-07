@@ -131,6 +131,7 @@
 #import <runtime/DateInstance.h>
 #import <runtime/InitializeThreading.h>
 #import <runtime/JSLock.h>
+#import <runtime/JSValue.h>
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>
@@ -3623,7 +3624,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return coreFrame->shouldClose();
 }
 
-static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsValue)
+static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValuePtr jsValue)
 {
     NSAppleEventDescriptor* aeDesc = 0;
     if (jsValue->isBoolean())
@@ -3665,7 +3666,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
                 return aeDesc;
             }
         }
-        JSValue* primitive = object->toPrimitive(exec);
+        JSValuePtr primitive = object->toPrimitive(exec);
         if (exec->hadException()) {
             exec->clearException();
             return [NSAppleEventDescriptor nullDescriptor];
@@ -3685,7 +3686,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
         return nil;
     if (!coreFrame->document())
         return nil;
-    JSValue* result = coreFrame->loader()->executeScript(script, true).jsValue();
+    JSValuePtr result = coreFrame->loader()->executeScript(script, true).jsValue();
     if (!result) // FIXME: pass errors
         return 0;
     JSLock lock(false);

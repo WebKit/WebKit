@@ -36,9 +36,9 @@ public:
     virtual ~RuntimeObjectImp();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
+    virtual void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
     virtual bool deleteProperty(ExecState* , const Identifier& propertyName);
-    virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const;
+    virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const;
     virtual CallType getCallData(CallData&);
     virtual ConstructType getConstructData(ConstructData&);
     
@@ -56,7 +56,7 @@ public:
         return exec->lexicalGlobalObject()->objectPrototype();
     }
 
-    static PassRefPtr<Structure> createStructure(JSValue* prototype)
+    static PassRefPtr<Structure> createStructure(JSValuePtr prototype)
     {
         return Structure::create(prototype, TypeInfo(ObjectType));
     }
@@ -70,9 +70,9 @@ private:
 
     virtual const ClassInfo* classInfo() const { return &s_info; }
     
-    static JSValue* fallbackObjectGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue* fieldGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue* methodGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValuePtr fallbackObjectGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValuePtr fieldGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValuePtr methodGetter(ExecState*, const Identifier&, const PropertySlot&);
 
     RefPtr<Bindings::Instance> instance;
 };

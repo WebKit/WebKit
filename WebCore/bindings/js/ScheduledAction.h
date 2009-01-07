@@ -35,7 +35,7 @@ namespace WebCore {
     */
     class ScheduledAction {
     public:
-        ScheduledAction(JSC::ExecState* exec, JSC::JSValue* function, const JSC::ArgList&);
+        ScheduledAction(JSC::ExecState* exec, JSC::JSValuePtr function, const JSC::ArgList&);
         ScheduledAction(const String& code)
             : m_code(code)
         {
@@ -46,8 +46,8 @@ namespace WebCore {
     private:
         void execute(JSDOMWindowShell*);
 
-        JSC::ProtectedPtr<JSC::JSValue> m_function;
-        Vector<JSC::ProtectedPtr<JSC::JSValue> > m_args;
+        JSC::ProtectedJSValuePtr m_function;
+        Vector<JSC::ProtectedJSValuePtr> m_args;
         String m_code;
     };
 

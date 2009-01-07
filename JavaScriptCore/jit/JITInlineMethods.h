@@ -53,8 +53,8 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
 
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
     if (m_codeBlock->isConstantRegisterIndex(src)) {
-        JSValue* value = m_codeBlock->getConstant(src);
-        move(ImmPtr(value), dst);
+        JSValuePtr value = m_codeBlock->getConstant(src);
+        move(ImmPtr(JSValuePtr::encode(value)), dst);
         killLastResultRegister();
         return;
     }
@@ -112,16 +112,7 @@ ALWAYS_INLINE void JIT::emitGetJITStubArg(unsigned argumentNumber, RegisterID ds
     peek(dst, argumentNumber);
 }
 
-ALWAYS_INLINE JSValue* JIT::getConstantImmediateNumericArg(unsigned src)
-{
-    if (m_codeBlock->isConstantRegisterIndex(src)) {
-        JSValue* value = m_codeBlock->getConstant(src);
-        return JSImmediate::isNumber(value) ? value : noValue();
-    }
-    return noValue();
-}
-
-ALWAYS_INLINE JSValue* JIT::getConstantOperand(unsigned src)
+ALWAYS_INLINE JSValuePtr JIT::getConstantOperand(unsigned src)
 {
     ASSERT(m_codeBlock->isConstantRegisterIndex(src));
     return m_codeBlock->getConstant(src);
@@ -142,7 +133,7 @@ ALWAYS_INLINE bool JIT::isOperandConstant31BitImmediateInt(unsigned src)
     if (!m_codeBlock->isConstantRegisterIndex(src))
         return false;
 
-    JSValue* value = getConstantOperand(src);
+    JSValuePtr value = getConstantOperand(src);
 
 #if USE(ALTERNATE_JSIMMEDIATE)
     if (!JSImmediate::isNumber(value))
@@ -159,8 +150,8 @@ ALWAYS_INLINE bool JIT::isOperandConstant31BitImmediateInt(unsigned src)
 ALWAYS_INLINE void JIT::emitPutJITStubArgFromVirtualRegister(unsigned src, unsigned argumentNumber, RegisterID scratch)
 {
     if (m_codeBlock->isConstantRegisterIndex(src)) {
-        JSValue* value = m_codeBlock->getConstant(src);
-        emitPutJITStubArgConstant(value, argumentNumber);
+        JSValuePtr value = m_codeBlock->getConstant(src);
+        emitPutJITStubArgConstant(JSValuePtr::encode(value), argumentNumber);
     } else {
         loadPtr(Address(callFrameRegister, src * sizeof(Register)), scratch);
         emitPutJITStubArg(scratch, argumentNumber);
@@ -210,7 +201,7 @@ ALWAYS_INLINE void JIT::emitPutVirtualRegister(unsigned dst, RegisterID from)
 
 ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
 {
-    storePtr(ImmPtr(jsUndefined()), Address(callFrameRegister, dst * sizeof(Register)));
+    storePtr(ImmPtr(JSValuePtr::encode(jsUndefined())), Address(callFrameRegister, dst * sizeof(Register)));
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 

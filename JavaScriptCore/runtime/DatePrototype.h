@@ -36,7 +36,7 @@ namespace JSC {
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
 
-        static PassRefPtr<Structure> createStructure(JSValue* prototype)
+        static PassRefPtr<Structure> createStructure(JSValuePtr prototype)
         {
             return Structure::create(prototype, TypeInfo(ObjectType));
         }

@@ -252,7 +252,7 @@ namespace JSC {
             return index >= m_numVars && index < m_numVars + m_numConstants;
         }
 
-        ALWAYS_INLINE JSValue* getConstant(int index)
+        ALWAYS_INLINE JSValuePtr getConstant(int index)
         {
             return m_constantRegisters[index - m_numVars].getJSValue();
         }
@@ -388,8 +388,8 @@ namespace JSC {
         unsigned addFunction(FuncDeclNode* n) { createRareDataIfNecessary(); unsigned size = m_rareData->m_functions.size(); m_rareData->m_functions.append(n); return size; }
         FuncDeclNode* function(int index) const { ASSERT(m_rareData); return m_rareData->m_functions[index].get(); }
 
-        unsigned addUnexpectedConstant(JSValue* v) { createRareDataIfNecessary(); unsigned size = m_rareData->m_unexpectedConstants.size(); m_rareData->m_unexpectedConstants.append(v); return size; }
-        JSValue* unexpectedConstant(int index) const { ASSERT(m_rareData); return m_rareData->m_unexpectedConstants[index]; }
+        unsigned addUnexpectedConstant(JSValuePtr v) { createRareDataIfNecessary(); unsigned size = m_rareData->m_unexpectedConstants.size(); m_rareData->m_unexpectedConstants.append(v); return size; }
+        JSValuePtr unexpectedConstant(int index) const { ASSERT(m_rareData); return m_rareData->m_unexpectedConstants[index]; }
 
         unsigned addRegExp(RegExp* r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
@@ -493,7 +493,7 @@ namespace JSC {
 
             // Rare Constants
             Vector<RefPtr<FuncDeclNode> > m_functions;
-            Vector<JSValue*> m_unexpectedConstants;
+            Vector<JSValuePtr> m_unexpectedConstants;
             Vector<RefPtr<RegExp> > m_regexps;
 
             // Jump Tables

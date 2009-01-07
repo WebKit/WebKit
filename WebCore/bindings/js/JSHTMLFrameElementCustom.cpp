@@ -47,7 +47,7 @@ static inline bool allowSettingJavascriptURL(ExecState* exec, HTMLFrameElement* 
     return true;
 }
 
-void JSHTMLFrameElement::setSrc(ExecState* exec, JSValue* value)
+void JSHTMLFrameElement::setSrc(ExecState* exec, JSValuePtr value)
 {
     HTMLFrameElement* imp = static_cast<HTMLFrameElement*>(impl());
     String srcValue = valueToStringWithNullCheck(exec, value);
@@ -59,7 +59,7 @@ void JSHTMLFrameElement::setSrc(ExecState* exec, JSValue* value)
     return;
 }
 
-void JSHTMLFrameElement::setLocation(ExecState* exec, JSValue* value)
+void JSHTMLFrameElement::setLocation(ExecState* exec, JSValuePtr value)
 {
     HTMLFrameElement* imp = static_cast<HTMLFrameElement*>(impl());
     String locationValue = valueToStringWithNullCheck(exec, value);

@@ -54,16 +54,16 @@ namespace WebCore {
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
         // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
-        JSEventListener* findJSEventListener(JSC::JSValue*, bool isInline = false);
+        JSEventListener* findJSEventListener(JSC::JSValuePtr, bool isInline = false);
 
         // Finds or creates a wrapper of a JS EventListener. JS EventListener object is GC-protected.
-        PassRefPtr<JSEventListener> findOrCreateJSEventListener(JSC::ExecState*, JSC::JSValue*, bool isInline = false);
+        PassRefPtr<JSEventListener> findOrCreateJSEventListener(JSC::ExecState*, JSC::JSValuePtr, bool isInline = false);
 
         // Finds a wrapper of a GC-unprotected JS EventListener, returns 0 if no existing one.
-        JSUnprotectedEventListener* findJSUnprotectedEventListener(JSC::ExecState*, JSC::JSValue*, bool isInline = false);
+        JSUnprotectedEventListener* findJSUnprotectedEventListener(JSC::ExecState*, JSC::JSValuePtr, bool isInline = false);
 
         // Finds or creates a wrapper of a JS EventListener. JS EventListener object is *NOT* GC-protected.
-        PassRefPtr<JSUnprotectedEventListener> findOrCreateJSUnprotectedEventListener(JSC::ExecState*, JSC::JSValue*, bool isInline = false);
+        PassRefPtr<JSUnprotectedEventListener> findOrCreateJSUnprotectedEventListener(JSC::ExecState*, JSC::JSValuePtr, bool isInline = false);
 
         typedef HashMap<JSC::JSObject*, JSEventListener*> ListenersMap;
         typedef HashMap<JSC::JSObject*, JSUnprotectedEventListener*> UnprotectedListenersMap;

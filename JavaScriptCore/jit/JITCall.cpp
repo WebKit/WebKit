@@ -49,7 +49,7 @@ void JIT::unlinkCall(CallLinkInfo* callLinkInfo)
     // When the JSFunction is deleted the pointer embedded in the instruction stream will no longer be valid
     // (and, if a new JSFunction happened to be constructed at the same location, we could get a false positive
     // match).  Reset the check so it no longer matches.
-    DataLabelPtr::patch(callLinkInfo->hotPathBegin, JSImmediate::impossibleValue());
+    DataLabelPtr::patch(callLinkInfo->hotPathBegin, JSValuePtr::encode(JSImmediate::impossibleValue()));
 }
 
 void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, CallLinkInfo* callLinkInfo, int callerArgCount)
@@ -75,7 +75,7 @@ void JIT::compileOpCallInitializeCallFrame()
 
     loadPtr(Address(X86::ecx, FIELD_OFFSET(JSFunction, m_scopeChain) + FIELD_OFFSET(ScopeChain, m_node)), X86::edx); // newScopeChain
 
-    storePtr(ImmPtr(noValue()), Address(callFrameRegister, RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register))));
+    storePtr(ImmPtr(JSValuePtr::encode(noValue())), Address(callFrameRegister, RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register))));
     storePtr(X86::ecx, Address(callFrameRegister, RegisterFile::Callee * static_cast<int>(sizeof(Register))));
     storePtr(X86::edx, Address(callFrameRegister, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register))));
 }
@@ -211,14 +211,14 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         compileOpCallEvalSetupArgs(instruction);
 
         emitCTICall(Interpreter::cti_op_call_eval);
-        wasEval = jnePtr(X86::eax, ImmPtr(JSImmediate::impossibleValue()));
+        wasEval = jnePtr(X86::eax, ImmPtr(JSValuePtr::encode(JSImmediate::impossibleValue())));
     }
 
     // This plants a check for a cached JSFunction value, so we can plant a fast link to the callee.
     // This deliberately leaves the callee in ecx, used when setting up the stack frame below
     emitGetVirtualRegister(callee, X86::ecx);
     DataLabelPtr addressOfLinkedFunctionCheck;
-    Jump jumpToSlow = jnePtrWithPatch(X86::ecx, addressOfLinkedFunctionCheck, ImmPtr(JSImmediate::impossibleValue()));
+    Jump jumpToSlow = jnePtrWithPatch(X86::ecx, addressOfLinkedFunctionCheck, ImmPtr(JSValuePtr::encode(JSImmediate::impossibleValue())));
     addSlowCase(jumpToSlow);
     ASSERT(differenceBetween(addressOfLinkedFunctionCheck, jumpToSlow) == patchOffsetOpCallCompareToJump);
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
@@ -239,7 +239,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
     // Fast version of stack frame initialization, directly relative to edi.
     // Note that this omits to set up RegisterFile::CodeBlock, which is set in the callee
-    storePtr(ImmPtr(noValue()), Address(callFrameRegister, (registerOffset + RegisterFile::OptionalCalleeArguments) * static_cast<int>(sizeof(Register))));
+    storePtr(ImmPtr(JSValuePtr::encode(noValue())), Address(callFrameRegister, (registerOffset + RegisterFile::OptionalCalleeArguments) * static_cast<int>(sizeof(Register))));
     storePtr(X86::ecx, Address(callFrameRegister, (registerOffset + RegisterFile::Callee) * static_cast<int>(sizeof(Register))));
     loadPtr(Address(X86::ecx, FIELD_OFFSET(JSFunction, m_scopeChain) + FIELD_OFFSET(ScopeChain, m_node)), X86::edx); // newScopeChain
     store32(Imm32(argCount), Address(callFrameRegister, (registerOffset + RegisterFile::ArgumentCount) * static_cast<int>(sizeof(Register))));

@@ -53,7 +53,7 @@ const char* CField::name() const
     return i->isString ? i->value.string : 0;
 }
 
-JSValue* CField::valueFromInstance(ExecState* exec, const Instance* inst) const
+JSValuePtr CField::valueFromInstance(ExecState* exec, const Instance* inst) const
 {
     const CInstance* instance = static_cast<const CInstance*>(inst);
     NPObject* obj = instance->getObject();
@@ -67,7 +67,7 @@ JSValue* CField::valueFromInstance(ExecState* exec, const Instance* inst) const
             result = obj->_class->getProperty(obj, _fieldIdentifier, &property);
         }
         if (result) {
-            JSValue* result = convertNPVariantToValue(exec, &property, instance->rootObject());
+            JSValuePtr result = convertNPVariantToValue(exec, &property, instance->rootObject());
             _NPN_ReleaseVariantValue(&property);
             return result;
         }
@@ -75,7 +75,7 @@ JSValue* CField::valueFromInstance(ExecState* exec, const Instance* inst) const
     return jsUndefined();
 }
 
-void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue* aValue) const
+void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValuePtr aValue) const
 {
     const CInstance* instance = static_cast<const CInstance*>(inst);
     NPObject* obj = instance->getObject();

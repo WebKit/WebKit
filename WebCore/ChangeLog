@@ -1,3 +1,597 @@
+2009-01-05  Gavin Barraclough  <baraclough@apple.com>
+
+        Rubber Stamped by Oliver Hunt.
+
+        Replace all uses of JSValue* with new wrapper class, JSValuePtr.
+        See JavaScriptCore/ChangeLog for more detailed description.
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::setValue):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::nameGetter):
+        (WebCore::JSCSSStyleDeclaration::customPut):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCanvasPixelArrayCustom.h:
+        (WebCore::JSCanvasPixelArray::getByIndex):
+        (WebCore::JSCanvasPixelArray::indexSetter):
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::toHTMLCanvasStyle):
+        (WebCore::JSCanvasRenderingContext2D::strokeStyle):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::JSCanvasRenderingContext2D::fillStyle):
+        (WebCore::JSCanvasRenderingContext2D::setFillStyle):
+        (WebCore::JSCanvasRenderingContext2D::setFillColor):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeColor):
+        (WebCore::JSCanvasRenderingContext2D::strokeRect):
+        (WebCore::JSCanvasRenderingContext2D::drawImage):
+        (WebCore::JSCanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::JSCanvasRenderingContext2D::setShadow):
+        (WebCore::JSCanvasRenderingContext2D::createPattern):
+        (WebCore::JSCanvasRenderingContext2D::putImageData):
+        (WebCore::JSCanvasRenderingContext2D::fillText):
+        (WebCore::JSCanvasRenderingContext2D::strokeText):
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::types):
+        (WebCore::JSClipboard::clearData):
+        (WebCore::JSClipboard::getData):
+        (WebCore::JSClipboard::setData):
+        (WebCore::JSClipboard::setDragImage):
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::profiles):
+        * bindings/js/JSCustomPositionCallback.cpp:
+        (WebCore::JSCustomPositionCallback::handleEvent):
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        (WebCore::JSCustomPositionErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        (WebCore::toVoidCallback):
+        * bindings/js/JSCustomVoidCallback.h:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::create):
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSCustomXPathNSResolver.h:
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::add):
+        (WebCore::JSDOMApplicationCache::remove):
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringOrNull):
+        (WebCore::jsOwnedStringOrNull):
+        (WebCore::jsStringOrUndefined):
+        (WebCore::jsStringOrFalse):
+        (WebCore::valueToStringWithNullCheck):
+        (WebCore::valueToStringWithUndefinedOrNullCheck):
+        (WebCore::reportException):
+        (WebCore::reportCurrentException):
+        (WebCore::setDOMException):
+        (WebCore::objectToStringFunctionGetter):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getDOMObjectWrapper):
+        (WebCore::getDOMNodeWrapper):
+        (WebCore::toJS):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::findJSEventListener):
+        (WebCore::JSDOMGlobalObject::findOrCreateJSEventListener):
+        (WebCore::JSDOMGlobalObject::findJSUnprotectedEventListener):
+        (WebCore::JSDOMGlobalObject::findOrCreateJSUnprotectedEventListener):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::createWindow):
+        (WebCore::showModalDialog):
+        (jsDOMWindowBaseCrypto):
+        (jsDOMWindowBaseEvent):
+        (jsDOMWindowBaseImage):
+        (jsDOMWindowBaseMessageChannel):
+        (jsDOMWindowBaseOption):
+        (jsDOMWindowBaseXMLHttpRequest):
+        (jsDOMWindowBaseAudio):
+        (jsDOMWindowBaseWorker):
+        (jsDOMWindowBaseXSLTProcessor):
+        (setJSDOMWindowBaseEvent):
+        (setJSDOMWindowBaseAudio):
+        (setJSDOMWindowBaseImage):
+        (setJSDOMWindowBaseMessageChannel):
+        (setJSDOMWindowBaseOption):
+        (setJSDOMWindowBaseWorker):
+        (setJSDOMWindowBaseXMLHttpRequest):
+        (setJSDOMWindowBaseXSLTProcessor):
+        (WebCore::JSDOMWindowBase::childFrameGetter):
+        (WebCore::JSDOMWindowBase::indexGetter):
+        (WebCore::JSDOMWindowBase::namedItemGetter):
+        (WebCore::JSDOMWindowBase::getOwnPropertySlot):
+        (WebCore::JSDOMWindowBase::put):
+        (WebCore::JSDOMWindowBase::clear):
+        (windowProtoFuncOpen):
+        (windowProtoFuncShowModalDialog):
+        (windowProtoFuncNotImplemented):
+        (WebCore::JSDOMWindowBase::setReturnValueSlot):
+        (WebCore::JSDOMWindowBase::installTimeout):
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::lookupGetter):
+        (WebCore::JSDOMWindow::lookupSetter):
+        (WebCore::JSDOMWindow::setLocation):
+        (WebCore::JSDOMWindow::postMessage):
+        (WebCore::setTimeoutOrInterval):
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::clearTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        (WebCore::JSDOMWindow::clearInterval):
+        (WebCore::JSDOMWindow::atob):
+        (WebCore::JSDOMWindow::btoa):
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        (WebCore::toDOMWindow):
+        (WebCore::nonCachingStaticCloseFunctionGetter):
+        (WebCore::nonCachingStaticBlurFunctionGetter):
+        (WebCore::nonCachingStaticFocusFunctionGetter):
+        (WebCore::nonCachingStaticPostMessageFunctionGetter):
+        * bindings/js/JSDOMWindowCustom.h:
+        (WebCore::JSDOMWindow::customPut):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::put):
+        (WebCore::JSDOMWindowShell::putWithAttributes):
+        (WebCore::JSDOMWindowShell::lookupGetter):
+        (WebCore::JSDOMWindowShell::lookupSetter):
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::createStructure):
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        (WebCore::JSDatabase::transaction):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::JSDocument::setLocation):
+        (WebCore::toJS):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::setAttribute):
+        (WebCore::JSElement::setAttributeNode):
+        (WebCore::JSElement::setAttributeNS):
+        (WebCore::JSElement::setAttributeNodeNS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::JSEvent::clipboardData):
+        (WebCore::toJS):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::eventParameterName):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventTarget.h:
+        * bindings/js/JSEventTargetBase.h:
+        * bindings/js/JSEventTargetNodeCustom.cpp:
+        (WebCore::JSEventTargetNode::addEventListener):
+        (WebCore::JSEventTargetNode::removeEventListener):
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::createPositionOptions):
+        (WebCore::JSGeolocation::getCurrentPosition):
+        (WebCore::JSGeolocation::watchPosition):
+        * bindings/js/JSHTMLAllCollection.h:
+        (WebCore::JSHTMLAllCollection::createStructure):
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::customPut):
+        (WebCore::JSHTMLAppletElement::nameGetter):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        (WebCore::callHTMLCollection):
+        (WebCore::JSHTMLCollection::nameGetter):
+        (WebCore::JSHTMLCollection::item):
+        (WebCore::JSHTMLCollection::namedItem):
+        (WebCore::toJS):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        (WebCore::JSHTMLDocument::all):
+        (WebCore::JSHTMLDocument::setAll):
+        (WebCore::JSHTMLDocument::open):
+        (WebCore::JSHTMLDocument::write):
+        (WebCore::JSHTMLDocument::writeln):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::customPut):
+        (WebCore::JSHTMLEmbedElement::nameGetter):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        (WebCore::JSHTMLFrameElement::setSrc):
+        (WebCore::JSHTMLFrameElement::setLocation):
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        (WebCore::JSHTMLFrameSetElement::nameGetter):
+        * bindings/js/JSHTMLIFrameElementCustom.cpp:
+        (WebCore::JSHTMLIFrameElement::setSrc):
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::JSHTMLInputElement::selectionStart):
+        (WebCore::JSHTMLInputElement::selectionEnd):
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::customPut):
+        (WebCore::JSHTMLObjectElement::nameGetter):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::length):
+        (WebCore::JSHTMLOptionsCollection::setLength):
+        (WebCore::JSHTMLOptionsCollection::indexSetter):
+        (WebCore::JSHTMLOptionsCollection::add):
+        (WebCore::JSHTMLOptionsCollection::remove):
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::remove):
+        (WebCore::selectIndexSetter):
+        (WebCore::JSHTMLSelectElement::indexSetter):
+        * bindings/js/JSHTMLSelectElementCustom.h:
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::nonCachingStaticBackFunctionGetter):
+        (WebCore::nonCachingStaticForwardFunctionGetter):
+        (WebCore::nonCachingStaticGoFunctionGetter):
+        (WebCore::JSHistory::customPut):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::wrap):
+        (WebCore::JSInspectedObjectWrapper::prepareIncomingValue):
+        * bindings/js/JSInspectedObjectWrapper.h:
+        (WebCore::JSInspectedObjectWrapper::wrapOutgoingValue):
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::JSInspectorCallbackWrapper::wrap):
+        (WebCore::JSInspectorCallbackWrapper::prepareIncomingValue):
+        * bindings/js/JSInspectorCallbackWrapper.h:
+        (WebCore::JSInspectorCallbackWrapper::wrapOutgoingValue):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::evaluate):
+        (WebCore::JSJavaScriptCallFrame::thisObject):
+        (WebCore::JSJavaScriptCallFrame::type):
+        (WebCore::JSJavaScriptCallFrame::scopeChain):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::nonCachingStaticReplaceFunctionGetter):
+        (WebCore::nonCachingStaticReloadFunctionGetter):
+        (WebCore::nonCachingStaticAssignFunctionGetter):
+        (WebCore::JSLocation::customPut):
+        (WebCore::JSLocation::setHref):
+        (WebCore::JSLocation::setProtocol):
+        (WebCore::JSLocation::setHost):
+        (WebCore::JSLocation::setHostname):
+        (WebCore::JSLocation::setPort):
+        (WebCore::JSLocation::setPathname):
+        (WebCore::JSLocation::setSearch):
+        (WebCore::JSLocation::setHash):
+        (WebCore::JSLocation::replace):
+        (WebCore::JSLocation::reload):
+        (WebCore::JSLocation::assign):
+        (WebCore::JSLocation::toString):
+        * bindings/js/JSMessageChannelConstructor.h:
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::startConversation):
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        * bindings/js/JSMimeTypeArrayCustom.cpp:
+        (WebCore::JSMimeTypeArray::nameGetter):
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::nameGetter):
+        * bindings/js/JSNamedNodesCollection.cpp:
+        (WebCore::JSNamedNodesCollection::lengthGetter):
+        (WebCore::JSNamedNodesCollection::indexGetter):
+        * bindings/js/JSNamedNodesCollection.h:
+        (WebCore::JSNamedNodesCollection::createStructure):
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::needsYouTubeQuirk):
+        (WebCore::JSNavigator::appVersion):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore):
+        (WebCore::JSNode::replaceChild):
+        (WebCore::JSNode::removeChild):
+        (WebCore::JSNode::appendChild):
+        (WebCore::createWrapper):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::JSNodeFilterCondition):
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/JSNodeFilterCondition.h:
+        (WebCore::JSNodeFilterCondition::create):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::acceptNode):
+        (WebCore::toNodeFilter):
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::nextNode):
+        (WebCore::JSNodeIterator::previousNode):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::callNodeList):
+        (WebCore::JSNodeList::nameGetter):
+        * bindings/js/JSPluginArrayCustom.cpp:
+        (WebCore::JSPluginArray::nameGetter):
+        * bindings/js/JSPluginCustom.cpp:
+        (WebCore::JSPlugin::nameGetter):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::runtimeObjectGetter):
+        (WebCore::runtimeObjectPropertyGetter):
+        (WebCore::runtimeObjectCustomPut):
+        (WebCore::callPlugin):
+        * bindings/js/JSPluginElementFunctions.h:
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::asWrapper):
+        (WebCore::JSQuarantinedObjectWrapper::cachedValueGetter):
+        (WebCore::JSQuarantinedObjectWrapper::getOwnPropertySlot):
+        (WebCore::JSQuarantinedObjectWrapper::put):
+        (WebCore::JSQuarantinedObjectWrapper::construct):
+        (WebCore::JSQuarantinedObjectWrapper::hasInstance):
+        (WebCore::JSQuarantinedObjectWrapper::call):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        (WebCore::JSQuarantinedObjectWrapper::createStructure):
+        * bindings/js/JSRGBColor.cpp:
+        (WebCore::getJSRGBColor):
+        (jsRGBColorRed):
+        (jsRGBColorGreen):
+        (jsRGBColorBlue):
+        * bindings/js/JSRGBColor.h:
+        (WebCore::JSRGBColor::createStructure):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::addEventListener):
+        (WebCore::JSSVGElementInstance::removeEventListener):
+        * bindings/js/JSSVGLengthCustom.cpp:
+        (WebCore::JSSVGLength::value):
+        (WebCore::JSSVGLength::convertToSpecifiedUnits):
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::multiply):
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::translate):
+        (WebCore::JSSVGMatrix::scale):
+        (WebCore::JSSVGMatrix::scaleNonUniform):
+        (WebCore::JSSVGMatrix::rotate):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        (WebCore::JSSVGMatrix::flipX):
+        (WebCore::JSSVGMatrix::flipY):
+        (WebCore::JSSVGMatrix::skewX):
+        (WebCore::JSSVGMatrix::skewY):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSSVGPathSegListCustom.cpp:
+        (WebCore::JSSVGPathSegList::clear):
+        (WebCore::JSSVGPathSegList::initialize):
+        (WebCore::JSSVGPathSegList::getItem):
+        (WebCore::JSSVGPathSegList::insertItemBefore):
+        (WebCore::JSSVGPathSegList::replaceItem):
+        (WebCore::JSSVGPathSegList::removeItem):
+        (WebCore::JSSVGPathSegList::appendItem):
+        * bindings/js/JSSVGPointListCustom.cpp:
+        (WebCore::finishGetter):
+        (WebCore::finishSetter):
+        (WebCore::finishSetterReadOnlyResult):
+        (WebCore::JSSVGPointList::clear):
+        (WebCore::JSSVGPointList::initialize):
+        (WebCore::JSSVGPointList::getItem):
+        (WebCore::JSSVGPointList::insertItemBefore):
+        (WebCore::JSSVGPointList::replaceItem):
+        (WebCore::JSSVGPointList::removeItem):
+        (WebCore::JSSVGPointList::appendItem):
+        * bindings/js/JSSVGTransformListCustom.cpp:
+        (WebCore::finishGetter):
+        (WebCore::finishSetter):
+        (WebCore::finishSetterReadOnlyResult):
+        (WebCore::JSSVGTransformList::clear):
+        (WebCore::JSSVGTransformList::initialize):
+        (WebCore::JSSVGTransformList::getItem):
+        (WebCore::JSSVGTransformList::insertItemBefore):
+        (WebCore::JSSVGTransformList::replaceItem):
+        (WebCore::JSSVGTransformList::removeItem):
+        (WebCore::JSSVGTransformList::appendItem):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::nameGetter):
+        (WebCore::JSStorage::deleteProperty):
+        (WebCore::JSStorage::customPut):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetListCustom.cpp:
+        (WebCore::JSStyleSheetList::nameGetter):
+        * bindings/js/JSTextCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        (WebCore::JSTreeWalker::parentNode):
+        (WebCore::JSTreeWalker::firstChild):
+        (WebCore::JSTreeWalker::lastChild):
+        (WebCore::JSTreeWalker::nextSibling):
+        (WebCore::JSTreeWalker::previousSibling):
+        (WebCore::JSTreeWalker::previousNode):
+        (WebCore::JSTreeWalker::nextNode):
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::JSWorkerContextBase::put):
+        * bindings/js/JSWorkerContextBase.h:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::self):
+        (WebCore::JSWorkerContext::setSelf):
+        (WebCore::JSWorkerContext::addEventListener):
+        (WebCore::JSWorkerContext::removeEventListener):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::addEventListener):
+        (WebCore::JSWorker::removeEventListener):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open):
+        (WebCore::JSXMLHttpRequest::setRequestHeader):
+        (WebCore::JSXMLHttpRequest::send):
+        (WebCore::JSXMLHttpRequest::getResponseHeader):
+        (WebCore::JSXMLHttpRequest::overrideMimeType):
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        (WebCore::JSXMLHttpRequest::responseText):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessor::importStylesheet):
+        (WebCore::JSXSLTProcessor::transformToFragment):
+        (WebCore::JSXSLTProcessor::transformToDocument):
+        (WebCore::JSXSLTProcessor::setParameter):
+        (WebCore::JSXSLTProcessor::getParameter):
+        (WebCore::JSXSLTProcessor::removeParameter):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        (WebCore::ScriptCallStack::initialize):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createScriptObjectForPluginElement):
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::getString):
+        (WebCore::ScriptValue::isNull):
+        (WebCore::ScriptValue::isUndefined):
+        * bindings/js/ScriptValue.h:
+        (WebCore::ScriptValue::ScriptValue):
+        (WebCore::ScriptValue::jsValue):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject webScriptValueAtIndex:]):
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bindings/objc/WebScriptObjectPrivate.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_HasMethod):
+        (_NPN_Construct):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::invokeMethod):
+        (JSC::Bindings::CInstance::invokeDefaultMethod):
+        (JSC::Bindings::CInstance::invokeConstruct):
+        (JSC::Bindings::CInstance::defaultValue):
+        (JSC::Bindings::CInstance::stringValue):
+        (JSC::Bindings::CInstance::numberValue):
+        (JSC::Bindings::CInstance::booleanValue):
+        (JSC::Bindings::CInstance::valueOf):
+        * bridge/c/c_instance.h:
+        * bridge/c/c_runtime.cpp:
+        (JSC::Bindings::CField::valueFromInstance):
+        (JSC::Bindings::CField::setValueToInstance):
+        * bridge/c/c_runtime.h:
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        (JSC::Bindings::convertNPVariantToValue):
+        * bridge/c/c_utility.h:
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::stringValue):
+        (JavaInstance::numberValue):
+        (JavaInstance::booleanValue):
+        (JavaInstance::invokeMethod):
+        (JavaInstance::defaultValue):
+        (JavaInstance::valueOf):
+        * bridge/jni/jni_instance.h:
+        * bridge/jni/jni_jsobject.h:
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::eval):
+        (JavaJSObject::getMember):
+        (JavaJSObject::getSlot):
+        (JavaJSObject::convertValueToJObject):
+        (JavaJSObject::convertJObjectToValue):
+        * bridge/jni/jni_objc.mm:
+        (JSC::Bindings::dispatchJNICall):
+        * bridge/jni/jni_runtime.cpp:
+        (JavaArray::convertJObjectToArray):
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::valueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+        (JavaField::setValueToInstance):
+        (JavaArray::setValueAt):
+        (JavaArray::valueAt):
+        * bridge/jni/jni_runtime.h:
+        * bridge/jni/jni_utility.cpp:
+        (JSC::Bindings::convertArrayInstanceToJavaArray):
+        (JSC::Bindings::convertValueToJValue):
+        * bridge/jni/jni_utility.h:
+        * bridge/objc/WebScriptObject.h:
+        * bridge/objc/objc_class.h:
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::fallbackObject):
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfUndefinedField):
+        (ObjcInstance::defaultValue):
+        (ObjcInstance::stringValue):
+        (ObjcInstance::numberValue):
+        (ObjcInstance::booleanValue):
+        (ObjcInstance::valueOf):
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::createStructure):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcField::valueFromInstance):
+        (JSC::Bindings::convertValueToObjcObject):
+        (JSC::Bindings::ObjcField::setValueToInstance):
+        (JSC::Bindings::ObjcArray::setValueAt):
+        (JSC::Bindings::ObjcArray::valueAt):
+        (JSC::Bindings::ObjcFallbackObjectImp::put):
+        (JSC::Bindings::callObjCFallbackObject):
+        (JSC::Bindings::ObjcFallbackObjectImp::defaultValue):
+        * bridge/objc/objc_utility.h:
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::convertValueToObjcValue):
+        (JSC::Bindings::convertNSStringToString):
+        (JSC::Bindings::convertObjcValueToValue):
+        * bridge/runtime.cpp:
+        (JSC::Bindings::Instance::getValueOfField):
+        (JSC::Bindings::Instance::setValueOfField):
+        * bridge/runtime.h:
+        (JSC::Bindings::Class::fallbackObject):
+        (JSC::Bindings::Instance::getValueOfUndefinedField):
+        (JSC::Bindings::Instance::setValueOfUndefinedField):
+        (JSC::Bindings::Instance::invokeDefaultMethod):
+        (JSC::Bindings::Instance::invokeConstruct):
+        (JSC::Bindings::Instance::valueOf):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::lengthGetter):
+        (JSC::RuntimeArray::indexGetter):
+        (JSC::RuntimeArray::put):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createStructure):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::lengthGetter):
+        (JSC::callRuntimeMethod):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createStructure):
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::fallbackObjectGetter):
+        (JSC::RuntimeObjectImp::fieldGetter):
+        (JSC::RuntimeObjectImp::methodGetter):
+        (JSC::RuntimeObjectImp::put):
+        (JSC::RuntimeObjectImp::defaultValue):
+        (JSC::callRuntimeObject):
+        (JSC::callRuntimeConstructor):
+        * bridge/runtime_object.h:
+        (JSC::RuntimeObjectImp::createStructure):
+        * inspector/InspectorController.cpp:
+        * inspector/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::evaluate):
+        * inspector/JavaScriptCallFrame.h:
+        * inspector/JavaScriptProfile.cpp:
+        (WebCore::toJS):
+        * inspector/JavaScriptProfile.h:
+        * inspector/JavaScriptProfileNode.cpp:
+        (WebCore::toJS):
+        * inspector/JavaScriptProfileNode.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dropProtection):
+
 2009-01-06  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Darin Adler.

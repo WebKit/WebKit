@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-JSValue* call(ExecState* exec, JSValue* functionObject, CallType callType, const CallData& callData, JSValue* thisValue, const ArgList& args)
+JSValuePtr call(ExecState* exec, JSValuePtr functionObject, CallType callType, const CallData& callData, JSValuePtr thisValue, const ArgList& args)
 {
     if (callType == CallTypeHost)
         return callData.native.function(exec, asObject(functionObject), thisValue, args);

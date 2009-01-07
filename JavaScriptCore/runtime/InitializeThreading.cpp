@@ -29,6 +29,7 @@
 #include "config.h"
 #include "InitializeThreading.h"
 
+#include "JSImmediate.h"
 #include "Collector.h"
 #include "DateMath.h"
 #include "dtoa.h"

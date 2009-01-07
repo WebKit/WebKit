@@ -77,24 +77,24 @@ CallType JSFunction::getCallData(CallData& callData)
     return CallTypeJS;
 }
 
-JSValue* JSFunction::call(ExecState* exec, JSValue* thisValue, const ArgList& args)
+JSValuePtr JSFunction::call(ExecState* exec, JSValuePtr thisValue, const ArgList& args)
 {
     return exec->interpreter()->execute(m_body.get(), exec, this, thisValue->toThisObject(exec), args, m_scopeChain.node(), exec->exceptionSlot());
 }
 
-JSValue* JSFunction::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr JSFunction::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSFunction* thisObj = asFunction(slot.slotBase());
     return exec->interpreter()->retrieveArguments(exec, thisObj);
 }
 
-JSValue* JSFunction::callerGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr JSFunction::callerGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSFunction* thisObj = asFunction(slot.slotBase());
     return exec->interpreter()->retrieveCaller(exec, thisObj);
 }
 
-JSValue* JSFunction::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr JSFunction::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSFunction* thisObj = asFunction(slot.slotBase());
     return jsNumber(exec, thisObj->m_body->parameterCount());
@@ -103,7 +103,7 @@ JSValue* JSFunction::lengthGetter(ExecState* exec, const Identifier&, const Prop
 bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().prototype) {
-        JSValue** location = getDirectLocation(propertyName);
+        JSValuePtr* location = getDirectLocation(propertyName);
 
         if (!location) {
             JSObject* prototype = new (exec) JSObject(m_scopeChain.globalObject()->emptyObjectStructure());
@@ -133,7 +133,7 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     return Base::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void JSFunction::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
+void JSFunction::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length)
         return;
@@ -158,14 +158,14 @@ ConstructType JSFunction::getConstructData(ConstructData& constructData)
 JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
 {
     Structure* structure;
-    JSValue* prototype = get(exec, exec->propertyNames().prototype);
+    JSValuePtr prototype = get(exec, exec->propertyNames().prototype);
     if (prototype->isObject())
         structure = asObject(prototype)->inheritorID();
     else
         structure = exec->lexicalGlobalObject()->emptyObjectStructure();
     JSObject* thisObj = new (exec) JSObject(structure);
 
-    JSValue* result = exec->interpreter()->execute(m_body.get(), exec, this, thisObj, args, m_scopeChain.node(), exec->exceptionSlot());
+    JSValuePtr result = exec->interpreter()->execute(m_body.get(), exec, this, thisObj, args, m_scopeChain.node(), exec->exceptionSlot());
     if (exec->hadException() || !result->isObject())
         return thisObj;
     return asObject(result);

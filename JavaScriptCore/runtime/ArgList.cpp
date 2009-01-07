@@ -51,7 +51,7 @@ void ArgList::markLists(ListSet& markSet)
     }
 }
 
-void ArgList::slowAppend(JSValue* v)
+void ArgList::slowAppend(JSValuePtr v)
 {
     // As long as our size stays within our Vector's inline 
     // capacity, all our values are allocated on the stack, and 

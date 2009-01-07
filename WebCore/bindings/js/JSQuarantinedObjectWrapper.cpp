@@ -36,7 +36,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSQuarantinedObjectWrapper)
 
 const ClassInfo JSQuarantinedObjectWrapper::s_info = { "JSQuarantinedObjectWrapper", 0, 0, 0 };
 
-JSQuarantinedObjectWrapper* JSQuarantinedObjectWrapper::asWrapper(JSValue* value)
+JSQuarantinedObjectWrapper* JSQuarantinedObjectWrapper::asWrapper(JSValuePtr value)
 {
     if (!value->isObject())
         return 0;
@@ -49,9 +49,9 @@ JSQuarantinedObjectWrapper* JSQuarantinedObjectWrapper::asWrapper(JSValue* value
     return static_cast<JSQuarantinedObjectWrapper*>(object);
 }
 
-JSValue* JSQuarantinedObjectWrapper::cachedValueGetter(ExecState*, const Identifier&, const PropertySlot& slot)
+JSValuePtr JSQuarantinedObjectWrapper::cachedValueGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
-    JSValue* v = slot.slotBase();
+    JSValuePtr v = slot.slotBase();
     ASSERT(v);
     return v;
 }
@@ -111,7 +111,7 @@ bool JSQuarantinedObjectWrapper::getOwnPropertySlot(ExecState* exec, const Ident
     PropertySlot unwrappedSlot(m_unwrappedObject);
     bool result = m_unwrappedObject->getOwnPropertySlot(unwrappedExecState(), identifier, unwrappedSlot);
     if (result) {
-        JSValue* unwrappedValue = unwrappedSlot.getValue(unwrappedExecState(), identifier);
+        JSValuePtr unwrappedValue = unwrappedSlot.getValue(unwrappedExecState(), identifier);
         slot.setCustom(wrapOutgoingValue(unwrappedExecState(), unwrappedValue), cachedValueGetter);
     }
 
@@ -130,7 +130,7 @@ bool JSQuarantinedObjectWrapper::getOwnPropertySlot(ExecState* exec, unsigned id
     PropertySlot unwrappedSlot(m_unwrappedObject);
     bool result = m_unwrappedObject->getOwnPropertySlot(unwrappedExecState(), identifier, unwrappedSlot);
     if (result) {
-        JSValue* unwrappedValue = unwrappedSlot.getValue(unwrappedExecState(), identifier);
+        JSValuePtr unwrappedValue = unwrappedSlot.getValue(unwrappedExecState(), identifier);
         slot.setCustom(wrapOutgoingValue(unwrappedExecState(), unwrappedValue), cachedValueGetter);
     }
 
@@ -139,7 +139,7 @@ bool JSQuarantinedObjectWrapper::getOwnPropertySlot(ExecState* exec, unsigned id
     return result;
 }
 
-void JSQuarantinedObjectWrapper::put(ExecState* exec, const Identifier& identifier, JSValue* value, PutPropertySlot& slot)
+void JSQuarantinedObjectWrapper::put(ExecState* exec, const Identifier& identifier, JSValuePtr value, PutPropertySlot& slot)
 {
     if (!allowsSetProperty())
         return;
@@ -149,7 +149,7 @@ void JSQuarantinedObjectWrapper::put(ExecState* exec, const Identifier& identifi
     transferExceptionToExecState(exec);
 }
 
-void JSQuarantinedObjectWrapper::put(ExecState* exec, unsigned identifier, JSValue* value)
+void JSQuarantinedObjectWrapper::put(ExecState* exec, unsigned identifier, JSValuePtr value)
 {
     if (!allowsSetProperty())
         return;
@@ -197,9 +197,9 @@ JSObject* JSQuarantinedObjectWrapper::construct(ExecState* exec, JSObject* const
     ConstructType unwrappedConstructType = wrapper->m_unwrappedObject->getConstructData(unwrappedConstructData);
     ASSERT(unwrappedConstructType != ConstructTypeNone);
 
-    JSValue* unwrappedResult = JSC::construct(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedConstructType, unwrappedConstructData, preparedArgs);
+    JSValuePtr unwrappedResult = JSC::construct(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedConstructType, unwrappedConstructData, preparedArgs);
 
-    JSValue* resultValue = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
+    JSValuePtr resultValue = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
     ASSERT(resultValue->isObject());
     JSObject* result = asObject(resultValue);
 
@@ -219,7 +219,7 @@ ConstructType JSQuarantinedObjectWrapper::getConstructData(ConstructData& constr
     return ConstructTypeHost;
 }
 
-bool JSQuarantinedObjectWrapper::hasInstance(ExecState* exec, JSValue* value, JSValue* proto)
+bool JSQuarantinedObjectWrapper::hasInstance(ExecState* exec, JSValuePtr value, JSValuePtr proto)
 {
     if (!allowsHasInstance())
         return false;
@@ -231,11 +231,11 @@ bool JSQuarantinedObjectWrapper::hasInstance(ExecState* exec, JSValue* value, JS
     return result;
 }
 
-JSValue* JSQuarantinedObjectWrapper::call(ExecState* exec, JSObject* function, JSValue* thisValue, const ArgList& args)
+JSValuePtr JSQuarantinedObjectWrapper::call(ExecState* exec, JSObject* function, JSValuePtr thisValue, const ArgList& args)
 {
     JSQuarantinedObjectWrapper* wrapper = static_cast<JSQuarantinedObjectWrapper*>(function);
 
-    JSValue* preparedThisValue = wrapper->prepareIncomingValue(exec, thisValue);
+    JSValuePtr preparedThisValue = wrapper->prepareIncomingValue(exec, thisValue);
 
     ArgList preparedArgs;
     for (size_t i = 0; i < args.size(); ++i)
@@ -247,9 +247,9 @@ JSValue* JSQuarantinedObjectWrapper::call(ExecState* exec, JSObject* function, J
     CallType unwrappedCallType = wrapper->m_unwrappedObject->getCallData(unwrappedCallData);
     ASSERT(unwrappedCallType != CallTypeNone);
 
-    JSValue* unwrappedResult = JSC::call(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedCallType, unwrappedCallData, preparedThisValue, preparedArgs);
+    JSValuePtr unwrappedResult = JSC::call(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedCallType, unwrappedCallData, preparedThisValue, preparedArgs);
 
-    JSValue* result = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
+    JSValuePtr result = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
 
     wrapper->transferExceptionToExecState(exec);
 

@@ -101,7 +101,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
         
     JSC::JSLock lock(false);
         
-    JSValue* handleEventFunction = m_data->callback()->get(exec, Identifier(exec, "handleEvent"));
+    JSValuePtr handleEventFunction = m_data->callback()->get(exec, Identifier(exec, "handleEvent"));
     CallData handleEventCallData;
     CallType handleEventCallType = handleEventFunction->getCallData(handleEventCallData);
     CallData callbackCallData;

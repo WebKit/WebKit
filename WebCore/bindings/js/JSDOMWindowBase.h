@@ -61,16 +61,16 @@ namespace WebCore {
         void disconnectFrame();
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
-        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue*, JSC::PutPropertySlot&);
+        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValuePtr, JSC::PutPropertySlot&);
 
         int installTimeout(const JSC::UString& handler, int t, bool singleShot);
-        int installTimeout(JSC::ExecState*, JSC::JSValue* function, const JSC::ArgList& args, int t, bool singleShot);
+        int installTimeout(JSC::ExecState*, JSC::JSValuePtr function, const JSC::ArgList& args, int t, bool singleShot);
         void removeTimeout(int timeoutId);
 
         void clear();
 
         // Set a place to put a dialog return value when the window is cleared.
-        void setReturnValueSlot(JSC::JSValue** slot);
+        void setReturnValueSlot(JSC::JSValuePtr* slot);
 
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
@@ -101,13 +101,13 @@ namespace WebCore {
 
             RefPtr<DOMWindow> impl;
 
-            JSC::JSValue** returnValueSlot;
+            JSC::JSValuePtr* returnValueSlot;
             JSDOMWindowShell* shell;
         };
 
-        static JSC::JSValue* childFrameGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-        static JSC::JSValue* indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-        static JSC::JSValue* namedItemGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+        static JSC::JSValuePtr childFrameGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+        static JSC::JSValuePtr indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+        static JSC::JSValuePtr namedItemGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
 
         void clearHelperObjectProperties();
         int installTimeout(ScheduledAction*, int interval, bool singleShot);
@@ -119,11 +119,11 @@ namespace WebCore {
     };
 
     // Returns a JSDOMWindow or jsNull()
-    JSC::JSValue* toJS(JSC::ExecState*, DOMWindow*);
+    JSC::JSValuePtr toJS(JSC::ExecState*, DOMWindow*);
 
     // Returns JSDOMWindow or 0
     JSDOMWindow* toJSDOMWindow(Frame*);
-    JSDOMWindow* toJSDOMWindow(JSC::JSValue*);
+    JSDOMWindow* toJSDOMWindow(JSC::JSValuePtr);
 
 } // namespace WebCore
 

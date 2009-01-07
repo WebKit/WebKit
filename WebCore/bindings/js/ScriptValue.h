@@ -39,15 +39,15 @@ class String;
 
 class ScriptValue {
 public:
-    ScriptValue(JSC::JSValue* value = JSC::noValue()) : m_value(value) {}
+    ScriptValue(JSC::JSValuePtr value = JSC::noValue()) : m_value(value) {}
 
-    JSC::JSValue* jsValue() const { return m_value.get(); }
+    JSC::JSValuePtr jsValue() const { return m_value.get(); }
     bool getString(String& result) const;
     bool isNull() const;
     bool isUndefined() const;
 
 private:
-    JSC::ProtectedPtr<JSC::JSValue> m_value;
+    JSC::ProtectedJSValuePtr m_value;
 };
 
 } // namespace WebCore

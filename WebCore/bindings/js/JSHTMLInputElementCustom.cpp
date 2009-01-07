@@ -51,7 +51,7 @@ bool JSHTMLInputElement::customGetOwnPropertySlot(ExecState* exec, const Identif
     return false;
 }
 
-JSValue* JSHTMLInputElement::selectionStart(ExecState* exec) const
+JSValuePtr JSHTMLInputElement::selectionStart(ExecState* exec) const
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
     if (!input->canHaveSelection())
@@ -60,7 +60,7 @@ JSValue* JSHTMLInputElement::selectionStart(ExecState* exec) const
     return jsNumber(exec, input->selectionStart());
 }
 
-JSValue* JSHTMLInputElement::selectionEnd(ExecState* exec) const
+JSValuePtr JSHTMLInputElement::selectionEnd(ExecState* exec) const
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
     if (!input->canHaveSelection())

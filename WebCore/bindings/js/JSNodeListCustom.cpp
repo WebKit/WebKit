@@ -36,7 +36,7 @@ using namespace JSC;
 namespace WebCore {
 
 // Need to support call so that list(0) works.
-static JSValue* callNodeList(ExecState* exec, JSObject* function, JSValue*, const ArgList& args)
+static JSValuePtr callNodeList(ExecState* exec, JSObject* function, JSValuePtr, const ArgList& args)
 {
     bool ok;
     unsigned index = args.at(exec, 0)->toString(exec).toUInt32(&ok);
@@ -56,7 +56,7 @@ bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, const Identifier
     return impl->itemWithName(propertyName);
 }
 
-JSValue* JSNodeList::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValuePtr JSNodeList::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSNodeList* thisObj = static_cast<JSNodeList*>(asObject(slot.slotBase()));
     return toJS(exec, thisObj->impl()->itemWithName(propertyName));

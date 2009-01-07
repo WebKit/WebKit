@@ -36,7 +36,7 @@ NumberObject::NumberObject(PassRefPtr<Structure> structure)
 {
 }
 
-JSValue* NumberObject::getJSNumber()
+JSValuePtr NumberObject::getJSNumber()
 {
     return internalValue();
 }
@@ -48,7 +48,7 @@ NumberObject* constructNumber(ExecState* exec, JSNumberCell* number)
     return object;
 }
 
-NumberObject* constructNumberFromImmediateNumber(ExecState* exec, JSValue* value)
+NumberObject* constructNumberFromImmediateNumber(ExecState* exec, JSValuePtr value)
 {
     NumberObject* object = new (exec) NumberObject(exec->lexicalGlobalObject()->numberObjectStructure());
     object->setInternalValue(value);

@@ -37,7 +37,7 @@ namespace JSC {
 namespace WebCore {
 
     JSClassRef ProfileNodeClass();
-    JSC::JSValue* toJS(JSC::ExecState*, JSC::ProfileNode*);
+    JSC::JSValuePtr toJS(JSC::ExecState*, JSC::ProfileNode*);
 
 } // namespace WebCore
 

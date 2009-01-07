@@ -30,7 +30,7 @@ namespace JSC {
         ObjectPrototype(ExecState*, PassRefPtr<Structure>, Structure* prototypeFunctionStructure);
     };
 
-    JSValue* objectProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValuePtr objectProtoFuncToString(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 
 } // namespace JSC
 

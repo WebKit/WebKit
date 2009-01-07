@@ -58,7 +58,7 @@ void JSWorker::mark()
     }
 }
 
-JSValue* JSWorker::addEventListener(ExecState* exec, const ArgList& args)
+JSValuePtr JSWorker::addEventListener(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)
@@ -70,7 +70,7 @@ JSValue* JSWorker::addEventListener(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue* JSWorker::removeEventListener(ExecState* exec, const ArgList& args)
+JSValuePtr JSWorker::removeEventListener(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)

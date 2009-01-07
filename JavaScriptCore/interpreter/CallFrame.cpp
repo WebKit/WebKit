@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-JSValue* CallFrame::thisValue()
+JSValuePtr CallFrame::thisValue()
 {
     return this[codeBlock()->thisRegister()].jsValue(this);
 }

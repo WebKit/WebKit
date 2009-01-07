@@ -53,7 +53,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
-- (id)_convertValueToObjcValue:(JSValue*)value;
+- (id)_convertValueToObjcValue:(JSValuePtr)value;
 
 @end
 
@@ -109,7 +109,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     _private->debuggerCallFrame = 0;
 }
 
-- (id)_convertValueToObjcValue:(JSValue*)value
+- (id)_convertValueToObjcValue:(JSValuePtr)value
 {
     if (!value)
         return nil;
@@ -204,7 +204,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if (!_private->debuggerCallFrame)
         return nil;
 
-    JSValue* exception = _private->debuggerCallFrame->exception();
+    JSValuePtr exception = _private->debuggerCallFrame->exception();
     return exception ? [self _convertValueToObjcValue:exception] : nil;
 }
 
@@ -221,8 +221,8 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
     JSLock lock(false);
 
-    JSValue* exception = noValue();
-    JSValue* result = _private->debuggerCallFrame->evaluate(String(script), exception);
+    JSValuePtr exception = noValue();
+    JSValuePtr result = _private->debuggerCallFrame->evaluate(String(script), exception);
     if (exception)
         return [self _convertValueToObjcValue:exception];
     return result ? [self _convertValueToObjcValue:result] : nil;

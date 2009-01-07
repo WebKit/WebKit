@@ -39,24 +39,24 @@ namespace JSC {
      */
     class Completion {
     public:
-        Completion(ComplType type = Normal, JSValue* value = noValue())
+        Completion(ComplType type = Normal, JSValuePtr value = noValue())
             : m_type(type)
             , m_value(value)
         {
         }
 
         ComplType complType() const { return m_type; }
-        JSValue* value() const { return m_value; }
-        void setValue(JSValue* v) { m_value = v; }
-        bool isValueCompletion() const { return !!m_value; }
+        JSValuePtr value() const { return m_value; }
+        void setValue(JSValuePtr v) { m_value = v; }
+        bool isValueCompletion() const { return m_value; }
 
     private:
         ComplType m_type;
-        JSValue* m_value;
+        JSValuePtr m_value;
     };
 
     Completion checkSyntax(ExecState*, const SourceCode&);
-    Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValue* thisValue = noValue());
+    Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValuePtr thisValue = noValue());
 
 } // namespace JSC
 

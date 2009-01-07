@@ -140,13 +140,13 @@ namespace JSC {
 
         bool isOpcode(Opcode);
         
-        JSValue* execute(ProgramNode*, CallFrame*, ScopeChainNode*, JSObject* thisObj, JSValue** exception);
-        JSValue* execute(FunctionBodyNode*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValue** exception);
-        JSValue* execute(EvalNode* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain, JSValue** exception);
+        JSValuePtr execute(ProgramNode*, CallFrame*, ScopeChainNode*, JSObject* thisObj, JSValuePtr* exception);
+        JSValuePtr execute(FunctionBodyNode*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValuePtr* exception);
+        JSValuePtr execute(EvalNode* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain, JSValuePtr* exception);
 
-        JSValue* retrieveArguments(CallFrame*, JSFunction*) const;
-        JSValue* retrieveCaller(CallFrame*, InternalFunction*) const;
-        void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue*& function) const;
+        JSValuePtr retrieveArguments(CallFrame*, JSFunction*) const;
+        JSValuePtr retrieveCaller(CallFrame*, InternalFunction*) const;
+        void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValuePtr& function) const;
         
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         void setTimeoutTime(unsigned timeoutTime) { m_timeoutTime = timeoutTime; }
@@ -183,8 +183,8 @@ namespace JSC {
 
         static JSObject* JIT_STUB cti_op_convert_this(STUB_ARGS);
         static void JIT_STUB cti_op_end(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_add(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_pre_inc(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_add(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_pre_inc(STUB_ARGS);
         static int JIT_STUB cti_op_loop_if_less(STUB_ARGS);
         static int JIT_STUB cti_op_loop_if_lesseq(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_new_object(STUB_ARGS);
@@ -192,22 +192,22 @@ namespace JSC {
         static void JIT_STUB cti_op_put_by_id_second(STUB_ARGS);
         static void JIT_STUB cti_op_put_by_id_generic(STUB_ARGS);
         static void JIT_STUB cti_op_put_by_id_fail(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_get_by_id(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_get_by_id_second(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_get_by_id_generic(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_get_by_id_self_fail(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_get_by_id_proto_list(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_get_by_id_proto_list_full(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_get_by_id_proto_fail(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_get_by_id_array_fail(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_get_by_id_string_fail(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_del_by_id(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_instanceof(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_mul(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_id(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_id_second(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_id_generic(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_id_self_fail(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_id_proto_list(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_id_proto_list_full(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_id_proto_fail(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_id_array_fail(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_id_string_fail(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_del_by_id(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_instanceof(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_mul(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_new_func(STUB_ARGS);
         static void* JIT_STUB cti_op_call_JSFunction(STUB_ARGS);
         static VoidPtrPair JIT_STUB cti_op_call_arityCheck(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_call_NotJSFunction(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_call_NotJSFunction(STUB_ARGS);
         static void JIT_STUB cti_op_create_arguments(STUB_ARGS);
         static void JIT_STUB cti_op_create_arguments_no_params(STUB_ARGS);
         static void JIT_STUB cti_op_tear_off_activation(STUB_ARGS);
@@ -216,71 +216,71 @@ namespace JSC {
         static void JIT_STUB cti_op_profile_did_call(STUB_ARGS);
         static void JIT_STUB cti_op_ret_scopeChain(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_new_array(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_resolve(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_resolve_global(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_resolve(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_resolve_global(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_construct_JSConstruct(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_construct_NotJSConstruct(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_get_by_val(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_construct_NotJSConstruct(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_val(STUB_ARGS);
         static VoidPtrPair JIT_STUB cti_op_resolve_func(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_sub(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_sub(STUB_ARGS);
         static void JIT_STUB cti_op_put_by_val(STUB_ARGS);
         static void JIT_STUB cti_op_put_by_val_array(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_lesseq(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_lesseq(STUB_ARGS);
         static int JIT_STUB cti_op_loop_if_true(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_resolve_base(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_negate(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_resolve_skip(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_div(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_pre_dec(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_resolve_base(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_negate(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_resolve_skip(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_div(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_pre_dec(STUB_ARGS);
         static int JIT_STUB cti_op_jless(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_not(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_not(STUB_ARGS);
         static int JIT_STUB cti_op_jtrue(STUB_ARGS);
         static VoidPtrPair JIT_STUB cti_op_post_inc(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_eq(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_lshift(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_bitand(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_rshift(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_bitnot(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_eq(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_lshift(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_bitand(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_rshift(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_bitnot(STUB_ARGS);
         static VoidPtrPair JIT_STUB cti_op_resolve_with_base(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_new_func_exp(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_mod(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_less(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_neq(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_mod(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_less(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_neq(STUB_ARGS);
         static VoidPtrPair JIT_STUB cti_op_post_dec(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_urshift(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_bitxor(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_urshift(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_bitxor(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_new_regexp(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_bitor(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_call_eval(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_throw(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_bitor(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_call_eval(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_throw(STUB_ARGS);
         static JSPropertyNameIterator* JIT_STUB cti_op_get_pnames(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_next_pname(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_next_pname(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_push_scope(STUB_ARGS);
         static void JIT_STUB cti_op_pop_scope(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_typeof(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_is_undefined(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_is_boolean(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_is_number(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_is_string(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_is_object(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_is_function(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_stricteq(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_nstricteq(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_to_jsnumber(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_in(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_typeof(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_is_undefined(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_is_boolean(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_is_number(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_is_string(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_is_object(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_is_function(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_stricteq(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_nstricteq(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_to_jsnumber(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_in(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_push_new_scope(STUB_ARGS);
         static void JIT_STUB cti_op_jmp_scopes(STUB_ARGS);
         static void JIT_STUB cti_op_put_by_index(STUB_ARGS);
         static void* JIT_STUB cti_op_switch_imm(STUB_ARGS);
         static void* JIT_STUB cti_op_switch_char(STUB_ARGS);
         static void* JIT_STUB cti_op_switch_string(STUB_ARGS);
-        static JSValue* JIT_STUB cti_op_del_by_val(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_del_by_val(STUB_ARGS);
         static void JIT_STUB cti_op_put_getter(STUB_ARGS);
         static void JIT_STUB cti_op_put_setter(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_new_error(STUB_ARGS);
         static void JIT_STUB cti_op_debug(STUB_ARGS);
 
-        static JSValue* JIT_STUB cti_vm_throw(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_vm_throw(STUB_ARGS);
         static void* JIT_STUB cti_vm_dontLazyLinkCall(STUB_ARGS);
         static void* JIT_STUB cti_vm_lazyLinkCall(STUB_ARGS);
         static JSObject* JIT_STUB cti_op_push_activation(STUB_ARGS);
@@ -290,44 +290,44 @@ namespace JSC {
         // Default number of ticks before a timeout check should be done.
         static const int initialTickCountThreshold = 1024;
 
-        bool isJSArray(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsArrayVptr; }
-        bool isJSString(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringVptr; }
-        bool isJSByteArray(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsByteArrayVptr; }
+        bool isJSArray(JSValuePtr v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsArrayVptr; }
+        bool isJSString(JSValuePtr v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringVptr; }
+        bool isJSByteArray(JSValuePtr v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsByteArrayVptr; }
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
-        NEVER_INLINE JSValue* callEval(CallFrame*, RegisterFile*, Register* argv, int argc, int registerOffset, JSValue*& exceptionValue);
-        JSValue* execute(EvalNode*, CallFrame*, JSObject* thisObject, int globalRegisterOffset, ScopeChainNode*, JSValue** exception);
+        NEVER_INLINE JSValuePtr callEval(CallFrame*, RegisterFile*, Register* argv, int argc, int registerOffset, JSValuePtr& exceptionValue);
+        JSValuePtr execute(EvalNode*, CallFrame*, JSObject* thisObject, int globalRegisterOffset, ScopeChainNode*, JSValuePtr* exception);
 
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine);
 
-        NEVER_INLINE bool resolve(CallFrame*, Instruction*, JSValue*& exceptionValue);
-        NEVER_INLINE bool resolveSkip(CallFrame*, Instruction*, JSValue*& exceptionValue);
-        NEVER_INLINE bool resolveGlobal(CallFrame*, Instruction*, JSValue*& exceptionValue);
+        NEVER_INLINE bool resolve(CallFrame*, Instruction*, JSValuePtr& exceptionValue);
+        NEVER_INLINE bool resolveSkip(CallFrame*, Instruction*, JSValuePtr& exceptionValue);
+        NEVER_INLINE bool resolveGlobal(CallFrame*, Instruction*, JSValuePtr& exceptionValue);
         NEVER_INLINE void resolveBase(CallFrame*, Instruction* vPC);
-        NEVER_INLINE bool resolveBaseAndProperty(CallFrame*, Instruction*, JSValue*& exceptionValue);
+        NEVER_INLINE bool resolveBaseAndProperty(CallFrame*, Instruction*, JSValuePtr& exceptionValue);
         NEVER_INLINE ScopeChainNode* createExceptionScope(CallFrame*, const Instruction* vPC);
 
-        NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValue*, unsigned& bytecodeOffset, CodeBlock*&);
-        NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue*&, unsigned bytecodeOffset, bool);
-        NEVER_INLINE bool resolveBaseAndFunc(CallFrame*, Instruction*, JSValue*& exceptionValue);
+        NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValuePtr, unsigned& bytecodeOffset, CodeBlock*&);
+        NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValuePtr&, unsigned bytecodeOffset, bool);
+        NEVER_INLINE bool resolveBaseAndFunc(CallFrame*, Instruction*, JSValuePtr& exceptionValue);
 
         static ALWAYS_INLINE CallFrame* slideRegisterWindowForCall(CodeBlock*, RegisterFile*, CallFrame*, size_t registerOffset, int argc);
 
         static CallFrame* findFunctionCallFrame(CallFrame*, InternalFunction*);
 
-        JSValue* privateExecute(ExecutionFlag, RegisterFile*, CallFrame*, JSValue** exception);
+        JSValuePtr privateExecute(ExecutionFlag, RegisterFile*, CallFrame*, JSValuePtr* exception);
 
         void dumpCallFrame(CallFrame*);
         void dumpRegisters(CallFrame*);
 
-        JSValue* checkTimeout(JSGlobalObject*);
+        bool checkTimeout(JSGlobalObject*);
         void resetTimeoutCheck();
 
-        void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
+        void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValuePtr baseValue, const Identifier& propertyName, const PropertySlot&);
         void uncacheGetByID(CodeBlock*, Instruction* vPC);
-        void tryCachePutByID(CallFrame*, CodeBlock*, Instruction*, JSValue* baseValue, const PutPropertySlot&);
+        void tryCachePutByID(CallFrame*, CodeBlock*, Instruction*, JSValuePtr baseValue, const PutPropertySlot&);
         void uncachePutByID(CodeBlock*, Instruction* vPC);
         
         bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval); }
@@ -335,8 +335,8 @@ namespace JSC {
 #if ENABLE(JIT)
         static void throwStackOverflowPreviousFrame(CallFrame**, JSGlobalData*, void*& returnAddress);
 
-        void tryCTICacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
-        void tryCTICachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const PutPropertySlot&);
+        void tryCTICacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValuePtr baseValue, const Identifier& propertyName, const PropertySlot&);
+        void tryCTICachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValuePtr baseValue, const PutPropertySlot&);
 #endif
 
         SamplingTool* m_sampler;

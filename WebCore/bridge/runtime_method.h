@@ -45,13 +45,13 @@ public:
         return exec->lexicalGlobalObject()->functionPrototype();
     }
 
-    static PassRefPtr<Structure> createStructure(JSValue* prototype)
+    static PassRefPtr<Structure> createStructure(JSValuePtr prototype)
     {
         return Structure::create(prototype, TypeInfo(ObjectType, ImplementsHasInstance));
     }
 
 private:
-    static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValuePtr lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual CallType getCallData(CallData&);
 

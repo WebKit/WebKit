@@ -84,7 +84,7 @@ void HashTable::deleteTable() const
 void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
 {
     ASSERT(entry->attributes() & Function);
-    JSValue** location = thisObj->getDirectLocation(propertyName);
+    JSValuePtr* location = thisObj->getDirectLocation(propertyName);
 
     if (!location) {
         PrototypeFunction* function = new (exec) PrototypeFunction(exec, entry->functionLength(), propertyName, entry->function());

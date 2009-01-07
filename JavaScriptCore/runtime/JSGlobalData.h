@@ -35,6 +35,7 @@
 #include "Collector.h"
 #include "ExecutableAllocator.h"
 #include "SmallStrings.h"
+#include "JSValue.h"
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
@@ -71,7 +72,7 @@ namespace JSC {
 
         Interpreter* interpreter;
 
-        JSValue* exception;
+        JSValuePtr exception;
 #if ENABLE(JIT)
         void* exceptionLocation;
 #endif

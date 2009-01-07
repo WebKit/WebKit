@@ -1,3 +1,20 @@
+2009-01-05  Gavin Barraclough  <baraclough@apple.com>
+
+        Rubber Stamped by Oliver Hunt.
+
+        Replace all uses of JSValue* with new wrapper class, JSValuePtr.
+        See JavaScriptCore/ChangeLog for more detailed description.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame _convertValueToObjcValue:]):
+        (-[WebScriptCallFrame exception]):
+        (-[WebScriptCallFrame evaluateWebScript:]):
+        * WebView/WebView.mm:
+        (aeDescFromJSValue):
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]):
+
 2009-01-06  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Darin Adler.

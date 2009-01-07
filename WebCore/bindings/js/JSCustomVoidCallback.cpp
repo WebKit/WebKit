@@ -60,7 +60,7 @@ void JSCustomVoidCallback::handleEvent()
         
     JSC::JSLock lock(false);
         
-    JSValue* function = m_callback->get(exec, Identifier(exec, "handleEvent"));
+    JSValuePtr function = m_callback->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;
     CallType callType = function->getCallData(callData);
     if (callType == CallTypeNone) {
@@ -86,7 +86,7 @@ void JSCustomVoidCallback::handleEvent()
     Document::updateDocumentsRendering();
 }
  
-PassRefPtr<VoidCallback> toVoidCallback(ExecState* exec, JSValue* value)
+PassRefPtr<VoidCallback> toVoidCallback(ExecState* exec, JSValuePtr value)
 {
     JSObject* object = value->getObject();
     if (!object)

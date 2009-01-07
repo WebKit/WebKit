@@ -49,7 +49,7 @@ void JSDocument::mark()
     markActiveObjectsForContext(*Heap::heap(this)->globalData(), impl());
 }
 
-JSValue* JSDocument::location(ExecState* exec) const
+JSValuePtr JSDocument::location(ExecState* exec) const
 {
     Frame* frame = static_cast<Document*>(impl())->frame();
     if (!frame)
@@ -58,7 +58,7 @@ JSValue* JSDocument::location(ExecState* exec) const
     return toJS(exec, frame->domWindow()->location());
 }
 
-void JSDocument::setLocation(ExecState* exec, JSValue* value)
+void JSDocument::setLocation(ExecState* exec, JSValuePtr value)
 {
     Frame* frame = static_cast<Document*>(impl())->frame();
     if (!frame)
@@ -76,7 +76,7 @@ void JSDocument::setLocation(ExecState* exec, JSValue* value)
     frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), false, userGesture);
 }
 
-JSValue* toJS(ExecState* exec, Document* document)
+JSValuePtr toJS(ExecState* exec, Document* document)
 {
     if (!document)
         return jsNull();

@@ -49,14 +49,14 @@ namespace WebCore {
             return exec->lexicalGlobalObject()->objectPrototype();
         }
 
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue* prototype)
+        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValuePtr prototype)
         {
             return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType));
         }
 
     private:
-        static JSC::JSValue* lengthGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-        static JSC::JSValue* indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+        static JSC::JSValuePtr lengthGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+        static JSC::JSValuePtr indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
 
         OwnPtr<Vector<RefPtr<Node> > > m_nodes;
     };

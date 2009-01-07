@@ -32,14 +32,14 @@
 
 namespace JSC {
 
-JSObject* JSImmediate::toThisObject(JSValue* v, ExecState* exec)
+JSObject* JSImmediate::toThisObject(JSValuePtr v, ExecState* exec)
 {
     ASSERT(isImmediate(v));
     if (isNumber(v))
         return constructNumberFromImmediateNumber(exec, v);
     if (isBoolean(v))
         return constructBooleanFromImmediateBoolean(exec, v);
-    if (v == jsNull())
+    if (v->isNull())
         return exec->globalThisValue();
     
     JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v->isNull());
@@ -47,7 +47,7 @@ JSObject* JSImmediate::toThisObject(JSValue* v, ExecState* exec)
     return new (exec) JSNotAnObject(exec, exception);
 }
 
-JSObject* JSImmediate::toObject(JSValue* v, ExecState* exec)
+JSObject* JSImmediate::toObject(JSValuePtr v, ExecState* exec)
 {
     ASSERT(isImmediate(v));
     if (isNumber(v))
@@ -60,7 +60,7 @@ JSObject* JSImmediate::toObject(JSValue* v, ExecState* exec)
     return new (exec) JSNotAnObject(exec, exception);
 }
 
-JSObject* JSImmediate::prototype(JSValue* v, ExecState* exec)
+JSObject* JSImmediate::prototype(JSValuePtr v, ExecState* exec)
 {
     ASSERT(isImmediate(v));
     if (isNumber(v))
@@ -73,18 +73,18 @@ JSObject* JSImmediate::prototype(JSValue* v, ExecState* exec)
     return new (exec) JSNotAnObject(exec, exception);
 }
 
-UString JSImmediate::toString(JSValue* v)
+UString JSImmediate::toString(JSValuePtr v)
 {
     ASSERT(isImmediate(v));
     if (isNumber(v))
         return UString::from(getTruncatedInt32(v));
-    if (v == jsBoolean(false))
+    if (jsBoolean(false) == v)
         return "false";
-    if (v == jsBoolean(true))
+    if (jsBoolean(true) == v)
         return "true";
     if (v->isNull())
         return "null";
-    ASSERT(v == jsUndefined());
+    ASSERT(v->isUndefined());
     return "undefined";
 }
 

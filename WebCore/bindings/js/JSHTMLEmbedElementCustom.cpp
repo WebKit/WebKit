@@ -38,7 +38,7 @@ bool JSHTMLEmbedElement::customGetOwnPropertySlot(ExecState* exec, const Identif
     return runtimeObjectCustomGetOwnPropertySlot(exec, propertyName, slot, this);
 }
 
-bool JSHTMLEmbedElement::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
+bool JSHTMLEmbedElement::customPut(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
 {
     return runtimeObjectCustomPut(exec, propertyName, value, impl(), slot);
 }
@@ -53,7 +53,7 @@ bool JSHTMLEmbedElement::canGetItemsForName(ExecState*, HTMLEmbedElement*, const
     return propertyName == "__apple_runtime_object";
 }
 
-JSValue* JSHTMLEmbedElement::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValuePtr JSHTMLEmbedElement::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return runtimeObjectGetter(exec, propertyName, slot);
 }

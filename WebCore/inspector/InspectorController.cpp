@@ -231,7 +231,7 @@ struct ConsoleMessage {
     MessageSource source;
     MessageLevel level;
     String message;
-    Vector<ProtectedPtr<JSValue> > wrappedArguments;
+    Vector<ProtectedJSValuePtr> wrappedArguments;
     Vector<ScriptString> frames;
     unsigned line;
     String url;

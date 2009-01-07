@@ -126,7 +126,7 @@ bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSi
     [], other       exception
 
 */
-ObjcValue convertValueToObjcValue(ExecState* exec, JSValue* value, ObjcValueType type)
+ObjcValue convertValueToObjcValue(ExecState* exec, JSValuePtr value, ObjcValueType type)
 {
     ObjcValue result;
     double d = 0;
@@ -194,7 +194,7 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValue* value, ObjcValueType
     return result;
 }
 
-JSValue* convertNSStringToString(ExecState* exec, NSString *nsstring)
+JSValuePtr convertNSStringToString(ExecState* exec, NSString *nsstring)
 {
     JSLock lock(false);
     
@@ -203,7 +203,7 @@ JSValue* convertNSStringToString(ExecState* exec, NSString *nsstring)
     chars = (unichar *)malloc(sizeof(unichar)*length);
     [nsstring getCharacters:chars];
     UString u((const UChar*)chars, length);
-    JSValue* aValue = jsString(exec, u);
+    JSValuePtr aValue = jsString(exec, u);
     free((void *)chars);
     return aValue;
 }
@@ -226,7 +226,7 @@ JSValue* convertNSStringToString(ExecState* exec, NSString *nsstring)
     id              object wrapper
     other           should not happen
 */
-JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType type, RootObject* rootObject)
+JSValuePtr convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType type, RootObject* rootObject)
 {
     JSLock lock(false);
     

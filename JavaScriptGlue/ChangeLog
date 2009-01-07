@@ -1,3 +1,34 @@
+2009-01-05  Gavin Barraclough  <baraclough@apple.com>
+
+        Rubber Stamped by Oliver Hunt.
+
+        Replace all uses of JSValue* with new wrapper class, JSValuePtr.
+        See JavaScriptCore/ChangeLog for more detailed description.
+
+        * JSObject.cpp:
+        (nativeCallFunction):
+        * JSUtils.cpp:
+        (KJSValueToJSObject):
+        (JSObjectKJSValue):
+        (KJSValueToCFTypeInternal):
+        (KJSValueToCFType):
+        * JSUtils.h:
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSValueWrapper):
+        (JSValueWrapper::GetValue):
+        (JSValueWrapper::JSObjectCopyProperty):
+        (JSValueWrapper::JSObjectSetProperty):
+        (JSValueWrapper::JSObjectCallFunction):
+        * JSValueWrapper.h:
+        * UserObjectImp.cpp:
+        (UserObjectImp::callAsFunction):
+        (UserObjectImp::userObjectGetter):
+        (UserObjectImp::getOwnPropertySlot):
+        (UserObjectImp::put):
+        (UserObjectImp::toPrimitive):
+        * UserObjectImp.h:
+        (UserObjectImp::createStructure):
+
 2008-12-15  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Cameron Zwarich.

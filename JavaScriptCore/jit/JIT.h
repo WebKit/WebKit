@@ -49,17 +49,17 @@
 
 #define ARG_callFrame static_cast<CallFrame*>(ARGS[STUB_ARGS_callFrame])
 #define ARG_registerFile static_cast<RegisterFile*>(ARGS[STUB_ARGS_registerFile])
-#define ARG_exception static_cast<JSValue**>(ARGS[STUB_ARGS_exception])
+#define ARG_exception static_cast<JSValuePtr*>(ARGS[STUB_ARGS_exception])
 #define ARG_profilerReference static_cast<Profiler**>(ARGS[STUB_ARGS_profilerReference])
 #define ARG_globalData static_cast<JSGlobalData*>(ARGS[STUB_ARGS_globalData])
 
 #define ARG_setCallFrame(newCallFrame) (ARGS[STUB_ARGS_callFrame] = (newCallFrame))
 
-#define ARG_src1 static_cast<JSValue*>(ARGS[1])
-#define ARG_src2 static_cast<JSValue*>(ARGS[2])
-#define ARG_src3 static_cast<JSValue*>(ARGS[3])
-#define ARG_src4 static_cast<JSValue*>(ARGS[4])
-#define ARG_src5 static_cast<JSValue*>(ARGS[5])
+#define ARG_src1 JSValuePtr::decode(static_cast<JSValueEncodedAsPointer*>(ARGS[1]))
+#define ARG_src2 JSValuePtr::decode(static_cast<JSValueEncodedAsPointer*>(ARGS[2]))
+#define ARG_src3 JSValuePtr::decode(static_cast<JSValueEncodedAsPointer*>(ARGS[3]))
+#define ARG_src4 JSValuePtr::decode(static_cast<JSValueEncodedAsPointer*>(ARGS[4]))
+#define ARG_src5 JSValuePtr::decode(static_cast<JSValueEncodedAsPointer*>(ARGS[5]))
 #define ARG_id1 static_cast<Identifier*>(ARGS[1])
 #define ARG_id2 static_cast<Identifier*>(ARGS[2])
 #define ARG_id3 static_cast<Identifier*>(ARGS[3])
@@ -97,7 +97,7 @@ namespace JSC {
     struct PolymorphicAccessStructureList;
     struct StructureStubInfo;
 
-    typedef JSValue* (JIT_STUB *CTIHelper_j)(STUB_ARGS);
+    typedef JSValueEncodedAsPointer* (JIT_STUB *CTIHelper_j)(STUB_ARGS);
     typedef JSObject* (JIT_STUB *CTIHelper_o)(STUB_ARGS);
     typedef JSPropertyNameIterator* (JIT_STUB *CTIHelper_p)(STUB_ARGS);
     typedef void (JIT_STUB *CTIHelper_v)(STUB_ARGS);
@@ -193,13 +193,13 @@ namespace JSC {
     };
 
     extern "C" {
-        JSValue* ctiTrampoline(
+        JSValueEncodedAsPointer* ctiTrampoline(
 #if PLATFORM(X86_64)
             // FIXME: (bug #22910) this will force all arguments onto the stack (regparm(0) does not appear to have any effect).
             // We can allow register passing here, and move the writes of these values into the trampoline.
             void*, void*, void*, void*, void*, void*,
 #endif
-            void* code, RegisterFile*, CallFrame*, JSValue** exception, Profiler**, JSGlobalData*);
+            void* code, RegisterFile*, CallFrame*, JSValuePtr* exception, Profiler**, JSGlobalData*);
         void ctiVMThrowTrampoline();
     };
 
@@ -341,13 +341,13 @@ namespace JSC {
         static void linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, CallLinkInfo* callLinkInfo, int callerArgCount);
         static void unlinkCall(CallLinkInfo*);
 
-        inline static JSValue* execute(void* code, RegisterFile* registerFile, CallFrame* callFrame, JSGlobalData* globalData, JSValue** exception)
+        inline static JSValuePtr execute(void* code, RegisterFile* registerFile, CallFrame* callFrame, JSGlobalData* globalData, JSValuePtr* exception)
         {
-            return ctiTrampoline(
+            return JSValuePtr::decode(ctiTrampoline(
 #if PLATFORM(X86_64)
                 0, 0, 0, 0, 0, 0,
 #endif
-                code, registerFile, callFrame, exception, Profiler::enabledProfilerReference(), globalData);
+                code, registerFile, callFrame, exception, Profiler::enabledProfilerReference(), globalData));
         }
 
     private:
@@ -432,8 +432,7 @@ namespace JSC {
         void emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry);
         void emitGetFromCallFrameHeader(RegisterFile::CallFrameHeaderEntry entry, RegisterID to);
 
-        JSValue* getConstantImmediateNumericArg(unsigned src);
-        JSValue* getConstantOperand(unsigned src);
+        JSValuePtr getConstantOperand(unsigned src);
         int32_t getConstantOperandImmediateInt(unsigned src);
         bool isOperandConstantImmediateInt(unsigned src);
         bool isOperandConstant31BitImmediateInt(unsigned src);

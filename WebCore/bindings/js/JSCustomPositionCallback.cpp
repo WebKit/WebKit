@@ -56,7 +56,7 @@ void JSCustomPositionCallback::handleEvent(Geoposition* geoposition, bool& raise
     
     JSC::JSLock lock(false);
     
-    JSValue* function = m_callback->get(exec, Identifier(exec, "handleEvent"));
+    JSValuePtr function = m_callback->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;
     CallType callType = function->getCallData(callData);
     if (callType == CallTypeNone) {

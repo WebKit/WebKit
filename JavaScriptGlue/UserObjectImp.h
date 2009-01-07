@@ -46,11 +46,11 @@ public:
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
-    virtual JSValue* callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
+    virtual JSValuePtr callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue* value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValuePtr value, int attr = None);
 
-    JSValue* toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
+    JSValuePtr toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
     virtual bool toBoolean(ExecState *exec) const;
     virtual double toNumber(ExecState *exec) const;
     virtual UString toString(ExecState *exec) const;
@@ -59,13 +59,13 @@ public:
 
     JSUserObject *GetJSUserObject() const;
 
-    static PassRefPtr<Structure> createStructure(JSValue* prototype)
+    static PassRefPtr<Structure> createStructure(JSValuePtr prototype)
     {
         return Structure::create(prototype, TypeInfo(ObjectType));
     }
 
 private:
-    static JSValue* userObjectGetter(ExecState*, const Identifier& propertyName, const PropertySlot&);
+    static JSValuePtr userObjectGetter(ExecState*, const Identifier& propertyName, const PropertySlot&);
 
     JSUserObject* fJSUserObject;
 };

@@ -36,7 +36,7 @@ namespace WebCore {
 
     class EventTarget;
 
-    JSC::JSValue* toJS(JSC::ExecState*, EventTarget*);
+    JSC::JSValuePtr toJS(JSC::ExecState*, EventTarget*);
 
 } // namespace WebCore
 

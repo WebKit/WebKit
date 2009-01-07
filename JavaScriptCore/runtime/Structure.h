@@ -51,7 +51,7 @@ namespace JSC {
     class Structure : public RefCounted<Structure> {
     public:
         friend class JIT;
-        static PassRefPtr<Structure> create(JSValue* prototype, const TypeInfo& typeInfo)
+        static PassRefPtr<Structure> create(JSValuePtr prototype, const TypeInfo& typeInfo)
         {
             return adoptRef(new Structure(prototype, typeInfo));
         }
@@ -64,7 +64,7 @@ namespace JSC {
         static PassRefPtr<Structure> addPropertyTransition(Structure*, const Identifier& propertyName, unsigned attributes, size_t& offset);
         static PassRefPtr<Structure> addPropertyTransitionToExistingStructure(Structure*, const Identifier& propertyName, unsigned attributes, size_t& offset);
         static PassRefPtr<Structure> removePropertyTransition(Structure*, const Identifier& propertyName, size_t& offset);
-        static PassRefPtr<Structure> changePrototypeTransition(Structure*, JSValue* prototype);
+        static PassRefPtr<Structure> changePrototypeTransition(Structure*, JSValuePtr prototype);
         static PassRefPtr<Structure> getterSetterTransition(Structure*);
         static PassRefPtr<Structure> toDictionaryTransition(Structure*);
         static PassRefPtr<Structure> fromDictionaryTransition(Structure*);
@@ -80,14 +80,14 @@ namespace JSC {
         // These should be used with caution.  
         size_t addPropertyWithoutTransition(const Identifier& propertyName, unsigned attributes);
         size_t removePropertyWithoutTransition(const Identifier& propertyName);
-        void setPrototypeWithoutTransition(JSValue* prototype) { m_prototype = prototype; }
+        void setPrototypeWithoutTransition(JSValuePtr prototype) { m_prototype = prototype; }
 
         bool isDictionary() const { return m_isDictionary; }
 
         const TypeInfo& typeInfo() const { return m_typeInfo; }
 
-        JSValue* storedPrototype() const { return m_prototype; }
-        JSValue* prototypeForLookup(ExecState*); 
+        JSValuePtr storedPrototype() const { return m_prototype; }
+        JSValuePtr prototypeForLookup(ExecState*); 
 
         Structure* previousID() const { return m_previous.get(); }
 
@@ -109,7 +109,7 @@ namespace JSC {
         bool isEmpty() const { return m_propertyTable ? !m_propertyTable->keyCount : m_offset == noOffset; }
 
     private:
-        Structure(JSValue* prototype, const TypeInfo&);
+        Structure(JSValuePtr prototype, const TypeInfo&);
 
         size_t put(const Identifier& propertyName, unsigned attributes);
         size_t remove(const Identifier& propertyName);
@@ -153,7 +153,7 @@ namespace JSC {
 
         TypeInfo m_typeInfo;
 
-        JSValue* m_prototype;
+        JSValuePtr m_prototype;
         RefPtr<StructureChain> m_cachedPrototypeChain;
 
         RefPtr<Structure> m_previous;

@@ -120,7 +120,7 @@ void Structure::dumpStatistics()
 #endif
 }
 
-Structure::Structure(JSValue* prototype, const TypeInfo& typeInfo)
+Structure::Structure(JSValuePtr prototype, const TypeInfo& typeInfo)
     : m_typeInfo(typeInfo)
     , m_prototype(prototype)
     , m_cachedPrototypeChain(0)
@@ -444,7 +444,7 @@ PassRefPtr<Structure> Structure::removePropertyTransition(Structure* structure, 
     return transition.release();
 }
 
-PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure, JSValue* prototype)
+PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure, JSValuePtr prototype)
 {
     RefPtr<Structure> transition = create(prototype, structure->typeInfo());
 
@@ -539,7 +539,7 @@ StructureChain* Structure::createCachedPrototypeChain()
     ASSERT(typeInfo().type() == ObjectType);
     ASSERT(!m_cachedPrototypeChain);
 
-    JSValue* prototype = storedPrototype();
+    JSValuePtr prototype = storedPrototype();
     if (JSImmediate::isImmediate(prototype))
         return 0;
 

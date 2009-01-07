@@ -26,12 +26,15 @@
 #ifndef APICast_h
 #define APICast_h
 
+#include "JSValue.h"
+
 namespace JSC {
     class ExecState;
     class PropertyNameArray;
     class JSGlobalData;
     class JSObject;
     class JSValue;
+    class JSValuePtr;
 }
 
 typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
@@ -53,9 +56,9 @@ inline JSC::ExecState* toJS(JSGlobalContextRef c)
     return reinterpret_cast<JSC::ExecState*>(c);
 }
 
-inline JSC::JSValue* toJS(JSValueRef v)
+inline JSC::JSValuePtr toJS(JSValueRef v)
 {
-    return reinterpret_cast<JSC::JSValue*>(const_cast<OpaqueJSValue*>(v));
+    return JSC::JSValuePtr::decode(reinterpret_cast<JSC::JSValueEncodedAsPointer*>(const_cast<OpaqueJSValue*>(v)));
 }
 
 inline JSC::JSObject* toJS(JSObjectRef o)
@@ -73,14 +76,14 @@ inline JSC::JSGlobalData* toJS(JSContextGroupRef g)
     return reinterpret_cast<JSC::JSGlobalData*>(const_cast<OpaqueJSContextGroup*>(g));
 }
 
-inline JSValueRef toRef(JSC::JSValue* v)
+inline JSValueRef toRef(JSC::JSValuePtr v)
 {
-    return reinterpret_cast<JSValueRef>(v);
+    return reinterpret_cast<JSValueRef>(JSC::JSValuePtr::encode(v));
 }
 
-inline JSValueRef* toRef(JSC::JSValue** v)
+inline JSValueRef* toRef(JSC::JSValuePtr* v)
 {
-    return reinterpret_cast<JSValueRef*>(const_cast<const JSC::JSValue**>(v));
+    return reinterpret_cast<JSValueRef*>(v);
 }
 
 inline JSObjectRef toRef(JSC::JSObject* o)

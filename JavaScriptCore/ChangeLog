@@ -1,3 +1,884 @@
+2009-01-05  Gavin Barraclough  <baraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Replace all uses of JSValue* with a new smart pointer type, JSValuePtr.
+        
+        A JavaScript value may be a heap object or boxed primitive, represented by a
+        pointer, or may be an unboxed immediate value, such as an integer.  Since a
+        value may dynamically need to contain either a pointer value or an immediate,
+        we encode immediates as pointer values (since all valid JSCell pointers are
+        allocated at alligned addesses, unaligned addresses are available to encode
+        immediates).  As such all JavaScript values are represented using a JSValue*.
+
+        This implementation is encumbered by a number of constraints.  It ties the
+        JSValue representation to the size of pointer on the platform, which, for
+        example, means that we currently can represent different ranges of integers
+        as immediates on x86 and x86-64.  It also prevents us from overloading the
+        to-boolean conversion used to test for noValue() - effectively forcing us
+        to represent noValue() as 0.  This would potentially be problematic were we
+        to wish to encode integer values differently (e.g. were we to use the v8
+        encoding, where pointers are tagged with 1 and integers with 0, then the
+        immediate integer 0 would conflict with noValue()).
+
+        This patch replaces all usage of JSValue* with a new class, JSValuePtr,
+        which encapsulates the pointer.  JSValuePtr maintains the same interface as
+        JSValue*, overloading operator-> and operator bool such that previous
+        operations in the code on variables of type JSValue* are still supported.
+
+        In order to provide a ProtectPtr<> type with support for the new value
+        representation (without using the internal JSValue type directly), a new
+        ProtectJSValuePtr type has been added, equivalent to the previous type
+        ProtectPtr<JSValue>.
+
+        This patch is likely the first in a sequence of three changes.  With the
+        value now encapsulated it will likely make sense to migrate the functionality
+        from JSValue into JSValuePtr, such that the internal pointer representation
+        need not be exposed.  Through migrating the functionality to the wrapper
+        class the existing JSValue should be rendered redundant, and the class is
+        likely to be removed (the JSValuePtr now wrapping a pointer to a JSCell).
+        At this stage it will likely make sense to rename JSValuePtr to JSValue.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23114
+
+        * API/APICast.h:
+        (toJS):
+        (toRef):
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::createStructure):
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::call):
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::createStructure):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::createStructure):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::asCallbackObject):
+        (JSC::::put):
+        (JSC::::hasInstance):
+        (JSC::::call):
+        (JSC::::staticValueGetter):
+        (JSC::::staticFunctionGetter):
+        (JSC::::callbackGetter):
+        * API/JSContextRef.cpp:
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeConstructor):
+        (JSObjectSetPrototype):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        * API/JSValueRef.cpp:
+        (JSValueGetType):
+        (JSValueIsUndefined):
+        (JSValueIsNull):
+        (JSValueIsBoolean):
+        (JSValueIsNumber):
+        (JSValueIsString):
+        (JSValueIsObject):
+        (JSValueIsObjectOfClass):
+        (JSValueIsEqual):
+        (JSValueIsStrictEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueToBoolean):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        (JSValueProtect):
+        (JSValueUnprotect):
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::valueToSourceString):
+        (JSC::constantName):
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getConstant):
+        (JSC::CodeBlock::addUnexpectedConstant):
+        (JSC::CodeBlock::unexpectedConstant):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::addConstant):
+        (JSC::BytecodeGenerator::addUnexpectedConstant):
+        (JSC::BytecodeGenerator::emitLoad):
+        (JSC::BytecodeGenerator::emitLoadJSV):
+        (JSC::BytecodeGenerator::emitGetScopedVar):
+        (JSC::BytecodeGenerator::emitPutScopedVar):
+        (JSC::BytecodeGenerator::emitNewError):
+        (JSC::keyForImmediateSwitch):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::JSValueHashTraits::constructDeletedValue):
+        (JSC::BytecodeGenerator::JSValueHashTraits::isDeletedValue):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * debugger/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::DebuggerCallFrame):
+        (JSC::DebuggerCallFrame::exception):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::thisValue):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::setException):
+        (JSC::ExecState::exception):
+        (JSC::ExecState::exceptionSlot):
+        (JSC::ExecState::hadException):
+        * interpreter/Interpreter.cpp:
+        (JSC::fastIsNumber):
+        (JSC::fastToInt32):
+        (JSC::fastToUInt32):
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+        (JSC::jsAddSlowCase):
+        (JSC::jsAdd):
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectType):
+        (JSC::jsIsFunctionType):
+        (JSC::Interpreter::resolve):
+        (JSC::Interpreter::resolveSkip):
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::inlineResolveBase):
+        (JSC::Interpreter::resolveBase):
+        (JSC::Interpreter::resolveBaseAndProperty):
+        (JSC::Interpreter::resolveBaseAndFunc):
+        (JSC::isNotObject):
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::checkTimeout):
+        (JSC::Interpreter::createExceptionScope):
+        (JSC::cachePrototypeChain):
+        (JSC::Interpreter::tryCachePutByID):
+        (JSC::countPrototypeChainEntriesAndCheckForProxies):
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveArguments):
+        (JSC::Interpreter::retrieveCaller):
+        (JSC::Interpreter::retrieveLastCaller):
+        (JSC::Interpreter::tryCTICachePutByID):
+        (JSC::Interpreter::tryCTICacheGetByID):
+        (JSC::returnToThrowTrampoline):
+        (JSC::Interpreter::cti_op_convert_this):
+        (JSC::Interpreter::cti_op_add):
+        (JSC::Interpreter::cti_op_pre_inc):
+        (JSC::Interpreter::cti_op_loop_if_less):
+        (JSC::Interpreter::cti_op_loop_if_lesseq):
+        (JSC::Interpreter::cti_op_get_by_id_generic):
+        (JSC::Interpreter::cti_op_get_by_id):
+        (JSC::Interpreter::cti_op_get_by_id_second):
+        (JSC::Interpreter::cti_op_get_by_id_self_fail):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list_full):
+        (JSC::Interpreter::cti_op_get_by_id_proto_fail):
+        (JSC::Interpreter::cti_op_get_by_id_array_fail):
+        (JSC::Interpreter::cti_op_get_by_id_string_fail):
+        (JSC::Interpreter::cti_op_instanceof):
+        (JSC::Interpreter::cti_op_del_by_id):
+        (JSC::Interpreter::cti_op_mul):
+        (JSC::Interpreter::cti_op_call_NotJSFunction):
+        (JSC::Interpreter::cti_op_resolve):
+        (JSC::Interpreter::cti_op_construct_NotJSConstruct):
+        (JSC::Interpreter::cti_op_get_by_val):
+        (JSC::Interpreter::cti_op_resolve_func):
+        (JSC::Interpreter::cti_op_sub):
+        (JSC::Interpreter::cti_op_put_by_val):
+        (JSC::Interpreter::cti_op_put_by_val_array):
+        (JSC::Interpreter::cti_op_lesseq):
+        (JSC::Interpreter::cti_op_loop_if_true):
+        (JSC::Interpreter::cti_op_negate):
+        (JSC::Interpreter::cti_op_resolve_base):
+        (JSC::Interpreter::cti_op_resolve_skip):
+        (JSC::Interpreter::cti_op_resolve_global):
+        (JSC::Interpreter::cti_op_div):
+        (JSC::Interpreter::cti_op_pre_dec):
+        (JSC::Interpreter::cti_op_jless):
+        (JSC::Interpreter::cti_op_not):
+        (JSC::Interpreter::cti_op_jtrue):
+        (JSC::Interpreter::cti_op_post_inc):
+        (JSC::Interpreter::cti_op_eq):
+        (JSC::Interpreter::cti_op_lshift):
+        (JSC::Interpreter::cti_op_bitand):
+        (JSC::Interpreter::cti_op_rshift):
+        (JSC::Interpreter::cti_op_bitnot):
+        (JSC::Interpreter::cti_op_resolve_with_base):
+        (JSC::Interpreter::cti_op_mod):
+        (JSC::Interpreter::cti_op_less):
+        (JSC::Interpreter::cti_op_neq):
+        (JSC::Interpreter::cti_op_post_dec):
+        (JSC::Interpreter::cti_op_urshift):
+        (JSC::Interpreter::cti_op_bitxor):
+        (JSC::Interpreter::cti_op_bitor):
+        (JSC::Interpreter::cti_op_call_eval):
+        (JSC::Interpreter::cti_op_throw):
+        (JSC::Interpreter::cti_op_next_pname):
+        (JSC::Interpreter::cti_op_typeof):
+        (JSC::Interpreter::cti_op_is_undefined):
+        (JSC::Interpreter::cti_op_is_boolean):
+        (JSC::Interpreter::cti_op_is_number):
+        (JSC::Interpreter::cti_op_is_string):
+        (JSC::Interpreter::cti_op_is_object):
+        (JSC::Interpreter::cti_op_is_function):
+        (JSC::Interpreter::cti_op_stricteq):
+        (JSC::Interpreter::cti_op_nstricteq):
+        (JSC::Interpreter::cti_op_to_jsnumber):
+        (JSC::Interpreter::cti_op_in):
+        (JSC::Interpreter::cti_op_switch_imm):
+        (JSC::Interpreter::cti_op_switch_char):
+        (JSC::Interpreter::cti_op_switch_string):
+        (JSC::Interpreter::cti_op_del_by_val):
+        (JSC::Interpreter::cti_op_new_error):
+        (JSC::Interpreter::cti_vm_throw):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::isJSArray):
+        (JSC::Interpreter::isJSString):
+        * interpreter/Register.h:
+        (JSC::Register::):
+        (JSC::Register::Register):
+        (JSC::Register::jsValue):
+        (JSC::Register::getJSValue):
+        * jit/JIT.cpp:
+        (JSC::):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JSC::):
+        (JSC::JIT::execute):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_rshift):
+        (JSC::JIT::compileFastArithSlow_op_rshift):
+        * jit/JITCall.cpp:
+        (JSC::JIT::unlinkCall):
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::getConstantOperand):
+        (JSC::JIT::isOperandConstant31BitImmediateInt):
+        (JSC::JIT::emitPutJITStubArgFromVirtualRegister):
+        (JSC::JIT::emitInitRegister):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::resizePropertyStorage):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePutByIdReplace):
+        * jsc.cpp:
+        (functionPrint):
+        (functionDebug):
+        (functionGC):
+        (functionVersion):
+        (functionRun):
+        (functionLoad):
+        (functionReadline):
+        (functionQuit):
+        * parser/Nodes.cpp:
+        (JSC::NullNode::emitBytecode):
+        (JSC::ArrayNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::VoidNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::processClauseList):
+        (JSC::EvalNode::emitBytecode):
+        (JSC::FunctionBodyNode::emitBytecode):
+        (JSC::ProgramNode::emitBytecode):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::willExecute):
+        (JSC::Profiler::didExecute):
+        (JSC::Profiler::createCallIdentifier):
+        * profiler/Profiler.h:
+        * runtime/ArgList.cpp:
+        (JSC::ArgList::slowAppend):
+        * runtime/ArgList.h:
+        (JSC::ArgList::at):
+        (JSC::ArgList::append):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::put):
+        * runtime/Arguments.h:
+        (JSC::Arguments::createStructure):
+        (JSC::asArguments):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::callArrayConstructor):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        (JSC::putProperty):
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::callBooleanConstructor):
+        (JSC::constructBooleanFromImmediateBoolean):
+        * runtime/BooleanConstructor.h:
+        * runtime/BooleanObject.h:
+        (JSC::asBooleanObject):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncToString):
+        (JSC::booleanProtoFuncValueOf):
+        * runtime/CallData.cpp:
+        (JSC::call):
+        * runtime/CallData.h:
+        * runtime/Collector.cpp:
+        (JSC::Heap::protect):
+        (JSC::Heap::unprotect):
+        (JSC::Heap::heap):
+        (JSC::Heap::collect):
+        * runtime/Collector.h:
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/Completion.h:
+        (JSC::Completion::Completion):
+        (JSC::Completion::value):
+        (JSC::Completion::setValue):
+        (JSC::Completion::isValueCompletion):
+        * runtime/ConstructData.cpp:
+        (JSC::construct):
+        * runtime/ConstructData.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        (JSC::callDate):
+        (JSC::dateParse):
+        (JSC::dateNow):
+        (JSC::dateUTC):
+        * runtime/DateInstance.h:
+        (JSC::asDateInstance):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToString):
+        (JSC::dateProtoFuncToUTCString):
+        (JSC::dateProtoFuncToDateString):
+        (JSC::dateProtoFuncToTimeString):
+        (JSC::dateProtoFuncToLocaleString):
+        (JSC::dateProtoFuncToLocaleDateString):
+        (JSC::dateProtoFuncToLocaleTimeString):
+        (JSC::dateProtoFuncValueOf):
+        (JSC::dateProtoFuncGetTime):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncToGMTString):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetMilliSeconds):
+        (JSC::dateProtoFuncGetUTCMilliseconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::dateProtoFuncSetTime):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetMilliSeconds):
+        (JSC::dateProtoFuncSetUTCMilliseconds):
+        (JSC::dateProtoFuncSetSeconds):
+        (JSC::dateProtoFuncSetUTCSeconds):
+        (JSC::dateProtoFuncSetMinutes):
+        (JSC::dateProtoFuncSetUTCMinutes):
+        (JSC::dateProtoFuncSetHours):
+        (JSC::dateProtoFuncSetUTCHours):
+        (JSC::dateProtoFuncSetDate):
+        (JSC::dateProtoFuncSetUTCDate):
+        (JSC::dateProtoFuncSetMonth):
+        (JSC::dateProtoFuncSetUTCMonth):
+        (JSC::dateProtoFuncSetFullYear):
+        (JSC::dateProtoFuncSetUTCFullYear):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear):
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::createStructure):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::callErrorConstructor):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createInterruptedExecutionException):
+        (JSC::createError):
+        (JSC::createStackOverflowError):
+        (JSC::createUndefinedVariableError):
+        (JSC::createErrorMessage):
+        (JSC::createInvalidParamError):
+        (JSC::createNotAConstructorError):
+        (JSC::createNotAFunctionError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::callFunctionConstructor):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::callFunctionPrototype):
+        (JSC::functionProtoFuncToString):
+        (JSC::functionProtoFuncApply):
+        (JSC::functionProtoFuncCall):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructure):
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::toPrimitive):
+        (JSC::GetterSetter::getPrimitiveNumber):
+        * runtime/GetterSetter.h:
+        (JSC::asGetterSetter):
+        * runtime/InitializeThreading.cpp:
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createStructure):
+        (JSC::asInternalFunction):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnPropertySlot):
+        (JSC::JSActivation::put):
+        (JSC::JSActivation::putWithAttributes):
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::createStructure):
+        (JSC::asActivation):
+        * runtime/JSArray.cpp:
+        (JSC::storageSize):
+        (JSC::JSArray::JSArray):
+        (JSC::JSArray::getOwnPropertySlot):
+        (JSC::JSArray::put):
+        (JSC::JSArray::putSlowCase):
+        (JSC::JSArray::deleteProperty):
+        (JSC::JSArray::getPropertyNames):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::mark):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::compactForSorting):
+        (JSC::JSArray::checkConsistency):
+        (JSC::constructArray):
+        * runtime/JSArray.h:
+        (JSC::JSArray::getIndex):
+        (JSC::JSArray::setIndex):
+        (JSC::JSArray::createStructure):
+        (JSC::asArray):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::put):
+        (JSC::JSCell::getJSNumber):
+        * runtime/JSCell.h:
+        (JSC::asCell):
+        (JSC::JSValue::asCell):
+        (JSC::JSValue::toPrimitive):
+        (JSC::JSValue::getPrimitiveNumber):
+        (JSC::JSValue::getJSNumber):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::call):
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::lengthGetter):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::construct):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createStructure):
+        (JSC::asFunction):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::markIfNeeded):
+        (JSC::JSGlobalObject::put):
+        (JSC::JSGlobalObject::putWithAttributes):
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::resetPrototype):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::createStructure):
+        (JSC::JSGlobalObject::GlobalPropertyInfo::GlobalPropertyInfo):
+        (JSC::asGlobalObject):
+        (JSC::Structure::prototypeForLookup):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncEval):
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncParseFloat):
+        (JSC::globalFuncIsNaN):
+        (JSC::globalFuncIsFinite):
+        (JSC::globalFuncDecodeURI):
+        (JSC::globalFuncDecodeURIComponent):
+        (JSC::globalFuncEncodeURI):
+        (JSC::globalFuncEncodeURIComponent):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        (JSC::globalFuncJSCPrint):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSImmediate.cpp:
+        (JSC::JSImmediate::toThisObject):
+        (JSC::JSImmediate::toObject):
+        (JSC::JSImmediate::prototype):
+        (JSC::JSImmediate::toString):
+        * runtime/JSImmediate.h:
+        (JSC::JSImmediate::isImmediate):
+        (JSC::JSImmediate::isNumber):
+        (JSC::JSImmediate::isPositiveNumber):
+        (JSC::JSImmediate::isBoolean):
+        (JSC::JSImmediate::isUndefinedOrNull):
+        (JSC::JSImmediate::isNegative):
+        (JSC::JSImmediate::isEitherImmediate):
+        (JSC::JSImmediate::isAnyImmediate):
+        (JSC::JSImmediate::areBothImmediate):
+        (JSC::JSImmediate::areBothImmediateNumbers):
+        (JSC::JSImmediate::andImmediateNumbers):
+        (JSC::JSImmediate::xorImmediateNumbers):
+        (JSC::JSImmediate::orImmediateNumbers):
+        (JSC::JSImmediate::rightShiftImmediateNumbers):
+        (JSC::JSImmediate::canDoFastAdditiveOperations):
+        (JSC::JSImmediate::addImmediateNumbers):
+        (JSC::JSImmediate::subImmediateNumbers):
+        (JSC::JSImmediate::incImmediateNumber):
+        (JSC::JSImmediate::decImmediateNumber):
+        (JSC::JSImmediate::makeValue):
+        (JSC::JSImmediate::makeInt):
+        (JSC::JSImmediate::makeBool):
+        (JSC::JSImmediate::makeUndefined):
+        (JSC::JSImmediate::makeNull):
+        (JSC::JSImmediate::intValue):
+        (JSC::JSImmediate::uintValue):
+        (JSC::JSImmediate::boolValue):
+        (JSC::JSImmediate::rawValue):
+        (JSC::JSImmediate::trueImmediate):
+        (JSC::JSImmediate::falseImmediate):
+        (JSC::JSImmediate::undefinedImmediate):
+        (JSC::JSImmediate::nullImmediate):
+        (JSC::JSImmediate::zeroImmediate):
+        (JSC::JSImmediate::oneImmediate):
+        (JSC::JSImmediate::impossibleValue):
+        (JSC::JSImmediate::toBoolean):
+        (JSC::JSImmediate::getTruncatedUInt32):
+        (JSC::JSImmediate::from):
+        (JSC::JSImmediate::getTruncatedInt32):
+        (JSC::JSImmediate::toDouble):
+        (JSC::JSImmediate::getUInt32):
+        (JSC::jsNull):
+        (JSC::jsBoolean):
+        (JSC::jsUndefined):
+        (JSC::JSValue::isUndefined):
+        (JSC::JSValue::isNull):
+        (JSC::JSValue::isUndefinedOrNull):
+        (JSC::JSValue::isBoolean):
+        (JSC::JSValue::getBoolean):
+        (JSC::JSValue::toInt32):
+        (JSC::JSValue::toUInt32):
+        (JSC::toInt32):
+        (JSC::toUInt32):
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::toPrimitive):
+        (JSC::JSNotAnObject::getPrimitiveNumber):
+        (JSC::JSNotAnObject::put):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::createStructure):
+        * runtime/JSNumberCell.cpp:
+        (JSC::JSNumberCell::toPrimitive):
+        (JSC::JSNumberCell::getPrimitiveNumber):
+        (JSC::JSNumberCell::getJSNumber):
+        (JSC::jsNumberCell):
+        (JSC::jsNaN):
+        * runtime/JSNumberCell.h:
+        (JSC::JSNumberCell::createStructure):
+        (JSC::asNumberCell):
+        (JSC::jsNumber):
+        (JSC::JSValue::toJSNumber):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::mark):
+        (JSC::JSObject::put):
+        (JSC::JSObject::putWithAttributes):
+        (JSC::callDefaultValueFunction):
+        (JSC::JSObject::getPrimitiveNumber):
+        (JSC::JSObject::defaultValue):
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        (JSC::JSObject::lookupGetter):
+        (JSC::JSObject::lookupSetter):
+        (JSC::JSObject::hasInstance):
+        (JSC::JSObject::toNumber):
+        (JSC::JSObject::toString):
+        (JSC::JSObject::fillGetterPropertySlot):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::offsetForLocation):
+        (JSC::JSObject::locationForOffset):
+        (JSC::JSObject::getDirectOffset):
+        (JSC::JSObject::putDirectOffset):
+        (JSC::JSObject::createStructure):
+        (JSC::asObject):
+        (JSC::JSObject::prototype):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSObject::getOwnPropertySlotForWrite):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::get):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::toPrimitive):
+        (JSC::JSValue::get):
+        (JSC::JSValue::put):
+        (JSC::JSObject::allocatePropertyStorageInline):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::toPrimitive):
+        (JSC::JSPropertyNameIterator::getPrimitiveNumber):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::create):
+        (JSC::JSPropertyNameIterator::next):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::put):
+        (JSC::JSStaticScopeObject::putWithAttributes):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::JSStaticScopeObject):
+        (JSC::JSStaticScopeObject::createStructure):
+        * runtime/JSString.cpp:
+        (JSC::JSString::toPrimitive):
+        (JSC::JSString::getPrimitiveNumber):
+        (JSC::JSString::getOwnPropertySlot):
+        * runtime/JSString.h:
+        (JSC::JSString::createStructure):
+        (JSC::asString):
+        * runtime/JSValue.h:
+        (JSC::JSValuePtr::makeImmediate):
+        (JSC::JSValuePtr::immediateValue):
+        (JSC::JSValuePtr::JSValuePtr):
+        (JSC::JSValuePtr::operator->):
+        (JSC::JSValuePtr::hasValue):
+        (JSC::JSValuePtr::operator==):
+        (JSC::JSValuePtr::operator!=):
+        (JSC::JSValuePtr::encode):
+        (JSC::JSValuePtr::decode):
+        (JSC::JSValue::asValue):
+        (JSC::noValue):
+        (JSC::operator==):
+        (JSC::operator!=):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::symbolTablePut):
+        (JSC::JSVariableObject::symbolTablePutWithAttributes):
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::mark):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::internalValue):
+        (JSC::JSWrapperObject::setInternalValue):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::lookupPut):
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncAbs):
+        (JSC::mathProtoFuncACos):
+        (JSC::mathProtoFuncASin):
+        (JSC::mathProtoFuncATan):
+        (JSC::mathProtoFuncATan2):
+        (JSC::mathProtoFuncCeil):
+        (JSC::mathProtoFuncCos):
+        (JSC::mathProtoFuncExp):
+        (JSC::mathProtoFuncFloor):
+        (JSC::mathProtoFuncLog):
+        (JSC::mathProtoFuncMax):
+        (JSC::mathProtoFuncMin):
+        (JSC::mathProtoFuncPow):
+        (JSC::mathProtoFuncRandom):
+        (JSC::mathProtoFuncRound):
+        (JSC::mathProtoFuncSin):
+        (JSC::mathProtoFuncSqrt):
+        (JSC::mathProtoFuncTan):
+        * runtime/MathObject.h:
+        (JSC::MathObject::createStructure):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::callNativeErrorConstructor):
+        * runtime/NumberConstructor.cpp:
+        (JSC::numberConstructorNaNValue):
+        (JSC::numberConstructorNegInfinity):
+        (JSC::numberConstructorPosInfinity):
+        (JSC::numberConstructorMaxValue):
+        (JSC::numberConstructorMinValue):
+        (JSC::callNumberConstructor):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::createStructure):
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::getJSNumber):
+        (JSC::constructNumberFromImmediateNumber):
+        * runtime/NumberObject.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToLocaleString):
+        (JSC::numberProtoFuncValueOf):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObject):
+        (JSC::callObjectConstructor):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncValueOf):
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        (JSC::objectProtoFuncToLocaleString):
+        (JSC::objectProtoFuncToString):
+        * runtime/ObjectPrototype.h:
+        * runtime/Operations.cpp:
+        (JSC::equal):
+        (JSC::equalSlowCase):
+        (JSC::strictEqual):
+        (JSC::strictEqualSlowCase):
+        (JSC::throwOutOfMemoryError):
+        * runtime/Operations.h:
+        (JSC::equalSlowCaseInline):
+        (JSC::strictEqualSlowCaseInline):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::getValue):
+        (JSC::PropertySlot::putValue):
+        (JSC::PropertySlot::setValueSlot):
+        (JSC::PropertySlot::setValue):
+        (JSC::PropertySlot::setCustom):
+        (JSC::PropertySlot::setCustomIndex):
+        (JSC::PropertySlot::slotBase):
+        (JSC::PropertySlot::setBase):
+        (JSC::PropertySlot::):
+        * runtime/Protect.h:
+        (JSC::gcProtect):
+        (JSC::gcUnprotect):
+        (JSC::ProtectedPtr::ProtectedPtr):
+        (JSC::ProtectedPtr::operator JSValuePtr):
+        (JSC::ProtectedJSValuePtr::ProtectedJSValuePtr):
+        (JSC::ProtectedJSValuePtr::get):
+        (JSC::ProtectedJSValuePtr::operator JSValuePtr):
+        (JSC::ProtectedJSValuePtr::operator->):
+        (JSC::::ProtectedPtr):
+        (JSC::::~ProtectedPtr):
+        (JSC::::operator):
+        (JSC::ProtectedJSValuePtr::~ProtectedJSValuePtr):
+        (JSC::ProtectedJSValuePtr::operator=):
+        (JSC::operator==):
+        (JSC::operator!=):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getBackref):
+        (JSC::RegExpConstructor::getLastParen):
+        (JSC::RegExpConstructor::getLeftContext):
+        (JSC::RegExpConstructor::getRightContext):
+        (JSC::regExpConstructorDollar1):
+        (JSC::regExpConstructorDollar2):
+        (JSC::regExpConstructorDollar3):
+        (JSC::regExpConstructorDollar4):
+        (JSC::regExpConstructorDollar5):
+        (JSC::regExpConstructorDollar6):
+        (JSC::regExpConstructorDollar7):
+        (JSC::regExpConstructorDollar8):
+        (JSC::regExpConstructorDollar9):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        (JSC::RegExpConstructor::put):
+        (JSC::setRegExpConstructorInput):
+        (JSC::setRegExpConstructorMultiline):
+        (JSC::constructRegExp):
+        (JSC::callRegExpConstructor):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::createStructure):
+        (JSC::asRegExpConstructor):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::put):
+        * runtime/RegExpObject.cpp:
+        (JSC::regExpObjectGlobal):
+        (JSC::regExpObjectIgnoreCase):
+        (JSC::regExpObjectMultiline):
+        (JSC::regExpObjectSource):
+        (JSC::regExpObjectLastIndex):
+        (JSC::RegExpObject::put):
+        (JSC::setRegExpObjectLastIndex):
+        (JSC::RegExpObject::test):
+        (JSC::RegExpObject::exec):
+        (JSC::callRegExpObject):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::createStructure):
+        (JSC::asRegExpObject):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTest):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncCompile):
+        (JSC::regExpProtoFuncToString):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCodeSlowCase):
+        (JSC::stringFromCharCode):
+        (JSC::callStringConstructor):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        * runtime/StringObject.h:
+        (JSC::StringObject::createStructure):
+        (JSC::asStringObject):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::createStructure):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncToString):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncConcat):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplit):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::stringProtoFuncBig):
+        (JSC::stringProtoFuncSmall):
+        (JSC::stringProtoFuncBlink):
+        (JSC::stringProtoFuncBold):
+        (JSC::stringProtoFuncFixed):
+        (JSC::stringProtoFuncItalics):
+        (JSC::stringProtoFuncStrike):
+        (JSC::stringProtoFuncSub):
+        (JSC::stringProtoFuncSup):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+        (JSC::stringProtoFuncLink):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::createCachedPrototypeChain):
+        * runtime/Structure.h:
+        (JSC::Structure::create):
+        (JSC::Structure::setPrototypeWithoutTransition):
+        (JSC::Structure::storedPrototype):
+
 2009-01-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

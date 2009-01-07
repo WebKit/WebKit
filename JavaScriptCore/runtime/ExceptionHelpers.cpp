@@ -58,36 +58,36 @@ public:
     virtual bool isWatchdogException() const { return true; }
 };
 
-JSValue* createInterruptedExecutionException(JSGlobalData* globalData)
+JSValuePtr createInterruptedExecutionException(JSGlobalData* globalData)
 {
     return new (globalData) InterruptedExecutionError(globalData);
 }
 
-JSValue* createError(ExecState* exec, ErrorType e, const char* msg)
+JSValuePtr createError(ExecState* exec, ErrorType e, const char* msg)
 {
     return Error::create(exec, e, msg, -1, -1, 0);
 }
 
-JSValue* createError(ExecState* exec, ErrorType e, const char* msg, const Identifier& label)
+JSValuePtr createError(ExecState* exec, ErrorType e, const char* msg, const Identifier& label)
 {
     UString message = msg;
     substitute(message, label.ustring());
     return Error::create(exec, e, message, -1, -1, 0);
 }
 
-JSValue* createError(ExecState* exec, ErrorType e, const char* msg, JSValue* v)
+JSValuePtr createError(ExecState* exec, ErrorType e, const char* msg, JSValuePtr v)
 {
     UString message = msg;
     substitute(message, v->toString(exec));
     return Error::create(exec, e, message, -1, -1, 0);
 }
 
-JSValue* createStackOverflowError(ExecState* exec)
+JSValuePtr createStackOverflowError(ExecState* exec)
 {
     return createError(exec, RangeError, "Maximum call stack size exceeded.");
 }
 
-JSValue* createUndefinedVariableError(ExecState* exec, const Identifier& ident, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSValuePtr createUndefinedVariableError(ExecState* exec, const Identifier& ident, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     int startOffset = 0;
     int endOffset = 0;
@@ -104,7 +104,7 @@ JSValue* createUndefinedVariableError(ExecState* exec, const Identifier& ident, 
     
 bool isStrWhiteSpace(UChar c);
 
-static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, int expressionStart, int expressionStop, JSValue* value, UString error)
+static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, int expressionStart, int expressionStop, JSValuePtr value, UString error)
 {
     if (!expressionStop || expressionStart > codeBlock->source()->length()) {
         UString errorText = value->toString(exec);
@@ -148,7 +148,7 @@ static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, in
     return errorText;
 }
 
-JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue* value, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValuePtr value, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     UString message = "not a valid argument for '";
     message.append(op);
@@ -166,7 +166,7 @@ JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue* valu
     return exception;
 }
 
-JSObject* createNotAConstructorError(ExecState* exec, JSValue* value, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSObject* createNotAConstructorError(ExecState* exec, JSValuePtr value, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     int startOffset = 0;
     int endOffset = 0;
@@ -187,7 +187,7 @@ JSObject* createNotAConstructorError(ExecState* exec, JSValue* value, unsigned b
     return exception;
 }
 
-JSValue* createNotAFunctionError(ExecState* exec, JSValue* value, unsigned bytecodeOffset, CodeBlock* codeBlock)
+JSValuePtr createNotAFunctionError(ExecState* exec, JSValuePtr value, unsigned bytecodeOffset, CodeBlock* codeBlock)
 {
     int startOffset = 0;
     int endOffset = 0;

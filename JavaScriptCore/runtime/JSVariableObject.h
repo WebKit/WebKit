@@ -46,7 +46,7 @@ namespace JSC {
     public:
         SymbolTable& symbolTable() const { return *d->symbolTable; }
 
-        virtual void putWithAttributes(ExecState*, const Identifier&, JSValue*, unsigned attributes) = 0;
+        virtual void putWithAttributes(ExecState*, const Identifier&, JSValuePtr, unsigned attributes) = 0;
 
         virtual bool deleteProperty(ExecState*, const Identifier&);
         virtual void getPropertyNames(ExecState*, PropertyNameArray&);
@@ -90,8 +90,8 @@ namespace JSC {
 
         bool symbolTableGet(const Identifier&, PropertySlot&);
         bool symbolTableGet(const Identifier&, PropertySlot&, bool& slotIsWriteable);
-        bool symbolTablePut(const Identifier&, JSValue*);
-        bool symbolTablePutWithAttributes(const Identifier&, JSValue*, unsigned attributes);
+        bool symbolTablePut(const Identifier&, JSValuePtr);
+        bool symbolTablePutWithAttributes(const Identifier&, JSValuePtr, unsigned attributes);
 
         JSVariableObjectData* d;
     };
@@ -117,7 +117,7 @@ namespace JSC {
         return false;
     }
 
-    inline bool JSVariableObject::symbolTablePut(const Identifier& propertyName, JSValue* value)
+    inline bool JSVariableObject::symbolTablePut(const Identifier& propertyName, JSValuePtr value)
     {
         ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
@@ -130,7 +130,7 @@ namespace JSC {
         return true;
     }
 
-    inline bool JSVariableObject::symbolTablePutWithAttributes(const Identifier& propertyName, JSValue* value, unsigned attributes)
+    inline bool JSVariableObject::symbolTablePutWithAttributes(const Identifier& propertyName, JSValuePtr value, unsigned attributes)
     {
         ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 

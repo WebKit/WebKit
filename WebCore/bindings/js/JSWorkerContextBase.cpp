@@ -76,7 +76,7 @@ static const HashTable* getJSWorkerContextBaseTable(ExecState* exec)
 
 const ClassInfo JSWorkerContextBase::s_info = { "WorkerContext", 0, 0, getJSWorkerContextBaseTable };
 
-void JSWorkerContextBase::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
+void JSWorkerContextBase::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
 {
     lookupPut<JSWorkerContextBase, Base>(exec, propertyName, value, getJSWorkerContextBaseTable(exec), this, slot);
 }

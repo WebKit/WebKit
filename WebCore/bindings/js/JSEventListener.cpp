@@ -78,7 +78,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
     ExecState* exec = globalObject->globalExec();
 
-    JSValue* handleEventFunction = listener->get(exec, Identifier(exec, "handleEvent"));
+    JSValuePtr handleEventFunction = listener->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;
     CallType callType = handleEventFunction->getCallData(callData);
     if (callType == CallTypeNone) {
@@ -101,12 +101,12 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
         JSGlobalData* globalData = globalObject->globalData();
         DynamicGlobalObjectScope globalObjectScope(exec, globalData->dynamicGlobalObject ? globalData->dynamicGlobalObject : globalObject);
 
-        JSValue* retval;
+        JSValuePtr retval;
         if (handleEventFunction) {
             globalObject->startTimeoutCheck();
             retval = call(exec, handleEventFunction, callType, callData, listener, args);
         } else {
-            JSValue* thisValue;
+            JSValuePtr thisValue;
             if (isWindowEvent)
                 thisValue = globalObject->toThisObject(exec);
             else
@@ -263,7 +263,7 @@ JSObject* JSLazyEventListener::listenerObj() const
 }
 
 // Helper function
-inline JSValue* eventParameterName(JSLazyEventListener::LazyEventListenerType type, ExecState* exec)
+inline JSValuePtr eventParameterName(JSLazyEventListener::LazyEventListenerType type, ExecState* exec)
 {
     switch (type) {
     case JSLazyEventListener::HTMLLazyEventListener:
@@ -319,7 +319,7 @@ void JSLazyEventListener::parseCode() const
         // (and the document, and the form - see JSHTMLElement::eventHandlerScope)
         ScopeChain scope = listenerAsFunction->scope();
 
-        JSValue* thisObj = toJS(exec, m_originalNode);
+        JSValuePtr thisObj = toJS(exec, m_originalNode);
         if (thisObj->isObject()) {
             static_cast<JSEventTargetNode*>(asObject(thisObj))->pushEventHandlerScope(exec, scope);
             listenerAsFunction->setScope(scope);

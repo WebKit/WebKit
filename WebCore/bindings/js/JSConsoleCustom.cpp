@@ -36,7 +36,7 @@ namespace WebCore {
 
 typedef Vector<RefPtr<JSC::Profile> > ProfilesArray;
 
-JSValue* JSConsole::profiles(ExecState* exec) const
+JSValuePtr JSConsole::profiles(ExecState* exec) const
 {
     const ProfilesArray& profiles = impl()->profiles();
     ArgList list;

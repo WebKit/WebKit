@@ -43,7 +43,7 @@ struct ObjectImpList {
     CFTypeRef data;
 };
 
-static CFTypeRef KJSValueToCFTypeInternal(JSValue* inValue, ExecState *exec, ObjectImpList* inImps);
+static CFTypeRef KJSValueToCFTypeInternal(JSValuePtr inValue, ExecState *exec, ObjectImpList* inImps);
 static JSGlueGlobalObject* getThreadGlobalObject();
 
 //--------------------------------------------------------------------------
@@ -100,7 +100,7 @@ CFStringRef IdentifierToCFString(const Identifier& inIdentifier)
 //--------------------------------------------------------------------------
 // KJSValueToJSObject
 //--------------------------------------------------------------------------
-JSUserObject* KJSValueToJSObject(JSValue* inValue, ExecState *exec)
+JSUserObject* KJSValueToJSObject(JSValuePtr inValue, ExecState *exec)
 {
     JSUserObject* result = 0;
 
@@ -126,11 +126,11 @@ JSUserObject* KJSValueToJSObject(JSValue* inValue, ExecState *exec)
 //--------------------------------------------------------------------------
 // JSObjectKJSValue
 //--------------------------------------------------------------------------
-JSValue* JSObjectKJSValue(JSUserObject* ptr)
+JSValuePtr JSObjectKJSValue(JSUserObject* ptr)
 {
     JSLock lock(true);
 
-    JSValue* result = jsUndefined();
+    JSValuePtr result = jsUndefined();
     if (ptr)
     {
         bool handled = false;
@@ -196,7 +196,7 @@ JSValue* JSObjectKJSValue(JSUserObject* ptr)
 // KJSValueToCFTypeInternal
 //--------------------------------------------------------------------------
 // Caller is responsible for releasing the returned CFTypeRef
-CFTypeRef KJSValueToCFTypeInternal(JSValue* inValue, ExecState *exec, ObjectImpList* inImps)
+CFTypeRef KJSValueToCFTypeInternal(JSValuePtr inValue, ExecState *exec, ObjectImpList* inImps)
 {
     if (!inValue)
         return 0;
@@ -358,7 +358,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue* inValue, ExecState *exec, ObjectImpL
     return 0;
 }
 
-CFTypeRef KJSValueToCFType(JSValue* inValue, ExecState *exec)
+CFTypeRef KJSValueToCFType(JSValuePtr inValue, ExecState *exec)
 {
     return KJSValueToCFTypeInternal(inValue, exec, 0);
 }

@@ -63,7 +63,7 @@ JSObject* DebuggerCallFrame::thisObject() const
     return asObject(m_callFrame->thisValue());
 }
 
-JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception) const
+JSValuePtr DebuggerCallFrame::evaluate(const UString& script, JSValuePtr& exception) const
 {
     if (!m_callFrame->codeBlock())
         return noValue();

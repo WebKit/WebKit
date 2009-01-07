@@ -93,11 +93,11 @@ void JIT::compileFastArithSlow_op_lshift(unsigned result, unsigned op1, unsigned
 
 void JIT::compileFastArith_op_rshift(unsigned result, unsigned op1, unsigned op2)
 {
-    if (JSValue* value = getConstantImmediateNumericArg(op2)) {
+    if (isOperandConstantImmediateInt(op2)) {
         emitGetVirtualRegister(op1, X86::eax);
         emitJumpSlowCaseIfNotImmNum(X86::eax);
         // Mask with 0x1f as per ecma-262 11.7.2 step 7.
-        rshiftPtr(Imm32(JSImmediate::getTruncatedUInt32(value) & 0x1f), X86::eax);
+        rshiftPtr(Imm32(JSImmediate::getTruncatedUInt32(getConstantOperand(op2)) & 0x1f), X86::eax);
     } else {
         emitGetVirtualRegisters(op1, X86::eax, op2, X86::ecx);
         emitJumpSlowCaseIfNotImmNum(X86::eax);
@@ -116,7 +116,7 @@ void JIT::compileFastArith_op_rshift(unsigned result, unsigned op1, unsigned op2
 void JIT::compileFastArithSlow_op_rshift(unsigned result, unsigned, unsigned op2, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    if (getConstantImmediateNumericArg(op2))
+    if (isOperandConstantImmediateInt(op2))
         emitPutJITStubArgFromVirtualRegister(op2, 2, X86::ecx);
     else {
         linkSlowCase(iter);

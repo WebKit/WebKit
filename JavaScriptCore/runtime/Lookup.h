@@ -45,9 +45,9 @@ namespace JSC {
     };
 
     // FIXME: There is no reason this get function can't be simpler.
-    // ie. typedef JSValue* (*GetFunction)(ExecState*, JSObject* baseObject)
+    // ie. typedef JSValuePtr (*GetFunction)(ExecState*, JSObject* baseObject)
     typedef PropertySlot::GetValueFunc GetFunction;
-    typedef void (*PutFunction)(ExecState*, JSObject* baseObject, JSValue* value);
+    typedef void (*PutFunction)(ExecState*, JSObject* baseObject, JSValuePtr value);
 
     class HashEntry {
     public:
@@ -243,7 +243,7 @@ namespace JSC {
      * is found it sets the value and returns true, else it returns false.
      */
     template <class ThisImp>
-    inline bool lookupPut(ExecState* exec, const Identifier& propertyName, JSValue* value, const HashTable* table, ThisImp* thisObj)
+    inline bool lookupPut(ExecState* exec, const Identifier& propertyName, JSValuePtr value, const HashTable* table, ThisImp* thisObj)
     {
         const HashEntry* entry = table->entry(exec, propertyName);
 
@@ -265,7 +265,7 @@ namespace JSC {
      * then it calls put() on the ParentImp class.
      */
     template <class ThisImp, class ParentImp>
-    inline void lookupPut(ExecState* exec, const Identifier& propertyName, JSValue* value, const HashTable* table, ThisImp* thisObj, PutPropertySlot& slot)
+    inline void lookupPut(ExecState* exec, const Identifier& propertyName, JSValuePtr value, const HashTable* table, ThisImp* thisObj, PutPropertySlot& slot)
     {
         if (!lookupPut<ThisImp>(exec, propertyName, value, table, thisObj))
             thisObj->ParentImp::put(exec, propertyName, value, slot); // not found: forward to parent

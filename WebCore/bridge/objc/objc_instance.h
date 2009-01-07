@@ -48,23 +48,23 @@ public:
     
     virtual Class *getClass() const;
         
-    virtual JSValue* valueOf(ExecState*) const;
-    virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const;
+    virtual JSValuePtr valueOf(ExecState*) const;
+    virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const;
     
-    virtual JSValue* invokeMethod(ExecState*, const MethodList&, const ArgList&);
+    virtual JSValuePtr invokeMethod(ExecState*, const MethodList&, const ArgList&);
     virtual bool supportsInvokeDefaultMethod() const;
-    virtual JSValue* invokeDefaultMethod(ExecState*, const ArgList&);
+    virtual JSValuePtr invokeDefaultMethod(ExecState*, const ArgList&);
 
     virtual bool supportsSetValueOfUndefinedField();
-    virtual void setValueOfUndefinedField(ExecState*, const Identifier&, JSValue*);
+    virtual void setValueOfUndefinedField(ExecState*, const Identifier&, JSValuePtr);
     
-    virtual JSValue* getValueOfUndefinedField(ExecState*, const Identifier& property) const;
+    virtual JSValuePtr getValueOfUndefinedField(ExecState*, const Identifier& property) const;
 
     ObjectStructPtr getObject() const { return _instance.get(); }
     
-    JSValue* stringValue(ExecState*) const;
-    JSValue* numberValue(ExecState*) const;
-    JSValue* booleanValue() const;
+    JSValuePtr stringValue(ExecState*) const;
+    JSValuePtr numberValue(ExecState*) const;
+    JSValuePtr booleanValue() const;
 
     virtual BindingLanguage getBindingLanguage() const { return ObjectiveCLanguage; }
 

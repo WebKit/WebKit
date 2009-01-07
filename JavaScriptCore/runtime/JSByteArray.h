@@ -35,7 +35,7 @@ namespace JSC {
         friend class Interpreter;
     public:
         bool canAccessIndex(unsigned i) { return i < m_storage->length(); }
-        JSValue* getIndex(unsigned i)
+        JSValuePtr getIndex(unsigned i)
         {
             ASSERT(canAccessIndex(i));
             return JSImmediate::from(m_storage->data()[i]);
@@ -63,7 +63,7 @@ namespace JSC {
             m_storage->data()[i] = static_cast<unsigned char>(value + 0.5);
         }
         
-        void setIndex(ExecState* exec, unsigned i, JSValue* value)
+        void setIndex(ExecState* exec, unsigned i, JSValuePtr value)
         {
             double byteValue = value->toNumber(exec);
             if (exec->hadException())
@@ -73,12 +73,12 @@ namespace JSC {
         }
 
         JSByteArray(ExecState* exec, PassRefPtr<Structure>, ByteArray* storage, const JSC::ClassInfo* = &s_defaultInfo);
-        static PassRefPtr<Structure> createStructure(JSValue* prototype);
+        static PassRefPtr<Structure> createStructure(JSValuePtr prototype);
         
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
         virtual bool getOwnPropertySlot(JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
-        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue*, JSC::PutPropertySlot&);
-        virtual void put(JSC::ExecState*, unsigned propertyName, JSC::JSValue*);
+        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValuePtr, JSC::PutPropertySlot&);
+        virtual void put(JSC::ExecState*, unsigned propertyName, JSC::JSValuePtr);
 
         virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
 
@@ -99,8 +99,8 @@ namespace JSC {
         const ClassInfo* m_classInfo;
     };
     
-    JSByteArray* asByteArray(JSValue* value);
-    inline JSByteArray* asByteArray(JSValue* value)
+    JSByteArray* asByteArray(JSValuePtr value);
+    inline JSByteArray* asByteArray(JSValuePtr value)
     {
         return static_cast<JSByteArray*>(asCell(value));
     }

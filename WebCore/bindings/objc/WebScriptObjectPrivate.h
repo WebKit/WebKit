@@ -46,7 +46,7 @@ namespace WebCore {
 }
 
 @interface WebScriptObject (Private)
-+ (id)_convertValueToObjcValue:(JSC::JSValue*)value originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
++ (id)_convertValueToObjcValue:(JSC::JSValuePtr)value originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
 + (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
 - (id)_init;
 - (id)_initWithJSObject:(JSC::JSObject*)imp originRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject;

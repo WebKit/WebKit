@@ -39,12 +39,13 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScheduledAction::ScheduledAction(ExecState* exec, JSValue* function, const ArgList& args)
+ScheduledAction::ScheduledAction(ExecState* exec, JSValuePtr function, const ArgList& args)
     : m_function(function)
 {
     ArgList::const_iterator end = args.end();
-    for (ArgList::const_iterator it = args.begin(); it != end; ++it)
+    for (ArgList::const_iterator it = args.begin(); it != end; ++it) {
         m_args.append((*it).jsValue(exec));
+    }
 }
 
 void ScheduledAction::execute(ScriptExecutionContext* context)

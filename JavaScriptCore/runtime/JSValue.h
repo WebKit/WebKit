@@ -20,21 +20,25 @@
  *
  */
 
+#include <stddef.h> // for size_t
+#include <stdint.h>
+
 #ifndef JSValue_h
 #define JSValue_h
 
 #include "CallData.h"
 #include "ConstructData.h"
-#include "JSImmediate.h"
-#include "UString.h"
-#include <stddef.h> // for size_t
+#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
     class Identifier;
+    class JSCell;
+    class JSObject;
     class JSString;
     class PropertySlot;
     class PutPropertySlot;
+    class UString;
 
     struct ClassInfo;
     struct Instruction;
@@ -76,15 +80,15 @@ namespace JSC {
         bool getTruncatedUInt32(uint32_t&) const;
         
         // Basic conversions.
-        JSValue* toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
-        bool getPrimitiveNumber(ExecState*, double& number, JSValue*&);
+        JSValuePtr toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
+        bool getPrimitiveNumber(ExecState*, double& number, JSValuePtr&);
 
         bool toBoolean(ExecState*) const;
 
         // toNumber conversion is expected to be side effect free if an exception has
         // been set in the ExecState already.
         double toNumber(ExecState*) const;
-        JSValue* toJSNumber(ExecState*) const; // Fast path for when you expect that the value is an immediate number.
+        JSValuePtr toJSNumber(ExecState*) const; // Fast path for when you expect that the value is an immediate number.
 
         UString toString(ExecState*) const;
         JSObject* toObject(ExecState*) const;
@@ -105,12 +109,12 @@ namespace JSC {
         bool marked() const;
 
         // Object operations, with the toObject operation included.
-        JSValue* get(ExecState*, const Identifier& propertyName) const;
-        JSValue* get(ExecState*, const Identifier& propertyName, PropertySlot&) const;
-        JSValue* get(ExecState*, unsigned propertyName) const;
-        JSValue* get(ExecState*, unsigned propertyName, PropertySlot&) const;
-        void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
-        void put(ExecState*, unsigned propertyName, JSValue*);
+        JSValuePtr get(ExecState*, const Identifier& propertyName) const;
+        JSValuePtr get(ExecState*, const Identifier& propertyName, PropertySlot&) const;
+        JSValuePtr get(ExecState*, unsigned propertyName) const;
+        JSValuePtr get(ExecState*, unsigned propertyName, PropertySlot&) const;
+        void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
+        void put(ExecState*, unsigned propertyName, JSValuePtr);
         bool deleteProperty(ExecState*, const Identifier& propertyName);
         bool deleteProperty(ExecState*, unsigned propertyName);
 
@@ -119,9 +123,9 @@ namespace JSC {
         UString toThisString(ExecState*) const;
         JSString* toThisJSString(ExecState*);
 
-        JSValue* getJSNumber(); // 0 if this is not a JSNumber or number object
+        JSValuePtr getJSNumber(); // 0 if this is not a JSNumber or number object
 
-        JSValue* asValue() const;
+        JSValuePtr asValue() const;
 
         JSCell* asCell() const;
 
@@ -132,107 +136,87 @@ namespace JSC {
         uint32_t toUInt32SlowCase(ExecState*, bool& ok) const;
     };
 
-    // These are identical logic to the JSValue functions above, and faster than jsNumber(number)->toInt32().
-    int32_t toInt32(double);
-    uint32_t toUInt32(double);
-    int32_t toInt32SlowCase(double, bool& ok);
-    uint32_t toUInt32SlowCase(double, bool& ok);
+    class JSImmediate;
+    class JSValueEncodedAsPointer;
 
-    inline JSValue* JSValue::asValue() const
-    {
-        return const_cast<JSValue*>(this);
-    }
+    class JSValuePtr {
+        friend class JSImmediate;
 
-    inline bool JSValue::isUndefined() const
-    {
-        return asValue() == jsUndefined();
-    }
+        static JSValuePtr makeImmediate(intptr_t value)
+        {
+            return JSValuePtr(reinterpret_cast<JSValue*>(value));
+        }
 
-    inline bool JSValue::isNull() const
-    {
-        return asValue() == jsNull();
-    }
-
-    inline bool JSValue::isUndefinedOrNull() const
-    {
-        return JSImmediate::isUndefinedOrNull(asValue());
-    }
-
-    inline bool JSValue::isBoolean() const
-    {
-        return JSImmediate::isBoolean(asValue());
-    }
-
-    inline bool JSValue::getBoolean(bool& v) const
-    {
-        if (JSImmediate::isBoolean(asValue())) {
-            v = JSImmediate::toBoolean(asValue());
-            return true;
+        intptr_t immediateValue()
+        {
+            return reinterpret_cast<intptr_t>(m_ptr);
         }
         
-        return false;
-    }
-
-    inline bool JSValue::getBoolean() const
-    {
-        return asValue() == jsBoolean(true);
-    }
-
-    ALWAYS_INLINE int32_t JSValue::toInt32(ExecState* exec) const
-    {
-        int32_t i;
-        if (getTruncatedInt32(i))
-            return i;
-        bool ok;
-        return toInt32SlowCase(exec, ok);
-    }
-
-    inline uint32_t JSValue::toUInt32(ExecState* exec) const
-    {
-        uint32_t i;
-        if (getTruncatedUInt32(i))
-            return i;
-        bool ok;
-        return toUInt32SlowCase(exec, ok);
-    }
-
-    inline int32_t toInt32(double val)
-    {
-        if (!(val >= -2147483648.0 && val < 2147483648.0)) {
-            bool ignored;
-            return toInt32SlowCase(val, ignored);
+    public:
+        JSValuePtr()
+            : m_ptr(0)
+        {
         }
-        return static_cast<int32_t>(val);
+
+        JSValuePtr(JSValue* ptr)
+            : m_ptr(ptr)
+        {
+        }
+
+        JSValuePtr(const JSValue* ptr)
+            : m_ptr(const_cast<JSValue*>(ptr))
+        {
+        }
+
+        JSValue* operator->() const
+        {
+            return m_ptr;
+        }
+
+        operator bool() const
+        {
+            return m_ptr;
+        }
+
+        bool operator==(const JSValuePtr other) const
+        {
+            return m_ptr == other.m_ptr;
+        }
+
+        bool operator!=(const JSValuePtr other) const
+        {
+            return m_ptr != other.m_ptr;
+        }
+
+        static JSValueEncodedAsPointer* encode(JSValuePtr value)
+        {
+            return reinterpret_cast<JSValueEncodedAsPointer*>(value.m_ptr);
+        }
+
+        static JSValuePtr decode(JSValueEncodedAsPointer* ptr)
+        {
+            return JSValuePtr(reinterpret_cast<JSValue*>(ptr));
+        }
+
+    private:
+        JSValue* m_ptr;
+    };
+
+    inline JSValuePtr JSValue::asValue() const
+    {
+        return JSValuePtr(this);
     }
 
-    inline uint32_t toUInt32(double val)
+    inline JSValuePtr noValue()
     {
-        if (!(val >= 0.0 && val < 4294967296.0)) {
-            bool ignored;
-            return toUInt32SlowCase(val, ignored);
-        }
-        return static_cast<uint32_t>(val);
+        return JSValuePtr();
     }
 
-    inline int32_t JSValue::toInt32(ExecState* exec, bool& ok) const
-    {
-        int32_t i;
-        if (getTruncatedInt32(i)) {
-            ok = true;
-            return i;
-        }
-        return toInt32SlowCase(exec, ok);
-    }
+    inline bool operator==(const JSValuePtr a, const JSValue* b) { return a == JSValuePtr(b); }
+    inline bool operator==(const JSValue* a, const JSValuePtr b) { return JSValuePtr(a) == b; }
 
-    inline uint32_t JSValue::toUInt32(ExecState* exec, bool& ok) const
-    {
-        uint32_t i;
-        if (getTruncatedUInt32(i)) {
-            ok = true;
-            return i;
-        }
-        return toUInt32SlowCase(exec, ok);
-    }
+    inline bool operator!=(const JSValuePtr a, const JSValue* b) { return a != JSValuePtr(b); }
+    inline bool operator!=(const JSValue* a, const JSValuePtr b) { return JSValuePtr(a) != b; }
 
 } // namespace JSC
 

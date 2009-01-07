@@ -32,9 +32,9 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(FunctionPrototype);
 
-static JSValue* functionProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* functionProtoFuncApply(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* functionProtoFuncCall(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValuePtr functionProtoFuncToString(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr functionProtoFuncApply(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr functionProtoFuncCall(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 
 FunctionPrototype::FunctionPrototype(ExecState* exec, PassRefPtr<Structure> structure)
     : InternalFunction(&exec->globalData(), structure, exec->propertyNames().nullIdentifier)
@@ -49,7 +49,7 @@ void FunctionPrototype::addFunctionProperties(ExecState* exec, Structure* protot
     putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
 }
 
-static JSValue* callFunctionPrototype(ExecState*, JSObject*, JSValue*, const ArgList&)
+static JSValuePtr callFunctionPrototype(ExecState*, JSObject*, JSValuePtr, const ArgList&)
 {
     return jsUndefined();
 }
@@ -63,7 +63,7 @@ CallType FunctionPrototype::getCallData(CallData& callData)
 
 // Functions
 
-JSValue* functionProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
+JSValuePtr functionProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     if (thisValue->isObject(&JSFunction::info)) {
         JSFunction* function = asFunction(thisValue);
@@ -78,17 +78,17 @@ JSValue* functionProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValu
     return throwError(exec, TypeError);
 }
 
-JSValue* functionProtoFuncApply(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
+JSValuePtr functionProtoFuncApply(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
     CallData callData;
     CallType callType = thisValue->getCallData(callData);
     if (callType == CallTypeNone)
         return throwError(exec, TypeError);
 
-    JSValue* thisArg = args.at(exec, 0);
-    JSValue* argArray = args.at(exec, 1);
+    JSValuePtr thisArg = args.at(exec, 0);
+    JSValuePtr argArray = args.at(exec, 1);
 
-    JSValue* applyThis;
+    JSValuePtr applyThis;
     if (thisArg->isUndefinedOrNull())
         applyThis = exec->globalThisValue();
     else
@@ -113,14 +113,14 @@ JSValue* functionProtoFuncApply(ExecState* exec, JSObject*, JSValue* thisValue, 
     return call(exec, thisValue, callType, callData, applyThis, applyArgs);
 }
 
-JSValue* functionProtoFuncCall(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
+JSValuePtr functionProtoFuncCall(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
     CallData callData;
     CallType callType = thisValue->getCallData(callData);
     if (callType == CallTypeNone)
         return throwError(exec, TypeError);
 
-    JSValue* thisArg = args.at(exec, 0);
+    JSValuePtr thisArg = args.at(exec, 0);
 
     JSObject* callThis;
     if (thisArg->isUndefinedOrNull())

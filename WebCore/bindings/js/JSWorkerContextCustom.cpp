@@ -65,17 +65,17 @@ void JSWorkerContext::mark()
     }
 }
 
-JSValue* JSWorkerContext::self(ExecState*) const
+JSValuePtr JSWorkerContext::self(ExecState*) const
 {
     return asValue();
 }
 
-void JSWorkerContext::setSelf(ExecState* exec, JSValue* value)
+void JSWorkerContext::setSelf(ExecState* exec, JSValuePtr value)
 {
     putDirect(Identifier(exec, "self"), value);
 }
 
-JSValue* JSWorkerContext::addEventListener(ExecState* exec, const ArgList& args)
+JSValuePtr JSWorkerContext::addEventListener(ExecState* exec, const ArgList& args)
 {
     RefPtr<JSUnprotectedEventListener> listener = findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1));
     if (!listener)
@@ -84,7 +84,7 @@ JSValue* JSWorkerContext::addEventListener(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue* JSWorkerContext::removeEventListener(ExecState* exec, const ArgList& args)
+JSValuePtr JSWorkerContext::removeEventListener(ExecState* exec, const ArgList& args)
 {
     JSUnprotectedEventListener* listener = findJSUnprotectedEventListener(exec, args.at(exec, 1));
     if (!listener)

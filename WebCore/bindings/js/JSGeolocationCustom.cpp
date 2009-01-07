@@ -39,21 +39,21 @@ using namespace JSC;
 
 namespace WebCore {
 
-static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue* value)
+static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValuePtr value)
 {
     if (!value->isObject())
         return 0;
 
     JSObject* object = asObject(value);
 
-    JSValue* enableHighAccuracyValue = object->get(exec, Identifier(exec, "enableHighAccuracy"));
+    JSValuePtr enableHighAccuracyValue = object->get(exec, Identifier(exec, "enableHighAccuracy"));
     if (exec->hadException())
         return 0;
     bool enableHighAccuracy = enableHighAccuracyValue->toBoolean(exec);
     if (exec->hadException())
         return 0;
 
-    JSValue* timeoutValue = object->get(exec, Identifier(exec, "timeout"));
+    JSValuePtr timeoutValue = object->get(exec, Identifier(exec, "timeout"));
     if (exec->hadException())
         return 0;
     unsigned timeout = timeoutValue->toUInt32(exec);
@@ -63,7 +63,7 @@ static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValu
     return PositionOptions::create(enableHighAccuracy, timeout);
 }
 
-JSValue* JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& args)
+JSValuePtr JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& args)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
     RefPtr<PositionCallback> positionCallback;
@@ -102,7 +102,7 @@ JSValue* JSGeolocation::getCurrentPosition(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue* JSGeolocation::watchPosition(ExecState* exec, const ArgList& args)
+JSValuePtr JSGeolocation::watchPosition(ExecState* exec, const ArgList& args)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
     RefPtr<PositionCallback> positionCallback;

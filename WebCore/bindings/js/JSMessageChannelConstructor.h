@@ -47,7 +47,7 @@ namespace WebCore {
 
     private:
         ScriptExecutionContext* m_scriptExecutionContext;
-        JSC::JSValue* m_contextWrapper;
+        JSC::JSValuePtr m_contextWrapper;
     };
 
 } // namespace WebCore

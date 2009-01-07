@@ -32,11 +32,11 @@ namespace JSC {
         NumberConstructor(ExecState*, PassRefPtr<Structure>, NumberPrototype*);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
+        JSValuePtr getValueProperty(ExecState*, int token) const;
 
         static const ClassInfo info;
 
-        static PassRefPtr<Structure> createStructure(JSValue* proto) 
+        static PassRefPtr<Structure> createStructure(JSValuePtr proto) 
         { 
             return Structure::create(proto, TypeInfo(ObjectType, ImplementsHasInstance)); 
         }

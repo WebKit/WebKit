@@ -37,7 +37,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue* JSSQLResultSetRowList::item(ExecState* exec, const ArgList& args)
+JSValuePtr JSSQLResultSetRowList::item(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
     int index = args.at(exec, 0)->toInt32(exec, indexOk);
@@ -56,7 +56,7 @@ JSValue* JSSQLResultSetRowList::item(ExecState* exec, const ArgList& args)
     unsigned valuesIndex = index * numColumns;
     for (unsigned i = 0; i < numColumns; i++) {
         const SQLValue& value = m_impl->values()[valuesIndex + i];
-        JSValue* jsValue = noValue();
+        JSValuePtr jsValue = noValue();
 
         switch (value.type()) {
             case SQLValue::StringValue:
