@@ -867,7 +867,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, double number)
     // Later we can do the extra work to handle that like the other cases.
     if (number == HashTraits<double>::emptyValue() || HashTraits<double>::isDeletedValue(number))
         return emitLoad(dst, jsNumber(globalData(), number));
-    JSValuePtr valueInMap = m_numberMap.add(number, noValue()).first->second;
+    JSValuePtr& valueInMap = m_numberMap.add(number, noValue()).first->second;
     if (!valueInMap)
         valueInMap = jsNumber(globalData(), number);
     return emitLoad(dst, valueInMap);
@@ -875,10 +875,10 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, double number)
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, const Identifier& identifier)
 {
-    JSValuePtr valueInMap = m_stringMap.add(identifier.ustring().rep(), 0).first->second;
-    if (!valueInMap)
-        valueInMap = jsOwnedString(globalData(), identifier.ustring());
-    return emitLoad(dst, valueInMap);
+    JSString*& stringInMap = m_stringMap.add(identifier.ustring().rep(), 0).first->second;
+    if (!stringInMap)
+        stringInMap = jsOwnedString(globalData(), identifier.ustring());
+    return emitLoad(dst, JSValuePtr(stringInMap));
 }
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValuePtr v)

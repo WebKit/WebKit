@@ -1,3 +1,26 @@
+2009-01-06  Gavin Barraclough  <baraclough@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Replace accidentally removed references in BytecodeGenerator, deleting these
+        will be hindering the sharing of constant numbers and strings.
+
+        The code to add a new constant (either number or string) to their respective
+        map works by attempting to add a null entry, then checking the result of the
+        add for null.  The first time, this should return the null (or noValue).
+        The code checks for null (to see if this is the initial add), and then allocates
+        a new number / string object.  This code relies on the result returned from
+        the add to the map being stored as a reference, such that the allocated object
+        will be stored in the map, and will be resused if the same constant is encountered
+        again.  By failing to use a reference we will be leaking GC object for each
+        additional entry added to the map.  As GC objects they should be clollected,
+        be we should no be allocatin them in the first place.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23158
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+
 2009-01-06  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
