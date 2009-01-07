@@ -72,6 +72,7 @@ WebInspectorClient::WebInspectorClient(WebView* webView)
     : m_inspectedWebView(webView)
     , m_hwnd(0)
     , m_webViewHwnd(0)
+    , m_shouldAttachWhenShown(false)
     , m_attached(false)
 {
     ASSERT(m_inspectedWebView);
@@ -202,20 +203,13 @@ String WebInspectorClient::localizedStringsURL()
 
 void WebInspectorClient::showWindow()
 {
-    if (!m_hwnd)
-        return;
-
-    updateWindowTitle();
-    ::SetWindowPos(m_hwnd, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
+    showWindowWithoutNotifications();
     m_inspectedWebView->page()->inspectorController()->setWindowVisible(true);
 }
 
 void WebInspectorClient::closeWindow()
 {
-    if (!m_webView)
-        return;
-
-    ::ShowWindow(m_hwnd, SW_HIDE);
+    closeWindowWithoutNotifications();
     m_inspectedWebView->page()->inspectorController()->setWindowVisible(false);
 }
 
@@ -226,27 +220,13 @@ bool WebInspectorClient::windowVisible()
 
 void WebInspectorClient::attachWindow()
 {
-    ASSERT(m_hwnd);
-    ASSERT(m_webView);
-    ASSERT(m_inspectedWebViewHwnd);
-
     if (m_attached)
         return;
 
-    WindowMessageBroadcaster::addListener(m_inspectedWebViewHwnd, this);
+    m_shouldAttachWhenShown = true;
 
-    HWND hostWindow;
-    if (FAILED(m_inspectedWebView->hostWindow((OLE_HANDLE*)&hostWindow)))
-        return;
-
-    m_webView->setHostWindow((OLE_HANDLE)(ULONG64)hostWindow);
-    ::ShowWindow(m_hwnd, SW_HIDE);
-    m_attached = true;
-
-    ::SendMessage(hostWindow, WM_SIZE, 0, 0);
-
-    if (m_highlight && m_highlight->isShowing())
-        m_highlight->update();
+    closeWindowWithoutNotifications();
+    showWindowWithoutNotifications();
 }
 
 void WebInspectorClient::detachWindow()
@@ -254,20 +234,10 @@ void WebInspectorClient::detachWindow()
     if (!m_attached)
         return;
 
-    WindowMessageBroadcaster::removeListener(m_inspectedWebViewHwnd, this);
+    m_shouldAttachWhenShown = false;
 
-    m_attached = false;
-
-    m_webView->setHostWindow((OLE_HANDLE)(ULONG64)m_hwnd);
-    ::ShowWindow(m_hwnd, SW_SHOW);
-    ::SendMessage(m_hwnd, WM_SIZE, 0, 0);
-
-    HWND hostWindow;
-    if (SUCCEEDED(m_inspectedWebView->hostWindow((OLE_HANDLE*)&hostWindow)))
-        ::SendMessage(hostWindow, WM_SIZE, 0, 0);
-
-    if (m_highlight && m_highlight->isShowing())
-        m_highlight->update();
+    closeWindowWithoutNotifications();
+    showWindowWithoutNotifications();
 }
 
 void WebInspectorClient::setAttachedWindowHeight(unsigned height)
@@ -301,6 +271,74 @@ void WebInspectorClient::inspectedURLChanged(const String& newURL)
 {
     m_inspectedURL = newURL;
     updateWindowTitle();
+}
+
+void WebInspectorClient::closeWindowWithoutNotifications()
+{
+    if (!m_hwnd)
+        return;
+
+    if (!m_attached) {
+        ShowWindow(m_hwnd, SW_HIDE);
+        return;
+    }
+
+    ASSERT(m_webView);
+    ASSERT(m_inspectedWebViewHwnd);
+    ASSERT(!IsWindowVisible(m_hwnd));
+
+    // Remove the Inspector's WebView from the inspected WebView's parent window.
+    WindowMessageBroadcaster::removeListener(m_inspectedWebViewHwnd, this);
+
+    m_attached = false;
+
+    m_webView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_hwnd));
+
+    // Make sure everything has the right size/position.
+    HWND hostWindow;
+    if (SUCCEEDED(m_inspectedWebView->hostWindow((OLE_HANDLE*)&hostWindow)))
+        SendMessage(hostWindow, WM_SIZE, 0, 0);
+
+    if (m_highlight && m_highlight->isShowing())
+        m_highlight->update();
+}
+
+void WebInspectorClient::showWindowWithoutNotifications()
+{
+    if (!m_hwnd)
+        return;
+
+    ASSERT(m_webView);
+    ASSERT(m_inspectedWebViewHwnd);
+
+    if (!m_shouldAttachWhenShown) {
+        // Put the Inspector's WebView inside our window and show it.
+        m_webView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_hwnd));
+        SendMessage(m_hwnd, WM_SIZE, 0, 0);
+        updateWindowTitle();
+
+        SetWindowPos(m_hwnd, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
+        return;
+    }
+
+    // Put the Inspector's WebView inside the inspected WebView's parent window.
+    WindowMessageBroadcaster::addListener(m_inspectedWebViewHwnd, this);
+
+    HWND hostWindow;
+    if (FAILED(m_inspectedWebView->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow))))
+        return;
+
+    m_webView->setHostWindow(reinterpret_cast<OLE_HANDLE>(hostWindow));
+
+    // Then hide our own window.
+    ShowWindow(m_hwnd, SW_HIDE);
+
+    m_attached = true;
+
+    // Make sure everything has the right size/position.
+    SendMessage(hostWindow, WM_SIZE, 0, 0);
+    if (m_highlight && m_highlight->isShowing())
+        m_highlight->update();
 }
 
 void WebInspectorClient::updateWindowTitle()
