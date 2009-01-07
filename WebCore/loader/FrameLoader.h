@@ -264,6 +264,7 @@ namespace WebCore {
         void sendRemainingDelegateMessages(unsigned long identifier, const ResourceResponse&, int length, const ResourceError&);
         void requestFromDelegate(ResourceRequest&, unsigned long& identifier, ResourceError&);
         void loadedResourceFromMemoryCache(const CachedResource*);
+        void tellClientAboutPastMemoryCacheLoads();
 
         void recursiveCheckLoadComplete();
         void checkLoadComplete();

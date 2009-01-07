@@ -29,20 +29,19 @@
 #ifndef InspectorController_h
 #define InspectorController_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-#include "JavaScriptDebugListener.h"
-#endif
-
 #include "Console.h"
 #include "PlatformString.h"
 #include "StringHash.h"
 #include "Timer.h"
-
 #include <JavaScriptCore/JSContextRef.h>
-
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+#include "JavaScriptDebugListener.h"
+#endif
+
 
 namespace JSC {
     class Profile;
@@ -51,6 +50,7 @@ namespace JSC {
 
 namespace WebCore {
 
+class CachedResource;
 class Database;
 class DocumentLoader;
 class GraphicsContext;
@@ -59,6 +59,7 @@ class InspectorClient;
 class JavaScriptCallFrame;
 class Node;
 class Page;
+class ResourceRequest;
 class ResourceResponse;
 class ResourceError;
 class ScriptCallStack;
@@ -67,7 +68,6 @@ class SharedBuffer;
 struct ConsoleMessage;
 struct InspectorDatabaseResource;
 struct InspectorResource;
-class ResourceRequest;
 
 class InspectorController
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -196,7 +196,7 @@ public:
     void didCommitLoad(DocumentLoader*);
     void frameDetachedFromParent(Frame*);
 
-    void didLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length);
+    void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
 
     void identifierForInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
     void willSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);

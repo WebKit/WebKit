@@ -2379,22 +2379,22 @@ void InspectorController::removeResource(InspectorResource* resource)
     }
 }
 
-void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
+void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader, const CachedResource* cachedResource)
 {
     if (!enabled())
         return;
 
     // If the resource URL is already known, we don't need to add it again since this is just a cached load.
-    if (m_knownResources.contains(request.url().string()))
+    if (m_knownResources.contains(cachedResource->url()))
         return;
 
     RefPtr<InspectorResource> resource = InspectorResource::create(m_nextIdentifier--, loader, loader->frame());
     resource->finished = true;
 
-    updateResourceRequest(resource.get(), request);
-    updateResourceResponse(resource.get(), response);
+    resource->requestURL = KURL(cachedResource->url());
+    updateResourceResponse(resource.get(), cachedResource->response());
 
-    resource->length = length;
+    resource->length = cachedResource->encodedSize();
     resource->cached = true;
     resource->startTime = currentTime();
     resource->responseReceivedTime = resource->startTime;
@@ -2402,7 +2402,7 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
 
     ASSERT(m_inspectedPage);
 
-    if (loader->frame() == m_inspectedPage->mainFrame() && request.url() == loader->requestURL())
+    if (loader->frame() == m_inspectedPage->mainFrame() && cachedResource->url() == loader->requestURL())
         m_mainResource = resource;
 
     addResource(resource.get());

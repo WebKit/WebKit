@@ -2046,6 +2046,16 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     return _private->selectTrailingWhitespaceEnabled;
 }
 
+- (void)setMemoryCacheDelegateCallsEnabled:(BOOL)enabled
+{
+    _private->page->setMemoryCacheClientCallsEnabled(enabled);
+}
+
+- (BOOL)areMemoryCacheDelegateCallsEnabled
+{
+    return _private->page->areMemoryCacheClientCallsEnabled();
+}
+
 @end
 
 @implementation _WebSafeForwarder

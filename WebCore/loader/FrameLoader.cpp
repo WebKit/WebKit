@@ -4024,27 +4024,31 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& i
 
 void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
 {
-    ResourceRequest request(resource->url());
-    const ResourceResponse& response = resource->response();
-    SharedBuffer* data = resource->data();
-    int length = data ? data->size() : 0;
-
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length);
-
-    if (!resource->sendResourceLoadCallbacks() || m_documentLoader->haveToldClientAboutLoad(request.url()))
+    Page* page = m_frame->page();
+    if (!page)
         return;
 
-    if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length)) {
-        m_documentLoader->didTellClientAboutLoad(request.url());
+    page->inspectorController()->didLoadResourceFromMemoryCache(m_documentLoader.get(), resource);
+
+    if (!resource->sendResourceLoadCallbacks() || m_documentLoader->haveToldClientAboutLoad(resource->url()))
+        return;
+
+    if (!page->areMemoryCacheClientCallsEnabled()) {
+        m_documentLoader->recordMemoryCacheLoadForFutureClientNotification(resource->url());
+        m_documentLoader->didTellClientAboutLoad(resource->url());
+        return;
+    }
+
+    ResourceRequest request(resource->url());
+    if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, resource->response(), resource->encodedSize())) {
+        m_documentLoader->didTellClientAboutLoad(resource->url());
         return;
     }
 
     unsigned long identifier;
     ResourceError error;
-    ResourceRequest r(request);
-    requestFromDelegate(r, identifier, error);
-    sendRemainingDelegateMessages(identifier, response, length, error);
+    requestFromDelegate(request, identifier, error);
+    sendRemainingDelegateMessages(identifier, resource->response(), resource->encodedSize(), error);
 }
 
 void FrameLoader::applyUserAgent(ResourceRequest& request)
@@ -5153,6 +5157,33 @@ void FrameLoader::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long
 
     if (Page* page = m_frame->page())
         page->inspectorController()->didFinishLoading(loader, identifier);
+}
+
+void FrameLoader::tellClientAboutPastMemoryCacheLoads()
+{
+    ASSERT(m_frame->page());
+    ASSERT(m_frame->page()->areMemoryCacheClientCallsEnabled());
+
+    if (!m_documentLoader)
+        return;
+
+    Vector<String> pastLoads;
+    m_documentLoader->takeMemoryCacheLoadsForClientNotification(pastLoads);
+
+    size_t size = pastLoads.size();
+    for (size_t i = 0; i < size; ++i) {
+        CachedResource* resource = cache()->resourceForURL(pastLoads[i]);
+
+        // FIXME: These loads, loaded from cache, but now gone from the cache by the time
+        // Page::setMemoryCacheClientCallsEnabled(true) is called, will not be seen by the client.
+        // Consider if there's some efficient way of remembering enough to deliver this client call.
+        // We have the URL, but not the rest of the response or the length.
+        if (!resource)
+            continue;
+
+        ResourceRequest request(resource->url());
+        m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, resource->response(), resource->encodedSize());
+    }
 }
 
 #if USE(LOW_BANDWIDTH_DISPLAY)

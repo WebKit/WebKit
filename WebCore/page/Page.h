@@ -27,11 +27,12 @@
 #include "FrameLoaderTypes.h"
 #include "LinkHash.h"
 #include "PlatformString.h"
+#include <wtf/HashSet.h>
+#include <wtf/OwnPtr.h>
+
 #if PLATFORM(MAC)
 #include "SchedulePair.h"
 #endif
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 
 #if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS)) || (PLATFORM(QT) && defined(Q_WS_WIN))
 typedef struct HINSTANCE__* HINSTANCE;
@@ -193,6 +194,9 @@ namespace WebCore {
         bool hasCustomHTMLTokenizerChunkSize() const { return m_customHTMLTokenizerChunkSize != -1; }
         int customHTMLTokenizerChunkSize() const { ASSERT(m_customHTMLTokenizerChunkSize != -1); return m_customHTMLTokenizerChunkSize; }
 
+        void setMemoryCacheClientCallsEnabled(bool);
+        bool areMemoryCacheClientCallsEnabled() const { return m_areMemoryCacheClientCallsEnabled; }
+
     private:
         void initGroup();
 
@@ -222,6 +226,7 @@ namespace WebCore {
 
         bool m_inLowQualityInterpolationMode;
         bool m_cookieEnabled;
+        bool m_areMemoryCacheClientCallsEnabled;
         float m_mediaVolume;
     
         InspectorController* m_parentInspectorController;
@@ -245,6 +250,7 @@ namespace WebCore {
 #if ENABLE(DOM_STORAGE)
         RefPtr<SessionStorage> m_sessionStorage;
 #endif
+
 #if PLATFORM(WIN) || (PLATFORM(WX) && defined(__WXMSW__)) || (PLATFORM(QT) && defined(Q_WS_WIN))
         static HINSTANCE s_instanceHandle;
 #endif

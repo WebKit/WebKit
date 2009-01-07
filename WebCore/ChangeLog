@@ -1,3 +1,33 @@
+2009-01-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 23160: add setMemoryCacheClientCallsEnabled SPI so Safari can be faster with activity window closed
+        https://bugs.webkit.org/show_bug.cgi?id=23160
+
+        * WebCore.base.exp: Added Page::setMemoryCacheClientCallsEnabled.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache): Updated to take a CachedResource
+        so that there's no extra work the caller has to do when the inspector is disabled.
+        * inspector/InspectorController.h: Ditto.
+
+        * loader/DocumentLoader.h: Added recordMemoryCacheLoadForFutureClientNotification,
+        takeMemoryCacheLoadsForClientNotification, and m_resourcesLoadedFromMemoryCacheForClientNotification.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache): Streamlined code so less work is done when
+        there's no inspector or client call needed. Added code to check areMemoryCacheClientCallsEnabled
+        and if it's false, use recordMemoryCacheLoadForFutureClientNotification.
+        (WebCore::FrameLoader::tellClientAboutPastMemoryCacheLoads): Added.
+        * loader/FrameLoader.h: Ditto.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize m_areMemoryCacheClientCallsEnabled to be compatible with old behavior.
+        (WebCore::Page::setMemoryCacheClientCallsEnabled): Added.
+        * page/Page.h: Added setMemoryCacheClientCallsEnabled, areMemoryCacheClientCallsEnabled,
+        and m_areMemoryCacheClientCallsEnabled.
+
 2009-01-07  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Simon Hausmann.
