@@ -1071,7 +1071,7 @@ SOURCES += \
     page/qt/DragControllerQt.cpp \
     page/qt/EventHandlerQt.cpp \
     page/qt/FrameQt.cpp \
-    platform/graphics/qt/AffineTransformQt.cpp \
+    platform/graphics/qt/TransformationMatrixQt.cpp \
     platform/graphics/qt/ColorQt.cpp \
     platform/graphics/qt/FontQt.cpp \
     platform/graphics/qt/FontQt43.cpp \

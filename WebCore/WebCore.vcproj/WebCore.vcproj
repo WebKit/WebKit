@@ -4612,7 +4612,7 @@
 					Name="cg"
 					>
 					<File
-						RelativePath="..\platform\graphics\cg\AffineTransformCG.cpp"
+						RelativePath="..\platform\graphics\cg\TransformationMatrixCG.cpp"
 						>
 						<FileConfiguration
 							Name="Debug_Cairo|Win32"
@@ -5016,7 +5016,7 @@
 					Name="cairo"
 					>
 					<File
-						RelativePath="..\platform\graphics\cairo\AffineTransformCairo.cpp"
+						RelativePath="..\platform\graphics\cairo\TransformationMatrixCairo.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"

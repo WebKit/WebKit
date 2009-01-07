@@ -3308,7 +3308,7 @@
 		B26554EB0B80D74900A50EC3 /* RenderSVGTextPath.h in Headers */ = {isa = PBXBuildFile; fileRef = B26554E90B80D74900A50EC3 /* RenderSVGTextPath.h */; };
 		B266CD4D0C3AEC6500EB08D2 /* JSSVGException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */; };
 		B266CD4E0C3AEC6500EB08D2 /* JSSVGException.h in Headers */ = {isa = PBXBuildFile; fileRef = B266CD4C0C3AEC6500EB08D2 /* JSSVGException.h */; };
-		B27535580B053814002CE64F /* AffineTransformCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352A0B053814002CE64F /* AffineTransformCG.cpp */; };
+		B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352A0B053814002CE64F /* TransformationMatrixCG.cpp */; };
 		B27535590B053814002CE64F /* FloatPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352B0B053814002CE64F /* FloatPointCG.cpp */; };
 		B275355A0B053814002CE64F /* FloatRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352C0B053814002CE64F /* FloatRectCG.cpp */; };
 		B275355B0B053814002CE64F /* FloatSizeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352D0B053814002CE64F /* FloatSizeCG.cpp */; };
@@ -8008,7 +8008,7 @@
 		B26554E90B80D74900A50EC3 /* RenderSVGTextPath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGTextPath.h; sourceTree = "<group>"; };
 		B266CD4B0C3AEC6500EB08D2 /* JSSVGException.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGException.cpp; sourceTree = "<group>"; };
 		B266CD4C0C3AEC6500EB08D2 /* JSSVGException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGException.h; sourceTree = "<group>"; };
-		B275352A0B053814002CE64F /* AffineTransformCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AffineTransformCG.cpp; sourceTree = "<group>"; };
+		B275352A0B053814002CE64F /* TransformationMatrixCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TransformationMatrixCG.cpp; sourceTree = "<group>"; };
 		B275352B0B053814002CE64F /* FloatPointCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPointCG.cpp; sourceTree = "<group>"; };
 		B275352C0B053814002CE64F /* FloatRectCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRectCG.cpp; sourceTree = "<group>"; };
 		B275352D0B053814002CE64F /* FloatSizeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatSizeCG.cpp; sourceTree = "<group>"; };
@@ -12827,7 +12827,7 @@
 		B27535290B053814002CE64F /* cg */ = {
 			isa = PBXGroup;
 			children = (
-				B275352A0B053814002CE64F /* AffineTransformCG.cpp */,
+				B275352A0B053814002CE64F /* TransformationMatrixCG.cpp */,
 				B275352B0B053814002CE64F /* FloatPointCG.cpp */,
 				B275352C0B053814002CE64F /* FloatRectCG.cpp */,
 				B275352D0B053814002CE64F /* FloatSizeCG.cpp */,
@@ -16772,7 +16772,7 @@
 				29800C960E524C8B00025536 /* AccessibilityTableRow.cpp in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,
 				49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */,
-				B27535580B053814002CE64F /* AffineTransformCG.cpp in Sources */,
+				B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
 				316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */,

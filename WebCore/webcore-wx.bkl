@@ -51,7 +51,7 @@ wxWebCore port Bakefile project file.
             page/wx/DragControllerWx.cpp
             page/wx/EventHandlerWx.cpp
            
-            platform/graphics/wx/AffineTransformWx.cpp
+            platform/graphics/wx/TransformationMatrixWx.cpp
             platform/graphics/wx/ColorWx.cpp
             platform/graphics/wx/FloatRectWx.cpp
             platform/graphics/wx/GradientWx.cpp

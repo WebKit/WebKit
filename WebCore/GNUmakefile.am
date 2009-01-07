@@ -1670,7 +1670,7 @@ webcoregtk_sources += \
 	WebCore/page/gtk/DragControllerGtk.cpp \
 	WebCore/page/gtk/EventHandlerGtk.cpp \
 	WebCore/page/gtk/FrameGtk.cpp \
-	WebCore/platform/graphics/cairo/AffineTransformCairo.cpp \
+	WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
 	WebCore/platform/graphics/cairo/CairoPath.h \
 	WebCore/platform/graphics/cairo/FontCairo.cpp \
 	WebCore/platform/graphics/cairo/GradientCairo.cpp \

@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -46,19 +46,19 @@ TransformationMatrix::TransformationMatrix(const PlatformAffineTransform& matrix
 TransformationMatrix::TransformationMatrix(double a, double b, double c, double d, double e, double f)
 {
 #if USE(WXGC)
-    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetDefaultRenderer(); 
+    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetDefaultRenderer();
     m_transform = renderer->CreateMatrix();
 #endif
     setMatrix(a, b, c, d, e, f);
 }
 
-TransformationMatrix::TransformationMatrix() 
-{ 
+TransformationMatrix::TransformationMatrix()
+{
     // NB: If we ever support using Cairo backend on Win/Mac, this will need to be
     // changed somehow (though I'm not sure how as we don't have a reference to the
     // graphics context here.
 #if USE(WXGC)
-    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetDefaultRenderer(); 
+    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetDefaultRenderer();
     m_transform = renderer->CreateMatrix();
 #endif
 }
@@ -76,8 +76,8 @@ void TransformationMatrix::setMatrix(double a, double b, double c, double d, dou
 #endif
 }
 
-void TransformationMatrix::map(double x, double y, double *x2, double *y2) const 
-{ 
+void TransformationMatrix::map(double x, double y, double *x2, double *y2) const
+{
     notImplemented();
 }
 
@@ -89,7 +89,7 @@ IntRect TransformationMatrix::mapRect(const IntRect &rect) const
     y = rect.y();
     width = rect.width();
     height = rect.height();
-    
+
     m_transform.TransformPoint(&x, &y);
     m_transform.TransformDistance(&width, &height);
     return IntRect(x, y, width, height);
@@ -105,7 +105,7 @@ FloatRect TransformationMatrix::mapRect(const FloatRect &rect) const
     y = rect.y();
     width = rect.width();
     height = rect.height();
-    
+
     m_transform.TransformPoint(&x, &y);
     m_transform.TransformDistance(&width, &height);
     return FloatRect(x, y, width, height);
@@ -114,12 +114,12 @@ FloatRect TransformationMatrix::mapRect(const FloatRect &rect) const
 }
 
 
-TransformationMatrix& TransformationMatrix::scale(double sx, double sy) 
+TransformationMatrix& TransformationMatrix::scale(double sx, double sy)
 {
 #if USE(WXGC)
-    m_transform.Scale((wxDouble)sx, (wxDouble)sy); 
+    m_transform.Scale((wxDouble)sx, (wxDouble)sy);
 #endif
-    return *this; 
+    return *this;
 }
 
 void TransformationMatrix::reset()
@@ -127,32 +127,32 @@ void TransformationMatrix::reset()
     notImplemented();
 }
 
-TransformationMatrix& TransformationMatrix::rotate(double d) 
-{ 
+TransformationMatrix& TransformationMatrix::rotate(double d)
+{
 #if USE(WXGC)
-    m_transform.Rotate((wxDouble)d); 
+    m_transform.Rotate((wxDouble)d);
 #endif
-    return *this; 
+    return *this;
 }
 
-TransformationMatrix& TransformationMatrix::translate(double tx, double ty) 
-{ 
+TransformationMatrix& TransformationMatrix::translate(double tx, double ty)
+{
 #if USE(WXGC)
-    m_transform.Translate((wxDouble)tx, (wxDouble)ty); 
+    m_transform.Translate((wxDouble)tx, (wxDouble)ty);
 #endif
-    return *this; 
+    return *this;
 }
 
-TransformationMatrix& TransformationMatrix::shear(double sx, double sy) 
-{ 
-    notImplemented(); 
-    return *this; 
-}
-
-TransformationMatrix& TransformationMatrix::operator*=(const TransformationMatrix& other) 
-{ 
+TransformationMatrix& TransformationMatrix::shear(double sx, double sy)
+{
     notImplemented();
-    return *this; 
+    return *this;
+}
+
+TransformationMatrix& TransformationMatrix::operator*=(const TransformationMatrix& other)
+{
+    notImplemented();
+    return *this;
 }
 
 bool TransformationMatrix::operator== (const TransformationMatrix &other) const
@@ -171,9 +171,9 @@ TransformationMatrix TransformationMatrix::operator* (const TransformationMatrix
     return *this; //m_transform * other.m_transform;
 }
 
-double TransformationMatrix::det() const 
-{ 
-    notImplemented(); 
+double TransformationMatrix::det() const
+{
+    notImplemented();
     return 0;
 }
 
@@ -249,7 +249,7 @@ double TransformationMatrix::e() const
     return e;
 }
 
-void TransformationMatrix::setE(double e) 
+void TransformationMatrix::setE(double e)
 {
     setMatrix(a(), b(), c(), d(), e, f());
 }

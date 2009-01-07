@@ -831,7 +831,7 @@ building_on_win32 = env['PLATFORM'] == 'win32' or env['PLATFORM'] == 'cygwin'
 
 if env['PLATFORM'] == 'darwin':
     sources['platform/graphics/cg'] = [
-        'platform/graphics/cg/AffineTransformCG.cpp',
+        'platform/graphics/cg/TransformationMatrixCG.cpp',
         'platform/graphics/cg/ColorCG.cpp',
         'platform/graphics/cg/FloatPointCG.cpp',
         'platform/graphics/cg/FloatRectCG.cpp',

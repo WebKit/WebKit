@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef TransformationMatrix_h
@@ -99,8 +99,8 @@ public:
     void reset();
 
     TransformationMatrix& multiply(const TransformationMatrix&);
-    TransformationMatrix& scale(double); 
-    TransformationMatrix& scale(double sx, double sy); 
+    TransformationMatrix& scale(double);
+    TransformationMatrix& scale(double sx, double sy);
     TransformationMatrix& scaleNonUniform(double sx, double sy);
     TransformationMatrix& rotate(double d);
     TransformationMatrix& rotateFromVector(double x, double y);
@@ -111,7 +111,7 @@ public:
     TransformationMatrix& skew(double angleX, double angleY);
     TransformationMatrix& skewX(double angle);
     TransformationMatrix& skewY(double angle);
- 
+
     double det() const;
     bool isInvertible() const;
     TransformationMatrix inverse() const;
@@ -126,7 +126,7 @@ public:
     bool operator!=(const TransformationMatrix& other) const { return !(*this == other); }
     TransformationMatrix& operator*=(const TransformationMatrix&);
     TransformationMatrix operator*(const TransformationMatrix&);
-    
+
 private:
 #if !PLATFORM(WX) || USE(WXGC)
     PlatformTransformationMatrix m_transform;
