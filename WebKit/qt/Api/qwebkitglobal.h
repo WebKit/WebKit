@@ -24,9 +24,17 @@
 
 #if defined(Q_OS_WIN)
 #    if defined(BUILD_WEBKIT)
-#        define QWEBKIT_EXPORT Q_DECL_EXPORT
+#        if defined(QT_SHARED)
+#            define QWEBKIT_EXPORT Q_DECL_EXPORT
+#        else
+#            define QWEBKIT_EXPORT
+#        endif
 #    else
-#        define QWEBKIT_EXPORT Q_DECL_IMPORT
+#        if defined(QT_SHARED)
+#            define QWEBKIT_EXPORT Q_DECL_IMPORT
+#        else
+#            define QWEBKIT_EXPORT
+#        endif
 #    endif
 #endif
 
