@@ -32,8 +32,8 @@ Function parameters:
 function runAnimationTest(expected, callback, event)
 {
     var result = "";
-    var hasPauseAnimationAPI = window.layoutTestController && layoutTestController.pauseAnimationAtTimeOnElementWithId;
-
+    var hasPauseAnimationAPI = ('layoutTestController' in window) && ('pauseAnimationAtTimeOnElementWithId' in layoutTestController);
+    
     function isCloseEnough(actual, desired, tolerance)
     {
         var diff = Math.abs(actual - desired);

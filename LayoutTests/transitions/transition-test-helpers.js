@@ -29,8 +29,8 @@ function roundNumber(num, decimalPlaces)
 function runTransitionTest(expected, callback)
 {
     var result = "";
-    var hasPauseTransitionAPI = window.layoutTestController && layoutTestController.pauseTransitionAtTimeOnElementWithId;
-
+    var hasPauseTransitionAPI = ('layoutTestController' in window) && ('pauseTransitionAtTimeOnElementWithId' in layoutTestController);
+    
     function isCloseEnough(actual, desired, tolerance)
     {
         var diff = Math.abs(actual - desired);
