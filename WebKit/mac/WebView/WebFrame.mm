@@ -1214,6 +1214,19 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return controller->pauseTransitionAtTime(coreNode->renderer(), name, time);
 }
 
+- (unsigned) _numberOfActiveAnimations
+{
+    Frame* frame = core(self);
+    if (!frame)
+        return false;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return false;
+
+    return controller->numberOfActiveAnimations();
+}
+
 @end
 
 @implementation WebFrame

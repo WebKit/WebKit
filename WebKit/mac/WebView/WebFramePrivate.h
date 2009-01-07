@@ -92,4 +92,7 @@ typedef enum {
 - (BOOL)_pauseAnimation:(NSString*)name onNode:(DOMNode *)node atTime:(NSTimeInterval)time;
 - (BOOL)_pauseTransitionOfProperty:(NSString*)name onNode:(DOMNode*)node atTime:(NSTimeInterval)time;
 
+// Returns the total number of currently running animations (includes both CSS transitions and CSS animations).
+- (unsigned) _numberOfActiveAnimations;
+
 @end

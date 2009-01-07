@@ -1,3 +1,23 @@
+2009-01-06  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added new API on AnimationController::numberOfActiveAnimations() to be used by DRT.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23126
+
+        Test: animations/animation-controller-drt-api.html
+
+        * WebCore.base.exp:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::numberOfActiveAnimations):
+        (WebCore::AnimationController::numberOfActiveAnimations):
+        * page/animation/AnimationController.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::numberOfActiveAnimations):
+        (WebCore::CompositeAnimation::numberOfActiveAnimations):
+        * page/animation/CompositeAnimation.h:
+
 2009-01-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Gavin Barraclough.

@@ -1,0 +1,4 @@
+Test for DRT numberOfActiveAnimations() API
+
+Number of active animations at 0s is (2) as expected
+Number of active animations at 1s is (4) as expected

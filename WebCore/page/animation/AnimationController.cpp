@@ -66,6 +66,7 @@ public:
 
     bool pauseAnimationAtTime(RenderObject*, const String& name, double t);
     bool pauseTransitionAtTime(RenderObject*, const String& property, double t);
+    unsigned numberOfActiveAnimations() const;
 
     double beginAnimationUpdateTime()
     {
@@ -306,6 +307,19 @@ bool AnimationControllerPrivate::pauseTransitionAtTime(RenderObject* renderer, c
     return false;
 }
 
+unsigned AnimationControllerPrivate::numberOfActiveAnimations() const
+{
+    unsigned count = 0;
+    
+    RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
+    for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
+        CompositeAnimation* compAnim = it->second.get();
+        count += compAnim->numberOfActiveAnimations();
+    }
+    
+    return count;
+}
+
 AnimationController::AnimationController(Frame* frame)
     : m_data(new AnimationControllerPrivate(frame))
     , m_numStyleAvailableWaiters(0)
@@ -376,6 +390,11 @@ void AnimationController::setTransitionStartTime(RenderObject* renderer, int pro
 bool AnimationController::pauseAnimationAtTime(RenderObject* renderer, const String& name, double t)
 {
     return m_data->pauseAnimationAtTime(renderer, name, t);
+}
+
+unsigned AnimationController::numberOfActiveAnimations() const
+{
+    return m_data->numberOfActiveAnimations();
 }
 
 bool AnimationController::pauseTransitionAtTime(RenderObject* renderer, const String& property, double t)

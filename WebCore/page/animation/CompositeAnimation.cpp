@@ -82,6 +82,7 @@ public:
 
     bool pauseAnimationAtTime(const AtomicString& name, double t);
     bool pauseTransitionAtTime(int property, double t);
+    unsigned numberOfActiveAnimations() const;
 
 protected:
     void updateTransitions(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
@@ -571,6 +572,27 @@ bool CompositeAnimationPrivate::pauseTransitionAtTime(int property, double t)
     return false;
 }
 
+unsigned CompositeAnimationPrivate::numberOfActiveAnimations() const
+{
+    unsigned count = 0;
+    
+    AnimationNameMap::const_iterator animationsEnd = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != animationsEnd; ++it) {
+        KeyframeAnimation* anim = it->second.get();
+        if (anim->active())
+            ++count;
+    }
+
+    CSSPropertyTransitionsMap::const_iterator transitionsEnd = m_transitions.end();
+    for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != transitionsEnd; ++it) {
+        ImplicitAnimation* anim = it->second.get();
+        if (anim->active())
+            ++count;
+    }
+    
+    return count;
+}
+
 CompositeAnimation::CompositeAnimation(AnimationController* animationController)
     : m_data(new CompositeAnimationPrivate(animationController, this))
 {
@@ -674,6 +696,11 @@ bool CompositeAnimation::pauseAnimationAtTime(const AtomicString& name, double t
 bool CompositeAnimation::pauseTransitionAtTime(int property, double t)
 {
     return m_data->pauseTransitionAtTime(property, t);
+}
+
+unsigned CompositeAnimation::numberOfActiveAnimations() const
+{
+    return m_data->numberOfActiveAnimations();
 }
 
 } // namespace WebCore

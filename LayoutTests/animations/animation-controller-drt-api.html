@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <style>
+    
+    body {
+      margin: 0;
+    }
+    
+    #target {
+      position: relative;
+      top: 100px;
+      left: 100px;
+      width: 200px;
+      height: 200px;
+      background-color: red;
+      -webkit-animation-name: anim1, anim2;
+      -webkit-animation-duration: 2s, 2s;
+      -webkit-animation-delay: 0s, 1s;
+      -webkit-transition-property: top, width;
+      -webkit-transition-duration: 2s, 2s;
+      -webkit-transition-delay: 0s, 1s;
+    }
+
+    @-webkit-keyframes anim1 {
+      from {
+        left: 100px;
+        opacity: 1.0;
+      }
+      to {
+        left: 200px;
+        opacity: 0.0;
+      }
+    }
+         
+    @-webkit-keyframes anim2 {
+      from {
+        height: 200px;
+      }
+      to {
+        height: 50px;
+      }
+    }
+         
+   </style>
+   <script type="text/javascript" charset="utf-8">
+   
+    function sample0() {
+      var expected = 2;
+      var current = layoutTestController.numberOfActiveAnimations();
+      if (current == expected)
+        document.getElementById('result0').innerHTML = "Number of active animations at 0s is (" + current + ") as expected";
+      else
+        document.getElementById('result0').innerHTML = "Number of active animations at 0s is (" + current + ") but was expecting (" + expected + ")";
+    }
+    
+    function sample1() {
+      var expected = 4;
+      var current = layoutTestController.numberOfActiveAnimations();
+      if (current == expected)
+        document.getElementById('result1').innerHTML = "Number of active animations at 1s is (" + current + ") as expected";
+      else
+        document.getElementById('result1').innerHTML = "Number of active animations at 1s is (" + current + ") but was expecting (" + expected + ")";
+      
+      layoutTestController.notifyDone();
+    }
+    
+    function startTest() {
+      if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+        
+        var target = document.getElementById('target');
+        target.style.top = '200px';
+        target.style.width = '100px';
+        
+        window.setTimeout(sample0, 0);
+        window.setTimeout(sample1, 1100);
+      }
+    }
+    
+   </script>
+</head>
+<body onload="startTest()">
+  <h1>Test for DRT numberOfActiveAnimations() API</h1>
+
+  <div id="target">
+  </div>
+  
+  <div id="result0">
+  </div>
+  
+  <div id="result1">
+  </div>
+
+</body>
+</html>

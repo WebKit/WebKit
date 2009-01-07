@@ -1,3 +1,15 @@
+2009-01-06  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Exposed through WebFrame private interface the new WebCore API AnimationController::numberOfActiveAnimations() to be used by DRT.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23126
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _numberOfActiveAnimations]):
+        * WebView/WebFramePrivate.h:
+
 2009-01-05  David Kilzer  <ddkilzer@apple.com>
 
         Add SPI to enable, disable and check state of WebIconDatabase

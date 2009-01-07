@@ -394,3 +394,8 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef prop
     
     return [mainFrame _pauseTransitionOfProperty:nameNS onNode:[[mainFrame DOMDocument] getElementById:idNS] atTime:time];
 }
+
+unsigned LayoutTestController::numberOfActiveAnimations() const
+{
+    return [mainFrame _numberOfActiveAnimations];
+}
