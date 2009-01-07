@@ -1,3 +1,12 @@
+2009-01-07  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fix unused variable warnings
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (TestPage::createWindow):
+
 2009-01-07  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Simon Hausmann.

@@ -57,10 +57,10 @@ QList<QWebPluginFactory::Plugin> TestPlugin::plugins() const
     return QList<QWebPluginFactory::Plugin>() << plugin;
 }
 
-QObject *TestPlugin::create(const QString &mimeType,
-                            const QUrl &url,
-                            const QStringList &argumentNames,
-                            const QStringList &argumentValues) const
+QObject *TestPlugin::create(const QString&,
+                            const QUrl&,
+                            const QStringList&,
+                            const QStringList&) const
 {
     return 0;
 }

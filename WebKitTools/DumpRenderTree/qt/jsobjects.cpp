@@ -63,7 +63,7 @@ void LayoutTestController::reset()
     qt_dump_resource_load_callbacks(false);
 }
 
-void LayoutTestController::maybeDump(bool ok)
+void LayoutTestController::maybeDump(bool)
 {
     m_topLoadingFrame = 0;
 

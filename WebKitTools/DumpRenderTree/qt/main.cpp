@@ -70,7 +70,7 @@ QString get_backtrace() {
         return s;
 
     char** strings = backtrace_symbols(array, size);
-    for (int i = 0; i < size; ++i) {
+    for (int i = 0; i < int(size); ++i) {
         s += QString::number(i) +
              QLatin1String(": ") +
              QLatin1String(strings[i]) + QLatin1String("\n");

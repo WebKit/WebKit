@@ -226,7 +226,7 @@ public:
         return true;
     }
 
-    virtual QWebPage* createWindow(WebWindowType type) {
+    virtual QWebPage* createWindow(WebWindowType) {
         QWebPage* page = new TestPage(this);
         createdWindows.append(page);
         return page;
