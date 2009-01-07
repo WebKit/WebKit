@@ -94,7 +94,7 @@ public:
 class QWebHitTestResultPrivate
 {
 public:
-    QWebHitTestResultPrivate() : isContentEditable(false), isContentSelected(false) {}
+    QWebHitTestResultPrivate() : isContentEditable(false), isContentSelected(false), isScrollBar(false) {}
     QWebHitTestResultPrivate(const WebCore::HitTestResult &hitTest);
 
     QPoint pos;
@@ -110,6 +110,7 @@ public:
     QPixmap pixmap;
     bool isContentEditable;
     bool isContentSelected;
+    bool isScrollBar;
     QPointer<QWebFrame> frame;
     RefPtr<WebCore::Node> innerNode;
     RefPtr<WebCore::Node> innerNonSharedNode;

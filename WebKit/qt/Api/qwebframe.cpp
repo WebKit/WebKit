@@ -1094,6 +1094,7 @@ QWebHitTestResult::QWebHitTestResult(QWebHitTestResultPrivate *priv)
 QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult &hitTest)
     : isContentEditable(false)
     , isContentSelected(false)
+    , isScrollBar(false)
 {
     if (!hitTest.innerNode())
         return;
@@ -1119,6 +1120,7 @@ QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult 
 
     isContentEditable = hitTest.isContentEditable();
     isContentSelected = hitTest.isSelected();
+    isScrollBar = hitTest.scrollbar();
 
     if (innerNonSharedNode && innerNonSharedNode->document()
         && innerNonSharedNode->document()->frame())
@@ -1329,3 +1331,13 @@ QWebFrame *QWebHitTestResult::frame() const
     return d->frame;
 }
 
+/*!
+    \since 4.6
+    Returns true if the test includes a scrollbar.
+*/
+bool QWebHitTestResult::isScrollBar() const
+{
+    if (!d)
+        return false;
+    return d->isScrollBar;
+}

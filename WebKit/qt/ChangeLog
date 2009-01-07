@@ -2,6 +2,19 @@
 
         Reviewed by George Staikos.
 
+        Add Qt API to QWebHitTestResult::isScrollBar method
+
+        * Api/qwebframe.cpp:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+        (QWebHitTestResult::isScrollBar):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+
+2009-01-07  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         Add Qt API for QWebFrame::scrollBarGeometry method
 
         * Api/qwebframe.cpp:
