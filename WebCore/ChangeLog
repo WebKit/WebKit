@@ -1,3 +1,16 @@
+2008-12-16  David Hyatt  <hyatt@apple.com>
+
+        Make Safari RSS behave nicely with full page zoom.  Need to add a new value to enable resetting of zoom
+        back to the document-level default.
+
+        Reviewed by Darin Adler
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+
 2009-01-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

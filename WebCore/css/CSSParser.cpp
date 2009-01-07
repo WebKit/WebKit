@@ -1079,8 +1079,8 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
 
-    case CSSPropertyZoom:          // normal | reset | <number> | <percentage> | inherit
-        if (id == CSSValueNormal || id == CSSValueReset)
+    case CSSPropertyZoom:          // normal | reset | document | <number> | <percentage> | inherit
+        if (id == CSSValueNormal || id == CSSValueReset || id == CSSValueDocument)
             valid_primitive = true;
         else
             valid_primitive = (!id && validUnit(value, FNumber | FPercent | FNonNeg, true));

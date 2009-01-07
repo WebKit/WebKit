@@ -4117,6 +4117,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (primitiveValue->getIdent() == CSSValueReset) {
             m_style->setEffectiveZoom(RenderStyle::initialZoom());
             m_style->setZoom(RenderStyle::initialZoom());
+        } else if (primitiveValue->getIdent() == CSSValueDocument) {
+            float docZoom = m_checker.m_document->renderer()->style()->zoom();
+            m_style->setEffectiveZoom(docZoom);
+            m_style->setZoom(docZoom);
         } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE) {
             if (primitiveValue->getFloatValue())
                 m_style->setZoom(primitiveValue->getFloatValue() / 100.0f);
