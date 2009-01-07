@@ -1,3 +1,39 @@
+2009-01-07  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Qt build fix after r39670.
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject):
+        * bridge/qt/qt_class.h:
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::mark):
+        (JSC::Bindings::QtInstance::invokeMethod):
+        (JSC::Bindings::QtInstance::defaultValue):
+        (JSC::Bindings::QtInstance::stringValue):
+        (JSC::Bindings::QtInstance::numberValue):
+        (JSC::Bindings::QtInstance::booleanValue):
+        (JSC::Bindings::QtInstance::valueOf):
+        (JSC::Bindings::QtField::valueFromInstance):
+        (JSC::Bindings::QtField::setValueToInstance):
+        * bridge/qt/qt_instance.h:
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::valueRealType):
+        (JSC::Bindings::convertValueToQVariant):
+        (JSC::Bindings::convertQVariantToValue):
+        (JSC::Bindings::findMethodIndex):
+        (JSC::Bindings::QtRuntimeMetaMethod::call):
+        (JSC::Bindings::QtRuntimeMetaMethod::lengthGetter):
+        (JSC::Bindings::QtRuntimeMetaMethod::connectGetter):
+        (JSC::Bindings::QtRuntimeMetaMethod::disconnectGetter):
+        (JSC::Bindings::QtRuntimeConnectionMethod::call):
+        (JSC::Bindings::QtRuntimeConnectionMethod::lengthGetter):
+        (JSC::Bindings::::setValueAt):
+        (JSC::Bindings::::valueAt):
+        * bridge/qt/qt_runtime.h:
+        (JSC::Bindings::QtRuntimeMethod::createStructure):
+
 2009-01-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.
