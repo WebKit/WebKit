@@ -2,6 +2,16 @@
 
         Reviewed by Dan Bernstein.
 
+        Fix build.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::idForObject):
+
+2009-01-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Add a way for a plug-in to get a reference to the Window JS object.
 
         * Plugins/Hosted/NetscapePluginHostProxy.mm:

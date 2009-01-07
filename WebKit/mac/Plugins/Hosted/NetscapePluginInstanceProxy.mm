@@ -463,7 +463,7 @@ uint32_t NetscapePluginInstanceProxy::idForObject(JSC::JSObject* object)
     // Assign a plug-in ID.
     do {
         objectID = ++m_objectIDCounter;
-    } while (m_objects.contains(objectID) || !m_objectIDCounter || m_objectIDCounter == reinterpret_cast<uint32_t>(-1));
+    } while (!m_objectIDCounter || m_objectIDCounter == static_cast<uint32_t>(-1) || m_objects.contains(objectID));
     
     m_objects.set(objectID, object);
     
