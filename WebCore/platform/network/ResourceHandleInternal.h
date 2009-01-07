@@ -116,6 +116,7 @@ namespace WebCore {
             , m_buffer(0)
             , m_bufsize(0)
             , m_total(0)
+            , m_idleHandler(0)
 #endif
 #if PLATFORM(QT)
             , m_job(0)
@@ -185,6 +186,7 @@ namespace WebCore {
         GCancellable* m_cancellable;
         char* m_buffer;
         gsize m_bufsize, m_total;
+        guint m_idleHandler;
 #endif
 #if PLATFORM(QT)
 #if QT_VERSION < 0x040400

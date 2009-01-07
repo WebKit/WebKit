@@ -63,6 +63,11 @@ ResourceHandleInternal::~ResourceHandleInternal()
         g_object_unref(m_msg);
         m_msg = 0;
     }
+
+    if (m_idleHandler) {
+        g_source_remove(m_idleHandler);
+        m_idleHandler = 0;
+    }
 }
 
 ResourceHandle::~ResourceHandle()
@@ -198,6 +203,8 @@ static gboolean parseDataUrl(gpointer callback_data)
     ResourceHandle* handle = static_cast<ResourceHandle*>(callback_data);
     ResourceHandleClient* client = handle->client();
 
+    handle->getInternal()->m_idleHandler = 0;
+
     ASSERT(client);
     if (!client)
         return FALSE;
@@ -262,10 +269,12 @@ static gboolean parseDataUrl(gpointer callback_data)
 
 bool ResourceHandle::startData(String urlString)
 {
-        // If parseDataUrl is called synchronously the job is not yet effectively started
-        // and webkit won't never know that the data has been parsed even didFinishLoading is called.
-        g_idle_add(parseDataUrl, this);
-        return true;
+    ResourceHandleInternal* d = this->getInternal();
+
+    // If parseDataUrl is called synchronously the job is not yet effectively started
+    // and webkit won't never know that the data has been parsed even didFinishLoading is called.
+    d->m_idleHandler = g_idle_add(parseDataUrl, this);
+    return true;
 }
 
 bool ResourceHandle::startHttp(String urlString)

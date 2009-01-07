@@ -1,3 +1,15 @@
+2009-01-07  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::parseDataUrl):
+        (WebCore::ResourceHandle::startData): keep track of the idle handler
+        we add and remove it in the destructor
+
 2009-01-07  Dean Jackson  <dino@apple.com>
 
         Reviewed by Darin Adler.
