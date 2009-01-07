@@ -149,6 +149,7 @@ public:
     int scrollBarValue(Qt::Orientation orientation) const;
     int scrollBarMinimum(Qt::Orientation orientation) const;
     int scrollBarMaximum(Qt::Orientation orientation) const;
+    QRect scrollBarGeometry(Qt::Orientation orientation) const;
 
     void scroll(int, int);
     QPoint scrollPosition() const;

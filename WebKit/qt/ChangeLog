@@ -2,6 +2,16 @@
 
         Reviewed by George Staikos.
 
+        Add Qt API for QWebFrame::scrollBarGeometry method
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::scrollBarGeometry):
+        * Api/qwebframe.h:
+
+2009-01-07  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         Fix unused variable warnings
 
         * tests/qwebpage/tst_qwebpage.cpp:

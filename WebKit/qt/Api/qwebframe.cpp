@@ -684,6 +684,21 @@ int QWebFrame::scrollBarMinimum(Qt::Orientation orientation) const
 }
 
 /*!
+  \since 4.6
+  Returns the geometry for the scrollbar with orientation \a orientation.
+
+  If the scrollbar does not exist an empty rect is returned.
+*/
+QRect QWebFrame::scrollBarGeometry(Qt::Orientation orientation) const
+{
+    Scrollbar *sb;
+    sb = (orientation == Qt::Horizontal) ? d->horizontalScrollBar() : d->verticalScrollBar();
+    if (sb)
+        return sb->frameRect();
+    return QRect();
+}
+
+/*!
   \since 4.5
   Scrolls the frame \a dx pixels to the right and \a dy pixels downward. Both
   \a dx and \a dy may be negative.
