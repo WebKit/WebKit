@@ -1,3 +1,29 @@
+2009-01-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add a way for a plug-in to get a reference to the Window JS object.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCGetWindowNPObject):
+        Call the appropriate instance.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        Add object ID counter.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::destroy):
+        Clear the object ID map.
+        
+        (WebKit::NetscapePluginInstanceProxy::idForObject):
+        New method that returns a unique ID for a given JS object.
+        
+        (WebKit::NetscapePluginInstanceProxy::getWindowNPObject):
+        Return the object ID for the window JS object.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Add GetWindowNPObject.
+
 2009-01-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

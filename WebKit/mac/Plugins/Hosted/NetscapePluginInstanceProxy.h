@@ -28,6 +28,7 @@
 #ifndef NetscapePluginInstanceProxy_h
 #define NetscapePluginInstanceProxy_h
 
+#include <JavaScriptCore/Protect.h>
 #include <WebCore/Timer.h>
 #include <WebKit/npapi.h>
 #include <wtf/Deque.h>
@@ -77,6 +78,8 @@ public:
     void keyEvent(NSView *pluginView, NSEvent *, NPCocoaEventType);
     void startTimers(bool throttleTimers);
     void stopTimers();
+    
+    bool getWindowNPObject(uint32_t& objectID);
     
     void status(const char* message);
     NPError loadURL(const char* url, const char* target, const char* postData, uint32_t postDataLength, LoadURLFlags, uint32_t& requestID);
@@ -157,7 +160,13 @@ private:
     boolean_t m_useSoftwareRenderer;
     
     bool m_waitingForReply;
-    std::auto_ptr<Reply> m_currentReply;    
+    std::auto_ptr<Reply> m_currentReply;
+    
+    // NPRuntime
+    uint32_t idForObject(JSC::JSObject*);
+    
+    uint32_t m_objectIDCounter;
+    HashMap<uint32_t, JSC::ProtectedPtr<JSC::JSObject> > m_objects;
 };
     
 } // namespace WebKit

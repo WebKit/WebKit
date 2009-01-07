@@ -44,6 +44,10 @@ routine LoadURL(clientPort :mach_port_t;
                       out resultCode :uint16_t;
                       out requestID :uint32_t);
 
+routine GetWindowNPObject(clientPort :mach_port_t;
+                          pluginID :uint32_t;
+                          out objectID :uint32_t);
+                          
 simpleroutine CancelLoadURL(clientPort :mach_port_t;
                             pluginID :uint32_t;
                             streamID :uint32_t;

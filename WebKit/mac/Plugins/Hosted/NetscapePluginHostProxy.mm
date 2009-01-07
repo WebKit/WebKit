@@ -33,7 +33,11 @@
 #import "HostedNetscapePluginStream.h"
 #import "NetscapePluginHostManager.h"
 #import "NetscapePluginInstanceProxy.h"
+#import "WebFrameInternal.h"
+#import "WebHostedNetscapePluginView.h"
 #import "WebKitSystemInterface.h"
+#import <WebCore/Frame.h>
+#import <WebCore/ScriptController.h>
 
 extern "C" {
 #import "WebKitPluginHost.h"
@@ -41,6 +45,7 @@ extern "C" {
 }
 
 using namespace std;
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -217,6 +222,24 @@ kern_return_t WKPCInstantiatePluginReply(mach_port_t clientPort, uint32_t plugin
         return KERN_FAILURE;
 
     instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::InstantiatePluginReply(result, renderContextID, useSoftwareRenderer));
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCGetWindowNPObject(mach_port_t clientPort, uint32_t pluginID, uint32_t* outObjectID)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
+    uint32_t objectID;
+    if (!instanceProxy->getWindowNPObject(objectID))
+        return KERN_FAILURE;
+    
+    *outObjectID = objectID;    
     return KERN_SUCCESS;
 }
 
