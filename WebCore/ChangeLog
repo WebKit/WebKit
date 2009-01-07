@@ -1,3 +1,53 @@
+2009-01-06  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Tests: animations/simultaneous-start-left.html
+               animations/simultaneous-start-transform.html
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=22870
+ 
+        I added calls beginAnimationUpdate() and endAnimationUpdate() calls
+        to AnimationController. These are called by Document at the start
+        and end of the recalcStyle cycle. Right now, I'm just using the 
+        beginAnimationUpdate() method to reset an animation time value.
+        The first time the animation time is accessed after this reset I set
+        it to the currentTime. So all animations in that cycle get the same
+        start time. 
+
+        The test cases checked in test this, but in the case of the 'left'
+        test it actually doesn't make any difference in most cases. This is
+        because values are clamped to whole pixels, so the start times would 
+        have to be pretty far off for the test to fail using the old
+        currentTime() model. Still, under really heavy load, it's possible for
+        the test to fail without these changes.
+
+        The 'transform' test is another story. It animates to the full resolution
+        of a floating point number, so the test fails miserably without this
+        fix.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        (WebCore::AnimationBase::willNeedService):
+        (WebCore::AnimationBase::progress):
+        (WebCore::AnimationBase::goIntoEndingOrLoopingState):
+        (WebCore::AnimationBase::beginAnimationUpdateTime):
+        * page/animation/AnimationBase.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::beginAnimationUpdateTime):
+        (WebCore::AnimationControllerPrivate::setBeginAnimationUpdateTime):
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+        (WebCore::AnimationController::updateAnimations):
+        (WebCore::AnimationController::beginAnimationUpdateTime):
+        (WebCore::AnimationController::beginAnimationUpdate):
+        (WebCore::AnimationController::endAnimationUpdate):
+        * page/animation/AnimationController.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+
 2009-01-06  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

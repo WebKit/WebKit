@@ -74,6 +74,11 @@ public:
         else
             m_numStyleAvailableWaiters--;
     }
+    
+    double beginAnimationUpdateTime();
+    
+    void beginAnimationUpdate();
+    void endAnimationUpdate();
 
 private:
     AnimationControllerPrivate* m_data;

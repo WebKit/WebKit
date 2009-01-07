@@ -153,6 +153,8 @@ public:
     
     void pauseAtTime(double t);
     
+    double beginAnimationUpdateTime() const;
+    
 protected:
     virtual void overrideAnimations() { }
     virtual void resumeOverriddenAnimations() { }
