@@ -233,6 +233,10 @@ void AnimationControllerPrivate::addEventToDispatch(PassRefPtr<Element> element,
 
 void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPrivate>*)
 {
+    // Make sure animationUpdateTime is updated, so that it is current even if no
+    // styleChange has happened (e.g. hardware animations)
+    setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
+
     // When the timer fires, all we do is call setChanged on all DOM nodes with running animations and then do an immediate
     // updateRendering.  It will then call back to us with new information.
     updateAnimationTimer(true);

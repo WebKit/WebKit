@@ -1,3 +1,24 @@
+2009-01-08  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed CSS Transitions with zero-duration but non-zero-delay not starting or ending properly.
+
+        Also updated AnimationController::numberOfActiveAnimations() which now returns the number of "active" animations,
+        instead of simply the "running" ones.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23177
+
+        Tests: transitions/zero-duration-with-non-zero-delay-end.html
+               transitions/zero-duration-with-non-zero-delay-start.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::animationTimerFired):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::numberOfActiveAnimations):
+
 2009-01-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.

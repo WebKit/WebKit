@@ -1,3 +1,22 @@
+2009-01-08  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Added layout tests for CSS Transitions with zero-duration but non-zero-delay.
+
+        Also updated the layout test for DRT API numberOfActiveAnimations() which now returns the number of "active" animations,
+        instead of simply the running ones.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23177
+
+        * animations/animation-controller-drt-api-expected.txt:
+        * animations/animation-controller-drt-api.html:
+        * platform/win/Skipped:
+        * transitions/zero-duration-with-non-zero-delay-end-expected.txt: Added.
+        * transitions/zero-duration-with-non-zero-delay-end.html: Added.
+        * transitions/zero-duration-with-non-zero-delay-start-expected.txt: Added.
+        * transitions/zero-duration-with-non-zero-delay-start.html: Added.
+
 2009-01-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

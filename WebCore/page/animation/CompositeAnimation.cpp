@@ -579,14 +579,14 @@ unsigned CompositeAnimationPrivate::numberOfActiveAnimations() const
     AnimationNameMap::const_iterator animationsEnd = m_keyframeAnimations.end();
     for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != animationsEnd; ++it) {
         KeyframeAnimation* anim = it->second.get();
-        if (anim->active())
+        if (anim->running())
             ++count;
     }
 
     CSSPropertyTransitionsMap::const_iterator transitionsEnd = m_transitions.end();
     for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != transitionsEnd; ++it) {
         ImplicitAnimation* anim = it->second.get();
-        if (anim->active())
+        if (anim->running())
             ++count;
     }
     

@@ -729,7 +729,7 @@ void AnimationBase::fireAnimationEventsIfNeeded()
     ASSERT(elapsedDuration >= 0);
     
     // Check for end timeout
-    if (m_totalDuration > 0 && elapsedDuration >= m_totalDuration) {
+    if (m_totalDuration >= 0 && elapsedDuration >= m_totalDuration) {
         // Fire an end event
         updateStateMachine(AnimationStateInputEndTimerFired, m_totalDuration);
     }

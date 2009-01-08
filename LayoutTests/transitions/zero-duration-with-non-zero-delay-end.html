@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <style>
+    
+    body {
+      margin: 0;
+    }
+    
+    #target {
+      position: relative;
+      top: 100px;
+      left: 100px;
+      width: 200px;
+      height: 200px;
+      background-color: red;
+      -webkit-transition-property: left;
+      -webkit-transition-duration: 0s;
+      -webkit-transition-delay: 0.5s;
+    }
+    
+   </style>
+   <script type="text/javascript" charset="utf-8">
+   
+    function sample0() {
+      var expected = 1;
+      var current = layoutTestController.numberOfActiveAnimations();
+      if (current == expected)
+        document.getElementById('result0').innerHTML = "Number of active animations before transition is (" + current + ") as expected";
+      else
+        document.getElementById('result0').innerHTML = "Number of active animations before transition is (" + current + ") but was expecting (" + expected + ")";
+    }
+    
+    function sample1() {
+      var expected = 0;
+      var current = layoutTestController.numberOfActiveAnimations();
+      if (current == expected)
+        document.getElementById('result1').innerHTML = "Number of active animations after transition is (" + current + ") as expected";
+      else
+        document.getElementById('result1').innerHTML = "Number of active animations after transition is (" + current + ") but was expecting (" + expected + ")";
+      
+      layoutTestController.notifyDone();
+    }
+    
+    function runTest() {
+      window.setTimeout(sample0, 250);
+      window.setTimeout(sample1, 500);
+    }
+    
+    function startTest() {
+      if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+        
+        var target = document.getElementById('target');
+        target.style.left = '200px';
+        
+        window.setTimeout(runTest, 0);
+      }
+    }
+    
+   </script>
+</head>
+<body onload="startTest()">
+  <h1>Test for DRT numberOfActiveAnimations() API</h1>
+
+  <div id="target">
+  </div>
+  
+  <div id="result0">
+  </div>
+  
+  <div id="result1">
+  </div>
+
+</body>
+</html>

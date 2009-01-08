@@ -435,3 +435,4 @@ animations/keyframes-to-missing.html
 transitions/transition-drt-api.html
 transitions/transition-drt-api-delay.html
 transitions/transition-shorthand-delay.html
+transitions/zero-duration-non-zero-delay-end.html
