@@ -1,3 +1,15 @@
+2009-01-03  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] Need a public method to reload view bypassing cache
+        https://bugs.webkit.org/show_bug.cgi?id=19815
+
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
+        Add webkit_web_view_reload_bypass_cache.
+
 2009-01-07  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Maciej Stachowiak.

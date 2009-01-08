@@ -2031,6 +2031,21 @@ void webkit_web_view_reload(WebKitWebView* webView)
     core(webView)->mainFrame()->loader()->reload();
 }
 
+/**
+ * webkit_web_view_reload_bypass_cache:
+ * @web_view: a #WebKitWebView
+ *
+ * Reloads the @web_view without using any cached data.
+ *
+ * Since: 1.0.3
+ */
+void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    core(webView)->mainFrame()->loader()->reload(true);
+}
+
 void webkit_web_view_load_string(WebKitWebView* webView, const gchar* content, const gchar* contentMimeType, const gchar* contentEncoding, const gchar* baseUri)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));

@@ -159,6 +159,9 @@ WEBKIT_API void
 webkit_web_view_reload                          (WebKitWebView        *web_view);
 
 WEBKIT_API void
+webkit_web_view_reload_bypass_cache             (WebKitWebView        *web_view);
+
+WEBKIT_API void
 webkit_web_view_load_string                     (WebKitWebView        *web_view,
                                                  const gchar          *content,
                                                  const gchar          *content_mime_type,
