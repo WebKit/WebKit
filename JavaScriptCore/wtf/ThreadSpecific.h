@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Jian Li <jianli@chromium.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +27,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/* Thread local storage is implemented by using either pthread API or Windows
+ * native API. There is subtle semantic discrepancy for the cleanup function
+ * implementation as noted below:
+ *   @ In pthread implementation, the destructor function will be called
+ *     repeatedly if there is still non-NULL value associated with the function.
+ *   @ In Windows native implementation, the destructor function will be called
+ *     only once.
+ * This semantic discrepancy does not impose any problem because nowhere in
+ * WebKit the repeated call bahavior is utilized.
+ */
+
 #ifndef WTF_ThreadSpecific_h
 #define WTF_ThreadSpecific_h
 
 #include <wtf/Noncopyable.h>
 
-#if USE(PTHREADS) || PLATFORM(WIN)
-// Windows currently doesn't use pthreads for basic threading, but implementing destructor functions is easier
-// with pthreads, so we use it here.
+#if USE(PTHREADS)
 #include <pthread.h>
+#elif PLATFORM(WIN_OS)
+#include <windows.h>
 #endif
 
 namespace WTF {
+
+#if !USE(PTHREADS) && PLATFORM(WIN_OS)
+// ThreadSpecificThreadExit should be called each time when a thread is detached.
+// This is done automatically for threads created with WTF::createThread.
+void ThreadSpecificThreadExit();
+#endif
 
 template<typename T> class ThreadSpecific : Noncopyable {
 public:
@@ -48,23 +66,34 @@ public:
     ~ThreadSpecific();
 
 private:
+#if !USE(PTHREADS) && PLATFORM(WIN_OS)
+    friend void ThreadSpecificThreadExit();
+#endif
+    
     T* get();
     void set(T*);
     void static destroy(void* ptr);
 
-#if USE(PTHREADS) || PLATFORM(WIN)
+#if USE(PTHREADS) || PLATFORM(WIN_OS)
     struct Data : Noncopyable {
         Data(T* value, ThreadSpecific<T>* owner) : value(value), owner(owner) {}
 
         T* value;
         ThreadSpecific<T>* owner;
+#if !USE(PTHREADS)
+        void (*destructor)(void*);
+#endif
     };
+#endif
 
+#if USE(PTHREADS)
     pthread_key_t m_key;
+#elif PLATFORM(WIN_OS)
+    int m_index;
 #endif
 };
 
-#if USE(PTHREADS) || PLATFORM(WIN)
+#if USE(PTHREADS)
 template<typename T>
 inline ThreadSpecific<T>::ThreadSpecific()
 {
@@ -93,23 +122,81 @@ inline void ThreadSpecific<T>::set(T* ptr)
     pthread_setspecific(m_key, new Data(ptr, this));
 }
 
-template<typename T>
-inline void ThreadSpecific<T>::destroy(void* ptr)
-{
-    Data* data = static_cast<Data*>(ptr);
+#elif PLATFORM(WIN_OS)
 
-    // We want get() to keep working while data destructor works, because it can be called indirectly by the destructor.
-    // Some pthreads implementations zero out the pointer before calling destroy(), so we temporarily reset it.
-    pthread_setspecific(data->owner->m_key, ptr);
-    data->value->~T();
-    fastFree(data->value);
-    pthread_setspecific(data->owner->m_key, 0);
-    delete data;
+// The maximum number of TLS keys that can be created. For simplification, we assume that:
+// 1) Once the instance of ThreadSpecific<> is created, it will not be destructed until the program dies.
+// 2) We do not need to hold many instances of ThreadSpecific<> data. This fixed number should be far enough.
+const int kMaxTlsKeySize = 256;
+
+extern long g_tls_key_count;
+extern DWORD g_tls_keys[kMaxTlsKeySize];
+
+template<typename T>
+inline ThreadSpecific<T>::ThreadSpecific()
+    : m_index(-1)
+{
+    DWORD tls_key = TlsAlloc();
+    if (tls_key == TLS_OUT_OF_INDEXES)
+        CRASH();
+
+    m_index = InterlockedIncrement(&g_tls_key_count) - 1;
+    if (m_index >= kMaxTlsKeySize)
+        CRASH();
+    g_tls_keys[m_index] = tls_key;
+}
+
+template<typename T>
+inline ThreadSpecific<T>::~ThreadSpecific()
+{
+    // Does not invoke destructor functions. They will be called from ThreadSpecificThreadExit when the thread is detached.
+    TlsFree(g_tls_keys[m_index]);
+}
+
+template<typename T>
+inline T* ThreadSpecific<T>::get()
+{
+    Data* data = static_cast<Data*>(TlsGetValue(g_tls_keys[m_index]));
+    return data ? data->value : 0;
+}
+
+template<typename T>
+inline void ThreadSpecific<T>::set(T* ptr)
+{
+    ASSERT(!get());
+    Data* data = new Data(ptr, this);
+    data->destructor = &ThreadSpecific<T>::destroy;
+    TlsSetValue(g_tls_keys[m_index], data);
 }
 
 #else
 #error ThreadSpecific is not implemented for this platform.
 #endif
+
+template<typename T>
+inline void ThreadSpecific<T>::destroy(void* ptr)
+{
+    Data* data = static_cast<Data*>(ptr);
+
+#if USE(PTHREADS)
+    // We want get() to keep working while data destructor works, because it can be called indirectly by the destructor.
+    // Some pthreads implementations zero out the pointer before calling destroy(), so we temporarily reset it.
+    pthread_setspecific(data->owner->m_key, ptr);
+#endif
+    
+    data->value->~T();
+    fastFree(data->value);
+
+#if USE(PTHREADS)
+    pthread_setspecific(data->owner->m_key, 0);
+#elif PLATFORM(WIN_OS)
+    TlsSetValue(g_tls_keys[data->owner->m_index], 0);
+#else
+#error ThreadSpecific is not implemented for this platform.
+#endif
+
+    delete data;
+}
 
 template<typename T>
 inline ThreadSpecific<T>::operator T*()

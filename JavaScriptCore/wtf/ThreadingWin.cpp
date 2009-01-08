@@ -64,6 +64,9 @@
 #include "Threading.h"
 
 #include "MainThread.h"
+#if !USE(PTHREADS) && PLATFORM(WIN_OS)
+#include "ThreadSpecific.h"
+#endif
 #include <process.h>
 #include <windows.h>
 #include <wtf/HashMap.h>
@@ -174,6 +177,11 @@ static unsigned __stdcall wtfThreadEntryPoint(void* param)
     delete static_cast<ThreadFunctionInvocation*>(param);
 
     void* result = invocation.function(invocation.data);
+
+#if !USE(PTHREADS) && PLATFORM(WIN_OS)
+    // Do the TLS cleanup.
+    ThreadSpecificThreadExit();
+#endif
 
     return reinterpret_cast<unsigned>(result);
 }

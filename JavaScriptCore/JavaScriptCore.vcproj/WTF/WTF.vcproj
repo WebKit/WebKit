@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="WTF"
 	ProjectGUID="{AA8A5A85-592B-4357-BC60-E0E91E026AF6}"
 	RootNamespace="WTF"
@@ -419,11 +419,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\Threading.h"
+			RelativePath="..\..\wtf\Threading.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\Threading.cpp"
+			RelativePath="..\..\wtf\Threading.h"
 			>
 		</File>
 		<File
@@ -432,6 +432,10 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\ThreadSpecific.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\ThreadSpecificWin.cpp"
 			>
 		</File>
 		<File
