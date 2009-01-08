@@ -27,30 +27,26 @@
 
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import <JavaScriptCore/Vector.h>
 #import <WebCore/TextIterator.h>
-#import <wtf/Vector.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
+using namespace JSC;
 using namespace WebCore;
 
-@interface WebTextIteratorPrivate : NSObject
-{
+@interface WebTextIteratorPrivate : NSObject {
 @public
-    TextIterator* m_textIterator;
+    OwnPtr<TextIterator> _textIterator;
 }
 @end
 
 @implementation WebTextIteratorPrivate
 
-- (void)dealloc
++ (void)initialize
 {
-    delete m_textIterator;
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    delete m_textIterator;
-    [super finalize];
+#ifndef BUILDING_ON_TIGER
+    WebCoreObjCFinalizeOnMainThread(self);
+#endif
 }
 
 @end
@@ -70,39 +66,47 @@ using namespace WebCore;
         return self;
     
     _private = [[WebTextIteratorPrivate alloc] init];
-    _private->m_textIterator = new TextIterator([range _range], true, false);
+    _private->_textIterator.set(new TextIterator([range _range], true, false));
     return self;
 }
 
 - (void)advance
 {
-    ASSERT(_private->m_textIterator);
-    
-    if (_private->m_textIterator->atEnd())
-        return;
-    
-    _private->m_textIterator->advance();
-}
-
-- (DOMNode *)currentNode
-{
-    ASSERT(_private->m_textIterator);
-    
-    return [DOMNode _wrapNode:_private->m_textIterator->node()];
-}
-
-- (NSString *)currentText
-{
-    ASSERT(_private->m_textIterator);
-    
-    return [NSString stringWithCharacters:_private->m_textIterator->characters() length:_private->m_textIterator->length()];
+    _private->_textIterator->advance();
 }
 
 - (BOOL)atEnd
 {
-    ASSERT(_private->m_textIterator);
-    
-    return _private->m_textIterator->atEnd();
+    return _private->_textIterator->atEnd();
+}
+
+- (DOMRange *)currentRange
+{
+    return [DOMRange _wrapRange:_private->_textIterator->range().get()];
+}
+
+- (const unichar *)currentTextPointer
+{
+    return _private->_textIterator->characters();
+}
+
+- (NSUInteger)currentTextLength
+{
+    return _private->_textIterator->length();
+}
+
+@end
+
+@implementation WebTextIterator (WebTextIteratorDeprecated)
+
+- (DOMNode *)currentNode
+{
+    return [DOMNode _wrapNode:_private->_textIterator->node()];
+}
+
+- (NSString *)currentText
+{
+    return [NSString stringWithCharacters:_private->_textIterator->characters() length:_private->_textIterator->length()];
 }
 
 @end

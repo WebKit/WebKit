@@ -1,3 +1,31 @@
+2009-01-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Bug 23185: add a currentRange method to the WebTextIterator SPI
+        https://bugs.webkit.org/show_bug.cgi?id=23185
+        rdar://problem/6455834
+
+        I also noticed a garbage-collection-related threading issue that I fixed, and
+        that the SPI for getting text was unnecessarily inefficient, so I fixed that too.
+
+        * WebView/WebTextIterator.h: Moved currentNode and currentText into a "deprecated"
+        category. Added currentTextPointer and currentTextLength.
+
+        * WebView/WebTextIterator.mm: Changed m_textIterator into an OwnPtr, and also
+        used _textIterator to be consistent with ObjC rather than C++ naming.
+        (+[WebTextIteratorPrivate initialize]): Added. Calls WebCoreObjCFinalizeOnMainThread,
+        since the finalize method here works with main-thread only WebCore objects. 
+        (-[WebTextIterator initWithRange:]): Changed since _textIterator is an OwnPtr now.
+        (-[WebTextIterator advance]): Changed name of m_textIterator. Removed null assertion,
+        since I don't think it provides much value.
+        (-[WebTextIterator atEnd]): Ditto.
+        (-[WebTextIterator currentRange]): Added.
+        (-[WebTextIterator currentTextPointer]): Added.
+        (-[WebTextIterator currentTextLength]): Added.
+        (-[WebTextIterator currentNode]): Did same as above, but also put into new category.
+        (-[WebTextIterator currentText]): Ditto.
+
 2009-01-08  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.
