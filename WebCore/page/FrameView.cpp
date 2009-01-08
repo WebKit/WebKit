@@ -353,7 +353,12 @@ PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientatio
 void FrameView::setContentsSize(const IntSize& size)
 {
     ScrollView::setContentsSize(size);
-    hostWindow()->contentsSizeChanged(m_frame.get(), size); //notify only
+
+    Page* page = frame() ? frame()->page() : 0;
+    if (!page)
+        return;
+
+    page->chrome()->contentsSizeChanged(frame(), size); //notify only
 }
 
 void FrameView::adjustViewSize()

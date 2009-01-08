@@ -1,3 +1,15 @@
+2009-01-08  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by David Hyatt.
+
+        No need to make this part of HostWindow and moreover HostWindow should
+        not have any reference to non-platform parts of WebCore.
+
+        * page/Chrome.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setContentsSize):
+        * platform/HostWindow.h:
+
 2009-01-08  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.
