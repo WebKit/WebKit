@@ -242,7 +242,7 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
         return;
     QPixmap *pixmap = cachedImage->image()->nativeImageForCurrentFrame();
     if (pixmap)
-        m_writableData->setImageData(pixmap);
+        m_writableData->setImageData(*pixmap);
 
     AtomicString imageURL = element->getAttribute(HTMLNames::srcAttr);
     if (imageURL.isEmpty()) 

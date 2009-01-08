@@ -1,3 +1,14 @@
+2009-01-08  Kent Hansen  <khansen@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix copy & paste of images in the Qt port.
+
+        Store the QPixmap itself in the mimedata, not a QPixmap* converted to bool.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+
 2009-01-08  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
         Reviewed by Holger Freyther.
