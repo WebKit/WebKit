@@ -47,15 +47,8 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawBezeledTextArea);
     INIT(DrawBezeledTextFieldCell);
     INIT(DrawFocusRing);
-    INIT(DrawMediaFullscreenButton);
-    INIT(DrawMediaMuteButton);
-    INIT(DrawMediaPauseButton);
-    INIT(DrawMediaPlayButton);
-    INIT(DrawMediaSeekBackButton);
-    INIT(DrawMediaSeekForwardButton);
+    INIT(DrawMediaUIPart);
     INIT(DrawMediaSliderTrack);
-    INIT(DrawMediaSliderThumb);
-    INIT(DrawMediaUnMuteButton);
     INIT(DrawTextFieldCellFocusRing);
     INIT(GetExtensionsForMIMEType);
     INIT(GetFontInLanguageForCharacter);
@@ -65,6 +58,8 @@ void InitWebCoreSystemInterface(void)
     INIT(GetNSURLResponseLastModifiedDate);
     INIT(GetPreferredExtensionForMIMEType);
     INIT(GetWheelEventDeltas);
+    INIT(HitTestMediaUIPart);
+    INIT(MeasureMediaUIPart);
     INIT(PopupMenu);
     INIT(SetCGFontRenderingMode);
     INIT(SetDragImage);
@@ -97,6 +92,8 @@ void InitWebCoreSystemInterface(void)
     INIT(ReleaseStyleGroup);
     INIT(SupportsMultipartXMixedReplace);
 #endif
+
+    INIT(UseSharedMediaUI);
 
     didInit = true;
 }

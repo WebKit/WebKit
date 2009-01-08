@@ -95,15 +95,8 @@ extern void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int radius);
 extern NSFont* (*wkGetFontInLanguageForRange)(NSFont*, NSString*, NSRange);
 extern NSFont* (*wkGetFontInLanguageForCharacter)(NSFont*, UniChar);
 extern BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransform*, ATSGlyphRef*, CGSize* advance);
-extern void (*wkDrawMediaFullscreenButton)(CGContextRef context, CGRect rect, BOOL active);
-extern void (*wkDrawMediaMuteButton)(CGContextRef context, CGRect rect, BOOL active);
-extern void (*wkDrawMediaPauseButton)(CGContextRef context, CGRect rect, BOOL active);
-extern void (*wkDrawMediaPlayButton)(CGContextRef context, CGRect rect, BOOL active);
-extern void (*wkDrawMediaSeekBackButton)(CGContextRef context, CGRect rect, BOOL active);
-extern void (*wkDrawMediaSeekForwardButton)(CGContextRef context, CGRect rect, BOOL active);
-extern void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float percentLoaded);
-extern void (*wkDrawMediaSliderThumb)(CGContextRef context, CGRect rect, BOOL active);
-extern void (*wkDrawMediaUnMuteButton)(CGContextRef context, CGRect rect, BOOL active);
+extern void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration);
+extern void (*wkDrawMediaUIPart)(int part, CGContextRef context, CGRect rect, BOOL active);
 extern NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
 extern NSArray* (*wkGetExtensionsForMIMEType)(NSString*);
 extern NSString* (*wkGetMIMETypeForExtension)(NSString*);
@@ -112,6 +105,8 @@ extern double (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response)
 extern NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 extern BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 extern void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
+extern BOOL (*wkHitTestMediaUIPart)(int part, CGRect bounds, CGPoint point);
+extern void (*wkMeasureMediaUIPart)(int part, CGRect *bounds, CGSize *naturalSize);
 extern void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
 extern int (*wkQTMovieDataRate)(QTMovie*);
 extern float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
@@ -146,6 +141,8 @@ extern OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
 extern void (*wkReleaseStyleGroup)(void* group);
 extern BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 #endif
+
+extern BOOL (*wkUseSharedMediaUI)();
 
 #ifdef __cplusplus
 }

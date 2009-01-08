@@ -918,15 +918,8 @@ _wkDrawBezeledTextArea
 _wkDrawBezeledTextFieldCell
 _wkDrawCapsLockIndicator
 _wkDrawFocusRing
-_wkDrawMediaFullscreenButton
-_wkDrawMediaMuteButton
-_wkDrawMediaPauseButton
-_wkDrawMediaPlayButton
-_wkDrawMediaSeekBackButton
-_wkDrawMediaSeekForwardButton
-_wkDrawMediaSliderThumb
 _wkDrawMediaSliderTrack
-_wkDrawMediaUnMuteButton
+_wkDrawMediaUIPart
 _wkDrawTextFieldCellFocusRing
 _wkGetExtensionsForMIMEType
 _wkGetFontInLanguageForCharacter
@@ -939,6 +932,8 @@ _wkGetNSURLResponseLastModifiedDate
 _wkGetNSURLResponseMustRevalidate
 _wkGetPreferredExtensionForMIMEType
 _wkGetWheelEventDeltas
+_wkHitTestMediaUIPart
+_wkMeasureMediaUIPart
 _wkPopupMenu
 _wkQTMovieDataRate
 _wkQTMovieMaxTimeLoaded
@@ -953,3 +948,4 @@ _wkSetUpFontCache
 _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
+_wkUseSharedMediaUI

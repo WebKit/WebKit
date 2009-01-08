@@ -1,3 +1,14 @@
+2009-01-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Simplify Mac interfaces for drawing media controller elements
+
+        <rdar://problem/6293969>
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface): Update for changes to media controller functions
+
 2009-01-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

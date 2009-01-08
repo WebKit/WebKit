@@ -157,6 +157,17 @@ void WKNSWindowRestoreCGContext(NSWindow *, CGContextRef);
 
 void WKNSWindowMakeBottomCornersSquare(NSWindow *);
 
+// These constants match the ones used by ThemeScrollbarArrowStyle (some of the values are private, so we can't just
+// use that enum directly).
+typedef enum {
+    WKThemeScrollBarArrowsSingle     = 0,
+    WKThemeScrollBarArrowsLowerRight = 1,
+    WKThemeScrollBarArrowsDouble     = 2,
+    WKThemeScrollBarArrowsUpperLeft  = 3,
+} WKThemeScrollBarArrowStyle;
+
+OSStatus WKThemeDrawTrack(const HIThemeTrackDrawInfo* inDrawInfo, CGContextRef inContext, int inArrowStyle);
+
 #ifdef BUILDING_ON_TIGER
 // WKSupportsMultipartXMixedReplace is not required on Leopard as multipart/x-mixed-replace is always handled by NSURLRequest
 BOOL WKSupportsMultipartXMixedReplace(NSMutableURLRequest *request);
@@ -174,15 +185,48 @@ void WKQTMovieViewSetDrawSynchronously(QTMovieView* view, BOOL sync);
 
 CFStringRef WKCopyFoundationCacheDirectory(void);
 
-void WKDrawMediaFullscreenButton(CGContextRef context, CGRect rect, BOOL active);
-void WKDrawMediaMuteButton(CGContextRef context, CGRect rect, BOOL active);
-void WKDrawMediaPauseButton(CGContextRef context, CGRect rect, BOOL active);
-void WKDrawMediaPlayButton(CGContextRef context, CGRect rect, BOOL active);
-void WKDrawMediaSeekBackButton(CGContextRef context, CGRect rect, BOOL active);
-void WKDrawMediaSeekForwardButton(CGContextRef context, CGRect rect, BOOL active);
-void WKDrawMediaSliderTrack(CGContextRef context, CGRect rect, float percentLoaded);
-void WKDrawMediaSliderThumb(CGContextRef context, CGRect rect, BOOL active);
-void WKDrawMediaUnMuteButton(CGContextRef context, CGRect rect, BOOL active);
+typedef enum {
+    WKMediaUIPartFullscreenButton   = 0,
+    WKMediaUIPartMuteButton         = 1,
+    WKMediaUIPartPlayButton         = 2,
+    WKMediaUIPartSeekBackButton     = 3,
+    WKMediaUIPartSeekForwardButton  = 4,
+    WKMediaUIPartSlider             = 5,
+    WKMediaUIPartSliderThumb        = 6,
+    WKMediaUIPartUnMuteButton       = 7,
+    WKMediaUIPartPauseButton        = 8,
+    WKMediaUIPartTimelineContainer  = 9,
+    WKMediaUIPartCurrentTimeDisplay = 10,
+    WKMediaUIPartTimeRemainingDisplay= 11
+} WKMediaUIPart;
+
+BOOL WKUseSharedMediaUI();
+BOOL WKHitTestMediaUIPart(int part, CGRect bounds, CGPoint point);
+void WKMeasureMediaUIPart(int part, CGRect *bounds, CGSize *naturalSize);
+void WKDrawMediaUIPart(int part, CGContextRef context, CGRect rect, BOOL active);
+void WKDrawMediaSliderTrack(CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration);
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && defined(__x86_64__)
+mach_port_t WKInitializeRenderServer(void);
+    
+@class CALayer;
+
+CALayer *WKMakeRenderLayer(uint32_t contextID);
+    
+typedef struct __WKSoftwareCARendererRef *WKSoftwareCARendererRef;
+
+WKSoftwareCARendererRef WKSoftwareCARendererCreate(uint32_t contextID);
+void WKSoftwareCARendererDestroy(WKSoftwareCARendererRef);
+void WKSoftwareCARendererRender(WKSoftwareCARendererRef, CGContextRef, CGRect);
+
+#import <mach/mig.h>
+
+CFRunLoopSourceRef WKCreateMIGServerSource(mig_subsystem_t subsystem, mach_port_t serverPort);
+
+#endif
+
+@class CAPropertyAnimation;
+void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
 
 #ifdef __cplusplus
 }

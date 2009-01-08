@@ -1,3 +1,29 @@
+2009-01-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Simplify Mac interfaces for drawing media controller elements
+
+        <rdar://problem/6293969>
+
+        * WebCore.base.exp: update for changed WebKitSystemInterface media controller functions
+
+        * platform/mac/WebCoreSystemInterface.h: Ditto
+        * platform/mac/WebCoreSystemInterface.mm: Ditto
+
+        * rendering/MediaControlElements.h:
+        (WebCore::): Add MediaControlElements enum
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMediaFullscreenButton):  update for changed WebKitSystemInterface
+        media controller functions
+        (WebCore::RenderThemeMac::paintMediaMuteButton): Ditto
+        (WebCore::RenderThemeMac::paintMediaPlayButton): Ditto
+        (WebCore::RenderThemeMac::paintMediaSeekBackButton): Ditto
+        (WebCore::RenderThemeMac::paintMediaSeekForwardButton): Ditto
+        (WebCore::RenderThemeMac::paintMediaSliderTrack): Ditto
+        (WebCore::RenderThemeMac::paintMediaSliderThumb): Ditto
+
 2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

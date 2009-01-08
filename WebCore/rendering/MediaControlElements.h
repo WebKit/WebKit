@@ -43,6 +43,13 @@ namespace WebCore {
 class Event;
 class Frame;
 
+enum MediaControlElements {
+    MediaFullscreenButton, MediaMuteButton, MediaPlayButton,
+    MediaSeekBackButton, MediaSeekForwardButton, MediaSlider, MediaSliderThumb,
+    MediaUnMuteButton, MediaPauseButton, MediaTimelineContainer, MediaCurrentTimeDisplay, 
+    MediaTimeRemainingDisplay, MediaControlsPanel
+};
+
 class MediaControlShadowRootElement : public HTMLDivElement {
 public:
     MediaControlShadowRootElement(Document*, HTMLMediaElement*);
