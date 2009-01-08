@@ -1,3 +1,64 @@
+2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a cleaned-up GraphicsContextSkia implementation to WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=23191
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp: Added.
+        (WebCore::):
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::platformContext):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::beginPath):
+        (WebCore::GraphicsContext::clearPlatformShadow):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipOutEllipseInRect):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineDash):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::GraphicsContext::setMiterLimit):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        (WebCore::GraphicsContext::setPlatformStrokeThickness):
+        (WebCore::GraphicsContext::setPlatformTextDrawingMode):
+        (WebCore::GraphicsContext::setURLForRect):
+        (WebCore::GraphicsContext::setUseAntialiasing):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::translate):
+
 2009-01-08  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/6465682> REGRESSION: In Mail, can't force a message to auto scroll.
