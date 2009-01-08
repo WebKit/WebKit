@@ -1,3 +1,51 @@
+2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add the first few files from platform/graphics/skia
+        https://bugs.webkit.org/show_bug.cgi?id=23191
+        
+        These are all pretty simple.
+        Eventually BitmapImageSingleFrameSkia might grow a .cpp file, for now it's just a header.
+        SkiaUtils needs to die, but that can come later, no need to block up-streaming now.
+
+        * platform/graphics/skia/BitmapImageSingleFrameSkia.h: Added.
+        (WebCore::BitmapImageSingleFrameSkia::isBitmapImage):
+        (WebCore::BitmapImageSingleFrameSkia::size):
+        (WebCore::BitmapImageSingleFrameSkia::destroyDecodedData):
+        (WebCore::BitmapImageSingleFrameSkia::decodedSize):
+        (WebCore::BitmapImageSingleFrameSkia::nativeImageForCurrentFrame):
+        (WebCore::BitmapImageSingleFrameSkia::BitmapImageSingleFrameSkia):
+        * platform/graphics/skia/FloatPointSkia.cpp: Copied from WebCore/platform/graphics/mac/FloatPointMac.mm.
+        (WebCore::FloatPoint::FloatPoint):
+        (WebCore::FloatPoint::operator SkPoint):
+        * platform/graphics/skia/FloatRectSkia.cpp: Copied from WebCore/platform/graphics/qt/IntRectQt.cpp.
+        (WebCore::FloatRect::FloatRect):
+        (WebCore::FloatRect::operator SkRect):
+        * platform/graphics/skia/IntPointSkia.cpp: Copied from WebCore/platform/graphics/win/IntPointWin.cpp.
+        (WebCore::IntPoint::IntPoint):
+        (WebCore::IntPoint::operator SkIPoint):
+        (WebCore::IntPoint::operator SkPoint):
+        * platform/graphics/skia/IntRectSkia.cpp: Copied from WebCore/platform/graphics/qt/IntRectQt.cpp.
+        (WebCore::IntRect::operator SkIRect):
+        (WebCore::IntRect::operator SkRect):
+        (WebCore::IntRect::IntRect):
+        * platform/graphics/skia/SkiaUtils.cpp: Added.
+        (WebCore::WebCorePointToSkiaPoint):
+        (WebCore::WebCoreRectToSkiaRect):
+        (WebCore::):
+        (WebCore::WebCoreCompositeToSkiaComposite):
+        (WebCore::InvScaleByte):
+        (WebCore::SkPMColorToColor):
+        (WebCore::SkPMColorToWebCoreColor):
+        (WebCore::IntersectRectAndRegion):
+        (WebCore::ClipRectToCanvas):
+        (WebCore::SkPathContainsPoint):
+        (WebCore::scratchContext):
+        * platform/graphics/skia/SkiaUtils.h: Added.
+        (WebCore::WebCoreFloatToSkScalar):
+        (WebCore::WebCoreDoubleToSkScalar):
+
 2009-01-08  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Dan Bernstein.
