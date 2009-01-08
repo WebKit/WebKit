@@ -431,7 +431,7 @@ static inline void* currentThreadStackBase()
     if (stackBase == 0 || thread != stackThread) {
         pthread_attr_t sattr;
         pthread_attr_init(&sattr);
-#if HAVE(PTHREAD_NP_H)
+#if HAVE(PTHREAD_NP_H) || PLATFORM(NETBSD)
         // e.g. on FreeBSD 5.4, neundorf@kde.org
         pthread_attr_get_np(thread, &sattr);
 #else

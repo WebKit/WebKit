@@ -1,3 +1,16 @@
+2009-01-08  Justin McPherson <justin.mcpherson@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix compilation with Qt on NetBSD.
+
+        * runtime/Collector.cpp:
+        (JSC::currentThreadStackBase): Use PLATFORM(NETBSD) to enter the
+        code path to retrieve the stack base using pthread_attr_get_np.
+        The PTHREAD_NP_H define is not used because the header file does
+        not exist on NetBSD, but the function is declared nevertheless.
+        * wtf/Platform.h: Introduce WTF_PLATFORM_NETBSD.
+
 2009-01-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
