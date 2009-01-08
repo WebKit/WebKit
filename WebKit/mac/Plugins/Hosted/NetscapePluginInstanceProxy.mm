@@ -46,6 +46,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/ScriptController.h>
+#import <WebCore/ScriptValue.h>
 #import <utility>
 
 extern "C" {
@@ -53,6 +54,7 @@ extern "C" {
 #import "WebKitPluginHost.h"
 }
 
+using namespace JSC;
 using namespace std;
 using namespace WebCore;
 
@@ -483,6 +485,23 @@ bool NetscapePluginInstanceProxy::getWindowNPObject(uint32_t& objectID)
         objectID = idForObject(frame->script()->windowShell()->window());
         
     return true;
+}
+    
+void NetscapePluginInstanceProxy::releaseObject(uint32_t objectID)
+{
+    m_objects.remove(objectID);
+}
+ 
+JSC::JSValuePtr NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& script)
+{
+    if (!m_objects.contains(objectID))
+        return JSValuePtr();
+
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return JSValuePtr();
+    
+    return frame->loader()->executeScript(script).jsValue();
 }
     
 } // namespace WebKit

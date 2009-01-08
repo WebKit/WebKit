@@ -1,3 +1,22 @@
+2009-01-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add basic support for evaluating scripts.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::fromUTF8WithLatin1Fallback):
+        (WebKit::NetscapePluginHostProxy::~NetscapePluginHostProxy):
+        (WKPCReleaseObject):
+        (marshalValue):
+        (WKPCEvaluate):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::releaseObject):
+        (WebKit::NetscapePluginInstanceProxy::evaluate):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+
 2009-01-08  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/6465682> REGRESSION: In Mail, can't force a message to auto scroll

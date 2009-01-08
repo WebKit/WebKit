@@ -44,10 +44,6 @@ routine LoadURL(clientPort :mach_port_t;
                       out resultCode :uint16_t;
                       out requestID :uint32_t);
 
-routine GetWindowNPObject(clientPort :mach_port_t;
-                          pluginID :uint32_t;
-                          out objectID :uint32_t);
-                          
 simpleroutine CancelLoadURL(clientPort :mach_port_t;
                             pluginID :uint32_t;
                             streamID :uint32_t;
@@ -60,8 +56,26 @@ simpleroutine InvalidateRect(clientPort :mach_port_t;
                              width :double;
                              height :double);
 
-// Replies
+// NPRuntime
+routine GetWindowNPObject(clientPort :mach_port_t;
+                          pluginID :uint32_t;
+                          out objectID :uint32_t);
+                      
+routine ReleaseObject(clientPort :mach_port_t;
+                      pluginID :uint32_t;
+                      objectID :uint32_t);
+                      
+// FIXME: This should be a simpleroutine with an EvaluateReply that has
+// the out parameters.
+routine Evaluate(clientPort :mach_port_t;
+                 pluginID :uint32_t;
+                 objectID :uint32_t;
+                 script :data_t;
+                 arguments :data_t;
+                 out returnValue :boolean_t;
+                 out result :data_t);
 
+// Replies
 simpleroutine InstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;
                                      result :kern_return_t;
