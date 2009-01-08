@@ -1,3 +1,14 @@
+2009-01-08  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23127
+
+        Invoke pango_coverage_get with each Unicode character.
+
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::containsCharacters):
+
 2009-01-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
