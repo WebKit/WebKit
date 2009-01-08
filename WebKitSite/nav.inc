@@ -19,11 +19,11 @@
 
         <li class="subtitle">Documentation</li>
 
-        <li><a href="http://trac.webkit.org/projects/webkit/wiki">Wiki</a></li>
+        <li><a href="http://trac.webkit.org/wiki">Wiki</a></li>
         <li><a href="/projects/">Projects</a></li>
         <li><a href="/coding/coding-style.html">Code Style Guidelines</a></li>
-        <li><a href="http://trac.webkit.org/projects/webkit/wiki/Drosera">Drosera</a></li>
-        <li><a href="http://trac.webkit.org/projects/webkit/wiki/WebDevelopers">Web developer resources</a></li>
+        <li><a href="http://trac.webkit.org/wiki/Web Inspector">Web Inspector</a></li>
+        <li><a href="http://trac.webkit.org/wiki/WebDevelopers">Web developer resources</a></li>
         <li><a href="/docs/hierarchy.html">DOM interfaces</a></li>
 
         <li class="subtitle">Testing</li>

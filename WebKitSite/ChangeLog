@@ -1,3 +1,14 @@
+2009-01-08  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adele Petersen.
+        Landed by Pamela Greene.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=23139
+        Remove links to no-longer-existing Drosera project.
+        Also, clean up references to wiki in the nav.inc file.
+
+        * nav.inc: Correct paths to wiki, swap Drosera for Web Inspector.
+
 2008-12-30  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Darin Adler.
