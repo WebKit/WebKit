@@ -2,9 +2,34 @@
 
         Reviewed by Eric Seidel.
 
+        Commit the right files this time!  (Instead of the ugly unfixed ones.)
+        https://bugs.webkit.org/show_bug.cgi?id=23191
+
+        * platform/graphics/skia/BitmapImageSingleFrameSkia.h:
+        * platform/graphics/skia/FloatPointSkia.cpp:
+        * platform/graphics/skia/FloatRectSkia.cpp:
+        * platform/graphics/skia/IntPointSkia.cpp:
+        * platform/graphics/skia/IntRectSkia.cpp:
+        (WebCore::IntRect::operator SkRect):
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::):
+        (WebCore::WebCoreCompositeToSkiaComposite):
+        (WebCore::SkPMColorToWebCoreColor):
+        (WebCore::IntersectRectAndRegion):
+        (WebCore::ClipRectToCanvas):
+        (WebCore::SkPathContainsPoint):
+        (WebCore::scratchContext):
+        * platform/graphics/skia/SkiaUtils.h:
+        (WebCore::WebCoreFloatToSkScalar):
+        (WebCore::WebCoreDoubleToSkScalar):
+
+2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Add the first few files from platform/graphics/skia
         https://bugs.webkit.org/show_bug.cgi?id=23191
-        
+
         These are all pretty simple.
         Eventually BitmapImageSingleFrameSkia might grow a .cpp file, for now it's just a header.
         SkiaUtils needs to die, but that can come later, no need to block up-streaming now.
