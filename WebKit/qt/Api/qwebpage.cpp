@@ -2632,8 +2632,8 @@ quint64 QWebPage::bytesReceived() const {
     \fn void QWebPage::databaseQuotaExceeded(QWebFrame* frame, QString databaseName);
     \since 4.5
 
-    This signal is emitted whenever a web site is asking to store data to the database \a databaseName
-    and the quota allocated to that web site is exceeded.
+    This signal is emitted whenever the web site shown in \a frame is asking to store data
+    to the database \a databaseName and the quota allocated to that web site is exceeded.
 */
 
 /*!

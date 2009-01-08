@@ -161,7 +161,7 @@ QVariant QWebHistoryItem::userData() const
 /*!
   \since 4.5
 
- Stores user specific data with the history item.
+ Stores user specific data \a userData with the history item.
 
  \sa userData()
 */
@@ -432,7 +432,7 @@ int QWebHistory::maximumItemCount() const
 
 /*!
   \since 4.5
-  Sets the maximum number of items in the history.
+  Sets the maximum number of items in the history to \a count.
 
   \sa maximumItemCount()
 */
