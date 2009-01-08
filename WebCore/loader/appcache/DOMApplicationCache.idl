@@ -43,8 +43,8 @@ module offline {
             raises(DOMException);
     
         // dynamic entries
-        readonly attribute unsigned long length;
-        DOMString item(in [IsIndex] unsigned long index)
+        readonly attribute DOMStringList items;
+        [Custom] boolean hasItem(in DOMString url)
             raises(DOMException);
         [Custom] void add(in DOMString uri)
             raises(DOMException);

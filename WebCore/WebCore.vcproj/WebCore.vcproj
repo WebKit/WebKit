@@ -656,6 +656,10 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMStringList.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMWindow.h"
 				>
 			</File>
@@ -11158,6 +11162,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\DOMStringList.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\DOMStringList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\DynamicNodeList.cpp"
 				>
 				<FileConfiguration
@@ -11791,6 +11811,22 @@
 			</File>
 			<File
 				RelativePath="..\dom\StaticNodeList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\StaticStringList.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\StaticStringList.h"
 				>
 			</File>
 			<File
@@ -14046,6 +14082,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSDOMGlobalObject.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDOMStringListCustom.cpp"
 					>
 				</File>
 				<File

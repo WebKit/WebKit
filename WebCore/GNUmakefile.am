@@ -105,6 +105,7 @@ IDL_BINDINGS += \
 	WebCore/dom/Comment.idl \
 	WebCore/dom/DOMCoreException.idl \
 	WebCore/dom/DOMImplementation.idl \
+	WebCore/dom/DOMStringList.idl \
 	WebCore/dom/Document.idl \
 	WebCore/dom/DocumentFragment.idl \
 	WebCore/dom/DocumentType.idl \
@@ -260,6 +261,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDOMBinding.h \
 	WebCore/bindings/js/JSDOMGlobalObject.cpp \
 	WebCore/bindings/js/JSDOMGlobalObject.h \
+	WebCore/bindings/js/JSDOMStringListCustom.cpp \
 	WebCore/bindings/js/JSDOMWindowBase.cpp \
 	WebCore/bindings/js/JSDOMWindowBase.h \
 	WebCore/bindings/js/JSDOMWindowCustom.cpp \
@@ -552,6 +554,8 @@ webcore_sources += \
 	WebCore/dom/DOMCoreException.h \
 	WebCore/dom/DOMImplementation.cpp \
 	WebCore/dom/DOMImplementation.h \
+	WebCore/dom/DOMStringList.cpp \
+	WebCore/dom/DOMStringList.h \
 	WebCore/dom/DocPtr.h \
 	WebCore/dom/Document.cpp \
 	WebCore/dom/Document.h \
@@ -650,6 +654,8 @@ webcore_sources += \
 	WebCore/dom/SelectorNodeList.h \
 	WebCore/dom/StaticNodeList.cpp \
 	WebCore/dom/StaticNodeList.h \
+	WebCore/dom/StaticStringList.cpp \
+	WebCore/dom/StaticStringList.h \
 	WebCore/dom/StyleElement.cpp \
 	WebCore/dom/StyleElement.h \
 	WebCore/dom/StyledElement.cpp \

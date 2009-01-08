@@ -78,6 +78,19 @@ void JSDOMApplicationCache::mark()
     }
 }
 
+JSValuePtr JSDOMApplicationCache::hasItem(ExecState* exec, const ArgList& args)
+{
+    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    if (!frame)
+        return jsUndefined();
+    const KURL& url = frame->loader()->completeURL(args.at(exec, 0)->toString(exec));
+
+    ExceptionCode ec = 0;
+    bool result = impl()->hasItem(url, ec);
+    setDOMException(exec, ec);
+    return jsBoolean(result);
+}
+
 JSValuePtr JSDOMApplicationCache::add(ExecState* exec, const ArgList& args)
 {
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();

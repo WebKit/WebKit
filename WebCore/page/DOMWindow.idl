@@ -240,7 +240,7 @@ module window {
 
         // FIXME: Implement the commented-out global constructors for interfaces listed in DOM Level 3 Core specification.
         attribute DOMCoreExceptionConstructor DOMException;
-//        attribute DOMStringListConstructor DOMStringList;
+        attribute DOMStringListConstructor DOMStringList;
 //        attribute NameListConstructor NameList;
 //        attribute DOMImplementationListConstructor DOMImplementationList;
 //        attribute DOMImplementationSourceConstructor DOMImplementationSource;

@@ -30,6 +30,7 @@
 
 #include "ApplicationCache.h"
 #include "ApplicationCacheGroup.h"
+#include "ApplicationCacheResource.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "EventException.h"
@@ -37,6 +38,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "StaticStringList.h"
 
 namespace WebCore {
 
@@ -119,29 +121,33 @@ void DOMApplicationCache::swapCache(ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
 }
 
-unsigned DOMApplicationCache::length() const
+PassRefPtr<DOMStringList> DOMApplicationCache::items()
 {
-    ApplicationCache* cache = associatedCache();
-    if (!cache)
-        return 0;
-    
-    return cache->numDynamicEntries();
+    Vector<String> result;
+    if (ApplicationCache* cache = associatedCache()) {
+        unsigned numEntries = cache->numDynamicEntries();
+        result.reserveCapacity(numEntries);
+        for (unsigned i = 0; i < numEntries; ++i)
+            result.append(cache->dynamicEntry(i));
+    }
+    return StaticStringList::adopt(result);
 }
-    
-String DOMApplicationCache::item(unsigned item, ExceptionCode& ec)
+
+bool DOMApplicationCache::hasItem(const KURL& url, ExceptionCode& ec)
 {
     ApplicationCache* cache = associatedCache();
     if (!cache) {
         ec = INVALID_STATE_ERR;
-        return String();
+        return false;
     }
 
-    if (item >= length()) {
-        ec = INDEX_SIZE_ERR;
-        return String();
+    if (!url.isValid()) {
+        ec = SYNTAX_ERR;
+        return false;
     }
-    
-    return cache->dynamicEntry(item);
+
+    ApplicationCacheResource* resource = cache->resourceForURL(url.string());
+    return resource && (resource->type() & ApplicationCacheResource::Dynamic);
 }
     
 void DOMApplicationCache::add(const KURL& url, ExceptionCode& ec)

@@ -54,6 +54,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSDatabaseCustom.cpp
         bindings/js/JSDOMApplicationCacheCustom.cpp
         bindings/js/JSDOMGlobalObject.cpp
+        bindings/js/JSDOMStringListCustom.cpp
         bindings/js/JSDOMWindowBase.cpp
         bindings/js/JSDOMWindowCustom.cpp
         bindings/js/JSDOMWindowShell.cpp
@@ -236,6 +237,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSDOMImplementation.cpp
         DerivedSources/WebCore/JSDOMParser.cpp
         DerivedSources/WebCore/JSDOMSelection.cpp
+        DerivedSources/WebCore/JSDOMStringList.cpp
         DerivedSources/WebCore/JSDOMWindow.cpp
         DerivedSources/WebCore/JSElement.cpp
         DerivedSources/WebCore/JSEntity.cpp
@@ -391,6 +393,7 @@ This file contains the list of files needed to build WebCore.
         dom/Comment.cpp
         dom/ContainerNode.cpp
         dom/DOMImplementation.cpp
+        dom/DOMStringList.cpp
         dom/Document.cpp
         dom/DocumentFragment.cpp
         dom/DocumentType.cpp
@@ -433,6 +436,7 @@ This file contains the list of files needed to build WebCore.
         dom/ScriptExecutionContext.cpp
         dom/SelectorNodeList.cpp
         dom/StaticNodeList.cpp
+        dom/StaticStringList.cpp
         dom/StyleElement.cpp
         dom/StyledElement.cpp
         dom/TagNodeList.cpp

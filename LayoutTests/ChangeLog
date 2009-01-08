@@ -1,3 +1,14 @@
+2009-01-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Part one of 
+        https://bugs.webkit.org/show_bug.cgi?id=23165
+        Add support for application cache dynamic entries
+
+        * http/tests/appcache/dynamic-entries-no-cache-expected.txt: Added.
+        * http/tests/appcache/dynamic-entries-no-cache.html: Added.
+
 2009-01-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

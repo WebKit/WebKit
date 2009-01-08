@@ -40,6 +40,7 @@ namespace WebCore {
 
 class ApplicationCache;
 class AtomicStringImpl;
+class DOMStringList;
 class Frame;
 class KURL;
 class String;
@@ -62,8 +63,8 @@ public:
     void update(ExceptionCode&);
     void swapCache(ExceptionCode&);
     
-    unsigned length() const;
-    String item(unsigned item, ExceptionCode&);
+    PassRefPtr<DOMStringList> items();
+    bool hasItem(const KURL&, ExceptionCode&);
     void add(const KURL&, ExceptionCode&);
     void remove(const KURL&, ExceptionCode&);
 

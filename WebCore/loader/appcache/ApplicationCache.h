@@ -100,6 +100,9 @@ private:
     Vector<KURL> m_onlineWhitelist;
     FallbackURLVector m_fallbackURLs;
 
+    // While an update is in progress, changes in dynamic entries are queued for later execution.
+    Vector<std::pair<KURL, bool> > m_pendingDynamicEntryActions;
+
     unsigned m_storageID;
 };
 
