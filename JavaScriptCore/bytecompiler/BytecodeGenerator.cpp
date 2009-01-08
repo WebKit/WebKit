@@ -115,7 +115,7 @@ namespace JSC {
 */
 
 #ifndef NDEBUG
-bool BytecodeGenerator::s_dumpsGeneratedCode = false;
+static bool s_dumpsGeneratedCode = false;
 #endif
 
 void BytecodeGenerator::setDumpsGeneratedCode(bool dumpsGeneratedCode)
@@ -211,7 +211,6 @@ void BytecodeGenerator::allocateConstants(size_t count)
 BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* debugger, const ScopeChain& scopeChain, SymbolTable* symbolTable, ProgramCodeBlock* codeBlock)
     : m_shouldEmitDebugHooks(!!debugger)
     , m_shouldEmitProfileHooks(scopeChain.globalObject()->supportsProfiling())
-    , m_regeneratingForExceptionInfo(false)
     , m_scopeChain(&scopeChain)
     , m_symbolTable(symbolTable)
     , m_scopeNode(programNode)
@@ -225,6 +224,8 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
+    , m_regeneratingForExceptionInfo(false)
+    , m_codeBlockBeingRegeneratedFrom(0)
 {
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
@@ -294,7 +295,6 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
 BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debugger* debugger, const ScopeChain& scopeChain, SymbolTable* symbolTable, CodeBlock* codeBlock)
     : m_shouldEmitDebugHooks(!!debugger)
     , m_shouldEmitProfileHooks(scopeChain.globalObject()->supportsProfiling())
-    , m_regeneratingForExceptionInfo(false)
     , m_scopeChain(&scopeChain)
     , m_symbolTable(symbolTable)
     , m_scopeNode(functionBody)
@@ -306,6 +306,8 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
+    , m_regeneratingForExceptionInfo(false)
+    , m_codeBlockBeingRegeneratedFrom(0)
 {
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
@@ -366,7 +368,6 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
 BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugger, const ScopeChain& scopeChain, SymbolTable* symbolTable, EvalCodeBlock* codeBlock)
     : m_shouldEmitDebugHooks(!!debugger)
     , m_shouldEmitProfileHooks(scopeChain.globalObject()->supportsProfiling())
-    , m_regeneratingForExceptionInfo(false)
     , m_scopeChain(&scopeChain)
     , m_symbolTable(symbolTable)
     , m_scopeNode(evalNode)
@@ -374,11 +375,13 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const Debugger* debugge
     , m_thisRegister(RegisterFile::ProgramCodeThisRegister)
     , m_finallyDepth(0)
     , m_dynamicScopeDepth(0)
-    , m_baseScopeDepth(scopeChain.localDepth())
+    , m_baseScopeDepth(codeBlock->baseScopeDepth())
     , m_codeType(EvalCode)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
     , m_emitNodeDepth(0)
+    , m_regeneratingForExceptionInfo(false)
+    , m_codeBlockBeingRegeneratedFrom(0)
 {
     if (m_shouldEmitDebugHooks || m_baseScopeDepth)
         m_codeBlock->setNeedsFullScopeChain(true);
@@ -991,14 +994,23 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
         return dst;
     }
 
-    if (index != missingSymbolMarker()) {
-        // Directly index the property lookup across multiple scopes.  Yay!
-        return emitGetScopedVar(dst, depth, index, globalObject);
-    }
-
     if (globalObject) {
+        bool forceGlobalResolve = false;
+        if (m_regeneratingForExceptionInfo) {
 #if ENABLE(JIT)
-        m_codeBlock->addGlobalResolveInfo();
+            forceGlobalResolve = m_codeBlockBeingRegeneratedFrom->hasGlobalResolveInfoAtBytecodeOffset(instructions().size());
+#else
+            forceGlobalResolve = m_codeBlockBeingRegeneratedFrom->hasGlobalResolveInstructionAtBytecodeOffset(instructions().size());
+#endif
+        }
+
+        if (index != missingSymbolMarker() && !forceGlobalResolve) {
+            // Directly index the property lookup across multiple scopes.
+            return emitGetScopedVar(dst, depth, index, globalObject);
+        }
+
+#if ENABLE(JIT)
+        m_codeBlock->addGlobalResolveInfo(instructions().size());
 #else
         m_codeBlock->addGlobalResolveInstruction(instructions().size());
 #endif
@@ -1009,6 +1021,11 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
         instructions().append(0);
         instructions().append(0);
         return dst;
+    }
+
+    if (index != missingSymbolMarker()) {
+        // Directly index the property lookup across multiple scopes.
+        return emitGetScopedVar(dst, depth, index, globalObject);
     }
 
     // In this case we are at least able to drop a few scope chains from the
@@ -1023,13 +1040,10 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
 RegisterID* BytecodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int index, JSValuePtr globalObject)
 {
     if (globalObject) {
-        // op_get_global_var must be the same length as op_resolve_global.
         emitOpcode(op_get_global_var);
         instructions().append(dst->index());
         instructions().append(asCell(globalObject));
         instructions().append(index);
-        instructions().append(0);
-        instructions().append(0);
         return dst;
     }
 
