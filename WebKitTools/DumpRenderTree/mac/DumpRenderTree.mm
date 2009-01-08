@@ -345,6 +345,7 @@ static void setDefaultsToConsistentValuesForTesting()
     [preferences setDefaultFixedFontSize:13];
     [preferences setMinimumFontSize:1];
     [preferences setJavaEnabled:NO];
+    [preferences setJavaScriptEnabled:YES];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
     [preferences setTabsToLinks:NO];
     [preferences setDOMPasteAllowed:YES];

@@ -1,3 +1,14 @@
+2009-01-07  Glenn Wilson  <gwilson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Changed DumpRenderTree to re-enable Javascript in web preferences on every test.
+        This fixes the case when a user mistakenly disables Javascript, and all layout tests crash.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (testStringByEvaluatingJavaScriptFromString):
+        (setDefaultsToConsistentValuesForTesting):
+
 2009-01-07  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Maciej Stachowiak.
