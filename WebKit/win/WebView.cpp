@@ -5069,6 +5069,11 @@ HRESULT STDMETHODCALLTYPE WebView::globalHistoryItem(IWebHistoryItem** item)
     if (!m_page)
         return E_FAIL;
 
+    if (!m_page->globalHistoryItem()) {
+        *item = 0;
+        return S_OK;
+    }
+
     *item = WebHistoryItem::createInstance(m_page->globalHistoryItem());
     return S_OK;
 }
