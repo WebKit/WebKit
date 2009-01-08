@@ -60,8 +60,8 @@ DocLoader::DocLoader(Document* doc)
 DocLoader::~DocLoader()
 {
     clearPreloads();
-    HashMap<String, CachedResource*>::iterator end = m_docResources.end();
-    for (HashMap<String, CachedResource*>::iterator it = m_docResources.begin(); it != end; ++it)
+    DocumentResourceMap::iterator end = m_documentResources.end();
+    for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it)
         it->second->setDocLoader(0);
     m_cache->removeDocLoader(this);
 }
@@ -195,11 +195,11 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
         return 0;
 
     if (cache()->disabled()) {
-        HashMap<String, CachedResource*>::iterator it = m_docResources.find(fullURL.string());
+        DocumentResourceMap::iterator it = m_documentResources.find(fullURL.string());
         
-        if (it != m_docResources.end()) {
+        if (it != m_documentResources.end()) {
             it->second->setDocLoader(0);
-            m_docResources.remove(it);
+            m_documentResources.remove(it);
         }
     }
 
@@ -212,7 +212,7 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
         if (!canRequest(type, KURL(resource->url())))
             return 0;
 
-        m_docResources.set(resource->url(), resource);
+        m_documentResources.set(resource->url(), resource);
         checkCacheObjectStatus(resource);
     }
     return resource;
@@ -252,9 +252,9 @@ void DocLoader::setAutoLoadImages(bool enable)
     if (!m_autoLoadImages)
         return;
 
-    HashMap<String, CachedResource*>::iterator end = m_docResources.end();
-    for (HashMap<String, CachedResource*>::iterator it = m_docResources.begin(); it != end; ++it) {
-        CachedResource* resource = it->second;
+    DocumentResourceMap::iterator end = m_documentResources.end();
+    for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it) {
+        CachedResource* resource = it->second.get();
         if (resource->type() == CachedResource::ImageResource) {
             CachedImage* image = const_cast<CachedImage*>(static_cast<const CachedImage*>(resource));
 
@@ -271,7 +271,7 @@ CachePolicy DocLoader::cachePolicy() const
 
 void DocLoader::removeCachedResource(CachedResource* resource) const
 {
-    m_docResources.remove(resource->url());
+    m_documentResources.remove(resource->url());
 }
 
 void DocLoader::setLoadInProgress(bool load)

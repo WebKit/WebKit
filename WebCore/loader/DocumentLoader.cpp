@@ -564,9 +564,9 @@ void DocumentLoader::getSubresources(Vector<PassRefPtr<ArchiveResource> >& subre
     if (!document)
         return;
 
-    const HashMap<String, CachedResource*>& allResources = document->docLoader()->allCachedResources();
-    HashMap<String, CachedResource*>::const_iterator end = allResources.end();
-    for (HashMap<String, CachedResource*>::const_iterator it = allResources.begin(); it != end; ++it) {
+    const DocLoader::DocumentResourceMap& allResources = document->docLoader()->allCachedResources();
+    DocLoader::DocumentResourceMap::const_iterator end = allResources.end();
+    for (DocLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
         RefPtr<ArchiveResource> subresource = this->subresource(KURL(it->second->url()));
         if (subresource)
             subresources.append(subresource.release());

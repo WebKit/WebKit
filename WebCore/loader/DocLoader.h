@@ -26,6 +26,7 @@
 #define DocLoader_h
 
 #include "CachedResource.h"
+#include "CachedResourceHandle.h"
 #include "CachePolicy.h"
 #include "StringHash.h"
 #include <wtf/HashMap.h>
@@ -70,8 +71,10 @@ public:
     // Logs an access denied message to the console for the specified URL.
     void printAccessDeniedMessage(const KURL& url) const;
 
-    CachedResource* cachedResource(const String& url) const { return m_docResources.get(url); }
-    const HashMap<String, CachedResource*>& allCachedResources() const { return m_docResources; }
+    CachedResource* cachedResource(const String& url) const { return m_documentResources.get(url).get(); }
+    
+    typedef HashMap<String, CachedResourceHandle<CachedResource> > DocumentResourceMap;
+    const DocumentResourceMap& allCachedResources() const { return m_documentResources; }
 
     bool autoLoadImages() const { return m_autoLoadImages; }
     void setAutoLoadImages(bool);
@@ -111,7 +114,7 @@ private:
     
     Cache* m_cache;
     HashSet<String> m_reloadedURLs;
-    mutable HashMap<String, CachedResource*> m_docResources;
+    mutable DocumentResourceMap m_documentResources;
     Document* m_doc;
     
     int m_requestCount;

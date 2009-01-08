@@ -1,3 +1,28 @@
+2009-01-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix <rdar://problem/6467206> 
+        Resources loaded from the memory cache do not get correctly inserted into the DocLoader resource map (22994)
+        
+        Use CachedResourceHandle in document resource map so resources get updated correctly when using
+        using cache validation conditionals.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::evict):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::~DocLoader):
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::setAutoLoadImages):
+        (WebCore::DocLoader::removeCachedResource):
+        * loader/DocLoader.h:
+        (WebCore::DocLoader::cachedResource):
+        (WebCore::DocLoader::allCachedResources):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::getSubresources):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+
 2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

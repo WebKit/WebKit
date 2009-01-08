@@ -397,6 +397,15 @@ void Cache::evict(CachedResource* resource)
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
     if (resource->inCache()) {
+        if (!resource->isCacheValidator()) {
+            // Notify all doc loaders that might be observing this object still that it has been
+            // extracted from the set of resources.
+            // No need to do this for cache validator resources, they are replaced automatically by using CachedResourceHandles.
+            HashSet<DocLoader*>::iterator end = m_docLoaders.end();
+            for (HashSet<DocLoader*>::iterator itr = m_docLoaders.begin(); itr != end; ++itr)
+                (*itr)->removeCachedResource(resource);
+        }
+        
         // Remove from the resource map.
         m_resources.remove(resource->url());
         resource->setInCache(false);
@@ -404,12 +413,6 @@ void Cache::evict(CachedResource* resource)
         // Remove from the appropriate LRU list.
         removeFromLRUList(resource);
         removeFromLiveDecodedResourcesList(resource);
-        
-        // Notify all doc loaders that might be observing this object still that it has been
-        // extracted from the set of resources.
-        HashSet<DocLoader*>::iterator end = m_docLoaders.end();
-        for (HashSet<DocLoader*>::iterator itr = m_docLoaders.begin(); itr != end; ++itr)
-            (*itr)->removeCachedResource(resource);
 
         // Subtract from our size totals.
         int delta = -static_cast<int>(resource->size());

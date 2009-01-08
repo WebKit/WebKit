@@ -101,7 +101,7 @@ void ImageLoader::updateFromElement()
             newImage = new CachedImage(sourceURI(attr));
             newImage->setLoading(true);
             newImage->setDocLoader(doc->docLoader());
-            doc->docLoader()->m_docResources.set(newImage->url(), newImage);
+            doc->docLoader()->m_documentResources.set(newImage->url(), newImage);
         } else
             newImage = doc->docLoader()->requestImage(sourceURI(attr));
 
