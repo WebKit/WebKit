@@ -1,3 +1,12 @@
+2009-01-08  Justin McPherson <justin.mcpherson@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the Qt build on older X11 systems with special X paths.
+
+        * WebCore.pro: Use the x11 qmake config to pull in extra paths
+        needed for NPAPI.
+
 2009-01-08  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r39699
