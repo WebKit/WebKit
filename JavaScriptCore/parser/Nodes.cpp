@@ -1,7 +1,7 @@
 /*
 *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
 *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
-*  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+*  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
 *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
 *  Copyright (C) 2007 Maks Orlovich
 *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -2449,11 +2449,42 @@ ProgramNode* ProgramNode::create(JSGlobalData* globalData, SourceElements* child
     return new ProgramNode(globalData, children, varStack, funcStack, source, features, numConstants);
 }
 
+RegisterID* ProgramNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
+{
+    generator.emitDebugHook(WillExecuteProgram, firstLine(), lastLine());
+
+    RefPtr<RegisterID> dstRegister = generator.newTemporary();
+    generator.emitLoad(dstRegister.get(), jsUndefined());
+    statementListEmitCode(children(), generator, dstRegister.get());
+
+    generator.emitDebugHook(DidExecuteProgram, firstLine(), lastLine());
+    generator.emitEnd(dstRegister.get());
+    return 0;
+}
+
+void ProgramNode::generateBytecode(ScopeChainNode* scopeChainNode)
+{
+    ScopeChain scopeChain(scopeChainNode);
+    JSGlobalObject* globalObject = scopeChain.globalObject();
+    
+    m_code.set(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider()));
+    
+    BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_code.get());
+    generator.generate();
+
+    destroyData();
+}
+
 // ------------------------------ EvalNode -----------------------------
 
 EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
     : ScopeNode(globalData, source, children, varStack, funcStack, features, numConstants)
 {
+}
+
+EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
+{
+    return new EvalNode(globalData, children, varStack, funcStack, source, features, numConstants);
 }
 
 RegisterID* EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
@@ -2484,9 +2515,20 @@ void EvalNode::generateBytecode(ScopeChainNode* scopeChainNode)
     children().clear();
 }
 
-EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
+EvalCodeBlock& EvalNode::bytecodeForExceptionInfoReparse(ScopeChainNode* scopeChainNode)
 {
-    return new EvalNode(globalData, children, varStack, funcStack, source, features, numConstants);
+    ASSERT(!m_code);
+
+    ScopeChain scopeChain(scopeChainNode);
+    JSGlobalObject* globalObject = scopeChain.globalObject();
+
+    m_code.set(new EvalCodeBlock(this, globalObject, source().provider()));
+
+    BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable(), m_code.get());
+    generator.setRegeneratingForExceptionInfo();
+    generator.generate();
+
+    return *m_code;
 }
 
 // ------------------------------ FunctionBodyNode -----------------------------
@@ -2552,7 +2594,7 @@ void FunctionBodyNode::generateBytecode(ScopeChainNode* scopeChainNode)
     // This branch is only necessary since you can still create a non-stub FunctionBodyNode by
     // calling Parser::parse<FunctionBodyNode>().   
     if (!data())
-        scopeChainNode->globalData->parser->reparse(scopeChainNode->globalData, this);
+        scopeChainNode->globalData->parser->reparseInPlace(scopeChainNode->globalData, this);
     ASSERT(data());
 
     ScopeChain scopeChain(scopeChainNode);
@@ -2566,6 +2608,22 @@ void FunctionBodyNode::generateBytecode(ScopeChainNode* scopeChainNode)
     destroyData();
 }
 
+CodeBlock& FunctionBodyNode::bytecodeForExceptionInfoReparse(ScopeChainNode* scopeChainNode)
+{
+    ASSERT(!m_code);
+
+    ScopeChain scopeChain(scopeChainNode);
+    JSGlobalObject* globalObject = scopeChain.globalObject();
+
+    m_code.set(new CodeBlock(this, FunctionCode, source().provider(), source().startOffset()));
+
+    BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable(), m_code.get());
+    generator.setRegeneratingForExceptionInfo();
+    generator.generate();
+
+    return *m_code;
+}
+
 RegisterID* FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     generator.emitDebugHook(DidEnterCallFrame, firstLine(), lastLine());
@@ -2576,32 +2634,6 @@ RegisterID* FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, Registe
         generator.emitReturn(r0);
     }
     return 0;
-}
-
-RegisterID* ProgramNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
-{
-    generator.emitDebugHook(WillExecuteProgram, firstLine(), lastLine());
-
-    RefPtr<RegisterID> dstRegister = generator.newTemporary();
-    generator.emitLoad(dstRegister.get(), jsUndefined());
-    statementListEmitCode(children(), generator, dstRegister.get());
-
-    generator.emitDebugHook(DidExecuteProgram, firstLine(), lastLine());
-    generator.emitEnd(dstRegister.get());
-    return 0;
-}
-
-void ProgramNode::generateBytecode(ScopeChainNode* scopeChainNode)
-{
-    ScopeChain scopeChain(scopeChainNode);
-    JSGlobalObject* globalObject = scopeChain.globalObject();
-    
-    m_code.set(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider()));
-    
-    BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_code.get());
-    generator.generate();
-
-    destroyData();
 }
 
 UString FunctionBodyNode::paramString() const

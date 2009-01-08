@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1059,7 +1059,7 @@ void JIT::privateCompileMainPass()
             JSValuePtr message = m_codeBlock->unexpectedConstant(currentInstruction[3].u.operand);
             emitPutJITStubArgConstant(currentInstruction[2].u.operand, 1);
             emitPutJITStubArgConstant(JSValuePtr::encode(message), 2);
-            emitPutJITStubArgConstant(m_codeBlock->lineNumberForBytecodeOffset(m_bytecodeIndex), 3);
+            emitPutJITStubArgConstant(m_bytecodeIndex, 3);
             emitCTICall(Interpreter::cti_op_new_error);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_new_error);

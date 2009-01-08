@@ -1,3 +1,83 @@
+2009-01-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        <rdar://problem/6469060> Don't store exception information for a CodeBlock until first exception is thrown
+
+        Don't initially store exception information (lineNumber/expressionRange/getByIdExcecptionInfo)
+        in CodeBlocks blocks.  Instead, re-parse for the data on demand and cache it then.
+
+        One important change that was needed to make this work was to pad op_get_global_var with nops to
+        be the same length as op_resolve_global, since one could be replaced for the other on re-parsing,
+        and we want to keep the offsets bytecode offsets the same.
+
+        1.3MB improvement on Membuster head.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump): Update op_get_global_var to account for the padding.
+        (JSC::CodeBlock::dumpStatistics): Add more statistic dumping.
+        (JSC::CodeBlock::CodeBlock): Initialize m_exceptionInfo.
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary): Re-parses the CodeBlocks
+        associated SourceCode and steals the ExceptionInfo from it.
+        (JSC::CodeBlock::lineNumberForBytecodeOffset): Creates the exception info on demand.
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset): Ditto.
+        (JSC::CodeBlock::getByIdExceptionInfoForBytecodeOffset): Ditto.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfExceptionHandlers): Updated to account for m_exceptionInfo indirection.
+        (JSC::CodeBlock::addExceptionHandler): Ditto.
+        (JSC::CodeBlock::exceptionHandler): Ditto.
+        (JSC::CodeBlock::clearExceptionInfo): Ditto.
+        (JSC::CodeBlock::addExpressionInfo): Ditto.
+        (JSC::CodeBlock::addGetByIdExceptionInfo): Ditto.
+        (JSC::CodeBlock::numberOfLineInfos): Ditto.
+        (JSC::CodeBlock::addLineInfo): Ditto.
+        (JSC::CodeBlock::lastLineInfo): Ditto.
+
+        * bytecode/Opcode.h: Change length of op_get_global_var to match op_resolve_global.
+
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::dump): Add comment indicating why it is okay not to pass a CallFrame.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate): Clear the exception info after generation for Function and Eval
+        Code when not in regenerate for exception info mode.
+        (JSC::BytecodeGenerator::BytecodeGenerator): Initialize m_regeneratingForExceptionInfo to false.
+        (JSC::BytecodeGenerator::emitGetScopedVar): Pad op_get_global_var with 2 nops.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::setRegeneratingForExcpeptionInfo): Added.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException): Pass the CallFrame to exception info accessors.
+        (JSC::Interpreter::privateExecute): Ditto.
+        (JSC::Interpreter::retrieveLastCaller): Ditto.
+        (JSC::Interpreter::cti_op_new_error): Ditto.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass): Pass the current bytecode offset instead of hard coding the
+        line number, the stub will do the accessing if it gets called.
+
+        * parser/Nodes.cpp:
+        (JSC::ProgramNode::emitBytecode): Moved.
+        (JSC::ProgramNode::generateBytecode): Moved.
+        (JSC::EvalNode::create): Moved.
+        (JSC::EvalNode::bytecodeForExceptionInfoReparse): Added.
+        (JSC::FunctionBodyNode::generateBytecode): Rename reparse to reparseInPlace.
+        (JSC::FunctionBodyNode::bytecodeForExceptionInfoReparse): Addded.
+
+        * parser/Nodes.h:
+        (JSC::ScopeNode::features): Added getter.
+        * parser/Parser.cpp:
+        (JSC::Parser::reparseInPlace): Renamed from reparse.
+        * parser/Parser.h:
+        (JSC::Parser::reparse): Added. Re-parses the passed in Node into
+        a new Node.
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError): Pass along CallFrame.
+        (JSC::createInvalidParamError): Ditto.
+        (JSC::createNotAConstructorError): Ditto.
+        (JSC::createNotAFunctionError): Ditto.
+        (JSC::createNotAnObjectError): Ditto.
+
 2009-01-06  Gavin Barraclough  <baraclough@apple.com>
 
         Reviewed by Maciej Stachowiak.

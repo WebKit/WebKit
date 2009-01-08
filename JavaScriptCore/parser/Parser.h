@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -50,8 +50,8 @@ namespace JSC {
     class Parser : Noncopyable {
     public:
         template <class ParsedNode> PassRefPtr<ParsedNode> parse(ExecState*, Debugger*, const SourceCode&, int* errLine = 0, UString* errMsg = 0);
-
-        void reparse(JSGlobalData*, FunctionBodyNode*);
+        template <class ParsedNode> PassRefPtr<ParsedNode> reparse(JSGlobalData*, ParsedNode*);
+        void reparseInPlace(JSGlobalData*, FunctionBodyNode*);
 
         void didFinishParsing(SourceElements*, ParserRefCountedData<DeclarationStacks::VarStack>*, 
                               ParserRefCountedData<DeclarationStacks::FunctionStack>*, CodeFeatures features, int lastLine, int numConstants);
@@ -91,6 +91,30 @@ namespace JSC {
 
         if (debugger)
             debugger->sourceParsed(exec, source, *errLine, *errMsg);
+        return result.release();
+    }
+
+    template <class ParsedNode> PassRefPtr<ParsedNode> Parser::reparse(JSGlobalData* globalData, ParsedNode* oldParsedNode)
+    {
+        m_source = &oldParsedNode->source();
+        parse(globalData, 0, 0);
+        RefPtr<ParsedNode> result;
+        if (m_sourceElements) {
+            result = ParsedNode::create(globalData,
+                                        m_sourceElements.get(),
+                                        m_varDeclarations ? &m_varDeclarations->data : 0, 
+                                        m_funcDeclarations ? &m_funcDeclarations->data : 0,
+                                        *m_source,
+                                        oldParsedNode->features(),
+                                        m_numConstants);
+            result->setLoc(m_source->firstLine(), m_lastLine);
+        }
+
+        m_source = 0;
+        m_sourceElements = 0;
+        m_varDeclarations = 0;
+        m_funcDeclarations = 0;
+
         return result.release();
     }
 

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -2095,6 +2095,8 @@ namespace JSC {
         intptr_t sourceID() const { return m_source.provider()->asID(); }
 
         void setFeatures(CodeFeatures features) { m_features = features; }
+        CodeFeatures features() { return m_features; }
+
         bool usesEval() const { return m_features & EvalFeature; }
         bool usesArguments() const { return m_features & ArgumentsFeature; }
         void setUsesArguments() { m_features |= ArgumentsFeature; }
@@ -2153,6 +2155,8 @@ namespace JSC {
                 generateBytecode(scopeChain);
             return *m_code;
         }
+
+        EvalCodeBlock& bytecodeForExceptionInfoReparse(ScopeChainNode*) JSC_FAST_CALL;
 
     private:
         EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
@@ -2216,6 +2220,8 @@ namespace JSC {
             if (!--m_refCount)
                 ScopeNode::deref();
         }
+
+        CodeBlock& bytecodeForExceptionInfoReparse(ScopeChainNode* scopeChain) JSC_FAST_CALL;
 
     private:
         FunctionBodyNode(JSGlobalData*) JSC_FAST_CALL;

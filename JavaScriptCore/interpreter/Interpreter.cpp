@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -797,7 +797,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
                     int startOffset = 0;
                     int endOffset = 0;
                     int divotPoint = 0;
-                    int line = codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset);
+                    int line = codeBlock->expressionRangeForBytecodeOffset(callFrame, bytecodeOffset, divotPoint, startOffset, endOffset);
                     exception->putWithAttributes(callFrame, Identifier(callFrame, "line"), jsNumber(callFrame, line), ReadOnly | DontDelete);
                     
                     // We only hit this path for error messages and throw statements, which don't have a specific failure position
@@ -805,7 +805,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
                     exception->putWithAttributes(callFrame, Identifier(callFrame, expressionBeginOffsetPropertyName), jsNumber(callFrame, divotPoint - startOffset), ReadOnly | DontDelete);
                     exception->putWithAttributes(callFrame, Identifier(callFrame, expressionEndOffsetPropertyName), jsNumber(callFrame, divotPoint + endOffset), ReadOnly | DontDelete);
                 } else
-                    exception->putWithAttributes(callFrame, Identifier(callFrame, "line"), jsNumber(callFrame, codeBlock->lineNumberForBytecodeOffset(bytecodeOffset)), ReadOnly | DontDelete);
+                    exception->putWithAttributes(callFrame, Identifier(callFrame, "line"), jsNumber(callFrame, codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset)), ReadOnly | DontDelete);
                 exception->putWithAttributes(callFrame, Identifier(callFrame, "sourceId"), jsNumber(callFrame, codeBlock->ownerNode()->sourceID()), ReadOnly | DontDelete);
                 exception->putWithAttributes(callFrame, Identifier(callFrame, "sourceURL"), jsOwnedString(callFrame, codeBlock->ownerNode()->sourceURL()), ReadOnly | DontDelete);
             }
@@ -821,7 +821,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 
     if (Debugger* debugger = callFrame->dynamicGlobalObject()->debugger()) {
         DebuggerCallFrame debuggerCallFrame(callFrame, exceptionValue);
-        debugger->exception(debuggerCallFrame, codeBlock->ownerNode()->sourceID(), codeBlock->lineNumberForBytecodeOffset(bytecodeOffset));
+        debugger->exception(debuggerCallFrame, codeBlock->ownerNode()->sourceID(), codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset));
     }
 
     // If we throw in the middle of a call instruction, we need to notify
@@ -2348,17 +2348,18 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_get_global_var) {
-        /* get_global_var dst(r) globalObject(c) index(n)
+        /* get_global_var dst(r) globalObject(c) index(n) nop(n) nop(n)
 
            Gets the global var at global slot index and places it in register dst.
          */
-        int dst = (++vPC)->u.operand;
-        JSGlobalObject* scope = static_cast<JSGlobalObject*>((++vPC)->u.jsCell);
+        int dst = vPC[1].u.operand;
+        JSGlobalObject* scope = static_cast<JSGlobalObject*>(vPC[2].u.jsCell);
         ASSERT(scope->isGlobalObject());
-        int index = (++vPC)->u.operand;
+        int index = vPC[3].u.operand;
 
         callFrame[dst] = scope->registerAt(index);
-        ++vPC;
+
+        vPC += OPCODE_LENGTH(op_resolve_global);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_put_global_var) {
@@ -3815,7 +3816,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int message = (++vPC)->u.operand;
 
         CodeBlock* codeBlock = callFrame->codeBlock();
-        callFrame[dst] = JSValuePtr(Error::create(callFrame, (ErrorType)type, codeBlock->unexpectedConstant(message)->toString(callFrame), codeBlock->lineNumberForBytecodeOffset(vPC - codeBlock->instructions().begin()), codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL()));
+        callFrame[dst] = JSValuePtr(Error::create(callFrame, (ErrorType)type, codeBlock->unexpectedConstant(message)->toString(callFrame), codeBlock->lineNumberForBytecodeOffset(callFrame, vPC - codeBlock->instructions().begin()), codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL()));
 
         ++vPC;
         NEXT_INSTRUCTION();
@@ -4032,7 +4033,7 @@ void Interpreter::retrieveLastCaller(CallFrame* callFrame, int& lineNumber, intp
         return;
 
     unsigned bytecodeOffset = bytecodeOffsetForPC(callerCodeBlock, callFrame->returnPC());
-    lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset - 1);
+    lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(callerFrame, bytecodeOffset - 1);
     sourceID = callerCodeBlock->ownerNode()->sourceID();
     sourceURL = callerCodeBlock->ownerNode()->sourceURL();
     function = callerFrame->callee();
@@ -6045,8 +6046,9 @@ JSObject* Interpreter::cti_op_new_error(STUB_ARGS)
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned type = ARG_int1;
     JSValuePtr message = ARG_src2;
-    unsigned lineNumber = ARG_int3;
+    unsigned bytecodeOffset = ARG_int3;
 
+    unsigned lineNumber = codeBlock->lineNumberForBytecodeOffset(callFrame, bytecodeOffset);
     return Error::create(callFrame, static_cast<ErrorType>(type), message->toString(callFrame), lineNumber, codeBlock->ownerNode()->sourceID(), codeBlock->ownerNode()->sourceURL());
 }
 

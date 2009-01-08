@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -94,7 +94,7 @@ namespace JSC {
         macro(op_resolve_global, 6) \
         macro(op_get_scoped_var, 4) \
         macro(op_put_scoped_var, 4) \
-        macro(op_get_global_var, 4) \
+        macro(op_get_global_var, 6) \
         macro(op_put_global_var, 4) \
         macro(op_resolve_base, 3) \
         macro(op_resolve_with_base, 4) \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -259,7 +259,9 @@ void SamplingTool::dump(ExecState* exec)
                     int count = record->m_samples[op];
                     if (count) {
                         printf("    [% 4d] has sample count: % 4d\n", op, count);
-                        unsigned line = codeBlock->lineNumberForBytecodeOffset(op);
+                        // It is okay to pass 0 as the CallFrame for lineNumberForBytecodeOffset since
+                        // we ensure exception information when Sampling is enabled.
+                        unsigned line = codeBlock->lineNumberForBytecodeOffset(0, op);
                         lineCounts.set(line, (lineCounts.contains(line) ? lineCounts.get(line) : 0) + count);
                     }
                 }
