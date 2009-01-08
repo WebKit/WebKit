@@ -86,6 +86,8 @@ private:
 WebPage::WebPage(QWidget *parent, DumpRenderTree *drt)
     : QWebPage(parent), m_drt(drt)
 {
+    settings()->setFontSize(QWebSettings::MinimumFontSize, 5);
+    settings()->setFontSize(QWebSettings::MinimumLogicalFontSize, 5);
     settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
     settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard, true);
     settings()->setAttribute(QWebSettings::LinksIncludedInFocusChain, false);

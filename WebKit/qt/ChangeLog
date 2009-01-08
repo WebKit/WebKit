@@ -1,3 +1,13 @@
+2009-01-08  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Simon Hausmann.
+
+        Don't set the minimumFontSize and minimumLogicalFontSize as these are
+        just for accessibility and should be left up to the client application.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+
 2009-01-08  Kavindra Palaraja  <kdpalara@trolltech.com>
 
         Reviewed by Simon Hausmann.

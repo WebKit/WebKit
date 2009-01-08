@@ -1,3 +1,12 @@
+2009-01-08  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Simon Hausmann.
+
+        Explicitly set these so that the layout tests do not break.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::WebPage::WebPage):
+
 2009-01-07  Glenn Wilson  <gwilson@chromium.org>
 
         Reviewed by Eric Seidel.

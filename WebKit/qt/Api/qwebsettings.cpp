@@ -308,9 +308,8 @@ QWebSettings::QWebSettings()
     : d(new QWebSettingsPrivate)
 {
     // Initialize our global defaults
-    // changing any of those will likely break the LayoutTests
-    d->fontSizes.insert(QWebSettings::MinimumFontSize, 5);
-    d->fontSizes.insert(QWebSettings::MinimumLogicalFontSize, 5);
+    d->fontSizes.insert(QWebSettings::MinimumFontSize, 0);
+    d->fontSizes.insert(QWebSettings::MinimumLogicalFontSize, 0);
     d->fontSizes.insert(QWebSettings::DefaultFontSize, 14);
     d->fontSizes.insert(QWebSettings::DefaultFixedFontSize, 14);
     d->fontFamilies.insert(QWebSettings::StandardFont, QLatin1String("Arial"));
