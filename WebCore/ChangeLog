@@ -60,6 +60,26 @@
 
         Reviewed by Eric Seidel.
 
+        Add two more files for platform/graphics/skia.
+        https://bugs.webkit.org/show_bug.cgi?id=23191
+
+        * platform/graphics/skia/GradientSkia.cpp: Added.
+        (WebCore::Gradient::platformDestroy):
+        (WebCore::F2B):
+        (WebCore::makeSkColor):
+        (WebCore::totalStopsNeeded):
+        (WebCore::fillStops):
+        (WebCore::compareStops):
+        (WebCore::Gradient::platformGradient):
+        (WebCore::Gradient::fill):
+        * platform/graphics/skia/GraphicsContextPlatformPrivate.h: Copied from WebCore/bindings/js/ScriptValue.h.
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::context):
+
+2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Commit the right files this time!  (Instead of the ugly unfixed ones.)
         https://bugs.webkit.org/show_bug.cgi?id=23191
 
