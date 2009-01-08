@@ -1,3 +1,15 @@
+2009-01-08  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/6465682> REGRESSION: In Mail, can't force a message to auto scroll
+
+        Add a new ChromeClient method for handling exposure of scrolled rects.
+
+        Reviewed by Oliver Hunt
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::scrollRectIntoView):
+
 2009-01-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

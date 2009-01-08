@@ -116,6 +116,7 @@ namespace WebCore {
         virtual IntRect windowToScreen(const IntRect&) const = 0;
         virtual PlatformWidget platformWindow() const = 0;
         virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
+        virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {} // Platforms other than Mac can implement this if it ever becomes necessary for them to do so.
         // End methods used by HostWindow.
 
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;

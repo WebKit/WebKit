@@ -1,3 +1,23 @@
+2009-01-08  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/6465682> REGRESSION: In Mail, can't force a message to auto scroll.
+
+        Make scrollRectIntoViewRecursively call out to the HostWindow to continue the recursive scroll for
+        any scrollable views that may contain a WebView.  Does nothing on platforms other than the Mac, but
+        might eventually be of interest to other platforms.
+
+        Reviewed by Oliver Hunt
+
+        * WebCore.base.exp:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::scrollRectIntoView):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::scrollRectIntoView):
+        * platform/HostWindow.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+
 2009-01-08  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by David Hyatt.

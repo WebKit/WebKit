@@ -103,6 +103,11 @@ void Chrome::contentsSizeChanged(Frame* frame, const IntSize& size) const
     m_client->contentsSizeChanged(frame, size);
 }
 
+void Chrome::scrollRectIntoView(const IntRect& rect, const ScrollView* scrollView) const
+{
+    m_client->scrollRectIntoView(rect, scrollView);
+}
+
 void Chrome::setWindowRect(const FloatRect& rect) const
 {
     m_client->setWindowRect(rect);

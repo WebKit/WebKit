@@ -95,7 +95,8 @@ public:
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const;
     virtual PlatformWidget platformWindow() const;
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const;
-
+    virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const;
+    
     virtual void setStatusbarText(const WebCore::String&);
 
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);

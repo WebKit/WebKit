@@ -55,6 +55,7 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/ScrollView.h>
 #import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
 #import <wtf/PassRefPtr.h>
@@ -453,6 +454,26 @@ PlatformWidget WebChromeClient::platformWindow() const
 void WebChromeClient::contentsSizeChanged(Frame*, const IntSize&) const
 {
 }
+
+void WebChromeClient::scrollRectIntoView(const IntRect& r, const ScrollView* scrollView) const
+{
+    // FIXME: This scrolling behavior should be under the control of the embedding client (rather than something
+    // we just do ourselves).
+    
+    // We have to convert back to document view coordinates in order to let the flipping conversion take place.  It just
+    // doesn't make sense for the scrollRectIntoView API to take document view coordinates.
+    IntRect scrollRect = r;
+    scrollRect.move(scrollView->scrollOffset());
+    NSRect rect = scrollRect;
+    for (NSView *view = [[[m_webView mainFrame] frameView] documentView]; view; view = [view superview]) { 
+        if ([view isKindOfClass:[NSClipView class]]) { 
+            NSClipView *clipView = (NSClipView *)view; 
+            NSView *documentView = [clipView documentView]; 
+            [documentView scrollRectToVisible:[documentView convertRect:rect fromView:[[[m_webView mainFrame] frameView] documentView]]]; 
+        } 
+    }
+}
+
 // End host window methods.
 
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
