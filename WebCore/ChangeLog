@@ -1,3 +1,12 @@
+2009-01-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6355786> Find fails for queries that contain a line break
+
+        * editing/TextIterator.cpp:
+        (WebCore::findPlainText): Allow find with queries that contain newlines.
+
 2009-01-07  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dan Bernstein.
