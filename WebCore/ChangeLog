@@ -1,3 +1,39 @@
+2009-01-07  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23122
+
+        This completes the removal of dependencies on WebKit from the platform code
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getDelayValue):
+        (WebCore::getDurationValue):
+        (WebCore::getTimingFunctionValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSHelper.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapAnimationDelay):
+        (WebCore::CSSStyleSelector::mapAnimationDirection):
+        (WebCore::CSSStyleSelector::mapAnimationDuration):
+        (WebCore::CSSStyleSelector::mapAnimationIterationCount):
+        (WebCore::CSSStyleSelector::mapAnimationName):
+        (WebCore::CSSStyleSelector::mapAnimationPlayState):
+        (WebCore::CSSStyleSelector::mapAnimationProperty):
+        (WebCore::CSSStyleSelector::mapAnimationTimingFunction):
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::Animation):
+        * platform/animation/Animation.h:
+        (WebCore::Animation::initialAnimationDelay):
+        (WebCore::Animation::initialAnimationDirection):
+        (WebCore::Animation::initialAnimationDuration):
+        (WebCore::Animation::initialAnimationIterationCount):
+        (WebCore::Animation::initialAnimationName):
+        (WebCore::Animation::initialAnimationPlayState):
+        (WebCore::Animation::initialAnimationProperty):
+        (WebCore::Animation::initialAnimationTimingFunction):
+        * rendering/style/RenderStyle.h:
+
 2008-01-07  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Sam Weinig.

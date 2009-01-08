@@ -431,7 +431,7 @@ static PassRefPtr<CSSValue> getDelayValue(const AnimationList* animList)
             list->append(CSSPrimitiveValue::create(animList->animation(i)->delay(), CSSPrimitiveValue::CSS_S));
     } else {
         // Note that initialAnimationDelay() is used for both transitions and animations
-        list->append(CSSPrimitiveValue::create(RenderStyle::initialAnimationDelay(), CSSPrimitiveValue::CSS_S));
+        list->append(CSSPrimitiveValue::create(Animation::initialAnimationDelay(), CSSPrimitiveValue::CSS_S));
     }
     return list.release();
 }
@@ -444,7 +444,7 @@ static PassRefPtr<CSSValue> getDurationValue(const AnimationList* animList)
             list->append(CSSPrimitiveValue::create(animList->animation(i)->duration(), CSSPrimitiveValue::CSS_S));
     } else {
         // Note that initialAnimationDuration() is used for both transitions and animations
-        list->append(CSSPrimitiveValue::create(RenderStyle::initialAnimationDuration(), CSSPrimitiveValue::CSS_S));
+        list->append(CSSPrimitiveValue::create(Animation::initialAnimationDuration(), CSSPrimitiveValue::CSS_S));
     }
     return list.release();
 }
@@ -459,7 +459,7 @@ static PassRefPtr<CSSValue> getTimingFunctionValue(const AnimationList* animList
         }
     } else {
         // Note that initialAnimationTimingFunction() is used for both transitions and animations
-        const TimingFunction& tf = RenderStyle::initialAnimationTimingFunction();
+        const TimingFunction& tf = Animation::initialAnimationTimingFunction();
         list->append(CSSTimingFunctionValue::create(tf.x1(), tf.y1(), tf.x2(), tf.y2()));
     }
     return list.release();
@@ -1081,7 +1081,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                         list->append(CSSPrimitiveValue::create(iterationCount, CSSPrimitiveValue::CSS_NUMBER));
                 }
             } else
-                list->append(CSSPrimitiveValue::create(RenderStyle::initialAnimationIterationCount(), CSSPrimitiveValue::CSS_NUMBER));
+                list->append(CSSPrimitiveValue::create(Animation::initialAnimationIterationCount(), CSSPrimitiveValue::CSS_NUMBER));
             return list.release();
         }
         case CSSPropertyWebkitAnimationName: {

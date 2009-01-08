@@ -1112,14 +1112,6 @@ public:
     static EPointerEvents initialPointerEvents() { return PE_AUTO; }
 
     // Keep these at the end.
-    static float initialAnimationDelay() { return 0; }
-    static bool initialAnimationDirection() { return false; }
-    static double initialAnimationDuration() { return 0; }
-    static int initialAnimationIterationCount() { return 1; }
-    static String initialAnimationName() { return String("none"); }
-    static unsigned initialAnimationPlayState() { return AnimPlayStatePlaying; }
-    static int initialAnimationProperty() { return cAnimateAll; }
-    static TimingFunction initialAnimationTimingFunction() { return TimingFunction(); }
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
     static ETextSecurity initialTextSecurity() { return TSNONE; }

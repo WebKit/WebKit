@@ -22,19 +22,17 @@
 #include "config.h"
 #include "Animation.h"
 
-#include "RenderStyle.h"
-
 namespace WebCore {
 
 Animation::Animation()
-    : m_delay(RenderStyle::initialAnimationDelay())
-    , m_direction(RenderStyle::initialAnimationDirection())
-    , m_duration(RenderStyle::initialAnimationDuration())
-    , m_iterationCount(RenderStyle::initialAnimationIterationCount())
-    , m_name(RenderStyle::initialAnimationName())
-    , m_property(RenderStyle::initialAnimationProperty())
-    , m_timingFunction(RenderStyle::initialAnimationTimingFunction())
-    , m_playState(RenderStyle::initialAnimationPlayState())
+    : m_delay(initialAnimationDelay())
+    , m_direction(initialAnimationDirection())
+    , m_duration(initialAnimationDuration())
+    , m_iterationCount(initialAnimationIterationCount())
+    , m_name(initialAnimationName())
+    , m_property(initialAnimationProperty())
+    , m_timingFunction(initialAnimationTimingFunction())
+    , m_playState(initialAnimationPlayState())
     , m_delaySet(false)
     , m_directionSet(false)
     , m_durationSet(false)

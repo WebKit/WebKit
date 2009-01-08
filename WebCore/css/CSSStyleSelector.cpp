@@ -222,7 +222,7 @@ if (isInherit) { \
     AnimationList* list = m_style->accessAnimations(); \
     if (list->isEmpty()) \
         list->append(Animation::create()); \
-    list->animation(0)->set##Prop(RenderStyle::initialAnimation##Prop()); \
+    list->animation(0)->set##Prop(Animation::initialAnimation##Prop()); \
     for (size_t i = 1; i < list->size(); ++i) \
         list->animation(0)->clear##Prop(); \
 }
@@ -272,7 +272,7 @@ if (isInherit) { \
     AnimationList* list = m_style->accessTransitions(); \
     if (list->isEmpty()) \
         list->append(Animation::create()); \
-    list->animation(0)->set##Prop(RenderStyle::initialAnimation##Prop()); \
+    list->animation(0)->set##Prop(Animation::initialAnimation##Prop()); \
     for (size_t i = 1; i < list->size(); ++i) \
         list->animation(0)->clear##Prop(); \
 }
@@ -5250,7 +5250,7 @@ void CSSStyleSelector::mapFillYPosition(FillLayer* layer, CSSValue* value)
 void CSSStyleSelector::mapAnimationDelay(Animation* animation, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        animation->setDelay(RenderStyle::initialAnimationDelay());
+        animation->setDelay(Animation::initialAnimationDelay());
         return;
     }
 
@@ -5264,7 +5264,7 @@ void CSSStyleSelector::mapAnimationDelay(Animation* animation, CSSValue* value)
 void CSSStyleSelector::mapAnimationDirection(Animation* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setDirection(RenderStyle::initialAnimationDirection());
+        layer->setDirection(Animation::initialAnimationDirection());
         return;
     }
 
@@ -5275,7 +5275,7 @@ void CSSStyleSelector::mapAnimationDirection(Animation* layer, CSSValue* value)
 void CSSStyleSelector::mapAnimationDuration(Animation* animation, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        animation->setDuration(RenderStyle::initialAnimationDuration());
+        animation->setDuration(Animation::initialAnimationDuration());
         return;
     }
 
@@ -5292,7 +5292,7 @@ void CSSStyleSelector::mapAnimationDuration(Animation* animation, CSSValue* valu
 void CSSStyleSelector::mapAnimationIterationCount(Animation* animation, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        animation->setIterationCount(RenderStyle::initialAnimationIterationCount());
+        animation->setIterationCount(Animation::initialAnimationIterationCount());
         return;
     }
 
@@ -5309,7 +5309,7 @@ void CSSStyleSelector::mapAnimationIterationCount(Animation* animation, CSSValue
 void CSSStyleSelector::mapAnimationName(Animation* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setName(RenderStyle::initialAnimationName());
+        layer->setName(Animation::initialAnimationName());
         return;
     }
 
@@ -5324,7 +5324,7 @@ void CSSStyleSelector::mapAnimationName(Animation* layer, CSSValue* value)
 void CSSStyleSelector::mapAnimationPlayState(Animation* layer, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setPlayState(RenderStyle::initialAnimationPlayState());
+        layer->setPlayState(Animation::initialAnimationPlayState());
         return;
     }
 
@@ -5335,7 +5335,7 @@ void CSSStyleSelector::mapAnimationPlayState(Animation* layer, CSSValue* value)
 void CSSStyleSelector::mapAnimationProperty(Animation* animation, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        animation->setProperty(RenderStyle::initialAnimationProperty());
+        animation->setProperty(Animation::initialAnimationProperty());
         return;
     }
 
@@ -5354,7 +5354,7 @@ void CSSStyleSelector::mapAnimationProperty(Animation* animation, CSSValue* valu
 void CSSStyleSelector::mapAnimationTimingFunction(Animation* animation, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        animation->setTimingFunction(RenderStyle::initialAnimationTimingFunction());
+        animation->setTimingFunction(Animation::initialAnimationTimingFunction());
         return;
     }
     

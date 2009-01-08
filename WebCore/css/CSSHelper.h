@@ -37,10 +37,6 @@ namespace WebCore {
     // "absolute" CSS length units like inch and pt is always fixed and never changes.
     const float cssPixelsPerInch = 96.0f;
 
-    // Used by animation.
-    const int cAnimateNone = 0;
-    const int cAnimateAll = -2;
-
 } // namespace WebCore
 
 #endif // CSSHelper_h
