@@ -48,23 +48,23 @@ ImageSource::~ImageSource()
     clear(true);
 }
 
-void ImageSource::clear(bool destroyAll, size_t)
+void ImageSource::clear(bool destroyAll, size_t, SharedBuffer* data, bool allDataReceived)
 {
-    if (destroyAll) {
-        if (m_decoder) {
-            CFRelease(m_decoder);
-            m_decoder = 0;
-        }
+    if (!destroyAll) {
+        // TODO(pkasting): If there was an appropriate API to do so, we could
+        // explicitly tell the CG decoder it can discard frames before
+        // |clearBeforeFrame| (not including anything it needs to keep around
+        // locally to continue decoding correctly).  This might help the decoder
+        // optimize memory/CPU usage.
         return;
     }
 
-    // TODO(pkasting): If there was an appropriate API to do so, we could
-    // explicitly tell the CG decoder it can discard frames before
-    // |clearBeforeFrame| (not including anything it needs to keep around
-    // locally to continue decoding correctly).  This might help the decoder
-    // optimize memory/CPU usage.  Right now the decoder seems to throw away
-    // frames aggressively and then re-decode from the beginning each time, thus
-    // using more CPU than it needs to.
+    if (m_decoder) {
+        CFRelease(m_decoder);
+        m_decoder = 0;
+    }
+    if (data)
+      setData(data, allDataReceived);
 }
 
 CFDictionaryRef imageSourceOptions()

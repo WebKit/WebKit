@@ -1,3 +1,31 @@
+2008-01-07  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22929
+
+        Fix errors while decoding GIFs by not calling setData() repeatedly
+        when it's not necessary.  Pushes the responsibility for calling
+        setData() after clear() into the ImageSource which presumably knows
+        better than BitmapImage what needs to be done.
+
+        NOTE: The above bug is mainly about a memory regression, which this
+        patch does not fix.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::clear):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::clear):
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::clear):
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::clear):
+
 2009-01-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

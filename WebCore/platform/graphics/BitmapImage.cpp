@@ -80,9 +80,7 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
 
     destroyMetadataAndNotify(framesCleared);
 
-    m_source.clear(destroyAll, clearBeforeFrame);
-    if (m_data)
-        m_source.setData(m_data.get(), m_allDataReceived);
+    m_source.clear(destroyAll, clearBeforeFrame, m_data.get(), m_allDataReceived);
     return;
 }
 

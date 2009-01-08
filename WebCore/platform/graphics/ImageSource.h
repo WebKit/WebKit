@@ -99,7 +99,15 @@ public:
     // Callers should not call clear(false, n) and subsequently call
     // createFrameAtIndex(m) with m < n, unless they first call clear(true).
     // This ensures that stateful ImageSources/decoders will work properly.
-    void clear(bool destroyAll, size_t clearBeforeFrame = 0);
+    //
+    // The |data| and |allDataReceived| parameters should be supplied by callers
+    // who set |destroyAll| to true if they wish to be able to continue using
+    // the ImageSource.  This way implementations which choose to destroy their
+    // decoders in some cases can reconstruct them correctly.
+    void clear(bool destroyAll,
+               size_t clearBeforeFrame = 0,
+               SharedBuffer* data = NULL,
+               bool allDataReceived = false);
 
     bool initialized() const;
 
