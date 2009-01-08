@@ -1,3 +1,17 @@
+2009-01-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6477501> Repro crash loading HTML5 AppCache manifest directly
+
+        The crash happened whenever a cached resource was downloaded, as opposed to used directly.
+
+        No test, as downloading cannot be tested automatically.
+
+        * loader/MainResourceLoader.cpp: (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        Cancel downloads that do not have an associated ResourceHandle, such as downloads from the
+        application cache. Activity window shows "The URL can't be shown", and the frame remains empty.
+
 2009-01-08  Justin McPherson <justin.mcpherson@nokia.com>
 
         Reviewed by Simon Hausmann.

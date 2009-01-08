@@ -209,6 +209,11 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     }
 
     case PolicyDownload:
+        // m_handle can be null, e.g. when loading a substitute resource from application cache.
+        if (!m_handle) {
+            receivedError(cannotShowURLError());
+            return;
+        }
         frameLoader()->client()->download(m_handle.get(), request(), m_handle.get()->request(), r);
         // It might have gone missing
         if (frameLoader())
