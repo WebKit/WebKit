@@ -2,6 +2,28 @@
 
         Reviewed by Eric Seidel.
 
+        Add svg/graphics/skia files.
+        https://bugs.webkit.org/show_bug.cgi?id=23147
+
+        * svg/graphics/skia/RenderPathSkia.cpp: Added.
+        (WebCore::RenderPath::strokeContains):
+        * svg/graphics/skia/SVGPaintServerPatternSkia.cpp: Added.
+        (WebCore::SVGPaintServerPattern::setup):
+        * svg/graphics/skia/SVGPaintServerSkia.cpp: Added.
+        (WebCore::SVGPaintServer::draw):
+        (WebCore::SVGPaintServer::teardown):
+        (WebCore::SVGPaintServer::renderPath):
+        * svg/graphics/skia/SVGResourceFilterSkia.cpp: Added.
+        (WebCore::SVGResourceFilter::createPlatformData):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        * svg/graphics/skia/SVGResourceMaskerSkia.cpp: Added.
+        (WebCore::SVGResourceMasker::applyMask):
+
+2009-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Add SkiaFontWin to platform/graphics/chromium
         https://bugs.webkit.org/show_bug.cgi?id=23215
 
