@@ -1,3 +1,12 @@
+2009-01-08  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/6474244> REGRESSION(39561-39603): Heap corruption when saving passwords?
+        
+        Reviewed by Adam Roben.
+
+        * WebView.cpp:
+        (WebViewWndProc): Hold a ref to the WebView inside the WNDPROC, since it could go away in an event handler.
+
 2009-01-07  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Fix a crash with querying a WebView for its global history item when

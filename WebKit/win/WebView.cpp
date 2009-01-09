@@ -1682,7 +1682,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 {
     LRESULT lResult = 0;
     LONG_PTR longPtr = GetWindowLongPtr(hWnd, 0);
-    WebView* webView = reinterpret_cast<WebView*>(longPtr);
+    COMPtr<WebView> webView = reinterpret_cast<WebView*>(longPtr); // hold a ref, since the WebView could go away in an event handler.
     WebFrame* mainFrameImpl = webView ? webView->topLevelFrame() : 0;
     if (!mainFrameImpl || webView->isBeingDestroyed())
         return DefWindowProc(hWnd, message, wParam, lParam);
@@ -1778,7 +1778,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             COMPtr<IWebUIDelegatePrivate> uiDelegatePrivate;
             if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
-                uiDelegatePrivate->webViewReceivedFocus(webView);
+                uiDelegatePrivate->webViewReceivedFocus(webView.get());
 
             FocusController* focusController = webView->page()->focusController();
             if (Frame* frame = focusController->focusedFrame()) {
@@ -1796,7 +1796,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             HWND newFocusWnd = reinterpret_cast<HWND>(wParam);
             if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
-                uiDelegatePrivate->webViewLostFocus(webView, (OLE_HANDLE)(ULONG64)newFocusWnd);
+                uiDelegatePrivate->webViewLostFocus(webView.get(), (OLE_HANDLE)(ULONG64)newFocusWnd);
 
             FocusController* focusController = webView->page()->focusController();
             Frame* frame = focusController->focusedOrMainFrame();
@@ -1872,7 +1872,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             }
             if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate &&
-                SUCCEEDED(uiDelegatePrivate->webViewGetDlgCode(webView, keyCode, &dlgCode)))
+                SUCCEEDED(uiDelegatePrivate->webViewGetDlgCode(webView.get(), keyCode, &dlgCode)))
                 return dlgCode;
             handled = false;
             break;
