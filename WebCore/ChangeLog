@@ -1,3 +1,23 @@
+2009-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add SkiaFontWin to platform/graphics/chromium
+        https://bugs.webkit.org/show_bug.cgi?id=23215
+
+        * platform/graphics/skia/SkiaFontWin.cpp: Added.
+        (WebCore::CachedOutlineKey::CachedOutlineKey):
+        (WebCore::operator==):
+        (WebCore::CachedOutlineKeyHash::hash):
+        (WebCore::CachedOutlineKeyHash::equal):
+        (WebCore::FIXEDToSkScalar):
+        (WebCore::deleteOutline):
+        (WebCore::addPolyCurveToPath):
+        (WebCore::getPathForGlyph):
+        (WebCore::SkiaWinOutlineCache::lookupOrCreatePathForGlyph):
+        (WebCore::SkiaWinOutlineCache::removePathsForFont):
+        * platform/graphics/skia/SkiaFontWin.h: Added.
+
 2009-01-09  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
