@@ -2,6 +2,16 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        Fix linking against QtWebKit on Windows, by defining the EXPORT macros
+        _exactly_ the same way as in qglobal.h, depending on QT_NODLL,
+        QT_MAKEDLL and QT_SHARED.
+
+        * Api/qwebkitglobal.h:
+
+2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
         Remove qwebnetworkinterface.h from WEBKIT_API_HEADERS as it's not
         public Qt 4.4/4.5 API.
 
