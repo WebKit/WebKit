@@ -1,3 +1,13 @@
+2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Swap the .h and the .cpp output in the Qt build for the
+        UserAgentStyleSheetData files, to put the definition in the .cpp file
+        and the declaration in the header file.
+
+        * WebCore.pro:
+
 2009-01-09  David Levin  <levin@chromium.org>
 
         Reviewed by Oliver Hunt.
