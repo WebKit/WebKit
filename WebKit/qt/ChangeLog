@@ -1,5 +1,13 @@
 2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed Qt build fix, remove qcookiejar.h from the API headers and
+        therefore HEADERS. It's not part of the API and it moc shouldn't be
+        called on it.
+
+        * Api/headers.pri:
+
+2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Rubber-stamped by Tor Arne Vestbø.
 
         Remove files not present anymore from the WEBKIT_API_HEADERS variable.

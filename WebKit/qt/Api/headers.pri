@@ -1,5 +1,4 @@
-WEBKIT_API_HEADERS = $$PWD/qcookiejar.h \
-                     $$PWD/qwebframe.h \
+WEBKIT_API_HEADERS = $$PWD/qwebframe.h \
                      $$PWD/qwebkitglobal.h \
                      $$PWD/qwebnetworkinterface.h \
                      $$PWD/qwebpage.h \
