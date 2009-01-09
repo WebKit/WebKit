@@ -1,3 +1,29 @@
+2009-01-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fixed <rdar://problem/6234347> Add/change conditional key
+          bindings for changing paragraph- and character-level writing
+          direction (to match NSTextView)
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]): Added
+        code to validate makeBaseWritingDirectionLeftToRight: and
+        makeBaseWritingDirectionRightToLeft:.
+        (writingDirectionKeyBindingsEnabled): Changed this function to
+        always return YES, except on Tiger and Leopard.
+        (-[WebHTMLView makeBaseWritingDirectionLeftToRight:]): Renamed
+        changeBaseWritingDirectionToLTR: to this.
+        (-[WebHTMLView makeBaseWritingDirectionRightToLeft:]): Renamed
+        changeBaseWritingDirectionToRTL: to this.
+        (-[WebHTMLView changeBaseWritingDirectionToLTR:]): Now calls
+        makeBaseWritingDirectionLeftToRight:.
+        (-[WebHTMLView changeBaseWritingDirectionToRTL:]): Now calls
+        makeBaseWritingDirectionRightToLeft:.
+        * WebView/WebView.mm: Added makeBaseWritingDirectionLeftToRight
+        and makeBaseWritingDirectionRightToLeft to
+        FOR_EACH_RESPONDER_SELECTOR.
+
 2009-01-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

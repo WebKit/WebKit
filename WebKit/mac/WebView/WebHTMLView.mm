@@ -2403,10 +2403,20 @@ WEBCORE_COMMAND(yankAndSelect)
         return [self _canEdit];
     }
     
-    if (action == @selector(changeBaseWritingDirection:)) {
-        NSWritingDirection writingDirection = static_cast<NSWritingDirection>([item tag]);
-        if (writingDirection == NSWritingDirectionNatural)
-            return NO;
+    if (action == @selector(changeBaseWritingDirection:)
+            || action == @selector(makeBaseWritingDirectionLeftToRight:)
+            || action == @selector(makeBaseWritingDirectionRightToLeft:)) {
+        NSWritingDirection writingDirection;
+
+        if (action == @selector(changeBaseWritingDirection:)) {
+            writingDirection = static_cast<NSWritingDirection>([item tag]);
+            if (writingDirection == NSWritingDirectionNatural)
+                return NO;
+        } else if (action == @selector(makeBaseWritingDirectionLeftToRight:))
+            writingDirection = NSWritingDirectionLeftToRight;
+        else
+            writingDirection = NSWritingDirectionRightToLeft;
+
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             RefPtr<CSSStyleDeclaration> style = CSSMutableStyleDeclaration::create();
@@ -4395,8 +4405,12 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 static BOOL writingDirectionKeyBindingsEnabled()
 {
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    return YES;
+#else
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     return [defaults boolForKey:@"NSAllowsBaseWritingDirectionKeyBindings"] || [defaults boolForKey:@"AppleTextDirection"];
+#endif
 }
 
 - (void)_changeBaseWritingDirectionTo:(NSWritingDirection)direction
@@ -4415,19 +4429,31 @@ static BOOL writingDirectionKeyBindingsEnabled()
         coreFrame->editor()->setBaseWritingDirection(direction == NSWritingDirectionLeftToRight ? LeftToRightWritingDirection : RightToLeftWritingDirection);
 }
 
-- (void)changeBaseWritingDirectionToLTR:(id)sender
+- (void)makeBaseWritingDirectionLeftToRight:(id)sender
 {
     COMMAND_PROLOGUE
 
     [self _changeBaseWritingDirectionTo:NSWritingDirectionLeftToRight];
 }
 
-- (void)changeBaseWritingDirectionToRTL:(id)sender
+- (void)makeBaseWritingDirectionRightToLeft:(id)sender
 {
     COMMAND_PROLOGUE
 
     [self _changeBaseWritingDirectionTo:NSWritingDirectionRightToLeft];
 }
+
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+- (void)changeBaseWritingDirectionToLTR:(id)sender
+{
+    [self makeBaseWritingDirectionLeftToRight:sender];
+}
+
+- (void)changeBaseWritingDirectionToRTL:(id)sender
+{
+    [self makeBaseWritingDirectionRightToLeft:sender];
+}
+#endif
 
 #if 0
 

@@ -198,6 +198,8 @@ macro(insertParagraphSeparator) \
 macro(insertTab) \
 macro(insertTabIgnoringFieldEditor) \
 macro(lowercaseWord) \
+macro(makeBaseWritingDirectionLeftToRight) \
+macro(makeBaseWritingDirectionRightToLeft) \
 macro(makeTextWritingDirectionLeftToRight) \
 macro(makeTextWritingDirectionNatural) \
 macro(makeTextWritingDirectionRightToLeft) \
