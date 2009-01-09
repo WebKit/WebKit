@@ -24,56 +24,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceResponse_h
-#define ResourceResponse_h
+#ifndef ResourceError_h
+#define ResourceError_h
 
-#include "CString.h"
-#include "NotImplemented.h"
-#include "ResourceResponseBase.h"
+#include "ResourceErrorBase.h"
 
 namespace WebCore {
 
-    class ResourceResponse : public ResourceResponseBase {
+    class ResourceError : public ResourceErrorBase {
     public:
-        ResourceResponse()
-            : m_isContentFiltered(false)
+        ResourceError()
         {
         }
 
-        ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
-            : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename),
-              m_isContentFiltered(false)
+        ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription)
+            : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
         {
-        }
-
-        const CString& getSecurityInfo() const { return m_securityInfo; }
-        void setSecurityInfo(const CString& securityInfo)
-        {
-            m_securityInfo = securityInfo;
-        }
-
-        bool isContentFiltered() const { return m_isContentFiltered; }
-        void setIsContentFiltered(bool isContentFiltered)
-        {
-            m_isContentFiltered = isContentFiltered;
         }
 
     private:
-        friend class ResourceResponseBase;
-
-        // An opaque value that contains some information regarding the security of
-        // the connection for this request, such as SSL connection info (empty
-        // string if not over HTTPS).
-        CString m_securityInfo;
-
-        void doUpdateResourceResponse()
-        {
-            notImplemented();
-        }
-
-        // Whether the contents for this response has been altered/blocked (usually
-        // for security reasons.
-        bool m_isContentFiltered;
+        friend class ResourceErrorBase;
     };
 
 } // namespace WebCore

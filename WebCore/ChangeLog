@@ -1,3 +1,48 @@
+2009-01-09  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23214
+        Upstream platform/network/chromium/
+
+        * platform/network/chromium/AuthenticationChallenge.h: Added.
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::sourceHandle):
+        * platform/network/chromium/AuthenticationChallengeChromium.cpp: Added.
+        (WebCore::AuthenticationChallenge::platformCompare):
+        * platform/network/chromium/CookieJarChromium.cpp: Added.
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+        * platform/network/chromium/DNSChromium.cpp: Added.
+        (WebCore::prefetchDNS):
+        * platform/network/chromium/NetworkStateNotifierChromium.cpp: Added.
+        (WebCore::NetworkStateNotifier::updateState):
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        * platform/network/chromium/NetworkStateNotifierPrivate.h: Added.
+        * platform/network/chromium/ResourceError.h: Added.
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/chromium/ResourceRequest.h: Added.
+        (WebCore::ResourceRequest::):
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::frame):
+        (WebCore::ResourceRequest::setFrame):
+        (WebCore::ResourceRequest::setTargetType):
+        (WebCore::ResourceRequest::targetType):
+        (WebCore::ResourceRequest::originPid):
+        (WebCore::ResourceRequest::setOriginPid):
+        (WebCore::ResourceRequest::securityInfo):
+        (WebCore::ResourceRequest::setSecurityInfo):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        * platform/network/chromium/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::getSecurityInfo):
+        (WebCore::ResourceResponse::setSecurityInfo):
+        (WebCore::ResourceResponse::isContentFiltered):
+        (WebCore::ResourceResponse::setIsContentFiltered):
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+
 2009-01-09  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.
