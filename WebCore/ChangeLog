@@ -8,6 +8,58 @@
 
         Reviewed by Eric Seidel.
 
+        Add PlatformContextSkia and PlatformGraphics.h to platform/graphics/skia
+        https://bugs.webkit.org/show_bug.cgi?id=23215
+
+        * platform/graphics/skia/PlatformContextSkia.cpp: Added.
+        (PlatformContextSkia::State::State):
+        (PlatformContextSkia::State::~State):
+        (PlatformContextSkia::State::applyAlpha):
+        (PlatformContextSkia::PlatformContextSkia):
+        (PlatformContextSkia::~PlatformContextSkia):
+        (PlatformContextSkia::setCanvas):
+        (PlatformContextSkia::save):
+        (PlatformContextSkia::restore):
+        (PlatformContextSkia::drawRect):
+        (PlatformContextSkia::setupPaintCommon):
+        (PlatformContextSkia::setupPaintForFilling):
+        (PlatformContextSkia::setupPaintForStroking):
+        (PlatformContextSkia::setDrawLooper):
+        (PlatformContextSkia::setMiterLimit):
+        (PlatformContextSkia::setAlpha):
+        (PlatformContextSkia::setLineCap):
+        (PlatformContextSkia::setLineJoin):
+        (PlatformContextSkia::setPorterDuffMode):
+        (PlatformContextSkia::setFillColor):
+        (PlatformContextSkia::getDrawLooper):
+        (PlatformContextSkia::getStrokeStyle):
+        (PlatformContextSkia::setStrokeStyle):
+        (PlatformContextSkia::setStrokeColor):
+        (PlatformContextSkia::getStrokeThickness):
+        (PlatformContextSkia::setStrokeThickness):
+        (PlatformContextSkia::getTextDrawingMode):
+        (PlatformContextSkia::setTextDrawingMode):
+        (PlatformContextSkia::setUseAntialiasing):
+        (PlatformContextSkia::fillColor):
+        (PlatformContextSkia::beginPath):
+        (PlatformContextSkia::addPath):
+        (PlatformContextSkia::setFillRule):
+        (PlatformContextSkia::setGradient):
+        (PlatformContextSkia::setPattern):
+        (PlatformContextSkia::setDashPathEffect):
+        (PlatformContextSkia::paintSkPaint):
+        (PlatformContextSkia::bitmap):
+        (PlatformContextSkia::isPrinting):
+        * platform/graphics/skia/PlatformContextSkia.h: Added.
+        (PlatformContextSkia::currentPath):
+        (PlatformContextSkia::canvas):
+        (PlatformContextSkia::gdk_skia):
+        * platform/graphics/skia/PlatformGraphics.h: Added.
+
+2009-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Add TransformationMatrixSkia to platform/graphics/skia
         https://bugs.webkit.org/show_bug.cgi?id=23215
 
