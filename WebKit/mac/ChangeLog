@@ -1,3 +1,13 @@
+2009-01-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add and implement WKPCGetStringIdentifier.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCGetStringIdentifier):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+
 2009-01-08  Stephanie Lewis  <slewis@gmail.com>
 
         Fix Tiger build.        

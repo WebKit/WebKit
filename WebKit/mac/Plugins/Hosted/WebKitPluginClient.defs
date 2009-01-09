@@ -57,6 +57,11 @@ simpleroutine InvalidateRect(clientPort :mach_port_t;
                              height :double);
 
 // NPRuntime
+
+routine GetStringIdentifier(clientPort :mach_port_t;
+                            name :data_t;
+                            out identifier: uint64_t);
+
 routine GetWindowNPObject(clientPort :mach_port_t;
                           pluginID :uint32_t;
                           out objectID :uint32_t);
@@ -73,7 +78,7 @@ routine Evaluate(clientPort :mach_port_t;
                  script :data_t;
                  arguments :data_t;
                  out returnValue :boolean_t;
-                 out result :data_t);
+                 out result :data_t, dealloc);
 
 // Replies
 simpleroutine InstantiatePluginReply(clientPort :mach_port_t;

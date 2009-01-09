@@ -38,6 +38,7 @@
 #import "WebKitSystemInterface.h"
 #import <WebCore/Frame.h>
 #import <WebCore/ScriptController.h>
+#import <WebCore/npruntime_impl.h>
 
 extern "C" {
 #import "WebKitPluginHost.h"
@@ -311,6 +312,14 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t o
         memcpy(*resultData, CFDataGetBytePtr(data.get()), *resultLength);
     }
     
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCGetStringIdentifier(mach_port_t clientPort, data_t name, mach_msg_type_number_t nameCnt, uint64_t *identifier)
+{
+    COMPILE_ASSERT(sizeof(*identifier) == sizeof(NPIdentifier), identifier_sizes);
+    
+    *identifier = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(name));
     return KERN_SUCCESS;
 }
 
