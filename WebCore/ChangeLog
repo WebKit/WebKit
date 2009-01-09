@@ -1,3 +1,40 @@
+2009-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add TransformationMatrixSkia to platform/graphics/skia
+        https://bugs.webkit.org/show_bug.cgi?id=23215
+
+        * platform/graphics/skia/TransformationMatrixSkia.cpp: Added.
+        (WebCore::TransformationMatrix::TransformationMatrix):
+        (WebCore::TransformationMatrix::setMatrix):
+        (WebCore::TransformationMatrix::map):
+        (WebCore::TransformationMatrix::mapRect):
+        (WebCore::TransformationMatrix::isIdentity):
+        (WebCore::TransformationMatrix::reset):
+        (WebCore::TransformationMatrix::scale):
+        (WebCore::TransformationMatrix::rotate):
+        (WebCore::TransformationMatrix::translate):
+        (WebCore::TransformationMatrix::shear):
+        (WebCore::TransformationMatrix::det):
+        (WebCore::TransformationMatrix::inverse):
+        (WebCore::TransformationMatrix::operator SkMatrix):
+        (WebCore::TransformationMatrix::operator==):
+        (WebCore::TransformationMatrix::operator*=):
+        (WebCore::TransformationMatrix::operator*):
+        (WebCore::TransformationMatrix::a):
+        (WebCore::TransformationMatrix::setA):
+        (WebCore::TransformationMatrix::b):
+        (WebCore::TransformationMatrix::setB):
+        (WebCore::TransformationMatrix::c):
+        (WebCore::TransformationMatrix::setC):
+        (WebCore::TransformationMatrix::d):
+        (WebCore::TransformationMatrix::setD):
+        (WebCore::TransformationMatrix::e):
+        (WebCore::TransformationMatrix::setE):
+        (WebCore::TransformationMatrix::f):
+        (WebCore::TransformationMatrix::setF):
+
 2009-01-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
