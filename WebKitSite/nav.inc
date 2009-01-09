@@ -5,7 +5,7 @@
         <li><a href="http://planet.webkit.org/">Planet WebKit</a></li>
         <li><a href="/projects/goals.html">Project Goals</a></li>
         <li><a href="/contact.html">Keeping in Touch</a></li>
-        <li><a href="http://trac.webkit.org/projects/webkit">Trac</a></li>
+        <li><a href="http://trac.webkit.org/">Trac</a></li>
 
         <li class="subtitle">Working with the Code</li>
 

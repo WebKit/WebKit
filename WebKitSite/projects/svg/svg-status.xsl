@@ -62,7 +62,7 @@
   
   <xsl:template match="bug">
     <xsl:variable name="number" select="text()"/>
-    <a href="http://bugs.webkit.org/show_bug.cgi?id={$number}">
+    <a href="https://bugs.webkit.org/show_bug.cgi?id={$number}">
     <xsl:value-of select="$number"/>
     </a>
   </xsl:template>
