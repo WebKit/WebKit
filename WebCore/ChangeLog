@@ -1,3 +1,9 @@
+2009-01-09  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+        
+        * WebCore.LP64.exp:
+
 2009-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

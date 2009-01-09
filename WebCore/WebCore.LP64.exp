@@ -1,3 +1,4 @@
 # This file gets appended to WebCore.exp, only for 64-bit architectures.
 
+__ZN7WebCore6String8fromUTF8EPKcm
 __ZN7WebCore16ScriptController9isEnabledEv
