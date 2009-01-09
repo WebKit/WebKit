@@ -32,7 +32,6 @@
 #include "ArgList.h"
 #include "Collector.h"
 #include "CommonIdentifiers.h"
-#include "InitializeThreading.h"
 #include "Interpreter.h"
 #include "JSActivation.h"
 #include "JSClassRef.h"
@@ -143,7 +142,6 @@ JSGlobalData::~JSGlobalData()
 
 PassRefPtr<JSGlobalData> JSGlobalData::create()
 {
-    initializeThreading();
     return adoptRef(new JSGlobalData);
 }
 
