@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,11 +45,15 @@ typedef const struct _CFURLRequest* CFURLRequestRef;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
+void wkSetFontSmoothingContrast(CGFloat);
+CGFloat wkGetFontSmoothingContrast();
 uint32_t wkSetFontSmoothingStyle(CGContextRef cg, bool fontAllowsSmoothing);
 void wkRestoreFontSmoothingStyle(CGContextRef cg, uint32_t oldStyle);
-void wkSetCGContextFontRenderingStyle(CGContextRef, bool isSystemFont, bool isPrinterFont);
+bool wkCanUsePlatformNativeGlyphs();
+void wkSetCGContextFontRenderingStyle(CGContextRef, bool isSystemFont, bool isPrinterFont, bool usePlatformNativeGlyphs);
 void wkGetGlyphAdvances(CGFontRef, const CGAffineTransform&, bool isSystemFont, bool isPrinterFont, CGGlyph, CGSize& advance);
 void wkGetGlyphs(CGFontRef, const UChar[], CGGlyph[], size_t count);
+void wkSetFontPlatformInfo(CGFontRef, LOGFONT*, void(*)(void*));
 void wkSetUpFontCache(size_t s);
 void wkAddFontsInDirectory(CFStringRef);
 void wkAddFontsAtPath(CFStringRef);

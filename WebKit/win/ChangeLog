@@ -1,3 +1,24 @@
+2009-01-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - WebPreferences changes to support Core Graphics native glyph drawing
+
+        * Interfaces/IWebPreferencesPrivate.idl: Added font smoothing contrast
+        getter and setter.
+        * WebPreferenceKeysPrivate.h: Added
+        WebKitFontSmoothingContrastPreferenceKey.
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Initialized
+        WebKitFontSmoothingContrastPreferenceKey to 2.
+        (WebPreferences::setFloatValue): Added.
+        (WebPreferences::setFontSmoothing): Changed to map
+        FontSmoothingTypeWindows to FontSmoothingTypeMedium.
+        (WebPreferences::fontSmoothingContrast): Added.
+        (WebPreferences::setFontSmoothingContrast): Added. Calls
+        wkSetFontSmoothingContrast().
+        * WebPreferences.h:
+
 2009-01-08  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/6474244> REGRESSION(39561-39603): Heap corruption when saving passwords?

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -294,12 +294,15 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
 void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, 
                       int from, int numGlyphs, const FloatPoint& point) const
 {
-    if (font->m_font.useGDI()) {
-        drawGDIGlyphs(graphicsContext, font, glyphBuffer, from, numGlyphs, point);
-        return;
-    }
-
     CGContextRef cgContext = graphicsContext->platformContext();
+
+    if (font->platformData().useGDI()) {
+        static bool canUsePlatformNativeGlyphs = wkCanUsePlatformNativeGlyphs();
+        if (!canUsePlatformNativeGlyphs || (graphicsContext->textDrawingMode() & cTextStroke)) {
+            drawGDIGlyphs(graphicsContext, font, glyphBuffer, from, numGlyphs, point);
+            return;
+        }
+    }
 
     uint32_t oldFontSmoothingStyle = wkSetFontSmoothingStyle(cgContext, WebCoreShouldUseFontSmoothing());
 
@@ -322,7 +325,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     FloatSize translation = glyphBuffer.offsetAt(from);
 
     CGContextSetFontSize(cgContext, platformData.size());
-    wkSetCGContextFontRenderingStyle(cgContext, font->isSystemFont(), false);
+    wkSetCGContextFontRenderingStyle(cgContext, font->isSystemFont(), false, font->platformData().useGDI());
 
     IntSize shadowSize;
     int shadowBlur;

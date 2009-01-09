@@ -2,7 +2,7 @@
  * This file is part of the internal font implementation.  It should not be included by anyone other than
  * FontMac.cpp, FontWin.cpp and Font.cpp.
  *
- * Copyright (C) 2006, 2007, 2008 Apple Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 #include "PlatformString.h"
 #include "StringHash.h"
 #include <ApplicationServices/ApplicationServices.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -118,6 +119,11 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
             m_cgFont.adoptCF(CGFontCreateWithFontName(postScriptName));
             ASSERT(m_cgFont);
         }
+    }
+    if (m_useGDI && wkCanUsePlatformNativeGlyphs()) {
+        LOGFONT* logfont = static_cast<LOGFONT*>(malloc(sizeof(LOGFONT)));
+        GetObject(font, sizeof(*logfont), logfont);
+        wkSetFontPlatformInfo(m_cgFont.get(), logfont, free);
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 #include "SharedBuffer.h"
 #include "SoftLinking.h"
 #include <ApplicationServices/ApplicationServices.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/RetainPtr.h>
 
 // From t2embapi.h, which is missing from the Microsoft Platform SDK.
@@ -64,7 +65,10 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     ASSERT(m_fontReference);
     ASSERT(T2embedLibrary());
 
-    LOGFONT logFont;
+    static bool canUsePlatformNativeGlyphs = wkCanUsePlatformNativeGlyphs();
+    LOGFONT _logFont;
+
+    LOGFONT& logFont = canUsePlatformNativeGlyphs ? *static_cast<LOGFONT*>(malloc(sizeof(LOGFONT))) : _logFont;
     if (m_name.isNull())
         TTGetNewFontName(&m_fontReference, logFont.lfFaceName, LF_FACESIZE, 0, 0);
     else
@@ -86,6 +90,8 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     logFont.lfWeight = bold ? 700 : 400;
 
     HFONT hfont = CreateFontIndirect(&logFont);
+    if (canUsePlatformNativeGlyphs)
+        wkSetFontPlatformInfo(m_cgFont, &logFont, free);
     return FontPlatformData(hfont, m_cgFont, size, bold, italic, renderingMode == AlternateRenderingMode);
 }
 

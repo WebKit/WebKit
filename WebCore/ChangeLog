@@ -1,3 +1,20 @@
+2009-01-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - use native glyph support in Core Graphics when available
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs): Changed to use drawGDIGlyphs() only if
+        native glyph support is not available or stroking is required. Changed
+        to pass the font's useGDI() flag to wkSetCGContextFontRenderingStyle to
+        request the use of native glyphs.
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Added a call to
+        wkSetFontPlatformInfo to attach the LOGFONT to the CGFont.
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::platformDataInit): Ditto.
+
 2009-01-08  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Sam Weinig.

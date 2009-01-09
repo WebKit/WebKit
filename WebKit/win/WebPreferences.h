@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -338,6 +338,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE zoomsTextOnly( 
     /* [retval][out] */ BOOL *zoomsTextOnly);
 
+    virtual HRESULT STDMETHODCALLTYPE fontSmoothingContrast( 
+    /* [retval][out] */ float* contrast);
+    
+    virtual HRESULT STDMETHODCALLTYPE setFontSmoothingContrast( 
+    /* [in] */ float contrast);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.
@@ -373,6 +379,7 @@ protected:
     void setStringValue(CFStringRef key, LPCTSTR value);
     void setIntegerValue(CFStringRef key, int value);
     void setBoolValue(CFStringRef key, BOOL value);
+    void setFloatValue(CFStringRef key, float value);
     void setLongLongValue(CFStringRef key, LONGLONG value);
     static WebPreferences* getInstanceForIdentifier(BSTR identifier);
     static void initializeDefaultSettings();
