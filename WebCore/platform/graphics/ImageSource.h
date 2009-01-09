@@ -130,7 +130,9 @@ public:
     bool frameHasAlphaAtIndex(size_t); // Whether or not the frame actually used any alpha.
     bool frameIsCompleteAtIndex(size_t); // Whether or not the frame is completely decoded.
 
-private:
+    // FIXME: This is protected only to allow ImageSourceSkia to set ICO decoder
+    // with a preferred size. See ImageSourceSkia.h for discussion.
+protected:
     NativeImageSourcePtr m_decoder;
 };
 

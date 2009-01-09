@@ -2,6 +2,39 @@
 
         Reviewed by Eric Seidel.
 
+        Add ImageSourceSkia to platform/graphics/skia
+        https://bugs.webkit.org/show_bug.cgi?id=23200
+        
+        ImageSourceSkia is mostly a hack to support our
+        ICO decoder model.  See ImageSourceSkia.h for more
+        explanation.  Eventually we'd like to make our ICO
+        decoder lazy.
+
+        * platform/graphics/ImageSource.h: mark m_decoder as protected
+        * platform/graphics/skia/ImageSourceSkia.cpp: Added.
+        (WebCore::createDecoder):
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::clear):
+        (WebCore::ImageSource::initialized):
+        (WebCore::ImageSource::setData):
+        (WebCore::ImageSource::isSizeAvailable):
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::frameCount):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        (WebCore::ImageSourceSkia::setData):
+        (WebCore::ImageSource::filenameExtension):
+        * platform/graphics/skia/ImageSourceSkia.h: Added.
+
+2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Add NativeImageSkia (PlatformImagePtr) to platform/graphics/skia
         https://bugs.webkit.org/show_bug.cgi?id=23200
 
