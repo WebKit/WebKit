@@ -1,3 +1,13 @@
+2009-01-08  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22929
+        Fix memory regression when decoding large animated GIFs.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::clear):
+
 2009-01-08  Scott Violet  <sky@chromium.org>
 
         Reviewed by Eric Seidel (and Adam Barth).

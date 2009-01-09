@@ -50,15 +50,9 @@ ImageSource::~ImageSource()
 
 void ImageSource::clear(bool destroyAll, size_t, SharedBuffer* data, bool allDataReceived)
 {
-    if (!destroyAll) {
-        // TODO(pkasting): If there was an appropriate API to do so, we could
-        // explicitly tell the CG decoder it can discard frames before
-        // |clearBeforeFrame| (not including anything it needs to keep around
-        // locally to continue decoding correctly).  This might help the decoder
-        // optimize memory/CPU usage.
-        return;
-    }
-
+    // We always destroy the decoder, because there is no API to get it to
+    // selectively release some of the frames it's holding, and if we don't
+    // release any of them, we use too much memory on large images.
     if (m_decoder) {
         CFRelease(m_decoder);
         m_decoder = 0;
