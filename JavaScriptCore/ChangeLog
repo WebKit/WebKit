@@ -1,3 +1,7 @@
+2009-01-09  Sam Weinig  <sam@webkit.org>
+
+        Roll r39720 back in with a working interpreted mode.
+
 2009-01-09  David Levin  <levin@chromium.org>
 
         Reviewed by Oliver Hunt.

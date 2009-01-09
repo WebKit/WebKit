@@ -329,7 +329,11 @@ namespace JSC {
 
         CodeType codeType() const { return m_codeType; }
 
-        void setRegeneratingForExceptionInfo() { m_regeneratingForExceptionInfo = true; }
+        void setRegeneratingForExceptionInfo(CodeBlock* originalCodeBlock)
+        {
+            m_regeneratingForExceptionInfo = true;
+            m_codeBlockBeingRegeneratedFrom = originalCodeBlock;
+        }
 
     private:
         void emitOpcode(OpcodeID);
@@ -422,8 +426,6 @@ namespace JSC {
         bool m_shouldEmitDebugHooks;
         bool m_shouldEmitProfileHooks;
 
-        bool m_regeneratingForExceptionInfo;
-
         const ScopeChain* m_scopeChain;
         SymbolTable* m_symbolTable;
 
@@ -465,11 +467,10 @@ namespace JSC {
 
         OpcodeID m_lastOpcodeID;
 
-#ifndef NDEBUG
-        static bool s_dumpsGeneratedCode;
-#endif
-
         unsigned m_emitNodeDepth;
+
+        bool m_regeneratingForExceptionInfo;
+        CodeBlock* m_codeBlockBeingRegeneratedFrom;
 
         static const unsigned s_maxEmitNodeDepth = 10000;
     };
