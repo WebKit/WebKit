@@ -1,3 +1,11 @@
+2009-01-08  Gavin Barraclough  <barraclough@apple.com>
+
+        RS by Oliver Hunt.
+
+        Looks like this should have been updated with r39699.
+
+        * fast/js/global-constructors-expected.txt:
+
 2009-01-08  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Dan Bernstein.
