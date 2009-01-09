@@ -1343,10 +1343,10 @@ ResourceError WebFrame::blockedError(const ResourceRequest& request)
     return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotUseRestrictedPort, request.url().string(), String());
 }
 
-ResourceError WebFrame::cannotShowURLError(const ResourceRequest&)
+ResourceError WebFrame::cannotShowURLError(const ResourceRequest& request)
 {
-    notImplemented();
-    return ResourceError();
+    // FIXME: Need to implement the String descriptions for errors in the WebKitErrorDomain and have them localized
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotShowURL, request.url().string(), String());
 }
 
 ResourceError WebFrame::interruptForPolicyChangeError(const ResourceRequest& request)
