@@ -1,3 +1,15 @@
+2009-01-09  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Prevent qmake from generating duplicate rules for embedded stylesheets
+        
+        The STYLESHEETS_EMBED variable used to contain only one file name, but
+        now that it is a list of files we need to change it to be a dependency
+        for the stylesheet generator instead of the input.
+
+        * WebCore.pro:
+
 2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

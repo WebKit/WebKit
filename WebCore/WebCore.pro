@@ -1980,8 +1980,10 @@ addExtraCompiler(colordata)
 
 # GENERATOR 9:
 stylesheets.output = $$GENERATED_SOURCES_DIR/UserAgentStyleSheetsData.cpp
-stylesheets.commands = perl $$PWD/css/make-css-file-arrays.pl --preprocessor \"$${QMAKE_MOC} -E\" $$GENERATED_SOURCES_DIR/UserAgentStyleSheets.h $$GENERATED_SOURCES_DIR/UserAgentStyleSheetsData.cpp $$PWD/css/html4.css $$PWD/css/quirks.css $$PWD/css/svg.css $$PWD/css/view-source.css $$PWD/css/wml.css $$PWD/css/mediaControls.css
-stylesheets.input = STYLESHEETS_EMBED
+stylesheets.commands = perl $$PWD/css/make-css-file-arrays.pl --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}UserAgentStyleSheets.h $$STYLESHEETS_EMBED
+STYLESHEETS_EMBED_GENERATOR_SCRIPT = $$PWD/css/make-css-file-arrays.pl
+stylesheets.input = STYLESHEETS_EMBED_GENERATOR_SCRIPT
+stylesheets.depends = $$STYLESHEETS_EMBED
 stylesheets.CONFIG = target_predeps
 stylesheets.variable_out = GENERATED_SOURCES
 stylesheets.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}UserAgentStyleSheets.h
