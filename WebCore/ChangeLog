@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        Add NativeImageSkia (PlatformImagePtr) to platform/graphics/skia
+        https://bugs.webkit.org/show_bug.cgi?id=23200
+
+        * platform/graphics/skia/NativeImageSkia.cpp: Added.
+        (NativeImageSkia::NativeImageSkia):
+        (NativeImageSkia::decodedSize):
+        (NativeImageSkia::hasResizedBitmap):
+        (NativeImageSkia::resizedBitmap):
+        (NativeImageSkia::shouldCacheResampling):
+        * platform/graphics/skia/NativeImageSkia.h: Added.
+        (NativeImageSkia::setDataComplete):
+        (NativeImageSkia::isDataComplete):
+
+2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Add ImageBufferSkia and ImageSkia files.
         https://bugs.webkit.org/show_bug.cgi?id=23200
         For now we've left BitmapImage and BitmapImageSingleFrameSkia
