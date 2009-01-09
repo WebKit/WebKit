@@ -1,3 +1,69 @@
+2009-01-09  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=23092
+        Separate CFNetwork-specific code in WebKit.dll into separate
+        implementation files. Create cURL stub files to be populated
+        with new implementation in a future bug report. 
+
+        * WebCookieManager.cpp: Move CFNetwork-specific routines to
+          the new WebCookieManagerCFNet.cpp file.
+        (WebCookieManager::Release):
+        * WebCookieManagerCFNet.cpp: Copied from WebCookieManager.cpp.
+        (WebCookieManager::cookieStorage):
+        * WebCookieManagerCurl.cpp: Added.
+        (WebCookieManager::cookieStorage):
+        (WebCookieManager::setCookieStorage):
+        * WebCoreSupport/WebFrameLoaderClient.cpp: Conditionalize two
+          methods in this file.
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::savePlatformDataToCachedPage):
+        * WebDownload.cpp: Move CFNetwork-specific logic to the new
+          WebDownloadCFNet.cpp
+        (WebDownload::bundleExtension):
+        (WebDownload::bundleMagicNumber):
+        (WebDownload::bundlePathForTargetPath):
+        (WebDownload::extractResumeDataFromBundle): Made static class method
+          so it could be used in WebDownload.cpp and WebDownloadCFNet.cpp
+        (WebDownload::appendResumeDataToBundle): Made static class method
+          so it could be used in WebDownload.cpp and WebDownloadCFNet.cpp
+        * WebDownload.h:
+        * WebDownloadCFNet.cpp: Copied from WebDownload.cpp.
+        (WebDownload::initToResumeWithBundle):
+        (WebDownload::setDestination):
+        (didFailCallback):
+        * WebDownloadCurl.cpp: Added.
+        (WebDownload::init):
+        (WebDownload::initWithRequest):
+        (WebDownload::initToResumeWithBundle):
+        (WebDownload::start):
+        (WebDownload::cancel):
+        (WebDownload::cancelForResume):
+        (WebDownload::deletesFileUponFailure):
+        (WebDownload::setDeletesFileUponFailure):
+        (WebDownload::setDestination):
+        (WebDownload::cancelAuthenticationChallenge):
+        (WebDownload::continueWithoutCredentialForAuthenticationChallenge):
+        (WebDownload::useCredential):
+        * WebKit.vcproj/WebKit.vcproj: Modify Apple targets to exclude the
+          new cURL files. Modify Cairo targets to exclude CFNet files.
+        * WebMutableURLRequest.cpp: Conditionalize the single method
+          with a CFNetwork-speicic call.
+        (WebMutableURLRequest::mutableCopy):
+        * WebURLAuthenticationChallenge.cpp: Conditionalize one line that
+          causes build problems for cURL. This will be removed later.
+        (WebURLAuthenticationChallenge::initWithProtectionSpace):
+        * WebURLAuthenticationChallengeSender.cpp:
+        * WebURLAuthenticationChallengeSenderCFNet.cpp: Copied from WebURLAuthenticationChallengeSender.cpp.
+        (WebURLAuthenticationChallengeSender::useCredential):
+        * WebURLAuthenticationChallengeSenderCurl.cpp: Added.
+        (WebURLAuthenticationChallengeSender::cancelAuthenticationChallenge):
+        (WebURLAuthenticationChallengeSender::continueWithoutCredentialForAuthenticationChallenge):
+        (WebURLAuthenticationChallengeSender::useCredential):
+        * WebURLResponse.cpp: Exclude WebKitSystemInterface when compiling
+          for the cURL target.
+
 2009-01-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

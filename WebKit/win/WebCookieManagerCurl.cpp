@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008 Brent Fulgham <bfulgham@gmail.com>. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,56 +27,22 @@
 #include "WebKitDLL.h"
 #include "WebCookieManager.h"
 
+#include "NotImplemented.h"
+
 using namespace WebCore;
 
-// WebCookieManager -------------------------------------------------------
+// IWebCookieManager -------------------------------------------------------
 
-WebCookieManager* WebCookieManager::createInstance()
+HRESULT STDMETHODCALLTYPE WebCookieManager::cookieStorage( 
+    /* [retval][out] */ CFHTTPCookieStorageRef* storage)
 {
-    WebCookieManager* manager = new WebCookieManager;
-    manager->AddRef();
-    return manager;    
+   notImplemented();
+   return E_FAIL;
 }
 
-WebCookieManager::WebCookieManager()
-    : m_refCount(0)
+HRESULT STDMETHODCALLTYPE WebCookieManager::setCookieStorage( 
+    /* [in] */ CFHTTPCookieStorageRef storage)
 {
-    gClassCount++;
-    gClassNameCount.add("WebCookieManager");
-}
-
-WebCookieManager::~WebCookieManager()
-{
-    gClassCount--;
-    gClassNameCount.remove("WebCookieManager");
-}
-
-// IUnknown ---------------------------------------------------------------
-
-HRESULT STDMETHODCALLTYPE WebCookieManager::QueryInterface(REFIID riid, void** ppvObject)
-{
-    *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IUnknown))
-        *ppvObject = static_cast<WebCookieManager*>(this);
-    else if (IsEqualGUID(riid, __uuidof(IWebCookieManager)))
-        *ppvObject = static_cast<IWebCookieManager*>(this);
-    else
-        return E_NOINTERFACE;
-
-    AddRef();
-    return S_OK;
-}
-
-ULONG STDMETHODCALLTYPE WebCookieManager::AddRef()
-{
-    return ++m_refCount;
-}
-
-ULONG STDMETHODCALLTYPE WebCookieManager::Release()
-{
-    ULONG newRef = --m_refCount;
-    if (!newRef)
-        delete this;
-
-    return newRef;
+   notImplemented();
+   return E_FAIL;
 }

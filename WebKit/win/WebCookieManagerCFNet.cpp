@@ -27,56 +27,26 @@
 #include "WebKitDLL.h"
 #include "WebCookieManager.h"
 
+#include <CFNetwork/CFHTTPCookiesPriv.h>
+#include <WebCore/CookieStorageWin.h>
+
 using namespace WebCore;
 
-// WebCookieManager -------------------------------------------------------
+// IWebCookieManager -------------------------------------------------------
 
-WebCookieManager* WebCookieManager::createInstance()
+HRESULT STDMETHODCALLTYPE WebCookieManager::cookieStorage( 
+    /* [retval][out] */ CFHTTPCookieStorageRef* storage)
 {
-    WebCookieManager* manager = new WebCookieManager;
-    manager->AddRef();
-    return manager;    
-}
+   if (!storage)
+        return E_POINTER;
 
-WebCookieManager::WebCookieManager()
-    : m_refCount(0)
-{
-    gClassCount++;
-    gClassNameCount.add("WebCookieManager");
-}
-
-WebCookieManager::~WebCookieManager()
-{
-    gClassCount--;
-    gClassNameCount.remove("WebCookieManager");
-}
-
-// IUnknown ---------------------------------------------------------------
-
-HRESULT STDMETHODCALLTYPE WebCookieManager::QueryInterface(REFIID riid, void** ppvObject)
-{
-    *ppvObject = 0;
-    if (IsEqualGUID(riid, IID_IUnknown))
-        *ppvObject = static_cast<WebCookieManager*>(this);
-    else if (IsEqualGUID(riid, __uuidof(IWebCookieManager)))
-        *ppvObject = static_cast<IWebCookieManager*>(this);
-    else
-        return E_NOINTERFACE;
-
-    AddRef();
+    *storage = currentCookieStorage();
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebCookieManager::AddRef()
+HRESULT STDMETHODCALLTYPE WebCookieManager::setCookieStorage( 
+    /* [in] */ CFHTTPCookieStorageRef storage)
 {
-    return ++m_refCount;
-}
-
-ULONG STDMETHODCALLTYPE WebCookieManager::Release()
-{
-    ULONG newRef = --m_refCount;
-    if (!newRef)
-        delete this;
-
-    return newRef;
+    setCurrentCookieStorage(storage);
+    return S_OK;
 }

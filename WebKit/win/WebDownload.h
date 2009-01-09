@@ -104,6 +104,7 @@ public:
         /* [in] */ IWebURLCredential* credential, 
         /* [in] */ IWebURLAuthenticationChallenge* challenge);
 
+#if USE(CFNETWORK)
     // CFURLDownload Callbacks
     void didStart();
     CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef);
@@ -116,13 +117,21 @@ public:
     void didCreateDestination(CFURLRef);
     void didFinish();
     void didFail(CFErrorRef);
+#endif
 
 protected:
+    static CFDataRef extractResumeDataFromBundle(const WebCore::String&);
+    static HRESULT appendResumeDataToBundle(CFDataRef, const WebCore::String&);
+    static const WebCore::String& bundleExtension();
+    static UInt32 bundleMagicNumber();
+
     ULONG m_refCount;
 
     WebCore::String m_destination;
     WebCore::String m_bundlePath;
+#if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;
+#endif
     COMPtr<IWebMutableURLRequest> m_request;
     COMPtr<IWebDownloadDelegate> m_delegate;
 

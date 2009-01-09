@@ -33,7 +33,10 @@
 #include "MarshallingHelpers.h"
 #include "WebLocalizableStrings.h"
 
+#if USE(CFNETWORK)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
+
 #include <wtf/platform.h>
 #pragma warning( push, 0 )
 #include <WebCore/BString.h>
