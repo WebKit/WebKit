@@ -1,3 +1,34 @@
+2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add ImageBufferSkia and ImageSkia files.
+        https://bugs.webkit.org/show_bug.cgi?id=23200
+        For now we've left BitmapImage and BitmapImageSingleFrameSkia
+        implementations in the ImageSkia file (like ImageCG has), but
+        we intend to break them out into their own files.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp: Added.
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::~ImageBuffer):
+        (WebCore::ImageBuffer::context):
+        (WebCore::ImageBuffer::image):
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/skia/ImageSkia.cpp: Added.
+        (WebCore::):
+        (WebCore::FrameData::clear):
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::invalidatePlatformData):
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImageSingleFrameSkia::draw):
+        (WebCore::BitmapImageSingleFrameSkia::create):
+
 2009-01-08  James Robinson  <jamesr@google.com>
 
         Reviewed by Mark Rowe.
