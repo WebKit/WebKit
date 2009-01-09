@@ -1,3 +1,26 @@
+2009-01-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6477502> Repro crash reloading page using HTML5 AppCache on Windows
+
+        Test: http/tests/appcache/reload.html
+
+        On Windows, reloading resulted in the following sequence of events:
+        1) A new main resource loader was created and associated with the cache. Its document loader
+        was not associated with the cache yet.
+        2) The old document loader was destroyed, and since it was the last one, ApplicationCacheGroup
+        teardown started, with newestCache being zeroed out.
+        3) The new document loader was associated with the cache group, and cache update started.
+        4) Since newestCache was null, this caused many problems.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::documentLoaderDestroyed): Improve comments and assertions,
+        no functional changes.
+        (WebCore::ApplicationCacheGroup::associateDocumentLoaderWithCache): Revive the cache group
+        if its newest cache pointer is already saved for teardown. Note that the cache pointer
+        validity is ensured by MainResourceLoader that holds a reference to it.
+
 2009-01-09  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.

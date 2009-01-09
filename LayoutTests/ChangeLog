@@ -10,6 +10,17 @@
 
 2009-01-09  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6477502> Repro crash reloading page using HTML5 AppCache on Windows
+
+        * http/tests/appcache/reload-expected.txt: Added.
+        * http/tests/appcache/reload.html: Added.
+        * http/tests/appcache/resources/reload-iframe.html: Added.
+        * http/tests/appcache/resources/reload-iframe.manifest: Added.
+
+2009-01-09  Alexey Proskuryakov  <ap@webkit.org>
+
         https://bugs.webkit.org/show_bug.cgi?id=23165
 
         * fast/dom/Window/window-properties-expected.txt: Forgot to commit this with r39699, too.

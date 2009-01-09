@@ -274,20 +274,17 @@ void ApplicationCacheGroup::documentLoaderDestroyed(DocumentLoader* loader)
     
     if (!m_associatedDocumentLoaders.isEmpty() || !m_cacheCandidates.isEmpty())
         return;
-    
-    // We should only have the newest cache remaining, or there is an initial cache attempt in progress.
-    ASSERT(m_caches.size() == 1 || m_cacheBeingUpdated);
-        
-    // If a cache update is in progress, stop it.
+
+    // This was the last document loader referencing the cache group, so there is at most one cache remaining in the group.
+    // If there are none, this was an initial cache attempt.
+
     if (m_caches.size() == 1) {
         ASSERT(m_caches.contains(m_newestCache.get()));
-        
-        // Release our reference to the newest cache.
-        m_savedNewestCachePointer = m_newestCache.get();
-        
-        // This could cause us to be deleted.
-        m_newestCache = 0;
-        
+
+        // Release our reference to the newest cache. This could cause us to be deleted.
+        // Any ongoing updates will be stopped from destructor.
+        m_savedNewestCachePointer = m_newestCache.release().get();
+
         return;
     }
     
@@ -307,6 +304,8 @@ void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
     
     if (cache != m_savedNewestCachePointer)
         cacheStorage().remove(cache);
+
+    // FIXME: When the newest cache is destroyed, we'd rather clear m_savedNewestCachePointer to avoid having a hanging reference - but currently, ApplicationCacheStorage checks the value as a flag.
 
     if (m_caches.isEmpty())
         delete this;
@@ -667,8 +666,15 @@ void ApplicationCacheGroup::addEntry(const String& url, unsigned type)
 
 void ApplicationCacheGroup::associateDocumentLoaderWithCache(DocumentLoader* loader, ApplicationCache* cache)
 {
+    // If teardown started already, revive the group.
+    if (m_savedNewestCachePointer) {
+        ASSERT(cache == m_savedNewestCachePointer);
+        m_newestCache = m_savedNewestCachePointer;
+        m_savedNewestCachePointer = 0;
+    }
+
     loader->setApplicationCache(cache);
-    
+
     ASSERT(!m_associatedDocumentLoaders.contains(loader));
     m_associatedDocumentLoaders.add(loader);
 }
