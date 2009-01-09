@@ -80,7 +80,7 @@
 
 2009-01-08  Gavin Barraclough  <barraclough@apple.com>
 
-        Reviewed by Oliver Hunt.
+        Reviewed by -O-l-i-v-e-r- -H-u-n-t- Sam Weinig (sorry, Sam!).
 
         Encode immediates in the low word of JSValuePtrs, on x86-64.
 
