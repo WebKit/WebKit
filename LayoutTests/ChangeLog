@@ -1,3 +1,9 @@
+2009-01-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=23165
+
+        * fast/dom/Window/window-properties-expected.txt: Forgot to commit this with r39699, too.
+
 2009-01-08  Gavin Barraclough  <barraclough@apple.com>
 
         RS by Oliver Hunt.
