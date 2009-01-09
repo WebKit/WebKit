@@ -5156,6 +5156,12 @@ STDMETHODIMP WebView::AccessibleObjectFromWindow(HWND hwnd, DWORD objectID, REFI
     return procPtr(hwnd, objectID, riid, ppObject);
 }
 
+HRESULT WebView::setMemoryCacheDelegateCallsEnabled(BOOL enabled)
+{
+    m_page->setMemoryCacheClientCallsEnabled(enabled);
+    return S_OK;
+}
+
 class EnumTextMatches : public IEnumTextMatches
 {
     long m_ref;

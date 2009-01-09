@@ -721,6 +721,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE registerEmbeddedViewMIMEType( 
         /* [in] */ BSTR mimeType);
 
+    virtual HRESULT STDMETHODCALLTYPE setMemoryCacheDelegateCallsEnabled( 
+        /* [in] */ BOOL enabled);
+
     // WebView
     bool shouldUseEmbeddedView(const WebCore::String& mimeType) const;
 

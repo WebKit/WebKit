@@ -155,4 +155,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT globalHistoryItem([out, retval] IWebHistoryItem**);
 
     HRESULT registerEmbeddedViewMIMEType([in] BSTR mimeType);
+
+    HRESULT setMemoryCacheDelegateCallsEnabled([in] BOOL enabled);
 }

@@ -1,3 +1,15 @@
+2009-01-09  Darin Adler  <darin@apple.com>
+
+        Reviewed and landed by Adele Peterson.
+
+        Bug 23160: add setMemoryCacheClientCallsEnabled SPI so Safari can be faster with activity window closed
+        https://bugs.webkit.org/show_bug.cgi?id=23160
+
+        * Interfaces/IWebViewPrivate.idl: Added setMemoryCacheDelegateCallsEnabled.
+        * WebView.cpp:
+        (WebView::setMemoryCacheDelegateCallsEnabled): Ditto.
+        * WebView.h: Ditto.
+
 2009-01-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
