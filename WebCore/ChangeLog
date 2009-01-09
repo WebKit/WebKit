@@ -2,6 +2,41 @@
 
         Reviewed by Eric Seidel.
 
+        Add PathSkia and PatternSkia implementations to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=23200
+
+        * platform/graphics/skia/PathSkia.cpp: Added.
+        (WebCore::Path::Path):
+        (WebCore::Path::~Path):
+        (WebCore::Path::operator=):
+        (WebCore::Path::isEmpty):
+        (WebCore::Path::contains):
+        (WebCore::Path::translate):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::clear):
+        (WebCore::convertPathPoints):
+        (WebCore::Path::apply):
+        (WebCore::Path::transform):
+        (WebCore::Path::debugString):
+        (WebCore::boundingBoxForCurrentStroke):
+        (WebCore::Path::strokeBoundingRect):
+        * platform/graphics/skia/PatternSkia.cpp: Added.
+        (WebCore::shaderRule):
+        (WebCore::Pattern::createPlatformPattern):
+
+2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Add ImageSourceSkia to platform/graphics/skia
         https://bugs.webkit.org/show_bug.cgi?id=23200
         
