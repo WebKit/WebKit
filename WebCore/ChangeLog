@@ -1,5 +1,14 @@
 2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Tor Arne Vestbø.
+
+        Fix qmake warning about missing test function, a contains() call was
+        missing.
+
+        * WebCore.pro:
+
+2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Rubber-stamped by Tor Arne Vestbø.
 
         Add the Qt API headers to HEADERS, too, for improved completion in IDEs.

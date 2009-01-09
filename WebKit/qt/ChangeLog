@@ -1,5 +1,14 @@
 2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Tor Arne Vestbø.
+
+        Remove qwebnetworkinterface.h from WEBKIT_API_HEADERS as it's not
+        public Qt 4.4/4.5 API.
+
+        * Api/headers.pri:
+
+2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Unreviewed Qt build fix, remove qcookiejar.h from the API headers and
         therefore HEADERS. It's not part of the API and it moc shouldn't be
         called on it.
