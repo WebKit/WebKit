@@ -439,9 +439,9 @@
 /* x86-64 support is under development. */
 #if PLATFORM(X86_64) && PLATFORM(MAC)
     #define ENABLE_JIT 0
-    #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 0
-    #define ENABLE_JIT_OPTIMIZE_CALL 0
-    #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 0
+    #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
+    #define ENABLE_JIT_OPTIMIZE_CALL 1
+    #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
     #define WTF_USE_ALTERNATE_JSIMMEDIATE 1
 /* The JIT is tested & working on x86 Mac */
 #elif PLATFORM(X86) && PLATFORM(MAC)

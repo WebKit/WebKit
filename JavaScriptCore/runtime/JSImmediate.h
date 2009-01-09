@@ -82,33 +82,51 @@ namespace JSC {
      *                      [ zero ]                       [ zero ]       [ tag 'other' ]
      */
 
+    /*
+     * On 64-bit platforms, we support an alternative encoding form for immediates, if
+     * USE(ALTERNATE_JSIMMEDIATE) is defined.
+     *
+     * The top 16-bits denote the type:
+     *
+     * Pointer: 0000:PPPP:PPPP:PPPP
+     * Integer: FFFF:0000:IIII:IIII
+     *
+     * 32-bit signed integers are marked with the 16-bit tag '0xFFFF'.  The tag '0x0000'
+     * denotes a pointer, or another form of tagged immediate.  Boolean, null and undefined
+     * values are encoded in the same manner as the default format.
+     */
+
     class JSImmediate {
     private:
         friend class JIT;
     
-        static const int32_t TagMask           = 0x3; // primary tag is 2 bits long
-        static const int32_t TagBitTypeInteger = 0x1; // bottom bit set indicates integer, this dominates the following bit
-        static const int32_t TagBitTypeOther   = 0x2; // second bit set indicates immediate other than an integer
+#if USE(ALTERNATE_JSIMMEDIATE)
+        static const intptr_t TagTypeInteger = 0xffff000000000000ll; // bottom bit set indicates integer, this dominates the following bit
+#else
+        static const intptr_t TagTypeInteger = 0x1; // bottom bit set indicates integer, this dominates the following bit
+#endif
+        static const intptr_t TagBitTypeOther   = 0x2; // second bit set indicates immediate other than an integer
+        static const intptr_t TagMask           = TagTypeInteger | TagBitTypeOther;
 
-        static const int32_t ExtendedTagMask         = 0xC; // extended tag holds a further two bits
-        static const int32_t ExtendedTagBitBool      = 0x4;
-        static const int32_t ExtendedTagBitUndefined = 0x8;
+        static const intptr_t ExtendedTagMask         = 0xC; // extended tag holds a further two bits
+        static const intptr_t ExtendedTagBitBool      = 0x4;
+        static const intptr_t ExtendedTagBitUndefined = 0x8;
 
-        static const int32_t FullTagTypeMask      = TagMask | ExtendedTagMask;
-        static const int32_t FullTagTypeBool      = TagBitTypeOther | ExtendedTagBitBool;
-        static const int32_t FullTagTypeUndefined = TagBitTypeOther | ExtendedTagBitUndefined;
-        static const int32_t FullTagTypeNull      = TagBitTypeOther;
-
-        static const int32_t IntegerPayloadShift  = 1;
-        static const int32_t ExtendedPayloadShift = 4;
-
-        static const int32_t ExtendedPayloadBitBoolValue = 1 << ExtendedPayloadShift;
+        static const intptr_t FullTagTypeMask      = TagMask | ExtendedTagMask;
+        static const intptr_t FullTagTypeBool      = TagBitTypeOther | ExtendedTagBitBool;
+        static const intptr_t FullTagTypeUndefined = TagBitTypeOther | ExtendedTagBitUndefined;
+        static const intptr_t FullTagTypeNull      = TagBitTypeOther;
 
 #if USE(ALTERNATE_JSIMMEDIATE)
-        static const intptr_t signBit = 0x100000000ll;
+        static const int32_t IntegerPayloadShift  = 0;
 #else
-        static const int32_t signBit = 0x80000000;
+        static const int32_t IntegerPayloadShift  = 1;
 #endif
+        static const int32_t ExtendedPayloadShift = 4;
+
+        static const intptr_t ExtendedPayloadBitBoolValue = 1 << ExtendedPayloadShift;
+
+        static const int32_t signBit = 0x80000000;
  
     public:
         static ALWAYS_INLINE bool isImmediate(JSValuePtr v)
@@ -118,13 +136,13 @@ namespace JSC {
         
         static ALWAYS_INLINE bool isNumber(JSValuePtr v)
         {
-            return rawValue(v) & TagBitTypeInteger;
+            return rawValue(v) & TagTypeInteger;
         }
 
         static ALWAYS_INLINE bool isPositiveNumber(JSValuePtr v)
         {
             // A single mask to check for the sign bit and the number tag all at once.
-            return (rawValue(v) & (signBit | TagBitTypeInteger)) == TagBitTypeInteger;
+            return (rawValue(v) & (signBit | TagTypeInteger)) == TagTypeInteger;
         }
         
         static ALWAYS_INLINE bool isBoolean(JSValuePtr v)
@@ -174,7 +192,7 @@ namespace JSC {
 
         static ALWAYS_INLINE bool areBothImmediateNumbers(JSValuePtr v1, JSValuePtr v2)
         {
-            return rawValue(v1) & rawValue(v2) & TagBitTypeInteger;
+            return rawValue(v1) & rawValue(v2) & TagTypeInteger;
         }
 
         static ALWAYS_INLINE JSValuePtr andImmediateNumbers(JSValuePtr v1, JSValuePtr v2)
@@ -186,7 +204,7 @@ namespace JSC {
         static ALWAYS_INLINE JSValuePtr xorImmediateNumbers(JSValuePtr v1, JSValuePtr v2)
         {
             ASSERT(areBothImmediateNumbers(v1, v2));
-            return makeValue((rawValue(v1) ^ rawValue(v2)) | TagBitTypeInteger);
+            return makeValue((rawValue(v1) ^ rawValue(v2)) | TagTypeInteger);
         }
 
         static ALWAYS_INLINE JSValuePtr orImmediateNumbers(JSValuePtr v1, JSValuePtr v2)
@@ -198,28 +216,32 @@ namespace JSC {
         static ALWAYS_INLINE JSValuePtr rightShiftImmediateNumbers(JSValuePtr val, JSValuePtr shift)
         {
             ASSERT(areBothImmediateNumbers(val, shift));
-            return makeValue((rawValue(val) >> ((rawValue(shift) >> IntegerPayloadShift) & 0x1f)) | TagBitTypeInteger);
+#if USE(ALTERNATE_JSIMMEDIATE)
+            return makeValue(static_cast<intptr_t>(static_cast<uint32_t>(static_cast<int32_t>(rawValue(val)) >> ((rawValue(shift) >> IntegerPayloadShift) & 0x1f))) | TagTypeInteger);
+#else
+            return makeValue((rawValue(val) >> ((rawValue(shift) >> IntegerPayloadShift) & 0x1f)) | TagTypeInteger);
+#endif
         }
 
         static ALWAYS_INLINE bool canDoFastAdditiveOperations(JSValuePtr v)
         {
             // Number is non-negative and an operation involving two of these can't overflow.
             // Checking for allowed negative numbers takes more time than it's worth on SunSpider.
-            return (rawValue(v) & (TagBitTypeInteger + (signBit | (signBit >> 1)))) == TagBitTypeInteger;
+            return (rawValue(v) & (TagTypeInteger + (signBit | (signBit >> 1)))) == TagTypeInteger;
         }
 
         static ALWAYS_INLINE JSValuePtr addImmediateNumbers(JSValuePtr v1, JSValuePtr v2)
         {
             ASSERT(canDoFastAdditiveOperations(v1));
             ASSERT(canDoFastAdditiveOperations(v2));
-            return makeValue(rawValue(v1) + rawValue(v2) - TagBitTypeInteger);
+            return makeValue(rawValue(v1) + rawValue(v2) - TagTypeInteger);
         }
 
         static ALWAYS_INLINE JSValuePtr subImmediateNumbers(JSValuePtr v1, JSValuePtr v2)
         {
             ASSERT(canDoFastAdditiveOperations(v1));
             ASSERT(canDoFastAdditiveOperations(v2));
-            return makeValue(rawValue(v1) - rawValue(v2) + TagBitTypeInteger);
+            return makeValue(rawValue(v1) - rawValue(v2) + TagTypeInteger);
         }
 
         static ALWAYS_INLINE JSValuePtr incImmediateNumber(JSValuePtr v)
@@ -273,9 +295,13 @@ namespace JSC {
             return JSValuePtr::makeImmediate(integer);
         }
 
+#if USE(ALTERNATE_JSIMMEDIATE)
+        static ALWAYS_INLINE JSValuePtr makeInt(uint32_t value)
+#else
         static ALWAYS_INLINE JSValuePtr makeInt(int32_t value)
+#endif
         {
-            return makeValue((static_cast<intptr_t>(value) << IntegerPayloadShift) | TagBitTypeInteger);
+            return makeValue((static_cast<intptr_t>(value) << IntegerPayloadShift) | TagTypeInteger);
         }
         
         static ALWAYS_INLINE JSValuePtr makeBool(bool b)
@@ -330,8 +356,8 @@ namespace JSC {
     {
         ASSERT(isImmediate(v));
         intptr_t bits = rawValue(v);
-        return (bits & TagBitTypeInteger)
-            ? bits != TagBitTypeInteger // !0 ints
+        return (bits & TagTypeInteger)
+            ? bits != TagTypeInteger // !0 ints
             : bits == (FullTagTypeBool | ExtendedPayloadBitBoolValue); // bool true
     }
 

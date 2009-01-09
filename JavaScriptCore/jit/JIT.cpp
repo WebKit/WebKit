@@ -348,12 +348,17 @@ void JIT::privateCompileMainPass()
             if (isOperandConstantImmediateInt(op2)) {
                 emitGetVirtualRegister(op1, X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::eax);
-                addJump(jlPtr(X86::eax, ImmPtr(JSValuePtr::encode(getConstantOperand(op2)))), target + 3);
+#if USE(ALTERNATE_JSIMMEDIATE)
+                int32_t op2imm = JSImmediate::intValue(getConstantOperand(op2));
+#else
+                int32_t op2imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op2)));
+#endif
+                addJump(jl32(X86::eax, Imm32(op2imm)), target + 3);
             } else {
                 emitGetVirtualRegisters(op1, X86::eax, op2, X86::edx);
                 emitJumpSlowCaseIfNotImmNum(X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::edx);
-                addJump(jlPtr(X86::eax, X86::edx), target + 3);
+                addJump(jl32(X86::eax, X86::edx), target + 3);
             }
             NEXT_OPCODE(op_loop_if_less);
         }
@@ -366,12 +371,17 @@ void JIT::privateCompileMainPass()
             if (isOperandConstantImmediateInt(op2)) {
                 emitGetVirtualRegister(op1, X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::eax);
-                addJump(jlePtr(X86::eax, ImmPtr(JSValuePtr::encode(getConstantOperand(op2)))), target + 3);
+#if USE(ALTERNATE_JSIMMEDIATE)
+                int32_t op2imm = JSImmediate::intValue(getConstantOperand(op2));
+#else
+                int32_t op2imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op2)));
+#endif
+                addJump(jle32(X86::eax, Imm32(op2imm)), target + 3);
             } else {
                 emitGetVirtualRegisters(op1, X86::eax, op2, X86::edx);
                 emitJumpSlowCaseIfNotImmNum(X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::edx);
-                addJump(jlePtr(X86::eax, X86::edx), target + 3);
+                addJump(jle32(X86::eax, X86::edx), target + 3);
             }
             NEXT_OPCODE(op_loop_if_less);
         }
@@ -395,8 +405,8 @@ void JIT::privateCompileMainPass()
 
             // check if any are immediates
             move(X86::eax, X86::ebx);
-            or32(X86::ecx, X86::ebx);
-            or32(X86::edx, X86::ebx);
+            orPtr(X86::ecx, X86::ebx);
+            orPtr(X86::edx, X86::ebx);
             emitJumpSlowCaseIfNotJSCell(X86::ebx);
 
             // check that all are object type - this is a bit of a bithack to avoid excess branching;
@@ -563,7 +573,17 @@ void JIT::privateCompileMainPass()
         case op_get_by_val: {
             emitGetVirtualRegisters(currentInstruction[2].u.operand, X86::eax, currentInstruction[3].u.operand, X86::edx);
             emitJumpSlowCaseIfNotImmNum(X86::edx);
+#if USE(ALTERNATE_JSIMMEDIATE)
+            // This is technically incorrect - we're zero-extending an int32.  On the hot path this doesn't matter.
+            // We check the value as if it was a uint32 against the m_fastAccessCutoff - which will always fail if
+            // number was signed since m_fastAccessCutoff is always less than intmax (since the total allocation
+            // size is always less than 4Gb).  As such zero extending wil have been correct (and extending the value
+            // to 64-bits is necessary since it's used in the address calculation.  We zero extend rather than sign
+            // extending since it makes it easier to re-tag the value in the slow case.
+            zeroExtend32ToPtr(X86::edx, X86::edx);
+#else
             emitFastArithImmToInt(X86::edx);
+#endif
             emitJumpSlowCaseIfNotJSCell(X86::eax);
             addSlowCase(jnePtr(Address(X86::eax), ImmPtr(m_interpreter->m_jsArrayVptr)));
 
@@ -591,7 +611,12 @@ void JIT::privateCompileMainPass()
         case op_put_by_val: {
             emitGetVirtualRegisters(currentInstruction[1].u.operand, X86::eax, currentInstruction[2].u.operand, X86::edx);
             emitJumpSlowCaseIfNotImmNum(X86::edx);
+#if USE(ALTERNATE_JSIMMEDIATE)
+            // See comment in op_get_by_val.
+            zeroExtend32ToPtr(X86::edx, X86::edx);
+#else
             emitFastArithImmToInt(X86::edx);
+#endif
             emitJumpSlowCaseIfNotJSCell(X86::eax);
             addSlowCase(jnePtr(Address(X86::eax), ImmPtr(m_interpreter->m_jsArrayVptr)));
 
@@ -619,7 +644,7 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(currentInstruction[1].u.operand, X86::eax);
 
             Jump isZero = jePtr(X86::eax, ImmPtr(JSValuePtr::encode(JSImmediate::zeroImmediate())));
-            addJump(jnz32(X86::eax, Imm32(JSImmediate::TagBitTypeInteger)), target + 2);
+            addJump(emitJumpIfImmNum(X86::eax), target + 2);
 
             addJump(jePtr(X86::eax, ImmPtr(JSValuePtr::encode(jsBoolean(true)))), target + 2);
             addSlowCase(jnePtr(X86::eax, ImmPtr(JSValuePtr::encode(jsBoolean(false)))));
@@ -691,20 +716,25 @@ void JIT::privateCompileMainPass()
             if (isOperandConstantImmediateInt(op2)) {
                 emitGetVirtualRegister(op1, X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::eax);
-                addJump(jgePtr(X86::eax, ImmPtr(JSValuePtr::encode(getConstantOperand(op2)))), target + 3);
+#if USE(ALTERNATE_JSIMMEDIATE)
+                int32_t op2imm = JSImmediate::intValue(getConstantOperand(op2));
+#else
+                int32_t op2imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op2)));
+#endif
+                addJump(jge32(X86::eax, Imm32(op2imm)), target + 3);
             } else {
                 emitGetVirtualRegisters(op1, X86::eax, op2, X86::edx);
                 emitJumpSlowCaseIfNotImmNum(X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::edx);
-                addJump(jgePtr(X86::eax, X86::edx), target + 3);
+                addJump(jge32(X86::eax, X86::edx), target + 3);
             }
             NEXT_OPCODE(op_jnless);
         }
         case op_not: {
             emitGetVirtualRegister(currentInstruction[2].u.operand, X86::eax);
-            xorPtr(Imm32(JSImmediate::FullTagTypeBool), X86::eax);
-            addSlowCase(jnz32(X86::eax, Imm32(JSImmediate::FullTagTypeMask)));
-            xorPtr(Imm32(JSImmediate::FullTagTypeBool | JSImmediate::ExtendedPayloadBitBoolValue), X86::eax);
+            xorPtr(Imm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), X86::eax);
+            addSlowCase(jnzPtr(X86::eax, Imm32(static_cast<int32_t>(~JSImmediate::ExtendedPayloadBitBoolValue))));
+            xorPtr(Imm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool | JSImmediate::ExtendedPayloadBitBoolValue)), X86::eax);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_not);
         }
@@ -713,7 +743,7 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(currentInstruction[1].u.operand, X86::eax);
 
             addJump(jePtr(X86::eax, ImmPtr(JSValuePtr::encode(JSImmediate::zeroImmediate()))), target + 2);
-            Jump isNonZero = jnz32(X86::eax, Imm32(JSImmediate::TagBitTypeInteger));
+            Jump isNonZero = emitJumpIfImmNum(X86::eax);
 
             addJump(jePtr(X86::eax, ImmPtr(JSValuePtr::encode(jsBoolean(false)))), target + 2);
             addSlowCase(jnePtr(X86::eax, ImmPtr(JSValuePtr::encode(jsBoolean(true)))));
@@ -806,7 +836,12 @@ void JIT::privateCompileMainPass()
         case op_bitnot: {
             emitGetVirtualRegister(currentInstruction[2].u.operand, X86::eax);
             emitJumpSlowCaseIfNotImmNum(X86::eax);
-            xorPtr(Imm32(~JSImmediate::TagBitTypeInteger), X86::eax);
+#if USE(ALTERNATE_JSIMMEDIATE)
+            not32(X86::eax);
+            emitFastArithIntToImmNoCheck(X86::eax, X86::eax);
+#else
+            xorPtr(Imm32(~JSImmediate::TagTypeInteger), X86::eax);
+#endif
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_bitnot);
         }
@@ -834,7 +869,7 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(currentInstruction[1].u.operand, X86::eax);
 
             Jump isZero = jePtr(X86::eax, ImmPtr(JSValuePtr::encode(JSImmediate::zeroImmediate())));
-            addJump(jnz32(X86::eax, Imm32(JSImmediate::TagBitTypeInteger)), target + 2);
+            addJump(emitJumpIfImmNum(X86::eax), target + 2);
 
             addJump(jePtr(X86::eax, ImmPtr(JSValuePtr::encode(jsBoolean(true)))), target + 2);
             addSlowCase(jnePtr(X86::eax, ImmPtr(JSValuePtr::encode(jsBoolean(false)))));
@@ -862,7 +897,7 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegisters(currentInstruction[2].u.operand, X86::eax, currentInstruction[3].u.operand, X86::edx);
             emitJumpSlowCaseIfNotImmNums(X86::eax, X86::edx, X86::ecx);
             xorPtr(X86::edx, X86::eax);
-            emitFastArithReTagImmediate(X86::eax);
+            emitFastArithReTagImmediate(X86::eax, X86::eax);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_bitxor);
         }
@@ -945,7 +980,7 @@ void JIT::privateCompileMainPass()
             int srcVReg = currentInstruction[2].u.operand;
             emitGetVirtualRegister(srcVReg, X86::eax);
             
-            Jump wasImmediate = jnz32(X86::eax, Imm32(JSImmediate::TagBitTypeInteger));
+            Jump wasImmediate = emitJumpIfImmNum(X86::eax);
 
             emitJumpSlowCaseIfNotJSCell(X86::eax, srcVReg);
             loadPtr(Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)), X86::ecx);
@@ -1253,7 +1288,7 @@ void JIT::privateCompileSlowCases()
             Jump notImm = getSlowCase(iter);
             linkSlowCase(iter);
             linkSlowCase(iter);
-            emitFastArithIntToImmNoCheck(X86::edx);
+            emitFastArithIntToImmNoCheck(X86::edx, X86::edx);
             notImm.link(this);
             emitPutJITStubArg(X86::eax, 1);
             emitPutJITStubArg(X86::edx, 2);
@@ -1342,7 +1377,7 @@ void JIT::privateCompileSlowCases()
             Jump notImm = getSlowCase(iter);
             linkSlowCase(iter);
             linkSlowCase(iter);
-            emitFastArithIntToImmNoCheck(X86::edx);
+            emitFastArithIntToImmNoCheck(X86::edx, X86::edx);
             notImm.link(this);
             emitGetVirtualRegister(currentInstruction[3].u.operand, X86::ecx);
             emitPutJITStubArg(X86::eax, 1);
@@ -1395,7 +1430,7 @@ void JIT::privateCompileSlowCases()
         }
         case op_not: {
             linkSlowCase(iter);
-            xorPtr(Imm32(JSImmediate::FullTagTypeBool), X86::eax);
+            xorPtr(Imm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), X86::eax);
             emitPutJITStubArg(X86::eax, 1);
             emitCTICall(Interpreter::cti_op_not);
             emitPutVirtualRegister(currentInstruction[1].u.operand);
@@ -1689,8 +1724,8 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     Jump array_failureCases3 = ja32(X86::eax, Imm32(JSImmediate::maxImmediateInt));
 
-    // X86::eax contains a 64 bit value (is signed, is zero extended) so we don't need sign extend here.
-    emitFastArithIntToImmNoCheck(X86::eax);
+    // X86::eax contains a 64 bit value (is positive, is zero extended) so we don't need sign extend here.
+    emitFastArithIntToImmNoCheck(X86::eax, X86::eax);
 
     ret();
 
@@ -1707,8 +1742,8 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     Jump string_failureCases3 = ja32(X86::eax, Imm32(JSImmediate::maxImmediateInt));
 
-    // X86::eax contains a 64 bit value (is signed, is zero extended) so we don't need sign extend here.
-    emitFastArithIntToImmNoCheck(X86::eax);
+    // X86::eax contains a 64 bit value (is positive, is zero extended) so we don't need sign extend here.
+    emitFastArithIntToImmNoCheck(X86::eax, X86::eax);
     
     ret();
 #endif

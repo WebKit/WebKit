@@ -579,12 +579,27 @@ public:
         m_assembler.imull_i32r(src, imm.m_value, dest);
     }
     
+    void not32(RegisterID srcDest)
+    {
+        m_assembler.notl_r(srcDest);
+    }
+    
     void orPtr(RegisterID src, RegisterID dest)
     {
 #if PLATFORM(X86_64)
         m_assembler.orq_rr(src, dest);
 #else
         or32(src, dest);
+#endif
+    }
+
+    void orPtr(ImmPtr imm, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        move(imm, scratchRegister);
+        m_assembler.orq_rr(scratchRegister, dest);
+#else
+        or32(Imm32(imm), dest);
 #endif
     }
 
@@ -1002,6 +1017,15 @@ public:
 #endif
     }
 
+    void zeroExtend32ToPtr(RegisterID src, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.movl_rr(src, dest);
+#else
+        if (src != dest)
+            move(src, dest);
+#endif
+    }
 
 
     // Forwards / external control flow operations:
@@ -1117,6 +1141,38 @@ public:
         return Jump(m_assembler.ja());
     }
     
+    Jump jaePtr(RegisterID left, RegisterID right)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.cmpq_rr(right, left);
+        return Jump(m_assembler.jae());
+#else
+        return jae32(left, right);
+#endif
+    }
+
+    Jump jaePtr(RegisterID reg, ImmPtr ptr)
+    {
+#if PLATFORM(X86_64)
+        intptr_t imm = ptr.asIntptr();
+        if (CAN_SIGN_EXTEND_32_64(imm)) {
+            compareImm64ForBranch(reg, imm);
+            return Jump(m_assembler.jae());
+        } else {
+            move(ptr, scratchRegister);
+            return jaePtr(reg, scratchRegister);
+        }
+#else
+        return jae32(reg, Imm32(ptr));
+#endif
+    }
+
+    Jump jae32(RegisterID left, RegisterID right)
+    {
+        m_assembler.cmpl_rr(right, left);
+        return Jump(m_assembler.jae());
+    }
+
     Jump jae32(RegisterID left, Imm32 right)
     {
         compareImm32ForBranch(left, right.m_value);
@@ -1133,6 +1189,44 @@ public:
     {
         m_assembler.cmpl_rm(right, left.offset, left.base);
         return Jump(m_assembler.jae());
+    }
+    
+    Jump jbPtr(RegisterID left, RegisterID right)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.cmpq_rr(right, left);
+        return Jump(m_assembler.jb());
+#else
+        return jb32(left, right);
+#endif
+    }
+
+    Jump jbPtr(RegisterID reg, ImmPtr ptr)
+    {
+#if PLATFORM(X86_64)
+        intptr_t imm = ptr.asIntptr();
+        if (CAN_SIGN_EXTEND_32_64(imm)) {
+            compareImm64ForBranch(reg, imm);
+            return Jump(m_assembler.jb());
+        } else {
+            move(ptr, scratchRegister);
+            return jbPtr(reg, scratchRegister);
+        }
+#else
+        return jb32(reg, Imm32(ptr));
+#endif
+    }
+
+    Jump jb32(RegisterID left, RegisterID right)
+    {
+        m_assembler.cmpl_rr(right, left);
+        return Jump(m_assembler.jb());
+    }
+
+    Jump jb32(RegisterID left, Imm32 right)
+    {
+        compareImm32ForBranch(left, right.m_value);
+        return Jump(m_assembler.jb());
     }
     
     Jump jb32(RegisterID left, Address right)
@@ -1468,6 +1562,17 @@ public:
 #endif
     }
 
+    Jump jnzPtr(RegisterID reg, ImmPtr mask)
+    {
+#if PLATFORM(X86_64)
+        move(mask, scratchRegister);
+        m_assembler.testq_rr(scratchRegister, reg);
+        return Jump(m_assembler.jne());
+#else
+        return jnz32(reg, Imm32(mask));
+#endif
+    }
+
     Jump jnzPtr(Address address, Imm32 mask = Imm32(-1))
     {
 #if PLATFORM(X86_64)
@@ -1497,6 +1602,17 @@ public:
         return Jump(m_assembler.je());
 #else
         return jz32(reg, mask);
+#endif
+    }
+
+    Jump jzPtr(RegisterID reg, ImmPtr mask)
+    {
+#if PLATFORM(X86_64)
+        move(mask, scratchRegister);
+        m_assembler.testq_rr(scratchRegister, reg);
+        return Jump(m_assembler.je());
+#else
+        return jz32(reg, Imm32(mask));
 #endif
     }
 

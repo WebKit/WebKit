@@ -1,3 +1,88 @@
+2009-01-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Encode immediates in the low word of JSValuePtrs, on x86-64.
+
+        On 32-bit platforms a JSValuePtr may represent a 31-bit signed integer.
+        On 64-bit platforms, if USE(ALTERNATE_JSIMMEDIATE) is defined, a full
+        32-bit integer may be stored in an immediate.
+        
+        Presently USE(ALTERNATE_JSIMMEDIATE) uses the same encoding as the default
+        immediate format - the value is left shifted by one, so a one bit tag can
+        be added to indicate the value is an immediate.  However this means that
+        values must be commonly be detagged (by right shifting by one) before
+        arithmetic operations can be performed on immediates.  This patch modifies
+        the formattting so the the high bits of the immediate mark values as being
+        integer.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::not32):
+        (JSC::MacroAssembler::orPtr):
+        (JSC::MacroAssembler::zeroExtend32ToPtr):
+        (JSC::MacroAssembler::jaePtr):
+        (JSC::MacroAssembler::jbPtr):
+        (JSC::MacroAssembler::jnzPtr):
+        (JSC::MacroAssembler::jzPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::notl_r):
+        (JSC::X86Assembler::testq_i32r):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_lshift):
+        (JSC::JIT::compileFastArith_op_rshift):
+        (JSC::JIT::compileFastArith_op_bitand):
+        (JSC::JIT::compileFastArithSlow_op_bitand):
+        (JSC::JIT::compileFastArith_op_mod):
+        (JSC::JIT::compileFastArithSlow_op_mod):
+        (JSC::JIT::compileFastArith_op_add):
+        (JSC::JIT::compileFastArith_op_mul):
+        (JSC::JIT::compileFastArith_op_post_inc):
+        (JSC::JIT::compileFastArith_op_post_dec):
+        (JSC::JIT::compileFastArith_op_pre_inc):
+        (JSC::JIT::compileFastArith_op_pre_dec):
+        (JSC::JIT::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::JIT::compileBinaryArithOp):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpIfJSCell):
+        (JSC::JIT::emitJumpIfNotJSCell):
+        (JSC::JIT::emitJumpIfImmNum):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmNum):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmNums):
+        (JSC::JIT::emitFastArithDeTagImmediate):
+        (JSC::JIT::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::JIT::emitFastArithReTagImmediate):
+        (JSC::JIT::emitFastArithImmToInt):
+        (JSC::JIT::emitFastArithIntToImmNoCheck):
+        (JSC::JIT::emitTagAsBoolImmediate):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::resizePropertyStorage):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePutByIdReplace):
+        * runtime/JSImmediate.h:
+        (JSC::JSImmediate::isNumber):
+        (JSC::JSImmediate::isPositiveNumber):
+        (JSC::JSImmediate::areBothImmediateNumbers):
+        (JSC::JSImmediate::xorImmediateNumbers):
+        (JSC::JSImmediate::rightShiftImmediateNumbers):
+        (JSC::JSImmediate::canDoFastAdditiveOperations):
+        (JSC::JSImmediate::addImmediateNumbers):
+        (JSC::JSImmediate::subImmediateNumbers):
+        (JSC::JSImmediate::makeInt):
+        (JSC::JSImmediate::toBoolean):
+        * wtf/Platform.h:
+
 2009-01-08  Sam Weinig  <sam@webkit.org>
 
         Revert r39720. It broke Interpreted mode.

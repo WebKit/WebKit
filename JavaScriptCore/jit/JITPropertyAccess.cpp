@@ -182,10 +182,10 @@ void JIT::compilePutByIdSlowCase(int baseVReg, Identifier* ident, int, Vector<Sl
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 
-static JSValueEncodedAsPointer* resizePropertyStorage(JSObject* baseObject, int32_t oldSize, int32_t newSize)
+static JSObject* resizePropertyStorage(JSObject* baseObject, int32_t oldSize, int32_t newSize)
 {
     baseObject->allocatePropertyStorage(oldSize, newSize);
-    return JSValuePtr::encode(baseObject);
+    return baseObject;
 }
 
 static inline bool transitionWillNeedStorageRealloc(Structure* oldStructure, Structure* newStructure)
@@ -197,7 +197,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
 {
     JumpList failureCases;
     // Check eax is an object of the right Structure.
-    failureCases.append(jnz32(X86::eax, Imm32(JSImmediate::TagMask)));
+    failureCases.append(emitJumpIfNotJSCell(X86::eax));
     failureCases.append(jnePtr(Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)), ImmPtr(oldStructure)));
     JumpList successCases;
 
@@ -317,13 +317,11 @@ void JIT::privateCompilePatchGetArrayLength(void* returnAddress)
 
     // Checks out okay! - get the length from the storage
     loadPtr(Address(X86::eax, FIELD_OFFSET(JSArray, m_storage)), X86::ecx);
-    loadPtr(Address(X86::ecx, FIELD_OFFSET(ArrayStorage, m_length)), X86::ecx);
+    load32(Address(X86::ecx, FIELD_OFFSET(ArrayStorage, m_length)), X86::ecx);
 
     Jump failureCases2 = ja32(X86::ecx, Imm32(JSImmediate::maxImmediateInt));
 
-    add32(X86::ecx, X86::ecx);
-    add32(Imm32(1), X86::ecx);
-    signExtend32ToPtr(X86::ecx, X86::eax);
+    emitFastArithIntToImmNoCheck(X86::ecx, X86::eax);
     Jump success = jump();
 
     void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
@@ -349,7 +347,7 @@ void JIT::privateCompilePatchGetArrayLength(void* returnAddress)
 void JIT::privateCompileGetByIdSelf(StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, void* returnAddress)
 {
     // Check eax is an object of the right Structure.
-    Jump failureCases1 = jnz32(X86::eax, Imm32(JSImmediate::TagMask));
+    Jump failureCases1 = emitJumpIfNotJSCell(X86::eax);
     Jump failureCases2 = checkStructure(X86::eax, structure);
 
     // Checks out okay! - getDirectOffset
@@ -423,7 +421,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     loadPtr(protoPropertyStorage, X86::edx);
 
     // Check eax is an object of the right Structure.
-    Jump failureCases1 = jne32(X86::eax, Imm32(JSImmediate::TagMask));
+    Jump failureCases1 = emitJumpIfNotJSCell(X86::eax);
     Jump failureCases2 = checkStructure(X86::eax, structure);
 
     // Check the prototype object's Structure had not changed.
@@ -641,7 +639,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     JumpList bucketsOfFail;
 
     // Check eax is an object of the right Structure.
-    bucketsOfFail.append(jne32(X86::eax, Imm32(JSImmediate::TagMask)));
+    bucketsOfFail.append(emitJumpIfNotJSCell(X86::eax));
     bucketsOfFail.append(checkStructure(X86::eax, structure));
 
     Structure* currStructure = structure;
@@ -680,7 +678,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
 void JIT::privateCompilePutByIdReplace(StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, void* returnAddress)
 {
     // Check eax is an object of the right Structure.
-    Jump failureCases1 = jne32(X86::eax, Imm32(JSImmediate::TagMask));
+    Jump failureCases1 = emitJumpIfNotJSCell(X86::eax);
     Jump failureCases2 = checkStructure(X86::eax, structure);
 
     // checks out okay! - putDirectOffset

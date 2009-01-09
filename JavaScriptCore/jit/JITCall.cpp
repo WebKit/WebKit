@@ -277,7 +277,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
         compileOpConstructSetupArgs(instruction);
 
     // Fast check for JS function.
-    Jump callLinkFailNotObject = jnz32(X86::ecx, Imm32(JSImmediate::TagMask));
+    Jump callLinkFailNotObject = emitJumpIfNotJSCell(X86::ecx);
     Jump callLinkFailNotJSFunction = jnePtr(Address(X86::ecx), ImmPtr(m_interpreter->m_jsFunctionVptr));
 
     // First, in the case of a construct, allocate the new object.
@@ -309,7 +309,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
         compileOpConstructSetupArgs(instruction);
 
     // Check for JSFunctions.
-    Jump isNotObject = jnzPtr(X86::ecx, Imm32(JSImmediate::TagMask));
+    Jump isNotObject = emitJumpIfNotJSCell(X86::ecx);
     Jump isJSFunction = jePtr(Address(X86::ecx), ImmPtr(m_interpreter->m_jsFunctionVptr));
 
     // This handles host functions

@@ -128,24 +128,6 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(unsigned src)
     return m_codeBlock->isConstantRegisterIndex(src) && JSImmediate::isNumber(getConstantOperand(src));
 }
 
-ALWAYS_INLINE bool JIT::isOperandConstant31BitImmediateInt(unsigned src)
-{
-    if (!m_codeBlock->isConstantRegisterIndex(src))
-        return false;
-
-    JSValuePtr value = getConstantOperand(src);
-
-#if USE(ALTERNATE_JSIMMEDIATE)
-    if (!JSImmediate::isNumber(value))
-        return false;
-
-    int32_t imm = JSImmediate::intValue(value);
-    return (imm == ((imm << 1) >> 1));
-#else
-    return JSImmediate::isNumber(value);
-#endif
-}
-
 // get arg puts an arg from the SF register array onto the stack, as an arg to a context threaded function.
 ALWAYS_INLINE void JIT::emitPutJITStubArgFromVirtualRegister(unsigned src, unsigned argumentNumber, RegisterID scratch)
 {
@@ -281,7 +263,11 @@ ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfJSCell(RegisterID reg)
 {
+#if USE(ALTERNATE_JSIMMEDIATE)
+    return jzPtr(reg, ImmPtr(reinterpret_cast<void*>(JSImmediate::TagMask)));
+#else
     return jz32(reg, Imm32(JSImmediate::TagMask));
+#endif
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg)
@@ -291,7 +277,11 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg)
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotJSCell(RegisterID reg)
 {
+#if USE(ALTERNATE_JSIMMEDIATE)
+    return jnzPtr(reg, ImmPtr(reinterpret_cast<void*>(JSImmediate::TagMask)));
+#else
     return jnz32(reg, Imm32(JSImmediate::TagMask));
+#endif
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg)
@@ -311,49 +301,81 @@ ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&
         linkSlowCase(iter);
 }
 
+ALWAYS_INLINE JIT::Jump JIT::emitJumpIfImmNum(RegisterID reg)
+{
+#if USE(ALTERNATE_JSIMMEDIATE)
+    return jaePtr(reg, ImmPtr(reinterpret_cast<void*>(JSImmediate::TagTypeInteger)));
+#else
+    return jnz32(reg, Imm32(JSImmediate::TagTypeInteger));
+#endif
+}
+
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNum(RegisterID reg)
 {
-    addSlowCase(jz32(reg, Imm32(JSImmediate::TagBitTypeInteger)));
+#if USE(ALTERNATE_JSIMMEDIATE)
+    addSlowCase(jbPtr(reg, ImmPtr(reinterpret_cast<void*>(JSImmediate::TagTypeInteger))));
+#else
+    addSlowCase(jz32(reg, Imm32(JSImmediate::TagTypeInteger)));
+#endif
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNums(RegisterID reg1, RegisterID reg2, RegisterID scratch)
 {
     move(reg1, scratch);
-    and32(reg2, scratch);
+    andPtr(reg2, scratch);
     emitJumpSlowCaseIfNotImmNum(scratch);
 }
 
+#if !USE(ALTERNATE_JSIMMEDIATE)
 ALWAYS_INLINE void JIT::emitFastArithDeTagImmediate(RegisterID reg)
 {
-    subPtr(Imm32(JSImmediate::TagBitTypeInteger), reg);
+    subPtr(Imm32(JSImmediate::TagTypeInteger), reg);
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitFastArithDeTagImmediateJumpIfZero(RegisterID reg)
 {
-    return jzSubPtr(Imm32(JSImmediate::TagBitTypeInteger), reg);
+    return jzSubPtr(Imm32(JSImmediate::TagTypeInteger), reg);
 }
+#endif
 
-ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID reg)
+ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID src, RegisterID dest)
 {
-    addPtr(Imm32(JSImmediate::TagBitTypeInteger), reg);
+#if USE(ALTERNATE_JSIMMEDIATE)
+    emitFastArithIntToImmNoCheck(src, dest);
+#else
+    if (src != dest)
+        move(src, dest);
+    addPtr(Imm32(JSImmediate::TagTypeInteger), dest);
+#endif
 }
 
 ALWAYS_INLINE void JIT::emitFastArithImmToInt(RegisterID reg)
 {
+#if USE(ALTERNATE_JSIMMEDIATE)
+    UNUSED_PARAM(reg);
+#else
     rshiftPtr(Imm32(JSImmediate::IntegerPayloadShift), reg);
+#endif
 }
 
-ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID reg)
+// operand is int32_t, must have been zero-extended if register is 64-bit.
+ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID src, RegisterID dest)
 {
-    signExtend32ToPtr(reg, reg);
-    addPtr(reg, reg);
-    emitFastArithReTagImmediate(reg);
+#if USE(ALTERNATE_JSIMMEDIATE)
+    if (src != dest)
+        move(src, dest);
+    orPtr(ImmPtr(reinterpret_cast<void*>(JSImmediate::TagTypeInteger)), dest);
+#else
+    signExtend32ToPtr(src, dest);
+    addPtr(dest, dest);
+    emitFastArithReTagImmediate(dest, dest);
+#endif
 }
 
 ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 {
     lshift32(Imm32(JSImmediate::ExtendedPayloadShift), reg);
-    or32(Imm32(JSImmediate::FullTagTypeBool), reg);
+    or32(Imm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), reg);
 }
 
 ALWAYS_INLINE void JIT::addSlowCase(Jump jump)

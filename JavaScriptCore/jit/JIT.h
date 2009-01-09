@@ -40,12 +40,13 @@
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
 
-#define STUB_ARGS_code 0x0C
-#define STUB_ARGS_registerFile 0x0D
-#define STUB_ARGS_callFrame 0x0E
-#define STUB_ARGS_exception 0x0F
-#define STUB_ARGS_profilerReference 0x10
-#define STUB_ARGS_globalData 0x11
+#define STUB_ARGS_offset 0x0C
+#define STUB_ARGS_code (STUB_ARGS_offset)
+#define STUB_ARGS_registerFile (STUB_ARGS_offset + 1)
+#define STUB_ARGS_callFrame (STUB_ARGS_offset + 2)
+#define STUB_ARGS_exception (STUB_ARGS_offset + 3)
+#define STUB_ARGS_profilerReference (STUB_ARGS_offset + 4)
+#define STUB_ARGS_globalData (STUB_ARGS_offset + 5)
 
 #define ARG_callFrame static_cast<CallFrame*>(ARGS[STUB_ARGS_callFrame])
 #define ARG_registerFile static_cast<RegisterFile*>(ARGS[STUB_ARGS_registerFile])
@@ -435,7 +436,6 @@ namespace JSC {
         JSValuePtr getConstantOperand(unsigned src);
         int32_t getConstantOperandImmediateInt(unsigned src);
         bool isOperandConstantImmediateInt(unsigned src);
-        bool isOperandConstant31BitImmediateInt(unsigned src);
 
         Jump emitJumpIfJSCell(RegisterID);
         void emitJumpSlowCaseIfJSCell(RegisterID);
@@ -454,16 +454,19 @@ namespace JSC {
         }
         void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int vReg);
 
+        JIT::Jump emitJumpIfImmNum(RegisterID);
         void emitJumpSlowCaseIfNotImmNum(RegisterID);
         void emitJumpSlowCaseIfNotImmNums(RegisterID, RegisterID, RegisterID);
 
         Jump checkStructure(RegisterID reg, Structure* structure);
 
+#if !USE(ALTERNATE_JSIMMEDIATE)
         void emitFastArithDeTagImmediate(RegisterID);
         Jump emitFastArithDeTagImmediateJumpIfZero(RegisterID);
-        void emitFastArithReTagImmediate(RegisterID);
+#endif
+        void emitFastArithReTagImmediate(RegisterID src, RegisterID dest);
         void emitFastArithImmToInt(RegisterID);
-        void emitFastArithIntToImmNoCheck(RegisterID);
+        void emitFastArithIntToImmNoCheck(RegisterID src, RegisterID dest);
 
         void emitTagAsBoolImmediate(RegisterID reg);
 
