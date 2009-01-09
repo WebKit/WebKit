@@ -1,3 +1,13 @@
+2009-01-08  Berend-Jan Wever  <sky@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix Images to return their file extension
+        http://code.google.com/p/chromium/issues/detail?id=5827
+
+        * platform/graphics/skia/ImageSourceSkia.cpp:
+        (WebCore::ImageSource::filenameExtension):
+
 2009-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
