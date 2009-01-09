@@ -1,5 +1,15 @@
 2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Documentation fixes, remove duplicated docs, document missing
+        parameters and return values.
+
+        * Api/qwebdatabase.cpp:
+        * Api/qwebpage.cpp:
+
+2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Tor Arne Vestbø.
 
         Fix linking against QtWebKit on Windows, by defining the EXPORT macros
