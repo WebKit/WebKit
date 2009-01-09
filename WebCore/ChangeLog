@@ -1,6 +1,6 @@
-2009-01-08  Berend-Jan Wever  <sky@chromium.org>
+2009-01-08  Scott Violet  <sky@chromium.org>
 
-        Reviewed by Adam Barth.
+        Reviewed by Eric Seidel (and Adam Barth).
 
         Fix Images to return their file extension
         http://code.google.com/p/chromium/issues/detail?id=5827
