@@ -39,6 +39,7 @@
 		088FA5BB0EF76D4300578E6F /* RandomNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088FA5B90EF76D4300578E6F /* RandomNumber.cpp */; };
 		088FA5BC0EF76D4300578E6F /* RandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 088FA5BA0EF76D4300578E6F /* RandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08E279E90EF83B10007DB523 /* RandomNumberSeed.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E279E80EF83B10007DB523 /* RandomNumberSeed.h */; };
+		0B1F921D0F1753500036468E /* PtrAndFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B1F921B0F17502D0036468E /* PtrAndFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140B7D1D0DC69AF7009C42B8 /* JSActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */; };
 		140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141211310A48794D00480255 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
@@ -419,6 +420,7 @@
 		088FA5B90EF76D4300578E6F /* RandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomNumber.cpp; sourceTree = "<group>"; };
 		088FA5BA0EF76D4300578E6F /* RandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumber.h; sourceTree = "<group>"; };
 		08E279E80EF83B10007DB523 /* RandomNumberSeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberSeed.h; sourceTree = "<group>"; };
+		0B1F921B0F17502D0036468E /* PtrAndFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtrAndFlags.h; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
 		141211020A48780900480255 /* minidom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minidom.c; path = tests/minidom.c; sourceTree = "<group>"; };
 		1412110D0A48788700480255 /* minidom.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = minidom.js; path = tests/minidom.js; sourceTree = "<group>"; };
@@ -1105,6 +1107,7 @@
 				9303F567099118FA00AD71B8 /* OwnPtr.h */,
 				6580F795094070560082C219 /* PassRefPtr.h */,
 				65D6D87E09B5A32E0002E4D7 /* Platform.h */,
+				0B1F921B0F17502D0036468E /* PtrAndFlags.h */,
 				088FA5B90EF76D4300578E6F /* RandomNumber.cpp */,
 				088FA5BA0EF76D4300578E6F /* RandomNumber.h */,
 				08E279E80EF83B10007DB523 /* RandomNumberSeed.h */,
@@ -1122,8 +1125,8 @@
 				6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */,
 				6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */,
 				E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */,
-				E1EE79220D6C95CD00FEA3BA /* Threading.h */,
 				5D6A566A0F05995500266145 /* Threading.cpp */,
+				E1EE79220D6C95CD00FEA3BA /* Threading.h */,
 				E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */,
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
@@ -1203,6 +1206,8 @@
 				704FD35305697E6D003DBED9 /* BooleanObject.h */,
 				BC7952340E15EB5600A898AB /* BooleanPrototype.cpp */,
 				BC7952350E15EB5600A898AB /* BooleanPrototype.h */,
+				A791EE5A0F11D90C00AE1F68 /* ByteArray.cpp */,
+				A791EE590F11D90C00AE1F68 /* ByteArray.h */,
 				BCA62DFE0E2826230004F30D /* CallData.cpp */,
 				145C507F0D9DF63B0088F6B9 /* CallData.h */,
 				BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */,
@@ -1251,6 +1256,8 @@
 				14DA818E0D99FD2000B0A4FB /* JSActivation.h */,
 				93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */,
 				938772E5038BFE19008635CE /* JSArray.h */,
+				A791EF270F11E07900AE1F68 /* JSByteArray.cpp */,
+				A791EF260F11E07900AE1F68 /* JSByteArray.h */,
 				BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */,
 				BC1167D80E19BCC9008066DD /* JSCell.h */,
 				F692A85E0255597D01FF60F7 /* JSFunction.cpp */,
@@ -1345,10 +1352,6 @@
 				6507D2970E871E4A00D7D896 /* TypeInfo.h */,
 				F692A8850255597D01FF60F7 /* UString.cpp */,
 				F692A8860255597D01FF60F7 /* UString.h */,
-				A791EE590F11D90C00AE1F68 /* ByteArray.h */,
-				A791EE5A0F11D90C00AE1F68 /* ByteArray.cpp */,
-				A791EF260F11E07900AE1F68 /* JSByteArray.h */,
-				A791EF270F11E07900AE1F68 /* JSByteArray.cpp */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -1490,6 +1493,7 @@
 				BC18C3EA0E16F5CD00B34460 /* Assertions.h in Headers */,
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
 				BC18C3EC0E16F5CD00B34460 /* BooleanObject.h in Headers */,
+				A791EE5B0F11D90C00AE1F68 /* ByteArray.h in Headers */,
 				969A07230ED1CE3300F1F681 /* BytecodeGenerator.h in Headers */,
 				BC18C3ED0E16F5CD00B34460 /* CallData.h in Headers */,
 				1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */,
@@ -1546,6 +1550,7 @@
 				BC18C4170E16F5CD00B34460 /* JSArray.h in Headers */,
 				BC18C4180E16F5CD00B34460 /* JSBase.h in Headers */,
 				140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */,
+				A791EF280F11E07900AE1F68 /* JSByteArray.h in Headers */,
 				BC18C4190E16F5CD00B34460 /* JSCallbackConstructor.h in Headers */,
 				BC18C41A0E16F5CD00B34460 /* JSCallbackFunction.h in Headers */,
 				BC18C41B0E16F5CD00B34460 /* JSCallbackObject.h in Headers */,
@@ -1620,6 +1625,7 @@
 				BC18C4550E16F5CD00B34460 /* PropertySlot.h in Headers */,
 				BC18C4560E16F5CD00B34460 /* Protect.h in Headers */,
 				BC257DF40E1F53740016B6C9 /* PrototypeFunction.h in Headers */,
+				0B1F921D0F1753500036468E /* PtrAndFlags.h in Headers */,
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
 				1429DA4A0ED245EC00B89619 /* Quantifier.h in Headers */,
 				088FA5BC0EF76D4300578E6F /* RandomNumber.h in Headers */,
@@ -1687,8 +1693,6 @@
 				BC18C44D0E16F5CD00B34460 /* pcre.h in Headers */,
 				BC18C44E0E16F5CD00B34460 /* pcre_internal.h in Headers */,
 				BC18C4720E16F5CD00B34460 /* ucpinternal.h in Headers */,
-				A791EE5B0F11D90C00AE1F68 /* ByteArray.h in Headers */,
-				A791EF280F11E07900AE1F68 /* JSByteArray.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1974,6 +1978,7 @@
 			files = (
 				659126BD0BDD1728001921FB /* AllInOneFile.cpp in Sources */,
 				65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */,
+				A791EE5C0F11D90C00AE1F68 /* ByteArray.cpp in Sources */,
 				1429D8DD0ED2205B00B89619 /* CallFrame.cpp in Sources */,
 				1429D9C40ED23C3900B89619 /* CharacterClass.cpp in Sources */,
 				7E2ADD900E79AC1100D50C51 /* CharacterClassConstructor.cpp in Sources */,
@@ -1994,6 +1999,7 @@
 				86CC85C40EE7A89400288682 /* JITPropertyAccess.cpp in Sources */,
 				140B7D1D0DC69AF7009C42B8 /* JSActivation.cpp in Sources */,
 				1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */,
+				A791EF290F11E07900AE1F68 /* JSByteArray.cpp in Sources */,
 				1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */,
 				1440F8920A508B100005F061 /* JSCallbackFunction.cpp in Sources */,
 				14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */,
@@ -2024,6 +2030,7 @@
 				BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */,
 				7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */,
 				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
+				5D6A566B0F05995500266145 /* Threading.cpp in Sources */,
 				E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */,
 				95CD41B30E1BF6560085358E /* TreeProfile.cpp in Sources */,
 				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
@@ -2036,9 +2043,6 @@
 				930754D008B0F74600AB3056 /* pcre_tables.cpp in Sources */,
 				937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp in Sources */,
 				93E26BD408B1514100F85226 /* pcre_xclass.cpp in Sources */,
-				5D6A566B0F05995500266145 /* Threading.cpp in Sources */,
-				A791EE5C0F11D90C00AE1F68 /* ByteArray.cpp in Sources */,
-				A791EF290F11E07900AE1F68 /* JSByteArray.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

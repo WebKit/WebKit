@@ -1,3 +1,64 @@
+2009-01-09  David Levin  <levin@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23175
+
+        Added a template to make the pointer and flags combination
+        in UString more readable and less error prone.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Added PtrAndFlags.h (and sorted the xcode project file).
+
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        (JSC::Identifier::addSlowCase):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        Made the init threading initialize the UString globals.  Before
+        these were initilized using {} but that became harder due to the
+        addition of this tempalte class.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::create):
+        * runtime/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+        * runtime/UString.cpp:
+        (JSC::initializeStaticBaseString):
+        (JSC::initializeUString):
+        (JSC::UString::Rep::create):
+        (JSC::UString::Rep::createFromUTF8):
+        (JSC::createRep):
+        (JSC::UString::UString):
+        (JSC::concatenate):
+        (JSC::UString::operator=):
+        (JSC::UString::makeNull):
+        (JSC::UString::nullRep):
+        * runtime/UString.h:
+        (JSC::UString::Rep::identifierTable):
+        (JSC::UString::Rep::setIdentifierTable):
+        (JSC::UString::Rep::isStatic):
+        (JSC::UString::Rep::setStatic):
+        (JSC::UString::Rep::):
+        (JSC::UString::Rep::null):
+        (JSC::UString::Rep::empty):
+        (JSC::UString::isNull):
+        (JSC::UString::null):
+        (JSC::UString::UString):
+
+        * wtf/PtrAndFlags.h: Added.
+        (WTF::PtrAndFlags::PtrAndFlags):
+        (WTF::PtrAndFlags::isFlagSet):
+        (WTF::PtrAndFlags::setFlag):
+        (WTF::PtrAndFlags::clearFlag):
+        (WTF::PtrAndFlags::get):
+        (WTF::PtrAndFlags::set):
+        A simple way to layer together a pointer and 2 flags.  It relies on the pointer being 4 byte aligned,
+        which should happen for all allocators (due to aligning pointers, int's, etc. on 4 byte boundaries).
+
 2009-01-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

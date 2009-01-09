@@ -359,6 +359,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\PtrAndFlags.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\RandomNumber.cpp"
 			>
 		</File>

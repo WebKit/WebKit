@@ -124,12 +124,12 @@ struct CStringTranslator {
 PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const char* c)
 {
     if (!c) {
-        UString::Rep::null.hash();
-        return &UString::Rep::null;
+        UString::Rep::null().hash();
+        return &UString::Rep::null();
     }
     if (!c[0]) {
-        UString::Rep::empty.hash();
-        return &UString::Rep::empty;
+        UString::Rep::empty().hash();
+        return &UString::Rep::empty();
     }
     if (!c[1])
         return add(globalData, globalData->smallStrings.singleCharacterStringRep(static_cast<unsigned char>(c[0])));
@@ -194,8 +194,8 @@ PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const UChar* 
             return add(globalData, globalData->smallStrings.singleCharacterStringRep(c));
     }
     if (!length) {
-        UString::Rep::empty.hash();
-        return &UString::Rep::empty;
+        UString::Rep::empty().hash();
+        return &UString::Rep::empty();
     }
     UCharBuffer buf = {s, length}; 
     pair<HashSet<UString::Rep*>::iterator, bool> addResult = globalData->identifierTable->add<UCharBuffer, UCharBufferTranslator>(buf);
@@ -225,8 +225,8 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(JSGlobalData* globalData, UStri
             }
     }
     if (!r->len) {
-        UString::Rep::empty.hash();
-        return &UString::Rep::empty;
+        UString::Rep::empty().hash();
+        return &UString::Rep::empty();
     }
     return *globalData->identifierTable->add(r).first;
 }
