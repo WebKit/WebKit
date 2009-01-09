@@ -1,3 +1,27 @@
+2009-01-09  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22995
+        Fix flaky image animation by resetting the metadata for a frame when
+        we get new data for that frame.  This fixes animations that halted
+        when the next frame of the animation wasn't complete by the time the
+        current frame's duration expired.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+        (WebCore::BitmapImage::dataChanged):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::FrameData::~FrameData):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::FrameData::clear):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::FrameData::clear):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::FrameData::clear):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::FrameData::clear):
+
 2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Tor Arne Vestbø.

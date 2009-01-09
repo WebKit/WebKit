@@ -38,15 +38,17 @@
 
 namespace WebCore {
 
-void FrameData::clear()
+bool FrameData::clear(bool clearMetadata)
 {
+    if (clearMetadata)
+        m_haveMetadata = false;
+
     if (m_frame) {
         cairo_surface_destroy(m_frame);
         m_frame = 0;
-        // NOTE: We purposefully don't reset metadata here, so that even if we
-        // throw away previously-decoded data, animation loops can still access
-        // properties like frame durations without re-decoding.
+        return true;
     }
+    return false;
 }
 
 BitmapImage::BitmapImage(cairo_surface_t* surface, ImageObserver* observer)

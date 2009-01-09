@@ -75,10 +75,12 @@ struct FrameData : Noncopyable {
 
     ~FrameData()
     { 
-        clear();
+        clear(true);
     }
 
-    void clear();
+    // Clear the cached image data on the frame, and (optionally) the metadata.
+    // Returns whether there was cached image data to clear.
+    bool clear(bool clearMetadata);
 
     NativeImagePtr m_frame;
     bool m_haveMetadata;
@@ -184,10 +186,6 @@ protected:
     // and notifies observers that the memory footprint has (hopefully)
     // decreased by |framesCleared| times the size (in bytes) of a frame.
     void destroyMetadataAndNotify(int framesCleared);
-
-    // If frame |frame| is cached, clears the cache handle.  Returns the number
-    // of frames actually cleared.
-    int clearFrame(size_t frame);
 
     // Whether or not size is available yet.    
     bool isSizeAvailable();
