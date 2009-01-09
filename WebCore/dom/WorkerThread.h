@@ -29,15 +29,19 @@
 
 #if ENABLE(WORKERS)
 
-#include "KURL.h"
 #include <wtf/MessageQueue.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+    class KURL;
+    class String;
     class WorkerContext;
     class WorkerMessagingProxy;
     class WorkerTask;
+    class WorkerThreadStartupData;
 
     class WorkerThread : public RefCounted<WorkerThread> {
     public:
@@ -59,16 +63,13 @@ namespace WebCore {
         void* workerThread();
 
         ThreadIdentifier m_threadID;
-
-        KURL m_scriptURL;
-        String m_userAgent;
-        String m_sourceCode;
         WorkerMessagingProxy* m_messagingProxy;
 
         RefPtr<WorkerContext> m_workerContext;
         Mutex m_threadCreationMutex;
 
         MessageQueue<RefPtr<WorkerTask> > m_messageQueue;
+        OwnPtr<WorkerThreadStartupData> m_startupData;
     };
 
 } // namespace WebCore

@@ -30,6 +30,8 @@
 
 #include "WorkerThread.h"
 
+#include "KURL.h"
+#include "PlatformString.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "Worker.h"
@@ -37,7 +39,30 @@
 #include "WorkerMessagingProxy.h"
 #include "WorkerTask.h"
 
+#include <utility>
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
+struct WorkerThreadStartupData : Noncopyable {
+public:
+    static std::auto_ptr<WorkerThreadStartupData> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
+    {
+        return std::auto_ptr<WorkerThreadStartupData>(new WorkerThreadStartupData(scriptURL, userAgent, sourceCode));
+    }
+
+    KURL m_scriptURL;
+    String m_userAgent;
+    String m_sourceCode;
+private:
+    WorkerThreadStartupData(const KURL& scriptURL, const String& userAgent, const String& sourceCode);
+};
+
+WorkerThreadStartupData::WorkerThreadStartupData(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
+    : m_scriptURL(scriptURL.copy())
+    , m_userAgent(userAgent.copy())
+    , m_sourceCode(sourceCode.copy())
+{
+}
 
 PassRefPtr<WorkerThread> WorkerThread::create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerMessagingProxy* messagingProxy)
 {
@@ -46,10 +71,8 @@ PassRefPtr<WorkerThread> WorkerThread::create(const KURL& scriptURL, const Strin
 
 WorkerThread::WorkerThread(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerMessagingProxy* messagingProxy)
     : m_threadID(0)
-    , m_scriptURL(scriptURL.copy())
-    , m_userAgent(userAgent.copy())
-    , m_sourceCode(sourceCode.copy())
     , m_messagingProxy(messagingProxy)
+    , m_startupData(WorkerThreadStartupData::create(scriptURL, userAgent, sourceCode))
 {
 }
 
@@ -79,11 +102,16 @@ void* WorkerThread::workerThread()
 {
     {
         MutexLocker lock(m_threadCreationMutex);
-        m_workerContext = WorkerContext::create(m_scriptURL, m_userAgent, this);
+        m_workerContext = WorkerContext::create(m_startupData->m_scriptURL, m_startupData->m_userAgent, this);
     }
 
     WorkerScriptController* script = m_workerContext->script();
-    script->evaluate(ScriptSourceCode(m_sourceCode, m_scriptURL));
+    script->evaluate(ScriptSourceCode(m_startupData->m_sourceCode, m_startupData->m_scriptURL));
+    // Free the startup data to cause its member variable deref's happen on the worker's thread (since
+    // all ref/derefs of these objects are happening on the thread at this point). Note that
+    // WorkerThread::~WorkerThread happens on a different thread where it was created.
+    m_startupData.clear();
+
     m_messagingProxy->confirmWorkerThreadMessage(m_workerContext->hasPendingActivity()); // This wasn't really a message, but it counts as one for GC.
 
     while (true) {
