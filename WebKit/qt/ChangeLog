@@ -1,3 +1,11 @@
+2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Remove files not present anymore from the WEBKIT_API_HEADERS variable.
+
+        * Api/headers.pri:
+
 2009-01-08  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Simon Hausmann.

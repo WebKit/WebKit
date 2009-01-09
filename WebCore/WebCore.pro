@@ -1049,10 +1049,6 @@ HEADERS += \
     $$PWD/platform/qt/QWebPopup.h \
     $$PWD/platform/qt/MenuEventProxy.h \
     $$PWD/platform/qt/SharedTimerQt.h \
-    $$PWD/../WebKit/qt/Api/qwebframe.h \
-    $$PWD/../WebKit/qt/Api/qwebpage.h \
-    $$PWD/../WebKit/qt/Api/qwebview.h \
-    $$PWD/../WebKit/qt/Api/qwebhistoryinterface.h \
     $$PWD/../WebKit/qt/Api/qwebpluginfactory.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/platform/network/qt/QNetworkReplyHandler.h \
@@ -2001,9 +1997,10 @@ xpathbison.dependency_type = TYPE_C
 xpathbison.variable_out = GENERATED_SOURCES
 addExtraCompilerWithHeader(xpathbison)
 
+include($$PWD/../WebKit/qt/Api/headers.pri)
+HEADERS += $$WEBKIT_API_HEADERS
 !CONFIG(QTDIR_build) {
     target.path = $$[QT_INSTALL_LIBS]
-    include($$PWD/../WebKit/qt/Api/headers.pri)
     headers.files = $$WEBKIT_API_HEADERS
     headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
     prf.files = $$PWD/../WebKit/qt/Api/qtwebkit.prf

@@ -1,3 +1,11 @@
+2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Add the Qt API headers to HEADERS, too, for improved completion in IDEs.
+
+        * WebCore.pro:
+
 2009-01-09  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
