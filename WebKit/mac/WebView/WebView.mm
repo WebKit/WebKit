@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -120,6 +120,7 @@
 #import <WebCore/SelectionController.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextResourceDecoder.h>
+#import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
@@ -421,6 +422,8 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 @interface WebView (WebCallDelegateFunctions)
 @end
 
+static void patchMailRemoveAttributesMethod();
+
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebElementFrameKey =              @"WebElementFrame";
 NSString *WebElementImageKey =              @"WebElementImage";
@@ -675,6 +678,8 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
 {
+    WebCoreThreadViolationCheck();
+
 #ifndef NDEBUG
     WTF::RefCountedLeakCounter::suppressMessages(webViewIsOpen);
 #endif
@@ -699,12 +704,17 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
         [frameView release];
     }
 
-    WebKitInitializeLoggingChannelsIfNecessary();
-    WebCore::InitializeLoggingChannelsIfNecessary();
-    [WebHistoryItem initWindowWatcherIfNecessary];
-    WebKitInitializeDatabasesIfNecessary();
-    WebKitInitializeApplicationCachePathIfNecessary();
-    
+    static bool didOneTimeInitialization = false;
+    if (!didOneTimeInitialization) {
+        WebKitInitializeLoggingChannelsIfNecessary();
+        WebCore::InitializeLoggingChannelsIfNecessary();
+        [WebHistoryItem initWindowWatcherIfNecessary];
+        WebKitInitializeDatabasesIfNecessary();
+        WebKitInitializeApplicationCachePathIfNecessary();
+        patchMailRemoveAttributesMethod();
+        didOneTimeInitialization = true;
+    }
+
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self), new WebInspectorClient(self));
 
     _private->page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
@@ -2245,6 +2255,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
 - (id)initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+    WebCoreThreadViolationCheck();
     return [self _initWithFrame:f frameName:frameName groupName:groupName usesDocumentViews:YES];
 }
 
@@ -5306,3 +5317,39 @@ BOOL CallFormDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, 
 }
 
 @end
+
+#ifdef BUILDING_ON_LEOPARD
+
+static IMP originalRecursivelyRemoveMailAttributesImp;
+
+static id objectElementDataAttribute(DOMHTMLObjectElement *self, SEL)
+{
+    return [self getAttribute:@"data"];
+}
+
+static void recursivelyRemoveMailAttributes(DOMNode *self, SEL selector, BOOL a, BOOL b, BOOL c)
+{
+    // While inside this Mail function, change the behavior of -[DOMHTMLObjectElement data] back to what it used to be
+    // before we fixed a bug in it (see http://trac.webkit.org/changeset/30044 for that change).
+
+    // It's a little bit strange to patch a method defined by WebKit, but it helps keep this workaround self-contained.
+
+    Method methodToPatch = class_getInstanceMethod(objc_getRequiredClass("DOMHTMLObjectElement"), @selector(data));
+    IMP originalDataImp = method_setImplementation(methodToPatch, reinterpret_cast<IMP>(objectElementDataAttribute));
+    originalRecursivelyRemoveMailAttributesImp(self, selector, a, b, c);
+    method_setImplementation(methodToPatch, originalDataImp);
+}
+
+#endif
+
+static void patchMailRemoveAttributesMethod()
+{
+#ifdef BUILDING_ON_LEOPARD
+    if (!WKAppVersionCheckLessThan(@"com.apple.mail", -1, 4.0))
+        return;
+    Method methodToPatch = class_getInstanceMethod(objc_getRequiredClass("DOMNode"), @selector(recursivelyRemoveMailAttributes:convertObjectsToImages:convertEditableElements:));
+    if (!methodToPatch)
+        return;
+    originalRecursivelyRemoveMailAttributesImp = method_setImplementation(methodToPatch, reinterpret_cast<IMP>(recursivelyRemoveMailAttributes));
+#endif
+}

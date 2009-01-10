@@ -1,3 +1,25 @@
+2009-01-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/5845089> REGRESSION (r30044): Mail custom stationery missing images
+        because of change to -[HTMLObjectElement data]
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]): Added a thread
+        violation check because I saw this being done off the main thread while testing Mail, and it
+        caused problems. Put all the one time initialization under a single guard to make things just
+        a little faster other times, and to make it clearer which things are one-time. Added a call to
+        the new patchMailRemoveAttributesMethod function.
+        (-[WebView initWithFrame:frameName:groupName:]): Added a thread violation check here too,
+        because I assumed it would be slightly better to have a public method name in the violation
+        message. This calls commonInitialization later, so it will hit that one eventually.
+        (objectElementDataAttribute): Added. Just returns the value of the "data" attribute.
+        (recursivelyRemoveMailAttributes): Added. Patch to an internal Mail method that in turn patches
+        a WebKit method and removes the patch again on the way out.
+        (patchMailRemoveAttributesMethod): Added. On Leopard only, checks the Mail version, and then
+        applies the patch that fixes this bug.
+
 2009-01-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
