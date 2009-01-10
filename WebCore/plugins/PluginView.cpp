@@ -70,7 +70,6 @@
 using JSC::ExecState;
 using JSC::JSLock;
 using JSC::JSObject;
-using JSC::JSValue;
 using JSC::JSValuePtr;
 using JSC::UString;
 

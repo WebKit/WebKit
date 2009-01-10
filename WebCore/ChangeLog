@@ -1,3 +1,9 @@
+2009-01-09  Adam Treat  <adam.treat@torchmobile.com>
+
+        Build fix.
+
+        * plugins/PluginView.cpp:
+
 2009-01-09  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
