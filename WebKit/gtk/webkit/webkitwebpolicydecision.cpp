@@ -113,9 +113,6 @@ void webkit_web_policy_decision_download(WebKitWebPolicyDecision* decision)
 
     WebKitWebPolicyDecisionPrivate* priv = decision->priv;
 
-    g_warning("Download is not supported");
-    webkit_web_policy_decision_ignore(decision);
-
     if (!priv->isCancelled)
         (core(priv->frame)->loader()->*(priv->framePolicyFunction))(WebCore::PolicyDownload);
 }

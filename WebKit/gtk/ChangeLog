@@ -1,3 +1,16 @@
+2009-01-09  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23194
+
+        Remove broken code that uses a fallback. The previous code did 2
+        policy decisions which caused crashes.
+        Download is still notImplemented();
+
+        * webkit/webkitwebpolicydecision.cpp:
+        (_WebKitWebPolicyDecisionPrivate::webkit_web_policy_decision_download):
+
 2009-01-03  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.
