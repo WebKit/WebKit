@@ -682,7 +682,7 @@ int RenderTextControlSingleLine::clientInsetRight() const
 
 int RenderTextControlSingleLine::clientPaddingLeft() const
 {
-    int padding = clientPaddingLeft();
+    int padding = paddingLeft();
 
     if (RenderObject* resultsRenderer = m_resultsButton ? m_resultsButton->renderer() : 0)
         padding += resultsRenderer->width();
@@ -692,7 +692,7 @@ int RenderTextControlSingleLine::clientPaddingLeft() const
 
 int RenderTextControlSingleLine::clientPaddingRight() const
 {
-    int padding = clientPaddingRight();
+    int padding = paddingRight();
 
     if (RenderObject* cancelRenderer = m_cancelButton ? m_cancelButton->renderer() : 0)
         padding += cancelRenderer->width();

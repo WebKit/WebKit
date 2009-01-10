@@ -1,3 +1,16 @@
+2009-01-09  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix infinite recursion in clientPaddingLeft and clientPaddingRight.  This changes the code back to
+        how it was before RenderTextControlSingleLine was split out from RenderTextControl.
+        
+        No test added since this code is only exercised when trying to place a search field's recent searches popup menu.
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::clientPaddingLeft):
+        (WebCore::RenderTextControlSingleLine::clientPaddingRight):
+
 2009-01-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Jon Honeycutt.
