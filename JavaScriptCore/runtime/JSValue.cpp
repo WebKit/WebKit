@@ -31,7 +31,7 @@ namespace JSC {
 static const double D32 = 4294967296.0;
 
 // ECMA 9.4
-double JSValue::toInteger(ExecState* exec) const
+double JSValuePtr::toInteger(ExecState* exec) const
 {
     int32_t i;
     if (getTruncatedInt32(i))
@@ -40,7 +40,7 @@ double JSValue::toInteger(ExecState* exec) const
     return isnan(d) ? 0.0 : trunc(d);
 }
 
-double JSValue::toIntegerPreserveNaN(ExecState* exec) const
+double JSValuePtr::toIntegerPreserveNaN(ExecState* exec) const
 {
     int32_t i;
     if (getTruncatedInt32(i))
@@ -68,7 +68,7 @@ int32_t toInt32SlowCase(double d, bool& ok)
     return static_cast<int32_t>(d32);
 }
 
-int32_t JSValue::toInt32SlowCase(ExecState* exec, bool& ok) const
+int32_t JSValuePtr::toInt32SlowCase(ExecState* exec, bool& ok) const
 {
     return JSC::toInt32SlowCase(toNumber(exec), ok);
 }
@@ -91,14 +91,9 @@ uint32_t toUInt32SlowCase(double d, bool& ok)
     return static_cast<uint32_t>(d32);
 }
 
-uint32_t JSValue::toUInt32SlowCase(ExecState* exec, bool& ok) const
+uint32_t JSValuePtr::toUInt32SlowCase(ExecState* exec, bool& ok) const
 {
     return JSC::toUInt32SlowCase(toNumber(exec), ok);
-}
-
-float JSValue::toFloat(ExecState* exec) const
-{
-    return static_cast<float>(toNumber(exec));
 }
 
 } // namespace JSC

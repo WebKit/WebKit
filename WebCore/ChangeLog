@@ -1,3 +1,13 @@
+2009-01-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Delete references to JSValue, removing this class.
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::self):
+        * bindings/js/ScriptCallStack.h:
+
 2009-01-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

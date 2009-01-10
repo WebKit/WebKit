@@ -28,7 +28,6 @@
 
 #include "CallData.h"
 #include "ConstructData.h"
-#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
@@ -45,12 +44,68 @@ namespace JSC {
 
     enum PreferredPrimitiveType { NoPreference, PreferNumber, PreferString };
 
-    class JSValue : Noncopyable {
-    protected:
-        JSValue() { }
-        virtual ~JSValue() { }
+    class JSImmediate;
+    class JSValueEncodedAsPointer;
 
+    class JSValuePtr {
+        friend class JSImmediate;
+
+        static JSValuePtr makeImmediate(intptr_t value)
+        {
+            return JSValuePtr(reinterpret_cast<JSCell*>(value));
+        }
+
+        intptr_t immediateValue()
+        {
+            return reinterpret_cast<intptr_t>(m_ptr);
+        }
+        
     public:
+        JSValuePtr()
+            : m_ptr(0)
+        {
+        }
+
+        JSValuePtr(JSCell* ptr)
+            : m_ptr(ptr)
+        {
+        }
+
+        JSValuePtr(const JSCell* ptr)
+            : m_ptr(const_cast<JSCell*>(ptr))
+        {
+        }
+
+        JSValuePtr* operator->() const
+        {
+            return const_cast<JSValuePtr*>(this);
+        }
+
+        operator bool() const
+        {
+            return m_ptr;
+        }
+
+        bool operator==(const JSValuePtr other) const
+        {
+            return m_ptr == other.m_ptr;
+        }
+
+        bool operator!=(const JSValuePtr other) const
+        {
+            return m_ptr != other.m_ptr;
+        }
+
+        static JSValueEncodedAsPointer* encode(JSValuePtr value)
+        {
+            return reinterpret_cast<JSValueEncodedAsPointer*>(value.m_ptr);
+        }
+
+        static JSValuePtr decode(JSValueEncodedAsPointer* ptr)
+        {
+            return JSValuePtr(reinterpret_cast<JSCell*>(ptr));
+        }
+
         // Querying the type.
         bool isUndefined() const;
         bool isNull() const;
@@ -89,7 +144,6 @@ namespace JSC {
         // been set in the ExecState already.
         double toNumber(ExecState*) const;
         JSValuePtr toJSNumber(ExecState*) const; // Fast path for when you expect that the value is an immediate number.
-
         UString toString(ExecState*) const;
         JSObject* toObject(ExecState*) const;
 
@@ -102,7 +156,7 @@ namespace JSC {
         uint32_t toUInt32(ExecState*, bool& ok) const;
 
         // Floating point conversions.
-        float toFloat(ExecState*) const;
+        float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
 
         // Garbage collection.
         void mark();
@@ -115,8 +169,6 @@ namespace JSC {
         JSValuePtr get(ExecState*, unsigned propertyName, PropertySlot&) const;
         void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
         void put(ExecState*, unsigned propertyName, JSValuePtr);
-        bool deleteProperty(ExecState*, const Identifier& propertyName);
-        bool deleteProperty(ExecState*, unsigned propertyName);
 
         bool needsThisConversion() const;
         JSObject* toThisObject(ExecState*) const;
@@ -125,98 +177,27 @@ namespace JSC {
 
         JSValuePtr getJSNumber(); // 0 if this is not a JSNumber or number object
 
-        JSValuePtr asValue() const;
-
         JSCell* asCell() const;
 
     private:
-        bool getPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
-        bool getPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        inline const JSValuePtr asValue() const { return *this; }
+
         int32_t toInt32SlowCase(ExecState*, bool& ok) const;
         uint32_t toUInt32SlowCase(ExecState*, bool& ok) const;
+
+        JSCell* m_ptr;
     };
-
-    class JSImmediate;
-    class JSValueEncodedAsPointer;
-
-    class JSValuePtr {
-        friend class JSImmediate;
-
-        static JSValuePtr makeImmediate(intptr_t value)
-        {
-            return JSValuePtr(reinterpret_cast<JSValue*>(value));
-        }
-
-        intptr_t immediateValue()
-        {
-            return reinterpret_cast<intptr_t>(m_ptr);
-        }
-        
-    public:
-        JSValuePtr()
-            : m_ptr(0)
-        {
-        }
-
-        JSValuePtr(JSValue* ptr)
-            : m_ptr(ptr)
-        {
-        }
-
-        JSValuePtr(const JSValue* ptr)
-            : m_ptr(const_cast<JSValue*>(ptr))
-        {
-        }
-
-        JSValue* operator->() const
-        {
-            return m_ptr;
-        }
-
-        operator bool() const
-        {
-            return m_ptr;
-        }
-
-        bool operator==(const JSValuePtr other) const
-        {
-            return m_ptr == other.m_ptr;
-        }
-
-        bool operator!=(const JSValuePtr other) const
-        {
-            return m_ptr != other.m_ptr;
-        }
-
-        static JSValueEncodedAsPointer* encode(JSValuePtr value)
-        {
-            return reinterpret_cast<JSValueEncodedAsPointer*>(value.m_ptr);
-        }
-
-        static JSValuePtr decode(JSValueEncodedAsPointer* ptr)
-        {
-            return JSValuePtr(reinterpret_cast<JSValue*>(ptr));
-        }
-
-    private:
-        JSValue* m_ptr;
-    };
-
-    inline JSValuePtr JSValue::asValue() const
-    {
-        return JSValuePtr(this);
-    }
 
     inline JSValuePtr noValue()
     {
         return JSValuePtr();
     }
 
-    inline bool operator==(const JSValuePtr a, const JSValue* b) { return a == JSValuePtr(b); }
-    inline bool operator==(const JSValue* a, const JSValuePtr b) { return JSValuePtr(a) == b; }
+    inline bool operator==(const JSValuePtr a, const JSCell* b) { return a == JSValuePtr(b); }
+    inline bool operator==(const JSCell* a, const JSValuePtr b) { return JSValuePtr(a) == b; }
 
-    inline bool operator!=(const JSValuePtr a, const JSValue* b) { return a != JSValuePtr(b); }
-    inline bool operator!=(const JSValue* a, const JSValuePtr b) { return JSValuePtr(a) != b; }
+    inline bool operator!=(const JSValuePtr a, const JSCell* b) { return a != JSValuePtr(b); }
+    inline bool operator!=(const JSCell* a, const JSValuePtr b) { return JSValuePtr(a) != b; }
 
 } // namespace JSC
 

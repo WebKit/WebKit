@@ -268,7 +268,7 @@ inline bool JSCell::isObject(const ClassInfo* info) const
 }
 
 // this method is here to be after the inline declaration of JSCell::isObject
-inline bool JSValue::isObject(const ClassInfo* classInfo) const
+inline bool JSValuePtr::isObject(const ClassInfo* classInfo) const
 {
     return !JSImmediate::isImmediate(asValue()) && asCell()->isObject(classInfo);
 }
@@ -465,13 +465,13 @@ inline JSValuePtr JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType 
     return defaultValue(exec, preferredType);
 }
 
-inline JSValuePtr JSValue::get(ExecState* exec, const Identifier& propertyName) const
+inline JSValuePtr JSValuePtr::get(ExecState* exec, const Identifier& propertyName) const
 {
-    PropertySlot slot(this);
+    PropertySlot slot(asValue());
     return get(exec, propertyName, slot);
 }
 
-inline JSValuePtr JSValue::get(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) const
+inline JSValuePtr JSValuePtr::get(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) const
 {
     if (UNLIKELY(JSImmediate::isImmediate(asValue()))) {
         JSObject* prototype = JSImmediate::prototype(asValue(), exec);
@@ -491,13 +491,13 @@ inline JSValuePtr JSValue::get(ExecState* exec, const Identifier& propertyName, 
     }
 }
 
-inline JSValuePtr JSValue::get(ExecState* exec, unsigned propertyName) const
+inline JSValuePtr JSValuePtr::get(ExecState* exec, unsigned propertyName) const
 {
-    PropertySlot slot(this);
+    PropertySlot slot(asValue());
     return get(exec, propertyName, slot);
 }
 
-inline JSValuePtr JSValue::get(ExecState* exec, unsigned propertyName, PropertySlot& slot) const
+inline JSValuePtr JSValuePtr::get(ExecState* exec, unsigned propertyName, PropertySlot& slot) const
 {
     if (UNLIKELY(JSImmediate::isImmediate(asValue()))) {
         JSObject* prototype = JSImmediate::prototype(asValue(), exec);
@@ -517,7 +517,7 @@ inline JSValuePtr JSValue::get(ExecState* exec, unsigned propertyName, PropertyS
     }
 }
 
-inline void JSValue::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
+inline void JSValuePtr::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
 {
     if (UNLIKELY(JSImmediate::isImmediate(asValue()))) {
         JSImmediate::toObject(asValue(), exec)->put(exec, propertyName, value, slot);
@@ -526,7 +526,7 @@ inline void JSValue::put(ExecState* exec, const Identifier& propertyName, JSValu
     asCell()->put(exec, propertyName, value, slot);
 }
 
-inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValuePtr value)
+inline void JSValuePtr::put(ExecState* exec, unsigned propertyName, JSValuePtr value)
 {
     if (UNLIKELY(JSImmediate::isImmediate(asValue()))) {
         JSImmediate::toObject(asValue(), exec)->put(exec, propertyName, value);

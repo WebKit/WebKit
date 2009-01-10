@@ -37,7 +37,6 @@ namespace JSC {
     class ExecState;
     class JSCell;
     class JSObject;
-    class JSValue;
     class UString;
 
     /*
@@ -505,27 +504,27 @@ namespace JSC {
     int32_t toInt32SlowCase(double, bool& ok);
     uint32_t toUInt32SlowCase(double, bool& ok);
 
-    inline bool JSValue::isUndefined() const
+    inline bool JSValuePtr::isUndefined() const
     {
         return asValue() == jsUndefined();
     }
 
-    inline bool JSValue::isNull() const
+    inline bool JSValuePtr::isNull() const
     {
         return asValue() == jsNull();
     }
 
-    inline bool JSValue::isUndefinedOrNull() const
+    inline bool JSValuePtr::isUndefinedOrNull() const
     {
         return JSImmediate::isUndefinedOrNull(asValue());
     }
 
-    inline bool JSValue::isBoolean() const
+    inline bool JSValuePtr::isBoolean() const
     {
         return JSImmediate::isBoolean(asValue());
     }
 
-    inline bool JSValue::getBoolean(bool& v) const
+    inline bool JSValuePtr::getBoolean(bool& v) const
     {
         if (JSImmediate::isBoolean(asValue())) {
             v = JSImmediate::toBoolean(asValue());
@@ -535,12 +534,12 @@ namespace JSC {
         return false;
     }
 
-    inline bool JSValue::getBoolean() const
+    inline bool JSValuePtr::getBoolean() const
     {
         return asValue() == jsBoolean(true);
     }
 
-    ALWAYS_INLINE int32_t JSValue::toInt32(ExecState* exec) const
+    ALWAYS_INLINE int32_t JSValuePtr::toInt32(ExecState* exec) const
     {
         int32_t i;
         if (getTruncatedInt32(i))
@@ -549,7 +548,7 @@ namespace JSC {
         return toInt32SlowCase(exec, ok);
     }
 
-    inline uint32_t JSValue::toUInt32(ExecState* exec) const
+    inline uint32_t JSValuePtr::toUInt32(ExecState* exec) const
     {
         uint32_t i;
         if (getTruncatedUInt32(i))
@@ -576,7 +575,7 @@ namespace JSC {
         return static_cast<uint32_t>(val);
     }
 
-    inline int32_t JSValue::toInt32(ExecState* exec, bool& ok) const
+    inline int32_t JSValuePtr::toInt32(ExecState* exec, bool& ok) const
     {
         int32_t i;
         if (getTruncatedInt32(i)) {
@@ -586,7 +585,7 @@ namespace JSC {
         return toInt32SlowCase(exec, ok);
     }
 
-    inline uint32_t JSValue::toUInt32(ExecState* exec, bool& ok) const
+    inline uint32_t JSValuePtr::toUInt32(ExecState* exec, bool& ok) const
     {
         uint32_t i;
         if (getTruncatedUInt32(i)) {

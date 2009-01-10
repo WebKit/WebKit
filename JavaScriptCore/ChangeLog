@@ -1,3 +1,81 @@
+2009-01-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Stage two of converting JSValue from a pointer to a class type.
+        Remove the class JSValue.  The functionallity has been transitioned
+        into the wrapper class type JSValuePtr.
+
+        The last stage will be to rename JSValuePtr to JSValue, remove the
+        overloaded -> operator, and switch operations on JSValuePtrs from
+        using '->' to use '.' instead.
+
+        * API/APICast.h:
+        * JavaScriptCore.exp:
+        * runtime/JSCell.h:
+        (JSC::asCell):
+        (JSC::JSValuePtr::asCell):
+        (JSC::JSValuePtr::isNumber):
+        (JSC::JSValuePtr::isString):
+        (JSC::JSValuePtr::isGetterSetter):
+        (JSC::JSValuePtr::isObject):
+        (JSC::JSValuePtr::getNumber):
+        (JSC::JSValuePtr::getString):
+        (JSC::JSValuePtr::getObject):
+        (JSC::JSValuePtr::getCallData):
+        (JSC::JSValuePtr::getConstructData):
+        (JSC::JSValuePtr::getUInt32):
+        (JSC::JSValuePtr::getTruncatedInt32):
+        (JSC::JSValuePtr::getTruncatedUInt32):
+        (JSC::JSValuePtr::mark):
+        (JSC::JSValuePtr::marked):
+        (JSC::JSValuePtr::toPrimitive):
+        (JSC::JSValuePtr::getPrimitiveNumber):
+        (JSC::JSValuePtr::toBoolean):
+        (JSC::JSValuePtr::toNumber):
+        (JSC::JSValuePtr::toString):
+        (JSC::JSValuePtr::toObject):
+        (JSC::JSValuePtr::toThisObject):
+        (JSC::JSValuePtr::needsThisConversion):
+        (JSC::JSValuePtr::toThisString):
+        (JSC::JSValuePtr::getJSNumber):
+        * runtime/JSImmediate.h:
+        (JSC::JSValuePtr::isUndefined):
+        (JSC::JSValuePtr::isNull):
+        (JSC::JSValuePtr::isUndefinedOrNull):
+        (JSC::JSValuePtr::isBoolean):
+        (JSC::JSValuePtr::getBoolean):
+        (JSC::JSValuePtr::toInt32):
+        (JSC::JSValuePtr::toUInt32):
+        * runtime/JSNumberCell.h:
+        (JSC::JSValuePtr::uncheckedGetNumber):
+        (JSC::JSValuePtr::toJSNumber):
+        * runtime/JSObject.h:
+        (JSC::JSValuePtr::isObject):
+        (JSC::JSValuePtr::get):
+        (JSC::JSValuePtr::put):
+        * runtime/JSString.h:
+        (JSC::JSValuePtr::toThisJSString):
+        * runtime/JSValue.cpp:
+        (JSC::JSValuePtr::toInteger):
+        (JSC::JSValuePtr::toIntegerPreserveNaN):
+        (JSC::JSValuePtr::toInt32SlowCase):
+        (JSC::JSValuePtr::toUInt32SlowCase):
+        * runtime/JSValue.h:
+        (JSC::JSValuePtr::makeImmediate):
+        (JSC::JSValuePtr::immediateValue):
+        (JSC::JSValuePtr::JSValuePtr):
+        (JSC::JSValuePtr::operator->):
+        (JSC::JSValuePtr::operator bool):
+        (JSC::JSValuePtr::operator==):
+        (JSC::JSValuePtr::operator!=):
+        (JSC::JSValuePtr::encode):
+        (JSC::JSValuePtr::decode):
+        (JSC::JSValuePtr::toFloat):
+        (JSC::JSValuePtr::asValue):
+        (JSC::operator==):
+        (JSC::operator!=):
+
 2009-01-09  David Levin  <levin@chromium.org>
 
         Reviewed by Oliver Hunt.

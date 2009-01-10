@@ -230,7 +230,7 @@ namespace JSC {
 
     // --- JSValue inlines ----------------------------
 
-    inline double JSValue::uncheckedGetNumber() const
+    inline double JSValuePtr::uncheckedGetNumber() const
     {
         ASSERT(JSImmediate::isImmediate(asValue()) || asCell()->isNumber());
         return JSImmediate::isImmediate(asValue()) ? JSImmediate::toDouble(asValue()) : asNumberCell(asValue())->value();
@@ -252,7 +252,7 @@ namespace JSC {
         return JSC::toUInt32SlowCase(m_value, scratch);
     }
 
-    ALWAYS_INLINE JSValuePtr JSValue::toJSNumber(ExecState* exec) const
+    ALWAYS_INLINE JSValuePtr JSValuePtr::toJSNumber(ExecState* exec) const
     {
         return JSImmediate::isNumber(asValue()) ? asValue() : jsNumber(exec, this->toNumber(exec));
     }

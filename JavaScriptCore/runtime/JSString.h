@@ -204,7 +204,7 @@ namespace JSC {
 
     // --- JSValue inlines ----------------------------
 
-    inline JSString* JSValue::toThisJSString(ExecState* exec)
+    inline JSString* JSValuePtr::toThisJSString(ExecState* exec)
     {
         return JSImmediate::isImmediate(asValue()) ? jsString(exec, JSImmediate::toString(asValue())) : asCell()->toThisJSString(exec);
     }

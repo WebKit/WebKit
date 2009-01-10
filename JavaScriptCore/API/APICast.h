@@ -33,7 +33,6 @@ namespace JSC {
     class PropertyNameArray;
     class JSGlobalData;
     class JSObject;
-    class JSValue;
     class JSValuePtr;
 }
 

@@ -67,7 +67,7 @@ void JSWorkerContext::mark()
 
 JSValuePtr JSWorkerContext::self(ExecState*) const
 {
-    return asValue();
+    return JSValuePtr(this);
 }
 
 void JSWorkerContext::setSelf(ExecState* exec, JSValuePtr value)

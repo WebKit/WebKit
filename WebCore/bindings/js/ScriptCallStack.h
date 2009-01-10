@@ -38,7 +38,7 @@
 
 namespace JSC {
     class ExecState;
-    class JSValue;
+    class JSValuePtr;
 }
 
 namespace WebCore {
