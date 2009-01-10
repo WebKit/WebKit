@@ -1,3 +1,24 @@
+2009-01-09  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [QT] Make SharedTimer use QBasicTimer
+
+        Kill the SharedTimerQt.h and the usage of signal and slots
+        by using QBasicTimer.
+
+        * WebCore.pro:
+        * platform/qt/SharedTimerQt.cpp:
+        (WebCore::SharedTimerQt::SharedTimerQt):
+        (WebCore::SharedTimerQt::inst):
+        (WebCore::SharedTimerQt::start):
+        (WebCore::SharedTimerQt::stop):
+        (WebCore::SharedTimerQt::timerEvent):
+        (WebCore::setSharedTimerFiredFunction):
+        (WebCore::setSharedTimerFireTime):
+        (WebCore::stopSharedTimer):
+        * platform/qt/SharedTimerQt.h: Removed.
+
 2009-01-09  Adam Bergkvist <adam.bergkvist@ericsson.com>
 
         Reviewed by Holger Freyther.
