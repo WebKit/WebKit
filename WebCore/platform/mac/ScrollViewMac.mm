@@ -157,7 +157,7 @@ bool ScrollView::platformScroll(ScrollDirection, ScrollGranularity)
 {
     // FIXME: It would be nice to implement this so that all of the code in WebFrameView could go away.
     notImplemented();
-    return true;
+    return false;
 }
 
 void ScrollView::platformRepaintContentRectangle(const IntRect& rect, bool now)

@@ -1877,8 +1877,11 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
         m_frame->editor()->handleKeyboardEvent(event);
         if (event->defaultHandled())
             return;
-        if (event->keyIdentifier() == "U+0009")
+        const String& keyIdentifier = event->keyIdentifier();
+        if (keyIdentifier == "U+0009")
             defaultTabEventHandler(event);
+        else if (keyIdentifier == "U+0020")
+            defaultSpaceEventHandler(event);
 
        // provides KB navigation and selection for enhanced accessibility users
        if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
@@ -2145,6 +2148,36 @@ void EventHandler::defaultTextInputEventHandler(TextEvent* event)
             event->setDefaultHandled();
     }
 }
+
+#if PLATFORM(QT) || PLATFORM(MAC)
+
+// These two platforms handle the space event in the platform-specific WebKit code.
+// Eventually it would be good to eliminate that and use the code here instead, but
+// the Qt version is inside an ifdef and the Mac version has some extra behavior
+// so we can't unify everything yet.
+void EventHandler::defaultSpaceEventHandler(KeyboardEvent*)
+{
+}
+
+#else
+
+void EventHandler::defaultSpaceEventHandler(KeyboardEvent* event)
+{
+    ScrollDirection direction = event->shiftKey() ? ScrollUp : ScrollDown;
+    if (scrollOverflow(direction, ScrollByPage)) {
+        event->setDefaultHandled();
+        return;
+    }
+
+    FrameView* view = m_frame->view();
+    if (!view)
+        return;
+
+    if (view->scroll(direction, ScrollByPage))
+        event->setDefaultHandled();
+}
+
+#endif
 
 void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
 {

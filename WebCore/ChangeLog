@@ -1,3 +1,23 @@
+2009-01-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Bug 22913: REGRESSION: Space bar doesn't scroll on windows
+        https://bugs.webkit.org/show_bug.cgi?id=22913
+        rdar://problem/6479834
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultKeyboardEventHandler): Added code to call
+        defaultSpaceEventHandler.
+        (WebCore::EventHandler::defaultSpaceEventHandler): Added. Scrolls down or up based
+        on the shift key.
+        * page/EventHandler.h: Added defaultSpaceEventHandler.
+
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformScroll): Return false, because this function does
+        not scroll. In an earlier version of this patch, I used this to prevent the
+        patch from affecting the Mac, but I decided to use #if instead.
+
 2009-01-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
