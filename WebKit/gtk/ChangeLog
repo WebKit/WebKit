@@ -4,6 +4,17 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=23194
 
+        make the finalize function the dispose function. Not releasing held
+        objects in dispose can cause crashers later.
+
+        * webkit/webkitwebview.cpp:
+
+2009-01-09  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23194
+
         Remove broken code that uses a fallback. The previous code did 2
         policy decisions which caused crashes.
         Download is still notImplemented();

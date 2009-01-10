@@ -807,31 +807,57 @@ static void webkit_web_view_real_paste_clipboard(WebKitWebView* webView)
     frame->editor()->command("Paste").execute();
 }
 
-static void webkit_web_view_finalize(GObject* object)
+static void webkit_web_view_dispose(GObject* object)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
 
-    webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
+    if (priv->corePage) {
+        webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
 
-    core(priv->mainFrame)->loader()->detachChildren();
-    delete priv->corePage;
+        core(priv->mainFrame)->loader()->detachChildren();
+        delete priv->corePage;
+        priv->corePage = 0;
+    }
 
-    if (priv->horizontalAdjustment)
+    if (priv->horizontalAdjustment) {
         g_object_unref(priv->horizontalAdjustment);
-    if (priv->verticalAdjustment)
-        g_object_unref(priv->verticalAdjustment);
-    g_object_unref(priv->backForwardList);
-    g_signal_handlers_disconnect_by_func(priv->webSettings, (gpointer)webkit_web_view_settings_notify, webView);
-    g_object_unref(priv->webSettings);
-    g_object_unref(priv->webInspector);
-    g_object_unref(priv->webWindowFeatures);
-    g_object_unref(priv->imContext);
-    gtk_target_list_unref(priv->copy_target_list);
-    gtk_target_list_unref(priv->paste_target_list);
-    delete priv->userAgent;
+        priv->horizontalAdjustment = 0;
+    }
 
-    G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
+    if (priv->verticalAdjustment) {
+        g_object_unref(priv->verticalAdjustment);
+        priv->verticalAdjustment = 0;
+    }
+
+    if (priv->backForwardList) {
+        g_object_unref(priv->backForwardList);
+        priv->backForwardList = 0;
+
+        g_signal_handlers_disconnect_by_func(priv->webSettings, (gpointer)webkit_web_view_settings_notify, webView);
+        g_object_unref(priv->webSettings);
+        priv->webSettings = 0;
+
+        g_object_unref(priv->webInspector);
+        priv->webInspector = 0;
+
+        g_object_unref(priv->webWindowFeatures);
+        priv->webWindowFeatures = 0;
+
+        g_object_unref(priv->imContext);
+        priv->imContext = 0;
+
+        gtk_target_list_unref(priv->copy_target_list);
+        priv->copy_target_list = 0;
+
+        gtk_target_list_unref(priv->paste_target_list);
+        priv->paste_target_list = 0;
+
+        delete priv->userAgent;
+        priv->userAgent = 0;
+    }
+
+    G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
 
 static gboolean webkit_create_web_view_request_handled(GSignalInvocationHint* ihint, GValue* returnAccu, const GValue* handlerReturn, gpointer dummy)
@@ -1362,7 +1388,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->paste_clipboard = webkit_web_view_real_paste_clipboard;
 
     GObjectClass* objectClass = G_OBJECT_CLASS(webViewClass);
-    objectClass->finalize = webkit_web_view_finalize;
+    objectClass->dispose = webkit_web_view_dispose;
     objectClass->get_property = webkit_web_view_get_property;
     objectClass->set_property = webkit_web_view_set_property;
 
