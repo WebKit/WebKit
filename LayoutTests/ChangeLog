@@ -1,3 +1,9 @@
+2009-01-09  Sam Weinig  <sam@webkit.org>
+
+        Check in correct results for failing test.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2009-01-09  Joel Weinberger  <jww@cs.berkeley.edu>
 
         Reviewed by Darin Adler.
