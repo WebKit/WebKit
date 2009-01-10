@@ -364,12 +364,14 @@ void ResourceHandleManager::setupPUT(ResourceHandle*, struct curl_slist**)
 void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** headers)
 {
     ResourceHandleInternal* d = job->getInternal();
-    Vector<FormDataElement> elements;
-    // Fix crash when httpBody is null (see bug #16906).
-    if (job->request().httpBody())
-        elements = job->request().httpBody()->elements();
-    size_t numElements = elements.size();
+    curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
+    curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, 0);
 
+    if (!job->request().httpBody())
+        return;
+
+    Vector<FormDataElement> elements = job->request().httpBody()->elements();
+    size_t numElements = elements.size();
     if (!numElements)
         return;
 
@@ -377,7 +379,6 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** h
     if (numElements == 1) {
         job->request().httpBody()->flatten(d->m_postBytes);
         if (d->m_postBytes.size() != 0) {
-            curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
             curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
             curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data());
         }
@@ -423,8 +424,6 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** h
         } else
             size += elements[i].m_data.size();
     }
-
-    curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
 
     // cURL guesses that we want chunked encoding as long as we specify the header
     if (chunkedTransfer)

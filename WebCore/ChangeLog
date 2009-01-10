@@ -1,3 +1,16 @@
+2009-01-09  Adam Bergkvist <adam.bergkvist@ericsson.com>
+
+        Reviewed by Holger Freyther.
+
+        [CURL] POST without body becomes GET
+        https://bugs.webkit.org/show_bug.cgi?id=23182
+
+        Make sure that method is always set to POST even when the body is
+        empty. Cleaned up httpBody null check.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::setupPOST):
+
 2009-01-09  Adam Treat  <adam.treat@torchmobile.com>
 
         Build fix.
