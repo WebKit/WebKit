@@ -1,3 +1,23 @@
+2009-01-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=21456
+
+        We shouldn't update the document pointer of inactive windows.  This
+        behavior differs slightly from Firefox, I'd argue that this behavior is
+        more correct (we both differ from IE).  The HTML 5 spec is a bit in flux
+        on this point.
+
+        Test: http/tests/security/xss-inactive-closure.html
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::~JSDOMWindowBase):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::updateDocument):
+        * bindings/js/ScriptController.h:
+
 2009-01-09  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

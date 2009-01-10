@@ -1,0 +1,12 @@
+<html>
+<body>
+    <p>Target Child</p>
+    <script>
+        window.parent.frames[1].document.getElementById('button').addEventListener("click", function() {
+           parent.log("document.bar = " + document.bar);
+        }, false);
+
+        window.location = "http://localhost:8000/security/listener/resources/xss-inactive-closure-child-2.html";
+    </script>
+</body>
+</html>
