@@ -1,4 +1,4 @@
-document.URL: LayoutTests/fast/dom/Window/resources/dom-access-from-closure-iframe-child.html
+document.URL: LayoutTests/fast/dom/Window/resources/notify-parent-done.html
 window.document.URL: LayoutTests/fast/dom/Window/resources/notify-parent-done.html
 name: child
 window.name: child

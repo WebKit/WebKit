@@ -1,18 +1,3 @@
-2009-01-10  Adam Barth  <abarth@webkit.org>
-
-        Reviewed by Darin Adler.
-
-        Test that we don't do goofy things with the document pointer after
-        navigation.
-
-        * fast/dom/Window/dom-access-from-closure-iframe-expected.txt:
-        * fast/dom/Window/dom-access-from-closure-window-expected.txt:
-        * http/tests/security/resources/childWithButton.html: Added.
-        * http/tests/security/resources/xss-inactive-closure-child-2.html: Added.
-        * http/tests/security/resources/xss-inactive-closure-child.html: Added.
-        * http/tests/security/xss-inactive-closure-expected.txt: Added.
-        * http/tests/security/xss-inactive-closure.html: Added.
-
 2009-01-09  Sam Weinig  <sam@webkit.org>
 
         Check in correct results for failing test.
