@@ -69,8 +69,7 @@ UString JSNotAnObject::toString(ExecState* exec) const
 
 JSObject* JSNotAnObject::toObject(ExecState* exec) const
 {
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
     return m_exception;
 }
 

@@ -1,3 +1,38 @@
+2009-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 23239: improve handling of unused arguments in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=23239
+
+        * runtime/DatePrototype.cpp: Moved LocaleDateTimeFormat enum outside #if
+        so we can use this on all platforms. Changed valueOf to share the same
+        function with getTime, since the contents of the two are identical. Removed
+        a FIXME since the idea isn't really specific enough or helpful enough to
+        need to sit here in the source code.
+        (JSC::formatLocaleDate): Changed the Mac version of this function to take
+        the same arguments as the non-Mac version so the caller doesn't have to
+        special-case the two platforms. Also made the formatString array be const;
+        before the characters were, but the array was a modifiable global variable.
+        (JSC::dateProtoFuncToLocaleString): Changed to call the new unified
+        version of formatLocaleDate and remove the ifdef.
+        (JSC::dateProtoFuncToLocaleDateString): Ditto.
+        (JSC::dateProtoFuncToLocaleTimeString): Ditto.
+
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::toObject): Use the new ASSERT_UNUSED instead of the
+        old UNUSED_PARAM.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp): Changed to only use UNUSED_PARAM when the parameter
+        is actually unused.
+
+        * wtf/TCSystemAlloc.cpp:
+        (TCMalloc_SystemRelease): Changed to only use UNUSED_PARAM when the parameter
+        is actually unused.
+        (TCMalloc_SystemCommit): Changed to omit the argument names instead of using
+        UNUSED_PARAM.
+
 2009-01-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
