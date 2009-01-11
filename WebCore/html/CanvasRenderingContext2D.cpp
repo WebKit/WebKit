@@ -422,9 +422,7 @@ void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float 
         return;
 
     TransformationMatrix transform(m11, m12, m21, m22, dx, dy);
-
-    TransformationMatrix newTransform = state().m_transform;
-    newTransform.multiply(transform);
+    TransformationMatrix newTransform = transform * state().m_transform;
     if (!newTransform.isInvertible()) {
         state().m_invertibleCTM = false;
         return;
