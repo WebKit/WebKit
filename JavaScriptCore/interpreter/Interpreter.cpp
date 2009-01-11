@@ -5116,7 +5116,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_get_by_val(STUB_ARGS)
             else
                 result = jsArray->JSArray::get(callFrame, i);
         } else if (interpreter->isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
-            result = JSValuePtr::encode(asString(baseValue)->getIndex(ARG_globalData, i));
+            result = asString(baseValue)->getIndex(ARG_globalData, i);
         else if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val_byte_array));

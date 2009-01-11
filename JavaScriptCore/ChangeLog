@@ -1,5 +1,14 @@
 2009-01-11  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Fix the build (whoops)
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::cti_op_get_by_val):
+
+2009-01-11  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin Adler and Anders Carlsson
 
         Bug 23128: get/put_by_val need to respecialise in the face of ByteArray
