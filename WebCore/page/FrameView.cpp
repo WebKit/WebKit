@@ -49,7 +49,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

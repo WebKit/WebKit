@@ -28,8 +28,8 @@
 #include "config.h"
 #include "SharedTimer.h"
 
-#include "SystemTime.h"
 #include <wtf/Assertions.h>
+#include <wtf/CurrentTime.h>
 #include <glib.h>
 
 namespace WebCore {

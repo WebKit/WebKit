@@ -61,7 +61,6 @@
 #include "Settings.h"
 #include "ScriptCallStack.h"
 #include "SharedBuffer.h"
-#include "SystemTime.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
 #include "ScriptController.h"
@@ -74,6 +73,7 @@
 #include <runtime/CollectorHeapIterator.h>
 #include <profiler/Profile.h>
 #include <profiler/Profiler.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 

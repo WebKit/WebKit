@@ -243,6 +243,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\CurrentTime.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\CurrentTime.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\Deque.h"
 			>
 		</File>

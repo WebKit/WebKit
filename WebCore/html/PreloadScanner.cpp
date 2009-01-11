@@ -40,7 +40,7 @@
 #include "FrameLoader.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
-#include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/unicode/Unicode.h>
 
 #ifdef __GNUC__

@@ -46,8 +46,8 @@
 #include "MediaPlayer.h"
 #include "Page.h"
 #include "RenderVideo.h"
-#include "SystemTime.h"
 #include "TimeRanges.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 
 using namespace std;
@@ -348,7 +348,7 @@ void HTMLMediaElement::load(ExceptionCode& ec)
         renderer()->updateFromElement();
     
     // 14
-    m_previousProgressTime = WebCore::currentTime();
+    m_previousProgressTime = WTF::currentTime();
     m_previousProgress = 0;
     if (m_begun)
         // 350ms is not magic, it is in the spec!
@@ -493,7 +493,7 @@ void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
 {
     ASSERT(m_player);
     unsigned progress = m_player->bytesLoaded();
-    double time = WebCore::currentTime();
+    double time = WTF::currentTime();
     double timedelta = time - m_previousProgressTime;
     if (timedelta)
         m_bufferingRate = (float)(0.8 * m_bufferingRate + 0.2 * ((float)(progress - m_previousProgress)) / timedelta);

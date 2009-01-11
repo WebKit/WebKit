@@ -32,6 +32,7 @@
 #include "HistoryItem.h"
 #include "Logging.h"
 #include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 
 using namespace std;
 

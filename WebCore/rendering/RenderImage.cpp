@@ -37,7 +37,7 @@
 #include "HitTestResult.h"
 #include "Page.h"
 #include "RenderView.h"
-#include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 
 #if ENABLE(WML)
 #include "WMLImageElement.h"

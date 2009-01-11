@@ -88,6 +88,8 @@
 		14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */; };
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
 		14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		180B9B080F16D94F009BDBC5 /* CurrentTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 180B9AF00F16C569009BDBC5 /* CurrentTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		180B9BFE0F16E94D009BDBC5 /* CurrentTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */; };
 		1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C61516A0EBAC7A00031376F /* ProfilerServer.mm */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
 		1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C61516B0EBAC7A00031376F /* ProfilerServer.h */; };
 		5D53726F0E1C54880021E549 /* Tracing.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D53726E0E1C54880021E549 /* Tracing.h */; };
@@ -497,6 +499,8 @@
 		14DE0D680D02431400AACCA2 /* JSGlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObject.cpp; sourceTree = "<group>"; };
 		14F252560D08DD8D004ECFFF /* JSVariableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVariableObject.h; sourceTree = "<group>"; };
 		14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectorHeapIterator.h; sourceTree = "<group>"; };
+		180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CurrentTime.cpp; sourceTree = "<group>"; };
+		180B9AF00F16C569009BDBC5 /* CurrentTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CurrentTime.h; sourceTree = "<group>"; };
 		1C61516A0EBAC7A00031376F /* ProfilerServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProfilerServer.mm; path = profiler/ProfilerServer.mm; sourceTree = "<group>"; };
 		1C61516B0EBAC7A00031376F /* ProfilerServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerServer.h; path = profiler/ProfilerServer.h; sourceTree = "<group>"; };
 		1C9051420BA9E8A70081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
@@ -1079,6 +1083,8 @@
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
 				65E217B708E7EECC0023E5F6 /* Assertions.h */,
+				180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */,
+				180B9AF00F16C569009BDBC5 /* CurrentTime.h */,
 				5186111D0CC824830081412B /* Deque.h */,
 				938C4F6B0CA06BCE00D9310A /* DisallowCType.h */,
 				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
@@ -1508,6 +1514,7 @@
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,
 				BC18C3F40E16F5CD00B34460 /* Completion.h in Headers */,
 				BC18C3F60E16F5CD00B34460 /* ConstructData.h in Headers */,
+				180B9B080F16D94F009BDBC5 /* CurrentTime.h in Headers */,
 				BCD2034A0E17135E002C7E82 /* DateConstructor.h in Headers */,
 				BC1166020E1997B4008066DD /* DateInstance.h in Headers */,
 				BC18C3F90E16F5CD00B34460 /* DateMath.h in Headers */,
@@ -1985,6 +1992,7 @@
 				969A07960ED1D3AE00F1F681 /* CodeBlock.cpp in Sources */,
 				E1A862D60D7F2B5C001EC6AA /* CollatorDefault.cpp in Sources */,
 				E1A862A90D7EBB76001EC6AA /* CollatorICU.cpp in Sources */,
+				180B9BFE0F16E94D009BDBC5 /* CurrentTime.cpp in Sources */,
 				149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */,
 				1429D8780ED21ACD00B89619 /* ExceptionHelpers.cpp in Sources */,
 				A7B48F490EE8936F00DCBDB6 /* ExecutableAllocator.cpp in Sources */,

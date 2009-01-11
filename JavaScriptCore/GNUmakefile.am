@@ -192,6 +192,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/AlwaysInline.h \
 	JavaScriptCore/wtf/Assertions.cpp \
 	JavaScriptCore/wtf/Assertions.h \
+	JavaScriptCore/wtf/CurrentTime.cpp \
+	JavaScriptCore/wtf/CurrentTime.h \
 	JavaScriptCore/wtf/Deque.h \
 	JavaScriptCore/wtf/DisallowCType.h \
 	JavaScriptCore/wtf/Forward.h \

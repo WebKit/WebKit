@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SystemTime.h"
 
-#include <DateMath.h>
 #include <windows.h>
 
 #if COMPILER(MINGW) || (PLATFORM(QT) && COMPILER(MSVC))
@@ -35,14 +34,6 @@
 #endif
 
 namespace WebCore {
-
-double currentTime()
-{
-    // Call through to our high-resolution JSC time code, since calls like GetSystemTimeAsFileTime and ftime are only accurate within 15ms.
-    // This resolution can be improved with timeBeginPeriod/timeEndPeriod on Vista, but these calls don't
-    // improve the resolution of date/time getters (GetSystemTimeAsFileTime, ftime, etc.) on XP.
-    return JSC::getCurrentUTCTimeWithMicroseconds() * 0.001;
-}
 
 float userIdleTime()
 {

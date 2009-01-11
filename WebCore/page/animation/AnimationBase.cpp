@@ -43,7 +43,6 @@
 #include "MatrixTransformOperation.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
-#include "SystemTime.h"
 #include "UnitBezier.h"
 
 namespace WebCore {

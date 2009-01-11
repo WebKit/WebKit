@@ -110,6 +110,7 @@ SOURCES += \
     runtime/Collector.cpp \
     runtime/CommonIdentifiers.cpp \
     runtime/ConstructData.cpp \
+    wtf/CurrentTime.cpp \
     runtime/DateConstructor.cpp \
     runtime/DateInstance.cpp \
     runtime/DateMath.cpp \

@@ -30,7 +30,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "ResourceResponse.h"
-#include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 
 using std::min;
 

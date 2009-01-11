@@ -1,3 +1,26 @@
+2009-01-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23207
+        Moved currentTime() to from WebCore to WTF.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp: added export for WTF::currentTime()
+        * JavaScriptCore.pri:
+        * JavaScriptCore.scons:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * runtime/DateMath.cpp:
+        (JSC::getCurrentUTCTimeWithMicroseconds): This function had another implementation of currentTime(), essentially. Now uses WTF version.
+        * wtf/CurrentTime.cpp: Added.
+        (WTF::currentTime):
+        (WTF::highResUpTime):
+        (WTF::lowResUTCTime):
+        (WTF::qpcAvailable):
+        * wtf/CurrentTime.h: Added.
+
 2009-01-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

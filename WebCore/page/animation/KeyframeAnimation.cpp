@@ -35,7 +35,6 @@
 #include "CompositeAnimation.h"
 #include "EventNames.h"
 #include "RenderObject.h"
-#include "SystemTime.h"
 
 namespace WebCore {
 

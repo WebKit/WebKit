@@ -159,6 +159,7 @@ Source files for JSCore.
     </set>
     <set append="1" var="JSCORE_WTF_SOURCES">
         wtf/Assertions.cpp
+        wtf/CurrentTime.cpp
         wtf/FastMalloc.cpp
         wtf/HashTable.cpp
         wtf/MainThread.cpp

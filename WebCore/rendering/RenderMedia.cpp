@@ -40,7 +40,7 @@
 #include "MouseEvent.h"
 #include "MediaPlayer.h"
 #include "RenderSlider.h"
-#include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 
 using namespace std;

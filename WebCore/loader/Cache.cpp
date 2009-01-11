@@ -34,8 +34,8 @@
 #include "FrameView.h"
 #include "Image.h"
 #include "ResourceHandle.h"
-#include "SystemTime.h"
 #include <stdio.h>
+#include <wtf/CurrentTime.h>
 
 using namespace std;
 
@@ -274,7 +274,7 @@ void Cache::pruneLiveResources()
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
     double currentTime = FrameView::currentPaintTimeStamp();
     if (!currentTime) // In case prune is called directly, outside of a Frame paint.
-        currentTime = WebCore::currentTime();
+        currentTime = WTF::currentTime();
     
     // Destroy any decoded data in live objects that we can.
     // Start from the tail, since this is the least recently accessed of the objects.

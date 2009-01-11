@@ -73,7 +73,6 @@
 #import <WebCore/RenderLayer.h>
 #import <WebCore/ReplaceSelectionCommand.h>
 #import <WebCore/SmartReplace.h>
-#import <WebCore/SystemTime.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/TypingCommand.h>
 #import <WebCore/htmlediting.h>
@@ -83,6 +82,7 @@
 #import <WebCore/visible_units.h>
 #import <runtime/JSLock.h>
 #import <runtime/JSValue.h>
+#include <wtf/CurrentTime.h>
 
 using namespace std;
 using namespace WebCore;

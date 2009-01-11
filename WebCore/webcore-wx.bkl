@@ -89,7 +89,6 @@ wxWebCore port Bakefile project file.
             platform/wx/ScrollViewWx.cpp
             platform/wx/SoundWx.cpp
             platform/text/wx/StringWx.cpp
-            platform/wx/SystemTimeWx.cpp
             platform/wx/WidgetWx.cpp
             platform/wx/ContextMenuWx.cpp
             platform/wx/ContextMenuItemWx.cpp

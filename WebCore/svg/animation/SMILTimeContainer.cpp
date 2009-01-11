@@ -34,7 +34,7 @@
 #include "SVGAnimationElement.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
-#include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 
 using namespace std;
 

@@ -40,12 +40,12 @@
 #include "Page.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
-#include "SystemTime.h"
 #include "TextResourceDecoder.h"
 #include "XMLHttpRequestException.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>

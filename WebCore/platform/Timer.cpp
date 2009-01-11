@@ -27,10 +27,10 @@
 #include "Timer.h"
 
 #include "SharedTimer.h"
-#include "SystemTime.h"
 #include <limits.h>
 #include <limits>
 #include <math.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 

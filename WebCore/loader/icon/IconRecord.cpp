@@ -34,7 +34,6 @@
 #include "Logging.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
-#include "SystemTime.h"
 
 #include <limits.h>
 

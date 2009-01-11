@@ -27,10 +27,10 @@
 
 #include "SharedTimer.h"
 #include "NotImplemented.h"
-#include "SystemTime.h"
 #include "Widget.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/CurrentTime.h>
 #include <stdio.h>
 
 #include "wx/defs.h"

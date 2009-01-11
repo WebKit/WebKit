@@ -31,11 +31,6 @@
 
 namespace WebCore {
 
-double currentTime()
-{
-    return CFAbsoluteTimeGetCurrent() + kCFAbsoluteTimeIntervalSince1970;
-}
-
 float userIdleTime()
 {
     return static_cast<float>(CGEventSourceSecondsSinceLastEventType(kCGEventSourceStateCombinedSessionState, kCGAnyInputEventType));

@@ -30,11 +30,11 @@
 #include "FloatRect.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
-#include "PlatformString.h"
-#include "SystemTime.h"
-#include "Timer.h"
-#include <wtf/Vector.h>
 #include "MIMETypeRegistry.h"
+#include "PlatformString.h"
+#include "Timer.h"
+#include <wtf/CurrentTime.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

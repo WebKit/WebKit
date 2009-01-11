@@ -39,7 +39,7 @@
 #include "Logging.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 #if ENABLE(SVG)

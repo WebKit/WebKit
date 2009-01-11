@@ -85,11 +85,11 @@
 #include "SecurityOrigin.h"
 #include "SegmentedString.h"
 #include "Settings.h"
-#include "SystemTime.h"
 #include "TextResourceDecoder.h"
 #include "WindowFeatures.h"
 #include "XMLHttpRequest.h"
 #include "XMLTokenizer.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

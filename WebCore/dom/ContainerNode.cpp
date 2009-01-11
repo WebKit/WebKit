@@ -36,7 +36,7 @@
 #include "MutationEvent.h"
 #include "RenderTheme.h"
 #include "RootInlineBox.h"
-#include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

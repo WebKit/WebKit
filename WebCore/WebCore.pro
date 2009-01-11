@@ -1153,9 +1153,6 @@ SOURCES += \
     ../WebKit/qt/Api/qwebdatabase.cpp
 
 
-    win32-*|wince*: SOURCES += platform/win/SystemTimeWin.cpp
-    else: SOURCES += platform/qt/SystemTimeQt.cpp
-
     mac {
         SOURCES += \
             platform/text/cf/StringCF.cpp \

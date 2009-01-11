@@ -2,6 +2,71 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23207
+        Moved currentTime() to from WebCore to WTF.
+
+        Most of these files only have a different header file included.
+        Various build files reflect removal of SystemTimeGtk, Wx, Qt and Linux
+        which were removed since they only implemented currentTime().
+
+        * ForwardingHeaders/wtf/CurrentTime.h: Added.
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * dom/ContainerNode.cpp:
+        * dom/Document.cpp:
+        * dom/Event.cpp:
+        * history/CachedPage.cpp:
+        * history/PageCache.cpp:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::progressEventTimerFired):
+        * html/HTMLTokenizer.cpp:
+        * html/PreloadScanner.cpp:
+        * inspector/InspectorController.cpp:
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneLiveResources):
+        * loader/CachedImage.cpp:
+        * loader/CachedResource.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/ProgressTracker.cpp:
+        * loader/icon/IconDatabase.cpp:
+        * loader/icon/IconRecord.cpp:
+        * page/DragController.cpp:
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        * page/animation/AnimationBase.cpp:
+        * page/animation/AnimationController.cpp:
+        * page/animation/KeyframeAnimation.cpp:
+        * platform/SystemTime.h:
+        * platform/Timer.cpp:
+        * platform/graphics/BitmapImage.cpp:
+        * platform/gtk/MouseEventGtk.cpp:
+        * platform/gtk/SharedTimerGtk.cpp:
+        * platform/gtk/SystemTimeGtk.cpp: Removed.
+        * platform/gtk/SystemTimeLinux.cpp: Removed.
+        * platform/mac/SystemTimeMac.cpp:
+        * platform/qt/PlatformMouseEventQt.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/qt/SharedTimerQt.cpp:
+        * platform/qt/SharedTimerQt.h:
+        * platform/qt/SystemTimeQt.cpp: Removed.
+        * platform/win/SharedTimerWin.cpp:
+        * platform/win/SystemTimeWin.cpp:
+        * platform/wx/MouseEventWx.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/wx/SharedTimerWx.cpp:
+        * platform/wx/SystemTimeWx.cpp: Removed.
+        * rendering/RenderImage.cpp:
+        * rendering/RenderMedia.cpp:
+        * svg/animation/SMILTimeContainer.cpp:
+        * webcore-wx.bkl:
+        * xml/XMLHttpRequest.cpp:
+
+2009-01-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Make ScheduledAction (Timeout callback) able to execute the callback under WorkerContext.
         Part of 'Timers in Workers' work.
         https://bugs.webkit.org/show_bug.cgi?id=23223

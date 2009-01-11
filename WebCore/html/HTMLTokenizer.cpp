@@ -46,8 +46,8 @@
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
-#include "SystemTime.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/CurrentTime.h>
 
 #include "HTMLEntityNames.c"
 

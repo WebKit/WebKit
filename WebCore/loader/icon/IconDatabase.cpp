@@ -40,8 +40,8 @@
 #include "PageURLRecord.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
-#include "SystemTime.h"
 #include <runtime/InitializeThreading.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 

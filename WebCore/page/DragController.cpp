@@ -57,10 +57,10 @@
 #include "ResourceRequest.h"
 #include "SelectionController.h"
 #include "Settings.h"
-#include "SystemTime.h"
 #include "Text.h"
 #include "htmlediting.h"
 #include "markup.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

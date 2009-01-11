@@ -28,7 +28,7 @@
 #include "config.h"
 #include "PlatformMouseEvent.h"
 
-#include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 
 #include <QMouseEvent>
 
@@ -36,7 +36,7 @@ namespace WebCore {
 
 PlatformMouseEvent::PlatformMouseEvent(QInputEvent* event, int clickCount)
 {
-    m_timestamp = WebCore::currentTime();
+    m_timestamp = WTF::currentTime();
 
     QMouseEvent *me = 0;
 

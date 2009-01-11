@@ -67,7 +67,6 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "SystemTime.h"
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "XMLNames.h"

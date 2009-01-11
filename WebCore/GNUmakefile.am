@@ -1731,7 +1731,6 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/SharedBufferGtk.cpp \
 	WebCore/platform/gtk/SharedTimerGtk.cpp \
 	WebCore/platform/gtk/SoundGtk.cpp \
-	WebCore/platform/gtk/SystemTimeGtk.cpp \
 	WebCore/platform/gtk/TemporaryLinkStubs.cpp \
 	WebCore/platform/gtk/WheelEventGtk.cpp \
 	WebCore/platform/gtk/WidgetGtk.cpp \

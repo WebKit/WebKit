@@ -24,7 +24,7 @@
 #include "Event.h"
 
 #include "AtomicString.h"
-#include "SystemTime.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

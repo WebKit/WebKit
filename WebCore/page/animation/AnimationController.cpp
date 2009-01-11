@@ -32,8 +32,8 @@
 #include "CSSParser.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "SystemTime.h"
 #include "Timer.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
