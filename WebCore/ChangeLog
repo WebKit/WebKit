@@ -1,3 +1,14 @@
+2009-01-11  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Anders Carlsson.
+
+        [GTK] make distcheck complains that distclean is not deleting JSWorkerContextBase.lut.h
+
+        make distcheck pass by adding JSWorkerContextBase.lut.h to the
+        CLEANFILES that will be cleaned on a make distclean.
+
+        * GNUmakefile.am:
+
 2009-01-11  Zalan Bujtas  <zbujtas@gmail.com>
 
         Reviewed by Alexey Proskuryakov.

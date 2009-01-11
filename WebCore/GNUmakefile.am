@@ -3105,5 +3105,6 @@ dist_webinspectorimages_DATA = \
 CLEANFILES += \
 	libWebCoreJS.la \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
-	WebCore/bindings/js/JSRGBColor.lut.h
+	WebCore/bindings/js/JSRGBColor.lut.h \
+	WebCore/bindings/js/JSWorkerContextBase.lut.h
 
