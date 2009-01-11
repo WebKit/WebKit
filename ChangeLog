@@ -1,3 +1,12 @@
+2009-01-11  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        Bump version to 1.1.0 since we are breaking ABI and adding new
+        major features.
+
+        * configure.ac:
+
 2008-12-19  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Holger Freyther.
