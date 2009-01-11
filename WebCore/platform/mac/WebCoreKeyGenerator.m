@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #import "WebCoreKeyGenerator.h"
 
 #import <wtf/Assertions.h>
+#import <wtf/UnusedParam.h>
 
 static WebCoreKeyGenerator *sharedGenerator;
 
@@ -50,8 +51,12 @@ static WebCoreKeyGenerator *sharedGenerator;
     return nil;
 }
 
-- (NSString *)signedPublicKeyAndChallengeStringWithStrengthIndex:(unsigned)index challenge:(NSString *)challenge pageURL:(NSURL *)pageURL
+- (NSString *)signedPublicKeyAndChallengeStringWithStrengthIndex:(unsigned)unusedIndex challenge:(NSString *)unusedChallenge pageURL:(NSURL *)unusedPageURL
 {
+    UNUSED_PARAM(unusedIndex);
+    UNUSED_PARAM(unusedChallenge);
+    UNUSED_PARAM(unusedPageURL);
+
     return nil;
 }
 

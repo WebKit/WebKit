@@ -34,9 +34,9 @@
 #include "Scrollbar.h"
 #include "ScrollbarClient.h"
 #include "Settings.h"
-#include <wtf/StdLibExtras.h>
-
 #include <Carbon/Carbon.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/UnusedParam.h>
 
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
 
@@ -58,8 +58,10 @@ static HashSet<Scrollbar*>* gScrollbars;
 
 @implementation ScrollbarPrefsObserver
 
-+ (void)appearancePrefsChanged:(NSNotification*)theNotification
++ (void)appearancePrefsChanged:(NSNotification*)unusedNotification
 {
+    UNUSED_PARAM(unusedNotification);
+
     static_cast<ScrollbarThemeMac*>(ScrollbarTheme::nativeTheme())->preferencesChanged();
     if (!gScrollbars)
         return;
@@ -70,8 +72,10 @@ static HashSet<Scrollbar*>* gScrollbars;
     }
 }
 
-+ (void)behaviorPrefsChanged:(NSNotification*)theNotification
++ (void)behaviorPrefsChanged:(NSNotification*)unusedNotification
 {
+    UNUSED_PARAM(unusedNotification);
+
     static_cast<ScrollbarThemeMac*>(ScrollbarTheme::nativeTheme())->preferencesChanged();
 }
 

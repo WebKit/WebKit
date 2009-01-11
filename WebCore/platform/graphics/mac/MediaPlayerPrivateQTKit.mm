@@ -30,13 +30,14 @@
 #import "MediaPlayerPrivateQTKit.h"
 
 #import "BlockExceptions.h"
+#import "FrameView.h"
 #import "GraphicsContext.h"
 #import "KURL.h"
-#import "FrameView.h"
 #import "SoftLinking.h"
 #import "WebCoreSystemInterface.h"
 #import <QTKit/QTKit.h>
 #import <objc/objc-runtime.h>
+#import <wtf/UnusedParam.h>
 
 #if DRAW_FRAME_RATE
 #import "Font.h"
@@ -239,7 +240,7 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
                                                object:m_qtMovie.get()];
 }
 
-static void mainThreadSetNeedsDisplay(id self, SEL _cmd)
+static void mainThreadSetNeedsDisplay(id self, SEL)
 {
     id movieView = [self superview];
     ASSERT(!movieView || [movieView isKindOfClass:[QTMovieView class]]);
@@ -969,48 +970,54 @@ void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
         m_callback->repaint();
 }
 
-- (void)loadStateChanged:(NSNotification *)notification
+- (void)loadStateChanged:(NSNotification *)unusedNotification
 {
+    UNUSED_PARAM(unusedNotification);
     if (m_delayCallbacks)
         [self performSelector:_cmd withObject:nil afterDelay:0];
     else
         m_callback->loadStateChanged();
 }
 
-- (void)rateChanged:(NSNotification *)notification
+- (void)rateChanged:(NSNotification *)unusedNotification
 {
+    UNUSED_PARAM(unusedNotification);
     if (m_delayCallbacks)
         [self performSelector:_cmd withObject:nil afterDelay:0];
     else
         m_callback->rateChanged();
 }
 
-- (void)sizeChanged:(NSNotification *)notification
+- (void)sizeChanged:(NSNotification *)unusedNotification
 {
+    UNUSED_PARAM(unusedNotification);
     if (m_delayCallbacks)
         [self performSelector:_cmd withObject:nil afterDelay:0];
     else
         m_callback->sizeChanged();
 }
 
-- (void)timeChanged:(NSNotification *)notification
+- (void)timeChanged:(NSNotification *)unusedNotification
 {
+    UNUSED_PARAM(unusedNotification);
     if (m_delayCallbacks)
         [self performSelector:_cmd withObject:nil afterDelay:0];
     else
         m_callback->timeChanged();
 }
 
-- (void)didEnd:(NSNotification *)notification
+- (void)didEnd:(NSNotification *)unusedNotification
 {
+    UNUSED_PARAM(unusedNotification);
     if (m_delayCallbacks)
         [self performSelector:_cmd withObject:nil afterDelay:0];
     else
         m_callback->didEnd();
 }
 
-- (void)newImageAvailable:(NSNotification *)notification
+- (void)newImageAvailable:(NSNotification *)unusedNotification
 {
+    UNUSED_PARAM(unusedNotification);
     [self repaint];
 }
 

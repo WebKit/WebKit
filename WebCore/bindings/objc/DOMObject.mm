@@ -38,6 +38,7 @@
 #import "ProcessingInstruction.h"
 #import "StyleSheet.h"
 #import "WebScriptObjectPrivate.h"
+#import <wtf/UnusedParam.h>
 
 @implementation DOMObject
 
@@ -56,8 +57,9 @@
     [super dealloc];
 }
 
-- (id)copyWithZone:(NSZone *)zone
+- (id)copyWithZone:(NSZone *)unusedZone
 {
+    UNUSED_PARAM(unusedZone);
     return [self retain];
 }
 

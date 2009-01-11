@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-#import "ResourceHandle.h"
 #import "ResourceHandleInternal.h"
 
 #import "AuthenticationChallenge.h"
@@ -41,6 +40,7 @@
 #import "SharedBuffer.h"
 #import "SubresourceLoader.h"
 #import "WebCoreSystemInterface.h"
+#import <wtf/UnusedParam.h>
 
 #ifdef BUILDING_ON_TIGER
 typedef int NSInteger;
@@ -64,6 +64,7 @@ using namespace WebCore;
 @end
 
 #ifndef BUILDING_ON_TIGER
+
 @interface WebCoreSynchronousLoader : NSObject {
     NSURL *m_url;
     NSURLResponse *m_response;
@@ -75,6 +76,7 @@ using namespace WebCore;
 @end
 
 static NSString *WebCoreSynchronousLoaderRunLoopMode = @"WebCoreSynchronousLoaderRunLoopMode";
+
 #endif
 
 namespace WebCore {
@@ -135,6 +137,7 @@ bool ResourceHandle::start(Frame* frame)
 #ifndef NDEBUG
     isInitializingConnection = YES;
 #endif
+
     id delegate;
     
     if (d->m_mightDownloadFromHandle) {
@@ -451,8 +454,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     m_handle = 0;
 }
 
-- (NSURLRequest *)connection:(NSURLConnection *)con willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+- (NSURLRequest *)connection:(NSURLConnection *)unusedConnection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
+    UNUSED_PARAM(unusedConnection);
+
     // the willSendRequest call may cancel this load, in which case self could be deallocated
     RetainPtr<WebCoreResourceHandleAsDelegate> protect(self);
 
@@ -486,8 +491,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     return request.nsURLRequest();
 }
 
-- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection
+- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)unusedConnection
 {
+    UNUSED_PARAM(unusedConnection);
+
     if (!m_handle)
         return NO;
 
@@ -495,8 +502,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     return m_handle->shouldUseCredentialStorage();
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+- (void)connection:(NSURLConnection *)unusedConnection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
+    UNUSED_PARAM(unusedConnection);
+
 #ifndef BUILDING_ON_TIGER
     if ([challenge previousFailureCount] == 0) {
         NSString *user = [m_url user];
@@ -519,24 +528,30 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     m_handle->didReceiveAuthenticationChallenge(core(challenge));
 }
 
-- (void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+- (void)connection:(NSURLConnection *)unusedConnection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
+    UNUSED_PARAM(unusedConnection);
+
     if (!m_handle)
         return;
     CallbackGuard guard;
     m_handle->didCancelAuthenticationChallenge(core(challenge));
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
+- (void)connection:(NSURLConnection *)unusedConnection didReceiveResponse:(NSURLResponse *)r
 {
+    UNUSED_PARAM(unusedConnection);
+
     if (!m_handle || !m_handle->client())
         return;
     CallbackGuard guard;
     m_handle->client()->didReceiveResponse(m_handle, r);
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+- (void)connection:(NSURLConnection *)unusedConnection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
+    UNUSED_PARAM(unusedConnection);
+
     if (!m_handle || !m_handle->client())
         return;
     // FIXME: If we get more than 2B bytes in a single chunk, this code won't do the right thing.
@@ -546,8 +561,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     m_handle->client()->didReceiveData(m_handle, (const char*)[data bytes], [data length], static_cast<int>(lengthReceived));
 }
 
-- (void)connection:(NSURLConnection *)con willStopBufferingData:(NSData *)data
+- (void)connection:(NSURLConnection *)unusedConnection willStopBufferingData:(NSData *)data
 {
+    UNUSED_PARAM(unusedConnection);
+
     if (!m_handle || !m_handle->client())
         return;
     // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
@@ -557,16 +574,21 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     m_handle->client()->willStopBufferingData(m_handle, (const char*)[data bytes], static_cast<int>([data length]));
 }
 
-- (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
+- (void)connection:(NSURLConnection *)unusedConnection didSendBodyData:(NSInteger)unusedBytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
 {
+    UNUSED_PARAM(unusedConnection);
+    UNUSED_PARAM(unusedBytesWritten);
+
     if (!m_handle || !m_handle->client())
         return;
     CallbackGuard guard;
     m_handle->client()->didSendData(m_handle, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)con
+- (void)connectionDidFinishLoading:(NSURLConnection *)unusedConnection
 {
+    UNUSED_PARAM(unusedConnection);
+
     if (!m_handle || !m_handle->client())
         return;
     CallbackGuard guard;
@@ -577,8 +599,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     m_handle->client()->didFinishLoading(m_handle);
 }
 
-- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
+- (void)connection:(NSURLConnection *)unusedConnection didFailWithError:(NSError *)error
 {
+    UNUSED_PARAM(unusedConnection);
+
     if (!m_handle || !m_handle->client())
         return;
     CallbackGuard guard;
@@ -600,8 +624,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 }
 #endif
 
-- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
+- (NSCachedURLResponse *)connection:(NSURLConnection *)unusedConnection willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
+    UNUSED_PARAM(unusedConnection);
+
 #ifdef BUILDING_ON_TIGER
     // On Tiger CFURLConnection can sometimes call the connection:willCacheResponse: delegate method on
     // a secondary thread instead of the main thread. If this happens perform the work on the main thread.
@@ -629,6 +655,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (isInitializingConnection)
         LOG_ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (4067625)");
 #endif
+
     if (!m_handle || !m_handle->client())
         return nil;
 
@@ -675,6 +702,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 @end
 
 #ifndef BUILDING_ON_TIGER
+
 @implementation WebCoreSynchronousLoader
 
 - (BOOL)_isDone
@@ -692,8 +720,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     [super dealloc];
 }
 
-- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
+- (NSURLRequest *)connection:(NSURLConnection *)unusedConnection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)unusedRedirectResponse
 {
+    UNUSED_PARAM(unusedConnection);
+    UNUSED_PARAM(unusedRedirectResponse);
+
     NSURL *copy = [[newRequest URL] copy];
     [m_url release];
     m_url = copy;
@@ -701,8 +732,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     return newRequest;
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+- (void)connection:(NSURLConnection *)unusedConnection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
+    UNUSED_PARAM(unusedConnection);
+
     if ([challenge previousFailureCount] == 0) {
         NSString *user = [m_url user];
         NSString *password = [m_url password];
@@ -720,29 +753,37 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+- (void)connection:(NSURLConnection *)unusedConnection didReceiveResponse:(NSURLResponse *)response
 {
+    UNUSED_PARAM(unusedConnection);
+
     NSURLResponse *r = [response copy];
     
     [m_response release];
     m_response = r;
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)unusedConnection didReceiveData:(NSData *)data
 {
+    UNUSED_PARAM(unusedConnection);
+
     if (!m_data)
         m_data = [[NSMutableData alloc] init];
     
     [m_data appendData:data];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+- (void)connectionDidFinishLoading:(NSURLConnection *)unusedConnection
 {
+    UNUSED_PARAM(unusedConnection);
+
     m_isDone = YES;
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+- (void)connection:(NSURLConnection *)unusedConnection didFailWithError:(NSError *)error
 {
+    UNUSED_PARAM(unusedConnection);
+
     ASSERT(!m_error);
     
     m_error = [error retain];
@@ -788,4 +829,5 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 }
 
 @end
+
 #endif

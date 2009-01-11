@@ -1,3 +1,57 @@
+2009-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 23102: turn on unused parameter warnings in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=23102
+
+        Second step: Fix simple Objective-C cases where we need to use UNUSED_PARAM.
+        That's because you can't omit an argument name in Objective-C methods.
+
+        * bindings/objc/DOMObject.mm:
+        (-[DOMObject copyWithZone:]): Use UNUSED_PARAM. Also rename argument to include
+        the word "unused" so we don't just start using it without removing the macro.
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebUndefined allocWithZone:]): Ditto.
+        (-[WebUndefined initWithCoder:]): Ditto.
+        (-[WebUndefined encodeWithCoder:]): Ditto.
+        (-[WebUndefined copyWithZone:]): Ditto.
+        * page/mac/WebDashboardRegion.m:
+        (-[WebDashboardRegion copyWithZone:]): Ditto.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::mainThreadSetNeedsDisplay): Omit argument name.
+        (-[WebCoreMovieObserver loadStateChanged:]): Use UNUSED_PARAM as above.
+        (-[WebCoreMovieObserver rateChanged:]): Ditto.
+        (-[WebCoreMovieObserver sizeChanged:]): Ditto.
+        (-[WebCoreMovieObserver timeChanged:]): Ditto.
+        (-[WebCoreMovieObserver didEnd:]): Ditto.
+        (-[WebCoreMovieObserver newImageAvailable:]): Ditto.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (+[ScrollbarPrefsObserver appearancePrefsChanged:]): Ditto.
+        (+[ScrollbarPrefsObserver behaviorPrefsChanged:]): Ditto.
+        * platform/mac/SharedTimerMac.mm:
+        (-[WebCorePowerNotifier didWake:]): Ditto.
+        * platform/mac/WebCoreKeyGenerator.m:
+        (-[WebCoreKeyGenerator signedPublicKeyAndChallengeStringWithStrengthIndex:challenge:pageURL:]): Ditto.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connectionShouldUseCredentialStorage:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didCancelAuthenticationChallenge:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:willStopBufferingData:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didSendBodyData:totalBytesWritten:totalBytesExpectedToWrite:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]): Ditto.
+        (-[WebCoreSynchronousLoader connection:willSendRequest:redirectResponse:]): Ditto.
+        (-[WebCoreSynchronousLoader connection:didReceiveAuthenticationChallenge:]): Ditto.
+        (-[WebCoreSynchronousLoader connection:didReceiveResponse:]): Ditto.
+        (-[WebCoreSynchronousLoader connection:didReceiveData:]): Ditto.
+        (-[WebCoreSynchronousLoader connectionDidFinishLoading:]): Ditto.
+        (-[WebCoreSynchronousLoader connection:didFailWithError:]): Ditto.
+
 2009-01-11  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.

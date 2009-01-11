@@ -583,8 +583,10 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 @implementation WebUndefined
 
-+ (id)allocWithZone:(NSZone *)zone
++ (id)allocWithZone:(NSZone *)unusedZone
 {
+    UNUSED_PARAM(unusedZone);
+
     static WebUndefined *sharedUndefined = 0;
     if (!sharedUndefined)
         sharedUndefined = [super allocWithZone:NULL];
@@ -596,17 +598,22 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     return @"undefined";
 }
 
-- (id)initWithCoder:(NSCoder *)coder
+- (id)initWithCoder:(NSCoder *)unusedCoder
 {
+    UNUSED_PARAM(unusedCoder);
+
     return self;
 }
 
-- (void)encodeWithCoder:(NSCoder *)encoder
+- (void)encodeWithCoder:(NSCoder *)unusedCoder
 {
+    UNUSED_PARAM(unusedCoder);
 }
 
-- (id)copyWithZone:(NSZone *)zone
+- (id)copyWithZone:(NSZone *)unusedZone
 {
+    UNUSED_PARAM(unusedZone);
+
     return self;
 }
 
