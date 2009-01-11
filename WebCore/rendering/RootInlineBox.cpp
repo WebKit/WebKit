@@ -240,18 +240,28 @@ GapRects RootInlineBox::fillLineSelectionGap(int selTop, int selHeight, RenderBl
                                                          lastBox->xPos() + lastBox->width(), selTop, selHeight,
                                                          rootBlock, blockX, blockY, tx, ty, paintInfo));
 
+    // When dealing with bidi text, a non-contiguous selection region is possible.
+    // e.g. The logical text aaaAAAbbb (capitals denote RTL text and non-capitals LTR) is layed out
+    // visually as 3 text runs |aaa|bbb|AAA| if we select 4 characters from the start of the text the
+    // selection will look like (underline denotes selection):
+    // |aaa|bbb|AAA|
+    //  ___       _
+    // We can see that the |bbb| run is not part of the selection while the runs around it are.
     if (firstBox && firstBox != lastBox) {
         // Now fill in any gaps on the line that occurred between two selected elements.
         int lastX = firstBox->xPos() + firstBox->width();
+        bool isPreviousBoxSelected = firstBox->selectionState() != RenderObject::SelectionNone;
         for (InlineBox* box = firstBox->nextLeafChild(); box; box = box->nextLeafChild()) {
             if (box->selectionState() != RenderObject::SelectionNone) {
-                result.uniteCenter(block()->fillHorizontalSelectionGap(box->parent()->object(),
-                                                                       lastX + tx, selTop + ty,
-                                                                       box->xPos() - lastX, selHeight, paintInfo));
+                if (isPreviousBoxSelected)  // Selection may be non-contiguous, see comment above.
+                    result.uniteCenter(block()->fillHorizontalSelectionGap(box->parent()->object(),
+                                                                           lastX + tx, selTop + ty,
+                                                                           box->xPos() - lastX, selHeight, paintInfo));
                 lastX = box->xPos() + box->width();
             }
             if (box == lastBox)
                 break;
+            isPreviousBoxSelected = box->selectionState() != RenderObject::SelectionNone;
         }
     }
 
