@@ -1,3 +1,13 @@
+2009-01-11  tony chang  <tony@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove svn:eol-style native from some utf16 files so
+        windows-svn doesn't alter them on checkout.
+
+        * fast/xsl/xslt-enc16.xml: remove svn:eol-style
+        * fast/xsl/xslt-enc16to16.xml: remove svn:eol-style
+
 2009-01-11  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov
