@@ -109,6 +109,15 @@ struct _WebKitWebViewClass {
     void                       (* set_scroll_adjustments) (WebKitWebView        *web_view,
                                                            GtkAdjustment        *hadjustment,
                                                            GtkAdjustment        *vadjustment);
+    /* Padding for future expansion */
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+    void (*_webkit_reserved4) (void);
+    void (*_webkit_reserved5) (void);
+    void (*_webkit_reserved6) (void);
+    void (*_webkit_reserved7) (void);
 };
 
 WEBKIT_API GType

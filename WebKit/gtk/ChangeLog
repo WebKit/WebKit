@@ -1,3 +1,17 @@
+2009-01-11  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        Add padding to the class structs to avoid breaking ABI each time
+        we add stuff there.
+
+        * webkit/webkitnetworkrequest.h:
+        * webkit/webkitwebbackforwardlist.h:
+        * webkit/webkitwebhistoryitem.h:
+        * webkit/webkitwebnavigationaction.h:
+        * webkit/webkitwebpolicydecision.h:
+        * webkit/webkitwebview.h:
+
 2009-01-09  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Holger Freyther.
