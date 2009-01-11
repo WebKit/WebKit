@@ -1,3 +1,13 @@
+2009-01-11  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23235
+        Build fix for non-VIDEO builds.
+
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderTheme.h:
+
 2009-01-11  Gabriella Toth  <gtoth@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.

@@ -140,9 +140,11 @@ public:
     // Method for painting the caps lock indicator
     virtual bool paintCapsLockIndicator(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return 0; };
 
+#if ENABLE(VIDEO)
     // Media controls
     virtual String styleSheetForMediaControls();
     virtual bool hitTestMediaControlPart(RenderObject*, const IntPoint& absPoint);
+#endif
 
 protected:
 #if !USE(NEW_THEME)
