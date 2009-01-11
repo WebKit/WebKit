@@ -1,5 +1,19 @@
 2009-01-11  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Darin Adler and Anders Carlsson
+
+        Bug 23128: get/put_by_val need to respecialise in the face of ByteArray
+
+        Restructure the code slightly, and add comments per Darin's suggestions
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::cti_op_get_by_val):
+        (JSC::Interpreter::cti_op_get_by_val_byte_array):
+        (JSC::Interpreter::cti_op_put_by_val):
+        (JSC::Interpreter::cti_op_put_by_val_byte_array):
+
+2009-01-11  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Whoops, I accidentally removed an exception check from fast the

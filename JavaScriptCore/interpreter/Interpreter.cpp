@@ -5118,6 +5118,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_get_by_val(STUB_ARGS)
         } else if (interpreter->isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
             result = JSValuePtr::encode(asString(baseValue)->getIndex(ARG_globalData, i));
         else if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
+            // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val_byte_array));
             return JSValuePtr::encode(asByteArray(baseValue)->getIndex(i));
         } else
@@ -5146,13 +5147,14 @@ JSValueEncodedAsPointer* Interpreter::cti_op_get_by_val_byte_array(STUB_ARGS)
     
     bool isUInt32 = JSImmediate::getUInt32(subscript, i);
     if (LIKELY(isUInt32)) {
-        if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i))
+        if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
+            // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             return JSValuePtr::encode(asByteArray(baseValue)->getIndex(i));
-        else {
-            result = baseValue->get(callFrame, i);
-            if (!interpreter->isJSByteArray(baseValue))
-                ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val));
         }
+
+        result = baseValue->get(callFrame, i);
+        if (!interpreter->isJSByteArray(baseValue))
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val));
     } else {
         Identifier property(callFrame, subscript->toString(callFrame));
         result = baseValue->get(callFrame, property);
@@ -5245,16 +5247,20 @@ void Interpreter::cti_op_put_by_val(STUB_ARGS)
                 jsArray->JSArray::put(callFrame, i, value);
         } else if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             JSByteArray* jsByteArray = asByteArray(baseValue);
-            double dValue = 0;
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_val_byte_array));
+            // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             if (JSImmediate::isNumber(value)) {
                 jsByteArray->setIndex(i, JSImmediate::getTruncatedInt32(value));
                 return;
-            } else if (fastIsNumber(value, dValue)) {
-                jsByteArray->setIndex(i, dValue);
-                return;
-            } else
-                baseValue->put(callFrame, i, value);
+            } else {
+                double dValue = 0;
+                if (fastIsNumber(value, dValue)) {
+                    jsByteArray->setIndex(i, dValue);
+                    return;
+                }
+            }
+
+            baseValue->put(callFrame, i, value);
         } else
             baseValue->put(callFrame, i, value);
     } else {
@@ -5311,20 +5317,23 @@ void Interpreter::cti_op_put_by_val_byte_array(STUB_ARGS)
     if (LIKELY(isUInt32)) {
         if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             JSByteArray* jsByteArray = asByteArray(baseValue);
-            double dValue = 0;
+            
+            // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             if (JSImmediate::isNumber(value)) {
                 jsByteArray->setIndex(i, JSImmediate::getTruncatedInt32(value));
                 return;
-            } else if (fastIsNumber(value, dValue)) {
-                jsByteArray->setIndex(i, dValue);
-                return;
-            } else
-                baseValue->put(callFrame, i, value);
-        } else {
-            if (!interpreter->isJSByteArray(baseValue))
-                ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_val));
-            baseValue->put(callFrame, i, value);
+            } else {
+                double dValue = 0;                
+                if (fastIsNumber(value, dValue)) {
+                    jsByteArray->setIndex(i, dValue);
+                    return;
+                }
+            }
         }
+
+        if (!interpreter->isJSByteArray(baseValue))
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_val));
+        baseValue->put(callFrame, i, value);
     } else {
         Identifier property(callFrame, subscript->toString(callFrame));
         if (!ARG_globalData->exception) { // Don't put to an object if toString threw an exception.
