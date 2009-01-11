@@ -1,3 +1,27 @@
+2009-01-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23210
+        Make it easier for ports to define custom UI for media controls
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement): call theme()->styleSheetForMediaControls to
+        get the media controller style sheet 
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::hitTest): Added
+        * rendering/MediaControlElements.h: Updated
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::forwardEvent): Call element hitTest() method instead of local function
+        so control elements don't necessarily have to be rectangular
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::styleSheetForMediaControls):  Added
+        (WebCore::RenderTheme::hitTestMediaControlPart):  Added
+        * rendering/RenderTheme.h: Updated
+
 2009-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

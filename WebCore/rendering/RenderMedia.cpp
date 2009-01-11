@@ -357,35 +357,27 @@ void RenderMedia::opacityAnimationTimerFired(Timer<RenderMedia>*)
     changeOpacity(m_panel.get(), opacity);
 }
 
-static bool rendererContainsPoint(const RenderObject* r, const IntPoint& absPoint)
-{
-    if (!r)
-        return false;
-    FloatPoint localPoint = r->absoluteToLocal(absPoint, false, true);  // respect transforms
-    return r->borderBox().contains(roundedIntPoint(localPoint));
-}
-
 void RenderMedia::forwardEvent(Event* event)
 {
     if (event->isMouseEvent() && m_controlsShadowRoot) {
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
         IntPoint point(mouseEvent->pageX(), mouseEvent->pageY());
-        if (m_muteButton && rendererContainsPoint(m_muteButton->renderer(), point))
+        if (m_muteButton && m_muteButton->hitTest(point))
             m_muteButton->defaultEventHandler(event);
 
-        if (m_playButton && rendererContainsPoint(m_playButton->renderer(), point))
+        if (m_playButton && m_playButton->hitTest(point))
             m_playButton->defaultEventHandler(event);
 
-        if (m_seekBackButton && rendererContainsPoint(m_seekBackButton->renderer(), point))
+        if (m_seekBackButton && m_seekBackButton->hitTest(point))
             m_seekBackButton->defaultEventHandler(event);
 
-        if (m_seekForwardButton && rendererContainsPoint(m_seekForwardButton->renderer(), point))
+        if (m_seekForwardButton && m_seekForwardButton->hitTest(point))
             m_seekForwardButton->defaultEventHandler(event);
 
-        if (m_timeline && rendererContainsPoint(m_timeline->renderer(), point))
+        if (m_timeline && m_timeline->hitTest(point))
             m_timeline->defaultEventHandler(event);
 
-        if (m_fullscreenButton && rendererContainsPoint(m_fullscreenButton->renderer(), point))
+        if (m_fullscreenButton && m_fullscreenButton->hitTest(point))
             m_fullscreenButton->defaultEventHandler(event);
         
         if (event->type() == eventNames().mouseoverEvent) {

@@ -68,6 +68,7 @@ public:
     MediaControlInputElement(Document*, RenderStyle::PseudoId, const String& type, HTMLMediaElement*);
     void attachToParent(Element*);
     void update();
+    bool hitTest(const IntPoint& absPoint);
 protected:
     HTMLMediaElement* m_mediaElement;   
 };

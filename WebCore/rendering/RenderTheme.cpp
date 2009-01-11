@@ -35,6 +35,7 @@
 #include "RenderView.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "UserAgentStyleSheets.h"
 
 // The methods in this file are shared by all themes on every platform.
 
@@ -360,6 +361,18 @@ bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInf
     }
 
     return false;
+}
+
+String RenderTheme::styleSheetForMediaControls()
+{
+    return String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet));
+}
+
+bool RenderTheme::hitTestMediaControlPart(RenderObject* o, const IntPoint& absPoint)
+{
+    FloatPoint localPoint = o->absoluteToLocal(absPoint, false, true);  // respect transforms
+
+    return o->borderBox().contains(roundedIntPoint(localPoint));
 }
 
 Color RenderTheme::activeSelectionBackgroundColor() const
