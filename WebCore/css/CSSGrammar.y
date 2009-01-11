@@ -94,6 +94,8 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %expect 49
 
+%nonassoc LOWEST_PREC
+
 %left UNIMPORTANT_TOK
 
 %token WHITESPACE SGML_CD
@@ -349,7 +351,7 @@ maybe_charset:
 
 closing_brace:
     '}'
-  | %prec maybe_sgml TOKEN_EOF
+  | %prec LOWEST_PREC TOKEN_EOF
   ;
 
 charset:
@@ -1355,10 +1357,10 @@ term:
       $$.string = $1;
   }
   /* We might need to actually parse the number from a dimension, but we can't just put something that uses $$.string into unary_term. */
-  | DIMEN maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_DIMENSION }
-  | unary_operator DIMEN maybe_space { $$.id = 0; $$.string = $2; $$.unit = CSSPrimitiveValue::CSS_DIMENSION }
+  | DIMEN maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_DIMENSION; }
+  | unary_operator DIMEN maybe_space { $$.id = 0; $$.string = $2; $$.unit = CSSPrimitiveValue::CSS_DIMENSION; }
   | URI maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_URI; }
-  | UNICODERANGE maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_UNICODE_RANGE }
+  | UNICODERANGE maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_UNICODE_RANGE; }
   | hexcolor { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; }
   | '#' maybe_space { $$.id = 0; $$.string = CSSParserString(); $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; } /* Handle error case: "color: #;" */
   /* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
