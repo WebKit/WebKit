@@ -1,3 +1,21 @@
+2009-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=23222
+        
+        We need to disable LayoutState when an object has transforms,
+        because LayoutState is not transform-aware and therefore
+        repaint rects can be computed incorrectly.
+        
+        Test: fast/repaint/transform-disable-layoutstate.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::layoutOnlyPositionedObjects):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+
 2009-01-09  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

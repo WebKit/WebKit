@@ -1,3 +1,17 @@
+2009-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=23222
+        
+        Test for repainting which is affected by LayoutState under an element
+        with a CSS transform.
+
+        * fast/repaint/transform-disable-layoutstate.html: Added.
+        * platform/mac/fast/repaint/transform-disable-layoutstate-expected.checksum: Added.
+        * platform/mac/fast/repaint/transform-disable-layoutstate-expected.png: Added.
+        * platform/mac/fast/repaint/transform-disable-layoutstate-expected.txt: Added.
+
 2009-01-09  Sam Weinig  <sam@webkit.org>
 
         Check in correct results for failing test.

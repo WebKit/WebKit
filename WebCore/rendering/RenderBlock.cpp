@@ -595,7 +595,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         oldOutlineBox = absoluteOutlineBounds();
     }
 
-    LayoutStateMaintainer statePusher(view(), this, IntSize(xPos(), yPos()), !m_hasColumns && !hasReflection());
+    LayoutStateMaintainer statePusher(view(), this, IntSize(xPos(), yPos()), !m_hasColumns && !hasTransform() && !hasReflection());
 
     int oldWidth = m_width;
     int oldColumnWidth = desiredColumnWidth();
@@ -1390,7 +1390,7 @@ bool RenderBlock::layoutOnlyPositionedObjects()
     if (!posChildNeedsLayout() || normalChildNeedsLayout() || selfNeedsLayout())
         return false;
 
-    LayoutStateMaintainer statePusher(view(), this, IntSize(xPos(), yPos()), !m_hasColumns);
+    LayoutStateMaintainer statePusher(view(), this, IntSize(xPos(), yPos()), !m_hasColumns && !hasTransform() && !hasReflection());
 
     if (needsPositionedMovementLayout()) {
         tryLayoutDoingPositionedMovementOnly();
