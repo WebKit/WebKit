@@ -1,3 +1,44 @@
+2009-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 23102: turn on unused parameter warnings in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=23102
+
+        Third step: Deal with cases of arguments used only in assertions.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePortCloseEventTask::performTask): Use ASSERT_UNUSED.
+        * dom/Worker.cpp:
+        (WebCore::Worker::notifyFinished): Ditto.
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::notifyFinished): Ditto.
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::failedLoadingMainResource): Ditto.
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion): Ditto.
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didReceiveData): Since loader and size are only
+        used when logging, use UNUSED_PARAM when logging is disabled.
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::beforeMouseDown): Use ASSERT_UNUSED.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didCancelAuthenticationChallenge): Use the
+        argument since it's probably a tiny bit more efficient and gets rid
+        of the unused argument warning.
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::createInlineBox): Use ASSERT_UNUSED.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createInlineBox): Ditto.
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::createInlineBox): Use UNUSED_PARAM.
+        I couldn't use ASSERT_UNUSED because it's a single assertion, but it's
+        the only use for two different arguments.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::createInlineBox): Use ASSERT_UNUSED.
+        * rendering/RenderThemeMac.mm:
+        (-[WebCoreRenderThemeNotificationObserver systemColorsDidChange:]): Ditto.
+
 2009-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Oliver Hunt

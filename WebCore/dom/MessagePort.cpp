@@ -52,10 +52,10 @@ private:
         ASSERT(m_port);
     }
 
-    virtual void performTask(ScriptExecutionContext* context)
+    virtual void performTask(ScriptExecutionContext* unusedContext)
     {
+        ASSERT_UNUSED(unusedContext, unusedContext == m_port->scriptExecutionContext());
         ASSERT(!m_port->active());
-        ASSERT(context == m_port->scriptExecutionContext());
 
         // Closing may destroy the port, dispatch any remaining messages now.
         if (m_port->queueIsOpen())

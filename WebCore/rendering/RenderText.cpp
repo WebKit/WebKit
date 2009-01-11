@@ -1003,9 +1003,10 @@ InlineTextBox* RenderText::createInlineTextBox()
     return new (renderArena()) InlineTextBox(this);
 }
 
-InlineBox* RenderText::createInlineBox(bool, bool isRootLineBox, bool)
+InlineBox* RenderText::createInlineBox(bool, bool unusedIsRootLineBox, bool)
 {
-    ASSERT(!isRootLineBox);
+    ASSERT_UNUSED(unusedIsRootLineBox, !unusedIsRootLineBox);
+
     InlineTextBox* textBox = createInlineTextBox();
     if (!m_firstTextBox)
         m_firstTextBox = m_lastTextBox = textBox;

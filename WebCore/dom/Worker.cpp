@@ -114,9 +114,10 @@ bool Worker::hasPendingActivity() const
     return m_messagingProxy->workerThreadHasPendingActivity() || ActiveDOMObject::hasPendingActivity();
 }
 
-void Worker::notifyFinished(CachedResource* resource)
+void Worker::notifyFinished(CachedResource* unusedResource)
 {
-    ASSERT(resource == m_cachedScript.get());
+    ASSERT_UNUSED(unusedResource, unusedResource == m_cachedScript);
+
     if (m_cachedScript->errorOccurred())
         dispatchErrorEvent();
     else {

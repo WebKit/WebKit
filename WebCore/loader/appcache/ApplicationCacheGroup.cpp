@@ -229,9 +229,9 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
     checkIfLoadIsComplete();
 }
 
-void ApplicationCacheGroup::failedLoadingMainResource(DocumentLoader* loader)
+void ApplicationCacheGroup::failedLoadingMainResource(DocumentLoader* unusedLoader)
 {
-    ASSERT(m_cacheCandidates.contains(loader) || m_associatedDocumentLoaders.contains(loader));
+    ASSERT_UNUSED(unusedLoader, m_cacheCandidates.contains(unusedLoader) || m_associatedDocumentLoaders.contains(unusedLoader));
 
     // Note that cacheUpdateFailed() can cause the cache group to be deleted.
     cacheUpdateFailed();

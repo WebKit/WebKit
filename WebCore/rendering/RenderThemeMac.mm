@@ -74,9 +74,9 @@ using std::min;
     return self;
 }
 
-- (void)systemColorsDidChange:(NSNotification *)notification
+- (void)systemColorsDidChange:(NSNotification *)unusedNotification
 {
-    ASSERT([[notification name] isEqualToString:NSSystemColorsDidChangeNotification]);
+    ASSERT_UNUSED(unusedNotification, [[unusedNotification name] isEqualToString:NSSystemColorsDidChangeNotification]);
     _theme->platformColorsDidChange();
 }
 

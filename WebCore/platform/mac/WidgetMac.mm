@@ -38,7 +38,6 @@
 #import "ScrollView.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
-
 #import <wtf/RetainPtr.h>
 
 @interface NSWindow (WebWindowDetails)
@@ -252,10 +251,10 @@ void Widget::removeFromSuperview()
     }
 }
 
-void Widget::beforeMouseDown(NSView *view, Widget* widget)
+void Widget::beforeMouseDown(NSView *unusedView, Widget* widget)
 {
     if (widget) {
-        ASSERT(view == widget->getOuterView());
+        ASSERT_UNUSED(unusedView, unusedView == widget->getOuterView());
         ASSERT(!widget->m_data->mustStayInWindow);
         widget->m_data->mustStayInWindow = true;
     }

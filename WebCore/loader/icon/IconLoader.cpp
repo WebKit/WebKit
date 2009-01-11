@@ -36,6 +36,7 @@
 #include "ResourceResponse.h"
 #include "ResourceRequest.h"
 #include "SubresourceLoader.h"
+#include <wtf/UnusedParam.h>
 
 using namespace std;
 
@@ -101,9 +102,13 @@ void IconLoader::didReceiveResponse(SubresourceLoader* resourceLoader, const Res
     }
 }
 
-void IconLoader::didReceiveData(SubresourceLoader* loader, const char*, int size)
+void IconLoader::didReceiveData(SubresourceLoader* unusedLoader, const char*, int unusedSize)
 {
-    LOG(IconDatabase, "IconLoader::didReceiveData() - Loader %p, number of bytes %i", loader, size);
+#if LOG_DISABLED
+    UNUSED_PARAM(unusedLoader);
+    UNUSED_PARAM(unusedSize);
+#endif
+    LOG(IconDatabase, "IconLoader::didReceiveData() - Loader %p, number of bytes %i", unusedLoader, unusedSize);
 }
 
 void IconLoader::didFail(SubresourceLoader* resourceLoader, const ResourceError&)

@@ -394,7 +394,7 @@ void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChalle
     ASSERT(d->m_currentWebChallenge == challenge);
 
     if (client())
-        client()->didCancelAuthenticationChallenge(this, d->m_currentWebChallenge);
+        client()->didCancelAuthenticationChallenge(this, challenge);
 }
 
 void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)

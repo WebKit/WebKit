@@ -506,9 +506,9 @@ void RenderListMarker::styleDidChange(RenderStyle::Diff diff, const RenderStyle*
     }
 }
 
-InlineBox* RenderListMarker::createInlineBox(bool, bool isRootLineBox, bool)
+InlineBox* RenderListMarker::createInlineBox(bool, bool unusedIsRootLineBox, bool)
 {
-    ASSERT(!isRootLineBox);
+    ASSERT_UNUSED(unusedIsRootLineBox, !unusedIsRootLineBox);
     ListMarkerBox* box = new (renderArena()) ListMarkerBox(this);
     m_inlineBoxWrapper = box;
     return box;

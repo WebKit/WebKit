@@ -2,7 +2,7 @@
  * This file is part of the WebKit project.
  *
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- *           (C) 2006 Apple Computer Inc.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 #include "RenderSVGInline.h"
 
 #include "SVGInlineFlowBox.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
     
@@ -35,9 +36,15 @@ RenderSVGInline::RenderSVGInline(Node* n)
 {
 }
 
-InlineBox* RenderSVGInline::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun)
+InlineBox* RenderSVGInline::createInlineBox(bool unusedMakePlaceHolderBox, bool unusedIsRootLineBox, bool isOnlyRun)
 {
-    ASSERT(!(!isRootLineBox && (isReplaced() || makePlaceHolderBox)));
+#if ASSERT_DISABLED
+    UNUSED_PARAM(unusedIsRootLineBox);
+    UNUSED_PARAM(unusedMakePlaceHolderBox);
+#endif
+
+    ASSERT(!(!unusedIsRootLineBox && (isReplaced() || unusedMakePlaceHolderBox)));
+
     ASSERT(isInlineFlow());
 
     InlineFlowBox* flowBox = new (renderArena()) SVGInlineFlowBox(this);

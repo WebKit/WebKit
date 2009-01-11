@@ -2854,9 +2854,9 @@ void RenderObject::removeLeftoverAnonymousBlock(RenderBlock*)
 {
 }
 
-InlineBox* RenderObject::createInlineBox(bool, bool isRootLineBox, bool)
+InlineBox* RenderObject::createInlineBox(bool, bool unusedIsRootLineBox, bool)
 {
-    ASSERT(!isRootLineBox);
+    ASSERT_UNUSED(unusedIsRootLineBox, !unusedIsRootLineBox);
     return new (renderArena()) InlineBox(this);
 }
 

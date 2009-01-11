@@ -314,8 +314,8 @@ void ApplicationCacheStorage::verifySchemaVersion()
     setDatabaseVersion.begin();
 
     char userVersionSQL[32];
-    int numBytes = snprintf(userVersionSQL, sizeof(userVersionSQL), "PRAGMA user_version=%d", schemaVersion);
-    ASSERT_UNUSED(numBytes, static_cast<int>(sizeof(userVersionSQL)) >= numBytes);
+    int unusedNumBytes = snprintf(userVersionSQL, sizeof(userVersionSQL), "PRAGMA user_version=%d", schemaVersion);
+    ASSERT_UNUSED(unusedNumBytes, static_cast<int>(sizeof(userVersionSQL)) >= unusedNumBytes);
 
     SQLiteStatement statement(m_database, userVersionSQL);
     if (statement.prepare() != SQLResultOk)
