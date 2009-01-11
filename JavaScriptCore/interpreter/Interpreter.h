@@ -221,10 +221,12 @@ namespace JSC {
         static JSObject* JIT_STUB cti_op_construct_JSConstruct(STUB_ARGS);
         static JSValueEncodedAsPointer* JIT_STUB cti_op_construct_NotJSConstruct(STUB_ARGS);
         static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_val(STUB_ARGS);
+        static JSValueEncodedAsPointer* JIT_STUB cti_op_get_by_val_byte_array(STUB_ARGS);
         static VoidPtrPair JIT_STUB cti_op_resolve_func(STUB_ARGS);
         static JSValueEncodedAsPointer* JIT_STUB cti_op_sub(STUB_ARGS);
         static void JIT_STUB cti_op_put_by_val(STUB_ARGS);
         static void JIT_STUB cti_op_put_by_val_array(STUB_ARGS);
+        static void JIT_STUB cti_op_put_by_val_byte_array(STUB_ARGS);
         static JSValueEncodedAsPointer* JIT_STUB cti_op_lesseq(STUB_ARGS);
         static int JIT_STUB cti_op_loop_if_true(STUB_ARGS);
         static JSValueEncodedAsPointer* JIT_STUB cti_op_resolve_base(STUB_ARGS);

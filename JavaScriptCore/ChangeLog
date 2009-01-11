@@ -1,3 +1,23 @@
+2009-01-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Bug 23128: get/put_by_val need to respecialise in the face of ByteArray
+        <https://bugs.webkit.org/show_bug.cgi?id=23128>
+
+        Fairly simple patch, add specialised versions of cti_op_get/put_by_val
+        that assume ByteArray, thus avoiding a few branches in the case of bytearray
+        manipulation.
+
+        No effect on SunSpider.  15% win on the original testcase.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::cti_op_get_by_val):
+        (JSC::Interpreter::cti_op_get_by_val_byte_array):
+        (JSC::Interpreter::cti_op_put_by_val):
+        (JSC::Interpreter::cti_op_put_by_val_byte_array):
+        * interpreter/Interpreter.h:
+
 2009-01-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Try to fix Windows build.
