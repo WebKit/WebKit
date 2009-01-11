@@ -52,7 +52,7 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebCore/SystemTime.h>
+#include <wtf/CurrentTime.h>
 #pragma warning(pop)
 
 using namespace WebCore;
