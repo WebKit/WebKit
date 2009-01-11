@@ -624,10 +624,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 }
 #endif
 
-- (NSCachedURLResponse *)connection:(NSURLConnection *)unusedConnection willCacheResponse:(NSCachedURLResponse *)cachedResponse
+- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
-    UNUSED_PARAM(unusedConnection);
-
 #ifdef BUILDING_ON_TIGER
     // On Tiger CFURLConnection can sometimes call the connection:willCacheResponse: delegate method on
     // a secondary thread instead of the main thread. If this happens perform the work on the main thread.
@@ -649,6 +647,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
         return [result autorelease];
     }
+#else
+    UNUSED_PARAM(connection);
 #endif
 
 #ifndef NDEBUG

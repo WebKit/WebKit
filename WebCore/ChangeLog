@@ -1,3 +1,10 @@
+2009-01-11  Mark Rowe  <mrowe@apple.com>
+
+        Tiger build fix.  The connection parameter is still used on Tiger in this method.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]):
+
 2009-01-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
