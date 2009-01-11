@@ -1,3 +1,22 @@
+2009-01-11  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov
+
+        - Make fast/encoding/char-encoding test work with Chromium by replacing
+        'data:' with 'file:' pointing to resources/dummy.html (an empty file).
+        - Put old Mac encodings in a separate char-encoding-mac.html to make it 
+        possible to to skip it.
+        - Factor out common functions in char-encoding.html and char-encoding-mac.html
+        and put them in char-encoding-utils.js
+
+        See: https://bugs.webkit.org/show_bug.cgi?id=22882
+
+        * fast/encoding/char-encoding-mac-expected.txt: Added.
+        * fast/encoding/char-encoding-mac.html: Added.
+        * fast/encoding/char-encoding.html:
+        * fast/encoding/resources/char-encoding-utils.js: Added.
+        * fast/encoding/resources/dummy.html: Added.
+
 2009-01-11  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Darin Adler.

@@ -23,25 +23,15 @@ var i = 0;
 
 var timeout = null;
 
-testEncode("UTF-8", "U+00A0", "%C2%A0");
-//Yen symbol in gbk
-testEncode('GBK', 'U+00A5', '%A3%A4');
-testEncode('gb2312', 'U+00A5', '%A3%A4');
-testEncode('GB-2312-80', 'U+00A5', '%A3%A4');
-testEncode('EUC-CN', 'U+00A5', '%A3%A4');
-//Euro symbol in gbk
-testEncode('GBK', 'U+20AC', '%80');
-testEncode('gb2312', 'U+20AC', '%80');
-testEncode('GB-2312-80', 'U+20AC', '%80');
-testEncode('EUC-CN', 'U+20AC', '%80');
-//Misc symbols from TEC specific GBK translation 
-testEncode('GBK', 'U+01F9', '%A8%BF');
-testEncode('GBK', 'U+1E3F', '%A8%BC');
-testEncode('GBK', 'U+22EF', '%A1%AD');
-testEncode('GBK', 'U+301C', '%A1%AB');
-
-// Turning on this test causes a download to occur. FIXME: A bug?
-// testEncode('UTF-8', 'U+221A', '%E2%88%9A');
+// Legacy Mac encodings.
+testEncode('mac', 'U+221A', '%C3');
+testEncode('macintosh', 'U+221A', '%C3');
+testEncode('MacRoman', 'U+221A', '%C3');
+testEncode('x-mac-greek', 'U+0391', '%B0');
+testEncode('x-mac-cyrillic', 'U+0410', '%80');
+testEncode('mac-cyrillic', 'U+0410', '%80');
+testEncode('x-mac-centraleurroman', 'U+0100', '%81');
+testEncode('x-mac-turkish', 'U+00C5', '%81');
 
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
