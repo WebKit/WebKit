@@ -1,3 +1,16 @@
+2009-01-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make ScheduledAction (Timeout callback) able to execute the callback under WorkerContext.
+        Part of 'Timers in Workers' work.
+        https://bugs.webkit.org/show_bug.cgi?id=23223
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute): new method that takes WorkerContext.
+        (WebCore::ScheduledAction::executeFunctionInContext): Executes a JSFunction in proper context with 'this' object.
+        * bindings/js/ScheduledAction.h:
+
 2009-01-10  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Eric Seidel.
