@@ -51,6 +51,8 @@
 
 namespace WTF {
 
+const double msPerSecond = 1000.0;
+
 #if PLATFORM(MAC)
 
 double currentTime()

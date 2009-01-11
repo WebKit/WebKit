@@ -2,6 +2,13 @@
 
         Try to fix Windows build.
 
+        * wtf/CurrentTime.cpp: Added a definition of msPerSecond (previously, this code was in
+        DateMath.cpp, with constant definition in DateTime.h)
+
+2009-01-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Try to fix Windows build.
+
         * wtf/CurrentTime.cpp: Include <sys/types.h> and <sys/timeb.h>, as MSDN says to.
 
 2009-01-11  Dmitry Titov  <dimich@chromium.org>
