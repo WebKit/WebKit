@@ -1,3 +1,12 @@
+2009-01-11  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Eric Seidel.
+        
+        <https://bugs.webkit.org/show_bug.cgi?id=23134>
+        Update bisect-builds for Safari 3.2 to prevent crashes
+
+        * Scripts/bisect-builds: Added Safari 3.2 and the corresponding minimal revision, r37348.
+
 2009-01-08  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Simon Hausmann.
