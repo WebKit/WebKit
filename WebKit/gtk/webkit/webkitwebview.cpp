@@ -817,44 +817,44 @@ static void webkit_web_view_dispose(GObject* object)
 
         core(priv->mainFrame)->loader()->detachChildren();
         delete priv->corePage;
-        priv->corePage = 0;
+        priv->corePage = NULL;
     }
 
     if (priv->horizontalAdjustment) {
         g_object_unref(priv->horizontalAdjustment);
-        priv->horizontalAdjustment = 0;
+        priv->horizontalAdjustment = NULL;
     }
 
     if (priv->verticalAdjustment) {
         g_object_unref(priv->verticalAdjustment);
-        priv->verticalAdjustment = 0;
+        priv->verticalAdjustment = NULL;
     }
 
     if (priv->backForwardList) {
         g_object_unref(priv->backForwardList);
-        priv->backForwardList = 0;
+        priv->backForwardList = NULL;
 
         g_signal_handlers_disconnect_by_func(priv->webSettings, (gpointer)webkit_web_view_settings_notify, webView);
         g_object_unref(priv->webSettings);
-        priv->webSettings = 0;
+        priv->webSettings = NULL;
 
         g_object_unref(priv->webInspector);
-        priv->webInspector = 0;
+        priv->webInspector = NULL;
 
         g_object_unref(priv->webWindowFeatures);
-        priv->webWindowFeatures = 0;
+        priv->webWindowFeatures = NULL;
 
         g_object_unref(priv->imContext);
-        priv->imContext = 0;
+        priv->imContext = NULL;
 
         gtk_target_list_unref(priv->copy_target_list);
-        priv->copy_target_list = 0;
+        priv->copy_target_list = NULL;
 
         gtk_target_list_unref(priv->paste_target_list);
-        priv->paste_target_list = 0;
+        priv->paste_target_list = NULL;
 
         delete priv->userAgent;
-        priv->userAgent = 0;
+        priv->userAgent = NULL;
     }
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);

@@ -2,6 +2,16 @@
 
         Reviewed by Holger Freyther.
 
+        Use NULL instead of 0 when dealing with pointers, as agreed for
+        the coding style of the WebKit GTK port for its GTK+ specific
+        files.
+
+        * webkit/webkitwebview.cpp:
+
+2009-01-11  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
         Add padding to the class structs to avoid breaking ABI each time
         we add stuff there.
 
