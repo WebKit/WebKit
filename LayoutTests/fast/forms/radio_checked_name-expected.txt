@@ -1,5 +1,5 @@
-There is a WinIE quirk that does not allow a user to select radio buttons that don't have names. This tests that we only honor that quirk
-in response to mouse and keyboard events. If the checked attribute is set on the element in the markup, or in javascript, we should ignore the quirk.
+There was once a WinIE quirk that did not allow a user to select radio buttons that did't have names. However, this was changed in a later version, and WinIE now allows users to select nameless radio buttons. This tests that we allow unnamed radio buttons to be selected.
+
     
 Pass
 Pass

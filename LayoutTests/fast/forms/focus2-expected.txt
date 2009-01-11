@@ -22,6 +22,9 @@ blur event: [to] ISINDEX
 focus event: [to] PASSWORD
 keydown event: [to] PASSWORD
 blur event: [to] PASSWORD
+focus event: [to] RADIO
+keydown event: [to] RADIO
+blur event: [to] RADIO
 focus event: [to] RANGE
 keydown event: [to] RANGE
 blur event: [to] RANGE
@@ -65,6 +68,9 @@ blur event: [to] ISINDEX
 focus event: [to] PASSWORD
 keydown event: [to] PASSWORD
 blur event: [to] PASSWORD
+focus event: [to] RADIO
+keydown event: [to] RADIO
+blur event: [to] RADIO
 focus event: [to] RANGE
 keydown event: [to] RANGE
 blur event: [to] RANGE
