@@ -38,6 +38,8 @@
 #include <windows.h>
 #include <math.h>
 #include <stdint.h>
+#include <sys/timeb.h>
+#include <sys/types.h>
 #include <time.h>
 #elif PLATFORM(GTK)
 #include <glib.h>
