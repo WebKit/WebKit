@@ -71,6 +71,8 @@ NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
         identifier = getStringIdentifierMap()->get(identifierFromNPIdentifier(name).ustring().rep());
         if (identifier == 0) {
             identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
+            if (!identifier)
+                CRASH();
             // We never release identifier names, so this dictionary will grow, as will
             // the memory for the identifier name strings.
             identifier->isString = true;
@@ -104,6 +106,8 @@ NPIdentifier _NPN_GetIntIdentifier(int32_t intid)
         identifier = negativeOneAndZeroIdentifiers[intid + 1];
         if (!identifier) {
             identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
+            if (!identifier)
+                CRASH();
             identifier->isString = false;
             identifier->value.number = intid;
 
@@ -113,6 +117,8 @@ NPIdentifier _NPN_GetIntIdentifier(int32_t intid)
         identifier = getIntIdentifierMap()->get(intid);
         if (!identifier) {
             identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
+            if (!identifier)
+                CRASH();
             // We never release identifier names, so this dictionary will grow.
             identifier->isString = false;
             identifier->value.number = intid;
@@ -151,6 +157,8 @@ void NPN_InitializeVariantWithStringCopy(NPVariant* variant, const NPString* val
     variant->type = NPVariantType_String;
     variant->value.stringValue.UTF8Length = value->UTF8Length;
     variant->value.stringValue.UTF8Characters = (NPUTF8 *)malloc(sizeof(NPUTF8) * value->UTF8Length);
+    if (!variant->value.stringValue.UTF8Characters)
+        CRASH();
     memcpy((void*)variant->value.stringValue.UTF8Characters, value->UTF8Characters, sizeof(NPUTF8) * value->UTF8Length);
 }
 
@@ -180,7 +188,8 @@ NPObject *_NPN_CreateObject(NPP npp, NPClass* aClass)
             obj = aClass->allocate(npp, aClass);
         else
             obj = (NPObject*)malloc(sizeof(NPObject));
-
+        if (!obj)
+            CRASH();
         obj->_class = aClass;
         obj->referenceCount = 1;
 
