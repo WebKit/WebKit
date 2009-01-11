@@ -30,7 +30,6 @@
 #import "SVGResourceMasker.h"
 
 #import "BlockExceptions.h"
-#import "CgSupport.h"
 #import "GraphicsContext.h"
 #import "ImageBuffer.h"
 #import "SVGMaskElement.h"

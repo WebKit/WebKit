@@ -135,6 +135,25 @@ bool Path::contains(const FloatPoint &point, WindRule rule) const
     return ret;
 }
 
+bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) const
+{
+    ASSERT(applier);
+
+    CGContextRef context = scratchContext();
+
+    CGContextSaveGState(context);
+    CGContextBeginPath(context);
+    CGContextAddPath(context, platformPath());
+
+    GraphicsContext gc(context);
+    applier->strokeStyle(&gc);
+
+    bool hitSuccess = CGContextPathContainsPoint(context, point, kCGPathStroke);
+    CGContextRestoreGState(context);
+    
+    return hitSuccess;
+}
+
 void Path::translate(const FloatSize& size)
 {
     CGAffineTransform translation = CGAffineTransformMake(1, 0, 0, 1, size.width(), size.height());

@@ -104,6 +104,18 @@ bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const
     return m_path.contains(point, style()->svgStyle()->fillRule());
 }
 
+bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) const
+{
+    if (m_path.isEmpty())
+        return false;
+
+    if (requiresStroke && !SVGPaintServer::strokePaintServer(style(), this))
+        return false;
+
+    BoundingRectStrokeStyleApplier strokeStyle(this, style());
+    return m_path.strokeContains(&strokeStyle, point);
+}
+
 FloatRect RenderPath::relativeBBox(bool includeStroke) const
 {
     if (m_path.isEmpty())

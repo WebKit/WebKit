@@ -2828,7 +2828,6 @@ webcore_sources += \
 	WebCore/svg/graphics/filters/SVGSpotLightSource.h
 
 webcoregtk_sources += \
-	WebCore/svg/graphics/cairo/RenderPathCairo.cpp \
 	WebCore/svg/graphics/cairo/SVGPaintServerCairo.cpp \
 	WebCore/svg/graphics/cairo/SVGPaintServerPatternCairo.cpp \
 	WebCore/svg/graphics/cairo/SVGResourceFilterCairo.cpp \

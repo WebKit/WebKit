@@ -89,8 +89,9 @@ namespace WebCore {
         Path& operator=(const Path&);
 
         bool contains(const FloatPoint&, WindRule rule = RULE_NONZERO) const;
+        bool strokeContains(StrokeStyleApplier*, const FloatPoint&) const;
         FloatRect boundingRect() const;
-        FloatRect strokeBoundingRect(StrokeStyleApplier* applier = 0);
+        FloatRect strokeBoundingRect(StrokeStyleApplier* = 0);
         
         float length();
         FloatPoint pointAtLength(float length, bool& ok);

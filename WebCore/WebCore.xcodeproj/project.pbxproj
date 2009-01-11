@@ -3192,9 +3192,6 @@
 		B237C8A80D344D110013F707 /* SVGFontData.h in Headers */ = {isa = PBXBuildFile; fileRef = B237C8A60D344D110013F707 /* SVGFontData.h */; };
 		B24055650B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */; };
 		B24055660B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */; };
-		B255992C0D00D8BA00BB825C /* CgSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598900D00D8B800BB825C /* CgSupport.cpp */; };
-		B255992D0D00D8BA00BB825C /* CgSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598910D00D8B800BB825C /* CgSupport.h */; };
-		B255992E0D00D8BA00BB825C /* RenderPathCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598920D00D8B800BB825C /* RenderPathCg.cpp */; };
 		B255992F0D00D8BA00BB825C /* SVGPaintServerCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598930D00D8B800BB825C /* SVGPaintServerCg.cpp */; };
 		B25599310D00D8BA00BB825C /* SVGPaintServerPatternCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598950D00D8B800BB825C /* SVGPaintServerPatternCg.cpp */; };
 		B25599350D00D8BA00BB825C /* SVGResourceFilterCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */; };
@@ -7900,9 +7897,6 @@
 		B237C8A60D344D110013F707 /* SVGFontData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFontData.h; sourceTree = "<group>"; };
 		B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceInternal.h; sourceTree = "<group>"; };
 		B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceListInternal.h; sourceTree = "<group>"; };
-		B25598900D00D8B800BB825C /* CgSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CgSupport.cpp; sourceTree = "<group>"; };
-		B25598910D00D8B800BB825C /* CgSupport.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CgSupport.h; sourceTree = "<group>"; };
-		B25598920D00D8B800BB825C /* RenderPathCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPathCg.cpp; sourceTree = "<group>"; };
 		B25598930D00D8B800BB825C /* SVGPaintServerCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPaintServerCg.cpp; sourceTree = "<group>"; };
 		B25598950D00D8B800BB825C /* SVGPaintServerPatternCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPaintServerPatternCg.cpp; sourceTree = "<group>"; };
 		B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGResourceFilterCg.mm; sourceTree = "<group>"; };
@@ -12732,9 +12726,6 @@
 		B255988F0D00D8B800BB825C /* cg */ = {
 			isa = PBXGroup;
 			children = (
-				B25598900D00D8B800BB825C /* CgSupport.cpp */,
-				B25598910D00D8B800BB825C /* CgSupport.h */,
-				B25598920D00D8B800BB825C /* RenderPathCg.cpp */,
 				B25598930D00D8B800BB825C /* SVGPaintServerCg.cpp */,
 				B25598950D00D8B800BB825C /* SVGPaintServerPatternCg.cpp */,
 				B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */,
@@ -14458,7 +14449,6 @@
 				93EEC20409C2877700C515D1 /* CanvasPattern.h in Headers */,
 				93EEC20009C2877700C515D1 /* CanvasRenderingContext2D.h in Headers */,
 				93EEC20109C2877700C515D1 /* CanvasStyle.h in Headers */,
-				B255992D0D00D8BA00BB825C /* CgSupport.h in Headers */,
 				514185EE0CD65F0400763C99 /* ChangeVersionWrapper.h in Headers */,
 				6550B6A0099DF0270090D781 /* CharacterData.h in Headers */,
 				B2C3DA260D006C1D00EF6F26 /* CharacterNames.h in Headers */,
@@ -16892,7 +16882,6 @@
 				93EEC26F09C3218000C515D1 /* CanvasPattern.cpp in Sources */,
 				93EEC1FF09C2877700C515D1 /* CanvasRenderingContext2D.cpp in Sources */,
 				93EEC27109C3218800C515D1 /* CanvasStyle.cpp in Sources */,
-				B255992C0D00D8BA00BB825C /* CgSupport.cpp in Sources */,
 				514185EF0CD65F0400763C99 /* ChangeVersionWrapper.cpp in Sources */,
 				6550B69F099DF0270090D781 /* CharacterData.cpp in Sources */,
 				9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */,
@@ -17980,7 +17969,6 @@
 				A871DED00A1530C700B12A68 /* RenderPart.cpp in Sources */,
 				A871DED60A1530C700B12A68 /* RenderPartObject.cpp in Sources */,
 				853CA9F00AEEC657002372DC /* RenderPath.cpp in Sources */,
-				B255992E0D00D8BA00BB825C /* RenderPathCg.cpp in Sources */,
 				A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */,
 				BCA846D60DC67A350026C309 /* RenderReplica.cpp in Sources */,
 				A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */,

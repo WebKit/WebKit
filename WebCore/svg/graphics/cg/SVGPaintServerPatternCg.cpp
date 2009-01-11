@@ -24,7 +24,6 @@
 #if ENABLE(SVG)
 #include "SVGPaintServerPattern.h"
 
-#include "CgSupport.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderObject.h"
