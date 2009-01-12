@@ -1,3 +1,18 @@
+2009-01-12  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Ensure that we're always notified of navigation actions for local anchors
+        
+        FrameLoader::checkNavigationPolicy() does not notify us if the request has
+        been checked before (which happens for local anchors), but in the case of
+        our clients not accepting the navigation request we do want to be notified
+        again later on, so we clear the lastCheckedRequest flag.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+
 2009-01-12  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Tor Arne Vestbø.

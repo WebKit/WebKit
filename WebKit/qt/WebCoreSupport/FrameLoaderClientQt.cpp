@@ -887,6 +887,12 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunc
     if (!page->d->acceptNavigationRequest(0, r, QWebPage::NavigationType(action.type()))) {
         if (action.type() == NavigationTypeFormSubmitted || action.type() == NavigationTypeFormResubmitted)
             m_frame->loader()->resetMultipleFormSubmissionProtection();
+
+        if (action.type() == NavigationTypeLinkClicked && r.url().hasFragment()) {
+            ResourceRequest emptyRequest;
+            m_frame->loader()->activeDocumentLoader()->setLastCheckedRequest(emptyRequest);
+        }
+
         slotCallPolicyFunction(PolicyIgnore);
         return;
     }
@@ -908,6 +914,12 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
     if (!page->d->acceptNavigationRequest(m_webFrame, r, QWebPage::NavigationType(action.type()))) {
         if (action.type() == NavigationTypeFormSubmitted || action.type() == NavigationTypeFormResubmitted)
             m_frame->loader()->resetMultipleFormSubmissionProtection();
+
+        if (action.type() == NavigationTypeLinkClicked && r.url().hasFragment()) {
+            ResourceRequest emptyRequest;
+            m_frame->loader()->activeDocumentLoader()->setLastCheckedRequest(emptyRequest);
+        }
+
         slotCallPolicyFunction(PolicyIgnore);
         return;
     }
