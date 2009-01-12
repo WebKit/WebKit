@@ -50,8 +50,6 @@ ScrollView::ScrollView()
     , m_useFixedLayout(false)
 {
     platformInit();
-    if (platformWidget())
-        platformSetCanBlitOnScroll(true);
 }
 
 ScrollView::~ScrollView()
