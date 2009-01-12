@@ -1,3 +1,50 @@
+2009-01-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=23220
+
+        Merge layoutDelta into LayoutState. This requires that we
+        push even when layoutState is disabled, so that layoutDelta
+        can still be stored.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::layoutOnlyPositionedObjects):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localToAbsolute):
+        (WebCore::RenderBox::absoluteToLocal):
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::absoluteClippedOverflowRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeAbsoluteRepaintRect):
+        (WebCore::RenderTableCell::localToAbsolute):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pushLayoutState):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::layoutDelta):
+        (WebCore::RenderView::addLayoutDelta):
+        (WebCore::RenderView::doingFullRepaint):
+        (WebCore::RenderView::pushLayoutState):
+        (WebCore::RenderView::popLayoutState):
+        (WebCore::RenderView::layoutStateEnabled):
+        (WebCore::RenderView::layoutState):
+        (WebCore::LayoutStateMaintainer::LayoutStateMaintainer):
+        (WebCore::LayoutStateMaintainer::push):
+        (WebCore::LayoutStateMaintainer::pop):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2009-01-12  Julien Chaffraix  <jchaffraix@pleyo.com>
 
         Reviewed by Holger Freyther.

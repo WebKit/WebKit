@@ -601,7 +601,7 @@ void RenderView::setBestTruncatedAt(int y, RenderObject* forRenderer, bool force
 
 void RenderView::pushLayoutState(RenderObject* root)
 {
-    ASSERT(!m_frameView->needsFullRepaint());
+    ASSERT(!doingFullRepaint());
     ASSERT(m_layoutStateDisableCount == 0);
     ASSERT(m_layoutState == 0);
 

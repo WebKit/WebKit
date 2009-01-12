@@ -191,7 +191,7 @@ void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool fixed)
 {
     r.setY(r.y() + m_topExtra);
     RenderView* v = view();
-    if ((!v || !v->layoutState()) && parent())
+    if ((!v || !v->layoutStateEnabled()) && parent())
         r.move(-parent()->xPos(), -parent()->yPos()); // Rows are in the same coordinate space, so don't add their offset in.
     RenderBlock::computeAbsoluteRepaintRect(r, fixed);
 }
@@ -199,7 +199,7 @@ void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool fixed)
 FloatPoint RenderTableCell::localToAbsolute(FloatPoint localPoint, bool fixed, bool useTransforms) const
 {
     RenderView* v = view();
-    if ((!v || !v->layoutState()) && parent()) {
+    if ((!v || !v->layoutStateEnabled()) && parent()) {
         // Rows are in the same coordinate space, so don't add their offset in.
         localPoint.move(-parent()->xPos(), -parent()->yPos());
     }
