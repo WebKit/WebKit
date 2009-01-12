@@ -2,6 +2,24 @@
 
         Reviewed by Sam Weinig.
 
+        Move marshalling into NetscapePluginInstanceProxy.
+        
+        Add support for marshallin strings.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEvaluate):
+        (WKPCInvoke):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::evaluate):
+        (WebKit::NetscapePluginInstanceProxy::invoke):
+        (WebKit::NetscapePluginInstanceProxy::marshalValue):
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+
+2009-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Implement WKPCInvoke.
         
         * Plugins/Hosted/NetscapePluginHostProxy.mm:

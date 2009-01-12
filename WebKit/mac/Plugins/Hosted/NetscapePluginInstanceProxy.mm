@@ -493,27 +493,37 @@ void NetscapePluginInstanceProxy::releaseObject(uint32_t objectID)
     m_objects.remove(objectID);
 }
  
-JSC::JSValuePtr NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& script)
+bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& script, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
+    resultData = 0;
+    resultLength = 0;
+
     if (!m_objects.contains(objectID))
-        return JSValuePtr();
+        return false;
 
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
-        return JSValuePtr();
+        return false;
     
-    return frame->loader()->executeScript(script).jsValue();
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    JSValuePtr value = frame->loader()->executeScript(script).jsValue();
+    
+    marshalValue(exec, value, resultData, resultLength);
+    return true;
 }
 
-JSC::JSValuePtr NetscapePluginInstanceProxy::invoke(uint32_t objectID, Identifier methodName)
+bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, Identifier methodName, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
+    resultData = 0;
+    resultLength = 0;
+    
     JSObject* object = m_objects.get(objectID);
     if (!object)
-        return JSValuePtr();
+        return false;
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
-        return JSValuePtr();
+        return false;
     
     ExecState* exec = frame->script()->globalObject()->globalExec();
     JSLock lock(false);
@@ -521,26 +531,30 @@ JSC::JSValuePtr NetscapePluginInstanceProxy::invoke(uint32_t objectID, Identifie
     CallData callData;
     CallType callType = function->getCallData(callData);
     if (callType == CallTypeNone)
-        return JSValuePtr();
+        return false;
     
     // Call the function object
     ArgList argList;
     
     ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
     globalObject->startTimeoutCheck();
-    JSValuePtr result = call(exec, function, callType, callData, object, argList);
+    JSValuePtr value = call(exec, function, callType, callData, object, argList);
     globalObject->stopTimeoutCheck();
     
     exec->clearException();
     
-    return result;
+    marshalValue(exec, value, resultData, resultLength);
+    return true;
 }
 
-void NetscapePluginInstanceProxy::marshalValue(JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength)
+void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
     RetainPtr<NSMutableArray*> array(AdoptNS, [[NSMutableArray alloc] init]);
     
     if (value->isString()) {
+        [array.get() addObject:[NSNumber numberWithInt:StringValueType]];
+        
+        [array.get() addObject:String(value->toString(exec))];
     } else if (value->isNumber()) {
     } else if (value->isBoolean()) {
     } else if (value->isNull()) {

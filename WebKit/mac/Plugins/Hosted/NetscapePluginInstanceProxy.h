@@ -86,10 +86,10 @@ public:
     // NPRuntime
     bool getWindowNPObject(uint32_t& objectID);
     void releaseObject(uint32_t objectID);
-    void marshalValue(JSC::JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength);
+    void marshalValue(JSC::ExecState* exec, JSC::JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength);
     
-    JSC::JSValuePtr evaluate(uint32_t objectID, const WebCore::String& script);
-    JSC::JSValuePtr invoke(uint32_t objectID, JSC::Identifier methodName);
+    bool evaluate(uint32_t objectID, const WebCore::String& script, data_t& resultData, mach_msg_type_number_t& resultLength);
+    bool invoke(uint32_t objectID, JSC::Identifier methodName, data_t& resultData, mach_msg_type_number_t& resultLength);
     
     void status(const char* message);
     NPError loadURL(const char* url, const char* target, const char* postData, uint32_t postDataLength, LoadURLFlags, uint32_t& requestID);

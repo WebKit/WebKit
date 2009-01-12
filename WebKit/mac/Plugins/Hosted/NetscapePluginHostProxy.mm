@@ -283,15 +283,7 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t o
     String script = fromUTF8WithLatin1Fallback(scriptData, scriptLength);
 
     // FIXME: Demarshal the arguments and pass them to evaluate.
-    JSValuePtr result = instanceProxy->evaluate(objectID, script);
-    if (!result) {
-        *returnValue = false;
-        *resultData = 0;
-        *resultLength = 0;
-    } else {
-        *returnValue = true;
-        instanceProxy->marshalValue(result, *resultData, *resultLength);
-    }
+    *returnValue = instanceProxy->evaluate(objectID, script, *resultData, *resultLength);
     
     return KERN_SUCCESS;
 }
@@ -322,16 +314,7 @@ kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t obj
     Identifier methodNameIdentifier = Identifier(JSDOMWindow::commonJSGlobalData(), methodNameString);
     
     // FIXME: Demarshal the arguments and pass them to invoke.
-    JSValuePtr result = instanceProxy->invoke(objectID, methodNameIdentifier);
-
-    if (!result) {
-        *returnValue = false;
-        *resultData = 0;
-        *resultLength = 0;
-    } else {
-        *returnValue = true;
-        instanceProxy->marshalValue(result, *resultData, *resultLength);
-    }
+    *returnValue = instanceProxy->invoke(objectID, methodNameIdentifier, *resultData, *resultLength);
     
     return KERN_SUCCESS;
 }
