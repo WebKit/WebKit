@@ -2249,7 +2249,7 @@ void tst_QWebFrame::popupFocus()
     // open the popup by clicking. check if focus is on the popup
     QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(25, 25));
     QObject* webpopup = firstChildByClassName(&view, "WebCore::QWebPopup");
-    QComboBox* combo = dynamic_cast<QComboBox*>(webpopup);
+    QComboBox* combo = qobject_cast<QComboBox*>(webpopup);
     QTest::qWait(1);
     QVERIFY2(!view.hasFocus() && combo->view()->hasFocus(),
              "Focus sould be on the Popup");

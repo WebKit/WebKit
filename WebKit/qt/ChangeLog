@@ -1,3 +1,13 @@
+2009-01-12  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Build fix: use qobject_cast which does not rely on RTTI. This fixes the
+        unit test when building it with a version of Qt (e.g. Qt/Embedded)
+        configured without RTTI.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-01-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Tor Arne Vestbø.
