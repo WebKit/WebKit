@@ -83,9 +83,11 @@ public:
     void startTimers(bool throttleTimers);
     void stopTimers();
     
+    // NPRuntime
     bool getWindowNPObject(uint32_t& objectID);
     void releaseObject(uint32_t objectID);
     JSC::JSValuePtr evaluate(uint32_t objectID, const WebCore::String& script);
+    void marshalValue(JSC::JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength);
     
     void status(const char* message);
     NPError loadURL(const char* url, const char* target, const char* postData, uint32_t postDataLength, LoadURLFlags, uint32_t& requestID);

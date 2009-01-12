@@ -1,3 +1,16 @@
+2009-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move marshalling code to NetscapePluginInstanceProxy. Add support for marshalling JS objects.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEvaluate):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::marshalValue):
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+
 2009-01-12  Julien Chaffraix  <jchaffraix@pleyo.com>
 
         Reviewed by Darin Adler.

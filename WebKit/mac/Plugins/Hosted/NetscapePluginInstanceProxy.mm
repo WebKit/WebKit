@@ -503,7 +503,34 @@ JSC::JSValuePtr NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const S
     
     return frame->loader()->executeScript(script).jsValue();
 }
+ 
+void NetscapePluginInstanceProxy::marshalValue(JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength)
+{
+    RetainPtr<NSMutableArray*> array(AdoptNS, [[NSMutableArray alloc] init]);
     
+    if (value->isString()) {
+    } else if (value->isNumber()) {
+    } else if (value->isBoolean()) {
+    } else if (value->isNull()) {
+    } else if (value->isObject()) {
+        [array.get() addObject:[NSNumber numberWithInt:ObjectValueType]];
+        
+        uint32_t objectID = idForObject(asObject(value));
+        
+        [array.get() addObject:[NSNumber numberWithInt:objectID]];
+    } else {
+        [array.get() addObject:[NSNumber numberWithInt:VoidValueType]];
+    }
+
+    RetainPtr<NSData*> data = [NSPropertyListSerialization dataFromPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
+    ASSERT(data);
+    
+    resultLength = [data.get() length];
+    mig_allocate(reinterpret_cast<vm_address_t*>(&resultData), resultLength);
+    
+    memcpy(resultData, [data.get() bytes], resultLength);
+}
+
 } // namespace WebKit
 
 #endif // USE(PLUGIN_HOST_PROCESS)

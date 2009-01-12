@@ -269,22 +269,6 @@ kern_return_t WKPCReleaseObject(mach_port_t clientPort, uint32_t pluginID, uint3
     return KERN_SUCCESS;
 }
 
-static RetainPtr<CFDataRef> marshalValue(JSValuePtr value)
-{
-    RetainPtr<NSMutableArray*> array(AdoptNS, [[NSMutableArray alloc] init]);
-    
-    if (value->isString()) {
-    } else if (value->isNumber()) {
-    } else if (value->isBoolean()) {
-    } else if (value->isNull()) {
-    } else if (value->isObject()) {
-    } else {
-        [array.get() addObject:[NSNumber numberWithInt:VoidValueType]];
-    }
-    
-    return (CFDataRef)[NSPropertyListSerialization dataFromPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
-}
-
 kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID, data_t scriptData, mach_msg_type_number_t scriptLength,
                            data_t arguments, mach_msg_type_number_t argumentsCnt, boolean_t *returnValue, data_t *resultData, mach_msg_type_number_t *resultLength)
 {
@@ -304,12 +288,8 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t o
         *resultLength = 0;
     } else {
         *returnValue = true;
-        RetainPtr<CFDataRef> data = marshalValue(result);
         
-        *resultLength = CFDataGetLength(data.get());
-        mig_allocate(reinterpret_cast<vm_address_t*>(resultData), *resultLength);
-        
-        memcpy(*resultData, CFDataGetBytePtr(data.get()), *resultLength);
+        instanceProxy->marshalValue(result, *resultData, *resultLength);
     }
     
     return KERN_SUCCESS;
