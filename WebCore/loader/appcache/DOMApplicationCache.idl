@@ -41,7 +41,8 @@ module offline {
             raises(DOMException);
         void swapCache()
             raises(DOMException);
-    
+
+#if ENABLE_APPLICATION_CAHE_DYNAMIC_ENTRIES
         // dynamic entries
         readonly attribute DOMStringList items;
         [Custom] boolean hasItem(in DOMString url)
@@ -50,6 +51,7 @@ module offline {
             raises(DOMException);
         [Custom] void remove(in DOMString uri)
             raises(DOMException);
+#endif
 
         // events
         attribute EventListener onchecking;
