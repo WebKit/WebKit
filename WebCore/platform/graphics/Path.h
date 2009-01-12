@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
- *                     2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2003, 2006, 2009 Apple Inc. All rights reserved.
+ *               2006 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 #ifndef Path_h
 #define Path_h
 
+#include <algorithm>
+
 #if PLATFORM(CG)
 typedef struct CGPath PlatformPath;
 #elif PLATFORM(QT)
@@ -52,13 +54,13 @@ typedef void PlatformPath;
 
 namespace WebCore {
 
-    class TransformationMatrix;
     class FloatPoint;
-    class FloatSize;
     class FloatRect;
+    class FloatSize;
     class GraphicsContext;
     class String;
     class StrokeStyleApplier;
+    class TransformationMatrix;
 
     enum WindRule {
         RULE_NONZERO = 0,
@@ -78,7 +80,7 @@ namespace WebCore {
         FloatPoint* points;
     };
 
-    typedef void (*PathApplierFunction) (void* info, const PathElement*);
+    typedef void (*PathApplierFunction)(void* info, const PathElement*);
 
     class Path {
     public:
@@ -87,6 +89,8 @@ namespace WebCore {
 
         Path(const Path&);
         Path& operator=(const Path&);
+
+        void swap(Path& other) { std::swap(m_path, other.m_path); }
 
         bool contains(const FloatPoint&, WindRule rule = RULE_NONZERO) const;
         bool strokeContains(StrokeStyleApplier*, const FloatPoint&) const;

@@ -32,7 +32,7 @@ namespace WebCore {
     class SVGPathSegCurvetoCubicSmooth : public SVGPathSeg {
     public:
         SVGPathSegCurvetoCubicSmooth(float x, float y, float x2, float y2)
-        : SVGPathSeg(), m_x(x), m_y(y), m_x2(x2), m_y2(y) {}
+        : m_x(x), m_y(y), m_x2(x2), m_y2(y2) { }
 
         virtual String toString() const { return pathSegTypeAsLetter() + String::format(" %.6lg %.6lg %.6lg %.6lg", m_x2, m_y2, m_x, m_y); }
 

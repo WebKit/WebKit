@@ -1,0 +1,100 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/scripted-random.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This test fuzzes the path parser with semi-random attribute values and dumps the results.");
+
+    var characters = [
+        [ "m", 2 ],  // maps a character to the number of arguments it requires
+        [ "M", 2 ],
+        [ "l", 2 ],
+        [ "L", 2 ],
+        [ "h", 1 ],
+        [ "H", 1 ],
+        [ "v", 1 ],
+        [ "V", 1 ],
+        [ "z", 0 ],
+        [ "Z", 0 ],
+        [ "c", 6 ],
+        [ "C", 6 ],
+        [ "s", 4 ],
+        [ "S", 4 ],
+        [ "q", 4 ],
+        [ "Q", 4 ],
+        [ "t", 2 ],
+        [ "T", 2 ],
+        [ "a", 7 ],
+        [ "A", 7 ]
+    ];
+
+    var separators = [
+        " ",
+        ","
+    ];
+    
+    var pathElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    function parsePath(string)
+    {
+        pathElement.setAttributeNS(null, "d", string);
+
+        var pathSegList = pathElement.pathSegList;
+        var numberOfItems = pathSegList.numberOfItems;
+        
+        if (!numberOfItems) {
+            debug("Could not parse: " + string);
+            return;
+        }
+
+        var pathCommands = "";
+        for (var i = 0; i < numberOfItems; i++) { //>
+            pathCommands += pathSegList.getItem(i).pathSegTypeAsLetter;
+        }
+        debug("Parsed as " + numberOfItems + " command(s) [" + pathCommands + "]: " + string);
+    }
+
+    function fuzz()
+    {
+        // Random assortments of valid characters with semi-valid argument counts
+        for (var i = 0; i < 250; i++) { //>
+            var pathString = "M1,1"; // path must start with moveto
+
+            var numPathCommands = Math.scriptedRandomInt(20);
+            for (var j = 0; j < numPathCommands; j++) { //>
+                var characterIndex = Math.scriptedRandomInt(characters.length);
+                pathString += characters[characterIndex][0];
+
+                var numArguments;
+                var argumentRandomizer = Math.scriptedRandomInt(10);
+                if (argumentRandomizer < 8) //>
+                    numArguments = characters[characterIndex][1];
+                else if (argumentRandomizer < 9) //>
+                    numArguments = characters[characterIndex][1] + 1;
+                else
+                    numArguments = Math.max(characters[characterIndex][1] - 1, 0);
+
+                for (var k = 0; k < numArguments; k++) { //>
+                    pathString += String(Math.scriptedRandomInt(10));
+                    pathString += separators[Math.scriptedRandomInt(separators.length)];
+                }
+            }
+            parsePath(pathString);
+        }
+        // Empty-ish paths
+        parsePath("");
+        parsePath("M");
+        parsePath("M" + String.fromCharCode(0));
+        // Edge case paths:
+        parsePath("M1,1Z0");
+    }
+    fuzz();
+
+    successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</html>

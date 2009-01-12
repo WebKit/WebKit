@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+# Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -93,6 +93,7 @@ for my $tfile (@templates) {
 
         next if $file =~ m:resources/NSResolver-exceptions\.js$:;
         next if $file =~ m:resources/WindowProperties\.js$:;
+        next if $file =~ m:resources/altGlyph-dom\.js$:;
         next if $file =~ m:resources/attr-case-sensitivity\.js$:;
         next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-1\.js$:;
         next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-2\.js$:;
@@ -107,6 +108,7 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/script3\.js$:;
         next if $file =~ m:resources/script4\.js$:;
         next if $file =~ m:resources/script5\.js$:;
+        next if $file =~ m:resources/scripted-random\.js$:;
         next if $file =~ m:resources/select-options-remove\.js$:;
         next if $file =~ m:resources/shadow-offset\.js$:;
         next if $file =~ m:resources/tabindex-focus-blur-all\.js$:;

@@ -1,8 +1,8 @@
-/* This file is part of the KDE project
+/*
    Copyright (C) 2002, 2003 The Karbon Developers
                  2006       Alexander Kellett <lypanov@kde.org>
                  2006, 2007 Rob Buis <buis@kde.org>
-                 2007       Apple, Inc.  All rights reserved.
+   Copyrigth (C) 2007, 2009 Apple, Inc.  All rights reserved.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -226,9 +226,6 @@ bool pointsListFromSVGData(SVGPointList* pointsList, const String& points)
     
 bool SVGPathParser::parseSVG(const String& s, bool process)
 {
-    if (s.isEmpty())
-        return false;
-
     const UChar* ptr = s.characters();
     const UChar* end = ptr + s.length();
 
@@ -672,13 +669,16 @@ void SVGPathParser::calculateArc(bool relative, double& curx, double& cury, doub
         cury += y;    
 }
 
-class PathBuilder : public SVGPathParser
-{
+class PathBuilder : private SVGPathParser {
 public:
     bool build(Path* path, const String& d)
     {
-        m_path = path;
-        return parseSVG(d, true);
+        Path temporaryPath;
+        m_path = &temporaryPath;
+        if (!parseSVG(d, true))
+            return false;
+        temporaryPath.swap(*path);
+        return true;
     }
 
 private:
@@ -712,6 +712,7 @@ private:
     {
         m_path->closeSubpath();
     }
+
     Path* m_path;
     FloatPoint current;
 };
@@ -722,118 +723,106 @@ bool pathFromSVGData(Path& path, const String& d)
     return builder.build(&path, d);
 }
 
-class SVGPathSegListBuilder : public SVGPathParser
-{
+class SVGPathSegListBuilder : private SVGPathParser {
 public:
     bool build(SVGPathSegList* segList, const String& d, bool process)
     {
-        m_pathSegList = segList;
-        return parseSVG(d, process);
+        if (!parseSVG(d, process))
+            return false;
+        size_t size = m_vector.size();
+        for (size_t i = 0; i < size; ++i) {
+            ExceptionCode ec;
+            segList->appendItem(m_vector[i].release(), ec);
+        }
+        m_vector.clear();
+        return true;
     }
 
 private:
     virtual void svgMoveTo(double x1, double y1, bool, bool abs = true)
     {
-        ExceptionCode ec = 0;
-
         if (abs)
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegMovetoAbs(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegMovetoAbs(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1)));
         else
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegMovetoRel(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegMovetoRel(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1)));
     }
     virtual void svgLineTo(double x1, double y1, bool abs = true)
     {
-        ExceptionCode ec = 0;
-
         if (abs)
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoAbs(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegLinetoAbs(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1)));
         else
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoRel(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegLinetoRel(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1)));
     }
     virtual void svgLineToHorizontal(double x, bool abs)
     {
-        ExceptionCode ec = 0;
-
         if (abs)
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoHorizontalAbs(narrowPrecisionToFloat(x)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegLinetoHorizontalAbs(narrowPrecisionToFloat(x)));
         else
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoHorizontalRel(narrowPrecisionToFloat(x)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegLinetoHorizontalRel(narrowPrecisionToFloat(x)));
     }
     virtual void svgLineToVertical(double y, bool abs)
     {
-        ExceptionCode ec = 0;
-
         if (abs)
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoVerticalAbs(narrowPrecisionToFloat(y)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegLinetoVerticalAbs(narrowPrecisionToFloat(y)));
         else
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegLinetoVerticalRel(narrowPrecisionToFloat(y)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegLinetoVerticalRel(narrowPrecisionToFloat(y)));
     }
     virtual void svgCurveToCubic(double x1, double y1, double x2, double y2, double x, double y, bool abs = true)
     {
-        ExceptionCode ec = 0;
-
         if (abs)
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoCubicAbs(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y),
+            m_vector.append(SVGPathElement::createSVGPathSegCurvetoCubicAbs(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y),
                                                                                       narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1),
-                                                                                      narrowPrecisionToFloat(x2), narrowPrecisionToFloat(y2)), ec);
+                                                                                      narrowPrecisionToFloat(x2), narrowPrecisionToFloat(y2)));
         else
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoCubicRel(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y),
+            m_vector.append(SVGPathElement::createSVGPathSegCurvetoCubicRel(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y),
                                                                                       narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1),
-                                                                                      narrowPrecisionToFloat(x2), narrowPrecisionToFloat(y2)), ec);
+                                                                                      narrowPrecisionToFloat(x2), narrowPrecisionToFloat(y2)));
     }
     virtual void svgCurveToCubicSmooth(double x, double y, double x2, double y2, bool abs)
     {
-        ExceptionCode ec = 0;
-
         if (abs)
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs(narrowPrecisionToFloat(x2), narrowPrecisionToFloat(y2),
-                                                                                            narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs(narrowPrecisionToFloat(x2), narrowPrecisionToFloat(y2),
+                                                                                            narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)));
         else
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel(narrowPrecisionToFloat(x2), narrowPrecisionToFloat(y2),
-                                                                                            narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel(narrowPrecisionToFloat(x2), narrowPrecisionToFloat(y2),
+                                                                                            narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)));
     }
     virtual void svgCurveToQuadratic(double x, double y, double x1, double y1, bool abs)
     {
-        ExceptionCode ec = 0;
-
         if (abs)
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoQuadraticAbs(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1), 
-                                                                                          narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegCurvetoQuadraticAbs(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1), 
+                                                                                          narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)));
         else
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoQuadraticRel(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1), 
-                                                                                          narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegCurvetoQuadraticRel(narrowPrecisionToFloat(x1), narrowPrecisionToFloat(y1), 
+                                                                                          narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)));
     }
     virtual void svgCurveToQuadraticSmooth(double x, double y, bool abs)
     {
-        ExceptionCode ec = 0;
-
         if (abs)
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)));
         else
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)), ec);
+            m_vector.append(SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y)));
     }
     virtual void svgArcTo(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, bool abs)
     {
-        ExceptionCode ec = 0;
-
         if (abs)
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegArcAbs(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y),
+            m_vector.append(SVGPathElement::createSVGPathSegArcAbs(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y),
                                                                              narrowPrecisionToFloat(r1), narrowPrecisionToFloat(r2), 
-                                                                             narrowPrecisionToFloat(angle), largeArcFlag, sweepFlag), ec);
+                                                                             narrowPrecisionToFloat(angle), largeArcFlag, sweepFlag));
         else
-            m_pathSegList->appendItem(SVGPathElement::createSVGPathSegArcRel(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y),
+            m_vector.append(SVGPathElement::createSVGPathSegArcRel(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y),
                                                                              narrowPrecisionToFloat(r1), narrowPrecisionToFloat(r2),
-                                                                             narrowPrecisionToFloat(angle), largeArcFlag, sweepFlag), ec);
+                                                                             narrowPrecisionToFloat(angle), largeArcFlag, sweepFlag));
     }
     virtual void svgClosePath()
     {
-        ExceptionCode ec = 0;
-        m_pathSegList->appendItem(SVGPathElement::createSVGPathSegClosePath(), ec);
+        m_vector.append(SVGPathElement::createSVGPathSegClosePath());
     }
-    SVGPathSegList* m_pathSegList;
+
+    Vector<RefPtr<SVGPathSeg> > m_vector;
 };
 
-bool pathSegListFromSVGData(SVGPathSegList* path , const String& d, bool process)
+bool pathSegListFromSVGData(SVGPathSegList* path, const String& d, bool process)
 {
     SVGPathSegListBuilder builder;
     return builder.build(path, d, process);

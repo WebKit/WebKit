@@ -1,3 +1,38 @@
+2009-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 23247: createSVGPathSegCurvetoCubicSmoothAbs doesn't set y2 correctly
+        https://bugs.webkit.org/show_bug.cgi?id=23247
+
+        Also fix problems where partially parsed paths will still have an effect
+        rather than failing parsing and being ignored.
+
+        Renamed the path-parser.html test to fuzz-path-parser.html, since it's a fuzz test,
+        to make room for a non-fuzz test of the path parser.
+
+        * platform/mac/svg/custom/path-bad-data-expected.txt: Updated results, since the old
+        ones were based on incorrect path parsing behavior.
+
+        * svg/dom/fuzz-path-parser-expected.txt: Copied from svg/dom/path-parser-expected.txt.
+        Also updated because the parser no longer tolerates extra characters at the end of the
+        string, which it was doing by accident.
+        * svg/dom/fuzz-path-parser.html: Copied from svg/dom/path-parser.html.
+
+        * svg/dom/path-parser-expected.txt: Replaced fuzz test results with new test results.
+        * svg/dom/path-parser.html: Replaced fuzz test with a new test.
+        * svg/dom/path-segments-expected.txt: Added.
+        * svg/dom/path-segments.html: Added.
+
+        * svg/dom/resources/TEMPLATE.html: Copied from fast/js/resources/TEMPLATE.html.
+
+        * svg/dom/resources/path-parser.js: Added. Mostly, this test shows that we are
+        processing the path while parsing it, which is a bug. This test would be much more
+        useful if that was fixed. But it also shows that we were incorrectly tolerating
+        extra characters after the path, which is now fixed.
+
+        * svg/dom/resources/path-segments.js: Added.
+
 2009-01-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

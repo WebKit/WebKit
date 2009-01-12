@@ -1,3 +1,8 @@
+2009-01-11  Darin Adler  <darin@apple.com>
+
+        * Scripts/make-js-test-wrappers: Updated so it won't overwrite tests in the svg/dom
+        directory that aren't using standard wrappers.
+
 2009-01-11  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Eric Seidel.

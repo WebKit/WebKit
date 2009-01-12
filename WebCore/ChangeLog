@@ -1,5 +1,41 @@
 2009-01-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Bug 23247: createSVGPathSegCurvetoCubicSmoothAbs doesn't set y2 correctly
+        https://bugs.webkit.org/show_bug.cgi?id=23247
+
+        Also fix problems where partially parsed paths will still have an effect
+        rather than failing parsing and being ignored.
+
+        Test: dom/path-segments.html
+
+        * platform/graphics/Path.h:
+        (WebCore::Path::swap): Added.
+
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::SVGPathParser::parseSVG): Removed unneeded special case for empty string.
+        (WebCore::PathBuilder::build): Changed to not modify the path if parsing fails.
+        (WebCore::SVGPathSegListBuilder::build): Changed to not modify the segment list if
+        parsing fails.
+        (WebCore::SVGPathSegListBuilder::svgMoveTo): Put the path element into the vector,
+        not directly into the segment list.
+        (WebCore::SVGPathSegListBuilder::svgLineTo): Ditto.
+        (WebCore::SVGPathSegListBuilder::svgLineToHorizontal): Ditto.
+        (WebCore::SVGPathSegListBuilder::svgLineToVertical): Ditto.
+        (WebCore::SVGPathSegListBuilder::svgCurveToCubic): Ditto.
+        (WebCore::SVGPathSegListBuilder::svgCurveToCubicSmooth): Ditto.
+        (WebCore::SVGPathSegListBuilder::svgCurveToQuadratic): Ditto.
+        (WebCore::SVGPathSegListBuilder::svgCurveToQuadraticSmooth): Ditto.
+        (WebCore::SVGPathSegListBuilder::svgArcTo): Ditto.
+        (WebCore::SVGPathSegListBuilder::svgClosePath): Ditto.
+
+        * svg/SVGPathSegCurvetoCubicSmooth.h:
+        (WebCore::SVGPathSegCurvetoCubicSmooth::SVGPathSegCurvetoCubicSmooth):
+        Set y2 to y2, not to y.
+
+2009-01-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 23102: turn on unused parameter warnings in WebCore
