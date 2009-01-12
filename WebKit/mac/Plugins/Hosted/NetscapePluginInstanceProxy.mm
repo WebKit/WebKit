@@ -47,6 +47,7 @@
 #import <WebCore/FrameTree.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
+#include <runtime/JSLock.h>
 #import <utility>
 
 extern "C" {
@@ -462,7 +463,7 @@ uint32_t NetscapePluginInstanceProxy::idForObject(JSC::JSObject* object)
 {
     uint32_t objectID = 0;
     
-    // Assign a plug-in ID.
+    // Assign an object ID.
     do {
         objectID = ++m_objectIDCounter;
     } while (!m_objectIDCounter || m_objectIDCounter == static_cast<uint32_t>(-1) || m_objects.contains(objectID));
@@ -503,7 +504,38 @@ JSC::JSValuePtr NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const S
     
     return frame->loader()->executeScript(script).jsValue();
 }
- 
+
+JSC::JSValuePtr NetscapePluginInstanceProxy::invoke(uint32_t objectID, Identifier methodName)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return JSValuePtr();
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return JSValuePtr();
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    JSLock lock(false);
+    JSValuePtr function = object->get(exec, methodName);
+    CallData callData;
+    CallType callType = function->getCallData(callData);
+    if (callType == CallTypeNone)
+        return JSValuePtr();
+    
+    // Call the function object
+    ArgList argList;
+    
+    ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
+    globalObject->startTimeoutCheck();
+    JSValuePtr result = call(exec, function, callType, callData, object, argList);
+    globalObject->stopTimeoutCheck();
+    
+    exec->clearException();
+    
+    return result;
+}
+
 void NetscapePluginInstanceProxy::marshalValue(JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
     RetainPtr<NSMutableArray*> array(AdoptNS, [[NSMutableArray alloc] init]);

@@ -80,6 +80,13 @@ routine Evaluate(clientPort :mach_port_t;
                  out returnValue :boolean_t;
                  out result :data_t, dealloc);
 
+routine Invoke(clientPort :mach_port_t;
+               pluginID :uint32_t;
+               objectID :uint32_t;
+               methodNameIdentifier :uint64_t;
+               arguments :data_t;
+               out returnValue :boolean_t;
+               out result :data_t, dealloc);
 // Replies
 simpleroutine InstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;

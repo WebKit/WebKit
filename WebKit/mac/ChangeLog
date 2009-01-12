@@ -2,6 +2,21 @@
 
         Reviewed by Sam Weinig.
 
+        Implement WKPCInvoke.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEvaluate):
+        (WKPCInvoke):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::idForObject):
+        (WebKit::NetscapePluginInstanceProxy::invoke):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+
+2009-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Move marshalling code to NetscapePluginInstanceProxy. Add support for marshalling JS objects.
         
         * Plugins/Hosted/NetscapePluginHostProxy.mm:

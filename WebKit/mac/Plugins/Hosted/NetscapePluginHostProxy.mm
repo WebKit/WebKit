@@ -277,7 +277,9 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t o
         return KERN_FAILURE;
     
     NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
-    
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
     String script = fromUTF8WithLatin1Fallback(scriptData, scriptLength);
 
     // FIXME: Demarshal the arguments and pass them to evaluate.
@@ -288,7 +290,6 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t o
         *resultLength = 0;
     } else {
         *returnValue = true;
-        
         instanceProxy->marshalValue(result, *resultData, *resultLength);
     }
     
@@ -300,6 +301,38 @@ kern_return_t WKPCGetStringIdentifier(mach_port_t clientPort, data_t name, mach_
     COMPILE_ASSERT(sizeof(*identifier) == sizeof(NPIdentifier), identifier_sizes);
     
     *identifier = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(name));
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID, uint64_t identifier,
+                         data_t arguments, mach_msg_type_number_t argumentsCnt, 
+                         boolean_t *returnValue, data_t* resultData, mach_msg_type_number_t* resultLength)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
+    const NPUTF8* methodName = _NPN_UTF8FromIdentifier(reinterpret_cast<NPIdentifier>(identifier));
+    String methodNameString = fromUTF8WithLatin1Fallback(methodName, strlen(methodName));
+    
+    Identifier methodNameIdentifier = Identifier(JSDOMWindow::commonJSGlobalData(), methodNameString);
+    
+    // FIXME: Demarshal the arguments and pass them to invoke.
+    JSValuePtr result = instanceProxy->invoke(objectID, methodNameIdentifier);
+
+    if (!result) {
+        *returnValue = false;
+        *resultData = 0;
+        *resultLength = 0;
+    } else {
+        *returnValue = true;
+        instanceProxy->marshalValue(result, *resultData, *resultLength);
+    }
+    
     return KERN_SUCCESS;
 }
 
