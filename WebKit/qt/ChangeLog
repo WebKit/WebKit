@@ -1,3 +1,14 @@
+2009-01-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        When the QWebView is disabled context menus implemented in JavaScript should not pop up.
+
+        Just like in QWidget::event() we have to check for the disabled state and
+        ignore context menu events.
+
+        * Api/qwebview.cpp:
+
 2009-01-12  Simon Hausmann  <simon.hausmann@nokia.com
 
         Reviewed by Tor Arne Vestbø.

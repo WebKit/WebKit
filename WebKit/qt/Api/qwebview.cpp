@@ -549,6 +549,8 @@ bool QWebView::event(QEvent *e)
     if (d->page) {
 #ifndef QT_NO_CONTEXTMENU
         if (e->type() == QEvent::ContextMenu) {
+            if (!isEnabled())
+                return false;
             QContextMenuEvent *event = static_cast<QContextMenuEvent *>(e);
             if (d->page->swallowContextMenuEvent(event)) {
                 e->accept();
