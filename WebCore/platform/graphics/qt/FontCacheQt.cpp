@@ -26,8 +26,19 @@
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "Font.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+FontCache* fontCache()
+{
+    DEFINE_STATIC_LOCAL(FontCache, globalFontCache, ());
+    return &globalFontCache;
+}
+
+FontCache::FontCache()
+{
+}
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
 {

@@ -1,3 +1,16 @@
+2009-01-12  Julien Chaffraix  <jchaffraix@pleyo.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Build fix after turning the fontCache to a singleton
+        https://bugs.webkit.org/show_bug.cgi?id=23253
+
+        Add a stub implementation for WebCore::fontCache() and FontCache::FontCache().
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::fontCache):
+        (WebCore::FontCache::FontCache):
+
 2009-01-12  Eric Roman  <eroman@chromium.org>
  
         Reviewed by Darin Adler.
