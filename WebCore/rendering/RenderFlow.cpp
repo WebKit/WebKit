@@ -312,7 +312,7 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
 
 int RenderFlow::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
 {
-    if (firstLine) {
+    if (firstLine && document()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         Length lh = s->lineHeight();
         if (lh.isNegative()) {
