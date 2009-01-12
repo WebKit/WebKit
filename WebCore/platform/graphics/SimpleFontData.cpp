@@ -124,7 +124,7 @@ SimpleFontData::~SimpleFontData()
 {
     if (!isCustomFont()) {
         if (m_smallCapsFontData)
-            FontCache::releaseFontData(m_smallCapsFontData);
+            fontCache()->releaseFontData(m_smallCapsFontData);
         GlyphPageTreeNode::pruneTreeFontData(this);
     }
 

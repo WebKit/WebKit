@@ -1,3 +1,17 @@
+2009-01-12  Julien Chaffraix  <jchaffraix@pleyo.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 22861: Turn the FontCache into a singleton
+        https://bugs.webkit.org/show_bug.cgi?id=22861
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics cachedFontDataCount]):
+        (+[WebCoreStatistics cachedFontDataInactiveCount]):
+        (+[WebCoreStatistics purgeInactiveFontData]):
+        Redirected all the static calls to the global FontCache
+        instance.
+
 2009-01-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.

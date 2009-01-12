@@ -144,7 +144,7 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceS
         codeUnits[1] = U16_TRAIL(c);
         codeUnitsLength = 2;
     }
-    const SimpleFontData* characterFontData = FontCache::getFontDataForCharacters(*this, codeUnits, codeUnitsLength);
+    const SimpleFontData* characterFontData = fontCache()->getFontDataForCharacters(*this, codeUnits, codeUnitsLength);
     if (useSmallCapsFont && characterFontData)
         characterFontData = characterFontData->smallCapsFontData(m_fontDescription);
     if (characterFontData) {

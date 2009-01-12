@@ -314,7 +314,7 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
                 smallCapsFont.m_syntheticBold = (fontTraits & NSBoldFontMask) && !(smallCapsFontTraits & NSBoldFontMask);
                 smallCapsFont.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(smallCapsFontTraits & NSItalicFontMask);
 
-                m_smallCapsFontData = FontCache::getCachedFontData(&smallCapsFont);
+                m_smallCapsFontData = fontCache()->getCachedFontData(&smallCapsFont);
             }
             END_BLOCK_OBJC_EXCEPTIONS;
         }

@@ -40,7 +40,7 @@ FontFallbackList::FontFallbackList()
     , m_pitch(UnknownPitch)
     , m_loadingCustomFonts(false)
     , m_fontSelector(0)
-    , m_generation(FontCache::generation())
+    , m_generation(fontCache()->generation())
 {
 }
 
@@ -52,7 +52,7 @@ void FontFallbackList::invalidate(PassRefPtr<FontSelector> fontSelector)
     m_pitch = UnknownPitch;
     m_loadingCustomFonts = false;
     m_fontSelector = fontSelector;
-    m_generation = FontCache::generation();
+    m_generation = fontCache()->generation();
 }
 
 void FontFallbackList::releaseFontData()
@@ -61,7 +61,7 @@ void FontFallbackList::releaseFontData()
     for (unsigned i = 0; i < numFonts; ++i) {
         if (!m_fontList[i].second) {
             ASSERT(!m_fontList[i].first->isSegmented());
-            FontCache::releaseFontData(static_cast<const SimpleFontData*>(m_fontList[i].first));
+            fontCache()->releaseFontData(static_cast<const SimpleFontData*>(m_fontList[i].first));
         }
     }
 }
@@ -96,8 +96,8 @@ const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realized
     // We are obtaining this font for the first time.  We keep track of the families we've looked at before
     // in |m_familyIndex|, so that we never scan the same spot in the list twice.  getFontData will adjust our
     // |m_familyIndex| as it scans for the right font to make.
-    ASSERT(FontCache::generation() == m_generation);
-    const FontData* result = FontCache::getFontData(*font, m_familyIndex, m_fontSelector.get());
+    ASSERT(fontCache()->generation() == m_generation);
+    const FontData* result = fontCache()->getFontData(*font, m_familyIndex, m_fontSelector.get());
     if (result) {
         m_fontList.append(pair<const FontData*, bool>(result, result->isCustomFont()));
         if (result->isLoading())
@@ -116,8 +116,8 @@ const FontData* FontFallbackList::fontDataForCharacters(const Font* font, const 
         fontData = fontDataAt(font, ++realizedFontIndex);
     
     if (!fontData) {
-        ASSERT(FontCache::generation() == m_generation);
-        fontData = FontCache::getFontDataForCharacters(*font, characters, length);
+        ASSERT(fontCache()->generation() == m_generation);
+        fontData = fontCache()->getFontDataForCharacters(*font, characters, length);
     }
 
     return fontData;
@@ -126,8 +126,8 @@ const FontData* FontFallbackList::fontDataForCharacters(const Font* font, const 
 void FontFallbackList::setPlatformFont(const FontPlatformData& platformData)
 {
     m_familyIndex = cAllFamiliesScanned;
-    ASSERT(FontCache::generation() == m_generation);
-    const FontData* fontData = FontCache::getCachedFontData(&platformData);
+    ASSERT(fontCache()->generation() == m_generation);
+    const FontData* fontData = fontCache()->getCachedFontData(&platformData);
     m_fontList.append(pair<const FontData*, bool>(fontData, fontData->isCustomFont()));
 }
 

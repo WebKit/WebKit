@@ -1,3 +1,48 @@
+2009-01-12  Julien Chaffraix  <jchaffraix@pleyo.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 22861: Turn the FontCache into a singleton
+        https://bugs.webkit.org/show_bug.cgi?id=22861
+
+        - Added fontCache() to get the global FontCache.
+
+        - Made all the methods in FontCache instance method.
+
+        - Changed FontCache:: to fontCache()-> in WebCore.
+
+        * WebCore.base.exp: Now export fontCache().
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::~CSSFontSelector):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::fontDataForGenericFamily):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::fontCache):
+        (WebCore::FontCache::FontCache):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::FontFallbackList):
+        (WebCore::FontFallbackList::invalidate):
+        (WebCore::FontFallbackList::releaseFontData):
+        (WebCore::FontFallbackList::fontDataAt):
+        (WebCore::FontFallbackList::fontDataForCharacters):
+        (WebCore::FontFallbackList::setPlatformFont):
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::~SimpleFontData):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::fontCacheATSNotificationCallback):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::smallCapsFontData):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::getCJKCodePageMasks):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::containsCharacters):
+
 2009-01-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

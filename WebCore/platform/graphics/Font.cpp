@@ -26,6 +26,7 @@
 
 #include "CharacterNames.h"
 #include "FloatRect.h"
+#include "FontCache.h"
 #include "FontFallbackList.h"
 #include "IntPoint.h"
 #include "GlyphBuffer.h"

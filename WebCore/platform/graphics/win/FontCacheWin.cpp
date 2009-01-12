@@ -134,7 +134,7 @@ static const Vector<DWORD, 4>& getCJKCodePageMasks()
     static bool initialized;
     if (!initialized) {
         initialized = true;
-        IMLangFontLink2* langFontLink = FontCache::getFontLinkInterface();
+        IMLangFontLink2* langFontLink = fontCache()->getFontLinkInterface();
         if (!langFontLink)
             return codePageMasks;
 
