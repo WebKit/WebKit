@@ -50,6 +50,8 @@ class SVGFontElement;
 
 struct GlyphData;
 
+const unsigned defaultUnitsPerEm = 1000;
+
 class Font {
 public:
     Font();

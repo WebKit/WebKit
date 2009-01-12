@@ -1,5 +1,15 @@
 2009-01-12  Kevin Ollivier  <kevino@theolliviers.com>
 
+        !ENABLE(SVG_FONTS) build fix. Move defaultUnitsPerEm into a non-SVG header
+        so it can be used by all builds.
+        
+        * platform/graphics/Font.h:
+        * platform/graphics/SimpleFontData.cpp:
+        * svg/SVGFontFaceElement.cpp:
+        * svg/SVGFontFaceElement.h:
+
+2009-01-12  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build typo fix.
 
         * platform/graphics/wx/TransformationMatrixWx.cpp:

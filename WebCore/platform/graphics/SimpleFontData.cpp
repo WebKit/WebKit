@@ -30,6 +30,7 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
+#include "Font.h"
 #include "FontCache.h"
 #if ENABLE(SVG_FONTS)
 #include "SVGFontData.h"

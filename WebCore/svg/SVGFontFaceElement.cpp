@@ -34,6 +34,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Document.h"
+#include "Font.h"
 #include "SVGDefinitionSrcElement.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceSrcElement.h"

@@ -31,8 +31,6 @@ namespace WebCore {
     class CSSMutableStyleDeclaration;
     class SVGFontElement;
 
-    const unsigned defaultUnitsPerEm = 1000;
-
     class SVGFontFaceElement : public SVGElement {
     public:
         SVGFontFaceElement(const QualifiedName&, Document*);
