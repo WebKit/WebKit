@@ -1,3 +1,13 @@
+2009-01-11  Darin Adler  <darin@apple.com>
+
+        Fix failure of new test seen on buildbots.
+
+        * fast/frames/frame-deep-nested-resize-expected.txt: Updated newlines to
+        match what DumpRenderTree generates on Mac. I believe Adam generated his
+        results under Qt DumpRenderTree. If so, then the Qt version will need to
+        change to match the Mac version, since all the expected results were
+        generated on Mac.
+
 2009-01-11  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Darin Adler.
