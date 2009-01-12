@@ -1,3 +1,13 @@
+2009-01-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Do not create a QVariant from QObject* directly, use the
+        template-specialized function.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (MyQObject::myOverloadedSlot):
+
 2009-01-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Tor Arne Vestbø.

@@ -405,7 +405,7 @@ public Q_SLOTS:
     }
     void myOverloadedSlot(QObject* arg) {
         m_qtFunctionInvoked = 41;
-        m_actuals << arg;
+        m_actuals << qVariantFromValue(arg);
     }
     void myOverloadedSlot(bool arg) {
         m_qtFunctionInvoked = 25;
