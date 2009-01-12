@@ -1,3 +1,12 @@
+2009-01-11  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Darin Adler.
+
+        Add test to check for correct frame resizing of deeply nested frames.
+
+        * fast/frames/frame-deep-nested-resize-expected.txt: Added.
+        * fast/frames/frame-deep-nested-resize.html: Added.
+
 2009-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Oliver Hunt
