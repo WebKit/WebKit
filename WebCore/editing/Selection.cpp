@@ -26,10 +26,12 @@
 #include "config.h"
 #include "Selection.h"
 
+#include "CharacterNames.h"
 #include "CString.h"
 #include "Document.h"
 #include "Element.h"
 #include "htmlediting.h"
+#include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"
 #include "Range.h"
@@ -193,12 +195,47 @@ bool Selection::expandUsingGranularity(TextGranularity granularity)
     return true;
 }
 
+static PassRefPtr<Range> makeSearchRange(const Position& pos)
+{
+    Node* n = pos.node();
+    if (!n)
+        return 0;
+    Document* d = n->document();
+    Node* de = d->documentElement();
+    if (!de)
+        return 0;
+    Node* boundary = n->enclosingBlockFlowElement();
+    if (!boundary)
+        return 0;
+
+    RefPtr<Range> searchRange(Range::create(d));
+    ExceptionCode ec = 0;
+
+    Position start(rangeCompliantEquivalent(pos));
+    searchRange->selectNodeContents(boundary, ec);
+    searchRange->setStart(start.node(), start.offset(), ec);
+
+    ASSERT(!ec);
+    if (ec)
+        return 0;
+
+    return searchRange.release();
+}
+
 void Selection::appendTrailingWhitespace()
 {
-    VisiblePosition end = VisiblePosition(m_end, m_affinity);
-    while (end.isNotNull() && isSpaceOrNewline(end.characterAfter()))
-        end = end.next();
-    m_end = end.deepEquivalent();
+    RefPtr<Range> searchRange = makeSearchRange(m_end);
+    if (!searchRange)
+        return;
+
+    CharacterIterator charIt(searchRange.get(), true);
+
+    for (; charIt.length(); charIt.advance(1)) {
+        UChar c = charIt.characters()[0];
+        if (!isSpaceOrNewline(c) && c != noBreakSpace)
+            break;
+        m_end = charIt.range()->endPosition();
+    }
 }
 
 void Selection::validate()
