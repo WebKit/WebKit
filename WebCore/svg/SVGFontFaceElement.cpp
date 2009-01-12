@@ -133,7 +133,7 @@ unsigned SVGFontFaceElement::unitsPerEm() const
 {
     const AtomicString& value = getAttribute(units_per_emAttr);
     if (value.isEmpty())
-        return 1000;
+        return defaultUnitsPerEm;
 
     return static_cast<unsigned>(ceilf(value.toFloat()));
 }
