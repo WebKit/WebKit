@@ -6,3 +6,4 @@ ALERT: Five resized correctly = true
 ALERT: Six resized correctly = true
 ALERT: Seven resized correctly = true
 ALERT: Eight resized correctly = true
+

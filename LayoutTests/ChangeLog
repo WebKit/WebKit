@@ -1,5 +1,9 @@
 2009-01-11  Darin Adler  <darin@apple.com>
 
+        * fast/frames/frame-deep-nested-resize-expected.txt: This time for sure.
+
+2009-01-11  Darin Adler  <darin@apple.com>
+
         Fix failure of new test seen on buildbots.
 
         * fast/frames/frame-deep-nested-resize-expected.txt: Updated newlines to
