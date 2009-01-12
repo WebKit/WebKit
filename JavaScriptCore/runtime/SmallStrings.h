@@ -55,9 +55,9 @@ namespace JSC {
         }
 
         UString::Rep* singleCharacterStringRep(unsigned char character);
-        
+
         void mark();
-        
+
     private:
         void createEmptyString(JSGlobalData*);
         void createSingleCharacterString(JSGlobalData*, unsigned char);
@@ -66,7 +66,7 @@ namespace JSC {
         JSString* m_singleCharacterStrings[0x100];
         OwnPtr<SmallStringsStorage> m_storage;
     };
-    
-}
 
-#endif
+} // namespace JSC
+
+#endif // SmallStrings_h

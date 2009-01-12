@@ -29,48 +29,60 @@
 #include "JSGlobalObject.h"
 #include "JSString.h"
 
-namespace JSC {
+#include <wtf/Noncopyable.h>
 
-class SmallStringsStorage {
+namespace JSC {
+static const unsigned numCharactersToStore = 0x100;
+
+class SmallStringsStorage : Noncopyable {
 public:
     SmallStringsStorage();
-    ~SmallStringsStorage();
 
-    UString::Rep* rep(unsigned char character) { return &reps[character]; }
+    UString::Rep* rep(unsigned char character) { return &m_reps[character]; }
 
 private:
-    UChar characters[0x100];
-    UString::Rep* reps;
+    UChar m_characters[numCharactersToStore];
+    UString::BaseString m_base;
+    UString::Rep m_reps[numCharactersToStore];
 };
 
 SmallStringsStorage::SmallStringsStorage()
-    : reps(static_cast<UString::Rep*>(fastZeroedMalloc(sizeof(UString::Rep) * 0x100)))
 {
-    for (unsigned i = 0; i < 0x100; ++i) {
-        characters[i] = i;
-        reps[i].offset = i;
-        reps[i].len = 1;
-        reps[i].rc = 1;
-        reps[i].baseString = &reps[0];
-    }
-    reps[0].rc = 0x101;
-    reps[0].buf = characters;
+    for (unsigned i = 0; i < numCharactersToStore; ++i)
+        m_characters[i] = i;
+
+    m_base.rc = numCharactersToStore + 1;
+    m_base.buf = m_characters;
+    m_base.len = numCharactersToStore;
+    m_base.offset = 0;
+    m_base._hash = 0;
+    m_base.m_baseString = 0;
+    m_base.preCapacity = 0;
+    m_base.usedPreCapacity = 0;
+    m_base.reportedCost = 0;
 
     // make sure UString doesn't try to reuse the buffer by pretending we have one more character in it
-    reps[0].usedCapacity = 0x101;
-    reps[0].capacity = 0x101;
-}
+    m_base.usedCapacity = numCharactersToStore + 1;
+    m_base.capacity = numCharactersToStore + 1;
+    m_base.checkConsistency();
 
-SmallStringsStorage::~SmallStringsStorage()
-{
-    fastFree(reps);
+    memset(&m_reps, 0, sizeof(m_reps));
+    for (unsigned i = 0; i < numCharactersToStore; ++i) {
+        m_reps[i].offset = i;
+        m_reps[i].len = 1;
+        m_reps[i].rc = 1;
+        m_reps[i].setBaseString(&m_base);
+        m_reps[i].checkConsistency();
+    }
 }
 
 SmallStrings::SmallStrings()
     : m_emptyString(0)
     , m_storage(0)
 {
-    for (unsigned i = 0; i < 0x100; ++i)
+    COMPILE_ASSERT(numCharactersToStore == sizeof(m_singleCharacterStrings) / sizeof(m_singleCharacterStrings[0]), IsNumCharactersConstInSyncWithClassUsage);
+
+    for (unsigned i = 0; i < numCharactersToStore; ++i)
         m_singleCharacterStrings[i] = 0;
 }
 
@@ -82,7 +94,7 @@ void SmallStrings::mark()
 {
     if (m_emptyString && !m_emptyString->marked())
         m_emptyString->mark();
-    for (unsigned i = 0; i < 0x100; ++i) {
+    for (unsigned i = 0; i < numCharactersToStore; ++i) {
         if (m_singleCharacterStrings[i] && !m_singleCharacterStrings[i]->marked())
             m_singleCharacterStrings[i]->mark();
     }
@@ -109,4 +121,4 @@ UString::Rep* SmallStrings::singleCharacterStringRep(unsigned char character)
     return m_storage->rep(character);
 }
 
-}
+} // namespace JSC

@@ -27,7 +27,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <wtf/Assertions.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/PtrAndFlags.h>
 #include <wtf/RefPtr.h>
@@ -76,7 +75,8 @@ namespace JSC {
         friend class JIT;
 
     public:
-        struct Rep {
+        struct BaseString;
+        struct Rep : Noncopyable {
             friend class JIT;
 
             static PassRefPtr<Rep> create(UChar*, int);
@@ -89,8 +89,8 @@ namespace JSC {
 
             void destroy();
 
-            bool baseIsSelf() const { return baseString == this; }
-            UChar* data() const { return baseString->buf + baseString->preCapacity + offset; }
+            bool baseIsSelf() const { return m_identifierTableAndFlags.isFlagSet(BaseStringFlag); }
+            UChar* data() const;
             int size() const { return len; }
 
             unsigned hash() const { if (_hash == 0) _hash = computeHash(data(), len); return _hash; }
@@ -104,14 +104,18 @@ namespace JSC {
             void setIdentifierTable(IdentifierTable* table) { ASSERT(!isStatic()); m_identifierTableAndFlags.set(table); }
 
             bool isStatic() const { return m_identifierTableAndFlags.isFlagSet(StaticFlag); }
-            void setStatic(bool v) { ASSERT(!identifierTable()); if (v) m_identifierTableAndFlags.setFlag(StaticFlag); else m_identifierTableAndFlags.clearFlag(StaticFlag); }
+            void setStatic(bool);
+            void setBaseString(PassRefPtr<BaseString>);
+            BaseString* baseString();
+            const BaseString* baseString() const;
 
             Rep* ref() { ++rc; return this; }
             ALWAYS_INLINE void deref() { if (--rc == 0) destroy(); }
 
             void checkConsistency() const;
             enum UStringFlags {
-                StaticFlag
+                StaticFlag,
+                BaseStringFlag
             };
 
             // unshared data
@@ -120,22 +124,31 @@ namespace JSC {
             int rc; // For null and empty static strings, this field does not reflect a correct count, because ref/deref are not thread-safe. A special case in destroy() guarantees that these do not get deleted.
             mutable unsigned _hash;
             PtrAndFlags<IdentifierTable, UStringFlags> m_identifierTableAndFlags;
-            UString::Rep* baseString;
-            size_t reportedCost;
+            void* m_baseString; // If "this" is a BaseString instance, it is 0. BaseString* otherwise.
 
-            // potentially shared data. 0 if backed up by a base string.
-            UChar* buf;
-            int usedCapacity;
-            int capacity;
-            int usedPreCapacity;
-            int preCapacity;
+            static BaseString& null() { return *nullBaseString; }
+            static BaseString& empty() { return *emptyBaseString; }
 
-            static Rep& null() { return *nullBaseString; }
-            static Rep& empty() { return *emptyBaseString; }
         private:
             friend void initializeUString();
-            static Rep* nullBaseString;
-            static Rep* emptyBaseString;
+            static BaseString* nullBaseString;
+            static BaseString* emptyBaseString;
+        };
+
+        struct BaseString : public Rep {
+            BaseString()
+            {
+                m_identifierTableAndFlags.setFlag(BaseStringFlag);
+            }
+
+            // potentially shared data.
+            UChar* buf;
+            int preCapacity;
+            int usedPreCapacity;
+            int capacity;
+            int usedCapacity;
+
+            size_t reportedCost;
         };
 
     public:
@@ -253,8 +266,6 @@ namespace JSC {
         size_t cost() const;
 
     private:
-        int usedCapacity() const;
-        int usedPreCapacity() const;
         void expandCapacity(int requiredLength);
         void expandPreCapacity(int requiredPreCap);
         void makeNull();
@@ -309,6 +320,37 @@ namespace JSC {
 
     bool equal(const UString::Rep*, const UString::Rep*);
 
+    inline UChar* UString::Rep::data() const
+    {
+        const BaseString* base = baseString();
+        return base->buf + base->preCapacity + offset;
+    }
+
+    inline void UString::Rep::setStatic(bool v)
+    {
+        ASSERT(!identifierTable());
+        if (v)
+            m_identifierTableAndFlags.setFlag(StaticFlag);
+        else
+            m_identifierTableAndFlags.clearFlag(StaticFlag);
+    }
+
+    inline void UString::Rep::setBaseString(PassRefPtr<BaseString> base)
+    {
+        ASSERT(base != this);
+        m_baseString = base.releaseRef();
+    }
+
+    inline UString::BaseString* UString::Rep::baseString()
+    {
+        return reinterpret_cast<BaseString*>(baseIsSelf() ? this : m_baseString);
+    }
+
+    inline const UString::BaseString* UString::Rep::baseString() const
+    {
+        return const_cast<const BaseString*>(const_cast<Rep*>(this)->baseString());
+    }
+
 #ifdef NDEBUG
     inline void UString::Rep::checkConsistency() const
     {
@@ -339,8 +381,9 @@ namespace JSC {
 
     inline size_t UString::cost() const
     {
-        size_t capacity = (m_rep->baseString->capacity + m_rep->baseString->preCapacity) * sizeof(UChar);
-        size_t reportedCost = m_rep->baseString->reportedCost;
+        BaseString* base = m_rep->baseString();
+        size_t capacity = (base->capacity + base->preCapacity) * sizeof(UChar);
+        size_t reportedCost = base->reportedCost;
         ASSERT(capacity >= reportedCost);
 
         size_t capacityDelta = capacity - reportedCost;
@@ -348,7 +391,7 @@ namespace JSC {
         if (capacityDelta < static_cast<size_t>(minShareSize))
             return 0;
 
-        m_rep->baseString->reportedCost = capacity;
+        base->reportedCost = capacity;
 
         return capacityDelta;
     }
