@@ -247,7 +247,7 @@ public:
 
         // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
         // merge sorting.
-        Vector<CSSRuleData*> m_matchedRules;
+        Vector<CSSRuleData*, 32> m_matchedRules;
 
         RefPtr<CSSRuleList> m_ruleList;
 
