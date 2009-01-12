@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSStringRef.h"
 
+#include "InitializeThreading.h"
 #include "OpaqueJSString.h"
 #include <wtf/unicode/UTF8.h>
 
@@ -34,11 +35,13 @@ using namespace WTF::Unicode;
 
 JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 {
+    initializeThreading();
     return OpaqueJSString::create(chars, numChars).releaseRef();
 }
 
 JSStringRef JSStringCreateWithUTF8CString(const char* string)
 {
+    initializeThreading();
     if (string) {
         size_t length = strlen(string);
         Vector<UChar, 1024> buffer(length);

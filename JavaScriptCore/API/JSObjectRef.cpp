@@ -32,6 +32,7 @@
 #include "ErrorConstructor.h"
 #include "FunctionConstructor.h"
 #include "Identifier.h"
+#include "InitializeThreading.h"
 #include "JSArray.h"
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
@@ -52,6 +53,7 @@ using namespace JSC;
 
 JSClassRef JSClassCreate(const JSClassDefinition* definition)
 {
+    initializeThreading();
     RefPtr<OpaqueJSClass> jsClass = (definition->attributes & kJSClassAttributeNoAutomaticPrototype)
         ? OpaqueJSClass::createNoAutomaticPrototype(definition)
         : OpaqueJSClass::create(definition);

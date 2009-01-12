@@ -2,6 +2,26 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23245
+
+        Add initializeThreading to key places in JS API to ensure that
+        UString is properly initialized.
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupCreate):
+        (JSGlobalContextCreate):
+        * API/JSObjectRef.cpp:
+        (JSClassCreate):
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithCharacters):
+        (JSStringCreateWithUTF8CString):
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+
+2009-01-11  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=23175
 
         Separate out BaseString information from UString::Rep and make all baseString access go through
