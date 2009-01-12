@@ -1,3 +1,9 @@
+2009-01-12  Alexey Proskuryakov  <ap@webkit.org>
+
+        Update test results.
+
+        * fast/dom/Window/window-properties-expected.txt: Remove appcache dynamic entries methods.
+
 2009-01-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
