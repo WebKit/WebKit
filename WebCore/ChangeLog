@@ -1,4 +1,42 @@
-2008-01-12  Dimitri Glazkov  <dglazkov@chromium.org>
+2009-01-12  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23254
+        Upstream page/chromium/
+
+        * page/chromium/AXObjectCacheChromium.cpp: Added.
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::attachWrapper):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postNotificationToElement):
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        * page/chromium/AccessibilityObjectChromium.cpp:
+        * page/chromium/AccessibilityObjectWrapper.h:
+        * page/chromium/ChromeClientChromium.h: Added.
+        * page/chromium/DragControllerChromium.cpp: Added.
+        (WebCore::DragController::dragOperation):
+        (WebCore::DragController::isCopyKeyDown):
+        (WebCore::DragController::maxDragImageSize):
+        (WebCore::DragController::cleanupAfterSystemDrag):
+        * page/chromium/EventHandlerChromium.cpp: Added.
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::tabsToAllControls):
+        (WebCore::EventHandler::eventActivatedView):
+        (WebCore::EventHandler::createDraggingClipboard):
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::accessKeyModifiers):
+        * page/chromium/FrameChromium.cpp: Added.
+        (WebCore::computePageRectsForFrame):
+        (WebCore::Frame::dragImageForSelection):
+        * page/chromium/FrameChromium.h: Added.
+
+2009-01-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
 

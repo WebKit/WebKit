@@ -25,13 +25,34 @@
  */
 
 #include "config.h"
+#include "AXObjectCache.h"
+
 #include "AccessibilityObject.h"
 
 namespace WebCore {
 
-bool AccessibilityObject::accessibilityIgnoreAttachment() const
+void AXObjectCache::detachWrapper(AccessibilityObject* obj)
 {
-    return false;
+    // In Chromium, AccessibilityObjects are wrapped lazily.
+    if (AccessibilityObjectWrapper* wrapper = obj->wrapper())
+        wrapper->detach();
+}
+
+void AXObjectCache::attachWrapper(AccessibilityObject*)
+{
+    // In Chromium, AccessibilityObjects are wrapped lazily.
+}
+
+void AXObjectCache::postNotification(RenderObject*, const String&)
+{
+}
+
+void AXObjectCache::postNotificationToElement(RenderObject*, const String&)
+{
+}
+
+void AXObjectCache::handleFocusedUIElementChanged()
+{
 }
 
 } // namespace WebCore
