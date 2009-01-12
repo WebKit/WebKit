@@ -496,16 +496,16 @@ PassRefPtr<Attribute> Element::createAttribute(const QualifiedName& name, const 
 
 void Element::attributeChanged(Attribute* attr, bool)
 {
+    if (!document()->axObjectCache()->accessibilityEnabled())
+        return;
+
     const QualifiedName& attrName = attr->name();
     if (attrName == aria_activedescendantAttr) {
         // any change to aria-activedescendant attribute triggers accessibility focus change, but document focus remains intact
-        if (document()->axObjectCache()->accessibilityEnabled())
-            document()->axObjectCache()->handleActiveDescendantChanged(renderer());
-    }
-    if (attrName == roleAttr) {
+        document()->axObjectCache()->handleActiveDescendantChanged(renderer());
+    } else if (attrName == roleAttr) {
         // the role attribute can change at any time, and the AccessibilityObject must pick up these changes
-        if (document()->axObjectCache()->accessibilityEnabled())
-            document()->axObjectCache()->handleAriaRoleChanged(renderer());
+        document()->axObjectCache()->handleAriaRoleChanged(renderer());
     }
 }
 

@@ -1,5 +1,16 @@
 2009-01-12  David Hyatt  <hyatt@apple.com>
 
+        Optimize Element::attributeChanged to just check if accessibility is enabled up front before looking at the
+        two accessibility-related attributes.  This avoids the rest of the code for all attributes on the PLT.
+        Tiny speedup.
+
+        Reviewed by Oliver Hunt
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+
+2009-01-12  David Hyatt  <hyatt@apple.com>
+
         Optimize the retrieval of line height.  If the document is not using any first-line rules, just immediately
         default to the normal case.  Tiny speedup on PLT.
 
