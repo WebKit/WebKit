@@ -61,13 +61,13 @@ void FrameLoaderClient::transitionToCommittedForNewPage(Frame* frame,
     frame->setView(0);
 
     FrameView* frameView;
-    if (isMainFrame)
+    if (isMainFrame) {
         frameView = new FrameView(frame, viewportSize);
-    else
+        frameView->setFixedLayoutSize(fixedLayoutSize);
+        frameView->setUseFixedLayout(useFixedLayout);
+    } else
         frameView = new FrameView(frame);
 
-    frameView->setFixedLayoutSize(fixedLayoutSize);
-    frameView->setUseFixedLayout(useFixedLayout);
     frameView->setScrollbarModes(horizontalScrollbarMode, verticalScrollbarMode);
     frameView->updateDefaultScrollbarState();
 

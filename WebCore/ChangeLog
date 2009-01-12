@@ -1,3 +1,13 @@
+2009-01-12  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Do not set fixedLayoutSize for anything other than the mainframe during
+        the transition as this is a page level state like the viewportSize.
+
+        * loader/FrameLoaderClient.cpp:
+        (WebCore::FrameLoaderClient::transitionToCommittedForNewPage):
+
 2009-01-12  Julien Chaffraix  <jchaffraix@pleyo.com>
 
         Reviewed by Darin Adler.
