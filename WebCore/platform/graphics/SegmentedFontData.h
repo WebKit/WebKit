@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,11 @@ class SegmentedFontData : public FontData {
 public:
     virtual ~SegmentedFontData();
 
+    void appendRange(const FontDataRange& range) { m_ranges.append(range); }
+    unsigned numRanges() const { return m_ranges.size(); }
+    const FontDataRange& rangeAt(unsigned i) const { return m_ranges[i]; }
+
+private:
     virtual const SimpleFontData* fontDataForCharacter(UChar32) const;
     virtual bool containsCharacters(const UChar*, int length) const;
 
@@ -62,11 +67,8 @@ public:
     virtual bool isLoading() const;
     virtual bool isSegmented() const;
 
-    void appendRange(const FontDataRange& range) { m_ranges.append(range); }
-    unsigned numRanges() const { return m_ranges.size(); }
-    const FontDataRange& rangeAt(unsigned i) const { return m_ranges[i]; }
+    bool containsCharacter(UChar32) const;
 
-private:
     Vector<FontDataRange, 1> m_ranges;
 };
 

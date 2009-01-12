@@ -129,9 +129,10 @@ InlineTextBox* RenderSVGInlineText::createInlineTextBox()
     return new (renderArena()) SVGInlineTextBox(this);
 }
 
-IntRect RenderSVGInlineText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
+IntRect RenderSVGInlineText::localCaretRect(InlineBox*, int, int*)
 {
-    // SVG doesn't have any editable content where a caret rect would be needed
+    // SVG doesn't have any editable content where a caret rect would be needed.
+    // FIXME: That's not sufficient. The localCaretRect function is also used for selection.
     return IntRect();
 }
 

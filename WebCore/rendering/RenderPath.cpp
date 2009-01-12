@@ -67,14 +67,8 @@ private:
 };
 
 // RenderPath
-RenderPath::RenderPath(RenderStyle* style, SVGStyledTransformableElement* node)
+RenderPath::RenderPath(SVGStyledTransformableElement* node)
     : RenderObject(node)
-{
-    ASSERT(style != 0);
-    ASSERT(static_cast<SVGElement*>(node)->isStyledTransformable());
-}
-
-RenderPath::~RenderPath()
 {
 }
 

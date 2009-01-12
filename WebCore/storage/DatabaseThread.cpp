@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "DatabaseThread.h"
 
@@ -35,7 +36,7 @@
 
 namespace WebCore {
 
-DatabaseThread::DatabaseThread(Document* document)
+DatabaseThread::DatabaseThread()
     : m_threadID(0)
 {
     m_selfRef = this;

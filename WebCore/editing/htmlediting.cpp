@@ -39,7 +39,6 @@
 #include "HTMLUListElement.h"
 #include "PositionIterator.h"
 #include "RenderObject.h"
-#include "RegularExpression.h"
 #include "Range.h"
 #include "Selection.h"
 #include "Text.h"

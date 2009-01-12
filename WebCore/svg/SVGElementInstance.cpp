@@ -169,7 +169,7 @@ bool SVGElementInstance::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec)
     evt->setTarget(this);
 
     RefPtr<FrameView> view = element->document()->view();
-    return element->dispatchGenericEvent(evt.release(), ec);
+    return element->dispatchGenericEvent(evt.release());
 }
 
 EventListener* SVGElementInstance::onabort() const

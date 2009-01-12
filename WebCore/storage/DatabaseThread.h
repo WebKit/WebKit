@@ -42,10 +42,9 @@ class Database;
 class DatabaseTask;
 class Document;
 
-class DatabaseThread : public ThreadSafeShared<DatabaseThread>
-{
+class DatabaseThread : public ThreadSafeShared<DatabaseThread> {
 public:
-    static PassRefPtr<DatabaseThread> create(Document* doc) { return adoptRef(new DatabaseThread(doc)); }
+    static PassRefPtr<DatabaseThread> create() { return adoptRef(new DatabaseThread); }
     ~DatabaseThread();
 
     bool start();
@@ -57,7 +56,7 @@ public:
     void unscheduleDatabaseTasks(Database*);
 
 private:
-    DatabaseThread(Document*);
+    DatabaseThread();
 
     static void* databaseThreadStart(void*);
     void* databaseThread();

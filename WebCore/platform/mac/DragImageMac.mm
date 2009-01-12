@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,30 +22,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #import "config.h"
 #import "DragImage.h"
 
 #import "CachedImage.h"
 #import "Image.h"
 #import "KURL.h"
-#import "PlatformString.h"
 #import "ResourceResponse.h"
 
 namespace WebCore {
 
-
-
-IntSize dragImageSize(DragImageRef image)
+IntSize dragImageSize(RetainPtr<NSImage> image)
 {
     return (IntSize)[image.get() size];
 }
 
-void deleteDragImage(DragImageRef image)
+void deleteDragImage(RetainPtr<NSImage>)
 {
-    //DragImageRef is a RetainPtr, so we don't need to explicitly delete it
+    // Since this is a RetainPtr, there's nothing additional we need to do to
+    // delete it. It will be released when it falls out of scope.
 }
 
-DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
+RetainPtr<NSImage> scaleDragImage(RetainPtr<NSImage> image, FloatSize scale)
 {
     NSSize originalSize = [image.get() size];
     NSSize newSize = NSMakeSize((originalSize.width * scale.width()), (originalSize.height * scale.height()));
@@ -56,7 +55,7 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     return image;
 }
     
-DragImageRef dissolveDragImageToFraction(DragImageRef image, float delta)
+RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float delta)
 {
     RetainPtr<NSImage> dissolvedImage(AdoptNS, [[NSImage alloc] initWithSize:[image.get() size]]);
     
@@ -76,14 +75,14 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float delta)
     return image;
 }
         
-DragImageRef createDragImageFromImage(Image* image)
+RetainPtr<NSImage> createDragImageFromImage(Image* image)
 {
-    DragImageRef dragImage(AdoptNS, [image->getNSImage() copy]);
+    RetainPtr<NSImage> dragImage(AdoptNS, [image->getNSImage() copy]);
     [dragImage.get() setSize:(NSSize)(image->size())];
     return dragImage;
 }
     
-DragImageRef createDragImageIconForCachedImage(CachedImage* image)
+RetainPtr<NSImage> createDragImageIconForCachedImage(CachedImage* image)
 {
     const String& filename = image->response().suggestedFilename();
     NSString *extension = nil;
@@ -91,12 +90,12 @@ DragImageRef createDragImageIconForCachedImage(CachedImage* image)
     
     if (dotIndex > 0 && dotIndex < (int)(filename.length() - 1)) // require that a . exists after the first character and before the last
         extension = filename.substring(dotIndex + 1);
-    else
-        //It might be worth doing a further look up to pull the extension from the mimetype
+    else {
+        // It might be worth doing a further lookup to pull the extension from the MIME type.
         extension = @"";
+    }
     
-    return DragImageRef([[NSWorkspace sharedWorkspace] iconForFileType:extension]);
-     
+    return [[NSWorkspace sharedWorkspace] iconForFileType:extension];
 }
     
 }

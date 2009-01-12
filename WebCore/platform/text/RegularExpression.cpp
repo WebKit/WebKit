@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora Ltd.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,84 +27,57 @@
 #include "config.h"
 #include "RegularExpression.h"
 
-#include "PlatformString.h"
 #include "Logging.h"
-#include <wtf/RefCounted.h>
 #include <pcre/pcre.h>
 
 namespace WebCore {
 
-const size_t maxSubstrings = 10;
-const size_t maxOffsets = 3 * maxSubstrings;
-
 class RegularExpression::Private : public RefCounted<Private> {
 public:
-    static PassRefPtr<Private> create() { return adoptRef(new Private); }
-    static PassRefPtr<Private> create(const String& pattern, bool caseSensitive) { return adoptRef(new Private(pattern, caseSensitive)); }
-
+    static PassRefPtr<Private> create(const String& pattern, TextCaseSensitivity);
     ~Private();
 
-    void compile(bool caseSensitive);
+    JSRegExp* regexp() const { return m_regexp; }
+    int lastMatchLength;    
 
-    String pattern;
-    JSRegExp* regex;
-
-    String lastMatchString;
-    int lastMatchOffsets[maxOffsets];
-    int lastMatchCount;
-    int lastMatchPos;
-    int lastMatchLength;
-    
 private:
-    Private();
-    Private(const String& pattern, bool caseSensitive);
+    Private(const String& pattern, TextCaseSensitivity);
+    static JSRegExp* compile(const String& pattern, TextCaseSensitivity);
+
+    JSRegExp* m_regexp;
 };
 
-RegularExpression::Private::Private()
-    : pattern("")
-{
-    compile(true);
-}
-
-RegularExpression::Private::Private(const String& p, bool caseSensitive)
-    : pattern(p)
-    , lastMatchPos(-1)
-    , lastMatchLength(-1)
-{
-    compile(caseSensitive);
-}
-
-void RegularExpression::Private::compile(bool caseSensitive)
+inline JSRegExp* RegularExpression::Private::compile(const String& pattern, TextCaseSensitivity caseSensitivity)
 {
     const char* errorMessage;
-    regex = jsRegExpCompile(pattern.characters(), pattern.length(),
-        caseSensitive ? JSRegExpDoNotIgnoreCase : JSRegExpIgnoreCase, JSRegExpSingleLine,
+    JSRegExp* regexp = jsRegExpCompile(pattern.characters(), pattern.length(),
+        caseSensitivity == TextCaseSensitive ? JSRegExpDoNotIgnoreCase : JSRegExpIgnoreCase, JSRegExpSingleLine,
         0, &errorMessage);
-    if (!regex)
+    if (!regexp)
         LOG_ERROR("RegularExpression: pcre_compile failed with '%s'", errorMessage);
+    return regexp;
+}
+
+inline RegularExpression::Private::Private(const String& pattern, TextCaseSensitivity caseSensitivity)
+    : lastMatchLength(-1)
+    , m_regexp(compile(pattern, caseSensitivity))
+{
+}
+
+inline PassRefPtr<RegularExpression::Private> RegularExpression::Private::create(const String& pattern, TextCaseSensitivity caseSensitivity)
+{
+    return adoptRef(new Private(pattern, caseSensitivity));
 }
 
 RegularExpression::Private::~Private()
 {
-    jsRegExpFree(regex);
+    jsRegExpFree(m_regexp);
 }
 
-
-RegularExpression::RegularExpression()
-    : d(Private::create())
+RegularExpression::RegularExpression(const String& pattern, TextCaseSensitivity caseSensitivity)
+    : d(Private::create(pattern, caseSensitivity))
 {
 }
-
-RegularExpression::RegularExpression(const String& pattern, bool caseSensitive)
-    : d(Private::create(pattern, caseSensitive))
-{
-}
-
-RegularExpression::RegularExpression(const char* pattern)
-    : d(Private::create(pattern, true))
-{
-}
-
 
 RegularExpression::RegularExpression(const RegularExpression& re)
     : d(re.d)
@@ -117,52 +90,41 @@ RegularExpression::~RegularExpression()
 
 RegularExpression& RegularExpression::operator=(const RegularExpression& re)
 {
-    RegularExpression tmp(re);
-    tmp.d.swap(d);
+    d = re.d;
     return *this;
-}
-
-String RegularExpression::pattern() const
-{
-    return d->pattern;
 }
 
 int RegularExpression::match(const String& str, int startFrom, int* matchLength) const
 {
+    if (!d->regexp())
+        return -1;
+
     if (str.isNull())
         return -1;
 
-    d->lastMatchString = str;
     // First 2 offsets are start and end offsets; 3rd entry is used internally by pcre
-    d->lastMatchCount = jsRegExpExecute(d->regex, d->lastMatchString.characters(),
-        d->lastMatchString.length(), startFrom, d->lastMatchOffsets, maxOffsets);
-    if (d->lastMatchCount < 0) {
-        if (d->lastMatchCount != JSRegExpErrorNoMatch)
-            LOG_ERROR("RegularExpression: pcre_exec() failed with result %d", d->lastMatchCount);
-        d->lastMatchPos = -1;
+    static const size_t maxOffsets = 3;
+    int offsets[maxOffsets];
+    int result = jsRegExpExecute(d->regexp(), str.characters(), str.length(), startFrom, offsets, maxOffsets);
+    if (result < 0) {
+        if (result != JSRegExpErrorNoMatch)
+            LOG_ERROR("RegularExpression: pcre_exec() failed with result %d", result);
         d->lastMatchLength = -1;
-        d->lastMatchString = String();
         return -1;
     }
-    
+
     // 1 means 1 match; 0 means more than one match. First match is recorded in offsets.
-    d->lastMatchPos = d->lastMatchOffsets[0];
-    d->lastMatchLength = d->lastMatchOffsets[1] - d->lastMatchOffsets[0];
+    d->lastMatchLength = offsets[1] - offsets[0];
     if (matchLength)
         *matchLength = d->lastMatchLength;
-    return d->lastMatchPos;
-}
-
-int RegularExpression::search(const String& str, int startFrom) const
-{
-    if (startFrom < 0)
-        startFrom = str.length() - startFrom;
-    return match(str, startFrom, 0);
+    return offsets[0];
 }
 
 int RegularExpression::searchRev(const String& str) const
 {
-    // FIXME: Total hack for now. Search forward, return the last, greedy match
+    // FIXME: This could be faster if it actually searched backwards.
+    // Instead, it just searches forwards, multiple times until it finds the last match.
+
     int start = 0;
     int pos;
     int lastPos = -1;
@@ -179,15 +141,8 @@ int RegularExpression::searchRev(const String& str) const
             start = pos + 1;
         }
     } while (pos != -1);
-    d->lastMatchPos = lastPos;
     d->lastMatchLength = lastMatchLength;
     return lastPos;
-}
-
-int RegularExpression::pos(int n)
-{
-    ASSERT(n == 0);
-    return d->lastMatchPos;
 }
 
 int RegularExpression::matchedLength() const

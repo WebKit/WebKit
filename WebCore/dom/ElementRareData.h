@@ -1,6 +1,5 @@
-/**
- *
- * Copyright (C) 2008 Apple Computer, Inc.
+/*
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Smith <catfish.man@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -30,9 +29,9 @@ namespace WebCore {
 
 class ElementRareData : public NodeRareData {
 public:
-    ElementRareData(Element*);
+    ElementRareData();
 
-    void resetComputedStyle(Element*);
+    void resetComputedStyle();
 
     using NodeRareData::needsFocusAppearanceUpdateSoonAfterAttach;
     using NodeRareData::setNeedsFocusAppearanceUpdateSoonAfterAttach;
@@ -46,12 +45,12 @@ inline IntSize defaultMinimumSizeForResizing()
     return IntSize(INT_MAX, INT_MAX);
 }
 
-inline ElementRareData::ElementRareData(Element* e)
+inline ElementRareData::ElementRareData()
     : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
 }
 
-inline void ElementRareData::resetComputedStyle(Element* element)
+inline void ElementRareData::resetComputedStyle()
 {
     m_computedStyle.clear();
 }

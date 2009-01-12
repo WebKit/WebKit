@@ -26,7 +26,6 @@
 #include "SVGStyledTransformableElement.h"
 
 #include "Attr.h"
-#include "RegularExpression.h"
 #include "RenderPath.h"
 #include "SVGDocument.h"
 #include "TransformationMatrix.h"
@@ -107,10 +106,10 @@ FloatRect SVGStyledTransformableElement::getBBox() const
     return SVGTransformable::getBBox(this);
 }
 
-RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     // By default, any subclass is expected to do path-based drawing
-    return new (arena) RenderPath(style, this);
+    return new (arena) RenderPath(this);
 }
 
 Path SVGStyledTransformableElement::toClipPath() const

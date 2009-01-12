@@ -35,15 +35,12 @@
 namespace WebCore {
 
 class FloatPoint;
-class Path;
 class RenderSVGContainer;
 class SVGStyledTransformableElement;
 
-class RenderPath : public RenderObject
-{
+class RenderPath : public RenderObject {
 public:
-    RenderPath(RenderStyle*, SVGStyledTransformableElement*);
-    virtual ~RenderPath();
+    RenderPath(SVGStyledTransformableElement*);
 
     // Hit-detection seperated for the fill and the stroke
     bool fillContains(const FloatPoint&, bool requiresFill = true) const;

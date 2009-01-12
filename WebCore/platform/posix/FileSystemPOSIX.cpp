@@ -158,11 +158,10 @@ String directoryName(const String& path)
     return dirname(fsRep.mutableData());
 }
 
-Vector<String> listDirectory(const String& path, const String& filter)
-{
-    Vector<String> entries;
-    notImplemented();
-    return entries;
-}
+// OK to not implement listDirectory at the moment, because it's only used for plug-ins, and
+// all platforms that use the shared plug-in implementation have implementations. We'd need
+// to implement it if we wanted to use PluginDatabase.cpp on the Mac. Better to not implement
+// at all and get a link error in case this arises, rather than having a stub here, because
+// with a stub you learn about the problem at runtime instead of link time.
 
 } // namespace WebCore

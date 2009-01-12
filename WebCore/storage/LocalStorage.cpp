@@ -79,7 +79,7 @@ LocalStorage::~LocalStorage()
     localStorageMap().remove(m_path);
 }
 
-PassRefPtr<StorageArea> LocalStorage::storageArea(Frame* sourceFrame, SecurityOrigin* origin)
+PassRefPtr<StorageArea> LocalStorage::storageArea(SecurityOrigin* origin)
 {
     ASSERT(isMainThread());
 

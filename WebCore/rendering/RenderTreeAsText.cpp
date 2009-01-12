@@ -69,7 +69,7 @@ static void writeIndent(TextStream& ts, int indent)
         ts << "  ";
 }
 
-static void printBorderStyle(TextStream& ts, const RenderObject& o, const EBorderStyle borderStyle)
+static void printBorderStyle(TextStream& ts, const EBorderStyle borderStyle)
 {
     switch (borderStyle) {
         case BNONE:
@@ -216,7 +216,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
                     ts << " none";
                 else {
                     ts << " (" << o.borderTop() << "px ";
-                    printBorderStyle(ts, o, o.style()->borderTopStyle());
+                    printBorderStyle(ts, o.style()->borderTopStyle());
                     Color col = o.style()->borderTopColor();
                     if (!col.isValid())
                         col = o.style()->color();
@@ -230,7 +230,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
                     ts << " none";
                 else {
                     ts << " (" << o.borderRight() << "px ";
-                    printBorderStyle(ts, o, o.style()->borderRightStyle());
+                    printBorderStyle(ts, o.style()->borderRightStyle());
                     Color col = o.style()->borderRightColor();
                     if (!col.isValid())
                         col = o.style()->color();
@@ -244,7 +244,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
                     ts << " none";
                 else {
                     ts << " (" << o.borderBottom() << "px ";
-                    printBorderStyle(ts, o, o.style()->borderBottomStyle());
+                    printBorderStyle(ts, o.style()->borderBottomStyle());
                     Color col = o.style()->borderBottomColor();
                     if (!col.isValid())
                         col = o.style()->color();
@@ -258,7 +258,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
                     ts << " none";
                 else {
                     ts << " (" << o.borderLeft() << "px ";
-                    printBorderStyle(ts, o, o.style()->borderLeftStyle());
+                    printBorderStyle(ts, o.style()->borderLeftStyle());
                     Color col = o.style()->borderLeftColor();
                     if (!col.isValid())
                         col = o.style()->color();

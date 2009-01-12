@@ -347,8 +347,7 @@ isTashkeelChar(UChar ch) {
  */
 static int32_t
 shapeUnicode(UChar *dest, int32_t sourceLength,
-             int32_t destSize,uint32_t options,
-             UErrorCode *pErrorCode,
+             int32_t destSize,
              int tashkeelFlag) {
 
     int32_t          i, iend;
@@ -528,11 +527,11 @@ int32_t shapeArabic(const UChar *source, int32_t sourceLength, UChar *dest, int3
         switch(options&U_SHAPE_LETTERS_MASK) {
         case U_SHAPE_LETTERS_SHAPE :
             /* Call the shaping function with tashkeel flag == 1 */
-            destLength = shapeUnicode(dest,sourceLength,destCapacity,options,pErrorCode,1);
+            destLength = shapeUnicode(dest,sourceLength,destCapacity,1);
             break;
         case U_SHAPE_LETTERS_SHAPE_TASHKEEL_ISOLATED :
             /* Call the shaping function with tashkeel flag == 0 */
-            destLength = shapeUnicode(dest,sourceLength,destCapacity,options,pErrorCode,0);
+            destLength = shapeUnicode(dest,sourceLength,destCapacity,0);
             break;
         case U_SHAPE_LETTERS_UNSHAPE :
             ASSERT_NOT_REACHED();

@@ -47,6 +47,8 @@ struct HashAndCharactersTranslator;
 struct StringHash;
 struct UCharBufferTranslator;
 
+enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
+
 typedef bool (*CharacterMatchFunctionPtr)(UChar);
 
 class StringImpl : public RefCounted<StringImpl> {

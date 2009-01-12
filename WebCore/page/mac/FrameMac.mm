@@ -90,7 +90,7 @@ RegularExpression* regExpForLabels(NSArray* labels)
     static const unsigned int regExpCacheSize = 4;
     static NSMutableArray* regExpLabels = nil;
     DEFINE_STATIC_LOCAL(Vector<RegularExpression*>, regExps, ());
-    DEFINE_STATIC_LOCAL(RegularExpression, wordRegExp, ("\\w"));
+    DEFINE_STATIC_LOCAL(RegularExpression, wordRegExp, ("\\w", TextCaseSensitive));
 
     RegularExpression* result;
     if (!regExpLabels)
@@ -108,8 +108,8 @@ RegularExpression* regExpForLabels(NSArray* labels)
             bool startsWithWordChar = false;
             bool endsWithWordChar = false;
             if (label.length() != 0) {
-                startsWithWordChar = wordRegExp.search(label.substring(0, 1)) >= 0;
-                endsWithWordChar = wordRegExp.search(label.substring(label.length() - 1, 1)) >= 0;
+                startsWithWordChar = wordRegExp.match(label.substring(0, 1)) >= 0;
+                endsWithWordChar = wordRegExp.match(label.substring(label.length() - 1, 1)) >= 0;
             }
             
             if (i != 0)
@@ -124,7 +124,7 @@ RegularExpression* regExpForLabels(NSArray* labels)
                 pattern.append("\\b");
         }
         pattern.append(")");
-        result = new RegularExpression(pattern, false);
+        result = new RegularExpression(pattern, TextCaseInsensitive);
     }
 
     // add regexp to the cache, making sure it is at the front for LRU ordering
@@ -241,7 +241,7 @@ NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
         return nil;
 
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
-    replace(name, RegularExpression("\\d"), " ");
+    replace(name, RegularExpression("\\d", TextCaseSensitive), " ");
     name.replace('_', ' ');
 
     RegularExpression* regExp = regExpForLabels(labels);
@@ -252,7 +252,7 @@ NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
     int bestLength = -1;
     int start = 0;
     do {
-        pos = regExp->search(name, start);
+        pos = regExp->match(name, start);
         if (pos != -1) {
             length = regExp->matchedLength();
             if (length >= bestLength) {

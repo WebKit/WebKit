@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include "DragActions.h"
 #include "DragImage.h"
 #include "IntPoint.h"
-#include "IntRect.h"
 #include "KURL.h"
 
 namespace WebCore {
@@ -41,6 +40,7 @@ namespace WebCore {
     class Element;
     class Frame;
     class Image;
+    class IntRect;
     class Node;
     class Page;
     class PlatformMouseEvent;
@@ -58,8 +58,8 @@ namespace WebCore {
         DragOperation dragUpdated(DragData*);
         bool performDrag(DragData*);
         
-        //FIXME: It should be possible to remove a number of these accessors once all
-        //drag logic is in WebCore
+        // FIXME: It should be possible to remove a number of these accessors once all
+        // drag logic is in WebCore.
         void setDidInitiateDrag(bool initiated) { m_didInitiateDrag = initiated; } 
         bool didInitiateDrag() const { return m_didInitiateDrag; }
         void setIsHandlingDrag(bool handling) { m_isHandlingDrag = handling; }
@@ -73,7 +73,7 @@ namespace WebCore {
         void setDragOffset(const IntPoint& offset) { m_dragOffset = offset; }
         const IntPoint& dragOffset() const { return m_dragOffset; }
         DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
-        
+
         Document* document() const { return m_document; }
         DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
         DragSourceAction delegateDragSourceAction(const IntPoint& pagePoint);
@@ -91,16 +91,17 @@ namespace WebCore {
         static const int DragIconRightInset;
         static const int DragIconBottomInset;        
         static const float DragImageAlpha;
+
     private:
         bool canProcessDrag(DragData*);
-        bool concludeDrag(DragData*, DragDestinationAction);
+        bool concludeEditDrag(DragData*);
         DragOperation dragEnteredOrUpdated(DragData*);
         DragOperation operationForLoad(DragData*);
         DragOperation tryDocumentDrag(DragData*, DragDestinationAction);
         DragOperation tryDHTMLDrag(DragData*);
         DragOperation dragOperation(DragData*);
         void cancelDrag();
-        bool dragIsMove(SelectionController*, DragData*);
+        bool dragIsMove(SelectionController*);
         bool isCopyKeyDown();
 
         IntRect selectionDraggingRect(Frame*);
@@ -108,14 +109,12 @@ namespace WebCore {
         void doImageDrag(Element*, const IntPoint&, const IntRect&, Clipboard*, Frame*, IntPoint&);
         void doSystemDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool forLink);
         void cleanupAfterSystemDrag();
+
         Page* m_page;
         DragClient* m_client;
         
-        //The Document the mouse was last dragged over
-        Document* m_document;
-        
-        //The Document (if any) that initiated the drag
-        Document* m_dragInitiator;
+        Document* m_document; // The document the mouse was last dragged over.
+        Document* m_dragInitiator; // The Document (if any) that initiated the drag.
         
         DragDestinationAction m_dragDestinationAction;
         DragSourceAction m_dragSourceAction;

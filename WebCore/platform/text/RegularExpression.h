@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,29 +26,21 @@
 #ifndef RegularExpression_h
 #define RegularExpression_h
 
-#include <wtf/RefPtr.h>
+#include "PlatformString.h"
 
 namespace WebCore {
 
-class String;
-
 class RegularExpression {
 public:
-    RegularExpression();
-    RegularExpression(const String&, bool caseSensitive = false);
-    RegularExpression(const char*);
+    RegularExpression(const String&, TextCaseSensitivity);
     ~RegularExpression();
 
     RegularExpression(const RegularExpression&);
     RegularExpression& operator=(const RegularExpression&);
 
-    String pattern() const;
     int match(const String&, int startFrom = 0, int* matchLength = 0) const;
-
-    int search(const String&, int startFrom = 0) const;
     int searchRev(const String&) const;
 
-    int pos(int n = 0);
     int matchedLength() const;
 
 private:

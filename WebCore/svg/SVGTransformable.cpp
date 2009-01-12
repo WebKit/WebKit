@@ -28,7 +28,6 @@
 
 #include "TransformationMatrix.h"
 #include "FloatConversion.h"
-#include "RegularExpression.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGStyledElement.h"

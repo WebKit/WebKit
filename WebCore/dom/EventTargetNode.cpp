@@ -270,10 +270,10 @@ bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec)
     evt->setTarget(eventTargetRespectingSVGTargetRules(this));
 
     RefPtr<FrameView> view = document()->view();
-    return dispatchGenericEvent(evt.release(), ec);
+    return dispatchGenericEvent(evt.release());
 }
 
-bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> prpEvent, ExceptionCode& ec)
+bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
 {
     RefPtr<Event> event(prpEvent);
 
@@ -435,8 +435,7 @@ void EventTargetNode::dispatchWindowEvent(const AtomicString& eventType, bool ca
         if (ownerElement) {
             RefPtr<Event> ownerEvent = Event::create(eventType, false, cancelableArg);
             ownerEvent->setTarget(ownerElement);
-            ExceptionCode ec = 0;
-            ownerElement->dispatchGenericEvent(ownerEvent.release(), ec);
+            ownerElement->dispatchGenericEvent(ownerEvent.release());
         }
     }
 }

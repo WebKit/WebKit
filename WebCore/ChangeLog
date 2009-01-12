@@ -1,3 +1,188 @@
+2009-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 23102: turn on unused parameter warnings in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=23102
+
+        Fourth step: Remove arguments entirely in the many cases where they are not
+        needed at all. This step is a little less mechanical than the earlier ones.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::isXMLMIMEType): Pass TextCaseSensitive when creating
+        the regular expression, since we already specify a-zA-Z in our expression.
+
+        * dom/Document.cpp:
+        (WebCore::Document::databaseThread): Don't pass in the document when creating
+        a DatabaseThread.
+
+        * dom/Element.cpp:
+        (WebCore::Element::createRareData): Don't pass the element when creating an
+        ElementRareData.
+        (WebCore::Element::detach): Don't pass the element when calling resetComputedStyle.
+        (WebCore::Element::recalcStyle): Ditto.
+
+        * dom/ElementRareData.h: Remove the unused Element* from the constructor and
+        the resetComputedStyle function.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchEvent): Don't pass ec to dispatchGenericEvent.
+        (WebCore::EventTargetNode::dispatchGenericEvent): Remove the unused ec argument.
+        (WebCore::EventTargetNode::dispatchWindowEvent): Don't pass ec to dispatchGenericEvent.
+        * dom/EventTargetNode.h: Remove the ExceptionCode& argument form disaptchGenericEvent.
+
+        * editing/ApplyStyleCommand.cpp: Remove the empty removeBlockStyle function.
+        (WebCore::ApplyStyleCommand::pushDownTextDecorationStyleAroundNode): Remove the unused
+        start and end arguments.
+        (WebCore::ApplyStyleCommand::pushDownTextDecorationStyleAtBoundaries): Don't pass start
+        and end to pushDownTextDecorationStyleAroundNode.
+
+        * editing/ApplyStyleCommand.h: Remove the empty removeBlockStyle function. Removed the
+        unused start and end arguments from pushDownTextDecorationStyleAroundNode.
+
+        * editing/htmlediting.cpp: Removed include of unused RegularExpression.h header.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::Token::addAttribute): Removed unused Document* argument.
+        (WebCore::HTMLTokenizer::parseTag): Don't pass document to addAttribute.
+
+        * html/HTMLTokenizer.h: Removed unused Document* argument to to addAttribute.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::localStorage): Don't pass the frame to storageArea.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragIsMove): Removed unused DragData argument.
+        (WebCore::DragController::performDrag): Call concludeEditDrag rather than
+        concludeDrag.
+        (WebCore::DragController::tryDocumentDrag): Don't pass dragData to dragIsMove.
+        (WebCore::DragController::concludeEditDrag): Renamed to make it clear this
+        should only be called for edit drags. Removed the action mask argument. Also
+        changed dragIsMove call sites to not pass dragData.
+
+        * page/DragController.h: Updated for above changes and tweaked comment format.
+
+        * page/Frame.cpp:
+        (WebCore::createRegExpForLabels): Pass TextCaseSensitive and TextCaseInsensitive
+        when creating regular expressions for clarity. Call match instead of search,
+        since both do the same thing except for with negative start offsets, and none
+        used here are negative.
+        (WebCore::Frame::matchLabelsAgainstElement): Ditto.
+
+        * page/Page.h: Moved TextCaseSensitivity from here to StringImpl.h in platform.
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (AXAttributeStringSetHeadingLevel): Removed unused object argument.
+        (AXAttributedStringAppendText): Ditto.
+        (-[AccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]): Ditto.
+
+        * page/mac/FrameMac.mm:
+        (WebCore::regExpForLabels): Pass TextCaseSensitive and TextCaseInsensitive
+        when creating regular expressions for clarity. Call match instead of search,
+        since both do the same thing except for with negative start offsets, and none
+        used here are negative.
+        (WebCore::Frame::matchLabelsAgainstElement): Ditto.
+
+        * platform/graphics/SegmentedFontData.cpp:
+        (WebCore::SegmentedFontData::containsCharacter): Added.
+        (WebCore::SegmentedFontData::containsCharacters): Updated to check all characters
+        instead of just the first one, using containsCharacter.
+
+        * platform/graphics/SegmentedFontData.h: Made more members private.
+        Added containsCharacter function member.
+
+        * platform/mac/DragImageMac.mm:
+        (WebCore::dragImageSize): Changed to use RetainPtr<NSImage> directly instead of
+        DragImageRef for clarity, since this is platform-specific code.
+        (WebCore::deleteDragImage): Ditto. Also remove argument name to get rid of unused
+        variable warning.
+        (WebCore::scaleDragImage): Ditto.
+        (WebCore::dissolveDragImageToFraction): Ditto.
+        (WebCore::createDragImageFromImage): Ditto.
+        (WebCore::createDragImageIconForCachedImage): Ditto.
+
+        * platform/mac/WebFontCache.mm:
+        (acceptableChoice): Removed the unused weight-related arguments.
+        (betterChoice): Ditto.
+        (+[WebFontCache internalFontWithFamily:traits:weight:size:]): Ditto.
+
+        * platform/posix/FileSystemPOSIX.cpp: Removed the implementation of listDirectory
+        because we'd rather get a link error rather than a runtime error if we use it
+        for anything, and right now it's not used.
+
+        * platform/text/RegularExpression.cpp: Removed unused private data,
+        including pattern, lastMatchString, lastMatchOffsets, lastMatchCount,
+        and lastMatchPos. Made the RegularExpression::Private::regex be private
+        and use an accessor function to get at it.
+        (WebCore::RegularExpression::RegularExpression): Removed the const char* version
+        of the constructor because it's not any more efficient. Changed the boolean
+        constructor argument to use TextCaseSensitivity instead to make it less likely
+        we'll use it wrong.
+        (WebCore::RegularExpression::operator=): Since the only member is a single RefPtr,
+        just use plain old assignment on it. The only reason we do this instead of using
+        the compiler generated assignment operator is that we want the Private structure
+        to be internal to the .cpp file.
+        (WebCore::RegularExpression::match): Added a null check so we won't crash if
+        we fail to compile the regular expression. Removed the code to handle multiple
+        match strings, since that was unused.
+
+        * platform/text/RegularExpression.h: Changed the case sensitivity argument to use
+        TextCaseSensitivity and not have a default value. Removed the default constructor,
+        and the pattern, match, and pos functions.
+
+        * platform/text/StringImpl.h: Moved the TextCaseSensitivity enum here from
+        Page.h, because we should eventually use it in all the places where we have
+        an argument to control case sensitivity, starting with the functions in this
+        class.
+
+        * platform/text/mac/ShapeArabic.c:
+        (shapeUnicode): Removed the unused options and pErrorCode arguments. Even though
+        this is code borrowed from ICU, this seems like a simple safe change to make.
+        (shapeArabic): Don't pass options or pErrorCode in to shapeUnicode.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::RenderPath): Removed the unused style argument.
+        Also removed the type check. The argument already has the correct type,
+        so it's not helpful to upcast it and then check its type again, unless
+        we have some reason to believe the type is not reliable. And we don't.
+
+        * rendering/RenderPath.h: Removed the RenderStyle* argument to the
+        constructor. Also removed the explicit declaration of the destructor.
+        It's not helpful or needed.
+
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::localCaretRect): Updated the comment here to
+        make it clear that just returning an empty rect is not a good implementation.
+        Removed the argument names to get rid of the warning.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::printBorderStyle): Removed the unused RenderObject argument.
+        (WebCore::operator<<): Updated for the change to printBorderStyle function.
+
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread): Removed the unused document argument.
+        * storage/DatabaseThread.h: Ditto.
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::storageArea): Removed the unused Frame* argument.
+        * storage/LocalStorage.h: Ditto.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible): Don't pass an exception
+        code location to dispatchGenericEvent.
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::dispatchEvent): Ditto.
+
+        * svg/SVGStyledTransformableElement.cpp: Removed include of unused RegularExpression.h.
+        (WebCore::SVGStyledTransformableElement::createRenderer): Don't pass style in to
+        the RenderPath constructor.
+
+        * svg/SVGTransformable.cpp: Removed include of unused RegularExpression.h.
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::createFragmentFromSource): Removed unused sourceNode argument.
+        (WebCore::XSLTProcessor::transformToFragment): Don't pass sourceNode to createFragmentFromSource.
+
 2009-01-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

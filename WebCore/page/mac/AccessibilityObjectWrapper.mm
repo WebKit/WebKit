@@ -417,7 +417,7 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
     }
 }
 
-static void AXAttributeStringSetHeadingLevel(AccessibilityObject* object, NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
+static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
 {
     int parentHeadingLevel = AccessibilityRenderObject::headingLevel(renderer->parent()->element());
     
@@ -471,7 +471,7 @@ static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, N
         [attrString removeAttribute:attribute range:range];
 }
 
-static void AXAttributedStringAppendText(AccessibilityObject* object, NSMutableAttributedString* attrString, Node* node, int offset, const UChar* chars, int length)
+static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, int offset, const UChar* chars, int length)
 {
     // skip invisible text
     if (!node->renderer())
@@ -493,7 +493,7 @@ static void AXAttributedStringAppendText(AccessibilityObject* object, NSMutableA
     
     // set new attributes
     AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
-    AXAttributeStringSetHeadingLevel(object, attrString, node->renderer(), attrStringRange);
+    AXAttributeStringSetHeadingLevel(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetBlockquoteLevel(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AXLinkElementForNode(node), attrStringRange);
     
@@ -543,7 +543,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.length() != 0) {
-            AXAttributedStringAppendText(m_object, attrString, node, offset, it.characters(), it.length());
+            AXAttributedStringAppendText(attrString, node, offset, it.characters(), it.length());
         } else {
             Node* replacedNode = node->childNode(offset);
             NSString *attachmentString = nsStringForReplacedNode(replacedNode);

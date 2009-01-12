@@ -5,7 +5,7 @@
               (C) 1999 Lars Knoll (knoll@kde.org)
               (C) 1999 Antti Koivisto (koivisto@kde.org)
               (C) 2001 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
     Copyright (C) 2005, 2006 Alexey Proskuryakov (ap@nypop.com)
 
     This library is free software; you can redistribute it and/or
@@ -133,7 +133,7 @@ static inline bool tagMatch(const char* s1, const UChar* s2, unsigned length)
     return true;
 }
 
-inline void Token::addAttribute(Document* doc, AtomicString& attrName, const AtomicString& attributeValue, bool viewSourceMode)
+inline void Token::addAttribute(AtomicString& attrName, const AtomicString& attributeValue, bool viewSourceMode)
 {
     if (!attrName.isEmpty()) {
         ASSERT(!attrName.contains('/'));
@@ -1309,7 +1309,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                             m_currentToken.addViewSourceChar(curchar);
                         src.advancePastNonNewline();
                     } else {
-                        m_currentToken.addAttribute(m_doc, m_attrName, emptyAtom, inViewSourceMode());
+                        m_currentToken.addAttribute(m_attrName, emptyAtom, inViewSourceMode());
                         m_dest = m_buffer;
                         state.setTagState(SearchAttribute);
                         lastIsSlash = false;
@@ -1363,7 +1363,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                         AtomicString attributeValue(m_buffer + 1, m_dest - m_buffer - 1);
                         if (!attributeValue.contains('/'))
                             m_attrName = attributeValue; // Just make the name/value match. (FIXME: Is this some WinIE quirk?)
-                        m_currentToken.addAttribute(m_doc, m_attrName, attributeValue, inViewSourceMode());
+                        m_currentToken.addAttribute(m_attrName, attributeValue, inViewSourceMode());
                         if (inViewSourceMode())
                             m_currentToken.addViewSourceChar('x');
                         state.setTagState(SearchAttribute);
@@ -1389,7 +1389,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                                 m_currentToken.addViewSourceChar('x');
                         } else if (inViewSourceMode())
                             m_currentToken.addViewSourceChar('v');
-                        m_currentToken.addAttribute(m_doc, m_attrName, attributeValue, inViewSourceMode());
+                        m_currentToken.addAttribute(m_attrName, attributeValue, inViewSourceMode());
                         m_dest = m_buffer;
                         state.setTagState(SearchAttribute);
                         tquote = NoQuote;
@@ -1419,7 +1419,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                     // '/' does not delimit in IE!
                     if (isASCIISpace(curchar) || curchar == '>') {
                         AtomicString attributeValue(m_buffer + 1, m_dest - m_buffer - 1);
-                        m_currentToken.addAttribute(m_doc, m_attrName, attributeValue, inViewSourceMode());
+                        m_currentToken.addAttribute(m_attrName, attributeValue, inViewSourceMode());
                         if (inViewSourceMode())
                             m_currentToken.addViewSourceChar('v');
                         m_dest = m_buffer;
