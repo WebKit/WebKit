@@ -1,3 +1,10 @@
+2009-01-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Since date time functions have moved here, now the wx port JSC
+        needs to depend on wx.
+
+        * jscore.bkl:
+
 2009-01-11  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.
