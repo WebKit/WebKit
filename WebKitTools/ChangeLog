@@ -1,3 +1,13 @@
+2009-01-12  Mark Rowe  <mrowe@apple.com>
+
+        Use the modern spelling of WebKit.
+
+        * Scripts/find-extra-includes:
+        * Scripts/report-include-statistics:
+        * Scripts/run-webkit-app:
+        * Scripts/svn-unapply:
+        * Scripts/update-webkit:
+
 2009-01-11  Darin Adler  <darin@apple.com>
 
         * Scripts/make-js-test-wrappers: Updated so it won't overwrite tests in the svg/dom
