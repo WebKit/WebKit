@@ -1,3 +1,23 @@
+2009-01-12  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [GIO] Invoke cleanupGioOperation before calling didFail to avoid crashes
+
+        https://bugs.webkit.org/show_bug.cgi?id=23116
+
+        The ResourceHandle becomes invalid (e.g. got destructed) from within
+        the invocation of didFail. Avoid this by cleaning up everything before
+        calling didFail and simply return afterwards.
+
+        This is happening with many tests from dom/html/level2/html e.g.
+        LayoutTests/dom/html/level2/html/HTMLBodyElement07.html.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::readCallback):
+        (WebCore::openCallback):
+        (WebCore::queryInfoCallback):
+
 2009-01-13  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon Hausmann.
