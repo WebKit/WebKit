@@ -243,7 +243,7 @@ public:
         // set of matched decls four times, once for those properties that others depend on (like font-size),
         // and then a second time for all the remaining properties.  We then do the same two passes
         // for any !important rules.
-        Vector<CSSMutableStyleDeclaration*> m_matchedDecls;
+        Vector<CSSMutableStyleDeclaration*, 64> m_matchedDecls;
 
         // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
         // merge sorting.
