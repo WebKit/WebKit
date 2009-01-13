@@ -1,3 +1,20 @@
+2009-01-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=22919
+
+        I added a common getElapsedTime() function to AnimationBase which uses a combination of
+        the techniques from KeyframeAnimation and AnimationBase to compute elapsedTime in all
+        states.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::progress):
+        (WebCore::AnimationBase::getElapsedTime):
+        * page/animation/AnimationBase.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+
 2009-01-12  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Darin Adler

@@ -54,7 +54,6 @@ public:
     RenderObject* renderer() const { return m_object; }
     void clearRenderer() { m_object = 0; }
     
-    double startTime() const { return m_startTime; }
     double duration() const;
 
     // Animations and Transitions go through the states below. When entering the STARTED state
@@ -154,6 +153,8 @@ public:
     void pauseAtTime(double t);
     
     double beginAnimationUpdateTime() const;
+    
+    double getElapsedTime() const;
     
 protected:
     virtual void overrideAnimations() { }

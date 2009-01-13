@@ -86,9 +86,7 @@ void KeyframeAnimation::animate(CompositeAnimation*, RenderObject*, const Render
     // We should cache the last pair or something.
 
     // Find the first key
-    double elapsedTime = (m_startTime > 0 || m_pauseTime > 0) ? ((!paused() ? beginAnimationUpdateTime() : m_pauseTime) - m_startTime) : 0;
-    if (elapsedTime < 0)
-        elapsedTime = 0;
+    double elapsedTime = getElapsedTime();
 
     double t = m_animation->duration() ? (elapsedTime / m_animation->duration()) : 1;
     int i = static_cast<int>(t);
