@@ -1,3 +1,17 @@
+2009-01-12  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin Adler
+
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=22096>
+        Bug 22096: REGRESSION (r35879) scrolldelay is counted in seconds 
+        instead of miliseconds
+
+        Test: fast/css/webkit-marquee-speed-unit-in-quirksmode.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validUnit): treat unitless values in quirks mode 
+        as miliseconds instead of seconds.
+
 2009-01-12  David Hyatt  <hyatt@apple.com>
 
         Apply the same idea as the previous fix but for matched declarations.

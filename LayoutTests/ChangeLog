@@ -1,3 +1,14 @@
+2009-01-12  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin Adler
+        
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=22096>
+        Bug 22096: REGRESSION (r35879) scrolldelay is counted in seconds 
+        instead of miliseconds
+
+        * fast/css/webkit-marquee-speed-unit-in-quirksmode-expected.txt: Added.
+        * fast/css/webkit-marquee-speed-unit-in-quirksmode.html: Added.
+
 2009-01-12  Eric Roman  <eroman@chromium.org>
 
         Reviewed by Darin Adler.
