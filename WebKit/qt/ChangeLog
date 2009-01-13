@@ -1,3 +1,14 @@
+2009-01-13  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Create actions for cursor navigation for QWebPage. 
+        Also properly disable and enable them when contentEditable is toggled.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateAction):
+        (QWebPage::action):
+
 2009-01-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
