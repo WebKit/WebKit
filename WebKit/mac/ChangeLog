@@ -1,3 +1,39 @@
+2009-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add a bunch of methods to WebKitPluginClient.defs, and implement them.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::fromUTF8WithLatin1Fallback):
+        If the length isn't specified, get it by calling strlen.
+        
+        (WKPCEvaluate):
+        Evaluate doesn't take any arguments.
+        
+        (WKPCGetIntIdentifier):
+        Call _NPN_GetIntIdentifier.
+        
+        (identifierFromServerIdentifier):
+        New helper function that returns a JSC Identifier from an NPIdentifier.
+        
+        (WKPCInvoke):
+        Call identifierFromServerIdentifier.
+        
+        (WKPCRemoveProperty):
+        (WKPCHasProperty):
+        (WKPCHasMethod):
+        Call NetscapePluginInstanceProxy.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::removeProperty):
+        (WebKit::NetscapePluginInstanceProxy::hasProperty):
+        (WebKit::NetscapePluginInstanceProxy::hasMethod):
+
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Add new definitions.
+
 2009-01-13  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

@@ -60,7 +60,11 @@ simpleroutine InvalidateRect(clientPort :mach_port_t;
 
 routine GetStringIdentifier(clientPort :mach_port_t;
                             name :data_t;
-                            out identifier: uint64_t);
+                            out identifier :uint64_t);
+
+routine GetIntIdentifier(clientPort :mach_port_t;
+                         value :int32_t;
+                         out identifier: uint64_t);
 
 routine GetWindowNPObject(clientPort :mach_port_t;
                           pluginID :uint32_t;
@@ -76,7 +80,6 @@ routine Evaluate(clientPort :mach_port_t;
                  pluginID :uint32_t;
                  objectID :uint32_t;
                  script :data_t;
-                 arguments :data_t;
                  out returnValue :boolean_t;
                  out result :data_t, dealloc);
 
@@ -87,6 +90,25 @@ routine Invoke(clientPort :mach_port_t;
                arguments :data_t;
                out returnValue :boolean_t;
                out result :data_t, dealloc);
+
+routine RemoveProperty(clientPort :mach_port_t;
+                       pluginID :uint32_t;
+                       objectID :uint32_t;
+                       propertyNameIdentifier :uint64_t;
+                       out returnValue :boolean_t);
+
+routine HasProperty(clientPort :mach_port_t;
+                    pluginID :uint32_t;
+                    objectID :uint32_t;
+                    propertyNameIdentifier :uint64_t;
+                    out returnValue :boolean_t);
+
+routine HasMethod(clientPort :mach_port_t;
+                    pluginID :uint32_t;
+                    objectID :uint32_t;
+                    methodNameIdentifier :uint64_t;
+                    out returnValue :boolean_t);
+
 // Replies
 simpleroutine InstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;

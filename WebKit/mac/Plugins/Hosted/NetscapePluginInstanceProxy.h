@@ -89,7 +89,13 @@ public:
     void marshalValue(JSC::ExecState* exec, JSC::JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength);
     
     bool evaluate(uint32_t objectID, const WebCore::String& script, data_t& resultData, mach_msg_type_number_t& resultLength);
-    bool invoke(uint32_t objectID, JSC::Identifier methodName, data_t& resultData, mach_msg_type_number_t& resultLength);
+    bool invoke(uint32_t objectID, const JSC::Identifier& methodName, data_t& resultData, mach_msg_type_number_t& resultLength);
+    
+    bool removeProperty(uint32_t objectID, const JSC::Identifier& propertyName);
+    bool removeProperty(uint32_t objectID, unsigned propertyName);
+    bool hasProperty(uint32_t objectID, const JSC::Identifier& propertyName);
+    bool hasProperty(uint32_t objectID, unsigned propertyName);
+    bool hasMethod(uint32_t objectID, const JSC::Identifier& methodName);
     
     void status(const char* message);
     NPError loadURL(const char* url, const char* target, const char* postData, uint32_t postDataLength, LoadURLFlags, uint32_t& requestID);

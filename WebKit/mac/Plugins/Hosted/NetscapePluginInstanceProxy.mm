@@ -512,7 +512,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     return true;
 }
 
-bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, Identifier methodName, data_t& resultData, mach_msg_type_number_t& resultLength)
+bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& methodName, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
     resultData = 0;
     resultLength = 0;
@@ -547,10 +547,107 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, Identifier methodNam
     return true;
 }
 
+bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, const JSC::Identifier& propertyName)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    if (!object->hasProperty(exec, propertyName)) {
+        exec->clearException();
+        return false;
+    }
+    
+    JSLock lock(false);
+    object->deleteProperty(exec, propertyName);
+    exec->clearException();    
+    return true;
+}
+    
+bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, unsigned propertyName)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    if (!object->hasProperty(exec, propertyName)) {
+        exec->clearException();
+        return false;
+    }
+    
+    JSLock lock(false);
+    object->deleteProperty(exec, propertyName);
+    exec->clearException();    
+    return true;
+}
+
+bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, const JSC::Identifier& propertyName)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    bool result = object->hasProperty(exec, propertyName);
+    exec->clearException();
+    
+    return result;
+}
+
+bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, unsigned propertyName)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    bool result = object->hasProperty(exec, propertyName);
+    exec->clearException();
+    
+    return result;
+}
+    
+bool NetscapePluginInstanceProxy::hasMethod(uint32_t objectID, const JSC::Identifier& methodName)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    JSLock lock(false);
+    JSValuePtr func = object->get(exec, methodName);
+    exec->clearException();
+    return !func->isUndefined();
+}
+
 void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
     RetainPtr<NSMutableArray*> array(AdoptNS, [[NSMutableArray alloc] init]);
     
+    JSLock lock(false);
+
     if (value->isString()) {
         [array.get() addObject:[NSNumber numberWithInt:StringValueType]];
         
