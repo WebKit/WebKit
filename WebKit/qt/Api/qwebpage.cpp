@@ -513,6 +513,18 @@ void QWebPagePrivate::updateEditorActions()
     updateAction(QWebPage::ToggleBold);
     updateAction(QWebPage::ToggleItalic);
     updateAction(QWebPage::ToggleUnderline);
+    updateAction(QWebPage::MoveToNextChar);
+    updateAction(QWebPage::MoveToPreviousChar);
+    updateAction(QWebPage::MoveToNextWord);
+    updateAction(QWebPage::MoveToPreviousWord);
+    updateAction(QWebPage::MoveToNextLine);
+    updateAction(QWebPage::MoveToPreviousLine);
+    updateAction(QWebPage::MoveToStartOfLine);
+    updateAction(QWebPage::MoveToEndOfLine);
+    updateAction(QWebPage::MoveToStartOfBlock);
+    updateAction(QWebPage::MoveToEndOfBlock);
+    updateAction(QWebPage::MoveToStartOfDocument);
+    updateAction(QWebPage::MoveToEndOfDocument);
 }
 
 void QWebPagePrivate::timerEvent(QTimerEvent *ev)

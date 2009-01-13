@@ -1,5 +1,16 @@
 2009-01-13  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
+        Rubber-stamped by Tor Arne Vestbø.
+
+        [Qt] Missing piece from my previous commit:
+        Disable and enable the cursor navigation actions when contentEditable
+        is changed.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateEditorActions):
+
+2009-01-13  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
         Reviewed by Tor Arne Vestbø.
 
         [Qt] Create actions for cursor navigation for QWebPage. 
