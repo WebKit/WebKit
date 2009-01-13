@@ -2248,6 +2248,30 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     FrameLoader::registerURLSchemeAsLocal(protocol);
 }
 
+- (id)_initWithArguments:(NSDictionary *) arguments
+{
+    NSCoder *decoder = [arguments objectForKey:@"decoder"];
+    if (decoder) {
+        self = [self initWithCoder:decoder];
+    } else {
+        ASSERT([arguments containsObjectForKey:@"frame"]);
+        NSValue *frameValue = [arguments objectForKey:@"frame"];
+        NSRect frame = (frameValue ? [frameValue rectValue] : NSZeroRect);
+        NSString *frameName = [arguments objectForKey:@"frameName"];
+        NSString *groupName = [arguments objectForKey:@"groupName"];
+        self = [self initWithFrame:frame frameName:frameName groupName:groupName];
+    }
+
+    return self;
+}
+
+static bool needsWebViewInitThreadWorkaround()
+{
+    static BOOL isOldInstaller = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_WEBVIEW_INIT_THREAD_WORKAROUND)
+        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.installer"];
+    return isOldInstaller && !pthread_main_np();
+}
+
 - (id)initWithFrame:(NSRect)f
 {
     return [self initWithFrame:f frameName:nil groupName:nil];
@@ -2255,12 +2279,33 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
 - (id)initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+    if (needsWebViewInitThreadWorkaround()) {
+        NSMutableDictionary *arguments = [[NSMutableDictionary alloc] initWithCapacity:3];
+        [arguments setObject:[NSValue valueWithRect:f] forKey:@"frame"];
+        if (frameName)
+            [arguments setObject:frameName forKey:@"frameName"];
+        if (groupName)
+            [arguments setObject:groupName forKey:@"groupName"];
+
+        self = [self _webkit_performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments];
+        [arguments release];
+        return self;
+    }
+
     WebCoreThreadViolationCheck();
     return [self _initWithFrame:f frameName:frameName groupName:groupName usesDocumentViews:YES];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
+    if (needsWebViewInitThreadWorkaround()) {
+        NSDictionary *arguments = [[NSDictionary alloc] initWithObjectsAndKeys:decoder, @"decoder", nil];
+        self = [self _webkit_performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments];
+        [arguments release];
+        return self;
+    }
+
+    WebCoreThreadViolationCheck();
     WebView *result = nil;
 
     @try {

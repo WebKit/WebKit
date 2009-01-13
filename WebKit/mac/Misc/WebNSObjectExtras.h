@@ -54,5 +54,6 @@ static inline IMP method_setImplementation(Method m, IMP i)
 #endif
 
 @interface NSObject (WebNSObjectExtras)
+- (id)_webkit_performSelectorOnMainThread:(SEL)selector withObject:(id)object;
 - (id)_webkit_getPropertyOnMainThread:(SEL)selector;
 @end

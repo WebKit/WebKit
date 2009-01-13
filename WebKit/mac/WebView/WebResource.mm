@@ -318,7 +318,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround()) {
-        [self performSelectorOnMainThread:@selector(_ignoreWhenUnarchiving) withObject:nil waitUntilDone:TRUE];
+        [self performSelectorOnMainThread:_cmd withObject:nil waitUntilDone:TRUE];
         return;
     }
 #endif
@@ -356,13 +356,11 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
             [arguments setObject:response forKey:@"response"];
         if (copyData)
             [arguments setObject:[NSNumber numberWithBool:YES] forKey:@"copyData"];
-        [self performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments waitUntilDone:TRUE];
-        NSException *exception = [[[arguments objectForKey:@"exception"] retain] autorelease];
-        id result = [[[arguments objectForKey:@"result"] retain] autorelease];
+
+        self = [self _webkit_performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments];
         [arguments release];
-        if (exception)
-            [exception raise];
-        return result;
+
+        return self;
     }
 #endif
 

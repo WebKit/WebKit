@@ -30,29 +30,40 @@
 
 @implementation NSObject (WebNSObjectExtras)
 
-- (void)_webkit_getPropertyWithArguments:(NSMutableDictionary *)arguments
+- (void)_webkit_performSelectorWithArguments:(NSMutableDictionary *)arguments
 {
     SEL selector = static_cast<SEL>([[arguments objectForKey:@"selector"] pointerValue]);
     @try {
-        id result = [self performSelector:selector];
+        id object = [arguments objectForKey:@"object"];
+        id result = [self performSelector:selector withObject:object];
         if (result)
-            [arguments setObject:result forKey:@"value"];
+            [arguments setObject:result forKey:@"result"];
     } @catch(NSException *exception) {
         [arguments setObject:exception forKey:@"exception"];
     }
 }
 
-- (id)_webkit_getPropertyOnMainThread:(SEL)selector
+- (id)_webkit_performSelectorOnMainThread:(SEL)selector withObject:(id)object
 {
     NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
     [arguments setObject:[NSValue valueWithPointer:selector] forKey:@"selector"];
-    [self performSelectorOnMainThread:@selector(_webkit_getPropertyWithArguments:) withObject:arguments waitUntilDone:TRUE];
+    if (object)
+        [arguments setObject:object forKey:@"object"];
+
+    [self performSelectorOnMainThread:@selector(_webkit_performSelectorWithArguments:) withObject:arguments waitUntilDone:TRUE];
+
     NSException *exception = [[[arguments objectForKey:@"exception"] retain] autorelease];
-    id value = [[[arguments objectForKey:@"value"] retain] autorelease];
+    id value = [[[arguments objectForKey:@"result"] retain] autorelease];
     [arguments release];
+
     if (exception)
         [exception raise];
     return value;
+}
+
+- (id)_webkit_getPropertyOnMainThread:(SEL)selector
+{
+    return [self _webkit_performSelectorOnMainThread:selector withObject:nil];
 }
 
 @end

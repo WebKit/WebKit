@@ -555,8 +555,9 @@ WebKit/mac/Misc/WebCache.mm:"Images"
 WebKit/mac/Misc/WebKitLogging.h:"<not running on main thread>"
 WebKit/mac/Misc/WebKitVersionChecks.m:"WebKit"
 WebKit/mac/Misc/WebNSNotificationCenterExtras.m
+WebKit/mac/Misc/WebNSObjectExtras.mm:"object"
 WebKit/mac/Misc/WebNSObjectExtras.mm:"selector"
-WebKit/mac/Misc/WebNSObjectExtras.mm:"value"
+WebKit/mac/Misc/WebNSObjectExtras.mm:"result"
 WebKit/mac/Misc/WebNSPasteboardExtras.mm
 WebKit/mac/Misc/WebNSURLExtras.mm:"file"
 WebKit/mac/Plugins/Hosted/HostedNetscapePluginStream.mm:" OK\n"

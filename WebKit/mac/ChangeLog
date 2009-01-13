@@ -1,3 +1,30 @@
+2009-01-13  Timothy Hatcher  <timothy@apple.com>
+
+        Adds a workaround for the flip4mac installer plugin decoding a WebView from a NIB on a secondary thread.
+
+        <rdar://problem/6489788> New WebKit thread checks break installation of flip4mac (thread violation)
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebKitVersionChecks.h: Add WEBKIT_FIRST_VERSION_WITHOUT_WEBVIEW_INIT_THREAD_WORKAROUND.
+        * Misc/WebNSObjectExtras.h: Add _webkit_performSelectorOnMainThread:withObject:.
+        * Misc/WebNSObjectExtras.mm:
+        (-[NSObject _webkit_performSelectorWithArguments:]): Renamed from _webkit_getPropertyWithArguments.
+        Passes the optional object to the selector.
+        (-[NSObject _webkit_performSelectorOnMainThread:withObject:]): Renamed from _webkit_getPropertyOnMainThread:.
+        Put the optional object into the arguments dictionary.
+        (-[NSObject _webkit_getPropertyOnMainThread:]): Call _webkit_performSelectorOnMainThread with a nil object.
+        * WebView/WebResource.mm:
+        (-[WebResource _ignoreWhenUnarchiving]): Use _cmd instead of making the selector again.
+        (-[WebResource _initWithData:URL:MIMEType:textEncodingName:frameName:response:copyData:]): Use the new
+        _webkit_performSelectorOnMainThread:withObject: method instead of performSelectorOnMainThread.
+        * WebView/WebView.mm:
+        (-[WebView _initWithArguments:]): Added. Pulls arguments out of the dictionary and calls the right init method.
+        (needsWebViewInitThreadWorkaround): Checks if the thead is not the main thread and if we are in the Installer bundle.
+        (-[WebView initWithFrame:frameName:groupName:]): Call needsWebViewInitThreadWorkaround and use _webkit_performSelectorOnMainThread
+        to call _initWithArguments: passing the frame, frameName and groupName.
+        (-[WebView initWithCoder:]): Ditto, except pass the coder to _initWithArguments:.
+
 2009-01-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
