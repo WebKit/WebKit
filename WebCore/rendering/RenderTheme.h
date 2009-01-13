@@ -60,10 +60,13 @@ public:
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // RenderThemeMac.cpp for Mac OS X.
 
-    // These methods return the theme's extra style sheets rules, to let each
-    // platform adjust the default CSS rules in html4.css or quirks.css.
+    // These methods return the theme's extra style sheets rules, to let each platform
+    // adjust the default CSS rules in html4.css, quirks.css, or mediaControls.css
     virtual String extraDefaultStyleSheet() { return String(); }
     virtual String extraQuirksStyleSheet() { return String(); }
+#if ENABLE(VIDEO)
+    virtual String extraMediaControlsStyleSheet() { return String(); };
+#endif
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
@@ -141,8 +144,6 @@ public:
     virtual bool paintCapsLockIndicator(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return 0; };
 
 #if ENABLE(VIDEO)
-    // Media controls
-    virtual String styleSheetForMediaControls();
     virtual bool hitTestMediaControlPart(RenderObject*, const IntPoint& absPoint);
 #endif
 

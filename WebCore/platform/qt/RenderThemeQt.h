@@ -42,8 +42,6 @@ public:
     RenderThemeQt();
     virtual ~RenderThemeQt();
 
-    virtual String extraDefaultStyleSheet();
-
     virtual bool supportsHover(const RenderStyle*) const;
     virtual bool supportsFocusRing(const RenderStyle* style) const;
 
@@ -73,6 +71,10 @@ public:
     virtual void adjustSliderThumbSize(RenderObject*) const;
 
     virtual double caretBlinkInterval() const;
+
+#if ENABLE(VIDEO)
+    virtual String extraMediaControlsStyleSheet();
+#endif
 
 protected:
     virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);

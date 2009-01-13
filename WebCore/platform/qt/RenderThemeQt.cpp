@@ -756,9 +756,11 @@ ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
     return result;
 }
 
-String RenderThemeQt::extraDefaultStyleSheet()
+#if ENABLE(VIDEO)
+
+String RenderThemeQt::extraMediaControlsStyleSheet()
 {
-    QFile platformStyleSheet(":/webcore/resources/html4-adjustments-qt.css");
+    QFile platformStyleSheet(":/webcore/css/mediaControls-extras.css");
     if (platformStyleSheet.open(QFile::ReadOnly)) {
         QByteArray sheetData = platformStyleSheet.readAll();
         return QString::fromUtf8(sheetData.constData(), sheetData.length());
@@ -766,8 +768,6 @@ String RenderThemeQt::extraDefaultStyleSheet()
 
     return String();
 }
-
-#if ENABLE(VIDEO)
 
 // Helper class to transform the painter's world matrix to the object's content area, scaled to 0,0,100,100
 class WorldMatrixTransformer

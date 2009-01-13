@@ -1092,12 +1092,10 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     static bool loadedMediaStyleSheet;
     if (!loadedMediaStyleSheet && (e->hasTagName(videoTag) || e->hasTagName(audioTag))) {
         loadedMediaStyleSheet = true;
-        const String& sheetText = theme()->styleSheetForMediaControls();
-        if (!sheetText.isNull()) {
-            CSSStyleSheet* mediaControlsSheet = parseUASheet(sheetText);
-            defaultStyle->addRulesFromSheet(mediaControlsSheet, screenEval());
-            defaultPrintStyle->addRulesFromSheet(mediaControlsSheet, printEval());
-        }
+        String mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + theme()->extraMediaControlsStyleSheet();
+        CSSStyleSheet* mediaControlsSheet = parseUASheet(mediaRules);
+        defaultStyle->addRulesFromSheet(mediaControlsSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(mediaControlsSheet, printEval());
     }
 #endif
 

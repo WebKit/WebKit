@@ -1,3 +1,32 @@
+2009-01-13  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Change how themes adjust mediaControls.css to match html4/quicks.css
+        
+        Instead of providing the full style sheet, the themes provide extra
+        overrides to the default style defined in UserAgentStyleSheetsData.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23210
+        
+        Also, merge WebKitResources.qrc and WebCoreResources.qrc to speed up
+        build time for the Qt port.
+
+        * Resources/WebKitResources.qrc: Removed. Merged into WebCore.qrc
+        * WebCore.pro:
+        * WebCore.qrc: Added.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        * css/qt/mediaControls-extras.css: Rename from html4-adjustments-qt.css
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::extraMediaControlsStyleSheet):
+        * platform/qt/RenderThemeQt.h:
+        * platform/qt/WebCoreResources.qrc: Removed.
+        * platform/qt/html4-adjustments-qt.css: Rename to mediaControls-extras.css
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::extraMediaControlsStyleSheet):
+
 2009-01-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
