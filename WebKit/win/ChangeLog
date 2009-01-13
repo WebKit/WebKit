@@ -1,3 +1,10 @@
+2009-01-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::jsValueToString):
+
 2009-01-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein
