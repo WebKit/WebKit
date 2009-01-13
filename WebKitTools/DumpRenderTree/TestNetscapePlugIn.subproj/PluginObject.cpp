@@ -677,3 +677,27 @@ void notifyStream(PluginObject* object, const char *url, const char *headers)
         object->lastHeaders = (headers ? strdup(headers) : NULL);
     }
 }
+
+void testNPRuntime(NPP npp)
+{
+    NPObject* windowScriptObject;
+    browser->getvalue(npp, NPNVWindowNPObject, &windowScriptObject);
+
+    // Invoke
+    NPIdentifier testNPInvoke = browser->getstringidentifier("testNPInvoke");
+    NPVariant args[7];
+    
+    VOID_TO_NPVARIANT(args[0]);
+    NULL_TO_NPVARIANT(args[1]);
+    BOOLEAN_TO_NPVARIANT(true, args[2]);
+    INT32_TO_NPVARIANT(242, args[3]);
+    DOUBLE_TO_NPVARIANT(242.242, args[4]);
+    STRINGZ_TO_NPVARIANT("Hello, World", args[5]);
+    OBJECT_TO_NPVARIANT(windowScriptObject, args[6]);
+    
+    NPVariant result;
+    browser->invoke(npp, windowScriptObject, testNPInvoke, args, 7, &result);
+    
+    browser->releasevariantvalue(&result);
+    browser->releaseobject(windowScriptObject);
+}

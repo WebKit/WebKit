@@ -1,3 +1,16 @@
+2009-01-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add NPRuntime test.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (testNPRuntime):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New):
+        (NPP_GetValue):
+
 2009-01-12  Mark Rowe  <mrowe@apple.com>
 
         Use the modern spelling of WebKit.

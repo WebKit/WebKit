@@ -48,3 +48,4 @@ typedef struct {
 extern NPClass *getPluginClass(void);
 extern void handleCallback(PluginObject* object, const char *url, NPReason reason, void *notifyData);
 extern void notifyStream(PluginObject* object, const char *url, const char *headers);
+extern void testNPRuntime(NPP npp);
