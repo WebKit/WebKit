@@ -1,3 +1,28 @@
+2009-01-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Land portions of platform/graphics/chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=23297
+
+        * platform/graphics/chromium/FontCustomPlatformData.cpp: Added.
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::EOTStream::EOTStream):
+        (WebCore::EOTStream::read):
+        (WebCore::readEmbedProc):
+        (WebCore::createUniqueFontName):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/chromium/FontCustomPlatformData.h: Added.
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        * platform/graphics/chromium/FontLinux.cpp: Added.
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        * platform/graphics/chromium/FontPlatformData.h: Added.
+
 2009-01-13  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Oliver Hunt.
