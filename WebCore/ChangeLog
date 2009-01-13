@@ -1,3 +1,28 @@
+2009-01-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Bug 23277: space bar scrolls the page when typed in any text field
+        https://bugs.webkit.org/show_bug.cgi?id=23277
+        rdar://problem/6490249
+
+        There's already a regression test for this, since bug 16421 was the same problem, but on
+        Mac. The regression test is fast/events/space-scroll-event.html, so I won't write a new one.
+
+        This bug doesn't affect Mac because the canEdit check in -[WebHTMLView insertText:] prevents
+        a text input event from being generated at all. That difference may in itself be a bug, but
+        the only symptom is that you get text input events in more cases on platforms other than Mac.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTextInputEvent): Return whether the event's default was
+        handled, not the result of the dispatchEvent function, which indicates only whether the
+        default behavior was prevented, not if the default behavior did some insertion. This fix
+        makes it so the keyboard event handler can detect that no space was inserted and know that
+        the space bar keypress event can be treated as a scrolling command.
+        (WebCore::EventHandler::defaultKeyboardEventHandler): Handle the keypress event, not the
+        keydown event. Without the change above, making this change would have restored the old
+        behavior, reintroducing bug 22913 where the space bar doesn't scroll at all on Windows.
+
 2009-01-13  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
