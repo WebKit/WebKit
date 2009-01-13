@@ -601,6 +601,9 @@ static void webkit_web_view_realize(GtkWidget* widget)
 
 static void webkit_web_view_set_scroll_adjustments(WebKitWebView* webView, GtkAdjustment* hadj, GtkAdjustment* vadj)
 {
+    if (!core(webView))
+        return;
+
     FrameView* view = core(webkit_web_view_get_main_frame(webView))->view();
 
     if (hadj)
@@ -883,6 +886,9 @@ static gboolean webkit_navigation_request_handled(GSignalInvocationHint* ihint, 
 static AtkObject* webkit_web_view_get_accessible(GtkWidget* widget)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    if (!core(webView))
+        return NULL;
+
     AXObjectCache::enableAccessibility();
 
     Frame* coreFrame = core(webView)->mainFrame();
