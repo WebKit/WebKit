@@ -100,19 +100,6 @@ bool JSCell::getTruncatedUInt32(uint32_t&) const
     return false;
 }
 
-bool JSCell::getNumber(double& numericValue) const
-{
-    if (!isNumber())
-        return false;
-    numericValue = static_cast<const JSNumberCell*>(this)->value();
-    return true;
-}
-
-double JSCell::getNumber() const
-{
-    return isNumber() ? static_cast<const JSNumberCell*>(this)->value() : NaN;
-}
-
 bool JSCell::getString(UString&stringValue) const
 {
     if (!isString())

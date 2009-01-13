@@ -107,54 +107,14 @@ static int depth(CodeBlock* codeBlock, ScopeChain& sc)
     return sc.localDepth();
 }
 
-// FIXME: This operation should be called "getNumber", not "isNumber" (as it is in JSValue.h).
-// FIXME: There's no need to have a "slow" version of this. All versions should be fast.
-static ALWAYS_INLINE bool fastIsNumber(JSValuePtr value, double& arg)
-{
-    if (JSImmediate::isNumber(value))
-        arg = JSImmediate::getTruncatedInt32(value);
-    else if (LIKELY(!JSImmediate::isImmediate(value)) && LIKELY(Heap::isNumber(asCell(value))))
-        arg = asNumberCell(value)->value();
-    else
-        return false;
-    return true;
-}
-
-// FIXME: Why doesn't JSValuePtr::toInt32 have the Heap::isNumber optimization?
-static bool fastToInt32(JSValuePtr value, int32_t& arg)
-{
-    if (JSImmediate::isNumber(value))
-        arg = JSImmediate::getTruncatedInt32(value);
-    else if (LIKELY(!JSImmediate::isImmediate(value)) && LIKELY(Heap::isNumber(asCell(value))))
-        arg = asNumberCell(value)->toInt32();
-    else
-        return false;
-    return true;
-}
-
-static ALWAYS_INLINE bool fastToUInt32(JSValuePtr value, uint32_t& arg)
-{
-    if (JSImmediate::isNumber(value)) {
-        if (JSImmediate::getTruncatedUInt32(value, arg))
-            return true;
-        bool scratch;
-        arg = toUInt32SlowCase(JSImmediate::getTruncatedInt32(value), scratch);
-        return true;
-    } else if (!JSImmediate::isImmediate(value) && Heap::isNumber(asCell(value)))
-        arg = asNumberCell(value)->toUInt32();
-    else
-        return false;
-    return true;
-}
-
 static inline bool jsLess(CallFrame* callFrame, JSValuePtr v1, JSValuePtr v2)
 {
-    if (JSImmediate::areBothImmediateNumbers(v1, v2))
-        return JSImmediate::getTruncatedInt32(v1) < JSImmediate::getTruncatedInt32(v2);
+    if (JSValuePtr::areBothInt32Fast(v1, v2))
+        return v1->getInt32Fast() < v2->getInt32Fast();
 
     double n1;
     double n2;
-    if (fastIsNumber(v1, n1) && fastIsNumber(v2, n2))
+    if (v1->getNumber(n1) && v2->getNumber(n2))
         return n1 < n2;
 
     Interpreter* interpreter = callFrame->interpreter();
@@ -174,12 +134,12 @@ static inline bool jsLess(CallFrame* callFrame, JSValuePtr v1, JSValuePtr v2)
 
 static inline bool jsLessEq(CallFrame* callFrame, JSValuePtr v1, JSValuePtr v2)
 {
-    if (JSImmediate::areBothImmediateNumbers(v1, v2))
-        return JSImmediate::getTruncatedInt32(v1) <= JSImmediate::getTruncatedInt32(v2);
+    if (JSValuePtr::areBothInt32Fast(v1, v2))
+        return v1->getInt32Fast() <= v2->getInt32Fast();
 
     double n1;
     double n2;
-    if (fastIsNumber(v1, n1) && fastIsNumber(v2, n2))
+    if (v1->getNumber(n1) && v2->getNumber(n2))
         return n1 <= n2;
 
     Interpreter* interpreter = callFrame->interpreter();
@@ -227,8 +187,8 @@ static ALWAYS_INLINE JSValuePtr jsAdd(CallFrame* callFrame, JSValuePtr v1, JSVal
     double left;
     double right = 0.0;
 
-    bool rightIsNumber = fastIsNumber(v2, right);
-    if (rightIsNumber && fastIsNumber(v1, left))
+    bool rightIsNumber = v2->getNumber(right);
+    if (rightIsNumber && v1->getNumber(left))
         return jsNumber(callFrame, left + right);
     
     bool leftIsString = v1->isString();
@@ -240,8 +200,8 @@ static ALWAYS_INLINE JSValuePtr jsAdd(CallFrame* callFrame, JSValuePtr v1, JSVal
     }
 
     if (rightIsNumber & leftIsString) {
-        RefPtr<UString::Rep> value = JSImmediate::isImmediate(v2) ?
-            concatenate(asString(v1)->value().rep(), JSImmediate::getTruncatedInt32(v2)) :
+        RefPtr<UString::Rep> value = v2->isInt32Fast() ?
+            concatenate(asString(v1)->value().rep(), v2->getInt32Fast()) :
             concatenate(asString(v1)->value().rep(), right);
 
         if (!value)
@@ -277,7 +237,7 @@ static JSValuePtr jsTypeStringForValue(CallFrame* callFrame, JSValuePtr v)
 
 static bool jsIsObjectType(JSValuePtr v)
 {
-    if (JSImmediate::isImmediate(v))
+    if (!v->isCell())
         return v->isNull();
 
     JSType type = asCell(v)->structure()->typeInfo().type();
@@ -1207,7 +1167,7 @@ NEVER_INLINE ScopeChainNode* Interpreter::createExceptionScope(CallFrame* callFr
 static StructureChain* cachePrototypeChain(CallFrame* callFrame, Structure* structure)
 {
     JSValuePtr prototype = structure->prototypeForLookup(callFrame);
-    if (JSImmediate::isImmediate(prototype))
+    if (!prototype->isCell())
         return 0;
     RefPtr<StructureChain> chain = StructureChain::create(asObject(prototype)->structure());
     structure->setCachedPrototypeChain(chain.release());
@@ -1220,7 +1180,7 @@ NEVER_INLINE void Interpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* 
     if (vPC[0].u.opcode != getOpcode(op_put_by_id))
         return;
 
-    if (JSImmediate::isImmediate(baseValue))
+    if (!baseValue->isCell())
         return;
 
     // Uncacheable: give up.
@@ -1329,7 +1289,7 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         return;
 
     // FIXME: Cache property access for immediates.
-    if (JSImmediate::isImmediate(baseValue)) {
+    if (!baseValue->isCell()) {
         vPC[0] = getOpcode(op_get_by_id_generic);
         return;
     }
@@ -1573,10 +1533,10 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int dst = (++vPC)->u.operand;
         JSValuePtr src1 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         JSValuePtr src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
-        if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            callFrame[dst] = jsBoolean(src1 == src2);
+        if (JSFastMath::canDoFastBitwiseOperations(src1, src2))
+            callFrame[dst] = JSFastMath::equal(src1, src2);
         else {
-            JSValuePtr result = jsBoolean(equalSlowCase(callFrame, src1, src2));
+            JSValuePtr result = jsBoolean(JSValuePtr::equalSlowCase(callFrame, src1, src2));
             CHECK_FOR_EXCEPTION();
             callFrame[dst] = result;
         }
@@ -1599,7 +1559,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
             NEXT_INSTRUCTION();
         }
         
-        callFrame[dst] = jsBoolean(!JSImmediate::isImmediate(src) && src->asCell()->structure()->typeInfo().masqueradesAsUndefined());
+        callFrame[dst] = jsBoolean(src->isCell() && src->asCell()->structure()->typeInfo().masqueradesAsUndefined());
         ++vPC;
         NEXT_INSTRUCTION();
     }
@@ -1613,10 +1573,10 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int dst = (++vPC)->u.operand;
         JSValuePtr src1 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         JSValuePtr src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
-        if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            callFrame[dst] = jsBoolean(src1 != src2);
+        if (JSFastMath::canDoFastBitwiseOperations(src1, src2))
+            callFrame[dst] = JSFastMath::notEqual(src1, src2);
         else {
-            JSValuePtr result = jsBoolean(!equalSlowCase(callFrame, src1, src2));
+            JSValuePtr result = jsBoolean(!JSValuePtr::equalSlowCase(callFrame, src1, src2));
             CHECK_FOR_EXCEPTION();
             callFrame[dst] = result;
         }
@@ -1639,7 +1599,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
             NEXT_INSTRUCTION();
         }
         
-        callFrame[dst] = jsBoolean(JSImmediate::isImmediate(src) || !asCell(src)->structure()->typeInfo().masqueradesAsUndefined());
+        callFrame[dst] = jsBoolean(src->isCell() || !asCell(src)->structure()->typeInfo().masqueradesAsUndefined());
         ++vPC;
         NEXT_INSTRUCTION();
     }
@@ -1653,12 +1613,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int dst = (++vPC)->u.operand;
         JSValuePtr src1 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         JSValuePtr src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
-        if (JSImmediate::areBothImmediate(src1, src2))
-            callFrame[dst] = jsBoolean(src1 == src2);
-        else if (JSImmediate::isEitherImmediate(src1, src2) & (src1 != JSImmediate::zeroImmediate()) & (src2 != JSImmediate::zeroImmediate()))
-            callFrame[dst] = jsBoolean(false);
-        else
-            callFrame[dst] = jsBoolean(strictEqualSlowCase(src1, src2));
+        callFrame[dst] = jsBoolean(JSValuePtr::strictEqual(src1, src2));
 
         ++vPC;
         NEXT_INSTRUCTION();
@@ -1673,13 +1628,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int dst = (++vPC)->u.operand;
         JSValuePtr src1 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         JSValuePtr src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
-
-        if (JSImmediate::areBothImmediate(src1, src2))
-            callFrame[dst] = jsBoolean(src1 != src2);
-        else if (JSImmediate::isEitherImmediate(src1, src2) & (src1 != JSImmediate::zeroImmediate()) & (src2 != JSImmediate::zeroImmediate()))
-            callFrame[dst] = jsBoolean(true);
-        else
-            callFrame[dst] = jsBoolean(!strictEqualSlowCase(src1, src2));
+        callFrame[dst] = jsBoolean(!JSValuePtr::strictEqual(src1, src2));
 
         ++vPC;
         NEXT_INSTRUCTION();
@@ -1726,8 +1675,8 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         */
         int srcDst = (++vPC)->u.operand;
         JSValuePtr v = callFrame[srcDst].jsValue(callFrame);
-        if (JSImmediate::canDoFastAdditiveOperations(v))
-            callFrame[srcDst] = JSValuePtr(JSImmediate::incImmediateNumber(v));
+        if (JSFastMath::canDoFastAdditiveOperations(v))
+            callFrame[srcDst] = JSValuePtr(JSFastMath::incImmediateNumber(v));
         else {
             JSValuePtr result = jsNumber(callFrame, v->toNumber(callFrame) + 1);
             CHECK_FOR_EXCEPTION();
@@ -1745,8 +1694,8 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         */
         int srcDst = (++vPC)->u.operand;
         JSValuePtr v = callFrame[srcDst].jsValue(callFrame);
-        if (JSImmediate::canDoFastAdditiveOperations(v))
-            callFrame[srcDst] = JSValuePtr(JSImmediate::decImmediateNumber(v));
+        if (JSFastMath::canDoFastAdditiveOperations(v))
+            callFrame[srcDst] = JSValuePtr(JSFastMath::decImmediateNumber(v));
         else {
             JSValuePtr result = jsNumber(callFrame, v->toNumber(callFrame) - 1);
             CHECK_FOR_EXCEPTION();
@@ -1766,9 +1715,9 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int dst = (++vPC)->u.operand;
         int srcDst = (++vPC)->u.operand;
         JSValuePtr v = callFrame[srcDst].jsValue(callFrame);
-        if (JSImmediate::canDoFastAdditiveOperations(v)) {
+        if (JSFastMath::canDoFastAdditiveOperations(v)) {
             callFrame[dst] = v;
-            callFrame[srcDst] = JSValuePtr(JSImmediate::incImmediateNumber(v));
+            callFrame[srcDst] = JSValuePtr(JSFastMath::incImmediateNumber(v));
         } else {
             JSValuePtr number = callFrame[srcDst].jsValue(callFrame)->toJSNumber(callFrame);
             CHECK_FOR_EXCEPTION();
@@ -1789,9 +1738,9 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int dst = (++vPC)->u.operand;
         int srcDst = (++vPC)->u.operand;
         JSValuePtr v = callFrame[srcDst].jsValue(callFrame);
-        if (JSImmediate::canDoFastAdditiveOperations(v)) {
+        if (JSFastMath::canDoFastAdditiveOperations(v)) {
             callFrame[dst] = v;
-            callFrame[srcDst] = JSValuePtr(JSImmediate::decImmediateNumber(v));
+            callFrame[srcDst] = JSValuePtr(JSFastMath::decImmediateNumber(v));
         } else {
             JSValuePtr number = callFrame[srcDst].jsValue(callFrame)->toJSNumber(callFrame);
             CHECK_FOR_EXCEPTION();
@@ -1834,7 +1783,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr src = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         ++vPC;
         double v;
-        if (fastIsNumber(src, v))
+        if (src->getNumber(v))
             callFrame[dst] = JSValuePtr(jsNumber(callFrame, -v));
         else {
             JSValuePtr result = jsNumber(callFrame, -src->toNumber(callFrame));
@@ -1854,8 +1803,8 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int dst = (++vPC)->u.operand;
         JSValuePtr src1 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         JSValuePtr src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
-        if (JSImmediate::canDoFastAdditiveOperations(src1) && JSImmediate::canDoFastAdditiveOperations(src2))
-            callFrame[dst] = JSValuePtr(JSImmediate::addImmediateNumbers(src1, src2));
+        if (JSFastMath::canDoFastAdditiveOperations(src1, src2))
+            callFrame[dst] = JSValuePtr(JSFastMath::addImmediateNumbers(src1, src2));
         else {
             JSValuePtr result = jsAdd(callFrame, src1, src2);
             CHECK_FOR_EXCEPTION();
@@ -1875,14 +1824,14 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         double left;
         double right;
-        if (JSImmediate::areBothImmediateNumbers(src1, src2)) {
-            int32_t left = JSImmediate::getTruncatedInt32(src1);
-            int32_t right = JSImmediate::getTruncatedInt32(src2);
+        if (JSValuePtr::areBothInt32Fast(src1, src2)) {
+            int32_t left = src1->getInt32Fast();
+            int32_t right = src2->getInt32Fast();
             if ((left | right) >> 15 == 0)
                 callFrame[dst] = JSValuePtr(jsNumber(callFrame, left * right));
             else
                 callFrame[dst] = JSValuePtr(jsNumber(callFrame, static_cast<double>(left) * static_cast<double>(right)));
-        } else if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
+        } else if (src1->getNumber(left) && src2->getNumber(right))
             callFrame[dst] = JSValuePtr(jsNumber(callFrame, left * right));
         else {
             JSValuePtr result = jsNumber(callFrame, src1->toNumber(callFrame) * src2->toNumber(callFrame));
@@ -1905,7 +1854,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr divisor = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         double left;
         double right;
-        if (fastIsNumber(dividend, left) && fastIsNumber(divisor, right))
+        if (dividend->getNumber(left) && divisor->getNumber(right))
             callFrame[dst] = JSValuePtr(jsNumber(callFrame, left / right));
         else {
             JSValuePtr result = jsNumber(callFrame, dividend->toNumber(callFrame) / divisor->toNumber(callFrame));
@@ -1929,8 +1878,12 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr dividendValue = callFrame[dividend].jsValue(callFrame);
         JSValuePtr divisorValue = callFrame[divisor].jsValue(callFrame);
 
-        if (JSImmediate::areBothImmediateNumbers(dividendValue, divisorValue) && divisorValue != JSImmediate::from(0)) {
-            callFrame[dst] = JSValuePtr(JSImmediate::from(JSImmediate::getTruncatedInt32(dividendValue) % JSImmediate::getTruncatedInt32(divisorValue)));
+        if (JSValuePtr::areBothInt32Fast(dividendValue, divisorValue) && divisorValue != js0()) {
+            // We expect the result of the modulus of a number that was representable as an int32 to also be representable
+            // as an int32.
+            JSValuePtr result = JSValuePtr::makeInt32Fast(dividendValue->getInt32Fast() % divisorValue->getInt32Fast());
+            ASSERT(result);
+            callFrame[dst] = result;
             ++vPC;
             NEXT_INSTRUCTION();
         }
@@ -1954,9 +1907,9 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         double left;
         double right;
-        if (JSImmediate::canDoFastAdditiveOperations(src1) && JSImmediate::canDoFastAdditiveOperations(src2))
-            callFrame[dst] = JSValuePtr(JSImmediate::subImmediateNumbers(src1, src2));
-        else if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
+        if (JSFastMath::canDoFastAdditiveOperations(src1, src2))
+            callFrame[dst] = JSValuePtr(JSFastMath::subImmediateNumbers(src1, src2));
+        else if (src1->getNumber(left) && src2->getNumber(right))
             callFrame[dst] = JSValuePtr(jsNumber(callFrame, left - right));
         else {
             JSValuePtr result = jsNumber(callFrame, src1->toNumber(callFrame) - src2->toNumber(callFrame));
@@ -1978,9 +1931,9 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr shift = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         int32_t left;
         uint32_t right;
-        if (JSImmediate::areBothImmediateNumbers(val, shift))
-            callFrame[dst] = JSValuePtr(jsNumber(callFrame, JSImmediate::getTruncatedInt32(val) << (JSImmediate::getTruncatedUInt32(shift) & 0x1f)));
-        else if (fastToInt32(val, left) && fastToUInt32(shift, right))
+        if (JSValuePtr::areBothInt32Fast(val, shift))
+            callFrame[dst] = JSValuePtr(jsNumber(callFrame, val->getInt32Fast() << (shift->getInt32Fast() & 0x1f)));
+        else if (val->numberToInt32(left) && shift->numberToUInt32(right))
             callFrame[dst] = JSValuePtr(jsNumber(callFrame, left << (right & 0x1f)));
         else {
             JSValuePtr result = jsNumber(callFrame, (val->toInt32(callFrame)) << (shift->toUInt32(callFrame) & 0x1f));
@@ -2003,9 +1956,9 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr shift = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         int32_t left;
         uint32_t right;
-        if (JSImmediate::areBothImmediateNumbers(val, shift))
-            callFrame[dst] = JSValuePtr(JSImmediate::rightShiftImmediateNumbers(val, shift));
-        else if (fastToInt32(val, left) && fastToUInt32(shift, right))
+        if (JSFastMath::canDoFastRshift(val, shift))
+            callFrame[dst] = JSValuePtr(JSFastMath::rightShiftImmediateNumbers(val, shift));
+        else if (val->numberToInt32(left) && shift->numberToUInt32(right))
             callFrame[dst] = JSValuePtr(jsNumber(callFrame, left >> (right & 0x1f)));
         else {
             JSValuePtr result = jsNumber(callFrame, (val->toInt32(callFrame)) >> (shift->toUInt32(callFrame) & 0x1f));
@@ -2026,8 +1979,8 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int dst = (++vPC)->u.operand;
         JSValuePtr val = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         JSValuePtr shift = callFrame[(++vPC)->u.operand].jsValue(callFrame);
-        if (JSImmediate::areBothImmediateNumbers(val, shift) && !JSImmediate::isNegative(val))
-            callFrame[dst] = JSValuePtr(JSImmediate::rightShiftImmediateNumbers(val, shift));
+        if (JSFastMath::canDoFastUrshift(val, shift))
+            callFrame[dst] = JSValuePtr(JSFastMath::rightShiftImmediateNumbers(val, shift));
         else {
             JSValuePtr result = jsNumber(callFrame, (val->toUInt32(callFrame)) >> (shift->toUInt32(callFrame) & 0x1f));
             CHECK_FOR_EXCEPTION();
@@ -2049,9 +2002,9 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         int32_t left;
         int32_t right;
-        if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            callFrame[dst] = JSValuePtr(JSImmediate::andImmediateNumbers(src1, src2));
-        else if (fastToInt32(src1, left) && fastToInt32(src2, right))
+        if (JSFastMath::canDoFastBitwiseOperations(src1, src2))
+            callFrame[dst] = JSValuePtr(JSFastMath::andImmediateNumbers(src1, src2));
+        else if (src1->numberToInt32(left) && src2->numberToInt32(right))
             callFrame[dst] = JSValuePtr(jsNumber(callFrame, left & right));
         else {
             JSValuePtr result = jsNumber(callFrame, src1->toInt32(callFrame) & src2->toInt32(callFrame));
@@ -2074,9 +2027,9 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         int32_t left;
         int32_t right;
-        if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            callFrame[dst] = JSValuePtr(JSImmediate::xorImmediateNumbers(src1, src2));
-        else if (fastToInt32(src1, left) && fastToInt32(src2, right))
+        if (JSFastMath::canDoFastBitwiseOperations(src1, src2))
+            callFrame[dst] = JSValuePtr(JSFastMath::xorImmediateNumbers(src1, src2));
+        else if (src1->numberToInt32(left) && src2->numberToInt32(right))
             callFrame[dst] = JSValuePtr(jsNumber(callFrame, left ^ right));
         else {
             JSValuePtr result = jsNumber(callFrame, src1->toInt32(callFrame) ^ src2->toInt32(callFrame));
@@ -2099,9 +2052,9 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         int32_t left;
         int32_t right;
-        if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            callFrame[dst] = JSValuePtr(JSImmediate::orImmediateNumbers(src1, src2));
-        else if (fastToInt32(src1, left) && fastToInt32(src2, right))
+        if (JSFastMath::canDoFastBitwiseOperations(src1, src2))
+            callFrame[dst] = JSValuePtr(JSFastMath::orImmediateNumbers(src1, src2));
+        else if (src1->numberToInt32(left) && src2->numberToInt32(right))
             callFrame[dst] = JSValuePtr(jsNumber(callFrame, left | right));
         else {
             JSValuePtr result = jsNumber(callFrame, src1->toInt32(callFrame) | src2->toInt32(callFrame));
@@ -2121,7 +2074,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int dst = (++vPC)->u.operand;
         JSValuePtr src = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         int32_t value;
-        if (fastToInt32(src, value))
+        if (src->numberToInt32(value))
             callFrame[dst] = JSValuePtr(jsNumber(callFrame, ~value));
         else {
             JSValuePtr result = jsNumber(callFrame, ~src->toInt32(callFrame));
@@ -2198,7 +2151,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int dst = (++vPC)->u.operand;
         int src = (++vPC)->u.operand;
         JSValuePtr v = callFrame[src].jsValue(callFrame);
-        callFrame[dst] = jsBoolean(JSImmediate::isImmediate(v) ? v->isUndefined() : v->asCell()->structure()->typeInfo().masqueradesAsUndefined());
+        callFrame[dst] = jsBoolean(v->isCell() ? v->asCell()->structure()->typeInfo().masqueradesAsUndefined() : v->isUndefined());
 
         ++vPC;
         NEXT_INSTRUCTION();
@@ -2509,7 +2462,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int base = vPC[2].u.operand;
         JSValuePtr baseValue = callFrame[base].jsValue(callFrame);
 
-        if (LIKELY(!JSImmediate::isImmediate(baseValue))) {
+        if (LIKELY(baseValue->isCell())) {
             JSCell* baseCell = asCell(baseValue);
             Structure* structure = vPC[4].u.structure;
 
@@ -2540,7 +2493,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int base = vPC[2].u.operand;
         JSValuePtr baseValue = callFrame[base].jsValue(callFrame);
 
-        if (LIKELY(!JSImmediate::isImmediate(baseValue))) {
+        if (LIKELY(baseValue->isCell())) {
             JSCell* baseCell = asCell(baseValue);
             Structure* structure = vPC[4].u.structure;
 
@@ -2589,7 +2542,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int base = vPC[2].u.operand;
         JSValuePtr baseValue = callFrame[base].jsValue(callFrame);
 
-        if (LIKELY(!JSImmediate::isImmediate(baseValue))) {
+        if (LIKELY(baseValue->isCell())) {
             JSCell* baseCell = asCell(baseValue);
             Structure* structure = vPC[4].u.structure;
 
@@ -2721,7 +2674,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int base = vPC[1].u.operand;
         JSValuePtr baseValue = callFrame[base].jsValue(callFrame);
         
-        if (LIKELY(!JSImmediate::isImmediate(baseValue))) {
+        if (LIKELY(baseValue->isCell())) {
             JSCell* baseCell = asCell(baseValue);
             Structure* oldStructure = vPC[4].u.structure;
             Structure* newStructure = vPC[5].u.structure;
@@ -2771,7 +2724,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int base = vPC[1].u.operand;
         JSValuePtr baseValue = callFrame[base].jsValue(callFrame);
 
-        if (LIKELY(!JSImmediate::isImmediate(baseValue))) {
+        if (LIKELY(baseValue->isCell())) {
             JSCell* baseCell = asCell(baseValue);
             Structure* structure = vPC[4].u.structure;
 
@@ -2850,10 +2803,9 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr subscript = callFrame[property].jsValue(callFrame);
 
         JSValuePtr result;
-        unsigned i;
 
-        bool isUInt32 = JSImmediate::getUInt32(subscript, i);
-        if (LIKELY(isUInt32)) {
+        if (LIKELY(subscript->isUInt32Fast())) {
+            uint32_t i = subscript->getUInt32Fast();
             if (isJSArray(baseValue)) {
                 JSArray* jsArray = asArray(baseValue);
                 if (jsArray->canGetIndex(i))
@@ -2863,7 +2815,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
             } else if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
                 result = asString(baseValue)->getIndex(&callFrame->globalData(), i);
             else if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i))
-                result = asByteArray(baseValue)->getIndex(i);
+                result = asByteArray(baseValue)->getIndex(callFrame, i);
             else
                 result = baseValue->get(callFrame, i);
         } else {
@@ -2894,10 +2846,8 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr baseValue = callFrame[base].jsValue(callFrame);
         JSValuePtr subscript = callFrame[property].jsValue(callFrame);
 
-        unsigned i;
-
-        bool isUInt32 = JSImmediate::getUInt32(subscript, i);
-        if (LIKELY(isUInt32)) {
+        if (LIKELY(subscript->isUInt32Fast())) {
+            uint32_t i = subscript->getUInt32Fast();
             if (isJSArray(baseValue)) {
                 JSArray* jsArray = asArray(baseValue);
                 if (jsArray->canSetIndex(i))
@@ -2908,9 +2858,9 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
                 JSByteArray* jsByteArray = asByteArray(baseValue);
                 double dValue = 0;
                 JSValuePtr jsValue = callFrame[value].jsValue(callFrame);
-                if (JSImmediate::isNumber(jsValue))
-                    jsByteArray->setIndex(i, JSImmediate::getTruncatedInt32(jsValue));
-                else if (fastIsNumber(jsValue, dValue))
+                if (jsValue->isInt32Fast())
+                    jsByteArray->setIndex(i, jsValue->getInt32Fast());
+                else if (jsValue->getNumber(dValue))
                     jsByteArray->setIndex(i, dValue);
                 else
                     baseValue->put(callFrame, i, jsValue);
@@ -3073,7 +3023,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int target = (++vPC)->u.operand;
         JSValuePtr srcValue = callFrame[src].jsValue(callFrame);
 
-        if (srcValue->isUndefinedOrNull() || (!JSImmediate::isImmediate(srcValue) && srcValue->asCell()->structure()->typeInfo().masqueradesAsUndefined())) {
+        if (srcValue->isUndefinedOrNull() || (srcValue->isCell() && srcValue->asCell()->structure()->typeInfo().masqueradesAsUndefined())) {
             vPC += target;
             NEXT_INSTRUCTION();
         }
@@ -3091,7 +3041,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int target = (++vPC)->u.operand;
         JSValuePtr srcValue = callFrame[src].jsValue(callFrame);
 
-        if (!srcValue->isUndefinedOrNull() || (!JSImmediate::isImmediate(srcValue) && !srcValue->asCell()->structure()->typeInfo().masqueradesAsUndefined())) {
+        if (!srcValue->isUndefinedOrNull() || (srcValue->isCell() && !srcValue->asCell()->structure()->typeInfo().masqueradesAsUndefined())) {
             vPC += target;
             NEXT_INSTRUCTION();
         }
@@ -3188,12 +3138,10 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         int tableIndex = (++vPC)->u.operand;
         int defaultOffset = (++vPC)->u.operand;
         JSValuePtr scrutinee = callFrame[(++vPC)->u.operand].jsValue(callFrame);
-        if (!JSImmediate::isNumber(scrutinee))
+        if (scrutinee->isInt32Fast())
+            vPC += callFrame->codeBlock()->immediateSwitchJumpTable(tableIndex).offsetForValue(scrutinee->getInt32Fast(), defaultOffset);
+        else
             vPC += defaultOffset;
-        else {
-            int32_t value = JSImmediate::getTruncatedInt32(scrutinee);
-            vPC += callFrame->codeBlock()->immediateSwitchJumpTable(tableIndex).offsetForValue(value, defaultOffset);
-        }
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_switch_char) {
@@ -4056,7 +4004,7 @@ NEVER_INLINE void Interpreter::tryCTICachePutByID(CallFrame* callFrame, CodeBloc
 {
     // The interpreter checks for recursion here; I do not believe this can occur in CTI.
 
-    if (JSImmediate::isImmediate(baseValue))
+    if (!baseValue->isCell())
         return;
 
     // Uncacheable: give up.
@@ -4115,7 +4063,7 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
     // like the interpreter does, then add a check for recursion.
 
     // FIXME: Cache property access for immediates.
-    if (JSImmediate::isImmediate(baseValue)) {
+    if (!baseValue->isCell()) {
         ctiPatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(cti_op_get_by_id_generic));
         return;
     }
@@ -4331,8 +4279,8 @@ JSValueEncodedAsPointer* Interpreter::cti_op_add(STUB_ARGS)
     double left;
     double right = 0.0;
 
-    bool rightIsNumber = fastIsNumber(v2, right);
-    if (rightIsNumber && fastIsNumber(v1, left))
+    bool rightIsNumber = v2->getNumber(right);
+    if (rightIsNumber && v1->getNumber(left))
         return JSValuePtr::encode(jsNumber(ARG_globalData, left + right));
     
     CallFrame* callFrame = ARG_callFrame;
@@ -4349,8 +4297,8 @@ JSValueEncodedAsPointer* Interpreter::cti_op_add(STUB_ARGS)
     }
 
     if (rightIsNumber & leftIsString) {
-        RefPtr<UString::Rep> value = JSImmediate::isImmediate(v2) ?
-            concatenate(asString(v1)->value().rep(), JSImmediate::getTruncatedInt32(v2)) :
+        RefPtr<UString::Rep> value = v2->isInt32Fast() ?
+            concatenate(asString(v1)->value().rep(), v2->getInt32Fast()) :
             concatenate(asString(v1)->value().rep(), right);
 
         if (UNLIKELY(!value)) {
@@ -4549,7 +4497,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_get_by_id_self_fail(STUB_ARGS)
 
     CHECK_FOR_EXCEPTION();
 
-    if (!JSImmediate::isImmediate(baseValue)
+    if (baseValue->isCell()
         && slot.isCacheable()
         && !asCell(baseValue)->structure()->isDictionary()
         && slot.slotBase() == baseValue) {
@@ -4623,7 +4571,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_get_by_id_proto_list(STUB_ARGS)
 
     CHECK_FOR_EXCEPTION();
 
-    if (JSImmediate::isImmediate(baseValue) || !slot.isCacheable() || asCell(baseValue)->structure()->isDictionary()) {
+    if (!baseValue->isCell() || !slot.isCacheable() || asCell(baseValue)->structure()->isDictionary()) {
         ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_fail));
         return JSValuePtr::encode(result);
     }
@@ -4732,7 +4680,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_instanceof(STUB_ARGS)
     JSValuePtr proto = ARG_src3;
 
     // at least one of these checks must have failed to get to the slow case
-    ASSERT(JSImmediate::isAnyImmediate(value, baseVal, proto) 
+    ASSERT(!value->isCell() || !baseVal->isCell() || !proto->isCell()
            || !value->isObject() || !baseVal->isObject() || !proto->isObject() 
            || (asObject(baseVal)->structure()->typeInfo().flags() & (ImplementsHasInstance | OverridesHasInstance)) != ImplementsHasInstance);
 
@@ -4783,7 +4731,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_mul(STUB_ARGS)
 
     double left;
     double right;
-    if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
+    if (src1->getNumber(left) && src2->getNumber(right))
         return JSValuePtr::encode(jsNumber(ARG_globalData, left * right));
 
     CallFrame* callFrame = ARG_callFrame;
@@ -5105,10 +5053,9 @@ JSValueEncodedAsPointer* Interpreter::cti_op_get_by_val(STUB_ARGS)
     JSValuePtr subscript = ARG_src2;
 
     JSValuePtr result;
-    unsigned i;
 
-    bool isUInt32 = JSImmediate::getUInt32(subscript, i);
-    if (LIKELY(isUInt32)) {
+    if (LIKELY(subscript->isUInt32Fast())) {
+        uint32_t i = subscript->getUInt32Fast();
         if (interpreter->isJSArray(baseValue)) {
             JSArray* jsArray = asArray(baseValue);
             if (jsArray->canGetIndex(i))
@@ -5120,7 +5067,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_get_by_val(STUB_ARGS)
         else if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val_byte_array));
-            return JSValuePtr::encode(asByteArray(baseValue)->getIndex(i));
+            return JSValuePtr::encode(asByteArray(baseValue)->getIndex(callFrame, i));
         } else
             result = baseValue->get(callFrame, i);
     } else {
@@ -5143,13 +5090,12 @@ JSValueEncodedAsPointer* Interpreter::cti_op_get_by_val_byte_array(STUB_ARGS)
     JSValuePtr subscript = ARG_src2;
     
     JSValuePtr result;
-    unsigned i;
-    
-    bool isUInt32 = JSImmediate::getUInt32(subscript, i);
-    if (LIKELY(isUInt32)) {
+
+    if (LIKELY(subscript->isUInt32Fast())) {
+        uint32_t i = subscript->getUInt32Fast();
         if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            return JSValuePtr::encode(asByteArray(baseValue)->getIndex(i));
+            return JSValuePtr::encode(asByteArray(baseValue)->getIndex(callFrame, i));
         }
 
         result = baseValue->get(callFrame, i);
@@ -5215,7 +5161,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_sub(STUB_ARGS)
 
     double left;
     double right;
-    if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
+    if (src1->getNumber(left) && src2->getNumber(right))
         return JSValuePtr::encode(jsNumber(ARG_globalData, left - right));
 
     CallFrame* callFrame = ARG_callFrame;
@@ -5235,10 +5181,8 @@ void Interpreter::cti_op_put_by_val(STUB_ARGS)
     JSValuePtr subscript = ARG_src2;
     JSValuePtr value = ARG_src3;
 
-    unsigned i;
-
-    bool isUInt32 = JSImmediate::getUInt32(subscript, i);
-    if (LIKELY(isUInt32)) {
+    if (LIKELY(subscript->isUInt32Fast())) {
+        uint32_t i = subscript->getUInt32Fast();
         if (interpreter->isJSArray(baseValue)) {
             JSArray* jsArray = asArray(baseValue);
             if (jsArray->canSetIndex(i))
@@ -5249,12 +5193,12 @@ void Interpreter::cti_op_put_by_val(STUB_ARGS)
             JSByteArray* jsByteArray = asByteArray(baseValue);
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_val_byte_array));
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            if (JSImmediate::isNumber(value)) {
-                jsByteArray->setIndex(i, JSImmediate::getTruncatedInt32(value));
+            if (value->isInt32Fast()) {
+                jsByteArray->setIndex(i, value->getInt32Fast());
                 return;
             } else {
                 double dValue = 0;
-                if (fastIsNumber(value, dValue)) {
+                if (value->getNumber(dValue)) {
                     jsByteArray->setIndex(i, dValue);
                     return;
                 }
@@ -5289,7 +5233,9 @@ void Interpreter::cti_op_put_by_val_array(STUB_ARGS)
     if (LIKELY(i >= 0))
         asArray(baseValue)->JSArray::put(callFrame, i, value);
     else {
-        Identifier property(callFrame, JSImmediate::from(i)->toString(callFrame));
+        // This should work since we're re-boxing an immediate unboxed in JIT code.
+        ASSERT(JSValuePtr::makeInt32Fast(i));
+        Identifier property(callFrame, JSValuePtr::makeInt32Fast(i)->toString(callFrame));
         // FIXME: can toString throw an exception here?
         if (!ARG_globalData->exception) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot;
@@ -5311,20 +5257,18 @@ void Interpreter::cti_op_put_by_val_byte_array(STUB_ARGS)
     JSValuePtr subscript = ARG_src2;
     JSValuePtr value = ARG_src3;
     
-    unsigned i;
-    
-    bool isUInt32 = JSImmediate::getUInt32(subscript, i);
-    if (LIKELY(isUInt32)) {
+    if (LIKELY(subscript->isUInt32Fast())) {
+        uint32_t i = subscript->getUInt32Fast();
         if (interpreter->isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             JSByteArray* jsByteArray = asByteArray(baseValue);
             
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            if (JSImmediate::isNumber(value)) {
-                jsByteArray->setIndex(i, JSImmediate::getTruncatedInt32(value));
+            if (value->isInt32Fast()) {
+                jsByteArray->setIndex(i, value->getInt32Fast());
                 return;
             } else {
                 double dValue = 0;                
-                if (fastIsNumber(value, dValue)) {
+                if (value->getNumber(dValue)) {
                     jsByteArray->setIndex(i, dValue);
                     return;
                 }
@@ -5375,7 +5319,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_negate(STUB_ARGS)
     JSValuePtr src = ARG_src1;
 
     double v;
-    if (fastIsNumber(src, v))
+    if (src->getNumber(v))
         return JSValuePtr::encode(jsNumber(ARG_globalData, -v));
 
     CallFrame* callFrame = ARG_callFrame;
@@ -5465,7 +5409,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_div(STUB_ARGS)
 
     double left;
     double right;
-    if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
+    if (src1->getNumber(left) && src2->getNumber(right))
         return JSValuePtr::encode(jsNumber(ARG_globalData, left / right));
 
     CallFrame* callFrame = ARG_callFrame;
@@ -5548,8 +5492,8 @@ JSValueEncodedAsPointer* Interpreter::cti_op_eq(STUB_ARGS)
 
     CallFrame* callFrame = ARG_callFrame;
 
-    ASSERT(!JSImmediate::areBothImmediateNumbers(src1, src2));
-    JSValuePtr result = jsBoolean(equalSlowCaseInline(callFrame, src1, src2));
+    ASSERT(!JSValuePtr::areBothInt32Fast(src1, src2));
+    JSValuePtr result = jsBoolean(JSValuePtr::equalSlowCaseInline(callFrame, src1, src2));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValuePtr::encode(result);
 }
@@ -5563,9 +5507,9 @@ JSValueEncodedAsPointer* Interpreter::cti_op_lshift(STUB_ARGS)
 
     int32_t left;
     uint32_t right;
-    if (JSImmediate::areBothImmediateNumbers(val, shift))
-        return JSValuePtr::encode(jsNumber(ARG_globalData, JSImmediate::getTruncatedInt32(val) << (JSImmediate::getTruncatedUInt32(shift) & 0x1f)));
-    if (fastToInt32(val, left) && fastToUInt32(shift, right))
+    if (JSValuePtr::areBothInt32Fast(val, shift))
+        return JSValuePtr::encode(jsNumber(ARG_globalData, val->getInt32Fast() << (shift->getInt32Fast() & 0x1f)));
+    if (val->numberToInt32(left) && shift->numberToUInt32(right))
         return JSValuePtr::encode(jsNumber(ARG_globalData, left << (right & 0x1f)));
 
     CallFrame* callFrame = ARG_callFrame;
@@ -5583,7 +5527,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_bitand(STUB_ARGS)
 
     int32_t left;
     int32_t right;
-    if (fastToInt32(src1, left) && fastToInt32(src2, right))
+    if (src1->numberToInt32(left) && src2->numberToInt32(right))
         return JSValuePtr::encode(jsNumber(ARG_globalData, left & right));
 
     CallFrame* callFrame = ARG_callFrame;
@@ -5601,9 +5545,9 @@ JSValueEncodedAsPointer* Interpreter::cti_op_rshift(STUB_ARGS)
 
     int32_t left;
     uint32_t right;
-    if (JSImmediate::areBothImmediateNumbers(val, shift))
-        return JSValuePtr::encode(JSImmediate::rightShiftImmediateNumbers(val, shift));
-    if (fastToInt32(val, left) && fastToUInt32(shift, right))
+    if (JSFastMath::canDoFastRshift(val, shift))
+        return JSValuePtr::encode(JSFastMath::rightShiftImmediateNumbers(val, shift));
+    if (val->numberToInt32(left) && shift->numberToUInt32(right))
         return JSValuePtr::encode(jsNumber(ARG_globalData, left >> (right & 0x1f)));
 
     CallFrame* callFrame = ARG_callFrame;
@@ -5619,7 +5563,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_bitnot(STUB_ARGS)
     JSValuePtr src = ARG_src1;
 
     int value;
-    if (fastToInt32(src, value))
+    if (src->numberToInt32(value))
         return JSValuePtr::encode(jsNumber(ARG_globalData, ~value));
 
     CallFrame* callFrame = ARG_callFrame;
@@ -5700,10 +5644,10 @@ JSValueEncodedAsPointer* Interpreter::cti_op_neq(STUB_ARGS)
     JSValuePtr src1 = ARG_src1;
     JSValuePtr src2 = ARG_src2;
 
-    ASSERT(!JSImmediate::areBothImmediateNumbers(src1, src2));
+    ASSERT(!JSValuePtr::areBothInt32Fast(src1, src2));
 
     CallFrame* callFrame = ARG_callFrame;
-    JSValuePtr result = jsBoolean(!equalSlowCaseInline(callFrame, src1, src2));
+    JSValuePtr result = jsBoolean(!JSValuePtr::equalSlowCaseInline(callFrame, src1, src2));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValuePtr::encode(result);
 }
@@ -5731,8 +5675,8 @@ JSValueEncodedAsPointer* Interpreter::cti_op_urshift(STUB_ARGS)
 
     CallFrame* callFrame = ARG_callFrame;
 
-    if (JSImmediate::areBothImmediateNumbers(val, shift) && !JSImmediate::isNegative(val))
-        return JSValuePtr::encode(JSImmediate::rightShiftImmediateNumbers(val, shift));
+    if (JSFastMath::canDoFastUrshift(val, shift))
+        return JSValuePtr::encode(JSFastMath::rightShiftImmediateNumbers(val, shift));
     else {
         JSValuePtr result = jsNumber(ARG_globalData, (val->toUInt32(callFrame)) >> (shift->toUInt32(callFrame) & 0x1f));
         CHECK_FOR_EXCEPTION_AT_END();
@@ -5803,7 +5747,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_call_eval(STUB_ARGS)
         return JSValuePtr::encode(result);
     }
 
-    return JSValuePtr::encode(JSImmediate::impossibleValue());
+    return JSValuePtr::encode(jsImpossibleValue());
 }
 
 JSValueEncodedAsPointer* Interpreter::cti_op_throw(STUB_ARGS)
@@ -5822,7 +5766,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_throw(STUB_ARGS)
 
     if (!handler) {
         *ARG_exception = exceptionValue;
-        return JSValuePtr::encode(JSImmediate::nullImmediate());
+        return JSValuePtr::encode(jsNull());
     }
 
     ARG_setCallFrame(callFrame);
@@ -5879,7 +5823,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_is_undefined(STUB_ARGS)
     BEGIN_STUB_FUNCTION();
 
     JSValuePtr v = ARG_src1;
-    return JSValuePtr::encode(jsBoolean(JSImmediate::isImmediate(v) ? v->isUndefined() : v->asCell()->structure()->typeInfo().masqueradesAsUndefined()));
+    return JSValuePtr::encode(jsBoolean(v->isCell() ? v->asCell()->structure()->typeInfo().masqueradesAsUndefined() : v->isUndefined()));
 }
 
 JSValueEncodedAsPointer* Interpreter::cti_op_is_boolean(STUB_ARGS)
@@ -5925,10 +5869,9 @@ JSValueEncodedAsPointer* Interpreter::cti_op_stricteq(STUB_ARGS)
     JSValuePtr src2 = ARG_src2;
 
     // handled inline as fast cases
-    ASSERT(!JSImmediate::areBothImmediate(src1, src2));
-    ASSERT(!(JSImmediate::isEitherImmediate(src1, src2) & (src1 != JSImmediate::zeroImmediate()) & (src2 != JSImmediate::zeroImmediate())));
+    ASSERT(!JIT::isStrictEqCaseHandledInJITCode(src1, src2));
 
-    return JSValuePtr::encode(jsBoolean(strictEqualSlowCaseInline(src1, src2)));
+    return JSValuePtr::encode(jsBoolean(JSValuePtr::strictEqualSlowCaseInline(src1, src2)));
 }
 
 JSValueEncodedAsPointer* Interpreter::cti_op_nstricteq(STUB_ARGS)
@@ -5939,10 +5882,9 @@ JSValueEncodedAsPointer* Interpreter::cti_op_nstricteq(STUB_ARGS)
     JSValuePtr src2 = ARG_src2;
 
     // handled inline as fast cases
-    ASSERT(!JSImmediate::areBothImmediate(src1, src2));
-    ASSERT(!(JSImmediate::isEitherImmediate(src1, src2) & (src1 != JSImmediate::zeroImmediate()) & (src2 != JSImmediate::zeroImmediate())));
+    ASSERT(!JIT::isStrictEqCaseHandledInJITCode(src1, src2));
     
-    return JSValuePtr::encode(jsBoolean(!strictEqualSlowCaseInline(src1, src2)));
+    return JSValuePtr::encode(jsBoolean(!JSValuePtr::strictEqualSlowCaseInline(src1, src2)));
 }
 
 JSValueEncodedAsPointer* Interpreter::cti_op_to_jsnumber(STUB_ARGS)
@@ -6027,10 +5969,8 @@ void* Interpreter::cti_op_switch_imm(STUB_ARGS)
     CallFrame* callFrame = ARG_callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    if (JSImmediate::isNumber(scrutinee)) {
-        int32_t value = JSImmediate::getTruncatedInt32(scrutinee);
-        return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(value);
-    }
+    if (scrutinee->isInt32Fast())
+        return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(scrutinee->getInt32Fast());
 
     return codeBlock->immediateSwitchJumpTable(tableIndex).ctiDefault;
 }
@@ -6168,7 +6108,7 @@ JSValueEncodedAsPointer* Interpreter::cti_vm_throw(STUB_ARGS)
 
     if (!handler) {
         *ARG_exception = exceptionValue;
-        return JSValuePtr::encode(JSImmediate::nullImmediate());
+        return JSValuePtr::encode(jsNull());
     }
 
     ARG_setCallFrame(callFrame);

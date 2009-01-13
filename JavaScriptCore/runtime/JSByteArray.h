@@ -35,10 +35,10 @@ namespace JSC {
         friend class Interpreter;
     public:
         bool canAccessIndex(unsigned i) { return i < m_storage->length(); }
-        JSValuePtr getIndex(unsigned i)
+        JSValuePtr getIndex(ExecState* exec, unsigned i)
         {
             ASSERT(canAccessIndex(i));
-            return JSImmediate::from(m_storage->data()[i]);
+            return jsNumber(exec, m_storage->data()[i]);
         }
 
         void setIndex(unsigned i, int value)

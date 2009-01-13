@@ -328,9 +328,9 @@ JSValuePtr stringProtoFuncCharAt(ExecState* exec, JSObject*, JSValuePtr thisValu
     UString s = thisValue->toThisString(exec);
     unsigned len = s.size();
     JSValuePtr a0 = args.at(exec, 0);
-    if (JSImmediate::isNumber(a0)) {
-        uint32_t i;
-        if (JSImmediate::getUInt32(a0, i) && i < len)
+    if (a0->isUInt32Fast()) {
+        uint32_t i = a0->getUInt32Fast();
+        if (i < len)
             return jsSingleCharacterSubstring(exec, s, i);
         return jsEmptyString(exec);
     }
@@ -345,9 +345,9 @@ JSValuePtr stringProtoFuncCharCodeAt(ExecState* exec, JSObject*, JSValuePtr this
     UString s = thisValue->toThisString(exec);
     unsigned len = s.size();
     JSValuePtr a0 = args.at(exec, 0);
-    if (JSImmediate::isNumber(a0)) {
-        uint32_t i;
-        if (JSImmediate::getUInt32(a0, i) && i < len)
+    if (a0->isUInt32Fast()) {
+        uint32_t i = a0->getUInt32Fast();
+        if (i < len)
             return jsNumber(exec, s.data()[i]);
         return jsNaN(exec);
     }

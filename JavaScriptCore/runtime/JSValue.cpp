@@ -33,18 +33,16 @@ static const double D32 = 4294967296.0;
 // ECMA 9.4
 double JSValuePtr::toInteger(ExecState* exec) const
 {
-    int32_t i;
-    if (getTruncatedInt32(i))
-        return i;
+    if (isInt32Fast())
+        return getInt32Fast();
     double d = toNumber(exec);
     return isnan(d) ? 0.0 : trunc(d);
 }
 
 double JSValuePtr::toIntegerPreserveNaN(ExecState* exec) const
 {
-    int32_t i;
-    if (getTruncatedInt32(i))
-        return i;
+    if (isInt32Fast())
+        return getInt32Fast();
     return trunc(toNumber(exec));
 }
 
@@ -68,11 +66,6 @@ int32_t toInt32SlowCase(double d, bool& ok)
     return static_cast<int32_t>(d32);
 }
 
-int32_t JSValuePtr::toInt32SlowCase(ExecState* exec, bool& ok) const
-{
-    return JSC::toInt32SlowCase(toNumber(exec), ok);
-}
-
 uint32_t toUInt32SlowCase(double d, bool& ok)
 {
     ok = true;
@@ -89,11 +82,6 @@ uint32_t toUInt32SlowCase(double d, bool& ok)
     if (d32 < 0)
         d32 += D32;
     return static_cast<uint32_t>(d32);
-}
-
-uint32_t JSValuePtr::toUInt32SlowCase(ExecState* exec, bool& ok) const
-{
-    return JSC::toUInt32SlowCase(toNumber(exec), ok);
 }
 
 } // namespace JSC

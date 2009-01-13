@@ -808,7 +808,7 @@ void Heap::protect(JSValuePtr k)
     ASSERT(k);
     ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance);
 
-    if (JSImmediate::isImmediate(k))
+    if (!k->isCell())
         return;
 
     if (m_protectedValuesMutex)
@@ -825,7 +825,7 @@ void Heap::unprotect(JSValuePtr k)
     ASSERT(k);
     ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance);
 
-    if (JSImmediate::isImmediate(k))
+    if (!k->isCell())
         return;
 
     if (m_protectedValuesMutex)
@@ -839,7 +839,7 @@ void Heap::unprotect(JSValuePtr k)
 
 Heap* Heap::heap(JSValuePtr v)
 {
-    if (JSImmediate::isImmediate(v))
+    if (!v->isCell())
         return 0;
     return Heap::cellBlock(v->asCell())->heap;
 }

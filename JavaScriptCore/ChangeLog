@@ -1,3 +1,175 @@
+2009-01-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Make the JSImmediate interface private.
+
+        All manipulation of JS values should be through the JSValuePtr class, not by using JSImmediate
+        directly.  The key missing methods on JSValuePtr are:
+
+            * isCell() - check for values that are JSCell*s, and as such where asCell() may be used.
+            * isInt32Fast() getInt32Fast() - fast check/access for integer immediates.
+            * isUInt32Fast() getUInt32Fast() - ditto for unsigned integer immediates.
+
+        The JIT is allowed full access to JSImmediate, since it needs to be able to directly
+        manipulate JSValuePtrs.  The Interpreter is provided access to perform operations directly
+        on JSValuePtrs through the new JSFastMath interface.
+
+        No performance impact.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::toNumber):
+        * API/JSValueRef.cpp:
+        (JSValueIsEqual):
+        (JSValueIsStrictEqual):
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isKnownNotImmediate):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::keyForImmediateSwitch):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::JSValueHashTraits::constructDeletedValue):
+        (JSC::BytecodeGenerator::JSValueHashTraits::isDeletedValue):
+        * interpreter/Interpreter.cpp:
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+        (JSC::jsAdd):
+        (JSC::jsIsObjectType):
+        (JSC::cachePrototypeChain):
+        (JSC::Interpreter::tryCachePutByID):
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::tryCTICachePutByID):
+        (JSC::Interpreter::tryCTICacheGetByID):
+        (JSC::Interpreter::cti_op_add):
+        (JSC::Interpreter::cti_op_get_by_id_self_fail):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list):
+        (JSC::Interpreter::cti_op_instanceof):
+        (JSC::Interpreter::cti_op_mul):
+        (JSC::Interpreter::cti_op_get_by_val):
+        (JSC::Interpreter::cti_op_get_by_val_byte_array):
+        (JSC::Interpreter::cti_op_sub):
+        (JSC::Interpreter::cti_op_put_by_val):
+        (JSC::Interpreter::cti_op_put_by_val_array):
+        (JSC::Interpreter::cti_op_put_by_val_byte_array):
+        (JSC::Interpreter::cti_op_negate):
+        (JSC::Interpreter::cti_op_div):
+        (JSC::Interpreter::cti_op_eq):
+        (JSC::Interpreter::cti_op_lshift):
+        (JSC::Interpreter::cti_op_bitand):
+        (JSC::Interpreter::cti_op_rshift):
+        (JSC::Interpreter::cti_op_bitnot):
+        (JSC::Interpreter::cti_op_neq):
+        (JSC::Interpreter::cti_op_urshift):
+        (JSC::Interpreter::cti_op_call_eval):
+        (JSC::Interpreter::cti_op_throw):
+        (JSC::Interpreter::cti_op_is_undefined):
+        (JSC::Interpreter::cti_op_stricteq):
+        (JSC::Interpreter::cti_op_nstricteq):
+        (JSC::Interpreter::cti_op_switch_imm):
+        (JSC::Interpreter::cti_vm_throw):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::isJSArray):
+        (JSC::Interpreter::isJSString):
+        (JSC::Interpreter::isJSByteArray):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        (JSC::JIT::isStrictEqCaseHandledInJITCode):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_rshift):
+        (JSC::JIT::compileFastArith_op_bitand):
+        (JSC::JIT::compileFastArith_op_mod):
+        * jit/JITCall.cpp:
+        (JSC::JIT::unlinkCall):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::getConstantOperandImmediateInt):
+        (JSC::JIT::isOperandConstantImmediateInt):
+        * parser/Nodes.cpp:
+        (JSC::processClauseList):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncValueOf):
+        * runtime/Collector.cpp:
+        (JSC::Heap::protect):
+        (JSC::Heap::unprotect):
+        (JSC::Heap::heap):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::getOwnPropertySlot):
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::getIndex):
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        (JSC::JSValuePtr::isNumberCell):
+        (JSC::JSValuePtr::asCell):
+        (JSC::JSValuePtr::isNumber):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseInt):
+        * runtime/JSImmediate.h:
+        (JSC::js0):
+        (JSC::jsImpossibleValue):
+        (JSC::JSValuePtr::toInt32):
+        (JSC::JSValuePtr::toUInt32):
+        (JSC::JSValuePtr::isCell):
+        (JSC::JSValuePtr::isInt32Fast):
+        (JSC::JSValuePtr::getInt32Fast):
+        (JSC::JSValuePtr::isUInt32Fast):
+        (JSC::JSValuePtr::getUInt32Fast):
+        (JSC::JSValuePtr::makeInt32Fast):
+        (JSC::JSValuePtr::areBothInt32Fast):
+        (JSC::JSFastMath::canDoFastBitwiseOperations):
+        (JSC::JSFastMath::equal):
+        (JSC::JSFastMath::notEqual):
+        (JSC::JSFastMath::andImmediateNumbers):
+        (JSC::JSFastMath::xorImmediateNumbers):
+        (JSC::JSFastMath::orImmediateNumbers):
+        (JSC::JSFastMath::canDoFastRshift):
+        (JSC::JSFastMath::canDoFastUrshift):
+        (JSC::JSFastMath::rightShiftImmediateNumbers):
+        (JSC::JSFastMath::canDoFastAdditiveOperations):
+        (JSC::JSFastMath::addImmediateNumbers):
+        (JSC::JSFastMath::subImmediateNumbers):
+        (JSC::JSFastMath::incImmediateNumber):
+        (JSC::JSFastMath::decImmediateNumber):
+        * runtime/JSNumberCell.h:
+        (JSC::JSValuePtr::asNumberCell):
+        (JSC::jsNumber):
+        (JSC::JSValuePtr::uncheckedGetNumber):
+        (JSC::JSNumberCell::toInt32):
+        (JSC::JSNumberCell::toUInt32):
+        (JSC::JSValuePtr::toJSNumber):
+        (JSC::JSValuePtr::getNumber):
+        (JSC::JSValuePtr::numberToInt32):
+        (JSC::JSValuePtr::numberToUInt32):
+        * runtime/JSObject.h:
+        (JSC::JSValuePtr::isObject):
+        (JSC::JSValuePtr::get):
+        (JSC::JSValuePtr::put):
+        * runtime/JSValue.cpp:
+        (JSC::JSValuePtr::toInteger):
+        (JSC::JSValuePtr::toIntegerPreserveNaN):
+        * runtime/JSValue.h:
+        * runtime/Operations.cpp:
+        (JSC::JSValuePtr::equalSlowCase):
+        (JSC::JSValuePtr::strictEqualSlowCase):
+        * runtime/Operations.h:
+        (JSC::JSValuePtr::equal):
+        (JSC::JSValuePtr::equalSlowCaseInline):
+        (JSC::JSValuePtr::strictEqual):
+        (JSC::JSValuePtr::strictEqualSlowCaseInline):
+        * runtime/Protect.h:
+        (JSC::gcProtect):
+        (JSC::gcUnprotect):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        * runtime/Structure.cpp:
+        (JSC::Structure::createCachedPrototypeChain):
+
 2009-01-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         Since date time functions have moved here, now the wx port JSC

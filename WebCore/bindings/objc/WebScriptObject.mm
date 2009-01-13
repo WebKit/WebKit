@@ -534,7 +534,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     }
 
     if (value->isNumber())
-        return [NSNumber numberWithDouble:value->getNumber()];
+        return [NSNumber numberWithDouble:value->uncheckedGetNumber()];
 
     if (value->isBoolean())
         return [NSNumber numberWithBool:value->getBoolean()];

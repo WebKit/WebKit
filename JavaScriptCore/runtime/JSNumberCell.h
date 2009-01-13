@@ -107,17 +107,15 @@ namespace JSC {
     extern const double NaN;
     extern const double Inf;
 
-    JSNumberCell* asNumberCell(JSValuePtr);
-
     JSValuePtr jsNumberCell(JSGlobalData*, double);
     JSValuePtr jsNaN(JSGlobalData*);
     JSValuePtr jsNumberCell(ExecState*, double);
     JSValuePtr jsNaN(ExecState*);
 
-    inline JSNumberCell* asNumberCell(JSValuePtr value)
+    inline JSNumberCell* JSValuePtr::asNumberCell() const
     {
-        ASSERT(asCell(value)->isNumber());
-        return static_cast<JSNumberCell*>(asCell(value));
+        ASSERT(isNumberCell());
+        return static_cast<JSNumberCell*>(asCell());
     }
 
     ALWAYS_INLINE JSValuePtr jsNumber(ExecState* exec, double d)
@@ -126,16 +124,28 @@ namespace JSC {
         return v ? v : jsNumberCell(exec, d);
     }
 
-    ALWAYS_INLINE JSValuePtr jsNumber(ExecState* exec, short i)
+    ALWAYS_INLINE JSValuePtr jsNumber(ExecState*, char i)
     {
-        JSValuePtr v = JSImmediate::from(i);
-        return v ? v : jsNumberCell(exec, i);
+        ASSERT(JSImmediate::from(i));
+        return JSImmediate::from(i);
     }
 
-    ALWAYS_INLINE JSValuePtr jsNumber(ExecState* exec, unsigned short i)
+    ALWAYS_INLINE JSValuePtr jsNumber(ExecState*, unsigned char i)
     {
-        JSValuePtr v = JSImmediate::from(i);
-        return v ? v : jsNumberCell(exec, i);
+        ASSERT(JSImmediate::from(i));
+        return JSImmediate::from(i);
+    }
+
+    ALWAYS_INLINE JSValuePtr jsNumber(ExecState*, short i)
+    {
+        ASSERT(JSImmediate::from(i));
+        return JSImmediate::from(i);
+    }
+
+    ALWAYS_INLINE JSValuePtr jsNumber(ExecState*, unsigned short i)
+    {
+        ASSERT(JSImmediate::from(i));
+        return JSImmediate::from(i);
     }
 
     ALWAYS_INLINE JSValuePtr jsNumber(ExecState* exec, int i)
@@ -232,29 +242,73 @@ namespace JSC {
 
     inline double JSValuePtr::uncheckedGetNumber() const
     {
-        ASSERT(JSImmediate::isImmediate(asValue()) || asCell()->isNumber());
-        return JSImmediate::isImmediate(asValue()) ? JSImmediate::toDouble(asValue()) : asNumberCell(asValue())->value();
+        ASSERT(isNumber());
+        return JSImmediate::isImmediate(asValue()) ? JSImmediate::toDouble(asValue()) : asNumberCell()->value();
     }
 
     inline int32_t JSNumberCell::toInt32() const
     {
         if (m_value >= -2147483648.0 && m_value < 2147483648.0)
             return static_cast<int32_t>(m_value);
-        bool scratch;
-        return JSC::toInt32SlowCase(m_value, scratch);
+        bool ignored;
+        return toInt32SlowCase(m_value, ignored);
     }
 
     inline uint32_t JSNumberCell::toUInt32() const
     {
         if (m_value >= 0.0 && m_value < 4294967296.0)
             return static_cast<uint32_t>(m_value);
-        bool scratch;
-        return JSC::toUInt32SlowCase(m_value, scratch);
+        bool ignored;
+        return toUInt32SlowCase(m_value, ignored);
     }
 
     ALWAYS_INLINE JSValuePtr JSValuePtr::toJSNumber(ExecState* exec) const
     {
-        return JSImmediate::isNumber(asValue()) ? asValue() : jsNumber(exec, this->toNumber(exec));
+        return isNumber() ? asValue() : jsNumber(exec, this->toNumber(exec));
+    }
+
+    inline bool JSValuePtr::getNumber(double &result) const
+    {
+        if (isInt32Fast())
+            result = getInt32Fast();
+        else if (LIKELY(isNumberCell()))
+            result = asNumberCell()->value();
+        else {
+            ASSERT(!isNumber());
+            return false;
+        }
+        return true;
+    }
+
+    inline bool JSValuePtr::numberToInt32(int32_t& arg)
+    {
+        if (isInt32Fast())
+            arg = getInt32Fast();
+        else if (LIKELY(isNumberCell()))
+            arg = asNumberCell()->toInt32();
+        else {
+            ASSERT(!isNumber());
+            return false;
+        }
+        return true;
+    }
+
+    inline bool JSValuePtr::numberToUInt32(uint32_t& arg)
+    {
+        if (isUInt32Fast())
+            arg = getUInt32Fast();
+        else if (LIKELY(isNumberCell()))
+            arg = asNumberCell()->toUInt32();
+        else if (isInt32Fast()) {
+            // FIXME: I think this case can be merged with the uint case; toUInt32SlowCase
+            // on a negative value is equivalent to simple static_casting.
+            bool ignored;
+            arg = toUInt32SlowCase(getInt32Fast(), ignored);
+        } else {
+            ASSERT(!isNumber());
+            return false;
+        }
+        return true;
     }
 
 } // namespace JSC

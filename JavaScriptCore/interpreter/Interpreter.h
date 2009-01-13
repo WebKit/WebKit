@@ -292,9 +292,9 @@ namespace JSC {
         // Default number of ticks before a timeout check should be done.
         static const int initialTickCountThreshold = 1024;
 
-        bool isJSArray(JSValuePtr v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsArrayVptr; }
-        bool isJSString(JSValuePtr v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringVptr; }
-        bool isJSByteArray(JSValuePtr v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsByteArrayVptr; }
+        bool isJSArray(JSValuePtr v) { return v->isCell() && v->asCell()->vptr() == m_jsArrayVptr; }
+        bool isJSString(JSValuePtr v) { return v->isCell() && v->asCell()->vptr() == m_jsStringVptr; }
+        bool isJSByteArray(JSValuePtr v) { return v->isCell() && v->asCell()->vptr() == m_jsByteArrayVptr; }
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };

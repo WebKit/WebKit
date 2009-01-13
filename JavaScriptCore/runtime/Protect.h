@@ -51,16 +51,14 @@ namespace JSC {
     
     inline void gcProtect(JSValuePtr value)
     {
-        if (!value || JSImmediate::isImmediate(value))
-            return;
-        gcProtect(asCell(value));
+        if (value && value->isCell())
+            gcProtect(asCell(value));
     }
 
     inline void gcUnprotect(JSValuePtr value)
     {
-        if (!value || JSImmediate::isImmediate(value))
-            return;
-        gcUnprotect(asCell(value));
+        if (value && value->isCell())
+            gcUnprotect(asCell(value));
     }
 
     // FIXME: Share more code with RefPtr template? The only differences are the ref/deref operation

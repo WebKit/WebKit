@@ -377,8 +377,10 @@ double JSCallbackObject<Base>::toNumber(ExecState* exec) const
     for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass)
         if (JSObjectConvertToTypeCallback convertToType = jsClass->convertToType) {
             JSLock::DropAllLocks dropAllLocks(exec);
-            if (JSValueRef value = convertToType(ctx, thisRef, kJSTypeNumber, toRef(exec->exceptionSlot())))
-                return toJS(value)->getNumber();
+            if (JSValueRef value = convertToType(ctx, thisRef, kJSTypeNumber, toRef(exec->exceptionSlot()))) {
+                double dValue;
+                return toJS(value)->getNumber(dValue) ? dValue : NaN;
+            }
         }
             
     return Base::toNumber(exec);

@@ -33,6 +33,7 @@ namespace JSC {
 
     class Identifier;
     class JSCell;
+    class JSNumberCell;
     class JSObject;
     class JSString;
     class PropertySlot;
@@ -120,7 +121,7 @@ namespace JSC {
         // Extracting the value.
         bool getBoolean(bool&) const;
         bool getBoolean() const; // false if not a boolean
-        double getNumber() const; // NaN if not a number
+        bool getNumber(double&) const;
         double uncheckedGetNumber() const;
         bool getString(UString&) const;
         UString getString() const; // null string if not a string
@@ -148,14 +149,29 @@ namespace JSC {
         JSObject* toObject(ExecState*) const;
 
         // Integer conversions.
+        // 'x.numberToInt32(output)' is equivalent to 'x.isNumber() && x.toInt32(output)'
         double toInteger(ExecState*) const;
         double toIntegerPreserveNaN(ExecState*) const;
         int32_t toInt32(ExecState*) const;
         int32_t toInt32(ExecState*, bool& ok) const;
+        bool numberToInt32(int32_t& arg);
         uint32_t toUInt32(ExecState*) const;
         uint32_t toUInt32(ExecState*, bool& ok) const;
+        bool numberToUInt32(uint32_t& arg);
 
-        // Floating point conversions.
+        // Fast integer operations; these values return results where the value is trivially available
+        // in a convenient form, for use in optimizations.  No assumptions should be made based on the
+        // results of these operations, for example !isInt32Fast() does not necessarily indicate the
+        // result of getNumber will not be 0.
+        bool isInt32Fast() const;
+        int32_t getInt32Fast() const;
+        bool isUInt32Fast() const;
+        uint32_t getUInt32Fast() const;
+        static JSValuePtr makeInt32Fast(int32_t);
+        static bool areBothInt32Fast(JSValuePtr, JSValuePtr);
+
+        // Floating point conversions (this is a convenience method for webcore;
+        // signle precision float is not a representation used in JS or JSC).
         float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
 
         // Garbage collection.
@@ -175,15 +191,23 @@ namespace JSC {
         UString toThisString(ExecState*) const;
         JSString* toThisJSString(ExecState*);
 
-        JSValuePtr getJSNumber(); // 0 if this is not a JSNumber or number object
+        static bool equal(ExecState* exec, JSValuePtr v1, JSValuePtr v2);
+        static bool equalSlowCase(ExecState* exec, JSValuePtr v1, JSValuePtr v2);
+        static bool equalSlowCaseInline(ExecState* exec, JSValuePtr v1, JSValuePtr v2);
+        static bool strictEqual(JSValuePtr v1, JSValuePtr v2);
+        static bool strictEqualSlowCase(JSValuePtr v1, JSValuePtr v2);
+        static bool strictEqualSlowCaseInline(JSValuePtr v1, JSValuePtr v2);
 
+        JSValuePtr getJSNumber(); // noValue() if this is not a JSNumber or number object
+
+        bool isCell() const;
         JSCell* asCell() const;
 
     private:
         inline const JSValuePtr asValue() const { return *this; }
 
-        int32_t toInt32SlowCase(ExecState*, bool& ok) const;
-        uint32_t toUInt32SlowCase(ExecState*, bool& ok) const;
+        bool isNumberCell() const;
+        JSNumberCell* asNumberCell() const;
 
         JSCell* m_ptr;
     };

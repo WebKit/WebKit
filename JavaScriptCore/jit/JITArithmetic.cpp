@@ -96,9 +96,9 @@ void JIT::compileFastArith_op_rshift(unsigned result, unsigned op1, unsigned op2
         emitJumpSlowCaseIfNotImmNum(X86::eax);
         // Mask with 0x1f as per ecma-262 11.7.2 step 7.
 #if USE(ALTERNATE_JSIMMEDIATE)
-        rshift32(Imm32(JSImmediate::getTruncatedUInt32(getConstantOperand(op2)) & 0x1f), X86::eax);
+        rshift32(Imm32(getConstantOperandImmediateInt(op2) & 0x1f), X86::eax);
 #else
-        rshiftPtr(Imm32(JSImmediate::getTruncatedUInt32(getConstantOperand(op2)) & 0x1f), X86::eax);
+        rshiftPtr(Imm32(getConstantOperandImmediateInt(op2) & 0x1f), X86::eax);
 #endif
     } else {
         emitGetVirtualRegisters(op1, X86::eax, op2, X86::ecx);
@@ -144,7 +144,7 @@ void JIT::compileFastArith_op_bitand(unsigned result, unsigned op1, unsigned op2
         emitGetVirtualRegister(op2, X86::eax);
         emitJumpSlowCaseIfNotImmNum(X86::eax);
 #if USE(ALTERNATE_JSIMMEDIATE)
-        int32_t imm = JSImmediate::intValue(getConstantOperand(op1));
+        int32_t imm = getConstantOperandImmediateInt(op1);
         andPtr(Imm32(imm), X86::eax);
         if (imm >= 0)
             emitFastArithIntToImmNoCheck(X86::eax, X86::eax);
@@ -155,7 +155,7 @@ void JIT::compileFastArith_op_bitand(unsigned result, unsigned op1, unsigned op2
         emitGetVirtualRegister(op1, X86::eax);
         emitJumpSlowCaseIfNotImmNum(X86::eax);
 #if USE(ALTERNATE_JSIMMEDIATE)
-        int32_t imm = JSImmediate::intValue(getConstantOperand(op2));
+        int32_t imm = getConstantOperandImmediateInt(op2);
         andPtr(Imm32(imm), X86::eax);
         if (imm >= 0)
             emitFastArithIntToImmNoCheck(X86::eax, X86::eax);
@@ -192,7 +192,7 @@ void JIT::compileFastArith_op_mod(unsigned result, unsigned op1, unsigned op2)
     emitJumpSlowCaseIfNotImmNum(X86::eax);
     emitJumpSlowCaseIfNotImmNum(X86::ecx);
 #if USE(ALTERNATE_JSIMMEDIATE)
-    addSlowCase(jePtr(X86::ecx, ImmPtr(JSValuePtr::encode(JSImmediate::zeroImmediate()))));
+    addSlowCase(jePtr(X86::ecx, ImmPtr(JSValuePtr::encode(js0()))));
     mod32(X86::ecx, X86::eax, X86::edx);
 #else
     emitFastArithDeTagImmediate(X86::eax);

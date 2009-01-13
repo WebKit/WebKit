@@ -118,7 +118,7 @@ bool JSValueIsEqual(JSContextRef ctx, JSValueRef a, JSValueRef b, JSValueRef* ex
     JSValuePtr jsA = toJS(a);
     JSValuePtr jsB = toJS(b);
 
-    bool result = equal(exec, jsA, jsB); // false if an exception is thrown
+    bool result = JSValuePtr::equal(exec, jsA, jsB); // false if an exception is thrown
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());
@@ -132,7 +132,7 @@ bool JSValueIsStrictEqual(JSContextRef, JSValueRef a, JSValueRef b)
     JSValuePtr jsA = toJS(a);
     JSValuePtr jsB = toJS(b);
     
-    bool result = strictEqual(jsA, jsB);
+    bool result = JSValuePtr::strictEqual(jsA, jsB);
     return result;
 }
 

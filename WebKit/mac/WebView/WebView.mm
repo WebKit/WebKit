@@ -3655,7 +3655,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValuePtr jsV
     if (jsValue->isString())
         return [NSAppleEventDescriptor descriptorWithString:String(jsValue->getString())];
     if (jsValue->isNumber()) {
-        double value = jsValue->getNumber();
+        double value = jsValue->uncheckedGetNumber();
         int intValue = value;
         if (value == intValue)
             return [NSAppleEventDescriptor descriptorWithDescriptorType:typeSInt32 bytes:&intValue length:sizeof(intValue)];

@@ -70,7 +70,7 @@ JSValuePtr JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
             if (value->isNull())
                 sqlValues.append(SQLValue());
             else if (value->isNumber())
-                sqlValues.append(value->getNumber());
+                sqlValues.append(value->uncheckedGetNumber());
             else {
                 // Convert the argument to a string and append it
                 sqlValues.append(value->toString(exec));

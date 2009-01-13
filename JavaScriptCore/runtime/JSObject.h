@@ -270,7 +270,7 @@ inline bool JSCell::isObject(const ClassInfo* info) const
 // this method is here to be after the inline declaration of JSCell::isObject
 inline bool JSValuePtr::isObject(const ClassInfo* classInfo) const
 {
-    return !JSImmediate::isImmediate(asValue()) && asCell()->isObject(classInfo);
+    return isCell() && asCell()->isObject(classInfo);
 }
 
 ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -473,7 +473,7 @@ inline JSValuePtr JSValuePtr::get(ExecState* exec, const Identifier& propertyNam
 
 inline JSValuePtr JSValuePtr::get(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) const
 {
-    if (UNLIKELY(JSImmediate::isImmediate(asValue()))) {
+    if (UNLIKELY(!isCell())) {
         JSObject* prototype = JSImmediate::prototype(asValue(), exec);
         if (!prototype->getPropertySlot(exec, propertyName, slot))
             return jsUndefined();
@@ -499,7 +499,7 @@ inline JSValuePtr JSValuePtr::get(ExecState* exec, unsigned propertyName) const
 
 inline JSValuePtr JSValuePtr::get(ExecState* exec, unsigned propertyName, PropertySlot& slot) const
 {
-    if (UNLIKELY(JSImmediate::isImmediate(asValue()))) {
+    if (UNLIKELY(!isCell())) {
         JSObject* prototype = JSImmediate::prototype(asValue(), exec);
         if (!prototype->getPropertySlot(exec, propertyName, slot))
             return jsUndefined();
@@ -519,7 +519,7 @@ inline JSValuePtr JSValuePtr::get(ExecState* exec, unsigned propertyName, Proper
 
 inline void JSValuePtr::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
 {
-    if (UNLIKELY(JSImmediate::isImmediate(asValue()))) {
+    if (UNLIKELY(!isCell())) {
         JSImmediate::toObject(asValue(), exec)->put(exec, propertyName, value, slot);
         return;
     }
@@ -528,7 +528,7 @@ inline void JSValuePtr::put(ExecState* exec, const Identifier& propertyName, JSV
 
 inline void JSValuePtr::put(ExecState* exec, unsigned propertyName, JSValuePtr value)
 {
-    if (UNLIKELY(JSImmediate::isImmediate(asValue()))) {
+    if (UNLIKELY(!isCell())) {
         JSImmediate::toObject(asValue(), exec)->put(exec, propertyName, value);
         return;
     }

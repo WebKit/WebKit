@@ -35,32 +35,12 @@
 
 namespace JSC {
 
-// ECMA 11.9.3
-bool equal(ExecState* exec, JSValuePtr v1, JSValuePtr v2)
-{
-    if (JSImmediate::areBothImmediateNumbers(v1, v2))
-        return v1 == v2;
-
-    return equalSlowCaseInline(exec, v1, v2);
-}
-
-bool equalSlowCase(ExecState* exec, JSValuePtr v1, JSValuePtr v2)
+bool JSValuePtr::equalSlowCase(ExecState* exec, JSValuePtr v1, JSValuePtr v2)
 {
     return equalSlowCaseInline(exec, v1, v2);
 }
 
-bool strictEqual(JSValuePtr v1, JSValuePtr v2)
-{
-    if (JSImmediate::areBothImmediate(v1, v2))
-        return v1 == v2;
-
-    if (JSImmediate::isEitherImmediate(v1, v2) & (v1 != JSImmediate::from(0)) & (v2 != JSImmediate::from(0)))
-        return false;
-
-    return strictEqualSlowCaseInline(v1, v2);
-}
-
-bool strictEqualSlowCase(JSValuePtr v1, JSValuePtr v2)
+bool JSValuePtr::strictEqualSlowCase(JSValuePtr v1, JSValuePtr v2)
 {
     return strictEqualSlowCaseInline(v1, v2);
 }

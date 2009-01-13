@@ -49,7 +49,7 @@ void JIT::unlinkCall(CallLinkInfo* callLinkInfo)
     // When the JSFunction is deleted the pointer embedded in the instruction stream will no longer be valid
     // (and, if a new JSFunction happened to be constructed at the same location, we could get a false positive
     // match).  Reset the check so it no longer matches.
-    DataLabelPtr::patch(callLinkInfo->hotPathBegin, JSValuePtr::encode(JSImmediate::impossibleValue()));
+    DataLabelPtr::patch(callLinkInfo->hotPathBegin, JSValuePtr::encode(jsImpossibleValue()));
 }
 
 void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, CallLinkInfo* callLinkInfo, int callerArgCount)
@@ -133,7 +133,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
         compileOpCallEvalSetupArgs(instruction);
 
         emitCTICall(Interpreter::cti_op_call_eval);
-        wasEval = jnePtr(X86::eax, ImmPtr(JSImmediate::impossibleValue()));
+        wasEval = jnePtr(X86::eax, ImmPtr(jsImpossibleValue()));
     }
 
     emitGetVirtualRegister(callee, X86::ecx);
@@ -211,14 +211,14 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         compileOpCallEvalSetupArgs(instruction);
 
         emitCTICall(Interpreter::cti_op_call_eval);
-        wasEval = jnePtr(X86::eax, ImmPtr(JSValuePtr::encode(JSImmediate::impossibleValue())));
+        wasEval = jnePtr(X86::eax, ImmPtr(JSValuePtr::encode(jsImpossibleValue())));
     }
 
     // This plants a check for a cached JSFunction value, so we can plant a fast link to the callee.
     // This deliberately leaves the callee in ecx, used when setting up the stack frame below
     emitGetVirtualRegister(callee, X86::ecx);
     DataLabelPtr addressOfLinkedFunctionCheck;
-    Jump jumpToSlow = jnePtrWithPatch(X86::ecx, addressOfLinkedFunctionCheck, ImmPtr(JSValuePtr::encode(JSImmediate::impossibleValue())));
+    Jump jumpToSlow = jnePtrWithPatch(X86::ecx, addressOfLinkedFunctionCheck, ImmPtr(JSValuePtr::encode(jsImpossibleValue())));
     addSlowCase(jumpToSlow);
     ASSERT(differenceBetween(addressOfLinkedFunctionCheck, jumpToSlow) == patchOffsetOpCallCompareToJump);
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
