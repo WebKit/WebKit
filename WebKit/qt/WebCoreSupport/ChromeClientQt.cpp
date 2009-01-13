@@ -309,8 +309,8 @@ void ChromeClientQt::repaint(const IntRect& windowRect, bool contentChanged, boo
         if (view) {
             QRect rect(windowRect);
             rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
-            if (!windowRect.isEmpty())
-                view->update(windowRect);
+            if (!rect.isEmpty())
+                view->update(rect);
         }
         emit m_webPage->repaintRequested(windowRect);
     }

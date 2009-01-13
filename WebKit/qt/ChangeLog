@@ -1,3 +1,22 @@
+2009-01-08  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23187
+
+        Update webview with the intersected rect.
+
+        In ChromeClientQt::repaint, view should be updated with the
+        intersected rect, not the whole windowRect;
+
+        This generally is not a problem for normal viewport setup where
+        viewport size is the same as the qwebview widget size.  However, if we
+        set the viewport size smaller than qwebkit widget, we will see
+        unwanted painting outside the viewport.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::repaint):
+
 2009-01-13  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Tor Arne Vestbø.
