@@ -1,3 +1,13 @@
+2009-01-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Speculative fix for an Uninitialized Memory Read (UMR)
+        seen by purify in chormium's equivalent V8 file.
+
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::PODTypeWrapperCacheInfo::PODTypeWrapperCacheInfo):
+
 2009-01-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
