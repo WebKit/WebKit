@@ -34,17 +34,19 @@
 
 #if PLATFORM(MAC)
 #include <CoreFoundation/CFDate.h>
-#elif PLATFORM(WIN)
+#elif PLATFORM(GTK)
+#include <glib.h>
+#elif PLATFORM(WX)
+#include <wx/datetime.h>
+#elif PLATFORM(WIN_OS)
+// If defined, WIN32_LEAN_AND_MEAN disables timeBeginPeriod/timeEndPeriod.
+#undef WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <math.h>
 #include <stdint.h>
 #include <sys/timeb.h>
 #include <sys/types.h>
 #include <time.h>
-#elif PLATFORM(GTK)
-#include <glib.h>
-#elif PLATFORM(WX)
-#include <wx/datetime.h>
 #else // Posix systems relying on the gettimeofday()
 #include <sys/time.h>
 #endif
@@ -60,7 +62,28 @@ double currentTime()
     return CFAbsoluteTimeGetCurrent() + kCFAbsoluteTimeIntervalSince1970;
 }
 
-#elif PLATFORM(WIN)
+#elif PLATFORM(GTK)
+
+// Note: GTK on Windows will pick up the PLATFORM(WIN) implementation above which provides
+// better accuracy compared with Windows implementation of g_get_current_time:
+// (http://www.google.com/codesearch/p?hl=en#HHnNRjks1t0/glib-2.5.2/glib/gmain.c&q=g_get_current_time).
+// Non-Windows GTK builds could use gettimeofday() directly but for the sake of consistency lets use GTK function.
+double currentTime()
+{
+    GTimeVal now;
+    g_get_current_time(&now);
+    return static_cast<double>(now.tv_sec) + static_cast<double>(now.tv_usec / 1000000.0);
+}
+
+#elif PLATFORM(WX)
+
+double currentTime()
+{
+    wxDateTime now = wxDateTime::UNow();
+    return (double)now.GetTicks() + (double)(now.GetMillisecond() / 1000.0);
+}
+
+#elif PLATFORM(WIN_OS)
 
 static LARGE_INTEGER qpcFrequency;
 static bool syncedTime;
@@ -185,27 +208,6 @@ double currentTime()
         return lastUTCTime;
     lastUTCTime = utc;
     return utc / 1000.0;
-}
-
-#elif PLATFORM(GTK)
-
-// Note: GTK on Windows will pick up the PLATFORM(WIN) implementation above which provides
-// better accuracy compared with Windows implementation of g_get_current_time:
-// (http://www.google.com/codesearch/p?hl=en#HHnNRjks1t0/glib-2.5.2/glib/gmain.c&q=g_get_current_time).
-// Non-Windows GTK builds could use gettimeofday() directly but for the sake of consistency lets use GTK function.
-double currentTime()
-{
-    GTimeVal now;
-    g_get_current_time(&now);
-    return static_cast<double>(now.tv_sec) + static_cast<double>(now.tv_usec / 1000000.0);
-}
-
-#elif PLATFORM(WX)
-
-double currentTime()
-{
-    wxDateTime now = wxDateTime::UNow();
-    return (double)now.GetTicks() + (double)(now.GetMillisecond() / 1000.0);
 }
 
 #else // Other Posix systems rely on the gettimeofday().
