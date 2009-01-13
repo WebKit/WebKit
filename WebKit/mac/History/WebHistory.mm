@@ -794,10 +794,13 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 @implementation WebHistory (WebInternal)
 
-- (void)_visitedURL:(NSURL *)URL withTitle:(NSString *)title wasFailure:(BOOL)wasFailure
+- (void)_visitedURL:(NSURL *)URL withTitle:(NSString *)title method:(NSString *)method wasFailure:(BOOL)wasFailure
 {
     WebHistoryItem *entry = [_historyPrivate visitedURL:URL withTitle:title];
-    core(entry)->setLastVisitWasFailure(wasFailure);
+    HistoryItem* item = core(entry);
+    item->setLastVisitWasFailure(wasFailure);
+    if ([method length] && [method caseInsensitiveCompare:@"GET"])
+        item->setLastVisitWasHTTPNonGet(true);
 
     NSArray *entries = [[NSArray alloc] initWithObjects:entry, nil];
     [self _sendNotification:WebHistoryItemsAddedNotification entries:entries];

@@ -1,3 +1,17 @@
+2009-01-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6468274> - Track Non-get requests in global history
+
+        * WebCore.base.exp:
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::lastVisitWasHTTPNonGet):
+        (WebCore::HistoryItem::setLastVisitWasHTTPNonGet):
+
 2009-01-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         !ENABLE(SVG_FONTS) build fix. Move defaultUnitsPerEm into a non-SVG header

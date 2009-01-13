@@ -456,7 +456,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     if (!history)
         return;
     DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
-    history->addItem(loader->urlForHistory(), loader->title(), loader->urlForHistoryReflectsFailure());                 
+    history->addItem(loader->urlForHistory(), loader->title(), loader->request().httpMethod(), loader->urlForHistoryReflectsFailure());                 
 }
 
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const

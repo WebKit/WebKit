@@ -39,6 +39,8 @@
 - (BOOL)lastVisitWasFailure;
 - (void)_setLastVisitWasFailure:(BOOL)failure;
 
+- (BOOL)_lastVisitWasHTTPNonGet;
+
 - (NSString *)RSSFeedReferrer;
 - (void)setRSSFeedReferrer:(NSString *)referrer;
 - (NSCalendarDate *)_lastVisitedDate;

@@ -1,3 +1,24 @@
+2009-01-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/6468274> - Track Non-get requests in global history
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory):
+
+        * WebHistory.cpp:
+        (WebHistory::addItem):
+        * WebHistory.h:
+
+        * Interfaces/IWebHistoryItemPrivate.idl:
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):
+        (WebHistoryItem::dictionaryRepresentation):
+        (WebHistoryItem::lastVisitWasHTTPNonGet):
+        (WebHistoryItem::setLastVisitWasHTTPNonGet):
+        * WebHistoryItem.h:
+
 2009-01-12  Julien Chaffraix  <jchaffraix@pleyo.com>
 
         Reviewed by Darin Adler.

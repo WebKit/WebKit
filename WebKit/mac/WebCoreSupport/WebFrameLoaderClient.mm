@@ -789,7 +789,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     const KURL& url = loader->urlForHistory();
     const String& title = loader->title();
     bool wasFailure = loader->urlForHistoryReflectsFailure();
-    [[WebHistory optionalSharedHistory] _visitedURL:url withTitle:title wasFailure:wasFailure];
+    [[WebHistory optionalSharedHistory] _visitedURL:url withTitle:title method:loader->request().httpMethod() wasFailure:wasFailure];
 }
 
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const

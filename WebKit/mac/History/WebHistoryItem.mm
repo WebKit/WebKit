@@ -56,12 +56,13 @@
 
 // Private keys used in the WebHistoryItem's dictionary representation.
 // see 3245793 for explanation of "lastVisitedDate"
-static NSString *WebLastVisitedTimeIntervalKey = @"lastVisitedDate";
-static NSString *WebVisitCountKey = @"visitCount";
-static NSString *WebTitleKey = @"title";
-static NSString *WebChildrenKey = @"children";
-static NSString *WebDisplayTitleKey = @"displayTitle";
+static NSString *lastVisitedTimeIntervalKey = @"lastVisitedDate";
+static NSString *visitCountKey = @"visitCount";
+static NSString *titleKey = @"title";
+static NSString *childrenKey = @"children";
+static NSString *displayTitleKey = @"displayTitle";
 static NSString *lastVisitWasFailureKey = @"lastVisitWasFailure";
+static NSString *lastVisitWasHTTPNonGetKey = @"lastVisitWasHTTPNonGet";
 
 // Notification strings.
 NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotification";
@@ -335,14 +336,14 @@ static WebWindowWatcher *_windowWatcher = nil;
 {
     ASSERT_MAIN_THREAD();
     NSString *URLString = [dict _webkit_stringForKey:@""];
-    NSString *title = [dict _webkit_stringForKey:WebTitleKey];
+    NSString *title = [dict _webkit_stringForKey:titleKey];
 
     // Do an existence check to avoid calling doubleValue on a nil string. Leave
     // time interval at 0 if there's no value in dict.
-    NSString *timeIntervalString = [dict _webkit_stringForKey:WebLastVisitedTimeIntervalKey];
+    NSString *timeIntervalString = [dict _webkit_stringForKey:lastVisitedTimeIntervalKey];
     NSTimeInterval lastVisited = timeIntervalString == nil ? 0 : [timeIntervalString doubleValue];
 
-    self = [self initWithURLString:URLString title:title displayTitle:[dict _webkit_stringForKey:WebDisplayTitleKey] lastVisitedTimeInterval:lastVisited];
+    self = [self initWithURLString:URLString title:title displayTitle:[dict _webkit_stringForKey:displayTitleKey] lastVisitedTimeInterval:lastVisited];
     
     // Check if we've read a broken URL from the file that has non-Latin1 chars.  If so, try to convert
     // as if it was from user typing.
@@ -354,12 +355,17 @@ static WebWindowWatcher *_windowWatcher = nil;
         core(_private)->setOriginalURLString(newURLString);
     } 
 
-    core(_private)->setVisitCount([dict _webkit_intForKey:WebVisitCountKey]);
+    core(_private)->setVisitCount([dict _webkit_intForKey:visitCountKey]);
 
     if ([dict _webkit_boolForKey:lastVisitWasFailureKey])
         core(_private)->setLastVisitWasFailure(true);
+    
+    BOOL lastVisitWasHTTPNonGet = [dict _webkit_boolForKey:lastVisitWasHTTPNonGetKey];
+    NSString *tempURLString = [URLString lowercaseString];
+    if (lastVisitWasHTTPNonGet && ([tempURLString hasPrefix:@"http:"] || [tempURLString hasPrefix:@"https:"]))
+        core(_private)->setLastVisitWasHTTPNonGet(lastVisitWasHTTPNonGet);
 
-    NSArray *childDicts = [dict objectForKey:WebChildrenKey];
+    NSArray *childDicts = [dict objectForKey:childrenKey];
     if (childDicts) {
         for (int i = [childDicts count] - 1; i >= 0; i--) {
             WebHistoryItem *child = [[WebHistoryItem alloc] initFromDictionaryRepresentation:[childDicts objectAtIndex:i]];
@@ -407,27 +413,33 @@ static WebWindowWatcher *_windowWatcher = nil;
         [dict setObject:(NSString*)coreItem->urlString() forKey:@""];
     }
     if (!coreItem->title().isEmpty()) {
-        [dict setObject:(NSString*)coreItem->title() forKey:WebTitleKey];
+        [dict setObject:(NSString*)coreItem->title() forKey:titleKey];
     }
     if (!coreItem->alternateTitle().isEmpty()) {
-        [dict setObject:(NSString*)coreItem->alternateTitle() forKey:WebDisplayTitleKey];
+        [dict setObject:(NSString*)coreItem->alternateTitle() forKey:displayTitleKey];
     }
     if (coreItem->lastVisitedTime() != 0.0) {
         // store as a string to maintain backward compatibility (see 3245793)
         [dict setObject:[NSString stringWithFormat:@"%.1lf", coreItem->lastVisitedTime()]
-                 forKey:WebLastVisitedTimeIntervalKey];
+                 forKey:lastVisitedTimeIntervalKey];
     }
     if (coreItem->visitCount())
-        [dict setObject:[NSNumber numberWithInt:coreItem->visitCount()] forKey:WebVisitCountKey];
+        [dict setObject:[NSNumber numberWithInt:coreItem->visitCount()] forKey:visitCountKey];
     if (coreItem->lastVisitWasFailure())
         [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasFailureKey];
+
+    if (coreItem->lastVisitWasHTTPNonGet()) {
+        ASSERT(coreItem->urlString().startsWith("http:", false) || coreItem->urlString().startsWith("https:", false));
+        [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasHTTPNonGetKey];
+    }
+    
     if (coreItem->children().size()) {
         const HistoryItemVector& children = coreItem->children();
         NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:children.size()];
         
         for (int i = children.size() - 1; i >= 0; i--)
             [childDicts addObject:[kit(children[i].get()) dictionaryRepresentation]];
-        [dict setObject: childDicts forKey:WebChildrenKey];
+        [dict setObject: childDicts forKey:childrenKey];
     }
 
     return dict;
@@ -537,6 +549,11 @@ static WebWindowWatcher *_windowWatcher = nil;
 - (void)_setLastVisitWasFailure:(BOOL)failure
 {
     core(_private)->setLastVisitWasFailure(failure);
+}
+
+- (BOOL)_lastVisitWasHTTPNonGet
+{
+    return core(_private)->lastVisitWasHTTPNonGet();
 }
 
 @end

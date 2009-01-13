@@ -99,6 +99,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE children(unsigned* childCount, SAFEARRAY** children);
     virtual HRESULT STDMETHODCALLTYPE lastVisitWasFailure(BOOL* wasFailure);
     virtual HRESULT STDMETHODCALLTYPE setLastVisitWasFailure(BOOL wasFailure);
+    virtual HRESULT STDMETHODCALLTYPE lastVisitWasHTTPNonGet(BOOL* HTTPNonGet);
+    virtual HRESULT STDMETHODCALLTYPE setLastVisitWasHTTPNonGet(BOOL HTTPNonGet);
 
     // WebHistoryItem
     WebCore::HistoryItem* historyItem() const;
