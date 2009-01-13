@@ -501,7 +501,7 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
 
 void WebFrameLoaderClient::savePlatformDataToCachedPage(CachedPage* cachedPage)
 {
-#if ENABLE(CFNETWORK)
+#if USE(CFNETWORK)
     Frame* coreFrame = core(m_webFrame);
     if (!coreFrame)
         return;

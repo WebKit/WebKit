@@ -1,5 +1,14 @@
 2009-01-12  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Dan Bernstein
+        
+        <rdar://problem/6490446> - Crash when going back to a cached page
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::savePlatformDataToCachedPage):  ENABLE(CFNETWORK) needed to be USE(CFNETWORK)
+
+2009-01-12  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin Adler
 
         <rdar://problem/6468274> - Track Non-get requests in global history
