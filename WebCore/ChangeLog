@@ -1,3 +1,15 @@
+2009-01-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix crash in the Qt port when deleting a popup from within a
+        JavaScript onchange handler.
+
+        * platform/qt/QWebPopup.cpp:
+        (WebCore::QWebPopup::QWebPopup): Perform the activation of the
+        combobox item (i.e. the call to the JS handler) from a different
+        call stack by using a queued connection.
+
 2009-01-12  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Tor Arne Vestbø.
