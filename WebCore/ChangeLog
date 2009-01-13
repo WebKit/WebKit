@@ -2,6 +2,27 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        [GIO] Make sure to untef the GFile and the GInputStream on destruction
+
+        Make sure to call cleanupGioOperation from the ResourceHandleInternal
+        d'tor. Change the signature of cleanupGioOperation so we can do the
+        cleanup of GIO next to the cleanup of SOUP.
+
+        This is happening with many tests from dom/html/level2/html e.g.
+        LayoutTests/dom/html/level2/html/HTMLBodyElement07.html.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::cleanupGioOperation):
+        (WebCore::closeCallback):
+        (WebCore::readCallback):
+        (WebCore::openCallback):
+        (WebCore::queryInfoCallback):
+
+2009-01-12  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Tor Arne Vestbø.
+
         [GIO] Attach the ResourceHandle to the GObject and get it from the GObject
 
         https://bugs.webkit.org/show_bug.cgi?id=23116 discussed with Benjamin Otte
