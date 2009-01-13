@@ -1,3 +1,10 @@
+2009-01-13  Christian Dywan  <christian@twotoasts.de>
+
+        Build fix, StorageEvent is only defined if we have DOM_STORAGE
+
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent): Conditionalize StorageEvent
+
 2009-01-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.
