@@ -4222,7 +4222,6 @@
 		E10B9B6D0B747599003ED890 /* NativeXPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */; };
 		E10B9CCC0B747A44003ED890 /* DOMCustomXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B9CCA0B747A44003ED890 /* DOMCustomXPathNSResolver.h */; };
 		E10B9CCD0B747A44003ED890 /* DOMCustomXPathNSResolver.mm in Sources */ = {isa = PBXBuildFile; fileRef = E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */; };
-		E10BB3740F14B58500560E13 /* DOMStringList.idl in Resources */ = {isa = PBXBuildFile; fileRef = E10BB3730F14B58500560E13 /* DOMStringList.idl */; };
 		E10BB3780F14B62200560E13 /* DOMStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = E10BB3770F14B62200560E13 /* DOMStringList.h */; };
 		E10BB37B0F14B64100560E13 /* DOMStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10BB37A0F14B64100560E13 /* DOMStringList.cpp */; };
 		E10BB3860F14B95000560E13 /* JSDOMStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = E10BB3840F14B95000560E13 /* JSDOMStringList.h */; };
@@ -16622,7 +16621,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				E10BB3740F14B58500560E13 /* DOMStringList.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
