@@ -197,6 +197,19 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Make sure media elements dispatch the 'loaded' event
+        
+        We assume that when Phonon goes into paused state that we have the
+        complete media file. Once we do media loading ourselves we can
+        distinguish between loading the first frame and the complete media.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::updateStates):
+
+2009-01-13  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Add more verbose error output when loading NPAPI plugins
 
         * plugins/qt/PluginPackageQt.cpp:

@@ -315,7 +315,7 @@ void MediaPlayerPrivate::updateStates()
             m_mediaObject->pause();
         }
     } else if (phononState == Phonon::PausedState) {
-        m_networkState = MediaPlayer::LoadedFirstFrame;
+        m_networkState = MediaPlayer::Loaded;
         m_readyState = MediaPlayer::CanPlayThrough;
     } else if (phononState == Phonon::ErrorState) {
          if (!m_mediaObject || m_mediaObject->errorType() == Phonon::FatalError) {
