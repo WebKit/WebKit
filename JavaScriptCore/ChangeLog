@@ -1,3 +1,13 @@
+2009-01-13  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23290
+        Fix JSImmediate::isImmediate(src) to !src->isCell()
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2009-01-13  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.

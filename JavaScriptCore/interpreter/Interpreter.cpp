@@ -1599,7 +1599,7 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
             NEXT_INSTRUCTION();
         }
         
-        callFrame[dst] = jsBoolean(src->isCell() || !asCell(src)->structure()->typeInfo().masqueradesAsUndefined());
+        callFrame[dst] = jsBoolean(!src->isCell() || !asCell(src)->structure()->typeInfo().masqueradesAsUndefined());
         ++vPC;
         NEXT_INSTRUCTION();
     }
