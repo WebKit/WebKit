@@ -1,3 +1,198 @@
+2009-01-13  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Landing portions of platform/chromium/, taken from here:
+        http://src.chromium.org/viewvc/chrome/trunk/deps/third_party/WebKit/WebCore/platform/chromium/
+
+        * platform/chromium/ChromiumBridge.h: Added.
+        * platform/chromium/ChromiumDataObject.cpp: Added.
+        (WebCore::ChromiumDataObject::clear):
+        (WebCore::ChromiumDataObject::hasData):
+        * platform/chromium/ChromiumDataObject.h: Added.
+        (WebCore::ChromiumDataObject::create):
+        (WebCore::ChromiumDataObject::ChromiumDataObject):
+        * platform/chromium/ClipboardChromium.cpp: Added.
+        (WebCore::):
+        (WebCore::clipboardTypeFromMIMEType):
+        (WebCore::ClipboardChromium::ClipboardChromium):
+        (WebCore::ClipboardChromium::create):
+        (WebCore::ClipboardChromium::clearData):
+        (WebCore::ClipboardChromium::clearAllData):
+        (WebCore::ClipboardChromium::getData):
+        (WebCore::ClipboardChromium::setData):
+        (WebCore::ClipboardChromium::types):
+        (WebCore::ClipboardChromium::setDragImage):
+        (WebCore::ClipboardChromium::setDragImageElement):
+        (WebCore::ClipboardChromium::createDragImage):
+        (WebCore::imageToMarkup):
+        (WebCore::getCachedImage):
+        (WebCore::writeImageToDataObject):
+        (WebCore::ClipboardChromium::declareAndWriteDragImage):
+        (WebCore::ClipboardChromium::writeURL):
+        (WebCore::ClipboardChromium::writeRange):
+        (WebCore::ClipboardChromium::hasData):
+        * platform/chromium/ClipboardChromium.h: Added.
+        (WebCore::ClipboardChromium::~ClipboardChromium):
+        (WebCore::ClipboardChromium::dataObject):
+        * platform/chromium/ClipboardUtilitiesChromium.cpp: Added.
+        (WebCore::replaceNewlinesWithWindowsStyleNewlines):
+        (WebCore::replaceNBSPWithSpace):
+        (WebCore::urlToMarkup):
+        * platform/chromium/ClipboardUtilitiesChromium.h: Added.
+        * platform/chromium/ContextMenuChromium.cpp: Added.
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::ContextMenu::insertItem):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::itemWithAction):
+        (WebCore::ContextMenu::itemAtIndex):
+        (WebCore::ContextMenu::setPlatformDescription):
+        (WebCore::ContextMenu::platformDescription):
+        (WebCore::ContextMenu::releasePlatformDescription):
+        * platform/chromium/ContextMenuItemChromium.cpp: Added.
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::ContextMenuItem::releasePlatformDescription):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::title):
+        (WebCore::ContextMenuItem::platformSubMenu):
+        (WebCore::ContextMenuItem::setType):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::setSubMenu):
+        (WebCore::ContextMenuItem::setChecked):
+        (WebCore::ContextMenuItem::setEnabled):
+        (WebCore::ContextMenuItem::enabled):
+        * platform/chromium/CursorChromium.cpp: Added.
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::Cursor::operator=):
+        (WebCore::pointerCursor):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        (WebCore::middlePanningCursor):
+        (WebCore::eastPanningCursor):
+        (WebCore::northPanningCursor):
+        (WebCore::northEastPanningCursor):
+        (WebCore::northWestPanningCursor):
+        (WebCore::southPanningCursor):
+        (WebCore::southEastPanningCursor):
+        (WebCore::southWestPanningCursor):
+        (WebCore::westPanningCursor):
+        (WebCore::moveCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::aliasCursor):
+        (WebCore::progressCursor):
+        (WebCore::noDropCursor):
+        (WebCore::copyCursor):
+        (WebCore::noneCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        (WebCore::grabCursor):
+        (WebCore::grabbingCursor):
+        * platform/chromium/DragDataChromium.cpp: Added.
+        (WebCore::containsHTML):
+        (WebCore::DragData::createClipboard):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::asFragment):
+        (WebCore::DragData::asColor):
+        * platform/chromium/EditorChromium.cpp: Added.
+        (WebCore::Editor::newGeneralClipboard):
+        * platform/chromium/FileChooserChromium.cpp: Added.
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/chromium/FileSystemChromium.cpp: Added.
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::directoryName):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::makeAllDirectories):
+        (WebCore::fileExists):
+        * platform/chromium/FileSystemChromiumLinux.cpp: Added.
+        (WebCore::pathGetFileName):
+        * platform/chromium/FileSystemChromiumMac.mm: Added.
+        (WebCore::pathGetFileName):
+        * platform/chromium/FileSystemChromiumWin.cpp: Added.
+        (WebCore::pathGetFileName):
+        * platform/chromium/FramelessScrollView.cpp: Added.
+        (WebCore::FramelessScrollView::~FramelessScrollView):
+        (WebCore::FramelessScrollView::invalidateScrollbarRect):
+        (WebCore::FramelessScrollView::isActive):
+        (WebCore::FramelessScrollView::invalidateRect):
+        (WebCore::FramelessScrollView::hostWindow):
+        (WebCore::FramelessScrollView::windowClipRect):
+        (WebCore::FramelessScrollView::paintContents):
+        (WebCore::FramelessScrollView::contentsResized):
+        (WebCore::FramelessScrollView::visibleContentsResized):
+        * platform/chromium/FramelessScrollView.h: Added.
+        (WebCore::FramelessScrollView::FramelessScrollView):
+        (WebCore::FramelessScrollView::client):
+        (WebCore::FramelessScrollView::setClient):
+        * platform/chromium/FramelessScrollViewClient.h: Added.
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp: Added.
+        (WebCore::):
+        (WebCore::ScrollbarThemeChromium::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromium::invalidateOnMouseEnterExit):
+        (WebCore::ScrollbarThemeChromium::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromium::paintButton):
+        (WebCore::ScrollbarThemeChromium::paintThumb):
+        (WebCore::ScrollbarThemeChromium::getThemeState):
+        (WebCore::ScrollbarThemeChromium::getThemeArrowState):
+        (WebCore::ScrollbarThemeChromium::getClassicThemeState):
+        * platform/chromium/SoundChromiumPosix.cpp: Added.
+        (WebCore::systemBeep):
+        * platform/chromium/SoundChromiumWin.cpp: Added.
+        (WebCore::systemBeep):
+        * platform/chromium/SystemTimeChromium.cpp: Added.
+        (WebCore::currentTime):
+        (WebCore::userIdleTime):
+        * platform/chromium/WidgetChromium.cpp: Added.
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::Widget::frameRect):
+        (WebCore::Widget::setFrameRect):
+        * platform/chromium/WindowsVersion.cpp: Added.
+        (WebCore::isVistaOrNewer):
+        * platform/chromium/WindowsVersion.h: Added.
+
 2009-01-13  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon Hausmann.
