@@ -2254,7 +2254,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     if (decoder) {
         self = [self initWithCoder:decoder];
     } else {
-        ASSERT([arguments containsObjectForKey:@"frame"]);
+        ASSERT([arguments objectForKey:@"frame"]);
         NSValue *frameValue = [arguments objectForKey:@"frame"];
         NSRect frame = (frameValue ? [frameValue rectValue] : NSZeroRect);
         NSString *frameName = [arguments objectForKey:@"frameName"];
