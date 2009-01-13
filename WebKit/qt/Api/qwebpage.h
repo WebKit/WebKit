@@ -269,6 +269,8 @@ public:
     virtual bool extension(Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
     virtual bool supportsExtension(Extension extension) const;
 
+    inline QWebPagePrivate* handle() const { return d; }
+
 Q_SIGNALS:
     void loadStarted();
     void loadProgress(int progress);

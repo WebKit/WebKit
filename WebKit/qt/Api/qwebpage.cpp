@@ -102,6 +102,16 @@ void QWEBKIT_EXPORT qt_drt_run(bool b)
     QWebPagePrivate::drtRun = b;
 }
 
+void QWEBKIT_EXPORT qt_webpage_setGroupName(QWebPage* page, const QString& groupName)
+{
+    page->handle()->page->setGroupName(groupName);
+}
+
+QString QWEBKIT_EXPORT qt_webpage_groupName(QWebPage* page)
+{
+    return page->handle()->page->groupName();
+}
+
 // Lookup table mapping QWebPage::WebActions to the associated Editor commands
 static const char* editorCommandWebActions[] = 
 {
@@ -2651,5 +2661,9 @@ quint64 QWebPage::bytesReceived() const {
   This signal is emitted when the load of \a frame is finished and the application may now update its state accordingly.
 */
 
+/*!
+  \fn QWebPagePrivate* QWebPage::handle() const
+  \internal
+*/
 
 #include "moc_qwebpage.cpp"

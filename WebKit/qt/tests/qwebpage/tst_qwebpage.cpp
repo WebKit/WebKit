@@ -100,6 +100,7 @@ private slots:
     void createPlugin();
     void destroyPlugin();
     void createViewlessPlugin();
+    void multiplePageGroupsAndLocalStorage();
 
 private:
 
@@ -370,12 +371,6 @@ void tst_QWebPage::database()
     QWebSettings::setOfflineStorageDefaultQuota(1024 * 1024);
     QVERIFY(QWebSettings::offlineStorageDefaultQuota() == 1024 * 1024);
 
-    m_page->settings()->setOfflineWebApplicationCachePath(path);
-    QVERIFY(m_page->settings()->offlineWebApplicationCachePath() == path);
-
-    m_page->settings()->setLocalStorageDatabasePath(path);
-    QVERIFY(m_page->settings()->localStorageDatabasePath() == path);
-
     QString dbFileName = path + "Databases.db";
 
     if (QFile::exists(dbFileName))
@@ -593,6 +588,51 @@ void tst_QWebPage::createViewlessPlugin()
     QCOMPARE(page->count, 1);
     QVERIFY(page->widget != 0);
     delete page;
+}
+
+// import private API
+void QWEBKIT_EXPORT qt_webpage_setGroupName(QWebPage* page, const QString& groupName);
+QString QWEBKIT_EXPORT qt_webpage_groupName(QWebPage* page);
+void QWEBKIT_EXPORT qt_websettings_setLocalStorageDatabasePath(QWebSettings* settings, const QString& path);
+
+void tst_QWebPage::multiplePageGroupsAndLocalStorage()
+{
+    QDir dir(QDir::currentPath());
+    dir.mkdir("path1");
+    dir.mkdir("path2");
+
+    QWebView view1;
+    QWebView view2;
+
+    qt_websettings_setLocalStorageDatabasePath(view1.page()->settings(), QDir::toNativeSeparators(QDir::currentPath() + "/path1"));
+    qt_webpage_setGroupName(view1.page(), "group1");
+    qt_websettings_setLocalStorageDatabasePath(view2.page()->settings(), QDir::toNativeSeparators(QDir::currentPath() + "/path2"));
+    qt_webpage_setGroupName(view2.page(), "group2");
+    QCOMPARE(qt_webpage_groupName(view1.page()), QString("group1"));
+    QCOMPARE(qt_webpage_groupName(view2.page()), QString("group2"));
+
+
+    view1.setHtml(QString("<html><body> </body></html>"), QUrl("http://www.myexample.com"));
+    view2.setHtml(QString("<html><body> </body></html>"), QUrl("http://www.myexample.com"));
+
+    view1.page()->mainFrame()->evaluateJavaScript("localStorage.test='value1';");
+    view2.page()->mainFrame()->evaluateJavaScript("localStorage.test='value2';");
+
+    view1.setHtml(QString("<html><body> </body></html>"), QUrl("http://www.myexample.com"));
+    view2.setHtml(QString("<html><body> </body></html>"), QUrl("http://www.myexample.com"));
+
+    QVariant s1 = view1.page()->mainFrame()->evaluateJavaScript("localStorage.test");
+    QCOMPARE(s1.toString(), QString("value1"));
+
+    QVariant s2 = view2.page()->mainFrame()->evaluateJavaScript("localStorage.test");
+    QCOMPARE(s2.toString(), QString("value2"));
+
+    QTest::qWait(1000);
+
+    QFile::remove(QDir::toNativeSeparators(QDir::currentPath() + "/path1/http_www.myexample.com_0.localstorage"));
+    QFile::remove(QDir::toNativeSeparators(QDir::currentPath() + "/path2/http_www.myexample.com_0.localstorage"));
+    dir.rmdir(QDir::toNativeSeparators("./path1"));
+    dir.rmdir(QDir::toNativeSeparators("./path2"));
 }
 
 QTEST_MAIN(tst_QWebPage)

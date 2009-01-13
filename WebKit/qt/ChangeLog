@@ -1,3 +1,29 @@
+2009-01-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23171
+
+        Based on patch by Yael Aharon  <yael.aharon@nokia.com>
+
+        Make the QWebSettings functions for setting the path for the local
+        storage database private QtWebkit API, including the ability to
+        associated a QWebPage with a named page group.
+
+        * Api/qwebpage.cpp:
+        (qt_webpage_setGroupName): Added.
+        (qt_webpage_groupName): Added.
+        * Api/qwebpage.h:
+        (ExtensionOption::handle): Added internal helper function.
+        * Api/qwebsettings.cpp:
+        (qt_websettings_setLocalStorageDatabasePath): Made private API.
+        (qt_websettings_localStorageDatabasePath): Made private API.
+        * Api/qwebsettings.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::database): Small cleanup.
+        (tst_QWebPage::multiplePageGroupsAndLocalStorage): New test for the
+        page group handling, written by Yael.
+
 2009-01-12  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon Hausmann.
