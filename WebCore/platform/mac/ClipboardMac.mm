@@ -36,6 +36,7 @@
 #import "Page.h"
 #import "Pasteboard.h"
 #import "RenderImage.h"
+#import "SecurityOrigin.h"
 #import "WebCoreSystemInterface.h"
 
 namespace WebCore {
@@ -211,7 +212,7 @@ bool ClipboardMac::setData(const String &type, const String &data)
         NSURL *url = [[NSURL alloc] initWithString:cocoaData];
         [url writeToPasteboard:m_pasteboard.get()];
 
-        if ([url isFileURL]) {
+        if ([url isFileURL] && m_frame->document()->securityOrigin()->canLoadLocalResources()) {
             [m_pasteboard.get() addTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
             NSArray *fileList = [NSArray arrayWithObject:[url path]];
             [m_pasteboard.get() setPropertyList:fileList forType:NSFilenamesPboardType];

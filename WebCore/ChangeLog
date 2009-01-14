@@ -1,3 +1,18 @@
+2009-01-14  Nigel Tao  <nigel.tao.gnome@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22476
+        Check that the document's SecurityOrigin canLoadLocalResources,
+        when pages try to put NSFilenamesPboardtype data on the clipboard,
+        by calling event.dataTransfer.setData('URL', 'file:///foo/bar');
+
+        Tests: http/tests/security/dataTransfer-set-data-file-url.html
+               platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::setData):
+
 2009-01-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

@@ -1,3 +1,17 @@
+2009-01-14  Nigel Tao  <nigel.tao.gnome@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        - tests for https://bugs.webkit.org/show_bug.cgi?id=22476
+        Added tests that calling dataTransfer.setData('URL', aFileUrl)
+        only puts NSFilenamesPboardtype data on the clipboard if called
+        from a locally served page.
+
+        * http/tests/security/dataTransfer-set-data-file-url-expected.txt: Added.
+        * http/tests/security/dataTransfer-set-data-file-url.html: Added.
+        * platform/mac/editing/pasteboard/dataTransfer-set-data-file-url-expected.txt: Added.
+        * platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html: Added.
+
 2009-01-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
