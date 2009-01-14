@@ -28,65 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ContextMenu.h"
+#ifndef PopupMenuPrivate_h
+#define PopupMenuPrivate_h
+
+#include "RefPtr.h"
 
 namespace WebCore {
 
-// This is a stub implementation of WebKit's ContextMenu class that does
-// nothing.
+    class PopupContainer;
 
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
-{
-}
-
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
-{
-}
-
-ContextMenu::~ContextMenu()
-{
-}
-
-unsigned ContextMenu::itemCount() const
-{
-    return 0;
-}
-
-void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
-{
-}
-
-void ContextMenu::appendItem(ContextMenuItem& item)
-{
-}
-
-ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
-{
-    return 0;
-}
-
-ContextMenuItem* ContextMenu::itemAtIndex(unsigned index, const PlatformMenuDescription platformDescription)
-{
-    return 0;
-}
-
-void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
-{
-}
-
-PlatformMenuDescription ContextMenu::platformDescription() const
-{
-    return m_platformDescription;
-}
-
-PlatformMenuDescription ContextMenu::releasePlatformDescription()
-{
-    return 0;
-}
+    struct PopupMenuPrivate {
+        RefPtr<PopupContainer> popup;
+    };
 
 } // namespace WebCore
+
+#endif

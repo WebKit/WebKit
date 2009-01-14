@@ -217,8 +217,8 @@ static String imageToMarkup(const String& url, Element* element)
     // Copy over attributes.  If we are dragging an image, we expect things like
     // the id to be copied as well.
     NamedAttrMap* attrs = element->attributes();
-    unsigned int length = attrs->length();
-    for (unsigned int i = 0; i < length; ++i) {
+    unsigned length = attrs->length();
+    for (unsigned i = 0; i < length; ++i) {
         Attribute* attr = attrs->attributeItem(i);
         if (attr->localName() == "src")
             continue;

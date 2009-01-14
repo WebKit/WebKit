@@ -43,6 +43,6 @@ namespace WebCore {
         };
     };
 
-}
+} // namespace WebCore
 
 #endif

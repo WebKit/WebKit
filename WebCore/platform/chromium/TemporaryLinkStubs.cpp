@@ -29,64 +29,26 @@
  */
 
 #include "config.h"
-#include "ContextMenu.h"
+
+#include "KURL.h"
+#include "NotImplemented.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
-// This is a stub implementation of WebKit's ContextMenu class that does
-// nothing.
+String signedPublicKeyAndChallengeString(unsigned, const String&, const KURL&) { notImplemented(); return String(); }
+void getSupportedKeySizes(Vector<String>&) { notImplemented(); }
 
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
-{
-}
+String KURL::fileSystemPath() const { notImplemented(); return String(); }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
-{
-}
-
-ContextMenu::~ContextMenu()
-{
-}
-
-unsigned ContextMenu::itemCount() const
-{
-    return 0;
-}
-
-void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
-{
-}
-
-void ContextMenu::appendItem(ContextMenuItem& item)
-{
-}
-
-ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
-{
-    return 0;
-}
-
-ContextMenuItem* ContextMenu::itemAtIndex(unsigned index, const PlatformMenuDescription platformDescription)
-{
-    return 0;
-}
-
-void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
-{
-}
-
-PlatformMenuDescription ContextMenu::platformDescription() const
-{
-    return m_platformDescription;
-}
-
-PlatformMenuDescription ContextMenu::releasePlatformDescription()
-{
-    return 0;
-}
+PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String&) { notImplemented(); return 0; }
 
 } // namespace WebCore
+
+namespace WTF {
+
+#if !defined(__linux__)
+void scheduleDispatchFunctionsOnMainThread() { notImplemented(); }
+#endif
+
+} // namespace WTF

@@ -204,4 +204,4 @@ int ScrollbarThemeChromium::getClassicThemeState(Scrollbar* scrollbar, Scrollbar
     return (scrollbar->pressedPart() == part) ? (DFCS_PUSHED | DFCS_FLAT) : 0;
 }
 
-}
+} // namespace WebCore

@@ -29,64 +29,45 @@
  */
 
 #include "config.h"
-#include "ContextMenu.h"
+#include "DragImage.h"
+
+#include "NotImplemented.h"
 
 namespace WebCore {
 
-// This is a stub implementation of WebKit's ContextMenu class that does
-// nothing.
-
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+IntSize dragImageSize(DragImageRef image)
 {
+    notImplemented();
+    return IntSize();
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+void deleteDragImage(DragImageRef image)
 {
+    notImplemented();
 }
 
-ContextMenu::~ContextMenu()
+DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
 {
-}
-
-unsigned ContextMenu::itemCount() const
-{
+    notImplemented();
     return 0;
 }
-
-void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
+    
+DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
 {
+    notImplemented();
+    return image;
 }
-
-void ContextMenu::appendItem(ContextMenuItem& item)
-{
-}
-
-ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
-{
+        
+DragImageRef createDragImageFromImage(Image* img)
+{    
+    notImplemented();
     return 0;
 }
-
-ContextMenuItem* ContextMenu::itemAtIndex(unsigned index, const PlatformMenuDescription platformDescription)
+    
+DragImageRef createDragImageIconForCachedImage(CachedImage*)
 {
-    return 0;
+    notImplemented();
+    return 0;     
 }
-
-void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
-{
-}
-
-PlatformMenuDescription ContextMenu::platformDescription() const
-{
-    return m_platformDescription;
-}
-
-PlatformMenuDescription ContextMenu::releasePlatformDescription()
-{
-    return 0;
-}
-
+    
 } // namespace WebCore

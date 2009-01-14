@@ -29,64 +29,24 @@
  */
 
 #include "config.h"
-#include "ContextMenu.h"
+#include "SSLKeyGenerator.h"
 
 namespace WebCore {
 
-// This is a stub implementation of WebKit's ContextMenu class that does
-// nothing.
+// These are defined in webkit/glue/localized_strings.cpp.
+String keygenMenuHighGradeKeySize();
+String keygenMenuMediumGradeKeySize();
 
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+// Returns the key sizes supported by the HTML keygen tag.  The first string
+// is displayed as the default key size in the keygen menu.
+Vector<String> supportedKeySizes()
 {
+    Vector<String> sizes(2);
+    sizes[0] = keygenMenuHighGradeKeySize();
+    sizes[1] = keygenMenuMediumGradeKeySize();
+    return sizes;
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
-{
-}
-
-ContextMenu::~ContextMenu()
-{
-}
-
-unsigned ContextMenu::itemCount() const
-{
-    return 0;
-}
-
-void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
-{
-}
-
-void ContextMenu::appendItem(ContextMenuItem& item)
-{
-}
-
-ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
-{
-    return 0;
-}
-
-ContextMenuItem* ContextMenu::itemAtIndex(unsigned index, const PlatformMenuDescription platformDescription)
-{
-    return 0;
-}
-
-void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
-{
-}
-
-PlatformMenuDescription ContextMenu::platformDescription() const
-{
-    return m_platformDescription;
-}
-
-PlatformMenuDescription ContextMenu::releasePlatformDescription()
-{
-    return 0;
-}
+// FIXME: implement signedPublicKeyAndChallengeString here.
 
 } // namespace WebCore

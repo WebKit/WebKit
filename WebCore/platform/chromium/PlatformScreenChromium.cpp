@@ -29,64 +29,36 @@
  */
 
 #include "config.h"
-#include "ContextMenu.h"
+#include "PlatformScreen.h"
+
+#include "ChromiumBridge.h"
+#include "IntRect.h"
 
 namespace WebCore {
 
-// This is a stub implementation of WebKit's ContextMenu class that does
-// nothing.
-
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+int screenDepth(Widget* widget)
 {
+    return ChromiumBridge::screenDepth(widget);
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+int screenDepthPerComponent(Widget* widget)
 {
+    return ChromiumBridge::screenDepthPerComponent(widget);
 }
 
-ContextMenu::~ContextMenu()
+bool screenIsMonochrome(Widget* widget)
 {
+    return ChromiumBridge::screenIsMonochrome(widget);
 }
 
-unsigned ContextMenu::itemCount() const
+FloatRect screenRect(Widget* widget)
 {
-    return 0;
+    return ChromiumBridge::screenRect(widget);
 }
 
-void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
+FloatRect screenAvailableRect(Widget* widget)
 {
-}
-
-void ContextMenu::appendItem(ContextMenuItem& item)
-{
-}
-
-ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
-{
-    return 0;
-}
-
-ContextMenuItem* ContextMenu::itemAtIndex(unsigned index, const PlatformMenuDescription platformDescription)
-{
-    return 0;
-}
-
-void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
-{
-}
-
-PlatformMenuDescription ContextMenu::platformDescription() const
-{
-    return m_platformDescription;
-}
-
-PlatformMenuDescription ContextMenu::releasePlatformDescription()
-{
-    return 0;
+    return ChromiumBridge::screenAvailableRect(widget);
 }
 
 } // namespace WebCore

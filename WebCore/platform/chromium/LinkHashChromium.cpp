@@ -29,64 +29,20 @@
  */
 
 #include "config.h"
-#include "ContextMenu.h"
+#include "LinkHash.h"
+
+#include "ChromiumBridge.h"
 
 namespace WebCore {
 
-// This is a stub implementation of WebKit's ContextMenu class that does
-// nothing.
-
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+LinkHash visitedLinkHash(const UChar* url, unsigned length)
 {
+    return ChromiumBridge::visitedLinkHash(url, length);
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
 {
-}
-
-ContextMenu::~ContextMenu()
-{
-}
-
-unsigned ContextMenu::itemCount() const
-{
-    return 0;
-}
-
-void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
-{
-}
-
-void ContextMenu::appendItem(ContextMenuItem& item)
-{
-}
-
-ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
-{
-    return 0;
-}
-
-ContextMenuItem* ContextMenu::itemAtIndex(unsigned index, const PlatformMenuDescription platformDescription)
-{
-    return 0;
-}
-
-void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
-{
-}
-
-PlatformMenuDescription ContextMenu::platformDescription() const
-{
-    return m_platformDescription;
-}
-
-PlatformMenuDescription ContextMenu::releasePlatformDescription()
-{
-    return 0;
+    return ChromiumBridge::visitedLinkHash(base, attributeURL);
 }
 
 } // namespace WebCore

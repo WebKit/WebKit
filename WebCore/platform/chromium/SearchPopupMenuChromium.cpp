@@ -29,64 +29,31 @@
  */
 
 #include "config.h"
-#include "ContextMenu.h"
+#include "SearchPopupMenu.h"
+
+#include "AtomicString.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
-// This is a stub implementation of WebKit's ContextMenu class that does
-// nothing.
-
-ContextMenu::ContextMenu(const HitTestResult& result)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client)
+    : PopupMenu(client)
 {
 }
 
-ContextMenu::ContextMenu(const HitTestResult& result, const PlatformMenuDescription menu)
-    : m_hitTestResult(result)
-    , m_platformDescription(0)
+bool SearchPopupMenu::enabled()
 {
+    return false;
 }
 
-ContextMenu::~ContextMenu()
+void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
 {
+    notImplemented();
 }
 
-unsigned ContextMenu::itemCount() const
+void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
 {
-    return 0;
-}
-
-void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
-{
-}
-
-void ContextMenu::appendItem(ContextMenuItem& item)
-{
-}
-
-ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
-{
-    return 0;
-}
-
-ContextMenuItem* ContextMenu::itemAtIndex(unsigned index, const PlatformMenuDescription platformDescription)
-{
-    return 0;
-}
-
-void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
-{
-}
-
-PlatformMenuDescription ContextMenu::platformDescription() const
-{
-    return m_platformDescription;
-}
-
-PlatformMenuDescription ContextMenu::releasePlatformDescription()
-{
-    return 0;
+    notImplemented();
 }
 
 } // namespace WebCore

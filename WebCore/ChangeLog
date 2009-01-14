@@ -92,6 +92,233 @@
 
         Reviewed by Eric Seidel.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23328
+        Upstream remaining files from platform/chromium/
+
+        * platform/chromium/CursorChromium.cpp:
+        (WebCore::pointerCursor):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        (WebCore::middlePanningCursor):
+        (WebCore::eastPanningCursor):
+        (WebCore::northPanningCursor):
+        (WebCore::northEastPanningCursor):
+        (WebCore::northWestPanningCursor):
+        (WebCore::southPanningCursor):
+        (WebCore::southEastPanningCursor):
+        (WebCore::southWestPanningCursor):
+        (WebCore::westPanningCursor):
+        (WebCore::moveCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::aliasCursor):
+        (WebCore::progressCursor):
+        (WebCore::noDropCursor):
+        (WebCore::copyCursor):
+        (WebCore::noneCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        * platform/chromium/DragDataRef.h: Added.
+        * platform/chromium/DragImageChromium.cpp: Added.
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageIconForCachedImage):
+        * platform/chromium/DragImageRef.h:
+        * platform/chromium/KeyCodeConversion.h: Added.
+        * platform/chromium/KeyCodeConversionGtk.cpp: Added.
+        (WebCore::windowsKeyCodeForKeyEvent):
+        * platform/chromium/KeyboardCodes.h: Added.
+        * platform/chromium/KeyboardCodesPosix.h: Added.
+        (WebCore::):
+        * platform/chromium/KeyboardCodesWin.h: Added.
+        (WebCore::):
+        * platform/chromium/Language.cpp: Added.
+        (WebCore::defaultLanguage):
+        * platform/chromium/LinkHashChromium.cpp: Added.
+        (WebCore::visitedLinkHash):
+        * platform/chromium/MimeTypeRegistryChromium.cpp: Added.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::getMIMETypeForPath):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedImageResourceMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding):
+        (WebCore::MIMETypeRegistry::isSupportedJavaScriptMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedNonImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedMediaMIMEType):
+        (WebCore::MIMETypeRegistry::isJavaAppletMIMEType):
+        (WebCore::dummyHashSet):
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedImageResourceMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypesForEncoding):
+        (WebCore::MIMETypeRegistry::getSupportedNonImageMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedMediaMIMETypes):
+        * platform/chromium/PasteboardChromium.cpp: Added.
+        (WebCore::Pasteboard::generalPasteboard):
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        * platform/chromium/PasteboardPrivate.h:
+        * platform/chromium/PlatformCursor.h: Added.
+        (WebCore::PlatformCursor::):
+        (WebCore::PlatformCursor::PlatformCursor):
+        (WebCore::PlatformCursor::customImage):
+        (WebCore::PlatformCursor::hotSpot):
+        (WebCore::PlatformCursor::type):
+        * platform/chromium/PlatformKeyboardEventChromium.cpp: Added.
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState):
+        * platform/chromium/PlatformScreenChromium.cpp: Added.
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/chromium/PlatformWidget.h:
+        * platform/chromium/PopupMenuChromium.cpp: Added.
+        (WebCore::PopupListBox::selectedIndex):
+        (WebCore::PopupListBox::numItems):
+        (WebCore::PopupListBox::setBaseWidth):
+        (WebCore::PopupListBox::setTextOnIndexChange):
+        (WebCore::PopupListBox::setAcceptOnAbandon):
+        (WebCore::PopupListBox::):
+        (WebCore::PopupListBox::ListItem::ListItem):
+        (WebCore::PopupListBox::PopupListBox):
+        (WebCore::PopupListBox::~PopupListBox):
+        (WebCore::PopupListBox::disconnectClient):
+        (WebCore::PopupListBox::scrollToRevealSelection):
+        (WebCore::constructRelativeMouseEvent):
+        (WebCore::constructRelativeWheelEvent):
+        (WebCore::PopupContainer::create):
+        (WebCore::PopupContainer::PopupContainer):
+        (WebCore::PopupContainer::~PopupContainer):
+        (WebCore::PopupContainer::showPopup):
+        (WebCore::PopupContainer::hidePopup):
+        (WebCore::PopupContainer::layout):
+        (WebCore::PopupContainer::handleMouseDownEvent):
+        (WebCore::PopupContainer::handleMouseMoveEvent):
+        (WebCore::PopupContainer::handleMouseReleaseEvent):
+        (WebCore::PopupContainer::handleWheelEvent):
+        (WebCore::PopupContainer::handleKeyEvent):
+        (WebCore::PopupContainer::hide):
+        (WebCore::PopupContainer::paint):
+        (WebCore::PopupContainer::paintBorder):
+        (WebCore::PopupContainer::isInterestedInEventForKey):
+        (WebCore::PopupContainer::show):
+        (WebCore::PopupContainer::setTextOnIndexChange):
+        (WebCore::PopupContainer::setAcceptOnAbandon):
+        (WebCore::PopupContainer::refresh):
+        (WebCore::PopupListBox::handleMouseDownEvent):
+        (WebCore::PopupListBox::handleMouseMoveEvent):
+        (WebCore::PopupListBox::handleMouseReleaseEvent):
+        (WebCore::PopupListBox::handleWheelEvent):
+        (WebCore::PopupListBox::isInterestedInEventForKey):
+        (WebCore::PopupListBox::handleKeyEvent):
+        (WebCore::PopupListBox::hostWindow):
+        (WebCore::PopupListBox::invalidateRect):
+        (WebCore::stripLeadingWhiteSpace):
+        (WebCore::PopupListBox::typeAheadFind):
+        (WebCore::PopupListBox::paint):
+        (WebCore::PopupListBox::paintRow):
+        (WebCore::PopupListBox::getRowFont):
+        (WebCore::PopupListBox::abandon):
+        (WebCore::PopupListBox::pointToRowIndex):
+        (WebCore::PopupListBox::acceptIndex):
+        (WebCore::PopupListBox::selectIndex):
+        (WebCore::PopupListBox::setOriginalIndex):
+        (WebCore::PopupListBox::getRowHeight):
+        (WebCore::PopupListBox::getRowBounds):
+        (WebCore::PopupListBox::invalidateRow):
+        (WebCore::PopupListBox::scrollToRevealRow):
+        (WebCore::PopupListBox::isSelectableItem):
+        (WebCore::PopupListBox::adjustSelectedIndex):
+        (WebCore::PopupListBox::updateFromElement):
+        (WebCore::PopupListBox::layout):
+        (WebCore::PopupListBox::clear):
+        (WebCore::PopupListBox::isPointInBounds):
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+        * platform/chromium/PopupMenuChromium.h: Added.
+        (WebCore::PopupContainer::listBox):
+        * platform/chromium/PopupMenuPrivate.h: Added.
+        * platform/chromium/SSLKeyGeneratorChromium.cpp: Added.
+        (WebCore::supportedKeySizes):
+        * platform/chromium/ScrollbarThemeChromium.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeChromium::ScrollbarThemeChromium):
+        (WebCore::ScrollbarThemeChromium::~ScrollbarThemeChromium):
+        (WebCore::ScrollbarThemeChromium::themeChanged):
+        (WebCore::ScrollbarThemeChromium::hasThumb):
+        (WebCore::ScrollbarThemeChromium::backButtonRect):
+        (WebCore::ScrollbarThemeChromium::forwardButtonRect):
+        (WebCore::ScrollbarThemeChromium::trackRect):
+        (WebCore::ScrollbarThemeChromium::paintTrackBackground):
+        (WebCore::ScrollbarThemeChromium::paintTickmarks):
+        (WebCore::ScrollbarThemeChromium::paintScrollCorner):
+        (WebCore::ScrollbarThemeChromium::shouldCenterOnThumb):
+        (WebCore::ScrollbarThemeChromium::buttonSize):
+        * platform/chromium/ScrollbarThemeChromium.h: Added.
+        (WebCore::ScrollbarThemeChromium::hasButtons):
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp: Added.
+        (WebCore::ScrollbarThemeChromium::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromium::invalidateOnMouseEnterExit):
+        (WebCore::initMozState):
+        (WebCore::paintScrollbarWidget):
+        (WebCore::ScrollbarThemeChromium::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromium::paintButton):
+        (WebCore::ScrollbarThemeChromium::paintThumb):
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        * platform/chromium/SearchPopupMenuChromium.cpp: Added.
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+        (WebCore::SearchPopupMenu::enabled):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        * platform/chromium/SharedTimerChromium.cpp: Added.
+        (WebCore::setSharedTimerFiredFunction):
+        (WebCore::setSharedTimerFireTime):
+        (WebCore::stopSharedTimer):
+        * platform/chromium/TemporaryLinkStubs.cpp: Added.
+        (WebCore::signedPublicKeyAndChallengeString):
+        (WebCore::getSupportedKeySizes):
+        (WebCore::KURL::fileSystemPath):
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
+2009-01-14  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         https://bugs.webkit.org/show_bug.cgi?id=23323
         Upstream platform/text/chromium/
 
