@@ -1,3 +1,26 @@
+2009-01-14  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=16829>
+        Implement NPN_SetException()
+
+        This mirrors the implementation in the obj-c bindings.
+
+        Test: plugins/netscape-throw-exception.html
+
+        * bridge/NP_jsobject.cpp:
+        (_NPN_SetException):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::getExceptionString):
+        (JSC::Bindings::CInstance::setGlobalException):
+        (JSC::Bindings::CInstance::moveGlobalExceptionToExecState):
+        (JSC::Bindings::CInstance::invokeMethod):
+        (JSC::Bindings::CInstance::invokeDefaultMethod):
+        (JSC::Bindings::CInstance::invokeConstruct):
+        (JSC::Bindings::CInstance::getPropertyNames):
+        * bridge/c/c_instance.h:
+
 2009-01-14  Pierre-Olivier Latour  <pol@apple.com>
 
         Fixed build warning when LIBXML_VERSION >= 20627.

@@ -36,6 +36,8 @@ typedef struct NPObject NPObject;
 
 namespace JSC {
 
+class UString;
+
 namespace Bindings {
 
 class CClass;
@@ -46,17 +48,20 @@ public:
     {
         return adoptRef(new CInstance(object, rootObject));
     }
+
+    static void setGlobalException(JSC::UString exception);
+
     ~CInstance ();
-    
+
     virtual Class *getClass() const;
 
     virtual JSValuePtr valueOf(ExecState*) const;
     virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const;
-    
+
     virtual JSValuePtr invokeMethod(ExecState*, const MethodList&, const ArgList&);
     virtual bool supportsInvokeDefaultMethod() const;
     virtual JSValuePtr invokeDefaultMethod(ExecState*, const ArgList&);
-    
+
     virtual bool supportsConstruct() const;
     virtual JSValuePtr invokeConstruct(ExecState*, const ArgList&);
 
@@ -65,14 +70,15 @@ public:
     JSValuePtr stringValue(ExecState*) const;
     JSValuePtr numberValue(ExecState*) const;
     JSValuePtr booleanValue() const;
-    
+
     NPObject *getObject() const { return _object; }
 
     virtual BindingLanguage getBindingLanguage() const { return CLanguage; }
 
 private:
+    static void moveGlobalExceptionToExecState(ExecState* exec);
     CInstance(NPObject*, PassRefPtr<RootObject>);
-    
+
     mutable CClass *_class;
     NPObject *_object;
 };

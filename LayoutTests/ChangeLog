@@ -1,3 +1,13 @@
+2009-01-14  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=16829>
+        Implement NPN_SetException()
+
+        * plugins/netscape-throw-exception-expected.txt: Added.
+        * plugins/netscape-throw-exception.html: Added.
+
 2009-01-14  David Kilzer  <ddkilzer@apple.com>
 
         Disabling webarchive/test-link-rel-icon.html due to various buildbot failures

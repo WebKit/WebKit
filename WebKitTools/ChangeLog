@@ -1,3 +1,17 @@
+2009-01-14  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=16829>
+        Implement NPN_SetException()
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginInvoke):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp:
+        (initializeIdentifiers):
+        (testHasMethod):
+        (testInvoke):
+
 2009-01-13  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Kilzer.

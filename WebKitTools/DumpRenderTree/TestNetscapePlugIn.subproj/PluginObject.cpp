@@ -98,7 +98,8 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 #define ID_TEST_IDENTIFIER_TO_INT   13
 #define ID_TEST_POSTURL_FILE        14
 #define ID_TEST_CONSTRUCT           15
-#define NUM_METHOD_IDENTIFIERS      16
+#define ID_TEST_THROW_EXCEPTION_METHOD 16
+#define NUM_METHOD_IDENTIFIERS      17
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
@@ -118,6 +119,7 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testIdentifierToInt",
     "testPostURLFile",
     "testConstruct",
+    "testThrowException",
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant* variant)
@@ -573,6 +575,10 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return testPostURLFile(plugin, args, argCount, result);
     else if (name == pluginMethodIdentifiers[ID_TEST_CONSTRUCT])
         return testConstruct(plugin, args, argCount, result);
+    else if (name == pluginMethodIdentifiers[ID_TEST_THROW_EXCEPTION_METHOD]) {
+        browser->setexception(header, "plugin object testThrowException SUCCESS");
+        return true;
+    }
     
     return false;
 }

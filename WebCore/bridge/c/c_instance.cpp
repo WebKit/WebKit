@@ -35,16 +35,44 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <runtime/ArgList.h>
+#include <runtime/Error.h>
 #include <interpreter/CallFrame.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSNumberCell.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 namespace Bindings {
+
+using JSC::UString;
+
+JSC::UString& globalExceptionString()
+{
+    DEFINE_STATIC_LOCAL(JSC::UString, exceptionStr, ());
+    return exceptionStr;
+}
+
+void CInstance::setGlobalException(UString exception)
+{
+    globalExceptionString() = exception;
+}
+
+void CInstance::moveGlobalExceptionToExecState(ExecState* exec)
+{
+    if (globalExceptionString().isNull())
+        return;
+
+    {
+        JSLock lock(false);
+        throwError(exec, GeneralError, globalExceptionString());
+    }
+
+    globalExceptionString() = UString();
+}
 
 CInstance::CInstance(NPObject* o, PassRefPtr<RootObject> rootObject)
     : Instance(rootObject)
@@ -95,7 +123,9 @@ JSValuePtr CInstance::invokeMethod(ExecState* exec, const MethodList& methodList
 
     {
         JSLock::DropAllLocks dropAllLocks(false);
+        ASSERT(globalExceptionString().isNull());
         _object->_class->invoke(_object, ident, cArgs.data(), count, &resultVariant);
+        moveGlobalExceptionToExecState(exec);
     }
 
     for (i = 0; i < count; i++)
@@ -124,9 +154,11 @@ JSValuePtr CInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
     VOID_TO_NPVARIANT(resultVariant);
     {
         JSLock::DropAllLocks dropAllLocks(false);
+        ASSERT(globalExceptionString().isNull());
         _object->_class->invokeDefault(_object, cArgs.data(), count, &resultVariant);
+        moveGlobalExceptionToExecState(exec);
     }
-    
+
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);
 
@@ -157,9 +189,11 @@ JSValuePtr CInstance::invokeConstruct(ExecState* exec, const ArgList& args)
     VOID_TO_NPVARIANT(resultVariant);
     {
         JSLock::DropAllLocks dropAllLocks(false);
+        ASSERT(globalExceptionString().isNull());
         _object->_class->construct(_object, cArgs.data(), count, &resultVariant);
+        moveGlobalExceptionToExecState(exec);
     }
-    
+
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);
 
@@ -211,7 +245,10 @@ void CInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray)
 
     {
         JSLock::DropAllLocks dropAllLocks(false);
-        if (!_object->_class->enumerate(_object, &identifiers, &count))
+        ASSERT(globalExceptionString().isNull());
+        bool ok = _object->_class->enumerate(_object, &identifiers, &count);
+        moveGlobalExceptionToExecState(exec);
+        if (!ok)
             return;
     }
 
