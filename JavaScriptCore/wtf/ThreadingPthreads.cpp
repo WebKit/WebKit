@@ -33,6 +33,7 @@
 
 #if USE(PTHREADS)
 
+#include "CurrentTime.h"
 #include "HashMap.h"
 #include "MainThread.h"
 #include "RandomNumberSeed.h"
@@ -232,28 +233,22 @@ void ThreadCondition::wait(Mutex& mutex)
         ASSERT(false);
 }
 
-bool ThreadCondition::timedWait(Mutex& mutex, double secondsToWait)
+bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
 {
-    if (secondsToWait < 0.0) {
+    if (absoluteTime < currentTime())
+        return false;
+
+    if (absoluteTime > INT_MAX) {
         wait(mutex);
         return true;
     }
 
-    int intervalSeconds = static_cast<int>(secondsToWait);
-    int intervalMicroseconds = static_cast<int>((secondsToWait - intervalSeconds) * 1000000.0);
+    int timeSeconds = static_cast<int>(absoluteTime);
+    int timeNanoseconds = static_cast<int>((absoluteTime - timeSeconds) * 1E9);
 
-    // Current time comes in sec/microsec
-    timeval currentTime;
-    gettimeofday(&currentTime, NULL);
-
-    // Target time comes in sec/nanosec
     timespec targetTime;
-    targetTime.tv_sec = currentTime.tv_sec + intervalSeconds;
-    targetTime.tv_nsec = (currentTime.tv_usec + intervalMicroseconds) * 1000;
-    if (targetTime.tv_nsec > 1000000000) {
-        targetTime.tv_nsec -= 1000000000;
-        targetTime.tv_sec++;
-    }
+    targetTime.tv_sec = timeSeconds;
+    targetTime.tv_nsec = timeNanoseconds;
 
     return pthread_cond_timedwait(&m_condition, &mutex.impl(), &targetTime) == 0;
 }

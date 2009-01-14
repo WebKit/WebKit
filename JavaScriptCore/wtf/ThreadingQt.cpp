@@ -29,6 +29,7 @@
 #include "config.h"
 #include "Threading.h"
 
+#include "CurrentTime.h"
 #include "HashMap.h"
 #include "MainThread.h"
 #include "RandomNumberSeed.h"
@@ -233,15 +234,20 @@ void ThreadCondition::wait(Mutex& mutex)
     m_condition->wait(mutex.impl());
 }
 
-bool ThreadCondition::timedWait(Mutex& mutex, double secondsToWait)
+bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
 {
-    if (secondsToWait < 0.0) {
-        wait(mutex);
-        return true;
-    }
+    double currentTime = WTF::currentTime();
 
-    unsigned long millisecondsToWait = static_cast<unsigned long>(secondsToWait * 1000.0);
-    return m_condition->wait(mutex.impl(), millisecondsToWait);
+    // Time is in the past - return immediately.
+    if (absoluteTime < currentTime)
+        return false;
+
+    double intervalMilliseconds = (absoluteTime - currentTime) * 1000.0;
+    // Qt defines wait for up to ULONG_MAX milliseconds.
+    if (interval >= ULONG_MAX)
+        interval = ULONG_MAX;
+
+    return m_condition->wait(mutex.impl(), static_cast<unsigned long>(interval));
 }
 
 void ThreadCondition::signal()

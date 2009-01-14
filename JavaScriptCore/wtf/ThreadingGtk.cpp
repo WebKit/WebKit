@@ -32,11 +32,13 @@
 
 #if !USE(PTHREADS)
 
+#include "CurrentTime.h"
 #include "HashMap.h"
 #include "MainThread.h"
 #include "RandomNumberSeed.h"
 
 #include <glib.h>
+#include <limits.h>
 
 namespace WTF {
 
@@ -205,25 +207,24 @@ void ThreadCondition::wait(Mutex& mutex)
     g_cond_wait(m_condition.get(), mutex.impl().get());
 }
 
-bool ThreadCondition::timedWait(Mutex& mutex, double interval)
+bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
 {
-    if (interval < 0.0) {
+    // Time is in the past - return right away.
+    if (absoluteTime < currentTime())
+        return false;
+    
+    // Time is too far in the future for g_cond_timed_wait - wait forever.
+    if (absoluteTime > INT_MAX) {
         wait(mutex);
         return true;
     }
-    
-    int intervalSeconds = static_cast<int>(interval);
-    int intervalMicroseconds = static_cast<int>((interval - intervalSeconds) * 1000000.0);
+
+    int timeSeconds = static_cast<int>(absoluteTime);
+    int timeMicroseconds = static_cast<int>((absoluteTime - timeSeconds) * 1000000.0);
     
     GTimeVal targetTime;
-    g_get_current_time(&targetTime);
-        
-    targetTime.tv_sec += intervalSeconds;
-    targetTime.tv_usec += intervalMicroseconds;
-    if (targetTime.tv_usec > 1000000) {
-        targetTime.tv_usec -= 1000000;
-        targetTime.tv_sec++;
-    }
+    targetTime.tv_sec = timeSeconds;
+    targetTime.tv_usec = timeMicroseconds;
 
     return g_cond_timed_wait(m_condition.get(), mutex.impl().get(), &targetTime);
 }

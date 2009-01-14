@@ -167,8 +167,9 @@ public:
     ~ThreadCondition();
     
     void wait(Mutex& mutex);
-    // Returns true if the condition was signaled before the timeout, false if the timeout was reached
-    bool timedWait(Mutex&, double interval);
+    // Returns true if the condition was signaled before absoluteTime, false if the absoluteTime was reached or is in the past.
+    // The absoluteTime is in seconds, starting on January 1, 1970. The time is assumed to use the same time zone as WTF::currentTime().
+    bool timedWait(Mutex&, double absoluteTime);
     void signal();
     void broadcast();
     

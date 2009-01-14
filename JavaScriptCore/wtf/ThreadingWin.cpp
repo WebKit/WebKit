@@ -378,9 +378,9 @@ void ThreadCondition::wait(Mutex& mutex)
     ::EnterCriticalSection (&cs.m_internalMutex);
 }
 
-bool ThreadCondition::timedWait(Mutex& mutex, double interval)
+bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
 {
-    // Empty for now
+    // FIXME: Implement.
     ASSERT(false);
     return false;
 }

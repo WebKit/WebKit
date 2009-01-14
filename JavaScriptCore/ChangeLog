@@ -1,3 +1,28 @@
+2009-01-14  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23312
+        Implement MessageQueue::waitForMessageTimed()
+        Also fixed ThreadCondition::timedWait() to take absolute time, as discussed on webkit-dev.
+        Win32 version of timedWait still has to be implemented.
+
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueueWaitResult: new enum for the result of MessageQueue::waitForMessageTimed.
+        (WTF::MessageQueue::waitForMessage):
+        (WTF::MessageQueue::waitForMessageTimed): New method.
+        * wtf/Threading.h:
+        * wtf/ThreadingGtk.cpp:
+        (WTF::ThreadCondition::timedWait): changed to use absolute time instead of interval.
+        * wtf/ThreadingNone.cpp:
+        (WTF::ThreadCondition::timedWait): ditto.
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::ThreadCondition::timedWait): ditto.
+        * wtf/ThreadingQt.cpp:
+        (WTF::ThreadCondition::timedWait): ditto.
+        * wtf/ThreadingWin.cpp:
+        (WTF::ThreadCondition::timedWait): ditto. The actual Win32 code is still to be implemented.
+
 2009-01-14  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Darin Adler and Oliver hunt.

@@ -48,7 +48,7 @@ void Mutex::unlock() { }
 ThreadCondition::ThreadCondition() { }
 ThreadCondition::~ThreadCondition() { }
 void ThreadCondition::wait(Mutex& mutex) { }
-bool ThreadCondition::timedWait(Mutex& mutex, double interval) { return false; }
+bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime) { return false; }
 void ThreadCondition::signal() { }
 void ThreadCondition::broadcast() { }
 
