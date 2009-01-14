@@ -1,3 +1,10 @@
+2009-01-14  Pierre-Olivier Latour  <pol@apple.com>
+
+        Fixed build warning when LIBXML_VERSION >= 20627.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::hackAroundLibXMLEntityBug):
+
 2009-01-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders Carlsson.
