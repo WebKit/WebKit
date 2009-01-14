@@ -1,3 +1,15 @@
+2009-01-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 22903: REGRESSION (r36267): visiting this site reliably crashes WebKit nightly
+
+        Add test to make sure we correctly mark cached EvalCodeBlocks
+
+        * fast/js/cached-eval-gc-expected.txt: Added.
+        * fast/js/cached-eval-gc.html: Added.
+        * fast/js/resources/cached-eval-gc.js: Added.
+
 2009-01-14  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22795: favicons should be saved to webarchives

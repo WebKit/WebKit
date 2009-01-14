@@ -2402,6 +2402,17 @@ ScopeNodeData::ScopeNodeData(SourceElements* children, VarStack* varStack, Funct
         children->releaseContentsIntoVector(m_children);
 }
 
+void ScopeNodeData::mark()
+{
+    FunctionStack::iterator end = m_functionStack.end();
+    for (FunctionStack::iterator ptr = m_functionStack.begin(); ptr != end; ++ptr) {
+        FunctionBodyNode* body = (*ptr)->body();
+        if (!body->isGenerated())
+            continue;
+        body->generatedBytecode().mark();
+    }
+}
+
 // ------------------------------ ScopeNode -----------------------------
 
 ScopeNode::ScopeNode(JSGlobalData* globalData)
@@ -2530,6 +2541,12 @@ EvalCodeBlock& EvalNode::bytecodeForExceptionInfoReparse(ScopeChainNode* scopeCh
     generator.generate();
 
     return *m_code;
+}
+
+void EvalNode::mark()
+{
+    // We don't need to mark our own CodeBlock as the JSGlobalObject takes care of that
+    data()->mark();
 }
 
 // ------------------------------ FunctionBodyNode -----------------------------

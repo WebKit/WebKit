@@ -409,6 +409,8 @@ namespace JSC {
         unsigned addFunction(FuncDeclNode* n) { createRareDataIfNecessary(); unsigned size = m_rareData->m_functions.size(); m_rareData->m_functions.append(n); return size; }
         FuncDeclNode* function(int index) const { ASSERT(m_rareData); return m_rareData->m_functions[index].get(); }
 
+        bool hasFunctions() const { return m_functionExpressions.size() || (m_rareData && m_rareData->m_functions.size()); }
+
         unsigned addUnexpectedConstant(JSValuePtr v) { createRareDataIfNecessary(); unsigned size = m_rareData->m_unexpectedConstants.size(); m_rareData->m_unexpectedConstants.append(v); return size; }
         JSValuePtr unexpectedConstant(int index) const { ASSERT(m_rareData); return m_rareData->m_unexpectedConstants[index]; }
 

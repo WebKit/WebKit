@@ -1382,6 +1382,7 @@ void CodeBlock::mark()
             if (!m_rareData->m_unexpectedConstants[i]->marked())
                 m_rareData->m_unexpectedConstants[i]->mark();
         }
+        m_rareData->m_evalCodeCache.mark();
     }
 }
 

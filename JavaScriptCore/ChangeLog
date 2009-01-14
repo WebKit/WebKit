@@ -1,3 +1,26 @@
+2009-01-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 22903: REGRESSION (r36267): visiting this site reliably crashes WebKit nightly
+
+        EvalCodeBlock's do not reference the functions that are declared inside the eval
+        code, this means that simply marking the EvalCodeBlock through the global object
+        is insufficient to mark the declared functions.  This patch corrects this by
+        explicitly marking the CodeBlocks of all the functions declared in the cached
+        EvalNode.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::mark):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasFunctions):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::mark):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNodeData::mark):
+        (JSC::EvalNode::mark):
+        * parser/Nodes.h:
+
 2009-01-14  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

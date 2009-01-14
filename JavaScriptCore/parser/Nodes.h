@@ -2074,6 +2074,8 @@ namespace JSC {
         FunctionStack m_functionStack;
         int m_numConstants;
         StatementVector m_children;
+
+        void mark();
     };
 
     class ScopeNode : public StatementNode {
@@ -2158,6 +2160,7 @@ namespace JSC {
 
         EvalCodeBlock& bytecodeForExceptionInfoReparse(ScopeChainNode*, CodeBlock*) JSC_FAST_CALL;
 
+        void mark();
     private:
         EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
 
