@@ -593,7 +593,11 @@ void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)
         return;
     }
 
-    bool accepted = frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 1));
+    bool accepted = false;
+    PlatformMouseEvent mev(ev, 1);
+    // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
+    if (mev.button() != NoButton)
+        accepted = frame->eventHandler()->handleMousePressEvent(mev);
     ev->setAccepted(accepted);
 }
 
@@ -603,7 +607,11 @@ void QWebPagePrivate::mouseDoubleClickEvent(QMouseEvent *ev)
     if (!frame->view())
         return;
 
-    bool accepted = frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 2));
+    bool accepted = false;
+    PlatformMouseEvent mev(ev, 2);
+    // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
+    if (mev.button() != NoButton)
+        accepted = frame->eventHandler()->handleMousePressEvent(mev);
     ev->setAccepted(accepted);
 
     tripleClickTimer.start(QApplication::doubleClickInterval(), q);
@@ -616,7 +624,11 @@ void QWebPagePrivate::mouseTripleClickEvent(QMouseEvent *ev)
     if (!frame->view())
         return;
 
-    bool accepted = frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 3));
+    bool accepted = false;
+    PlatformMouseEvent mev(ev, 3);
+    // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
+    if (mev.button() != NoButton)
+        accepted = frame->eventHandler()->handleMousePressEvent(mev);
     ev->setAccepted(accepted);
 }
 
@@ -626,7 +638,11 @@ void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
     if (!frame->view())
         return;
 
-    bool accepted = frame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
+    bool accepted = false;
+    PlatformMouseEvent mev(ev, 0);
+    // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
+    if (mev.button() != NoButton)
+        accepted = frame->eventHandler()->handleMouseReleaseEvent(mev);
     ev->setAccepted(accepted);
 
 #ifndef QT_NO_CLIPBOARD

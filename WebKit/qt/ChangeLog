@@ -1,3 +1,27 @@
+2009-01-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix failing assertion when pressing an extra mouse button on a
+        QWebView.
+
+        Mice with more than three buttons - for example with a dedicated
+        "back" button - can generate Qt::XButton1 or Button2.
+        WebCore::MouseButton contains only Left, Middle and Right, so in
+        Qt's PlatformMouseEvent we map to NoButton, resulting in a mouse
+        press or release even with no button set. That triggers an assertion
+        in EventTargetNode::dispatchMouseEvent requiring that either a button
+        is set or it is just a mouse move event, which is correct.
+
+        In QWebPage decide not to dispatch such mouse events where we cannot
+        map the mouse button to a WebCore::MouseButton.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPagePrivate::mouseTripleClickEvent):
+        (QWebPagePrivate::mouseReleaseEvent):
+
 2009-01-14  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon Hausmann.
