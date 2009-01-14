@@ -101,6 +101,7 @@ private slots:
     void destroyPlugin();
     void createViewlessPlugin();
     void multiplePageGroupsAndLocalStorage();
+    void cursorMovements();
 
 private:
 
@@ -633,6 +634,215 @@ void tst_QWebPage::multiplePageGroupsAndLocalStorage()
     QFile::remove(QDir::toNativeSeparators(QDir::currentPath() + "/path2/http_www.myexample.com_0.localstorage"));
     dir.rmdir(QDir::toNativeSeparators("./path1"));
     dir.rmdir(QDir::toNativeSeparators("./path2"));
+}
+
+class CursorTrackedPage : public QWebPage
+{
+public:
+
+    CursorTrackedPage(QWidget *parent = 0): QWebPage(parent) {
+        setViewportSize(QSize(1024, 768)); // big space
+    }
+
+    QString selectedText() {
+        return mainFrame()->evaluateJavaScript("window.getSelection().toString()").toString();
+    }
+
+    int selectionStartOffset() {
+        return mainFrame()->evaluateJavaScript("window.getSelection().getRangeAt(0).startOffset").toInt();
+    }
+
+    int selectionEndOffset() {
+        return mainFrame()->evaluateJavaScript("window.getSelection().getRangeAt(0).endOffset").toInt();
+    }
+
+    // true if start offset == end offset, i.e. no selected text
+    int isSelectionCollapsed() {
+        return mainFrame()->evaluateJavaScript("window.getSelection().getRangeAt(0).collapsed").toBool();
+    }
+};
+
+void tst_QWebPage::cursorMovements()
+{
+    CursorTrackedPage* page = new CursorTrackedPage;
+    QString content("<html><body<p id=one>The quick brown fox</p><p id=two>jumps over the lazy dog</p><p>May the source<br/>be with you!</p></body></html>");
+    page->mainFrame()->setHtml(content);
+
+    // this will select the first paragraph
+    QString script = "var range = document.createRange(); " \
+        "var node = document.getElementById(\"one\"); " \
+        "range.selectNode(node); " \
+        "getSelection().addRange(range);";
+    page->mainFrame()->evaluateJavaScript(script);
+    QCOMPARE(page->selectedText().trimmed(), QString::fromLatin1("The quick brown fox"));
+
+    // these actions must exist
+    QVERIFY(page->action(QWebPage::MoveToNextChar) != 0);
+    QVERIFY(page->action(QWebPage::MoveToPreviousChar) != 0);
+    QVERIFY(page->action(QWebPage::MoveToNextWord) != 0);
+    QVERIFY(page->action(QWebPage::MoveToPreviousWord) != 0);
+    QVERIFY(page->action(QWebPage::MoveToNextLine) != 0);
+    QVERIFY(page->action(QWebPage::MoveToPreviousLine) != 0);
+    QVERIFY(page->action(QWebPage::MoveToStartOfLine) != 0);
+    QVERIFY(page->action(QWebPage::MoveToEndOfLine) != 0);
+    QVERIFY(page->action(QWebPage::MoveToStartOfBlock) != 0);
+    QVERIFY(page->action(QWebPage::MoveToEndOfBlock) != 0);
+    QVERIFY(page->action(QWebPage::MoveToStartOfDocument) != 0);
+    QVERIFY(page->action(QWebPage::MoveToEndOfDocument) != 0);
+
+    // right now they are disabled because contentEditable is false
+    QCOMPARE(page->action(QWebPage::MoveToNextChar)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToPreviousChar)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToNextWord)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToPreviousWord)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToNextLine)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToPreviousLine)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToStartOfLine)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToEndOfLine)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToStartOfBlock)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToEndOfBlock)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToStartOfDocument)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::MoveToEndOfDocument)->isEnabled(), false);
+
+    // make it editable before navigating the cursor
+    page->setContentEditable(true);
+
+    // here the actions are enabled after contentEditable is true
+    QCOMPARE(page->action(QWebPage::MoveToNextChar)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToPreviousChar)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToNextWord)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToPreviousWord)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToNextLine)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToPreviousLine)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToStartOfLine)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToEndOfLine)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToStartOfBlock)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToEndOfBlock)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToStartOfDocument)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::MoveToEndOfDocument)->isEnabled(), true);
+
+    // cursor will be before the word "jump"
+    page->triggerAction(QWebPage::MoveToNextChar);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 0);
+
+    // cursor will be between 'j' and 'u' in the word "jump"
+    page->triggerAction(QWebPage::MoveToNextChar);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 1);
+
+    // cursor will be between 'u' and 'm' in the word "jump"
+    page->triggerAction(QWebPage::MoveToNextChar);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 2);
+
+    // cursor will be after the word "jump"
+    page->triggerAction(QWebPage::MoveToNextWord);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 5);
+
+    // cursor will be after the word "lazy"
+    page->triggerAction(QWebPage::MoveToNextWord);
+    page->triggerAction(QWebPage::MoveToNextWord);
+    page->triggerAction(QWebPage::MoveToNextWord);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 19);
+
+    // cursor will be between 'z' and 'y' in "lazy"
+    page->triggerAction(QWebPage::MoveToPreviousChar);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 18);
+
+    // cursor will be between 'a' and 'z' in "lazy"
+    page->triggerAction(QWebPage::MoveToPreviousChar);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 17);
+
+    // cursor will be before the word "lazy"
+    page->triggerAction(QWebPage::MoveToPreviousWord);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 15);
+
+    // cursor will be before the word "quick"
+    page->triggerAction(QWebPage::MoveToPreviousWord);
+    page->triggerAction(QWebPage::MoveToPreviousWord);
+    page->triggerAction(QWebPage::MoveToPreviousWord);
+    page->triggerAction(QWebPage::MoveToPreviousWord);
+    page->triggerAction(QWebPage::MoveToPreviousWord);
+    page->triggerAction(QWebPage::MoveToPreviousWord);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 4);
+
+    // cursor will be between 'p' and 's' in the word "jumps"
+    page->triggerAction(QWebPage::MoveToNextLine);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 4);
+
+    // cursor will be before the word "jumps"
+    page->triggerAction(QWebPage::MoveToStartOfLine);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 0);
+
+    // cursor will be after the word "dog"
+    page->triggerAction(QWebPage::MoveToEndOfLine);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 23);
+
+    // cursor will be between 'w' and 'n' in "brown"
+    page->triggerAction(QWebPage::MoveToStartOfLine);
+    page->triggerAction(QWebPage::MoveToNextWord);
+    page->triggerAction(QWebPage::MoveToNextWord);
+    page->triggerAction(QWebPage::MoveToNextWord);
+    page->triggerAction(QWebPage::MoveToPreviousLine);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 14);
+
+    // cursor will be after the word "fox"
+    page->triggerAction(QWebPage::MoveToEndOfLine);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 19);
+
+    // cursor will be before the word "The"
+    page->triggerAction(QWebPage::MoveToStartOfDocument);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 0);
+
+    // cursor will be after the word "you!"
+    page->triggerAction(QWebPage::MoveToEndOfDocument);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 12);
+
+    // cursor will be before the word "be"
+    page->triggerAction(QWebPage::MoveToStartOfBlock);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 2);
+
+    // cursor will be after the word "you!"
+    page->triggerAction(QWebPage::MoveToEndOfBlock);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 12);
+
+    // try to move before the document start
+    page->triggerAction(QWebPage::MoveToStartOfDocument);
+    page->triggerAction(QWebPage::MoveToPreviousChar);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 0);
+    page->triggerAction(QWebPage::MoveToStartOfDocument);
+    page->triggerAction(QWebPage::MoveToPreviousWord);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 0);
+
+    // try to move past the document end
+    page->triggerAction(QWebPage::MoveToEndOfDocument);
+    page->triggerAction(QWebPage::MoveToNextChar);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 12);
+    page->triggerAction(QWebPage::MoveToEndOfDocument);
+    page->triggerAction(QWebPage::MoveToNextWord);
+    QVERIFY(page->isSelectionCollapsed());
+    QCOMPARE(page->selectionStartOffset(), 12);
+
+    delete page;
 }
 
 QTEST_MAIN(tst_QWebPage)

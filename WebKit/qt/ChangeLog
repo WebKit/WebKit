@@ -1,3 +1,21 @@
+2009-01-14  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Unit tests for cursor movements. The following are tested:
+            - the actions are not NULL
+            - the actions are disabled when contentEditable is false
+            - the actions are enabled when contentEditable is true
+            - the cursor moves properly when the actions are triggered
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (CursorTrackedPage::CursorTrackedPage):
+        (CursorTrackedPage::selectedText):
+        (CursorTrackedPage::selectionStartOffset):
+        (CursorTrackedPage::selectionEndOffset):
+        (CursorTrackedPage::isSelectionCollapsed):
+        (tst_QWebPage::cursorMovements):
+
 2009-01-08  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Simon Hausmann.
