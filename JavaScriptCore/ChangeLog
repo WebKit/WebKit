@@ -1,3 +1,17 @@
+2009-01-13  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler and Oliver Hunt.
+
+        <rdar://problem/6489314> REGRESSION: Business widget's front side 
+        fails to render correctly when flipping widget
+
+        The problem here is that parseInt was parsing NaN as 0. This patch 
+        corrects that by parsing NaN as NaN. This matches our old behavior 
+        and Firefox. 
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseInt):
+
 2009-01-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

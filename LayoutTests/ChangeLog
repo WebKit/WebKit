@@ -1,3 +1,15 @@
+2009-01-13  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler and Oliver Hunt.
+
+        Updated test and results for <rdar://problem/6489314> REGRESSION: 
+        Business widget's front side fails to render correctly when 
+        flipping widget
+
+        parseInt(NaN) should be NaN.
+        * fast/js/numeric-conversion-expected.txt:
+        * fast/js/resources/numeric-conversion.js:
+
 2009-01-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
