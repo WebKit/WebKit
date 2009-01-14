@@ -1,6 +1,56 @@
 2009-01-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23321
+        Upstream more bits of graphics/chromium.
+        
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::RefCountedHFONT::~RefCountedHFONT):
+        (WebCore::FontPlatformData::hashTableDeletedFontValue):
+        (WebCore::FontPlatformData::scriptFontProperties):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.h: Added.
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+        (WebCore::FontPlatformData::hfont):
+        (WebCore::FontPlatformData::size):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        (WebCore::FontPlatformData::scriptCache):
+        (WebCore::FontPlatformData::RefCountedHFONT::create):
+        (WebCore::FontPlatformData::RefCountedHFONT::hfont):
+        (WebCore::FontPlatformData::RefCountedHFONT::hash):
+        (WebCore::FontPlatformData::RefCountedHFONT::operator==):
+        (WebCore::FontPlatformData::RefCountedHFONT::RefCountedHFONT):
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::setupPaint):
+        (WebCore::FontPlatformData::operator==):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::isFixedPitch):
+        * platform/graphics/chromium/FontPlatformDataLinux.h: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::size):
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+        (WebCore::FontPlatformData::hashTableDeletedFontValue):
+        * platform/graphics/chromium/FontUtilsChromiumWin.cpp: Added.
+        (WebCore::):
+        (WebCore::FontMap::getAscent):
+        (WebCore::FontMap::FontData::FontData):
+        (WebCore::getFontFamilyForScript):
+        (WebCore::getFallbackFamily):
+        (WebCore::getDerivedFontData):
+        (WebCore::getStyleFromLogfont):
+        * platform/graphics/chromium/FontUtilsChromiumWin.h: Added.
+        (WebCore::):
+
+2009-01-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=23325
         Upstream even more graphics/chromium bits.
