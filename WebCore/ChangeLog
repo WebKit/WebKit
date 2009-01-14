@@ -1,3 +1,45 @@
+2009-01-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23325
+        Upstream even more graphics/chromium bits.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp: Added.
+        (WebCore::fillEmptyGlyphs):
+        (WebCore::initSpaceGlyph):
+        (WebCore::fillBMPGlyphs):
+        (WebCore::fillNonBMPGlyphs):
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/chromium/GlyphPageTreeNodeLinux.cpp: Added.
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/chromium/IconChromiumLinux.cpp: Added.
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::createIconForFile):
+        (WebCore::Icon::createIconForFiles):
+        (WebCore::Icon::paint):
+        * platform/graphics/chromium/IconChromiumMac.cpp: Added.
+        (WebCore::Icon::createIconForFile):
+        (WebCore::Icon::createIconForFiles):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::paint):
+        * platform/graphics/chromium/IconChromiumWin.cpp: Added.
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::createIconForFile):
+        (WebCore::Icon::createIconForFiles):
+        (WebCore::Icon::paint):
+        * platform/graphics/chromium/ImageBufferData.h: Added.
+        * platform/graphics/chromium/ImageChromiumMac.mm: Added.
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::invalidatePlatformData):
+        * platform/graphics/chromium/MediaPlayerPrivateChromium.h: Added.
+        * platform/graphics/chromium/PlatformIcon.h: Added.
+
 2009-01-14  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
