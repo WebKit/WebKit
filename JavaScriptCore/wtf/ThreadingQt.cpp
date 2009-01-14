@@ -244,10 +244,10 @@ bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
 
     double intervalMilliseconds = (absoluteTime - currentTime) * 1000.0;
     // Qt defines wait for up to ULONG_MAX milliseconds.
-    if (interval >= ULONG_MAX)
-        interval = ULONG_MAX;
+    if (intervalMilliseconds >= ULONG_MAX)
+        intervalMilliseconds = ULONG_MAX;
 
-    return m_condition->wait(mutex.impl(), static_cast<unsigned long>(interval));
+    return m_condition->wait(mutex.impl(), static_cast<unsigned long>(intervalMilliseconds));
 }
 
 void ThreadCondition::signal()
