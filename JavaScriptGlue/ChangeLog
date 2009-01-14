@@ -1,3 +1,11 @@
+2009-01-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - update copyright
+
+        * Info.plist:
+
 2009-01-09  David Levin  <levin@chromium.org>
 
         Reviewed by Oliver Hunt.

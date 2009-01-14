@@ -1,3 +1,11 @@
+2009-01-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - update copyright
+
+        * Info.plist:
+
 2009-01-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

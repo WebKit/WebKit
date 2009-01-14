@@ -407,7 +407,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleGetInfoString</key>
-	<string>rVERSION, Copyright 2005, 2006, 2007 Apple Inc.</string>
+	<string>rVERSION, Copyright 2005-2009 Apple Inc.</string>
 	<key>CFBundleIconFile</key>
 	<string>webkit.icns</string>
 	<key>CFBundleIdentifier</key>
