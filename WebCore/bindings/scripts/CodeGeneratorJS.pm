@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
 # 
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -963,7 +963,15 @@ sub GenerateImplementation
         push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
         push(@implContent, "    : $parentClassName(structure, impl, shell)\n");
     } else {
-        push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl" . ($needsSVGContext ? ", SVGElement* context" : "") . ")\n");
+        my $contextArg = "";
+        if ($needsSVGContext) {
+            if ($hasParent && !$parentNeedsSVGContext) {
+                $contextArg = ", SVGElement*";
+            } else {
+                $contextArg = ", SVGElement* context";
+            }
+        }
+        push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl$contextArg)\n");
         if ($hasParent) {
             push(@implContent, "    : $parentClassName(structure, impl" . ($parentNeedsSVGContext ? ", context" : "") . ")\n");
         } else {
@@ -1091,6 +1099,7 @@ sub GenerateImplementation
                     } else {
                         $listenerType = "JSUnprotectedEventListener";
                     }
+                    push(@implContent, "    UNUSED_PARAM(exec);\n");
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
                     push(@implContent, "    if (${listenerType}* listener = static_cast<${listenerType}*>(imp->$implGetterFunctionName())) {\n");
                     push(@implContent, "        if (JSObject* listenerObj = listener->listenerObj())\n");
@@ -1100,8 +1109,10 @@ sub GenerateImplementation
                 } elsif ($attribute->signature->type =~ /Constructor$/) {
                     my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
                     $constructorType =~ s/Constructor$//;
+                    push(@implContent, "    UNUSED_PARAM(slot);\n");
                     push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec);\n");
                 } elsif (!@{$attribute->getterExceptions}) {
+                    push(@implContent, "    UNUSED_PARAM(exec);\n");
                     if ($podType) {
                         push(@implContent, "    $podType imp(*static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
                         if ($podType eq "float") { # Special case for JSSVGNumber
@@ -1299,6 +1310,7 @@ sub GenerateImplementation
 
             push(@implContent, "JSValuePtr ${functionName}(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)\n");
             push(@implContent, "{\n");
+            push(@implContent, "    UNUSED_PARAM(args);\n");
 
             $implKJSInclude{"Error.h"} = 1;
 
@@ -1426,7 +1438,7 @@ sub GenerateImplementation
     }
 
     if ($dataNode->extendedAttributes->{"HasIndexGetter"}) {
-        push(@implContent, "\nJSValuePtr ${className}::indexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)\n");
+        push(@implContent, "\nJSValuePtr ${className}::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObj = static_cast<$className*>(asObject(slot.slotBase()));\n");
         if (IndexGetterReturnsStrings($implClassName)) {

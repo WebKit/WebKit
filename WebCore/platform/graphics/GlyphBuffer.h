@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,16 @@
 #define GlyphBuffer_h
 
 #include "FloatSize.h"
+#include <wtf/UnusedParam.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
-#elif PLATFORM(CAIRO)
-#include <cairo.h>
 #endif
 
-#include <wtf/Vector.h>
+#if PLATFORM(CAIRO)
+#include <cairo.h>
+#endif
 
 namespace WebCore {
 
@@ -125,6 +127,7 @@ public:
 #if PLATFORM(WIN)
         return m_offsets[index];
 #else
+        UNUSED_PARAM(index);
         return FloatSize();
 #endif
     }
@@ -132,6 +135,7 @@ public:
     void add(Glyph glyph, const SimpleFontData* font, float width, const FloatSize* offset = 0)
     {
         m_fontData.append(font);
+
 #if PLATFORM(CAIRO)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
@@ -152,6 +156,8 @@ public:
             m_offsets.append(*offset);
         else
             m_offsets.append(FloatSize());
+#else
+        UNUSED_PARAM(offset);
 #endif
     }
     

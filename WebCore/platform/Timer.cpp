@@ -64,7 +64,8 @@ public:
 
     TimerBase* timer() const { return m_timer; }
 
-    void checkConsistency() const {
+    void checkConsistency() const
+    {
         ASSERT(m_index >= 0);
         ASSERT(m_index < (timerHeap ? static_cast<int>(timerHeap->size()) : 0));
     }
@@ -131,9 +132,10 @@ public:
 
     int index() const { return m_index; }
 
-    void checkConsistency(int offset = 0) const {
-        ASSERT(m_index + offset >= 0);
-        ASSERT(m_index + offset <= (timerHeap ? static_cast<int>(timerHeap->size()) : 0));
+    void checkConsistency(int offset = 0) const
+    {
+        ASSERT_UNUSED(offset, m_index + offset >= 0);
+        ASSERT_UNUSED(offset, m_index + offset <= (timerHeap ? static_cast<int>(timerHeap->size()) : 0));
     }
 
 private:

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -223,14 +223,17 @@ sub printConstructors
     for my $name (sort keys %tags) {
         my $ucName = $tags{$name}{'interfaceName'};
 
-        print F "static PassRefPtr<$parameters{'namespace'}Element> ${name}Constructor(Document* doc, bool createdByParser)\n";
-        print F "{\n";
         if ($tags{$name}{'constructorNeedsCreatedByParser'}) {
-            print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, doc, createdByParser);\n";
+            print F "static PassRefPtr<$parameters{'namespace'}Element> ${name}Constructor(Document* document, bool createdByParser)\n";
+            print F "{\n";
+            print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, document, createdByParser);\n";
+            print F "}\n\n";
         } else {
-            print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, doc);\n";
+            print F "static PassRefPtr<$parameters{'namespace'}Element> ${name}Constructor(Document* document, bool)\n";
+            print F "{\n";
+            print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, document);\n";
+            print F "}\n\n";
         }
-        print F "}\n\n";
     }
     print F "#endif\n" if $parameters{'guardFactoryWith'};
 }

@@ -376,16 +376,23 @@ JSValuePtr jsDOMWindowBaseImage(ExecState* exec, const Identifier&, const Proper
     return getDOMConstructor<JSImageConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
 }
 
+#if !ENABLE(CHANNEL_MESSAGING)
+
+JSValuePtr jsDOMWindowBaseMessageChannel(ExecState*, const Identifier&, const PropertySlot&)
+{
+    return jsUndefined();
+}
+
+#else
+
 JSValuePtr jsDOMWindowBaseMessageChannel(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-#if ENABLE(CHANNEL_MESSAGING)
     if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
     return getDOMConstructor<JSMessageChannelConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
-#else
-    return jsUndefined();
-#endif
 }
+
+#endif
 
 JSValuePtr jsDOMWindowBaseOption(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {

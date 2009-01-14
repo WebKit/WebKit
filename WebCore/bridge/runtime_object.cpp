@@ -191,6 +191,8 @@ void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSVa
 #if PLATFORM(QT)
     else if (instance->getBindingLanguage() == Instance::QtLanguage)
         JSObject::put(exec, propertyName, value, slot);
+#else
+    UNUSED_PARAM(slot);
 #endif
 
     instance->end();

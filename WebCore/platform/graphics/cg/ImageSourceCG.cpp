@@ -48,7 +48,7 @@ ImageSource::~ImageSource()
     clear(true);
 }
 
-void ImageSource::clear(bool destroyAll, size_t, SharedBuffer* data, bool allDataReceived)
+void ImageSource::clear(bool, size_t, SharedBuffer* data, bool allDataReceived)
 {
     // We always destroy the decoder, because there is no API to get it to
     // selectively release some of the frames it's holding, and if we don't

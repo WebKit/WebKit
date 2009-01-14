@@ -1,3 +1,75 @@
+2009-01-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23102: turn on unused parameter warnings in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=23102
+
+        Last step: Turn on the warning and fix the last few instances.
+
+        * Configurations/Base.xcconfig: Removed -Wno-unused-parameter from
+        WARNING_CFLAGS_BASE, so the unused parameter warning will fire.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (jsDOMWindowBaseMessageChannel): Separate the version for use when
+        CHANNEL_MESSAGING is turned off, so we can omit the argument names.
+        It would be better to not even have this property in that case,
+        rather than having the function return undefined, but I don't know
+        how to do that with the bindings script.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Leave out argument names in
+        functions where they're not used (the SVG context, and the property
+        name in the index getter). Use UNUSED_PARAM where arguments are
+        sometimes not used.
+
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::put): Use UNUSED_PARAM for non-QT.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::animationMediaFeatureEval): Omit argument names for style and frame.
+        (WebCore::transitionMediaFeatureEval): Ditto.
+        (WebCore::transform_2dMediaFeatureEval): Ditto.
+        (WebCore::transform_3dMediaFeatureEval): Ditto.
+
+        * dom/make_names.pl: Leave out the createdByParser property name in
+        cases where it's not used.
+
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::setJavaScriptPaused): Separate the
+        version for the Mac platform so we can omit the argument names.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::contentsSizeChanged): Removed argument name.
+
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::shouldUsePluginDocument): Commented out
+        argument name.
+
+        * loader/icon/IconFetcher.cpp:
+        (WebCore::IconFetcher::didReceiveResponse): Use ASSERT_UNUSED.
+        (WebCore::IconFetcher::didReceiveData): Ditto.
+        (WebCore::IconFetcher::didFinishLoading): Ditto.
+        (WebCore::IconFetcher::didFail): Ditto.
+
+        * platform/KURL.cpp:
+        (WebCore::assertProtocolIsGood): Separate out the NDEBUG version so
+        we can omit the argument names.
+
+        * platform/Timer.cpp:
+        (WebCore::TimerHeapIterator::checkConsistency): Use ASSERT_UNUSED.
+
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::offsetAt): Use UNUSED_PARAM in the non-WIN case.
+        (WebCore::GlyphBuffer::add): Use UNUSED_PARAM in the non-CAIRO case.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::clear): Removed argument name.
+
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::prepareToRenderSVGContent): Use UNUSED_PARAM when SVG_FILTERS
+        is not enabled.
+        (WebCore::finishRenderSVGContent): Ditto.
+
 2009-01-13  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.

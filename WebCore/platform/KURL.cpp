@@ -597,16 +597,24 @@ bool KURL::hasRef() const
     return m_fragmentEnd != m_queryEnd;
 }
 
-static inline void assertProtocolIsGood(const char* protocol)
+#ifdef NDEBUG
+
+static inline void assertProtocolIsGood(const char*)
 {
-#ifndef NDEBUG
+}
+
+#else
+
+static void assertProtocolIsGood(const char* protocol)
+{
     const char* p = protocol;
     while (*p) {
         ASSERT(*p > ' ' && *p < 0x7F && !(*p >= 'A' && *p <= 'Z'));
         ++p;
     }
-#endif
 }
+
+#endif
 
 bool KURL::protocolIs(const char* protocol) const
 {

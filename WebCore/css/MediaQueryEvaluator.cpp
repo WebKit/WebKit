@@ -388,7 +388,7 @@ static bool max_device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style
     return device_widthMediaFeatureEval(value, style, frame, MaxPrefix);
 }
 
-static bool animationMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
+static bool animationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op)
 {
     if (value) {
         float number;
@@ -397,7 +397,7 @@ static bool animationMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame
     return true;
 }
 
-static bool transitionMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
+static bool transitionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op)
 {
     if (value) {
         float number;
@@ -406,7 +406,7 @@ static bool transitionMediaFeatureEval(CSSValue* value, RenderStyle* style, Fram
     return true;
 }
 
-static bool transform_2dMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
+static bool transform_2dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op)
 {
     if (value) {
         float number;
@@ -415,7 +415,7 @@ static bool transform_2dMediaFeatureEval(CSSValue* value, RenderStyle* style, Fr
     return true;
 }
 
-static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame,  MediaFeaturePrefix op)
+static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op)
 {
     if (value) {
         float number;
