@@ -5,8 +5,6 @@
         https://bugs.webkit.org/show_bug.cgi?id=23325
         Upstream even more graphics/chromium bits.
 
-        WARNING: NO TEST CASES ADDED OR CHANGED
-
         * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp: Added.
         (WebCore::fillEmptyGlyphs):
         (WebCore::initSpaceGlyph):
