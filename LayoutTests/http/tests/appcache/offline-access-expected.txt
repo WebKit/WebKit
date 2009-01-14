@@ -1,27 +1,6 @@
 Test that offline applications work when there is no network access (simulated).
 
-Should say SUCCESS:
+Should say SUCCESS (output in frames is timing dependent, and may legally differ between runs):
 
 SUCCESS
   
-
---------
-Frame: '<!--framePath //<!--frame0-->-->'
---------
-cached
-error
-noupdate
-
-
---------
-Frame: '<!--framePath //<!--frame1-->-->'
---------
-error
-noupdate
-
-
---------
-Frame: '<!--framePath //<!--frame2-->-->'
---------
-noupdate
-
