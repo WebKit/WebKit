@@ -875,11 +875,6 @@ bool DocumentLoader::shouldLoadResourceFromApplicationCache(const ResourceReques
     // in the application cache, then get the resource from the cache (instead of fetching it).
     resource = cache->resourceForURL(request.url());
 
-    // Don't load foreign resources.
-    // FIXME: This check should not be here. Foreign resources are only to be ignored when navigating, not during other kinds of loads.
-    if (resource && (resource->type() & ApplicationCacheResource::Foreign))
-        resource = 0;
-
     // Resources that match fallback namespaces or online whitelist entries are fetched from the network,
     // unless they are also cached.
     if (!resource && (cache->urlMatchesFallbackNamespace(request.url()) || cache->isURLInOnlineWhitelist(request.url())))

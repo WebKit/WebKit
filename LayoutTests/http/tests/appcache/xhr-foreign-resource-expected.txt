@@ -1,0 +1,6 @@
+Test that a resource marked as foreign can still be loaded via XHR.
+
+Should say SUCCESS:
+
+SUCCESS
+

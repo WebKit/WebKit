@@ -39,8 +39,8 @@ ApplicationCacheResource::ApplicationCacheResource(const KURL& url, const Resour
 }
 
 void ApplicationCacheResource::addType(unsigned type) 
-{ 
-    ASSERT(!m_storageID);
+{
+    // Caller should take care of storing the new type in database.
     m_type |= type; 
 }
 

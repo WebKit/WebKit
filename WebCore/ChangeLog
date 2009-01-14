@@ -1,3 +1,31 @@
+2009-01-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Test: http/tests/appcache/xhr-foreign-resource.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=23256
+        Implement application cache foreign entries
+
+        * loader/DocumentLoader.cpp: (WebCore::DocumentLoader::shouldLoadResourceFromApplicationCache):
+        Removed a misplaced check for foreign resources that prevented them from being loaded altogether.
+
+        * loader/appcache/ApplicationCacheGroup.cpp: (WebCore::ApplicationCacheGroup::selectCache):
+        If a document that was loaded from appcache should be associated with a different cache,
+        mark the resource as foreign in the original cache and start over.
+
+        * loader/appcache/ApplicationCacheResource.cpp: (WebCore::ApplicationCacheResource::addType):
+        This function can now be called after a cache is stored, so it no longer asserts the opposite.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL): Fix database pass to correctly ignore
+        in-memory caches that were already rejected.
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL): Ditto.
+        (WebCore::ApplicationCacheStorage::storeUpdatedType): Added a function that updates type of
+        an already stored cached resource.
+
+        * loader/appcache/ApplicationCacheStorage.h: Added storeUpdatedType().
+
 2009-01-13  Mark Rowe  <mrowe@apple.com>
 
         Fix the Tiger WebCore build after r39880.

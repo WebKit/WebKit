@@ -126,9 +126,17 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& manifestURL)
             mainResourceCache->group()->associateDocumentLoaderWithCache(documentLoader, mainResourceCache);
             mainResourceCache->group()->update(frame);
         } else {
-            // FIXME: If the resource being loaded was loaded from an application cache and the URI of 
-            // that application cache's manifest is not the same as the manifest URI with which the algorithm was invoked
-            // then we should "undo" the navigation.
+            // The main resource was loaded from cache, so the cache must have an entry for it. Mark it as foreign.
+            ApplicationCacheResource* resource = mainResourceCache->resourceForURL(documentLoader->url());
+            bool inStorage = resource->storageID();
+            resource->addType(ApplicationCacheResource::Foreign);
+            if (inStorage)
+                cacheStorage().storeUpdatedType(resource, mainResourceCache);
+
+            // Restart the current navigation from the top of the navigation algorithm, undoing any changes that were made
+            // as part of the initial load.
+            // The navigation will not result in the same resource being loaded, because "foreign" entries are never picked during navigation.
+            frame->loader()->scheduleLocationChange(documentLoader->url(), frame->loader()->referrer(), true);
         }
         
         return;
