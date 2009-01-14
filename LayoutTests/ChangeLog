@@ -1,3 +1,13 @@
+2009-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Disabling webarchive/test-link-rel-icon.html due to various buildbot failures
+
+        Bug 23331: LayoutTests/webarchive/test-link-rel-icon.html fails in different ways on buildbots
+        <https://bugs.webkit.org/show_bug.cgi?id=23331>
+
+        * webarchive/test-link-rel-icon.html: Removed.
+        * webarchive/test-link-rel-icon.html-disabled: Renamed from LayoutTests/webarchive/test-link-rel-icon.html.
+
 2009-01-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.
