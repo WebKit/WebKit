@@ -1,3 +1,19 @@
+2009-01-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23326
+        Resources are never deleted from application cache disk database
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::openDatabase): Create a trigger that deletes resources when
+        a cache is deleted. Note that this change doesn't require bumping schema version. We should
+        consider switching to foreign keys and cascade delete instead of triggers in the future.
+        (WebCore::ApplicationCacheStorage::remove): Added a comment explaining why it's sufficient
+        to only remove the cache itself.
+        (WebCore::ApplicationCacheStorage::empty): Don't delete from CacheResources, now that this
+        is done automatically when a cache is deleted.
+
 2009-01-14  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22795: favicons should be saved to webarchives

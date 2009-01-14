@@ -372,7 +372,13 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
                       "  DELETE FROM CacheWhitelistURLs WHERE cache = OLD.id;"
                       "  DELETE FROM FallbackURLs WHERE cache = OLD.id;"
                       " END");
-    
+
+    // When a cache entry is deleted, its resource should also be deleted.
+    executeSQLCommand("CREATE TRIGGER IF NOT EXISTS CacheEntryDeleted AFTER DELETE ON CacheEntries"
+                      " FOR EACH ROW BEGIN"
+                      "  DELETE FROM CacheResources WHERE id = OLD.resource;"
+                      " END");
+
     // When a cache resource is deleted, its data blob should also be deleted.
     executeSQLCommand("CREATE TRIGGER IF NOT EXISTS CacheResourceDeleted AFTER DELETE ON CacheResources"
                       " FOR EACH ROW BEGIN"
@@ -724,6 +730,7 @@ void ApplicationCacheStorage::remove(ApplicationCache* cache)
     if (!m_database.isOpen())
         return;
 
+    // All associated data will be deleted by database triggers.
     SQLiteStatement statement(m_database, "DELETE FROM Caches WHERE id=?");
     if (statement.prepare() != SQLResultOk)
         return;
@@ -742,7 +749,6 @@ void ApplicationCacheStorage::empty()
     // Clear cache groups, caches and cache resources.
     executeSQLCommand("DELETE FROM CacheGroups");
     executeSQLCommand("DELETE FROM Caches");
-    executeSQLCommand("DELETE FROM CacheResources");
     
     // Clear the storage IDs for the caches in memory.
     // The caches will still work, but cached resources will not be saved to disk 
