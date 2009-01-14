@@ -512,7 +512,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     return true;
 }
 
-bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& methodName, data_t& resultData, mach_msg_type_number_t& resultLength)
+bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& methodName, data_t argumentsData, mach_msg_type_number_t argumentsLength, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
     resultData = 0;
     resultLength = 0;
@@ -533,9 +533,9 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     if (callType == CallTypeNone)
         return false;
     
-    // Call the function object
     ArgList argList;
-    
+    demarshalValues(exec, argumentsData, argumentsLength, argList);
+
     ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
     globalObject->startTimeoutCheck();
     JSValuePtr value = call(exec, function, callType, callData, object, argList);
@@ -672,6 +672,56 @@ void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValuePtr value
     mig_allocate(reinterpret_cast<vm_address_t*>(&resultData), resultLength);
     
     memcpy(resultData, [data.get() bytes], resultLength);
+}
+
+bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArray *array, NSUInteger& index, JSValuePtr& result)
+{
+    if (index == [array count])
+        return false;
+                  
+    int type = [[array objectAtIndex:index++] intValue];
+    switch (type) {
+        case VoidValueType:
+            result = jsUndefined();
+            return true;
+        case NullValueType:
+            result = jsNull();
+            return true;
+        case BoolValueType:
+            result = jsBoolean([[array objectAtIndex:index++] boolValue]);
+            return true;
+        case DoubleValueType:
+            result = jsNumber(exec, [[array objectAtIndex:index++] doubleValue]);
+            return true;
+        case StringValueType: {
+            NSString *string = [array objectAtIndex:index++];
+            
+            result = jsString(exec, String(string));
+            return true;
+        }
+        case ObjectValueType: {
+            uint32_t objectID = [[array objectAtIndex:index++] intValue];
+            
+            result = m_objects.get(objectID);
+            return true;
+        }
+        default:
+            return false;
+    }
+}
+    
+void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t valuesData, mach_msg_type_number_t valuesLength, ArgList& result)
+{
+    RetainPtr<NSData*> data(AdoptNS, [[NSData alloc] initWithBytesNoCopy:valuesData length:valuesLength freeWhenDone:NO]);
+    
+    RetainPtr<NSArray*> array = [NSPropertyListSerialization propertyListFromData:data.get()
+                                                                 mutabilityOption:NSPropertyListImmutable
+                                                                           format:0
+                                                                 errorDescription:0];
+    NSUInteger position = 0;
+    JSValuePtr value;
+    while (demarshalValueFromArray(exec, array.get(), position, value))
+        result.append(value);
 }
 
 } // namespace WebKit

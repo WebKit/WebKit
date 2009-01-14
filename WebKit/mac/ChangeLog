@@ -1,3 +1,17 @@
+2009-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Demarshal arguments and pass them to the JS call.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCInvoke):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::invoke):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValueFromArray):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValues):
+
 2009-01-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Timothy Hatcher.

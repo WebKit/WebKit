@@ -316,7 +316,7 @@ static Identifier identifierFromServerIdentifier(uint64_t serverIdentifier)
 }
 
 kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID, uint64_t identifier,
-                         data_t arguments, mach_msg_type_number_t argumentsCnt, 
+                         data_t argumentsData, mach_msg_type_number_t argumentsLength, 
                          boolean_t *returnValue, data_t* resultData, mach_msg_type_number_t* resultLength)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
@@ -328,9 +328,8 @@ kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t obj
         return KERN_FAILURE;
 
     Identifier methodNameIdentifier = identifierFromServerIdentifier(identifier);
-    
-    // FIXME: Demarshal the arguments and pass them to invoke.
-    *returnValue = instanceProxy->invoke(objectID, methodNameIdentifier, *resultData, *resultLength);
+
+    *returnValue = instanceProxy->invoke(objectID, methodNameIdentifier, argumentsData, argumentsLength, *resultData, *resultLength);
     
     return KERN_SUCCESS;
 }
