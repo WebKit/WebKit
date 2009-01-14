@@ -237,6 +237,8 @@ void ResourceHandle::schedule(SchedulePair* pair)
         [d->m_connection.get() start];
         d->m_startWhenScheduled = false;
     }
+#else
+    UNUSED_PARAM(pair);
 #endif
 }
 
@@ -245,6 +247,8 @@ void ResourceHandle::unschedule(SchedulePair* pair)
 #ifndef BUILDING_ON_TIGER
     if (NSRunLoop *runLoop = pair->nsRunLoop())
         [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(NSString *)pair->mode()];
+#else
+    UNUSED_PARAM(pair);
 #endif
 }
 

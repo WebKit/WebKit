@@ -46,6 +46,7 @@
 
 #import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/UnusedParam.h>
 
 @interface NSAttributedString (AppKitSecretsIKnowAbout)
 - (id)_initWithDOMRange:(DOMRange *)domRange;
@@ -143,7 +144,8 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, 
     // 4930197: Mail overrides [WebHTMLView pasteboardTypesForSelection] in order to add another type to the pasteboard
     // after WebKit does.  On Tiger we must call this function so that Mail code will be executed, meaning that 
     // we can't call WebCore::Pasteboard's method for setting types. 
-    
+    UNUSED_PARAM(canSmartCopyOrDelete);
+
     NSArray *types = frame->editor()->client()->pasteboardTypesForSelection(frame);
     // Don't write RTFD to the pasteboard when the copied attributed string has no attachments.
     NSMutableArray *mutableTypes = nil;

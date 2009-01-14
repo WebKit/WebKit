@@ -1,3 +1,20 @@
+2009-01-13  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Tiger WebCore build after r39880.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markBadGrammar):
+        * loader/mac/DocumentLoaderMac.cpp:
+        (WebCore::DocumentLoader::schedule):
+        (WebCore::DocumentLoader::unschedule):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+        * platform/mac/WebCoreObjCExtras.mm:
+        (WebCoreObjCFinalizeOnMainThread):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::schedule):
+        (WebCore::ResourceHandle::unschedule):
+
 2009-01-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
