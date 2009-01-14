@@ -1,3 +1,19 @@
+2009-01-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Try to fix regression test failures seen on Leopard; possibly new to 10.5.6.
+
+        * http/tests/misc/willCacheResponse-delegate-callback-expected.txt: Removed.
+        This test has enough Mac specifics in it that I don't think it makes sense to have cross-platform results.
+
+        * platform/mac-tiger/http/tests/misc/willCacheResponse-delegate-callback-expected.txt:
+        Copied from http/tests/misc/willCacheResponse-delegate-callback-expected.txt.
+
+        * platform/mac/http/tests/misc/willCacheResponse-delegate-callback-expected.txt:
+        Copied from http/tests/misc/willCacheResponse-delegate-callback-expected.txt.
+        Updated with non-Tiger results. The order of delegate calls has changed.
+
 2009-01-14  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.
