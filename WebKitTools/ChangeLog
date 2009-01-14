@@ -1,5 +1,16 @@
 2009-01-14  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX: Implement LayoutTestController::setIconDatabaseEnabled(bool) for GTK
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest): Added call to reset the icon database to match Mac
+        and Windows ports.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setIconDatabaseEnabled): Implemented
+        stub method.
+
+2009-01-14  David Kilzer  <ddkilzer@apple.com>
+
         Bug 22795: favicons should be saved to webarchives
 
         <https://bugs.webkit.org/show_bug.cgi?id=22795>

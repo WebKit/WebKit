@@ -234,6 +234,8 @@ static void runTest(const string& testPathOrURL)
     topLoadingFrame = 0;
     done = false;
 
+    gLayoutTestController->setIconDatabaseEnabled(false);
+
     if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
 

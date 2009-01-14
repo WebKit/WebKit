@@ -234,6 +234,11 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     // FIXME: implement
 }
 
+void LayoutTestController::setIconDatabaseEnabled(bool flag)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setJavaScriptProfilingEnabled(bool flag)
 {
     // FIXME: implement
