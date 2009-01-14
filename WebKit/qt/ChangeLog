@@ -2,6 +2,20 @@
 
         Reviewed by Simon Hausmann.
 
+        http://www.qtsoftware.com/developer/task-tracker/index_html?id=241144&method=entry
+
+        [Qt] Create actions for text selection and editing for QWebPage.
+        Also properly disable and enable them when contentEditable is toggled.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateAction):
+        (QWebPagePrivate::updateEditorActions):
+        (QWebPage::action):
+
+2009-01-14  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Unit tests for cursor movements. The following are tested:
             - the actions are not NULL
             - the actions are disabled when contentEditable is false
