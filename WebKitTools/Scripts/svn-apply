@@ -339,7 +339,7 @@ sub patch($)
     my $addition = 0;
     my $isBinary = 0;
 
-    $addition = 1 if $patch =~ /\n--- .+\(revision 0\)\n/;
+    $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\n/ || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
     $isBinary = 1 if $patch =~ /\nCannot display: file marked as a binary type\./;
 

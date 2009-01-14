@@ -1,3 +1,12 @@
+2009-01-13  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23304
+        Fix svn-apply to match svn-unapply to recognize added files in 'git diff' patches.
+
+        * Scripts/svn-apply: Added a check (similar to svn-unapply) to recognize added files.
+
 2009-01-14  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Implement LayoutTestController::setIconDatabaseEnabled(bool) for GTK
