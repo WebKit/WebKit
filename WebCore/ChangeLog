@@ -1,3 +1,14 @@
+2009-01-14  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23323
+        Upstream platform/text/chromium/
+
+        * platform/text/chromium: Added.
+        * platform/text/chromium/TextBreakIteratorInternalICUChromium.cpp: Added.
+        (WebCore::currentTextBreakLocaleID):
+
 2009-01-14  Steve Falkenburg  <sfalken@apple.com>
 
         Update copyright year in version resources.
