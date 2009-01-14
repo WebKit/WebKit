@@ -1,3 +1,29 @@
+2009-01-14  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23333
+        Platform code fixes. These compensate for changes in platform
+        callbacks from WebKit and minor API tweaks.
+
+        I enumerated a few below.
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        fontExists has been gone since r34794.
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+
+        (WebCore::FrameData::clear):
+        r39751 changes this api to take and return a bool.
+
+        (WebCore::Image::drawPattern):
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::apply):
+        (WebCore::boundingBoxForCurrentStroke):
+        (WebCore::Path::strokeContains):
+        * svg/graphics/skia/RenderPathSkia.cpp: Removed due to r39805.
+
 2009-01-14  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.

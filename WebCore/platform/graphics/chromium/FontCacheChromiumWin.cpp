@@ -516,28 +516,6 @@ static void FillLogFont(const FontDescription& fontDescription, LOGFONT* winfont
     winfont->lfWeight = toGDIFontWeight(fontDescription.weight());
 }
 
-bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicString& family)
-{
-    LOGFONT winfont = {0};
-    FillLogFont(fontDescription, &winfont);
-    String winName;
-    HFONT hfont = createFontIndirectAndGetWinName(family, &winfont, &winName);
-    if (!hfont)
-      return false;
-
-    DeleteObject(hfont);
-    if (equalIgnoringCase(family, winName))
-      return true;
-    // For CJK fonts with both English and native names, 
-    // GetTextFace returns a native name under the font's "locale"
-    // and an English name under other locales regardless of 
-    // lfFaceName field of LOGFONT. As a result, we need to check
-    // if a font has an alternate name. If there is, we need to
-    // compare it with what's requested in the first place.
-    String altName;
-    return LookupAltName(family, altName) && equalIgnoringCase(altName, winName);
-}
-
 struct TraitsInFamilyProcData {
     TraitsInFamilyProcData(const AtomicString& familyName)
         : m_familyName(familyName)
