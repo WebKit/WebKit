@@ -1,3 +1,14 @@
+2009-01-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix crash I ran into while printing. I was unable to reproduce it, but also,
+        it's clear there's no guarantee that the frame will be non-zero in this case,
+        so it seems fine to check it.
+
+        * WebView/WebHTMLView.mm: (-[WebHTMLView reapplyStyles]): Check frame for zero
+        and don't do anything with it if it's zero.
+
 2009-01-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

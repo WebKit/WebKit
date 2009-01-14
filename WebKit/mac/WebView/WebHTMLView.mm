@@ -2774,12 +2774,13 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    Frame* coreFrame = core([self _frame]);
-    if (FrameView* coreView = coreFrame->view())
-        coreView->setMediaType(_private->printing ? "print" : "screen");
-    if (Document* document = coreFrame->document())
-        document->setPrinting(_private->printing);
-    coreFrame->reapplyStyles();
+    if (Frame* coreFrame = core([self _frame])) {
+        if (FrameView* coreView = coreFrame->view())
+            coreView->setMediaType(_private->printing ? "print" : "screen");
+        if (Document* document = coreFrame->document())
+            document->setPrinting(_private->printing);
+        coreFrame->reapplyStyles();
+    }
     
 #ifdef LOG_TIMES        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
