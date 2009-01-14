@@ -1,3 +1,15 @@
+2009-01-14  Dean McNamee  <deanm@chromium.org>
+
+        Reviewed by Darin Adler and Oliver hunt.
+
+        Correctly match allocation functions by implementing a custom deref().
+
+        https://bugs.webkit.org/show_bug.cgi?id=23315
+
+        * runtime/ByteArray.h:
+        (JSC::ByteArray::deref):
+        (JSC::ByteArray::ByteArray):
+
 2009-01-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
