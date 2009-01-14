@@ -168,13 +168,10 @@ static BOOL isArrayOfClass(id object, Class elementClass)
             [arguments setObject:subresources forKey:@"subresources"];
         if (subframeArchives)
             [arguments setObject:subframeArchives forKey:@"subframeArchives"];
-        [self performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments waitUntilDone:TRUE];
-        NSException *exception = [[[arguments objectForKey:@"exception"] retain] autorelease];
-        id result = [[[arguments objectForKey:@"result"] retain] autorelease];
+
+        self = [self _webkit_performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments];
         [arguments release];
-        if (exception)
-            [exception raise];
-        return result;
+        return self;
     }
 #endif
 
@@ -430,18 +427,12 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 @implementation WebArchive (WebMailThreadWorkaround)
 
-- (void)_initWithArguments:(NSMutableDictionary *)arguments
+- (id)_initWithArguments:(NSDictionary *)arguments
 {
     WebResource *mainResource = [arguments objectForKey:@"mainResource"];
     NSArray *subresources = [arguments objectForKey:@"subresources"];
     NSArray *subframeArchives = [arguments objectForKey:@"subframeArchives"];
-    @try {
-        id result = [self initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives];
-        if (result)
-            [arguments setObject:result forKey:@"result"];
-    } @catch(NSException *exception) {
-        [arguments setObject:exception forKey:@"exception"];
-    }
+    return [self initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives];
 }
 
 @end

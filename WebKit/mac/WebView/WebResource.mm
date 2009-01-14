@@ -465,7 +465,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     return isOldMail;
 }
 
-- (void)_initWithArguments:(NSMutableDictionary *)arguments
+- (id)_initWithArguments:(NSDictionary *)arguments
 {
     NSData *data = [arguments objectForKey:@"data"];
     NSURL *URL = [arguments objectForKey:@"URL"];
@@ -473,14 +473,8 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     NSString *textEncodingName = [arguments objectForKey:@"textEncodingName"];
     NSString *frameName = [arguments objectForKey:@"frameName"];
     NSURLResponse *response = [arguments objectForKey:@"response"];
-    bool copyData = [arguments objectForKey:@"copyData"];
-    @try {
-        id result = [self _initWithData:data URL:URL MIMEType:MIMEType textEncodingName:textEncodingName frameName:frameName response:response copyData:copyData];
-        if (result)
-            [arguments setObject:result forKey:@"result"];
-    } @catch(NSException *exception) {
-        [arguments setObject:exception forKey:@"exception"];
-    }
+    BOOL copyData = [[arguments objectForKey:@"copyData"] boolValue];
+    return [self _initWithData:data URL:URL MIMEType:MIMEType textEncodingName:textEncodingName frameName:frameName response:response copyData:copyData];
 }
 
 @end

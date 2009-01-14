@@ -1,3 +1,18 @@
+2009-01-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        <rdar://problem/6496520> REGRESSION: In Mail, a crash occurs when attempting to display a mail message
+
+        Move WebArchive and WebResource to use the same approach for initializing themselves on the main thread
+        that WebView uses.
+
+        * WebView/WebArchive.mm:
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]): Use _webkit_performSelectorOnMainThread:withObject:.
+        (-[WebArchive _initWithArguments:]):
+        * WebView/WebResource.mm:
+        (-[WebResource _initWithArguments:]): Unbox the BOOL argument.
+
 2009-01-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
