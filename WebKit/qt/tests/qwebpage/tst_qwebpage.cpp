@@ -102,6 +102,8 @@ private slots:
     void createViewlessPlugin();
     void multiplePageGroupsAndLocalStorage();
     void cursorMovements();
+    void textSelection();
+    void textEditing();
 
 private:
 
@@ -844,6 +846,123 @@ void tst_QWebPage::cursorMovements()
 
     delete page;
 }
+
+void tst_QWebPage::textSelection()
+{
+    CursorTrackedPage* page = new CursorTrackedPage;
+    QString content("<html><body<p id=one>The quick brown fox</p>" \
+        "<p id=two>jumps over the lazy dog</p>" \
+        "<p>May the source<br/>be with you!</p></body></html>");
+    page->mainFrame()->setHtml(content);
+
+    // this will select the first paragraph
+    QString script = "var range = document.createRange(); " \
+        "var node = document.getElementById(\"one\"); " \
+        "range.selectNode(node); " \
+        "getSelection().addRange(range);";
+    page->mainFrame()->evaluateJavaScript(script);
+    QCOMPARE(page->selectedText().trimmed(), QString::fromLatin1("The quick brown fox"));
+
+    // these actions must exist
+    QVERIFY(page->action(QWebPage::SelectNextChar) != 0);
+    QVERIFY(page->action(QWebPage::SelectPreviousChar) != 0);
+    QVERIFY(page->action(QWebPage::SelectNextWord) != 0);
+    QVERIFY(page->action(QWebPage::SelectPreviousWord) != 0);
+    QVERIFY(page->action(QWebPage::SelectNextLine) != 0);
+    QVERIFY(page->action(QWebPage::SelectPreviousLine) != 0);
+    QVERIFY(page->action(QWebPage::SelectStartOfLine) != 0);
+    QVERIFY(page->action(QWebPage::SelectEndOfLine) != 0);
+    QVERIFY(page->action(QWebPage::SelectStartOfBlock) != 0);
+    QVERIFY(page->action(QWebPage::SelectEndOfBlock) != 0);
+    QVERIFY(page->action(QWebPage::SelectStartOfDocument) != 0);
+    QVERIFY(page->action(QWebPage::SelectEndOfDocument) != 0);
+
+    // right now they are disabled because contentEditable is false
+    QCOMPARE(page->action(QWebPage::SelectNextChar)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectPreviousChar)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectNextWord)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectPreviousWord)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectNextLine)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectPreviousLine)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectStartOfLine)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectEndOfLine)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectStartOfBlock)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectEndOfBlock)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectStartOfDocument)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SelectEndOfDocument)->isEnabled(), false);
+
+    // make it editable before navigating the cursor
+    page->setContentEditable(true);
+
+    // here the actions are enabled after contentEditable is true
+    QCOMPARE(page->action(QWebPage::SelectNextChar)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectPreviousChar)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectNextWord)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectPreviousWord)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectNextLine)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectPreviousLine)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectStartOfLine)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectEndOfLine)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectStartOfBlock)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectEndOfBlock)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectStartOfDocument)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SelectEndOfDocument)->isEnabled(), true);
+
+    delete page;
+}
+
+void tst_QWebPage::textEditing()
+{
+    CursorTrackedPage* page = new CursorTrackedPage;
+    QString content("<html><body<p id=one>The quick brown fox</p>" \
+        "<p id=two>jumps over the lazy dog</p>" \
+        "<p>May the source<br/>be with you!</p></body></html>");
+    page->mainFrame()->setHtml(content);
+
+    // this will select the first paragraph
+    QString script = "var range = document.createRange(); " \
+        "var node = document.getElementById(\"one\"); " \
+        "range.selectNode(node); " \
+        "getSelection().addRange(range);";
+    page->mainFrame()->evaluateJavaScript(script);
+    QCOMPARE(page->selectedText().trimmed(), QString::fromLatin1("The quick brown fox"));
+
+    // these actions must exist
+    QVERIFY(page->action(QWebPage::DeleteStartOfWord) != 0);
+    QVERIFY(page->action(QWebPage::DeleteEndOfWord) != 0);
+    QVERIFY(page->action(QWebPage::SetTextDirectionDefault) != 0);
+    QVERIFY(page->action(QWebPage::SetTextDirectionLeftToRight) != 0);
+    QVERIFY(page->action(QWebPage::SetTextDirectionRightToLeft) != 0);
+    QVERIFY(page->action(QWebPage::ToggleBold) != 0);
+    QVERIFY(page->action(QWebPage::ToggleItalic) != 0);
+    QVERIFY(page->action(QWebPage::ToggleUnderline) != 0);
+
+    // right now they are disabled because contentEditable is false
+    QCOMPARE(page->action(QWebPage::DeleteStartOfWord)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::DeleteEndOfWord)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SetTextDirectionDefault)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SetTextDirectionLeftToRight)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::SetTextDirectionRightToLeft)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::ToggleBold)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::ToggleItalic)->isEnabled(), false);
+    QCOMPARE(page->action(QWebPage::ToggleUnderline)->isEnabled(), false);
+
+    // make it editable before navigating the cursor
+    page->setContentEditable(true);
+
+    // here the actions are enabled after contentEditable is true
+    QCOMPARE(page->action(QWebPage::DeleteStartOfWord)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::DeleteEndOfWord)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SetTextDirectionDefault)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SetTextDirectionLeftToRight)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::SetTextDirectionRightToLeft)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::ToggleBold)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::ToggleItalic)->isEnabled(), true);
+    QCOMPARE(page->action(QWebPage::ToggleUnderline)->isEnabled(), true);
+
+    delete page;
+}
+
 
 QTEST_MAIN(tst_QWebPage)
 #include "tst_qwebpage.moc"
