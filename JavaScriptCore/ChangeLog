@@ -1,3 +1,14 @@
+2009-01-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for: https://bugs.webkit.org/show_bug.cgi?id=23292
+
+        Implementation of two argument canDoFastAdditiveOperations does not correlate well with reality.
+
+        * runtime/JSImmediate.h:
+        (JSC::JSFastMath::canDoFastAdditiveOperations):
+
 2009-01-13  Zalan Bujtas  <zbujtas@gmail.com>
 
         Reviewed by Darin Adler.

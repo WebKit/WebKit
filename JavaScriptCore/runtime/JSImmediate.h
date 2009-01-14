@@ -698,7 +698,7 @@ namespace JSC {
         {
             // Number is non-negative and an operation involving two of these can't overflow.
             // Checking for allowed negative numbers takes more time than it's worth on SunSpider.
-            return ((JSImmediate::rawValue(v1) | JSImmediate::rawValue(v2)) & (JSImmediate::TagTypeInteger + (JSImmediate::signBit | (JSImmediate::signBit >> 1)))) == JSImmediate::TagTypeInteger;
+            return canDoFastAdditiveOperations(v1) && canDoFastAdditiveOperations(v2);
         }
 
         static ALWAYS_INLINE JSValuePtr addImmediateNumbers(JSValuePtr v1, JSValuePtr v2)
