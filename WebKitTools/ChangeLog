@@ -1,3 +1,13 @@
+2009-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Use COM API on Windows in LayoutTestController::setIconDatabaseEnabled()
+
+        Rubber-stamped by Alice Liu.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setIconDatabaseEnabled): Use COM API
+        to get the shared WebIconDatabase.
+
 2009-01-14  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.

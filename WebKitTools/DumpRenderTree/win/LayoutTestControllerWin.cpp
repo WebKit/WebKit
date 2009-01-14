@@ -268,16 +268,15 @@ void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permis
 
 void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)
 {
-    // FIXME: Workaround <rdar://problem/6480108>
-    static WebIconDatabase* sharedWebIconDatabase = NULL;
-    if (!sharedWebIconDatabase) {
-        if (!iconDatabaseEnabled)
-            return;
-        sharedWebIconDatabase = WebIconDatabase::sharedWebIconDatabase();
-        if (sharedWebIconDatabase->isEnabled() == iconDatabaseEnabled)
-            return;
-    }
-    sharedWebIconDatabase->setEnabled(iconDatabaseEnabled);
+    // See also <rdar://problem/6480108>
+    COMPtr<IWebIconDatabase> iconDatabase;
+    COMPtr<IWebIconDatabase> tmpIconDatabase;
+    if (FAILED(CoCreateInstance(CLSID_WebIconDatabase, 0, CLSCTX_ALL, IID_IWebIconDatabase, (void**)&tmpIconDatabase)))
+        return;
+    if (FAILED(tmpIconDatabase->sharedIconDatabase(&iconDatabase)))
+        return;
+
+    iconDatabase->setEnabled(iconDatabaseEnabled);
 }
 
 void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
