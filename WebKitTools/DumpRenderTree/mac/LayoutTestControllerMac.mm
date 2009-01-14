@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHistory.h>
@@ -224,6 +225,26 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     [origin release];
 }
 
+void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)
+{
+    // FIXME: Workaround <rdar://problem/6480108>
+    static WebIconDatabase* sharedWebIconDatabase = NULL;
+    if (!sharedWebIconDatabase) {
+        if (!iconDatabaseEnabled)
+            return;
+        sharedWebIconDatabase = [WebIconDatabase sharedIconDatabase];
+        if ([sharedWebIconDatabase isEnabled] == iconDatabaseEnabled)
+            return;
+    }
+    [sharedWebIconDatabase setEnabled:iconDatabaseEnabled];
+}
+
+void LayoutTestController::setJavaScriptProfilingEnabled(bool profilingEnabled)
+{
+    [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:profilingEnabled];
+    [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:profilingEnabled];
+}
+
 void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
 {
     NSView *documentView = [[mainFrame frameView] documentView];
@@ -289,12 +310,6 @@ void LayoutTestController::setWindowIsKey(bool windowIsKey)
 void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
 {
     [[mainFrame webView] setSmartInsertDeleteEnabled:flag];
-}
-
-void LayoutTestController::setJavaScriptProfilingEnabled(bool profilingEnabled)
-{
-    [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:profilingEnabled];
-    [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:profilingEnabled];
 }
 
 void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)

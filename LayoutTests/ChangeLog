@@ -1,3 +1,18 @@
+2009-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22795: favicons should be saved to webarchives
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22795>
+
+        Reviewed by Darin Adler.
+
+        Note that this test case contains a workaround for Bug 21026 and
+        <rdar://problem/6240826> which may be removed once that is fixed.
+
+        * webarchive/resources/favicon.ico: Copied from LayoutTests/fast/images/resources/favicon.ico.
+        * webarchive/test-link-rel-icon-expected.webarchive: Added.
+        * webarchive/test-link-rel-icon.html: Added.
+
 2009-01-14  Nigel Tao  <nigel.tao.gnome@gmail.com>
 
         Reviewed by Darin Adler.

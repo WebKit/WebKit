@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "FrameTree.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
+#include "IconDatabase.h"
 #include "KURLHash.h"
 #include "Logging.h"
 #include "markup.h"
@@ -541,7 +542,17 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
             }
         }
     }
-    
+
+    // Add favicon if one exists for this page
+    if (iconDatabase() && iconDatabase()->isEnabled()) {
+        const String& iconURL = iconDatabase()->iconURLForPageURL(responseURL);
+        if (!iconURL.isEmpty() && iconDatabase()->iconDataKnownForIconURL(iconURL)) {
+            RefPtr<SharedBuffer> data = iconDatabase()->iconForPageURL(responseURL, IntSize(16, 16))->data();
+            RefPtr<ArchiveResource> resource = ArchiveResource::create(data.release(), KURL(iconURL), "image/x-icon", "", "");
+            subresources.append(resource.release());
+        }
+    }
+
     return create(mainResource, subresources, subframeArchives);
 }
 

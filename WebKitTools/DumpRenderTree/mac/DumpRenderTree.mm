@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1040,6 +1040,8 @@ static void runTest(const string& testPathOrURL)
     gLayoutTestController = new LayoutTestController(testURL, expectedPixelHash);
     topLoadingFrame = nil;
     done = NO;
+
+    gLayoutTestController->setIconDatabaseEnabled(false);
 
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs);

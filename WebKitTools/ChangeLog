@@ -1,3 +1,31 @@
+2009-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22795: favicons should be saved to webarchives
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22795>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setIconDatabaseEnabledCallback): Added.
+        (setJavaScriptProfilingEnabledCallback): Realphabetized.
+        (LayoutTestController::staticFunctions): Added entry for calling
+        LayoutTestController.setIconDatabaseEnabled(bool) from JavaScript.
+        * DumpRenderTree/LayoutTestController.h:
+        (setIconDatabaseEnabledCallback): Added declaration.
+        (setJavaScriptProfilingEnabledCallback): Realphabetized.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest): Disable the icon database before each test.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setIconDatabaseEnabled): Added.
+        (LayoutTestController::setJavaScriptProfilingEnabled): Realphabetized.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest): Disable the icon database before each test.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setIconDatabaseEnabled): Added.
+
 2009-01-14  Steve Falkenburg  <sfalken@apple.com>
 
         Update copyright year in version resources.

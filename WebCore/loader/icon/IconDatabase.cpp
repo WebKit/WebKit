@@ -174,6 +174,9 @@ void IconDatabase::close()
     m_syncThreadRunning = false;    
     m_threadTerminationRequested = false;
     m_removeIconsRequested = false;
+
+    m_syncDB.close();
+    ASSERT(!isOpen());
 }
 
 void IconDatabase::removeAllIcons()

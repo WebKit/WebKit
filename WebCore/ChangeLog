@@ -1,3 +1,25 @@
+2009-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22795: favicons should be saved to webarchives
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22795>
+
+        Reviewed by Darin Adler.
+
+        Test: webarchive/test-link-rel-icon.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs): Do not add
+        favicon URLs to the list since no ArchiveResource or CachedResource
+        is ever created for them.
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create): Handle favicons as a special
+        case for all main resources.
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::close): Actually close the SQLite database
+        so that isOpen() returns false when called.  Added an ASSERT() for
+        good measure.
+
 2009-01-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

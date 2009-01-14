@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+&lt;script&gt;
+function runTest()
+{
+    if (!location.href.match('\\?')) {
+        if (window.layoutTestController) {
+            layoutTestController.setIconDatabaseEnabled(true);
+            layoutTestController.dumpDOMAsWebArchive();
+            layoutTestController.waitUntilDone();
+        }
+        // Reload once since we just enabled the icon database
+        redirect('1');
+    } else if (!location.href.match('\\?2')) {
+        // Reload twice to work around Bug 21026 / &lt;rdar://problem/6240826&gt;
+        redirect('2');
+    } else {
+        if (window.layoutTestController) {
+            layoutTestController.notifyDone();
+        }
+    }
+}
+
+function redirect(arg)
+{
+    var loc = '' + document.location;
+    if (loc.indexOf('?') &gt; 0)
+        loc = loc.substring(0, loc.indexOf('?'));
+    document.location = loc + '?' + arg;
+}
+&lt;/script&gt;
+&lt;link rel="icon" href="resources/favicon.ico" type="image/x-icon"&gt;
+&lt;/head&gt;&lt;body onload="runTest()"&gt;
+
+
+&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/test-link-rel-icon.html?2</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<data>
+			AAABAAEAEBAAAAAAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/
+			AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A
+			/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AABk/wAA
+			//8AAP/vAAD//wAAAAcAAP//AAD//wAA//8AAP//AAC2PwAAAAAA
+			AP//AAD/9AAAuX8AAOzkAACmJA==
+			</data>
+			<key>WebResourceMIMEType</key>
+			<string>image/x-icon</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>image/x-icon</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/favicon.ico</string>
+				<key>expectedContentLength</key>
+				<integer>0</integer>
+				<key>textEncodingName</key>
+				<string></string>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/favicon.ico</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -384,11 +384,10 @@ void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    if (m_isIcon) {
-        addSubresourceURL(urls, href());
+    // Favicons are handled by a special case in LegacyWebArchive::create()
+    if (m_isIcon)
         return;
-    }
-    
+
     if (!m_isStyleSheet)
         return;
     
