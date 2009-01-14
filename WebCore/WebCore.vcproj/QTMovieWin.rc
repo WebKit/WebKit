@@ -34,7 +34,7 @@ BEGIN
             VALUE "FileVersion", __VERSION_TEXT__
             VALUE "CompanyName", "Apple Inc."
             VALUE "InternalName", "WebKit"
-            VALUE "LegalCopyright", "Copyright Apple Inc. 2007-2008"
+            VALUE "LegalCopyright", "Copyright Apple Inc. 2007-2009"
             VALUE "OriginalFilename", "QTMovieWin.dll"
             VALUE "ProductName", "WebKit"
             VALUE "ProductVersion", __BUILD_NUMBER_SHORT__

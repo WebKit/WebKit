@@ -1,3 +1,11 @@
+2009-01-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Update copyright year in version resources.
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.rc:
+
 2009-01-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
