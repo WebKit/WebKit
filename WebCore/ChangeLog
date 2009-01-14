@@ -1,3 +1,10 @@
+2009-01-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Release build fix.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::storeUpdatedType): Use ASSERT_UNUSED.
+
 2009-01-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders Carlsson.

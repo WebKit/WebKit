@@ -540,7 +540,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
 
 bool ApplicationCacheStorage::storeUpdatedType(ApplicationCacheResource* resource, ApplicationCache* cache)
 {
-    ASSERT(cache->storageID());
+    ASSERT_UNUSED(cache, cache->storageID());
     ASSERT(resource->storageID());
 
     // FIXME: If the resource gained a Dynamic bit, it should be re-inserted at the end for correct order.
