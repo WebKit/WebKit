@@ -220,8 +220,9 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
         }
 
     }
-
+#if !wxCHECK_VERSION(2,9,0)
     bmp->UseAlpha();
+#endif
     ASSERT(bmp->IsOk());
     return bmp;
 }

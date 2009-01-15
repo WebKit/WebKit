@@ -81,7 +81,7 @@ public:
     bool operator==(const FontPlatformData& other) const
     { 
         if (m_fontState == VALID)
-            return other.m_fontState == VALID && m_font.Ok() && other.m_font.Ok() && m_font.IsSameAs(other.m_font);
+            return other.m_fontState == VALID && m_font.IsOk() && other.m_font.IsOk() && m_font.IsSameAs(other.m_font);
         else
             return m_fontState == other.m_fontState;
     }
@@ -89,7 +89,7 @@ public:
     bool isHashTableDeletedValue() const { return m_fontState == DELETED; }
     
     unsigned computeHash() const {
-        ASSERT(m_font.Ok());
+        ASSERT(m_font.IsOk());
         
         // make a hash that is unique for this font, but not globally unique - that is,
         // a font whose properties are equal should generate the same hash

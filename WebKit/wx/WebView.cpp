@@ -73,6 +73,7 @@
 
 #include <wx/defs.h>
 #include <wx/dcbuffer.h>
+#include <wx/dcgraph.h>
 
 #if defined(_MSC_VER)
 int rint(double val)

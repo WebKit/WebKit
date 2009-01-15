@@ -1,3 +1,13 @@
+2009-01-14  miggilin  <mr.diggilin@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Fixing wx compilation for wx 2.9/trunk.
+
+        * WebFrame.cpp:
+        (wxWebFrame::SetPageSource):
+        * WebView.cpp:
+
 2009-01-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. JSValue* -> JSValuePtr.

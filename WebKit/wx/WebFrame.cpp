@@ -142,7 +142,7 @@ void wxWebFrame::SetPageSource(const wxString& source, const wxString& baseUrl)
     if (m_impl->frame && m_impl->frame->loader()) {
         WebCore::FrameLoader* loader = m_impl->frame->loader();
         loader->begin(WebCore::KURL(static_cast<const char*>(baseUrl.mb_str(wxConvUTF8))));
-        loader->write(source);
+        loader->write(static_cast<const WebCore::String>(source));
         loader->end();
     }
 }

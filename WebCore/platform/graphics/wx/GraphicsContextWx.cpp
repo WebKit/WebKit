@@ -284,7 +284,7 @@ void GraphicsContext::clip(const FloatRect& r)
     wxPoint pos(0, 0);
 
     if (windc) {
-#ifndef __WXGTK__
+#if !defined(__WXGTK__) || wxCHECK_VERSION(2,9,0)
         wxWindow* window = windc->GetWindow();
 #else
         wxWindow* window = windc->m_owner;
@@ -414,7 +414,13 @@ void GraphicsContext::setURLForRect(const KURL&, const IntRect&)
 void GraphicsContext::setCompositeOperation(CompositeOperator op)
 {
     if (m_data->context)
+    {
+#if wxCHECK_VERSION(2,9,0)
+        m_data->context->SetLogicalFunction(static_cast<wxRasterOperationMode>(getWxCompositingOperation(op, false)));
+#else
         m_data->context->SetLogicalFunction(getWxCompositingOperation(op, false));
+#endif
+    }
 }
 
 void GraphicsContext::beginPath()

@@ -1,3 +1,25 @@
+2009-01-14  miggilin  <mr.diggilin@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Fixing wx compilation for wx 2.9/trunk.
+
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::operator==):
+        (WebCore::FontPlatformData::computeHash):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::contains):
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::paintButton):
+        (WebCore::RenderThemeWx::paintTextField):
+        (WebCore::RenderThemeWx::paintMenuList):
+        * platform/wx/wxcode/gtk/non-kerned-drawing.cpp:
+
 2009-01-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Adding WebKitCSSMatrix.
