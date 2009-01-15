@@ -376,12 +376,12 @@ int RenderTextControlSingleLine::textBlockWidth() const
 
     if (RenderObject* resultsRenderer = m_resultsButton ? m_resultsButton->renderer() : 0) {
         resultsRenderer->calcWidth();
-        width -= resultsRenderer->width();
+        width -= resultsRenderer->width() + resultsRenderer->marginLeft() + resultsRenderer->marginRight();
     }
 
     if (RenderObject* cancelRenderer = m_cancelButton ? m_cancelButton->renderer() : 0) {
         cancelRenderer->calcWidth();
-        width -= cancelRenderer->width();
+        width -= cancelRenderer->width() + cancelRenderer->marginLeft() + cancelRenderer->marginRight();
     }
 
     return width;

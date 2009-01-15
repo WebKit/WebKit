@@ -83,14 +83,6 @@
 #define PBS_DISABLED    4
 #define PBS_DEFAULTED   5
 
-// This is the fixed width IE and Firefox use for buttons on dropdown menus
-static const int dropDownButtonWidth = 17;
-
-static const int shell32MagnifierIconIndex = 22;
-
-// Default font size to match Firefox.
-static const float defaultControlFontPixelSize = 13;
-
 SOFT_LINK_LIBRARY(uxtheme)
 SOFT_LINK(uxtheme, OpenThemeData, HANDLE, WINAPI, (HWND hwnd, LPCWSTR pszClassList), (hwnd, pszClassList))
 SOFT_LINK(uxtheme, CloseThemeData, HRESULT, WINAPI, (HANDLE hTheme), (hTheme))
@@ -100,7 +92,25 @@ SOFT_LINK(uxtheme, IsThemeBackgroundPartiallyTransparent, BOOL, WINAPI, (HANDLE 
 
 static bool haveTheme;
 
+using namespace std;
+
 namespace WebCore {
+
+// This is the fixed width IE and Firefox use for buttons on dropdown menus
+static const int dropDownButtonWidth = 17;
+
+static const int shell32MagnifierIconIndex = 22;
+
+// Default font size to match Firefox.
+static const float defaultControlFontPixelSize = 13;
+
+static const float defaultCancelButtonSize = 9;
+static const float minCancelButtonSize = 5;
+static const float maxCancelButtonSize = 21;
+static const float defaultSearchFieldResultsDecorationSize = 13;
+static const float minSearchFieldResultsDecorationSize = 9;
+static const float maxSearchFieldResultsDecorationSize = 30;
+static const float defaultSearchFieldResultsButtonWidth = 18;
 
 static bool gWebKitIsBeingUnloaded;
 
@@ -325,6 +335,7 @@ bool RenderThemeWin::supportsFocus(ControlPart appearance)
         case PushButtonPart:
         case ButtonPart:
         case DefaultButtonPart:
+        case SearchFieldPart:
         case TextFieldPart:
         case TextAreaPart:
             return true;
@@ -376,7 +387,7 @@ unsigned RenderThemeWin::determineState(RenderObject* o)
     ControlPart appearance = o->style()->appearance();
     if (!isEnabled(o))
         result = TS_DISABLED;
-    else if (isReadOnlyControl(o) && (TextFieldPart == appearance || TextAreaPart == appearance))
+    else if (isReadOnlyControl(o) && (TextFieldPart == appearance || TextAreaPart == appearance || SearchFieldPart == appearance))
         result = TFS_READONLY; // Readonly is supported on textfields.
     else if (isPressed(o)) // Active overrides hover and focused.
         result = TS_ACTIVE;
@@ -435,6 +446,7 @@ ThemeData RenderThemeWin::getClassicThemeData(RenderObject* o)
             result.m_part = DFC_SCROLL;
             result.m_state = determineClassicState(o);
             break;
+        case SearchFieldPart:
         case TextFieldPart:
         case TextAreaPart:
             result.m_part = TFP_TEXTFIELD;
@@ -488,6 +500,7 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o)
             result.m_part = BP_RADIO;
             result.m_state = determineState(o);
             break;
+        case SearchFieldPart:
         case TextFieldPart:
         case TextAreaPart:
             result.m_part = TFP_TEXTFIELD;
@@ -725,33 +738,33 @@ void RenderThemeWin::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderSt
 
 bool RenderThemeWin::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    Color buttonColor = (o->element() && o->element()->active()) ? Color(138, 138, 138) : Color(186, 186, 186);
+    IntRect bounds = r;
+    ASSERT(o->parent());
+    if (!o->parent())
+        return false;
+    IntRect parentBox = o->parent()->absoluteContentBox();
+    
+    // Make sure the scaled button stays square and will fit in its parent's box
+    bounds.setHeight(min(parentBox.width(), min(parentBox.height(), bounds.height())));
+    bounds.setWidth(bounds.height());
 
-    IntSize cancelSize(10, 10);
-    IntSize cancelRadius(cancelSize.width() / 2, cancelSize.height() / 2);
-    int x = r.x() + (r.width() - cancelSize.width()) / 2;
-    int y = r.y() + (r.height() - cancelSize.height()) / 2 + 1;
-    IntRect cancelBounds(IntPoint(x, y), cancelSize);
-    paintInfo.context->save();
-    paintInfo.context->addRoundedRectClip(cancelBounds, cancelRadius, cancelRadius, cancelRadius, cancelRadius);
-    paintInfo.context->fillRect(cancelBounds, buttonColor);
+    // Center the button vertically.  Round up though, so if it has to be one pixel off-center, it will
+    // be one pixel closer to the bottom of the field.  This tends to look better with the text.
+    bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
 
-    // Draw the 'x'
-    IntSize xSize(3, 3);
-    IntRect xBounds(cancelBounds.location() + IntSize(3, 3), xSize);
-    paintInfo.context->setStrokeColor(Color::white);
-    paintInfo.context->drawLine(xBounds.location(),  xBounds.location() + xBounds.size());
-    paintInfo.context->drawLine(IntPoint(xBounds.right(), xBounds.y()),  IntPoint(xBounds.x(), xBounds.bottom()));
-
-    paintInfo.context->restore(); 
+    static Image* cancelImage = Image::loadPlatformResource("searchCancel").releaseRef();
+    static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").releaseRef();
+    paintInfo.context->drawImage(isPressed(o) ? cancelPressedImage : cancelImage, bounds);
     return false;
 }
 
 void RenderThemeWin::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    IntSize cancelSize(13, 11);
-    style->setWidth(Length(cancelSize.width(), Fixed));
-    style->setHeight(Length(cancelSize.height(), Fixed));
+    // Scale the button size based on the font size
+    float fontScale = style->fontSize() / defaultControlFontPixelSize;
+    int cancelButtonSize = lroundf(min(max(minCancelButtonSize, defaultCancelButtonSize * fontScale), maxCancelButtonSize));
+    style->setWidth(Length(cancelButtonSize, Fixed));
+    style->setHeight(Length(cancelButtonSize, Fixed));
 }
 
 void RenderThemeWin::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
@@ -760,46 +773,67 @@ void RenderThemeWin::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector
     style->setWidth(Length(emptySize.width(), Fixed));
     style->setHeight(Length(emptySize.height(), Fixed));
 }
-   
+
 void RenderThemeWin::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    IntSize magnifierSize(15, 11);
-    style->setWidth(Length(magnifierSize.width(), Fixed));
-    style->setHeight(Length(magnifierSize.height(), Fixed));
+    // Scale the decoration size based on the font size
+    float fontScale = style->fontSize() / defaultControlFontPixelSize;
+    int magnifierSize = lroundf(min(max(minSearchFieldResultsDecorationSize, defaultSearchFieldResultsDecorationSize * fontScale), 
+                                     maxSearchFieldResultsDecorationSize));
+    style->setWidth(Length(magnifierSize, Fixed));
+    style->setHeight(Length(magnifierSize, Fixed));
 }
 
 bool RenderThemeWin::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
+    ASSERT(o->parent());
+    if (!o->parent())
+        return false;
+    IntRect parentBox = o->parent()->absoluteContentBox();
+    
+    // Make sure the scaled decoration stays square and will fit in its parent's box
+    bounds.setHeight(min(parentBox.width(), min(parentBox.height(), bounds.height())));
     bounds.setWidth(bounds.height());
 
-    TCHAR buffer[MAX_PATH];
-    UINT length = ::GetSystemDirectory(buffer, ARRAYSIZE(buffer));
-    if (!length)
-        return 0;
+    // Center the decoration vertically.  Round up though, so if it has to be one pixel off-center, it will
+    // be one pixel closer to the bottom of the field.  This tends to look better with the text.
+    bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
     
-    if (_tcscat_s(buffer, TEXT("\\shell32.dll")))
-        return 0;
-
-    HICON hIcon;
-    if (!::ExtractIconEx(buffer, shell32MagnifierIconIndex, 0, &hIcon, 1))
-        return 0;
-
-    RefPtr<Icon> icon = Icon::create(hIcon);
-    icon->paint(paintInfo.context, bounds);
+    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").releaseRef();
+    paintInfo.context->drawImage(magnifierImage, bounds);
     return false;
 }
 
 void RenderThemeWin::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    IntSize magnifierSize(15, 11);
-    style->setWidth(Length(magnifierSize.width(), Fixed));
-    style->setHeight(Length(magnifierSize.height(), Fixed));
+    // Scale the button size based on the font size
+    float fontScale = style->fontSize() / defaultControlFontPixelSize;
+    int magnifierHeight = lroundf(min(max(minSearchFieldResultsDecorationSize, defaultSearchFieldResultsDecorationSize * fontScale), 
+                                   maxSearchFieldResultsDecorationSize));
+    int magnifierWidth = lroundf(magnifierHeight * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize);
+    style->setWidth(Length(magnifierWidth, Fixed));
+    style->setHeight(Length(magnifierHeight, Fixed));
 }
 
 bool RenderThemeWin::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    paintSearchFieldResultsDecoration(o, paintInfo, r);
+    IntRect bounds = r;
+    ASSERT(o->parent());
+    if (!o->parent())
+        return false;
+    IntRect parentBox = o->parent()->absoluteContentBox();
+    
+    // Make sure the scaled decoration will fit in its parent's box
+    bounds.setHeight(min(parentBox.height(), bounds.height()));
+    bounds.setWidth(min(parentBox.width(), static_cast<int>(bounds.height() * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize)));
+
+    // Center the button vertically.  Round up though, so if it has to be one pixel off-center, it will
+    // be one pixel closer to the bottom of the field.  This tends to look better with the text.
+    bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
+
+    static Image* magnifierImage = Image::loadPlatformResource("searchMagnifierResults").releaseRef();
+    paintInfo.context->drawImage(magnifierImage, bounds);
     return false;
 }
 

@@ -167,6 +167,14 @@ PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
         idr = IDR_PAN_NORTH_EAST_CURSOR;
     else if (!strcmp(name, "panNorthWestCursor"))
         idr = IDR_PAN_NORTH_WEST_CURSOR;
+    else if (!strcmp(name, "searchMagnifier"))
+        idr = IDR_SEARCH_MAGNIFIER;
+    else if (!strcmp(name, "searchMagnifierResults"))
+        idr = IDR_SEARCH_MAGNIFIER_RESULTS;
+    else if (!strcmp(name, "searchCancel"))
+        idr = IDR_SEARCH_CANCEL;
+    else if (!strcmp(name, "searchCancelPressed"))
+        idr = IDR_SEARCH_CANCEL_PRESSED;
     else if (!strcmp(name, "zoomInCursor"))
         idr = IDR_ZOOM_IN_CURSOR;
     else if (!strcmp(name, "zoomOutCursor"))

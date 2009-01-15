@@ -19,6 +19,10 @@
 #define IDR_PAN_SOUTH_WEST_CURSOR       15
 #define IDR_PAN_NORTH_EAST_CURSOR       16
 #define IDR_PAN_NORTH_WEST_CURSOR       17
+#define IDR_SEARCH_CANCEL               18
+#define IDR_SEARCH_CANCEL_PRESSED       19
+#define IDR_SEARCH_MAGNIFIER            20
+#define IDR_SEARCH_MAGNIFIER_RESULTS    21
 #define IDC_STATIC                      -1
 
 #define BUILD_NUMBER                    1
@@ -27,7 +31,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        18
+#define _APS_NEXT_RESOURCE_VALUE        22
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101

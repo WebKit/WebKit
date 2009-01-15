@@ -1320,6 +1320,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\searchCancel.png"
+				>
+			</File>
+			<File
+				RelativePath=".\searchCancelPressed.png"
+				>
+			</File>
+			<File
+				RelativePath=".\searchMagnifier.png"
+				>
+			</File>
+			<File
+				RelativePath=".\searchMagnifierResults.png"
+				>
+			</File>
+			<File
 				RelativePath=".\textAreaResizeCorner.png"
 				>
 			</File>
