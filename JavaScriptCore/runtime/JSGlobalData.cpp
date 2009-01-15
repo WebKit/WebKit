@@ -91,6 +91,7 @@ JSGlobalData::JSGlobalData(bool isShared)
     , dynamicGlobalObject(0)
     , isSharedInstance(isShared)
     , clientData(0)
+    , scopeNodeBeingReparsed(0)
     , heap(this)
 {
 #if PLATFORM(MAC)

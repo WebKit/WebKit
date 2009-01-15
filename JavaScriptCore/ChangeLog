@@ -1,3 +1,22 @@
+2009-01-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix crash seen running fast/canvas.
+
+        Make sure to mark the ScopeNode and CodeBlock being created
+        in the re-parse for exception information.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::mark):
+        * runtime/Collector.cpp:
+        (JSC::Heap::collect):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+
 2009-01-15  Craig Schlenter  <craig.schlenter@gmail.com>
 
         Reviewed by Darin Adler.

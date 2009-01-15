@@ -986,6 +986,8 @@ bool Heap::collect()
         m_globalData->exception->mark();
     m_globalData->interpreter->registerFile().markCallFrames(this);
     m_globalData->smallStrings.mark();
+    if (m_globalData->scopeNodeBeingReparsed)
+        m_globalData->scopeNodeBeingReparsed->mark();
 
     JAVASCRIPTCORE_GC_MARKED();
 

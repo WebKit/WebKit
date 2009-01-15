@@ -2118,6 +2118,8 @@ namespace JSC {
             return m_data->m_numConstants + 2;
         }
 
+        virtual void mark() { }
+
     protected:
         void setSource(const SourceCode& source) { m_source = source; }
 
@@ -2160,7 +2162,8 @@ namespace JSC {
 
         EvalCodeBlock& bytecodeForExceptionInfoReparse(ScopeChainNode*, CodeBlock*) JSC_FAST_CALL;
 
-        void mark();
+        virtual void mark();
+
     private:
         EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
 
@@ -2203,7 +2206,7 @@ namespace JSC {
             return m_code;
         }
 
-        void mark();
+        virtual void mark();
 
         void finishParsing(const SourceCode&, ParameterNode*);
         void finishParsing(Identifier* parameters, size_t parameterCount);
