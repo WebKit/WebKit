@@ -259,6 +259,7 @@ IDL_BINDINGS += \
     css/StyleSheetList.idl \
     css/WebKitCSSKeyframeRule.idl \
     css/WebKitCSSKeyframesRule.idl \
+    css/WebKitCSSMatrix.idl \
     css/WebKitCSSTransformValue.idl \
     dom/Attr.idl \
     dom/CharacterData.idl \
@@ -460,6 +461,7 @@ SOURCES += \
     bindings/js/JSStyleSheetCustom.cpp \
     bindings/js/JSStyleSheetListCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
+    bindings/js/JSWebKitCSSMatrixConstructor.cpp \
     bindings/js/JSXMLHttpRequestConstructor.cpp \
     bindings/js/JSXMLHttpRequestCustom.cpp \
     bindings/js/JSXMLHttpRequestUploadCustom.cpp \
@@ -546,6 +548,7 @@ SOURCES += \
     css/StyleSheetList.cpp \
     css/WebKitCSSKeyframeRule.cpp \
     css/WebKitCSSKeyframesRule.cpp \
+    css/WebKitCSSMatrix.cpp \
     css/WebKitCSSTransformValue.cpp \
     dom/ActiveDOMObject.cpp \
     dom/Attr.cpp \
