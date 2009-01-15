@@ -161,15 +161,8 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
     }
         
     instance->end();
-#if PLATFORM(QT)
-    // For Qt instances we call the baseclass implementation to allow
-    // runtime objects to have custom properties or a prototype
-    if (instance->getBindingLanguage() == Instance::QtLanguage)
-        return JSObject::getOwnPropertySlot(exec, propertyName, slot);
-#endif
-    // For other platforms and/or binding languages we don't allow
-    // runtime properties/prototypes
-    return false;
+    
+    return instance->getOwnPropertySlot(exec, propertyName, slot);
 }
 
 void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
@@ -188,12 +181,8 @@ void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSVa
         instance->setValueOfField(exec, aField, value);
     else if (instance->supportsSetValueOfUndefinedField())
         instance->setValueOfUndefinedField(exec, propertyName, value);
-#if PLATFORM(QT)
-    else if (instance->getBindingLanguage() == Instance::QtLanguage)
-        JSObject::put(exec, propertyName, value, slot);
-#else
-    UNUSED_PARAM(slot);
-#endif
+    else
+        instance->put(exec, propertyName, value, slot);
 
     instance->end();
 }

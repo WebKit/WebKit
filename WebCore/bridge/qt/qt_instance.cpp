@@ -130,8 +130,14 @@ PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObje
     return ret.release();
 }
 
-RuntimeObjectImp* QtInstance::getRuntimeObject(ExecState* exec, PassRefPtr<QtInstance> instance)
+bool QtInstance::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
+}
+
+void QtInstance::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
+{
+    JSObject::put(exec, propertyName, value, slot);
 }
 
 Class* QtInstance::getClass() const

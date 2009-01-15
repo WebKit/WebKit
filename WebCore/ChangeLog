@@ -1,5 +1,22 @@
 2009-01-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add the ability for Instance objects to override getOwnPropertySlot/put for runtime objects.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::getOwnPropertySlot):
+        (JSC::Bindings::QtInstance::put):
+        * bridge/qt/qt_instance.h:
+        * bridge/runtime.h:
+        (JSC::Bindings::Instance::getOwnPropertySlot):
+        (JSC::Bindings::Instance::put):
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::getOwnPropertySlot):
+        (JSC::RuntimeObjectImp::put):
+
+2009-01-15  Anders Carlsson  <andersca@apple.com>
+
         Fix the QT build.
 
         * bridge/qt/qt_instance.cpp:
