@@ -1,3 +1,13 @@
+2009-01-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Fix problem where a URL visited as non-GET once is flagged as non-GET forever.
+
+        * History/WebHistory.mm:
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:]): Always update the HTTPNonGet
+          flag for all loads with an HTTP Method
+
 2009-01-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
