@@ -1,3 +1,13 @@
+2009-01-14  Mark Rowe  <mrowe@apple.com>
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=23334
+        Bug 23334: Compile failure in XMLTokenizerLibxml2.cpp
+
+        Include wtf/UnusedParam.h to get UNUSED_PARAM.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::hackAroundLibXMLEntityBug):
+
 2009-01-14  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.
