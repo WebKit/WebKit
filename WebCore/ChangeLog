@@ -1,3 +1,16 @@
+2009-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 23338: Make "Streamline Inspector Source" build script check for a directory before using it
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23338>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCore.xcodeproj/project.pbxproj: Check to see if
+        "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector"
+        exists before trying to change directories into it and then
+        deleting, modifying and adding files to it.
+
 2009-01-14  miggilin  <mr.diggilin@gmail.com>
 
         Reviewed by Kevin Ollivier.
