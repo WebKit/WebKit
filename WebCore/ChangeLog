@@ -1,3 +1,11 @@
+2009-01-15  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed Windows project file after https://bugs.webkit.org/show_bug.cgi?id=21421
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2009-01-15  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Adam Roben.

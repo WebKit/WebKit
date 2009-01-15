@@ -1716,6 +1716,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSMatrix.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSMatrix.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSTransformValue.h"
 				>
 			</File>
@@ -8614,6 +8622,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\WebKitCSSMatrix.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSMatrix.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\WebKitCSSTransformValue.cpp"
 				>
 				<FileConfiguration
@@ -14414,6 +14438,14 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSTreeWalkerCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSWebKitCSSMatrixConstructor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSWebKitCSSMatrixConstructor.h"
 					>
 				</File>
 				<File
