@@ -1,3 +1,18 @@
+2009-01-14  Michael Moss  <mmoss@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Workaround a skia limitation on repeated patterns, and remove extra
+        transformations applied to pattern.
+        https://bugs.webkit.org/show_bug.cgi?id=23332
+
+        Fixes:
+        LayoutTests/fast/canvas/patternfill-repeat.html
+        LayoutTests/svg/W3C-SVG-1.1/pservers-grad-06-b.svg
+
+        * platform/graphics/skia/PatternSkia.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+
 2009-01-14  Mark Rowe  <mrowe@apple.com>
 
         Fix https://bugs.webkit.org/show_bug.cgi?id=23334
