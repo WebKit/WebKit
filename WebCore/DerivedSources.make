@@ -355,6 +355,7 @@ DOM_CLASSES = \
     WebKitAnimationEvent \
     WebKitCSSKeyframeRule \
     WebKitCSSKeyframesRule \
+    WebKitCSSMatrix \
     WebKitCSSTransformValue \
     WebKitTransitionEvent \
     WheelEvent \

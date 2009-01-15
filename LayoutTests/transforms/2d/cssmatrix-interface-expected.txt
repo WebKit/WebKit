@@ -1,0 +1,97 @@
+This test exercises the CSSMatrix interface
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+CSSMatrix constructors
+PASS default constructor
+PASS object constructor
+PASS string constructor
+
+Test bad input to string constructor
+PASS new WebKitCSSMatrix("banana") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+
+Test attributes on default matrix
+PASS m.a is 1
+PASS m.b is 0
+PASS m.c is 0
+PASS m.d is 1
+PASS m.e is 0
+PASS m.f is 0
+
+Test attributes on custom matrix
+PASS m.a is 11
+PASS m.b is 12
+PASS m.c is 21
+PASS m.d is 22
+PASS m.e is 41
+PASS m.f is 42
+
+Test setMatrixValue - set to matrix()
+PASS m.a is 11
+PASS m.b is 12
+PASS m.c is 21
+PASS m.d is 22
+PASS m.e is 41
+PASS m.f is 42
+
+Test setMatrixValue - set to translate(10px, 20px) scale(2, 3)
+PASS m.a is 2
+PASS m.b is 0
+PASS m.c is 0
+PASS m.d is 3
+PASS m.e is 10
+PASS m.f is 20
+
+Test throwing exception from setMatrixValue
+PASS m.setMatrixValue("banana") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS m.setMatrixValue("translate(10em, 20%)") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS m.setMatrixValue("translate(10px, 20px) scale()") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+
+Test multiply
+PASS parseFloat(m3.a) is 25
+PASS parseFloat(m3.b) is 28
+PASS parseFloat(m3.c) is 57
+PASS parseFloat(m3.d) is 64
+PASS parseFloat(m3.e) is 100
+PASS parseFloat(m3.f) is 112
+
+Test inverse
+PASS parseFloat(m2.a) is 0.5
+PASS parseFloat(m2.b) is 0
+PASS parseFloat(m2.c) is 0
+PASS parseFloat(m2.d) is 0.5
+PASS parseFloat(m2.e) is -5
+PASS parseFloat(m2.f) is -10
+
+Test throwing exception from inverse
+PASS m.inverse() threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+
+Test translate
+PASS m.a is 1
+PASS m.b is 0
+PASS m.c is 0
+PASS m.d is 1
+PASS m.e is 10
+PASS m.f is 20
+
+Test scale
+PASS m.a is 10
+PASS m.b is 0
+PASS m.c is 0
+PASS m.d is 20
+PASS m.e is 0
+PASS m.f is 0
+
+Test rotate
+PASS m.a is 0.9848077893257141
+PASS m.b is 0.1736481785774231
+PASS m.c is -0.1736481785774231
+PASS m.d is 0.9848077893257141
+PASS m.e is 0
+PASS m.f is 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

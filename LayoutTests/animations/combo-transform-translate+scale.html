@@ -19,16 +19,54 @@
         to   { -webkit-transform: translate(100px, 200px) scale(2,4); }
     }
   </style>
-  <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+    }
     
-    const expectedValues = [
-      // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["anim", 0.5, "box", "webkitTransform", [1.25,0,0,1.75,25,50], 0.2],
-      ["anim", 1.0, "box", "webkitTransform", [1.5,0,0,2.5,50,100], 0.2],
-    ];
+    result = "PASS";
+    const defaultTolerance = 0.2;
     
-    runAnimationTest(expectedValues);
+    const expected =  [ [ 1.25,0,0,1.75,25,50 ],
+                        [ 1.5,0,0,2.5,50,100 ] ];
+    const tolerance = [ 0.2,0.2,0.2,0.2,5,5 ];
+    const prop = [ "a", "b", "c", "d", "e", "f" ];
+    
+    function isEqual(actual, desired, tolerance)
+    {
+        if (tolerance == undefined || tolerance == 0)
+            tolerance = defaultTolerance;
+        var diff = Math.abs(actual - desired);
+        return diff <= tolerance;
+    }
+    
+    function snapshot(which)
+    {
+        if (result != "PASS")
+            return;
+        
+        var t = new WebKitCSSMatrix(window.getComputedStyle(document.getElementById('box')).webkitTransform);
+        for (i = 0; i < 6; ++i)
+            if (!isEqual(t[prop[i]], expected[which][i], tolerance[i])) {
+                result = "FAIL('"+prop[i]+"' was:"+t[prop[i]]+", expected:"+expected[which][i]+")";
+                return;
+            }
+    }
+
+    function start()
+    {
+        setTimeout("snapshot(0)", 500);
+        setTimeout("snapshot(1)", 1000);
+        
+        window.setTimeout(function() {
+            document.getElementById('result').innerHTML = result;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, 1100);
+    }
+    
+    document.addEventListener('webkitAnimationStart', start, false);
     
   </script>
 </head>

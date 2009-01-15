@@ -1,0 +1,160 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css"/>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+description("This test exercises the CSSMatrix interface");
+
+debug("");
+debug("CSSMatrix constructors");
+
+var m = null;
+m = new WebKitCSSMatrix();
+if (m)
+  testPassed("default constructor");
+else
+  testFailed("default constructor");
+
+var m2 = new WebKitCSSMatrix(m);
+if (m2)
+  testPassed("object constructor");
+else
+  testFailed("object constructor");
+
+m = new WebKitCSSMatrix("matrix(1, 0, 0, 1, 0, 0)");
+if (m)
+  testPassed("string constructor");
+else
+  testFailed("string constructor");
+
+debug("");
+debug("Test bad input to string constructor");
+shouldThrow('new WebKitCSSMatrix("banana")');
+
+debug("");
+debug("Test attributes on default matrix");
+m = new WebKitCSSMatrix();
+shouldBe('m.a', '1');
+shouldBe('m.b', '0');
+shouldBe('m.c', '0');
+shouldBe('m.d', '1');
+shouldBe('m.e', '0');
+shouldBe('m.f', '0');
+
+debug("");
+debug("Test attributes on custom matrix");
+m = new WebKitCSSMatrix("matrix(11, 12, 21, 22, 41, 42)");
+shouldBe('m.a', '11');
+shouldBe('m.b', '12');
+shouldBe('m.c', '21');
+shouldBe('m.d', '22');
+shouldBe('m.e', '41');
+shouldBe('m.f', '42');
+
+debug("");
+debug("Test setMatrixValue - set to matrix()");
+m = new WebKitCSSMatrix();
+m.setMatrixValue("matrix(11, 12, 21, 22, 41, 42)");
+shouldBe('m.a', '11');
+shouldBe('m.b', '12');
+shouldBe('m.c', '21');
+shouldBe('m.d', '22');
+shouldBe('m.e', '41');
+shouldBe('m.f', '42');
+
+debug("");
+debug("Test setMatrixValue - set to translate(10px, 20px) scale(2, 3)");
+m = new WebKitCSSMatrix();
+m.setMatrixValue("translate(10px, 20px) scale(2, 3)");
+shouldBe('m.a', '2');
+shouldBe('m.b', '0');
+shouldBe('m.c', '0');
+shouldBe('m.d', '3');
+shouldBe('m.e', '10');
+shouldBe('m.f', '20');
+
+debug("");
+debug("Test throwing exception from setMatrixValue");
+shouldThrow('m.setMatrixValue("banana")');
+shouldThrow('m.setMatrixValue("translate(10em, 20%)")');
+shouldThrow('m.setMatrixValue("translate(10px, 20px) scale()")');
+
+debug("");
+debug("Test multiply");
+m = new WebKitCSSMatrix("matrix(1, 2, 3, 4, 5, 6)");
+m2 = new WebKitCSSMatrix("matrix(7, 8, 9, 10, 11, 12)");
+var m3 = m.multiply(m2);
+shouldBe('parseFloat(m3.a)', '25');
+shouldBe('parseFloat(m3.b)', '28');
+shouldBe('parseFloat(m3.c)', '57');
+shouldBe('parseFloat(m3.d)', '64');
+shouldBe('parseFloat(m3.e)', '100');
+shouldBe('parseFloat(m3.f)', '112');
+
+debug("");
+debug("Test inverse");
+m = new WebKitCSSMatrix("matrix(2, 0, 0, 2, 10, 20)");
+m2 = m.inverse();
+
+shouldBe('parseFloat(m2.a)', '0.5');
+shouldBe('parseFloat(m2.b)', '0');
+shouldBe('parseFloat(m2.c)', '0');
+shouldBe('parseFloat(m2.d)', '0.5');
+shouldBe('parseFloat(m2.e)', '-5');
+shouldBe('parseFloat(m2.f)', '-10');
+
+debug("");
+debug("Test throwing exception from inverse");
+m = new WebKitCSSMatrix("matrix(0, 0, 0, 0, 0, 0)"); // not invertible
+shouldThrow('m.inverse()');
+
+debug("");
+debug("Test translate");
+m = new WebKitCSSMatrix();
+m = m.translate(10, 20);
+shouldBe('m.a', '1');
+shouldBe('m.b', '0');
+shouldBe('m.c', '0');
+shouldBe('m.d', '1');
+shouldBe('m.e', '10');
+shouldBe('m.f', '20');
+
+debug("");
+debug("Test scale");
+m = new WebKitCSSMatrix();
+m = m.scale(10, 20);
+shouldBe('m.a', '10');
+shouldBe('m.b', '0');
+shouldBe('m.c', '0');
+shouldBe('m.d', '20');
+shouldBe('m.e', '0');
+shouldBe('m.f', '0');
+
+debug("");
+debug("Test rotate");
+m = new WebKitCSSMatrix();
+m = m.rotate(10);
+shouldBe('m.a', '0.9848077893257141');
+shouldBe('m.b', '0.1736481785774231');
+shouldBe('m.c', '-0.1736481785774231');
+shouldBe('m.d', '0.9848077893257141');
+shouldBe('m.e', '0');
+shouldBe('m.f', '0');
+
+debug("");
+successfullyParsed = true;
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+
+<script>
+</script>
+
+</body>
+</html>

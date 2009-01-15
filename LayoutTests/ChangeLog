@@ -1,3 +1,15 @@
+2009-01-14  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+       Testcase for implementation of WebKitCSSMatrix
+       https://bugs.webkit.org/show_bug.cgi?id=21421
+
+        * animations/combo-transform-translate+scale-expected.txt:
+        * animations/combo-transform-translate+scale.html:
+        * transforms/2d/cssmatrix-interface-expected.txt: Added.
+        * transforms/2d/cssmatrix-interface.xhtml: Added.
+
 2009-01-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth Dakin.

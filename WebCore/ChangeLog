@@ -1,3 +1,52 @@
+2009-01-14  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implemented 2D WebKitCSSMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=21421
+
+        Test: transforms/2d/cssmatrix-interface.xhtml
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (jsDOMWindowBaseWebKitCSSMatrix):
+        (setJSDOMWindowBaseWebKitCSSMatrix):
+        * bindings/js/JSWebKitCSSMatrixConstructor.cpp: Added.
+        (WebCore::):
+        (WebCore::JSWebKitCSSMatrixConstructor::JSWebKitCSSMatrixConstructor):
+        (WebCore::constructWebKitCSSMatrix):
+        (WebCore::JSWebKitCSSMatrixConstructor::getConstructData):
+        * bindings/js/JSWebKitCSSMatrixConstructor.h: Added.
+        (WebCore::JSWebKitCSSMatrixConstructor::classInfo):
+        * bindings/objc/DOMInternal.h:
+        * css/WebKitCSSMatrix.cpp: Added.
+        (WebCore::WebKitCSSMatrix::WebKitCSSMatrix):
+        (WebCore::WebKitCSSMatrix::~WebKitCSSMatrix):
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+        (WebCore::WebKitCSSMatrix::multiply):
+        (WebCore::WebKitCSSMatrix::inverse):
+        (WebCore::WebKitCSSMatrix::translate):
+        (WebCore::WebKitCSSMatrix::scale):
+        (WebCore::WebKitCSSMatrix::rotate):
+        (WebCore::WebKitCSSMatrix::toString):
+        * css/WebKitCSSMatrix.h: Added.
+        (WebCore::WebKitCSSMatrix::create):
+        (WebCore::WebKitCSSMatrix::a):
+        (WebCore::WebKitCSSMatrix::b):
+        (WebCore::WebKitCSSMatrix::c):
+        (WebCore::WebKitCSSMatrix::d):
+        (WebCore::WebKitCSSMatrix::e):
+        (WebCore::WebKitCSSMatrix::f):
+        (WebCore::WebKitCSSMatrix::setA):
+        (WebCore::WebKitCSSMatrix::setB):
+        (WebCore::WebKitCSSMatrix::setC):
+        (WebCore::WebKitCSSMatrix::setD):
+        (WebCore::WebKitCSSMatrix::setE):
+        (WebCore::WebKitCSSMatrix::setF):
+        (WebCore::WebKitCSSMatrix::transform):
+        * css/WebKitCSSMatrix.idl: Added.
+
 2009-01-14  Michael Moss  <mmoss@chromium.org>
 
         Reviewed by Eric Seidel.
@@ -23,6 +72,7 @@
         * dom/XMLTokenizerLibxml2.cpp:
         (WebCore::hackAroundLibXMLEntityBug):
 
+>>>>>>> .r39921
 2009-01-14  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

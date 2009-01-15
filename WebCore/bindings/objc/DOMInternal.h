@@ -150,6 +150,7 @@
 #import "DOMUIEventInternal.h"
 #import "DOMWebKitCSSKeyframeRuleInternal.h"
 #import "DOMWebKitCSSKeyframesRuleInternal.h"
+#import "DOMWebKitCSSMatrixInternal.h"
 #import "DOMWebKitCSSTransformValueInternal.h"
 #import "DOMWheelEventInternal.h"
 
