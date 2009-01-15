@@ -66,6 +66,8 @@ public:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual void put(ExecState*, const Identifier&, JSValuePtr, PutPropertySlot&);
 
+    static QtInstance* getInstance(JSObject*);
+
 private:
     static PassRefPtr<QtInstance> create(QObject *instance, PassRefPtr<RootObject> rootObject)
     {
