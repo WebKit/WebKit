@@ -1,3 +1,44 @@
+2009-01-14  Pierre-Olivier Latour  <pol@apple.com>
+
+        Added missing reference images for pixel tests (generated on iMac Intel with 10.5.5 + QT 7.5.5).
+
+        * platform/mac/editing/pasteboard/dataTransfer-set-data-file-url-expected.checksum: Added.
+        * platform/mac/editing/pasteboard/dataTransfer-set-data-file-url-expected.png: Added.
+        * platform/mac/fast/events/pointer-events-2-expected.checksum: Added.
+        * platform/mac/fast/events/pointer-events-2-expected.png: Added.
+        * platform/mac/fast/events/pointer-events-expected.checksum: Added.
+        * platform/mac/fast/events/pointer-events-expected.png: Added.
+        * platform/mac/fast/media/mq-animation-expected.checksum: Added.
+        * platform/mac/fast/media/mq-animation-expected.png: Added.
+        * platform/mac/fast/media/mq-transform-01-expected.checksum: Added.
+        * platform/mac/fast/media/mq-transform-01-expected.png: Added.
+        * platform/mac/fast/media/mq-transform-02-expected.checksum: Added.
+        * platform/mac/fast/media/mq-transform-02-expected.png: Added.
+        * platform/mac/fast/media/mq-transform-03-expected.checksum: Added.
+        * platform/mac/fast/media/mq-transform-03-expected.png: Added.
+        * platform/mac/fast/media/mq-transform-04-expected.checksum: Added.
+        * platform/mac/fast/media/mq-transform-04-expected.png: Added.
+        * platform/mac/fast/media/mq-transition-expected.checksum: Added.
+        * platform/mac/fast/media/mq-transition-expected.png: Added.
+        * platform/mac/http/tests/security: Added.
+        * platform/mac/http/tests/security/dataTransfer-set-data-file-url-expected.checksum: Added.
+        * platform/mac/http/tests/security/dataTransfer-set-data-file-url-expected.png: Added.
+        * platform/mac/http/tests/webarchive: Added.
+        * platform/mac/http/tests/webarchive/test-css-url-encoding-expected.checksum: Added.
+        * platform/mac/http/tests/webarchive/test-css-url-encoding-expected.png: Added.
+        * platform/mac/http/tests/webarchive/test-css-url-encoding-shift-jis-expected.checksum: Added.
+        * platform/mac/http/tests/webarchive/test-css-url-encoding-shift-jis-expected.png: Added.
+        * platform/mac/http/tests/webarchive/test-css-url-encoding-utf-8-expected.checksum: Added.
+        * platform/mac/http/tests/webarchive/test-css-url-encoding-utf-8-expected.png: Added.
+        * platform/mac/http/tests/webarchive/test-preload-resources-expected.checksum: Added.
+        * platform/mac/http/tests/webarchive/test-preload-resources-expected.png: Added.
+        * platform/mac/media/video-zoom-expected.checksum: Added.
+        * platform/mac/media/video-zoom-expected.png: Added.
+        * platform/mac/webarchive/test-css-url-resources-in-stylesheets-expected.checksum: Added.
+        * platform/mac/webarchive/test-css-url-resources-in-stylesheets-expected.png: Added.
+        * platform/mac/webarchive/test-css-url-resources-inline-styles-expected.checksum: Added.
+        * platform/mac/webarchive/test-css-url-resources-inline-styles-expected.png: Added.
+
 2009-01-14  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Sam Weinig.
