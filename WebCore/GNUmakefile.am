@@ -97,6 +97,7 @@ IDL_BINDINGS += \
 	WebCore/css/StyleSheetList.idl \
 	WebCore/css/WebKitCSSKeyframeRule.idl \
 	WebCore/css/WebKitCSSKeyframesRule.idl \
+	WebCore/css/WebKitCSSMatrix.idl \
 	WebCore/css/WebKitCSSTransformValue.idl \
 	WebCore/dom/Attr.idl \
 	WebCore/dom/CDATASection.idl \
@@ -341,6 +342,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSStyleSheetListCustom.cpp \
 	WebCore/bindings/js/JSTextCustom.cpp \
 	WebCore/bindings/js/JSTreeWalkerCustom.cpp \
+	WebCore/bindings/js/JSWebKitCSSMatrixConstructor.cpp \
+	WebCore/bindings/js/JSWebKitCSSMatrixConstructor.h \
 	WebCore/bindings/js/JSXMLHttpRequestConstructor.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestConstructor.h \
 	WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
@@ -517,6 +520,8 @@ webcore_sources += \
 	WebCore/css/WebKitCSSKeyframeRule.h \
 	WebCore/css/WebKitCSSKeyframesRule.cpp \
 	WebCore/css/WebKitCSSKeyframesRule.h \
+	WebCore/css/WebKitCSSMatrix.cpp \
+	WebCore/css/WebKitCSSMatrix.h \
 	WebCore/css/WebKitCSSTransformValue.cpp \
 	WebCore/css/WebKitCSSTransformValue.h \
 	WebCore/dom/ActiveDOMObject.cpp \
@@ -1036,8 +1041,8 @@ webcore_sources += \
 	WebCore/loader/FormState.h \
 	WebCore/loader/FrameLoader.cpp \
 	WebCore/loader/FrameLoader.h \
-	WebCore/loader/FrameLoaderClient.h \
 	WebCore/loader/FrameLoaderClient.cpp \
+	WebCore/loader/FrameLoaderClient.h \
 	WebCore/loader/FrameLoaderTypes.h \
 	WebCore/loader/ImageDocument.cpp \
 	WebCore/loader/ImageDocument.h \
@@ -1286,9 +1291,9 @@ webcore_sources += \
 	WebCore/platform/graphics/FontFallbackList.h \
 	WebCore/platform/graphics/FontFamily.cpp \
 	WebCore/platform/graphics/FontFamily.h \
+	WebCore/platform/graphics/FontFastPath.cpp \
 	WebCore/platform/graphics/FontRenderingMode.h \
 	WebCore/platform/graphics/FontSelector.h \
-	WebCore/platform/graphics/FontFastPath.cpp \
 	WebCore/platform/graphics/FontTraitsMask.h \
 	WebCore/platform/graphics/GeneratedImage.cpp \
 	WebCore/platform/graphics/GeneratedImage.h \
@@ -1340,8 +1345,6 @@ webcore_sources += \
 	WebCore/platform/graphics/filters/FEColorMatrix.h \
 	WebCore/platform/graphics/filters/FEComponentTransfer.h \
 	WebCore/platform/graphics/filters/FEComposite.h \
-	WebCore/platform/graphics/transforms/TransformationMatrix.cpp \
-	WebCore/platform/graphics/transforms/TransformationMatrix.h \
 	WebCore/platform/graphics/transforms/IdentityTransformOperation.h \
 	WebCore/platform/graphics/transforms/MatrixTransformOperation.cpp \
 	WebCore/platform/graphics/transforms/MatrixTransformOperation.h \
@@ -1354,6 +1357,8 @@ webcore_sources += \
 	WebCore/platform/graphics/transforms/TransformOperation.h \
 	WebCore/platform/graphics/transforms/TransformOperations.cpp \
 	WebCore/platform/graphics/transforms/TransformOperations.h \
+	WebCore/platform/graphics/transforms/TransformationMatrix.cpp \
+	WebCore/platform/graphics/transforms/TransformationMatrix.h \
 	WebCore/platform/graphics/transforms/TranslateTransformOperation.cpp \
 	WebCore/platform/graphics/transforms/TranslateTransformOperation.h \
 	WebCore/platform/network/AuthenticationChallengeBase.cpp \
@@ -1676,7 +1681,6 @@ webcoregtk_sources += \
 	WebCore/page/gtk/DragControllerGtk.cpp \
 	WebCore/page/gtk/EventHandlerGtk.cpp \
 	WebCore/page/gtk/FrameGtk.cpp \
-	WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
 	WebCore/platform/graphics/cairo/CairoPath.h \
 	WebCore/platform/graphics/cairo/FontCairo.cpp \
 	WebCore/platform/graphics/cairo/GradientCairo.cpp \
@@ -1688,6 +1692,7 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	WebCore/platform/graphics/cairo/PathCairo.cpp \
 	WebCore/platform/graphics/cairo/PatternCairo.cpp \
+	WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
 	WebCore/platform/graphics/gtk/ColorGtk.cpp \
 	WebCore/platform/graphics/gtk/FontCacheGtk.cpp \
 	WebCore/platform/graphics/gtk/FontCustomPlatformData.h \
@@ -1787,12 +1792,12 @@ webcore_cppflags += \
 webcore_sources += \
 	WebCore/platform/network/soup/AuthenticationChallenge.h \
 	WebCore/platform/network/soup/CookieJarSoup.cpp \
+	WebCore/platform/network/soup/CookieJarSoup.h \
 	WebCore/platform/network/soup/DNSSoup.cpp \
 	WebCore/platform/network/soup/ResourceError.h \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
-	WebCore/platform/network/soup/ResourceResponse.h \
-	WebCore/platform/network/soup/CookieJarSoup.h
+	WebCore/platform/network/soup/ResourceResponse.h
 endif
 
 # ---
@@ -2158,10 +2163,10 @@ webcore_sources += \
 	WebCore/bindings/js/JSWorkerCustom.cpp \
 	WebCore/bindings/js/WorkerScriptController.cpp \
 	WebCore/bindings/js/WorkerScriptController.h \
-	WebCore/dom/WorkerContext.cpp \
-	WebCore/dom/WorkerContext.h \
 	WebCore/dom/Worker.cpp \
 	WebCore/dom/Worker.h \
+	WebCore/dom/WorkerContext.cpp \
+	WebCore/dom/WorkerContext.h \
 	WebCore/dom/WorkerLocation.cpp \
 	WebCore/dom/WorkerLocation.h \
 	WebCore/dom/WorkerMessagingProxy.cpp \
@@ -2238,8 +2243,8 @@ webcore_cppflags += \
 	-DENABLE_GEOLOCATION=1
 
 webcoregtk_sources += \
-	WebCore/platform/gtk/GeolocationServiceGtk.h \
-	WebCore/platform/gtk/GeolocationServiceGtk.cpp
+	WebCore/platform/gtk/GeolocationServiceGtk.cpp \
+	WebCore/platform/gtk/GeolocationServiceGtk.h
 endif # END ENABLE_GEOLOCATION
 
 
