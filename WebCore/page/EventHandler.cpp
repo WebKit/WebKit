@@ -1630,8 +1630,10 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
     IntPoint viewportPos = v->windowToContents(event.pos());
     MouseEventWithHitTestResults mev = doc->prepareMouseEvent(HitTestRequest(false, true), viewportPos, event);
 
-    // Context menu events shouldn't select text in GTK+ applications.
-#if !PLATFORM(GTK)
+    // Context menu events shouldn't select text in GTK+ applications or in Chromium.
+    // FIXME: This should probably be configurable by embedders. Consider making it a WebPreferences setting.
+    // See: https://bugs.webkit.org/show_bug.cgi?id=15279
+#if !PLATFORM(GTK) && !PLATFORM(CHROMIUM)
     if (!m_frame->selection()->contains(viewportPos) && 
         // FIXME: In the editable case, word selection sometimes selects content that isn't underneath the mouse.
         // If the selection is non-editable, we do word selection to make it easier to use the contextual menu items

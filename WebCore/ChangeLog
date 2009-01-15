@@ -1,3 +1,16 @@
+2009-01-15  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15279
+        Right clicking over text (or multiple spaces) auto selects the word
+        (or multiple spaces) under it, which is not a desirable effect for some
+        platforms.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent):
+        Don't select words on right-click on Chromium.
+
 2009-01-15  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
