@@ -26,8 +26,9 @@
 #define SharedBuffer_h
 
 #include "PlatformString.h"
-#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(CF)
