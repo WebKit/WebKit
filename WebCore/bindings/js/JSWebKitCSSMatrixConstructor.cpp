@@ -35,10 +35,10 @@ namespace WebCore {
 
 const ClassInfo JSWebKitCSSMatrixConstructor::s_info = { "WebKitCSSMatrixConstructor", 0, 0, 0 };
 
-JSWebKitCSSMatrixConstructor::JSWebKitCSSMatrixConstructor(ExecState* exec, ScriptExecutionContext*)
+JSWebKitCSSMatrixConstructor::JSWebKitCSSMatrixConstructor(ExecState* exec, ScriptExecutionContext* context)
     : DOMObject(JSWebKitCSSMatrixConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
 {
-    ASSERT(context->isDocument());
+    ASSERT_UNUSED(context, context->isDocument());
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 
