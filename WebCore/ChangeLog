@@ -1,3 +1,15 @@
+2009-01-15  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/6500278> REGRESSION: 3.5% of samples on iBench in WebCore::Frame::setZoomFactor
+
+        setZoomFactor was supposed to bail if both the zoom factor and mode were the same.  The mode check was
+        buggy and doing the wrong thing.
+
+        Reviewed by Darin Adler
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setZoomFactor):
+
 2009-01-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoffrey Garen.
