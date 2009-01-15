@@ -123,6 +123,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/ScriptController.cpp
         bindings/js/ScriptValue.cpp
         bindings/js/ScheduledAction.cpp
+        bindings/js/JSWebKitCSSMatrixConstructor.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_BRIDGE">
@@ -195,6 +196,7 @@ This file contains the list of files needed to build WebCore.
         css/StyleSheetList.cpp
         css/WebKitCSSKeyframeRule.cpp
         css/WebKitCSSKeyframesRule.cpp
+        css/WebKitCSSMatrix.cpp
         css/WebKitCSSTransformValue.cpp
     </set>
 
@@ -356,6 +358,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSWebKitAnimationEvent.cpp
         DerivedSources/WebCore/JSWebKitCSSKeyframeRule.cpp
         DerivedSources/WebCore/JSWebKitCSSKeyframesRule.cpp
+        DerivedSources/WebCore/JSWebKitCSSMatrix.cpp
         DerivedSources/WebCore/JSWebKitCSSTransformValue.cpp
         DerivedSources/WebCore/JSWebKitTransitionEvent.cpp
         DerivedSources/WebCore/JSWheelEvent.cpp

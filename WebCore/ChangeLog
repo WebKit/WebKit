@@ -1,3 +1,9 @@
+2009-01-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Adding WebKitCSSMatrix.
+
+        * WebCoreSources.bkl:
+
 2009-01-14  Adam Treat  <adam.treat@torchmobile.com>
 
         Prospective build fix for Qt following r39922.
