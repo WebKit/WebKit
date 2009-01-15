@@ -39,6 +39,7 @@
 #include "RandomNumberSeed.h"
 
 #include <errno.h>
+#include <limits.h>
 #include <sys/time.h>
 
 namespace WTF {
