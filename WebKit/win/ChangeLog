@@ -1,3 +1,26 @@
+2009-01-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21799
+        <rdar://problem/6310684> Crash in dumpFramesAsText() when running http/tests/security/cross-origin-xsl-BLOCKED.html
+        
+        Return S_OK or E_FAIL based on the result from CreateInstance.
+        This was causing DumpRenderTree to not realize it had just gotten a null documentElement.
+        
+        * DOMCoreClasses.cpp: Made all functions that return the result of CreateInstance consistent.
+        (DOMNode::parentNode):
+        (DOMNode::ownerDocument):
+        (DOMNodeList::item):
+        (DOMDocument::documentElement):
+        (DOMDocument::createElement):
+        (DOMDocument::getElementsByTagName):
+        (DOMDocument::getElementsByTagNameNS):
+        (DOMDocument::getElementById):
+        (DOMDocument::getComputedStyle):
+        (DOMDocument::createEvent):
+        (DOMElement::style):
+
 2009-01-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
