@@ -1,3 +1,79 @@
+2009-01-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23340
+        Add remaining bits of graphics/chromium.
+
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp: Added.
+        (WebCore::scaleEmToUnits):
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::smallCapsFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp: Added.
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::smallCapsFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/chromium/ThemeHelperChromiumWin.cpp: Added.
+        (WebCore::ThemeHelperWin::ThemeHelperWin):
+        (WebCore::ThemeHelperWin::~ThemeHelperWin):
+        * platform/graphics/chromium/ThemeHelperChromiumWin.h: Added.
+        (WebCore::ThemeHelperWin::):
+        (WebCore::ThemeHelperWin::context):
+        (WebCore::ThemeHelperWin::rect):
+        * platform/graphics/chromium/UniscribeHelper.cpp: Added.
+        (WebCore::treatAsSpace):
+        (WebCore::containsMissingGlyphs):
+        (WebCore::setLogFontAndStyle):
+        (WebCore::UniscribeHelper::UniscribeHelper):
+        (WebCore::UniscribeHelper::~UniscribeHelper):
+        (WebCore::UniscribeHelper::initWithOptionalLengthProtection):
+        (WebCore::UniscribeHelper::width):
+        (WebCore::UniscribeHelper::justify):
+        (WebCore::UniscribeHelper::characterToX):
+        (WebCore::UniscribeHelper::xToCharacter):
+        (WebCore::UniscribeHelper::draw):
+        (WebCore::UniscribeHelper::firstGlyphForCharacter):
+        (WebCore::UniscribeHelper::fillRuns):
+        (WebCore::UniscribeHelper::shape):
+        (WebCore::UniscribeHelper::fillShapes):
+        (WebCore::UniscribeHelper::fillScreenOrder):
+        (WebCore::UniscribeHelper::adjustSpaceAdvances):
+        (WebCore::UniscribeHelper::applySpacing):
+        (WebCore::UniscribeHelper::advanceForItem):
+        * platform/graphics/chromium/UniscribeHelper.h: Added.
+        (WebCore::UniscribeHelper::directionalOverride):
+        (WebCore::UniscribeHelper::setDirectionalOverride):
+        (WebCore::UniscribeHelper::inhibitLigate):
+        (WebCore::UniscribeHelper::setInhibitLigate):
+        (WebCore::UniscribeHelper::letterSpacing):
+        (WebCore::UniscribeHelper::setLetterSpacing):
+        (WebCore::UniscribeHelper::spaceWidth):
+        (WebCore::UniscribeHelper::setSpaceWidth):
+        (WebCore::UniscribeHelper::wordSpacing):
+        (WebCore::UniscribeHelper::setWordSpacing):
+        (WebCore::UniscribeHelper::setAscent):
+        (WebCore::UniscribeHelper::init):
+        (WebCore::UniscribeHelper::tryToPreloadFont):
+        (WebCore::UniscribeHelper::Shaping::Shaping):
+        (WebCore::UniscribeHelper::Shaping::glyphLength):
+        (WebCore::UniscribeHelper::Shaping::charLength):
+        (WebCore::UniscribeHelper::Shaping::effectiveAdvances):
+        (WebCore::UniscribeHelper::nextWinFontData):
+        (WebCore::UniscribeHelper::resetFontIndex):
+        * platform/graphics/chromium/UniscribeHelperTextRun.cpp: Added.
+        (WebCore::UniscribeHelperTextRun::UniscribeHelperTextRun):
+        (WebCore::UniscribeHelperTextRun::tryToPreloadFont):
+        (WebCore::UniscribeHelperTextRun::nextWinFontData):
+        (WebCore::UniscribeHelperTextRun::resetFontIndex):
+        * platform/graphics/chromium/UniscribeHelperTextRun.h: Added.
+
 2009-01-15  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dan Bernstein.
