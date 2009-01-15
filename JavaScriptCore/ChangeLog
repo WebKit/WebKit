@@ -1,3 +1,17 @@
+2009-01-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 23225: REGRESSION: Assertion failure in reparseInPlace() (m_sourceElements) at sfgate.com
+        <https://bugs.webkit.org/show_bug.cgi?id=23225> <rdar://problem/6487432>
+
+        Character position for open and closing brace was incorrectly referencing m_position to
+        record their position in a source document, however this is unsafe as BOMs may lead to
+        m_position being an arbitrary position from the real position of the current character.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::matchPunctuator):
+
 2009-01-14  David Kilzer  <ddkilzer@apple.com>
 
         Bug 23153: JSC build always touches JavaScriptCore/docs/bytecode.html

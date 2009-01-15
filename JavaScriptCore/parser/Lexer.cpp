@@ -758,11 +758,11 @@ int Lexer::matchPunctuator(int& charPos, int c1, int c2, int c3, int c4)
             shift(1);
             return static_cast<int>(c1);
         case '{':
-            charPos = m_position - 4;
+            charPos = m_currentOffset;
             shift(1);
             return OPENBRACE;
         case '}':
-            charPos = m_position - 4;
+            charPos = m_currentOffset;
             shift(1);
             return CLOSEBRACE;
         default:

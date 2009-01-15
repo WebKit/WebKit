@@ -1,3 +1,16 @@
+2009-01-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 23225: REGRESSION: Assertion failure in reparseInPlace() (m_sourceElements) at sfgate.com
+        <https://bugs.webkit.org/show_bug.cgi?id=23225> <rdar://problem/6487432>
+
+        Test to verify reparsing behaviour in the face of a BOM in the middle of the file.
+
+        * fast/js/bom-in-file-retains-correct-offset-expected.txt: Added.
+        * fast/js/bom-in-file-retains-correct-offset.html: Added.
+        * fast/js/resources/bom-in-file-retains-correct-offset.js: Added.
+
 2009-01-14  David Kilzer  <ddkilzer@apple.com>
 
         Updated layout test results after adding WebKitCSSMatrix (r39922)
