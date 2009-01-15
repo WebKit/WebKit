@@ -91,6 +91,34 @@ routine Invoke(clientPort :mach_port_t;
                out returnValue :boolean_t;
                out result :data_t, dealloc);
 
+routine InvokeDefault(clientPort :mach_port_t;
+               pluginID :uint32_t;
+               objectID :uint32_t;
+               arguments :data_t;
+               out returnValue :boolean_t;
+               out result :data_t, dealloc);
+
+routine Construct(clientPort :mach_port_t;
+                  pluginID :uint32_t;
+                  objectID :uint32_t;
+                  arguments :data_t;
+                  out returnValue :boolean_t;
+                  out result :data_t, dealloc);
+
+routine GetProperty(clientPort :mach_port_t;
+                    pluginID :uint32_t;
+                    objectID :uint32_t;
+                    propertyNameIdentifier :uint64_t;
+                    out returnValue :boolean_t;
+                    out result :data_t, dealloc);
+
+routine SetProperty(clientPort :mach_port_t;
+                    pluginID :uint32_t;
+                    objectID :uint32_t;
+                    propertyNameIdentifier :uint64_t;
+                    value :data_t;
+                    out returnValue :boolean_t);
+
 routine RemoveProperty(clientPort :mach_port_t;
                        pluginID :uint32_t;
                        objectID :uint32_t;

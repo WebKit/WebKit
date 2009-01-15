@@ -2,6 +2,31 @@
 
         Reviewed by Sam Weinig.
 
+        Implement InvokeDefault, Construct, GetProperty and SetProperty.
+        
+        Fully implement marshalValue.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCInvokeDefault):
+        (WKPCConstruct):
+        (WKPCGetProperty):
+        (WKPCSetProperty):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::evaluate):
+        (WebKit::NetscapePluginInstanceProxy::invoke):
+        (WebKit::NetscapePluginInstanceProxy::invokeDefault):
+        (WebKit::NetscapePluginInstanceProxy::construct):
+        (WebKit::NetscapePluginInstanceProxy::getProperty):
+        (WebKit::NetscapePluginInstanceProxy::setProperty):
+        (WebKit::NetscapePluginInstanceProxy::marshalValue):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValue):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+
+2009-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Demarshal arguments and pass them to the JS call.
         
         * Plugins/Hosted/NetscapePluginHostProxy.mm:

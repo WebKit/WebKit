@@ -509,6 +509,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     JSValuePtr value = frame->loader()->executeScript(script).jsValue();
     
     marshalValue(exec, value, resultData, resultLength);
+    exec->clearException();
     return true;
 }
 
@@ -540,10 +541,149 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     globalObject->startTimeoutCheck();
     JSValuePtr value = call(exec, function, callType, callData, object, argList);
     globalObject->stopTimeoutCheck();
-    
+        
+    marshalValue(exec, value, resultData, resultLength);
     exec->clearException();
+    return true;
+}
+
+bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argumentsData, mach_msg_type_number_t argumentsLength, data_t& resultData, mach_msg_type_number_t& resultLength)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    JSLock lock(false);    
+    CallData callData;
+    CallType callType = object->getCallData(callData);
+    if (callType == CallTypeNone)
+        return false;
+    
+    ArgList argList;
+    demarshalValues(exec, argumentsData, argumentsLength, argList);
+
+    ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
+    globalObject->startTimeoutCheck();
+    JSValuePtr value = call(exec, object, callType, callData, object, argList);
+    globalObject->stopTimeoutCheck();
     
     marshalValue(exec, value, resultData, resultLength);
+    exec->clearException();
+    return true;
+}
+
+bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsData, mach_msg_type_number_t argumentsLength, data_t& resultData, mach_msg_type_number_t& resultLength)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    JSLock lock(false);
+
+    ConstructData constructData;
+    ConstructType constructType = object->getConstructData(constructData);
+    if (constructType == ConstructTypeNone)
+        return false;
+        
+    ArgList argList;
+    demarshalValues(exec, argumentsData, argumentsLength, argList);
+
+    ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
+    globalObject->startTimeoutCheck();
+    JSValuePtr value = JSC::construct(exec, object, constructType, constructData, argList);
+    globalObject->stopTimeoutCheck();
+    
+    marshalValue(exec, value, resultData, resultLength);
+    exec->clearException();
+    return true;
+}
+
+bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, const JSC::Identifier& propertyName, data_t &resultData, mach_msg_type_number_t& resultLength)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    JSLock lock(false);    
+    JSValuePtr value = object->get(exec, propertyName);
+    
+    marshalValue(exec, value, resultData, resultLength);
+    exec->clearException();
+    return true;
+}
+    
+bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, unsigned propertyName, data_t &resultData, mach_msg_type_number_t& resultLength)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    JSLock lock(false);    
+    JSValuePtr value = object->get(exec, propertyName);
+    
+    marshalValue(exec, value, resultData, resultLength);
+    exec->clearException();
+    return true;
+}
+
+bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, const JSC::Identifier& propertyName, data_t valueData, mach_msg_type_number_t valueLength)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    JSLock lock(false);    
+
+    JSValuePtr value = demarshalValue(exec, valueData, valueLength);
+    PutPropertySlot slot;
+    object->put(exec, propertyName, value, slot);
+    
+    exec->clearException();
+    return true;
+}
+
+bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, unsigned propertyName, data_t valueData, mach_msg_type_number_t valueLength)
+{
+    JSObject* object = m_objects.get(objectID);
+    if (!object)
+        return false;
+    
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
+    
+    ExecState* exec = frame->script()->globalObject()->globalExec();
+    JSLock lock(false);    
+    
+    JSValuePtr value = demarshalValue(exec, valueData, valueLength);
+    object->put(exec, propertyName, value);
+    
+    exec->clearException();
     return true;
 }
 
@@ -653,8 +793,15 @@ void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValuePtr value
         
         [array.get() addObject:String(value->toString(exec))];
     } else if (value->isNumber()) {
+        [array.get() addObject:[NSNumber numberWithInt:DoubleValueType]];
+        
+        [array.get() addObject:[NSNumber numberWithDouble:value->toNumber(exec)]];
     } else if (value->isBoolean()) {
+        [array.get() addObject:[NSNumber numberWithInt:BoolValueType]];
+        
+        [array.get() addObject:[NSNumber numberWithDouble:value->toBoolean(exec)]];
     } else if (value->isNull()) {
+        [array.get() addObject:[NSNumber numberWithInt:NullValueType]];
     } else if (value->isObject()) {
         [array.get() addObject:[NSNumber numberWithInt:ObjectValueType]];
         
@@ -709,7 +856,23 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
             return false;
     }
 }
+
+JSValuePtr NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, data_t valueData, mach_msg_type_number_t valueLength)
+{
+    RetainPtr<NSData*> data(AdoptNS, [[NSData alloc] initWithBytesNoCopy:valueData length:valueLength freeWhenDone:NO]);
     
+    RetainPtr<NSArray*> array = [NSPropertyListSerialization propertyListFromData:data.get()
+                                                                 mutabilityOption:NSPropertyListImmutable
+                                                                           format:0
+                                                                 errorDescription:0];
+    NSUInteger position = 0;
+    JSValuePtr value;
+    bool result = demarshalValueFromArray(exec, array.get(), position, value);
+    ASSERT(result);
+    
+    return value;
+}
+
 void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t valuesData, mach_msg_type_number_t valuesLength, ArgList& result)
 {
     RetainPtr<NSData*> data(AdoptNS, [[NSData alloc] initWithBytesNoCopy:valuesData length:valuesLength freeWhenDone:NO]);
