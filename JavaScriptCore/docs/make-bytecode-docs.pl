@@ -10,9 +10,9 @@ my @undocumented = ();
 print OUTPUT "<style>p code \{ font-size: 14px; \}</style>\n";
 
 while (<MACHINE>) {
-    if (/^ *BEGIN_OPCODE/) {
+    if (/^ *DEFINE_OPCODE/) {
         chomp;
-        s/^ *BEGIN_OPCODE\(op_//;
+        s/^ *DEFINE_OPCODE\(op_//;
         s/\).*$//;
         my $opcode = $_;
         $_ = <MACHINE>;

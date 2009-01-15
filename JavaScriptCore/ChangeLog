@@ -1,3 +1,23 @@
+2009-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 23153: JSC build always touches JavaScriptCore/docs/bytecode.html
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23153>
+
+        Reviewed by Darin Adler.
+
+        Instead of building bytecode.html into ${SRCROOT}/docs/bytecode.html, build it
+        into ${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/docs/bytecode.html.
+
+        Also fixes make-bytecode-docs.pl to actually generate documentation.
+
+        * DerivedSources.make: Changed bytecode.html to be built into local docs
+        directory in ${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added "/docs" to the end of the
+        "mkdir -p" command so that the docs subdirectory is automatically created.
+        * docs/make-bytecode-docs.pl: Changed BEGIN_OPCODE to DEFINE_OPCODE so that
+        documentation is actually generated.
+
 2009-01-14  Adam Treat  <adam.treat@torchmobile.com>
 
         Build fix for Qt from Dmitry Titov.

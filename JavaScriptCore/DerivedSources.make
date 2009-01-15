@@ -46,7 +46,7 @@ all : \
     RegExpConstructor.lut.h \
     RegExpObject.lut.h \
     StringPrototype.lut.h \
-    $(JavaScriptCore)/docs/bytecode.html \
+    docs/bytecode.html \
 #
 
 # lookup tables for classes
@@ -71,5 +71,5 @@ Grammar.cpp: Grammar.y
 chartables.c : dftables
 	$^ $@
 
-$(JavaScriptCore)/docs/bytecode.html: make-bytecode-docs.pl Interpreter.cpp 
+docs/bytecode.html: make-bytecode-docs.pl Interpreter.cpp 
 	perl $^ $@
