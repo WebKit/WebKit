@@ -253,7 +253,7 @@ JSValuePtr convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType 
                 return jsNull();
             if (obj == 0)
                 return jsUndefined();
-            return Instance::createRuntimeObject(exec, ObjcInstance::create(obj, rootObject));
+            return ObjcInstance::create(obj, rootObject)->createRuntimeObject(exec);
         }
         case ObjcCharType:
             return jsNumber(exec, *(char*)buffer);

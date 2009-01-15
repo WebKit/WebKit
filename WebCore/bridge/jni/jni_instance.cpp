@@ -222,7 +222,7 @@ JSValuePtr JavaInstance::invokeMethod (ExecState *exec, const MethodList &method
                     resultValue = JavaArray::convertJObjectToArray(exec, result.l, arrayType, rootObject);
                 }
                 else {
-                    resultValue = Instance::createRuntimeObject(exec, JavaInstance::create(result.l, rootObject));
+                    resultValue = JavaInstance::create(result.l, rootObject)->createRuntimeObject(exec);
                 }
             }
             else {

@@ -96,7 +96,6 @@ public:
     static void setDidExecuteFunction(KJSDidExecuteFunctionPtr func);
     static KJSDidExecuteFunctionPtr didExecuteFunction();
 
-    static RuntimeObjectImp* createRuntimeObject(ExecState*, PassRefPtr<Instance>);
     static Instance* getInstance(JSObject*, BindingLanguage);
 
     // These functions are called before and after the main entry points into
@@ -106,6 +105,7 @@ public:
     void end();
     
     virtual Class *getClass() const = 0;
+    virtual RuntimeObjectImp* createRuntimeObject(ExecState*);
     
     virtual JSValuePtr getValueOfField(ExecState*, const Field*) const;
     virtual JSValuePtr getValueOfUndefinedField(ExecState*, const Identifier&) const { return jsUndefined(); }

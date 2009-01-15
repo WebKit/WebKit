@@ -1,3 +1,33 @@
+2009-01-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make Instance::createRuntimeObject a virtual function and override it for QtInstance.
+        
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::getRuntimeObject):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertNPVariantToValue):
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::convertJObjectToValue):
+        * bridge/jni/jni_runtime.cpp:
+        (JavaField::valueFromInstance):
+        (JavaArray::valueAt):
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::convertObjcValueToValue):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::getRuntimeObject):
+        (JSC::Bindings::QtInstance::createRuntimeObject):
+        * bridge/qt/qt_instance.h:
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertQVariantToValue):
+        (JSC::Bindings::QtConnectionObject::execute):
+        * bridge/runtime.cpp:
+        (JSC::Bindings::Instance::createRuntimeObject):
+        * bridge/runtime.h:
+
 2009-01-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

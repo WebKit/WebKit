@@ -602,7 +602,7 @@ JSValuePtr JavaJSObject::convertJObjectToValue(ExecState* exec, jobject theObjec
 
     JSLock lock(false);
 
-    return JSC::Bindings::Instance::createRuntimeObject(exec, JavaInstance::create(theObject, _rootObject));
+    return JavaInstance::create(theObject, _rootObject)->createRuntimeObject(exec);
 }
 
 void JavaJSObject::getListFromJArray(ExecState* exec, jobjectArray jArray, ArgList& list) const

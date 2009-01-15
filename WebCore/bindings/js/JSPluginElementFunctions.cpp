@@ -58,7 +58,7 @@ static RuntimeObjectImp* getRuntimeObject(ExecState* exec, Node* node)
     Instance* instance = pluginInstance(node);
     if (!instance)
         return 0;
-    return JSC::Bindings::Instance::createRuntimeObject(exec, instance);
+    return instance->createRuntimeObject(exec);
 }
 
 JSValuePtr runtimeObjectGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)

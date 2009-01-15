@@ -132,15 +132,6 @@ PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObje
 
 RuntimeObjectImp* QtInstance::getRuntimeObject(ExecState* exec, PassRefPtr<QtInstance> instance)
 {
-    JSLock lock(false);
-    QtInstance* qtInstance = instance.get();
-    RuntimeObjectImp* ret = static_cast<RuntimeObjectImp*>(cachedObjects.value(qtInstance));
-    if (!ret) {
-        ret = new (exec) QtRuntimeObjectImp(exec, instance);
-        cachedObjects.insert(qtInstance, ret);
-        ret = static_cast<RuntimeObjectImp*>(cachedObjects.value(qtInstance));
-    }
-    return ret;
 }
 
 Class* QtInstance::getClass() const
@@ -148,6 +139,18 @@ Class* QtInstance::getClass() const
     if (!m_class)
         m_class = QtClass::classForObject(m_object);
     return m_class;
+}
+
+RuntimeObjectImp* QtInstance::createRuntimeObject(ExecState* exec)
+{
+    JSLock lock(false);
+    RuntimeObjectImp* ret = static_cast<RuntimeObjectImp*>(cachedObjects.value(this));
+    if (!ret) {
+        ret = new (exec) QtRuntimeObjectImp(exec, instance);
+        cachedObjects.insert(this, ret);
+        ret = static_cast<RuntimeObjectImp*>(cachedObjects.value(this));
+    }
+    return ret;
 }
 
 void QtInstance::mark()
