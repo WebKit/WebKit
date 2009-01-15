@@ -1,3 +1,10 @@
+2009-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Updated layout test results after adding WebKitCSSMatrix (r39922)
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2009-01-14  Pierre-Olivier Latour  <pol@apple.com>
 
         Added missing reference images for pixel tests (generated on iMac Intel with 10.5.5 + QT 7.5.5).
