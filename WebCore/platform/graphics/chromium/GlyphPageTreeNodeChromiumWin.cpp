@@ -205,13 +205,13 @@ static bool fillNonBMPGlyphs(unsigned offset,
                                  fontData->m_font.scriptCache(),
                                  fontData->m_font.scriptFontProperties());
     state.setInhibitLigate(true);
-    state.Init();
+    state.init();
 
     for (unsigned i = 0; i < length; i++) {
         // Each character in this input buffer is a surrogate pair, which
         // consists of two UChars. So, the offset for its i-th character is
         // (i * 2).
-        WORD glyph = state.FirstGlyphForCharacter(i * 2);
+        WORD glyph = state.firstGlyphForCharacter(i * 2);
         if (glyph) {
             haveGlyphs = true;
             page->setGlyphDataForIndex(offset + i, glyph, fontData);

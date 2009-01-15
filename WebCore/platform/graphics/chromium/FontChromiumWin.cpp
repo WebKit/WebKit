@@ -57,8 +57,7 @@ static bool windowsCanHandleTextDrawing(GraphicsContext* context)
     // which look weird. All else being equal, it's better to use Windows' text
     // drawing, so we don't check for zooms.
     const TransformationMatrix& matrix = context->getCTM();
-    if (matrix.b() != 0 ||  // Y skew
-        matrix.c() != 0)    // X skew
+    if (matrix.b() != 0 || matrix.c() != 0)  // Check for skew.
         return false;
 
     // Check for stroke effects.
@@ -263,12 +262,12 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
                                             int to) const
 {
     UniscribeHelperTextRun state(run, *this);
-    float left = static_cast<float>(point.x() + state.CharacterToX(from));
-    float right = static_cast<float>(point.x() + state.CharacterToX(to));
+    float left = static_cast<float>(point.x() + state.characterToX(from));
+    float right = static_cast<float>(point.x() + state.characterToX(to));
 
     // If the text is RTL, left will actually be after right.
     if (left < right)
-      return FloatRect(left, static_cast<float>(point.y()),
+        return FloatRect(left, static_cast<float>(point.y()),
                        right - left, static_cast<float>(h));
 
     return FloatRect(right, static_cast<float>(point.y()),
@@ -300,14 +299,14 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
 
     // Uniscribe counts the coordinates from the upper left, while WebKit uses
     // the baseline, so we have to subtract off the ascent.
-    state.Draw(hdc, static_cast<int>(point.x()), static_cast<int>(point.y() - ascent()), from, to);
+    state.draw(hdc, static_cast<int>(point.x()), static_cast<int>(point.y() - ascent()), from, to);
     context->canvas()->endPlatformPaint();
 }
 
 float Font::floatWidthForComplexText(const TextRun& run) const
 {
     UniscribeHelperTextRun state(run, *this);
-    return static_cast<float>(state.Width());
+    return static_cast<float>(state.width());
 }
 
 int Font::offsetForPositionForComplexText(const TextRun& run, int x,
@@ -316,13 +315,13 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x,
     // Mac code ignores includePartialGlyphs, and they don't know what it's
     // supposed to do, so we just ignore it as well.
     UniscribeHelperTextRun state(run, *this);
-    int char_index = state.XToCharacter(x);
+    int charIndex = state.xToCharacter(x);
 
     // XToCharacter will return -1 if the position is before the first
     // character (we get called like this sometimes).
-    if (char_index < 0)
-      char_index = 0;
-    return char_index;
+    if (charIndex < 0)
+        charIndex = 0;
+    return charIndex;
 }
 
 } // namespace WebCore
