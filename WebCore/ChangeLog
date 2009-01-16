@@ -1,3 +1,25 @@
+2009-01-16  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fixes QString and 8-bit mix fixes.
+
+        Details:  Make sure we use QLatin1String where appropriate (and don't
+        use QString when not necessary)
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::create):
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::openTemporaryFile):
+        * platform/qt/LoggingQt.cpp:
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::extraMediaControlsStyleSheet):
+        * plugins/qt/PluginDataQt.cpp:
+        (WebCore::PluginData::initPlugins):
+
 2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Adam Roben.

@@ -760,7 +760,7 @@ ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
 
 String RenderThemeQt::extraMediaControlsStyleSheet()
 {
-    QFile platformStyleSheet(":/webcore/css/mediaControls-extras.css");
+    QFile platformStyleSheet(QLatin1String(":/webcore/css/mediaControls-extras.css"));
     if (platformStyleSheet.open(QFile::ReadOnly)) {
         QByteArray sheetData = platformStyleSheet.readAll();
         return QString::fromUtf8(sheetData.constData(), sheetData.length());

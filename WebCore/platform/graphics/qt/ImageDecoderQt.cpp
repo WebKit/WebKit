@@ -189,7 +189,7 @@ ImageDecoderQt* ImageDecoderQt::create(const SharedBuffer& data)
     if (!buffer.open(QBuffer::ReadOnly))
         return 0;
 
-    QString imageFormat = QImageReader::imageFormat(&buffer).toLower();
+    QString imageFormat = QString::fromLatin1(QImageReader::imageFormat(&buffer).toLower());
     if (imageFormat.isEmpty())
         return 0; // Image format not supported
 

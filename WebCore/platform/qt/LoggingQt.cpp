@@ -64,18 +64,18 @@ void InitializeLoggingChannelsIfNecessary()
 
     haveInitializedLoggingChannels = true;
 
-    QString loggingEnv = qgetenv("QT_WEBKIT_LOG");
+    QByteArray loggingEnv = qgetenv("QT_WEBKIT_LOG");
     if (loggingEnv.isEmpty())
         return;
 
 #if defined(NDEBUG)
     qWarning("This is a release build. Setting QT_WEBKIT_LOG will have no effect.");
 #else
-    QStringList channels = loggingEnv.split(",");
-    QStringListIterator iter(channels);
+    QList<QByteArray> channels = loggingEnv.split(",");
+    QListIterator<QByteArray> iter(channels);
 
     while (iter.hasNext()) {
-        QString channelName = iter.next();
+        QByteArray channelName = iter.next();
         WTFLogChannel* channel = getChannelFromName(channelName);
         if (!channel) continue;
         channel->state = WTFLogChannelOn;
