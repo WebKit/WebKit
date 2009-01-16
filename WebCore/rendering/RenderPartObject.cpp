@@ -140,7 +140,7 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
         // Check for a child EMBED tag.
         HTMLEmbedElement* embed = 0;
         const PluginData* pluginData = frame->page()->pluginData();
-        if (shouldUseChildEmbedOfObject(o, pluginData)) {
+        if (pluginData && shouldUseChildEmbedOfObject(o, pluginData)) {
             for (Node* child = o->firstChild(); child;) {
                 if (child->hasTagName(embedTag)) {
                     embed = static_cast<HTMLEmbedElement*>(child);

@@ -1,5 +1,14 @@
 2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
+         Reviewed by Adam Roben.
+
+         [Qt] Prevent crash if plugin data is NULL.
+
+         * WebCoreSupport/FrameLoaderClientQt.cpp: NULL check.
+         (WebCore::FrameLoaderClientQt::objectContentType):
+
+2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
         Rubber-stamped by Simon Hausmann.
 
         [Qt] Per-line cursor movement tests depend on platform-specific font

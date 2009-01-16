@@ -1718,7 +1718,8 @@ bool FrameLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool 
     // Allow other plug-ins to win over QuickTime because if the user has installed a plug-in that
     // can handle TIFF (which QuickTime can also handle) they probably intended to override QT.
     if (m_frame->page() && (mimeType == "image/tiff" || mimeType == "image/tif" || mimeType == "image/x-tiff")) {
-        String pluginName = m_frame->page()->pluginData()->pluginNameForMimeType(mimeType);
+        const PluginData* pluginData = m_frame->page()->pluginData();
+        String pluginName = pluginData ? pluginData->pluginNameForMimeType(mimeType) : String();
         if (!pluginName.isEmpty() && !pluginName.contains("QuickTime", false)) 
             return true;
     }

@@ -1000,7 +1000,7 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
         return ObjectContentNetscapePlugin;
 
-    if (m_frame->page() && m_frame->page()->pluginData()->supportsMimeType(mimeType))
+    if (m_frame->page() && m_frame->page()->pluginData() && m_frame->page()->pluginData()->supportsMimeType(mimeType))
         return ObjectContentOtherPlugin;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))

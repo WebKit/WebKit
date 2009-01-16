@@ -1,3 +1,20 @@
+2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22452
+
+        When plugins are disabled, plugin data should not be available for
+        the page. This ensures that navigator.plugins would not see the
+        additional MIME types supported by the plugins.
+
+        * page/Page.cpp:
+        (WebCore::Page::pluginData):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldUsePlugin):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+
 2009-01-15  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Sam Weinig.
