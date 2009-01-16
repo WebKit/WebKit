@@ -1,3 +1,10 @@
+2009-01-16  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * wrec/WRECParser.cpp:
+        (JSC::WREC::Parser::parseParentheses): Removed unreachable code.
+
 2009-01-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

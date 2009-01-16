@@ -269,9 +269,6 @@ bool Parser::parseParentheses(JumpList& failures)
             setError(ParenthesesNotSupported);
             return false;
     }
-
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 bool Parser::parseCharacterClass(JumpList& failures)
