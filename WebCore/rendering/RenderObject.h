@@ -301,7 +301,7 @@ public:
     virtual bool childrenInline() const { return false; }
     virtual void setChildrenInline(bool) { }
 
-    virtual RenderFlow* continuation() const;
+    virtual RenderFlow* virtualContinuation() const { return 0; }
 
 #if ENABLE(SVG)
     virtual bool isSVGRoot() const { return false; }

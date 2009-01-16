@@ -385,7 +385,7 @@ VisiblePosition RenderInline::positionForCoordinates(int x, int y)
     RenderBlock* cb = containingBlock();
     int parentBlockX = cb->xPos() + x;
     int parentBlockY = cb->yPos() + y;
-    for (RenderObject* c = continuation(); c; c = c->continuation()) {
+    for (RenderFlow* c = continuation(); c; c = c->continuation()) {
         RenderObject* contBlock = c;
         if (c->isInline())
             contBlock = c->containingBlock();

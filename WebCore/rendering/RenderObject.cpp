@@ -242,11 +242,6 @@ bool RenderObject::canHaveChildren() const
     return false;
 }
 
-RenderFlow* RenderObject::continuation() const
-{
-    return 0;
-}
-
 bool RenderObject::isInlineContinuation() const
 {
     return false;
@@ -1711,12 +1706,15 @@ void RenderObject::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool to
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (topLevel && continuation()) {
-        rects.append(IntRect(tx, ty - collapsedMarginTop(),
-                             width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
-        continuation()->absoluteRects(rects,
-                                      tx - xPos() + continuation()->containingBlock()->xPos(),
-                                      ty - yPos() + continuation()->containingBlock()->yPos(), topLevel);
+    if (topLevel) {
+        RenderFlow* continuation = virtualContinuation();
+        if (continuation) {
+            rects.append(IntRect(tx, ty - collapsedMarginTop(),
+                                 width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
+            continuation->absoluteRects(rects,
+                                        tx - xPos() + continuation->containingBlock()->xPos(),
+                                        ty - yPos() + continuation->containingBlock()->yPos(), topLevel);
+        }
     } else
         rects.append(IntRect(tx, ty, width(), height() + borderTopExtra() + borderBottomExtra()));
 }
@@ -1760,11 +1758,14 @@ void RenderObject::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (topLevel && continuation()) {
-        FloatRect localRect(0, -collapsedMarginTop(),
-                            width(), height() + collapsedMarginTop() + collapsedMarginBottom());
-        quads.append(localToAbsoluteQuad(localRect));
-        continuation()->absoluteQuads(quads, topLevel);
+    if (topLevel) {
+        RenderFlow* continuation = virtualContinuation();
+        if (continuation) {
+            FloatRect localRect(0, -collapsedMarginTop(),
+                                width(), height() + collapsedMarginTop() + collapsedMarginBottom());
+            quads.append(localToAbsoluteQuad(localRect));
+            continuation->absoluteQuads(quads, topLevel);
+        }
     } else
         quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height() + borderTopExtra() + borderBottomExtra())));
 }
@@ -1805,11 +1806,12 @@ void RenderObject::addFocusRingRects(GraphicsContext* graphicsContext, int tx, i
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (continuation()) {
+    RenderFlow* continuation = virtualContinuation();
+    if (continuation) {
         graphicsContext->addFocusRingRect(IntRect(tx, ty - collapsedMarginTop(), width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
-        continuation()->addFocusRingRects(graphicsContext,
-                                          tx - xPos() + continuation()->containingBlock()->xPos(),
-                                          ty - yPos() + continuation()->containingBlock()->yPos());
+        continuation->addFocusRingRects(graphicsContext,
+                                        tx - xPos() + continuation->containingBlock()->xPos(),
+                                        ty - yPos() + continuation->containingBlock()->yPos());
     } else
         graphicsContext->addFocusRingRect(IntRect(tx, ty, width(), height()));
 }
@@ -1958,7 +1960,8 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
 
     // We didn't move, but we did change size.  Invalidate the delta, which will consist of possibly
     // two rectangles (but typically only one).
-    RenderStyle* outlineStyle = !isInline() && continuation() ? continuation()->style() : style();
+    RenderFlow* continuation = virtualContinuation();
+    RenderStyle* outlineStyle = !isInline() && continuation ? continuation->style() : style();
     int ow = outlineStyle->outlineSize();
     ShadowData* boxShadow = style()->boxShadow();
     int width = abs(newOutlineBox.width() - oldOutlineBox.width());
@@ -2019,7 +2022,7 @@ IntRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
     IntRect r(absoluteClippedOverflowRect());
     r.inflate(ow);
 
-    if (continuation() && !isInline())
+    if (virtualContinuation() && !isInline())
         r.inflateY(collapsedMarginTop());
 
     if (isInlineFlow()) {
@@ -2178,7 +2181,7 @@ void RenderObject::handleDynamicFloatPositionChange()
                 RenderInline* parentInline = static_cast<RenderInline*>(parent());
                 RenderBlock* newBox = parentInline->createAnonymousBlock();
 
-                RenderFlow* oldContinuation = parent()->continuation();
+                RenderFlow* oldContinuation = parentInline->continuation();
                 parentInline->setContinuation(newBox);
 
                 RenderObject* beforeChild = nextSibling();
@@ -2575,7 +2578,7 @@ RenderObject* RenderObject::container() const
 // content (and perhaps XBL).  That's why it uses the render tree and not the DOM tree.
 RenderObject* RenderObject::hoverAncestor() const
 {
-    return (!isInline() && continuation()) ? continuation() : parent();
+    return (!isInline() && virtualContinuation()) ? virtualContinuation() : parent();
 }
 
 bool RenderObject::isSelectionBorder() const
@@ -2688,8 +2691,9 @@ void RenderObject::updateDragState(bool dragOn)
         element()->setChanged();
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
         curr->updateDragState(dragOn);
-    if (continuation())
-        continuation()->updateDragState(dragOn);
+    RenderFlow* continuation = virtualContinuation();
+    if (continuation)
+        continuation->updateDragState(dragOn);
 }
 
 bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result, const IntPoint& point, int tx, int ty, HitTestFilter hitTestFilter)
@@ -2724,14 +2728,14 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const IntPoint& po
     IntPoint localPoint(point);
     if (isRenderView())
         node = document()->documentElement();
-    else if (!isInline() && continuation())
+    else if (!isInline() && virtualContinuation())
         // We are in the margins of block elements that are part of a continuation.  In
         // this case we're actually still inside the enclosing inline element that was
         // split.  Go ahead and set our inner node accordingly.
-        node = continuation()->element();
+        node = virtualContinuation()->element();
 
     if (node) {
-        if (node->renderer() && node->renderer()->continuation() && node->renderer() != this) {
+        if (node->renderer() && node->renderer()->virtualContinuation() && node->renderer() != this) {
             // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space
             // of the principal renderer's containing block.  This will end up being the innerNonSharedNode.
             RenderObject* firstBlock = node->renderer()->containingBlock();
@@ -2976,8 +2980,8 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
             }
         }
         curr = curr->parent();
-        if (curr && curr->isRenderBlock() && curr->continuation())
-            curr = curr->continuation();
+        if (curr && curr->isRenderBlock() && curr->virtualContinuation())
+            curr = curr->virtualContinuation();
     } while (curr && decorations && (!quirksMode || !curr->element() ||
                                      (!curr->element()->hasTagName(aTag) && !curr->element()->hasTagName(fontTag))));
 
@@ -3160,7 +3164,7 @@ FloatQuad RenderObject::absoluteContentQuad() const
 
 void RenderObject::adjustRectForOutlineAndShadow(IntRect& rect) const
 {
-    int outlineSize = !isInline() && continuation() ? continuation()->style()->outlineSize() : style()->outlineSize();
+    int outlineSize = !isInline() && virtualContinuation() ? virtualContinuation()->style()->outlineSize() : style()->outlineSize();
     if (ShadowData* boxShadow = style()->boxShadow()) {
         int shadowLeft = 0;
         int shadowRight = 0;

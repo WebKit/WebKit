@@ -249,11 +249,11 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
         if (!flow->lastLineBox()->isConstructed()) {
             if (ltr) {
                 if (!nextLineBox() &&
-                    ((lastLine && !object()->continuation()) || nextOnLineExists() || onEndChain(endObject)))
+                    ((lastLine && !flow->continuation()) || nextOnLineExists() || onEndChain(endObject)))
                     includeRightEdge = true;
             } else {
                 if ((!prevLineBox() || prevLineBox()->isConstructed()) &&
-                    ((lastLine && !object()->continuation()) || prevOnLineExists() || onEndChain(endObject)))
+                    ((lastLine && !flow->continuation()) || prevOnLineExists() || onEndChain(endObject)))
                     includeLeftEdge = true;
             }
         }
@@ -628,7 +628,7 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
             // Add ourselves to the paint info struct's list of inlines that need to paint their
             // outlines.
             if (object()->style()->visibility() == VISIBLE && object()->hasOutline() && !isRootInlineBox()) {
-                if ((object()->continuation() || object()->isInlineContinuation()) && !object()->hasLayer()) {
+                if ((flowObject()->continuation() || object()->isInlineContinuation()) && !object()->hasLayer()) {
                     // Add ourselves to the containing block of the entire continuation so that it can
                     // paint us atomically.
                     RenderBlock* block = object()->containingBlock()->containingBlock();

@@ -113,7 +113,7 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     // Before calling absoluteRects, check for the common case where the renderer
     // or one of the continuations is non-empty, since this is a faster check and
     // almost always returns true.
-    for (RenderObject* r = renderer(); r; r = r->continuation())
+    for (RenderObject* r = renderer(); r; r = r->virtualContinuation())
         if (r->width() > 0 && r->height() > 0)
             return true;
 

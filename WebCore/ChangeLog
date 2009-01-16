@@ -1,5 +1,43 @@
 2009-01-16  David Hyatt  <hyatt@apple.com>
 
+        Split continuation() into virtual and non-virtual versions so that the non-virtual version can
+        be used whereever possible.  Eventually the virtual method can be eliminated completely.
+
+        Reviewed by Sam Weinig and Oliver Hunt
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::InlineFlowBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer):
+        * rendering/RenderFlow.h:
+        (WebCore::RenderFlow::virtualContinuation):
+        (WebCore::RenderFlow::continuation):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::positionForCoordinates):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteRects):
+        (WebCore::RenderObject::absoluteQuads):
+        (WebCore::RenderObject::addFocusRingRects):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::getAbsoluteRepaintRectWithOutline):
+        (WebCore::RenderObject::handleDynamicFloatPositionChange):
+        (WebCore::RenderObject::hoverAncestor):
+        (WebCore::RenderObject::updateDragState):
+        (WebCore::RenderObject::updateHitTestResult):
+        (WebCore::RenderObject::getTextDecorationColors):
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::virtualContinuation):
+
+2009-01-16  David Hyatt  <hyatt@apple.com>
+
         Inline the methods of Font for obtaining metrics such as ascent, descent and line spacing.
 
         Reviewed by ggaren
