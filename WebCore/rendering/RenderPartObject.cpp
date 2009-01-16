@@ -219,7 +219,7 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
         }
 
         // If we still don't have a type, try to map from a specific CLASSID to a type.
-        if (serviceType.isEmpty())
+        if (pluginData && serviceType.isEmpty())
             mapClassIdToServiceType(o->classId(), serviceType, pluginData);
 
         if (!isURLAllowed(document(), url))

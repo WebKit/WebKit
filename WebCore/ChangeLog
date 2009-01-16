@@ -1,3 +1,13 @@
+2009-01-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Kevin Decker and Adam Roben.
+
+        - fix a regression that resulted in a crash when plug-ins were
+          disabled.
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget): Added a null check.
+
 2009-01-16  David Hyatt  <hyatt@apple.com>
 
         Split continuation() into virtual and non-virtual versions so that the non-virtual version can
