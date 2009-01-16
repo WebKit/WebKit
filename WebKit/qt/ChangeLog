@@ -1,3 +1,10 @@
+2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Another attempt at fixing the Qt build.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject):
+
 2009-01-14  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Tor Arne Vestbø.

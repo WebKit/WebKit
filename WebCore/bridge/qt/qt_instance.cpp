@@ -148,7 +148,7 @@ void QtInstance::put(JSObject* object, ExecState* exec, const Identifier& proper
     object->JSObject::put(exec, propertyName, value, slot);
 }
 
-static QtInstance* QtInstance::getInstance(JSObject* object)
+QtInstance* QtInstance::getInstance(JSObject* object)
 {
     if (!object)
         return 0;

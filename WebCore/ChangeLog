@@ -1,3 +1,10 @@
+2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Another attempt at fixing the Qt build.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::getInstance):
+
 2009-01-16  David Hyatt  <hyatt@apple.com>
 
         Fix for 1.85% PLT regression.  Since asking if a frame is "complete" actually aggressively decodes
