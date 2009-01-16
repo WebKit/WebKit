@@ -1,3 +1,15 @@
+2009-01-16  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16001
+        Re-land layout test which didn't land as part of r39785
+        Move pixel results to platforms directory.
+
+        * editing/selection/extend-selection-bidi.html: Added.
+        * platform/mac/editing/selection/extend-selection-bidi-expected.checksum: Renamed from LayoutTests/editing/selection/extend-selection-bidi-expected.checksum.
+        * platform/mac/editing/selection/extend-selection-bidi-expected.png: Renamed from LayoutTests/editing/selection/extend-selection-bidi-expected.png.
+
 2009-01-16  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by David Hyatt.
