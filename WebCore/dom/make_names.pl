@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 # Copyright (C) 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2009, Julien Chaffraix <jchaffraix@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -87,6 +88,7 @@ if ($printWrapperFactory) {
 sub initializeTagPropertyHash
 {
     return ('constructorNeedsCreatedByParser' => 0,
+            'constructorNeedsFormElement' => 0,
             'exportString' => 0,
             'interfaceName' => defaultInterfaceName($_[0]),
             # By default, the JSInterfaceName is the same as the interfaceName.
@@ -223,17 +225,29 @@ sub printConstructors
     for my $name (sort keys %tags) {
         my $ucName = $tags{$name}{'interfaceName'};
 
-        if ($tags{$name}{'constructorNeedsCreatedByParser'}) {
-            print F "static PassRefPtr<$parameters{'namespace'}Element> ${name}Constructor(Document* document, bool createdByParser)\n";
-            print F "{\n";
-            print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, document, createdByParser);\n";
-            print F "}\n\n";
-        } else {
-            print F "static PassRefPtr<$parameters{'namespace'}Element> ${name}Constructor(Document* document, bool)\n";
-            print F "{\n";
-            print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, document);\n";
-            print F "}\n\n";
+        # Print the method signature avoiding unused arguments' name.
+        print F "static PassRefPtr<$parameters{'namespace'}Element> ${name}Constructor(Document* doc";
+        if ($parameters{'namespace'} eq "HTML") {
+            print F ", HTMLFormElement* formElement";
+            if ($tags{$name}{'constructorNeedsFormElement'}) {
+                print F " formElement";
+            }
         }
+        print F ", bool";
+        if ($tags{$name}{'constructorNeedsCreatedByParser'}) {
+            print F " createdByParser"; 
+        }
+        print F ")\n{\n";
+
+        # Now call the constructor with the right parameters.
+        print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, doc";
+        if ($tags{$name}{'constructorNeedsFormElement'}) {
+            print F ", formElement";
+        }
+        if ($tags{$name}{'constructorNeedsCreatedByParser'}) {
+            print F ", createdByParser";
+        }
+        print F ");\n}\n\n";
     }
     print F "#endif\n" if $parameters{'guardFactoryWith'};
 }
@@ -538,6 +552,10 @@ print F <<END
 END
 ;
 
+if ($parameters{'namespace'} eq "HTML") {
+    print F "#include \"HTMLFormElement.h\"\n";
+}
+
 printElementIncludes($F);
 
 print F <<END
@@ -545,7 +563,18 @@ print F <<END
 
 using namespace WebCore;
 
-typedef PassRefPtr<$parameters{'namespace'}Element> (*ConstructorFunction)(Document*, bool createdByParser);
+END
+;
+
+print F "typedef PassRefPtr<$parameters{'namespace'}Element> (*ConstructorFunction)(Document*";
+
+if ($parameters{'namespace'} eq "HTML") {
+    print F ", HTMLFormElement* formElement";
+}
+
+print F ", bool createdByParser);\n";
+
+print F <<END
 typedef WTF::HashMap<AtomicStringImpl*, ConstructorFunction> FunctionMap;
 
 static FunctionMap* gFunctionMap = 0;
@@ -574,13 +603,15 @@ END
 printFunctionInits($F);
 
 print F "}\n";
-print F "#endif\n\n" if $parameters{'guardFactoryWith'};
+print F "#endif\n" if $parameters{'guardFactoryWith'};
 
-print F <<END
-PassRefPtr<$parameters{'namespace'}Element> $parameters{'namespace'}ElementFactory::create$parameters{'namespace'}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
-{
-END
-;
+print F "\nPassRefPtr<$parameters{'namespace'}Element> $parameters{'namespace'}ElementFactory::create$parameters{'namespace'}Element(const QualifiedName& qName, Document* doc";
+
+if ($parameters{"namespace"} eq "HTML") {
+    print F ", HTMLFormElement* formElement";
+}
+
+print F ", bool createdByParser)\n{\n";
 
 print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
 
@@ -598,11 +629,16 @@ print F <<END
     createFunctionMapIfNecessary();
     ConstructorFunction func = gFunctionMap->get(qName.localName().impl());
     if (func)
-        return func(doc, createdByParser);
-
-    return new $parameters{'namespace'}Element(qName, doc);
 END
 ;
+
+if ($parameters{"namespace"} eq "HTML") {
+    print F "        return func(doc, formElement, createdByParser);\n";
+} else {
+    print F "        return func(doc, createdByParser);\n";
+}
+
+print F "    return new $parameters{'namespace'}Element(qName, doc);\n";
 
 if ($parameters{'guardFactoryWith'}) {
 
@@ -650,13 +686,30 @@ namespace WebCore {
 namespace WebCore {
 
     class $parameters{'namespace'}Element;
+END
+;
 
+if ($parameters{'namespace'} eq "HTML") {
+    print F "     class HTMLFormElement;\n";
+}
+
+print F<<END
     // The idea behind this class is that there will eventually be a mapping from namespace URIs to ElementFactories that can dispense
     // elements. In a compound document world, the generic createElement function (will end up being virtual) will be called.
     class $parameters{'namespace'}ElementFactory {
     public:
         PassRefPtr<Element> createElement(const WebCore::QualifiedName&, WebCore::Document*, bool createdByParser = true);
-        static PassRefPtr<$parameters{'namespace'}Element> create$parameters{'namespace'}Element(const WebCore::QualifiedName&, WebCore::Document*, bool createdByParser = true);
+END
+;
+print F "        static PassRefPtr<$parameters{'namespace'}Element> create$parameters{'namespace'}Element(const WebCore::QualifiedName&, WebCore::Document*";
+
+if ($parameters{'namespace'} eq "HTML") {
+    print F ", HTMLFormElement* = 0";
+}
+
+print F ", bool /*createdByParser*/ = true);\n";
+
+printf F<<END
     };
 }
 

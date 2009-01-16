@@ -19,7 +19,7 @@ big interfaceName=HTMLElement
 blockquote
 body
 br interfaceName=HTMLBRElement
-button
+button constructorNeedsFormElement=1
 canvas
 caption interfaceName=HTMLTableCaptionElement
 center interfaceName=HTMLElement
@@ -36,7 +36,7 @@ dl interfaceName=HTMLDListElement
 dt interfaceName=HTMLElement
 em interfaceName=HTMLElement
 embed
-fieldset interfaceName=HTMLFieldSetElement
+fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement=1
 font
 form
 frame constructorNeedsCreatedByParser=1
@@ -53,15 +53,15 @@ html
 i interfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement, constructorNeedsCreatedByParser=1
 image
-img interfaceName=HTMLImageElement
-input
+img interfaceName=HTMLImageElement, constructorNeedsFormElement=1
+input constructorNeedsFormElement=1
 ins interfaceName=HTMLModElement
-isindex interfaceName=HTMLIsIndexElement
+isindex interfaceName=HTMLIsIndexElement, constructorNeedsFormElement=1
 kbd interfaceName=HTMLElement
-keygen JSInterfaceName=HTMLSelectElement
+keygen JSInterfaceName=HTMLSelectElement, constructorNeedsFormElement=1
 label
 layer interfaceName=HTMLElement
-legend
+legend constructorNeedsFormElement=1
 li interfaceName=HTMLLIElement
 link constructorNeedsCreatedByParser=1
 listing interfaceName=HTMLPreElement
@@ -74,10 +74,10 @@ noembed interfaceName=HTMLElement
 noframes interfaceName=HTMLElement
 nolayer interfaceName=HTMLElement
 noscript interfaceName=HTMLElement
-object
+object constructorNeedsCreatedByParser=1
 ol interfaceName=HTMLOListElement
-optgroup interfaceName=HTMLOptGroupElement
-option
+optgroup interfaceName=HTMLOptGroupElement, constructorNeedsFormElement=1
+option constructorNeedsFormElement=1
 p interfaceName=HTMLParagraphElement
 param
 plaintext interfaceName=HTMLElement
@@ -86,7 +86,7 @@ q interfaceName=HTMLQuoteElement
 s interfaceName=HTMLElement
 samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser=1
-select
+select constructorNeedsFormElement=1
 small interfaceName=HTMLElement
 #if ENABLE_VIDEO
 source wrapperOnlyIfMediaIsAvailable=1
@@ -100,7 +100,7 @@ sup interfaceName=HTMLElement
 table
 tbody interfaceName=HTMLTableSectionElement
 td interfaceName=HTMLTableCellElement
-textarea interfaceName=HTMLTextAreaElement
+textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement=1
 tfoot interfaceName=HTMLTableSectionElement
 th interfaceName=HTMLTableCellElement
 thead interfaceName=HTMLTableSectionElement

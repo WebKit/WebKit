@@ -1,3 +1,18 @@
+2009-01-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 23237: Some HTML constructors in HTMLElementFactory needs
+        an HTMLFormElement argument
+
+        - Added 'constructorNeedsFormElement' parameter to make_names.pl to account
+          for HTML form elements.
+
+        - Added the new information to HTMLTagNames.in.
+
+        * dom/make_names.pl:
+        * html/HTMLTagNames.in:
+
 2009-01-16  David Hyatt  <hyatt@apple.com>
 
         Eliminate a bunch of save/restore pairs from commonly used GraphicsContext methods.  The most common reason
