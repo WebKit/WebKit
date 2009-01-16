@@ -1,3 +1,12 @@
+2009-01-15  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Got rid of .idl file in Resources for bug https://bugs.webkit.org/show_bug.cgi?id=21421.
+        Also fixed the test case to work on ppc.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Another attempt at fixing the Qt build.

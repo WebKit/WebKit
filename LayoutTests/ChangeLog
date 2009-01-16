@@ -1,3 +1,11 @@
+2009-01-15  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed test case to work on ppc, which (apparently) has some difference in sin() and cos()
+
+        * transforms/2d/cssmatrix-interface.xhtml:
+
 2009-01-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

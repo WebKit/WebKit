@@ -140,10 +140,10 @@ debug("");
 debug("Test rotate");
 m = new WebKitCSSMatrix();
 m = m.rotate(10);
-shouldBe('m.a', '0.9848077893257141');
-shouldBe('m.b', '0.1736481785774231');
-shouldBe('m.c', '-0.1736481785774231');
-shouldBe('m.d', '0.9848077893257141');
+shouldBe('Math.round(m.a*1000000)/1000000', '0.984808');
+shouldBe('Math.round(m.b*1000000)/1000000', '0.173648');
+shouldBe('Math.round(m.c*1000000)/1000000', '-0.173648');
+shouldBe('Math.round(m.d*1000000)/1000000', '0.984808');
 shouldBe('m.e', '0');
 shouldBe('m.f', '0');
 
