@@ -183,6 +183,11 @@ static JSValueRef titleUIElementCallback(JSContextRef context, JSObjectRef funct
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->titleUIElement());
 }
 
+static JSValueRef parentElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->parentElement());
+}
+
 static JSValueRef setSelectedTextRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     unsigned location = UINT_MAX, length = 0;
@@ -310,6 +315,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "setSelectedTextRange", setSelectedTextRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributeValue", attributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isAttributeSettable", isAttributeSettableCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "parentElement", parentElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

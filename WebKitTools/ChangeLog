@@ -1,3 +1,18 @@
+2009-01-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Add AX methods to retrieve the parent of an element.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (parentElementCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::parentElement):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::parentElement):
+
 2009-01-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

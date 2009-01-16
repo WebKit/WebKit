@@ -208,6 +208,15 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
     return nil;
 }
 
+AccessibilityUIElement AccessibilityUIElement::parentElement()
+{
+    id accessibilityObject = [m_element accessibilityAttributeValue:NSAccessibilityParentAttribute];
+    if (accessibilityObject)
+        return AccessibilityUIElement(accessibilityObject);
+    
+    return nil;
+}
+
 JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
 {
     Vector<AccessibilityUIElement> linkedElements;

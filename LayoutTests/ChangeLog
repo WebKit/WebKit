@@ -1,3 +1,13 @@
+2009-01-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 23387: AX hierarchy is incorrect when iframes are present
+        https://bugs.webkit.org/show_bug.cgi?id=23387
+
+        * accessibility/iframe-bastardization-expected.txt: Added.
+        * accessibility/iframe-bastardization.html: Added.
+
 2009-01-16  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Darin Adler.

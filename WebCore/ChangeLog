@@ -1,3 +1,17 @@
+2009-01-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 23387: AX hierarchy is incorrect when iframes are present
+        https://bugs.webkit.org/show_bug.cgi?id=23387
+
+        The AX hierarchy is incorrect when iframes are present.
+
+        Test: accessibility/iframe-bastardization.html
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper renderWidgetChildren]):
+
 2009-01-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

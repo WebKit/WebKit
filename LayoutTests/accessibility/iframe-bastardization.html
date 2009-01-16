@@ -1,0 +1,39 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body id="body">
+
+    <!-- This test makes sure that the AX parent chain hierarchy with iframes is correct -->
+ 
+    <iframe id='iframe1' scrolling=YES  width=100 height=100 border=1 src='resources/cake.png'></iframe>
+    
+    <div id="result"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+            var webArea = accessibilityController.focusedElement;
+
+            var group1 = webArea.childAtIndex(0);
+            var iframeScrollArea = group1.childAtIndex(0);
+            var iframeWebArea = iframeScrollArea.childAtIndex(0);
+            
+            var parentIframeWebArea = iframeWebArea.parentElement();
+            var parentIframeScrollArea = parentIframeWebArea.parentElement();
+            var parentGroup1 = parentIframeScrollArea.parentElement();
+
+            if (parentIframeWebArea.role == iframeScrollArea.role && parentIframeScrollArea.role == group1.role && parentGroup1.role == webArea.role) {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n";
+            }
+        }
+    </script>
+</body>
+</html>

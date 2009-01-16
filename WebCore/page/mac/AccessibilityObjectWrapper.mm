@@ -842,7 +842,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     Widget* widget = m_object->widget();
     if (!widget)
         return nil;
-    return [(widget->getOuterView()) accessibilityAttributeValue: NSAccessibilityChildrenAttribute];
+    return [(widget->platformWidget()) accessibilityAttributeValue: NSAccessibilityChildrenAttribute];
 }
 
 static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityChildrenVector& vector)
