@@ -1,3 +1,25 @@
+2009-01-16  David Hyatt  <hyatt@apple.com>
+
+        Add a new flag (similar to first-line and first-letter) to Document to track whether any before/after rules
+        are being used.  If not, don't waste time probing for those pseudo element styles.
+
+        Reviewed by Sam Weinig
+
+        * css/CSSGrammar.y:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::usesBeforeAfterRules):
+        (WebCore::Document::setUsesBeforeAfterRules):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::addChildToFlow):
+        (WebCore::RenderInline::splitInlines):
+
 2009-01-16  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alp Toker.

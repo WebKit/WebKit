@@ -1097,6 +1097,11 @@ pseudo:
             CSSParser* p = static_cast<CSSParser*>(parser);
             if (Document* doc = p->document())
                 doc->setUsesFirstLineRules(true);
+        } else if (type == CSSSelector::PseudoBefore ||
+                   type == CSSSelector::PseudoAfter) {
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            if (Document* doc = p->document())
+                doc->setUsesBeforeAfterRules(true);
         }
     }
     | ':' ':' IDENT {
@@ -1111,6 +1116,11 @@ pseudo:
             CSSParser* p = static_cast<CSSParser*>(parser);
             if (Document* doc = p->document())
                 doc->setUsesFirstLineRules(true);
+        } else if (type == CSSSelector::PseudoBefore ||
+                   type == CSSSelector::PseudoAfter) {
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            if (Document* doc = p->document())
+                doc->setUsesBeforeAfterRules(true);
         }
     }
     // used by :nth-*(ax+b)

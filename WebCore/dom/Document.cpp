@@ -348,6 +348,7 @@ Document::Document(Frame* frame, bool isXHTML)
     m_usesSiblingRules = false;
     m_usesFirstLineRules = false;
     m_usesFirstLetterRules = false;
+    m_usesBeforeAfterRules = false;
     m_gotoAnchorNeededAfterStylesheetsLoad = false;
  
     m_styleSelector = 0;

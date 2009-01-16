@@ -258,6 +258,9 @@ static RenderObject* findBeforeAfterParent(RenderObject* object)
 
 void RenderContainer::updateBeforeAfterContentForContainer(RenderStyle::PseudoId type, RenderContainer* styledObject)
 {
+    // Double check that the document did in fact use generated content rules.  Otherwise we should not have been called.
+    ASSERT(document()->usesBeforeAfterRules());
+
     // In CSS2, before/after pseudo-content cannot nest.  Check this first.
     if (style()->styleType() == RenderStyle::BEFORE || style()->styleType() == RenderStyle::AFTER)
         return;

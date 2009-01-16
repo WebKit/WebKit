@@ -172,7 +172,7 @@ void RenderBlock::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldS
     m_lineHeight = -1;
 
     // Update pseudos for :before and :after now.
-    if (!isAnonymous() && canHaveChildren()) {
+    if (!isAnonymous() && document()->usesBeforeAfterRules() && canHaveChildren()) {
         updateBeforeAfterContent(RenderStyle::BEFORE);
         updateBeforeAfterContent(RenderStyle::AFTER);
     }
