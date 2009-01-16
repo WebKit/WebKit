@@ -1094,7 +1094,7 @@ GdkDrawable* GraphicsContext::gdkDrawable() const
 }
 #endif
 
-void GraphicsContext::setUseAntialiasing(bool enable)
+void GraphicsContext::setPlatformShouldAntialias(bool enable)
 {
     if (paintingDisabled())
         return;

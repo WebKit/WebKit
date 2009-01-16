@@ -162,6 +162,9 @@ namespace WebCore {
         void setFillGradient(PassRefPtr<Gradient>);
         void setShadowsIgnoreTransforms(bool);
 
+        void setShouldAntialias(bool);
+        bool shouldAntialias() const;
+
         void save();
         void restore();
 
@@ -271,8 +274,6 @@ namespace WebCore {
         void concatCTM(const TransformationMatrix&);
         TransformationMatrix getCTM() const;
 
-        void setUseAntialiasing(bool = true);
-
 #if PLATFORM(WIN)
         GraphicsContext(HDC, bool hasAlpha = false); // FIXME: To be removed.
         bool inTransparencyLayer() const;
@@ -333,6 +334,8 @@ namespace WebCore {
         void setPlatformStrokeThickness(float);
 
         void setPlatformFillColor(const Color&);
+
+        void setPlatformShouldAntialias(bool b);
 
         void setPlatformShadow(const IntSize&, int blur, const Color&);
         void clearPlatformShadow();

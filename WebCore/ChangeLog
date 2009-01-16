@@ -1,3 +1,38 @@
+2009-01-16  David Hyatt  <hyatt@apple.com>
+
+        Eliminate a bunch of save/restore pairs from commonly used GraphicsContext methods.  The most common reason
+        for needing save/restore in the line-drawing methods was antialiasing, so this has now been made part of
+        the cross-platform graphics state.  By being able to query for the current antialiasing setting, antialiasing
+        can be temporarily changed and then restored back to the real value without needing to do a save/restore.
+
+        The line drawing code also set the fill color to the stroke color and relied on save/restore to prevent
+        a permanent mutation of the fill color in the CGContext.   The new code just restores the fill color back
+        to its original value without doing the much more expensive save/restore.
+
+        Reviewed by Oliver Hunt
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setShouldAntialias):
+        (WebCore::GraphicsContext::shouldAntialias):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextPrivate.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformShouldAntialias):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::setPlatformShouldAntialias):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setPlatformShouldAntialias):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShouldAntialias):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::setPlatformShouldAntialias):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+
 2009-01-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

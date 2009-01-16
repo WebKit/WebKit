@@ -211,6 +211,17 @@ Color GraphicsContext::fillColor() const
     return m_common->state.fillColor;
 }
 
+void GraphicsContext::setShouldAntialias(bool b)
+{
+    m_common->state.shouldAntialias = b;
+    setPlatformShouldAntialias(b);
+}
+
+bool GraphicsContext::shouldAntialias() const
+{
+    return m_common->state.shouldAntialias;
+}
+
 void GraphicsContext::setStrokePattern(PassRefPtr<Pattern> pattern)
 {
     ASSERT(pattern);

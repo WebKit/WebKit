@@ -249,7 +249,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
 
         prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
         if (style()->svgStyle()->shapeRendering() == SR_CRISPEDGES)
-            paintInfo.context->setUseAntialiasing(false);
+            paintInfo.context->setShouldAntialias(false);
         fillAndStrokePath(m_path, paintInfo.context, style(), this);
 
         if (static_cast<SVGStyledElement*>(element())->supportsMarkers())
