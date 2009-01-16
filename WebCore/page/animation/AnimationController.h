@@ -65,6 +65,7 @@ public:
 
     void startUpdateRenderingDispatcher();
     void addEventToDispatch(PassRefPtr<Element>, const AtomicString& eventType, const String& name, double elapsedTime);
+    void addNodeChangeToDispatch(PassRefPtr<Node>);
 
     void styleAvailable();
 

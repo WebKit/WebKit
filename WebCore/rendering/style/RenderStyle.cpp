@@ -751,7 +751,7 @@ void RenderStyle::adjustAnimations()
     if (!animationList)
         return;
 
-    // get rid of empty transitions and anything beyond them
+    // Get rid of empty animations and anything beyond them
     for (size_t i = 0; i < animationList->size(); ++i) {
         if (animationList->animation(i)->isEmpty()) {
             animationList->resize(i);
@@ -774,7 +774,7 @@ void RenderStyle::adjustTransitions()
     if (!transitionList)
         return;
 
-    // get rid of empty transitions and anything beyond them
+    // Get rid of empty transitions and anything beyond them
     for (size_t i = 0; i < transitionList->size(); ++i) {
         if (transitionList->animation(i)->isEmpty()) {
             transitionList->resize(i);

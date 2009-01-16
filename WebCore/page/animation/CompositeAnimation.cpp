@@ -166,14 +166,12 @@ void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, Render
             bool equal = true;
 
             if (implAnim) {
-               // This implAnim might not be an already running transition. It might be
-               // newly added to the list in a previous iteration. This would happen if
-               // you have both an explicit transition-property and 'all' in the same
-               // list. In this case, the latter one overrides the earlier one, so we
-               // behave as though this is a running animation being replaced.
-                if (!isActiveTransition)
-                    m_transitions.remove(prop);
-                else if (!implAnim->isTargetPropertyEqual(prop, targetStyle)) {
+                // This implAnim might not be an already running transition. It might be
+                // newly added to the list in a previous iteration. This would happen if
+                // you have both an explicit transition-property and 'all' in the same
+                // list. In this case, the latter one overrides the earlier one, so we
+                // behave as though this is a running animation being replaced.
+                if (!implAnim->isTargetPropertyEqual(prop, targetStyle)) {
                     m_transitions.remove(prop);
                     equal = false;
                 }

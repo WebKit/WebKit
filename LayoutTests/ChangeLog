@@ -1,3 +1,12 @@
+2009-01-16  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        * transitions/hang-with-bad-transition-list-expected.txt: Added.
+        * transitions/hang-with-bad-transition-list.html: Added.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23088
+
 2009-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,0 +1,41 @@
+<html>
+<head>
+  <title>Testing hang when running a bad transition</title>
+  <style type="text/css" media="screen">
+    span {
+        background: blue;
+        color: white;
+        opacity: .666;
+        -webkit-transition: opacity, .25s, .15s ease-out;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    function checkRunning()
+    {
+      var current = layoutTestController.numberOfActiveAnimations();
+      if (current == 0)
+        document.getElementById('result').innerHTML = "Number of active animations before transition is (0) as expected";
+      else
+        document.getElementById('result').innerHTML = "Number of active transitions is (" + current + ") but was expecting (0)";
+      layoutTestController.notifyDone();
+    }
+    
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+        window.setTimeout(checkRunning, 300);            
+    }
+  </script>
+</head>
+<body>
+
+<span id="doomSpan">If you can see this then we didn't hang!!!</span>
+
+<script type="text/javascript" charset="utf-8">
+    document.getElementById("doomSpan").style.opacity=1;
+</script>
+
+<div id="result">
+</div>
+</body>
+</html>

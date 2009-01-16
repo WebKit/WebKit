@@ -1,3 +1,38 @@
+2009-01-16  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Test: transitions/hang-with-bad-transition-list.html
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=23088.
+        This was happening because I was calling setChanged() from inside updateRendering()
+        which causes an infinite loop. I fixed this by deferring the setChanged to the next
+        run loop iteration. That made it not infinite loop, but it still retriggers the
+        transition forever. The problem is that there is both an 'all' and specific transition
+        on 'opacity'. This tickled a bug in AnimationController which causes the opacity 
+        transition to get constantly cancelled and then retriggered. The problem is that
+        the specific opacity transition has a duration of 0. I got rid of the logic to 
+        flush out 0 duration transitions and it is no longer constantly triggered. The
+        logic to flush them was just an optimization, and you really need to keep them
+        around to make the logic to override earlier animations by later ones work. And there is
+        very little overhead in this case anyway, so the optimization was not that useful.
+
+        I made a LayoutTest from the original testcase which tests both the infinite
+        loop and constantly triggering animation cases.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateRenderingDispatcherFired):
+        (WebCore::AnimationControllerPrivate::addNodeChangeToDispatch):
+        (WebCore::AnimationController::addNodeChangeToDispatch):
+        * page/animation/AnimationController.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::updateTransitions):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::adjustAnimations):
+        (WebCore::RenderStyle::adjustTransitions):
+
 2009-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
