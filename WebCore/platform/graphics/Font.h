@@ -30,6 +30,8 @@
 #include "SimpleFontData.h"
 #include <wtf/HashMap.h>
 
+#include <math.h>
+
 #if PLATFORM(QT)
 #include <QFont>
 #endif

@@ -1,3 +1,9 @@
+2009-01-16  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix the Qt build.
+
+        * platform/graphics/Font.h:
+
 2009-01-16  David Hyatt  <hyatt@apple.com>
 
         Add a new flag (similar to first-line and first-letter) to Document to track whether any before/after rules
