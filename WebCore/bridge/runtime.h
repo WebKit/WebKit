@@ -133,8 +133,8 @@ public:
 
     virtual BindingLanguage getBindingLanguage() const = 0;
 
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&) { return false; }
-    virtual void put(ExecState*, const Identifier&, JSValuePtr, PutPropertySlot&) { }
+    virtual bool getOwnPropertySlot(JSObject*, ExecState*, const Identifier&, PropertySlot&) { return false; }
+    virtual void put(JSObject*, ExecState*, const Identifier&, JSValuePtr, PutPropertySlot&) { }
 
 protected:
     virtual void virtualBegin() { }

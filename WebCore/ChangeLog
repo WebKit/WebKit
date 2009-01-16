@@ -1,5 +1,20 @@
 2009-01-15  Anders Carlsson  <andersca@apple.com>
 
+        Another attempt at fixing the Qt build.
+        
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::getOwnPropertySlot):
+        (JSC::Bindings::QtInstance::put):
+        * bridge/qt/qt_instance.h:
+        * bridge/runtime.h:
+        (JSC::Bindings::Instance::getOwnPropertySlot):
+        (JSC::Bindings::Instance::put):
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::getOwnPropertySlot):
+        (JSC::RuntimeObjectImp::put):
+
+2009-01-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Add QtInstance::getInstance and start using it.

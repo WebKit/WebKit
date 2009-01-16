@@ -162,7 +162,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
         
     instance->end();
     
-    return instance->getOwnPropertySlot(exec, propertyName, slot);
+    return instance->getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
 void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
@@ -182,7 +182,7 @@ void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSVa
     else if (instance->supportsSetValueOfUndefinedField())
         instance->setValueOfUndefinedField(exec, propertyName, value);
     else
-        instance->put(exec, propertyName, value, slot);
+        instance->put(this, exec, propertyName, value, slot);
 
     instance->end();
 }
