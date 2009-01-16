@@ -1,3 +1,14 @@
+2009-01-15  Dimitri Dupuis-Latour  <dupuislatour@apple.com>
+
+        Added testcases for all CSS3 pseudo-classes and pseudo-elements
+
+        <rdar://problem/5870656> selectorText and cssText are clipped for :nth-child() and :nth-of-type();
+
+        Reviewed by Timothy Hatcher.
+
+        * fast/dom/css-selectorText-expected.txt:
+        * fast/dom/css-selectorText.html:
+
 2009-01-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.

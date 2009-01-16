@@ -374,7 +374,11 @@ String CSSSelector::selectorText() const
                 if (CSSSelector* subSel = cs->simpleSelector())
                     str += subSel->selectorText();
                 str += ")";
-            } else if (cs->pseudoType() == PseudoLang) {
+            } else if (cs->pseudoType() == PseudoLang
+                    || cs->pseudoType() == PseudoNthChild
+                    || cs->pseudoType() == PseudoNthLastChild
+                    || cs->pseudoType() == PseudoNthOfType
+                    || cs->pseudoType() == PseudoNthLastOfType) {
                 str += cs->argument();
                 str += ")";
             }
