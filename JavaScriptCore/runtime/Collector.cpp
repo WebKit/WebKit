@@ -22,13 +22,14 @@
 #include "Collector.h"
 
 #include "ArgList.h"
-#include "CollectorHeapIterator.h"
 #include "CallFrame.h"
+#include "CollectorHeapIterator.h"
+#include "Interpreter.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSString.h"
 #include "JSValue.h"
-#include "Interpreter.h"
+#include "Nodes.h"
 #include "Tracing.h"
 #include <algorithm>
 #include <setjmp.h>
