@@ -620,7 +620,7 @@ void JIT::privateCompileMainPass()
             NEXT_OPCODE(op_resolve_func);
         }
         case op_sub: {
-            compileBinaryArithOp(op_sub, currentInstruction[1].u.operand, currentInstruction[2].u.operand, currentInstruction[3].u.operand, OperandTypes::fromInt(currentInstruction[4].u.operand));
+            compileFastArith_op_sub(currentInstruction);
             NEXT_OPCODE(op_sub);
         }
         case op_put_by_val: {
@@ -1326,7 +1326,7 @@ void JIT::privateCompileSlowCases()
             NEXT_OPCODE(op_get_by_val);
         }
         case op_sub: {
-            compileBinaryArithOpSlowCase(op_sub, iter, currentInstruction[1].u.operand, currentInstruction[2].u.operand, currentInstruction[3].u.operand, OperandTypes::fromInt(currentInstruction[4].u.operand));
+            compileFastArithSlow_op_sub(currentInstruction, iter);
             NEXT_OPCODE(op_sub);
         }
         case op_rshift: {

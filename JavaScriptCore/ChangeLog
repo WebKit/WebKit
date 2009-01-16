@@ -1,5 +1,29 @@
 2009-01-15  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Add support for integer addition, subtraction and multiplication
+        in JIT code on x86-64.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::mul32):
+        (JSC::MacroAssembler::sub32):
+        (JSC::MacroAssembler::joMul32):
+        (JSC::MacroAssembler::joSub32):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_add):
+        (JSC::JIT::compileFastArithSlow_op_add):
+        (JSC::JIT::compileFastArith_op_mul):
+        (JSC::JIT::compileFastArithSlow_op_mul):
+        (JSC::JIT::compileFastArith_op_sub):
+        (JSC::JIT::compileFastArithSlow_op_sub):
+
+2009-01-15  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         On x86-64 allow JSImmediate to encode 64-bit double precision values.

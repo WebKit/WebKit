@@ -391,6 +391,7 @@ namespace JSC {
         void putDoubleResultToJSNumberCellOrJSImmediate(X86Assembler::XMMRegisterID xmmSource, RegisterID jsNumberCell, unsigned dst, X86Assembler::JmpSrc* wroteJSNumberCell, X86Assembler::XMMRegisterID tempXmm, RegisterID tempReg1, RegisterID tempReg2);
 
         void compileFastArith_op_add(Instruction*);
+        void compileFastArith_op_sub(Instruction*);
         void compileFastArith_op_mul(Instruction*);
         void compileFastArith_op_mod(unsigned result, unsigned op1, unsigned op2);
         void compileFastArith_op_bitand(unsigned result, unsigned op1, unsigned op2);
@@ -401,6 +402,7 @@ namespace JSC {
         void compileFastArith_op_post_inc(unsigned result, unsigned srcDst);
         void compileFastArith_op_post_dec(unsigned result, unsigned srcDst);
         void compileFastArithSlow_op_add(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void compileFastArithSlow_op_sub(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void compileFastArithSlow_op_mul(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void compileFastArithSlow_op_mod(unsigned result, unsigned op1, unsigned op2, Vector<SlowCaseEntry>::iterator&);
         void compileFastArithSlow_op_bitand(unsigned result, unsigned op1, unsigned op2, Vector<SlowCaseEntry>::iterator&);
@@ -410,8 +412,10 @@ namespace JSC {
         void compileFastArithSlow_op_pre_dec(unsigned srcDst, Vector<SlowCaseEntry>::iterator&);
         void compileFastArithSlow_op_post_inc(unsigned result, unsigned srcDst, Vector<SlowCaseEntry>::iterator&);
         void compileFastArithSlow_op_post_dec(unsigned result, unsigned srcDst, Vector<SlowCaseEntry>::iterator&);
+#if ENABLE(JIT_OPTIMIZE_ARITHMETIC) && !USE(ALTERNATE_JSIMMEDIATE)
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);
         void compileBinaryArithOpSlowCase(OpcodeID, Vector<SlowCaseEntry>::iterator&, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);
+#endif
 
         void emitGetVirtualRegister(int src, RegisterID dst);
         void emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2);
