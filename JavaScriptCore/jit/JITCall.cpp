@@ -167,9 +167,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
     // Put the return value in dst. In the interpreter, op_ret does this.
     emitPutVirtualRegister(dst);
 
-#if ENABLE(CODEBLOCK_SAMPLING)
-    storePtr(ImmPtr(m_codeBlock), m_interpreter->sampler()->codeBlockSlot());
-#endif
+    sampleCodeBlock(m_codeBlock);
 }
 
 void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned, OpcodeID opcodeID)
@@ -184,9 +182,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     // Put the return value in dst. In the interpreter, op_ret does this.
     emitPutVirtualRegister(dst);
 
-#if ENABLE(CODEBLOCK_SAMPLING)
-    storePtr(ImmPtr(m_codeBlock), m_interpreter->sampler()->codeBlockSlot());
-#endif
+    sampleCodeBlock(m_codeBlock);
 }
 
 #else
@@ -256,9 +252,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     // Put the return value in dst. In the interpreter, op_ret does this.
     emitPutVirtualRegister(dst);
 
-#if ENABLE(CODEBLOCK_SAMPLING)
-        storePtr(ImmPtr(m_codeBlock), m_interpreter->sampler()->codeBlockSlot());
-#endif
+    sampleCodeBlock(m_codeBlock);
 }
 
 void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex, OpcodeID opcodeID)
@@ -341,9 +335,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     storeResultForFirstRun.link(this);
     emitPutVirtualRegister(dst);
 
-#if ENABLE(CODEBLOCK_SAMPLING)
-    storePtr(ImmPtr(m_codeBlock), m_interpreter->sampler()->codeBlockSlot());
-#endif
+    sampleCodeBlock(m_codeBlock);
 }
 
 #endif

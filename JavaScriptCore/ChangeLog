@@ -1,3 +1,29 @@
+2009-01-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fixes for SamplingTool.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23390
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::storePtr):
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::run):
+        (JSC::SamplingTool::dump):
+        * bytecode/SamplingTool.h:
+        (JSC::SamplingTool::encodeSample):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::samplingToolTrackCodeBlock):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitCTICall_internal):
+
 2009-01-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

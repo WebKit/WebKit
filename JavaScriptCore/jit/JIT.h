@@ -27,6 +27,7 @@
 #define JIT_h
 
 #include <wtf/Platform.h>
+#include <bytecode/SamplingTool.h>
 
 #if ENABLE(JIT)
 
@@ -247,7 +248,7 @@ namespace JSC {
         static const int patchOffsetGetByIdPropertyMapOffset = 31;
         static const int patchOffsetGetByIdPutResult = 31;
 #if ENABLE(OPCODE_SAMPLING)
-        static const int patchOffsetGetByIdSlowCaseCall = 40 + ctiArgumentInitSize;
+        static const int patchOffsetGetByIdSlowCaseCall = 53 + ctiArgumentInitSize;
 #else
         static const int patchOffsetGetByIdSlowCaseCall = 30 + ctiArgumentInitSize;
 #endif
@@ -504,6 +505,34 @@ namespace JSC {
 #endif
 
         void killLastResultRegister();
+
+#if ENABLE(CODEBLOCK_SAMPLING)
+        void sampleCodeBlock(CodeBlock* codeBlock)
+        {
+#if PLATFORM(X86_64)
+            move(ImmPtr(m_interpreter->sampler()->codeBlockSlot()), X86::ecx);
+            storePtr(ImmPtr(codeBlock), X86::ecx);
+#else
+            storePtr(ImmPtr(codeBlock), m_interpreter->sampler()->codeBlockSlot());
+#endif
+        }
+#else
+        void sampleCodeBlock(CodeBlock*) {}
+#endif
+
+#if ENABLE(OPCODE_SAMPLING)
+        void sampleInstruction(Instruction* instruction, bool inHostFunction=false)
+        {
+#if PLATFORM(X86_64)
+            move(ImmPtr(m_interpreter->sampler()->sampleSlot()), X86::ecx);
+            storePtr(ImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), X86::ecx);
+#else
+            storePtr(ImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), m_interpreter->sampler()->sampleSlot());
+#endif
+        }
+#else
+        void sampleInstruction(Instruction*, bool) {}
+#endif
 
         Interpreter* m_interpreter;
         JSGlobalData* m_globalData;

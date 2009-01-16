@@ -314,7 +314,7 @@ void JIT::privateCompileMainPass()
 
 #if ENABLE(OPCODE_SAMPLING)
         if (m_bytecodeIndex > 0) // Avoid the overhead of sampling op_enter twice.
-            store32(m_interpreter->sampler()->encodeSample(currentInstruction), m_interpreter->sampler()->sampleSlot());
+            sampleInstruction(currentInstruction);
 #endif
 
         m_labels[m_bytecodeIndex] = label();
@@ -1608,11 +1608,9 @@ void JIT::privateCompileSlowCases()
 
 void JIT::privateCompile()
 {
-#if ENABLE(CODEBLOCK_SAMPLING)
-        storePtr(ImmPtr(m_codeBlock), m_interpreter->sampler()->codeBlockSlot());
-#endif
+    sampleCodeBlock(m_codeBlock);
 #if ENABLE(OPCODE_SAMPLING)
-        store32(Imm32(m_interpreter->sampler()->encodeSample(m_codeBlock->instructions().begin())), m_interpreter->sampler()->sampleSlot());
+    sampleInstruction(m_codeBlock->instructions().begin());
 #endif
 
     // Could use a pop_m, but would need to offset the following instruction if so.

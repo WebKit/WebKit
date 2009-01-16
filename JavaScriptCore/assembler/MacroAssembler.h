@@ -887,6 +887,13 @@ public:
 #endif
     }
 
+#if !PLATFORM(X86_64)
+    void storePtr(ImmPtr imm, void* address)
+    {
+        store32(Imm32(imm), address);
+    }
+#endif
+
     DataLabelPtr storePtrWithPatch(Address address)
     {
 #if PLATFORM(X86_64)

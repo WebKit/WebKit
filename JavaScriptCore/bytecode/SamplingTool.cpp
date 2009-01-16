@@ -105,7 +105,7 @@ void SamplingTool::run()
 
 #if ENABLE(CODEBLOCK_SAMPLING)
         MutexLocker locker(m_scopeSampleMapMutex);
-        ScopeSampleRecord* record = m_scopeSampleMap->get(sample.codeBlock()->ownerNode);
+        ScopeSampleRecord* record = m_scopeSampleMap->get(sample.codeBlock()->ownerNode());
         ASSERT(record);
         record->sample(sample.codeBlock(), sample.vPC());
 #endif
@@ -248,8 +248,8 @@ void SamplingTool::dump(ExecState* exec)
         double blockPercent = (record->m_sampleCount * 100.0) / m_sampleCount;
 
         if (blockPercent >= 1) {
-            Instruction* code = codeBlock->instructions().begin();
-            printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_scope->sourceURL().UTF8String().c_str(), codeBlock->lineNumberForBytecodeOffset(0), record->m_sampleCount, m_sampleCount, blockPercent);
+            //Instruction* code = codeBlock->instructions().begin();
+            printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_scope->sourceURL().UTF8String().c_str(), codeBlock->lineNumberForBytecodeOffset(exec, 0), record->m_sampleCount, m_sampleCount, blockPercent);
             if (i < 10) {
                 HashMap<unsigned,unsigned> lineCounts;
                 codeBlock->dump(exec);
@@ -259,9 +259,7 @@ void SamplingTool::dump(ExecState* exec)
                     int count = record->m_samples[op];
                     if (count) {
                         printf("    [% 4d] has sample count: % 4d\n", op, count);
-                        // It is okay to pass 0 as the CallFrame for lineNumberForBytecodeOffset since
-                        // we ensure exception information when Sampling is enabled.
-                        unsigned line = codeBlock->lineNumberForBytecodeOffset(0, op);
+                        unsigned line = codeBlock->lineNumberForBytecodeOffset(exec, op);
                         lineCounts.set(line, (lineCounts.contains(line) ? lineCounts.get(line) : 0) + count);
                     }
                 }
