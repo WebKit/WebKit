@@ -169,46 +169,6 @@ void Font::update(PassRefPtr<FontSelector> fontSelector) const
     m_pages.clear();
 }
 
-int Font::width(const TextRun& run) const
-{
-    return lroundf(floatWidth(run));
-}
-
-int Font::ascent() const
-{
-    return primaryFont()->ascent();
-}
-
-int Font::descent() const
-{
-    return primaryFont()->descent();
-}
-
-int Font::lineSpacing() const
-{
-    return primaryFont()->lineSpacing();
-}
-
-int Font::lineGap() const
-{
-    return primaryFont()->lineGap();
-}
-
-float Font::xHeight() const
-{
-    return primaryFont()->xHeight();
-}
-
-unsigned Font::unitsPerEm() const
-{
-    return primaryFont()->unitsPerEm();
-}
-
-int Font::spaceWidth() const
-{
-    return (int)ceilf(primaryFont()->m_adjustedSpaceWidth + m_letterSpacing);
-}
-
 bool Font::isFixedPitch() const
 {
     ASSERT(m_fontList);

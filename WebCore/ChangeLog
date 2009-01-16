@@ -1,3 +1,20 @@
+2009-01-16  David Hyatt  <hyatt@apple.com>
+
+        Inline the methods of Font for obtaining metrics such as ascent, descent and line spacing.
+
+        Reviewed by ggaren
+
+        * platform/graphics/Font.cpp:
+        * platform/graphics/Font.h:
+        (WebCore::Font::width):
+        (WebCore::Font::ascent):
+        (WebCore::Font::descent):
+        (WebCore::Font::lineSpacing):
+        (WebCore::Font::lineGap):
+        (WebCore::Font::xHeight):
+        (WebCore::Font::unitsPerEm):
+        (WebCore::Font::spaceWidth):
+
 2009-01-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.
