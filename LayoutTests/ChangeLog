@@ -1,3 +1,13 @@
+2009-01-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Added a test for <rdar://problem/6471394> REGRESSION (r39164): Discarding
+        quantifier on assertion gives incorrect result (23075)
+
+        * fast/regex/quantified-assertions-expected.txt:
+        * fast/regex/resources/quantified-assertions.js:
+
 2009-01-15  Dimitri Dupuis-Latour  <dupuislatour@apple.com>
 
         Added testcases for all CSS3 pseudo-classes and pseudo-elements

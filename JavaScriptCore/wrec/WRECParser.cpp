@@ -233,38 +233,45 @@ bool Parser::parseParentheses(JumpList& failures)
     // unsupported parentheses, we fall back on PCRE.
 
     switch (type) {
-        case Generator::Assertion:
+        case Generator::Assertion: {
             m_generator.generateParenthesesAssertion(failures);
 
             if (consume() != ')') {
                 setError(ParenthesesUnmatched);
                 return false;
             }
-            
-            // A quantifier after an assertion is meaningless, since assertions
-            // don't move index forward. So, we discard it.
-            consumeQuantifier();
-            break;
 
-        case Generator::InvertedAssertion:
+            Quantifier quantifier = consumeQuantifier();
+            if (quantifier.type != Quantifier::None && quantifier.min == 0) {
+                setError(ParenthesesNotSupported);
+                return false;
+            }
+
+            return true;
+        }
+        case Generator::InvertedAssertion: {
             m_generator.generateParenthesesInvertedAssertion(failures);
 
             if (consume() != ')') {
                 setError(ParenthesesUnmatched);
                 return false;
             }
-            
-            // A quantifier after an assertion is meaningless, since assertions
-            // don't move index forward. So, we discard it.
-            consumeQuantifier();
-            break;
 
+            Quantifier quantifier = consumeQuantifier();
+            if (quantifier.type != Quantifier::None && quantifier.min == 0) {
+                setError(ParenthesesNotSupported);
+                return false;
+            }
+
+            return true;
+        }
         default:
             setError(ParenthesesNotSupported);
             return false;
     }
 
-    return true;
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool Parser::parseCharacterClass(JumpList& failures)

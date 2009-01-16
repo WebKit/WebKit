@@ -1,3 +1,22 @@
+2009-01-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Fixed <rdar://problem/6471394> REGRESSION (r39164): Discarding quantifier
+        on assertion gives incorrect result (23075)
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23075
+
+        * pcre/pcre_compile.cpp:
+        (compileBranch): Throw away an assertion if it's followed by a quantifier
+        with a 0 minimum, to match SpiderMonkey, v8, and the ECMA spec.
+
+        * wrec/WRECParser.cpp:
+        (JSC::WREC::Parser::parseParentheses): Fall back on PCRE for the rare
+        case of an assertion with a quantifier with a 0 minimum, since we
+        don't handle quantified subexpressions yet, and in this special case,
+        we can't just throw away the quantifier.
+
 2009-01-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
