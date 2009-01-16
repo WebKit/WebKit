@@ -1,3 +1,16 @@
+2009-01-15  David Hyatt  <hyatt@apple.com>
+
+        Eliminate an extra virtual function call that occurs for every single RenderText by moving the SVG-specific
+        code that was placed into RenderText::styleDidChange into RenderSVGInlineText::styleDidChange.
+
+        Reviewed by Oliver Hunt
+
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::styleDidChange):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::styleDidChange):
+
 2009-01-15  Anders Carlsson  <andersca@apple.com>
 
         Another attempt at fixing the Qt build.

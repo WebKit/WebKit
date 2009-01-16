@@ -34,6 +34,8 @@ class RenderSVGInlineText : public RenderText {
 public:
     RenderSVGInlineText(Node*, PassRefPtr<StringImpl>);
     virtual const char* renderName() const { return "RenderSVGInlineText"; }
+        
+    virtual void styleDidChange(RenderStyle::Diff, const RenderStyle*);
 
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);

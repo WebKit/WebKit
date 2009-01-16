@@ -53,6 +53,17 @@ RenderSVGInlineText::RenderSVGInlineText(Node* n, PassRefPtr<StringImpl> str)
 {
 }
 
+
+void RenderSVGInlineText::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+{
+    // Skip RenderText's work.
+    RenderObject::styleDidChange(diff, oldStyle);
+    
+    // SVG text is apparently always transformed.
+    if (RefPtr<StringImpl> textToTransform = originalText())
+        setText(textToTransform.release(), true);
+}
+
 void RenderSVGInlineText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
 {
     rects.append(computeAbsoluteRectForRange(0, textLength()));
