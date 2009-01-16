@@ -99,7 +99,19 @@ void SmallStrings::mark()
             m_singleCharacterStrings[i]->mark();
     }
 }
-    
+
+unsigned SmallStrings::count() const
+{
+    unsigned count = 0;
+    if (m_emptyString)
+        ++count;
+    for (unsigned i = 0; i < numCharactersToStore; ++i) {
+        if (m_singleCharacterStrings[i])
+            ++count;
+    }
+    return count;
+}
+
 void SmallStrings::createEmptyString(JSGlobalData* globalData)
 {
     ASSERT(!m_emptyString);

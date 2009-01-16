@@ -1,5 +1,21 @@
 2009-01-15  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoffrey Garen.
+
+        <rdar://problem/6045018>
+        REGRESSION (r34838): JavaScript objects appear to be leaked after loading google.com
+
+        Subtract the number of JSStrings cached in SmallStrings when calculating the
+        number of live JSObjects.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::objectCount):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::count):
+        * runtime/SmallStrings.h:
+
+2009-01-15  Sam Weinig  <sam@webkit.org>
+
         Fix Qt build.
 
         * runtime/Collector.cpp:

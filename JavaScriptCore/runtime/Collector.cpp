@@ -1005,7 +1005,7 @@ bool Heap::collect()
 
 size_t Heap::objectCount() 
 {
-    return primaryHeap.numLiveObjects + numberHeap.numLiveObjects; 
+    return primaryHeap.numLiveObjects + numberHeap.numLiveObjects - m_globalData->smallStrings.count(); 
 }
 
 template <HeapType heapType> 
