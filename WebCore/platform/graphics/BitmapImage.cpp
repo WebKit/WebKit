@@ -285,7 +285,7 @@ void BitmapImage::startAnimation(bool catchUpIfNecessary)
 
     // Don't advance the animation to an incomplete frame.
     size_t nextFrame = (m_currentFrame + 1) % frameCount();
-    if (!frameIsCompleteAtIndex(nextFrame))
+    if (!m_allDataReceived && !frameIsCompleteAtIndex(nextFrame))
         return;
 
     // Don't advance past the last frame if we haven't decoded the whole image
