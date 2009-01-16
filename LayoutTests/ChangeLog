@@ -1,3 +1,13 @@
+2009-01-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test case for
+        Bug 23385: crash at com.apple.WebCore WebCore::HTMLAnchorElement::isKeyboardFocusable
+
+        * fast/events/tab-crash-with-image-map-expected.txt: Added.
+        * fast/events/tab-crash-with-image-map.html: Added.
+
 2009-01-15  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Sam Weinig.
