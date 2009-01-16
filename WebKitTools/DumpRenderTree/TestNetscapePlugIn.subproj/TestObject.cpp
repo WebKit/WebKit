@@ -147,7 +147,7 @@ static bool testGetProperty(NPObject* npobj, NPIdentifier name, NPVariant* resul
 
 static bool testEnumerate(NPObject *npobj, NPIdentifier **value, uint32_t *count)
 {
-    *count = NUM_TEST_IDENTIFIERS;
+    *count = NUM_ENUMERATABLE_TEST_IDENTIFIERS;
     
     *value = (NPIdentifier*)browser->memalloc(NUM_ENUMERATABLE_TEST_IDENTIFIERS * sizeof(NPIdentifier));
     memcpy(*value, testIdentifiers, sizeof(NPIdentifier) * NUM_ENUMERATABLE_TEST_IDENTIFIERS);

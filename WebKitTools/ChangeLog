@@ -1,3 +1,12 @@
+2009-01-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Set the count to the right number of elements.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp:
+        (testEnumerate):
+
 2009-01-14  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Use COM API on Windows in LayoutTestController::setIconDatabaseEnabled()
