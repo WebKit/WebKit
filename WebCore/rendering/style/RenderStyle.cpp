@@ -499,7 +499,8 @@ void RenderStyle::setCursorList(PassRefPtr<CursorList> other)
 
 void RenderStyle::clearCursorList()
 {
-    inherited.access()->cursorData = CursorList::create();
+    if (inherited->cursorData)
+        inherited.access()->cursorData = 0;
 }
 
 bool RenderStyle::contentDataEquivalent(const RenderStyle* otherStyle) const

@@ -3214,7 +3214,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             }
         } else if (primitiveValue) {
             int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_IDENT)
+            if (type == CSSPrimitiveValue::CSS_IDENT && m_style->cursor() != ECursor(*primitiveValue))
                 m_style->setCursor(*primitiveValue);
         }
         return;
