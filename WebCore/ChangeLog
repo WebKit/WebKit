@@ -1,3 +1,15 @@
+2009-01-16  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23384
+        PLATFORM(CHROMIUM) needs to delegate BackForwardList.cpp methods to the embedder
+
+        * history/BackForwardList.h:
+        (WebCore::BackForwardListClient::~BackForwardListClient):
+        (WebCore::BackForwardList::setClient):
+        * history/BackForwardListChromium.cpp: Added.
+
 2009-01-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Kevin Decker and Adam Roben.
