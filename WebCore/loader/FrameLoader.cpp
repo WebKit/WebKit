@@ -1886,23 +1886,13 @@ void FrameLoader::addData(const char* bytes, int length)
     write(bytes, length);
 }
 
-bool FrameLoader::canCachePage()
-{    
-    // Cache the page, if possible.
-    // Don't write to the cache if in the middle of a redirect, since we will want to
-    // store the final page we end up on.
-    // No point writing to the cache on a reload or loadSame, since we will just write
-    // over it again when we leave that page.
-    // FIXME: <rdar://problem/4886592> - We should work out the complexities of caching pages with frames as they
-    // are the most interesting pages on the web, and often those that would benefit the most from caching!
-    FrameLoadType loadType = this->loadType();
-
+bool FrameLoader::canCachePageContainingThisFrame()
+{
     return m_documentLoader
         && m_documentLoader->mainDocumentError().isNull()
         && !m_frame->tree()->childCount()
-        && !m_frame->tree()->parent()
-        // FIXME: If we ever change this so that pages with plug-ins will be cached,
-        // we need to make sure that we don't cache pages that have outstanding NPObjects
+        // FIXME: If we ever change this so that frames with plug-ins will be cached,
+        // we need to make sure that we don't cache frames that have outstanding NPObjects
         // (objects created by the plug-in). Since there is no way to pause/resume a Netscape plug-in,
         // they would need to be destroyed and then recreated, and there is no way that we can recreate
         // the right NPObjects. See <rdar://problem/5197041> for more information.
@@ -1914,27 +1904,163 @@ bool FrameLoader::canCachePage()
         && !m_frame->document()->hasOpenDatabases()
 #endif
         && !m_frame->document()->usingGeolocation()
-        && m_frame->page()
-        && m_frame->page()->backForwardList()->enabled()
-        && m_frame->page()->backForwardList()->capacity() > 0
-        && m_frame->page()->settings()->usesPageCache()
         && m_currentHistoryItem
         && !isQuickRedirectComing()
-        && loadType != FrameLoadTypeReload 
-        && loadType != FrameLoadTypeReloadAllowingStaleData
-        && loadType != FrameLoadTypeReloadFromOrigin
-        && loadType != FrameLoadTypeSame
         && !m_documentLoader->isLoadingInAPISense()
         && !m_documentLoader->isStopping()
         && m_frame->document()->canSuspendActiveDOMObjects()
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        // FIXME: We should investigating caching pages that have an associated
+        // FIXME: We should investigating caching frames that have an associated
         // application cache. <rdar://problem/5917899> tracks that work.
         && !m_documentLoader->applicationCache()
         && !m_documentLoader->candidateApplicationCacheGroup()
 #endif
+        && m_client->canCachePage()
         ;
 }
+
+bool FrameLoader::canCachePage()
+{
+#ifndef NDEBUG
+    logCanCachePageDecision();
+#endif
+    
+    // Cache the page, if possible.
+    // Don't write to the cache if in the middle of a redirect, since we will want to
+    // store the final page we end up on.
+    // No point writing to the cache on a reload or loadSame, since we will just write
+    // over it again when we leave that page.
+    // FIXME: <rdar://problem/4886592> - We should work out the complexities of caching pages with frames as they
+    // are the most interesting pages on the web, and often those that would benefit the most from caching!
+    FrameLoadType loadType = this->loadType();
+    
+    return !m_frame->tree()->parent()
+        && canCachePageContainingThisFrame()
+        && m_frame->page()
+        && m_frame->page()->backForwardList()->enabled()
+        && m_frame->page()->backForwardList()->capacity() > 0
+        && m_frame->page()->settings()->usesPageCache()
+        && loadType != FrameLoadTypeReload 
+        && loadType != FrameLoadTypeReloadAllowingStaleData
+        && loadType != FrameLoadTypeReloadFromOrigin
+        && loadType != FrameLoadTypeSame
+        ;
+}
+
+#ifndef NDEBUG
+void FrameLoader::logCanCachePageDecision()
+{
+    // Only bother logging for main frames that have actually loaded and have content.
+    if (m_creatingInitialEmptyDocument)
+        return;
+    KURL currentURL = m_documentLoader ? m_documentLoader->url() : KURL();
+    if (currentURL.isEmpty())
+        return;
+
+    LOG(PageCache, "--------\nDetermining if page can be cached:");
+    
+    bool cannotCache = !logCanCacheFrameDecision();
+    
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        cannotCache = !child->loader()->logCanCacheFrameDecision();
+        
+    FrameLoadType loadType = this->loadType();
+    do {
+        if (m_frame->tree()->parent())
+            { LOG(PageCache, " -Frame has a parent frame"); cannotCache = true; }
+        if (!m_frame->page()) {
+            LOG(PageCache, " -There is no Page object");
+            cannotCache = true;
+            break;
+        }
+        if (!m_frame->page()->backForwardList()->enabled())
+            { LOG(PageCache, " -The back/forward list is disabled"); cannotCache = true; }
+        if (!m_frame->page()->backForwardList()->capacity() > 0)
+            { LOG(PageCache, " -The back/forward list has a 0 capacity"); cannotCache = true; }
+        if (!m_frame->page()->settings()->usesPageCache())
+            { LOG(PageCache, " -Page settings says b/f cache disabled"); cannotCache = true; }
+        if (loadType == FrameLoadTypeReload)
+            { LOG(PageCache, " -Load type is: Reload"); cannotCache = true; }
+        if (loadType == FrameLoadTypeReloadAllowingStaleData)
+            { LOG(PageCache, " -Load type is: Reload allowing stale data"); cannotCache = true; }
+        if (loadType == FrameLoadTypeReloadFromOrigin)
+            { LOG(PageCache, " -Load type is: Reload from origin"); cannotCache = true; }
+        if (loadType == FrameLoadTypeSame)
+            { LOG(PageCache, " -Load type is: Same"); cannotCache = true; }
+    } while (false);
+    
+    LOG(PageCache, cannotCache ? "Page CANNOT be cached\n--------" : "Page CAN be cached\n--------");
+}
+
+bool FrameLoader::logCanCacheFrameDecision()
+{
+    // Only bother logging for frames that have actually loaded and have content.
+    if (m_creatingInitialEmptyDocument)
+        return false;
+    KURL currentURL = m_documentLoader ? m_documentLoader->url() : KURL();
+    if (currentURL.isEmpty())
+        return false;
+
+    KURL newURL = m_provisionalDocumentLoader ? m_provisionalDocumentLoader->url() : KURL();
+    if (!newURL.isEmpty())
+        LOG(PageCache, "----\nDetermining if frame can be cached navigating from (%s) to (%s):", currentURL.string().utf8().data(), newURL.string().utf8().data());
+    else
+        LOG(PageCache, "----\nDetermining if subframe with URL (%s) can be cached:", currentURL.string().utf8().data());
+        
+    bool cannotCache = false;
+
+    do {
+        if (!m_documentLoader) {
+            LOG(PageCache, " -There is no DocumentLoader object");
+            cannotCache = true;
+            break;
+        }
+        if (!m_documentLoader->mainDocumentError().isNull())
+            { LOG(PageCache, " -Main document has an error"); cannotCache = true; }
+        if (m_frame->tree()->childCount())
+            { LOG(PageCache, " -Frame has child frames"); cannotCache = true; }
+        if (m_containsPlugIns)
+            { LOG(PageCache, " -Frame contains plugins"); cannotCache = true; }
+        if (m_URL.protocolIs("https"))
+            { LOG(PageCache, " -Frame is HTTPS"); cannotCache = true; }
+        if (!m_frame->document()) {
+            LOG(PageCache, " -There is no Document object");
+            cannotCache = true;
+            break;
+        }
+        if (m_frame->document()->hasWindowEventListener(eventNames().unloadEvent))
+            { LOG(PageCache, " -Frame has an unload event listener"); cannotCache = true; }
+#if ENABLE(DATABASE)
+        if (m_frame->document()->hasOpenDatabases())
+            { LOG(PageCache, " -Frame has open database handles"); cannotCache = true; }
+#endif
+        if (m_frame->document()->usingGeolocation())
+            { LOG(PageCache, " -Frame uses Geolocation"); cannotCache = true; }
+        if (!m_currentHistoryItem)
+            { LOG(PageCache, " -No current history item"); cannotCache = true; }
+        if (isQuickRedirectComing())
+            { LOG(PageCache, " -Quick redirect is coming"); cannotCache = true; }
+        if (m_documentLoader->isLoadingInAPISense())
+            { LOG(PageCache, " -DocumentLoader is still loading in API sense"); cannotCache = true; }
+        if (m_documentLoader->isStopping())
+            { LOG(PageCache, " -DocumentLoader is in the middle of stopping"); cannotCache = true; }
+        if (!m_frame->document()->canSuspendActiveDOMObjects())
+            { LOG(PageCache, " -The document cannot suspect its active DOM Objects"); cannotCache = true; }
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        if (m_documentLoader->applicationCache())
+            { LOG(PageCache, " -The DocumentLoader has an active application cache"); cannotCache = true; }
+        if (m_documentLoader->candidateApplicationCacheGroup())
+            { LOG(PageCache, " -The DocumentLoader has a candidateApplicationCacheGroup"); cannotCache = true; }
+#endif
+        if (!m_client->canCachePage())
+            { LOG(PageCache, " -The client says this frame cannot be cached"); cannotCache = true; }
+    } while (false);
+    
+    LOG(PageCache, cannotCache ? "Frame CANNOT be cached\n----" : "Frame CAN be cached\n----");
+    
+    return !cannotCache;
+}
+#endif
 
 void FrameLoader::updatePolicyBaseURL()
 {
@@ -2693,7 +2819,7 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
     
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
     // We are doing this here because we know for sure that a new page is about to be loaded.
-    if (canCachePage() && m_client->canCachePage() && !m_currentHistoryItem->isInPageCache()) {
+    if (canCachePage() && !m_currentHistoryItem->isInPageCache()) {
         if (Document* document = m_frame->document())
             document->suspendActiveDOMObjects();
         cachePageForHistoryItem(m_currentHistoryItem.get());

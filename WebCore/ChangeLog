@@ -1,3 +1,19 @@
+2009-01-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/3541409> - Split up some back/forward cache decision making and add detailed logging to
+        better understand what the common disqualifiers are.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePageContainingThisFrame):
+        (WebCore::FrameLoader::canCachePage): Split off what will be per-frame decision making into canCacheSubframe.
+        (WebCore::FrameLoader::logCanCachePageDecision): Detailed logging about why a page may not be considered for
+          the back/forward cache.
+        (WebCore::FrameLoader::logCanCacheFrameDecision): Same detailed logging on the per-frame basis.
+        (WebCore::FrameLoader::commitProvisionalLoad): Move the m_client->canCachePage() call into canCachePageContainingThisFrame().
+        * loader/FrameLoader.h:
+
 2009-01-16  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by David Hyatt.
