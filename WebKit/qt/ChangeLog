@@ -2,6 +2,16 @@
 
         Rubber-stamped by Simon Hausmann.
 
+        [Qt] Per-line cursor movement tests depend on platform-specific font
+        metrics. Remove them to avoid test failures on different platforms.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::cursorMovements):
+
+2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Rubber-stamped by Simon Hausmann.
+
         http://www.qtsoftware.com/developer/task-tracker/index_html?id=219344&method=entry
 
         [Qt] API documentation for QWebPage::WebAction enum.

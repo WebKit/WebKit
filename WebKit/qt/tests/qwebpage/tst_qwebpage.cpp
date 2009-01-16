@@ -776,7 +776,14 @@ void tst_QWebPage::cursorMovements()
     QCOMPARE(page->selectionStartOffset(), 4);
 
     // cursor will be between 'p' and 's' in the word "jumps"
-    page->triggerAction(QWebPage::MoveToNextLine);
+    page->triggerAction(QWebPage::MoveToNextWord);
+    page->triggerAction(QWebPage::MoveToNextWord);
+    page->triggerAction(QWebPage::MoveToNextWord);
+    page->triggerAction(QWebPage::MoveToNextChar);
+    page->triggerAction(QWebPage::MoveToNextChar);
+    page->triggerAction(QWebPage::MoveToNextChar);
+    page->triggerAction(QWebPage::MoveToNextChar);
+    page->triggerAction(QWebPage::MoveToNextChar);
     QVERIFY(page->isSelectionCollapsed());
     QCOMPARE(page->selectionStartOffset(), 4);
 
@@ -792,10 +799,12 @@ void tst_QWebPage::cursorMovements()
 
     // cursor will be between 'w' and 'n' in "brown"
     page->triggerAction(QWebPage::MoveToStartOfLine);
-    page->triggerAction(QWebPage::MoveToNextWord);
-    page->triggerAction(QWebPage::MoveToNextWord);
-    page->triggerAction(QWebPage::MoveToNextWord);
-    page->triggerAction(QWebPage::MoveToPreviousLine);
+    page->triggerAction(QWebPage::MoveToPreviousWord);
+    page->triggerAction(QWebPage::MoveToPreviousWord);
+    page->triggerAction(QWebPage::MoveToNextChar);
+    page->triggerAction(QWebPage::MoveToNextChar);
+    page->triggerAction(QWebPage::MoveToNextChar);
+    page->triggerAction(QWebPage::MoveToNextChar);
     QVERIFY(page->isSelectionCollapsed());
     QCOMPARE(page->selectionStartOffset(), 14);
 
