@@ -2,6 +2,63 @@
 
         Reviewed by Oliver Hunt.
 
+        Add support in ResultType to track that the results of bitops
+        are always of type int32_t.
+
+        * parser/Nodes.cpp:
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::ReadModifyDotNode::emitBytecode):
+        (JSC::ReadModifyBracketNode::emitBytecode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::):
+        (JSC::BooleanNode::):
+        (JSC::NumberNode::):
+        (JSC::StringNode::):
+        (JSC::PrePostResolveNode::):
+        (JSC::TypeOfResolveNode::):
+        (JSC::TypeOfValueNode::):
+        (JSC::UnaryPlusNode::):
+        (JSC::NegateNode::):
+        (JSC::BitwiseNotNode::):
+        (JSC::LogicalNotNode::):
+        (JSC::MultNode::):
+        (JSC::DivNode::):
+        (JSC::ModNode::):
+        (JSC::SubNode::):
+        (JSC::LeftShiftNode::):
+        (JSC::RightShiftNode::):
+        (JSC::UnsignedRightShiftNode::):
+        (JSC::LessNode::):
+        (JSC::GreaterNode::):
+        (JSC::LessEqNode::):
+        (JSC::GreaterEqNode::):
+        (JSC::InstanceOfNode::):
+        (JSC::EqualNode::):
+        (JSC::NotEqualNode::):
+        (JSC::StrictEqualNode::):
+        (JSC::NotStrictEqualNode::):
+        (JSC::BitAndNode::):
+        (JSC::BitOrNode::):
+        (JSC::BitXOrNode::):
+        (JSC::LogicalOpNode::):
+        * parser/ResultType.h:
+        (JSC::ResultType::isInt32):
+        (JSC::ResultType::isNotNumber):
+        (JSC::ResultType::booleanType):
+        (JSC::ResultType::numberType):
+        (JSC::ResultType::numberTypeCanReuse):
+        (JSC::ResultType::numberTypeCanReuseIsInt32):
+        (JSC::ResultType::stringOrNumberTypeCanReuse):
+        (JSC::ResultType::stringType):
+        (JSC::ResultType::unknownType):
+        (JSC::ResultType::forAdd):
+        (JSC::ResultType::forBitOp):
+        (JSC::OperandTypes::OperandTypes):
+
+2009-01-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Add support for integer addition, subtraction and multiplication
         in JIT code on x86-64.
 
