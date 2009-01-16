@@ -890,18 +890,15 @@ int caretMinOffset(const Node* n)
     return r ? r->caretMinOffset() : 0;
 }
 
+// If a node can contain candidates for VisiblePositions, return the offset of the last candidate, otherwise 
+// return the number of children for container nodes and the length for unrendered text nodes.
 int caretMaxOffset(const Node* n)
 {
-    RenderObject* r = n->renderer();
-    ASSERT(!n->isCharacterDataNode() || !r || r->isText()); // FIXME: This was a runtime check that seemingly couldn't fail; changed it to an assertion for now.
-    if (r)
-        return r->caretMaxOffset();
-
-    if (n->isCharacterDataNode()) {
-        const CharacterData* c = static_cast<const CharacterData*>(n);
-        return static_cast<int>(c->length());
-    }
-    return 1;
+    // For rendered text nodes, return the last position that a caret could occupy.
+    if (n->isTextNode() && n->renderer())
+        return n->renderer()->caretMaxOffset();
+    // For containers return the number of children.  For others do the same as above.
+    return maxDeepOffset(n);
 }
 
 bool lineBreakExistsAtPosition(const VisiblePosition& visiblePosition)

@@ -125,7 +125,9 @@ void InsertLineBreakCommand::doApply()
             insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
         
         setEndingSelection(Selection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
-    } else if (pos.offset() >= caretMaxOffset(pos.node())) {
+    // If we're inserting after all of the rendered text in a text node, or into a non-text node,
+    // a simple insertion is sufficient.
+    } else if (pos.offset() >= caretMaxOffset(pos.node()) || !pos.node()->isTextNode()) {
         insertNodeAt(nodeToInsert.get(), pos);
         setEndingSelection(Selection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
     } else {

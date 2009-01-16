@@ -858,13 +858,16 @@ void ApplyStyleCommand::applyInlineStyleToRange(CSSMutableStyleDeclaration* styl
     }
 
     if (!rangeIsEmpty) {
+        // pastEndNode is the node after the last fully selected node.
+        Node* pastEndNode = end.node();
+        if (end.offset() >= caretMaxOffset(end.node()))
+            pastEndNode = end.node()->traverseNextSibling();
         // FIXME: Callers should perform this operation on a Range that includes the br
         // if they want style applied to the empty line.
         if (start == end && start.node()->hasTagName(brTag))
-            end = positionAfterNode(start.node());
+            pastEndNode = start.node()->traverseNextNode();
         // Add the style to selected inline runs.
-        Node* pastLast = Range::create(document(), rangeCompliantEquivalent(start), rangeCompliantEquivalent(end))->pastLastNode();
-        for (Node* next; node && node != pastLast; node = next) {
+        for (Node* next; node && node != pastEndNode; node = next) {
             
             next = node->traverseNextNode();
             
@@ -873,7 +876,9 @@ void ApplyStyleCommand::applyInlineStyleToRange(CSSMutableStyleDeclaration* styl
             
             if (!node->isContentRichlyEditable() && node->isHTMLElement()) {
                 // This is a plaintext-only region. Only proceed if it's fully selected.
-                if (end.node()->isDescendantOf(node))
+                // pastEndNode is the node after the last fully selected node, so if it's inside node then
+                // node isn't fully selected.
+                if (pastEndNode->isDescendantOf(node))
                     break;
                 // Add to this element's inline style and skip over its contents.
                 HTMLElement* element = static_cast<HTMLElement*>(node);
@@ -898,7 +903,7 @@ void ApplyStyleCommand::applyInlineStyleToRange(CSSMutableStyleDeclaration* styl
             Node* runStart = node;
             // Find the end of the run.
             Node* sibling = node->nextSibling();
-            while (sibling && sibling != pastLast && (!sibling->isElementNode() || sibling->hasTagName(brTag)) && !isBlock(sibling)) {
+            while (sibling && sibling != pastEndNode && (!sibling->isElementNode() || sibling->hasTagName(brTag)) && !isBlock(sibling)) {
                 node = sibling;
                 sibling = node->nextSibling();
             }

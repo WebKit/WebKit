@@ -1,3 +1,24 @@
+2009-01-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        <rdar://problem/6444148> Styling a selection that ends in a line break can sometimes style what's after the break
+
+        If the range to style ended at [node, 0] or inside node (and if for some reason the node didn't get split),
+        applyInlineStyle would style node.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle): Rename pastLast to pastEndNode, since it doesn't come from 
+        Range::pastLastNode() anymore.  pastEndNode is the node after the last one that is fully selected, since
+        the work done in the loop that follows should only be performed on fully selected nodes.
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): Explicitly handle insertion into containers and after non-text nodes.
+        Those were handled accidently before.
+        * editing/htmlediting.cpp:
+        (WebCore::caretMaxOffset): In various places we call this with a container and expect to be given the number 
+        of children in that container, so I changed it to match that.  RenderBR and RenderObject::caretMaxOffset() should 
+        also be eliminated since maxDeepOffset handles non-text nodes.
+
 2009-01-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoffrey Garen.

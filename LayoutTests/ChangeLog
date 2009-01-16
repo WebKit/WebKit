@@ -1,3 +1,12 @@
+2009-01-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        <rdar://problem/6444148> Styling a selection that ends in a line break can sometimes style what's after the break
+
+        * editing/execCommand/6444148-expected.txt: Added.
+        * editing/execCommand/6444148.html: Added.
+
 2009-01-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
