@@ -2386,15 +2386,14 @@ void RenderObject::styleDidChange(RenderStyle::Diff diff, const RenderStyle*)
     if (s_affectsParentBlock)
         handleDynamicFloatPositionChange();
 
-    // No need to ever schedule repaints from a style change of a text run, since
-    // we already did this for the parent of the text run.
-    // We do have to schedule layouts, though, since a style change can force us to
-    // need to relayout.
-    if (diff == RenderStyle::Layout && m_parent)
+    if (!m_parent)
+        return;
+    
+    if (diff == RenderStyle::Layout)
         setNeedsLayoutAndPrefWidthsRecalc();
-    else if (diff == RenderStyle::LayoutPositionedMovementOnly && m_parent && !isText())
+    else if (diff == RenderStyle::LayoutPositionedMovementOnly)
         setNeedsPositionedMovementLayout();
-    else if (m_parent && !isText() && (diff == RenderStyle::RepaintLayer || diff == RenderStyle::Repaint))
+    else if (diff == RenderStyle::RepaintLayer || diff == RenderStyle::Repaint)
         // Do a repaint with the new style now, e.g., for example if we go from
         // not having an outline to having an outline.
         repaint();

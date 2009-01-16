@@ -1,3 +1,17 @@
+2009-01-16  David Hyatt  <hyatt@apple.com>
+
+        Optimize RenderText::styleDidChange.  Don't call the base class, which does extra meaningless work.
+        Instead just do the one check we need to do (for a diff of layout) and mark dirty as appropriate.
+        Clean up the base class method also to just bail early if no m_parent is set instead of repeatedly checking
+        for the existence of m_parent in each if clause.
+
+        Reviewed by Darin Adler
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleDidChange):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::styleDidChange):
+
 2009-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
