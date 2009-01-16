@@ -1,3 +1,65 @@
+2009-01-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23388
+        Remove FrameViewPrivate
+
+        Removes an indirection and is a small speedup on PLT.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::resetScrollbars):
+        (WebCore::FrameView::init):
+        (WebCore::FrameView::clear):
+        (WebCore::FrameView::didFirstLayout):
+        (WebCore::FrameView::initScrollbars):
+        (WebCore::FrameView::updateDefaultScrollbarState):
+        (WebCore::FrameView::setCanHaveScrollbars):
+        (WebCore::FrameView::applyOverflowToViewport):
+        (WebCore::FrameView::layoutCount):
+        (WebCore::FrameView::needsFullRepaint):
+        (WebCore::FrameView::layoutRoot):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::setMediaType):
+        (WebCore::FrameView::mediaType):
+        (WebCore::FrameView::useSlowRepaints):
+        (WebCore::FrameView::setUseSlowRepaints):
+        (WebCore::FrameView::addSlowRepaintObject):
+        (WebCore::FrameView::removeSlowRepaintObject):
+        (WebCore::FrameView::scrollRectIntoViewRecursively):
+        (WebCore::FrameView::setScrollPosition):
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::beginDeferredRepaints):
+        (WebCore::FrameView::endDeferredRepaints):
+        (WebCore::FrameView::scheduleRelayout):
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+        (WebCore::FrameView::layoutPending):
+        (WebCore::FrameView::needsLayout):
+        (WebCore::FrameView::unscheduleRelayout):
+        (WebCore::FrameView::isTransparent):
+        (WebCore::FrameView::setTransparent):
+        (WebCore::FrameView::baseBackgroundColor):
+        (WebCore::FrameView::setBaseBackgroundColor):
+        (WebCore::FrameView::shouldUpdateWhileOffscreen):
+        (WebCore::FrameView::setShouldUpdateWhileOffscreen):
+        (WebCore::FrameView::scheduleEvent):
+        (WebCore::FrameView::pauseScheduledEvents):
+        (WebCore::FrameView::resumeScheduledEvents):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::updateOverflowStatus):
+        (WebCore::FrameView::dispatchScheduledEvents):
+        (WebCore::FrameView::wasScrolledByUser):
+        (WebCore::FrameView::setWasScrolledByUser):
+        (WebCore::FrameView::paintContents):
+        (WebCore::FrameView::setPaintRestriction):
+        (WebCore::FrameView::isPainting):
+        (WebCore::FrameView::setNodeToDraw):
+        * page/FrameView.h:
+        (WebCore::FrameView::setIsVisuallyNonEmpty): Inline.
+
 2009-01-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.
