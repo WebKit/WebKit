@@ -1,0 +1,31 @@
+Test to make sure styles toggle as expected and tag-based styles can be removed by editing commands.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.compatMode is "BackCompat"
+PASS bold toggle
+PASS bold removing b
+FAIL bold removing font-weight: bold -- <span style="">test</span>
+FAIL bold removing strong -- <strong><span class="Apple-style-span" style="font-weight: normal;">test</span></strong>
+PASS italic toggle
+PASS italic removing i
+FAIL italic removing font-style: italic -- <span style="">test</span>
+FAIL italic removing em -- <em><span class="Apple-style-span" style="font-style: normal;">test</span></em>
+FAIL subscript toggle: <span class="Apple-style-span" style="vertical-align: sub;">test</span>
+FAIL subscript removing sub -- <sub>test</sub>
+FAIL subscript removing vertical-align: subscript -- <span><span class="Apple-style-span" style="vertical-align: sub;">test</span></span>
+FAIL superscript toggle: <span class="Apple-style-span" style="vertical-align: super;">test</span>
+FAIL superscript removing sup -- <sup>test</sup>
+FAIL superscript removing vertical-align: superscript -- <span><span class="Apple-style-span" style="vertical-align: super;">test</span></span>
+PASS strikethrough toggle
+FAIL strikethrough removing strike -- <strike style=""><span class="Apple-style-span" style="text-decoration: none;">test</span></strike>
+FAIL strikethrough removing text-decoration: line-through -- <span style="">test</span>
+FAIL strikethrough removing s -- <s style=""><span class="Apple-style-span" style="text-decoration: none;">test</span></s>
+PASS underline toggle
+FAIL underline removing u -- <u style=""><span class="Apple-style-span" style="text-decoration: none;">test</span></u>
+FAIL underline removing text-decoration: underline -- <span style="">test</span>
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
