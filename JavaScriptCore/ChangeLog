@@ -1,3 +1,14 @@
+2009-01-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed <rdar://problem/6452301> REGRESSION: Latest WebKit nightlies
+        turn "c" into "" when stripping \\c_ character
+
+        * wrec/WRECParser.cpp:
+        (JSC::WREC::Parser::consumeEscape): Mimic a Firefox quirk when parsing
+        control escapes inside character classes.
+
 2009-01-16  Adam Roben  <aroben@apple.com>
 
         Windows build fix

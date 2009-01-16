@@ -461,7 +461,9 @@ Escape Parser::consumeEscape(bool inCharacterClass)
         consume();
         
         int control = consume();
-        if (!isASCIIAlpha(control)) {
+        // To match Firefox, inside a character class, we also accept numbers
+        // and '_' as control characters.
+        if ((!inCharacterClass && !isASCIIAlpha(control)) || (!isASCIIAlphanumeric(control) && control != '_')) {
             state.restore();
             return PatternCharacterEscape('\\');
         }

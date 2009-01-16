@@ -34,4 +34,16 @@ debug("\nTesting regexp: " + regexp);
 shouldBeTrue("regexp.test('\\\\8')");
 shouldBe("regexp.lastIndex", "2");
 
+regexp = /^[\c]$/;
+debug("\nTesting regexp: " + regexp);
+shouldBeTrue("regexp.test('c')");
+
+regexp = /^[\c_]$/;
+debug("\nTesting regexp: " + regexp);
+shouldBeFalse("regexp.test('c')");
+
+regexp = /^[\c]]$/;
+debug("\nTesting regexp: " + regexp);
+shouldBeTrue("regexp.test('c]')");
+
 var successfullyParsed = true;

@@ -1,3 +1,13 @@
+2009-01-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Added tests for <rdar://problem/6452301> REGRESSION: Latest WebKit
+        nightlies turn "c" into "" when stripping \\c_ character
+
+        * fast/regex/malformed-escapes-expected.txt:
+        * fast/regex/resources/malformed-escapes.js:
+
 2009-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

@@ -303,7 +303,10 @@ static int checkEscape(const UChar** ptrPtr, const UChar* patternEnd, ErrorCode*
                 }
                 
                 c = *ptr;
-                if (!isASCIIAlpha(c)) {
+
+                /* To match Firefox, inside a character class, we also accept
+                   numbers and '_' as control characters */
+                if ((!isClass && !isASCIIAlpha(c)) || (!isASCIIAlphanumeric(c) && c != '_')) {
                     c = '\\';
                     ptr -= 2;
                     break;
