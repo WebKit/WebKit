@@ -2250,13 +2250,13 @@ void tst_QWebFrame::popupFocus()
     QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(25, 25));
     QObject* webpopup = firstChildByClassName(&view, "WebCore::QWebPopup");
     QComboBox* combo = qobject_cast<QComboBox*>(webpopup);
-    QTest::qWait(1);
+    QTest::qWait(500);
     QVERIFY2(!view.hasFocus() && combo->view()->hasFocus(),
              "Focus sould be on the Popup");
 
     // hide the popup and check if focus is on the page
     combo->hidePopup();
-    QTest::qWait(1);
+    QTest::qWait(500);
     QVERIFY2(view.hasFocus() && !combo->view()->hasFocus(),
              "Focus sould be back on the WebView");
 

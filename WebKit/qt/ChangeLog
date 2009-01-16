@@ -1,5 +1,13 @@
 2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Increase popup focus delay time to a sensible 500 ms.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
+2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
          Reviewed by Adam Roben.
 
          [Qt] Prevent crash if plugin data is NULL.
