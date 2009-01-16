@@ -1,3 +1,15 @@
+2009-01-16  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23394
+        Remove unnecessary calls to setDeferringTimers().
+
+        Use of this function was obsoleted by better handling of EINTR.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::downloadTimerCallback): removed setDeferringTimers calls.
+
 2009-01-16  David Hyatt  <hyatt@apple.com>
 
         Fix badness with the cursor CSS property.  For all links and form controls, resetting to a value of auto
