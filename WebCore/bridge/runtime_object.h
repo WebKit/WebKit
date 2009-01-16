@@ -33,6 +33,8 @@ namespace JSC {
 
 class RuntimeObjectImp : public JSObject {
 public:
+    RuntimeObjectImp(ExecState*, PassRefPtr<Bindings::Instance>);
+
     virtual ~RuntimeObjectImp();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -65,9 +67,6 @@ protected:
     RuntimeObjectImp(ExecState*, PassRefPtr<Structure>, PassRefPtr<Bindings::Instance>);
 
 private:
-    friend class Bindings::Instance;
-    RuntimeObjectImp(ExecState*, PassRefPtr<Bindings::Instance>);
-
     virtual const ClassInfo* classInfo() const { return &s_info; }
     
     static JSValuePtr fallbackObjectGetter(ExecState*, const Identifier&, const PropertySlot&);

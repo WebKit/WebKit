@@ -95,20 +95,6 @@ RuntimeObjectImp* Instance::createRuntimeObject(ExecState* exec)
     return new (exec) RuntimeObjectImp(exec, this);
 }
 
-Instance* Instance::getInstance(JSObject* object, BindingLanguage language)
-{
-    if (!object)
-        return 0;
-    if (!object->inherits(&RuntimeObjectImp::s_info))
-        return 0;
-    Instance* instance = static_cast<RuntimeObjectImp*>(object)->getInternalInstance();
-    if (!instance)
-        return 0;
-    if (instance->getBindingLanguage() != language)
-        return 0;
-    return instance;
-}
-
 RootObject* Instance::rootObject() const 
 { 
     return _rootObject && _rootObject->isValid() ? _rootObject.get() : 0;

@@ -1,3 +1,17 @@
+2009-01-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Get rid of the dreaded BindingLanguage once and for all. Also get rid of Instance::getInstance.
+
+        * bridge/c/c_instance.h:
+        * bridge/jni/jni_instance.h:
+        * bridge/objc/objc_instance.h:
+        * bridge/qt/qt_instance.h:
+        * bridge/runtime.cpp:
+        * bridge/runtime.h:
+        * bridge/runtime_object.h:
+
 2009-01-15  David Hyatt  <hyatt@apple.com>
 
         Eliminate an extra virtual function call that occurs for every single RenderText by moving the SVG-specific

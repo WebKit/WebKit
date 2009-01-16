@@ -53,8 +53,6 @@ public:
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
-    virtual BindingLanguage getBindingLanguage() const { return QtLanguage; }
-
     JSValuePtr stringValue(ExecState* exec) const;
     JSValuePtr numberValue(ExecState* exec) const;
     JSValuePtr booleanValue() const;
