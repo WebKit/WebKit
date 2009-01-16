@@ -305,11 +305,10 @@ void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
     ASSERT(m_caches.contains(cache));
     
     m_caches.remove(cache);
-    
-    if (cache != m_savedNewestCachePointer)
-        cacheStorage().remove(cache);
 
-    // FIXME: When the newest cache is destroyed, we'd rather clear m_savedNewestCachePointer to avoid having a hanging reference - but currently, ApplicationCacheStorage checks the value as a flag.
+    // If no one holds a reference to the newest cache, then the cache group won't be revived.
+    if (cache == m_savedNewestCachePointer)
+        m_savedNewestCachePointer = 0;
 
     if (m_caches.isEmpty())
         delete this;
@@ -319,6 +318,11 @@ void ApplicationCacheGroup::setNewestCache(PassRefPtr<ApplicationCache> newestCa
 {
     ASSERT(!m_caches.contains(newestCache.get()));
     ASSERT(!newestCache->group());
+
+    if (m_newestCache) {
+        cacheStorage().remove(m_newestCache.get());
+        m_newestCache->clearStorageID();
+    }
 
     m_newestCache = newestCache; 
     m_caches.add(m_newestCache.get());

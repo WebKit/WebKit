@@ -64,9 +64,6 @@ ResourceLoader::ResourceLoader(Frame* frame, bool sendResourceLoadCallbacks, boo
     , m_shouldContentSniff(shouldContentSniff)
     , m_shouldBufferData(true)
     , m_defersLoading(frame->page()->defersLoading())
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    , m_wasLoadedFromApplicationCache(false)
-#endif
 {
 }
 
@@ -122,10 +119,8 @@ bool ResourceLoader::load(const ResourceRequest& r)
         return true;
     
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    if (m_documentLoader->scheduleApplicationCacheLoad(this, clientRequest, r.url())) {
-        m_wasLoadedFromApplicationCache = true;
+    if (m_documentLoader->scheduleApplicationCacheLoad(this, clientRequest, r.url()))
         return true;
-    }
 #endif
 
     if (m_defersLoading) {
@@ -200,7 +195,6 @@ bool ResourceLoader::scheduleLoadFallbackResourceFromApplicationCache(Applicatio
 {
     if (documentLoader()->scheduleLoadFallbackResourceFromApplicationCache(this, m_request, cache)) {
         handle()->cancel();
-        m_wasLoadedFromApplicationCache = true;
         return true;
     }
     return false;

@@ -1,3 +1,30 @@
+2009-01-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23349
+        Don't store obsolete caches in disk storage
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::load):
+        (WebCore::ResourceLoader::scheduleLoadFallbackResourceFromApplicationCache):
+        * loader/ResourceLoader.h:
+        Don't maintain m_wasLoadedFromApplicationCache, which was never used.
+
+        * loader/appcache/ApplicationCache.cpp: (WebCore::ApplicationCache::addResource):
+        Assert that only implicit and dynamic resources can be added after the cache has been fully
+        loaded and stored to disk database.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::cacheDestroyed): Don't remove non-newest caches from disk
+        database, as this is now done whenever the cache becomes obsolete.
+        (WebCore::ApplicationCacheGroup::setNewestCache): Remove an obsolete cache from disk storage.
+
+        * loader/appcache/ApplicationCacheStorage.cpp: (WebCore::ApplicationCacheStorage::cacheGroupDestroyed):
+        A cache group that has never been saved should not be remembered in m_cacheHostSet. Changed
+        the check to no longer rely on savedNewestCachePointer.
+
 2009-01-15  Dimitri Dupuis-Latour  <dupuislatour@apple.com>
 
         <rdar://problem/5870656> selectorText and cssText are clipped for :nth-child() and :nth-of-type();
