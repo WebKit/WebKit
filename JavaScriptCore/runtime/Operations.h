@@ -31,7 +31,7 @@ namespace JSC {
     // ECMA 11.9.3
     inline bool JSValuePtr::equal(ExecState* exec, JSValuePtr v1, JSValuePtr v2)
     {
-        if (JSImmediate::areBothImmediateNumbers(v1, v2))
+        if (JSImmediate::areBothImmediateIntegerNumbers(v1, v2))
             return v1 == v2;
 
         return equalSlowCase(exec, v1, v2);
@@ -39,7 +39,7 @@ namespace JSC {
 
     ALWAYS_INLINE bool JSValuePtr::equalSlowCaseInline(ExecState* exec, JSValuePtr v1, JSValuePtr v2)
     {
-        ASSERT(!JSImmediate::areBothImmediateNumbers(v1, v2));
+        ASSERT(!JSImmediate::areBothImmediateIntegerNumbers(v1, v2));
 
         do {
             if (v1->isNumber() && v2->isNumber())
@@ -71,7 +71,7 @@ namespace JSC {
                 if (exec->hadException())
                     return false;
                 v1 = p1;
-                if (JSImmediate::areBothImmediateNumbers(v1, v2))
+                if (JSImmediate::areBothImmediateIntegerNumbers(v1, v2))
                     return v1 == v2;
                 continue;
             }
@@ -81,7 +81,7 @@ namespace JSC {
                 if (exec->hadException())
                     return false;
                 v2 = p2;
-                if (JSImmediate::areBothImmediateNumbers(v1, v2))
+                if (JSImmediate::areBothImmediateIntegerNumbers(v1, v2))
                     return v1 == v2;
                 continue;
             }
@@ -107,39 +107,24 @@ namespace JSC {
     // ECMA 11.9.3
     inline bool JSValuePtr::strictEqual(JSValuePtr v1, JSValuePtr v2)
     {
-        if (JSImmediate::areBothImmediate(v1, v2))
+        if (JSImmediate::areBothImmediateIntegerNumbers(v1, v2))
             return v1 == v2;
 
-        if (JSImmediate::isEitherImmediate(v1, v2) & (v1 != js0()) & (v2 != js0()))
-            return false;
+        if (v1->isNumber() && v2->isNumber())
+            return v1->uncheckedGetNumber() == v2->uncheckedGetNumber();
+
+        if (JSImmediate::isEitherImmediate(v1, v2))
+            return v1 == v2;
 
         return strictEqualSlowCase(v1, v2);
     }
 
     ALWAYS_INLINE bool JSValuePtr::strictEqualSlowCaseInline(JSValuePtr v1, JSValuePtr v2)
     {
-        ASSERT(!JSImmediate::areBothImmediate(v1, v2));
+        ASSERT(!JSImmediate::isEitherImmediate(v1, v2));
 
-        if (JSImmediate::isEitherImmediate(v1, v2)) {
-            ASSERT(v1 == js0() || v2 == js0());
-            ASSERT(v1 != v2);
-
-            // The reason we can't just return false here is that 0 === -0,
-            // and while the former is an immediate number, the latter is not.
-            if (v1 == js0())
-                return v2->asCell()->isNumber() && v2->asNumberCell()->value() == 0;
-            return v1->asCell()->isNumber() && v1->asNumberCell()->value() == 0;
-        }
-
-        if (v1->asCell()->isNumber()) {
-            return v2->asCell()->isNumber()
-                && v1->asNumberCell()->value() == v2->asNumberCell()->value();
-        }
-
-        if (v1->asCell()->isString()) {
-            return v2->asCell()->isString()
-                && asString(v1)->value() == asString(v2)->value();
-        }
+        if (v1->asCell()->isString() && v2->asCell()->isString())
+            return asString(v1)->value() == asString(v2)->value();
 
         return v1 == v2;
     }

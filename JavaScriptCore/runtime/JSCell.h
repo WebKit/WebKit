@@ -129,11 +129,6 @@ namespace JSC {
         return Heap::isNumber(const_cast<JSCell*>(this));
     }
 
-    inline bool JSValuePtr::isNumberCell() const
-    {
-        return isCell() && asCell()->isNumber();
-    }
-
     inline bool JSCell::isObject() const
     {
         return m_structure->typeInfo().type() == ObjectType;
@@ -175,11 +170,6 @@ namespace JSC {
     }
 
     // --- JSValue inlines ----------------------------
-
-    inline bool JSValuePtr::isNumber() const
-    {
-        return JSImmediate::isNumber(asValue()) || (isCell() && asCell()->isNumber());
-    }
 
     inline bool JSValuePtr::isString() const
     {

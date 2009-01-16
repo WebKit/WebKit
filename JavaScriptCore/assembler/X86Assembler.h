@@ -145,6 +145,7 @@ public:
         OP2_ADDSD_VsdWsd    = 0x58,
         OP2_MULSD_VsdWsd    = 0x59,
         OP2_SUBSD_VsdWsd    = 0x5C,
+        OP2_MOVD_VdEd       = 0x6E,
         OP2_MOVD_EdVd       = 0x7E,
         OP2_JO_rel32        = 0x80,
         OP2_JB_rel32        = 0x82,
@@ -441,6 +442,11 @@ public:
     }
 
 #if PLATFORM(X86_64)
+    void subq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_SUB_EvGv, src, dst);
+    }
+
     void subq_ir(int imm, RegisterID dst)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -1088,6 +1094,14 @@ public:
         m_formatter.twoByteOp(OP2_MOVD_EdVd, (RegisterID)src, dst);
     }
 
+#if PLATFORM(X86_64)
+    void movq_rr(RegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp64(OP2_MOVD_VdEd, (RegisterID)dst, src);
+    }
+#endif
+
     void movsd_rm(XMMRegisterID src, int offset, RegisterID base)
     {
         m_formatter.prefix(PRE_SSE_F2);
@@ -1131,7 +1145,7 @@ public:
         m_formatter.twoByteOp(OP2_SUBSD_VsdWsd, (RegisterID)dst, base, offset);
     }
 
-    void ucomis_rr(XMMRegisterID src, XMMRegisterID dst)
+    void ucomisd_rr(XMMRegisterID src, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_66);
         m_formatter.twoByteOp(OP2_UCOMISD_VsdWsd, (RegisterID)dst, (RegisterID)src);
@@ -1414,6 +1428,15 @@ private:
             emitRexW(reg, index, base);
             m_buffer.putByteUnchecked(opcode);
             memoryModRM(reg, base, index, scale, offset);
+        }
+
+        void twoByteOp64(TwoByteOpcodeID opcode, int reg, RegisterID rm)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexW(reg, 0, rm);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(opcode);
+            registerModRM(reg, rm);
         }
 #endif
 

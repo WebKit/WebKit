@@ -75,22 +75,22 @@ JSValuePtr numberConstructorNaNValue(ExecState* exec, const Identifier&, const P
 
 JSValuePtr numberConstructorNegInfinity(ExecState* exec, const Identifier&, const PropertySlot&)
 {
-    return jsNumberCell(exec, -Inf);
+    return jsNumber(exec, -Inf);
 }
 
 JSValuePtr numberConstructorPosInfinity(ExecState* exec, const Identifier&, const PropertySlot&)
 {
-    return jsNumberCell(exec, Inf);
+    return jsNumber(exec, Inf);
 }
 
 JSValuePtr numberConstructorMaxValue(ExecState* exec, const Identifier&, const PropertySlot&)
 {
-    return jsNumberCell(exec, 1.7976931348623157E+308);
+    return jsNumber(exec, 1.7976931348623157E+308);
 }
 
 JSValuePtr numberConstructorMinValue(ExecState* exec, const Identifier&, const PropertySlot&)
 {
-    return jsNumberCell(exec, 5E-324);
+    return jsNumber(exec, 5E-324);
 }
 
 // ECMA 15.7.1

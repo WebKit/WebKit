@@ -5868,10 +5868,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_stricteq(STUB_ARGS)
     JSValuePtr src1 = ARG_src1;
     JSValuePtr src2 = ARG_src2;
 
-    // handled inline as fast cases
-    ASSERT(!JIT::isStrictEqCaseHandledInJITCode(src1, src2));
-
-    return JSValuePtr::encode(jsBoolean(JSValuePtr::strictEqualSlowCaseInline(src1, src2)));
+    return JSValuePtr::encode(jsBoolean(JSValuePtr::strictEqual(src1, src2)));
 }
 
 JSValueEncodedAsPointer* Interpreter::cti_op_nstricteq(STUB_ARGS)
@@ -5881,10 +5878,7 @@ JSValueEncodedAsPointer* Interpreter::cti_op_nstricteq(STUB_ARGS)
     JSValuePtr src1 = ARG_src1;
     JSValuePtr src2 = ARG_src2;
 
-    // handled inline as fast cases
-    ASSERT(!JIT::isStrictEqCaseHandledInJITCode(src1, src2));
-    
-    return JSValuePtr::encode(jsBoolean(!JSValuePtr::strictEqualSlowCaseInline(src1, src2)));
+    return JSValuePtr::encode(jsBoolean(!JSValuePtr::strictEqual(src1, src2)));
 }
 
 JSValueEncodedAsPointer* Interpreter::cti_op_to_jsnumber(STUB_ARGS)

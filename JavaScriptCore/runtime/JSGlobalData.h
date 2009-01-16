@@ -92,7 +92,9 @@ namespace JSC {
         RefPtr<Structure> stringStructure;
         RefPtr<Structure> notAnObjectErrorStubStructure;
         RefPtr<Structure> notAnObjectStructure;
+#if !USE(ALTERNATE_JSIMMEDIATE)
         RefPtr<Structure> numberStructure;
+#endif
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;

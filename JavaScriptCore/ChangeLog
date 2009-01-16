@@ -1,3 +1,126 @@
+2009-01-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        On x86-64 allow JSImmediate to encode 64-bit double precision values.
+        This patch only affects builds that set USE(ALTERNATE_JSIMMEDIATE).
+        Updates the implementation of JSValuePtr:: and JSImmediate:: methods
+        that operate on neumeric values to be be aware of the new representation.
+        When this representation is in use, the class JSNumberCell is redundant
+        and is compiled out.
+
+        The format of the new immediate representation is documented in JSImmediate.h.
+
+        * JavaScriptCore.exp:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::subPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::subq_rr):
+        (JSC::X86Assembler::movq_rr):
+        (JSC::X86Assembler::ucomisd_rr):
+        (JSC::X86Assembler::X86InstructionFormatter::twoByteOp64):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::cti_op_stricteq):
+        (JSC::Interpreter::cti_op_nstricteq):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_lshift):
+        (JSC::JIT::compileFastArith_op_rshift):
+        (JSC::JIT::compileFastArith_op_bitand):
+        (JSC::JIT::compileFastArith_op_mod):
+        (JSC::JIT::compileFastArith_op_add):
+        (JSC::JIT::compileFastArith_op_mul):
+        (JSC::JIT::compileFastArith_op_post_inc):
+        (JSC::JIT::compileFastArith_op_post_dec):
+        (JSC::JIT::compileFastArith_op_pre_inc):
+        (JSC::JIT::compileFastArith_op_pre_dec):
+        (JSC::JIT::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::JIT::compileBinaryArithOp):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpIfBothJSCells):
+        (JSC::JIT::emitJumpIfEitherNumber):
+        (JSC::JIT::emitJumpIfNotEitherNumber):
+        (JSC::JIT::emitJumpIfImmediateIntegerNumber):
+        (JSC::JIT::emitJumpIfNotImmediateIntegerNumber):
+        (JSC::JIT::emitJumpIfNotImmediateIntegerNumbers):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmediateIntegerNumber):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmediateIntegerNumbers):
+        (JSC::JIT::emitFastArithDeTagImmediate):
+        (JSC::JIT::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::JIT::emitFastArithReTagImmediate):
+        (JSC::JIT::emitFastArithIntToImmNoCheck):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSImmediate.cpp:
+        (JSC::JSImmediate::toThisObject):
+        (JSC::JSImmediate::toObject):
+        (JSC::JSImmediate::toString):
+        * runtime/JSImmediate.h:
+        (JSC::wtf_reinterpret_cast):
+        (JSC::JSImmediate::isNumber):
+        (JSC::JSImmediate::isIntegerNumber):
+        (JSC::JSImmediate::isDoubleNumber):
+        (JSC::JSImmediate::isPositiveIntegerNumber):
+        (JSC::JSImmediate::areBothImmediateIntegerNumbers):
+        (JSC::JSImmediate::makeInt):
+        (JSC::JSImmediate::makeDouble):
+        (JSC::JSImmediate::doubleValue):
+        (JSC::doubleToBoolean):
+        (JSC::JSImmediate::toBoolean):
+        (JSC::JSImmediate::getTruncatedUInt32):
+        (JSC::JSImmediate::makeOutOfIntegerRange):
+        (JSC::JSImmediate::from):
+        (JSC::JSImmediate::getTruncatedInt32):
+        (JSC::JSImmediate::toDouble):
+        (JSC::JSImmediate::getUInt32):
+        (JSC::JSValuePtr::isInt32Fast):
+        (JSC::JSValuePtr::isUInt32Fast):
+        (JSC::JSValuePtr::areBothInt32Fast):
+        (JSC::JSFastMath::canDoFastBitwiseOperations):
+        (JSC::JSFastMath::xorImmediateNumbers):
+        (JSC::JSFastMath::canDoFastRshift):
+        (JSC::JSFastMath::canDoFastUrshift):
+        (JSC::JSFastMath::rightShiftImmediateNumbers):
+        (JSC::JSFastMath::canDoFastAdditiveOperations):
+        (JSC::JSFastMath::addImmediateNumbers):
+        (JSC::JSFastMath::subImmediateNumbers):
+        * runtime/JSNumberCell.cpp:
+        (JSC::jsNumberCell):
+        * runtime/JSNumberCell.h:
+        (JSC::createNumberStructure):
+        (JSC::isNumberCell):
+        (JSC::asNumberCell):
+        (JSC::jsNumber):
+        (JSC::JSValuePtr::isDoubleNumber):
+        (JSC::JSValuePtr::getDoubleNumber):
+        (JSC::JSValuePtr::isNumber):
+        (JSC::JSValuePtr::uncheckedGetNumber):
+        (JSC::jsNaN):
+        (JSC::JSValuePtr::getNumber):
+        (JSC::JSValuePtr::numberToInt32):
+        (JSC::JSValuePtr::numberToUInt32):
+        * runtime/JSValue.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::numberConstructorNegInfinity):
+        (JSC::numberConstructorPosInfinity):
+        (JSC::numberConstructorMaxValue):
+        (JSC::numberConstructorMinValue):
+        * runtime/NumberObject.cpp:
+        (JSC::constructNumber):
+        * runtime/NumberObject.h:
+        * runtime/Operations.h:
+        (JSC::JSValuePtr::equal):
+        (JSC::JSValuePtr::equalSlowCaseInline):
+        (JSC::JSValuePtr::strictEqual):
+        (JSC::JSValuePtr::strictEqualSlowCaseInline):
+        * wtf/Platform.h:
+
 2009-01-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

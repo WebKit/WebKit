@@ -41,17 +41,10 @@ JSValuePtr NumberObject::getJSNumber()
     return internalValue();
 }
 
-NumberObject* constructNumber(ExecState* exec, JSNumberCell* number)
+NumberObject* constructNumber(ExecState* exec, JSValuePtr number)
 {
     NumberObject* object = new (exec) NumberObject(exec->lexicalGlobalObject()->numberObjectStructure());
     object->setInternalValue(number);
-    return object;
-}
-
-NumberObject* constructNumberFromImmediateNumber(ExecState* exec, JSValuePtr value)
-{
-    NumberObject* object = new (exec) NumberObject(exec->lexicalGlobalObject()->numberObjectStructure());
-    object->setInternalValue(value);
     return object;
 }
 
