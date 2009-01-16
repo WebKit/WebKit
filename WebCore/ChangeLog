@@ -1,3 +1,42 @@
+2009-01-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Clean up the bridge code and get rid of Field::name() and Method::name().
+        
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::invokeMethod):
+        * bridge/c/c_runtime.cpp:
+        * bridge/c/c_runtime.h:
+        (JSC::Bindings::CField::identifier):
+        (JSC::Bindings::CMethod::identifier):
+        * bridge/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/jni_runtime.cpp:
+        (JavaField::valueFromInstance):
+        (JavaField::setValueToInstance):
+        (JavaMethod::methodID):
+        * bridge/jni/jni_runtime.h:
+        (JSC::Bindings::JavaField::name):
+        (JSC::Bindings::JavaMethod::name):
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::methodsNamed):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcMethod::isFallbackMethod):
+        (JSC::Bindings::ObjcMethod::selector):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcMethod::ObjcMethod):
+        (JSC::Bindings::ObjcMethod::getMethodSignature):
+        (JSC::Bindings::ObjcField::ObjcField):
+        (JSC::Bindings::ObjcField::valueFromInstance):
+        (JSC::Bindings::ObjcField::setValueToInstance):
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/runtime.h:
+
 2009-01-16  David Hyatt  <hyatt@apple.com>
 
         Optimize RenderText::styleDidChange.  Don't call the base class, which does extra meaningless work.

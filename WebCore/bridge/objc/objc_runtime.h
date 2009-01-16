@@ -46,9 +46,7 @@ public:
     
     virtual JSValuePtr valueFromInstance(ExecState*, const Instance*) const;
     virtual void setValueToInstance(ExecState*, const Instance*, JSValuePtr) const;
-    
-    virtual const char *name() const;
-        
+
 private:
     IvarStructPtr _ivar;
     RetainPtr<CFStringRef> _name;
@@ -57,21 +55,21 @@ private:
 class ObjcMethod : public Method {
 public:
     ObjcMethod() : _objcClass(0), _selector(0), _javaScriptName(0) {}
-    ObjcMethod(ClassStructPtr aClass, const char *_selector);
-
-    virtual const char *name() const;
+    ObjcMethod(ClassStructPtr aClass, SEL _selector);
 
     virtual int numParameters() const;
 
     NSMethodSignature *getMethodSignature() const;
     
-    bool isFallbackMethod() const { return strcmp(_selector, "invokeUndefinedMethodFromWebScript:withArguments:") == 0; }
+    bool isFallbackMethod() const { return _selector == @selector(invokeUndefinedMethodFromWebScript:withArguments:); }
     void setJavaScriptName(CFStringRef n) { _javaScriptName = n; }
     CFStringRef javaScriptName() const { return _javaScriptName.get(); }
     
+    SEL selector() const { return _selector; }
+
 private:
     ClassStructPtr _objcClass;
-    const char *_selector;
+    SEL _selector;
     RetainPtr<CFStringRef> _javaScriptName;
 };
 

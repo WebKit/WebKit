@@ -131,7 +131,7 @@ JSValuePtr JavaInstance::invokeMethod (ExecState *exec, const MethodList &method
     }
     
     const JavaMethod *jMethod = static_cast<const JavaMethod*>(method);
-    JS_LOG ("call %s %s on %p\n", method->name(), jMethod->signature(), _instance->_instance);
+    JS_LOG ("call %s %s on %p\n", UString(jMethod->name()).UTF8String().c_str(), jMethod->signature(), _instance->_instance);
     
     if (count > 0) {
         jArgs = (jvalue *)malloc (count * sizeof(jvalue));

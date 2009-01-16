@@ -141,11 +141,7 @@ JSValuePtr ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodL
     method = static_cast<ObjcMethod*>(methodList[0]);
     NSMethodSignature* signature = method->getMethodSignature();
     NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
-    [invocation setSelector:sel_registerName(method->name())];
-#else
-    [invocation setSelector:(SEL)method->name()];
-#endif
+    [invocation setSelector:method->selector()];
     [invocation setTarget:_instance.get()];
 
     if (method->isFallbackMethod()) {

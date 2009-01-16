@@ -56,16 +56,10 @@ ClassStructPtr webUndefinedClass()
 
 // ---------------------- ObjcMethod ----------------------
 
-ObjcMethod::ObjcMethod(ClassStructPtr aClass, const char* name)
+ObjcMethod::ObjcMethod(ClassStructPtr aClass, SEL selector)
+    : _objcClass(aClass)
+    , _selector(selector)
 {
-    _objcClass = aClass;
-    _selector = name;   // Assume ObjC runtime keeps these around forever.
-    _javaScriptName = 0;
-}
-
-const char* ObjcMethod::name() const
-{
-    return _selector;
 }
 
 int ObjcMethod::numParameters() const
@@ -75,37 +69,25 @@ int ObjcMethod::numParameters() const
 
 NSMethodSignature* ObjcMethod::getMethodSignature() const
 {
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
-    return [_objcClass instanceMethodSignatureForSelector:sel_registerName(_selector)];
-#else
-    return [_objcClass instanceMethodSignatureForSelector:(SEL)_selector];
-#endif
+    return [_objcClass instanceMethodSignatureForSelector:_selector];
 }
 
 // ---------------------- ObjcField ----------------------
 
 ObjcField::ObjcField(Ivar ivar) 
-{
-    _ivar = ivar;    // Assume ObjectiveC runtime will keep this alive forever
-    _name = 0;
-}
-
-ObjcField::ObjcField(CFStringRef name) 
-{
-    _ivar = 0;
-    _name = (CFStringRef)CFRetain(name);
-}
-
-const char* ObjcField::name() const 
-{
+    : _ivar(ivar)
 #if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
-    if (_ivar)
-        return ivar_getName(_ivar);
+    , _name(AdoptCF, CFStringCreateWithCString(0, ivar_getName(_ivar), kCFStringEncodingASCII))
 #else
-    if (_ivar)
-        return _ivar->ivar_name;
+    , _name(AdoptCF, CFStringCreateWithCString(0, _ivar->ivar_name, kCFStringEncodingASCII))
 #endif
-    return [(NSString*)_name.get() UTF8String];
+{
+}
+
+ObjcField::ObjcField(CFStringRef name)
+    : _ivar(0)
+    , _name(name)
+{
 }
 
 JSValuePtr ObjcField::valueFromInstance(ExecState* exec, const Instance* instance) const
@@ -117,8 +99,7 @@ JSValuePtr ObjcField::valueFromInstance(ExecState* exec, const Instance* instanc
     JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
-        NSString* key = [NSString stringWithCString:name() encoding:NSASCIIStringEncoding];
-        if (id objcValue = [targetObject valueForKey:key])
+        if (id objcValue = [targetObject valueForKey:(NSString *)_name.get()])
             result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType, instance->rootObject());
     } @catch(NSException* localException) {
         JSLock::lock(false);
@@ -147,8 +128,7 @@ void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JS
     JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
-        NSString* key = [NSString stringWithCString:name() encoding:NSASCIIStringEncoding];
-        [targetObject setValue:value forKey:key];
+        [targetObject setValue:value forKey:(NSString *)_name.get()];
     } @catch(NSException* localException) {
         JSLock::lock(false);
         throwError(exec, GeneralError, [localException reason]);
@@ -246,7 +226,7 @@ static JSValuePtr callObjCFallbackObject(ExecState* exec, JSObject* function, JS
     
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
         ObjcClass* objcClass = static_cast<ObjcClass*>(instance->getClass());
-        OwnPtr<ObjcMethod> fallbackMethod(new ObjcMethod(objcClass->isa(), sel_getName(@selector(invokeUndefinedMethodFromWebScript:withArguments:))));
+        OwnPtr<ObjcMethod> fallbackMethod(new ObjcMethod(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:)));
         const Identifier& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(function)->propertyName();
         RetainPtr<CFStringRef> name(AdoptCF, CFStringCreateWithCharacters(0, nameIdentifier.data(), nameIdentifier.size()));
         fallbackMethod->setJavaScriptName(name.get());

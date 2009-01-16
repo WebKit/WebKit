@@ -115,7 +115,7 @@ public:
     virtual JSValuePtr valueFromInstance(ExecState *exec, const Instance *instance) const;
     virtual void setValueToInstance(ExecState *exec, const Instance *instance, JSValuePtr aValue) const;
     
-    virtual const char *name() const { return _name.UTF8String(); }
+    UString::Rep* name() const { return ((UString)_name).rep(); }
     virtual RuntimeType type() const { return _type.UTF8String(); }
 
     JNIType getJNIType() const { return _JNIType; }
@@ -137,7 +137,7 @@ public:
     JavaMethod(JNIEnv* env, jobject aMethod);
     ~JavaMethod();
 
-    virtual const char *name() const { return _name.UTF8String(); };
+    UString::Rep* name() const { return ((UString)_name).rep(); }
     RuntimeType returnType() const { return _returnType.UTF8String(); };
     JavaParameter* parameterAt(int i) const { return &_parameters[i]; };
     int numParameters() const { return _numParameters; };

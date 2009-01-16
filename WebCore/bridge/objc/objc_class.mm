@@ -133,7 +133,7 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
                     mappedName = [thisClass webScriptNameForSelector:objcMethodSelector];
 
                 if ((mappedName && [mappedName isEqual:(NSString*)methodName.get()]) || strcmp(objcMethodSelectorName, buffer) == 0) {
-                    Method* aMethod = new ObjcMethod(thisClass, objcMethodSelectorName); // deleted when the dictionary is destroyed
+                    Method* aMethod = new ObjcMethod(thisClass, objcMethodSelector); // deleted when the dictionary is destroyed
                     CFDictionaryAddValue(_methods.get(), methodName.get(), aMethod);
                     methodList.append(aMethod);
                     break;

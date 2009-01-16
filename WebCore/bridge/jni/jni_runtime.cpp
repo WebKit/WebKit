@@ -157,7 +157,7 @@ JSValuePtr JavaField::valueFromInstance(ExecState* exec, const Instance* i) cons
         break;
     }
 
-    JS_LOG ("getting %s = %s\n", name(), jsresult->toString(exec).ascii());
+    JS_LOG ("getting %s = %s\n", UString(name()).UTF8String().c_str(), jsresult->toString(exec).ascii());
     
     return jsresult;
 }
@@ -194,7 +194,7 @@ void JavaField::setValueToInstance(ExecState* exec, const Instance* i, JSValuePt
     const JavaInstance *instance = static_cast<const JavaInstance *>(i);
     jvalue javaValue = convertValueToJValue (exec, aValue, _JNIType, type());
 
-    JS_LOG ("setting value %s to %s\n", name(), aValue->toString(exec).ascii());
+    JS_LOG ("setting value %s to %s\n", UString(name()).UTF8String().c_str(), aValue->toString(exec).ascii());
 
     switch (_JNIType) {
         case array_type:
@@ -359,7 +359,7 @@ JNIType JavaMethod::JNIReturnType() const
 jmethodID JavaMethod::methodID (jobject obj) const
 {
     if (_methodID == 0) {
-        _methodID = getMethodID (obj, name(), signature());
+        _methodID = getMethodID (obj, _name.UTF8String(), signature());
     }
     return _methodID;
 }

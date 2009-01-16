@@ -37,22 +37,6 @@
 namespace JSC {
 namespace Bindings {
 
-// ---------------------- CMethod ----------------------
-
-const char* CMethod::name() const
-{
-    PrivateIdentifier *i = (PrivateIdentifier *)_methodIdentifier;
-    return i->isString ? i->value.string : 0;
-}
-
-// ---------------------- CField ----------------------
-
-const char* CField::name() const
-{
-    PrivateIdentifier *i = (PrivateIdentifier *)_fieldIdentifier;
-    return i->isString ? i->value.string : 0;
-}
-
 JSValuePtr CField::valueFromInstance(ExecState* exec, const Instance* inst) const
 {
     const CInstance* instance = static_cast<const CInstance*>(inst);
