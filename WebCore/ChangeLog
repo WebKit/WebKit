@@ -1,5 +1,11 @@
 2009-01-16  Adam Treat  <adam.treat@torchmobile.com>
 
+        The correct build fix for all platforms.
+
+        * platform/graphics/Font.h:
+
+2009-01-16  Adam Treat  <adam.treat@torchmobile.com>
+
         Fix the Qt build.
 
         * platform/graphics/Font.h:
