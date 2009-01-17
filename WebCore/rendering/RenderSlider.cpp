@@ -31,6 +31,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLNames.h"
+#include "MediaControlElements.h"
 #include "MouseEvent.h"
 #include "RenderTheme.h"
 #include <wtf/MathExtras.h>
@@ -258,10 +259,16 @@ bool RenderSlider::mouseEventIsInThumb(MouseEvent* evt)
 {
     if (!m_thumb || !m_thumb->renderer())
         return false;
- 
-    FloatPoint localPoint = m_thumb->renderer()->absoluteToLocal(FloatPoint(evt->pageX(), evt->pageY()), false, true);
-    IntRect thumbBounds = m_thumb->renderer()->borderBox();
-    return thumbBounds.contains(roundedIntPoint(localPoint));
+
+    if (style()->appearance() == MediaSliderPart) {
+        MediaControlInputElement *sliderThumb = static_cast<MediaControlInputElement*>(m_thumb->renderer()->node());
+        IntPoint absPoint(evt->pageX(), evt->pageY());
+        return sliderThumb->hitTest(absPoint);
+    } else {
+        FloatPoint localPoint = m_thumb->renderer()->absoluteToLocal(FloatPoint(evt->pageX(), evt->pageY()), false, true);
+        IntRect thumbBounds = m_thumb->renderer()->borderBox();
+        return thumbBounds.contains(roundedIntPoint(localPoint));
+    }
 }
 
 void RenderSlider::setValueForPosition(int position)

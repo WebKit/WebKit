@@ -1,3 +1,15 @@
+2009-01-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson
+
+        <rdar://problem/6293969>
+
+        Update media controls rendering results for new controls CSS.
+
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+
 2009-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.

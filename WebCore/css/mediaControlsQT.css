@@ -22,19 +22,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-/* media controls */
+/* alternate media controls */
 
 audio {
     width: 200px;
-    height: 16px;
+    height: 25px;
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
+    -webkit-user-select: none;
     position: absolute;
     bottom: 0;
     width: 100%;
     height: 100%;
-    -webkit-user-select: none;
     z-index: 0;
 }
 
@@ -47,9 +47,10 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
     position: absolute;
     top: auto;
     bottom: 0;
-    left: 0;
-    width: 17px;
-    height: 16px;
+    right: 0;
+    left: auto;
+    width: 30px;
+    height: 25px;
 }
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
@@ -57,59 +58,74 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
     position: absolute;
     top: auto;
     bottom: 0;
-    left: 16px;
-    width: 17px;
-    height: 16px;
+    left: 0px;
+    width: 30px;
+    height: 25px;
 }
 
 audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
+    -webkit-appearance: media-timeline-container;
     -webkit-user-select: none;
     position: absolute;
-    padding: 0px 16px 0px 0px;
     top: auto;
     bottom: 0;
-    left: 32px;
-    right: 32px;
-    height: 16px;
+    left: 30px;
+    right: 30px;
+    height: 25px;
 }
 
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
-    display: none;
+    -webkit-appearance: media-current-time-display;
+    -webkit-user-select: none;
+    display: inline-block;
+    position: absolute;
+    cursor: default;
+    font: -webkit-small-control;
+    font-size: .09em;
+    text-align: center;
+    overflow: hidden;
+    line-height: 13px;
+    top: auto;
+    bottom: 6px;
+    left: 0px;
+    height: 13px;
+    width: 45px;
 }
 
 audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
-    display: none;
+    -webkit-appearance: media-time-remaining-display;
+    -webkit-user-select: none;
+    display: inline-block;
+    position: absolute;
+    cursor: default;
+    font: -webkit-small-control;
+    font-size: .09em;
+    text-align: center;
+    overflow: hidden;
+    line-height: 13px;
+    top: auto;
+    bottom: 6px;
+    right: 0px;
+    height: 13px;
+    width: 45px;
 }
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
     position: absolute;
     top: auto;
-    bottom: 0;
-    left: 0px;
-    right: 0px;
-    height: 16px;
-    padding: 0px 2px;
+    bottom: 6px;
+    left: 45px;
+    right: 45px;
+    height: 13px;
 }
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
-    -webkit-appearance: media-seek-back-button;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    right: 16px;
-    width: 17px;
-    height: 16px;
+    display: none;
 }
 
 audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
-    -webkit-appearance: media-seek-forward-button;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    right: 0;
-    width: 17px;
-    height: 16px;
+    display: none;
 }
 
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {

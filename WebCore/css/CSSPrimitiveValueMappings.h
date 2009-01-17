@@ -216,6 +216,15 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         case MediaSliderThumbPart:
             m_value.ident = CSSValueMediaSliderthumb;
             break;
+        case MediaTimelineContainerPart:
+            m_value.ident = CSSValueMediaTimelineContainer;
+            break;
+        case MediaCurrentTimePart:
+            m_value.ident = CSSValueMediaCurrentTimeDisplay;
+            break;
+        case MediaTimeRemainingPart:
+            m_value.ident = CSSValueMediaTimeRemainingDisplay;
+            break;
         case MenulistPart:
             m_value.ident = CSSValueMenulist;
             break;

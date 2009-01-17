@@ -506,6 +506,9 @@ media-seek-back-button
 media-seek-forward-button
 media-slider
 media-sliderthumb
+media-timeline-container
+media-current-time-display
+media-time-remaining-display
 menulist
 menulist-button
 menulist-text

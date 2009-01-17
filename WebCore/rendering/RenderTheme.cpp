@@ -268,6 +268,12 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
             if (o->parent()->isSlider())
                 return paintMediaSliderThumb(o, paintInfo, r);
             break;
+        case MediaTimeRemainingPart:
+            return paintMediaTimeRemaining(o, paintInfo, r);
+        case MediaCurrentTimePart:
+            return paintMediaCurrentTime(o, paintInfo, r);
+        case MediaTimelineContainerPart:
+            return paintMediaTimelineContainer(o, paintInfo, r);
         case MenulistButtonPart:
         case TextFieldPart:
         case TextAreaPart:

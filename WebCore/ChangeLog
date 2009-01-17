@@ -1,3 +1,99 @@
+2009-01-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson
+
+        Complete <rdar://problem/6293969>
+
+        * DerivedSources.make: include mediaControlsQT.css for Mac build.
+
+        * WebCore.xcodeproj/project.pbxproj: add mediaControlsQT.css
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): add MediaTimelineContainerPart, 
+        CSSValueMediaCurrentTimeDisplay, and CSSValueMediaTimeRemainingDisplay
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType): include new media controller element styles
+        * css/CSSSelector.h: 
+        (WebCore::CSSSelector::): Ditto.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):  include new media 
+        controller element styles
+
+        * css/CSSValueKeywords.in: add keywords for new media time display controls
+
+        * css/mediaControls.css: adjust css for new control elements
+
+        * css/mediaControlsQT.css: Added.
+
+        * platform/ThemeTypes.h:
+        (WebCore::): add media time display controls to ControlPart
+
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm: pass controller style to WKSI functions
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaTextDisplayElement::MediaTextDisplayElement): Added
+        (WebCore::MediaTextDisplayElement::attachToParent): Added
+        (WebCore::MediaTextDisplayElement::update): Added
+        (WebCore::MediaTimeDisplayElement::MediaTimeDisplayElement): Added
+        (WebCore::MediaControlInputElement::MediaControlInputElement): Added
+        (WebCore::MediaControlInputElement::hitTest): Added
+        (WebCore::MediaControlTimelineElement::defaultEventHandler): Update the time display when
+        dragging the thumb
+        * rendering/MediaControlElements.h:
+        (WebCore::): Add MediaTextDisplayElement
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createTimelineContainer): Added
+        (WebCore::RenderMedia::createTimeline): Parent is now the timeline container
+        (WebCore::RenderMedia::createCurrentTimeDisplay): Added
+        (WebCore::RenderMedia::createTimeRemainingDisplay): Added
+        (WebCore::RenderMedia::updateControls): Create new elements. Don't ever start the time update
+        timer when the time display elements are not visible
+        (WebCore::RenderMedia::formatTime): Handle negative times. Don't display 0 hours or minutes
+        (WebCore::RenderMedia::updateTimeDisplay): Do nothing when the time display elements are not
+        visible. Display time remaining as well as current time.
+        (WebCore::RenderMedia::updateControlVisibility): Don't assume opacity should be set to 0 when
+        visibility changes
+        (WebCore::RenderMedia::forwardEvent): Call element hitTest() method instead of local function
+        as we can't assume that all controls are rectangular
+        * rendering/RenderMedia.h: Updated
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::mouseEventIsInThumb): When slider is media timeline control, call 
+        element hitTest() method instead of assuming it is rectangular
+        * rendering/RenderSlider.h: make mouseEventIsInThumb virtual
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint): Deal with time display and timeline container
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintMediaTimelineContainer): Updated
+        (WebCore::RenderTheme::paintMediaCurrentTime): Added
+        (WebCore::RenderTheme::paintMediaTimeRemaining): Added
+
+        * rendering/RenderThemeMac.h: Updated
+        * rendering/RenderThemeMac.mm:
+        (WebCore::):
+        (WebCore::mediaControllerTheme):
+        (WebCore::RenderThemeMac::adjustSliderThumbSize): Call WebKitSystemInterface to get the thumb
+        size when appropriate
+        (WebCore::RenderThemeMac::paintMediaFullscreenButton): pass controller style to render function
+        (WebCore::RenderThemeMac::paintMediaMuteButton): Ditto
+        (WebCore::RenderThemeMac::paintMediaPlayButton): Ditto
+        (WebCore::RenderThemeMac::paintMediaSeekBackButton): Ditto
+        (WebCore::RenderThemeMac::paintMediaSeekForwardButton): Ditto
+        (WebCore::RenderThemeMac::paintMediaSliderTrack): Ditto
+        (WebCore::RenderThemeMac::paintMediaSliderThumb): Ditto
+        (WebCore::RenderThemeMac::paintMediaTimelineContainer): Added
+        (WebCore::RenderThemeMac::paintMediaCurrentTime): Added
+        (WebCore::RenderThemeMac::paintMediaTimeRemaining): Added
+        (WebCore::RenderThemeMac::extraMediaControlsStyleSheet): Added
+        (WebCore::RenderThemeMac::hitTestMediaControlPart): Added
+        * rendering/style/RenderStyle.h: Updated
+        (WebCore::):
+
 2009-01-17  David Hyatt  <hyatt@apple.com>
 
         Inline a few methods in FrameView for speed.

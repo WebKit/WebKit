@@ -200,11 +200,15 @@ typedef enum {
     WKMediaUIPartTimeRemainingDisplay= 11
 } WKMediaUIPart;
 
-BOOL WKUseSharedMediaUI();
-BOOL WKHitTestMediaUIPart(int part, CGRect bounds, CGPoint point);
-void WKMeasureMediaUIPart(int part, CGRect *bounds, CGSize *naturalSize);
-void WKDrawMediaUIPart(int part, CGContextRef context, CGRect rect, BOOL active);
-void WKDrawMediaSliderTrack(CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration);
+typedef enum {
+    WKMediaControllerThemeClassic   = 1,
+    WKMediaControllerThemeQT        = 2
+} WKMediaControllerThemeStyle;
+
+BOOL WKHitTestMediaUIPart(int part, int themeStyle, CGRect bounds, CGPoint point);
+void WKMeasureMediaUIPart(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
+void WKDrawMediaUIPart(int part, int themeStyle, CGContextRef context, CGRect rect, BOOL active);
+void WKDrawMediaSliderTrack(int themeStyle, CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration);
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && defined(__x86_64__)
 mach_port_t WKInitializeRenderServer(void);

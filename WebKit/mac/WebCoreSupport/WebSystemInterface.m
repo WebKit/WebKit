@@ -93,7 +93,5 @@ void InitWebCoreSystemInterface(void)
     INIT(SupportsMultipartXMixedReplace);
 #endif
 
-    INIT(UseSharedMediaUI);
-
     didInit = true;
 }

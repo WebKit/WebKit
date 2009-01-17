@@ -44,7 +44,7 @@ namespace WebCore {
         virtual void layout();
         virtual void updateFromElement();
         
-        bool mouseEventIsInThumb(MouseEvent*);
+        virtual bool mouseEventIsInThumb(MouseEvent*);
 
         void setValueForPosition(int position);
         double setPositionFromValue(bool inLayout = false);

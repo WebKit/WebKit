@@ -1,3 +1,12 @@
+2009-01-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson
+
+        Complete <rdar://problem/6293969>
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface): Remove UseSharedMediaUI
+
 2009-01-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein
