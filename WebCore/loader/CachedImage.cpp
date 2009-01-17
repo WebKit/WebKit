@@ -96,7 +96,7 @@ void CachedImage::addClient(CachedResourceClient* c)
         m_image->setData(m_data, true);
     }
 
-    if (m_image && !m_image->rect().isEmpty())
+    if (m_image && !m_image->isNull())
         c->imageChanged(this);
 
     if (!m_loading)

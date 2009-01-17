@@ -62,11 +62,6 @@ bool Image::supportsType(const String& type)
     return MIMETypeRegistry::isSupportedImageResourceMIMEType(type); 
 } 
 
-bool Image::isNull() const
-{
-    return size().isEmpty();
-}
-
 bool Image::setData(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
     m_data = data;
@@ -78,21 +73,6 @@ bool Image::setData(PassRefPtr<SharedBuffer> data, bool allDataReceived)
         return true;
     
     return dataChanged(allDataReceived);
-}
-
-IntRect Image::rect() const
-{
-    return IntRect(IntPoint(), size());
-}
-
-int Image::width() const
-{
-    return size().width();
-}
-
-int Image::height() const
-{
-    return size().height();
 }
 
 void Image::fillWithSolidColor(GraphicsContext* ctxt, const FloatRect& dstRect, const Color& color, CompositeOperator op)
