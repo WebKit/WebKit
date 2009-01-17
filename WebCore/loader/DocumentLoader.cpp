@@ -95,9 +95,6 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
                 continue;
             buffer[builderIndex++] = ' ';
             previousCharWasWS = true;
-        } else if (c == '\\') {
-            buffer[builderIndex++] = frame->backslashAsCurrencySymbol();
-            previousCharWasWS = false;
         } else {
             buffer[builderIndex++] = c;
             previousCharWasWS = false;
@@ -115,6 +112,11 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
         return "";
 
     buffer.shrink(builderIndex + 1);
+    
+    // Replace the backslashes with currency symbols if the encoding requires it.
+    if (frame->document())
+        frame->document()->displayBufferModifiedByEncoding(buffer.characters(), buffer.length());
+
     return String::adopt(buffer);
 }
 

@@ -3072,15 +3072,6 @@ bool RenderObject::shrinkToAvoidFloats() const
     return style()->width().isAuto();
 }
 
-UChar RenderObject::backslashAsCurrencySymbol() const
-{
-    if (Node *node = element()) {
-        if (TextResourceDecoder* decoder = node->document()->decoder())
-            return decoder->encoding().backslashAsCurrencySymbol();
-    }
-    return '\\';
-}
-
 bool RenderObject::willRenderImage(CachedImage*)
 {
     // Without visibility we won't render (and therefore don't care about animation).

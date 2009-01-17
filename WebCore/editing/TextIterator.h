@@ -46,7 +46,7 @@ inline bool isCollapsibleWhitespace(UChar c)
 }
 
 String plainText(const Range*);
-UChar* plainTextToMallocAllocatedBuffer(const Range*, unsigned& bufferLength);
+UChar* plainTextToMallocAllocatedBuffer(const Range*, unsigned& bufferLength, bool isDisplayString);
 PassRefPtr<Range> findPlainText(const Range*, const String&, bool forward, bool caseSensitive);
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries

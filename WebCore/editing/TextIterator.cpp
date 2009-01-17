@@ -1522,7 +1522,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
 
 // --------
     
-UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength) 
+UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength, bool isDisplayString) 
 {
     UChar* result = 0;
 
@@ -1577,13 +1577,17 @@ exit:
             free(textSegments->at(i).first);
         delete textSegments;
     }
+    
+    if (isDisplayString && r->ownerDocument())
+        r->ownerDocument()->displayBufferModifiedByEncoding(result, bufferLength);
+
     return result;
 }
 
 String plainText(const Range* r)
 {
     unsigned length;
-    UChar* buf = plainTextToMallocAllocatedBuffer(r, length);
+    UChar* buf = plainTextToMallocAllocatedBuffer(r, length, false);
     if (!buf)
         return "";
     String result(buf, length);

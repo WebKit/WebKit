@@ -2021,8 +2021,7 @@ void Editor::addToKillRing(Range* range, bool prepend)
     if (m_shouldStartNewKillRingSequence)
         startNewKillRingSequence();
 
-    String text = plainText(range);
-    text.replace('\\', m_frame->backslashAsCurrencySymbol());
+    String text = m_frame->displayStringModifiedByEncoding(plainText(range));
     if (prepend)
         prependToKillRing(text);
     else

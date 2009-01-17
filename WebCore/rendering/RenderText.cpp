@@ -67,7 +67,7 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
 {
     ASSERT(m_text);
     setRenderText();
-    m_text = m_text->replace('\\', backslashAsCurrencySymbol());
+    m_text = document()->displayStringModifiedByEncoding(PassRefPtr<StringImpl>(m_text));
 
     view()->frameView()->setIsVisuallyNonEmpty();
 }
@@ -894,8 +894,7 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
     m_text = text;
     ASSERT(m_text);
 
-    m_text = m_text->replace('\\', backslashAsCurrencySymbol());
-
+    m_text = document()->displayStringModifiedByEncoding(PassRefPtr<StringImpl>(m_text));
 #if ENABLE(SVG)
     if (isSVGText()) {
         if (style() && style()->whiteSpace() == PRE) {

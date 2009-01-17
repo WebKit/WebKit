@@ -3140,13 +3140,6 @@ void Document::setDecoder(PassRefPtr<TextResourceDecoder> decoder)
     m_decoder = decoder;
 }
 
-UChar Document::backslashAsCurrencySymbol() const
-{
-    if (!m_decoder)
-        return '\\';
-    return m_decoder->encoding().backslashAsCurrencySymbol();
-}
-
 KURL Document::completeURL(const String& url) const
 {
     // Always return a null URL when passed a null string.

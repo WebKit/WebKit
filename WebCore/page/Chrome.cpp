@@ -259,10 +259,7 @@ void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
     PageGroupLoadDeferrer deferrer(m_page, true);
 
     ASSERT(frame);
-    String text = message;
-    text.replace('\\', frame->backslashAsCurrencySymbol());
-
-    m_client->runJavaScriptAlert(frame, text);
+    m_client->runJavaScriptAlert(frame, frame->displayStringModifiedByEncoding(message));
 }
 
 bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
@@ -272,10 +269,7 @@ bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
     PageGroupLoadDeferrer deferrer(m_page, true);
 
     ASSERT(frame);
-    String text = message;
-    text.replace('\\', frame->backslashAsCurrencySymbol());
-    
-    return m_client->runJavaScriptConfirm(frame, text);
+    return m_client->runJavaScriptConfirm(frame, frame->displayStringModifiedByEncoding(message));
 }
 
 bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const String& defaultValue, String& result)
@@ -285,15 +279,10 @@ bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const Strin
     PageGroupLoadDeferrer deferrer(m_page, true);
 
     ASSERT(frame);
-    String promptText = prompt;
-    promptText.replace('\\', frame->backslashAsCurrencySymbol());
-    String defaultValueText = defaultValue;
-    defaultValueText.replace('\\', frame->backslashAsCurrencySymbol());
-    
-    bool ok = m_client->runJavaScriptPrompt(frame, promptText, defaultValueText, result);
+    bool ok = m_client->runJavaScriptPrompt(frame, frame->displayStringModifiedByEncoding(prompt), frame->displayStringModifiedByEncoding(defaultValue), result);
     
     if (ok)
-        result.replace(frame->backslashAsCurrencySymbol(), '\\');
+        result = frame->displayStringModifiedByEncoding(result);
     
     return ok;
 }
@@ -301,10 +290,7 @@ bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const Strin
 void Chrome::setStatusbarText(Frame* frame, const String& status)
 {
     ASSERT(frame);
-    String text = status;
-    text.replace('\\', frame->backslashAsCurrencySymbol());
-    
-    m_client->setStatusbarText(text);
+    m_client->setStatusbarText(frame->displayStringModifiedByEncoding(status));
 }
 
 bool Chrome::shouldInterruptJavaScript()

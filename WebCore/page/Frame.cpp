@@ -1455,18 +1455,6 @@ void Frame::setInViewSourceMode(bool mode) const
     d->m_inViewSourceMode = mode;
 }
 
-UChar Frame::backslashAsCurrencySymbol() const
-{
-    Document *doc = document();
-    if (!doc)
-        return '\\';
-    TextResourceDecoder *decoder = doc->decoder();
-    if (!decoder)
-        return '\\';
-
-    return decoder->encoding().backslashAsCurrencySymbol();
-}
-
 // Searches from the beginning of the document if nothing is selected.
 bool Frame::findString(const String& target, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection)
 {
@@ -1751,9 +1739,7 @@ bool Frame::shouldClose()
     if (beforeUnloadEvent->result().isNull())
         return true;
 
-    String text = beforeUnloadEvent->result();
-    text.replace('\\', backslashAsCurrencySymbol());
-
+    String text = doc->displayStringModifiedByEncoding(beforeUnloadEvent->result());
     return chrome->runBeforeUnloadConfirmPanel(text, this);
 }
 

@@ -371,8 +371,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
             }
 
             if (!m_altText.isEmpty()) {
-                String text = m_altText;
-                text.replace('\\', backslashAsCurrencySymbol());
+                String text = document()->displayStringModifiedByEncoding(m_altText);
                 context->setFillColor(style()->color());
                 int ax = tx + leftBorder + leftPad;
                 int ay = ty + topBorder + topPad;

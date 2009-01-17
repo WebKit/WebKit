@@ -98,7 +98,7 @@ String HTMLOptionElement::text() const
         }
     }
 
-    text.replace('\\', document()->backslashAsCurrencySymbol());
+    text = document()->displayStringModifiedByEncoding(text);
     // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
     text = text.stripWhiteSpace();
     // We want to collapse our whitespace too.  This will match other browsers.

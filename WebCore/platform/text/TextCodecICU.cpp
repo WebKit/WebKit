@@ -428,7 +428,7 @@ CString TextCodecICU::encode(const UChar* characters, size_t length, Unencodable
     // until then, we change the backslash into a yen sign.
     // Encoding will change the yen sign back into a backslash.
     String copy(characters, length);
-    copy.replace('\\', m_encoding.backslashAsCurrencySymbol());
+    copy = m_encoding.displayString(copy.impl());
 
     const UChar* source = copy.characters();
     const UChar* sourceLimit = source + copy.length();

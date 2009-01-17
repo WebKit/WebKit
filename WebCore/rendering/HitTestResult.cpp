@@ -177,9 +177,7 @@ String displayString(const String& string, const Node* node)
 {
     if (!node)
         return string;
-    String copy(string);
-    copy.replace('\\', node->document()->backslashAsCurrencySymbol());
-    return copy;
+    return node->document()->displayStringModifiedByEncoding(string);
 }
 
 String HitTestResult::altDisplayString() const

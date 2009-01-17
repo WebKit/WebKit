@@ -1,3 +1,63 @@
+2009-01-17  David Hyatt  <hyatt@apple.com>
+
+        Change how backslashAsCurrencySymbol() works.  Instead of forcing call sites to do the direct
+        replacement themselves, the exact transformation is instead done by the encoding (indirectly through
+        a method on Document).
+
+        These changes allow the fast case (where no replacement is needed) checks to be completely inlined for
+        a slight speedup, and also allow encodings to do future alterations to displayed string content without
+        having to patch call sites again.
+
+        Reviewed by Oliver Hunt
+
+        * WebCore.base.exp:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        (WebCore::Document::displayStringModifiedByEncoding):
+        (WebCore::Document::displayBufferModifiedByEncoding):
+        * editing/Editor.cpp:
+        (WebCore::Editor::addToKillRing):
+        * editing/TextIterator.cpp:
+        (WebCore::plainTextToMallocAllocatedBuffer):
+        (WebCore::plainText):
+        * editing/TextIterator.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::groupLabelText):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::text):
+        * loader/DocumentLoader.cpp:
+        (WebCore::canonicalizedTitle):
+        * page/Chrome.cpp:
+        (WebCore::displayString):
+        (WebCore::Chrome::runJavaScriptAlert):
+        (WebCore::Chrome::runJavaScriptConfirm):
+        (WebCore::Chrome::runJavaScriptPrompt):
+        (WebCore::Chrome::setStatusbarText):
+        * page/Frame.cpp:
+        (WebCore::Frame::shouldClose):
+        * page/Frame.h:
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::encode):
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::TextEncoding):
+        * platform/text/TextEncoding.h:
+        (WebCore::TextEncoding::displayString):
+        (WebCore::TextEncoding::displayBuffer):
+        * rendering/HitTestResult.cpp:
+        (WebCore::displayString):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::setTextInternal):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setInnerTextValue):
+        (WebCore::RenderTextControl::finishText):
+
 2009-01-17  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson

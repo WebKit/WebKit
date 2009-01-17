@@ -140,9 +140,6 @@ public:
     void clearTimers();
     static void clearTimers(FrameView*, Document*);
 
-    // Convenience, to avoid repeating the code to dig down to get this.
-    UChar backslashAsCurrencySymbol() const;
-
     void setNeedsReapplyStyles();
     bool needsReapplyStyles() const;
     void reapplyStyles();
@@ -152,6 +149,11 @@ public:
     // This method -- and the corresponding list of former DOM windows --
     // should move onto ScriptController
     void clearDOMWindow();
+
+    String displayStringModifiedByEncoding(const String& str) const 
+    {
+        return document() ? document()->displayStringModifiedByEncoding(str) : str;
+    }
 
 private:
     void lifeSupportTimerFired(Timer<Frame>*);

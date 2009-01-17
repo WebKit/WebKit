@@ -148,7 +148,7 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
         value = "";
     else {
         value = innerTextValue; 
-        value = value.replace('\\', backslashAsCurrencySymbol());
+        value = document()->displayStringModifiedByEncoding(value);
     }
 
     if (value != text() || !m_innerText->hasChildNodes()) {
@@ -293,14 +293,8 @@ String RenderTextControl::finishText(Vector<UChar>& result) const
         result.shrink(--size);
 
     // Convert backslash to currency symbol.
-    UChar symbol = backslashAsCurrencySymbol();
-    if (symbol != '\\') {
-        for (size_t i = 0; i < size; ++i) {
-            if (result[i] == '\\')
-                result[i] = symbol;
-        }
-    }
-
+    document()->displayBufferModifiedByEncoding(result.data(), result.size());
+    
     return String::adopt(result);
 }
 

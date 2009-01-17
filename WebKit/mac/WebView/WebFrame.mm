@@ -554,25 +554,17 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSString *)_selectedString
 {
-    String text = _private->coreFrame->selectedText();
-    text.replace('\\', _private->coreFrame->backslashAsCurrencySymbol());
-    return text;
+    return _private->coreFrame->displayStringModifiedByEncoding(_private->coreFrame->selectedText());
 }
 
 - (NSString *)_stringForRange:(DOMRange *)range
 {
     // This will give a system malloc'd buffer that can be turned directly into an NSString
     unsigned length;
-    UChar* buf = plainTextToMallocAllocatedBuffer([range _range], length);
+    UChar* buf = plainTextToMallocAllocatedBuffer([range _range], length, true);
     
     if (!buf)
         return [NSString string];
-    
-    UChar backslashAsCurrencySymbol = _private->coreFrame->backslashAsCurrencySymbol();
-    if (backslashAsCurrencySymbol != '\\')
-        for (unsigned n = 0; n < length; n++) 
-            if (buf[n] == '\\')
-                buf[n] = backslashAsCurrencySymbol;
 
     // Transfer buffer ownership to NSString
     return [[[NSString alloc] initWithCharactersNoCopy:buf length:length freeWhenDone:YES] autorelease];
