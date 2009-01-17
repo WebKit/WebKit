@@ -1,5 +1,14 @@
 2009-01-17  David Hyatt  <hyatt@apple.com>
 
+        Minor tweaks to RenderBox::styleChange to speed it up.
+
+        Reviewed by Oliver Hunt
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+
+2009-01-17  David Hyatt  <hyatt@apple.com>
+
         Inline FrameLoader::client().
 
         Reviewed by Oliver Hunt

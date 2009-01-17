@@ -117,8 +117,11 @@ void RenderBox::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldSty
     if (needsLayout() && oldStyle && (oldStyle->height().isPercent() || oldStyle->minHeight().isPercent() || oldStyle->maxHeight().isPercent()))
         RenderBlock::removePercentHeightDescendant(this);
 
+    bool isRootObject = isRoot();
+    bool isViewObject = isRenderView();
+
     // The root and the RenderView always paint their backgrounds/borders.
-    if (isRoot() || isRenderView())
+    if (isRootObject || isViewObject)
         setHasBoxDecorations(true);
 
     setInline(style()->isDisplayInlineType());
@@ -140,7 +143,7 @@ void RenderBox::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldSty
     }
 
     // We also handle <body> and <html>, whose overflow applies to the viewport.
-    if (!isRoot() && (isRenderBlock() || isTableRow() || isTableSection()) && style()->overflowX() != OVISIBLE) {
+    if (style()->overflowX() != OVISIBLE && !isRootObject && (isRenderBlock() || isTableRow() || isTableSection())) {
         bool boxHasOverflowClip = true;
         if (isBody()) {
             // Overflow on the body can propagate to the viewport under the following conditions.
@@ -176,7 +179,7 @@ void RenderBox::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldSty
             if (parent() && !needsLayout() && containingBlock())
                 m_layer->updateLayerPositions();
         }
-    } else if (m_layer && !isRoot() && !isRenderView()) {
+    } else if (m_layer && !isRootObject && !isViewObject) {
         ASSERT(m_layer->parent());
         RenderLayer* layer = m_layer;
         m_layer = 0;
