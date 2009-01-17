@@ -513,16 +513,13 @@ void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* a
     m_documentElement = 0;
 }
 
-Element* Document::documentElement() const
+void Document::cacheDocumentElement() const
 {
-    if (!m_documentElement) {
-        Node* n = firstChild();
-        while (n && !n->isElementNode())
-            n = n->nextSibling();
-        m_documentElement = static_cast<Element*>(n);
-    }
-
-    return m_documentElement.get();
+    ASSERT(!m_documentElement);
+    Node* n = firstChild();
+    while (n && !n->isElementNode())
+        n = n->nextSibling();
+    m_documentElement = static_cast<Element*>(n);
 }
 
 PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode& ec)

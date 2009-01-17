@@ -1,5 +1,18 @@
 2009-01-17  David Hyatt  <hyatt@apple.com>
 
+        Inline Document::documentElement(), since it is used by the (very hot) RenderObject::isRoot().  Split off
+        the code that fetches and caches the document element into a separate function and inline the part that
+        does the null check and the return of the already-cached element.
+
+        Reviewed by Oliver Hunt
+
+        * dom/Document.cpp:
+        (WebCore::Document::cacheDocumentElement):
+        * dom/Document.h:
+        (WebCore::Document::documentElement):
+
+2009-01-17  David Hyatt  <hyatt@apple.com>
+
         Minor tweaks to RenderBox::styleChange to speed it up.
 
         Reviewed by Oliver Hunt

@@ -214,7 +214,14 @@ public:
 
     DOMImplementation* implementation() const;
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-    Element* documentElement() const;
+    
+    Element* documentElement() const
+    {
+        if (!m_documentElement)
+            cacheDocumentElement();
+        return m_documentElement.get();
+    }
+    
     virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);
     PassRefPtr<DocumentFragment> createDocumentFragment ();
     PassRefPtr<Text> createTextNode(const String& data);
@@ -1031,6 +1038,8 @@ private:
     void imageLoadEventTimerFired(Timer<Document>*);
     void updateFocusAppearanceTimerFired(Timer<Document>*);
     void updateBaseURL();
+
+    void cacheDocumentElement() const;
 
     RenderObject* m_savedRenderer;
     int m_secureForms;
