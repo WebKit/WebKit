@@ -370,6 +370,7 @@ static PassRefPtr<HTMLElement> brConstructor(const QualifiedName&, Document* doc
 
 static PassRefPtr<HTMLElement> quoteConstructor(const QualifiedName&, Document* doc, HTMLFormElement*, bool)
 {
+    doc->setUsesBeforeAfterRules(true);
     return new HTMLQuoteElement(qTag, doc);
 }
 

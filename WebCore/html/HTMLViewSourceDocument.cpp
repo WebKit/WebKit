@@ -50,6 +50,7 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const String& mimeT
     , m_tbody(0)
     , m_td(0)
 {
+    setUsesBeforeAfterRules(true);
 }
 
 Tokenizer* HTMLViewSourceDocument::createTokenizer()
