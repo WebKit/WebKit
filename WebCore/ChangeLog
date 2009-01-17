@@ -1,3 +1,15 @@
+2009-01-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 23393: TextField has AXTitle and AXTitleUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=23393
+
+        Test: accessibility/double-title.html
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::title):
+
 2009-01-16  Adam Treat  <adam.treat@torchmobile.com>
 
         The correct build fix for all platforms.
