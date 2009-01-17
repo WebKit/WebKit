@@ -114,8 +114,8 @@ public:
                       // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
 
 protected:
-    void paintCompositionBackground(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, int startPos, int endPos);
-    void paintDocumentMarkers(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, bool background);
+    void paintCompositionBackground(GraphicsContext*, int tx, int ty, RenderStyle*, const Font&, int startPos, int endPos);
+    void paintDocumentMarkers(GraphicsContext*, int tx, int ty, RenderStyle*, const Font&, bool background);
     void paintCompositionUnderline(GraphicsContext*, int tx, int ty, const CompositionUnderline&);
 #if PLATFORM(MAC)
     void paintCustomHighlight(int tx, int ty, const AtomicString& type);
@@ -123,9 +123,9 @@ protected:
 
 private:
     void paintDecoration(GraphicsContext*, int tx, int ty, int decoration, ShadowData* shadow);
-    void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*);
-    void paintSpellingOrGrammarMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*, bool grammar);
-    void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*);
+    void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font&);
+    void paintSpellingOrGrammarMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font&, bool grammar);
+    void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font&);
     friend class RenderText;
 };
 

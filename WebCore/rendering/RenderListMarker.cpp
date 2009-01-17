@@ -539,7 +539,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         paintBoxDecorations(paintInfo, box.x(), box.y());
 
     GraphicsContext* context = paintInfo.context;
-    context->setFont(style()->font());
 
     if (isImage()) {
 #if PLATFORM(MAC)
@@ -619,15 +618,15 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     const Font& font = style()->font();
     if (style()->direction() == LTR) {
         int width = font.width(textRun);
-        context->drawText(textRun, marker.location());
+        context->drawText(style()->font(), textRun, marker.location());
         const UChar periodSpace[2] = { '.', ' ' };
-        context->drawText(TextRun(periodSpace, 2), marker.location() + IntSize(width, 0));
+        context->drawText(style()->font(), TextRun(periodSpace, 2), marker.location() + IntSize(width, 0));
     } else {
         const UChar spacePeriod[2] = { ' ', '.' };
         TextRun spacePeriodRun(spacePeriod, 2);
         int width = font.width(spacePeriodRun);
-        context->drawText(spacePeriodRun, marker.location());
-        context->drawText(textRun, marker.location() + IntSize(width, 0));
+        context->drawText(style()->font(), spacePeriodRun, marker.location());
+        context->drawText(style()->font(), textRun, marker.location() + IntSize(width, 0));
     }
 }
 

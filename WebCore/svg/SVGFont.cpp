@@ -553,10 +553,10 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
                     currentPoint.move(identifier.horizontalAdvanceX * scale, 0.0f);
             } else {
                 // Handle system font fallback
-                FontDescription fontDescription(context->font().fontDescription());
+                FontDescription fontDescription(m_fontDescription);
                 fontDescription.setFamily(FontFamily());
                 Font font(fontDescription, 0, 0); // spacing handled by SVG text code.
-                font.update(context->font().fontSelector());
+                font.update(fontSelector());
 
                 TextRun fallbackCharacterRun(run);
                 fallbackCharacterRun.setText(&data.fallbackCharacters[run.rtl() ? data.fallbackCharacters.size() - fallbackCharacterIndex - 1 : fallbackCharacterIndex], 1);

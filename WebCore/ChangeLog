@@ -1,5 +1,52 @@
 2009-01-16  David Hyatt  <hyatt@apple.com>
 
+        Take Font out of the GraphicsContext.  Fonts are moderately expensive to both compare and to assign to.
+        The Font's presence in the GraphicsContext was making save/restore more expensive than it needed to be,
+        and was also causing expensive comparison checks to be made before doing alterations of the Font in the
+        GraphicsContext.
+
+        A font must now be passed as a parameter to all text drawing functions.
+
+        Reviewed by Oliver Hunt
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText):
+        (WebCore::GraphicsContext::drawBidiText):
+        (WebCore::GraphicsContext::drawHighlightForText):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextPrivate.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::paintTextWithShadows):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        (WebCore::SVGInlineTextBox::paintSelection):
+        * rendering/SVGInlineTextBox.h:
+        * svg/SVGFont.cpp:
+        (WebCore::Font::drawTextUsingSVGFont):
+
+2009-01-16  David Hyatt  <hyatt@apple.com>
+
         Fix a regression from the virtualContinuation()/continuation() split where I accidentally changed
         two if statements.
 

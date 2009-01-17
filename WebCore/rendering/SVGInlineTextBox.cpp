@@ -346,9 +346,7 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
 
     // Set our font
     RenderStyle* styleToUse = text->style(isFirstLineStyle());
-    const Font* font = &styleToUse->font();
-    if (*font != paintInfo.context->font())
-        paintInfo.context->setFont(*font);
+    const Font& font = styleToUse->font();
 
     TransformationMatrix ctm = svgChar.characterTransform();
     if (!ctm.isIdentity())
@@ -365,8 +363,8 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
 
         if (containsComposition && !useCustomUnderlines)
             paintCompositionBackground(paintInfo.context, tx, ty, styleToUse, font, 
-                                                text->document()->frame()->editor()->compositionStart(),
-                                                text->document()->frame()->editor()->compositionEnd());
+                                       text->document()->frame()->editor()->compositionStart(),
+                                       text->document()->frame()->editor()->compositionEnd());
         
         paintDocumentMarkers(paintInfo.context, tx, ty, styleToUse, font, true);
 
@@ -395,7 +393,7 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
     run.setActivePaintServer(activePaintServer);
 #endif
 
-    paintInfo.context->drawText(run, origin);
+    paintInfo.context->drawText(font, run, origin);
 
     if (paintInfo.phase != PaintPhaseSelection) {
         paintDocumentMarkers(paintInfo.context, tx, ty, styleToUse, font, false);
@@ -434,7 +432,7 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
         paintInfo.context->concatCTM(ctm.inverse());
 }
 
-void SVGInlineTextBox::paintSelection(int boxStartOffset, const SVGChar& svgChar, const UChar*, int length, GraphicsContext* p, RenderStyle* style, const Font* f)
+void SVGInlineTextBox::paintSelection(int boxStartOffset, const SVGChar& svgChar, const UChar*, int length, GraphicsContext* p, RenderStyle* style, const Font& font)
 {
     if (selectionState() == RenderObject::SelectionNone)
         return;
@@ -473,9 +471,9 @@ void SVGInlineTextBox::paintSelection(int boxStartOffset, const SVGChar& svgChar
     p->save();
 
     int adjust = startPos >= boxStartOffset ? boxStartOffset : 0;
-    p->drawHighlightForText(svgTextRunForInlineTextBox(textObject()->text()->characters() + start() + boxStartOffset, length, style, this, svgChar.x),
-                            IntPoint((int) svgChar.x, (int) svgChar.y - f->ascent()),
-                            f->ascent() + f->descent(), color, startPos - adjust, endPos - adjust);
+    p->drawHighlightForText(font, svgTextRunForInlineTextBox(textObject()->text()->characters() + start() + boxStartOffset, length, style, this, svgChar.x),
+                            IntPoint((int) svgChar.x, (int) svgChar.y - font.ascent()),
+                            font.ascent() + font.descent(), color, startPos - adjust, endPos - adjust);
 
     p->restore();
 }

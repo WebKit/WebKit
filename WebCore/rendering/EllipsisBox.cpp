@@ -32,9 +32,6 @@ void EllipsisBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
     GraphicsContext* context = paintInfo.context;
     RenderStyle* style = m_object->style(m_firstLine);
-    if (style->font() != context->font())
-        context->setFont(style->font());
-
     Color textColor = style->color();
     if (textColor != context->fillColor())
         context->setFillColor(textColor);
@@ -46,7 +43,7 @@ void EllipsisBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     }
 
     const String& str = m_str;
-    context->drawText(TextRun(str.characters(), str.length(), false, 0, 0, false, style->visuallyOrdered()), IntPoint(m_x + tx, m_y + ty + m_baseline));
+    context->drawText(style->font(), TextRun(str.characters(), str.length(), false, 0, 0, false, style->visuallyOrdered()), IntPoint(m_x + tx, m_y + ty + m_baseline));
 
     if (setShadow)
         context->clearShadow();

@@ -373,7 +373,6 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
             if (!m_altText.isEmpty()) {
                 String text = m_altText;
                 text.replace('\\', backslashAsCurrencySymbol());
-                context->setFont(style()->font());
                 context->setFillColor(style()->color());
                 int ax = tx + leftBorder + leftPad;
                 int ay = ty + topBorder + topPad;
@@ -386,9 +385,9 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
                 int textWidth = font.width(textRun);
                 if (errorPictureDrawn) {
                     if (usableWidth >= textWidth && font.height() <= imageY)
-                        context->drawText(textRun, IntPoint(ax, ay + ascent));
+                        context->drawText(style()->font(), textRun, IntPoint(ax, ay + ascent));
                 } else if (usableWidth >= textWidth && cHeight >= font.height())
-                    context->drawText(textRun, IntPoint(ax, ay + ascent));
+                    context->drawText(style()->font(), textRun, IntPoint(ax, ay + ascent));
             }
         }
     } else if (hasImage() && cWidth > 0 && cHeight > 0) {

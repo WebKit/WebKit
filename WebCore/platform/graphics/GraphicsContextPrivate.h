@@ -27,7 +27,6 @@
 #define GraphicsContextPrivate_h
 
 #include "TransformationMatrix.h"
-#include "Font.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "Pattern.h"
@@ -66,7 +65,6 @@ namespace WebCore {
         {
         }
 
-        Font font;
         int textDrawingMode;
         
         StrokeStyle strokeStyle;

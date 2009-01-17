@@ -203,11 +203,10 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
             + buttonRenderer->marginTop() + buttonRenderer->borderTop() + buttonRenderer->paddingTop()
             + buttonRenderer->baselinePosition(true, false);
 
-        paintInfo.context->setFont(style()->font());
         paintInfo.context->setFillColor(style()->color());
         
         // Draw the filename
-        paintInfo.context->drawBidiText(textRun, IntPoint(textX, textY));
+        paintInfo.context->drawBidiText(style()->font(), textRun, IntPoint(textX, textY));
         
         if (m_fileChooser->icon()) {
             // Determine where the icon should be placed
