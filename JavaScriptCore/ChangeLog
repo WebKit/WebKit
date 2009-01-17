@@ -2,6 +2,33 @@
 
         Reviewed by Oliver Hunt.
 
+        On x86-64 jit, cache JSImmedate::TagMask & JSImmedate::TagTypeNumber in
+        registers, save reloading them every time they're used.
+
+        Draws x86-64 jit performance close to that of i386 jit.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::subPtr):
+        (JSC::MacroAssembler::jnzPtr):
+        (JSC::MacroAssembler::jzPtr):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpIfJSCell):
+        (JSC::JIT::emitJumpIfNotJSCell):
+        (JSC::JIT::emitJumpIfImmediateNumber):
+        (JSC::JIT::emitJumpIfNotImmediateNumber):
+        (JSC::JIT::emitJumpIfImmediateInteger):
+        (JSC::JIT::emitJumpIfNotImmediateInteger):
+        (JSC::JIT::emitFastArithIntToImmNoCheck):
+
+2009-01-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Add support to x86-64 JIT for inline double precision arithmetic ops.
         +5/6% on x86-64, JIT enabled, sunspider.
 

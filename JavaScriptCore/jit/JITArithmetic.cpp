@@ -394,6 +394,9 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned, unsigned op1, unsign
 
 void JIT::compileBinaryArithOpSlowCase(OpcodeID opcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned, unsigned op1, unsigned, OperandTypes types)
 {
+    // We assume that subtracting TagTypeNumber is equivalent to adding DoubleEncodeOffset.
+    COMPILE_ASSERT(((JSImmediate::TagTypeNumber + JSImmediate::DoubleEncodeOffset) == 0), TagTypeNumber_PLUS_DoubleEncodeOffset_EQUALS_0);
+
     Jump notImm1 = getSlowCase(iter);
     Jump notImm2 = getSlowCase(iter);
 
@@ -421,7 +424,7 @@ void JIT::compileBinaryArithOpSlowCase(OpcodeID opcodeID, Vector<SlowCaseEntry>:
         emitJumpIfNotImmediateNumber(X86::eax).linkTo(stubFunctionCall, this);
     if (!types.second().definitelyIsNumber())
         emitJumpIfNotImmediateNumber(X86::edx).linkTo(stubFunctionCall, this);
-    subPtr(ImmPtr(reinterpret_cast<void*>(JSImmediate::DoubleEncodeOffset)), X86::eax);
+    addPtr(tagTypeNumberRegister, X86::eax);
     m_assembler.movq_rr(X86::eax, X86::xmm1);
     Jump op2isDouble = emitJumpIfNotImmediateInteger(X86::edx);
     m_assembler.cvtsi2sd_rr(X86::edx, X86::xmm2);
@@ -433,7 +436,7 @@ void JIT::compileBinaryArithOpSlowCase(OpcodeID opcodeID, Vector<SlowCaseEntry>:
         emitJumpIfNotImmediateNumber(X86::edx).linkTo(stubFunctionCall, this);
     m_assembler.cvtsi2sd_rr(X86::eax, X86::xmm1);
     op2isDouble.link(this);
-    subPtr(ImmPtr(reinterpret_cast<void*>(JSImmediate::DoubleEncodeOffset)), X86::edx);
+    addPtr(tagTypeNumberRegister, X86::edx);
     m_assembler.movq_rr(X86::edx, X86::xmm2);
     op2wasInteger.link(this);
 
@@ -446,7 +449,7 @@ void JIT::compileBinaryArithOpSlowCase(OpcodeID opcodeID, Vector<SlowCaseEntry>:
         m_assembler.mulsd_rr(X86::xmm2, X86::xmm1);
     }
     m_assembler.movq_rr(X86::xmm1, X86::eax);
-    addPtr(ImmPtr(reinterpret_cast<void*>(JSImmediate::DoubleEncodeOffset)), X86::eax);
+    subPtr(tagTypeNumberRegister, X86::eax);
 
     end.link(this);
 }
