@@ -1975,7 +1975,7 @@ void FrameLoader::logCanCachePageDecision()
         }
         if (!m_frame->page()->backForwardList()->enabled())
             { LOG(PageCache, " -The back/forward list is disabled"); cannotCache = true; }
-        if (!m_frame->page()->backForwardList()->capacity() > 0)
+        if (!(m_frame->page()->backForwardList()->capacity() > 0))
             { LOG(PageCache, " -The back/forward list has a 0 capacity"); cannotCache = true; }
         if (!m_frame->page()->settings()->usesPageCache())
             { LOG(PageCache, " -Page settings says b/f cache disabled"); cannotCache = true; }

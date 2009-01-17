@@ -1,3 +1,9 @@
+2009-01-16  Adele Peterson  <adele@apple.com>
+
+        Windows build fix.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::logCanCachePageDecision):
+
 2009-01-16  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/6502511> Safari crashes if it's running while the desktop theme is changed.
