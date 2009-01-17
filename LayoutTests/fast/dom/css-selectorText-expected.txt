@@ -58,7 +58,6 @@ div span#foo.test div:hover#bar a
 :only-of-type
 :empty
 ::first-line
-::first-letter
 ::selection
 ::before
 ::after
