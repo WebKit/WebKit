@@ -1706,15 +1706,13 @@ void RenderObject::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool to
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (topLevel) {
-        RenderFlow* continuation = virtualContinuation();
-        if (continuation) {
-            rects.append(IntRect(tx, ty - collapsedMarginTop(),
-                                 width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
-            continuation->absoluteRects(rects,
-                                        tx - xPos() + continuation->containingBlock()->xPos(),
-                                        ty - yPos() + continuation->containingBlock()->yPos(), topLevel);
-        }
+    RenderFlow* continuation = virtualContinuation();
+    if (topLevel && continuation) {
+        rects.append(IntRect(tx, ty - collapsedMarginTop(),
+                             width(), height() + collapsedMarginTop() + collapsedMarginBottom()));
+        continuation->absoluteRects(rects,
+                                    tx - xPos() + continuation->containingBlock()->xPos(),
+                                    ty - yPos() + continuation->containingBlock()->yPos(), topLevel);
     } else
         rects.append(IntRect(tx, ty, width(), height() + borderTopExtra() + borderBottomExtra()));
 }
@@ -1758,14 +1756,12 @@ void RenderObject::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
-    if (topLevel) {
-        RenderFlow* continuation = virtualContinuation();
-        if (continuation) {
-            FloatRect localRect(0, -collapsedMarginTop(),
-                                width(), height() + collapsedMarginTop() + collapsedMarginBottom());
-            quads.append(localToAbsoluteQuad(localRect));
-            continuation->absoluteQuads(quads, topLevel);
-        }
+    RenderFlow* continuation = virtualContinuation();
+    if (topLevel && continuation) {
+        FloatRect localRect(0, -collapsedMarginTop(),
+                            width(), height() + collapsedMarginTop() + collapsedMarginBottom());
+        quads.append(localToAbsoluteQuad(localRect));
+        continuation->absoluteQuads(quads, topLevel);
     } else
         quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height() + borderTopExtra() + borderBottomExtra())));
 }

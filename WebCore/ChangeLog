@@ -1,5 +1,16 @@
 2009-01-16  David Hyatt  <hyatt@apple.com>
 
+        Fix a regression from the virtualContinuation()/continuation() split where I accidentally changed
+        two if statements.
+
+        Reviewed by Oliver Hunt
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteRects):
+        (WebCore::RenderObject::absoluteQuads):
+
+2009-01-16  David Hyatt  <hyatt@apple.com>
+
         Fix a regression from my before/after optimization.  Make sure the <q> element puts the document
         into a mode where it will respect before/after rules, since <q> implicitly uses such rules.
 
