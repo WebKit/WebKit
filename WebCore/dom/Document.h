@@ -950,7 +950,7 @@ private:
     String m_contentLanguage;
 
 public:
-    bool inPageCache();
+    bool inPageCache() const { return m_inPageCache; }
     void setInPageCache(bool flag);
     
     // Elements can register themselves for the "documentWillBecomeInactive()" and  

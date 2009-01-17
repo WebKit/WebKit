@@ -3162,11 +3162,6 @@ KURL Document::completeURL(const String& url) const
     return KURL(m_baseURL, url, m_decoder->encoding());
 }
 
-bool Document::inPageCache()
-{
-    return m_inPageCache;
-}
-
 void Document::setInPageCache(bool flag)
 {
     if (m_inPageCache == flag)
