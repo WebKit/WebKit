@@ -42,7 +42,7 @@ CSSParserValueList::~CSSParserValueList()
 
 void CSSParserValueList::addValue(const CSSParserValue& v)
 {
-    if (v.isVariable())
+    if (v.unit == CSSPrimitiveValue::CSS_PARSER_VARIABLE_FUNCTION_SYNTAX) // isVariable() is not inlined. This is hot.
         m_variablesCount++;
     m_values.append(v);
 }
