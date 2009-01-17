@@ -465,6 +465,16 @@ public:
 #endif
     }
 
+    void addPtr(ImmPtr imm, RegisterID dest)
+    {
+#if PLATFORM(X86_64)
+        move(imm, scratchRegister);
+        m_assembler.addq_rr(scratchRegister, dest);
+#else
+        add32(Imm32(imm), dest);
+#endif
+    }
+
     void addPtr(Imm32 imm, RegisterID src, RegisterID dest)
     {
         m_assembler.leal_mr(imm.m_value, src, dest);

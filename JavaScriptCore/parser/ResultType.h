@@ -41,6 +41,8 @@ namespace JSC {
         static const Type TypeMaybeBool   = 0x20;
         static const Type TypeMaybeOther  = 0x40;
 
+        static const Type TypeBits = TypeMaybeNumber | TypeMaybeString | TypeMaybeNull | TypeMaybeBool | TypeMaybeOther;
+
         explicit ResultType(Type type)
             : m_type(type)
         {
@@ -48,29 +50,29 @@ namespace JSC {
         
         bool isReusable()
         {
-            return (m_type & TypeReusable);
+            return m_type & TypeReusable;
         }
 
         bool isInt32()
         {
-            return (m_type & TypeInt32);
+            return m_type & TypeInt32;
         }
 
         bool definitelyIsNumber()
         {
-            return ((m_type & ~TypeReusable) == TypeMaybeNumber);
-        }
-        
-        bool isNotNumber()
-        {
-            return !(m_type & TypeMaybeNumber);
+            return (m_type & TypeBits) == TypeMaybeNumber;
         }
         
         bool mightBeNumber()
         {
-            return !isNotNumber();
+            return m_type & TypeMaybeNumber;
         }
 
+        bool isNotNumber()
+        {
+            return !mightBeNumber();
+        }
+        
         static ResultType nullType()
         {
             return ResultType(TypeMaybeNull);
@@ -108,7 +110,7 @@ namespace JSC {
         
         static ResultType unknownType()
         {
-            return ResultType(TypeMaybeNumber | TypeMaybeString | TypeMaybeNull | TypeMaybeBool | TypeMaybeOther);
+            return ResultType(TypeBits);
         }
         
         static ResultType forAdd(ResultType op1, ResultType op2)
