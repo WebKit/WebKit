@@ -89,13 +89,13 @@ public:
     bool layoutPending() const;
 
     RenderObject* layoutRoot(bool onlyDuringLayout = false) const;
-    int layoutCount() const;
+    int layoutCount() const { return m_layoutCount; }
 
     // These two helper functions just pass through to the RenderView.
     bool needsLayout() const;
     void setNeedsLayout();
 
-    bool needsFullRepaint() const;
+    bool needsFullRepaint() const { return m_doFullRepaint; }
 
     void resetScrollbars();
 

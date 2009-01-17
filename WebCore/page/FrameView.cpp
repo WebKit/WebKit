@@ -363,16 +363,6 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
     m_viewportRenderer = o;
 }
 
-int FrameView::layoutCount() const
-{
-    return m_layoutCount;
-}
-
-bool FrameView::needsFullRepaint() const
-{
-    return m_doFullRepaint;
-}
-
 RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
 {
     return onlyDuringLayout && layoutPending() ? 0 : m_layoutRoot;
