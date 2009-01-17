@@ -3475,11 +3475,6 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
     return count;
 }
 
-FrameLoaderClient* FrameLoader::client() const
-{
-    return m_client;
-}
-
 void FrameLoader::submitForm(const FrameLoadRequest& request, Event* event)
 {
     // FIXME: We'd like to remove this altogether and fix the multiple form submission issue another way.

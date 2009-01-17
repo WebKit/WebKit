@@ -276,7 +276,7 @@ namespace WebCore {
         
         static void addHTTPOriginIfNeeded(ResourceRequest&, String origin);
 
-        FrameLoaderClient* client() const;
+        FrameLoaderClient* client() const { return m_client; }
 
         void setDefersLoading(bool);
 
