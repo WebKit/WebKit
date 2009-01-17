@@ -1,3 +1,40 @@
+2009-01-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        Make surroundNodeRangeWithElement call insertNodeBefore implicitly
+        Make insertNodeBefore take PassRefPtr
+        Clean up the use of PassRefPtr vs. raw pointers a few places in the editing code.
+        https://bugs.webkit.org/show_bug.cgi?id=23389
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::applyTextDecorationStyle):
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/ApplyStyleCommand.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::prepareBlockquoteLevelForInsertion):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::insertTab):
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::IncreaseSelectionListLevelCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::removeNodePreservingChildren):
+        (WebCore::ReplacementFragment::insertNodeBefore):
+        (WebCore::ReplacementFragment::removeInterchangeNodes):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::insertNodeAfterAndUpdateNodesInserted):
+        (WebCore::ReplaceSelectionCommand::insertNodeAtAndUpdateNodesInserted):
+        (WebCore::ReplaceSelectionCommand::insertNodeBeforeAndUpdateNodesInserted):
+        * editing/ReplaceSelectionCommand.h:
+
 2009-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.

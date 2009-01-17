@@ -91,7 +91,7 @@ private:
     bool mergeEndWithNextIfIdentical(const Position& start, const Position& end);
     void cleanupUnstyledAppleStyleSpans(Node* dummySpanAncestor);
 
-    void surroundNodeRangeWithElement(Node* start, Node* end, Element* element);
+    void surroundNodeRangeWithElement(Node* start, Node* end, PassRefPtr<Element>);
     float computedFontSize(const Node*);
     void joinChildTextNodes(Node*, const Position& start, const Position& end);
 

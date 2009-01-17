@@ -50,9 +50,9 @@ private:
 
     void completeHTMLReplacement(const Position& lastPositionToSelect);
 
-    void insertNodeAfterAndUpdateNodesInserted(Node* insertChild, Node* refChild);
-    void insertNodeAtAndUpdateNodesInserted(Node*, const Position&);
-    void insertNodeBeforeAndUpdateNodesInserted(Node* insertChild, Node* refChild);
+    void insertNodeAfterAndUpdateNodesInserted(PassRefPtr<Node> insertChild, Node* refChild);
+    void insertNodeAtAndUpdateNodesInserted(PassRefPtr<Node>, const Position&);
+    void insertNodeBeforeAndUpdateNodesInserted(PassRefPtr<Node> insertChild, Node* refChild);
 
     void updateNodesInserted(Node*);
     bool shouldRemoveEndBR(Node*, const VisiblePosition&);

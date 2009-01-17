@@ -113,7 +113,7 @@ void InsertLineBreakCommand::doApply()
         insertNodeAt(nodeToInsert.get(), pos);
         
         if (needExtraLineBreak)
-            insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
+            insertNodeBefore(nodeToInsert->cloneNode(false), nodeToInsert);
         
         VisiblePosition endingPosition(Position(nodeToInsert.get(), 0));
         setEndingSelection(Selection(endingPosition));
@@ -136,11 +136,11 @@ void InsertLineBreakCommand::doApply()
         
         // Do the split
         ExceptionCode ec = 0;
-        Text *textNode = static_cast<Text *>(pos.node());
+        Text* textNode = static_cast<Text*>(pos.node());
         RefPtr<Text> textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), ec));
         deleteTextFromNode(textNode, 0, pos.offset());
-        insertNodeBefore(textBeforeNode.get(), textNode);
-        insertNodeBefore(nodeToInsert.get(), textNode);
+        insertNodeBefore(textBeforeNode, textNode);
+        insertNodeBefore(nodeToInsert, textNode);
         Position endingPosition = Position(textNode, 0);
         
         // Handle whitespace that occurs after the split

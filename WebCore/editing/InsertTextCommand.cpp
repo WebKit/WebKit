@@ -232,7 +232,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
             // insert the span before it.
             if (offset > 0)
                 splitTextNode(textNode, offset);
-            insertNodeBefore(spanNode.get(), textNode);
+            insertNodeBefore(spanNode, textNode);
         }
     }
     

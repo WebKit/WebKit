@@ -165,14 +165,13 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
             insertNodeBefore(insertChild, child);
         else
             appendNode(insertChild, static_cast<Element*>(refChild));
-    } else if (caretMinOffset(refChild) >= offset) {
+    } else if (caretMinOffset(refChild) >= offset)
         insertNodeBefore(insertChild, refChild);
-    } else if (refChild->isTextNode() && caretMaxOffset(refChild) > offset) {
+    else if (refChild->isTextNode() && caretMaxOffset(refChild) > offset) {
         splitTextNode(static_cast<Text *>(refChild), offset);
         insertNodeBefore(insertChild, refChild);
-    } else {
+    } else
         insertNodeAfter(insertChild, refChild);
-    }
 }
 
 void CompositeEditCommand::appendNode(PassRefPtr<Node> node, PassRefPtr<Element> parent)

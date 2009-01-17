@@ -207,7 +207,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // find ending selection position easily before inserting the paragraph
         pos = pos.downstream();
         
-        insertNodeBefore(blockToInsert.get(), refNode);
+        insertNodeBefore(blockToInsert, refNode);
         appendBlockPlaceholder(blockToInsert.get());
         setEndingSelection(Selection(Position(blockToInsert.get(), 0), DOWNSTREAM));
         applyStyleAfterInsertion(startBlock);

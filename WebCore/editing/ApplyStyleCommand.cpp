@@ -527,7 +527,6 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
             // Last styled node was not parent node of this text node, but we wish to style this
             // text node. To make this possible, add a style span to surround this text node.
             RefPtr<HTMLElement> span = createStyleSpanElement(document());
-            insertNodeBefore(span.get(), node);
             surroundNodeRangeWithElement(node, node, span.get());
             element = span.release();
         }  else {
@@ -1090,7 +1089,6 @@ void ApplyStyleCommand::applyTextDecorationStyle(Node *node, CSSMutableStyleDecl
 
     if (node->isTextNode()) {
         RefPtr<HTMLElement> styleSpan = createStyleSpanElement(document());
-        insertNodeBefore(styleSpan.get(), node);
         surroundNodeRangeWithElement(node, node, styleSpan.get());
         node = styleSpan.get();
     }
@@ -1428,15 +1426,18 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position &start, const
     return false;
 }
 
-void ApplyStyleCommand::surroundNodeRangeWithElement(Node *startNode, Node *endNode, Element *element)
+void ApplyStyleCommand::surroundNodeRangeWithElement(Node* startNode, Node* endNode, PassRefPtr<Element> elementToInsert)
 {
     ASSERT(startNode);
     ASSERT(endNode);
-    ASSERT(element);
+    ASSERT(elementToInsert);
+    RefPtr<Element> element = elementToInsert;
+
+    insertNodeBefore(element, startNode);
     
-    Node *node = startNode;
+    Node* node = startNode;
     while (1) {
-        Node *next = node->traverseNextNode();
+        Node* next = node->traverseNextNode();
         if (node->childNodeCount() == 0 && node->renderer() && node->renderer()->isInline()) {
             removeNode(node);
             appendNode(node, element);
@@ -1513,7 +1514,6 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
         if (fontColorChangesComputedStyle(computedStyle, styleChange)
                 || fontFaceChangesComputedStyle(computedStyle, styleChange)
                 || fontSizeChangesComputedStyle(computedStyle, styleChange)) {
-            insertNodeBefore(fontElement.get(), startNode);
             if (styleChange.applyFontColor())
                 fontElement->setAttribute(colorAttr, styleChange.fontColor());
             if (styleChange.applyFontFace())
@@ -1527,29 +1527,17 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
     if (styleChange.cssStyle().length() > 0) {
         RefPtr<Element> styleElement = createStyleSpanElement(document());
         styleElement->setAttribute(styleAttr, styleChange.cssStyle());
-        insertNodeBefore(styleElement.get(), startNode);
-        surroundNodeRangeWithElement(startNode, endNode, styleElement.get());
+        surroundNodeRangeWithElement(startNode, endNode, styleElement.release());
     }
 
-    if (styleChange.applyBold()) {
-        RefPtr<Element> boldElement = document()->createElementNS(xhtmlNamespaceURI, "b", ec);
-        ASSERT(ec == 0);
-        insertNodeBefore(boldElement.get(), startNode);
-        surroundNodeRangeWithElement(startNode, endNode, boldElement.get());
-    }
+    if (styleChange.applyBold())
+        surroundNodeRangeWithElement(startNode, endNode, document()->createElementNS(xhtmlNamespaceURI, "b", ec));
 
-    if (styleChange.applyItalic()) {
-        RefPtr<Element> italicElement = document()->createElementNS(xhtmlNamespaceURI, "i", ec);
-        ASSERT(ec == 0);
-        insertNodeBefore(italicElement.get(), startNode);
-        surroundNodeRangeWithElement(startNode, endNode, italicElement.get());
-    }
+    if (styleChange.applyItalic())
+        surroundNodeRangeWithElement(startNode, endNode, document()->createElementNS(xhtmlNamespaceURI, "i", ec));
     
-    if (m_styledInlineElement) {
-        RefPtr<Element> clonedElement = m_styledInlineElement->cloneElement();
-        insertNodeBefore(clonedElement.get(), startNode);
-        surroundNodeRangeWithElement(startNode, endNode, clonedElement.get());
-    }
+    if (m_styledInlineElement)
+        surroundNodeRangeWithElement(startNode, endNode, m_styledInlineElement->cloneElement());
 }
 
 float ApplyStyleCommand::computedFontSize(const Node *node)

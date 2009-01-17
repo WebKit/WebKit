@@ -80,7 +80,7 @@ private:
     void restoreTestRenderingNodesToFragment(Node*);
     void removeInterchangeNodes(Node*);
     
-    void insertNodeBefore(Node* node, Node* refNode);
+    void insertNodeBefore(PassRefPtr<Node> node, Node* refNode);
 
     RefPtr<Document> m_document;
     RefPtr<DocumentFragment> m_fragment;
@@ -182,7 +182,7 @@ void ReplacementFragment::removeNodePreservingChildren(Node *node)
 
     while (RefPtr<Node> n = node->firstChild()) {
         removeNode(n);
-        insertNodeBefore(n.get(), node);
+        insertNodeBefore(n.release(), node);
     }
     removeNode(node);
 }
@@ -201,12 +201,12 @@ void ReplacementFragment::removeNode(PassRefPtr<Node> node)
     ASSERT(ec == 0);
 }
 
-void ReplacementFragment::insertNodeBefore(Node *node, Node *refNode)
+void ReplacementFragment::insertNodeBefore(PassRefPtr<Node> node, Node* refNode)
 {
     if (!node || !refNode)
         return;
         
-    Node *parent = refNode->parentNode();
+    Node* parent = refNode->parentNode();
     if (!parent)
         return;
         
@@ -311,7 +311,7 @@ void ReplacementFragment::removeInterchangeNodes(Node* container)
             RefPtr<Node> n = 0;
             while ((n = node->firstChild())) {
                 removeNode(n);
-                insertNodeBefore(n.get(), node);
+                insertNodeBefore(n, node);
             }
             removeNode(node);
             if (n)
@@ -820,12 +820,12 @@ void ReplaceSelectionCommand::doApply()
     RefPtr<Node> node = refNode->nextSibling();
     
     fragment.removeNode(refNode);
-    insertNodeAtAndUpdateNodesInserted(refNode.get(), insertionPos);
+    insertNodeAtAndUpdateNodesInserted(refNode, insertionPos);
     
     while (node) {
         Node* next = node->nextSibling();
         fragment.removeNode(node);
-        insertNodeAfterAndUpdateNodesInserted(node.get(), refNode.get());
+        insertNodeAfterAndUpdateNodesInserted(node, refNode.get());
         refNode = node;
         node = next;
     }
@@ -938,7 +938,7 @@ void ReplaceSelectionCommand::doApply()
                 insertTextIntoNode(text, text->length(), collapseWhiteSpace ? nonBreakingSpaceString() : " ");
             } else {
                 RefPtr<Node> node = document()->createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
-                insertNodeAfterAndUpdateNodesInserted(node.get(), endNode);
+                insertNodeAfterAndUpdateNodesInserted(node, endNode);
             }
         }
     
@@ -955,7 +955,7 @@ void ReplaceSelectionCommand::doApply()
                 RefPtr<Node> node = document()->createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
                 // Don't updateNodesInserted.  Doing so would set m_lastLeafInserted to be the node containing the 
                 // leading space, but m_lastLeafInserted is supposed to mark the end of pasted content.
-                insertNodeBefore(node.get(), startNode);
+                insertNodeBefore(node, startNode);
                 // FIXME: Use positions to track the start/end of inserted content.
                 m_firstNodeInserted = node;
             }
@@ -1023,22 +1023,25 @@ EditAction ReplaceSelectionCommand::editingAction() const
     return m_editAction;
 }
 
-void ReplaceSelectionCommand::insertNodeAfterAndUpdateNodesInserted(Node *insertChild, Node *refChild)
+void ReplaceSelectionCommand::insertNodeAfterAndUpdateNodesInserted(PassRefPtr<Node> insertChild, Node* refChild)
 {
+    Node* nodeToUpdate = insertChild.get(); // insertChild will be cleared when passed
     insertNodeAfter(insertChild, refChild);
-    updateNodesInserted(insertChild);
+    updateNodesInserted(nodeToUpdate);
 }
 
-void ReplaceSelectionCommand::insertNodeAtAndUpdateNodesInserted(Node *insertChild, const Position& p)
+void ReplaceSelectionCommand::insertNodeAtAndUpdateNodesInserted(PassRefPtr<Node> insertChild, const Position& p)
 {
+    Node* nodeToUpdate = insertChild.get(); // insertChild will be cleared when passed
     insertNodeAt(insertChild, p);
-    updateNodesInserted(insertChild);
+    updateNodesInserted(nodeToUpdate);
 }
 
-void ReplaceSelectionCommand::insertNodeBeforeAndUpdateNodesInserted(Node *insertChild, Node *refChild)
+void ReplaceSelectionCommand::insertNodeBeforeAndUpdateNodesInserted(PassRefPtr<Node> insertChild, Node* refChild)
 {
+    Node* nodeToUpdate = insertChild.get(); // insertChild will be cleared when passed
     insertNodeBefore(insertChild, refChild);
-    updateNodesInserted(insertChild);
+    updateNodesInserted(nodeToUpdate);
 }
 
 void ReplaceSelectionCommand::updateNodesInserted(Node *node)

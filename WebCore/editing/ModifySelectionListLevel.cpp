@@ -196,9 +196,9 @@ void IncreaseSelectionListLevelCommand::doApply()
                 newParent = createUnorderedListElement(document());
                 break;
         }
-        insertNodeBefore(newParent.get(), startListChild);
+        insertNodeBefore(newParent, startListChild);
         appendSiblingNodeRange(startListChild, endListChild, newParent.get());
-        m_listElement = newParent.get();
+        m_listElement = newParent.release();
     }
 }
 

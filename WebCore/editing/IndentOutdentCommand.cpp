@@ -103,8 +103,8 @@ PassRefPtr<Element> IndentOutdentCommand::prepareBlockquoteLevelForInsertion(Vis
     // Add another br before the placeholder if it collapsed.
     VisiblePosition visiblePos(Position(placeholder.get(), 0));
     if (!isStartOfParagraph(visiblePos))
-        insertNodeBefore(createBreakElement(document()).get(), placeholder.get());
-    return placeholder.get();
+        insertNodeBefore(createBreakElement(document()), placeholder);
+    return placeholder.release();
 }
 
 void IndentOutdentCommand::indentRegion()
