@@ -1,3 +1,10 @@
+2009-01-16  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitdirs.pm: Added '--makeargs' parameter which can pass additional
+        parameters to make command in QMake projects.
+
 2009-01-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

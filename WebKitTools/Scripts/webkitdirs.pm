@@ -934,17 +934,22 @@ sub buildAutotoolsProject($@)
 
 sub buildQMakeProject($@)
 {
-    my ($clean, @buildArgs) = @_;
+    my ($clean, @buildParams) = @_;
 
-    push @buildArgs, "-r";
+    my @buildArgs = ("-r");
 
     my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
-    for my $i (0 .. $#ARGV) {
-        my $opt = $ARGV[$i];
+    my $makeargs = "";
+    for my $i (0 .. $#buildParams) {
+        my $opt = $buildParams[$i];
         if ($opt =~ /^--qmake=(.*)/i ) {
             $qmakebin = $1;
         } elsif ($opt =~ /^--qmakearg=(.*)/i ) {
             push @buildArgs, $1;
+        } elsif ($opt =~ /^--makeargs=(.*)/i ) {
+            $makeargs = $1;
+        } else {
+            push @buildArgs, $opt;
         }
     }
 
@@ -988,9 +993,9 @@ sub buildQMakeProject($@)
     }
 
     if ($clean) {
-      $result = system "$make distclean";
+      $result = system "$make $makeargs distclean";
     } else {
-      $result = system "$make";
+      $result = system "$make $makeargs";
     }
 
     chdir ".." or die;
