@@ -1,3 +1,18 @@
+2009-01-16  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/6502511> Safari crashes if it's running while the desktop theme is changed.
+        
+        This was caused by mismatched ENABLE definitions across WebCore and WebKit.
+        
+        Several virtual methods were added to RenderTheme.h, conditionalized by ENABLE(VIDEO).
+        In addition to adding ENABLE_VIDEO to WebKit, this change also adds ENABLE_DATABASE and ENABLE_ICONDATABASE
+        to Windows WebCore/WebKit, and adds ENABLE_WORKERS, and several ENABLE_SVG_ flags to WebKit on Windows.
+        Our Windows ENABLE flags now match Mac.
+        
+        Reviewed by Adele Peterson.
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2009-01-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
