@@ -615,6 +615,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* tableColAttrs = nil;
     static NSArray* tableCellAttrs = nil;
     static NSArray* groupAttrs = nil;
+    static NSArray* inputImageAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -786,6 +787,12 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         groupAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
+    if (inputImageAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:controlAttrs];
+        [tempArray addObject:NSAccessibilityURLAttribute];
+        inputImageAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
     
     if (m_object->isPasswordField())
         return attributes;
@@ -814,6 +821,9 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (m_object->isProgressIndicator() || m_object->isSlider())
         return rangeAttrs;
 
+    if (m_object->isInputImage())
+        return inputImageAttrs;
+    
     if (m_object->isControl())
         return controlAttrs;
     

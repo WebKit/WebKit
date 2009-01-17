@@ -76,6 +76,7 @@ public:
     virtual bool isWebArea() const;
     virtual bool isCheckboxOrRadio() const;
     virtual bool isFileUploadButton() const;
+    virtual bool isInputImage() const;
     virtual bool isProgressIndicator() const;
     virtual bool isSlider() const;
     virtual bool isMenuRelated() const;

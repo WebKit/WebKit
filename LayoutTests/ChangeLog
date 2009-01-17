@@ -2,6 +2,16 @@
 
         Reviewed by Oliver Hunt.
 
+        Bug 23397: AXURL is not reported for <INPUT type="image"> elements
+        https://bugs.webkit.org/show_bug.cgi?id=23397
+
+        * accessibility/input-image-url-expected.txt: Added.
+        * accessibility/input-image-url.html: Added.
+
+2009-01-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Bug 23393: TextField has AXTitle and AXTitleUIElement
         https://bugs.webkit.org/show_bug.cgi?id=23393
 

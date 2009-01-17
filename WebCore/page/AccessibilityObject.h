@@ -213,6 +213,7 @@ public:
     virtual bool isMenuButton() const { return false; }
     virtual bool isMenuItem() const { return false; }
     virtual bool isFileUploadButton() const { return false; };
+    virtual bool isInputImage() const { return false; }
     virtual bool isProgressIndicator() const { return false; };
     virtual bool isSlider() const { return false; };
     virtual bool isControl() const { return false; };
