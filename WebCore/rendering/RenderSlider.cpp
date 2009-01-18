@@ -260,11 +260,14 @@ bool RenderSlider::mouseEventIsInThumb(MouseEvent* evt)
     if (!m_thumb || !m_thumb->renderer())
         return false;
 
+#if ENABLE(VIDEO)
     if (style()->appearance() == MediaSliderPart) {
         MediaControlInputElement *sliderThumb = static_cast<MediaControlInputElement*>(m_thumb->renderer()->node());
         IntPoint absPoint(evt->pageX(), evt->pageY());
         return sliderThumb->hitTest(absPoint);
-    } else {
+    } else 
+#endif
+    {
         FloatPoint localPoint = m_thumb->renderer()->absoluteToLocal(FloatPoint(evt->pageX(), evt->pageY()), false, true);
         IntRect thumbBounds = m_thumb->renderer()->borderBox();
         return thumbBounds.contains(roundedIntPoint(localPoint));
