@@ -237,7 +237,6 @@ DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLa
     // for drag images on win, so we use 1
     static const Color backgroundColor(140, 140, 140);
     static const IntSize radii(DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS);
-    context.setFont(labelFont);
     IntRect rect(0, 0, imageSize.width(), imageSize.height());
     context.fillRoundedRect(rect, radii, radii, radii, radii, backgroundColor);
  
