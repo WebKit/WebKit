@@ -52,10 +52,8 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
     context.setFillColor(color);
     if (isOneLeftToRightRun(run))
         font.drawText(&context, run, point);
-    else {
-        context.setFont(font);
-        context.drawBidiText(run, point);
-    }
+    else
+        context.drawBidiText(font, run, point);
 
     if (underlinedIndex >= 0) {
         ASSERT(underlinedIndex < static_cast<int>(text.length()));
