@@ -61,8 +61,8 @@ namespace WebCore {
     
 static HashSet<EventTargetNode*>* gNodesDispatchingSimulatedClicks = 0; 
 
-EventTargetNode::EventTargetNode(Document* doc, bool isElement, bool isContainer)
-    : Node(doc, isElement, isContainer)
+EventTargetNode::EventTargetNode(Document* doc, bool isElement, bool isContainer, bool isText)
+    : Node(doc, isElement, isContainer, isText)
 {
 }
 

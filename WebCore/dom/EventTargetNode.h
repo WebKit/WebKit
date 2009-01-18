@@ -38,7 +38,7 @@ typedef Vector<RefPtr<RegisteredEventListener> > RegisteredEventListenerVector;
 
 class EventTargetNode : public Node, public EventTarget {
 public:
-    EventTargetNode(Document*, bool isElement = false, bool isContainer = false);
+    EventTargetNode(Document*, bool isElement = false, bool isContainer = false, bool isText = false);
     virtual ~EventTargetNode();
 
     virtual bool isEventTargetNode() const { return true; }

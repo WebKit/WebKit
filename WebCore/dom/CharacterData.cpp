@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-CharacterData::CharacterData(Document *doc)
-    : EventTargetNode(doc)
+CharacterData::CharacterData(Document *doc, bool isText)
+    : EventTargetNode(doc, false, false, isText)
     , m_data(StringImpl::empty())
 {
 }
 
-CharacterData::CharacterData(Document* document, const String& text)
-    : EventTargetNode(document)
+CharacterData::CharacterData(Document* document, const String& text, bool isText)
+    : EventTargetNode(document, false, false, isText)
 {
     m_data = text.impl() ? text.impl() : StringImpl::empty();
 }

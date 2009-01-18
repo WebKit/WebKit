@@ -29,8 +29,8 @@ namespace WebCore {
 
 class CharacterData : public EventTargetNode {
 public:
-    CharacterData(Document*, const String& text);
-    CharacterData(Document*);
+    CharacterData(Document*, const String& text, bool isText = false);
+    CharacterData(Document*, bool isText = false);
     virtual ~CharacterData();
 
     // DOM methods & attributes for CharacterData

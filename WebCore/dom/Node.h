@@ -99,7 +99,7 @@ public:
     enum StyleChange { NoChange, NoInherit, Inherit, Detach, Force };    
     static StyleChange diff(RenderStyle*, RenderStyle*);
 
-    Node(Document*, bool isElement = false, bool isContainer = false);
+    Node(Document*, bool isElement = false, bool isContainer = false, bool isText = false);
     virtual ~Node();
 
     // DOM methods & attributes for Node
@@ -157,6 +157,8 @@ public:
 
     bool isElementNode() const { return m_isElement; }
     bool isContainerNode() const { return m_isContainer; }
+    bool isTextNode() const { return m_isText; }
+
     virtual bool isHTMLElement() const { return false; }
 
 #if ENABLE(SVG)
@@ -174,7 +176,6 @@ public:
     virtual bool isStyledElement() const { return false; }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isAttributeNode() const { return false; }
-    virtual bool isTextNode() const { return false; }
     virtual bool isCommentNode() const { return false; }
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
@@ -540,6 +541,7 @@ private:
     bool m_hasRareData : 1;
     const bool m_isElement : 1;
     const bool m_isContainer : 1;
+    const bool m_isText : 1;
 
 protected:
     // These bits are used by the Element derived class, pulled up here so they can
