@@ -71,7 +71,7 @@ void InitializeLoggingChannelsIfNecessary()
 #if defined(NDEBUG)
     qWarning("This is a release build. Setting QT_WEBKIT_LOG will have no effect.");
 #else
-    QList<QByteArray> channels = loggingEnv.split(",");
+    QList<QByteArray> channels = loggingEnv.split(',');
     QListIterator<QByteArray> iter(channels);
 
     while (iter.hasNext()) {

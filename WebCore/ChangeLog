@@ -1,3 +1,10 @@
+2009-01-19  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        [Qt] Build fix after r39971.
+
+        * platform/qt/LoggingQt.cpp:
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+
 2009-01-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.
