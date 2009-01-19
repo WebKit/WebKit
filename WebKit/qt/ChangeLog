@@ -1,3 +1,27 @@
+2009-01-19  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix calling of onkeypress event handlers on input elements when pressing enter
+        and other text insertion commands in the Qt port.
+
+        Similar to the win and mac ports don't execute text inserting editor
+        commands on RawKeyDown but continue processing the event first in
+        WebCore, i.e. also get a keypress event sent. If unhandled it will
+        come back to EditorClientQt::handleKeyboardEvent later and we execute
+        it then.
+
+        This also fixes search by pressing enter on www.trafikanten.no.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::editorCommandForWebActions): Make function
+        accessible from other files.
+        (QWebPage::triggerAction): Adjust to new function visibility.
+        * Api/qwebpage_p.h: Ditto.
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent): Don't execute
+        text inserting commands on RawKeyPressDown.
+
 2009-01-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Simon Hausmann.

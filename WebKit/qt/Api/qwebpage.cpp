@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008, 2009 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2007 Staikos Computing Services Inc.
     Copyright (C) 2007 Apple Inc.
 
@@ -182,7 +182,7 @@ static const char* editorCommandWebActions[] =
 };
 
 // Lookup the appropriate editor command to use for WebAction \a action
-static const char* editorCommandForWebActions(QWebPage::WebAction action)
+const char* QWebPagePrivate::editorCommandForWebActions(QWebPage::WebAction action)
 {
     if ((action > QWebPage::NoWebAction) && (action < int(sizeof(editorCommandWebActions) / sizeof(const char*))))
         return editorCommandWebActions[action];
@@ -1512,7 +1512,7 @@ void QWebPage::triggerAction(WebAction action, bool checked)
                 d->page->inspectorController()->show();
             break;
         default:
-            command = editorCommandForWebActions(action);
+            command = QWebPagePrivate::editorCommandForWebActions(action);
             break;
     }
 
