@@ -22,6 +22,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 AXTitleUIElement: <AXGroup>
+AXAccessKey: (null)
 
 
 -----------------------------

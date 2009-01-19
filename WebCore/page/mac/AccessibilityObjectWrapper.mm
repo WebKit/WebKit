@@ -107,6 +107,10 @@ using namespace std;
 #define NSAccessibilityBlockQuoteLevelAttribute @"AXBlockQuoteLevel"
 #endif
 
+#ifndef NSAccessibilityAccessKeyAttribute
+#define NSAccessibilityAccessKeyAttribute @"AXAccessKey"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
 #endif
@@ -655,6 +659,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (anchorAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:attributes];
         [tempArray addObject:NSAccessibilityURLAttribute];
+        [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         anchorAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -675,6 +680,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray addObject:NSAccessibilityVisibleCharacterRangeAttribute];
         [tempArray addObject:NSAccessibilityInsertionPointLineNumberAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         textAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -684,6 +690,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         listBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -743,6 +750,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (controlAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:attributes];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         controlAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -790,6 +798,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (inputImageAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:controlAttrs];
         [tempArray addObject:NSAccessibilityURLAttribute];
+        [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         inputImageAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -1277,6 +1286,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (fv)
             return [fv->platformWidget() window];
         return nil;
+    }
+    
+    if ([attributeName isEqualToString:NSAccessibilityAccessKeyAttribute]) {
+        AtomicString accessKey = m_object->accessKey();
+        if (accessKey.isNull())
+            return nil;
+        return accessKey;
     }
     
     if (m_object->isDataTable()) {

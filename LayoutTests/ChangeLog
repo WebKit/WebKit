@@ -1,3 +1,19 @@
+2009-01-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 23422: AX: AXLinks should expose access key information
+        https://bugs.webkit.org/show_bug.cgi?id=23422
+
+        Update and add tests for access key information
+
+        * accessibility/accesskey-expected.txt: Added.
+        * accessibility/accesskey.html: Added.
+        * accessibility/document-links-expected.txt:
+        * accessibility/legend-expected.txt:
+        * accessibility/radio-button-group-members-expected.txt:
+        * accessibility/table-with-aria-role-expected.txt:
+
 2009-01-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders Carlsson.

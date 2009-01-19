@@ -68,6 +68,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'link 3'>
 AXURL: http://webkit.org/
+AXAccessKey: (null)
 
 ------------
 AXRole: AXLink
@@ -92,6 +93,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'link 4'>
 AXURL: LayoutTests/accessibility/document-links.html#asdf
+AXAccessKey: (null)
 
 ------------
 
