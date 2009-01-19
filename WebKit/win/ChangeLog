@@ -1,3 +1,12 @@
+2009-01-19  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * DOMCoreClasses.cpp: Replaced "using namespace WebCore" with
+        individual using directives for each type we need from that namespace,
+        to avoid conflicts between DOMObject and WebCore::DOMObject.
+        (DOMElement::font): Added a now-needed WebCore::.
+
 2009-01-17  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

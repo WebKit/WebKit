@@ -1,3 +1,13 @@
+2009-01-19  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj: Copy headers from page/animation into
+        $WebKitOutputDir so that WebKit can access them.
+
+        * html/HTMLBaseFontElement.cpp: Touched this file to cause a rebuild
+        and header copy.
+
 2009-01-19  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon Hausmann.
