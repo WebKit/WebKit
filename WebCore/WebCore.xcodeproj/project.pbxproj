@@ -115,6 +115,7 @@
 		08E6E0F10EFF42BA00029FBF /* WMLFieldSetElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E6E0EF0EFF42BA00029FBF /* WMLFieldSetElement.cpp */; };
 		08E6E0F20EFF42BA00029FBF /* WMLFieldSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E6E0F00EFF42BA00029FBF /* WMLFieldSetElement.h */; };
 		0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A4844980CA44CB200B7BD48 /* SoftLinking.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0BA5D3860F240FB4009B870B /* GenericWorkerTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BA5D3850F240FB4009B870B /* GenericWorkerTask.h */; };
 		0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56028D0E4B76580065B038 /* RenderMarquee.h */; };
 		0F5602900E4B76580065B038 /* RenderMarquee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F56028E0E4B76580065B038 /* RenderMarquee.cpp */; };
 		0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC705200EB1815600B90AD8 /* AtomicStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4928,6 +4929,7 @@
 		08FB84B00ECE373300DC064E /* WMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLElementFactory.cpp; sourceTree = "<group>"; };
 		08FB84B10ECE373300DC064E /* WMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLElementFactory.h; sourceTree = "<group>"; };
 		0A4844980CA44CB200B7BD48 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
+		0BA5D3850F240FB4009B870B /* GenericWorkerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericWorkerTask.h; sourceTree = "<group>"; };
 		0F56028D0E4B76580065B038 /* RenderMarquee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMarquee.h; sourceTree = "<group>"; };
 		0F56028E0E4B76580065B038 /* RenderMarquee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMarquee.cpp; sourceTree = "<group>"; };
 		0FC705200EB1815600B90AD8 /* AtomicStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringHash.h; sourceTree = "<group>"; };
@@ -9610,8 +9612,6 @@
 		49E911B20EF86D27009D0CAF /* transforms */ = {
 			isa = PBXGroup;
 			children = (
-				49E911B30EF86D47009D0CAF /* TransformationMatrix.cpp */,
-				49E911B40EF86D47009D0CAF /* TransformationMatrix.h */,
 				49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */,
 				49E911B60EF86D47009D0CAF /* MatrixTransformOperation.cpp */,
 				49E911B70EF86D47009D0CAF /* MatrixTransformOperation.h */,
@@ -9625,6 +9625,8 @@
 				49E911BE0EF86D47009D0CAF /* TransformOperation.h */,
 				49E911BF0EF86D47009D0CAF /* TransformOperations.cpp */,
 				49E911C00EF86D47009D0CAF /* TransformOperations.h */,
+				49E911B30EF86D47009D0CAF /* TransformationMatrix.cpp */,
+				49E911B40EF86D47009D0CAF /* TransformationMatrix.h */,
 				49E911C10EF86D47009D0CAF /* TranslateTransformOperation.cpp */,
 				49E911C20EF86D47009D0CAF /* TranslateTransformOperation.h */,
 			);
@@ -12857,7 +12859,6 @@
 		B27535290B053814002CE64F /* cg */ = {
 			isa = PBXGroup;
 			children = (
-				B275352A0B053814002CE64F /* TransformationMatrixCG.cpp */,
 				B275352B0B053814002CE64F /* FloatPointCG.cpp */,
 				B275352C0B053814002CE64F /* FloatRectCG.cpp */,
 				B275352D0B053814002CE64F /* FloatSizeCG.cpp */,
@@ -12876,6 +12877,7 @@
 				B27535370B053814002CE64F /* PDFDocumentImage.h */,
 				B27535350B053814002CE64F /* PathCG.cpp */,
 				A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */,
+				B275352A0B053814002CE64F /* TransformationMatrixCG.cpp */,
 			);
 			path = cg;
 			sourceTree = "<group>";
@@ -13746,8 +13748,6 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
-				07AFE5900F1446BD00841617 /* mediaControlsQT.css */,
-				070DD8F50F01868000727DEB /* mediaControls.css */,
 				93CA4C9C09DF93FA00DF8677 /* maketokenizer */,
 				A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */,
 				A80E6CDD0A1989CA007FB8C5 /* CSSBorderImageValue.h */,
@@ -13910,6 +13910,8 @@
 				93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */,
 				93CA4C9B09DF93FA00DF8677 /* makeprop.pl */,
 				93CA4C9D09DF93FA00DF8677 /* makevalues.pl */,
+				070DD8F50F01868000727DEB /* mediaControls.css */,
+				07AFE5900F1446BD00841617 /* mediaControlsQT.css */,
 				93CA4C9F09DF93FA00DF8677 /* quirks.css */,
 				93CA4CA209DF93FA00DF8677 /* svg.css */,
 				93CA4CA309DF93FA00DF8677 /* tokenizer.flex */,
@@ -14205,6 +14207,7 @@
 				93831B560D087D6000E5C984 /* ExceptionCode.cpp */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
 				085773340F0846010080583E /* FormControlElement.h */,
+				0BA5D3850F240FB4009B870B /* GenericWorkerTask.h */,
 				85031B2D0A44EFC700F992E0 /* KeyboardEvent.cpp */,
 				85031B2E0A44EFC700F992E0 /* KeyboardEvent.h */,
 				14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */,
@@ -14365,7 +14368,6 @@
 				29AAC51F0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h in Headers */,
 				29800C950E524C8B00025536 /* AccessibilityTableRow.h in Headers */,
 				E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */,
-				49E911C40EF86D47009D0CAF /* TransformationMatrix.h in Headers */,
 				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
 				316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */,
@@ -15208,6 +15210,7 @@
 				859D62F00AD8892700012995 /* DOMSVGZoomEventInternal.h in Headers */,
 				A8E544C40CA9D1C20097D09B /* DOMSVGZoomEventInternal.h in Headers */,
 				BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */,
+				E10BB3780F14B62200560E13 /* DOMStringList.h in Headers */,
 				850657000AAB4763002D15C0 /* DOMStyleSheet.h in Headers */,
 				85B498FF0ADB348100925CBB /* DOMStyleSheetInternal.h in Headers */,
 				850657020AAB4763002D15C0 /* DOMStyleSheetList.h in Headers */,
@@ -15231,6 +15234,8 @@
 				316FE07F0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRuleInternal.h in Headers */,
 				316FE0800E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.h in Headers */,
 				316FE0820E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h in Headers */,
+				498391500F1E76B400C23782 /* DOMWebKitCSSMatrix.h in Headers */,
+				498391520F1E76B400C23782 /* DOMWebKitCSSMatrixInternal.h in Headers */,
 				31611E610E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h in Headers */,
 				31611E630E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h in Headers */,
 				31C0FF4C0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.h in Headers */,
@@ -15355,6 +15360,7 @@
 				935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				BCE04C8A0DAFF7A0007A0F41 /* Generator.h in Headers */,
+				0BA5D3860F240FB4009B870B /* GenericWorkerTask.h in Headers */,
 				FE80D7C60E9C1F25000D6F75 /* Geolocation.h in Headers */,
 				FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */,
 				FE80D7C90E9C1F25000D6F75 /* Geoposition.h in Headers */,
@@ -15530,6 +15536,7 @@
 				65DF31F809D1CC60000BE325 /* JSDOMImplementation.h in Headers */,
 				1ACE53E00A8D18810022947D /* JSDOMParser.h in Headers */,
 				BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */,
+				E10BB3860F14B95000560E13 /* JSDOMStringList.h in Headers */,
 				BC6932740D7E293900AE44D1 /* JSDOMWindowBase.h in Headers */,
 				BCF937E70E8B2E95005C7AB7 /* JSDOMWindowBase.lut.h in Headers */,
 				652FBBBC0DE27CB60001D386 /* JSDOMWindowCustom.h in Headers */,
@@ -15810,6 +15817,8 @@
 				31C0FF3E0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h in Headers */,
 				316FE0720E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h in Headers */,
 				316FE0740E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h in Headers */,
+				498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */,
+				498391640F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h in Headers */,
 				31611E5B0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h in Headers */,
 				31C0FF400E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h in Headers */,
 				65DF320609D1CC60000BE325 /* JSWheelEvent.h in Headers */,
@@ -16300,6 +16309,7 @@
 				93309E16099E64920056E581 /* SplitTextNodeContainingElementCommand.h in Headers */,
 				9352071909BD3BA500F2038D /* StaticConstructors.h in Headers */,
 				BC7FA62D0D1F0EFF00DB22A9 /* StaticNodeList.h in Headers */,
+				E181B3510F15008A00FB7847 /* StaticStringList.h in Headers */,
 				51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */,
 				51E0BABB0DA5547100A9E417 /* StorageEvent.h in Headers */,
 				51E0BB380DA5ACB600A9E417 /* StorageMap.h in Headers */,
@@ -16374,6 +16384,7 @@
 				BCCFBAE80B5152ED0001F1D7 /* Tokenizer.h in Headers */,
 				49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */,
 				49E911D00EF86D47009D0CAF /* TransformOperations.h in Headers */,
+				49E911C40EF86D47009D0CAF /* TransformationMatrix.h in Headers */,
 				49E911D20EF86D47009D0CAF /* TranslateTransformOperation.h in Headers */,
 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
 				1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */,
@@ -16451,6 +16462,7 @@
 				31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */,
 				31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */,
 				31288E750E3005D6003619AE /* WebKitCSSKeyframesRule.h in Headers */,
+				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
 				BC9ADD230CC4032600098C4C /* WebKitCSSTransformValue.h in Headers */,
 				31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */,
 				1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */,
@@ -16531,14 +16543,6 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				E10BB3780F14B62200560E13 /* DOMStringList.h in Headers */,
-				E10BB3860F14B95000560E13 /* JSDOMStringList.h in Headers */,
-				E181B3510F15008A00FB7847 /* StaticStringList.h in Headers */,
-				498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */,
-				498391500F1E76B400C23782 /* DOMWebKitCSSMatrix.h in Headers */,
-				498391520F1E76B400C23782 /* DOMWebKitCSSMatrixInternal.h in Headers */,
-				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
-				498391640F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16819,8 +16823,6 @@
 				29AAC5200E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp in Sources */,
 				29800C960E524C8B00025536 /* AccessibilityTableRow.cpp in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,
-				49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */,
-				B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
 				316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */,
@@ -17196,6 +17198,7 @@
 				859D62C30AD888EF00012995 /* DOMSVGViewElement.mm in Sources */,
 				859D62C60AD888EF00012995 /* DOMSVGZoomEvent.mm in Sources */,
 				BC5A86840C33676000EEA649 /* DOMSelection.cpp in Sources */,
+				E10BB37B0F14B64100560E13 /* DOMStringList.cpp in Sources */,
 				850657010AAB4763002D15C0 /* DOMStyleSheet.mm in Sources */,
 				850657030AAB4763002D15C0 /* DOMStyleSheetList.mm in Sources */,
 				85ACA99D0A9B575900671E90 /* DOMText.mm in Sources */,
@@ -17207,6 +17210,7 @@
 				31C0FF4A0E4CEFDD007D6FE5 /* DOMWebKitAnimationEvent.mm in Sources */,
 				316FE07E0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm in Sources */,
 				316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */,
+				498391510F1E76B400C23782 /* DOMWebKitCSSMatrix.mm in Sources */,
 				31611E620E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm in Sources */,
 				31C0FF4D0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm in Sources */,
 				85C7F5E80AAFBAFB004014DD /* DOMWheelEvent.mm in Sources */,
@@ -17496,6 +17500,8 @@
 				65DF31F709D1CC60000BE325 /* JSDOMImplementation.cpp in Sources */,
 				1ACE53DF0A8D18810022947D /* JSDOMParser.cpp in Sources */,
 				BC5A86B50C3367E800EEA649 /* JSDOMSelection.cpp in Sources */,
+				E10BB3870F14B95000560E13 /* JSDOMStringList.cpp in Sources */,
+				E181B2570F14C1A600FB7847 /* JSDOMStringListCustom.cpp in Sources */,
 				1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */,
 				BC6932730D7E293900AE44D1 /* JSDOMWindowBase.cpp in Sources */,
 				BCD9C2620C17AA67005C90A2 /* JSDOMWindowCustom.cpp in Sources */,
@@ -17823,6 +17829,8 @@
 				31C0FF3D0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.cpp in Sources */,
 				316FE0710E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp in Sources */,
 				316FE0730E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp in Sources */,
+				4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */,
+				498391630F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp in Sources */,
 				31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */,
 				31C0FF3F0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp in Sources */,
 				65DF320509D1CC60000BE325 /* JSWheelEvent.cpp in Sources */,
@@ -18286,6 +18294,7 @@
 				93309E13099E64920056E581 /* SplitTextNodeCommand.cpp in Sources */,
 				93309E15099E64920056E581 /* SplitTextNodeContainingElementCommand.cpp in Sources */,
 				BC7FA62E0D1F0EFF00DB22A9 /* StaticNodeList.cpp in Sources */,
+				E181B3560F1500D700FB7847 /* StaticStringList.cpp in Sources */,
 				51E3F9C70DA059DC00250911 /* Storage.cpp in Sources */,
 				51BE37DF0DAEE00E001085FC /* StorageArea.cpp in Sources */,
 				51E0BABC0DA5547100A9E417 /* StorageEvent.cpp in Sources */,
@@ -18346,6 +18355,8 @@
 				E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */,
 				93309EA4099EB78C0056E581 /* Timer.cpp in Sources */,
 				49E911CF0EF86D47009D0CAF /* TransformOperations.cpp in Sources */,
+				49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */,
+				B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */,
 				49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */,
 				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,
 				854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */,
@@ -18417,6 +18428,7 @@
 				31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */,
 				31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */,
 				31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */,
+				498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */,
 				BC9ADD800CC4092200098C4C /* WebKitCSSTransformValue.cpp in Sources */,
 				31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */,
 				1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */,
@@ -18489,14 +18501,6 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
-				E10BB37B0F14B64100560E13 /* DOMStringList.cpp in Sources */,
-				E10BB3870F14B95000560E13 /* JSDOMStringList.cpp in Sources */,
-				E181B2570F14C1A600FB7847 /* JSDOMStringListCustom.cpp in Sources */,
-				E181B3560F1500D700FB7847 /* StaticStringList.cpp in Sources */,
-				4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */,
-				498391510F1E76B400C23782 /* DOMWebKitCSSMatrix.mm in Sources */,
-				498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */,
-				498391630F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

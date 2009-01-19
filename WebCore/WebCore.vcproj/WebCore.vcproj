@@ -11386,6 +11386,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\GenericWorkerTask.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\KeyboardEvent.cpp"
 				>
 				<FileConfiguration

@@ -1,3 +1,64 @@
+2009-01-19  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22720
+
+        Provide a generic class to handle the pattern of task callbacks across worker/parent threads.  It
+        only works for methods that need 6 parameters but similar classes could be added as needed for
+        other numbers of parameters.
+
+        Add addMessage and resourceRetrievedByXMLHttpRequest to ScriptExecutionContext.
+
+        Use these methods and others to remove document() from XMLHttpRequest in a few more places.
+
+        No observable change in behavior, so no test.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Sorted project file while adding GenericWorkerTask.h
+
+        * bindings/js/ScriptString.h:
+        (WebCore::ScriptString::operator=):
+        (WebCore::ScriptString::operator+=):
+        (WebCore::ScriptString::operator==):
+        (WebCore::ScriptString::operator!=):
+        Removed unnecessary JSLock.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addMessage):
+        (WebCore::Document::resourceRetrievedByXMLHttpRequest):
+        * dom/Document.h:
+        * dom/GenericWorkerTask.h: Added.
+        (WebCore::GenericWorkerTaskBase::GenericWorkerTaskBase):
+        (WebCore::GenericWorkerTaskBase::canPerformTask):
+        (WebCore::GenericWorkerTask6::create):
+        (WebCore::GenericWorkerTask6::GenericWorkerTask6):
+        (WebCore::GenericWorkerTask6::performTask):
+        (WebCore::createCallbackTask):
+        * dom/ScriptExecutionContext.h:
+        * dom/WorkerContext.cpp:
+        (WebCore::addMessageTask):
+        (WebCore::WorkerContext::addMessage):
+        (WebCore::WorkerContext::resourceRetrievedByXMLHttpRequest):
+        (WebCore::WorkerContext::postTaskToParentContext):
+        * dom/WorkerContext.h:
+        * dom/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postTaskToParentContext):
+        * dom/WorkerMessagingProxy.h:
+        * dom/WorkerThread.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::dropProtection):
+        (WebCore::reportUnsafeUsage):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::create):
+
+
 2009-01-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

@@ -29,6 +29,7 @@
 
 #if ENABLE(WORKERS)
 
+#include "ScriptExecutionContext.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -48,6 +49,7 @@ namespace WebCore {
 
         void postMessageToWorkerObject(const String& message);
         void postMessageToWorkerContext(const String& message);
+        void postTaskToParentContext(PassRefPtr<ScriptExecutionContext::Task>);
 
         void postWorkerException(const String& errorMessage, int lineNumber, const String& sourceURL);
 
@@ -62,6 +64,7 @@ namespace WebCore {
         bool workerThreadHasPendingActivity() const;
 
     private:
+        friend class GenericWorkerTaskBase;
         friend class MessageWorkerTask;
         friend class WorkerContextDestroyedTask;
         friend class WorkerExceptionTask;

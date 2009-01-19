@@ -41,7 +41,7 @@ namespace WebCore {
     class WorkerContext;
     class WorkerMessagingProxy;
     class WorkerTask;
-    class WorkerThreadStartupData;
+    struct WorkerThreadStartupData;
 
     class WorkerThread : public RefCounted<WorkerThread> {
     public:

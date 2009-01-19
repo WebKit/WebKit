@@ -34,12 +34,15 @@
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"
+#include "GenericWorkerTask.h"
+#include "NotImplemented.h"
 #include "SecurityOrigin.h"
 #include "WorkerLocation.h"
 #include "WorkerMessagingProxy.h"
 #include "WorkerNavigator.h"
 #include "WorkerTask.h"
 #include "WorkerThread.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -106,6 +109,26 @@ bool WorkerContext::hasPendingActivity() const
 void WorkerContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)
 {
     m_thread->messagingProxy()->postWorkerException(errorMessage, lineNumber, sourceURL);
+}
+
+static void addMessageTask(ScriptExecutionContext* context, MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+{
+    context->addMessage(destination, source, level, message, lineNumber, sourceURL);
+}
+
+void WorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+{
+    // createCallbackTask has to be a separate statement from postTaskToParentContext to make the destructor
+    // for message.copy() get called before postTaskToParentContext.  (If they are one statement, the destructor
+    // gets called after postTaskToParentContext which causes a race condition.) 
+    RefPtr<Task> task = createCallbackTask(m_thread->messagingProxy(), &addMessageTask, destination, source, level, message.copy(), lineNumber, sourceURL.copy());
+    postTaskToParentContext(task.release());
+}
+
+void WorkerContext::resourceRetrievedByXMLHttpRequest(unsigned long, const ScriptString&)
+{
+    // FIXME: The implementation is pending the fixes in https://bugs.webkit.org/show_bug.cgi?id=23175
+    notImplemented();
 }
 
 void WorkerContext::postMessage(const String& message)
@@ -188,6 +211,11 @@ private:
 void WorkerContext::postTask(PassRefPtr<Task> task)
 {
     thread()->messageQueue().append(ScriptExecutionContextTaskWorkerTask::create(task));
+}
+
+void WorkerContext::postTaskToParentContext(PassRefPtr<Task> task)
+{
+    thread()->messagingProxy()->postTaskToParentContext(task);
 }
 
 } // namespace WebCore

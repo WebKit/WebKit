@@ -27,6 +27,7 @@
 #ifndef ScriptExecutionContext_h
 #define ScriptExecutionContext_h
 
+#include "Console.h"
 #include "KURL.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -38,7 +39,13 @@ namespace WebCore {
     class ActiveDOMObject;
     class MessagePort;
     class SecurityOrigin;
+    class ScriptString;
     class String;
+
+    enum MessageDestination {
+        InspectorControllerDestination,
+        ConsoleDestination,
+    };
 
     class ScriptExecutionContext {
     public:
@@ -54,6 +61,8 @@ namespace WebCore {
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
         virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL) = 0;
+        virtual void addMessage(MessageDestination, MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL) = 0;
+        virtual void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString) = 0;
 
         // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.
         bool canSuspendActiveDOMObjects();

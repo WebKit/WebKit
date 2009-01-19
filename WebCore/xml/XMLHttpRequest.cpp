@@ -318,8 +318,8 @@ static const XMLHttpRequestStaticData* initializeXMLHttpRequestStaticData()
     return dummy;
 }
 
-XMLHttpRequest::XMLHttpRequest(Document* doc)
-    : ActiveDOMObject(doc, this)
+XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
+    : ActiveDOMObject(context, this)
     , m_async(true)
     , m_includeCredentials(false)
     , m_state(UNSENT)
@@ -333,7 +333,6 @@ XMLHttpRequest::XMLHttpRequest(Document* doc)
     , m_receivedLength(0)
     , m_lastSendLineNumber(0)
 {
-    ASSERT(document());
     initializeXMLHttpRequestStaticData();
 }
 
@@ -953,11 +952,9 @@ void XMLHttpRequest::dropProtection()
     // can't be recouped until the load is done, so only
     // report the extra cost at that point.
 
-    if (JSDOMWindow* window = toJSDOMWindow(document()->frame())) {
-        JSC::JSValuePtr wrapper = getCachedDOMObjectWrapper(*window->globalData(), this);
-        if (wrapper)
-            JSC::Heap::heap(wrapper)->reportExtraMemoryCost(m_responseText.size() * 2);
-    }
+   if (JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(scriptExecutionContext()))
+       if (DOMObject* wrapper = getCachedDOMObjectWrapper(*globalObject->globalData(), this))
+           JSC::Heap::heap(wrapper)->reportExtraMemoryCost(m_responseText.size() * 2);
 #endif
 
     unsetPendingActivity(this);
@@ -968,16 +965,13 @@ void XMLHttpRequest::overrideMimeType(const String& override)
     m_mimeTypeOverride = override;
 }
 
-static void reportUnsafeUsage(Document* document, const String& message)
+static void reportUnsafeUsage(ScriptExecutionContext* context, const String& message)
 {
-    if (!document)
+    if (!context)
         return;
-    Frame* frame = document->frame();
-    if (!frame)
-        return;
-    // It's not good to report the bad usage without indicating what source line it came from.
+    // FIXME: It's not good to report the bad usage without indicating what source line it came from.
     // We should pass additional parameters so we can tell the console where the mistake occurred.
-    frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 1, String());
+    context->addMessage(ConsoleDestination, JSMessageSource, ErrorMessageLevel, message, 1, String());
 }
 
 void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& value, ExceptionCode& ec)
@@ -1000,7 +994,7 @@ void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& va
 
     // A privileged script (e.g. a Dashboard widget) can set any headers.
     if (!scriptExecutionContext()->securityOrigin()->canLoadLocalResources() && !isSafeRequestHeader(name)) {
-        reportUnsafeUsage(document(), "Refused to set unsafe header \"" + name + "\"");
+        reportUnsafeUsage(scriptExecutionContext(), "Refused to set unsafe header \"" + name + "\"");
         return;
     }
 
@@ -1071,12 +1065,12 @@ String XMLHttpRequest::getResponseHeader(const AtomicString& name, ExceptionCode
 
     // See comment in getAllResponseHeaders above.
     if (isSetCookieHeader(name) && !scriptExecutionContext()->securityOrigin()->canLoadLocalResources()) {
-        reportUnsafeUsage(document(), "Refused to get unsafe header \"" + name + "\"");
+        reportUnsafeUsage(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
         return "";
     }
 
     if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(name)) {
-        reportUnsafeUsage(document(), "Refused to get unsafe header \"" + name + "\"");
+        reportUnsafeUsage(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
         return "";
     }
 
@@ -1188,12 +1182,8 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
     if (m_decoder)
         m_responseText += m_decoder->flush();
 
-    if (Frame* frame = document()->frame()) {
-        if (Page* page = frame->page()) {
-            page->inspectorController()->resourceRetrievedByXMLHttpRequest(m_loader ? m_loader->identifier() : m_identifier, m_responseText);
-            page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, "XHR finished loading: \"" + m_url + "\".", m_lastSendLineNumber, m_lastSendURL);
-        }
-    }
+    scriptExecutionContext()->resourceRetrievedByXMLHttpRequest(m_loader ? m_loader->identifier() : m_identifier, m_responseText);
+    scriptExecutionContext()->addMessage(InspectorControllerDestination, JSMessageSource, LogMessageLevel, "XHR finished loading: \"" + m_url + "\".", m_lastSendLineNumber, m_lastSendURL);
 
     bool hadLoader = m_loader;
     m_loader = 0;

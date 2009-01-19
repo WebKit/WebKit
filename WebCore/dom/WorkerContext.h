@@ -72,11 +72,14 @@ namespace WebCore {
         bool hasPendingActivity() const;
 
         virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL);
+        virtual void addMessage(MessageDestination, MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
+        virtual void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
 
         virtual WorkerContext* toWorkerContext() { return this; }
 
         void postMessage(const String& message);
         virtual void postTask(PassRefPtr<Task>); // Executes the task on context's thread asynchronously.
+        void postTaskToParentContext(PassRefPtr<Task>); // Executes the task in the parent's context (and thread) asynchronously.
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);

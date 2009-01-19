@@ -223,6 +223,11 @@ void WorkerMessagingProxy::postMessageToWorkerContext(const String& message)
         m_queuedEarlyTasks.append(MessageWorkerContextTask::create(message));
 }
 
+void WorkerMessagingProxy::postTaskToParentContext(PassRefPtr<ScriptExecutionContext::Task> task)
+{
+    m_scriptExecutionContext->postTask(task);
+}
+
 void WorkerMessagingProxy::postWorkerException(const String& errorMessage, int lineNumber, const String& sourceURL)
 {
     m_scriptExecutionContext->postTask(WorkerExceptionTask::create(errorMessage, lineNumber, sourceURL, this));
