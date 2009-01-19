@@ -860,7 +860,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
 JSValuePtr NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, data_t valueData, mach_msg_type_number_t valueLength)
 {
     RetainPtr<NSData*> data(AdoptNS, [[NSData alloc] initWithBytesNoCopy:valueData length:valueLength freeWhenDone:NO]);
-    
+
     RetainPtr<NSArray*> array = [NSPropertyListSerialization propertyListFromData:data.get()
                                                                  mutabilityOption:NSPropertyListImmutable
                                                                            format:0
@@ -868,15 +868,15 @@ JSValuePtr NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, data_t v
     NSUInteger position = 0;
     JSValuePtr value;
     bool result = demarshalValueFromArray(exec, array.get(), position, value);
-    ASSERT(result);
-    
+    ASSERT_UNUSED(result, result);
+
     return value;
 }
 
 void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t valuesData, mach_msg_type_number_t valuesLength, ArgList& result)
 {
     RetainPtr<NSData*> data(AdoptNS, [[NSData alloc] initWithBytesNoCopy:valuesData length:valuesLength freeWhenDone:NO]);
-    
+
     RetainPtr<NSArray*> array = [NSPropertyListSerialization propertyListFromData:data.get()
                                                                  mutabilityOption:NSPropertyListImmutable
                                                                            format:0

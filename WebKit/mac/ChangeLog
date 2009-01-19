@@ -1,3 +1,11 @@
+2009-01-19  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build!
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::demarshalValue):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValues):
+
 2009-01-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders Carlsson.
