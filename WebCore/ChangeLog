@@ -1,3 +1,11 @@
+2009-01-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Actually add the new header.
+
+        * dom/GenericWorkerTask.h: Added.
+
 2009-01-19  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
