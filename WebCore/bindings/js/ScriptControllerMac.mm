@@ -57,6 +57,7 @@
 @interface NSObject (WebPlugin)
 - (id)objectForWebScript;
 - (NPObject *)createPluginScriptableObject;
+- (PassRefPtr<JSC::Bindings::Instance>)createPluginBindingsInstance:(PassRefPtr<JSC::Bindings::RootObject>)rootObject;
 @end
 
 using namespace JSC::Bindings;
@@ -71,6 +72,9 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
 
     RefPtr<RootObject> rootObject = createRootObject(widgetView);
 
+    if ([widgetView respondsToSelector:@selector(createPluginBindingsInstance:)])
+        return [widgetView createPluginBindingsInstance:rootObject.release()];
+        
     if ([widgetView respondsToSelector:@selector(objectForWebScript)]) {
         id objectForWebScript = [widgetView objectForWebScript];
         if (!objectForWebScript)
