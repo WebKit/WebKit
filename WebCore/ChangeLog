@@ -1,3 +1,15 @@
+2009-01-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Hyatt.
+
+        AX: some buttons don't expose AXPress as an action
+        https://bugs.webkit.org/show_bug.cgi?id=23399
+
+        Test: accessibility/button-press-action.html
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::actionElement):
+
 2009-01-19  Adam Roben  <aroben@apple.com>
 
         Windows build fix

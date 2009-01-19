@@ -491,10 +491,17 @@ Element* AccessibilityRenderObject::anchorElement() const
 
 Element* AccessibilityRenderObject::actionElement() const
 {
-    if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->element());
-        if (!input->disabled() && (isCheckboxOrRadio() || input->isTextButton()))
-            return input;
+    if (!m_renderer)
+        return 0;
+    
+    Node* node = m_renderer->element();
+    if (node) {
+        if (node->hasTagName(inputTag)) {
+            HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+            if (!input->disabled() && (isCheckboxOrRadio() || input->isTextButton()))
+                return input;
+        } else if (node->hasTagName(buttonTag))
+            return static_cast<Element*>(node);
     }
             
     if (isFileUploadButton())
