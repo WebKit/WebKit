@@ -1,3 +1,11 @@
+2009-01-19  Adam Roben  <aroben@apple.com>
+
+        Add links to some recommended Visual Studio hotfixes
+
+        Reviewed by Dave Hyatt.
+
+        * building/tools.html:
+
 2009-01-08  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Adele Petersen.
