@@ -30,7 +30,6 @@
 #include "TransformationMatrix.h"
 #include "FloatRect.h"
 #include "Document.h"
-#include "FramePrivate.h"
 #include "RenderView.h"
 #include "Settings.h"
 

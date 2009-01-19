@@ -21,9 +21,10 @@
 #define FrameTree_h
 
 #include "AtomicString.h"
-#include "Frame.h"
 
 namespace WebCore {
+
+    class Frame;
 
     class FrameTree : Noncopyable {
     public:

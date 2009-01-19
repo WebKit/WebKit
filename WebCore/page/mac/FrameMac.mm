@@ -36,7 +36,6 @@
 #import "EditorClient.h"
 #import "Event.h"
 #import "FrameLoaderClient.h"
-#import "FramePrivate.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"
 #import "HTMLNames.h"
@@ -270,7 +269,7 @@ NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
 
 NSImage* Frame::imageFromRect(NSRect rect) const
 {
-    NSView* view = d->m_view->documentView();
+    NSView* view = m_view->documentView();
     if (!view)
         return nil;
     if (![view respondsToSelector:@selector(drawSingleRect:)])
@@ -315,10 +314,10 @@ NSImage* Frame::imageFromRect(NSRect rect) const
 
 NSImage* Frame::selectionImage(bool forceBlackText) const
 {
-    d->m_view->setPaintRestriction(forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly);
-    d->m_doc->updateLayout();
+    m_view->setPaintRestriction(forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly);
+    m_doc->updateLayout();
     NSImage* result = imageFromRect(selectionBounds());
-    d->m_view->setPaintRestriction(PaintRestrictionNone);
+    m_view->setPaintRestriction(PaintRestrictionNone);
     return result;
 }
 
@@ -329,16 +328,16 @@ NSImage* Frame::snapshotDragImage(Node* node, NSRect* imageRect, NSRect* element
         return nil;
     
     renderer->updateDragState(true);    // mark dragged nodes (so they pick up the right CSS)
-    d->m_doc->updateLayout();        // forces style recalc - needed since changing the drag state might
+    m_doc->updateLayout();        // forces style recalc - needed since changing the drag state might
                                         // imply new styles, plus JS could have changed other things
     IntRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
-    d->m_view->setNodeToDraw(node);              // invoke special sub-tree drawing mode
+    m_view->setNodeToDraw(node);              // invoke special sub-tree drawing mode
     NSImage* result = imageFromRect(paintingRect);
     renderer->updateDragState(false);
-    d->m_doc->updateLayout();
-    d->m_view->setNodeToDraw(0);
+    m_doc->updateLayout();
+    m_view->setNodeToDraw(0);
 
     if (elementRect)
         *elementRect = topLevelRect;
@@ -353,14 +352,14 @@ NSImage* Frame::nodeImage(Node* node) const
     if (!renderer)
         return nil;
 
-    d->m_doc->updateLayout(); // forces style recalc
+    m_doc->updateLayout(); // forces style recalc
 
     IntRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
-    d->m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
+    m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
     NSImage* result = imageFromRect(paintingRect);
-    d->m_view->setNodeToDraw(0);
+    m_view->setNodeToDraw(0);
 
     return result;
 }
@@ -537,18 +536,18 @@ DragImageRef Frame::dragImageForSelection()
 
 void Frame::setUserStyleSheetLocation(const KURL& url)
 {
-    delete d->m_userStyleSheetLoader;
-    d->m_userStyleSheetLoader = 0;
-    if (d->m_doc && d->m_doc->docLoader())
-        d->m_userStyleSheetLoader = new UserStyleSheetLoader(d->m_doc, url.string());
+    delete m_userStyleSheetLoader;
+    m_userStyleSheetLoader = 0;
+    if (m_doc && m_doc->docLoader())
+        m_userStyleSheetLoader = new UserStyleSheetLoader(m_doc, url.string());
 }
 
 void Frame::setUserStyleSheet(const String& styleSheet)
 {
-    delete d->m_userStyleSheetLoader;
-    d->m_userStyleSheetLoader = 0;
-    if (d->m_doc)
-        d->m_doc->setUserStyleSheet(styleSheet);
+    delete m_userStyleSheetLoader;
+    m_userStyleSheetLoader = 0;
+    if (m_doc)
+        m_doc->setUserStyleSheet(styleSheet);
 }
 
 } // namespace WebCore

@@ -2296,10 +2296,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\FramePrivate.h"
-				>
-			</File>
-			<File
 				RelativePath="..\page\FrameTree.cpp"
 				>
 				<FileConfiguration

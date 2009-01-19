@@ -23,7 +23,7 @@
 
 #include "config.h"
 #include "Frame.h"
-#include "FramePrivate.h"
+
 #include "UserStyleSheetLoader.h"
 
 namespace WebCore {
@@ -35,18 +35,18 @@ DragImageRef Frame::dragImageForSelection()
 
 void Frame::setUserStyleSheetLocation(const KURL& url)
 {
-    delete d->m_userStyleSheetLoader;
-    d->m_userStyleSheetLoader = 0;
-    if (d->m_doc && d->m_doc->docLoader())
-        d->m_userStyleSheetLoader = new UserStyleSheetLoader(d->m_doc, url.string());
+    delete m_userStyleSheetLoader;
+    m_userStyleSheetLoader = 0;
+    if (m_doc && m_doc->docLoader())
+        m_userStyleSheetLoader = new UserStyleSheetLoader(m_doc, url.string());
 }
 
 void Frame::setUserStyleSheet(const String& styleSheet)
 {
-    delete d->m_userStyleSheetLoader;
-    d->m_userStyleSheetLoader = 0;
-    if (d->m_doc)
-        d->m_doc->setUserStyleSheet(styleSheet);
+    delete m_userStyleSheetLoader;
+    m_userStyleSheetLoader = 0;
+    if (m_doc)
+        m_doc->setUserStyleSheet(styleSheet);
 }
 
 }

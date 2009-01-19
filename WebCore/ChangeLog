@@ -1,3 +1,112 @@
+2009-01-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23415
+        Remove FramePrivate
+
+        Minor PLT speedup.
+
+        * WebCore.base.exp:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::init):
+        (WebCore::Frame::loader):
+        (WebCore::Frame::view):
+        (WebCore::Frame::setView):
+        (WebCore::Frame::script):
+        (WebCore::Frame::document):
+        (WebCore::Frame::setDocument):
+        (WebCore::Frame::settings):
+        (WebCore::Frame::selection):
+        (WebCore::Frame::editor):
+        (WebCore::Frame::selectionGranularity):
+        (WebCore::Frame::setSelectionGranularity):
+        (WebCore::Frame::dragCaretController):
+        (WebCore::Frame::animation):
+        (WebCore::Frame::mark):
+        (WebCore::Frame::setMark):
+        (WebCore::Frame::setCaretVisible):
+        (WebCore::Frame::clearCaretRectIfNeeded):
+        (WebCore::Frame::selectionLayoutChanged):
+        (WebCore::Frame::caretBlinkTimerFired):
+        (WebCore::Frame::paintCaret):
+        (WebCore::Frame::paintDragCaret):
+        (WebCore::Frame::zoomFactor):
+        (WebCore::Frame::isZoomFactorTextOnly):
+        (WebCore::Frame::shouldApplyTextZoom):
+        (WebCore::Frame::shouldApplyPageZoom):
+        (WebCore::Frame::setZoomFactor):
+        (WebCore::Frame::setPrinting):
+        (WebCore::Frame::setJSStatusBarText):
+        (WebCore::Frame::setJSDefaultStatusBarText):
+        (WebCore::Frame::jsStatusBarText):
+        (WebCore::Frame::jsDefaultStatusBarText):
+        (WebCore::Frame::setNeedsReapplyStyles):
+        (WebCore::Frame::needsReapplyStyles):
+        (WebCore::Frame::reapplyStyles):
+        (WebCore::Frame::isContentEditable):
+        (WebCore::Frame::updateSecureKeyboardEntryIfActive):
+        (WebCore::Frame::typingStyle):
+        (WebCore::Frame::setTypingStyle):
+        (WebCore::Frame::clearTypingStyle):
+        (WebCore::Frame::computeAndSetTypingStyle):
+        (WebCore::Frame::selectionComputedStyle):
+        (WebCore::Frame::applyEditingStyleToBodyElement):
+        (WebCore::Frame::removeEditingStyleFromBodyElement):
+        (WebCore::Frame::keepAlive):
+        (WebCore::Frame::cancelAllKeepAlive):
+        (WebCore::Frame::clearDOMWindow):
+        (WebCore::Frame::ownerElement):
+        (WebCore::Frame::ownerRenderer):
+        (WebCore::Frame::isDisconnected):
+        (WebCore::Frame::setIsDisconnected):
+        (WebCore::Frame::excludeFromTextSearch):
+        (WebCore::Frame::setExcludeFromTextSearch):
+        (WebCore::Frame::selectionBounds):
+        (WebCore::Frame::selectionTextRects):
+        (WebCore::Frame::isFrameSet):
+        (WebCore::Frame::currentForm):
+        (WebCore::Frame::forceLayout):
+        (WebCore::Frame::sendScrollEvent):
+        (WebCore::Frame::clearTimers):
+        (WebCore::Frame::styleForSelectionStart):
+        (WebCore::Frame::inViewSourceMode):
+        (WebCore::Frame::setInViewSourceMode):
+        (WebCore::Frame::markAllMatchesForText):
+        (WebCore::Frame::markedTextMatchesAreHighlighted):
+        (WebCore::Frame::setMarkedTextMatchesAreHighlighted):
+        (WebCore::Frame::tree):
+        (WebCore::Frame::setDOMWindow):
+        (WebCore::Frame::domWindow):
+        (WebCore::Frame::clearFormerDOMWindow):
+        (WebCore::Frame::page):
+        (WebCore::Frame::eventHandler):
+        (WebCore::Frame::pageDestroyed):
+        (WebCore::Frame::disconnectOwnerElement):
+        (WebCore::Frame::documentAtPoint):
+        * page/Frame.h:
+        * page/FramePrivate.h: Removed.
+        * page/FrameTree.h:
+        * page/chromium/FrameChromium.cpp:
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::imageFromRect):
+        (WebCore::Frame::selectionImage):
+        (WebCore::Frame::snapshotDragImage):
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::setUserStyleSheetLocation):
+        (WebCore::Frame::setUserStyleSheet):
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::setUserStyleSheetLocation):
+        (WebCore::Frame::setUserStyleSheet):
+        * page/win/FrameCGWin.cpp:
+        (WebCore::Frame::nodeImage):
+        * page/win/FrameWin.cpp:
+
 2009-01-18  Eric Carlson  <eric.carlson@apple.com>
 
         Build fix for !ENABLE(VIDEO) following r40016. 

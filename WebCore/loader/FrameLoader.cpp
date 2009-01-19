@@ -52,7 +52,6 @@
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoaderClient.h"
-#include "FramePrivate.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"

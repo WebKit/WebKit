@@ -29,7 +29,6 @@
 
 #include "Document.h"
 #include "FloatRect.h"
-#include "FramePrivate.h"
 #include "RenderView.h"
 #include "Settings.h"
 
