@@ -1034,13 +1034,15 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (BOOL)_canProvideDocumentSource
 {
-    String mimeType = _private->coreFrame->loader()->responseMIMEType();
-    
+    Frame* frame = _private->coreFrame;
+    String mimeType = frame->loader()->responseMIMEType();
+    PluginData* pluginData = frame->page() ? frame->page()->pluginData() : 0;
+
     if (WebCore::DOMImplementation::isTextMIMEType(mimeType) ||
         Image::supportsType(mimeType) ||
-        (_private->coreFrame->page() && _private->coreFrame->page()->pluginData()->supportsMimeType(mimeType)))
+        (pluginData && pluginData->supportsMimeType(mimeType)))
         return NO;
-    
+
     return YES;
 }
 

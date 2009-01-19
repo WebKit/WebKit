@@ -1,3 +1,13 @@
+2009-01-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=23414>.
+        Bug 23414: Reproducible crash accessing View menu with plugins disabled
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _canProvideDocumentSource]): Null-check the PluginData before using it.
+
 2009-01-17  David Hyatt  <hyatt@apple.com>
 
         Eliminate dependencies on "backslashAsCurrencySymbol()" from WebKit, and make sure these alterations
