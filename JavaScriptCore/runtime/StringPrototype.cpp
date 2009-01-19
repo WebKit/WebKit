@@ -146,7 +146,6 @@ static inline UString substituteBackreferences(const UString& replacement, const
             ++i;
             substitutedReplacement.append(replacement.data() + offset, i - offset);
             offset = i + 1;
-            substitutedReplacement.append('$');
             continue;
         }
 

@@ -1,3 +1,17 @@
+2009-01-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23409: REGRESSION: RegExp 'replace()' function improperly processes '$$'
+        <https://bugs.webkit.org/show_bug.cgi?id=23409>
+        <rdar://problem/6505723>
+
+        Test: fast/js/string-replace-3.html
+
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferences): Remove code that adds an extra $ -- not sure
+        how this ever worked.
+
 2009-01-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
