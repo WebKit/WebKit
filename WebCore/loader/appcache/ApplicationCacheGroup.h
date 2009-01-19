@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ public:
     ApplicationCacheGroup(const KURL& manifestURL, bool isCopy = false);    
     ~ApplicationCacheGroup();
     
-    enum Status { Idle, Checking, Downloading };
+    enum UpdateStatus { Idle, Checking, Downloading };
 
     static ApplicationCache* cacheForMainRequest(const ResourceRequest&, DocumentLoader*);
     static ApplicationCache* fallbackCacheForMainRequest(const ResourceRequest&, DocumentLoader*);
@@ -61,25 +61,28 @@ public:
     static void selectCacheWithoutManifestURL(Frame*);
     
     const KURL& manifestURL() const { return m_manifestURL; }
-    Status status() const { return m_status; }
-    
+    UpdateStatus updateStatus() const { return m_updateStatus; }
+
     void setStorageID(unsigned storageID) { m_storageID = storageID; }
     unsigned storageID() const { return m_storageID; }
     void clearStorageID();
     
     void update(Frame*);
     void cacheDestroyed(ApplicationCache*);
-        
+
     ApplicationCache* newestCache() const { return m_newestCache.get(); }
-    ApplicationCache* savedNewestCachePointer() const { return m_savedNewestCachePointer; }
-    
+    void setNewestCache(PassRefPtr<ApplicationCache>);
+
+    void makeObsolete();
+    bool isObsolete() const { return m_isObsolete; }
+
     void finishedLoadingMainResource(DocumentLoader*);
     void failedLoadingMainResource(DocumentLoader*);
-    void documentLoaderDestroyed(DocumentLoader*);
 
-    void setNewestCache(PassRefPtr<ApplicationCache> newestCache);
+    void disassociateDocumentLoader(DocumentLoader*);
 
     bool isCopy() const { return m_isCopy; }
+
 private:
     typedef void (DOMApplicationCache::*ListenerFunction)();
     void callListenersOnAssociatedDocuments(ListenerFunction);
@@ -93,11 +96,11 @@ private:
     void didReceiveManifestResponse(const ResourceResponse&);
     void didReceiveManifestData(const char*, int);
     void didFinishLoadingManifest();
-    void didFailToLoadManifest();
     
     void startLoadingEntry();
     void checkIfLoadIsComplete();
     void cacheUpdateFailed();
+    void manifestNotFound();
     
     void addEntry(const String&, unsigned type);
     
@@ -106,19 +109,16 @@ private:
     void stopLoading();
     
     KURL m_manifestURL;
-    Status m_status;
+    UpdateStatus m_updateStatus;
     
     // This is the newest cache in the group.
     RefPtr<ApplicationCache> m_newestCache;
-    
-    // During tear-down we save the pointer to the newest cache to prevent reference cycles.
-    ApplicationCache* m_savedNewestCachePointer;
     
     // The caches in this cache group.
     HashSet<ApplicationCache*> m_caches;
     
     // The cache being updated (if any). Note that cache updating does not immediately create a new
-    // ApplicationCache object, so this may be null even when status is not Idle.
+    // ApplicationCache object, so this may be null even when update status is not Idle.
     RefPtr<ApplicationCache> m_cacheBeingUpdated;
 
     // When a cache group does not yet have a complete cache, this contains the document loaders
@@ -132,10 +132,13 @@ private:
     typedef HashMap<String, unsigned> EntryMap;
     EntryMap m_pendingEntries;
 
-    // Frame used for fetching resources when updating
+    // Frame used for fetching resources when updating.
+    // FIXME: An update started by a particular frame should not stop if it is destroyed, but there are other frames associated with the same cache group.
     Frame* m_frame;
   
+    // An obsolete cache group is never stored, but the opposite is not true - storing may fail for multiple reasons, such as exceeding disk quota.
     unsigned m_storageID;
+    bool m_isObsolete;
   
     // Whether this cache group is a copy that's only used for transferring the cache to another file.
     bool m_isCopy;

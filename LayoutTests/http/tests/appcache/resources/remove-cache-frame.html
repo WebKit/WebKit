@@ -1,0 +1,67 @@
+<html manifest="fail-on-update.php">
+<body>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+function onObsolete()
+{
+    log("obsolete")
+    log("status=" + applicationCache.status + " (expected 2)");
+    clearTimeout(timeoutId);
+    applicationCache.onobsolete = function() { log("obsolete") }
+    applicationCache.onupdateready = function() { log("updateready") }
+    applicationCache.onnoupdate = function() { log("noupdate") }
+
+    // We still have a cache, so loading should fail
+    try {
+        var req = new XMLHttpRequest;
+        req.open("GET", "empty.txt", false);
+        req.send(null);
+        alert("FAIL: XMLHttpRequest for an uncached resource didn't raise an exception");
+    } catch (ex) {
+    }
+    log("There should be no messages below.");
+    parent.postMessage("frameDone - obsolete", "*");
+}
+
+function onNoManifest()
+{
+    if (applicationCache.status != applicationCache.UNCACHED && applicationCache.status != applicationCache.OBSOLETE) {
+        timeoutId = setTimeout(onNoManifest, 100);
+        return;
+    }
+
+    log("no callback");
+    clearTimeout(timeoutId);
+    applicationCache.onobsolete = function() { log("obsolete") }
+    applicationCache.onupdateready = function() { log("updateready") }
+    applicationCache.onnoupdate = function() { log("noupdate") }
+
+    // Ensure that we are not associated with a cache.
+    try {
+        var req = new XMLHttpRequest;
+        req.open("GET", "empty.txt", false);
+        req.send(null);
+    } catch (ex) {
+        alert("FAIL: XMLHttpRequest raised an exception, " + ex);
+    }
+    log("There should be no messages below.");
+    parent.postMessage("frameDone - timeout", "*");
+}
+
+applicationCache.onupdateready = function() { log("updateready"); alert("Unexpected updateready event in frame") }
+applicationCache.onerror = function() { log("error"); alert("Unexpected error event in frame") }
+applicationCache.onnoupdate = function() { log("noupdate"); alert("Unexpected noupdate event in frame") }
+applicationCache.oncached = function() { log("cached"); alert("Unexpected cached event in frame") }
+
+applicationCache.onobsolete = onObsolete;
+
+var timeoutId = setTimeout(onNoManifest, 100);
+
+</script>
+</body>
+</html>

@@ -1,3 +1,22 @@
+2009-01-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23417
+        Implement application cache obsolete state
+
+        * http/tests/appcache/resources/fail-on-update.php: This script used to alternate between
+        200 and 404 responses, which is not correct, because update process should check the
+        manifest twice (WebKit doesn't implement that yet). Changed it to take explicit commands.
+
+        * http/tests/appcache/fail-on-update.html: Updated to "delete" the manifest explicitly.
+
+        * http/tests/appcache/remove-cache-expected.txt: Added.
+        * http/tests/appcache/remove-cache.html: Added.
+        * http/tests/appcache/resources/remove-cache-frame-2.html: Added.
+        * http/tests/appcache/resources/remove-cache-frame.html: Added.
+        Added a test for manifest obsolescence.
+
 2009-01-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Hyatt.

@@ -171,9 +171,9 @@ DocumentLoader::~DocumentLoader()
     
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (m_applicationCache)
-        m_applicationCache->group()->documentLoaderDestroyed(this);
+        m_applicationCache->group()->disassociateDocumentLoader(this);
     else if (m_candidateApplicationCacheGroup)
-        m_candidateApplicationCacheGroup->documentLoaderDestroyed(this);
+        m_candidateApplicationCacheGroup->disassociateDocumentLoader(this);
 #endif
 }
 

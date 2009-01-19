@@ -1,3 +1,87 @@
+2009-01-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23417
+        Implement application cache obsolete state
+
+        Test: http/tests/appcache/remove-cache.html
+
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::mark):
+        * dom/EventNames.h:
+        * loader/appcache/DOMApplicationCache.h:
+        (WebCore::DOMApplicationCache::Status):
+        (WebCore::DOMApplicationCache::setOnobsolete):
+        (WebCore::DOMApplicationCache::onobsolete):
+        * loader/appcache/DOMApplicationCache.idl:
+        Added "obsolete" event and status.
+
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::savedNewestCachePointer): Removed, there is no longer
+        any need to track what the newest cache was during teardown.
+        (WebCore::ApplicationCacheGroup::updateStatus): Renamed Status to UpdateStatus, reducing
+        confusion with cache group lifecycle status.
+        (WebCore::ApplicationCacheGroup::m_isObsolete): Added an obsolete state flag.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup): Initialize m_isObsolete.
+        (WebCore::ApplicationCacheGroup::cacheForMainRequest): Assert that the returned cache does
+        not belong to an obsolete group.
+        (WebCore::ApplicationCacheGroup::fallbackCacheForMainRequest): Ditto.
+        (WebCore::ApplicationCacheGroup::disassociateDocumentLoader): Disassociation can now happen
+        via a JS swapCache() call, not only when the loader is destroyed.
+        (WebCore::ApplicationCacheGroup::cacheDestroyed): Don't track m_savedNewestCachePointer.
+        (WebCore::ApplicationCacheGroup::setNewestCache): Remove old newest cache from storage is
+        a caller responsibility, because this method is also used when loading caches from disk.
+        (WebCore::ApplicationCacheGroup::makeObsolete): Added. Mark the cache group as obsolete, and
+        inform cache storage, so that it could be removed.
+        (WebCore::ApplicationCacheGroup::didFailToLoadManifest): Removed, as all this method did
+        was call cacheUpdateFailed().
+        (WebCore::ApplicationCacheGroup::didReceiveResponse): Added a FIXME about correct failure
+        handing.
+        (WebCore::ApplicationCacheGroup::didFail): Ditto.
+        (WebCore::ApplicationCacheGroup::didReceiveManifestResponse): Call a new manifestNotFound()
+        method for 404 and 410 responses.
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest): Call cacheUpdateFailed()
+        directly, instead of the removed didFailToLoadManifest().
+        (WebCore::ApplicationCacheGroup::manifestNotFound): Implement "remove a cache" algorithm.
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete): Remove superceded cache from storage
+        after update successfully finishes (moved from setNewestCache()).
+        (WebCore::ApplicationCacheGroup::associateDocumentLoaderWithCache): Revive the group using
+        an explicitly passed pointer, without the need to save it during teardown.
+
+        * loader/DocumentLoader.cpp: (WebCore::DocumentLoader::~DocumentLoader):
+        Call the general ApplicationCacheGroup::disassociateDocumentLoader() method.
+
+        * loader/appcache/ApplicationCacheStorage.h: Added a cacheGroupMadeObsolete() method, updated
+        some comments.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL): Assert that iterated caches are not
+        obsolete.
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL): Ditto.
+        (WebCore::ApplicationCacheStorage::cacheGroupDestroyed): Don't do anything for obsolete
+        groups, as they cannot be in storage.
+        (WebCore::ApplicationCacheStorage::cacheGroupMadeObsolete): Remove the cache group from storage
+        completely, so that a new one could replace it, if necessary.
+        (WebCore::ApplicationCacheStorage::storeNewestCache): Added assertions.
+        (WebCore::ApplicationCacheStorage::remove): Remove cache group if its newest cache is removed.
+
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::status): Added support for OBSOLETE state.
+        (WebCore::DOMApplicationCache::swapCache): Disassociate document loader from cache if the
+        application was removed server-side.
+        (WebCore::DOMApplicationCache::callObsoleteListener): Added support for obsolete event.
+
+        * loader/appcache/DOMApplicationCache.h:
+        (WebCore::DOMApplicationCache::Status):
+        (WebCore::DOMApplicationCache::setOnobsolete):
+        (WebCore::DOMApplicationCache::onobsolete):
+        Added support for OBSOLETE state and obsolete event.
+
+        * loader/appcache/DOMApplicationCache.idl: Ditto.
+
 2009-01-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

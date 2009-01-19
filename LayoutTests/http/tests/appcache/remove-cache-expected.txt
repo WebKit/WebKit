@@ -1,0 +1,9 @@
+Test that a 404 response for manifest results in cache removal.
+
+Frame 1: Manifest loading results in 404 response, to the cache group becomes obsolete.
+Frame 2: Manifest is still 404 - the document is never associated with a cache.
+Frame 3: Manifest is now available, so the document gets associated with a cache in a newly created group; the obsolete cache group is not affected.
+Should say SUCCESS:
+
+SUCCESS
+

@@ -1,0 +1,105 @@
+<html manifest="resources/fail-on-update.php">
+<p>Test that a 404 response for manifest results in cache removal.</p>
+<body>
+<ul>
+<li>Frame 1: Manifest loading results in 404 response, to the cache group becomes obsolete.
+<li>Frame 2: Manifest is still 404 - the document is never associated with a cache.
+<li>Frame 3: Manifest is now available, so the document gets associated with a cache in a newly created group; the obsolete cache group is not affected.
+</ul>
+<p>Should say SUCCESS:</p>
+<div id=result></div>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+function setManifestDeleted(state)
+{
+    var req = new XMLHttpRequest;
+    req.open("GET", "resources/fail-on-update.php?command=" + (state ? "delete" : "reset"), false);
+    req.send(null);
+}
+
+function test()
+{
+    clearTimeout(timeoutId);
+    applicationCache.onnoupdate = null;
+    applicationCache.oncached = null;
+
+    setManifestDeleted(true);
+    // The frame will be associated to a cache, but update will obsolete it.
+    var ifr = document.createElement("iframe");
+    ifr.setAttribute("src", "resources/remove-cache-frame.html");
+    document.body.appendChild(ifr);
+    window.addEventListener("message", test2, false);
+}
+
+function test2()
+{
+    window.removeEventListener("message", test2, false);
+
+    applicationCache.onupdateready = function() { log("Unexpected updateready event after obsolete event") }
+    applicationCache.onerror = function() { log("Unexpected error event after obsolete event") }
+    applicationCache.onnoupdate = function() { log("Unexpected noupdate event after obsolete event") }
+    applicationCache.oncached = function() { log("Unexpected cached event after obsolete event") }
+
+    // The frame will not be associated to a cache.
+    var ifr = document.createElement("iframe");
+    ifr.setAttribute("src", "resources/remove-cache-frame.html");
+    document.body.appendChild(ifr);
+    window.addEventListener("message", test3, false);
+}
+
+function test3()
+{
+    setManifestDeleted(false);
+
+    window.removeEventListener("message", test3, false);
+    applicationCache.onupdateready = null;
+
+    // The frame will be associated to a cache.
+    var ifr = document.createElement("iframe");
+    ifr.setAttribute("src", "resources/remove-cache-frame-2.html");
+    document.body.appendChild(ifr);
+    window.addEventListener("message", test4, false);
+}
+
+function test4()
+{
+    log(obsolete ? "SUCCESS" : "FAIL: Tests steps have finished, but main frame never received an obsolete event");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function resetManifest()
+{
+    if (applicationCache.status != applicationCache.UNCACHED && applicationCache.status != applicationCache.OBSOLETE) {
+        timeoutId = setTimeout(resetManifest, 100);
+        return;
+    }
+
+    setManifestDeleted(false);
+    location.reload();
+}
+
+applicationCache.onupdateready = function() { log("Unexpected updateready event") }
+applicationCache.onerror = function() { log("Unexpected error event") }
+applicationCache.onnoupdate = function() { setTimeout(test, 0) }
+applicationCache.oncached = function() { setTimeout(test, 0) }
+
+var obsolete = false;
+applicationCache.onobsolete = function() { obsolete = true; }
+
+// If the manifest script happened to be in a wrong state, reset it.
+var timeoutId = setTimeout(resetManifest, 100);
+
+</script>
+</body>
+</html>

@@ -68,6 +68,7 @@ namespace WebCore {
     macro(mouseup) \
     macro(mousewheel) \
     macro(noupdate) \
+    macro(obsolete) \
     macro(offline) \
     macro(online) \
     macro(overflowchanged) \
