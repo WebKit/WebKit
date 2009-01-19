@@ -717,8 +717,10 @@ ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
         // Readonly is supported on textfields.
         option.state |= QStyle::State_ReadOnly;
 
-    if (supportsFocus(o->style()->appearance()) && isFocused(o))
+    if (supportsFocus(o->style()->appearance()) && isFocused(o)) {
         option.state |= QStyle::State_HasFocus;
+        option.state |= QStyle::State_KeyboardFocusChange;
+    }
 
     if (isHovered(o))
         option.state |= QStyle::State_MouseOver;

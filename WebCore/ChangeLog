@@ -1,5 +1,17 @@
 2009-01-19  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
+        Reviewed by Simon Hausmann.
+
+        http://www.qtsoftware.com/developer/task-tracker/index_html?id=211228&method=entry
+
+        [Qt] Show focus rect when a button gets the focus for the first time.
+        This is important at least for Windows style.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::applyTheme):
+
+2009-01-19  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
         [Qt] Build fix after r39971.
 
         * platform/qt/LoggingQt.cpp:
