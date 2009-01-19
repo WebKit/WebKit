@@ -1,11 +1,18 @@
 2009-01-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Build fix: remove duplicate entries in the Xcode project, and
+        sort the project with ort-Xcode-project-file .
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
+2009-01-19  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt
 
         https://bugs.webkit.org/show_bug.cgi?id=18078
 
         Support animations and transitions of shorthand properties by creating
-        PropertyWrappers that simply wrap a vector of atomci wrappers, and implement
+        PropertyWrappers that simply wrap a vector of atomic wrappers, and implement
         equal() and blend(). Build that collection of shorthand wrappers using the
         shorthand map that CSSMutableStyleDeclaration already has. Skip comparing these
         shorthand wrappers during 'all' transitions.
