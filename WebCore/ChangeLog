@@ -1,3 +1,61 @@
+2009-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=18078
+
+        Support animations and transitions of shorthand properties by creating
+        PropertyWrappers that simply wrap a vector of atomci wrappers, and implement
+        equal() and blend(). Build that collection of shorthand wrappers using the
+        shorthand map that CSSMutableStyleDeclaration already has. Skip comparing these
+        shorthand wrappers during 'all' transitions.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Add CSSPropertyLonghand.h/cpp.
+        
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::removeShorthandProperty):
+        Move CSSPropertyLonghand to its own file.
+        
+        * css/CSSPropertyLonghand.cpp: Added.
+        (WebCore::initShorthandMap):
+        (WebCore::longhandForProperty):
+        * css/CSSPropertyLonghand.h: Added.
+        (WebCore::CSSPropertyLonghand::CSSPropertyLonghand):
+        (WebCore::CSSPropertyLonghand::properties):
+        (WebCore::CSSPropertyLonghand::length):
+        Code moved from CSSMutableStyleDeclaration.h/cpp
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperBase::isShorthandWrapper):
+        (WebCore::ShorthandPropertyWrapper::ShorthandPropertyWrapper):
+        (WebCore::ShorthandPropertyWrapper::isShorthandWrapper):
+        (WebCore::ShorthandPropertyWrapper::equals):
+        (WebCore::ShorthandPropertyWrapper::blend):
+        Add a wrapper class for shorthand properties that simply wraps an
+        array of atomic property wrappers.
+
+        (WebCore::ensurePropertyMap):
+        (WebCore::addPropertyWrapper):
+        (WebCore::addShorthandProperties):
+        (WebCore::wrapperForProperty):
+        (WebCore::AnimationBase::propertiesEqual):
+        (WebCore::AnimationBase::getPropertyAtIndex):
+        Some minor refactoring to re-use wrapperForProperty(), and ensure that gPropertyWrapperMap
+        is filled with an invalid index (-1), not 0.
+
+        (WebCore::AnimationBase::blendProperties):
+        * page/animation/AnimationBase.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::updateTransitions):
+        When doing 'all' transitions, skip shorthand wrappers, since 'all' transitions
+        just need to compare all the atomic property wrappers.
+
 2009-01-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

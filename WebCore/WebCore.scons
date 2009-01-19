@@ -26,6 +26,7 @@ sources['css'] = [
     'css/CSSParser.cpp',
     'css/CSSParserValues.cpp',
     'css/CSSPrimitiveValue.cpp',
+    'css/CSSPropertyLonghand.cpp',
     'css/CSSProperty.cpp',
     'css/CSSReflectValue.cpp',
     'css/CSSRule.cpp',

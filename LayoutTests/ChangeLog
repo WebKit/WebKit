@@ -1,3 +1,20 @@
+2009-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=18078
+        
+        Fix transition-test-helpers.js to handle more kinds
+        of CSS properties, like lists and colors, and to
+        optionally not use the pause API.
+
+        * transitions/transform-op-list-match.html:
+        * transitions/transform-op-list-no-match.html:
+        * transitions/transition-test-helpers.js:
+        (runTransitionTest.checkExpectedValue):
+        (runTransitionTest.runTest):
+        * transitions/zero-duration-in-list.html:
+
 2009-01-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Update test results for https://bugs.webkit.org/show_bug.cgi?id=23417.

@@ -172,7 +172,7 @@ protected:
     void goIntoEndingOrLoopingState();
 
     static bool propertiesEqual(int prop, const RenderStyle* a, const RenderStyle* b);
-    static int getPropertyAtIndex(int);
+    static int getPropertyAtIndex(int, bool& isShorthand);
     static int getNumProperties();
 
     // Return true if we need to start software animation timers

@@ -518,6 +518,7 @@ SOURCES += \
     css/CSSParserValues.cpp \
     css/CSSPrimitiveValue.cpp \
     css/CSSProperty.cpp \
+    css/CSSPropertyLonghand.cpp \
     css/CSSReflectValue.cpp \
     css/CSSRule.cpp \
     css/CSSRuleList.cpp \

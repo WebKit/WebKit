@@ -452,6 +452,8 @@ webcore_sources += \
 	WebCore/css/CSSPrimitiveValueMappings.h \
 	WebCore/css/CSSProperty.cpp \
 	WebCore/css/CSSProperty.h \
+	WebCore/css/CSSPropertyLonghand.cpp \
+	WebCore/css/CSSPropertyLonghand.h \
 	WebCore/css/CSSQuirkPrimitiveValue.h \
 	WebCore/css/CSSReflectValue.cpp \
 	WebCore/css/CSSReflectValue.h \

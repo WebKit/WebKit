@@ -8046,6 +8046,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSPropertyLonghand.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSPropertyLonghand.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSPropertyNames.in"
 				>
 			</File>
