@@ -1,7 +1,7 @@
 2009-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix: remove duplicate entries in the Xcode project, and
-        sort the project with ort-Xcode-project-file .
+        sort the project with sort-Xcode-project-file .
         
         * WebCore.xcodeproj/project.pbxproj:
 
