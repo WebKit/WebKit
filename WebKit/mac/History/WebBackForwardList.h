@@ -126,7 +126,7 @@
 - (int)capacity;
 
 /*!
-    @method setCacpacity
+    @method setCapacity
     @abstract Sets the list's maximum size.
     @param size The new maximum size for the list.
 */
