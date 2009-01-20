@@ -1,3 +1,15 @@
+2009-01-20  Alexander V. Butenko  <alex@digiqube.com>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=23116
+        [GTK] Fix crash due a callback called from GIO after the
+        destruction of the ResourceHandle
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::cancel): Only call didFinishLoading if
+        'client' is set, otherwise cancelling a load could lead to a crash.
+
 2009-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix: remove duplicate entries in the Xcode project, and
