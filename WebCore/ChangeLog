@@ -1,3 +1,11 @@
+2009-01-19  Steve Falkenburg  <sfalken@apple.com>
+
+        Partial build fix.
+        Move new derived sources into all-in-one DerivedSources.cpp
+
+        * DerivedSources.cpp:
+        * WebCore.vcproj/WebCore.vcproj:
+
 2009-01-19  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.

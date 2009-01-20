@@ -1692,15 +1692,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitAnimationEvent.cpp"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitAnimationEvent.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframeRule.cpp"
 				>
 			</File>
 			<File
@@ -1708,15 +1700,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframesRule.cpp"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframesRule.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSMatrix.cpp"
 				>
 			</File>
 			<File
@@ -1728,10 +1712,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitTransitionEvent.cpp"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitTransitionEvent.h"
 				>
 			</File>
@@ -1740,15 +1720,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorker.cpp"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorker.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerContext.cpp"
 				>
 			</File>
 			<File
@@ -1760,15 +1732,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerLocation.cpp"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerLocation.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerNavigator.cpp"
 				>
 			</File>
 			<File
