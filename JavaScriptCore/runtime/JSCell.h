@@ -112,7 +112,7 @@ namespace JSC {
 
     inline JSCell* asCell(JSValuePtr value)
     {
-        return value->asCell();
+        return value.asCell();
     }
 
     inline JSCell::JSCell(Structure* structure)

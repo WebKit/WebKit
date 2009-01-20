@@ -308,12 +308,12 @@ void RegExpConstructor::put(ExecState* exec, const Identifier& propertyName, JSV
 
 void setRegExpConstructorInput(ExecState* exec, JSObject* baseObject, JSValuePtr value)
 {
-    asRegExpConstructor(baseObject)->setInput(value->toString(exec));
+    asRegExpConstructor(baseObject)->setInput(value.toString(exec));
 }
 
 void setRegExpConstructorMultiline(ExecState* exec, JSObject* baseObject, JSValuePtr value)
 {
-    asRegExpConstructor(baseObject)->setMultiline(value->toBoolean(exec));
+    asRegExpConstructor(baseObject)->setMultiline(value.toBoolean(exec));
 }
   
 // ECMA 15.10.4
@@ -322,14 +322,14 @@ JSObject* constructRegExp(ExecState* exec, const ArgList& args)
     JSValuePtr arg0 = args.at(exec, 0);
     JSValuePtr arg1 = args.at(exec, 1);
 
-    if (arg0->isObject(&RegExpObject::info)) {
-        if (!arg1->isUndefined())
+    if (arg0.isObject(&RegExpObject::info)) {
+        if (!arg1.isUndefined())
             return throwError(exec, TypeError, "Cannot supply flags when constructing one RegExp from another.");
         return asObject(arg0);
     }
 
-    UString pattern = arg0->isUndefined() ? UString("") : arg0->toString(exec);
-    UString flags = arg1->isUndefined() ? UString("") : arg1->toString(exec);
+    UString pattern = arg0.isUndefined() ? UString("") : arg0.toString(exec);
+    UString flags = arg1.isUndefined() ? UString("") : arg1.toString(exec);
 
     RefPtr<RegExp> regExp = RegExp::create(&exec->globalData(), pattern, flags);
     if (!regExp->isValid())

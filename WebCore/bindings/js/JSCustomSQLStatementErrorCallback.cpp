@@ -62,7 +62,7 @@ bool JSCustomSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction,
         
     JSValuePtr handleEventFunction = m_callback->get(exec, Identifier(exec, "handleEvent"));
     CallData handleEventCallData;
-    CallType handleEventCallType = handleEventFunction->getCallData(handleEventCallData);
+    CallType handleEventCallType = handleEventFunction.getCallData(handleEventCallData);
     CallData callbackCallData;
     CallType callbackCallType = CallTypeNone;
 
@@ -100,7 +100,7 @@ bool JSCustomSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction,
         
     Document::updateDocumentsRendering();
 
-    return result->toBoolean(exec);
+    return result.toBoolean(exec);
 }
 
 }

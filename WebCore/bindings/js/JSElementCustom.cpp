@@ -64,8 +64,8 @@ static inline bool allowSettingSrcToJavascriptURL(ExecState* exec, Element* elem
 JSValuePtr JSElement::setAttribute(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    AtomicString name = args.at(exec, 0)->toString(exec);
-    AtomicString value = args.at(exec, 1)->toString(exec);
+    AtomicString name = args.at(exec, 0).toString(exec);
+    AtomicString value = args.at(exec, 1).toString(exec);
 
     Element* imp = impl();
     if (!allowSettingSrcToJavascriptURL(exec, imp, name, value))
@@ -98,8 +98,8 @@ JSValuePtr JSElement::setAttributeNS(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     AtomicString namespaceURI = valueToStringWithNullCheck(exec, args.at(exec, 0));
-    AtomicString qualifiedName = args.at(exec, 1)->toString(exec);
-    AtomicString value = args.at(exec, 2)->toString(exec);
+    AtomicString qualifiedName = args.at(exec, 1).toString(exec);
+    AtomicString value = args.at(exec, 2).toString(exec);
 
     Element* imp = impl();
     if (!allowSettingSrcToJavascriptURL(exec, imp, qualifiedName, value))

@@ -44,7 +44,7 @@ bool ScriptValue::getString(String& result) const
         return false;
     JSLock lock(false);
     UString ustring;
-    if (!m_value->getString(ustring))
+    if (!m_value.get().getString(ustring))
         return false;
     result = ustring;
     return true;
@@ -54,14 +54,14 @@ bool ScriptValue::isNull() const
 {
     if (!m_value)
         return false;
-    return m_value->isNull();
+    return m_value.get().isNull();
 }
 
 bool ScriptValue::isUndefined() const
 {
     if (!m_value)
         return false;
-    return m_value->isUndefined();
+    return m_value.get().isUndefined();
 }
 
 } // namespace WebCore

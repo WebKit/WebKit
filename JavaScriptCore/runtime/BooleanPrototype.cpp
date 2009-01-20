@@ -58,7 +58,7 @@ JSValuePtr booleanProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisV
     if (thisValue == jsBoolean(true))
         return jsNontrivialString(exec, "true");
 
-    if (!thisValue->isObject(&BooleanObject::info))
+    if (!thisValue.isObject(&BooleanObject::info))
         return throwError(exec, TypeError);
 
     if (asBooleanObject(thisValue)->internalValue() == jsBoolean(false))
@@ -70,10 +70,10 @@ JSValuePtr booleanProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisV
 
 JSValuePtr booleanProtoFuncValueOf(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
-    if (thisValue->isBoolean())
+    if (thisValue.isBoolean())
         return thisValue;
 
-    if (!thisValue->isObject(&BooleanObject::info))
+    if (!thisValue.isObject(&BooleanObject::info))
         return throwError(exec, TypeError);
 
     return asBooleanObject(thisValue)->internalValue();

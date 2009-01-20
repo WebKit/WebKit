@@ -99,7 +99,7 @@ jvalue JavaField::dispatchValueFromInstance(ExecState *exec, const JavaInstance 
                 args[0].l = jinstance;
                 dispatchJNICall(exec, rootObject->nativeHandle(), fieldJInstance, false, returnType, mid, args, result, 0, exceptionDescription);
                 if (exceptionDescription)
-                    throwError(exec, GeneralError, exceptionDescription->toString(exec));
+                    throwError(exec, GeneralError, exceptionDescription.toString(exec));
             }
         }
     }
@@ -157,7 +157,7 @@ JSValuePtr JavaField::valueFromInstance(ExecState* exec, const Instance* i) cons
         break;
     }
 
-    JS_LOG ("getting %s = %s\n", UString(name()).UTF8String().c_str(), jsresult->toString(exec).ascii());
+    JS_LOG ("getting %s = %s\n", UString(name()).UTF8String().c_str(), jsresult.toString(exec).ascii());
     
     return jsresult;
 }
@@ -183,7 +183,7 @@ void JavaField::dispatchSetValueToInstance(ExecState *exec, const JavaInstance *
                 args[1] = javaValue;
                 dispatchJNICall(exec, rootObject->nativeHandle(), fieldJInstance, false, void_type, mid, args, result, 0, exceptionDescription);
                 if (exceptionDescription)
-                    throwError(exec, GeneralError, exceptionDescription->toString(exec));
+                    throwError(exec, GeneralError, exceptionDescription.toString(exec));
             }
         }
     }
@@ -194,7 +194,7 @@ void JavaField::setValueToInstance(ExecState* exec, const Instance* i, JSValuePt
     const JavaInstance *instance = static_cast<const JavaInstance *>(i);
     jvalue javaValue = convertValueToJValue (exec, aValue, _JNIType, type());
 
-    JS_LOG ("setting value %s to %s\n", UString(name()).UTF8String().c_str(), aValue->toString(exec).ascii());
+    JS_LOG ("setting value %s to %s\n", UString(name()).UTF8String().c_str(), aValue.toString(exec).ascii());
 
     switch (_JNIType) {
         case array_type:

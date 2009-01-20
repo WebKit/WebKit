@@ -135,13 +135,13 @@ static double intPow10(int e)
 
 JSValuePtr numberProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
-    JSValuePtr v = thisValue->getJSNumber();
+    JSValuePtr v = thisValue.getJSNumber();
     if (!v)
         return throwError(exec, TypeError);
 
-    double radixAsDouble = args.at(exec, 0)->toInteger(exec); // nan -> 0
-    if (radixAsDouble == 10 || args.at(exec, 0)->isUndefined())
-        return jsString(exec, v->toString(exec));
+    double radixAsDouble = args.at(exec, 0).toInteger(exec); // nan -> 0
+    if (radixAsDouble == 10 || args.at(exec, 0).isUndefined())
+        return jsString(exec, v.toString(exec));
 
     if (radixAsDouble < 2 || radixAsDouble > 36)
         return throwError(exec, RangeError, "toString() radix argument must be between 2 and 36");
@@ -153,7 +153,7 @@ JSValuePtr numberProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisVa
     // unless someone finds a precise rule.
     char s[2048 + 3];
     const char* lastCharInString = s + sizeof(s) - 1;
-    double x = v->uncheckedGetNumber();
+    double x = v.uncheckedGetNumber();
     if (isnan(x) || isinf(x))
         return jsString(exec, UString::from(x));
 
@@ -201,16 +201,16 @@ JSValuePtr numberProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValuePtr 
 {
     // FIXME: Not implemented yet.
 
-    JSValuePtr v = thisValue->getJSNumber();
+    JSValuePtr v = thisValue.getJSNumber();
     if (!v)
         return throwError(exec, TypeError);
 
-    return jsString(exec, v->toString(exec));
+    return jsString(exec, v.toString(exec));
 }
 
 JSValuePtr numberProtoFuncValueOf(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
-    JSValuePtr v = thisValue->getJSNumber();
+    JSValuePtr v = thisValue.getJSNumber();
     if (!v)
         return throwError(exec, TypeError);
 
@@ -219,17 +219,17 @@ JSValuePtr numberProtoFuncValueOf(ExecState* exec, JSObject*, JSValuePtr thisVal
 
 JSValuePtr numberProtoFuncToFixed(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
-    JSValuePtr v = thisValue->getJSNumber();
+    JSValuePtr v = thisValue.getJSNumber();
     if (!v)
         return throwError(exec, TypeError);
 
     JSValuePtr fractionDigits = args.at(exec, 0);
-    double df = fractionDigits->toInteger(exec);
+    double df = fractionDigits.toInteger(exec);
     if (!(df >= 0 && df <= 20))
         return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
     int f = static_cast<int>(df);
 
-    double x = v->uncheckedGetNumber();
+    double x = v.uncheckedGetNumber();
     if (isnan(x))
         return jsNontrivialString(exec, "NaN");
 
@@ -304,21 +304,21 @@ static void exponentialPartToString(char* buf, int& i, int decimalPoint)
 
 JSValuePtr numberProtoFuncToExponential(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
-    JSValuePtr v = thisValue->getJSNumber();
+    JSValuePtr v = thisValue.getJSNumber();
     if (!v)
         return throwError(exec, TypeError);
 
-    double x = v->uncheckedGetNumber();
+    double x = v.uncheckedGetNumber();
 
     if (isnan(x) || isinf(x))
         return jsString(exec, UString::from(x));
 
     JSValuePtr fractionalDigitsValue = args.at(exec, 0);
-    double df = fractionalDigitsValue->toInteger(exec);
+    double df = fractionalDigitsValue.toInteger(exec);
     if (!(df >= 0 && df <= 20))
         return throwError(exec, RangeError, "toExponential() argument must between 0 and 20");
     int fractionalDigits = static_cast<int>(df);
-    bool includeAllDigits = fractionalDigitsValue->isUndefined();
+    bool includeAllDigits = fractionalDigitsValue.isUndefined();
 
     int decimalAdjust = 0;
     if (x && !includeAllDigits) {
@@ -374,14 +374,14 @@ JSValuePtr numberProtoFuncToExponential(ExecState* exec, JSObject*, JSValuePtr t
 
 JSValuePtr numberProtoFuncToPrecision(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
-    JSValuePtr v = thisValue->getJSNumber();
+    JSValuePtr v = thisValue.getJSNumber();
     if (!v)
         return throwError(exec, TypeError);
 
-    double doublePrecision = args.at(exec, 0)->toIntegerPreserveNaN(exec);
-    double x = v->uncheckedGetNumber();
-    if (args.at(exec, 0)->isUndefined() || isnan(x) || isinf(x))
-        return jsString(exec, v->toString(exec));
+    double doublePrecision = args.at(exec, 0).toIntegerPreserveNaN(exec);
+    double x = v.uncheckedGetNumber();
+    if (args.at(exec, 0).isUndefined() || isnan(x) || isinf(x))
+        return jsString(exec, v.toString(exec));
 
     UString s;
     if (x < 0) {

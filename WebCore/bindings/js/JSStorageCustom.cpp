@@ -57,7 +57,7 @@ bool JSStorage::deleteProperty(ExecState* exec, const Identifier& propertyName)
         return false;
         
     JSValuePtr prototype = this->prototype();
-    if (prototype->isObject() && asObject(prototype)->hasProperty(exec, propertyName))
+    if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return false;
 
     m_impl->removeItem(propertyName);
@@ -84,7 +84,7 @@ bool JSStorage::customPut(ExecState* exec, const Identifier& propertyName, JSVal
         return false;
         
     JSValuePtr prototype = this->prototype();
-    if (prototype->isObject() && asObject(prototype)->hasProperty(exec, propertyName))
+    if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return false;
     
     String stringValue = valueToStringWithNullCheck(exec, value);

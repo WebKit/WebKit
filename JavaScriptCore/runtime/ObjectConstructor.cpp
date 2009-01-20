@@ -42,9 +42,9 @@ ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<Structure> stru
 static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, const ArgList& args)
 {
     JSValuePtr arg = args.at(exec, 0);
-    if (arg->isUndefinedOrNull())
+    if (arg.isUndefinedOrNull())
         return new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure());
-    return arg->toObject(exec);
+    return arg.toObject(exec);
 }
 
 static JSObject* constructWithObjectConstructor(ExecState* exec, JSObject*, const ArgList& args)

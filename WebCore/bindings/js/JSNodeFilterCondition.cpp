@@ -38,8 +38,8 @@ JSNodeFilterCondition::JSNodeFilterCondition(JSValuePtr filter)
 
 void JSNodeFilterCondition::mark()
 {
-    if (!m_filter->marked())
-        m_filter->mark();
+    if (!m_filter.marked())
+        m_filter.mark();
 }
 
 short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) const
@@ -47,7 +47,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     JSLock lock(false);
 
     CallData callData;
-    CallType callType = m_filter->getCallData(callData);
+    CallType callType = m_filter.getCallData(callData);
     if (callType == CallTypeNone)
         return NodeFilter::FILTER_ACCEPT;
 
@@ -69,7 +69,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 
-    int intResult = result->toInt32(exec);
+    int intResult = result.toInt32(exec);
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 

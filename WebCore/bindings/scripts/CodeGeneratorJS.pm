@@ -280,7 +280,7 @@ sub GenerateGetOwnPropertySlotBody
 
     if ($interfaceName eq "NamedNodeMap" or $interfaceName eq "HTMLCollection") {
         push(@getOwnPropertySlotImpl, "    ${namespaceMaybe}JSValuePtr proto = prototype();\n");
-        push(@getOwnPropertySlotImpl, "    if (proto->isObject() && static_cast<${namespaceMaybe}JSObject*>(asObject(proto))->hasProperty(exec, propertyName))\n");
+        push(@getOwnPropertySlotImpl, "    if (proto.isObject() && static_cast<${namespaceMaybe}JSObject*>(asObject(proto))->hasProperty(exec, propertyName))\n");
         push(@getOwnPropertySlotImpl, "        return false;\n\n");
     }
 
@@ -1319,7 +1319,7 @@ sub GenerateImplementation
                 push(@implContent, "    if (!castedThisObj)\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
             } else {
-                push(@implContent, "    if (!thisValue->isObject(&${className}::s_info))\n");
+                push(@implContent, "    if (!thisValue.isObject(&${className}::s_info))\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
                 push(@implContent, "    $className* castedThisObj = static_cast<$className*>(asObject(thisValue));\n");
             }
@@ -1483,7 +1483,7 @@ sub GenerateImplementation
 
         push(@implContent, "{\n");
 
-        push(@implContent, "    return value->isObject(&${className}::s_info) ? " . ($podType ? "($podType) *" : "") . "static_cast<$className*>(asObject(value))->impl() : ");
+        push(@implContent, "    return value.isObject(&${className}::s_info) ? " . ($podType ? "($podType) *" : "") . "static_cast<$className*>(asObject(value))->impl() : ");
         if ($podType and $podType ne "float") {
             push(@implContent, "$podType();\n}\n");
         } else {
@@ -1588,18 +1588,18 @@ sub JSValueToNative
 
     my $type = $codeGenerator->StripModule($signature->type);
 
-    return "$value->toBoolean(exec)" if $type eq "boolean";
-    return "$value->toNumber(exec)" if $type eq "double";
-    return "$value->toFloat(exec)" if $type eq "float" or $type eq "SVGNumber";
-    return "$value->toInt32(exec)" if $type eq "unsigned long" or $type eq "long" or $type eq "unsigned short";
+    return "$value.toBoolean(exec)" if $type eq "boolean";
+    return "$value.toNumber(exec)" if $type eq "double";
+    return "$value.toFloat(exec)" if $type eq "float" or $type eq "SVGNumber";
+    return "$value.toInt32(exec)" if $type eq "unsigned long" or $type eq "long" or $type eq "unsigned short";
 
-    return "static_cast<Range::CompareHow>($value->toInt32(exec))" if $type eq "CompareHow";
-    return "static_cast<SVGPaint::SVGPaintType>($value->toInt32(exec))" if $type eq "SVGPaintType";
+    return "static_cast<Range::CompareHow>($value.toInt32(exec))" if $type eq "CompareHow";
+    return "static_cast<SVGPaint::SVGPaintType>($value.toInt32(exec))" if $type eq "SVGPaintType";
 
     if ($type eq "DOMString") {
         return "valueToStringWithNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
         return "valueToStringWithUndefinedOrNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};
-        return "$value->toString(exec)";
+        return "$value.toString(exec)";
     }
 
     if ($type eq "EventTarget") {

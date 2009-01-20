@@ -55,7 +55,7 @@ static Structure* leakInspectorCallbackWrapperStructure()
 
 JSValuePtr JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValuePtr unwrappedValue)
 {
-    if (!unwrappedValue->isObject())
+    if (!unwrappedValue.isObject())
         return unwrappedValue;
 
     JSObject* unwrappedObject = asObject(unwrappedValue);
@@ -67,9 +67,9 @@ JSValuePtr JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValuePtr
         return wrapper;
 
     JSValuePtr prototype = unwrappedObject->prototype();
-    ASSERT(prototype->isNull() || prototype->isObject());
+    ASSERT(prototype.isNull() || prototype.isObject());
 
-    if (prototype->isNull()) {
+    if (prototype.isNull()) {
         static Structure* structure = leakInspectorCallbackWrapperStructure();
         return new (unwrappedExec) JSInspectorCallbackWrapper(unwrappedExec, unwrappedObject, structure);
     }

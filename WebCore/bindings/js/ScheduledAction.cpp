@@ -73,7 +73,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     JSLock lock(false);
 
     CallData callData;
-    CallType callType = m_function->getCallData(callData);
+    CallType callType = m_function.get().getCallData(callData);
     if (callType == CallTypeNone)
         return;
 

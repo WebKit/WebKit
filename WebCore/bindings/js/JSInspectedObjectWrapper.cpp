@@ -49,7 +49,7 @@ const ClassInfo JSInspectedObjectWrapper::s_info = { "JSInspectedObjectWrapper",
 
 JSValuePtr JSInspectedObjectWrapper::wrap(ExecState* unwrappedExec, JSValuePtr unwrappedValue)
 {
-    if (!unwrappedValue->isObject())
+    if (!unwrappedValue.isObject())
         return unwrappedValue;
 
     JSObject* unwrappedObject = asObject(unwrappedValue);
@@ -62,9 +62,9 @@ JSValuePtr JSInspectedObjectWrapper::wrap(ExecState* unwrappedExec, JSValuePtr u
             return wrapper;
 
     JSValuePtr prototype = unwrappedObject->prototype();
-    ASSERT(prototype->isNull() || prototype->isObject());
+    ASSERT(prototype.isNull() || prototype.isObject());
 
-    if (prototype->isNull())
+    if (prototype.isNull())
         return new (unwrappedExec) JSInspectedObjectWrapper(unwrappedExec, unwrappedObject, JSQuarantinedObjectWrapper::createStructure(jsNull()));
     return new (unwrappedExec) JSInspectedObjectWrapper(unwrappedExec, unwrappedObject, JSQuarantinedObjectWrapper::createStructure(asObject(wrap(unwrappedExec, prototype))));
 }
@@ -100,7 +100,7 @@ JSValuePtr JSInspectedObjectWrapper::prepareIncomingValue(ExecState*, JSValuePtr
 {
     // The Inspector is only allowed to pass primitive values and wrapped objects to objects from the inspected page.
 
-    if (!value->isObject())
+    if (!value.isObject())
         return value;
 
     JSQuarantinedObjectWrapper* wrapper = asWrapper(value);

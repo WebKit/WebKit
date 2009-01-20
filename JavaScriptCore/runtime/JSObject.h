@@ -222,7 +222,7 @@ inline JSObject::JSObject(PassRefPtr<Structure> structure)
     ASSERT(m_structure);
     ASSERT(m_structure->propertyStorageCapacity() == inlineStorageCapacity);
     ASSERT(m_structure->isEmpty());
-    ASSERT(prototype()->isNull() || Heap::heap(this) == Heap::heap(prototype()));
+    ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
 }
 
 inline JSObject::~JSObject()
@@ -276,7 +276,7 @@ inline bool JSValuePtr::isObject(const ClassInfo* classInfo) const
 ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (JSValuePtr* location = getDirectLocation(propertyName)) {
-        if (m_structure->hasGetterSetterProperties() && location[0]->isGetterSetter())
+        if (m_structure->hasGetterSetterProperties() && location[0].isGetterSetter())
             fillGetterPropertySlot(slot, location);
         else
             slot.setValueSlot(this, location, offsetForLocation(location));
@@ -296,7 +296,7 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const I
 {
     unsigned attributes;
     if (JSValuePtr* location = getDirectLocation(propertyName, attributes)) {
-        if (m_structure->hasGetterSetterProperties() && location[0]->isGetterSetter()) {
+        if (m_structure->hasGetterSetterProperties() && location[0].isGetterSetter()) {
             slotIsWriteable = false;
             fillGetterPropertySlot(slot, location);
         } else {
@@ -340,7 +340,7 @@ inline bool JSObject::getPropertySlot(ExecState* exec, const Identifier& propert
         if (object->fastGetOwnPropertySlot(exec, propertyName, slot))
             return true;
         JSValuePtr prototype = object->prototype();
-        if (!prototype->isObject())
+        if (!prototype.isObject())
             return false;
         object = asObject(prototype);
     }
@@ -353,7 +353,7 @@ inline bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, Pr
         if (object->getOwnPropertySlot(exec, propertyName, slot))
             return true;
         JSValuePtr prototype = object->prototype();
-        if (!prototype->isObject())
+        if (!prototype.isObject())
             return false;
         object = asObject(prototype);
     }
@@ -485,7 +485,7 @@ inline JSValuePtr JSValuePtr::get(ExecState* exec, const Identifier& propertyNam
             return slot.getValue(exec, propertyName);
         ASSERT(cell->isObject());
         JSValuePtr prototype = static_cast<JSObject*>(cell)->prototype();
-        if (!prototype->isObject())
+        if (!prototype.isObject())
             return jsUndefined();
         cell = asObject(prototype);
     }
@@ -511,9 +511,9 @@ inline JSValuePtr JSValuePtr::get(ExecState* exec, unsigned propertyName, Proper
             return slot.getValue(exec, propertyName);
         ASSERT(cell->isObject());
         JSValuePtr prototype = static_cast<JSObject*>(cell)->prototype();
-        if (!prototype->isObject())
+        if (!prototype.isObject())
             return jsUndefined();
-        cell = prototype->asCell();
+        cell = prototype.asCell();
     }
 }
 

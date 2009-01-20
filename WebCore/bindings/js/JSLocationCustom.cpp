@@ -153,7 +153,7 @@ void JSLocation::setHref(ExecState* exec, JSValuePtr value)
     if (!activeFrame->loader()->shouldAllowNavigation(frame))
         return;
 
-    KURL url = activeFrame->loader()->completeURL(value->toString(exec));
+    KURL url = activeFrame->loader()->completeURL(value.toString(exec));
     navigateIfAllowed(exec, frame, url, false);
 }
 
@@ -163,7 +163,7 @@ void JSLocation::setProtocol(ExecState* exec, JSValuePtr value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    url.setProtocol(value->toString(exec));
+    url.setProtocol(value.toString(exec));
 
     navigateIfAllowed(exec, frame, url, false);
 }
@@ -174,7 +174,7 @@ void JSLocation::setHost(ExecState* exec, JSValuePtr value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    url.setHostAndPort(value->toString(exec));
+    url.setHostAndPort(value.toString(exec));
 
     navigateIfAllowed(exec, frame, url, false);
 }
@@ -185,7 +185,7 @@ void JSLocation::setHostname(ExecState* exec, JSValuePtr value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    url.setHost(value->toString(exec));
+    url.setHost(value.toString(exec));
 
     navigateIfAllowed(exec, frame, url, false);
 }
@@ -197,7 +197,7 @@ void JSLocation::setPort(ExecState* exec, JSValuePtr value)
 
     KURL url = frame->loader()->url();
     // FIXME: Could make this a little less ugly if String provided a toUnsignedShort function.
-    const UString& portString = value->toString(exec);
+    const UString& portString = value.toString(exec);
     int port = charactersToInt(portString.data(), portString.size());
     if (port < 0 || port > 0xFFFF)
         port = 0;
@@ -212,7 +212,7 @@ void JSLocation::setPathname(ExecState* exec, JSValuePtr value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    url.setPath(value->toString(exec));
+    url.setPath(value.toString(exec));
 
     navigateIfAllowed(exec, frame, url, false);
 }
@@ -223,7 +223,7 @@ void JSLocation::setSearch(ExecState* exec, JSValuePtr value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    url.setQuery(value->toString(exec));
+    url.setQuery(value.toString(exec));
 
     navigateIfAllowed(exec, frame, url, false);
 }
@@ -235,7 +235,7 @@ void JSLocation::setHash(ExecState* exec, JSValuePtr value)
 
     KURL url = frame->loader()->url();
     String oldRef = url.ref();
-    String str = value->toString(exec);
+    String str = value.toString(exec);
     if (str.startsWith("#"))
         str = str.substring(1);
     if (oldRef == str || (oldRef.isNull() && str.isEmpty()))
@@ -257,7 +257,7 @@ JSValuePtr JSLocation::replace(ExecState* exec, const ArgList& args)
     if (!activeFrame->loader()->shouldAllowNavigation(frame))
         return jsUndefined();
 
-    navigateIfAllowed(exec, frame, activeFrame->loader()->completeURL(args.at(exec, 0)->toString(exec)), true);
+    navigateIfAllowed(exec, frame, activeFrame->loader()->completeURL(args.at(exec, 0).toString(exec)), true);
     return jsUndefined();
 }
 
@@ -291,7 +291,7 @@ JSValuePtr JSLocation::assign(ExecState* exec, const ArgList& args)
         return jsUndefined();
 
     // We want a new history item if this JS was called via a user gesture
-    navigateIfAllowed(exec, frame, activeFrame->loader()->completeURL(args.at(exec, 0)->toString(exec)), false);
+    navigateIfAllowed(exec, frame, activeFrame->loader()->completeURL(args.at(exec, 0).toString(exec)), false);
     return jsUndefined();
 }
 

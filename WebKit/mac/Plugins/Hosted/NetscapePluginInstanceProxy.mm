@@ -530,7 +530,7 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     JSLock lock(false);
     JSValuePtr function = object->get(exec, methodName);
     CallData callData;
-    CallType callType = function->getCallData(callData);
+    CallType callType = function.getCallData(callData);
     if (callType == CallTypeNone)
         return false;
     
@@ -779,7 +779,7 @@ bool NetscapePluginInstanceProxy::hasMethod(uint32_t objectID, const JSC::Identi
     JSLock lock(false);
     JSValuePtr func = object->get(exec, methodName);
     exec->clearException();
-    return !func->isUndefined();
+    return !func.isUndefined();
 }
 
 void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength)
@@ -788,29 +788,22 @@ void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValuePtr value
     
     JSLock lock(false);
 
-    if (value->isString()) {
+    if (value.isString()) {
         [array.get() addObject:[NSNumber numberWithInt:StringValueType]];
-        
-        [array.get() addObject:String(value->toString(exec))];
-    } else if (value->isNumber()) {
+        [array.get() addObject:String(value.toString(exec))];
+    } else if (value.isNumber()) {
         [array.get() addObject:[NSNumber numberWithInt:DoubleValueType]];
-        
-        [array.get() addObject:[NSNumber numberWithDouble:value->toNumber(exec)]];
-    } else if (value->isBoolean()) {
+        [array.get() addObject:[NSNumber numberWithDouble:value.toNumber(exec)]];
+    } else if (value.isBoolean()) {
         [array.get() addObject:[NSNumber numberWithInt:BoolValueType]];
-        
-        [array.get() addObject:[NSNumber numberWithDouble:value->toBoolean(exec)]];
-    } else if (value->isNull()) {
+        [array.get() addObject:[NSNumber numberWithDouble:value.toBoolean(exec)]];
+    } else if (value.isNull())
         [array.get() addObject:[NSNumber numberWithInt:NullValueType]];
-    } else if (value->isObject()) {
+    else if (value.isObject()) {
         [array.get() addObject:[NSNumber numberWithInt:ObjectValueType]];
-        
-        uint32_t objectID = idForObject(asObject(value));
-        
-        [array.get() addObject:[NSNumber numberWithInt:objectID]];
-    } else {
+        [array.get() addObject:[NSNumber numberWithInt:idForObject(asObject(value))]];
+    } else
         [array.get() addObject:[NSNumber numberWithInt:VoidValueType]];
-    }
 
     RetainPtr<NSData*> data = [NSPropertyListSerialization dataFromPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
     ASSERT(data);

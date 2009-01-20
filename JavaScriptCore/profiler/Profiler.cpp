@@ -135,7 +135,7 @@ CallIdentifier Profiler::createCallIdentifier(JSGlobalData* globalData, JSValueP
 {
     if (!function)
         return CallIdentifier(GlobalCodeExecution, defaultSourceURL, defaultLineNumber);
-    if (!function->isObject())
+    if (!function.isObject())
         return CallIdentifier("(unknown)", defaultSourceURL, defaultLineNumber);
     if (asObject(function)->inherits(&JSFunction::info))
         return createCallIdentifierFromFunctionImp(globalData, asFunction(function));

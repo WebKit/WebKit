@@ -391,24 +391,24 @@ JSValuePtr jsStringOrFalse(ExecState* exec, const KURL& url)
 
 UString valueToStringWithNullCheck(ExecState* exec, JSValuePtr value)
 {
-    if (value->isNull())
+    if (value.isNull())
         return UString();
-    return value->toString(exec);
+    return value.toString(exec);
 }
 
 UString valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValuePtr value)
 {
-    if (value->isUndefinedOrNull())
+    if (value.isUndefinedOrNull())
         return UString();
-    return value->toString(exec);
+    return value.toString(exec);
 }
 
 void reportException(JSC::ExecState* exec, JSValuePtr exception)
 {
-    UString errorMessage = exception->toString(exec);
-    JSObject* exceptionObject = exception->toObject(exec);
-    int lineNumber = exceptionObject->get(exec, Identifier(exec, "line"))->toInt32(exec);
-    UString exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
+    UString errorMessage = exception.toString(exec);
+    JSObject* exceptionObject = exception.toObject(exec);
+    int lineNumber = exceptionObject->get(exec, Identifier(exec, "line")).toInt32(exec);
+    UString exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL")).toString(exec);
     exec->clearException();
 
     ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();

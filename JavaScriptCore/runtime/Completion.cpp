@@ -61,13 +61,13 @@ Completion evaluate(ExecState* exec, ScopeChain& scopeChain, const SourceCode& s
     if (!programNode)
         return Completion(Throw, Error::create(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url()));
 
-    JSObject* thisObj = (!thisValue || thisValue->isUndefinedOrNull()) ? exec->dynamicGlobalObject() : thisValue->toObject(exec);
+    JSObject* thisObj = (!thisValue || thisValue.isUndefinedOrNull()) ? exec->dynamicGlobalObject() : thisValue.toObject(exec);
 
     JSValuePtr exception = noValue();
     JSValuePtr result = exec->interpreter()->execute(programNode.get(), exec, scopeChain.node(), thisObj, &exception);
 
     if (exception) {
-        if (exception->isObject() && asObject(exception)->isWatchdogException())
+        if (exception.isObject() && asObject(exception)->isWatchdogException())
             return Completion(Interrupted, result);
         return Completion(Throw, exception);
     }

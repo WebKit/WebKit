@@ -38,7 +38,7 @@ const ClassInfo JSQuarantinedObjectWrapper::s_info = { "JSQuarantinedObjectWrapp
 
 JSQuarantinedObjectWrapper* JSQuarantinedObjectWrapper::asWrapper(JSValuePtr value)
 {
-    if (!value->isObject())
+    if (!value.isObject())
         return 0;
 
     JSObject* object = asObject(value);
@@ -200,7 +200,7 @@ JSObject* JSQuarantinedObjectWrapper::construct(ExecState* exec, JSObject* const
     JSValuePtr unwrappedResult = JSC::construct(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedConstructType, unwrappedConstructData, preparedArgs);
 
     JSValuePtr resultValue = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
-    ASSERT(resultValue->isObject());
+    ASSERT(resultValue.isObject());
     JSObject* result = asObject(resultValue);
 
     wrapper->transferExceptionToExecState(exec);

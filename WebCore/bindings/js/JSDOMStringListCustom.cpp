@@ -39,7 +39,7 @@ JSValuePtr JSDOMStringList::getByIndex(ExecState* exec, unsigned index)
 
 JSValuePtr JSDOMStringList::item(ExecState* exec, const ArgList& args)
 {
-    unsigned index = args.at(exec, 0)->toUInt32(exec);
+    unsigned index = args.at(exec, 0).toUInt32(exec);
     if (index >= impl()->length())
         return jsNull();
 

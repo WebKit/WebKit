@@ -153,7 +153,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
         }
 
         // Try a fallback object.
-        if (!aClass->fallbackObject(exec, instance.get(), propertyName)->isUndefined()) {
+        if (!aClass->fallbackObject(exec, instance.get(), propertyName).isUndefined()) {
             slot.setCustom(this, fallbackObjectGetter);
             instance->end();
             return true;
@@ -230,7 +230,7 @@ JSObject* callRuntimeConstructor(ExecState* exec, JSObject* constructor, const A
     instance->end();
     
     ASSERT(result);
-    return result->isObject() ? static_cast<JSObject*>(result->asCell()) : constructor;
+    return result.isObject() ? static_cast<JSObject*>(result.asCell()) : constructor;
 }
 
 ConstructType RuntimeObjectImp::getConstructData(ConstructData& constructData)

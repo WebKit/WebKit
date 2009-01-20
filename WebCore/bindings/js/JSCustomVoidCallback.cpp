@@ -62,7 +62,7 @@ void JSCustomVoidCallback::handleEvent()
         
     JSValuePtr function = m_callback->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;
-    CallType callType = function->getCallData(callData);
+    CallType callType = function.getCallData(callData);
     if (callType == CallTypeNone) {
         callType = m_callback->getCallData(callData);
         if (callType == CallTypeNone) {
@@ -88,7 +88,7 @@ void JSCustomVoidCallback::handleEvent()
  
 PassRefPtr<VoidCallback> toVoidCallback(ExecState* exec, JSValuePtr value)
 {
-    JSObject* object = value->getObject();
+    JSObject* object = value.getObject();
     if (!object)
         return 0;
     

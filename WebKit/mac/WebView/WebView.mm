@@ -3695,19 +3695,19 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValuePtr jsValue)
 {
     NSAppleEventDescriptor* aeDesc = 0;
-    if (jsValue->isBoolean())
-        return [NSAppleEventDescriptor descriptorWithBoolean:jsValue->getBoolean()];
-    if (jsValue->isString())
-        return [NSAppleEventDescriptor descriptorWithString:String(jsValue->getString())];
-    if (jsValue->isNumber()) {
-        double value = jsValue->uncheckedGetNumber();
+    if (jsValue.isBoolean())
+        return [NSAppleEventDescriptor descriptorWithBoolean:jsValue.getBoolean()];
+    if (jsValue.isString())
+        return [NSAppleEventDescriptor descriptorWithString:String(jsValue.getString())];
+    if (jsValue.isNumber()) {
+        double value = jsValue.uncheckedGetNumber();
         int intValue = value;
         if (value == intValue)
             return [NSAppleEventDescriptor descriptorWithDescriptorType:typeSInt32 bytes:&intValue length:sizeof(intValue)];
         return [NSAppleEventDescriptor descriptorWithDescriptorType:typeIEEE64BitFloatingPoint bytes:&value length:sizeof(value)];
     }
-    if (jsValue->isObject()) {
-        JSObject* object = jsValue->getObject();
+    if (jsValue.isObject()) {
+        JSObject* object = jsValue.getObject();
         if (object->inherits(&DateInstance::info)) {
             DateInstance* date = static_cast<DateInstance*>(object);
             double ms = 0;
@@ -3741,9 +3741,9 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValuePtr jsV
         }
         return aeDescFromJSValue(exec, primitive);
     }
-    if (jsValue->isUndefined())
+    if (jsValue.isUndefined())
         return [NSAppleEventDescriptor descriptorWithTypeCode:cMissingValue];
-    ASSERT(jsValue->isNull());
+    ASSERT(jsValue.isNull());
     return [NSAppleEventDescriptor nullDescriptor];
 }
 

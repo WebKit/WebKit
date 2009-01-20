@@ -51,7 +51,7 @@ namespace JSC {
     inline void JSWrapperObject::setInternalValue(JSValuePtr value)
     {
         ASSERT(value);
-        ASSERT(!value->isObject());
+        ASSERT(!value.isObject());
         m_internalValue = value;
     }
 

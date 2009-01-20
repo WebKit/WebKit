@@ -88,7 +88,7 @@ JSValuePtr JSDOMApplicationCache::hasItem(ExecState* exec, const ArgList& args)
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
-    const KURL& url = frame->loader()->completeURL(args.at(exec, 0)->toString(exec));
+    const KURL& url = frame->loader()->completeURL(args.at(exec, 0).toString(exec));
 
     ExceptionCode ec = 0;
     bool result = impl()->hasItem(url, ec);
@@ -101,7 +101,7 @@ JSValuePtr JSDOMApplicationCache::add(ExecState* exec, const ArgList& args)
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
-    const KURL& url = frame->loader()->completeURL(args.at(exec, 0)->toString(exec));
+    const KURL& url = frame->loader()->completeURL(args.at(exec, 0).toString(exec));
     
     ExceptionCode ec = 0;
     impl()->add(url, ec);
@@ -114,7 +114,7 @@ JSValuePtr JSDOMApplicationCache::remove(ExecState* exec, const ArgList& args)
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
-    const KURL& url = frame->loader()->completeURL(args.at(exec, 0)->toString(exec));
+    const KURL& url = frame->loader()->completeURL(args.at(exec, 0).toString(exec));
     
     ExceptionCode ec = 0;
     impl()->remove(url, ec);
@@ -132,7 +132,7 @@ JSValuePtr JSDOMApplicationCache::addEventListener(ExecState* exec, const ArgLis
     RefPtr<JSUnprotectedEventListener> listener = globalObject->findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
-    impl()->addEventListener(args.at(exec, 0)->toString(exec), listener.release(), args.at(exec, 2)->toBoolean(exec));
+    impl()->addEventListener(args.at(exec, 0).toString(exec), listener.release(), args.at(exec, 2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -144,7 +144,7 @@ JSValuePtr JSDOMApplicationCache::removeEventListener(ExecState* exec, const Arg
     JSUnprotectedEventListener* listener = globalObject->findJSUnprotectedEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
-    impl()->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
+    impl()->removeEventListener(args.at(exec, 0).toString(exec), listener, args.at(exec, 2).toBoolean(exec));
     return jsUndefined();
 }
 

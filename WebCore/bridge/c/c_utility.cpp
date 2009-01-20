@@ -72,18 +72,18 @@ void convertValueToNPVariant(ExecState* exec, JSValuePtr value, NPVariant* resul
 
     VOID_TO_NPVARIANT(*result);
 
-    if (value->isString()) {
-        UString ustring = value->toString(exec);
+    if (value.isString()) {
+        UString ustring = value.toString(exec);
         CString cstring = ustring.UTF8String();
         NPString string = { (const NPUTF8*)cstring.c_str(), static_cast<uint32_t>(cstring.size()) };
         NPN_InitializeVariantWithStringCopy(result, &string);
-    } else if (value->isNumber()) {
-        DOUBLE_TO_NPVARIANT(value->toNumber(exec), *result);
-    } else if (value->isBoolean()) {
-        BOOLEAN_TO_NPVARIANT(value->toBoolean(exec), *result);
-    } else if (value->isNull()) {
+    } else if (value.isNumber()) {
+        DOUBLE_TO_NPVARIANT(value.toNumber(exec), *result);
+    } else if (value.isBoolean()) {
+        BOOLEAN_TO_NPVARIANT(value.toBoolean(exec), *result);
+    } else if (value.isNull()) {
         NULL_TO_NPVARIANT(*result);
-    } else if (value->isObject()) {
+    } else if (value.isObject()) {
         JSObject* object = asObject(value);
         if (object->classInfo() == &RuntimeObjectImp::s_info) {
             RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(object);

@@ -41,7 +41,7 @@ namespace WebCore {
         virtual short acceptNode(ScriptState*, Node*) const;
         virtual void mark();
 
-        JSC::JSValuePtr m_filter;
+        mutable JSC::JSValuePtr m_filter;
     };
 
 } // namespace WebCore

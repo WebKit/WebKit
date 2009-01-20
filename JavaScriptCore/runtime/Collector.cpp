@@ -809,13 +809,13 @@ void Heap::protect(JSValuePtr k)
     ASSERT(k);
     ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance);
 
-    if (!k->isCell())
+    if (!k.isCell())
         return;
 
     if (m_protectedValuesMutex)
         m_protectedValuesMutex->lock();
 
-    m_protectedValues.add(k->asCell());
+    m_protectedValues.add(k.asCell());
 
     if (m_protectedValuesMutex)
         m_protectedValuesMutex->unlock();
@@ -826,13 +826,13 @@ void Heap::unprotect(JSValuePtr k)
     ASSERT(k);
     ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance);
 
-    if (!k->isCell())
+    if (!k.isCell())
         return;
 
     if (m_protectedValuesMutex)
         m_protectedValuesMutex->lock();
 
-    m_protectedValues.remove(k->asCell());
+    m_protectedValues.remove(k.asCell());
 
     if (m_protectedValuesMutex)
         m_protectedValuesMutex->unlock();
@@ -840,9 +840,9 @@ void Heap::unprotect(JSValuePtr k)
 
 Heap* Heap::heap(JSValuePtr v)
 {
-    if (!v->isCell())
+    if (!v.isCell())
         return 0;
-    return Heap::cellBlock(v->asCell())->heap;
+    return Heap::cellBlock(v.asCell())->heap;
 }
 
 void Heap::markProtectedObjects()
@@ -983,8 +983,8 @@ bool Heap::collect()
     markProtectedObjects();
     if (m_markListSet && m_markListSet->size())
         ArgList::markLists(*m_markListSet);
-    if (m_globalData->exception && !m_globalData->exception->marked())
-        m_globalData->exception->mark();
+    if (m_globalData->exception && !m_globalData->exception.marked())
+        m_globalData->exception.mark();
     m_globalData->interpreter->registerFile().markCallFrames(this);
     m_globalData->smallStrings.mark();
     if (m_globalData->scopeNodeBeingReparsed)
@@ -1075,16 +1075,16 @@ size_t Heap::protectedObjectCount()
     return result;
 }
 
-static const char* typeName(JSCell* val)
+static const char* typeName(JSCell* cell)
 {
-    if (val->isString())
+    if (cell->isString())
         return "string";
-    if (val->isNumber())
+    if (cell->isNumber())
         return "number";
-    if (val->isGetterSetter())
+    if (cell->isGetterSetter())
         return "gettersetter";
-    ASSERT(val->isObject());
-    const ClassInfo* info = static_cast<JSObject*>(val)->classInfo();
+    ASSERT(cell->isObject());
+    const ClassInfo* info = static_cast<JSObject*>(cell)->classInfo();
     return info ? info->className : "Object";
 }
 

@@ -288,7 +288,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
     JSValuePtr function = [self _imp]->get(exec, Identifier(exec, String(name)));
     CallData callData;
-    CallType callType = function->getCallData(callData);
+    CallType callType = function.getCallData(callData);
     if (callType == CallTypeNone)
         return nil;
 
@@ -506,14 +506,14 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 + (id)_convertValueToObjcValue:(JSValuePtr)value originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject
 {
-    if (value->isObject()) {
+    if (value.isObject()) {
         JSObject* object = asObject(value);
         ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock(false);
         
         if (object->classInfo() != &RuntimeObjectImp::s_info) {
             JSValuePtr runtimeObject = object->get(exec, Identifier(exec, "__apple_runtime_object"));
-            if (runtimeObject && runtimeObject->isObject())
+            if (runtimeObject && runtimeObject.isObject())
                 object = asObject(runtimeObject);
         }
 
@@ -528,18 +528,18 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         return [WebScriptObject scriptObjectForJSObject:toRef(object) originRootObject:originRootObject rootObject:rootObject];
     }
 
-    if (value->isString()) {
+    if (value.isString()) {
         const UString& u = asString(value)->value();
         return [NSString stringWithCharacters:u.data() length:u.size()];
     }
 
-    if (value->isNumber())
-        return [NSNumber numberWithDouble:value->uncheckedGetNumber()];
+    if (value.isNumber())
+        return [NSNumber numberWithDouble:value.uncheckedGetNumber()];
 
-    if (value->isBoolean())
-        return [NSNumber numberWithBool:value->getBoolean()];
+    if (value.isBoolean())
+        return [NSNumber numberWithBool:value.getBoolean()];
 
-    if (value->isUndefined())
+    if (value.isUndefined())
         return [WebUndefined undefined];
 
     // jsNull is not returned as NSNull because existing applications do not expect

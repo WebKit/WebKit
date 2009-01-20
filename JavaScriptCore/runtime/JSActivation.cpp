@@ -99,7 +99,7 @@ bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propert
     // We don't call through to JSObject because there's no way to give an 
     // activation object getter properties or a prototype.
     ASSERT(!hasGetterSetterProperties());
-    ASSERT(prototype()->isNull());
+    ASSERT(prototype().isNull());
     return false;
 }
 

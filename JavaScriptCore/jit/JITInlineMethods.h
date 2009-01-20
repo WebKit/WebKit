@@ -120,12 +120,12 @@ ALWAYS_INLINE JSValuePtr JIT::getConstantOperand(unsigned src)
 
 ALWAYS_INLINE int32_t JIT::getConstantOperandImmediateInt(unsigned src)
 {
-    return getConstantOperand(src)->getInt32Fast();
+    return getConstantOperand(src).getInt32Fast();
 }
 
 ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(unsigned src)
 {
-    return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src)->isInt32Fast();
+    return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isInt32Fast();
 }
 
 // get arg puts an arg from the SF register array onto the stack, as an arg to a context threaded function.

@@ -814,7 +814,7 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
         if (src1->index() == dstIndex
             && src1->isTemporary()
             && m_codeBlock->isConstantRegisterIndex(src2->index())
-            && m_codeBlock->constantRegister(src2->index() - m_codeBlock->m_numVars).jsValue(m_scopeChain->globalObject()->globalExec())->isString()) {
+            && m_codeBlock->constantRegister(src2->index() - m_codeBlock->m_numVars).jsValue(m_scopeChain->globalObject()->globalExec()).isString()) {
             const UString& value = asString(m_codeBlock->constantRegister(src2->index() - m_codeBlock->m_numVars).jsValue(m_scopeChain->globalObject()->globalExec()))->value();
             if (value == "undefined") {
                 rewindUnaryOp();
@@ -1687,7 +1687,7 @@ static int32_t keyForImmediateSwitch(ExpressionNode* node, int32_t min, int32_t 
     ASSERT(node->isNumber());
     double value = static_cast<NumberNode*>(node)->value();
     int32_t key = static_cast<int32_t>(value);
-    ASSERT(JSValuePtr::makeInt32Fast(key) && (JSValuePtr::makeInt32Fast(key)->getInt32Fast() == value));
+    ASSERT(JSValuePtr::makeInt32Fast(key) && (JSValuePtr::makeInt32Fast(key).getInt32Fast() == value));
     ASSERT(key == value);
     ASSERT(key >= min);
     ASSERT(key <= max);

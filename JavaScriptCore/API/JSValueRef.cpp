@@ -44,17 +44,17 @@
 JSType JSValueGetType(JSContextRef, JSValueRef value)
 {
     JSC::JSValuePtr jsValue = toJS(value);
-    if (jsValue->isUndefined())
+    if (jsValue.isUndefined())
         return kJSTypeUndefined;
-    if (jsValue->isNull())
+    if (jsValue.isNull())
         return kJSTypeNull;
-    if (jsValue->isBoolean())
+    if (jsValue.isBoolean())
         return kJSTypeBoolean;
-    if (jsValue->isNumber())
+    if (jsValue.isNumber())
         return kJSTypeNumber;
-    if (jsValue->isString())
+    if (jsValue.isString())
         return kJSTypeString;
-    ASSERT(jsValue->isObject());
+    ASSERT(jsValue.isObject());
     return kJSTypeObject;
 }
 
@@ -63,44 +63,44 @@ using namespace JSC; // placed here to avoid conflict between JSC::JSType and JS
 bool JSValueIsUndefined(JSContextRef, JSValueRef value)
 {
     JSValuePtr jsValue = toJS(value);
-    return jsValue->isUndefined();
+    return jsValue.isUndefined();
 }
 
 bool JSValueIsNull(JSContextRef, JSValueRef value)
 {
     JSValuePtr jsValue = toJS(value);
-    return jsValue->isNull();
+    return jsValue.isNull();
 }
 
 bool JSValueIsBoolean(JSContextRef, JSValueRef value)
 {
     JSValuePtr jsValue = toJS(value);
-    return jsValue->isBoolean();
+    return jsValue.isBoolean();
 }
 
 bool JSValueIsNumber(JSContextRef, JSValueRef value)
 {
     JSValuePtr jsValue = toJS(value);
-    return jsValue->isNumber();
+    return jsValue.isNumber();
 }
 
 bool JSValueIsString(JSContextRef, JSValueRef value)
 {
     JSValuePtr jsValue = toJS(value);
-    return jsValue->isString();
+    return jsValue.isString();
 }
 
 bool JSValueIsObject(JSContextRef, JSValueRef value)
 {
     JSValuePtr jsValue = toJS(value);
-    return jsValue->isObject();
+    return jsValue.isObject();
 }
 
 bool JSValueIsObjectOfClass(JSContextRef, JSValueRef value, JSClassRef jsClass)
 {
     JSValuePtr jsValue = toJS(value);
     
-    if (JSObject* o = jsValue->getObject()) {
+    if (JSObject* o = jsValue.getObject()) {
         if (o->inherits(&JSCallbackObject<JSGlobalObject>::info))
             return static_cast<JSCallbackObject<JSGlobalObject>*>(o)->inherits(jsClass);
         else if (o->inherits(&JSCallbackObject<JSObject>::info))
@@ -192,7 +192,7 @@ bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
 {
     ExecState* exec = toJS(ctx);
     JSValuePtr jsValue = toJS(value);
-    return jsValue->toBoolean(exec);
+    return jsValue.toBoolean(exec);
 }
 
 double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
@@ -203,7 +203,7 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
 
     JSValuePtr jsValue = toJS(value);
 
-    double number = jsValue->toNumber(exec);
+    double number = jsValue.toNumber(exec);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());
@@ -221,7 +221,7 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
 
     JSValuePtr jsValue = toJS(value);
     
-    RefPtr<OpaqueJSString> stringRef(OpaqueJSString::create(jsValue->toString(exec)));
+    RefPtr<OpaqueJSString> stringRef(OpaqueJSString::create(jsValue.toString(exec)));
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());
@@ -239,7 +239,7 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
 
     JSValuePtr jsValue = toJS(value);
     
-    JSObjectRef objectRef = toRef(jsValue->toObject(exec));
+    JSObjectRef objectRef = toRef(jsValue.toObject(exec));
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());

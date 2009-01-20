@@ -78,7 +78,7 @@ JSValuePtr createError(ExecState* exec, ErrorType e, const char* msg, const Iden
 JSValuePtr createError(ExecState* exec, ErrorType e, const char* msg, JSValuePtr v)
 {
     UString message = msg;
-    substitute(message, v->toString(exec));
+    substitute(message, v.toString(exec));
     return Error::create(exec, e, message, -1, -1, 0);
 }
 
@@ -107,7 +107,7 @@ bool isStrWhiteSpace(UChar c);
 static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, int expressionStart, int expressionStop, JSValuePtr value, UString error)
 {
     if (!expressionStop || expressionStart > codeBlock->source()->length()) {
-        UString errorText = value->toString(exec);
+        UString errorText = value.toString(exec);
         errorText.append(" is ");
         errorText.append(error);
         return errorText;
@@ -119,7 +119,7 @@ static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, in
         errorText.append('\'');
         errorText.append(codeBlock->source()->getRange(expressionStart, expressionStop));
         errorText.append("' [");
-        errorText.append(value->toString(exec));
+        errorText.append(value.toString(exec));
         errorText.append("] is ");
     } else {
         // No range information, so give a few characters of context
@@ -140,7 +140,7 @@ static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, in
         errorText.append("near '...");
         errorText.append(codeBlock->source()->getRange(start, stop));
         errorText.append("...' [");
-        errorText.append(value->toString(exec));
+        errorText.append(value.toString(exec));
         errorText.append("] is ");
     }
     errorText.append(error);

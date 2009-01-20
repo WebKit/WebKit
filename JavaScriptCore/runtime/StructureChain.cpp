@@ -37,7 +37,7 @@ StructureChain::StructureChain(Structure* structure)
     size_t size = 1;
 
     Structure* tmp = structure;
-    while (!tmp->storedPrototype()->isNull()) {
+    while (!tmp->storedPrototype().isNull()) {
         ++size;
         tmp = asCell(tmp->storedPrototype())->structure();
     }

@@ -41,14 +41,14 @@ JSValuePtr JSHTMLSelectElement::remove(ExecState* exec, const ArgList& args)
     if (element && element->hasTagName(optionTag))
         select.remove(static_cast<HTMLOptionElement*>(element)->index());
     else
-        select.remove(args.at(exec, 0)->toInt32(exec));
+        select.remove(args.at(exec, 0).toInt32(exec));
 
     return jsUndefined();
 }
 
 void selectIndexSetter(HTMLSelectElement* select, JSC::ExecState* exec, unsigned index, JSC::JSValuePtr value)
 {
-    if (value->isUndefinedOrNull())
+    if (value.isUndefinedOrNull())
         select->remove(index);
     else {
         ExceptionCode ec = 0;

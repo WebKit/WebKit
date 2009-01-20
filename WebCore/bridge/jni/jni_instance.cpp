@@ -142,7 +142,7 @@ JSValuePtr JavaInstance::invokeMethod (ExecState *exec, const MethodList &method
     for (i = 0; i < count; i++) {
         JavaParameter* aParameter = jMethod->parameterAt(i);
         jArgs[i] = convertValueToJValue(exec, args.at(exec, i), aParameter->getJNIType(), aParameter->type());
-        JS_LOG("arg[%d] = %s\n", i, args.at(exec, i)->toString(exec).ascii());
+        JS_LOG("arg[%d] = %s\n", i, args.at(exec, i).toString(exec).ascii());
     }
         
     jvalue result;
@@ -161,7 +161,7 @@ JSValuePtr JavaInstance::invokeMethod (ExecState *exec, const MethodList &method
         const char *callingURL = 0;  // FIXME, need to propagate calling URL to Java
         handled = dispatchJNICall(exec, rootObject->nativeHandle(), obj, jMethod->isStatic(), jMethod->JNIReturnType(), jMethod->methodID(obj), jArgs, result, callingURL, exceptionDescription);
         if (exceptionDescription) {
-            throwError(exec, GeneralError, exceptionDescription->toString(exec));
+            throwError(exec, GeneralError, exceptionDescription.toString(exec));
             free (jArgs);
             return jsUndefined();
         }

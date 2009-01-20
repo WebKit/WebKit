@@ -1,3 +1,21 @@
+2009-01-19  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Gavin Barraclough.
+
+        Remove temporary operator-> from JSValuePtr.
+
+        * JSUtils.cpp:
+        (KJSValueToJSObject):
+        (KJSValueToCFTypeInternal):
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        (JSValueWrapper::JSObjectCopyProperty):
+        (JSValueWrapper::JSObjectSetProperty):
+        (JSValueWrapper::JSObjectCallFunction):
+        (JSValueWrapper::JSObjectMark):
+        * UserObjectImp.cpp:
+        (UserObjectImp::getOwnPropertySlot):
+
 2009-01-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

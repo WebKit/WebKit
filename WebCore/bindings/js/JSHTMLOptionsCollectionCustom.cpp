@@ -46,7 +46,7 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValuePtr value)
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
     ExceptionCode ec = 0;
     unsigned newLength = 0;
-    double lengthValue = value->toNumber(exec);
+    double lengthValue = value.toNumber(exec);
     if (!isnan(lengthValue) && !isinf(lengthValue)) {
         if (lengthValue < 0.0)
             ec = INDEX_SIZE_ERR;
@@ -76,7 +76,7 @@ JSValuePtr JSHTMLOptionsCollection::add(ExecState* exec, const ArgList& args)
         imp->add(option, ec);
     else {
         bool ok;
-        int index = args.at(exec, 1)->toInt32(exec, ok);
+        int index = args.at(exec, 1).toInt32(exec, ok);
         if (exec->hadException())
             return jsUndefined();
         if (!ok)

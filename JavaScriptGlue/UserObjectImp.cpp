@@ -141,8 +141,8 @@ bool UserObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& proper
         return true;
     } else {
         JSValuePtr kjsValue = toPrimitive(exec);
-        if (!kjsValue->isUndefinedOrNull()) {
-            JSObject *kjsObject = kjsValue->toObject(exec);
+        if (!kjsValue.isUndefinedOrNull()) {
+            JSObject* kjsObject = kjsValue.toObject(exec);
             if (kjsObject->getPropertySlot(exec, propertyName, slot))
                 return true;
         }

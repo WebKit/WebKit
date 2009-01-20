@@ -208,7 +208,7 @@ void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValuePtr, PutPr
 
 static JSValuePtr callObjCFallbackObject(ExecState* exec, JSObject* function, JSValuePtr thisValue, const ArgList& args)
 {
-    if (!thisValue->isObject(&RuntimeObjectImp::s_info))
+    if (!thisValue.isObject(&RuntimeObjectImp::s_info))
         return throwError(exec, TypeError);
 
     JSValuePtr result = jsUndefined();

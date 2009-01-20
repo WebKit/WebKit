@@ -237,7 +237,7 @@ void JSObjectSetPrototype(JSContextRef, JSObjectRef object, JSValueRef value)
     JSObject* jsObject = toJS(object);
     JSValuePtr jsValue = toJS(value);
 
-    jsObject->setPrototype(jsValue->isObject() ? jsValue : jsNull());
+    jsObject->setPrototype(jsValue.isObject() ? jsValue : jsNull());
 }
 
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)

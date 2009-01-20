@@ -131,8 +131,8 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValuePtr value, ObjcValueTy
     ObjcValue result;
     double d = 0;
 
-    if (value->isNumber() || value->isString() || value->isBoolean())
-        d = value->toNumber(exec);
+    if (value.isNumber() || value.isString() || value.isBoolean())
+        d = value.toNumber(exec);
 
     switch (type) {
         case ObjcObjectType: {
@@ -142,7 +142,7 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValuePtr value, ObjcValueTy
             RootObject* originRootObject = findRootObject(originGlobalObject);
 
             JSGlobalObject* globalObject = 0;
-            if (value->isObject() && asObject(value)->isGlobalObject())
+            if (value.isObject() && asObject(value)->isGlobalObject())
                 globalObject = static_cast<JSGlobalObject*>(asObject(value));
 
             if (!globalObject)

@@ -48,11 +48,11 @@ static JSObject* constructImage(ExecState* exec, JSObject* constructor, const Ar
     int height = 0;
     if (args.size() > 0) {
         widthSet = true;
-        width = args.at(exec, 0)->toInt32(exec);
+        width = args.at(exec, 0).toInt32(exec);
     }
     if (args.size() > 1) {
         heightSet = true;
-        height = args.at(exec, 1)->toInt32(exec);
+        height = args.at(exec, 1).toInt32(exec);
     }
 
     Document* document = static_cast<JSImageConstructor*>(constructor)->document();

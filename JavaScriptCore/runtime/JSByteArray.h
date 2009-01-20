@@ -65,7 +65,7 @@ namespace JSC {
         
         void setIndex(ExecState* exec, unsigned i, JSValuePtr value)
         {
-            double byteValue = value->toNumber(exec);
+            double byteValue = value.toNumber(exec);
             if (exec->hadException())
                 return;
             if (canAccessIndex(i))

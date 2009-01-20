@@ -29,8 +29,8 @@ ASSERT_CLASS_FITS_IN_CELL(JSWrapperObject);
 void JSWrapperObject::mark() 
 {
     JSObject::mark();
-    if (m_internalValue && !m_internalValue->marked())
-        m_internalValue->mark();
+    if (m_internalValue && !m_internalValue.marked())
+        m_internalValue.mark();
 }
 
 } // namespace JSC

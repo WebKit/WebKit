@@ -64,7 +64,7 @@ void JSDocument::setLocation(ExecState* exec, JSValuePtr value)
     if (!frame)
         return;
 
-    String str = value->toString(exec);
+    String str = value.toString(exec);
 
     // IE and Mozilla both resolve the URL relative to the source frame,
     // not the target frame.

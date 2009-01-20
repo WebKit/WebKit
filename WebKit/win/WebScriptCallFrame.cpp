@@ -54,15 +54,15 @@ UString WebScriptCallFrame::jsValueToString(JSC::ExecState* state, JSValuePtr js
     if (!jsvalue)
         return "undefined";
 
-    if (jsvalue->isString())
-        return jsvalue->getString();
-    else if (jsvalue->isNumber())
-        return UString::from(jsvalue->uncheckedGetNumber());
-    else if (jsvalue->isBoolean())
-        return jsvalue->getBoolean() ? "True" : "False";
-    else if (jsvalue->isObject()) {
-        jsvalue = jsvalue->getObject()->defaultValue(state, PreferString);
-        return jsvalue->getString();
+    if (jsvalue.isString())
+        return jsvalue.getString();
+    else if (jsvalue.isNumber())
+        return UString::from(jsvalue.uncheckedGetNumber());
+    else if (jsvalue.isBoolean())
+        return jsvalue.getBoolean() ? "True" : "False";
+    else if (jsvalue.isObject()) {
+        jsvalue = jsvalue.getObject()->defaultValue(state, PreferString);
+        return jsvalue.getString();
     }
 
     return "undefined";

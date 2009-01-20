@@ -73,8 +73,8 @@ namespace JSC {
 
         void mark()
         {
-            if (!m_prototype->marked())
-                m_prototype->mark();
+            if (!m_prototype.marked())
+                m_prototype.mark();
         }
 
         // These should be used with caution.  

@@ -46,19 +46,19 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, PassRefPtr<Structure> structure,
 
 JSValuePtr errorProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
-    JSObject* thisObj = thisValue->toThisObject(exec);
+    JSObject* thisObj = thisValue.toThisObject(exec);
 
     UString s = "Error";
 
     JSValuePtr v = thisObj->get(exec, exec->propertyNames().name);
-    if (!v->isUndefined())
-        s = v->toString(exec);
+    if (!v.isUndefined())
+        s = v.toString(exec);
 
     v = thisObj->get(exec, exec->propertyNames().message);
-    if (!v->isUndefined()) {
+    if (!v.isUndefined()) {
         // Mozilla-compatible format.
         s += ": ";
-        s += v->toString(exec);
+        s += v.toString(exec);
     }
 
     return jsNontrivialString(exec, s);

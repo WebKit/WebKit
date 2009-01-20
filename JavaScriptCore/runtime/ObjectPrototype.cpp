@@ -62,25 +62,25 @@ ObjectPrototype::ObjectPrototype(ExecState* exec, PassRefPtr<Structure> stucture
 
 JSValuePtr objectProtoFuncValueOf(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
-    return thisValue->toThisObject(exec);
+    return thisValue.toThisObject(exec);
 }
 
 JSValuePtr objectProtoFuncHasOwnProperty(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
-    return jsBoolean(thisValue->toThisObject(exec)->hasOwnProperty(exec, Identifier(exec, args.at(exec, 0)->toString(exec))));
+    return jsBoolean(thisValue.toThisObject(exec)->hasOwnProperty(exec, Identifier(exec, args.at(exec, 0).toString(exec))));
 }
 
 JSValuePtr objectProtoFuncIsPrototypeOf(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
-    JSObject* thisObj = thisValue->toThisObject(exec);
+    JSObject* thisObj = thisValue.toThisObject(exec);
 
-    if (!args.at(exec, 0)->isObject())
+    if (!args.at(exec, 0).isObject())
         return jsBoolean(false);
 
     JSValuePtr v = asObject(args.at(exec, 0))->prototype();
 
     while (true) {
-        if (!v->isObject())
+        if (!v.isObject())
             return jsBoolean(false);
         if (v == thisObj)
             return jsBoolean(true);
@@ -91,44 +91,44 @@ JSValuePtr objectProtoFuncIsPrototypeOf(ExecState* exec, JSObject*, JSValuePtr t
 JSValuePtr objectProtoFuncDefineGetter(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
     CallData callData;
-    if (args.at(exec, 1)->getCallData(callData) == CallTypeNone)
+    if (args.at(exec, 1).getCallData(callData) == CallTypeNone)
         return throwError(exec, SyntaxError, "invalid getter usage");
-    thisValue->toThisObject(exec)->defineGetter(exec, Identifier(exec, args.at(exec, 0)->toString(exec)), asObject(args.at(exec, 1)));
+    thisValue.toThisObject(exec)->defineGetter(exec, Identifier(exec, args.at(exec, 0).toString(exec)), asObject(args.at(exec, 1)));
     return jsUndefined();
 }
 
 JSValuePtr objectProtoFuncDefineSetter(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
     CallData callData;
-    if (args.at(exec, 1)->getCallData(callData) == CallTypeNone)
+    if (args.at(exec, 1).getCallData(callData) == CallTypeNone)
         return throwError(exec, SyntaxError, "invalid setter usage");
-    thisValue->toThisObject(exec)->defineSetter(exec, Identifier(exec, args.at(exec, 0)->toString(exec)), asObject(args.at(exec, 1)));
+    thisValue.toThisObject(exec)->defineSetter(exec, Identifier(exec, args.at(exec, 0).toString(exec)), asObject(args.at(exec, 1)));
     return jsUndefined();
 }
 
 JSValuePtr objectProtoFuncLookupGetter(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
-    return thisValue->toThisObject(exec)->lookupGetter(exec, Identifier(exec, args.at(exec, 0)->toString(exec)));
+    return thisValue.toThisObject(exec)->lookupGetter(exec, Identifier(exec, args.at(exec, 0).toString(exec)));
 }
 
 JSValuePtr objectProtoFuncLookupSetter(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
-    return thisValue->toThisObject(exec)->lookupSetter(exec, Identifier(exec, args.at(exec, 0)->toString(exec)));
+    return thisValue.toThisObject(exec)->lookupSetter(exec, Identifier(exec, args.at(exec, 0).toString(exec)));
 }
 
 JSValuePtr objectProtoFuncPropertyIsEnumerable(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
-    return jsBoolean(thisValue->toThisObject(exec)->propertyIsEnumerable(exec, Identifier(exec, args.at(exec, 0)->toString(exec))));
+    return jsBoolean(thisValue.toThisObject(exec)->propertyIsEnumerable(exec, Identifier(exec, args.at(exec, 0).toString(exec))));
 }
 
 JSValuePtr objectProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
-    return thisValue->toThisJSString(exec);
+    return thisValue.toThisJSString(exec);
 }
 
 JSValuePtr objectProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
-    return jsNontrivialString(exec, "[object " + thisValue->toThisObject(exec)->className() + "]");
+    return jsNontrivialString(exec, "[object " + thisValue.toThisObject(exec)->className() + "]");
 }
 
 } // namespace JSC

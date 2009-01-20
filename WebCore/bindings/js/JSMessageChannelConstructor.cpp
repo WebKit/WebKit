@@ -72,8 +72,8 @@ JSObject* JSMessageChannelConstructor::construct(ExecState* exec, JSObject* cons
 void JSMessageChannelConstructor::mark()
 {
     DOMObject::mark();
-    if (!m_contextWrapper->marked())
-        m_contextWrapper->mark();
+    if (!m_contextWrapper.marked())
+        m_contextWrapper.mark();
 }
 
 } // namespace WebCore

@@ -66,7 +66,7 @@ JSValuePtr JSWorker::addEventListener(ExecState* exec, const ArgList& args)
     RefPtr<JSUnprotectedEventListener> listener = globalObject->findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
-    impl()->addEventListener(args.at(exec, 0)->toString(exec), listener.release(), args.at(exec, 2)->toBoolean(exec));
+    impl()->addEventListener(args.at(exec, 0).toString(exec), listener.release(), args.at(exec, 2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -78,7 +78,7 @@ JSValuePtr JSWorker::removeEventListener(ExecState* exec, const ArgList& args)
     JSUnprotectedEventListener* listener = globalObject->findJSUnprotectedEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
-    impl()->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
+    impl()->removeEventListener(args.at(exec, 0).toString(exec), listener, args.at(exec, 2).toBoolean(exec));
     return jsUndefined();
 }
 

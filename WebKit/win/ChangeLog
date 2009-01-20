@@ -1,3 +1,14 @@
+2009-01-19  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Gavin Barraclough.
+
+        Remove temporary operator-> from JSValuePtr.
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::jsValueToString):
+        * WebView.cpp:
+        (WebView::stringByEvaluatingJavaScriptFromString):
+
 2009-01-19  Adam Roben  <aroben@apple.com>
 
         Windows build fix

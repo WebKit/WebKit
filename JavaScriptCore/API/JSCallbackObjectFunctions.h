@@ -308,7 +308,7 @@ JSValuePtr JSCallbackObject<Base>::call(ExecState* exec, JSObject* functionObjec
 {
     JSContextRef execRef = toRef(exec);
     JSObjectRef functionRef = toRef(functionObject);
-    JSObjectRef thisObjRef = toRef(thisValue->toThisObject(exec));
+    JSObjectRef thisObjRef = toRef(thisValue.toThisObject(exec));
     
     for (JSClassRef jsClass = static_cast<JSCallbackObject<Base>*>(functionObject)->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsFunctionCallback callAsFunction = jsClass->callAsFunction) {
@@ -379,7 +379,7 @@ double JSCallbackObject<Base>::toNumber(ExecState* exec) const
             JSLock::DropAllLocks dropAllLocks(exec);
             if (JSValueRef value = convertToType(ctx, thisRef, kJSTypeNumber, toRef(exec->exceptionSlot()))) {
                 double dValue;
-                return toJS(value)->getNumber(dValue) ? dValue : NaN;
+                return toJS(value).getNumber(dValue) ? dValue : NaN;
             }
         }
             
@@ -400,7 +400,7 @@ UString JSCallbackObject<Base>::toString(ExecState* exec) const
                 value = convertToType(ctx, thisRef, kJSTypeString, toRef(exec->exceptionSlot()));
             }
             if (value)
-                return toJS(value)->getString();
+                return toJS(value).getString();
         }
             
     return Base::toString(exec);

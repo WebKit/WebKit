@@ -244,8 +244,8 @@ void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValuePtr va
     }
 
     if (propertyName == exec->propertyNames().length) {
-        unsigned newLength = value->toUInt32(exec);
-        if (value->toNumber(exec) != static_cast<double>(newLength)) {
+        unsigned newLength = value.toUInt32(exec);
+        if (value.toNumber(exec) != static_cast<double>(newLength)) {
             throwError(exec, RangeError, "Invalid array length.");
             return;
         }
@@ -600,16 +600,16 @@ void JSArray::mark()
     unsigned usedVectorLength = min(storage->m_length, storage->m_vectorLength);
     for (unsigned i = 0; i < usedVectorLength; ++i) {
         JSValuePtr value = storage->m_vector[i];
-        if (value && !value->marked())
-            value->mark();
+        if (value && !value.marked())
+            value.mark();
     }
 
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
         SparseArrayValueMap::iterator end = map->end();
         for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it) {
             JSValuePtr value = it->second;
-            if (!value->marked())
-                value->mark();
+            if (!value.marked())
+                value.mark();
         }
     }
 }
@@ -647,7 +647,7 @@ void JSArray::sort(ExecState* exec)
 
     for (size_t i = 0; i < lengthNotIncludingUndefined; i++) {
         JSValuePtr value = m_storage->m_vector[i];
-        ASSERT(!value->isUndefined());
+        ASSERT(!value.isUndefined());
         values[i].first = value;
     }
 
@@ -658,7 +658,7 @@ void JSArray::sort(ExecState* exec)
     // a toString call raises an exception.
 
     for (size_t i = 0; i < lengthNotIncludingUndefined; i++)
-        values[i].second = values[i].first->toString(exec);
+        values[i].second = values[i].first.toString(exec);
 
     if (exec->hadException())
         return;
@@ -733,8 +733,8 @@ struct AVLTreeAbstractorForArrayCompare {
 
     int compare_key_key(key va, key vb)
     {
-        ASSERT(!va->isUndefined());
-        ASSERT(!vb->isUndefined());
+        ASSERT(!va.isUndefined());
+        ASSERT(!vb.isUndefined());
 
         if (m_exec->hadException())
             return 1;
@@ -742,7 +742,7 @@ struct AVLTreeAbstractorForArrayCompare {
         ArgList arguments;
         arguments.append(va);
         arguments.append(vb);
-        double compareResult = call(m_exec, m_compareFunction, m_compareCallType, *m_compareCallData, m_globalThisValue, arguments)->toNumber(m_exec);
+        double compareResult = call(m_exec, m_compareFunction, m_compareCallType, *m_compareCallData, m_globalThisValue, arguments).toNumber(m_exec);
         return (compareResult < 0) ? -1 : 1; // Not passing equality through, because we need to store all values, even if equivalent.
     }
 
@@ -791,7 +791,7 @@ void JSArray::sort(ExecState* exec, JSValuePtr compareFunction, CallType callTyp
     // Iterate over the array, ignoring missing values, counting undefined ones, and inserting all other ones into the tree.
     for (; numDefined < usedVectorLength; ++numDefined) {
         JSValuePtr v = m_storage->m_vector[numDefined];
-        if (!v || v->isUndefined())
+        if (!v || v.isUndefined())
             break;
         tree.abstractor().m_nodes[numDefined].value = v;
         tree.insert(numDefined);
@@ -799,7 +799,7 @@ void JSArray::sort(ExecState* exec, JSValuePtr compareFunction, CallType callTyp
     for (unsigned i = numDefined; i < usedVectorLength; ++i) {
         JSValuePtr v = m_storage->m_vector[i];
         if (v) {
-            if (v->isUndefined())
+            if (v.isUndefined())
                 ++numUndefined;
             else {
                 tree.abstractor().m_nodes[numDefined].value = v;
@@ -882,13 +882,13 @@ unsigned JSArray::compactForSorting()
 
     for (; numDefined < usedVectorLength; ++numDefined) {
         JSValuePtr v = storage->m_vector[numDefined];
-        if (!v || v->isUndefined())
+        if (!v || v.isUndefined())
             break;
     }
     for (unsigned i = numDefined; i < usedVectorLength; ++i) {
         JSValuePtr v = storage->m_vector[i];
         if (v) {
-            if (v->isUndefined())
+            if (v.isUndefined())
                 ++numUndefined;
             else
                 storage->m_vector[numDefined++] = v;

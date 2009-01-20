@@ -76,11 +76,6 @@ namespace JSC {
         {
         }
 
-        JSValuePtr* operator->() const
-        {
-            return const_cast<JSValuePtr*>(this);
-        }
-
         operator bool() const
         {
             return m_ptr;

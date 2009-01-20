@@ -80,8 +80,8 @@ static const int preferredScriptCheckTimeInterval = 1000;
 
 static inline void markIfNeeded(JSValuePtr v)
 {
-    if (v && !v->marked())
-        v->mark();
+    if (v && !v.marked())
+        v.mark();
 }
 
 static inline void markIfNeeded(const RefPtr<Structure>& s)
@@ -190,7 +190,7 @@ void JSGlobalObject::defineSetter(ExecState* exec, const Identifier& propertyNam
 static inline JSObject* lastInPrototypeChain(JSObject* object)
 {
     JSObject* o = object;
-    while (o->prototype()->isObject())
+    while (o->prototype().isObject())
         o = asObject(o->prototype());
     return o;
 }

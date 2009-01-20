@@ -61,7 +61,7 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
         
     JSValuePtr function = m_callback->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;
-    CallType callType = function->getCallData(callData);
+    CallType callType = function.getCallData(callData);
     if (callType == CallTypeNone) {
         callType = m_callback->getCallData(callData);
         if (callType == CallTypeNone) {
@@ -86,7 +86,7 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
         
     Document::updateDocumentsRendering();
     
-    return result->toBoolean(exec);
+    return result.toBoolean(exec);
 }
     
 }

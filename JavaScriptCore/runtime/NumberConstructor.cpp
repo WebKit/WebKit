@@ -97,7 +97,7 @@ JSValuePtr numberConstructorMinValue(ExecState* exec, const Identifier&, const P
 static JSObject* constructWithNumberConstructor(ExecState* exec, JSObject*, const ArgList& args)
 {
     NumberObject* object = new (exec) NumberObject(exec->lexicalGlobalObject()->numberObjectStructure());
-    double n = args.isEmpty() ? 0 : args.at(exec, 0)->toNumber(exec);
+    double n = args.isEmpty() ? 0 : args.at(exec, 0).toNumber(exec);
     object->setInternalValue(jsNumber(exec, n));
     return object;
 }
@@ -111,7 +111,7 @@ ConstructType NumberConstructor::getConstructData(ConstructData& constructData)
 // ECMA 15.7.2
 static JSValuePtr callNumberConstructor(ExecState* exec, JSObject*, JSValuePtr, const ArgList& args)
 {
-    return jsNumber(exec, args.isEmpty() ? 0 : args.at(exec, 0)->toNumber(exec));
+    return jsNumber(exec, args.isEmpty() ? 0 : args.at(exec, 0).toNumber(exec));
 }
 
 CallType NumberConstructor::getCallData(CallData& callData)

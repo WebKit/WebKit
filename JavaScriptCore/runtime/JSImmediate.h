@@ -602,7 +602,7 @@ namespace JSC {
         return JSImmediate::impossibleValue();
     }
 
-    // These are identical logic to the JSValue functions above, and faster than jsNumber(number)->toInt32().
+    // These are identical logic to the JSValue functions above, and faster than jsNumber(number).toInt32().
     int32_t toInt32(double);
     uint32_t toUInt32(double);
     int32_t toInt32SlowCase(double, bool& ok);

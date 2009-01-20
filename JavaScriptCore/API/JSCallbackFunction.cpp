@@ -50,7 +50,7 @@ JSValuePtr JSCallbackFunction::call(ExecState* exec, JSObject* functionObject, J
 {
     JSContextRef execRef = toRef(exec);
     JSObjectRef functionRef = toRef(functionObject);
-    JSObjectRef thisObjRef = toRef(thisValue->toThisObject(exec));
+    JSObjectRef thisObjRef = toRef(thisValue.toThisObject(exec));
 
     int argumentCount = static_cast<int>(args.size());
     Vector<JSValueRef, 16> arguments(argumentCount);

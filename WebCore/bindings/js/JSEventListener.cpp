@@ -80,7 +80,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
     JSValuePtr handleEventFunction = listener->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;
-    CallType callType = handleEventFunction->getCallData(callData);
+    CallType callType = handleEventFunction.getCallData(callData);
     if (callType == CallTypeNone) {
         handleEventFunction = noValue();
         callType = listener->getCallData(callData);
@@ -121,11 +121,11 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
         if (exec->hadException())
             reportCurrentException(exec);
         else {
-            if (!retval->isUndefinedOrNull() && event->storesResultAsString())
-                event->storeResult(retval->toString(exec));
+            if (!retval.isUndefinedOrNull() && event->storesResultAsString())
+                event->storeResult(retval.toString(exec));
             if (m_isInline) {
                 bool retvalbool;
-                if (retval->getBoolean(retvalbool) && !retvalbool)
+                if (retval.getBoolean(retvalbool) && !retvalbool)
                     event->preventDefault();
             }
         }
@@ -320,7 +320,7 @@ void JSLazyEventListener::parseCode() const
         ScopeChain scope = listenerAsFunction->scope();
 
         JSValuePtr thisObj = toJS(exec, m_originalNode);
-        if (thisObj->isObject()) {
+        if (thisObj.isObject()) {
             static_cast<JSEventTargetNode*>(asObject(thisObj))->pushEventHandlerScope(exec, scope);
             listenerAsFunction->setScope(scope);
         }

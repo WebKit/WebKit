@@ -2677,9 +2677,9 @@ HRESULT STDMETHODCALLTYPE WebView::stringByEvaluatingJavaScriptFromString(
     JSC::JSValuePtr scriptExecutionResult = coreFrame->loader()->executeScript(WebCore::String(script), true).jsValue();
     if (!scriptExecutionResult)
         return E_FAIL;
-    else if (scriptExecutionResult->isString()) {
+    else if (scriptExecutionResult.isString()) {
         JSLock lock(false);
-        *result = BString(String(scriptExecutionResult->getString()));
+        *result = BString(String(scriptExecutionResult.getString()));
     }
 
     return S_OK;

@@ -57,13 +57,13 @@ static UString escapeQuotes(const UString& str)
 
 static UString valueToSourceString(ExecState* exec, JSValuePtr val)
 {
-    if (val->isString()) {
+    if (val.isString()) {
         UString result("\"");
-        result += escapeQuotes(val->toString(exec)) + "\"";
+        result += escapeQuotes(val.toString(exec)) + "\"";
         return result;
     } 
 
-    return val->toString(exec);
+    return val.toString(exec);
 }
 
 static CString registerName(int r)
@@ -1379,8 +1379,8 @@ void CodeBlock::mark()
             m_rareData->m_functions[i]->body()->mark();
 
         for (size_t i = 0; i < m_rareData->m_unexpectedConstants.size(); ++i) {
-            if (!m_rareData->m_unexpectedConstants[i]->marked())
-                m_rareData->m_unexpectedConstants[i]->mark();
+            if (!m_rareData->m_unexpectedConstants[i].marked())
+                m_rareData->m_unexpectedConstants[i].mark();
         }
         m_rareData->m_evalCodeCache.mark();
     }

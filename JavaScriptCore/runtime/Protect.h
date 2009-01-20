@@ -51,13 +51,13 @@ namespace JSC {
     
     inline void gcProtect(JSValuePtr value)
     {
-        if (value && value->isCell())
+        if (value && value.isCell())
             gcProtect(asCell(value));
     }
 
     inline void gcUnprotect(JSValuePtr value)
     {
-        if (value && value->isCell())
+        if (value && value.isCell())
             gcUnprotect(asCell(value));
     }
 

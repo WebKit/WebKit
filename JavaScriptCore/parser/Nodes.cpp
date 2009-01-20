@@ -2102,7 +2102,7 @@ static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& 
         if (clauseExpression->isNumber()) {
             double value = static_cast<NumberNode*>(clauseExpression)->value();
             JSValuePtr jsValue = JSValuePtr::makeInt32Fast(static_cast<int32_t>(value));
-            if ((typeForTable & ~SwitchNumber) || !jsValue || (jsValue->getInt32Fast() != value)) {
+            if ((typeForTable & ~SwitchNumber) || !jsValue || (jsValue.getInt32Fast() != value)) {
                 typeForTable = SwitchNeither;
                 break;
             }

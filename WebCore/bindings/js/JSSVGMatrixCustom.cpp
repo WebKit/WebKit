@@ -52,8 +52,8 @@ JSValuePtr JSSVGMatrix::translate(ExecState* exec, const ArgList& args)
 {
     TransformationMatrix imp(*impl());
 
-    float x = args.at(exec, 0)->toFloat(exec);
-    float y = args.at(exec, 1)->toFloat(exec);
+    float x = args.at(exec, 0).toFloat(exec);
+    float y = args.at(exec, 1).toFloat(exec);
 
     return toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.translate(x, y)).get(), m_context.get());
 }
@@ -62,7 +62,7 @@ JSValuePtr JSSVGMatrix::scale(ExecState* exec, const ArgList& args)
 {
     TransformationMatrix imp(*impl());
 
-    float scaleFactor = args.at(exec, 0)->toFloat(exec);
+    float scaleFactor = args.at(exec, 0).toFloat(exec);
     return toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.scale(scaleFactor)).get(), m_context.get());
 }
 
@@ -70,8 +70,8 @@ JSValuePtr JSSVGMatrix::scaleNonUniform(ExecState* exec, const ArgList& args)
 {
     TransformationMatrix imp(*impl());
 
-    float scaleFactorX = args.at(exec, 0)->toFloat(exec);
-    float scaleFactorY = args.at(exec, 1)->toFloat(exec);
+    float scaleFactorX = args.at(exec, 0).toFloat(exec);
+    float scaleFactorY = args.at(exec, 1).toFloat(exec);
 
     return toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.scaleNonUniform(scaleFactorX, scaleFactorY)).get(), m_context.get());
 }
@@ -80,7 +80,7 @@ JSValuePtr JSSVGMatrix::rotate(ExecState* exec, const ArgList& args)
 {
     TransformationMatrix imp(*impl());
 
-    float angle = args.at(exec, 0)->toFloat(exec);
+    float angle = args.at(exec, 0).toFloat(exec);
     return toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.rotate(angle)).get(), m_context.get());
 }
 
@@ -88,8 +88,8 @@ JSValuePtr JSSVGMatrix::rotateFromVector(ExecState* exec, const ArgList& args)
 {
     TransformationMatrix imp(*impl());
  
-    float x = args.at(exec, 0)->toFloat(exec);
-    float y = args.at(exec, 1)->toFloat(exec);
+    float x = args.at(exec, 0).toFloat(exec);
+    float y = args.at(exec, 1).toFloat(exec);
 
     JSC::JSValuePtr result = toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.rotateFromVector(x, y)).get(), m_context.get());
 
@@ -115,7 +115,7 @@ JSValuePtr JSSVGMatrix::skewX(ExecState* exec, const ArgList& args)
 {
     TransformationMatrix imp(*impl());
 
-    float angle = args.at(exec, 0)->toFloat(exec);
+    float angle = args.at(exec, 0).toFloat(exec);
     return toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.skewX(angle)).get(), m_context.get());
 }
 
@@ -123,7 +123,7 @@ JSValuePtr JSSVGMatrix::skewY(ExecState* exec, const ArgList& args)
 {
     TransformationMatrix imp(*impl());
 
-    float angle = args.at(exec, 0)->toFloat(exec);
+    float angle = args.at(exec, 0).toFloat(exec);
     return toJS(exec, JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.skewY(angle)).get(), m_context.get());
 }
 

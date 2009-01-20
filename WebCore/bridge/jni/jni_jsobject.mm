@@ -295,7 +295,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     Identifier identifier(exec, JavaString(methodName));
     JSValuePtr function = _imp->get(exec, identifier);
     CallData callData;
-    CallType callType = function->getCallData(callData);
+    CallType callType = function.getCallData(callData);
     if (callType == CallTypeNone)
         return 0;
 
@@ -505,28 +505,28 @@ jobject JavaJSObject::convertValueToJObject(JSValuePtr value) const
     // Java instance -> Java instance
     // Everything else -> JavaJSObject
     
-    if (value->isNumber()) {
+    if (value.isNumber()) {
         jclass JSObjectClass = env->FindClass ("java/lang/Double");
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(D)V");
         if (constructorID != NULL) {
-            result = env->NewObject (JSObjectClass, constructorID, (jdouble)value->toNumber(exec));
+            result = env->NewObject (JSObjectClass, constructorID, (jdouble)value.toNumber(exec));
         }
-    } else if (value->isString()) {
-        UString stringValue = value->toString(exec);
+    } else if (value.isString()) {
+        UString stringValue = value.toString(exec);
         JNIEnv *env = getJNIEnv();
         result = env->NewString ((const jchar *)stringValue.data(), stringValue.size());
-    } else if (value->isBoolean()) {
+    } else if (value.isBoolean()) {
         jclass JSObjectClass = env->FindClass ("java/lang/Boolean");
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(Z)V");
         if (constructorID != NULL) {
-            result = env->NewObject (JSObjectClass, constructorID, (jboolean)value->toBoolean(exec));
+            result = env->NewObject (JSObjectClass, constructorID, (jboolean)value.toBoolean(exec));
         }
     }
     else {
         // Create a JavaJSObject.
         jlong nativeHandle;
         
-        if (value->isObject()) {
+        if (value.isObject()) {
             JSObject* imp = asObject(value);
             
             // We either have a wrapper around a Java instance or a JavaScript

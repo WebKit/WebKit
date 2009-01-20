@@ -32,7 +32,7 @@ namespace JSC {
         explicit DateInstance(PassRefPtr<Structure>);
         virtual ~DateInstance();
 
-        double internalNumber() const { return internalValue()->uncheckedGetNumber(); }
+        double internalNumber() const { return internalValue().uncheckedGetNumber(); }
 
         bool getTime(GregorianDateTime&, int& offset) const;
         bool getUTCTime(GregorianDateTime&) const;

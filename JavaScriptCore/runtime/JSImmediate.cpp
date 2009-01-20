@@ -39,10 +39,10 @@ JSObject* JSImmediate::toThisObject(JSValuePtr v, ExecState* exec)
         return constructNumber(exec, v);
     if (isBoolean(v))
         return constructBooleanFromImmediateBoolean(exec, v);
-    if (v->isNull())
+    if (v.isNull())
         return exec->globalThisValue();
     
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v->isNull());
+    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v.isNull());
     exec->setException(exception);
     return new (exec) JSNotAnObject(exec, exception);
 }
@@ -55,7 +55,7 @@ JSObject* JSImmediate::toObject(JSValuePtr v, ExecState* exec)
     if (isBoolean(v))
         return constructBooleanFromImmediateBoolean(exec, v);
     
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v->isNull());
+    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v.isNull());
     exec->setException(exception);
     return new (exec) JSNotAnObject(exec, exception);
 }
@@ -68,7 +68,7 @@ JSObject* JSImmediate::prototype(JSValuePtr v, ExecState* exec)
     if (isBoolean(v))
         return exec->lexicalGlobalObject()->booleanPrototype();
 
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v->isNull());
+    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v.isNull());
     exec->setException(exception);
     return new (exec) JSNotAnObject(exec, exception);
 }
@@ -93,9 +93,9 @@ UString JSImmediate::toString(JSValuePtr v)
         return "false";
     if (jsBoolean(true) == v)
         return "true";
-    if (v->isNull())
+    if (v.isNull())
         return "null";
-    ASSERT(v->isUndefined());
+    ASSERT(v.isUndefined());
     return "undefined";
 }
 
