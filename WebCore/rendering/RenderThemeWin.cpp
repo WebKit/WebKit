@@ -212,24 +212,24 @@ bool RenderThemeWin::supportsHover(const RenderStyle*) const
 Color RenderThemeWin::platformActiveSelectionBackgroundColor() const
 {
     COLORREF color = GetSysColor(COLOR_HIGHLIGHT);
-    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 255);
+    return Color(GetRValue(color), GetGValue(color), GetBValue(color));
 }
 
 Color RenderThemeWin::platformInactiveSelectionBackgroundColor() const
 {
-    COLORREF color = GetSysColor(COLOR_GRAYTEXT);
-    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 255);
+    // This color matches Firefox.
+    return Color(176, 176, 176);
 }
 
 Color RenderThemeWin::platformActiveSelectionForegroundColor() const
 {
     COLORREF color = GetSysColor(COLOR_HIGHLIGHTTEXT);
-    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 255);
+    return Color(GetRValue(color), GetGValue(color), GetBValue(color));
 }
 
 Color RenderThemeWin::platformInactiveSelectionForegroundColor() const
 {
-    return Color::white;
+    return platformActiveSelectionForegroundColor();
 }
 
 static void fillFontDescription(FontDescription& fontDescription, LOGFONT& logFont, float fontSize)
@@ -329,21 +329,21 @@ void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) co
     }
 }
 
-bool RenderThemeWin::supportsFocus(ControlPart appearance)
+bool RenderThemeWin::supportsFocus(ControlPart appearance) const
 {
     switch (appearance) {
         case PushButtonPart:
         case ButtonPart:
         case DefaultButtonPart:
-        case SearchFieldPart:
-        case TextFieldPart:
-        case TextAreaPart:
             return true;
-        case MenulistPart:
-            return false;
         default:
             return false;
     }
+}
+
+bool RenderThemeWin::supportsFocusRing(const RenderStyle* style) const
+{
+    return supportsFocus(style->appearance());
 }
 
 unsigned RenderThemeWin::determineClassicState(RenderObject* o)

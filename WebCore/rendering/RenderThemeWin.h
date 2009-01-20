@@ -117,6 +117,8 @@ public:
 
     static void setWebKitIsBeingUnloaded();
 
+    virtual bool supportsFocusRing(const RenderStyle*) const;
+
 private:
     void addIntrinsicMargins(RenderStyle*) const;
     void close();
@@ -126,7 +128,7 @@ private:
     unsigned determineSliderThumbState(RenderObject*);
     unsigned determineButtonState(RenderObject*);
 
-    bool supportsFocus(ControlPart);
+    bool supportsFocus(ControlPart) const;
 
     ThemeData getThemeData(RenderObject*);
     ThemeData getClassicThemeData(RenderObject* o);

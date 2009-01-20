@@ -104,23 +104,19 @@ public:
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle*) const { return false; }
 
-    // The selection color.
+    // Text selection colors.
     Color activeSelectionBackgroundColor() const;
     Color inactiveSelectionBackgroundColor() const;
+    Color activeSelectionForegroundColor() const;
+    Color inactiveSelectionForegroundColor() const;
+
+    // List box selection colors
+    Color activeListBoxSelectionBackgroundColor() const;
+    Color activeListBoxSelectionForegroundColor() const;
+    Color inactiveListBoxSelectionBackgroundColor() const;
+    Color inactiveListBoxSelectionForegroundColor() const;
 
     virtual Color platformTextSearchHighlightColor() const;
-
-    // The platform selection color.
-    virtual Color platformActiveSelectionBackgroundColor() const;
-    virtual Color platformInactiveSelectionBackgroundColor() const;
-    virtual Color platformActiveSelectionForegroundColor() const;
-    virtual Color platformInactiveSelectionForegroundColor() const;
-
-    // List Box selection color
-    virtual Color activeListBoxSelectionBackgroundColor() const;
-    virtual Color activeListBoxSelectionForegroundColor() const;
-    virtual Color inactiveListBoxSelectionBackgroundColor() const;
-    virtual Color inactiveListBoxSelectionForegroundColor() const;
 
     virtual void platformColorsDidChange();
 
@@ -149,6 +145,20 @@ public:
 #endif
 
 protected:
+    // The platform selection color.
+    virtual Color platformActiveSelectionBackgroundColor() const;
+    virtual Color platformInactiveSelectionBackgroundColor() const;
+    virtual Color platformActiveSelectionForegroundColor() const;
+    virtual Color platformInactiveSelectionForegroundColor() const;
+
+    virtual Color platformActiveListBoxSelectionBackgroundColor() const;
+    virtual Color platformInactiveListBoxSelectionBackgroundColor() const;
+    virtual Color platformActiveListBoxSelectionForegroundColor() const;
+    virtual Color platformInactiveListBoxSelectionForegroundColor() const;
+
+    virtual bool supportsSelectionForegroundColors() const { return true; }
+    virtual bool supportsListBoxSelectionForegroundColors() const { return true; }
+
 #if !USE(NEW_THEME)
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
@@ -222,8 +232,16 @@ public:
     bool isDefault(const RenderObject*) const;
 
 private:
-    mutable Color m_activeSelectionColor;
-    mutable Color m_inactiveSelectionColor;
+    mutable Color m_activeSelectionBackgroundColor;
+    mutable Color m_inactiveSelectionBackgroundColor;
+    mutable Color m_activeSelectionForegroundColor;
+    mutable Color m_inactiveSelectionForegroundColor;
+
+    mutable Color m_activeListBoxSelectionBackgroundColor;
+    mutable Color m_inactiveListBoxSelectionBackgroundColor;
+    mutable Color m_activeListBoxSelectionForegroundColor;
+    mutable Color m_inactiveListBoxSelectionForegroundColor;
+
 #if USE(NEW_THEME)
     Theme* m_theme; // The platform-specific theme.
 #endif

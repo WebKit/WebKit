@@ -1,3 +1,45 @@
+2009-01-20  Dave Hyatt  <hyatt@apple.com>
+
+        Fix for focus rings on Windows.  Make sure that focus rings draw for all controls but buttons.
+
+        Fix list box selection colors on Windows.  Also add a cache for all of the selection colors (and not just the two
+        background selection colors).
+
+        Reviewed by Adam Roben
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionForegroundColor):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::activeSelectionBackgroundColor):
+        (WebCore::RenderTheme::inactiveSelectionBackgroundColor):
+        (WebCore::RenderTheme::activeSelectionForegroundColor):
+        (WebCore::RenderTheme::inactiveSelectionForegroundColor):
+        (WebCore::RenderTheme::activeListBoxSelectionBackgroundColor):
+        (WebCore::RenderTheme::inactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderTheme::activeListBoxSelectionForegroundColor):
+        (WebCore::RenderTheme::inactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderTheme::platformActiveSelectionForegroundColor):
+        (WebCore::RenderTheme::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderTheme::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderTheme::platformActiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderTheme::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderTheme::platformInactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderTheme::platformInactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderTheme::platformColorsDidChange):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::supportsForegroundSelectionColors):
+        (WebCore::RenderTheme::supportsForegroundListBoxSelectionColors):
+        * rendering/RenderThemeMac.h:
+        (WebCore::RenderThemeMac::supportsForegroundSelectionColors):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionBackgroundColor):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeWin::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeWin::supportsFocus):
+        (WebCore::RenderThemeWin::supportsFocusRing):
+        * rendering/RenderThemeWin.h:
+
 2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
