@@ -2607,7 +2607,7 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
     
     const UChar* ptr = (const UChar*)pattern;
     const UChar* patternEnd = pattern + patternLength;
-    unsigned char* code = (unsigned char*)codeStart;
+    unsigned char* code = const_cast<unsigned char*>(codeStart);
     int firstByte, reqByte;
     int bracketCount = 0;
     if (!cd.needOuterBracket)

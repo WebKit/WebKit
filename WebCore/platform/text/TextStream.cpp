@@ -33,6 +33,11 @@ namespace WebCore {
 
 static const size_t printBufferSize = 100; // large enough for any integer or floating point value in string format, including trailing null character
 
+TextStream& TextStream::operator<<(bool b)
+{
+    return *this << (b ? "1" : "0");
+}
+
 TextStream& TextStream::operator<<(int i)
 {
     char buffer[printBufferSize];

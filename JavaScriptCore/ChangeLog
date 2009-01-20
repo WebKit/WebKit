@@ -1,3 +1,22 @@
+2009-01-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 23352: Turn on more compiler warnings in the Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=23352
+
+        First patch: Fix some simple cases of various warnings.
+
+        * pcre/pcre_compile.cpp:
+        (jsRegExpCompile): Use const_cast to change const-ness.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferences): Remove unneeded initialization and
+        use UChar instead of unsigned short for UTF-16 values.
+
+        * wtf/dtoa.cpp:
+        (WTF::strtod): Use const_cast to change const-ness.
+
 2009-01-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (build fix).

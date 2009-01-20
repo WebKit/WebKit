@@ -32,8 +32,6 @@
 #include "XPathExpressionNode.h"
 #include "XPathNodeSet.h"
 
-int xpathyyparse(void*);
-
 namespace WebCore {
 
     namespace XPath {

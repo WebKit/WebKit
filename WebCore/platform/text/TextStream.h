@@ -35,6 +35,7 @@ class String;
 
 class TextStream {
 public:
+    TextStream& operator<<(bool);
     TextStream& operator<<(int);
     TextStream& operator<<(unsigned);
     TextStream& operator<<(long);

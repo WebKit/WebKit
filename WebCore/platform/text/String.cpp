@@ -378,6 +378,16 @@ String String::format(const char *format, ...)
 #endif
 }
 
+String String::number(short n)
+{
+    return String::format("%hd", n);
+}
+
+String String::number(unsigned short n)
+{
+    return String::format("%hu", n);
+}
+
 String String::number(int n)
 {
     return String::format("%d", n);

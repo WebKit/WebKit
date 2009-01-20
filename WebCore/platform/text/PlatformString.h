@@ -147,6 +147,8 @@ public:
     // Return the string with case folded for case insensitive comparison.
     String foldCase() const;
 
+    static String number(short);
+    static String number(unsigned short);
     static String number(int);
     static String number(unsigned);
     static String number(long);

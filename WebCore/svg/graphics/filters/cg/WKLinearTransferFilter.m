@@ -77,4 +77,4 @@ static CIKernel *linearTransferFilter = nil;
 
 @end
 
-#endif ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)

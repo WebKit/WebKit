@@ -1721,7 +1721,7 @@ retfree:
     Bfree(delta);
 ret:
     if (se)
-        *se = (char*)s;
+        *se = const_cast<char*>(s);
     return sign ? -dval(rv) : dval(rv);
 }
 

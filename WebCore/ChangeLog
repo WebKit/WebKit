@@ -1,3 +1,35 @@
+2009-01-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 23352: Turn on more compiler warnings in the Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=23352
+
+        First patch: Fix some simple cases of various warnings.
+
+        * platform/DeprecatedPtrListImpl.cpp:
+        (WebCore::DeprecatedPtrListImpl::insert): Use const_cast to change const-ness.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::containsCharacters): Ditto.
+
+        * platform/text/PlatformString.h: Overload for short and unsigned short to avoid
+        ambiguity leading to warnings.
+        * platform/text/String.cpp:
+        (WebCore::String::number): Implemented overloads.
+
+        * platform/text/TextStream.cpp:
+        (WebCore::TextStream::operator<<): Overload for bool to avoid ambiguity leading
+        to warnings.
+        * platform/text/TextStream.h: Ditto.
+
+        * rendering/InlineFlowBox.h: Fix declaration that was specifying the wrong type.
+
+        * svg/graphics/filters/cg/WKLinearTransferFilter.m: Fix stray characters after
+        #endif that should be a comment instead.
+        * svg/graphics/filters/cg/WKSpecularLightingFilter.h: Ditto.
+
+        * xml/XPathPath.h: Remove unneeded redundant declaration.
+
 2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Build fix for WML enabled builds, not reviewed.

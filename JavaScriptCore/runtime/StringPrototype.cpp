@@ -135,12 +135,12 @@ static inline UString substituteBackreferences(const UString& replacement, const
 {
     UString substitutedReplacement;
     int offset = 0;
-    int i = -1;
+    int i;
     while ((i = replacement.find('$', i + 1)) != -1) {
         if (i + 1 == replacement.size())
             break;
 
-        unsigned short ref = replacement[i + 1];
+        UChar ref = replacement[i + 1];
         if (ref == '$') {
             // "$$" -> "$"
             ++i;

@@ -165,7 +165,7 @@ inline void InlineFlowBox::setHasBadChildList()
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
-void showTree(const WebCore::InlineBox*);
+void showTree(const WebCore::InlineFlowBox*);
 #endif
 
 #endif // InlineFlowBox_h
