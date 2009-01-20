@@ -325,14 +325,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\ByteArray.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\ByteArray.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\CallData.cpp"
 				>
 			</File>

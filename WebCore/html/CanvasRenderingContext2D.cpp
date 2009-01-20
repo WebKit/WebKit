@@ -58,7 +58,7 @@
 #include "TextMetrics.h"
 #include <stdio.h>
 
-#include <runtime/ByteArray.h>
+#include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
 
 using namespace std;

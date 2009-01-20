@@ -1,3 +1,16 @@
+2009-01-20  Oliver Hunt  <oliver@apple.com>
+
+        RS=Dan Bernstein
+
+        Move runtime/ByteArray to wtf/ByteArray
+
+        * ForwardingHeaders/wtf/ByteArray.h: Renamed from WebCore/ForwardingHeaders/runtime/ByteArray.h.
+        * html/CanvasRenderingContext2D.cpp:
+        * html/ImageData.cpp:
+        (WebCore::ImageData::ImageData):
+        * html/ImageData.h:
+        (WebCore::ImageData::data):
+
 2009-01-20  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Sam Weinig.

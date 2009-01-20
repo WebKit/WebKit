@@ -142,6 +142,7 @@ sources['wrec'] = [
 ]
 sources['wtf'] = [
     'wtf/Assertions.cpp',
+    'wtf/ByteArray.cpp',
     'wtf/CurrentTime.cpp',
     'wtf/FastMalloc.cpp',
     'wtf/HashTable.cpp',

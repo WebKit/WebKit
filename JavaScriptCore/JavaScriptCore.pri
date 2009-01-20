@@ -46,6 +46,7 @@ JSCBISON += \
 
 SOURCES += \
     wtf/Assertions.cpp \
+    wtf/ByteArray.cpp \
     wtf/HashTable.cpp \
     wtf/MainThread.cpp \
     wtf/RandomNumber.cpp \

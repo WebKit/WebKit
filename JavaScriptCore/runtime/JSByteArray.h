@@ -26,8 +26,9 @@
 #ifndef JSByteArray_h
 #define JSByteArray_h
 
-#include "ByteArray.h"
 #include "JSObject.h"
+
+#include <wtf/ByteArray.h>
 
 namespace JSC {
 
@@ -72,7 +73,7 @@ namespace JSC {
                 setIndex(i, byteValue);
         }
 
-        JSByteArray(ExecState* exec, PassRefPtr<Structure>, ByteArray* storage, const JSC::ClassInfo* = &s_defaultInfo);
+        JSByteArray(ExecState* exec, PassRefPtr<Structure>, WTF::ByteArray* storage, const JSC::ClassInfo* = &s_defaultInfo);
         static PassRefPtr<Structure> createStructure(JSValuePtr prototype);
         
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
@@ -95,7 +96,7 @@ namespace JSC {
         {
         }
 
-        RefPtr<ByteArray> m_storage;
+        RefPtr<WTF::ByteArray> m_storage;
         const ClassInfo* m_classInfo;
     };
     

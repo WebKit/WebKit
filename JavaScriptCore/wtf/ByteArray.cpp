@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ByteArray.h"
 
-namespace JSC {
+namespace WTF {
 
 PassRefPtr<ByteArray> ByteArray::create(size_t size)
 {

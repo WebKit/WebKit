@@ -29,8 +29,8 @@
 #include "wtf/PassRefPtr.h"
 #include "wtf/RefCounted.h"
 
-namespace JSC {
-    class ByteArray : public WTF::RefCountedBase {
+namespace WTF {
+    class ByteArray : public RefCountedBase {
     public:
         unsigned length() const { return m_size; }
 

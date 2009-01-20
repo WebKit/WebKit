@@ -292,8 +292,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/BooleanObject.h \
 	JavaScriptCore/runtime/BooleanPrototype.cpp \
 	JavaScriptCore/runtime/BooleanPrototype.h \
-	JavaScriptCore/runtime/ByteArray.cpp \
-	JavaScriptCore/runtime/ByteArray.h \
 	JavaScriptCore/runtime/CallData.cpp \
 	JavaScriptCore/runtime/CallData.h \
 	JavaScriptCore/runtime/ClassInfo.h \
@@ -417,6 +415,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/UString.h \
+	JavaScriptCore/wtf/ByteArray.cpp \
+	JavaScriptCore/wtf/ByteArray.h \
 	JavaScriptCore/wtf/FastMalloc.cpp \
 	JavaScriptCore/wtf/FastMalloc.h \
 	JavaScriptCore/wtf/MallocZoneSupport.h \

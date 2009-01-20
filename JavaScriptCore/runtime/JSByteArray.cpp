@@ -29,6 +29,8 @@
 #include "JSGlobalObject.h"
 #include "PropertyNameArray.h"
 
+using namespace WTF;
+
 namespace JSC {
 
 const ClassInfo JSByteArray::s_defaultInfo = { "ByteArray", 0, 0, 0 };

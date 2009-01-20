@@ -1,3 +1,28 @@
+2009-01-20  Oliver Hunt  <oliver@apple.com>
+
+        RS=Dan Bernstein.
+
+        Move runtime/ByteArray to wtf/ByteArray
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.scons:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSByteArray.cpp:
+        * runtime/JSByteArray.h:
+        * wtf/ByteArray.cpp: Renamed from JavaScriptCore/runtime/ByteArray.cpp.
+        (WTF::ByteArray::create):
+        * wtf/ByteArray.h: Renamed from JavaScriptCore/runtime/ByteArray.h.
+        (WTF::ByteArray::length):
+        (WTF::ByteArray::set):
+        (WTF::ByteArray::get):
+        (WTF::ByteArray::data):
+        (WTF::ByteArray::deref):
+        (WTF::ByteArray::ByteArray):
+
 2009-01-19  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Gavin Barraclough.

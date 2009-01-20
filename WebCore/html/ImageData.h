@@ -29,7 +29,7 @@
 #ifndef ImageData_h
 #define ImageData_h
 
-#include <runtime/ByteArray.h>
+#include <wtf/ByteArray.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -41,13 +41,13 @@ namespace WebCore {
 
         unsigned width() const { return m_width; }
         unsigned height() const { return m_height; }
-        JSC::ByteArray* data() const { return m_data.get(); }
+        WTF::ByteArray* data() const { return m_data.get(); }
 
     private:
         ImageData(unsigned width, unsigned height);
         unsigned m_width;
         unsigned m_height;
-        RefPtr<JSC::ByteArray> m_data;
+        RefPtr<WTF::ByteArray> m_data;
     };
 
 } // namespace WebCore

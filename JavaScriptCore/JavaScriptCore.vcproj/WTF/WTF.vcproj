@@ -230,6 +230,14 @@
 			RelativePath="..\..\wtf\Assertions.h"
 			>
 		</File>
+	    <File
+    		RelativePath="..\..\runtime\ByteArray.cpp"
+    		>
+    	</File>
+    	<File
+    		RelativePath="..\..\runtime\ByteArray.h"
+    		>
+    	</File>
 		<File
 			RelativePath="..\..\wtf\unicode\Collator.h"
 			>
