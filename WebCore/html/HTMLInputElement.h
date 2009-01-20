@@ -25,6 +25,7 @@
 #define HTMLInputElement_h
 
 #include "HTMLFormControlElement.h"
+#include "InputElement.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -34,7 +35,7 @@ class HTMLImageLoader;
 class KURL;
 class Selection;
 
-class HTMLInputElement : public HTMLFormControlElementWithState {
+class HTMLInputElement : public HTMLFormControlElementWithState, public InputElement {
 public:
     enum InputType {
         TEXT,
@@ -74,7 +75,7 @@ public:
     virtual bool shouldUseInputMethod() const;
 
     virtual const AtomicString& name() const;
-
+ 
     bool autoComplete() const;
 
     // isChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
@@ -87,8 +88,8 @@ public:
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }
-    bool isTextField() const { return m_type == TEXT || m_type == PASSWORD || m_type == SEARCH || m_type == ISINDEX; }
-    bool isSearchField() const { return m_type == SEARCH; }
+    virtual bool isTextField() const { return m_type == TEXT || m_type == PASSWORD || m_type == SEARCH || m_type == ISINDEX; }
+    virtual bool isSearchField() const { return m_type == SEARCH; }
     virtual bool isInputTypeHidden() const { return m_type == HIDDEN; }
     virtual bool isPasswordField() const { return m_type == PASSWORD; }
 
@@ -96,17 +97,19 @@ public:
     void setChecked(bool, bool sendChangeEvent = false);
     bool indeterminate() const { return m_indeterminate; }
     void setIndeterminate(bool);
-    int maxLength() const { return m_maxLen; }
-    int size() const { return m_size; }
+    virtual int size() const;
     virtual const AtomicString& type() const;
     void setType(const String&);
 
-    String value() const;
-    void setValue(const String&);
+    virtual String value() const;
+    virtual void setValue(const String&);
+
+    virtual String placeholderValue() const;
+    virtual bool searchEventsShouldBeDispatched() const;
 
     String valueWithDefault() const;
 
-    void setValueFromRenderer(const String&);
+    virtual void setValueFromRenderer(const String&);
     void setFileListFromRenderer(const Vector<String>&);
 
     virtual bool saveState(String& value) const;
@@ -119,7 +122,7 @@ public:
     int selectionEnd() const;
     void setSelectionStart(int);
     void setSelectionEnd(int);
-    void select();
+    virtual void select();
     void setSelectionRange(int start, int end);
 
     virtual void accessKeyAction(bool sendToAnyElement);
@@ -163,6 +166,8 @@ public:
     bool defaultChecked() const;
     void setDefaultChecked(bool);
 
+    void setDefaultName(const AtomicString&);
+
     String accept() const;
     void setAccept(const String&);
 
@@ -180,23 +185,24 @@ public:
     KURL src() const;
     void setSrc(const String&);
 
+    int maxLength() const;
     void setMaxLength(int);
 
     String useMap() const;
     void setUseMap(const String&);
 
-    virtual bool isAutofilled() const { return m_autofilled; }
-    void setAutofilled(bool b = true);
+    bool isAutofilled() const { return m_autofilled; }
+    void setAutofilled(bool value = true);
 
     FileList* files();
 
-    void cacheSelection(int s, int e) { cachedSelStart = s; cachedSelEnd = e; };
+    virtual void cacheSelection(int start, int end);
     void addSearchResult();
     void onSearch();
-    
+
     Selection selection() const;
 
-    String constrainValue(const String& proposedValue) const;
+    virtual String constrainValue(const String& proposedValue) const;
 
     virtual void documentDidBecomeActive();
 
@@ -204,39 +210,25 @@ public:
     
     virtual bool willValidate() const;
 
-    bool placeholderShouldBeVisible() const { return m_placeholderShouldBeVisible; }
+    virtual bool placeholderShouldBeVisible() const;
     
 protected:
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
-    
-    AtomicString m_name;
 
 private:
-    void init();
     bool storesValueSeparateFromAttribute() const;
-    String constrainValue(const String& proposedValue, int maxLen) const;
-    void recheckValue();
-    
+
     bool needsActivationCallback();
     void registerForActivationCallbackIfNeeded();
     void unregisterForActivationCallbackIfNeeded();
 
-    void updatePlaceholderVisibility(bool placeholderValueChanged = false);
-    
-    String m_value;
-    String m_originalValue;
-    int xPos;
-    int yPos;
-    int m_maxLen;
-    int m_size;
-
+    InputElementData m_data;
+    int m_xPos;
+    int m_yPos;
     short m_maxResults;
-
     OwnPtr<HTMLImageLoader> m_imageLoader;
-
     RefPtr<FileList> m_fileList;
-
     unsigned m_type : 4; // InputType 
     bool m_checked : 1;
     bool m_defaultChecked : 1;
@@ -247,10 +239,6 @@ private:
     unsigned m_autocomplete : 2; // AutoCompleteSetting
     bool m_autofilled : 1;
     bool m_inited : 1;
-    bool m_placeholderShouldBeVisible : 1;
-    
-    int cachedSelStart;
-    int cachedSelEnd;
 };
 
 } //namespace

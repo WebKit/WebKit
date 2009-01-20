@@ -1,3 +1,117 @@
+2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=23433
+
+        Add InputElement abstraction, similar to the FormControlElement refactorization
+        done a month ago. The goal is to share as much code as possible between HTML/WMLInputElement.
+        In a previous patch the RenderTextControl class has been split-up in RenderTextControlSingle/MultiLine,
+        RenderTextControl itself only depends on FormControlElement, RenderTextControlSingleLine still
+        depends on HTMLInputElement directly -> change that and make it use the new InputElement abstraction.
+
+        A lot of code from HTMLInputElement now lives in InputElement, as static member functions - the
+        InputElement class itself is an abstract virtual class, just like ScriptElement. HTML/WMLInputElement
+        derive from InputElement, and hold a InputElementData member variable, that they pass to the
+        static functions in InputElement. The abstraction is equal to the one chosen for HTML/SVGScriptElement.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/FormControlElement.cpp: Added.
+        (WebCore::formControlElementForElement):
+        * dom/FormControlElement.h:
+        * dom/InputElement.cpp: Added.
+        (WebCore::InputElement::dispatchFocusEvent):
+        (WebCore::InputElement::dispatchBlurEvent):
+        (WebCore::InputElement::updatePlaceholderVisibility):
+        (WebCore::InputElement::updateFocusAppearance):
+        (WebCore::InputElement::updateSelectionRange):
+        (WebCore::InputElement::aboutToUnload):
+        (WebCore::InputElement::setValueFromRenderer):
+        (WebCore::numCharactersInGraphemeClusters):
+        (WebCore::InputElement::constrainValue):
+        (WebCore::numGraphemeClusters):
+        (WebCore::InputElement::handleBeforeTextInsertedEvent):
+        (WebCore::InputElement::parseSizeAttribute):
+        (WebCore::InputElement::parseMaxLengthAttribute):
+        (WebCore::InputElement::updateValueIfNeeded):
+        (WebCore::InputElement::notifyFormStateChanged):
+        (WebCore::InputElementData::InputElementData):
+        (WebCore::InputElementData::~InputElementData):
+        (WebCore::InputElementData::name):
+        (WebCore::inputElementForElement):
+        * dom/InputElement.h: Added.
+        (WebCore::InputElement::~InputElement):
+        (WebCore::InputElement::InputElement):
+        (WebCore::InputElementData::inputElement):
+        (WebCore::InputElementData::element):
+        (WebCore::InputElementData::placeholderShouldBeVisible):
+        (WebCore::InputElementData::setPlaceholderShouldBeVisible):
+        (WebCore::InputElementData::setName):
+        (WebCore::InputElementData::value):
+        (WebCore::InputElementData::setValue):
+        (WebCore::InputElementData::size):
+        (WebCore::InputElementData::setSize):
+        (WebCore::InputElementData::maxLength):
+        (WebCore::InputElementData::setMaxLength):
+        (WebCore::InputElementData::cachedSelectionStart):
+        (WebCore::InputElementData::setCachedSelectionStart):
+        (WebCore::InputElementData::cachedSelectionEnd):
+        (WebCore::InputElementData::setCachedSelectionEnd):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::name):
+        (WebCore::HTMLInputElement::updateFocusAppearance): Moved to InputElement.
+        (WebCore::HTMLInputElement::aboutToUnload): Ditto.
+        (WebCore::HTMLInputElement::dispatchFocusEvent): Ditto.
+        (WebCore::HTMLInputElement::dispatchBlurEvent): Ditto.
+        (WebCore::HTMLInputElement::setSelectionRange): Moved to InputElement::updateSelectionRange, call it from here.
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::size): Make virtual and override InputElements abstract version.
+        (WebCore::HTMLInputElement::copyNonAttributeProperties):
+        (WebCore::HTMLInputElement::value): Make virtual and override InputElements abstract version.
+        (WebCore::HTMLInputElement::setValue): Ditto.
+        (WebCore::HTMLInputElement::placeholderValue): Ditto.
+        (WebCore::HTMLInputElement::searchEventsShouldBeDispatched): Ditto.
+        (WebCore::HTMLInputElement::setValueFromRenderer): Ditto.
+        (WebCore::HTMLInputElement::setFileListFromRenderer): Use new code in InputElement::setValueFromRenderer
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        (WebCore::HTMLInputElement::setDefaultName): Added as helper function for HTMLIsIndexElement.
+        (WebCore::HTMLInputElement::maxLength): Added accesor.
+        (WebCore::HTMLInputElement::constrainValue): Move functionality to InputElement::constrainValue.
+        (WebCore::HTMLInputElement::cacheSelection): Move functionality to InputElement::cacheSelection.
+        (WebCore::HTMLInputElement::selection):
+        (WebCore::HTMLInputElement::placeholderShouldBeVisible): Make virtual and override InputElements abstract version.
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isTextField):
+        (WebCore::HTMLInputElement::isSearchField):
+        (WebCore::HTMLInputElement::isAutofilled):
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::HTMLIsIndexElement):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::formControlElement):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::placeholderShouldBeVisible):
+        (WebCore::RenderTextControlSingleLine::addSearchResult):
+        (WebCore::RenderTextControlSingleLine::stopSearchEventTimer):
+        (WebCore::RenderTextControlSingleLine::showPopup):
+        (WebCore::RenderTextControlSingleLine::hidePopup):
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        (WebCore::RenderTextControlSingleLine::capsLockStateMayHaveChanged):
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        (WebCore::RenderTextControlSingleLine::cacheSelection):
+        (WebCore::RenderTextControlSingleLine::createInnerBlockStyle):
+        (WebCore::RenderTextControlSingleLine::createResultsButtonStyle):
+        (WebCore::RenderTextControlSingleLine::createCancelButtonStyle):
+        (WebCore::RenderTextControlSingleLine::updateCancelButtonVisibility):
+        (WebCore::RenderTextControlSingleLine::startSearchEventTimer):
+        (WebCore::RenderTextControlSingleLine::searchEventTimerFired):
+        (WebCore::RenderTextControlSingleLine::valueChanged):
+        (WebCore::RenderTextControlSingleLine::setTextFromItem):
+        (WebCore::RenderTextControlSingleLine::inputElement):
+        * rendering/RenderTextControlSingleLine.h:
+
 2009-01-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

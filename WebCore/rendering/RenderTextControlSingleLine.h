@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class InputElement;
 class SearchFieldCancelButtonElement;
 class SearchFieldResultsButtonElement;
 class SearchPopupMenu;
@@ -103,6 +104,8 @@ private:
     virtual FontSelector* fontSelector() const;
     virtual HostWindow* hostWindow() const;
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+
+    InputElement* inputElement() const;
 
 private:
     bool m_placeholderVisible;

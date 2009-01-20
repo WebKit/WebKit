@@ -575,11 +575,7 @@ HTMLElement* RenderTextControl::innerTextElement() const
 
 FormControlElement* RenderTextControl::formControlElement() const
 {
-    if (node()->isHTMLElement())
-        return static_cast<HTMLFormControlElement*>(node());
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    return formControlElementForElement(static_cast<Element*>(node()));
 }
 
 } // namespace WebCore
