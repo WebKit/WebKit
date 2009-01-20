@@ -1,3 +1,11 @@
+2009-01-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        Attempt to fix gtk build
+
+        * GNUmakefile.am:
+
 2009-01-20  Darin Adler  <darin@apple.com>
 
         * runtime/StringPrototype.cpp:

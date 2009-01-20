@@ -159,6 +159,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/InitializeThreading.h \
 	JavaScriptCore/runtime/JSActivation.cpp \
 	JavaScriptCore/runtime/JSActivation.h \
+	JavaScriptCore/runtime/JSByteArray.cpp \
+	JavaScriptCore/runtime/JSByteArray.h \
 	JavaScriptCore/runtime/JSGlobalData.cpp \
 	JavaScriptCore/runtime/JSGlobalData.h \
 	JavaScriptCore/runtime/JSNotAnObject.cpp \
@@ -192,6 +194,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/AlwaysInline.h \
 	JavaScriptCore/wtf/Assertions.cpp \
 	JavaScriptCore/wtf/Assertions.h \
+	JavaScriptCore/wtf/ByteArray.cpp \
+	JavaScriptCore/wtf/ByteArray.h \
 	JavaScriptCore/wtf/CurrentTime.cpp \
 	JavaScriptCore/wtf/CurrentTime.h \
 	JavaScriptCore/wtf/Deque.h \
@@ -334,8 +338,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Completion.cpp \
 	JavaScriptCore/runtime/JSArray.cpp \
 	JavaScriptCore/runtime/JSArray.h \
-	JavaScriptCore/runtime/JSByteArray.cpp \
-	JavaScriptCore/runtime/JSByteArray.h \
 	JavaScriptCore/runtime/JSCell.cpp \
 	JavaScriptCore/runtime/JSCell.h \
 	JavaScriptCore/runtime/JSFunction.cpp \
@@ -415,8 +417,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/UString.h \
-	JavaScriptCore/wtf/ByteArray.cpp \
-	JavaScriptCore/wtf/ByteArray.h \
 	JavaScriptCore/wtf/FastMalloc.cpp \
 	JavaScriptCore/wtf/FastMalloc.h \
 	JavaScriptCore/wtf/MallocZoneSupport.h \
@@ -431,10 +431,6 @@ javascriptcore_built_nosources += \
 	DerivedSources/Grammar.h
 
 javascriptcore_sources += \
-	JavaScriptCore/runtime/ByteArray.cpp \
-	JavaScriptCore/runtime/ByteArray.h \
-	JavaScriptCore/runtime/JSByteArray.cpp \
-	JavaScriptCore/runtime/JSByteArray.h \
 	JavaScriptCore/AllInOneFile.cpp
 endif # END ENABLE_DEBUG
 
