@@ -1,5 +1,15 @@
 2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Not reviewed. Forgot to land build changes for non-mac platforms.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+
+2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Adam Roben.
 
         Fix last-minute regression, introduced by simplifying max length determination - by

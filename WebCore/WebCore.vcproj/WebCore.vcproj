@@ -11362,11 +11362,39 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\FormControlElement.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\dom\FormControlElement.h"
 				>
 			</File>
 			<File
 				RelativePath="..\dom\GenericWorkerTask.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\InputElement.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\InputElement.h"
 				>
 			</File>
 			<File
