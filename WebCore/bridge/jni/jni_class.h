@@ -40,8 +40,6 @@ public:
     JavaClass (jobject anInstance);
     ~JavaClass ();
 
-    virtual const char *name() const { return _name; };
-    
     virtual MethodList methodsNamed(const Identifier&, Instance* instance) const;    
     virtual Field *fieldNamed(const Identifier&, Instance* instance) const;
     
@@ -50,8 +48,6 @@ public:
     bool isStringClass() const;
     
 private:
-    JavaClass ();                                 // prevent default construction
-    
     const char *_name;
     FieldMap _fields;
     MethodListMap _methods;

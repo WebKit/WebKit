@@ -78,16 +78,6 @@ void Instance::end()
     virtualEnd();
 }
 
-JSValuePtr Instance::getValueOfField(ExecState* exec, const Field* aField) const
-{
-    return aField->valueFromInstance(exec, this);
-}
-
-void Instance::setValueOfField(ExecState* exec, const Field* aField, JSValuePtr aValue) const
-{
-    aField->setValueToInstance(exec, this, aValue);
-}
-
 RuntimeObjectImp* Instance::createRuntimeObject(ExecState* exec)
 {
     JSLock lock(false);

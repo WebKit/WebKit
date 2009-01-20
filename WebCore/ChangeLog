@@ -1,3 +1,39 @@
+2009-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * bridge/c/c_class.cpp:
+        * bridge/c/c_class.h:
+        Get rid of CClass::name().
+        
+        * bridge/jni/jni_class.h:
+        Get rid of JavaClass::name().
+        
+        * bridge/objc/objc_class.h:
+        * bridge/objc/objc_class.mm:
+        Get rid of ObjcClass::name().
+        
+        * bridge/objc/objc_instance.h:
+        Get rid of supportsSetValueOfUndefinedField.
+        
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::setValueOfUndefinedField):
+        Fold supportsSetValueOfUndefinedField into setValueOfUndefinedField.
+        
+        * bridge/runtime.cpp:
+        Get rid of getValueOfField and setValueOfField.
+        
+        * bridge/runtime.h:
+        (JSC::Bindings::Instance::setValueOfUndefinedField):
+        Have this return a bool and get rid of supportsSetValueOfUndefinedField
+        
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::fieldGetter):
+        Call Field::valueFromInstance on the field.
+        
+        (JSC::RuntimeObjectImp::put):
+        Call Field::setValueToInstance on the field.
+
 2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Forgot to land build changes for non-mac platforms.

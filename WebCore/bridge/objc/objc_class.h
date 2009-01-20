@@ -40,8 +40,6 @@ public:
     // Return the cached ObjC of the specified name.
     static ObjcClass *classForIsA(ClassStructPtr);
     
-    virtual const char *name() const;
-    
     virtual MethodList methodsNamed(const Identifier&, Instance *instance) const;
     virtual Field *fieldNamed(const Identifier&, Instance *instance) const;
 

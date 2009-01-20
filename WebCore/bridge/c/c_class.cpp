@@ -70,11 +70,6 @@ CClass* CClass::classForIsA(NPClass* isa)
     return aClass;
 }
 
-const char* CClass::name() const
-{
-    return "";
-}
-
 MethodList CClass::methodsNamed(const Identifier& identifier, Instance* instance) const
 {
     MethodList methodList;

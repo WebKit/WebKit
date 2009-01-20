@@ -296,17 +296,11 @@ JSValuePtr ObjcInstance::invokeDefaultMethod(ExecState* exec, const ArgList &arg
     return const_cast<JSValuePtr&>(result);
 }
 
-bool ObjcInstance::supportsSetValueOfUndefinedField()
+bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier& property, JSValuePtr aValue)
 {
     id targetObject = getObject();
-    if ([targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)])
-        return true;
-    return false;
-}
-
-void ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier &property, JSValuePtr aValue)
-{
-    id targetObject = getObject();
+    if (![targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)])
+        return false;
 
     JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
 
@@ -326,6 +320,8 @@ void ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier &p
 
         moveGlobalExceptionToExecState(exec);
     }
+    
+    return true;
 }
 
 JSValuePtr ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifier& property) const

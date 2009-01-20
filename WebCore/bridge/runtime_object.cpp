@@ -96,7 +96,7 @@ JSValuePtr RuntimeObjectImp::fieldGetter(ExecState* exec, const Identifier& prop
 
     Class *aClass = instance->getClass();
     Field* aField = aClass->fieldNamed(propertyName, instance.get());
-    JSValuePtr result = instance->getValueOfField(exec, aField); 
+    JSValuePtr result = aField->valueFromInstance(exec, instance.get());
     
     instance->end();
             
@@ -178,10 +178,8 @@ void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSVa
     // Set the value of the property.
     Field *aField = instance->getClass()->fieldNamed(propertyName, instance.get());
     if (aField)
-        instance->setValueOfField(exec, aField, value);
-    else if (instance->supportsSetValueOfUndefinedField())
-        instance->setValueOfUndefinedField(exec, propertyName, value);
-    else
+        aField->setValueToInstance(exec, instance.get(), value);
+    else if (!instance->setValueOfUndefinedField(exec, propertyName, value))
         instance->put(this, exec, propertyName, value, slot);
 
     instance->end();

@@ -73,11 +73,6 @@ ObjcClass* ObjcClass::classForIsA(ClassStructPtr isa)
     return aClass;
 }
 
-const char* ObjcClass::name() const
-{
-    return object_getClassName(_isa);
-}
-
 MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) const
 {
     MethodList methodList;

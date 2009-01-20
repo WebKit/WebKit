@@ -55,10 +55,8 @@ public:
     virtual bool supportsInvokeDefaultMethod() const;
     virtual JSValuePtr invokeDefaultMethod(ExecState*, const ArgList&);
 
-    virtual bool supportsSetValueOfUndefinedField();
-    virtual void setValueOfUndefinedField(ExecState*, const Identifier&, JSValuePtr);
-    
-    virtual JSValuePtr getValueOfUndefinedField(ExecState*, const Identifier& property) const;
+    JSValuePtr getValueOfUndefinedField(ExecState*, const Identifier&) const;
+    virtual bool setValueOfUndefinedField(ExecState*, const Identifier&, JSValuePtr);
 
     ObjectStructPtr getObject() const { return _instance.get(); }
     
