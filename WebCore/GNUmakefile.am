@@ -2836,7 +2836,6 @@ webcore_sources += \
 
 webcoregtk_sources += \
 	WebCore/svg/graphics/cairo/SVGPaintServerCairo.cpp \
-	WebCore/svg/graphics/cairo/SVGPaintServerPatternCairo.cpp \
 	WebCore/svg/graphics/cairo/SVGResourceFilterCairo.cpp \
 	WebCore/svg/graphics/cairo/SVGResourceMaskerCairo.cpp
 

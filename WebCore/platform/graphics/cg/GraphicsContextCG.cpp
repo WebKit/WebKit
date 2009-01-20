@@ -389,11 +389,11 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         CGContextSetShouldAntialias(context, shouldAntialias());
 }
 
-static void applyStrokePattern(GraphicsContext* context, Pattern* pattern)
+void GraphicsContext::applyStrokePattern()
 {
-    CGContextRef cgContext = context->platformContext();
+    CGContextRef cgContext = platformContext();
     
-    CGPatternRef platformPattern = pattern->createPlatformPattern(context->getCTM());
+    CGPatternRef platformPattern = m_common->state.strokePattern.get()->createPlatformPattern(getCTM());
     if (!platformPattern)
         return;
 
@@ -406,11 +406,11 @@ static void applyStrokePattern(GraphicsContext* context, Pattern* pattern)
     CGPatternRelease(platformPattern);
 }
 
-static void applyFillPattern(GraphicsContext* context, Pattern* pattern)
+void GraphicsContext::applyFillPattern()
 {
-    CGContextRef cgContext = context->platformContext();
+    CGContextRef cgContext = platformContext();
 
-    CGPatternRef platformPattern = pattern->createPlatformPattern(context->getCTM());
+    CGPatternRef platformPattern = m_common->state.fillPattern.get()->createPlatformPattern(getCTM());
     if (!platformPattern)
         return;
 
@@ -466,9 +466,9 @@ void GraphicsContext::drawPath()
     }
     
     if (state.fillColorSpace == PatternColorSpace)
-        applyFillPattern(this, m_common->state.fillPattern.get());
+        applyFillPattern();
     if (state.strokeColorSpace == PatternColorSpace)
-        applyStrokePattern(this, m_common->state.strokePattern.get());
+        applyStrokePattern();
 
     CGPathDrawingMode drawingMode;
     if (calculateDrawingMode(state, drawingMode))
@@ -495,7 +495,7 @@ void GraphicsContext::fillPath()
             fillPathWithFillRule(context, fillRule());
         break;
     case PatternColorSpace:
-        applyFillPattern(this, m_common->state.fillPattern.get());
+        applyFillPattern();
         fillPathWithFillRule(context, fillRule());
         break;
     case GradientColorSpace:
@@ -522,7 +522,7 @@ void GraphicsContext::strokePath()
             CGContextStrokePath(context);
         break;
     case PatternColorSpace:
-        applyStrokePattern(this, m_common->state.strokePattern.get());
+        applyStrokePattern();
         CGContextStrokePath(context);
         break;
     case GradientColorSpace:
@@ -546,7 +546,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
             CGContextFillRect(context, rect);
         break;
     case PatternColorSpace:
-        applyFillPattern(this, m_common->state.fillPattern.get());
+        applyFillPattern();
         CGContextFillRect(context, rect);
         break;
     case GradientColorSpace:
@@ -783,7 +783,7 @@ void GraphicsContext::strokeRect(const FloatRect& r, float lineWidth)
             CGContextStrokeRectWithWidth(context, r, lineWidth);
         break;
     case PatternColorSpace:
-        applyStrokePattern(this, m_common->state.strokePattern.get());
+        applyStrokePattern();
         CGContextStrokeRectWithWidth(context, r, lineWidth);
         break;
     case GradientColorSpace:

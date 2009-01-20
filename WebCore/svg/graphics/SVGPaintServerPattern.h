@@ -30,6 +30,7 @@
 
 #include "TransformationMatrix.h"
 #include "FloatRect.h"
+#include "Pattern.h"
 #include "SVGPaintServer.h"
 
 #include <memory>
@@ -63,9 +64,8 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
         virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-#if PLATFORM(CG) || PLATFORM(QT)
+        virtual void renderPath(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const;
         virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-#endif
 
     private:
         SVGPaintServerPattern(const SVGPatternElement*);
@@ -75,10 +75,7 @@ namespace WebCore {
         TransformationMatrix m_patternTransform;
         FloatRect m_patternBoundaries;
 
-#if PLATFORM(CG)
-        mutable CGColorSpaceRef m_patternSpace;
-        mutable CGPatternRef m_pattern;
-#endif                
+        mutable RefPtr<Pattern> m_pattern;
     };
 
 } // namespace WebCore

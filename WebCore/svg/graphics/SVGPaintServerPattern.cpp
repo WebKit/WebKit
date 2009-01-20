@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ *               2008 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +29,14 @@
 #if ENABLE(SVG)
 #include "SVGPaintServerPattern.h"
 
+#include "GraphicsContext.h"
+#include "Image.h"
 #include "ImageBuffer.h"
+#include "Pattern.h"
+#include "RenderObject.h"
 #include "SVGPatternElement.h"
 #include "SVGRenderTreeAsText.h"
+#include "TransformationMatrix.h"
 
 using namespace std;
 
@@ -38,20 +44,13 @@ namespace WebCore {
 
 SVGPaintServerPattern::SVGPaintServerPattern(const SVGPatternElement* owner)
     : m_ownerElement(owner)
-#if PLATFORM(CG)
-    , m_patternSpace(0)
     , m_pattern(0)
-#endif
 {
     ASSERT(owner);
 }
 
 SVGPaintServerPattern::~SVGPaintServerPattern()
 {
-#if PLATFORM(CG)
-    CGPatternRelease(m_pattern);
-    CGColorSpaceRelease(m_patternSpace);
-#endif
 }
 
 FloatRect SVGPaintServerPattern::patternBoundaries() const
@@ -94,6 +93,102 @@ TextStream& SVGPaintServerPattern::externalRepresentation(TextStream& ts) const
     if (!patternTransform().isIdentity())
         ts << " [pattern transform=" << patternTransform() << "]";
     return ts;
+}
+
+bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
+{
+    FloatRect targetRect;
+    if (isPaintingText) {
+        IntRect textBoundary = const_cast<RenderObject*>(object)->absoluteBoundingBoxRect();
+        targetRect = object->absoluteTransform().inverse().mapRect(textBoundary);
+    } else
+        targetRect = object->relativeBBox(false);
+
+    const SVGRenderStyle* style = object->style()->svgStyle();
+    bool isFilled = (type & ApplyToFillTargetType) && style->hasFill();
+    bool isStroked = (type & ApplyToStrokeTargetType) && style->hasStroke();
+
+    ASSERT(isFilled && !isStroked || !isFilled && isStroked);
+
+    m_ownerElement->buildPattern(targetRect);
+    if (!tile())
+        return false;
+
+    context->save();
+    context->translate(patternBoundaries().x(), patternBoundaries().y());
+    context->concatCTM(patternTransform());
+
+    ASSERT(!m_pattern);
+
+    IntRect tileRect = tile()->image()->rect();
+    if (tileRect.width() > patternBoundaries().width() || tileRect.height() > patternBoundaries().height()) {
+        // Draw the first cell of the pattern manually to support overflow="visible" on all platforms.
+        int tileWidth = static_cast<int>(patternBoundaries().width() + 0.5f);
+        int tileHeight = static_cast<int>(patternBoundaries().height() + 0.5f);
+        std::auto_ptr<ImageBuffer> tileImage = ImageBuffer::create(IntSize(tileWidth, tileHeight), false);
+  
+        GraphicsContext* tileImageContext = tileImage->context();
+
+        int numY = static_cast<int>(ceilf(tileRect.height() / tileHeight)) + 1;
+        int numX = static_cast<int>(ceilf(tileRect.width() / tileWidth)) + 1;
+
+        tileImageContext->save();
+        tileImageContext->translate(-patternBoundaries().width() * numX, -patternBoundaries().height() * numY);
+        for (int i = numY; i > 0; i--) {
+            tileImageContext->translate(0, patternBoundaries().height());
+            for (int j = numX; j > 0; j--) {
+                tileImageContext->translate(patternBoundaries().width(), 0);
+                tileImageContext->drawImage(tile()->image(), tileRect, tileRect);
+            }
+            tileImageContext->translate(-patternBoundaries().width() * numX, 0);
+        }
+        tileImageContext->restore();
+
+        m_pattern = Pattern::create(tileImage->image(), true, true);
+    }
+    else
+        m_pattern = Pattern::create(tile()->image(), true, true);
+
+    if (isFilled) {
+        context->setAlpha(style->fillOpacity());
+        context->setFillPattern(m_pattern);
+        context->setFillRule(style->fillRule());
+    }
+    if (isStroked) {
+        context->setAlpha(style->strokeOpacity());
+        context->setStrokePattern(m_pattern);
+        applyStrokeStyleToContext(context, object->style(), object);
+    }
+
+    if (isPaintingText) {
+        context->setTextDrawingMode(isFilled ? cTextFill : cTextStroke);
+#if PLATFORM(CG)
+        if (isFilled)
+            context->applyFillPattern();
+        else
+            context->applyStrokePattern();
+#endif
+    }
+
+    return true;
+}
+
+void SVGPaintServerPattern::renderPath(GraphicsContext*& context, const RenderObject* path, SVGPaintTargetType type) const
+{
+    const SVGRenderStyle* style = path->style()->svgStyle();
+
+    if ((type & ApplyToFillTargetType) && style->hasFill())
+        context->fillPath();
+
+    if ((type & ApplyToStrokeTargetType) && style->hasStroke())
+        context->strokePath();
+}
+
+void SVGPaintServerPattern::teardown(GraphicsContext*& context, const RenderObject*, SVGPaintTargetType, bool) const
+{
+    m_pattern = 0;
+
+    context->restore();
 }
 
 } // namespace WebCore
