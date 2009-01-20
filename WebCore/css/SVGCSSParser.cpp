@@ -160,14 +160,6 @@ bool CSSParser::parseSVGValue(int propId, bool important)
      * correctly and allows optimization in applyRule(..)
      */
 
-    case CSSPropertyPointerEvents:
-    // none | visiblePainted | visibleFill | visibleStroke | visible |
-    // painted | fill | stroke | none | all | inherit
-        if (id == CSSValueVisible || id == CSSValueNone || id == CSSValueAll ||
-          (id >= CSSValueVisiblepainted && id <= CSSValueStroke))
-            valid_primitive = true;
-        break;
-
     case CSSPropertyTextAnchor:    // start | middle | end | inherit
         if (id == CSSValueStart || id == CSSValueMiddle || id == CSSValueEnd)
             valid_primitive = true;

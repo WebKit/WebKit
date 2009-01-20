@@ -1,3 +1,16 @@
+2009-01-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Remove a little dead code left over after the fix for
+        https://bugs.webkit.org/show_bug.cgi?id=11395, which
+        moved pointer-events from SVG to be shared with HTML.
+
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue): Remove SVG's parsing of this
+        property since it's handled in the non-SVG function now so we'll
+        never get here.
+
 2009-01-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.
