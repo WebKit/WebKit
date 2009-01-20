@@ -80,7 +80,6 @@ Source files for JSCore.
         runtime/BooleanConstructor.cpp
         runtime/BooleanObject.cpp
         runtime/BooleanPrototype.cpp
-        runtime/ByteArray.cpp
         runtime/CallData.cpp
         runtime/Collector.cpp
         runtime/CommonIdentifiers.cpp
@@ -159,6 +158,7 @@ Source files for JSCore.
     </set>
     <set append="1" var="JSCORE_WTF_SOURCES">
         wtf/Assertions.cpp
+        wtf/ByteArray.cpp
         wtf/CurrentTime.cpp
         wtf/FastMalloc.cpp
         wtf/HashTable.cpp

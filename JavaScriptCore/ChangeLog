@@ -1,5 +1,15 @@
 2009-01-20  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (build fix).
+
+        Whoops, remove runtime/ByteArray references from .pri and .scons builds, update .bkl
+
+        * JavaScriptCore.pri:
+        * JavaScriptCore.scons:
+        * JavaScriptCoreSources.bkl:
+
+2009-01-20  Oliver Hunt  <oliver@apple.com>
+
         RS=Dan Bernstein.
 
         Move runtime/ByteArray to wtf/ByteArray
