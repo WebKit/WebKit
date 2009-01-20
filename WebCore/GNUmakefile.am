@@ -1138,7 +1138,6 @@ webcore_sources += \
 	WebCore/page/Frame.cpp \
 	WebCore/page/Frame.h \
 	WebCore/page/FrameLoadRequest.h \
-	WebCore/page/FramePrivate.h \
 	WebCore/page/FrameTree.cpp \
 	WebCore/page/FrameTree.h \
 	WebCore/page/FrameView.cpp \
