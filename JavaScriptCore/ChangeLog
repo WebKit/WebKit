@@ -1,5 +1,10 @@
 2009-01-20  Darin Adler  <darin@apple.com>
 
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferences): Add back the initialization to fix the build.
+
+2009-01-20  Darin Adler  <darin@apple.com>
+
         Reviewed by Mark Rowe.
 
         Bug 23352: Turn on more compiler warnings in the Mac build
