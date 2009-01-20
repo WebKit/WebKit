@@ -12,6 +12,7 @@ fieldset interfaceName=WMLFieldSetElement
 go
 head interfaceName=WMLElement
 img interfaceName=WMLImageElement
+input
 # Note: 'insertedLegend' is not an official WML element - internal purpose only!
 insertedLegend interfaceName=WMLInsertedLegendElement
 meta
@@ -30,5 +31,5 @@ tr interfaceName=WMLElement
 
 #if 0
 # These elements have a corresponding HTML*Element class, that we want to share code with.
-# input, optgroup, option, select
+# optgroup, option, select
 #endif

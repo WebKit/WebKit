@@ -39,8 +39,7 @@ FormControlElement* formControlElementForElement(Element* element)
             return static_cast<HTMLFormControlElement*>(element);
     }
 
-    // FIXME: Enable this code, once the follow-up WMLInputElement addition patch lands.
-#if ENABLE(WML) && 0
+#if ENABLE(WML)
     if (element->isWMLElement() && element->hasTagName(WMLNames::inputTag))
         return static_cast<WMLInputElement*>(element);
 #endif

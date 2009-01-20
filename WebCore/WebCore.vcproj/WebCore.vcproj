@@ -16722,6 +16722,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\wml\WMLInputElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLInputElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\wml\WMLInsertedLegendElement.cpp"
 				>
 			</File>

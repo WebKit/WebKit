@@ -1,3 +1,75 @@
+2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=23434
+
+        Add WML <input> element support - it required a lot of changes to the RenderText*/HTMLInput* code.
+        Now any language can provide <input>-style elements, without having to inherit from HTML* classes.
+
+        No WML specific features/attributes are handled so far. A follow-up patch will provide those bits.
+        Added very simple fast/wml/input.wml, just checking that input elements can be rendered properly now.
+        Detailed testcases will follow in conjunction with the WML specific attribute support.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * dom/FormControlElement.cpp: Activate disabled code from previous checking.
+        (WebCore::formControlElementForElement):
+        * dom/InputElement.cpp: Ditto.
+        (WebCore::inputElementForElement):
+        * wml/WMLInputElement.cpp: Added.
+        (WebCore::WMLInputElement::WMLInputElement):
+        (WebCore::WMLInputElement::~WMLInputElement):
+        (WebCore::isInputFocusable):
+        (WebCore::WMLInputElement::isKeyboardFocusable):
+        (WebCore::WMLInputElement::isMouseFocusable):
+        (WebCore::WMLInputElement::dispatchFocusEvent):
+        (WebCore::WMLInputElement::dispatchBlurEvent):
+        (WebCore::WMLInputElement::updateFocusAppearance):
+        (WebCore::WMLInputElement::aboutToUnload):
+        (WebCore::WMLInputElement::size):
+        (WebCore::WMLInputElement::name):
+        (WebCore::WMLInputElement::value):
+        (WebCore::WMLInputElement::setValue):
+        (WebCore::WMLInputElement::setValueFromRenderer):
+        (WebCore::WMLInputElement::saveState):
+        (WebCore::WMLInputElement::restoreState):
+        (WebCore::WMLInputElement::select):
+        (WebCore::WMLInputElement::accessKeyAction):
+        (WebCore::WMLInputElement::parseMappedAttribute):
+        (WebCore::WMLInputElement::copyNonAttributeProperties):
+        (WebCore::WMLInputElement::createRenderer):
+        (WebCore::WMLInputElement::attach):
+        (WebCore::WMLInputElement::detach):
+        (WebCore::WMLInputElement::appendFormData):
+        (WebCore::WMLInputElement::reset):
+        (WebCore::WMLInputElement::defaultEventHandler):
+        (WebCore::WMLInputElement::cacheSelection):
+        (WebCore::WMLInputElement::constrainValue):
+        (WebCore::WMLInputElement::documentDidBecomeActive):
+        (WebCore::WMLInputElement::placeholderShouldBeVisible):
+        (WebCore::WMLInputElement::willMoveToNewOwnerDocument):
+        (WebCore::WMLInputElement::didMoveToNewOwnerDocument):
+        * wml/WMLInputElement.h: Added.
+        (WebCore::WMLInputElement::valueMatchesRenderer):
+        (WebCore::WMLInputElement::setValueMatchesRenderer):
+        (WebCore::WMLInputElement::shouldUseInputMethod):
+        (WebCore::WMLInputElement::isChecked):
+        (WebCore::WMLInputElement::isIndeterminate):
+        (WebCore::WMLInputElement::isTextControl):
+        (WebCore::WMLInputElement::isRadioButton):
+        (WebCore::WMLInputElement::isTextField):
+        (WebCore::WMLInputElement::isSearchField):
+        (WebCore::WMLInputElement::isInputTypeHidden):
+        (WebCore::WMLInputElement::isPasswordField):
+        (WebCore::WMLInputElement::searchEventsShouldBeDispatched):
+        (WebCore::WMLInputElement::placeholderValue):
+        * wml/WMLTagNames.in:
+
 2009-01-20  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

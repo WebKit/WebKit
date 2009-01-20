@@ -2213,6 +2213,7 @@ webcore_sources += \
 	WebCore/wml/WMLGoElement.cpp \
 	WebCore/wml/WMLImageElement.cpp \
 	WebCore/wml/WMLImageLoader.cpp \
+	WebCore/wml/WMLInputElement.cpp \
 	WebCore/wml/WMLInsertedLegendElement.cpp \
 	WebCore/wml/WMLIntrinsicEvent.cpp \
 	WebCore/wml/WMLIntrinsicEventHandler.cpp \

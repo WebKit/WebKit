@@ -1,3 +1,20 @@
+2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=23434 (Add WML <input> element support)
+
+        Protect text field related WebEditorClient.mm methods against non-HTMLElement callers.
+        WebEditorClient.mm relies on HTMLInputElement as input element. Ignore calls from non-HTMLElement elements.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::textFieldDidBeginEditing):
+        (WebEditorClient::textFieldDidEndEditing):
+        (WebEditorClient::textDidChangeInTextField):
+        (WebEditorClient::doTextFieldCommandFromEvent):
+        (WebEditorClient::textWillBeDeletedInTextField):
+        (WebEditorClient::textDidChangeInTextArea):
+
 2009-01-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

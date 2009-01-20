@@ -296,8 +296,7 @@ InputElement* inputElementForElement(Element* element)
     if (element->isHTMLElement() && (element->hasTagName(inputTag) || element->hasTagName(isindexTag)))
         return static_cast<HTMLInputElement*>(element);
 
-    // FIXME: Enable this code, once the follow-up WMLInputElement addition patch lands.
-#if ENABLE(WML) && 0
+#if ENABLE(WML)
     if (element->isWMLElement() && element->hasTagName(WMLNames::inputTag))
         return static_cast<WMLInputElement*>(element);
 #endif

@@ -80,6 +80,8 @@
 		08807B810ED709AB003F6975 /* WMLSetvarElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08807B750ED709AB003F6975 /* WMLSetvarElement.h */; };
 		08820BDE0EF5D381009099A8 /* WMLTableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08820BDC0EF5D381009099A8 /* WMLTableElement.cpp */; };
 		08820BDF0EF5D381009099A8 /* WMLTableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08820BDD0EF5D381009099A8 /* WMLTableElement.h */; };
+		088451150F267B63007F139E /* WMLInputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088451130F267B62007F139E /* WMLInputElement.cpp */; };
+		088451160F267B63007F139E /* WMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 088451140F267B63007F139E /* WMLInputElement.h */; };
 		088C97120ECB6D92000534BA /* WMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3AB490E556F2400E9C0C0 /* WMLNames.cpp */; };
 		088C97130ECB6D9D000534BA /* WMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CA3AB480E556F2400E9C0C0 /* WMLNames.h */; };
 		088C97510ECB6E28000534BA /* WMLAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B99180E52E37300487BB7 /* WMLAElement.cpp */; };
@@ -4908,6 +4910,8 @@
 		08807B750ED709AB003F6975 /* WMLSetvarElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLSetvarElement.h; sourceTree = "<group>"; };
 		08820BDC0EF5D381009099A8 /* WMLTableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLTableElement.cpp; sourceTree = "<group>"; };
 		08820BDD0EF5D381009099A8 /* WMLTableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTableElement.h; sourceTree = "<group>"; };
+		088451130F267B62007F139E /* WMLInputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLInputElement.cpp; sourceTree = "<group>"; };
+		088451140F267B63007F139E /* WMLInputElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLInputElement.h; sourceTree = "<group>"; };
 		0893E4650ECB68F400A28563 /* WMLPageState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLPageState.cpp; sourceTree = "<group>"; };
 		0893E4660ECB68F400A28563 /* WMLPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLPageState.h; sourceTree = "<group>"; };
 		089582530E857A7E00F82C83 /* ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageLoader.cpp; sourceTree = "<group>"; };
@@ -9685,6 +9689,8 @@
 				08C4C5150EF19A4000E4840F /* WMLImageElement.h */,
 				08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */,
 				08C4C5170EF19A4000E4840F /* WMLImageLoader.h */,
+				088451130F267B62007F139E /* WMLInputElement.cpp */,
+				088451140F267B63007F139E /* WMLInputElement.h */,
 				087FFA0D0EFF3ED3009DBD88 /* WMLInsertedLegendElement.cpp */,
 				087FFA0E0EFF3ED3009DBD88 /* WMLInsertedLegendElement.h */,
 				080AEC7D0ED8708A00DF4CCE /* WMLIntrinsicEvent.cpp */,
@@ -16449,6 +16455,7 @@
 				08807B770ED709AB003F6975 /* WMLGoElement.h in Headers */,
 				08C4C5190EF19A4000E4840F /* WMLImageElement.h in Headers */,
 				08C4C51B0EF19A4000E4840F /* WMLImageLoader.h in Headers */,
+				088451160F267B63007F139E /* WMLInputElement.h in Headers */,
 				087FFA100EFF3ED3009DBD88 /* WMLInsertedLegendElement.h in Headers */,
 				080AEC820ED8708B00DF4CCE /* WMLIntrinsicEvent.h in Headers */,
 				080AEC840ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h in Headers */,
@@ -18421,6 +18428,7 @@
 				08807B760ED709AB003F6975 /* WMLGoElement.cpp in Sources */,
 				08C4C5180EF19A4000E4840F /* WMLImageElement.cpp in Sources */,
 				08C4C51A0EF19A4000E4840F /* WMLImageLoader.cpp in Sources */,
+				088451150F267B63007F139E /* WMLInputElement.cpp in Sources */,
 				087FFA0F0EFF3ED3009DBD88 /* WMLInsertedLegendElement.cpp in Sources */,
 				080AEC810ED8708B00DF4CCE /* WMLIntrinsicEvent.cpp in Sources */,
 				080AEC830ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp in Sources */,

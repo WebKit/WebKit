@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card>
+<p>Very simple test, checking that input elements are rendered correctly</p>
+<input type="text" value="Test"/>
+<input type="password" value="Password"/>
+</card>
+</wml>
