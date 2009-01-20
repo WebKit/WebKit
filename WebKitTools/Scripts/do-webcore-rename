@@ -139,6 +139,9 @@ my %renamesContemplatedForTheFuture = (
     "_KJS_USTRING_H_" => "UString_h",
 
     "m_invertibleCTM" => "m_transformIsInvertible",
+
+    "JSValuePtr" => "JSValue",
+    "ProtectedJSValuePtr" => "ProtectedJSValue",
 );
 
 # rename files

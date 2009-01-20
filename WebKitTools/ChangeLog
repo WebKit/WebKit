@@ -1,3 +1,7 @@
+2009-01-19  Sam Weinig  <sam@webkit.org>
+
+        * Scripts/do-webcore-rename: Add JSValuePtr and ProtectedJSValuePtr.
+
 2009-01-16  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.
