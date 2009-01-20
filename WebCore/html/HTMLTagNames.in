@@ -9,7 +9,7 @@ address interfaceName=HTMLElement
 applet
 area
 #if ENABLE_VIDEO
-audio wrapperOnlyIfMediaIsAvailable=1
+audio wrapperOnlyIfMediaIsAvailable
 #endif
 b interfaceName=HTMLElement
 base
@@ -19,7 +19,7 @@ big interfaceName=HTMLElement
 blockquote
 body
 br interfaceName=HTMLBRElement
-button constructorNeedsFormElement=1
+button constructorNeedsFormElement
 canvas
 caption interfaceName=HTMLTableCaptionElement
 center interfaceName=HTMLElement
@@ -36,10 +36,10 @@ dl interfaceName=HTMLDListElement
 dt interfaceName=HTMLElement
 em interfaceName=HTMLElement
 embed
-fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement=1
+fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement
 font
 form
-frame constructorNeedsCreatedByParser=1
+frame constructorNeedsCreatedByParser
 frameset interfaceName=HTMLFrameSetElement
 head
 h1 interfaceName=HTMLHeadingElement
@@ -51,19 +51,19 @@ h6 interfaceName=HTMLHeadingElement
 hr interfaceName=HTMLHRElement
 html
 i interfaceName=HTMLElement
-iframe interfaceName=HTMLIFrameElement, constructorNeedsCreatedByParser=1
+iframe interfaceName=HTMLIFrameElement, constructorNeedsCreatedByParser
 image
-img interfaceName=HTMLImageElement, constructorNeedsFormElement=1
-input constructorNeedsFormElement=1
+img interfaceName=HTMLImageElement, constructorNeedsFormElement
+input constructorNeedsFormElement
 ins interfaceName=HTMLModElement
-isindex interfaceName=HTMLIsIndexElement, constructorNeedsFormElement=1
+isindex interfaceName=HTMLIsIndexElement, constructorNeedsFormElement
 kbd interfaceName=HTMLElement
-keygen JSInterfaceName=HTMLSelectElement, constructorNeedsFormElement=1
+keygen JSInterfaceName=HTMLSelectElement, constructorNeedsFormElement
 label
 layer interfaceName=HTMLElement
-legend constructorNeedsFormElement=1
+legend constructorNeedsFormElement
 li interfaceName=HTMLLIElement
-link constructorNeedsCreatedByParser=1
+link constructorNeedsCreatedByParser
 listing interfaceName=HTMLPreElement
 map
 marquee
@@ -74,10 +74,10 @@ noembed interfaceName=HTMLElement
 noframes interfaceName=HTMLElement
 nolayer interfaceName=HTMLElement
 noscript interfaceName=HTMLElement
-object constructorNeedsCreatedByParser=1
+object constructorNeedsCreatedByParser
 ol interfaceName=HTMLOListElement
-optgroup interfaceName=HTMLOptGroupElement, constructorNeedsFormElement=1
-option constructorNeedsFormElement=1
+optgroup interfaceName=HTMLOptGroupElement, constructorNeedsFormElement
+option constructorNeedsFormElement
 p interfaceName=HTMLParagraphElement
 param
 plaintext interfaceName=HTMLElement
@@ -85,22 +85,22 @@ pre
 q interfaceName=HTMLQuoteElement
 s interfaceName=HTMLElement
 samp interfaceName=HTMLElement
-script constructorNeedsCreatedByParser=1
-select constructorNeedsFormElement=1
+script constructorNeedsCreatedByParser
+select constructorNeedsFormElement
 small interfaceName=HTMLElement
 #if ENABLE_VIDEO
-source wrapperOnlyIfMediaIsAvailable=1
+source wrapperOnlyIfMediaIsAvailable
 #endif
 span interfaceName=HTMLElement
 strike interfaceName=HTMLElement
 strong interfaceName=HTMLElement
-style constructorNeedsCreatedByParser=1
+style constructorNeedsCreatedByParser
 sub interfaceName=HTMLElement
 sup interfaceName=HTMLElement
 table
 tbody interfaceName=HTMLTableSectionElement
 td interfaceName=HTMLTableCellElement
-textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement=1
+textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement
 tfoot interfaceName=HTMLTableSectionElement
 th interfaceName=HTMLTableCellElement
 thead interfaceName=HTMLTableSectionElement
@@ -111,7 +111,7 @@ u interfaceName=HTMLElement
 ul interfaceName=HTMLUListElement
 var interfaceName=HTMLElement
 #if ENABLE_VIDEO
-video wrapperOnlyIfMediaIsAvailable=1
+video wrapperOnlyIfMediaIsAvailable
 #endif
 wbr interfaceName=HTMLElement
 xmp interfaceName=HTMLPreElement

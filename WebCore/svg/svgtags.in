@@ -1,7 +1,7 @@
 namespace="SVG"
 namespaceURI="http://www.w3.org/2000/svg"
 guardFactoryWith="ENABLE(SVG)"
-exportStrings="1"
+exportStrings
 
 a
 #if ENABLE_SVG_FONTS
@@ -98,9 +98,9 @@ polygon
 polyline
 radialGradient
 rect
-script constructorNeedsCreatedByParser=1
+script constructorNeedsCreatedByParser
 stop
-style constructorNeedsCreatedByParser=1
+style constructorNeedsCreatedByParser
 svg interfaceName=SVGSVGElement
 switch
 symbol

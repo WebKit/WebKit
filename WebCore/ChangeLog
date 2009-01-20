@@ -1,3 +1,26 @@
+2009-01-20  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 23438: Provide a default value to the .in file parser
+
+        Added the default value 1 as it simplifies some of 
+        the format by removing some "=1" that were awkward.
+
+        This was suggested by Darin Adler as par of a previous
+        review.
+
+        * bindings/scripts/InFilesParser.pm: When no value
+        was entered (the second part of the split is undef),
+        provide the default value.
+
+        * html/HTMLAttributeNames.in: Removed unnecessary "=1".
+        * html/HTMLTagNames.in: Ditto.
+        * svg/svgattrs.in: Ditto.
+        * svg/svgtags.in: Ditto.
+        * svg/xlinkattrs.in: Ditto.
+        * wml/WMLAttributeNames.in: Ditto.
+
 2009-01-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

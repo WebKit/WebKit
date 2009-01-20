@@ -1,7 +1,7 @@
 namespace="WML"
 namespaceURI="http://www.wapforum.org/DTD/wml_1.1.xml"
 guardFactoryWith="ENABLE(WML)"
-attrsNullNamespace="1"
+attrsNullNamespace
 
 cache_control
 columns

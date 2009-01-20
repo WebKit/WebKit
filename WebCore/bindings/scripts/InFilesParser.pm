@@ -109,7 +109,12 @@ sub parse($)
             my ($name, $value) = split '=', $_;
 
             $name = trimWS($name);
-            $value = trimQuoteAndWS($value);
+            if (defined($value)) {
+                $value = trimQuoteAndWS($value);
+            } else {
+                # We default to 1 as it eases the syntax.
+                $value = "1";
+            }
 
             &$commonParameterHandler($name, $value);
         } else {
@@ -125,7 +130,12 @@ sub parse($)
                 for (my $i = 0; $i < @options; ++$i) {
                     ($option, $value) = split "=", $options[$i];
                     $option = trimWS($option);
-                    $value = trimQuoteAndWS($value);
+                    if (defined($value)) {
+                        $value = trimQuoteAndWS($value);
+                    } else {
+                        # We default to 1 as it eases the syntax.
+                        $value = "1";
+                    }
 
                     &$perTagHandler($elementName, $option, $value);
                 }
