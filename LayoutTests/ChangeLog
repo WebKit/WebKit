@@ -1,3 +1,14 @@
+2009-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=18078
+        
+        New testcases for transitions of shorthand properties.
+
+        * transitions/shorthand-border-transitions-expected.txt: Added.
+        * transitions/shorthand-border-transitions.html: Added.
+        * transitions/shorthand-transitions-expected.txt: Added.
+        * transitions/shorthand-transitions.html: Added.
+
 2009-01-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
