@@ -64,7 +64,7 @@ void WMLGoElement::parseMappedAttribute(MappedAttribute* attr)
         WMLTaskElement::parseMappedAttribute(attr);
 }
 
-void WMLGoElement::executeTask(Event* event)
+void WMLGoElement::executeTask(Event*)
 {
     Document* doc = document();
     WMLPageState* pageState = wmlPageStateForDocument(doc);

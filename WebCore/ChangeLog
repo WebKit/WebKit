@@ -2,6 +2,15 @@
 
         Build fix for WML enabled builds, not reviewed.
 
+        Fix unused variable warning.
+
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::executeTask):
+
+2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Build fix for WML enabled builds, not reviewed.
+
         Rename 'continuation' to 'virtualContinuation'.
 
         * wml/WMLAElement.cpp:
