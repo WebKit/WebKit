@@ -185,8 +185,8 @@ void QtInstance::mark()
             val->mark();
     }
     foreach(JSValuePtr val, m_children.values()) {
-        if (val && !val->marked())
-            val->mark();
+        if (val && !val.marked())
+            val.mark();
     }
 }
 

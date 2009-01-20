@@ -1,5 +1,17 @@
 2009-01-19  Sam Weinig  <sam@webkit.org>
 
+        Fix Qt build.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::mark):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::valueRealType):
+        (JSC::Bindings::convertValueToQVariant):
+        (JSC::Bindings::QtRuntimeConnectionMethod::call):
+        (JSC::Bindings::QtConnectionObject::execute):
+
+2009-01-19  Sam Weinig  <sam@webkit.org>
+
         Fix wx build.
 
         * plugins/PluginView.cpp:
