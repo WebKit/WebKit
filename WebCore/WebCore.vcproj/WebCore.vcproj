@@ -14706,10 +14706,6 @@
 			Name="svg"
 			>
 			<File
-				RelativePath="..\svg\ColorDistance.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\ColorDistance.h"
 				>
 			</File>
@@ -14718,15 +14714,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGAElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGAElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGAltGlyphElement.cpp"
+				RelativePath="..\svg\SVGAllInOne.cpp"
 				>
 			</File>
 			<File
@@ -14734,15 +14726,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGAngle.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGAngle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGAnimateColorElement.cpp"
 				>
 			</File>
 			<File
@@ -14750,15 +14734,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGAnimatedPathData.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGAnimatedPathData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGAnimatedPoints.cpp"
 				>
 			</File>
 			<File
@@ -14770,15 +14746,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGAnimateElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGAnimateElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGAnimateMotionElement.cpp"
 				>
 			</File>
 			<File
@@ -14786,15 +14754,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGAnimateTransformElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGAnimateTransformElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGAnimationElement.cpp"
 				>
 			</File>
 			<File
@@ -14802,15 +14762,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGCircleElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGCircleElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGClipPathElement.cpp"
 				>
 			</File>
 			<File
@@ -14818,15 +14770,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGColor.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGColor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGComponentTransferFunctionElement.cpp"
 				>
 			</File>
 			<File
@@ -14834,15 +14778,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGCursorElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGCursorElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGDefinitionSrcElement.cpp"
 				>
 			</File>
 			<File
@@ -14850,15 +14786,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGDefsElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGDefsElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGDescElement.cpp"
 				>
 			</File>
 			<File
@@ -14866,15 +14794,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGDocument.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGDocument.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGDocumentExtensions.cpp"
 				>
 			</File>
 			<File
@@ -14882,15 +14802,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGElementInstance.cpp"
 				>
 			</File>
 			<File
@@ -14898,15 +14810,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGElementInstanceList.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGElementInstanceList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGEllipseElement.cpp"
 				>
 			</File>
 			<File
@@ -14918,15 +14822,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGExternalResourcesRequired.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGExternalResourcesRequired.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFEBlendElement.cpp"
 				>
 			</File>
 			<File
@@ -14934,15 +14830,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFEColorMatrixElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFEColorMatrixElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFEComponentTransferElement.cpp"
 				>
 			</File>
 			<File
@@ -14950,15 +14838,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFECompositeElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFECompositeElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFEDiffuseLightingElement.cpp"
 				>
 			</File>
 			<File
@@ -14966,15 +14846,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFEDisplacementMapElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFEDisplacementMapElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFEDistantLightElement.cpp"
 				>
 			</File>
 			<File
@@ -14990,15 +14862,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFEFuncAElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFEFuncAElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFEFuncBElement.cpp"
 				>
 			</File>
 			<File
@@ -15006,15 +14870,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFEFuncGElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFEFuncGElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFEFuncRElement.cpp"
 				>
 			</File>
 			<File
@@ -15022,15 +14878,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFEGaussianBlurElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFEGaussianBlurElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFEImageElement.cpp"
 				>
 			</File>
 			<File
@@ -15038,15 +14886,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFELightElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFELightElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFEMergeElement.cpp"
 				>
 			</File>
 			<File
@@ -15054,15 +14894,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFEMergeNodeElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFEMergeNodeElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFEOffsetElement.cpp"
 				>
 			</File>
 			<File
@@ -15070,15 +14902,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFEPointLightElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFEPointLightElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFESpecularLightingElement.cpp"
 				>
 			</File>
 			<File
@@ -15086,15 +14910,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFESpotLightElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFESpotLightElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFETileElement.cpp"
 				>
 			</File>
 			<File
@@ -15102,15 +14918,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFETurbulenceElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFETurbulenceElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFilterElement.cpp"
 				>
 			</File>
 			<File
@@ -15118,15 +14926,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFilterPrimitiveStandardAttributes.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFilterPrimitiveStandardAttributes.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFitToViewBox.cpp"
 				>
 			</File>
 			<File
@@ -15134,19 +14934,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFont.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFontData.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFontData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFontElement.cpp"
 				>
 			</File>
 			<File
@@ -15162,15 +14950,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFontFaceFormatElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFontFaceFormatElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFontFaceNameElement.cpp"
 				>
 			</File>
 			<File
@@ -15178,15 +14958,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGFontFaceSrcElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGFontFaceSrcElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGFontFaceUriElement.cpp"
 				>
 			</File>
 			<File
@@ -15194,15 +14966,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGForeignObjectElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGForeignObjectElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGGElement.cpp"
 				>
 			</File>
 			<File
@@ -15222,10 +14986,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGGradientElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGGradientElement.h"
 				>
 			</File>
@@ -15238,15 +14998,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGImageElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGImageElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGImageLoader.cpp"
 				>
 			</File>
 			<File
@@ -15254,15 +15006,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGLangSpace.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGLangSpace.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGLength.cpp"
 				>
 			</File>
 			<File
@@ -15270,23 +15014,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGLengthList.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGLengthList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGLinearGradientElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGLinearGradientElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGLineElement.cpp"
 				>
 			</File>
 			<File
@@ -15302,15 +15034,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGLocatable.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGLocatable.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGMarkerElement.cpp"
 				>
 			</File>
 			<File
@@ -15326,15 +15050,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGMetadataElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGMetadataElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGMissingGlyphElement.cpp"
 				>
 			</File>
 			<File
@@ -15342,15 +15058,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGMPathElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGMPathElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGNumberList.cpp"
 				>
 			</File>
 			<File
@@ -15358,71 +15066,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPaint.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPaint.h"
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGParserUtilities.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalOptions="$(AnalyzeWithLargeStack)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalOptions="$(AnalyzeWithLargeStack)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalOptions="$(AnalyzeWithLargeStack)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalOptions="$(AnalyzeWithLargeStack)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalOptions="$(AnalyzeWithLargeStack)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalOptions="$(AnalyzeWithLargeStack)"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\svg\SVGParserUtilities.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGPathElement.cpp"
 				>
 			</File>
 			<File
@@ -15434,15 +15082,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPathSegArc.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPathSegArc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGPathSegClosePath.cpp"
 				>
 			</File>
 			<File
@@ -15450,15 +15090,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPathSegCurvetoCubic.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPathSegCurvetoCubic.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGPathSegCurvetoCubicSmooth.cpp"
 				>
 			</File>
 			<File
@@ -15466,15 +15098,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPathSegCurvetoQuadratic.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPathSegCurvetoQuadratic.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGPathSegCurvetoQuadraticSmooth.cpp"
 				>
 			</File>
 			<File
@@ -15482,15 +15106,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPathSegLineto.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPathSegLineto.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGPathSegLinetoHorizontal.cpp"
 				>
 			</File>
 			<File
@@ -15498,15 +15114,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPathSegLinetoVertical.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPathSegLinetoVertical.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGPathSegList.cpp"
 				>
 			</File>
 			<File
@@ -15514,15 +15122,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPathSegMoveto.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPathSegMoveto.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGPatternElement.cpp"
 				>
 			</File>
 			<File
@@ -15530,15 +15130,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPointList.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPointList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGPolyElement.cpp"
 				>
 			</File>
 			<File
@@ -15546,15 +15138,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPolygonElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPolygonElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGPolylineElement.cpp"
 				>
 			</File>
 			<File
@@ -15562,23 +15146,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPreserveAspectRatio.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPreserveAspectRatio.h"
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGRadialGradientElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGRadialGradientElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGRectElement.cpp"
 				>
 			</File>
 			<File
@@ -15590,15 +15162,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGScriptElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGScriptElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGSetElement.cpp"
 				>
 			</File>
 			<File
@@ -15606,23 +15170,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGStopElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGStopElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGStringList.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGStringList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGStylable.cpp"
 				>
 			</File>
 			<File
@@ -15638,15 +15190,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGStyledLocatableElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGStyledLocatableElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGStyledTransformableElement.cpp"
 				>
 			</File>
 			<File
@@ -15662,15 +15206,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGSVGElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGSVGElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGSwitchElement.cpp"
 				>
 			</File>
 			<File
@@ -15678,15 +15214,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGSymbolElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGSymbolElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGTests.cpp"
 				>
 			</File>
 			<File
@@ -15694,15 +15222,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGTextContentElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGTextContentElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGTextElement.cpp"
 				>
 			</File>
 			<File
@@ -15710,15 +15230,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGTextPathElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGTextPathElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGTextPositioningElement.cpp"
 				>
 			</File>
 			<File
@@ -15726,15 +15238,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGTitleElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGTitleElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGTransform.cpp"
 				>
 			</File>
 			<File
@@ -15742,15 +15246,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGTransformable.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGTransformable.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGTransformDistance.cpp"
 				>
 			</File>
 			<File
@@ -15758,23 +15254,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGTransformList.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGTransformList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGTRefElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGTRefElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGTSpanElement.cpp"
 				>
 			</File>
 			<File
@@ -15786,15 +15270,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGURIReference.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGURIReference.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGUseElement.cpp"
 				>
 			</File>
 			<File
@@ -15802,15 +15278,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGViewElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGViewElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGViewSpec.cpp"
 				>
 			</File>
 			<File
@@ -15818,15 +15286,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGZoomAndPan.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGZoomAndPan.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGZoomEvent.cpp"
 				>
 			</File>
 			<File
