@@ -120,3 +120,8 @@ simpleroutine StreamDidFail(pluginHostPort :mach_port_t;
                             reason :int16_t);
 
 // Replies
+
+simpleroutine EvaluateReply(pluginHostPort :mach_port_t;
+                            pluginID :uint32_t;
+                            returnValue :boolean_t;
+                            result :data_t);

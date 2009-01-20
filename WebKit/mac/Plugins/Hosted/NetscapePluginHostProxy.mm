@@ -272,8 +272,7 @@ kern_return_t WKPCReleaseObject(mach_port_t clientPort, uint32_t pluginID, uint3
     return KERN_SUCCESS;
 }
 
-kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID, data_t scriptData, mach_msg_type_number_t scriptLength,
-                           boolean_t*returnValue, data_t* resultData, mach_msg_type_number_t* resultLength)
+kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID, data_t scriptData, mach_msg_type_number_t scriptLength)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
@@ -284,8 +283,15 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t o
         return KERN_FAILURE;
 
     String script = fromUTF8WithLatin1Fallback(scriptData, scriptLength);
-    *returnValue = instanceProxy->evaluate(objectID, script, *resultData, *resultLength);
     
+    data_t resultData;
+    mach_msg_type_number_t resultLength;
+    
+    boolean_t returnValue = instanceProxy->evaluate(objectID, script, resultData, resultLength);
+    
+    kern_return_t kr = _WKPHEvaluateReply(hostProxy->port(), instanceProxy->pluginID(), returnValue, resultData, resultLength);
+    mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
+        
     return KERN_SUCCESS;
 }
 

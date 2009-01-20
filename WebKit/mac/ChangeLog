@@ -1,3 +1,14 @@
+2009-01-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make Evaluate an asynchronous method that has a reply method.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEvaluate):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
 2009-01-19  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Tim Hatcher
