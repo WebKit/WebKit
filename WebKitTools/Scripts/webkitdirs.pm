@@ -619,6 +619,23 @@ sub isAppleWinWebKit()
     return isAppleWebKit() && isCygwin();
 }
 
+sub isPerianInstalled()
+{
+    if (!isAppleWebKit()) {
+        return 0;
+    }
+
+    if (-d "/Library/QuickTime/Perian.component") {
+        return 1;
+    }
+
+    if (-d "$ENV{HOME}/Library/QuickTime/Perian.component") {
+        return 1;
+    }
+
+    return 0;
+}
+
 sub determineOSXVersion()
 {
     return if $osXVersion;
