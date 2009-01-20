@@ -1817,7 +1817,7 @@ QAction *QWebPage::action(WebAction action) const
             text = tr("Select to the end of the block");
             break;
         case SelectStartOfDocument:
-            text = tr("Select to the start of the documeht");
+            text = tr("Select to the start of the document");
             break;
         case SelectEndOfDocument:
             text = tr("Select to the end of the document");
