@@ -29,6 +29,7 @@
 
 #import "HostedNetscapePluginStream.h"
 #import "NetscapePluginHostProxy.h"
+#import "ProxyInstance.h"
 #import "WebDataSourceInternal.h"
 #import "WebFrameInternal.h"
 #import "WebHostedNetscapePluginView.h"
@@ -56,6 +57,7 @@ extern "C" {
 }
 
 using namespace JSC;
+using namespace JSC::Bindings;
 using namespace std;
 using namespace WebCore;
 
@@ -878,6 +880,19 @@ void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t values
     JSValuePtr value;
     while (demarshalValueFromArray(exec, array.get(), position, value))
         result.append(value);
+}
+
+PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRefPtr<RootObject>)
+{
+    if (_WKPHGetScriptableNPObject(m_pluginHostProxy->port(), m_pluginID) != KERN_SUCCESS)
+        return 0;
+    
+    auto_ptr<GetScriptableNPObjectReply> reply = waitForReply<GetScriptableNPObjectReply>();
+    if (!reply.get())
+        return 0;
+    
+    // FIXME: Implement
+    return 0;
 }
 
 } // namespace WebKit

@@ -140,5 +140,9 @@ simpleroutine InstantiatePluginReply(clientPort :mach_port_t;
                                      renderContextID :uint32_t;
                                      useSoftwareRenderer :boolean_t);
 
+simpleroutine GetScriptableNPObjectReply(clientPort :mach_port_t;
+                                         pluginID :uint32_t;
+                                         objectID :uint32_t);
+
 
 

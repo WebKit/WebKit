@@ -1,3 +1,35 @@
+2009-01-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add and implement GetScriptableNPObject.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCGetScriptableNPObjectReply):
+        Create a new reply struct and set it as the current reply.
+        
+        (WKPCEvaluate):
+        Get rid of an unused variable.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::Reply::):
+        (WebKit::NetscapePluginInstanceProxy::GetScriptableNPObjectReply::GetScriptableNPObjectReply):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::createBindingsInstance):
+        Call _WKPHGetScriptableNPObject and wait for a reply.
+        
+        * Plugins/Hosted/ProxyInstance.h: Added.
+        * Plugins/Hosted/ProxyInstance.mm: Added.
+        Add empty files.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView JSC::Bindings::createPluginBindingsInstance:JSC::Bindings::]):
+        Call NetscapePluginInstanceProxy::createBindingsInstance.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        Add new declarations.
+
 2009-01-19  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Gavin Barraclough.

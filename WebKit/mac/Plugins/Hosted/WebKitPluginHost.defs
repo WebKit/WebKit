@@ -119,6 +119,11 @@ simpleroutine StreamDidFail(pluginHostPort :mach_port_t;
                             streamID :uint32_t;
                             reason :int16_t);
 
+// NPRuntime
+
+simpleroutine GetScriptableNPObject(pluginHostPort :mach_port_t;
+                                    pluginID :uint32_t);
+
 // Replies
 
 simpleroutine EvaluateReply(pluginHostPort :mach_port_t;

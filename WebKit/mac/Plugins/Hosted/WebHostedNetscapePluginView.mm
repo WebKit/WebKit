@@ -34,6 +34,8 @@
 #import "WebUIDelegate.h"
 
 #import <CoreFoundation/CoreFoundation.h>
+#import <WebCore/runtime.h>
+#import <WebCore/runtime_root.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
@@ -282,6 +284,11 @@ extern "C" {
         [[NSColor redColor] set];
         NSRectFill(rect);
     }
+}
+
+- (PassRefPtr<JSC::Bindings::Instance>)createPluginBindingsInstance:(PassRefPtr<JSC::Bindings::RootObject>)rootObject
+{
+    return _proxy->createBindingsInstance(rootObject);
 }
 
 @end

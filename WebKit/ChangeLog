@@ -1,3 +1,11 @@
+2009-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add ProxyInstance files.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-01-04  David Kilzer  <ddkilzer@apple.com>
 
         Don't install internal headers in WebKit framework

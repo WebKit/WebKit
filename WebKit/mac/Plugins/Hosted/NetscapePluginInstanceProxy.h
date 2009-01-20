@@ -42,6 +42,12 @@ namespace WebCore {
     class String;
 }
 
+namespace JSC {
+    namespace Bindings {
+        class Instance;
+        class RootObject;
+    }
+}
 @class WebHostedNetscapePluginView;
 
 namespace WebKit {
@@ -105,10 +111,13 @@ public:
     void status(const char* message);
     NPError loadURL(const char* url, const char* target, const char* postData, uint32_t postDataLength, LoadURLFlags, uint32_t& requestID);
 
+    PassRefPtr<JSC::Bindings::Instance> createBindingsInstance(PassRefPtr<JSC::Bindings::RootObject>);
+    
     // Reply structs
     struct Reply {
         enum Type {
-            InstantiatePlugin
+            InstantiatePlugin,
+            GetScriptableNPObject
         };
         
         Reply(Type type) : m_type(type) { }
@@ -133,6 +142,18 @@ public:
         boolean_t m_useSoftwareRenderer;
     };
 
+    struct GetScriptableNPObjectReply : public Reply {
+        static const int ReplyType = GetScriptableNPObject;
+        
+        GetScriptableNPObjectReply(uint32_t objectID)
+            : Reply(GetScriptableNPObject)
+            , m_objectID(objectID)
+        {
+        }
+            
+        uint32_t m_objectID;
+    };
+    
     void setCurrentReply(Reply* reply)
     {
         ASSERT(!m_currentReply.get());
