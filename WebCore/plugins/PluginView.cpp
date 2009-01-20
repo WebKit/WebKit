@@ -206,12 +206,12 @@ static char* createUTF8String(const String& str)
 
 static bool getString(ScriptController* proxy, JSValuePtr result, String& string)
 {
-    if (!proxy || !result || result->isUndefined())
+    if (!proxy || !result || result.isUndefined())
         return false;
     JSLock lock(false);
 
     ExecState* exec = proxy->globalObject()->globalExec();
-    UString ustring = result->toString(exec);
+    UString ustring = result.toString(exec);
     exec->clearException();
 
     string = ustring;

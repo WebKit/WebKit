@@ -1,5 +1,12 @@
 2009-01-19  Sam Weinig  <sam@webkit.org>
 
+        Fix wx build.
+
+        * plugins/PluginView.cpp:
+        (WebCore::getString):
+
+2009-01-19  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Gavin Barraclough.
 
         Remove temporary operator-> from JSValuePtr.
