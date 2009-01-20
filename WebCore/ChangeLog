@@ -1,3 +1,12 @@
+2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Build fix for WML enabled builds, not reviewed.
+
+        Rename 'continuation' to 'virtualContinuation'.
+
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::isKeyboardFocusable):
+
 2009-01-20  Oliver Hunt  <oliver@apple.com>
 
         RS=Dan Bernstein
