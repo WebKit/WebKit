@@ -2,6 +2,16 @@
 
         Reviewed by Adam Roben.
 
+        Fix last-minute regression, introduced by simplifying max length determination - by
+        clamping using min/max, negative maxLength values got broken.
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::parseMaxLengthAttribute):
+
+2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Adam Roben.
+
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=23433
 
         Add InputElement abstraction, similar to the FormControlElement refactorization
