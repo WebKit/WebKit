@@ -1013,12 +1013,12 @@ void ApplyStyleCommand::removeHTMLBidiEmbeddingStyle(CSSMutableStyleDeclaration 
         removeNodePreservingChildren(elem);
 }
 
-void ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration *style, HTMLElement *elem)
+void ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration* style, HTMLElement* elem)
 {
     ASSERT(style);
     ASSERT(elem);
 
-    CSSMutableStyleDeclaration *decl = elem->inlineStyleDecl();
+    CSSMutableStyleDeclaration* decl = elem->inlineStyleDecl();
     if (!decl)
         return;
 
@@ -1032,6 +1032,10 @@ void ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration *style, HTMLEl
                 removeCSSProperty(decl, CSSPropertyDirection);
         }
     }
+
+    // No need to serialize <foo style=""> if we just removed the last css property
+    if (decl->length() == 0)
+        removeNodeAttribute(elem, styleAttr);
 
     if (isUnstyledStyleSpan(elem))
         removeNodePreservingChildren(elem);

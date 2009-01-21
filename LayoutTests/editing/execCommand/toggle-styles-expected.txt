@@ -6,25 +6,25 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS document.compatMode is "BackCompat"
 PASS bold toggle
 PASS bold removing b
-FAIL bold removing font-weight: bold -- <span style="">test</span>
+FAIL bold removing font-weight: bold -- <span>test</span>
 FAIL bold removing strong -- <strong><span class="Apple-style-span" style="font-weight: normal;">test</span></strong>
 PASS italic toggle
 PASS italic removing i
-FAIL italic removing font-style: italic -- <span style="">test</span>
+FAIL italic removing font-style: italic -- <span>test</span>
 FAIL italic removing em -- <em><span class="Apple-style-span" style="font-style: normal;">test</span></em>
 PASS subscript toggle
 PASS subscript removing sub
-FAIL subscript removing vertical-align: sub -- <span style="">test</span>
+FAIL subscript removing vertical-align: sub -- <span>test</span>
 PASS superscript toggle
 PASS superscript removing sup
-FAIL superscript removing vertical-align: super -- <span style="">test</span>
+FAIL superscript removing vertical-align: super -- <span>test</span>
 PASS strikethrough toggle
-FAIL strikethrough removing strike -- <strike style=""><span class="Apple-style-span" style="text-decoration: none;">test</span></strike>
-FAIL strikethrough removing text-decoration: line-through -- <span style="">test</span>
-FAIL strikethrough removing s -- <s style=""><span class="Apple-style-span" style="text-decoration: none;">test</span></s>
+FAIL strikethrough removing strike -- <strike><span class="Apple-style-span" style="text-decoration: none;">test</span></strike>
+FAIL strikethrough removing text-decoration: line-through -- <span>test</span>
+FAIL strikethrough removing s -- <s><span class="Apple-style-span" style="text-decoration: none;">test</span></s>
 PASS underline toggle
-FAIL underline removing u -- <u style=""><span class="Apple-style-span" style="text-decoration: none;">test</span></u>
-FAIL underline removing text-decoration: underline -- <span style="">test</span>
+FAIL underline removing u -- <u><span class="Apple-style-span" style="text-decoration: none;">test</span></u>
+FAIL underline removing text-decoration: underline -- <span>test</span>
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,5 +1,19 @@
 2009-01-21  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Justin Garcia.
+
+        Remove the style='' turds left by some editing commands
+        https://bugs.webkit.org/show_bug.cgi?id=23463
+
+        Test: editing/execCommand/toggle-styles.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeCSSStyle): check if we just removed the last CSS property and remove the style attribute as well
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removeNodeAttribute): remove extra ;
+
+2009-01-21  Eric Seidel  <eric@webkit.org>
+
         No review, build fix.
 
         Fix release-only build failure (and do a tiny code-cleanup).

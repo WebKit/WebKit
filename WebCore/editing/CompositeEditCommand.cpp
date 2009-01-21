@@ -356,7 +356,7 @@ void CompositeEditCommand::removeCSSProperty(PassRefPtr<CSSMutableStyleDeclarati
 
 void CompositeEditCommand::removeNodeAttribute(PassRefPtr<Element> element, const QualifiedName& attribute)
 {
-    setNodeAttribute(element, attribute, AtomicString());;
+    setNodeAttribute(element, attribute, AtomicString());
 }
 
 void CompositeEditCommand::setNodeAttribute(PassRefPtr<Element> element, const QualifiedName& attribute, const AtomicString& value)
