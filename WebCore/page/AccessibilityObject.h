@@ -400,6 +400,10 @@ public:
     bool accessibilityIgnoreAttachment() const { return true; }
 #endif
 
+    // allows for an AccessibilityObject to update its render tree or perform
+    // other operations update type operations
+    virtual void updateBackingStore();
+    
 protected:
     unsigned m_id;
     AccessibilityChildrenVector m_children;

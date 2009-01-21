@@ -580,6 +580,8 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
 - (NSArray*)accessibilityActionNames
 {
+    m_object->updateBackingStore();
+
     static NSArray* actionElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, NSAccessibilityShowMenuAction, nil];
     static NSArray* defaultElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityShowMenuAction, nil];
     static NSArray* menuElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityCancelAction, NSAccessibilityPressAction, nil];
@@ -599,6 +601,8 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
 - (NSArray*)accessibilityAttributeNames
 {
+    m_object->updateBackingStore();
+    
     if (m_object->isAttachment())
         return [[self attachmentView] accessibilityAttributeNames];
 
@@ -1124,6 +1128,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (!m_object)
         return nil;
 
+    m_object->updateBackingStore();
+    
     if ([attributeName isEqualToString: NSAccessibilityRoleAttribute])
         return [self role];
 
@@ -1430,6 +1436,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (id)accessibilityFocusedUIElement
 {
+    m_object->updateBackingStore();
+
     RefPtr<AccessibilityObject> focusedObj = m_object->focusedUIElement();
 
     if (!focusedObj)
@@ -1440,6 +1448,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (id)accessibilityHitTest:(NSPoint)point
 {
+    m_object->updateBackingStore();
+
     RefPtr<AccessibilityObject> axObject = m_object->doAccessibilityHitTest(IntPoint(point));
     if (axObject)
         return NSAccessibilityUnignoredAncestor(axObject->wrapper());
@@ -1448,6 +1458,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
 {
+    m_object->updateBackingStore();
+
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"])
         return YES;
 
@@ -1482,6 +1494,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 // Registering an object is also required for observing notifications. Only registered objects can be observed.
 - (BOOL)accessibilityIsIgnored
 {
+    m_object->updateBackingStore();
+
     if (m_object->isAttachment())
         return [[self attachmentView] accessibilityIsIgnored];
     return m_object->accessibilityIsIgnored();
@@ -1489,6 +1503,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (NSArray* )accessibilityParameterizedAttributeNames
 {
+    m_object->updateBackingStore();
+
     if (m_object->isAttachment()) 
         return nil;
 
@@ -1569,6 +1585,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityPerformPressAction
 {
+    m_object->updateBackingStore();
+
     if (m_object->isAttachment())
         [[self attachmentView] accessibilityPerformAction:NSAccessibilityPressAction];
     
@@ -1613,6 +1631,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityPerformAction:(NSString*)action
 {
+    m_object->updateBackingStore();
+
     if ([action isEqualToString:NSAccessibilityPressAction])
         [self accessibilityPerformPressAction];
     
@@ -1622,6 +1642,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
 {
+    m_object->updateBackingStore();
+
     WebCoreTextMarkerRange* textMarkerRange = nil;
     NSNumber*               number = nil;
     NSString*               string = nil;
@@ -1744,6 +1766,8 @@ static RenderObject* rendererForView(NSView* view)
     if (!m_object || !attribute || !parameter)
         return nil;
 
+    m_object->updateBackingStore();
+    
     // common parameter type check/casting.  Nil checks in handlers catch wrong type case.
     // NOTE: This assumes nil is not a valid parameter, because it is indistinguishable from
     // a parameter of the wrong type.
@@ -1989,6 +2013,8 @@ static RenderObject* rendererForView(NSView* view)
 // API that AppKit uses for faster access
 - (NSUInteger)accessibilityIndexOfChild:(id)child
 {
+    m_object->updateBackingStore();
+    
     const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
        
     if (children.isEmpty())
@@ -2005,6 +2031,8 @@ static RenderObject* rendererForView(NSView* view)
 
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute
 {
+    m_object->updateBackingStore();
+    
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
         const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
         if (children.isEmpty())
@@ -2018,6 +2046,8 @@ static RenderObject* rendererForView(NSView* view)
 
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount 
 {
+    m_object->updateBackingStore();
+    
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
         if (m_object->children().isEmpty()) {
             NSArray *children = [self renderWidgetChildren];

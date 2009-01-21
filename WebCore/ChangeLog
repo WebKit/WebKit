@@ -1,3 +1,44 @@
+2009-01-21  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 23443: Table accessibility should be re-enabled after fixing crash that occurs at WebCore::AccessibilityTable::isTableExposableThroughAccessibility() 
+        https://bugs.webkit.org/show_bug.cgi?id=23443
+
+        Test: accessibility/table-modification-crash.html
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::updateBackingStore):
+        * page/AccessibilityObject.h:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::childrenChanged):
+        (WebCore::AccessibilityRenderObject::children):
+        (WebCore::AccessibilityRenderObject::updateBackingStore):
+        * page/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::markChildrenDirty):
+        * page/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::AccessibilityTable):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityActionNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityFocusedUIElement]):
+        (-[AccessibilityObjectWrapper accessibilityHitTest:]):
+        (-[AccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+        (-[AccessibilityObjectWrapper accessibilityIsIgnored]):
+        (-[AccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityPerformPressAction]):
+        (-[AccessibilityObjectWrapper accessibilityPerformAction:]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (-[AccessibilityObjectWrapper accessibilityIndexOfChild:]):
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeCount:]):
+        (-[AccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2009-01-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin Garcia.

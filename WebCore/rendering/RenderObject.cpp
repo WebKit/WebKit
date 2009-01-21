@@ -2622,9 +2622,10 @@ void RenderObject::destroy()
     if (m_hasCounterNodeMap)
         RenderCounter::destroyCounterNodes(this);
 
-    if (AXObjectCache::accessibilityEnabled())
+    if (AXObjectCache::accessibilityEnabled()) {
+        document()->axObjectCache()->childrenChanged(this->parent());
         document()->axObjectCache()->remove(this);
-
+    }
     animation()->cancelAnimations(this);
 
     // By default no ref-counting. RenderWidget::destroy() doesn't call

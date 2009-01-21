@@ -209,9 +209,12 @@ public:
     virtual String doAXStringForRange(const PlainTextRange&) const;
     virtual IntRect doAXBoundsForRange(const PlainTextRange&) const;
     
+    virtual void updateBackingStore();
+    
 protected:
     RenderObject* m_renderer;
     AccessibilityRole m_ariaRole;
+    mutable bool m_childrenDirty;
     
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
     virtual void removeAXObjectID();
@@ -231,6 +234,7 @@ private:
     AccessibilityObject* internalLinkElement() const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement* map) const;
 
+    void markChildrenDirty() const { m_childrenDirty = true; }
 };
     
 } // namespace WebCore

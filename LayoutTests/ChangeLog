@@ -1,3 +1,12 @@
+2009-01-21  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Test to make sure accessibility doesn't crash when a table is modified through JavaScript
+
+        * accessibility/table-modification-crash-expected.txt: Added.
+        * accessibility/table-modification-crash.html: Added.
+
 2009-01-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin Garcia.
