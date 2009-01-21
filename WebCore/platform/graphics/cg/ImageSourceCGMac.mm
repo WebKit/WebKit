@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,8 @@ String MIMETypeForImageSourceType(const String& uti)
 String preferredExtensionForImageSourceType(const String& uti)
 {
     RetainPtr<CFStringRef> type(AdoptCF, uti.createCFString());
-    return UTTypeCopyPreferredTagWithClass(type.get(), kUTTagClassFilenameExtension);
+    RetainPtr<CFStringRef> extension(AdoptCF, UTTypeCopyPreferredTagWithClass(type.get(), kUTTagClassFilenameExtension));
+    return extension.get();
 }
 
 } // namespace WebCore
