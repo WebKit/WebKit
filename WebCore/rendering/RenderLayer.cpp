@@ -116,8 +116,8 @@ void ClipRects::destroy(RenderArena* renderArena)
     renderArena->free(*(size_t *)this, this);
 }
 
-RenderLayer::RenderLayer(RenderObject* object)
-    : m_object(object)
+RenderLayer::RenderLayer(RenderBox* renderer)
+    : m_renderer(renderer)
     , m_parent(0)
     , m_previous(0)
     , m_next(0)
@@ -164,9 +164,9 @@ RenderLayer::RenderLayer(RenderObject* object)
     , m_scrollCorner(0)
     , m_resizer(0)
 {
-    if (!object->firstChild() && object->style()) {
+    if (!renderer->firstChild() && renderer->style()) {
         m_visibleContentStatusDirty = false;
-        m_hasVisibleContent = object->style()->visibility() == VISIBLE;
+        m_hasVisibleContent = renderer->style()->visibility() == VISIBLE;
     }
 }
 
@@ -207,7 +207,7 @@ RenderLayer::~RenderLayer()
 void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
 {
     if (doFullRepaint) {
-        m_object->repaint();
+        renderer()->repaint();
         checkForRepaint = doFullRepaint = false;
     }
     
@@ -225,14 +225,14 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
     updateTransform();
      
     if (m_hasVisibleContent) {
-        RenderView* view = m_object->view();
+        RenderView* view = renderer()->view();
         ASSERT(view);
         // FIXME: Optimize using LayoutState and remove the disableLayoutState() call
         // from updateScrollInfoAfterLayout().
         ASSERT(!view->layoutStateEnabled());
 
-        IntRect newRect = m_object->absoluteClippedOverflowRect();
-        IntRect newOutlineBox = m_object->absoluteOutlineBounds();
+        IntRect newRect = renderer()->absoluteClippedOverflowRect();
+        IntRect newOutlineBox = renderer()->absoluteOutlineBounds();
         if (checkForRepaint) {
             if (view && !view->printing()) {
                 if (m_needsFullRepaint) {
@@ -240,7 +240,7 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
                     if (newRect != m_repaintRect)
                         view->repaintViewRectangle(newRect);
                 } else
-                    m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_outlineBox);
+                    renderer()->repaintAfterLayoutIfNeeded(m_repaintRect, m_outlineBox);
             }
         }
         m_repaintRect = newRect;
@@ -342,12 +342,12 @@ void RenderLayer::updateVisibilityStatus()
     }
 
     if (m_visibleContentStatusDirty) {
-        if (m_object->style()->visibility() == VISIBLE)
+        if (renderer()->style()->visibility() == VISIBLE)
             m_hasVisibleContent = true;
         else {
             // layer may be hidden but still have some visible content, check for this
             m_hasVisibleContent = false;
-            RenderObject* r = m_object->firstChild();
+            RenderObject* r = renderer()->firstChild();
             while (r) {
                 if (r->style()->visibility() == VISIBLE && !r->hasLayer()) {
                     m_hasVisibleContent = true;
@@ -360,7 +360,7 @@ void RenderLayer::updateVisibilityStatus()
                 else {
                     do {
                         r = r->parent();
-                        if (r==m_object)
+                        if (r==renderer())
                             r = 0;
                     } while (r && !r->nextSibling());
                     if (r)
@@ -377,13 +377,13 @@ void RenderLayer::updateLayerPosition()
     // Clear our cached clip rect information.
     clearClipRects();
 
-    int x = m_object->xPos();
-    int y = m_object->yPos() - m_object->borderTopExtra();
+    int x = renderer()->xPos();
+    int y = renderer()->yPos() - renderer()->borderTopExtra();
 
-    if (!m_object->isPositioned() && m_object->parent()) {
+    if (!renderer()->isPositioned() && renderer()->parent()) {
         // We must adjust our position by walking up the render tree looking for the
         // nearest enclosing object with a layer.
-        RenderObject* curr = m_object->parent();
+        RenderObject* curr = renderer()->parent();
         while (curr && !curr->hasLayer()) {
             if (!curr->isTableRow()) {
                 // Rows and cells share the same coordinate space (that of the section).
@@ -402,21 +402,21 @@ void RenderLayer::updateLayerPosition()
     }
 
     m_relX = m_relY = 0;
-    if (m_object->isRelPositioned()) {
-        m_relX = static_cast<RenderBox*>(m_object)->relativePositionOffsetX();
-        m_relY = static_cast<RenderBox*>(m_object)->relativePositionOffsetY();
+    if (renderer()->isRelPositioned()) {
+        m_relX = static_cast<RenderBox*>(renderer())->relativePositionOffsetX();
+        m_relY = static_cast<RenderBox*>(renderer())->relativePositionOffsetY();
         x += m_relX; y += m_relY;
     }
     
     // Subtract our parent's scroll offset.
-    if (m_object->isPositioned() && enclosingPositionedAncestor()) {
+    if (renderer()->isPositioned() && enclosingPositionedAncestor()) {
         RenderLayer* positionedParent = enclosingPositionedAncestor();
 
         // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
         positionedParent->subtractScrolledContentOffset(x, y);
         
-        if (m_object->isPositioned()) {
-            IntSize offset = static_cast<RenderBox*>(m_object)->offsetForPositionedInContainer(positionedParent->renderer());
+        if (renderer()->isPositioned()) {
+            IntSize offset = static_cast<RenderBox*>(renderer())->offsetForPositionedInContainer(positionedParent->renderer());
             x += offset.width();
             y += offset.height();
         }
@@ -425,22 +425,22 @@ void RenderLayer::updateLayerPosition()
     
     setPos(x,y);
 
-    setWidth(m_object->width());
-    setHeight(m_object->height() + m_object->borderTopExtra() + m_object->borderBottomExtra());
+    setWidth(renderer()->width());
+    setHeight(renderer()->height() + renderer()->borderTopExtra() + renderer()->borderBottomExtra());
 
-    if (!m_object->hasOverflowClip()) {
-        if (m_object->overflowWidth() > m_object->width())
-            setWidth(m_object->overflowWidth());
-        if (m_object->overflowHeight() > m_object->height())
-            setHeight(m_object->overflowHeight());
+    if (!renderer()->hasOverflowClip()) {
+        if (renderer()->overflowWidth() > renderer()->width())
+            setWidth(renderer()->overflowWidth());
+        if (renderer()->overflowHeight() > renderer()->height())
+            setHeight(renderer()->overflowHeight());
     }
 }
 
 RenderLayer *RenderLayer::stackingContext() const
 {
     RenderLayer* curr = parent();
-    for ( ; curr && !curr->m_object->isRenderView() && !curr->m_object->isRoot() &&
-          curr->m_object->style()->hasAutoZIndex();
+    for ( ; curr && !curr->renderer()->isRenderView() && !curr->renderer()->isRoot() &&
+          curr->renderer()->style()->hasAutoZIndex();
           curr = curr->parent()) { }
     return curr;
 }
@@ -448,7 +448,7 @@ RenderLayer *RenderLayer::stackingContext() const
 RenderLayer* RenderLayer::enclosingPositionedAncestor() const
 {
     RenderLayer* curr = parent();
-    for ( ; curr && !curr->m_object->isRenderView() && !curr->m_object->isPositioned() && !curr->m_object->isRelPositioned() && !curr->hasTransform();
+    for ( ; curr && !curr->renderer()->isRenderView() && !curr->renderer()->isPositioned() && !curr->renderer()->isRelPositioned() && !curr->hasTransform();
          curr = curr->parent()) { }
     return curr;
 }
@@ -456,7 +456,7 @@ RenderLayer* RenderLayer::enclosingPositionedAncestor() const
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const
 {
     RenderLayer* curr = parent();
-    for ( ; curr && !curr->m_object->isRenderView() && !curr->transform(); curr = curr->parent())
+    for ( ; curr && !curr->renderer()->isRenderView() && !curr->transform(); curr = curr->parent())
         { }
     return curr;
 }
@@ -479,10 +479,10 @@ bool RenderLayer::requiresSlowRepaints() const
 bool RenderLayer::isTransparent() const
 {
 #if ENABLE(SVG)
-    if (m_object->node()->namespaceURI() == SVGNames::svgNamespaceURI)
+    if (renderer()->node()->namespaceURI() == SVGNames::svgNamespaceURI)
         return false;
 #endif
-    return m_object->isTransparent() || m_object->hasMask();
+    return renderer()->isTransparent() || renderer()->hasMask();
 }
 
 RenderLayer*
@@ -695,17 +695,17 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int&
     if (ancestorLayer == this)
         return;
         
-    if (m_object->style()->position() == FixedPosition) {
+    if (renderer()->style()->position() == FixedPosition) {
         // Add in the offset of the view.  We can obtain this by calling
         // localToAbsolute() on the RenderView.
-        FloatPoint absPos = m_object->localToAbsolute(FloatPoint(), true);
+        FloatPoint absPos = renderer()->localToAbsolute(FloatPoint(), true);
         x += absPos.x();
         y += absPos.y();
         return;
     }
  
     RenderLayer* parentLayer;
-    if (m_object->style()->position() == AbsolutePosition)
+    if (renderer()->style()->position() == AbsolutePosition)
         parentLayer = enclosingPositionedAncestor();
     else
         parentLayer = parent();
@@ -758,10 +758,10 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
 void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
 {
     bool restrictedByLineClamp = false;
-    if (m_object->parent())
-        restrictedByLineClamp = m_object->parent()->style()->lineClamp() >= 0;
+    if (renderer()->parent())
+        restrictedByLineClamp = renderer()->parent()->style()->lineClamp() >= 0;
 
-    if (m_object->hasOverflowClip() && !restrictedByLineClamp) {
+    if (renderer()->hasOverflowClip() && !restrictedByLineClamp) {
         int newOffsetX = scrollXOffset() + xDelta;
         int newOffsetY = scrollYOffset() + yDelta;
         scrollToOffset(newOffsetX, newOffsetY);
@@ -769,14 +769,14 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
         // If this layer can't do the scroll we ask its parent
         int leftToScrollX = newOffsetX - scrollXOffset();
         int leftToScrollY = newOffsetY - scrollYOffset();
-        if ((leftToScrollX || leftToScrollY) && m_object->parent()) {
-            m_object->parent()->enclosingLayer()->scrollByRecursively(leftToScrollX, leftToScrollY);
+        if ((leftToScrollX || leftToScrollY) && renderer()->parent()) {
+            renderer()->parent()->enclosingLayer()->scrollByRecursively(leftToScrollX, leftToScrollY);
             Frame* frame = renderer()->document()->frame();
             if (frame)
                 frame->eventHandler()->updateAutoscrollRenderer();
         }
-    } else if (m_object->view()->frameView())
-        m_object->view()->frameView()->scrollBy(IntSize(xDelta, yDelta));
+    } else if (renderer()->view()->frameView())
+        renderer()->view()->frameView()->scrollBy(IntSize(xDelta, yDelta));
 }
 
 
@@ -802,8 +802,8 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     
         // Call the scrollWidth/Height functions so that the dimensions will be computed if they need
         // to be (for overflow:hidden blocks).
-        int maxX = scrollWidth() - m_object->clientWidth();
-        int maxY = scrollHeight() - m_object->clientHeight();
+        int maxX = scrollWidth() - renderer()->clientWidth();
+        int maxY = scrollHeight() - renderer()->clientHeight();
         
         if (x > maxX) x = maxX;
         if (y > maxY) y = maxY;
@@ -845,7 +845,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
 
     // Just schedule a full repaint of our object.
     if (repaint)
-        m_object->repaint();
+        renderer()->repaint();
     
     if (updateScrollbars) {
         if (m_hBar)
@@ -868,24 +868,24 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, bool scrollToAnchor, 
     int xOffset = 0, yOffset = 0;
 
     // We may end up propagating a scroll event. It is important that we suspend events until 
-    // the end of the function since they could delete the layer or the layer's m_object.
-    FrameView* frameView = m_object->document()->view();
+    // the end of the function since they could delete the layer or the layer's renderer().
+    FrameView* frameView = renderer()->document()->view();
     if (frameView)
         frameView->pauseScheduledEvents();
 
     bool restrictedByLineClamp = false;
-    if (m_object->parent()) {
-        parentLayer = m_object->parent()->enclosingLayer();
-        restrictedByLineClamp = m_object->parent()->style()->lineClamp() >= 0;
+    if (renderer()->parent()) {
+        parentLayer = renderer()->parent()->enclosingLayer();
+        restrictedByLineClamp = renderer()->parent()->style()->lineClamp() >= 0;
     }
 
-    if (m_object->hasOverflowClip() && !restrictedByLineClamp) {
+    if (renderer()->hasOverflowClip() && !restrictedByLineClamp) {
         // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
         // This will prevent us from revealing text hidden by the slider in Safari RSS.
-        FloatPoint absPos = m_object->localToAbsolute();
-        absPos.move(m_object->borderLeft(), m_object->borderTop());
+        FloatPoint absPos = renderer()->localToAbsolute();
+        absPos.move(renderer()->borderLeft(), renderer()->borderTop());
 
-        IntRect layerBounds = IntRect(absPos.x() + scrollXOffset(), absPos.y() + scrollYOffset(), m_object->clientWidth(), m_object->clientHeight());
+        IntRect layerBounds = IntRect(absPos.x() + scrollXOffset(), absPos.y() + scrollYOffset(), renderer()->clientWidth(), renderer()->clientHeight());
         IntRect exposeRect = IntRect(rect.x() + scrollXOffset(), rect.y() + scrollYOffset(), rect.width(), rect.height());
         IntRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
@@ -906,7 +906,7 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, bool scrollToAnchor, 
         }
     } else if (!parentLayer && renderer()->canBeProgramaticallyScrolled(scrollToAnchor)) {
         if (frameView) {
-            if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
+            if (renderer()->document() && renderer()->document()->ownerElement() && renderer()->document()->ownerElement()->renderer()) {
                 IntRect viewRect = frameView->visibleContentRect();
                 IntRect r = getRectToExpose(viewRect, rect, alignX, alignY);
                 
@@ -917,7 +917,7 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, bool scrollToAnchor, 
                 yOffset = max(0, min(frameView->contentsHeight(), yOffset));
 
                 frameView->setScrollPosition(IntPoint(xOffset, yOffset));
-                parentLayer = m_object->document()->ownerElement()->renderer()->enclosingLayer();
+                parentLayer = renderer()->document()->ownerElement()->renderer()->enclosingLayer();
                 newRect.setX(rect.x() - frameView->scrollX() + frameView->x());
                 newRect.setY(rect.y() - frameView->scrollY() + frameView->y());
             } else {
@@ -1029,12 +1029,12 @@ void RenderLayer::autoscroll()
 
 void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset)
 {
-    if (!inResizeMode() || !m_object->hasOverflowClip())
+    if (!inResizeMode() || !renderer()->hasOverflowClip())
         return;
 
     // Set the width and height of the shadow ancestor node if there is one.
     // This is necessary for textarea elements since the resizable layer is in the shadow content.
-    Element* element = static_cast<Element*>(m_object->node()->shadowAncestorNode());
+    Element* element = static_cast<Element*>(renderer()->node()->shadowAncestorNode());
     RenderBox* renderer = static_cast<RenderBox*>(element->renderer());
 
     EResize resize = renderer->style()->resize();
@@ -1171,7 +1171,7 @@ static IntRect resizerCornerRect(const RenderLayer* layer, const IntRect& bounds
 
 bool RenderLayer::scrollbarCornerPresent() const
 {
-    return !scrollCornerRect(this, m_object->borderBox()).isEmpty();
+    return !scrollCornerRect(this, renderer()->borderBox()).isEmpty();
 }
 
 void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
@@ -1187,12 +1187,12 @@ void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& r
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar> widget;
-    bool hasCustomScrollbarStyle = m_object->node()->shadowAncestorNode()->renderer()->style()->hasPseudoStyle(RenderStyle::SCROLLBAR);
+    bool hasCustomScrollbarStyle = renderer()->node()->shadowAncestorNode()->renderer()->style()->hasPseudoStyle(RenderStyle::SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(this, orientation, m_object->node()->shadowAncestorNode()->renderer());
+        widget = RenderScrollbar::createCustomScrollbar(this, orientation, renderer()->node()->shadowAncestorNode()->renderer());
     else
         widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
-    m_object->document()->view()->addChild(widget.get());        
+    renderer()->document()->view()->addChild(widget.get());        
     return widget.release();
 }
 
@@ -1224,8 +1224,8 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 
 #if ENABLE(DASHBOARD_SUPPORT)
     // Force an update since we know the scrollbars have changed things.
-    if (m_object->document()->hasDashboardRegions())
-        m_object->document()->setDashboardRegionsDirty(true);
+    if (renderer()->document()->hasDashboardRegions())
+        renderer()->document()->setDashboardRegionsDirty(true);
 #endif
 }
 
@@ -1247,8 +1247,8 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 
 #if ENABLE(DASHBOARD_SUPPORT)
     // Force an update since we know the scrollbars have changed things.
-    if (m_object->document()->hasDashboardRegions())
-        m_object->document()->setDashboardRegionsDirty(true);
+    if (renderer()->document()->hasDashboardRegions())
+        renderer()->document()->setDashboardRegionsDirty(true);
 #endif
 }
 
@@ -1276,22 +1276,22 @@ IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& absolutePoint) const
 
 void RenderLayer::positionOverflowControls(int tx, int ty)
 {
-    if (!m_hBar && !m_vBar && (!m_object->hasOverflowClip() || m_object->style()->resize() == RESIZE_NONE))
+    if (!m_hBar && !m_vBar && (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE))
         return;
     
-    IntRect borderBox = m_object->borderBox();
+    IntRect borderBox = renderer()->borderBox();
     IntRect scrollCorner(scrollCornerRect(this, borderBox));
     IntRect absBounds(borderBox.x() + tx, borderBox.y() + ty, borderBox.width(), borderBox.height());
     if (m_vBar)
-        m_vBar->setFrameRect(IntRect(absBounds.right() - m_object->borderRight() - m_vBar->width(),
-                                     absBounds.y() + m_object->borderTop(),
+        m_vBar->setFrameRect(IntRect(absBounds.right() - renderer()->borderRight() - m_vBar->width(),
+                                     absBounds.y() + renderer()->borderTop(),
                                      m_vBar->width(),
-                                     absBounds.height() - (m_object->borderTop() + m_object->borderBottom()) - scrollCorner.height()));
+                                     absBounds.height() - (renderer()->borderTop() + renderer()->borderBottom()) - scrollCorner.height()));
 
     if (m_hBar)
-        m_hBar->setFrameRect(IntRect(absBounds.x() + m_object->borderLeft(),
-                                     absBounds.bottom() - m_object->borderBottom() - m_hBar->height(),
-                                     absBounds.width() - (m_object->borderLeft() + m_object->borderRight()) - scrollCorner.width(),
+        m_hBar->setFrameRect(IntRect(absBounds.x() + renderer()->borderLeft(),
+                                     absBounds.bottom() - renderer()->borderBottom() - m_hBar->height(),
+                                     absBounds.width() - (renderer()->borderLeft() + renderer()->borderRight()) - scrollCorner.width(),
                                      m_hBar->height()));
     
     if (m_scrollCorner)
@@ -1318,17 +1318,17 @@ void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
 {
     m_scrollDimensionsDirty = false;
     
-    bool ltr = m_object->style()->direction() == LTR;
+    bool ltr = renderer()->style()->direction() == LTR;
 
-    int clientWidth = m_object->clientWidth();
-    int clientHeight = m_object->clientHeight();
+    int clientWidth = renderer()->clientWidth();
+    int clientHeight = renderer()->clientHeight();
 
-    m_scrollLeftOverflow = ltr ? 0 : min(0, m_object->leftmostPosition(true, false) - m_object->borderLeft());
+    m_scrollLeftOverflow = ltr ? 0 : min(0, renderer()->leftmostPosition(true, false) - renderer()->borderLeft());
 
     int rightPos = ltr ?
-                    m_object->rightmostPosition(true, false) - m_object->borderLeft() :
+                    renderer()->rightmostPosition(true, false) - renderer()->borderLeft() :
                     clientWidth - m_scrollLeftOverflow;
-    int bottomPos = m_object->lowestPosition(true, false) - m_object->borderTop();
+    int bottomPos = renderer()->lowestPosition(true, false) - renderer()->borderTop();
 
     m_scrollWidth = max(rightPos, clientWidth);
     m_scrollHeight = max(bottomPos, clientHeight);
@@ -1358,9 +1358,9 @@ void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOve
         m_horizontalOverflow = horizontalOverflow;
         m_verticalOverflow = verticalOverflow;
         
-        if (FrameView* frameView = m_object->document()->view()) {
+        if (FrameView* frameView = renderer()->document()->view()) {
             frameView->scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
-                EventTargetNodeCast(m_object->element()));
+                EventTargetNodeCast(renderer()->element()));
         }
     }
 }
@@ -1373,13 +1373,13 @@ RenderLayer::updateScrollInfoAfterLayout()
     bool horizontalOverflow, verticalOverflow;
     computeScrollDimensions(&horizontalOverflow, &verticalOverflow);
 
-    if (m_object->style()->overflowX() != OMARQUEE) {
+    if (renderer()->style()->overflowX() != OMARQUEE) {
         // Layout may cause us to be in an invalid scroll position.  In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
-        int newX = max(0, min(scrollXOffset(), scrollWidth() - m_object->clientWidth()));
-        int newY = max(0, min(m_scrollY, scrollHeight() - m_object->clientHeight()));
+        int newX = max(0, min(scrollXOffset(), scrollWidth() - renderer()->clientWidth()));
+        int newY = max(0, min(m_scrollY, scrollHeight() - renderer()->clientHeight()));
         if (newX != scrollXOffset() || newY != m_scrollY) {
-            RenderView* view = m_object->view();
+            RenderView* view = renderer()->view();
             ASSERT(view);
             // scrollToOffset() may call updateLayerPositions(), which doesn't work
             // with LayoutState.
@@ -1396,58 +1396,58 @@ RenderLayer::updateScrollInfoAfterLayout()
     bool haveVerticalBar = m_vBar;
     
     // overflow:scroll should just enable/disable.
-    if (m_object->style()->overflowX() == OSCROLL)
+    if (renderer()->style()->overflowX() == OSCROLL)
         m_hBar->setEnabled(horizontalOverflow);
-    if (m_object->style()->overflowY() == OSCROLL)
+    if (renderer()->style()->overflowY() == OSCROLL)
         m_vBar->setEnabled(verticalOverflow);
 
     // A dynamic change from a scrolling overflow to overflow:hidden means we need to get rid of any
     // scrollbars that may be present.
-    if (m_object->style()->overflowX() == OHIDDEN && haveHorizontalBar)
+    if (renderer()->style()->overflowX() == OHIDDEN && haveHorizontalBar)
         setHasHorizontalScrollbar(false);
-    if (m_object->style()->overflowY() == OHIDDEN && haveVerticalBar)
+    if (renderer()->style()->overflowY() == OHIDDEN && haveVerticalBar)
         setHasVerticalScrollbar(false);
     
     // overflow:auto may need to lay out again if scrollbars got added/removed.
-    bool scrollbarsChanged = (m_object->hasAutoHorizontalScrollbar() && haveHorizontalBar != horizontalOverflow) || 
-                             (m_object->hasAutoVerticalScrollbar() && haveVerticalBar != verticalOverflow);    
+    bool scrollbarsChanged = (renderer()->hasAutoHorizontalScrollbar() && haveHorizontalBar != horizontalOverflow) || 
+                             (renderer()->hasAutoVerticalScrollbar() && haveVerticalBar != verticalOverflow);    
     if (scrollbarsChanged) {
-        if (m_object->hasAutoHorizontalScrollbar())
+        if (renderer()->hasAutoHorizontalScrollbar())
             setHasHorizontalScrollbar(horizontalOverflow);
-        if (m_object->hasAutoVerticalScrollbar())
+        if (renderer()->hasAutoVerticalScrollbar())
             setHasVerticalScrollbar(verticalOverflow);
 
 #if ENABLE(DASHBOARD_SUPPORT)
         // Force an update since we know the scrollbars have changed things.
-        if (m_object->document()->hasDashboardRegions())
-            m_object->document()->setDashboardRegionsDirty(true);
+        if (renderer()->document()->hasDashboardRegions())
+            renderer()->document()->setDashboardRegionsDirty(true);
 #endif
 
-        m_object->repaint();
+        renderer()->repaint();
 
-        if (m_object->style()->overflowX() == OAUTO || m_object->style()->overflowY() == OAUTO) {
+        if (renderer()->style()->overflowX() == OAUTO || renderer()->style()->overflowY() == OAUTO) {
             if (!m_inOverflowRelayout) {
                 // Our proprietary overflow: overlay value doesn't trigger a layout.
                 m_inOverflowRelayout = true;
-                m_object->setNeedsLayout(true);
-                if (m_object->isRenderBlock())
-                    static_cast<RenderBlock*>(m_object)->layoutBlock(true);
+                renderer()->setNeedsLayout(true);
+                if (renderer()->isRenderBlock())
+                    static_cast<RenderBlock*>(renderer())->layoutBlock(true);
                 else
-                    m_object->layout();
+                    renderer()->layout();
                 m_inOverflowRelayout = false;
             }
         }
     }
     
     // If overflow:scroll is turned into overflow:auto a bar might still be disabled (Bug 11985).
-    if (m_hBar && m_object->hasAutoHorizontalScrollbar())
+    if (m_hBar && renderer()->hasAutoHorizontalScrollbar())
         m_hBar->setEnabled(true);
-    if (m_vBar && m_object->hasAutoVerticalScrollbar())
+    if (m_vBar && renderer()->hasAutoVerticalScrollbar())
         m_vBar->setEnabled(true);
 
     // Set up the range (and page step/line step).
     if (m_hBar) {
-        int clientWidth = m_object->clientWidth();
+        int clientWidth = renderer()->clientWidth();
         int pageStep = (clientWidth - cAmountToKeepWhenPaging);
         if (pageStep < 0) pageStep = clientWidth;
         m_hBar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
@@ -1455,21 +1455,21 @@ RenderLayer::updateScrollInfoAfterLayout()
         m_hBar->setValue(scrollXOffset());
     }
     if (m_vBar) {
-        int clientHeight = m_object->clientHeight();
+        int clientHeight = renderer()->clientHeight();
         int pageStep = (clientHeight - cAmountToKeepWhenPaging);
         if (pageStep < 0) pageStep = clientHeight;
         m_vBar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
         m_vBar->setProportion(clientHeight, m_scrollHeight);
     }
  
-    if (m_object->element() && m_object->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
+    if (renderer()->element() && renderer()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(horizontalOverflow, verticalOverflow);
 }
 
 void RenderLayer::paintOverflowControls(GraphicsContext* context, int tx, int ty, const IntRect& damageRect)
 {
     // Don't do anything if we have no overflow.
-    if (!m_object->hasOverflowClip())
+    if (!renderer()->hasOverflowClip())
         return;
     
     // Move the scrollbar widgets if necessary.  We normally move and resize widgets during layout, but sometimes
@@ -1493,7 +1493,7 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, int tx, int ty
 
 void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, const IntRect& damageRect)
 {
-    IntRect cornerRect = scrollCornerRect(this, m_object->borderBox());
+    IntRect cornerRect = scrollCornerRect(this, renderer()->borderBox());
     IntRect absRect = IntRect(cornerRect.x() + tx, cornerRect.y() + ty, cornerRect.width(), cornerRect.height());
     if (!absRect.intersects(damageRect))
         return;
@@ -1513,10 +1513,10 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, co
 
 void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const IntRect& damageRect)
 {
-    if (m_object->style()->resize() == RESIZE_NONE)
+    if (renderer()->style()->resize() == RESIZE_NONE)
         return;
 
-    IntRect cornerRect = resizerCornerRect(this, m_object->borderBox());
+    IntRect cornerRect = resizerCornerRect(this, renderer()->borderBox());
     IntRect absRect = IntRect(cornerRect.x() + tx, cornerRect.y() + ty, cornerRect.width(), cornerRect.height());
     if (!absRect.intersects(damageRect))
         return;
@@ -1552,12 +1552,12 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
 
 bool RenderLayer::isPointInResizeControl(const IntPoint& absolutePoint) const
 {
-    if (!m_object->hasOverflowClip() || m_object->style()->resize() == RESIZE_NONE)
+    if (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE)
         return false;
     
     IntPoint localPoint = absoluteToContents(absolutePoint);
 
-    IntRect localBounds(0, 0, m_object->width(), m_object->height());
+    IntRect localBounds(0, 0, renderer()->width(), renderer()->height());
     return resizerCornerRect(this, localBounds).contains(localPoint);
 }
     
@@ -1653,7 +1653,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         return;
     
     // If this layer is totally invisible then there is nothing to paint.
-    if (!m_object->opacity())
+    if (!renderer()->opacity())
         return;
 
     if (isTransparent())
@@ -1739,7 +1739,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Else, our renderer tree may or may not contain the painting root, so we pass that root along
     // so it will be tested against as we decend through the renderers.
     RenderObject* paintingRootForRenderer = 0;
-    if (paintingRoot && !m_object->isDescendantOf(paintingRoot))
+    if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
 
     // We want to paint our layer, but only if we intersect the damage rect.
@@ -1949,7 +1949,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
     if (fgRect.contains(hitTestPoint) && 
         renderer()->hitTest(request, result, hitTestPoint,
                             layerBounds.x() - renderer()->xPos(),
-                            layerBounds.y() - renderer()->yPos() + m_object->borderTopExtra(), 
+                            layerBounds.y() - renderer()->yPos() + renderer()->borderTopExtra(), 
                             HitTestDescendants)) {
         // For positioned generated content, we might still not have a
         // node by the time we get to the layer level, since none of
@@ -1979,7 +1979,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
     if (bgRect.contains(hitTestPoint) &&
         renderer()->hitTest(request, result, hitTestPoint,
                             layerBounds.x() - renderer()->xPos(),
-                            layerBounds.y() - renderer()->yPos() + m_object->borderTopExtra(),
+                            layerBounds.y() - renderer()->yPos() + renderer()->borderTopExtra(),
                             HitTestSelf)) {
         if (!result.innerNode() || !result.innerNonSharedNode()) {
             Node* e = enclosingElement();
@@ -2022,7 +2022,7 @@ void RenderLayer::updateClipRects(const RenderLayer* rootLayer)
     if (parentLayer && parentLayer->clipRects() && clipRects == *parentLayer->clipRects())
         m_clipRects = parentLayer->clipRects();
     else
-        m_clipRects = new (m_object->renderArena()) ClipRects(clipRects);
+        m_clipRects = new (renderer()->renderArena()) ClipRects(clipRects);
     m_clipRects->ref();
 #ifndef NDEBUG
     m_clipRectsRoot = rootLayer;
@@ -2054,18 +2054,18 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, ClipRects& cl
 
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.
-    if (m_object->style()->position() == FixedPosition) {
+    if (renderer()->style()->position() == FixedPosition) {
         clipRects.setPosClipRect(clipRects.fixedClipRect());
         clipRects.setOverflowClipRect(clipRects.fixedClipRect());
         clipRects.setFixed(true);
     }
-    else if (m_object->style()->position() == RelativePosition)
+    else if (renderer()->style()->position() == RelativePosition)
         clipRects.setPosClipRect(clipRects.overflowClipRect());
-    else if (m_object->style()->position() == AbsolutePosition)
+    else if (renderer()->style()->position() == AbsolutePosition)
         clipRects.setOverflowClipRect(clipRects.posClipRect());
     
     // Update the clip rects that will be passed to child layers.
-    if (m_object->hasOverflowClip() || m_object->hasClip()) {
+    if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
         // This layer establishes a clip of some kind.
         int x = 0;
         int y = 0;
@@ -2077,14 +2077,14 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, ClipRects& cl
             y -= view->frameView()->scrollY();
         }
         
-        if (m_object->hasOverflowClip()) {
-            IntRect newOverflowClip = m_object->getOverflowClipRect(x,y);
+        if (renderer()->hasOverflowClip()) {
+            IntRect newOverflowClip = renderer()->getOverflowClipRect(x,y);
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
-            if (m_object->isPositioned() || m_object->isRelPositioned())
+            if (renderer()->isPositioned() || renderer()->isRelPositioned())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
         }
-        if (m_object->hasClip()) {
-            IntRect newPosClip = m_object->getClipRect(x,y);
+        if (renderer()->hasClip()) {
+            IntRect newPosClip = renderer()->getClipRect(x,y);
             clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
@@ -2104,8 +2104,8 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
             parentClipRects = *parent()->clipRects();
         }
 
-        backgroundRect = m_object->style()->position() == FixedPosition ? parentClipRects.fixedClipRect() :
-                         (m_object->isPositioned() ? parentClipRects.posClipRect() : 
+        backgroundRect = renderer()->style()->position() == FixedPosition ? parentClipRects.fixedClipRect() :
+                         (renderer()->isPositioned() ? parentClipRects.posClipRect() : 
                                                      parentClipRects.overflowClipRect());
         RenderView* view = renderer()->view();
         ASSERT(view);
@@ -2125,13 +2125,13 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
     layerBounds = IntRect(x,y,width(),height());
     
     // Update the clip rects that will be passed to child layers.
-    if (m_object->hasOverflowClip() || m_object->hasClip()) {
+    if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
         // This layer establishes a clip of some kind.
-        if (m_object->hasOverflowClip())
-            foregroundRect.intersect(m_object->getOverflowClipRect(x,y));
-        if (m_object->hasClip()) {
+        if (renderer()->hasOverflowClip())
+            foregroundRect.intersect(renderer()->getOverflowClipRect(x,y));
+        if (renderer()->hasClip()) {
             // Clip applies to *us* as well, so go ahead and update the damageRect.
-            IntRect newPosClip = m_object->getClipRect(x,y);
+            IntRect newPosClip = renderer()->getClipRect(x,y);
             backgroundRect.intersect(newPosClip);
             foregroundRect.intersect(newPosClip);
             outlineRect.intersect(newPosClip);
@@ -2278,7 +2278,7 @@ void RenderLayer::clearClipRectsIncludingDescendants()
 void RenderLayer::clearClipRects()
 {
     if (m_clipRects) {
-        m_clipRects->deref(m_object->renderArena());
+        m_clipRects->deref(renderer()->renderArena());
         m_clipRects = 0;
 #ifndef NDEBUG
         m_clipRectsRoot = 0;
@@ -2462,7 +2462,7 @@ void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderL
 
 void RenderLayer::repaintIncludingDescendants()
 {
-    m_object->repaint();
+    renderer()->repaint();
     for (RenderLayer* curr = firstChild(); curr; curr = curr->nextSibling())
         curr->repaintIncludingDescendants();
 }
@@ -2487,7 +2487,7 @@ void RenderLayer::styleChanged(RenderStyle::Diff, const RenderStyle*)
         dirtyStackingContextZOrderLists();
     }
 
-    if (m_object->style()->overflowX() == OMARQUEE && m_object->style()->marqueeBehavior() != MNONE) {
+    if (renderer()->style()->overflowX() == OMARQUEE && renderer()->style()->marqueeBehavior() != MNONE) {
         if (!m_marquee)
             m_marquee = new RenderMarquee(this);
         m_marquee->updateMarqueeStyle();
@@ -2518,12 +2518,12 @@ void RenderLayer::styleChanged(RenderStyle::Diff, const RenderStyle*)
 
 void RenderLayer::updateScrollCornerStyle()
 {
-    RenderObject* actualRenderer = m_object->node()->isElementNode() ? m_object->node()->shadowAncestorNode()->renderer() : m_object;
-    RefPtr<RenderStyle> corner = m_object->hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(RenderStyle::SCROLLBAR_CORNER, actualRenderer->style()) : 0;
+    RenderObject* actualRenderer = renderer()->node()->isElementNode() ? renderer()->node()->shadowAncestorNode()->renderer() : renderer();
+    RefPtr<RenderStyle> corner = renderer()->hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(RenderStyle::SCROLLBAR_CORNER, actualRenderer->style()) : 0;
     if (corner) {
         if (!m_scrollCorner) {
-            m_scrollCorner = new (m_object->renderArena()) RenderScrollbarPart(m_object->document());
-            m_scrollCorner->setParent(m_object);
+            m_scrollCorner = new (renderer()->renderArena()) RenderScrollbarPart(renderer()->document());
+            m_scrollCorner->setParent(renderer());
         }
         m_scrollCorner->setStyle(corner.release());
     } else if (m_scrollCorner) {
@@ -2534,12 +2534,12 @@ void RenderLayer::updateScrollCornerStyle()
 
 void RenderLayer::updateResizerStyle()
 {
-    RenderObject* actualRenderer = m_object->node()->isElementNode() ? m_object->node()->shadowAncestorNode()->renderer() : m_object;
-    RefPtr<RenderStyle> resizer = m_object->hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(RenderStyle::RESIZER, actualRenderer->style()) : 0;
+    RenderObject* actualRenderer = renderer()->node()->isElementNode() ? renderer()->node()->shadowAncestorNode()->renderer() : renderer();
+    RefPtr<RenderStyle> resizer = renderer()->hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(RenderStyle::RESIZER, actualRenderer->style()) : 0;
     if (resizer) {
         if (!m_resizer) {
-            m_resizer = new (m_object->renderArena()) RenderScrollbarPart(m_object->document());
-            m_resizer->setParent(m_object);
+            m_resizer = new (renderer()->renderArena()) RenderScrollbarPart(renderer()->document());
+            m_resizer->setParent(renderer());
         }
         m_resizer->setStyle(resizer.release());
     } else if (m_resizer) {

@@ -1,5 +1,53 @@
 2009-01-20  David Hyatt  <hyatt@apple.com>
 
+        Tighten up the type of RenderObject owned by RenderLayer to be a RenderBox.  Rename m_object to
+        m_renderer to be consistent with the corresponding member function.
+
+        Reviewed by Jon Honeycutt
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updateVisibilityStatus):
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::stackingContext):
+        (WebCore::RenderLayer::enclosingPositionedAncestor):
+        (WebCore::RenderLayer::enclosingTransformedAncestor):
+        (WebCore::RenderLayer::isTransparent):
+        (WebCore::RenderLayer::convertToLayerCoords):
+        (WebCore::RenderLayer::scrollByRecursively):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::scrollbarCornerPresent):
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::positionOverflowControls):
+        (WebCore::RenderLayer::computeScrollDimensions):
+        (WebCore::RenderLayer::updateOverflowStatus):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::isPointInResizeControl):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateClipRects):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::clearClipRects):
+        (WebCore::RenderLayer::repaintIncludingDescendants):
+        (WebCore::RenderLayer::styleChanged):
+        (WebCore::RenderLayer::updateScrollCornerStyle):
+        (WebCore::RenderLayer::updateResizerStyle):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::renderer):
+        (WebCore::RenderLayer::hasReflection):
+        (WebCore::RenderLayer::hasTransform):
+
+2009-01-20  David Hyatt  <hyatt@apple.com>
+
         Fix Mac build bustage from my selection changes.  I forgot to implement the functions on RenderThemeMac
         for returning the appropriate listbox selection colors.
 
