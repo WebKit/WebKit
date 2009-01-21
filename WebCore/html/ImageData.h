@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 #ifndef ImageData_h
 #define ImageData_h
 
-#include <wtf/ByteArray.h>
+#include "CanvasPixelArray.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -41,13 +41,13 @@ namespace WebCore {
 
         unsigned width() const { return m_width; }
         unsigned height() const { return m_height; }
-        WTF::ByteArray* data() const { return m_data.get(); }
+        CanvasPixelArray* data() const { return m_data.get(); }
 
     private:
         ImageData(unsigned width, unsigned height);
         unsigned m_width;
         unsigned m_height;
-        RefPtr<WTF::ByteArray> m_data;
+        RefPtr<CanvasPixelArray> m_data;
     };
 
 } // namespace WebCore

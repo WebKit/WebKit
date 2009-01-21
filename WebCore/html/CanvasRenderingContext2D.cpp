@@ -1170,9 +1170,9 @@ GraphicsContext* CanvasRenderingContext2D::drawingContext() const
 
 static PassRefPtr<ImageData> createEmptyImageData(const IntSize& size)
 {
-    PassRefPtr<ImageData> data = ImageData::create(size.width(), size.height());
-    memset(data->data()->data(), 0, data->data()->length());
-    return data;
+    RefPtr<ImageData> data = ImageData::create(size.width(), size.height());
+    memset(data->data()->data()->data(), 0, data->data()->data()->length());
+    return data.get();
 }
 
 PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float sh) const

@@ -1787,6 +1787,7 @@
 		85FF313C0AAFBD7200374F38 /* DOMWheelEventPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 85FF313B0AAFBD7200374F38 /* DOMWheelEventPrivate.h */; };
 		85FF315A0AAFBFCB00374F38 /* DOMKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */; };
 		85FF315B0AAFBFCB00374F38 /* DOMKeyboardEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */; };
+		898D1FB30F27934B004BBAC7 /* CanvasPixelArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 898D1FB20F27934B004BBAC7 /* CanvasPixelArray.h */; };
 		929264770B61FC7200B41D34 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2043,6 +2044,8 @@
 		93F9B7A00BA6032600854064 /* JSCDATASection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B79E0BA6032600854064 /* JSCDATASection.cpp */; };
 		93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B79F0BA6032600854064 /* JSCDATASection.h */; };
 		93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDAFC90B11307400E2746F /* EditorInsertAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7094AFA0F27AE6000596CEC /* CanvasPixelArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7094AF90F27AE6000596CEC /* CanvasPixelArray.cpp */; };
+		A7094AFC0F27AEE300596CEC /* CanvasPixelArray.idl in Resources */ = {isa = PBXBuildFile; fileRef = A7094AFB0F27AEE300596CEC /* CanvasPixelArray.idl */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */; };
@@ -6640,6 +6643,7 @@
 		85FF313B0AAFBD7200374F38 /* DOMWheelEventPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMWheelEventPrivate.h; sourceTree = "<group>"; };
 		85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMKeyboardEvent.h; sourceTree = "<group>"; };
 		85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMKeyboardEvent.mm; sourceTree = "<group>"; };
+		898D1FB20F27934B004BBAC7 /* CanvasPixelArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasPixelArray.h; sourceTree = "<group>"; };
 		929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
@@ -6879,6 +6883,8 @@
 		93F9B79E0BA6032600854064 /* JSCDATASection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCDATASection.cpp; sourceTree = "<group>"; };
 		93F9B79F0BA6032600854064 /* JSCDATASection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCDATASection.h; sourceTree = "<group>"; };
 		93FDAFC90B11307400E2746F /* EditorInsertAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorInsertAction.h; sourceTree = "<group>"; };
+		A7094AF90F27AE6000596CEC /* CanvasPixelArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPixelArray.cpp; sourceTree = "<group>"; };
+		A7094AFB0F27AEE300596CEC /* CanvasPixelArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasPixelArray.idl; sourceTree = "<group>"; };
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGBlock.cpp; sourceTree = "<group>"; };
@@ -11371,6 +11377,9 @@
 				93EEC26E09C3218000C515D1 /* CanvasPattern.cpp */,
 				93EEC1F209C2877700C515D1 /* CanvasPattern.h */,
 				930CAB8F09C49F1B00229C04 /* CanvasPattern.idl */,
+				A7094AF90F27AE6000596CEC /* CanvasPixelArray.cpp */,
+				898D1FB20F27934B004BBAC7 /* CanvasPixelArray.h */,
+				A7094AFB0F27AEE300596CEC /* CanvasPixelArray.idl */,
 				93EEC1ED09C2877700C515D1 /* CanvasRenderingContext2D.cpp */,
 				93EEC1EE09C2877700C515D1 /* CanvasRenderingContext2D.h */,
 				930CAAD609C495B600229C04 /* CanvasRenderingContext2D.idl */,
@@ -14504,6 +14513,7 @@
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				93EEC20309C2877700C515D1 /* CanvasGradient.h in Headers */,
 				93EEC20409C2877700C515D1 /* CanvasPattern.h in Headers */,
+				898D1FB30F27934B004BBAC7 /* CanvasPixelArray.h in Headers */,
 				93EEC20009C2877700C515D1 /* CanvasRenderingContext2D.h in Headers */,
 				93EEC20109C2877700C515D1 /* CanvasStyle.h in Headers */,
 				514185EE0CD65F0400763C99 /* ChangeVersionWrapper.h in Headers */,
@@ -16697,6 +16707,7 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				A7094AFC0F27AEE300596CEC /* CanvasPixelArray.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18545,6 +18556,7 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				A7094AFA0F27AE6000596CEC /* CanvasPixelArray.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

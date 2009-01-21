@@ -521,6 +521,7 @@ This file contains the list of files needed to build WebCore.
     <set append="1" var="WEBCORE_SOURCES_HTML">
         html/CanvasGradient.cpp
         html/CanvasPattern.cpp
+        html/CanvasPixelArray.cpp
         html/CanvasRenderingContext2D.cpp
         html/CanvasStyle.cpp
         html/File.cpp

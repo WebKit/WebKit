@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,22 +26,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ImageData.h"
+#ifndef CanvasPixelArray_h
+#define CanvasPixelArray_h
+
+#include <wtf/ByteArray.h>
+#include <wtf/MathExtras.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+    
+    class CanvasPixelArray : public RefCounted<CanvasPixelArray> {
+    public:
+        static PassRefPtr<CanvasPixelArray> create(unsigned length);
+        
+        WTF::ByteArray* data() { return m_data.get(); }
+        unsigned length() const { return m_data->length(); }
+        
+        void set(unsigned index, double value)
+        {
+            m_data->set(index, value);
+        }
+        
+        bool get(unsigned index, unsigned char& result) const
+        {
+            return m_data->get(index, result);
+        }
 
-PassRefPtr<ImageData> ImageData::create(unsigned width, unsigned height)
-{
-    return adoptRef(new ImageData(width, height));
-}
+    private:
+        CanvasPixelArray(unsigned length);
+        RefPtr<WTF::ByteArray> m_data;
+    };
+    
+} // namespace WebCore
 
-ImageData::ImageData(unsigned width, unsigned height)
-    : m_width(width)
-    , m_height(height)
-    , m_data(CanvasPixelArray::create(width * height * 4))
-{
-}
-
-}
-
+#endif // CanvasPixelArray_h

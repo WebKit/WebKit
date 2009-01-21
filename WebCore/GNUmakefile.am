@@ -808,6 +808,8 @@ webcore_sources += \
 	WebCore/html/CanvasGradient.h \
 	WebCore/html/CanvasPattern.cpp \
 	WebCore/html/CanvasPattern.h \
+	WebCore/html/CanvasPixelArray.cpp \
+	WebCore/html/CanvasPixelArray.h \
 	WebCore/html/CanvasRenderingContext2D.cpp \
 	WebCore/html/CanvasRenderingContext2D.h \
 	WebCore/html/CanvasStyle.cpp \

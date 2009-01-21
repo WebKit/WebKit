@@ -12590,6 +12590,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\CanvasPixelArray.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\html\CanvasPixelArray.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\CanvasRenderingContext2D.cpp"
 				>
 				<FileConfiguration

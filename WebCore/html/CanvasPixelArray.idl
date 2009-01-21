@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,22 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ImageData.h"
-
-namespace WebCore {
-
-PassRefPtr<ImageData> ImageData::create(unsigned width, unsigned height)
-{
-    return adoptRef(new ImageData(width, height));
+module html {
+#if !defined(LANGUAGE_JAVASCRIPT) || defined(V8_BINDING)
+    interface [
+        CustomHeader,
+        HasCustomIndexGetter,
+        HasCustomIndexSetter
+    ] CanvasPixelArray {
+        readonly attribute long length;
+    };
+#endif
 }
-
-ImageData::ImageData(unsigned width, unsigned height)
-    : m_width(width)
-    , m_height(height)
-    , m_data(CanvasPixelArray::create(width * height * 4))
-{
-}
-
-}
-
