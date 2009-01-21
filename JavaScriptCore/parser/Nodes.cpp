@@ -2570,6 +2570,8 @@ FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* chi
 FunctionBodyNode::~FunctionBodyNode()
 {
     ASSERT(!m_refCount);
+    for (size_t i = 0; i < m_parameterCount; ++i)
+        m_parameters[i].~Identifier();
     fastFree(m_parameters);
 }
 
