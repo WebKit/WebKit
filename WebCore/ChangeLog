@@ -1,3 +1,33 @@
+2009-01-21  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Remove last relics of platform dependent PaintServer in SVG.
+        We draw everything with the help of GraphicsContext.
+
+        Remove SVGPaintServerPlatform's
+        [https://bugs.webkit.org/show_bug.cgi?id=23439]
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/graphics/SVGPaintServer.cpp:
+        (WebCore::SVGPaintServer::draw):
+        (WebCore::SVGPaintServer::renderPath):
+        (WebCore::SVGPaintServer::teardown):
+        * svg/graphics/SVGPaintServer.h:
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        * svg/graphics/SVGPaintServerGradient.h:
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        * svg/graphics/SVGPaintServerPattern.h:
+        * svg/graphics/SVGPaintServerSolid.cpp:
+        * svg/graphics/SVGPaintServerSolid.h:
+        * svg/graphics/cairo/SVGPaintServerCairo.cpp: Removed.
+        * svg/graphics/cg/SVGPaintServerCg.cpp: Removed.
+        * svg/graphics/qt/SVGPaintServerQt.cpp: Removed.
+        * svg/graphics/skia/SVGPaintServerSkia.cpp: Removed.
+
 2009-01-21  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov.

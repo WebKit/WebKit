@@ -88,17 +88,6 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
     return true;
 }
 
-void SVGPaintServerSolid::renderPath(GraphicsContext*& context, const RenderObject* path, SVGPaintTargetType type) const
-{
-    const SVGRenderStyle* svgStyle = path ? path->style()->svgStyle() : 0;
-
-    if ((type & ApplyToFillTargetType) && (!svgStyle || svgStyle->hasFill()))
-        context->fillPath();
-
-    if ((type & ApplyToStrokeTargetType) && (!svgStyle || svgStyle->hasStroke()))
-        context->strokePath();
-}
-
 } // namespace WebCore
 
 #endif

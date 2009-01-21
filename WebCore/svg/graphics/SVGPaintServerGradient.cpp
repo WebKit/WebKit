@@ -257,17 +257,6 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
     return true;
 }
 
-void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderObject* path, SVGPaintTargetType type) const
-{
-    const SVGRenderStyle* style = path->style()->svgStyle();
-
-    if ((type & ApplyToFillTargetType) && style->hasFill())
-        context->fillPath();
-
-    if ((type & ApplyToStrokeTargetType) && style->hasStroke())
-        context->strokePath();
-}
-
 void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType, bool isPaintingText) const
 {
 #if PLATFORM(CG)

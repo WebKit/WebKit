@@ -71,7 +71,6 @@ namespace WebCore {
 
         virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
         virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-        virtual void renderPath(GraphicsContext*&, const RenderObject*, SVGPaintTargetType) const;
 
     protected:
         SVGPaintServerGradient(const SVGGradientElement* owner);
