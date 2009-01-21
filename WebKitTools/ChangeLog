@@ -1,3 +1,14 @@
+2009-01-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23450: string leaks seen in DumpRenderTree accessibility test code
+        https://bugs.webkit.org/show_bug.cgi?id=23450
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (isAttributeSettableCallback): Add the missing JSStringRelease call.
+        (attributeValueCallback): Ditto.
+
 2009-01-20  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Darin Adler.

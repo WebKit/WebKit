@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -153,9 +153,11 @@ static JSValueRef isAttributeSettableCallback(JSContextRef context, JSObjectRef 
 {
     JSStringRef attribute = NULL;
     if (argumentCount == 1)
-        attribute = JSValueToStringCopy(context, arguments[0], exception);
-    
-    return JSValueMakeNumber(context, toAXElement(thisObject)->isAttributeSettable(attribute));
+        attribute = JSValueToStringCopy(context, arguments[0], exception);    
+    JSValueRef result = JSValueMakeNumber(context, toAXElement(thisObject)->isAttributeSettable(attribute));
+    if (attribute)
+        JSStringRelease(attribute);
+    return result;
 }
 
 static JSValueRef attributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -163,8 +165,10 @@ static JSValueRef attributeValueCallback(JSContextRef context, JSObjectRef funct
     JSStringRef attribute = NULL;
     if (argumentCount == 1)
         attribute = JSValueToStringCopy(context, arguments[0], exception);
-    
-    return JSValueMakeString(context, toAXElement(thisObject)->attributeValue(attribute));
+    JSValueRef result = JSValueMakeString(context, toAXElement(thisObject)->attributeValue(attribute));
+    if (attribute)
+        JSStringRelease(attribute);
+    return result;
 }
 
 static JSValueRef cellForColumnAndRowCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
