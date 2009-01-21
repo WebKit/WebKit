@@ -179,9 +179,6 @@ void setLoaderForLibXMLCallbacks(DocLoader*);
 HashMap<String, String> parseAttributes(const String&, bool& attrsOK);
 bool parseXMLDocumentFragment(const String&, DocumentFragment*, Element* parent = 0);
 
-bool isScriptElement(Element*);
-ScriptElement* castToScriptElement(Element*);
-
 } // namespace WebCore
 
 #endif // XMLTokenizer_h

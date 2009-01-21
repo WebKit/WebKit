@@ -1,3 +1,27 @@
+2009-01-21  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Move "Element -> ScriptElement" casting functionality into ScriptElement.h
+        to be consistent with FormControlElement/InputElement/OptionElement/OptionGroupElement.
+
+        It was living in XMLTokenizer before, which is not an obvious place for this.
+        TODO: Rename 'formControlElementForElement' to 'toFormControlElement' (analogous changes for InputElement etc.)
+              as suggested by Alexey, it really reads better this way.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::toScriptElement):
+        * dom/ScriptElement.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::notifyFinished):
+        * dom/XMLTokenizer.h:
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::XMLTokenizer::endElementNs):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::parseStartElement):
+        (WebCore::XMLTokenizer::parseEndElement):
+
 2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

@@ -93,6 +93,8 @@ private:
     bool m_firedLoad;
 };
 
+ScriptElement* toScriptElement(Element*);
+
 }
 
 #endif

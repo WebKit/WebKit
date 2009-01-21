@@ -751,7 +751,8 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
 
     newElement->beginParsingChildren();
 
-    if (isScriptElement(newElement.get()))
+    ScriptElement* scriptElement = toScriptElement(newElement.get());
+    if (scriptElement)
         m_scriptStartLine = lineNumber();
 
     if (!m_currentNode->addChild(newElement.get())) {
@@ -779,34 +780,40 @@ void XMLTokenizer::endElementNs()
     Node* n = m_currentNode;
     RefPtr<Node> parent = n->parentNode();
     n->finishParsingChildren();
-    
-    // don't load external scripts for standalone documents (for now)
-    if (n->isElementNode() && m_view && isScriptElement(static_cast<Element*>(n))) {
-        ASSERT(!m_pendingScript);
-        m_requestingScript = true;
 
-        Element* element = static_cast<Element*>(n); 
-        ScriptElement* scriptElement = castToScriptElement(element);
-
-        String scriptHref = scriptElement->sourceAttributeValue();
-        if (!scriptHref.isEmpty()) {
-            // we have a src attribute 
-            String scriptCharset = scriptElement->scriptCharset();
-            if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
-                m_scriptElement = element;
-                m_pendingScript->addClient(this);
-
-                // m_pendingScript will be 0 if script was already loaded and ref() executed it
-                if (m_pendingScript)
-                    pauseParsing();
-            } else 
-                m_scriptElement = 0;
-        } else
-            m_view->frame()->loader()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
-
-        m_requestingScript = false;
+    if (!n->isElementNode() || !m_view) {
+        setCurrentNode(parent.get());
+        return;
     }
 
+    Element* element = static_cast<Element*>(n);
+    ScriptElement* scriptElement = toScriptElement(element);
+    if (!scriptElement) {
+        setCurrentNode(parent.get());
+        return;
+    }
+
+    // don't load external scripts for standalone documents (for now)
+    ASSERT(!m_pendingScript);
+    m_requestingScript = true;
+
+    String scriptHref = scriptElement->sourceAttributeValue();
+    if (!scriptHref.isEmpty()) {
+        // we have a src attribute 
+        String scriptCharset = scriptElement->scriptCharset();
+        if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, scriptCharset))) {
+            m_scriptElement = element;
+            m_pendingScript->addClient(this);
+
+            // m_pendingScript will be 0 if script was already loaded and ref() executed it
+            if (m_pendingScript)
+                pauseParsing();
+        } else 
+            m_scriptElement = 0;
+    } else
+        m_view->frame()->loader()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
+
+    m_requestingScript = false;
     setCurrentNode(parent.get());
 }
 

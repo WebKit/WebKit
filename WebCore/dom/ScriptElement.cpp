@@ -29,6 +29,8 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "HTMLNames.h"
+#include "HTMLScriptElement.h"
 #include "MIMETypeRegistry.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
@@ -36,6 +38,11 @@
 #include "StringHash.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
+
+#if ENABLE(SVG)
+#include "SVGNames.h"
+#include "SVGScriptElement.h"
+#endif
 
 namespace WebCore {
 
@@ -267,6 +274,19 @@ String ScriptElementData::scriptContent() const
         return firstTextNode->data();
 
     return String::adopt(val);
+}
+
+ScriptElement* toScriptElement(Element* element)
+{
+    if (element->isHTMLElement() && element->hasTagName(HTMLNames::scriptTag))
+        return static_cast<HTMLScriptElement*>(element);
+
+#if ENABLE(SVG)
+    if (element->isSVGElement() && element->hasTagName(SVGNames::scriptTag))
+        return static_cast<SVGScriptElement*>(element);
+#endif
+
+    return 0;
 }
 
 }
