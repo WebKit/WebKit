@@ -1,3 +1,9 @@
+2009-01-21  Anders Carlsson  <andersca@apple.com>
+
+        Fix 64-bit build.
+
+        * WebCore.LP64.exp:
+
 2009-01-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey Proskuryakov.
