@@ -141,6 +141,21 @@ Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor() const
     return Color(static_cast<int>(255.0 * [color redComponent]), static_cast<int>(255.0 * [color greenComponent]), static_cast<int>(255.0 * [color blueComponent]));
 }
 
+Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor() const
+{
+    return Color::white;
+}
+
+Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor() const
+{
+    return Color::black;
+}
+
+Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor() const
+{
+    return Color(128, 128, 128);
+}
+
 static FontWeight toFontWeight(NSInteger appKitFontWeight)
 {
     ASSERT(appKitFontWeight > 0 && appKitFontWeight < 15);

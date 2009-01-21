@@ -1,3 +1,15 @@
+2009-01-20  David Hyatt  <hyatt@apple.com>
+
+        Fix Mac build bustage from my selection changes.  I forgot to implement the functions on RenderThemeMac
+        for returning the appropriate listbox selection colors.
+
+        Reviewed by Adele
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor):
+
 2009-01-20  Dave Hyatt  <hyatt@apple.com>
 
         Fix for focus rings on Windows.  Make sure that focus rings draw for all controls but buttons.
