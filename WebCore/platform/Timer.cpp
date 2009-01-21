@@ -46,7 +46,6 @@ namespace WebCore {
 
 // ----------------
 
-static bool deferringTimers;
 static Vector<TimerBase*>* timerHeap;
 static HashSet<const TimerBase*>* timersReadyToFire;
 
@@ -156,7 +155,7 @@ inline int operator-(TimerHeapIterator a, TimerHeapIterator b) { return a.index(
 
 void updateSharedTimer()
 {
-    if (timersReadyToFire || deferringTimers || !timerHeap || timerHeap->isEmpty())
+    if (timersReadyToFire || !timerHeap || timerHeap->isEmpty())
         stopSharedTimer();
     else
         setSharedTimerFireTime(timerHeap->first()->m_nextFireTime);
@@ -377,21 +376,6 @@ void TimerBase::sharedTimerFired()
 void TimerBase::fireTimersInNestedEventLoop()
 {
     timersReadyToFire = 0;
-    updateSharedTimer();
-}
-
-// ----------------
-
-bool isDeferringTimers()
-{
-    return deferringTimers;
-}
-
-void setDeferringTimers(bool shouldDefer)
-{
-    if (shouldDefer == deferringTimers)
-        return;
-    deferringTimers = shouldDefer;
     updateSharedTimer();
 }
 

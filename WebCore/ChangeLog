@@ -1,3 +1,14 @@
+2009-01-20  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23413
+        Remove unused WebCore::setDeferringTimers()
+
+        * platform/Timer.cpp:
+        (WebCore::updateSharedTimer):
+        * platform/Timer.h:
+
 2009-01-20  David Hyatt  <hyatt@apple.com>
 
         Tighten up the type of RenderObject owned by RenderLayer to be a RenderBox.  Rename m_object to
