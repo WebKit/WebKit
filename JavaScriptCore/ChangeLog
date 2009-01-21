@@ -1,3 +1,15 @@
+2009-01-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Structure property table deleted offset maps are being leaked.
+        Probably shouldn't be doing that.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23442
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::~Structure):
+
 2009-01-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (build fix).

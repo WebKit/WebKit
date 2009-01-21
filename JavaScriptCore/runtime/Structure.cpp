@@ -178,6 +178,8 @@ Structure::~Structure()
             if (UString::Rep* key = m_propertyTable->entries()[i].key)
                 key->deref();
         }
+
+        delete m_propertyTable->deletedOffsets;
         fastFree(m_propertyTable);
     }
 
