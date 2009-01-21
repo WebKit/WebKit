@@ -1,3 +1,16 @@
+2009-01-19  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Mitz Pettel.
+
+        Fixes https://bugs.webkit.org/show_bug.cgi?id=23423.
+
+        The Windows Cairo post-build targets (Release/Debug) do not
+        copy all of the headers that the CG-based build does.
+
+        * WebCore.vcproj/WebCore.vcproj: Extend WebCore Cairo build targets
+          to copy the page/animation/*.h files into WebKitBuild so that
+          WebKit can find them.
+
 2009-01-20  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
