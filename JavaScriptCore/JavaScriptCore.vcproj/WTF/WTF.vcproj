@@ -231,11 +231,11 @@
 			>
 		</File>
 	    <File
-    		RelativePath="..\..\runtime\ByteArray.cpp"
+    		RelativePath="..\..\wtf\ByteArray.cpp"
     		>
     	</File>
     	<File
-    		RelativePath="..\..\runtime\ByteArray.h"
+    		RelativePath="..\..\wtf\ByteArray.h"
     		>
     	</File>
 		<File

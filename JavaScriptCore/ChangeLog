@@ -1,3 +1,11 @@
+2009-01-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Windows build fix
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+
 2009-01-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Mark Rowe.
