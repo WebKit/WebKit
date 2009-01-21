@@ -1,3 +1,14 @@
+2009-01-21  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix.
+
+        Fix release-only build failure (and do a tiny code-cleanup).
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::createFontElement):
+        (WebCore::createStyleSpanElement):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+
 2009-01-21  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

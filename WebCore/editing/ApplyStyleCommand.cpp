@@ -288,16 +288,14 @@ static bool isEmptyFontTag(const Node *node)
 
 static PassRefPtr<Element> createFontElement(Document* document)
 {
-    ExceptionCode ec = 0;
-    RefPtr<Element> fontNode = document->createElementNS(xhtmlNamespaceURI, "font", ec);
-    ASSERT(ec == 0);
+    RefPtr<Element> fontNode = createHTMLElement(document, fontTag);
     fontNode->setAttribute(classAttr, styleSpanClassString());
     return fontNode.release();
 }
 
 PassRefPtr<HTMLElement> createStyleSpanElement(Document* document)
 {
-    RefPtr<HTMLElement> styleElement = new HTMLElement(spanTag, document);
+    RefPtr<HTMLElement> styleElement = createHTMLElement(document, spanTag);
     styleElement->setAttribute(classAttr, styleSpanClassString());
     return styleElement.release();
 }
@@ -1527,14 +1525,12 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
         return;
 
     StyleChange styleChange(style, Position(startNode, 0), StyleChange::styleModeForParseMode(document()->inCompatMode()));
-    ExceptionCode ec = 0;
 
     //
     // Font tags need to go outside of CSS so that CSS font sizes override leagcy font sizes.
     //
     if (styleChange.applyFontColor() || styleChange.applyFontFace() || styleChange.applyFontSize()) {
         RefPtr<Element> fontElement = createFontElement(document());
-        ASSERT(ec == 0);
         RenderStyle* computedStyle = startNode->computedStyle();
 
         // We only want to insert a font element if it will end up changing the style of the
