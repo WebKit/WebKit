@@ -98,9 +98,6 @@ void setupMainDisplayColorProfile()
     signal(SIGINT, restoreMainDisplayColorProfile);
     signal(SIGHUP, restoreMainDisplayColorProfile);
     signal(SIGTERM, restoreMainDisplayColorProfile);
-    
-    fprintf(stderr, "\n\nWARNING: Temporarily changing the main display color profile to \"%s\": the colors on your screen will change for the duration of the testing.\n", PROFILE_PATH);
-    fprintf(stderr, "This allows the WebKit pixel-based regression tests to have consistent color values across all machines.\n");
 }
 
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)

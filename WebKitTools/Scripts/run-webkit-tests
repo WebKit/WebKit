@@ -324,6 +324,10 @@ my $testResults = catfile($testResultsDirectory, "results.html");
 print "Running tests from $testDirectory\n";
 if ($pixelTests) {
     print "Enabling pixel tests with a tolerance of $tolerance%\n";
+    if (isDarwin()) {
+        print "WARNING: Temporarily changing the main display color profile: the colors on your screen will change for the duration of the testing.\n";
+        print "This allows the pixel tests to have consistent color values across all machines.\n";
+    }
 }
 
 my @tests = ();

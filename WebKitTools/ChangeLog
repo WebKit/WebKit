@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        Print warning regarding display color profile change in run-webkit-tests instead of DRT.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23392
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (setupMainDisplayColorProfile):
+        * Scripts/run-webkit-tests:
+
+2009-01-20  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Darin Adler.
+
         Changed run-webkit-tests to abort on the Mac if pixel tests are enabled and Perian is installed,
         in order to avoid result differences in some media tests.
 
