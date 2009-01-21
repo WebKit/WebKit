@@ -54,10 +54,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 {
     if (wxTheClipboard->Open())
     {
-        String text = frame->selectedText();
-        text.replace('\\', frame->backslashAsCurrencySymbol());
-        
-        wxTheClipboard->SetData( new wxTextDataObject(text) );
+        wxTheClipboard->SetData( new wxTextDataObject(frame->selectedText()) );
         wxTheClipboard->Close();
     }
 }

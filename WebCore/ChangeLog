@@ -1,3 +1,13 @@
+2009-01-20  Darin Adler  <darin@apple.com>
+
+        Try to fix Wx build.
+
+        * platform/wx/PasteboardWx.cpp:
+        (WebCore::Pasteboard::writeSelection): Removed code that replaces backslash
+        with backslashAsCurrencySymbol. I'm pretty sure this is not needed when writing
+        to the clipboard. Other platforms don't do it. If it was needed, the new function
+        to use would be displayStringModifiedByEncoding.
+
 2009-01-19  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Mitz Pettel.
