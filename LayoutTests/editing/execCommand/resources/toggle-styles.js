@@ -88,8 +88,8 @@ runTests("bold", "b", "font-weight", "bold");
 testTagRemovalOnToggle("strong", "bold"); // IE adds "strong" tags for bold, so we should remove them (even though FF doesn't)
 runTests("italic", "i", "font-style", "italic");
 testTagRemovalOnToggle("em", "italic"); // IE adds "em" tags for italic, so we should remove them (even though FF doesn't)
-runTests("subscript", "sub", "vertical-align", "subscript");
-runTests("superscript", "sup", "vertical-align", "superscript");
+runTests("subscript", "sub", "vertical-align", "sub");
+runTests("superscript", "sup", "vertical-align", "super");
 runTests("strikethrough", "strike", "text-decoration", "line-through");
 testTagRemovalOnToggle("s", "strikethrough");
 runTests("underline", "u", "text-decoration", "underline");

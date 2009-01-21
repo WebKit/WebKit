@@ -1,3 +1,27 @@
+2009-01-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        Fix execCommand() 'super' and 'sub' commands to add <sup> and <sub> in quirks mode, and to toggle when called twice
+        https://bugs.webkit.org/show_bug.cgi?id=17733
+        
+        Test changed: editing/execCommand/toggle-styles-expected.txt
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::applySubscript):
+        (WebCore::StyleChange::applySuperscript):
+        (WebCore::StyleChange::StyleChange):
+        (WebCore::StyleChange::init):
+        (WebCore::StyleChange::checkForLegacyHTMLStyleChange):
+        (WebCore::ApplyStyleCommand::isHTMLStyleNode):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeSubscript):
+        (WebCore::executeSuperscript):
+        * editing/htmlediting.cpp:
+        (WebCore::createHTMLElement):
+        * editing/htmlediting.h:
+
 2009-01-21  Anders Carlsson  <andersca@apple.com>
 
         Fix 64-bit build.

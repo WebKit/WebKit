@@ -12,12 +12,12 @@ PASS italic toggle
 PASS italic removing i
 FAIL italic removing font-style: italic -- <span style="">test</span>
 FAIL italic removing em -- <em><span class="Apple-style-span" style="font-style: normal;">test</span></em>
-FAIL subscript toggle: <span class="Apple-style-span" style="vertical-align: sub;">test</span>
-FAIL subscript removing sub -- <sub>test</sub>
-FAIL subscript removing vertical-align: subscript -- <span><span class="Apple-style-span" style="vertical-align: sub;">test</span></span>
-FAIL superscript toggle: <span class="Apple-style-span" style="vertical-align: super;">test</span>
-FAIL superscript removing sup -- <sup>test</sup>
-FAIL superscript removing vertical-align: superscript -- <span><span class="Apple-style-span" style="vertical-align: super;">test</span></span>
+PASS subscript toggle
+PASS subscript removing sub
+FAIL subscript removing vertical-align: sub -- <span style="">test</span>
+PASS superscript toggle
+PASS superscript removing sup
+FAIL superscript removing vertical-align: super -- <span style="">test</span>
 PASS strikethrough toggle
 FAIL strikethrough removing strike -- <strike style=""><span class="Apple-style-span" style="text-decoration: none;">test</span></strike>
 FAIL strikethrough removing text-decoration: line-through -- <span style="">test</span>
