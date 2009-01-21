@@ -638,6 +638,10 @@ webcore_sources += \
 	WebCore/dom/NodeWithIndex.h \
 	WebCore/dom/Notation.cpp \
 	WebCore/dom/Notation.h \
+	WebCore/dom/OptionGroupElement.cpp \
+	WebCore/dom/OptionGroupElement.h \
+	WebCore/dom/OptionElement.cpp \
+	WebCore/dom/OptionElement.h \
 	WebCore/dom/OverflowEvent.cpp \
 	WebCore/dom/OverflowEvent.h \
 	WebCore/dom/Position.cpp \

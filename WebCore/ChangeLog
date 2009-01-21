@@ -1,3 +1,46 @@
+2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=23444
+
+        Refactor some functionality from HTMLOption/OptGroupElement needed by RenderListBox/RenderMenuList
+        in two abstract base classes: OptionElement & OptionGroupElement living in dom/ - just like it
+        has been done before for FormControlElement and RenderTextControl.
+
+        This is needed to prepare the addtion of WMLOption/OptGroupElement.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * dom/OptionElement.cpp: Added.
+        (WebCore::optionElementForElement):
+        * dom/OptionElement.h: Added.
+        (WebCore::OptionElement::~OptionElement):
+        (WebCore::OptionElement::OptionElement):
+        * dom/OptionGroupElement.cpp: Added.
+        (WebCore::optionGroupElementForElement):
+        * dom/OptionGroupElement.h: Added.
+        (WebCore::OptionGroupElement::~OptionGroupElement):
+        (WebCore::OptionGroupElement::OptionGroupElement):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::optionText):
+        * html/HTMLOptionElement.h:
+        (WebCore::HTMLOptionElement::selected):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        (WebCore::RenderMenuList::setTextFromOption):
+        (WebCore::RenderMenuList::itemText):
+        (WebCore::RenderMenuList::itemIsSelected):
+
 2009-01-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.

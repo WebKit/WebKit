@@ -600,6 +600,8 @@ SOURCES += \
     dom/NodeFilter.cpp \
     dom/NodeIterator.cpp \
     dom/Notation.cpp \
+    dom/OptionGroupElement.cpp \
+    dom/OptionElement.cpp \
     dom/OverflowEvent.cpp \
     dom/Position.cpp \
     dom/PositionIterator.cpp \

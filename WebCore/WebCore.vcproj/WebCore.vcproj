@@ -11646,6 +11646,38 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\OptionGroupElement.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\OptionGroupElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\OptionElement.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\OptionElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\OverflowEvent.cpp"
 				>
 				<FileConfiguration

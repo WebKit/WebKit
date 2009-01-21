@@ -237,11 +237,11 @@ RenderStyle* HTMLOptionElement::nonRendererRenderStyle() const
     return m_style.get(); 
 }
 
-String HTMLOptionElement::optionText()
+String HTMLOptionElement::optionText() const
 {
     if (parentNode() && parentNode()->hasTagName(optgroupTag))
         return "    " + text();
-        
+
     return text();
 }
 

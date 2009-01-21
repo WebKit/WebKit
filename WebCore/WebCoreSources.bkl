@@ -430,6 +430,8 @@ This file contains the list of files needed to build WebCore.
         dom/NodeFilterCondition.cpp
         dom/NodeIterator.cpp
         dom/Notation.cpp
+        dom/OptionGroupElement.cpp
+        dom/OptionElement.cpp
         dom/OverflowEvent.cpp
         dom/Position.cpp
         dom/PositionIterator.cpp

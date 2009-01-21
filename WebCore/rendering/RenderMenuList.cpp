@@ -2,6 +2,7 @@
  * This file is part of the select element renderer in WebCore.
  *
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,9 +30,9 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
-#include "HTMLOptionElement.h"
-#include "HTMLOptGroupElement.h"
 #include "HTMLSelectElement.h"
+#include "OptionElement.h"
+#include "OptionGroupElement.h"
 #include "PopupMenu.h"
 #include "RenderBR.h"
 #include "RenderScrollbar.h"
@@ -141,11 +142,13 @@ void RenderMenuList::updateOptionsWidth()
     int size = listItems.size();    
     for (int i = 0; i < size; ++i) {
         HTMLElement* element = listItems[i];
-        if (element->hasTagName(optionTag)) {
-            String text = static_cast<HTMLOptionElement*>(element)->optionText();
-            if (!text.isEmpty())
-                maxOptionWidth = max(maxOptionWidth, style()->font().floatWidth(text));
-        }
+        OptionElement* optionElement = optionElementForElement(element);
+        if (!optionElement)
+            continue;
+
+        String text = optionElement->optionText();
+        if (!text.isEmpty())
+            maxOptionWidth = max(maxOptionWidth, style()->font().floatWidth(text));
     }
 
     int width = static_cast<int>(ceilf(maxOptionWidth));
@@ -178,10 +181,10 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     int i = select->optionToListIndex(optionIndex);
     String text = "";
     if (i >= 0 && i < size) {
-        HTMLElement* element = listItems[i];
-        if (element->hasTagName(optionTag))
-            text = static_cast<HTMLOptionElement*>(listItems[i])->optionText();
+        if (OptionElement* optionElement = optionElementForElement(listItems[i]))
+            text = optionElement->optionText();
     }
+
     setText(text.stripWhiteSpace());
 }
 
@@ -302,10 +305,10 @@ String RenderMenuList::itemText(unsigned listIndex) const
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     HTMLElement* element = select->listItems()[listIndex];
-    if (element->hasTagName(optgroupTag))
-        return static_cast<HTMLOptGroupElement*>(element)->groupLabelText();
-    else if (element->hasTagName(optionTag))
-        return static_cast<HTMLOptionElement*>(element)->optionText();
+    if (OptionGroupElement* optionGroupElement = optionGroupElementForElement(element))
+        return optionGroupElement->groupLabelText();
+    else if (OptionElement* optionElement = optionElementForElement(element))
+        return optionElement->optionText();
     return String();
 }
 
@@ -424,7 +427,9 @@ bool RenderMenuList::itemIsSelected(unsigned listIndex) const
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     HTMLElement* element = select->listItems()[listIndex];
-    return element->hasTagName(optionTag)&& static_cast<HTMLOptionElement*>(element)->selected();
+    if (OptionElement* optionElement = optionElementForElement(element))
+        return optionElement->selected();
+    return false;
 }
 
 void RenderMenuList::setTextFromItem(unsigned listIndex)
