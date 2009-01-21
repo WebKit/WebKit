@@ -28,42 +28,66 @@
 
 #import "WebNSObjectExtras.h"
 
-@implementation NSObject (WebNSObjectExtras)
 
-- (void)_webkit_performSelectorWithArguments:(NSMutableDictionary *)arguments
+@interface WebMainThreadInvoker : NSProxy
 {
-    SEL selector = static_cast<SEL>([[arguments objectForKey:@"selector"] pointerValue]);
-    @try {
-        id object = [arguments objectForKey:@"object"];
-        id result = [self performSelector:selector withObject:object];
-        if (result)
-            [arguments setObject:result forKey:@"result"];
-    } @catch(NSException *exception) {
-        [arguments setObject:exception forKey:@"exception"];
+    id target;
+    id exception;
+}
+@end
+
+@implementation WebMainThreadInvoker
+
+- (id)initWithTarget:(id)theTarget
+{
+    target = theTarget;
+    return self;
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation
+{
+    [invocation setTarget:target];
+    [invocation retainArguments];
+    [invocation performSelectorOnMainThread:@selector(_webkit_invokeAndHandleException:) withObject:self waitUntilDone:YES];
+    if (exception) {
+        id exceptionToThrow = [exception autorelease];
+        exception = nil;
+        @throw exceptionToThrow;
     }
 }
 
-- (id)_webkit_performSelectorOnMainThread:(SEL)selector withObject:(id)object
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector
 {
-    NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
-    [arguments setObject:[NSValue valueWithPointer:selector] forKey:@"selector"];
-    if (object)
-        [arguments setObject:object forKey:@"object"];
-
-    [self performSelectorOnMainThread:@selector(_webkit_performSelectorWithArguments:) withObject:arguments waitUntilDone:TRUE];
-
-    NSException *exception = [[[arguments objectForKey:@"exception"] retain] autorelease];
-    id value = [[[arguments objectForKey:@"result"] retain] autorelease];
-    [arguments release];
-
-    if (exception)
-        [exception raise];
-    return value;
+    return [target methodSignatureForSelector:selector];
 }
 
-- (id)_webkit_getPropertyOnMainThread:(SEL)selector
+- (void)handleException:(id)e
 {
-    return [self _webkit_performSelectorOnMainThread:selector withObject:nil];
+    exception = [e retain];
+}
+
+@end
+
+
+@implementation NSInvocation (WebMainThreadInvoker)
+
+- (void)_webkit_invokeAndHandleException:(WebMainThreadInvoker *)exceptionHandler
+{
+    @try {
+        [self invoke];
+    } @catch (id e) {
+        [exceptionHandler handleException:e];
+    }
+}
+
+@end
+
+
+@implementation NSObject (WebNSObjectExtras)
+
+- (id)_webkit_invokeOnMainThread
+{
+    return [[[WebMainThreadInvoker alloc] initWithTarget:self] autorelease];
 }
 
 @end

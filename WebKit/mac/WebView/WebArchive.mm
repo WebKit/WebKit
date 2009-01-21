@@ -159,20 +159,8 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 - (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
 {
 #ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround()) {
-        // Maybe this could be done more cleanly with NSInvocation.
-        NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
-        if (mainResource)
-            [arguments setObject:mainResource forKey:@"mainResource"];
-        if (subresources)
-            [arguments setObject:subresources forKey:@"subresources"];
-        if (subframeArchives)
-            [arguments setObject:subframeArchives forKey:@"subframeArchives"];
-
-        self = [self _webkit_performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments];
-        [arguments release];
-        return self;
-    }
+    if (needMailThreadWorkaround())
+        return [[self _webkit_invokeOnMainThread] initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -296,7 +284,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] mainResource];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -316,7 +304,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] subresources];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -348,7 +336,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] subframeArchives];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -422,19 +410,3 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 }
 
 @end
-
-#ifdef MAIL_THREAD_WORKAROUND
-
-@implementation WebArchive (WebMailThreadWorkaround)
-
-- (id)_initWithArguments:(NSDictionary *)arguments
-{
-    WebResource *mainResource = [arguments objectForKey:@"mainResource"];
-    NSArray *subresources = [arguments objectForKey:@"subresources"];
-    NSArray *subframeArchives = [arguments objectForKey:@"subframeArchives"];
-    return [self initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives];
-}
-
-@end
-
-#endif

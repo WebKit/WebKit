@@ -202,7 +202,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] data];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -218,7 +218,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] URL];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -233,7 +233,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] MIMEType];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -248,7 +248,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] textEncodingName];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -263,7 +263,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] frameName];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -318,7 +318,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround()) {
-        [self performSelectorOnMainThread:_cmd withObject:nil waitUntilDone:TRUE];
+        [[self _webkit_invokeOnMainThread] _ignoreWhenUnarchiving];
         return;
     }
 #endif
@@ -339,29 +339,8 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
            copyData:(BOOL)copyData
 {
 #ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround()) {
-        // Maybe this could be done more cleanly with NSInvocation.
-        NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
-        if (data)
-            [arguments setObject:data forKey:@"data"];
-        if (URL)
-            [arguments setObject:URL forKey:@"URL"];
-        if (MIMEType)
-            [arguments setObject:MIMEType forKey:@"MIMEType"];
-        if (textEncodingName)
-            [arguments setObject:textEncodingName forKey:@"textEncodingName"];
-        if (frameName)
-            [arguments setObject:frameName forKey:@"frameName"];
-        if (response)
-            [arguments setObject:response forKey:@"response"];
-        if (copyData)
-            [arguments setObject:[NSNumber numberWithBool:YES] forKey:@"copyData"];
-
-        self = [self _webkit_performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments];
-        [arguments release];
-
-        return self;
-    }
+    if (needMailThreadWorkaround())
+        return [[self _webkit_invokeOnMainThread] _initWithData:data URL:URL MIMEType:MIMEType textEncodingName:textEncodingName frameName:frameName response:response copyData:copyData];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -374,9 +353,9 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         [self release];
         return nil;
     }
-            
+
     _private = [[WebResourcePrivate alloc] initWithCoreResource:ArchiveResource::create(SharedBuffer::wrapNSData(copyData ? [[data copy] autorelease] : data), URL, MIMEType, textEncodingName, frameName, response)];
-            
+
     return self;
 }
 
@@ -390,14 +369,14 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
               textEncodingName:[response textEncodingName]
                      frameName:nil
                       response:response
-                      copyData:NO];    
+                      copyData:NO];
 }
 
 - (NSString *)_suggestedFilename
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] _suggestedFilename];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -422,7 +401,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] _response];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -437,7 +416,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
 #ifdef MAIL_THREAD_WORKAROUND
     if (needMailThreadWorkaround())
-        return [self _webkit_getPropertyOnMainThread:_cmd];
+        return [[self _webkit_invokeOnMainThread] _stringValue];
 #endif
 
     WebCoreThreadViolationCheck();
@@ -463,18 +442,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     static BOOL isOldMail = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_MAIL_THREAD_WORKAROUND)
         && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
     return isOldMail;
-}
-
-- (id)_initWithArguments:(NSDictionary *)arguments
-{
-    NSData *data = [arguments objectForKey:@"data"];
-    NSURL *URL = [arguments objectForKey:@"URL"];
-    NSString *MIMEType = [arguments objectForKey:@"MIMEType"];
-    NSString *textEncodingName = [arguments objectForKey:@"textEncodingName"];
-    NSString *frameName = [arguments objectForKey:@"frameName"];
-    NSURLResponse *response = [arguments objectForKey:@"response"];
-    BOOL copyData = [[arguments objectForKey:@"copyData"] boolValue];
-    return [self _initWithData:data URL:URL MIMEType:MIMEType textEncodingName:textEncodingName frameName:frameName response:response copyData:copyData];
 }
 
 @end

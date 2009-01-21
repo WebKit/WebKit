@@ -1,3 +1,47 @@
+2009-01-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Clean up how we force invocations of API that happened on background threads over to the main thread.
+
+        This was previously accomplished in a somewhat ad-hoc manner using a mutable dictionary to pass arguments
+        and return values back from the function.  The new approach is to use a proxy object that forwards an
+        NSInvocation over to the main thread and applies it to the target object, which leads to a much cleaner
+        call site.
+
+        * Misc/WebNSObjectExtras.h:
+        * Misc/WebNSObjectExtras.mm:
+        (-[WebMainThreadInvoker initWithTarget:]):
+        (-[WebMainThreadInvoker forwardInvocation:]):
+        (-[WebMainThreadInvoker methodSignatureForSelector:]):
+        (-[WebMainThreadInvoker handleException:]):
+        (-[NSInvocation _webkit_invokeAndHandleException:]): Execute the invocation and forward any exception that was
+        raised back to the WebMainThreadInvoker.
+        (-[NSObject _webkit_invokeOnMainThread]):
+
+        The following methods are updated to use the proxy object to forward methods to the main thread:
+
+        * WebView/WebArchive.mm:
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]):
+        (-[WebArchive mainResource]):
+        (-[WebArchive subresources]):
+        (-[WebArchive subframeArchives]):
+        * WebView/WebResource.mm:
+        (-[WebResource data]):
+        (-[WebResource URL]):
+        (-[WebResource MIMEType]):
+        (-[WebResource textEncodingName]):
+        (-[WebResource frameName]):
+        (-[WebResource _ignoreWhenUnarchiving]):
+        (-[WebResource _initWithData:URL:MIMEType:textEncodingName:frameName:response:copyData:]):
+        (-[WebResource _initWithData:URL:response:]):
+        (-[WebResource _suggestedFilename]):
+        (-[WebResource _response]):
+        (-[WebResource _stringValue]):
+        * WebView/WebView.mm:
+        (-[WebView initWithFrame:frameName:groupName:]):
+        (-[WebView initWithCoder:]):
+
 2009-01-20  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

@@ -2279,18 +2279,8 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (id)initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName
 {
-    if (needsWebViewInitThreadWorkaround()) {
-        NSMutableDictionary *arguments = [[NSMutableDictionary alloc] initWithCapacity:3];
-        [arguments setObject:[NSValue valueWithRect:f] forKey:@"frame"];
-        if (frameName)
-            [arguments setObject:frameName forKey:@"frameName"];
-        if (groupName)
-            [arguments setObject:groupName forKey:@"groupName"];
-
-        self = [self _webkit_performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments];
-        [arguments release];
-        return self;
-    }
+    if (needsWebViewInitThreadWorkaround())
+        return [[self _webkit_invokeOnMainThread] initWithFrame:f frameName:frameName groupName:groupName];
 
     WebCoreThreadViolationCheck();
     return [self _initWithFrame:f frameName:frameName groupName:groupName usesDocumentViews:YES];
@@ -2298,12 +2288,8 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
-    if (needsWebViewInitThreadWorkaround()) {
-        NSDictionary *arguments = [[NSDictionary alloc] initWithObjectsAndKeys:decoder, @"decoder", nil];
-        self = [self _webkit_performSelectorOnMainThread:@selector(_initWithArguments:) withObject:arguments];
-        [arguments release];
-        return self;
-    }
+    if (needsWebViewInitThreadWorkaround())
+        return [[self _webkit_invokeOnMainThread] initWithCoder:decoder];
 
     WebCoreThreadViolationCheck();
     WebView *result = nil;
