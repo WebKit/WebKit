@@ -1,3 +1,63 @@
+2009-01-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=23454
+
+        Add WML <option>/<optgroup> element support.
+        Currently the implementation is stubbed, all relevant parts can be enabled
+        once WMLSelectElement/SelectElement has been created.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * wml/WMLOptGroupElement.cpp: Added.
+        (WebCore::WMLOptGroupElement::WMLOptGroupElement):
+        (WebCore::WMLOptGroupElement::~WMLOptGroupElement):
+        (WebCore::WMLOptGroupElement::insertBefore):
+        (WebCore::WMLOptGroupElement::replaceChild):
+        (WebCore::WMLOptGroupElement::removeChild):
+        (WebCore::WMLOptGroupElement::appendChild):
+        (WebCore::WMLOptGroupElement::removeChildren):
+        (WebCore::ownerSelectElement):
+        (WebCore::WMLOptGroupElement::accessKeyAction):
+        (WebCore::WMLOptGroupElement::childrenChanged):
+        (WebCore::WMLOptGroupElement::parseMappedAttribute):
+        (WebCore::WMLOptGroupElement::attach):
+        (WebCore::WMLOptGroupElement::detach):
+        (WebCore::WMLOptGroupElement::setRenderStyle):
+        (WebCore::WMLOptGroupElement::nonRendererRenderStyle):
+        (WebCore::WMLOptGroupElement::groupLabelText):
+        (WebCore::WMLOptGroupElement::recalcSelectOptions):
+        * wml/WMLOptGroupElement.h: Added.
+        (WebCore::WMLOptGroupElement::title):
+        (WebCore::WMLOptGroupElement::valueMatchesRenderer):
+        (WebCore::WMLOptGroupElement::setValueMatchesRenderer):
+        (WebCore::WMLOptGroupElement::rendererIsNeeded):
+        * wml/WMLOptionElement.cpp: Added.
+        (WebCore::WMLOptionElement::WMLOptionElement):
+        (WebCore::WMLOptionElement::~WMLOptionElement):
+        (WebCore::ownerSelectElement):
+        (WebCore::WMLOptionElement::accessKeyAction):
+        (WebCore::WMLOptionElement::childrenChanged):
+        (WebCore::WMLOptionElement::parseMappedAttribute):
+        (WebCore::WMLOptionElement::attach):
+        (WebCore::WMLOptionElement::detach):
+        (WebCore::WMLOptionElement::setRenderStyle):
+        (WebCore::WMLOptionElement::insertedIntoDocument):
+        (WebCore::WMLOptionElement::selected):
+        (WebCore::WMLOptionElement::setSelectedState):
+        (WebCore::WMLOptionElement::value):
+        (WebCore::WMLOptionElement::textIndentedToRespectGroupLabel):
+        (WebCore::WMLOptionElement::nonRendererRenderStyle):
+        (WebCore::WMLOptionElement::handleIntrinsicEventIfNeeded):
+        * wml/WMLOptionElement.h: Added.
+        (WebCore::WMLOptionElement::valueMatchesRenderer):
+        (WebCore::WMLOptionElement::setValueMatchesRenderer):
+        (WebCore::WMLOptionElement::rendererIsNeeded):
+        * wml/WMLTagNames.in:
+
 2009-01-22  Eric Roman  <eroman@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -2233,6 +2233,8 @@ webcore_sources += \
 	WebCore/wml/WMLNoopElement.cpp \
 	WebCore/wml/WMLOnEventElement.cpp \
 	WebCore/wml/WMLPElement.cpp \
+	WebCore/wml/WMLOptGroupElement.cpp \
+	WebCore/wml/WMLOptionElement.cpp \
 	WebCore/wml/WMLPageState.cpp \
 	WebCore/wml/WMLPostfieldElement.cpp \
 	WebCore/wml/WMLPrevElement.cpp \

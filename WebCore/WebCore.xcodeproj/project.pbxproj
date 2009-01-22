@@ -57,6 +57,10 @@
 		083DAEA70F01A7FB00342754 /* RenderTextControlMultiLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 083DAEA30F01A7FB00342754 /* RenderTextControlMultiLine.h */; };
 		083DAEA80F01A7FB00342754 /* RenderTextControlSingleLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083DAEA40F01A7FB00342754 /* RenderTextControlSingleLine.cpp */; };
 		083DAEA90F01A7FB00342754 /* RenderTextControlSingleLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 083DAEA50F01A7FB00342754 /* RenderTextControlSingleLine.h */; };
+		084CE5CB0F27DADC00E6240E /* WMLOptGroupElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084CE5C70F27DADC00E6240E /* WMLOptGroupElement.cpp */; };
+		084CE5CC0F27DADC00E6240E /* WMLOptGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 084CE5C80F27DADC00E6240E /* WMLOptGroupElement.h */; };
+		084CE5CD0F27DADC00E6240E /* WMLOptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084CE5C90F27DADC00E6240E /* WMLOptionElement.cpp */; };
+		084CE5CE0F27DADC00E6240E /* WMLOptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 084CE5CA0F27DADC00E6240E /* WMLOptionElement.h */; };
 		084DBAA10ED39D360038C226 /* WMLVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084DBA9D0ED39D350038C226 /* WMLVariables.cpp */; };
 		084DBAA20ED39D360038C226 /* WMLVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 084DBA9E0ED39D360038C226 /* WMLVariables.h */; };
 		085773350F0846010080583E /* FormControlElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 085773340F0846010080583E /* FormControlElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4899,6 +4903,10 @@
 		083DAEA30F01A7FB00342754 /* RenderTextControlMultiLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlMultiLine.h; sourceTree = "<group>"; };
 		083DAEA40F01A7FB00342754 /* RenderTextControlSingleLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControlSingleLine.cpp; sourceTree = "<group>"; };
 		083DAEA50F01A7FB00342754 /* RenderTextControlSingleLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlSingleLine.h; sourceTree = "<group>"; };
+		084CE5C70F27DADC00E6240E /* WMLOptGroupElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLOptGroupElement.cpp; sourceTree = "<group>"; };
+		084CE5C80F27DADC00E6240E /* WMLOptGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOptGroupElement.h; sourceTree = "<group>"; };
+		084CE5C90F27DADC00E6240E /* WMLOptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLOptionElement.cpp; sourceTree = "<group>"; };
+		084CE5CA0F27DADC00E6240E /* WMLOptionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOptionElement.h; sourceTree = "<group>"; };
 		084DBA9D0ED39D350038C226 /* WMLVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLVariables.cpp; sourceTree = "<group>"; };
 		084DBA9E0ED39D360038C226 /* WMLVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLVariables.h; sourceTree = "<group>"; };
 		085773340F0846010080583E /* FormControlElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormControlElement.h; sourceTree = "<group>"; };
@@ -9727,6 +9735,10 @@
 				0865CCE50EDDF51B00DF9EC3 /* WMLNoopElement.h */,
 				08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */,
 				08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */,
+				084CE5C70F27DADC00E6240E /* WMLOptGroupElement.cpp */,
+				084CE5C80F27DADC00E6240E /* WMLOptGroupElement.h */,
+				084CE5C90F27DADC00E6240E /* WMLOptionElement.cpp */,
+				084CE5CA0F27DADC00E6240E /* WMLOptionElement.h */,
 				4C6B99350E52E37300487BB7 /* WMLPElement.cpp */,
 				4C6B99360E52E37300487BB7 /* WMLPElement.h */,
 				0893E4650ECB68F400A28563 /* WMLPageState.cpp */,
@@ -16505,6 +16517,8 @@
 				088C97130ECB6D9D000534BA /* WMLNames.h in Headers */,
 				0865CCE70EDDF51B00DF9EC3 /* WMLNoopElement.h in Headers */,
 				08744BAE0EDB7D92004C9E63 /* WMLOnEventElement.h in Headers */,
+				084CE5CC0F27DADC00E6240E /* WMLOptGroupElement.h in Headers */,
+				084CE5CE0F27DADC00E6240E /* WMLOptionElement.h in Headers */,
 				088C976F0ECB6E29000534BA /* WMLPElement.h in Headers */,
 				088C976D0ECB6E29000534BA /* WMLPageState.h in Headers */,
 				08E6A2E90EEE035200AC1206 /* WMLPostfieldElement.h in Headers */,
@@ -18484,6 +18498,8 @@
 				088C97120ECB6D92000534BA /* WMLNames.cpp in Sources */,
 				0865CCE60EDDF51B00DF9EC3 /* WMLNoopElement.cpp in Sources */,
 				08744BAA0EDB7D86004C9E63 /* WMLOnEventElement.cpp in Sources */,
+				084CE5CB0F27DADC00E6240E /* WMLOptGroupElement.cpp in Sources */,
+				084CE5CD0F27DADC00E6240E /* WMLOptionElement.cpp in Sources */,
 				088C976E0ECB6E29000534BA /* WMLPElement.cpp in Sources */,
 				088C976C0ECB6E29000534BA /* WMLPageState.cpp in Sources */,
 				08E6A2E80EEE035200AC1206 /* WMLPostfieldElement.cpp in Sources */,

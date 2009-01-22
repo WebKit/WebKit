@@ -1430,6 +1430,8 @@ contains(DEFINES, ENABLE_WML=1) {
         wml/WMLNoopElement.cpp \
         wml/WMLOnEventElement.cpp \
         wml/WMLPElement.cpp \
+        wml/WMLOptGroupElement.cpp \
+        wml/WMLOptionElement.cpp \
         wml/WMLPageState.cpp \
         wml/WMLPostfieldElement.cpp \
         wml/WMLPrevElement.cpp \

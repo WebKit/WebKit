@@ -16794,6 +16794,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\wml\WMLOptGroupElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLOptGroupElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLOptionElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLOptionElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\wml\WMLPageState.cpp"
 				>
 			</File>
