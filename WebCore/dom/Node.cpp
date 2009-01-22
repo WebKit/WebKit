@@ -576,14 +576,16 @@ bool Node::shouldUseInputMethod() const
     return isContentEditable();
 }
 
+RenderBox* Node::renderBox() const
+{
+    return m_renderer && m_renderer->isBox() ? static_cast<const RenderBox* const>(m_renderer) : 0;
+}
+
 IntRect Node::getRect() const
 {
     // FIXME: broken with transforms
-    if (renderer()) {
-        FloatPoint absPos = renderer()->localToAbsolute();
-        return IntRect(roundedIntPoint(absPos),
-                       IntSize(renderer()->width(), renderer()->height() + renderer()->borderTopExtra() + renderer()->borderBottomExtra()));
-    }
+    if (renderer())
+        return renderer()->absoluteBoundingBoxRect();
     return IntRect();
 }
 

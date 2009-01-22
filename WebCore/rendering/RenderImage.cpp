@@ -281,21 +281,21 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         // layout when we get added in to the render tree hierarchy later.
         if (containingBlock()) {
             // lets see if we need to relayout at all..
-            int oldwidth = m_width;
-            int oldheight = m_height;
+            int oldwidth = width();
+            int oldheight = height();
             if (!prefWidthsDirty())
                 setPrefWidthsDirty(true);
             calcWidth();
             calcHeight();
 
-            if (imageSizeChanged || m_width != oldwidth || m_height != oldheight) {
+            if (imageSizeChanged || width() != oldwidth || height() != oldheight) {
                 shouldRepaint = false;
                 if (!selfNeedsLayout())
                     setNeedsLayout(true);
             }
 
-            m_width = oldwidth;
-            m_height = oldheight;
+            setWidth(oldwidth);
+            setHeight(oldheight);
         }
     }
 
@@ -304,11 +304,11 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         if (rect) {
             // The image changed rect is in source image coordinates (pre-zooming),
             // so map from the bounds of the image to the contentsBox.
-            repaintRect = enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), imageSize(1.0f)), contentBox()));
+            repaintRect = enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), imageSize(1.0f)), contentBoxRect()));
             // Guard against too-large changed rects.
-            repaintRect.intersect(contentBox());
+            repaintRect.intersect(contentBoxRect());
         } else
-            repaintRect = contentBox();
+            repaintRect = contentBoxRect();
         
         repaintRectangle(repaintRect);
     }
@@ -396,7 +396,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
 #if PLATFORM(MAC)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-            paintCustomHighlight(tx - m_x, ty - m_y, style()->highlight(), true);
+            paintCustomHighlight(tx - x(), ty - m_frameRect.y(), style()->highlight(), true);
 #endif
 
         IntSize contentSize(cWidth, cHeight);
@@ -424,8 +424,8 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     bool inside = RenderReplaced::nodeAtPoint(request, result, _x, _y, _tx, _ty, hitTestAction);
 
     if (inside && element()) {
-        int tx = _tx + m_x;
-        int ty = _ty + m_y;
+        int tx = _tx + x();
+        int ty = _ty + m_frameRect.y();
         
         HTMLMapElement* map = imageMap();
         if (map) {
@@ -490,8 +490,10 @@ bool RenderImage::isHeightSpecified() const
 int RenderImage::calcReplacedWidth(bool includeMaxWidth) const
 {
     if (imageHasRelativeWidth())
-        if (RenderObject* cb = isPositioned() ? container() : containingBlock())
-            setImageContainerSize(IntSize(cb->availableWidth(), cb->availableHeight()));
+        if (RenderObject* cb = isPositioned() ? container() : containingBlock()) {
+            if (cb->isBox())
+                setImageContainerSize(IntSize(toRenderBox(cb)->availableWidth(), toRenderBox(cb)->availableHeight()));
+        }
 
     int width;
     if (isWidthSpecified())

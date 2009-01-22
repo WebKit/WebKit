@@ -134,7 +134,7 @@ static inline TransformOperations blendFunc(const AnimationBase* anim, const Tra
         }
     } else {
         // Convert the TransformOperations into matrices
-        IntSize size = anim->renderer()->borderBox().size();
+        IntSize size = anim->renderer()->isBox() ? RenderBox::toRenderBox(anim->renderer())->borderBoxRect().size() : IntSize();
         TransformationMatrix fromT;
         TransformationMatrix toT;
         from.apply(size, fromT);

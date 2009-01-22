@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "InlineTextBox.h"
 #include "MutationEvent.h"
+#include "RenderBox.h"
 #include "RenderTheme.h"
 #include "RootInlineBox.h"
 #include <wtf/CurrentTime.h>
@@ -691,10 +692,12 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
         } else if ((o->isText() && !o->isBR()) || o->isReplaced()) {
             point = o->container()->localToAbsolute();
             if (o->isText() && static_cast<RenderText *>(o)->firstTextBox()) {
-                point.move(static_cast<RenderText *>(o)->minXPos(),
+                point.move(static_cast<RenderText *>(o)->boundingBoxX(),
                            static_cast<RenderText *>(o)->firstTextBox()->root()->topOverflow());
-            } else
-                point.move(o->xPos(), o->yPos());
+            } else if (o->isBox()) {
+                RenderBox* box = RenderBox::toRenderBox(o);
+                point.move(box->x(), box->y());
+            }
             return true;
         }
     }
@@ -717,9 +720,10 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
     RenderObject *o = renderer();
     if (!o->isInline() || o->isReplaced())
     {
+        RenderBox* box = RenderBox::toRenderBox(o);
         point = o->localToAbsolute();
-        point.move(o->width(),
-                   o->height() + o->borderTopExtra() + o->borderBottomExtra());
+        point.move(box->width(),
+                   box->height() + box->borderTopExtra() + box->borderBottomExtra());
         return true;
     }
 
@@ -741,13 +745,13 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
         }
         if (o->isText() || o->isReplaced()) {
             point = o->container()->localToAbsolute();
-            int xOffset;
-            if (o->isText())
-                xOffset = static_cast<RenderText *>(o)->minXPos() + o->width();
-            else
-                xOffset = o->xPos() + o->width();
-            
-            point.move(xOffset, o->yPos() + o->height());
+            if (o->isText()) {
+                RenderText* text = static_cast<RenderText*>(o);
+                point.move(text->boundingBoxX() + text->boundingBoxWidth(), text->boundingBoxHeight());
+            } else {
+                RenderBox* box = RenderBox::toRenderBox(o);
+                point.move(box->x() + box->width(), box->y() + box->height());
+            }
             return true;
         }
     }

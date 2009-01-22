@@ -34,6 +34,10 @@ public:
     virtual RenderObject* firstChild() const { return m_firstChild; }
     virtual RenderObject* lastChild() const { return m_lastChild; }
 
+    // Use this with caution! No type checking is done!
+    RenderBox* firstChildBox() const { ASSERT(!firstChild() || firstChild()->isBox()); return toRenderBox(m_firstChild); }
+    RenderBox* lastChildBox() const { ASSERT(!lastChild() || lastChild()->isBox()); return toRenderBox(m_lastChild); }
+    
     virtual bool canHaveChildren() const;
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
@@ -65,7 +69,7 @@ public:
     virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
     virtual void collectAbsoluteLineBoxQuads(Vector<FloatQuad>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
 
-private:
+protected:
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
 };

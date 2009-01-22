@@ -292,14 +292,16 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool to
         rects.append(IntRect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height()));
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-        if (!curr->isText())
-            curr->absoluteRects(rects, tx + curr->xPos(), ty + curr->yPos(), false);
+        if (curr->isBox()) {
+            RenderBox* box = toRenderBox(curr);
+            curr->absoluteRects(rects, tx + box->x(), ty + box->y(), false);
+        }
     }
 
     if (continuation() && topLevel)
         continuation()->absoluteRects(rects, 
-                                      tx - containingBlock()->xPos() + continuation()->xPos(),
-                                      ty - containingBlock()->yPos() + continuation()->yPos(),
+                                      tx - containingBlock()->x() + continuation()->x(),
+                                      ty - containingBlock()->y() + continuation()->y(),
                                       topLevel);
 }
 
@@ -324,7 +326,7 @@ bool RenderInline::requiresLayer()
     return isRelPositioned() || isTransparent() || hasMask();
 }
 
-int RenderInline::width() const
+int RenderInline::boundingBoxWidth() const
 {
     // Return the width of the minimal left side and the maximal right side.
     int leftSide = 0;
@@ -339,7 +341,7 @@ int RenderInline::width() const
     return rightSide - leftSide;
 }
 
-int RenderInline::height() const
+int RenderInline::boundingBoxHeight() const
 {
     // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero.  We have been
     // unable to reproduce this at all (and consequently unable to figure ot why this is happening).  The assert will hopefully catch the problem in debug
@@ -385,14 +387,14 @@ VisiblePosition RenderInline::positionForCoordinates(int x, int y)
 {
     // Translate the coords from the pre-anonymous block to the post-anonymous block.
     RenderBlock* cb = containingBlock();
-    int parentBlockX = cb->xPos() + x;
-    int parentBlockY = cb->yPos() + y;
+    int parentBlockX = cb->x() + x;
+    int parentBlockY = cb->y() + y;
     for (RenderFlow* c = continuation(); c; c = c->continuation()) {
-        RenderObject* contBlock = c;
+        RenderFlow* contBlock = c;
         if (c->isInline())
             contBlock = c->containingBlock();
         if (c->isInline() || c->firstChild())
-            return c->positionForCoordinates(parentBlockX - contBlock->xPos(), parentBlockY - contBlock->yPos());
+            return c->positionForCoordinates(parentBlockX - contBlock->x(), parentBlockY - contBlock->y());
     }
 
     return RenderFlow::positionForCoordinates(x, y);

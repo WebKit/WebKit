@@ -55,7 +55,7 @@ public:
     virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
 
     virtual int placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing);
-    virtual void verticallyAlignBoxes(int& heightOfBlock);
+    virtual int verticallyAlignBoxes(int heightOfBlock);
 
     virtual void computePerCharacterLayoutInformation();
 

@@ -50,6 +50,7 @@ class InlineFlowBox;
 class Position;
 class RenderArena;
 class RenderBlock;
+class RenderBox;
 class RenderFlow;
 class RenderFrameSet;
 class RenderLayer;
@@ -329,6 +330,7 @@ public:
     bool isPositioned() const { return m_positioned; } // absolute or fixed positioning
     bool isRelPositioned() const { return m_relPositioned; } // relative positioning
     bool isText() const  { return m_isText; }
+    bool isBox() const { return m_isBox; }
     bool isInline() const { return m_inline; }  // inline object
     bool isCompact() const { return style()->display() == COMPACT; } // compact object
     bool isRunIn() const { return style()->display() == RUN_IN; } // run-in object
@@ -370,7 +372,6 @@ public:
     
     bool hasTransform() const { return m_hasTransform; }
     bool hasMask() const { return style() && style()->hasMask(); }
-    virtual IntRect maskClipRect() { return borderBox(); }
 
 private:
     bool includeVerticalScrollbarSize() const { return hasOverflowClip() && (style()->overflowY() == OSCROLL || style()->overflowY() == OAUTO); }
@@ -402,7 +403,7 @@ public:
     RenderObject* container() const;
     RenderObject* hoverAncestor() const;
 
-    virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
+    virtual void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0);
     void markContainingBlocksForLayout(bool scheduleRelayout = true, RenderObject* newRoot = 0);
     void setNeedsLayout(bool b, bool markParents = true);
     void setChildNeedsLayout(bool b, bool markParents = true);
@@ -422,7 +423,8 @@ public:
     void setFloating(bool b = true) { m_floating = b; }
     void setInline(bool b = true) { m_inline = b; }
     void setHasBoxDecorations(bool b = true) { m_paintBackground = b; }
-    void setRenderText() { m_isText = true; }
+    void setIsText() { m_isText = true; }
+    void setIsBox() { m_isBox = true; }
     void setReplaced(bool b = true) { m_replaced = b; }
     void setHasOverflowClip(bool b = true) { m_hasOverflowClip = b; }
     void setHasLayer(bool b = true) { m_hasLayer = b; }
@@ -479,7 +481,6 @@ public:
     virtual void paint(PaintInfo&, int tx, int ty);
     void paintBorder(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool begin = true, bool end = true);
     bool paintNinePieceImage(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, const NinePieceImage&, CompositeOperator = CompositeSourceOver);
-    void paintOutline(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*);
     void paintBoxShadow(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool begin = true, bool end = true);
 
     // RenderBox implements this.
@@ -519,11 +520,6 @@ public:
     // repaint and do not need a relayout
     virtual void updateFromElement() { }
 
-    // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
-    virtual int availableWidth() const { return contentWidth(); }
-    
-    virtual int availableHeight() const { return 0; }
-
     virtual void updateWidgetPosition();
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -560,37 +556,18 @@ public:
     // return just the height of the containing block
     virtual int containingBlockHeight() const;
 
-    // content area (box minus padding/border)
-    IntRect contentBox() const;
-    // absolute coords of content area. Ignores transforms.
-    IntRect absoluteContentBox() const;
-    // content rect converted to absolute coords, taking transforms into account
-    FloatQuad absoluteContentQuad() const;
-    
-    int contentWidth() const { return clientWidth() - paddingLeft() - paddingRight(); }
-    int contentHeight() const { return clientHeight() - paddingTop() - paddingBottom(); }
-
     // used by flexible boxes to impose a flexed width/height override
     virtual int overrideSize() const { return 0; }
     virtual int overrideWidth() const { return 0; }
     virtual int overrideHeight() const { return 0; }
     virtual void setOverrideSize(int /*overrideSize*/) { }
 
-    // relative to parent node
-    virtual void setPos(int /*xPos*/, int /*yPos*/) { }
-    virtual void setWidth(int /*width*/) { }
-    virtual void setHeight(int /*height*/) { }
-    virtual void setRect(const IntRect& rect) { setPos(rect.x(), rect.y()); setWidth(rect.width()); setHeight(rect.height()); }
-
-    virtual int xPos() const { return 0; }
-    virtual int yPos() const { return 0; }
-
     // Convert the given local point to absolute coordinates
     // FIXME: Temporary. If useTransforms is true, take transforms into account. Eventually localToAbsolute() will always be transform-aware.
     virtual FloatPoint localToAbsolute(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
     virtual FloatPoint absoluteToLocal(FloatPoint, bool fixed = false, bool useTransforms = false) const;
 
-    // This function is used to deal with the extra top space that can occur in table cells (called borderTopExtra).
+    // This function is used to deal with the extra top space that can occur in table cells (called intrinsicPaddingTop).
     // The children of the cell do not factor this space in, so we have to add it in.  Any code that wants to
     // accurately deal with the contents of a cell must call this function instad of absolutePosition.
     FloatPoint localToAbsoluteForContent(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const
@@ -604,55 +581,6 @@ public:
 
     // Return the offset from the container() renderer (excluding transforms)
     virtual IntSize offsetFromContainer(RenderObject*) const;
-
-    // width and height are without margins but include paddings and borders
-    virtual int width() const { return 0; }
-    virtual int height() const { return 0; }
-
-    virtual IntRect borderBox() const { return IntRect(0, 0, width(), height()); }
-    // Bounds of the outline box in absolute coords. Respects transforms
-    IntRect absoluteOutlineBounds() const;
-
-    // The height of a block when you include normal flow overflow spillage out of the bottom
-    // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside
-    // it would have an overflow height of borderTop() + paddingTop() + 100px.
-    virtual int overflowHeight(bool /*includeInterior*/ = true) const { return height(); }
-    virtual int overflowWidth(bool /*includeInterior*/ = true) const { return width(); }
-    virtual void setOverflowHeight(int) { }
-    virtual void setOverflowWidth(int) { }
-    virtual int overflowLeft(bool /*includeInterior*/ = true) const { return 0; }
-    virtual int overflowTop(bool /*includeInterior*/ = true) const { return 0; }
-    virtual IntRect overflowRect(bool /*includeInterior*/ = true) const { return borderBox(); }
-
-    // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
-    // to return the remaining width on a given line (and the height of a single line).
-    virtual int offsetWidth() const { return width(); }
-    virtual int offsetHeight() const { return height() + borderTopExtra() + borderBottomExtra(); }
-
-    // IE extensions.  Also supported by Gecko.  We override in render flow to get the
-    // left and top correct. -dwh
-    virtual int offsetLeft() const;
-    virtual int offsetTop() const;
-    virtual RenderObject* offsetParent() const;
-
-    // More IE extensions.  clientWidth and clientHeight represent the interior of an object
-    // excluding border and scrollbar.  clientLeft/Top are just the borderLeftWidth and borderTopWidth.
-    int clientLeft() const { return borderLeft(); }
-    int clientTop() const { return borderTop(); }
-    int clientWidth() const;
-    int clientHeight() const;
-
-    // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
-    // object has overflow:hidden/scroll/auto specified and also has overflow.
-    // scrollLeft/Top return the current scroll position.  These methods are virtual so that objects like
-    // textareas can scroll shadow content (but pretend that they are the objects that are
-    // scrolling).
-    virtual int scrollLeft() const;
-    virtual int scrollTop() const;
-    virtual int scrollWidth() const;
-    virtual int scrollHeight() const;
-    virtual void setScrollLeft(int);
-    virtual void setScrollTop(int);
 
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
     virtual bool canBeProgramaticallyScrolled(bool) const;
@@ -689,29 +617,26 @@ public:
     virtual int paddingLeft() const;
     virtual int paddingRight() const;
 
-    virtual int borderTop() const { return style()->borderTopWidth(); }
-    virtual int borderBottom() const { return style()->borderBottomWidth(); }
     virtual int borderTopExtra() const { return 0; }
     virtual int borderBottomExtra() const { return 0; }
+
+    virtual int borderTop() const { return style()->borderTopWidth(); }
+    virtual int borderBottom() const { return style()->borderBottomWidth(); }
     virtual int borderLeft() const { return style()->borderLeftWidth(); }
     virtual int borderRight() const { return style()->borderRightWidth(); }
 
     virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
-
-    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
+    
+    virtual void absoluteRects(Vector<IntRect>&, int, int, bool = true) { }
     // FIXME: useTransforms should go away eventually
     IntRect absoluteBoundingBoxRect(bool useTransforms = false);
 
     // Build an array of quads in absolute coords for line boxes
-    virtual void collectAbsoluteLineBoxQuads(Vector<FloatQuad>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
+    virtual void collectAbsoluteLineBoxQuads(Vector<FloatQuad>&, unsigned /*startOffset*/ = 0, unsigned /*endOffset*/ = UINT_MAX, bool /*useSelectionHeight*/ = false) { };
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool /*topLevel*/ = true) { };
 
     // the rect that will be painted if this object is passed as the paintingRoot
     IntRect paintingRootRect(IntRect& topLevelRect);
-
-    void addPDFURLRect(GraphicsContext*, const IntRect&);
-
-    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
     virtual int minPrefWidth() const { return 0; }
     virtual int maxPrefWidth() const { return 0; }
@@ -756,7 +681,7 @@ public:
     // Returns the rect that should be repainted whenever this object changes.  The rect is in the view's
     // coordinate space.  This method deals with outlines and overflow.
     virtual IntRect absoluteClippedOverflowRect();
-
+    
     IntRect getAbsoluteRepaintRectWithOutline(int ow);
 
     // Given a rect in the object's coordinate space, this method converts the rectangle to the view's
@@ -783,10 +708,6 @@ public:
     float opacity() const { return style()->opacity(); }
 
     bool hasReflection() const { return m_hasReflection; }
-    IntRect reflectionBox() const;
-    int reflectionOffset() const;
-    // Given a rect in the object's coordinate space, returns the corresponding rect in the reflection.
-    IntRect reflectedRect(const IntRect&) const;
 
     // Applied as a "slop" to dirty rect checks during the outline painting phase's dirty-rect checks.
     int maximalOutlineSize(PaintPhase) const;
@@ -914,6 +835,9 @@ public:
 
     bool visibleToHitTesting() const { return style()->visibility() == VISIBLE && style()->pointerEvents() != PE_NONE; }
     
+    virtual void addFocusRingRects(GraphicsContext*, int /*tx*/, int /*ty*/) { };
+    virtual IntRect absoluteOutlineBounds() const { return IntRect(); }
+
 protected:
     // Overrides should call the superclass at the end
     virtual void styleWillChange(RenderStyle::Diff, const RenderStyle* newStyle);
@@ -921,6 +845,9 @@ protected:
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
     
     virtual void printBoxDecorations(GraphicsContext*, int /*x*/, int /*y*/, int /*w*/, int /*h*/, int /*tx*/, int /*ty*/) { }
+
+    void paintOutline(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool onlyUsePassedInBounds = false);
+    void addPDFURLRect(GraphicsContext*, const IntRect&);
 
     virtual IntRect viewRect() const;
 
@@ -958,6 +885,7 @@ private:
 
     bool m_isAnonymous               : 1;
     bool m_isText                    : 1;
+    bool m_isBox                     : 1;
     bool m_inline                    : 1;
     bool m_replaced                  : 1;
     bool m_isDragging                : 1;

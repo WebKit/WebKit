@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "RenderBR.h"
+#include "RenderInline.h"
 #include "RenderListMarker.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
@@ -180,7 +181,26 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
         }
     }
 
-    IntRect r(o.xPos(), o.yPos(), o.width(), o.height());
+    IntRect r;
+    if (o.isText()) {
+        // FIXME: Would be better to dump the bounding box x and y rather than the first run's x and y, but that would involve updating
+        // many test results.
+        const RenderText& text = static_cast<const RenderText&>(o);
+        r = IntRect(text.firstRunX(), text.firstRunY(), text.boundingBoxWidth(), text.boundingBoxHeight());
+    } else if (o.isBox()) {
+        if (o.isRenderInline()) {
+            // FIXME: Would be better not to just dump 0, 0 as the x and y here.
+            const RenderInline& inlineFlow = static_cast<const RenderInline&>(o);
+            r = IntRect(0, 0, inlineFlow.boundingBoxWidth(), inlineFlow.boundingBoxHeight());
+        } else {
+            // FIXME: We can't just use the actual frameRect of the box because dump render tree dumps the "inner box" of table cells.
+            // Because of the lie we have to call y().  We would like to fix dump render tree to dump the actual dimensions of the table
+            // cell including the extra intrinsic padding.
+            const RenderBox& box = static_cast<const RenderBox&>(o);
+            r = IntRect(box.x(), box.y(), box.width(), box.height());
+        }
+    }
+
     ts << " " << r;
 
     if (!(o.isText() && !o.isBR())) {

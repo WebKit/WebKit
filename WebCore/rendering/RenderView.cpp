@@ -50,10 +50,7 @@ RenderView::RenderView(Node* node, FrameView* view)
 
     // init RenderObject attributes
     setInline(false);
-
-    // try to contrain the width to the views width
-    m_width = 0;
-    m_height = 0;
+    
     m_minPrefWidth = 0;
     m_maxPrefWidth = 0;
 
@@ -73,13 +70,13 @@ RenderView::~RenderView()
 void RenderView::calcHeight()
 {
     if (!printing() && m_frameView)
-        m_height = viewHeight();
+        setHeight(viewHeight());
 }
 
 void RenderView::calcWidth()
 {
     if (!printing() && m_frameView)
-        m_width = viewWidth();
+        setWidth(viewWidth());
     m_marginLeft = 0;
     m_marginRight = 0;
 }
@@ -96,10 +93,10 @@ void RenderView::calcPrefWidths()
 void RenderView::layout()
 {
     if (printing())
-        m_minPrefWidth = m_maxPrefWidth = m_width;
+        m_minPrefWidth = m_maxPrefWidth = width();
 
     // Use calcWidth/Height to get the new width/height, since this will take the full page zoom factor into account.
-    bool relayoutChildren = !printing() && (!m_frameView || m_width != viewWidth() || m_height != viewHeight());
+    bool relayoutChildren = !printing() && (!m_frameView || width() != viewWidth() || height() != viewHeight());
     if (relayoutChildren) {
         setChildNeedsLayout(true, false);
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
@@ -118,8 +115,8 @@ void RenderView::layout()
         RenderBlock::layout();
 
     // Ensure that docWidth() >= width() and docHeight() >= height().
-    setOverflowWidth(m_width);
-    setOverflowHeight(m_height);
+    setOverflowWidth(width());
+    setOverflowHeight(height());
 
     setOverflowWidth(docWidth());
     setOverflowHeight(docHeight());
@@ -514,7 +511,7 @@ void RenderView::removeWidget(RenderObject* o)
 IntRect RenderView::viewRect() const
 {
     if (printing())
-        return IntRect(0, 0, m_width, m_height);
+        return IntRect(0, 0, width(), height());
     if (m_frameView)
         return m_frameView->visibleContentRect();
     return IntRect();
@@ -522,7 +519,7 @@ IntRect RenderView::viewRect() const
 
 int RenderView::docHeight() const
 {
-    int h = m_height;
+    int h = height();
     int lowestPos = lowestPosition();
     if (lowestPos > h)
         h = lowestPos;
@@ -531,7 +528,7 @@ int RenderView::docHeight() const
     // Instead of this dh computation we should keep the result
     // when we call RenderBlock::layout.
     int dh = 0;
-    for (RenderObject* c = firstChild(); c; c = c->nextSibling())
+    for (RenderBox* c = firstChildBox(); c; c = c->nextSiblingBox())
         dh += c->height() + c->marginTop() + c->marginBottom();
 
     if (dh > h)
@@ -542,12 +539,12 @@ int RenderView::docHeight() const
 
 int RenderView::docWidth() const
 {
-    int w = m_width;
+    int w = width();
     int rightmostPos = rightmostPosition();
     if (rightmostPos > w)
         w = rightmostPos;
-
-    for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
+    
+    for (RenderBox* c = firstChildBox(); c; c = c->nextSiblingBox()) {
         int dw = c->width() + c->marginLeft() + c->marginRight();
         if (dw > w)
             w = dw;
@@ -578,7 +575,7 @@ int RenderView::viewWidth() const
 
 // The idea here is to take into account what object is moving the pagination point, and
 // thus choose the best place to chop it.
-void RenderView::setBestTruncatedAt(int y, RenderObject* forRenderer, bool forcedBreak)
+void RenderView::setBestTruncatedAt(int y, RenderBox* forRenderer, bool forcedBreak)
 {
     // Nobody else can set a page break once we have a forced break.
     if (m_forcedPageBreak)
@@ -592,9 +589,8 @@ void RenderView::setBestTruncatedAt(int y, RenderObject* forRenderer, bool force
     }
 
     // prefer the widest object who tries to move the pagination point
-    int width = forRenderer->width();
-    if (width > m_truncatorWidth) {
-        m_truncatorWidth = width;
+    if (forRenderer->width() > m_truncatorWidth) {
+        m_truncatorWidth = forRenderer->width();
         m_bestTruncatedAt = y;
     }
 }

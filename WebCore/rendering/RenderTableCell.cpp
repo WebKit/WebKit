@@ -123,10 +123,10 @@ void RenderTableCell::calcWidth()
 {
 }
 
-void RenderTableCell::setWidth(int width)
+void RenderTableCell::updateWidth(int w)
 {
-    if (width != m_width) {
-        m_width = width;
+    if (w != width()) {
+        setWidth(w);
         m_widthChanged = true;
     }
 }
@@ -192,7 +192,7 @@ void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool fixed)
     r.setY(r.y() + m_topExtra);
     RenderView* v = view();
     if ((!v || !v->layoutStateEnabled()) && parent())
-        r.move(-parent()->xPos(), -parent()->yPos()); // Rows are in the same coordinate space, so don't add their offset in.
+        r.move(-parentBox()->x(), -parentBox()->y()); // Rows are in the same coordinate space, so don't add their offset in.
     RenderBlock::computeAbsoluteRepaintRect(r, fixed);
 }
 
@@ -201,7 +201,7 @@ FloatPoint RenderTableCell::localToAbsolute(FloatPoint localPoint, bool fixed, b
     RenderView* v = view();
     if ((!v || !v->layoutStateEnabled()) && parent()) {
         // Rows are in the same coordinate space, so don't add their offset in.
-        localPoint.move(-parent()->xPos(), -parent()->yPos());
+        localPoint.move(-parentBox()->x(), -parentBox()->y());
     }
     return RenderBlock::localToAbsolute(localPoint, fixed, useTransforms);
 }
@@ -211,7 +211,7 @@ FloatPoint RenderTableCell::absoluteToLocal(FloatPoint containerPoint, bool fixe
     FloatPoint localPoint = RenderBlock::absoluteToLocal(containerPoint, fixed, useTransforms);
     if (parent()) {
         // Rows are in the same coordinate space, so add their offset back in.
-        localPoint.move(parent()->xPos(), parent()->yPos());
+        localPoint.move(parentBox()->x(), parentBox()->y());
     }
     return localPoint;
 }
@@ -221,7 +221,7 @@ FloatQuad RenderTableCell::localToAbsoluteQuad(const FloatQuad& localQuad, bool 
     FloatQuad quad = localQuad;
     if (parent()) {
         // Rows are in the same coordinate space, so don't add their offset in.
-        quad.move(-parent()->xPos(), -parent()->yPos());
+        quad.move(-parentBox()->x(), -parentBox()->y());
     }
     return RenderBlock::localToAbsoluteQuad(quad, fixed);
 }
@@ -630,15 +630,15 @@ int RenderTableCell::borderHalfBottom(bool outer) const
 
 void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    tx += m_x;
-    ty += m_y;
+    tx += x();
+    ty += m_frameRect.y();
 
     // check if we need to do anything at all...
     int os = 2 * maximalOutlineSize(paintInfo.phase);
 
     if (paintInfo.phase == PaintPhaseCollapsedTableBorders && style()->visibility() == VISIBLE) {
         if (ty - table()->outerBorderTop() >= paintInfo.rect.bottom() + os ||
-                ty + m_topExtra + m_height + m_bottomExtra + table()->outerBorderBottom() <= paintInfo.rect.y() - os)
+                ty + m_topExtra + height() + m_bottomExtra + table()->outerBorderBottom() <= paintInfo.rect.y() - os)
             return;
         int w = width();
         int h = height() + borderTopExtra() + borderBottomExtra();
@@ -807,8 +807,8 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, i
         return;
 
     if (backgroundObject != this) {
-        tx += m_x;
-        ty += m_y + m_topExtra;
+        tx += x();
+        ty += m_frameRect.y() + m_topExtra;
     }
 
     int w = width();

@@ -226,7 +226,7 @@ int HTMLImageElement::width(bool ignorePendingStylesheets) const
     else
         document()->updateLayout();
 
-    return renderer() ? renderer()->contentWidth() : 0;
+    return renderBox() ? renderBox()->contentWidth() : 0;
 }
 
 int HTMLImageElement::height(bool ignorePendingStylesheets) const
@@ -250,7 +250,7 @@ int HTMLImageElement::height(bool ignorePendingStylesheets) const
     else
         document()->updateLayout();
 
-    return renderer() ? renderer()->contentHeight() : 0;
+    return renderBox() ? renderBox()->contentHeight() : 0;
 }
 
 int HTMLImageElement::naturalWidth() const

@@ -42,7 +42,7 @@
 #include "Node.h"
 #include "Range.h"
 #include "RemoveNodeCommand.h"
-#include "RenderObject.h"
+#include "RenderBox.h"
 #include "SelectionController.h"
 
 namespace WebCore {
@@ -71,7 +71,11 @@ static bool isDeletableElement(const Node* node)
     const unsigned minimumVisibleBorders = 3;
 
     RenderObject* renderer = node->renderer();
-    if (!renderer || renderer->width() < minimumWidth || renderer->height() < minimumHeight)
+    if (!renderer || !renderer->isBox())
+        return false;
+
+    RenderBox* box = RenderBox::toRenderBox(renderer);
+    if (box->width() < minimumWidth || box->height() < minimumHeight)
         return false;
 
     if (renderer->isTable())

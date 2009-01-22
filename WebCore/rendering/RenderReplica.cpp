@@ -42,17 +42,13 @@ RenderReplica::~RenderReplica()
     
 void RenderReplica::layout()
 {
-    IntRect box = parent()->borderBox();
-    m_x = box.x();
-    m_y = box.y();
-    m_width = box.width();
-    m_height = box.height();
+    m_frameRect = parentBox()->borderBoxRect();
     setNeedsLayout(false);
 }
 
 void RenderReplica::calcPrefWidths()
 {
-    m_minPrefWidth = parent()->width();
+    m_minPrefWidth = parentBox()->width();
     m_maxPrefWidth = m_minPrefWidth;
     setPrefWidthsDirty(false);
 }
@@ -62,8 +58,8 @@ void RenderReplica::paint(PaintInfo& paintInfo, int tx, int ty)
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseMask)
         return;
  
-    tx += m_x;
-    ty += m_y;
+    tx += x();
+    ty += m_frameRect.y();
 
     if (paintInfo.phase == PaintPhaseForeground)
         // Turn around and paint the parent layer. Use temporary clipRects, so that the layer doesn't end up caching clip rects

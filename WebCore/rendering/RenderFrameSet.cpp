@@ -126,8 +126,8 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     // Add in our offsets.
-    tx += m_x;
-    ty += m_y;
+    tx += x();
+    ty += m_frameRect.y();
 
     int rows = frameSet()->totalRows();
     int cols = frameSet()->totalCols();
@@ -457,8 +457,8 @@ void RenderFrameSet::layout()
         oldBounds = absoluteClippedOverflowRect();
 
     if (!parent()->isFrameSet() && !document()->printing()) {
-        m_width = view()->viewWidth();
-        m_height = view()->viewHeight();
+        setWidth(view()->viewWidth());
+        setHeight(view()->viewHeight());
     }
 
     size_t cols = frameSet()->totalCols();
@@ -470,8 +470,8 @@ void RenderFrameSet::layout()
     }
 
     int borderThickness = frameSet()->border();
-    layOutAxis(m_rows, frameSet()->rowLengths(), m_height - (rows - 1) * borderThickness);
-    layOutAxis(m_cols, frameSet()->colLengths(), m_width - (cols - 1) * borderThickness);
+    layOutAxis(m_rows, frameSet()->rowLengths(), height() - (rows - 1) * borderThickness);
+    layOutAxis(m_cols, frameSet()->colLengths(), width() - (cols - 1) * borderThickness);
 
     positionFrames();
 
@@ -491,7 +491,7 @@ void RenderFrameSet::layout()
 
 void RenderFrameSet::positionFrames()
 {
-    RenderObject* child = firstChild();
+    RenderBox* child = firstChildBox();
     if (!child)
         return;
 
@@ -504,7 +504,7 @@ void RenderFrameSet::positionFrames()
         int xPos = 0;
         int height = m_rows.m_sizes[r];
         for (int c = 0; c < cols; c++) {
-            child->setPos(xPos, yPos);
+            child->setLocation(xPos, yPos);
             int width = m_cols.m_sizes[c];
 
             // has to be resized and itself resize its contents
@@ -517,7 +517,7 @@ void RenderFrameSet::positionFrames()
 
             xPos += width + borderThickness;
 
-            child = child->nextSibling();
+            child = child->nextSiblingBox();
             if (!child)
                 return;
         }
@@ -525,7 +525,7 @@ void RenderFrameSet::positionFrames()
     }
 
     // all the remaining frames are hidden to avoid ugly spurious unflowed frames
-    for (; child; child = child->nextSibling()) {
+    for (; child; child = child->nextSiblingBox()) {
         child->setWidth(0);
         child->setHeight(0);
         child->setNeedsLayout(false);

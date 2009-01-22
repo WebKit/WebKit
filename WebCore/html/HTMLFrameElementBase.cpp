@@ -311,7 +311,7 @@ int HTMLFrameElementBase::width() const
         return 0;
     
     document()->updateLayoutIgnorePendingStylesheets();
-    return renderer()->width();
+    return RenderBox::toRenderBox(renderer())->width();
 }
 
 int HTMLFrameElementBase::height() const
@@ -320,7 +320,7 @@ int HTMLFrameElementBase::height() const
         return 0;
     
     document()->updateLayoutIgnorePendingStylesheets();
-    return renderer()->height();
+    return RenderBox::toRenderBox(renderer())->height();
 }
 
 } // namespace WebCore

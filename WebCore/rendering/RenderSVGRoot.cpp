@@ -102,8 +102,8 @@ void RenderSVGRoot::layout()
 
     m_absoluteBounds = absoluteClippedOverflowRect();
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
-    m_width = static_cast<int>(m_width * svg->currentScale());
-    m_height = static_cast<int>(m_height * svg->currentScale());
+    setWidth(static_cast<int>(width() * svg->currentScale()));
+    setHeight(static_cast<int>(height() * svg->currentScale()));
     
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (selfNeedsLayout()) // either bounds or transform changed, force kids to relayout
@@ -125,7 +125,7 @@ void RenderSVGRoot::applyContentTransforms(PaintInfo& paintInfo, int parentX, in
     // Translate from parent offsets (html renderers) to a relative transform (svg renderers)
     IntPoint origin;
     origin.move(parentX, parentY);
-    origin.move(m_x, m_y);
+    origin.move(x(), m_frameRect.y());
     origin.move(borderLeft(), borderTop());
     origin.move(paddingLeft(), paddingTop());
 
@@ -165,7 +165,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     // This should only exist for <svg> renderers
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
-        paintBoxDecorations(paintInfo, m_x + parentX, m_y + parentY);
+        paintBoxDecorations(paintInfo, x() + parentX, m_frameRect.y() + parentY);
 
     if (!firstChild()) {
 #if ENABLE(SVG_FILTERS)
@@ -268,7 +268,7 @@ void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool)
 TransformationMatrix RenderSVGRoot::absoluteTransform() const
 {
     TransformationMatrix ctm = RenderContainer::absoluteTransform();
-    ctm.translate(m_x, m_y);
+    ctm.translate(x(), m_frameRect.y());
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
     ctm.scale(svg->currentScale());
     ctm.translate(svg->currentTranslate().x(), svg->currentTranslate().y());
@@ -308,8 +308,8 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     if (!viewport().isEmpty()
         && style()->overflowX() == OHIDDEN
         && style()->overflowY() == OHIDDEN) {
-        int tx = m_x - _tx + sx;
-        int ty = m_y - _ty + sy;
+        int tx = x() - _tx + sx;
+        int ty = m_frameRect.y() - _ty + sy;
 
         // Check if we need to do anything at all.
         IntRect overflowBox = overflowRect(false);

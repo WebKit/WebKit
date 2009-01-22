@@ -199,7 +199,7 @@ bool HTMLFormControlElement::isFocusable() const
 {
     if (disabled() || !renderer() || 
         (renderer()->style() && renderer()->style()->visibility() != VISIBLE) || 
-        renderer()->width() == 0 || renderer()->height() == 0)
+        !renderer()->isBox() || RenderBox::toRenderBox(renderer())->size().isEmpty())
         return false;
     return true;
 }

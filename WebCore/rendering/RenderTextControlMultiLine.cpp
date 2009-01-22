@@ -54,14 +54,14 @@ void RenderTextControlMultiLine::subtreeHasChanged()
 
 void RenderTextControlMultiLine::layout()
 {
-    int oldHeight = m_height;
+    int oldHeight = height();
     calcHeight();
 
-    int oldWidth = m_width;
+    int oldWidth = width();
     calcWidth();
 
-    bool relayoutChildren = oldHeight != m_height || oldWidth != m_width;
-    RenderObject* innerTextRenderer = innerTextElement()->renderer();
+    bool relayoutChildren = oldHeight != height() || oldWidth != width();
+    RenderBox* innerTextRenderer = innerTextElement()->renderBox();
 
     // Set the text block height
     int desiredHeight = textBlockHeight();
@@ -104,7 +104,7 @@ int RenderTextControlMultiLine::preferredContentWidth(float charWidth) const
 
 void RenderTextControlMultiLine::adjustControlHeightBasedOnLineHeight(int lineHeight)
 {
-    m_height += lineHeight * static_cast<HTMLTextAreaElement*>(node())->rows();
+    setHeight(height() + lineHeight * static_cast<HTMLTextAreaElement*>(node())->rows());
 }
 
 int RenderTextControlMultiLine::baselinePosition(bool, bool) const

@@ -27,7 +27,7 @@
 #include "PositionIterator.h"
 
 #include "Node.h"
-#include "RenderObject.h"
+#include "RenderBlock.h"
 #include "htmlediting.h"
 
 namespace WebCore {
@@ -151,7 +151,7 @@ bool PositionIterator::isCandidate() const
         return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(m_parent->parent());
 
     if (!m_parent->hasTagName(htmlTag) && renderer->isBlockFlow() && !Position::hasRenderedNonAnonymousDescendantsWithHeight(renderer) &&
-       (renderer->height() || m_parent->hasTagName(bodyTag)))
+       (static_cast<RenderBlock*>(renderer)->height() || m_parent->hasTagName(bodyTag)))
         return atStartOfNode() && !Position::nodeIsUserSelectNone(m_parent);
     
     return false;

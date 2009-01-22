@@ -38,6 +38,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "markup.h"
+#include "RenderTableCell.h"
 #include "ReplaceSelectionCommand.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -357,7 +358,7 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
         // make sure empty cell has some height
         updateLayout();
         RenderObject *r = node->renderer();
-        if (r && r->isTableCell() && r->contentHeight() <= 0)
+        if (r && r->isTableCell() && static_cast<RenderTableCell*>(r)->contentHeight() <= 0)
             insertBlockPlaceholder(Position(node,0));
         return;
     }

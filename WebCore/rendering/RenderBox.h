@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-    enum WidthType { Width, MinWidth, MaxWidth };
+enum WidthType { Width, MinWidth, MaxWidth };
 
 class RenderBox : public RenderObject {
 public:
@@ -35,6 +35,98 @@ public:
     virtual ~RenderBox();
 
     virtual const char* renderName() const { return "RenderBox"; }
+
+    static RenderBox* toRenderBox(RenderObject* o) { ASSERT(!o || o->isBox()); return static_cast<RenderBox*>(o); }
+    static const RenderBox* toConstRenderBox(const RenderObject* o) { ASSERT(!o || o->isBox()); return static_cast<const RenderBox*>(o);}
+    
+    int x() const { return m_frameRect.x(); }
+    int y() const { return m_frameRect.y() + borderTopExtra(); } // FIXME: Need to deal with the borderTopExtra() lie in a sane way.
+    int width() const { return m_frameRect.width(); }
+    int height() const { return m_frameRect.height(); }
+    
+    void setX(int x) { m_frameRect.setX(x); }
+    void setY(int y) { m_frameRect.setY(y); }
+    void setWidth(int width) { m_frameRect.setWidth(width); }
+    void setHeight(int height) { m_frameRect.setHeight(height); }
+    
+    IntPoint location() const { return m_frameRect.location(); } // FIXME: Be aware that this is not equivalent to x(), y() because of y()'s borderTopExtra() lie!
+    IntSize size() const { return m_frameRect.size(); }
+
+    void setLocation(const IntPoint& location) { m_frameRect.setLocation(location); }
+    void setLocation(int x, int y) { setLocation(IntPoint(x, y)); }
+    
+    void setSize(const IntSize& size) { m_frameRect.setSize(size); }
+    void move(int dx, int dy) { m_frameRect.move(dx, dy); }
+
+    IntRect frameRect() const { return m_frameRect; }
+    void setFrameRect(const IntRect& rect) { m_frameRect = rect; }
+
+    IntRect borderBoxRect() const { return IntRect(0, -borderTopExtra(), width(), height() + borderTopExtra() + borderBottomExtra()); }
+    
+    // The content area of the box (excludes padding and border).
+    IntRect contentBoxRect() const { return IntRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()); }
+    // The content box in absolute coords. Ignores transforms.
+    IntRect absoluteContentBox() const;
+    // The content box converted to absolute coords (taking transforms into account).
+    FloatQuad absoluteContentQuad() const;
+
+    // Bounds of the outline box in absolute coords. Respects transforms
+    virtual IntRect absoluteOutlineBounds() const;
+    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
+
+    // Use this with caution! No type checking is done!
+    RenderBox* previousSiblingBox() const { ASSERT(!previousSibling() || previousSibling()->isBox()); return toRenderBox(previousSibling()); }
+    RenderBox* nextSiblingBox() const { ASSERT(!nextSibling() || nextSibling()->isBox()); return toRenderBox(nextSibling()); }
+    RenderBox* parentBox() const { ASSERT(!parent() || parent()->isBox()); return toRenderBox(parent()); }
+
+    // The height of a block when you include normal flow overflow spillage out of the bottom
+    // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside
+    // it would have an overflow height of borderTop() + paddingTop() + 100px.
+    virtual int overflowHeight(bool /*includeInterior*/ = true) const { return height(); }
+    virtual int overflowWidth(bool /*includeInterior*/ = true) const { return width(); }
+    virtual void setOverflowHeight(int) { }
+    virtual void setOverflowWidth(int) { }
+    virtual int overflowLeft(bool /*includeInterior*/ = true) const { return 0; }
+    virtual int overflowTop(bool /*includeInterior*/ = true) const { return 0; }
+    virtual IntRect overflowRect(bool /*includeInterior*/ = true) const { return borderBoxRect(); }
+
+    int contentWidth() const { return clientWidth() - paddingLeft() - paddingRight(); }
+    int contentHeight() const { return clientHeight() - paddingTop() - paddingBottom(); }
+
+    // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
+    // to return the remaining width on a given line (and the height of a single line).
+    virtual int offsetWidth() const { return width(); }
+    virtual int offsetHeight() const { return height() + borderTopExtra() + borderBottomExtra(); }
+    virtual int offsetLeft() const;
+    virtual int offsetTop() const;
+    virtual RenderBox* offsetParent() const;
+
+    // More IE extensions.  clientWidth and clientHeight represent the interior of an object
+    // excluding border and scrollbar.  clientLeft/Top are just the borderLeftWidth and borderTopWidth.
+    int clientLeft() const { return borderLeft(); }
+    int clientTop() const { return borderTop(); }
+    int clientWidth() const;
+    int clientHeight() const;
+
+    // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
+    // object has overflow:hidden/scroll/auto specified and also has overflow.
+    // scrollLeft/Top return the current scroll position.  These methods are virtual so that objects like
+    // textareas can scroll shadow content (but pretend that they are the objects that are
+    // scrolling).
+    virtual int scrollLeft() const;
+    virtual int scrollTop() const;
+    virtual int scrollWidth() const;
+    virtual int scrollHeight() const;
+    virtual void setScrollLeft(int);
+    virtual void setScrollTop(int);
+
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
+    
+    IntRect reflectionBox() const;
+    int reflectionOffset() const;
+    // Given a rect in the object's coordinate space, returns the corresponding rect in the reflection.
+    IntRect reflectedRect(const IntRect&) const;
 
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
@@ -55,21 +147,10 @@ public:
 
     virtual IntSize offsetFromContainer(RenderObject*) const;
 
-    virtual int xPos() const { return m_x; }
-    virtual int yPos() const { return m_y; }
-    virtual void setPos(int x, int y);
-
-    virtual int width() const { return m_width; }
-    virtual int height() const { return m_height; }
-    virtual void setWidth(int width) { m_width = width; }
-    virtual void setHeight(int height) { m_height = height; }
-
     virtual int marginTop() const { return m_marginTop; }
     virtual int marginBottom() const { return m_marginBottom; }
     virtual int marginLeft() const { return m_marginLeft; }
     virtual int marginRight() const { return m_marginRight; }
-
-    virtual IntRect borderBox() const { return IntRect(0, -borderTopExtra(), width(), height() + borderTopExtra() + borderBottomExtra()); }
 
     int calcBorderBoxWidth(int width) const;
     int calcBorderBoxHeight(int height) const;
@@ -132,6 +213,8 @@ public:
 
     int calcPercentageHeight(const Length& height);
 
+    // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
+    virtual int availableWidth() const { return contentWidth(); }
     virtual int availableHeight() const;
     int availableHeightUsing(const Length&) const;
 
@@ -165,17 +248,21 @@ public:
     // that just updates the object's position.
     virtual void tryLayoutDoingPositionedMovementOnly()
     {
-        int oldWidth = m_width;
+        int oldWidth = width();
         calcWidth();
         // If we shrink to fit our width may have changed, so we still need full layout.
-        if (oldWidth != m_width)
+        if (oldWidth != width())
             return;
         calcHeight();
         setNeedsLayout(false);
     }
 
-    virtual IntRect maskClipRect();
+    IntRect maskClipRect();
     
+#if ENABLE(SVG)
+    virtual TransformationMatrix localTransform() const;
+#endif
+
 protected:
     virtual void styleWillChange(RenderStyle::Diff, const RenderStyle* newStyle);
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
@@ -222,12 +309,8 @@ private:
     virtual void calcPrefWidths() = 0;
 
 protected:
-    // The width/height of the contents + borders + padding.
-    int m_width;
-    int m_height;
-
-    int m_x;
-    int m_y;
+    // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
+    IntRect m_frameRect;
 
     int m_marginLeft;
     int m_marginRight;

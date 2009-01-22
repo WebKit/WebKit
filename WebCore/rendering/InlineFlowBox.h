@@ -115,7 +115,7 @@ public:
     int getFlowSpacingWidth();
     bool onEndChain(RenderObject* endObject);
     virtual int placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool& needsWordSpacing);
-    virtual void verticallyAlignBoxes(int& heightOfBlock);
+    virtual int verticallyAlignBoxes(int heightOfBlock);
     void computeLogicalBoxHeights(int& maxPositionTop, int& maxPositionBottom,
                                   int& maxAscent, int& maxDescent, bool strictMode);
     void adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,

@@ -32,6 +32,7 @@
 #import "WebFrameView.h"
 #import "WebHTMLView.h"
 #import <WebCore/Frame.h>
+#import <WebCore/RenderText.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/Widget.h>
@@ -88,8 +89,27 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
 
     // FIXME: broken with transforms
     FloatPoint absPos = node->localToAbsolute(FloatPoint());
+    int x = 0;
+    int y = 0;
+    int width = 0;
+    int height = 0;
+    if (node->isBox()) {
+        RenderBox* box = static_cast<RenderBox*>(node);
+        x = box->x();
+        y = box->y();
+        width = box->width();
+        height = box->height();
+    } else if (node->isText()) {
+        // FIXME: Preserve old behavior even though it's strange.
+        RenderText* text = static_cast<RenderText*>(node);
+        x = text->firstRunX();
+        y = text->firstRunY();
+        width = text->boundingBoxWidth();
+        height = text->boundingBoxHeight();
+    }
+    
     WebRenderNode *result = [[WebRenderNode alloc] initWithName:name
-        position:absPos rect:NSMakeRect(node->xPos(), node->yPos(), node->width(), node->height())
+        position:absPos rect:NSMakeRect(x, y, width, height)
         view:view children:children];
 
     [name release];

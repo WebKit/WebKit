@@ -224,7 +224,7 @@ void RenderListBox::calcHeight()
     int toAdd = paddingTop() + paddingBottom() + borderTop() + borderBottom();
  
     int itemHeight = RenderListBox::itemHeight();
-    m_height = itemHeight * size() - rowSpacing + toAdd;
+    setHeight(itemHeight * size() - rowSpacing + toAdd);
     
     RenderBlock::calcHeight();
     
@@ -581,7 +581,7 @@ void RenderListBox::setScrollTop(int newTop)
 
 IntRect RenderListBox::controlClipRect(int tx, int ty) const
 {
-    IntRect clipRect = contentBox();
+    IntRect clipRect = contentBoxRect();
     clipRect.move(tx, ty);
     return clipRect;
 }

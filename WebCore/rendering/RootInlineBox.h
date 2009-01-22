@@ -119,7 +119,7 @@ public:
 
     InlineBox* closestLeafChildForXPos(int x, bool onlyEditableLeaves = false);
 
-    Vector<RenderObject*>& floats()
+    Vector<RenderBox*>& floats()
     {
         ASSERT(!isDirty());
         if (!m_overflow)
@@ -127,7 +127,7 @@ public:
         return m_overflow->floats;
     }
 
-    Vector<RenderObject*>* floatsPtr() { ASSERT(!isDirty()); return m_overflow ? &m_overflow->floats : 0; }
+    Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_overflow ? &m_overflow->floats : 0; }
 
 protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content
@@ -158,7 +158,7 @@ protected:
         int m_selectionBottom;
         // Floats hanging off the line are pushed into this vector during layout. It is only
         // good for as long as the line has not been marked dirty.
-        Vector<RenderObject*> floats;
+        Vector<RenderBox*> floats;
     private:
         void* operator new(size_t) throw();
     };

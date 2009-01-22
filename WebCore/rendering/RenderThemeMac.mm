@@ -1254,6 +1254,9 @@ void RenderThemeMac::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderSt
 bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     Node* input = o->node()->shadowAncestorNode();
+    if (!input->renderer()->isBox())
+        return false;
+
     setSearchCellState(input->renderer(), r);
 
     NSSearchFieldCell* search = this->search();
@@ -1264,7 +1267,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderO
 
     float zoomLevel = o->style()->effectiveZoom();
 
-    FloatRect localBounds = [search cancelButtonRectForBounds:NSRect(input->renderer()->borderBox())];
+    FloatRect localBounds = [search cancelButtonRectForBounds:NSRect(input->renderBox()->borderBoxRect())];
     localBounds = convertToPaintingRect(input->renderer(), o, localBounds, r);
 
     FloatRect unzoomedRect(localBounds);
@@ -1328,6 +1331,9 @@ void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, 
 bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
 {
     Node* input = o->node()->shadowAncestorNode();
+    if (!input->renderer()->isBox())
+        return false;
+
     setSearchCellState(input->renderer(), r);
 
     NSSearchFieldCell* search = this->search();
@@ -1335,7 +1341,7 @@ bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const Re
     if ([search searchMenuTemplate] != nil)
         [search setSearchMenuTemplate:nil];
 
-    FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderer()->borderBox())];
+    FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderBox()->borderBoxRect())];
     localBounds = convertToPaintingRect(input->renderer(), o, localBounds, r);
 
     [[search searchButtonCell] drawWithFrame:localBounds inView:o->view()->frameView()->documentView()];
@@ -1355,6 +1361,9 @@ void RenderThemeMac::adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, Rend
 bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     Node* input = o->node()->shadowAncestorNode();
+    if (!input->renderer()->isBox())
+        return false;
+
     setSearchCellState(input->renderer(), r);
 
     NSSearchFieldCell* search = this->search();
@@ -1366,7 +1375,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const Render
 
     float zoomLevel = o->style()->effectiveZoom();
 
-    FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderer()->borderBox())];
+    FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderBox()->borderBoxRect())];
     localBounds = convertToPaintingRect(input->renderer(), o, localBounds, r);
     
     IntRect unzoomedRect(localBounds);
@@ -1594,10 +1603,13 @@ String RenderThemeMac::extraMediaControlsStyleSheet()
 
 bool RenderThemeMac::hitTestMediaControlPart(RenderObject* o, const IntPoint& absPoint)
 {
+    if (!o->isBox())
+        return false;
+        
     if (mediaControllerTheme() == MediaControllerThemeQT) {
         ControlPart part = o->style()->appearance();
         FloatPoint localPoint = o->absoluteToLocal(absPoint, false, true);  // respect transforms
-        return wkHitTestMediaUIPart(part - MediaFullscreenButtonPart, MediaControllerThemeQT, CGRect(o->borderBox()), CGPoint(localPoint));
+        return wkHitTestMediaUIPart(part - MediaFullscreenButtonPart, MediaControllerThemeQT, CGRect(RenderBox::toRenderBox(o)->borderBoxRect()), CGPoint(localPoint));
     }
     else
         return RenderTheme::hitTestMediaControlPart(o, absPoint);

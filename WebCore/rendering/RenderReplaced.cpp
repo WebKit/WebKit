@@ -85,7 +85,7 @@ void RenderReplaced::layout()
         oldOutlineBox = absoluteOutlineBounds();
     }
     
-    m_height = minimumReplacedHeight();
+    setHeight(minimumReplacedHeight());
     
     calcWidth();
     calcHeight();
@@ -110,8 +110,8 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
     if (!shouldPaint(paintInfo, tx, ty))
         return;
     
-    tx += m_x;
-    ty += m_y;
+    tx += x();
+    ty += m_frameRect.y();
     
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
         paintBoxDecorations(paintInfo, tx, ty);
@@ -159,8 +159,8 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
     if (style()->visibility() != VISIBLE)
         return false;
 
-    int currentTX = tx + m_x;
-    int currentTY = ty + m_y;
+    int currentTX = tx + x();
+    int currentTY = ty + m_frameRect.y();
 
     // Early exit if the element touches the edges.
     int top = currentTY + overflowTop();
@@ -215,7 +215,7 @@ unsigned RenderReplaced::caretMaxRenderedOffset() const
     return 1; 
 }
 
-VisiblePosition RenderReplaced::positionForCoordinates(int x, int y)
+VisiblePosition RenderReplaced::positionForCoordinates(int xPos, int yPos)
 {
     InlineBox* box = inlineBoxWrapper();
     if (!box)
@@ -228,19 +228,19 @@ VisiblePosition RenderReplaced::positionForCoordinates(int x, int y)
     int top = root->topOverflow();
     int bottom = root->nextRootBox() ? root->nextRootBox()->topOverflow() : root->bottomOverflow();
 
-    if (y + yPos() < top)
+    if (yPos + y() < top)
         return VisiblePosition(element(), caretMinOffset(), DOWNSTREAM); // coordinates are above
     
-    if (y + yPos() >= bottom)
+    if (yPos + y() >= bottom)
         return VisiblePosition(element(), caretMaxOffset(), DOWNSTREAM); // coordinates are below
     
     if (element()) {
-        if (x <= width() / 2)
+        if (xPos <= width() / 2)
             return VisiblePosition(element(), 0, DOWNSTREAM);
         return VisiblePosition(element(), 1, DOWNSTREAM);
     }
 
-    return RenderBox::positionForCoordinates(x, y);
+    return RenderBox::positionForCoordinates(xPos, yPos);
 }
 
 IntRect RenderReplaced::selectionRect(bool clipToVisibleContent)
@@ -275,7 +275,7 @@ IntRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
         return IntRect();
     
     RootInlineBox* root = m_inlineBoxWrapper->root();
-    return IntRect(0, root->selectionTop() - yPos(), width(), root->selectionHeight());
+    return IntRect(0, root->selectionTop() - y(), width(), root->selectionHeight());
 }
 
 void RenderReplaced::setSelectionState(SelectionState s)
@@ -327,7 +327,7 @@ void RenderReplaced::adjustOverflowForBoxShadow()
 {
     IntRect overflow;
     for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-        IntRect shadow = borderBox();
+        IntRect shadow = borderBoxRect();
         shadow.move(boxShadow->x, boxShadow->y);
         shadow.inflate(boxShadow->blur);
         overflow.unite(shadow);
@@ -336,7 +336,7 @@ void RenderReplaced::adjustOverflowForBoxShadow()
     if (!overflow.isEmpty()) {
         if (!gOverflowRectMap)
             gOverflowRectMap = new OverflowRectMap();
-        overflow.unite(borderBox());
+        overflow.unite(borderBoxRect());
         gOverflowRectMap->set(this, overflow);
         m_hasOverflow = true;
     } else if (m_hasOverflow) {
@@ -386,7 +386,7 @@ IntRect RenderReplaced::overflowRect(bool) const
     if (m_hasOverflow)
         return gOverflowRectMap->find(this)->second;
 
-    return borderBox();
+    return borderBoxRect();
 }
 
 IntRect RenderReplaced::absoluteClippedOverflowRect()

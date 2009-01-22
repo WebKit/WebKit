@@ -43,28 +43,28 @@ RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement* element)
 
 void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
-    IntRect rect = contentBox();
+    IntRect rect = contentBoxRect();
     rect.move(tx, ty);
     static_cast<HTMLCanvasElement*>(node())->paint(paintInfo.context, rect);
 }
 
 void RenderHTMLCanvas::canvasSizeChanged()
 {
-    IntSize size = static_cast<HTMLCanvasElement*>(node())->size();
-    IntSize zoomedSize(size.width() * style()->effectiveZoom(), size.height() * style()->effectiveZoom());
+    IntSize canvasSize = static_cast<HTMLCanvasElement*>(node())->size();
+    IntSize zoomedSize(canvasSize.width() * style()->effectiveZoom(), canvasSize.height() * style()->effectiveZoom());
 
-    if (size == intrinsicSize())
+    if (canvasSize == intrinsicSize())
         return;
 
-    setIntrinsicSize(size);
+    setIntrinsicSize(canvasSize);
 
     if (!prefWidthsDirty())
         setPrefWidthsDirty(true);
 
-    IntSize oldSize = IntSize(m_width, m_height);
+    IntSize oldSize = size();
     calcWidth();
     calcHeight();
-    if (oldSize == IntSize(m_width, m_height))
+    if (oldSize == size())
         return;
 
     if (!selfNeedsLayout())

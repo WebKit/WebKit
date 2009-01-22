@@ -59,13 +59,13 @@ public:
     // overrides RenderObject
     virtual bool requiresLayer();
 
-    virtual int width() const;
-    virtual int height() const;
+    int boundingBoxWidth() const;
+    int boundingBoxHeight() const;
 
-    // used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow) to return
-    // the remaining width on a given line (and the height of a single line).
     virtual int offsetLeft() const;
     virtual int offsetTop() const;
+    virtual int offsetWidth() const { return boundingBoxWidth(); }
+    virtual int offsetHeight() const { return boundingBoxHeight(); }
 
     void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);

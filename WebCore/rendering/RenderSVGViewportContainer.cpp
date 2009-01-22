@@ -37,7 +37,6 @@ namespace WebCore {
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGStyledElement* node)
     : RenderSVGContainer(node)
 {
-    setReplaced(true);
 }
 
 RenderSVGViewportContainer::~RenderSVGViewportContainer()
@@ -159,7 +158,7 @@ bool RenderSVGViewportContainer::nodeAtPoint(const HitTestRequest& request, HitT
         && style()->overflowX() == OHIDDEN
         && style()->overflowY() == OHIDDEN) {
         // Check if we need to do anything at all.
-        IntRect overflowBox = overflowRect(false);
+        IntRect overflowBox = IntRect(0, 0, width(), height());
         overflowBox.move(_tx, _ty);
         TransformationMatrix ctm = RenderObject::absoluteTransform();
         ctm.translate(viewport().x(), viewport().y());

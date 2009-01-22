@@ -96,7 +96,7 @@ void RenderSVGText::layout()
     SVGTextElement* text = static_cast<SVGTextElement*>(element());
     int xOffset = (int)(text->x()->getFirst().value(text));
     int yOffset = (int)(text->y()->getFirst().value(text));
-    setPos(xOffset, yOffset);
+    setLocation(xOffset, yOffset);
     
     calculateLocalTransform();
 
@@ -231,7 +231,7 @@ FloatRect RenderSVGText::relativeBBox(bool includeStroke) const
         repaintRect.inflate(strokeWidth);
     }
 
-    repaintRect.move(xPos(), yPos());
+    repaintRect.move(x(), y());
     return repaintRect;
 }
 

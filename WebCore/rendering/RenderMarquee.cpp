@@ -105,7 +105,7 @@ bool RenderMarquee::isHorizontal() const
 
 int RenderMarquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge)
 {
-    RenderObject* o = m_layer->renderer();
+    RenderBox* o = m_layer->renderer();
     RenderStyle* s = o->style();
     if (isHorizontal()) {
         bool ltr = s->direction() == LTR;

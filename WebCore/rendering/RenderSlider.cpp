@@ -105,9 +105,9 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
             FloatPoint curPoint = slider->absoluteToLocal(FloatPoint(mouseEvent->pageX(), mouseEvent->pageY()), false, true);
             int newPosition = slider->positionForOffset(
                 IntPoint(m_initialPosition + curPoint.x() - m_initialClickPoint.x()
-                        + (renderer()->width() / 2), 
+                        + (renderBox()->width() / 2), 
                     m_initialPosition + curPoint.y() - m_initialClickPoint.y()
-                        + (renderer()->height() / 2)));
+                        + (renderBox()->height() / 2)));
             if (slider->currentPosition() != newPosition) {
                 slider->setCurrentPosition(newPosition);
                 slider->valueChanged();
@@ -213,12 +213,12 @@ void RenderSlider::layout()
     
     if (m_thumb && m_thumb->renderer()) {
             
-        int oldWidth = m_width;
+        int oldWidth = width();
         calcWidth();
-        int oldHeight = m_height;
+        int oldHeight = height();
         calcHeight();
         
-        if (oldWidth != m_width || oldHeight != m_height)
+        if (oldWidth != width() || oldHeight != height())
             relayoutChildren = true;  
 
         // Allow the theme to set the size of the thumb
@@ -268,8 +268,8 @@ bool RenderSlider::mouseEventIsInThumb(MouseEvent* evt)
     } else 
 #endif
     {
-        FloatPoint localPoint = m_thumb->renderer()->absoluteToLocal(FloatPoint(evt->pageX(), evt->pageY()), false, true);
-        IntRect thumbBounds = m_thumb->renderer()->borderBox();
+        FloatPoint localPoint = m_thumb->renderBox()->absoluteToLocal(FloatPoint(evt->pageX(), evt->pageY()), false, true);
+        IntRect thumbBounds = m_thumb->renderBox()->borderBoxRect();
         return thumbBounds.contains(roundedIntPoint(localPoint));
     }
 }
@@ -351,9 +351,9 @@ int RenderSlider::positionForOffset(const IntPoint& p)
    
     int position;
     if (style()->appearance() == SliderVerticalPart)
-        position = p.y() - m_thumb->renderer()->height() / 2;
+        position = p.y() - m_thumb->renderBox()->height() / 2;
     else
-        position = p.x() - m_thumb->renderer()->width() / 2;
+        position = p.x() - m_thumb->renderBox()->width() / 2;
     
     return max(0, min(position, trackSize()));
 }
@@ -395,8 +395,8 @@ int RenderSlider::trackSize()
         return 0;
 
     if (style()->appearance() == SliderVerticalPart)
-        return contentHeight() - m_thumb->renderer()->height();
-    return contentWidth() - m_thumb->renderer()->width();
+        return contentHeight() - m_thumb->renderBox()->height();
+    return contentWidth() - m_thumb->renderBox()->width();
 }
 
 void RenderSlider::forwardEvent(Event* evt)

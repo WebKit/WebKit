@@ -288,12 +288,12 @@ PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientatio
     // Try the <body> element first as a scrollbar source.
     Element* body = doc->body();
     if (body && body->renderer() && body->renderer()->style()->hasPseudoStyle(RenderStyle::SCROLLBAR))
-        return RenderScrollbar::createCustomScrollbar(this, orientation, body->renderer());
+        return RenderScrollbar::createCustomScrollbar(this, orientation, body->renderBox());
     
     // If the <body> didn't have a custom style, then the root element might.
     Element* docElement = doc->documentElement();
     if (docElement && docElement->renderer() && docElement->renderer()->style()->hasPseudoStyle(RenderStyle::SCROLLBAR))
-        return RenderScrollbar::createCustomScrollbar(this, orientation, docElement->renderer());
+        return RenderScrollbar::createCustomScrollbar(this, orientation, docElement->renderBox());
         
     // If we have an owning iframe/frame element, then it can set the custom scrollbar also.
     RenderPart* frameRenderer = m_frame->ownerRenderer();
@@ -460,7 +460,7 @@ void FrameView::layout(bool allowSubtree)
                 hMode = ScrollbarAlwaysOff;
             } else if (body->hasTagName(bodyTag)) {
                 if (!m_firstLayout && m_size.height() != layoutHeight()
-                        && static_cast<RenderBox*>(body->renderer())->stretchesToViewHeight())
+                        && RenderBox::toRenderBox(body->renderer())->stretchesToViewHeight())
                     body->renderer()->setChildNeedsLayout(true);
                 // It's sufficient to just check the X overflow,
                 // since it's illegal to have visible in only one direction.
@@ -1095,7 +1095,7 @@ void FrameView::updateDashboardRegions()
     if (!document->hasDashboardRegions())
         return;
     Vector<DashboardRegionValue> newRegions;
-    document->renderer()->collectDashboardRegions(newRegions);
+    document->renderBox()->collectDashboardRegions(newRegions);
     if (newRegions == document->dashboardRegions())
         return;
     document->setDashboardRegions(newRegions);

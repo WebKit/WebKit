@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class HitTestResult;
+class RenderBox;
 class RootInlineBox;
 
 struct HitTestRequest;
@@ -239,6 +240,9 @@ public:
     
     bool visibleToHitTesting() const { return object()->style()->visibility() == VISIBLE && object()->style()->pointerEvents() != PE_NONE; }
     
+    // Use with caution! The type is not checked!
+    RenderBox* renderBox() const;
+
 public:
     RenderObject* m_object;
 

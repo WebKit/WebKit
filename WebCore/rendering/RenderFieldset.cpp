@@ -48,7 +48,7 @@ RenderFieldset::RenderFieldset(Node* element)
 void RenderFieldset::calcPrefWidths()
 {
     RenderBlock::calcPrefWidths();
-    if (RenderObject* legend = findLegend()) {
+    if (RenderBox* legend = findLegend()) {
         int legendMinWidth = legend->minPrefWidth();
 
         Length legendMarginLeft = legend->style()->marginLeft();
@@ -66,7 +66,7 @@ void RenderFieldset::calcPrefWidths()
 
 RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
 {
-    RenderObject* legend = findLegend();
+    RenderBox* legend = findLegend();
     if (legend) {
         if (relayoutChildren)
             legend->setNeedsLayout(true);
@@ -79,18 +79,18 @@ RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
                     xPos = borderLeft() + paddingLeft();
                     break;
                 case CENTER:
-                    xPos = (m_width - legend->width()) / 2;
+                    xPos = (width() - legend->width()) / 2;
                     break;
                 default:
-                    xPos = m_width - paddingRight() - borderRight() - legend->width() - legend->marginRight();
+                    xPos = width() - paddingRight() - borderRight() - legend->width() - legend->marginRight();
             }
         } else {
             switch (legend->style()->textAlign()) {
                 case RIGHT:
-                    xPos = m_width - paddingRight() - borderRight() - legend->width();
+                    xPos = width() - paddingRight() - borderRight() - legend->width();
                     break;
                 case CENTER:
-                    xPos = (m_width - legend->width()) / 2;
+                    xPos = (width() - legend->width()) / 2;
                     break;
                 default:
                     xPos = borderLeft() + paddingLeft() + legend->marginLeft();
@@ -98,13 +98,13 @@ RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
         }
         int b = borderTop();
         int h = legend->height();
-        legend->setPos(xPos, max((b-h)/2, 0));
-        m_height = max(b,h) + paddingTop();
+        legend->setLocation(xPos, max((b-h)/2, 0));
+        setHeight(max(b,h) + paddingTop());
     }
     return legend;
 }
 
-RenderObject* RenderFieldset::findLegend() const
+RenderBox* RenderFieldset::findLegend() const
 {
     for (RenderObject* legend = firstChild(); legend; legend = legend->nextSibling()) {
         if (!legend->isFloatingOrPositioned() && legend->element() &&
@@ -113,7 +113,7 @@ RenderObject* RenderFieldset::findLegend() const
             || legend->element()->hasTagName(WMLNames::insertedLegendTag)
 #endif
            )
-            return legend;
+            return toRenderBox(legend);
     }
     return 0;
 }
@@ -122,12 +122,12 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
     int w = width();
     int h = height() + borderTopExtra() + borderBottomExtra();
-    RenderObject* legend = findLegend();
+    RenderBox* legend = findLegend();
     if (!legend)
         return RenderBlock::paintBoxDecorations(paintInfo, tx, ty);
 
-    int yOff = (legend->yPos() > 0) ? 0 : (legend->height() - borderTop()) / 2;
-    int legendBottom = ty + legend->yPos() + legend->height();
+    int yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
+    int legendBottom = ty + legend->y() + legend->height();
     h -= yOff;
     ty += yOff - borderTopExtra();
 
@@ -144,7 +144,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 
     // Save time by not saving and restoring the GraphicsContext in the straight border case
     if (!style()->hasBorderRadius())
-        return paintBorderMinusLegend(paintInfo.context, tx, ty, w, h, style(), legend->xPos(), legend->width(), legendBottom);
+        return paintBorderMinusLegend(paintInfo.context, tx, ty, w, h, style(), legend->x(), legend->width(), legendBottom);
     
     // We have rounded borders, create a clipping region 
     // around the legend and paint the border as normal
@@ -154,7 +154,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     int clipTop = ty;
     int clipHeight = max(static_cast<int>(style()->borderTopWidth()), legend->height());
 
-    graphicsContext->clipOut(IntRect(tx + legend->xPos(), clipTop,
+    graphicsContext->clipOut(IntRect(tx + legend->x(), clipTop,
                                        legend->width(), clipHeight));
     paintBorder(paintInfo.context, tx, ty, w, h, style(), true, true);
 
@@ -168,11 +168,11 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, int tx, int ty)
 
     int w = width();
     int h = height() + borderTopExtra() + borderBottomExtra();
-    RenderObject* legend = findLegend();
+    RenderBox* legend = findLegend();
     if (!legend)
         return RenderBlock::paintMask(paintInfo, tx, ty);
 
-    int yOff = (legend->yPos() > 0) ? 0 : (legend->height() - borderTop()) / 2;
+    int yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
     h -= yOff;
     ty += yOff - borderTopExtra();
 

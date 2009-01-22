@@ -51,6 +51,7 @@
 #include "RemoveNodeCommand.h"
 #include "RemoveNodePreservingChildrenCommand.h"
 #include "ReplaceSelectionCommand.h"
+#include "RenderBlock.h"
 #include "SetNodeAttributeCommand.h"
 #include "SplitElementCommand.h"
 #include "SplitTextNodeCommand.h"
@@ -590,7 +591,8 @@ PassRefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* cont
     
     // append the placeholder to make sure it follows
     // any unrendered blocks
-    if (renderer->height() == 0 || (renderer->isListItem() && renderer->isEmpty()))
+    RenderBlock* block = static_cast<RenderBlock*>(renderer);
+    if (block->height() == 0 || (block->isListItem() && block->isEmpty()))
         return appendBlockPlaceholder(container);
 
     return 0;

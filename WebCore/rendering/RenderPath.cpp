@@ -172,9 +172,6 @@ void RenderPath::layout()
 
     m_absoluteBounds = absoluteClippedOverflowRect();
 
-    setWidth(m_absoluteBounds.width());
-    setHeight(m_absoluteBounds.height());
-
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
 
@@ -260,7 +257,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
         paintOutline(paintInfo.context, static_cast<int>(boundingBox.x()), static_cast<int>(boundingBox.y()),
-            static_cast<int>(boundingBox.width()), static_cast<int>(boundingBox.height()), style());
+            static_cast<int>(boundingBox.width()), static_cast<int>(boundingBox.height()), style(), true);
     
     paintInfo.context->restore();
 }
@@ -483,6 +480,13 @@ FloatRect RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatR
         bounds.unite(endMarker->cachedBounds());
 
     return bounds;
+}
+
+IntRect RenderPath::absoluteOutlineBounds() const
+{
+    IntRect result = m_absoluteBounds;
+    adjustRectForOutlineAndShadow(result);
+    return result;
 }
 
 }

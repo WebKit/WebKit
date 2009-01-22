@@ -48,10 +48,10 @@ public:
     virtual bool isFlexingChildren() const { return m_flexingChildren; }
     virtual bool isStretchingChildren() const { return m_stretchingChildren; }
 
-    void placeChild(RenderObject* child, int x, int y);
+    void placeChild(RenderBox* child, int x, int y);
 
 protected:
-    int allowedChildFlex(RenderObject* child, bool expanding, unsigned group);
+    int allowedChildFlex(RenderBox* child, bool expanding, unsigned group);
 
     bool hasMultipleLines() const { return style()->boxLines() == MULTIPLE; }
     bool isVertical() const { return style()->boxOrient() == VERTICAL; }

@@ -26,6 +26,7 @@
 #include "RenderSVGTextPath.h"
 
 #include "FloatRect.h"
+#include "RenderBlock.h"
 #include "SVGInlineTextBox.h"
 #include "SVGPathElement.h"
 #include "SVGRootInlineBox.h"
@@ -82,13 +83,13 @@ void RenderSVGTextPath::absoluteRects(Vector<IntRect>& rects, int, int)
     InlineRunBox* firstBox = firstLineBox();
 
     SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
-    RenderObject* object = rootBox ? rootBox->object() : 0;
+    RenderBlock* object = rootBox ? rootBox->block() : 0;
 
     if (!object)
         return;
 
-    int xRef = object->xPos() + xPos();
-    int yRef = object->yPos() + yPos();
+    int xRef = object->x() + x();
+    int yRef = object->y() + y();
 
     for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
         FloatRect rect(xRef + curr->xPos(), yRef + curr->yPos(), curr->width(), curr->height());
@@ -102,13 +103,13 @@ void RenderSVGTextPath::absoluteQuads(Vector<FloatQuad>& quads, bool)
     InlineRunBox* firstBox = firstLineBox();
 
     SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
-    RenderObject* object = rootBox ? rootBox->object() : 0;
+    RenderBlock* object = rootBox ? rootBox->block() : 0;
 
     if (!object)
         return;
 
-    int xRef = object->xPos() + xPos();
-    int yRef = object->yPos() + yPos();
+    int xRef = object->x() + x();
+    int yRef = object->y() + y();
 
     for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
         FloatRect rect(xRef + curr->xPos(), yRef + curr->yPos(), curr->width(), curr->height());

@@ -36,7 +36,7 @@
 #include "ExceptionCode.h"
 #include "Pair.h"
 #include "Rect.h"
-#include "RenderObject.h"
+#include "RenderBox.h"
 #include "ShadowValue.h"
 #include "WebKitCSSTransformValue.h"
 
@@ -395,7 +395,11 @@ static PassRefPtr<CSSValue> getBorderRadiusCornerValue(IntSize radius)
 
 static IntRect sizingBox(RenderObject* renderer)
 {
-    return renderer->style()->boxSizing() == CONTENT_BOX ? renderer->contentBox() : renderer->borderBox();
+    if (!renderer->isBox())
+        return IntRect();
+    
+    RenderBox* box = RenderBox::toRenderBox(renderer);
+    return box->style()->boxSizing() == CONTENT_BOX ? box->contentBoxRect() : box->borderBoxRect();
 }
 
 static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer)

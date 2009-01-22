@@ -112,8 +112,8 @@ public:
     void layoutInlineChildren(bool relayoutChildren, int& repaintTop, int& repaintBottom);
 
     void layoutPositionedObjects(bool relayoutChildren);
-    void insertPositionedObject(RenderObject*);
-    void removePositionedObject(RenderObject*);
+    void insertPositionedObject(RenderBox*);
+    void removePositionedObject(RenderBox*);
     virtual void removePositionedObjects(RenderBlock*);
 
     void addPercentHeightDescendant(RenderBox*);
@@ -128,13 +128,13 @@ public:
 
     // the implementation of the following functions is in bidi.cpp
     struct FloatWithRect {
-        FloatWithRect(RenderObject* f)
+        FloatWithRect(RenderBox* f)
             : object(f)
-            , rect(IntRect(f->xPos() - f->marginLeft(), f->yPos() - f->marginTop(), f->width() + f->marginLeft() + f->marginRight(), f->height() + f->marginTop() + f->marginBottom()))
+            , rect(IntRect(f->x() - f->marginLeft(), f->y() - f->marginTop(), f->width() + f->marginLeft() + f->marginRight(), f->height() + f->marginTop() + f->marginBottom()))
         {
         }
 
-        RenderObject* object;
+        RenderBox* object;
         IntRect rect;
     };
 
@@ -169,15 +169,15 @@ public:
     void paintSelection(PaintInfo&, int tx, int ty);
     void paintCaret(PaintInfo&, int tx, int ty, CaretType);
 
-    void insertFloatingObject(RenderObject*);
-    void removeFloatingObject(RenderObject*);
+    void insertFloatingObject(RenderBox*);
+    void removeFloatingObject(RenderBox*);
 
     // Called from lineWidth, to position the floats added in the last line.
     // Returns ture if and only if it has positioned any floats.
     bool positionNewFloats();
     void clearFloats();
-    int getClearDelta(RenderObject* child);
-    virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
+    int getClearDelta(RenderBox* child);
+    virtual void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0);
     void markPositionedObjectsForLayout();
 
     virtual bool containsFloats() { return m_floatingObjects && !m_floatingObjects->isEmpty(); }
@@ -185,7 +185,7 @@ public:
 
     virtual bool avoidsFloats() const;
 
-    virtual bool hasOverhangingFloats() { return !hasColumns() && floatBottom() > m_height; }
+    virtual bool hasOverhangingFloats() { return !hasColumns() && floatBottom() > height(); }
     void addIntrudingFloats(RenderBlock* prev, int xoffset, int yoffset);
     int addOverhangingFloats(RenderBlock* child, int xoffset, int yoffset, bool makeChildPaintOtherFloats);
 
@@ -352,7 +352,7 @@ protected:
 
         Type type() { return static_cast<Type>(m_type); }
 
-        RenderObject* m_renderer;
+        RenderBox* m_renderer;
         int m_top;
         int m_bottom;
         int m_left;
@@ -365,18 +365,18 @@ protected:
     // The following helper functions and structs are used by layoutBlockChildren.
     class CompactInfo {
         // A compact child that needs to be collapsed into the margin of the following block.
-        RenderObject* m_compact;
+        RenderBox* m_compact;
 
         // The block with the open margin that the compact child is going to place itself within.
         RenderObject* m_block;
 
     public:
-        RenderObject* compact() const { return m_compact; }
+        RenderBox* compact() const { return m_compact; }
         RenderObject* block() const { return m_block; }
         bool matches(RenderObject* child) const { return m_compact && m_block == child; }
 
         void clear() { set(0, 0); }
-        void set(RenderObject* c, RenderObject* b) { m_compact = c; m_block = b; }
+        void set(RenderBox* c, RenderObject* b) { m_compact = c; m_block = b; }
 
         CompactInfo() { clear(); }
     };
@@ -449,24 +449,24 @@ protected:
 
     void adjustPositionedBlock(RenderObject* child, const MarginInfo&);
     void adjustFloatingBlock(const MarginInfo&);
-    RenderObject* handleSpecialChild(RenderObject* child, const MarginInfo&, CompactInfo&, bool& handled);
-    RenderObject* handleFloatingChild(RenderObject* child, const MarginInfo&, bool& handled);
-    RenderObject* handlePositionedChild(RenderObject* child, const MarginInfo&, bool& handled);
-    RenderObject* handleCompactChild(RenderObject* child, CompactInfo&, bool& handled);
-    RenderObject* handleRunInChild(RenderObject* child, bool& handled);
-    void collapseMargins(RenderObject* child, MarginInfo&, int yPosEstimate);
-    void clearFloatsIfNeeded(RenderObject* child, MarginInfo&, int oldTopPosMargin, int oldTopNegMargin);
-    void insertCompactIfNeeded(RenderObject* child, CompactInfo&);
+    RenderBox* handleSpecialChild(RenderBox* child, const MarginInfo&, CompactInfo&, bool& handled);
+    RenderBox* handleFloatingChild(RenderBox* child, const MarginInfo&, bool& handled);
+    RenderBox* handlePositionedChild(RenderBox* child, const MarginInfo&, bool& handled);
+    RenderBox* handleCompactChild(RenderBox* child, CompactInfo&, bool& handled);
+    RenderBox* handleRunInChild(RenderBox* child, bool& handled);
+    void collapseMargins(RenderBox* child, MarginInfo&, int yPosEstimate);
+    void clearFloatsIfNeeded(RenderBox* child, MarginInfo&, int oldTopPosMargin, int oldTopNegMargin);
+    void insertCompactIfNeeded(RenderBox* child, CompactInfo&);
     int estimateVerticalPosition(RenderObject* child, const MarginInfo&);
-    void determineHorizontalPosition(RenderObject* child);
+    void determineHorizontalPosition(RenderBox* child);
     void handleBottomOfBlock(int top, int bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
     // End helper functions and structs used by layoutBlockChildren.
 
 private:
-    typedef ListHashSet<RenderObject*>::const_iterator Iterator;
+    typedef ListHashSet<RenderBox*>::const_iterator Iterator;
     DeprecatedPtrList<FloatingObject>* m_floatingObjects;
-    ListHashSet<RenderObject*>* m_positionedObjects;
+    ListHashSet<RenderBox*>* m_positionedObjects;
          
     // Allocated only when some of these fields have non-default values
     struct MaxMargin {

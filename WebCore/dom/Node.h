@@ -52,6 +52,7 @@ class PlatformMouseEvent;
 class PlatformWheelEvent;
 class QualifiedName;
 class RenderArena;
+class RenderBox;
 class RenderObject;
 class RenderStyle;
 class StringBuilder;
@@ -373,6 +374,10 @@ public:
     RenderObject* nextRenderer();
     RenderObject* previousRenderer();
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
+    
+    // Use with caution. Does no type checking.  Mostly a convenience method for shadow nodes of form controls, where we know exactly
+    // what kind of renderer we made.
+    RenderBox* renderBox() const;
     
     void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);
     bool isDescendantOf(const Node*) const;

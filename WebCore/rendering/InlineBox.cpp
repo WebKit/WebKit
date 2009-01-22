@@ -23,6 +23,7 @@
 #include "HitTestResult.h"
 #include "InlineFlowBox.h"
 #include "RenderArena.h"
+#include "RenderBox.h"
 #include "RootInlineBox.h"
 
 using namespace std;
@@ -84,6 +85,12 @@ void InlineBox::showTreeForThis() const
 }
 #endif
 
+RenderBox* InlineBox::renderBox() const
+{
+    ASSERT(m_object->isBox());
+    return RenderBox::toRenderBox(m_object);
+}
+
 int InlineBox::caretMinOffset() const 
 { 
     return m_object->caretMinOffset(); 
@@ -129,8 +136,10 @@ void InlineBox::adjustPosition(int dx, int dy)
 {
     m_x += dx;
     m_y += dy;
-    if (m_object->isReplaced() || m_object->isBR())
-        m_object->setPos(m_object->xPos() + dx, m_object->yPos() + dy);
+    if (m_object->isReplaced()) {
+        RenderBox* box = RenderBox::toRenderBox(m_object);
+        box->move(dx, dy);
+    }
 }
 
 void InlineBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)

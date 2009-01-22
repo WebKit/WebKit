@@ -126,12 +126,12 @@ void RenderTextControl::createSubtreeIfNeeded(TextControlInnerElement* innerBloc
 
 int RenderTextControl::textBlockHeight() const
 {
-    return m_height - paddingTop() - paddingBottom() - borderTop() - borderBottom();
+    return height() - paddingTop() - paddingBottom() - borderTop() - borderBottom();
 }
 
 int RenderTextControl::textBlockWidth() const
 {
-    return m_width - paddingLeft() - paddingRight() - borderLeft() - borderRight()
+    return width() - paddingLeft() - paddingRight() - borderLeft() - borderRight()
            - m_innerText->renderer()->paddingLeft() - m_innerText->renderer()->paddingRight();
 }
 
@@ -217,7 +217,7 @@ void RenderTextControl::setSelectionRange(int start, int end)
 
     document()->updateLayout();
 
-    if (style()->visibility() == HIDDEN || !m_innerText || !m_innerText->renderer() || !m_innerText->renderer()->height()) {
+    if (style()->visibility() == HIDDEN || !m_innerText || !m_innerText->renderer() || !m_innerText->renderBox()->height()) {
         cacheSelection(start, end);
         return;
     }
@@ -418,25 +418,25 @@ int RenderTextControl::scrollbarThickness() const
 
 void RenderTextControl::calcHeight()
 {
-    m_height = m_innerText->renderer()->borderTop() + m_innerText->renderer()->borderBottom() +
-               m_innerText->renderer()->paddingTop() + m_innerText->renderer()->paddingBottom() +
-               m_innerText->renderer()->marginTop() + m_innerText->renderer()->marginBottom();
+    setHeight(m_innerText->renderer()->borderTop() + m_innerText->renderer()->borderBottom() +
+              m_innerText->renderer()->paddingTop() + m_innerText->renderer()->paddingBottom() +
+              m_innerText->renderer()->marginTop() + m_innerText->renderer()->marginBottom());
 
     adjustControlHeightBasedOnLineHeight(m_innerText->renderer()->lineHeight(true, true));
-    m_height += paddingTop() + paddingBottom() + borderTop() + borderBottom();
+    setHeight(height() + paddingTop() + paddingBottom() + borderTop() + borderBottom());
 
     // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
     if (m_innerText->renderer()->style()->overflowX() == OSCROLL ||  (m_innerText->renderer()->style()->overflowX() == OAUTO && m_innerText->renderer()->style()->wordWrap() == NormalWordWrap))
-        m_height += scrollbarThickness();
+        setHeight(height() + scrollbarThickness());
 
     RenderBlock::calcHeight();
 }
 
-void RenderTextControl::hitInnerTextBlock(HitTestResult& result, int x, int y, int tx, int ty)
+void RenderTextControl::hitInnerTextBlock(HitTestResult& result, int xPos, int yPos, int tx, int ty)
 {
     result.setInnerNode(m_innerText.get());
-    result.setLocalPoint(IntPoint(x - tx - m_x - m_innerText->renderer()->xPos(),
-                                  y - ty - m_y - m_innerText->renderer()->yPos()));
+    result.setLocalPoint(IntPoint(xPos - tx - x() - m_innerText->renderBox()->x(),
+                                  yPos - ty - y() - m_innerText->renderBox()->y()));
 }
 
 void RenderTextControl::forwardEvent(Event* event)
@@ -448,7 +448,7 @@ void RenderTextControl::forwardEvent(Event* event)
 
 IntRect RenderTextControl::controlClipRect(int tx, int ty) const
 {
-    IntRect clipRect = contentBox();
+    IntRect clipRect = contentBoxRect();
     clipRect.move(tx, ty);
     return clipRect;
 }

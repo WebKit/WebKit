@@ -129,8 +129,8 @@ IntRect RenderSVGInlineText::computeAbsoluteRectForRange(int startPos, int endPo
     // But do take the containingBlocks's container position into account, ie. SVG text in scrollable <div>.
     TransformationMatrix htmlParentCtm = root->RenderContainer::absoluteTransform();
 
-    FloatRect fixedRect(narrowPrecisionToFloat(rect.x() + absPos.x() - xPos() - htmlParentCtm.e()),
-                        narrowPrecisionToFloat(rect.y() + absPos.y() - yPos() - htmlParentCtm.f()), rect.width(), rect.height());
+    FloatRect fixedRect(narrowPrecisionToFloat(rect.x() + absPos.x() - (firstTextBox() ? firstTextBox()->xPos() : 0) - htmlParentCtm.e()),
+                        narrowPrecisionToFloat(rect.y() + absPos.y() - (firstTextBox() ? firstTextBox()->yPos() : 0) - htmlParentCtm.f()), rect.width(), rect.height());
     // FIXME: broken with CSS transforms
     return enclosingIntRect(absoluteTransform().mapRect(fixedRect));
 }
@@ -155,7 +155,7 @@ VisiblePosition RenderSVGInlineText::positionForCoordinates(int x, int y)
         return VisiblePosition(element(), 0, DOWNSTREAM);
 
     SVGRootInlineBox* rootBox = textBox->svgRootInlineBox();
-    RenderObject* object = rootBox ? rootBox->object() : 0;
+    RenderBlock* object = rootBox ? rootBox->block() : 0;
 
     if (!object)
         return VisiblePosition(element(), 0, DOWNSTREAM);
@@ -163,7 +163,7 @@ VisiblePosition RenderSVGInlineText::positionForCoordinates(int x, int y)
     int offset = 0;
 
     for (SVGInlineTextBox* box = textBox; box; box = static_cast<SVGInlineTextBox*>(box->nextTextBox())) {
-        if (box->svgCharacterHitsPosition(x + object->xPos(), y + object->yPos(), offset)) {
+        if (box->svgCharacterHitsPosition(x + object->x(), y + object->y(), offset)) {
             // If we're not at the end/start of the box, stop looking for other selected boxes.
             if (box->direction() == LTR) {
                 if (offset <= (int) box->end() + 1)

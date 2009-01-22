@@ -277,7 +277,7 @@ void RenderLayer::updateTransform()
     
     if (hasTransform) {
         m_transform->reset();
-        renderer()->style()->applyTransform(*m_transform, renderer()->borderBox().size());
+        renderer()->style()->applyTransform(*m_transform, renderer()->borderBoxRect().size());
     }
 }
 
@@ -377,34 +377,34 @@ void RenderLayer::updateLayerPosition()
     // Clear our cached clip rect information.
     clearClipRects();
 
-    int x = renderer()->xPos();
-    int y = renderer()->yPos() - renderer()->borderTopExtra();
+    int x = renderer()->x();
+    int y = renderer()->y() - renderer()->borderTopExtra();
 
     if (!renderer()->isPositioned() && renderer()->parent()) {
         // We must adjust our position by walking up the render tree looking for the
         // nearest enclosing object with a layer.
-        RenderObject* curr = renderer()->parent();
+        RenderBox* curr = renderer()->parentBox();
         while (curr && !curr->hasLayer()) {
             if (!curr->isTableRow()) {
                 // Rows and cells share the same coordinate space (that of the section).
                 // Omit them when computing our xpos/ypos.
-                x += curr->xPos();
-                y += curr->yPos();
+                x += curr->x();
+                y += curr->y();
             }
-            curr = curr->parent();
+            curr = curr->parentBox();
         }
         y += curr->borderTopExtra();
         if (curr->isTableRow()) {
             // Put ourselves into the row coordinate space.
-            x -= curr->xPos();
-            y -= curr->yPos();
+            x -= curr->x();
+            y -= curr->y();
         }
     }
 
     m_relX = m_relY = 0;
     if (renderer()->isRelPositioned()) {
-        m_relX = static_cast<RenderBox*>(renderer())->relativePositionOffsetX();
-        m_relY = static_cast<RenderBox*>(renderer())->relativePositionOffsetY();
+        m_relX = RenderBox::toRenderBox(renderer())->relativePositionOffsetX();
+        m_relY = RenderBox::toRenderBox(renderer())->relativePositionOffsetY();
         x += m_relX; y += m_relY;
     }
     
@@ -416,17 +416,25 @@ void RenderLayer::updateLayerPosition()
         positionedParent->subtractScrolledContentOffset(x, y);
         
         if (renderer()->isPositioned()) {
-            IntSize offset = static_cast<RenderBox*>(renderer())->offsetForPositionedInContainer(positionedParent->renderer());
+            IntSize offset = RenderBox::toRenderBox(renderer())->offsetForPositionedInContainer(positionedParent->renderer());
             x += offset.width();
             y += offset.height();
         }
     } else if (parent())
         parent()->subtractScrolledContentOffset(x, y);
     
-    setPos(x,y);
+    // FIXME: We'd really like to just get rid of the concept of a layer rectangle and rely on the renderers.
 
-    setWidth(renderer()->width());
-    setHeight(renderer()->height() + renderer()->borderTopExtra() + renderer()->borderBottomExtra());
+    setPos(x, y);
+
+    if (renderer()->isRenderInline()) {
+        RenderInline* inlineFlow = static_cast<RenderInline*>(renderer());
+        setWidth(inlineFlow->boundingBoxWidth());
+        setHeight(inlineFlow->boundingBoxHeight());
+    } else {
+        setWidth(renderer()->width());
+        setHeight(renderer()->height() + renderer()->borderTopExtra() + renderer()->borderBottomExtra());
+    }
 
     if (!renderer()->hasOverflowClip()) {
         if (renderer()->overflowWidth() > renderer()->width())
@@ -1035,7 +1043,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
     // Set the width and height of the shadow ancestor node if there is one.
     // This is necessary for textarea elements since the resizable layer is in the shadow content.
     Element* element = static_cast<Element*>(renderer()->node()->shadowAncestorNode());
-    RenderBox* renderer = static_cast<RenderBox*>(element->renderer());
+    RenderBox* renderer = RenderBox::toRenderBox(element->renderer());
 
     EResize resize = renderer->style()->resize();
     if (resize == RESIZE_NONE)
@@ -1171,7 +1179,7 @@ static IntRect resizerCornerRect(const RenderLayer* layer, const IntRect& bounds
 
 bool RenderLayer::scrollbarCornerPresent() const
 {
-    return !scrollCornerRect(this, renderer()->borderBox()).isEmpty();
+    return !scrollCornerRect(this, renderer()->borderBoxRect()).isEmpty();
 }
 
 void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
@@ -1189,7 +1197,7 @@ PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientat
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = renderer()->node()->shadowAncestorNode()->renderer()->style()->hasPseudoStyle(RenderStyle::SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(this, orientation, renderer()->node()->shadowAncestorNode()->renderer());
+        widget = RenderScrollbar::createCustomScrollbar(this, orientation, renderer()->node()->shadowAncestorNode()->renderBox());
     else
         widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
     renderer()->document()->view()->addChild(widget.get());        
@@ -1279,7 +1287,7 @@ void RenderLayer::positionOverflowControls(int tx, int ty)
     if (!m_hBar && !m_vBar && (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE))
         return;
     
-    IntRect borderBox = renderer()->borderBox();
+    IntRect borderBox = renderer()->borderBoxRect();
     IntRect scrollCorner(scrollCornerRect(this, borderBox));
     IntRect absBounds(borderBox.x() + tx, borderBox.y() + ty, borderBox.width(), borderBox.height());
     if (m_vBar)
@@ -1295,9 +1303,9 @@ void RenderLayer::positionOverflowControls(int tx, int ty)
                                      m_hBar->height()));
     
     if (m_scrollCorner)
-        m_scrollCorner->setRect(scrollCorner);
+        m_scrollCorner->setFrameRect(scrollCorner);
     if (m_resizer)
-        m_resizer->setRect(resizerCornerRect(this, borderBox));
+        m_resizer->setFrameRect(resizerCornerRect(this, borderBox));
 }
 
 int RenderLayer::scrollWidth()
@@ -1493,7 +1501,7 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, int tx, int ty
 
 void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, const IntRect& damageRect)
 {
-    IntRect cornerRect = scrollCornerRect(this, renderer()->borderBox());
+    IntRect cornerRect = scrollCornerRect(this, renderer()->borderBoxRect());
     IntRect absRect = IntRect(cornerRect.x() + tx, cornerRect.y() + ty, cornerRect.width(), cornerRect.height());
     if (!absRect.intersects(damageRect))
         return;
@@ -1516,7 +1524,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
     if (renderer()->style()->resize() == RESIZE_NONE)
         return;
 
-    IntRect cornerRect = resizerCornerRect(this, renderer()->borderBox());
+    IntRect cornerRect = resizerCornerRect(this, renderer()->borderBoxRect());
     IntRect absRect = IntRect(cornerRect.x() + tx, cornerRect.y() + ty, cornerRect.width(), cornerRect.height());
     if (!absRect.intersects(damageRect))
         return;
@@ -1724,8 +1732,8 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, temporaryClipRects);
     int x = layerBounds.x();
     int y = layerBounds.y();
-    int tx = x - renderer()->xPos();
-    int ty = y - renderer()->yPos() + renderer()->borderTopExtra();
+    int tx = x - renderer()->x();
+    int ty = y - renderer()->y() + renderer()->borderTopExtra();
                              
     // Ensure our lists are up-to-date.
     updateZOrderLists();
@@ -1948,8 +1956,8 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer.
     if (fgRect.contains(hitTestPoint) && 
         renderer()->hitTest(request, result, hitTestPoint,
-                            layerBounds.x() - renderer()->xPos(),
-                            layerBounds.y() - renderer()->yPos() + renderer()->borderTopExtra(), 
+                            layerBounds.x() - renderer()->x(),
+                            layerBounds.y() - renderer()->y() + renderer()->borderTopExtra(), 
                             HitTestDescendants)) {
         // For positioned generated content, we might still not have a
         // node by the time we get to the layer level, since none of
@@ -1978,8 +1986,8 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, const HitTestRequ
     // Next we want to see if the mouse is inside this layer but not any of its children.
     if (bgRect.contains(hitTestPoint) &&
         renderer()->hitTest(request, result, hitTestPoint,
-                            layerBounds.x() - renderer()->xPos(),
-                            layerBounds.y() - renderer()->yPos() + renderer()->borderTopExtra(),
+                            layerBounds.x() - renderer()->x(),
+                            layerBounds.y() - renderer()->y() + renderer()->borderTopExtra(),
                             HitTestSelf)) {
         if (!result.innerNode() || !result.innerNonSharedNode()) {
             Node* e = enclosingElement();
@@ -2122,7 +2130,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
     int x = 0;
     int y = 0;
     convertToLayerCoords(rootLayer, x, y);
-    layerBounds = IntRect(x,y,width(),height());
+    layerBounds = IntRect(x, y, width(), height());
     
     // Update the clip rects that will be passed to child layers.
     if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
@@ -2217,12 +2225,12 @@ IntRect RenderLayer::boundingBox(const RenderLayer* rootLayer) const
         int left = firstBox->xPos();
         for (InlineRunBox* curr = firstBox->nextLineBox(); curr; curr = curr->nextLineBox())
             left = min(left, curr->xPos());
-        result = IntRect(m_x + left, m_y + (top - renderer()->yPos()), width(), bottom - top);
+        result = IntRect(m_x + left, m_y + (top - renderer()->y()), width(), bottom - top);
     } else if (renderer()->isTableRow()) {
         // Our bounding box is just the union of all of our cells' border/overflow rects.
         for (RenderObject* child = renderer()->firstChild(); child; child = child->nextSibling()) {
             if (child->isTableCell()) {
-                IntRect bbox = child->borderBox();
+                IntRect bbox = RenderBox::toRenderBox(child)->borderBoxRect();
                 bbox.move(0, child->borderTopExtra());
                 result.unite(bbox);
                 IntRect overflowRect = renderer()->overflowRect(false);
@@ -2236,7 +2244,7 @@ IntRect RenderLayer::boundingBox(const RenderLayer* rootLayer) const
         if (renderer()->hasMask())
             result = renderer()->maskClipRect();
         else {
-            IntRect bbox = renderer()->borderBox();
+            IntRect bbox = renderer()->borderBoxRect();
             result = bbox;
             IntRect overflowRect = renderer()->overflowRect(false);
             if (bbox != overflowRect)
@@ -2244,7 +2252,7 @@ IntRect RenderLayer::boundingBox(const RenderLayer* rootLayer) const
         }
 
         // We have to adjust the x/y of this result so that it is in the coordinate space of the layer.
-        // We also have to add in borderTopExtra here, since borderBox(), in order to play well with methods like
+        // We also have to add in intrinsicPaddingTop here, since borderBoxRect(), in order to play well with methods like
         // floatRect that deal with child content, uses an origin of (0,0) that is at the child content box (so
         // border box returns a y coord of -borderTopExtra().  The layer, however, uses the outer box.  This is all
         // really confusing.

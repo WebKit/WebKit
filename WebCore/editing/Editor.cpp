@@ -2071,7 +2071,7 @@ bool Editor::insideVisibleArea(const IntPoint& point) const
         return true;
 
     IntRect rectInPageCoords = container->getOverflowClipRect(0, 0);
-    IntRect rectInFrameCoords = IntRect(renderer->xPos() * -1, renderer->yPos() * -1,
+    IntRect rectInFrameCoords = IntRect(renderer->x() * -1, renderer->y() * -1,
                                     rectInPageCoords.width(), rectInPageCoords.height());
 
     return rectInFrameCoords.contains(point);
@@ -2097,7 +2097,7 @@ bool Editor::insideVisibleArea(Range* range) const
         return true;
 
     IntRect rectInPageCoords = container->getOverflowClipRect(0, 0);
-    IntRect rectInFrameCoords = IntRect(renderer->xPos() * -1, renderer->yPos() * -1,
+    IntRect rectInFrameCoords = IntRect(renderer->x() * -1, renderer->y() * -1,
                                     rectInPageCoords.width(), rectInPageCoords.height());
     IntRect resultRect = range->boundingBox();
     
