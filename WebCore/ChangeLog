@@ -1,5 +1,12 @@
 2009-01-21  David Hyatt  <hyatt@apple.com>
 
+        Fix RenderThemeSafari bustage on Win32.
+
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::baselinePosition):
+
+2009-01-21  David Hyatt  <hyatt@apple.com>
+
         Fix bustage in RenderThemeWin. It's actually terrible that RenderThemeWin is using absoluteContentBox,
         but that's a problem for another day.
 

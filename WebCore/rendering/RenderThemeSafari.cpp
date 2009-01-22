@@ -272,8 +272,11 @@ IntRect RenderThemeSafari::inflateRect(const IntRect& r, const IntSize& size, co
 
 int RenderThemeSafari::baselinePosition(const RenderObject* o) const
 {
+    if (!o->isBox())
+        return 0;
+
     if (o->style()->appearance() == CheckboxPart || o->style()->appearance() == RadioPart)
-        return o->marginTop() + o->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
+        return o->marginTop() + RenderBox::toConstRenderBox(o)->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
     return RenderTheme::baselinePosition(o);
 }
 
