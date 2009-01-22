@@ -2,7 +2,7 @@
 
         Rubber stamped by Geoff "Cameron Zwarich" Garen.
 
-        Add pre & post standalone driver stcripts to assist running the javascript layout tests
+        Add pre & post standalone driver scripts to assist running the javascript layout tests
         on jsc, rather than a full webkit build.
 
         * fast/js/resources/standalone-post.js: Copied from fast/js/resources/js-test-post.js.
