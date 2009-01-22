@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1579,6 +1579,8 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     RenderObject* docRenderer = doc->renderer();
     if (!docRenderer)
         return false;
+    
+    RefPtr<FrameView> protector(m_frame->view());
 
     IntPoint vPoint = m_frame->view()->windowToContents(e.pos());
 
