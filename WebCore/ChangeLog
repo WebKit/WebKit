@@ -1,3 +1,9 @@
+2009-01-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Fix WML build problem in RenderBox.cpp, WMLNames is undefined.
+
+        * rendering/RenderBox.cpp:
+
 2009-01-22  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix the Qt build after RenderBox changes.
