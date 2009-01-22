@@ -1,3 +1,13 @@
+2009-01-21  David Hyatt  <hyatt@apple.com>
+
+        Fix bustage in RenderThemeWin. It's actually terrible that RenderThemeWin is using absoluteContentBox,
+        but that's a problem for another day.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsButton):
+
 2009-01-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dave Hyatt.
