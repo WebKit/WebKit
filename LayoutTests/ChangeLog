@@ -1,5 +1,20 @@
 2009-01-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Geoff "Cameron Zwarich" Garen.
+
+        Add pre & post standalone driver stcripts to assist running the javascript layout tests
+        on jsc, rather than a full webkit build.
+
+        * fast/js/resources/standalone-post.js: Copied from fast/js/resources/js-test-post.js.
+        * fast/js/resources/standalone-pre.js: Copied from fast/js/resources/js-test-pre.js.
+        (description):
+        (debug):
+        (escapeString):
+        (testPassed):
+        (testFailed):
+
+2009-01-21  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Add layout test for switch (-0).
