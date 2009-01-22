@@ -112,12 +112,17 @@ public:
     NPError loadURL(const char* url, const char* target, const char* postData, uint32_t postDataLength, LoadURLFlags, uint32_t& requestID);
 
     PassRefPtr<JSC::Bindings::Instance> createBindingsInstance(PassRefPtr<JSC::Bindings::RootObject>);
-    
+    RetainPtr<NSData *> marshalValues(JSC::ExecState*, const JSC::ArgList& args);
+    JSC::JSValuePtr demarshalValue(JSC::ExecState*, const char* valueData, mach_msg_type_number_t valueLength);
+
     // Reply structs
     struct Reply {
         enum Type {
             InstantiatePlugin,
-            GetScriptableNPObject
+            GetScriptableNPObject,
+            NPObjectHasProperty,
+            NPObjectHasMethod,
+            NPObjectInvoke
         };
         
         Reply(Type type) : m_type(type) { }
@@ -143,15 +148,53 @@ public:
     };
 
     struct GetScriptableNPObjectReply : public Reply {
-        static const int ReplyType = GetScriptableNPObject;
+        static const Reply::Type ReplyType = GetScriptableNPObject;
         
         GetScriptableNPObjectReply(uint32_t objectID)
-            : Reply(GetScriptableNPObject)
+            : Reply(ReplyType)
             , m_objectID(objectID)
         {
         }
             
         uint32_t m_objectID;
+    };
+    
+    struct NPObjectHasPropertyReply : public Reply {
+        static const Reply::Type ReplyType = NPObjectHasProperty;
+        
+        NPObjectHasPropertyReply(boolean_t hasProperty)
+            : Reply(ReplyType)
+            , m_hasProperty(hasProperty)
+        {
+        }
+        
+        boolean_t m_hasProperty;
+    };
+
+    struct NPObjectHasMethodReply : public Reply {
+        static const Reply::Type ReplyType = NPObjectHasMethod;
+        
+        NPObjectHasMethodReply(boolean_t hasMethod)
+            : Reply(ReplyType)
+            , m_hasMethod(hasMethod)
+        {
+        }
+        
+        boolean_t m_hasMethod;
+    };
+
+    struct NPObjectInvokeReply : public Reply {
+        static const Reply::Type ReplyType = NPObjectInvoke;
+        
+        NPObjectInvokeReply(boolean_t returnValue, RetainPtr<CFDataRef> result)
+            : Reply(ReplyType)
+            , m_returnValue(returnValue)
+            , m_result(result)
+        {
+        }
+        
+        boolean_t m_returnValue;
+        RetainPtr<CFDataRef> m_result;
     };
     
     void setCurrentReply(Reply* reply)
@@ -206,10 +249,12 @@ private:
     
     // NPRuntime
     uint32_t idForObject(JSC::JSObject*);
-    void marshalValue(JSC::ExecState*, JSC::JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength);
+    
+    void marshalValue(JSC::ExecState*, JSC::JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength);    
+    void addValueToArray(NSMutableArray *, JSC::ExecState* exec, JSC::JSValuePtr value);
+    
     bool demarshalValueFromArray(JSC::ExecState*, NSArray *array, NSUInteger& index, JSC::JSValuePtr& result);
     void demarshalValues(JSC::ExecState*, data_t valuesData, mach_msg_type_number_t valuesLength, JSC::ArgList& result);
-    JSC::JSValuePtr demarshalValue(JSC::ExecState*, data_t valueData, mach_msg_type_number_t valueLength);
 
     uint32_t m_objectIDCounter;
     typedef HashMap<uint32_t, JSC::ProtectedPtr<JSC::JSObject> > ObjectMap;

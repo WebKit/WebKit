@@ -1,3 +1,73 @@
+2009-01-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        More browser->plug-in scripting support.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCNPObjectHasPropertyReply):
+        (WKPCNPObjectHasMethodReply):
+        (WKPCNPObjectInvokeReply):
+        MIG reply functions.
+        
+        (WKPCIdentifierInfo):
+        Return information about an identifier given its 64-bit value.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        Add new reply structs.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray):
+        Split out code that adds values to the arrays from marshalValue.
+        
+        (WebKit::NetscapePluginInstanceProxy::marshalValue):
+        Call addValueToArray.
+    
+        (WebKit::NetscapePluginInstanceProxy::marshalValues):
+        Marshal a list of values.
+        
+        (WebKit::NetscapePluginInstanceProxy::createBindingsInstance):
+        Actually create a proxy instance.
+        
+        * Plugins/Hosted/ProxyInstance.h:
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyClass::methodsNamed):
+        (WebKit::ProxyClass::fieldNamed):
+        Add a proxy ProxyClass class that just forwards everything to the ProxyInstance class.
+        
+        (WebKit::proxyClass):
+        Shared proxyClass getter.
+        
+        (WebKit::ProxyField::ProxyField):
+        (WebKit::ProxyField::valueFromInstance):
+        (WebKit::ProxyField::setValueToInstance):
+        Add a proxy ProxyField class that just forwards everything to the ProxyInstance class.
+        
+        (WebKit::ProxyMethod::ProxyMethod):
+        (WebKit::ProxyMethod::serverIdentifier):
+        (WebKit::ProxyMethod::numParameters):
+        Add a dummy ProxyMethod class.
+        
+        (WebKit::ProxyInstance::invokeMethod):
+        Call _WKPHNPObjectInvoke.
+        
+        (WebKit::ProxyInstance::defaultValue):
+        (WebKit::ProxyInstance::stringValue):
+        (WebKit::ProxyInstance::numberValue):
+        (WebKit::ProxyInstance::booleanValue):
+        (WebKit::ProxyInstance::valueOf):
+        Add dummy implementations (taken from CInstance).
+        
+        (WebKit::ProxyInstance::methodsNamed):
+        Call _WKPHNPObjectHasMethod to determine whether a method with the given name exists.
+        
+        (WebKit::ProxyInstance::fieldNamed):
+        Call _WKPHNPObjectHasProperty to determine whether a property with the given name exists.
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        Add new MIG definitions.
+
 2009-01-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

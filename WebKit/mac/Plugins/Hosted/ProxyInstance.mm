@@ -27,7 +27,203 @@
 
 #import "ProxyInstance.h"
 
+#import "NetscapePluginHostProxy.h"
+#import "NetscapePluginInstanceProxy.h"
+#import <WebCore/npruntime_impl.h>
+
+extern "C" {
+#import "WebKitPluginHost.h"
+}
+
+using namespace JSC;
+using namespace JSC::Bindings;
+using namespace std;
+
 namespace WebKit {
+
+class ProxyClass : public JSC::Bindings::Class {
+private:
+    virtual MethodList methodsNamed(const Identifier&, Instance*) const;
+    virtual Field* fieldNamed(const Identifier&, Instance*) const;
+};
+
+MethodList ProxyClass::methodsNamed(const Identifier& identifier, Instance* instance) const
+{
+    return static_cast<ProxyInstance*>(instance)->methodsNamed(identifier);
+}
+
+Field* ProxyClass::fieldNamed(const Identifier& identifier, Instance* instance) const
+{
+    return static_cast<ProxyInstance*>(instance)->fieldNamed(identifier);
+}
+
+ProxyClass* proxyClass()
+{
+    DEFINE_STATIC_LOCAL(ProxyClass, proxyClass, ());
+    return &proxyClass;
+}
+    
+class ProxyField : public JSC::Bindings::Field {
+public:
+    ProxyField(uint64_t serverIdentifier)
+        : m_serverIdentifier(serverIdentifier)
+    {
+    }
+    
+private:
+    virtual JSValuePtr valueFromInstance(ExecState*, const Instance*) const;
+    virtual void setValueToInstance(ExecState*, const Instance*, JSValuePtr) const;
+    
+    uint64_t m_serverIdentifier;
+};
+
+JSValuePtr ProxyField::valueFromInstance(ExecState*, const Instance*) const
+{
+    ASSERT_NOT_REACHED();
+    return JSValuePtr();
+}
+    
+void ProxyField::setValueToInstance(ExecState*, const Instance*, JSValuePtr) const
+{
+    ASSERT_NOT_REACHED();
+}
+
+class ProxyMethod : public JSC::Bindings::Method {
+public:
+    ProxyMethod(uint64_t serverIdentifier)
+        : m_serverIdentifier(serverIdentifier)
+    {
+    }
+
+    uint64_t serverIdentifier() const { return m_serverIdentifier; }
+
+private:
+    virtual int numParameters() const { return 0; }
+
+    uint64_t m_serverIdentifier;
+};
+
+ProxyInstance::ProxyInstance(PassRefPtr<RootObject> rootObject, NetscapePluginInstanceProxy* instanceProxy, uint32_t objectID)
+    : Instance(rootObject)
+    , m_instanceProxy(instanceProxy)
+    , m_objectID(objectID)
+{
+}
+
+ProxyInstance::~ProxyInstance()
+{
+    deleteAllValues(m_fields);
+    deleteAllValues(m_methods);
+    
+    // FIXME: Tell the host that we're no longer interested in this object.
+}
+    
+JSC::Bindings::Class *ProxyInstance::getClass() const
+{
+    return proxyClass();
+}
+
+JSValuePtr ProxyInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const ArgList& args)
+{
+    ASSERT(methodList.size() == 1);
+
+    ProxyMethod* method = static_cast<ProxyMethod*>(methodList[0]);
+
+    RetainPtr<NSData*> arguments(m_instanceProxy->marshalValues(exec, args));
+    
+    if (_WKPHNPObjectInvoke(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), m_objectID,
+                            method->serverIdentifier(), (char*)[arguments.get() bytes], [arguments.get() length]) != KERN_SUCCESS)
+        return jsUndefined();
+    
+    auto_ptr<NetscapePluginInstanceProxy::NPObjectInvokeReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::NPObjectInvokeReply>();
+    if (!reply.get())
+        return jsUndefined();
+    
+    return m_instanceProxy->demarshalValue(exec, (char*)CFDataGetBytePtr(reply->m_result.get()), CFDataGetLength(reply->m_result.get()));
+}
+    
+JSValuePtr ProxyInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+{
+    if (hint == PreferString)
+        return stringValue(exec);
+    if (hint == PreferNumber)
+        return numberValue(exec);
+    return valueOf(exec);
+}
+
+JSValuePtr ProxyInstance::stringValue(ExecState* exec) const
+{
+    // FIXME: Implement something sensible.
+    return jsString(exec, "");
+}
+
+JSValuePtr ProxyInstance::numberValue(ExecState* exec) const
+{
+    // FIXME: Implement something sensible.
+    return jsNumber(exec, 0);
+}
+
+JSValuePtr ProxyInstance::booleanValue() const
+{
+    // FIXME: Implement something sensible.
+    return jsBoolean(false);
+}
+
+JSValuePtr ProxyInstance::valueOf(ExecState* exec) const
+{
+    return stringValue(exec);
+}
+
+MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
+{
+    if (Method* method = m_methods.get(identifier.ustring().rep())) {
+        MethodList methodList;
+        methodList.append(method);
+        return methodList;
+    }
+
+    uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii()));
+    if (_WKPHNPObjectHasMethod(m_instanceProxy->hostProxy()->port(),
+                               m_instanceProxy->pluginID(),
+                               m_objectID, methodName) != KERN_SUCCESS)
+        return MethodList();
+    
+    auto_ptr<NetscapePluginInstanceProxy::NPObjectHasMethodReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::NPObjectHasMethodReply>();
+    if (reply.get() && reply->m_hasMethod) {
+        Method* method = new ProxyMethod(methodName);
+        
+        m_methods.set(identifier.ustring().rep(), method);
+    
+        MethodList methodList;
+        methodList.append(method);
+        return methodList;
+    }
+
+    return MethodList();
+}
+
+Field* ProxyInstance::fieldNamed(const Identifier& identifier)
+{
+    if (Field* field = m_fields.get(identifier.ustring().rep()))
+        return field;
+    
+    uint64_t propertyName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii()));
+    if (_WKPHNPObjectHasProperty(m_instanceProxy->hostProxy()->port(),
+                                 m_instanceProxy->pluginID(),
+                                 m_objectID, propertyName) != KERN_SUCCESS)
+        return 0;
+        
+    auto_ptr<NetscapePluginInstanceProxy::NPObjectHasPropertyReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::NPObjectHasPropertyReply>();
+    if (reply.get() && reply->m_hasProperty) {
+        Field* field = new ProxyField(propertyName);
+        
+        m_fields.set(identifier.ustring().rep(), field);
+    
+        return field;
+    }
+    
+    return 0;
+}
 
 } // namespace WebKit
 

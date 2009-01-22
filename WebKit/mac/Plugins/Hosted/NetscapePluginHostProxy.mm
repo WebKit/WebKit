@@ -240,6 +240,50 @@ kern_return_t WKPCGetScriptableNPObjectReply(mach_port_t clientPort, uint32_t pl
     return KERN_SUCCESS;
 }
 
+kern_return_t WKPCNPObjectHasPropertyReply(mach_port_t clientPort, uint32_t pluginID, boolean_t hasProperty)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+    
+    instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::NPObjectHasPropertyReply(hasProperty));
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCNPObjectHasMethodReply(mach_port_t clientPort, uint32_t pluginID, boolean_t hasMethod)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+    
+    instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::NPObjectHasMethodReply(hasMethod));
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCNPObjectInvokeReply(mach_port_t clientPort, uint32_t pluginID, boolean_t returnValue, data_t resultData, mach_msg_type_number_t resultLength)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
+    RetainPtr<CFDataRef> result = CFDataCreate(0, reinterpret_cast<UInt8*>(resultData), resultLength);
+    instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::NPObjectInvokeReply(returnValue, result));
+    
+    return KERN_SUCCESS;
+}
+
 kern_return_t WKPCInstantiatePluginReply(mach_port_t clientPort, uint32_t pluginID, kern_return_t result, uint32_t renderContextID, boolean_t useSoftwareRenderer)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
@@ -493,6 +537,28 @@ kern_return_t WKPCHasMethod(mach_port_t clientPort, uint32_t pluginID, uint32_t 
     Identifier methodNameIdentifier = identifierFromServerIdentifier(identifier);        
     *returnValue = instanceProxy->hasMethod(objectID, methodNameIdentifier);
 
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCIdentifierInfo(mach_port_t clientPort, uint64_t serverIdentifier, data_t* infoData, mach_msg_type_number_t* infoLength)
+{
+    NPIdentifier identifier = reinterpret_cast<NPIdentifier>(serverIdentifier);
+    
+    id info;
+    if (_NPN_IdentifierIsString(identifier)) {
+        char* s = _NPN_UTF8FromIdentifier(identifier);
+        info = [NSData dataWithBytesNoCopy:s length:strlen(s) freeWhenDone:NO];
+    } else 
+        info = [NSNumber numberWithInt:_NPN_IntFromIdentifier(identifier)];
+
+    RetainPtr<NSData*> data = [NSPropertyListSerialization dataFromPropertyList:info format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
+    ASSERT(data);
+    
+    *infoLength = [data.get() length];
+    mig_allocate(reinterpret_cast<vm_address_t*>(infoData), *infoLength);
+    
+    memcpy(*infoData, [data.get() bytes], *infoLength);
+    
     return KERN_SUCCESS;
 }
 

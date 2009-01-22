@@ -133,6 +133,10 @@ routine HasMethod(clientPort :mach_port_t;
                     methodNameIdentifier :uint64_t;
                     out returnValue :boolean_t);
 
+routine IdentifierInfo(clientPort :mach_port_t;
+                       identifier :uint64_t;
+                       out info :data_t, dealloc);
+
 // Replies
 simpleroutine InstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;
@@ -144,5 +148,17 @@ simpleroutine GetScriptableNPObjectReply(clientPort :mach_port_t;
                                          pluginID :uint32_t;
                                          objectID :uint32_t);
 
+simpleroutine NPObjectHasPropertyReply(clientPort :mach_port_t;
+                                       pluginID :uint32_t;
+                                       hasProperty :boolean_t);
+
+simpleroutine NPObjectHasMethodReply(clientPort :mach_port_t;
+                                     pluginID :uint32_t;
+                                     hasMethod :boolean_t);
+
+simpleroutine NPObjectInvokeReply(clientPort :mach_port_t;
+                                  pluginID :uint32_t;
+                                  returnValue :boolean_t;
+                                  result :data_t);  
 
 

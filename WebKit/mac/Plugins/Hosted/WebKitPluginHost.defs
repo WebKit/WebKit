@@ -124,6 +124,22 @@ simpleroutine StreamDidFail(pluginHostPort :mach_port_t;
 simpleroutine GetScriptableNPObject(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t);
 
+simpleroutine NPObjectHasProperty(pluginHostPort :mach_port_t;
+                                  pluginID :uint32_t;
+                                  objectID :uint32_t;
+                                  propertyName :uint64_t);
+
+simpleroutine NPObjectHasMethod(pluginHostPort :mach_port_t;
+                                pluginID :uint32_t;
+                                objectID :uint32_t;
+                                methodName :uint64_t);
+
+simpleroutine NPObjectInvoke(pluginHostPort :mach_port_t;
+                             pluginID :uint32_t;
+                             objectID :uint32_t;
+                             methodName :uint64_t;
+                             arguments :data_t);
+
 // Replies
 
 simpleroutine EvaluateReply(pluginHostPort :mach_port_t;
