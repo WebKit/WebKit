@@ -42,7 +42,7 @@ using namespace HTMLNames;
 
 HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLFormControlElement(tagName, doc, f)
-    , m_selected(false)
+    , m_data(this)
     , m_style(0)
 {
     ASSERT(hasTagName(optionTag));
@@ -79,32 +79,7 @@ const AtomicString& HTMLOptionElement::type() const
 
 String HTMLOptionElement::text() const
 {
-    String text;
-
-    // WinIE does not use the label attribute, so as a quirk, we ignore it.
-    if (!document()->inCompatMode())
-        text = getAttribute(labelAttr);
-
-    if (text.isEmpty()) {
-        const Node* n = firstChild();
-        while (n) {
-            if (n->nodeType() == TEXT_NODE || n->nodeType() == CDATA_SECTION_NODE)
-                text += n->nodeValue();
-            // skip script content
-            if (n->isElementNode() && n->hasTagName(HTMLNames::scriptTag))
-                n = n->traverseNextSibling(this);
-            else
-                n = n->traverseNextNode(this);
-        }
-    }
-
-    text = document()->displayStringModifiedByEncoding(text);
-    // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
-    text = text.stripWhiteSpace();
-    // We want to collapse our whitespace too.  This will match other browsers.
-    text = text.simplifyWhiteSpace();
-
-    return text;
+    return OptionElement::collectOptionText(m_data, document());
 }
 
 void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)
@@ -150,19 +125,18 @@ int HTMLOptionElement::index() const
 void HTMLOptionElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == selectedAttr)
-        m_selected = (!attr->isNull());
+        m_data.setSelected(!attr->isNull());
     else if (attr->name() == valueAttr)
-        m_value = attr->value();
+        m_data.setValue(attr->value());
+    else if (attr->name() == labelAttr)
+        m_data.setLabel(attr->value());
     else
         HTMLFormControlElement::parseMappedAttribute(attr);
 }
 
 String HTMLOptionElement::value() const
 {
-    if ( !m_value.isNull() )
-        return m_value;
-    // Use the text if the value wasn't set.
-    return text().stripWhiteSpace();
+    return OptionElement::collectOptionValue(m_data, document());
 }
 
 void HTMLOptionElement::setValue(const String& value)
@@ -170,21 +144,25 @@ void HTMLOptionElement::setValue(const String& value)
     setAttribute(valueAttr, value);
 }
 
+bool HTMLOptionElement::selected() const
+{
+    return m_data.selected();
+}
+
 void HTMLOptionElement::setSelected(bool selected)
 {
-    if (m_selected == selected)
+    if (m_data.selected() == selected)
         return;
+
+    OptionElement::setSelectedState(m_data, selected);
+
     if (HTMLSelectElement* select = ownerSelectElement())
         select->setSelectedIndex(selected ? index() : -1, false);
-    m_selected = selected;
 }
 
 void HTMLOptionElement::setSelectedState(bool selected)
 {
-    if (m_selected == selected)
-        return;
-    m_selected = selected;
-    setChanged();
+    OptionElement::setSelectedState(m_data, selected);
 }
 
 void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -219,7 +197,7 @@ void HTMLOptionElement::setDefaultSelected(bool b)
 
 String HTMLOptionElement::label() const
 {
-    return getAttribute(labelAttr);
+    return m_data.label();
 }
 
 void HTMLOptionElement::setLabel(const String& value)
@@ -237,12 +215,9 @@ RenderStyle* HTMLOptionElement::nonRendererRenderStyle() const
     return m_style.get(); 
 }
 
-String HTMLOptionElement::optionText() const
+String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
-    if (parentNode() && parentNode()->hasTagName(optgroupTag))
-        return "    " + text();
-
-    return text();
+    return OptionElement::collectOptionTextRespectingGroupLabel(m_data, document());
 }
 
 bool HTMLOptionElement::disabled() const

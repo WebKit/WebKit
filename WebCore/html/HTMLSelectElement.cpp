@@ -979,7 +979,8 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
         if (!items[index]->hasTagName(optionTag) || items[index]->disabled())
             continue;
 
-        if (stripLeadingWhiteSpace(static_cast<HTMLOptionElement*>(items[index])->optionText()).startsWith(prefix, false)) {
+        String text = static_cast<HTMLOptionElement*>(items[index])->textIndentedToRespectGroupLabel();
+        if (stripLeadingWhiteSpace(text).startsWith(prefix, false)) {
             setSelectedIndex(listToOptionIndex(index));
             if(!usesMenuList())
                 listBoxOnChange();

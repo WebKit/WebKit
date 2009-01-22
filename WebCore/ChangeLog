@@ -1,3 +1,54 @@
+2009-01-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=23465
+
+        Further enhancments to share code between HTMLOptionElement and the upcoming WMLOptionElement.
+
+        Rename optionText() to textIndentedToRespectGroupLabel() in (HTML)OptionElement, as it fits better.
+        optionText() returns the options text prefixed with some spaces, in case it got an optgroup parent.
+
+        Add two more pure-virtual functions to OptionElement: setSelectedState(bool) & value().
+        These aren't used outside of html/ at the moment (unlike the other pure-virtual functions
+        used by RenderMenuList/RenderListBox) - but they will be used by SelectElement, once it exists.
+
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::setSelectedState):
+        (WebCore::OptionElement::collectOptionText):
+        (WebCore::OptionElement::collectOptionTextRespectingGroupLabel):
+        (WebCore::OptionElement::collectOptionValue):
+        (WebCore::OptionElementData::OptionElementData):
+        (WebCore::OptionElementData::~OptionElementData):
+        * dom/OptionElement.h:
+        (WebCore::OptionElementData::element):
+        (WebCore::OptionElementData::value):
+        (WebCore::OptionElementData::setValue):
+        (WebCore::OptionElementData::label):
+        (WebCore::OptionElementData::setLabel):
+        (WebCore::OptionElementData::selected):
+        (WebCore::OptionElementData::setSelected):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        (WebCore::HTMLOptionElement::text):
+        (WebCore::HTMLOptionElement::parseMappedAttribute):
+        (WebCore::HTMLOptionElement::value):
+        (WebCore::HTMLOptionElement::selected):
+        (WebCore::HTMLOptionElement::setSelected):
+        (WebCore::HTMLOptionElement::setSelectedState):
+        (WebCore::HTMLOptionElement::label):
+        (WebCore::HTMLOptionElement::textIndentedToRespectGroupLabel):
+        * html/HTMLOptionElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::typeAheadFind):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        (WebCore::RenderMenuList::setTextFromOption):
+        (WebCore::RenderMenuList::itemText):
+
 2009-01-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Justin Garcia.
