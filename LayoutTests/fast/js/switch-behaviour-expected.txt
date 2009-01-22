@@ -12,6 +12,7 @@ PASS characterSwitch('B') is "B"
 PASS characterSwitch('￿') is "default"
 PASS characterSwitch({toString: function(){return 'B'}}) is "default"
 PASS characterSwitch(0) is "default"
+PASS characterSwitch(-0) is "default"
 PASS characterSwitch(1) is "default"
 PASS characterSwitch(-1) is "default"
 PASS characterSwitch(-1000000000) is "default"
@@ -26,6 +27,7 @@ PASS sparseCharacterSwitch('B') is "B"
 PASS sparseCharacterSwitch('￿') is "￿"
 PASS sparseCharacterSwitch({toString: function(){return 'B'}}) is "default"
 PASS sparseCharacterSwitch(0) is "default"
+PASS sparseCharacterSwitch(-0) is "default"
 PASS sparseCharacterSwitch(1) is "default"
 PASS sparseCharacterSwitch(-1) is "default"
 PASS sparseCharacterSwitch(-1000000000) is "default"
@@ -42,6 +44,7 @@ PASS stringSwitch('some string') is "some string"
 PASS stringSwitch({toString: function(){return 'some string'}}) is "default"
 PASS stringSwitch('s') is "default"
 PASS stringSwitch(0) is "default"
+PASS stringSwitch(-0) is "default"
 PASS stringSwitch(1) is "default"
 PASS stringSwitch(-1) is "default"
 PASS stringSwitch(-1000000000) is "default"
@@ -58,6 +61,7 @@ PASS numberSwitch('some string') is "default"
 PASS numberSwitch({valueOf: function(){return 0}}) is "default"
 PASS numberSwitch('s') is "default"
 PASS numberSwitch(0) is 0
+PASS numberSwitch(-0) is 0
 PASS numberSwitch(1) is 1
 PASS numberSwitch(-1) is -1
 PASS numberSwitch(-1000000000) is "default"
@@ -74,6 +78,7 @@ PASS sparseNumberSwitch('some string') is "default"
 PASS sparseNumberSwitch({valueOf: function(){return 0}}) is "default"
 PASS sparseNumberSwitch('s') is "default"
 PASS sparseNumberSwitch(0) is 0
+PASS sparseNumberSwitch(-0) is 0
 PASS sparseNumberSwitch(1) is 1
 PASS sparseNumberSwitch(-1) is -1
 PASS sparseNumberSwitch(-1000000000) is -1000000000
@@ -90,6 +95,7 @@ PASS generalSwitch('some string') is "some string"
 PASS generalSwitch({valueOf: function(){return 0}}) is "default"
 PASS generalSwitch('s') is "default"
 PASS generalSwitch(0) is 0
+PASS generalSwitch(-0) is 0
 PASS generalSwitch(1) is 1
 PASS generalSwitch(-1) is -1
 PASS generalSwitch(-1000000000) is -1000000000

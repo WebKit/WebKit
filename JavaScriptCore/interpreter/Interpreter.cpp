@@ -3143,8 +3143,13 @@ JSValuePtr Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registe
         JSValuePtr scrutinee = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         if (scrutinee.isInt32Fast())
             vPC += callFrame->codeBlock()->immediateSwitchJumpTable(tableIndex).offsetForValue(scrutinee.getInt32Fast(), defaultOffset);
-        else
-            vPC += defaultOffset;
+        else {
+            int32_t value;
+            if (scrutinee.numberToInt32(value))
+                vPC += callFrame->codeBlock()->immediateSwitchJumpTable(tableIndex).offsetForValue(value, defaultOffset);
+            else
+                vPC += defaultOffset;
+        }
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_switch_char) {
@@ -5968,8 +5973,13 @@ void* Interpreter::cti_op_switch_imm(STUB_ARGS)
 
     if (scrutinee.isInt32Fast())
         return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(scrutinee.getInt32Fast());
-
-    return codeBlock->immediateSwitchJumpTable(tableIndex).ctiDefault;
+    else {
+        int32_t value;
+        if (scrutinee.numberToInt32(value))
+            return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(value);
+        else
+            return codeBlock->immediateSwitchJumpTable(tableIndex).ctiDefault;
+    }
 }
 
 void* Interpreter::cti_op_switch_char(STUB_ARGS)

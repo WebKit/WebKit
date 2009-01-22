@@ -1,3 +1,12 @@
+2009-01-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add layout test for switch (-0).
+
+        * fast/js/resources/switch-behaviour.js:
+        * fast/js/switch-behaviour-expected.txt:
+
 2009-01-19  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by David Hyatt

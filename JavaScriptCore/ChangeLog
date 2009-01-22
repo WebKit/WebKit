@@ -1,5 +1,18 @@
 2009-01-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23469.
+
+        We need to check all numbers in integer switches, not just those
+        represented as integer JSImmediates.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::cti_op_switch_imm):
+
+2009-01-21  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=23468.
