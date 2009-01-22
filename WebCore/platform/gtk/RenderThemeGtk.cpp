@@ -82,10 +82,13 @@ bool RenderThemeGtk::controlSupportsTints(const RenderObject* o) const
 
 int RenderThemeGtk::baselinePosition(const RenderObject* o) const
 {
+    if (!o->isBox())
+        return 0;
+
     // FIXME: This strategy is possibly incorrect for the GTK+ port.
     if (o->style()->appearance() == CheckboxPart ||
         o->style()->appearance() == RadioPart)
-        return o->marginTop() + o->height() - 2;
+        return o->marginTop() + RenderBox::toRenderBox(o)->height() - 2;
     return RenderTheme::baselinePosition(o);
 }
 
