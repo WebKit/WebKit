@@ -288,6 +288,9 @@ extern "C" {
 
 - (PassRefPtr<JSC::Bindings::Instance>)createPluginBindingsInstance:(PassRefPtr<JSC::Bindings::RootObject>)rootObject
 {
+    if (!_proxy)
+        return 0;
+    
     return _proxy->createBindingsInstance(rootObject);
 }
 

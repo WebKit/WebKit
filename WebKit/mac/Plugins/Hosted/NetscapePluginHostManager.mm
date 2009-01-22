@@ -220,6 +220,9 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     if (!reply.get())
         return 0;
     
+    if (reply->m_resultCode != KERN_SUCCESS)
+        return 0;
+    
     instance->setRenderContextID(reply->m_renderContextID);
     instance->setUseSoftwareRenderer(reply->m_useSoftwareRenderer);
 
