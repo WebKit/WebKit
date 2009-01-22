@@ -26,8 +26,7 @@
 #include "HTMLOptGroupElement.h"
 #include <wtf/Assertions.h>
 
-// FIXME: Activate code once WMLOptGroupElement is available
-#if ENABLE(WML) && 0
+#if ENABLE(WML)
 #include "WMLOptGroupElement.h"
 #include "WMLNames.h"
 #endif
@@ -39,8 +38,7 @@ OptionGroupElement* optionGroupElementForElement(Element* element)
     if (element->isHTMLElement() && element->hasTagName(HTMLNames::optgroupTag))
         return static_cast<HTMLOptGroupElement*>(element);
 
-    // FIXME: Activate code once WMLOptGroupElement is available
-#if ENABLE(WML) && 0
+#if ENABLE(WML)
     if (element->isWMLElement() && element->hasTagName(WMLNames::optgroupTag))
         return static_cast<WMLOptGroupElement*>(element);
 #endif

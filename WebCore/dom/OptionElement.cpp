@@ -29,8 +29,7 @@
 #include "ScriptElement.h"
 #include <wtf/Assertions.h>
 
-// FIXME: Activate code once WMLOptionElement is available
-#if ENABLE(WML) && 0
+#if ENABLE(WML)
 #include "WMLOptionElement.h"
 #include "WMLNames.h"
 #endif
@@ -114,8 +113,7 @@ OptionElement* optionElementForElement(Element* element)
     if (element->isHTMLElement() && element->hasTagName(HTMLNames::optionTag))
         return static_cast<HTMLOptionElement*>(element);
 
-    // FIXME: Activate code once WMLOptionElement is available
-#if ENABLE(WML) && 0
+#if ENABLE(WML)
     if (element->isWMLElement() && element->hasTagName(WMLNames::optionTag))
         return static_cast<WMLOptionElement*>(element);
 #endif
