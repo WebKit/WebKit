@@ -35,7 +35,6 @@ typedef struct {
     NPBool logSetWindow;
     NPBool logDestroy;
     NPBool returnErrorFromNewStream;
-    NPEventModel eventModel;
     NPObject* testObject;
     NPStream* stream;
     char* onStreamLoad;
@@ -45,6 +44,9 @@ typedef struct {
     char* firstHeaders;
     char* lastUrl;
     char* lastHeaders;
+#ifdef XP_MACOSX
+    NPEventModel eventModel;
+#endif
 } PluginObject;
 
 extern NPClass *getPluginClass(void);

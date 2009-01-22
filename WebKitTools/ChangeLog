@@ -1,5 +1,11 @@
 2009-01-22  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+
+2009-01-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
         
         Clean up the test plug-in code. We now always use the CG drawing model and the
