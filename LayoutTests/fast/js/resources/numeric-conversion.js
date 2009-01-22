@@ -23,7 +23,7 @@ shouldBe("parseInt('9007199254740992e2000').toString()", "'9007199254740992'");
 shouldBe("parseInt('9007199254740992.0e2000').toString()", "'9007199254740992'");
 
 shouldBe("parseInt(NaN)", "NaN");
-shouldBe("parseInt(-Infinity)", "0");
-shouldBe("parseInt(Infinity)", "0");
+shouldBe("parseInt(-Infinity)", "NaN");
+shouldBe("parseInt(Infinity)", "NaN");
 
 var successfullyParsed = true;

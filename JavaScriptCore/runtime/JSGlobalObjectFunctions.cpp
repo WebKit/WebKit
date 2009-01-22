@@ -304,7 +304,7 @@ JSValuePtr globalFuncParseInt(ExecState* exec, JSObject*, JSValuePtr, const ArgL
         double d = value.uncheckedGetNumber();
         if (isfinite(d))
             return jsNumber(exec, floor(d));
-        if (isnan(d))
+        if (isnan(d) || isinf(d))
             return jsNaN(&exec->globalData());
         return js0();
     }
