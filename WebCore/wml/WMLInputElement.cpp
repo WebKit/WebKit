@@ -50,10 +50,10 @@ WMLInputElement::~WMLInputElement()
 
 static inline bool isInputFocusable(RenderObject* renderer)
 {
-    if (!renderer)
+    if (!renderer || !renderer->isBox())
         return false;
 
-    if (!renderer->width() || !renderer->height())
+    if (RenderBox::toRenderBox(renderer)->size().isEmpty())
         return false;
 
     if (RenderStyle* style = renderer->style()) {
