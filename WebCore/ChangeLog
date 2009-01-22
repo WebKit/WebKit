@@ -1,3 +1,47 @@
+2009-01-19  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23317
+
+        The high CPU usage was really from repeatedly firing transitions caused
+        by a bug in the way we handle background-color animations. If animating 
+        from a valid background color to no background color, we sometimes left
+        (based on timing) the background color as transparent black, but valid
+        rather than invalid, which it should be. Fixing that got rid of the
+        repeated firing.
+
+        But we really were doing more expensive iteration of all objects with
+        animations or transitions on them (running or not). So I added two
+        optimizations to quickly short circuit when an object had no running
+        animations or transitions. Things are now as zippy as ever.
+
+        Test: transitions/repeated-firing-background-color.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateAnimationTimer):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::hasAnimations):
+        (WebCore::CompositeAnimationPrivate::clearRenderer):
+        (WebCore::CompositeAnimationPrivate::animate):
+        (WebCore::CompositeAnimationPrivate::setAnimating):
+        (WebCore::CompositeAnimationPrivate::willNeedService):
+        (WebCore::CompositeAnimationPrivate::getAnimationForProperty):
+        (WebCore::CompositeAnimationPrivate::cleanupFinishedAnimations):
+        (WebCore::CompositeAnimationPrivate::setAnimationStartTime):
+        (WebCore::CompositeAnimationPrivate::setTransitionStartTime):
+        (WebCore::CompositeAnimationPrivate::suspendAnimations):
+        (WebCore::CompositeAnimationPrivate::resumeAnimations):
+        (WebCore::CompositeAnimationPrivate::overrideImplicitAnimations):
+        (WebCore::CompositeAnimationPrivate::resumeOverriddenImplicitAnimations):
+        (WebCore::CompositeAnimationPrivate::styleAvailable):
+        (WebCore::CompositeAnimationPrivate::isAnimatingProperty):
+        (WebCore::CompositeAnimationPrivate::numberOfActiveAnimations):
+        (WebCore::CompositeAnimation::hasAnimations):
+        * page/animation/CompositeAnimation.h:
+
 2009-01-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin Garcia.

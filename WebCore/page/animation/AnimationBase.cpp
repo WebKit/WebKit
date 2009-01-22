@@ -80,7 +80,11 @@ static inline float blendFunc(const AnimationBase*, float from, float to, double
 }
 
 static inline Color blendFunc(const AnimationBase* anim, const Color& from, const Color& to, double progress)
-{  
+{
+    // We need to preserve the state of the valid flag at the end of the animation
+    if (progress == 1 && !to.isValid())
+        return Color();
+
     return Color(blendFunc(anim, from.red(), to.red(), progress),
                  blendFunc(anim, from.green(), to.green(), progress),
                  blendFunc(anim, from.blue(), to.blue(), progress),

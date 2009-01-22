@@ -66,6 +66,8 @@ public:
     void suspendAnimations();
     void resumeAnimations();
     bool isSuspended() const;
+    
+    bool hasAnimations() const;
 
     void styleAvailable();
     void setAnimating(bool);
