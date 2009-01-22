@@ -56,6 +56,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "RenderBox.h"
 
 namespace WebCore {
 
@@ -159,7 +160,7 @@ int RenderThemeQt::baselinePosition(const RenderObject* o) const
 
     if (o->style()->appearance() == CheckboxPart ||
         o->style()->appearance() == RadioPart)
-        return o->marginTop() + RenderBox::toRenderBox(o)->height() - 2; // Same as in old khtml
+        return o->marginTop() + RenderBox::toConstRenderBox(o)->height() - 2; // Same as in old khtml
     return RenderTheme::baselinePosition(o);
 }
 
