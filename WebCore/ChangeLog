@@ -1,5 +1,46 @@
 2009-01-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Eric Seidel.
+
+        Rename some of the casting functions in dom/*Element.cpp:
+        formControlElementForElement -> toFormControlElement
+        inputElementForElement -> toInputElement
+        optionElementForElement -> toOptionElement
+        optionGroupElementForElement -> toOptionGroupElement
+
+        Suggested by Alexey, while refactoring the Element*->ScriptElement* code.
+        The Element*->ScriptElement* helper function is already named 'toScriptElement'.
+
+        * dom/FormControlElement.cpp:
+        (WebCore::toFormControlElement):
+        * dom/FormControlElement.h:
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::setValueFromRenderer):
+        (WebCore::toInputElement):
+        * dom/InputElement.h:
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::collectOptionTextRespectingGroupLabel):
+        (WebCore::toOptionElement):
+        * dom/OptionElement.h:
+        * dom/OptionGroupElement.cpp:
+        (WebCore::toOptionGroupElement):
+        * dom/OptionGroupElement.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        (WebCore::RenderMenuList::setTextFromOption):
+        (WebCore::RenderMenuList::itemText):
+        (WebCore::RenderMenuList::itemIsSelected):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::formControlElement):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::inputElement):
+
+2009-01-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Rubber-stamped by George Staikos.
 
         Forgot to include in my last commit: Activate code depending on WMLOptionElement/WMLOptGroupElement.

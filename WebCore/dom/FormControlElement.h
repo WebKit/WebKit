@@ -36,7 +36,7 @@ protected:
     FormControlElement() { }
 };
 
-FormControlElement* formControlElementForElement(Element*);
+FormControlElement* toFormControlElement(Element*);
 
 }
 

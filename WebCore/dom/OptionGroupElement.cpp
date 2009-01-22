@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-OptionGroupElement* optionGroupElementForElement(Element* element)
+OptionGroupElement* toOptionGroupElement(Element* element)
 {
     if (element->isHTMLElement() && element->hasTagName(HTMLNames::optgroupTag))
         return static_cast<HTMLOptGroupElement*>(element);

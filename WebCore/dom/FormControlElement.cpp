@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-FormControlElement* formControlElementForElement(Element* element)
+FormControlElement* toFormControlElement(Element* element)
 {
     if (element->isHTMLElement()) {
         if (static_cast<HTMLElement*>(element)->isGenericFormElement())

@@ -142,7 +142,7 @@ void RenderMenuList::updateOptionsWidth()
     int size = listItems.size();    
     for (int i = 0; i < size; ++i) {
         HTMLElement* element = listItems[i];
-        OptionElement* optionElement = optionElementForElement(element);
+        OptionElement* optionElement = toOptionElement(element);
         if (!optionElement)
             continue;
 
@@ -181,7 +181,7 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     int i = select->optionToListIndex(optionIndex);
     String text = "";
     if (i >= 0 && i < size) {
-        if (OptionElement* optionElement = optionElementForElement(listItems[i]))
+        if (OptionElement* optionElement = toOptionElement(listItems[i]))
             text = optionElement->textIndentedToRespectGroupLabel();
     }
 
@@ -305,9 +305,9 @@ String RenderMenuList::itemText(unsigned listIndex) const
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     HTMLElement* element = select->listItems()[listIndex];
-    if (OptionGroupElement* optionGroupElement = optionGroupElementForElement(element))
+    if (OptionGroupElement* optionGroupElement = toOptionGroupElement(element))
         return optionGroupElement->groupLabelText();
-    else if (OptionElement* optionElement = optionElementForElement(element))
+    else if (OptionElement* optionElement = toOptionElement(element))
         return optionElement->textIndentedToRespectGroupLabel();
     return String();
 }
@@ -427,7 +427,7 @@ bool RenderMenuList::itemIsSelected(unsigned listIndex) const
 {
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     HTMLElement* element = select->listItems()[listIndex];
-    if (OptionElement* optionElement = optionElementForElement(element))
+    if (OptionElement* optionElement = toOptionElement(element))
         return optionElement->selected();
     return false;
 }

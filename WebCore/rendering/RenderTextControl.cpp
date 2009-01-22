@@ -575,7 +575,7 @@ HTMLElement* RenderTextControl::innerTextElement() const
 
 FormControlElement* RenderTextControl::formControlElement() const
 {
-    return formControlElementForElement(static_cast<Element*>(node()));
+    return toFormControlElement(static_cast<Element*>(node()));
 }
 
 } // namespace WebCore

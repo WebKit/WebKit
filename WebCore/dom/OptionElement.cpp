@@ -80,7 +80,7 @@ String OptionElement::collectOptionText(const OptionElementData& data, Document*
 String OptionElement::collectOptionTextRespectingGroupLabel(const OptionElementData& data, Document* document)
 {
     Element* parentElement = static_cast<Element*>(data.element()->parentNode());
-    if (parentElement && optionGroupElementForElement(parentElement))
+    if (parentElement && toOptionGroupElement(parentElement))
         return "    " + collectOptionText(data, document);
 
     return collectOptionText(data, document);
@@ -108,7 +108,7 @@ OptionElementData::~OptionElementData()
 {
 }
 
-OptionElement* optionElementForElement(Element* element)
+OptionElement* toOptionElement(Element* element)
 {
     if (element->isHTMLElement() && element->hasTagName(HTMLNames::optionTag))
         return static_cast<HTMLOptionElement*>(element);
