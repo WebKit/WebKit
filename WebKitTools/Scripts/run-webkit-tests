@@ -306,7 +306,8 @@ my $imageDiffTool = "$productDir/ImageDiff";
 $imageDiffTool .= "_debug" if isCygwin() && $configuration ne "Release";
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
-die "You can't run pixel tests if Perian's QuickTime component is installed as it affects the results\n\thttps://bugs.webkit.org/show_bug.cgi?id=22615\n" if $pixelTests && isPerianInstalled();
+die "You can't generate new pixel test results if Perian's QuickTime component is installed as it may affect the results\n\thttps://bugs.webkit.org/show_bug.cgi?id=22615\n" if $resetResults && $pixelTests && isPerianInstalled();
+print "WARNING: Perian's QuickTime component is installed and this may affect pixel test results!!!\n\thttps://bugs.webkit.org/show_bug.cgi?id=22615\n" if $pixelTests && isPerianInstalled();
 
 checkFrameworks() unless isCygwin();
 
