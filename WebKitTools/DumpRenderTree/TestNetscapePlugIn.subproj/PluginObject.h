@@ -29,11 +29,13 @@ extern NPNetscapeFuncs *browser;
 
 typedef struct {
     NPObject header;
+
     NPP npp;
     NPBool eventLogging;
     NPBool logSetWindow;
     NPBool logDestroy;
     NPBool returnErrorFromNewStream;
+    NPEventModel eventModel;
     NPObject* testObject;
     NPStream* stream;
     char* onStreamLoad;

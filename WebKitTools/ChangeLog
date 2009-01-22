@@ -1,3 +1,18 @@
+2009-01-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Clean up the test plug-in code. We now always use the CG drawing model and the
+        Cocoa event model. It is however possible to revert to the old Carbon event model by
+        specifying forcecarbon=true in the embed/object tag.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New):
+        (handleEventCarbon):
+        (handleEventCocoa):
+        (NPP_HandleEvent):
+
 2009-01-21  Pierre-Olivier Latour  <pol@apple.com>
 
         Tweaked earlier fix to only print a warning when Perian is installed,
