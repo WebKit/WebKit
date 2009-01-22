@@ -1,3 +1,30 @@
+2009-01-22  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23373
+
+        Implement ThreadCondition::timedWait().
+        Since we borrow the code for condition variables from other sources,
+        I did the same for timedWait(). See comments in ThreadingWin.cpp for
+        rationale and more info.
+
+        * wtf/CONTRIBUTORS.pthreads-win32: 
+        Added. A list of Pthreads-win32 contributors mentioned in their license. The license itself
+        is included into wtf/ThreadingWin32.cpp.
+
+        * wtf/Threading.h:
+        * wtf/ThreadingWin.cpp:
+        Additional info and Pthreads-win32 license at the beginning.
+        (WTF::PlatformCondition::timedWait): new method, derived from Pthreads-win32.
+        (WTF::PlatformCondition::signal): same
+        (WTF::ThreadCondition::ThreadCondition):
+        (WTF::ThreadCondition::~ThreadCondition):
+        (WTF::ThreadCondition::wait): this now calls PlatformCondition::timedWait.
+        (WTF::ThreadCondition::timedWait): same
+        (WTF::ThreadCondition::signal): this now calls PlatformCondition::signal.
+        (WTF::ThreadCondition::broadcast): same
+
 2009-01-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

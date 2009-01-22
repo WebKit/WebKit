@@ -132,12 +132,15 @@ struct PlatformMutex {
     size_t m_recursionCount;
 };
 struct PlatformCondition {
-    size_t m_timedOut;
-    size_t m_blocked;
-    size_t m_waitingForRemoval;
-    HANDLE m_gate;
-    HANDLE m_queue;
-    HANDLE m_mutex;
+    size_t m_waitersGone;
+    size_t m_waitersBlocked;
+    size_t m_waitersToUnblock; 
+    HANDLE m_blockLock;
+    HANDLE m_blockQueue;
+    HANDLE m_unblockLock;
+
+    bool timedWait(PlatformMutex&, DWORD durationMilliseconds);
+    void signal(bool unblockAll);
 };
 #else
 typedef void* PlatformMutex;
