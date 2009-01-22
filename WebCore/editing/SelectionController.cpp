@@ -111,9 +111,16 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
         m_sel = s;
         return;
     }
+
+    Node* baseNode = s.base().node();
+    Document* document = 0;
+    if (baseNode)
+        document = baseNode->document();
     
-    if (s.base().node() && s.base().node()->document() != m_frame->document()) {
-        s.base().node()->document()->frame()->selection()->setSelection(s, closeTyping, clearTypingStyle, userTriggered);
+    // <http://bugs.webkit.org/show_bug.cgi?id=23464>: Infinite recursion at SelectionController::setSelection
+    // if document->frame() == m_frame we can get into an infinite loop
+    if (document && document->frame() != m_frame && document != m_frame->document()) {
+        document->frame()->selection()->setSelection(s, closeTyping, clearTypingStyle, userTriggered);
         return;
     }
     
