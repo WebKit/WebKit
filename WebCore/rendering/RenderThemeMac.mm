@@ -153,7 +153,7 @@ Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor() const
 
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor() const
 {
-    return Color(128, 128, 128);
+    return platformInactiveSelectionBackgroundColor();
 }
 
 static FontWeight toFontWeight(NSInteger appKitFontWeight)

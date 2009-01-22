@@ -1,3 +1,19 @@
+2009-01-22  David Hyatt  <hyatt@apple.com>
+
+        Fix regressions in list box selection on Mac.  The wrong color was being used for the list box
+        background, and list box colors actually weren't even being properly fetched because of a bug in
+        the RenderTheme base class.  Existing pixel tests cover the bug fix.
+
+        Reviewed by Jon Honeycutt
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::activeListBoxSelectionBackgroundColor):
+        (WebCore::RenderTheme::inactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderTheme::activeListBoxSelectionForegroundColor):
+        (WebCore::RenderTheme::inactiveListBoxSelectionForegroundColor):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor):
+
 2009-01-22  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
