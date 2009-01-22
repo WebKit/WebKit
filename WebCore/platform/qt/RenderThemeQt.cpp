@@ -154,9 +154,12 @@ bool RenderThemeQt::supportsFocusRing(const RenderStyle* style) const
 
 int RenderThemeQt::baselinePosition(const RenderObject* o) const
 {
+    if (!o->isBox())
+        return 0;
+
     if (o->style()->appearance() == CheckboxPart ||
         o->style()->appearance() == RadioPart)
-        return o->marginTop() + o->height() - 2; // Same as in old khtml
+        return o->marginTop() + RenderBox::toRenderBox(o)->height() - 2; // Same as in old khtml
     return RenderTheme::baselinePosition(o);
 }
 
