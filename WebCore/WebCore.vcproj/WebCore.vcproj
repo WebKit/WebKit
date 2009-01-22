@@ -5825,6 +5825,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\HTTPHeaderMap.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\HTTPHeaderMap.h"
 					>
 				</File>

@@ -1386,6 +1386,7 @@ webcore_sources += \
 	WebCore/platform/network/FormDataBuilder.cpp \
 	WebCore/platform/network/FormDataBuilder.h \
 	WebCore/platform/network/HTTPHeaderMap.h \
+	WebCore/platform/network/HTTPHeaderMap.cpp \
 	WebCore/platform/network/HTTPParsers.cpp \
 	WebCore/platform/network/HTTPParsers.h \
 	WebCore/platform/network/NetworkStateNotifier.cpp \

@@ -1,3 +1,25 @@
+2009-01-22  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 22720: Make XMLHttpRequest work in Workers
+        <https://bugs.webkit.org/show_bug.cgi?id=22720>
+
+        Add copy/adopt for HTTPHeaderMap to allow the data to be passed across threads.
+
+        No observable change in behavior, so no test.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * platform/network/HTTPHeaderMap.cpp: Added.
+        (WebCore::HTTPHeaderMap::copyData):
+        (WebCore::HTTPHeaderMap::adopt):
+        * platform/network/HTTPHeaderMap.h:
+
 2009-01-21  David Hyatt  <hyatt@apple.com>
 
         Back out a portion of my patch that I did not mean to land.  Revert paintOutline back to the way it
@@ -600,8 +622,9 @@
 
         More removal of document usage from XMLHttpRequest.
         * Abstracted away the sync and async requests behind the ThreadableLoader class, which
-          will get an implementation for Workers.  It follows the same model as SubresourceLoader, since
-          it is a thin wrapper around it.
+          will get an implementation for Workers.  ThreadableLoader follows the same model as
+          SubresourceLoader because DocumentThreadableLoader is a thin wrapper around SubresourceLoader.
+          Also, WorkerThreadableLoader (coming soon) will use DocumentThreadableLoader to get things done.
         * Consolidated dashboard compatibility checks into usesDashboardBackwardCompatibilityMode
           which handles workers.
 

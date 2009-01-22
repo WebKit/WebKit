@@ -29,11 +29,22 @@
 #include "AtomicString.h"
 #include "AtomicStringHash.h"
 #include "StringHash.h"
+#include <memory>
+#include <utility>
 #include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-    typedef HashMap<AtomicString, String, CaseFoldingHash> HTTPHeaderMap;
+    typedef Vector<std::pair<String, String> > HTTPHeaderMapData;
+
+    class HTTPHeaderMap : public HashMap<AtomicString, String, CaseFoldingHash> {
+    public:
+        // Gets a copy of the data suitable for passing to another thread.
+        std::auto_ptr<HTTPHeaderMapData> copyData() const;
+
+        void adopt(std::auto_ptr<HTTPHeaderMapData>);
+    };
 
 } // namespace WebCore
 
