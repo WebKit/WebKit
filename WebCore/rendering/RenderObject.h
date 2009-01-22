@@ -846,7 +846,7 @@ protected:
     
     virtual void printBoxDecorations(GraphicsContext*, int /*x*/, int /*y*/, int /*w*/, int /*h*/, int /*tx*/, int /*ty*/) { }
 
-    void paintOutline(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool onlyUsePassedInBounds = false);
+    void paintOutline(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*);
     void addPDFURLRect(GraphicsContext*, const IntRect&);
 
     virtual IntRect viewRect() const;

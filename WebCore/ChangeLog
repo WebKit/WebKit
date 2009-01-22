@@ -1,5 +1,18 @@
 2009-01-21  David Hyatt  <hyatt@apple.com>
 
+        Back out a portion of my patch that I did not mean to land.  Revert paintOutline back to the way it
+        was before my landing.  Fixes failing SVG focus ring tests.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+
+2009-01-21  David Hyatt  <hyatt@apple.com>
+
         Fix Node's renderBox() method on Windows.
 
         * dom/Node.cpp:
