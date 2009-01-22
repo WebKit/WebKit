@@ -1037,11 +1037,30 @@ template <int BITS> class MapSelector {
   typedef PackedCache<BITS, uint64_t> CacheType;
 };
 
+#if defined(WTF_CHANGES)
+#if PLATFORM(X86_64)
+// On all known X86-64 platforms, the upper 16 bits are always unused and therefore 
+// can be excluded from the PageMap key.
+// See http://en.wikipedia.org/wiki/X86-64#Virtual_address_space_details
+
+static const size_t kBitsUnusedOn64Bit = 16;
+#else
+static const size_t kBitsUnusedOn64Bit = 0;
+#endif
+
+// A three-level map for 64-bit machines
+template <> class MapSelector<64> {
+ public:
+  typedef TCMalloc_PageMap3<64 - kPageShift - kBitsUnusedOn64Bit> Type;
+  typedef PackedCache<64, uint64_t> CacheType;
+};
+#endif
+
 // A two-level map for 32-bit machines
 template <> class MapSelector<32> {
  public:
-  typedef TCMalloc_PageMap2<32-kPageShift> Type;
-  typedef PackedCache<32-kPageShift, uint16_t> CacheType;
+  typedef TCMalloc_PageMap2<32 - kPageShift> Type;
+  typedef PackedCache<32 - kPageShift, uint16_t> CacheType;
 };
 
 // -------------------------------------------------------------------------

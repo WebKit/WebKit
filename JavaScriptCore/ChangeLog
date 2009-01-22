@@ -1,3 +1,21 @@
+2009-01-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix for <rdar://problem/6439247>
+        FastMalloc allocating an extra 4MB of meta-data on 64-bit
+
+        Rely on the fact that on all known x86-64 platforms only use 48 bits of
+        address space to shrink the initial size of the PageMap from ~4MB to 120K.
+        For 64-bit we still use a 3-level radix tree, but now each level is only 12
+        bits wide.
+
+        No performance change.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::MapSelector): Add specialization for 64 bit that takes into account the
+        16 bits of unused address space on x86-64.
+
 2009-01-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
