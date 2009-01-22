@@ -1,5 +1,12 @@
 2009-01-21  David Hyatt  <hyatt@apple.com>
 
+        Fix Node's renderBox() method on Windows.
+
+        * dom/Node.cpp:
+        (WebCore::Node::renderBox):
+
+2009-01-21  David Hyatt  <hyatt@apple.com>
+
         Fix RenderThemeSafari bustage on Win32.
 
         * rendering/RenderThemeSafari.cpp:
