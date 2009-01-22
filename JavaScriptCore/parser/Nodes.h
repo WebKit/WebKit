@@ -2211,7 +2211,7 @@ namespace JSC {
         void finishParsing(const SourceCode&, ParameterNode*);
         void finishParsing(Identifier* parameters, size_t parameterCount);
         
-        UString toSourceString() const JSC_FAST_CALL { return UString("{") + source().toString() + UString("}"); }
+        UString toSourceString() const JSC_FAST_CALL { return source().toString(); }
 
         // These objects are ref/deref'd a lot in the scope chain, so this is a faster ref/deref.
         // If the virtual machine changes so this doesn't happen as much we can change back.

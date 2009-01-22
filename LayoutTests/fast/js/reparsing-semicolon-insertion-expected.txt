@@ -6,6 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS commaTest() is undefined.
 PASS varCommaTest() is undefined.
 PASS constCommaTest() is undefined.
+PASS commaParenTest() is undefined.
+PASS commaParenThrowTest() threw exception ReferenceError: Can't find variable: x.
 PASS successfullyParsed is true
 
 TEST COMPLETE

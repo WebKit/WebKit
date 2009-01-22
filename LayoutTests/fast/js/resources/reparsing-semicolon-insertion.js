@@ -22,4 +22,12 @@ function constCommaTest() { const a = 1, }
 
 shouldBeUndefined("constCommaTest()");
 
+function commaParenTest() { (1), }
+
+shouldBeUndefined("commaParenTest()");
+
+function commaParenThrowTest() { (x), }
+
+shouldThrow("commaParenThrowTest()");
+
 var successfullyParsed = true;

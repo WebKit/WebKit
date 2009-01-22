@@ -1,3 +1,23 @@
+2009-01-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/6516853> (r39682-r39736) JSFunFuzz: crash on "(function(){({ x2: x }), })()"
+        <https://bugs.webkit.org/show_bug.cgi?id=23479>
+
+        Automatic semicolon insertion was resulting in this being accepted in the initial
+        nodeless parsing, but subsequent reparsing for code generation would fail, leading
+        to a crash.  The solution is to ensure that reparsing a function performs parsing
+        in the same state as the initial parse.  We do this by modifying the saved source
+        ranges to include rather than exclude the opening and closing braces.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary): add an assertion for successful recompile
+        * parser/Lexer.h:
+        (JSC::Lexer::sourceCode): include rather than exclude braces.
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::toSourceString):  No need to append braces anymore.
+
 2009-01-22  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

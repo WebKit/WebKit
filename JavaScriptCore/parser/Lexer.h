@@ -88,7 +88,7 @@ namespace JSC {
         bool sawError() const { return m_error; }
 
         void clear();
-        SourceCode sourceCode(int openBrace, int closeBrace, int firstLine) { return SourceCode(m_source->provider(), openBrace + 1, closeBrace, firstLine); }
+        SourceCode sourceCode(int openBrace, int closeBrace, int firstLine) { return SourceCode(m_source->provider(), openBrace, closeBrace + 1, firstLine); }
 
     private:
         friend class JSGlobalData;

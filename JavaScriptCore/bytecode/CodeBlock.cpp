@@ -1408,6 +1408,7 @@ void CodeBlock::reparseForExceptionInfoIfNecessary(CallFrame* callFrame)
         case FunctionCode: {
             FunctionBodyNode* ownerFunctionBodyNode = static_cast<FunctionBodyNode*>(m_ownerNode);
             RefPtr<FunctionBodyNode> newFunctionBody = m_globalData->parser->reparse<FunctionBodyNode>(m_globalData, ownerFunctionBodyNode);
+            ASSERT(newFunctionBody);
             newFunctionBody->finishParsing(ownerFunctionBodyNode->copyParameters(), ownerFunctionBodyNode->parameterCount());
 
             m_globalData->scopeNodeBeingReparsed = newFunctionBody.get();
