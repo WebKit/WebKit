@@ -464,12 +464,12 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (NSString *)RSSFeedReferrer
 {
-    return nsStringNilIfEmpty(core(_private)->rssFeedReferrer());
+    return nsStringNilIfEmpty(core(_private)->referrer());
 }
 
 - (void)setRSSFeedReferrer:(NSString *)referrer
 {
-    core(_private)->setRSSFeedReferrer(referrer);
+    core(_private)->setReferrer(referrer);
 }
 
 - (NSArray *)children

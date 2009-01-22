@@ -1,3 +1,14 @@
+2009-01-22  Eric Roman  <eroman@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20806
+        "Referer" header not sent for history navigation.
+
+        * http/tests/navigation/back-send-referrer-expected.txt: Added.
+        * http/tests/navigation/back-send-referrer.html: Added.
+        * http/tests/navigation/resources/back-send-referrer-helper.php: Added.
+
 2009-01-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

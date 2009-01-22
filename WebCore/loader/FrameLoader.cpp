@@ -4537,6 +4537,9 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
             bool addedExtraFields = false;
             ResourceRequest request(itemURL);
 
+            if (!item->referrer().isNull())
+                request.setHTTPReferrer(item->referrer());
+            
             // If this was a repost that failed the page cache, we might try to repost the form.
             NavigationAction action;
             if (formData) {
@@ -4544,10 +4547,9 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                 formData->generateFiles(m_frame->page()->chrome()->client());
 
                 request.setHTTPMethod("POST");
-                request.setHTTPReferrer(item->formReferrer());
                 request.setHTTPBody(formData);
                 request.setHTTPContentType(item->formContentType());
-                RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item->formReferrer());
+                RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item->referrer());
                 addHTTPOriginIfNeeded(request, securityOrigin->toString());
         
                 // Make sure to add extra fields to the request after the Origin header is added for the FormData case.

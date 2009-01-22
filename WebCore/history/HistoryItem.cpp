@@ -107,6 +107,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     : RefCounted<HistoryItem>()
     , m_urlString(item.m_urlString)
     , m_originalURLString(item.m_originalURLString)
+    , m_referrer(item.m_referrer)
     , m_target(item.m_target)
     , m_parent(item.m_parent)
     , m_title(item.m_title)
@@ -119,8 +120,6 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_isTargetItem(item.m_isTargetItem)
     , m_visitCount(item.m_visitCount)
     , m_formContentType(item.m_formContentType)
-    , m_formReferrer(item.m_formReferrer)
-    , m_rssFeedReferrer(item.m_rssFeedReferrer)
 {
     if (item.m_formData)
         m_formData = item.m_formData->copy();
@@ -179,6 +178,11 @@ KURL HistoryItem::originalURL() const
     return KURL(m_originalURLString);
 }
 
+const String& HistoryItem::referrer() const
+{
+    return m_referrer;
+}
+
 const String& HistoryItem::target() const
 {
     return m_target;
@@ -216,6 +220,12 @@ void HistoryItem::setURL(const KURL& url)
 void HistoryItem::setOriginalURLString(const String& urlString)
 {
     m_originalURLString = urlString;
+    notifyHistoryItemChanged();
+}
+
+void HistoryItem::setReferrer(const String& referrer)
+{
+    m_referrer = referrer;
     notifyHistoryItemChanged();
 }
 
@@ -357,33 +367,18 @@ String HistoryItem::formContentType() const
     return m_formContentType;
 }
 
-String HistoryItem::formReferrer() const
-{
-    return m_formReferrer;
-}
-
-String HistoryItem::rssFeedReferrer() const
-{
-    return m_rssFeedReferrer;
-}
-
-void HistoryItem::setRSSFeedReferrer(const String& referrer)
-{
-    m_rssFeedReferrer = referrer;
-}
-
 void HistoryItem::setFormInfoFromRequest(const ResourceRequest& request)
 {
+    m_referrer = request.httpReferrer();
+    
     if (equalIgnoringCase(request.httpMethod(), "POST")) {
         // FIXME: Eventually we have to make this smart enough to handle the case where
         // we have a stream for the body to handle the "data interspersed with files" feature.
         m_formData = request.httpBody();
         m_formContentType = request.httpContentType();
-        m_formReferrer = request.httpReferrer();
     } else {
         m_formData = 0;
         m_formContentType = String();
-        m_formReferrer = String();
     }
 }
 

@@ -1,3 +1,14 @@
+2009-01-22  Eric Roman  <eroman@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20806
+        Deprecate RSSFeedReferrer() and setRSSFeedReferrer().
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::RSSFeedReferrer):
+        (WebHistoryItem::setRSSFeedReferrer):
+
 2009-01-19  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Gavin Barraclough.
