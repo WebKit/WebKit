@@ -335,6 +335,7 @@ sources['loader'] = [
     'loader/CachedXSLStyleSheet.cpp',
     'loader/DocLoader.cpp',
     'loader/DocumentLoader.cpp',
+    'loader/DocumentThreadableLoader.cpp',
     'loader/FormState.cpp',
     'loader/FrameLoader.cpp',
     'loader/FTPDirectoryDocument.cpp',
@@ -353,6 +354,7 @@ sources['loader'] = [
     'loader/SubresourceLoader.cpp',
     'loader/TextDocument.cpp',
     'loader/TextResourceDecoder.cpp',
+    'loader/ThreadableLoader.cpp',
     'loader/UserStyleSheetLoader.cpp',
 ]
 sources['page'] = [

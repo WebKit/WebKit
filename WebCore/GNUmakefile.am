@@ -1043,6 +1043,8 @@ webcore_sources += \
 	WebCore/loader/DocLoader.h \
 	WebCore/loader/DocumentLoader.cpp \
 	WebCore/loader/DocumentLoader.h \
+	WebCore/loader/DocumentThreadableLoader.cpp \
+	WebCore/loader/DocumentThreadableLoader.h \
 	WebCore/loader/EmptyClients.h \
 	WebCore/loader/FTPDirectoryDocument.cpp \
 	WebCore/loader/FTPDirectoryDocument.h \
@@ -1084,6 +1086,9 @@ webcore_sources += \
 	WebCore/loader/TextDocument.h \
 	WebCore/loader/TextResourceDecoder.cpp \
 	WebCore/loader/TextResourceDecoder.h \
+	WebCore/loader/ThreadableLoader.cpp \
+	WebCore/loader/ThreadableLoader.h \
+	WebCore/loader/ThreadableLoaderClient.h \
 	WebCore/loader/archive/Archive.h \
 	WebCore/loader/archive/ArchiveFactory.cpp \
 	WebCore/loader/archive/ArchiveFactory.h \

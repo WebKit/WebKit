@@ -23,24 +23,23 @@
 #include "XMLHttpRequest.h"
 
 #include "CString.h"
-#include "Console.h"
 #include "DOMImplementation.h"
-#include "DOMWindow.h"
+#include "Document.h"
 #include "Event.h"
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "File.h"
-#include "Frame.h"
-#include "FrameLoader.h"
 #include "HTTPParsers.h"
-#include "InspectorController.h"
 #include "KURL.h"
 #include "KURLHash.h"
-#include "Page.h"
+#include "ResourceError.h"
+#include "ResourceRequest.h"
+#include "ScriptExecutionContext.h"
 #include "Settings.h"
-#include "SubresourceLoader.h"
+#include "SystemTime.h"
 #include "TextResourceDecoder.h"
+#include "ThreadableLoader.h"
 #include "XMLHttpRequestException.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
@@ -323,7 +322,6 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
     , m_async(true)
     , m_includeCredentials(false)
     , m_state(UNSENT)
-    , m_identifier(std::numeric_limits<unsigned long>::max())
     , m_responseText("")
     , m_createdDocument(false)
     , m_error(false)
@@ -347,6 +345,16 @@ Document* XMLHttpRequest::document() const
     ASSERT(scriptExecutionContext()->isDocument());
     return static_cast<Document*>(scriptExecutionContext());
 }
+
+#if ENABLE(DASHBOARD_SUPPORT)
+bool XMLHttpRequest::usesDashboardBackwardCompatibilityMode() const
+{
+    if (scriptExecutionContext()->isWorkerContext())
+        return false;
+    Settings* settings = document()->settings();
+    return settings && settings->usesDashboardBackwardCompatibilityMode();
+}
+#endif
 
 XMLHttpRequest::State XMLHttpRequest::readyState() const
 {
@@ -558,8 +566,7 @@ void XMLHttpRequest::send(Document* document, ExceptionCode& ec)
         String contentType = getRequestHeader("Content-Type");
         if (contentType.isEmpty()) {
 #if ENABLE(DASHBOARD_SUPPORT)
-            Settings* settings = document->settings();
-            if (settings && settings->usesDashboardBackwardCompatibilityMode())
+            if (usesDashboardBackwardCompatibilityMode())
                 setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
             else
 #endif
@@ -590,8 +597,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         String contentType = getRequestHeader("Content-Type");
         if (contentType.isEmpty()) {
 #if ENABLE(DASHBOARD_SUPPORT)
-            Settings* settings = document()->settings();
-            if (settings && settings->usesDashboardBackwardCompatibilityMode())
+            if (usesDashboardBackwardCompatibilityMode())
                 setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
             else
 #endif
@@ -805,15 +811,13 @@ void XMLHttpRequest::loadRequestSynchronously(ResourceRequest& request, Exceptio
     ResourceError error;
     ResourceResponse response;
 
-    if (document()->frame())
-        m_identifier = document()->frame()->loader()->loadResourceSynchronously(request, error, response, data);
-
+    unsigned long identifier = ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, error, response, data);
     m_loader = 0;
 
     // No exception for file:/// resources, see <rdar://problem/4962298>.
     // Also, if we have an HTTP response, then it wasn't a network error in fact.
     if (error.isNull() || request.url().isLocalFile() || response.httpStatusCode() > 0) {
-        processSyncLoadResults(data, response, ec);
+        processSyncLoadResults(identifier, data, response, ec);
         return;
     }
 
@@ -837,8 +841,9 @@ void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
     // FIXME: Maybe create can return null for other reasons too?
     // We need to keep content sniffing enabled for local files due to CFNetwork not providing a MIME type
     // for local files otherwise, <rdar://problem/5671813>.
-    bool sendResourceLoadCallbacks = !m_inPreflight;
-    m_loader = SubresourceLoader::create(document()->frame(), this, request, false, sendResourceLoadCallbacks, request.url().isLocalFile());
+    LoadCallbacks callbacks = m_inPreflight ? DoNotSendLoadCallbacks : SendLoadCallbacks;
+    ContentSniff contentSniff =  request.url().isLocalFile() ? SniffContent : DoNotSniffContent;
+    m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, callbacks, contentSniff);
 
     if (m_loader) {
         // Neither this object nor the JavaScript wrapper should be deleted while
@@ -978,8 +983,7 @@ void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& va
 {
     if (m_state != OPENED || m_loader) {
 #if ENABLE(DASHBOARD_SUPPORT)
-        Settings* settings = document() ? document()->settings() : 0;
-        if (settings && settings->usesDashboardBackwardCompatibilityMode())
+        if (usesDashboardBackwardCompatibilityMode())
             return;
 #endif
 
@@ -1130,51 +1134,53 @@ String XMLHttpRequest::statusText(ExceptionCode& ec) const
     return String();
 }
 
-void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const ResourceResponse& response, ExceptionCode& ec)
+void XMLHttpRequest::processSyncLoadResults(unsigned long identifier, const Vector<char>& data, const ResourceResponse& response, ExceptionCode& ec)
 {
     if (m_sameOriginRequest && !scriptExecutionContext()->securityOrigin()->canRequest(response.url())) {
         abort();
         return;
     }
     
-    didReceiveResponse(0, response);
+    didReceiveResponse(response);
     changeState(HEADERS_RECEIVED);
 
     const char* bytes = static_cast<const char*>(data.data());
     int len = static_cast<int>(data.size());
-    didReceiveData(0, bytes, len);
+    didReceiveData(bytes, len);
 
-    didFinishLoading(0);
+    didFinishLoading(identifier);
     if (m_error)
         ec = XMLHttpRequestException::NETWORK_ERR;
 }
 
-void XMLHttpRequest::didFail(SubresourceLoader*, const ResourceError& error)
+void XMLHttpRequest::didFail()
 {
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)
         return;
 
-    if (error.isCancellation()) {
-        abortError();
-        return;
-    }
-
+    internalAbort();
     networkError();
-    return;
 }
 
-void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
+void XMLHttpRequest::didGetCancelled()
+{
+    // If we are already in an error state, for instance we called abort(), bail out early.
+    if (m_error)
+        return;
+
+    abortError();
+}
+
+void XMLHttpRequest::didFinishLoading(unsigned long identifier)
 {
     if (m_error)
         return;
 
     if (m_inPreflight) {
-        didFinishLoadingPreflight(loader);
+        didFinishLoadingPreflight();
         return;
     }
-
-    ASSERT(loader == m_loader);
 
     if (m_state < HEADERS_RECEIVED)
         changeState(HEADERS_RECEIVED);
@@ -1182,7 +1188,7 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
     if (m_decoder)
         m_responseText += m_decoder->flush();
 
-    scriptExecutionContext()->resourceRetrievedByXMLHttpRequest(m_loader ? m_loader->identifier() : m_identifier, m_responseText);
+    scriptExecutionContext()->resourceRetrievedByXMLHttpRequest(identifier, m_responseText);
     scriptExecutionContext()->addMessage(InspectorControllerDestination, JSMessageSource, LogMessageLevel, "XHR finished loading: \"" + m_url + "\".", m_lastSendLineNumber, m_lastSendURL);
 
     bool hadLoader = m_loader;
@@ -1195,7 +1201,7 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
         dropProtection();
 }
 
-void XMLHttpRequest::didFinishLoadingPreflight(SubresourceLoader*)
+void XMLHttpRequest::didFinishLoadingPreflight()
 {
     ASSERT(m_inPreflight);
     ASSERT(!m_sameOriginRequest);
@@ -1208,16 +1214,7 @@ void XMLHttpRequest::didFinishLoadingPreflight(SubresourceLoader*)
         unsetPendingActivity(this);
 }
 
-void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse&)
-{
-    // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
-    if (!scriptExecutionContext()->securityOrigin()->canRequest(request.url())) {
-        internalAbort();
-        networkError();
-    }
-}
-
-void XMLHttpRequest::didSendData(SubresourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     if (!m_upload)
         return;
@@ -1253,10 +1250,10 @@ bool XMLHttpRequest::accessControlCheck(const ResourceResponse& response)
     return true;
 }
 
-void XMLHttpRequest::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
+void XMLHttpRequest::didReceiveResponse(const ResourceResponse& response)
 {
     if (m_inPreflight) {
-        didReceiveResponsePreflight(loader, response);
+        didReceiveResponsePreflight(response);
         return;
     }
 
@@ -1273,7 +1270,7 @@ void XMLHttpRequest::didReceiveResponse(SubresourceLoader* loader, const Resourc
         m_responseEncoding = response.textEncodingName();
 }
 
-void XMLHttpRequest::didReceiveResponsePreflight(SubresourceLoader*, const ResourceResponse& response)
+void XMLHttpRequest::didReceiveResponsePreflight(const ResourceResponse& response)
 {
     ASSERT(m_inPreflight);
     ASSERT(!m_sameOriginRequest);
@@ -1284,17 +1281,9 @@ void XMLHttpRequest::didReceiveResponsePreflight(SubresourceLoader*, const Resou
     }
 
     OwnPtr<PreflightResultCacheItem> preflightResult(new PreflightResultCacheItem(m_includeCredentials));
-    if (!preflightResult->parse(response))  {
-        networkError();
-        return;
-    }
-
-    if (!preflightResult->allowsCrossSiteMethod(m_method)) {
-        networkError();
-        return;
-    }
-
-    if (!preflightResult->allowsCrossSiteHeaders(m_requestHeaders)) {
+    if (!preflightResult->parse(response)
+        || !preflightResult->allowsCrossSiteMethod(m_method)
+        || !preflightResult->allowsCrossSiteHeaders(m_requestHeaders)) {
         networkError();
         return;
     }
@@ -1302,12 +1291,12 @@ void XMLHttpRequest::didReceiveResponsePreflight(SubresourceLoader*, const Resou
     PreflightResultCache::shared().appendEntry(scriptExecutionContext()->securityOrigin()->toString(), m_url, preflightResult.release());
 }
 
-void XMLHttpRequest::receivedCancellation(SubresourceLoader*, const AuthenticationChallenge& challenge)
+void XMLHttpRequest::didReceiveAuthenticationCancellation(const ResourceResponse& failureResponse)
 {
-    m_response = challenge.failureResponse();
+    m_response = failureResponse;
 }
 
-void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int len)
+void XMLHttpRequest::didReceiveData(const char* data, int len)
 {
     if (m_inPreflight)
         return;
@@ -1326,7 +1315,7 @@ void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int le
         else
             m_decoder = TextResourceDecoder::create("text/plain", "UTF-8");
     }
-    if (len == 0)
+    if (!len)
         return;
 
     if (len == -1)

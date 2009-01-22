@@ -2748,6 +2748,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\DocumentThreadableLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\DocumentThreadableLoader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\FormState.cpp"
 				>
 			</File>
@@ -2913,6 +2921,18 @@
 			</File>
 			<File
 				RelativePath="..\loader\TextResourceDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\ThreadableLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\ThreadableLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\ThreadableLoaderClient.h"
 				>
 			</File>
 			<Filter

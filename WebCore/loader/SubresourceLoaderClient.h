@@ -46,7 +46,7 @@ public:
     virtual void didSendData(SubresourceLoader*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
     virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&) { }
-    virtual void didReceiveData(SubresourceLoader*, const char*, int) { }
+    virtual void didReceiveData(SubresourceLoader*, const char*, int /*lengthReceived*/) { }
     virtual void didFinishLoading(SubresourceLoader*) { }
     virtual void didFail(SubresourceLoader*, const ResourceError&) { }
     

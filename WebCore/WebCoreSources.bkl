@@ -635,6 +635,7 @@ This file contains the list of files needed to build WebCore.
         loader/CachedXSLStyleSheet.cpp
         loader/DocLoader.cpp
         loader/DocumentLoader.cpp
+        loader/DocumentThreadableLoader.cpp
         loader/FormState.cpp
         loader/FrameLoader.cpp
         loader/FrameLoaderClient.cpp
@@ -653,6 +654,7 @@ This file contains the list of files needed to build WebCore.
         loader/SubresourceLoader.cpp
         loader/TextDocument.cpp
         loader/TextResourceDecoder.cpp
+        loader/ThreadableLoader.cpp
         loader/loader.cpp
     </set>
     

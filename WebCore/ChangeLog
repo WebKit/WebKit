@@ -1,3 +1,78 @@
+2009-01-20  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 22720: Make XMLHttpRequest work in Workers
+        <https://bugs.webkit.org/show_bug.cgi?id=22720>
+
+        More removal of document usage from XMLHttpRequest.
+        * Abstracted away the sync and async requests behind the ThreadableLoader class, which
+          will get an implementation for Workers.  It follows the same model as SubresourceLoader, since
+          it is a thin wrapper around it.
+        * Consolidated dashboard compatibility checks into usesDashboardBackwardCompatibilityMode
+          which handles workers.
+
+        No observable change in behavior, so no test.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * loader/DocumentThreadableLoader.cpp: Added.
+        (WebCore::DocumentThreadableLoader::create):
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::~DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::cancel):
+        (WebCore::DocumentThreadableLoader::willSendRequest):
+        (WebCore::DocumentThreadableLoader::didSendData):
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::didReceiveData):
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::didFail):
+        (WebCore::DocumentThreadableLoader::receivedCancellation):
+        * loader/DocumentThreadableLoader.h: Added.
+        (WebCore::DocumentThreadableLoader::refThreadableLoader):
+        (WebCore::DocumentThreadableLoader::derefThreadableLoader):
+        * loader/SubresourceLoaderClient.h:
+        (WebCore::SubresourceLoaderClient::didReceiveData):
+        * loader/ThreadableLoader.cpp: Added.
+        (WebCore::ThreadableLoader::create):
+        (WebCore::ThreadableLoader::loadResourceSynchronously):
+        * loader/ThreadableLoader.h: Added.
+        (WebCore::):
+        (WebCore::ThreadableLoader::ref):
+        (WebCore::ThreadableLoader::deref):
+        (WebCore::ThreadableLoader::~ThreadableLoader):
+        * loader/ThreadableLoaderClient.h: Added.
+        (WebCore::ThreadableLoaderClient::didSendData):
+        (WebCore::ThreadableLoaderClient::didReceiveResponse):
+        (WebCore::ThreadableLoaderClient::didReceiveData):
+        (WebCore::ThreadableLoaderClient::didFinishLoading):
+        (WebCore::ThreadableLoaderClient::didFail):
+        (WebCore::ThreadableLoaderClient::didGetCancelled):
+        (WebCore::ThreadableLoaderClient::didReceiveAuthenticationCancellation):
+        (WebCore::ThreadableLoaderClient::~ThreadableLoaderClient):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::usesDashboardBackwardCompatibilityMode):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::loadRequestSynchronously):
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::processSyncLoadResults):
+        (WebCore::XMLHttpRequest::didFail):
+        (WebCore::XMLHttpRequest::didGetCancelled):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didFinishLoadingPreflight):
+        (WebCore::XMLHttpRequest::didSendData):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+        (WebCore::XMLHttpRequest::didReceiveAuthenticationCancellation):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/XMLHttpRequest.h:
+
 2009-01-19  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by David Hyatt.

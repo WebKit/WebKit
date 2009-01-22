@@ -786,6 +786,7 @@ SOURCES += \
     loader/CachedXSLStyleSheet.cpp \
     loader/DocLoader.cpp \
     loader/DocumentLoader.cpp \
+    loader/DocumentThreadableLoader.cpp \
     loader/FormState.cpp \
     loader/FrameLoader.cpp \
     loader/FrameLoaderClient.cpp \
@@ -806,6 +807,7 @@ SOURCES += \
     loader/SubresourceLoader.cpp \
     loader/TextDocument.cpp \
     loader/TextResourceDecoder.cpp \
+    loader/ThreadableLoader.cpp \
     page/AccessibilityImageMapLink.cpp \
     page/AccessibilityObject.cpp \    
     page/AccessibilityList.cpp \    
