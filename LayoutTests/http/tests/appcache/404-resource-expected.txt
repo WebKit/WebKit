@@ -1,0 +1,6 @@
+Test that a missing explicit resource makes caching fail.
+
+Should say SUCCESS:
+
+SUCCESS
+
