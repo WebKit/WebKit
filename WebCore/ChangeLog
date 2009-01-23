@@ -1,3 +1,13 @@
+2009-01-23  Holger Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix.
+
+        Based on https://bugs.webkit.org/show_bug.cgi?id=23498
+        from craig.schlenter@gmail.com
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::baselinePosition):
+
 2009-01-23  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
