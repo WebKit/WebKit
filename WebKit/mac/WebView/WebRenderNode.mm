@@ -104,8 +104,9 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
         RenderText* text = static_cast<RenderText*>(node);
         x = text->firstRunX();
         y = text->firstRunY();
-        width = text->boundingBoxWidth();
-        height = text->boundingBoxHeight();
+        IntRect box = text->linesBoundingBox();
+        width = box.width();
+        height = box.height();
     }
     
     WebRenderNode *result = [[WebRenderNode alloc] initWithName:name

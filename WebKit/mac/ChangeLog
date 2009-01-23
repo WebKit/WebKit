@@ -1,3 +1,12 @@
+2009-01-23  Adele Peterson  <adele@apple.com>
+
+        Build fix.
+
+        Use new linesBoundingBox method instead of
+        boundingBoxWidth and boundingBoxHeight for RenderText objects.
+
+        * WebView/WebRenderNode.mm: (copyRenderNode):
+
 2009-01-23  Anders Carlsson  <andersca@apple.com>
 
         Fix 64-bit build.
