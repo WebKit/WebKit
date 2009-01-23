@@ -55,7 +55,7 @@ NSString *toNSString(const UString& s)
     return [NSString stringWithCharacters:reinterpret_cast<const unichar*>(s.data()) length:s.size()];
 }
 
-NSString *toNSString(const SourceCode& s)
+static NSString *toNSString(const SourceCode& s)
 {
     if (!s.length())
         return nil;

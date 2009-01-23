@@ -1,3 +1,20 @@
+2009-01-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Turn on -Wmissing-prototypes and fix the resulting warnings.
+
+        * Configurations/Base.xcconfig:
+        * History/WebHistory.mm:
+        (timeIntervalForBeginningOfDay):
+        * History/WebHistoryItem.mm:
+        (historyItemWrappers):
+        * Misc/WebNSPasteboardExtras.mm:
+        (imageFromElement):
+        * WebView/WebFrame.mm:
+        * WebView/WebScriptDebugger.mm:
+        (toNSString):
+
 2009-01-22  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Anders Carlsson.

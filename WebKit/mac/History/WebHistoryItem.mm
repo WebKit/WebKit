@@ -74,7 +74,7 @@ typedef HashMap<HistoryItem*, WebHistoryItem*> HistoryItemMap;
 static inline WebHistoryItemPrivate* kitPrivate(WebCoreHistoryItem* list) { return (WebHistoryItemPrivate*)list; }
 static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* list) { return (WebCoreHistoryItem*)list; }
 
-HistoryItemMap& historyItemWrappers()
+static HistoryItemMap& historyItemWrappers()
 {
     DEFINE_STATIC_LOCAL(HistoryItemMap, historyItemWrappers, ());
     return historyItemWrappers;

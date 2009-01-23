@@ -211,7 +211,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     
 }
 
-CachedImage* imageFromElement(DOMElement *domElement) {
+static CachedImage* imageFromElement(DOMElement *domElement) {
     Element* element = core(domElement);
     if (!element)
         return 0;

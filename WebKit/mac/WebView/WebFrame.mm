@@ -188,11 +188,6 @@ DOMNode *kit(Node* node)
     return [DOMNode _wrapNode:node];
 }
 
-DOMNode *kit(PassRefPtr<Node> node)
-{
-    return [DOMNode _wrapNode:node.get()];
-}
-
 Document* core(DOMDocument *document)
 {
     return [document _document];

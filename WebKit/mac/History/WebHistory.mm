@@ -135,7 +135,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
 #pragma mark MODIFYING CONTENTS
 
-WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
+static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 {
     CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
     CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(interval, timeZone);
