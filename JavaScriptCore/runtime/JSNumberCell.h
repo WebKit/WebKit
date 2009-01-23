@@ -35,6 +35,8 @@ namespace JSC {
     extern const double NaN;
     extern const double Inf;
 
+    JSValuePtr jsNumberCell(ExecState*, double);
+
 #if !USE(ALTERNATE_JSIMMEDIATE)
 
     class Identifier;
@@ -45,8 +47,6 @@ namespace JSC {
 
     struct ClassInfo;
     struct Instruction;
-
-    JSValuePtr jsNumberCell(ExecState*, double);
 
     class JSNumberCell : public JSCell {
         friend class JIT;

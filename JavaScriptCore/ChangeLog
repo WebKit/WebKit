@@ -1,5 +1,13 @@
 2009-01-23  Anders Carlsson  <andersca@apple.com>
 
+        * Configurations/Base.xcconfig:
+        GCC 4.0 build fix.
+        
+        * runtime/JSNumberCell.h:
+        64-bit build fix.
+
+2009-01-23  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
         
         Turn on -Wmissing-prototypes and fix the warnings.
