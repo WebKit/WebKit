@@ -2877,7 +2877,7 @@ void RenderBlock::clearFloats()
         offset -= toRenderBox(prev)->y();
     else if (parent()->isBox()) {
         prev = parent();
-        xoffset += RenderBox::toRenderBox(prev)->borderLeft() + RenderBox::toRenderBox(prev)->paddingLeft();
+        xoffset += toRenderBox(prev)->borderLeft() + toRenderBox(prev)->paddingLeft();
     }
 
     // Add overhanging floats from the previous RenderBlock, but only if it has a float that intrudes into our space.

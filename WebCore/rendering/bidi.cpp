@@ -103,9 +103,9 @@ static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
     RenderObject* parent = child->parent();
     while (parent->isBox() && parent->isInline() && !parent->isInlineBlockOrInlineTable() && lineDepth++ < cMaxLineDepth) {
         if (start && parent->firstChild() == child)
-            extraWidth += getBorderPaddingMargin(RenderBox::toRenderBox(parent), false);
+            extraWidth += getBorderPaddingMargin(toRenderBox(parent), false);
         if (end && parent->lastChild() == child)
-            extraWidth += getBorderPaddingMargin(RenderBox::toRenderBox(parent), true);
+            extraWidth += getBorderPaddingMargin(toRenderBox(parent), true);
         child = parent;
         parent = child->parent();
     }
@@ -596,7 +596,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             }
             r->m_box->setWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, m_firstLine));
         } else if (!r->m_object->isInlineFlow()) {
-            RenderBox* renderBox = RenderBox::toRenderBox(r->m_object);
+            RenderBox* renderBox = toRenderBox(r->m_object);
             renderBox->calcWidth();
             r->m_box->setWidth(renderBox->width());
             if (!r->m_compact)
@@ -1430,7 +1430,7 @@ static inline bool requiresLineBox(const InlineIterator& it)
     if (it.obj->isFloatingOrPositioned())
         return false;
 
-    if (it.obj->isInlineFlow() && !inlineFlowRequiresLineBox(RenderBox::toRenderBox(it.obj)))
+    if (it.obj->isInlineFlow() && !inlineFlowRequiresLineBox(toRenderBox(it.obj)))
         return false;
 
     if (!shouldCollapseWhiteSpace(it.obj->style()) || it.obj->isBR())
@@ -1707,7 +1707,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, ECle
             // Right now, we should only encounter empty inlines here.
             ASSERT(!o->firstChild());
     
-            RenderBox* flowBox = RenderBox::toRenderBox(o);
+            RenderBox* flowBox = toRenderBox(o);
             
             // Now that some inline flows have line boxes, if we are already ignoring spaces, we need 
             // to make sure that we stop to include this object and then start ignoring spaces again. 

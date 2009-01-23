@@ -398,7 +398,7 @@ static IntRect sizingBox(RenderObject* renderer)
     if (!renderer->isBox())
         return IntRect();
     
-    RenderBox* box = RenderBox::toRenderBox(renderer);
+    RenderBox* box = toRenderBox(renderer);
     return box->style()->boxSizing() == CONTENT_BOX ? box->contentBoxRect() : box->borderBoxRect();
 }
 
@@ -763,22 +763,22 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyMarginTop:
             if (renderer && renderer->isBox())
                 // FIXME: Supposed to return the percentage if percentage was specified.
-                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->marginTop(), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(toRenderBox(renderer)->marginTop(), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->marginTop());
         case CSSPropertyMarginRight:
             if (renderer && renderer->isBox())
                 // FIXME: Supposed to return the percentage if percentage was specified.
-                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->marginRight(), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(toRenderBox(renderer)->marginRight(), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->marginRight());
         case CSSPropertyMarginBottom:
             if (renderer && renderer->isBox())
                 // FIXME: Supposed to return the percentage if percentage was specified.
-                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->marginBottom(), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(toRenderBox(renderer)->marginBottom(), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->marginBottom());
         case CSSPropertyMarginLeft:
             if (renderer && renderer->isBox())
                 // FIXME: Supposed to return the percentage if percentage was specified.
-                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->marginLeft(), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(toRenderBox(renderer)->marginLeft(), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->marginLeft());
         case CSSPropertyWebkitMarqueeDirection:
             return CSSPrimitiveValue::create(style->marqueeDirection());
@@ -863,19 +863,19 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->overflowY());
         case CSSPropertyPaddingTop:
             if (renderer && renderer->isBox())
-                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->paddingTop(false), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(toRenderBox(renderer)->paddingTop(false), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->paddingTop());
         case CSSPropertyPaddingRight:
             if (renderer && renderer->isBox())
-                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->paddingRight(false), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(toRenderBox(renderer)->paddingRight(false), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->paddingRight());
         case CSSPropertyPaddingBottom:
             if (renderer && renderer->isBox())
-                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->paddingBottom(false), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(toRenderBox(renderer)->paddingBottom(false), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->paddingBottom());
         case CSSPropertyPaddingLeft:
             if (renderer && renderer->isBox())
-                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->paddingLeft(false), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(toRenderBox(renderer)->paddingLeft(false), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->paddingLeft());
         case CSSPropertyPageBreakAfter:
             return CSSPrimitiveValue::create(style->pageBreakAfter());

@@ -399,7 +399,7 @@ static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*
             beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
             newObject = 0;
         }
-        parentLayer->addChild(RenderBox::toRenderBox(obj)->layer(), beforeChild);
+        parentLayer->addChild(toRenderBox(obj)->layer(), beforeChild);
         return;
     }
 
@@ -423,7 +423,7 @@ void RenderObject::removeLayers(RenderLayer* parentLayer)
         return;
 
     if (hasLayer()) {
-        parentLayer->removeChild(RenderBox::toRenderBox(this)->layer());
+        parentLayer->removeChild(toRenderBox(this)->layer());
         return;
     }
 
@@ -437,7 +437,7 @@ void RenderObject::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
         return;
 
     if (hasLayer()) {
-        RenderLayer* layer = RenderBox::toRenderBox(this)->layer();
+        RenderLayer* layer = toRenderBox(this)->layer();
         if (oldParent)
             oldParent->removeChild(layer);
         newParent->addChild(layer);
@@ -456,7 +456,7 @@ RenderLayer* RenderObject::findNextLayer(RenderLayer* parentLayer, RenderObject*
         return 0;
 
     // Step 1: If our layer is a child of the desired parent, then return our layer.
-    RenderLayer* ourLayer = hasLayer() ? RenderBox::toRenderBox(this)->layer() : 0;
+    RenderLayer* ourLayer = hasLayer() ? toRenderBox(this)->layer() : 0;
     if (ourLayer && ourLayer->parent() == parentLayer)
         return ourLayer;
 
@@ -488,7 +488,7 @@ RenderLayer* RenderObject::enclosingLayer() const
 {
     const RenderObject* curr = this;
     while (curr) {
-        RenderLayer* layer = curr->hasLayer() ? RenderBox::toConstRenderBox(curr)->layer() : 0;
+        RenderLayer* layer = curr->hasLayer() ? toRenderBox(curr)->layer() : 0;
         if (layer)
             return layer;
         curr = curr->parent();
@@ -547,7 +547,7 @@ void RenderObject::setNeedsLayout(bool b, bool markParents)
             if (markParents)
                 markContainingBlocksForLayout();
             if (hasLayer())
-                RenderBox::toRenderBox(this)->layer()->setNeedsFullRepaint();
+                toRenderBox(this)->layer()->setNeedsFullRepaint();
         }
     } else {
         m_everHadLayout = true;
@@ -578,7 +578,7 @@ void RenderObject::setNeedsPositionedMovementLayout()
     if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();
         if (hasLayer())
-            RenderBox::toRenderBox(this)->layer()->setNeedsFullRepaint();
+            toRenderBox(this)->layer()->setNeedsFullRepaint();
     }
 }
 
@@ -1749,7 +1749,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
         for (ShadowData* shadow = boxShadow; shadow; shadow = shadow->next)
             shadowRight = max(shadow->x + shadow->blur, shadowRight);
 
-        int borderRight = isBox() ? RenderBox::toRenderBox(this)->borderRight() : 0;
+        int borderRight = isBox() ? toRenderBox(this)->borderRight() : 0;
         int borderWidth = max(-outlineStyle->outlineOffset(), max(borderRight, max(style()->borderTopRightRadius().width(), style()->borderBottomRightRadius().width()))) + max(ow, shadowRight);
         IntRect rightRect(newOutlineBox.x() + min(newOutlineBox.width(), oldOutlineBox.width()) - borderWidth,
             newOutlineBox.y(),
@@ -1767,7 +1767,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
         for (ShadowData* shadow = boxShadow; shadow; shadow = shadow->next)
             shadowBottom = max(shadow->y + shadow->blur, shadowBottom);
 
-        int borderBottom = isBox() ? RenderBox::toRenderBox(this)->borderBottom() : 0;
+        int borderBottom = isBox() ? toRenderBox(this)->borderBottom() : 0;
         int borderHeight = max(-outlineStyle->outlineOffset(), max(borderBottom, max(style()->borderBottomLeftRadius().height(), style()->borderBottomRightRadius().height()))) + max(ow, shadowBottom);
         IntRect bottomRect(newOutlineBox.x(),
             min(newOutlineBox.bottom(), oldOutlineBox.bottom()) - borderHeight,
@@ -1804,7 +1804,7 @@ IntRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
     r.inflate(ow);
 
     if (virtualContinuation() && !isInline())
-        r.inflateY(RenderBox::toRenderBox(this)->collapsedMarginTop());
+        r.inflateY(toRenderBox(this)->collapsedMarginTop());
 
     if (isInlineFlow()) {
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
@@ -1836,7 +1836,7 @@ void RenderObject::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
             // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
             // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
             // anyway if its size does change.
-            RenderBox* boxParent = RenderBox::toRenderBox(o);
+            RenderBox* boxParent = toRenderBox(o);
 
             IntRect boxRect(0, 0, boxParent->layer()->width(), boxParent->layer()->height());
             int x = rect.x();
@@ -2148,7 +2148,7 @@ FloatPoint RenderObject::localToAbsolute(FloatPoint localPoint, bool fixed, bool
     RenderObject* o = parent();
     if (o) {
         if (o->hasOverflowClip())
-            localPoint -= RenderBox::toRenderBox(o)->layer()->scrolledContentOffset();
+            localPoint -= toRenderBox(o)->layer()->scrolledContentOffset();
         return o->localToAbsolute(localPoint, fixed, useTransforms);
     }
 
@@ -2161,7 +2161,7 @@ FloatPoint RenderObject::absoluteToLocal(FloatPoint containerPoint, bool fixed, 
     if (o) {
         FloatPoint localPoint = o->absoluteToLocal(containerPoint, fixed, useTransforms);
         if (o->hasOverflowClip())
-            localPoint += RenderBox::toRenderBox(o)->layer()->scrolledContentOffset();
+            localPoint += toRenderBox(o)->layer()->scrolledContentOffset();
         return localPoint;
     }
     return FloatPoint();
@@ -2173,7 +2173,7 @@ FloatQuad RenderObject::localToAbsoluteQuad(const FloatQuad& localQuad, bool fix
     if (o) {
         FloatQuad quad = localQuad;
         if (o->hasOverflowClip())
-            quad -= RenderBox::toRenderBox(o)->layer()->scrolledContentOffset();
+            quad -= toRenderBox(o)->layer()->scrolledContentOffset();
         return o->localToAbsoluteQuad(quad, fixed);
     }
 
@@ -2186,7 +2186,7 @@ IntSize RenderObject::offsetFromContainer(RenderObject* o) const
 
     IntSize offset;
     if (o->hasOverflowClip())
-        offset -= RenderBox::toRenderBox(o)->layer()->scrolledContentOffset();
+        offset -= toRenderBox(o)->layer()->scrolledContentOffset();
 
     return offset;
 }
@@ -2274,14 +2274,14 @@ void RenderObject::removeFromObjectLists()
         }
 
         if (outermostBlock)
-            outermostBlock->markAllDescendantsWithFloatsForLayout(RenderBox::toRenderBox(this));
+            outermostBlock->markAllDescendantsWithFloatsForLayout(toRenderBox(this));
     }
 
     if (isPositioned()) {
         RenderObject* p;
         for (p = parent(); p; p = p->parent()) {
             if (p->isRenderBlock())
-                static_cast<RenderBlock*>(p)->removePositionedObject(RenderBox::toRenderBox(this));
+                static_cast<RenderBlock*>(p)->removePositionedObject(toRenderBox(this));
         }
     }
 }
@@ -2316,7 +2316,7 @@ void RenderObject::destroy()
     // be moved into RenderBox::destroy.
     RenderArena* arena = renderArena();
     if (hasLayer())
-        RenderBox::toRenderBox(this)->layer()->destroy(arena);
+        toRenderBox(this)->layer()->destroy(arena);
     arenaDelete(arena, this);
 }
 
@@ -2416,7 +2416,7 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const IntPoint& po
             RenderBlock* firstBlock = node->renderer()->containingBlock();
             
             // Get our containing block.
-            RenderBox* block = RenderBox::toRenderBox(this);
+            RenderBox* block = toRenderBox(this);
             if (isInline())
                 block = containingBlock();
         
@@ -2682,7 +2682,7 @@ void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
     if (style()->visibility() != VISIBLE || !isBox())
         return;
     
-    RenderBox* box = RenderBox::toRenderBox(this);
+    RenderBox* box = toRenderBox(this);
 
     const Vector<StyleDashboardRegion>& styleRegions = style()->dashboardRegions();
     unsigned i, count = styleRegions.size();

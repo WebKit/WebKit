@@ -549,7 +549,7 @@ static bool shouldEmitExtraNewlineForNode(Node* node)
         || node->hasTagName(pTag)) {
         RenderStyle* style = r->style();
         if (style) {
-            int bottomMargin = RenderBox::toRenderBox(r)->collapsedMarginBottom();
+            int bottomMargin = toRenderBox(r)->collapsedMarginBottom();
             int fontSize = style->fontDescription().computedPixelSize();
             if (bottomMargin * 2 >= fontSize)
                 return true;

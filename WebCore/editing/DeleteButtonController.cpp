@@ -74,7 +74,7 @@ static bool isDeletableElement(const Node* node)
     if (!renderer || !renderer->isBox())
         return false;
 
-    RenderBox* box = RenderBox::toRenderBox(renderer);
+    RenderBox* box = toRenderBox(renderer);
     if (box->width() < minimumWidth || box->height() < minimumHeight)
         return false;
 

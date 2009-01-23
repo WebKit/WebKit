@@ -375,7 +375,7 @@ bool RenderTheme::hitTestMediaControlPart(RenderObject* o, const IntPoint& absPo
         return false;
 
     FloatPoint localPoint = o->absoluteToLocal(absPoint, false, true);  // respect transforms
-    return RenderBox::toRenderBox(o)->borderBoxRect().contains(roundedIntPoint(localPoint));
+    return toRenderBox(o)->borderBoxRect().contains(roundedIntPoint(localPoint));
 }
 #endif
 
@@ -485,7 +485,7 @@ int RenderTheme::baselinePosition(const RenderObject* o) const
     if (!o->isBox())
         return 0;
 
-    const RenderBox* box = RenderBox::toConstRenderBox(o);
+    const RenderBox* box = toRenderBox(o);
 
 #if USE(NEW_THEME)
     return box->height() + box->marginTop() + m_theme->baselinePositionAdjustment(o->style()->appearance()) * o->style()->effectiveZoom();

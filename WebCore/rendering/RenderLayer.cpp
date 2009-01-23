@@ -402,8 +402,8 @@ void RenderLayer::updateLayerPosition()
 
     m_relX = m_relY = 0;
     if (renderer()->isRelPositioned()) {
-        m_relX = RenderBox::toRenderBox(renderer())->relativePositionOffsetX();
-        m_relY = RenderBox::toRenderBox(renderer())->relativePositionOffsetY();
+        m_relX = toRenderBox(renderer())->relativePositionOffsetX();
+        m_relY = toRenderBox(renderer())->relativePositionOffsetY();
         x += m_relX; y += m_relY;
     }
     
@@ -415,7 +415,7 @@ void RenderLayer::updateLayerPosition()
         positionedParent->subtractScrolledContentOffset(x, y);
         
         if (renderer()->isPositioned()) {
-            IntSize offset = RenderBox::toRenderBox(renderer())->offsetForPositionedInContainer(positionedParent->renderer());
+            IntSize offset = toRenderBox(renderer())->offsetForPositionedInContainer(positionedParent->renderer());
             x += offset.width();
             y += offset.height();
         }
@@ -1043,7 +1043,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
     // Set the width and height of the shadow ancestor node if there is one.
     // This is necessary for textarea elements since the resizable layer is in the shadow content.
     Element* element = static_cast<Element*>(renderer()->node()->shadowAncestorNode());
-    RenderBox* renderer = RenderBox::toRenderBox(element->renderer());
+    RenderBox* renderer = toRenderBox(element->renderer());
 
     EResize resize = renderer->style()->resize();
     if (resize == RESIZE_NONE)
@@ -2230,7 +2230,7 @@ IntRect RenderLayer::boundingBox(const RenderLayer* rootLayer) const
         // Our bounding box is just the union of all of our cells' border/overflow rects.
         for (RenderObject* child = renderer()->firstChild(); child; child = child->nextSibling()) {
             if (child->isTableCell()) {
-                IntRect bbox = RenderBox::toRenderBox(child)->borderBoxRect();
+                IntRect bbox = toRenderBox(child)->borderBoxRect();
                 result.unite(bbox);
                 IntRect overflowRect = renderer()->overflowRect(false);
                 if (bbox != overflowRect)

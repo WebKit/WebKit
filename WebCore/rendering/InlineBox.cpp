@@ -131,7 +131,7 @@ void InlineBox::adjustPosition(int dx, int dy)
     m_x += dx;
     m_y += dy;
     if (m_object->isReplaced()) {
-        RenderBox* box = RenderBox::toRenderBox(m_object);
+        RenderBox* box = toRenderBox(m_object);
         box->move(dx, dy);
     }
 }

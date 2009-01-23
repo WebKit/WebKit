@@ -404,7 +404,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
         // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
         // Otherwise, let the bridge handle it so the view can scroll itself.
         RenderObject* renderer = targetNode->renderer();
-        while (renderer && (!renderer->isBox() || !RenderBox::toRenderBox(renderer)->canBeProgramaticallyScrolled(false))) {
+        while (renderer && (!renderer->isBox() || !toRenderBox(renderer)->canBeProgramaticallyScrolled(false))) {
             if (!renderer->parent() && renderer->node() == renderer->document() && renderer->document()->ownerElement())
                 renderer = renderer->document()->ownerElement()->renderer();
             else
@@ -604,7 +604,7 @@ void EventHandler::autoscrollTimerFired(Timer<EventHandler>*)
             stopAutoscrollTimer();
             return;
         }
-        RenderBox::toRenderBox(r)->autoscroll();
+        toRenderBox(r)->autoscroll();
     } else {
         // we verify that the main frame hasn't received the order to stop the panScroll
         if (!m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress()) {
@@ -665,7 +665,7 @@ void EventHandler::updateAutoscrollRenderer()
     if (Node* nodeAtPoint = hitTest.innerNode())
         m_autoscrollRenderer = nodeAtPoint->renderer();
 
-    while (m_autoscrollRenderer && (!m_autoscrollRenderer->isBox() || !RenderBox::toRenderBox(m_autoscrollRenderer)->canBeProgramaticallyScrolled(false)))
+    while (m_autoscrollRenderer && (!m_autoscrollRenderer->isBox() || !toRenderBox(m_autoscrollRenderer)->canBeProgramaticallyScrolled(false)))
         m_autoscrollRenderer = m_autoscrollRenderer->parent();
 }
 
@@ -747,7 +747,7 @@ void EventHandler::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 
     if (autoscrollRenderer()) {
         if (!rendererIsBeingDestroyed && (m_autoscrollInProgress || m_panScrollInProgress))
-            RenderBox::toRenderBox(autoscrollRenderer())->stopAutoscroll();
+            toRenderBox(autoscrollRenderer())->stopAutoscroll();
 #if ENABLE(PAN_SCROLLING)
         if (m_panScrollInProgress) {
             m_frame->view()->removePanScrollIcon();
@@ -789,7 +789,7 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
     if (node) {
         RenderObject* r = node->renderer();
         if (r && r->isBox() && !r->isListBox())
-            return RenderBox::toRenderBox(r)->scroll(direction, granularity);
+            return toRenderBox(r)->scroll(direction, granularity);
     }
 
     return false;

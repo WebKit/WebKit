@@ -743,7 +743,7 @@ bool RenderThemeWin::paintSearchFieldCancelButton(RenderObject* o, const RenderO
     if (!o->parent() || !o->parent()->isBox())
         return false;
     
-    RenderBox* parentRenderBox = RenderBox::toRenderBox(o->parent());
+    RenderBox* parentRenderBox = toRenderBox(o->parent());
 
     IntRect parentBox = parentRenderBox->absoluteContentBox();
     
@@ -794,7 +794,7 @@ bool RenderThemeWin::paintSearchFieldResultsDecoration(RenderObject* o, const Re
     if (!o->parent() || !o->parent()->isBox())
         return false;
     
-    RenderBox* parentRenderBox = RenderBox::toRenderBox(o->parent());
+    RenderBox* parentRenderBox = toRenderBox(o->parent());
     IntRect parentBox = parentRenderBox->absoluteContentBox();
     
     // Make sure the scaled decoration stays square and will fit in its parent's box

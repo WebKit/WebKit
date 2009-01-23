@@ -53,7 +53,7 @@ static inline bool isInputFocusable(RenderObject* renderer)
     if (!renderer || !renderer->isBox())
         return false;
 
-    if (RenderBox::toRenderBox(renderer)->size().isEmpty())
+    if (toRenderBox(renderer)->size().isEmpty())
         return false;
 
     if (RenderStyle* style = renderer->style()) {

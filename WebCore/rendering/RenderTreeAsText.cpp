@@ -541,7 +541,7 @@ String externalRepresentation(RenderObject* o)
     if (o->view()->frameView())
         o->view()->frameView()->layout();
     if (o->hasLayer()) {
-        RenderLayer* l = RenderBox::toRenderBox(o)->layer();
+        RenderLayer* l = toRenderBox(o)->layer();
         writeLayers(ts, l, l, IntRect(l->xPos(), l->yPos(), l->width(), l->height()));
         writeSelection(ts, o);
     }

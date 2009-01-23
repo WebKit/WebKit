@@ -1872,7 +1872,7 @@ AccessibilityObject* AccessibilityRenderObject::doAccessibilityHitTest(const Int
     if (!m_renderer || !m_renderer->hasLayer())
         return 0;
     
-    RenderLayer* layer = RenderBox::toRenderBox(m_renderer)->layer();
+    RenderLayer* layer = toRenderBox(m_renderer)->layer();
      
     HitTestRequest request(true, true);
     HitTestResult hitTestResult = HitTestResult(point);

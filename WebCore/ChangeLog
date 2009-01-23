@@ -1,3 +1,112 @@
+2009-01-23  David Hyatt  <hyatt@apple.com>
+
+        Make toRenderBox a non-member function.  Rename toConstRenderBox to just also be called toRenderBox.
+
+        Reviewed by Oliver Hunt
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::sizingBox):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        (WebCore::ContainerNode::getLowerRightCorner):
+        * dom/Element.cpp:
+        (WebCore::Element::scrollByUnits):
+        * dom/Position.cpp:
+        (WebCore::endsOfNodeAreVisuallyDistinctPositions):
+        (WebCore::Position::hasRenderedNonAnonymousDescendantsWithHeight):
+        (WebCore::Position::isCandidate):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance):
+        * editing/TextIterator.cpp:
+        (WebCore::shouldEmitExtraNewlineForNode):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isFocusable):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::width):
+        (WebCore::HTMLFrameElementBase::height):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::autoscrollTimerFired):
+        (WebCore::EventHandler::updateAutoscrollRenderer):
+        (WebCore::EventHandler::stopAutoscrollTimer):
+        (WebCore::EventHandler::scrollOverflow):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::adjustPosition):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::renderBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        (WebCore::RenderBox::containingBlockHeightForPositioned):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced):
+        * rendering/RenderBox.h:
+        (WebCore::toRenderBox):
+        (WebCore::RenderBox::previousSiblingBox):
+        (WebCore::RenderBox::nextSiblingBox):
+        (WebCore::RenderBox::parentBox):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::absoluteClippedOverflowRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::boundingBox):
+        * rendering/RenderObject.cpp:
+        (WebCore::addLayers):
+        (WebCore::RenderObject::removeLayers):
+        (WebCore::RenderObject::moveLayers):
+        (WebCore::RenderObject::findNextLayer):
+        (WebCore::RenderObject::enclosingLayer):
+        (WebCore::RenderObject::setNeedsLayout):
+        (WebCore::RenderObject::setNeedsPositionedMovementLayout):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::getAbsoluteRepaintRectWithOutline):
+        (WebCore::RenderObject::computeAbsoluteRepaintRect):
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::absoluteToLocal):
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        (WebCore::RenderObject::offsetFromContainer):
+        (WebCore::RenderObject::removeFromObjectLists):
+        (WebCore::RenderObject::destroy):
+        (WebCore::RenderObject::updateHitTestResult):
+        (WebCore::RenderObject::addDashboardRegions):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::hitTestMediaControlPart):
+        (WebCore::RenderTheme::baselinePosition):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::hitTestMediaControlPart):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation):
+        * rendering/bidi.cpp:
+        (WebCore::inlineWidth):
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::requiresLineBox):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::PercentageOfViewport):
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::isKeyboardFocusable):
+        * wml/WMLInputElement.cpp:
+        (WebCore::isInputFocusable):
+
 2009-01-23  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

@@ -232,7 +232,7 @@ static int verticalScrollDistance(Frame* frame)
         return 0;
     if (!(style->overflowY() == OSCROLL || style->overflowY() == OAUTO || renderer->isTextArea()))
         return 0;
-    int height = RenderBox::toRenderBox(renderer)->clientHeight();
+    int height = toRenderBox(renderer)->clientHeight();
     return max((height + 1) / 2, height - cAmountToKeepWhenPaging);
 }
 

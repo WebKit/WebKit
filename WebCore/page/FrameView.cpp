@@ -460,7 +460,7 @@ void FrameView::layout(bool allowSubtree)
                 hMode = ScrollbarAlwaysOff;
             } else if (body->hasTagName(bodyTag)) {
                 if (!m_firstLayout && m_size.height() != layoutHeight()
-                        && RenderBox::toRenderBox(body->renderer())->stretchesToViewHeight())
+                        && toRenderBox(body->renderer())->stretchesToViewHeight())
                     body->renderer()->setChildNeedsLayout(true);
                 // It's sufficient to just check the X overflow,
                 // since it's illegal to have visible in only one direction.

@@ -217,7 +217,7 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
                 direction = ScrollUp;
                 units = -units;
             }
-            RenderBox::toRenderBox(rend)->layer()->scroll(direction, granularity, units);
+            toRenderBox(rend)->layer()->scroll(direction, granularity, units);
         }
     }
 }

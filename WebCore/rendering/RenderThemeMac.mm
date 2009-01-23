@@ -1609,7 +1609,7 @@ bool RenderThemeMac::hitTestMediaControlPart(RenderObject* o, const IntPoint& ab
     if (mediaControllerTheme() == MediaControllerThemeQT) {
         ControlPart part = o->style()->appearance();
         FloatPoint localPoint = o->absoluteToLocal(absPoint, false, true);  // respect transforms
-        return wkHitTestMediaUIPart(part - MediaFullscreenButtonPart, MediaControllerThemeQT, CGRect(RenderBox::toRenderBox(o)->borderBoxRect()), CGPoint(localPoint));
+        return wkHitTestMediaUIPart(part - MediaFullscreenButtonPart, MediaControllerThemeQT, CGRect(toRenderBox(o)->borderBoxRect()), CGPoint(localPoint));
     }
     else
         return RenderTheme::hitTestMediaControlPart(o, absPoint);

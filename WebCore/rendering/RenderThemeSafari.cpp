@@ -276,8 +276,8 @@ int RenderThemeSafari::baselinePosition(const RenderObject* o) const
         return 0;
 
     if (o->style()->appearance() == CheckboxPart || o->style()->appearance() == RadioPart) {
-        const RenderBox* box = RenderBox::toConstRenderBox(o);
-        return box->marginTop() + RenderBox::toConstRenderBox(o)->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
+        const RenderBox* box = toRenderBox(o);
+        return box->marginTop() + box->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
     }
 
     return RenderTheme::baselinePosition(o);
