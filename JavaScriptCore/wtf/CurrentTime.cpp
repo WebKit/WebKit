@@ -181,7 +181,7 @@ double currentTime()
     double lowResTime = lowResUTCTime();
 
     if (!qpcAvailable())
-        return lowResTime;
+        return lowResTime / 1000.0;
 
     double highResTime = highResUpTime();
 
@@ -205,7 +205,7 @@ double currentTime()
     // make sure time doesn't run backwards (only correct if difference is < 2 seconds, since DST or clock changes could occur)
     const double backwardTimeLimit = 2000.0;
     if (utc < lastUTCTime && (lastUTCTime - utc) < backwardTimeLimit)
-        return lastUTCTime;
+        return lastUTCTime / 1000.0;
     lastUTCTime = utc;
     return utc / 1000.0;
 }
