@@ -8,7 +8,7 @@ layer at (0,0) size 800x178
           text run at (0,0) width 51: "Case A:"
       RenderBlock {DIV} at (0,18) size 784x18
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderBlock (run-in) {DIV} at (0,0) size 0x0
+          RenderBlock (run-in) {DIV} at (0,0) size 78x18
             RenderText {#text} at (0,0) size 78x18
               text run at (0,0) width 78: "This should "
           RenderInline {DIV} at (0,0) size 41x18
@@ -20,7 +20,7 @@ layer at (0,0) size 800x178
           text run at (0,0) width 50: "Case B:"
       RenderBlock {DIV} at (0,54) size 784x18
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderBlock (run-in) {DIV} at (0,0) size 0x0
+          RenderBlock (run-in) {DIV} at (0,0) size 78x18
             RenderText {#text} at (0,0) size 78x18
               text run at (0,0) width 78: "This should "
           RenderText {#text} at (78,0) size 41x18
@@ -30,7 +30,7 @@ layer at (0,0) size 800x178
           text run at (0,0) width 50: "Case C:"
       RenderBlock {DIV} at (0,90) size 784x18
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderBlock (run-in) {DIV} at (0,0) size 0x0
+          RenderBlock (run-in) {DIV} at (0,0) size 78x18
             RenderText {#text} at (0,0) size 78x18
               text run at (0,0) width 78: "This should "
           RenderText {#text} at (78,0) size 41x18
