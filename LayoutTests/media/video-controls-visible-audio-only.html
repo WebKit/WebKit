@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <style>
+            #no-video-media { background-color: yellow; width: 320px; height: 100px;} 
+            #mouse-parking:hover { padding:8; background-color: blue; }
+        </style>
+        <script>
+
+            var video;
+
+            function consoleWrite(text)
+            {
+                var console = document.getElementById("console");
+                console.innerHTML += text + "<br>";
+            }
+            
+            function testcondition(testFuncString, endit)
+            {
+                if (eval(testFuncString))
+                    consoleWrite("TEST(" + testFuncString + ") <span style='color:green'>OK</span>");
+                else
+                    consoleWrite("TEST(" + testFuncString + ") <span style='color:red'>FAIL</span>");    
+            }
+            
+            function start()
+            {
+                video = document.getElementById("no-video-media");
+                var left = video.offsetLeft;
+                var bottom = video.offsetTop + video.offsetHeight;
+
+                testcondition("video.paused");
+                if (!window.layoutTestController)
+                    return;
+
+                // start playback
+                eventSender.mouseMoveTo(left + 16 + 8, bottom - 8);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+                testcondition("!video.paused");
+
+                // move the mouse off of the element
+                target = document.getElementById("mouse-parking");
+                eventSender.mouseMoveTo(target.offsetLeft + 4, target.offsetTop + 4);
+
+                // controller should still be visible after a second
+                setTimeout(function() { layoutTestController.notifyDone(); } , 1000);
+            }
+
+            if (window.layoutTestController) {
+                layoutTestController.waitUntilDone();
+                setTimeout(function() { 
+                    document.body.appendChild(document.createTextNode('FAIL')); 
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                } , 8000);
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+
+        <p>Test video element control visibility when mouse is not over element.</p>
+        <p>This test only runs in DRT!</p>
+
+        <p><span id="mouse-parking">mouse parks here, am I blue?</span></p>
+
+        <video id="no-video-media" controls loop src="content/test.wav"></video>
+        <br><br><div id="console"></div>
+    </body>
+</html>

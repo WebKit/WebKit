@@ -1,3 +1,20 @@
+2009-01-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson
+        
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23407
+
+        Implement QTMovieWin::hasVideo so the controller on an audio-only <video> element 
+        is never hidden (as with an <audio> element).
+
+        Test: media/video-controls-visible-audio-only.html
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::hasVideo):
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::hasVideo):
+        * platform/graphics/win/QTMovieWin.h:
+
 2009-01-23  David Hyatt  <hyatt@apple.com>
 
         Make toRenderBox a non-member function.  Rename toConstRenderBox to just also be called toRenderBox.

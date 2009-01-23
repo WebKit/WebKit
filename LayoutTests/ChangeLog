@@ -1,3 +1,16 @@
+2009-01-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson
+
+        Test for behavior of <video> element controller when a media file has
+        only audio.
+        https://bugs.webkit.org/show_bug.cgi?id=23407
+
+        * media/video-controls-visible-audio-only.html: Added.
+        * platform/mac/media/video-controls-visible-audio-only-expected.checksum: Added.
+        * platform/mac/media/video-controls-visible-audio-only-expected.png: Added.
+        * platform/mac/media/video-controls-visible-audio-only-expected.txt: Added.
+
 2009-01-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.
