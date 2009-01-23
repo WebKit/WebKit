@@ -2260,11 +2260,14 @@ void tst_QWebFrame::popupFocus()
     QVERIFY2(view.hasFocus() && !combo->view()->hasFocus(),
              "Focus sould be back on the WebView");
 
+    // triple the flashing time, should at least blink twice already
+    int delay = qApp->cursorFlashTime() * 3;
+
     // focus the lineedit and check if it blinks
     QTest::mouseClick(&view, Qt::LeftButton, 0, QPoint(200, 25));
     m_popupTestView = &view;
     view.installEventFilter( this );
-    QTest::qWait(2000);
+    QTest::qWait(delay);
     QVERIFY2(m_popupTestPaintCount >= 4,
              "The input field should have a blinking caret");
 }

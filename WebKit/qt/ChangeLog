@@ -1,3 +1,12 @@
+2009-01-23  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Make the test more robust by taking into account the platform-specific
+        cursor flashing time.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-01-20  Friedemann Kleint  <Friedemann.Kleint@nokia.com>
 
         Reviewed by Simon Hausmann.
