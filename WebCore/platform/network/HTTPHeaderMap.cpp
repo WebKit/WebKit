@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,9 +38,9 @@ using namespace std;
 
 namespace WebCore {
 
-auto_ptr<HTTPHeaderMapData> HTTPHeaderMap::copyData() const
+auto_ptr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
 {
-    auto_ptr<HTTPHeaderMapData> data(new HTTPHeaderMapData());
+    auto_ptr<CrossThreadHTTPHeaderMapData> data(new CrossThreadHTTPHeaderMapData());
     data->reserveCapacity(size());
 
     HTTPHeaderMap::const_iterator end_it = end();
@@ -50,12 +50,13 @@ auto_ptr<HTTPHeaderMapData> HTTPHeaderMap::copyData() const
     return data;
 }
 
-void HTTPHeaderMap::adopt(auto_ptr<HTTPHeaderMapData> data)
+void HTTPHeaderMap::adopt(auto_ptr<CrossThreadHTTPHeaderMapData> data)
 {
     clear();
-    HTTPHeaderMapData::const_iterator end_it = data->end();
-    for (HTTPHeaderMapData::const_iterator it = data->begin(); it != end_it; ++it) {
-        set(it->first, it->second);
+    size_t dataSize = data->size();
+    for (size_t index = 0; index < dataSize; ++index) {
+        pair<String, String>& header = (*data)[index];
+        set(header.first, header.second);
     }
 }
 

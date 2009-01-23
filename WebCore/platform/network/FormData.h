@@ -68,6 +68,7 @@ public:
     static PassRefPtr<FormData> create(const CString&);
     static PassRefPtr<FormData> create(const Vector<char>&);
     PassRefPtr<FormData> copy() const;
+    PassRefPtr<FormData> deepCopy() const;
     ~FormData();
     
     void appendData(const void* data, size_t);

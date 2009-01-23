@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +29,54 @@
 
 #include "ResourceResponse.h"
 
+using namespace std;
+
 namespace WebCore {
 
 static void parseCacheHeader(const String& header, Vector<pair<String, String> >& result);
 static void parseCacheControlDirectiveValues(const String& directives, Vector<String>& result);
+
+auto_ptr<ResourceResponse> ResourceResponseBase::adopt(auto_ptr<CrossThreadResourceResponseData> data)
+{
+    auto_ptr<ResourceResponse> response(new ResourceResponse());
+    response->setUrl(data->m_url);
+    response->setMimeType(data->m_mimeType);
+    response->setExpectedContentLength(data->m_expectedContentLength);
+    response->setTextEncodingName(data->m_textEncodingName);
+    response->setSuggestedFilename(data->m_suggestedFilename);
+
+    response->setHTTPStatusCode(data->m_httpStatusCode);
+    response->setHTTPStatusText(data->m_httpStatusText);
+
+    response->lazyInit();
+    response->m_httpHeaderFields.adopt(std::auto_ptr<CrossThreadHTTPHeaderMapData>(data->m_httpHeaders.release()));
+
+    response->setExpirationDate(data->m_expirationDate);
+    response->setLastModifiedDate(data->m_lastModifiedDate);
+    response->m_haveParsedCacheControl = data->m_haveParsedCacheControl;
+    response->m_cacheControlContainsMustRevalidate = data->m_cacheControlContainsMustRevalidate;
+    response->m_cacheControlContainsNoCache = data->m_cacheControlContainsNoCache;
+    return response;
+}
+
+auto_ptr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() const
+{
+    auto_ptr<CrossThreadResourceResponseData> data(new CrossThreadResourceResponseData());
+    data->m_url = url().copy();
+    data->m_mimeType = mimeType().copy();
+    data->m_expectedContentLength = expectedContentLength();
+    data->m_textEncodingName = textEncodingName().copy();
+    data->m_suggestedFilename = suggestedFilename().copy();
+    data->m_httpStatusCode = httpStatusCode();
+    data->m_httpStatusText = httpStatusText().copy();
+    data->m_httpHeaders.adopt(httpHeaderFields().copyData());
+    data->m_expirationDate = expirationDate();
+    data->m_lastModifiedDate = lastModifiedDate();
+    data->m_haveParsedCacheControl = m_haveParsedCacheControl;
+    data->m_cacheControlContainsMustRevalidate = m_cacheControlContainsMustRevalidate;
+    data->m_cacheControlContainsNoCache = m_cacheControlContainsNoCache;
+    return data;
+}
 
 bool ResourceResponseBase::isHTTP() const
 {

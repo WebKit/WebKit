@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -88,6 +89,28 @@ PassRefPtr<FormData> FormData::create(const Vector<char>& vector)
 PassRefPtr<FormData> FormData::copy() const
 {
     return adoptRef(new FormData(*this));
+}
+
+PassRefPtr<FormData> FormData::deepCopy() const
+{
+    RefPtr<FormData> formData(create());
+
+    formData->m_alwaysStream = m_alwaysStream;
+
+    size_t n = m_elements.size();
+    formData->m_elements.reserveCapacity(n);
+    for (size_t i = 0; i < n; ++i) {
+        const FormDataElement& e = m_elements[i];
+        switch (e.m_type) {
+        case FormDataElement::data:
+            formData->m_elements.append(FormDataElement(e.m_data));
+            break;
+        case FormDataElement::encodedFile:
+            formData->m_elements.append(FormDataElement(e.m_filename, e.m_shouldGenerateFile));
+            break;
+        }
+    }
+    return formData.release();
 }
 
 void FormData::appendData(const void* data, size_t size)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,64 @@
 #include "ResourceRequestBase.h"
 #include "ResourceRequest.h"
 
+using namespace std;
+
 namespace WebCore {
 
 inline const ResourceRequest& ResourceRequestBase::asResourceRequest() const
 {
     return *static_cast<const ResourceRequest*>(this);
+}
+
+auto_ptr<ResourceRequest> ResourceRequestBase::adopt(auto_ptr<CrossThreadResourceRequestData> data)
+{
+    auto_ptr<ResourceRequest> request(new ResourceRequest());
+    request->setURL(data->m_url);
+    request->setCachePolicy(data->m_cachePolicy);
+    request->setTimeoutInterval(data->m_timeoutInterval);
+    request->setMainDocumentURL(data->m_mainDocumentURL);
+    request->setHTTPMethod(data->m_httpMethod);
+
+    request->updateResourceRequest();
+    request->m_httpHeaderFields.adopt(auto_ptr<CrossThreadHTTPHeaderMapData>(data->m_httpHeaders.release()));
+
+    size_t encodingCount = data->m_responseContentDispositionEncodingFallbackArray.size();
+    if (encodingCount > 0) {
+        String encoding1 = data->m_responseContentDispositionEncodingFallbackArray[0];
+        String encoding2;
+        String encoding3;
+        if (encodingCount > 1) {
+            encoding2 = data->m_responseContentDispositionEncodingFallbackArray[1];
+            if (encodingCount > 2)
+                encoding3 = data->m_responseContentDispositionEncodingFallbackArray[2];
+        }
+        ASSERT(encodingCount <= 3);
+        request->setResponseContentDispositionEncodingFallbackArray(encoding1, encoding2, encoding3);
+    }
+    request->setHTTPBody(data->m_httpBody);
+    request->setAllowHTTPCookies(data->m_allowHTTPCookies);
+    return request;
+}
+
+auto_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
+{
+    auto_ptr<CrossThreadResourceRequestData> data(new CrossThreadResourceRequestData());
+    data->m_url = url().copy();
+    data->m_cachePolicy = cachePolicy();
+    data->m_timeoutInterval = timeoutInterval();
+    data->m_mainDocumentURL = mainDocumentURL().copy();
+    data->m_httpMethod = httpMethod().copy();
+    data->m_httpHeaders.adopt(httpHeaderFields().copyData());
+
+    data->m_responseContentDispositionEncodingFallbackArray.reserveCapacity(m_responseContentDispositionEncodingFallbackArray.size());
+    size_t encodingArraySize = m_responseContentDispositionEncodingFallbackArray.size();
+    for (size_t index = 0; index < encodingArraySize; ++index) {
+        data->m_responseContentDispositionEncodingFallbackArray.append(m_responseContentDispositionEncodingFallbackArray[index].copy());
+    }
+    if (m_httpBody)
+        data->m_httpBody = m_httpBody->deepCopy();
+    data->m_allowHTTPCookies = m_allowHTTPCookies;
+    return data;
 }
 
 bool ResourceRequestBase::isEmpty() const

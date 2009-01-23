@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,14 +37,14 @@
 
 namespace WebCore {
 
-    typedef Vector<std::pair<String, String> > HTTPHeaderMapData;
+    typedef Vector<std::pair<String, String> > CrossThreadHTTPHeaderMapData;
 
     class HTTPHeaderMap : public HashMap<AtomicString, String, CaseFoldingHash> {
     public:
         // Gets a copy of the data suitable for passing to another thread.
-        std::auto_ptr<HTTPHeaderMapData> copyData() const;
+        std::auto_ptr<CrossThreadHTTPHeaderMapData> copyData() const;
 
-        void adopt(std::auto_ptr<HTTPHeaderMapData>);
+        void adopt(std::auto_ptr<CrossThreadHTTPHeaderMapData>);
     };
 
 } // namespace WebCore

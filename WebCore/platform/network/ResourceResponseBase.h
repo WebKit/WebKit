@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +30,21 @@
 #include "HTTPHeaderMap.h"
 #include "KURL.h"
 
+#include <memory>
+
 namespace WebCore {
 
 class ResourceResponse;
+struct CrossThreadResourceResponseData;
 
 // Do not use this class directly, use the class ResponseResponse instead
 class ResourceResponseBase {
 public:
+    static std::auto_ptr<ResourceResponse> adopt(std::auto_ptr<CrossThreadResourceResponseData>);
+
+    // Gets a copy of the data suitable for passing to another thread.
+    std::auto_ptr<CrossThreadResourceResponseData> copyData() const;
+
     bool isNull() const { return m_isNull; }
     bool isHTTP() const;
 
@@ -145,6 +154,22 @@ private:
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
 inline bool operator!=(const ResourceResponse& a, const ResourceResponse& b) { return !(a == b); }
+
+struct CrossThreadResourceResponseData {
+    KURL m_url;
+    String m_mimeType;
+    long long m_expectedContentLength;
+    String m_textEncodingName;
+    String m_suggestedFilename;
+    int m_httpStatusCode;
+    String m_httpStatusText;
+    OwnPtr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
+    time_t m_expirationDate;
+    time_t m_lastModifiedDate;
+    bool m_haveParsedCacheControl : 1;
+    bool m_cacheControlContainsMustRevalidate : 1;
+    bool m_cacheControlContainsNoCache : 1;
+};
 
 } // namespace WebCore
 

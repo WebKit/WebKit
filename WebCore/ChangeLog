@@ -1,3 +1,31 @@
+2009-01-23  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 22720: Make XMLHttpRequest work in Workers
+        <https://bugs.webkit.org/show_bug.cgi?id=22720>
+
+        Add copy/adopt for ResourceResponse(Base)/ResourceRequest(Base) to allow the
+        data to be passed across threads.
+
+        No observable change in behavior, so no test.
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::deepCopy):
+        * platform/network/FormData.h:
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::copyData):
+        (WebCore::HTTPHeaderMap::adopt):
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+        * platform/network/ResourceResponseBase.h:
+
 2009-01-23  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
