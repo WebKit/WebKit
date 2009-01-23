@@ -42,7 +42,7 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (-8,-14) size 16x392
           chunk 1 (vertical) text run 1 at (250.00,88.00) startOffset 0 endOffset 23 height 391.00: "Glyph Orientation:180\x{753B}\x{50CF}"
       RenderSVGText {text} at (317,79) size 17x171 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (-26,0) size 26x171
+        RenderSVGInlineText {#text} at (-26,0) size 17x171
           chunk 1 (vertical) text run 1 at (317.00,79.00) startOffset 0 endOffset 23 height 391.00: "Glyph Orientation:270\x{753B}\x{50CF}"
       RenderSVGText {text} at (333,79) size 17x173 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (9,0) size 17x71
