@@ -1,5 +1,20 @@
 2009-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+        Fix GCC 4.0 build.
+        
+        * editing/markup.cpp:
+        (WebCore::joinMarkups):
+        Pass a const reference to the vector.
+        
+        * html/HTMLElement.cpp:
+        * platform/text/String.cpp:
+        Add comments indicating that these functions are for use in the debugger.
+
+2009-01-23  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Turn on -Wmissing-prototypes and fix the resulting warnings.
