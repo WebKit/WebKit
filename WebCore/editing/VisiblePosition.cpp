@@ -438,7 +438,7 @@ VisiblePosition VisiblePosition::honorEditableBoundaryAtOrAfter(const VisiblePos
     return firstEditablePositionAfterPositionInRoot(pos.deepEquivalent(), highestRoot);
 }
 
-Position canonicalizeCandidate(const Position& candidate)
+static Position canonicalizeCandidate(const Position& candidate)
 {
     if (candidate.isNull())
         return Position();

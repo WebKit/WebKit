@@ -341,16 +341,23 @@ sub printNamesHeaderFile
     if (keys %tags) {
         print F "// Tags\n";
         printMacros($F, "extern const WebCore::QualifiedName", "Tag", \%tags);
-        print F "\n\nWebCore::QualifiedName** get$parameters{'namespace'}Tags(size_t* size);\n";
     }
     
     if (keys %attrs) {
         print F "// Attributes\n";
         printMacros($F, "extern const WebCore::QualifiedName", "Attr", \%attrs);
-        print F "\n\nWebCore::QualifiedName** get$parameters{'namespace'}Attr(size_t* size);\n";
     }
     print F "#endif\n\n";
-    print F "void init();\n\n";
+    
+    if (keys %tags) {
+        print F "WebCore::QualifiedName** get$parameters{'namespace'}Tags(size_t* size);\n";
+    }
+
+    if (keys %attrs) {
+        print F "WebCore::QualifiedName** get$parameters{'namespace'}Attrs(size_t* size);\n";
+    }
+    
+    print F "\nvoid init();\n\n";
     print F "} }\n\n";
     print F "#endif\n\n";
     

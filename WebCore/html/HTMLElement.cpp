@@ -829,7 +829,7 @@ bool HTMLElement::isRecognizedTagName(const QualifiedName& tagName)
 
 // The terms inline and block are used here loosely.  Don't make the mistake of assuming all inlines or all blocks
 // need to be in these two lists.
-HashSet<AtomicStringImpl*>* inlineTagList()
+static HashSet<AtomicStringImpl*>* inlineTagList()
 {
     DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, tagList, ());
     if (tagList.isEmpty()) {
@@ -888,7 +888,7 @@ HashSet<AtomicStringImpl*>* inlineTagList()
     return &tagList;
 }
 
-HashSet<AtomicStringImpl*>* blockTagList()
+static HashSet<AtomicStringImpl*>* blockTagList()
 {
     DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, tagList, ());
     if (tagList.isEmpty()) {
@@ -1015,6 +1015,8 @@ HTMLFormElement* HTMLElement::virtualForm() const
 } // namespace WebCore
 
 #ifndef NDEBUG
+void dumpInnerHTML(WebCore::HTMLElement*);
+
 void dumpInnerHTML(WebCore::HTMLElement* element)
 {
     printf("%s\n", element->innerHTML().ascii().data());

@@ -55,7 +55,7 @@ const float smallCapsFontSizeMultiplier = 0.7f;
 const float contextDPI = 72.0f;
 static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return x * (contextDPI / (contextDPI * unitsPerEm)); }
 
-bool initFontData(SimpleFontData* fontData)
+static bool initFontData(SimpleFontData* fontData)
 {
     if (!fontData->m_font.cgFont())
         return false;

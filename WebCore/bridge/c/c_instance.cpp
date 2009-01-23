@@ -50,7 +50,7 @@ namespace Bindings {
 
 using JSC::UString;
 
-JSC::UString& globalExceptionString()
+static JSC::UString& globalExceptionString()
 {
     DEFINE_STATIC_LOCAL(JSC::UString, exceptionStr, ());
     return exceptionStr;

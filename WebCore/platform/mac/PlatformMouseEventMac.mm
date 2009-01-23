@@ -116,25 +116,6 @@ IntPoint globalPointForEvent(NSEvent *event)
     }
 }
 
-int eventNumberForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSLeftMouseDown:
-        case NSLeftMouseUp:
-        case NSLeftMouseDragged:
-        case NSRightMouseDown:
-        case NSRightMouseUp:
-        case NSRightMouseDragged:
-        case NSOtherMouseDown:
-        case NSOtherMouseUp:
-        case NSOtherMouseDragged:
-        case NSMouseMoved:
-            return [event eventNumber];
-        default:
-            return 0;
-    }
-}
-    
 static MouseEventType mouseEventForNSEvent(NSEvent* event) 
 {
     switch ([event type]) {

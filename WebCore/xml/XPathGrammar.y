@@ -68,8 +68,8 @@ using namespace XPath;
 
 %{
 
-int xpathyylex(YYSTYPE* yylval) { return Parser::current()->lex(yylval); }
-void xpathyyerror(const char*) { }
+static int xpathyylex(YYSTYPE* yylval) { return Parser::current()->lex(yylval); }
+static void xpathyyerror(const char*) { }
     
 %}
 

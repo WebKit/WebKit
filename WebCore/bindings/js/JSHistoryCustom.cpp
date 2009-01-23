@@ -37,17 +37,17 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr nonCachingStaticBackFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
+static JSValuePtr nonCachingStaticBackFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
 {
     return new (exec) PrototypeFunction(exec, 0, propertyName, jsHistoryPrototypeFunctionBack);
 }
 
-JSValuePtr nonCachingStaticForwardFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
+static JSValuePtr nonCachingStaticForwardFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
 {
     return new (exec) PrototypeFunction(exec, 0, propertyName, jsHistoryPrototypeFunctionForward);
 }
 
-JSValuePtr nonCachingStaticGoFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
+static JSValuePtr nonCachingStaticGoFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
 {
     return new (exec) PrototypeFunction(exec, 1, propertyName, jsHistoryPrototypeFunctionGo);
 }

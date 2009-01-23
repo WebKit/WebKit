@@ -40,14 +40,14 @@ namespace WebCore {
 
 static NSMapTable* RGBColorWrapperCache;
 
-id getWrapperForRGB(WebCore::RGBA32 value)
+static id getWrapperForRGB(WebCore::RGBA32 value)
 {
     if (!RGBColorWrapperCache)
         return nil;
     return static_cast<id>(NSMapGet(RGBColorWrapperCache, reinterpret_cast<const void*>(value)));
 }
 
-void setWrapperForRGB(id wrapper, WebCore::RGBA32 value)
+static void setWrapperForRGB(id wrapper, WebCore::RGBA32 value)
 {
     if (!RGBColorWrapperCache)
         // No need to retain/free either impl key, or id value.  Items will be removed
@@ -56,7 +56,7 @@ void setWrapperForRGB(id wrapper, WebCore::RGBA32 value)
     NSMapInsert(RGBColorWrapperCache, reinterpret_cast<const void*>(value), wrapper);
 }
 
-void removeWrapperForRGB(WebCore::RGBA32 value)
+static void removeWrapperForRGB(WebCore::RGBA32 value)
 {
     if (!RGBColorWrapperCache)
         return;

@@ -88,7 +88,7 @@ TextStream& operator<<(TextStream& ts, const IntRect& r)
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
 
-bool hasFractions(double val)
+static bool hasFractions(double val)
 {
     double epsilon = 0.0001;
     int ival = static_cast<int>(val);

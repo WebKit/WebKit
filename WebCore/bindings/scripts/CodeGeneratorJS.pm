@@ -650,10 +650,11 @@ sub GenerateHeader
         } else {
             push(@headerContent, "$implClassName* to${interfaceName}(JSC::JSValuePtr);\n");
         }
-        if ($interfaceName eq "Node" or $interfaceName eq "Element" or $interfaceName eq "Text") {
-            push(@headerContent, "JSC::JSValuePtr toJSNewlyCreated(JSC::ExecState*, $interfaceName*);\n");
-        }
     }
+    if ($interfaceName eq "Node" or $interfaceName eq "Element" or $interfaceName eq "Text") {
+        push(@headerContent, "JSC::JSValuePtr toJSNewlyCreated(JSC::ExecState*, $interfaceName*);\n");
+    }
+    
     push(@headerContent, "\n");
 
     # Add prototype declaration.

@@ -220,7 +220,7 @@ CallType RuntimeObjectImp::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-JSObject* callRuntimeConstructor(ExecState* exec, JSObject* constructor, const ArgList& args)
+static JSObject* callRuntimeConstructor(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
     RefPtr<Instance> instance(static_cast<RuntimeObjectImp*>(constructor)->getInternalInstance());
     instance->begin();

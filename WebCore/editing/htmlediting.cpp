@@ -713,15 +713,6 @@ Node* enclosingEmptyListItem(const VisiblePosition& visiblePos)
     return listChildNode;
 }
 
-Node* outermostEnclosingListChild(Node* node)
-{
-    Node* listNode = 0;
-    Node* nextNode = node;
-    while ((nextNode = enclosingListChild(nextNode)))
-        listNode = nextNode;
-    return listNode;
-}
-
 HTMLElement* outermostEnclosingList(Node* node)
 {
     HTMLElement* list = enclosingList(node);

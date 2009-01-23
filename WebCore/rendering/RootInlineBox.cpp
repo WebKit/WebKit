@@ -342,7 +342,7 @@ RenderBlock* RootInlineBox::block() const
     return static_cast<RenderBlock*>(m_object);
 }
 
-bool isEditableLeaf(InlineBox* leaf)
+static bool isEditableLeaf(InlineBox* leaf)
 {
     return leaf && leaf->object() && leaf->object()->element() && leaf->object()->element()->isContentEditable();
 }

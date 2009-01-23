@@ -307,7 +307,7 @@ struct PathApplierInfo {
     PathApplierFunction function;
 };
 
-void CGPathApplierToPathApplier(void *info, const CGPathElement *element)
+static void CGPathApplierToPathApplier(void *info, const CGPathElement *element)
 {
     PathApplierInfo* pinfo = (PathApplierInfo*)info;
     FloatPoint points[3];

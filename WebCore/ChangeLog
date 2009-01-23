@@ -1,3 +1,92 @@
+2009-01-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Turn on -Wmissing-prototypes and fix the resulting warnings.
+        
+        * Configurations/Base.xcconfig:
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::nonCachingStaticBackFunctionGetter):
+        (WebCore::nonCachingStaticForwardFunctionGetter):
+        (WebCore::nonCachingStaticGoFunctionGetter):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::nonCachingStaticReplaceFunctionGetter):
+        (WebCore::nonCachingStaticReloadFunctionGetter):
+        (WebCore::nonCachingStaticAssignFunctionGetter):
+        (WebCore::JSLocation::customGetOwnPropertySlot):
+        * bindings/objc/DOMRGBColor.mm:
+        (WebCore::getWrapperForRGB):
+        (WebCore::setWrapperForRGB):
+        (WebCore::removeWrapperForRGB):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::globalExceptionString):
+        * bridge/runtime_object.cpp:
+        (JSC::callRuntimeConstructor):
+        * css/CSSParser.cpp:
+        (WebCore::parseGradientColorStop):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::scaleFactorForConversion):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::operator >):
+        (WebCore::operator <=):
+        (WebCore::getTransformOperationType):
+        * dom/make_names.pl:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::updatePositionForTextRemoval):
+        * editing/EditorCommand.cpp:
+        (WebCore::valueBackColor):
+        (WebCore::valueFontName):
+        (WebCore::valueFontSize):
+        (WebCore::valueFontSizeDelta):
+        (WebCore::valueForeColor):
+        * editing/VisiblePosition.cpp:
+        (WebCore::canonicalizeCandidate):
+        * editing/htmlediting.cpp:
+        * editing/markup.cpp:
+        (WebCore::joinMarkups):
+        * html/HTMLElement.cpp:
+        (WebCore::inlineTagList):
+        (WebCore::blockTagList):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::serializeTimeOffset):
+        (WebCore::parseTimeOffset):
+        * page/mac/FrameMac.mm:
+        (WebCore::regExpForLabels):
+        * platform/Arena.cpp:
+        * platform/graphics/Color.cpp:
+        (WebCore::colorFloatToRGBAByte):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::imageSourceOptions):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::CGPathApplierToPathApplier):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::initFontData):
+        * platform/mac/PlatformMouseEventMac.mm:
+        * platform/text/String.cpp:
+        * rendering/RenderBlock.cpp:
+        (WebCore::continuationOutlineTable):
+        (WebCore::getHeightForLineCount):
+        * rendering/RenderView.cpp:
+        (WebCore::rendererAfterPosition):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::isEditableLeaf):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::hasFractions):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::positionedObjectMoved):
+        * svg/SVGFont.cpp:
+        (WebCore::floatWidthUsingSVGFontCallback):
+        (WebCore::floatWidthMissingGlyphCallback):
+        (WebCore::drawTextUsingSVGFontCallback):
+        (WebCore::drawTextMissingGlyphCallback):
+        * svg/SVGTransformable.cpp:
+        (WebCore::parseTransformParamList):
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        (WebCore::operator<<):
+        * xml/XPathGrammar.y:
+        * xml/XSLTExtensions.cpp:
+
 2009-01-23  Eric Seidel  <eric@webkit.org>
 
         No review, removing an empty file.

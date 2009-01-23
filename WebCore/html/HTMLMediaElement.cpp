@@ -199,7 +199,7 @@ void HTMLMediaElement::asyncEventTimerFired(Timer<HTMLMediaElement>*)
         dispatchEventForType(asyncEventsToDispatch[n], false, true);
 }
 
-String serializeTimeOffset(float time)
+static String serializeTimeOffset(float time)
 {
     String timeString = String::number(time);
     // FIXME serialize time offset values properly (format not specified yet)
@@ -207,7 +207,7 @@ String serializeTimeOffset(float time)
     return timeString;
 }
 
-float parseTimeOffset(const String& timeString, bool* ok = 0)
+static float parseTimeOffset(const String& timeString, bool* ok = 0)
 {
     const UChar* characters = timeString.characters();
     unsigned length = timeString.length();
