@@ -1,5 +1,12 @@
 2009-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Fix tyop.
+        
+        * editing/markup.cpp:
+        (WebCore::joinMarkups):
+
+2009-01-23  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         * Configurations/Base.xcconfig:

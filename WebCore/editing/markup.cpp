@@ -677,7 +677,7 @@ static bool elementHasTextDecorationProperty(const Node* node)
     return !propertyMissingOrEqualToNone(style.get(), CSSPropertyTextDecoration);
 }
 
-static String joinMarkups(const const Vector<String>& preMarkups, const Vector<String>& postMarkups)
+static String joinMarkups(const Vector<String>& preMarkups, const Vector<String>& postMarkups)
 {
     size_t length = 0;
 
