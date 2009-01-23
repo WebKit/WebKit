@@ -1,3 +1,15 @@
+2009-01-23  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Holger Hans Peter Freyther.
+
+        Redo previous patch http://trac.webkit.org/changeset/34260 which fixes a
+        huge memory leak by ensuring that the timer is fired one last time on
+        application tear down thus triggering the GCController thereby freeing
+        JavaScript objects as well as triggering other timer based tear down methods.
+
+        * platform/qt/SharedTimerQt.cpp:
+        (WebCore::SharedTimerQt::~SharedTimerQt):
+
 2009-01-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.
