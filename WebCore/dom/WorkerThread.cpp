@@ -103,6 +103,11 @@ void* WorkerThread::workerThread()
     {
         MutexLocker lock(m_threadCreationMutex);
         m_workerContext = WorkerContext::create(m_startupData->m_scriptURL, m_startupData->m_userAgent, this);
+        if (m_messageQueue.killed()) {
+            // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet, 
+            // forbidExecution() couldn't be called from stop().
+           m_workerContext->script()->forbidExecution();
+        }
     }
 
     WorkerScriptController* script = m_workerContext->script();
