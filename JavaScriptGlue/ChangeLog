@@ -1,3 +1,15 @@
+2009-01-22  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Disable GCC_WARN_ABOUT_MISSING_PROTOTYPES temporarily.
+
+        Current versions of Xcode only respect it for C and Objective-C files,
+        and our code doesn't currently compile if it is applied to C++ and
+        Objective-C++ files.
+
+        * Configurations/Base.xcconfig:
+
 2009-01-19  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Gavin Barraclough.
