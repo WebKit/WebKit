@@ -1,3 +1,16 @@
+2009-01-23  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 23509: Crash at -[WebCoreAXObject doAXNextSentenceEndTextMarkerForTextMarker:]
+        https://bugs.webkit.org/show_bug.cgi?id=23509
+  
+        Add null checking around next/previous sentence retrieval in AX code
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::nextSentenceEndPosition):
+        (WebCore::AccessibilityObject::previousSentenceStartPosition):
+
 2009-01-23  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/6518850> REGRESSION: hover feedback not showing on many sites
