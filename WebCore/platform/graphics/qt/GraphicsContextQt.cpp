@@ -1106,8 +1106,8 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
 
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
-    // painting through native HDC is only supported for plugin, where mayCreateBitmap is always TRUE
-    Q_ASSERT(mayCreateBitmap == TRUE);
+    // painting through native HDC is only supported for plugin, where mayCreateBitmap is always true
+    Q_ASSERT(mayCreateBitmap);
 
     if (dstRect.isEmpty())
         return 0;
@@ -1165,8 +1165,8 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
 
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
-    // painting through native HDC is only supported for plugin, where mayCreateBitmap is always TRUE
-    Q_ASSERT(mayCreateBitmap == TRUE);
+    // painting through native HDC is only supported for plugin, where mayCreateBitmap is always true
+    Q_ASSERT(mayCreateBitmap);
 
     if (hdc) {
 
