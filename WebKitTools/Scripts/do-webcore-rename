@@ -91,7 +91,7 @@ my %renamesContemplatedForTheFuture = (
     "KURLCFNet" => "URLCF",
     "KURLHash" => "URLHash",
     "KURLMac" => "URLMac",
-    "KURL_H_" => "URL_h",
+    "KURL_h" => "URL_h",
 
     "ThreadSafeShared" => "ThreadSafeRefCounted",
     "TreeShared" => "TreeRefCounted",
@@ -123,20 +123,10 @@ my %renamesContemplatedForTheFuture = (
     "createTokenizer" => "createBuilder",
     "tokenizerProcessedData" => "documentBuilderProcessedData",
 
-    "KJSCOLLECTOR_H_" => "Collector_h",
-    "KJS_COMPLETION_H" => "Completion_h",
-    "KJS_IDENTIFIER_H" => "Identifier_h",
-    "KJS_Interpreter_h" => "Interpreter_h",
-    "KJS_JSWrapperObject_h" => "JSWrapperObject_h",
-    "KJS_JS_IMMEDIATE_H" => "JSImmediate_h",
-    "KJS_REGEXP_H" => "RegExp_h",
-    "KJS_UNICODE_H" => "Unicode_h",
-    "KJS_UNICODE_ICU_H" => "UnicodeICU_h",
-    "KJS_UNICODE_QT4_H" => "UnicodeQt4_h",
-    "KJS_lookup_h" => "Lookup_h",
+    "WTF_UNICODE_H" => "Unicode_h",
+    "WTF_UNICODE_ICU_H" => "UnicodeICU_h",
+    "WTF_UNICODE_QT4_H" => "UnicodeQt4_h",
     "UnicodeIcu" => "UnicodeICU",
-    "_KJS_OPERATIONS_H_" => "Operations_h",
-    "_KJS_USTRING_H_" => "UString_h",
 
     "m_invertibleCTM" => "m_transformIsInvertible",
 
