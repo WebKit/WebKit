@@ -1,3 +1,10 @@
+2009-01-23  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::baselinePosition):
+
 2009-01-23  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
