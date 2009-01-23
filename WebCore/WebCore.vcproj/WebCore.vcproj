@@ -14601,11 +14601,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\ScriptCachedPageData.cpp"
+					RelativePath="..\bindings\js\ScriptCachedFrameData.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\ScriptCachedPageData.h"
+					RelativePath="..\bindings\js\ScriptCachedFrameData.h"
 					>
 				</File>
 				<File

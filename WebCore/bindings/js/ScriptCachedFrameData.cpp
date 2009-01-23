@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Google Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,29 +29,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptCachedPageData_h
-#define ScriptCachedPageData_h
+#include "config.h"
+#include "ScriptCachedFrameData.h"
 
-#include <runtime/Protect.h>
+#include "Frame.h"
+#include "GCController.h"
+#include "Page.h"
+#include "PageGroup.h"
+#include <runtime/JSLock.h>
+#include "ScriptController.h"
+
+using namespace JSC;
 
 namespace WebCore {
-    class JSDOMWindow;
-    class Page;
-    class DOMWindow;
 
-    class ScriptCachedPageData  {
-    public:
-        ScriptCachedPageData(Page*);
-        ~ScriptCachedPageData();
+ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
+{
+    JSLock lock(false);
 
-        void restore(Page*);
-        void clear();
-        DOMWindow* domWindow() const;
+    ScriptController* scriptController = frame->script();
+    if (scriptController->haveWindowShell()) {
+        m_window = scriptController->windowShell()->window();
+    }
+}
 
-    private:
-        JSC::ProtectedPtr<JSDOMWindow> m_window;
-    };
+DOMWindow* ScriptCachedFrameData::domWindow() const {
+    return m_window ? m_window->impl() : 0;
+}
+
+ScriptCachedFrameData::~ScriptCachedFrameData()
+{
+    clear();
+}
+
+void ScriptCachedFrameData::restore(Frame* frame)
+{
+    Page* page = frame->page();
+
+    JSLock lock(false);
+
+    ScriptController* scriptController = frame->script();
+    if (scriptController->haveWindowShell()) {
+        JSDOMWindowShell* windowShell = scriptController->windowShell();
+        if (m_window) {
+            windowShell->setWindow(m_window.get());
+        } else {
+            windowShell->setWindow(frame->domWindow());
+            scriptController->attachDebugger(page->debugger());
+            windowShell->window()->setProfileGroup(page->group().identifier());
+        }
+    }
+}
+
+void ScriptCachedFrameData::clear()
+{
+    JSLock lock(false);
+
+    if (!m_window) {
+        m_window = 0;
+        gcController().garbageCollectSoon();
+    }
+}
 
 } // namespace WebCore
-
-#endif // ScriptCachedPageData_h

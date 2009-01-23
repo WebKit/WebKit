@@ -1,3 +1,29 @@
+2009-01-23  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam Weinig
+
+        Rework ScriptCachedPageData to ScriptCachedFrameData to more accurately reflect its true purpose
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        * bindings/js/ScriptCachedFrameData.cpp: Copied from bindings/js/ScriptCachedPageData.cpp.
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::domWindow):
+        (WebCore::ScriptCachedFrameData::~ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        (WebCore::ScriptCachedFrameData::clear):
+        * bindings/js/ScriptCachedFrameData.h: Copied from bindings/js/ScriptCachedPageData.h.
+        * bindings/js/ScriptCachedPageData.cpp: Removed.
+        * bindings/js/ScriptCachedPageData.h: Removed.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        * history/CachedPage.h:
+
 2009-01-23  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build.

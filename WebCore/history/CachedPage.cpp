@@ -65,7 +65,7 @@ CachedPage::CachedPage(Page* page)
     , m_view(page->mainFrame()->view())
     , m_mousePressNode(page->mainFrame()->eventHandler()->mousePressNode())
     , m_URL(page->mainFrame()->loader()->url())
-    , m_cachedPageScriptData(page)
+    , m_cachedPageScriptData(page->mainFrame())
 {
 #ifndef NDEBUG
     cachedPageCounter.increment();
@@ -99,7 +99,7 @@ void CachedPage::restore(Page* page)
 
     Frame* mainFrame = page->mainFrame();
 
-    m_cachedPageScriptData.restore(page);
+    m_cachedPageScriptData.restore(mainFrame);
 
 #if ENABLE(SVG)
     if (m_document && m_document->svgExtensions())
