@@ -124,9 +124,8 @@ private:
     int m_column;
     int m_rowSpan;
     int m_columnSpan;
-    int m_intrinsicPaddingTop : 31;
-    int m_intrinsicPaddingBottom : 31;
-    bool m_widthChanged : 1;
+    int m_intrinsicPaddingTop;
+    int m_intrinsicPaddingBottom;
     int m_percentageHeight;
 };
 

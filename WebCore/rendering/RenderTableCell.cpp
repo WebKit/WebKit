@@ -45,7 +45,6 @@ RenderTableCell::RenderTableCell(Node* node)
     , m_columnSpan(1)
     , m_intrinsicPaddingTop(0)
     , m_intrinsicPaddingBottom(0)
-    , m_widthChanged(false)
     , m_percentageHeight(0)
 {
     updateFromElement();
@@ -127,14 +126,14 @@ void RenderTableCell::updateWidth(int w)
 {
     if (w != width()) {
         setWidth(w);
-        m_widthChanged = true;
+        m_cellWidthChanged = true;
     }
 }
 
 void RenderTableCell::layout()
 {
-    layoutBlock(m_widthChanged);
-    m_widthChanged = false;
+    layoutBlock(m_cellWidthChanged);
+    m_cellWidthChanged = false;
 }
 
 int RenderTableCell::paddingTop(bool includeIntrinsicPadding) const

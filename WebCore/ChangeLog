@@ -1,5 +1,20 @@
 2009-01-22  David Hyatt  <hyatt@apple.com>
 
+        Move the m_widthChanged bit on RenderTableCell into RenderFlow's set of bits.  Let intrinsicPaddingTop and
+        intrinsicPaddingBottom just be normal non-bitfield values.
+
+        Reviewed by Oliver Hunt
+
+        * rendering/RenderFlow.h:
+        (WebCore::RenderFlow::RenderFlow):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        (WebCore::RenderTableCell::updateWidth):
+        (WebCore::RenderTableCell::layout):
+        * rendering/RenderTableCell.h:
+
+2009-01-22  David Hyatt  <hyatt@apple.com>
+
         Properly encapsulate m_frameRect.y() behind the RenderBox::y() method now that they are the same thing.
         Make m_frameRect private.
 

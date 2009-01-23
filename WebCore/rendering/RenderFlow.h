@@ -52,6 +52,7 @@ public:
         , m_selectionState(SelectionNone)
         , m_hasColumns(false)
         , m_isContinuation(false)
+        , m_cellWidthChanged(false)
     {
     }
 #ifndef NDEBUG
@@ -134,6 +135,9 @@ protected:
     
     // from RenderInline
     bool m_isContinuation : 1; // Whether or not we're a continuation of an inline.
+    
+    // from RenderTableCell
+    bool m_cellWidthChanged : 1;
 };
 
 #ifdef NDEBUG
