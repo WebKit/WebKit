@@ -2844,23 +2844,24 @@ void RenderBlock::clearFloats()
 
     // First add in floats from the parent.
     int offset = y();
-    if (parentHasFloats)
-        addIntrudingFloats(static_cast<RenderBlock *>(parent()),
-                           parent()->borderLeft() + parent()->paddingLeft(), offset);
-
+    if (parentHasFloats) {
+        RenderBlock* parentBlock = static_cast<RenderBlock *>(parent());
+        addIntrudingFloats(parentBlock, parentBlock->borderLeft() + parentBlock->paddingLeft(), offset);
+    }
     
     int xoffset = 0;
     if (prev)
         offset -= toRenderBox(prev)->y();
-    else {
+    else if (parent()->isBox()) {
         prev = parent();
-        xoffset += prev->borderLeft() + prev->paddingLeft();
+        xoffset += RenderBox::toRenderBox(prev)->borderLeft() + RenderBox::toRenderBox(prev)->paddingLeft();
     }
 
     // Add overhanging floats from the previous RenderBlock, but only if it has a float that intrudes into our space.
-    if (!prev->isRenderBlock()) return;
+    if (!prev || !prev->isRenderBlock())
+        return;
+    
     RenderBlock* block = static_cast<RenderBlock *>(prev);
-
     if (block->m_floatingObjects && block->floatBottom() > offset)
         addIntrudingFloats(block, xoffset, offset);
 

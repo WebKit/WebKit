@@ -97,10 +97,10 @@ public:
     int marginBorderPaddingRight();
     int marginLeft();
     int marginRight();
-    int borderLeft() { if (includeLeftEdge()) return object()->borderLeft(); return 0; }
-    int borderRight() { if (includeRightEdge()) return object()->borderRight(); return 0; }
-    int paddingLeft() { if (includeLeftEdge()) return object()->paddingLeft(); return 0; }
-    int paddingRight() { if (includeRightEdge()) return object()->paddingRight(); return 0; }
+    int borderLeft() { if (includeLeftEdge()) return renderBox()->borderLeft(); return 0; }
+    int borderRight() { if (includeRightEdge()) return renderBox()->borderRight(); return 0; }
+    int paddingLeft() { if (includeLeftEdge()) return renderBox()->paddingLeft(); return 0; }
+    int paddingRight() { if (includeRightEdge()) return renderBox()->paddingRight(); return 0; }
 
     bool includeLeftEdge() { return m_includeLeftEdge; }
     bool includeRightEdge() { return m_includeRightEdge; }

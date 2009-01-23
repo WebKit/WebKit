@@ -222,7 +222,7 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
     Element* elt = document()->ownerElement();
     if (!elt)
         m_frameView->repaintContentRectangle(ur, immediate);
-    else if (RenderObject* obj = elt->renderer()) {
+    else if (RenderBox* obj = elt->renderBox()) {
         IntRect vr = viewRect();
         IntRect r = intersection(ur, vr);
         

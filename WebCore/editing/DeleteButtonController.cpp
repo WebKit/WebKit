@@ -167,10 +167,10 @@ void DeleteButtonController::createDeletionUI()
     style->setProperty(CSSPropertyWebkitUserSelect, CSSValueNone);
     style->setProperty(CSSPropertyWebkitUserModify, CSSValueNone);
     style->setProperty(CSSPropertyZIndex, String::number(-1000000));
-    style->setProperty(CSSPropertyTop, String::number(-borderWidth - m_target->renderer()->borderTop()) + "px");
-    style->setProperty(CSSPropertyRight, String::number(-borderWidth - m_target->renderer()->borderRight()) + "px");
-    style->setProperty(CSSPropertyBottom, String::number(-borderWidth - m_target->renderer()->borderBottom()) + "px");
-    style->setProperty(CSSPropertyLeft, String::number(-borderWidth - m_target->renderer()->borderLeft()) + "px");
+    style->setProperty(CSSPropertyTop, String::number(-borderWidth - m_target->renderBox()->borderTop()) + "px");
+    style->setProperty(CSSPropertyRight, String::number(-borderWidth - m_target->renderBox()->borderRight()) + "px");
+    style->setProperty(CSSPropertyBottom, String::number(-borderWidth - m_target->renderBox()->borderBottom()) + "px");
+    style->setProperty(CSSPropertyLeft, String::number(-borderWidth - m_target->renderBox()->borderLeft()) + "px");
     style->setProperty(CSSPropertyBorder, String::number(borderWidth) + "px solid rgba(0, 0, 0, 0.6)");
     style->setProperty(CSSPropertyWebkitBorderRadius, String::number(borderRadius) + "px");
 
@@ -194,8 +194,8 @@ void DeleteButtonController::createDeletionUI()
     style->setProperty(CSSPropertyWebkitUserSelect, CSSValueNone);
     style->setProperty(CSSPropertyWebkitUserModify, CSSValueNone);
     style->setProperty(CSSPropertyZIndex, String::number(1000000));
-    style->setProperty(CSSPropertyTop, String::number((-buttonHeight / 2) - m_target->renderer()->borderTop() - (borderWidth / 2) + buttonBottomShadowOffset) + "px");
-    style->setProperty(CSSPropertyLeft, String::number((-buttonWidth / 2) - m_target->renderer()->borderLeft() - (borderWidth / 2)) + "px");
+    style->setProperty(CSSPropertyTop, String::number((-buttonHeight / 2) - m_target->renderBox()->borderTop() - (borderWidth / 2) + buttonBottomShadowOffset) + "px");
+    style->setProperty(CSSPropertyLeft, String::number((-buttonWidth / 2) - m_target->renderBox()->borderLeft() - (borderWidth / 2)) + "px");
     style->setProperty(CSSPropertyWidth, String::number(buttonWidth) + "px");
     style->setProperty(CSSPropertyHeight, String::number(buttonHeight) + "px");
 

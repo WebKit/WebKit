@@ -400,11 +400,11 @@ int RenderTextControlSingleLine::preferredContentWidth(float charWidth) const
 
     int result = static_cast<int>(ceilf(charWidth * factor));
 
-    if (RenderObject* resultsRenderer = m_resultsButton ? m_resultsButton->renderer() : 0)
+    if (RenderBox* resultsRenderer = m_resultsButton ? m_resultsButton->renderBox() : 0)
         result += resultsRenderer->borderLeft() + resultsRenderer->borderRight() +
                   resultsRenderer->paddingLeft() + resultsRenderer->paddingRight();
 
-    if (RenderObject* cancelRenderer = m_cancelButton ? m_cancelButton->renderer() : 0)
+    if (RenderBox* cancelRenderer = m_cancelButton ? m_cancelButton->renderBox() : 0)
         result += cancelRenderer->borderLeft() + cancelRenderer->borderRight() +
                   cancelRenderer->paddingLeft() + cancelRenderer->paddingRight();
 

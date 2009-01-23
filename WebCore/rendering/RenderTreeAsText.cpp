@@ -236,16 +236,20 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
             o.style()->textStrokeWidth() > 0)
             ts << " [textStrokeWidth=" << o.style()->textStrokeWidth() << "]";
 
-        if (o.borderTop() || o.borderRight() || o.borderBottom() || o.borderLeft()) {
+        if (!o.isBox())
+            return ts;
+
+        const RenderBox& box = static_cast<const RenderBox&>(o);
+        if (box.borderTop() || box.borderRight() || box.borderBottom() || box.borderLeft()) {
             ts << " [border:";
 
             BorderValue prevBorder;
             if (o.style()->borderTop() != prevBorder) {
                 prevBorder = o.style()->borderTop();
-                if (!o.borderTop())
+                if (!box.borderTop())
                     ts << " none";
                 else {
-                    ts << " (" << o.borderTop() << "px ";
+                    ts << " (" << box.borderTop() << "px ";
                     printBorderStyle(ts, o.style()->borderTopStyle());
                     Color col = o.style()->borderTopColor();
                     if (!col.isValid())
@@ -256,10 +260,10 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
 
             if (o.style()->borderRight() != prevBorder) {
                 prevBorder = o.style()->borderRight();
-                if (!o.borderRight())
+                if (!box.borderRight())
                     ts << " none";
                 else {
-                    ts << " (" << o.borderRight() << "px ";
+                    ts << " (" << box.borderRight() << "px ";
                     printBorderStyle(ts, o.style()->borderRightStyle());
                     Color col = o.style()->borderRightColor();
                     if (!col.isValid())
@@ -269,11 +273,11 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
             }
 
             if (o.style()->borderBottom() != prevBorder) {
-                prevBorder = o.style()->borderBottom();
-                if (!o.borderBottom())
+                prevBorder = box.style()->borderBottom();
+                if (!box.borderBottom())
                     ts << " none";
                 else {
-                    ts << " (" << o.borderBottom() << "px ";
+                    ts << " (" << box.borderBottom() << "px ";
                     printBorderStyle(ts, o.style()->borderBottomStyle());
                     Color col = o.style()->borderBottomColor();
                     if (!col.isValid())
@@ -284,10 +288,10 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
 
             if (o.style()->borderLeft() != prevBorder) {
                 prevBorder = o.style()->borderLeft();
-                if (!o.borderLeft())
+                if (!box.borderLeft())
                     ts << " none";
                 else {
-                    ts << " (" << o.borderLeft() << "px ";
+                    ts << " (" << box.borderLeft() << "px ";
                     printBorderStyle(ts, o.style()->borderLeftStyle());
                     Color col = o.style()->borderLeftColor();
                     if (!col.isValid())

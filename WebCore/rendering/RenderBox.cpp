@@ -343,6 +343,42 @@ void RenderBox::setScrollTop(int newTop)
         m_layer->scrollToYOffset(newTop);
 }
 
+int RenderBox::paddingTop(bool) const
+{
+    int w = 0;
+    Length padding = style()->paddingTop();
+    if (padding.isPercent())
+        w = containingBlock()->availableWidth();
+    return padding.calcMinValue(w);
+}
+
+int RenderBox::paddingBottom(bool) const
+{
+    int w = 0;
+    Length padding = style()->paddingBottom();
+    if (padding.isPercent())
+        w = containingBlock()->availableWidth();
+    return padding.calcMinValue(w);
+}
+
+int RenderBox::paddingLeft(bool) const
+{
+    int w = 0;
+    Length padding = style()->paddingLeft();
+    if (padding.isPercent())
+        w = containingBlock()->availableWidth();
+    return padding.calcMinValue(w);
+}
+
+int RenderBox::paddingRight(bool) const
+{
+    int w = 0;
+    Length padding = style()->paddingRight();
+    if (padding.isPercent())
+        w = containingBlock()->availableWidth();
+    return padding.calcMinValue(w);
+}
+
 void RenderBox::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
@@ -1787,8 +1823,8 @@ void RenderBox::calcHeight()
             setHeight(max(height(), visHeight - margins));
         else {
             int marginsBordersPadding = margins + parentBox()->marginTop() + parentBox()->marginBottom()
-                + parent()->borderTop() + parent()->borderBottom()
-                + parent()->paddingTop() + parent()->paddingBottom();
+                + parentBox()->borderTop() + parentBox()->borderBottom()
+                + parentBox()->paddingTop() + parentBox()->paddingBottom();
             setHeight(max(height(), visHeight - marginsBordersPadding));
         }
     }
@@ -2064,19 +2100,22 @@ int RenderBox::containingBlockWidthForPositioned(const RenderObject* containingB
         return max(0, (fromRight - fromLeft));
     }
 
-    return RenderBox::toConstRenderBox(containingBlock)->width() - containingBlock->borderLeft() - containingBlock->borderRight() - containingBlock->verticalScrollbarWidth();
+    const RenderBox* containingBlockBox = RenderBox::toConstRenderBox(containingBlock);
+    return containingBlockBox->width() - containingBlockBox->borderLeft() - containingBlockBox->borderRight() - containingBlockBox->verticalScrollbarWidth();
 }
 
 int RenderBox::containingBlockHeightForPositioned(const RenderObject* containingBlock) const
 {
+    const RenderBox* containingBlockBox = RenderBox::toConstRenderBox(containingBlock);
+    
     int heightResult;
     if (containingBlock->isRenderInline()) {
         ASSERT(containingBlock->isRelPositioned());
         heightResult = static_cast<const RenderInline*>(containingBlock)->boundingBoxHeight();
     } else
-        heightResult = RenderBox::toConstRenderBox(containingBlock)->height();
+        heightResult = containingBlockBox->height();
     
-    return heightResult - containingBlock->borderTop() - containingBlock->borderBottom();
+    return heightResult - containingBlockBox->borderTop() - containingBlockBox->borderBottom();
 }
 
 void RenderBox::calcAbsoluteHorizontal()
@@ -2113,8 +2152,8 @@ void RenderBox::calcAbsoluteHorizontal()
 
     // We don't use containingBlock(), since we may be positioned by an enclosing
     // relative positioned inline.
-    const RenderObject* containerBlock = container();
-
+    const RenderBox* containerBlock = RenderBox::toRenderBox(container());
+    
     const int containerWidth = containingBlockWidthForPositioned(containerBlock);
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
@@ -2233,7 +2272,7 @@ void RenderBox::calcAbsoluteHorizontal()
     setWidth(width() + bordersPlusPadding);
 }
 
-void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderObject* containerBlock, TextDirection containerDirection,
+void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderBox* containerBlock, TextDirection containerDirection,
                                              const int containerWidth, const int bordersPlusPadding,
                                              const Length left, const Length right, const Length marginLeft, const Length marginRight,
                                              int& widthValue, int& marginLeftValue, int& marginRightValue, int& xPos)
@@ -2420,7 +2459,7 @@ void RenderBox::calcAbsoluteVertical()
 
 
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
-    const RenderObject* containerBlock = container();
+    const RenderBox* containerBlock = RenderBox::toConstRenderBox(container());
 
     const int containerHeight = containingBlockHeightForPositioned(containerBlock);
 
@@ -2514,7 +2553,7 @@ void RenderBox::calcAbsoluteVertical()
     setHeight(h + bordersPlusPadding);
 }
 
-void RenderBox::calcAbsoluteVerticalValues(Length h, const RenderObject* containerBlock,
+void RenderBox::calcAbsoluteVerticalValues(Length h, const RenderBox* containerBlock,
                                            const int containerHeight, const int bordersPlusPadding,
                                            const Length top, const Length bottom, const Length marginTop, const Length marginBottom,
                                            int& heightValue, int& marginTopValue, int& marginBottomValue, int& yPos)
@@ -2643,7 +2682,7 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
 
     // We don't use containingBlock(), since we may be positioned by an enclosing
     // relative positioned inline.
-    const RenderObject* containerBlock = container();
+    const RenderBox* containerBlock = RenderBox::toConstRenderBox(container());
 
     const int containerWidth = containingBlockWidthForPositioned(containerBlock);
 
@@ -2816,7 +2855,7 @@ void RenderBox::calcAbsoluteVerticalReplaced()
     // the numbers correspond to numbers in spec)
 
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
-    const RenderObject* containerBlock = container();
+    const RenderBox* containerBlock = RenderBox::toConstRenderBox(container());
 
     const int containerHeight = containingBlockHeightForPositioned(containerBlock);
 

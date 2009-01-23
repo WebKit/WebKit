@@ -1,5 +1,59 @@
 2009-01-22  David Hyatt  <hyatt@apple.com>
 
+        Move the border and padding methods from RenderObject to RenderBox.
+
+        Reviewed by Oliver Hunt
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::borderLeft):
+        (WebCore::InlineFlowBox::borderRight):
+        (WebCore::InlineFlowBox::paddingLeft):
+        (WebCore::InlineFlowBox::paddingRight):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paddingTop):
+        (WebCore::RenderBox::paddingBottom):
+        (WebCore::RenderBox::paddingLeft):
+        (WebCore::RenderBox::paddingRight):
+        (WebCore::RenderBox::calcHeight):
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        (WebCore::RenderBox::containingBlockHeightForPositioned):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        (WebCore::RenderBox::calcAbsoluteVerticalValues):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::borderTop):
+        (WebCore::RenderBox::borderBottom):
+        (WebCore::RenderBox::borderLeft):
+        (WebCore::RenderBox::borderRight):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textBlockWidth):
+        (WebCore::RenderTextControl::calcHeight):
+        (WebCore::RenderTextControl::calcPrefWidths):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+
+2009-01-22  David Hyatt  <hyatt@apple.com>
+
         Devirtualize the marginTop/Right/Left/Bottom functions and move them to RenderBox (along with some of the
         other margin functions that have to come along for the ride).
 

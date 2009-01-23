@@ -1792,7 +1792,8 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
         for (ShadowData* shadow = boxShadow; shadow; shadow = shadow->next)
             shadowRight = max(shadow->x + shadow->blur, shadowRight);
 
-        int borderWidth = max(-outlineStyle->outlineOffset(), max(borderRight(), max(style()->borderTopRightRadius().width(), style()->borderBottomRightRadius().width()))) + max(ow, shadowRight);
+        int borderRight = isBox() ? RenderBox::toRenderBox(this)->borderRight() : 0;
+        int borderWidth = max(-outlineStyle->outlineOffset(), max(borderRight, max(style()->borderTopRightRadius().width(), style()->borderBottomRightRadius().width()))) + max(ow, shadowRight);
         IntRect rightRect(newOutlineBox.x() + min(newOutlineBox.width(), oldOutlineBox.width()) - borderWidth,
             newOutlineBox.y(),
             width + borderWidth,
@@ -1809,7 +1810,8 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
         for (ShadowData* shadow = boxShadow; shadow; shadow = shadow->next)
             shadowBottom = max(shadow->y + shadow->blur, shadowBottom);
 
-        int borderHeight = max(-outlineStyle->outlineOffset(), max(borderBottom(), max(style()->borderBottomLeftRadius().height(), style()->borderBottomRightRadius().height()))) + max(ow, shadowBottom);
+        int borderBottom = isBox() ? RenderBox::toRenderBox(this)->borderBottom() : 0;
+        int borderHeight = max(-outlineStyle->outlineOffset(), max(borderBottom, max(style()->borderBottomLeftRadius().height(), style()->borderBottomRightRadius().height()))) + max(ow, shadowBottom);
         IntRect bottomRect(newOutlineBox.x(),
             min(newOutlineBox.bottom(), oldOutlineBox.bottom()) - borderHeight,
             max(newOutlineBox.width(), oldOutlineBox.width()),
@@ -2306,42 +2308,6 @@ IntRect RenderObject::localCaretRect(InlineBox*, int, int* extraWidthToEndOfLine
        *extraWidthToEndOfLine = 0;
 
     return IntRect();
-}
-
-int RenderObject::paddingTop(bool) const
-{
-    int w = 0;
-    Length padding = m_style->paddingTop();
-    if (padding.isPercent())
-        w = containingBlock()->availableWidth();
-    return padding.calcMinValue(w);
-}
-
-int RenderObject::paddingBottom(bool) const
-{
-    int w = 0;
-    Length padding = style()->paddingBottom();
-    if (padding.isPercent())
-        w = containingBlock()->availableWidth();
-    return padding.calcMinValue(w);
-}
-
-int RenderObject::paddingLeft(bool) const
-{
-    int w = 0;
-    Length padding = style()->paddingLeft();
-    if (padding.isPercent())
-        w = containingBlock()->availableWidth();
-    return padding.calcMinValue(w);
-}
-
-int RenderObject::paddingRight(bool) const
-{
-    int w = 0;
-    Length padding = style()->paddingRight();
-    if (padding.isPercent())
-        w = containingBlock()->availableWidth();
-    return padding.calcMinValue(w);
 }
 
 RenderView* RenderObject::view() const
