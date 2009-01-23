@@ -96,6 +96,7 @@ namespace WebCore {
     class Range;
     class RegisteredEventListener;
     class RenderArena;
+    class RenderView;
     class SecurityOrigin;
     class Settings;
     class StyleSheet;
@@ -410,6 +411,8 @@ public:
     void clearFramePointer();
 
     RenderArena* renderArena() { return m_renderArena; }
+
+    RenderView* renderView() const;
 
     void clearAXObjectCache();
     AXObjectCache* axObjectCache() const;

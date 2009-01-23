@@ -53,7 +53,7 @@ private:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
     // The only time rows get a layer is when they have transparency.
-    virtual bool requiresLayer() { return isTransparent() || hasOverflowClip(); }
+    virtual bool requiresLayer() const { return isTransparent() || hasOverflowClip(); }
 
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);

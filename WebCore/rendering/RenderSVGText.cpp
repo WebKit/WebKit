@@ -65,11 +65,6 @@ IntRect RenderSVGText::absoluteClippedOverflowRect()
     return enclosingIntRect(repaintRect);
 }
 
-bool RenderSVGText::requiresLayer()
-{
-    return false;
-}
-
 bool RenderSVGText::calculateLocalTransform()
 {
     TransformationMatrix oldTransform = m_localTransform;

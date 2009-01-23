@@ -40,7 +40,7 @@ public:
 
     virtual const char* renderName() const { return "RenderReplica"; }
     
-    virtual bool requiresLayer() { return true; }
+    virtual bool requiresLayer() const { return true; }
 
     virtual void layout();
     virtual void calcPrefWidths();

@@ -69,7 +69,7 @@ public:
     virtual bool isSVGContainer() const { return true; }
     virtual const char* renderName() const { return "RenderSVGContainer"; }
 
-    virtual bool requiresLayer();
+    virtual bool requiresLayer() const { return false; }
     virtual int lineHeight(bool b, bool isRootLineBox = false) const;
     virtual int baselinePosition(bool b, bool isRootLineBox = false) const;
 

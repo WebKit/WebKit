@@ -1,3 +1,140 @@
+2009-01-23  David Hyatt  <hyatt@apple.com>
+
+        Move layer() into RenderBox and make it non-virtual.  Move all of the scrolling functions from RenderObject
+        to RenderBox and devirtualize as many as possible.  Clean up styleWillChange to factor code specific to
+        RenderBox and RenderBlock into their appropriate subclasses.  Stubbed out an empty styleWillChange on
+        RenderText, since none of the work done in styleWillChange was relevant to text nodes.
+
+        Reviewed by Sam Weinig
+
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint):
+        (WebCore::Document::renderView):
+        (WebCore::Document::prepareMouseEvent):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::scrollByUnits):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::contains):
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::start):
+        (WebCore::HTMLMarqueeElement::stop):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::topRenderer):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        * page/AccessibilityRenderObject.h:
+        * page/EventHandler.cpp:
+        (WebCore::scrollAndAcceptEvent):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::autoscrollTimerFired):
+        (WebCore::EventHandler::updateAutoscrollRenderer):
+        (WebCore::EventHandler::stopAutoscrollTimer):
+        (WebCore::EventHandler::scrollOverflow):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::hoverTimerFired):
+        * page/Frame.cpp:
+        (WebCore::Frame::clearTimers):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleWillChange):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::RenderBox::verticalScrollbarWidth):
+        (WebCore::RenderBox::horizontalScrollbarHeight):
+        (WebCore::RenderBox::scroll):
+        (WebCore::RenderBox::canBeProgramaticallyScrolled):
+        (WebCore::RenderBox::autoscroll):
+        (WebCore::RenderBox::panScroll):
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::layer):
+        (WebCore::RenderBox::requiresLayer):
+        (WebCore::RenderBox::stopAutoscroll):
+        (WebCore::RenderBox::hasAutoVerticalScrollbar):
+        (WebCore::RenderBox::hasAutoHorizontalScrollbar):
+        (WebCore::RenderBox::scrollsOverflow):
+        (WebCore::RenderBox::scrollsOverflowX):
+        (WebCore::RenderBox::scrollsOverflowY):
+        (WebCore::RenderBox::includeVerticalScrollbarSize):
+        (WebCore::RenderBox::includeHorizontalScrollbarSize):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::absoluteClippedOverflowRect):
+        (WebCore::RenderFlow::addFocusRingRects):
+        * rendering/RenderForeignObject.cpp:
+        * rendering/RenderForeignObject.h:
+        (WebCore::RenderForeignObject::requiresLayer):
+        * rendering/RenderInline.cpp:
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::requiresLayer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::childrenClipRect):
+        (WebCore::RenderLayer::selfClipRect):
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::addLayers):
+        (WebCore::RenderObject::removeLayers):
+        (WebCore::RenderObject::moveLayers):
+        (WebCore::RenderObject::findNextLayer):
+        (WebCore::RenderObject::enclosingLayer):
+        (WebCore::RenderObject::setNeedsLayout):
+        (WebCore::RenderObject::setNeedsPositionedMovementLayout):
+        (WebCore::RenderObject::computeAbsoluteRepaintRect):
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::absoluteToLocal):
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        (WebCore::RenderObject::offsetFromContainer):
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        * rendering/RenderPath.h:
+        (WebCore::RenderPath::requiresLayer):
+        * rendering/RenderReplica.h:
+        (WebCore::RenderReplica::requiresLayer):
+        * rendering/RenderSVGContainer.cpp:
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::requiresLayer):
+        * rendering/RenderSVGHiddenContainer.cpp:
+        * rendering/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::requiresLayer):
+        * rendering/RenderSVGImage.cpp:
+        * rendering/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::requiresLayer):
+        * rendering/RenderSVGInline.h:
+        (WebCore::RenderSVGInline::requiresLayer):
+        * rendering/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::requiresLayer):
+        * rendering/RenderSVGText.cpp:
+        * rendering/RenderSVGText.h:
+        (WebCore::RenderSVGText::requiresLayer):
+        * rendering/RenderScrollbarPart.h:
+        (WebCore::RenderScrollbarPart::requiresLayer):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::setCurrentPosition):
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::requiresLayer):
+        * rendering/RenderTableCol.h:
+        (WebCore::RenderTableCol::requiresLayer):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::requiresLayer):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::styleWillChange):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::autoscroll):
+        (WebCore::RenderTextControl::scroll):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        (WebCore::externalRepresentation):
+
 2009-01-23  Anders Carlsson  <andersca@apple.com>
 
         Fix tyop.

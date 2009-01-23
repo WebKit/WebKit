@@ -39,11 +39,6 @@ RenderSVGHiddenContainer::~RenderSVGHiddenContainer()
 {
 }
 
-bool RenderSVGHiddenContainer::requiresLayer()
-{
-    return false;
-}
-
 int RenderSVGHiddenContainer::lineHeight(bool, bool) const
 {
     return 0;

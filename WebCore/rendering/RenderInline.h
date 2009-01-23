@@ -56,8 +56,7 @@ public:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    // overrides RenderObject
-    virtual bool requiresLayer();
+    virtual bool requiresLayer() const { return isRelPositioned() || isTransparent() || hasMask(); }
 
     int boundingBoxWidth() const;
     int boundingBoxHeight() const;

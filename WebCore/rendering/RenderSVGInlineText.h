@@ -40,7 +40,7 @@ public:
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
 
-    virtual bool requiresLayer() { return false; }
+    virtual bool requiresLayer() const { return false; }
     virtual IntRect selectionRect(bool clipToVisibleContent = true);
     virtual bool isSVGText() const { return true; }
     virtual InlineTextBox* createInlineTextBox();

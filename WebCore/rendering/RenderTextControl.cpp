@@ -508,7 +508,7 @@ void RenderTextControl::addFocusRingRects(GraphicsContext* graphicsContext, int 
 
 void RenderTextControl::autoscroll()
 {
-    RenderLayer* layer = m_innerText->renderer()->layer();
+    RenderLayer* layer = m_innerText->renderBox()->layer();
     if (layer)
         layer->autoscroll();
 }
@@ -555,17 +555,10 @@ void RenderTextControl::setScrollTop(int newTop)
 
 bool RenderTextControl::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
-    RenderLayer* layer = m_innerText->renderer()->layer();
+    RenderLayer* layer = m_innerText->renderBox()->layer();
     if (layer && layer->scroll(direction, granularity, multiplier))
         return true;
-    return RenderObject::scroll(direction, granularity, multiplier);
-}
-
-bool RenderTextControl::isScrollable() const
-{
-    if (m_innerText && m_innerText->renderer()->isScrollable())
-        return true;
-    return RenderObject::isScrollable();
+    return RenderBlock::scroll(direction, granularity, multiplier);
 }
 
 HTMLElement* RenderTextControl::innerTextElement() const

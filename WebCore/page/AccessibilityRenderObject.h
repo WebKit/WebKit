@@ -50,6 +50,7 @@ class Node;
 class RenderObject;
 class RenderListBox;
 class RenderTextControl;
+class RenderView;
 class Selection;
 class String;
 class Widget;
@@ -147,7 +148,7 @@ public:
     
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     RenderObject* renderer() const { return m_renderer; }
-    RenderObject* topRenderer() const;
+    RenderView* topRenderer() const;
     RenderTextControl* textControl() const;
     Document* document() const;
     FrameView* topDocumentFrameView() const;  

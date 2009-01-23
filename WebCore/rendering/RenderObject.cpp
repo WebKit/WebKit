@@ -399,7 +399,7 @@ static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*
             beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
             newObject = 0;
         }
-        parentLayer->addChild(obj->layer(), beforeChild);
+        parentLayer->addChild(RenderBox::toRenderBox(obj)->layer(), beforeChild);
         return;
     }
 
@@ -423,7 +423,7 @@ void RenderObject::removeLayers(RenderLayer* parentLayer)
         return;
 
     if (hasLayer()) {
-        parentLayer->removeChild(layer());
+        parentLayer->removeChild(RenderBox::toRenderBox(this)->layer());
         return;
     }
 
@@ -437,9 +437,10 @@ void RenderObject::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
         return;
 
     if (hasLayer()) {
+        RenderLayer* layer = RenderBox::toRenderBox(this)->layer();
         if (oldParent)
-            oldParent->removeChild(layer());
-        newParent->addChild(layer());
+            oldParent->removeChild(layer);
+        newParent->addChild(layer);
         return;
     }
 
@@ -455,7 +456,7 @@ RenderLayer* RenderObject::findNextLayer(RenderLayer* parentLayer, RenderObject*
         return 0;
 
     // Step 1: If our layer is a child of the desired parent, then return our layer.
-    RenderLayer* ourLayer = layer();
+    RenderLayer* ourLayer = hasLayer() ? RenderBox::toRenderBox(this)->layer() : 0;
     if (ourLayer && ourLayer->parent() == parentLayer)
         return ourLayer;
 
@@ -487,7 +488,7 @@ RenderLayer* RenderObject::enclosingLayer() const
 {
     const RenderObject* curr = this;
     while (curr) {
-        RenderLayer* layer = curr->layer();
+        RenderLayer* layer = curr->hasLayer() ? RenderBox::toConstRenderBox(curr)->layer() : 0;
         if (layer)
             return layer;
         curr = curr->parent();
@@ -495,53 +496,9 @@ RenderLayer* RenderObject::enclosingLayer() const
     return 0;
 }
 
-bool RenderObject::requiresLayer()
-{
-    return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasReflection();
-}
-
 RenderBlock* RenderObject::firstLineBlock() const
 {
     return 0;
-}
-
-int RenderObject::verticalScrollbarWidth() const
-{
-    return includeVerticalScrollbarSize() ? layer()->verticalScrollbarWidth() : 0;
-}
-
-int RenderObject::horizontalScrollbarHeight() const
-{
-    return includeHorizontalScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0;
-}
-
-bool RenderObject::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
-{
-    RenderLayer* l = layer();
-    if (l && l->scroll(direction, granularity, multiplier))
-        return true;
-    RenderBlock* b = containingBlock();
-    if (b && !b->isRenderView())
-        return b->scroll(direction, granularity, multiplier);
-    return false;
-}
-    
-bool RenderObject::canBeProgramaticallyScrolled(bool) const
-{
-    if (!layer())
-        return false;
-
-    return (hasOverflowClip() && (scrollsOverflow() || (node() && node()->isContentEditable()))) || (node() && node()->isDocumentNode());
-}
-
-void RenderObject::autoscroll()
-{
-    layer()->autoscroll();
-}
-
-void RenderObject::panScroll(const IntPoint& source)
-{
-    layer()->panScrollFromPoint(source);
 }
 
 bool RenderObject::hasStaticX() const
@@ -590,7 +547,7 @@ void RenderObject::setNeedsLayout(bool b, bool markParents)
             if (markParents)
                 markContainingBlocksForLayout();
             if (hasLayer())
-                layer()->setNeedsFullRepaint();
+                RenderBox::toRenderBox(this)->layer()->setNeedsFullRepaint();
         }
     } else {
         m_everHadLayout = true;
@@ -621,7 +578,7 @@ void RenderObject::setNeedsPositionedMovementLayout()
     if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();
         if (hasLayer())
-            layer()->setNeedsFullRepaint();
+            RenderBox::toRenderBox(this)->layer()->setNeedsFullRepaint();
     }
 }
 
@@ -1879,10 +1836,12 @@ void RenderObject::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
             // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
             // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
             // anyway if its size does change.
-            IntRect boxRect(0, 0, o->layer()->width(), o->layer()->height());
+            RenderBox* boxParent = RenderBox::toRenderBox(o);
+
+            IntRect boxRect(0, 0, boxParent->layer()->width(), boxParent->layer()->height());
             int x = rect.x();
             int y = rect.y();
-            o->layer()->subtractScrolledContentOffset(x, y); // For overflow:auto/scroll/hidden.
+            boxParent->layer()->subtractScrolledContentOffset(x, y); // For overflow:auto/scroll/hidden.
             IntRect repaintRect(x, y, rect.width(), rect.height());
             rect = intersection(repaintRect, boxRect);
             if (rect.isEmpty())
@@ -2080,15 +2039,7 @@ void RenderObject::styleWillChange(RenderStyle::Diff diff, const RenderStyle* ne
                 document()->setDashboardRegionsDirty(true);
 #endif
 
-            if ((m_style->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
-                    m_style->zIndex() != newStyle->zIndex() ||
-                    m_style->visibility() != newStyle->visibility()) && hasLayer()) {
-                layer()->dirtyStackingContextZOrderLists();
-                if (m_style->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
-                        m_style->visibility() != newStyle->visibility())
-                    layer()->dirtyZOrderLists();
-            }
-            // keep layer hierarchy visibility bits up to date if visibility changes
+            // Keep layer hierarchy visibility bits up to date if visibility changes.
             if (m_style->visibility() != newStyle->visibility()) {
                 if (RenderLayer* l = enclosingLayer()) {
                     if (newStyle->visibility() == VISIBLE)
@@ -2102,70 +2053,8 @@ void RenderObject::styleWillChange(RenderStyle::Diff diff, const RenderStyle* ne
             }
         }
 
-        // The background of the root element or the body element could propagate up to
-        // the canvas.  Just dirty the entire canvas when our style changes substantially.
-        if (diff >= RenderStyle::Repaint && element() &&
-                (element()->hasTagName(htmlTag) || element()->hasTagName(bodyTag)))
-            view()->repaint();
-        else if (m_parent && !isText()) {
-            // Do a repaint with the old style first, e.g., for example if we go from
-            // having an outline to not having an outline.
-            if (diff == RenderStyle::RepaintLayer) {
-                layer()->repaintIncludingDescendants();
-                if (!(m_style->clip() == newStyle->clip()))
-                    layer()->clearClipRectsIncludingDescendants();
-            } else if (diff == RenderStyle::Repaint || newStyle->outlineSize() < m_style->outlineSize())
-                repaint();
-        }
-
-        if (diff == RenderStyle::Layout) {
-            // When a layout hint happens, we go ahead and do a repaint of the layer, since the layer could
-            // end up being destroyed.
-            if (hasLayer()) {
-                if (m_style->position() != newStyle->position() ||
-                    m_style->zIndex() != newStyle->zIndex() ||
-                    m_style->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
-                    !(m_style->clip() == newStyle->clip()) ||
-                    m_style->hasClip() != newStyle->hasClip() ||
-                    m_style->opacity() != newStyle->opacity() ||
-                    m_style->transform() != newStyle->transform())
-                layer()->repaintIncludingDescendants();
-            } else if (newStyle->hasTransform() || newStyle->opacity() < 1) {
-                // If we don't have a layer yet, but we are going to get one because of transform or opacity,
-                //  then we need to repaint the old position of the object.
-                repaint();
-            }
-        }
-        
-        // When a layout hint happens and an object's position style changes, we have to do a layout
-        // to dirty the render tree using the old position value now.
-        if (diff == RenderStyle::Layout && m_parent && m_style->position() != newStyle->position()) {
-            markContainingBlocksForLayout();
-            if (m_style->position() == StaticPosition)
-                repaint();
-            if (isFloating() && !isPositioned() && (newStyle->position() == AbsolutePosition || newStyle->position() == FixedPosition))
-                removeFromObjectLists();
-            if (isRenderBlock()) {
-                if (newStyle->position() == StaticPosition)
-                    // Clear our positioned objects list. Our absolutely positioned descendants will be
-                    // inserted into our containing block's positioned objects list during layout.
-                    removePositionedObjects(0);
-                else if (m_style->position() == StaticPosition) {
-                    // Remove our absolutely positioned descendants from their current containing block.
-                    // They will be inserted into our positioned objects list during layout.
-                    RenderObject* cb = parent();
-                    while (cb && (cb->style()->position() == StaticPosition || (cb->isInline() && !cb->isReplaced())) && !cb->isRenderView()) {
-                        if (cb->style()->position() == RelativePosition && cb->isInline() && !cb->isReplaced()) {
-                            cb = cb->containingBlock();
-                            break;
-                        }
-                        cb = cb->parent();
-                    }
-                    cb->removePositionedObjects(static_cast<RenderBlock*>(this));
-                }
-            }
-        }
-
+        if (m_parent && (diff == RenderStyle::Repaint || newStyle->outlineSize() < m_style->outlineSize()))
+            repaint();
         if (isFloating() && (m_style->floating() != newStyle->floating()))
             // For changes in float styles, we need to conceivably remove ourselves
             // from the floating objects list.
@@ -2259,7 +2148,7 @@ FloatPoint RenderObject::localToAbsolute(FloatPoint localPoint, bool fixed, bool
     RenderObject* o = parent();
     if (o) {
         if (o->hasOverflowClip())
-            localPoint -= o->layer()->scrolledContentOffset();
+            localPoint -= RenderBox::toRenderBox(o)->layer()->scrolledContentOffset();
         return o->localToAbsolute(localPoint, fixed, useTransforms);
     }
 
@@ -2272,7 +2161,7 @@ FloatPoint RenderObject::absoluteToLocal(FloatPoint containerPoint, bool fixed, 
     if (o) {
         FloatPoint localPoint = o->absoluteToLocal(containerPoint, fixed, useTransforms);
         if (o->hasOverflowClip())
-            localPoint += o->layer()->scrolledContentOffset();
+            localPoint += RenderBox::toRenderBox(o)->layer()->scrolledContentOffset();
         return localPoint;
     }
     return FloatPoint();
@@ -2284,7 +2173,7 @@ FloatQuad RenderObject::localToAbsoluteQuad(const FloatQuad& localQuad, bool fix
     if (o) {
         FloatQuad quad = localQuad;
         if (o->hasOverflowClip())
-            quad -= o->layer()->scrolledContentOffset();
+            quad -= RenderBox::toRenderBox(o)->layer()->scrolledContentOffset();
         return o->localToAbsoluteQuad(quad, fixed);
     }
 
@@ -2297,7 +2186,7 @@ IntSize RenderObject::offsetFromContainer(RenderObject* o) const
 
     IntSize offset;
     if (o->hasOverflowClip())
-        offset -= o->layer()->scrolledContentOffset();
+        offset -= RenderBox::toRenderBox(o)->layer()->scrolledContentOffset();
 
     return offset;
 }
@@ -2423,11 +2312,11 @@ void RenderObject::destroy()
 
     remove();
 
+    // FIXME: Would like to do this in RenderBox, but the timing is so complicated that this can't easily
+    // be moved into RenderBox::destroy.
     RenderArena* arena = renderArena();
-
     if (hasLayer())
-        layer()->destroy(arena);
-
+        RenderBox::toRenderBox(this)->layer()->destroy(arena);
     arenaDelete(arena, this);
 }
 
@@ -2934,12 +2823,6 @@ void RenderObject::adjustRectForOutlineAndShadow(IntRect& rect) const
         rect.setHeight(rect.height() - shadowTop + shadowBottom);
     } else
         rect.inflate(outlineSize);
-}
-
-bool RenderObject::isScrollable() const
-{
-    RenderLayer* l = enclosingLayer();
-    return l && (l->verticalScrollbar() || l->horizontalScrollbar());
 }
 
 AnimationController* RenderObject::animation() const

@@ -60,7 +60,7 @@ public:
     
     virtual void layout();
     virtual IntRect absoluteClippedOverflowRect();
-    virtual bool requiresLayer();
+    virtual bool requiresLayer() const { return false; }
     virtual int lineHeight(bool b, bool isRootLineBox = false) const;
     virtual int baselinePosition(bool b, bool isRootLineBox = false) const;
     virtual void paint(PaintInfo&, int parentX, int parentY);

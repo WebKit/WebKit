@@ -2163,7 +2163,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
 
 IntRect RenderLayer::childrenClipRect() const
 {
-    RenderLayer* rootLayer = renderer()->document()->renderer()->layer();
+    RenderLayer* rootLayer = renderer()->view()->layer();
     IntRect layerBounds, backgroundRect, foregroundRect, outlineRect;
     calculateRects(rootLayer, rootLayer->boundingBox(rootLayer), layerBounds, backgroundRect, foregroundRect, outlineRect);
     return foregroundRect;
@@ -2171,7 +2171,7 @@ IntRect RenderLayer::childrenClipRect() const
 
 IntRect RenderLayer::selfClipRect() const
 {
-    RenderLayer* rootLayer = renderer()->document()->renderer()->layer();
+    RenderLayer* rootLayer = renderer()->view()->layer();
     IntRect layerBounds, backgroundRect, foregroundRect, outlineRect;
     calculateRects(rootLayer, rootLayer->boundingBox(rootLayer), layerBounds, backgroundRect, foregroundRect, outlineRect);
     return backgroundRect;

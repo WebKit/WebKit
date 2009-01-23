@@ -321,11 +321,6 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
         continuation()->absoluteQuads(quads, topLevel);
 }
 
-bool RenderInline::requiresLayer()
-{
-    return isRelPositioned() || isTransparent() || hasMask();
-}
-
 int RenderInline::boundingBoxWidth() const
 {
     // Return the width of the minimal left side and the maximal right side.

@@ -43,7 +43,7 @@ namespace WebCore {
 
         virtual const char* renderName() const { return "RenderSVGHiddenContainer"; }
         
-        virtual bool requiresLayer();
+        virtual bool requiresLayer() const { return false; }
         
         virtual int lineHeight(bool b, bool isRootLineBox = false) const;
         virtual int baselinePosition(bool b, bool isRootLineBox = false) const;

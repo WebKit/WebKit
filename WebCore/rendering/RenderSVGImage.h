@@ -54,7 +54,7 @@ namespace WebCore {
         virtual void layout();
         virtual void paint(PaintInfo&, int parentX, int parentY);
 
-        bool requiresLayer();
+        bool requiresLayer() const { return false; }
 
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
 

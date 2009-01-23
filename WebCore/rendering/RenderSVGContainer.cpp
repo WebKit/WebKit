@@ -202,12 +202,6 @@ TransformationMatrix RenderSVGContainer::localTransform() const
     return m_localTransform;
 }
 
-bool RenderSVGContainer::requiresLayer()
-{
-    // Only allow an <svg> element to generate a layer when it's positioned in a non-SVG context
-    return false;
-}
-
 int RenderSVGContainer::lineHeight(bool, bool) const
 {
     return height();

@@ -29,7 +29,6 @@
 #include "Document.h"
 #include "FloatQuad.h"
 #include "RenderStyle.h"
-#include "ScrollTypes.h"
 #include "VisiblePosition.h"
 #include <wtf/HashMap.h>
 
@@ -136,8 +135,8 @@ typedef HashSet<RenderFlow*> RenderFlowSequencedSet;
 // Base class for all rendering tree objects.
 class RenderObject : public CachedResourceClient {
     friend class RenderContainer;
-    friend class RenderSVGContainer;
     friend class RenderLayer;
+    friend class RenderSVGContainer;
 public:
     // Anonymous objects should pass the document as their node, and they will then automatically be
     // marked as anonymous in the constructor.
@@ -165,14 +164,14 @@ public:
     RenderObject* firstLeafChild() const;
     RenderObject* lastLeafChild() const;
 
-    virtual RenderLayer* layer() const { return 0; }
+    // The following five functions are used when the render tree hierarchy changes to make sure layers get
+    // properly added and removed.  Since containership can be implemented by any subclass, and since a hierarchy
+    // can contain a mixture of boxes and other object types, these functions need to be in the base class.
     RenderLayer* enclosingLayer() const;
     void addLayers(RenderLayer* parentLayer, RenderObject* newObject);
     void removeLayers(RenderLayer* parentLayer);
     void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);
     RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
-    virtual void positionChildLayers() { }
-    virtual bool requiresLayer();
 
     virtual IntRect getOverflowClipRect(int /*tx*/, int /*ty*/) { return IntRect(0, 0, 0, 0); }
     virtual IntRect getClipRect(int /*tx*/, int /*ty*/) { return IntRect(0, 0, 0, 0); }
@@ -357,22 +356,8 @@ public:
     virtual bool hasControlClip() const { return false; }
     virtual IntRect controlClipRect(int /*tx*/, int /*ty*/) const { return IntRect(); }
 
-    bool hasAutoVerticalScrollbar() const { return hasOverflowClip() && (style()->overflowY() == OAUTO || style()->overflowY() == OOVERLAY); }
-    bool hasAutoHorizontalScrollbar() const { return hasOverflowClip() && (style()->overflowX() == OAUTO || style()->overflowX() == OOVERLAY); }
-
-    bool scrollsOverflow() const { return scrollsOverflowX() || scrollsOverflowY(); }
-    bool scrollsOverflowX() const { return hasOverflowClip() && (style()->overflowX() == OSCROLL || hasAutoHorizontalScrollbar()); }
-    bool scrollsOverflowY() const { return hasOverflowClip() && (style()->overflowY() == OSCROLL || hasAutoVerticalScrollbar()); }
-
-    virtual int verticalScrollbarWidth() const;
-    virtual int horizontalScrollbarHeight() const;
-    
     bool hasTransform() const { return m_hasTransform; }
     bool hasMask() const { return style() && style()->hasMask(); }
-
-private:
-    bool includeVerticalScrollbarSize() const { return hasOverflowClip() && (style()->overflowY() == OSCROLL || style()->overflowY() == OAUTO); }
-    bool includeHorizontalScrollbarSize() const { return hasOverflowClip() && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO); }
 
 public:
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
@@ -570,15 +555,6 @@ public:
     // Return the offset from the container() renderer (excluding transforms)
     virtual IntSize offsetFromContainer(RenderObject*) const;
 
-    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
-    virtual bool canBeProgramaticallyScrolled(bool) const;
-    virtual void autoscroll();
-    virtual void stopAutoscroll() { }
-
-    virtual void panScroll(const IntPoint&);
-
-    virtual bool isScrollable() const;
-
     virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
     
     virtual void absoluteRects(Vector<IntRect>&, int, int, bool = true) { }
@@ -648,8 +624,6 @@ public:
     virtual bool containsFloats() { return false; }
     virtual bool containsFloat(RenderObject*) { return false; }
     virtual bool hasOverhangingFloats() { return false; }
-
-    virtual void removePositionedObjects(RenderBlock*) { }
 
     virtual bool avoidsFloats() const;
     bool shrinkToAvoidFloats() const;

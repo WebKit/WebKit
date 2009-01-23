@@ -996,7 +996,7 @@ bool SelectionController::contains(const IntPoint& point)
     
     HitTestRequest request(true, true);
     HitTestResult result(point);
-    document->renderer()->layer()->hitTest(request, result);
+    document->renderView()->layer()->hitTest(request, result);
     Node* innerNode = result.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;

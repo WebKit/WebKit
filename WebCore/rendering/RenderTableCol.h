@@ -44,7 +44,7 @@ public:
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     virtual bool canHaveChildren() const;
-    virtual bool requiresLayer() { return false; }
+    virtual bool requiresLayer() const { return false; }
 
     virtual IntRect absoluteClippedOverflowRect();
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);

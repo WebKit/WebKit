@@ -268,11 +268,6 @@ void RenderTableCell::styleDidChange(RenderStyle::Diff diff, const RenderStyle* 
     setHasBoxDecorations(true);
 }
 
-bool RenderTableCell::requiresLayer()
-{
-    return isPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasReflection();
-}
-
 // The following rules apply for resolving conflicts and figuring out which border
 // to use.
 // (1) Borders with the 'border-style' of 'hidden' take precedence over all other conflicting 

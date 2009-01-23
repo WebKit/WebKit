@@ -109,14 +109,14 @@ void HTMLMarqueeElement::parseMappedAttribute(MappedAttribute *attr)
 
 void HTMLMarqueeElement::start()
 {
-    if (renderer() && renderer()->hasLayer() && renderer()->layer()->marquee())
-        renderer()->layer()->marquee()->start();
+    if (renderer() && renderer()->hasLayer() && renderBox()->layer()->marquee())
+        renderBox()->layer()->marquee()->start();
 }
 
 void HTMLMarqueeElement::stop()
 {
-    if (renderer() && renderer()->hasLayer() && renderer()->layer()->marquee())
-        renderer()->layer()->marquee()->stop();
+    if (renderer() && renderer()->hasLayer() && renderBox()->layer()->marquee())
+        renderBox()->layer()->marquee()->stop();
 }
 
 } // namespace WebCore

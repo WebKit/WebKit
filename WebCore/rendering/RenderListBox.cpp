@@ -599,13 +599,6 @@ void RenderListBox::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect&
     repaintRectangle(scrollRect);
 }
 
-bool RenderListBox::isScrollable() const
-{
-    if (numVisibleItems() < numItems())
-        return true;
-    return RenderObject::isScrollable();
-}
-
 PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;

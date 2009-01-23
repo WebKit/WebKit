@@ -217,11 +217,6 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest&, HitTestResult& result, i
     return false;
 }
 
-bool RenderSVGImage::requiresLayer()
-{
-    return false;
-}
-
 FloatRect RenderSVGImage::relativeBBox(bool) const
 {
     return m_localBounds;

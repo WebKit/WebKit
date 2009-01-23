@@ -399,7 +399,7 @@ void write(TextStream& ts, const RenderObject& o, int indent)
         Widget* widget = static_cast<const RenderWidget&>(o).widget();
         if (widget && widget->isFrameView()) {
             FrameView* view = static_cast<FrameView*>(widget);
-            RenderObject* root = view->frame()->contentRenderer();
+            RenderView* root = view->frame()->contentRenderer();
             if (root) {
                 view->layout();
                 RenderLayer* l = root->layer();
@@ -539,8 +539,8 @@ String externalRepresentation(RenderObject* o)
 #endif
     if (o->view()->frameView())
         o->view()->frameView()->layout();
-    RenderLayer* l = o->layer();
-    if (l) {
+    if (o->hasLayer()) {
+        RenderLayer* l = RenderBox::toRenderBox(o)->layer();
         writeLayers(ts, l, l, IntRect(l->xPos(), l->yPos(), l->width(), l->height()));
         writeSelection(ts, o);
     }

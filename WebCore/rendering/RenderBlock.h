@@ -114,7 +114,7 @@ public:
     void layoutPositionedObjects(bool relayoutChildren);
     void insertPositionedObject(RenderBox*);
     void removePositionedObject(RenderBox*);
-    virtual void removePositionedObjects(RenderBlock*);
+    void removePositionedObjects(RenderBlock*);
 
     void addPercentHeightDescendant(RenderBox*);
     static void removePercentHeightDescendant(RenderBox*);

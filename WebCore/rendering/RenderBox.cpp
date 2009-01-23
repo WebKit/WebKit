@@ -104,6 +104,65 @@ void RenderBox::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newSt
     s_wasFloating = isFloating();
     s_hadOverflowClip = hasOverflowClip();
 
+    if (style()) {
+        // If our z-index changes value or our visibility changes,
+        // we need to dirty our stacking context's z-order list.
+        if (newStyle) {
+            if (hasLayer() && (style()->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
+                               style()->zIndex() != newStyle->zIndex() ||
+                               style()->visibility() != newStyle->visibility())) {
+                layer()->dirtyStackingContextZOrderLists();
+                if (style()->hasAutoZIndex() != newStyle->hasAutoZIndex() || style()->visibility() != newStyle->visibility())
+                    layer()->dirtyZOrderLists();
+            }
+        }
+        
+        // The background of the root element or the body element could propagate up to
+        // the canvas.  Just dirty the entire canvas when our style changes substantially.
+        if (diff >= RenderStyle::Repaint && element() &&
+                (element()->hasTagName(htmlTag) || element()->hasTagName(bodyTag)))
+            view()->repaint();
+        else if (parent() && !isText()) {
+            // Do a repaint with the old style first, e.g., for example if we go from
+            // having an outline to not having an outline.
+            if (diff == RenderStyle::RepaintLayer) {
+                layer()->repaintIncludingDescendants();
+                if (!(style()->clip() == newStyle->clip()))
+                    layer()->clearClipRectsIncludingDescendants();
+            } else if (diff == RenderStyle::Repaint || newStyle->outlineSize() < style()->outlineSize())
+                repaint();
+        }
+
+        if (diff == RenderStyle::Layout) {
+            // When a layout hint happens, we go ahead and do a repaint of the layer, since the layer could
+            // end up being destroyed.
+            if (hasLayer()) {
+                if (style()->position() != newStyle->position() ||
+                    style()->zIndex() != newStyle->zIndex() ||
+                    style()->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
+                    !(style()->clip() == newStyle->clip()) ||
+                    style()->hasClip() != newStyle->hasClip() ||
+                    style()->opacity() != newStyle->opacity() ||
+                    style()->transform() != newStyle->transform())
+                layer()->repaintIncludingDescendants();
+            } else if (newStyle->hasTransform() || newStyle->opacity() < 1) {
+                // If we don't have a layer yet, but we are going to get one because of transform or opacity,
+                //  then we need to repaint the old position of the object.
+                repaint();
+            }
+        
+            // When a layout hint happens and an object's position style changes, we have to do a layout
+            // to dirty the render tree using the old position value now.
+            if (parent() && style()->position() != newStyle->position()) {
+                markContainingBlocksForLayout();
+                if (style()->position() == StaticPosition)
+                    repaint();
+                if (isFloating() && !isPositioned() && (newStyle->position() == AbsolutePosition || newStyle->position() == FixedPosition))
+                    removeFromObjectLists();
+            }
+        }
+    }
+
     RenderObject::styleWillChange(diff, newStyle);
 }
 
@@ -508,6 +567,44 @@ IntRect RenderBox::reflectedRect(const IntRect& r) const
             break;
     }
     return result;
+}
+
+int RenderBox::verticalScrollbarWidth() const
+{
+    return includeVerticalScrollbarSize() ? layer()->verticalScrollbarWidth() : 0;
+}
+
+int RenderBox::horizontalScrollbarHeight() const
+{
+    return includeHorizontalScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0;
+}
+
+bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
+{
+    RenderLayer* l = layer();
+    if (l && l->scroll(direction, granularity, multiplier))
+        return true;
+    RenderBlock* b = containingBlock();
+    if (b && !b->isRenderView())
+        return b->scroll(direction, granularity, multiplier);
+    return false;
+}
+    
+bool RenderBox::canBeProgramaticallyScrolled(bool) const
+{
+    return (hasOverflowClip() && (scrollsOverflow() || (node() && node()->isContentEditable()))) || (node() && node()->isDocumentNode());
+}
+
+void RenderBox::autoscroll()
+{
+    if (layer())
+        layer()->autoscroll();
+}
+
+void RenderBox::panScroll(const IntPoint& source)
+{
+    if (layer())
+        layer()->panScrollFromPoint(source);
 }
 
 int RenderBox::minPrefWidth() const
@@ -1372,7 +1469,7 @@ IntSize RenderBox::offsetFromContainer(RenderObject* o) const
     }
 
     if (o->hasOverflowClip())
-        offset -= o->layer()->scrolledContentOffset();
+        offset -= RenderBox::toRenderBox(o)->layer()->scrolledContentOffset();
 
     if (style()->position() == AbsolutePosition)
         offset += offsetForPositionedInContainer(o);
@@ -1519,13 +1616,15 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
     if (o->hasOverflowClip()) {
+        RenderBox* containerBox = RenderBox::toRenderBox(o);
+
         // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
         // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
         // anyway if its size does change.
-        topLeft -= o->layer()->scrolledContentOffset(); // For overflow:auto/scroll/hidden.
+        topLeft -= containerBox->layer()->scrolledContentOffset(); // For overflow:auto/scroll/hidden.
 
         IntRect repaintRect(topLeft, rect.size());
-        IntRect boxRect(0, 0, o->layer()->width(), o->layer()->height());
+        IntRect boxRect(0, 0, containerBox->layer()->width(), containerBox->layer()->height());
         rect = intersection(repaintRect, boxRect);
         if (rect.isEmpty())
             return;
