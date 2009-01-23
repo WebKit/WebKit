@@ -356,7 +356,7 @@ void RenderBox::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLe
                                     tx - x() + continuation->containingBlock()->x(),
                                     ty - y() + continuation->containingBlock()->y(), topLevel);
     } else
-        rects.append(IntRect(tx, ty, width(), height() + borderTopExtra() + borderBottomExtra()));
+        rects.append(IntRect(tx, ty, width(), height()));
 }
 
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
@@ -371,13 +371,13 @@ void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
         quads.append(localToAbsoluteQuad(localRect));
         continuation->absoluteQuads(quads, topLevel);
     } else
-        quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height() + borderTopExtra() + borderBottomExtra())));
+        quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height())));
 }
 
 IntRect RenderBox::absoluteContentBox() const
 {
     IntRect rect = contentBoxRect();
-    FloatPoint absPos = localToAbsoluteForContent(FloatPoint());
+    FloatPoint absPos = localToAbsolute(FloatPoint());
     rect.move(absPos.x(), absPos.y());
     return rect;
 }
@@ -651,8 +651,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     }
 
     int w = width();
-    int h = height() + borderTopExtra() + borderBottomExtra();
-    ty -= borderTopExtra();
+    int h = height();
 
     // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
     // balloon layout is an example of this).
@@ -693,8 +692,7 @@ void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     int w = width();
-    int h = height() + borderTopExtra() + borderBottomExtra();
-    ty -= borderTopExtra();
+    int h = height();
 
     // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
     // balloon layout is an example of this).
@@ -1158,7 +1156,7 @@ IntRect RenderBox::getOverflowClipRect(int tx, int ty)
     int clipX = tx + bLeft;
     int clipY = ty + bTop;
     int clipWidth = width() - bLeft - borderRight();
-    int clipHeight = height() - bTop - borderBottom() + borderTopExtra() + borderBottomExtra();
+    int clipHeight = height() - bTop - borderBottom();
 
     // Subtract out scrollbars if we have them.
     if (m_layer) {
@@ -1270,7 +1268,7 @@ FloatPoint RenderBox::localToAbsolute(FloatPoint localPoint, bool fixed, bool us
 
         localPoint += offsetFromContainer(o);
 
-        return o->localToAbsoluteForContent(localPoint, fixed, useTransforms);
+        return o->localToAbsolute(localPoint, fixed, useTransforms);
     }
     
     return FloatPoint();
@@ -1290,16 +1288,9 @@ FloatPoint RenderBox::absoluteToLocal(FloatPoint containerPoint, bool fixed, boo
     RenderObject* o = container();
     if (o) {
         FloatPoint localPoint = o->absoluteToLocal(containerPoint, fixed, useTransforms);
-
-        // Take into account space above a vertically aligned table cell
-        // (see localToAbsoluteForContent())
-        localPoint.move(0.0f, -static_cast<float>(borderTopExtra()));
-
         localPoint -= offsetFromContainer(o);
-
         if (useTransforms && m_layer && m_layer->transform())
             localPoint = m_layer->transform()->inverse().mapPoint(localPoint);
-        
         return localPoint;
     }
     
@@ -1318,13 +1309,7 @@ FloatQuad RenderBox::localToAbsoluteQuad(const FloatQuad& localQuad, bool fixed)
             fixed = false;  // Elements with transforms act as a containing block for fixed position descendants
             quad = m_layer->transform()->mapQuad(quad);
         }
-
         quad += offsetFromContainer(o);
-
-        // Take into account space above a vertically aligned table cell
-        // (see localToAbsoluteForContent())
-        quad.move(0.0f, static_cast<float>(o->borderTopExtra()));
-
         return o->localToAbsoluteQuad(quad, fixed);
     }
     

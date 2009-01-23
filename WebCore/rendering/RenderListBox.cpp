@@ -370,9 +370,9 @@ bool RenderListBox::isPointInOverflowControl(HitTestResult& result, int _x, int 
         return false;
 
     IntRect vertRect(_tx + width() - borderRight() - m_vBar->width(),
-                   _ty + borderTop() - borderTopExtra(),
-                   m_vBar->width(),
-                   height() + borderTopExtra() + borderBottomExtra() - borderTop() - borderBottom());
+                     _ty,
+                     m_vBar->width(),
+                     height() - borderTop() - borderBottom());
 
     if (vertRect.contains(_x, _y)) {
         result.setScrollbar(m_vBar.get());

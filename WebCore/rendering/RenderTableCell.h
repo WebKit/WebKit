@@ -65,8 +65,6 @@ public:
     virtual void calcWidth();
     void updateWidth(int);
 
-    virtual bool expandsToEncloseOverhangingFloats() const { return true; }
-
     int borderLeft() const;
     int borderRight() const;
     int borderTop() const;
@@ -104,11 +102,18 @@ public:
 
     virtual int baselinePosition(bool firstLine = false, bool isRootLineBox = false) const;
 
-    void setCellTopExtra(int p) { m_topExtra = p; }
-    void setCellBottomExtra(int p) { m_bottomExtra = p; }
+    void setIntrinsicPaddingTop(int p) { m_intrinsicPaddingTop = p; }
+    void setIntrinsicPaddingBottom(int p) { m_intrinsicPaddingBottom = p; }
+    void setIntrinsicPadding(int top, int bottom) { setIntrinsicPaddingTop(top); setIntrinsicPaddingBottom(bottom); }
+    void clearIntrinsicPadding() { setIntrinsicPadding(0, 0); }
 
-    virtual int borderTopExtra() const { return m_topExtra; }
-    virtual int borderBottomExtra() const { return m_bottomExtra; }
+    int intrinsicPaddingTop() const { return m_intrinsicPaddingTop; }
+    int intrinsicPaddingBottom() const { return m_intrinsicPaddingBottom; }
+
+    virtual int paddingTop(bool includeIntrinsicPadding = true) const;
+    virtual int paddingBottom(bool includeIntrinsicPadding = true) const;
+
+    virtual void setOverrideSize(int);
 
 protected:
     virtual void styleWillChange(RenderStyle::Diff, const RenderStyle* newStyle);
@@ -119,8 +124,8 @@ private:
     int m_column;
     int m_rowSpan;
     int m_columnSpan;
-    int m_topExtra : 31;
-    int m_bottomExtra : 31;
+    int m_intrinsicPaddingTop : 31;
+    int m_intrinsicPaddingBottom : 31;
     bool m_widthChanged : 1;
     int m_percentageHeight;
 };

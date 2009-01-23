@@ -121,7 +121,7 @@ RenderBox* RenderFieldset::findLegend() const
 void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
     int w = width();
-    int h = height() + borderTopExtra() + borderBottomExtra();
+    int h = height();
     RenderBox* legend = findLegend();
     if (!legend)
         return RenderBlock::paintBoxDecorations(paintInfo, tx, ty);
@@ -129,7 +129,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     int yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
     int legendBottom = ty + legend->y() + legend->height();
     h -= yOff;
-    ty += yOff - borderTopExtra();
+    ty += yOff;
 
     int my = max(ty, paintInfo.rect.y());
     int end = min(paintInfo.rect.bottom(), ty + h);
@@ -167,14 +167,14 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     int w = width();
-    int h = height() + borderTopExtra() + borderBottomExtra();
+    int h = height();
     RenderBox* legend = findLegend();
     if (!legend)
         return RenderBlock::paintMask(paintInfo, tx, ty);
 
     int yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
     h -= yOff;
-    ty += yOff - borderTopExtra();
+    ty += yOff;
 
     int my = max(ty, paintInfo.rect.y());
     int end = min(paintInfo.rect.bottom(), ty + h);

@@ -221,7 +221,7 @@ void RenderText::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigne
     start = min(start, static_cast<unsigned>(INT_MAX));
     end = min(end, static_cast<unsigned>(INT_MAX));
     
-    FloatPoint absPos = localToAbsoluteForContent(FloatPoint());
+    FloatPoint absPos = localToAbsolute(FloatPoint());
 
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it

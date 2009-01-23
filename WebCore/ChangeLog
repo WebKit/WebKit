@@ -1,3 +1,158 @@
+2009-01-22  David Hyatt  <hyatt@apple.com>
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23487.
+
+        This patch completely reworks vertical alignment of table cells.  The current system uses methods called borderTopExtra() and borderBottomExtra() to
+        add extra space above and below the content of a cell.  This system was not confined to the table code and spilled out into all the other RenderObjects.
+        The y-position of the table cell box was set to the outer edge of the cell, but the y() method of RenderBox lied and added in borderTopExtra().  height()
+        also excluded the extra space, so did not accurately reflect the true size of the cell.
+        
+        With the new system, the table cell box is completely accurate.  The extra space becomes part of the padding of the cell.  Padding has been reworked so that
+        additional intrinsic padding can be added on to the specified padding from style.  Only the table code has to deal with the extra cell padding.
+
+        localToAbsoluteForContent has now been removed, since there no longer has to be a special hacked content box.
+
+        A number of table layout tests progress with this change, since the new layout system actually fixes existing bugs in baseline alignment of cells.
+
+        Reviewed by Oliver Hunt
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Make CSSComputedStyleDeclaration ask for padding values that exclude the built-in intrinsic padding.  This ensures that getComputedStyle continues
+        to give the right answer.
+    
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getLowerRightCorner):
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        Remove borderTopExtra()/borderBottomExtra() hacks and localToAbsoluteForContent calls.
+        
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::overflowRect):
+        Remove borderTopExtra()/borderBottomExtra() hacks and localToAbsoluteForContent calls.
+        
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::expandsToEncloseOverhangingFloats):
+        The expandsToEncloseOverhangingFloats logic has been reworked.  Table cells and fieldsets did not properly handle floats that spilled into the bottom padding.  The
+        resulting box needed to not only expand to encompass the float, but also needed to place the full bottom padding after the float.  The switch to make the extra table cell
+        space into padding exposed this issue.  No extra layout test is required, since an existing table layout test exposes this issue and progresses to match Firefox with
+        this change.
+    
+        (WebCore::RenderBlock::selectionGapRects):
+        (WebCore::RenderBlock::paintSelection):
+        (WebCore::RenderBlock::fillSelectionGaps):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::positionForCoordinates):
+        (WebCore::RenderBlock::offsetForContents):
+        Remove borderTopExtra()/borderBottomExtra() hacks and localToAbsoluteForContent calls.
+    
+        * rendering/RenderBlock.h:
+        Add the new simplified method for expanding to encompass overhanging floats.  The method has been devirtualized and made to include all of the cases (and not just a subset).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteRects):
+        (WebCore::RenderBox::absoluteQuads):
+        (WebCore::RenderBox::absoluteContentBox):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintMask):
+        (WebCore::RenderBox::getOverflowClipRect):
+        (WebCore::RenderBox::localToAbsolute):
+        (WebCore::RenderBox::absoluteToLocal):
+        (WebCore::RenderBox::localToAbsoluteQuad):
+        Remove borderTopExtra()/borderBottomExtra() hacks and localToAbsoluteForContent calls.
+        
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::y):
+        (WebCore::RenderBox::location):
+        (WebCore::RenderBox::borderBoxRect):
+        (WebCore::RenderBox::offsetHeight):
+        Remove borderTopExtra()/borderBottomExtra() hacks and localToAbsoluteForContent calls.
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::addLineBoxRects):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        (WebCore::RenderFieldset::paintMask):
+        * rendering/RenderFieldset.h:
+        (WebCore::RenderFieldset::avoidsFloats):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::localCaretRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::boundingBox):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isPointInOverflowControl):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::absoluteToLocal):
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        (WebCore::RenderObject::offsetFromContainer):
+        (WebCore::RenderObject::paddingTop):
+        (WebCore::RenderObject::paddingBottom):
+        (WebCore::RenderObject::paddingLeft):
+        (WebCore::RenderObject::paddingRight):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasOverhangingFloats):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::selectionRect):
+        (WebCore::RenderReplaced::localSelectionRect):
+        Remove borderTopExtra()/borderBottomExtra() hacks and localToAbsoluteForContent calls.  Also modifed paddingLeft/Top/Right/Bottom to take an argument indicating
+        whether or not the intrinsic padding of an object should be included (by default it is).  getComputedStyle needs to exclude it, which is why this argument is
+        necessary.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        (WebCore::RenderTableCell::paddingTop):
+        (WebCore::RenderTableCell::paddingBottom):
+        The new paddingTop() and paddingBottom() methods on table cells include the extra intrinsic padding.
+    
+        (WebCore::RenderTableCell::setOverrideSize):
+        When a table's override size gets altered, the intrinsic padding needs to be cleared.
+        
+        (WebCore::RenderTableCell::absoluteClippedOverflowRect):
+        (WebCore::RenderTableCell::computeAbsoluteRepaintRect):
+        (WebCore::RenderTableCell::baselinePosition):
+        (WebCore::RenderTableCell::paint):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        (WebCore::RenderTableCell::paintMask):
+        Remove borderTopExtra()/borderBottomExtra() hacks and localToAbsoluteForContent calls.
+        
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::setIntrinsicPaddingTop):
+        (WebCore::RenderTableCell::setIntrinsicPaddingBottom):
+        (WebCore::RenderTableCell::setIntrinsicPadding):
+        (WebCore::RenderTableCell::clearIntrinsicPadding):
+        (WebCore::RenderTableCell::intrinsicPaddingTop):
+        (WebCore::RenderTableCell::intrinsicPaddingBottom):
+        Add new helper methods for getting/setting a cell's intrinsic padding.
+    
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowHeight):
+        calcRowHeight has been modified to exclude the intrinsic padding when calculating the base height of rows prior to flexing.  Because a cell now includes that
+        extra space, it has to be subtracted out in this method.
+        
+        (WebCore::RenderTableSection::layoutRows):
+        Modify the code that sets up the intrinsic padding so that it does a relayout if the intrinsic padding changes.   There was also an error where the baseline
+        position mismatched leading to negative intrinsic padding being added in (this error exists in ToT).  The code now properly ignores cells that don't establish
+        a baseline.  A number of tests progress with this change.
+        
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::addLineBoxRects):
+        Remove borderTopExtra()/borderBottomExtra() hacks and localToAbsoluteForContent calls.
+        
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::writeTextRun):
+        Modify the render tree dumping code to continue to produce the same results as before.  This is really a hack, since we're now capable of indicating the correct
+        position for the descendants of cells with intrinsic padding (and also indicating what the correct cell box is).  A future patch can remove these hacks so that the
+        layout test results can all be regenerated.
+
 2009-01-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin Garcia.

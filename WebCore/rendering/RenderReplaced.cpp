@@ -254,7 +254,7 @@ IntRect RenderReplaced::selectionRect(bool clipToVisibleContent)
     if (clipToVisibleContent)
         computeAbsoluteRepaintRect(rect);
     else {
-        FloatPoint absPos = localToAbsoluteForContent(FloatPoint());
+        FloatPoint absPos = localToAbsolute(FloatPoint());
         rect.move(absPos.x(), absPos.y());
     }
     
@@ -268,7 +268,7 @@ IntRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
 
     if (!m_inlineBoxWrapper)
         // We're a block-level replaced element.  Just return our own dimensions.
-        return IntRect(0, 0, width(), height() + borderTopExtra() + borderBottomExtra());
+        return IntRect(0, 0, width(), height());
 
     RenderBlock* cb =  containingBlock();
     if (!cb)

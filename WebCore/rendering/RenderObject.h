@@ -567,15 +567,6 @@ public:
     virtual FloatPoint localToAbsolute(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
     virtual FloatPoint absoluteToLocal(FloatPoint, bool fixed = false, bool useTransforms = false) const;
 
-    // This function is used to deal with the extra top space that can occur in table cells (called intrinsicPaddingTop).
-    // The children of the cell do not factor this space in, so we have to add it in.  Any code that wants to
-    // accurately deal with the contents of a cell must call this function instad of absolutePosition.
-    FloatPoint localToAbsoluteForContent(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const
-    {
-        localPoint.move(0.0f, static_cast<float>(borderTopExtra()));
-        return localToAbsolute(localPoint, fixed, useTransforms);
-    }
-
     // Convert a local quad to an absolute quad, taking transforms into account.
     virtual FloatQuad localToAbsoluteQuad(const FloatQuad&, bool fixed = false) const;
 
@@ -612,13 +603,10 @@ public:
     virtual int marginRight() const { return 0; }
 
     // Virtual since table cells override
-    virtual int paddingTop() const;
-    virtual int paddingBottom() const;
-    virtual int paddingLeft() const;
-    virtual int paddingRight() const;
-
-    virtual int borderTopExtra() const { return 0; }
-    virtual int borderBottomExtra() const { return 0; }
+    virtual int paddingTop(bool includeIntrinsicPadding = true) const;
+    virtual int paddingBottom(bool includeIntrinsicPadding = true) const;
+    virtual int paddingLeft(bool includeIntrinsicPadding = true) const;
+    virtual int paddingRight(bool includeIntrinsicPadding = true) const;
 
     virtual int borderTop() const { return style()->borderTopWidth(); }
     virtual int borderBottom() const { return style()->borderBottomWidth(); }
@@ -694,7 +682,6 @@ public:
     virtual bool containsFloats() { return false; }
     virtual bool containsFloat(RenderObject*) { return false; }
     virtual bool hasOverhangingFloats() { return false; }
-    virtual bool expandsToEncloseOverhangingFloats() const { return isFloating() && style()->height().isAuto(); }
 
     virtual void removePositionedObjects(RenderBlock*) { }
 

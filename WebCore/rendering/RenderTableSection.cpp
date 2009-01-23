@@ -340,12 +340,16 @@ int RenderTableSection::calcRowHeight()
                 cell->layoutIfNeeded();
             }
             
+            int adjustedPaddingTop = cell->paddingTop() - cell->intrinsicPaddingTop();
+            int adjustedPaddingBottom = cell->paddingBottom() - cell->intrinsicPaddingBottom();
+            int adjustedHeight = cell->height() - (cell->intrinsicPaddingTop() + cell->intrinsicPaddingBottom());
+        
             // Explicit heights use the border box in quirks mode.  In strict mode do the right
             // thing and actually add in the border and padding.
             ch = cell->style()->height().calcValue(0) + 
-                (cell->style()->htmlHacks() ? 0 : (cell->paddingTop() + cell->paddingBottom() +
+                (cell->style()->htmlHacks() ? 0 : (adjustedPaddingTop + adjustedPaddingBottom +
                                                    cell->borderTop() + cell->borderBottom()));
-            ch = max(ch, cell->height());
+            ch = max(ch, adjustedHeight);
 
             pos = m_rowPos[indx] + ch + (m_grid[r].rowRenderer ? spacing : 0);
 
@@ -356,8 +360,8 @@ int RenderTableSection::calcRowHeight()
             if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB) {
                 int b = cell->baselinePosition();
                 if (b > cell->borderTop() + cell->paddingTop()) {
-                    baseline = max(baseline, b);
-                    bdesc = max(bdesc, m_rowPos[indx] + ch - b);
+                    baseline = max(baseline, b - cell->intrinsicPaddingTop());
+                    bdesc = max(bdesc, m_rowPos[indx] + ch - (b - cell->intrinsicPaddingTop()));
                 }
             }
         }
@@ -503,10 +507,11 @@ int RenderTableSection::layoutRows(int toAdd)
                     }
                 }
             }
+            
             if (cellChildrenFlex) {
                 // Alignment within a cell is based off the calculated
                 // height, which becomes irrelevant once the cell has
-                // been resized based off its percentage. -dwh
+                // been resized based off its percentage.
                 cell->setOverrideSize(max(0, 
                                            rHeight - cell->borderTop() - cell->paddingTop() - 
                                                      cell->borderBottom() - cell->paddingBottom()));
@@ -521,6 +526,10 @@ int RenderTableSection::layoutRows(int toAdd)
                 }
             }
             
+            int oldTe = cell->intrinsicPaddingTop();
+            int oldBe = cell->intrinsicPaddingBottom();
+            int heightWithoutIntrinsicPadding = cell->height() - oldTe - oldBe;
+            
             int te = 0;
             switch (cell->style()->verticalAlign()) {
                 case SUB:
@@ -528,31 +537,35 @@ int RenderTableSection::layoutRows(int toAdd)
                 case TEXT_TOP:
                 case TEXT_BOTTOM:
                 case BASELINE:
-                    te = getBaseline(r) - cell->baselinePosition();
+                    int b = cell->baselinePosition();
+                    if (b > cell->borderTop() + cell->paddingTop())
+                        te = getBaseline(r) - (b - oldTe);
                     break;
                 case TOP:
                     te = 0;
                     break;
                 case MIDDLE:
-                    te = (rHeight - cell->height()) / 2;
+                    te = (rHeight - heightWithoutIntrinsicPadding) / 2;
                     break;
                 case BOTTOM:
-                    te = rHeight - cell->height();
+                    te = rHeight - heightWithoutIntrinsicPadding;
                     break;
                 default:
                     break;
             }
-                
-            int oldTe = cell->borderTopExtra();
-            int oldBe = cell->borderBottomExtra();
-                
-            int be = rHeight - cell->height() - te;
-            cell->setCellTopExtra(te);
-            cell->setCellBottomExtra(be);
+            
+            int be = rHeight - heightWithoutIntrinsicPadding - te;
+            cell->setIntrinsicPaddingTop(te);
+            cell->setIntrinsicPaddingBottom(be);
+            if (te != oldTe || be != oldBe) {
+                cell->setNeedsLayout(true, false);
+                cell->layoutIfNeeded();
+            }
+
             if ((te != oldTe || be > oldBe) && !table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
                 cell->repaint();
             
-            IntRect oldCellRect(cell->x(), cell->y() - cell->borderTopExtra() , cell->width(), cell->height());
+            IntRect oldCellRect(cell->x(), cell->y() , cell->width(), cell->height());
         
             if (style()->direction() == RTL) {
                 cell->setLocation(table()->columnPositions()[nEffCols] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + hspacing, m_rowPos[rindx]);

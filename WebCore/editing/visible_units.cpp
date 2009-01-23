@@ -494,7 +494,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     
     if (root) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
-        FloatPoint absPos = containingBlock->localToAbsoluteForContent(FloatPoint());
+        FloatPoint absPos = containingBlock->localToAbsolute(FloatPoint());
         if (containingBlock->hasOverflowClip())
             absPos -= containingBlock->layer()->scrolledContentOffset();
         RenderObject *renderer = root->closestLeafChildForXPos(x - absPos.x(), isEditablePosition(p))->object();
@@ -595,7 +595,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     
     if (root) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
-        FloatPoint absPos = containingBlock->localToAbsoluteForContent(FloatPoint());
+        FloatPoint absPos = containingBlock->localToAbsolute(FloatPoint());
         if (containingBlock->hasOverflowClip())
             absPos -= containingBlock->layer()->scrolledContentOffset();
         RenderObject *renderer = root->closestLeafChildForXPos(x - absPos.x(), isEditablePosition(p))->object();

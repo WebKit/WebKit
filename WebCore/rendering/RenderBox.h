@@ -40,7 +40,7 @@ public:
     static const RenderBox* toConstRenderBox(const RenderObject* o) { ASSERT(!o || o->isBox()); return static_cast<const RenderBox*>(o);}
     
     int x() const { return m_frameRect.x(); }
-    int y() const { return m_frameRect.y() + borderTopExtra(); } // FIXME: Need to deal with the borderTopExtra() lie in a sane way.
+    int y() const { return m_frameRect.y(); }
     int width() const { return m_frameRect.width(); }
     int height() const { return m_frameRect.height(); }
     
@@ -49,7 +49,7 @@ public:
     void setWidth(int width) { m_frameRect.setWidth(width); }
     void setHeight(int height) { m_frameRect.setHeight(height); }
     
-    IntPoint location() const { return m_frameRect.location(); } // FIXME: Be aware that this is not equivalent to x(), y() because of y()'s borderTopExtra() lie!
+    IntPoint location() const { return m_frameRect.location(); }
     IntSize size() const { return m_frameRect.size(); }
 
     void setLocation(const IntPoint& location) { m_frameRect.setLocation(location); }
@@ -61,7 +61,7 @@ public:
     IntRect frameRect() const { return m_frameRect; }
     void setFrameRect(const IntRect& rect) { m_frameRect = rect; }
 
-    IntRect borderBoxRect() const { return IntRect(0, -borderTopExtra(), width(), height() + borderTopExtra() + borderBottomExtra()); }
+    IntRect borderBoxRect() const { return IntRect(0, 0, width(), height()); }
     
     // The content area of the box (excludes padding and border).
     IntRect contentBoxRect() const { return IntRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()); }
@@ -96,7 +96,7 @@ public:
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
     // to return the remaining width on a given line (and the height of a single line).
     virtual int offsetWidth() const { return width(); }
-    virtual int offsetHeight() const { return height() + borderTopExtra() + borderBottomExtra(); }
+    virtual int offsetHeight() const { return height(); }
     virtual int offsetLeft() const;
     virtual int offsetTop() const;
     virtual RenderBox* offsetParent() const;
