@@ -1,3 +1,15 @@
+2009-01-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        Remove <span> turds left by editing commands
+        https://bugs.webkit.org/show_bug.cgi?id=23466
+
+        * editing/execCommand/empty-span-removal-expected.txt: Added.
+        * editing/execCommand/empty-span-removal.html: Added.
+        * editing/execCommand/resources/empty-span-removal.js: Added.
+        * editing/execCommand/toggle-styles-expected.txt: Updated.
+
 2009-01-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

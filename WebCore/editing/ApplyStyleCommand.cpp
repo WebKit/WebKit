@@ -251,7 +251,7 @@ bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *prop
     return equalIgnoringCase(value->cssText(), property->value()->cssText());
 }
 
-static String &styleSpanClassString()
+static String& styleSpanClassString()
 {
     DEFINE_STATIC_LOCAL(String, styleSpanClassString, ((AppleStyleSpanClass)));
     return styleSpanClassString;
@@ -262,18 +262,31 @@ bool isStyleSpan(const Node *node)
     if (!node || !node->isHTMLElement())
         return false;
 
-    const HTMLElement *elem = static_cast<const HTMLElement *>(node);
+    const HTMLElement* elem = static_cast<const HTMLElement*>(node);
     return elem->hasLocalName(spanAttr) && elem->getAttribute(classAttr) == styleSpanClassString();
 }
 
-static bool isUnstyledStyleSpan(const Node *node)
+static bool isUnstyledStyleSpan(const Node* node)
 {
     if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))
         return false;
 
-    const HTMLElement *elem = static_cast<const HTMLElement *>(node);
-    CSSMutableStyleDeclaration *inlineStyleDecl = elem->inlineStyleDecl();
+    const HTMLElement* elem = static_cast<const HTMLElement*>(node);
+    CSSMutableStyleDeclaration* inlineStyleDecl = elem->inlineStyleDecl();
     return (!inlineStyleDecl || inlineStyleDecl->length() == 0) && elem->getAttribute(classAttr) == styleSpanClassString();
+}
+
+static bool isSpanWithoutAttributesOrUnstyleStyleSpan(const Node* node)
+{
+    if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))
+        return false;
+
+    const HTMLElement* elem = static_cast<const HTMLElement*>(node);
+    NamedAttrMap* attributes = elem->attributes(true); // readonly
+    if (attributes->length() == 0)
+        return true;
+
+    return isUnstyledStyleSpan(node);
 }
 
 static bool isEmptyFontTag(const Node *node)
@@ -570,6 +583,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
         }
         if (inlineStyleDecl->length() == 0) {
             removeNodeAttribute(element.get(), styleAttr);
+            // FIXME: should this be isSpanWithoutAttributesOrUnstyleStyleSpan?  Need a test.
             if (isUnstyledStyleSpan(element.get()))
                 unstyledSpans.append(element.release());
         }
@@ -694,6 +708,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
                     inlineStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
                     inlineStyle->removeProperty(CSSPropertyDirection);
                     setNodeAttribute(element, styleAttr, inlineStyle->cssText());
+                    // FIXME: should this be isSpanWithoutAttributesOrUnstyleStyleSpan?  Need a test.
                     if (isUnstyledStyleSpan(element))
                         removeNodePreservingChildren(element);
                 }
@@ -1009,6 +1024,7 @@ void ApplyStyleCommand::removeHTMLBidiEmbeddingStyle(CSSMutableStyleDeclaration 
 
     removeNodeAttribute(elem, dirAttr);
 
+    // FIXME: should this be isSpanWithoutAttributesOrUnstyleStyleSpan?  Need a test.
     if (isUnstyledStyleSpan(elem))
         removeNodePreservingChildren(elem);
 }
@@ -1037,7 +1053,7 @@ void ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclaration* style, HTMLEl
     if (decl->length() == 0)
         removeNodeAttribute(elem, styleAttr);
 
-    if (isUnstyledStyleSpan(elem))
+    if (isSpanWithoutAttributesOrUnstyleStyleSpan(elem))
         removeNodePreservingChildren(elem);
 }
 
