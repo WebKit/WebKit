@@ -57,7 +57,7 @@ Field* ProxyClass::fieldNamed(const Identifier& identifier, Instance* instance) 
     return static_cast<ProxyInstance*>(instance)->fieldNamed(identifier);
 }
 
-ProxyClass* proxyClass()
+static ProxyClass* proxyClass()
 {
     DEFINE_STATIC_LOCAL(ProxyClass, proxyClass, ());
     return &proxyClass;

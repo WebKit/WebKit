@@ -1,5 +1,12 @@
 2009-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Fix 64-bit build.
+        
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::proxyClass):
+
+2009-01-23  Anders Carlsson  <andersca@apple.com>
+
         Fix GCC 4.0 build.
         
         * Configurations/Base.xcconfig:
