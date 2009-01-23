@@ -41,7 +41,13 @@ enum LoadURLFlags {
     AllowHeadersInPostData = 1 << 2,
     CurrentEventIsUserGesture = 1 << 3,
 };
-    
+ 
+enum InvokeType {
+    Invoke,
+    InvokeDefault,
+    Construct
+};
+
 enum ValueType {
     VoidValueType,
     NullValueType,

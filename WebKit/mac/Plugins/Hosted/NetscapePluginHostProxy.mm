@@ -240,7 +240,7 @@ kern_return_t WKPCGetScriptableNPObjectReply(mach_port_t clientPort, uint32_t pl
     return KERN_SUCCESS;
 }
 
-kern_return_t WKPCNPObjectHasPropertyReply(mach_port_t clientPort, uint32_t pluginID, boolean_t hasProperty)
+kern_return_t WKPCBooleanReply(mach_port_t clientPort, uint32_t pluginID, boolean_t result)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
@@ -250,21 +250,7 @@ kern_return_t WKPCNPObjectHasPropertyReply(mach_port_t clientPort, uint32_t plug
     if (!instanceProxy)
         return KERN_FAILURE;
     
-    instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::NPObjectHasPropertyReply(hasProperty));
-    return KERN_SUCCESS;
-}
-
-kern_return_t WKPCNPObjectHasMethodReply(mach_port_t clientPort, uint32_t pluginID, boolean_t hasMethod)
-{
-    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
-    if (!hostProxy)
-        return KERN_FAILURE;
-    
-    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
-    if (!instanceProxy)
-        return KERN_FAILURE;
-    
-    instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::NPObjectHasMethodReply(hasMethod));
+    instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::BooleanReply(result));
     return KERN_SUCCESS;
 }
 

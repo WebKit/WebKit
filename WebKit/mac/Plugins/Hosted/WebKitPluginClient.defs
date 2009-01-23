@@ -148,14 +148,10 @@ simpleroutine GetScriptableNPObjectReply(clientPort :mach_port_t;
                                          pluginID :uint32_t;
                                          objectID :uint32_t);
 
-simpleroutine NPObjectHasPropertyReply(clientPort :mach_port_t;
-                                       pluginID :uint32_t;
-                                       hasProperty :boolean_t);
-
-simpleroutine NPObjectHasMethodReply(clientPort :mach_port_t;
-                                     pluginID :uint32_t;
-                                     hasMethod :boolean_t);
-
+simpleroutine BooleanReply(clientPort :mach_port_t;
+                           pluginID :uint32_t;
+                           result :boolean_t);
+                           
 simpleroutine NPObjectInvokeReply(clientPort :mach_port_t;
                                   pluginID :uint32_t;
                                   returnValue :boolean_t;

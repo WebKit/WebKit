@@ -120,9 +120,8 @@ public:
         enum Type {
             InstantiatePlugin,
             GetScriptableNPObject,
-            NPObjectHasProperty,
-            NPObjectHasMethod,
-            NPObjectInvoke
+            NPObjectInvoke,
+            Boolean
         };
         
         Reply(Type type) : m_type(type) { }
@@ -159,28 +158,16 @@ public:
         uint32_t m_objectID;
     };
     
-    struct NPObjectHasPropertyReply : public Reply {
-        static const Reply::Type ReplyType = NPObjectHasProperty;
+    struct BooleanReply : public Reply {
+        static const Reply::Type ReplyType = Boolean;
         
-        NPObjectHasPropertyReply(boolean_t hasProperty)
+        BooleanReply(boolean_t result)
             : Reply(ReplyType)
-            , m_hasProperty(hasProperty)
+            , m_result(result)
         {
         }
         
-        boolean_t m_hasProperty;
-    };
-
-    struct NPObjectHasMethodReply : public Reply {
-        static const Reply::Type ReplyType = NPObjectHasMethod;
-        
-        NPObjectHasMethodReply(boolean_t hasMethod)
-            : Reply(ReplyType)
-            , m_hasMethod(hasMethod)
-        {
-        }
-        
-        boolean_t m_hasMethod;
+        boolean_t m_result;
     };
 
     struct NPObjectInvokeReply : public Reply {

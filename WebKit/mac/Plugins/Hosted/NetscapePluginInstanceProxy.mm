@@ -870,6 +870,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
             uint32_t objectID = [[array objectAtIndex:index++] intValue];
             
             result = m_objects.get(objectID);
+            ASSERT(result);
             return true;
         }
         default:

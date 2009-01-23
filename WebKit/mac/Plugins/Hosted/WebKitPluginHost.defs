@@ -137,9 +137,18 @@ simpleroutine NPObjectHasMethod(pluginHostPort :mach_port_t;
 simpleroutine NPObjectInvoke(pluginHostPort :mach_port_t;
                              pluginID :uint32_t;
                              objectID :uint32_t;
+                             invokeType :uint32_t;
                              methodName :uint64_t;
                              arguments :data_t);
 
+simpleroutine NPObjectHasInvokeDefaultMethod(pluginHostPort :mach_port_t;
+                                             pluginID :uint32_t;
+                                             objectID :uint32_t);
+
+simpleroutine NPObjectHasConstructMethod(pluginHostPort :mach_port_t;
+                                         pluginID :uint32_t;
+                                         objectID :uint32_t);
+                                       
 // Replies
 
 simpleroutine EvaluateReply(pluginHostPort :mach_port_t;

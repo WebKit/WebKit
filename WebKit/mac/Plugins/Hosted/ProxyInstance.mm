@@ -123,25 +123,49 @@ JSC::Bindings::Class *ProxyInstance::getClass() const
     return proxyClass();
 }
 
+JSValuePtr ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t identifier, const JSC::ArgList& args)
+{
+    RetainPtr<NSData*> arguments(m_instanceProxy->marshalValues(exec, args));
+    
+    if (_WKPHNPObjectInvoke(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), m_objectID,
+                            type, identifier, (char*)[arguments.get() bytes], [arguments.get() length]) != KERN_SUCCESS)
+        return jsUndefined();
+    
+    auto_ptr<NetscapePluginInstanceProxy::NPObjectInvokeReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::NPObjectInvokeReply>();
+    if (!reply.get() || !reply->m_returnValue)
+        return jsUndefined();
+    
+    return m_instanceProxy->demarshalValue(exec, (char*)CFDataGetBytePtr(reply->m_result.get()), CFDataGetLength(reply->m_result.get()));
+}
+
 JSValuePtr ProxyInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const ArgList& args)
 {
     ASSERT(methodList.size() == 1);
 
     ProxyMethod* method = static_cast<ProxyMethod*>(methodList[0]);
 
-    RetainPtr<NSData*> arguments(m_instanceProxy->marshalValues(exec, args));
+    return invoke(exec, Invoke, method->serverIdentifier(), args);
+}
+
+bool ProxyInstance::supportsInvokeDefaultMethod() const
+{
+    if (_WKPHNPObjectHasInvokeDefaultMethod(m_instanceProxy->hostProxy()->port(),
+                                            m_instanceProxy->pluginID(),
+                                            m_objectID) != KERN_SUCCESS)
+        return false;
     
-    if (_WKPHNPObjectInvoke(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), m_objectID,
-                            method->serverIdentifier(), (char*)[arguments.get() bytes], [arguments.get() length]) != KERN_SUCCESS)
-        return jsUndefined();
-    
-    auto_ptr<NetscapePluginInstanceProxy::NPObjectInvokeReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::NPObjectInvokeReply>();
-    if (!reply.get())
-        return jsUndefined();
-    
-    return m_instanceProxy->demarshalValue(exec, (char*)CFDataGetBytePtr(reply->m_result.get()), CFDataGetLength(reply->m_result.get()));
+    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>();
+    if (reply.get() && reply->m_result)
+        return true;
+        
+    return false;
 }
     
+JSValuePtr ProxyInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
+{
+    return invoke(exec, InvokeDefault, 0, args);
+}
+
 JSValuePtr ProxyInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
     if (hint == PreferString)
@@ -188,8 +212,8 @@ MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
                                m_objectID, methodName) != KERN_SUCCESS)
         return MethodList();
     
-    auto_ptr<NetscapePluginInstanceProxy::NPObjectHasMethodReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::NPObjectHasMethodReply>();
-    if (reply.get() && reply->m_hasMethod) {
+    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>();
+    if (reply.get() && reply->m_result) {
         Method* method = new ProxyMethod(methodName);
         
         m_methods.set(identifier.ustring().rep(), method);
@@ -213,8 +237,8 @@ Field* ProxyInstance::fieldNamed(const Identifier& identifier)
                                  m_objectID, propertyName) != KERN_SUCCESS)
         return 0;
         
-    auto_ptr<NetscapePluginInstanceProxy::NPObjectHasPropertyReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::NPObjectHasPropertyReply>();
-    if (reply.get() && reply->m_hasProperty) {
+    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>();
+    if (reply.get() && reply->m_result) {
         Field* field = new ProxyField(propertyName);
         
         m_fields.set(identifier.ustring().rep(), field);
