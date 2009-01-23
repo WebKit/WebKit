@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008, 2009 Google, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +24,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JPEG_DECODER_H_
-#define JPEG_DECODER_H_
+#ifndef JPEGImageDecoder_h
+#define JPEGImageDecoder_h
 
 #include "ImageDecoder.h"
 
 namespace WebCore {
 
-class JPEGImageReader;
+    class JPEGImageReader;
 
-// This class decodes the JPEG image format.
-class JPEGImageDecoder : public ImageDecoder
-{
-public:
-    JPEGImageDecoder();
-    ~JPEGImageDecoder();
+    // This class decodes the JPEG image format.
+    class JPEGImageDecoder : public ImageDecoder {
+    public:
+        JPEGImageDecoder();
+        ~JPEGImageDecoder();
 
-    virtual String filenameExtension() const { return "jpg"; }
+        virtual String filenameExtension() const { return "jpg"; }
 
-    // Take the data and store it.
-    virtual void setData(SharedBuffer* data, bool allDataReceived);
+        // Take the data and store it.
+        virtual void setData(SharedBuffer* data, bool allDataReceived);
 
-    // Whether or not the size information has been decoded yet.
-    virtual bool isSizeAvailable() const;
+        // Whether or not the size information has been decoded yet.
+        virtual bool isSizeAvailable() const;
 
-    virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
-    
-    virtual bool supportsAlpha() const { return false; }
+        virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
+        
+        virtual bool supportsAlpha() const { return false; }
 
-    void decode(bool sizeOnly = false) const;
+        void decode(bool sizeOnly = false) const;
 
-    JPEGImageReader* reader() { return m_reader; }
+        JPEGImageReader* reader() { return m_reader; }
 
-    void setSize(int width, int height) {
-        if (!m_sizeAvailable) {
-            m_sizeAvailable = true;
-            m_size = IntSize(width, height);
-        }
-    }
+        bool outputScanlines();
+        void jpegComplete();
 
-    bool outputScanlines();
-    void jpegComplete();
+    private:
+        friend class JPEGImageReader;
+        mutable JPEGImageReader* m_reader;
+    };
 
-private:
-    mutable JPEGImageReader* m_reader;
-};
-
-}
+} // namespace WebCore
 
 #endif
