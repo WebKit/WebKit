@@ -49,6 +49,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,292) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
           RenderBlock {DIV} at (42,2) size 740x28
-            RenderText {#text} at (-40,0) size 40x28
+            RenderText {#text} at (-40,0) size 32x28
               text run at (-40,0) width 32: "foo"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
