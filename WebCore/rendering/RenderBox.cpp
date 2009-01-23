@@ -244,7 +244,7 @@ int RenderBox::offsetTop() const
     RenderBox* offsetPar = offsetParent();
     if (!offsetPar)
         return 0;
-    int yPos = m_frameRect.y() - offsetPar->borderTop();
+    int yPos = y() - offsetPar->borderTop();
     if (!isPositioned()) {
         if (isRelPositioned())
             yPos += relativePositionOffsetY();
@@ -556,7 +556,7 @@ int RenderBox::calcContentBoxHeight(int height) const
 bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int xPos, int yPos, int tx, int ty, HitTestAction action)
 {
     tx += x();
-    ty += m_frameRect.y();
+    ty += y();
 
     // Check kids first.
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
@@ -585,7 +585,7 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
 void RenderBox::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     tx += x();
-    ty += m_frameRect.y();
+    ty += y();
 
     // default implementation. Just pass paint through to the children
     PaintInfo childInfo(paintInfo);
@@ -1138,7 +1138,7 @@ void RenderBox::paintCustomHighlight(int tx, int ty, const AtomicString& type, b
         FloatRect imageRect(tx + x(), rootRect.y(), width(), rootRect.height());
         page->chrome()->client()->paintCustomHighlight(node(), type, imageRect, rootRect, behindText, false);
     } else {
-        FloatRect imageRect(tx + x(), ty + m_frameRect.y(), width(), height());
+        FloatRect imageRect(tx + x(), ty + y(), width(), height());
         page->chrome()->client()->paintCustomHighlight(node(), type, imageRect, imageRect, behindText, false);
     }
 }
@@ -1201,7 +1201,7 @@ int RenderBox::containingBlockWidth() const
     if (!cb)
         return 0;
     if (shrinkToAvoidFloats())
-        return cb->lineWidth(m_frameRect.y());
+        return cb->lineWidth(y());
     return cb->availableWidth();
 }
 
@@ -1248,7 +1248,7 @@ FloatPoint RenderBox::localToAbsolute(FloatPoint localPoint, bool fixed, bool us
         if (v->layoutStateEnabled()) {
             LayoutState* layoutState = v->layoutState();
             IntSize offset = layoutState->m_offset;
-            offset.expand(x(), m_frameRect.y());
+            offset.expand(x(), y());
             localPoint += offset;
             if (style()->position() == RelativePosition && m_layer)
                 localPoint += m_layer->relativePositionOffset();
@@ -1328,11 +1328,11 @@ IntSize RenderBox::offsetFromContainer(RenderObject* o) const
         RenderBlock* cb;
         if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition
                 && (cb = static_cast<RenderBlock*>(o))->hasColumns()) {
-            IntRect rect(x(), m_frameRect.y(), 1, 1);
+            IntRect rect(x(), y(), 1, 1);
             cb->adjustRectForColumns(rect);
             offset.expand(rect.x(), rect.y());
         } else
-            offset.expand(x(), m_frameRect.y());
+            offset.expand(x(), y());
     }
 
     if (o->hasOverflowClip())
@@ -1429,7 +1429,7 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
             if (style()->position() == RelativePosition && m_layer)
                 rect.move(m_layer->relativePositionOffset());
 
-            rect.move(x(), m_frameRect.y());
+            rect.move(x(), y());
             rect.move(layoutState->m_offset);
             if (layoutState->m_clipped)
                 rect.intersect(layoutState->m_clipRect);
@@ -1445,7 +1445,7 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
         return;
 
     IntPoint topLeft = rect.location();
-    topLeft.move(x(), m_frameRect.y());
+    topLeft.move(x(), y());
 
     if (style()->position() == FixedPosition)
         fixed = true;
@@ -1467,7 +1467,7 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
         rect = m_layer->transform()->mapRect(rect);
         // FIXME: this clobbers topLeft adjustment done for multicol above
         topLeft = rect.location();
-        topLeft.move(x(), m_frameRect.y());
+        topLeft.move(x(), y());
     }
 
     if (style()->position() == AbsolutePosition)
@@ -1502,7 +1502,7 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
 void RenderBox::repaintDuringLayoutIfMoved(const IntRect& rect)
 {
     int newX = x();
-    int newY = m_frameRect.y();
+    int newY = y();
     int newWidth = width();
     int newHeight = height();
     if (rect.x() != newX || rect.y() != newY) {

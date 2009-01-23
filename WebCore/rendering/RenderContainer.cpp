@@ -524,7 +524,7 @@ void RenderContainer::layout()
 {
     ASSERT(needsLayout());
 
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), m_frameRect.y()));
+    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()));
 
     RenderObject* child = m_firstChild;
     while (child) {

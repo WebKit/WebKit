@@ -111,7 +111,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
     
     tx += x();
-    ty += m_frameRect.y();
+    ty += y();
     
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
         paintBoxDecorations(paintInfo, tx, ty);
@@ -160,7 +160,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
         return false;
 
     int currentTX = tx + x();
-    int currentTY = ty + m_frameRect.y();
+    int currentTY = ty + y();
 
     // Early exit if the element touches the edges.
     int top = currentTY + overflowTop();

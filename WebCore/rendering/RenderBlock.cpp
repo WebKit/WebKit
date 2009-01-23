@@ -1483,7 +1483,7 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
 void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     tx += x();
-    ty += m_frameRect.y();
+    ty += y();
     
     PaintPhase phase = paintInfo.phase;
 
@@ -2844,7 +2844,7 @@ void RenderBlock::clearFloats()
     }
 
     // First add in floats from the parent.
-    int offset = m_frameRect.y();
+    int offset = y();
     if (parentHasFloats)
         addIntrudingFloats(static_cast<RenderBlock *>(parent()),
                            parent()->borderLeft() + parent()->paddingLeft(), offset);

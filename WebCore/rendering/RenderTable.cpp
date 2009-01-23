@@ -224,7 +224,7 @@ void RenderTable::calcWidth()
     } else {
         // An auto width table should shrink to fit within the line width if necessary in order to 
         // avoid overlapping floats.
-        availableWidth = cb->lineWidth(m_frameRect.y());
+        availableWidth = cb->lineWidth(y());
         
         // Subtract out any fixed margins from our available width for auto width tables.
         int marginTotal = 0;
@@ -265,7 +265,7 @@ void RenderTable::layout()
         oldOutlineBox = absoluteOutlineBounds();
     }
     
-    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), m_frameRect.y()));
+    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()));
 
     setHeight(0);
     m_overflowHeight = 0;

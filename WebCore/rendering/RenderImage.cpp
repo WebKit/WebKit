@@ -396,7 +396,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
 #if PLATFORM(MAC)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-            paintCustomHighlight(tx - x(), ty - m_frameRect.y(), style()->highlight(), true);
+            paintCustomHighlight(tx - x(), ty - y(), style()->highlight(), true);
 #endif
 
         IntSize contentSize(cWidth, cHeight);
@@ -425,7 +425,7 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     if (inside && element()) {
         int tx = _tx + x();
-        int ty = _ty + m_frameRect.y();
+        int ty = _ty + y();
         
         HTMLMapElement* map = imageMap();
         if (map) {

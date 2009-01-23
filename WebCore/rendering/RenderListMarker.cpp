@@ -530,7 +530,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     IntRect marker = getRelativeMarkerRect();
     marker.move(tx, ty);
 
-    IntRect box(tx + x(), ty + m_frameRect.y(), width(), height());
+    IntRect box(tx + x(), ty + y(), width(), height());
 
     if (box.y() > paintInfo.rect.bottom() || box.y() + box.height() < paintInfo.rect.y())
         return;
@@ -829,7 +829,7 @@ bool RenderListMarker::isInside() const
 IntRect RenderListMarker::getRelativeMarkerRect()
 {
     if (isImage())
-        return IntRect(x(), m_frameRect.y(), m_image->imageSize(this, style()->effectiveZoom()).width(), m_image->imageSize(this, style()->effectiveZoom()).height());
+        return IntRect(x(), y(), m_image->imageSize(this, style()->effectiveZoom()).width(), m_image->imageSize(this, style()->effectiveZoom()).height());
 
     switch (style()->listStyleType()) {
         case DISC:
@@ -839,7 +839,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
             const Font& font = style()->font();
             int ascent = font.ascent();
             int bulletWidth = (ascent * 2 / 3 + 1) / 2;
-            return IntRect(x() + 1, m_frameRect.y() + 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
+            return IntRect(x() + 1, y() + 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
         }
         case LNONE:
             return IntRect();
@@ -866,7 +866,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
             int itemWidth = font.width(m_text);
             const UChar periodSpace[2] = { '.', ' ' };
             int periodSpaceWidth = font.width(TextRun(periodSpace, 2));
-            return IntRect(x(), m_frameRect.y() + font.ascent(), itemWidth + periodSpaceWidth, font.height());
+            return IntRect(x(), y() + font.ascent(), itemWidth + periodSpaceWidth, font.height());
     }
 
     return IntRect();

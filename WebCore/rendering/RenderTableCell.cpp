@@ -645,7 +645,7 @@ int RenderTableCell::borderHalfBottom(bool outer) const
 void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     tx += x();
-    ty += m_frameRect.y();
+    ty += y();
 
     // check if we need to do anything at all...
     int os = 2 * maximalOutlineSize(paintInfo.phase);
@@ -820,7 +820,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, i
 
     if (backgroundObject != this) {
         tx += x();
-        ty += m_frameRect.y();
+        ty += y();
     }
 
     int w = width();

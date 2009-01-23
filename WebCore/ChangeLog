@@ -1,5 +1,62 @@
 2009-01-22  David Hyatt  <hyatt@apple.com>
 
+        Properly encapsulate m_frameRect.y() behind the RenderBox::y() method now that they are the same thing.
+        Make m_frameRect private.
+
+        Reviewed by Oliver Hunt
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::clearFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetTop):
+        (WebCore::RenderBox::nodeAtPoint):
+        (WebCore::RenderBox::paint):
+        (WebCore::RenderBox::paintCustomHighlight):
+        (WebCore::RenderBox::containingBlockWidth):
+        (WebCore::RenderBox::localToAbsolute):
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+        (WebCore::RenderBox::repaintDuringLayoutIfMoved):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::layout):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paint):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::nodeAtPoint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::applyContentTransforms):
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::absoluteTransform):
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcWidth):
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::setCellWidths):
+        (WebCore::RenderTableSection::calcRowHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::paint):
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
+2009-01-22  David Hyatt  <hyatt@apple.com>
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=23487.
 
         This patch completely reworks vertical alignment of table cells.  The current system uses methods called borderTopExtra() and borderBottomExtra() to

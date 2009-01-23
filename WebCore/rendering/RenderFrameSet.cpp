@@ -127,7 +127,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, int tx, int ty)
 
     // Add in our offsets.
     tx += x();
-    ty += m_frameRect.y();
+    ty += y();
 
     int rows = frameSet()->totalRows();
     int cols = frameSet()->totalCols();

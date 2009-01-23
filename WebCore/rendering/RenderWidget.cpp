@@ -174,7 +174,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     tx += x();
-    ty += m_frameRect.y();
+    ty += y();
 
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection))
         paintBoxDecorations(paintInfo, tx, ty);
@@ -189,7 +189,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
 
 #if PLATFORM(MAC)
     if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-        paintCustomHighlight(tx - x(), ty - m_frameRect.y(), style()->highlight(), true);
+        paintCustomHighlight(tx - x(), ty - y(), style()->highlight(), true);
 #endif
 
     if (m_widget) {
