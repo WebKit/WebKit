@@ -1,5 +1,12 @@
 2009-01-23  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
+        [Qt] Fix the build after RenderBox refactoring in r40153.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::baselinePosition):
+
+2009-01-23  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
         Rubber-stamped by Alexey Proskuryakov.
 
         Fix the build after RenderBox refactoring in r40153.
