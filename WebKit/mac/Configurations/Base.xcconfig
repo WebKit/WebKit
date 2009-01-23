@@ -17,12 +17,13 @@ GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
 OTHER_MIGFLAGS = -F$(BUILT_PRODUCTS_DIR);
 PREBINDING = NO;
 VALID_ARCHS = i386 ppc x86_64 ppc64;
 // FIXME: <rdar://problem/5070292> WebKit should build with -Wshorten-64-to-32
-WARNING_CFLAGS = -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wundef -Wmissing-prototypes;
+WARNING_CFLAGS = -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wundef;
 
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL and STRIP_INSTALLED_PRODUCT vary between the debug and normal variants.

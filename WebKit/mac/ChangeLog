@@ -1,5 +1,11 @@
 2009-01-23  Anders Carlsson  <andersca@apple.com>
 
+        Fix GCC 4.0 build.
+        
+        * Configurations/Base.xcconfig:
+
+2009-01-23  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Turn on -Wmissing-prototypes and fix the resulting warnings.
