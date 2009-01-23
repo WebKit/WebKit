@@ -1,3 +1,16 @@
+2009-01-23  Eric Seidel  <eric@webkit.org>
+
+        No review, removing an empty file.
+
+        Remove RemoveNodeAttributeCommand since it was empty.
+
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/RemoveNodeAttributeCommand.cpp: Removed.
+        * editing/RemoveNodeAttributeCommand.h: Removed.
+
 2009-01-23  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam Weinig

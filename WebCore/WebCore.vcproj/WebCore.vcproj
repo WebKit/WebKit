@@ -12438,14 +12438,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\editing\RemoveNodeAttributeCommand.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\editing\RemoveNodeAttributeCommand.h"
-				>
-			</File>
-			<File
 				RelativePath="..\editing\RemoveNodeCommand.cpp"
 				>
 			</File>
