@@ -1,3 +1,20 @@
+2009-01-23  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23506
+        Copy existing image-decoders in preparation for landing Skia changes on top.
+
+        * platform/image-decoders/skia: Added.
+        * platform/image-decoders/skia/GIFImageDecoder.cpp: Copied from platform/image-decoders/gif/GIFImageDecoder.cpp.
+        * platform/image-decoders/skia/GIFImageDecoder.h: Copied from platform/image-decoders/gif/GIFImageDecoder.h.
+        * platform/image-decoders/skia/GIFImageReader.cpp: Copied from platform/image-decoders/gif/GIFImageReader.cpp.
+        * platform/image-decoders/skia/GIFImageReader.h: Copied from platform/image-decoders/gif/GIFImageReader.h.
+        * platform/image-decoders/skia/JPEGImageDecoder.cpp: Copied from platform/image-decoders/jpeg/JPEGImageDecoder.cpp.
+        * platform/image-decoders/skia/JPEGImageDecoder.h: Copied from platform/image-decoders/jpeg/JPEGImageDecoder.h.
+        * platform/image-decoders/skia/PNGImageDecoder.cpp: Copied from platform/image-decoders/png/PNGImageDecoder.cpp.
+        * platform/image-decoders/skia/PNGImageDecoder.h: Copied from platform/image-decoders/png/PNGImageDecoder.h.
+
 2009-01-23  Holger Freyther  <zecke@selfish.org>
 
         Unreviewed build fix.
