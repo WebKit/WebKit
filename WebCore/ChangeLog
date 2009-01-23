@@ -1,5 +1,14 @@
 2009-01-23  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Fix the build after RenderBox refactoring in r40153.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::invalidateWindowlessPluginRect):
+
+2009-01-23  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
         Reviewed by Simon Hausmann.
 
         [Qt] Simplify the assertion.
