@@ -43,7 +43,6 @@ namespace WebCore {
 
     class WorkerLocation;
     class WorkerNavigator;
-    class WorkerTask;
     class WorkerThread;
 
     class WorkerContext : public RefCounted<WorkerContext>, public ScriptExecutionContext, public EventTarget {

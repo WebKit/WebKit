@@ -103,7 +103,7 @@ void* WorkerThread::workerThread()
     {
         MutexLocker lock(m_threadCreationMutex);
         m_workerContext = WorkerContext::create(m_startupData->m_scriptURL, m_startupData->m_userAgent, this);
-        if (m_messageQueue.killed()) {
+        if (m_runLoop.terminated()) {
             // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet, 
             // forbidExecution() couldn't be called from stop().
            m_workerContext->script()->forbidExecution();
@@ -119,13 +119,8 @@ void* WorkerThread::workerThread()
 
     m_messagingProxy->confirmWorkerThreadMessage(m_workerContext->hasPendingActivity()); // This wasn't really a message, but it counts as one for GC.
 
-    while (true) {
-        RefPtr<WorkerTask> task;
-        if (!m_messageQueue.waitForMessage(task))
-            break;
-
-        task->performTask(m_workerContext.get());
-    }
+    // Blocks until terminated.
+    m_runLoop.run(m_workerContext.get());
 
     ThreadIdentifier threadID = m_threadID;
 
@@ -151,7 +146,7 @@ void WorkerThread::stop()
         m_workerContext->script()->forbidExecution();
 
     // FIXME: Rudely killing the thread won't work when we allow nested workers, because they will try to post notifications of their destruction.
-    m_messageQueue.kill();
+    m_runLoop.terminate();
 }
 
 } // namespace WebCore

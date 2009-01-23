@@ -210,7 +210,7 @@ private:
 
 void WorkerContext::postTask(PassRefPtr<Task> task)
 {
-    thread()->messageQueue().append(ScriptExecutionContextTaskWorkerTask::create(task));
+    thread()->runLoop().postTask(ScriptExecutionContextTaskWorkerTask::create(task));
 }
 
 void WorkerContext::postTaskToParentContext(PassRefPtr<Task> task)

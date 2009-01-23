@@ -1,3 +1,32 @@
+2009-01-23  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23374
+        Add WorkerRunLoop to encapsulate message queue and timer heap.
+        This is first half (timer heap is added as separate patch).
+
+        * GNUmakefile.am: Added WorkerRunLoop.cpp to the build.
+        * WebCore.vcproj/WebCore.vcproj: Same as above.
+        * WebCore.xcodeproj/project.pbxproj: Same as above
+        * dom/WorkerContext.cpp:
+        (WebCore::WorkerContext::postTask):
+        * dom/WorkerContext.h:
+        * dom/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerContext):
+        (WebCore::WorkerMessagingProxy::workerThreadCreated):
+        * dom/WorkerRunLoop.cpp: Added.
+        (WebCore::WorkerRunLoop::run): Runs the loop until terminate() is called.
+        (WebCore::WorkerRunLoop::terminate): Causes the loop to exit.
+        (WebCore::WorkerRunLoop::postTask): Adds a task to the internal queue.
+        * dom/WorkerRunLoop.h: Added.
+        (WebCore::WorkerRunLoop::WorkerRunLoop):
+        * dom/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        (WebCore::WorkerThread::stop):
+        * dom/WorkerThread.h:
+        (WebCore::WorkerThread::runLoop):
+
 2009-01-23  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Holger Hans Peter Freyther.

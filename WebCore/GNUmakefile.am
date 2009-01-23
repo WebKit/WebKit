@@ -2188,6 +2188,8 @@ webcore_sources += \
 	WebCore/dom/WorkerLocation.h \
 	WebCore/dom/WorkerMessagingProxy.cpp \
 	WebCore/dom/WorkerMessagingProxy.h \
+	WebCore/dom/WorkerRunLoop.cpp \
+	WebCore/dom/WorkerRunLoop.h \
 	WebCore/dom/WorkerTask.cpp \
 	WebCore/dom/WorkerTask.h \
 	WebCore/dom/WorkerThread.cpp \

@@ -12146,6 +12146,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\WorkerRunLoop.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\WorkerRunLoop.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\WorkerTask.cpp"
 				>
 			</File>
