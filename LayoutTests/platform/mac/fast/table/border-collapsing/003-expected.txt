@@ -23,8 +23,8 @@ layer at (0,0) size 800x386
         RenderTable {DIV} at (1,1) size 115x220 [border:]
           RenderTableSection (anonymous) at (1,10) size 104x200
             RenderTableRow {P} at (0,0) size 104x100
-              RenderTableCell {SPAN} at (0,-1) size 52x11 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {SPAN} at (52,-10) size 52x68 [border: (10px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {SPAN} at (0,0) size 52x11 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (52,0) size 52x68 [border: (10px solid #000000)] [r=0 c=1 rs=1 cs=1]
             RenderTableRow {P} at (0,100) size 104x100 [border: (1px solid #0000FF)]
-              RenderTableCell {SPAN} at (0,90) size 52x20 [border: (10px solid #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderTableCell {SPAN} at (52,90) size 52x68 [border: (10px solid #000000)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {SPAN} at (0,100) size 52x20 [border: (10px solid #000000)] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (52,100) size 52x68 [border: (10px solid #000000)] [r=1 c=1 rs=1 cs=1]
