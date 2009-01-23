@@ -1,3 +1,10 @@
+2009-01-23  Darin Adler  <darin@apple.com>
+
+        Try to fix WX build.
+
+        * runtime/JSGlobalObjectFunctions.h: Include <wtf/unicode/Unicode.h>
+        for the definition of UChar.
+
 2009-01-23  Anders Carlsson  <andersca@apple.com>
 
         * Configurations/Base.xcconfig:

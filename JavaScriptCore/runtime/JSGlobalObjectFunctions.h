@@ -24,13 +24,14 @@
 #ifndef JSGlobalObjectFunctions_h
 #define JSGlobalObjectFunctions_h
 
-#include "JSImmediate.h" // temporary until JSValue* becomes a class we can forward-declare
+#include <wtf/unicode/Unicode.h>
 
 namespace JSC {
 
     class ArgList;
     class ExecState;
     class JSObject;
+    class JSValuePtr;
 
     // FIXME: These functions should really be in JSGlobalObject.cpp, but putting them there
     // is a 0.5% reduction.
