@@ -191,7 +191,7 @@ UString::BaseString* UString::Rep::nullBaseString;
 UString::BaseString* UString::Rep::emptyBaseString;
 UString* UString::nullUString;
 
-void initializeStaticBaseString(int len, UChar* buf, UString::BaseString& base)
+static void initializeStaticBaseString(int len, UChar* buf, UString::BaseString& base)
 {
     base.offset = 0;
     base.len = len;
@@ -496,7 +496,7 @@ void UString::expandPreCapacity(int requiredPreCap)
     m_rep->checkConsistency();
 }
 
-PassRefPtr<UString::Rep> createRep(const char* c)
+static PassRefPtr<UString::Rep> createRep(const char* c)
 {
     if (!c)
         return &UString::Rep::null();

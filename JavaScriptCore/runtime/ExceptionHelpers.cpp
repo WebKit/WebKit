@@ -31,22 +31,13 @@
 
 #include "CodeBlock.h"
 #include "CallFrame.h"
+#include "JSGlobalObjectFunctions.h"
 #include "JSObject.h"
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
 #include "Nodes.h"
 
 namespace JSC {
-
-static void substitute(UString& string, const UString& substring)
-{
-    int position = string.find("%s");
-    ASSERT(position != -1);
-    UString newString = string.substr(0, position);
-    newString.append(substring);
-    newString.append(string.substr(position + 2));
-    string = newString;
-}
 
 class InterruptedExecutionError : public JSObject {
 public:
@@ -63,23 +54,9 @@ JSValuePtr createInterruptedExecutionException(JSGlobalData* globalData)
     return new (globalData) InterruptedExecutionError(globalData);
 }
 
-JSValuePtr createError(ExecState* exec, ErrorType e, const char* msg)
+static JSValuePtr createError(ExecState* exec, ErrorType e, const char* msg)
 {
     return Error::create(exec, e, msg, -1, -1, 0);
-}
-
-JSValuePtr createError(ExecState* exec, ErrorType e, const char* msg, const Identifier& label)
-{
-    UString message = msg;
-    substitute(message, label.ustring());
-    return Error::create(exec, e, message, -1, -1, 0);
-}
-
-JSValuePtr createError(ExecState* exec, ErrorType e, const char* msg, JSValuePtr v)
-{
-    UString message = msg;
-    substitute(message, v.toString(exec));
-    return Error::create(exec, e, message, -1, -1, 0);
 }
 
 JSValuePtr createStackOverflowError(ExecState* exec)
@@ -102,8 +79,6 @@ JSValuePtr createUndefinedVariableError(ExecState* exec, const Identifier& ident
     return exception;
 }
     
-bool isStrWhiteSpace(UChar c);
-
 static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, int expressionStart, int expressionStop, JSValuePtr value, UString error)
 {
     if (!expressionStop || expressionStart > codeBlock->source()->length()) {

@@ -3316,6 +3316,8 @@ void* calloc(size_t n, size_t elem_size) {
   return result;
 }
 
+// Since cfree isn't used anywhere, we don't compile it in.
+#ifndef WTF_CHANGES
 #ifndef WTF_CHANGES
 extern "C" 
 #endif
@@ -3325,6 +3327,7 @@ void cfree(void* ptr) {
 #endif
   do_free(ptr);
 }
+#endif
 
 #ifndef WTF_CHANGES
 extern "C" 

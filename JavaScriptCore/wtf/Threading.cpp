@@ -72,6 +72,8 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*
 // This function is deprecated but needs to be kept around for backward
 // compatibility. Use the 3-argument version of createThread above.
 
+ThreadIdentifier createThread(ThreadFunction entryPoint, void* data);
+
 ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
 {
     return createThread(entryPoint, data, 0);
