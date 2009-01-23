@@ -1786,7 +1786,7 @@ void RenderBox::calcHeight()
         if (isRoot())
             setHeight(max(height(), visHeight - margins));
         else {
-            int marginsBordersPadding = margins + parent()->marginTop() + parent()->marginBottom()
+            int marginsBordersPadding = margins + parentBox()->marginTop() + parentBox()->marginBottom()
                 + parent()->borderTop() + parent()->borderBottom()
                 + parent()->paddingTop() + parent()->paddingBottom();
             setHeight(max(height(), visHeight - marginsBordersPadding));

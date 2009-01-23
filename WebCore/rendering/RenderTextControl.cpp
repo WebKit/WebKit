@@ -420,7 +420,7 @@ void RenderTextControl::calcHeight()
 {
     setHeight(m_innerText->renderer()->borderTop() + m_innerText->renderer()->borderBottom() +
               m_innerText->renderer()->paddingTop() + m_innerText->renderer()->paddingBottom() +
-              m_innerText->renderer()->marginTop() + m_innerText->renderer()->marginBottom());
+              m_innerText->renderBox()->marginTop() + m_innerText->renderBox()->marginBottom());
 
     adjustControlHeightBasedOnLineHeight(m_innerText->renderer()->lineHeight(true, true));
     setHeight(height() + paddingTop() + paddingBottom() + borderTop() + borderBottom());

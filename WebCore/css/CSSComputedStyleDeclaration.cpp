@@ -761,24 +761,24 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyListStyleType:
             return CSSPrimitiveValue::create(style->listStyleType());
         case CSSPropertyMarginTop:
-            if (renderer)
+            if (renderer && renderer->isBox())
                 // FIXME: Supposed to return the percentage if percentage was specified.
-                return CSSPrimitiveValue::create(renderer->marginTop(), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->marginTop(), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->marginTop());
         case CSSPropertyMarginRight:
-            if (renderer)
+            if (renderer && renderer->isBox())
                 // FIXME: Supposed to return the percentage if percentage was specified.
-                return CSSPrimitiveValue::create(renderer->marginRight(), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->marginRight(), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->marginRight());
         case CSSPropertyMarginBottom:
-            if (renderer)
+            if (renderer && renderer->isBox())
                 // FIXME: Supposed to return the percentage if percentage was specified.
-                return CSSPrimitiveValue::create(renderer->marginBottom(), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->marginBottom(), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->marginBottom());
         case CSSPropertyMarginLeft:
-            if (renderer)
+            if (renderer && renderer->isBox())
                 // FIXME: Supposed to return the percentage if percentage was specified.
-                return CSSPrimitiveValue::create(renderer->marginLeft(), CSSPrimitiveValue::CSS_PX);
+                return CSSPrimitiveValue::create(RenderBox::toRenderBox(renderer)->marginLeft(), CSSPrimitiveValue::CSS_PX);
             return CSSPrimitiveValue::create(style->marginLeft());
         case CSSPropertyWebkitMarqueeDirection:
             return CSSPrimitiveValue::create(style->marqueeDirection());

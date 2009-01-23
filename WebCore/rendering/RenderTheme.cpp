@@ -485,10 +485,12 @@ int RenderTheme::baselinePosition(const RenderObject* o) const
     if (!o->isBox())
         return 0;
 
+    const RenderBox* box = RenderBox::toConstRenderBox(o);
+
 #if USE(NEW_THEME)
-    return RenderBox::toConstRenderBox(o)->height() + o->marginTop() + m_theme->baselinePositionAdjustment(o->style()->appearance()) * o->style()->effectiveZoom();
+    return box->height() + box->marginTop() + m_theme->baselinePositionAdjustment(o->style()->appearance()) * o->style()->effectiveZoom();
 #else
-    return RenderBox::toConstRenderBox(o)->height() + o->marginTop();
+    return box->height() + box->marginTop();
 #endif
 }
 

@@ -341,9 +341,6 @@ public:
     
     bool hasBoxDecorations() const { return m_paintBackground; }
     bool mustRepaintBackgroundOrBorder() const;
-
-    bool hasHorizontalBordersPaddingOrMargin() const { return hasHorizontalBordersOrPadding() || marginLeft() != 0 || marginRight() != 0; }
-    bool hasHorizontalBordersOrPadding() const { return borderLeft() != 0 || borderRight() != 0 || paddingLeft() != 0 || paddingRight() != 0; }
                                                               
     bool needsLayout() const { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout || m_needsPositionedMovementLayout; }
     bool selfNeedsLayout() const { return m_needsLayout; }
@@ -581,26 +578,6 @@ public:
     virtual void panScroll(const IntPoint&);
 
     virtual bool isScrollable() const;
-
-    // The following seven functions are used to implement collapsing margins.
-    // All objects know their maximal positive and negative margins.  The
-    // formula for computing a collapsed margin is |maxPosMargin|-|maxNegmargin|.
-    // For a non-collapsing, e.g., a leaf element, this formula will simply return
-    // the margin of the element.  Blocks override the maxTopMargin and maxBottomMargin
-    // methods.
-    virtual bool isSelfCollapsingBlock() const { return false; }
-    virtual int collapsedMarginTop() const { return maxTopMargin(true) - maxTopMargin(false); }
-    virtual int collapsedMarginBottom() const { return maxBottomMargin(true) - maxBottomMargin(false); }
-    virtual bool isTopMarginQuirk() const { return false; }
-    virtual bool isBottomMarginQuirk() const { return false; }
-
-    virtual int maxTopMargin(bool positive) const;
-    virtual int maxBottomMargin(bool positive) const;
-
-    virtual int marginTop() const { return 0; }
-    virtual int marginBottom() const { return 0; }
-    virtual int marginLeft() const { return 0; }
-    virtual int marginRight() const { return 0; }
 
     // Virtual since table cells override
     virtual int paddingTop(bool includeIntrinsicPadding = true) const;

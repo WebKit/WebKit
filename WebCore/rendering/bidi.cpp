@@ -88,7 +88,7 @@ static bool betweenMidpoints;
 static bool isLineEmpty = true;
 static bool previousLineBrokeCleanly = true;
 
-static int getBorderPaddingMargin(RenderObject* child, bool endOfInline)
+static int getBorderPaddingMargin(RenderBox* child, bool endOfInline)
 {
     bool leftSide = (child->style()->direction() == LTR) ? !endOfInline : endOfInline;
     if (leftSide)
@@ -101,11 +101,11 @@ static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
     unsigned lineDepth = 1;
     int extraWidth = 0;
     RenderObject* parent = child->parent();
-    while (parent->isInline() && !parent->isInlineBlockOrInlineTable() && lineDepth++ < cMaxLineDepth) {
+    while (parent->isBox() && parent->isInline() && !parent->isInlineBlockOrInlineTable() && lineDepth++ < cMaxLineDepth) {
         if (start && parent->firstChild() == child)
-            extraWidth += getBorderPaddingMargin(parent, false);
+            extraWidth += getBorderPaddingMargin(RenderBox::toRenderBox(parent), false);
         if (end && parent->lastChild() == child)
-            extraWidth += getBorderPaddingMargin(parent, true);
+            extraWidth += getBorderPaddingMargin(RenderBox::toRenderBox(parent), true);
         child = parent;
         parent = child->parent();
     }
@@ -596,10 +596,11 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             }
             r->m_box->setWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, m_firstLine));
         } else if (!r->m_object->isInlineFlow()) {
-            r->m_object->calcWidth();
-            r->m_box->setWidth(toRenderBox(r->m_object)->width());
+            RenderBox* renderBox = RenderBox::toRenderBox(r->m_object);
+            renderBox->calcWidth();
+            r->m_box->setWidth(renderBox->width());
             if (!r->m_compact)
-                 totWidth += r->m_object->marginLeft() + r->m_object->marginRight();
+                 totWidth += renderBox->marginLeft() + renderBox->marginRight();
         }
 
         // Compacts don't contribute to the width of the line, since they are placed in the margin.
@@ -1416,7 +1417,7 @@ static inline bool shouldPreserveNewline(RenderObject* object)
     return object->style()->preserveNewline();
 }
 
-static bool inlineFlowRequiresLineBox(RenderObject* flow)
+static bool inlineFlowRequiresLineBox(RenderBox* flow)
 {
     // FIXME: Right now, we only allow line boxes for inlines that are truly empty.
     // We need to fix this, though, because at the very least, inlines containing only
@@ -1429,7 +1430,7 @@ static inline bool requiresLineBox(const InlineIterator& it)
     if (it.obj->isFloatingOrPositioned())
         return false;
 
-    if (it.obj->isInlineFlow() && !inlineFlowRequiresLineBox(it.obj))
+    if (it.obj->isInlineFlow() && !inlineFlowRequiresLineBox(RenderBox::toRenderBox(it.obj)))
         return false;
 
     if (!shouldCollapseWhiteSpace(it.obj->style()) || it.obj->isBR())
@@ -1706,11 +1707,13 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, ECle
             // Right now, we should only encounter empty inlines here.
             ASSERT(!o->firstChild());
     
+            RenderBox* flowBox = RenderBox::toRenderBox(o);
+            
             // Now that some inline flows have line boxes, if we are already ignoring spaces, we need 
             // to make sure that we stop to include this object and then start ignoring spaces again. 
             // If this object is at the start of the line, we need to behave like list markers and 
             // start ignoring spaces.
-            if (inlineFlowRequiresLineBox(o)) {
+            if (inlineFlowRequiresLineBox(flowBox)) {
                 isLineEmpty = false;
                 if (ignoringSpaces) {
                     trailingSpaceObject = 0;
@@ -1726,8 +1729,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, ECle
                 }
             }
 
-            tmpW += o->marginLeft() + o->borderLeft() + o->paddingLeft() +
-                    o->marginRight() + o->borderRight() + o->paddingRight();
+            tmpW += flowBox->marginLeft() + flowBox->borderLeft() + flowBox->paddingLeft() +
+                    flowBox->marginRight() + flowBox->borderRight() + flowBox->paddingRight();
         } else if (o->isReplaced()) {
             RenderBox* replacedBox = toRenderBox(o);
 

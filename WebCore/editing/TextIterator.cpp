@@ -535,7 +535,7 @@ static bool shouldEmitExtraNewlineForNode(Node* node)
     // result even without margin collapsing. For example: <div><p>text</p></div>
     // will work right even if both the <div> and the <p> have bottom margins.
     RenderObject* r = node->renderer();
-    if (!r)
+    if (!r || !r->isBox())
         return false;
     
     // NOTE: We only do this for a select set of nodes, and fwiw WinIE appears
@@ -549,7 +549,7 @@ static bool shouldEmitExtraNewlineForNode(Node* node)
         || node->hasTagName(pTag)) {
         RenderStyle* style = r->style();
         if (style) {
-            int bottomMargin = r->collapsedMarginBottom();
+            int bottomMargin = RenderBox::toRenderBox(r)->collapsedMarginBottom();
             int fontSize = style->fontDescription().computedPixelSize();
             if (bottomMargin * 2 >= fontSize)
                 return true;

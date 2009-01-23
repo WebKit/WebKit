@@ -210,12 +210,12 @@ bool RenderSVGContainer::requiresLayer()
 
 int RenderSVGContainer::lineHeight(bool, bool) const
 {
-    return height() + marginTop() + marginBottom();
+    return height();
 }
 
 int RenderSVGContainer::baselinePosition(bool, bool) const
 {
-    return height() + marginTop() + marginBottom();
+    return height();
 }
 
 bool RenderSVGContainer::calculateLocalTransform()

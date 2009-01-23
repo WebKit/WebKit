@@ -547,7 +547,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
         
         // Whether or not we collapse is dependent on whether all our normal flow children
         // are also self-collapsing.
-        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
             if (child->isFloatingOrPositioned())
                 continue;
             if (!child->isSelfCollapsingBlock())
@@ -763,7 +763,7 @@ bool RenderBlock::expandsToEncloseOverhangingFloats() const
     return isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() || (parent() && parent()->isFlexibleBox()) || m_hasColumns || isTableCell() || isFieldset();
 }
 
-void RenderBlock::adjustPositionedBlock(RenderObject* child, const MarginInfo& marginInfo)
+void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marginInfo)
 {
     if (child->hasStaticX()) {
         if (style()->direction() == LTR)
@@ -863,13 +863,12 @@ RenderBox* RenderBlock::handleCompactChild(RenderBox* child, CompactInfo& compac
     // compact A followed by another compact B should simply be treated as block A.
     if (child->isCompact() && !compactInfo.compact() && (child->childrenInline() || child->isReplaced())) {
         // Get the next non-positioned/non-floating RenderBlock.
-        RenderObject* next = child->nextSibling();
-        RenderObject* curr = next;
+        RenderBox* next = child->nextSiblingBox();
+        RenderBox* curr = next;
         while (curr && curr->isFloatingOrPositioned())
-            curr = curr->nextSibling();
+            curr = curr->nextSiblingBox();
         if (curr && curr->isRenderBlock() && !curr->isCompact() && !curr->isRunIn()) {
             curr->calcWidth(); // So that horizontal margins are correct.
-                               
             child->setInline(true); // Need to compute the margins/width for the child as though it is an inline, so that it won't try to puff up the margins to
                                     // fill the containing block width.
             child->calcWidth();
@@ -1103,7 +1102,7 @@ void RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, 
     child->layoutIfNeeded();
 }
 
-int RenderBlock::estimateVerticalPosition(RenderObject* child, const MarginInfo& marginInfo)
+int RenderBlock::estimateVerticalPosition(RenderBox* child, const MarginInfo& marginInfo)
 {
     // FIXME: We need to eliminate the estimation of vertical position, because when it's wrong we sometimes trigger a pathological
     // relayout if there are intruding floats.
@@ -3800,7 +3799,7 @@ static int getBPMWidth(int childValue, Length cssUnit)
     return 0;
 }
 
-static int getBorderPaddingMargin(const RenderObject* child, bool endOfInline)
+static int getBorderPaddingMargin(const RenderBox* child, bool endOfInline)
 {
     RenderStyle* cstyle = child->style();
     int result = 0;
@@ -3903,7 +3902,7 @@ void RenderBlock::calcInlinePrefWidths()
                 if (child->isInlineFlow()) {
                     // Add in padding/border/margin from the appropriate side of
                     // the element.
-                    int bpm = getBorderPaddingMargin(child, childIterator.endOfInline);
+                    int bpm = getBorderPaddingMargin(static_cast<RenderFlow*>(child), childIterator.endOfInline);
                     childMin += bpm;
                     childMax += bpm;
 

@@ -85,12 +85,6 @@ void InlineBox::showTreeForThis() const
 }
 #endif
 
-RenderBox* InlineBox::renderBox() const
-{
-    ASSERT(m_object->isBox());
-    return RenderBox::toRenderBox(m_object);
-}
-
 int InlineBox::caretMinOffset() const 
 { 
     return m_object->caretMinOffset(); 

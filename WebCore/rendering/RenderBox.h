@@ -120,6 +120,28 @@ public:
     virtual void setScrollLeft(int);
     virtual void setScrollTop(int);
 
+    bool hasHorizontalBordersPaddingOrMargin() const { return hasHorizontalBordersOrPadding() || marginLeft() != 0 || marginRight() != 0; }
+    bool hasHorizontalBordersOrPadding() const { return borderLeft() != 0 || borderRight() != 0 || paddingLeft() != 0 || paddingRight() != 0; }
+
+    int marginTop() const { return m_marginTop; }
+    int marginBottom() const { return m_marginBottom; }
+    int marginLeft() const { return m_marginLeft; }
+    int marginRight() const { return m_marginRight; }
+
+    // The following seven functions are used to implement collapsing margins.
+    // All objects know their maximal positive and negative margins.  The
+    // formula for computing a collapsed margin is |maxPosMargin| - |maxNegmargin|.
+    // For a non-collapsing box, such as a leaf element, this formula will simply return
+    // the margin of the element.  Blocks override the maxTopMargin and maxBottomMargin
+    // methods.
+    virtual bool isSelfCollapsingBlock() const { return false; }
+    int collapsedMarginTop() const { return maxTopMargin(true) - maxTopMargin(false); }
+    int collapsedMarginBottom() const { return maxBottomMargin(true) - maxBottomMargin(false); }
+    virtual bool isTopMarginQuirk() const { return false; }
+    virtual bool isBottomMarginQuirk() const { return false; }
+    virtual int maxTopMargin(bool positive) const { return positive ? std::max(0, marginTop()) : -std::min(0, marginTop()); }
+    virtual int maxBottomMargin(bool positive) const { return positive ? std::max(0, marginBottom()) : -std::min(0, marginBottom()); }
+
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
     
@@ -146,12 +168,7 @@ public:
     virtual FloatQuad localToAbsoluteQuad(const FloatQuad&, bool fixed = false) const;
 
     virtual IntSize offsetFromContainer(RenderObject*) const;
-
-    virtual int marginTop() const { return m_marginTop; }
-    virtual int marginBottom() const { return m_marginBottom; }
-    virtual int marginLeft() const { return m_marginLeft; }
-    virtual int marginRight() const { return m_marginRight; }
-
+    
     int calcBorderBoxWidth(int width) const;
     int calcBorderBoxHeight(int height) const;
     int calcContentBoxWidth(int width) const;

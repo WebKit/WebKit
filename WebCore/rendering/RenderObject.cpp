@@ -1845,7 +1845,7 @@ IntRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
     r.inflate(ow);
 
     if (virtualContinuation() && !isInline())
-        r.inflateY(collapsedMarginTop());
+        r.inflateY(RenderBox::toRenderBox(this)->collapsedMarginTop());
 
     if (isInlineFlow()) {
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
@@ -2943,16 +2943,6 @@ int RenderObject::previousOffset(int current) const
 int RenderObject::nextOffset(int current) const
 {
     return current + 1;
-}
-
-int RenderObject::maxTopMargin(bool positive) const
-{
-    return positive ? max(0, marginTop()) : -min(0, marginTop());
-}
-
-int RenderObject::maxBottomMargin(bool positive) const
-{
-    return positive ? max(0, marginBottom()) : -min(0, marginBottom());
 }
 
 void RenderObject::adjustRectForOutlineAndShadow(IntRect& rect) const
