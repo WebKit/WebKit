@@ -83,13 +83,7 @@ public:
                            int& beginMaxW, int& endMaxW,
                            int& minW, int& maxW, bool& stripFrontSpaces);
 
-    // Returns the leftmost (and topmost) position of the bounding box that encloses all text runs
-    int boundingBoxX() const;
-    int boundingBoxY() const;
-
-    // Returns the width and height of the bounding box that encloses all text runs.
-    int boundingBoxWidth() const;
-    int boundingBoxHeight() const;
+    IntRect linesBoundingBox() const;
 
     int firstRunX() const;
     int firstRunY() const;

@@ -321,32 +321,6 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
         continuation()->absoluteQuads(quads, topLevel);
 }
 
-int RenderInline::boundingBoxWidth() const
-{
-    // Return the width of the minimal left side and the maximal right side.
-    int leftSide = 0;
-    int rightSide = 0;
-    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        if (curr == firstLineBox() || curr->xPos() < leftSide)
-            leftSide = curr->xPos();
-        if (curr == firstLineBox() || curr->xPos() + curr->width() > rightSide)
-            rightSide = curr->xPos() + curr->width();
-    }
-
-    return rightSide - leftSide;
-}
-
-int RenderInline::boundingBoxHeight() const
-{
-    // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero.  We have been
-    // unable to reproduce this at all (and consequently unable to figure ot why this is happening).  The assert will hopefully catch the problem in debug
-    // builds and help us someday figure out why.  We also put in a redundant check of lastLineBox() to avoid the crash for now.
-    ASSERT(!firstLineBox() == !lastLineBox());  // Either both are null or both exist.
-    if (firstLineBox() && lastLineBox())
-        return lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
-    return 0;
-}
-
 int RenderInline::offsetLeft() const
 {
     int x = RenderFlow::offsetLeft();

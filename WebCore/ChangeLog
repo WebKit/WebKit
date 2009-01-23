@@ -1,5 +1,44 @@
 2009-01-23  David Hyatt  <hyatt@apple.com>
 
+        Fix for <rdar://problem/6518850> REGRESSION: hover feedback not showing on many sites
+
+        Inline flow repainting was broken because it relied on width() and height().  Give RenderFlow a linesBoundingBox
+        method for obtaining a reasonable bounding box to use for repainting.  Eliminate the methods from RenderInline
+        since compacts/run-ins need them too, so putting them on RenderFlow is necessary.
+
+        For consistency, change RenderText's version of these methods into the single linesBoundingBox method as
+        well.
+
+        Reviewed by Oliver Hunt
+
+        * WebCore.base.exp:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        (WebCore::ContainerNode::getLowerRightCorner):
+        * dom/Position.cpp:
+        (WebCore::Position::hasRenderedNonAnonymousDescendantsWithHeight):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockHeightForPositioned):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::absoluteClippedOverflowRect):
+        (WebCore::RenderFlow::linesBoundingBox):
+        * rendering/RenderFlow.h:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::offsetWidth):
+        (WebCore::RenderInline::offsetHeight):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::linesBoundingBox):
+        * rendering/RenderText.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::write):
+
+2009-01-23  David Hyatt  <hyatt@apple.com>
+
         Move layer() into RenderBox and make it non-virtual.  Move all of the scrolling functions from RenderObject
         to RenderBox and devirtualize as many as possible.  Clean up styleWillChange to factor code specific to
         RenderBox and RenderBlock into their appropriate subclasses.  Stubbed out an empty styleWillChange on

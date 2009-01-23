@@ -514,7 +514,9 @@ void write(TextStream& ts, const RenderSVGInlineText& text, int indent)
             ts << " {" << tagName << "}";
     }
 
-    ts << " at (" << text.firstRunX() << "," << text.firstRunY() << ") size " << text.boundingBoxWidth() << "x" << text.boundingBoxHeight() << "\n";
+    IntRect linesBox = text.linesBoundingBox();
+
+    ts << " at (" << text.firstRunX() << "," << text.firstRunY() << ") size " << linesBox.width() << "x" << linesBox.height() << "\n";
     writeSVGInlineText(ts, text, indent);
 }
 

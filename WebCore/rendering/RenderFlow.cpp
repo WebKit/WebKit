@@ -490,17 +490,12 @@ IntRect RenderFlow::absoluteClippedOverflowRect()
             return IntRect();
 
         // Find our leftmost position.
-        int left = 0;
-        int top = firstLineBox() ? firstLineBox()->yPos() : 0;
-        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-            if (curr == firstLineBox() || curr->xPos() < left)
-                left = curr->xPos();
-        }
+        IntRect boundingBox(linesBoundingBox());
+        int left = boundingBox.x();
+        int top = boundingBox.y();
 
         // Now invalidate a rectangle.
         int ow = style() ? style()->outlineSize() : 0;
-        if (isCompact())
-            left -= x();
         
         // We need to add in the relative position offsets of any inlines (including us) up to our
         // containing block.
@@ -511,7 +506,7 @@ IntRect RenderFlow::absoluteClippedOverflowRect()
                 RenderBox::toRenderBox(inlineFlow)->layer()->relativePositionOffset(left, top);
         }
 
-        IntRect r(-ow + left, -ow + top, width() + ow * 2, height() + ow * 2);
+        IntRect r(-ow + left, -ow + top, boundingBox.width() + ow * 2, boundingBox.height() + ow * 2);
         if (cb->hasColumns())
             cb->adjustRectForColumns(r);
 
@@ -546,6 +541,33 @@ IntRect RenderFlow::absoluteClippedOverflowRect()
     }
 
     return RenderContainer::absoluteClippedOverflowRect();
+}
+
+IntRect RenderFlow::linesBoundingBox() const
+{
+    IntRect result;
+    
+    // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero.  We have been
+    // unable to reproduce this at all (and consequently unable to figure ot why this is happening).  The assert will hopefully catch the problem in debug
+    // builds and help us someday figure out why.  We also put in a redundant check of lastLineBox() to avoid the crash for now.
+    ASSERT(!firstLineBox() == !lastLineBox());  // Either both are null or both exist.
+    if (firstLineBox() && lastLineBox()) {
+        // Return the width of the minimal left side and the maximal right side.
+        int leftSide = 0;
+        int rightSide = 0;
+        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+            if (curr == firstLineBox() || curr->xPos() < leftSide)
+                leftSide = curr->xPos();
+            if (curr == firstLineBox() || curr->xPos() + curr->width() > rightSide)
+                rightSide = curr->xPos() + curr->width();
+        }
+        result.setWidth(rightSide - leftSide);
+        result.setX(isCompact() ? leftSide : leftSide - x());
+        result.setHeight(lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos());
+        result.setY(firstLineBox()->yPos());
+    }
+
+    return result;
 }
 
 int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) const

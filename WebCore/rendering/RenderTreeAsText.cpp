@@ -188,14 +188,15 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
         // FIXME: Would be better to dump the bounding box x and y rather than the first run's x and y, but that would involve updating
         // many test results.
         const RenderText& text = static_cast<const RenderText&>(o);
-        r = IntRect(text.firstRunX(), text.firstRunY(), text.boundingBoxWidth(), text.boundingBoxHeight());
+        IntRect linesBox = text.linesBoundingBox();
+        r = IntRect(text.firstRunX(), text.firstRunY(), linesBox.width(), linesBox.height());
         if (adjustForTableCells && !text.firstTextBox())
             adjustForTableCells = false;
     } else if (o.isBox()) {
-        if (o.isRenderInline()) {
+        if (o.isInlineFlow()) {
             // FIXME: Would be better not to just dump 0, 0 as the x and y here.
-            const RenderInline& inlineFlow = static_cast<const RenderInline&>(o);
-            r = IntRect(0, 0, inlineFlow.boundingBoxWidth(), inlineFlow.boundingBoxHeight());
+            const RenderFlow& inlineFlow = static_cast<const RenderFlow&>(o);
+            r = IntRect(0, 0, inlineFlow.linesBoundingBox().width(), inlineFlow.linesBoundingBox().height());
             adjustForTableCells = false;
         } else if (o.isTableCell()) {
             // FIXME: Deliberately dump the "inner" box of table cells, since that is what current results reflect.  We'd like

@@ -692,7 +692,7 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
         } else if ((o->isText() && !o->isBR()) || o->isReplaced()) {
             point = o->container()->localToAbsolute();
             if (o->isText() && static_cast<RenderText *>(o)->firstTextBox()) {
-                point.move(static_cast<RenderText *>(o)->boundingBoxX(),
+                point.move(static_cast<RenderText *>(o)->linesBoundingBox().x(),
                            static_cast<RenderText *>(o)->firstTextBox()->root()->topOverflow());
             } else if (o->isBox()) {
                 RenderBox* box = RenderBox::toRenderBox(o);
@@ -746,7 +746,8 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
             point = o->container()->localToAbsolute();
             if (o->isText()) {
                 RenderText* text = static_cast<RenderText*>(o);
-                point.move(text->boundingBoxX() + text->boundingBoxWidth(), text->boundingBoxHeight());
+                IntRect linesBox = text->linesBoundingBox();
+                point.move(linesBox.x() + linesBox.width(), linesBox.height());
             } else {
                 RenderBox* box = RenderBox::toRenderBox(o);
                 point.move(box->x() + box->width(), box->y() + box->height());

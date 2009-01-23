@@ -735,30 +735,6 @@ bool RenderText::containsOnlyWhitespace(unsigned from, unsigned len) const
     return currPos >= (from + len);
 }
 
-int RenderText::boundingBoxX() const
-{
-    if (!m_firstTextBox)
-        return 0;
-
-    // FIXME: we should not use an arbitrary value like this.  Perhaps we should use INT_MAX.
-    int minXPos = 6666666;
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        minXPos = min(minXPos, static_cast<int>(box->m_x));
-    return minXPos;
-}
-
-int RenderText::boundingBoxY() const
-{
-    if (!m_firstTextBox)
-        return 0;
-
-    // FIXME: we should not use an arbitrary value like this.  Perhaps we should use INT_MAX.
-    int minYPos = 6666666;
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        minYPos = min(minYPos, static_cast<int>(box->m_y));
-    return minYPos;
-}
-
 int RenderText::firstRunX() const
 {
     return m_firstTextBox ? m_firstTextBox->m_x : 0;
@@ -985,14 +961,6 @@ void RenderText::setText(PassRefPtr<StringImpl> text, bool force)
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-int RenderText::boundingBoxHeight() const
-{
-    int retval = 0;
-    if (firstTextBox())
-        retval = lastTextBox()->m_y + lastTextBox()->height() - firstTextBox()->m_y;
-    return retval;
-}
-
 int RenderText::lineHeight(bool firstLine, bool) const
 {
     // Always use the interior line height of the parent (e.g., if our parent is an inline block).
@@ -1077,20 +1045,28 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font& 
     return w;
 }
 
-int RenderText::boundingBoxWidth() const
+IntRect RenderText::linesBoundingBox() const
 {
-    // FIXME: we should not use an arbitrary value like this.  Perhaps we should use INT_MAX.
-    int minx = 100000000;
-    int maxx = 0;
-    // slooow
-    for (InlineTextBox* s = firstTextBox(); s; s = s->nextTextBox()) {
-        if (s->m_x < minx)
-            minx = s->m_x;
-        if (s->m_x + s->m_width > maxx)
-            maxx = s->m_x + s->m_width;
+    IntRect result;
+    
+    ASSERT(!firstTextBox() == !lastTextBox());  // Either both are null or both exist.
+    if (firstTextBox() && lastTextBox()) {
+        // Return the width of the minimal left side and the maximal right side.
+        int leftSide = 0;
+        int rightSide = 0;
+        for (InlineTextBox* curr = firstTextBox(); curr; curr = curr->nextTextBox()) {
+            if (curr == firstTextBox() || curr->xPos() < leftSide)
+                leftSide = curr->xPos();
+            if (curr == firstTextBox() || curr->xPos() + curr->width() > rightSide)
+                rightSide = curr->xPos() + curr->width();
+        }
+        result.setWidth(rightSide - leftSide);
+        result.setX(leftSide);
+        result.setHeight(lastTextBox()->yPos() + lastTextBox()->height() - firstTextBox()->yPos());
+        result.setY(firstTextBox()->yPos());
     }
 
-    return max(0, maxx - minx);
+    return result;
 }
 
 IntRect RenderText::absoluteClippedOverflowRect()
