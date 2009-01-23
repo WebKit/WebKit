@@ -830,7 +830,7 @@ bool RenderThemeWin::paintSearchFieldResultsButton(RenderObject* o, const Render
     if (!o->parent() || !o->parent()->isBox())
         return false;
     
-    RenderBox* parentRenderBox = RenderBox::toRenderBox(o->parent());
+    RenderBox* parentRenderBox = toRenderBox(o->parent());
     IntRect parentBox = parentRenderBox->absoluteContentBox();
     
     // Make sure the scaled decoration will fit in its parent's box
