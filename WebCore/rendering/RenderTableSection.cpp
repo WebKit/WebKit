@@ -536,11 +536,12 @@ int RenderTableSection::layoutRows(int toAdd)
                 case SUPER:
                 case TEXT_TOP:
                 case TEXT_BOTTOM:
-                case BASELINE:
+                case BASELINE: {
                     int b = cell->baselinePosition();
                     if (b > cell->borderTop() + cell->paddingTop())
                         te = getBaseline(r) - (b - oldTe);
                     break;
+                }
                 case TOP:
                     te = 0;
                     break;
