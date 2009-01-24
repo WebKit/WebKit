@@ -461,6 +461,7 @@ SOURCES += \
     bindings/js/JSRGBColor.cpp \
     bindings/js/JSStyleSheetCustom.cpp \
     bindings/js/JSStyleSheetListCustom.cpp \
+    bindings/js/JSTextCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSWebKitCSSMatrixConstructor.cpp \
     bindings/js/JSXMLHttpRequestConstructor.cpp \
