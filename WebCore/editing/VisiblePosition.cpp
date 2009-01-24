@@ -593,6 +593,9 @@ void VisiblePosition::showTreeForThis() const
 
 PassRefPtr<Range> makeRange(const VisiblePosition &start, const VisiblePosition &end)
 {
+    if (start.isNull() || end.isNull())
+        return 0;
+    
     Position s = rangeCompliantEquivalent(start);
     Position e = rangeCompliantEquivalent(end);
     return Range::create(s.node()->document(), s.node(), s.offset(), e.node(), e.offset());

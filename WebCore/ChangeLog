@@ -1,3 +1,18 @@
+2009-01-23  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 23509: Crash at -[WebCoreAXObject doAXNextSentenceEndTextMarkerForTextMarker:]
+        https://bugs.webkit.org/show_bug.cgi?id=23509
+  
+        Add null checking in makeRange instead of AX code
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::makeRange):
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::nextSentenceEndPosition):
+        (WebCore::AccessibilityObject::previousSentenceStartPosition):
+
 2009-01-23  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix the Gtk build too after removal of RenderBox::toConstRenderBox
