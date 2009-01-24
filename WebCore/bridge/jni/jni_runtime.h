@@ -56,7 +56,7 @@ public:
         const jchar *uc = getUCharactersFromJStringInEnv (e, s);
         {
             JSLock lock(false);
-            _rep = UString((UChar *)uc,_size).rep();
+            _rep = UString(reinterpret_cast<const UChar*>(uc), _size).rep();
         }
         releaseUCharactersForJStringInEnv (e, s, uc);
     }

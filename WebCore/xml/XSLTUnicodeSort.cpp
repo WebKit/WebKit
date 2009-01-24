@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,8 @@
 #if ENABLE(XSLT)
 
 #include "PlatformString.h"
-
 #include <libxslt/templates.h>
 #include <libxslt/xsltutils.h>
-
 #include <wtf/unicode/Collator.h>
 
 #if PLATFORM(MAC)
@@ -43,57 +41,29 @@
 #endif
 
 #if PLATFORM(MAC)
+
 SOFT_LINK_LIBRARY(libxslt)
 SOFT_LINK(libxslt, xsltComputeSortResult, xmlXPathObjectPtr*, (xsltTransformContextPtr ctxt, xmlNodePtr sort), (ctxt, sort))
 SOFT_LINK(libxslt, xsltEvalAttrValueTemplate, xmlChar*, (xsltTransformContextPtr ctxt, xmlNodePtr node, const xmlChar *name, const xmlChar *ns), (ctxt, node, name, ns))
 
-static void init_xsltTransformError(xsltTransformContextPtr ctxt, xsltStylesheetPtr style, xmlNodePtr node, const char *, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
-static void (*softLink_xsltTransformError)(xsltTransformContextPtr ctxt, xsltStylesheetPtr style, xmlNodePtr node, const char *, ...) WTF_ATTRIBUTE_PRINTF(4, 5) = init_xsltTransformError;
+static void xsltTransformErrorTrampoline(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char* message, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
 
-static void init_xsltTransformError(xsltTransformContextPtr ctxt, xsltStylesheetPtr style, xmlNodePtr node, const char* msg, ...)
-{
-    softLink_xsltTransformError = (void (*) (xsltTransformContextPtr ctxt, xsltStylesheetPtr style, xmlNodePtr node, const char *, ...))dlsym(libxsltLibrary(), "xsltTransformError");
-    ASSERT(softLink_xsltTransformError);
-
-    va_list args;
-    va_start(args, msg);
-#if PLATFORM(WIN_OS)
-    char str[1024];
-    vsnprintf(str, sizeof(str) - 1, msg, args);
-#else
-    char* str;
-    vasprintf(&str, msg, args);
-#endif
-    va_end(args);
-
-    softLink_xsltTransformError(ctxt, style, node, "%s", str);
-
-#if !PLATFORM(WIN_OS)
-    free(str);
-#endif
-}
-
-inline void xsltTransformError(xsltTransformContextPtr ctxt, xsltStylesheetPtr style, xmlNodePtr node, const char* msg, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
-
-inline void xsltTransformError(xsltTransformContextPtr ctxt, xsltStylesheetPtr style, xmlNodePtr node, const char* msg, ...)
+void xsltTransformErrorTrampoline(xsltTransformContextPtr context, xsltStylesheetPtr style, xmlNodePtr node, const char* message, ...)
 {
     va_list args;
-    va_start(args, msg);
-#if PLATFORM(WIN_OS)
-    char str[1024];
-    vsnprintf(str, sizeof(str) - 1, msg, args);
-#else
-    char* str;
-    vasprintf(&str, msg, args);
-#endif
+    va_start(args, message);
+    char* messageWithArgs;
+    vasprintf(&messageWithArgs, message, args);
     va_end(args);
 
-    softLink_xsltTransformError(ctxt, style, node, "%s", str);
+    static void (*xsltTransformErrorPointer)(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char*, ...) WTF_ATTRIBUTE_PRINTF(4, 5)
+        = reinterpret_cast<void (*)(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char*, ...)>(dlsym(libxsltLibrary(), "xsltTransformError"));
+    xsltTransformErrorPointer(context, style, node, "%s", messageWithArgs);
 
-#if !PLATFORM(WIN_OS)
-    free(str);
-#endif
+    free(messageWithArgs);
 }
+
+#define xsltTransformError xsltTransformErrorTrampoline
 
 #endif
 

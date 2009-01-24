@@ -2,6 +2,30 @@
 
         Reviewed by Anders Carlsson.
 
+        Bug 23352: Turn on more compiler warnings in the Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=23352
+
+        Second patch: Slightly less simple cases of various warnings.
+
+        * bridge/jni/jni_runtime.h:
+        (JSC::Bindings::JavaString::_commonInit): Use reinterpret_cast here and avoid casting
+        away const.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::PendingCallbacks::appendStartElementNSCallback): Use static_cast instead of
+        reinterpret_cast; this is casting the result of malloc, and the idiom is to use
+        static_cast, which works because we're casting from void*.
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::call): Use const_cast instead
+        C-style casts.
+
+        * xml/XSLTUnicodeSort.cpp:
+        (inlineXSLTTransformError): Tweak soft linking of xsltTransformError to use a macro
+        instead of redefining the function.
+
+2009-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Bug 23475: fast/text/find-backwards.html fails with ICU disabled SearchBuffer
         https://bugs.webkit.org/show_bug.cgi?id=23475
 

@@ -82,12 +82,12 @@ public:
         callback->xmlPrefix = xmlStrdup(xmlPrefix);
         callback->xmlURI = xmlStrdup(xmlURI);
         callback->nb_namespaces = nb_namespaces;
-        callback->namespaces = reinterpret_cast<xmlChar**>(xmlMalloc(sizeof(xmlChar*) * nb_namespaces * 2));
+        callback->namespaces = static_cast<xmlChar**>(xmlMalloc(sizeof(xmlChar*) * nb_namespaces * 2));
         for (int i = 0; i < nb_namespaces * 2 ; i++)
             callback->namespaces[i] = xmlStrdup(namespaces[i]);
         callback->nb_attributes = nb_attributes;
         callback->nb_defaulted = nb_defaulted;
-        callback->attributes = reinterpret_cast<xmlChar**>(xmlMalloc(sizeof(xmlChar*) * nb_attributes * 5));
+        callback->attributes = static_cast<xmlChar**>(xmlMalloc(sizeof(xmlChar*) * nb_attributes * 5));
         for (int i = 0; i < nb_attributes; i++) {
             // Each attribute has 5 elements in the array:
             // name, prefix, uri, value and an end pointer.
@@ -204,8 +204,8 @@ private:
         
         virtual void call(XMLTokenizer* tokenizer) {
             tokenizer->startElementNs(xmlLocalName, xmlPrefix, xmlURI, 
-                                      nb_namespaces, (const xmlChar**)namespaces,
-                                      nb_attributes, nb_defaulted, (const xmlChar**)(attributes));
+                                      nb_namespaces, const_cast<const xmlChar**>(namespaces),
+                                      nb_attributes, nb_defaulted, const_cast<const xmlChar**>(attributes));
         }
 
         xmlChar* xmlLocalName;
