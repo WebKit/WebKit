@@ -14097,6 +14097,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSCDATASectionCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSClipboardCustom.cpp"
 					>
 				</File>

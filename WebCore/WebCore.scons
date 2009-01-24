@@ -605,6 +605,7 @@ sources['bindings/js'] = [
     "bindings/js/GCController.cpp",
     "bindings/js/JSAttrCustom.cpp",
     "bindings/js/JSAudioConstructor.cpp",
+    "bindings/js/JSCDATASectionCustom.cpp",
     "bindings/js/JSCSSRuleCustom.cpp",
     "bindings/js/JSCSSStyleDeclarationCustom.cpp",
     "bindings/js/JSCSSValueCustom.cpp",

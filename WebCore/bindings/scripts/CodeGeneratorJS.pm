@@ -651,7 +651,7 @@ sub GenerateHeader
             push(@headerContent, "$implClassName* to${interfaceName}(JSC::JSValuePtr);\n");
         }
     }
-    if ($interfaceName eq "Node" or $interfaceName eq "Element" or $interfaceName eq "Text") {
+    if ($interfaceName eq "Node" or $interfaceName eq "Element" or $interfaceName eq "Text" or $interfaceName eq "CDATASection") {
         push(@headerContent, "JSC::JSValuePtr toJSNewlyCreated(JSC::ExecState*, $interfaceName*);\n");
     }
     

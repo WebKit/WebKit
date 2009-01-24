@@ -37,6 +37,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/GCController.cpp
         bindings/js/JSAttrCustom.cpp
         bindings/js/JSAudioConstructor.cpp
+        bindings/js/JSCDATASectionCustom.cpp
         bindings/js/JSCanvasRenderingContext2DCustom.cpp
         bindings/js/JSClipboardCustom.cpp
         bindings/js/JSConsoleCustom.cpp

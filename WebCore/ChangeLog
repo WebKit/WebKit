@@ -1,3 +1,28 @@
+2009-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Bug 23510: REGRESSION (r40171): CDATASection objects not getting proper JavaScript wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=23510
+
+        That patch fixed the optimization that's supposed to give a faster path for
+        allocating the wrappers for DOM Text objects. But CDATASection is the one
+        subclass of Text objects.
+
+        * GNUmakefile.am: Added JSCDATASectionCustom.cpp.
+        * WebCore.scons: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * bindings/js/JSCDATASectionCustom.cpp: Copied from bindings/js/JSTextCustom.cpp.
+        (WebCore::toJSNewlyCreated): Changed to do CDATASection, not Text.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Added another toJSNewlyCreated function
+        for CDATASection. We don't want to have to check when creating a wrapper for a
+        Text object whether it's a CDATASection object or not, so we need to do this overload
+        at compile time.
+
 2009-01-23  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Eric Seidel.
