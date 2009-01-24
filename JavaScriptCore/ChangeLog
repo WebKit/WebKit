@@ -1,3 +1,20 @@
+2009-01-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fix for <rdar://problem/6126212>
+        Ensure that callbacks out from the JSC interface are only allowed
+        to return in reverse-chronological order to that in which they were
+        made.  If we allow earlier callbacks to return first, then this may
+        result in setions of the RegisterFile in use by another thread
+        being trampled.
+
+        See uber-comment in JSLock.h for details.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+
 2009-01-23  Darin Adler  <darin@apple.com>
 
         Try to fix WX build.
