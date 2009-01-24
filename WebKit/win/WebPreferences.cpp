@@ -42,13 +42,16 @@
 #pragma warning( pop )
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <CoreGraphics/CoreGraphics.h>
 #include <shlobj.h>
 #include <shfolder.h>
 #include <tchar.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
+
+#if PLATFORM(CG)
+#include <CoreGraphics/CoreGraphics.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 using namespace WebCore;
 
@@ -977,7 +980,9 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setFontSmoothing(
     setIntegerValue(CFSTR(WebKitFontSmoothingTypePreferenceKey), smoothingType);
     if (smoothingType == FontSmoothingTypeWindows)
         smoothingType = FontSmoothingTypeMedium;
+#if PLATFORM(CG)
     wkSetFontSmoothingLevel((int)smoothingType);
+#endif
     return S_OK;
 }
 
@@ -992,7 +997,9 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setFontSmoothingContrast(
     /* [in] */ float contrast)
 {
     setFloatValue(CFSTR(WebKitFontSmoothingContrastPreferenceKey), contrast);
+#if PLATFORM(CG)
     wkSetFontSmoothingContrast(contrast);
+#endif
     return S_OK;
 }
 
