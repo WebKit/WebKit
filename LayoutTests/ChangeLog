@@ -1,3 +1,11 @@
+2009-01-24  Darin Adler  <darin@apple.com>
+
+        Try to fix expected results for new video element test.
+
+        * platform/mac/media/video-controls-visible-audio-only-expected.png: Landed new result
+        generated on my machine.
+        * platform/mac/media/video-controls-visible-audio-only-expected.txt: Ditto.
+
 2009-01-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
