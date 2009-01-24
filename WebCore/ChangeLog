@@ -1,3 +1,10 @@
+2009-01-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix after r40170
+
+        * GNUmakefile.am: Removed editing/RemoveNodeAttributeCommand.cpp
+        and editing/RemoveNodeAttributeCommand.h
+
 2009-01-23  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix the Qt build after r40205.

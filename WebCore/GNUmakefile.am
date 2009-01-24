@@ -757,8 +757,6 @@ webcore_sources += \
 	WebCore/editing/RemoveCSSPropertyCommand.h \
 	WebCore/editing/RemoveFormatCommand.cpp \
 	WebCore/editing/RemoveFormatCommand.h \
-	WebCore/editing/RemoveNodeAttributeCommand.cpp \
-	WebCore/editing/RemoveNodeAttributeCommand.h \
 	WebCore/editing/RemoveNodeCommand.cpp \
 	WebCore/editing/RemoveNodeCommand.h \
 	WebCore/editing/RemoveNodePreservingChildrenCommand.cpp \
