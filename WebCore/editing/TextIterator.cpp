@@ -40,7 +40,7 @@
 #include "RenderTextControl.h"
 #include "visible_units.h"
 
-#if USE(ICU_UNICODE)
+#if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
 #include <unicode/usearch.h>
 #endif
 
@@ -65,7 +65,7 @@ public:
     void reachedBreak();
 
     // Result is the size in characters of what was found.
-    // And <startOffset> is the number of charactesrs back to the start of what was found.
+    // And <startOffset> is the number of characters back to the start of what was found.
     size_t search(size_t& startOffset);
     bool atBreak() const;
 
@@ -1396,6 +1396,14 @@ inline size_t SearchBuffer::search(size_t& start)
         return 0;
 
     start = length();
+
+    // Now that we've found a match once, we don't want to find it again, because those
+    // are the SearchBuffer semantics, allowing for a buffer where you append more than one
+    // character at a time. To do this we take advantage of m_isCharacterStartBuffer, but if
+    // we want to get rid of that in the future we could track this with a separate boolean
+    // or even move the characters to the start of the buffer and set m_isBufferFull to false.
+    m_isCharacterStartBuffer[m_cursor] = false;
+
     return start;
 }
 

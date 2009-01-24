@@ -2,6 +2,19 @@
 
         Reviewed by Anders Carlsson.
 
+        Bug 23475: fast/text/find-backwards.html fails with ICU disabled SearchBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=23475
+
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::search): Set the character start flag to false to
+        ensure we won't ever return the same result twice. There are other ways we
+        could accomplish this, mentioned in the comment, but this one was the smallest
+        and cleanest I could think of.
+
+2009-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Bug 23510: REGRESSION (r40171): CDATASection objects not getting proper JavaScript wrappers
         https://bugs.webkit.org/show_bug.cgi?id=23510
 
