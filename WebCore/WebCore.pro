@@ -404,6 +404,7 @@ SOURCES += \
     bindings/js/DOMTimer.cpp \
     bindings/js/GCController.cpp \
     bindings/js/JSAttrCustom.cpp \
+    bindings/js/JSCDATASectionCustom.cpp \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
     bindings/js/JSClipboardCustom.cpp \
     bindings/js/JSConsoleCustom.cpp \

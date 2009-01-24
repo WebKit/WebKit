@@ -1,3 +1,9 @@
+2009-01-23  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix the Qt build after r40205.
+
+        * WebCore.pro:
+
 2009-01-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler
