@@ -108,6 +108,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSStorageCustom.cpp
         bindings/js/JSStyleSheetCustom.cpp
         bindings/js/JSStyleSheetListCustom.cpp
+        bindings/js/JSTextCustom.cpp
         bindings/js/JSTreeWalkerCustom.cpp
         bindings/js/JSXMLHttpRequestConstructor.cpp
         bindings/js/JSXMLHttpRequestCustom.cpp
@@ -489,7 +490,6 @@ This file contains the list of files needed to build WebCore.
         editing/MoveSelectionCommand.cpp
         editing/RemoveCSSPropertyCommand.cpp
         editing/RemoveFormatCommand.cpp
-        editing/RemoveNodeAttributeCommand.cpp
         editing/RemoveNodeCommand.cpp
         editing/RemoveNodePreservingChildrenCommand.cpp
         editing/ReplaceSelectionCommand.cpp

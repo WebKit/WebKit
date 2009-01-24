@@ -908,7 +908,7 @@ void PluginView::invalidateWindowlessPluginRect(const IntRect& rect)
     
     if (!m_element->renderer())
         return;
-    RenderBox* renderer = RenderBox::toRenderBox(m_element->renderer());
+    RenderBox* renderer = toRenderBox(m_element->renderer());
     
     IntRect dirtyRect = rect;
     dirtyRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
