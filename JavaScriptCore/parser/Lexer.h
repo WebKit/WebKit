@@ -104,7 +104,7 @@ namespace JSC {
         bool isLineTerminator();
         static bool isOctalDigit(int);
 
-        int matchPunctuator(int& charPos, int c1, int c2, int c3, int c4);
+        ALWAYS_INLINE int matchPunctuator(int& charPos, int c1, int c2, int c3, int c4);
         static unsigned short singleEscape(unsigned short);
         static unsigned short convertOctal(int c1, int c2, int c3);
 
