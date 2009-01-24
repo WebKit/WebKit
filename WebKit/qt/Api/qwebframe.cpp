@@ -145,6 +145,37 @@ WebCore::Scrollbar* QWebFramePrivate::verticalScrollBar() const
     return frame->view()->verticalScrollbar();
 }
 
+void QWebFramePrivate::renderPrivate(QPainter *painter, const QRegion &clip, bool contents)
+{
+    if (!frame->view() || !frame->contentRenderer())
+        return;
+
+    QVector<QRect> vector = clip.rects();
+    if (vector.isEmpty())
+        return;
+
+    WebCore::FrameView* view = frame->view();
+    view->layoutIfNeededRecursive();
+
+    GraphicsContext context(painter);
+
+    if (!contents)
+        view->paint(&context, vector.first());
+    else
+        view->paintContents(&context, vector.first());
+
+    for (int i = 1; i < vector.size(); ++i) {
+        const QRect& clipRect = vector.at(i);
+        painter->save();
+        painter->setClipRect(clipRect, Qt::IntersectClip);
+        if (!contents)
+            view->paint(&context, clipRect);
+        else
+            view->paintContents(&context, clipRect);
+        painter->restore();
+    }
+}
+
 /*!
     \class QWebFrame
     \since 4.4
@@ -744,25 +775,7 @@ void QWebFrame::setScrollPosition(const QPoint &pos)
 */
 void QWebFrame::render(QPainter *painter, const QRegion &clip)
 {
-    if (!d->frame->view() || !d->frame->contentRenderer())
-        return;
-
-    d->frame->view()->layoutIfNeededRecursive();
-
-    GraphicsContext ctx(painter);
-    QVector<QRect> vector = clip.rects();
-    WebCore::FrameView* view = d->frame->view();
-    for (int i = 0; i < vector.size(); ++i) {
-        if (i > 0) {
-            painter->save();
-            painter->setClipRect(vector.at(i), Qt::IntersectClip);
-        }
-
-        view->paint(&ctx, vector.at(i));
-
-        if (i > 0)
-            painter->restore();
-    }
+    d->renderPrivate(painter, clip);
 }
 
 /*!
@@ -770,14 +783,16 @@ void QWebFrame::render(QPainter *painter, const QRegion &clip)
 */
 void QWebFrame::render(QPainter *painter)
 {
-    if (!d->frame->view() || !d->frame->contentRenderer())
-        return;
+    d->renderPrivate(painter, QRegion(view->frameRect()));
+}
 
-    d->frame->view()->layoutIfNeededRecursive();
-
-    GraphicsContext ctx(painter);
-    WebCore::FrameView* view = d->frame->view();
-    view->paint(&ctx, view->frameRect());
+/*!
+  \since 4.6
+  Render the frame's \a contents into \a painter while clipping to \a contents.
+*/
+void QWebFrame::renderContents(QPainter *painter, const QRegion &contents)
+{
+    d->renderPrivate(painter, contents, true);
 }
 
 /*!

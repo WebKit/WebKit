@@ -81,6 +81,8 @@ public:
     static WebCore::Frame* core(QWebFrame*);
     static QWebFrame* kit(WebCore::Frame*);
 
+    void renderPrivate(QPainter *painter, const QRegion &clip, bool contents = false);
+
     QWebFrame *q;
     WebCore::FrameLoaderClientQt *frameLoaderClient;
     WebCore::Frame *frame;

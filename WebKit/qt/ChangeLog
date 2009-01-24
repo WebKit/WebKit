@@ -1,3 +1,15 @@
+2009-01-24  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add QWebFrame::renderContents() method which allows arbitary rendering
+        of any content region within the QWebFrame.  It also does not draw any
+        scrollbars.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::renderContents):
+        * Api/qwebframe.h:
+
 2009-01-23  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon Hausmann.
