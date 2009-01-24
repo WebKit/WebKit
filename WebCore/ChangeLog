@@ -1,3 +1,24 @@
+2009-01-23  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Darin Adler
+
+        Rename CachedPagePlatformData to CachedFramePlatformData to more accurately reflect its true role.
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.order:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * history/CachedFramePlatformData.h: Copied from WebCore/history/CachedPagePlatformData.h.
+        (WebCore::CachedFramePlatformData::~CachedFramePlatformData):
+        * history/CachedPagePlatformData.h: Removed.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::clear):
+        (WebCore::CachedPage::setCachedFramePlatformData):
+        (WebCore::CachedPage::cachedFramePlatformData):
+        * history/CachedPage.h:
+
 2009-01-23  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

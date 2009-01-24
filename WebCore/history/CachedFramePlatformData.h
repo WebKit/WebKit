@@ -25,19 +25,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef CachedFramePlatformData_h
+#define CachedFramePlatformData_h
 
-#import <objc/objc-runtime.h>
-#import <WebCore/CachedPagePlatformData.h>
-#import <wtf/RetainPtr.h>
+namespace WebCore {
 
-class WebCachedPagePlatformData : public WebCore::CachedPagePlatformData {
+// The purpose of this class is to give each platform a vessel to store platform data when a page
+// goes into the Back/Forward page cache, and perform some action with that data when the page comes out.  
+// Each platform should subclass this class as neccessary
+
+class CachedFramePlatformData {
 public:
-    WebCachedPagePlatformData(id webDocumentView) : m_webDocumentView(webDocumentView) { }
-    
-    virtual void clear() { objc_msgSend(m_webDocumentView.get(), @selector(closeIfNotCurrentView)); }
-
-    id webDocumentView() { return m_webDocumentView.get(); }
-private:
-    RetainPtr<id> m_webDocumentView;
+    virtual ~CachedFramePlatformData() { }
+    virtual void clear() { }
 };
 
+} // namespace WebCore
+
+#endif // CachedFramePlatformData_h

@@ -35,7 +35,7 @@
 
 #import "DOMElementInternal.h"
 #import "WebBackForwardList.h"
-#import "WebCachedPagePlatformData.h"
+#import "WebCachedFramePlatformData.h"
 #import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocumentInternal.h"
@@ -990,13 +990,13 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& URL)
 
 void WebFrameLoaderClient::savePlatformDataToCachedPage(CachedPage* cachedPage)
 {
-    WebCachedPagePlatformData* webPlatformData = new WebCachedPagePlatformData([m_webFrame->_private->webFrameView documentView]);
-    cachedPage->setCachedPagePlatformData(webPlatformData);
+    WebCachedFramePlatformData* webPlatformData = new WebCachedFramePlatformData([m_webFrame->_private->webFrameView documentView]);
+    cachedPage->setCachedFramePlatformData(webPlatformData);
 }
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedPage(CachedPage* cachedPage)
 {
-    WebCachedPagePlatformData* platformData = reinterpret_cast<WebCachedPagePlatformData*>(cachedPage->cachedPagePlatformData());
+    WebCachedFramePlatformData* platformData = reinterpret_cast<WebCachedFramePlatformData*>(cachedPage->cachedFramePlatformData());
     NSView <WebDocumentView> *cachedView = platformData->webDocumentView();
     ASSERT(cachedView != nil);
     ASSERT(cachedPage->documentLoader());

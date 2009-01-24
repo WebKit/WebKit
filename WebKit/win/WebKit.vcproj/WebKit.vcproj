@@ -688,7 +688,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\WebCachedPagePlatformData.h"
+				RelativePath="..\WebCachedFramePlatformData.h"
 				>
 			</File>
 			<File

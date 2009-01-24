@@ -770,7 +770,7 @@
 		51BE38290DAEF7DA001085FC /* LocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE38270DAEF7DA001085FC /* LocalStorage.h */; };
 		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
 		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
-		51CBFC990D10E483002DBF51 /* CachedPagePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */; };
 		51DCE8020CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */; };
 		51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5678,7 +5678,7 @@
 		51BE38270DAEF7DA001085FC /* LocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorage.h; sourceTree = "<group>"; };
 		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
 		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
-		51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPagePlatformData.h; sourceTree = "<group>"; };
+		51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFramePlatformData.h; sourceTree = "<group>"; };
 		51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageCustom.cpp; sourceTree = "<group>"; };
 		51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLResultSetRowListCustom.cpp; sourceTree = "<group>"; };
 		51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadCheck.h; sourceTree = "<group>"; };
@@ -9833,7 +9833,7 @@
 				51741D0B0B07259A00ED442C /* BackForwardList.h */,
 				510184680B08602A004A825F /* CachedPage.cpp */,
 				510184670B08602A004A825F /* CachedPage.h */,
-				51CBFC980D10E483002DBF51 /* CachedPagePlatformData.h */,
+				51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */,
 				51741D0E0B07259A00ED442C /* HistoryItem.cpp */,
 				51741D0D0B07259A00ED442C /* HistoryItem.h */,
 				1477E7740BF4134A00152872 /* PageCache.cpp */,
@@ -14532,7 +14532,7 @@
 				BC64B4CC0CB4295D005F2B62 /* CachedFont.h in Headers */,
 				BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */,
 				510184690B08602A004A825F /* CachedPage.h in Headers */,
-				51CBFC990D10E483002DBF51 /* CachedPagePlatformData.h in Headers */,
+				51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */,
 				BCB16C200979C3BD00467741 /* CachedResource.h in Headers */,
 				BCFB2E5E0979E46400BA703D /* CachedResourceClient.h in Headers */,
 				BCB16C220979C3BD00467741 /* CachedResourceClientWalker.h in Headers */,

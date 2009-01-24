@@ -25,16 +25,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef WebCachedPagePlatformData_h
-#define WebCachedPagePlatformData_h
+#ifndef WebCachedFramePlatformData_h
+#define WebCachedFramePlatformData_h
 
 #include "WebDataSource.h"
 
-#include <WebCore/CachedPagePlatformData.h>
+#include <WebCore/CachedFramePlatformData.h>
 
-class WebCachedPagePlatformData : public WebCore::CachedPagePlatformData {
+class WebCachedFramePlatformData : public WebCore::CachedFramePlatformData {
 public:
-    WebCachedPagePlatformData(IWebDataSource* webDataSource) : m_webDataSource(webDataSource) { }
+    WebCachedFramePlatformData(IWebDataSource* webDataSource) : m_webDataSource(webDataSource) { }
 
     IWebDataSource* webDataSource() { return m_webDataSource.get(); }
 
@@ -42,4 +42,4 @@ private:
     COMPtr<IWebDataSource> m_webDataSource;
 };
 
-#endif // CachedPagePlatformData_h
+#endif // CachedFramePlatformData_h

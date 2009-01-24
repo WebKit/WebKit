@@ -27,7 +27,7 @@
 #include "CachedPage.h"
 
 #include "AnimationController.h"
-#include "CachedPagePlatformData.h"
+#include "CachedFramePlatformData.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -124,8 +124,8 @@ void CachedPage::clear()
     if (!m_document)
         return;
 
-    if (m_cachedPagePlatformData)
-        m_cachedPagePlatformData->clear();
+    if (m_cachedFramePlatformData)
+        m_cachedFramePlatformData->clear();
         
     ASSERT(m_view);
     ASSERT(m_document->frame() == m_view->frame());
@@ -148,7 +148,7 @@ void CachedPage::clear()
     m_mousePressNode = 0;
     m_URL = KURL();
 
-    m_cachedPagePlatformData.clear();
+    m_cachedFramePlatformData.clear();
 
     m_cachedPageScriptData.clear();
 }
@@ -178,14 +178,14 @@ double CachedPage::timeStamp() const
     return m_timeStamp;
 }
 
-void CachedPage::setCachedPagePlatformData(CachedPagePlatformData* data)
+void CachedPage::setCachedFramePlatformData(CachedFramePlatformData* data)
 {
-    m_cachedPagePlatformData.set(data);
+    m_cachedFramePlatformData.set(data);
 }
 
-CachedPagePlatformData* CachedPage::cachedPagePlatformData()
+CachedFramePlatformData* CachedPage::cachedFramePlatformData()
 {
-    return m_cachedPagePlatformData.get();
+    return m_cachedFramePlatformData.get();
 }
 
 } // namespace WebCore

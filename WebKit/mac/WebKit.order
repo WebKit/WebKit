@@ -955,7 +955,6 @@ _WKPopupMenu
 _WKAccessibilityHandleFocusChanged
 -[WebViewFactory unregisterUniqueIdForUIElement:]
 _WKUnregisterUniqueIdForElement
-__ZN25WebCachedPagePlatformData5clearEv
 -[WebHTMLView(WebInternal) closeIfNotCurrentView]
 _WKGetFontInLanguageForCharacter
 __ZN20WebFrameLoaderClient35dispatchDidChangeLocationWithinPageEv

@@ -32,7 +32,7 @@
 
 namespace WebCore {
     
-    class CachedPagePlatformData;
+    class CachedFramePlatformData;
     class DOMWindow;
     class Document;
     class DocumentLoader;
@@ -62,8 +62,8 @@ public:
     void setDocumentLoader(PassRefPtr<DocumentLoader>);
     DocumentLoader* documentLoader();
 
-    void setCachedPagePlatformData(CachedPagePlatformData*);
-    CachedPagePlatformData* cachedPagePlatformData();
+    void setCachedFramePlatformData(CachedFramePlatformData*);
+    CachedFramePlatformData* cachedFramePlatformData();
 
 private:
     CachedPage(Page*);
@@ -75,7 +75,7 @@ private:
     RefPtr<Node> m_mousePressNode;
     KURL m_URL;
     ScriptCachedFrameData m_cachedPageScriptData;
-    OwnPtr<CachedPagePlatformData> m_cachedPagePlatformData;
+    OwnPtr<CachedFramePlatformData> m_cachedFramePlatformData;
 };
 
 } // namespace WebCore

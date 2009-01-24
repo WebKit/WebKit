@@ -85,7 +85,7 @@
 		51AEDEF10CECF45700854328 /* WebDatabaseManagerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AEDEF00CECF45700854328 /* WebDatabaseManagerInternal.h */; };
 		51B2A1000ADB15D0002A9BEE /* WebIconDatabaseDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B2A0FF0ADB15D0002A9BEE /* WebIconDatabaseDelegate.h */; };
 		51C714FB0B20F79F00E5E33C /* WebBackForwardListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C714FA0B20F79F00E5E33C /* WebBackForwardListInternal.h */; };
-		51CBFCAD0D10E6C5002DBF51 /* WebCachedPagePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFCAC0D10E6C5002DBF51 /* WebCachedPagePlatformData.h */; };
+		51CBFCAD0D10E6C5002DBF51 /* WebCachedFramePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFCAC0D10E6C5002DBF51 /* WebCachedFramePlatformData.h */; };
 		51FDC4D30B0AF5C100F84EB3 /* WebHistoryItemPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5241ADF50B1BC48A004012BD /* WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5241ADF30B1BC48A004012BD /* WebCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5241ADF40B1BC48A004012BD /* WebCache.mm */; };
@@ -441,7 +441,7 @@
 		51AEDEF00CECF45700854328 /* WebDatabaseManagerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseManagerInternal.h; sourceTree = "<group>"; };
 		51B2A0FF0ADB15D0002A9BEE /* WebIconDatabaseDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseDelegate.h; sourceTree = "<group>"; };
 		51C714FA0B20F79F00E5E33C /* WebBackForwardListInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListInternal.h; sourceTree = "<group>"; };
-		51CBFCAC0D10E6C5002DBF51 /* WebCachedPagePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCachedPagePlatformData.h; sourceTree = "<group>"; };
+		51CBFCAC0D10E6C5002DBF51 /* WebCachedFramePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCachedFramePlatformData.h; sourceTree = "<group>"; };
 		51E94C3406C0321200A9B09E /* WebPDFView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPDFView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51E94C3506C0321200A9B09E /* WebPDFView.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPDFView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51E94C6806C0347500A9B09E /* WebPDFRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPDFRepresentation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1097,7 +1097,7 @@
 		F5B36B400281DE87018635CB /* WebCoreSupport */ = {
 			isa = PBXGroup;
 			children = (
-				51CBFCAC0D10E6C5002DBF51 /* WebCachedPagePlatformData.h */,
+				51CBFCAC0D10E6C5002DBF51 /* WebCachedFramePlatformData.h */,
 				14D8252D0AF955090004F057 /* WebChromeClient.h */,
 				14D8252E0AF955090004F057 /* WebChromeClient.mm */,
 				065AD5A10B0C32C7005A2B1D /* WebContextMenuClient.h */,
@@ -1240,7 +1240,7 @@
 				1A4DF5E40EC8D104006BD4B4 /* WebBaseNetscapePluginView.h in Headers */,
 				9398102E0824BF01008DF038 /* WebBasePluginPackage.h in Headers */,
 				5241ADF50B1BC48A004012BD /* WebCache.h in Headers */,
-				51CBFCAD0D10E6C5002DBF51 /* WebCachedPagePlatformData.h in Headers */,
+				51CBFCAD0D10E6C5002DBF51 /* WebCachedFramePlatformData.h in Headers */,
 				14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */,
 				939810490824BF01008DF038 /* WebClipView.h in Headers */,
 				065AD5A30B0C32C7005A2B1D /* WebContextMenuClient.h in Headers */,

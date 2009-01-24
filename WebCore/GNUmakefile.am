@@ -799,7 +799,7 @@ webcore_sources += \
 	WebCore/history/BackForwardList.h \
 	WebCore/history/CachedPage.cpp \
 	WebCore/history/CachedPage.h \
-	WebCore/history/CachedPagePlatformData.h \
+	WebCore/history/CachedFramePlatformData.h \
 	WebCore/history/HistoryItem.cpp \
 	WebCore/history/HistoryItem.h \
 	WebCore/history/PageCache.cpp \
