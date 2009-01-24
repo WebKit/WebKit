@@ -47,6 +47,7 @@
             }
 
             if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
                 layoutTestController.waitUntilDone();
                 setTimeout(function() { 
                     document.body.appendChild(document.createTextNode('FAIL')); 

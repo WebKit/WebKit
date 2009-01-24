@@ -1,3 +1,12 @@
+2009-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+        <video> controls visibility test needs to dump render tree as text because
+        the test does not always end at the same time, so the timeline slider thumb
+        is not always at the same position.
+
+        * media/video-controls-visible-audio-only.html:
+        * platform/mac/media/video-controls-visible-audio-only-expected.txt:
+
 2009-01-24  Darin Adler  <darin@apple.com>
 
         Try to fix expected results for new video element test.
