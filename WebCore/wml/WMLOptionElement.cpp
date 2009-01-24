@@ -32,14 +32,19 @@ namespace WebCore {
 using namespace WMLNames;
 
 WMLOptionElement::WMLOptionElement(const QualifiedName& tagName, Document* doc)
-    : WMLEventHandlingElement(tagName, doc)
+    : WMLFormControlElement(tagName, doc)
     , m_data(this)
-    , m_valueMatchesRenderer(false)
 {
 }
 
 WMLOptionElement::~WMLOptionElement()
 {
+}
+
+const AtomicString& WMLOptionElement::type() const
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, option, ("option"));
+    return option;
 }
 
 // FIXME: Activate once WMLSelectElement is available 

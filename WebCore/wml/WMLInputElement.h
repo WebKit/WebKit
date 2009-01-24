@@ -22,21 +22,17 @@
 #define WMLInputElement_h
 
 #if ENABLE(WML)
-#include "FormControlElement.h"
+#include "WMLFormControlElement.h"
 #include "InputElement.h"
-#include "WMLElement.h"
 
 namespace WebCore {
 
 class FormDataList;
 
-class WMLInputElement : public WMLElement, public FormControlElement, public InputElement {
+class WMLInputElement : public WMLFormControlElementWithState, public InputElement {
 public:
     WMLInputElement(const QualifiedName& tagName, Document*);
     virtual ~WMLInputElement();
-
-    virtual bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
-    virtual void setValueMatchesRenderer(bool b = true) { m_valueMatchesRenderer = b; }
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
@@ -57,6 +53,7 @@ public:
     virtual bool searchEventsShouldBeDispatched() const { return false; }
 
     virtual int size() const;
+    virtual const AtomicString& type() const;
     virtual const AtomicString& name() const;
     virtual String value() const;
     virtual void setValue(const String&);
@@ -92,7 +89,6 @@ public:
 private:
     InputElementData m_data;
     bool m_isPasswordField;
-    bool m_valueMatchesRenderer;
 };
 
 }

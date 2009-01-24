@@ -3897,14 +3897,17 @@ Vector<String> Document::formElementsState() const
 {
     Vector<String> stateVector;
     stateVector.reserveCapacity(m_formElementsWithState.size() * 3);
-    typedef ListHashSet<HTMLFormControlElementWithState*>::const_iterator Iterator;
+    typedef ListHashSet<FormControlElementWithState*>::const_iterator Iterator;
     Iterator end = m_formElementsWithState.end();
     for (Iterator it = m_formElementsWithState.begin(); it != end; ++it) {
-        HTMLFormControlElementWithState* e = *it;
+        FormControlElementWithState* e = *it;
         String value;
         if (e->saveState(value)) {
-            stateVector.append(e->name().string());
-            stateVector.append(e->type().string());
+            FormControlElement* formControlElement = e->toFormControlElement();
+            ASSERT(formControlElement);
+
+            stateVector.append(formControlElement->name().string());
+            stateVector.append(formControlElement->type().string());
             stateVector.append(value);
         }
     }

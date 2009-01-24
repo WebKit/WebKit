@@ -432,7 +432,7 @@ unsigned HTMLFormElement::formElementIndex(HTMLFormControlElement* e)
             if (node == e)
                 return i;
             if (node->isHTMLElement()
-                    && static_cast<HTMLElement*>(node)->isGenericFormElement()
+                    && static_cast<Element*>(node)->isFormControlElement()
                     && static_cast<HTMLFormControlElement*>(node)->form() == this)
                 ++i;
         }

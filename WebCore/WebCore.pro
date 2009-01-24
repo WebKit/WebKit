@@ -582,6 +582,7 @@ SOURCES += \
     dom/EventTargetNode.cpp \
     dom/ExceptionBase.cpp \
     dom/ExceptionCode.cpp \
+    dom/FormControlElementWithState.cpp \
     dom/FormControlElement.cpp \
     dom/InputElement.cpp \
     dom/KeyboardEvent.cpp \
@@ -1417,6 +1418,7 @@ contains(DEFINES, ENABLE_WML=1) {
         wml/WMLElement.cpp \
         wml/WMLErrorHandling.cpp \
         wml/WMLEventHandlingElement.cpp \
+        wml/WMLFormControlElement.cpp \
         wml/WMLFieldSetElement.cpp \
         wml/WMLGoElement.cpp \
         wml/WMLImageElement.cpp \

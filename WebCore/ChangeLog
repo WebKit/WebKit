@@ -1,3 +1,116 @@
+2009-01-23  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
+        Add a base class for WML form control elements: WMLFormControlElement (as it's designed in HTML as well).
+        WMLFormControlElement inherits from WMLElement and FormControlElement (just like the HTMLFormControlElement equivalent).
+
+        WMLInputElement / WMLOptionElement / WMLOptGroupElement are supposed to inherit from the new WMLFormControlElement class.
+        Now WMLInputElement & WMLOptGroupElement only inherit from WMLElement and FormControlElement, but WMLOptionElement inherits
+        from WMLEventHandlingElement (which in turn inherits from WMLElement) and FormControlElement. In order to introduce a shared
+        base class, WMLEventHandlingElement is no longer allowed to inherit from WMLElement directly. Instead it should turn into
+        another base class, just like FormControlElement.
+
+        Add a base class for form control elements 'with state': FormControlElementWithState, serving as base class for
+        HTMLFormControlElementWithState and WMLFormControlElementWithState. -> Make Document operate on FormControlElementWithState
+        objects instead of HTMLFormControlElementWithState objects, to support save/restore control state for non HTMLFormControlElements.
+
+        Rename isGenericFormElement() to isFormControlElement(), and move it to Element.h
+        Add new virtual function isFormControlElementWithState() to Element.h.
+
+        * GNUmakefile.am:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * dom/Document.cpp:
+        (WebCore::Document::formElementsState):
+        * dom/Document.h:
+        (WebCore::Document::registerFormElementWithState):
+        (WebCore::Document::unregisterFormElementWithState):
+        * dom/Element.h:
+        (WebCore::Element::isFormControlElement):
+        (WebCore::Element::isFormControlElementWithState):
+        * dom/FormControlElement.cpp:
+        (WebCore::toFormControlElement):
+        * dom/FormControlElement.h:
+        * dom/FormControlElementWithState.cpp: Added.
+        (WebCore::FormControlElementWithState::registerFormControlElementWithState):
+        (WebCore::FormControlElementWithState::unregisterFormControlElementWithState):
+        (WebCore::FormControlElementWithState::finishParsingChildren):
+        (WebCore::toFormControlElementWithState):
+        * dom/FormControlElementWithState.h: Added.
+        (WebCore::FormControlElementWithState::~FormControlElementWithState):
+        (WebCore::FormControlElementWithState::FormControlElementWithState):
+        * html/HTMLElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElementWithState::HTMLFormControlElementWithState):
+        (WebCore::HTMLFormControlElementWithState::~HTMLFormControlElementWithState):
+        (WebCore::HTMLFormControlElementWithState::willMoveToNewOwnerDocument):
+        (WebCore::HTMLFormControlElementWithState::didMoveToNewOwnerDocument):
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::isFormControlElement):
+        (WebCore::HTMLFormControlElementWithState::isFormControlElementWithState):
+        (WebCore::HTMLFormControlElementWithState::toFormControlElement):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formElementIndex):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::correspondingControl):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::formElement):
+        * page/Frame.cpp:
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        (WebCore::scanForForm):
+        (WebCore::Frame::currentForm):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::WMLCardElement):
+        (WebCore::WMLCardElement::parseMappedAttribute):
+        (WebCore::WMLCardElement::insertedIntoDocument):
+        * wml/WMLCardElement.h:
+        * wml/WMLDoElement.cpp:
+        (WebCore::WMLDoElement::insertedIntoDocument):
+        * wml/WMLElement.h:
+        (WebCore::WMLElement::isWMLElement):
+        * wml/WMLEventHandlingElement.cpp:
+        (WebCore::WMLEventHandlingElement::WMLEventHandlingElement):
+        (WebCore::WMLEventHandlingElement::registerDoElement):
+        (WebCore::toWMLEventHandlingElement):
+        * wml/WMLEventHandlingElement.h:
+        * wml/WMLFormControlElement.cpp: Added.
+        (WebCore::WMLFormControlElement::WMLFormControlElement):
+        (WebCore::WMLFormControlElement::~WMLFormControlElement):
+        (WebCore::WMLFormControlElementWithState::WMLFormControlElementWithState):
+        (WebCore::WMLFormControlElementWithState::~WMLFormControlElementWithState):
+        * wml/WMLFormControlElement.h: Added.
+        (WebCore::WMLFormControlElement::isFormControlElement):
+        (WebCore::WMLFormControlElement::valueMatchesRenderer):
+        (WebCore::WMLFormControlElement::setValueMatchesRenderer):
+        (WebCore::WMLFormControlElement::name):
+        (WebCore::WMLFormControlElementWithState::isFormControlElementWithState):
+        (WebCore::WMLFormControlElementWithState::toFormControlElement):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::WMLInputElement):
+        (WebCore::WMLInputElement::type):
+        * wml/WMLInputElement.h:
+        * wml/WMLOnEventElement.cpp:
+        (WebCore::WMLOnEventElement::registerTask):
+        * wml/WMLOptGroupElement.cpp:
+        (WebCore::WMLOptGroupElement::WMLOptGroupElement):
+        (WebCore::WMLOptGroupElement::type):
+        * wml/WMLOptGroupElement.h:
+        * wml/WMLOptionElement.cpp:
+        (WebCore::WMLOptionElement::WMLOptionElement):
+        (WebCore::WMLOptionElement::type):
+        * wml/WMLOptionElement.h:
+        * wml/WMLTemplateElement.cpp:
+        (WebCore::WMLTemplateElement::WMLTemplateElement):
+        (WebCore::WMLTemplateElement::parseMappedAttribute):
+        * wml/WMLTemplateElement.h:
+
 2009-01-23  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

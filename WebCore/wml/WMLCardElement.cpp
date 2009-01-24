@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,7 +41,7 @@ namespace WebCore {
 using namespace WMLNames;
 
 WMLCardElement::WMLCardElement(const QualifiedName& tagName, Document* doc)
-    : WMLEventHandlingElement(tagName, doc)
+    : WMLElement(tagName, doc)
     , m_isNewContext(false)
     , m_isOrdered(false)
     , m_isVisible(false)
@@ -216,7 +216,7 @@ void WMLCardElement::parseMappedAttribute(MappedAttribute* attr)
     else if (attr->name() == orderedAttr)
         m_isOrdered = (attr->value() == "true");
     else {
-        WMLEventHandlingElement::parseMappedAttribute(attr);
+        WMLElement::parseMappedAttribute(attr);
         return;
     }
 
@@ -232,7 +232,7 @@ void WMLCardElement::parseMappedAttribute(MappedAttribute* attr)
 
 void WMLCardElement::insertedIntoDocument()
 {
-    WMLEventHandlingElement::insertedIntoDocument();
+    WMLElement::insertedIntoDocument();
 
     // The first card inserted into a document, is visible by default.
     if (!m_isVisible) {

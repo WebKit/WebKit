@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,7 @@
 
 namespace WebCore {
 
+class AtomicString;
 class Element;
 
 class FormControlElement {
@@ -31,6 +32,9 @@ public:
 
     virtual bool valueMatchesRenderer() const = 0;
     virtual void setValueMatchesRenderer(bool value = true) = 0;
+
+    virtual const AtomicString& name() const = 0;
+    virtual const AtomicString& type() const = 0;
 
 protected:
     FormControlElement() { }

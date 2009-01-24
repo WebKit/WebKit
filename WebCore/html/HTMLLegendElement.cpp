@@ -97,7 +97,7 @@ Element *HTMLLegendElement::formElement()
     while ((node = node->traverseNextNode(fieldset))) {
         if (node->isHTMLElement()) {
             HTMLElement *element = static_cast<HTMLElement *>(node);
-            if (!element->hasLocalName(legendTag) && element->isGenericFormElement())
+            if (!element->hasLocalName(legendTag) && element->isFormControlElement())
                 return element;
         }
     }

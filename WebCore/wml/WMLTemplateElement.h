@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,11 +22,12 @@
 #define WMLTemplateElement_h
 
 #if ENABLE(WML)
+#include "WMLElement.h"
 #include "WMLEventHandlingElement.h"
 
 namespace WebCore {
 
-class WMLTemplateElement : public WMLEventHandlingElement {
+class WMLTemplateElement : public WMLElement, public WMLEventHandlingElement {
 public:
     WMLTemplateElement(const QualifiedName&, Document*);
     virtual ~WMLTemplateElement();

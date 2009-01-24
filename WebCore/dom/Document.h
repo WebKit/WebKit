@@ -74,12 +74,12 @@ namespace WebCore {
     class EntityReference;
     class Event;
     class EventListener;
+    class FormControlElementWithState;
     class Frame;
     class FrameView;
     class HTMLCanvasElement;
     class HTMLDocument;
     class HTMLElement;
-    class HTMLFormControlElementWithState;
     class HTMLFormElement;
     class HTMLHeadElement;
     class HTMLInputElement;
@@ -374,8 +374,8 @@ public:
     void setUsesBeforeAfterRules(bool b) { m_usesBeforeAfterRules = b; }
 
     // Machinery for saving and restoring state when you leave and then go back to a page.
-    void registerFormElementWithState(HTMLFormControlElementWithState* e) { m_formElementsWithState.add(e); }
-    void unregisterFormElementWithState(HTMLFormControlElementWithState* e) { m_formElementsWithState.remove(e); }
+    void registerFormElementWithState(FormControlElementWithState* e) { m_formElementsWithState.add(e); }
+    void unregisterFormElementWithState(FormControlElementWithState* e) { m_formElementsWithState.remove(e); }
     Vector<String> formElementsState() const;
     void setStateForNewFormElements(const Vector<String>&);
     bool hasStateForNewFormElements() const;
@@ -890,7 +890,7 @@ private:
     RegisteredEventListenerVector m_windowEventListeners;
 
     typedef HashMap<FormElementKey, Vector<String>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
-    ListHashSet<HTMLFormControlElementWithState*> m_formElementsWithState;
+    ListHashSet<FormControlElementWithState*> m_formElementsWithState;
     FormElementStateMap m_stateForNewFormElements;
     
     Color m_linkColor;

@@ -11386,6 +11386,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\FormControlElementWithState.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\FormControlElementWithState.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\FormControlElement.cpp"
 				>
 				<FileConfiguration
@@ -16703,6 +16719,14 @@
 			</File>
 			<File
 				RelativePath="..\wml\WMLEventHandlingElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLFormControlElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLFormControlElement.h"
 				>
 			</File>
 			<File

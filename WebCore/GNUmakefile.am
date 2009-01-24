@@ -596,6 +596,8 @@ webcore_sources += \
 	WebCore/dom/ExceptionBase.h \
 	WebCore/dom/ExceptionCode.cpp \
 	WebCore/dom/ExceptionCode.h \
+	WebCore/dom/FormControlElementWithState.cpp \
+	WebCore/dom/FormControlElementWithState.h \
 	WebCore/dom/FormControlElement.cpp \
 	WebCore/dom/FormControlElement.h \
 	WebCore/dom/InputElement.cpp \
@@ -2224,6 +2226,7 @@ webcore_sources += \
 	WebCore/wml/WMLErrorHandling.cpp \
 	WebCore/wml/WMLEventHandlingElement.cpp \
 	WebCore/wml/WMLFieldSetElement.cpp \
+	WebCore/wml/WMLFormControlElement.cpp \
 	WebCore/wml/WMLGoElement.cpp \
 	WebCore/wml/WMLImageElement.cpp \
 	WebCore/wml/WMLImageLoader.cpp \

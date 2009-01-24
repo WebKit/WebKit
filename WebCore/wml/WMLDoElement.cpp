@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -119,11 +119,8 @@ void WMLDoElement::insertedIntoDocument()
     if (!parent || !parent->isWMLElement())
         return;
 
-    WMLElement* parentElement = static_cast<WMLElement*>(parent);
-    if (!parentElement->isWMLEventHandlingElement())
-        return;
-
-    static_cast<WMLEventHandlingElement*>(parentElement)->registerDoElement(this);
+    if (WMLEventHandlingElement* eventHandlingElement = toWMLEventHandlingElement(static_cast<WMLElement*>(parent)))
+        eventHandlingElement->registerDoElement(this, document());
 }
 
 RenderObject* WMLDoElement::createRenderer(RenderArena* arena, RenderStyle* style)

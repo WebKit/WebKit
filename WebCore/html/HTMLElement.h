@@ -85,8 +85,6 @@ public:
 
     virtual void accessKeyAction(bool sendToAnyElement);
 
-    virtual bool isGenericFormElement() const { return false; }
-
     virtual HTMLTagStatus endTagRequirement() const;
     virtual int tagPriority() const;
     virtual bool childAllowed(Node* newChild); // Error-checking during parsing that checks the DTD

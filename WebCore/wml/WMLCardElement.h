@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,7 +31,7 @@ namespace WebCore {
 class WMLTemplateElement;
 class WMLTimerElement;
 
-class WMLCardElement : public WMLEventHandlingElement {
+class WMLCardElement : public WMLElement, public WMLEventHandlingElement {
 public:
     WMLCardElement(const QualifiedName&, Document*);
     virtual ~WMLCardElement();

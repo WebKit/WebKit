@@ -196,8 +196,7 @@ NSString* Frame::searchForLabelsBeforeElement(NSArray* labels, Element* element)
          n = n->traversePreviousNode())
     {
         if (n->hasTagName(formTag)
-            || (n->isHTMLElement()
-                && static_cast<HTMLElement*>(n)->isGenericFormElement()))
+            || (n->isHTMLElement() && static_cast<Element*>(n)->isFormControlElement()))
         {
             // We hit another form element or the start of the form - bail out
             break;

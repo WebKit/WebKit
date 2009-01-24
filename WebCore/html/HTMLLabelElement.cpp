@@ -59,7 +59,7 @@ HTMLElement* HTMLLabelElement::correspondingControl()
         while ((node = node->traverseNextNode(this))) {
             if (node->isHTMLElement()) {
                 HTMLElement* element = static_cast<HTMLElement*>(node);
-                if (element->isGenericFormElement())
+                if (element->isFormControlElement())
                     return element;
             }
         }

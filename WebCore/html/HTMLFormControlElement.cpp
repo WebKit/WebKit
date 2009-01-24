@@ -257,23 +257,23 @@ void HTMLFormControlElement::removeFromForm()
 HTMLFormControlElementWithState::HTMLFormControlElementWithState(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLFormControlElement(tagName, doc, f)
 {
-    doc->registerFormElementWithState(this);
+    FormControlElementWithState::registerFormControlElementWithState(this, document());
 }
 
 HTMLFormControlElementWithState::~HTMLFormControlElementWithState()
 {
-    document()->unregisterFormElementWithState(this);
+    FormControlElementWithState::unregisterFormControlElementWithState(this, document());
 }
 
 void HTMLFormControlElementWithState::willMoveToNewOwnerDocument()
 {
-    document()->unregisterFormElementWithState(this);
+    FormControlElementWithState::unregisterFormControlElementWithState(this, document());
     HTMLFormControlElement::willMoveToNewOwnerDocument();
 }
 
 void HTMLFormControlElementWithState::didMoveToNewOwnerDocument()
 {
-    document()->registerFormElementWithState(this);
+    FormControlElementWithState::registerFormControlElementWithState(this, document());
     HTMLFormControlElement::didMoveToNewOwnerDocument();
 }
 
