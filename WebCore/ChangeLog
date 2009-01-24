@@ -1,5 +1,12 @@
 2009-01-23  Adam Treat  <adam.treat@torchmobile.com>
 
+        Fix the Gtk build too after removal of RenderBox::toConstRenderBox
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::baselinePosition):
+
+2009-01-23  Adam Treat  <adam.treat@torchmobile.com>
+
         Fix the Qt build after rename of RenderBox::toConstRenderBox -> toRenderBox
 
         * platform/qt/RenderThemeQt.cpp:

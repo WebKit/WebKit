@@ -89,7 +89,7 @@ int RenderThemeGtk::baselinePosition(const RenderObject* o) const
     // FIXME: This strategy is possibly incorrect for the GTK+ port.
     if (o->style()->appearance() == CheckboxPart ||
         o->style()->appearance() == RadioPart) {
-        const RenderBox* box = RenderBox::toConstRenderBox(o);
+        const RenderBox* box = toRenderBox(o);
         return box->marginTop() + box->height() - 2;
     }
 
