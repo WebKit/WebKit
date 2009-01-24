@@ -1,3 +1,13 @@
+2009-01-23  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Fix drawing in situations where sub-portions of the bitmap are to be 
+        drawn to the screen.
+
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::draw):
+
 2009-01-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fixes for recent changes.
