@@ -515,6 +515,7 @@ This file contains the list of files needed to build WebCore.
     
     <set append="1" var="WEBCORE_SOURCES_HISTORY">
         history/BackForwardList.cpp
+        history/CachedFrame.cpp
         history/CachedPage.cpp
         history/PageCache.cpp
         history/HistoryItem.cpp

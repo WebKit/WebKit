@@ -16066,6 +16066,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\history\CachedFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\history\CachedFrame.h"
+				>
+			</File>
+			<File
+				RelativePath="..\history\CachedFramePlatformData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\history\CachedPage.cpp"
 				>
 			</File>

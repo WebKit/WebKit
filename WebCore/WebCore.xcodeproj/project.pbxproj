@@ -772,6 +772,8 @@
 		51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE37DE0DAEE00E001085FC /* StorageArea.h */; };
 		51BE38280DAEF7DA001085FC /* LocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BE38260DAEF7DA001085FC /* LocalStorage.cpp */; };
 		51BE38290DAEF7DA001085FC /* LocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE38270DAEF7DA001085FC /* LocalStorage.h */; };
+		51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C0AA380F2AA10A001648C2 /* CachedFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */; };
 		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
 		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
 		51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5685,6 +5687,8 @@
 		51BE37DE0DAEE00E001085FC /* StorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
 		51BE38260DAEF7DA001085FC /* LocalStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorage.cpp; sourceTree = "<group>"; };
 		51BE38270DAEF7DA001085FC /* LocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorage.h; sourceTree = "<group>"; };
+		51C0AA380F2AA10A001648C2 /* CachedFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFrame.h; sourceTree = "<group>"; };
+		51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedFrame.cpp; sourceTree = "<group>"; };
 		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
 		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
 		51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFramePlatformData.h; sourceTree = "<group>"; };
@@ -9843,9 +9847,11 @@
 				5160F4920B0AA71500C1D2AF /* mac */,
 				51741D0C0B07259A00ED442C /* BackForwardList.cpp */,
 				51741D0B0B07259A00ED442C /* BackForwardList.h */,
+				51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */,
+				51C0AA380F2AA10A001648C2 /* CachedFrame.h */,
+				51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */,
 				510184680B08602A004A825F /* CachedPage.cpp */,
 				510184670B08602A004A825F /* CachedPage.h */,
-				51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */,
 				51741D0E0B07259A00ED442C /* HistoryItem.cpp */,
 				51741D0D0B07259A00ED442C /* HistoryItem.h */,
 				1477E7740BF4134A00152872 /* PageCache.cpp */,
@@ -16645,6 +16651,7 @@
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
 				18A0537D0F26859C00A51705 /* WorkerRunLoop.h in Headers */,
+				51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18616,6 +18623,7 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */,
 				93BA59B20F2AA5FE008E8E99 /* JSCDATASectionCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

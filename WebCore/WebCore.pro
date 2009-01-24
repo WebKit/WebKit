@@ -677,6 +677,7 @@ SOURCES += \
     editing/visible_units.cpp \
     editing/WrapContentsInDummySpanCommand.cpp \
     history/BackForwardList.cpp \
+    history/CachedFrame.cpp \
     history/CachedPage.cpp \
     history/HistoryItem.cpp \
     history/PageCache.cpp \

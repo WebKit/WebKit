@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,54 +22,52 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
+#ifndef CachedFrame_h
+#define CachedFrame_h
 
-#ifndef CachedPage_h
-#define CachedPage_h
-
-#include "CachedFrame.h"
+#include "KURL.h"
+#include "ScriptCachedFrameData.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
     
-    class CachedFrame;
     class CachedFramePlatformData;
     class DOMWindow;
     class Document;
     class DocumentLoader;
+    class Frame;
     class FrameView;
-    class KURL;
     class Node;
-    class Page;
 
-class CachedPage : public RefCounted<CachedPage> {
+class CachedFrame : public Noncopyable {
 public:
-    static PassRefPtr<CachedPage> create(Page*);
-    ~CachedPage();
+    CachedFrame(Frame*);
+    ~CachedFrame();
 
-    void restore(Page*);
+    void restore(Frame*);
     void clear();
 
-    Document* document() const { return m_cachedMainFrame.document(); }
-    DocumentLoader* documentLoader() const { return m_cachedMainFrame.documentLoader(); }
-    FrameView* view() const { return m_cachedMainFrame.view(); }
-    Node* mousePressNode() const { return m_cachedMainFrame.mousePressNode(); }
-    const KURL& url() const { return m_cachedMainFrame.url(); }
-    DOMWindow* domWindow() const { return m_cachedMainFrame.domWindow(); }
-
-    void setTimeStamp(double);
-    void setTimeStampToNow();
-    double timeStamp() const;
+    Document* document() const { return m_document.get(); }
+    DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
+    FrameView* view() const { return m_view.get(); }
+    Node* mousePressNode() const { return m_mousePressNode.get(); }
+    const KURL& url() const { return m_URL; }
+    DOMWindow* domWindow() const { return m_cachedFrameScriptData.domWindow(); }
 
     void setCachedFramePlatformData(CachedFramePlatformData*);
     CachedFramePlatformData* cachedFramePlatformData();
 
 private:
-    CachedPage(Page*);
-
-    double m_timeStamp;
-    CachedFrame m_cachedMainFrame;
+    RefPtr<Document> m_document;
+    RefPtr<DocumentLoader> m_documentLoader;
+    RefPtr<FrameView> m_view;
+    RefPtr<Node> m_mousePressNode;
+    KURL m_URL;
+    ScriptCachedFrameData m_cachedFrameScriptData;
+    OwnPtr<CachedFramePlatformData> m_cachedFramePlatformData;
 };
 
 } // namespace WebCore
 
-#endif // CachedPage_h
-
+#endif // CachedFrame_h

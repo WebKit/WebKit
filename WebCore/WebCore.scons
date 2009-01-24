@@ -198,6 +198,7 @@ sources['editing'] = [
 ]
 sources['history'] = [
     'history/BackForwardList.cpp',
+    'history/CachedFrame.cpp',
     'history/CachedPage.cpp',
     'history/HistoryItem.cpp',
     'history/PageCache.cpp'

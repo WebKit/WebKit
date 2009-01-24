@@ -800,9 +800,11 @@ webcore_sources += \
 	WebCore/editing/visible_units.h \
 	WebCore/history/BackForwardList.cpp \
 	WebCore/history/BackForwardList.h \
+	WebCore/history/CachedFrame.cpp \
+	WebCore/history/CachedFrame.h \
+	WebCore/history/CachedFramePlatformData.h \
 	WebCore/history/CachedPage.cpp \
 	WebCore/history/CachedPage.h \
-	WebCore/history/CachedFramePlatformData.h \
 	WebCore/history/HistoryItem.cpp \
 	WebCore/history/HistoryItem.h \
 	WebCore/history/PageCache.cpp \

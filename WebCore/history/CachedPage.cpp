@@ -26,25 +26,12 @@
 #include "config.h"
 #include "CachedPage.h"
 
-#include "AnimationController.h"
-#include "CachedFramePlatformData.h"
-#include "Document.h"
-#include "DocumentLoader.h"
-#include "Element.h"
-#include "EventHandler.h"
+#include "CachedFrame.h"
 #include "FocusController.h"
 #include "Frame.h"
-#include "FrameLoader.h"
-#include "FrameView.h"
-#include "Logging.h"
 #include "Page.h"
-#include "PageGroup.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>
-
-#if ENABLE(SVG)
-#include "SVGDocumentExtensions.h"
-#endif
 
 using namespace JSC;
 
@@ -61,22 +48,11 @@ PassRefPtr<CachedPage> CachedPage::create(Page* page)
 
 CachedPage::CachedPage(Page* page)
     : m_timeStamp(0)
-    , m_document(page->mainFrame()->document())
-    , m_view(page->mainFrame()->view())
-    , m_mousePressNode(page->mainFrame()->eventHandler()->mousePressNode())
-    , m_URL(page->mainFrame()->loader()->url())
-    , m_cachedPageScriptData(page->mainFrame())
+    , m_cachedMainFrame(page->mainFrame())
 {
 #ifndef NDEBUG
     cachedPageCounter.increment();
 #endif
-    
-    m_document->documentWillBecomeInactive(); 
-    
-    Frame* mainFrame = page->mainFrame();
-    mainFrame->clearTimers();
-
-    m_document->setInPageCache(true);
 }
 
 CachedPage::~CachedPage()
@@ -88,28 +64,11 @@ CachedPage::~CachedPage()
     clear();
 }
 
-DOMWindow* CachedPage::domWindow() const
-{
-    return m_cachedPageScriptData.domWindow();
-}
-
 void CachedPage::restore(Page* page)
 {
-    ASSERT(m_document->view() == m_view);
+    ASSERT(page && page->mainFrame());
+    m_cachedMainFrame.restore(page->mainFrame());
 
-    Frame* mainFrame = page->mainFrame();
-
-    m_cachedPageScriptData.restore(mainFrame);
-
-#if ENABLE(SVG)
-    if (m_document && m_document->svgExtensions())
-        m_document->accessSVGExtensions()->unpauseAnimations();
-#endif
-
-    mainFrame->animation()->resumeAnimations(m_document.get());
-
-    mainFrame->eventHandler()->setMousePressNode(mousePressNode());
-        
     // Restore the focus appearance for the focused element.
     // FIXME: Right now we don't support pages w/ frames in the b/f cache.  This may need to be tweaked when we add support for that.
     Document* focusedDocument = page->focusController()->focusedOrMainFrame()->document();
@@ -121,46 +80,7 @@ void CachedPage::restore(Page* page)
 
 void CachedPage::clear()
 {
-    if (!m_document)
-        return;
-
-    if (m_cachedFramePlatformData)
-        m_cachedFramePlatformData->clear();
-        
-    ASSERT(m_view);
-    ASSERT(m_document->frame() == m_view->frame());
-
-    if (m_document->inPageCache()) {
-        Frame::clearTimers(m_view.get(), m_document.get());
-
-        m_document->setInPageCache(false);
-        // FIXME: We don't call willRemove here. Why is that OK?
-        m_document->detach();
-        m_document->removeAllEventListenersFromAllNodes();
-
-        m_view->clearFrame();
-    }
-
-    ASSERT(!m_document->inPageCache());
-
-    m_document = 0;
-    m_view = 0;
-    m_mousePressNode = 0;
-    m_URL = KURL();
-
-    m_cachedFramePlatformData.clear();
-
-    m_cachedPageScriptData.clear();
-}
-
-void CachedPage::setDocumentLoader(PassRefPtr<DocumentLoader> loader)
-{
-    m_documentLoader = loader;
-}
-
-DocumentLoader* CachedPage::documentLoader()
-{
-    return m_documentLoader.get();
+    m_cachedMainFrame.clear();
 }
 
 void CachedPage::setTimeStamp(double timeStamp)
@@ -180,12 +100,12 @@ double CachedPage::timeStamp() const
 
 void CachedPage::setCachedFramePlatformData(CachedFramePlatformData* data)
 {
-    m_cachedFramePlatformData.set(data);
+    m_cachedMainFrame.setCachedFramePlatformData(data);
 }
 
 CachedFramePlatformData* CachedPage::cachedFramePlatformData()
 {
-    return m_cachedFramePlatformData.get();
+    return m_cachedMainFrame.cachedFramePlatformData();
 }
 
 } // namespace WebCore

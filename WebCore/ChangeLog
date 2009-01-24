@@ -1,3 +1,51 @@
+2009-01-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        In CachedPage, break off per-Frame pieces of data into a CachedFrame object.
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        * history/CachedFrame.cpp: Added.
+        (WebCore::cachedFrameCounter):
+        (WebCore::CachedFrame::CachedFrame):
+        (WebCore::CachedFrame::~CachedFrame):
+        (WebCore::CachedFrame::restore):
+        (WebCore::CachedFrame::clear):
+        (WebCore::CachedFrame::setCachedFramePlatformData):
+        (WebCore::CachedFrame::cachedFramePlatformData):
+        * history/CachedFrame.h: Added.
+        (WebCore::CachedFrame::document):
+        (WebCore::CachedFrame::documentLoader):
+        (WebCore::CachedFrame::view):
+        (WebCore::CachedFrame::mousePressNode):
+        (WebCore::CachedFrame::url):
+        (WebCore::CachedFrame::domWindow):
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        (WebCore::CachedPage::setCachedFramePlatformData):
+        (WebCore::CachedPage::cachedFramePlatformData):
+        * history/CachedPage.h:
+        (WebCore::CachedPage::document):
+        (WebCore::CachedPage::documentLoader):
+        (WebCore::CachedPage::view):
+        (WebCore::CachedPage::mousePressNode):
+        (WebCore::CachedPage::url):
+        (WebCore::CachedPage::domWindow):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::cachePageForHistoryItem): Setting the DocumentLoader independently of
+          creating a CachedPage was a historical relic.  Take the opportunity to clean that up.
+
 2009-01-23  David Hyatt  <hyatt@apple.com>
 
         Add ASSERTs to catch anyone trying to obtain the width/height of an inline flow.  Fix up all the places
