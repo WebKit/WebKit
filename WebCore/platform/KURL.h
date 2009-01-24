@@ -74,8 +74,6 @@ public:
 
     // The argument is an absolute URL string. The string is assumed to be
     // already encoded.
-    // FIXME: For characters with codes other than 0000-00FF will be chopped
-    // off, so this call is currently not safe to use with arbitrary strings.
     // FIXME: This constructor has a special case for strings that start with
     // "/", prepending "file://" to such strings; it would be good to get
     // rid of that special case.

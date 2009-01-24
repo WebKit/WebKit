@@ -1,3 +1,23 @@
+2009-01-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6368059> REGRESSION: URL encoding problems on http://www.cineman.ch
+
+        Test: http/tests/xmlhttprequest/encode-request-url-2.html
+
+        * platform/KURL.cpp:
+        (WebCore::appendASCII): Added a helper function.
+        (WebCore::KURL::KURL): Explicitly encode the URL to call two-argument parse() with better
+        specified behavior.
+        (WebCore::KURL::init): Ditto. This avoids trying to round-trip an URL encoded into a byte
+        stream, but not yet transformed to ASCII-only using percent escapes. Since different parts
+        of the byte stream can use different encodings, round-tripping is not possible.
+        (WebCore::KURL::parse): Reverted an earlier change that made the single-argument version of
+        this function convert the string to utf-8. I think that on the remanining code paths, it is
+        correct to assume that the string is all ASCII, but I'm not yet confident enough to drop a
+        FIXME warning.
+
 2009-01-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix after r40170

@@ -1,3 +1,15 @@
+2009-01-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6368059> REGRESSION: URL encoding problems on http://www.cineman.ch
+
+        * http/tests/xmlhttprequest/encode-request-url-2-expected.txt: Added.
+        * http/tests/xmlhttprequest/encode-request-url-2.html: Added.
+
+        * fast/loader/url-parse-1-expected.txt: Updated test results. Neither new nor old result
+        matches Firefox, and the change is caused by <https://bugs.webkit.org/show_bug.cgi?id=23500>.
+
 2009-01-23  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson

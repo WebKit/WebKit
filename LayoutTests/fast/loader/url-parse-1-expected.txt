@@ -5,7 +5,7 @@ file:///BASE/		/BASE/
 test	file:///BASE/test		/BASE/test
 /	file:///		/
 /test	file:///test		/test
-//	file://		
+//	file:		
 //test	file://test	test	
 ///	file:///		/
 ///test	file:///test		/test

@@ -243,6 +243,14 @@ static void copyASCII(const UChar* src, int length, char* dest)
         dest[i] = static_cast<char>(src[i]);
 }
 
+static void appendASCII(const String& base, const char* rel, size_t len, CharBuffer& buffer)
+{
+    buffer.resize(base.length() + len + 1);
+    copyASCII(base.characters(), base.length(), buffer.data());
+    memcpy(buffer.data() + base.length(), rel, len);
+    buffer[buffer.size() - 1] = '\0';
+}
+
 // FIXME: Move to PlatformString.h eventually.
 // Returns the index of the first index in string |s| of any of the characters
 // in |toFind|. |toFind| should be a null-terminated string, all characters up
@@ -300,7 +308,7 @@ KURL::KURL(const char* url)
 KURL::KURL(const String& url)
 {
     if (url[0] != '/') {
-        parse(url);
+        parse(url.utf8().data(), &url);
         return;
     }
 
@@ -399,15 +407,18 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
         }
     }
 
+    CharBuffer parseBuffer;
+
     if (absolute) {
         parse(str, originalString);
     } else {
         // If the base is empty or opaque (e.g. data: or javascript:), then the URL is invalid
         // unless the relative URL is a single fragment.
         if (!base.isHierarchical()) {
-            if (str[0] == '#')
-                parse(base.m_string.left(base.m_queryEnd) + (allASCII ? String(str) : String::fromUTF8(str)));
-            else {
+            if (str[0] == '#') {
+                appendASCII(base.m_string.left(base.m_queryEnd), str, len, parseBuffer);
+                parse(parseBuffer.data(), 0);
+            } else {
                 m_string = relative;
                 invalidate();
             }
@@ -420,22 +431,28 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
             // reference to the same document
             *this = base;
             break;
-        case '#':
+        case '#': {
             // must be fragment-only reference
-            parse(base.m_string.left(base.m_queryEnd) + (allASCII ? String(str) : String::fromUTF8(str)));
+            appendASCII(base.m_string.left(base.m_queryEnd), str, len, parseBuffer);
+            parse(parseBuffer.data(), 0);
             break;
-        case '?':
+        }
+        case '?': {
             // query-only reference, special case needed for non-URL results
-            parse(base.m_string.left(base.m_pathEnd) + (allASCII ? String(str) : String::fromUTF8(str)));
+            appendASCII(base.m_string.left(base.m_pathEnd), str, len, parseBuffer);
+            parse(parseBuffer.data(), 0);
             break;
+        }
         case '/':
             // must be net-path or absolute-path reference
             if (str[1] == '/') {
                 // net-path
-                parse(base.m_string.left(base.m_schemeEnd + 1) + (allASCII ? String(str) : String::fromUTF8(str)));
+                appendASCII(base.m_string.left(base.m_schemeEnd + 1), str, len, parseBuffer);
+                parse(parseBuffer.data(), 0);
             } else {
                 // abs-path
-                parse(base.m_string.left(base.m_portEnd) + (allASCII ? String(str) : String::fromUTF8(str)));
+                appendASCII(base.m_string.left(base.m_portEnd), str, len, parseBuffer);
+                parse(parseBuffer.data(), 0);
             }
             break;
         default:
@@ -443,16 +460,15 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
                 // must be relative-path reference
 
                 // Base part plus relative part plus one possible slash added in between plus terminating \0 byte.
-                CharBuffer buffer(base.m_pathEnd + 1 + len + 1);
+                parseBuffer.resize(base.m_pathEnd + 1 + len + 1);
 
-                char* bufferPos = buffer.data();
+                char* bufferPos = parseBuffer.data();
 
                 // first copy everything before the path from the base
                 unsigned baseLength = base.m_string.length();
                 const UChar* baseCharacters = base.m_string.characters();
                 CharBuffer baseStringBuffer(baseLength);
-                for (unsigned i = 0; i < baseLength; ++i)
-                    baseStringBuffer[i] = static_cast<char>(baseCharacters[i]);
+                copyASCII(baseCharacters, baseLength, baseStringBuffer.data());
                 const char* baseString = baseStringBuffer.data();
                 const char* baseStringStart = baseString;
                 const char* pathStart = baseStringStart + base.m_portEnd;
@@ -511,9 +527,9 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
                 // of the relative reference; this will also add a null terminator
                 strcpy(bufferPos, relStringPos);
 
-                parse(buffer.data(), 0);
+                parse(parseBuffer.data(), 0);
 
-                ASSERT(strlen(buffer.data()) + 1 <= buffer.size());
+                ASSERT(strlen(parseBuffer.data()) + 1 <= parseBuffer.size());
                 break;
             }
         }
@@ -966,8 +982,11 @@ static inline bool matchLetter(char c, char lowercaseLetter)
 
 void KURL::parse(const String& string)
 {
-    CharBuffer buffer;
-    encodeRelativeString(string, UTF8Encoding(), buffer);
+    // FIXME: What should this do for non-ASCII URLs?
+    // Currently it throws away the high bytes of the characters in the string in that case, matching createCFURL().
+    CharBuffer buffer(string.length() + 1);
+    copyASCII(string.characters(), string.length(), buffer.data());
+    buffer[string.length()] = '\0';
     parse(buffer.data(), &string);
 }
 
