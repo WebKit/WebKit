@@ -360,11 +360,15 @@ RenderBox* RenderBox::offsetParent() const
 // excluding border and scrollbar.
 int RenderBox::clientWidth() const
 {
+    if (isInlineFlow())
+        return 0;
     return width() - borderLeft() - borderRight() - verticalScrollbarWidth();
 }
 
 int RenderBox::clientHeight() const
 {
+    if (isInlineFlow())
+        return 0;
     return height() - borderTop() - borderBottom() - horizontalScrollbarHeight();
 }
 
@@ -372,12 +376,12 @@ int RenderBox::clientHeight() const
 // object has overflow:hidden/scroll/auto specified and also has overflow.
 int RenderBox::scrollWidth() const
 {
-    return hasOverflowClip() ? m_layer->scrollWidth() : overflowWidth();
+    return hasOverflowClip() ? m_layer->scrollWidth() : clientWidth();
 }
 
 int RenderBox::scrollHeight() const
 {
-    return hasOverflowClip() ? m_layer->scrollHeight() : overflowHeight();
+    return hasOverflowClip() ? m_layer->scrollHeight() : clientHeight();
 }
 
 int RenderBox::scrollLeft() const
@@ -486,7 +490,7 @@ FloatQuad RenderBox::absoluteContentQuad() const
 
 IntRect RenderBox::absoluteOutlineBounds() const
 {
-    IntRect box = borderBoxRect();
+    IntRect box = borderBoundingBox();
     adjustRectForOutlineAndShadow(box);
 
     FloatQuad absOutlineQuad = localToAbsoluteQuad(FloatRect(box));

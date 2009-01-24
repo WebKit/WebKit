@@ -48,6 +48,7 @@ public:
     void paintIntoRect(GraphicsContext*, int tx, int ty, const IntRect&);
     
 protected:
+    virtual void styleWillChange(RenderStyle::Diff diff, const RenderStyle* newStyle);
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 

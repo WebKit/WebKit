@@ -434,13 +434,13 @@ void RenderLayer::updateLayerPosition()
     } else {
         setWidth(renderer()->width());
         setHeight(renderer()->height());
-    }
 
-    if (!renderer()->hasOverflowClip()) {
-        if (renderer()->overflowWidth() > renderer()->width())
-            setWidth(renderer()->overflowWidth());
-        if (renderer()->overflowHeight() > renderer()->height())
-            setHeight(renderer()->overflowHeight());
+        if (!renderer()->hasOverflowClip()) {
+            if (renderer()->overflowWidth() > renderer()->width())
+                setWidth(renderer()->overflowWidth());
+            if (renderer()->overflowHeight() > renderer()->height())
+                setHeight(renderer()->overflowHeight());
+        }
     }
 }
 

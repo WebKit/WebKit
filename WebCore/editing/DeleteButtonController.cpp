@@ -75,7 +75,8 @@ static bool isDeletableElement(const Node* node)
         return false;
 
     RenderBox* box = toRenderBox(renderer);
-    if (box->width() < minimumWidth || box->height() < minimumHeight)
+    IntRect borderBoundingBox = box->borderBoundingBox();
+    if (borderBoundingBox.width() < minimumWidth || borderBoundingBox.height() < minimumHeight)
         return false;
 
     if (renderer->isTable())

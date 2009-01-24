@@ -114,10 +114,10 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     // or one of the continuations is non-empty, since this is a faster check and
     // almost always returns true.
     RenderBox* box = toRenderBox(renderer());
-    if (box->width() > 0 && box->height() > 0)
+    if (!box->borderBoundingBox().isEmpty())
         return true;
     for (RenderFlow* r = box->virtualContinuation(); r; r = r->continuation())
-        if (r->width() > 0 && r->height() > 0)
+        if (!r->borderBoundingBox().isEmpty())
             return true;
 
     Vector<IntRect> rects;
