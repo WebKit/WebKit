@@ -1106,9 +1106,6 @@ void Document::recalcStyle(StyleChange change)
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
 
-    if (m_frame)
-        m_frame->animation()->beginAnimationUpdate();
-
     m_inStyleRecalc = true;
     suspendPostAttachCallbacks();
     
@@ -1173,19 +1170,21 @@ bail_out:
         m_closeAfterStyleRecalc = false;
         implicitClose();
     }
-
-    if (m_frame)
-        m_frame->animation()->endAnimationUpdate();
 }
 
 void Document::updateRendering()
 {
-    if (hasChangedChild() && !inPageCache())
-        recalcStyle(NoChange);
-    
-    // Tell the animation controller that the style is available and it can start animations
+    if (!hasChangedChild() || inPageCache())
+        return;
+        
     if (m_frame)
-        m_frame->animation()->styleAvailable();
+        m_frame->animation()->beginAnimationUpdate();
+        
+    recalcStyle(NoChange);
+    
+    // Tell the animation controller that updateRendering is finished and it can do any post-processing
+    if (m_frame)
+        m_frame->animation()->endAnimationUpdate();
 }
 
 void Document::updateDocumentsRendering()

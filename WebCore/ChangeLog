@@ -1,3 +1,49 @@
+2009-01-23  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23467
+
+        Change styleAvailable functionality to be a linked list
+        rather than scanning every CompositeAnimation for 
+        Animations that are waiting for styleAvailable. This has
+        potential for large performance improvement in cases where
+        there are many animations firing at once. But it will also
+        help in my next fix, which is to synchronize software and
+        accelerated animations.
+
+        I also changed slightly when the beginAnimationUpdate and
+        endAnimationUpdate calls are made. But this has no real
+        effect on performance or behavior.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateRendering):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        (WebCore::AnimationBase::~AnimationBase):
+        (WebCore::AnimationBase::updateStateMachine):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::next):
+        (WebCore::AnimationBase::setNext):
+        (WebCore::AnimationBase::styleAvailable):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::addToStyleAvailableWaitList):
+        (WebCore::AnimationControllerPrivate::removeFromStyleAvailableWaitList):
+        (WebCore::AnimationControllerPrivate::styleAvailable):
+        (WebCore::AnimationController::AnimationController):
+        (WebCore::AnimationController::endAnimationUpdate):
+        (WebCore::AnimationController::addToStyleAvailableWaitList):
+        (WebCore::AnimationController::removeFromStyleAvailableWaitList):
+        * page/animation/AnimationController.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::addToStyleAvailableWaitList):
+        (WebCore::CompositeAnimationPrivate::removeFromStyleAvailableWaitList):
+        (WebCore::CompositeAnimation::addToStyleAvailableWaitList):
+        (WebCore::CompositeAnimation::removeFromStyleAvailableWaitList):
+        * page/animation/CompositeAnimation.h:
+
 2009-01-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class AnimationBase;
 class AnimationControllerPrivate;
 class AtomicString;
 class Document;
@@ -67,16 +68,9 @@ public:
     void addEventToDispatch(PassRefPtr<Element>, const AtomicString& eventType, const String& name, double elapsedTime);
     void addNodeChangeToDispatch(PassRefPtr<Node>);
 
-    void styleAvailable();
+    void addToStyleAvailableWaitList(AnimationBase*);
+    void removeFromStyleAvailableWaitList(AnimationBase*);
 
-    void setWaitingForStyleAvailable(bool waiting)
-    {
-        if (waiting)
-            m_numStyleAvailableWaiters++;
-        else
-            m_numStyleAvailableWaiters--;
-    }
-    
     double beginAnimationUpdateTime();
     
     void beginAnimationUpdate();
@@ -84,7 +78,6 @@ public:
 
 private:
     AnimationControllerPrivate* m_data;
-    unsigned m_numStyleAvailableWaiters;    
 };
 
 } // namespace WebCore

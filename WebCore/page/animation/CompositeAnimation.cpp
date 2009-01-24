@@ -75,12 +75,10 @@ public:
 
     bool hasAnimations() const  { return !m_transitions.isEmpty() || !m_keyframeAnimations.isEmpty(); }
 
-    void styleAvailable();
-
     bool isAnimatingProperty(int property, bool isRunningNow) const;
 
-    void setWaitingForStyleAvailable(bool);
-    bool isWaitingForStyleAvailable() const     { return m_numStyleAvailableWaiters > 0; }
+    void addToStyleAvailableWaitList(AnimationBase*);
+    void removeFromStyleAvailableWaitList(AnimationBase*);
 
     bool pauseAnimationAtTime(const AtomicString& name, double t);
     bool pauseTransitionAtTime(int property, double t);
@@ -511,40 +509,6 @@ void CompositeAnimationPrivate::resumeOverriddenImplicitAnimations(int property)
     }
 }
 
-static inline bool compareAnimationIndices(RefPtr<KeyframeAnimation> a, const RefPtr<KeyframeAnimation> b)
-{
-    return a->index() < b->index();
-}
-
-void CompositeAnimationPrivate::styleAvailable()
-{
-    if (m_numStyleAvailableWaiters == 0)
-        return;
-
-    // We have to go through animations in the order in which they appear in
-    // the style, because order matters for additivity.
-    Vector<RefPtr<KeyframeAnimation> > animations(m_keyframeAnimations.size());
-    copyValuesToVector(m_keyframeAnimations, animations);
-
-    if (animations.size() > 1)
-        std::stable_sort(animations.begin(), animations.end(), compareAnimationIndices);
-
-    for (size_t i = 0; i < animations.size(); ++i) {
-        KeyframeAnimation* anim = animations[i].get();
-        if (anim && anim->waitingForStyleAvailable())
-            anim->updateStateMachine(AnimationBase::AnimationStateInputStyleAvailable, -1);
-    }
-
-    if (!m_transitions.isEmpty()) {
-        CSSPropertyTransitionsMap::const_iterator end = m_transitions.end();
-        for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != end; ++it) {
-            ImplicitAnimation* anim = it->second.get();
-            if (anim && anim->waitingForStyleAvailable())
-                anim->updateStateMachine(AnimationBase::AnimationStateInputStyleAvailable, -1);
-        }
-    }
-}
-
 bool CompositeAnimationPrivate::isAnimatingProperty(int property, bool isRunningNow) const
 {
     if (!m_keyframeAnimations.isEmpty()) {
@@ -567,13 +531,14 @@ bool CompositeAnimationPrivate::isAnimatingProperty(int property, bool isRunning
     return false;
 }
 
-void CompositeAnimationPrivate::setWaitingForStyleAvailable(bool waiting)
+void CompositeAnimationPrivate::addToStyleAvailableWaitList(AnimationBase* animation)
 {
-    if (waiting)
-        m_numStyleAvailableWaiters++;
-    else
-        m_numStyleAvailableWaiters--;
-    m_animationController->setWaitingForStyleAvailable(waiting);
+    m_animationController->addToStyleAvailableWaitList(animation);
+}
+
+void CompositeAnimationPrivate::removeFromStyleAvailableWaitList(AnimationBase* animation)
+{
+    m_animationController->removeFromStyleAvailableWaitList(animation);
 }
 
 bool CompositeAnimationPrivate::pauseAnimationAtTime(const AtomicString& name, double t)
@@ -666,14 +631,14 @@ double CompositeAnimation::willNeedService() const
     return m_data->willNeedService();
 }
 
-void CompositeAnimation::setWaitingForStyleAvailable(bool b)
+void CompositeAnimation::addToStyleAvailableWaitList(AnimationBase* animation)
 {
-    m_data->setWaitingForStyleAvailable(b);
+    m_data->addToStyleAvailableWaitList(animation);
 }
 
-bool CompositeAnimation::isWaitingForStyleAvailable() const
+void CompositeAnimation::removeFromStyleAvailableWaitList(AnimationBase* animation)
 {
-    return m_data->isWaitingForStyleAvailable();
+    m_data->removeFromStyleAvailableWaitList(animation);
 }
 
 void CompositeAnimation::suspendAnimations()
@@ -694,11 +659,6 @@ bool CompositeAnimation::isSuspended() const
 bool CompositeAnimation::hasAnimations() const
 {
     return m_data->hasAnimations();
-}
-
-void CompositeAnimation::styleAvailable()
-{
-    m_data->styleAvailable();
 }
 
 void CompositeAnimation::setAnimating(bool b)

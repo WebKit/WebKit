@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "AnimationController.h"
+#include "AnimationBase.h"
 #include "CompositeAnimation.h"
 #include "CSSParser.h"
 #include "EventNames.h"
@@ -78,6 +79,9 @@ public:
     
     void setBeginAnimationUpdateTime(double t) { m_beginAnimationUpdateTime = t; }
     
+    void addToStyleAvailableWaitList(AnimationBase*);
+    void removeFromStyleAvailableWaitList(AnimationBase*);    
+    
 private:
     typedef HashMap<RenderObject*, RefPtr<CompositeAnimation> > RenderObjectAnimationMap;
 
@@ -98,6 +102,8 @@ private:
     Vector<RefPtr<Node> > m_nodeChangesToDispatch;
     
     double m_beginAnimationUpdateTime;
+    AnimationBase* m_styleAvailableWaiters;
+    AnimationBase* m_lastStyleAvailableWaiter;
 };
 
 AnimationControllerPrivate::AnimationControllerPrivate(Frame* frame)
@@ -105,6 +111,8 @@ AnimationControllerPrivate::AnimationControllerPrivate(Frame* frame)
     , m_updateRenderingDispatcher(this, &AnimationControllerPrivate::updateRenderingDispatcherFired)
     , m_frame(frame)
     , m_beginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet)
+    , m_styleAvailableWaiters(0)
+    , m_lastStyleAvailableWaiter(0)
 {
 }
 
@@ -131,23 +139,6 @@ bool AnimationControllerPrivate::clear(RenderObject* renderer)
         return false;
     animation->clearRenderer();
     return animation->isSuspended();
-}
-
-void AnimationControllerPrivate::styleAvailable()
-{
-    // styleAvailable() can call event handlers which would ultimately delete a CompositeAnimation
-    // from the m_compositeAnimations table. So we can't iterate it directly. We will instead build
-    // a list of CompositeAnimations which need the styleAvailable() call iterate over that.
-    Vector<RefPtr<CompositeAnimation> > list;
-    
-    RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
-    for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it)
-        if (it->second->isWaitingForStyleAvailable())
-            list.append(it->second);
-    
-    Vector<RefPtr<CompositeAnimation> >::const_iterator listEnd = list.end();
-    for (Vector<RefPtr<CompositeAnimation> >::const_iterator it = list.begin(); it != listEnd; ++it)
-        (*it)->styleAvailable();
 }
 
 void AnimationControllerPrivate::updateAnimationTimer(bool callSetChanged/* = false*/)
@@ -339,9 +330,49 @@ unsigned AnimationControllerPrivate::numberOfActiveAnimations() const
     return count;
 }
 
+void AnimationControllerPrivate::addToStyleAvailableWaitList(AnimationBase* animation)
+{
+    ASSERT(!animation->next());
+    
+    if (m_styleAvailableWaiters)
+        m_lastStyleAvailableWaiter->setNext(animation);
+    else
+        m_styleAvailableWaiters = animation;
+        
+    m_lastStyleAvailableWaiter = animation;
+    animation->setNext(0);
+}
+
+void AnimationControllerPrivate::removeFromStyleAvailableWaitList(AnimationBase* animationToRemove)
+{
+    AnimationBase* prevAnimation = 0;
+    for (AnimationBase* animation = m_styleAvailableWaiters; animation; animation = animation->next()) {
+        if (animation == animationToRemove) {
+            if (prevAnimation)
+                prevAnimation->setNext(animation->next());
+            else
+                m_styleAvailableWaiters = animation->next();
+            
+            if (m_lastStyleAvailableWaiter == animation)
+                m_lastStyleAvailableWaiter = prevAnimation;
+                
+            animationToRemove->setNext(0);
+        }
+    }
+}
+
+void AnimationControllerPrivate::styleAvailable()
+{
+    // Go through list of waiters and send them on their way
+    for (AnimationBase* animation = m_styleAvailableWaiters; animation; animation = animation->next())
+        animation->styleAvailable();
+    
+    m_styleAvailableWaiters = 0;
+    m_lastStyleAvailableWaiter = 0;
+}
+
 AnimationController::AnimationController(Frame* frame)
     : m_data(new AnimationControllerPrivate(frame))
-    , m_numStyleAvailableWaiters(0)
 {
 }
 
@@ -453,14 +484,6 @@ void AnimationController::addNodeChangeToDispatch(PassRefPtr<Node> node)
         m_data->addNodeChangeToDispatch(node);
 }
 
-void AnimationController::styleAvailable()
-{
-    if (!m_numStyleAvailableWaiters)
-        return;
-
-    m_data->styleAvailable();
-}
-
 double AnimationController::beginAnimationUpdateTime()
 {
     return m_data->beginAnimationUpdateTime();
@@ -473,6 +496,17 @@ void AnimationController::beginAnimationUpdate()
 
 void AnimationController::endAnimationUpdate()
 {
+    m_data->styleAvailable();
+}
+
+void AnimationController::addToStyleAvailableWaitList(AnimationBase* animation)
+{
+    m_data->addToStyleAvailableWaitList(animation);
+}
+
+void AnimationController::removeFromStyleAvailableWaitList(AnimationBase* animation)
+{
+    m_data->removeFromStyleAvailableWaitList(animation);
 }
 
 } // namespace WebCore

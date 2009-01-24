@@ -156,6 +156,15 @@ public:
     
     double getElapsedTime() const;
     
+    AnimationBase* next() const { return m_next; }
+    void setNext(AnimationBase* animation) { m_next = animation; }
+    
+    void styleAvailable() 
+    {
+        ASSERT(waitingForStyleAvailable());
+        updateStateMachine(AnimationBase::AnimationStateInputStyleAvailable, -1);
+    }
+    
 protected:
     virtual void overrideAnimations() { }
     virtual void resumeOverriddenAnimations() { }
@@ -193,6 +202,8 @@ protected:
     CompositeAnimation* m_compAnim;
     bool m_transformFunctionListValid;
     double m_totalDuration, m_nextIterationDuration;
+    
+    AnimationBase* m_next;
 };
 
 } // namespace WebCore
