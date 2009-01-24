@@ -1,5 +1,12 @@
 2009-01-23  Adam Treat  <adam.treat@torchmobile.com>
 
+        Fix the Qt build after rename of RenderBox::toConstRenderBox -> toRenderBox
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::baselinePosition):
+
+2009-01-23  Adam Treat  <adam.treat@torchmobile.com>
+
         Fix the Qt build after r40168.
 
         * WebCore.pro:
