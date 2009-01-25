@@ -783,7 +783,10 @@ void QWebFrame::render(QPainter *painter, const QRegion &clip)
 */
 void QWebFrame::render(QPainter *painter)
 {
-    d->renderPrivate(painter, QRegion(view->frameRect()));
+    if (!d->frame->view())
+        return;
+
+    d->renderPrivate(painter, QRegion(d->frame->view()->frameRect()));
 }
 
 /*!

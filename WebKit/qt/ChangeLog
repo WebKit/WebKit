@@ -1,5 +1,12 @@
 2009-01-24  Adam Treat  <adam.treat@torchmobile.com>
 
+        Oops, fix the Qt build.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::render):
+
+2009-01-24  Adam Treat  <adam.treat@torchmobile.com>
+
         Reviewed by Nikolas Zimmermann.
 
         Add QWebFrame::renderContents() method which allows arbitary rendering
