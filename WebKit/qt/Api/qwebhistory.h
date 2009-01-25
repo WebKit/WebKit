@@ -32,7 +32,7 @@ class QWebPage;
 
 namespace WebCore {
     class FrameLoaderClientQt;
-};
+}
 
 class QWebHistoryItemPrivate;
 class QWEBKIT_EXPORT QWebHistoryItem

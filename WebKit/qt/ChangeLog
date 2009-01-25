@@ -1,3 +1,13 @@
+2008-12-20  Urs Wolfer  <uwolfer@kde.org>
+
+        Reviewed by Simon Hausmann.
+
+        Fix: compile qwebhistory.h with pendantic comiler flag.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22947
+
+        * Api/qwebhistory.h:
+
 2009-01-24  Adam Treat  <adam.treat@torchmobile.com>
 
         Oops, fix the Qt build.
