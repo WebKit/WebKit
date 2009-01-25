@@ -1,0 +1,9 @@
+Test how non-ASCII characters are encoded in relative URLs.
+
+1 2 3 4 5
+1. PASS
+2. FAIL: http://127.0.0.1:8000/uri/resolve-encoding-relative.html#%F4%F0%E0%E3%EC%E5%ED%F2
+3. PASS
+4. PASS
+5. FAIL: http://127.0.0.1:8000/%D0%BF%D1%83%D1%82%D1%8C?%E7%E0%EF%F0%EE%F1#%F4%F0%E0%E3%EC%E5%ED%F2
+

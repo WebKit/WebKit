@@ -26,15 +26,12 @@ function test() {
     // Non-URLs should fail with a syntax error.
     tryPostMessage("");
     tryPostMessage("asdf");
+    tryPostMessage("/tmp/foo");
+    tryPostMessage("//localhost");
 
     // URLs without an origin should fail without generating any errors.
     tryPostMessage("asdf:");
     tryPostMessage("http:");
-
-    // WebKit converts URLs that start with / to file:// URLs. They don't match the target frame, so they fail silently.
-    tryPostMessage("/tmp/foo");
-    tryPostMessage("//localhost");
-
     
     win.postMessage('done', '*');
 }

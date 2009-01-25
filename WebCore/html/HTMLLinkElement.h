@@ -102,7 +102,7 @@ public:
 protected:
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;
-    String m_url;
+    KURL m_url;
     String m_type;
     String m_media;
     int m_disabledState; // 0=unset(default), 1=enabled via script, 2=disabled

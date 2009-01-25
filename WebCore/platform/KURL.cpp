@@ -267,6 +267,21 @@ static int findFirstOf(const UChar* s, int sLen, int startPos, const char* toFin
     return -1;
 }
 
+#ifndef NDEBUG
+static void checkEncodedString(const String& url)
+{
+    for (unsigned i = 0; i < url.length(); ++i)
+        ASSERT(!(url[i] & ~0x7F));
+
+    // FIXME: The first character should be checked with isSchemeFirstChar(), but some layout tests currently trigger this assertion.
+    ASSERT(!url.length() || url[0] != '/');
+}
+#else
+static inline void checkEncodedString(const String&)
+{
+}
+#endif
+
 inline bool KURL::protocolIs(const String& string, const char* protocol)
 {
     return WebCore::protocolIs(string, protocol);
@@ -289,39 +304,14 @@ void KURL::invalidate()
 
 KURL::KURL(const char* url)
 {
-    if (!url || url[0] != '/') {
-        parse(url, 0);
-        return;
-    }
-
-    size_t urlLength = strlen(url) + 1;
-    CharBuffer buffer(urlLength + 5); // 5 for "file:".
-    buffer[0] = 'f';
-    buffer[1] = 'i';
-    buffer[2] = 'l';
-    buffer[3] = 'e';
-    buffer[4] = ':';
-    memcpy(&buffer[5], url, urlLength);
-    parse(buffer.data(), 0);
+    parse(url, 0);
 }
 
 KURL::KURL(const String& url)
 {
-    if (url[0] != '/') {
-        parse(url.utf8().data(), &url);
-        return;
-    }
+    checkEncodedString(url);
 
-    CharBuffer buffer(url.length() + 6); // 5 for "file:", 1 for terminator.
-    buffer[0] = 'f';
-    buffer[1] = 'i';
-    buffer[2] = 'l';
-    buffer[3] = 'e';
-    buffer[4] = ':';
-    copyASCII(url.characters(), url.length(), &buffer[5]);
-    buffer[url.length() + 5] = '\0'; // Need null terminator.
-
-    parse(buffer.data(), 0);
+    parse(url);
 }
 
 KURL::KURL(const KURL& base, const String& relative)
@@ -657,6 +647,9 @@ String KURL::path() const
 
 void KURL::setProtocol(const String& s)
 {
+    // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
+    // and to avoid changing more than just the protocol.
+
     if (!m_isValid) {
         parse(s + ":" + m_string);
         return;
@@ -670,6 +663,9 @@ void KURL::setHost(const String& s)
     if (!m_isValid)
         return;
 
+    // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
+    // and to avoid changing more than just the host.
+
     bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
 
     parse(m_string.left(hostStart()) + (slashSlashNeeded ? "//" : "") + s + m_string.substring(m_hostEnd));
@@ -679,6 +675,9 @@ void KURL::setPort(unsigned short i)
 {
     if (!m_isValid)
         return;
+
+    // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
+    // and to avoid changing more than just the port.
 
     bool colonNeeded = m_portEnd == m_hostEnd;
     int portStart = (colonNeeded ? m_hostEnd : m_hostEnd + 1);
@@ -691,6 +690,9 @@ void KURL::setHostAndPort(const String& hostAndPort)
     if (!m_isValid)
         return;
 
+    // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
+    // and to avoid changing more than just host and port.
+
     bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
 
     parse(m_string.left(hostStart()) + (slashSlashNeeded ? "//" : "") + hostAndPort + m_string.substring(m_portEnd));
@@ -701,6 +703,8 @@ void KURL::setUser(const String& user)
     if (!m_isValid)
         return;
 
+    // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
+    // and to avoid changing more than just the user login.
     String u;
     int end = m_userEnd;
     if (!user.isEmpty()) {
@@ -723,6 +727,8 @@ void KURL::setPass(const String& password)
     if (!m_isValid)
         return;
 
+    // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
+    // and to avoid changing more than just the user password.
     String p;
     int end = m_passwordEnd;
     if (!password.isEmpty()) {
@@ -744,6 +750,8 @@ void KURL::setRef(const String& s)
 {
     if (!m_isValid)
         return;
+
+    // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations.
     parse(m_string.left(m_queryEnd) + (s.isNull() ? "" : "#" + s));
 }
 
@@ -759,6 +767,9 @@ void KURL::setQuery(const String& query)
     if (!m_isValid)
         return;
 
+    // FIXME: '#' and non-ASCII characters must be encoded and escaped.
+    // Usually, the query is encoded using document encoding, not UTF-8, but we don't have
+    // access to the document in this function.
     if ((query.isEmpty() || query[0] != '?') && !query.isNull())
         parse(m_string.left(m_pathEnd) + "?" + query + m_string.substring(m_queryEnd));
     else
@@ -771,6 +782,8 @@ void KURL::setPath(const String& s)
     if (!m_isValid)
         return;
 
+    // FIXME: encodeWithURLEscapeSequences does not correctly escape '#' and '?', so fragment and query parts
+    // may be inadvertently affected.
     parse(m_string.left(m_portEnd) + encodeWithURLEscapeSequences(s) + m_string.substring(m_pathEnd));
 }
 
@@ -982,8 +995,8 @@ static inline bool matchLetter(char c, char lowercaseLetter)
 
 void KURL::parse(const String& string)
 {
-    // FIXME: What should this do for non-ASCII URLs?
-    // Currently it throws away the high bytes of the characters in the string in that case, matching createCFURL().
+    checkEncodedString(string);
+
     CharBuffer buffer(string.length() + 1);
     copyASCII(string.characters(), string.length(), buffer.data());
     buffer[string.length()] = '\0';

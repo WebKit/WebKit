@@ -1,3 +1,32 @@
+2009-01-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5954398> REGRESSION: 1.1% PLT regression from 33577 and 33578 (encoding fixes)
+
+        * http/tests/misc/dns-prefetch-control-expected.txt:
+        * http/tests/misc/dns-prefetch-control.html:
+        Google documentation for DNS Prefetch makes use of net-path relative URLs (//server-name),
+        explaining that scheme is not necessary. This is of course true, but this test uses data:
+        subframes, and data: is a non-hierachical scheme, so resolving such URLs fails, resulting
+        in a KURL object that is not valid. WebKit used to ignore this, and tried to create a URL
+        from this string again, now with a single argument KURL constructor, which resulted in a
+        valid file: URL, which was successfully used! Both issues have been corrected in WebCore,
+        so I had to change the test to no longer use relative net-path URLs.
+
+        * http/tests/security/postMessage/invalid-origin-throws-exception-expected.txt:
+        * http/tests/security/postMessage/invalid-origin-throws-exception.html:
+        URLs that start with "/" are no longer converted to "file:" ones, so the results now
+        match Firefox.
+
+        * http/tests/uri/resolve-encoding-relative-expected.txt: Added.
+        * http/tests/uri/resolve-encoding-relative.html: Added.
+        Added a test to cover some cases of relative URL resolving that were not covered before.
+        Expected results are taken from Firefox 3, and WebKit doesn't match in how fragments are
+        encoded (we use document encoding, while Firefox uses UTF-8). Since fragments are not
+        sent in HTTP requests, this is not too dangerous, but the Firefox behavior looks more
+        consistent.
+
 2009-01-24  Eric Carlson  <eric.carlson@apple.com>
 
         <video> controls visibility test needs to dump render tree as text because

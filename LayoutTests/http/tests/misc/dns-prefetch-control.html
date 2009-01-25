@@ -30,7 +30,7 @@
         var contents = "";
         if (dnsPrefetchControl)
             contents += "<meta http-equiv='x-dns-prefetch-control' content='" + dnsPrefetchControl + "'>";
-        contents += "<link rel='dns-prefetch' href='//" + host + "'>" + host;
+        contents += "<link rel='dns-prefetch' href='http://" + host + "'>" + host;
         emitFrameWithContents(contents);
     }
 </script>
@@ -46,7 +46,6 @@ a manual test of DNS prefetch using a networking monitoring tool.</p>
   <script>emitFrameForScheme("http:")</script>
   <script>emitFrameForScheme("https:")</script>
   <script>emitFrameForScheme("ftp:")</script>
-  <script>emitFrameForScheme("")</script>
   <iframe src="resources/dns-prefetch-control.php"></iframe>
   <iframe src="resources/dns-prefetch-control.php?value=on"></iframe>
   <iframe src="https://127.0.0.1:8443/misc/resources/dns-prefetch-control.php?value=on"></iframe>

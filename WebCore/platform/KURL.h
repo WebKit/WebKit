@@ -66,17 +66,8 @@ public:
     KURL() { invalidate(); }
 
     // The argument is an absolute URL string. The string is assumed to be
-    // already encoded.
-    // FIXME: This constructor has a special case for strings that start with
-    // "/", prepending "file://" to such strings; it would be good to get
-    // rid of that special case.
+    // an already encoded (ASCII-only) valid absolute URL.
     explicit KURL(const char*);
-
-    // The argument is an absolute URL string. The string is assumed to be
-    // already encoded.
-    // FIXME: This constructor has a special case for strings that start with
-    // "/", prepending "file://" to such strings; it would be good to get
-    // rid of that special case.
     explicit KURL(const String&);
 
     // Resolves the relative URL with the given base URL. If provided, the

@@ -1,3 +1,58 @@
+2009-01-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5954398> REGRESSION: 1.1% PLT regression from 33577 and 33578 (encoding fixes)
+
+        Changed single argument KURL constructors back to always expect an already encoded string,
+        eliminating extra conversions.
+
+        This is a rather unstable situation, as it is often unclear whether a given string is safe
+        to convert to KURL without resolving. I think that going forward, the solution is to try to
+        keep encoded URLs as KURL instances, and not as strings.
+
+        * platform/KURL.h: Updated comments.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::KURL): In debug builds, verify that the passed string is ASCII-only. The
+        intention is to verify that it is already parsed and encoded by KURL or equivalent code, but
+        since encoding is scheme-dependent, such a verification would be quite complicated.
+        Don't encode the string as UTF-8, as it supposed to be ASCII-only.
+        Removed a hack that made strings beginning with "/" turn into "file:" URLs. I didn't find
+        any reason for it to exist, but I saw several cases where this code path was taken
+        inadvertently (see examples in LayoutTests/ChangeLog).
+        (WebCore::KURL::setProtocol): Using a user-provided string without validation or encoding
+        is clearly wrong here (e.g., the "protocol" can be set to a full URL, effectively replacing
+        the old one), and an already encoded string is expected by parse().
+        In debug builds, non-ASCII input will make an assertion in parse() fail. Added a FIXME.
+        (WebCore::KURL::setHost): Ditto.
+        (WebCore::KURL::setPort): Ditto.
+        (WebCore::KURL::setHostAndPort): Ditto.
+        (WebCore::KURL::setUser): Ditto.
+        (WebCore::KURL::setPass): Ditto.
+        (WebCore::KURL::setRef): Ditto.
+        (WebCore::KURL::setQuery): Ditto.
+        (WebCore::KURL::setPath): Ditto.  Note that problems described in bug 23500 mask some of
+        the problems in release builds currently, as the incorrectly parsed URL is ignored. 
+        (WebCore::KURL::parse): Verify that the passed string is already encoded.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLLinkElement.h:
+        Changed to avoid using invalid URLs (this was causing problems on DNS prefetch tests, see
+        LayoutTests/ChangeLog).
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init): Create an empty KURL without indirection for a small speedup.
+        (WebCore::FrameLoader::requestFrame): Resolve and encode javascript URLs properly, now that
+        String to KURL conversion requires the string to be already encoded.
+
+        * page/DOMWindow.cpp: (WebCore::DOMWindow::postMessage): Resolve and encode the origin.
+        HTML5 seems a little unclear on how this should work (it talks about "either parsing it as
+        a URL, or resolving it", and then somehow compares unaltered targetOrigin string to a
+        security origin object), so I just made the code as close to what we already had as possible.
+
 2009-01-24  Darin Adler  <darin@apple.com>
 
         Try to fix Qt build.

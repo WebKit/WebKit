@@ -114,7 +114,7 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
         tokenizeRelAttribute(attr->value(), m_isStyleSheet, m_alternate, m_isIcon, m_isDNSPrefetch);
         process();
     } else if (attr->name() == hrefAttr) {
-        m_url = document()->completeURL(parseURL(attr->value())).string();
+        m_url = document()->completeURL(parseURL(attr->value()));
         process();
     } else if (attr->name() == typeAttr) {
         m_type = attr->value();
@@ -173,15 +173,15 @@ void HTMLLinkElement::process()
 
     // IE extension: location of small icon for locationbar / bookmarks
     // We'll record this URL per document, even if we later only use it in top level frames
-    if (m_isIcon && !m_url.isEmpty())
-        document()->setIconURL(m_url, type);
+    if (m_isIcon && m_url.isValid() && !m_url.isEmpty())
+        document()->setIconURL(m_url.string(), type);
 
-    if (m_isDNSPrefetch && !m_url.isEmpty())
-        prefetchDNS(KURL(m_url).host());
+    if (m_isDNSPrefetch && m_url.isValid() && !m_url.isEmpty())
+        prefetchDNS(m_url.host());
 
     // Stylesheet
     // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh
-    if (m_disabledState != 2 && m_isStyleSheet && document()->frame()) {
+    if (m_disabledState != 2 && m_isStyleSheet && document()->frame() && m_url.isValid()) {
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
         // also, don't load style sheets for standalone documents
@@ -206,7 +206,7 @@ void HTMLLinkElement::process()
                 m_cachedSheet->removeClient(this);
             }
             m_loading = true;
-            m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(m_url, chset);
+            m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(m_url.string(), chset);
             if (m_cachedSheet)
                 m_cachedSheet->addClient(this);
             else if (!isAlternate()) { // request may have been denied if stylesheet is local and document is remote.
