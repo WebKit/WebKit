@@ -1,3 +1,14 @@
+2009-01-25  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix gcc compiler warning (deprecated conversion from constant string to char*)
+
+        "" cannot be stored in a char*
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::destroyStream):
+
 2009-01-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
