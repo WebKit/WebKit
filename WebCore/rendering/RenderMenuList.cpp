@@ -28,6 +28,7 @@
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
+#include "NodeRenderStyle.h"
 #include "OptionElement.h"
 #include "OptionGroupElement.h"
 #include "PopupMenu.h"

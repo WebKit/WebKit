@@ -1,5 +1,9 @@
 2009-01-25  Darin Adler  <darin@apple.com>
 
+        * rendering/RenderMenuList.cpp: Fix build by adding back needed include.
+
+2009-01-25  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 23352: Turn on more compiler warnings in the Mac build
