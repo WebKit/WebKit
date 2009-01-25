@@ -1,3 +1,15 @@
+2009-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23522: use checked casts for render tree
+        https://bugs.webkit.org/show_bug.cgi?id=23522
+
+        Step one: RenderText.
+
+        * WebView/WebRenderNode.mm:
+        (copyRenderNode): Use toRenderText.
+
 2009-01-23  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Darin Adler

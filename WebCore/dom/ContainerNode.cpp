@@ -25,8 +25,6 @@
 
 #include "ContainerNodeAlgorithms.h"
 #include "DeleteButtonController.h"
-#include "Document.h"
-#include "Editor.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FloatRect.h"
@@ -34,11 +32,9 @@
 #include "FrameView.h"
 #include "InlineTextBox.h"
 #include "MutationEvent.h"
-#include "RenderBox.h"
 #include "RenderTheme.h"
 #include "RootInlineBox.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -687,13 +683,13 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
             return true;
         }
 
-        if (p->element() && p->element() == this && o->isText() && !o->isBR() && !static_cast<RenderText*>(o)->firstTextBox()) {
+        if (p->element() && p->element() == this && o->isText() && !o->isBR() && !toRenderText(o)->firstTextBox()) {
                 // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
         } else if ((o->isText() && !o->isBR()) || o->isReplaced()) {
             point = o->container()->localToAbsolute();
-            if (o->isText() && static_cast<RenderText *>(o)->firstTextBox()) {
-                point.move(static_cast<RenderText *>(o)->linesBoundingBox().x(),
-                           static_cast<RenderText *>(o)->firstTextBox()->root()->topOverflow());
+            if (o->isText() && toRenderText(o)->firstTextBox()) {
+                point.move(toRenderText(o)->linesBoundingBox().x(),
+                           toRenderText(o)->firstTextBox()->root()->topOverflow());
             } else if (o->isBox()) {
                 RenderBox* box = toRenderBox(o);
                 point.move(box->x(), box->y());
@@ -745,7 +741,7 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
         if (o->isText() || o->isReplaced()) {
             point = o->container()->localToAbsolute();
             if (o->isText()) {
-                RenderText* text = static_cast<RenderText*>(o);
+                RenderText* text = toRenderText(o);
                 IntRect linesBox = text->linesBoundingBox();
                 point.move(linesBox.x() + linesBox.width(), linesBox.height());
             } else {

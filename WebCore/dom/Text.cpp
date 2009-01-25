@@ -23,7 +23,6 @@
 #include "Text.h"
 
 #include "CString.h"
-#include "Document.h"
 #include "ExceptionCode.h"
 #include "RenderText.h"
 #include "TextBreakIterator.h"
@@ -81,7 +80,7 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
         document()->textNodeSplit(this);
 
     if (renderer())
-        static_cast<RenderText*>(renderer())->setText(m_data);
+        toRenderText(renderer())->setText(m_data);
 
     return newText.release();
 }
@@ -256,7 +255,7 @@ void Text::recalcStyle(StyleChange change)
     if (changed()) {
         if (renderer()) {
             if (renderer()->isText())
-                static_cast<RenderText*>(renderer())->setText(m_data);
+                toRenderText(renderer())->setText(m_data);
         } else {
             if (attached())
                 detach();

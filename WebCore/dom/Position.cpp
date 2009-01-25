@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,12 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CString.h"
 #include "CharacterNames.h"
-#include "Document.h"
-#include "Element.h"
-#include "HTMLNames.h"
 #include "Logging.h"
 #include "PositionIterator.h"
 #include "RenderBlock.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "VisiblePosition.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <stdio.h>
@@ -54,7 +52,7 @@ static Node *nextRenderedEditable(Node *node)
         RenderObject* renderer = node->renderer();
         if (!renderer)
             continue;
-        if (renderer->inlineBoxWrapper() || renderer->isText() && static_cast<RenderText*>(renderer)->firstTextBox())
+        if (renderer->inlineBoxWrapper() || renderer->isText() && toRenderText(renderer)->firstTextBox())
             return node;
     }
     return 0;
@@ -69,7 +67,7 @@ static Node *previousRenderedEditable(Node *node)
         RenderObject* renderer = node->renderer();
         if (!renderer)
             continue;
-        if (renderer->inlineBoxWrapper() || renderer->isText() && static_cast<RenderText*>(renderer)->firstTextBox())
+        if (renderer->inlineBoxWrapper() || renderer->isText() && toRenderText(renderer)->firstTextBox())
             return node;
     }
     return 0;
@@ -196,17 +194,17 @@ int Position::renderedOffset() const
         return offset();
                     
     int result = 0;
-    RenderText *textRenderer = static_cast<RenderText *>(node()->renderer());
+    RenderText *textRenderer = toRenderText(node()->renderer());
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        int start = box->m_start;
-        int end = box->m_start + box->m_len;
+        int start = box->start();
+        int end = box->start() + box->len();
         if (offset() < start)
             return result;
         if (offset() <= end) {
             result += offset() - start;
             return result;
         }
-        result += box->m_len;
+        result += box->len();
     }
     return result;
 }
@@ -366,7 +364,7 @@ Position Position::upstream() const
         }
 
         // return current position if it is in rendered text
-        if (renderer->isText() && static_cast<RenderText*>(renderer)->firstTextBox()) {
+        if (renderer->isText() && toRenderText(renderer)->firstTextBox()) {
             if (currentNode != startNode) {
                 // This assertion fires in layout tests in the case-transform.html test because
                 // of a mix-up between offsets in the text in the DOM tree with text in the
@@ -377,7 +375,7 @@ Position Position::upstream() const
             }
 
             unsigned textOffset = currentPos.offsetInLeafNode();
-            RenderText* textRenderer = static_cast<RenderText*>(renderer);
+            RenderText* textRenderer = toRenderText(renderer);
             InlineTextBox* lastTextBox = textRenderer->lastTextBox();
             for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
                 if (textOffset <= box->start() + box->len()) {
@@ -482,14 +480,14 @@ Position Position::downstream() const
         }
 
         // return current position if it is in rendered text
-        if (renderer->isText() && static_cast<RenderText*>(renderer)->firstTextBox()) {
+        if (renderer->isText() && toRenderText(renderer)->firstTextBox()) {
             if (currentNode != startNode) {
                 ASSERT(currentPos.atStartOfNode());
                 return Position(currentNode, renderer->caretMinOffset());
             }
 
             unsigned textOffset = currentPos.offsetInLeafNode();
-            RenderText* textRenderer = static_cast<RenderText*>(renderer);
+            RenderText* textRenderer = toRenderText(renderer);
             InlineTextBox* lastTextBox = textRenderer->lastTextBox();
             for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
                 if (textOffset <= box->end()) {
@@ -537,7 +535,7 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(RenderObject* render
     RenderObject* stop = renderer->nextInPreOrderAfterChildren();
     for (RenderObject *o = renderer->firstChild(); o && o != stop; o = o->nextInPreOrder())
         if (o->element()) {
-            if ((o->isText() && static_cast<RenderText*>(o)->linesBoundingBox().height()) ||
+            if ((o->isText() && toRenderText(o)->linesBoundingBox().height()) ||
                 (o->isBox() && toRenderBox(o)->borderBoundingBox().height()))
                 return true;
         }
@@ -586,9 +584,9 @@ bool Position::inRenderedText() const
     if (!renderer)
         return false;
     
-    RenderText *textRenderer = static_cast<RenderText *>(renderer);
+    RenderText *textRenderer = toRenderText(renderer);
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        if (offset() < box->m_start && !textRenderer->containsReversedText()) {
+        if (offset() < static_cast<int>(box->start()) && !textRenderer->containsReversedText()) {
             // The offset we're looking for is before this node
             // this means the offset must be in content that is
             // not rendered. Return false.
@@ -618,19 +616,19 @@ bool Position::isRenderedCharacter() const
     if (isNull() || !node()->isTextNode())
         return false;
         
-    RenderObject *renderer = node()->renderer();
+    RenderObject* renderer = node()->renderer();
     if (!renderer)
         return false;
     
-    RenderText *textRenderer = static_cast<RenderText *>(renderer);
-    for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        if (offset() < box->m_start && !textRenderer->containsReversedText()) {
+    RenderText* textRenderer = toRenderText(renderer);
+    for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+        if (offset() < static_cast<int>(box->start()) && !textRenderer->containsReversedText()) {
             // The offset we're looking for is before this node
             // this means the offset must be in content that is
             // not rendered. Return false.
             return false;
         }
-        if (offset() >= box->m_start && offset() < box->m_start + box->m_len)
+        if (offset() >= static_cast<int>(box->start()) && offset() < static_cast<int>(box->start() + box->len()))
             return true;
     }
     
@@ -797,7 +795,7 @@ static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
         if (isNonTextLeafChild(next))
             break;
         if (next->isText()) {
-            for (InlineTextBox* box = static_cast<RenderText*>(next)->firstTextBox(); box; box = box->nextTextBox()) {
+            for (InlineTextBox* box = toRenderText(next)->firstTextBox(); box; box = box->nextTextBox()) {
                 int caretMinOffset = box->caretMinOffset();
                 if (caretMinOffset < minOffset) {
                     match = box;
@@ -818,7 +816,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
         if (!inlineBox || caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset())
             return;
     } else {
-        RenderText* textRenderer = static_cast<RenderText*>(renderer);
+        RenderText* textRenderer = toRenderText(renderer);
 
         InlineTextBox* box;
         InlineTextBox* candidate = 0;

@@ -26,26 +26,13 @@
 #include "RenderObject.h"
 
 #include "AXObjectCache.h"
-#include "TransformationMatrix.h"
-#include "AnimationController.h"
 #include "CSSStyleSelector.h"
-#include "CachedImage.h"
-#include "Chrome.h"
-#include "Document.h"
-#include "Element.h"
-#include "EventHandler.h"
-#include "FloatRect.h"
-#include "Frame.h"
+#include "FloatQuad.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
-#include "HTMLOListElement.h"
-#include "HitTestRequest.h"
 #include "HitTestResult.h"
-#include "KURL.h"
 #include "Page.h"
-#include "PlatformScreen.h"
-#include "Position.h"
 #include "RenderArena.h"
 #include "RenderCounter.h"
 #include "RenderFlexibleBox.h"
@@ -55,11 +42,8 @@
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
-#include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "SelectionController.h"
-#include "TextResourceDecoder.h"
 #include <algorithm>
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -352,7 +336,7 @@ bool RenderObject::isEditable() const
 {
     RenderText* textRenderer = 0;
     if (isText())
-        textRenderer = static_cast<RenderText*>(const_cast<RenderObject*>(this));
+        textRenderer = toRenderText(const_cast<RenderObject*>(this));
 
     return style()->visibility() == VISIBLE &&
         element() && element()->isContentEditable() &&
@@ -2356,6 +2340,11 @@ void RenderObject::arenaDelete(RenderArena* arena, void* base)
 VisiblePosition RenderObject::positionForCoordinates(int, int)
 {
     return VisiblePosition(element(), caretMinOffset(), DOWNSTREAM);
+}
+
+VisiblePosition RenderObject::positionForPoint(const IntPoint& point)
+{
+    return positionForCoordinates(point.x(), point.y());
 }
 
 void RenderObject::updateDragState(bool dragOn)

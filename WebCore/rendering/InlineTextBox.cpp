@@ -108,7 +108,7 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
 
 void InlineTextBox::deleteLine(RenderArena* arena)
 {
-    static_cast<RenderText*>(m_object)->removeTextBox(this);
+    toRenderText(m_object)->removeTextBox(this);
     destroy(arena);
 }
 
@@ -117,7 +117,7 @@ void InlineTextBox::extractLine()
     if (m_extracted)
         return;
 
-    static_cast<RenderText*>(m_object)->extractTextBox(this);
+    toRenderText(m_object)->extractTextBox(this);
 }
 
 void InlineTextBox::attachLine()
@@ -125,7 +125,7 @@ void InlineTextBox::attachLine()
     if (!m_extracted)
         return;
     
-    static_cast<RenderText*>(m_object)->attachTextBox(this);
+    toRenderText(m_object)->attachTextBox(this);
 }
 
 int InlineTextBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool& foundBox)
@@ -162,7 +162,7 @@ int InlineTextBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
             
             // Set the truncation index on the text run.  The ellipsis needs to be placed just after the last visible character.
             m_truncation = offset;
-            return m_x + static_cast<RenderText*>(m_object)->width(m_start, offset, textPos(), m_firstLine);
+            return m_x + toRenderText(m_object)->width(m_start, offset, textPos(), m_firstLine);
         }
     }
     else {
@@ -572,7 +572,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
         return;
     
     int width = (m_truncation == cNoTruncation) ? m_width
-        : static_cast<RenderText*>(m_object)->width(m_start, m_truncation, textPos(), m_firstLine);
+        : toRenderText(m_object)->width(m_start, m_truncation, textPos(), m_firstLine);
     
     // Get the text decoration colors.
     Color underline, overline, linethrough;
@@ -797,7 +797,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, int tx, int 
     if (paintStart <= underline.startOffset) {
         paintStart = underline.startOffset;
         useWholeWidth = false;
-        start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, textPos(), m_firstLine);
+        start = toRenderText(m_object)->width(m_start, paintStart - m_start, textPos(), m_firstLine);
     }
     if (paintEnd != underline.endOffset) {      // end points at the last char, not past it
         paintEnd = min(paintEnd, (unsigned)underline.endOffset);
@@ -808,7 +808,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, int tx, int 
         useWholeWidth = false;
     }
     if (!useWholeWidth) {
-        width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
+        width = toRenderText(m_object)->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
     }
 
     // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
@@ -858,7 +858,7 @@ int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
     if (isLineBreak())
         return 0;
 
-    RenderText* text = static_cast<RenderText*>(m_object);
+    RenderText* text = toRenderText(m_object);
     RenderStyle *style = text->style(m_firstLine);
     const Font* f = &style->font();
     return f->offsetForPosition(TextRun(textObject()->text()->characters() + m_start, m_len, textObject()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || style->visuallyOrdered()),
@@ -873,7 +873,7 @@ int InlineTextBox::positionForOffset(int offset) const
     if (isLineBreak())
         return m_x;
 
-    RenderText* text = static_cast<RenderText*>(m_object);
+    RenderText* text = toRenderText(m_object);
     const Font& f = text->style(m_firstLine)->font();
     int from = direction() == RTL ? offset - m_start : 0;
     int to = direction() == RTL ? m_len : offset - m_start;

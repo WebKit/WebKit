@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the select element renderer in WebCore.
  *
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
@@ -25,10 +25,7 @@
 #include "RenderMenuList.h"
 
 #include "CSSStyleSelector.h"
-#include "Document.h"
-#include "FontSelector.h"
 #include "FrameView.h"
-#include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "OptionElement.h"
@@ -36,9 +33,7 @@
 #include "PopupMenu.h"
 #include "RenderBR.h"
 #include "RenderScrollbar.h"
-#include "RenderText.h"
 #include "RenderTheme.h"
-#include "NodeRenderStyle.h"
 #include <math.h>
 
 using namespace std;

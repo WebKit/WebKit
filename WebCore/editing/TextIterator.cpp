@@ -38,6 +38,7 @@
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderTextControl.h"
+#include "VisiblePosition.h"
 #include "visible_units.h"
 
 #if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
@@ -285,7 +286,7 @@ static inline bool compareBoxStart(const InlineTextBox *first, const InlineTextB
 
 bool TextIterator::handleTextNode()
 {
-    RenderText* renderer = static_cast<RenderText*>(m_node->renderer());
+    RenderText* renderer = toRenderText(m_node->renderer());
     if (renderer->style()->visibility() != VISIBLE)
         return false;
         
@@ -332,12 +333,12 @@ bool TextIterator::handleTextNode()
 
 void TextIterator::handleTextBox()
 {    
-    RenderText *renderer = static_cast<RenderText *>(m_node->renderer());
+    RenderText *renderer = toRenderText(m_node->renderer());
     String str = renderer->text();
     int start = m_offset;
     int end = (m_node == m_endContainer) ? m_endOffset : INT_MAX;
     while (m_textBox) {
-        int textBoxStart = m_textBox->m_start;
+        int textBoxStart = m_textBox->start();
         int runStart = max(textBoxStart, start);
 
         // Check for collapsed space at the start of this run.
@@ -354,7 +355,7 @@ void TextIterator::handleTextBox()
                 emitCharacter(' ', m_node, 0, runStart, runStart);
             return;
         }
-        int textBoxEnd = textBoxStart + m_textBox->m_len;
+        int textBoxEnd = textBoxStart + m_textBox->len();
         int runEnd = min(textBoxEnd, end);
         
         // Determine what the next text box will be, but don't advance yet
@@ -387,7 +388,7 @@ void TextIterator::handleTextBox()
                 return;
 
             // Advance and return
-            int nextRunStart = nextTextBox ? nextTextBox->m_start : str.length();
+            int nextRunStart = nextTextBox ? nextTextBox->start() : str.length();
             if (nextRunStart > runEnd)
                 m_lastTextNodeEndedWithCollapsedSpace = true; // collapsed space between runs or at the end
             m_textBox = nextTextBox;
@@ -712,7 +713,7 @@ void TextIterator::emitCharacter(UChar c, Node *textNode, Node *offsetBaseNode, 
 
 void TextIterator::emitText(Node* textNode, int textStartOffset, int textEndOffset)
 {
-    RenderText* renderer = static_cast<RenderText*>(m_node->renderer());
+    RenderText* renderer = toRenderText(m_node->renderer());
     String str = renderer->text();
     ASSERT(str.characters());
 
@@ -895,7 +896,7 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
 {
     m_lastTextNode = m_node;
 
-    RenderText *renderer = static_cast<RenderText *>(m_node->renderer());
+    RenderText *renderer = toRenderText(m_node->renderer());
     String str = renderer->text();
 
     if (!renderer->firstTextBox() && str.length() > 0)

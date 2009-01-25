@@ -52,6 +52,7 @@
 #include "RemoveNodePreservingChildrenCommand.h"
 #include "ReplaceSelectionCommand.h"
 #include "RenderBlock.h"
+#include "RenderText.h"
 #include "SetNodeAttributeCommand.h"
 #include "SplitElementCommand.h"
 #include "SplitTextNodeCommand.h"
@@ -465,7 +466,7 @@ void CompositeEditCommand::deleteInsignificantText(PassRefPtr<Text> textNode, un
     if (!textNode || start >= end)
         return;
 
-    RenderText* textRenderer = static_cast<RenderText*>(textNode->renderer());
+    RenderText* textRenderer = toRenderText(textNode->renderer());
     if (!textRenderer)
         return;
 
@@ -487,12 +488,12 @@ void CompositeEditCommand::deleteInsignificantText(PassRefPtr<Text> textNode, un
     // This loop structure works to process all gaps preceding a box,
     // and also will look at the gap after the last box.
     while (prevBox || box) {
-        unsigned gapStart = prevBox ? prevBox->m_start + prevBox->m_len : 0;
+        unsigned gapStart = prevBox ? prevBox->start() + prevBox->len() : 0;
         if (end < gapStart)
             // No more chance for any intersections
             break;
 
-        unsigned gapEnd = box ? box->m_start : length;
+        unsigned gapEnd = box ? box->start() : length;
         bool indicesIntersect = start <= gapEnd && end >= gapStart;
         int gapLen = gapEnd - gapStart;
         if (indicesIntersect && gapLen > 0) {

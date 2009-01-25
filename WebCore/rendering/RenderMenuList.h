@@ -23,8 +23,8 @@
 #ifndef RenderMenuList_h
 #define RenderMenuList_h
 
-#include "RenderFlexibleBox.h"
 #include "PopupMenuClient.h"
+#include "RenderFlexibleBox.h"
 
 #if PLATFORM(MAC)
 #define POPUP_MENU_PULLS_DOWN 0
@@ -36,6 +36,7 @@ namespace WebCore {
 
 class HTMLSelectElement;
 class PopupMenu;
+class RenderText;
 
 class RenderMenuList : public RenderFlexibleBox, private PopupMenuClient {
 public:
@@ -44,6 +45,7 @@ public:
     
     HTMLSelectElement* selectElement();
 
+private:
     virtual bool isMenuList() const { return true; }
 
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
@@ -60,6 +62,7 @@ public:
 
     virtual void calcPrefWidths();
 
+public:
     bool popupIsVisible() const { return m_popupIsVisible; }
     void showPopup();
     void hidePopup();
@@ -68,10 +71,9 @@ public:
 
     String text() const;
 
-protected:
+private:
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
 
-private:
     // PopupMenuClient methods
     virtual String itemText(unsigned listIndex) const;
     virtual bool itemIsEnabled(unsigned listIndex) const;

@@ -61,6 +61,7 @@
 #include "RenderListBox.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
+#include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -1142,7 +1143,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         if (parentObjectUnignored()->ariaRoleAttribute() == MenuItemRole ||
             parentObjectUnignored()->ariaRoleAttribute() == MenuButtonRole)
             return true;
-         return m_renderer->isBR() || !static_cast<RenderText*>(m_renderer)->firstTextBox();
+         return m_renderer->isBR() || !toRenderText(m_renderer)->firstTextBox();
     }
     
     if (isHeading())

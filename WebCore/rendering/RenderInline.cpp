@@ -25,7 +25,7 @@
 #include "config.h"
 #include "RenderInline.h"
 
-#include "Document.h"
+#include "FloatQuad.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
 #include "VisiblePosition.h"

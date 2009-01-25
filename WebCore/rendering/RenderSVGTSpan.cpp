@@ -26,7 +26,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGTSpan.h"
 
-#include "FloatRect.h"
+#include "FloatQuad.h"
 #include "RenderBlock.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRootInlineBox.h"

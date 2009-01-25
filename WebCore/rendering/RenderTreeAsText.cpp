@@ -187,7 +187,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
     if (o.isText()) {
         // FIXME: Would be better to dump the bounding box x and y rather than the first run's x and y, but that would involve updating
         // many test results.
-        const RenderText& text = static_cast<const RenderText&>(o);
+        const RenderText& text = *toRenderText(&o);
         IntRect linesBox = text.linesBoundingBox();
         r = IntRect(text.firstRunX(), text.firstRunY(), linesBox.width(), linesBox.height());
         if (adjustForTableCells && !text.firstTextBox())
@@ -205,7 +205,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
             const RenderTableCell& cell = static_cast<const RenderTableCell&>(o);
             r = IntRect(cell.x(), cell.y() + cell.intrinsicPaddingTop(), cell.width(), cell.height() - cell.intrinsicPaddingTop() - cell.intrinsicPaddingBottom());
         } else
-            r = static_cast<const RenderBox&>(o).frameRect();
+            r = toRenderBox(&o)->frameRect();
     }
 
     // FIXME: Temporary in order to ensure compatibility with existing layout test results.
@@ -240,7 +240,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
         if (!o.isBox())
             return ts;
 
-        const RenderBox& box = static_cast<const RenderBox&>(o);
+        const RenderBox& box = *toRenderBox(&o);
         if (box.borderTop() || box.borderRight() || box.borderBottom() || box.borderLeft()) {
             ts << " [border:";
 
@@ -350,7 +350,7 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
             ts << " override";
     }
     ts << ": "
-        << quoteAndEscapeNonPrintables(String(o.text()).substring(run.m_start, run.m_len))
+        << quoteAndEscapeNonPrintables(String(o.text()).substring(run.start(), run.len()))
         << "\n";
 }
 
@@ -383,7 +383,7 @@ void write(TextStream& ts, const RenderObject& o, int indent)
     ts << o << "\n";
 
     if (o.isText() && !o.isBR()) {
-        const RenderText& text = static_cast<const RenderText&>(o);
+        const RenderText& text = *toRenderText(&o);
         for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox()) {
             writeIndent(ts, indent + 1);
             writeTextRun(ts, text, *box);

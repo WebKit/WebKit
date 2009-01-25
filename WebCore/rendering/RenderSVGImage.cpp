@@ -29,6 +29,7 @@
 
 #include "Attr.h"
 #include "FloatConversion.h"
+#include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
 #include "SVGImageElement.h"

@@ -35,6 +35,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FocusController.h"
+#include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -918,7 +919,7 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
         fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->localName().string().utf8().data());
     }
     else if (r->isText()) {
-        RenderText* textRenderer = static_cast<RenderText*>(r);
+        RenderText* textRenderer = toRenderText(r);
         if (textRenderer->textLength() == 0 || !textRenderer->firstTextBox()) {
             fprintf(stderr, "%s#text (empty)\n", selected ? "==> " : "    ");
             return;
@@ -936,7 +937,7 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
                 
             int pos;
             InlineTextBox *box = textRenderer->findNextInlineTextBox(offset, pos);
-            text = text.substring(box->m_start, box->m_len);
+            text = text.substring(box->start(), box->len());
             
             String show;
             int mid = max / 2;

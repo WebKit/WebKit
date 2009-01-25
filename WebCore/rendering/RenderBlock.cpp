@@ -72,7 +72,7 @@ static PercentHeightDescendantsMap* gPercentHeightDescendantsMap = 0;
 typedef WTF::HashMap<const RenderBox*, HashSet<RenderBlock*>*> PercentHeightContainerMap;
 static PercentHeightContainerMap* gPercentHeightContainerMap = 0;
     
-typedef WTF::HashMap<RenderBlock*, RenderFlowSequencedSet*> ContinuationOutlineTableMap;
+typedef WTF::HashMap<RenderBlock*, ListHashSet<RenderFlow*>*> ContinuationOutlineTableMap;
 
 // Our MarginInfo state used when laying out block children.
 RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int top, int bottom)
@@ -1824,9 +1824,9 @@ void RenderBlock::addContinuationWithOutline(RenderFlow* flow)
     ASSERT(!flow->layer());
     
     ContinuationOutlineTableMap* table = continuationOutlineTable();
-    RenderFlowSequencedSet* continuations = table->get(this);
+    ListHashSet<RenderFlow*>* continuations = table->get(this);
     if (!continuations) {
-        continuations = new RenderFlowSequencedSet;
+        continuations = new ListHashSet<RenderFlow*>;
         table->set(this, continuations);
     }
     
@@ -1839,13 +1839,13 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, int tx, int ty)
     if (table->isEmpty())
         return;
         
-    RenderFlowSequencedSet* continuations = table->get(this);
+    ListHashSet<RenderFlow*>* continuations = table->get(this);
     if (!continuations)
         return;
         
     // Paint each continuation outline.
-    RenderFlowSequencedSet::iterator end = continuations->end();
-    for (RenderFlowSequencedSet::iterator it = continuations->begin(); it != end; ++it) {
+    ListHashSet<RenderFlow*>::iterator end = continuations->end();
+    for (ListHashSet<RenderFlow*>::iterator it = continuations->begin(); it != end; ++it) {
         // Need to add in the coordinates of the intervening blocks.
         RenderFlow* flow = *it;
         RenderBlock* block = flow->containingBlock();
@@ -3843,7 +3843,7 @@ static inline void stripTrailingSpace(int& inlineMax, int& inlineMin,
 {
     if (trailingSpaceChild && trailingSpaceChild->isText()) {
         // Collapse away the trailing space at the end of a block.
-        RenderText* t = static_cast<RenderText*>(trailingSpaceChild);
+        RenderText* t = toRenderText(trailingSpaceChild);
         const UChar space = ' ';
         const Font& font = t->style()->font(); // FIXME: This ignores first-line.
         int spaceWidth = font.width(TextRun(&space, 1));
@@ -4009,7 +4009,7 @@ void RenderBlock::calcInlinePrefWidths()
                 }
             } else if (child->isText()) {
                 // Case (3). Text.
-                RenderText* t = static_cast<RenderText *>(child);
+                RenderText* t = toRenderText(child);
 
                 if (t->isWordBreak()) {
                     m_minPrefWidth = max(inlineMin, m_minPrefWidth);
@@ -4412,7 +4412,7 @@ void RenderBlock::updateFirstLetter()
         // adding and removing children of firstLetterContainer.
         view()->disableLayoutState();
 
-        RenderText* textObj = static_cast<RenderText*>(currChild);
+        RenderText* textObj = toRenderText(currChild);
         
         // Create our pseudo style now that we have our firstLetterContainer determined.
         RenderStyle* pseudoStyle = firstLetterBlock->getCachedPseudoStyle(RenderStyle::FIRST_LETTER,

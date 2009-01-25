@@ -26,9 +26,8 @@
 #if ENABLE(SVG)
 #include "RenderPath.h"
 
-#include <math.h>
-
 #include "FloatPoint.h"
+#include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGContainer.h"
@@ -41,7 +40,6 @@
 #include "SVGStyledTransformableElement.h"
 #include "SVGTransformList.h"
 #include "SVGURIReference.h"
-
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

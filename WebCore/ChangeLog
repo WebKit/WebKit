@@ -1,3 +1,157 @@
+2009-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23522: use checked casts for render tree
+        https://bugs.webkit.org/show_bug.cgi?id=23522
+
+        Step one: RenderText.
+
+        Also change set of RenderFlow* to be a ListHashSet as the comment in the
+        header indicated.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData): Use toRenderText.
+        (WebCore::CharacterData::appendData): Ditto.
+        (WebCore::CharacterData::insertData): Ditto.
+        (WebCore::CharacterData::deleteData): Ditto.
+        (WebCore::CharacterData::replaceData): Ditto.
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner): Ditto.
+        (WebCore::ContainerNode::getLowerRightCorner): Ditto.
+        * dom/Position.cpp:
+        (WebCore::nextRenderedEditable): Ditto.
+        (WebCore::previousRenderedEditable): Ditto.
+        (WebCore::Position::renderedOffset): Ditto. Also use function members
+        instead of data members of InlineTextBox.
+        (WebCore::Position::upstream): Ditto.
+        (WebCore::Position::downstream): Ditto.
+        (WebCore::Position::hasRenderedNonAnonymousDescendantsWithHeight): Ditto.
+        (WebCore::Position::inRenderedText): Ditto.
+        (WebCore::Position::isRenderedCharacter): Ditto.
+        (WebCore::searchAheadForBetterMatch): Ditto.
+        (WebCore::Position::getInlineBoxAndOffset): Ditto.
+
+        * dom/Range.cpp: Added include of VisiblePosition.h now that it's no longer
+        included in RenderObject.h.
+
+        * dom/Text.cpp:
+        (WebCore::Text::splitText): Use toRenderText.
+        (WebCore::Text::recalcStyle): Ditto.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText): Ditto.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::debugRenderer): Ditto.
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode): Ditto.
+        (WebCore::TextIterator::handleTextBox): Ditto.
+        (WebCore::TextIterator::emitText): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::handleTextNode): Ditto.
+
+        * editing/VisiblePosition.cpp: Added include of FloatQuad.h now that it's
+        no longer included in RenderObject.h.
+        * inspector/InspectorController.cpp: Ditto.
+        * page/Frame.cpp: Ditto.
+        * rendering/RenderBox.cpp: Ditto.
+        * rendering/RenderInline.cpp: Ditto.
+        * rendering/RenderPath.cpp: Ditto.
+        * rendering/RenderSVGContainer.cpp: Ditto.
+        * rendering/RenderSVGImage.cpp: Ditto.
+        * rendering/RenderSVGInlineText.cpp: Ditto.
+        * rendering/RenderSVGTSpan.cpp: Ditto.
+        * rendering/RenderSVGText.cpp: Ditto.
+        * rendering/RenderSVGTextPath.cpp: Ditto.
+        * rendering/RenderTableCell.cpp: Ditto.
+        * rendering/RenderView.cpp: Ditto.
+
+        * editing/visible_units.cpp:
+        (WebCore::startPositionForLine): Use function members instead of data
+        members of InlineTextBox.
+        (WebCore::endPositionForLine): Ditto.
+        (WebCore::startOfParagraph): Use toRenderText.
+        (WebCore::endOfParagraph): Ditto.
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored): Use toRenderText.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally): Ditto.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::deleteLine): Ditto.
+        (WebCore::InlineTextBox::extractLine): Ditto.
+        (WebCore::InlineTextBox::attachLine): Ditto.
+        (WebCore::InlineTextBox::placeEllipsisBox): Ditto.
+        (WebCore::InlineTextBox::paintDecoration): Ditto.
+        (WebCore::InlineTextBox::paintCompositionUnderline): Ditto.
+        (WebCore::InlineTextBox::offsetForPosition): Ditto.
+        (WebCore::InlineTextBox::positionForOffset): Ditto.
+
+        * rendering/InlineTextBox.h: Made most members private. Use toRenderText.
+
+        * rendering/RenderArena.cpp:
+        (WebCore::RenderArena::allocate): Use static_cast instead of C-style cast.
+        (WebCore::RenderArena::free): Ditto.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addContinuationWithOutline): Use ListHashSet<RenderFlow*>
+        instead of RenderFlowSequencedSet.
+        (WebCore::RenderBlock::paintContinuationOutlines): Ditto.
+        (WebCore::stripTrailingSpace): Ditto.
+        (WebCore::RenderBlock::calcInlinePrefWidths): Ditto.
+        (WebCore::RenderBlock::updateFirstLetter): Ditto.
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::addChild): Use toRenderText.
+
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::dirtyLinesFromChangedChild): Use ListHashSet<RenderFlow*>
+        instead of RenderFlowSequencedSet.
+        (WebCore::RenderFlow::paintLines): Ditto.
+
+        * rendering/RenderMenuList.cpp: Removed some unneeded includes.
+
+        * rendering/RenderMenuList.h: Added now-needed forward declaration of RenderText.
+        Made more members private.
+
+        * rendering/RenderObject.cpp: Updated includes.
+        (WebCore::RenderObject::isEditable): Use toRenderText.
+        (WebCore::RenderObject::positionForPoint): Made non-inline so we wouldn't have to
+        include VisiblePosition.h in the header just for this.
+
+        * rendering/RenderObject.h: Removed unneeded includes and forward declarations.
+        Changed special vertical position values to be constants rather than an enum.
+        Eliminated RenderFlowSequencedSet, and changed clients to use ListHashSet<RenderFlow*>.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::findNextInlineTextBox): Use function members instead of
+        data members of InlineTextBox.
+        (WebCore::RenderText::positionForCoordinates): Ditto.
+        (WebCore::isInlineFlowOrEmptyText): Use toRenderText.
+        (WebCore::RenderText::previousCharacter): Use function members instead of
+        data members of InlineTextBox.
+        (WebCore::RenderText::position): Ditto.
+        (WebCore::RenderText::caretMinOffset): Ditto.
+        (WebCore::RenderText::caretMaxOffset): Ditto.
+        (WebCore::RenderText::caretMaxRenderedOffset): Ditto.
+
+        * rendering/RenderText.h: Added definition of toRenderText.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textWithHardLineBreaks): Use toRenderText.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<): Use toRenderText and toRenderBox.
+        (WebCore::writeTextRun): Ditto.
+        (WebCore::write): Ditto.
+
+        * rendering/bidi.cpp:
+        (WebCore::InlineIterator::increment): Use toRenderText.
+        (WebCore::InlineIterator::current): Ditto.
+        (WebCore::checkMidpoints): Ditto.
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Ditto.
+        (WebCore::RenderBlock::layoutInlineChildren): Ditto.
+        (WebCore::RenderBlock::determineStartPosition): Ditto.
+        (WebCore::shouldSkipWhitespaceAfterStartObject): Ditto.
+        (WebCore::RenderBlock::findNextLineBreak): Ditto.
+
 2009-01-25  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderTableCell.h"
 
+#include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"

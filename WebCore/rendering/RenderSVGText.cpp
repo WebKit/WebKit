@@ -30,16 +30,17 @@
 #include "RenderSVGText.h"
 
 #include "FloatConversion.h"
+#include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGRoot.h"
-#include "SimpleFontData.h"
 #include "SVGLengthList.h"
 #include "SVGResourceFilter.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextElement.h"
 #include "SVGTransformList.h"
 #include "SVGURIReference.h"
+#include "SimpleFontData.h"
 
 namespace WebCore {
 

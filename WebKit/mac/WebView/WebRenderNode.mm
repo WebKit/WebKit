@@ -94,14 +94,14 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     int width = 0;
     int height = 0;
     if (node->isBox()) {
-        RenderBox* box = static_cast<RenderBox*>(node);
+        RenderBox* box = toRenderBox(node);
         x = box->x();
         y = box->y();
         width = box->width();
         height = box->height();
     } else if (node->isText()) {
         // FIXME: Preserve old behavior even though it's strange.
-        RenderText* text = static_cast<RenderText*>(node);
+        RenderText* text = toRenderText(node);
         x = text->firstRunX();
         y = text->firstRunY();
         IntRect box = text->linesBoundingBox();

@@ -127,9 +127,9 @@ void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild
     }
     
     if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE) {
-        RefPtr<StringImpl> textToTransform = static_cast<RenderText*>(newChild)->originalText();
+        RefPtr<StringImpl> textToTransform = toRenderText(newChild)->originalText();
         if (textToTransform)
-            static_cast<RenderText*>(newChild)->setText(textToTransform.release(), true);
+            toRenderText(newChild)->setText(textToTransform.release(), true);
     }
 }
 

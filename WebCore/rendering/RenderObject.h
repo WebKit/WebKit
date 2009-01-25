@@ -3,7 +3,7 @@
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,38 +27,18 @@
 
 #include "CachedResourceClient.h"
 #include "Document.h"
-#include "FloatQuad.h"
 #include "RenderStyle.h"
-#include "VisiblePosition.h"
-#include <wtf/HashMap.h>
 
 namespace WebCore {
 
-class TransformationMatrix;
 class AnimationController;
-class Color;
-class Document;
-class Element;
-class Event;
-class FloatRect;
-class FrameView;
-class HTMLAreaElement;
 class HitTestResult;
 class InlineBox;
 class InlineFlowBox;
-class Position;
-class RenderArena;
 class RenderBlock;
-class RenderBox;
 class RenderFlow;
-class RenderFrameSet;
 class RenderLayer;
-class RenderTable;
-class RenderText;
-class RenderView;
-class String;
-
-struct HitTestRequest;
+class VisiblePosition;
 
 /*
  *  The painting of a layer occurs in three distinct phases.  Each phase involves
@@ -104,11 +84,10 @@ enum HitTestAction {
     HitTestForeground
 };
 
-enum VerticalPositionHint {
-    PositionTop = -0x7fffffff,
-    PositionBottom = 0x7fffffff,
-    PositionUndefined = static_cast<int>(0x80000000)
-};
+// Values for verticalPosition.
+const int PositionTop = -0x7fffffff;
+const int PositionBottom = 0x7fffffff;
+const int PositionUndefined = 0x80000000;
 
 #if ENABLE(DASHBOARD_SUPPORT)
 struct DashboardRegionValue {
@@ -127,10 +106,6 @@ struct DashboardRegionValue {
     int type;
 };
 #endif
-
-// FIXME: This should be a HashSequencedSet, but we don't have that data structure yet.
-// This means the paint order of outlines will be wrong, although this is a minor issue.
-typedef HashSet<RenderFlow*> RenderFlowSequencedSet;
 
 // Base class for all rendering tree objects.
 class RenderObject : public CachedResourceClient {
@@ -291,7 +266,6 @@ public:
     virtual bool isTextField() const { return false; }
     virtual bool isWidget() const { return false; }
 
-
     bool isRoot() const { return document()->documentElement() == node(); }
     bool isBody() const;
     bool isHR() const;
@@ -442,7 +416,7 @@ public:
      */
     struct PaintInfo {
         PaintInfo(GraphicsContext* newContext, const IntRect& newRect, PaintPhase newPhase, bool newForceBlackText,
-                  RenderObject* newPaintingRoot, RenderFlowSequencedSet* newOutlineObjects)
+                  RenderObject* newPaintingRoot, ListHashSet<RenderFlow*>* newOutlineObjects)
             : context(newContext)
             , rect(newRect)
             , phase(newPhase)
@@ -457,7 +431,7 @@ public:
         PaintPhase phase;
         bool forceBlackText;
         RenderObject* paintingRoot; // used to draw just one element and its visual kids
-        RenderFlowSequencedSet* outlineObjects; // used to list outlines that should be painted by a block with inline children
+        ListHashSet<RenderFlow*>* outlineObjects; // used to list outlines that should be painted by a block with inline children
     };
 
     virtual void paint(PaintInfo&, int tx, int ty);
@@ -472,7 +446,6 @@ public:
                                         int /*clipY*/, int /*clipH*/, int /*tx*/, int /*ty*/, int /*width*/, int /*height*/,
                                         InlineFlowBox* = 0, CompositeOperator = CompositeSourceOver) { }
 
-    
     /*
      * Calculates the actual width of the object (only for non inline
      * objects)
@@ -514,7 +487,7 @@ public:
     void updateHitTestResult(HitTestResult&, const IntPoint&);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
-    VisiblePosition positionForPoint(const IntPoint& point) { return positionForCoordinates(point.x(), point.y()); }
+    VisiblePosition positionForPoint(const IntPoint&);
 
     virtual void dirtyLinesFromChangedChild(RenderObject*);
 
@@ -562,8 +535,8 @@ public:
     IntRect absoluteBoundingBoxRect(bool useTransforms = false);
 
     // Build an array of quads in absolute coords for line boxes
-    virtual void collectAbsoluteLineBoxQuads(Vector<FloatQuad>&, unsigned /*startOffset*/ = 0, unsigned /*endOffset*/ = UINT_MAX, bool /*useSelectionHeight*/ = false) { };
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool /*topLevel*/ = true) { };
+    virtual void collectAbsoluteLineBoxQuads(Vector<FloatQuad>&, unsigned /*startOffset*/ = 0, unsigned /*endOffset*/ = UINT_MAX, bool /*useSelectionHeight*/ = false) { }
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool /*topLevel*/ = true) { }
 
     // the rect that will be painted if this object is passed as the paintingRoot
     IntRect paintingRootRect(IntRect& topLevelRect);

@@ -39,6 +39,7 @@
 #include "DocumentLoader.h"
 #include "Element.h"
 #include "FloatConversion.h"
+#include "FloatQuad.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"

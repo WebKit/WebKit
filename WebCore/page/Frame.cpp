@@ -42,6 +42,7 @@
 #include "EditorClient.h"
 #include "EventNames.h"
 #include "FocusController.h"
+#include "FloatQuad.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"

@@ -33,6 +33,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
+#include "FloatQuad.h"
 #include "Frame.h"
 #include "Page.h"
 #include "RenderArena.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 #include "CString.h"
 #include "Document.h"
 #include "Element.h"
-#include "FloatRect.h"
+#include "FloatQuad.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "Logging.h"

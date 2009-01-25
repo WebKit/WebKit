@@ -29,10 +29,12 @@
 #include "RenderSVGInlineText.h"
 
 #include "FloatConversion.h"
+#include "FloatQuad.h"
 #include "RenderBlock.h"
 #include "RenderSVGRoot.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRootInlineBox.h"
+#include "VisiblePosition.h"
 
 namespace WebCore {
 

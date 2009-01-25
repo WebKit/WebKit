@@ -27,6 +27,7 @@
 #include "RenderSVGContainer.h"
 
 #include "AXObjectCache.h"
+#include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"

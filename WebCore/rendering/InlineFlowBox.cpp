@@ -289,7 +289,7 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->object()->isText()) {
             InlineTextBox* text = static_cast<InlineTextBox*>(curr);
-            RenderText* rt = static_cast<RenderText*>(text->object());
+            RenderText* rt = toRenderText(text->object());
             if (rt->textLength()) {
                 if (needsWordSpacing && isSpaceOrNewline(rt->characters()[text->start()]))
                     x += rt->style(m_firstLine)->font().wordSpacing();
