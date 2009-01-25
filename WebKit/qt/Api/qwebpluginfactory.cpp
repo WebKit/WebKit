@@ -136,7 +136,7 @@ void QWebPluginFactory::refreshPlugins()
     For example:
 
     \code
-    <object type="application/x-pdf" data="http://www.trolltech.com/document.pdf" width="500" height="400">
+    <object type="application/x-pdf" data="http://qtsoftware.com/document.pdf" width="500" height="400">
         <param name="showTableOfContents" value="true" />
         <param name="hideThumbnails" value="false" />
     </object>
@@ -149,7 +149,7 @@ void QWebPluginFactory::refreshPlugins()
     \row    \o mimeType
             \o "application/x-pdf"
     \row    \o url
-            \o "http://www.trolltech.com/document.pdf"
+            \o "http://qtsoftware.com/document.pdf"
     \row    \o argumentNames
             \o "showTableOfContents" "hideThumbnails"
     \row    \o argumentVaues
