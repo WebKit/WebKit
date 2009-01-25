@@ -2374,8 +2374,8 @@ QWebPluginFactory *QWebPage::pluginFactory() const
 }
 
 /*!
-    This function is called when a user agent for HTTP requests is needed. You can re-implement this
-    function to dynamically return different user agent's for different urls, based on the \a url parameter.
+    This function is called when a user agent for HTTP requests is needed. You can reimplement this
+    function to dynamically return different user agents for different URLs, based on the \a url parameter.
 
     The default implementation returns the following value:
 

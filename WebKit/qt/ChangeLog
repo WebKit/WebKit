@@ -1,3 +1,11 @@
+2009-01-25  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc: Fixed the terminology used.
+
+        * Api/qwebpage.cpp:
+
 2009-01-25  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon Hausmann.
