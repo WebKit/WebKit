@@ -85,6 +85,7 @@ public:
 public slots:
     void init();
     void cleanup();
+    void cleanupFiles();
 
 private slots:
     void initTestCase();
@@ -132,16 +133,21 @@ void tst_QWebPage::cleanup()
     delete m_view;
 }
 
+void tst_QWebPage::cleanupFiles()
+{
+    QFile::remove("Databases.db");
+    QDir::current().rmdir("http_www.myexample.com_0");
+    QFile::remove("http_www.myexample.com_0.localstorage");
+}
+
 void tst_QWebPage::initTestCase()
 {
+    cleanupFiles(); // In case there are old files from previous runs
 }
 
 void tst_QWebPage::cleanupTestCase()
 {
-    // clean up the database files we created
-    QFile::remove("Databases.db");
-    QDir::current().rmdir("http_www.myexample.com_0");
-    QFile::remove("http_www.myexample.com_0.localstorage");
+    cleanupFiles(); // Be nice
 }
 
 class NavigationRequestOverride : public QWebPage

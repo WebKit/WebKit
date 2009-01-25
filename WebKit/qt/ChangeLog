@@ -1,3 +1,18 @@
+2009-01-25  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Make QWebPage auto-test more robust by cleaning up generated files
+
+        Sometimes the auto-test may segfault, leaving behind files because the
+        call to cleanupTestCase() never happens, so we also clean up the files
+        at initTestCase() just to make sure we're running in a clean environment.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::cleanupFiles):
+        (tst_QWebPage::initTestCase):
+        (tst_QWebPage::cleanupTestCase):
+
 2008-12-20  Urs Wolfer  <uwolfer@kde.org>
 
         Reviewed by Simon Hausmann.
