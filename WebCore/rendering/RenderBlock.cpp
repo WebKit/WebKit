@@ -4325,7 +4325,7 @@ bool RenderBlock::containsNonZeroBidiLevel() const
 
 RenderBlock* RenderBlock::firstLineBlock() const
 {
-    const RenderObject* firstLineBlock = this;
+    RenderBlock* firstLineBlock = const_cast<RenderBlock*>(this);
     bool hasPseudo = false;
     while (true) {
         hasPseudo = firstLineBlock->style()->hasPseudoStyle(RenderStyle::FIRST_LINE);
@@ -4335,13 +4335,14 @@ RenderBlock* RenderBlock::firstLineBlock() const
         if (firstLineBlock->isReplaced() || firstLineBlock->isFloating() || 
             !parentBlock || parentBlock->firstChild() != firstLineBlock || !parentBlock->isBlockFlow())
             break;
-        firstLineBlock = parentBlock;
+        ASSERT(parentBlock->isRenderBlock());
+        firstLineBlock = static_cast<RenderBlock*>(parentBlock);
     } 
     
     if (!hasPseudo)
         return 0;
     
-    return (RenderBlock*)(firstLineBlock);
+    return firstLineBlock;
 }
 
 void RenderBlock::updateFirstLetter()

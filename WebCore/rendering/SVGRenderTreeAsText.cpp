@@ -233,8 +233,10 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
 
     if (!object.localTransform().isIdentity())
         ts << " [transform=" << object.localTransform() << "]";
-    if (svgStyle->imageRendering() != SVGRenderStyle::initialImageRendering())
-        ts << " [image rendering=" << svgStyle->imageRendering() << "]";
+    if (svgStyle->imageRendering() != SVGRenderStyle::initialImageRendering()) {
+        unsigned imageRenderingAsInteger = svgStyle->imageRendering();
+        ts << " [image rendering=" << imageRenderingAsInteger << "]";
+    }
     if (style->opacity() != RenderStyle::initialOpacity())
         ts << " [opacity=" << style->opacity() << "]";
     if (object.isRenderPath()) {

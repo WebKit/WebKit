@@ -5,6 +5,19 @@
         Bug 23352: Turn on more compiler warnings in the Mac build
         https://bugs.webkit.org/show_bug.cgi?id=23352
 
+        Fourth patch: Deal with the last few stray warnings.
+
+        * parser/Parser.cpp: Only declare jscyyparse if it's not already declared.
+        This makes both separate compilation and all-in-one compilation work with the
+        -Wredundant-decls warning.
+
+2009-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23352: Turn on more compiler warnings in the Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=23352
+
         Third patch: Use the noreturn attribute on functions that don't
         return to prepare for the use of the -Wmissing-noreturn warning.
 

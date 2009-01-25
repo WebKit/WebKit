@@ -31,7 +31,9 @@
 
 using std::auto_ptr;
 
+#ifndef yyparse
 extern int jscyyparse(void*);
+#endif
 
 namespace JSC {
 

@@ -2,6 +2,24 @@
 
         Reviewed by Sam Weinig.
 
+        Bug 23352: Turn on more compiler warnings in the Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=23352
+
+        Fourth patch: Deal with the last few stray warnings.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::firstLineBlock): Handle the const_cast a little better.
+        Also make the local variable be a RenderBlock so the cast is closer to the code
+        that guarantees it's correct.
+
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle): Put the enum into a local variable that's a built-in
+        type before using it with TextStream, so we don't get a warning due to -Wsign-promo.
+
+2009-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Bug 23522: use checked casts for render tree
         https://bugs.webkit.org/show_bug.cgi?id=23522
 
