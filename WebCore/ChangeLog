@@ -1,5 +1,37 @@
 2009-01-25  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Bug 23538: REGRESSION (r39969): Garbage text instead of blank content rendered when plug-ins are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=23538
+        rdar://problem/6523719
+
+        I'm not sure how to make a regression test for this, since it depends on plug-ins being disabled.
+
+        The main problem here is that when plug-ins were disabled, the code ignored the classId attribute and
+        the <embed> element entirely. That resulted in a page treating a Flash document as plain HTML rather
+        than doing fallback.
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::createClassIdToTypeMap): Added. Broke this out into a separate function so we could get rid of an
+        inelegant if statement.
+        (WebCore::activeXType): Added. To avoid repeating the MIME type for ActiveX and possibly having a typo.
+        (WebCore::havePlugin): Added. Helper function to make sure we don't forget the null check.
+        (WebCore::serviceTypeForClassId): Give this function a return value since that's a more natural way to
+        return a string than an "out" parameter.  Fixed the logic to only prefer the ActiveX type over the
+        type guessed from the classId when there actually is an ActiveX plug-in to use. The old function assumed
+        there was one, which I presume right for Chrome on Windows when plug-ins are enabled, but wrong in many
+        other cases, and wrong all the time for all clients on Mac. We don't want to assume either way. Use the
+        new havePlugin function so we handle the case where pluginData is 0.
+        (WebCore::shouldUseEmbedDescendant): Renamed. Simplified the comment. Changed to use serviceTypeForClassId
+        instead of the old version that used an out parameter. Always use the <embed> if there isn't a plug-in
+        that knows how to handle <object> elements.
+        (WebCore::RenderPartObject::updateWidget): Removed null checks of pluginData. The two functions that
+        use this data still need to be called; they still do something even if no plug-ins are present. And
+        they have now been corrected to handle 0 properly.
+
+2009-01-25  Darin Adler  <darin@apple.com>
+
         * rendering/RenderMenuList.cpp: Fix build by adding back needed include.
 
 2009-01-25  Darin Adler  <darin@apple.com>

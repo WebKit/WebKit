@@ -80,46 +80,61 @@ static bool isURLAllowed(Document* doc, const String& url)
     return true;
 }
 
-static inline void mapClassIdToServiceType(const String& classId, String& serviceType, const PluginData* pluginData)
+typedef HashMap<String, String, CaseFoldingHash> ClassIdToTypeMap;
+
+static ClassIdToTypeMap* createClassIdToTypeMap()
+{
+    ClassIdToTypeMap* map = new ClassIdToTypeMap;
+    map->add("clsid:D27CDB6E-AE6D-11CF-96B8-444553540000", "application/x-shockwave-flash");
+    map->add("clsid:CFCDAA03-8BE4-11CF-B84B-0020AFBBCCFA", "audio/x-pn-realaudio-plugin");
+    map->add("clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B", "video/quicktime");
+    map->add("clsid:166B1BCA-3F9C-11CF-8075-444553540000", "application/x-director");
+#if ENABLE(ACTIVEX_TYPE_CONVERSION_WMPLAYER)
+    map->add("clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6", "application/x-mplayer2");
+    map->add("clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95", "application/x-mplayer2");
+#endif
+    return map;
+}
+
+static const String& activeXType()
+{
+    DEFINE_STATIC_LOCAL(String, activeXType, ("application/x-oleobject"));
+    return activeXType;
+}
+
+static inline bool havePlugin(const PluginData* pluginData, const String& type)
+{
+    return pluginData && pluginData->supportsMimeType(type);
+}
+
+static String serviceTypeForClassId(const String& classId, const PluginData* pluginData)
 {
     // Return early if classId is empty (since we won't do anything below).
     // Furthermore, if classId is null, calling get() below will crash.
     if (classId.isEmpty())
-        return;
+        return String();
 
-    typedef HashMap<String, String, CaseFoldingHash> ServiceTypeHashMap;
-    static ServiceTypeHashMap* serviceTypeFallbackForClassId = 0;
-    if (!serviceTypeFallbackForClassId) {
-        serviceTypeFallbackForClassId = new ServiceTypeHashMap;
-        serviceTypeFallbackForClassId->add("clsid:D27CDB6E-AE6D-11CF-96B8-444553540000", "application/x-shockwave-flash");
-        serviceTypeFallbackForClassId->add("clsid:CFCDAA03-8BE4-11CF-B84B-0020AFBBCCFA", "audio/x-pn-realaudio-plugin");
-        serviceTypeFallbackForClassId->add("clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B", "video/quicktime");
-        serviceTypeFallbackForClassId->add("clsid:166B1BCA-3F9C-11CF-8075-444553540000", "application/x-director");
-#if ENABLE(ACTIVEX_TYPE_CONVERSION_WMPLAYER)
-        serviceTypeFallbackForClassId->add("clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6", "application/x-mplayer2");
-        serviceTypeFallbackForClassId->add("clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95", "application/x-mplayer2");
-#endif
-    }
+    static ClassIdToTypeMap* map = createClassIdToTypeMap();
+    String type = map->get(classId);
 
-    const String fallbackServiceType = serviceTypeFallbackForClassId->get(classId);
-    if (pluginData->supportsMimeType(fallbackServiceType))
-        serviceType = fallbackServiceType;
-    else if (pluginData->supportsMimeType("application/x-oleobject"))
-        serviceType = "application/x-oleobject";
+    if (type.isEmpty())
+        return activeXType();
+
+    // If we do have a plug-in that supports generic ActiveX content and don't have a plug-in
+    // for the MIME type we came up with, ignore the MIME type we came up with and just use
+    // the ActiveX type.
+    if (havePlugin(pluginData, activeXType()) && !havePlugin(pluginData, type))
+        return activeXType();
+
+    return type;
 }
 
-static bool shouldUseChildEmbedOfObject(HTMLObjectElement* o, const PluginData* pluginData)
+static inline bool shouldUseEmbedDescendant(HTMLObjectElement* objectElement, const PluginData* pluginData)
 {
-    // An OBJECT tag with a classId is some kind of ActiveX control.  The most
-    // common controls have parallel plugin versions and thus possibly nested
-    // EMBED tags.  If this is the case, the OBJECT's classId should map to some
-    // known plugin MIME type.  If it doesn't, either the control is unlikely to
-    // have a parallel plugin implementation (so there's no point looking
-    // inside), or we've purposefully disabled conversion for this classId, in
-    // which case we want to use the ActiveX OBJECT instead of the EMBED anyway.
-    String serviceType;
-    mapClassIdToServiceType(o->classId(), serviceType, pluginData);
-    return serviceType != "application/x-oleobject";
+    // If we have both an <object> and <embed>, we always want to use the <embed> except when we have
+    // an ActiveX plug-in and plan to use it.
+    return !(havePlugin(pluginData, activeXType())
+        && serviceTypeForClassId(objectElement->classId(), pluginData) == activeXType());
 }
 
 void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
@@ -140,8 +155,8 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
         // Check for a child EMBED tag.
         HTMLEmbedElement* embed = 0;
         const PluginData* pluginData = frame->page()->pluginData();
-        if (pluginData && shouldUseChildEmbedOfObject(o, pluginData)) {
-            for (Node* child = o->firstChild(); child;) {
+        if (shouldUseEmbedDescendant(o, pluginData)) {
+            for (Node* child = o->firstChild(); child; ) {
                 if (child->hasTagName(embedTag)) {
                     embed = static_cast<HTMLEmbedElement*>(child);
                     break;
@@ -219,8 +234,8 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
         }
 
         // If we still don't have a type, try to map from a specific CLASSID to a type.
-        if (pluginData && serviceType.isEmpty())
-            mapClassIdToServiceType(o->classId(), serviceType, pluginData);
+        if (serviceType.isEmpty())
+            serviceType = serviceTypeForClassId(o->classId(), pluginData);
 
         if (!isURLAllowed(document(), url))
             return;
