@@ -178,6 +178,8 @@ static const char* editorCommandWebActions[] =
     "InsertNewline", // InsertParagraphSeparator
     "InsertLineBreak", // InsertLineSeparator
 
+    "SelectAll", // SelectAll
+
     0 // WebActionCount
 };
 
@@ -750,6 +752,7 @@ QWebPage::WebAction QWebPagePrivate::editorActionForKeyEvent(QKeyEvent* event)
         { QKeySequence::InsertParagraphSeparator, QWebPage::InsertParagraphSeparator },
         { QKeySequence::InsertLineSeparator, QWebPage::InsertLineSeparator },
 #endif
+        { QKeySequence::SelectAll, QWebPage::SelectAll },
         { QKeySequence::UnknownKey, QWebPage::NoWebAction }
     };
 
@@ -1172,6 +1175,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     \value InspectElement Show the Web Inspector with the currently highlighted HTML element.
     \value InsertParagraphSeparator Insert a new paragraph.
     \value InsertLineSeparator Insert a new line.
+    \value SelectAll Selects all content.
     \omitvalue WebActionCount
 
 */

@@ -1,3 +1,15 @@
+2009-01-25  Urs Wolfer  <uwolfer@kde.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add QWebPage::SelectAll to WebAction enum to select all content.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22946
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::editorActionForKeyEvent):
+        * Api/qwebpage.h:
+
 2009-01-25  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon Hausmann.

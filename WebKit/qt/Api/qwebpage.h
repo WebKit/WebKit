@@ -148,6 +148,8 @@ public:
         InsertParagraphSeparator,
         InsertLineSeparator,
 
+        SelectAll,
+
         WebActionCount
     };
 
