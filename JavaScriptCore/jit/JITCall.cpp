@@ -187,7 +187,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
 #else
 
-static void unreachable()
+static NO_RETURN void unreachable()
 {
     ASSERT_NOT_REACHED();
     exit(1);

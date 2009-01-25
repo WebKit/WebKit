@@ -74,7 +74,7 @@ static JSValuePtr functionVersion(ExecState*, JSObject*, JSValuePtr, const ArgLi
 static JSValuePtr functionRun(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 static JSValuePtr functionLoad(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 static JSValuePtr functionReadline(ExecState*, JSObject*, JSValuePtr, const ArgList&);
-static JSValuePtr functionQuit(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static NO_RETURN JSValuePtr functionQuit(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 
 struct Options {
     Options()
@@ -256,10 +256,6 @@ JSValuePtr functionQuit(ExecState* exec, JSObject*, JSValuePtr, const ArgList&)
 {
     cleanupGlobalData(&exec->globalData());
     exit(EXIT_SUCCESS);
-#if !COMPILER(MSVC) && !PLATFORM(WIN_CE)
-    // MSVC knows that exit(0) never returns, so it flags this return statement as unreachable.
-    return jsUndefined();
-#endif
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog
@@ -393,7 +389,7 @@ static void runInteractive(GlobalObject* globalObject)
     printf("\n");
 }
 
-static void printUsageStatement()
+static NO_RETURN void printUsageStatement()
 {
     fprintf(stderr, "Usage: jsc [options] [files] [-- arguments]\n");
     fprintf(stderr, "  -d         Dumps bytecode (debug builds only)\n");

@@ -1,3 +1,20 @@
+2009-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23352: Turn on more compiler warnings in the Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=23352
+
+        Third patch: Use the noreturn attribute on functions that don't
+        return to prepare for the use of the -Wmissing-noreturn warning.
+
+        * jit/JITCall.cpp:
+        (JSC::unreachable): Added NO_RETURN.
+        * jsc.cpp:
+        (functionQuit): Ditto.
+        (printUsageStatement): Ditto.
+        * wtf/AlwaysInline.h: Added definition of NO_RETURN.
+
 2009-01-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
