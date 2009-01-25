@@ -32,8 +32,7 @@
         (WebCore::KURL::setPass): Ditto.
         (WebCore::KURL::setRef): Ditto.
         (WebCore::KURL::setQuery): Ditto.
-        (WebCore::KURL::setPath): Ditto.  Note that problems described in bug 23500 mask some of
-        the problems in release builds currently, as the incorrectly parsed URL is ignored. 
+        (WebCore::KURL::setPath): Ditto.
         (WebCore::KURL::parse): Verify that the passed string is already encoded.
 
         * html/HTMLLinkElement.cpp:
