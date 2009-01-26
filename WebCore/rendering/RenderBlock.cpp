@@ -2559,7 +2559,23 @@ IntRect RenderBlock::floatRect() const
 
 int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    int bottom = RenderFlow::lowestPosition(includeOverflowInterior, includeSelf);
+    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
+        return includeSelf && width() > 0 ? overflowHeight(false) : 0;
+    
+    int bottom = includeSelf && width() > 0 ? height() : 0;
+    if (!hasColumns()) {
+        // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
+        // For now, we have to descend into all the children, since we may have a huge abs div inside
+        // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
+        // the abs div.
+        for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
+            if (!c->isFloatingOrPositioned() && !c->isText() && !c->isRenderInline())
+                bottom = max(bottom, toRenderBox(c)->y() + c->lowestPosition(false));
+        }
+    }
+
+    if (includeSelf && isRelPositioned())
+        bottom += relativePositionOffsetY();     
     if (!includeOverflowInterior && hasOverflowClip())
         return bottom;
 
@@ -2605,7 +2621,6 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
         }
     }
 
-
     if (!includeSelf && lastLineBox()) {
         int lp = lastLineBox()->yPos() + lastLineBox()->height();
         bottom = max(bottom, lp);
@@ -2616,7 +2631,25 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
 
 int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    int right = RenderFlow::rightmostPosition(includeOverflowInterior, includeSelf);
+    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
+        return includeSelf && height() > 0 ? overflowWidth(false) : 0;
+
+    int right = includeSelf && height() > 0 ? width() : 0;
+
+    if (!hasColumns()) {
+        // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
+        // For now, we have to descend into all the children, since we may have a huge abs div inside
+        // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
+        // the abs div.
+        for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
+            if (!c->isFloatingOrPositioned() && c->isBox() && !c->isRenderInline())
+                right = max(right, toRenderBox(c)->x() + c->rightmostPosition(false));
+        }
+    }
+
+    if (includeSelf && isRelPositioned())
+        right += relativePositionOffsetX();
+
     if (!includeOverflowInterior && hasOverflowClip())
         return right;
 
@@ -2678,7 +2711,24 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
 
 int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    int left = RenderFlow::leftmostPosition(includeOverflowInterior, includeSelf);
+    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
+        return includeSelf && height() > 0 ? overflowLeft(false) : width();
+
+    int left = includeSelf && height() > 0 ? 0 : width();
+    if (!hasColumns()) {
+        // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
+        // For now, we have to descend into all the children, since we may have a huge abs div inside
+        // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
+        // the abs div.
+        for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
+            if (!c->isFloatingOrPositioned() && c->isBox() && !c->isRenderInline())
+                left = min(left, toRenderBox(c)->x() + c->leftmostPosition(false));
+        }
+    }
+
+    if (includeSelf && isRelPositioned())
+        left += relativePositionOffsetX(); 
+
     if (!includeOverflowInterior && hasOverflowClip())
         return left;
     

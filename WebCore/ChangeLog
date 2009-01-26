@@ -1,3 +1,17 @@
+2009-01-26  David Hyatt  <hyatt@apple.com>
+
+        Eliminate rightmostPosition, lowestPosition and leftmostPosition from RenderFlow.  Move the code into
+        RenderBlock's methods.
+
+        Reviewed by Eric Seidel
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+
 2009-01-26  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
