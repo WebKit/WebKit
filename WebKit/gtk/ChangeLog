@@ -1,3 +1,9 @@
+2009-01-25  Darin Adler  <darin@apple.com>
+
+        Try to fix GTK build.
+
+        * webkit/webkitwebview.cpp: Added include of FloatQuad.h.
+
 2009-01-13  Alexander V. Butenko  <alex@digiqube.com>
 
         Reviewed by Holger Freyther.

@@ -47,6 +47,7 @@
 #include "Editor.h"
 #include "EditorClientGtk.h"
 #include "EventHandler.h"
+#include "FloatQuad.h"
 #include "FocusController.h"
 #include "FrameLoaderTypes.h"
 #include "HitTestRequest.h"
