@@ -23,7 +23,7 @@ LINKER_DISPLAYS_MANGLED_NAMES = YES;
 PREBINDING = NO;
 VALID_ARCHS = i386 ppc x86_64 ppc64;
 WARNING_CFLAGS = $(WARNING_CFLAGS_$(CURRENT_ARCH));
-WARNING_CFLAGS_BASE = -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wundef;
+WARNING_CFLAGS_BASE = -Wall -Wextra -Wcast-align -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings;
 WARNING_CFLAGS_ = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
 WARNING_CFLAGS_i386 = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
 WARNING_CFLAGS_ppc = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;

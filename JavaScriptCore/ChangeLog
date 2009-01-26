@@ -1,3 +1,25 @@
+2009-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 23352: Turn on more compiler warnings in the Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=23352
+
+        Turn on the following warnings:
+
+            -Wcast-qual
+            -Wextra-tokens
+            -Wformat=2
+            -Winit-self
+            -Wmissing-noreturn
+            -Wpacked
+            -Wrendundant-decls
+
+        * Configurations/Base.xcconfig: Added the new warnings. Switched to -Wextra instead of
+        -W for clarity since we don't have to support the older versions of gcc that require the
+        old -W syntax. Since we now use -Wformat=2, removed -Wformat-security. Also removed
+        -Wno-format-y2k since we can have that one on now.
+
 2009-01-25  Judit Jasz  <jasy@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.
