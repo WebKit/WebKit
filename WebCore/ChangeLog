@@ -1,3 +1,17 @@
+2009-01-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Remove some historical CachedPage time stamp fluff.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        * history/CachedPage.h:
+        (WebCore::CachedPage::timeStamp):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::cachePageForHistoryItem):
+
 2009-01-26  David Hyatt  <hyatt@apple.com>
 
         Move absoluteClippedOverflowRect, linesBoundingBox and borderBoundingBox from RenderFlow to RenderInline.

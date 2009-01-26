@@ -55,9 +55,7 @@ public:
     const KURL& url() const { return m_cachedMainFrame.url(); }
     DOMWindow* domWindow() const { return m_cachedMainFrame.domWindow(); }
 
-    void setTimeStamp(double);
-    void setTimeStampToNow();
-    double timeStamp() const;
+    double timeStamp() const { return m_timeStamp; }
 
     void setCachedFramePlatformData(CachedFramePlatformData*);
     CachedFramePlatformData* cachedFramePlatformData();

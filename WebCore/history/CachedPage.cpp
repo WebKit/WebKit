@@ -47,7 +47,7 @@ PassRefPtr<CachedPage> CachedPage::create(Page* page)
 }
 
 CachedPage::CachedPage(Page* page)
-    : m_timeStamp(0)
+    : m_timeStamp(currentTime())
     , m_cachedMainFrame(page->mainFrame())
 {
 #ifndef NDEBUG
@@ -81,21 +81,6 @@ void CachedPage::restore(Page* page)
 void CachedPage::clear()
 {
     m_cachedMainFrame.clear();
-}
-
-void CachedPage::setTimeStamp(double timeStamp)
-{
-    m_timeStamp = timeStamp;
-}
-
-void CachedPage::setTimeStampToNow()
-{
-    m_timeStamp = currentTime();
-}
-
-double CachedPage::timeStamp() const
-{
-    return m_timeStamp;
 }
 
 void CachedPage::setCachedFramePlatformData(CachedFramePlatformData* data)

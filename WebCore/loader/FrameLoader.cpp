@@ -4239,7 +4239,6 @@ void FrameLoader::cachePageForHistoryItem(HistoryItem* item)
 {
     if (Page* page = m_frame->page()) {
         RefPtr<CachedPage> cachedPage = CachedPage::create(page);
-        cachedPage->setTimeStampToNow();
         m_client->savePlatformDataToCachedPage(cachedPage.get());
 
         pageCache()->add(item, cachedPage.release());
