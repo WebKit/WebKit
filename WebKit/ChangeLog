@@ -1,3 +1,10 @@
+2009-01-25  Darin Adler  <darin@apple.com>
+
+        Try to fix full build on Mac Leopard.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed WebKitPluginClient.defs from the WebKit target.
+        Maybe this is temporary, but I had to do it to get the full build to succeed.
+
 2009-01-25  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.

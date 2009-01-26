@@ -1,5 +1,9 @@
 2009-01-25  Darin Adler  <darin@apple.com>
 
+        * Plugins/Hosted/HostedNetscapePluginStream.mm: Added a missing extern "C".
+
+2009-01-25  Darin Adler  <darin@apple.com>
+
         Discussed with Mark Rowe; not sure he reviewed it.
 
         * Configurations/Base.xcconfig: Add all the same warnings as in WebCore except for

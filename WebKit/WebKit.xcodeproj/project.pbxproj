@@ -40,7 +40,6 @@
 		1AAF5CEE0EDDE1FE008D883D /* NetscapePluginInstanceProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF5CE80EDDE1FE008D883D /* NetscapePluginInstanceProxy.h */; };
 		1AAF5CEF0EDDE1FE008D883D /* NetscapePluginInstanceProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF5CE90EDDE1FE008D883D /* NetscapePluginInstanceProxy.mm */; };
 		1AAF5CF10EDDE586008D883D /* WebKitPluginHost.defs in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF588D0EDCCEA3008D883D /* WebKitPluginHost.defs */; };
-		1AAF5D000EDDE604008D883D /* WebKitPluginClient.defs in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF588C0EDCCEA3008D883D /* WebKitPluginClient.defs */; settings = {ATTRIBUTES = (Server, ); }; };
 		1AAF5D090EDDE71D008D883D /* WebKitPluginHostTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF5D080EDDE71D008D883D /* WebKitPluginHostTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAF5D0F0EDDE7A7008D883D /* WebKitPluginAgent.defs in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF588A0EDCCEA3008D883D /* WebKitPluginAgent.defs */; };
 		1AAF5FBF0EDE3A92008D883D /* WebHostedNetscapePluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF5FBD0EDE3A92008D883D /* WebHostedNetscapePluginView.h */; };
@@ -1646,7 +1645,6 @@
 				939810C30824BF01008DF038 /* WebKitLogging.m in Sources */,
 				939810C40824BF01008DF038 /* WebKitNSStringExtras.m in Sources */,
 				1AAF5D0F0EDDE7A7008D883D /* WebKitPluginAgent.defs in Sources */,
-				1AAF5D000EDDE604008D883D /* WebKitPluginClient.defs in Sources */,
 				BCDFA9130C10B93E00D3A10C /* WebKitPluginContainerView.mm in Sources */,
 				1AAF5CF10EDDE586008D883D /* WebKitPluginHost.defs in Sources */,
 				939810C50824BF01008DF038 /* WebKitStatistics.m in Sources */,

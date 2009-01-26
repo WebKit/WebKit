@@ -37,8 +37,11 @@
 #import "WebKitErrorsPrivate.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
-#import "WebKitPluginHost.h"
 #import "WebKitSystemInterface.h"
+
+extern "C" {
+#import "WebKitPluginHost.h"
+}
 
 using namespace WebCore;
 
