@@ -2045,7 +2045,7 @@
 		93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */; };
 		93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */; };
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
-		93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5150C2A50702629800AF642C /* WebDashboardRegion.m */; };
+		93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5150C2A50702629800AF642C /* WebDashboardRegion.m */; settings = {COMPILER_FLAGS = "-Wno-cast-qual"; }; };
 		93F19B1308245E59001E9ABC /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869302846DCD018635CA /* ApplicationServices.framework */; };
 		93F19B1408245E59001E9ABC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869402846DCD018635CA /* Carbon.framework */; };
 		93F19B1508245E59001E9ABC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869502846DCD018635CA /* Cocoa.framework */; };

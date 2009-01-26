@@ -1,3 +1,13 @@
+2009-01-25  Darin Adler  <darin@apple.com>
+
+        Try to fix Tiger buildbot.
+
+        * WebCore.xcodeproj/project.pbxproj: Turn off cast-qual for WebDashboardRegion.m.
+        * page/mac/WebDashboardRegion.m:
+        (typeName): Added.
+        (-[WebDashboardRegion description]): Use typeName.
+        (-[WebDashboardRegion isEqual:]): Added comment.
+
 2009-01-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
