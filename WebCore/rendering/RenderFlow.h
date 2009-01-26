@@ -111,7 +111,7 @@ public:
     
     virtual IntRect borderBoundingBox() const
     {
-        if (isInlineFlow()) {
+        if (isRenderInline()) {
             IntRect boundingBox = linesBoundingBox();
             return IntRect(0, 0, boundingBox.width(), boundingBox.height());
         }

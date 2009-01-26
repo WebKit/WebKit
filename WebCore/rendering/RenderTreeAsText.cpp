@@ -193,7 +193,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
         if (adjustForTableCells && !text.firstTextBox())
             adjustForTableCells = false;
     } else if (o.isBox()) {
-        if (o.isInlineFlow()) {
+        if (o.isRenderInline()) {
             // FIXME: Would be better not to just dump 0, 0 as the x and y here.
             const RenderFlow& inlineFlow = static_cast<const RenderFlow&>(o);
             r = IntRect(0, 0, inlineFlow.linesBoundingBox().width(), inlineFlow.linesBoundingBox().height());

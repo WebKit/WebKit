@@ -328,7 +328,7 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
                     curr->setXPos(root()->block()->width()-x);
                 continue; // The positioned object has no effect on the width.
             }
-            if (curr->object()->isInlineFlow()) {
+            if (curr->object()->isRenderInline()) {
                 InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
                 x += flow->marginLeft();
                 x = flow->placeBoxesHorizontally(x, leftPosition, rightPosition, needsWordSpacing);
@@ -852,7 +852,7 @@ void InlineFlowBox::paintMask(RenderObject::PaintInfo& paintInfo, int tx, int ty
 static bool shouldDrawTextDecoration(RenderObject* obj)
 {
     for (RenderObject* curr = obj->firstChild(); curr; curr = curr->nextSibling()) {
-        if (curr->isInlineFlow())
+        if (curr->isRenderInline())
             return true;
         if (curr->isText() && !curr->isBR()) {
             if (!curr->style()->collapseWhiteSpace())

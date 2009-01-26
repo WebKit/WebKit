@@ -174,7 +174,7 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
         next = 0;
         if (!oldEndOfInline && !current->isFloating() && !current->isReplaced() && !current->isPositioned()) {
             next = current->firstChild();
-            if (next && resolver && next->isInlineFlow()) {
+            if (next && resolver && next->isRenderInline()) {
                 EUnicodeBidi ub = next->style()->unicodeBidi();
                 if (ub != UBNormal) {
                     TextDirection dir = next->style()->direction();
@@ -187,19 +187,19 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
         }
 
         if (!next) {
-            if (!skipInlines && !oldEndOfInline && current->isInlineFlow()) {
+            if (!skipInlines && !oldEndOfInline && current->isRenderInline()) {
                 next = current;
                 endOfInline = true;
                 break;
             }
 
             while (current && current != block) {
-                if (resolver && current->isInlineFlow() && current->style()->unicodeBidi() != UBNormal)
+                if (resolver && current->isRenderInline() && current->style()->unicodeBidi() != UBNormal)
                     resolver->embed(PopDirectionalFormat);
 
                 next = current->nextSibling();
                 if (next) {
-                    if (resolver && next->isInlineFlow()) {
+                    if (resolver && next->isRenderInline()) {
                         EUnicodeBidi ub = next->style()->unicodeBidi();
                         if (ub != UBNormal) {
                             TextDirection dir = next->style()->direction();
@@ -213,7 +213,7 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
                 }
                 
                 current = current->parent();
-                if (!skipInlines && current && current != block && current->isInlineFlow()) {
+                if (!skipInlines && current && current != block && current->isRenderInline()) {
                     next = current;
                     endOfInline = true;
                     break;
@@ -226,7 +226,7 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
 
         if (next->isText() || next->isFloating() || next->isReplaced() || next->isPositioned()
             || ((!skipInlines || !next->firstChild()) // Always return EMPTY inlines.
-                && next->isInlineFlow()))
+                && next->isRenderInline()))
             break;
         current = next;
     }
@@ -243,7 +243,7 @@ static RenderObject* bidiFirst(RenderBlock* block, InlineBidiResolver* resolver,
         return 0;
     
     RenderObject* o = block->firstChild();
-    if (o->isInlineFlow()) {
+    if (o->isRenderInline()) {
         if (resolver) {
             EUnicodeBidi ub = o->style()->unicodeBidi();
             if (ub != UBNormal) {
@@ -386,7 +386,7 @@ static void addMidpoint(const InlineIterator& midpoint)
 static void appendRunsForObject(int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
 {
     if (start > end || obj->isFloating() ||
-        (obj->isPositioned() && !obj->hasStaticX() && !obj->hasStaticY() && !obj->container()->isInlineFlow()))
+        (obj->isPositioned() && !obj->hasStaticX() && !obj->hasStaticY() && !obj->container()->isRenderInline()))
         return;
 
     bool haveNextMidpoint = (sCurrMidpoint < sNumMidpoints);
@@ -464,7 +464,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
     InlineFlowBox* parentBox = 0;
     InlineFlowBox* result = 0;
     do {
-        ASSERT(obj->isInlineFlow() || obj == this);
+        ASSERT(obj->isRenderInline() || obj == this);
         RenderFlow* flow = static_cast<RenderFlow*>(obj);
 
         // Get the last box we made for this render object.
@@ -595,7 +595,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
                 needsWordSpacing = !isSpaceOrNewline(rt->characters()[r->m_stop - 1]) && r->m_stop == length;          
             }
             r->m_box->setWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, m_firstLine));
-        } else if (!r->m_object->isInlineFlow()) {
+        } else if (!r->m_object->isRenderInline()) {
             RenderBox* renderBox = toRenderBox(r->m_object);
             renderBox->calcWidth();
             r->m_box->setWidth(renderBox->width());
@@ -819,12 +819,12 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
 
                     o->layoutIfNeeded();
                 }
-            } else if (o->isText() || (o->isInlineFlow() && !endOfInline)) {
+            } else if (o->isText() || (o->isRenderInline() && !endOfInline)) {
                 if (fullLayout || o->selfNeedsLayout())
                     o->dirtyLineBoxes(fullLayout);
                 
                 // Calculate margins of inline flows so that they can be used later by line layout.
-                if (o->isInlineFlow())
+                if (o->isRenderInline())
                     static_cast<RenderFlow*>(o)->calcMargins(containerWidth);
                 o->setNeedsLayout(false);
             }
@@ -1388,7 +1388,7 @@ static bool inlineFlowRequiresLineBox(RenderBox* flow)
     // FIXME: Right now, we only allow line boxes for inlines that are truly empty.
     // We need to fix this, though, because at the very least, inlines containing only
     // ignorable whitespace should should also have line boxes. 
-    return flow->isInlineFlow() && !flow->firstChild() && flow->hasHorizontalBordersPaddingOrMargin();
+    return flow->isRenderInline() && !flow->firstChild() && flow->hasHorizontalBordersPaddingOrMargin();
 }
 
 static inline bool requiresLineBox(const InlineIterator& it)
@@ -1396,7 +1396,7 @@ static inline bool requiresLineBox(const InlineIterator& it)
     if (it.obj->isFloatingOrPositioned())
         return false;
 
-    if (it.obj->isInlineFlow() && !inlineFlowRequiresLineBox(toRenderBox(it.obj)))
+    if (it.obj->isRenderInline() && !inlineFlowRequiresLineBox(toRenderBox(it.obj)))
         return false;
 
     if (!shouldCollapseWhiteSpace(it.obj->style()) || it.obj->isBR())
@@ -1433,7 +1433,7 @@ void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator)
             // FIXME: The math here is actually not really right.  It's a best-guess approximation that
             // will work for the common cases
             RenderObject* c = object->container();
-            if (c->isInlineFlow()) {
+            if (c->isRenderInline()) {
                 // A relative positioned inline encloses us.  In this case, we also have to determine our
                 // position as though we were an inline.  Set |staticX| and |staticY| on the relative positioned
                 // inline so that we can obtain the value later.
@@ -1468,7 +1468,7 @@ int RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver)
             // FIXME: The math here is actually not really right.  It's a best-guess approximation that
             // will work for the common cases
             RenderObject* c = object->container();
-            if (c->isInlineFlow()) {
+            if (c->isRenderInline()) {
                 // A relative positioned inline encloses us.  In this case, we also have to determine our
                 // position as though we were an inline.  Set |staticX| and |staticY| on the relative positioned
                 // inline so that we can obtain the value later.
@@ -1653,7 +1653,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, ECle
                 
                 bool needToCreateLineBox = needToSetStaticX || needToSetStaticY;
                 RenderObject* c = o->container();
-                if (c->isInlineFlow() && (!needToSetStaticX || !needToSetStaticY))
+                if (c->isRenderInline() && (!needToSetStaticX || !needToSetStaticY))
                     needToCreateLineBox = true;
 
                 // If we're ignoring spaces, we have to stop and include this object and
@@ -1669,7 +1669,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, ECle
                     
                 }
             }
-        } else if (o->isInlineFlow()) {
+        } else if (o->isRenderInline()) {
             // Right now, we should only encounter empty inlines here.
             ASSERT(!o->firstChild());
     

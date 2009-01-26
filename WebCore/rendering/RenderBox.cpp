@@ -361,14 +361,14 @@ RenderBox* RenderBox::offsetParent() const
 // excluding border and scrollbar.
 int RenderBox::clientWidth() const
 {
-    if (isInlineFlow())
+    if (isRenderInline())
         return 0;
     return width() - borderLeft() - borderRight() - verticalScrollbarWidth();
 }
 
 int RenderBox::clientHeight() const
 {
-    if (isInlineFlow())
+    if (isRenderInline())
         return 0;
     return height() - borderTop() - borderBottom() - horizontalScrollbarHeight();
 }
@@ -702,7 +702,7 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
         // at the moment (a demoted inline <form> for example). If we ever implement a
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
-        if (!child->hasLayer() && !child->isInlineFlow() && child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
+        if (!child->hasLayer() && !child->isRenderInline() && child->nodeAtPoint(request, result, xPos, yPos, tx, ty, action)) {
             updateHitTestResult(result, IntPoint(xPos - tx, yPos - ty));
             return true;
         }
@@ -949,8 +949,10 @@ IntSize RenderBox::calculateBackgroundSize(const FillLayer* bgLayer, int scaledW
 
 void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 {
-    if (isInlineFlow() ||
-        style()->borderImage().image() && style()->borderImage().image()->data() == image ||
+    if (!parent())
+        return;
+
+    if (isRenderInline() || style()->borderImage().image() && style()->borderImage().image()->data() == image ||
         style()->maskBoxImage().image() && style()->maskBoxImage().image()->data() == image) {
         repaint();
         return;
@@ -1345,7 +1347,7 @@ int RenderBox::containingBlockWidth() const
 
 IntSize RenderBox::offsetForPositionedInContainer(RenderObject* container) const
 {
-    if (!container->isRelPositioned() || !container->isInlineFlow())
+    if (!container->isRelPositioned() || !container->isRenderInline())
         return IntSize();
 
     // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
@@ -2179,7 +2181,7 @@ void RenderBox::setStaticY(int staticY)
 
 int RenderBox::containingBlockWidthForPositioned(const RenderObject* containingBlock) const
 {
-    if (containingBlock->isInlineFlow()) {
+    if (containingBlock->isRenderInline()) {
         ASSERT(containingBlock->isRelPositioned());
 
         const RenderFlow* flow = static_cast<const RenderFlow*>(containingBlock);
@@ -2212,7 +2214,7 @@ int RenderBox::containingBlockHeightForPositioned(const RenderObject* containing
     const RenderBox* containingBlockBox = toRenderBox(containingBlock);
     
     int heightResult;
-    if (containingBlock->isInlineFlow()) {
+    if (containingBlock->isRenderInline()) {
         ASSERT(containingBlock->isRelPositioned());
         heightResult = static_cast<const RenderFlow*>(containingBlock)->linesBoundingBox().height();
     } else

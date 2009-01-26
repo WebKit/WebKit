@@ -109,7 +109,7 @@ void RenderSVGText::layout()
 
 InlineBox* RenderSVGText::createInlineBox(bool, bool, bool)
 {
-    ASSERT(!isInlineFlow());
+    ASSERT(!isRenderInline());
     InlineFlowBox* flowBox = new (renderArena()) SVGRootInlineBox(this);
     
     if (!m_firstLineBox)

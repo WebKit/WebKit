@@ -854,7 +854,7 @@ void RenderText::setTextWithOffset(PassRefPtr<StringImpl> text, unsigned offset,
 
 static inline bool isInlineFlowOrEmptyText(RenderObject* o)
 {
-    if (o->isInlineFlow())
+    if (o->isRenderInline())
         return true;
     if (!o->isText())
         return false;

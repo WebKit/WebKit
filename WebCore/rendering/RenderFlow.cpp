@@ -246,7 +246,7 @@ void RenderFlow::destroy()
 
 void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
 {
-    if (!parent() || (selfNeedsLayout() && !isInlineFlow()) || isTable())
+    if (!parent() || (selfNeedsLayout() && !isRenderInline()) || isTable())
         return;
 
     // If we have no first line box, then just bail early.
@@ -275,7 +275,7 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
             InlineTextBox* textBox = toRenderText(curr)->lastTextBox();
             if (textBox)
                 box = textBox->root();
-        } else if (curr->isInlineFlow()) {
+        } else if (curr->isRenderInline()) {
             InlineRunBox* runBox = static_cast<RenderFlow*>(curr)->lastLineBox();
             if (runBox)
                 box = runBox->root();
@@ -355,7 +355,7 @@ InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineB
         return RenderContainer::createInlineBox(false, isRootLineBox);  // (or positioned element placeholders).
 
     InlineFlowBox* flowBox = 0;
-    if (isInlineFlow())
+    if (isRenderInline())
         flowBox = new (renderArena()) InlineFlowBox(this);
     else
         flowBox = new (renderArena()) RootInlineBox(this);
@@ -381,7 +381,7 @@ void RenderFlow::paintLines(PaintInfo& paintInfo, int tx, int ty)
         && paintInfo.phase != PaintPhaseMask)
         return;
 
-    bool inlineFlow = isInlineFlow();
+    bool inlineFlow = isRenderInline();
     if (inlineFlow)
         ASSERT(m_layer); // The only way an inline could paint like this is if it has a layer.
 
@@ -449,7 +449,7 @@ bool RenderFlow::hitTestLines(const HitTestRequest& request, HitTestResult& resu
     if (hitTestAction != HitTestForeground)
         return false;
 
-    bool inlineFlow = isInlineFlow();
+    bool inlineFlow = isRenderInline();
     if (inlineFlow)
         ASSERT(m_layer); // The only way an inline can hit test like this is if it has a layer.
 
@@ -482,7 +482,7 @@ bool RenderFlow::hitTestLines(const HitTestRequest& request, HitTestResult& resu
 
 IntRect RenderFlow::absoluteClippedOverflowRect()
 {
-    if (isInlineFlow()) {
+    if (isRenderInline()) {
         // Only run-ins are allowed in here during layout.
         ASSERT(!view() || !view()->layoutStateEnabled() || isRunIn());
 
@@ -500,7 +500,7 @@ IntRect RenderFlow::absoluteClippedOverflowRect()
         // We need to add in the relative position offsets of any inlines (including us) up to our
         // containing block.
         RenderBlock* cb = containingBlock();
-        for (RenderObject* inlineFlow = this; inlineFlow && inlineFlow->isInlineFlow() && inlineFlow != cb; 
+        for (RenderObject* inlineFlow = this; inlineFlow && inlineFlow->isRenderInline() && inlineFlow != cb; 
              inlineFlow = inlineFlow->parent()) {
              if (inlineFlow->style()->position() == RelativePosition && inlineFlow->hasLayer())
                 toRenderBox(inlineFlow)->layer()->relativePositionOffset(left, top);
@@ -572,7 +572,7 @@ IntRect RenderFlow::linesBoundingBox() const
 
 int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    ASSERT(!isInlineFlow());
+    ASSERT(!isRenderInline());
     if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
         return includeSelf && width() > 0 ? overflowHeight(false) : 0;
 
@@ -583,7 +583,7 @@ int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) c
         // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
         // the abs div.
         for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
-            if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow())
+            if (!c->isFloatingOrPositioned() && !c->isText() && !c->isRenderInline())
                 bottom = max(bottom, toRenderBox(c)->y() + c->lowestPosition(false));
         }
     }
@@ -596,7 +596,7 @@ int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) c
 
 int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    ASSERT(!isInlineFlow());
+    ASSERT(!isRenderInline());
     if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
         return includeSelf && height() > 0 ? overflowWidth(false) : 0;
 
@@ -608,7 +608,7 @@ int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf
         // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
         // the abs div.
         for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
-            if (!c->isFloatingOrPositioned() && c->isBox() && !c->isInlineFlow())
+            if (!c->isFloatingOrPositioned() && c->isBox() && !c->isRenderInline())
                 right = max(right, toRenderBox(c)->x() + c->rightmostPosition(false));
         }
     }
@@ -621,7 +621,7 @@ int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf
 
 int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    ASSERT(!isInlineFlow());
+    ASSERT(!isRenderInline());
     if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
         return includeSelf && height() > 0 ? overflowLeft(false) : width();
 
@@ -632,7 +632,7 @@ int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf)
         // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
         // the abs div.
         for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
-            if (!c->isFloatingOrPositioned() && c->isBox() && !c->isInlineFlow())
+            if (!c->isFloatingOrPositioned() && c->isBox() && !c->isRenderInline())
                 left = min(left, toRenderBox(c)->x() + c->leftmostPosition(false));
         }
     }

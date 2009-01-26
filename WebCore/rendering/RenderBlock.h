@@ -56,7 +56,6 @@ public:
 
     virtual bool isRenderBlock() const { return true; }
     virtual bool isBlockFlow() const { return (!isInline() || isReplaced()) && !isTable(); }
-    virtual bool isInlineFlow() const { return isInline() && !isReplaced(); }
     virtual bool isInlineBlockOrInlineTable() const { return isInline() && isReplaced(); }
 
     virtual bool childrenInline() const { return m_childrenInline; }

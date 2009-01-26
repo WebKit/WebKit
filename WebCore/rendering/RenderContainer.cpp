@@ -301,7 +301,7 @@ void RenderContainer::updateBeforeAfterContentForContainer(RenderStyle::PseudoId
     if (!newContentWanted)
         return;
 
-    if (isInlineFlow() && !pseudoElementStyle->isDisplayInlineType() && pseudoElementStyle->floating() == FNONE &&
+    if (isRenderInline() && !pseudoElementStyle->isDisplayInlineType() && pseudoElementStyle->floating() == FNONE &&
         !(pseudoElementStyle->position() == AbsolutePosition || pseudoElementStyle->position() == FixedPosition))
         // According to the CSS2 spec (the end of section 12.1), the only allowed
         // display values for the pseudo style are NONE and INLINE for inline flows.

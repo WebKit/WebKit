@@ -39,7 +39,6 @@ public:
     virtual const char* renderName() const;
 
     virtual bool isRenderInline() const { return true; }
-    virtual bool isInlineFlow() const { return true; }
     virtual bool childrenInline() const { return true; }
 
     virtual bool isInlineContinuation() const;
