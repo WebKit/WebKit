@@ -67,6 +67,7 @@
 #include <WebCore/EventNames.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/FloatQuad.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameView.h>
