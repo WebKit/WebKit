@@ -63,6 +63,18 @@ void BackForwardList::goToItem(HistoryItem* item)
     m_client->goToItem(item);
 }
 
+HistoryItem* BackForwardList::backItem()
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+HistoryItem* BackForwardList::forwardItem()
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 HistoryItem* BackForwardList::currentItem()
 {
     return m_client->currentItem();
