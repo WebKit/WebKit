@@ -366,8 +366,7 @@ static Identifier identifierFromServerIdentifier(uint64_t serverIdentifier)
 }
 
 kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID, uint64_t identifier,
-                         data_t argumentsData, mach_msg_type_number_t argumentsLength, 
-                         boolean_t*returnValue, data_t* resultData, mach_msg_type_number_t* resultLength)
+                         data_t argumentsData, mach_msg_type_number_t argumentsLength) 
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
@@ -379,7 +378,13 @@ kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t obj
 
     Identifier methodNameIdentifier = identifierFromServerIdentifier(identifier);
 
-    *returnValue = instanceProxy->invoke(objectID, methodNameIdentifier, argumentsData, argumentsLength, *resultData, *resultLength);
+    data_t resultData;
+    mach_msg_type_number_t resultLength;
+    
+    boolean_t returnValue = instanceProxy->invoke(objectID, methodNameIdentifier, argumentsData, argumentsLength, resultData, resultLength);
+    
+    _WKPHEvaluateReply(hostProxy->port(), instanceProxy->pluginID(), returnValue, resultData, resultLength);
+    mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
     
     return KERN_SUCCESS;
 }

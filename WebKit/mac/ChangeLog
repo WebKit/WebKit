@@ -1,5 +1,15 @@
 2009-01-26  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Make WKPCInvoke a simpleroutine.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCInvoke):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+
+2009-01-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Implement using plug-in objects as constructors, and setting and getting properties from a plug-in object.

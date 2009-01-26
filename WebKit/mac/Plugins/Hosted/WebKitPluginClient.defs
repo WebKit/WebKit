@@ -79,13 +79,11 @@ simpleroutine Evaluate(clientPort :mach_port_t;
                        objectID :uint32_t;
                        script :data_t);
 
-routine Invoke(clientPort :mach_port_t;
-               pluginID :uint32_t;
-               objectID :uint32_t;
-               methodNameIdentifier :uint64_t;
-               arguments :data_t;
-               out returnValue :boolean_t;
-               out result :data_t, dealloc);
+simpleroutine Invoke(clientPort :mach_port_t;
+                     pluginID :uint32_t;
+                     objectID :uint32_t;
+                     methodNameIdentifier :uint64_t;
+                     arguments :data_t);
 
 routine InvokeDefault(clientPort :mach_port_t;
                pluginID :uint32_t;
