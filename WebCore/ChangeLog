@@ -1,3 +1,49 @@
+2009-01-26  David Hyatt  <hyatt@apple.com>
+
+        Drop support for display:compact.
+
+        (1) display:compact is no longer part of CSS2.1.
+        (2) Shipping Safari has completely broken compact support with severely broken rendering
+        (all of the compact text just piles on top of the text in the inserted block and on top of itself as well).
+        (3) This has been broken in WebKit for years (ever since blocks converted to painting lines directly) without
+        anyone even noticing.
+
+        Reviewed by Eric Seidel
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleSpecialChild):
+        (WebCore::RenderBlock::handleRunInChild):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::positionForCoordinates):
+        (WebCore::shouldCheckLines):
+        (WebCore::getHeightForLineCount):
+        (WebCore::RenderBlock::renderName):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesToIntrinsicWidth):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::width):
+        (WebCore::RenderBox::height):
+        (WebCore::RenderBox::size):
+        (WebCore::RenderBox::frameRect):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintLines):
+        (WebCore::RenderFlow::hitTestLines):
+        (WebCore::RenderFlow::absoluteClippedOverflowRect):
+        (WebCore::RenderFlow::linesBoundingBox):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isInline):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/bidi.h:
+        (WebCore::BidiRun::BidiRun):
+
 2009-01-26  Adam Langley  <agl@google.com>
 
         Reviewed by Nikolas Zimmermann.

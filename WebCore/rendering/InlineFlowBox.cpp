@@ -330,15 +330,10 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
             }
             if (curr->object()->isInlineFlow()) {
                 InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
-                if (curr->object()->isCompact()) {
-                    int ignoredX = x;
-                    flow->placeBoxesHorizontally(ignoredX, leftPosition, rightPosition, needsWordSpacing);
-                } else {
-                    x += flow->marginLeft();
-                    x = flow->placeBoxesHorizontally(x, leftPosition, rightPosition, needsWordSpacing);
-                    x += flow->marginRight();
-                }
-            } else if (!curr->object()->isCompact() && (!curr->object()->isListMarker() || static_cast<RenderListMarker*>(curr->object())->isInside())) {
+                x += flow->marginLeft();
+                x = flow->placeBoxesHorizontally(x, leftPosition, rightPosition, needsWordSpacing);
+                x += flow->marginRight();
+            } else if (!curr->object()->isListMarker() || static_cast<RenderListMarker*>(curr->object())->isInside()) {
                 x += curr->renderBox()->marginLeft();
                 curr->setXPos(x);
                 leftPosition = min(x + curr->renderBox()->overflowLeft(false), leftPosition);

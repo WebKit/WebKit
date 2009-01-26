@@ -590,7 +590,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             }
 
             if (int length = rt->textLength()) {
-                if (!r->m_compact && !r->m_start && needsWordSpacing && isSpaceOrNewline(rt->characters()[r->m_start]))
+                if (!r->m_start && needsWordSpacing && isSpaceOrNewline(rt->characters()[r->m_start]))
                     totWidth += rt->style(m_firstLine)->font().wordSpacing();
                 needsWordSpacing = !isSpaceOrNewline(rt->characters()[r->m_stop - 1]) && r->m_stop == length;          
             }
@@ -599,13 +599,10 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             RenderBox* renderBox = toRenderBox(r->m_object);
             renderBox->calcWidth();
             r->m_box->setWidth(renderBox->width());
-            if (!r->m_compact)
-                 totWidth += renderBox->marginLeft() + renderBox->marginRight();
+            totWidth += renderBox->marginLeft() + renderBox->marginRight();
         }
 
-        // Compacts don't contribute to the width of the line, since they are placed in the margin.
-        if (!r->m_compact)
-            totWidth += r->m_box->width();
+        totWidth += r->m_box->width();
     }
 
     // Armed with the total width of the line (without justification),
@@ -686,7 +683,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
                 continue;
 
             int spaceAdd = 0;
-            if (r->m_object->isText() && !r->m_compact) {
+            if (r->m_object->isText()) {
                 unsigned spaces = 0;
                 const UChar* characters = toRenderText(r->m_object)->characters();
                 for (int i = r->m_start; i < r->m_stop; i++) {
@@ -752,34 +749,6 @@ void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox, BidiRu
 void RenderBlock::bidiReorderLine(InlineBidiResolver& resolver, const InlineIterator& end)
 {
     resolver.createBidiRunsForLine(end, style()->visuallyOrdered(), previousLineBrokeCleanly);
-}
-
-static void buildCompactRuns(RenderObject* compactObj, InlineBidiResolver& resolver)
-{
-    ASSERT(compactObj->isRenderBlock());
-    ASSERT(!resolver.firstRun());
-
-    // Format the compact like it is its own single line.  We build up all the runs for
-    // the little compact and then reorder them for bidi.
-    RenderBlock* compactBlock = static_cast<RenderBlock*>(compactObj);
-
-    InlineIterator start(compactBlock, bidiFirst(compactBlock, &resolver), 0);
-    resolver.setPosition(start);
-
-    betweenMidpoints = false;
-    isLineEmpty = true;
-    previousLineBrokeCleanly = true;
-
-    InlineIterator end = compactBlock->findNextLineBreak(resolver);
-    if (!isLineEmpty)
-        compactBlock->bidiReorderLine(resolver, end);
-
-    for (BidiRun* run = resolver.firstRun(); run; run = run->next())
-        run->m_compact = true;
-
-    sNumMidpoints = 0;
-    sCurrMidpoint = 0;
-    betweenMidpoints = false;
 }
 
 static inline bool isCollapsibleSpace(UChar character, RenderText* renderer)
@@ -941,10 +910,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
 
             betweenMidpoints = false;
             isLineEmpty = true;
-            if (m_firstLine && firstChild()->isCompact() && firstChild()->isRenderBlock()) {
-                buildCompactRuns(firstChild(), resolver);
-                resolver.setPosition(InlineIterator(this, firstChild()->nextSibling(), 0));
-            }
+            
             EClear clear = CNONE;
             end = findNextLineBreak(resolver, &clear);
             if (resolver.position().atEnd()) {

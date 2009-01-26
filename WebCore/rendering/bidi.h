@@ -38,7 +38,6 @@ struct BidiRun : BidiCharacterRun {
         : BidiCharacterRun(start, stop, context, dir)
         , m_object(object)
         , m_box(0)
-        , m_compact(false)
     {
     }
 
@@ -59,7 +58,6 @@ private:
 public:
     RenderObject* m_object;
     InlineBox* m_box;
-    bool m_compact;
 };
 
 } // namespace WebCore

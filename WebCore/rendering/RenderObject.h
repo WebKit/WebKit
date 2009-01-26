@@ -308,7 +308,6 @@ public:
     bool isText() const  { return m_isText; }
     bool isBox() const { return m_isBox; }
     bool isInline() const { return m_inline; }  // inline object
-    bool isCompact() const { return style()->display() == COMPACT; } // compact object
     bool isRunIn() const { return style()->display() == RUN_IN; } // run-in object
     bool isDragging() const { return m_isDragging; }
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
