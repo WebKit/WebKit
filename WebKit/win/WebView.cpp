@@ -29,6 +29,7 @@
 
 #include "CFDictionaryPropertyBag.h"
 #include "DOMCoreClasses.h"
+#include "MarshallingHelpers.h"
 #include "WebDatabaseManager.h"
 #include "WebDocumentLoader.h"
 #include "WebEditorClient.h"
@@ -2577,8 +2578,7 @@ HRESULT STDMETHODCALLTYPE WebView::userAgentForURL(
     /* [in] */ BSTR url,
     /* [retval][out] */ BSTR* userAgent)
 {
-    String urlStr(url, SysStringLen(url));
-    String userAgentString = this->userAgentForKURL(KURL(urlStr));
+    String userAgentString = userAgentForKURL(MarshallingHelpers::BSTRToKURL(url));
     *userAgent = SysAllocStringLen(userAgentString.characters(), userAgentString.length());
     if (!*userAgent && userAgentString.length())
         return E_OUTOFMEMORY;
@@ -3806,8 +3806,7 @@ HRESULT STDMETHODCALLTYPE WebView::paste(
 HRESULT STDMETHODCALLTYPE WebView::copyURL( 
         /* [in] */ BSTR url)
 {
-    String temp(url, SysStringLen(url));
-    m_page->focusController()->focusedOrMainFrame()->editor()->copyURL(KURL(temp), "");
+    m_page->focusController()->focusedOrMainFrame()->editor()->copyURL(MarshallingHelpers::BSTRToKURL(url), "");
     return S_OK;
 }
 

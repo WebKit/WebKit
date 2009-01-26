@@ -1,3 +1,27 @@
+2009-01-26  Adam Roben  <aroben@apple.com>
+
+        Fix an assertion on launch in KURL::KURL
+
+        All URL strings passed in to the WebKit API need to be passed to
+        MarshallingHelpers::BSTRToKURL so that they may be properly parsed.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * MarshallingHelpers.cpp:
+        (MarshallingHelpers::BSTRToKURL): Changed to use the two-argument
+        constructor for KURL so that the strings will be parsed rather than
+        assumed to be in the correct encoding/form.
+
+        * WebResource.cpp:
+        (WebResource::initWithData):
+        * WebURLResponse.cpp:
+        (WebURLResponse::initWithURL):
+        * WebView.cpp:
+        (WebView::userAgentForURL):
+        (WebView::copyURL):
+        Changed to use MarshallingHelpers::BSTRToKURL instead of trying to do
+        the work manually.
+
 2009-01-25  Darin Adler  <darin@apple.com>
 
         Try to fix Windows build.
