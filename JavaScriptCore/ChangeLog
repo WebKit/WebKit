@@ -1,3 +1,11 @@
+2009-01-25  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Improve the consistency of settings in our .xcconfig files.
+
+        * Configurations/Base.xcconfig: Enable GCC_OBJC_CALL_CXX_CDTORS to match other projects.
+
 2009-01-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

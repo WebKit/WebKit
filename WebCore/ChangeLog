@@ -1,3 +1,12 @@
+2009-01-25  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Improve the consistency of settings in our .xcconfig files.
+
+        * Configurations/Base.xcconfig: Enable GCC_OBJC_CALL_CXX_CDTORS to match other projects,
+        and handle all cases in GCC_GENERATE_DEBUGGING_SYMBOLS.
+
 2009-01-25  David Hyatt  <hyatt@apple.com>
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=23524, lots of missing content in table sections.
