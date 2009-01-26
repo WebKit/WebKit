@@ -148,6 +148,9 @@ public:
     void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);
     RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
 
+    // Convenience function for getting to the nearest enclosing box of a RenderObject.
+    RenderBox* enclosingBox() const;
+    
     virtual IntRect getOverflowClipRect(int /*tx*/, int /*ty*/) { return IntRect(0, 0, 0, 0); }
     virtual IntRect getClipRect(int /*tx*/, int /*ty*/) { return IntRect(0, 0, 0, 0); }
     bool hasClip() { return isPositioned() && style()->hasClip(); }

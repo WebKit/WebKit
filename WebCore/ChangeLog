@@ -1,3 +1,20 @@
+2009-01-25  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/6525392> REGRESSION (r40180): Scroll wheel events over text scroll the page
+        instead of the ancestor overflow (23525)
+        
+        Make sure that we always call scroll() on the nearest enclosing RenderBox.  No test case is possible
+        here, since wheel scrolling is currently untestable (the offset varies from machine to machine).
+
+        Reviewed by Dan Bernstein
+
+        * page/EventHandler.cpp:
+        (WebCore::scrollAndAcceptEvent):
+        (WebCore::EventHandler::scrollOverflow):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingBox):
+        * rendering/RenderObject.h:
+
 2009-01-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -480,6 +480,19 @@ RenderLayer* RenderObject::enclosingLayer() const
     return 0;
 }
 
+RenderBox* RenderObject::enclosingBox() const
+{
+    RenderObject* curr = const_cast<RenderObject*>(this);
+    while (curr) {
+        if (curr->isBox())
+            return toRenderBox(curr);
+        curr = curr->parent();
+    }
+    
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 RenderBlock* RenderObject::firstLineBlock() const
 {
     return 0;

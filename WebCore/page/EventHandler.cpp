@@ -100,17 +100,21 @@ static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
 static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDirection, ScrollDirection negativeDirection, PlatformWheelEvent& e, Node* node)
 {
-    if (!delta  || !node->renderBox())
+    if (!delta)
         return;
+        
+    // Find the nearest enclosing box.
+    RenderBox* enclosingBox = node->renderer()->enclosingBox();
+
     if (e.granularity() == ScrollByPageWheelEvent) {
-        if (node->renderBox()->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPage, 1))
+        if (enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPage, 1))
             e.accept();
         return;
     } 
     float pixelsToScroll = delta > 0 ? delta : -delta;
     if (e.granularity() == ScrollByLineWheelEvent)
         pixelsToScroll *= cMouseWheelPixelsPerLineStep;
-    if (node->renderBox()->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPixel, pixelsToScroll))
+    if (enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPixel, pixelsToScroll))
         e.accept();
 }
 
@@ -788,8 +792,8 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
     
     if (node) {
         RenderObject* r = node->renderer();
-        if (r && r->isBox() && !r->isListBox())
-            return toRenderBox(r)->scroll(direction, granularity);
+        if (r && !r->isListBox())
+            return r->enclosingBox()->scroll(direction, granularity);
     }
 
     return false;
