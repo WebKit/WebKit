@@ -1,3 +1,21 @@
+2009-01-26  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23553
+        Upstream changes from jcampan to fix chromium bugs 6692 and 6694.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::setLoopSelectionNavigation):
+        (WebCore::PopupListBox::PopupListBox):
+        (WebCore::PopupContainer::setLoopSelectionNavigation):
+        (WebCore::PopupListBox::handleKeyEvent):
+        (WebCore::PopupListBox::paintRow):
+        (WebCore::PopupListBox::clearSelection):
+        (WebCore::PopupListBox::selectNextRow):
+        (WebCore::PopupListBox::selectPreviousRow):
+        * platform/chromium/PopupMenuChromium.h:
+
 2009-01-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

@@ -86,14 +86,19 @@ namespace WebCore {
 
         // Sets whether the PopupMenuClient should be told to change its text when a
         // new item is selected (by using the arrow keys).  Default is true.
-        void setTextOnIndexChange(bool value);
+        void setTextOnIndexChange(bool);
 
         // Sets whether the selection should be accepted when the popup menu is
-        // closed (through ESC being pressed or the focus going away).
-        // Default is true.
-        // Note that when TAB is pressed, the selection is always accepted
-        // regardless of this setting.
-        void setAcceptOnAbandon(bool value);
+        // closed (through ESC being pressed or the focus going away).  Default
+        // is true.  Note that when TAB is pressed, the selection is always
+        // accepted regardless of this setting.
+        void setAcceptOnAbandon(bool);
+
+        // Sets whether we should move the selection to the first/last item
+        // when the user presses down/up arrow keys and the last/first item is
+        // selected.  Default is false, causing the first/last item to stay
+        // selected.
+        void setLoopSelectionNavigation(bool);
 
         PopupListBox* listBox() const { return m_listBox.get(); }
 

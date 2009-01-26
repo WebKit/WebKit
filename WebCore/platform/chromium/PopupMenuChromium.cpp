@@ -89,27 +89,27 @@ public:
 
     // PopupListBox methods
 
-    // Show the popup
+    // Shows the popup
     void showPopup();
 
-    // Hide the popup.  Do not call this directly: use client->hidePopup().
+    // Hides the popup.  Do not call this directly: use client->hidePopup().
     void hidePopup();
 
-    // Update our internal list to match the client.
+    // Updates our internal list to match the client.
     void updateFromElement();
 
-    // Free any allocated resources used in a particular popup session. 
+    // Frees any allocated resources used in a particular popup session. 
     void clear();
 
-    // Set the index of the option that is displayed in the <select> widget in the page
+    // Sets the index of the option that is displayed in the <select> widget in the page
     void setOriginalIndex(int index);
 
-    // Get the index of the item that the user is currently moused over or has selected with
+    // Gets the index of the item that the user is currently moused over or has selected with
     // the keyboard. This is not the same as the original index, since the user has not yet
     // accepted this input.
     int selectedIndex() const { return m_selectedIndex; }
 
-    // Move selection down/up the given number of items, scrolling if necessary.
+    // Moves selection down/up the given number of items, scrolling if necessary.
     // Positive is down.  The resulting index will be clamped to the range
     // [0, numItems), and non-option items will be skipped.
     void adjustSelectedIndex(int delta);
@@ -119,7 +119,7 @@ public:
 
     void setBaseWidth(int width) { m_baseWidth = width; }
 
-    // Compute size of widget and children.
+    // Computes the size of widget and children.
     void layout();
 
     // Returns whether the popup wants to process events for the passed key.
@@ -132,6 +132,12 @@ public:
     // Sets whether we should accept the selected index when the popup is
     // abandonned.
     void setAcceptOnAbandon(bool value) { m_shouldAcceptOnAbandon = value; }
+
+    // Sets whether pressing the down/up arrow when the last/first row is
+    // selected clears the selection on the first key press and then selects the
+    // first/last row on the next key press.  If false, the selected row stays
+    // the last/first row.
+    void setLoopSelectionNavigation(bool value) { m_loopSelectionNavigation = value; }
 
 private:
     friend class PopupContainer;
@@ -163,6 +169,7 @@ private:
         , m_repeatingChar(0)
         , m_lastCharTime(0)
         , m_setTextOnIndexChange(true)
+        , m_loopSelectionNavigation(false)
     {
         setScrollbarModes(ScrollbarAlwaysOff, ScrollbarAlwaysOff);
     }
@@ -185,6 +192,9 @@ private:
     // Returns true if the selection can be changed to index.
     // Disabled items, or labels cannot be selected.
     bool isSelectableItem(int index);
+
+    // Clears the selection (so no row appears selected).
+    void clearSelection();
 
     // Scrolls to reveal the given index.
     void scrollToRevealRow(int index);
@@ -212,6 +222,11 @@ private:
 
     // Returns the font to use for the given row
     Font getRowFont(int index);
+
+    // Moves the selection down/up one item, taking care of looping back to the
+    // first/last element if m_loopSelectionNavigation is true.
+    void selectPreviousRow();
+    void selectNextRow();
 
     // This is the index of the item marked as "selected" - i.e. displayed in the widget on the
     // page. 
@@ -264,6 +279,8 @@ private:
     TimeStamp m_lastCharTime;
 
     bool m_setTextOnIndexChange;
+
+    bool m_loopSelectionNavigation;
 };
 
 static PlatformMouseEvent constructRelativeMouseEvent(const PlatformMouseEvent& e,
@@ -488,6 +505,11 @@ void PopupContainer::setAcceptOnAbandon(bool value)
     listBox()->setAcceptOnAbandon(value);
 }
 
+void PopupContainer::setLoopSelectionNavigation(bool value)
+{
+    listBox()->setLoopSelectionNavigation(value);
+}
+
 void PopupContainer::refresh()
 {
     listBox()->updateFromElement();
@@ -599,13 +621,18 @@ bool PopupListBox::handleKeyEvent(const PlatformKeyboardEvent& event)
         abandon();  // may delete this
         return true;
     case VKEY_RETURN:
+        if (m_selectedIndex == -1)  {
+            m_popupClient->hidePopup();
+            // Don't eat the enter if nothing is selected.
+            return false;
+        }
         acceptIndex(m_selectedIndex);  // may delete this
         return true;
     case VKEY_UP:
-        adjustSelectedIndex(-1);
+        selectPreviousRow();
         break;
     case VKEY_DOWN:
-        adjustSelectedIndex(1);
+        selectNextRow();
         break;
     case VKEY_PRIOR:
         adjustSelectedIndex(-m_visibleRows);
@@ -788,9 +815,6 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     
     gc->setFillColor(textColor);
 
-    Font itemFont = getRowFont(rowIndex);
-    gc->setFont(itemFont);
-
     // Bunch of shit to deal with RTL text...
     String itemText = m_popupClient->itemText(rowIndex);
     unsigned length = itemText.length();
@@ -803,9 +827,10 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
 
     // Draw the item text
     if (style.isVisible()) {
+        Font itemFont = getRowFont(rowIndex);
         int textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
         int textY = rowRect.y() + itemFont.ascent() + (rowRect.height() - itemFont.height()) / 2;
-        gc->drawBidiText(textRun, IntPoint(textX, textY));
+        gc->drawBidiText(itemFont, textRun, IntPoint(textX, textY));
     }
 }
 
@@ -936,6 +961,43 @@ void PopupListBox::scrollToRevealRow(int index)
 
 bool PopupListBox::isSelectableItem(int index) {
     return m_items[index]->type == TypeOption && m_popupClient->itemIsEnabled(index);
+}
+
+void PopupListBox::clearSelection()
+{
+    if (m_selectedIndex != -1) {
+        invalidateRow(m_selectedIndex);
+        m_selectedIndex = -1;
+    }
+}
+
+void PopupListBox::selectNextRow()
+{
+    if (!m_loopSelectionNavigation || m_selectedIndex != numItems() - 1) {
+        adjustSelectedIndex(1);
+        return;
+    }
+
+    // We are moving past the last item, no row should be selected.
+    clearSelection();
+}
+
+void PopupListBox::selectPreviousRow()
+{
+    if (!m_loopSelectionNavigation || m_selectedIndex > 0) {
+        adjustSelectedIndex(-1);
+        return;
+    }
+
+    if (m_selectedIndex == 0) {
+        // We are moving past the first item, clear the selection.
+        clearSelection();
+        return;
+    }
+
+    // No row are selected, jump to the last item.
+    selectIndex(numItems() - 1);
+    scrollToRevealSelection();
 }
 
 void PopupListBox::adjustSelectedIndex(int delta)
