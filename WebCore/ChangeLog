@@ -1,3 +1,18 @@
+2009-01-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22650
+        Implement support for "Immutable" attribute to CodeGeneratorJS.pm, thus
+        allowing to explicitly mark methods as immutable (i.e. returning a new
+        instance rather than a reference to an existing instance).
+
+        * bindings/js/JSSVGMatrixCustom.cpp: Removed custom methods.
+        * bindings/scripts/CodeGeneratorJS.pm: Added check for Immutable
+            attribute when generating function call.
+        * svg/SVGMatrix.idl: Replaced Custom attribute with Immutable on
+            methods.
+
 2009-01-26  David Hyatt  <hyatt@apple.com>
 
         Eliminate isInlineFlow() now that a RenderBlock can never be an inline flow.  isInlineFlow() is now

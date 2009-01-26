@@ -34,19 +34,19 @@ module svg {
         attribute double e;
         attribute double f;
 
-        [Custom] SVGMatrix multiply(in SVGMatrix secondMatrix);
+        [Immutable] SVGMatrix multiply(in SVGMatrix secondMatrix);
         [Custom] SVGMatrix inverse()
             raises(SVGException);
-        [Custom] SVGMatrix translate(in float x, in float y);
-        [Custom] SVGMatrix scale(in float scaleFactor);
-        [Custom] SVGMatrix scaleNonUniform(in float scaleFactorX, in float scaleFactorY);
-        [Custom] SVGMatrix rotate(in float angle);
+        [Immutable] SVGMatrix translate(in float x, in float y);
+        [Immutable] SVGMatrix scale(in float scaleFactor);
+        [Immutable] SVGMatrix scaleNonUniform(in float scaleFactorX, in float scaleFactorY);
+        [Immutable] SVGMatrix rotate(in float angle);
         [Custom] SVGMatrix rotateFromVector(in float x, in float y)
             raises(SVGException);
-        [Custom] SVGMatrix flipX();
-        [Custom] SVGMatrix flipY();
-        [Custom] SVGMatrix skewX(in float angle);
-        [Custom] SVGMatrix skewY(in float angle);
+        [Immutable] SVGMatrix flipX();
+        [Immutable] SVGMatrix flipY();
+        [Immutable] SVGMatrix skewX(in float angle);
+        [Immutable] SVGMatrix skewY(in float angle);
     };
 
 }
