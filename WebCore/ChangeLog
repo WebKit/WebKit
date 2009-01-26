@@ -1,3 +1,16 @@
+2009-01-26  David Hyatt  <hyatt@apple.com>
+
+        Change display:run-in handling so that we no longer reuse RenderBlock as though it is an inline flow.
+        Instead we create a new RenderInline, move the RenderBlock's children underneath it, and then set the
+        inline as the new element's renderer.
+
+        Reviewed by Dan Bernstein
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleRunInChild):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::renderName):
+
 2009-01-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

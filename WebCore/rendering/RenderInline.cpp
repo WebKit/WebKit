@@ -343,6 +343,8 @@ const char* RenderInline::renderName() const
         return "RenderInline (relative positioned)";
     if (isAnonymous())
         return "RenderInline (generated)";
+    if (isRunIn())
+        return "RenderInline (run-in)";
     return "RenderInline";
 }
 

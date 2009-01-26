@@ -32,6 +32,7 @@
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
 #include "RenderImage.h"
+#include "RenderInline.h"
 #include "RenderMarquee.h"
 #include "RenderReplica.h"
 #include "RenderTableCell.h"
@@ -937,29 +938,43 @@ void RenderBlock::insertCompactIfNeeded(RenderBox* child, CompactInfo& compactIn
     }
 }
 
-RenderBox* RenderBlock::handleRunInChild(RenderBox* child, bool& handled)
+RenderBox* RenderBlock::handleRunInChild(RenderBox* blockRunIn, bool& handled)
 {
     // See if we have a run-in element with inline children.  If the
     // children aren't inline, then just treat the run-in as a normal
     // block.
-    if (child->isRunIn() && (child->childrenInline() || child->isReplaced())) {
+    if (blockRunIn->isRunIn() && (blockRunIn->childrenInline() || blockRunIn->isReplaced())) {
         // Get the next non-positioned/non-floating RenderBlock.
-        RenderObject* curr = child->nextSibling();
+        RenderObject* curr = blockRunIn->nextSibling();
         while (curr && curr->isFloatingOrPositioned())
             curr = curr->nextSibling();
         if (curr && (curr->isRenderBlock() && curr->childrenInline() && !curr->isCompact() && !curr->isRunIn())) {
             // The block acts like an inline, so just null out its
             // position.
             handled = true;
-            child->setInline(true);
-            child->setLocation(0,0);
             
-            // Remove the child.
-            RenderBox* next = child->nextSiblingBox();
-            removeChildNode(child);
+            // Remove the old child.
+            RenderBox* next = blockRunIn->nextSiblingBox();
+            removeChildNode(blockRunIn);
+
+            // Create an inline.
+            RenderInline* inlineRunIn = new (renderArena()) RenderInline(blockRunIn->node());
+            inlineRunIn->setStyle(blockRunIn->style());
+
+            // Move the nodes from the old child to the new child.
+            for (RenderObject* runInChild = blockRunIn->firstChild(); runInChild; runInChild = runInChild->nextSibling())
+                inlineRunIn->moveChildNode(runInChild);
+
+            // Now insert the new child under |curr|.
+            curr->insertChildNode(inlineRunIn, curr->firstChild());
             
-            // Now insert the child under |curr|.
-            curr->insertChildNode(child, curr->firstChild());
+            // If the run-in had an element, we need to set the new renderer.
+            if (blockRunIn->element())
+                blockRunIn->element()->setRenderer(inlineRunIn);
+            
+            // Destroy the block run-in.
+            blockRunIn->destroy();
+
             return next;
         }
     }
