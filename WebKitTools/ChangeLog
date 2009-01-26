@@ -1,3 +1,12 @@
+2009-01-26  Pierre-Olivier Latour  <pol@apple.com>
+
+        Tweaked again earlier fix, this time just to print a warning and not abort if
+        attempting to generate pixel results and Perian is installed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22615
+
+        * Scripts/run-webkit-tests:
+
 2009-01-26  Christian Dywan  <christian@twotoasts.de>
 
         Rubber stamped by Holger Freyther.

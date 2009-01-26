@@ -306,9 +306,6 @@ my $imageDiffTool = "$productDir/ImageDiff";
 $imageDiffTool .= "_debug" if isCygwin() && $configuration ne "Release";
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
-die "You can't generate new pixel test results if Perian's QuickTime component is installed as it may affect the results\n\thttps://bugs.webkit.org/show_bug.cgi?id=22615\n" if $resetResults && $pixelTests && isPerianInstalled();
-print "WARNING: Perian's QuickTime component is installed and this may affect pixel test results!!!\n\thttps://bugs.webkit.org/show_bug.cgi?id=22615\n" if $pixelTests && isPerianInstalled();
-
 checkFrameworks() unless isCygwin();
 
 my $layoutTestsName = "LayoutTests";
@@ -326,8 +323,15 @@ print "Running tests from $testDirectory\n";
 if ($pixelTests) {
     print "Enabling pixel tests with a tolerance of $tolerance%\n";
     if (isDarwin()) {
-        print "WARNING: Temporarily changing the main display color profile: the colors on your screen will change for the duration of the testing.\n";
-        print "This allows the pixel tests to have consistent color values across all machines.\n";
+        print "WARNING: Temporarily changing the main display color profile:\n";
+        print "\tThe colors on your screen will change for the duration of the testing.\n";
+        print "\tThis allows the pixel tests to have consistent color values across all machines.\n";
+        
+        if (isPerianInstalled()) {
+            print "WARNING: Perian's QuickTime component is installed and this may affect pixel test results!\n";
+            print "\tYou should avoid generating new pixel results in this environment.\n";
+            print "\tSee https://bugs.webkit.org/show_bug.cgi?id=22615 for details.\n";
+        }
     }
 }
 
