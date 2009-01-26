@@ -1,3 +1,31 @@
+2009-01-26  Adam Langley  <agl@google.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        gtk2drawing: fix compiler warnings
+
+        g_object_set_data expects a gpointer as the last argument. Cast the
+          TRUE/FALSE values to avoid a warning.
+        gtk_tree_view_column_new doesn't return a GtkWidget.
+
+        * platform/gtk/gtk2drawing.c:
+        (setup_widget_prototype):
+        (moz_gtk_get_combo_box_inner_button):
+        (moz_gtk_get_combo_box_button_inner_widgets):
+        (ensure_combo_box_widgets):
+        (moz_gtk_get_combo_box_entry_inner_widgets):
+        (moz_gtk_get_combo_box_entry_arrow):
+        (ensure_combo_box_entry_widgets):
+        (ensure_toolbar_widget):
+        (ensure_menu_bar_item_widget):
+        (ensure_menu_popup_widget):
+        (ensure_menu_item_widget):
+        (ensure_image_menu_item_widget):
+        (ensure_menu_separator_widget):
+        (ensure_check_menu_item_widget):
+        (ensure_tree_header_cell_widget):
+        (moz_gtk_entry_paint):
+
 2009-01-26  David Hyatt  <hyatt@apple.com>
 
         Change display:run-in handling so that we no longer reuse RenderBlock as though it is an inline flow.

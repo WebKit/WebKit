@@ -89,7 +89,7 @@ static GtkWidget* gMenuItemWidget;
 static GtkWidget* gImageMenuItemWidget;
 static GtkWidget* gCheckMenuItemWidget;
 static GtkWidget* gTreeViewWidget;
-static GtkWidget* gMiddleTreeViewColumn;
+static GtkTreeViewColumn* gMiddleTreeViewColumn;
 static GtkWidget* gTreeHeaderCellWidget;
 static GtkWidget* gTreeHeaderSortArrowWidget;
 static GtkWidget* gExpanderWidget;
@@ -143,7 +143,7 @@ setup_widget_prototype(GtkWidget* widget)
 
     gtk_container_add(GTK_CONTAINER(protoLayout), widget);
     gtk_widget_realize(widget);
-    g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", TRUE);
+    g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     return MOZ_GTK_SUCCESS;
 }
 
@@ -288,7 +288,7 @@ moz_gtk_get_combo_box_inner_button(GtkWidget *widget, gpointer client_data)
         g_object_add_weak_pointer(G_OBJECT(widget),
                                   (gpointer) &gComboBoxButtonWidget);
         gtk_widget_realize(widget);
-        g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", TRUE);
+        g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     }
 }
 
@@ -307,7 +307,7 @@ moz_gtk_get_combo_box_button_inner_widgets(GtkWidget *widget,
     } else
         return;
     gtk_widget_realize(widget);
-    g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", TRUE);
+    g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
 }
 
 static gint
@@ -348,7 +348,7 @@ ensure_combo_box_widgets()
                                       &gComboBoxArrowWidget);
             gtk_widget_realize(gComboBoxArrowWidget);
             g_object_set_data(G_OBJECT(gComboBoxArrowWidget),
-                              "transparent-bg-hint", TRUE);
+                              "transparent-bg-hint", GINT_TO_POINTER(TRUE));
         }
     } else {
         /* Shouldn't be reached with current internal gtk implementation; we
@@ -398,7 +398,7 @@ moz_gtk_get_combo_box_entry_inner_widgets(GtkWidget *widget,
     } else
         return;
     gtk_widget_realize(widget);
-    g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", TRUE);
+    g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
 }
 
 static void
@@ -409,7 +409,8 @@ moz_gtk_get_combo_box_entry_arrow(GtkWidget *widget, gpointer client_data)
         g_object_add_weak_pointer(G_OBJECT(widget),
                                   (gpointer) &gComboBoxEntryArrowWidget);
         gtk_widget_realize(widget);
-        g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", TRUE);
+        g_object_set_data(G_OBJECT(widget), "transparent-bg-hint",
+                          GINT_TO_POINTER(TRUE));
     }
 }
 
@@ -461,7 +462,7 @@ ensure_combo_box_entry_widgets()
                                       &gComboBoxEntryArrowWidget);
             gtk_widget_realize(gComboBoxEntryArrowWidget);
             g_object_set_data(G_OBJECT(gComboBoxEntryArrowWidget),
-                              "transparent-bg-hint", TRUE);
+                              "transparent-bg-hint", GINT_TO_POINTER(TRUE));
         }
     } else {
         /* Shouldn't be reached with current internal gtk implementation;
@@ -501,7 +502,8 @@ ensure_toolbar_widget()
         gToolbarWidget = gtk_toolbar_new();
         gtk_container_add(GTK_CONTAINER(gHandleBoxWidget), gToolbarWidget);
         gtk_widget_realize(gToolbarWidget);
-        g_object_set_data(G_OBJECT(gToolbarWidget), "transparent-bg-hint", TRUE);
+        g_object_set_data(G_OBJECT(gToolbarWidget), "transparent-bg-hint",
+                          GINT_TO_POINTER(TRUE));
     }
     return MOZ_GTK_SUCCESS;
 }
@@ -590,7 +592,7 @@ ensure_menu_bar_item_widget()
                               gMenuBarItemWidget);
         gtk_widget_realize(gMenuBarItemWidget);
         g_object_set_data(G_OBJECT(gMenuBarItemWidget),
-                          "transparent-bg-hint", TRUE);
+                          "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     }
     return MOZ_GTK_SUCCESS;
 }
@@ -605,7 +607,7 @@ ensure_menu_popup_widget()
                                   gMenuPopupWidget);
         gtk_widget_realize(gMenuPopupWidget);
         g_object_set_data(G_OBJECT(gMenuPopupWidget),
-                          "transparent-bg-hint", TRUE);
+                          "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     }
     return MOZ_GTK_SUCCESS;
 }
@@ -620,7 +622,7 @@ ensure_menu_item_widget()
                               gMenuItemWidget);
         gtk_widget_realize(gMenuItemWidget);
         g_object_set_data(G_OBJECT(gMenuItemWidget),
-                          "transparent-bg-hint", TRUE);
+                          "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     }
     return MOZ_GTK_SUCCESS;
 }
@@ -635,7 +637,7 @@ ensure_image_menu_item_widget()
                               gImageMenuItemWidget);
         gtk_widget_realize(gImageMenuItemWidget);
         g_object_set_data(G_OBJECT(gImageMenuItemWidget),
-                          "transparent-bg-hint", TRUE);
+                          "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     }
     return MOZ_GTK_SUCCESS;
 }
@@ -650,7 +652,7 @@ ensure_menu_separator_widget()
                               gMenuSeparatorWidget);
         gtk_widget_realize(gMenuSeparatorWidget);
         g_object_set_data(G_OBJECT(gMenuSeparatorWidget),
-                          "transparent-bg-hint", TRUE);
+                          "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     }
     return MOZ_GTK_SUCCESS;
 }
@@ -665,7 +667,7 @@ ensure_check_menu_item_widget()
                               gCheckMenuItemWidget);
         gtk_widget_realize(gCheckMenuItemWidget);
         g_object_set_data(G_OBJECT(gCheckMenuItemWidget),
-                          "transparent-bg-hint", TRUE);
+                          "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     }
     return MOZ_GTK_SUCCESS;
 }
@@ -720,9 +722,9 @@ ensure_tree_header_cell_widget()
         gTreeHeaderCellWidget = GTK_TREE_VIEW_COLUMN(gMiddleTreeViewColumn)->button;
         gTreeHeaderSortArrowWidget = GTK_TREE_VIEW_COLUMN(gMiddleTreeViewColumn)->arrow;
         g_object_set_data(G_OBJECT(gTreeHeaderCellWidget),
-                          "transparent-bg-hint", TRUE);
+                          "transparent-bg-hint", GINT_TO_POINTER(TRUE));
         g_object_set_data(G_OBJECT(gTreeHeaderSortArrowWidget),
-                          "transparent-bg-hint", TRUE);
+                          "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     }
     return MOZ_GTK_SUCCESS;
 }
@@ -1536,11 +1538,12 @@ moz_gtk_entry_paint(GdkDrawable* drawable, GdkRectangle* rect,
      * If the theme is able to cope with transparency, then we can skip pre-filling
      * and notify the theme it will paint directly on the canvas. */
     if (theme_honors_transparency) {
-        g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", TRUE);
+        g_object_set_data(G_OBJECT(widget), "transparent-bg-hint",
+                          GINT_TO_POINTER(TRUE));
     } else {
         gdk_draw_rectangle(drawable, style->base_gc[bg_state], TRUE,
                            cliprect->x, cliprect->y, cliprect->width, cliprect->height);
-        g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", FALSE);
+        g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(FALSE));
     }
 
     /* Get the position of the inner window, see _gtk_entry_get_borders */
