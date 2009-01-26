@@ -43,7 +43,7 @@ using namespace JSC;
 using namespace WebCore;
 
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
-- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebScriptCallFrame *)caller debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame;
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj debugger:(WebScriptDebugger *)debugger caller:(WebScriptCallFrame *)caller debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame;
 - (void)_setDebuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame;
 - (void)_clearDebuggerCallFrame;
 @end
@@ -78,9 +78,25 @@ static WebFrame *toWebFrame(JSGlobalObject* globalObject)
 
 WebScriptDebugger::WebScriptDebugger(JSGlobalObject* globalObject)
     : m_callingDelegate(false)
+    , m_globalObject(globalObject)
 {
     attach(globalObject);
-    callEvent(globalObject->globalExec(), 0, -1);
+    initGlobalCallFrame(globalObject->globalExec());
+}
+
+void WebScriptDebugger::initGlobalCallFrame(const DebuggerCallFrame& debuggerCallFrame)
+{
+    m_callingDelegate = true;
+
+    WebFrame *webFrame = toWebFrame(debuggerCallFrame.dynamicGlobalObject());
+
+    m_topCallFrame.adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script()->windowScriptObject() debugger:this caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
+    m_globalCallFrame = m_topCallFrame;
+
+    WebView *webView = [webFrame webView];
+    [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:m_topCallFrame.get() sourceId:static_cast<WebSourceId>(0) line:-1 forWebFrame:webFrame];
+
+    m_callingDelegate = false;
 }
 
 // callbacks - relay to delegate
@@ -120,7 +136,7 @@ void WebScriptDebugger::callEvent(const DebuggerCallFrame& debuggerCallFrame, in
 
     WebFrame *webFrame = toWebFrame(debuggerCallFrame.dynamicGlobalObject());
 
-    m_topCallFrame.adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script()->windowScriptObject() caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
+    m_topCallFrame.adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script()->windowScriptObject() debugger:this caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
 
     WebView *webView = [webFrame webView];
     [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:m_topCallFrame.get() sourceId:static_cast<WebSourceId>(sourceID) line:lineNumber forWebFrame:webFrame];

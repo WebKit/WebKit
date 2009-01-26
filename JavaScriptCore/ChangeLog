@@ -1,3 +1,17 @@
+2009-01-26  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Gavin Barraclough.
+
+        Bug 23552: Dashcode evaluator no longer works after making ExecStates actual call frames
+        <https://bugs.webkit.org/show_bug.cgi?id=23552>
+        <rdar://problem/6398839>
+
+        * JavaScriptCore.exp:
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame): Added so that WebScriptCallFrame can
+        evaluate JS starting from a global call frame.
+        * debugger/Debugger.h:
+
 2009-01-25  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.

@@ -51,4 +51,18 @@ void Debugger::detach(JSGlobalObject* globalObject)
     globalObject->setDebugger(0);
 }
 
+JSValuePtr evaluateInGlobalCallFrame(const UString& script, JSValuePtr& exception, JSGlobalObject* globalObject)
+{
+    CallFrame* globalCallFrame = globalObject->globalExec();
+
+    int errLine;
+    UString errMsg;
+    SourceCode source = makeSource(script);
+    RefPtr<EvalNode> evalNode = globalObject->globalData()->parser->parse<EvalNode>(globalCallFrame, globalObject->debugger(), source, &errLine, &errMsg);
+    if (!evalNode)
+        return Error::create(globalCallFrame, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
+
+    return globalObject->globalData()->interpreter->execute(evalNode.get(), globalCallFrame, globalObject, globalCallFrame->scopeChain(), &exception);
+}
+
 } // namespace JSC

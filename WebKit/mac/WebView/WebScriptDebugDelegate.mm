@@ -32,6 +32,7 @@
 #import "WebFrameInternal.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebViewInternal.h"
+#import <debugger/Debugger.h>
 #import <debugger/DebuggerCallFrame.h>
 #import <interpreter/CallFrame.h>
 #import <runtime/JSGlobalObject.h>
@@ -62,6 +63,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     WebScriptObject        *globalObject;   // the global object's proxy (not retained)
     WebScriptCallFrame     *caller;         // previous stack frame
     DebuggerCallFrame* debuggerCallFrame;
+    WebScriptDebugger* debugger;
 }
 @end
 
@@ -85,12 +87,13 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 @implementation WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
-- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebScriptCallFrame *)caller debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj debugger:(WebScriptDebugger *)debugger caller:(WebScriptCallFrame *)caller debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame
 {
     if ((self = [super init])) {
         _private = [[WebScriptCallFramePrivate alloc] init];
         _private->globalObject = globalObj;
         _private->caller = [caller retain];
+        _private->debugger = debugger;
     }
     return self;
 }
@@ -220,6 +223,23 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
         return nil;
 
     JSLock lock(false);
+
+    // If this is the global call frame and there is no dynamic global object,
+    // Dashcode is attempting to execute JS in the evaluator using a stale
+    // WebScriptCallFrame. Instead, we need to set the dynamic global object
+    // and evaluate the JS in the global object's global call frame.
+    JSGlobalObject* globalObject = _private->debugger->globalObject();
+    if (self == _private->debugger->globalCallFrame() && !globalObject->globalData()->dynamicGlobalObject) {
+        JSGlobalObject* globalObject = _private->debugger->globalObject();
+
+        DynamicGlobalObjectScope globalObjectScope(globalObject->globalExec(), globalObject);
+
+        JSValuePtr exception = noValue();
+        JSValuePtr result = evaluateInGlobalCallFrame(String(script), exception, globalObject);
+        if (exception)
+            return [self _convertValueToObjcValue:exception];
+        return result ? [self _convertValueToObjcValue:result] : nil;        
+    }
 
     JSValuePtr exception = noValue();
     JSValuePtr result = _private->debuggerCallFrame->evaluate(String(script), exception);
