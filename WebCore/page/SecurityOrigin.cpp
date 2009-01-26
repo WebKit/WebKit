@@ -96,6 +96,8 @@ bool SecurityOrigin::isEmpty() const
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url)
 {
+    if (!url.isValid())
+        return adoptRef(new SecurityOrigin(KURL()));
     return adoptRef(new SecurityOrigin(url));
 }
 
@@ -224,7 +226,7 @@ String SecurityOrigin::toString() const
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
 {
-    return SecurityOrigin::create(KURL(originString));
+    return SecurityOrigin::create(KURL(KURL(), originString));
 }
 
 static const char SeparatorCharacter = '_';

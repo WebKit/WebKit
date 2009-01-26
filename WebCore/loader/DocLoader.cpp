@@ -191,7 +191,7 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
 {
     KURL fullURL = m_doc->completeURL(url);
 
-    if (!canRequest(type, fullURL))
+    if (!fullURL.isValid() || !canRequest(type, fullURL))
         return 0;
 
     if (cache()->disabled()) {
