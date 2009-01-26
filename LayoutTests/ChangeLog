@@ -1,3 +1,11 @@
+2009-01-26  Darin Adler  <darin@apple.com>
+
+        Requested by David Hyatt.
+
+        * platform/mac/fast/table/form-with-table-style-expected.checksum: Updated to reflect
+        the progression; we now render things we used to fail to render.
+        * platform/mac/fast/table/form-with-table-style-expected.png: Ditto.
+
 2009-01-25  David Hyatt  <hyatt@apple.com>
 
         Add layout test for https://bugs.webkit.org/show_bug.cgi?id=23524.
