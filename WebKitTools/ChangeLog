@@ -1,3 +1,10 @@
+2009-01-26  Christian Dywan  <christian@twotoasts.de>
+
+        Rubber stamped by Holger Freyther.
+
+        * GtkLauncher/main.c:
+        (main): Initialize threads, which is required for libSoup.
+
 2009-01-23  David Kilzer  <ddkilzer@apple.com>
 
         * Scripts/do-webcore-rename: Removed 10 header guard renames that

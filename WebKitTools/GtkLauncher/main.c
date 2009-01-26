@@ -183,6 +183,8 @@ int
 main (int argc, char* argv[])
 {
     gtk_init (&argc, &argv);
+    if (!g_thread_supported ())
+        g_thread_init (NULL);
 
     GtkWidget* vbox = gtk_vbox_new (FALSE, 0);
     gtk_box_pack_start (GTK_BOX (vbox), create_toolbar (), FALSE, FALSE, 0);
