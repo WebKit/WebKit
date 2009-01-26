@@ -1120,7 +1120,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
 
     This enum describes the types of action which can be performed on the web page.
     Actions which are related to text editing, cursor movement, and text selection
-    only have an effect if \l{QWebPage::contentEditable()}{contentEditable} is true.
+    only have an effect if \l contentEditable is true.
 
     \value NoWebAction No action is triggered.
     \value OpenLink Open the current link.
