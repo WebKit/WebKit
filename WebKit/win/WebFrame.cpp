@@ -486,8 +486,13 @@ void WebFrame::loadData(PassRefPtr<WebCore::SharedBuffer> data, BSTR mimeType, B
         mimeTypeString = "text/html";
 
     String encodingString(textEncodingName, SysStringLen(textEncodingName));
-    KURL baseKURL(String(baseURL ? baseURL : L"", SysStringLen(baseURL)));
-    KURL failingKURL(String(failingURL, SysStringLen(failingURL)));
+
+    // FIXME: We should really be using MarshallingHelpers::BSTRToKURL here,
+    // but that would turn a null BSTR into a null KURL, and we crash inside of
+    // WebCore if we use a null KURL in constructing the ResourceRequest.
+    KURL baseKURL = KURL(KURL(), String(baseURL ? baseURL : L"", SysStringLen(baseURL)));
+
+    KURL failingKURL = MarshallingHelpers::BSTRToKURL(failingURL);
 
     ResourceRequest request(baseKURL);
     SubstituteData substituteData(data, mimeTypeString, encodingString, failingKURL);

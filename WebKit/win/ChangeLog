@@ -1,5 +1,15 @@
 2009-01-26  Adam Roben  <aroben@apple.com>
 
+        Fix an assertion failure when Safari loads an error page
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebFrame.cpp:
+        (WebFrame::loadData): Use the two-argument version of KURL and
+        MarshallingHelpers::BSTRToKURL, for reasons mentioned in r40248.
+
+2009-01-26  Adam Roben  <aroben@apple.com>
+
         Fix an assertion on launch in KURL::KURL
 
         All URL strings passed in to the WebKit API need to be passed to
