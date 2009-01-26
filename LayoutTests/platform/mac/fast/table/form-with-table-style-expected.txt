@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 91x18
             text run at (0,0) width 91: "display: run-in"
       RenderBlock {DIV} at (0,188) size 784x18
-        RenderBlock (compact) {FORM} at (0,0) size 784x18
+        RenderBlock {FORM} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 106x18
             text run at (0,0) width 106: "display: compact"
       RenderBlock {DIV} at (0,222) size 784x34
