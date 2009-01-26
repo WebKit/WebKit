@@ -5250,7 +5250,7 @@ void FrameLoader::dispatchWillSendRequest(DocumentLoader* loader, unsigned long 
     m_client->dispatchWillSendRequest(loader, identifier, request, redirectResponse);
 
     // If the URL changed, then we want to put that new URL in the "did tell client" set too.
-    if (oldRequestURL != request.url().string().impl())
+    if (!request.isNull() && oldRequestURL != request.url().string().impl())
         m_documentLoader->didTellClientAboutLoad(request.url());
 
     if (Page* page = m_frame->page())

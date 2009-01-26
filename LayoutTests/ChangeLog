@@ -1,3 +1,13 @@
+2009-01-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - test for <rdar://problem/6525618> REGRESSION (r39566): NewsFire crashes in
+          string hashing code when opening a Digg RSS article
+
+        * fast/loader/null-request-after-willSendRequest-expected.txt: Added.
+        * fast/loader/null-request-after-willSendRequest.html: Added.
+
 2009-01-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

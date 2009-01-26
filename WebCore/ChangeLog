@@ -1,3 +1,16 @@
+2009-01-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix <rdar://problem/6525618> REGRESSION (r39566): NewsFire crashes in
+          string hashing code when opening a Digg RSS article
+
+        Test: fast/loader/null-request-after-willSendRequest.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem): Null-check the request returned from
+        the client's willSendRequest method.
+
 2009-01-25  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/6525392> REGRESSION (r40180): Scroll wheel events over text scroll the page
