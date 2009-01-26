@@ -149,6 +149,21 @@ simpleroutine NPObjectHasConstructMethod(pluginHostPort :mach_port_t;
                                          pluginID :uint32_t;
                                          objectID :uint32_t);
                                        
+simpleroutine NPObjectGetProperty(pluginHostPort :mach_port_t;
+                                  pluginID :uint32_t;
+                                  objectID :uint32_t;
+                                  propertyName :uint64_t);
+
+simpleroutine NPObjectSetProperty(pluginHostPort :mach_port_t;
+                                  pluginID :uint32_t;
+                                  objectID :uint32_t;
+                                  propertyName :uint64_t;
+                                  value :data_t);
+                                  
+simpleroutine NPObjectRelease(pluginHostPort :mach_port_t;
+                              pluginID :uint32_t;
+                              objectID :uint32_t);
+
 // Replies
 
 simpleroutine EvaluateReply(pluginHostPort :mach_port_t;

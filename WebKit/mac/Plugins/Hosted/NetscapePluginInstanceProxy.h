@@ -113,6 +113,7 @@ public:
 
     PassRefPtr<JSC::Bindings::Instance> createBindingsInstance(PassRefPtr<JSC::Bindings::RootObject>);
     RetainPtr<NSData *> marshalValues(JSC::ExecState*, const JSC::ArgList& args);
+    void marshalValue(JSC::ExecState*, JSC::JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength);
     JSC::JSValuePtr demarshalValue(JSC::ExecState*, const char* valueData, mach_msg_type_number_t valueLength);
 
     // Reply structs
@@ -120,7 +121,7 @@ public:
         enum Type {
             InstantiatePlugin,
             GetScriptableNPObject,
-            NPObjectInvoke,
+            BooleanAndData,
             Boolean
         };
         
@@ -170,10 +171,10 @@ public:
         boolean_t m_result;
     };
 
-    struct NPObjectInvokeReply : public Reply {
-        static const Reply::Type ReplyType = NPObjectInvoke;
+    struct BooleanAndDataReply : public Reply {
+        static const Reply::Type ReplyType = BooleanAndData;
         
-        NPObjectInvokeReply(boolean_t returnValue, RetainPtr<CFDataRef> result)
+        BooleanAndDataReply(boolean_t returnValue, RetainPtr<CFDataRef> result)
             : Reply(ReplyType)
             , m_returnValue(returnValue)
             , m_result(result)
@@ -237,7 +238,6 @@ private:
     // NPRuntime
     uint32_t idForObject(JSC::JSObject*);
     
-    void marshalValue(JSC::ExecState*, JSC::JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength);    
     void addValueToArray(NSMutableArray *, JSC::ExecState* exec, JSC::JSValuePtr value);
     
     bool demarshalValueFromArray(JSC::ExecState*, NSArray *array, NSUInteger& index, JSC::JSValuePtr& result);

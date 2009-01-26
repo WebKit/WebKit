@@ -1,3 +1,42 @@
+2009-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement using plug-in objects as constructors, and setting and getting properties from a plug-in object.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCBooleanAndDataReply):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::Reply::):
+        (WebKit::NetscapePluginInstanceProxy::BooleanAndDataReply::BooleanAndDataReply):
+        Rename NPObjectInvokeReply to BooleanAndDataReply.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray):
+        Fix a cut and paste error.
+        
+        (WebKit::NetscapePluginInstanceProxy::demarshalValueFromArray):
+        Handle NPObjects.
+        
+        * Plugins/Hosted/ProxyInstance.h:
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyField::valueFromInstance):
+        (WebKit::ProxyField::setValueToInstance):
+        Call the ProxyInstance method.
+        
+        (WebKit::ProxyInstance::~ProxyInstance):
+        Release the NPObject.
+        
+        (WebKit::ProxyInstance::supportsConstruct):
+        Ask the plug-in host if an instance supports construct.
+        
+        (WebKit::ProxyInstance::fieldValue):
+        (WebKit::ProxyInstance::setFieldValue):
+        Call the plug-in host methods.
+        
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+        Rename ObjectValueType to JSObjectValueType, and add NPObjectValueType.
+
 2009-01-26  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.

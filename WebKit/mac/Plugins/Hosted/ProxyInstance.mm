@@ -70,6 +70,8 @@ public:
     {
     }
     
+    uint64_t serverIdentifier() const { return m_serverIdentifier; }
+
 private:
     virtual JSValuePtr valueFromInstance(ExecState*, const Instance*) const;
     virtual void setValueToInstance(ExecState*, const Instance*, JSValuePtr) const;
@@ -77,15 +79,14 @@ private:
     uint64_t m_serverIdentifier;
 };
 
-JSValuePtr ProxyField::valueFromInstance(ExecState*, const Instance*) const
+JSValuePtr ProxyField::valueFromInstance(ExecState* exec, const Instance* instance) const
 {
-    ASSERT_NOT_REACHED();
-    return JSValuePtr();
+    return static_cast<const ProxyInstance*>(instance)->fieldValue(exec, this);
 }
     
-void ProxyField::setValueToInstance(ExecState*, const Instance*, JSValuePtr) const
+void ProxyField::setValueToInstance(ExecState* exec, const Instance* instance, JSValuePtr value) const
 {
-    ASSERT_NOT_REACHED();
+    static_cast<const ProxyInstance*>(instance)->setFieldValue(exec, this, value);
 }
 
 class ProxyMethod : public JSC::Bindings::Method {
@@ -115,7 +116,8 @@ ProxyInstance::~ProxyInstance()
     deleteAllValues(m_fields);
     deleteAllValues(m_methods);
     
-    // FIXME: Tell the host that we're no longer interested in this object.
+    _WKPHNPObjectRelease(m_instanceProxy->hostProxy()->port(),
+                         m_instanceProxy->pluginID(), m_objectID);
 }
     
 JSC::Bindings::Class *ProxyInstance::getClass() const
@@ -131,7 +133,7 @@ JSValuePtr ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t
                             type, identifier, (char*)[arguments.get() bytes], [arguments.get() length]) != KERN_SUCCESS)
         return jsUndefined();
     
-    auto_ptr<NetscapePluginInstanceProxy::NPObjectInvokeReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::NPObjectInvokeReply>();
+    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>();
     if (!reply.get() || !reply->m_returnValue)
         return jsUndefined();
     
@@ -164,6 +166,25 @@ bool ProxyInstance::supportsInvokeDefaultMethod() const
 JSValuePtr ProxyInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
 {
     return invoke(exec, InvokeDefault, 0, args);
+}
+
+bool ProxyInstance::supportsConstruct() const
+{
+    if (_WKPHNPObjectHasConstructMethod(m_instanceProxy->hostProxy()->port(),
+                                        m_instanceProxy->pluginID(),
+                                        m_objectID) != KERN_SUCCESS)
+        return false;
+    
+    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>();
+    if (reply.get() && reply->m_result)
+        return true;
+        
+    return false;
+}
+    
+JSValuePtr ProxyInstance::invokeConstruct(ExecState* exec, const ArgList& args)
+{
+    return invoke(exec, Construct, 0, args);
 }
 
 JSValuePtr ProxyInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
@@ -247,6 +268,40 @@ Field* ProxyInstance::fieldNamed(const Identifier& identifier)
     }
     
     return 0;
+}
+
+JSC::JSValuePtr ProxyInstance::fieldValue(ExecState* exec, const Field* field) const
+{
+    uint64_t serverIdentifier = static_cast<const ProxyField*>(field)->serverIdentifier();
+    
+    if (_WKPHNPObjectGetProperty(m_instanceProxy->hostProxy()->port(),
+                                 m_instanceProxy->pluginID(),
+                                 m_objectID, serverIdentifier) != KERN_SUCCESS)
+        return jsUndefined();
+    
+    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>();
+    if (!reply.get() || !reply->m_returnValue)
+        return jsUndefined();
+    
+    return m_instanceProxy->demarshalValue(exec, (char*)CFDataGetBytePtr(reply->m_result.get()), CFDataGetLength(reply->m_result.get()));
+}
+    
+void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValuePtr value) const
+{
+    uint64_t serverIdentifier = static_cast<const ProxyField*>(field)->serverIdentifier();
+    
+    data_t valueData;
+    mach_msg_type_number_t valueLength;
+
+    m_instanceProxy->marshalValue(exec, value, valueData, valueLength);
+    kern_return_t kr = _WKPHNPObjectSetProperty(m_instanceProxy->hostProxy()->port(),
+                                                m_instanceProxy->pluginID(),
+                                                m_objectID, serverIdentifier, valueData, valueLength);
+    mig_deallocate(reinterpret_cast<vm_address_t>(valueData), valueLength);
+    if (kr != KERN_SUCCESS)
+        return;
+    
+    auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>();
 }
 
 } // namespace WebKit

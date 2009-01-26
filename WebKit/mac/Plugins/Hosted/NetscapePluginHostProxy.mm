@@ -254,7 +254,7 @@ kern_return_t WKPCBooleanReply(mach_port_t clientPort, uint32_t pluginID, boolea
     return KERN_SUCCESS;
 }
 
-kern_return_t WKPCNPObjectInvokeReply(mach_port_t clientPort, uint32_t pluginID, boolean_t returnValue, data_t resultData, mach_msg_type_number_t resultLength)
+kern_return_t WKPCBooleanAndDataReply(mach_port_t clientPort, uint32_t pluginID, boolean_t returnValue, data_t resultData, mach_msg_type_number_t resultLength)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
@@ -265,7 +265,7 @@ kern_return_t WKPCNPObjectInvokeReply(mach_port_t clientPort, uint32_t pluginID,
         return KERN_FAILURE;
 
     RetainPtr<CFDataRef> result = CFDataCreate(0, reinterpret_cast<UInt8*>(resultData), resultLength);
-    instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::NPObjectInvokeReply(returnValue, result));
+    instanceProxy->setCurrentReply(new NetscapePluginInstanceProxy::BooleanAndDataReply(returnValue, result));
     
     return KERN_SUCCESS;
 }

@@ -797,7 +797,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
         [array addObject:[NSNumber numberWithDouble:value.toNumber(exec)]];
     } else if (value.isBoolean()) {
         [array addObject:[NSNumber numberWithInt:BoolValueType]];
-        [array addObject:[NSNumber numberWithDouble:value.toBoolean(exec)]];
+        [array addObject:[NSNumber numberWithBool:value.toBoolean(exec)]];
     } else if (value.isNull())
         [array addObject:[NSNumber numberWithInt:NullValueType]];
     else if (value.isObject()) {
@@ -806,7 +806,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
             // FIXME: Handle ProxyInstance objects.
             ASSERT_NOT_REACHED();
         } else {
-            [array addObject:[NSNumber numberWithInt:ObjectValueType]];
+            [array addObject:[NSNumber numberWithInt:JSObjectValueType]];
             [array addObject:[NSNumber numberWithInt:idForObject(object)]];
         }
     } else
@@ -866,14 +866,32 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
             result = jsString(exec, String(string));
             return true;
         }
-        case ObjectValueType: {
+        case JSObjectValueType: {
             uint32_t objectID = [[array objectAtIndex:index++] intValue];
             
             result = m_objects.get(objectID);
             ASSERT(result);
             return true;
         }
+        case NPObjectValueType: {
+            uint32_t objectID = [[array objectAtIndex:index++] intValue];
+
+            Frame* frame = core([m_pluginView webFrame]);
+            if (!frame)
+                return false;
+            
+            if (!frame->script()->isEnabled())
+                return false;
+
+            RefPtr<RootObject> rootObject = frame->script()->createRootObject(m_pluginView);
+            if (!rootObject)
+                return false;
+            
+            result = ProxyInstance::create(rootObject.release(), this, objectID)->createRuntimeObject(exec);
+            return true;
+        }
         default:
+            ASSERT_NOT_REACHED();
             return false;
     }
 }

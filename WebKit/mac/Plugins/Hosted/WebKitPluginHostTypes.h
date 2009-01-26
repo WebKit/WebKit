@@ -54,7 +54,8 @@ enum ValueType {
     BoolValueType,
     DoubleValueType,
     StringValueType,
-    ObjectValueType
+    JSObjectValueType,
+    NPObjectValueType
 };
 
 #endif // WebKitPluginHostTypes_h
