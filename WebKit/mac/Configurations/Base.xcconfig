@@ -39,9 +39,9 @@ STRIP_INSTALLED_PRODUCT = $(STRIP_INSTALLED_PRODUCT_$(CURRENT_VARIANT));
 STRIP_INSTALLED_PRODUCT_normal = YES;
 STRIP_INSTALLED_PRODUCT_debug = NO;
 
-DEAD_CODE_STRIPPING_debug = NO;
-DEAD_CODE_STRIPPING_normal = YES;
-DEAD_CODE_STRIPPING = $(DEAD_CODE_STRIPPING_$(CURRENT_VARIANT));
+// Dead code stripping needs to be on in the debug variant to avoid link errors.  This is due to unconditionally
+// building the MiG bindings for WebKitPluginClient even when the functions that the bindings wrap are not built.
+DEAD_CODE_STRIPPING = YES;
 
 
 GCC_VERSION = $(GCC_VERSION_$(XCODE_VERSION_ACTUAL));

@@ -1,3 +1,13 @@
+2009-01-26  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Clean up after r40240.
+
+        * Configurations/Base.xcconfig: Don't dead code strip in debug builds for now as it leads to link errors.
+        * Plugins/Hosted/HostedNetscapePluginStream.mm: Revert change that is no longer needed now that WebKitPluginHost.defs
+        is back in the build.
+
 2009-01-25  Darin Adler  <darin@apple.com>
 
         * Plugins/Hosted/HostedNetscapePluginStream.mm: Added a missing extern "C".

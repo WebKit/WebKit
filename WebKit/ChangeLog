@@ -1,3 +1,11 @@
+2009-01-26  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Clean up after r40240.
+
+        * WebKit.xcodeproj/project.pbxproj: Reinstate WebKitPluginHost.defs.
+
 2009-01-25  Darin Adler  <darin@apple.com>
 
         Try to fix full build on Mac Leopard.
