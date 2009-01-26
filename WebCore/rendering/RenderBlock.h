@@ -177,7 +177,7 @@ public:
     bool positionNewFloats();
     void clearFloats();
     int getClearDelta(RenderBox* child);
-    virtual void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0);
+    void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0, bool inLayout = true);
     void markPositionedObjectsForLayout();
 
     virtual bool containsFloats() { return m_floatingObjects && !m_floatingObjects->isEmpty(); }

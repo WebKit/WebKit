@@ -1,3 +1,14 @@
+2009-01-25  David Hyatt  <hyatt@apple.com>
+
+        Add layout test for https://bugs.webkit.org/show_bug.cgi?id=23524.
+
+        Reviewed by Oliver Hunt
+
+        * fast/repaint/dynamic-table-vertical-alignment-change.html: Added.
+        * platform/mac/fast/repaint/dynamic-table-vertical-alignment-change-expected.checksum: Added.
+        * platform/mac/fast/repaint/dynamic-table-vertical-alignment-change-expected.png: Added.
+        * platform/mac/fast/repaint/dynamic-table-vertical-alignment-change-expected.txt: Added.
+
 2009-01-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

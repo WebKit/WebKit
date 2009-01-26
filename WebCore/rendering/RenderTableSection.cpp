@@ -587,6 +587,8 @@ int RenderTableSection::layoutRows(int toAdd)
         }
     }
 
+    ASSERT(!needsLayout());
+
     statePusher.pop();
 
     setHeight(m_rowPos[totalRows]);

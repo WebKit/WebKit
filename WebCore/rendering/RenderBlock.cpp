@@ -1066,7 +1066,7 @@ void RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo, int 
             child->setChildNeedsLayout(true, false);
 
         if (!child->avoidsFloats() && child->containsFloats())
-            child->markAllDescendantsWithFloatsForLayout();
+            static_cast<RenderBlock*>(child)->markAllDescendantsWithFloatsForLayout();
 
         // Our guess was wrong. Make the child lay itself out again.
         child->layoutIfNeeded();
@@ -1121,7 +1121,7 @@ void RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, 
         // So go ahead and mark the item as dirty.
         child->setChildNeedsLayout(true, false);
     if (!child->avoidsFloats() && child->containsFloats())
-        child->markAllDescendantsWithFloatsForLayout();
+        static_cast<RenderBlock*>(child)->markAllDescendantsWithFloatsForLayout();
     child->layoutIfNeeded();
 }
 
@@ -1342,7 +1342,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         }
 
         if (markDescendantsWithFloats)
-            child->markAllDescendantsWithFloatsForLayout();
+            static_cast<RenderBlock*>(child)->markAllDescendantsWithFloatsForLayout();
 
         if (child->isRenderBlock())
             previousFloatBottom = max(previousFloatBottom, oldRect.y() + static_cast<RenderBlock*>(child)->floatBottom());
@@ -3052,9 +3052,9 @@ bool RenderBlock::containsFloat(RenderObject* o)
     return false;
 }
 
-void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove)
+void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove, bool inLayout)
 {
-    setChildNeedsLayout(true);
+    setChildNeedsLayout(true, !inLayout);
 
     if (floatToRemove)
         removeFloatingObject(floatToRemove);
@@ -3064,7 +3064,7 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
             if (isBlockFlow() && !child->isFloatingOrPositioned() &&
                 ((floatToRemove ? child->containsFloat(floatToRemove) : child->containsFloats()) || child->shrinkToAvoidFloats()))
-                child->markAllDescendantsWithFloatsForLayout(floatToRemove);
+                static_cast<RenderBlock*>(child)->markAllDescendantsWithFloatsForLayout(floatToRemove, inLayout);
         }
     }
 }
