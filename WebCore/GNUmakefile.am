@@ -238,8 +238,6 @@ IDL_BINDINGS += \
 webcore_sources += \
 	WebCore/WebCorePrefix.h \
 	WebCore/bindings/js/CachedScriptSourceProvider.h \
-	WebCore/bindings/js/DOMTimer.cpp \
-	WebCore/bindings/js/DOMTimer.h \
 	WebCore/bindings/js/GCController.cpp \
 	WebCore/bindings/js/GCController.h \
 	WebCore/bindings/js/JSAttrCustom.cpp \
@@ -1140,6 +1138,8 @@ webcore_sources += \
 	WebCore/page/ContextMenuController.h \
 	WebCore/page/DOMSelection.cpp \
 	WebCore/page/DOMSelection.h \
+	WebCore/page/DOMTimer.cpp \
+	WebCore/page/DOMTimer.h \
 	WebCore/page/DOMWindow.cpp \
 	WebCore/page/DOMWindow.h \
 	WebCore/page/DragActions.h \

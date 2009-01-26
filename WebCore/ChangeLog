@@ -1,3 +1,24 @@
+2009-01-26  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23511
+        Move DOMTimer from bindings/js to page/.
+        This was prepared by moving all JSC dependencies from DOMTimer
+        to ScheduledAction earlier, and helps unfork the Chromuim version
+        of the DOMTimer.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/DOMTimer.cpp: Removed.
+        * bindings/js/DOMTimer.h: Removed.
+        * page/DOMTimer.cpp: Copied from WebCore/bindings/js/DOMTimer.cpp.
+        * page/DOMTimer.h: Copied from WebCore/bindings/js/DOMTimer.h.
+
 2009-01-26  David Hyatt  <hyatt@apple.com>
 
         Eliminate rightmostPosition, lowestPosition and leftmostPosition from RenderFlow.  Move the code into

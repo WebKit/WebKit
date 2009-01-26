@@ -376,6 +376,7 @@ sources['page'] = [
     'page/Console.cpp',
     'page/ContextMenuController.cpp',
     'page/DOMSelection.cpp',
+    'page/DOMTimer.cpp',
     'page/DOMWindow.cpp',
     'page/DragController.cpp',
     'page/EventHandler.cpp',
@@ -602,7 +603,6 @@ sources['xml'] = [
 
 # Using JavaScriptCore for now, eventually this needs to be configurable (and in separate file)
 sources['bindings/js'] = [
-    "bindings/js/DOMTimer.cpp",
     "bindings/js/GCController.cpp",
     "bindings/js/JSAttrCustom.cpp",
     "bindings/js/JSAudioConstructor.cpp",

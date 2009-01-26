@@ -181,10 +181,10 @@
 		14EC268009CA07E000E1EEEC /* EventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */; };
 		14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */; };
+		188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 188604B10F2E654A000B6443 /* DOMTimer.cpp */; };
+		188604B40F2E654A000B6443 /* DOMTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 188604B20F2E654A000B6443 /* DOMTimer.h */; };
 		18A0537C0F26859C00A51705 /* WorkerRunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18A0537A0F26859C00A51705 /* WorkerRunLoop.cpp */; };
 		18A0537D0F26859C00A51705 /* WorkerRunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 18A0537B0F26859C00A51705 /* WorkerRunLoop.h */; };
-		18E687870EDB793500A8E8B7 /* DOMTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18E687850EDB793400A8E8B7 /* DOMTimer.cpp */; };
-		18E687880EDB793500A8E8B7 /* DOMTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 18E687860EDB793500A8E8B7 /* DOMTimer.h */; };
 		1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */; };
 		1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */; };
 		1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */; };
@@ -5035,10 +5035,10 @@
 		14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNode.cpp; sourceTree = "<group>"; };
 		14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFrameElementBase.h; sourceTree = "<group>"; };
 		14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameElementBase.cpp; sourceTree = "<group>"; };
+		188604B10F2E654A000B6443 /* DOMTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTimer.cpp; sourceTree = "<group>"; };
+		188604B20F2E654A000B6443 /* DOMTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTimer.h; sourceTree = "<group>"; };
 		18A0537A0F26859C00A51705 /* WorkerRunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerRunLoop.cpp; sourceTree = "<group>"; };
 		18A0537B0F26859C00A51705 /* WorkerRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerRunLoop.h; sourceTree = "<group>"; };
-		18E687850EDB793400A8E8B7 /* DOMTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTimer.cpp; sourceTree = "<group>"; };
-		18E687860EDB793500A8E8B7 /* DOMTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTimer.h; sourceTree = "<group>"; };
 		1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OverflowEvent.cpp; sourceTree = "<group>"; };
 		1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OverflowEvent.h; sourceTree = "<group>"; };
 		1A0D57380A5C7812007EDD4C /* OverflowEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = OverflowEvent.idl; sourceTree = "<group>"; };
@@ -10103,6 +10103,8 @@
 				BC5A86810C33676000EEA649 /* DOMSelection.cpp */,
 				BC5A86820C33676000EEA649 /* DOMSelection.h */,
 				BC5A86830C33676000EEA649 /* DOMSelection.idl */,
+				188604B10F2E654A000B6443 /* DOMTimer.cpp */,
+				188604B20F2E654A000B6443 /* DOMTimer.h */,
 				1403B99609EB13AF00797C7F /* DOMWindow.cpp */,
 				1403B99509EB13AF00797C7F /* DOMWindow.h */,
 				1403B90C09EB124500797C7F /* DOMWindow.idl */,
@@ -13187,8 +13189,6 @@
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
-				18E687850EDB793400A8E8B7 /* DOMTimer.cpp */,
-				18E687860EDB793500A8E8B7 /* DOMTimer.h */,
 				1432E8480C51493F00B1500F /* GCController.cpp */,
 				1432E8460C51493800B1500F /* GCController.h */,
 				E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */,
@@ -15310,7 +15310,6 @@
 				DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */,
 				85E711D90AC5D5350053270F /* DOMTextInternal.h in Headers */,
 				BCC5733A0D695BF1006EF517 /* DOMTextPrivate.h in Headers */,
-				18E687880EDB793500A8E8B7 /* DOMTimer.h in Headers */,
 				BC1A37BE097C715F0019F3D8 /* DOMTraversal.h in Headers */,
 				85526CD20AB0B7D9000302EA /* DOMTreeWalker.h in Headers */,
 				850B41C30AD9E7E700A6ED4F /* DOMTreeWalkerInternal.h in Headers */,
@@ -16652,6 +16651,7 @@
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
 				18A0537D0F26859C00A51705 /* WorkerRunLoop.h in Headers */,
 				51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */,
+				188604B40F2E654A000B6443 /* DOMTimer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17315,7 +17315,6 @@
 				850657030AAB4763002D15C0 /* DOMStyleSheetList.mm in Sources */,
 				85ACA99D0A9B575900671E90 /* DOMText.mm in Sources */,
 				933A14AA0B7D1D0900A53FFD /* DOMTextEvent.mm in Sources */,
-				18E687870EDB793500A8E8B7 /* DOMTimer.cpp in Sources */,
 				85526CD30AB0B7DA000302EA /* DOMTreeWalker.mm in Sources */,
 				85C7F4920AAF79DC004014DD /* DOMUIEvent.mm in Sources */,
 				BC1A37BF097C715F0019F3D8 /* DOMUtility.mm in Sources */,
@@ -18625,6 +18624,7 @@
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
 				51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */,
 				93BA59B20F2AA5FE008E8E99 /* JSCDATASectionCustom.cpp in Sources */,
+				188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

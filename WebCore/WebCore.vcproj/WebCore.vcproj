@@ -2136,6 +2136,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\DOMTimer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\DOMTimer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\DOMWindow.cpp"
 				>
 				<FileConfiguration
@@ -14062,14 +14070,6 @@
 				>
 				<File
 					RelativePath="..\bindings\js\CachedScriptSourceProvider.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\DOMTimer.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\DOMTimer.h"
 					>
 				</File>
 				<File

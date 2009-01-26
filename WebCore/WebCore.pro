@@ -401,7 +401,6 @@ IDL_BINDINGS += \
 
 
 SOURCES += \
-    bindings/js/DOMTimer.cpp \
     bindings/js/GCController.cpp \
     bindings/js/JSAttrCustom.cpp \
     bindings/js/JSCDATASectionCustom.cpp \
@@ -833,6 +832,7 @@ SOURCES += \
     page/Console.cpp \
     page/ContextMenuController.cpp \
     page/DOMSelection.cpp \
+    page/DOMTimer.cpp \
     page/DOMWindow.cpp \
     page/Navigator.cpp \
     page/NavigatorBase.cpp \
