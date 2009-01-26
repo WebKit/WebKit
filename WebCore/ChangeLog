@@ -1,3 +1,23 @@
+2009-01-26  David Hyatt  <hyatt@apple.com>
+
+        Move absoluteClippedOverflowRect, linesBoundingBox and borderBoundingBox from RenderFlow to RenderInline.
+
+        Reviewed by Eric Seidel
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockHeightForPositioned):
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::linesBoundingBox):
+        (WebCore::RenderInline::absoluteClippedOverflowRect):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::borderBoundingBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+
 2009-01-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

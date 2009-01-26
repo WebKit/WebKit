@@ -427,7 +427,7 @@ void RenderLayer::updateLayerPosition()
     setPos(x, y);
 
     if (renderer()->isRenderInline()) {
-        RenderFlow* inlineFlow = static_cast<RenderFlow*>(renderer());
+        RenderInline* inlineFlow = static_cast<RenderInline*>(renderer());
         IntRect lineBox = inlineFlow->linesBoundingBox();
         setWidth(lineBox.width());
         setHeight(lineBox.height());

@@ -65,7 +65,17 @@ public:
     void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
 
+    virtual IntRect absoluteClippedOverflowRect();
+
     virtual VisiblePosition positionForCoordinates(int x, int y);
+
+    IntRect linesBoundingBox() const;
+    
+    virtual IntRect borderBoundingBox() const
+    {
+        IntRect boundingBox = linesBoundingBox();
+        return IntRect(0, 0, boundingBox.width(), boundingBox.height());
+    }
 
 protected:
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
