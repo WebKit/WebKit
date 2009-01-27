@@ -1,3 +1,16 @@
+2009-01-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes for eq null & neq null, on 64-bit JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=23559
+
+        This patch degrades 64-bit JIT performance on some benchmarks,
+        due to the whole not-being-incorrect thing.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
 2009-01-26  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Gavin Barraclough.
