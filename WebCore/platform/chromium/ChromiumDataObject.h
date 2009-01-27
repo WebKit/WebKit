@@ -54,6 +54,7 @@ namespace WebCore {
         KURL url;
         String urlTitle;
 
+        String fileExtension;
         Vector<String> filenames;
 
         String plainText;

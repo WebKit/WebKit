@@ -37,6 +37,7 @@ void ChromiumDataObject::clear()
 {
     url = KURL();
     urlTitle = "";
+    fileExtension = "";
     filenames.clear();
     plainText = "";
     textHtml = "";
@@ -49,6 +50,7 @@ void ChromiumDataObject::clear()
 bool ChromiumDataObject::hasData()
 {
     return !url.isEmpty()
+        || !fileExtension.isEmpty()
         || !filenames.isEmpty()
         || !plainText.isEmpty()
         || !textHtml.isEmpty()
