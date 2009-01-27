@@ -1,3 +1,21 @@
+2009-01-26  Pierre-Olivier Latour  <pol@apple.com>
+
+        Updated the reference images for the video tests that rely on the H264 test movie,
+        as QuickTime 7.6 apparently slightly changed the results from the 7.5.5 version.
+
+        * platform/mac/media/video-aspect-ratio-expected.checksum:
+        * platform/mac/media/video-aspect-ratio-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.checksum:
+        * platform/mac/media/video-controls-rendering-expected.png:
+        * platform/mac/media/video-display-toggle-expected.checksum:
+        * platform/mac/media/video-display-toggle-expected.png:
+        * platform/mac/media/video-layer-crash-expected.checksum:
+        * platform/mac/media/video-layer-crash-expected.png:
+        * platform/mac/media/video-transformed-expected.checksum:
+        * platform/mac/media/video-transformed-expected.png:
+        * platform/mac/media/video-zoom-expected.checksum:
+        * platform/mac/media/video-zoom-expected.png:
+
 2009-01-26  Darin Adler  <darin@apple.com>
 
         Requested by David Hyatt.
