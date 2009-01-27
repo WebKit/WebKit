@@ -148,7 +148,7 @@ void RenderTableRow::layout()
     // We only ever need to repaint if our cells didn't, which menas that they didn't need
     // layout, so we know that our bounds didn't change. This code is just making up for
     // the fact that we did not repaint in setStyle() because we had a layout hint.
-    // We cannot call repaint() because our absoluteClippedOverflowRect() is taken from the
+    // We cannot call repaint() because our clippedOverflowRectForRepaint() is taken from the
     // parent table, and being mid-layout, that is invalid. Instead, we repaint our cells.
     if (selfNeedsLayout() && checkForRepaintDuringLayout()) {
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {

@@ -69,7 +69,7 @@ bool RenderTableCol::canHaveChildren() const
     return style()->display() == TABLE_COLUMN_GROUP;
 }
 
-IntRect RenderTableCol::clippedOverflowRectForRepaint(RenderBox* /*repaintContainer*/)
+IntRect RenderTableCol::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
 {
     // For now, just repaint the whole table.
     // FIXME: Find a better way to do this, e.g., need to repaint all the cells that we
@@ -79,7 +79,7 @@ IntRect RenderTableCol::clippedOverflowRectForRepaint(RenderBox* /*repaintContai
     if (table && !table->isTable())
         table = table->parent();
     if (table && table->isTable())
-        return table->absoluteClippedOverflowRect();
+        return table->clippedOverflowRectForRepaint(repaintContainer);
 
     return IntRect();
 }

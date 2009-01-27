@@ -45,7 +45,7 @@ namespace WebCore {
         // RenderObject's default impl asks the parent Object and RenderSVGRoot
         // asks all child RenderObjects for overflow rects, thus infinite loop.
         // https://bugs.webkit.org/show_bug.cgi?id=20400
-        virtual IntRect absoluteClippedOverflowRect() { return IntRect(); }
+        virtual IntRect clippedOverflowRectForRepaint(RenderBox*) { return IntRect(); }
     
     protected:
         virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
