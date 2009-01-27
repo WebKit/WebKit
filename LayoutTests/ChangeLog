@@ -1,3 +1,13 @@
+2009-01-27  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Darin Adler.
+
+        Get the build bot green as discussed on the mailinglist. There is
+        only one crash after unloading a page with plugins. For the remaining
+        failing tests DumpRenderTree needs to be looked at.
+
+        * platform/gtk/Skipped:
+
 2009-01-27  Mads Ager  <ager@chromium.org>
 
         Reviewed by Darin Adler.
