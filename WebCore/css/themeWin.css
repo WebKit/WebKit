@@ -63,6 +63,10 @@ input[type="search"]:disabled {
     background-color: #EBEBE4; 
 }
 
+input[type="search"] {
+    -webkit-appearance: textfield;
+}
+
 input[type="search"]::-webkit-search-cancel-button {
    margin-right: 3px; 
 }

@@ -1,3 +1,12 @@
+2009-01-27  Adele Peterson  <adele@apple.com>
+
+        RS by Dave Hyatt  
+
+        Use the textfield appearance for search fields in themeWin.css so the border/background
+        styling will work correctly on these fields.
+
+        * css/themeWin.css:
+
 2009-01-27  Dan Bernstein  <mitz@apple.com>
 
         - build fix
