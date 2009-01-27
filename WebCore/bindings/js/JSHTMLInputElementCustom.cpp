@@ -32,41 +32,53 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSHTMLInputElement::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
-    if (input->canHaveSelection())
-        return false;
-
-    const HashEntry* entry = JSHTMLInputElementPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
-    if (entry) {
-        if (entry->attributes() & Function) {
-            if (entry->function() == jsHTMLInputElementPrototypeFunctionSetSelectionRange) {
-                slot.setUndefined();
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 JSValuePtr JSHTMLInputElement::selectionStart(ExecState* exec) const
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
     if (!input->canHaveSelection())
-        return jsUndefined();
+        return throwError(exec, TypeError);
 
     return jsNumber(exec, input->selectionStart());
+}
+
+void JSHTMLInputElement::setSelectionStart(ExecState* exec, JSValuePtr value)
+{
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    if (!input->canHaveSelection())
+        throwError(exec, TypeError);
+
+    input->setSelectionStart(value->toInt32(exec));
 }
 
 JSValuePtr JSHTMLInputElement::selectionEnd(ExecState* exec) const
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
     if (!input->canHaveSelection())
-        return jsUndefined();
+        return throwError(exec, TypeError);
 
     return jsNumber(exec, input->selectionEnd());
+}
+
+void JSHTMLInputElement::setSelectionEnd(ExecState* exec, JSValuePtr value)
+{
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    if (!input->canHaveSelection())
+        throwError(exec, TypeError);
+
+    input->setSelectionEnd(value->toInt32(exec));
+}
+
+JSValuePtr JSHTMLInputElement::setSelectionRange(ExecState* exec, const ArgList& args)
+{
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    if (!input->canHaveSelection())
+        return throwError(exec, TypeError);
+
+    int start = args.at(exec, 0)->toInt32(exec);
+    int end = args.at(exec, 1)->toInt32(exec);
+
+    input->setSelectionRange(start, end);
+    return jsUndefined();
 }
 
 } // namespace WebCore

@@ -1,3 +1,21 @@
+2009-01-27  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23300
+        Follow Firefox in throwing exceptions when using selection
+        functions on HTMLInputElements that cannot have selection.
+
+        This requires custom setSelectionRange, setSelectionStart and
+        setSelectionEnd implementations, but it gets rid of the custom
+        getOwnPropertySlot.
+
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::JSHTMLInputElement::selectionStart):
+        (WebCore::JSHTMLInputElement::selectionEnd):
+        (WebCore::JSHTMLInputElement::setSelectionRange):
+        * html/HTMLInputElement.idl:
+
 2009-01-27  Evan Stade  <estade@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

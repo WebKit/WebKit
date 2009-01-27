@@ -45,4 +45,10 @@ selectionEnd:
 0, 48
 7, 7
 
-
+===button===
+button.selectionStart threw exception
+button.selectionStart = 0 threw exception
+button.selectionEnd threw exception
+button.selectionEnd = 0 threw exception
+button.setSelectionRange defined
+button.setSelectionRange(0,0) threw exception

@@ -26,17 +26,20 @@
                 testElt(elt);
 
                 print("");
+                print("===button===");
 
-                // Make sure selectionStart, selectionEnd and setSelectionRange are undefined on the button
+                // Make sure that accessing selectionStart and selectionEnd on
+                // the button throws exceptions.
                 elt = document.getElementById("button");
-                if (elt.selectionStart != undefined) {
-                    print("Button.selectionStart defined");
-                }
-                if (elt.selectionEnd != undefined) {
-                    print("Button.selectionStart defined");
-                }
+                testButtonSelectionAccess(elt, ".selectionStart");
+                testButtonSelectionAccess(elt, ".selectionStart = 0");
+                testButtonSelectionAccess(elt, ".selectionEnd");
+                testButtonSelectionAccess(elt, ".selectionEnd = 0");
+                // Make sure that setSelectionRange is defined on the button element,
+                // but throws an exception if called.
                 if (elt.setSelectionRange != undefined) {
-                    print("Button.setSelectionRange defined");
+                    print("button.setSelectionRange defined");
+                    testButtonSelectionAccess(elt, ".setSelectionRange(0,0)");
                 }
             }
             function testElt(elt)
@@ -86,6 +89,16 @@
                 display(elt);
                 
                 elt.value = "";
+            }
+            function testButtonSelectionAccess(button, access)
+            {
+                var source = "button" + access;
+                try {
+                    eval(source);
+                    print(source + " did not throw exception");
+                } catch(e) {
+                    print(source + " threw exception");
+                }
             }
             function display(elt)
             {
