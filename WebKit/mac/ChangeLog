@@ -1,3 +1,16 @@
+2009-01-26  John Sullivan  <sullivan@apple.com>
+
+        fixed <rdar://problem/6530053> REGRESSION (Leopard): Shift-tab in http authentication window gets 
+        stuck in the Name field rather than cycling around
+
+        Reviewed by Dan Bernstein
+
+        * Panels/English.lproj/WebAuthenticationPanel.nib/designable.nib:
+        * Panels/English.lproj/WebAuthenticationPanel.nib/keyedobjects.nib:
+        The two static text fields and the last button all had their "next key view" outlets set to the
+        name field, which caused shift-tab from the name field to do the wrong thing. Fixed by making each
+        selectable view have exactly one "next key view" set to it.
+
 2009-01-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
