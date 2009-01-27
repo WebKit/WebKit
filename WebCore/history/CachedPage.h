@@ -56,9 +56,8 @@ public:
     DOMWindow* domWindow() const { return m_cachedMainFrame.domWindow(); }
 
     double timeStamp() const { return m_timeStamp; }
-
-    void setCachedFramePlatformData(CachedFramePlatformData*);
-    CachedFramePlatformData* cachedFramePlatformData();
+    
+    CachedFrame* cachedMainFrame() { return &m_cachedMainFrame; }
 
 private:
     CachedPage(Page*);

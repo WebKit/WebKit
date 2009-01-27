@@ -83,14 +83,4 @@ void CachedPage::clear()
     m_cachedMainFrame.clear();
 }
 
-void CachedPage::setCachedFramePlatformData(CachedFramePlatformData* data)
-{
-    m_cachedMainFrame.setCachedFramePlatformData(data);
-}
-
-CachedFramePlatformData* CachedPage::cachedFramePlatformData()
-{
-    return m_cachedMainFrame.cachedFramePlatformData();
-}
-
 } // namespace WebCore

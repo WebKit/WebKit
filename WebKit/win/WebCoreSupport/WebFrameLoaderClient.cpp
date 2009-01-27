@@ -48,7 +48,7 @@
 #include "WebURLResponse.h"
 #include "WebView.h"
 #pragma warning(push, 0)
-#include <WebCore/CachedPage.h>
+#include <WebCore/CachedFrame.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
@@ -499,20 +499,24 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
     itemPrivate->setTitle(BString(title));
 }
 
-void WebFrameLoaderClient::savePlatformDataToCachedPage(CachedPage* cachedPage)
+void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 {
 #if USE(CFNETWORK)
     Frame* coreFrame = core(m_webFrame);
     if (!coreFrame)
         return;
 
-    ASSERT(coreFrame->loader()->documentLoader() == cachedPage->documentLoader());
+    ASSERT(coreFrame->loader()->documentLoader() == cachedFrame->documentLoader());
 
     WebCachedFramePlatformData* webPlatformData = new WebCachedFramePlatformData(static_cast<IWebDataSource*>(getWebDataSource(coreFrame->loader()->documentLoader())));
-    cachedPage->setCachedFramePlatformData(webPlatformData);
+    cachedFrame->setCachedFramePlatformData(webPlatformData);
 #else
     notImplemented();
 #endif
+}
+
+void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
+{
 }
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()

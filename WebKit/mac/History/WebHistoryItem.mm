@@ -42,7 +42,6 @@
 #import "WebNSViewExtras.h"
 #import "WebPluginController.h"
 #import "WebTypesInternal.h"
-#import <WebCore/CachedPage.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Image.h>
 #import <WebCore/KURL.h>

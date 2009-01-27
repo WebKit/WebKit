@@ -1,3 +1,17 @@
+2009-01-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Rework FrameLoaderClient to work on a CachedFrame basis instead of CachedPage
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::savePlatformDataToCachedFrame):
+        (WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
+        * WebFrame.cpp:
+        * WebFrame.h:
+
 2009-01-26  Adam Roben  <aroben@apple.com>
 
         Fix an assertion failure when Safari loads an error page

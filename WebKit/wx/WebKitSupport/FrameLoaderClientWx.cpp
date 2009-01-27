@@ -227,13 +227,6 @@ void FrameLoaderClientWx::detachedFromParent3()
     notImplemented();
 }
 
-
-void FrameLoaderClientWx::loadedFromCachedPage()
-{
-    notImplemented();
-}
-
-
 void FrameLoaderClientWx::dispatchDidHandleOnloadEvents()
 {
     if (m_webView) {
@@ -844,12 +837,12 @@ void FrameLoaderClientWx::registerForIconNotification(bool listen)
     notImplemented();
 }
 
-void FrameLoaderClientWx::savePlatformDataToCachedPage(CachedPage*)
+void FrameLoaderClientWx::savePlatformDataToCachedFrame(CachedFrame*)
 { 
     notImplemented();
 }
 
-void FrameLoaderClientWx::transitionToCommittedFromCachedPage(CachedPage*)
+void FrameLoaderClientWx::transitionToCommittedFromCachedFrame(CachedFrame*)
 { 
     notImplemented();
 }

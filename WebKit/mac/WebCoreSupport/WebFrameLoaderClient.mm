@@ -73,7 +73,7 @@
 #import <WebKitSystemInterface.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BlockExceptions.h>
-#import <WebCore/CachedPage.h>
+#import <WebCore/CachedFrame.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
@@ -988,19 +988,19 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& URL)
     [[[WebHistory optionalSharedHistory] itemForURL:nsURL] setTitle:titleNSString];
 }
 
-void WebFrameLoaderClient::savePlatformDataToCachedPage(CachedPage* cachedPage)
+void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 {
     WebCachedFramePlatformData* webPlatformData = new WebCachedFramePlatformData([m_webFrame->_private->webFrameView documentView]);
-    cachedPage->setCachedFramePlatformData(webPlatformData);
+    cachedFrame->setCachedFramePlatformData(webPlatformData);
 }
 
-void WebFrameLoaderClient::transitionToCommittedFromCachedPage(CachedPage* cachedPage)
+void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame* cachedFrame)
 {
-    WebCachedFramePlatformData* platformData = reinterpret_cast<WebCachedFramePlatformData*>(cachedPage->cachedFramePlatformData());
+    WebCachedFramePlatformData* platformData = reinterpret_cast<WebCachedFramePlatformData*>(cachedFrame->cachedFramePlatformData());
     NSView <WebDocumentView> *cachedView = platformData->webDocumentView();
     ASSERT(cachedView != nil);
-    ASSERT(cachedPage->documentLoader());
-    [cachedView setDataSource:dataSource(cachedPage->documentLoader())];
+    ASSERT(cachedFrame->documentLoader());
+    [cachedView setDataSource:dataSource(cachedFrame->documentLoader())];
     
     // clean up webkit plugin instances before WebHTMLView gets freed.
     WebView *webView = getWebView(m_webFrame.get());

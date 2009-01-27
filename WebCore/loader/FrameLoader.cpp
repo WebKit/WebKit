@@ -1214,7 +1214,8 @@ void FrameLoader::restoreDocumentState()
     
     if (!itemToRestore)
         return;
-        
+
+    LOG(Loading, "WebCoreLoading %s: restoring form state from %p", m_frame->tree()->name().string().utf8().data(), itemToRestore);
     doc->setStateForNewFormElements(itemToRestore->documentState());
 }
 
@@ -2841,7 +2842,9 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
 {
     RefPtr<CachedPage> cachedPage = prpCachedPage;
     RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
-    
+
+    LOG(Loading, "WebCoreLoading %s: About to commit provisional load from previous URL %s", m_frame->tree()->name().string().utf8().data(), m_URL.string().utf8().data());
+
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
     // We are doing this here because we know for sure that a new page is about to be loaded.
     if (canCachePage() && !m_currentHistoryItem->isInPageCache()) {
@@ -2879,6 +2882,9 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<CachedPage> prpCachedPage)
 
         didOpenURL(url);
     }
+
+    LOG(Loading, "WebCoreLoading %s: Finished committing provisional load to URL %s", m_frame->tree()->name().string().utf8().data(), m_URL.string().utf8().data());
+
     opened();
 }
 
@@ -2929,7 +2935,7 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
                         DocumentLoader* cachedDocumentLoader = cachedPage->documentLoader();
                         ASSERT(cachedDocumentLoader);
                         cachedDocumentLoader->setFrame(m_frame);
-                        m_client->transitionToCommittedFromCachedPage(cachedPage.get());
+                        m_client->transitionToCommittedFromCachedFrame(cachedPage->cachedMainFrame());
                         
                     } else
                         m_client->transitionToCommittedForNewPage();
@@ -4265,7 +4271,7 @@ void FrameLoader::cachePageForHistoryItem(HistoryItem* item)
 {
     if (Page* page = m_frame->page()) {
         RefPtr<CachedPage> cachedPage = CachedPage::create(page);
-        m_client->savePlatformDataToCachedPage(cachedPage.get());
+        m_client->savePlatformDataToCachedFrame(cachedPage->cachedMainFrame());
 
         pageCache()->add(item, cachedPage.release());
     }

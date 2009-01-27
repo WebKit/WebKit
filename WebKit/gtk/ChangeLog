@@ -1,3 +1,14 @@
+2009-01-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Rework FrameLoaderClient to work on a CachedFrame basis instead of CachedPage
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::savePlatformDataToCachedFrame):
+        (WebKit::FrameLoaderClient::transitionToCommittedFromCachedFrame):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2009-01-25  Darin Adler  <darin@apple.com>
 
         Try to fix GTK build.

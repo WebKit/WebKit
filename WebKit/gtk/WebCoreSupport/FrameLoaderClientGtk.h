@@ -58,8 +58,6 @@ namespace WebKit {
         virtual void detachedFromParent2();
         virtual void detachedFromParent3();
 
-        virtual void loadedFromCachedPage();
-
         virtual void assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&);
 
         virtual void dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long  identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
@@ -163,8 +161,8 @@ namespace WebKit {
 
         virtual WebCore::String userAgent(const WebCore::KURL&);
 
-        virtual void savePlatformDataToCachedPage(WebCore::CachedPage*);
-        virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
+        virtual void savePlatformDataToCachedFrame(WebCore::CachedFrame*);
+        virtual void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*);
         virtual void transitionToCommittedForNewPage();
 
         virtual bool canCachePage() const;

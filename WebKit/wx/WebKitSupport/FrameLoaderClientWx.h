@@ -90,8 +90,6 @@ namespace WebCore {
         virtual void detachedFromParent2();
         virtual void detachedFromParent3();
 
-        virtual void loadedFromCachedPage();
-
         virtual void frameLoaderDestroyed();
         virtual bool canHandleRequest(const ResourceRequest&) const;
 
@@ -146,8 +144,8 @@ namespace WebCore {
 
         virtual String userAgent(const KURL&);
 
-        virtual void savePlatformDataToCachedPage(WebCore::CachedPage*);
-        virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
+        virtual void savePlatformDataToCachedFrame(WebCore::CachedFrame*);
+        virtual void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*);
         virtual void transitionToCommittedForNewPage();
         
         virtual void updateGlobalHistory();

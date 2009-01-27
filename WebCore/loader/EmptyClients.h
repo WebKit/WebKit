@@ -239,8 +239,8 @@ public:
 
     virtual String userAgent(const KURL&) { return ""; }
 
-    virtual void savePlatformDataToCachedPage(CachedPage*) { }
-    virtual void transitionToCommittedFromCachedPage(CachedPage*) { }
+    virtual void savePlatformDataToCachedFrame(CachedFrame*) { }
+    virtual void transitionToCommittedFromCachedFrame(CachedFrame*) { }
     virtual void transitionToCommittedForNewPage() { }    
 
     virtual void updateGlobalHistory() { }

@@ -1,3 +1,25 @@
+2009-01-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Rework FrameLoaderClient to work on a CachedFrame basis instead of CachedPage
+
+        * WebCore.base.exp:
+        * history/CachedPage.cpp:
+        * history/CachedPage.h:
+        (WebCore::CachedPage::cachedMainFrame):
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::savePlatformDataToCachedFrame):
+        (WebCore::EmptyFrameLoaderClient::transitionToCommittedFromCachedFrame):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::restoreDocumentState):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::cachePageForHistoryItem):
+        * loader/FrameLoaderClient.h:
+
 2009-01-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

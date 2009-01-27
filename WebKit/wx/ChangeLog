@@ -1,3 +1,14 @@
+2009-01-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Rework FrameLoaderClient to work on a CachedFrame basis instead of CachedPage
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::savePlatformDataToCachedFrame):
+        (WebCore::FrameLoaderClientWx::transitionToCommittedFromCachedFrame):
+        * WebKitSupport/FrameLoaderClientWx.h:
+
 2009-01-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, add missing include dir.

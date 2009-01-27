@@ -260,7 +260,6 @@ public:
     virtual void didFinishLoad();
     virtual void prepareForDataSourceReplacement();
     virtual WebCore::String userAgent(const WebCore::KURL&);
-    virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
     virtual void saveViewStateToItem(WebCore::HistoryItem *);
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
