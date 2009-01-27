@@ -376,15 +376,21 @@ RetainPtr<CFDataRef> LegacyWebArchive::rawDataRepresentation()
         LOG(Archives, "LegacyWebArchive - Failed to create property list for archive, returning no data");
         return 0;
     }
-    
-    // FIXME: On Mac, WebArchives have been written out as Binary Property Lists until this change.
-    // Unless we jump through CFWriteStream hoops, they'll now be textual XML data.  Is this okay?
-    RetainPtr<CFDataRef> plistData(AdoptCF, CFPropertyListCreateXMLData(0, propertyList.get()));
+
+    RetainPtr<CFWriteStreamRef> stream(AdoptCF, CFWriteStreamCreateWithAllocatedBuffers(0, 0));
+
+    CFWriteStreamOpen(stream.get());
+    CFPropertyListWriteToStream(propertyList.get(), stream.get(), kCFPropertyListBinaryFormat_v1_0, 0);
+
+    RetainPtr<CFDataRef> plistData(AdoptCF, static_cast<CFDataRef>(CFWriteStreamCopyProperty(stream.get(), kCFStreamPropertyDataWritten)));
+
+    CFWriteStreamClose(stream.get());
+
     if (!plistData) {
         LOG(Archives, "LegacyWebArchive - Failed to convert property list into raw data, returning no data");
         return 0;
     }
-    
+
     return plistData;
 }
 
