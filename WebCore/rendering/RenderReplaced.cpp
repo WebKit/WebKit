@@ -412,7 +412,7 @@ IntRect RenderReplaced::clippedOverflowRectForRepaint(RenderBox* repaintContaine
         if (v)
             r.inflate(style()->outlineSize());
     }
-    computeRectForRepaint(r, repaintContainer);
+    computeRectForRepaint(repaintContainer, r);
     return r;
 }
 

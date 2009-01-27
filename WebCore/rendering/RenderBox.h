@@ -207,7 +207,7 @@ public:
     virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBox* repaintContainer);
-    virtual void computeRectForRepaint(IntRect&, RenderBox* repaintContainer, bool fixed = false);
+    virtual void computeRectForRepaint(RenderBox* repaintContainer, IntRect&, bool fixed = false);
     IntSize offsetForPositionedInContainer(RenderObject*) const;
     virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBox* repaintContainer, bool fixed = false) const;
 

@@ -240,7 +240,7 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
     }
 }
 
-void RenderView::computeRectForRepaint(IntRect& rect, RenderBox* repaintContainer, bool fixed)
+void RenderView::computeRectForRepaint(RenderBox* repaintContainer, IntRect& rect, bool fixed)
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.
