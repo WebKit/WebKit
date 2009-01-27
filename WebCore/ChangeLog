@@ -1,3 +1,21 @@
+2009-01-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        -Make the recently added back/forward cache logging much better by actually
+         walking the entire frame tree and indenting the resulting output.
+        -Fix a null-termination bug in HistoryItem tree logging 
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::showTreeWithIndent):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::pageCacheLogPrefix):
+        (WebCore::pageCacheLog):
+        (WebCore::FrameLoader::logCanCachePageDecision):
+        (WebCore::FrameLoader::logCanCacheFrameDecision):
+        * loader/FrameLoader.h:
+
 2009-01-26  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Nikolas Zimmermann.

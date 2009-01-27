@@ -1947,6 +1947,28 @@ bool FrameLoader::canCachePage()
 }
 
 #ifndef NDEBUG
+static String& pageCacheLogPrefix(int indentLevel)
+{
+    static int previousIndent = -1;
+    DEFINE_STATIC_LOCAL(String, prefix, ());
+    
+    if (indentLevel != previousIndent) {    
+        previousIndent = indentLevel;
+        prefix.truncate(0);
+        for (int i = 0; i < previousIndent; ++i)
+            prefix += "    ";
+    }
+    
+    return prefix;
+}
+
+static void pageCacheLog(const String& prefix, const String& message)
+{
+    LOG(PageCache, "%s%s", prefix.utf8().data(), message.utf8().data());
+}
+
+#define PCLOG(...) pageCacheLog(pageCacheLogPrefix(indentLevel), String::format(__VA_ARGS__))
+
 void FrameLoader::logCanCachePageDecision()
 {
     // Only bother logging for main frames that have actually loaded and have content.
@@ -1956,42 +1978,40 @@ void FrameLoader::logCanCachePageDecision()
     if (currentURL.isEmpty())
         return;
 
-    LOG(PageCache, "--------\nDetermining if page can be cached:");
-    
-    bool cannotCache = !logCanCacheFrameDecision();
-    
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        cannotCache = !child->loader()->logCanCacheFrameDecision();
+    int indentLevel = 0;
+    PCLOG("--------\n Determining if page can be cached:");
+
+    bool cannotCache = !logCanCacheFrameDecision(1);
         
     FrameLoadType loadType = this->loadType();
     do {
         if (m_frame->tree()->parent())
-            { LOG(PageCache, " -Frame has a parent frame"); cannotCache = true; }
+            { PCLOG("   -Frame has a parent frame"); cannotCache = true; }
         if (!m_frame->page()) {
-            LOG(PageCache, " -There is no Page object");
+            PCLOG("   -There is no Page object");
             cannotCache = true;
             break;
         }
         if (!m_frame->page()->backForwardList()->enabled())
-            { LOG(PageCache, " -The back/forward list is disabled"); cannotCache = true; }
+            { PCLOG("   -The back/forward list is disabled"); cannotCache = true; }
         if (!(m_frame->page()->backForwardList()->capacity() > 0))
-            { LOG(PageCache, " -The back/forward list has a 0 capacity"); cannotCache = true; }
+            { PCLOG("   -The back/forward list has a 0 capacity"); cannotCache = true; }
         if (!m_frame->page()->settings()->usesPageCache())
-            { LOG(PageCache, " -Page settings says b/f cache disabled"); cannotCache = true; }
+            { PCLOG("   -Page settings says b/f cache disabled"); cannotCache = true; }
         if (loadType == FrameLoadTypeReload)
-            { LOG(PageCache, " -Load type is: Reload"); cannotCache = true; }
+            { PCLOG("   -Load type is: Reload"); cannotCache = true; }
         if (loadType == FrameLoadTypeReloadAllowingStaleData)
-            { LOG(PageCache, " -Load type is: Reload allowing stale data"); cannotCache = true; }
+            { PCLOG("   -Load type is: Reload allowing stale data"); cannotCache = true; }
         if (loadType == FrameLoadTypeReloadFromOrigin)
-            { LOG(PageCache, " -Load type is: Reload from origin"); cannotCache = true; }
+            { PCLOG("   -Load type is: Reload from origin"); cannotCache = true; }
         if (loadType == FrameLoadTypeSame)
-            { LOG(PageCache, " -Load type is: Same"); cannotCache = true; }
+            { PCLOG("   -Load type is: Same"); cannotCache = true; }
     } while (false);
     
-    LOG(PageCache, cannotCache ? "Page CANNOT be cached\n--------" : "Page CAN be cached\n--------");
+    PCLOG(cannotCache ? " Page CANNOT be cached\n--------" : " Page CAN be cached\n--------");
 }
 
-bool FrameLoader::logCanCacheFrameDecision()
+bool FrameLoader::logCanCacheFrameDecision(int indentLevel)
 {
     // Only bother logging for frames that have actually loaded and have content.
     if (m_creatingInitialEmptyDocument)
@@ -2000,63 +2020,69 @@ bool FrameLoader::logCanCacheFrameDecision()
     if (currentURL.isEmpty())
         return false;
 
+    PCLOG("+---");
     KURL newURL = m_provisionalDocumentLoader ? m_provisionalDocumentLoader->url() : KURL();
     if (!newURL.isEmpty())
-        LOG(PageCache, "----\nDetermining if frame can be cached navigating from (%s) to (%s):", currentURL.string().utf8().data(), newURL.string().utf8().data());
+        PCLOG(" Determining if frame can be cached navigating from (%s) to (%s):", currentURL.string().utf8().data(), newURL.string().utf8().data());
     else
-        LOG(PageCache, "----\nDetermining if subframe with URL (%s) can be cached:", currentURL.string().utf8().data());
+        PCLOG(" Determining if subframe with URL (%s) can be cached:", currentURL.string().utf8().data());
         
     bool cannotCache = false;
 
     do {
         if (!m_documentLoader) {
-            LOG(PageCache, " -There is no DocumentLoader object");
+            PCLOG("   -There is no DocumentLoader object");
             cannotCache = true;
             break;
         }
         if (!m_documentLoader->mainDocumentError().isNull())
-            { LOG(PageCache, " -Main document has an error"); cannotCache = true; }
+            { PCLOG("   -Main document has an error"); cannotCache = true; }
         if (m_frame->tree()->childCount())
-            { LOG(PageCache, " -Frame has child frames"); cannotCache = true; }
+            { PCLOG("   -Frame has child frames"); cannotCache = true; }
         if (m_containsPlugIns)
-            { LOG(PageCache, " -Frame contains plugins"); cannotCache = true; }
+            { PCLOG("   -Frame contains plugins"); cannotCache = true; }
         if (m_URL.protocolIs("https"))
-            { LOG(PageCache, " -Frame is HTTPS"); cannotCache = true; }
+            { PCLOG("   -Frame is HTTPS"); cannotCache = true; }
         if (!m_frame->document()) {
-            LOG(PageCache, " -There is no Document object");
+            PCLOG("   -There is no Document object");
             cannotCache = true;
             break;
         }
         if (m_frame->document()->hasWindowEventListener(eventNames().unloadEvent))
-            { LOG(PageCache, " -Frame has an unload event listener"); cannotCache = true; }
+            { PCLOG("   -Frame has an unload event listener"); cannotCache = true; }
 #if ENABLE(DATABASE)
         if (m_frame->document()->hasOpenDatabases())
-            { LOG(PageCache, " -Frame has open database handles"); cannotCache = true; }
+            { PCLOG("   -Frame has open database handles"); cannotCache = true; }
 #endif
         if (m_frame->document()->usingGeolocation())
-            { LOG(PageCache, " -Frame uses Geolocation"); cannotCache = true; }
+            { PCLOG("   -Frame uses Geolocation"); cannotCache = true; }
         if (!m_currentHistoryItem)
-            { LOG(PageCache, " -No current history item"); cannotCache = true; }
+            { PCLOG("   -No current history item"); cannotCache = true; }
         if (isQuickRedirectComing())
-            { LOG(PageCache, " -Quick redirect is coming"); cannotCache = true; }
+            { PCLOG("   -Quick redirect is coming"); cannotCache = true; }
         if (m_documentLoader->isLoadingInAPISense())
-            { LOG(PageCache, " -DocumentLoader is still loading in API sense"); cannotCache = true; }
+            { PCLOG("   -DocumentLoader is still loading in API sense"); cannotCache = true; }
         if (m_documentLoader->isStopping())
-            { LOG(PageCache, " -DocumentLoader is in the middle of stopping"); cannotCache = true; }
+            { PCLOG("   -DocumentLoader is in the middle of stopping"); cannotCache = true; }
         if (!m_frame->document()->canSuspendActiveDOMObjects())
-            { LOG(PageCache, " -The document cannot suspect its active DOM Objects"); cannotCache = true; }
+            { PCLOG("   -The document cannot suspect its active DOM Objects"); cannotCache = true; }
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         if (m_documentLoader->applicationCache())
-            { LOG(PageCache, " -The DocumentLoader has an active application cache"); cannotCache = true; }
+            { PCLOG("   -The DocumentLoader has an active application cache"); cannotCache = true; }
         if (m_documentLoader->candidateApplicationCacheGroup())
-            { LOG(PageCache, " -The DocumentLoader has a candidateApplicationCacheGroup"); cannotCache = true; }
+            { PCLOG("   -The DocumentLoader has a candidateApplicationCacheGroup"); cannotCache = true; }
 #endif
         if (!m_client->canCachePage())
-            { LOG(PageCache, " -The client says this frame cannot be cached"); cannotCache = true; }
+            { PCLOG("   -The client says this frame cannot be cached"); cannotCache = true; }
     } while (false);
+
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        if (!child->loader()->logCanCacheFrameDecision(indentLevel + 1))
+            cannotCache = true;
     
-    LOG(PageCache, cannotCache ? "Frame CANNOT be cached\n----" : "Frame CAN be cached\n----");
-    
+    PCLOG(cannotCache ? " Frame CANNOT be cached" : " Frame CAN be cached");
+    PCLOG("+---");
+
     return !cannotCache;
 }
 #endif

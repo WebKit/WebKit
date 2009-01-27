@@ -412,6 +412,7 @@ int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
     Vector<char> prefix;
     for (unsigned i = 0; i < indentLevel; ++i)
         prefix.append("  ", 2);
+    prefix.append("\0", 1);
 
     fprintf(stderr, "%s+-%s (%p)\n", prefix.data(), m_urlString.utf8().data(), this);
     
