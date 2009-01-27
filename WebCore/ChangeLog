@@ -1,3 +1,10 @@
+2009-01-27  Dan Bernstein  <mitz@apple.com>
+
+        - build fix
+
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::setSpreadMethod):
+
 2009-01-27  Paul Godavari  <paul@chromium.org>
 
         Reviewed by Eric Seidel.

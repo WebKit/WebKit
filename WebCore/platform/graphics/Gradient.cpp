@@ -147,7 +147,7 @@ int Gradient::findStop(float value) const
     return m_lastStop;
 }
 
-GradientSpreadMethod Gradient::setSpreadMethod(GradientSpreadMethod spreadMethod)
+void Gradient::setSpreadMethod(GradientSpreadMethod spreadMethod)
 {
     // FIXME: Should it become necessary, allow calls to this method after m_gradient has been set.
     ASSERT(m_gradient == 0);
