@@ -1,3 +1,14 @@
+2009-01-27  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        http://www.qtsoftware.com/developer/task-tracker/index_html?id=238662&method=entry
+
+        [Qt] Map function keys F1 to F24.
+
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2009-01-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein
