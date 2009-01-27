@@ -25,8 +25,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#import <wtf/RefPtr.h> 
+
+#ifndef AccessibilityObjectWrapper_h
+#define AccessibilityObjectWrapper_h
+
+#import <wtf/RefPtr.h>
 
 #ifdef __OBJC__
 @class WebCoreTextMarker;
@@ -53,3 +56,5 @@ namespace WebCore {
 - (NSView*)attachmentView;
 
 @end
+
+#endif // AccessibilityObjectWrapper_h

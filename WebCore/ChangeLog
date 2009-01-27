@@ -1,3 +1,11 @@
+2009-01-27  David Kilzer  <ddkilzer@apple.com>
+
+        Add missing header guards to AccessibilityObjectWrapper.h
+
+        Reviewed by Anders Carlsson.
+
+        * page/mac/AccessibilityObjectWrapper.h: Added missing header guards.
+
 2009-01-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
