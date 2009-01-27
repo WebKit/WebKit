@@ -1650,6 +1650,17 @@ RenderBox* RenderObject::containerForRepaint() const
     return 0;
 }
 
+void RenderObject::repaintUsingContainer(RenderBox* repaintContainer, const IntRect& r, bool immediate)
+{
+    if (!repaintContainer || repaintContainer->isRenderView()) {
+        RenderView* v = repaintContainer ? static_cast<RenderView*>(repaintContainer) : view();
+        v->repaintViewRectangle(r, immediate);
+    } else {
+        // Handle container-relative repaints eventually.
+        ASSERT_NOT_REACHED();
+    }
+}
+
 void RenderObject::repaint(bool immediate)
 {
     // Can't use view(), since we might be unrooted.
@@ -1663,7 +1674,8 @@ void RenderObject::repaint(bool immediate)
     if (view->printing())
         return; // Don't repaint if we're printing.
 
-    view->repaintViewRectangle(absoluteClippedOverflowRect(), immediate);
+    RenderBox* repaintContainer = containerForRepaint();
+    repaintUsingContainer(repaintContainer ? repaintContainer : view, clippedOverflowRectForRepaint(repaintContainer), immediate);
 }
 
 void RenderObject::repaintRectangle(const IntRect& r, bool immediate)
@@ -1679,23 +1691,24 @@ void RenderObject::repaintRectangle(const IntRect& r, bool immediate)
     if (view->printing())
         return; // Don't repaint if we're printing.
 
-    IntRect absRect(r);
+    IntRect dirtyRect(r);
 
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    absRect.move(view->layoutDelta());
+    dirtyRect.move(view->layoutDelta());
 
-    computeAbsoluteRepaintRect(absRect);
-    view->repaintViewRectangle(absRect, immediate);
+    RenderBox* repaintContainer = containerForRepaint();
+    computeRectForRepaint(repaintContainer, dirtyRect);
+    repaintUsingContainer(repaintContainer ? repaintContainer : view, dirtyRect, immediate);
 }
 
-bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const IntRect& oldOutlineBox)
+bool RenderObject::repaintAfterLayoutIfNeeded(RenderBox* repaintContainer, const IntRect& oldBounds, const IntRect& oldOutlineBox)
 {
     RenderView* v = view();
     if (v->printing())
         return false; // Don't repaint if we're printing.
 
-    IntRect newBounds = absoluteClippedOverflowRect();
+    IntRect newBounds = clippedOverflowRectForRepaint(repaintContainer);
     IntRect newOutlineBox;
 
     bool fullRepaint = selfNeedsLayout();
@@ -1703,14 +1716,18 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
     if (!fullRepaint && style()->borderFit() == BorderFitLines)
         fullRepaint = true;
     if (!fullRepaint) {
-        newOutlineBox = absoluteOutlineBounds();
+        newOutlineBox = outlineBoundsForRepaint(repaintContainer);
         if (newOutlineBox.location() != oldOutlineBox.location() || (mustRepaintBackgroundOrBorder() && (newBounds != oldBounds || newOutlineBox != oldOutlineBox)))
             fullRepaint = true;
     }
+
+    if (!repaintContainer)
+        repaintContainer = v;
+
     if (fullRepaint) {
-        v->repaintViewRectangle(oldBounds);
+        repaintUsingContainer(repaintContainer, oldBounds);
         if (newBounds != oldBounds)
-            v->repaintViewRectangle(newBounds);
+            repaintUsingContainer(repaintContainer, newBounds);
         return true;
     }
 
@@ -1719,27 +1736,27 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
 
     int deltaLeft = newBounds.x() - oldBounds.x();
     if (deltaLeft > 0)
-        v->repaintViewRectangle(IntRect(oldBounds.x(), oldBounds.y(), deltaLeft, oldBounds.height()));
+        repaintUsingContainer(repaintContainer, IntRect(oldBounds.x(), oldBounds.y(), deltaLeft, oldBounds.height()));
     else if (deltaLeft < 0)
-        v->repaintViewRectangle(IntRect(newBounds.x(), newBounds.y(), -deltaLeft, newBounds.height()));
+        repaintUsingContainer(repaintContainer, IntRect(newBounds.x(), newBounds.y(), -deltaLeft, newBounds.height()));
 
     int deltaRight = newBounds.right() - oldBounds.right();
     if (deltaRight > 0)
-        v->repaintViewRectangle(IntRect(oldBounds.right(), newBounds.y(), deltaRight, newBounds.height()));
+        repaintUsingContainer(repaintContainer, IntRect(oldBounds.right(), newBounds.y(), deltaRight, newBounds.height()));
     else if (deltaRight < 0)
-        v->repaintViewRectangle(IntRect(newBounds.right(), oldBounds.y(), -deltaRight, oldBounds.height()));
+        repaintUsingContainer(repaintContainer, IntRect(newBounds.right(), oldBounds.y(), -deltaRight, oldBounds.height()));
 
     int deltaTop = newBounds.y() - oldBounds.y();
     if (deltaTop > 0)
-        v->repaintViewRectangle(IntRect(oldBounds.x(), oldBounds.y(), oldBounds.width(), deltaTop));
+        repaintUsingContainer(repaintContainer, IntRect(oldBounds.x(), oldBounds.y(), oldBounds.width(), deltaTop));
     else if (deltaTop < 0)
-        v->repaintViewRectangle(IntRect(newBounds.x(), newBounds.y(), newBounds.width(), -deltaTop));
+        repaintUsingContainer(repaintContainer, IntRect(newBounds.x(), newBounds.y(), newBounds.width(), -deltaTop));
 
     int deltaBottom = newBounds.bottom() - oldBounds.bottom();
     if (deltaBottom > 0)
-        v->repaintViewRectangle(IntRect(newBounds.x(), oldBounds.bottom(), newBounds.width(), deltaBottom));
+        repaintUsingContainer(repaintContainer, IntRect(newBounds.x(), oldBounds.bottom(), newBounds.width(), deltaBottom));
     else if (deltaBottom < 0)
-        v->repaintViewRectangle(IntRect(oldBounds.x(), newBounds.bottom(), oldBounds.width(), -deltaBottom));
+        repaintUsingContainer(repaintContainer, IntRect(oldBounds.x(), newBounds.bottom(), oldBounds.width(), -deltaBottom));
 
     if (newOutlineBox == oldOutlineBox)
         return false;
@@ -1765,7 +1782,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
         int right = min(newBounds.right(), oldBounds.right());
         if (rightRect.x() < right) {
             rightRect.setWidth(min(rightRect.width(), right - rightRect.x()));
-            v->repaintViewRectangle(rightRect);
+            repaintUsingContainer(repaintContainer, rightRect);
         }
     }
     int height = abs(newOutlineBox.height() - oldOutlineBox.height());
@@ -1783,7 +1800,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
         int bottom = min(newBounds.bottom(), oldBounds.bottom());
         if (bottomRect.y() < bottom) {
             bottomRect.setHeight(min(bottomRect.height(), bottom - bottomRect.y()));
-            v->repaintViewRectangle(bottomRect);
+            repaintUsingContainer(repaintContainer, bottomRect);
         }
     }
     return false;

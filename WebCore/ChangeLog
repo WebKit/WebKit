@@ -1,3 +1,57 @@
+2009-01-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23360
+        
+        Use the new container-relative repaint methods to compute
+        post-layout repaints, and repaints using RenderLayer's
+        cached repaintRect() relative to that container, rather than
+        using absolute coords.
+
+        Replaced lots of boilerplate old/new rect code in various
+        layout methods with a stack-based LayoutRepainter class, and
+        fixed a bug in RenderTable which set didFullRepaint to
+        'true' every time.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::setHasVisibleContent):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintUsingContainer):
+        (WebCore::RenderObject::repaint):
+        (WebCore::RenderObject::repaintRectangle):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::LayoutRepainter::LayoutRepainter):
+        (WebCore::RenderObject::LayoutRepainter::repaintAfterLayout):
+        (WebCore::RenderObject::LayoutRepainter::checkForRepaint):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::layout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2009-01-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

@@ -611,14 +611,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (!relayoutChildren && layoutOnlyPositionedObjects())
         return;
 
-    IntRect oldBounds;
-    IntRect oldOutlineBox;
-    bool checkForRepaint = m_everHadLayout && checkForRepaintDuringLayout();
-    if (checkForRepaint) {
-        oldBounds = absoluteClippedOverflowRect();
-        oldOutlineBox = absoluteOutlineBounds();
-    }
-
+    LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
     LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), m_hasColumns || hasTransform() || hasReflection());
 
     int oldWidth = width();
@@ -749,9 +742,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         m_layer->updateScrollInfoAfterLayout();
 
     // Repaint with our new bounds if they are different from our old bounds.
-    bool didFullRepaint = false;
-    if (checkForRepaint)
-        didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
+    bool didFullRepaint = repainter.repaintAfterLayout();
     if (!didFullRepaint && repaintTop != repaintBottom && (style()->visibility() == VISIBLE || enclosingLayer()->hasVisibleContent())) {
         IntRect repaintRect(m_overflowLeft, repaintTop, m_overflowWidth - m_overflowLeft, repaintBottom - repaintTop);
 

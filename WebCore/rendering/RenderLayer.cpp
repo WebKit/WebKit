@@ -231,16 +231,17 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
         // from updateScrollInfoAfterLayout().
         ASSERT(!view->layoutStateEnabled());
 
-        IntRect newRect = renderer()->absoluteClippedOverflowRect();
-        IntRect newOutlineBox = renderer()->absoluteOutlineBounds();
+        RenderBox* repaintContainer = renderer()->containerForRepaint();
+        IntRect newRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
+        IntRect newOutlineBox = renderer()->outlineBoundsForRepaint(repaintContainer);
         if (checkForRepaint) {
             if (view && !view->printing()) {
                 if (m_needsFullRepaint) {
-                    view->repaintViewRectangle(m_repaintRect);
+                    renderer()->repaintUsingContainer(repaintContainer, m_repaintRect);
                     if (newRect != m_repaintRect)
-                        view->repaintViewRectangle(newRect);
+                        renderer()->repaintUsingContainer(repaintContainer, newRect);
                 } else
-                    renderer()->repaintAfterLayoutIfNeeded(m_repaintRect, m_outlineBox);
+                    renderer()->repaintAfterLayoutIfNeeded(repaintContainer, m_repaintRect, m_outlineBox);
             }
         }
         m_repaintRect = newRect;
@@ -288,8 +289,9 @@ void RenderLayer::setHasVisibleContent(bool b)
     m_visibleContentStatusDirty = false; 
     m_hasVisibleContent = b;
     if (m_hasVisibleContent) {
-        m_repaintRect = renderer()->absoluteClippedOverflowRect();
-        m_outlineBox = renderer()->absoluteOutlineBounds();
+        RenderBox* repaintContainer = renderer()->containerForRepaint();
+        m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
+        m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer);
         if (!isOverflowOnly())
             dirtyStackingContextZOrderLists();
     }

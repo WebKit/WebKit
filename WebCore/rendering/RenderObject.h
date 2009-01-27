@@ -573,6 +573,9 @@ public:
     // if painting is root-relative. This is the container that should be passed to the 'forRepaint'
     // methods.
     RenderBox* containerForRepaint() const;
+    // Actually do the repaint of rect r for this object which has been computed in the coordinate space
+    // of repaintContainer. If repaintContainer is 0, repaint via the view.
+    void repaintUsingContainer(RenderBox* repaintContainer, const IntRect& r, bool immediate = false);
     
     // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
     // style changes.
@@ -582,7 +585,7 @@ public:
     void repaintRectangle(const IntRect&, bool immediate = false);
 
     // Repaint only if our old bounds and new bounds are different.
-    bool repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const IntRect& oldOutlineBox);
+    bool repaintAfterLayoutIfNeeded(RenderBox* repaintContainer, const IntRect& oldBounds, const IntRect& oldOutlineBox);
 
     // Repaint only if the object moved.
     virtual void repaintDuringLayoutIfMoved(const IntRect& rect);
@@ -784,6 +787,36 @@ protected:
 
     virtual IntRect outlineBoundsForRepaint(RenderBox* /*repaintContainer*/) const { return IntRect(); }
 
+    class LayoutRepainter {
+    public:
+        LayoutRepainter(RenderObject& object, bool checkForRepaint, const IntRect* oldBounds = 0)
+            : m_object(object)
+            , m_repaintContainer(0)
+            , m_checkForRepaint(checkForRepaint)
+        {
+            if (m_checkForRepaint) {
+                m_oldBounds = oldBounds ? *oldBounds : m_object.absoluteClippedOverflowRect();
+                m_oldOutlineBox = m_object.absoluteOutlineBounds();
+                m_repaintContainer = m_object.containerForRepaint();
+            }
+        }
+        
+        // Return true if it repainted.
+        bool repaintAfterLayout()
+        {
+            return m_checkForRepaint ? m_object.repaintAfterLayoutIfNeeded(m_repaintContainer, m_oldBounds, m_oldOutlineBox) : false;
+        }
+        
+        bool checkForRepaint() const { return m_checkForRepaint; }
+        
+    private:
+        RenderObject& m_object;
+        RenderBox* m_repaintContainer;
+        IntRect m_oldBounds;
+        IntRect m_oldOutlineBox;
+        bool m_checkForRepaint;
+    };
+    
 private:
     RefPtr<RenderStyle> m_style;
 

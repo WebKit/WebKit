@@ -226,13 +226,8 @@ void RenderSVGContainer::layout()
     // Arbitrary affine transforms are incompatible with LayoutState.
     view()->disableLayoutState();
 
-    IntRect oldBounds;
-    IntRect oldOutlineBox;
-    bool checkForRepaint = checkForRepaintDuringLayout() && selfWillPaint();
-    if (checkForRepaint) {
-        oldBounds = m_absoluteBounds;
-        oldOutlineBox = absoluteOutlineBounds();
-    }
+    // FIXME: using m_absoluteBounds breaks if containerForRepaint() is not the root
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfWillPaint(), &m_absoluteBounds);
     
     calculateLocalTransform();
 
@@ -250,8 +245,7 @@ void RenderSVGContainer::layout()
 
     calcBounds();
 
-    if (checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
+    repainter.repaintAfterLayout();
 
     view()->enableLayoutState();
     setNeedsLayout(false);

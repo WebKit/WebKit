@@ -845,7 +845,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 // that the block really needed a full layout, we missed our chance to repaint the layer
                 // before layout started.  Luckily the layer has cached the repaint rect for its original
                 // position and size, and so we can use that to make a repaint happen now.
-                v->repaintViewRectangle(m_layer->repaintRect());
+                repaintUsingContainer(containerForRepaint(), m_layer->repaintRect());
             }
         }
 

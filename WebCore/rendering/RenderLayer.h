@@ -358,6 +358,7 @@ public:
 
     void updateHoverActiveState(const HitTestRequest&, HitTestResult&);
 
+    // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
     IntRect repaintRect() const { return m_repaintRect; }
     void setNeedsFullRepaint(bool f = true) { m_needsFullRepaint = f; }
     
