@@ -1,3 +1,14 @@
+2009-01-26  David Kilzer  <ddkilzer@apple.com>
+
+        Fix misspelling of "lowercase" in font-face-locally-installed.html
+
+        Reviewed by Dan Bernstein.
+
+        * fast/css/font-face-locally-installed.html: Updated.
+        * platform/mac/fast/css/font-face-locally-installed-expected.checksum: Updated.
+        * platform/mac/fast/css/font-face-locally-installed-expected.png: Updated.
+        * platform/mac/fast/css/font-face-locally-installed-expected.txt: Updated.
+
 2009-01-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
