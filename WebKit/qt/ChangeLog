@@ -1,3 +1,15 @@
+2009-01-27  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        http://www.qtsoftware.com/developer/task-tracker/index_html?id=238391&method=entry
+
+        [Qt] If QPainter fails to start on a QPrinter instance, do not
+        continue printing.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::print):
+
 2009-01-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein
