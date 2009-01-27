@@ -1,3 +1,17 @@
+2009-01-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=18141
+        Acid3 tests 77 and 78 fail on reload due to SVG font race
+        <rdar://problem/6504899>
+
+        * http/tests/misc/SVGFont-delayed-load-expected.txt: Added.
+        * http/tests/misc/SVGFont-delayed-load.html: Added.
+        * http/tests/misc/resources/SVGFont-delayed-loader.svg: Added.
+        * svg/custom/acid3-test-77.html:
+        * svg/custom/resources/Acid3Font-loader.svg:
+
 2009-01-26  Pierre-Olivier Latour  <pol@apple.com>
 
         Updated the reference images for the video tests that rely on the H264 test movie,

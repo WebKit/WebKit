@@ -1,3 +1,31 @@
+2009-01-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=18141
+        Acid3 tests 77 and 78 fail on reload due to SVG font race
+        <rdar://problem/6504899>
+
+        Match Opera's behavior of loading SVGFonts as soon as <font-face-uri>
+        tag is inserted into the document and not at the first use of the font
+        as is done for CSS web fonts.
+
+        This fixes a race condition noticeable by some in the Acid3 test that
+        happened because the onload event handler for an iframe containing a
+        <font-face-uri> with an external reference was not delayed by the pending
+        load of the font.
+
+        Test: http/tests/misc/SVGFont-delayed-load.html
+
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::~SVGFontFaceUriElement):
+        (WebCore::SVGFontFaceUriElement::parseMappedAttribute): Call loadFont if
+        the href attribute changes.
+        (WebCore::SVGFontFaceUriElement::insertedIntoDocument): Call loadFont.
+        (WebCore::SVGFontFaceUriElement::loadFont): Force a load of the
+        font specified in href attribute.
+        * svg/SVGFontFaceUriElement.h:
+
 2009-01-26  Timothy Hatcher  <timothy@apple.com>
 
         Change Web Archive serialization back to the binary property list format.

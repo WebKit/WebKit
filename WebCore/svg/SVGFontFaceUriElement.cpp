@@ -1,5 +1,6 @@
 /*
    Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+   Copyright (C) 2009 Apple Inc. All rights reserved.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -23,6 +24,9 @@
 #include "SVGFontFaceUriElement.h"
 
 #include "CSSFontFaceSrcValue.h"
+#include "CachedFont.h"
+#include "DocLoader.h"
+#include "Document.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
@@ -36,12 +40,27 @@ SVGFontFaceUriElement::SVGFontFaceUriElement(const QualifiedName& tagName, Docum
 {
 }
 
+SVGFontFaceUriElement::~SVGFontFaceUriElement()
+{
+    if (m_cachedFont)
+        m_cachedFont->removeClient(this);
+}
+
 PassRefPtr<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
 {
     RefPtr<CSSFontFaceSrcValue> src = CSSFontFaceSrcValue::create(getAttribute(XLinkNames::hrefAttr));
     AtomicString value(getAttribute(formatAttr));
     src->setFormat(value.isEmpty() ? "svg" : value); // Default format
     return src.release();
+}
+
+void SVGFontFaceUriElement::parseMappedAttribute(MappedAttribute* attr)
+{
+    const QualifiedName& attrName = attr->name();
+    if (attrName == XLinkNames::hrefAttr)
+        loadFont();
+    else
+        SVGElement::parseMappedAttribute(attr);
 }
 
 void SVGFontFaceUriElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -54,6 +73,28 @@ void SVGFontFaceUriElement::childrenChanged(bool changedByParser, Node* beforeCh
     Node* grandParent = parentNode()->parentNode();
     if (grandParent && grandParent->hasTagName(font_faceTag))
         static_cast<SVGFontFaceElement*>(grandParent)->rebuildFontFace();
+}
+
+void SVGFontFaceUriElement::insertedIntoDocument()
+{
+    loadFont();
+    SVGElement::insertedIntoDocument();
+}
+
+void SVGFontFaceUriElement::loadFont()
+{
+    if (m_cachedFont)
+        m_cachedFont->removeClient(this);
+
+    String href = getAttribute(XLinkNames::hrefAttr);
+    if (!href.isNull()) {        
+        DocLoader* docLoader = document()->docLoader();
+        m_cachedFont = docLoader->requestFont(href);
+        m_cachedFont->setSVGFont(true);
+        m_cachedFont->addClient(this);
+        m_cachedFont->beginLoadIfNeeded(docLoader);
+    } else
+        m_cachedFont = 0;
 }
 
 }

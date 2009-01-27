@@ -10,7 +10,4 @@
         <path id="path" d="M0 0l0 42l16 16l4711 0"/>
     </defs>
     <text>X</text>
-
-    <!-- Adding this possibly fixes the problem that acid3-test-77.html is timing dependa though it currently crashes us
-    <script>document.documentElement.offsetWidth;</script> -->
 </svg>
