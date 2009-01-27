@@ -2,6 +2,15 @@
 
         - build fix
 
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::JSHTMLInputElement::setSelectionStart):
+        (WebCore::JSHTMLInputElement::setSelectionEnd):
+        (WebCore::JSHTMLInputElement::setSelectionRange):
+
+2009-01-27  Dan Bernstein  <mitz@apple.com>
+
+        - build fix
+
         * platform/graphics/Gradient.cpp:
         (WebCore::Gradient::setSpreadMethod):
 
