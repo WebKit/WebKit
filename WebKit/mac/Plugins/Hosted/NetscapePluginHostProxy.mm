@@ -75,6 +75,7 @@ static PluginProxyMap& pluginProxyMap()
 NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort)
     : m_clientPort(clientPort)
     , m_pluginHostPort(pluginHostPort)
+    , m_menuBarIsVisible(true)
 {
     pluginProxyMap().add(m_clientPort, this);
     
@@ -125,6 +126,10 @@ void NetscapePluginHostProxy::pluginHostDied()
     
     NetscapePluginHostManager::shared().pluginHostDied(this);
     
+    // The plug-in crashed while its menu bar was hidden. Make sure to show it.
+    if (m_menuBarIsVisible)
+        setMenuBarVisible(true);
+
     delete this;
 }
     
@@ -152,6 +157,19 @@ void NetscapePluginHostProxy::deadNameNotificationCallback(CFMachPortRef port, v
     ASSERT(msg && static_cast<mach_msg_header_t*>(msg)->msgh_id == MACH_NOTIFY_DEAD_NAME);
     
     static_cast<NetscapePluginHostProxy*>(info)->pluginHostDied();
+}
+
+void NetscapePluginHostProxy::setMenuBarVisible(bool visible)
+{
+    m_menuBarIsVisible = visible;
+    
+    [NSMenu setMenuBarVisible:visible];
+    if (visible) {
+        // Make ourselves the front app
+        ProcessSerialNumber psn;
+        GetCurrentProcess(&psn);
+        SetFrontProcess(&psn);
+    }
 }
 
 } // namespace WebKit
@@ -549,6 +567,17 @@ kern_return_t WKPCIdentifierInfo(mach_port_t clientPort, uint64_t serverIdentifi
     mig_allocate(reinterpret_cast<vm_address_t*>(infoData), *infoLength);
     
     memcpy(*infoData, [data.get() bytes], *infoLength);
+    
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCSetMenuBarVisible(mach_port_t clientPort, boolean_t menuBarVisible)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+
+    hostProxy->setMenuBarVisible(menuBarVisible);
     
     return KERN_SUCCESS;
 }

@@ -1,3 +1,17 @@
+2009-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add the ability for a plug-in to show or hide the menu bar.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        (WebKit::NetscapePluginHostProxy::pluginHostDied):
+        (WebKit::NetscapePluginHostProxy::setMenuBarVisible):
+        (WKPCSetMenuBarVisible):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+
 2009-01-26  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Gavin Barraclough.

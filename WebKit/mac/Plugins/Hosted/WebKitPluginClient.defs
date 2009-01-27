@@ -135,6 +135,11 @@ routine IdentifierInfo(clientPort :mach_port_t;
                        identifier :uint64_t;
                        out info :data_t, dealloc);
 
+// Misc
+
+simpleroutine SetMenuBarVisible(clientPort :mach_port_t;
+                                visible :boolean_t);
+
 // Replies
 simpleroutine InstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;
