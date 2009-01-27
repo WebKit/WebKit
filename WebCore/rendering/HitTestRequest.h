@@ -25,11 +25,12 @@
 namespace WebCore {
 
 struct HitTestRequest {
-    HitTestRequest(bool r, bool a, bool m = false, bool u = false)
+    HitTestRequest(bool r, bool a, bool m = false, bool u = false, bool c = true)
         : readonly(r)
         , active(a)
         , mouseMove(m)
         , mouseUp(u)
+        , clipToVisible(c)
     { 
     }
 
@@ -37,6 +38,7 @@ struct HitTestRequest {
     bool active;
     bool mouseMove;
     bool mouseUp;
+    bool clipToVisible;
 };
 
 } // namespace WebCore
