@@ -27,9 +27,12 @@
 #include "CachedPage.h"
 
 #include "CachedFramePlatformData.h"
+#include "CString.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "Logging.h"
 #include <wtf/RefCountedLeakCounter.h>
 
 #if ENABLE(SVG)
@@ -51,7 +54,7 @@ CachedFrame::CachedFrame(Frame* frame)
     , m_documentLoader(frame->loader()->documentLoader())
     , m_view(frame->view())
     , m_mousePressNode(frame->eventHandler()->mousePressNode())
-    , m_URL(frame->loader()->url())
+    , m_url(frame->loader()->url())
     , m_cachedFrameScriptData(frame)
 {
 #ifndef NDEBUG
@@ -60,6 +63,13 @@ CachedFrame::CachedFrame(Frame* frame)
     m_document->documentWillBecomeInactive(); 
     frame->clearTimers();
     m_document->setInPageCache(true);
+    
+    frame->loader()->client()->savePlatformDataToCachedFrame(this);
+                
+    for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        m_childFrames.append(CachedFrame::create(child));
+
+    LOG(PageCache, "Finished creating CachedFrame with url %s\n", m_url.string().utf8().data());
 }
 
 CachedFrame::~CachedFrame()
@@ -113,7 +123,7 @@ void CachedFrame::clear()
     m_document = 0;
     m_view = 0;
     m_mousePressNode = 0;
-    m_URL = KURL();
+    m_url = KURL();
 
     m_cachedFramePlatformData.clear();
 

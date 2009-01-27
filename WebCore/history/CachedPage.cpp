@@ -48,7 +48,7 @@ PassRefPtr<CachedPage> CachedPage::create(Page* page)
 
 CachedPage::CachedPage(Page* page)
     : m_timeStamp(currentTime())
-    , m_cachedMainFrame(page->mainFrame())
+    , m_cachedMainFrame(CachedFrame::create(page->mainFrame()))
 {
 #ifndef NDEBUG
     cachedPageCounter.increment();
@@ -67,7 +67,7 @@ CachedPage::~CachedPage()
 void CachedPage::restore(Page* page)
 {
     ASSERT(page && page->mainFrame());
-    m_cachedMainFrame.restore(page->mainFrame());
+    m_cachedMainFrame->restore(page->mainFrame());
 
     // Restore the focus appearance for the focused element.
     // FIXME: Right now we don't support pages w/ frames in the b/f cache.  This may need to be tweaked when we add support for that.

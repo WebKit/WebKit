@@ -1,3 +1,32 @@
+2009-01-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/3541409> - More groundwork and cleanup for CachedFrames
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame): Make the savePlatformDataToCachedFrame() client call here,
+          and add the code for caching subframes.
+        (WebCore::CachedFrame::clear):
+        * history/CachedFrame.h: Change to be RefCounted
+        (WebCore::CachedFrame::create):
+        (WebCore::CachedFrame::url):
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        * history/CachedPage.h:
+        (WebCore::CachedPage::document):
+        (WebCore::CachedPage::documentLoader):
+        (WebCore::CachedPage::view):
+        (WebCore::CachedPage::url):
+        (WebCore::CachedPage::domWindow):
+        (WebCore::CachedPage::cachedMainFrame):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::cachePageForHistoryItem): Move the platform data saving into the
+          CachedFrame itself.
+
 2009-01-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
