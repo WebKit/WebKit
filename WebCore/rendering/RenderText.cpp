@@ -1070,10 +1070,10 @@ IntRect RenderText::linesBoundingBox() const
     return result;
 }
 
-IntRect RenderText::absoluteClippedOverflowRect()
+IntRect RenderText::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
 {
     RenderObject* cb = containingBlock();
-    return cb->absoluteClippedOverflowRect();
+    return cb->clippedOverflowRectForRepaint(repaintContainer);
 }
 
 IntRect RenderText::selectionRect(bool clipToVisibleContent)

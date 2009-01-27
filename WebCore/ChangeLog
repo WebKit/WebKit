@@ -1,5 +1,84 @@
 2009-01-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23360
+
+        Add variants of all the methods that compute dirty rects for repainting
+        with versions that compute those rects relative to some container
+        RenderBox that acts as a painting root.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::outlineBoundsForRepaint):
+        (WebCore::RenderBox::localToContainerQuad):
+        (WebCore::RenderBox::clippedOverflowRectForRepaint):
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderBox.h:
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::computeRectForRepaint):
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint):
+        (WebCore::RenderObject::repaint):
+        (WebCore::RenderObject::repaintRectangle):
+        (WebCore::RenderObject::rectWithOutlineForRepaint):
+        (WebCore::RenderObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderObject::computeRectForRepaint):
+        (WebCore::RenderObject::localToContainerQuad):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        (WebCore::RenderObject::absoluteClippedOverflowRect):
+        (WebCore::RenderObject::computeAbsoluteRepaintRect):
+        (WebCore::RenderObject::absoluteOutlineBounds):
+        (WebCore::RenderObject::outlineBoundsForRepaint):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::clippedOverflowRectForRepaint):
+        (WebCore::RenderPath::outlineBoundsForRepaint):
+        * rendering/RenderPath.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGContainer::outlineBoundsForRepaint):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGText.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        (WebCore::RenderTableCell::computeRectForRepaint):
+        (WebCore::RenderTableCell::localToContainerQuad):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::clippedOverflowRectForRepaint):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::clippedOverflowRectForRepaint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::clippedOverflowRectForRepaint):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::localToContainerQuad):
+        (WebCore::RenderView::computeRectForRepaint):
+        * rendering/RenderView.h:
+
+2009-01-26  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by David Hyatt
         
         Back out r40285, because it was checked in with no bug number, no

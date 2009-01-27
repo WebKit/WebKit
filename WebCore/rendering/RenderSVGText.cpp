@@ -49,8 +49,9 @@ RenderSVGText::RenderSVGText(SVGTextElement* node)
 {
 }
 
-IntRect RenderSVGText::absoluteClippedOverflowRect()
+IntRect RenderSVGText::clippedOverflowRectForRepaint(RenderBox* /*repaintContainer*/)
 {
+    // FIXME: handle non-root repaintContainer
     FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
 
 #if ENABLE(SVG_FILTERS)

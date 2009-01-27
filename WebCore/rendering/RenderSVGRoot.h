@@ -47,7 +47,7 @@ public:
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
     
-    virtual IntRect absoluteClippedOverflowRect();
+    virtual IntRect clippedOverflowRectForRepaint(RenderBox* repaintContainer);
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);

@@ -170,7 +170,7 @@ void RenderBox::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newSt
 void RenderBox::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
 {
     // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
-    // during the style change (it's used by absoluteClippedOverflowRect()).
+    // during the style change (it's used by clippedOverflowRectForRepaint()).
     if (style()->outlineWidth() > 0 && style()->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
         static_cast<RenderView*>(document()->renderer())->setMaximalOutlineSize(style()->outlineSize());
 
@@ -489,13 +489,16 @@ FloatQuad RenderBox::absoluteContentQuad() const
 }
 
 
-IntRect RenderBox::absoluteOutlineBounds() const
+IntRect RenderBox::outlineBoundsForRepaint(RenderBox* /*repaintContainer*/) const
 {
     IntRect box = borderBoundingBox();
     adjustRectForOutlineAndShadow(box);
 
     FloatQuad absOutlineQuad = localToAbsoluteQuad(FloatRect(box));
     box = absOutlineQuad.enclosingBoundingBox();
+
+    // FIXME: layoutDelta needs to be applied in parts before/after transforms and
+    // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     box.move(view()->layoutDelta());
 
     return box;
@@ -1437,8 +1440,11 @@ FloatPoint RenderBox::absoluteToLocal(FloatPoint containerPoint, bool fixed, boo
     return FloatPoint();
 }
 
-FloatQuad RenderBox::localToAbsoluteQuad(const FloatQuad& localQuad, bool fixed) const
+FloatQuad RenderBox::localToContainerQuad(const FloatQuad& localQuad, RenderBox* repaintContainer, bool fixed) const
 {
+    if (repaintContainer == this)
+        return localQuad;
+
     if (style()->position() == FixedPosition)
         fixed = true;
 
@@ -1450,7 +1456,7 @@ FloatQuad RenderBox::localToAbsoluteQuad(const FloatQuad& localQuad, bool fixed)
             quad = m_layer->transform()->mapQuad(quad);
         }
         quad += offsetFromContainer(o);
-        return o->localToAbsoluteQuad(quad, fixed);
+        return o->localToContainerQuad(quad, repaintContainer, fixed);
     }
     
     return FloatQuad();
@@ -1534,7 +1540,7 @@ void RenderBox::deleteLineBoxWrapper()
     }
 }
 
-IntRect RenderBox::absoluteClippedOverflowRect()
+IntRect RenderBox::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
 {
     if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
         return IntRect();
@@ -1542,9 +1548,12 @@ IntRect RenderBox::absoluteClippedOverflowRect()
     IntRect r = overflowRect(false);
 
     RenderView* v = view();
-    if (v)
+    if (v) {
+        // FIXME: layoutDelta needs to be applied in parts before/after transforms and
+        // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
         r.move(v->layoutDelta());
-
+    }
+    
     if (style()) {
         if (style()->hasAppearance())
             // The theme may wish to inflate the rect used when repainting.
@@ -1557,14 +1566,15 @@ IntRect RenderBox::absoluteClippedOverflowRect()
             r.inflate(v->maximalOutlineSize());
         }
     }
-    computeAbsoluteRepaintRect(r);
+    computeRectForRepaint(r, repaintContainer);
     return r;
 }
 
-void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
+void RenderBox::computeRectForRepaint(IntRect& rect, RenderBox* repaintContainer, bool fixed)
 {
     if (RenderView* v = view()) {
-        if (v->layoutStateEnabled()) {
+        // LayoutState is only valid for root-relative repainting
+        if (v->layoutStateEnabled() && !repaintContainer) {
             LayoutState* layoutState = v->layoutState();
             if (style()->position() == RelativePosition && m_layer)
                 rect.move(m_layer->relativePositionOffset());
@@ -1579,6 +1589,9 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
 
     if (hasReflection())
         rect.unite(reflectedRect(rect));
+
+    if (repaintContainer == this)
+        return;
 
     RenderObject* o = container();
     if (!o)
@@ -1638,7 +1651,7 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
     } else
         rect.setLocation(topLeft);
     
-    o->computeAbsoluteRepaintRect(rect, fixed);
+    o->computeRectForRepaint(rect, repaintContainer, fixed);
 }
 
 void RenderBox::repaintDuringLayoutIfMoved(const IntRect& rect)

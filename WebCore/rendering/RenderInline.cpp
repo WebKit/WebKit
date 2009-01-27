@@ -399,7 +399,7 @@ IntRect RenderInline::linesBoundingBox() const
     return result;
 }
 
-IntRect RenderInline::absoluteClippedOverflowRect()
+IntRect RenderInline::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
 {
     // Only run-ins are allowed in here during layout.
     ASSERT(!view() || !view()->layoutStateEnabled() || isRunIn());
@@ -439,18 +439,19 @@ IntRect RenderInline::absoluteClippedOverflowRect()
         IntRect repaintRect(x, y, r.width(), r.height());
         r = intersection(repaintRect, boxRect);
     }
-    cb->computeAbsoluteRepaintRect(r);
+    ASSERT(repaintContainer != this);
+    cb->computeRectForRepaint(r, repaintContainer);
 
     if (ow) {
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
             if (!curr->isText()) {
-                IntRect childRect = curr->getAbsoluteRepaintRectWithOutline(ow);
+                IntRect childRect = curr->rectWithOutlineForRepaint(repaintContainer, ow);
                 r.unite(childRect);
             }
         }
 
         if (continuation() && !continuation()->isInline()) {
-            IntRect contRect = continuation()->getAbsoluteRepaintRectWithOutline(ow);
+            IntRect contRect = continuation()->rectWithOutlineForRepaint(repaintContainer, ow);
             r.unite(contRect);
         }
     }

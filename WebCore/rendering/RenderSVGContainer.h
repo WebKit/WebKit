@@ -76,7 +76,7 @@ public:
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
-    virtual IntRect absoluteClippedOverflowRect();
+    virtual IntRect clippedOverflowRectForRepaint(RenderBox* repaintContainer);
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
@@ -89,13 +89,13 @@ public:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    virtual IntRect absoluteOutlineBounds() const;
-
 protected:
     virtual void applyContentTransforms(PaintInfo&);
     virtual void applyAdditionalTransforms(PaintInfo&);
 
     void calcBounds();
+
+    virtual IntRect outlineBoundsForRepaint(RenderBox* /*repaintContainer*/) const;
 
 private:
     int calcReplacedWidth() const;

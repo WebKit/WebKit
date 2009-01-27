@@ -249,8 +249,9 @@ void RenderSVGImage::calculateAbsoluteBounds()
     m_absoluteBounds = enclosingIntRect(absoluteRect);
 }
 
-IntRect RenderSVGImage::absoluteClippedOverflowRect()
+IntRect RenderSVGImage::clippedOverflowRectForRepaint(RenderBox* /*repaintContainer*/)
 {
+    // FIXME: handle non-root repaintContainer
     return m_absoluteBounds;
 }
 

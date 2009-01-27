@@ -42,7 +42,7 @@ public:
     virtual TransformationMatrix localTransform() const { return m_localTransform; }
     virtual bool calculateLocalTransform();
 
-    virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed);
+    virtual void computeRectForRepaint(IntRect&, RenderBox* repaintContainer, bool fixed = false);
     virtual bool requiresLayer() const { return false; }
     virtual void layout();
 

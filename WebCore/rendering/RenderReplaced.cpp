@@ -389,7 +389,7 @@ IntRect RenderReplaced::overflowRect(bool) const
     return borderBoxRect();
 }
 
-IntRect RenderReplaced::absoluteClippedOverflowRect()
+IntRect RenderReplaced::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
 {
     if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
         return IntRect();
@@ -399,8 +399,11 @@ IntRect RenderReplaced::absoluteClippedOverflowRect()
     IntRect r = localSelectionRect(false);
 
     RenderView* v = view();
-    if (v)
+    if (v) {
+        // FIXME: layoutDelta needs to be applied in parts before/after transforms and
+        // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
         r.move(v->layoutDelta());
+    }
 
     if (style()) {
         if (style()->hasAppearance())
@@ -409,7 +412,7 @@ IntRect RenderReplaced::absoluteClippedOverflowRect()
         if (v)
             r.inflate(style()->outlineSize());
     }
-    computeAbsoluteRepaintRect(r);
+    computeRectForRepaint(r, repaintContainer);
     return r;
 }
 

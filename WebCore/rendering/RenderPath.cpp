@@ -176,8 +176,9 @@ void RenderPath::layout()
     setNeedsLayout(false);
 }
 
-IntRect RenderPath::absoluteClippedOverflowRect()
+IntRect RenderPath::clippedOverflowRectForRepaint(RenderBox* /*repaintContainer*/)
 {
+    // FIXME: handle non-root repaintContainer
     FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
 
     // Markers can expand the bounding box
@@ -475,8 +476,9 @@ FloatRect RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatR
     return bounds;
 }
 
-IntRect RenderPath::absoluteOutlineBounds() const
+IntRect RenderPath::outlineBoundsForRepaint(RenderBox* /*repaintContainer*/) const
 {
+    // FIXME: handle non-root repaintContainer
     IntRect result = m_absoluteBounds;
     adjustRectForOutlineAndShadow(result);
     return result;

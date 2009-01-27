@@ -143,8 +143,12 @@ FloatPoint RenderView::absoluteToLocal(FloatPoint containerPoint, bool fixed, bo
     return containerPoint;
 }
 
-FloatQuad RenderView::localToAbsoluteQuad(const FloatQuad& localQuad, bool fixed) const
+FloatQuad RenderView::localToContainerQuad(const FloatQuad& localQuad, RenderBox* repaintContainer, bool fixed) const
 {
+    // If a container was specified, and was not 0 or the RenderView,
+    // then we should have found it by now.
+    ASSERT_UNUSED(repaintContainer, !repaintContainer || repaintContainer == this);
+
     FloatQuad quad = localQuad;
     if (fixed && m_frameView)
         quad += m_frameView->scrollOffset();
@@ -236,8 +240,12 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
     }
 }
 
-void RenderView::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
+void RenderView::computeRectForRepaint(IntRect& rect, RenderBox* repaintContainer, bool fixed)
 {
+    // If a container was specified, and was not 0 or the RenderView,
+    // then we should have found it by now.
+    ASSERT_UNUSED(repaintContainer, !repaintContainer || repaintContainer == this);
+
     if (printing())
         return;
 
