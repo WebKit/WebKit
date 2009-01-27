@@ -57,6 +57,18 @@ cairo_pattern_t* Gradient::platformGradient()
         ++stopIterator;
     }
 
+    switch (m_spreadMethod) {
+    case SpreadMethodPad:
+        cairo_pattern_set_extend(m_gradient, CAIRO_EXTEND_PAD);
+        break;
+    case SpreadMethodReflect:
+        cairo_pattern_set_extend(m_gradient, CAIRO_EXTEND_REFLECT);
+        break;
+    case SpreadMethodRepeat:
+        cairo_pattern_set_extend(m_gradient, CAIRO_EXTEND_REPEAT);
+        break;
+    }
+
     return m_gradient;
 }
 

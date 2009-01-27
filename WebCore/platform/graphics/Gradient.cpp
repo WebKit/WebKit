@@ -39,6 +39,7 @@ Gradient::Gradient(const FloatPoint& p0, const FloatPoint& p1)
     , m_r1(0)
     , m_stopsSorted(false)
     , m_lastStop(0)
+    , m_spreadMethod(SpreadMethodPad)
 {
     platformInit();
 }
@@ -144,6 +145,13 @@ int Gradient::findStop(float value) const
 
     m_lastStop = i - 1;
     return m_lastStop;
+}
+
+GradientSpreadMethod Gradient::setSpreadMethod(GradientSpreadMethod spreadMethod)
+{
+    // FIXME: Should it become necessary, allow calls to this method after m_gradient has been set.
+    ASSERT(m_gradient == 0);
+    m_spreadMethod = spreadMethod;
 }
 
 } //namespace

@@ -76,8 +76,7 @@ static TextStream& operator<<(TextStream& ts, const Vector<SVGGradientStop>& l)
 }
 
 SVGPaintServerGradient::SVGPaintServerGradient(const SVGGradientElement* owner)
-    : m_spreadMethod(SpreadMethodPad)
-    , m_boundingBoxMode(true)
+    : m_boundingBoxMode(true)
     , m_ownerElement(owner)
 
 #if PLATFORM(CG)
@@ -100,16 +99,6 @@ Gradient* SVGPaintServerGradient::gradient() const
 void SVGPaintServerGradient::setGradient(PassRefPtr<Gradient> gradient)
 {
     m_gradient = gradient;
-}
-
-GradientSpreadMethod SVGPaintServerGradient::spreadMethod() const
-{
-    return m_spreadMethod;
-}
-
-void SVGPaintServerGradient::setGradientSpreadMethod(const GradientSpreadMethod& method)
-{
-    m_spreadMethod = method;
 }
 
 bool SVGPaintServerGradient::boundingBoxMode() const
@@ -252,7 +241,6 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
         context->setStrokeThickness(strokeThickness);
     }
     context->concatCTM(gradientTransform());
-    context->setSpreadMethod(spreadMethod());
 
     return true;
 }
@@ -284,8 +272,8 @@ TextStream& SVGPaintServerGradient::externalRepresentation(TextStream& ts) const
 
     // abstract, don't stream type
     ts  << "[stops=" << gradientStops() << "]";
-    if (spreadMethod() != SpreadMethodPad)
-        ts << "[method=" << spreadMethod() << "]";
+    if (m_gradient->spreadMethod() != SpreadMethodPad)
+        ts << "[method=" << m_gradient->spreadMethod() << "]";
     if (!boundingBoxMode())
         ts << " [bounding box mode=" << boundingBoxMode() << "]";
     if (!gradientTransform().isIdentity())

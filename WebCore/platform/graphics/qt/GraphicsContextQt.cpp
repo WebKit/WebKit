@@ -152,22 +152,6 @@ static Qt::PenStyle toQPenStyle(StrokeStyle style)
     return Qt::NoPen;
 }
 
-static inline QGradient applySpreadMethod(QGradient gradient, GradientSpreadMethod spreadMethod)
-{
-    switch (spreadMethod) {
-        case SpreadMethodPad:
-            gradient.setSpread(QGradient::PadSpread);
-           break;
-        case SpreadMethodReflect:
-            gradient.setSpread(QGradient::ReflectSpread);
-            break;
-        case SpreadMethodRepeat:
-            gradient.setSpread(QGradient::RepeatSpread);
-            break;
-    }
-    return gradient;
-}
-
 struct TransparencyLayer
 {
     TransparencyLayer(const QPainter* p, const QRect &rect)
@@ -554,7 +538,6 @@ void GraphicsContext::fillPath()
     }
     case GradientColorSpace:
         QGradient* gradient = m_common->state.fillGradient->platformGradient();
-        *gradient = applySpreadMethod(*gradient, spreadMethod());  
         p->fillPath(path, QBrush(*gradient));
         break;
     }
@@ -584,7 +567,6 @@ void GraphicsContext::strokePath()
     }
     case GradientColorSpace: {
         QGradient* gradient = m_common->state.strokeGradient->platformGradient();
-        *gradient = applySpreadMethod(*gradient, spreadMethod()); 
         pen.setBrush(QBrush(*gradient));
         p->setPen(pen);
         p->strokePath(path, pen);

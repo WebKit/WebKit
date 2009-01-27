@@ -136,6 +136,19 @@ SkShader* Gradient::platformGradient()
 
     fillStops(m_stops.data(), m_stops.size(), pos, colors);
 
+    SkShader::TileMode tile = SkShader::kClamp_TileMode;
+    switch (m_spreadMethod) {
+    case SpreadMethodReflect:
+        tile = SkShader::kMirror_TileMode;
+        break;
+    case SpreadMethodRepeat:
+        tile = SkShader::kRepeat_TileMode;
+        break;
+    case SpreadMethodPad:
+        tile = SkShader::kClamp_TileMode;
+        break;
+    }
+
     if (m_radial) {
         // FIXME: CSS radial Gradients allow an offset focal point (the
         // "start circle"), but skia doesn't seem to support that, so this just
@@ -145,11 +158,11 @@ SkShader* Gradient::platformGradient()
         // description of the expected behavior.
         m_gradient = SkGradientShader::CreateRadial(m_p1,
             WebCoreFloatToSkScalar(m_r1), colors, pos,
-            static_cast<int>(countUsed), SkShader::kClamp_TileMode);
+            static_cast<int>(countUsed), tile);
     } else {
         SkPoint pts[2] = { m_p0, m_p1 };
         m_gradient = SkGradientShader::CreateLinear(pts, colors, pos,
-            static_cast<int>(countUsed), SkShader::kClamp_TileMode);
+            static_cast<int>(countUsed), tile);
     }
 
     return m_gradient;

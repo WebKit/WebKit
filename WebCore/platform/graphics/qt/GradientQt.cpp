@@ -66,6 +66,18 @@ QGradient* Gradient::platformGradient()
         ++stopIterator;
     }
 
+    switch(m_spreadMethod) {
+    case SpreadMethodPad:
+        m_gradient->setSpread(QGradient::PadSpread);
+        break;
+    case SpreadMethodReflect:
+        m_gradient->setSpread(QGradient::ReflectSpread);
+        break;
+    case SpreadMethodRepeat:
+        m_gradient->setSpread(QGradient::RepeatSpread);
+        break;
+    }
+
     return m_gradient;
 }
 

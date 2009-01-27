@@ -114,6 +114,7 @@ void SVGRadialGradientElement::buildGradient() const
         0.f, // SVG does not support a "focus radius"
         centerPoint,
         narrowPrecisionToFloat(attributes.r()));
+    gradient->setSpreadMethod(attributes.spreadMethod());
 
     Vector<SVGGradientStop> stops = attributes.stops();
     float previousOffset = 0.0f;
@@ -129,7 +130,6 @@ void SVGRadialGradientElement::buildGradient() const
         return;
 
     radialGradient->setBoundingBoxMode(attributes.boundingBoxMode());
-    radialGradient->setGradientSpreadMethod(attributes.spreadMethod()); 
     radialGradient->setGradientTransform(attributes.gradientTransform());
     radialGradient->setGradientCenter(centerPoint);
     radialGradient->setGradientFocal(focalPoint);
