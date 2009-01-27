@@ -1855,8 +1855,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
     renderer()->document()->updateLayout();
     
     IntRect boundsRect(m_x, m_y, width(), height());
-    if (request.clipToVisible)
-        boundsRect.intersect(frameVisibleRect(renderer()));
+    boundsRect.intersect(frameVisibleRect(renderer()));
 
     RenderLayer* insideLayer = hitTestLayer(this, request, result, boundsRect, result.point());
 

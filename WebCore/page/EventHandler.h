@@ -97,7 +97,7 @@ public:
     RenderObject* autoscrollRenderer() const;
     void updateAutoscrollRenderer();
 
-    HitTestResult hitTestResultAtPoint(const IntPoint&, bool allowShadowContent, bool clipToVisible = true);
+    HitTestResult hitTestResultAtPoint(const IntPoint&, bool allowShadowContent);
 
     bool mousePressed() const { return m_mousePressed; }
     void setMousePressed(bool pressed) { m_mousePressed = pressed; }

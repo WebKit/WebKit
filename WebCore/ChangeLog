@@ -1,3 +1,19 @@
+2009-01-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by David Hyatt
+        
+        Back out r40285, because it was checked in with no bug number, no
+        testcase, is rendering change that did not get thorough review,
+        and broke the Mac build.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        * page/EventHandler.h:
+        * rendering/HitTestRequest.h:
+        (WebCore::HitTestRequest::HitTestRequest):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+
 2009-01-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

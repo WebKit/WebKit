@@ -691,12 +691,12 @@ void EventHandler::allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const
     flagUA = ((mask & DragSourceActionImage) || (mask & DragSourceActionLink) || (mask & DragSourceActionSelection));
 }
     
-HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent, bool clipToVisible)
+HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent)
 {
     HitTestResult result(point);
     if (!m_frame->contentRenderer())
         return result;
-    m_frame->contentRenderer()->layer()->hitTest(HitTestRequest(true, true, false, false, clipToVisible), result);
+    m_frame->contentRenderer()->layer()->hitTest(HitTestRequest(true, true), result);
 
     while (true) {
         Node* n = result.innerNode();
@@ -713,7 +713,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
         IntPoint widgetPoint(result.localPoint().x() + view->scrollX() - renderWidget->borderLeft() - renderWidget->paddingLeft(), 
             result.localPoint().y() + view->scrollY() - renderWidget->borderTop() - renderWidget->paddingTop());
         HitTestResult widgetHitTestResult(widgetPoint);
-        frame->contentRenderer()->layer()->hitTest(HitTestRequest(true, true, false, false, clipToVisible), widgetHitTestResult);
+        frame->contentRenderer()->layer()->hitTest(HitTestRequest(true, true), widgetHitTestResult);
         result = widgetHitTestResult;
     }
     
@@ -724,7 +724,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
     if (m_frame != mainFrame && resultFrame && resultFrame != mainFrame && !resultFrame->editor()->insideVisibleArea(result.point())) {
         IntPoint windowPoint = resultFrame->view()->contentsToWindow(result.point());
         IntPoint mainFramePoint = mainFrame->view()->windowToContents(windowPoint);
-        result = mainFrame->eventHandler()->hitTestResultAtPoint(mainFramePoint, allowShadowContent, clipToVisible);
+        result = mainFrame->eventHandler()->hitTestResultAtPoint(mainFramePoint, allowShadowContent);
     }
 
     if (!allowShadowContent)
