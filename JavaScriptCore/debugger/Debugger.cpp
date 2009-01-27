@@ -23,6 +23,8 @@
 #include "Debugger.h"
 
 #include "JSGlobalObject.h"
+#include "Interpreter.h"
+#include "Parser.h"
 
 namespace JSC {
 

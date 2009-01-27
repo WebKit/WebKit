@@ -1,3 +1,9 @@
+2009-01-26  Adele Peterson  <adele@apple.com>
+
+        Build fix.  
+
+        * debugger/Debugger.cpp:
+
 2009-01-26  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.
