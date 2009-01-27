@@ -140,6 +140,9 @@ routine IdentifierInfo(clientPort :mach_port_t;
 simpleroutine SetMenuBarVisible(clientPort :mach_port_t;
                                 visible :boolean_t);
 
+simpleroutine SetModal(clientPort :mach_port_t;
+                       modal :boolean_t);
+
 // Replies
 simpleroutine InstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;

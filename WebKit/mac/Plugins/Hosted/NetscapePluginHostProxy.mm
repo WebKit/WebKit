@@ -75,6 +75,7 @@ static PluginProxyMap& pluginProxyMap()
 NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort)
     : m_clientPort(clientPort)
     , m_pluginHostPort(pluginHostPort)
+    , m_modalCount(0)
     , m_menuBarIsVisible(true)
 {
     pluginProxyMap().add(m_clientPort, this);
@@ -130,6 +131,13 @@ void NetscapePluginHostProxy::pluginHostDied()
     if (m_menuBarIsVisible)
         setMenuBarVisible(true);
 
+    // The plug-in crashed while it had a modal dialog up.
+    if (m_modalCount) {
+        m_modalCount = 1;
+        
+        setModal(false);
+    }
+    
     delete this;
 }
     
@@ -172,6 +180,37 @@ void NetscapePluginHostProxy::setMenuBarVisible(bool visible)
     }
 }
 
+void NetscapePluginHostProxy::setModal(bool modal)
+{
+    if (modal) {
+        if (!m_modalCount++) {
+            ASSERT(!m_placeholderWindow);
+
+            m_placeholderWindow.adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+
+            // We need to be able to get the setModal(false) call from the plug-in host.
+            CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
+
+            [NSApp runModalForWindow:m_placeholderWindow.get()];
+        }
+    } else {
+        if (!--m_modalCount) {
+            ASSERT(m_placeholderWindow);
+            
+            CFRunLoopRemoveSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
+
+            [NSApp stopModal];
+            [m_placeholderWindow.get() orderOut:nil];
+            m_placeholderWindow = 0;
+            
+            // Make ourselves the front process.
+            ProcessSerialNumber psn;
+            GetCurrentProcess(&psn);
+            SetFrontProcess(&psn);            
+        }
+    }        
+}
+    
 } // namespace WebKit
 
 using namespace WebKit;
@@ -578,6 +617,17 @@ kern_return_t WKPCSetMenuBarVisible(mach_port_t clientPort, boolean_t menuBarVis
         return KERN_FAILURE;
 
     hostProxy->setMenuBarVisible(menuBarVisible);
+    
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCSetModal(mach_port_t clientPort, boolean_t modal)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    hostProxy->setModal(modal);
     
     return KERN_SUCCESS;
 }

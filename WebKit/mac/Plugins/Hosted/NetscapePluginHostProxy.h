@@ -50,7 +50,8 @@ public:
     NetscapePluginInstanceProxy* pluginInstance(uint32_t pluginID);
     
     void setMenuBarVisible(bool);
-    
+    void setModal(bool);
+
 private:
     ~NetscapePluginHostProxy();
     void pluginHostDied();
@@ -68,6 +69,9 @@ private:
 #endif
     mach_port_t m_pluginHostPort;
     RetainPtr<CFMachPortRef> m_deadNameNotificationPort;
+    
+    RetainPtr<NSWindow *> m_placeholderWindow;
+    unsigned m_modalCount;
     
     bool m_menuBarIsVisible;
 };

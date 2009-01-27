@@ -1,3 +1,19 @@
+2009-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add the ability for plug-ins to make WebKit operate in "modal mode"
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        (WebKit::NetscapePluginHostProxy::pluginHostDied):
+        If the plug-in crashes while we're modal, make sure to leave the modal mode.
+        
+        (WebKit::NetscapePluginHostProxy::setModal):
+        (WKPCSetModal):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+
 2009-01-26  John Sullivan  <sullivan@apple.com>
 
         fixed <rdar://problem/6530053> REGRESSION (Leopard): Shift-tab in http authentication window gets 
