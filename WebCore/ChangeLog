@@ -1,3 +1,14 @@
+2009-01-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        - fix <rdar://problem/6524351> Text looks bad when font smoothing is
+          forced off
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs): Changed to use GDI rather than Core
+        Graphics if the client has turned font smoothing off.
+
 2009-01-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
