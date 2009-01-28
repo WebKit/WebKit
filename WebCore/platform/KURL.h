@@ -47,7 +47,7 @@ QT_END_NAMESPACE
 #endif
 
 #if USE(GOOGLEURL)
-#include "GoogleURLPrivate.h"
+#include "KURLGooglePrivate.h"
 #endif
 
 namespace WebCore {
@@ -203,10 +203,10 @@ private:
     bool isHierarchical() const;
     static bool protocolIs(const String&, const char*);
 #if USE(GOOGLEURL)
-    friend class GoogleURLPrivate;
+    friend class KURLGooglePrivate;
     void parse(const char* url, const String* originalString);  // KURLMac calls this.
     void copyToBuffer(Vector<char, 512>& buffer) const;  // KURLCFNet uses this.
-    GoogleURLPrivate m_url;
+    KURLGooglePrivate m_url;
 #else  // !USE(GOOGLEURL)
     void init(const KURL&, const String&, const TextEncoding&);
     void copyToBuffer(Vector<char, 512>& buffer) const;
