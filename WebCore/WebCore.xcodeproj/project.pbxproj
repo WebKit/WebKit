@@ -139,6 +139,7 @@
 		0B90561C0F2578BF0095FF6A /* ThreadableLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056180F2578BE0095FF6A /* ThreadableLoaderClient.h */; settings = {ATTRIBUTES = (); }; };
 		0B90561E0F257E930095FF6A /* ThreadableLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B90561D0F257E930095FF6A /* ThreadableLoader.cpp */; };
 		0BA5D3860F240FB4009B870B /* GenericWorkerTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BA5D3850F240FB4009B870B /* GenericWorkerTask.h */; };
+		0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56028D0E4B76580065B038 /* RenderMarquee.h */; };
 		0F5602900E4B76580065B038 /* RenderMarquee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F56028E0E4B76580065B038 /* RenderMarquee.cpp */; };
 		0F6ECD450F252F3700BDE271 /* CSSPropertyLonghand.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */; };
@@ -4983,6 +4984,7 @@
 		0B9056180F2578BE0095FF6A /* ThreadableLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableLoaderClient.h; sourceTree = "<group>"; };
 		0B90561D0F257E930095FF6A /* ThreadableLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableLoader.cpp; sourceTree = "<group>"; };
 		0BA5D3850F240FB4009B870B /* GenericWorkerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericWorkerTask.h; sourceTree = "<group>"; };
+		0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLineBoxList.h; sourceTree = "<group>"; };
 		0F56028D0E4B76580065B038 /* RenderMarquee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMarquee.h; sourceTree = "<group>"; };
 		0F56028E0E4B76580065B038 /* RenderMarquee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMarquee.cpp; sourceTree = "<group>"; };
 		0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertyLonghand.h; sourceTree = "<group>"; };
@@ -14075,6 +14077,7 @@
 				A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */,
 				A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */,
 				BC33FB1A0F30EE85002CDD7C /* RenderLineBoxList.cpp */,
+				0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */,
 				ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */,
 				ABB5419D0ACDDFE4002820EB /* RenderListBox.h */,
 				A8EA7A480A191A5200A8EF5F /* RenderListItem.cpp */,
@@ -14554,9 +14557,10 @@
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
 				BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */,
 				BC64B4CC0CB4295D005F2B62 /* CachedFont.h in Headers */,
+				51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */,
+				51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */,
 				BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */,
 				510184690B08602A004A825F /* CachedPage.h in Headers */,
-				51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */,
 				BCB16C200979C3BD00467741 /* CachedResource.h in Headers */,
 				BCFB2E5E0979E46400BA703D /* CachedResourceClient.h in Headers */,
 				BCB16C220979C3BD00467741 /* CachedResourceClientWalker.h in Headers */,
@@ -15313,6 +15317,7 @@
 				DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */,
 				85E711D90AC5D5350053270F /* DOMTextInternal.h in Headers */,
 				BCC5733A0D695BF1006EF517 /* DOMTextPrivate.h in Headers */,
+				188604B40F2E654A000B6443 /* DOMTimer.h in Headers */,
 				BC1A37BE097C715F0019F3D8 /* DOMTraversal.h in Headers */,
 				85526CD20AB0B7D9000302EA /* DOMTreeWalker.h in Headers */,
 				850B41C30AD9E7E700A6ED4F /* DOMTreeWalkerInternal.h in Headers */,
@@ -16103,6 +16108,7 @@
 				BCEA4878097D93020094C9E4 /* RenderInline.h in Headers */,
 				BCEA487A097D93020094C9E4 /* RenderLayer.h in Headers */,
 				A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */,
+				0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */,
 				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,
 				A8EA7A520A191A5200A8EF5F /* RenderListItem.h in Headers */,
 				A8EA7A500A191A5200A8EF5F /* RenderListMarker.h in Headers */,
@@ -16586,6 +16592,7 @@
 				E1C363010EAF2CC6007410BC /* WorkerLocation.h in Headers */,
 				E14799A70ECDE3A400292BF3 /* WorkerMessagingProxy.h in Headers */,
 				E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */,
+				18A0537D0F26859C00A51705 /* WorkerRunLoop.h in Headers */,
 				E1A643F20EC0972500779668 /* WorkerScriptController.h in Headers */,
 				E108224B0EC3153A00E93953 /* WorkerTask.h in Headers */,
 				E1C2C4240EACE0BC007E61FB /* WorkerThread.h in Headers */,
@@ -16652,9 +16659,6 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				18A0537D0F26859C00A51705 /* WorkerRunLoop.h in Headers */,
-				51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */,
-				188604B40F2E654A000B6443 /* DOMTimer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17016,6 +17020,7 @@
 				BCB16C170979C3BD00467741 /* Cache.cpp in Sources */,
 				BCB16C190979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */,
 				BC64B4CB0CB4295D005F2B62 /* CachedFont.cpp in Sources */,
+				51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */,
 				BCB16C1B0979C3BD00467741 /* CachedImage.cpp in Sources */,
 				5101846A0B08602A004A825F /* CachedPage.cpp in Sources */,
 				BCB16C1F0979C3BD00467741 /* CachedResource.cpp in Sources */,
@@ -17318,6 +17323,7 @@
 				850657030AAB4763002D15C0 /* DOMStyleSheetList.mm in Sources */,
 				85ACA99D0A9B575900671E90 /* DOMText.mm in Sources */,
 				933A14AA0B7D1D0900A53FFD /* DOMTextEvent.mm in Sources */,
+				188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */,
 				85526CD30AB0B7DA000302EA /* DOMTreeWalker.mm in Sources */,
 				85C7F4920AAF79DC004014DD /* DOMUIEvent.mm in Sources */,
 				BC1A37BF097C715F0019F3D8 /* DOMUtility.mm in Sources */,
@@ -17574,6 +17580,7 @@
 				E4EEFFC80D34550C00469A58 /* JSAudioConstructor.cpp in Sources */,
 				BC124EFF0C26447A009E2349 /* JSBarInfo.cpp in Sources */,
 				93F9B7A00BA6032600854064 /* JSCDATASection.cpp in Sources */,
+				93BA59B20F2AA5FE008E8E99 /* JSCDATASectionCustom.cpp in Sources */,
 				BC46C1FA0C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp in Sources */,
 				BC46C1FC0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp in Sources */,
 				BC46C1FE0C0DDC8F0020CFC3 /* JSCSSImportRule.cpp in Sources */,
@@ -18117,6 +18124,7 @@
 				BCEA4877097D93020094C9E4 /* RenderInline.cpp in Sources */,
 				BCEA4879097D93020094C9E4 /* RenderLayer.cpp in Sources */,
 				A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */,
+				BC33FB1B0F30EE85002CDD7C /* RenderLineBoxList.cpp in Sources */,
 				ABB5419E0ACDDFE4002820EB /* RenderListBox.cpp in Sources */,
 				A8EA7A4E0A191A5200A8EF5F /* RenderListItem.cpp in Sources */,
 				A8EA7A510A191A5200A8EF5F /* RenderListMarker.cpp in Sources */,
@@ -18625,10 +18633,6 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
-				51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */,
-				93BA59B20F2AA5FE008E8E99 /* JSCDATASectionCustom.cpp in Sources */,
-				188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */,
-				BC33FB1B0F30EE85002CDD7C /* RenderLineBoxList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
