@@ -77,6 +77,8 @@ public:
         return IntRect(0, 0, boundingBox.width(), boundingBox.height());
     }
 
+    virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
+
     RenderBox* continuation() const { return m_continuation; }
     RenderInline* inlineContinuation() const;
     void setContinuation(RenderBox* c) { m_continuation = c; }
@@ -95,6 +97,7 @@ protected:
 private:
     RenderBox* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the
                                // <b> will just have an inline as its continuation.
+    mutable int m_lineHeight;
 };
 
 } // namespace WebCore

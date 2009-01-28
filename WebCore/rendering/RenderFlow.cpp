@@ -320,29 +320,6 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
     }
 }
 
-int RenderFlow::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
-{
-    if (firstLine && document()->usesFirstLineRules()) {
-        RenderStyle* s = style(firstLine);
-        Length lh = s->lineHeight();
-        if (lh.isNegative()) {
-            if (s == style()) {
-                if (m_lineHeight == -1)
-                    m_lineHeight = RenderObject::lineHeight(false);
-                return m_lineHeight;
-            }
-            return s->font().lineSpacing();
-        }
-        if (lh.isPercent())
-            return lh.calcMinValue(s->fontSize());
-        return lh.value();
-    }
-
-    if (m_lineHeight == -1)
-        m_lineHeight = RenderObject::lineHeight(false);
-    return m_lineHeight;
-}
-
 void RenderFlow::dirtyLineBoxes(bool fullLayout, bool isRootLineBox)
 {
     if (!isRootLineBox && isReplaced())

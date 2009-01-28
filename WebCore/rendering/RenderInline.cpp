@@ -37,6 +37,7 @@ namespace WebCore {
 RenderInline::RenderInline(Node* node)
     : RenderFlow(node)
     , m_continuation(0)
+    , m_lineHeight(-1)
 {
     setChildrenInline(true);
 }
@@ -524,6 +525,20 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const IntPoint& po
             result.setInnerNonSharedNode(node);
         result.setLocalPoint(localPoint);
     }
+}
+
+int RenderInline::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
+{
+    if (firstLine && document()->usesFirstLineRules()) {
+        RenderStyle* s = style(firstLine);
+        if (s != style())
+            return s->computedLineHeight();
+    }
+    
+    if (m_lineHeight == -1)
+        m_lineHeight = style()->computedLineHeight();
+    
+    return m_lineHeight;
 }
 
 } // namespace WebCore

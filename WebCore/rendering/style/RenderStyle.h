@@ -446,6 +446,19 @@ public:
 
     TextDirection direction() const { return static_cast<TextDirection>(inherited_flags._direction); }
     Length lineHeight() const { return inherited->line_height; }
+    int computedLineHeight() const
+    {
+        Length lh = lineHeight();
+
+        // Negative value means the line height is not set.  Use the font's built-in spacing.
+        if (lh.isNegative())
+            return font().lineSpacing();
+
+        if (lh.isPercent())
+            return lh.calcMinValue(fontSize());
+
+        return lh.value();
+    }
 
     EWhiteSpace whiteSpace() const { return static_cast<EWhiteSpace>(inherited_flags._white_space); }
     static bool autoWrap(EWhiteSpace ws)

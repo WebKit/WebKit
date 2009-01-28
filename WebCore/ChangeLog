@@ -1,3 +1,26 @@
+2009-01-28  David Hyatt  <hyatt@apple.com>
+
+        Move the m_lineHeight member variable out of RenderFlow and down into RenderBlock and RenderInline.  Shift the line height computation into RenderStyle so
+        that it isn't repeated in three places.
+
+        Reviewed by Sam Weinig
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::lineHeight):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        (WebCore::RenderFlow::RenderFlow):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        (WebCore::RenderInline::lineHeight):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::lineHeight):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::computedLineHeight):
+
 2009-01-28  Zachary Kuznia  <zork@chromiuum.org>
 
         Reviewed by Sam Weinig.

@@ -42,7 +42,6 @@ public:
         : RenderContainer(node)
         , m_firstLineBox(0)
         , m_lastLineBox(0)
-        , m_lineHeight(-1)
     {
     }
 #ifndef NDEBUG
@@ -64,8 +63,6 @@ public:
     virtual void destroy();
 
     virtual void dirtyLinesFromChangedChild(RenderObject* child);
-
-    virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
     InlineFlowBox* firstLineBox() const { return m_firstLineBox; }
     InlineFlowBox* lastLineBox() const { return m_lastLineBox; }
@@ -92,8 +89,6 @@ protected:
     // For inline flows, each box represents a portion of that inline.
     InlineFlowBox* m_firstLineBox;
     InlineFlowBox* m_lastLineBox;
-
-    mutable int m_lineHeight;
 };
 
 #ifdef NDEBUG
