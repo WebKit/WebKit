@@ -1,3 +1,12 @@
+2009-01-28  Adam Langley  <agl@google.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23573
+        Make PlatformWidget on chromium an intptr_t to match changes made in Chromium
+
+        * platform/chromium/PlatformWidget.h:
+
 2009-01-28  David Hyatt  <hyatt@apple.com>
 
         Fix for 
