@@ -29,6 +29,7 @@
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "RenderArena.h"
+#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListMarker.h"
 #include "RenderView.h"

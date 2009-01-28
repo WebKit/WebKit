@@ -346,6 +346,15 @@ void RenderBlock::deleteLineBoxTree()
     m_lineBoxes.deleteLineBoxTree(renderArena());
 }
 
+InlineBox* RenderBlock::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool /*isOnlyRun*/)
+{
+    if (!isRootLineBox && (isReplaced() || makePlaceHolderBox))                     // Inline tables and inline blocks
+        return RenderContainer::createInlineBox(false, isRootLineBox);              // (or positioned element placeholders).
+    InlineFlowBox* flowBox = new (renderArena()) RootInlineBox(this);
+    m_lineBoxes.appendLineBox(flowBox);
+    return flowBox;
+}
+
 void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
 {    
     // makeChildrenNonInline takes a block whose children are *all* inline and it

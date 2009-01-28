@@ -258,23 +258,6 @@ void RenderFlow::dirtyLineBoxes(bool fullLayout, bool isRootLineBox)
     }
 }
 
-InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool /*isOnlyRun*/)
-{
-    if (!isRootLineBox &&
-        (isReplaced() || makePlaceHolderBox))                     // Inline tables and inline blocks
-        return RenderContainer::createInlineBox(false, isRootLineBox);  // (or positioned element placeholders).
-
-    InlineFlowBox* flowBox = 0;
-    if (isRenderInline())
-        flowBox = new (renderArena()) InlineFlowBox(this);
-    else
-        flowBox = new (renderArena()) RootInlineBox(this);
-
-    m_lineBoxes.appendLineBox(flowBox);
-
-    return flowBox;
-}
-
 void RenderFlow::paintLines(PaintInfo& paintInfo, int tx, int ty)
 {
     // Only paint during the foreground/selection phases.

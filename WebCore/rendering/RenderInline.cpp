@@ -527,6 +527,13 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const IntPoint& po
     }
 }
 
+InlineBox* RenderInline::createInlineBox(bool, bool, bool)
+{
+    InlineFlowBox* flowBox = new (renderArena()) InlineFlowBox(this);
+    m_lineBoxes.appendLineBox(flowBox);
+    return flowBox;
+}
+
 int RenderInline::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
 {
     if (firstLine && document()->usesFirstLineRules()) {

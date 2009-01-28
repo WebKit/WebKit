@@ -1,5 +1,21 @@
 2009-01-28  David Hyatt  <hyatt@apple.com>
 
+        Move createInlineBox out of RenderFlow and down into RenderInline and RenderBlock.
+
+        Reviewed by Beth Dakin
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::createInlineBox):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::createInlineBox):
+        * rendering/RenderInline.h:
+        * rendering/bidi.cpp:
+
+2009-01-28  David Hyatt  <hyatt@apple.com>
+
         Move calcMargins from RenderFlow to RenderInline, since it was only ever called on RenderInlines.
 
         Reviewed by Oliver Hunt
