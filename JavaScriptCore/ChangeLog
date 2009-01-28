@@ -1,4 +1,4 @@
-2009-01-27  David Kilzer  <ddkilzer@apple.com>
+2009-01-28  David Kilzer  <ddkilzer@apple.com>
 
         Bug 23490: Remove initialRefCount argument from RefCounted class
 
