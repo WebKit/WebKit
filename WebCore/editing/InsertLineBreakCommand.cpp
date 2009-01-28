@@ -135,11 +135,8 @@ void InsertLineBreakCommand::doApply()
         ASSERT(pos.node()->isTextNode());
         
         // Do the split
-        ExceptionCode ec = 0;
         Text* textNode = static_cast<Text*>(pos.node());
-        RefPtr<Text> textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), ec));
-        deleteTextFromNode(textNode, 0, pos.offset());
-        insertNodeBefore(textBeforeNode, textNode);
+        splitTextNode(textNode, pos.offset());
         insertNodeBefore(nodeToInsert, textNode);
         Position endingPosition = Position(textNode, 0);
         

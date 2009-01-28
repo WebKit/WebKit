@@ -1,3 +1,15 @@
+2009-01-28  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Justin Garcia.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18835
+        Spelling underlines disappear when they shouldn't
+
+        Add a layout text to verify if misspelled markers are copied when a
+        line-break command splits a text node.
+
+        * editing/spelling/spelling-linebreak.html: Added.
+
 2009-01-27  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber stamped by Darin Adler.

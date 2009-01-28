@@ -1,3 +1,19 @@
+2009-01-28  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Justin Garcia.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18835
+        Spelling underlines disappear when they shouldn't
+
+        The WebCore::InsertLineBreakCommand::doApply() function splits a text node
+        without copying existing markers. To fix this bug, change code which
+        manually splits a text node into a CompositeEditCommand::splitTextNode() call.
+
+        Test: editing/spelling/spelling-linebreak.html
+
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+
 2009-01-28  David Hyatt  <hyatt@apple.com>
 
         Move the m_lineHeight member variable out of RenderFlow and down into RenderBlock and RenderInline.  Shift the line height computation into RenderStyle so
