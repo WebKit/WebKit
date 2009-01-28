@@ -1,3 +1,25 @@
+2009-01-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23582
+
+        Fix assertions when inline elements have both opacity (or something
+        else that creates a RenderLayer), and transform by ensuring that
+        setHasTransform() is only called for non-inline or replaced elements.
+        We also have to ensure that RenderReplicas will get transforms applied
+        to them by lying about them being replaced.
+
+        Tests: fast/transforms/transform-on-inline.html
+               fast/transforms/transform-table-row.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::RenderReplica):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::requiresLayer):
+
 2009-01-28  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Justin Garcia.
