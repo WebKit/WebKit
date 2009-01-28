@@ -316,6 +316,8 @@ public:
     RenderInline* inlineContinuation() const { return m_inlineContinuation; }
     void setInlineContinuation(RenderInline* c) { m_inlineContinuation = c; }
 
+    virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
+
 private:
     void adjustPointToColumnContents(IntPoint&) const;
     void adjustForBorderFit(int x, int& left, int& right) const; // Helper function for borderFitAdjust

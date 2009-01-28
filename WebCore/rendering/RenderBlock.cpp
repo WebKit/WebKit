@@ -4756,6 +4756,85 @@ void RenderBlock::updateHitTestResult(HitTestResult& result, const IntPoint& poi
     }
 }
 
+IntRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
+{
+    // Do the normal calculation in most cases.
+    if (firstChild())
+        return RenderContainer::localCaretRect(inlineBox, caretOffset, extraWidthToEndOfLine);
+
+    // This is a special case:
+    // The element is not an inline element, and it's empty. So we have to
+    // calculate a fake position to indicate where objects are to be inserted.
+    
+    // FIXME: This does not take into account either :first-line or :first-letter
+    // However, as soon as some content is entered, the line boxes will be
+    // constructed and this kludge is not called any more. So only the caret size
+    // of an empty :first-line'd block is wrong. I think we can live with that.
+    RenderStyle* currentStyle = firstLineStyle();
+    int height = lineHeight(true);
+    const int caretWidth = 1;
+
+    enum CaretAlignment { alignLeft, alignRight, alignCenter };
+
+    CaretAlignment alignment = alignLeft;
+
+    switch (currentStyle->textAlign()) {
+        case TAAUTO:
+        case JUSTIFY:
+            if (currentStyle->direction() == RTL)
+                alignment = alignRight;
+            break;
+        case LEFT:
+        case WEBKIT_LEFT:
+            break;
+        case CENTER:
+        case WEBKIT_CENTER:
+            alignment = alignCenter;
+            break;
+        case RIGHT:
+        case WEBKIT_RIGHT:
+            alignment = alignRight;
+            break;
+    }
+
+    int x = borderLeft() + paddingLeft();
+    int w = width();
+
+    switch (alignment) {
+        case alignLeft:
+            break;
+        case alignCenter:
+            x = (x + w - (borderRight() + paddingRight())) / 2;
+            break;
+        case alignRight:
+            x = w - (borderRight() + paddingRight());
+            break;
+    }
+
+    if (extraWidthToEndOfLine) {
+        if (isRenderBlock()) {
+            *extraWidthToEndOfLine = w - (x + caretWidth);
+        } else {
+            // FIXME: This code looks wrong.
+            // myRight and containerRight are set up, but then clobbered.
+            // So *extraWidthToEndOfLine will always be 0 here.
+
+            int myRight = x + caretWidth;
+            // FIXME: why call localToAbsoluteForContent() twice here, too?
+            FloatPoint absRightPoint = localToAbsolute(FloatPoint(myRight, 0));
+
+            int containerRight = containingBlock()->x() + containingBlockWidth();
+            FloatPoint absContainerPoint = localToAbsolute(FloatPoint(containerRight, 0));
+
+            *extraWidthToEndOfLine = absContainerPoint.x() - absRightPoint.x();
+        }
+    }
+
+    int y = paddingTop() + borderTop();
+
+    return IntRect(x, y, caretWidth, height);
+}
+
 const char* RenderBlock::renderName() const
 {
     if (isBody())
