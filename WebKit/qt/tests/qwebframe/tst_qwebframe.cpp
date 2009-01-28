@@ -576,6 +576,7 @@ private slots:
     void ipv6HostEncoding();
     void metaData();
     void popupFocus();
+    void hitTestContent();
 private:
     QString  evalJS(const QString&s) {
         // Convert an undefined return variant to the string "undefined"
@@ -2270,6 +2271,18 @@ void tst_QWebFrame::popupFocus()
     QTest::qWait(delay);
     QVERIFY2(m_popupTestPaintCount >= 4,
              "The input field should have a blinking caret");
+}
+
+void tst_QWebFrame::hitTestContent()
+{
+    QString html("<html><body><p>A paragraph</p><br/><br/><br/><a href=\"about:blank\">link text</a></body></html>");
+
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+    frame->setHtml(html);
+    page.setViewportSize(QSize(200, 0)); //no height so link is not visible
+    QWebHitTestResult result = frame->hitTestContent(QPoint(10, 100));
+    QCOMPARE(result.linkText(), QString("link text"));
 }
 
 QTEST_MAIN(tst_QWebFrame)

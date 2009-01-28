@@ -1,3 +1,15 @@
+2009-01-28  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Nikolas Zimmermann and George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23557
+        Do not clip the QWebFrame::hitTestContent method to the visible viewport
+        and add a regression test to make sure it works.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::hitTestContent):
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-01-28  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Simon Hausmann.

@@ -1,3 +1,20 @@
+2009-01-28  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Nikolas Zimmermann and George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23557
+        Allow option of hit testing frame content without clipping to the visible
+        viewport.
+
+        * WebCore.base.exp:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        * page/EventHandler.h:
+        * rendering/HitTestRequest.h:
+        (WebCore::HitTestRequest::HitTestRequest):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+
 2009-01-28  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Holger Freyther.
