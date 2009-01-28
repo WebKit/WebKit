@@ -69,8 +69,7 @@ namespace WTF {
 
     private:
         ByteArray(size_t size)
-            : RefCountedBase(1)
-            , m_size(size)
+            : m_size(size)
         {
         }
         size_t m_size;

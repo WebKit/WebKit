@@ -1,3 +1,22 @@
+2009-01-27  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 23490: Remove initialRefCount argument from RefCounted class
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23490>
+
+        Reviewed by Darin Adler.
+
+        RefCountedBase now always starts with a ref count of 1, so there
+        is no need to pass the initialRefCount into the class anymore.
+
+        * wtf/ByteArray.h:
+        (WTF::ByteArray::ByteArray): Removed call to RefCounted(1).
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::RefCountedBase): Changed to start with a
+        ref count of 1.
+        (WTF::RefCounted::RefCounted): Removed initialRefCount argument
+        and removed call to RefCounted(1).
+
 2009-01-26  Adele Peterson  <adele@apple.com>
 
         Build fix.  

@@ -1,3 +1,19 @@
+2009-01-27  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 23490: Remove initialRefCount argument from RefCounted class
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23490>
+
+        Reviewed by Darin Adler.
+
+        FrameLoaderClientWx is no longer a RefCounted class.
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::FrameLoaderClientWx): Removed call
+        to the RefCounted<FrameLoaderClientWx>(0) super constructor.
+        * WebKitSupport/FrameLoaderClientWx.h: Don't include RefCounted.h
+        and stop inheriting from RefCounted<FrameLoaderClientWx>.
+
 2009-01-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein

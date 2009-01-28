@@ -49,8 +49,8 @@ public:
     }
 
 protected:
-    RefCountedBase(int initialRefCount)
-        : m_refCount(initialRefCount)
+    RefCountedBase()
+        : m_refCount(1)
 #ifndef NDEBUG
         , m_deletionHasBegun(false)
 #endif
@@ -85,11 +85,6 @@ protected:
 
 template<class T> class RefCounted : public RefCountedBase {
 public:
-    RefCounted(int initialRefCount = 1)
-        : RefCountedBase(initialRefCount)
-    {
-    }
-
     void deref()
     {
         if (derefBase())
