@@ -1,3 +1,15 @@
+2009-01-28  David Hyatt  <hyatt@apple.com>
+
+        Fix for 
+
+        <rdar://problem/6531287> REGRESSION: CrashTracer: [USER] 12 crashes in Safari at com.apple.WebCore • WebCore::RenderBlock::removeFloatingObject + 59
+
+        My tightening up of markAllDescendantsWithFloatsForLayout exposed a buggy check in that code that could
+        lead to a bad cast.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markAllDescendantsWithFloatsForLayout):
+
 2009-01-27  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=23576
