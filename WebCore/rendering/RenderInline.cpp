@@ -26,6 +26,7 @@
 #include "RenderInline.h"
 
 #include "FloatQuad.h"
+#include "HitTestResult.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
 #include "RenderView.h"
@@ -35,11 +36,30 @@ namespace WebCore {
 
 RenderInline::RenderInline(Node* node)
     : RenderFlow(node)
+    , m_continuation(0)
 {
+    setChildrenInline(true);
 }
 
 RenderInline::~RenderInline()
 {
+}
+
+void RenderInline::destroy()
+{
+    // Detach our continuation first.
+    if (m_continuation)
+        m_continuation->destroy();
+    m_continuation = 0;
+    
+    RenderFlow::destroy();
+}
+
+RenderInline* RenderInline::inlineContinuation() const
+{
+    if (!m_continuation || m_continuation->isInline())
+        return static_cast<RenderInline*>(m_continuation);
+    return static_cast<RenderBlock*>(m_continuation)->inlineContinuation();
 }
 
 void RenderInline::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
@@ -55,15 +75,11 @@ void RenderInline::styleDidChange(RenderStyle::Diff diff, const RenderStyle* old
     // e.g., <font>foo <h4>goo</h4> moo</font>.  The <font> inlines before
     // and after the block share the same style, but the block doesn't
     // need to pass its style on to anyone else.
-    RenderFlow* currCont = continuation();
-    while (currCont) {
-        if (currCont->isInline()) {
-            RenderFlow* nextCont = currCont->continuation();
-            currCont->setContinuation(0);
-            currCont->setStyle(style());
-            currCont->setContinuation(nextCont);
-        }
-        currCont = currCont->continuation();
+    for (RenderInline* currCont = inlineContinuation(); currCont; currCont = currCont->inlineContinuation()) {
+        RenderBox* nextCont = currCont->continuation();
+        currCont->setContinuation(0);
+        currCont->setStyle(style());
+        currCont->setContinuation(nextCont);
     }
 
     m_lineHeight = -1;
@@ -73,11 +89,6 @@ void RenderInline::styleDidChange(RenderStyle::Diff diff, const RenderStyle* old
         updateBeforeAfterContent(RenderStyle::BEFORE);
         updateBeforeAfterContent(RenderStyle::AFTER);
     }
-}
-
-bool RenderInline::isInlineContinuation() const
-{
-    return m_isContinuation;
 }
 
 static inline bool isAfterContent(RenderObject* child)
@@ -109,7 +120,7 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
 
         RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
         newBox->setStyle(newStyle.release());
-        RenderFlow* oldContinuation = continuation();
+        RenderBox* oldContinuation = continuation();
         setContinuation(newBox);
 
         // Someone may have put a <p> inside a <q>, causing a split.  When this happens, the :after content
@@ -134,14 +145,13 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
 RenderInline* RenderInline::cloneInline(RenderFlow* src)
 {
     RenderInline* o = new (src->renderArena()) RenderInline(src->element());
-    o->m_isContinuation = true;
     o->setStyle(src->style());
     return o;
 }
 
 void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
                                 RenderBlock* middleBlock,
-                                RenderObject* beforeChild, RenderFlow* oldCont)
+                                RenderObject* beforeChild, RenderBox* oldCont)
 {
     // Create a clone of this inline.
     RenderInline* clone = cloneInline(this);
@@ -158,7 +168,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     }
 
     // Hook |clone| up as the continuation of the middle block.
-    middleBlock->setContinuation(clone);
+    middleBlock->setInlineContinuation(clone);
 
     // We have been reparented and are now under the fromBlock.  We need
     // to walk up our inline parent chain until we hit the containing block.
@@ -182,8 +192,9 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             clone->addChildToFlow(cloneChild, 0);
 
             // Hook the clone up as a continuation of |curr|.
-            RenderFlow* oldCont = curr->continuation();
-            curr->setContinuation(clone);
+            RenderInline* inlineCurr = static_cast<RenderInline*>(curr);
+            RenderBox* oldCont = inlineCurr->continuation();
+            inlineCurr->setContinuation(clone);
             clone->setContinuation(oldCont);
 
             // Someone may have indirectly caused a <q> to split.  When this happens, the :after content
@@ -223,7 +234,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
 }
 
 void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
-                             RenderObject* newChild, RenderFlow* oldCont)
+                             RenderObject* newChild, RenderBox* oldCont)
 {
     RenderBlock* pre = 0;
     RenderBlock* block = containingBlock();
@@ -361,14 +372,14 @@ VisiblePosition RenderInline::positionForCoordinates(int x, int y)
     RenderBlock* cb = containingBlock();
     int parentBlockX = cb->x() + x;
     int parentBlockY = cb->y() + y;
-    for (RenderFlow* c = continuation(); c; c = c->continuation()) {
-        RenderFlow* contBlock = c;
-        if (c->isInline())
-            contBlock = c->containingBlock();
+    RenderBox* c = continuation();
+    while (c) {
+        RenderBox* contBlock = c;
         if (c->isInline() || c->firstChild())
             return c->positionForCoordinates(parentBlockX - contBlock->x(), parentBlockY - contBlock->y());
+        c = static_cast<RenderBlock*>(c)->inlineContinuation();
     }
-
+    
     return RenderFlow::positionForCoordinates(x, y);
 }
 
@@ -457,6 +468,62 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
     }
 
     return r;
+}
+
+IntRect RenderInline::rectWithOutlineForRepaint(RenderBox* repaintContainer, int outlineWidth)
+{
+    IntRect r(RenderFlow::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+        if (!curr->isText())
+            r.unite(curr->rectWithOutlineForRepaint(repaintContainer, outlineWidth));
+    }
+    return r;
+}
+
+void RenderInline::updateDragState(bool dragOn)
+{
+    RenderFlow::updateDragState(dragOn);
+    if (continuation())
+        continuation()->updateDragState(dragOn);
+}
+
+void RenderInline::childBecameNonInline(RenderObject* child)
+{
+    // We have to split the parent flow.
+    RenderBlock* newBox = createAnonymousBlock();
+    RenderBox* oldContinuation = continuation();
+    setContinuation(newBox);
+    RenderObject* beforeChild = child->nextSibling();
+    removeChildNode(child);
+    splitFlow(beforeChild, newBox, child, oldContinuation);
+}
+
+void RenderInline::updateHitTestResult(HitTestResult& result, const IntPoint& point)
+{
+    if (result.innerNode())
+        return;
+
+    Node* node = element();
+    IntPoint localPoint(point);
+    if (node) {
+        if (isInlineContinuation()) {
+            // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space
+            // of the principal renderer's containing block.  This will end up being the innerNonSharedNode.
+            RenderBlock* firstBlock = node->renderer()->containingBlock();
+            
+            // Get our containing block.
+            RenderBox* block = toRenderBox(this);
+            if (isInline())
+                block = containingBlock();
+        
+            localPoint.move(block->x() - firstBlock->x(), block->y() - firstBlock->y());
+        }
+
+        result.setInnerNode(node);
+        if (!result.innerNonSharedNode())
+            result.setInnerNonSharedNode(node);
+        result.setLocalPoint(localPoint);
+    }
 }
 
 } // namespace WebCore

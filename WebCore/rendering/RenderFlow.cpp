@@ -58,12 +58,20 @@ RenderFlow* RenderFlow::createAnonymousFlow(Document* doc, PassRefPtr<RenderStyl
     return result;
 }
 
+// FIXME: This is temporary and will go away once we finish pushing all the continuation code down into RenderBlock and RenderInline.
+static RenderFlow* nextContinuation(RenderObject* renderer)
+{
+    if (renderer->isInline() && !renderer->isReplaced())
+        return static_cast<RenderFlow*>(static_cast<RenderInline*>(renderer)->continuation());
+    return static_cast<RenderBlock*>(renderer)->inlineContinuation();
+}
+
 RenderFlow* RenderFlow::continuationBefore(RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() == this)
         return this;
 
-    RenderFlow* curr = continuation();
+    RenderFlow* curr = nextContinuation(this);
     RenderFlow* nextToLast = this;
     RenderFlow* last = this;
     while (curr) {
@@ -75,7 +83,7 @@ RenderFlow* RenderFlow::continuationBefore(RenderObject* beforeChild)
 
         nextToLast = last;
         last = curr;
-        curr = curr->continuation();
+        curr = nextContinuation(curr);
     }
 
     if (!beforeChild && !last->firstChild())
@@ -96,10 +104,17 @@ void RenderFlow::addChildWithContinuation(RenderObject* newChild, RenderObject* 
     }
 
     RenderFlow* flow = continuationBefore(beforeChild);
-    ASSERT(!beforeChild || beforeChild->parent()->isRenderBlock() ||
-                beforeChild->parent()->isRenderInline());
-    RenderFlow* beforeChildParent = beforeChild ? static_cast<RenderFlow*>(beforeChild->parent()) : 
-                                    (flow->continuation() ? flow->continuation() : flow);
+    ASSERT(!beforeChild || beforeChild->parent()->isRenderBlock() || beforeChild->parent()->isRenderInline());
+    RenderFlow* beforeChildParent = 0;
+    if (beforeChild)
+        beforeChildParent = static_cast<RenderFlow*>(beforeChild->parent());
+    else {
+        RenderFlow* cont = nextContinuation(flow);
+        if (cont)
+            beforeChildParent = cont;
+        else
+            beforeChildParent = flow;
+    }
 
     if (newChild->isFloatingOrPositioned())
         return beforeChildParent->addChildToFlow(newChild, beforeChild);
@@ -126,7 +141,7 @@ void RenderFlow::addChildWithContinuation(RenderObject* newChild, RenderObject* 
 
 void RenderFlow::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
-    if (continuation())
+    if (nextContinuation(this))
         return addChildWithContinuation(newChild, beforeChild);
     return addChildToFlow(newChild, beforeChild);
 }
@@ -198,11 +213,6 @@ void RenderFlow::deleteLineBoxes()
 
 void RenderFlow::destroy()
 {
-    // Detach our continuation first.
-    if (m_continuation)
-        m_continuation->destroy();
-    m_continuation = 0;
-
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from.  Effects that do :before/:after only on hover could crash otherwise.
     RenderContainer::destroyLeftoverChildren();
@@ -562,10 +572,14 @@ IntRect RenderFlow::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
 void RenderFlow::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
 {
     if (isRenderBlock()) {
-        // Continuations should include their margins in the outline rect.
-        if (continuation()) {
-            bool nextInlineHasLineBox = continuation()->firstLineBox();
-            bool prevInlineHasLineBox = static_cast<RenderFlow*>(continuation()->element()->renderer())->firstLineBox();
+        // For blocks inside inlines, we go ahead and include margins so that we run right up to the
+        // inline boxes above and below us (thus getting merged with them to form a single irregular
+        // shape).
+        if (static_cast<RenderBlock*>(this)->inlineContinuation()) {
+            // FIXME: This check really isn't accurate. 
+            bool nextInlineHasLineBox = static_cast<RenderBlock*>(this)->inlineContinuation()->firstLineBox();
+            // FIXME: This is wrong. The principal renderer may not be the continuation preceding this block.
+            bool prevInlineHasLineBox = static_cast<RenderFlow*>(static_cast<RenderBlock*>(this)->inlineContinuation()->element()->renderer())->firstLineBox(); 
             int topMargin = prevInlineHasLineBox ? collapsedMarginTop() : 0;
             int bottomMargin = nextInlineHasLineBox ? collapsedMarginBottom() : 0;
             graphicsContext->addFocusRingRect(IntRect(tx, ty - topMargin, 
@@ -591,15 +605,16 @@ void RenderFlow::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int
             }
     }
 
-    if (continuation()) {
+    RenderBox* continuation = nextContinuation(this);
+    if (continuation) {
         if (isInline())
-            continuation()->addFocusRingRects(graphicsContext, 
-                                              tx - containingBlock()->x() + continuation()->x(),
-                                              ty - containingBlock()->y() + continuation()->y());
+            continuation->addFocusRingRects(graphicsContext, 
+                                            tx - containingBlock()->x() + continuation->x(),
+                                            ty - containingBlock()->y() + continuation->y());
         else
-            continuation()->addFocusRingRects(graphicsContext, 
-                                              tx - x() + continuation()->containingBlock()->x(),
-                                              ty - y() + continuation()->containingBlock()->y());
+            continuation->addFocusRingRects(graphicsContext, 
+                                            tx - x() + continuation->containingBlock()->x(),
+                                            ty - y() + continuation->containingBlock()->y());
     }
 }
 

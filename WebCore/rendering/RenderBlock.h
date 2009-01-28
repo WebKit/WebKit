@@ -36,6 +36,7 @@ namespace WebCore {
 class InlineIterator;
 class BidiRun;
 class Position;
+class RenderInline;
 class RootInlineBox;
 
 template <class Iterator, class Run> class BidiResolver;
@@ -48,6 +49,8 @@ public:
     RenderBlock(Node*);
     virtual ~RenderBlock();
 
+    virtual void destroy();
+
     virtual const char* renderName() const;
 
     // These two functions are overridden for inline-block.
@@ -58,8 +61,6 @@ public:
     virtual bool isBlockFlow() const { return (!isInline() || isReplaced()) && !isTable(); }
     virtual bool isInlineBlockOrInlineTable() const { return isInline() && isReplaced(); }
 
-    virtual bool childrenInline() const { return m_childrenInline; }
-    virtual void setChildrenInline(bool b) { m_childrenInline = b; }
     void makeChildrenNonInline(RenderObject* insertionPoint = 0);
     void deleteLineBoxTree();
 
@@ -77,8 +78,6 @@ public:
     void addVisualOverflow(const IntRect&);
 
     virtual bool isSelfCollapsingBlock() const;
-    virtual bool isTopMarginQuirk() const { return m_topMarginQuirk; }
-    virtual bool isBottomMarginQuirk() const { return m_bottomMarginQuirk; }
 
     virtual int maxTopMargin(bool positive) const { return positive ? maxTopPosMargin() : maxTopNegMargin(); }
     virtual int maxBottomMargin(bool positive) const { return positive ? maxBottomPosMargin() : maxBottomNegMargin(); }
@@ -138,7 +137,7 @@ public:
     };
 
     void bidiReorderLine(InlineBidiResolver&, const InlineIterator& end);
-    RootInlineBox* determineStartPosition(bool& fullLayout, InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats);
+    RootInlineBox* determineStartPosition(bool& firstLine, bool& fullLayout, InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats);
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, InlineIterator& cleanLineStart,
                                         BidiStatus& cleanLineBidiStatus,
                                         int& yPos);
@@ -146,12 +145,12 @@ public:
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
     bool generatesLineBoxesForInlineChild(RenderObject*);
     void skipTrailingWhitespace(InlineIterator&);
-    int skipLeadingWhitespace(InlineBidiResolver&);
-    void fitBelowFloats(int widthToFit, int& availableWidth);
-    InlineIterator findNextLineBreak(InlineBidiResolver&, EClear* clear = 0);
-    RootInlineBox* constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool lastLine, RenderObject* endObject);
-    InlineFlowBox* createLineBoxes(RenderObject*);
-    void computeHorizontalPositionsForLine(RootInlineBox*, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd);
+    int skipLeadingWhitespace(InlineBidiResolver&, bool firstLine);
+    void fitBelowFloats(int widthToFit, bool firstLine, int& availableWidth);
+    InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, EClear* clear = 0);
+    RootInlineBox* constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool firstLine, bool lastLine, RenderObject* endObject);
+    InlineFlowBox* createLineBoxes(RenderObject*, bool firstLine);
+    void computeHorizontalPositionsForLine(RootInlineBox*, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd);
     void computeVerticalPositionsForLine(RootInlineBox*, BidiRun*);
     void checkLinesForOverflow();
     void deleteEllipsisLineBoxes();
@@ -194,18 +193,18 @@ public:
     inline int rightBottom();
     IntRect floatRect() const;
 
-    virtual int lineWidth(int) const;
+    int lineWidth(int y, bool firstLine) const;
     virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
     virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
     virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
 
     int rightOffset() const;
     int rightRelOffset(int y, int fixedOffset, bool applyTextIndent = true, int* heightRemaining = 0) const;
-    int rightOffset(int y) const { return rightRelOffset(y, rightOffset(), true); }
+    int rightOffset(int y, bool firstLine) const { return rightRelOffset(y, rightOffset(), firstLine); }
 
     int leftOffset() const;
     int leftRelOffset(int y, int fixedOffset, bool applyTextIndent = true, int* heightRemaining = 0) const;
-    int leftOffset(int y) const { return leftRelOffset(y, leftOffset(), true); }
+    int leftOffset(int y, bool firstLine) const { return leftRelOffset(y, leftOffset(), firstLine); }
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
@@ -237,11 +236,15 @@ public:
 
     bool inRootBlockContext() const;
 
-    void setHasMarkupTruncation(bool b = true) { m_hasMarkupTruncation = b; }
-    bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
+    virtual IntRect rectWithOutlineForRepaint(RenderBox* repaintContainer, int outlineWidth);
+    virtual RenderStyle* outlineStyleForRepaint() const;
+    
+    virtual RenderObject* hoverAncestor() const;
+    virtual void updateDragState(bool dragOn);
+    virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
+    
+    virtual void childBecameNonInline(RenderObject* child);
 
-    virtual bool hasSelectedChildren() const { return m_selectionState != SelectionNone; }
-    virtual SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
     virtual void setSelectionState(SelectionState s);
 
     struct BlockSelectionInfo {
@@ -289,6 +292,9 @@ public:
     int leftSelectionOffset(RenderBlock* rootBlock, int y);
     int rightSelectionOffset(RenderBlock* rootBlock, int y);
 
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
+
     // Helper methods for computing line counts and heights for line counts.
     RootInlineBox* lineAtIndex(int);
     int lineCount();
@@ -302,8 +308,11 @@ public:
     
     void adjustRectForColumns(IntRect&) const;
 
-    void addContinuationWithOutline(RenderFlow*);
+    void addContinuationWithOutline(RenderInline*);
     void paintContinuationOutlines(PaintInfo&, int tx, int ty);
+
+    RenderInline* inlineContinuation() const { return m_inlineContinuation; }
+    void setInlineContinuation(RenderInline* c) { m_inlineContinuation = c; }
 
 private:
     void adjustPointToColumnContents(IntPoint&) const;
@@ -447,7 +456,13 @@ private:
     typedef ListHashSet<RenderBox*>::const_iterator Iterator;
     DeprecatedPtrList<FloatingObject>* m_floatingObjects;
     ListHashSet<RenderBox*>* m_positionedObjects;
-         
+
+    // An inline can be split with blocks occurring in between the inline content.
+    // When this occurs we need a pointer to our next object.  We can basically be
+    // split into a sequence of inlines and blocks.  The continuation will either be
+    // an anonymous block (that houses other blocks) or it will be an inline flow.
+    RenderInline* m_inlineContinuation;
+
     // Allocated only when some of these fields have non-default values
     struct MaxMargin {
         MaxMargin(const RenderBlock* o) 

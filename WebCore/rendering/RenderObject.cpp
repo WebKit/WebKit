@@ -183,6 +183,13 @@ RenderObject::RenderObject(Node* node)
     , m_hasOverrideSize(false)
     , m_hasCounterNodeMap(false)
     , m_everHadLayout(false)
+    , m_childrenInline(false)
+    , m_topMarginQuirk(false) 
+    , m_bottomMarginQuirk(false)
+    , m_hasMarkupTruncation(false)
+    , m_selectionState(SelectionNone)
+    , m_hasColumns(false)
+    , m_cellWidthChanged(false)
 {
 #ifndef NDEBUG
     renderObjectCounter.increment();
@@ -223,11 +230,6 @@ bool RenderObject::isHTMLMarquee() const
 }
 
 bool RenderObject::canHaveChildren() const
-{
-    return false;
-}
-
-bool RenderObject::isInlineContinuation() const
 {
     return false;
 }
@@ -1763,8 +1765,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBox* repaintContainer, const
 
     // We didn't move, but we did change size.  Invalidate the delta, which will consist of possibly
     // two rectangles (but typically only one).
-    RenderFlow* continuation = virtualContinuation();
-    RenderStyle* outlineStyle = !isInline() && continuation ? continuation->style() : style();
+    RenderStyle* outlineStyle = outlineStyleForRepaint();
     int ow = outlineStyle->outlineSize();
     ShadowData* boxShadow = style()->boxShadow();
     int width = abs(newOutlineBox.width() - oldOutlineBox.width());
@@ -1826,17 +1827,6 @@ IntRect RenderObject::rectWithOutlineForRepaint(RenderBox* repaintContainer, int
 {
     IntRect r(clippedOverflowRectForRepaint(repaintContainer));
     r.inflate(outlineWidth);
-
-    if (virtualContinuation() && !isInline())
-        r.inflateY(toRenderBox(this)->collapsedMarginTop());
-
-    if (isRenderInline()) {
-        for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-            if (!curr->isText())
-                r.unite(curr->rectWithOutlineForRepaint(repaintContainer, outlineWidth));
-        }
-    }
-
     return r;
 }
 
@@ -1985,26 +1975,9 @@ void RenderObject::handleDynamicFloatPositionChange()
     // childrenInline() state and our state.
     setInline(style()->isDisplayInlineType());
     if (isInline() != parent()->childrenInline()) {
-        if (!isInline()) {
-            if (parent()->isRenderInline()) {
-                // We have to split the parent flow.
-                RenderInline* parentInline = static_cast<RenderInline*>(parent());
-                RenderBlock* newBox = parentInline->createAnonymousBlock();
-
-                RenderFlow* oldContinuation = parentInline->continuation();
-                parentInline->setContinuation(newBox);
-
-                RenderObject* beforeChild = nextSibling();
-                parent()->removeChildNode(this);
-                parentInline->splitFlow(beforeChild, newBox, this, oldContinuation);
-            } else if (parent()->isRenderBlock()) {
-                RenderBlock* o = static_cast<RenderBlock*>(parent());
-                o->makeChildrenNonInline();
-                if (o->isAnonymousBlock() && o->parent())
-                    o->parent()->removeLeftoverAnonymousBlock(o);
-                // o may be dead here
-            }
-        } else {
+        if (!isInline())
+            static_cast<RenderBox*>(parent())->childBecameNonInline(this);
+        else {
             // An anonymous block must be made to wrap this inline.
             RenderBlock* box = createAnonymousBlock();
             parent()->insertChildNode(box, this);
@@ -2278,13 +2251,6 @@ RenderObject* RenderObject::container() const
     return o;
 }
 
-// This code has been written to anticipate the addition of CSS3-::outside and ::inside generated
-// content (and perhaps XBL).  That's why it uses the render tree and not the DOM tree.
-RenderObject* RenderObject::hoverAncestor() const
-{
-    return (!isInline() && virtualContinuation()) ? virtualContinuation() : parent();
-}
-
 bool RenderObject::isSelectionBorder() const
 {
     SelectionState st = selectionState();
@@ -2401,9 +2367,6 @@ void RenderObject::updateDragState(bool dragOn)
         element()->setChanged();
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
         curr->updateDragState(dragOn);
-    RenderFlow* continuation = virtualContinuation();
-    if (continuation)
-        continuation->updateDragState(dragOn);
 }
 
 bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result, const IntPoint& point, int tx, int ty, HitTestFilter hitTestFilter)
@@ -2435,33 +2398,11 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const IntPoint& po
         return;
 
     Node* node = element();
-    IntPoint localPoint(point);
-    if (isRenderView())
-        node = document()->documentElement();
-    else if (!isInline() && virtualContinuation())
-        // We are in the margins of block elements that are part of a continuation.  In
-        // this case we're actually still inside the enclosing inline element that was
-        // split.  Go ahead and set our inner node accordingly.
-        node = virtualContinuation()->element();
-
     if (node) {
-        if (node->renderer() && node->renderer()->virtualContinuation() && node->renderer() != this) {
-            // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space
-            // of the principal renderer's containing block.  This will end up being the innerNonSharedNode.
-            RenderBlock* firstBlock = node->renderer()->containingBlock();
-            
-            // Get our containing block.
-            RenderBox* block = toRenderBox(this);
-            if (isInline())
-                block = containingBlock();
-        
-            localPoint.move(block->x() - firstBlock->x(), block->y() - firstBlock->y());
-        }
-
         result.setInnerNode(node);
         if (!result.innerNonSharedNode())
             result.setInnerNonSharedNode(node);
-        result.setLocalPoint(localPoint);
+        result.setLocalPoint(point);
     }
 }
 
@@ -2690,8 +2631,8 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
             }
         }
         curr = curr->parent();
-        if (curr && curr->isRenderBlock() && curr->virtualContinuation())
-            curr = curr->virtualContinuation();
+        if (curr && curr->isRenderBlock() && static_cast<RenderBlock*>(curr)->inlineContinuation())
+            curr = static_cast<RenderBlock*>(curr)->inlineContinuation();
     } while (curr && decorations && (!quirksMode || !curr->element() ||
                                      (!curr->element()->hasTagName(aTag) && !curr->element()->hasTagName(fontTag))));
 
@@ -2837,7 +2778,7 @@ int RenderObject::nextOffset(int current) const
 
 void RenderObject::adjustRectForOutlineAndShadow(IntRect& rect) const
 {
-    int outlineSize = !isInline() && virtualContinuation() ? virtualContinuation()->style()->outlineSize() : style()->outlineSize();
+    int outlineSize = outlineStyleForRepaint()->outlineSize();
     if (ShadowData* boxShadow = style()->boxShadow()) {
         int shadowLeft = 0;
         int shadowRight = 0;

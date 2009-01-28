@@ -60,7 +60,6 @@ public:
 
     bool isInside() const;
 
-    virtual SelectionState selectionState() const { return m_selectionState; }
     virtual void setSelectionState(SelectionState);
     virtual IntRect selectionRect(bool clipToVisibleContent = true);
     virtual bool canBeSelectionLeaf() const { return true; }
@@ -77,7 +76,6 @@ private:
     String m_text;
     RefPtr<StyleImage> m_image;
     RenderListItem* m_listItem;
-    SelectionState m_selectionState;
 };
 
 } // namespace WebCore

@@ -59,7 +59,6 @@ public:
     virtual VisiblePosition positionForCoordinates(int x, int y);
     
     virtual bool canBeSelectionLeaf() const { return true; }
-    virtual SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
     virtual void setSelectionState(SelectionState);
     virtual IntRect selectionRect(bool clipToVisibleContent = true);
 
@@ -77,9 +76,7 @@ protected:
 
 private:
     IntSize m_intrinsicSize;
-    
-    unsigned m_selectionState : 3; // SelectionState
-    bool m_hasOverflow : 1;
+    bool m_hasOverflow;
 };
 
 }

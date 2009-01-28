@@ -770,7 +770,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 if (destBlock->style()->direction() != LTR)
                     continue;
 
-                int blockEdge = destBlock->rightOffset(lastVisibleLine->yPos());
+                int blockEdge = destBlock->rightOffset(lastVisibleLine->yPos(), false);
                 if (!lastVisibleLine->canAccommodateEllipsis(true, blockEdge, 
                                                              lastVisibleLine->xPos() + lastVisibleLine->width(),
                                                              totalWidth))

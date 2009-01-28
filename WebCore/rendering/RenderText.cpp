@@ -60,7 +60,6 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
      , m_maxWidth(-1)
      , m_beginMinWidth(0)
      , m_endMinWidth(0)
-     , m_selectionState(SelectionNone)
      , m_hasTab(false)
      , m_linesDirty(false)
      , m_containsReversedText(false)
@@ -394,7 +393,7 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
 
     RenderBlock* cb = containingBlock();
     if (style()->autoWrap()) {
-        int availableWidth = cb->lineWidth(top);
+        int availableWidth = cb->lineWidth(top, false);
         if (box->direction() == LTR)
             left = min(left, rootLeft + availableWidth - 1);
         else
@@ -750,7 +749,7 @@ void RenderText::setSelectionState(SelectionState state)
 {
     InlineTextBox* box;
 
-    m_selectionState = state;
+    RenderObject::setSelectionState(state);
     if (state == SelectionStart || state == SelectionEnd || state == SelectionBoth) {
         int startPos, endPos;
         selectionStartEnd(startPos, endPos);

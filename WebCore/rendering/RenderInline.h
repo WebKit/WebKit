@@ -36,18 +36,17 @@ public:
     RenderInline(Node*);
     virtual ~RenderInline();
 
+    virtual void destroy();
+
     virtual const char* renderName() const;
 
     virtual bool isRenderInline() const { return true; }
-    virtual bool childrenInline() const { return true; }
-
-    virtual bool isInlineContinuation() const;
 
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
     void splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock,
-                      RenderObject* beforeChild, RenderFlow* oldCont);
+                      RenderObject* beforeChild, RenderBox* oldCont);
     void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
-                   RenderObject* newChild, RenderFlow* oldCont);
+                   RenderObject* newChild, RenderBox* oldCont);
 
     virtual void layout() { } // Do nothing for layout()
 
@@ -62,10 +61,11 @@ public:
     virtual int offsetWidth() const { return linesBoundingBox().width(); }
     virtual int offsetHeight() const { return linesBoundingBox().height(); }
 
-    void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBox* repaintContainer);
+    virtual IntRect rectWithOutlineForRepaint(RenderBox* repaintContainer, int outlineWidth);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
@@ -77,11 +77,24 @@ public:
         return IntRect(0, 0, boundingBox.width(), boundingBox.height());
     }
 
+    RenderBox* continuation() const { return m_continuation; }
+    RenderInline* inlineContinuation() const;
+    void setContinuation(RenderBox* c) { m_continuation = c; }
+    
+    virtual void updateDragState(bool dragOn);
+    
+    virtual void childBecameNonInline(RenderObject* child);
+
+    virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
+
 protected:
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
 
     static RenderInline* cloneInline(RenderFlow* src);
 
+private:
+    RenderBox* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the
+                               // <b> will just have an inline as its continuation.
 };
 
 } // namespace WebCore

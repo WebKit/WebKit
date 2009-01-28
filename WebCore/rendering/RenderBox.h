@@ -138,7 +138,7 @@ public:
     virtual int borderLeft() const { return style()->borderLeftWidth(); }
     virtual int borderRight() const { return style()->borderRightWidth(); }
 
-    // The following seven functions are used to implement collapsing margins.
+    // The following five functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The
     // formula for computing a collapsed margin is |maxPosMargin| - |maxNegmargin|.
     // For a non-collapsing box, such as a leaf element, this formula will simply return
@@ -147,8 +147,6 @@ public:
     virtual bool isSelfCollapsingBlock() const { return false; }
     int collapsedMarginTop() const { return maxTopMargin(true) - maxTopMargin(false); }
     int collapsedMarginBottom() const { return maxBottomMargin(true) - maxBottomMargin(false); }
-    virtual bool isTopMarginQuirk() const { return false; }
-    virtual bool isBottomMarginQuirk() const { return false; }
     virtual int maxTopMargin(bool positive) const { return positive ? std::max(0, marginTop()) : -std::min(0, marginTop()); }
     virtual int maxBottomMargin(bool positive) const { return positive ? std::max(0, marginBottom()) : -std::min(0, marginBottom()); }
 
@@ -299,7 +297,9 @@ public:
     }
 
     IntRect maskClipRect();
-    
+
+    virtual void childBecameNonInline(RenderObject* /*child*/) { }
+
 #if ENABLE(SVG)
     virtual TransformationMatrix localTransform() const;
 #endif

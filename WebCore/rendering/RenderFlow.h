@@ -40,28 +40,15 @@ class RenderFlow : public RenderContainer {
 public:
     RenderFlow(Node* node)
         : RenderContainer(node)
-        , m_continuation(0)
         , m_firstLineBox(0)
         , m_lastLineBox(0)
         , m_lineHeight(-1)
-        , m_childrenInline(true)
-        , m_firstLine(false)
-        , m_topMarginQuirk(false) 
-        , m_bottomMarginQuirk(false)
-        , m_hasMarkupTruncation(false)
-        , m_selectionState(SelectionNone)
-        , m_hasColumns(false)
-        , m_isContinuation(false)
-        , m_cellWidthChanged(false)
     {
     }
 #ifndef NDEBUG
     virtual ~RenderFlow();
 #endif
 
-    virtual RenderFlow* virtualContinuation() const { return continuation(); }
-    RenderFlow* continuation() const { return m_continuation; }
-    void setContinuation(RenderFlow* c) { m_continuation = c; }
     RenderFlow* continuationBefore(RenderObject* beforeChild);
 
     void addChildWithContinuation(RenderObject* newChild, RenderObject* beforeChild);
@@ -95,18 +82,9 @@ public:
     void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine, const IntRect& nextLine);
     void paintOutline(GraphicsContext*, int tx, int ty);
 
-    virtual bool hasColumns() const { return m_hasColumns; }
-
     void calcMargins(int containerWidth);
 
     void checkConsistency() const;
-
-private:
-    // An inline can be split with blocks occurring in between the inline content.
-    // When this occurs we need a pointer to our next object.  We can basically be
-    // split into a sequence of inlines and blocks.  The continuation will either be
-    // an anonymous block (that houses other blocks) or it will be an inline flow.
-    RenderFlow* m_continuation;
 
 protected:
     // For block flows, each box represents the root inline box for a line in the
@@ -116,22 +94,6 @@ protected:
     InlineFlowBox* m_lastLineBox;
 
     mutable int m_lineHeight;
-    
-    // These bitfields are moved here from subclasses to pack them together
-    // from RenderBlock
-    bool m_childrenInline : 1;
-    bool m_firstLine : 1;
-    bool m_topMarginQuirk : 1;
-    bool m_bottomMarginQuirk : 1;
-    bool m_hasMarkupTruncation : 1;
-    unsigned m_selectionState : 3; // SelectionState
-    bool m_hasColumns : 1;
-    
-    // from RenderInline
-    bool m_isContinuation : 1; // Whether or not we're a continuation of an inline.
-    
-    // from RenderTableCell
-    bool m_cellWidthChanged : 1;
 };
 
 #ifdef NDEBUG

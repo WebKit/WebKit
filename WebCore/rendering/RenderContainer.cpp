@@ -276,7 +276,7 @@ void RenderContainer::updateBeforeAfterContentForContainer(RenderStyle::PseudoId
 
     // For <q><p/></q>, if this object is the inline continuation of the <q>, we only want to generate
     // :after content and not :before content.
-    if (newContentWanted && type == RenderStyle::BEFORE && isInlineContinuation())
+    if (newContentWanted && type == RenderStyle::BEFORE && isRenderInline() && static_cast<RenderInline*>(this)->isInlineContinuation())
         newContentWanted = false;
 
     // Similarly, if we're the beginning of a <q>, and there's an inline continuation for our object,
@@ -542,7 +542,7 @@ void RenderContainer::removeLeftoverAnonymousBlock(RenderBlock* child)
     ASSERT(child->isAnonymousBlock());
     ASSERT(!child->childrenInline());
     
-    if (child->continuation()) 
+    if (child->inlineContinuation()) 
         return;
     
     RenderObject* firstAnChild = child->firstChild();

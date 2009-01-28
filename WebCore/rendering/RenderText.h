@@ -94,7 +94,6 @@ public:
     void setTextWithOffset(PassRefPtr<StringImpl>, unsigned offset, unsigned len, bool force = false);
 
     virtual bool canBeSelectionLeaf() const { return true; }
-    virtual SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
     virtual void setSelectionState(SelectionState s);
     virtual IntRect selectionRect(bool clipToVisibleContent = true);
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
@@ -155,7 +154,6 @@ private:
     int m_beginMinWidth;
     int m_endMinWidth;
 
-    unsigned m_selectionState : 3; // enums on Windows are signed, so this needs to be unsigned to prevent it turning negative. 
     bool m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.
     bool m_hasBreak : 1; // Whether or not we have a hard break (e.g., <pre> with '\n').
     bool m_hasTab : 1; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').

@@ -27,6 +27,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
 #include "RenderLayer.h"
 
 namespace WebCore {
@@ -609,6 +610,20 @@ void RenderView::pushLayoutState(RenderObject* root)
     ASSERT(m_layoutState == 0);
 
     m_layoutState = new (renderArena()) LayoutState(root);
+}
+
+void RenderView::updateHitTestResult(HitTestResult& result, const IntPoint& point)
+{
+    if (result.innerNode())
+        return;
+
+    Node* node = document()->documentElement();
+    if (node) {
+        result.setInnerNode(node);
+        if (!result.innerNonSharedNode())
+            result.setInnerNonSharedNode(node);
+        result.setLocalPoint(point);
+    }
 }
 
 } // namespace WebCore

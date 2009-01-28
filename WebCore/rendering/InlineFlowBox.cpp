@@ -29,6 +29,7 @@
 #include "RootInlineBox.h"
 #include "RenderBlock.h"
 #include "RenderFlow.h"
+#include "RenderInline.h"
 #include "RenderListMarker.h"
 #include "RenderTableCell.h"
 #include "RootInlineBox.h"
@@ -247,13 +248,14 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
         // (3) The line may end on the inline.  If we are the last child (climbing up
         // the end object's chain), then we just closed as well.
         if (!flow->lastLineBox()->isConstructed()) {
+            RenderInline* inlineFlow = static_cast<RenderInline*>(flow);
             if (ltr) {
                 if (!nextLineBox() &&
-                    ((lastLine && !flow->continuation()) || nextOnLineExists() || onEndChain(endObject)))
+                    ((lastLine && !inlineFlow->continuation()) || nextOnLineExists() || onEndChain(endObject)))
                     includeRightEdge = true;
             } else {
                 if ((!prevLineBox() || prevLineBox()->isConstructed()) &&
-                    ((lastLine && !flow->continuation()) || prevOnLineExists() || onEndChain(endObject)))
+                    ((lastLine && !inlineFlow->continuation()) || prevOnLineExists() || onEndChain(endObject)))
                     includeLeftEdge = true;
             }
         }
@@ -625,12 +627,13 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
             // Add ourselves to the paint info struct's list of inlines that need to paint their
             // outlines.
             if (object()->style()->visibility() == VISIBLE && object()->hasOutline() && !isRootInlineBox()) {
-                if ((flowObject()->continuation() || object()->isInlineContinuation()) && !object()->hasLayer()) {
+                RenderInline* inlineFlow = static_cast<RenderInline*>(object());
+                if ((inlineFlow->continuation() || inlineFlow->isInlineContinuation()) && !object()->hasLayer()) {
                     // Add ourselves to the containing block of the entire continuation so that it can
                     // paint us atomically.
                     RenderBlock* block = object()->containingBlock()->containingBlock();
-                    block->addContinuationWithOutline(static_cast<RenderFlow*>(object()->element()->renderer()));
-                } else if (!object()->isInlineContinuation())
+                    block->addContinuationWithOutline(static_cast<RenderInline*>(object()->element()->renderer()));
+                } else if (!inlineFlow->isInlineContinuation())
                     paintInfo.outlineObjects->add(flowObject());
             }
         } else if (paintInfo.phase == PaintPhaseMask) {

@@ -1,3 +1,197 @@
+2009-01-27  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=23576
+
+        Work towards eliminating RenderFlow from the tree.
+        
+        Move the m_continuation variable down from RenderFlow into RenderInline and RenderBlock.  Since a block can only have an inline continuation following it, the type
+        of the member and methods reflect this (inlineContinuation() and m_inlineContinuation).  Since an inline can have either a block or an inline continuation following it,
+        a base class of RenderBox* is used for the type of object returned (in anticipation of the removal of RenderFlow).
+        
+        Since moving the continuation variable down into the subclasses increased the size of RenderInline and RenderBlock by 4 bytes, this patch also moves all of the bitfield
+        members of RenderFlow up to RenderObject.  Since they fit within the available bits on RenderObject, this patch actually results in a net savings of 4 bytes on RenderInlines
+        and RenderBlocks!
+        
+        One bitfield member was eliminated rather than moved: m_firstLine.  This was really more of a state variable used during line layout only, so I removed it as a member
+        and just passed firstLine down to various methods as needed.  Doing so uncovered some potential bugs where the first line state was not being respected when querying for
+        line offsets.
+
+        Continuations have been completely hidden from all files except for RenderFlow, RenderBlock and RenderInline.  All of the code that referenced continuations directly
+        from base classes has been refactored to use virtual methods on RenderBlock and RenderInline instead.
+        
+        RenderFlow still has a common addChildWithContinuation method that is used by both blocks and inlines.  Since refactoring that method will be pretty tricky, I've held
+        off on that for a later patch.
+
+        Reviewed by Oliver Hunt
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::InlineFlowBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::destroy):
+        (WebCore::RenderBlock::addChildToFlow):
+        (WebCore::RenderBlock::makeChildrenNonInline):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::expandsToEncloseOverhangingFloats):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        (WebCore::RenderBlock::setCollapsedBottomMargin):
+        (WebCore::RenderBlock::layoutOnlyPositionedObjects):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::addContinuationWithOutline):
+        (WebCore::RenderBlock::setSelectionState):
+        (WebCore::RenderBlock::shouldPaintSelectionGaps):
+        (WebCore::RenderBlock::fillSelectionGaps):
+        (WebCore::RenderBlock::leftSelectionOffset):
+        (WebCore::RenderBlock::rightSelectionOffset):
+        (WebCore::RenderBlock::leftOffset):
+        (WebCore::RenderBlock::leftRelOffset):
+        (WebCore::RenderBlock::rightOffset):
+        (WebCore::RenderBlock::rightRelOffset):
+        (WebCore::RenderBlock::lineWidth):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::getClearDelta):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::offsetForContents):
+        (WebCore::RenderBlock::availableWidth):
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth):
+        (WebCore::RenderBlock::desiredColumnWidth):
+        (WebCore::RenderBlock::desiredColumnCount):
+        (WebCore::RenderBlock::columnRects):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::adjustPointToColumnContents):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::absoluteRects):
+        (WebCore::RenderBlock::absoluteQuads):
+        (WebCore::RenderBlock::rectWithOutlineForRepaint):
+        (WebCore::RenderBlock::hoverAncestor):
+        (WebCore::RenderBlock::updateDragState):
+        (WebCore::RenderBlock::outlineStyleForRepaint):
+        (WebCore::RenderBlock::childBecameNonInline):
+        (WebCore::RenderBlock::updateHitTestResult):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::rightOffset):
+        (WebCore::RenderBlock::leftOffset):
+        (WebCore::RenderBlock::inlineContinuation):
+        (WebCore::RenderBlock::setInlineContinuation):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteRects):
+        (WebCore::RenderBox::absoluteQuads):
+        (WebCore::RenderBox::addFocusRingRects):
+        (WebCore::RenderBox::containingBlockWidth):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::collapsedMarginBottom):
+        (WebCore::RenderBox::childBecameNonInline):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer):
+        (WebCore::RenderContainer::removeLeftoverAnonymousBlock):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderFlow.cpp:
+        (WebCore::nextContinuation):
+        (WebCore::RenderFlow::continuationBefore):
+        (WebCore::RenderFlow::addChildWithContinuation):
+        (WebCore::RenderFlow::addChild):
+        (WebCore::RenderFlow::destroy):
+        (WebCore::RenderFlow::addFocusRingRects):
+        * rendering/RenderFlow.h:
+        (WebCore::RenderFlow::RenderFlow):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        (WebCore::RenderInline::destroy):
+        (WebCore::RenderInline::inlineContinuation):
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::addChildToFlow):
+        (WebCore::RenderInline::cloneInline):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::splitFlow):
+        (WebCore::RenderInline::positionForCoordinates):
+        (WebCore::RenderInline::rectWithOutlineForRepaint):
+        (WebCore::RenderInline::updateDragState):
+        (WebCore::RenderInline::childBecameNonInline):
+        (WebCore::RenderInline::updateHitTestResult):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::isRenderInline):
+        (WebCore::RenderInline::continuation):
+        (WebCore::RenderInline::setContinuation):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::RenderListMarker):
+        (WebCore::RenderListMarker::setSelectionState):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::rectWithOutlineForRepaint):
+        (WebCore::RenderObject::handleDynamicFloatPositionChange):
+        (WebCore::RenderObject::updateDragState):
+        (WebCore::RenderObject::updateHitTestResult):
+        (WebCore::RenderObject::getTextDecorationColors):
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isInlineBlockOrInlineTable):
+        (WebCore::RenderObject::childrenInline):
+        (WebCore::RenderObject::setChildrenInline):
+        (WebCore::RenderObject::hasColumns):
+        (WebCore::RenderObject::setHasColumns):
+        (WebCore::RenderObject::cellWidthChanged):
+        (WebCore::RenderObject::setCellWidthChanged):
+        (WebCore::RenderObject::isInlineContinuation):
+        (WebCore::RenderObject::hoverAncestor):
+        (WebCore::RenderObject::outlineStyleForRepaint):
+        (WebCore::RenderObject::setHasMarkupTruncation):
+        (WebCore::RenderObject::hasMarkupTruncation):
+        (WebCore::RenderObject::selectionState):
+        (WebCore::RenderObject::setSelectionState):
+        (WebCore::RenderObject::hasSelectedChildren):
+        (WebCore::RenderObject::isTopMarginQuirk):
+        (WebCore::RenderObject::isBottomMarginQuirk):
+        (WebCore::RenderObject::setTopMarginQuirk):
+        (WebCore::RenderObject::setBottomMarginQuirk):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::RenderReplaced):
+        (WebCore::RenderReplaced::setSelectionState):
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::canBeSelectionLeaf):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcWidth):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::updateWidth):
+        (WebCore::RenderTableCell::layout):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::localCaretRect):
+        (WebCore::RenderText::setSelectionState):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::canBeSelectionLeaf):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::updateHitTestResult):
+        * rendering/RenderView.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::selectionTop):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::createLineBoxes):
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::skipTrailingWhitespace):
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        (WebCore::RenderBlock::fitBelowFloats):
+        (WebCore::RenderBlock::findNextLineBreak):
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+
 2009-01-28  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Nikolas Zimmermann and George Staikos.

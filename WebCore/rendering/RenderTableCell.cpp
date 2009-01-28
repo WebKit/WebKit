@@ -127,14 +127,14 @@ void RenderTableCell::updateWidth(int w)
 {
     if (w != width()) {
         setWidth(w);
-        m_cellWidthChanged = true;
+        setCellWidthChanged(true);
     }
 }
 
 void RenderTableCell::layout()
 {
-    layoutBlock(m_cellWidthChanged);
-    m_cellWidthChanged = false;
+    layoutBlock(cellWidthChanged());
+    setCellWidthChanged(false);
 }
 
 int RenderTableCell::paddingTop(bool includeIntrinsicPadding) const
