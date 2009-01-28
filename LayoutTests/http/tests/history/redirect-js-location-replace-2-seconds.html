@@ -1,0 +1,15 @@
+<html>
+<head>
+<title>JavaScript Redirect</title>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.keepWebHistory();
+    layoutTestController.waitUntilDone();
+}
+setTimeout(function () { location.replace("resources/redirect-target.html?1"); }, 2000);
+</script>
+</head>
+
+<body>This page is a JavaScript redirect on a 2 second delay.</body>
+</html>

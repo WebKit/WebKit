@@ -1,0 +1,38 @@
+<!-- This page accepts a query string specifying how many history items should
+be present once it finishes loading. -->
+
+<html>
+<head>
+<title>Redirect Target</title>
+
+<script>
+function log(s)
+{
+    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+}
+
+function testHistoryItemCount()
+{
+    var expected = parseInt(location.search.slice(1));
+    var actual = layoutTestController.webHistoryItemCount + 1; // Add one to include the referring page, which loaded before we started recording history.
+    if (actual === expected)
+        log("PASS: History item count should be " + expected + " and is.");
+    else
+        log("FAIL: History item count should be " + expected + " but instead is " + actual + ".");
+}
+
+window.addEventListener("load", function () {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        testHistoryItemCount();
+        layoutTestController.notifyDone();
+    }
+}, false);
+</script>
+</head>
+
+<body>
+<p>This page is the target of a redirect.</p>
+<pre id="console"></pre>
+</body>
+</html>

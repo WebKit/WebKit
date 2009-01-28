@@ -1,3 +1,60 @@
+2009-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added layout tests for how many history items are created during a
+        redirect. (Many of these results are expected failures for now.)
+
+        * http/tests/history: Added.
+        * http/tests/history/redirect-200-refresh-0-seconds-expected.txt: Added.
+        * http/tests/history/redirect-200-refresh-0-seconds.pl: Added.
+        * http/tests/history/redirect-200-refresh-2-seconds-expected.txt: Added.
+        * http/tests/history/redirect-200-refresh-2-seconds.pl: Added.
+        * http/tests/history/redirect-301-expected.txt: Added.
+        * http/tests/history/redirect-301.pl: Added.
+        * http/tests/history/redirect-302-expected.txt: Added.
+        * http/tests/history/redirect-302.pl: Added.
+        * http/tests/history/redirect-303-expected.txt: Added.
+        * http/tests/history/redirect-303.pl: Added.
+        * http/tests/history/redirect-307-expected.txt: Added.
+        * http/tests/history/redirect-307.pl: Added.
+        * http/tests/history/redirect-js-document-location-0-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-document-location-0-seconds.html: Added.
+        * http/tests/history/redirect-js-document-location-2-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-document-location-2-seconds.html: Added.
+        * http/tests/history/redirect-js-document-location-before-load-expected.txt: Added.
+        * http/tests/history/redirect-js-document-location-before-load.html: Added.
+        * http/tests/history/redirect-js-location-0-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-location-0-seconds.html: Added.
+        * http/tests/history/redirect-js-location-2-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-location-2-seconds.html: Added.
+        * http/tests/history/redirect-js-location-assign-0-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-location-assign-0-seconds.html: Added.
+        * http/tests/history/redirect-js-location-assign-2-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-location-assign-2-seconds.html: Added.
+        * http/tests/history/redirect-js-location-assign-before-load-expected.txt: Added.
+        * http/tests/history/redirect-js-location-assign-before-load.html: Added.
+        * http/tests/history/redirect-js-location-before-load-expected.txt: Added.
+        * http/tests/history/redirect-js-location-before-load.html: Added.
+        * http/tests/history/redirect-js-location-href-0-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-location-href-0-seconds.html: Added.
+        * http/tests/history/redirect-js-location-href-2-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-location-href-2-seconds.html: Added.
+        * http/tests/history/redirect-js-location-href-before-load-expected.txt: Added.
+        * http/tests/history/redirect-js-location-href-before-load.html: Added.
+        * http/tests/history/redirect-js-location-replace-0-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-location-replace-0-seconds.html: Added.
+        * http/tests/history/redirect-js-location-replace-2-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-location-replace-2-seconds.html: Added.
+        * http/tests/history/redirect-js-location-replace-before-load-expected.txt: Added.
+        * http/tests/history/redirect-js-location-replace-before-load.html: Added.
+        * http/tests/history/redirect-meta-refresh-0-seconds-expected.txt: Added.
+        * http/tests/history/redirect-meta-refresh-0-seconds.html: Added.
+        * http/tests/history/redirect-meta-refresh-2-seconds-expected.txt: Added.
+        * http/tests/history/redirect-meta-refresh-2-seconds.html: Added.
+        * http/tests/history/resources: Added.
+        * http/tests/history/resources/redirect-target.html: Added.
+
 2009-01-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
