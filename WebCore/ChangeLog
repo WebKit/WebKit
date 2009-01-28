@@ -1,5 +1,18 @@
 2009-01-28  David Hyatt  <hyatt@apple.com>
 
+        Move calcMargins from RenderFlow to RenderInline, since it was only ever called on RenderInlines.
+
+        Reviewed by Oliver Hunt
+
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::calcMargins):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
+2009-01-28  David Hyatt  <hyatt@apple.com>
+
         Refactor the first and last line box member variables from RenderFlow.  Encapsulate them into a new class called RenderLineBoxList that manages all modifications to
         the list.  This change will make it easier to give RenderInline and RenderBlock separate versions of the line box list without having to duplicate very much code.
 

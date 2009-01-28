@@ -825,7 +825,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 
                 // Calculate margins of inline flows so that they can be used later by line layout.
                 if (o->isRenderInline())
-                    static_cast<RenderFlow*>(o)->calcMargins(containerWidth);
+                    static_cast<RenderInline*>(o)->calcMargins(containerWidth);
                 o->setNeedsLayout(false);
             }
             o = bidiNext(this, o, 0, false, &endOfInline);
