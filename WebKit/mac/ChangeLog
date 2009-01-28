@@ -1,3 +1,16 @@
+2009-01-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix two bugs with Core Animation based plug-ins.
+        
+        1. The plug-in view was marked as opaque even though it's not. 
+           (This would leave garbage in the plug-in view).
+        2. The plug-in layer needs to have autoresizing turned on.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView setLayer:]):
+
 2009-01-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein

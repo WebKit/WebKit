@@ -1076,9 +1076,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)setLayer:(CALayer *)newLayer
 {
     [super setLayer:newLayer];
-    
-    if (_pluginLayer)
+
+    if (_pluginLayer) {
+        _pluginLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
         [newLayer addSublayer:_pluginLayer.get()];
+    }
 }
 #endif
 
@@ -1934,11 +1936,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     LOG(Plugins, "NPN_InvalidateRect");
     [self setNeedsDisplayInRect:NSMakeRect(invalidRect->left, invalidRect->top,
         (float)invalidRect->right - invalidRect->left, (float)invalidRect->bottom - invalidRect->top)];
-}
-
--(BOOL)isOpaque
-{
-    return YES;
 }
 
 - (void)invalidateRegion:(NPRegion)invalidRegion
