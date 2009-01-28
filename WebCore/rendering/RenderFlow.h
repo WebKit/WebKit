@@ -67,7 +67,6 @@ public:
     void paintLines(PaintInfo&, int tx, int ty);
     bool hitTestLines(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
     void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine, const IntRect& nextLine);
     void paintOutline(GraphicsContext*, int tx, int ty);
 

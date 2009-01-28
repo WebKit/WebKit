@@ -4835,6 +4835,47 @@ IntRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, int* 
     return IntRect(x, y, caretWidth, height);
 }
 
+void RenderBlock::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+{
+    // For blocks inside inlines, we go ahead and include margins so that we run right up to the
+    // inline boxes above and below us (thus getting merged with them to form a single irregular
+    // shape).
+    if (inlineContinuation()) {
+        // FIXME: This check really isn't accurate. 
+        bool nextInlineHasLineBox = inlineContinuation()->firstLineBox();
+        // FIXME: This is wrong. The principal renderer may not be the continuation preceding this block.
+        bool prevInlineHasLineBox = static_cast<RenderInline*>(inlineContinuation()->element()->renderer())->firstLineBox(); 
+        int topMargin = prevInlineHasLineBox ? collapsedMarginTop() : 0;
+        int bottomMargin = nextInlineHasLineBox ? collapsedMarginBottom() : 0;
+        graphicsContext->addFocusRingRect(IntRect(tx, ty - topMargin, 
+                                                  width(), height() + topMargin + bottomMargin));
+    } else
+        graphicsContext->addFocusRingRect(IntRect(tx, ty, width(), height()));
+
+    if (!hasOverflowClip() && !hasControlClip()) {
+        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+            graphicsContext->addFocusRingRect(IntRect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height()));
+
+        for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+            if (!curr->isText() && !curr->isListMarker() && curr->isBox()) {
+                RenderBox* box = toRenderBox(curr);
+                FloatPoint pos;
+                // FIXME: This doesn't work correctly with transforms.
+                if (box->layer()) 
+                    pos = curr->localToAbsolute();
+                else
+                    pos = FloatPoint(tx + box->x(), ty + box->y());
+                box->addFocusRingRects(graphicsContext, pos.x(), pos.y());
+            }
+        }
+    }
+
+    if (inlineContinuation())
+        inlineContinuation()->addFocusRingRects(graphicsContext, 
+                                                tx - x() + inlineContinuation()->containingBlock()->x(),
+                                                ty - y() + inlineContinuation()->containingBlock()->y());
+}
+
 const char* RenderBlock::renderName() const
 {
     if (isBody())

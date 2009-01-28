@@ -26,6 +26,7 @@
 #include "RenderInline.h"
 
 #include "FloatQuad.h"
+#include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
@@ -546,6 +547,30 @@ int RenderInline::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
         m_lineHeight = style()->computedLineHeight();
     
     return m_lineHeight;
+}
+
+void RenderInline::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+{
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+        graphicsContext->addFocusRingRect(IntRect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height()));
+
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+        if (!curr->isText() && !curr->isListMarker() && curr->isBox()) {
+            RenderBox* box = toRenderBox(curr);
+            FloatPoint pos;
+            // FIXME: This doesn't work correctly with transforms.
+            if (box->layer()) 
+                pos = curr->localToAbsolute();
+            else
+                pos = FloatPoint(tx + box->x(), ty + box->y());
+            box->addFocusRingRects(graphicsContext, pos.x(), pos.y());
+        }
+    }
+
+    if (continuation())
+        continuation()->addFocusRingRects(graphicsContext, 
+                                          tx - containingBlock()->x() + continuation()->x(),
+                                          ty - containingBlock()->y() + continuation()->y());
 }
 
 } // namespace WebCore

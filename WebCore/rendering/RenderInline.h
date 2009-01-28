@@ -91,6 +91,8 @@ public:
 
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
 
+    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
+
     void calcMargins(int containerWidth)
     {
         m_marginLeft = style()->marginLeft().calcMinValue(containerWidth);
