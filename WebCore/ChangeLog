@@ -1,3 +1,14 @@
+2009-01-28  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Speed-up clipping: avoid calling expensive QPainter::clipRegion().
+        Beside, the check is not necessary since QPainter::setClipRect() will
+        work just fine if there is no clip region yet.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clip):
+
 2009-01-28  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.

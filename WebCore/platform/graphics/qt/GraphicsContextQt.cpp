@@ -645,10 +645,7 @@ void GraphicsContext::clip(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    QPainter *p = m_data->p();
-    if (p->clipRegion().isEmpty())
-        p->setClipRect(rect);
-    else p->setClipRect(rect, Qt::IntersectClip);
+    m_data->p()->setClipRect(rect, Qt::IntersectClip);
 }
 
 void GraphicsContext::clipPath(WindRule clipRule)
