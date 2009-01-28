@@ -1,3 +1,18 @@
+2009-01-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Fix the build with Qt on Windows.
+
+        Make sure that the QTWEBKIT_EXPORT macro becomes the Q_DECL_EXPORT macro
+        instead of the import macro when building the dll, by defining
+        QT_MAKEDLL.
+
+        SystemTimeWin.cpp is needed on Windows for userIdleTime(), which for the
+        other Qt platforms comes from TemporaryLinkStubs.cpp.
+
+        * WebCore.pro:
+
 2009-01-28  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon Hausmann.

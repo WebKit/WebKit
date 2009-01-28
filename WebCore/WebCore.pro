@@ -13,6 +13,8 @@ CONFIG(QTDIR_build) {
     include($$QT_SOURCE_TREE/src/qbase.pri)
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
     DEFINES *= NDEBUG
+} else {
+    win32-*:!static: DEFINES += QT_MAKEDLL
 }
 
 isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
@@ -1166,6 +1168,8 @@ SOURCES += \
     ../WebKit/qt/Api/qwebsecurityorigin.cpp \
     ../WebKit/qt/Api/qwebdatabase.cpp
 
+
+    win32-*|wince*: SOURCES += platform/win/SystemTimeWin.cpp
 
     mac {
         SOURCES += \
