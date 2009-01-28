@@ -1,5 +1,12 @@
 2009-01-28  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix for GTK.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::webHistoryItemCount):
+
+2009-01-28  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         Added support for querying how many history items were created during a
