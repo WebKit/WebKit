@@ -1,3 +1,16 @@
+2009-01-28  Zachary Kuznia  <zork@chromiuum.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22070
+        Add an option to allow scripts to close windows.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setAllowScriptsToCloseWindows):
+        * page/Settings.h:
+        (WebCore::Settings::allowScriptsToCloseWindows):
+
 2009-01-28  Adam Langley  <agl@google.com>
 
         Reviewed by Sam Weinig.

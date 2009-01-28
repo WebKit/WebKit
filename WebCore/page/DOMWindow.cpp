@@ -449,7 +449,13 @@ void DOMWindow::close()
     if (!m_frame)
         return;
 
-    if (m_frame->loader()->openedByDOM() || m_frame->loader()->getHistoryLength() <= 1)
+    Settings* settings = m_frame->settings();
+    bool allowScriptsToCloseWindows =
+        settings && settings->allowScriptsToCloseWindows();
+
+    if (m_frame->loader()->openedByDOM()
+        || m_frame->loader()->getHistoryLength() <= 1
+        || allowScriptsToCloseWindows)
         m_frame->scheduleClose();
 }
 
