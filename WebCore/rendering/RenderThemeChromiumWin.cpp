@@ -35,6 +35,7 @@
 #include "FontSelector.h"
 #include "FontUtilsChromiumWin.h"
 #include "GraphicsContext.h"
+#include "RenderBox.h"
 #include "ScrollbarTheme.h"
 #include "SkiaUtils.h"
 #include "ThemeHelperChromiumWin.h"
@@ -400,10 +401,14 @@ void RenderThemeChromiumWin::adjustMenuListStyle(CSSStyleSelector* selector, Ren
 // Used to paint unstyled menulists (i.e. with the default border)
 bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    int borderRight = o->borderRight();
-    int borderLeft = o->borderLeft();
-    int borderTop = o->borderTop();
-    int borderBottom = o->borderBottom();
+    if (!o->isBox())
+        return false;
+
+    const RenderBox* box = toRenderBox(o);
+    int borderRight = box->borderRight();
+    int borderLeft = box->borderLeft();
+    int borderTop = box->borderTop();
+    int borderBottom = box->borderBottom();
 
     // If all the borders are 0, then tell skia not to paint the border on the
     // textfield.  FIXME: http://b/1210017 Figure out how to get Windows to not
@@ -418,10 +423,10 @@ bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const RenderObject::
     // the size of a button, make sure to shrink it appropriately and not put
     // its x position to the left of the menulist.
     const int buttonWidth = GetSystemMetrics(SM_CXVSCROLL);
-    int spacingLeft = borderLeft + o->paddingLeft();
-    int spacingRight = borderRight + o->paddingRight();
-    int spacingTop = borderTop + o->paddingTop();
-    int spacingBottom = borderBottom + o->paddingBottom();
+    int spacingLeft = borderLeft + box->paddingLeft();
+    int spacingRight = borderRight + box->paddingRight();
+    int spacingTop = borderTop + box->paddingTop();
+    int spacingBottom = borderBottom + box->paddingBottom();
 
     int buttonX;
     if (r.right() - r.x() < buttonWidth)
