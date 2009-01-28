@@ -745,6 +745,12 @@ static JSValueRef getGlobalFlagCallback(JSContextRef context, JSObjectRef thisOb
     return JSValueMakeBoolean(context, controller->globalFlag());
 }
 
+static JSValueRef getWebHistoryItemCountCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(context, controller->webHistoryItemCount());
+}
+
 static bool setGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
 {
     LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -790,6 +796,7 @@ JSStaticValue* LayoutTestController::staticValues()
 {
     static JSStaticValue staticValues[] = {
         { "globalFlag", getGlobalFlagCallback, setGlobalFlagCallback, kJSPropertyAttributeNone },
+        { "webHistoryItemCount", getWebHistoryItemCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
     return staticValues;

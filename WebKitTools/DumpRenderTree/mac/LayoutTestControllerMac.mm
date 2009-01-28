@@ -48,6 +48,7 @@
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHistory.h>
+#import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebInspector.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
@@ -153,6 +154,11 @@ void LayoutTestController::keepWebHistory()
         [WebHistory setOptionalSharedHistory:history];
         [history release];
     }
+}
+
+size_t LayoutTestController::webHistoryItemCount()
+{
+    return [[[WebHistory optionalSharedHistory] allItems] count];
 }
 
 void LayoutTestController::notifyDone()

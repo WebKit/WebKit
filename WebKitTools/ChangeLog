@@ -1,3 +1,19 @@
+2009-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added support for querying how many history items were created during a
+        layout test.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (getWebHistoryItemCountCallback):
+        (LayoutTestController::staticValues):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::webHistoryItemCount):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::webHistoryItemCount):
+
 2009-01-26  Pierre-Olivier Latour  <pol@apple.com>
 
         Tweaked again earlier fix, this time just to print a warning and not abort if

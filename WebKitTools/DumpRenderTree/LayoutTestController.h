@@ -40,7 +40,6 @@ public:
 
     void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
 
-    // Controller Methods - platfrom independant implementations
     void addDisallowedURL(JSStringRef url);
     void clearAllDatabases();
     void clearBackForwardList();
@@ -50,6 +49,7 @@ public:
     void display();
     bool isCommandEnabled(JSStringRef name);
     void keepWebHistory();
+    size_t webHistoryItemCount();
     void notifyDone();
     JSStringRef pathToLocalResource(JSContextRef, JSStringRef url);
     void queueBackNavigation(int howFarBackward);

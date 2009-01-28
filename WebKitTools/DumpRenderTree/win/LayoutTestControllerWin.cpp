@@ -137,6 +137,27 @@ void LayoutTestController::keepWebHistory()
     history->setOptionalSharedHistory(sharedHistory.get());
 }
 
+size_t LayoutTestController::webHistoryItemCount()
+{
+    COMPtr<IWebHistory> history(Create, CLSID_WebHistory);
+    if (!history)
+        return 0;
+
+    COMPtr<IWebHistory> sharedHistory;
+    if (FAILED(history->optionalSharedHistory(&sharedHistory)))
+        return 0;
+
+    COMPtr<IWebHistoryPrivate> sharedHistoryPrivate;
+    if (FAILED(sharedHistory->QueryInterface(&sharedHistoryPrivate)))
+        return 0;
+
+    int count;
+    if (FAILED(sharedHistoryPrivate->allItems(&count, 0)))
+        return 0;
+
+    return count;
+}
+
 void LayoutTestController::notifyDone()
 {
     // Same as on mac.  This can be shared.
