@@ -1,3 +1,16 @@
+2009-01-28  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up FontPlatformData constructor
+
+        Reviewed by David Hyatt.
+
+        * platform/graphics/mac/FontPlatformData.h: Updated copyright.
+        (WebCore::FontPlatformData::FontPlatformData): Provide readable
+        names for constructor arguments and reformat member variables.
+        * platform/graphics/mac/FontPlatformDataMac.mm: Updated copyright.
+        (WebCore::FontPlatformData::FontPlatformData): Provide readable
+        names for constructor arguments and reformat member variables.
+
 2009-01-28  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Hyatt.

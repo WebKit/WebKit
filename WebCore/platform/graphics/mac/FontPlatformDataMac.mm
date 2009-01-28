@@ -1,7 +1,7 @@
 /*
  * This file is part of the internal font implementation.
  *
- * Copyright (C) 2006-7 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,18 +27,20 @@
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(NSFont *f, bool b , bool o)
-: m_syntheticBold(b), m_syntheticOblique(o), m_font(f)
+FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool syntheticOblique)
+    : m_syntheticBold(syntheticBold)
+    , m_syntheticOblique(syntheticOblique)
+    , m_font(nsFont)
 {
-    if (f)
-        CFRetain(f);
-    m_size = f ? [f pointSize] : 0.0f;
+    if (nsFont)
+        CFRetain(nsFont);
+    m_size = nsFont ? [nsFont pointSize] : 0.0f;
 #ifndef BUILDING_ON_TIGER
-    m_cgFont.adoptCF(CTFontCopyGraphicsFont(toCTFontRef(f), 0));
-    m_atsuFontID = CTFontGetPlatformFont(toCTFontRef(f), 0);
+    m_cgFont.adoptCF(CTFontCopyGraphicsFont(toCTFontRef(nsFont), 0));
+    m_atsuFontID = CTFontGetPlatformFont(toCTFontRef(nsFont), 0);
 #else
-    m_cgFont = wkGetCGFontFromNSFont(f);
-    m_atsuFontID = wkGetNSFontATSUFontId(f);
+    m_cgFont = wkGetCGFontFromNSFont(nsFont);
+    m_atsuFontID = wkGetNSFontATSUFontId(nsFont);
 #endif
 }
 

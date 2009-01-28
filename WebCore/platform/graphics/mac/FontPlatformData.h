@@ -1,8 +1,8 @@
 /*
  * This file is part of the internal font implementation.
- * It should not be included by source files outside it.
+ * It should not be included by source files outside of it.
  *
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -61,10 +61,15 @@ struct FontPlatformData {
     {
     }
 
-    FontPlatformData(NSFont * = 0, bool syntheticBold = false, bool syntheticOblique = false);
+    FontPlatformData(NSFont *nsFont = 0, bool syntheticBold = false, bool syntheticOblique = false);
     
-    FontPlatformData(CGFontRef f, ATSUFontID fontID, float s, bool b , bool o)
-        : m_syntheticBold(b), m_syntheticOblique(o), m_atsuFontID(fontID), m_size(s), m_font(0), m_cgFont(f)
+    FontPlatformData(CGFontRef cgFont, ATSUFontID fontID, float size, bool syntheticBold, bool syntheticOblique)
+        : m_syntheticBold(syntheticBold)
+        , m_syntheticOblique(syntheticOblique)
+        , m_atsuFontID(fontID)
+        , m_size(size)
+        , m_font(0)
+        , m_cgFont(cgFont)
     {
     }
 
