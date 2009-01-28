@@ -150,7 +150,7 @@
 		969A072B0ED1CE6900F1F681 /* RegisterID.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07280ED1CE6900F1F681 /* RegisterID.h */; };
 		969A072C0ED1CE6900F1F681 /* SegmentedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07290ED1CE6900F1F681 /* SegmentedVector.h */; };
 		969A07960ED1D3AE00F1F681 /* CodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */; };
-		969A07970ED1D3AE00F1F681 /* CodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07910ED1D3AE00F1F681 /* CodeBlock.h */; };
+		969A07970ED1D3AE00F1F681 /* CodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07910ED1D3AE00F1F681 /* CodeBlock.h */; settings = {ATTRIBUTES = (); }; };
 		969A07980ED1D3AE00F1F681 /* EvalCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07920ED1D3AE00F1F681 /* EvalCodeCache.h */; };
 		969A07990ED1D3AE00F1F681 /* Instruction.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07930ED1D3AE00F1F681 /* Instruction.h */; };
 		969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07940ED1D3AE00F1F681 /* Opcode.cpp */; };
@@ -213,7 +213,7 @@
 		BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAA8B4A0D32C39A0041BCFF /* JavaScript.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAA8B4B0D32C39A0041BCFF /* JavaScriptCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC18C4150E16F5CD00B34460 /* JavaScriptCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */; };
-		BC18C4160E16F5CD00B34460 /* JSActivation.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DA818E0D99FD2000B0A4FB /* JSActivation.h */; };
+		BC18C4160E16F5CD00B34460 /* JSActivation.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DA818E0D99FD2000B0A4FB /* JSActivation.h */; settings = {ATTRIBUTES = (); }; };
 		BC18C4170E16F5CD00B34460 /* JSArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 938772E5038BFE19008635CE /* JSArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4180E16F5CD00B34460 /* JSBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 142711380A460BBB0080EEEA /* JSBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC18C4190E16F5CD00B34460 /* JSCallbackConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440F8AC0A508D200005F061 /* JSCallbackConstructor.h */; };
@@ -312,6 +312,8 @@
 		BC257DF00E1F52ED0016B6C9 /* GlobalEvalFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DEE0E1F52ED0016B6C9 /* GlobalEvalFunction.h */; };
 		BC257DF40E1F53740016B6C9 /* PrototypeFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DF20E1F53740016B6C9 /* PrototypeFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3046070E1F497F003232CF /* Error.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3046060E1F497F003232CF /* Error.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC3135640F302FA3003DFD3A /* DebuggerActivation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3135620F302FA3003DFD3A /* DebuggerActivation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC3135650F302FA3003DFD3A /* DebuggerActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3135630F302FA3003DFD3A /* DebuggerActivation.cpp */; };
 		BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */; };
 		BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -716,6 +718,8 @@
 		BC2680C90E16D4E900A06E92 /* ObjectPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectPrototype.h; sourceTree = "<group>"; };
 		BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberConstructor.lut.h; sourceTree = "<group>"; };
 		BC3046060E1F497F003232CF /* Error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Error.h; sourceTree = "<group>"; };
+		BC3135620F302FA3003DFD3A /* DebuggerActivation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerActivation.h; sourceTree = "<group>"; };
+		BC3135630F302FA3003DFD3A /* DebuggerActivation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerActivation.cpp; sourceTree = "<group>"; };
 		BC337BDE0E1AF0B80076918A /* GetterSetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetterSetter.h; sourceTree = "<group>"; };
 		BC337BEA0E1B00CB0076918A /* Error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Error.cpp; sourceTree = "<group>"; };
 		BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassInfo.h; sourceTree = "<group>"; };
@@ -1034,6 +1038,8 @@
 				F692A8590255597D01FF60F7 /* Debugger.h */,
 				149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */,
 				1480DB9B0DDC227F003CFDF2 /* DebuggerCallFrame.h */,
+				BC3135630F302FA3003DFD3A /* DebuggerActivation.cpp */,
+				BC3135620F302FA3003DFD3A /* DebuggerActivation.h */,
 			);
 			path = debugger;
 			sourceTree = "<group>";
@@ -1700,6 +1706,7 @@
 				BC18C44E0E16F5CD00B34460 /* pcre_internal.h in Headers */,
 				BC18C4720E16F5CD00B34460 /* ucpinternal.h in Headers */,
 				A7A1F7AD0F252B3C00E184E2 /* ByteArray.h in Headers */,
+				BC3135640F302FA3003DFD3A /* DebuggerActivation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2051,6 +2058,7 @@
 				937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp in Sources */,
 				93E26BD408B1514100F85226 /* pcre_xclass.cpp in Sources */,
 				A7A1F7AC0F252B3C00E184E2 /* ByteArray.cpp in Sources */,
+				BC3135650F302FA3003DFD3A /* DebuggerActivation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

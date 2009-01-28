@@ -103,6 +103,8 @@ javascriptcore_sources += \
 	JavaScriptCore/bytecode/SamplingTool.h \
 	JavaScriptCore/bytecompiler/SegmentedVector.h \
 	JavaScriptCore/config.h \
+	JavaScriptCore/debugger/DebuggerActivation.cpp \
+	JavaScriptCore/debugger/DebuggerActivation.h \
 	JavaScriptCore/debugger/DebuggerCallFrame.cpp \
 	JavaScriptCore/debugger/DebuggerCallFrame.h \
 	JavaScriptCore/icu/unicode/parseerr.h \

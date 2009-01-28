@@ -46,6 +46,7 @@ Source files for JSCore.
     </set>
     <set append="1" var="JSCORE_DEBUGGER_SOURCES">
         debugger/Debugger.cpp
+        debugger/DebuggerActivation.cpp
         debugger/DebuggerCallFrame.cpp
     </set>
     <set append="1" var="JSCORE_JSC_SOURCES">

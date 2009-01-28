@@ -50,6 +50,8 @@ namespace JSC {
 
         virtual bool isDynamicScope() const;
 
+        virtual bool isActivationObject() const { return true; }
+
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
 
         virtual void put(ExecState*, const Identifier&, JSValuePtr, PutPropertySlot&);

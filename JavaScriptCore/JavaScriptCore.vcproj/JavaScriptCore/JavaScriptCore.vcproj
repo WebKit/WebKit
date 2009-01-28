@@ -1338,6 +1338,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\debugger\DebuggerActivation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\debugger\DebuggerActivation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\debugger\DebuggerCallFrame.cpp"
 				>
 			</File>

@@ -117,6 +117,7 @@ SOURCES += \
     runtime/DatePrototype.cpp \
     debugger/Debugger.cpp \
     debugger/DebuggerCallFrame.cpp \
+    debugger/DebuggerActivation.cpp \
     wtf/dtoa.cpp \
     runtime/Error.cpp \
     runtime/ErrorConstructor.cpp \

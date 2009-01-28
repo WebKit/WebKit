@@ -26,23 +26,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebScriptDebugger.h"
 #import "WebDataSource.h"
 #import "WebDataSourceInternal.h"
 #import "WebFrameInternal.h"
 #import "WebScriptDebugDelegate.h"
+#import "WebScriptDebugger.h"
 #import "WebViewInternal.h"
+#import <WebCore/Frame.h>
+#import <WebCore/ScriptController.h>
+#import <WebCore/WebScriptObjectPrivate.h>
+#import <WebCore/runtime_root.h>
 #import <debugger/Debugger.h>
+#import <debugger/DebuggerActivation.h>
 #import <debugger/DebuggerCallFrame.h>
 #import <interpreter/CallFrame.h>
-#import <runtime/JSGlobalObject.h>
-#import <runtime/JSFunction.h>
-#import <runtime/JSLock.h>
 #import <runtime/Completion.h>
-#import <WebCore/Frame.h>
-#import <WebCore/WebScriptObjectPrivate.h>
-#import <WebCore/ScriptController.h>
-#import <WebCore/runtime_root.h>
+#import <runtime/JSFunction.h>
+#import <runtime/JSGlobalObject.h>
+#import <runtime/JSLock.h>
 
 using namespace JSC;
 using namespace WebCore;
@@ -180,8 +181,12 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     NSMutableArray *scopes = [[NSMutableArray alloc] init];
 
     ScopeChainIterator end = scopeChain->end();
-    for (ScopeChainIterator it = scopeChain->begin(); it != end; ++it)
-        [scopes addObject:[self _convertValueToObjcValue:(*it)]];
+    for (ScopeChainIterator it = scopeChain->begin(); it != end; ++it) {
+        JSObject* object = *it;
+        if (object->isActivationObject())
+            object = new (scopeChain->globalData) DebuggerActivation(object);
+        [scopes addObject:[self _convertValueToObjcValue:object]];
+    }
 
     NSArray *result = [NSArray arrayWithArray:scopes];
     [scopes release];

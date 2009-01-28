@@ -19,6 +19,7 @@ sources['bytecompiler'] = [
 ]
 sources['debugger'] = [
     'debugger/Debugger.cpp',
+    'debugger/DebuggerActivation.cpp',
     'debugger/DebuggerCallFrame.cpp',
 ]
 sources['parser'] = [

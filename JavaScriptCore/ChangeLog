@@ -1,3 +1,36 @@
+2009-01-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Fix for <rdar://problem/6129678>
+        REGRESSION (Safari 3-4): Local variable not accessible from Dashcode console or variables view
+
+        Iterating the properties of activation objects accessed through the WebKit debugging
+        APIs was broken by forced conversion of JSActivation to the global object. To fix this,
+        we use a proxy activation object that acts more like a normal JSObject.
+
+        * debugger/DebuggerActivation.cpp: Added.
+        (JSC::DebuggerActivation::DebuggerActivation):
+        (JSC::DebuggerActivation::mark):
+        (JSC::DebuggerActivation::className):
+        (JSC::DebuggerActivation::getOwnPropertySlot):
+        (JSC::DebuggerActivation::put):
+        (JSC::DebuggerActivation::putWithAttributes):
+        (JSC::DebuggerActivation::deleteProperty):
+        (JSC::DebuggerActivation::getPropertyNames):
+        (JSC::DebuggerActivation::getPropertyAttributes):
+        (JSC::DebuggerActivation::defineGetter):
+        (JSC::DebuggerActivation::defineSetter):
+        (JSC::DebuggerActivation::lookupGetter):
+        (JSC::DebuggerActivation::lookupSetter):
+        * debugger/DebuggerActivation.h: Added.
+        Proxy JSActivation object for Debugging.
+
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::isActivationObject): Added.
+        * runtime/JSObject.h:
+        (JSC::JSObject::isActivationObject): Added.
+
 2009-01-28  David Kilzer  <ddkilzer@apple.com>
 
         Bug 23490: Remove initialRefCount argument from RefCounted class
