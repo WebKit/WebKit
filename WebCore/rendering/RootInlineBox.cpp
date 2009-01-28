@@ -412,4 +412,19 @@ void RootInlineBox::setVerticalOverflowPositions(int top, int bottom)
     m_overflow->m_bottomOverflow = bottom; 
 }
 
+void RootInlineBox::removeLineBoxFromRenderObject()
+{
+    block()->lineBoxes()->removeLineBox(this);
+}
+
+void RootInlineBox::extractLineBoxFromRenderObject()
+{
+    block()->lineBoxes()->extractLineBox(this);
+}
+
+void RootInlineBox::attachLineBoxToRenderObject()
+{
+    block()->lineBoxes()->attachLineBox(this);
+}
+
 } // namespace WebCore

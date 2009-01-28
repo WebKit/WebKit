@@ -343,14 +343,7 @@ static void getInlineRun(RenderObject* start, RenderObject* boundary,
 
 void RenderBlock::deleteLineBoxTree()
 {
-    InlineFlowBox* line = m_firstLineBox;
-    InlineFlowBox* nextLine;
-    while (line) {
-        nextLine = line->nextFlowBox();
-        line->deleteLine(renderArena());
-        line = nextLine;
-    }
-    m_firstLineBox = m_lastLineBox = 0;
+    m_lineBoxes.deleteLineBoxTree(renderArena());
 }
 
 void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)

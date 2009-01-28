@@ -49,14 +49,8 @@ InlineBox* RenderSVGInline::createInlineBox(bool unusedMakePlaceHolderBox, bool 
 
     InlineFlowBox* flowBox = new (renderArena()) SVGInlineFlowBox(this);
 
-    if (!m_firstLineBox)
-        m_firstLineBox = m_lastLineBox = flowBox;
-    else {
-        m_lastLineBox->setNextLineBox(flowBox);
-        flowBox->setPreviousLineBox(m_lastLineBox);
-        m_lastLineBox = flowBox;
-    }
-        
+    m_lineBoxes.appendLineBox(flowBox);
+
     return flowBox;
 }
 

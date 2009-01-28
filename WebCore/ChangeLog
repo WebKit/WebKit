@@ -1,3 +1,60 @@
+2009-01-28  David Hyatt  <hyatt@apple.com>
+
+        Refactor the first and last line box member variables from RenderFlow.  Encapsulate them into a new class called RenderLineBoxList that manages all modifications to
+        the list.  This change will make it easier to give RenderInline and RenderBlock separate versions of the line box list without having to duplicate very much code.
+
+        Reviewed by Oliver Hunt
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::deleteLine):
+        (WebCore::InlineFlowBox::removeLineBoxFromRenderObject):
+        (WebCore::InlineFlowBox::extractLine):
+        (WebCore::InlineFlowBox::extractLineBoxFromRenderObject):
+        (WebCore::InlineFlowBox::attachLine):
+        (WebCore::InlineFlowBox::attachLineBoxToRenderObject):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::deleteLineBoxTree):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::destroy):
+        (WebCore::RenderFlow::dirtyLineBoxes):
+        (WebCore::RenderFlow::createInlineBox):
+        * rendering/RenderFlow.h:
+        (WebCore::RenderFlow::RenderFlow):
+        (WebCore::RenderFlow::lineBoxes):
+        (WebCore::RenderFlow::firstLineBox):
+        (WebCore::RenderFlow::lastLineBox):
+        * rendering/RenderLineBoxList.cpp: Added.
+        (WebCore::RenderLineBoxList::~RenderLineBoxList):
+        (WebCore::RenderLineBoxList::appendLineBox):
+        (WebCore::RenderLineBoxList::deleteLineBoxTree):
+        (WebCore::RenderLineBoxList::extractLineBox):
+        (WebCore::RenderLineBoxList::attachLineBox):
+        (WebCore::RenderLineBoxList::removeLineBox):
+        (WebCore::RenderLineBoxList::deleteLineBoxes):
+        (WebCore::RenderLineBoxList::checkConsistency):
+        * rendering/RenderLineBoxList.h: Added.
+        (WebCore::RenderLineBoxList::RenderLineBoxList):
+        (WebCore::RenderLineBoxList::firstLineBox):
+        (WebCore::RenderLineBoxList::lastLineBox):
+        (WebCore::RenderLineBoxList::checkConsistency):
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::createInlineBox):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::createInlineBox):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::removeLineBoxFromRenderObject):
+        (WebCore::RootInlineBox::extractLineBoxFromRenderObject):
+        (WebCore::RootInlineBox::attachLineBoxToRenderObject):
+        * rendering/RootInlineBox.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2009-01-28  David Kilzer  <ddkilzer@apple.com>
 
         Clean up FontPlatformData constructor

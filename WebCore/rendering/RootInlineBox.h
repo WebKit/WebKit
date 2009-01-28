@@ -129,6 +129,10 @@ public:
 
     Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_overflow ? &m_overflow->floats : 0; }
 
+    virtual void extractLineBoxFromRenderObject();
+    virtual void attachLineBoxToRenderObject();
+    virtual void removeLineBoxFromRenderObject();
+
 protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content
     // that spills out above the height of our font (e.g, a tall image), or something that extends further

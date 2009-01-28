@@ -24,6 +24,7 @@
 #define RenderFlow_h
 
 #include "RenderContainer.h"
+#include "RenderLineBoxList.h"
 
 namespace WebCore {
 
@@ -40,13 +41,8 @@ class RenderFlow : public RenderContainer {
 public:
     RenderFlow(Node* node)
         : RenderContainer(node)
-        , m_firstLineBox(0)
-        , m_lastLineBox(0)
     {
     }
-#ifndef NDEBUG
-    virtual ~RenderFlow();
-#endif
 
     RenderFlow* continuationBefore(RenderObject* beforeChild);
 
@@ -56,16 +52,15 @@ public:
 
     static RenderFlow* createAnonymousFlow(Document*, PassRefPtr<RenderStyle>);
 
-    void extractLineBox(InlineFlowBox*);
-    void attachLineBox(InlineFlowBox*);
-    void removeLineBox(InlineFlowBox*);
-    void deleteLineBoxes();
+    RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
+    const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
+
     virtual void destroy();
 
     virtual void dirtyLinesFromChangedChild(RenderObject* child);
 
-    InlineFlowBox* firstLineBox() const { return m_firstLineBox; }
-    InlineFlowBox* lastLineBox() const { return m_lastLineBox; }
+    InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
+    InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
 
     virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun=false);
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
@@ -81,21 +76,9 @@ public:
 
     void calcMargins(int containerWidth);
 
-    void checkConsistency() const;
-
 protected:
-    // For block flows, each box represents the root inline box for a line in the
-    // paragraph.
-    // For inline flows, each box represents a portion of that inline.
-    InlineFlowBox* m_firstLineBox;
-    InlineFlowBox* m_lastLineBox;
+    RenderLineBoxList m_lineBoxes;
 };
-
-#ifdef NDEBUG
-inline void RenderFlow::checkConsistency() const
-{
-}
-#endif
 
 } // namespace WebCore
 

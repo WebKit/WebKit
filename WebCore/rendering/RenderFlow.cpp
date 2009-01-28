@@ -37,16 +37,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#ifndef NDEBUG
-
-RenderFlow::~RenderFlow()
-{
-    ASSERT(!m_firstLineBox);
-    ASSERT(!m_lastLineBox);
-}
-
-#endif
-
 RenderFlow* RenderFlow::createAnonymousFlow(Document* doc, PassRefPtr<RenderStyle> style)
 {
     RenderFlow* result;
@@ -146,71 +136,6 @@ void RenderFlow::addChild(RenderObject* newChild, RenderObject* beforeChild)
     return addChildToFlow(newChild, beforeChild);
 }
 
-void RenderFlow::extractLineBox(InlineFlowBox* box)
-{
-    checkConsistency();
-
-    m_lastLineBox = box->prevFlowBox();
-    if (box == m_firstLineBox)
-        m_firstLineBox = 0;
-    if (box->prevLineBox())
-        box->prevLineBox()->setNextLineBox(0);
-    box->setPreviousLineBox(0);
-    for (InlineRunBox* curr = box; curr; curr = curr->nextLineBox())
-        curr->setExtracted();
-
-    checkConsistency();
-}
-
-void RenderFlow::attachLineBox(InlineFlowBox* box)
-{
-    checkConsistency();
-
-    if (m_lastLineBox) {
-        m_lastLineBox->setNextLineBox(box);
-        box->setPreviousLineBox(m_lastLineBox);
-    } else
-        m_firstLineBox = box;
-    InlineFlowBox* last = box;
-    for (InlineFlowBox* curr = box; curr; curr = curr->nextFlowBox()) {
-        curr->setExtracted(false);
-        last = curr;
-    }
-    m_lastLineBox = last;
-
-    checkConsistency();
-}
-
-void RenderFlow::removeLineBox(InlineFlowBox* box)
-{
-    checkConsistency();
-
-    if (box == m_firstLineBox)
-        m_firstLineBox = box->nextFlowBox();
-    if (box == m_lastLineBox)
-        m_lastLineBox = box->prevFlowBox();
-    if (box->nextLineBox())
-        box->nextLineBox()->setPreviousLineBox(box->prevLineBox());
-    if (box->prevLineBox())
-        box->prevLineBox()->setNextLineBox(box->nextLineBox());
-
-    checkConsistency();
-}
-
-void RenderFlow::deleteLineBoxes()
-{
-    if (m_firstLineBox) {
-        RenderArena* arena = renderArena();
-        InlineRunBox* next;
-        for (InlineRunBox* curr = m_firstLineBox; curr; curr = next) {
-            next = curr->nextLineBox();
-            curr->destroy(arena);
-        }
-        m_firstLineBox = 0;
-        m_lastLineBox = 0;
-    }
-}
-
 void RenderFlow::destroy()
 {
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
@@ -218,7 +143,7 @@ void RenderFlow::destroy()
     RenderContainer::destroyLeftoverChildren();
 
     if (!documentBeingDestroyed()) {
-        if (m_firstLineBox) {
+        if (firstLineBox()) {
             // We can't wait for RenderContainer::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
             // FIXME: The SelectionController should be responsible for this when it
@@ -231,8 +156,8 @@ void RenderFlow::destroy()
             // lines aren't pointing to deleted children. If the first line box does
             // not have a parent that means they are either already disconnected or
             // root lines that can just be destroyed without disconnecting.
-            if (m_firstLineBox->parent()) {
-                for (InlineRunBox* box = m_firstLineBox; box; box = box->nextLineBox())
+            if (firstLineBox()->parent()) {
+                for (InlineRunBox* box = firstLineBox(); box; box = box->nextLineBox())
                     box->remove();
             }
 
@@ -240,7 +165,7 @@ void RenderFlow::destroy()
             // that will outlast this block. In the non-anonymous block case those
             // children will be destroyed by the time we return from this function.
             if (isAnonymousBlock()) {
-                for (InlineFlowBox* box = m_firstLineBox; box; box = box->nextFlowBox()) {
+                for (InlineFlowBox* box = firstLineBox(); box; box = box->nextFlowBox()) {
                     while (InlineBox* childBox = box->firstChild())
                         childBox->remove();
                 }
@@ -249,7 +174,7 @@ void RenderFlow::destroy()
             parent()->dirtyLinesFromChangedChild(this);
     }
 
-    deleteLineBoxes();
+    m_lineBoxes.deleteLineBoxes(renderArena());
 
     RenderContainer::destroy();
 }
@@ -326,7 +251,7 @@ void RenderFlow::dirtyLineBoxes(bool fullLayout, bool isRootLineBox)
         return RenderContainer::dirtyLineBoxes(fullLayout, isRootLineBox);
 
     if (fullLayout)
-        deleteLineBoxes();
+        m_lineBoxes.deleteLineBoxes(renderArena());
     else {
         for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
             curr->dirtyLineBoxes();
@@ -335,8 +260,6 @@ void RenderFlow::dirtyLineBoxes(bool fullLayout, bool isRootLineBox)
 
 InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool /*isOnlyRun*/)
 {
-    checkConsistency();
-
     if (!isRootLineBox &&
         (isReplaced() || makePlaceHolderBox))                     // Inline tables and inline blocks
         return RenderContainer::createInlineBox(false, isRootLineBox);  // (or positioned element placeholders).
@@ -347,15 +270,7 @@ InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineB
     else
         flowBox = new (renderArena()) RootInlineBox(this);
 
-    if (!m_firstLineBox)
-        m_firstLineBox = m_lastLineBox = flowBox;
-    else {
-        m_lastLineBox->setNextLineBox(flowBox);
-        flowBox->setPreviousLineBox(m_lastLineBox);
-        m_lastLineBox = flowBox;
-    }
-
-    checkConsistency();
+    m_lineBoxes.appendLineBox(flowBox);
 
     return flowBox;
 }
@@ -715,22 +630,5 @@ void RenderFlow::calcMargins(int containerWidth)
     m_marginLeft = style()->marginLeft().calcMinValue(containerWidth);
     m_marginRight = style()->marginRight().calcMinValue(containerWidth);
 }
-
-#ifndef NDEBUG
-
-void RenderFlow::checkConsistency() const
-{
-#ifdef CHECK_CONSISTENCY
-    const InlineFlowBox* prev = 0;
-    for (const InlineFlowBox* child = m_firstLineBox; child != 0; child = child->nextFlowBox()) {
-        ASSERT(child->object() == this);
-        ASSERT(child->prevFlowBox() == prev);
-        prev = child;
-    }
-    ASSERT(prev == m_lastLineBox);
-#endif
-}
-
-#endif
 
 } // namespace WebCore

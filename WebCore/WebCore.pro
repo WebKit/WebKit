@@ -981,6 +981,7 @@ SOURCES += \
     rendering/RenderInline.cpp \
     rendering/RenderLayer.cpp \
     rendering/RenderLegend.cpp \
+    rendering/RenderLineBoxList.cpp \
     rendering/RenderListBox.cpp \
     rendering/RenderListItem.cpp \
     rendering/RenderListMarker.cpp \
