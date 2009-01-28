@@ -1,3 +1,19 @@
+2009-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION (r40234): Launching iTunes from a link displays a
+        "Safari can't find the Internet plug-in" sheet in Safari
+        rdar://problem/6533678
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::havePlugin): Put the check for empty string in here.
+        (WebCore::serviceTypeForClassId): Only return activeXType() if
+        we have a plug-in that can handle that type. While it might be logical
+        to return an Active X type for any <object> with a classId in it,
+        even if we don't have a plug-in that implements Active X, existing
+        clients, such as Safari, don't expect that.
+
 2009-01-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Steve Falkenburg.
