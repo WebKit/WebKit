@@ -158,9 +158,12 @@ void IconLoader::finishLoading(const KURL& iconURL, PassRefPtr<SharedBuffer> dat
     // <rdar://problem/5463392> tracks that enhancement
     
     if (!iconURL.isEmpty() && m_loadIsInProgress) {
-        iconDatabase()->setIconDataForIconURL(data, iconURL.string());
         LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", iconURL.string().ascii().data());
         m_frame->loader()->commitIconURLToIconDatabase(iconURL);
+        // Setting the icon data only after committing to the database ensures that the data is
+        // kept in memory (so it does not have to be read from the database asynchronously), since
+        // there is a page URL referencing it.
+        iconDatabase()->setIconDataForIconURL(data, iconURL.string());
         m_frame->loader()->client()->dispatchDidReceiveIcon();
     }
 

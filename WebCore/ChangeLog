@@ -1,3 +1,18 @@
+2009-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6077047> REGRESSION (r34544): Custom icon does not
+          appear in address field on first visit to any site
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::finishLoading): Changed to set the icon data only
+        after establishing a mapping from the page URL(s) to the icon. Doing
+        things the other way around resulted in the data not being cached
+        in the icon-URL to IconRecord map (because there was no interested page
+        at the time) and subsequently having to be fetched asynchronously from
+        the database when the page-to-icon mapping was established.
+
 2009-01-28  David Hyatt  <hyatt@apple.com>
 
         Move addFocusRingRects from RenderFlow down into RenderBlock and RenderInline.
