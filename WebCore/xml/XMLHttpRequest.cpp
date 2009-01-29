@@ -36,6 +36,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SystemTime.h"
 #include "TextResourceDecoder.h"
