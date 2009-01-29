@@ -2,6 +2,21 @@
 
         Reviewed by Anders Carlsson.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23476
+        HTTP redirect should make application cache updating fail
+
+        * http/tests/appcache/manifest-redirect-expected.txt: Added.
+        * http/tests/appcache/manifest-redirect.html: Added.
+        * http/tests/appcache/resource-redirect-expected.txt: Added.
+        * http/tests/appcache/resource-redirect.html: Added.
+        * http/tests/appcache/resources/manifest-redirect.php: Added.
+        * http/tests/appcache/resources/resource-redirect.manifest: Added.
+        * http/tests/appcache/resources/resource-redirect.php: Added.
+
+2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         https://bugs.webkit.org/show_bug.cgi?id=23592
         Update appcache manifest signature parsing
 

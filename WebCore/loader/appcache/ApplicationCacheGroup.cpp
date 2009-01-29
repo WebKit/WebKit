@@ -415,8 +415,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
     if (!m_newestCache)
         ASSERT(!(type & ApplicationCacheResource::Implicit));
 
-    int statusCode = response.httpStatusCode() / 100;
-    if (statusCode == 4 || statusCode == 5) {
+    if (response.httpStatusCode() / 100 != 2) {
         if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
             // Note that cacheUpdateFailed() can cause the cache group to be deleted.
             cacheUpdateFailed();
@@ -508,8 +507,7 @@ void ApplicationCacheGroup::didReceiveManifestResponse(const ResourceResponse& r
         return;
     }
 
-    int statusCode = response.httpStatusCode() / 100;
-    if (statusCode == 4 || statusCode == 5 || !equalIgnoringCase(response.mimeType(), "text/cache-manifest")) {
+    if (response.httpStatusCode() / 100 != 2 || !equalIgnoringCase(response.mimeType(), "text/cache-manifest")) {
         cacheUpdateFailed();
         return;
     }
