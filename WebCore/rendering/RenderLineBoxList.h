@@ -61,6 +61,7 @@ public:
     void removeLineBox(InlineFlowBox*);
     
     void dirtyLineBoxes();
+    void dirtyLinesFromChangedChild(RenderObject* parent, RenderObject* child);
 
     void paint(RenderBox*, RenderObject::PaintInfo&, int x, int y) const;
     bool hitTest(RenderBox*, const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction) const;

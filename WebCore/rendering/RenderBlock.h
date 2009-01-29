@@ -65,6 +65,7 @@ public:
     
     void deleteLineBoxTree();
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
+    virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
 
     // The height (and width) of a block when you include overflow spillage out of the bottom
     // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside

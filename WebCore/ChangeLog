@@ -1,3 +1,19 @@
+2009-01-29  David Hyatt  <hyatt@apple.com>
+
+        Move dirtyLinesFromChangedChild into RenderLineBoxList so that it can be shared by RenderBlock and RenderInline.
+    
+        Reviewed by Sam Weinig
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::dirtyLinesFromChangedChild):
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::dirtyLinesFromChangedChild):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderLineBoxList.h:
+
 2009-01-29  Adam Roben  <aroben@apple.com>
 
         Fix Bug 23623: Windowed Flash instances aren't captured when a WebView
