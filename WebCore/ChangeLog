@@ -1,3 +1,16 @@
+2009-01-29  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23609
+        Use the two-arg constructor for implicit QUrl->KURL conversion as the
+        single argument ctors assume that KURL::parse has already been called
+        and assert if the parse results in a different string.  This was causing
+        an assert for QUrl's with no path and without a trailing slash.
+
+        * platform/qt/KURLQt.cpp:
+        (WebCore::KURL::KURL):
+
 2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Darin Adler.
