@@ -152,27 +152,25 @@ struct ScheduledRedirection {
     bool wasUserGesture;
     bool wasRefresh;
 
-    ScheduledRedirection(double redirectDelay, const String& redirectURL, bool redirectLockHistory, bool userGesture, bool refresh)
+    ScheduledRedirection(double delay, const String& url, bool lockHistory, bool wasUserGesture, bool refresh)
         : type(redirection)
-        , delay(redirectDelay)
-        , url(redirectURL)
+        , delay(delay)
+        , url(url)
         , historySteps(0)
-        , lockHistory(redirectLockHistory)
-        , wasUserGesture(userGesture)
+        , lockHistory(lockHistory)
+        , wasUserGesture(wasUserGesture)
         , wasRefresh(refresh)
     {
     }
 
-    ScheduledRedirection(Type locationChangeType,
-            const String& locationChangeURL, const String& locationChangeReferrer,
-            bool locationChangeLockHistory, bool locationChangeWasUserGesture, bool refresh)
+    ScheduledRedirection(Type locationChangeType, const String& url, const String& referrer, bool lockHistory, bool wasUserGesture, bool refresh)
         : type(locationChangeType)
         , delay(0)
-        , url(locationChangeURL)
-        , referrer(locationChangeReferrer)
+        , url(url)
+        , referrer(referrer)
         , historySteps(0)
-        , lockHistory(locationChangeLockHistory)
-        , wasUserGesture(locationChangeWasUserGesture)
+        , lockHistory(lockHistory)
+        , wasUserGesture(wasUserGesture)
         , wasRefresh(refresh)
     {
     }

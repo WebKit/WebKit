@@ -1,3 +1,12 @@
+2009-01-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Cleaned up some naming in ScheduledRedirection.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::ScheduledRedirection::ScheduledRedirection):
+
 2009-01-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
