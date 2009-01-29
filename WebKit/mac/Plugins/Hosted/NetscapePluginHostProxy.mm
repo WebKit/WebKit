@@ -134,7 +134,7 @@ void NetscapePluginHostProxy::pluginHostDied()
 
     // The plug-in crashed while it had a modal dialog up.
     if (m_isModal)
-        setModal(false);
+        endModal();
     
     delete this;
 }
@@ -178,11 +178,20 @@ void NetscapePluginHostProxy::setMenuBarVisible(bool visible)
     }
 }
 
+void NetscapePluginHostProxy::applicationDidBecomeActive()
+{
+    SetFrontProcess(&m_pluginHostPSN);
+}
+
 void NetscapePluginHostProxy::beginModal()
 {
     ASSERT(!m_placeholderWindow);
+    ASSERT(!m_activationObserver);
     
     m_placeholderWindow.adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    
+    m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationWillBecomeActiveNotification object:NSApp queue:nil
+                                                                         usingBlock:^(NSNotification *){ applicationDidBecomeActive(); }];
     
     // We need to be able to get the setModal(false) call from the plug-in host.
     CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
@@ -193,6 +202,10 @@ void NetscapePluginHostProxy::beginModal()
 void NetscapePluginHostProxy::endModal()
 {
     ASSERT(m_placeholderWindow);
+    ASSERT(m_activationObserver);
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
+    m_activationObserver = nil;
     
     CFRunLoopRemoveSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
     

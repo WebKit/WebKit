@@ -52,6 +52,8 @@ public:
     void setMenuBarVisible(bool);
     void setModal(bool);
 
+    void applicationDidBecomeActive();
+    
 private:
     ~NetscapePluginHostProxy();
     void pluginHostDied();
@@ -73,6 +75,7 @@ private:
     mach_port_t m_pluginHostPort;
     RetainPtr<CFMachPortRef> m_deadNameNotificationPort;
     
+    RetainPtr<id> m_activationObserver;
     RetainPtr<NSWindow *> m_placeholderWindow;
     unsigned m_isModal;
     bool m_menuBarIsVisible;

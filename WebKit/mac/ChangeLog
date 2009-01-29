@@ -1,3 +1,23 @@
+2009-01-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Always activate the plug-in host process if we're in "modal mode" and are being told to activate.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::pluginHostDied):
+        Call endModal here.
+        
+        (WebKit::NetscapePluginHostProxy::applicationDidBecomeActive):
+        If we're modal, we should always bring the plug-in host process to the front.
+        
+        (WebKit::NetscapePluginHostProxy::beginModal):
+        Add an observer for the NSApplicationWillBecomeActiveNotification callback.
+        
+        (WebKit::NetscapePluginHostProxy::endModal):
+        Remove the observer.
+
 2009-01-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
