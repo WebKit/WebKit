@@ -272,6 +272,17 @@ namespace WebCore {
         HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
         void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);    // The passed in HDC should be the one handed back by getWindowsContext.
 
+        // When set to true, child windows should be rendered into this context
+        // rather than allowing them just to render to the screen. Defaults to
+        // false.
+        // FIXME: This is a layering violation. GraphicsContext shouldn't know
+        // what a "window" is. It would be much more appropriate for this flag
+        // to be passed as a parameter alongside the GraphicsContext, but doing
+        // that would require lots of changes in cross-platform code that we
+        // aren't sure we want to make.
+        void setShouldIncludeChildWindows(bool);
+        bool shouldIncludeChildWindows() const;
+
         class WindowsBitmap : public Noncopyable {
         public:
             WindowsBitmap(HDC, IntSize);

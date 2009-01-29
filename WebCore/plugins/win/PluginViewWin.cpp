@@ -99,6 +99,92 @@ const LPCWSTR kWebPluginViewProperty = L"WebPluginViewProperty";
 
 static const char* MozillaUserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1) Gecko/20061010 Firefox/2.0";
 
+// The code used to hook BeginPaint/EndPaint originally came from
+// <http://www.fengyuan.com/article/wmprint.html>.
+// Copyright (C) 2000 by Feng Yuan (www.fengyuan.com).
+
+static unsigned beginPaintSysCall;
+static BYTE* beginPaint;
+
+static unsigned endPaintSysCall;
+static BYTE* endPaint;
+
+HDC WINAPI PluginView::hookedBeginPaint(HWND hWnd, PAINTSTRUCT* lpPaint)
+{
+    PluginView* pluginView = reinterpret_cast<PluginView*>(GetProp(hWnd, kWebPluginViewProperty));
+    if (pluginView && pluginView->m_wmPrintHDC) {
+        // We're secretly handling WM_PRINTCLIENT, so set up the PAINTSTRUCT so
+        // that the plugin will paint into the HDC we provide.
+        memset(lpPaint, 0, sizeof(PAINTSTRUCT));
+        lpPaint->hdc = pluginView->m_wmPrintHDC;
+        GetClientRect(hWnd, &lpPaint->rcPaint);
+        return pluginView->m_wmPrintHDC;
+    }
+
+    // Call through to the original BeginPaint.
+    __asm   mov     eax, beginPaintSysCall
+    __asm   push    lpPaint
+    __asm   push    hWnd
+    __asm   call    beginPaint
+}
+
+BOOL WINAPI PluginView::hookedEndPaint(HWND hWnd, const PAINTSTRUCT* lpPaint)
+{
+    PluginView* pluginView = reinterpret_cast<PluginView*>(GetProp(hWnd, kWebPluginViewProperty));
+    if (pluginView && pluginView->m_wmPrintHDC) {
+        // We're secretly handling WM_PRINTCLIENT, so we don't have to do any
+        // cleanup.
+        return TRUE;
+    }
+
+    // Call through to the original EndPaint.
+    __asm   mov     eax, endPaintSysCall
+    __asm   push    lpPaint
+    __asm   push    hWnd
+    __asm   call    endPaint
+}
+
+static void hook(const char* module, const char* proc, unsigned& sysCallID, BYTE*& pProc, const void* pNewProc)
+{
+    // See <http://www.fengyuan.com/article/wmprint.html> for an explanation of
+    // how this function works.
+
+    HINSTANCE hMod = GetModuleHandleA(module);
+
+    pProc = reinterpret_cast<BYTE*>(GetProcAddress(hMod, proc));
+
+    if (pProc[0] != 0xB8)
+        return;
+
+    // FIXME: Should we be reading the bytes one-by-one instead of doing an
+    // unaligned read?
+    sysCallID = *reinterpret_cast<unsigned*>(pProc + 1);
+
+    DWORD flOldProtect;
+    if (!VirtualProtect(pProc, 5, PAGE_EXECUTE_READWRITE, &flOldProtect))
+        return;
+
+    pProc[0] = 0xE9;
+    *reinterpret_cast<unsigned*>(pProc + 1) = reinterpret_cast<intptr_t>(pNewProc) - reinterpret_cast<intptr_t>(pProc + 5);
+
+    pProc += 5;
+}
+
+static void setUpOffscreenPaintingHooks(HDC (WINAPI*hookedBeginPaint)(HWND, PAINTSTRUCT*), BOOL (WINAPI*hookedEndPaint)(HWND, const PAINTSTRUCT*))
+{
+    static bool haveHooked = false;
+    if (haveHooked)
+        return;
+    haveHooked = true;
+
+    // Most (all?) windowed plugins don't seem to respond to WM_PRINTCLIENT, so
+    // we hook into BeginPaint/EndPaint to allow their normal WM_PAINT handling
+    // to draw into a given HDC. Note that this hooking affects the entire
+    // process.
+    hook("user32.dll", "BeginPaint", beginPaintSysCall, beginPaint, hookedBeginPaint);
+    hook("user32.dll", "EndPaint", endPaintSysCall, endPaint, hookedEndPaint);
+}
+
 static bool registerPluginView()
 {
     static bool haveRegisteredWindowClass = false;
@@ -201,8 +287,18 @@ PluginView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         m_popPopupsStateTimer.startOneShot(0);
     }
 
+    if (message == WM_PRINTCLIENT) {
+        // Most (all?) windowed plugins don't respond to WM_PRINTCLIENT, so we
+        // change the message to WM_PAINT and rely on our hooked versions of
+        // BeginPaint/EndPaint to make the plugin draw into the given HDC.
+        message = WM_PAINT;
+        m_wmPrintHDC = reinterpret_cast<HDC>(wParam);
+    }
+
     // Call the plug-in's window proc.
     LRESULT result = ::CallWindowProc(m_pluginWndProc, hWnd, message, wParam, lParam);
+
+    m_wmPrintHDC = 0;
 
     m_isCallingPluginWndProc = false;
 
@@ -305,6 +401,34 @@ bool PluginView::dispatchNPEvent(NPEvent& npEvent)
     return result;
 }
 
+void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const IntRect& rect) const
+{
+    ASSERT(m_isWindowed);
+    ASSERT(context->shouldIncludeChildWindows());
+
+    ASSERT(parent()->isFrameView());
+    IntPoint locationInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameRect().location());
+
+    HDC hdc = context->getWindowsContext(frameRect(), false);
+
+    XFORM originalTransform;
+    GetWorldTransform(hdc, &originalTransform);
+
+    // The plugin expects the DC to be in client coordinates, so we translate
+    // the DC to make that so.
+    XFORM transform = originalTransform;
+    transform.eDx = locationInWindow.x();
+    transform.eDy = locationInWindow.y();
+
+    SetWorldTransform(hdc, &transform);
+
+    SendMessage(platformPluginWidget(), WM_PRINTCLIENT, reinterpret_cast<WPARAM>(hdc), PRF_CLIENT | PRF_CHILDREN | PRF_OWNED);
+
+    SetWorldTransform(hdc, &originalTransform);
+
+    context->releaseWindowsContext(hdc, frameRect(), false);
+}
+
 void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (!m_isStarted) {
@@ -313,8 +437,14 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
     }
 
-    if (m_isWindowed || context->paintingDisabled())
+    if (context->paintingDisabled())
         return;
+
+    if (m_isWindowed) {
+        if (context->shouldIncludeChildWindows())
+            paintWindowedPluginIntoContext(context, rect);
+        return;
+    }
 
     ASSERT(parent()->isFrameView());
     IntRect rectInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameRect());
@@ -800,6 +930,7 @@ void PluginView::init()
 
     if (m_isWindowed) {
         registerPluginView();
+        setUpOffscreenPaintingHooks(hookedBeginPaint, hookedEndPaint);
 
         DWORD flags = WS_CHILD;
         if (isSelfVisible())

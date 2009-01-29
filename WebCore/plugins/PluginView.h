@@ -207,7 +207,13 @@ namespace WebCore {
         void setCallingPlugin(bool) const;
 
         void invalidateWindowlessPluginRect(const IntRect&);
-        
+
+#if PLATFORM(WIN_OS) && !PLATFORM(WX) && ENABLE(NETSCAPE_PLUGIN_API)
+        void paintWindowedPluginIntoContext(GraphicsContext*, const IntRect&) const;
+        static HDC WINAPI hookedBeginPaint(HWND, PAINTSTRUCT*);
+        static BOOL WINAPI hookedEndPaint(HWND, const PAINTSTRUCT*);
+#endif
+
         Frame* m_parentFrame;
         RefPtr<PluginPackage> m_plugin;
         Element* m_element;
@@ -270,6 +276,7 @@ namespace WebCore {
         WNDPROC m_pluginWndProc;
         unsigned m_lastMessage;
         bool m_isCallingPluginWndProc;
+        HDC m_wmPrintHDC;
 #endif
 
 #if (PLATFORM(QT) && PLATFORM(WIN_OS)) || defined(XP_MACOSX)

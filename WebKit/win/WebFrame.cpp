@@ -313,6 +313,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
 
     HDC dc = (HDC)(ULONG64)deviceContext;
     GraphicsContext gc(dc);
+    gc.setShouldIncludeChildWindows(true);
     gc.save();
     LONG width = rect.right - rect.left;
     LONG height = rect.bottom - rect.top;
@@ -1812,6 +1813,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
     float headerHeight = 0, footerHeight = 0;
     headerAndFooterHeights(&headerHeight, &footerHeight);
     GraphicsContext spoolCtx(pctx);
+    spoolCtx.setShouldIncludeChildWindows(true);
 
     for (UINT ii = startPage; ii < endPage; ii++) {
         IntRect pageRect = m_pageRects[ii];

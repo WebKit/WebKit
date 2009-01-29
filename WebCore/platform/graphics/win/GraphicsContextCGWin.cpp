@@ -173,6 +173,16 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     m_data->restore();
 }
 
+void GraphicsContext::setShouldIncludeChildWindows(bool include)
+{
+    m_data->m_shouldIncludeChildWindows = include;
+}
+
+bool GraphicsContext::shouldIncludeChildWindows() const
+{
+    return m_data->m_shouldIncludeChildWindows;
+}
+
 GraphicsContext::WindowsBitmap::WindowsBitmap(HDC hdc, IntSize size)
     : m_hdc(0)
     , m_size(size)

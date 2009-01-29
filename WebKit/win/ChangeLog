@@ -1,5 +1,37 @@
 2009-01-29  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 23623: Windowed Flash instances aren't captured when a WebView
+        receives a WM_PRINTCLIENT message
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23623>
+        <rdar://problem/6513921>
+        <rdar://problem/6536874>
+
+        Reviewed by Darin Adler.
+
+        * WebFrame.cpp:
+        (WebFrame::paintDocumentRectToContext):
+        (WebFrame::spoolPages):
+        Call GraphicsContext::setShouldIncludeChildWindows so that child
+        windows will be painted into the GraphicsContext rather than painted
+        directly to the screen.
+
+        * WebView.cpp:
+        (WebView::updateBackingStore): Added a windowsToPaint parameter, which
+        we pass along to paintIntoBackingStore.
+
+        (WebView::paint): Tell updateBackingStore to paint child windows if
+        we're not painting to the screen.
+
+        (WebView::paintIntoBackingStore): Added a windowsToPaint paramter,
+        which we use to tell our GraphicsContext whether or not to include
+        child windows.
+
+        * WebView.h: Added windowsToPaint parameters to paintIntoBackingStore
+        and updateBackingStore (which I also made private).
+
+2009-01-29  Adam Roben  <aroben@apple.com>
+
         Build fix after r40353
 
         * WebCoreSupport/WebFrameLoaderClient.cpp:

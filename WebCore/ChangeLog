@@ -1,3 +1,64 @@
+2009-01-29  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 23623: Windowed Flash instances aren't captured when a WebView
+        receives a WM_PRINTCLIENT message
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23623>
+        <rdar://problem/6513921>
+        <rdar://problem/6536874>
+
+        Flash doesn't seem to respond to WM_PRINTCLIENT, so we change
+        WM_PRINTCLIENT messages into WM_PAINT messages and hook into the
+        BeginPaint/EndPaint APIs to return the HDC we received from
+        WM_PRINTCLIENT. This causes the plugin to paint into the
+        WM_PRINTCLIENT HDC via its normal WM_PAINT handler. This technique
+        came from <http://www.fengyuan.com/article/wmprint.html>.
+
+        No test possible.
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/GraphicsContext.h: Added
+        [set]ShouldIncludeChildWindows on Windows.
+
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h: Added
+        m_shouldIncludeChildWindows.
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        Initialize the new member.
+
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::setShouldIncludeChildWindows):
+        (WebCore::GraphicsContext::shouldIncludeChildWindows):
+        Added simple setter and getter.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView): Initialize the new member.
+
+        * plugins/PluginView.h: Added m_wmPrintHDC and various functions
+        required for making WM_PRINTCLIENT work.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::hookedBeginPaint):
+        (WebCore::PluginView::hookedEndPaint):
+        (WebCore::hook):
+        (WebCore::setUpOffscreenPaintingHooks):
+        Added. Code was modified from code available on fengyuan.com.
+
+        (WebCore::PluginView::wndProc): Turn WM_PRINTCLIENT messages into
+        WM_PAINT messages and save off the HDC that we're supposed to paint
+        into.
+
+        (WebCore::PluginView::paintWindowedPluginIntoContext): Added. Gets an
+        HDC from the GraphicsContext, translates it into client coordinates,
+        gets the plugin to draw into the HDC by sending a WM_PRINTCLIENT
+        message, and returns the HDC to the GraphicsContext.
+
+        (WebCore::PluginView::paint): If we're trying to paint a windowed
+        plugin into the GraphicsContext, call paintWindowedPluginIntoContext.
+
+        (WebCore::PluginView::init): Call setUpOffscreenPaintingHooks to make
+        our WM_PRINTCLIENT trick work.
+
 2009-01-29  David Hyatt  <hyatt@apple.com>
 
         Move RenderFlow::destroy down into RenderBlock and RenderInline.
