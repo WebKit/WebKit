@@ -1,5 +1,16 @@
 2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
+        Not reviewed (this was just a merge problem).
+
+        https://bugs.webkit.org/show_bug.cgi?id=23476
+        HTTP redirect should make application cache updating fail
+
+        * http/tests/appcache/manifest-redirect.html:
+        * http/tests/appcache/resource-redirect.html:
+        Updated the tests to work with the new appcache event sending behavior.
+
+2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         https://bugs.webkit.org/show_bug.cgi?id=23476

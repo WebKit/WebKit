@@ -16,26 +16,24 @@ function log(message)
 
 function cacheCallback()
 {
-    log("FAIL: An event was dispatched on window.applicationCache, even though it was not associated with any cache yet.");
+    log("FAIL: An event was dispatched on window.applicationCache, even though it was not associated wuth any cache yet.");
 }
 
-function timeout()
+function test()
 {
-    if (applicationCache.status != applicationCache.UNCACHED) {
-        setTimeout(timeout, 100);
-        return;
-    }
+    // Wait for cache update to finish.
+    if (window.applicationCache.status != window.applicationCache.UNCACHED)
+        log("FAILURE: Unexpected cache status: " + window.applicationCache.status);
+    else
+        log("SUCCESS");
 
-    log("SUCCESS");
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
 
 applicationCache.addEventListener('cached', function() { log("cached"); cacheCallback() }, false);
 applicationCache.addEventListener('noupdate', function() { log("noupdate"); cacheCallback() }, false);
-applicationCache.addEventListener('error', function() { log("error"); cacheCallback() }, false);
-
-setTimeout(timeout, 100);
+applicationCache.addEventListener('error', test, false);
 
 </script>
 </body>
