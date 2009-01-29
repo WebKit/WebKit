@@ -1,5 +1,24 @@
 2009-01-28  David Hyatt  <hyatt@apple.com>
 
+        Move hit testing and painting of lines from RenderFlow into RenderLineBoxList.
+
+        Reviewed by Oliver Hunt
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintContents):
+        (WebCore::RenderBlock::hitTestContents):
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paint):
+        (WebCore::RenderInline::nodeAtPoint):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderLineBoxList.h:
+
+2009-01-28  David Hyatt  <hyatt@apple.com>
+
         Fix SVG pixel test regressions.  I wish I could say that I understand this fix, but I don't.  For
         some reason the original code returned 0 for RenderSVGInlineText::yPos() and somehow my literal
         replacement of yPos() with the body of that method changed the results.  I am completely baffled,

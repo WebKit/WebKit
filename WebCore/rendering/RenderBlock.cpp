@@ -1591,7 +1591,7 @@ void RenderBlock::paintContents(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     if (childrenInline())
-        paintLines(paintInfo, tx, ty);
+        m_lineBoxes.paint(this, paintInfo, tx, ty);
     else
         paintChildren(paintInfo, tx, ty);
 }
@@ -3239,7 +3239,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
 {
     if (childrenInline() && !isTable()) {
         // We have to hit-test our line boxes.
-        if (hitTestLines(request, result, x, y, tx, ty, hitTestAction)) {
+        if (m_lineBoxes.hitTest(this, request, result, x, y, tx, ty, hitTestAction)) {
             updateHitTestResult(result, IntPoint(x - tx, y - ty));
             return true;
         }

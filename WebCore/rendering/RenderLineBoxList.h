@@ -62,6 +62,9 @@ public:
     
     void dirtyLineBoxes();
 
+    void paint(RenderBox*, RenderObject::PaintInfo&, int x, int y) const;
+    bool hitTest(RenderBox*, const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction) const;
+    
 private:
     // For block flows, each box represents the root inline box for a line in the
     // paragraph.

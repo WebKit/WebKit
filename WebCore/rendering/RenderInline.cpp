@@ -299,7 +299,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
 
 void RenderInline::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    paintLines(paintInfo, tx, ty);
+    m_lineBoxes.paint(this, paintInfo, tx, ty);
 }
 
 void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel)
@@ -367,7 +367,7 @@ const char* RenderInline::renderName() const
 bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,
                                 int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
-    return hitTestLines(request, result, x, y, tx, ty, hitTestAction);
+    return m_lineBoxes.hitTest(this, request, result, x, y, tx, ty, hitTestAction);
 }
 
 VisiblePosition RenderInline::positionForCoordinates(int x, int y)
