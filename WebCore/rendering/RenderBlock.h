@@ -102,7 +102,7 @@ public:
         }
     }
 
-    virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
+    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
 
     virtual void repaintOverhangingFloats(bool paintAllDescendants);

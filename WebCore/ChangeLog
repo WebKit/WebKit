@@ -1,3 +1,40 @@
+2009-01-29  David Hyatt  <hyatt@apple.com>
+
+        Move all of the contination insertion code from RenderFlow to RenderInline.  addChildToFlow is renamed to addChildIgnoringContinuation, and it has been moved to
+        RenderContainer so that it can still be called on either blocks or inlines.  The base class implementation in RenderContainer is what RenderBlock uses.  RenderInline
+        subclasses it to do all the work it used to do in addChildToFlow.
+        
+        RenderBlock's old addChildToFlow can just become addChild.  This simplification is possible because addChild was actually never being called on anonymous
+        block continuations.
+        
+        The code dealing with anonymous table parts in the old addChildWithContinuation method can now be removed as a result with no harmful side effects.  Falling through to the
+        base class and ignoring a block continuation makes the right thing happen.
+        
+        addChildWithContinuation moved to RenderInline and has been renamed to addChildToContinuation.
+        
+        Reviewed by Eric Seidel
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChild):
+        * rendering/RenderBlock.h:
+        * rendering/RenderContainer.h:
+        (WebCore::RenderContainer::addChildIgnoringContinuation):
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::addChild):
+        (WebCore::nextContinuation):
+        (WebCore::RenderInline::continuationBefore):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::splitFlow):
+        (WebCore::RenderInline::addChildToContinuation):
+        (WebCore::RenderInline::childBecameNonInline):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::continuation):
+        (WebCore::RenderInline::setContinuation):
+
 2009-01-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver Hunt

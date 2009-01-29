@@ -245,7 +245,7 @@ void RenderBlock::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldS
     updateFirstLetter();
 }
 
-void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)
+void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.
     if (!beforeChild && isAfterContent(lastChild()))
@@ -269,7 +269,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
                 beforeChild->parent()->addChild(newChild, beforeChild);
             else
-                addChildToFlow(newChild, beforeChild->parent());
+                addChild(newChild, beforeChild->parent());
             return;
         }
 

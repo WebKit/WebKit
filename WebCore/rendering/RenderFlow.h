@@ -44,12 +44,6 @@ public:
     {
     }
 
-    RenderFlow* continuationBefore(RenderObject* beforeChild);
-
-    void addChildWithContinuation(RenderObject* newChild, RenderObject* beforeChild);
-    virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild) = 0;
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
-
     RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
     const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
 
