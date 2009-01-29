@@ -583,10 +583,7 @@ void WebFrameLoaderClient::loadURLIntoChild(const KURL& originalURL, const Strin
     // If we're moving in the backforward list, we might want to replace the content
     // of this child frame with whatever was there at that point.
     // Reload will maintain the frame contents, LoadSame will not.
-    if (parentItem && parentItem->children().size() &&
-        (isBackForwardLoadType(loadType)
-         || loadType == FrameLoadTypeReloadAllowingStaleData))
-    {
+    if (parentItem && parentItem->children().size() && isBackForwardLoadType(loadType)) {
         if (HistoryItem* childItem = parentItem->childItemWithName(core(childFrame)->tree()->name())) {
             // Use the original URL to ensure we get all the side-effects, such as
             // onLoad handlers, of any redirects that happened. An example of where
