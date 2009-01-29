@@ -131,8 +131,8 @@ IntRect RenderSVGInlineText::computeAbsoluteRectForRange(int startPos, int endPo
     // But do take the containingBlocks's container position into account, ie. SVG text in scrollable <div>.
     TransformationMatrix htmlParentCtm = root->RenderContainer::absoluteTransform();
 
-    FloatRect fixedRect(narrowPrecisionToFloat(rect.x() + absPos.x() - (firstTextBox() ? firstTextBox()->xPos() : 0) - htmlParentCtm.e()),
-                        narrowPrecisionToFloat(rect.y() + absPos.y() - (firstTextBox() ? firstTextBox()->yPos() : 0) - htmlParentCtm.f()), rect.width(), rect.height());
+    FloatRect fixedRect(narrowPrecisionToFloat(rect.x() + absPos.x() - htmlParentCtm.e()),
+                        narrowPrecisionToFloat(rect.y() + absPos.y() - htmlParentCtm.f()), rect.width(), rect.height());
     // FIXME: broken with CSS transforms
     return enclosingIntRect(absoluteTransform().mapRect(fixedRect));
 }
