@@ -94,16 +94,6 @@ void FrameLoaderClientWx::detachFrameLoader()
     m_frame = 0;
 }
 
-void FrameLoaderClientWx::ref()
-{
-    RefCounted<FrameLoaderClientWx>::ref();
-}
-
-void FrameLoaderClientWx::deref()
-{
-    RefCounted<FrameLoaderClientWx>::deref();
-}
-
 bool FrameLoaderClientWx::hasWebView() const
 {
     notImplemented();

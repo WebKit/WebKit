@@ -55,9 +55,6 @@ namespace WebCore {
         void setWebView(wxWebView *webview);
         virtual void detachFrameLoader();
 
-        virtual void ref();
-        virtual void deref();
-
         virtual bool hasWebView() const; // mainly for assertions
 
         virtual bool hasBackForwardList() const;

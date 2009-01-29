@@ -1,3 +1,12 @@
+2009-01-29  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix for Wx: Finish de-RefCount-ing FrameLoaderClientWx
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::ref): Removed.
+        (WebCore::FrameLoaderClientWx::deref): Removed.
+        * WebKitSupport/FrameLoaderClientWx.h: Ditto.
+
 2009-01-28  David Kilzer  <ddkilzer@apple.com>
 
         Bug 23490: Remove initialRefCount argument from RefCounted class
