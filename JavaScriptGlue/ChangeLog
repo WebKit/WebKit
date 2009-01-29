@@ -1,3 +1,13 @@
+2009-01-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix for <rdar://problem/6525537>
+        Hang occurs when closing Installer window (iTunes, Aperture)
+
+        * JSUtils.cpp:
+        (getThreadGlobalObject): Use the shared JSGlobalData instance.
+
 2009-01-22  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Anders Carlsson.

@@ -1,5 +1,14 @@
 2009-01-28  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Gavin Barraclough.
+
+        Fix for <rdar://problem/6525537>
+        Hang occurs when closing Installer window (iTunes, Aperture)
+
+        * JavaScriptCore.exp: Export JSGlobalData::sharedInstance.
+
+2009-01-28  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoff Garen.
 
         Initial patch by Mark Rowe.
