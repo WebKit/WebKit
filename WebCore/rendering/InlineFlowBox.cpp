@@ -652,7 +652,7 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
                     RenderBlock* block = object()->containingBlock()->containingBlock();
                     block->addContinuationWithOutline(static_cast<RenderInline*>(object()->element()->renderer()));
                 } else if (!inlineFlow->isInlineContinuation())
-                    paintInfo.outlineObjects->add(flowObject());
+                    paintInfo.outlineObjects->add(inlineFlow);
             }
         } else if (paintInfo.phase == PaintPhaseMask) {
             paintMask(paintInfo, tx, ty);

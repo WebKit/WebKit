@@ -92,6 +92,7 @@ public:
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
 
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
+    void paintOutline(GraphicsContext*, int tx, int ty);
 
     void calcMargins(int containerWidth)
     {
@@ -103,6 +104,9 @@ protected:
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
 
     static RenderInline* cloneInline(RenderFlow* src);
+
+private:
+    void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine, const IntRect& nextLine);
 
 private:
     RenderBox* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the

@@ -33,6 +33,8 @@
 #include "RenderView.h"
 #include "VisiblePosition.h"
 
+using namespace std;
+
 namespace WebCore {
 
 RenderInline::RenderInline(Node* node)
@@ -571,6 +573,121 @@ void RenderInline::addFocusRingRects(GraphicsContext* graphicsContext, int tx, i
         continuation()->addFocusRingRects(graphicsContext, 
                                           tx - containingBlock()->x() + continuation()->x(),
                                           ty - containingBlock()->y() + continuation()->y());
+}
+
+void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty)
+{
+    if (!hasOutline())
+        return;
+    
+    if (style()->outlineStyleIsAuto() || hasOutlineAnnotation()) {
+        int ow = style()->outlineWidth();
+        Color oc = style()->outlineColor();
+        if (!oc.isValid())
+            oc = style()->color();
+
+        graphicsContext->initFocusRing(ow, style()->outlineOffset());
+        addFocusRingRects(graphicsContext, tx, ty);
+        if (style()->outlineStyleIsAuto())
+            graphicsContext->drawFocusRing(oc);
+        else
+            addPDFURLRect(graphicsContext, graphicsContext->focusRingBoundingRect());
+        graphicsContext->clearFocusRing();
+    }
+
+    if (style()->outlineStyleIsAuto() || style()->outlineStyle() == BNONE)
+        return;
+
+    Vector<IntRect> rects;
+
+    rects.append(IntRect());
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+        rects.append(IntRect(curr->xPos(), curr->yPos(), curr->width(), curr->height()));
+
+    rects.append(IntRect());
+
+    for (unsigned i = 1; i < rects.size() - 1; i++)
+        paintOutlineForLine(graphicsContext, tx, ty, rects.at(i - 1), rects.at(i), rects.at(i + 1));
+}
+
+void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx, int ty,
+                                       const IntRect& lastline, const IntRect& thisline, const IntRect& nextline)
+{
+    int ow = style()->outlineWidth();
+    EBorderStyle os = style()->outlineStyle();
+    Color oc = style()->outlineColor();
+    if (!oc.isValid())
+        oc = style()->color();
+
+    int offset = style()->outlineOffset();
+
+    int t = ty + thisline.y() - offset;
+    int l = tx + thisline.x() - offset;
+    int b = ty + thisline.bottom() + offset;
+    int r = tx + thisline.right() + offset;
+    
+    // left edge
+    drawBorder(graphicsContext,
+               l - ow,
+               t - (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.right() - 1) <= thisline.x() ? ow : 0),
+               l,
+               b + (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.right() - 1) <= thisline.x() ? ow : 0),
+               BSLeft,
+               oc, style()->color(), os,
+               (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.right() - 1) <= thisline.x() ? ow : -ow),
+               (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.right() - 1) <= thisline.x() ? ow : -ow));
+    
+    // right edge
+    drawBorder(graphicsContext,
+               r,
+               t - (lastline.isEmpty() || lastline.right() < thisline.right() || (thisline.right() - 1) <= lastline.x() ? ow : 0),
+               r + ow,
+               b + (nextline.isEmpty() || nextline.right() <= thisline.right() || (thisline.right() - 1) <= nextline.x() ? ow : 0),
+               BSRight,
+               oc, style()->color(), os,
+               (lastline.isEmpty() || lastline.right() < thisline.right() || (thisline.right() - 1) <= lastline.x() ? ow : -ow),
+               (nextline.isEmpty() || nextline.right() <= thisline.right() || (thisline.right() - 1) <= nextline.x() ? ow : -ow));
+    // upper edge
+    if (thisline.x() < lastline.x())
+        drawBorder(graphicsContext,
+                   l - ow,
+                   t - ow,
+                   min(r+ow, (lastline.isEmpty() ? 1000000 : tx + lastline.x())),
+                   t ,
+                   BSTop, oc, style()->color(), os,
+                   ow,
+                   (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow);
+    
+    if (lastline.right() < thisline.right())
+        drawBorder(graphicsContext,
+                   max(lastline.isEmpty() ? -1000000 : tx + lastline.right(), l - ow),
+                   t - ow,
+                   r + ow,
+                   t ,
+                   BSTop, oc, style()->color(), os,
+                   (!lastline.isEmpty() && l - ow < tx + lastline.right()) ? -ow : ow,
+                   ow);
+    
+    // lower edge
+    if (thisline.x() < nextline.x())
+        drawBorder(graphicsContext,
+                   l - ow,
+                   b,
+                   min(r + ow, !nextline.isEmpty() ? tx + nextline.x() + 1 : 1000000),
+                   b + ow,
+                   BSBottom, oc, style()->color(), os,
+                   ow,
+                   (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow);
+    
+    if (nextline.right() < thisline.right())
+        drawBorder(graphicsContext,
+                   max(!nextline.isEmpty() ? tx + nextline.right() : -1000000, l - ow),
+                   b,
+                   r + ow,
+                   b + ow,
+                   BSBottom, oc, style()->color(), os,
+                   (!nextline.isEmpty() && l - ow < tx + nextline.right()) ? -ow : ow,
+                   ow);
 }
 
 } // namespace WebCore

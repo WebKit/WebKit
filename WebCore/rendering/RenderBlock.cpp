@@ -74,7 +74,7 @@ static PercentHeightDescendantsMap* gPercentHeightDescendantsMap = 0;
 typedef WTF::HashMap<const RenderBox*, HashSet<RenderBlock*>*> PercentHeightContainerMap;
 static PercentHeightContainerMap* gPercentHeightContainerMap = 0;
     
-typedef WTF::HashMap<RenderBlock*, ListHashSet<RenderFlow*>*> ContinuationOutlineTableMap;
+typedef WTF::HashMap<RenderBlock*, ListHashSet<RenderInline*>*> ContinuationOutlineTableMap;
 
 // Our MarginInfo state used when laying out block children.
 RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int top, int bottom)
@@ -1685,7 +1685,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     // 5. paint outline.
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && hasOutline() && style()->visibility() == VISIBLE)
-        RenderBox::paintOutline(paintInfo.context, tx, ty, width(), height(), style());
+        paintOutline(paintInfo.context, tx, ty, width(), height(), style());
 
     // 6. paint continuation outlines.
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseChildOutlines)) {
@@ -1776,9 +1776,9 @@ void RenderBlock::addContinuationWithOutline(RenderInline* flow)
     ASSERT(!flow->layer() && !flow->isInlineContinuation());
     
     ContinuationOutlineTableMap* table = continuationOutlineTable();
-    ListHashSet<RenderFlow*>* continuations = table->get(this);
+    ListHashSet<RenderInline*>* continuations = table->get(this);
     if (!continuations) {
-        continuations = new ListHashSet<RenderFlow*>;
+        continuations = new ListHashSet<RenderInline*>;
         table->set(this, continuations);
     }
     
@@ -1791,15 +1791,15 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, int tx, int ty)
     if (table->isEmpty())
         return;
         
-    ListHashSet<RenderFlow*>* continuations = table->get(this);
+    ListHashSet<RenderInline*>* continuations = table->get(this);
     if (!continuations)
         return;
         
     // Paint each continuation outline.
-    ListHashSet<RenderFlow*>::iterator end = continuations->end();
-    for (ListHashSet<RenderFlow*>::iterator it = continuations->begin(); it != end; ++it) {
+    ListHashSet<RenderInline*>::iterator end = continuations->end();
+    for (ListHashSet<RenderInline*>::iterator it = continuations->begin(); it != end; ++it) {
         // Need to add in the coordinates of the intervening blocks.
-        RenderFlow* flow = *it;
+        RenderInline* flow = *it;
         RenderBlock* block = flow->containingBlock();
         for ( ; block && block != this; block = block->containingBlock()) {
             tx += block->x();

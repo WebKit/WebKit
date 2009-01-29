@@ -36,6 +36,7 @@ class AnimationController;
 class HitTestResult;
 class InlineBox;
 class InlineFlowBox;
+class RenderInline;
 class RenderBlock;
 class RenderFlow;
 class RenderLayer;
@@ -418,7 +419,7 @@ public:
      */
     struct PaintInfo {
         PaintInfo(GraphicsContext* newContext, const IntRect& newRect, PaintPhase newPhase, bool newForceBlackText,
-                  RenderObject* newPaintingRoot, ListHashSet<RenderFlow*>* newOutlineObjects)
+                  RenderObject* newPaintingRoot, ListHashSet<RenderInline*>* newOutlineObjects)
             : context(newContext)
             , rect(newRect)
             , phase(newPhase)
@@ -433,7 +434,7 @@ public:
         PaintPhase phase;
         bool forceBlackText;
         RenderObject* paintingRoot; // used to draw just one element and its visual kids
-        ListHashSet<RenderFlow*>* outlineObjects; // used to list outlines that should be painted by a block with inline children
+        ListHashSet<RenderInline*>* outlineObjects; // used to list outlines that should be painted by a block with inline children
     };
 
     virtual void paint(PaintInfo&, int tx, int ty);
