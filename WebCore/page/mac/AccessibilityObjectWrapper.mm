@@ -181,9 +181,11 @@ static WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition& vi
     if (!domNode)
         return nil;
 
-    if (domNode->isHTMLElement())
-        if (static_cast<HTMLElement*>(domNode)->isPasswordField())
+    if (domNode->isHTMLElement()) {
+        InputElement* inputElement = toInputElement(static_cast<Element*>(domNode));
+        if (inputElement && inputElement->isPasswordField())
             return nil;
+    }
 
     // locate the renderer, which must exist for a visible dom node
     RenderObject* renderer = domNode->renderer();

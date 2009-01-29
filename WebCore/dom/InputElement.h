@@ -36,6 +36,10 @@ class InputElement {
 public:
     virtual ~InputElement() { }
 
+    virtual bool isAutofilled() const = 0;
+    virtual bool isChecked() const = 0;
+    virtual bool isIndeterminate() const = 0;
+    virtual bool isInputTypeHidden() const = 0;
     virtual bool isPasswordField() const = 0;
     virtual bool isSearchField() const = 0;
     virtual bool isTextField() const = 0;

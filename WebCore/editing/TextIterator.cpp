@@ -224,7 +224,9 @@ void TextIterator::advance()
             if (!m_handledNode) {
                 if (renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) // FIXME: What about CDATA_SECTION_NODE?
                     m_handledNode = handleTextNode();
-                else if (renderer && (renderer->isImage() || renderer->isWidget() || (renderer->element() && renderer->element()->isControl())))
+                else if (renderer && (renderer->isImage() || renderer->isWidget() ||
+                         (renderer->element() && renderer->element()->isElementNode() &&
+                          static_cast<Element*>(renderer->element())->isFormControlElement())))
                     m_handledNode = handleReplacedElement();
                 else
                     m_handledNode = handleNonTextNode();

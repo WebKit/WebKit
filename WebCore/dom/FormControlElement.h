@@ -30,6 +30,10 @@ class FormControlElement {
 public:
     virtual ~FormControlElement() { }
 
+    virtual bool isEnabled() const = 0;
+    virtual bool isReadOnlyControl() const = 0;
+    virtual bool isTextControl() const = 0;
+
     virtual bool valueMatchesRenderer() const = 0;
     virtual void setValueMatchesRenderer(bool value = true) = 0;
 

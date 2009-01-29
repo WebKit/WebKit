@@ -47,30 +47,14 @@ WMLInputElement::~WMLInputElement()
         document()->unregisterForDocumentActivationCallbacks(this);
 }
 
-static inline bool isInputFocusable(RenderObject* renderer)
-{
-    if (!renderer || !renderer->isBox())
-        return false;
-
-    if (toRenderBox(renderer)->size().isEmpty())
-        return false;
-
-    if (RenderStyle* style = renderer->style()) {
-        if (style->visibility() != VISIBLE)
-            return false;
-    }
-
-    return true;
-}
-
 bool WMLInputElement::isKeyboardFocusable(KeyboardEvent*) const
 {
-    return isInputFocusable(renderer());
+    return WMLFormControlElementWithState::isFocusable();
 }
 
 bool WMLInputElement::isMouseFocusable() const
 {
-    return isInputFocusable(renderer());
+    return WMLFormControlElementWithState::isFocusable();
 }
 
 void WMLInputElement::dispatchFocusEvent()

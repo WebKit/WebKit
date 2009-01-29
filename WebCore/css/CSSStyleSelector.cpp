@@ -5,7 +5,7 @@
  * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -939,15 +939,29 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
             (s->getAttribute(langAttr) == m_element->getAttribute(langAttr)) &&
             (s->getAttribute(readonlyAttr) == m_element->getAttribute(readonlyAttr)) &&
             (s->getAttribute(cellpaddingAttr) == m_element->getAttribute(cellpaddingAttr))) {
-            bool isControl = s->isControl();
-            if (isControl != m_element->isControl())
+            bool isControl = s->isFormControlElement();
+            if (isControl != m_element->isFormControlElement())
                 return false;
-            if (isControl && (s->isEnabled() != m_element->isEnabled()) ||
-                             (s->isIndeterminate() != m_element->isIndeterminate()) ||
-                             (s->isChecked() != m_element->isChecked()) ||
-                             (s->isAutofilled() != m_element->isAutofilled()))
-                return false;
-            
+            if (isControl) {
+                InputElement* thisInputElement = toInputElement(s);
+                InputElement* otherInputElement = toInputElement(m_element);
+                if (thisInputElement && otherInputElement) {
+                    if ((thisInputElement->isAutofilled() != otherInputElement->isAutofilled()) ||
+                        (thisInputElement->isChecked() != otherInputElement->isChecked()) ||
+                        (thisInputElement->isIndeterminate() != otherInputElement->isIndeterminate()))
+                    return false;
+                } else
+                    return false;
+
+                FormControlElement* thisFormControlElement = toFormControlElement(s);
+                FormControlElement* otherFormControlElement = toFormControlElement(m_element);
+                if (thisFormControlElement && otherFormControlElement) {
+                    if (thisFormControlElement->isEnabled() != otherFormControlElement->isEnabled())
+                        return false;
+                } else
+                    return false;
+            }
+
             if (style->transitions() || style->animations())
                 return false;
 
@@ -1526,7 +1540,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
 
     // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
     // alter fonts and heights/widths.
-    if (e && e->isControl() && style->fontSize() >= 11) {
+    if (e && e->isFormControlElement() && style->fontSize() >= 11) {
         // Don't apply intrinsic margins to image buttons.  The designer knows how big the images are,
         // so we have to treat all image buttons as though they were explicitly sized.
         if (!e->hasTagName(inputTag) || static_cast<HTMLInputElement*>(e)->inputType() != HTMLInputElement::IMAGE)
@@ -2204,10 +2218,13 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 if (pseudoState == PseudoAnyLink || pseudoState == PseudoLink || pseudoState == PseudoVisited)
                     return true;
                 break;
-            case CSSSelector::PseudoAutofill:
-                if (e)
-                    return e->isAutofilled();
+            case CSSSelector::PseudoAutofill: {
+                if (!e || !e->isFormControlElement())
+                    break;
+                if (InputElement* inputElement = toInputElement(e))
+                    return inputElement->isAutofilled();
                 break;
+            }
             case CSSSelector::PseudoLink:
                 if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
                     pseudoState = checkPseudoState(e);
@@ -2259,37 +2276,62 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 }
                 break;
             case CSSSelector::PseudoEnabled:
-                if (e && e->isControl() && !e->isInputTypeHidden())
+                if (e && e->isFormControlElement()) {
+                    InputElement* inputElement = toInputElement(e);
+                    if (inputElement && inputElement->isInputTypeHidden())
+                        break;
                     // The UI spec states that you can't match :enabled unless you are an object that can
                     // "receive focus and be activated."  We will limit matching of this pseudo-class to elements
                     // that are non-"hidden" controls.
-                    return e->isEnabled();                    
+                    return toFormControlElement(e)->isEnabled();
+                }
                 break;
             case CSSSelector::PseudoFullPageMedia:
                 return e && e->document() && e->document()->isMediaDocument();
                 break;
             case CSSSelector::PseudoDisabled:
-                if (e && e->isControl() && !e->isInputTypeHidden())
+                if (e && e->isFormControlElement()) {
+                    InputElement* inputElement = toInputElement(e);
+                    if (inputElement && inputElement->isInputTypeHidden())
+                        break;
+
                     // The UI spec states that you can't match :enabled unless you are an object that can
                     // "receive focus and be activated."  We will limit matching of this pseudo-class to elements
                     // that are non-"hidden" controls.
-                    return !e->isEnabled();                    
+                    return !toFormControlElement(e)->isEnabled();
+                }
                 break;
-            case CSSSelector::PseudoReadOnly:
-                return e && e->isTextControl() && e->isReadOnlyControl();
-            case CSSSelector::PseudoReadWrite:
-                return e && e->isTextControl() && !e->isReadOnlyControl();
-            case CSSSelector::PseudoChecked:
+            case CSSSelector::PseudoReadOnly: {
+                if (!e || !e->isFormControlElement())
+                    return false;
+                FormControlElement* formControlElement = toFormControlElement(e);
+                return formControlElement->isTextControl() && formControlElement->isReadOnlyControl();
+            }
+            case CSSSelector::PseudoReadWrite: {
+                if (!e || !e->isFormControlElement())
+                    return false;
+                FormControlElement* formControlElement = toFormControlElement(e);
+                return formControlElement->isTextControl() && !formControlElement->isReadOnlyControl();
+            }
+            case CSSSelector::PseudoChecked: {
+                if (!e || !e->isFormControlElement())
+                    break;
                 // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
                 // you can't be both checked and indeterminate.  We will behave like WinIE behind the scenes and just
                 // obey the CSS spec here in the test for matching the pseudo.
-                if (e && e->isChecked() && !e->isIndeterminate())
+                InputElement* inputElement = toInputElement(e);
+                if (inputElement && inputElement->isChecked() && !inputElement->isIndeterminate())
                     return true;
                 break;
-            case CSSSelector::PseudoIndeterminate:
-                if (e && e->isIndeterminate())
+            }
+            case CSSSelector::PseudoIndeterminate: {
+                if (!e || !e->isFormControlElement())
+                    break;
+                InputElement* inputElement = toInputElement(e);
+                if (inputElement && inputElement->isIndeterminate())
                     return true;
                 break;
+            }
             case CSSSelector::PseudoRoot:
                 if (e == e->document()->documentElement())
                     return true;

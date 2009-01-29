@@ -315,9 +315,15 @@ bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
     if (!element->hasTagName(optionTag))
         return false;
     bool groupEnabled = true;
-    if (element->parentNode() && element->parentNode()->hasTagName(optgroupTag))
-        groupEnabled = element->parentNode()->isEnabled();
-    return element->isEnabled() && groupEnabled;
+    if (element->parentNode() && element->parentNode()->hasTagName(optgroupTag)) {
+        FormControlElement* formControlElement = toFormControlElement(static_cast<Element*>(element->parentNode()));
+        groupEnabled = formControlElement->isEnabled();
+    }
+
+    if (!groupEnabled)
+        return false;
+
+    return toFormControlElement(element)->isEnabled();
 }
 
 PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const

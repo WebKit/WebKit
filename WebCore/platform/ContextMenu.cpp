@@ -252,7 +252,7 @@ void ContextMenu::populate()
     if (!node)
         return;
 #if PLATFORM(GTK)
-    if (!result.isContentEditable() && node->isControl())
+    if (!result.isContentEditable() && (node->isElementNode() && static_cast<Element*>(node)->isFormControlElement()))
         return;
 #endif
     Frame* frame = node->document()->frame();

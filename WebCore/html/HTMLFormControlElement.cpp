@@ -98,8 +98,12 @@ void HTMLFormControlElement::attach()
     // Focus the element if it should honour its autofocus attribute.
     // We have to determine if the element is a TextArea/Input/Button/Select,
     // if input type hidden ignore autofocus. So if disabled or readonly.
+    bool isInputTypeHidden = false;
+    if (hasTagName(inputTag))
+        isInputTypeHidden = static_cast<HTMLInputElement*>(this)->isInputTypeHidden();
+
     if (autofocus() && renderer() && !document()->ignoreAutofocus() && !isReadOnlyControl() &&
-            ((hasTagName(inputTag) && !isInputTypeHidden()) || hasTagName(selectTag) ||
+            ((hasTagName(inputTag) && !isInputTypeHidden) || hasTagName(selectTag) ||
               hasTagName(buttonTag) || hasTagName(textareaTag)))
          focus();
 }

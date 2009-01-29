@@ -33,12 +33,17 @@ public:
     WMLFormControlElement(const QualifiedName& tagName, Document* document);
     virtual ~WMLFormControlElement();
 
+    virtual bool isEnabled() const { return true; }
     virtual bool isFormControlElement() const { return true; }
+    virtual bool isReadOnlyControl() const { return false; }
+    virtual bool isTextControl() const { return false; }
 
     virtual bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
     virtual void setValueMatchesRenderer(bool b = true) { m_valueMatchesRenderer = b; }
 
     virtual const AtomicString& name() const { return emptyAtom; }
+
+    virtual bool isFocusable() const;
 
 private:
     bool m_valueMatchesRenderer;

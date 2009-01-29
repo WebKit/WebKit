@@ -43,6 +43,7 @@ public:
 
     virtual bool shouldUseInputMethod() const { return !m_isPasswordField; }
     virtual bool isChecked() const { return false; }
+    virtual bool isAutofilled() const { return false; }
     virtual bool isIndeterminate() const { return false; }
     virtual bool isTextControl() const { return true; }
     virtual bool isRadioButton() const { return false; }

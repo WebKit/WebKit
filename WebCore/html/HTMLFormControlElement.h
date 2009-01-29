@@ -45,7 +45,7 @@ public:
 
     virtual const AtomicString& type() const = 0;
 
-    virtual bool isControl() const { return true; }
+    virtual bool isTextControl() const { return false; }
     virtual bool isEnabled() const { return !disabled(); }
 
     virtual void parseMappedAttribute(MappedAttribute*);

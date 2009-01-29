@@ -1,5 +1,80 @@
 2009-01-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by David Hyatt.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=23539
+
+        Remove several virtual functions from Node & Element related to form control / input elements,
+        that shouldn't reside there, but move to approriate locations, in the new form control /
+        input element abstract base classes.
+
+        Remove the isControl() method from Node, as it's redundant - isFormControlElement() provides the same information.
+        Move isEnabled( / isReadOnlyControl() / isTextControl() from Node to FormControlElement.
+        Move isAutofilled() / isChecked() / isIndeterminate() from Node to InputElement.
+        Move isInputTypeHidden() / isPasswordField() from Element to InputElement.
+
+        Querying these methods requires using the toInputElement/toFormControlElement casting helper functions
+        to cast Element pointers to InputElement/FormControlElement pointers.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * dom/Element.h:
+        (WebCore::Element::isFormControlElementWithState):
+        * dom/FormControlElement.h:
+        * dom/InputElement.h:
+        * dom/Node.h:
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::attach):
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::isTextControl):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::CheckedRadioButtons::removeButton):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isAutofilled):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isPasswordField):
+        (WebCore::AccessibilityRenderObject::isIndeterminate):
+        (WebCore::AccessibilityRenderObject::isChecked):
+        (WebCore::AccessibilityRenderObject::isControl):
+        (WebCore::AccessibilityRenderObject::isEnabled):
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (textMarkerForVisiblePosition):
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemIsEnabled):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::updateUserModifyProperty):
+        (WebCore::RenderTextControl::adjustInnerTextStyle):
+        (WebCore::RenderTextControl::updateFromElement):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isChecked):
+        (WebCore::RenderTheme::isIndeterminate):
+        (WebCore::RenderTheme::isEnabled):
+        (WebCore::RenderTheme::isReadOnlyControl):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        * wml/WMLFormControlElement.cpp:
+        (WebCore::WMLFormControlElement::isFocusable):
+        * wml/WMLFormControlElement.h:
+        (WebCore::WMLFormControlElement::isEnabled):
+        (WebCore::WMLFormControlElement::isReadOnlyControl):
+        (WebCore::WMLFormControlElement::isTextControl):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::isKeyboardFocusable):
+        (WebCore::WMLInputElement::isMouseFocusable):
+        * wml/WMLInputElement.h:
+        (WebCore::WMLInputElement::isAutofilled):
+
+2009-01-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Not reviewed. Fix WML build - apply same fix as HTMLAnchorElement received.
 
         * wml/WMLAElement.cpp:
