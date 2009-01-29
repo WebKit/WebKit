@@ -72,11 +72,12 @@ static PluginProxyMap& pluginProxyMap()
     return pluginProxyMap;
 }
 
-NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort)
+NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort, const ProcessSerialNumber& pluginHostPSN)
     : m_clientPort(clientPort)
     , m_pluginHostPort(pluginHostPort)
-    , m_modalCount(0)
+    , m_isModal(false)
     , m_menuBarIsVisible(true)
+    , m_pluginHostPSN(pluginHostPSN)
 {
     pluginProxyMap().add(m_clientPort, this);
     
@@ -128,15 +129,12 @@ void NetscapePluginHostProxy::pluginHostDied()
     NetscapePluginHostManager::shared().pluginHostDied(this);
     
     // The plug-in crashed while its menu bar was hidden. Make sure to show it.
-    if (m_menuBarIsVisible)
+    if (!m_menuBarIsVisible)
         setMenuBarVisible(true);
 
     // The plug-in crashed while it had a modal dialog up.
-    if (m_modalCount) {
-        m_modalCount = 1;
-        
+    if (m_isModal)
         setModal(false);
-    }
     
     delete this;
 }
@@ -180,35 +178,46 @@ void NetscapePluginHostProxy::setMenuBarVisible(bool visible)
     }
 }
 
+void NetscapePluginHostProxy::beginModal()
+{
+    ASSERT(!m_placeholderWindow);
+    
+    m_placeholderWindow.adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    
+    // We need to be able to get the setModal(false) call from the plug-in host.
+    CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
+    
+    [NSApp runModalForWindow:m_placeholderWindow.get()];
+}
+    
+void NetscapePluginHostProxy::endModal()
+{
+    ASSERT(m_placeholderWindow);
+    
+    CFRunLoopRemoveSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
+    
+    [NSApp stopModal];
+    [m_placeholderWindow.get() orderOut:nil];
+    m_placeholderWindow = 0;
+    
+    // Make ourselves the front process.
+    ProcessSerialNumber psn;
+    GetCurrentProcess(&psn);
+    SetFrontProcess(&psn);            
+}
+    
+
 void NetscapePluginHostProxy::setModal(bool modal)
 {
-    if (modal) {
-        if (!m_modalCount++) {
-            ASSERT(!m_placeholderWindow);
-
-            m_placeholderWindow.adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
-
-            // We need to be able to get the setModal(false) call from the plug-in host.
-            CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
-
-            [NSApp runModalForWindow:m_placeholderWindow.get()];
-        }
-    } else {
-        if (!--m_modalCount) {
-            ASSERT(m_placeholderWindow);
-            
-            CFRunLoopRemoveSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
-
-            [NSApp stopModal];
-            [m_placeholderWindow.get() orderOut:nil];
-            m_placeholderWindow = 0;
-            
-            // Make ourselves the front process.
-            ProcessSerialNumber psn;
-            GetCurrentProcess(&psn);
-            SetFrontProcess(&psn);            
-        }
-    }        
+    if (modal == m_isModal) 
+        return;
+    
+    m_isModal = modal;
+    
+    if (m_isModal)
+        beginModal();
+    else
+        endModal();
 }
     
 } // namespace WebKit

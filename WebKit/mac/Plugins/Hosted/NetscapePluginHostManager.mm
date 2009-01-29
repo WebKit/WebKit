@@ -77,12 +77,13 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPackage(WebNetscapePl
         return 0;
     
     mach_port_t pluginHostPort;
-    if (!spawnPluginHost(package, clientPort, pluginHostPort)) {
+    ProcessSerialNumber pluginHostPSN;
+    if (!spawnPluginHost(package, clientPort, pluginHostPort, pluginHostPSN)) {
         mach_port_destroy(mach_task_self(), clientPort);
         return 0;
     }
     
-    NetscapePluginHostProxy* hostProxy = new NetscapePluginHostProxy(clientPort, pluginHostPort);
+    NetscapePluginHostProxy* hostProxy = new NetscapePluginHostProxy(clientPort, pluginHostPort, pluginHostPSN);
     
     CFRetain(package);
     result.first->second = hostProxy;
@@ -90,7 +91,7 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPackage(WebNetscapePl
     return hostProxy;
 }
 
-bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *package, mach_port_t clientPort, mach_port_t& pluginHostPort)
+bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *package, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN)
 {
     if (m_pluginVendorPort == MACH_PORT_NULL) {
         if (!initializeVendorPort())
@@ -130,8 +131,12 @@ bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *packag
     ASSERT(data);
 
     [hostProperties release];
-    
-    kr = _WKPHCheckInWithPluginHost(pluginHostPort, (uint8_t*)[data bytes], [data length], clientPort, renderServerPort);
+
+    ProcessSerialNumber psn;
+    GetCurrentProcess(&psn);
+
+    kr = _WKPHCheckInWithPluginHost(pluginHostPort, (uint8_t*)[data bytes], [data length], clientPort, psn.highLongOfPSN, psn.lowLongOfPSN, renderServerPort, 
+                                    &pluginHostPSN.highLongOfPSN, &pluginHostPSN.lowLongOfPSN);
     
     if (kr != KERN_SUCCESS) {
         mach_port_deallocate(mach_task_self(), pluginHostPort);

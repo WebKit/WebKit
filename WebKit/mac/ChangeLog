@@ -1,3 +1,33 @@
+2009-01-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Pass the PSN of the client to the host, and get the PSN of the host back when checking in.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::hostForPackage):
+        Get the current PSN and pass it to spawnPluginHost.
+        
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        Pass the PSN to the "check in" function.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        
+        (WebKit::NetscapePluginHostProxy::pluginHostDied):
+        Fix a bug noticed by Julien Chaffraix. Call endModal if necessary.
+        
+        (WebKit::NetscapePluginHostProxy::beginModal):
+        (WebKit::NetscapePluginHostProxy::endModal):
+        (WebKit::NetscapePluginHostProxy::setModal):
+        Split out the code that does all of the work into beginModal and endModal methods.
+        
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView loadStream]):
+
 2009-01-29  David Kilzer  <ddkilzer@apple.com>
 
         Remove semi-colons from the end of ObjC method implementations

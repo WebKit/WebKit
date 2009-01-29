@@ -33,7 +33,11 @@ userprefix _WKPH;
 routine CheckInWithPluginHost(pluginHostPort :mach_port_t;
                               options :plist_bytes_t;
                               clientPort :mach_port_make_send_t;
-                              renderPort :mach_port_copy_send_t);
+                              clientPSNHigh :uint32_t;
+                              clientPSNLow :uint32_t;
+                              renderPort :mach_port_copy_send_t;
+                              out pluginHostPSNHigh :uint32_t;
+                              out pluginHostPSNLow :uint32_t);
 
 simpleroutine InstantiatePlugin(pluginHostPort :mach_port_t;
                                 options :plist_bytes_t;
