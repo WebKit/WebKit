@@ -1,3 +1,16 @@
+2009-01-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        First step in tracking the urls a HistoryItem was redirected through.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        (-[WebHistoryItem dictionaryRepresentation]):
+        * Misc/WebNSDictionaryExtras.h:
+        * Misc/WebNSDictionaryExtras.m:
+        (-[NSDictionary _webkit_arrayForKey:]): Add helper.
+
 2009-01-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

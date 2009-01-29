@@ -49,6 +49,12 @@
     return [object isKindOfClass:[NSString class]] ? object : nil;
 }
 
+-(NSArray *)_webkit_arrayForKey:(id)key
+{
+    id object = [self objectForKey:key];
+    return [object isKindOfClass:[NSArray class]] ? object : nil;
+}
+
 -(id)_webkit_objectForMIMEType:(NSString *)MIMEType
 {
     id result;

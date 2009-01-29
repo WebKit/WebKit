@@ -1,3 +1,17 @@
+2009-01-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        First step in tracking the urls a HistoryItem was redirected through.
+
+        * WebCore.base.exp:
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::addRedirectURL):
+        (WebCore::HistoryItem::redirectURLs):
+        (WebCore::HistoryItem::setRedirectURLs):
+        * history/HistoryItem.h:
+
 2009-01-29  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann, Eric Seidel.

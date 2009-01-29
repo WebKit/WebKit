@@ -1,3 +1,13 @@
+2009-01-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        First step in tracking the urls a HistoryItem was redirected through.
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):
+        (WebHistoryItem::dictionaryRepresentation):
+
 2009-01-29  Adam Roben  <aroben@apple.com>
 
         Fix Bug 23623: Windowed Flash instances aren't captured when a WebView

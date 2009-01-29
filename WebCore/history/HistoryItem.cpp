@@ -128,6 +128,9 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     m_subItems.reserveCapacity(size);
     for (unsigned i = 0; i < size; ++i)
         m_subItems.append(item.m_subItems[i]->copy());
+
+    if (item.m_redirectURLs)
+        m_redirectURLs.set(new Vector<String>(*item.m_redirectURLs));
 }
 
 PassRefPtr<HistoryItem> HistoryItem::copy() const
@@ -398,6 +401,24 @@ void HistoryItem::mergeAutoCompleteHints(HistoryItem* otherItem)
     ASSERT(otherItem);
     if (otherItem != this)
         m_visitCount += otherItem->m_visitCount;
+}
+
+void HistoryItem::addRedirectURL(const String& url)
+{
+    if (!m_redirectURLs)
+        m_redirectURLs.set(new Vector<String>);
+
+    m_redirectURLs->append(url);
+}
+
+Vector<String>* HistoryItem::redirectURLs() const
+{
+    return m_redirectURLs.get();
+}
+
+void HistoryItem::setRedirectURLs(std::auto_ptr<Vector<String> > redirectURLs)
+{
+    m_redirectURLs.adopt(redirectURLs);
 }
 
 #ifndef NDEBUG

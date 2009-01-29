@@ -62,6 +62,7 @@ static NSString *childrenKey = @"children";
 static NSString *displayTitleKey = @"displayTitle";
 static NSString *lastVisitWasFailureKey = @"lastVisitWasFailure";
 static NSString *lastVisitWasHTTPNonGetKey = @"lastVisitWasHTTPNonGet";
+static NSString *redirectURLsKey = @"redirectURLs";
 
 // Notification strings.
 NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotification";
@@ -364,6 +365,14 @@ static WebWindowWatcher *_windowWatcher = nil;
     if (lastVisitWasHTTPNonGet && ([tempURLString hasPrefix:@"http:"] || [tempURLString hasPrefix:@"https:"]))
         core(_private)->setLastVisitWasHTTPNonGet(lastVisitWasHTTPNonGet);
 
+    if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey]) {
+        NSUInteger size = [redirectURLs count];
+        std::auto_ptr<Vector<String> > redirectURLsVector(new Vector<String>(size));
+        for (NSUInteger i = 0; i < size; ++i)
+            (*redirectURLsVector)[i] = String([redirectURLs objectAtIndex:i]);
+        core(_private)->setRedirectURLs(redirectURLsVector);
+    }
+
     NSArray *childDicts = [dict objectForKey:childrenKey];
     if (childDicts) {
         for (int i = [childDicts count] - 1; i >= 0; i--) {
@@ -408,17 +417,14 @@ static WebWindowWatcher *_windowWatcher = nil;
 
     HistoryItem* coreItem = core(_private);
     
-    if (!coreItem->urlString().isEmpty()) {
+    if (!coreItem->urlString().isEmpty())
         [dict setObject:(NSString*)coreItem->urlString() forKey:@""];
-    }
-    if (!coreItem->title().isEmpty()) {
+    if (!coreItem->title().isEmpty())
         [dict setObject:(NSString*)coreItem->title() forKey:titleKey];
-    }
-    if (!coreItem->alternateTitle().isEmpty()) {
+    if (!coreItem->alternateTitle().isEmpty())
         [dict setObject:(NSString*)coreItem->alternateTitle() forKey:displayTitleKey];
-    }
     if (coreItem->lastVisitedTime() != 0.0) {
-        // store as a string to maintain backward compatibility (see 3245793)
+        // Store as a string to maintain backward compatibility. (See 3245793)
         [dict setObject:[NSString stringWithFormat:@"%.1lf", coreItem->lastVisitedTime()]
                  forKey:lastVisitedTimeIntervalKey];
     }
@@ -426,10 +432,17 @@ static WebWindowWatcher *_windowWatcher = nil;
         [dict setObject:[NSNumber numberWithInt:coreItem->visitCount()] forKey:visitCountKey];
     if (coreItem->lastVisitWasFailure())
         [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasFailureKey];
-
     if (coreItem->lastVisitWasHTTPNonGet()) {
         ASSERT(coreItem->urlString().startsWith("http:", false) || coreItem->urlString().startsWith("https:", false));
         [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasHTTPNonGetKey];
+    }
+    if (Vector<String>* redirectURLs = coreItem->redirectURLs()) {
+        size_t size = redirectURLs->size();
+        NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:size];
+        for (size_t i = 0; i < size; ++i)
+            [result addObject:(NSString*)redirectURLs->at(i)];
+        [dict setObject:result forKey:redirectURLsKey];
+        [result release];
     }
     
     if (coreItem->children().size()) {
