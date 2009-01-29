@@ -1,5 +1,17 @@
 2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
+        Rubber-stamped by Darin Adler.
+
+        Renamed ApplicationCacheResource::Implicit to Master, because that's the word HTML5 uses,
+        and it describes the meaning better.
+
+        * loader/appcache/ApplicationCache.cpp:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        * loader/appcache/ApplicationCacheResource.cpp:
+        * loader/appcache/ApplicationCacheResource.h:
+
+2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
         Release build fix.
 
         * loader/appcache/ApplicationCacheGroup.cpp: (WebCore::ApplicationCacheGroup::selectCache):

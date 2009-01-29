@@ -47,8 +47,8 @@ void ApplicationCacheResource::addType(unsigned type)
 #ifndef NDEBUG
 void ApplicationCacheResource::dumpType(unsigned type)
 {
-    if (type & Implicit)
-        printf("implicit ");
+    if (type & Master)
+        printf("master ");
     if (type & Manifest)
         printf("manifest ");
     if (type & Explicit)

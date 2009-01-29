@@ -195,12 +195,12 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
         associateDocumentLoaderWithCache(loader, m_newestCache.get());
 
         if (ApplicationCacheResource* resource = m_newestCache->resourceForURL(url)) {
-            if (!(resource->type() & ApplicationCacheResource::Implicit)) {
-                resource->addType(ApplicationCacheResource::Implicit);
+            if (!(resource->type() & ApplicationCacheResource::Master)) {
+                resource->addType(ApplicationCacheResource::Master);
                 ASSERT(!resource->storageID());
             }
         } else
-            m_newestCache->addResource(ApplicationCacheResource::create(url, loader->response(), ApplicationCacheResource::Implicit, loader->mainResourceData()));
+            m_newestCache->addResource(ApplicationCacheResource::create(url, loader->response(), ApplicationCacheResource::Master, loader->mainResourceData()));
 
         break;
     case Failure:
@@ -215,12 +215,12 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
         ASSERT(m_associatedDocumentLoaders.contains(loader));
 
         if (ApplicationCacheResource* resource = m_cacheBeingUpdated->resourceForURL(url)) {
-            if (!(resource->type() & ApplicationCacheResource::Implicit)) {
-                resource->addType(ApplicationCacheResource::Implicit);
+            if (!(resource->type() & ApplicationCacheResource::Master)) {
+                resource->addType(ApplicationCacheResource::Master);
                 ASSERT(!resource->storageID());
             }
         } else
-            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, loader->response(), ApplicationCacheResource::Implicit, loader->mainResourceData()));
+            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, loader->response(), ApplicationCacheResource::Master, loader->mainResourceData()));
         // The "cached" event will be posted to all associated documents once update is complete.
         break;
     }
@@ -409,9 +409,9 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
     
     unsigned type = m_pendingEntries.get(url);
     
-    // If this is an initial cache attempt, we should not get implicit resources delivered here.
+    // If this is an initial cache attempt, we should not get master resources delivered here.
     if (!m_newestCache)
-        ASSERT(!(type & ApplicationCacheResource::Implicit));
+        ASSERT(!(type & ApplicationCacheResource::Master));
 
     if (response.httpStatusCode() / 100 != 2) {
         if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
@@ -574,7 +574,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
         ApplicationCache::ResourceMap::const_iterator end = m_newestCache->end();
         for (ApplicationCache::ResourceMap::const_iterator it = m_newestCache->begin(); it != end; ++it) {
             unsigned type = it->second->type();
-            if (type & (ApplicationCacheResource::Implicit | ApplicationCacheResource::Dynamic))
+            if (type & (ApplicationCacheResource::Master | ApplicationCacheResource::Dynamic))
                 addEntry(it->first, type);
         }
     }
@@ -736,10 +736,10 @@ void ApplicationCacheGroup::addEntry(const String& url, unsigned type)
 {
     ASSERT(m_cacheBeingUpdated);
     
-    // Don't add the URL if we already have an implicit resource in the cache
+    // Don't add the URL if we already have an master resource in the cache
     // (i.e., the main resource finished loading before the manifest).
     if (ApplicationCacheResource* resource = m_cacheBeingUpdated->resourceForURL(url)) {
-        ASSERT(resource->type() & ApplicationCacheResource::Implicit);
+        ASSERT(resource->type() & ApplicationCacheResource::Master);
         ASSERT(!m_frame->loader()->documentLoader()->isLoadingMainResource());
     
         resource->addType(type);

@@ -35,7 +35,7 @@ namespace WebCore {
 class ApplicationCacheResource : public SubstituteResource {
 public:
     enum Type {
-        Implicit = 1 << 0,
+        Master = 1 << 0,
         Manifest = 1 << 1,
         Explicit = 1 << 2,
         Foreign = 1 << 3,
