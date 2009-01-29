@@ -1,3 +1,14 @@
+2009-01-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver Hunt
+
+        <rdar://problem/6337157> hyundaiusa.com closes window or tab during load
+
+        Test: fast/loader/subframe-self-close.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::close): Only allow mainframes to close the window.
+
 2009-01-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by David Hyatt.

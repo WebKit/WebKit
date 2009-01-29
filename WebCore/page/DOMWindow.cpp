@@ -449,6 +449,13 @@ void DOMWindow::close()
     if (!m_frame)
         return;
 
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    if (m_frame != page->mainFrame())
+        return;
+
     Settings* settings = m_frame->settings();
     bool allowScriptsToCloseWindows =
         settings && settings->allowScriptsToCloseWindows();
