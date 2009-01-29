@@ -50,8 +50,6 @@ public:
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild) = 0;
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
 
-    static RenderFlow* createAnonymousFlow(Document*, PassRefPtr<RenderStyle>);
-
     RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
     const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
 

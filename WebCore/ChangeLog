@@ -1,3 +1,14 @@
+2009-01-29  David Hyatt  <hyatt@apple.com>
+
+        Get rid of createAnonymousFlow.  It was only called in one spot, so just inline the code.
+
+        Reviewed by Oliver Hunt
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+
 2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders Carlsson.

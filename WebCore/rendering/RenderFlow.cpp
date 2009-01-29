@@ -37,17 +37,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderFlow* RenderFlow::createAnonymousFlow(Document* doc, PassRefPtr<RenderStyle> style)
-{
-    RenderFlow* result;
-    if (style->display() == INLINE)
-        result = new (doc->renderArena()) RenderInline(doc);
-    else
-        result = new (doc->renderArena()) RenderBlock(doc);
-    result->setStyle(style);
-    return result;
-}
-
 // FIXME: This is temporary and will go away once we finish pushing all the continuation code down into RenderBlock and RenderInline.
 static RenderFlow* nextContinuation(RenderObject* renderer)
 {
