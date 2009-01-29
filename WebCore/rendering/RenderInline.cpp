@@ -56,6 +56,34 @@ void RenderInline::destroy()
         m_continuation->destroy();
     m_continuation = 0;
     
+    // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
+    // properly dirty line boxes that they are removed from.  Effects that do :before/:after only on hover could crash otherwise.
+    RenderContainer::destroyLeftoverChildren();
+
+    if (!documentBeingDestroyed()) {
+        if (firstLineBox()) {
+            // We can't wait for RenderContainer::destroy to clear the selection,
+            // because by then we will have nuked the line boxes.
+            // FIXME: The SelectionController should be responsible for this when it
+            // is notified of DOM mutations.
+            if (isSelectionBorder())
+                view()->clearSelection();
+
+            // If line boxes are contained inside a root, that means we're an inline.
+            // In that case, we need to remove all the line boxes so that the parent
+            // lines aren't pointing to deleted children. If the first line box does
+            // not have a parent that means they are either already disconnected or
+            // root lines that can just be destroyed without disconnecting.
+            if (firstLineBox()->parent()) {
+                for (InlineRunBox* box = firstLineBox(); box; box = box->nextLineBox())
+                    box->remove();
+            }
+        } else if (isInline() && parent())
+            parent()->dirtyLinesFromChangedChild(this);
+    }
+
+    m_lineBoxes.deleteLineBoxes(renderArena());
+
     RenderFlow::destroy();
 }
 

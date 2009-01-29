@@ -1,3 +1,16 @@
+2009-01-29  David Hyatt  <hyatt@apple.com>
+
+        Move RenderFlow::destroy down into RenderBlock and RenderInline.
+
+        Reviewed by Anders Carlsson
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::destroy):
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::destroy):
+
 2009-01-29  David Kilzer  <ddkilzer@apple.com>
 
         Remove semi-colons from the end of ObjC method implementations

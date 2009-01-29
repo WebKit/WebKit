@@ -53,8 +53,6 @@ public:
     RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
     const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
 
-    virtual void destroy();
-
     virtual void dirtyLinesFromChangedChild(RenderObject* child);
 
     InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
