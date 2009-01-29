@@ -50,7 +50,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     return YES;
 }
 
-- (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor;
+- (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor
 {
     // FIXME: Would be more efficient to change this to C++ and use Vector<UChar, 2048>.
     unsigned length = [self length];

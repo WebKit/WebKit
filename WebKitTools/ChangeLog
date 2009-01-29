@@ -1,3 +1,19 @@
+2009-01-29  David Kilzer  <ddkilzer@apple.com>
+
+        Remove semi-colons from the end of ObjC method implementations
+
+        Rubber-stamped by Adam Roben.
+
+        $ find WebKitTools -name \*.m -o -name \*.mm -exec perl -e 'undef $/; $s = <>; while ($s =~ m/[\n\r][-+].*;[\s\r\n]+\{/g) { print "$ARGV: $&\n"; }' {} \;
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didFailLoadWithError:forFrame:]):
+        (-[FrameLoadDelegate webView:windowScriptObjectAvailable:]):
+        (-[FrameLoadDelegate webView:didFinishDocumentLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didHandleOnloadEventsForFrame:]):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webViewFrame:]):
+
 2009-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix for GTK.

@@ -622,7 +622,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return pages;
 }
 
-- (BOOL)_getVisibleRect:(NSRect*)rect;
+- (BOOL)_getVisibleRect:(NSRect*)rect
 {
     ASSERT_ARG(rect, rect);
     if (RenderPart* ownerRenderer = _private->coreFrame->ownerRenderer()) {

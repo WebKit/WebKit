@@ -1,3 +1,49 @@
+2009-01-29  David Kilzer  <ddkilzer@apple.com>
+
+        Remove semi-colons from the end of ObjC method implementations
+
+        Rubber-stamped by Adam Roben.
+
+        $ find WebKit -name \*.m -o -name \*.mm -exec perl -e 'undef $/; $s = <>; while ($s =~ m/[\n\r][-+].*;[\s\r\n]+\{/g) { print "$ARGV: $&\n"; }' {} \;
+
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webView:setResizable:]):
+        (-[WebDefaultUIDelegate webView:dragDestinationActionMaskForDraggingInfo:]):
+        (-[WebDefaultUIDelegate webView:dragSourceActionMaskForPoint:]):
+        (-[WebDefaultUIDelegate webView:willPerformDragSourceAction:fromPoint:withPasteboard:]):
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList addItem:]):
+        (-[WebBackForwardList backListWithLimit:]):
+        (-[WebBackForwardList forwardListWithLimit:]):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem alternateTitle]):
+        (-[WebHistoryItem setViewState:]):
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging:]):
+        * Misc/WebKitNSStringExtras.m:
+        (-[NSString _web_drawAtPoint:font:textColor:]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView setAttributeKeys:andValues:]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (-[WebEditCommand command]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _getVisibleRect:]):
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation _redirectDataToManualLoader:forPluginView:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]):
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences setAllowsAnimatedImages:]):
+        (-[WebPreferences setAutosaves:]):
+        (-[WebPreferences PDFDisplayMode]):
+        * WebView/WebView.mm:
+        (+[WebView _viewClass:andRepresentationClass:forMIMEType:]):
+        (-[WebView _viewClass:andRepresentationClass:forMIMEType:]):
+        (+[WebView _unregisterViewClassAndRepresentationClassForMIMEType:]):
+        (+[WebView _registerViewClass:representationClass:forURLScheme:]):
+        (-[WebView _shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (-[WebView _insertNewlineInQuotedContent]):
+
 2009-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

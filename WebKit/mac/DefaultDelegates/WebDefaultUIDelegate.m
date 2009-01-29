@@ -134,7 +134,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return [[wv window] showsResizeIndicator];
 }
 
-- (void)webView: (WebView *)wv setResizable:(BOOL)resizable;
+- (void)webView: (WebView *)wv setResizable:(BOOL)resizable
 {
     // FIXME: This doesn't actually change the resizability of the window,
     // only visibility of the indicator.
@@ -193,7 +193,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return YES;
 }
 
-- (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+- (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     return WebDragDestinationActionAny;
 }
@@ -202,12 +202,12 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
-- (NSUInteger)webView:(WebView *)webView dragSourceActionMaskForPoint:(NSPoint)point;
+- (NSUInteger)webView:(WebView *)webView dragSourceActionMaskForPoint:(NSPoint)point
 {
     return WebDragSourceActionAny;
 }
 
-- (void)webView:(WebView *)webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:(NSPoint)point withPasteboard:(NSPasteboard *)pasteboard;
+- (void)webView:(WebView *)webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:(NSPoint)point withPasteboard:(NSPasteboard *)pasteboard
 {
 }
 

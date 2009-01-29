@@ -905,7 +905,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     return uniqueExtensions;
 }
 
-+ (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
++ (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType
 {
     MIMEType = [MIMEType lowercaseString];
     Class viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
@@ -938,7 +938,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     return NO;
 }
 
-- (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
+- (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType
 {
     if ([[self class] _viewClass:vClass andRepresentationClass:rClass forMIMEType:MIMEType])
         return YES;
@@ -1453,7 +1453,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     [[self _UIDelegateForwarder] webViewClose:self];
 }
 
-+ (void)_unregisterViewClassAndRepresentationClassForMIMEType:(NSString *)MIMEType;
++ (void)_unregisterViewClassAndRepresentationClassForMIMEType:(NSString *)MIMEType
 {
     [[WebFrameView _viewTypesAllowImageTypeOmission:NO] removeObjectForKey:MIMEType];
     [[WebDataSource _repTypesAllowImageTypeOmission:NO] removeObjectForKey:MIMEType];
@@ -1464,7 +1464,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     MIMETypeRegistry::getSupportedNonImageMIMETypes().remove(MIMEType);
 }
 
-+ (void)_registerViewClass:(Class)viewClass representationClass:(Class)representationClass forURLScheme:(NSString *)URLScheme;
++ (void)_registerViewClass:(Class)viewClass representationClass:(Class)representationClass forURLScheme:(NSString *)URLScheme
 {
     NSString *MIMEType = [self _generatedMIMETypeForURLScheme:URLScheme];
     [self registerViewClass:viewClass representationClass:representationClass forMIMEType:MIMEType];
@@ -4055,7 +4055,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValuePtr jsV
     return kit(page->mainFrame()->editor()->rangeForPoint(IntPoint([self convertPoint:point toView:nil])).get());
 }
 
-- (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
+- (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
 {
     // FIXME: This quirk is needed due to <rdar://problem/4985321> - We can phase it out once Aperture can adopt the new behavior on their end
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK) && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Aperture"])
@@ -4367,7 +4367,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 
 @implementation WebView (WebViewEditingInMail)
 
-- (void)_insertNewlineInQuotedContent;
+- (void)_insertNewlineInQuotedContent
 {
     [[self _selectedOrMainFrame] _insertParagraphSeparatorInQuotedContent];
 }

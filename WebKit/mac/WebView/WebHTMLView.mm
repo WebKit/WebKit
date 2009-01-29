@@ -5773,7 +5773,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return [self elementAtPoint:point allowShadowContent:NO];
 }
 
-- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
+- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow
 {
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)

@@ -663,7 +663,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     return [self _boolValueForKey: WebKitAllowAnimatedImagesPreferenceKey];
 }
 
-- (void)setAllowsAnimatedImages:(BOOL)flag;
+- (void)setAllowsAnimatedImages:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitAllowAnimatedImagesPreferenceKey];
 }
@@ -688,7 +688,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     return [self _boolValueForKey: WebKitDisplayImagesKey];
 }
 
-- (void)setAutosaves:(BOOL)flag;
+- (void)setAutosaves:(BOOL)flag
 {
     _private->autosaves = flag;
 }
@@ -878,7 +878,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     [self _setFloatValue:factor forKey:WebKitPDFScaleFactorPreferenceKey];
 }
 
-- (PDFDisplayMode)PDFDisplayMode;
+- (PDFDisplayMode)PDFDisplayMode
 {
     PDFDisplayMode value = [self _integerValueForKey:WebKitPDFDisplayModePreferenceKey];
     if (value != kPDFDisplaySinglePage && value != kPDFDisplaySinglePageContinuous && value != kPDFDisplayTwoUp && value != kPDFDisplayTwoUpContinuous) {

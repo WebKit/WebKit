@@ -138,7 +138,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     core(self)->close();
 }
 
-- (void)addItem:(WebHistoryItem *)entry;
+- (void)addItem:(WebHistoryItem *)entry
 {
     core(self)->addItem(core(entry));
     
@@ -198,14 +198,14 @@ static NSArray* vectorToNSArray(HistoryItemVector& list)
     return result;
 }
 
-- (NSArray *)backListWithLimit:(int)limit;
+- (NSArray *)backListWithLimit:(int)limit
 {
     HistoryItemVector list;
     core(self)->backListWithLimit(limit, list);
     return vectorToNSArray(list);
 }
 
-- (NSArray *)forwardListWithLimit:(int)limit;
+- (NSArray *)forwardListWithLimit:(int)limit
 {
     HistoryItemVector list;
     core(self)->forwardListWithLimit(limit, list);

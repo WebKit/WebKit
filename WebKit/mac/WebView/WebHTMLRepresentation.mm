@@ -137,7 +137,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
     [super finalize];
 }
 
-- (void)_redirectDataToManualLoader:(id<WebPluginManualLoader>)manualLoader forPluginView:(NSView *)pluginView;
+- (void)_redirectDataToManualLoader:(id<WebPluginManualLoader>)manualLoader forPluginView:(NSView *)pluginView
 {
     _private->manualLoader = manualLoader;
     _private->pluginView = pluginView;

@@ -212,7 +212,7 @@
     [gNavigationController webView:sender didFinishLoadForFrame:frame];
 }
 
-- (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
+- (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFailLoadWithError", [frame _drt_descriptionSuitableForTestResult]];
@@ -225,7 +225,7 @@
     [self webView:sender locationChangeDone:error forDataSource:[frame dataSource]];    
 }
 
-- (void)webView:(WebView *)webView windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject;
+- (void)webView:(WebView *)webView windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"?? - windowScriptObjectAvailable"];
@@ -326,7 +326,7 @@
     }
 }
 
-- (void)webView:(WebView *)sender didFinishDocumentLoadForFrame:(WebFrame *)frame;
+- (void)webView:(WebView *)sender didFinishDocumentLoadForFrame:(WebFrame *)frame
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFinishDocumentLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
@@ -340,7 +340,7 @@
     }
 }
 
-- (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame;
+- (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didHandleOnloadEventsForFrame", [frame _drt_descriptionSuitableForTestResult]];

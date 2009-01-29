@@ -47,7 +47,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     m_frame = frame;
 }
 
-- (NSRect)webViewFrame:(WebView *)sender;
+- (NSRect)webViewFrame:(WebView *)sender
 {
     return m_frame;
 }

@@ -103,7 +103,7 @@
 }
 
 /*
-- (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args;
+- (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args
 {
     NSLog (@"Call to undefined method %@", name);
     NSLog (@"%d args\n", [args count]);

@@ -95,7 +95,7 @@ using namespace WebCore;
     gcController().garbageCollectNow();
 }
 
-+ (void)garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging:(BOOL)waitUntilDone;
++ (void)garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging:(BOOL)waitUntilDone
 {
     gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
 }

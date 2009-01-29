@@ -1,3 +1,13 @@
+2009-01-29  David Kilzer  <ddkilzer@apple.com>
+
+        Remove semi-colons from the end of ObjC method implementations
+
+        Rubber-stamped by Adam Roben.
+
+        $ find WebCore -name \*.m -o -name \*.mm -exec perl -e 'undef $/; $s = <>; while ($s =~ m/[\n\r][-+].*;[\s\r\n]+\{/g) { print "$ARGV: $&\n"; }' {} \;
+
+        * bridge/testbindings.mm:
+
 2009-01-29  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov.

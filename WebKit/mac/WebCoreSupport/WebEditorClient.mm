@@ -127,7 +127,7 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
     return [[[WebEditCommand alloc] initWithEditCommand:command] autorelease];
 }
 
-- (EditCommand *)command;
+- (EditCommand *)command
 {
     return m_command;
 }

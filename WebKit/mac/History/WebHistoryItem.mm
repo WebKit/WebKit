@@ -170,7 +170,7 @@ void WKNotifyHistoryItemChanged()
     core(_private)->setAlternateTitle(alternateTitle);
 }
 
-- (NSString *)alternateTitle;
+- (NSString *)alternateTitle
 {
     return nsStringNilIfEmpty(core(_private)->alternateTitle());
 }
@@ -320,7 +320,7 @@ static WebWindowWatcher *_windowWatcher = nil;
     core(_private)->setVisitCount(count);
 }
 
-- (void)setViewState:(id)statePList;
+- (void)setViewState:(id)statePList
 {
     core(_private)->setViewState(statePList);
 }

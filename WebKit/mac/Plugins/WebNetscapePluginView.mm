@@ -1152,7 +1152,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return plugin;
 }
 
-- (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
+- (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values
 {
     ASSERT([keys count] == [values count]);
     
