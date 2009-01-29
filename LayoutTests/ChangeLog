@@ -1,3 +1,47 @@
+2009-01-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23584
+        Update application cache code for the latest round of spec changes
+
+        * http/tests/appcache/404-manifest.html:
+        * http/tests/appcache/404-resource.html:
+        When initial cache attempt fails, the applicationCache singleton now gets an error event.
+
+        * http/tests/appcache/foreign-iframe-main-expected.txt: Checking, downloading and progress
+        events are now dispatched during initial cache attempt.
+
+        * http/tests/appcache/idempotent-update-expected.txt:
+        * http/tests/appcache/idempotent-update.html:
+        Events are now posted asynchronously, so we cannot assume any status when handling an event.
+        Rewrote the test to no longer rely on synchronous event dispatch.
+
+        * http/tests/appcache/manifest-containing-itself.html: Changed the test to pass on reload,
+        to simplify testing in browser (not related to any behavior changes).
+
+        * http/tests/appcache/navigating-away-while-cache-attempt-in-progress.html: Fixed the test
+        to not fail in browser due to missing layoutTestController.
+
+        * http/tests/appcache/offline-access-expected.txt:
+        * http/tests/appcache/offline-access.html:
+        Removed a warning saying that output is timing dependent - I think this is not true now.
+
+        * http/tests/appcache/remove-cache-expected.txt:
+        * http/tests/appcache/remove-cache.html:
+        * http/tests/appcache/resources/remove-cache-frame-2.html:
+        * http/tests/appcache/resources/remove-cache-frame.html:
+        An obsolete event is only dispatched if the document's main resource was already in cache,
+        otherwise, an error event is dispatched. Changed the test to add the main resource to cache
+        first. Also, updated it to make use of additional events that are now being posted.
+
+        * http/tests/appcache/resources/offline-access-frame.html: Updated to dump frame events more
+        completely.
+
+        * http/tests/appcache/wrong-content-type.html:
+        * http/tests/appcache/wrong-signature.html:
+        Changed to expect and to make use of error event that is now being posted.
+
 2009-01-28  Darin Fisher  <darin@chromium.org>
 
         Fixing bustage.

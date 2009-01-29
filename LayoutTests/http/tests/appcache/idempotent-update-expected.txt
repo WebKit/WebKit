@@ -2,6 +2,5 @@ Test what applicationCache.update() does if update is already in progess.
 
 Should say DONE, with no failures:
 
-checking
 DONE
 

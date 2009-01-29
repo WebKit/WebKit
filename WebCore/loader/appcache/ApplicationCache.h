@@ -58,7 +58,9 @@ public:
     
     void setGroup(ApplicationCacheGroup*);
     ApplicationCacheGroup* group() const { return m_group; }
-    
+
+    bool isComplete() const;
+
     ApplicationCacheResource* resourceForRequest(const ResourceRequest&);
     ApplicationCacheResource* resourceForURL(const String& url);
 

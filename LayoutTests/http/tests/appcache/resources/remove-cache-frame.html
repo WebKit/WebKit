@@ -10,11 +10,11 @@ function log(message)
 function onObsolete()
 {
     log("obsolete")
-    log("status=" + applicationCache.status + " (expected 2)");
-    clearTimeout(timeoutId);
+    log("status=" + applicationCache.status + " (expected 5)");
     applicationCache.onobsolete = function() { log("obsolete") }
     applicationCache.onupdateready = function() { log("updateready") }
     applicationCache.onnoupdate = function() { log("noupdate") }
+    applicationCache.onnoupdate = function() { log("error") }
 
     // We still have a cache, so loading should fail
     try {
@@ -25,21 +25,20 @@ function onObsolete()
     } catch (ex) {
     }
     log("There should be no messages below.");
-    parent.postMessage("frameDone - obsolete", "*");
 }
 
-function onNoManifest()
+function onError()
 {
     if (applicationCache.status != applicationCache.UNCACHED && applicationCache.status != applicationCache.OBSOLETE) {
         timeoutId = setTimeout(onNoManifest, 100);
         return;
     }
 
-    log("no callback");
-    clearTimeout(timeoutId);
+    log("error");
     applicationCache.onobsolete = function() { log("obsolete") }
     applicationCache.onupdateready = function() { log("updateready") }
     applicationCache.onnoupdate = function() { log("noupdate") }
+    applicationCache.onnoupdate = function() { log("error") }
 
     // Ensure that we are not associated with a cache.
     try {
@@ -54,13 +53,11 @@ function onNoManifest()
 }
 
 applicationCache.onupdateready = function() { log("updateready"); alert("Unexpected updateready event in frame") }
-applicationCache.onerror = function() { log("error"); alert("Unexpected error event in frame") }
-applicationCache.onnoupdate = function() { log("noupdate"); alert("Unexpected noupdate event in frame") }
+applicationCache.onnoupdate = function() { log("noupdate") }
 applicationCache.oncached = function() { log("cached"); alert("Unexpected cached event in frame") }
 
 applicationCache.onobsolete = onObsolete;
-
-var timeoutId = setTimeout(onNoManifest, 100);
+applicationCache.onerror = onError;
 
 </script>
 </body>

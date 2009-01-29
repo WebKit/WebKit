@@ -1,6 +1,6 @@
 Test that offline applications work when there is no network access (simulated).
 
-Should say SUCCESS (output in frames is timing dependent, and may legally differ between runs):
+Should say SUCCESS:
 
 SUCCESS
   

@@ -92,7 +92,7 @@ void DOMApplicationCache::update(ExceptionCode& ec)
         return;
     }
     
-    cache->group()->update(m_frame);
+    cache->group()->update(m_frame, ApplicationCacheUpdateWithoutBrowsingContext);
 }
 
 bool DOMApplicationCache::swapCache()

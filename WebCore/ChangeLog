@@ -1,3 +1,71 @@
+2009-01-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23584
+        Update application cache code for the latest round of spec changes
+
+        The changes mostly affect the update process - events are sent at a different
+        time, and caches are associated with documents earlier.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::mainReceivedError): Changed an always passing test to an assertion.
+        (WebCore::DocumentLoader::shouldLoadResourceFromApplicationCache): Caches are now associated
+        with DocumentLoader before being complete, but they only affect loading after being completed.
+        (WebCore::DocumentLoader::getApplicationCacheFallbackResource): Ditto.
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::setGroup): Allow setting the group to the same one, to simplify
+        ApplicationCacheGroup code.
+        (WebCore::ApplicationCache::isComplete): A new method that tells whether the cache is
+        complete, as defined in HTML5.
+        * loader/appcache/ApplicationCache.h: Added isComplete().
+
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheUpdateOption): Per HTML5, cache updating should work differently
+        when invoked with or without a browsing context (Frame). A Frame is currently always needed
+        for updating in WebKit, so a new argument to update() tells whether we should pretend that
+        there isn't one.
+        (WebCore::ApplicationCacheGroup::cacheIsBeingUpdated): A helper for ApplicationCache::isComplete().
+        (WebCore::ApplicationCacheGroup::CompletionType): Cache update algorithm now waits for
+        ne main resources to finish loading in more cases. A member variable of this type is used to
+        distinguish between different cases when waiting.
+        (WebCore::ApplicationCacheGroup::m_cacheCandidates): The new algorithm doesn't track cache
+        candidates. Caches are associated with documents much earlier, but the ones whose main resources
+        have not been loaded from a cache are being tracked in a pending master entry list.
+
+        * loader/appcache/DOMApplicationCache.cpp: (WebCore::DOMApplicationCache::update):
+        An explicit call to update() invokes the algorithm without a browsing context.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::~ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
+        (WebCore::ApplicationCacheGroup::failedLoadingMainResource):
+        (WebCore::ApplicationCacheGroup::stopLoading):
+        (WebCore::ApplicationCacheGroup::disassociateDocumentLoader):
+        (WebCore::ApplicationCacheGroup::cacheDestroyed):
+        (WebCore::ApplicationCacheGroup::setNewestCache):
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::cacheUpdateFailed):
+        (WebCore::ApplicationCacheGroup::manifestNotFound):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        (WebCore::ApplicationCacheGroup::deliverDelayedMainResources):
+        (WebCore::ApplicationCacheGroup::addEntry):
+        (WebCore::ApplicationCacheGroup::associateDocumentLoaderWithCache):
+        (WebCore::CallCacheListenerTask::create):
+        (WebCore::CallCacheListenerTask::performTask):
+        (WebCore::CallCacheListenerTask::CallCacheListenerTask):
+        (WebCore::ApplicationCacheGroup::postListenerTask):
+        Rewrote the update algorithm.
+
 2009-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

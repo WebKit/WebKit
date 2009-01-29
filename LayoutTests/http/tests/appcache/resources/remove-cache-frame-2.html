@@ -10,7 +10,7 @@ function log(message)
 function test()
 {
     log("cached")
-    log("status=" + applicationCache.status + " (expected 3)");
+    log("status=" + applicationCache.status);
     applicationCache.onnoupdate = null;
 
     // Associated to a cache, so loading should fail

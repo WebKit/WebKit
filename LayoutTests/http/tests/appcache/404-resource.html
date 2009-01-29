@@ -14,28 +14,25 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-function cacheCallback()
+function unexpectedCallback(eventName)
 {
-    log("FAIL: An event was dispatched on window.applicationCache, even though it was not associated with any cache yet.");
+    log("FAIL: An unexpected " + eventName + " event was dispatched on window.applicationCache.");
 }
 
-function timeout()
+function test()
 {
-    if (applicationCache.status != applicationCache.UNCACHED) {
-        setTimeout(timeout, 100);
-        return;
-    }
+    if (applicationCache.status == applicationCache.UNCACHED)
+        log("SUCCESS");
+    else
+        log("FAILURE: cache status is not uncached: " + applicationCache.status);
 
-    log("SUCCESS");
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
 
-applicationCache.addEventListener('cached', function() { log("cached"); cacheCallback() }, false);
-applicationCache.addEventListener('noupdate', function() { log("noupdate"); cacheCallback() }, false);
-applicationCache.addEventListener('error', function() { log("error"); cacheCallback() }, false);
-
-setTimeout(timeout, 100);
+applicationCache.addEventListener('cached', function() { unexpectedCallback("cached"); cacheCallback() }, false);
+applicationCache.addEventListener('noupdate', function() { unexpectedCallback("noupdate"); cacheCallback() }, false);
+applicationCache.addEventListener('error', test, false);
 
 </script>
 </body>

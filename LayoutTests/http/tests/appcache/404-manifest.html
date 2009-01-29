@@ -15,9 +15,6 @@ function unexpectedEvent(name)
     log("FAILURE: Unexpected " + name + " event.");
 }
 
-// This is a cache attempt, so there are no associated browsing contexts, and the events are
-// only dispatched to associated browsing contexts.
-applicationCache.addEventListener('checking', function() { unexpectedEvent("checking") }, false);
 applicationCache.addEventListener('noupdate', function() { unexpectedEvent("noupdate") }, false);
 applicationCache.addEventListener('downloading', function() { unexpectedEvent("downloading") }, false);
 applicationCache.addEventListener('progress', function() { unexpectedEvent("progress") }, false);
@@ -27,6 +24,8 @@ applicationCache.addEventListener('obsolete', function() { unexpectedEvent("obso
 
 function test()
 {
+    if (!gotCheckingEvent)
+        log("FAILURE: Did not get a checking event");
     if (window.applicationCache.status)
         log("FAILURE: Cache status is not UNCACHED, " + window.applicationCache.status);
 
@@ -48,7 +47,10 @@ function test()
         layoutTestController.notifyDone();
 }
 
-setTimeout(test, 100);
+var gotCheckingEvent = false;
+applicationCache.addEventListener('checking', function() { gotCheckingEvent = true; }, false);
+
+applicationCache.addEventListener('error', function() { test() }, false);
 
 </script>
 <p>Test that subresources can be loaded if manifest is not available. Should say SUCCESS.</p>

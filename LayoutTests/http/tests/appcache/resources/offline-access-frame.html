@@ -1,20 +1,22 @@
 <html manifest="/resources/network-simulator.php?path=/appcache/resources/offline-access.manifest">
 <div id=result></div>
-<script src="/resources/network-simulator.php?path=/appcache/resources/offline-access.js"></script>
 <script>
 function log(message)
 {
     document.getElementById("result").innerHTML += message + "<br>";
 }
-
-applicationCache.oncached = function() { log("cached"); test() }
-applicationCache.onnoupdate = function() { log("noupdate"); test() }
-applicationCache.onerror = function() { log("error"); test() }
-
+applicationCache.onchecking = function() { log("checking"); }
 applicationCache.ondownloading = function() { log("downloading") }
 applicationCache.onprogress = function() { log("progress") }
 applicationCache.onupdateready = function() { log("updateready") }
 applicationCache.onobsolete = function() { log("obsolete") }
+</script>
+<script src="/resources/network-simulator.php?path=/appcache/resources/offline-access.js"></script>
+<script>
+
+applicationCache.oncached = function() { log("cached"); test() }
+applicationCache.onnoupdate = function() { log("noupdate"); test() }
+applicationCache.onerror = function() { log("error"); test() }
 
 if (applicationCache.status == applicationCache.IDLE) {
     // Update finished while we were waiting for offline-access.js to load.

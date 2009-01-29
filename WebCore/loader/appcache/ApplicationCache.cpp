@@ -51,8 +51,13 @@ ApplicationCache::~ApplicationCache()
     
 void ApplicationCache::setGroup(ApplicationCacheGroup* group)
 {
-    ASSERT(!m_group);
+    ASSERT(!m_group || group == m_group);
     m_group = group;
+}
+
+bool ApplicationCache::isComplete() const
+{
+    return !m_group->cacheIsBeingUpdated(this);
 }
 
 void ApplicationCache::setManifestResource(PassRefPtr<ApplicationCacheResource> manifest)

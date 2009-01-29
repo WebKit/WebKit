@@ -7,7 +7,7 @@ if (window.layoutTestController) {
 }
 
 function navigateAway() {
-    if (layoutTestController)
+    if (window.layoutTestController)
         layoutTestController.notifyDone();
     else
         window.location.href = "about:blank"
