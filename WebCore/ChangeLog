@@ -1,3 +1,10 @@
+2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Release build fix.
+
+        * loader/appcache/ApplicationCacheGroup.cpp: (WebCore::ApplicationCacheGroup::selectCache):
+        Got rid of a variable that wasn't used in release builds.
+
 2009-01-29  David Hyatt  <hyatt@apple.com>
 
         Get rid of createAnonymousFlow.  It was only called in one spot, so just inline the code.

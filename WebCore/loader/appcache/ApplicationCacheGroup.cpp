@@ -157,12 +157,10 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& manifestURL)
             
     ApplicationCacheGroup* group = cacheStorage().findOrCreateCacheGroup(manifestURL);
 
-    bool isUpdating = group->m_cacheBeingUpdated;
-
     documentLoader->setCandidateApplicationCacheGroup(group);
     group->m_pendingMasterResourceLoaders.add(documentLoader);
 
-    ASSERT(!isUpdating || group->m_updateStatus != Idle);
+    ASSERT(!group->m_cacheBeingUpdated || group->m_updateStatus != Idle);
     group->update(frame, ApplicationCacheUpdateWithBrowsingContext);
 }
 
