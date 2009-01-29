@@ -2,6 +2,25 @@
 
         Reviewed by Geoff Garen.
 
+        Initial patch by Mark Rowe.
+
+        <rdar://problem/6519356>
+        REGRESSION (r36006): "out of memory" alert running dromaeo on Windows
+
+        Report the cost of the ArrayStorage vector more accurately/often.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray): Report the extra cost even for a filled array
+        because JSString using the single character optimization and immediates
+        wont increase the cost themselves. 
+        (JSC::JSArray::putSlowCase): Update the cost when increasing the size of
+        the array.
+        (JSC::JSArray::increaseVectorLength): Ditto.
+
+2009-01-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
         Fix for <rdar://problem/6129678>
         REGRESSION (Safari 3-4): Local variable not accessible from Dashcode console or variables view
 

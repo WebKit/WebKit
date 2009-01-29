@@ -175,8 +175,7 @@ JSArray::JSArray(ExecState* exec, PassRefPtr<Structure> structure, const ArgList
 
     m_storage = storage;
 
-    // When the array is created non-empty, its cells are filled, so it's really no worse than
-    // a property map. Therefore don't report extra memory cost.
+    Heap::heap(this)->reportExtraMemoryCost(storageSize(length));
 
     checkConsistency();
 }
@@ -349,6 +348,9 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValuePtr v
     }
 
     unsigned vectorLength = storage->m_vectorLength;
+
+    Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
+
     if (newNumValuesInVector == storage->m_numValuesInVector + 1) {
         for (unsigned j = vectorLength; j < newVectorLength; ++j)
             storage->m_vector[j] = noValue();
@@ -462,6 +464,7 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     if (!storage)
         return false;
 
+    Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
     storage->m_vectorLength = newVectorLength;
 
     for (unsigned i = vectorLength; i < newVectorLength; ++i)
