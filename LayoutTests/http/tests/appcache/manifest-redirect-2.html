@@ -1,4 +1,4 @@
-<html manifest="resources/resource-redirect.manifest">
+<html manifest="resources/manifest-redirect-2.php">
 <body>
 <p>Test that a redirect makes resource caching fail.</p>
 <p>Should say SUCCESS:</p>
@@ -16,7 +16,7 @@ function log(message)
 
 function cacheCallback()
 {
-    log("FAIL: An unexpected event was dispatched on window.applicationCache.");
+    log("FAIL: An event was dispatched on window.applicationCache, even though it was not associated wuth any cache yet.");
 }
 
 function test()

@@ -413,7 +413,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
     if (!m_newestCache)
         ASSERT(!(type & ApplicationCacheResource::Master));
 
-    if (response.httpStatusCode() / 100 != 2) {
+    if (response.httpStatusCode() / 100 != 2  || response.url() != m_currentHandle->request().url()) {
         if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
             // Note that cacheUpdateFailed() can cause the cache group to be deleted.
             cacheUpdateFailed();
@@ -482,8 +482,14 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
         cacheUpdateFailed();
         return;
     }
-    
-    if ((m_currentResource->type() & ApplicationCacheResource::Explicit) || (m_currentResource->type() & ApplicationCacheResource::Fallback)) {
+
+    unsigned type = m_currentResource ? m_currentResource->type() : m_pendingEntries.get(handle->request().url());
+
+    ASSERT(!m_currentResource || !m_pendingEntries.contains(handle->request().url()));
+    m_currentResource = 0;
+    m_pendingEntries.remove(handle->request().url());
+
+    if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
         // Note that cacheUpdateFailed() can cause the cache group to be deleted.
         cacheUpdateFailed();
     } else {
@@ -500,18 +506,19 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
 
 void ApplicationCacheGroup::didReceiveManifestResponse(const ResourceResponse& response)
 {
+    ASSERT(!m_manifestResource);
+    ASSERT(m_manifestHandle);
+
     if (response.httpStatusCode() == 404 || response.httpStatusCode() == 410) {
         manifestNotFound();
         return;
     }
 
-    if (response.httpStatusCode() / 100 != 2 || !equalIgnoringCase(response.mimeType(), "text/cache-manifest")) {
+    if (response.httpStatusCode() / 100 != 2 || response.url() != m_manifestHandle->request().url() || !equalIgnoringCase(response.mimeType(), "text/cache-manifest")) {
         cacheUpdateFailed();
         return;
     }
-    
-    ASSERT(!m_manifestResource);
-    ASSERT(m_manifestHandle);
+
     m_manifestResource = ApplicationCacheResource::create(m_manifestHandle->request().url(), response, 
                                                           ApplicationCacheResource::Manifest);
 }

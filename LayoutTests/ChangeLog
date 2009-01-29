@@ -1,5 +1,27 @@
 2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23620
+        Crash in appcache/resource-redirect.html on Tiger
+
+        * http/tests/appcache/resource-redirect.html:
+        * http/tests/appcache/resources/resource-redirect.php:
+        * http/tests/appcache/resources/manifest-redirect.php:
+        Corrected the tests to redirect properly.
+
+        * http/tests/appcache/manifest-redirect-2-expected.txt: Added.
+        * http/tests/appcache/manifest-redirect-2.html: Added.
+        * http/tests/appcache/resource-redirect-2-expected.txt: Added.
+        * http/tests/appcache/resource-redirect-2.html: Added.
+        * http/tests/appcache/resources/manifest-redirect-2.php: Added.
+        * http/tests/appcache/resources/resource-redirect-2.manifest: Added.
+        * http/tests/appcache/resources/resource-redirect-2.php: Added.
+        Added tests for the code path that was accidentally tested on Tiger only (using a redirect
+        to self, so Leopard will exercise it, too).
+
+2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
         Not reviewed (this was just a merge problem).
 
         https://bugs.webkit.org/show_bug.cgi?id=23476

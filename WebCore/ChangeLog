@@ -1,3 +1,23 @@
+2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23620
+        Crash in appcache/resource-redirect.html on Tiger
+
+        There was a bug in the test case - it didn't send a Location header, and on Tiger, this
+        resulted in a failure callback being sent. It turned out that proper redirects weren't
+        caught at all.
+
+        Tests: http/tests/appcache/manifest-redirect-2.html
+               http/tests/appcache/resource-redirect-2.html
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFail): Fixed this function to not crash if
+        didReceiveResponse() wasn't called for this request.
+        (WebCore::ApplicationCacheGroup::didReceiveResponse): Fixed to check for redirects correctly.
+        (WebCore::ApplicationCacheGroup::didReceiveManifestResponse): Ditto.
+
 2009-01-29  David Hyatt  <hyatt@apple.com>
 
         Move dirtyLinesFromChangedChild into RenderLineBoxList so that it can be shared by RenderBlock and RenderInline.
