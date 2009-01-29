@@ -1,3 +1,15 @@
+2009-01-29  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann, Eric Seidel.
+
+        Transformations on SVG patterns caused ugly drawings. The pattern is transformed
+        directly now. Texts or strokes are no longer affected by transformations.
+
+        * platform/mac/svg/custom/pattern-with-transformation-expected.checksum: Added.
+        * platform/mac/svg/custom/pattern-with-transformation-expected.png: Added.
+        * platform/mac/svg/custom/pattern-with-transformation-expected.txt: Added.
+        * svg/custom/pattern-with-transformation.svg: Added.
+
 2009-01-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver Hunt

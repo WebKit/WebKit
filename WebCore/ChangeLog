@@ -1,3 +1,26 @@
+2009-01-29  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann, Eric Seidel.
+
+        Just transform the pattern directly instead of transforming the context fixes this 
+        problem. Texts or strokes are no longer affected by transformations.
+
+        SVG pattern transformation/BoundingBox can cause ugly stroke thickness or text positions
+        https://bugs.webkit.org/show_bug.cgi?id=23472
+
+        Test: svg/custom/pattern-with-transformation.svg
+
+        * platform/graphics/Pattern.h:
+        (WebCore::Pattern::setPatternSpaceTransform):
+        * platform/graphics/cairo/PatternCairo.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/qt/PatternQt.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+
 2009-01-29  David Hyatt  <hyatt@apple.com>
 
         Move the line box list member out of RenderFlow and down into RenderBlock and RenderInline.  Eliminate RenderFlow from the tree.

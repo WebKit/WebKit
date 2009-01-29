@@ -50,11 +50,12 @@ static void patternReleaseCallback(void* info)
     static_cast<Image*>(info)->deref();
 }
 
-CGPatternRef Pattern::createPlatformPattern(const TransformationMatrix& transform) const
+CGPatternRef Pattern::createPlatformPattern(const TransformationMatrix& userSpaceTransformation) const
 {
     IntRect tileRect = tileImage()->rect();
 
-    TransformationMatrix patternTransform = transform;
+    TransformationMatrix patternTransform = m_patternSpaceTransformation;
+    patternTransform.multiply(userSpaceTransformation);
     patternTransform.scale(1, -1);
     patternTransform.translate(0, -tileRect.height());
 

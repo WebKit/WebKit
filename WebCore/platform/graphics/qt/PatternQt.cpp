@@ -31,14 +31,15 @@
 
 namespace WebCore {
 
-QBrush Pattern::createPlatformPattern(const TransformationMatrix& transform) const
+QBrush Pattern::createPlatformPattern(const TransformationMatrix&) const
 {
     QPixmap* pixmap = tileImage()->nativeImageForCurrentFrame();
     if (!pixmap)
         return QBrush();
 
+    // Qt merges patter space and user space itself
     QBrush brush(*pixmap);
-    brush.setMatrix(transform);
+    brush.setMatrix(m_patternSpaceTransformation);
 
     return brush;
 }

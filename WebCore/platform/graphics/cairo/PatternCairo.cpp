@@ -26,23 +26,26 @@
 #include "config.h"
 #include "Pattern.h"
 
-#include "TransformationMatrix.h"
 #include "GraphicsContext.h"
+#include "TransformationMatrix.h"
 
 #include <cairo.h>
 
 namespace WebCore {
 
-cairo_pattern_t* Pattern::createPlatformPattern(const TransformationMatrix& patternTransform) const
+cairo_pattern_t* Pattern::createPlatformPattern(const TransformationMatrix&) const
 {
     cairo_surface_t* surface = tileImage()->nativeImageForCurrentFrame();
     if (!surface)
         return 0;
 
     cairo_pattern_t* pattern = cairo_pattern_create_for_surface(surface);
-    const TransformationMatrix& inverse = patternTransform.inverse();
-    const cairo_matrix_t* pattern_matrix = reinterpret_cast<const cairo_matrix_t*>(&inverse);
-    cairo_pattern_set_matrix(pattern, pattern_matrix);
+
+    // cairo merges patter space and user space itself
+    cairo_matrix_t matrix = m_patternSpaceTransformation;
+    cairo_matrix_invert(&matrix);
+    cairo_pattern_set_matrix(pattern, &matrix);
+
     if (m_repeatX || m_repeatY)
         cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
     return pattern;
