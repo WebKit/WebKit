@@ -1,3 +1,13 @@
+2009-01-28  David Kilzer  <ddkilzer@apple.com>
+
+        Add missing declaration for -[NSURL(WebNSURLExtras) _webkit_isFileURL]
+
+        Reviewed by Dan Bernstein.
+
+        * Misc/WebNSURLExtras.h:
+        (-[NSURL(WebNSURLExtras) _webkit_isFileURL]): Added missing
+        declaration after the implementation was added in r9258.
+
 2009-01-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.

@@ -60,6 +60,7 @@
 - (NSURL *)_webkit_URLByRemovingResourceSpecifier;
 
 - (BOOL)_webkit_isJavaScriptURL;
+- (BOOL)_webkit_isFileURL;
 - (NSString *)_webkit_scriptIfJavaScriptURL;
 - (BOOL)_webkit_isFTPDirectoryURL;
 
