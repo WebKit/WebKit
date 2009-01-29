@@ -1,3 +1,23 @@
+2009-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23619
+        ASSERT(!error.isNull()) in DocumentLoader::mainReceivedError() when an SVG image load
+        is cancelled
+
+        Covered by existing tests (as a random crash).
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::cancelledError):
+        (WebCore::EmptyFrameLoaderClient::blockedError):
+        (WebCore::EmptyFrameLoaderClient::cannotShowURLError):
+        (WebCore::EmptyFrameLoaderClient::interruptForPolicyChangeError):
+        (WebCore::EmptyFrameLoaderClient::cannotShowMIMETypeError):
+        (WebCore::EmptyFrameLoaderClient::fileDoesNotExistError):
+        (WebCore::EmptyFrameLoaderClient::pluginWillHandleLoadError):
+        Create non-null errors.
+
 2009-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
