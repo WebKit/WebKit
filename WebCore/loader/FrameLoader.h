@@ -230,7 +230,7 @@ namespace WebCore {
         void cancelContentPolicyCheck();
 
         void reload(bool endToEndReload = false);
-        void reloadAllowingStaleData(const String& overrideEncoding);
+        void reloadWithOverrideEncoding(const String& overrideEncoding);
 
         void didReceiveServerRedirectForProvisionalLoadForFrame();
         void finishedLoadingDocument(DocumentLoader*);

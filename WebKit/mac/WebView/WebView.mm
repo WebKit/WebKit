@@ -2924,7 +2924,7 @@ static bool needsWebViewInitThreadWorkaround()
     if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding])
         return;
     if (Frame* mainFrame = core([self mainFrame]))
-        mainFrame->loader()->reloadAllowingStaleData(encoding);
+        mainFrame->loader()->reloadWithOverrideEncoding(encoding);
 }
 
 - (NSString *)_mainFrameOverrideEncoding

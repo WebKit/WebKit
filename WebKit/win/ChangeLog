@@ -1,3 +1,12 @@
+2009-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Updated for WebCore rename.
+        
+        * WebView.cpp:
+        (WebView::setCustomTextEncodingName):
+
 2009-01-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein
