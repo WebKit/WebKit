@@ -1,3 +1,14 @@
+2009-01-28  Darin Fisher  <darin@chromium.org>
+
+        Fixing bustage.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18835
+        Add missing layout test results.
+
+        * platform/mac/editing/spelling/spelling-linebreak-expected.checksum: Added.
+        * platform/mac/editing/spelling/spelling-linebreak-expected.png: Added.
+        * platform/mac/editing/spelling/spelling-linebreak-expected.txt: Added.
+
 2009-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
