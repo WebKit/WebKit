@@ -27,7 +27,8 @@
 
 #include "DeprecatedPtrList.h"
 #include "GapRects.h"
-#include "RenderFlow.h"
+#include "RenderContainer.h"
+#include "RenderLineBoxList.h"
 #include "RootInlineBox.h"
 #include <wtf/ListHashSet.h>
 
@@ -44,7 +45,7 @@ typedef BidiResolver<InlineIterator, BidiRun> InlineBidiResolver;
 
 enum CaretType { CursorCaret, DragCaret };
 
-class RenderBlock : public RenderFlow {
+class RenderBlock : public RenderContainer {
 public:
     RenderBlock(Node*);
     virtual ~RenderBlock();
@@ -62,7 +63,13 @@ public:
     virtual bool isInlineBlockOrInlineTable() const { return isInline() && isReplaced(); }
 
     void makeChildrenNonInline(RenderObject* insertionPoint = 0);
-    
+
+    RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
+    const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
+
+    InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
+    InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
+
     void deleteLineBoxTree();
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
     virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
@@ -496,6 +503,8 @@ private:
     MaxMargin* m_maxMargin;
 
 protected:
+    RenderLineBoxList m_lineBoxes;   // All of the root line boxes created for this block flow.  For example, <div>Hello<br>world.</div> will have two total lines for the <div>.
+
     // How much content overflows out of our block vertically or horizontally.
     int m_overflowHeight;
     int m_overflowWidth;

@@ -1,3 +1,79 @@
+2009-01-29  David Hyatt  <hyatt@apple.com>
+
+        Move the line box list member out of RenderFlow and down into RenderBlock and RenderInline.  Eliminate RenderFlow from the tree.
+
+        Reviewed by Sam Weinig
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLAnchorElement.cpp:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::rendererLineBoxes):
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        * rendering/InlineFlowBox.h:
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::destroy):
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::dirtyLineBoxes):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::setSelectionState):
+        (WebCore::RenderBlock::avoidsFloats):
+        (WebCore::RenderBlock::positionForCoordinates):
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        (WebCore::RenderBlock::baselinePosition):
+        (WebCore::RenderBlock::getBaselineOfFirstLineBox):
+        (WebCore::RenderBlock::getBaselineOfLastLineBox):
+        (WebCore::RenderBlock::rectWithOutlineForRepaint):
+        (WebCore::RenderBlock::hoverAncestor):
+        (WebCore::RenderBlock::updateDragState):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::lineBoxes):
+        (WebCore::RenderBlock::firstLineBox):
+        (WebCore::RenderBlock::lastLineBox):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlow.cpp: Removed.
+        * rendering/RenderFlow.h: Removed.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        (WebCore::RenderInline::destroy):
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::cloneInline):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::offsetLeft):
+        (WebCore::RenderInline::offsetTop):
+        (WebCore::RenderInline::positionForCoordinates):
+        (WebCore::RenderInline::rectWithOutlineForRepaint):
+        (WebCore::RenderInline::updateDragState):
+        (WebCore::RenderInline::relativePositionedInlineOffset):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::lineBoxes):
+        (WebCore::RenderInline::firstLineBox):
+        (WebCore::RenderInline::lastLineBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::rendererLineBoxes):
+        * rendering/RootInlineBox.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::createLineBoxes):
+        * wml/WMLAElement.cpp:
+
 2009-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

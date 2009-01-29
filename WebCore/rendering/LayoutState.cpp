@@ -27,6 +27,7 @@
 #include "LayoutState.h"
 
 #include "RenderArena.h"
+#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 
@@ -52,8 +53,10 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const IntSize& 
         if (renderer->hasLayer())
             m_offset += renderer->layer()->relativePositionOffset();
     } else if (renderer->isPositioned() && !fixed) {
-        if (RenderObject* container = renderer->container())
-            m_offset += renderer->offsetForPositionedInContainer(container);
+        if (RenderObject* container = renderer->container()) {
+            if (container->isRelPositioned() && container->isRenderInline())
+                m_offset += static_cast<RenderInline*>(container)->relativePositionedInlineOffset(renderer);
+        }
     }
 
     m_clipped = !fixed && prev->m_clipped;

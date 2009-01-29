@@ -63,6 +63,8 @@ public:
 
     virtual void setVerticalSelectionPositions(int top, int bottom);
 
+    virtual RenderLineBoxList* rendererLineBoxes() const;
+
 #if ENABLE(SVG)
     virtual void computePerCharacterLayoutInformation() { }
 #endif

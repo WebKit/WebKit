@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class HitTestResult;
+class RenderLineBoxList;
 
 struct HitTestRequest;
 
@@ -51,8 +52,6 @@ public:
 #ifndef NDEBUG
     virtual ~InlineFlowBox();
 #endif
-
-    RenderFlow* flowObject();
 
     virtual bool isInlineFlowBox() { return true; }
 
@@ -96,6 +95,8 @@ public:
     virtual void paintTextDecorations(RenderObject::PaintInfo&, int tx, int ty, bool paintedChildren = false);
     virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
+
+    virtual RenderLineBoxList* rendererLineBoxes() const;
 
     int marginBorderPaddingLeft();
     int marginBorderPaddingRight();

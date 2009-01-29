@@ -972,7 +972,6 @@ SOURCES += \
     rendering/RenderFieldset.cpp \
     rendering/RenderFileUploadControl.cpp \
     rendering/RenderFlexibleBox.cpp \
-    rendering/RenderFlow.cpp \
     rendering/RenderFrame.cpp \
     rendering/RenderFrameSet.cpp \
     rendering/RenderHTMLCanvas.cpp \

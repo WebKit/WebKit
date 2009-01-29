@@ -416,8 +416,8 @@ void RenderLayer::updateLayerPosition()
         // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
         positionedParent->subtractScrolledContentOffset(x, y);
         
-        if (renderer()->isPositioned()) {
-            IntSize offset = toRenderBox(renderer())->offsetForPositionedInContainer(positionedParent->renderer());
+        if (renderer()->isPositioned() && positionedParent->renderer()->isRelPositioned() && positionedParent->renderer()->isRenderInline()) {
+            IntSize offset = static_cast<RenderInline*>(positionedParent->renderer())->relativePositionedInlineOffset(renderer());
             x += offset.width();
             y += offset.height();
         }

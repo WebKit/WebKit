@@ -25,13 +25,14 @@
 #ifndef RenderInline_h
 #define RenderInline_h
 
-#include "RenderFlow.h"
+#include "RenderContainer.h"
+#include "RenderLineBoxList.h"
 
 namespace WebCore {
 
 class Position;
 
-class RenderInline : public RenderFlow {
+class RenderInline : public RenderContainer {
 public:
     RenderInline(Node*);
     virtual ~RenderInline();
@@ -84,6 +85,12 @@ public:
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
     virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
 
+    RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
+    const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
+
+    InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
+    InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
+
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
     RenderContainer* continuation() const { return m_continuation; }
@@ -95,6 +102,8 @@ public:
     virtual void childBecameNonInline(RenderObject* child);
 
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
+
+    IntSize relativePositionedInlineOffset(const RenderObject* child) const;
 
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
     void paintOutline(GraphicsContext*, int tx, int ty);
@@ -108,11 +117,14 @@ public:
 protected:
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
 
-    static RenderInline* cloneInline(RenderFlow* src);
+    static RenderInline* cloneInline(RenderInline* src);
 
 private:
     void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine, const IntRect& nextLine);
     RenderContainer* continuationBefore(RenderObject* beforeChild);
+
+protected:
+    RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
 
 private:
     RenderContainer* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the

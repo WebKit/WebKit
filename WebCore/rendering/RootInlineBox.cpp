@@ -74,6 +74,11 @@ void RootInlineBox::detachEllipsisBox(RenderArena* arena)
     }
 }
 
+RenderLineBoxList* RootInlineBox::rendererLineBoxes() const
+{
+    return block()->lineBoxes();
+}
+
 void RootInlineBox::clearTruncation()
 {
     if (m_hasEllipsisBox) {

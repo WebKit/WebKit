@@ -28,7 +28,6 @@
 #include "HitTestResult.h"
 #include "RootInlineBox.h"
 #include "RenderBlock.h"
-#include "RenderFlow.h"
 #include "RenderInline.h"
 #include "RenderListMarker.h"
 #include "RenderTableCell.h"
@@ -51,11 +50,6 @@ InlineFlowBox::~InlineFlowBox()
 }
 
 #endif
-
-RenderFlow* InlineFlowBox::flowObject()
-{
-    return static_cast<RenderFlow*>(m_object);
-}
 
 int InlineFlowBox::marginLeft()
 {
@@ -214,6 +208,12 @@ void InlineFlowBox::adjustPosition(int dx, int dy)
         child->adjustPosition(dx, dy);
 }
 
+RenderLineBoxList* InlineFlowBox::rendererLineBoxes() const
+{
+    ASSERT(object()->isRenderInline());
+    return static_cast<RenderInline*>(object())->lineBoxes();
+}
+
 bool InlineFlowBox::onEndChain(RenderObject* endObject)
 {
     if (!endObject)
@@ -241,20 +241,19 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
     // any side.
     bool includeLeftEdge = false;
     bool includeRightEdge = false;
-
-    RenderFlow* flow = static_cast<RenderFlow*>(object());
     
-    if (!flow->firstChild())
+    if (!object()->firstChild())
         includeLeftEdge = includeRightEdge = true; // Empty inlines never split across lines.
     else if (parent()) { // The root inline box never has borders/margins/padding.
-        bool ltr = flow->style()->direction() == LTR;
+        bool ltr = object()->style()->direction() == LTR;
         
         // Check to see if all initial lines are unconstructed.  If so, then
         // we know the inline began on this line.
-        if (!flow->firstLineBox()->isConstructed()) {
-            if (ltr && flow->firstLineBox() == this)
+        RenderLineBoxList* lineBoxList = rendererLineBoxes();
+        if (!lineBoxList->firstLineBox()->isConstructed()) {
+            if (ltr && lineBoxList->firstLineBox() == this)
                 includeLeftEdge = true;
-            else if (!ltr && flow->lastLineBox() == this)
+            else if (!ltr && lineBoxList->lastLineBox() == this)
                 includeRightEdge = true;
         }
     
@@ -265,8 +264,8 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
         // reverse for rtl), then the inline has closed.
         // (3) The line may end on the inline.  If we are the last child (climbing up
         // the end object's chain), then we just closed as well.
-        if (!flow->lastLineBox()->isConstructed()) {
-            RenderInline* inlineFlow = static_cast<RenderInline*>(flow);
+        if (!lineBoxList->lastLineBox()->isConstructed()) {
+            RenderInline* inlineFlow = static_cast<RenderInline*>(object());
             if (ltr) {
                 if (!nextLineBox() &&
                     ((lastLine && !inlineFlow->continuation()) || nextOnLineExists() || onEndChain(endObject)))
