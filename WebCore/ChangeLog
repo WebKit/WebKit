@@ -1,5 +1,23 @@
 2009-01-28  David Hyatt  <hyatt@apple.com>
 
+        Move dirtyLineBoxes from RenderFlow to RenderInline and RenderBlock.
+
+        Reviewed by Oliver Hunt
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::dirtyLineBoxes):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::dirtyLineBoxes):
+        * rendering/RenderInline.h:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLineBoxes):
+        * rendering/RenderLineBoxList.h:
+
+2009-01-28  David Hyatt  <hyatt@apple.com>
+
         Back out my change to scrollWidth/Height from an earlier checkin since it broke stuff.  The current
         behavior is not correct, but this will need to be investigated before being changed again.
 

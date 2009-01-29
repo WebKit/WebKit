@@ -245,19 +245,6 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
     }
 }
 
-void RenderFlow::dirtyLineBoxes(bool fullLayout, bool isRootLineBox)
-{
-    if (!isRootLineBox && isReplaced())
-        return RenderContainer::dirtyLineBoxes(fullLayout, isRootLineBox);
-
-    if (fullLayout)
-        m_lineBoxes.deleteLineBoxes(renderArena());
-    else {
-        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-            curr->dirtyLineBoxes();
-    }
-}
-
 void RenderFlow::paintLines(PaintInfo& paintInfo, int tx, int ty)
 {
     // Only paint during the foreground/selection phases.

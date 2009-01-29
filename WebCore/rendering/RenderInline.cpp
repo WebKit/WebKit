@@ -530,6 +530,14 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const IntPoint& po
     }
 }
 
+void RenderInline::dirtyLineBoxes(bool fullLayout, bool)
+{
+    if (fullLayout)
+        m_lineBoxes.deleteLineBoxes(renderArena());
+    else
+        m_lineBoxes.dirtyLineBoxes();
+}
+
 InlineBox* RenderInline::createInlineBox(bool, bool, bool)
 {
     InlineFlowBox* flowBox = new (renderArena()) InlineFlowBox(this);

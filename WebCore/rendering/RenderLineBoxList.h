@@ -60,6 +60,8 @@ public:
     void attachLineBox(InlineFlowBox*);
     void removeLineBox(InlineFlowBox*);
     
+    void dirtyLineBoxes();
+
 private:
     // For block flows, each box represents the root inline box for a line in the
     // paragraph.

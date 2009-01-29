@@ -133,6 +133,12 @@ void RenderLineBoxList::deleteLineBoxes(RenderArena* arena)
     }
 }
 
+void RenderLineBoxList::dirtyLineBoxes()
+{
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+        curr->dirtyLineBoxes();
+}
+
 #ifndef NDEBUG
 
 void RenderLineBoxList::checkConsistency() const

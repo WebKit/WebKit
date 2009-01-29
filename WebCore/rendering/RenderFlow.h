@@ -62,8 +62,6 @@ public:
     InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
     InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
 
-    virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
-
     void paintLines(PaintInfo&, int tx, int ty);
     bool hitTestLines(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
