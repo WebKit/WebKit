@@ -59,6 +59,8 @@ function test()
 
 applicationCache.onnoupdate = function() { test() }
 applicationCache.oncached = function() { test() }
+
+applicationCache.onerror = function() { log("error") }
 </script>
 </body>
 </html>
