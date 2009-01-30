@@ -1,3 +1,49 @@
+2009-01-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Add toRenderInline methods for casting RenderObjects to RenderInlines.  The methods will assert if the object
+        is not a RenderInline.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::removeLineBoxFromRenderObject):
+        (WebCore::InlineFlowBox::extractLineBoxFromRenderObject):
+        (WebCore::InlineFlowBox::attachLineBoxToRenderObject):
+        (WebCore::InlineFlowBox::rendererLineBoxes):
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::InlineFlowBox::paint):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        (WebCore::RenderBox::containingBlockHeightForPositioned):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::inlineContinuation):
+        (WebCore::nextContinuation):
+        (WebCore::RenderInline::splitInlines):
+        * rendering/RenderInline.h:
+        (WebCore::toRenderInline):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::boundingBox):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderText.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::createLineBoxes):
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2009-01-30  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.

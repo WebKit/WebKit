@@ -1730,7 +1730,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     // 6. paint continuation outlines.
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseChildOutlines)) {
         if (inlineContinuation() && inlineContinuation()->hasOutline() && inlineContinuation()->style()->visibility() == VISIBLE) {
-            RenderInline* inlineRenderer = static_cast<RenderInline*>(inlineContinuation()->element()->renderer());
+            RenderInline* inlineRenderer = toRenderInline(inlineContinuation()->element()->renderer());
             if (!inlineRenderer->hasLayer())
                 containingBlock()->addContinuationWithOutline(inlineRenderer);
             else if (!inlineRenderer->firstLineBox())
@@ -4889,7 +4889,7 @@ void RenderBlock::addFocusRingRects(GraphicsContext* graphicsContext, int tx, in
         // FIXME: This check really isn't accurate. 
         bool nextInlineHasLineBox = inlineContinuation()->firstLineBox();
         // FIXME: This is wrong. The principal renderer may not be the continuation preceding this block.
-        bool prevInlineHasLineBox = static_cast<RenderInline*>(inlineContinuation()->element()->renderer())->firstLineBox(); 
+        bool prevInlineHasLineBox = toRenderInline(inlineContinuation()->element()->renderer())->firstLineBox(); 
         int topMargin = prevInlineHasLineBox ? collapsedMarginTop() : 0;
         int bottomMargin = nextInlineHasLineBox ? collapsedMarginBottom() : 0;
         graphicsContext->addFocusRingRect(IntRect(tx, ty - topMargin, 

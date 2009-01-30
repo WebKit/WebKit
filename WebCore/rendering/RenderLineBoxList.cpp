@@ -280,7 +280,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
             if (textBox)
                 box = textBox->root();
         } else if (curr->isRenderInline()) {
-            InlineRunBox* runBox = static_cast<RenderInline*>(curr)->lastLineBox();
+            InlineRunBox* runBox = toRenderInline(curr)->lastLineBox();
             if (runBox)
                 box = runBox->root();
         }

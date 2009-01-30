@@ -90,7 +90,7 @@ void RenderInline::destroy()
 RenderInline* RenderInline::inlineContinuation() const
 {
     if (!m_continuation || m_continuation->isInline())
-        return static_cast<RenderInline*>(m_continuation);
+        return toRenderInline(m_continuation);
     return toRenderBlock(m_continuation)->inlineContinuation();
 }
 
@@ -145,7 +145,7 @@ void RenderInline::addChild(RenderObject* newChild, RenderObject* beforeChild)
 static RenderContainer* nextContinuation(RenderObject* renderer)
 {
     if (renderer->isInline() && !renderer->isReplaced())
-        return static_cast<RenderInline*>(renderer)->continuation();
+        return toRenderInline(renderer)->continuation();
     return toRenderBlock(renderer)->inlineContinuation();
 }
 
@@ -258,13 +258,13 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         if (splitDepth < cMaxSplitDepth) {
             // Create a new clone.
             RenderInline* cloneChild = clone;
-            clone = cloneInline(static_cast<RenderInline*>(curr));
+            clone = cloneInline(toRenderInline(curr));
 
             // Insert our child clone as the first child.
             clone->addChildIgnoringContinuation(cloneChild, 0);
 
             // Hook the clone up as a continuation of |curr|.
-            RenderInline* inlineCurr = static_cast<RenderInline*>(curr);
+            RenderInline* inlineCurr = toRenderInline(curr);
             oldCont = inlineCurr->continuation();
             inlineCurr->setContinuation(clone);
             clone->setContinuation(oldCont);

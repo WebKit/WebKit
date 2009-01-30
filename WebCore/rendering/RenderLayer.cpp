@@ -417,7 +417,7 @@ void RenderLayer::updateLayerPosition()
         positionedParent->subtractScrolledContentOffset(x, y);
         
         if (renderer()->isPositioned() && positionedParent->renderer()->isRelPositioned() && positionedParent->renderer()->isRenderInline()) {
-            IntSize offset = static_cast<RenderInline*>(positionedParent->renderer())->relativePositionedInlineOffset(renderer());
+            IntSize offset = toRenderInline(positionedParent->renderer())->relativePositionedInlineOffset(renderer());
             x += offset.width();
             y += offset.height();
         }
@@ -429,7 +429,7 @@ void RenderLayer::updateLayerPosition()
     setPos(x, y);
 
     if (renderer()->isRenderInline()) {
-        RenderInline* inlineFlow = static_cast<RenderInline*>(renderer());
+        RenderInline* inlineFlow = toRenderInline(renderer());
         IntRect lineBox = inlineFlow->linesBoundingBox();
         setWidth(lineBox.width());
         setHeight(lineBox.height());
@@ -2219,7 +2219,7 @@ IntRect RenderLayer::boundingBox(const RenderLayer* rootLayer) const
     IntRect result;
     if (renderer()->isRenderInline()) {
         // Go from our first line box to our last line box.
-        RenderInline* inlineFlow = static_cast<RenderInline*>(renderer());
+        RenderInline* inlineFlow = toRenderInline(renderer());
         InlineFlowBox* firstBox = inlineFlow->firstLineBox();
         if (!firstBox)
             return result;

@@ -468,7 +468,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine)
         ASSERT(obj->isRenderInline() || obj == this);
         
         // Get the last box we made for this render object.
-        parentBox = obj->isRenderInline() ? static_cast<RenderInline*>(obj)->lastLineBox() : toRenderBlock(obj)->lastLineBox();
+        parentBox = obj->isRenderInline() ? toRenderInline(obj)->lastLineBox() : toRenderBlock(obj)->lastLineBox();
 
         // If this box is constructed then it is from a previous line, and we need
         // to make a new box for our line.  If this box is unconstructed but it has
@@ -825,7 +825,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 
                 // Calculate margins of inline flows so that they can be used later by line layout.
                 if (o->isRenderInline())
-                    static_cast<RenderInline*>(o)->calcMargins(containerWidth);
+                    toRenderInline(o)->calcMargins(containerWidth);
                 o->setNeedsLayout(false);
             }
             o = bidiNext(this, o, 0, false, &endOfInline);

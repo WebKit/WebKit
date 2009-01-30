@@ -169,8 +169,7 @@ void InlineFlowBox::deleteLine(RenderArena* arena)
 
 void InlineFlowBox::removeLineBoxFromRenderObject()
 {
-    ASSERT(m_object->isRenderInline());
-    static_cast<RenderInline*>(m_object)->lineBoxes()->removeLineBox(this);
+    toRenderInline(m_object)->lineBoxes()->removeLineBox(this);
 }
 
 void InlineFlowBox::extractLine()
@@ -183,8 +182,7 @@ void InlineFlowBox::extractLine()
 
 void InlineFlowBox::extractLineBoxFromRenderObject()
 {
-    ASSERT(m_object->isRenderInline());
-    static_cast<RenderInline*>(m_object)->lineBoxes()->extractLineBox(this);
+    toRenderInline(m_object)->lineBoxes()->extractLineBox(this);
 }
 
 void InlineFlowBox::attachLine()
@@ -197,8 +195,7 @@ void InlineFlowBox::attachLine()
 
 void InlineFlowBox::attachLineBoxToRenderObject()
 {
-    ASSERT(m_object->isRenderInline());
-    static_cast<RenderInline*>(m_object)->lineBoxes()->attachLineBox(this);
+    toRenderInline(m_object)->lineBoxes()->attachLineBox(this);
 }
 
 void InlineFlowBox::adjustPosition(int dx, int dy)
@@ -210,8 +207,7 @@ void InlineFlowBox::adjustPosition(int dx, int dy)
 
 RenderLineBoxList* InlineFlowBox::rendererLineBoxes() const
 {
-    ASSERT(object()->isRenderInline());
-    return static_cast<RenderInline*>(object())->lineBoxes();
+    return toRenderInline(object())->lineBoxes();
 }
 
 bool InlineFlowBox::onEndChain(RenderObject* endObject)
@@ -265,7 +261,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
         // (3) The line may end on the inline.  If we are the last child (climbing up
         // the end object's chain), then we just closed as well.
         if (!lineBoxList->lastLineBox()->isConstructed()) {
-            RenderInline* inlineFlow = static_cast<RenderInline*>(object());
+            RenderInline* inlineFlow = toRenderInline(object());
             if (ltr) {
                 if (!nextLineBox() &&
                     ((lastLine && !inlineFlow->continuation()) || nextOnLineExists() || onEndChain(endObject)))
@@ -644,12 +640,12 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
             // Add ourselves to the paint info struct's list of inlines that need to paint their
             // outlines.
             if (object()->style()->visibility() == VISIBLE && object()->hasOutline() && !isRootInlineBox()) {
-                RenderInline* inlineFlow = static_cast<RenderInline*>(object());
+                RenderInline* inlineFlow = toRenderInline(object());
                 if ((inlineFlow->continuation() || inlineFlow->isInlineContinuation()) && !object()->hasLayer()) {
                     // Add ourselves to the containing block of the entire continuation so that it can
                     // paint us atomically.
                     RenderBlock* block = object()->containingBlock()->containingBlock();
-                    block->addContinuationWithOutline(static_cast<RenderInline*>(object()->element()->renderer()));
+                    block->addContinuationWithOutline(toRenderInline(object()->element()->renderer()));
                 } else if (!inlineFlow->isInlineContinuation())
                     paintInfo.outlineObjects->add(inlineFlow);
             }

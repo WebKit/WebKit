@@ -179,6 +179,9 @@ inline const RenderText* toRenderText(const RenderObject* o)
     return static_cast<const RenderText*>(o);
 }
 
+// This will catch anyone doing an unnecessary cast.
+void toRenderText(const RenderText*);
+
 #ifdef NDEBUG
 inline void RenderText::checkConsistency() const
 {

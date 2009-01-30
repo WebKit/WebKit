@@ -132,6 +132,21 @@ private:
     mutable int m_lineHeight;
 };
 
+inline RenderInline* toRenderInline(RenderObject* o)
+{ 
+    ASSERT(!o || o->isRenderInline());
+    return static_cast<RenderInline*>(o);
+}
+
+inline const RenderInline* toRenderInline(const RenderObject* o)
+{ 
+    ASSERT(!o || o->isRenderInline());
+    return static_cast<const RenderInline*>(o);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderInline(const RenderInline*);
+
 } // namespace WebCore
 
 #endif // RenderInline_h
