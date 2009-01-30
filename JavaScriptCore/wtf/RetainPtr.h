@@ -21,6 +21,7 @@
 #ifndef RetainPtr_h
 #define RetainPtr_h
 
+#include "TypeTraits.h"
 #include <algorithm>
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -29,14 +30,6 @@
 #endif
 
 namespace WTF {
-
-    template <typename T> struct RemovePointer {
-        typedef T type;
-    };
-
-    template <typename T> struct RemovePointer<T*> {
-        typedef T type;
-    };
 
     // Unlike most most of our smart pointers, RetainPtr can take either the pointer type or the pointed-to type,
     // so both RetainPtr<NSDictionary> and RetainPtr<CFDictionaryRef> will work.
@@ -56,7 +49,7 @@ namespace WTF {
 
     template <typename T> class RetainPtr {
     public:
-        typedef typename RemovePointer<T>::type ValueType;
+        typedef typename RemovePointer<T>::Type ValueType;
         typedef ValueType* PtrType;
 
         RetainPtr() : m_ptr(0) {}

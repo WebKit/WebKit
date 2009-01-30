@@ -459,6 +459,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\TypeTraits.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\unicode\Unicode.h"
 			>
 		</File>

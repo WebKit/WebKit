@@ -40,6 +40,7 @@
 		088FA5BC0EF76D4300578E6F /* RandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 088FA5BA0EF76D4300578E6F /* RandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08E279E90EF83B10007DB523 /* RandomNumberSeed.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E279E80EF83B10007DB523 /* RandomNumberSeed.h */; };
 		0B1F921D0F1753500036468E /* PtrAndFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B1F921B0F17502D0036468E /* PtrAndFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0B4D7E630F319AC800AD7E58 /* TypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B4D7E620F319AC800AD7E58 /* TypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140B7D1D0DC69AF7009C42B8 /* JSActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */; };
 		140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141211310A48794D00480255 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
@@ -425,6 +426,7 @@
 		088FA5BA0EF76D4300578E6F /* RandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumber.h; sourceTree = "<group>"; };
 		08E279E80EF83B10007DB523 /* RandomNumberSeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberSeed.h; sourceTree = "<group>"; };
 		0B1F921B0F17502D0036468E /* PtrAndFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtrAndFlags.h; sourceTree = "<group>"; };
+		0B4D7E620F319AC800AD7E58 /* TypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeTraits.h; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
 		141211020A48780900480255 /* minidom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minidom.c; path = tests/minidom.c; sourceTree = "<group>"; };
 		1412110D0A48788700480255 /* minidom.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = minidom.js; path = tests/minidom.js; sourceTree = "<group>"; };
@@ -1142,6 +1144,7 @@
 				5D6A566A0F05995500266145 /* Threading.cpp */,
 				E1EE79220D6C95CD00FEA3BA /* Threading.h */,
 				E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */,
+				0B4D7E620F319AC800AD7E58 /* TypeTraits.h */,
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
 				6592C317098B7DE10003D4F6 /* VectorTraits.h */,
@@ -1684,6 +1687,7 @@
 				5D53726F0E1C54880021E549 /* Tracing.h in Headers */,
 				95CD41B40E1BF6560085358E /* TreeProfile.h in Headers */,
 				6507D29E0E871E5E00D7D896 /* TypeInfo.h in Headers */,
+				0B4D7E630F319AC800AD7E58 /* TypeTraits.h in Headers */,
 				BC18C4760E16F5CD00B34460 /* UString.h in Headers */,
 				BC18C4770E16F5CD00B34460 /* UTF8.h in Headers */,
 				BC18C4730E16F5CD00B34460 /* Unicode.h in Headers */,

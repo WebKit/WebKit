@@ -23,6 +23,7 @@
 
 #include "Assertions.h"
 #include "HashFunctions.h"
+#include "TypeTraits.h"
 #include <utility>
 #include <limits>
 
@@ -30,47 +31,6 @@ namespace WTF {
 
     using std::pair;
     using std::make_pair;
-
-    template<typename T> struct IsInteger           { static const bool value = false; };
-    template<> struct IsInteger<bool>               { static const bool value = true; };
-    template<> struct IsInteger<char>               { static const bool value = true; };
-    template<> struct IsInteger<signed char>        { static const bool value = true; };
-    template<> struct IsInteger<unsigned char>      { static const bool value = true; };
-    template<> struct IsInteger<short>              { static const bool value = true; };
-    template<> struct IsInteger<unsigned short>     { static const bool value = true; };
-    template<> struct IsInteger<int>                { static const bool value = true; };
-    template<> struct IsInteger<unsigned int>       { static const bool value = true; };
-    template<> struct IsInteger<long>               { static const bool value = true; };
-    template<> struct IsInteger<unsigned long>      { static const bool value = true; };
-    template<> struct IsInteger<long long>          { static const bool value = true; };
-    template<> struct IsInteger<unsigned long long> { static const bool value = true; };
-
-#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
-    template<> struct IsInteger<wchar_t>            { static const bool value = true; };
-#endif
-
-    COMPILE_ASSERT(IsInteger<bool>::value, WTF_IsInteger_bool_true);
-    COMPILE_ASSERT(IsInteger<char>::value, WTF_IsInteger_char_true);
-    COMPILE_ASSERT(IsInteger<signed char>::value, WTF_IsInteger_signed_char_true);
-    COMPILE_ASSERT(IsInteger<unsigned char>::value, WTF_IsInteger_unsigned_char_true);
-    COMPILE_ASSERT(IsInteger<short>::value, WTF_IsInteger_short_true);
-    COMPILE_ASSERT(IsInteger<unsigned short>::value, WTF_IsInteger_unsigned_short_true);
-    COMPILE_ASSERT(IsInteger<int>::value, WTF_IsInteger_int_true);
-    COMPILE_ASSERT(IsInteger<unsigned int>::value, WTF_IsInteger_unsigned_int_true);
-    COMPILE_ASSERT(IsInteger<long>::value, WTF_IsInteger_long_true);
-    COMPILE_ASSERT(IsInteger<unsigned long>::value, WTF_IsInteger_unsigned_long_true);
-    COMPILE_ASSERT(IsInteger<long long>::value, WTF_IsInteger_long_long_true);
-    COMPILE_ASSERT(IsInteger<unsigned long long>::value, WTF_IsInteger_unsigned_long_long_true);
-
-#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
-    COMPILE_ASSERT(IsInteger<wchar_t>::value, WTF_IsInteger_wchar_t_true);
-#endif
-
-    COMPILE_ASSERT(!IsInteger<char*>::value, WTF_IsInteger_char_pointer_false);
-    COMPILE_ASSERT(!IsInteger<const char* >::value, WTF_IsInteger_const_char_pointer_false);
-    COMPILE_ASSERT(!IsInteger<volatile char* >::value, WTF_IsInteger_volatile_char_pointer__false);
-    COMPILE_ASSERT(!IsInteger<double>::value, WTF_IsInteger_double_false);
-    COMPILE_ASSERT(!IsInteger<float>::value, WTF_IsInteger_float_false);
 
     template<typename T> struct HashTraits;
 

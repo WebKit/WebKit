@@ -22,30 +22,13 @@
 #define WTF_VectorTraits_h
 
 #include "RefPtr.h"
+#include "TypeTraits.h"
 #include <utility>
 #include <memory>
 
 using std::pair;
 
 namespace WTF {
-
-    template <typename T> struct IsPod           { static const bool value = false; };
-    template <> struct IsPod<bool>               { static const bool value = true; };
-    template <> struct IsPod<char>               { static const bool value = true; };
-    template <> struct IsPod<signed char>        { static const bool value = true; };
-    template <> struct IsPod<unsigned char>      { static const bool value = true; };
-    template <> struct IsPod<short>              { static const bool value = true; };
-    template <> struct IsPod<unsigned short>     { static const bool value = true; };
-    template <> struct IsPod<int>                { static const bool value = true; };
-    template <> struct IsPod<unsigned int>       { static const bool value = true; };
-    template <> struct IsPod<long>               { static const bool value = true; };
-    template <> struct IsPod<unsigned long>      { static const bool value = true; };
-    template <> struct IsPod<long long>          { static const bool value = true; };
-    template <> struct IsPod<unsigned long long> { static const bool value = true; };
-    template <> struct IsPod<float>              { static const bool value = true; };
-    template <> struct IsPod<double>             { static const bool value = true; };
-    template <> struct IsPod<long double>        { static const bool value = true; };
-    template <typename P> struct IsPod<P *>      { static const bool value = true; };
 
     template<bool isPod, typename T>
     class VectorTraitsBase;

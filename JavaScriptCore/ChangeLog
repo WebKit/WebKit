@@ -1,3 +1,24 @@
+2009-01-30  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23616: Various "template helpers" should be consolidated from isolated files in JavaScriptCore.
+        <https://bugs.webkit.org/show_bug.cgi?id=23616>
+
+        * wtf/TypeTraits.h: Moved RemovePointer, IsPod, IsInteger to this file.
+
+        * wtf/OwnPtr.h: Use RemovePointer from TypeTraits.h.
+        * wtf/RetainPtr.h:  Ditto.
+
+        * wtf/HashTraits.h: Use IsInteger from TypeTraits.h.
+
+        * wtf/VectorTraits.h: Use IsPod from TypeTraits.h.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Added TypeTraits.h.
+
 2009-01-29  Stephanie Lewis <slewis@apple.com>
 
         RS by Oliver Hunt.
