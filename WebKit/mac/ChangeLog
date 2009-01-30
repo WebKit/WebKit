@@ -1,3 +1,25 @@
+2009-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix <rdar://problem/6490778>.
+        
+        Change the NPRuntime related functions to use IdentifierRep directly, and make sure to always
+        validate IdentifierReps before dereferencing them.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEvaluate):
+        (WKPCGetStringIdentifier):
+        (WKPCGetIntIdentifier):
+        (identifierFromIdentifierRep):
+        (WKPCInvoke):
+        (WKPCGetProperty):
+        (WKPCSetProperty):
+        (WKPCRemoveProperty):
+        (WKPCHasProperty):
+        (WKPCHasMethod):
+        (WKPCIdentifierInfo):
+
 2009-01-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
