@@ -2,6 +2,22 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Bug 23618: Templated worker tasks should be more error proof to use
+        <https://bugs.webkit.org/show_bug.cgi?id=23618>
+
+        Add the type traits needed for the generic worker tasks
+        and compile asserts for them.
+
+        Add a summary header to the TypeTraits.h file to explain what is in there.
+
+        Add a note to explain IsPod's deficiencies.
+
+        * wtf/TypeTraits.h:
+
+2009-01-30  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Bug 23616: Various "template helpers" should be consolidated from isolated files in JavaScriptCore.
         <https://bugs.webkit.org/show_bug.cgi?id=23616>
 
