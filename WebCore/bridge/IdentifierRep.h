@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,48 @@
 #ifndef IdentifierRep_h
 #define IdentifierRep_h
 
+#include <wtf/Assertions.h>
+
 namespace WebCore {
     
-struct IdentifierRep;
+class IdentifierRep {
+public:
+    static IdentifierRep* get(int);
+    static IdentifierRep* get(const char*);
+
+    static bool isValid(IdentifierRep*);
     
-IdentifierRep* identifierRep(int);
-IdentifierRep* identifierRep(const char*);
+    bool isString() const { return m_isString; }
+
+    int number() const { return m_isString ? 0 : m_value.m_number; }
+    const char* string() const { return m_isString ? m_value.m_string : 0; }
+
+private:
+    IdentifierRep(int number) 
+        : m_isString(false)
+    {
+        m_value.m_number = number;
+    }
     
+    IdentifierRep(const char* name)
+        : m_isString(true)
+    {
+        m_value.m_string = strdup(name);
+    }
+    
+    ~IdentifierRep()
+    {
+        // IdentifierReps should never be deleted.
+        ASSERT_NOT_REACHED();
+    }
+    
+    union {
+        const char* m_string;
+        int m_number;
+    } m_value;
+    bool m_isString;
+};
+
 } // namespace WebCore
 
 #endif // IdentifierRep_h

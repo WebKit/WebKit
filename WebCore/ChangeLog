@@ -1,5 +1,26 @@
 2009-01-30  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig and Darin Adler.
+
+        Make IdentifierRep a real class, add necessary class methods.
+
+        * bridge/IdentifierRep.cpp:
+        (WebCore::identifierSet):
+        Returns a set of all identifiers.
+        
+        (WebCore::IdentifierRep::isValid):
+        Return whether an identifier is valid, meaning that it's present in the
+        set of identifiers.
+        
+        * bridge/IdentifierRep.h:
+        (WebCore::IdentifierRep::isString):
+        (WebCore::IdentifierRep::number):
+        (WebCore::IdentifierRep::string):
+        (WebCore::IdentifierRep::IdentifierRep):
+        (WebCore::IdentifierRep::):
+
+2009-01-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add IdentifierRep which will be used by both plug-in implementations.
