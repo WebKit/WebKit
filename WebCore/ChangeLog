@@ -1,3 +1,14 @@
+2009-01-29  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=23598
+        Replace smart-quotes in UTF-8 with ASCII double-quotes to avoid
+        the compilation error on CJK Windows
+
+        * wml/WMLTableElement.cpp:
+        (WebCore::WMLTableElement::parseMappedAttribute):
+
 2009-01-29  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
