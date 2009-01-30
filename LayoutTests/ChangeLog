@@ -1,3 +1,21 @@
+2009-01-30  Pierre-Olivier Latour  <pol@apple.com>
+
+        Updated the references images for the media layout tests on Tiger since they now differ from Leopard after installing QuickTime 7.6.
+
+        * platform/mac-tiger/media: Added.
+        * platform/mac-tiger/media/video-aspect-ratio-expected.checksum: Added.
+        * platform/mac-tiger/media/video-aspect-ratio-expected.png: Added.
+        * platform/mac-tiger/media/video-controls-rendering-expected.checksum: Added.
+        * platform/mac-tiger/media/video-controls-rendering-expected.png: Added.
+        * platform/mac-tiger/media/video-display-toggle-expected.checksum: Added.
+        * platform/mac-tiger/media/video-display-toggle-expected.png: Added.
+        * platform/mac-tiger/media/video-layer-crash-expected.checksum: Added.
+        * platform/mac-tiger/media/video-layer-crash-expected.png: Added.
+        * platform/mac-tiger/media/video-transformed-expected.checksum: Added.
+        * platform/mac-tiger/media/video-transformed-expected.png: Added.
+        * platform/mac-tiger/media/video-zoom-expected.checksum: Added.
+        * platform/mac-tiger/media/video-zoom-expected.png: Added.
+
 2009-01-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
