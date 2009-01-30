@@ -1133,7 +1133,7 @@ RenderView* Frame::contentRenderer() const
     if (!object)
         return 0;
     ASSERT(object->isRenderView());
-    return static_cast<RenderView*>(object);
+    return toRenderView(object);
 }
 
 HTMLFrameOwnerElement* Frame::ownerElement() const
@@ -1351,7 +1351,7 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
 {
     // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
-    RenderView *root = static_cast<RenderView*>(document()->renderer());
+    RenderView *root = toRenderView(document()->renderer());
     if (root) {
         // This magic is basically copied from khtmlview::print
         int pageW = (int)ceilf(minPageWidth);

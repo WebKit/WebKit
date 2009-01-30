@@ -475,7 +475,7 @@ void FrameView::layout(bool allowSubtree)
 #endif
     }
 
-    m_doFullRepaint = !subtree && (m_firstLayout || static_cast<RenderView*>(root)->printing());
+    m_doFullRepaint = !subtree && (m_firstLayout || toRenderView(root)->printing());
 
     if (!subtree) {
         // Now set our scrollbar state for the layout.
@@ -530,7 +530,7 @@ void FrameView::layout(bool allowSubtree)
    
     m_layoutSchedulingEnabled = true;
 
-    if (!subtree && !static_cast<RenderView*>(root)->printing())
+    if (!subtree && !toRenderView(root)->printing())
         adjustViewSize();
 
     // Now update the positions of all layers.
