@@ -530,9 +530,6 @@ String FrameLoaderClientQt::generatedMIMETypeForURLScheme(const String& URLSchem
 void FrameLoaderClientQt::frameLoadCompleted()
 {
     // Note: Can be called multiple times.
-    // Even if already complete, we might have set a previous item on a frame that
-    // didn't do any data loading on the past transaction. Make sure to clear these out.
-    m_frame->loader()->setPreviousHistoryItem(0);
 }
 
 

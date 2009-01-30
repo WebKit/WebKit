@@ -56,7 +56,7 @@ public:
     FrameView* view() const { return m_view.get(); }
     Node* mousePressNode() const { return m_mousePressNode.get(); }
     const KURL& url() const { return m_url; }
-    DOMWindow* domWindow() const { return m_cachedFrameScriptData.domWindow(); }
+    DOMWindow* domWindow() const { return m_cachedFrameScriptData->domWindow(); }
 
     void setCachedFramePlatformData(CachedFramePlatformData*);
     CachedFramePlatformData* cachedFramePlatformData();
@@ -69,7 +69,7 @@ private:
     RefPtr<FrameView> m_view;
     RefPtr<Node> m_mousePressNode;
     KURL m_url;
-    ScriptCachedFrameData m_cachedFrameScriptData;
+    OwnPtr<ScriptCachedFrameData> m_cachedFrameScriptData;
     OwnPtr<CachedFramePlatformData> m_cachedFramePlatformData;
     
     CachedFrameVector m_childFrames;

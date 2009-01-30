@@ -55,11 +55,16 @@ CachedFrame::CachedFrame(Frame* frame)
     , m_view(frame->view())
     , m_mousePressNode(frame->eventHandler()->mousePressNode())
     , m_url(frame->loader()->url())
-    , m_cachedFrameScriptData(frame)
 {
 #ifndef NDEBUG
     cachedFrameCounter().increment();
 #endif
+    ASSERT(m_document);
+
+    // Active DOM objects must be suspended before we cached the frame script data
+    m_document->suspendActiveDOMObjects();
+    m_cachedFrameScriptData.set(new ScriptCachedFrameData(frame));
+    
     m_document->documentWillBecomeInactive(); 
     frame->clearTimers();
     m_document->setInPageCache(true);
@@ -85,15 +90,16 @@ void CachedFrame::restore(Frame* frame)
 {
     ASSERT(m_document->view() == m_view);
     
-    m_cachedFrameScriptData.restore(frame);
+    m_cachedFrameScriptData->restore(frame);
 
 #if ENABLE(SVG)
-    if (m_document && m_document->svgExtensions())
+    if (m_document->svgExtensions())
         m_document->accessSVGExtensions()->unpauseAnimations();
 #endif
 
     frame->animation()->resumeAnimations(m_document.get());
     frame->eventHandler()->setMousePressNode(mousePressNode());
+    m_document->resumeActiveDOMObjects();
 }
 
 void CachedFrame::clear()

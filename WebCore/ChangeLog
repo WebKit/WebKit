@@ -1,3 +1,26 @@
+2009-01-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        - Let CachedFrame handle the suspending/resuming of active DOM objects itself instead of
+          relying on some outside force.
+        - Clear the previous history item inside FrameLoader instead of relying on multiple
+          FrameLoaderClients to do it.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame): Suspend active DOM objects here.
+        (WebCore::CachedFrame::restore): Resume those DOM objects here.
+        * history/CachedFrame.h:
+        (WebCore::CachedFrame::domWindow):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad): Let CachedFrame  creation handle the 
+          suspending of active DOM objects.
+        (WebCore::FrameLoader::open): Let CachedFrame::restore() handle resuming those DOM objects.
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Call frameLoadCompleted() instead
+          of performing a client call by itself.
+        (WebCore::FrameLoader::frameLoadCompleted):
+
 2009-01-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

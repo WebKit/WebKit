@@ -1,3 +1,12 @@
+2009-01-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Remove FrameLoaderClient code that is now handled by FrameLoader itself
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::frameLoadCompleted):
+
 2009-01-29  Stephanie Lewis <slewis@apple.com>
 
         RS by Oliver Hunt.

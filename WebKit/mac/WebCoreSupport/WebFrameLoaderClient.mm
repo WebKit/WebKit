@@ -878,12 +878,7 @@ void WebFrameLoaderClient::frameLoadCompleted()
     // See WebFrameLoaderClient::provisionalLoadStarted.
     if ([getWebView(m_webFrame.get()) drawsBackground])
         [[m_webFrame->_private->webFrameView _scrollView] setDrawsBackground:YES];
-
-    // Even if already complete, we might have set a previous item on a frame that
-    // didn't do any data loading on the past transaction. Make sure to clear these out.
-    core(m_webFrame.get())->loader()->setPreviousHistoryItem(0);
 }
-
 
 void WebFrameLoaderClient::saveViewStateToItem(HistoryItem* item)
 {
