@@ -138,11 +138,11 @@ namespace WebCore {
         void loadWithNavigationAction(const ResourceRequest&, const NavigationAction&,              // Calls loadWithDocumentLoader()
             FrameLoadType, PassRefPtr<FormState>);
 
-        void loadPostRequest(const ResourceRequest& inRequest, const String& referrer,              // Called by loadFrameRequestWithFormAndValues(), calls loadWithNavigationAction
-            const String& frameName, Event* event, PassRefPtr<FormState> prpFormState);
+        void loadPostRequest(const ResourceRequest&, const String& referrer,                        // Called by loadFrameRequestWithFormAndValues(), calls loadWithNavigationAction
+            const String& frameName, FrameLoadType, Event*, PassRefPtr<FormState>);
 
         void loadURL(const KURL& newURL, const String& referrer, const String& frameName,           // Called by loadFrameRequestWithFormAndValues(), calls loadWithNavigationAction or else dispatches to navigation policy delegate    
-            FrameLoadType, Event* event, PassRefPtr<FormState> prpFormState);                                                         
+            FrameLoadType, Event*, PassRefPtr<FormState>);                                                         
         void loadURLIntoChildFrame(const KURL&, const String& referer, Frame*);
 
         void loadFrameRequestWithFormAndValues(const FrameLoadRequest&, bool lockHistory,           // Called by submitForm, calls loadPostRequest()
@@ -288,9 +288,9 @@ namespace WebCore {
         bool requestFrame(HTMLFrameOwnerElement*, const String& url, const AtomicString& frameName);
         Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
 
-        void submitForm(const char* action, const String& url, PassRefPtr<FormData>, const String& target, const String& contentType, const String& boundary, Event*);
+        void submitForm(const char* action, const String& url, PassRefPtr<FormData>, const String& target, const String& contentType, const String& boundary, Event*, bool lockHistory);
         void submitFormAgain();
-        void submitForm(const FrameLoadRequest&, Event*);
+        void submitForm(const FrameLoadRequest&, Event*, bool lockHistory);
 
         void stop();
         void stopLoading(bool sendUnload);

@@ -89,6 +89,7 @@ public:
 
     void setProcessingTimerCallback(bool b) { m_processingTimerCallback = b; }
     bool processingUserGesture() const;
+    bool anyPageIsProcessingUserGesture() const;
 
     bool isEnabled();
 
@@ -140,6 +141,9 @@ private:
     void initScript();
 
     void disconnectPlatformScriptObjects();
+
+    bool processingUserGestureEvent() const;
+    bool isJavaScriptAnchorNavigation() const;
 
     JSC::ProtectedPtr<JSDOMWindowShell> m_windowShell;
     HashSet<JSDOMWindow*> m_liveFormerWindows;

@@ -180,6 +180,11 @@ void ScriptController::initScript()
 
 bool ScriptController::processingUserGesture() const
 {
+    return processingUserGestureEvent() || isJavaScriptAnchorNavigation();
+}
+
+bool ScriptController::processingUserGestureEvent() const
+{
     if (!m_windowShell)
         return false;
 
@@ -196,13 +201,37 @@ bool ScriptController::processingUserGesture() const
             type == eventNames().focusEvent || type == eventNames().blurEvent ||
             type == eventNames().submitEvent)
             return true;
-    } else { // no event
-        if (m_sourceURL && m_sourceURL->isNull() && !m_processingTimerCallback) {
-            // This is the <a href="javascript:window.open('...')> case -> we let it through
-            return true;
-        }
-        // This is the <script>window.open(...)</script> case or a timer callback -> block it
     }
+    
+    return false;
+}
+
+// FIXME: This seems like an insufficient check to verify a click on a javascript: anchor.
+bool ScriptController::isJavaScriptAnchorNavigation() const
+{
+    // This is the <a href="javascript:window.open('...')> case -> we let it through
+    if (m_sourceURL && m_sourceURL->isNull() && !m_processingTimerCallback)
+        return true;
+
+    // This is the <script>window.open(...)</script> case or a timer callback -> block it
+    return false;
+}
+
+bool ScriptController::anyPageIsProcessingUserGesture() const
+{
+    Page* page = m_frame->page();
+    if (!page)
+        return false;
+
+    const HashSet<Page*>& pages = page->group().pages();
+    HashSet<Page*>::const_iterator end = pages.end();
+    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
+        for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+            if (frame->script()->processingUserGesture())
+                return true;
+        }
+    }
+
     return false;
 }
 

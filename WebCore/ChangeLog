@@ -1,3 +1,56 @@
+2009-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        More scaffolding for redirect tracking. No behavior change yet.
+
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::submit): Added scaffolding necessary for
+        redirect checking in a form submission through JS. (Currently, we
+        just specify "no redirect.")
+
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+        (WebCore::ScriptController::processingUserGestureEvent):
+        (WebCore::ScriptController::isJavaScriptAnchorNavigation): Refactored
+        user gesture check to make it more clear.
+
+        (WebCore::ScriptController::pageIsProcessingUserGesture): Added a helper
+        for checking if there's a user gesture in any frame on the page (a more
+        relaxed rule than our popup blocking rule, which requires the user
+        gesture to occur in the frame that's executing JavaScript.)
+
+        * html/HTMLFormElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit): Added scaffolding necessary for
+        redirect checking in a form submission through the DOM. (Currently, we
+        just specify "no redirect.")
+
+        * html/HTMLFormElement.idl: Made submit custom so it can participate
+        in redirect checking.
+
+        * loader/FrameLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FormSubmission::FormSubmission): Clarified some names, and
+        added a "lockHistory" parameter to form submissions, to match other
+        navigations.
+
+        (WebCore::FrameLoader::submitFormAgain):
+        (WebCore::FrameLoader::submitForm): Use the lockHistory parameter.
+
+        (WebCore::FrameLoader::userGestureHint): Refactored this function for
+        clarity, and added a FIXME for a change I was too scared to make myself.
+        (Really, we should just get rid of this function.)
+
+        (WebCore::FrameLoader::loadFrameRequestWithFormAndValues): Refactored
+        to pass a FrameLoadType to form posts, too, so they can participate in
+        redirect tracking.
+
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::loadItem): Use the lockHistory parameter.
+
 2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed build fix.

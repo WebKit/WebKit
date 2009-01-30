@@ -1,0 +1,18 @@
+<html>
+<head>
+<title>JavaScript Redirect</title>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.keepWebHistory();
+    layoutTestController.waitUntilDone();
+}
+setTimeout(function () { document.getElementById("form").submit(); }, 0);
+</script>
+</head>
+
+<body>
+<p>This page is a JavaScript redirect on a 0 second delay.</p>
+<form id="form" action="resources/redirect-target.html#1"></form>
+</body>
+</html>

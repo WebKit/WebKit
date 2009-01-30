@@ -1,3 +1,70 @@
+2009-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        More redirect layout test work.
+        
+        Added tests (expected to fail) for form submission via JavaScript:
+        
+        * http/tests/history/redirect-js-form-submit-0-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-form-submit-0-seconds.html: Added.
+        * http/tests/history/redirect-js-form-submit-2-seconds-expected.txt: Added.
+        * http/tests/history/redirect-js-form-submit-2-seconds.html: Added.
+        * http/tests/history/redirect-js-form-submit-before-load-expected.txt: Added.
+        * http/tests/history/redirect-js-form-submit-before-load.html: Added.
+        
+        Updated these tests to dump their back/forward lists, to check for
+        back/forward regressions, and to use # instead of ? to communicate between
+        URLs, since, to my surprise, form submissions can't use query strings.
+
+        * http/tests/history/redirect-200-refresh-0-seconds-expected.txt:
+        * http/tests/history/redirect-200-refresh-0-seconds.pl:
+        * http/tests/history/redirect-200-refresh-2-seconds-expected.txt:
+        * http/tests/history/redirect-200-refresh-2-seconds.pl:
+        * http/tests/history/redirect-301-expected.txt:
+        * http/tests/history/redirect-301.pl:
+        * http/tests/history/redirect-302-expected.txt:
+        * http/tests/history/redirect-302.pl:
+        * http/tests/history/redirect-303-expected.txt:
+        * http/tests/history/redirect-303.pl:
+        * http/tests/history/redirect-307-expected.txt:
+        * http/tests/history/redirect-307.pl:
+        * http/tests/history/redirect-js-document-location-0-seconds-expected.txt:
+        * http/tests/history/redirect-js-document-location-0-seconds.html:
+        * http/tests/history/redirect-js-document-location-2-seconds-expected.txt:
+        * http/tests/history/redirect-js-document-location-2-seconds.html:
+        * http/tests/history/redirect-js-document-location-before-load-expected.txt:
+        * http/tests/history/redirect-js-document-location-before-load.html:
+        * http/tests/history/redirect-js-location-0-seconds-expected.txt:
+        * http/tests/history/redirect-js-location-0-seconds.html:
+        * http/tests/history/redirect-js-location-2-seconds-expected.txt:
+        * http/tests/history/redirect-js-location-2-seconds.html:
+        * http/tests/history/redirect-js-location-assign-0-seconds-expected.txt:
+        * http/tests/history/redirect-js-location-assign-0-seconds.html:
+        * http/tests/history/redirect-js-location-assign-2-seconds-expected.txt:
+        * http/tests/history/redirect-js-location-assign-2-seconds.html:
+        * http/tests/history/redirect-js-location-assign-before-load-expected.txt:
+        * http/tests/history/redirect-js-location-assign-before-load.html:
+        * http/tests/history/redirect-js-location-before-load-expected.txt:
+        * http/tests/history/redirect-js-location-before-load.html:
+        * http/tests/history/redirect-js-location-href-0-seconds-expected.txt:
+        * http/tests/history/redirect-js-location-href-0-seconds.html:
+        * http/tests/history/redirect-js-location-href-2-seconds-expected.txt:
+        * http/tests/history/redirect-js-location-href-2-seconds.html:
+        * http/tests/history/redirect-js-location-href-before-load-expected.txt:
+        * http/tests/history/redirect-js-location-href-before-load.html:
+        * http/tests/history/redirect-js-location-replace-0-seconds-expected.txt:
+        * http/tests/history/redirect-js-location-replace-0-seconds.html:
+        * http/tests/history/redirect-js-location-replace-2-seconds-expected.txt:
+        * http/tests/history/redirect-js-location-replace-2-seconds.html:
+        * http/tests/history/redirect-js-location-replace-before-load-expected.txt:
+        * http/tests/history/redirect-js-location-replace-before-load.html:
+        * http/tests/history/redirect-meta-refresh-0-seconds-expected.txt:
+        * http/tests/history/redirect-meta-refresh-0-seconds.html:
+        * http/tests/history/redirect-meta-refresh-2-seconds-expected.txt:
+        * http/tests/history/redirect-meta-refresh-2-seconds.html:
+        * http/tests/history/resources/redirect-target.html:
+
 2009-01-30  Pierre-Olivier Latour  <pol@apple.com>
 
         Updated the references images for the media layout tests on Tiger since they now differ from Leopard after installing QuickTime 7.6.

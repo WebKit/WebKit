@@ -2,7 +2,7 @@
 # Script to generate a 303 HTTP redirect
 
 print "Status: 303 See Other\r\n";
-print "Location: resources/redirect-target.html?1\r\n";
+print "Location: resources/redirect-target.html#1\r\n";
 print "Content-type: text/html\r\n";
 print "\r\n";
 

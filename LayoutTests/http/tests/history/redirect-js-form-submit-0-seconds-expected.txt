@@ -4,6 +4,6 @@ FAIL: History item count should be 1 but instead is 2.
 
 
 ============== Back Forward List ==============
-        http://127.0.0.1:8000/history/redirect-js-document-location-2-seconds.html  **nav target**
-curr->  http://127.0.0.1:8000/history/resources/redirect-target.html#1  **nav target**
+        http://127.0.0.1:8000/history/redirect-js-form-submit-0-seconds.html  **nav target**
+curr->  http://127.0.0.1:8000/history/resources/redirect-target.html?#1  **nav target**
 ===============================================

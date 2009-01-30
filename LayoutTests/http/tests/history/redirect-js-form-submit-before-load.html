@@ -7,9 +7,14 @@ if (window.layoutTestController) {
     layoutTestController.keepWebHistory();
     layoutTestController.waitUntilDone();
 }
-setTimeout(function () { location.replace("resources/redirect-target.html#1"); }, 0);
 </script>
 </head>
 
-<body>This page is a JavaScript redirect on a 0 second delay.</body>
+<body>
+<p>This page is a JavaScript redirect.</p>
+<form id="form" action="resources/redirect-target.html#1"></form>
+<script>
+document.getElementById("form").submit();
+</script>
+</body>
 </html>

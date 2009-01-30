@@ -13,7 +13,7 @@ function log(s)
 
 function testHistoryItemCount()
 {
-    var expected = parseInt(location.search.slice(1));
+    var expected = parseInt(location.hash.slice(1));
     var actual = layoutTestController.webHistoryItemCount + 1; // Add one to include the referring page, which loaded before we started recording history.
     if (actual === expected)
         log("PASS: History item count should be " + expected + " and is.");
@@ -25,6 +25,7 @@ window.addEventListener("load", function () {
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
         testHistoryItemCount();
+        layoutTestController.dumpBackForwardList();
         layoutTestController.notifyDone();
     }
 }, false);

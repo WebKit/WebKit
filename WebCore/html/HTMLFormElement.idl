@@ -37,7 +37,7 @@ module html {
                  attribute [ConvertNullToNullString] DOMString       method;
                  attribute [ConvertNullToNullString] DOMString       target;
         
-        void               submit();
-        void               reset();
+        [Custom] void submit();
+        void reset();
     };
 }
