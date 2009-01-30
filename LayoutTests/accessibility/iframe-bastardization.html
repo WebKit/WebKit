@@ -27,7 +27,8 @@
             var parentIframeScrollArea = parentIframeWebArea.parentElement();
             var parentGroup1 = parentIframeScrollArea.parentElement();
 
-            if (parentIframeWebArea.role == iframeScrollArea.role && parentIframeScrollArea.role == group1.role && parentGroup1.role == webArea.role) {
+            if (parentIframeWebArea.allAttributes() == iframeScrollArea.allAttributes() && parentIframeScrollArea.allAttributes() == group1.allAttributes()
+                 && parentGroup1.allAttributes() == webArea.allAttributes()) {
                 result.innerText += "Test passed\n";
             }
             else {

@@ -1,3 +1,14 @@
+2009-01-30  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 23656: AX hierarchy for iFrames is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=23656
+
+        Update test to reflect correct behavior.
+
+        * accessibility/iframe-bastardization.html:
+
 2009-01-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

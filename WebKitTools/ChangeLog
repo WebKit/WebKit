@@ -1,3 +1,13 @@
+2009-01-30  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Catch exceptions thrown by AppKit when accessing an attribute than an element
+        doesn't return.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (attributesOfElement):
+
 2009-01-29  David Kilzer  <ddkilzer@apple.com>
 
         Remove semi-colons from the end of ObjC method implementations

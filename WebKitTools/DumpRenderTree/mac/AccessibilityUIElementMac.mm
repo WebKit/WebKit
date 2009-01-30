@@ -130,9 +130,13 @@ static NSString* attributesOfElement(id accessibilityObject)
         if ([attribute isEqualToString:@"AXPosition"])
             continue;
         
-        id valueObject = [accessibilityObject accessibilityAttributeValue:attribute];
-        NSString* value = descriptionOfValue(valueObject, accessibilityObject);
-        [attributesString appendFormat:@"%@: %@\n", attribute, value];
+        // accessibilityAttributeValue: can throw an if an attribute is not returned.
+        // For DumpRenderTree's purpose, we should ignore those exceptions
+        @try {
+            id valueObject = [accessibilityObject accessibilityAttributeValue:attribute];
+            NSString* value = descriptionOfValue(valueObject, accessibilityObject);
+            [attributesString appendFormat:@"%@: %@\n", attribute, value];
+        } @catch (NSException* e) { }
     }
     
     return attributesString;

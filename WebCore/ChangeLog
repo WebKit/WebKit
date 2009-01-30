@@ -1,3 +1,16 @@
+2009-01-30  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Bug 23656: AX hierarchy for iFrames is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=23656
+
+        The AX hierarchy when an iFrame was present was incorrect. A different scroll area was
+        returned when going down compared to when going up.
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (convertToNSArray):
+
 2009-01-30  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix Qt build to include new class IdentifierRep introduced in revision 40412.

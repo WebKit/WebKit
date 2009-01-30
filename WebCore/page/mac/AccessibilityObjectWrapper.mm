@@ -886,9 +886,16 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
     unsigned length = vector.size();
     NSMutableArray* array = [NSMutableArray arrayWithCapacity: length];
     for (unsigned i = 0; i < length; ++i) {
-        ASSERT(vector[i]->wrapper());
-        if (vector[i]->wrapper())
-            [array addObject:vector[i]->wrapper()];
+        AccessibilityObjectWrapper* wrapper = vector[i]->wrapper();
+        ASSERT(wrapper);
+        if (wrapper) {
+            // we want to return the attachment view instead of the object representing the attachment.
+            // otherwise, we get palindrome errors in the AX hierarchy
+            if (vector[i]->isAttachment() && [wrapper attachmentView])
+                [array addObject:[wrapper attachmentView]];
+            else
+                [array addObject:wrapper];
+        }
     }
     return array;
 }
