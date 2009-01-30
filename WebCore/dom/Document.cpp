@@ -1357,7 +1357,7 @@ void Document::removeAllDisconnectedNodeEventListeners()
 
 RenderView* Document::renderView() const
 {
-    return static_cast<RenderView*>(renderer());
+    return toRenderView(renderer());
 }
 
 void Document::clearAXObjectCache()

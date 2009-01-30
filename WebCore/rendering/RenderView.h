@@ -180,6 +180,22 @@ private:
     unsigned m_layoutStateDisableCount;
 };
 
+inline RenderView* toRenderView(RenderObject* o)
+{
+    ASSERT(!o || o->isRenderView());
+    return static_cast<RenderView*>(o);
+}
+
+inline const RenderView* toRenderView(const RenderObject* o)
+{
+    ASSERT(!o || o->isRenderView());
+    return static_cast<const RenderView*>(o);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderView(const RenderView*);
+
+
 // Stack-based class to assist with LayoutState push/pop
 class LayoutStateMaintainer : Noncopyable {
 public:

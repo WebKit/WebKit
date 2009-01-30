@@ -1,3 +1,26 @@
+2009-01-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add toRenderView methods for casting RenderObjects to RenderViews.  The methods will assert if the object
+        is not a RenderView.
+
+        * dom/Document.cpp:
+        (WebCore::Document::renderView):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::nodeWillBeRemoved):
+        (WebCore::SelectionController::recomputeCaretRect):
+        (WebCore::SelectionController::invalidateCaretRect):
+        (WebCore::SelectionController::focusedOrActiveStateChanged):
+        * editing/mac/SelectionControllerMac.mm:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+        (WebCore::RenderBox::availableHeightUsing):
+        * rendering/RenderView.h:
+        (WebCore::toRenderView):
+
 2009-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

@@ -215,7 +215,7 @@ void SelectionController::nodeWillBeRemoved(Node *node)
     if (clearRenderTreeSelection) {
         RefPtr<Document> document = m_sel.start().node()->document();
         document->updateRendering();
-        if (RenderView* view = static_cast<RenderView*>(document->renderer()))
+        if (RenderView* view = toRenderView(document->renderer()))
             view->clearSelection();
     }
 
@@ -853,7 +853,7 @@ bool SelectionController::recomputeCaretRect()
     if (oldAbsRepaintRect == m_absCaretBounds)
         return false;
     
-    if (RenderView* view = static_cast<RenderView*>(m_frame->document()->renderer())) {
+    if (RenderView* view = toRenderView(m_frame->document()->renderer())) {
         view->repaintViewRectangle(oldAbsRepaintRect, false);
         view->repaintViewRectangle(m_absCaretBounds, false);
     }
@@ -886,7 +886,7 @@ void SelectionController::invalidateCaretRect()
     m_needsLayout = true;
 
     if (!caretRectChanged) {
-        if (RenderView* view = static_cast<RenderView*>(d->renderer()))
+        if (RenderView* view = toRenderView(d->renderer()))
             view->repaintViewRectangle(caretRepaintRect(), false);
     }
 }
@@ -1166,7 +1166,7 @@ void SelectionController::focusedOrActiveStateChanged()
     // Because RenderObject::selectionBackgroundColor() and
     // RenderObject::selectionForegroundColor() check if the frame is active,
     // we have to update places those colors were painted.
-    if (RenderView* view = static_cast<RenderView*>(m_frame->document()->renderer()))
+    if (RenderView* view = toRenderView(m_frame->document()->renderer()))
         view->repaintViewRectangle(enclosingIntRect(m_frame->selectionBounds()));
 
     // Caret appears in the active frame.

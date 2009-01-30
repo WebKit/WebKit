@@ -45,7 +45,7 @@ void SelectionController::notifyAccessibilityForSelectionChange()
     
     // if zoom feature is enabled, insertion point changes should update the zoom
     if (UAZoomEnabled() && m_sel.isCaret() && m_sel.start().node()) {
-        RenderView *renderView = static_cast<RenderView*>(m_sel.start().node()->renderer());
+        RenderView* renderView = toRenderView(m_sel.start().node()->renderer());
         if (renderView) {
             IntRect selectionRect = absoluteCaretBounds();
             IntRect viewRect = renderView->viewRect();
