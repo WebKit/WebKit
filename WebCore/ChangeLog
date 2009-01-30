@@ -1,3 +1,23 @@
+2009-01-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6448823> Application Cache is kept after a private browsing session
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::update):
+        Cache update will not be started if private browsing is enabled. Existing cache version
+        from disk database will be used.
+
+        * loader/appcache/ApplicationCacheGroup.h: Made postListenerTask() static, in order to call
+        it when refusing to update from selectCache().
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::addDynamicEntry):
+        (WebCore::ApplicationCache::removeDynamicEntry):
+        Added reminders about private browsing to unimplemented methods.
+
 2009-01-30  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.
