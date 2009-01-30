@@ -157,7 +157,7 @@ static RenderObject* getParentOfFirstLineBox(RenderBlock* curr, RenderObject* ma
             (currChild->element()->hasTagName(ulTag)|| currChild->element()->hasTagName(olTag)))
             break;
 
-        RenderObject* lineBox = getParentOfFirstLineBox(static_cast<RenderBlock*>(currChild), marker);
+        RenderObject* lineBox = getParentOfFirstLineBox(toRenderBlock(currChild), marker);
         if (lineBox)
             return lineBox;
     }
@@ -271,7 +271,7 @@ void RenderListItem::positionListMarker()
             do {
                 o = o->parentBox();
                 if (o->isRenderBlock())
-                    static_cast<RenderBlock*>(o)->addVisualOverflow(markerRect);
+                    toRenderBlock(o)->addVisualOverflow(markerRect);
                 markerRect.move(-o->x(), -o->y());
             } while (o != this);
         }

@@ -1406,7 +1406,7 @@ IntSize RenderBox::offsetFromContainer(RenderObject* o) const
     if (!isInline() || isReplaced()) {
         RenderBlock* cb;
         if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition
-                && (cb = static_cast<RenderBlock*>(o))->hasColumns()) {
+                && (cb = toRenderBlock(o))->hasColumns()) {
             IntRect rect(x(), y(), 1, 1);
             cb->adjustRectForColumns(rect);
             offset.expand(rect.x(), rect.y());
@@ -1537,7 +1537,7 @@ void RenderBox::computeRectForRepaint(RenderBox* repaintContainer, IntRect& rect
         fixed = true;
 
     if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
-        RenderBlock* cb = static_cast<RenderBlock*>(o);
+        RenderBlock* cb = toRenderBlock(o);
         if (cb->hasColumns()) {
             IntRect repaintRect(topLeft, rect.size());
             cb->adjustRectForColumns(repaintRect);
@@ -2015,12 +2015,12 @@ int RenderBox::calcReplacedHeightUsing(Length height) const
             RenderObject* cb = isPositioned() ? container() : containingBlock();
             while (cb->isAnonymous()) {
                 cb = cb->containingBlock();
-                static_cast<RenderBlock*>(cb)->addPercentHeightDescendant(const_cast<RenderBox*>(this));
+                toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox*>(this));
             }
 
             if (cb->isPositioned() && cb->style()->height().isAuto() && !(cb->style()->top().isAuto() || cb->style()->bottom().isAuto())) {
                 ASSERT(cb->isRenderBlock());
-                RenderBlock* block = static_cast<RenderBlock*>(cb);
+                RenderBlock* block = toRenderBlock(cb);
                 int oldHeight = block->height();
                 block->calcHeight();
                 int newHeight = block->calcContentBoxHeight(block->contentHeight());

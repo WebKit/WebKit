@@ -468,7 +468,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine)
         ASSERT(obj->isRenderInline() || obj == this);
         
         // Get the last box we made for this render object.
-        parentBox = obj->isRenderInline() ? static_cast<RenderInline*>(obj)->lastLineBox() : static_cast<RenderBlock*>(obj)->lastLineBox();
+        parentBox = obj->isRenderInline() ? static_cast<RenderInline*>(obj)->lastLineBox() : toRenderBlock(obj)->lastLineBox();
 
         // If this box is constructed then it is from a previous line, and we need
         // to make a new box for our line.  If this box is unconstructed but it has

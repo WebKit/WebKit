@@ -592,7 +592,7 @@ PassRefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* cont
     
     // append the placeholder to make sure it follows
     // any unrendered blocks
-    RenderBlock* block = static_cast<RenderBlock*>(renderer);
+    RenderBlock* block = toRenderBlock(renderer);
     if (block->height() == 0 || (block->isListItem() && block->isEmpty()))
         return appendBlockPlaceholder(container);
 

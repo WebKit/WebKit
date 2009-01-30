@@ -123,7 +123,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
                 m_caption = 0;
         }
         if (!m_caption)
-            m_caption = static_cast<RenderBlock*>(child);
+            m_caption = toRenderBlock(child);
         wrapInAnonymousSection = false;
     } else if (child->isTableCol()) {
         m_hasColElements = true;
@@ -655,7 +655,7 @@ void RenderTable::recalcSections() const
         switch (child->style()->display()) {
             case TABLE_CAPTION:
                 if (!m_caption && child->isRenderBlock()) {
-                    m_caption = static_cast<RenderBlock*>(child);
+                    m_caption = toRenderBlock(child);
                     m_caption->setNeedsLayout(true);
                 }
                 break;

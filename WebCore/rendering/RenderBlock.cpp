@@ -214,7 +214,7 @@ void RenderBlock::styleWillChange(RenderStyle::Diff diff, const RenderStyle* new
             }
             
             if (cb->isRenderBlock())
-                static_cast<RenderBlock*>(cb)->removePositionedObjects(this);
+                toRenderBlock(cb)->removePositionedObjects(this);
         }
     }
 
@@ -451,7 +451,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
     RenderObject* prev = oldChild->previousSibling();
     RenderObject* next = oldChild->nextSibling();
     bool canDeleteAnonymousBlocks = !documentBeingDestroyed() && !isInline() && !oldChild->isInline() && 
-                                    (!oldChild->isRenderBlock() || !static_cast<RenderBlock*>(oldChild)->inlineContinuation()) && 
+                                    (!oldChild->isRenderBlock() || !toRenderBlock(oldChild)->inlineContinuation()) && 
                                     (!prev || (prev->isAnonymousBlock() && prev->childrenInline())) &&
                                     (!next || (next->isAnonymousBlock() && next->childrenInline()));
     if (canDeleteAnonymousBlocks && prev && next) {
@@ -465,7 +465,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
             prev->moveChildNode(no);
         }
  
-        RenderBlock* nextBlock = static_cast<RenderBlock*>(next);
+        RenderBlock* nextBlock = toRenderBlock(next);
         nextBlock->deleteLineBoxTree();
         
         // Nuke the now-empty block.
@@ -480,7 +480,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // box.  We can go ahead and pull the content right back up into our
         // box.
         setNeedsLayoutAndPrefWidthsRecalc();
-        RenderBlock* anonBlock = static_cast<RenderBlock*>(removeChildNode(child, false));
+        RenderBlock* anonBlock = toRenderBlock(removeChildNode(child, false));
         setChildrenInline(true);
         RenderObject* o = anonBlock->firstChild();
         while (o) {
@@ -746,7 +746,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
             // One of our children's floats may have become an overhanging float for us. We need to look for it.
             for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
                 if (child->isBlockFlow() && !child->isFloatingOrPositioned()) {
-                    RenderBlock* block = static_cast<RenderBlock*>(child);
+                    RenderBlock* block = toRenderBlock(child);
                     if (block->floatBottom() + block->y() > height())
                         addOverhangingFloats(block, -block->x(), -block->y(), false);
                 }
@@ -1065,7 +1065,7 @@ void RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo, int 
             child->setChildNeedsLayout(true, false);
 
         if (!child->avoidsFloats() && child->containsFloats())
-            static_cast<RenderBlock*>(child)->markAllDescendantsWithFloatsForLayout();
+            toRenderBlock(child)->markAllDescendantsWithFloatsForLayout();
 
         // Our guess was wrong. Make the child lay itself out again.
         child->layoutIfNeeded();
@@ -1120,7 +1120,7 @@ void RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, 
         // So go ahead and mark the item as dirty.
         child->setChildNeedsLayout(true, false);
     if (!child->avoidsFloats() && child->containsFloats())
-        static_cast<RenderBlock*>(child)->markAllDescendantsWithFloatsForLayout();
+        toRenderBlock(child)->markAllDescendantsWithFloatsForLayout();
     child->layoutIfNeeded();
 }
 
@@ -1340,10 +1340,10 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         }
 
         if (markDescendantsWithFloats)
-            static_cast<RenderBlock*>(child)->markAllDescendantsWithFloatsForLayout();
+            toRenderBlock(child)->markAllDescendantsWithFloatsForLayout();
 
         if (child->isRenderBlock())
-            previousFloatBottom = max(previousFloatBottom, oldRect.y() + static_cast<RenderBlock*>(child)->floatBottom());
+            previousFloatBottom = max(previousFloatBottom, oldRect.y() + toRenderBlock(child)->floatBottom());
 
         bool childHadLayout = child->m_everHadLayout;
         bool childNeededLayout = child->needsLayout();
@@ -1373,7 +1373,8 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         }
         // If the child has overhanging floats that intrude into following siblings (or possibly out
         // of this block), then the parent gets notified of the floats now.
-        maxFloatBottom = max(maxFloatBottom, addOverhangingFloats(static_cast<RenderBlock*>(child), -child->x(), -child->y(), !childNeededLayout));
+        if (child->containsFloats())
+            maxFloatBottom = max(maxFloatBottom, addOverhangingFloats(toRenderBlock(child), -child->x(), -child->y(), !childNeededLayout));
 
         // Update our overflow in case the child spills out the block.
         m_overflowTop = min(m_overflowTop, child->y() + child->overflowTop(false));
@@ -2097,7 +2098,7 @@ GapRects RenderBlock::fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX,
             lastRight = rightSelectionOffset(rootBlock, curr->y() + curr->height());
         } else if (childState != SelectionNone)
             // We must be a block that has some selected object inside it.  Go ahead and recur.
-            result.unite(static_cast<RenderBlock*>(curr)->fillSelectionGaps(rootBlock, blockX, blockY, tx + curr->x(), ty + curr->y(), 
+            result.unite(toRenderBlock(curr)->fillSelectionGaps(rootBlock, blockX, blockY, tx + curr->x(), ty + curr->y(), 
                                                                             lastTop, lastLeft, lastRight, paintInfo));
     }
     return result;
@@ -3099,7 +3100,7 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
             if (child->isRenderBlock() && !child->isFloatingOrPositioned() &&
                 ((floatToRemove ? child->containsFloat(floatToRemove) : child->containsFloats()) || child->shrinkToAvoidFloats()))
-                static_cast<RenderBlock*>(child)->markAllDescendantsWithFloatsForLayout(floatToRemove, inLayout);
+                toRenderBlock(child)->markAllDescendantsWithFloatsForLayout(floatToRemove, inLayout);
         }
     }
 }
@@ -4379,7 +4380,7 @@ RenderBlock* RenderBlock::firstLineBlock() const
             !parentBlock || parentBlock->firstChild() != firstLineBlock || !parentBlock->isBlockFlow())
             break;
         ASSERT(parentBlock->isRenderBlock());
-        firstLineBlock = static_cast<RenderBlock*>(parentBlock);
+        firstLineBlock = toRenderBlock(parentBlock);
     } 
     
     if (!hasPseudo)
@@ -4549,7 +4550,7 @@ static RootInlineBox* getLineAtIndex(RenderBlock* block, int i, int& count)
         else {
             for (RenderObject* obj = block->firstChild(); obj; obj = obj->nextSibling()) {
                 if (shouldCheckLines(obj)) {
-                    RootInlineBox *box = getLineAtIndex(static_cast<RenderBlock*>(obj), i, count);
+                    RootInlineBox *box = getLineAtIndex(toRenderBlock(obj), i, count);
                     if (box)
                         return box;
                 }
@@ -4572,7 +4573,7 @@ static int getHeightForLineCount(RenderBlock* block, int l, bool includeBottom, 
             RenderBox* normalFlowChildWithoutLines = 0;
             for (RenderBox* obj = block->firstChildBox(); obj; obj = obj->nextSiblingBox()) {
                 if (shouldCheckLines(obj)) {
-                    int result = getHeightForLineCount(static_cast<RenderBlock*>(obj), l, false, count);
+                    int result = getHeightForLineCount(toRenderBlock(obj), l, false, count);
                     if (result != -1)
                         return result + obj->y() + (includeBottom ? (block->borderBottom() + block->paddingBottom()) : 0);
                 }
@@ -4603,7 +4604,7 @@ int RenderBlock::lineCount()
         else
             for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling())
                 if (shouldCheckLines(obj))
-                    count += static_cast<RenderBlock*>(obj)->lineCount();
+                    count += toRenderBlock(obj)->lineCount();
     }
     return count;
 }
@@ -4631,7 +4632,7 @@ void RenderBlock::adjustForBorderFit(int x, int& left, int& right) const
             for (RenderBox* obj = firstChildBox(); obj; obj = obj->nextSiblingBox()) {
                 if (!obj->isFloatingOrPositioned()) {
                     if (obj->isBlockFlow() && !obj->hasOverflowClip())
-                        static_cast<RenderBlock*>(obj)->adjustForBorderFit(x + obj->x(), left, right);
+                        toRenderBlock(obj)->adjustForBorderFit(x + obj->x(), left, right);
                     else if (obj->style()->visibility() == VISIBLE) {
                         // We are a replaced element or some kind of non-block-flow object.
                         left = min(left, x + obj->x());
@@ -4692,7 +4693,7 @@ void RenderBlock::clearTruncation()
         else
             for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling())
                 if (shouldCheckLines(obj))
-                    static_cast<RenderBlock*>(obj)->clearTruncation();
+                    toRenderBlock(obj)->clearTruncation();
     }
 }
 

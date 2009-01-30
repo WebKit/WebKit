@@ -514,6 +514,21 @@ protected:
     mutable int m_lineHeight;
 };
 
+inline RenderBlock* toRenderBlock(RenderObject* o)
+{ 
+    ASSERT(!o || o->isRenderBlock());
+    return static_cast<RenderBlock*>(o);
+}
+
+inline const RenderBlock* toRenderBlock(const RenderObject* o)
+{ 
+    ASSERT(!o || o->isRenderBlock());
+    return static_cast<const RenderBlock*>(o);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderBlock(const RenderBlock* o);
+
 } // namespace WebCore
 
 #endif // RenderBlock_h

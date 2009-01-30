@@ -91,7 +91,7 @@ RenderInline* RenderInline::inlineContinuation() const
 {
     if (!m_continuation || m_continuation->isInline())
         return static_cast<RenderInline*>(m_continuation);
-    return static_cast<RenderBlock*>(m_continuation)->inlineContinuation();
+    return toRenderBlock(m_continuation)->inlineContinuation();
 }
 
 void RenderInline::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
@@ -146,7 +146,7 @@ static RenderContainer* nextContinuation(RenderObject* renderer)
 {
     if (renderer->isInline() && !renderer->isReplaced())
         return static_cast<RenderInline*>(renderer)->continuation();
-    return static_cast<RenderBlock*>(renderer)->inlineContinuation();
+    return toRenderBlock(renderer)->inlineContinuation();
 }
 
 RenderContainer* RenderInline::continuationBefore(RenderObject* beforeChild)
@@ -485,7 +485,7 @@ VisiblePosition RenderInline::positionForCoordinates(int x, int y)
         RenderBox* contBlock = c;
         if (c->isInline() || c->firstChild())
             return c->positionForCoordinates(parentBlockX - contBlock->x(), parentBlockY - contBlock->y());
-        c = static_cast<RenderBlock*>(c)->inlineContinuation();
+        c = toRenderBlock(c)->inlineContinuation();
     }
     
     return RenderContainer::positionForCoordinates(x, y);

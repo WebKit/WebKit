@@ -344,7 +344,7 @@ int RootInlineBox::selectionTop()
 
 RenderBlock* RootInlineBox::block() const
 {
-    return static_cast<RenderBlock*>(m_object);
+    return toRenderBlock(m_object);
 }
 
 static bool isEditableLeaf(InlineBox* leaf)

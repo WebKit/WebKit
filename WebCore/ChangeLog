@@ -1,3 +1,73 @@
+2009-01-30  David Hyatt  <hyatt@apple.com>
+
+        Add toRenderBlock methods for casting RenderObjects to RenderBlocks.  The methods will assert if the object
+        is not a RenderBlock.  Also add a toRenderBlock method that takes a RenderBlock but returns void and that
+        is unimplemented.  This method will catch anyone trying to do a cast when the object is already a RenderBlock.
+
+        Making this change caught a bad cast in RenderBlock::layoutBlockChildren, so that is also fixed by this
+        patch with a containsFloats() check.
+
+        Reviewed by Darin Adler
+
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        * editing/Editor.cpp:
+        (WebCore::Editor::hasBidiSelection):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::fillBlockSelectionGaps):
+        (WebCore::RenderBlock::markAllDescendantsWithFloatsForLayout):
+        (WebCore::RenderBlock::firstLineBlock):
+        (WebCore::getLineAtIndex):
+        (WebCore::getHeightForLineCount):
+        (WebCore::RenderBlock::lineCount):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        (WebCore::RenderBlock::clearTruncation):
+        * rendering/RenderBlock.h:
+        (WebCore::toRenderBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::calcReplacedHeightUsing):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::inlineContinuation):
+        (WebCore::nextContinuation):
+        (WebCore::RenderInline::positionForCoordinates):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderListItem.cpp:
+        (WebCore::getParentOfFirstLineBox):
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::RenderObject::computeRectForRepaint):
+        (WebCore::RenderObject::removeFromObjectLists):
+        (WebCore::RenderObject::getTextDecorationColors):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::recalcSections):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::styleDidChange):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::block):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::createLineBoxes):
+
 2009-01-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
