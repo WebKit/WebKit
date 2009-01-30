@@ -233,9 +233,10 @@ JSValuePtr functionLoad(ExecState* exec, JSObject*, JSValuePtr, const ArgList& a
         return throwError(exec, GeneralError, "Could not open file.");
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
-
-    return jsUndefined();
+    Completion result = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
+    if (result.complType() == Throw)
+        exec->setException(result.value());
+    return result.value();
 }
 
 JSValuePtr functionReadline(ExecState* exec, JSObject*, JSValuePtr, const ArgList&)

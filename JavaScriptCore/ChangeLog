@@ -1,3 +1,12 @@
+2009-01-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe and Sam Weinig.
+
+        Finally fix load() to propagate exceptions correctly.
+
+        * jsc.cpp:
+        (functionLoad):
+
 2009-01-30  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.
