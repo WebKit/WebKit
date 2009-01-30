@@ -78,6 +78,24 @@
 
 2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Mark Rowe.
+
+        [Gtk+] Use AccessibilityObject::stringValue for the AtkObject name
+
+        https://bugs.webkit.org/show_bug.cgi?id=21546
+
+        The API documentation at http://library.gnome.org/devel/atk/stable/AtkText.html
+        states that: "AtkObjects whose text content is simple, unattributed, and very
+        brief may expose that content via atk_object_get_name instead"
+
+        As we are currently not able to always provide a AtkTextInterface
+        implementation this will make the whole content available to accerciser,
+        and other tools.
+
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp:
+
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Unreviewed build fix.
 
         Include string.h for strdup.
