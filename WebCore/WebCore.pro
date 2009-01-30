@@ -485,6 +485,7 @@ SOURCES += \
     bindings/js/ScriptController.cpp \
     bindings/js/ScriptValue.cpp \
     bindings/js/ScheduledAction.cpp \
+    bridge/IdentifierRep.cpp \
     bridge/NP_jsobject.cpp \
     bridge/npruntime.cpp \
     bridge/runtime_array.cpp \

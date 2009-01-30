@@ -1,3 +1,9 @@
+2009-01-30  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix Qt build to include new class IdentifierRep introduced in revision 40412.
+
+        * WebCore.pro:
+
 2009-01-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
