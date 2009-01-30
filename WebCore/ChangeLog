@@ -1,3 +1,12 @@
+2009-01-30  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Bug 23580: GNU mode RVCT compilation support
+        <https://bugs.webkit.org/show_bug.cgi?id=23580>
+
+        * html/PreloadScanner.cpp: Use COMPILER(GCC) instead of __GNUC__.
+
 2009-01-30  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

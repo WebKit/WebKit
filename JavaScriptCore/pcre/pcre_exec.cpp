@@ -56,7 +56,7 @@ the JavaScript specification. There are also some supporting functions. */
 
 using namespace WTF;
 
-#ifdef __GNUC__
+#if COMPILER(GCC)
 #define USE_COMPUTED_GOTO_FOR_MATCH_RECURSION
 //#define USE_COMPUTED_GOTO_FOR_MATCH_OPCODE_LOOP
 #endif

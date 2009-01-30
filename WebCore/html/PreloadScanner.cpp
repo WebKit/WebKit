@@ -43,7 +43,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/unicode/Unicode.h>
 
-#ifdef __GNUC__
+#if COMPILER(GCC)
 // The main tokenizer includes this too so we are getting two copies of the data. However, this way the code gets inlined.
 #include "HTMLEntityNames.c"
 #else

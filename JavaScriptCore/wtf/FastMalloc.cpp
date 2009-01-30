@@ -3571,7 +3571,7 @@ extern "C" struct mallinfo mallinfo(void) {
 
 #if defined(__GLIBC__)
 extern "C" {
-# if defined(__GNUC__) && !defined(__MACH__) && defined(HAVE___ATTRIBUTE__)
+#if COMPILER(GCC) && !defined(__MACH__) && defined(HAVE___ATTRIBUTE__)
   // Potentially faster variants that use the gcc alias extension.
   // Mach-O (Darwin) does not support weak aliases, hence the __MACH__ check.
 # define ALIAS(x) __attribute__ ((weak, alias (x)))

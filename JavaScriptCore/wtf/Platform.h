@@ -242,8 +242,14 @@
 #endif
 #endif
 
+/* COMPILER(RVCT) */
+#if defined(__CC_ARM) || defined(__ARMCC__)
+#define WTF_COMPILER_RVCT 1
+#endif
+
 /* COMPILER(GCC) */
-#if defined(__GNUC__)
+/* --gnu option of the RVCT compiler also defines __GNUC__ */
+#if defined(__GNUC__) && !COMPILER(RVCT)
 #define WTF_COMPILER_GCC 1
 #endif
 
@@ -262,11 +268,6 @@
 /* not really fully supported - is this relevant any more? */
 #if defined(__CYGWIN__)
 #define WTF_COMPILER_CYGWIN 1
-#endif
-
-/* COMPILER(RVCT) */
-#if defined(__CC_ARM) || defined(__ARMCC__)
-#define WTF_COMPILER_RVCT 1
 #endif
 
 /* COMPILER(WINSCW) */
