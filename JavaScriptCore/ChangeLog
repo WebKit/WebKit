@@ -1,3 +1,24 @@
+2009-01-29  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 23551: Crash on page load with profiler enabled and running
+        <https://bugs.webkit.org/show_bug.cgi?id=23551>
+        <rdar://problem/6529521>
+
+        Interpreter::execute(FunctionBodyNode*, ...) calls Profiler::didExecute()
+        with a stale CallFrame. If some part of the scope chain has already been
+        freed, Profiler::didExecute() will crash when attempting to get the lexical
+        global object. The fix is to make the didExecute() call use the caller's
+        CallFrame, not the one made for the function call. In this case, the
+        willExecute() call should also be changed to match.
+
+        Since this occurs in the actual inspector JS, it is difficult to reduce.
+        I couldn't make a layout test.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+
 2009-01-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

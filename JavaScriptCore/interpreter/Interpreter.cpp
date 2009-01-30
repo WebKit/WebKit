@@ -921,7 +921,7 @@ JSValuePtr Interpreter::execute(FunctionBodyNode* functionBodyNode, CallFrame* c
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
-        (*profiler)->willExecute(newCallFrame, function);
+        (*profiler)->willExecute(callFrame, function);
 
     JSValuePtr result;
     {
@@ -939,7 +939,7 @@ JSValuePtr Interpreter::execute(FunctionBodyNode* functionBodyNode, CallFrame* c
     }
 
     if (*profiler)
-        (*profiler)->didExecute(newCallFrame, function);
+        (*profiler)->didExecute(callFrame, function);
 
     m_registerFile.shrink(oldEnd);
     return result;
