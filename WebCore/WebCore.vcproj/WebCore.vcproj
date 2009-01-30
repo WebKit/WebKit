@@ -16374,6 +16374,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\bridge\IdentifierRep.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\bridge\IdentifierRep.h"
+				>
+			</File>
+			<File
 				RelativePath="..\bridge\npruntime_impl.h"
 				>
 			</File>

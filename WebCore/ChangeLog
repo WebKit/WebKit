@@ -1,3 +1,24 @@
+2009-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add IdentifierRep which will be used by both plug-in implementations.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/IdentifierRep.cpp: Added.
+        (WebCore::IdentifierRep::IdentifierRep):
+        (WebCore::IdentifierRep::):
+        (WebCore::intIdentifierMap):
+        (WebCore::identifierRep):
+        (WebCore::stringIdentifierMap):
+        * bridge/IdentifierRep.h: Added.
+        * bridge/c/c_utility.h:
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        (WebCore::String::fromUTF8WithLatin1Fallback):
+
 2009-01-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.

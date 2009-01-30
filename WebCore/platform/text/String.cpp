@@ -623,6 +623,15 @@ String String::fromUTF8(const char* string)
     return UTF8Encoding().decode(string, strlen(string));
 }
 
+String String::fromUTF8WithLatin1Fallback(const char* string, size_t size)
+{
+    String result = fromUTF8(string, size);
+    if (!result)
+        result = String(string, size);
+    
+    return result;
+}
+
 #if USE(JSC)
 String::String(const Identifier& str)
 {

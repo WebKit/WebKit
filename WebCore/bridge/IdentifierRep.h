@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef C_UTILITY_H_
-#define C_UTILITY_H_
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
-#include "npruntime_internal.h"
-#include <runtime/JSValue.h>
+#ifndef IdentifierRep_h
+#define IdentifierRep_h
 
 namespace WebCore {
-    class String;
-}
-
-namespace JSC {
-
-class ExecState;
-class Identifier;
-
-namespace Bindings {
-
-class RootObject;
     
-typedef uint16_t NPUTF16;
+struct IdentifierRep;
+    
+IdentifierRep* identifierRep(int);
+IdentifierRep* identifierRep(const char*);
+    
+} // namespace WebCore
 
-WebCore::String convertNPStringToUTF16(const NPString *string);
-void convertValueToNPVariant(ExecState*, JSValuePtr, NPVariant* result);
-JSValuePtr convertNPVariantToValue(ExecState*, const NPVariant*, RootObject*);
-Identifier identifierFromNPIdentifier(const NPUTF8* name);
-
-struct PrivateIdentifier {
-    union {
-        const NPUTF8* string;
-        int32_t number;
-    } value;
-    bool isString;
-};
-
-} }
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-#endif
+#endif // IdentifierRep_h
