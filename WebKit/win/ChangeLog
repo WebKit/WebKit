@@ -1,5 +1,18 @@
 2009-01-29  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Second step in tracking the urls a HistoryItem was redirected through
+        Add SPI to access the array of redirect urls associated with a HistoryItem.
+
+        * Interfaces/IWebHistoryItemPrivate.idl:
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::dictionaryRepresentation):
+        (WebHistoryItem::redirectURLs):
+        * WebHistoryItem.h:
+
+2009-01-29  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mark Rowe.
 
         First step in tracking the urls a HistoryItem was redirected through.

@@ -45,6 +45,8 @@
 - (void)setRSSFeedReferrer:(NSString *)referrer;
 - (NSCalendarDate *)_lastVisitedDate;
 
+- (NSArray *)_redirectURLs;
+
 - (WebHistoryItem *)targetItem;
 - (NSString *)target;
 - (BOOL)isTargetItem;

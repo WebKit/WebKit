@@ -438,6 +438,7 @@ static WebWindowWatcher *_windowWatcher = nil;
     }
     if (Vector<String>* redirectURLs = coreItem->redirectURLs()) {
         size_t size = redirectURLs->size();
+        ASSERT(size);
         NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:size];
         for (size_t i = 0; i < size; ++i)
             [result addObject:(NSString*)redirectURLs->at(i)];
@@ -566,6 +567,20 @@ static WebWindowWatcher *_windowWatcher = nil;
 - (BOOL)_lastVisitWasHTTPNonGet
 {
     return core(_private)->lastVisitWasHTTPNonGet();
+}
+
+- (NSArray *)_redirectURLs
+{
+    Vector<String>* redirectURLs = core(_private)->redirectURLs();
+    if (!redirectURLs)
+        return nil;
+
+    size_t size = redirectURLs->size();
+    ASSERT(size);
+    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:size];
+    for (size_t i = 0; i < size; ++i)
+        [result addObject:(NSString*)redirectURLs->at(i)];
+    return [result autorelease];
 }
 
 @end

@@ -27,6 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebHistoryItem.h"
 
+#include "COMEnumVariant.h"
 #include "COMPtr.h"
 #include "MarshallingHelpers.h"
 #include "WebKit.h"
@@ -201,7 +202,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
 
     if (Vector<String>* redirectURLs = m_historyItem->redirectURLs()) {
         size_t size = redirectURLs->size();
-
+        ASSERT(size);
         CFStringRef* items = new CFStringRef[size];
         for (size_t i = 0; i < size; ++i)
             items[i] = redirectURLs->at(i).createCFString();
@@ -396,6 +397,25 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::lastVisitWasHTTPNonGet(BOOL* HTTPNonGe
 HRESULT STDMETHODCALLTYPE WebHistoryItem::setLastVisitWasHTTPNonGet(BOOL HTTPNonGet)
 {
     m_historyItem->setLastVisitWasHTTPNonGet(HTTPNonGet);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebHistoryItem::redirectURLs(IEnumVARIANT** urls)
+{
+    if (!urls) {
+        ASSERT_NOT_REACHED();
+        return E_POINTER;
+    }
+
+    Vector<String>* urlVector = m_historyItem->redirectURLs();
+    if (!urlVector) {
+        *urls = 0;
+        return S_OK;
+    }
+
+    COMPtr<COMEnumVariant<Vector<String> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<String> >::createInstance(*urlVector));
+    *urls = enumVariant.releaseRef();
+
     return S_OK;
 }
 
