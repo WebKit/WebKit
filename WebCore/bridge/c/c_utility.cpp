@@ -139,7 +139,7 @@ JSValuePtr convertNPVariantToValue(ExecState* exec, const NPVariant* variant, Ro
 
 String convertNPStringToUTF16(const NPString* string)
 {
-    return convertUTF8ToUTF16WithLatin1Fallback(string->UTF8Characters, string->UTF8Length);
+    return String::fromUTF8WithLatin1Fallback(string->UTF8Characters, string->UTF8Length);
 }
 
 Identifier identifierFromNPIdentifier(const NPUTF8* name)

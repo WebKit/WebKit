@@ -32,6 +32,7 @@
 #include "c_class.h"
 #include "c_runtime.h"
 #include "c_utility.h"
+#include "IdentifierRep.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <runtime/ArgList.h>
@@ -44,6 +45,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
+
+using namespace WebCore;
 
 namespace JSC {
 namespace Bindings {
@@ -253,12 +256,12 @@ void CInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray)
     }
 
     for (uint32_t i = 0; i < count; i++) {
-        PrivateIdentifier* identifier = static_cast<PrivateIdentifier*>(identifiers[i]);
+        IdentifierRep* identifier = static_cast<IdentifierRep*>(identifiers[i]);
 
-        if (identifier->isString)
-            nameArray.add(identifierFromNPIdentifier(identifier->value.string));
+        if (identifier->isString())
+            nameArray.add(identifierFromNPIdentifier(identifier->string()));
         else
-            nameArray.add(Identifier::from(exec, identifier->value.number));
+            nameArray.add(Identifier::from(exec, identifier->number()));
     }
 
     // FIXME: This should really call NPN_MemFree but that's in WebKit

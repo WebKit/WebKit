@@ -33,6 +33,7 @@
 #include "StringSourceProvider.h"
 #include "c_utility.h"
 #include "c_instance.h"
+#include "IdentifierRep.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "runtime_root.h"
@@ -44,10 +45,9 @@
 #include <runtime/Completion.h>
 #include <runtime/Completion.h>
 
-using WebCore::String;
-using WebCore::StringSourceProvider;
 using namespace JSC;
 using namespace JSC::Bindings;
+using namespace WebCore;
 
 static void getListFromVariantArgs(ExecState* exec, const NPVariant* args, unsigned argCount, RootObject* rootObject, ArgList& aList)
 {
@@ -143,8 +143,8 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = reinterpret_cast<JavaScriptObject*>(o); 
 
-        PrivateIdentifier* i = static_cast<PrivateIdentifier*>(methodName);
-        if (!i->isString)
+        IdentifierRep* i = static_cast<IdentifierRep*>(methodName);
+        if (!i->isString())
             return false;
 
         // Special case the "eval" method.
@@ -162,7 +162,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
             return false;
         ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock(false);
-        JSValuePtr function = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
+        JSValuePtr function = obj->imp->get(exec, identifierFromNPIdentifier(i->string()));
         CallData callData;
         CallType callType = function.getCallData(callData);
         if (callType == CallTypeNone)
@@ -234,14 +234,14 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
             return false;
 
         ExecState* exec = rootObject->globalObject()->globalExec();
-        PrivateIdentifier* i = static_cast<PrivateIdentifier*>(propertyName);
+        IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
         
         JSLock lock(false);
         JSValuePtr result;
-        if (i->isString)
-            result = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
+        if (i->isString())
+            result = obj->imp->get(exec, identifierFromNPIdentifier(i->string()));
         else
-            result = obj->imp->get(exec, i->value.number);
+            result = obj->imp->get(exec, i->number());
 
         convertValueToNPVariant(exec, result, variant);
         exec->clearException();
@@ -269,13 +269,13 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
 
         ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock(false);
-        PrivateIdentifier* i = static_cast<PrivateIdentifier*>(propertyName);
+        IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
 
-        if (i->isString) {
+        if (i->isString()) {
             PutPropertySlot slot;
-            obj->imp->put(exec, identifierFromNPIdentifier(i->value.string), convertNPVariantToValue(exec, variant, rootObject), slot);
+            obj->imp->put(exec, identifierFromNPIdentifier(i->string()), convertNPVariantToValue(exec, variant, rootObject), slot);
         } else
-            obj->imp->put(exec, i->value.number, convertNPVariantToValue(exec, variant, rootObject));
+            obj->imp->put(exec, i->number(), convertNPVariantToValue(exec, variant, rootObject));
         exec->clearException();
         return true;
     }
@@ -296,24 +296,24 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
             return false;
 
         ExecState* exec = rootObject->globalObject()->globalExec();
-        PrivateIdentifier* i = static_cast<PrivateIdentifier*>(propertyName);
-        if (i->isString) {
-            if (!obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->value.string))) {
+        IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
+        if (i->isString()) {
+            if (!obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->string()))) {
                 exec->clearException();
                 return false;
             }
         } else {
-            if (!obj->imp->hasProperty(exec, i->value.number)) {
+            if (!obj->imp->hasProperty(exec, i->number())) {
                 exec->clearException();
                 return false;
             }
         }
 
         JSLock lock(false);
-        if (i->isString)
-            obj->imp->deleteProperty(exec, identifierFromNPIdentifier(i->value.string));
+        if (i->isString())
+            obj->imp->deleteProperty(exec, identifierFromNPIdentifier(i->string()));
         else
-            obj->imp->deleteProperty(exec, i->value.number);
+            obj->imp->deleteProperty(exec, i->number());
 
         exec->clearException();
         return true;
@@ -331,15 +331,15 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
             return false;
 
         ExecState* exec = rootObject->globalObject()->globalExec();
-        PrivateIdentifier* i = static_cast<PrivateIdentifier*>(propertyName);
+        IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
         JSLock lock(false);
-        if (i->isString) {
-            bool result = obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->value.string));
+        if (i->isString()) {
+            bool result = obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->string()));
             exec->clearException();
             return result;
         }
 
-        bool result = obj->imp->hasProperty(exec, i->value.number);
+        bool result = obj->imp->hasProperty(exec, i->number());
         exec->clearException();
         return result;
     }
@@ -355,8 +355,8 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = reinterpret_cast<JavaScriptObject*>(o); 
 
-        PrivateIdentifier* i = static_cast<PrivateIdentifier*>(methodName);
-        if (!i->isString)
+        IdentifierRep* i = static_cast<IdentifierRep*>(methodName);
+        if (!i->isString())
             return false;
 
         RootObject* rootObject = obj->rootObject;
@@ -365,7 +365,7 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
 
         ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock(false);
-        JSValuePtr func = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
+        JSValuePtr func = obj->imp->get(exec, identifierFromNPIdentifier(i->string()));
         exec->clearException();
         return !func.isUndefined();
     }

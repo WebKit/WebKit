@@ -27,6 +27,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
+#include "IdentifierRep.h"
 #include "npruntime_internal.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
@@ -38,52 +39,11 @@
 #include <wtf/HashMap.h>
 
 using namespace JSC::Bindings;
-
-typedef HashMap<RefPtr<JSC::UString::Rep>, PrivateIdentifier*> StringIdentifierMap;
-
-static StringIdentifierMap* getStringIdentifierMap()
-{
-    static StringIdentifierMap* stringIdentifierMap = 0;
-    if (!stringIdentifierMap)
-        stringIdentifierMap = new StringIdentifierMap;
-    return stringIdentifierMap;
-}
-
-typedef HashMap<int, PrivateIdentifier*> IntIdentifierMap;
-
-static IntIdentifierMap* getIntIdentifierMap()
-{
-    static IntIdentifierMap* intIdentifierMap = 0;
-    if (!intIdentifierMap)
-        intIdentifierMap = new IntIdentifierMap;
-    return intIdentifierMap;
-}
+using namespace WebCore;
 
 NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
 {
-    ASSERT(name);
-    
-    if (name) {
-        PrivateIdentifier* identifier = 0;
-        
-        JSC::JSLock lock(false);
-        
-        identifier = getStringIdentifierMap()->get(identifierFromNPIdentifier(name).ustring().rep());
-        if (identifier == 0) {
-            identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
-            if (!identifier)
-                CRASH();
-            // We never release identifier names, so this dictionary will grow, as will
-            // the memory for the identifier name strings.
-            identifier->isString = true;
-            identifier->value.string = strdup(name);
-
-            getStringIdentifierMap()->set(identifierFromNPIdentifier(name).ustring().rep(), identifier);
-        }
-        return (NPIdentifier)identifier;
-    }
-    
-    return 0;
+    return static_cast<NPIdentifier>(IdentifierRep::get(name));
 }
 
 void _NPN_GetStringIdentifiers(const NPUTF8** names, int32_t nameCount, NPIdentifier* identifiers)
@@ -91,65 +51,34 @@ void _NPN_GetStringIdentifiers(const NPUTF8** names, int32_t nameCount, NPIdenti
     ASSERT(names);
     ASSERT(identifiers);
     
-    if (names && identifiers)
+    if (names && identifiers) {
         for (int i = 0; i < nameCount; i++)
             identifiers[i] = _NPN_GetStringIdentifier(names[i]);
+    }
 }
 
 NPIdentifier _NPN_GetIntIdentifier(int32_t intid)
 {
-    PrivateIdentifier* identifier;
-
-    if (intid == 0 || intid == -1) {
-        static PrivateIdentifier* negativeOneAndZeroIdentifiers[2];
-
-        identifier = negativeOneAndZeroIdentifiers[intid + 1];
-        if (!identifier) {
-            identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
-            if (!identifier)
-                CRASH();
-            identifier->isString = false;
-            identifier->value.number = intid;
-
-            negativeOneAndZeroIdentifiers[intid + 1] = identifier;
-        }
-    } else {
-        identifier = getIntIdentifierMap()->get(intid);
-        if (!identifier) {
-            identifier = (PrivateIdentifier*)malloc(sizeof(PrivateIdentifier));
-            if (!identifier)
-                CRASH();
-            // We never release identifier names, so this dictionary will grow.
-            identifier->isString = false;
-            identifier->value.number = intid;
-
-            getIntIdentifierMap()->set(intid, identifier);
-        }
-    }
-    return (NPIdentifier)identifier;
+    return static_cast<NPIdentifier>(IdentifierRep::get(intid));
 }
 
 bool _NPN_IdentifierIsString(NPIdentifier identifier)
 {
-    PrivateIdentifier* i = (PrivateIdentifier*)identifier;
-    return i->isString;
+    return static_cast<IdentifierRep*>(identifier)->isString();
 }
 
 NPUTF8 *_NPN_UTF8FromIdentifier(NPIdentifier identifier)
 {
-    PrivateIdentifier* i = (PrivateIdentifier*)identifier;
-    if (!i->isString || !i->value.string)
-        return NULL;
-        
-    return (NPUTF8 *)strdup(i->value.string);
+    const char* string = static_cast<IdentifierRep*>(identifier)->string();
+    if (!string)
+        return 0;
+    
+    return strdup(string);
 }
 
 int32_t _NPN_IntFromIdentifier(NPIdentifier identifier)
 {
-    PrivateIdentifier* i = (PrivateIdentifier*)identifier;
-    if (i->isString)
-        return 0;
-    return i->value.number;
+    return static_cast<IdentifierRep*>(identifier)->number();
 }
 
 void NPN_InitializeVariantWithStringCopy(NPVariant* variant, const NPString* value)

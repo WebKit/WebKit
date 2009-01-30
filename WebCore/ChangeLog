@@ -1,5 +1,31 @@
 2009-01-30  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Get rid of PrivateIdentifier and use IdentifierRep instead.
+
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Invoke):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::getPropertyNames):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertNPStringToUTF16):
+        * bridge/c/c_utility.h:
+        * bridge/npruntime.cpp:
+        (_NPN_GetStringIdentifier):
+        (_NPN_GetStringIdentifiers):
+        (_NPN_GetIntIdentifier):
+        (_NPN_IdentifierIsString):
+        (_NPN_UTF8FromIdentifier):
+        (_NPN_IntFromIdentifier):
+
+2009-01-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig and Darin Adler.
 
         Make IdentifierRep a real class, add necessary class methods.

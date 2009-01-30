@@ -51,14 +51,6 @@ void convertValueToNPVariant(ExecState*, JSValuePtr, NPVariant* result);
 JSValuePtr convertNPVariantToValue(ExecState*, const NPVariant*, RootObject*);
 Identifier identifierFromNPIdentifier(const NPUTF8* name);
 
-struct PrivateIdentifier {
-    union {
-        const NPUTF8* string;
-        int32_t number;
-    } value;
-    bool isString;
-};
-
 } }
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
