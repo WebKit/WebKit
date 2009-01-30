@@ -1,3 +1,17 @@
+2009-01-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23640
+        Test that non-HTML main resources work with application cache correctly
+
+        * http/tests/appcache/non-html-expected.txt: Added.
+        * http/tests/appcache/non-html.xhtml: Added.
+        * http/tests/appcache/resources/abe.png: Added.
+        * http/tests/appcache/resources/non-html.manifest: Added.
+
+        * http/tests/resources/network-simulator.php: Support more file extensions.
+
 2009-01-29  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Adler.
