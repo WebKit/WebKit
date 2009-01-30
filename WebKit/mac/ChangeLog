@@ -2,6 +2,27 @@
 
         Reviewed by Sam Weinig.
 
+        Fix <rdar://problem/6544048>
+        
+        Have NetscapePluginInstanceProxy keep track of all the ProxyInstance objects associated.
+        
+        When the plug-in instance is destroyed, invalidate all proxy instances.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::destroy):
+        (WebKit::NetscapePluginInstanceProxy::addInstance):
+        (WebKit::NetscapePluginInstanceProxy::removeInstance):
+        * Plugins/Hosted/ProxyInstance.h:
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::ProxyInstance):
+        (WebKit::ProxyInstance::~ProxyInstance):
+        (WebKit::ProxyInstance::invalidate):
+
+2009-01-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Fix <rdar://problem/6490778>.
         
         Change the NPRuntime related functions to use IdentifierRep directly, and make sure to always

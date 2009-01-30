@@ -54,6 +54,7 @@ namespace WebKit {
 
 class HostedNetscapePluginStream;
 class NetscapePluginHostProxy;
+class ProxyInstance;
     
 class NetscapePluginInstanceProxy : public RefCounted<NetscapePluginInstanceProxy> {
 public:
@@ -116,6 +117,9 @@ public:
     void marshalValue(JSC::ExecState*, JSC::JSValuePtr value, data_t& resultData, mach_msg_type_number_t& resultLength);
     JSC::JSValuePtr demarshalValue(JSC::ExecState*, const char* valueData, mach_msg_type_number_t valueLength);
 
+    void addInstance(ProxyInstance*);
+    void removeInstance(ProxyInstance*);
+    
     // Reply structs
     struct Reply {
         enum Type {
@@ -246,6 +250,9 @@ private:
     uint32_t m_objectIDCounter;
     typedef HashMap<uint32_t, JSC::ProtectedPtr<JSC::JSObject> > ObjectMap;
     ObjectMap m_objects;
+    
+    typedef HashSet<ProxyInstance*> ProxyInstanceSet;
+    ProxyInstanceSet m_instances;
 };
     
 } // namespace WebKit

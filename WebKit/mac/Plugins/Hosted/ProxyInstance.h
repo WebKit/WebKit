@@ -52,6 +52,8 @@ public:
     JSC::JSValuePtr fieldValue(JSC::ExecState*, const JSC::Bindings::Field*) const;
     void setFieldValue(JSC::ExecState*, const JSC::Bindings::Field*, JSC::JSValuePtr) const;
     
+    void invalidate();
+    
 private:
     ProxyInstance(PassRefPtr<JSC::Bindings::RootObject>, NetscapePluginInstanceProxy*, uint32_t objectID);
     

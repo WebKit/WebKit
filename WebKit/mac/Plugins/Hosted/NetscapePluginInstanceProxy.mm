@@ -135,6 +135,17 @@ void NetscapePluginInstanceProxy::destroy()
     // Clear the object map, this will cause any outstanding JS objects that the plug-in had a reference to 
     // to go away when the next garbage collection takes place.
     m_objects.clear();
+
+    if (Frame* frame = core([m_pluginView webFrame]))
+        frame->script()->cleanupScriptObjectsForPlugin(m_pluginView);
+    
+    ProxyInstanceSet instances;
+    instances.swap(m_instances);
+    
+    // Invalidate all proxy instances.
+    ProxyInstanceSet::const_iterator end = instances.end();
+    for (ProxyInstanceSet::const_iterator it = instances.begin(); it != end; ++it)
+        (*it)->invalidate();
     
     m_pluginHostProxy->removePluginInstance(this);
     m_pluginHostProxy = 0;
@@ -941,6 +952,20 @@ PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRef
     return ProxyInstance::create(rootObject, this, reply->m_objectID);
 }
 
+void NetscapePluginInstanceProxy::addInstance(ProxyInstance* instance)
+{
+    ASSERT(!m_instances.contains(instance));
+    
+    m_instances.add(instance);
+}
+    
+void NetscapePluginInstanceProxy::removeInstance(ProxyInstance* instance)
+{
+    ASSERT(m_instances.contains(instance));
+    
+    m_instances.remove(instance);
+}
+    
 } // namespace WebKit
 
 #endif // USE(PLUGIN_HOST_PROCESS)

@@ -109,15 +109,20 @@ ProxyInstance::ProxyInstance(PassRefPtr<RootObject> rootObject, NetscapePluginIn
     , m_instanceProxy(instanceProxy)
     , m_objectID(objectID)
 {
+    m_instanceProxy->addInstance(this);
 }
 
 ProxyInstance::~ProxyInstance()
 {
     deleteAllValues(m_fields);
     deleteAllValues(m_methods);
+
+    if (!m_instanceProxy)
+        return;
     
-    _WKPHNPObjectRelease(m_instanceProxy->hostProxy()->port(),
-                         m_instanceProxy->pluginID(), m_objectID);
+    m_instanceProxy->removeInstance(this);
+
+    invalidate();
 }
     
 JSC::Bindings::Class *ProxyInstance::getClass() const
@@ -302,6 +307,13 @@ void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValuePt
         return;
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>();
+}
+
+void ProxyInstance::invalidate()
+{
+    _WKPHNPObjectRelease(m_instanceProxy->hostProxy()->port(),
+                         m_instanceProxy->pluginID(), m_objectID);
+    m_instanceProxy = 0;
 }
 
 } // namespace WebKit
