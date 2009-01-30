@@ -1,3 +1,31 @@
+2009-01-29  Scott Violet  <sky@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23625
+        Skia platform doesn't render text to a canvas or support clipping to an image buffer
+
+        Fixes two bugs in Skia rendering to a canvas:
+        . Text was not rendered at all. This is because we never properly
+          fixed up the alpha values. The fix is to create a layer when
+          rendering text to a layer.
+        . We were not honoring clipping to an image buffer.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::PlatformContextSkia):
+        (PlatformContextSkia::setDrawingToImageBuffer):
+        (PlatformContextSkia::isDrawingToImageBuffer):
+        (PlatformContextSkia::beginLayerClippedToImage):
+        (PlatformContextSkia::restore):
+        (PlatformContextSkia::applyClipFromImage):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2009-01-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

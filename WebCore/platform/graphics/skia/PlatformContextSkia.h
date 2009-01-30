@@ -73,8 +73,27 @@ public:
     // to the constructor.
     void setCanvas(skia::PlatformCanvas*);
 
+#if PLATFORM(WIN_OS)
+    // If false we're rendering to a GraphicsContext for a web page, if false
+    // we're not (as is the case when rendering to a canvas object).
+    // If this is true the contents have not been marked up with the magic
+    // color and all text drawing needs to go to a layer so that the alpha is
+    // correctly updated.
+    void setDrawingToImageBuffer(bool);
+    bool isDrawingToImageBuffer() const;
+#endif
+
     void save();
     void restore();
+
+    // Begins a layer that is clipped to the image |imageBuffer| at the location
+    // |rect|. This layer is implicitly restored when the next restore is
+    // invoked.
+    // NOTE: |imageBuffer| may be deleted before the |restore| is invoked.
+#if defined(__linux__) || PLATFORM(WIN_OS)
+    void beginLayerClippedToImage(const WebCore::FloatRect&,
+                                  const WebCore::ImageBuffer*);
+#endif
 
     // Sets up the common flags on a paint for antialiasing, effects, etc.
     // This is implicitly called by setupPaintFill and setupPaintStroke, but
@@ -148,6 +167,12 @@ public:
 #endif
 
 private:
+#if defined(__linux__) || PLATFORM(WIN_OS)
+    // Used when restoring and the state has an image clip. Only shows the pixels in
+    // m_canvas that are also in imageBuffer.
+    void applyClipFromImage(const WebCore::FloatRect&, const SkBitmap&);
+#endif
+
     // Defines drawing style.
     struct State;
 
@@ -167,6 +192,10 @@ private:
 #if defined(__linux__)
     // A pointer to a GDK Drawable wrapping of this Skia canvas
     GdkSkia* m_gdkskia;
+#endif
+
+#if PLATFORM(WIN_OS)
+    bool m_drawingToImageBuffer;
 #endif
 };
 

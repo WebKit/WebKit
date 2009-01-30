@@ -174,6 +174,19 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
 {
     PlatformGraphicsContext* context = graphicsContext->platformContext();
 
+    bool canUseGDI = windowsCanHandleTextDrawing(graphicsContext);
+    bool createdLayer = false;
+
+    if (canUseGDI && context->isDrawingToImageBuffer()) {
+        // We're drawing to an image buffer and about to render text with GDI.
+        // We need to start a layer here, otherwise the alpha values rendered
+        // by GDI are never correctly updated.
+        // NOTE: this doesn't handle clear type well and should be removed when
+        // we have better text handling code.
+        graphicsContext->beginTransparencyLayer(1.0);
+        createdLayer = true;
+    }
+
     // Max buffer length passed to the underlying windows API.
     const int kMaxBufferLength = 1024;
     // Default size for the buffer. It should be enough for most of cases.
@@ -204,8 +217,6 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
     // to move it up to the top of the bounding square.
     int x = static_cast<int>(point.x());
     int lineTop = static_cast<int>(point.y()) - font->ascent();
-
-    bool canUseGDI = windowsCanHandleTextDrawing(graphicsContext);
 
     // We draw the glyphs in chunks to avoid having to do a heap allocation for
     // the arrays of characters and advances. Since ExtTextOut is the
@@ -252,6 +263,8 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
     }
 
     SelectObject(hdc, oldFont);
+    if (createdLayer)
+        graphicsContext->endTransparencyLayer();
     context->canvas()->endPlatformPaint();
 }
 

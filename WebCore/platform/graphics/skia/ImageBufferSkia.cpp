@@ -63,6 +63,9 @@ ImageBuffer::ImageBuffer(const IntSize& size, bool grayScale, bool& success)
 
     m_data.m_platformContext.setCanvas(&m_data.m_canvas);
     m_context.set(new GraphicsContext(&m_data.m_platformContext));
+#if PLATFORM(WIN_OS)
+    m_context->platformContext()->setDrawingToImageBuffer(true);
+#endif
 
     // Make the background transparent. It would be nice if this wasn't
     // required, but the canvas is currently filled with the magic transparency

@@ -31,6 +31,7 @@
 #include "config.h"
 
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #include "SkiaUtils.h"
@@ -85,6 +86,13 @@ struct PlatformContextSkia::State {
     // Helper function for applying the state's alpha value to the given input
     // color to produce a new output color.
     SkColor applyAlpha(SkColor) const;
+
+#if defined(__linux__) || PLATFORM(WIN_OS)
+    // If non-empty, the current State is clipped to this image.
+    SkBitmap m_imageBufferClip;
+    // If m_imageBufferClip is non-empty, this is the region the image is clipped to.
+    WebCore::FloatRect m_clip;
+#endif
 
 private:
     // Not supported.
@@ -148,6 +156,9 @@ SkColor PlatformContextSkia::State::applyAlpha(SkColor c) const
 PlatformContextSkia::PlatformContextSkia(skia::PlatformCanvas* canvas)
     : m_canvas(canvas)
     , m_stateStack(sizeof(State))
+#if PLATFORM(WIN_OS)
+    , m_drawingToImageBuffer(false)
+#endif
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
@@ -171,6 +182,18 @@ void PlatformContextSkia::setCanvas(skia::PlatformCanvas* canvas)
     m_canvas = canvas;
 }
 
+#if PLATFORM(WIN_OS)
+void PlatformContextSkia::setDrawingToImageBuffer(bool value)
+{
+    m_drawingToImageBuffer = value;
+}
+
+bool PlatformContextSkia::isDrawingToImageBuffer() const
+{
+    return m_drawingToImageBuffer;
+}
+#endif
+
 void PlatformContextSkia::save()
 {
     m_stateStack.append(*m_state);
@@ -180,8 +203,32 @@ void PlatformContextSkia::save()
     canvas()->save();
 }
 
+#if defined(__linux__) || PLATFORM(WIN_OS)
+void PlatformContextSkia::beginLayerClippedToImage(const WebCore::FloatRect& rect,
+                                                   const WebCore::ImageBuffer* imageBuffer)
+{
+    // Skia doesn't support clipping to an image, so we create a layer. The next
+    // time restore is invoked the layer and |imageBuffer| are combined to
+    // create the resulting image.
+    m_state->m_clip = rect;
+    SkRect bounds = { SkFloatToScalar(rect.x()), SkFloatToScalar(rect.y()),
+                      SkFloatToScalar(rect.right()), SkFloatToScalar(rect.bottom()) };
+                      
+    canvas()->saveLayerAlpha(&bounds, 255,
+                             static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag));
+    // Copy off the image as |imageBuffer| may be deleted before restore is invoked.
+    m_state->m_imageBufferClip = *(imageBuffer->context()->platformContext()->bitmap());
+}
+#endif
 void PlatformContextSkia::restore()
 {
+#if defined(__linux__) || PLATFORM(WIN_OS)
+    if (!m_state->m_imageBufferClip.empty()) {
+        applyClipFromImage(m_state->m_clip, m_state->m_imageBufferClip);
+        canvas()->restore();
+    }
+#endif
+
     m_stateStack.removeLast();
     m_state = &m_stateStack.last();
 
@@ -425,3 +472,14 @@ bool PlatformContextSkia::isPrinting()
 {
     return m_canvas->getTopPlatformDevice().IsVectorial();
 }
+
+#if defined(__linux__) || PLATFORM(WIN_OS)
+void PlatformContextSkia::applyClipFromImage(const WebCore::FloatRect& rect, const SkBitmap& imageBuffer)
+{
+    // NOTE: this assumes the image mask contains opaque black for the portions that are to be shown, as such we
+    // only look at the alpha when compositing. I'm not 100% sure this is what WebKit expects for image clipping.
+    SkPaint paint;
+    paint.setPorterDuffXfermode(SkPorterDuff::kDstIn_Mode);
+    m_canvas->drawBitmap(imageBuffer, SkFloatToScalar(rect.x()), SkFloatToScalar(rect.y()), &paint);
+}
+#endif

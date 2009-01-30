@@ -36,6 +36,7 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include "Gradient.h"
+#include "ImageBuffer.h"
 #include "IntRect.h"
 #include "NativeImageSkia.h"
 #include "NotImplemented.h"
@@ -418,8 +419,9 @@ void GraphicsContext::clipToImageBuffer(const FloatRect& rect,
     if (paintingDisabled())
         return;
 
-    // FIXME: This is needed for image masking and complex text fills.
-    notImplemented();
+#if defined(__linux__) || PLATFORM(WIN_OS)
+    platformContext()->beginLayerClippedToImage(rect, imageBuffer);
+#endif
 }
 
 void GraphicsContext::concatCTM(const TransformationMatrix& xform)
