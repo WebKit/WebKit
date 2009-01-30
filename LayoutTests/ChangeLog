@@ -1,3 +1,13 @@
+2009-01-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test that documents loaded from application cache cannot load local resources.
+
+        * http/tests/appcache/local-content-expected.txt: Added.
+        * http/tests/appcache/local-content.html: Added.
+        * http/tests/appcache/resources/local-content.manifest: Added.
+
 2009-01-30  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
