@@ -110,21 +110,34 @@ namespace WTF {
     COMPILE_ASSERT(IsPod<float>::value, WTF_IsPod_float_true);
     COMPILE_ASSERT(!IsPod<IsPod<bool> >::value, WTF_IsPod_struct_false);
 
-    template<typename T> struct IsConvertibleToInteger {
-    private:
-        typedef char YesType;
-        struct NoType {
-            char padding[8];
+    template<typename T> class IsConvertibleToInteger {
+        // Avoid "possible loss of data" warning when using Microsoft's C++ compiler
+        // by not converting int's to doubles.
+        template<bool performCheck, typename U> class IsConvertibleToDouble;
+        template<typename U> class IsConvertibleToDouble<false, U> {
+        public:
+            static const bool value = false;
         };
 
-        static YesType integerCheck(int);
-        static NoType integerCheck(...);
-        static T& t;
+        template<typename U> class IsConvertibleToDouble<true, U> {
+            typedef char YesType;
+            struct NoType {
+                char padding[8];
+            };
+
+            static YesType floatCheck(long double);
+            static NoType floatCheck(...);
+            static T& t;
+        public:
+            static const bool value = sizeof(floatCheck(t)) == sizeof(YesType);
+        };
 
     public:
-        static const bool value = sizeof(integerCheck(t)) == sizeof(YesType);
+        static const bool value = IsInteger<T>::value || IsConvertibleToDouble<!IsInteger<T>::value, T>::value;
     };
 
+    enum IsConvertibleToIntegerCheck { };
+    COMPILE_ASSERT(IsConvertibleToInteger<IsConvertibleToIntegerCheck>::value, WTF_IsConvertibleToInteger_enum_true);
     COMPILE_ASSERT(IsConvertibleToInteger<bool>::value, WTF_IsConvertibleToInteger_bool_true);
     COMPILE_ASSERT(IsConvertibleToInteger<char>::value, WTF_IsConvertibleToInteger_char_true);
     COMPILE_ASSERT(IsConvertibleToInteger<signed char>::value, WTF_IsConvertibleToInteger_signed_char_true);
