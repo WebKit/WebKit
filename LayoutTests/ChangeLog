@@ -1,3 +1,16 @@
+2009-01-29  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22894
+        Fix typo in fill-stroke-clip-reset-path.html where
+        layoutTestController.setUseDashboardCompatiblityMode is called instead of
+        layoutTestController.setUseDashboardCompatibilityMode.
+
+        * fast/canvas/fill-stroke-clip-reset-path.html:
+        * platform/mac/fast/canvas/fill-stroke-clip-reset-path-expected.checksum:
+        * platform/mac/fast/canvas/fill-stroke-clip-reset-path-expected.png:
+
 2009-01-29  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Eric Seidel.

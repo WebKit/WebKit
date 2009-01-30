@@ -4,8 +4,8 @@
 function testOne(operation, quirk)
 {
     if (window.layoutTestController)
-        if (layoutTestController.setUseDashboardCompatiblityMode)
-            layoutTestController.setUseDashboardCompatiblityMode(quirk);
+        if (layoutTestController.setUseDashboardCompatibilityMode)
+            layoutTestController.setUseDashboardCompatibilityMode(quirk);
 
     var canvas = document.getElementById(operation + "-" + (quirk ? "" : "no-") + "quirk");
     var context = canvas.getContext('2d');
