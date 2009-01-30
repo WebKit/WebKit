@@ -7,11 +7,11 @@ PASS document.compatMode is "BackCompat"
 PASS bold toggle
 PASS bold removing b
 PASS bold removing font-weight: bold
-FAIL bold removing strong -- <strong><span class="Apple-style-span" style="font-weight: normal;">test</span></strong>
+PASS bold removing strong
 PASS italic toggle
 PASS italic removing i
 PASS italic removing font-style: italic
-FAIL italic removing em -- <em><span class="Apple-style-span" style="font-style: normal;">test</span></em>
+PASS italic removing em
 PASS subscript toggle
 PASS subscript removing sub
 PASS subscript removing vertical-align: sub

@@ -3874,6 +3874,18 @@
 
 2009-01-22  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Remove <strong>/<em> tags when toggling bold/italic since IE inserts them instead of <b>/<i>
+        https://bugs.webkit.org/show_bug.cgi?id=23486
+
+        Test: editing/execCommand/toggle-styles.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::isHTMLStyleNode):
+
+2009-01-22  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Justin Garcia.
 
         Remove <span> turds left by editing commands
