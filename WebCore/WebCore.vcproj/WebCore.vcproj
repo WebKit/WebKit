@@ -3376,6 +3376,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\ThreadTimers.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ThreadTimers.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Timer.cpp"
 				>
 			</File>

@@ -742,6 +742,7 @@ sources['platform'] = [
     'platform/SharedBuffer.cpp',
     'platform/Theme.cpp',
     'platform/ThreadGlobalData.cpp',
+    'platform/ThreadTimers.cpp',
     'platform/Timer.cpp',
     'platform/Widget.cpp'
 ]

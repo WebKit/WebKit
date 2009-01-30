@@ -763,6 +763,7 @@ This file contains the list of files needed to build WebCore.
         platform/text/TextEncodingRegistry.cpp
         platform/text/TextStream.cpp
         platform/ThreadGlobalData.cpp
+        platform/ThreadTimers.cpp
         platform/Timer.cpp
         platform/Widget.cpp
         platform/graphics/BitmapImage.cpp

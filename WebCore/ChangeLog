@@ -1,3 +1,81 @@
+2009-01-29  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23488
+
+        Make TimerBase thread-aware (for Workers).
+        Added new class ThreadTimers - it keeps a heap of all timers for a thread (previously kept in a static global).
+        Pointer to instance of ThreadTimers is stored in GlobalThreadData.
+        Most static methods of TimerBase went to ThreadTimers.
+
+        The TimerBase functionality did not change (it maintains the timer heap which computes the nearest firing).
+
+        Added new abstract class SharedTimer, so worker threads can provide their own implementation (will be implemented on WorkerRunLoop).
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Added new ThreadTimers.cpp to build files.
+
+        * platform/SharedTimer.h:
+        (WebCore::SharedTimer::~SharedTimer):
+        (WebCore::MainThreadSharedTimer::setFiredFunction):
+        (WebCore::MainThreadSharedTimer::setFireTime):
+        (WebCore::MainThreadSharedTimer::stop):
+        Added abstract SharedTimer and MainThreadSharedTimer which redirects to the existing port-supplied functions.
+
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::~ThreadGlobalData):
+        * platform/ThreadGlobalData.h:
+        (WebCore::ThreadGlobalData::threadTimers):
+        Added ThreadTimers to ThreadGlobalData.
+
+        * platform/ThreadTimers.cpp: Added.
+        (WebCore::mainThreadSharedTimer):
+        Static getter for a MainThreadSharedTimer singleton.
+
+        (WebCore::ThreadTimers::ThreadTimers):
+        (WebCore::ThreadTimers::setSharedTimer):
+        (WebCore::ThreadTimers::updateSharedTimer):
+        (WebCore::ThreadTimers::collectFiringTimers):
+        (WebCore::ThreadTimers::fireTimers):
+        (WebCore::ThreadTimers::sharedTimerFired):
+        (WebCore::ThreadTimers::sharedTimerFiredInternal):
+        (WebCore::ThreadTimers::fireTimersInNestedEventLoop):
+        ThreadTimers implementation. Most of the code is moved from previous static functions on TimerBase.
+        Need a new class so each thread may get ts own copy of the timer heap.
+
+        * platform/ThreadTimers.h: Added.
+        (WebCore::ThreadTimers::timerHeap):
+        (WebCore::ThreadTimers::timersReadyToFire):
+
+        * platform/Timer.cpp:
+        (WebCore::timerHeap):
+        (WebCore::timersReadyToFire):
+        (WebCore::TimerHeapElement::TimerHeapElement):
+        (WebCore::TimerHeapElement::checkConsistency):
+        (WebCore::TimerHeapElement::operator=):
+        (WebCore::TimerHeapIterator::checkConsistency):
+        (WebCore::TimerBase::TimerBase):
+        (WebCore::TimerBase::~TimerBase):
+        (WebCore::TimerBase::isActive):
+        (WebCore::TimerBase::checkHeapIndex):
+        (WebCore::TimerBase::heapDelete):
+        (WebCore::TimerBase::heapDeleteMin):
+        (WebCore::TimerBase::heapInsert):
+        (WebCore::TimerBase::heapPopMin):
+        (WebCore::TimerBase::setNextFireTime):
+        (WebCore::TimerBase::fireTimersInNestedEventLoop):
+        Now instead of static timer heap these use accessor functions that pull thread-specific heap instance.
+
+        * platform/Timer.h:
+        static methods moved to ThreadTimers.
+
 2009-01-29  David Hyatt  <hyatt@apple.com>
 
         Beginning of work to eliminate RenderContainer and make containership "pluggable" into any spot in the render tree.  The first step is to create

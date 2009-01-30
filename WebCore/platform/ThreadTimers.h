@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2009 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +24,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SharedTimer_h
-#define SharedTimer_h
+#ifndef ThreadTimer_h
+#define ThreadTimer_h
+
+#include <wtf/Noncopyable.h>
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-    // Each thread has its own single instance of shared timer, which implements this interface.
-    // This instance is shared by all timers in the thread.
-    // Not intended to be used directly; use the Timer class instead.
-    class SharedTimer {
-    public:
-        virtual ~SharedTimer() {}
-        virtual void setFiredFunction(void (*)()) = 0;
+    class SharedTimer;
+    class TimerBase;
 
-        // The fire time is relative to the classic POSIX epoch of January 1, 1970,
-        // as the result of currentTime() is.
-        virtual void setFireTime(double) = 0;
-        virtual void stop() = 0;
+    // A collection of timers per thread. Kept in ThreadGlobalData.
+    class ThreadTimers : Noncopyable {
+    public:
+        ThreadTimers();
+
+        // On a thread different then main, we should set the thread's instance of the SharedTimer.
+        void setSharedTimer(SharedTimer*);
+
+        Vector<TimerBase*>& timerHeap() { return m_timerHeap; }
+        HashSet<const TimerBase*>& timersReadyToFire() { return m_timersReadyToFire; }
+
+        void updateSharedTimer();
+        void fireTimersInNestedEventLoop();
+
+    private:
+        static void sharedTimerFired();
+
+        void fireTimers(double fireTime, const Vector<TimerBase*>&);
+        void collectFiringTimers(double fireTime, Vector<TimerBase*>&);
+        void sharedTimerFiredInternal();
+        void fireTimersInNestedEventLoopInternal();
+
+        Vector<TimerBase*> m_timerHeap;
+        HashSet<const TimerBase*> m_timersReadyToFire; // Temporarily holds a pointer to a stack object. No ownership.
+        SharedTimer* m_sharedTimer; // External object, can be a run loop on a worker thread. Normally set/reset by worker thread.
+        bool m_firingTimers; // Reentrancy guard.
     };
 
+}
 
-    // Implemented by port (since it provides the run loop for the main thread).
-    // FIXME: make ports implement MainThreadSharedTimer directly instead.
-    void setSharedTimerFiredFunction(void (*)());
-    void setSharedTimerFireTime(double);
-    void stopSharedTimer();
-
-    // Implementation of SharedTimer for the main thread.
-    class MainThreadSharedTimer : public SharedTimer {
-    public:
-        virtual void setFiredFunction(void (*function)())
-        {
-            setSharedTimerFiredFunction(function);
-        }
-        
-        virtual void setFireTime(double fireTime)
-        {
-            setSharedTimerFireTime(fireTime);
-        }
-        
-        virtual void stop()
-        {
-            stopSharedTimer();
-        }
-    };
-
-} // namespace WebCore
-
-#endif // SharedTimer_h
+#endif

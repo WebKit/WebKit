@@ -1272,6 +1272,8 @@ webcore_sources += \
 	WebCore/platform/ThreadCheck.h \
 	WebCore/platform/ThreadGlobalData.cpp \
 	WebCore/platform/ThreadGlobalData.h \
+	WebCore/platform/ThreadTimers.cpp \
+	WebCore/platform/ThreadTimers.h \
 	WebCore/platform/Timer.cpp \
 	WebCore/platform/Timer.h \
 	WebCore/platform/TreeShared.h \

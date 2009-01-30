@@ -182,6 +182,8 @@
 		14EC268009CA07E000E1EEEC /* EventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */; };
 		14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */; };
+		185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 185BCF260F3279CE000EA262 /* ThreadTimers.cpp */; };
+		185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */ = {isa = PBXBuildFile; fileRef = 185BCF270F3279CE000EA262 /* ThreadTimers.h */; };
 		188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 188604B10F2E654A000B6443 /* DOMTimer.cpp */; };
 		188604B40F2E654A000B6443 /* DOMTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 188604B20F2E654A000B6443 /* DOMTimer.h */; };
 		18A0537C0F26859C00A51705 /* WorkerRunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18A0537A0F26859C00A51705 /* WorkerRunLoop.cpp */; };
@@ -5037,6 +5039,8 @@
 		14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNode.cpp; sourceTree = "<group>"; };
 		14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFrameElementBase.h; sourceTree = "<group>"; };
 		14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameElementBase.cpp; sourceTree = "<group>"; };
+		185BCF260F3279CE000EA262 /* ThreadTimers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadTimers.cpp; sourceTree = "<group>"; };
+		185BCF270F3279CE000EA262 /* ThreadTimers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadTimers.h; sourceTree = "<group>"; };
 		188604B10F2E654A000B6443 /* DOMTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTimer.cpp; sourceTree = "<group>"; };
 		188604B20F2E654A000B6443 /* DOMTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTimer.h; sourceTree = "<group>"; };
 		18A0537A0F26859C00A51705 /* WorkerRunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerRunLoop.cpp; sourceTree = "<group>"; };
@@ -13696,6 +13700,8 @@
 				51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */,
 				E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */,
 				E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */,
+				185BCF260F3279CE000EA262 /* ThreadTimers.cpp */,
+				185BCF270F3279CE000EA262 /* ThreadTimers.h */,
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
 				1419D2C40CEA6F6100FF507A /* TreeShared.h */,
@@ -16656,6 +16662,7 @@
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
 				BC2CC8DF0F32881000A9DF26 /* RenderObjectChildList.h in Headers */,
+				185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18629,6 +18636,7 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

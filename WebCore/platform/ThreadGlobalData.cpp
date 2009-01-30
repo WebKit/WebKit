@@ -29,6 +29,7 @@
 
 #include "EventNames.h"
 #include "StringImpl.h"
+#include "ThreadTimers.h"
 #include <wtf/UnusedParam.h>
 
 #if USE(ICU_UNICODE)
@@ -70,6 +71,7 @@ ThreadGlobalData::ThreadGlobalData()
     : m_emptyString(new StringImpl)
     , m_atomicStringTable(new HashSet<StringImpl*>)
     , m_eventNames(new EventNames)
+    , m_threadTimers(new ThreadTimers)
 #if USE(ICU_UNICODE)
     , m_cachedConverterICU(new ICUConverterWrapper)
 #endif
@@ -90,6 +92,7 @@ ThreadGlobalData::~ThreadGlobalData()
 
     delete m_eventNames;
     delete m_atomicStringTable;
+    delete m_threadTimers;
 
     ASSERT(isMainThread() || m_emptyString->hasOneRef()); // We intentionally don't clean up static data on application quit, so there will be many strings remaining on the main thread.
     delete m_emptyString;
