@@ -63,6 +63,7 @@ $requestedPath = $_GET['path'];
 $state = getState($stateFile);
 if ($state == "Offline") {
     header('HTTP/1.1 307 Temporary Redirect');
+    # Simulate a network error by redirecting to self.
     header('Location: ' . $_SERVER['REQUEST_URI']);
 } else {
     // A little securuty checking can't hurt.
@@ -73,7 +74,7 @@ if ($state == "Offline") {
         $requestedPath = '..' . $requestedPath;
 
     header("Expires: Thu, 01 Dec 2003 16:00:00 GMT");
-    header("Cache-Control: no-cache, must-revalidate");
+    header("Cache-Control: no-cache, no-store, must-revalidate");
     header("Pragma: no-cache");
 
     if (file_exists($requestedPath)) {
