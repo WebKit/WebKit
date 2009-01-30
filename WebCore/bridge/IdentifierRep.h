@@ -27,6 +27,7 @@
 #define IdentifierRep_h
 
 #include <wtf/Assertions.h>
+#include <string.h>
 
 namespace WebCore {
     

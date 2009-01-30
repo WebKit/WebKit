@@ -1,3 +1,11 @@
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix.
+
+        Include string.h for strdup.
+
+        * bridge/IdentifierRep.h:
+
 2009-01-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
