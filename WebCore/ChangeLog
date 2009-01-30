@@ -1,3 +1,13 @@
+2009-01-30  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23647
+        Fix PLATFORM(SKIA)'s ImageSource::clear method to match other ports
+
+        * platform/graphics/skia/ImageSourceSkia.cpp:
+        (WebCore::ImageSource::clear):
+
 2009-01-30  David Hyatt  <hyatt@apple.com>
 
         Add toRenderBlock methods for casting RenderObjects to RenderBlocks.  The methods will assert if the object

@@ -100,16 +100,16 @@ ImageSource::~ImageSource()
 
 void ImageSource::clear(bool destroyAll, size_t clearBeforeFrame, SharedBuffer* data, bool allDataReceived)
 {
-    // TODO(darin): Figure out what to do with the |data| and |allDataReceived| params.
-
-    if (destroyAll) {
-        delete m_decoder;
-        m_decoder = 0;
+    if (!destroyAll) {
+        if (m_decoder)
+            m_decoder->clearFrameBufferCache(clearBeforeFrame);
         return;
     }
 
-    if (m_decoder)
-        m_decoder->clearFrameBufferCache(clearBeforeFrame);
+    delete m_decoder;
+    m_decoder = 0;
+    if (data)
+        setData(data, allDataReceived);
 }
 
 bool ImageSource::initialized() const
