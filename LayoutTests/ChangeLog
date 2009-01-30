@@ -1,3 +1,14 @@
+2009-01-30  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23650
+        LayoutTests/fast/dom/Window/timeout-released-on-close.html fails intermittently.
+        Disable this test to keep buildbots green. Need more time to investigate the cause.
+
+        * fast/dom/Window/timeout-released-on-close.html: Removed.
+        * fast/dom/Window/timeout-released-on-close.html-disabled: Copied from LayoutTests/fast/dom/Window/timeout-released-on-close.html.
+
 2009-01-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
