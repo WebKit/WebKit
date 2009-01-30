@@ -1,3 +1,16 @@
+2009-01-30  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23599: ResourceError needs to be copyable for use in another thread.
+        <https://bugs.webkit.org/show_bug.cgi?id=23599>
+
+        Add ResourceErrorBase::copy method.  (Not yet used.)
+
+        * platform/network/ResourceErrorBase.cpp:
+        (WebCore::ResourceErrorBase::copy):
+        * platform/network/ResourceErrorBase.h:
+
 2009-01-29  Stephanie Lewis <slewis@apple.com>
 
         RS by Oliver Hunt.
