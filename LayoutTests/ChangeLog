@@ -1,3 +1,17 @@
+2009-01-30  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23615
+        Try to make this test reliable on buildbots.
+
+        * fast/dom/Window/resources/long_timeout.html:
+        Allocate more objects to make detection more reliable.
+
+        * fast/dom/Window/timeout-released-on-close.html:
+        Use threshold to account for objects allocated by the running scripts.
+        Add debug output in case of failure to help understand possible failures.
+
 2009-01-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mark Rowe.
