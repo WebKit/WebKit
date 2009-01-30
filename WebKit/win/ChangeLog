@@ -1,5 +1,12 @@
 2009-01-29  Sam Weinig  <sam@webkit.org>
 
+        Fix Windows build
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):
+
+2009-01-29  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Second step in tracking the urls a HistoryItem was redirected through

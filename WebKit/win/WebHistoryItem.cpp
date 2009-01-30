@@ -137,7 +137,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
     std::auto_ptr<Vector<String> > redirectURLsVector;
     if (CFArrayRef redirectURLsRef = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionaryRef, redirectURLsKey))) {
         CFIndex size = CFArrayGetCount(redirectURLsRef);
-        redirectURLs = std::auto_ptr<Vector<String> >(new Vector<String>(size));
+        redirectURLsVector.reset(new Vector<String>(size));
         for (CFIndex i = 0; i < size; ++i)
             (*redirectURLsVector)[i] = String(static_cast<CFStringRef>(CFArrayGetValueAtIndex(redirectURLsRef, i)));
     }
@@ -154,7 +154,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
         m_historyItem->setLastVisitWasHTTPNonGet(true);
 
     if (redirectURLsVector)
-        core(_private)->setRedirectURLs(redirectURLsVector);
+        m_historyItem->setRedirectURLs(redirectURLsVector);
 
     return S_OK;
 }
