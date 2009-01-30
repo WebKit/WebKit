@@ -1,3 +1,11 @@
+2009-01-29  Stephanie Lewis <slewis@apple.com>
+
+        RS by Oliver Hunt.
+
+        Update the order files.
+
+        * WebCore.order:
+
 2009-01-29  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.
