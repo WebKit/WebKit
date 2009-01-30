@@ -1,3 +1,37 @@
+2009-01-29  David Hyatt  <hyatt@apple.com>
+
+        Beginning of work to eliminate RenderContainer and make containership "pluggable" into any spot in the render tree.  The first step is to create
+        the new object that will handle children: RenderObjectChildList and move RenderContainer's member variables into it.  Subsequent patches will begin
+        moving RenderContainer's functionality into RenderObjectChildList.
+
+        Reviewed by Eric Seidel
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::RenderContainer):
+        (WebCore::RenderContainer::destroyLeftoverChildren):
+        (WebCore::RenderContainer::addChild):
+        (WebCore::RenderContainer::removeChildNode):
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer):
+        (WebCore::RenderContainer::appendChildNode):
+        (WebCore::RenderContainer::insertChildNode):
+        (WebCore::RenderContainer::layout):
+        (WebCore::RenderContainer::removeLeftoverAnonymousBlock):
+        (WebCore::RenderContainer::positionForCoordinates):
+        (WebCore::RenderContainer::addLineBoxRects):
+        (WebCore::RenderContainer::collectAbsoluteLineBoxQuads):
+        * rendering/RenderContainer.h:
+        (WebCore::RenderContainer::firstChild):
+        (WebCore::RenderContainer::lastChild):
+        (WebCore::RenderContainer::firstChildBox):
+        (WebCore::RenderContainer::lastChildBox):
+        * rendering/RenderObjectChildList.h: Added.
+        (WebCore::RenderObjectChildList::RenderObjectChildList):
+        (WebCore::RenderObjectChildList::firstChild):
+        (WebCore::RenderObjectChildList::lastChild):
+        (WebCore::RenderObjectChildList::setFirstChild):
+        (WebCore::RenderObjectChildList::setLastChild):
+
 2009-01-29  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -22,6 +22,7 @@
 #define RenderContainer_h
 
 #include "RenderBox.h"
+#include "RenderObjectChildList.h"
 
 namespace WebCore {
 
@@ -31,12 +32,12 @@ public:
     RenderContainer(Node*);
     virtual ~RenderContainer();
 
-    virtual RenderObject* firstChild() const { return m_firstChild; }
-    virtual RenderObject* lastChild() const { return m_lastChild; }
+    virtual RenderObject* firstChild() const { return m_children.firstChild(); }
+    virtual RenderObject* lastChild() const { return m_children.lastChild(); }
 
     // Use this with caution! No type checking is done!
-    RenderBox* firstChildBox() const { ASSERT(!firstChild() || firstChild()->isBox()); return toRenderBox(m_firstChild); }
-    RenderBox* lastChildBox() const { ASSERT(!lastChild() || lastChild()->isBox()); return toRenderBox(m_lastChild); }
+    RenderBox* firstChildBox() const { ASSERT(!firstChild() || firstChild()->isBox()); return toRenderBox(firstChild()); }
+    RenderBox* lastChildBox() const { ASSERT(!lastChild() || lastChild()->isBox()); return toRenderBox(lastChild()); }
     
     virtual bool canHaveChildren() const;
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
@@ -71,8 +72,7 @@ public:
     virtual void collectAbsoluteLineBoxQuads(Vector<FloatQuad>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
 
 protected:
-    RenderObject* m_firstChild;
-    RenderObject* m_lastChild;
+    RenderObjectChildList m_children;
 };
 
 } // namespace WebCore
