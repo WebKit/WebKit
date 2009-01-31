@@ -1,3 +1,16 @@
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Build fix.
+
+        Move the inline virtual destructor after a non-inline virtual
+        function so that the symbol for the vtable is not marked as a
+        weakly exported symbol.
+
+        This trick was previously used at revision 36122 in JSObject.h
+
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::~FrameLoaderClient):
+
 2009-01-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Stephanie Lewis

@@ -72,9 +72,12 @@ namespace WebCore {
 
     class FrameLoaderClient {
     public:
-        virtual ~FrameLoaderClient() {}
         virtual void frameLoaderDestroyed() = 0;
-        
+
+        // The inline virtual destructor cannot be the first virtual function declared
+        // in the class as it results in the vtable being generated as a weak symbol
+        virtual ~FrameLoaderClient() {}
+
         virtual bool hasWebView() const = 0; // mainly for assertions
 
         virtual bool hasHTMLView() const { return true; }
