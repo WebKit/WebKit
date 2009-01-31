@@ -1,3 +1,8 @@
+2009-01-30  Darin Adler  <darin@apple.com>
+
+        * page/Frame.cpp:
+        (WebCore::Frame::createView): Fix debug build by removing get() from assert.
+
 2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.
