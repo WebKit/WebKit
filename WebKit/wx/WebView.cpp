@@ -481,7 +481,7 @@ void wxWebView::OnSize(wxSizeEvent& event)
 { 
     if (m_isInitialized && m_mainFrame) {
         WebCore::Frame* frame = m_mainFrame->GetFrame();
-        frame->sendResizeEvent();
+        frame->eventHandler()->sendResizeEvent();
         frame->view()->layout();
         frame->view()->adjustScrollbars();
     }
