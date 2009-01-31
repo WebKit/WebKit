@@ -2,6 +2,28 @@
 
         Reviewed by Dave Hyatt
 
+        https://bugs.webkit.org/show_bug.cgi?id=23357
+        
+        New files to support accelerated compositing at the RenderLayer
+        level.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        New files added to project, and run through the sort script.
+        
+        * rendering/RenderLayerBacking.cpp: Added.
+        * rendering/RenderLayerBacking.h: Added.
+        New object to store compositing-related data for a single
+        RenderLayer.
+        
+        * rendering/RenderLayerCompositor.cpp: Added.
+        * rendering/RenderLayerCompositor.h: Added.
+        Per-RenderView controller object for compositing hierarchy
+        maintenance.
+
+2009-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
         https://bugs.webkit.org/show_bug.cgi?id=23356
         
         Add new files related to accelerated compositing:

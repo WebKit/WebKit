@@ -1,0 +1,966 @@
+/*
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+
+#if USE(ACCELERATED_COMPOSITING)
+
+#include "AnimationController.h"
+#include "CSSStyleSelector.h"
+#include "FrameView.h"
+#include "GraphicsContext.h"
+#include "GraphicsLayer.h"
+#include "HitTestRequest.h"
+#include "HitTestResult.h"
+#include "HTMLNames.h"
+#include "RenderBox.h"
+#include "RenderImage.h"
+#include "RenderLayerCompositor.h"
+#include "RenderVideo.h"
+#include "RenderView.h"
+
+#include "RenderLayerBacking.h"
+
+using namespace std;
+
+namespace WebCore {
+
+RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
+    : m_owningLayer(layer)
+    , m_ancestorClippingLayer(0)
+    , m_graphicsLayer(0)
+    , m_contentsLayer(0)
+    , m_clippingLayer(0)
+    , m_forceCompositingLayer(false)
+    , m_isSimpleContainerCompositingLayer(false)
+    , m_simpleCompositingLayerStatusDirty(true)
+    , m_compositingContentOffsetDirty(true)
+{
+    createGraphicsLayer();
+}
+
+RenderLayerBacking::~RenderLayerBacking()
+{
+    updateClippingLayers(false, false);
+    updateContentsLayer(false);
+    destroyGraphicsLayer();
+}
+
+void RenderLayerBacking::createGraphicsLayer()
+{
+    m_graphicsLayer = GraphicsLayer::createGraphicsLayer(this);
+    
+#ifndef NDEBUG
+    if (renderer()->node()->isDocumentNode())
+        m_graphicsLayer->setName("Document Node");
+    else {
+        if (renderer()->node()->isHTMLElement() && renderer()->node()->hasID())
+            m_graphicsLayer->setName(renderer()->renderName() + String(" ") + static_cast<HTMLElement*>(renderer()->element())->id());
+        else
+            m_graphicsLayer->setName(renderer()->renderName());
+    }
+#endif  // NDEBUG
+
+    updateLayerOpacity();
+    updateLayerTransform();
+}
+
+void RenderLayerBacking::destroyGraphicsLayer()
+{
+    if (m_graphicsLayer)
+        m_graphicsLayer->removeFromParent();
+
+    delete m_graphicsLayer;
+    m_graphicsLayer = 0;
+
+    delete m_contentsLayer;
+    m_contentsLayer = 0;
+
+    delete m_clippingLayer;
+    m_clippingLayer = 0;
+}
+
+void RenderLayerBacking::updateLayerOpacity()
+{
+    m_graphicsLayer->setOpacity(compositingOpacity(renderer()->opacity()), 0, 0);
+}
+
+void RenderLayerBacking::updateLayerTransform()
+{
+    RenderStyle* style = renderer()->style();
+
+    // FIXME: This could use m_owningLayer->transform(), but that currently has transform-origin
+    // baked into it, and we don't want that.
+    TransformationMatrix t;
+    if (m_owningLayer->hasTransform())
+        style->applyTransform(t, renderer()->borderBoxRect().size(), false);
+    
+    m_graphicsLayer->setTransform(t);
+}
+
+void RenderLayerBacking::updateAfterLayout()
+{
+    invalidateDrawingOptimizations();
+    detectDrawingOptimizations();
+
+    updateGraphicsLayerGeometry();
+}
+
+bool RenderLayerBacking::updateGraphicsLayers(bool needsContentsLayer, bool needsUpperClippingLayer, bool needsLowerClippingLayer, bool needsRepaint)
+{
+    bool layerConfigChanged = false;
+    if (updateContentsLayer(needsContentsLayer))
+        layerConfigChanged = true;
+    
+    if (updateClippingLayers(needsUpperClippingLayer, needsLowerClippingLayer))
+        layerConfigChanged = true;
+
+    // See if we can now use any drawing optimizations.
+    bool didDrawContent = graphicsLayer()->drawsContent();
+    invalidateDrawingOptimizations();
+    detectDrawingOptimizations();
+    if (!didDrawContent && graphicsLayer()->drawsContent())
+        needsRepaint = true;
+
+    // Set opacity, if it is not animating.
+    if (!renderer()->animation()->isAnimatingPropertyOnRenderer(renderer(), CSSPropertyOpacity))
+        updateLayerOpacity();
+    
+    updateGraphicsLayerGeometry();
+    
+    m_graphicsLayer->updateContentsRect();
+    
+    if (needsRepaint) {
+        m_graphicsLayer->setNeedsDisplay();
+        if (m_contentsLayer)
+            m_contentsLayer->setNeedsDisplay();
+    }
+    
+    return layerConfigChanged;
+}
+
+void RenderLayerBacking::updateGraphicsLayerGeometry()
+{
+    // If we haven't built z-order lists yet, wait until later.
+    if (m_owningLayer->isStackingContext() && m_owningLayer->m_zOrderListsDirty)
+        return;
+
+    // Set transform property, if it is not animating. We have to do this here because the transform
+    // is affected by the layer dimensions.
+    if (!renderer()->animation()->isAnimatingPropertyOnRenderer(renderer(), CSSPropertyWebkitTransform))
+        updateLayerTransform();
+
+    m_compositingContentOffsetDirty = true;
+    
+    RenderLayer* compAncestor = compositor()->enclosingCompositingLayer(m_owningLayer, false);
+    
+    // We compute everything relative to the enclosing compositing layer.
+    IntRect ancestorCompositingBounds;
+    if (compAncestor)
+        ancestorCompositingBounds = compositor()->calculateCompositedBounds(compAncestor, compAncestor);
+    
+    IntRect localCompositingBounds = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
+
+    IntRect relativeCompositingBounds(localCompositingBounds);
+    int deltaX = 0, deltaY = 0;
+    m_owningLayer->convertToLayerCoords(compAncestor, deltaX, deltaY);
+    relativeCompositingBounds.move(deltaX, deltaY);
+
+    IntPoint graphicsLayerParentLocation;
+    if (compAncestor && compAncestor->backing()->hasClippingLayer()) {
+        // If the compositing ancestor has a layer to clip children, we parent in that, and therefore
+        // position relative to it.
+        graphicsLayerParentLocation = compAncestor->renderer()->getOverflowClipRect(0, 0).location();
+    } else
+        graphicsLayerParentLocation = ancestorCompositingBounds.location();
+    
+    if (compAncestor && m_ancestorClippingLayer) {
+        // Call calculateRects to get the backgroundRect which is what is used to clip the contents of this
+        // layer. Note that we call it with temporaryClipRects = true because normally when computing clip rects
+        // for a compositing layer, rootLayer is the layer itself.
+        IntRect infiniteRect(INT_MIN/2, INT_MIN/2, INT_MAX, INT_MAX);
+        IntRect layerBounds, backgroundRect, foregroundRect, outlineRect;
+        m_owningLayer->calculateRects(compAncestor, infiniteRect, layerBounds, backgroundRect, foregroundRect, outlineRect, true);
+        
+        m_ancestorClippingLayer->setPosition(FloatPoint() + (backgroundRect.location() - graphicsLayerParentLocation));
+        m_ancestorClippingLayer->setSize(backgroundRect.size());
+
+        // backgroundRect is relative to compAncestor, so subtract deltaX/deltaY to get back to local coords.
+        IntSize rendererOffset(backgroundRect.location().x() - deltaX, backgroundRect.location().y() - deltaY);
+        m_ancestorClippingLayer->setOffsetFromRenderer(rendererOffset);
+
+        // The primary layer is then parented in, and positioned relative to this clipping layer.
+        graphicsLayerParentLocation = backgroundRect.location();
+    }
+
+    m_graphicsLayer->setPosition(FloatPoint() + (relativeCompositingBounds.location() - graphicsLayerParentLocation));
+    m_graphicsLayer->setOffsetFromRenderer(localCompositingBounds.location() - IntPoint());
+    
+    FloatSize oldSize = m_graphicsLayer->size();
+    FloatSize newSize = relativeCompositingBounds.size();
+    if (oldSize != newSize) {
+        m_graphicsLayer->setSize(newSize);
+        // A bounds change will almost always require redisplay. Usually that redisplay
+        // will happen because of a repaint elsewhere, but not always:
+        // e.g. see RenderView::setMaximalOutlineSize()
+        m_graphicsLayer->setNeedsDisplay();
+    }
+
+    // If we have a layer that clips children, position it.
+    if (m_clippingLayer) {
+        IntRect clippingBox = renderer()->getOverflowClipRect(0, 0);
+        m_clippingLayer->setPosition(FloatPoint() + (clippingBox.location() - localCompositingBounds.location()));
+        m_clippingLayer->setSize(clippingBox.size());
+        m_clippingLayer->setOffsetFromRenderer(clippingBox.location() - IntPoint());
+    }
+    
+    if (m_owningLayer->hasTransform()) {
+        const IntRect borderBox = renderer()->borderBoxRect();
+
+        IntRect layerBounds = IntRect(m_owningLayer->xPos(), m_owningLayer->yPos(), borderBox.width(), borderBox.height());
+        // Convert to absolute coords to match bbox.
+        int x = 0, y = 0;
+        m_owningLayer->convertToLayerCoords(compAncestor, x, y);
+        layerBounds.move(x - m_owningLayer->xPos(), y - m_owningLayer->yPos());
+
+        // Update properties that depend on layer dimensions
+        FloatPoint3D transformOrigin = computeTransformOrigin(borderBox);
+        // Compute the anchor point, which is in the center of the renderer box unless transform-origin is set.
+        FloatPoint3D anchor(relativeCompositingBounds.width()  != 0.0f ? ((layerBounds.x() - relativeCompositingBounds.x()) + transformOrigin.x()) / relativeCompositingBounds.width()  : 0.5f,
+                            relativeCompositingBounds.height() != 0.0f ? ((layerBounds.y() - relativeCompositingBounds.y()) + transformOrigin.y()) / relativeCompositingBounds.height() : 0.5f,
+                            transformOrigin.z());
+        m_graphicsLayer->setAnchorPoint(anchor);
+    } else {
+        m_graphicsLayer->setAnchorPoint(FloatPoint3D(0.5f, 0.5f, 0));
+    }
+
+    if (m_contentsLayer) {
+        // The contents layer is always coincidental with the graphicsLayer for now.
+        m_contentsLayer->setPosition(IntPoint(0, 0));
+        m_contentsLayer->setSize(newSize);
+        m_contentsLayer->setOffsetFromRenderer(m_graphicsLayer->offsetFromRenderer());
+    }
+
+    m_graphicsLayer->updateContentsRect();
+}
+
+void RenderLayerBacking::updateInternalHierarchy()
+{
+    // m_contentsLayer has to be inserted in the correct order with child layers,
+    // so it's not inserted here.
+    if (m_ancestorClippingLayer) {
+        m_ancestorClippingLayer->removeAllChildren();
+        m_graphicsLayer->removeFromParent();
+        m_ancestorClippingLayer->addChild(m_graphicsLayer);
+    }
+
+    if (m_clippingLayer) {
+        m_clippingLayer->removeFromParent();
+        m_graphicsLayer->addChild(m_clippingLayer);
+    }
+}
+
+// Return true if the layers changed.
+bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needsDescendantClip)
+{
+    bool layersChanged = false;
+
+    if (needsAncestorClip) {
+        if (!m_ancestorClippingLayer) {
+            m_ancestorClippingLayer = GraphicsLayer::createGraphicsLayer(this);
+#ifndef NDEBUG
+            m_ancestorClippingLayer->setName("Ancestor clipping Layer");
+#endif
+            m_ancestorClippingLayer->setMasksToBounds(true);
+            layersChanged = true;
+        }
+    } else if (m_ancestorClippingLayer) {
+        m_ancestorClippingLayer->removeFromParent();
+        delete m_ancestorClippingLayer;
+        m_ancestorClippingLayer = 0;
+        layersChanged = true;
+    }
+    
+    if (needsDescendantClip) {
+        if (!m_clippingLayer) {
+            m_clippingLayer = GraphicsLayer::createGraphicsLayer(0);
+#ifndef NDEBUG
+            m_clippingLayer->setName("Child clipping Layer");
+#endif
+            m_clippingLayer->setMasksToBounds(true);
+            layersChanged = true;
+        }
+    } else if (m_clippingLayer) {
+        m_clippingLayer->removeFromParent();
+        delete m_clippingLayer;
+        m_clippingLayer = 0;
+        layersChanged = true;
+    }
+    
+    if (layersChanged)
+        updateInternalHierarchy();
+
+    return layersChanged;
+}
+
+bool RenderLayerBacking::updateContentsLayer(bool needsContentsLayer)
+{
+    bool layerChanged = false;
+    if (needsContentsLayer) {
+        if (!m_contentsLayer) {
+            m_contentsLayer = GraphicsLayer::createGraphicsLayer(this);
+#ifndef NDEBUG
+            m_contentsLayer->setName("Contents");
+#endif
+            m_contentsLayer->setDrawsContent(true);
+            m_contentsLayer->setDrawingPhase(GraphicsLayerPaintForegroundMask);
+            m_graphicsLayer->setDrawingPhase(GraphicsLayerPaintBackgroundMask);
+            layerChanged = true;
+        }
+    } else if (m_contentsLayer) {
+        m_contentsLayer->removeFromParent();
+        delete m_contentsLayer;
+        m_contentsLayer = 0;
+        m_graphicsLayer->setDrawingPhase(GraphicsLayerPaintAllMask);
+        layerChanged = true;
+    }
+    return layerChanged;
+}
+
+float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
+{
+    float finalOpacity = rendererOpacity;
+    
+    for (RenderLayer* curr = m_owningLayer->parent(); curr; curr = curr->parent()) {
+        // We only care about parents that are stacking contexts.
+        // Recall that opacity creates stacking context.
+        if (!curr->isStackingContext())
+            continue;
+        
+        // If we found a compositing layer, we want to compute opacity
+        // relative to it. So we can break here.
+        if (curr->isComposited())
+            break;
+        
+        finalOpacity *= curr->renderer()->opacity();
+    }
+
+    return finalOpacity;
+}
+
+// A simple background is either none or a solid color.
+static bool hasSimpleBackground(RenderStyle* style)
+{
+    return !style->hasBackgroundImage();
+}
+
+static bool hasBorderOutlineOrShadow(RenderStyle* style)
+{
+    return (style->hasBorder() || style->hasBorderRadius() || style->hasOutline() || (style->boxShadow() != 0));
+}
+
+bool RenderLayerBacking::rendererHasBackground() const
+{
+    // FIXME: share more code here
+    if (renderer()->node()->isDocumentNode()) {
+        RenderObject* htmlObject = renderer()->firstChild();
+        if (!htmlObject)
+            return false;
+        
+        RenderStyle* style = htmlObject->style();
+        if (style->hasBackground())
+            return true;
+        
+        RenderObject* bodyObject = htmlObject->firstChild();
+        if (!bodyObject)
+            return false;
+        
+        style = bodyObject->style();
+        return style->hasBackground();
+    }
+    
+    return renderer()->style()->hasBackground();
+}
+
+const Color& RenderLayerBacking::rendererBackgroundColor() const
+{
+    // FIXME: share more code here
+    if (renderer()->node()->isDocumentNode()) {
+        RenderObject* htmlObject = renderer()->firstChild();
+        RenderStyle* style = htmlObject->style();
+        if (style->hasBackground())
+            return style->backgroundColor();
+
+        RenderObject* bodyObject = htmlObject->firstChild();
+        style = bodyObject->style();
+        return style->backgroundColor();
+    }
+
+    return renderer()->style()->backgroundColor();
+}
+
+bool RenderLayerBacking::canBeSimpleContainerCompositingLayer() const
+{
+    RenderObject* renderObject = renderer();
+    if (renderObject->isReplaced() ||       // replaced objects are not containers
+        renderObject->hasMask())            // masks require special treatment
+        return false;
+
+    RenderStyle* style = renderObject->style();
+
+    // Reject anything that has a border, a border-radius or outline,
+    // or any background (color or image).
+    // FIXME: we could optimize layers for simple backgrounds.
+    if (hasBorderOutlineOrShadow(style) ||
+        style->hasBackground())
+        return false;
+
+    // If we have got this far and the renderer has no children, then we're ok.
+    if (!renderObject->firstChild())
+        return true;
+    
+    if (renderObject->node()->isDocumentNode()) {
+        // Look to see if the root object has a non-simple backgound
+        RenderObject* rootObject = renderObject->document()->documentElement()->renderer();
+        if (!rootObject)
+            return false;
+        
+        style = rootObject->style();
+        
+        // Reject anything that has a border, a border-radius or outline,
+        // or is not a simple background (no background, or solid color).
+        if (hasBorderOutlineOrShadow(style) ||
+            !hasSimpleBackground(style))
+            return false;
+        
+        // Now look at the body's renderer.
+        HTMLElement* body = renderObject->document()->body();
+        RenderObject* bodyObject = (body && body->hasLocalName(HTMLNames::bodyTag)) ? body->renderer() : 0;
+        if (!bodyObject)
+            return false;
+        
+        style = bodyObject->style();
+        
+        if (hasBorderOutlineOrShadow(style) ||
+            !hasSimpleBackground(style))
+            return false;
+
+        // Ceck to see if all the body's children are compositing layers.
+        if (hasNonCompositingContent())
+            return false;
+        
+        return true;
+    }
+
+    // Check to see if all the renderer's children are compositing layers.
+    if (hasNonCompositingContent())
+        return false;
+    
+    return true;
+}
+
+bool RenderLayerBacking::hasNonCompositingContent() const
+{
+    // Conservative test for having no rendered children.
+    
+    // Some HTML can cause whitespace text nodes to have renderers, like:
+    // <div>
+    // <img src=...>
+    // </div>
+    // so test for 0x0 RenderTexts here
+    for (RenderObject* child = renderer()->firstChild(); child; child = child->nextSibling()) {
+        if (!child->hasLayer()) {
+            if (child->isRenderInline() || !child->isBox())
+                return true;
+            
+            if (toRenderBox(child)->width() > 0 || toRenderBox(child)->height() > 0)
+                return true;
+        }
+    }
+
+    // FIXME: test for overflow controls.
+    if (m_owningLayer->isStackingContext()) {
+        // Use the m_hasCompositingDescendant bit to optimize?
+        Vector<RenderLayer*>* negZOrderList = m_owningLayer->negZOrderList();
+        if (negZOrderList && negZOrderList->size() > 0) {
+            for (Vector<RenderLayer*>::const_iterator it = negZOrderList->begin(); it != negZOrderList->end(); ++it) {
+                RenderLayer* curLayer = (*it);
+                if (!curLayer->isComposited())
+                    return true;
+            }
+        }
+
+        Vector<RenderLayer*>* posZOrderList = m_owningLayer->posZOrderList();
+        if (posZOrderList && posZOrderList->size() > 0) {
+            for (Vector<RenderLayer*>::const_iterator it = posZOrderList->begin(); it != posZOrderList->end(); ++it) {
+                RenderLayer* curLayer = (*it);
+                if (!curLayer->isComposited())
+                    return true;
+            }
+        }
+    }
+
+    Vector<RenderLayer*>* overflowList = m_owningLayer->overflowList();
+    if (overflowList && overflowList->size() > 0) {
+        for (Vector<RenderLayer*>::const_iterator it = overflowList->begin(); it != overflowList->end(); ++it) {
+            RenderLayer* curLayer = (*it);
+            if (!curLayer->isComposited())
+                return true;
+        }
+    }
+
+    return false;
+}
+
+// A "simple container layer" is a RenderLayer which has no visible content to render.
+// It may have no children, or all its children may be themselves composited.
+// This is a useful optimization, because it allows us to avoid allocating backing store.
+bool RenderLayerBacking::isSimpleContainerCompositingLayer()
+{
+    if (m_simpleCompositingLayerStatusDirty) {
+        m_isSimpleContainerCompositingLayer = canBeSimpleContainerCompositingLayer();
+        m_simpleCompositingLayerStatusDirty = false;
+    }
+
+    return m_isSimpleContainerCompositingLayer;
+}
+
+void RenderLayerBacking::detectDrawingOptimizations()
+{
+    bool drawsContent = true;
+
+    if (isSimpleContainerCompositingLayer() || paintingGoesToWindow())
+        drawsContent = false;
+
+    m_graphicsLayer->setDrawsContent(drawsContent);
+}
+
+void RenderLayerBacking::invalidateDrawingOptimizations()
+{
+    m_simpleCompositingLayerStatusDirty = true;
+}
+
+void RenderLayerBacking::forceCompositingLayer(bool force)
+{
+    m_forceCompositingLayer = force;
+}
+
+FloatPoint RenderLayerBacking::computeTransformOrigin(const IntRect& borderBox) const
+{
+    RenderStyle* style = renderer()->style();
+
+    FloatPoint origin;
+    origin.setX(style->transformOriginX().calcFloatValue(borderBox.width()));
+    origin.setY(style->transformOriginY().calcFloatValue(borderBox.height()));
+
+    return origin;
+}
+
+// Return the offset from the top-left of this compositing layer at which the renderer's contents are painted.
+IntSize RenderLayerBacking::contentOffsetInCompostingLayer()
+{
+    if (!m_compositingContentOffsetDirty)
+        return m_compositingContentOffset;
+
+    IntRect relativeCompositingBounds = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
+    m_compositingContentOffset = IntSize(-relativeCompositingBounds.x(), -relativeCompositingBounds.y());
+    m_compositingContentOffsetDirty = false;
+
+    return m_compositingContentOffset;
+}
+
+IntRect RenderLayerBacking::contentsBox(const GraphicsLayer*)
+{
+    IntRect contentsRect = renderer()->contentBoxRect();
+    IntSize contentOffset = contentOffsetInCompostingLayer();
+    contentsRect.move(contentOffset);
+    return contentsRect;
+}
+
+// Map the given point from coordinates in the GraphicsLayer to RenderLayer coordinates.
+FloatPoint RenderLayerBacking::graphicsLayerToContentsCoordinates(const GraphicsLayer* graphicsLayer, const FloatPoint& point)
+{
+    return point + FloatSize(graphicsLayer->offsetFromRenderer());
+}
+
+// Map the given point from coordinates in the RenderLayer to GraphicsLayer coordinates.
+FloatPoint RenderLayerBacking::contentsToGraphicsLayerCoordinates(const GraphicsLayer* graphicsLayer, const FloatPoint& point)
+{
+    return point - FloatSize(graphicsLayer->offsetFromRenderer());
+}
+
+bool RenderLayerBacking::paintingGoesToWindow() const
+{
+    return m_owningLayer->isDocumentLayer();
+}
+
+void RenderLayerBacking::setContentsNeedDisplay()
+{
+    if (m_graphicsLayer)
+        m_graphicsLayer->setNeedsDisplay();
+    if (m_contentsLayer)
+        m_contentsLayer->setNeedsDisplay();
+}
+
+// r is in the coordinate space of the layer's render object
+void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r)
+{
+    if (m_graphicsLayer) {
+        FloatPoint dirtyOrigin = contentsToGraphicsLayerCoordinates(m_graphicsLayer, FloatPoint(r.x(), r.y()));
+        FloatRect dirtyRect(dirtyOrigin, r.size());
+        FloatRect bounds(FloatPoint(), m_graphicsLayer->size());
+        if (bounds.intersects(dirtyRect))
+            m_graphicsLayer->setNeedsDisplayInRect(dirtyRect);
+    }
+
+    if (m_contentsLayer) {
+        // FIXME: do incremental repaint
+        m_contentsLayer->setNeedsDisplay();
+    }
+}
+
+static void setClip(GraphicsContext* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
+{
+    if (paintDirtyRect == clipRect)
+        return;
+    p->save();
+    p->clip(clipRect);
+}
+
+static void restoreClip(GraphicsContext* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
+{
+    if (paintDirtyRect == clipRect)
+        return;
+    p->restore();
+}
+
+// Share this with RenderLayer::paintLayer, which would have to be educated about GraphicsLayerPaintingPhase?
+void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext* context,
+                    const IntRect& paintDirtyRect,      // in the coords of rootLayer
+                    bool haveTransparency, PaintRestriction paintRestriction, GraphicsLayerPaintingPhase paintingPhase,
+                    RenderObject* paintingRoot)
+{
+    if (paintingGoesToWindow()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    
+    if (m_owningLayer->isStackingContext() && (m_owningLayer->m_zOrderListsDirty || m_owningLayer->m_overflowListDirty))
+        compositor()->updateCompositingLayers(m_owningLayer);
+    
+    // Calculate the clip rects we should use.
+    IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
+    m_owningLayer->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
+    
+    int x = layerBounds.x();        // layerBounds is computed relative to rootLayer
+    int y = layerBounds.y();
+    int tx = x - renderer()->x();
+    int ty = y - renderer()->y();
+
+    // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
+    // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
+    // Else, our renderer tree may or may not contain the painting root, so we pass that root along
+    // so it will be tested against as we decend through the renderers.
+    RenderObject *paintingRootForRenderer = 0;
+    if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
+        paintingRootForRenderer = paintingRoot;
+
+    if (paintingPhase & GraphicsLayerPaintBackgroundMask) {
+        // If this is the root then we need to send in a bigger bounding box
+        // because we'll be painting the background as well (see RenderBox::paintRootBoxDecorations()).
+        IntRect paintBox = clipRectToApply;
+        
+        if (renderer()->node()->isDocumentNode() && renderer()->document()->isHTMLDocument()) {
+            int w = renderer()->width();
+            int h = renderer()->height();
+            
+            int rw;
+            int rh;
+            if (renderer()->view()->frameView()) {
+                rw = renderer()->view()->frameView()->contentsWidth();
+                rh = renderer()->view()->frameView()->contentsHeight();
+            } else {
+                rw = renderer()->view()->width();
+                rh = renderer()->view()->height();
+            }
+            
+            int bx = tx - renderer()->marginLeft();
+            int by = ty - renderer()->marginTop();
+            int bw = max(w + renderer()->marginLeft() + renderer()->marginRight() + renderer()->borderLeft() + renderer()->borderRight(), rw);
+            int bh = max(h + renderer()->marginTop() + renderer()->marginBottom() + renderer()->borderTop() + renderer()->borderBottom(), rh);
+            paintBox = IntRect(bx, by, bw, bh);
+        }
+
+        // Paint our background first, before painting any child layers.
+        // Establish the clip used to paint our background.
+        setClip(context, paintDirtyRect, damageRect);
+        
+        RenderObject::PaintInfo info(context, paintBox, PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
+        renderer()->paint(info, tx, ty);
+
+        // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
+        // z-index.  We paint after we painted the background/border, so that the scrollbars will
+        // sit above the background/border.
+        m_owningLayer->paintOverflowControls(context, x, y, damageRect);
+        
+        // Restore the clip.
+        restoreClip(context, paintDirtyRect, damageRect);
+    }
+                
+    if (paintingPhase & GraphicsLayerPaintForegroundMask) {
+        // Now walk the sorted list of children with negative z-indices. Only RenderLayers without compositing layers will paint.
+        // FIXME: should these be painted as background?
+        Vector<RenderLayer*>* negZOrderList = m_owningLayer->negZOrderList();
+        if (negZOrderList) {
+            for (Vector<RenderLayer*>::iterator it = negZOrderList->begin(); it != negZOrderList->end(); ++it)
+                it[0]->paintLayer(rootLayer, context, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot);
+        }
+
+        bool forceBlackText = paintRestriction == PaintRestrictionSelectionOnlyBlackText;
+        bool selectionOnly  = paintRestriction == PaintRestrictionSelectionOnly || paintRestriction == PaintRestrictionSelectionOnlyBlackText;
+
+        // Set up the clip used when painting our children.
+        setClip(context, paintDirtyRect, clipRectToApply);
+        RenderObject::PaintInfo paintInfo(context, clipRectToApply, 
+                                          selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
+                                          forceBlackText, paintingRootForRenderer, 0);
+        renderer()->paint(paintInfo, tx, ty);
+
+        if (!selectionOnly) {
+            paintInfo.phase = PaintPhaseFloat;
+            renderer()->paint(paintInfo, tx, ty);
+
+            paintInfo.phase = PaintPhaseForeground;
+            renderer()->paint(paintInfo, tx, ty);
+
+            paintInfo.phase = PaintPhaseChildOutlines;
+            renderer()->paint(paintInfo, tx, ty);
+        }
+
+        // Now restore our clip.
+        restoreClip(context, paintDirtyRect, clipRectToApply);
+
+        if (!outlineRect.isEmpty()) {
+            // Paint our own outline
+            RenderObject::PaintInfo paintInfo(context, outlineRect, PaintPhaseSelfOutline, false, paintingRootForRenderer, 0);
+            setClip(context, paintDirtyRect, outlineRect);
+            renderer()->paint(paintInfo, tx, ty);
+            restoreClip(context, paintDirtyRect, outlineRect);
+        }
+
+        // Paint any child layers that have overflow.
+        Vector<RenderLayer*>* overflowList = m_owningLayer->overflowList();
+        if (overflowList) {
+            for (Vector<RenderLayer*>::iterator it = overflowList->begin(); it != overflowList->end(); ++it)
+                it[0]->paintLayer(rootLayer, context, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot);
+        }
+
+        // Now walk the sorted list of children with positive z-indices.
+        Vector<RenderLayer*>* posZOrderList = m_owningLayer->posZOrderList();
+        if (posZOrderList) {
+            for (Vector<RenderLayer*>::iterator it = posZOrderList->begin(); it != posZOrderList->end(); ++it)
+                it[0]->paintLayer(rootLayer, context, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot);
+        }
+        
+        if (renderer()->hasMask() && !selectionOnly && !damageRect.isEmpty()) {
+            setClip(context, paintDirtyRect, damageRect);
+
+            // Paint the mask.
+            RenderObject::PaintInfo paintInfo(context, damageRect, PaintPhaseMask, false, paintingRootForRenderer, 0);
+            renderer()->paint(paintInfo, tx, ty);
+            
+            // Restore the clip.
+            restoreClip(context, paintDirtyRect, damageRect);
+        }
+    }
+
+    ASSERT(!m_owningLayer->m_usedTransparency);
+}
+
+// Up-call from compositing layer drawing callback.
+void RenderLayerBacking::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase drawingPhase, const IntRect& clip)
+{
+    // We have to use the same root as for hit testing, because both methods
+    // can compute and cache clipRects.
+    IntRect enclosingBBox = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
+
+    IntRect clipRect(clip);
+    
+    // Set up the coordinate space to be in the layer's rendering coordinates.
+    context.translate(-enclosingBBox.x(), -enclosingBBox.y());
+
+    // Offset the clip.
+    clipRect.move(enclosingBBox.x(), enclosingBBox.y());
+    
+    // The dirtyRect is in the coords of the painting root.
+    IntRect dirtyRect = enclosingBBox;
+    dirtyRect.intersect(clipRect);
+
+    paintIntoLayer(m_owningLayer, &context, dirtyRect, false, PaintRestrictionNone, drawingPhase, renderer());
+}
+
+bool RenderLayerBacking::startAnimation(double beginTime, const Animation* anim, const KeyframeList& keyframes)
+{
+    bool hasOpacity = keyframes.containsProperty(CSSPropertyOpacity);
+    bool hasTransform = keyframes.containsProperty(CSSPropertyWebkitTransform);
+    
+    if (!hasOpacity && !hasTransform)
+        return false;
+    
+    GraphicsLayer::TransformValueList transformVector;
+    GraphicsLayer::FloatValueList opacityVector;
+
+    for (Vector<KeyframeValue>::const_iterator it = keyframes.beginKeyframes(); it != keyframes.endKeyframes(); ++it) {
+        const RenderStyle* keyframeStyle = it->style();
+        float key = it->key();
+
+        if (!keyframeStyle)
+            continue;
+            
+        // get timing function
+        const TimingFunction* tf = keyframeStyle->hasAnimations() ? &((*keyframeStyle->animations()).animation(0)->timingFunction()) : 0;
+        
+        if (hasTransform)
+            transformVector.insert(key, &(keyframeStyle->transform()), tf);
+
+        if (hasOpacity)
+            opacityVector.insert(key, keyframeStyle->opacity(), tf);
+    }
+
+    bool didAnimateTransform = !hasTransform;
+    bool didAnimateOpacity = !hasOpacity;
+    
+    if (hasTransform && m_graphicsLayer->animateTransform(transformVector, renderer()->borderBoxRect().size(), anim, beginTime, false))
+        didAnimateTransform = true;
+
+    if (hasOpacity && m_graphicsLayer->animateFloat(AnimatedPropertyOpacity, opacityVector, anim, beginTime))
+        didAnimateOpacity = true;
+    
+    return didAnimateTransform && didAnimateOpacity;
+}
+
+bool RenderLayerBacking::startTransition(double beginTime, int property, const RenderStyle* fromStyle, const RenderStyle* toStyle)
+{
+    bool didAnimate = false;
+    ASSERT(property != cAnimateAll);
+
+    if (property == (int)CSSPropertyOpacity) {
+        const Animation* opacityAnim = toStyle->transitionForProperty(CSSPropertyOpacity);
+        if (opacityAnim && !opacityAnim->isEmptyOrZeroDuration()) {
+            // If beginTime is not 0, we are restarting this transition, so first set the from value
+            // in case it was smashed by a previous animation.
+            if (beginTime > 0)
+                m_graphicsLayer->setOpacity(compositingOpacity(fromStyle->opacity()), 0, 0);
+
+            if (m_graphicsLayer->setOpacity(compositingOpacity(toStyle->opacity()), opacityAnim, beginTime))
+                didAnimate = true;
+        }
+    }
+
+    if (property == (int)CSSPropertyWebkitTransform && m_owningLayer->hasTransform()) {
+        // We get a TransformOperation, which is a linked list of primitive operations and their arguments.
+        // Arguments can be floats or Length values, which need to be converted to numbers using
+        // val.calcFloatValue(renderer()->width()) (or height()).
+        const Animation* transformAnim = toStyle->transitionForProperty(CSSPropertyWebkitTransform);
+        if (transformAnim && !transformAnim->isEmptyOrZeroDuration()) {
+            GraphicsLayer::TransformValueList transformVector;
+            transformVector.insert(0, &fromStyle->transform(), 0);        
+            transformVector.insert(1, &toStyle->transform(), 0);        
+            if (m_graphicsLayer->animateTransform(transformVector, renderer()->borderBoxRect().size(), transformAnim, beginTime, true))
+                didAnimate = true;
+        }
+    }
+    
+    return didAnimate;
+}
+
+void RenderLayerBacking::notifyTransitionStarted(const GraphicsLayer*, AnimatedPropertyID property, double time)
+{
+    renderer()->notifyTransitionStarted(graphicsLayerToCSSProperty(property), time);
+}
+
+void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, double time)
+{
+    renderer()->notifyAnimationStarted(time);
+}
+
+void RenderLayerBacking::animationFinished(const String& name, int index, bool reset)
+{
+    m_graphicsLayer->removeFinishedAnimations(name, index, reset);
+}
+
+void RenderLayerBacking::transitionFinished(int property)
+{
+    AnimatedPropertyID animatedProperty = cssToGraphicsLayerProperty(property);
+    if (animatedProperty != AnimatedPropertyInvalid)
+        m_graphicsLayer->removeFinishedTransitions(animatedProperty);
+}
+
+void RenderLayerBacking::suspendAnimations()
+{
+    m_graphicsLayer->suspendAnimations();
+}
+
+void RenderLayerBacking::resumeAnimations()
+{
+    m_graphicsLayer->resumeAnimations();
+}
+
+int RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID property)
+{
+    int cssProperty = CSSPropertyInvalid;
+    switch (property) {
+        case AnimatedPropertyWebkitTransform:
+            cssProperty = CSSPropertyWebkitTransform;
+            break;
+        case AnimatedPropertyOpacity:
+            cssProperty = CSSPropertyOpacity;
+            break;
+        case AnimatedPropertyBackgroundColor:
+            cssProperty = CSSPropertyBackgroundColor;
+            break;
+        case AnimatedPropertyInvalid:
+            ASSERT_NOT_REACHED();
+    }
+    return cssProperty;
+}
+
+AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(int cssProperty)
+{
+    switch (cssProperty) {
+        case CSSPropertyWebkitTransform:
+            return AnimatedPropertyWebkitTransform;
+        case CSSPropertyOpacity:
+            return AnimatedPropertyOpacity;
+        case CSSPropertyBackgroundColor:
+            return AnimatedPropertyBackgroundColor;
+        // It's fine if we see other css properties here; they are just not accelerated.
+    }
+    return AnimatedPropertyInvalid;
+}
+
+} // namespace WebCore
+
+#endif // USE(ACCELERATED_COMPOSITING)

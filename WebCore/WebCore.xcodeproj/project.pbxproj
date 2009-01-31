@@ -147,6 +147,10 @@
 		0F580B0C0F12A2690051D689 /* GraphicsLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580B090F12A2690051D689 /* GraphicsLayer.cpp */; };
 		0F580B0D0F12A2690051D689 /* GraphicsLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F580B0A0F12A2690051D689 /* GraphicsLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F580B0E0F12A2690051D689 /* GraphicsLayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F580B0B0F12A2690051D689 /* GraphicsLayerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F580CFD0F12DE9B0051D689 /* RenderLayerCompositor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F580CF90F12DE9B0051D689 /* RenderLayerCompositor.h */; };
+		0F580CFE0F12DE9B0051D689 /* RenderLayerCompositor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580CFA0F12DE9B0051D689 /* RenderLayerCompositor.cpp */; };
+		0F580CFF0F12DE9B0051D689 /* RenderLayerBacking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F580CFB0F12DE9B0051D689 /* RenderLayerBacking.h */; };
+		0F580D000F12DE9B0051D689 /* RenderLayerBacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580CFC0F12DE9B0051D689 /* RenderLayerBacking.cpp */; };
 		0F6ECD450F252F3700BDE271 /* CSSPropertyLonghand.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */; };
 		0F6ECD460F252F3700BDE271 /* CSSPropertyLonghand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6ECD440F252F3700BDE271 /* CSSPropertyLonghand.cpp */; };
 		0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC705200EB1815600B90AD8 /* AtomicStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5005,6 +5009,10 @@
 		0F580B090F12A2690051D689 /* GraphicsLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayer.cpp; sourceTree = "<group>"; };
 		0F580B0A0F12A2690051D689 /* GraphicsLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayer.h; sourceTree = "<group>"; };
 		0F580B0B0F12A2690051D689 /* GraphicsLayerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerClient.h; sourceTree = "<group>"; };
+		0F580CF90F12DE9B0051D689 /* RenderLayerCompositor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerCompositor.h; sourceTree = "<group>"; };
+		0F580CFA0F12DE9B0051D689 /* RenderLayerCompositor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerCompositor.cpp; sourceTree = "<group>"; };
+		0F580CFB0F12DE9B0051D689 /* RenderLayerBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerBacking.h; sourceTree = "<group>"; };
+		0F580CFC0F12DE9B0051D689 /* RenderLayerBacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerBacking.cpp; sourceTree = "<group>"; };
 		0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertyLonghand.h; sourceTree = "<group>"; };
 		0F6ECD440F252F3700BDE271 /* CSSPropertyLonghand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyLonghand.cpp; sourceTree = "<group>"; };
 		0FC705200EB1815600B90AD8 /* AtomicStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringHash.h; sourceTree = "<group>"; };
@@ -14112,6 +14120,10 @@
 				BCEA4839097D93020094C9E4 /* RenderInline.h */,
 				BCEA483A097D93020094C9E4 /* RenderLayer.cpp */,
 				BCEA483B097D93020094C9E4 /* RenderLayer.h */,
+				0F580CFC0F12DE9B0051D689 /* RenderLayerBacking.cpp */,
+				0F580CFB0F12DE9B0051D689 /* RenderLayerBacking.h */,
+				0F580CFA0F12DE9B0051D689 /* RenderLayerCompositor.cpp */,
+				0F580CF90F12DE9B0051D689 /* RenderLayerCompositor.h */,
 				A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */,
 				A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */,
 				BC33FB1A0F30EE85002CDD7C /* RenderLineBoxList.cpp */,
@@ -15610,6 +15622,7 @@
 				1A2D753D0DE47FAB00F0A648 /* IconFetcher.h in Headers */,
 				513F14540AB634C400094DDF /* IconLoader.h in Headers */,
 				51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */,
+				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
 				49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */,
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
@@ -16148,6 +16161,8 @@
 				BCB4F8900DB28DD60039139B /* RenderImageGeneratedContent.h in Headers */,
 				BCEA4878097D93020094C9E4 /* RenderInline.h in Headers */,
 				BCEA487A097D93020094C9E4 /* RenderLayer.h in Headers */,
+				0F580CFF0F12DE9B0051D689 /* RenderLayerBacking.h in Headers */,
+				0F580CFD0F12DE9B0051D689 /* RenderLayerCompositor.h in Headers */,
 				A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */,
 				0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */,
 				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,
@@ -16157,6 +16172,7 @@
 				E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */,
 				ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */,
 				BCEA4880097D93020094C9E4 /* RenderObject.h in Headers */,
+				BC2CC8DF0F32881000A9DF26 /* RenderObjectChildList.h in Headers */,
 				A871DED70A1530C700B12A68 /* RenderPart.h in Headers */,
 				A871DED50A1530C700B12A68 /* RenderPartObject.h in Headers */,
 				853CA9F10AEEC657002372DC /* RenderPath.h in Headers */,
@@ -16527,6 +16543,7 @@
 				BCE659A90EA927B9007E4533 /* ThemeTypes.h in Headers */,
 				51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */,
 				E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */,
+				185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */,
 				0B90561B0F2578BF0095FF6A /* ThreadableLoader.h in Headers */,
 				0B90561C0F2578BF0095FF6A /* ThreadableLoaderClient.h in Headers */,
 				E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */,
@@ -16702,9 +16719,6 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				BC2CC8DF0F32881000A9DF26 /* RenderObjectChildList.h in Headers */,
-				185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */,
-				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17595,6 +17609,7 @@
 				513F14530AB634C400094DDF /* IconLoader.cpp in Sources */,
 				B275358E0B053A66002CE64F /* IconMac.mm in Sources */,
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
+				1A71D57B0F33819000F9CE4E /* IdentifierRep.cpp in Sources */,
 				B275356F0B053814002CE64F /* Image.cpp in Sources */,
 				B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */,
 				B275355E0B053814002CE64F /* ImageCG.cpp in Sources */,
@@ -18171,6 +18186,8 @@
 				BCB4F8930DB28E530039139B /* RenderImageGeneratedContent.cpp in Sources */,
 				BCEA4877097D93020094C9E4 /* RenderInline.cpp in Sources */,
 				BCEA4879097D93020094C9E4 /* RenderLayer.cpp in Sources */,
+				0F580D000F12DE9B0051D689 /* RenderLayerBacking.cpp in Sources */,
+				0F580CFE0F12DE9B0051D689 /* RenderLayerCompositor.cpp in Sources */,
 				A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */,
 				BC33FB1B0F30EE85002CDD7C /* RenderLineBoxList.cpp in Sources */,
 				ABB5419E0ACDDFE4002820EB /* RenderListBox.cpp in Sources */,
@@ -18526,6 +18543,7 @@
 				BCE659E90EA92FFA007E4533 /* ThemeMac.mm in Sources */,
 				51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */,
 				E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */,
+				185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */,
 				0B90561E0F257E930095FF6A /* ThreadableLoader.cpp in Sources */,
 				E44613AF0CD6331000FADA75 /* TimeRanges.cpp in Sources */,
 				93309EA4099EB78C0056E581 /* Timer.cpp in Sources */,
@@ -18683,8 +18701,6 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
-				185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */,
-				1A71D57B0F33819000F9CE4E /* IdentifierRep.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
