@@ -962,7 +962,7 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     // ### set override encoding if we have one
 
     FrameLoadType loadType = m_frame->loader()->loadType();
-    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedHistory;
+    FrameLoadType childLoadType = FrameLoadTypeRedirect;
 
     childFrame->loader()->loadURL(frameData.url, frameData.referrer, String(), childLoadType, 0, 0);
 

@@ -1,5 +1,11 @@
 2009-01-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix.
+
+        * WebView/WebFramePrivate.h:
+
+2009-01-30  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Split "lockHistory" into "lockHistory" and "lockBackForwardList" in
