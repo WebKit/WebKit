@@ -102,7 +102,7 @@ namespace StringWrapperCFAllocator {
         }
     }
 
-    CFIndex preferredSize(CFIndex size, CFOptionFlags, void*)
+    static CFIndex preferredSize(CFIndex size, CFOptionFlags, void*)
     {
         // FIXME: If FastMalloc provided a "good size" callback, we'd want to use it here.
         // Note that this optimization would help performance for strings created with the

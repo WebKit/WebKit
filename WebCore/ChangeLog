@@ -1,3 +1,10 @@
+2009-01-30  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Declare preferredSize as static.
+
+        * platform/text/cf/StringImplCF.cpp:
+        (WebCore::StringWrapperCFAllocator::preferredSize):
+
 2009-01-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.
