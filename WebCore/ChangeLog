@@ -1,3 +1,35 @@
+2009-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23356
+        
+        Add new files related to accelerated compositing:
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Add the files to the project. Also add ColorCG.cpp, for the
+        Color(CGColorRef) constructor.
+        
+        * platform/graphics/GraphicsLayer.cpp: Added.
+        * platform/graphics/GraphicsLayer.h: Added.
+        GraphicsLayer is a platform abstraction for a hardware-backed
+        layer.
+        
+        * platform/graphics/GraphicsLayerClient.h: Added.
+        Client of GraphicsLayer, allowing GraphicsLayer to call out
+        to WebCore code.
+        
+        * platform/graphics/mac/GraphicsLayerCA.h: Added.
+        * platform/graphics/mac/GraphicsLayerCA.mm: Added.
+        Mac Core Animation implementation of GraphicsLayer.
+        
+        * platform/graphics/mac/WebLayer.h: Added.
+        * platform/graphics/mac/WebLayer.mm: Added.
+        * platform/graphics/mac/WebTiledLayer.h: Added.
+        * platform/graphics/mac/WebTiledLayer.mm: Added.
+        Subclasses of CALayer and CATiledLayer -- helpers for the
+        GraphicsLayerCA implementation.
+
 2009-01-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
