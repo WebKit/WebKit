@@ -1,3 +1,13 @@
+2009-01-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Stephanie Lewis
+
+        Inline SimpleFontData::widthForGlyph for a minor page load improvement.
+
+        * platform/graphics/SimpleFontData.cpp:
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::widthForGlyph):
+
 2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Build fix for WX and maybe even Windows.

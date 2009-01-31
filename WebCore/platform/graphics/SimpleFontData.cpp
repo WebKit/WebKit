@@ -136,20 +136,6 @@ SimpleFontData::~SimpleFontData()
         platformDestroy();
 }
 
-#if !PLATFORM(QT)
-float SimpleFontData::widthForGlyph(Glyph glyph) const
-{
-    float width = m_glyphToWidthMap.widthForGlyph(glyph);
-    if (width != cGlyphWidthUnknown)
-        return width;
-    
-    width = platformWidthForGlyph(glyph);
-    m_glyphToWidthMap.setWidthForGlyph(glyph, width);
-    
-    return width;
-}
-#endif
-
 const SimpleFontData* SimpleFontData::fontDataForCharacter(UChar32) const
 {
     return this;
