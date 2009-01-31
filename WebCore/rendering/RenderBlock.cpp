@@ -163,7 +163,7 @@ void RenderBlock::destroy()
     
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from.  Effects that do :before/:after only on hover could crash otherwise.
-    RenderContainer::destroyLeftoverChildren();
+    children()->destroyLeftoverChildren();
 
     if (!documentBeingDestroyed()) {
         if (firstLineBox()) {
@@ -322,10 +322,9 @@ void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
     }
 
     RenderContainer::addChild(newChild, beforeChild);
-    // ### care about aligned stuff
 
-    if (madeBoxesNonInline && parent() && isAnonymousBlock())
-        parent()->removeLeftoverAnonymousBlock(this);
+    if (madeBoxesNonInline && parent() && isAnonymousBlock() && parent()->isRenderBlock())
+        toRenderBlock(parent())->removeLeftoverAnonymousBlock(this);
     // this object may be dead here
 }
 
@@ -441,6 +440,48 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
 #endif
 
     repaint();
+}
+
+void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
+{
+    ASSERT(child->isAnonymousBlock());
+    ASSERT(!child->childrenInline());
+    
+    if (child->inlineContinuation()) 
+        return;
+    
+    RenderObject* firstAnChild = child->m_children.firstChild();
+    RenderObject* lastAnChild = child->m_children.lastChild();
+    if (firstAnChild) {
+        RenderObject* o = firstAnChild;
+        while (o) {
+            o->setParent(this);
+            o = o->nextSibling();
+        }
+        firstAnChild->setPreviousSibling(child->previousSibling());
+        lastAnChild->setNextSibling(child->nextSibling());
+        if (child->previousSibling())
+            child->previousSibling()->setNextSibling(firstAnChild);
+        if (child->nextSibling())
+            child->nextSibling()->setPreviousSibling(lastAnChild);
+    } else {
+        if (child->previousSibling())
+            child->previousSibling()->setNextSibling(child->nextSibling());
+        if (child->nextSibling())
+            child->nextSibling()->setPreviousSibling(child->previousSibling());
+    }
+    if (child == m_children.firstChild())
+        m_children.setFirstChild(firstAnChild);
+    if (child == m_children.lastChild())
+        m_children.setLastChild(lastAnChild);
+    child->setParent(0);
+    child->setPreviousSibling(0);
+    child->setNextSibling(0);
+    
+    child->children()->setFirstChild(0);
+    child->m_next = 0;
+
+    child->destroy();
 }
 
 void RenderBlock::removeChild(RenderObject* oldChild)
@@ -1446,7 +1487,7 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
                 r->setChildNeedsLayout(true, false);
                 
             // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
-            if (relayoutChildren && (r->style()->paddingLeft().isPercent() || r->style()->paddingRight().isPercent()))
+            //if (relayoutChildren && (r->style()->paddingLeft().isPercent() || r->style()->paddingRight().isPercent()))
                 r->setPrefWidthsDirty(true, false);
             
             // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
@@ -4777,8 +4818,8 @@ RenderStyle* RenderBlock::outlineStyleForRepaint() const
 void RenderBlock::childBecameNonInline(RenderObject*)
 {
     makeChildrenNonInline();
-    if (isAnonymousBlock() && parent())
-        parent()->removeLeftoverAnonymousBlock(this);
+    if (isAnonymousBlock() && parent() && parent()->isRenderBlock())
+        toRenderBlock(parent())->removeLeftoverAnonymousBlock(this);
     // |this| may be dead here
 }
 

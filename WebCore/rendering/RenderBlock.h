@@ -63,6 +63,7 @@ public:
     virtual bool isInlineBlockOrInlineTable() const { return isInline() && isReplaced(); }
 
     void makeChildrenNonInline(RenderObject* insertionPoint = 0);
+    virtual void removeLeftoverAnonymousBlock(RenderBlock* child);
 
     RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
     const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }

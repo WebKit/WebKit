@@ -34,6 +34,8 @@ public:
 
     virtual const char* renderName() const { return "RenderReplaced"; }
 
+    virtual bool canHaveChildren() const { return false; }
+
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
     virtual int baselinePosition(bool firstLine, bool isRootLineBox = false) const;
 

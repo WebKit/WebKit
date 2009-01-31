@@ -37,18 +37,18 @@ public:
     RenderSVGContainer(SVGStyledElement*);
     ~RenderSVGContainer();
 
-    virtual RenderObject* firstChild() const { return m_firstChild; }
-    virtual RenderObject* lastChild() const { return m_lastChild; }
+    virtual RenderObjectChildList* virtualChildren() { return children(); }
+    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+    const RenderObjectChildList* children() const { return &m_children; }
+    RenderObjectChildList* children() { return &m_children; }
 
     int width() const { return m_width; }
     int height() const { return m_height; }
 
-    virtual bool canHaveChildren() const;
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
 
     virtual void destroy();
-    void destroyLeftoverChildren();
 
     virtual RenderObject* removeChildNode(RenderObject*, bool fullRemove = true);
     virtual void appendChildNode(RenderObject*, bool fullAppend = true);
@@ -101,8 +101,7 @@ private:
     int calcReplacedWidth() const;
     int calcReplacedHeight() const;
 
-    RenderObject* m_firstChild;
-    RenderObject* m_lastChild;
+    RenderObjectChildList m_children;
 
     int m_width;
     int m_height;

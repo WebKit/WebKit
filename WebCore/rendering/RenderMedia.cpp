@@ -89,6 +89,7 @@ void RenderMedia::destroy()
 
         removeChild(m_controlsShadowRoot->renderer());
         m_controlsShadowRoot->detach();
+        m_controlsShadowRoot = 0;
     }
     RenderReplaced::destroy();
 }
@@ -123,16 +124,16 @@ void RenderMedia::layout()
     }
 }
 
-RenderObject* RenderMedia::firstChild() const 
-{ 
-    return m_controlsShadowRoot ? m_controlsShadowRoot->renderer() : 0; 
+const RenderObjectChildList* RenderMedia::children() const
+{
+    return m_controlsShadowRoot ? m_controlsShadowRoot->renderer()->virtualChildren() : 0; 
 }
 
-RenderObject* RenderMedia::lastChild() const 
-{ 
-    return m_controlsShadowRoot ? m_controlsShadowRoot->renderer() : 0;
+RenderObjectChildList* RenderMedia::children()
+{
+    return m_controlsShadowRoot ? m_controlsShadowRoot->renderer()->virtualChildren() : 0; 
 }
-    
+   
 void RenderMedia::removeChild(RenderObject* child)
 {
     ASSERT(m_controlsShadowRoot);

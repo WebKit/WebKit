@@ -28,6 +28,7 @@
 #include "CachedResourceClient.h"
 #include "FloatQuad.h"
 #include "Document.h"
+#include "RenderObjectChildList.h"
 #include "RenderStyle.h"
 
 namespace WebCore {
@@ -111,6 +112,7 @@ struct DashboardRegionValue {
 
 // Base class for all rendering tree objects.
 class RenderObject : public CachedResourceClient {
+    friend class RenderBlock;
     friend class RenderContainer;
     friend class RenderLayer;
     friend class RenderSVGContainer;
@@ -128,8 +130,20 @@ public:
     RenderObject* previousSibling() const { return m_previous; }
     RenderObject* nextSibling() const { return m_next; }
 
-    virtual RenderObject* firstChild() const { return 0; }
-    virtual RenderObject* lastChild() const { return 0; }
+    RenderObject* firstChild() const
+    {
+        if (const RenderObjectChildList* children = virtualChildren())
+            return children->firstChild();
+        return 0;
+    }
+    RenderObject* lastChild() const
+    {
+        if (const RenderObjectChildList* children = virtualChildren())
+            return children->lastChild();
+        return 0;
+    }
+    virtual RenderObjectChildList* virtualChildren() { return 0; }
+    virtual const RenderObjectChildList* virtualChildren() const { return 0; }
 
     RenderObject* nextInPreOrder() const;
     RenderObject* nextInPreOrder(RenderObject* stayWithin) const;
@@ -194,7 +208,7 @@ public:
 
     // RenderObject tree manipulation
     //////////////////////////////////////////
-    virtual bool canHaveChildren() const;
+    virtual bool canHaveChildren() const { return virtualChildren(); }
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const { return true; }
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
@@ -455,17 +469,8 @@ public:
      */
     virtual void calcWidth() { }
 
-    /*
-     * This function should cause the Element to calculate its
-     * width and height and the layout of its content
-     *
-     * when the Element calls setNeedsLayout(false), layout() is no
-     * longer called during relayouts, as long as there is no
-     * style sheet change. When that occurs, m_needsLayout will be
-     * set to true and the Element receives layout() calls
-     * again.
-     */
-    virtual void layout() = 0;
+    // Recursive function that computes the size and position of this object and all its descendants.
+    virtual void layout();
 
     /* This function performs a layout only if one is needed. */
     void layoutIfNeeded() { if (needsLayout()) layout(); }
@@ -763,9 +768,7 @@ public:
     void remove() { if (parent()) parent()->removeChild(this); }
 
     void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
-    
-    virtual void removeLeftoverAnonymousBlock(RenderBlock* child);
-    
+
     virtual void capsLockStateMayHaveChanged() { }
 
     AnimationController* animation() const;

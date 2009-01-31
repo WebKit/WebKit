@@ -52,7 +52,7 @@ public:
     void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
                    RenderObject* newChild, RenderContainer* oldCont);
 
-    virtual void layout() { } // Do nothing for layout()
+    virtual void layout() { ASSERT_NOT_REACHED(); } // Do nothing for layout()
 
     virtual void paint(PaintInfo&, int tx, int ty);
 

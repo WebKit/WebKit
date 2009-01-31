@@ -3976,6 +3976,7 @@
 		BC60DA5B0D2A31F700B9918F /* XPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DA590D2A31F700B9918F /* XPathException.h */; };
 		BC60DB490D2A3D1E00B9918F /* JSXPathException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60DB470D2A3D1E00B9918F /* JSXPathException.cpp */; };
 		BC60DB4A0D2A3D1E00B9918F /* JSXPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DB480D2A3D1E00B9918F /* JSXPathException.h */; };
+		BC60EFB70F33A0E700812A93 /* RenderObjectChildList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60EFB60F33A0E700812A93 /* RenderObjectChildList.cpp */; };
 		BC64B4CB0CB4295D005F2B62 /* CachedFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */; };
 		BC64B4CC0CB4295D005F2B62 /* CachedFont.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4CA0CB4295D005F2B62 /* CachedFont.h */; };
 		BC64B4D50CB4298A005F2B62 /* CSSFontFace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */; };
@@ -8754,6 +8755,7 @@
 		BC60DA5A0D2A31F700B9918F /* XPathException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XPathException.idl; sourceTree = "<group>"; };
 		BC60DB470D2A3D1E00B9918F /* JSXPathException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathException.cpp; sourceTree = "<group>"; };
 		BC60DB480D2A3D1E00B9918F /* JSXPathException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXPathException.h; sourceTree = "<group>"; };
+		BC60EFB60F33A0E700812A93 /* RenderObjectChildList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderObjectChildList.cpp; sourceTree = "<group>"; };
 		BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedFont.cpp; sourceTree = "<group>"; };
 		BC64B4CA0CB4295D005F2B62 /* CachedFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFont.h; sourceTree = "<group>"; };
 		BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFace.cpp; sourceTree = "<group>"; };
@@ -14139,6 +14141,7 @@
 				ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */,
 				BCEA4840097D93020094C9E4 /* RenderObject.cpp */,
 				BCEA4841097D93020094C9E4 /* RenderObject.h */,
+				BC60EFB60F33A0E700812A93 /* RenderObjectChildList.cpp */,
 				BC2CC8DE0F32881000A9DF26 /* RenderObjectChildList.h */,
 				A871DEC80A1530C700B12A68 /* RenderPart.cpp */,
 				A871DECF0A1530C700B12A68 /* RenderPart.h */,
@@ -18697,6 +18700,7 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
+				BC60EFB70F33A0E700812A93 /* RenderObjectChildList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

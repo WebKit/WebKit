@@ -49,8 +49,11 @@ public:
     RenderMedia(HTMLMediaElement*, const IntSize& intrinsicSize);
     virtual ~RenderMedia();
     
-    virtual RenderObject* firstChild() const;
-    virtual RenderObject* lastChild() const;
+    virtual RenderObjectChildList* virtualChildren() { return children(); }
+    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+    const RenderObjectChildList* children() const;
+    RenderObjectChildList* children();
+
     virtual void removeChild(RenderObject*);
     virtual void destroy();
     

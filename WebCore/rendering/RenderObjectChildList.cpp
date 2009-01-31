@@ -23,36 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RenderObjectChildList_h
-#define RenderObjectChildList_h
+#include "config.h"
+#include "RenderObjectChildList.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 
-class RenderObject;
-
-class RenderObjectChildList {
-public:
-    RenderObjectChildList()
-        : m_firstChild(0)
-        , m_lastChild(0)
-    {
+void RenderObjectChildList::destroyLeftoverChildren()
+{
+    while (firstChild()) {
+        if (firstChild()->isListMarker() || (firstChild()->style()->styleType() == RenderStyle::FIRST_LETTER && !firstChild()->isText()))
+            firstChild()->remove();  // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
+        else {
+            // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
+            if (firstChild()->element())
+                firstChild()->element()->setRenderer(0);
+            firstChild()->destroy();
+        }
     }
+}
 
-    RenderObject* firstChild() const { return m_firstChild; }
-    RenderObject* lastChild() const { return m_lastChild; }
-    
-    // FIXME: Temporary while RenderContainer still exists. Eventually this will just happen during insert/append/remove methods on the child list, and nobody
-    // will need to manipulate firstChild or lastChild directly.
-    void setFirstChild(RenderObject* child) { m_firstChild = child; }
-    void setLastChild(RenderObject* child) { m_lastChild = child; }
-    
-    void destroyLeftoverChildren();
-
-private:
-    RenderObject* m_firstChild;
-    RenderObject* m_lastChild;
-};
-
-} // namespace WebCore
-
-#endif // RenderObjectChildList_h
+}

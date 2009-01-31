@@ -39,8 +39,6 @@ namespace WebCore {
 
 RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
     : RenderObject(node)
-    , m_firstChild(0)
-    , m_lastChild(0)
     , m_width(0)
     , m_height(0)
     , m_drawsContents(true)
@@ -49,11 +47,6 @@ RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
 
 RenderSVGContainer::~RenderSVGContainer()
 {
-}
-
-bool RenderSVGContainer::canHaveChildren() const
-{
-    return true;
 }
 
 void RenderSVGContainer::addChild(RenderObject* newChild, RenderObject* beforeChild)
@@ -73,19 +66,8 @@ void RenderSVGContainer::removeChild(RenderObject* oldChild)
 
 void RenderSVGContainer::destroy()
 {
-    destroyLeftoverChildren();
+    children()->destroyLeftoverChildren();
     RenderObject::destroy();
-}
-
-void RenderSVGContainer::destroyLeftoverChildren()
-{
-    while (m_firstChild) {
-        // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
-        if (m_firstChild->element())
-            m_firstChild->element()->setRenderer(0);
-
-        m_firstChild->destroy();
-    }
 }
 
 RenderObject* RenderSVGContainer::removeChildNode(RenderObject* oldChild, bool fullRemove)
@@ -118,10 +100,10 @@ RenderObject* RenderSVGContainer::removeChildNode(RenderObject* oldChild, bool f
     if (oldChild->nextSibling())
         oldChild->nextSibling()->setPreviousSibling(oldChild->previousSibling());
 
-    if (m_firstChild == oldChild)
-        m_firstChild = oldChild->nextSibling();
-    if (m_lastChild == oldChild)
-        m_lastChild = oldChild->previousSibling();
+    if (children()->firstChild() == oldChild)
+        children()->setFirstChild(oldChild->nextSibling());
+    if (children()->lastChild() == oldChild)
+        children()->setLastChild(oldChild->previousSibling());
 
     oldChild->setPreviousSibling(0);
     oldChild->setNextSibling(0);
@@ -139,15 +121,15 @@ void RenderSVGContainer::appendChildNode(RenderObject* newChild, bool)
     ASSERT(newChild->element()->isSVGElement());
 
     newChild->setParent(this);
-    RenderObject* lChild = m_lastChild;
+    RenderObject* lChild = children()->lastChild();
 
     if (lChild) {
         newChild->setPreviousSibling(lChild);
         lChild->setNextSibling(newChild);
     } else
-        m_firstChild = newChild;
+        children()->setFirstChild(newChild);
 
-    m_lastChild = newChild;
+    children()->setLastChild(newChild);
 
     newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
     if (!normalChildNeedsLayout())
@@ -168,8 +150,8 @@ void RenderSVGContainer::insertChildNode(RenderObject* child, RenderObject* befo
     ASSERT(beforeChild->parent() == this);
     ASSERT(child->element()->isSVGElement());
 
-    if (beforeChild == m_firstChild)
-        m_firstChild = child;
+    if (beforeChild == children()->firstChild())
+        children()->setFirstChild(child);
 
     RenderObject* prev = beforeChild->previousSibling();
     child->setNextSibling(beforeChild);

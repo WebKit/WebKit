@@ -1,5 +1,70 @@
 2009-01-31  David Hyatt  <hyatt@apple.com>
 
+        More removal of code from RenderContainer.  Move removeLeftoverAnonymousBlock down into RenderBlock.
+        Move destroyLeftoverChildren into the RenderObjectChildList.  Convert all containers to use the
+        RenderObjectChildList.
+
+        Reviewed by Sam Weinig
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::destroy):
+        (WebCore::RenderBlock::addChild):
+        (WebCore::RenderBlock::removeLeftoverAnonymousBlock):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::childBecameNonInline):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layout):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::firstChildBox):
+        (WebCore::RenderBox::lastChildBox):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::addChild):
+        (WebCore::RenderContainer::removeChildNode):
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer):
+        (WebCore::RenderContainer::appendChildNode):
+        (WebCore::RenderContainer::insertChildNode):
+        (WebCore::RenderContainer::positionForCoordinates):
+        (WebCore::RenderContainer::addLineBoxRects):
+        (WebCore::RenderContainer::collectAbsoluteLineBoxQuads):
+        * rendering/RenderContainer.h:
+        (WebCore::RenderContainer::virtualChildren):
+        (WebCore::RenderContainer::children):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::destroy):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::layout):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::destroy):
+        (WebCore::RenderMedia::children):
+        * rendering/RenderMedia.h:
+        (WebCore::RenderMedia::virtualChildren):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        (WebCore::RenderObject::layout):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::firstChild):
+        (WebCore::RenderObject::lastChild):
+        (WebCore::RenderObject::virtualChildren):
+        (WebCore::RenderObject::canHaveChildren):
+        * rendering/RenderObjectChildList.cpp: Added.
+        (WebCore::RenderObjectChildList::destroyLeftoverChildren):
+        * rendering/RenderObjectChildList.h:
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::canHaveChildren):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::RenderSVGContainer):
+        (WebCore::RenderSVGContainer::destroy):
+        (WebCore::RenderSVGContainer::removeChildNode):
+        (WebCore::RenderSVGContainer::appendChildNode):
+        (WebCore::RenderSVGContainer::insertChildNode):
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::virtualChildren):
+        (WebCore::RenderSVGContainer::children):
+
+2009-01-31  David Hyatt  <hyatt@apple.com>
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=11363
         
         Remove the hacks in table code around the DeleteButtonController and fix tables so that positioned children don't get wrapped in anonymous objects.
