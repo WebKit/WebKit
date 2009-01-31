@@ -1,3 +1,12 @@
+2009-01-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        - <rdar://problem/6545912> expose the build number in autoversion.h
+
+        * win/tools/scripts/auto-version.sh: Added a #define __BUILD_NUMBER__
+        with the full build number.
+
 2009-01-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.
