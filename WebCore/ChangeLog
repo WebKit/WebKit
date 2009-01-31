@@ -1,5 +1,12 @@
 2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Build fix for WX and maybe even Windows.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Darin Adler.
 
         Move Frame::sendResizeEvent and Frame::sendScrollEvent to EventHandler

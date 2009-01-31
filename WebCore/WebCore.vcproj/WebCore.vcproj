@@ -2780,10 +2780,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\FrameLoaderClient.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\FrameLoaderClient.h"
 				>
 			</File>
