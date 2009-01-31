@@ -4131,6 +4131,13 @@ void Document::initSecurityContext()
             securityOrigin()->grantLoadLocalResources();
     }
 
+    if (settings() && !settings()->isWebSecurityEnabled()) {
+        // Web security is turned off.  We should let this document access every
+        // other document.  This is used primary by testing harnesses for web
+        // sites.
+        securityOrigin()->grantUniversalAccess();
+    }
+
     if (!securityOrigin()->isEmpty())
         return;
 

@@ -69,4 +69,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setFontSmoothingContrast([in] float contrast);
     HRESULT fontSmoothingContrast([out, retval] float* contrast);
+
+    HRESULT isWebSecurityEnabled([out, retval] BOOL* enabled);
+    HRESULT setWebSecurityEnabled([in] BOOL enabled);
 }

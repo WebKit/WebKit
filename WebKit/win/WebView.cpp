@@ -4050,6 +4050,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setJavaScriptEnabled(!!enabled);
 
+    hr = preferences->isWebSecurityEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setWebSecurityEnabled(!!enabled);
+
     hr = preferences->javaScriptCanOpenWindowsAutomatically(&enabled);
     if (FAILED(hr))
         return hr;

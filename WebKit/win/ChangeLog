@@ -1,3 +1,19 @@
+2009-01-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add a pref to disable web security.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::isWebSecurityEnabled):
+        (WebPreferences::setWebSecurityEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2009-01-30  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

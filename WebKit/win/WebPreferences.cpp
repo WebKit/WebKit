@@ -203,6 +203,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitTextAreasAreResizablePreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitWebSecurityEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitPluginsEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitDatabasesEnabledPreferenceKey), kCFBooleanTrue);
@@ -748,6 +749,20 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setJavaScriptEnabled(
     /* [in] */ BOOL enabled)
 {
     setBoolValue(CFSTR(WebKitJavaScriptEnabledPreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::isWebSecurityEnabled( 
+    /* [retval][out] */ BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitWebSecurityEnabledPreferenceKey));
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setWebSecurityEnabled( 
+    /* [in] */ BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitWebSecurityEnabledPreferenceKey), enabled);
     return S_OK;
 }
 

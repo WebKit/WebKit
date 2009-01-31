@@ -58,6 +58,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
     , m_host(url.host().isNull() ? "" : url.host().lower())
     , m_port(url.port())
     , m_noAccess(false)
+    , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
 {
     // These protocols do not create security origins; the owner frame provides the origin
@@ -74,6 +75,9 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
     // By default, only local SecurityOrigins can load local resources.
     m_canLoadLocalResources = isLocal();
 
+    // By default, grant universalAccess to local SecurityOrigins
+    m_universalAccess = isLocal();
+
     if (isDefaultPortForProtocol(m_port, m_protocol))
         m_port = 0;
 }
@@ -84,6 +88,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_domain(other->m_domain.copy())
     , m_port(other->m_port)
     , m_noAccess(other->m_noAccess)
+    , m_universalAccess(other->m_universalAccess)
     , m_domainWasSetInDOM(other->m_domainWasSetInDOM)
     , m_canLoadLocalResources(other->m_canLoadLocalResources)
 {
@@ -119,7 +124,7 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
 
 bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
 {  
-    if (isLocal())
+    if (m_universalAccess)
         return true;
 
     if (m_noAccess || other->m_noAccess)
@@ -160,7 +165,7 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
 
 bool SecurityOrigin::canRequest(const KURL& url) const
 {
-    if (isLocal())
+    if (m_universalAccess)
         return true;
 
     if (m_noAccess)
@@ -182,6 +187,11 @@ void SecurityOrigin::grantLoadLocalResources()
     // documents that have been granted the privilege.
     ASSERT(FrameLoader::allowSubstituteDataAccessToLocal());
     m_canLoadLocalResources = true;
+}
+
+void SecurityOrigin::grantUniversalAccess()
+{
+    m_universalAccess = true;
 }
 
 bool SecurityOrigin::isLocal() const

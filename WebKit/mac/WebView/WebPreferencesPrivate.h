@@ -89,6 +89,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)localStorageEnabled;
 - (void)setLocalStorageEnabled:(BOOL)localStorageEnabled;
 
+- (BOOL)isWebSecurityEnabled;
+- (void)setWebSecurityEnabled:(BOOL)flag;
+
 - (BOOL)zoomsTextOnly;
 - (void)setZoomsTextOnly:(BOOL)zoomsTextOnly;
 

@@ -344,6 +344,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setFontSmoothingContrast( 
     /* [in] */ float contrast);
 
+    virtual HRESULT STDMETHODCALLTYPE isWebSecurityEnabled(
+    /* [retval][out] */ BOOL* enabled);
+
+    virtual HRESULT STDMETHODCALLTYPE setWebSecurityEnabled(
+    /* [in] */ BOOL enabled);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

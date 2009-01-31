@@ -313,6 +313,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitShrinksStandaloneImagesToFitPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitWebSecurityEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitPluginsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDatabasesEnabledPreferenceKey,
@@ -860,6 +861,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setAutomaticallyDetectsCacheModel:(BOOL)automaticallyDetectsCacheModel
 {
     _private->automaticallyDetectsCacheModel = automaticallyDetectsCacheModel;
+}
+
+- (BOOL)isWebSecurityEnabled
+{
+    return [self _boolValueForKey: WebKitWebSecurityEnabledPreferenceKey];
+}
+
+- (void)setWebSecurityEnabled:(BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitWebSecurityEnabledPreferenceKey];
 }
 
 - (NSTimeInterval)_backForwardCacheExpirationInterval
