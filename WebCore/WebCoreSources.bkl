@@ -902,6 +902,7 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderMarquee.cpp
         rendering/RenderMenuList.cpp
         rendering/RenderObject.cpp
+        rendering/RenderObjectChildList.cpp
         rendering/RenderPart.cpp
         rendering/RenderPartObject.cpp
         rendering/RenderReplaced.cpp

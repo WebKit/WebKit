@@ -1951,6 +1951,14 @@
 				RelativePath="..\page\AccessibilityRenderObject.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\page\AccessibilityRenderObjectChildList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityRenderObjectChildList.h"
+				>
+			</File>
 			<File
 				RelativePath="..\page\AccessibilityTable.cpp"
 				>

@@ -1561,6 +1561,8 @@ webcore_sources += \
 	WebCore/rendering/RenderMenuList.h \
 	WebCore/rendering/RenderObject.cpp \
 	WebCore/rendering/RenderObject.h \
+	WebCore/rendering/RenderObjectChildList.cpp \
+	WebCore/rendering/RenderObjectChildList.h \
 	WebCore/rendering/RenderPart.cpp \
 	WebCore/rendering/RenderPart.h \
 	WebCore/rendering/RenderPartObject.cpp \

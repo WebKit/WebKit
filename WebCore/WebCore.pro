@@ -988,6 +988,7 @@ SOURCES += \
     rendering/RenderMarquee.cpp \
     rendering/RenderMenuList.cpp \
     rendering/RenderObject.cpp \
+    rendering/RenderObjectChildList.cpp \
     rendering/RenderPart.cpp \
     rendering/RenderPartObject.cpp \
     rendering/RenderReplaced.cpp \
