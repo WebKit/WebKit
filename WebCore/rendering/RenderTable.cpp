@@ -110,7 +110,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     if (!beforeChild && isAfterContent(lastChild()))
         beforeChild = lastChild();
 
-    bool wrapInAnonymousSection = true;
+    bool wrapInAnonymousSection = !child->isPositioned();
     bool isTableElement = element() && element()->hasTagName(tableTag);
 
     if (child->isRenderBlock() && child->style()->display() == TABLE_CAPTION) {
@@ -166,14 +166,9 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
         }
     } else if (child->isTableCell() || child->isTableRow()) {
         wrapInAnonymousSection = true;
-    } else {
+    } else
         // Allow a form to just sit at the top level.
         wrapInAnonymousSection = !isTableElement || !child->element() || !(child->element()->hasTagName(formTag) && document()->isHTMLDocument());
-
-        // FIXME: Allow the delete button container element to sit at the top level. This is needed until http://bugs.webkit.org/show_bug.cgi?id=11363 is fixed.
-        if (wrapInAnonymousSection && child->element() && child->element()->isHTMLElement() && static_cast<HTMLElement*>(child->element())->id() == DeleteButtonController::containerElementIdentifier)
-            wrapInAnonymousSection = false;
-    }
 
     if (!wrapInAnonymousSection) {
         // If the next renderer is actually wrapped in an anonymous table section, we need to go up and find that.
@@ -287,16 +282,18 @@ void RenderTable::layout()
     bool collapsing = collapseBorders();
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        // FIXME: What about a form that has a display value that makes it a table section?
-        if (child->needsLayout() && !(child->element() && child->element()->hasTagName(formTag) && !child->isTableSection()))
-            child->layout();
         if (child->isTableSection()) {
+            child->layoutIfNeeded();
             RenderTableSection* section = static_cast<RenderTableSection*>(child);
             calculatedHeight += section->calcRowHeight();
             if (collapsing)
                 section->recalcOuterBorder();
         }
     }
+
+    // Only lay out one caption, since it's the only one we're going to end up painting.
+    if (m_caption)
+        m_caption->layoutIfNeeded();
 
     m_overflowWidth = width() + (collapsing ? outerBorderRight() - borderRight() : 0);
     m_overflowLeft = collapsing ? borderLeft() - outerBorderLeft() : 0;

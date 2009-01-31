@@ -46,6 +46,8 @@ public:
 
     virtual void destroy();
 
+    virtual void layout();
+
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
 
     virtual int getBaselineOfFirstLineBox() const;

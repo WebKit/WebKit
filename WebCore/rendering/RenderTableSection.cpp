@@ -381,6 +381,21 @@ int RenderTableSection::calcRowHeight()
     return m_rowPos[m_gridRows];
 }
 
+void RenderTableSection::layout()
+{
+    ASSERT(needsLayout());
+
+    LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()));
+    for (RenderObject* child = children()->firstChild(); child; child = child->nextSibling()) {
+        if (child->isTableRow()) {
+            child->layoutIfNeeded();
+            ASSERT(!child->needsLayout());
+        }
+    }
+    statePusher.pop();
+    setNeedsLayout(false);
+}
+
 int RenderTableSection::layoutRows(int toAdd)
 {
     int rHeight;
