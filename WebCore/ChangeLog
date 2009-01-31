@@ -1,3 +1,19 @@
+2009-01-30  Aurelian Maga  <aurelianmaga@yahoo.com>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] Logic fixes and build fixes
+ 
+        https://bugs.webkit.org/show_bug.cgi?id=22022
+
+        Catch up with the internal GeoLocation API and fix the logic of
+        the previous version.
+
+        * platform/gtk/GeolocationServiceGtk.cpp:
+        (WebCore::GeolocationServiceGtk::startUpdating):
+        (WebCore::GeolocationServiceGtk::updateLocationInformation):
+        (WebCore::GeolocationServiceGtk::position_changed):
+
 2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Nikolas Zimmermann.
