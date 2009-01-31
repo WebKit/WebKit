@@ -1,3 +1,15 @@
+2009-01-31  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23664
+        Remove unused dead code from RenderTable class.  The dead code includes
+        two enums and the associated member variables as well as one getter function.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        * rendering/RenderTable.h:
+
 2009-01-31  David Hyatt  <hyatt@apple.com>
 
         More removal of code from RenderContainer.  Move removeLeftoverAnonymousBlock down into RenderBlock.

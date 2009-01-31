@@ -39,26 +39,6 @@ class TableLayout;
 
 class RenderTable : public RenderBlock {
 public:
-    enum Rules {
-        None    = 0x00,
-        RGroups = 0x01,
-        CGroups = 0x02,
-        Groups  = 0x03,
-        Rows    = 0x05,
-        Cols    = 0x0a,
-        All     = 0x0f
-    };
-    enum Frame {
-        Void   = 0x00,
-        Above  = 0x01,
-        Below  = 0x02,
-        Lhs    = 0x04,
-        Rhs    = 0x08,
-        Hsides = 0x03,
-        Vsides = 0x0c,
-        Box    = 0x0f
-    };
-
     RenderTable(Node*);
     ~RenderTable();
 
@@ -79,8 +59,6 @@ public:
     int borderTop() const;
     int borderBottom() const;
     
-    Rules getRules() const { return static_cast<Rules>(m_rules); }
-
     const Color& bgColor() const { return style()->backgroundColor(); }
 
     int outerBorderTop() const;
@@ -209,9 +187,6 @@ private:
 
     const CollapsedBorderValue* m_currentBorder;
     
-    unsigned m_frame : 4; // Frame
-    unsigned m_rules : 4; // Rules
-
     mutable bool m_hasColElements : 1;
     mutable bool m_needsSectionRecalc : 1;
     
