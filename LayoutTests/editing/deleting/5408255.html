@@ -13,8 +13,8 @@ sel.setPosition(li, 0);
 
 if (window.layoutTestController) {
     deleteButton = document.getElementById("WebKit-Editing-Delete-Button");
-    x = deleteButton.offsetParent.offsetLeft + deleteButton.offsetLeft + deleteButton.offsetWidth / 2;
-    y = deleteButton.offsetParent.offsetTop + deleteButton.offsetTop + deleteButton.offsetHeight / 2;
+    x = deleteButton.offsetParent.offsetLeft + deleteButton.offsetParent.offsetParent.offsetLeft + deleteButton.offsetLeft + deleteButton.offsetWidth / 2;
+    y = deleteButton.offsetParent.offsetTop + deleteButton.offsetParent.offsetParent.offsetTop + deleteButton.offsetTop + deleteButton.offsetHeight / 2;
     alert(x);
     alert(y);
     eventSender.mouseMoveTo(x, y);
