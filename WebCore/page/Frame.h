@@ -176,12 +176,6 @@ public:
 private:
     void lifeSupportTimerFired(Timer<Frame>*);
 
-// === to be moved into EventHandler
-
-public:
-    void sendResizeEvent();
-    void sendScrollEvent();
-
 // === to be moved into FrameView
 
 public: 

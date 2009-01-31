@@ -166,6 +166,9 @@ public:
     void addPendingFrameBeforeUnloadEventCount();
     void removePendingFrameBeforeUnloadEventCount();
     void clearPendingFrameBeforeUnloadEventCount();
+
+    void sendResizeEvent();
+    void sendScrollEvent();
     
 #if PLATFORM(MAC)
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;

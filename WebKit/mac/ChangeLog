@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        Move Frame::sendResizeEvent and Frame::sendScrollEvent to EventHandler
+
+        Carry out the move and catch up in two call sites.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]):
+
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin Adler.
+
         isFrameSet was moved from Frame to Document. Update the
         WebKit usage.
 

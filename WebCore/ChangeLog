@@ -2,6 +2,25 @@
 
         Reviewed by Darin Adler.
 
+        Move Frame::sendResizeEvent and Frame::sendScrollEvent to EventHandler
+
+        Carry out the move and catch up in two call sites.
+
+        * WebCore.base.exp:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendResizeEvent):
+        (WebCore::EventHandler::sendScrollEvent):
+        * page/EventHandler.h:
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::valueChanged):
+
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin Adler.
+
         Move Frame::isFrameSet to Document::isFrameSet
 
         Changed the FrameLoader callsite. I assume that as this

@@ -1367,24 +1367,6 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
         view()->adjustViewSize();
 }
 
-void Frame::sendResizeEvent()
-{
-    if (Document* doc = document())
-        doc->dispatchWindowEvent(eventNames().resizeEvent, false, false);
-}
-
-void Frame::sendScrollEvent()
-{
-    FrameView* v = m_view.get();
-    if (!v)
-        return;
-    v->setWasScrolledByUser(true);
-    Document* doc = document();
-    if (!doc)
-        return;
-    doc->dispatchEventForType(eventNames().scrollEvent, true, false);
-}
-
 void Frame::clearTimers(FrameView *view, Document *document)
 {
     if (view) {

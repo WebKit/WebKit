@@ -959,7 +959,7 @@ void FrameView::performPostLayoutTasks()
         m_lastLayoutSize = currentSize;
         m_lastZoomFactor = currentZoomFactor;
         if (resized)
-            m_frame->sendResizeEvent();
+            m_frame->eventHandler()->sendResizeEvent();
     }
 }
 
@@ -1064,7 +1064,7 @@ void FrameView::valueChanged(Scrollbar* bar)
     IntSize offset = scrollOffset();
     ScrollView::valueChanged(bar);
     if (offset != scrollOffset())
-        frame()->sendScrollEvent();
+        frame()->eventHandler()->sendScrollEvent();
 }
 
 void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)

@@ -1064,7 +1064,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     NSPoint origin = [[self superview] bounds].origin;
     if (!NSEqualPoints(_private->lastScrollPosition, origin)) {
         if (Frame* coreFrame = core([self _frame]))
-            coreFrame->sendScrollEvent();
+            coreFrame->eventHandler()->sendScrollEvent();
         [_private->compController endRevertingChange:NO moveLeft:NO];
         
         WebView *webView = [self _webView];

@@ -2244,6 +2244,24 @@ void EventHandler::clearPendingFrameUnloadEventCount()
     return; 
 }
 
+void EventHandler::sendResizeEvent()
+{
+    if (Document* doc = m_frame->document())
+        doc->dispatchWindowEvent(eventNames().resizeEvent, false, false);
+}
+
+void EventHandler::sendScrollEvent()
+{
+    FrameView* v = m_frame->view();
+    if (!v)
+        return;
+    v->setWasScrolledByUser(true);
+    Document* doc = m_frame->document();
+    if (!doc)
+        return;
+    doc->dispatchEventForType(eventNames().scrollEvent, true, false);
+}
+
 unsigned EventHandler::pendingFrameBeforeUnloadEventCount()
 {
     return m_pendingFrameBeforeUnloadEventCount;
