@@ -441,9 +441,9 @@
 #endif
 
 #if !defined(ENABLE_JIT)
-/* x86-64 support is under development. */
+/* The JIT is tested & working on x86_64 Mac */
 #if PLATFORM(X86_64) && PLATFORM(MAC)
-    #define ENABLE_JIT 0
+    #define ENABLE_JIT 1
     #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
 /* The JIT is tested & working on x86 Mac */
 #elif PLATFORM(X86) && PLATFORM(MAC)
