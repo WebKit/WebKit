@@ -1,5 +1,29 @@
 2009-01-30  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Bug 23622: create CFString and NSString objects from WebCore::String without copying the characters
+        https://bugs.webkit.org/show_bug.cgi?id=23622
+
+        * platform/text/cf/StringImplCF.cpp:
+        (WebCore::StringWrapperCFAllocator::allocator): Added. Returns the allocator.
+        (WebCore::StringWrapperCFAllocator::retain): Added. Callback for allocator.
+        (WebCore::StringWrapperCFAllocator::release): Ditto.
+        (WebCore::StringWrapperCFAllocator::copyDescription): Ditto.
+        (WebCore::StringWrapperCFAllocator::allocate): Ditto.
+        (WebCore::StringWrapperCFAllocator::reallocate): Ditto.
+        (WebCore::StringWrapperCFAllocator::deallocate): Ditto.
+        (WebCore::StringWrapperCFAllocator::preferredSize): Ditto.
+        (WebCore::StringWrapperCFAllocator::create): Added. Creates the allocator, but
+        returns 0 if garbage collection is enabled.
+        (WebCore::StringImpl::createCFString): Use StringWrapperCFAllocator if possible.
+
+        * platform/text/mac/StringImplMac.mm:
+        (WebCore::StringImpl::operator NSString *): Use CFString and toll-free bridging,
+        rather than using NSString directly. This lets NSString benefit from the above.
+
+2009-01-30  Darin Adler  <darin@apple.com>
+
         * page/Frame.cpp:
         (WebCore::Frame::createView): Fix debug build by removing get() from assert.
 
