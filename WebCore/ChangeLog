@@ -1,3 +1,16 @@
+2009-01-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6545095>
+        ASSERTION FAILED: RenderBlock.h:519: !o || o->isRenderBlock()
+
+        Test: fast/block/float/crash-replaced-display-block.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren): Move RenderBlock only code into
+        isRenderBlock if-statement.
+
 2009-01-30  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.
