@@ -676,6 +676,14 @@ if test "$enable_xslt" = "yes"; then
    AC_SUBST([LIBXSLT_LIBS])
 fi
 
+# check if geoclue is available
+if test "$enable_geolocation" = "yes"; then
+    PKG_CHECK_MODULES([GEOCLUE], [geoclue])
+    AC_SUBST([GEOCLUE_CFLAGS])
+    AC_SUBST([GEOCLUE_LIBS])
+fi
+
+
 # check if gstreamer is available
 if test "$enable_video" = "yes"; then
    PKG_CHECK_MODULES([GSTREAMER],

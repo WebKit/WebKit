@@ -1,3 +1,31 @@
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [GTK] Implement GeolocationService using the Geoclue library
+
+        https://bugs.webkit.org/show_bug.cgi?id=22022
+
+        Untested implementation of the GeolocationService using the geoclue
+        library. Velocity handling is completely missing and the accuracy
+        handling might be wrong.
+
+        * platform/gtk/GeolocationServiceGtk.cpp:
+        (WTF::GeoclueAccuracy):
+        (WebCore::GeolocationServiceGtk::GeolocationServiceGtk):
+        (WebCore::GeolocationServiceGtk::~GeolocationServiceGtk):
+        (WebCore::GeolocationServiceGtk::startUpdating):
+        (WebCore::GeolocationServiceGtk::stopUpdating):
+        (WebCore::GeolocationServiceGtk::suspend):
+        (WebCore::GeolocationServiceGtk::resume):
+        (WebCore::GeolocationServiceGtk::lastPosition):
+        (WebCore::GeolocationServiceGtk::lastError):
+        (WebCore::GeolocationServiceGtk::updateLocationInformation):
+        (WebCore::GeolocationServiceGtk::updatePosition):
+        (WebCore::GeolocationServiceGtk::position_changed):
+        (WebCore::GeolocationServiceGtk::setError):
+        * platform/gtk/GeolocationServiceGtk.h:
+
 2009-01-30  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Declare preferredSize as static.

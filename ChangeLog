@@ -1,3 +1,18 @@
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [GTK] Implement GeolocationService using the Geoclue library
+
+        https://bugs.webkit.org/show_bug.cgi?id=22022
+
+        Untested implementation of the GeolocationService using the geoclue
+        library. Velocity handling is completely missing and the accuracy
+        handling might be wrong.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2009-01-11  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.
