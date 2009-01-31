@@ -122,6 +122,10 @@ public:
     bool excludeFromTextSearch() const;
     void setExcludeFromTextSearch(bool);
 
+    void createView(const IntSize&, const Color&, bool, const IntSize &, bool,
+                    ScrollbarMode = ScrollbarAuto, ScrollbarMode = ScrollbarAuto);
+
+
     friend class FramePrivate;
 
 private:

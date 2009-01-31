@@ -72,7 +72,7 @@ namespace WebCore {
 
     class FrameLoaderClient {
     public:
-        virtual ~FrameLoaderClient();
+        virtual ~FrameLoaderClient() {}
         virtual void frameLoaderDestroyed() = 0;
         
         virtual bool hasWebView() const = 0; // mainly for assertions
@@ -211,10 +211,6 @@ namespace WebCore {
 #endif
 
         virtual bool shouldUsePluginDocument(const String& /*mimeType*/) const { return false; }
-
-    protected:
-        static void transitionToCommittedForNewPage(Frame*, const IntSize&, const Color&, bool, const IntSize &, bool,
-                                                    ScrollbarMode = ScrollbarAuto, ScrollbarMode = ScrollbarAuto);
     };
 
 } // namespace WebCore

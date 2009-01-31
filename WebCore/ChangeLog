@@ -1,3 +1,26 @@
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22056
+
+        Kill FrameLoaderClient.cpp, move the code over to Frame::createView
+
+        FrameLoaderClient is supposed to be an interface, move the
+        to be shared code to Frame which is a controller and is
+        allowed to create a FrameView.
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoaderClient.cpp: Removed.
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::~FrameLoaderClient):
+        * page/Frame.cpp:
+        (WebCore::Frame::createView):
+        * page/Frame.h:
+
 2009-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

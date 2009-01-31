@@ -1,3 +1,16 @@
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        Kill FrameLoaderClient.cpp, move the code over to Frame::createView
+
+        FrameLoaderClient is supposed to be an interface, move the
+        to be shared code to Frame which is a controller and is
+        allowed to create a FrameView.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+
 2009-01-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

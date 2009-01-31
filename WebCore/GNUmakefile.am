@@ -1057,7 +1057,6 @@ webcore_sources += \
 	WebCore/loader/FormState.h \
 	WebCore/loader/FrameLoader.cpp \
 	WebCore/loader/FrameLoader.h \
-	WebCore/loader/FrameLoaderClient.cpp \
 	WebCore/loader/FrameLoaderClient.h \
 	WebCore/loader/FrameLoaderTypes.h \
 	WebCore/loader/ImageDocument.cpp \

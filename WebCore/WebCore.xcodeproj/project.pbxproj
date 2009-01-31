@@ -4300,7 +4300,6 @@
 		E181B2570F14C1A600FB7847 /* JSDOMStringListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E181B2560F14C1A600FB7847 /* JSDOMStringListCustom.cpp */; };
 		E181B3510F15008A00FB7847 /* StaticStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = E181B3500F15008A00FB7847 /* StaticStringList.h */; };
 		E181B3560F1500D700FB7847 /* StaticStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E181B3550F1500D700FB7847 /* StaticStringList.cpp */; };
-		E182504F0ED2F20200499A8F /* FrameLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182504E0ED2F20200499A8F /* FrameLoaderClient.cpp */; };
 		E182568F0EF2B02D00933242 /* JSWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */; };
 		E18256900EF2B02D00933242 /* JSWorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E182568E0EF2B02D00933242 /* JSWorkerContext.h */; };
 		E18258AC0EF3CD7000933242 /* JSWorkerContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */; };
@@ -9094,7 +9093,6 @@
 		E181B2560F14C1A600FB7847 /* JSDOMStringListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringListCustom.cpp; sourceTree = "<group>"; };
 		E181B3500F15008A00FB7847 /* StaticStringList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticStringList.h; sourceTree = "<group>"; };
 		E181B3550F1500D700FB7847 /* StaticStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticStringList.cpp; sourceTree = "<group>"; };
-		E182504E0ED2F20200499A8F /* FrameLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoaderClient.cpp; sourceTree = "<group>"; };
 		E182564F0EF2ACE600933242 /* WorkerContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerContext.idl; sourceTree = "<group>"; };
 		E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContext.cpp; sourceTree = "<group>"; };
 		E182568E0EF2B02D00933242 /* JSWorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContext.h; sourceTree = "<group>"; };
@@ -13608,7 +13606,6 @@
 				656D37220ADBA5DE00A4554D /* FormState.h */,
 				932E16080AF578340025F408 /* FrameLoader.cpp */,
 				656D37240ADBA5DE00A4554D /* FrameLoader.h */,
-				E182504E0ED2F20200499A8F /* FrameLoaderClient.cpp */,
 				656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */,
 				93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */,
 				1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */,
@@ -17496,7 +17493,6 @@
 				D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */,
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
 				932E16090AF578340025F408 /* FrameLoader.cpp in Sources */,
-				E182504F0ED2F20200499A8F /* FrameLoaderClient.cpp in Sources */,
 				65BF02450974819000C43196 /* FrameMac.mm in Sources */,
 				65A21484097A3F5300B9050A /* FrameTree.cpp in Sources */,
 				65CBFEF90974F607001DAC25 /* FrameView.cpp in Sources */,

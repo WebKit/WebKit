@@ -1849,4 +1849,47 @@ Document* Frame::documentAtPoint(const IntPoint& point)
     return result.innerNode() ? result.innerNode()->document() : 0;
 }
 
+void Frame::createView(const IntSize& viewportSize,
+                       const Color& backgroundColor, bool transparent,
+                       const IntSize& fixedLayoutSize, bool useFixedLayout,
+                       ScrollbarMode horizontalScrollbarMode, ScrollbarMode verticalScrollbarMode)
+{
+    ASSERT(this);
+    ASSERT(m_page.get());
+
+    bool isMainFrame = this == m_page->mainFrame();
+
+    if (isMainFrame && view())
+        view()->setParentVisible(false);
+
+    setView(0);
+
+    FrameView* frameView;
+    if (isMainFrame) {
+        frameView = new FrameView(this, viewportSize);
+        frameView->setFixedLayoutSize(fixedLayoutSize);
+        frameView->setUseFixedLayout(useFixedLayout);
+    } else
+        frameView = new FrameView(this);
+
+    frameView->setScrollbarModes(horizontalScrollbarMode, verticalScrollbarMode);
+    frameView->updateDefaultScrollbarState();
+
+    setView(frameView);
+    // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
+    frameView->deref();
+
+    if (backgroundColor.isValid())
+        frameView->updateBackgroundRecursively(backgroundColor, transparent);
+
+    if (isMainFrame)
+        frameView->setParentVisible(true);
+
+    if (ownerRenderer())
+        ownerRenderer()->setWidget(frameView);
+
+    if (HTMLFrameOwnerElement* owner = ownerElement())
+        view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
+}
+
 } // namespace WebCore
