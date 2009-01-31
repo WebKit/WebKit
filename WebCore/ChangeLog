@@ -1,3 +1,59 @@
+2009-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Split "lockHistory" into "lockHistory" and "lockBackForwardList" in
+        preparation for setting them differently during a redirect.
+
+        * WebCore.base.exp:
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::submit):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::navigateIfAllowed):
+        (WebCore::JSLocation::setHref):
+        (WebCore::JSLocation::setProtocol):
+        (WebCore::JSLocation::setHost):
+        (WebCore::JSLocation::setHostname):
+        (WebCore::JSLocation::setPort):
+        (WebCore::JSLocation::setPathname):
+        (WebCore::JSLocation::setSearch):
+        (WebCore::JSLocation::setHash):
+        (WebCore::JSLocation::replace):
+        (WebCore::JSLocation::assign):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLFormElement.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FormSubmission::FormSubmission):
+        (WebCore::ScheduledRedirection::ScheduledRedirection):
+        (WebCore::isBackForwardLoadType):
+        (WebCore::FrameLoader::createWindow):
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::submitFormAgain):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::restoreDocumentState):
+        (WebCore::FrameLoader::scheduleHTTPRedirection):
+        (WebCore::FrameLoader::scheduleLocationChange):
+        (WebCore::FrameLoader::scheduleRefresh):
+        (WebCore::FrameLoader::redirectionTimerFired):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::startRedirectionTimer):
+        (WebCore::FrameLoader::loadFrameRequestWithFormAndValues):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::clientRedirected):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h:
+        (WebCore::):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+
 2009-01-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

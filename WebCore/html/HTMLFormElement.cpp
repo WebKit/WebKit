@@ -268,7 +268,7 @@ bool HTMLFormElement::prepareSubmit(Event* event)
     return m_doingsubmit;
 }
 
-void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockHistory)
+void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockHistory, bool lockBackForwardList)
 {
     FrameView* view = document()->view();
     Frame* frame = document()->frame();
@@ -330,14 +330,14 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
                 FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
                 data = FormData::create(String(bodyData.data(), bodyData.size()).replace('+', "%20").latin1());
             }
-            frame->loader()->submitForm("POST", m_url, data, m_target, m_formDataBuilder.encodingType(), String(), event, lockHistory);
+            frame->loader()->submitForm("POST", m_url, data, m_target, m_formDataBuilder.encodingType(), String(), event, lockHistory, lockBackForwardList);
         } else {
             Vector<char> boundary = m_formDataBuilder.generateUniqueBoundaryString();
-            frame->loader()->submitForm("POST", m_url, createFormData(boundary.data()), m_target, m_formDataBuilder.encodingType(), boundary.data(), event, lockHistory);
+            frame->loader()->submitForm("POST", m_url, createFormData(boundary.data()), m_target, m_formDataBuilder.encodingType(), boundary.data(), event, lockHistory, lockBackForwardList);
         }
     } else {
         m_formDataBuilder.setIsMultiPartForm(false);
-        frame->loader()->submitForm("GET", m_url, createFormData(CString()), m_target, String(), String(), event, lockHistory);
+        frame->loader()->submitForm("GET", m_url, createFormData(CString()), m_target, String(), String(), event, lockHistory, lockBackForwardList);
     }
 
     if (needButtonActivation && firstSuccessfulSubmitButton)

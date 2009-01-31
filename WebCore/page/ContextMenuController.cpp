@@ -219,7 +219,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         case ContextMenuItemTagOpenLink:
             if (Frame* targetFrame = result.targetFrame())
                 targetFrame->loader()->loadFrameRequestWithFormAndValues(FrameLoadRequest(ResourceRequest(result.absoluteLinkURL(), 
-                    frame->loader()->outgoingReferrer())), false, 0, 0, HashMap<String, String>());
+                    frame->loader()->outgoingReferrer())), false, false, 0, 0, HashMap<String, String>());
             else
                 openNewWindow(result.absoluteLinkURL(), frame);
             break;

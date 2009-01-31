@@ -62,7 +62,7 @@ JSValuePtr JSHTMLFormElement::submit(ExecState* exec, const ArgList&)
     Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!activeFrame)
         return jsUndefined();
-    static_cast<HTMLFormElement*>(impl())->submit(0, false, false);
+    static_cast<HTMLFormElement*>(impl())->submit(0, false, false, false);
     return jsUndefined();
 }
 

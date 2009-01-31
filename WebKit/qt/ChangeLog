@@ -1,3 +1,13 @@
+2009-01-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Split "lockHistory" into "lockHistory" and "lockBackForwardList" in
+        preparation for setting them differently during a redirect.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+
 2009-01-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

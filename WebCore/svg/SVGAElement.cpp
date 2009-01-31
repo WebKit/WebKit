@@ -151,7 +151,7 @@ void SVGAElement::defaultEventHandler(Event* evt)
             }
 #endif
             if (document()->frame())
-                document()->frame()->loader()->urlSelected(document()->completeURL(url), target, evt, false, true);
+                document()->frame()->loader()->urlSelected(document()->completeURL(url), target, evt, false, false, true);
         }
 
         evt->setDefaultHandled();

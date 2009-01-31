@@ -52,7 +52,7 @@ namespace WebCore {
         FrameLoadTypeIndexedBackForward, // a multi-item hop in the backforward list
         FrameLoadTypeReload,
         FrameLoadTypeSame,               // user loads same URL again (but not reload button)
-        FrameLoadTypeRedirectWithLockedHistory,
+        FrameLoadTypeRedirect,
         FrameLoadTypeReplace,
         FrameLoadTypeReloadFromOrigin
     };

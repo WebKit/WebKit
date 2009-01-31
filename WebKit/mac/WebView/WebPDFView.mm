@@ -950,7 +950,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
             button, 0, 0, true);
 
     // Call to the frame loader because this is where our security checks are made.
-    core([dataSource webFrame])->loader()->loadFrameRequestWithFormAndValues(ResourceRequest(URL), false, event.get(), 0, HashMap<String, String>());
+    core([dataSource webFrame])->loader()->loadFrameRequestWithFormAndValues(ResourceRequest(URL), false, false, event.get(), 0, HashMap<String, String>());
 }
 
 - (void)PDFViewOpenPDFInNativeApplication:(PDFView *)sender
