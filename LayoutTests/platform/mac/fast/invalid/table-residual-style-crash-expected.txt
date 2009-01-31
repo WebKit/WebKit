@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
         RenderInline {FONT} at (0,0) size 0x0
       RenderTable {TABLE} at (0,0) size 4x2
         RenderTableSection {TBODY} at (0,0) size 4x2
-          RenderBlock {FORM} at (0,0) size 4x0
+          RenderBlock {FORM} at (0,0) size 0x0
             RenderInline {FONT} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
