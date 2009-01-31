@@ -6,6 +6,10 @@ m4_define([webkit_micro_version], [0])
 
 AC_INIT([WebKit],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
 
+AC_CONFIG_MACRO_DIR([autotools])
+AC_CONFIG_AUX_DIR([autotools])
+AC_SUBST(ACLOCAL_AMFLAGS, "-I autotools")
+
 AC_CONFIG_HEADERS([autotoolsconfig.h])
 AC_CANONICAL_SYSTEM
 
@@ -26,7 +30,7 @@ AC_SUBST([LIBWEBKITGTK_VERSION])
 AM_INIT_AUTOMAKE([foreign subdir-objects tar-ustar])
 
 # host checking - inspired by the GTK+ configure.in
-# TODO: os_mac, os_bsd
+# TODO: move these to webkit.m4?
 AC_MSG_CHECKING([for native Win32])
 case "$host" in
      *-*-mingw*)
@@ -59,56 +63,13 @@ case "$host_os" in
        ;;
 esac
 
-# If CXXFLAGS and CFLAGS are unset, default to empty.
-# This is to tell automake not to include '-g' if CXXFLAGS is not set
-# For more info - http://www.gnu.org/software/automake/manual/autoconf.html#C_002b_002b-Compiler
-if test -z "$CXXFLAGS"; then
-   CXXFLAGS=""
-fi
-if test -z "$CFLAGS"; then
-   CFLAGS=""
-fi
-
-AM_PROG_CC_STDC
-AM_PROG_CC_C_O
-AC_PROG_CXX
-AC_PROG_INSTALL
+# initialize webkit options
+WEBKIT_INIT
 AC_DISABLE_STATIC
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
-AC_SYS_LARGEFILE
+# use dolt to speedup the build
 DOLT
-
-# check for -fvisibility=hidden compiler support (GCC >= 4)
-saved_CFLAGS="$CFLAGS"
-CFLAGS="$CFLAGS -fvisibility=hidden -fvisibility-inlines-hidden"
-AC_MSG_CHECKING([if ${CXX} supports -fvisibility=hidden -fvisibility-inlines-hidden])
-AC_COMPILE_IFELSE([char foo;],
-      [ AC_MSG_RESULT([yes])
-        SYMBOL_VISIBILITY="-fvisibility=hidden" SYMBOL_VISIBILITY_INLINES="-fvisibility-inlines-hidden" ],
-        AC_MSG_RESULT([no]))
-CFLAGS="$saved_CFLAGS"
-AC_SUBST(SYMBOL_VISIBILITY)
-AC_SUBST(SYMBOL_VISIBILITY_INLINES)
-
-AC_PATH_PROG(PERL, perl)
-if test -z "$PERL"; then
-   AC_MSG_ERROR([You need 'perl' to compile WebKit])
-fi
-
-AC_PATH_PROG(BISON, bison)
-if test -z "$BISON"; then
-   AC_MSG_ERROR([You need the 'bison' parser generator to compile WebKit])
-else
-    case "$target_cpu" in
-        arm)
-            BISON_VERSION=`$BISON --version | head -1 | sed 's,.*\ \([0-9]*\.[0-9]*\)$,\1,'`
-            AX_COMPARE_VERSION([2.2],[gt],[$BISON_VERSION],
-                AC_MSG_ERROR([You need at least version 2.2 of the 'bison' parser generator to compile WebKit correctly for ARM]))
-        ;;
-        *) ;;
-    esac
-fi
 
 AC_PATH_PROG(FLEX, flex)
 if test -z "$FLEX"; then
@@ -123,34 +84,6 @@ AC_PATH_PROG(GPERF, gperf)
 if test -z "$GPERF"; then
    AC_MSG_ERROR([You need the 'gperf' hash function generator to compile WebKit])
 fi
-
-AC_PATH_PROG(MV, mv)
-if test -z "$MV"; then
-   AC_MSG_ERROR([You need 'mv' to compile WebKit])
-fi
-
-# GTK+ port only
-# Check for glib-genmarshal and glib-mkenums
-AC_PATH_PROG([GLIB_GENMARSHAL], [glib-genmarshal])
-AC_PATH_PROG([GLIB_MKENUMS],[glib-mkenums])
-if test -z "$GLIB_GENMARSHAL" || test -z "$GLIB_MKENUMS"; then
-   AC_MSG_ERROR([You need the GLib dev tools in your path])
-fi
-
-# Check whether a C++ was found (AC_PROG_CXX sets $CXX to "g++" even when it
-# doesn't exist)
-AC_LANG_PUSH([C++])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([],[])],[],[AC_MSG_ERROR([No C++ compiler found])])
-AC_LANG_POP([C++])
-
-# C/C++ Language Features
-AC_C_CONST
-AC_C_INLINE
-AC_C_VOLATILE
-
-# C/C++ Headers
-AC_HEADER_STDC
-AC_HEADER_STDBOOL
 
 # pthread (not needed on Windows)
 if test "$os_win32" = "no"; then
@@ -183,12 +116,6 @@ if test "$jpeg_ok" = yes; then
 fi
 AC_SUBST([JPEG_LIBS])
 
-# check for pkg-config
-AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
-if test "$PKG_CONFIG" = "no"; then
-   AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed in your PATH])
-fi
-
 # Check for libpng the way Gtk+ does it
 AC_MSG_CHECKING(for libpng12)
 if $PKG_CONFIG --exists libpng12 ; then
@@ -218,44 +145,6 @@ else
   fi
 fi
 AC_SUBST([PNG_LIBS])
-
-# determine the Unicode backend
-AC_MSG_CHECKING([the Unicode backend to use])
-AC_ARG_WITH(unicode_backend,
-            AC_HELP_STRING([--with-unicode-backend=@<:@icu@:>@],
-                           [Select Unicode backend [default=icu]]),
-            [],[unicode_backend="icu"])
-
-case "$unicode_backend" in
-     icu) ;;
-     *) AC_MSG_ERROR([Invalid Unicode backend: must be icu.]) ;;
-esac
-
-AC_MSG_RESULT([$unicode_backend])
-
-if test "$unicode_backend" = "icu"; then
-	AC_PATH_PROG(icu_config, icu-config, no)
-	if test "$icu_config" = "no"; then
-		if test "$os_darwin" = "yes"; then
-			UNICODE_CFLAGS="-I\$(srcdir)/JavaScriptCore/icu -I\$(srcdir)/WebCore/icu"
-			UNICODE_LIBS="-licucore"
-		elif test "$os_win32" = "yes"; then
-			UNICODE_CFLAGS=""
-			UNICODE_LIBS="-licuin -licuuc"
-		else
-			AC_MSG_ERROR([Cannot find icu-config. The ICU library is needed.])
-		fi
-	else
-		# We don't use --cflags as this gives us a lot of things that we don't
-		# necessarily want, like debugging and optimization flags
-		# See man (1) icu-config for more info.
-		UNICODE_CFLAGS=`$icu_config --cppflags`
-		UNICODE_LIBS=`$icu_config --ldflags`
-	fi
-fi
-
-AC_SUBST([UNICODE_CFLAGS])
-AC_SUBST([UNICODE_LIBS])
 
 # determine the GDK/GTK+ target
 AC_MSG_CHECKING([the target windowing system])
@@ -307,9 +196,6 @@ FREETYPE2_REQUIRED_VERSION=9.0
 LIBXML_REQUIRED_VERSION=2.6
 
 # minimum GTK+ base dependencies
-GLIB_REQUIRED_VERSION=2.0
-GOBJECT_REQUIRED_VERSION=2.0
-GTHREAD_REQUIRED_VERSION=2.0
 PANGO_REQUIRED_VERSION=1.0
 GTK_REQUIRED_VERSION=2.8
 
@@ -320,13 +206,14 @@ LIBXSLT_REQUIRED_VERSION=1.1.7
 SQLITE_REQUIRED_VERSION=3.0
 GSTREAMER_REQUIRED_VERSION=0.10
 
-PKG_CHECK_MODULES([GLOBALDEPS],
-                  [glib-2.0 >= $GLIB_REQUIRED_VERSION
-                  gobject-2.0 >= $GOBJECT_REQUIRED_VERSION
-                  gthread-2.0 >= $GTHREAD_REQUIRED_VERSION])
-AC_SUBST([GLOBALDEPS_CFLAGS])
-AC_SUBST([GLOBALDEPS_LIBS])
-
+# Available modules
+#
+# glib - glib and includes gthread
+# unicode - check and identify which unicode backend to use
+#
+# todo: webcore gtk
+WEBKIT_CHECK_DEPENDENCIES([glib unicode])
+                          
 PKG_CHECK_MODULES(LIBXML, libxml-2.0 >= $LIBXML_REQUIRED_VERSION)
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)

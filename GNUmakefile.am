@@ -77,7 +77,7 @@ no_undefined = -no-undefined
 endif
 
 if OS_GNU
-version_script = -Wl,--version-script,$(srcdir)/symbols.filter
+version_script = -Wl,--version-script,$(srcdir)/autotools/symbols.filter
 endif
 
 # Shared libraries
@@ -121,7 +121,7 @@ libJavaScriptCore_la_SOURCES = \
 
 libJavaScriptCore_la_LIBADD = \
 	$(UNICODE_LIBS) \
-	$(GLOBALDEPS_LIBS) \
+	$(GLIB_LIBS) \
 	-lpthread
 
 libJavaScriptCore_la_CXXFLAGS = \
@@ -132,7 +132,7 @@ libJavaScriptCore_la_CFLAGS = \
 	-fstrict-aliasing \
 	-O3 \
 	$(global_cflags) \
-	$(GLOBALDEPS_CFLAGS) \
+	$(GLIB_CFLAGS) \
 	$(UNICODE_CFLAGS)
 
 libJavaScriptCore_la_CPPFLAGS = \
@@ -167,7 +167,7 @@ libWebCore_la_CXXFLAGS = \
 libWebCore_la_CFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cflags) \
-	$(GLOBALDEPS_CFLAGS) \
+	$(GLIB_CFLAGS) \
 	$(UNICODE_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(CAIRO_CFLAGS) \
@@ -195,7 +195,7 @@ libWebCore_la_LIBADD = \
 	libJavaScriptCore.la \
 	libWebCoreJS.la \
 	$(webcore_libadd) \
-	$(GLOBALDEPS_LIBS) \
+	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
 	$(CAIRO_LIBS) \
 	$(PANGO_LIBS) \

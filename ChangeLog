@@ -1,3 +1,19 @@
+2009-01-30  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [Gtk] Refactor autoconf/configure.ac in preparation for jsc and webkit build splits
+        https://bugs.webkit.org/show_bug.cgi?id=22136
+
+        * GNUmakefile.am:
+        * acinclude.m4: Removed.
+        * autogen.sh:
+        * autotools/acinclude.m4: Added.
+        * autotools/dolt.m4: Added.
+        * autotools/symbols.filter: Renamed from symbols.filter.
+        * autotools/webkit.m4: Added.
+        * configure.ac:
+
 2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Nikolas Zimmermann.
