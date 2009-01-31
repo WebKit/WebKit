@@ -93,7 +93,10 @@ layer at (0,0) size 800x600
               RenderTableCell {FORM} at (0,0) size 110x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 110x18
                   text run at (0,0) width 110: "display: table-cell"
-      RenderBlock {DIV} at (0,430) size 784x0
-        RenderTable at (0,0) size 49x0
-          RenderBlock {FORM} at (0,0) size 0x0
-            RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,430) size 784x70
+        RenderTable at (0,0) size 49x70
+          RenderBlock {FORM} at (0,0) size 49x54
+            RenderText {#text} at (0,0) size 49x54
+              text run at (0,0) width 49: "display:"
+              text run at (0,18) width 35: "table-"
+              text run at (0,36) width 46: "caption"
