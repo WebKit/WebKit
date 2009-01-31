@@ -391,6 +391,9 @@ inline const RenderBox* toRenderBox(const RenderObject* o)
     return static_cast<const RenderBox*>(o);
 }
 
+// This will catch anyone doing an unnecessary cast.
+void toRenderBox(const RenderBox*);
+
 inline RenderBox* RenderBox::previousSiblingBox() const
 {
     return toRenderBox(previousSibling());

@@ -404,8 +404,8 @@ void RenderLayer::updateLayerPosition()
 
     m_relX = m_relY = 0;
     if (renderer()->isRelPositioned()) {
-        m_relX = toRenderBox(renderer())->relativePositionOffsetX();
-        m_relY = toRenderBox(renderer())->relativePositionOffsetY();
+        m_relX = renderer()->relativePositionOffsetX();
+        m_relY = renderer()->relativePositionOffsetY();
         x += m_relX; y += m_relY;
     }
     

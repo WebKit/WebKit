@@ -1,3 +1,21 @@
+2009-01-31  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23663
+        Add a void toRenderBox() method which catches unnecessary casts at compile
+        time and also fix the four cases where this was happening.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateHitTestResult):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+
 2009-01-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

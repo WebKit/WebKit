@@ -425,7 +425,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             // fill the height of a containing box by default.
             // Now do a layout.
             int oldChildHeight = child->height();
-            toRenderBox(child)->calcHeight();
+            child->calcHeight();
             if (oldChildHeight != child->height())
                 child->setChildNeedsLayout(true, false);
             child->layoutIfNeeded();
