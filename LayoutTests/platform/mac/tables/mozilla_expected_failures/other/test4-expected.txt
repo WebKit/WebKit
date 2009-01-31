@@ -417,9 +417,8 @@ layer at (0,0) size 785x2452
             RenderTableCell {TD} at (2,2) size 92x15 [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 47x13
                 text run at (1,1) width 47: "FOOTER"
-        RenderBlock {CAPTION} at (0,0) size 190x18
-          RenderText {#text} at (2,0) size 186x18
-            text run at (2,0) width 186: "Table 5 has a scrolling tbody."
+        RenderBlock {CAPTION} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1204) size 769x36
         RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 614x18
