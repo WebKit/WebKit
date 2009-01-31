@@ -1,3 +1,15 @@
+2009-01-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin Adler.
+
+        isFrameSet was moved from Frame to Document. Update the
+        WebKit usage.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _isFrameSet]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView knowsPageRange:]):
+
 2009-01-30  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

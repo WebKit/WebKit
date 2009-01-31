@@ -573,7 +573,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
     
     RefPtr<LegacyWebArchive> archive = create(markupString, frame, nodeList);
     
-    if (!frame->isFrameSet()) 
+    if (!frame->document() || !frame->document()->isFrameSet())
         return archive.release();
         
     // Wrap the frameset document in an iframe so it can be pasted into

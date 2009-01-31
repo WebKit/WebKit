@@ -3884,7 +3884,7 @@ bool FrameLoader::shouldScrollToAnchor(bool isFormSubmission, FrameLoadType load
         && !shouldReload(this->url(), url)
         // We don't want to just scroll if a link from within a
         // frameset is trying to reload the frameset into _top.
-        && !m_frame->isFrameSet();
+        && (!m_frame->document() || !m_frame->document()->isFrameSet());
 }
 
 void FrameLoader::opened()

@@ -1094,7 +1094,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (BOOL)_isFrameSet
 {
-    return _private->coreFrame->isFrameSet();
+    Document* document = _private->coreFrame->document();
+    return document && document->isFrameSet();
 }
 
 - (BOOL)_firstLayoutDone

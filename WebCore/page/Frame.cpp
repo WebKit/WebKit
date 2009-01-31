@@ -1211,15 +1211,6 @@ void Frame::selectionTextRects(Vector<FloatRect>& rects, bool clipToVisibleConte
 }
 
 
-bool Frame::isFrameSet() const
-{
-    Document* document = m_doc.get();
-    if (!document || !document->isHTMLDocument())
-        return false;
-    Node *body = static_cast<HTMLDocument*>(document)->body();
-    return body && body->renderer() && body->hasTagName(framesetTag);
-}
-
 // Scans logically forward from "start", including any child frames
 static HTMLFormElement *scanForForm(Node *start)
 {

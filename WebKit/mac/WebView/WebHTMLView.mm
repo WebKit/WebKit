@@ -3548,7 +3548,7 @@ noPromisedData:
     Frame* frame = core([self _frame]);
     if (!frame)
         return NO;
-    if (!frame->isFrameSet()) {
+    if (!frame->document() || !frame->document()->isFrameSet()) {
         float paperWidth = [self _availablePaperWidthForPrintOperation:[NSPrintOperation currentOperation]];
         minLayoutWidth = paperWidth * PrintingMinimumShrinkFactor;
         maxLayoutWidth = paperWidth * PrintingMaximumShrinkFactor;
