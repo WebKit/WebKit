@@ -1534,6 +1534,13 @@ void RenderBlock::fitBelowFloats(int widthToFit, bool firstLine, int& availableW
     }
 }
 
+static inline unsigned textWidth(RenderText* text, unsigned from, unsigned len, const Font& font, int xPos, bool isFixedPitch, bool collapseWhiteSpace)
+{
+    if (isFixedPitch || !from && len == text->textLength())
+        return text->width(from, len, font, xPos);
+    return font.width(TextRun(text->characters() + from, len, !collapseWhiteSpace, xPos));
+}
+
 InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool firstLine, EClear* clear)
 {
     ASSERT(resolver.position().block == this);
@@ -1742,6 +1749,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             const UChar* str = t->characters();
 
             const Font& f = t->style(firstLine)->font();
+            bool isFixedPitch = f.isFixedPitch();
 
             int lastSpace = pos;
             int wordSpacing = o->style()->wordSpacing();
@@ -1790,12 +1798,12 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                             addMidpoint(beforeSoftHyphen);
 
                         // Add the width up to but not including the hyphen.
-                        tmpW += t->width(lastSpace, pos - lastSpace, f, w + tmpW) + lastSpaceWordSpacing;
+                        tmpW += textWidth(t, lastSpace, pos - lastSpace, f, w + tmpW, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
 
                         // For wrapping text only, include the hyphen.  We need to ensure it will fit
                         // on the line if it shows when we break.
                         if (autoWrap)
-                            tmpW += t->width(pos, 1, f, w + tmpW);
+                            tmpW += textWidth(t, pos, 1, f, w + tmpW, isFixedPitch, collapseWhiteSpace);
 
                         InlineIterator afterSoftHyphen(0, o, pos);
                         afterSoftHyphen.increment();
@@ -1815,7 +1823,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
                 if ((breakAll || breakWords) && !midWordBreak) {
                     wrapW += charWidth;
-                    charWidth = t->width(pos, 1, f, w + wrapW);
+                    charWidth = textWidth(t, pos, 1, f, w + wrapW, isFixedPitch, collapseWhiteSpace);
                     midWordBreak = w + wrapW + charWidth > width;
                 }
 
@@ -1840,7 +1848,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                         }
                     }
 
-                    int additionalTmpW = t->width(lastSpace, pos - lastSpace, f, w+tmpW) + lastSpaceWordSpacing;
+                    int additionalTmpW = textWidth(t, lastSpace, pos - lastSpace, f, w + tmpW, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
                     tmpW += additionalTmpW;
                     if (!appliedStartWidth) {
                         tmpW += inlineWidth(o, true, false);
@@ -1857,7 +1865,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                         // as candidate width for this line.
                         bool lineWasTooWide = false;
                         if (w + tmpW <= width && currentCharacterIsWS && o->style()->breakOnlyAfterWhiteSpace() && !midWordBreak) {
-                            int charWidth = t->width(pos, 1, f, w + tmpW) + (applyWordSpacing ? wordSpacing : 0);
+                            int charWidth = textWidth(t, pos, 1, f, w + tmpW, isFixedPitch, collapseWhiteSpace) + (applyWordSpacing ? wordSpacing : 0);
                             // Check if line is too big even without the extra space
                             // at the end of the line. If it is not, do nothing. 
                             // If the line needs the extra whitespace to be too long, 
@@ -1887,7 +1895,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                                 tmpW -= additionalTmpW;
                             if (pos > 0 && str[pos-1] == softHyphen)
                                 // Subtract the width of the soft hyphen out since we fit on a line.
-                                tmpW -= t->width(pos-1, 1, f, w+tmpW);
+                                tmpW -= textWidth(t, pos - 1, 1, f, w + tmpW, isFixedPitch, collapseWhiteSpace);
                         }
                     }
 
@@ -1978,7 +1986,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
             // IMPORTANT: pos is > length here!
             if (!ignoringSpaces)
-                tmpW += t->width(lastSpace, pos - lastSpace, f, w+tmpW) + lastSpaceWordSpacing;
+                tmpW += textWidth(t, lastSpace, pos - lastSpace, f, w + tmpW, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
             tmpW += inlineWidth(o, !appliedStartWidth, true);
         } else
             ASSERT_NOT_REACHED();

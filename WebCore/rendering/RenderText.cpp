@@ -1014,7 +1014,7 @@ void RenderText::position(InlineBox* box)
     m_containsReversedText |= s->direction() == RTL;
 }
 
-unsigned int RenderText::width(unsigned int from, unsigned int len, int xPos, bool firstLine) const
+unsigned RenderText::width(unsigned from, unsigned len, int xPos, bool firstLine) const
 {
     if (from >= textLength())
         return 0;
@@ -1025,13 +1025,11 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, int xPos, bo
     return width(from, len, style(firstLine)->font(), xPos);
 }
 
-unsigned int RenderText::width(unsigned int from, unsigned int len, const Font& f, int xPos) const
+unsigned RenderText::width(unsigned from, unsigned len, const Font& f, int xPos) const
 {
-    if (!characters() || from > textLength())
+    ASSERT(from + len <= textLength());
+    if (!characters())
         return 0;
-
-    if (from + len > textLength())
-        len = textLength() - from;
 
     int w;
     if (&f == &style()->font()) {

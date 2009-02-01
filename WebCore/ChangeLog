@@ -1,3 +1,27 @@
+2009-01-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix <rdar://problem/6546549> Eliminate some RenderText::width() overhead from findNextLineBreak()
+
+        On the PLT, this results in 0.36x the number of virtual function calls
+        to RenderText::width() and 0.69x the number of calls to
+        Font::isFixedPitch(), but makes 1.0004x the number of calls to
+        Font::width().
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::width): Replaced bounds checks on 'from' and 'len'
+        with an assertion.
+        * rendering/bidi.cpp:
+        (WebCore::textWidth): Added this inlined helper function which calls
+        Font::width() directly in the non-fixed-pitch, non-full-range case, and
+        otherwise calls RenderText::width().
+        (WebCore::RenderBlock::findNextLineBreak): Cache whether the font has
+        fixed pitch (in which case RenderText::width() will be called in order
+        to take advantage of the widthFromCache() optimization for fixed-pitch
+        fonts). Replaced all calls to RenderText::width() with calls to the
+        textWidth() helper function.
+
 2009-01-31  David Hyatt  <hyatt@apple.com>
 
         Inline all of the setNeedsLayout method and its associated functions.  Also inline setChildNeedsLayout
