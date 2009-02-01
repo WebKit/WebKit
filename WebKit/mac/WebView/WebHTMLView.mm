@@ -2167,8 +2167,8 @@ static String commandNameForSelector(SEL selector)
     // Remove the trailing colon.
     const char* selectorName = sel_getName(selector);
     size_t selectorNameLength = strlen(selectorName);
-    ASSERT(selectorNameLength >= 2);
-    ASSERT(selectorName[selectorNameLength - 1] == ':');
+    if (selectorNameLength < 2 || selectorName[selectorNameLength - 1] != ':')
+        return String();
     return String(selectorName, selectorNameLength - 1);
 }
 
@@ -4889,7 +4889,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     return (!_private->receivedNOOP && parameters.eventWasHandled) || parameters.consumedByIM;
 }
 
-- (WebCore::CachedImage*)promisedDragTIFFDataSource 
+- (WebCore::CachedImage*)promisedDragTIFFDataSource
 {
     return _private->promisedDragTIFFDataSource;
 }
