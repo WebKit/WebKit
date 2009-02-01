@@ -232,6 +232,7 @@ protected:
     //////////////////////////////////////////
 private:
     void addAbsoluteRectForLayer(IntRect& result);
+    void setLayerNeedsFullRepaint();
 
 public:
 #ifndef NDEBUG
@@ -896,6 +897,102 @@ private:
     // Store state between styleWillChange and styleDidChange
     static bool s_affectsParentBlock;
 };
+
+inline void RenderObject::setNeedsLayout(bool b, bool markParents)
+{
+    bool alreadyNeededLayout = m_needsLayout;
+    m_needsLayout = b;
+    if (b) {
+        if (!alreadyNeededLayout) {
+            if (markParents)
+                markContainingBlocksForLayout();
+            if (hasLayer())
+                setLayerNeedsFullRepaint();
+        }
+    } else {
+        m_everHadLayout = true;
+        m_posChildNeedsLayout = false;
+        m_normalChildNeedsLayout = false;
+        m_needsPositionedMovementLayout = false;
+    }
+}
+
+inline void RenderObject::setChildNeedsLayout(bool b, bool markParents)
+{
+    bool alreadyNeededLayout = m_normalChildNeedsLayout;
+    m_normalChildNeedsLayout = b;
+    if (b) {
+        if (!alreadyNeededLayout && markParents)
+            markContainingBlocksForLayout();
+    } else {
+        m_posChildNeedsLayout = false;
+        m_normalChildNeedsLayout = false;
+        m_needsPositionedMovementLayout = false;
+    }
+}
+
+inline void RenderObject::setNeedsPositionedMovementLayout()
+{
+    bool alreadyNeededLayout = needsLayout();
+    m_needsPositionedMovementLayout = true;
+    if (!alreadyNeededLayout) {
+        markContainingBlocksForLayout();
+        if (hasLayer())
+            setLayerNeedsFullRepaint();
+    }
+}
+
+inline bool objectIsRelayoutBoundary(const RenderObject *obj) 
+{
+    // FIXME: In future it may be possible to broaden this condition in order to improve performance.
+    // Table cells are excluded because even when their CSS height is fixed, their height()
+    // may depend on their contents.
+    return obj->isTextField() || obj->isTextArea()
+        || obj->hasOverflowClip() && !obj->style()->width().isIntrinsicOrAuto() && !obj->style()->height().isIntrinsicOrAuto() && !obj->style()->height().isPercent() && !obj->isTableCell()
+#if ENABLE(SVG)
+           || obj->isSVGRoot()
+#endif
+           ;
+}
+
+inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderObject* newRoot)
+{
+    ASSERT(!scheduleRelayout || !newRoot);
+
+    RenderObject* o = container();
+    RenderObject* last = this;
+
+    while (o) {
+        if (!last->isText() && (last->style()->position() == FixedPosition || last->style()->position() == AbsolutePosition)) {
+            if (last->hasStaticY()) {
+                RenderObject* parent = last->parent();
+                if (!parent->normalChildNeedsLayout()) {
+                    parent->setChildNeedsLayout(true, false);
+                    if (parent != newRoot)
+                        parent->markContainingBlocksForLayout(scheduleRelayout, newRoot);
+                }
+            }
+            if (o->m_posChildNeedsLayout)
+                return;
+            o->m_posChildNeedsLayout = true;
+        } else {
+            if (o->m_normalChildNeedsLayout)
+                return;
+            o->m_normalChildNeedsLayout = true;
+        }
+
+        if (o == newRoot)
+            return;
+
+        last = o;
+        if (scheduleRelayout && objectIsRelayoutBoundary(last))
+            break;
+        o = o->container();
+    }
+
+    if (scheduleRelayout)
+        last->scheduleRelayout();
+}
 
 } // namespace WebCore
 
