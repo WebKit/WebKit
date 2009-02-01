@@ -148,7 +148,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValuePtr value)
     if (!protocolIs(dstUrl, "javascript") || allowsAccessFrom(exec)) {
         bool userGesture = activeFrame->script()->processingUserGesture();
         // We want a new history item if this JS was called via a user gesture
-        impl()->frame()->loader()->scheduleLocationChange(dstUrl, activeFrame->loader()->outgoingReferrer(), false, userGesture);
+        impl()->frame()->loader()->scheduleLocationChange(dstUrl, activeFrame->loader()->outgoingReferrer(), false, false, userGesture);
     }
 }
 

@@ -250,7 +250,7 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
         if (created)
             newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
         else if (!url.isEmpty())
-            newFrame->loader()->scheduleLocationChange(completedURL.string(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
+            newFrame->loader()->scheduleLocationChange(completedURL.string(), activeFrame->loader()->outgoingReferrer(), false, false, userGesture);
     }
 
     return newFrame;
@@ -790,7 +790,7 @@ JSValuePtr windowProtoFuncOpen(ExecState* exec, JSObject*, JSValuePtr thisValue,
         const JSDOMWindow* targetedWindow = toJSDOMWindow(frame);
         if (!completedURL.isEmpty() && (!protocolIs(completedURL, "javascript") || (targetedWindow && targetedWindow->allowsAccessFrom(exec)))) {
             bool userGesture = activeFrame->script()->processingUserGesture();
-            frame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
+            frame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), false, false, userGesture);
         }
         return toJS(exec, frame->domWindow());
     }

@@ -439,7 +439,7 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
 
     Frame* frame = ownerElement->contentFrame();
     if (frame)
-        frame->loader()->scheduleLocationChange(url.string(), m_outgoingReferrer, true, userGestureHint());
+        frame->loader()->scheduleLocationChange(url.string(), m_outgoingReferrer, true, true, userGestureHint());
     else
         frame = loadSubframe(ownerElement, url, frameName, m_outgoingReferrer);
     

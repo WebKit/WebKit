@@ -1,3 +1,25 @@
+2009-02-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/6546625> REGRESSION (r40432): iframes added to global history at haaretz.co.il
+
+        Fixes http/tests/navigation/multiple-back-forward-entries.html
+
+        r40432 added a parameter to FrameLoader::scheduleLocationChange() and
+        failed to update all call sites.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::createWindow): Pass the lockBackForwardHistory parameter,
+        giving it the same value as the lockHistory parameter.
+        (windowProtoFuncOpen): Ditto.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation): Ditto.
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::setLocation): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestFrame): Ditto.
+
 2009-01-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.
