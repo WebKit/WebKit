@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,27 +60,28 @@ namespace WebCore {
     class ResourceError;
     class ResourceHandle;
     class ResourceLoader;
+    class ResourceRequest;
     class ResourceResponse;
     class SharedBuffer;
     class SubstituteData;
     class String;
     class Widget;
 
-    class ResourceRequest;
-
     typedef void (FrameLoader::*FramePolicyFunction)(PolicyAction);
 
     class FrameLoaderClient {
     public:
+        // An inline function cannot be the first non-abstract virtual function declared
+        // in the class as it results in the vtable being generated as a weak symbol.
+        // This hurts performance (in Mac OS X at least, when loadig frameworks), so we
+        // don't want to do it in WebKit.
+        virtual bool hasHTMLView() const;
+
+        virtual ~FrameLoaderClient() { }
+
         virtual void frameLoaderDestroyed() = 0;
 
-        // The inline virtual destructor cannot be the first virtual function declared
-        // in the class as it results in the vtable being generated as a weak symbol
-        virtual ~FrameLoaderClient() {}
-
         virtual bool hasWebView() const = 0; // mainly for assertions
-
-        virtual bool hasHTMLView() const { return true; }
 
         virtual void makeRepresentation(DocumentLoader*) = 0;
         virtual void forceLayout() = 0;

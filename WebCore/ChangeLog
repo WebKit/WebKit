@@ -1,3 +1,14 @@
+2009-01-31  Darin Adler  <darin@apple.com>
+
+        Fix Mac build.
+
+        * loader/FrameLoader.cpp: Moved FrameLoaderClient::hasHTMLView in here.
+        We need it to not be an inline. Sadly, FrameLoaderClient.cpp was prematurely
+        deleted and I don't want to bring it back just to fix the build.
+
+        * loader/FrameLoaderClient.h: Rearrange virtual functions and corrected
+        a possibly-confusing comment.
+
 2009-01-31  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by David Hyatt.
