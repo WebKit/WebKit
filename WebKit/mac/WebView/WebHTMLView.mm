@@ -289,6 +289,9 @@ static CachedResourceClient* promisedDataClient()
 - (NSString *)_plainTextFromPasteboard:(NSPasteboard *)pasteboard;
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
 - (void)_pasteAsPlainTextWithPasteboard:(NSPasteboard *)pasteboard;
+- (void)_removeMouseMovedObserverUnconditionally;
+- (void)_removeSuperviewObservers;
+- (void)_removeWindowObservers;
 - (BOOL)_shouldInsertFragment:(DOMDocumentFragment *)fragment replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)_shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)_shouldReplaceSelectionWithText:(NSString *)text givenAction:(WebViewInsertAction)action;
@@ -372,6 +375,9 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
     BOOL avoidingPrintOrphan;
+    BOOL observingMouseMovedNotifications;
+    BOOL observingSuperviewNotifications;
+    BOOL observingWindowNotifications;
     
     id savedSubviews;
     BOOL subviewsSetAside;
@@ -753,6 +759,49 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     NSString *text = [self _plainTextFromPasteboard:pasteboard];
     if ([self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionPasted])
         [[self _frame] _replaceSelectionWithText:text selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
+}
+
+- (void)_removeMouseMovedObserverUnconditionally
+{
+    if (!_private->observingMouseMovedNotifications)
+        return;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:WKMouseMovedNotification() object:nil];
+    _private->observingMouseMovedNotifications = false;
+}
+
+- (void)_removeSuperviewObservers
+{
+    if (!_private->observingSuperviewNotifications)
+        return;
+    
+    NSView *superview = [self superview];
+    if (!superview || ![self window])
+        return;
+    
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter removeObserver:self name:NSViewFrameDidChangeNotification object:superview];
+    [notificationCenter removeObserver:self name:NSViewBoundsDidChangeNotification object:superview];
+    
+    _private->observingSuperviewNotifications = false;
+}
+
+- (void)_removeWindowObservers
+{
+    if (!_private->observingWindowNotifications)
+        return;
+    
+    NSWindow *window = [self window];
+    if (!window)
+        return;
+    
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
+    [notificationCenter removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
+    [notificationCenter removeObserver:self name:NSWindowWillCloseNotification object:window];
+    [notificationCenter removeObserver:self name:WKWindowWillOrderOnScreenNotification() object:window];
+    
+    _private->observingWindowNotifications = false;
 }
 
 - (BOOL)_shouldInsertFragment:(DOMDocumentFragment *)fragment replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action
@@ -1843,8 +1892,9 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     [self _cancelUpdateMouseoverTimer];
     [self _cancelUpdateFocusedAndActiveStateTimer];
     [self _clearLastHitViewIfSelf];
-    // FIXME: This is slow; should remove individual observers instead.
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self _removeMouseMovedObserverUnconditionally];
+    [self _removeWindowObservers];
+    [self _removeSuperviewObservers];
     [_private->pluginController destroyAllPlugins];
     [_private->pluginController setDataSource:nil];
     // remove tooltips before clearing _private so removeTrackingRect: will work correctly
@@ -2566,7 +2616,7 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)addMouseMovedObserver
 {
-    if (!_private->dataSource || ![self _isTopHTMLView])
+    if (!_private->dataSource || ![self _isTopHTMLView] || _private->observingMouseMovedNotifications)
         return;
 
     // Unless the Dashboard asks us to do this for all windows, keep an observer going only for the key window.
@@ -2580,12 +2630,7 @@ WEBCORE_COMMAND(yankAndSelect)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mouseMovedNotification:)
         name:WKMouseMovedNotification() object:nil];
     [self _frameOrBoundsChanged];
-}
-
-- (void)removeMouseMovedObserverUnconditionally
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-        name:WKMouseMovedNotification() object:nil];
+    _private->observingMouseMovedNotifications = true;
 }
 
 - (void)removeMouseMovedObserver
@@ -2597,7 +2642,7 @@ WEBCORE_COMMAND(yankAndSelect)
 #endif
 
     [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
-    [self removeMouseMovedObserverUnconditionally];
+    [self _removeMouseMovedObserverUnconditionally];
 }
 
 - (void)addSuperviewObservers
@@ -2610,66 +2655,48 @@ WEBCORE_COMMAND(yankAndSelect)
     // to extend the background the full height of the space and because some elements have
     // sizes that are based on the total size of the view.
     
-    NSView *superview = [self superview];
-    if (superview && [self window]) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged) 
-            name:NSViewFrameDidChangeNotification object:superview];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged) 
-            name:NSViewBoundsDidChangeNotification object:superview];
+    if (_private->observingSuperviewNotifications)
+        return;
 
-        // In addition to registering for frame/bounds change notifications, call -_frameOrBoundsChanged.
-        // It will check the current size/scroll against the previous layout's size/scroll.  We need to
-        // do this here to catch the case where the WebView is laid out at one size, removed from its
-        // window, resized, and inserted into another window.  Our frame/bounds changed notifications
-        // will not be sent in that situation, since we only watch for changes while in the view hierarchy.
-        [self _frameOrBoundsChanged];
-    }
-}
-
-- (void)removeSuperviewObservers
-{
     NSView *superview = [self superview];
-    if (superview && [self window]) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSViewFrameDidChangeNotification object:superview];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSViewBoundsDidChangeNotification object:superview];
-    }
+    if (!superview || ![self window])
+        return;
+    
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter addObserver:self selector:@selector(_frameOrBoundsChanged) name:NSViewFrameDidChangeNotification object:superview];
+    [notificationCenter addObserver:self selector:@selector(_frameOrBoundsChanged) name:NSViewBoundsDidChangeNotification object:superview];
+    
+    // In addition to registering for frame/bounds change notifications, call -_frameOrBoundsChanged.
+    // It will check the current size/scroll against the previous layout's size/scroll.  We need to
+    // do this here to catch the case where the WebView is laid out at one size, removed from its
+    // window, resized, and inserted into another window.  Our frame/bounds changed notifications
+    // will not be sent in that situation, since we only watch for changes while in the view hierarchy.
+    [self _frameOrBoundsChanged];
+    
+    _private->observingSuperviewNotifications = true;
 }
 
 - (void)addWindowObservers
 {
+    if (_private->observingWindowNotifications)
+        return;
+    
     NSWindow *window = [self window];
-    if (window) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeKey:)
-            name:NSWindowDidBecomeKeyNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidResignKey:)
-            name:NSWindowDidResignKeyNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:)
-            name:NSWindowWillCloseNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillOrderOnScreen:)
-            name:WKWindowWillOrderOnScreenNotification() object:window];
-    }
-}
-
-- (void)removeWindowObservers
-{
-    NSWindow *window = [self window];
-    if (window) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidBecomeKeyNotification object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidResignKeyNotification object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowWillCloseNotification object:window];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:WKWindowWillOrderOnScreenNotification() object:window];
-    }
+    if (!window)
+        return;
+    
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter addObserver:self selector:@selector(windowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(windowDidResignKey:) name:NSWindowDidResignKeyNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:window];
+    [notificationCenter addObserver:self selector:@selector(windowWillOrderOnScreen:) name:WKWindowWillOrderOnScreenNotification() object:window];
+    
+    _private->observingWindowNotifications = true;
 }
 
 - (void)viewWillMoveToSuperview:(NSView *)newSuperview
 {
-    [self removeSuperviewObservers];
+    [self _removeSuperviewObservers];
 }
 
 - (void)viewDidMoveToSuperview
@@ -2694,9 +2721,9 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
         return;
 
     // FIXME: Some of these calls may not work because this view may be already removed from it's superview.
-    [self removeMouseMovedObserverUnconditionally];
-    [self removeWindowObservers];
-    [self removeSuperviewObservers];
+    [self _removeMouseMovedObserverUnconditionally];
+    [self _removeWindowObservers];
+    [self _removeSuperviewObservers];
     [self _cancelUpdateMouseoverTimer];
     [self _cancelUpdateFocusedAndActiveStateTimer];
     

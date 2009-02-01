@@ -1,3 +1,43 @@
+2009-01-31  John Sullivan  <sullivan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=23665
+
+        Cleaned up code to add/remove NSNotification observers, to avoid performance hit
+        of calling removeObserver with unspecified notifications, or calling removeObserver
+        multiple times for the same notification.
+
+        Reviewed by Darin Adler
+
+        * WebView/WebHTMLView.mm:
+        added observingMouseMovedNotifications, observingSuperviewNotifications, and 
+        observingWindowNotifications as BOOL ivars of _private object
+        (-[WebHTMLView _removeMouseMovedObserverUnconditionally]):
+        moved to file-internal section of file, added leading underscore, now bails out
+        if we aren't observing the relevant notifications, now records that we are no longer
+        observing the relevant notifications
+        (-[WebHTMLView _removeSuperviewObservers]):
+        ditto, also stores [NSNoticationCenter defaultCenter] in local var to avoid objc dispatch
+        (-[WebHTMLView _removeWindowObservers]):
+        ditto
+        (-[WebHTMLView close]):
+        replace general removeObserver: call with three specific calls for all the notifications
+        that this class actually observes
+        (-[WebHTMLView addMouseMovedObserver]):
+        bail out if already observing relevant notifications, now records that we are observing
+        the relevant notifications
+        (-[WebHTMLView removeMouseMovedObserver]):
+        updated for name change
+        (-[WebHTMLView addSuperviewObservers]):
+        bail out if already observing relevant notifications, now records that we are observing
+        the relevant notifications; also stores [NSNoticationCenter defaultCenter] in local var 
+        to avoid objc dispatch
+        (-[WebHTMLView addWindowObservers]):
+        ditto
+        (-[WebHTMLView viewWillMoveToSuperview:]):
+        updated for name change
+        (-[WebHTMLView viewWillMoveToWindow:]):
+        updated for name changes
+
 2009-01-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.
