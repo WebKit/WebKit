@@ -160,7 +160,7 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
 
     ResourceRequest request = ResourceRequest(url);
     if (Page* page = frame->page())
-        page->mainFrame()->loader()->urlSelected(FrameLoadRequest(request), 0, false);
+        page->mainFrame()->loader()->urlSelected(FrameLoadRequest(request), 0, false, false);
 }
 
 void WebContextMenuClient::lookUpInDictionary(Frame*)

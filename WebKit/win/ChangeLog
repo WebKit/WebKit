@@ -1,3 +1,15 @@
+2009-01-31  Matt Lilek  <webkit@mattlilek.com>
+
+        Not reviewed, build fixes.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle):
+        * WebFrame.cpp:
+        (WebFrame::setInPrintingMode):
+        (WebFrame::isFrameSet):
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2009-01-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
