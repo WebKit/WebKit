@@ -43,6 +43,18 @@ namespace WebCore {
 
 class SVGResourceImage;
 
+bool GraphicsContext::inTransparencyLayer() const { return m_data->m_transparencyCount; }
+
+void GraphicsContext::setShouldIncludeChildWindows(bool include)
+{
+    m_data->m_shouldIncludeChildWindows = include;
+}
+
+bool GraphicsContext::shouldIncludeChildWindows() const
+{
+    return m_data->m_shouldIncludeChildWindows;
+}
+
 void GraphicsContextPlatformPrivate::save()
 {
     if (!m_hdc)

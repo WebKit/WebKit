@@ -1,3 +1,28 @@
+2009-02-02  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by George Staikos.
+
+        Fixes https://bugs.webkit.org/show_bug.cgi?id=23691.
+        Correct build break caused by @r40366 by moving the
+        common code implmentations from GraphicsContextCGWin.cpp
+        into the base Windows class (GraphicsContextWin.cpp).  Also
+        move inTransparencyLayer since it is identical in both
+        children.
+
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+          Added member m_shouldIncludeChildWindows to Windows version,
+          similar to GraphicsContextPlatformPrivateCG.h.
+        * platform/graphics/win/GraphicsContextCGWin.cpp: Remove the
+          implementations of shouldIncludeChildWindows,
+          setShouldIncludeChildWindows, and inTransparencyLayer.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp: Remove
+          the implementation of inTransparencyLayer.
+        * platform/graphics/win/GraphicsContextWin.cpp: Move common code
+          from GraphicsContextCGWin.cpp and GraphicsContextCairoWin.cpp. 
+        (WebCore::GraphicsContext::inTransparencyLayer):
+        (WebCore::GraphicsContext::setShouldIncludeChildWindows):
+        (WebCore::GraphicsContext::shouldIncludeChildWindows):
+
 2009-02-02  Darin Adler  <darin@apple.com>
 
         Try to fix Wx build, and maybe Chromium build too.

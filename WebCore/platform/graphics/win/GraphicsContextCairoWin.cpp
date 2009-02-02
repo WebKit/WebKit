@@ -87,8 +87,6 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     return hdc;
 }
 
-bool GraphicsContext::inTransparencyLayer() const { return m_data->m_transparencyCount; }
-
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
     // FIXME:  We aren't really doing anything with the 'mayCreateBitmap' flag.  This needs
