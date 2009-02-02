@@ -340,8 +340,10 @@ void NetscapePluginInstanceProxy::performRequest(PluginRequest* pluginRequest)
                                                                   windowFeatures:features];
             [features release];
 
-            if (!newWebView)
+            if (!newWebView) {
+                _WKPHLoadURLNotify(m_pluginHostProxy->port(), m_pluginID, pluginRequest->requestID(), NPERR_GENERIC_ERROR);
                 return;
+            }
             
             frame = [newWebView mainFrame];
             core(frame)->tree()->setName(frameName);

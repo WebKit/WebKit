@@ -1,5 +1,15 @@
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        When a new Web View was not created, report back to the plug-in host.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::performRequest):
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
+2009-02-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Kevin Decker.
 
         Draw the regular missing plug-in icon instead of a red rect when a plug-in has crashed.
