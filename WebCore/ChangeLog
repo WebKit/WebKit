@@ -2,10 +2,12 @@
 
         Reviewed by George Staikos.
 
-        Fix shouldLoadAsEmptyDocument() to return a blank page for an empty
-        url or about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=23508
+        Returns Blank Page for all "about" protocols
 
         * loader/MainResourceLoader.cpp:
+        Fix shouldLoadAsEmptyDocument() to return a blank page for an empty
+        url or about:blank only (for now, exclusively for Torch Mobile platform).
 
 2009-02-02  Brent Fulgham  <bfulgham@webkit.org>
 
