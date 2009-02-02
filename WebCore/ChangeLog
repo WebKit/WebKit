@@ -1,3 +1,13 @@
+2009-02-02  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix only, no review.
+
+        Fixes https://bugs.webkit.org/show_bug.cgi?id=23685.
+        Correct build break caused by @r40473.
+
+        * page/win/FrameWin.cpp: Correct access for adjustPageHeight.
+        (WebCore::computePageRectsForFrame):
+
 2009-02-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
