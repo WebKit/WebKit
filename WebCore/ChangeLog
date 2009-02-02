@@ -1,3 +1,20 @@
+2009-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Change createPlugin to take a HTMLPlugInElement, and createJavaAppletWidget to take a HTMLAppletElement.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::createPlugin):
+        (WebCore::EmptyFrameLoaderClient::createJavaAppletWidget):
+        * loader/FrameLoader.cpp:
+        (WebCore::toPlugInElement):
+        (WebCore::FrameLoader::loadPlugin):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+
 2009-02-02  Genevieve Mak  <gen@staikos.net>
 
         Reviewed by George Staikos.

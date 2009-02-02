@@ -54,6 +54,7 @@ namespace WebCore {
     class Frame;
     class FrameLoaderClient;
     class HistoryItem;
+    class HTMLAppletElement;
     class HTMLFormElement;
     class HTMLFrameOwnerElement;
     class IconLoader;
@@ -342,7 +343,7 @@ namespace WebCore {
         void handledOnloadEvents();
         String userAgent(const KURL&) const;
 
-        Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>& args);
+        Widget* createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const HashMap<String, String>& args);
 
         void dispatchWindowObjectAvailable();
         void restoreDocumentState();

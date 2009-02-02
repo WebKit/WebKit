@@ -2435,14 +2435,14 @@
 		A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */; };
 		A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */; };
 		A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */; };
-		A871D4560A127CBC00B12A68 /* HTMLPlugInElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */; };
+		A871D4560A127CBC00B12A68 /* HTMLPlugInElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871D4570A127CBC00B12A68 /* HTMLPlugInElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */; };
 		A871D4580A127CBC00B12A68 /* HTMLParamElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */; };
 		A871D4590A127CBC00B12A68 /* HTMLParamElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871D44F0A127CBC00B12A68 /* HTMLParamElement.cpp */; };
 		A871D45A0A127CBC00B12A68 /* HTMLObjectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D4500A127CBC00B12A68 /* HTMLObjectElement.h */; };
 		A871D45B0A127CBC00B12A68 /* HTMLObjectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871D4510A127CBC00B12A68 /* HTMLObjectElement.cpp */; };
 		A871D45C0A127CBC00B12A68 /* HTMLEmbedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D4520A127CBC00B12A68 /* HTMLEmbedElement.h */; };
-		A871D45D0A127CBC00B12A68 /* HTMLAppletElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D4530A127CBC00B12A68 /* HTMLAppletElement.h */; };
+		A871D45D0A127CBC00B12A68 /* HTMLAppletElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871D4530A127CBC00B12A68 /* HTMLAppletElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871D45E0A127CBC00B12A68 /* HTMLAppletElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871D4540A127CBC00B12A68 /* HTMLAppletElement.cpp */; };
 		A871D45F0A127CBC00B12A68 /* HTMLEmbedElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871D4550A127CBC00B12A68 /* HTMLEmbedElement.cpp */; };
 		A871DB250A150BD600B12A68 /* HTMLTableSectionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DB170A150BD600B12A68 /* HTMLTableSectionElement.h */; };

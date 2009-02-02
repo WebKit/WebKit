@@ -1,3 +1,14 @@
+2009-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Update for changes to WebCore.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createPlugin):
+        (WebKit::FrameLoaderClient::createJavaAppletWidget):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2009-02-02  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.

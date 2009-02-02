@@ -1,5 +1,15 @@
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Update for changes to WebCore.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+
+2009-02-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Oliver Hunt.
 
         When a new Web View was not created, report back to the plug-in host.
