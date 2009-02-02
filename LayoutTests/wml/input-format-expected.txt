@@ -1,0 +1,53 @@
+WML layout tests - using XHTML scripting
+
+
+Tests input format validation
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pElement1.textContent is "Result: $input1"
+PASS pElement2.textContent is "Result: $input2"
+PASS pElement3.textContent is "Result: $input3"
+PASS pElement4.textContent is "Result: $input4"
+PASS pElement5.textContent is "Result: $input5"
+PASS pElement6.textContent is "Result: $input6"
+PASS pElement7.textContent is "Result: $input7"
+PASS pElement8.textContent is "Result: $input8"
+PASS pElement9.textContent is "Result: $input9"
+PASS pElement10.textContent is "Result: $input10"
+PASS pElement11.textContent is "Result: $input11"
+PASS pElement12.textContent is "Result: $input12"
+PASS pElement1.textContent is "Result: TeSt0-01"
+PASS pElement2.textContent is "Result: TeSt0-02"
+PASS pElement3.textContent is "Result: TeSt-+03"
+PASS pElement4.textContent is "Result: TeSt0-04"
+PASS pElement5.textContent is "Result: TeSt0-05"
+PASS pElement6.textContent is "Result: "
+PASS pElement7.textContent is "Result: "
+PASS pElement8.textContent is "Result: TeSt0-08"
+PASS pElement9.textContent is "Result: TeSt0-09"
+PASS pElement10.textContent is "Result: 0123456789"
+PASS pElement11.textContent is "Result: TeSt0-11"
+PASS pElement12.textContent is "Result: TeSt0-12"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Start test
+Result: TeSt0-01
+Result: TeSt0-02
+Result: TeSt-+03
+Result: TeSt0-04
+Result: TeSt0-05
+Result:
+Result:
+Result: TeSt0-08
+Result: TeSt0-09
+Result: 0123456789
+Result: TeSt0-11
+Result: TeSt0-12

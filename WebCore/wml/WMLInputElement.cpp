@@ -23,7 +23,6 @@
 #if ENABLE(WML)
 #include "WMLInputElement.h"
 
-#include "Document.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -31,6 +30,9 @@
 #include "KeyboardEvent.h"
 #include "RenderTextControlSingleLine.h"
 #include "TextEvent.h"
+#include "WMLDocument.h"
+#include "WMLNames.h"
+#include "WMLPageState.h"
 
 namespace WebCore {
 
@@ -38,6 +40,8 @@ WMLInputElement::WMLInputElement(const QualifiedName& tagName, Document* doc)
     : WMLFormControlElementWithState(tagName, doc)
     , m_data(this, this)
     , m_isPasswordField(false)
+    , m_isEmptyOk(false)
+    , m_numOfCharsAllowedByMask(0)
 {
 }
 
@@ -45,6 +49,12 @@ WMLInputElement::~WMLInputElement()
 {
     if (m_isPasswordField)
         document()->unregisterForDocumentActivationCallbacks(this);
+}
+
+static const AtomicString& formatCodes()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, codes, ("AaNnXxMm"));
+    return codes;
 }
 
 bool WMLInputElement::isKeyboardFocusable(KeyboardEvent*) const
@@ -65,6 +75,18 @@ void WMLInputElement::dispatchFocusEvent()
 
 void WMLInputElement::dispatchBlurEvent()
 {
+    // Firstly check if it is allowed to leave this input field
+    String val = value();
+    if ((!m_isEmptyOk && val.isEmpty()) || !isConformedToInputMask(val)) {
+        updateFocusAppearance(true);
+        return;
+    }
+
+    // update the name variable of WML input elmenet
+    String nameVariable = name();
+    if (!nameVariable.isEmpty())
+        wmlPageStateForDocument(document())->storeVariable(nameVariable, val); 
+
     InputElement::dispatchBlurEvent(m_data, document());
     WMLElement::dispatchBlurEvent();
 }
@@ -178,12 +200,14 @@ void WMLInputElement::parseMappedAttribute(MappedAttribute* attr)
         InputElement::parseMaxLengthAttribute(m_data, attr);
     else if (attr->name() == HTMLNames::sizeAttr)
         InputElement::parseSizeAttribute(m_data, attr);
+    else if (attr->name() == WMLNames::formatAttr)
+        m_formatMask = validateInputMask(parseValueForbiddingVariableReferences(attr->value()));
+    else if (attr->name() == WMLNames::emptyokAttr)
+        m_isEmptyOk = (attr->value() == "true");
     else
         WMLElement::parseMappedAttribute(attr);
 
     // FIXME: Handle 'accesskey' attribute
-    // FIXME: Handle 'format' attribute
-    // FIXME: Handle 'emptyok' attribute
     // FIXME: Handle 'tabindex' attribute
     // FIXME: Handle 'title' attribute
 }
@@ -210,6 +234,13 @@ void WMLInputElement::attach()
     // on the renderer.
     if (renderer())
         renderer()->updateFromElement();
+
+    // FIXME: maybe this is not a good place to do this since it is possible 
+    // to cause unexpected several times initialise of <input> if we force the
+    // node to be reattached. But placing it here can ensure the run-webkit-tests
+    // get expected result,i.e. multiple-times initialise is expected when making
+    // layout test for WMLInputElement 
+    init();
 }  
 
 void WMLInputElement::detach()
@@ -236,8 +267,14 @@ void WMLInputElement::defaultEventHandler(Event* evt)
 {
     bool clickDefaultFormButton = false;
 
-    if (evt->type() == eventNames().textInputEvent && evt->isTextEvent() && static_cast<TextEvent*>(evt)->data() == "\n")
-        clickDefaultFormButton = true;
+    if (evt->type() == eventNames().textInputEvent && evt->isTextEvent()) {
+        TextEvent* textEvent = static_cast<TextEvent*>(evt);
+        if (textEvent->data() == "\n")
+            clickDefaultFormButton = true;
+        else if (renderer() && !isConformedToInputMask(textEvent->data()[0], static_cast<RenderTextControl*>(renderer())->text().length() + 1))
+            // If the inputed char doesn't conform to the input mask, stop handling 
+            return;
+    }
 
     if (evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent() && focused() && document()->frame()
         && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
@@ -320,6 +357,168 @@ void WMLInputElement::didMoveToNewOwnerDocument()
         document()->registerForDocumentActivationCallbacks(this);
 
     WMLElement::didMoveToNewOwnerDocument();
+}
+
+void WMLInputElement::init()
+{
+    String nameVariable = name();
+    String variableValue;
+    WMLPageState* pageSate = wmlPageStateForDocument(document()); 
+    ASSERT(pageSate);
+    if (!nameVariable.isEmpty())
+        variableValue = pageSate->getVariable(nameVariable);
+
+    if (variableValue.isEmpty() || !isConformedToInputMask(variableValue)) {
+        String val = value();
+        if (isConformedToInputMask(val))
+            variableValue = val;
+        else
+            variableValue = "";
+ 
+        pageSate->storeVariable(nameVariable, variableValue);
+    }
+    setValue(variableValue);
+ 
+    if (!hasAttribute(WMLNames::emptyokAttr)) {
+        if (m_formatMask.isEmpty() || 
+            // check if the format codes is just "*f"
+           (m_formatMask.length() == 2 && m_formatMask[0] == '*' && formatCodes().find(m_formatMask[1]) != -1))
+            m_isEmptyOk = true;
+    }
+}
+
+String WMLInputElement::validateInputMask(const String& inputMask)
+{
+    bool isValid = true;
+    bool hasWildcard = false;
+    unsigned escapeCharCount = 0;
+    unsigned maskLength = inputMask.length();
+    UChar formatCode;
+ 
+    for (unsigned i = 0; i < maskLength; ++i) {
+        formatCode = inputMask[i];
+        if (formatCodes().find(formatCode) == -1) {
+            if (formatCode == '*' || (WTF::isASCIIDigit(formatCode) && formatCode != '0')) {
+                // validate codes which ends with '*f' or 'nf'
+                formatCode = inputMask[++i];
+                if ((i + 1 != maskLength) || formatCodes().find(formatCode) == -1) {
+                    isValid = false;
+                    break;
+                }
+                hasWildcard = true;
+            } else if (formatCode == '\\') {
+                //skip over the next mask character
+                ++i;
+                ++escapeCharCount;
+            } else {
+                isValid = false;
+                break;
+            }
+        }
+    }
+
+    if (!isValid)
+        return String();
+ 
+    // calculate the number of characters allowed to be entered by input mask
+    m_numOfCharsAllowedByMask = maskLength;
+
+    if (escapeCharCount)
+        m_numOfCharsAllowedByMask -= escapeCharCount;
+
+    if (hasWildcard) {
+        formatCode = inputMask[maskLength - 2];
+        if (formatCode == '*')
+            m_numOfCharsAllowedByMask = m_data.maxLength();
+        else {
+            unsigned leftLen = String(&formatCode).toInt();
+            m_numOfCharsAllowedByMask = leftLen + m_numOfCharsAllowedByMask - 2;
+        }
+    }
+
+    return inputMask;
+}
+
+bool WMLInputElement::isConformedToInputMask(const String& inputChars)
+{
+    for (unsigned i = 0; i < inputChars.length(); ++i)
+        if (!isConformedToInputMask(inputChars[i], i + 1, false))
+            return false;
+
+    return true;
+}
+ 
+bool WMLInputElement::isConformedToInputMask(UChar inChar, unsigned inputCharCount, bool isUserInput)
+{
+    if (m_formatMask.isEmpty())
+        return true;
+ 
+    if (inputCharCount > m_numOfCharsAllowedByMask)
+        return false;
+
+    unsigned maskIndex = 0;
+    if (isUserInput) {
+        unsigned cursorPosition = 0;
+        if (renderer())
+            cursorPosition = static_cast<RenderTextControl*>(renderer())->selectionStart(); 
+        else
+            cursorPosition = m_data.cachedSelectionStart();
+
+        maskIndex = cursorPositionToMaskIndex(cursorPosition);
+    } else
+        maskIndex = cursorPositionToMaskIndex(inputCharCount - 1);
+
+    bool ok = true;
+    UChar mask = m_formatMask[maskIndex];
+    // match the inputed character with input mask
+    switch (mask) {
+    case 'A':
+        ok = !WTF::isASCIIDigit(inChar) && !WTF::isASCIILower(inChar) && WTF::isASCIIPrintable(inChar);
+        break;
+    case 'a':
+        ok = !WTF::isASCIIDigit(inChar) && !WTF::isASCIIUpper(inChar) && WTF::isASCIIPrintable(inChar);
+        break;
+    case 'N':
+        ok = WTF::isASCIIDigit(inChar);
+        break;
+    case 'n':
+        ok = !WTF::isASCIIAlpha(inChar) && WTF::isASCIIPrintable(inChar);
+        break;
+    case 'X':
+        ok = !WTF::isASCIILower(inChar) && WTF::isASCIIPrintable(inChar);
+        break;
+    case 'x':
+        ok = !WTF::isASCIIUpper(inChar) && WTF::isASCIIPrintable(inChar);
+        break;
+    case 'M':
+        ok = WTF::isASCIIPrintable(inChar);
+        break;
+    case 'm':
+        ok = WTF::isASCIIPrintable(inChar);
+        break;
+    default:
+        ok = (mask == inChar);
+        break;
+    }
+
+    return ok;
+}
+
+unsigned WMLInputElement::cursorPositionToMaskIndex(unsigned cursorPosition)
+{
+    UChar mask;
+    int index = -1;
+    do {
+        mask = m_formatMask[++index];
+        if (mask == '\\')
+            ++index;
+        else if (mask == '*' || (WTF::isASCIIDigit(mask) && mask != '0')) {
+            index = m_formatMask.length() - 1;
+            break;
+        }
+    } while (cursorPosition--);
+ 
+    return index;
 }
 
 }

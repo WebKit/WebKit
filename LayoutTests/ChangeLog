@@ -1,3 +1,16 @@
+2009-02-02  Yichao Yin  <yichao.yin@torchmobile.com.cn>
+
+        Reviewed by Niko Zimmermann.
+
+        Tests for WML Input
+
+        * wml/input-format-expected.txt: Added.
+        * wml/input-format.html: Added.
+        * wml/resources/input-format.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+
 2009-01-29  Scott Violet  <sky@google.com>
 
         Reviewed by Darin Adler.

@@ -87,9 +87,19 @@ public:
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
 
+    bool isConformedToInputMask(const String&);
+    bool isConformedToInputMask(UChar, unsigned, bool isUserInput = true);
+
 private:
+    void init();
+    String validateInputMask(const String&);
+    unsigned cursorPositionToMaskIndex(unsigned);
+
     InputElementData m_data;
     bool m_isPasswordField;
+    bool m_isEmptyOk;
+    String m_formatMask;
+    unsigned m_numOfCharsAllowedByMask;
 };
 
 }

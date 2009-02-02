@@ -1,3 +1,22 @@
+2009-02-02  Yichao Yin  <yichao.yin@torchmobile.com.cn>
+
+        Reviewed by Niko Zimmermann.
+
+        Test: wml/input-format.html
+
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::WMLInputElement):
+        (WebCore::formatCodes):
+        (WebCore::WMLInputElement::dispatchBlurEvent):
+        (WebCore::WMLInputElement::parseMappedAttribute):
+        (WebCore::WMLInputElement::attach):
+        (WebCore::WMLInputElement::defaultEventHandler):
+        (WebCore::WMLInputElement::init):
+        (WebCore::WMLInputElement::validateInputMask):
+        (WebCore::WMLInputElement::isConformedToInputMask):
+        (WebCore::WMLInputElement::cursorPositionToMaskIndex):
+        * wml/WMLInputElement.h:
+
 2009-02-02  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix only, no review.
