@@ -707,6 +707,7 @@ sources['bindings/js'] = [
     "bindings/js/WorkerScriptController.cpp",
 ]
 sources['bridge'] = [
+    'bridge/IdentifierRep.cpp',
     'bridge/NP_jsobject.cpp',
     'bridge/npruntime.cpp',
     'bridge/runtime.cpp',

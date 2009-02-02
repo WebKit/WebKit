@@ -1,5 +1,12 @@
 2009-02-02  Darin Adler  <darin@apple.com>
 
+        Try to fix Wx build, and maybe Chromium build too.
+
+        * WebCore.scons: Added IdentifierRep.cpp.
+        * WebCoreSources.bkl: Ditto.
+
+2009-02-02  Darin Adler  <darin@apple.com>
+
         Try to fix Wx build.
 
         * html/HTMLAreaElement.cpp: Added missing include of "Path.h".
