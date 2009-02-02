@@ -1,5 +1,17 @@
 2009-02-02  Adam Treat  <adam.treat@torchmobile.com>
 
+        Reviewed by Nikolas Zimmermann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23587
+        Refactor HitTestRequest to eliminate all the ugly boolean arguments and
+        use an enum bitflag instead.  Cleanup all the code that constructs the
+        various HitTestRequests to make the code more readable.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::hitTestContent):
+
+2009-02-02  Adam Treat  <adam.treat@torchmobile.com>
+
         Fix the Qt build to call forceLayout on the view instead.
 
         * Api/qwebpage.cpp:

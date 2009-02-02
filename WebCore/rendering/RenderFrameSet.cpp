@@ -165,7 +165,7 @@ bool RenderFrameSet::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         || m_isResizing || canResize(IntPoint(x, y));
 
     if (inside && frameSet()->noResize()
-            && !request.readonly && !result.innerNode()) {
+            && !request.readOnly() && !result.innerNode()) {
         result.setInnerNode(node());
         result.setInnerNonSharedNode(node());
     }

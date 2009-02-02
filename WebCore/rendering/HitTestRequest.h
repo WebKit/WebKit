@@ -2,6 +2,7 @@
  * This file is part of the HTML rendering engine for KDE.
  *
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,26 +20,35 @@
  * Boston, MA 02110-1301, USA.
  *
 */
+
 #ifndef HitTestRequest_h
 #define HitTestRequest_h
 
 namespace WebCore {
 
-struct HitTestRequest {
-    HitTestRequest(bool r, bool a, bool m = false, bool u = false, bool c = true)
-        : readonly(r)
-        , active(a)
-        , mouseMove(m)
-        , mouseUp(u)
-        , clipToVisible(c)
-    { 
+class HitTestRequest {
+public:
+    enum RequestType {
+        ReadOnly = 0x1,
+        Active = 0x2,
+        MouseMove = 0x4,
+        MouseUp = 0x8,
+        IgnoreClipping = 0x10
+    };
+
+    HitTestRequest(int requestType)
+        : m_requestType(requestType)
+    {
     }
 
-    bool readonly;
-    bool active;
-    bool mouseMove;
-    bool mouseUp;
-    bool clipToVisible;
+    bool readOnly() const { return m_requestType & ReadOnly; }
+    bool active() const { return m_requestType & Active; }
+    bool mouseMove() const { return m_requestType & MouseMove; }
+    bool mouseUp() const { return m_requestType & MouseUp; }
+    bool ignoreClipping() const { return m_requestType & IgnoreClipping; }
+
+private:
+    int m_requestType;
 };
 
 } // namespace WebCore
