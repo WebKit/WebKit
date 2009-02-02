@@ -1,3 +1,25 @@
+2009-02-02  Jay Campan  <jcampan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Clean up PopupMenuChromium a little.
+        https://bugs.webkit.org/show_bug.cgi?id=23653
+
+        No functional changes, only code cleanup, thus no tests.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::):
+        (WebCore::PopupListBox::PopupListBox):
+        (WebCore::PopupContainer::create):
+        (WebCore::PopupContainer::PopupContainer):
+        (WebCore::PopupContainer::showPopup):
+        (WebCore::PopupListBox::handleKeyEvent):
+        (WebCore::PopupListBox::isSelectableItem):
+        (WebCore::PopupListBox::selectNextRow):
+        (WebCore::PopupListBox::selectPreviousRow):
+        (WebCore::PopupMenu::show):
+        * platform/chromium/PopupMenuChromium.h:
+
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

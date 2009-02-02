@@ -69,6 +69,15 @@ static const int kMaxHeight = 500;
 static const int kBorderSize = 1;
 static const TimeStamp kTypeAheadTimeoutMs = 1000;
 
+// The settings used for the drop down menu.
+// This is the delegate used if none is provided.
+static const PopupContainerSettings dropDownSettings = {
+    true, // focusOnShow
+    true, // setTextOnIndexChange
+    true, // acceptOnAbandon
+    false // loopSelectionNavigation
+};
+
 // This class uses WebCore code to paint and handle events for a drop-down list
 // box ("combobox" on Windows).
 class PopupListBox : public FramelessScrollView, public RefCounted<PopupListBox> {
@@ -125,20 +134,6 @@ public:
     // Returns whether the popup wants to process events for the passed key.
     bool isInterestedInEventForKey(int keyCode);
 
-    // Sets whether the PopupMenuClient should be told to change its text when a
-    // new item is selected (by using the arrow keys).  Default is true.
-    void setTextOnIndexChange(bool value) { m_setTextOnIndexChange = value; }
-
-    // Sets whether we should accept the selected index when the popup is
-    // abandonned.
-    void setAcceptOnAbandon(bool value) { m_shouldAcceptOnAbandon = value; }
-
-    // Sets whether pressing the down/up arrow when the last/first row is
-    // selected clears the selection on the first key press and then selects the
-    // first/last row on the next key press.  If false, the selected row stays
-    // the last/first row.
-    void setLoopSelectionNavigation(bool value) { m_loopSelectionNavigation = value; }
-
 private:
     friend class PopupContainer;
     friend class RefCounted<PopupListBox>;
@@ -159,17 +154,15 @@ private:
         int y;  // y offset of this item, relative to the top of the popup.
     };
 
-    PopupListBox(PopupMenuClient* client)
-        : m_originalIndex(0)
+    PopupListBox(PopupMenuClient* client, const PopupContainerSettings& settings)
+        : m_settings(settings)
+        , m_originalIndex(0)
         , m_selectedIndex(0)
-        , m_shouldAcceptOnAbandon(true)
         , m_willAcceptOnAbandon(false)
         , m_visibleRows(0)
         , m_popupClient(client)
         , m_repeatingChar(0)
         , m_lastCharTime(0)
-        , m_setTextOnIndexChange(true)
-        , m_loopSelectionNavigation(false)
     {
         setScrollbarModes(ScrollbarAlwaysOff, ScrollbarAlwaysOff);
     }
@@ -228,6 +221,9 @@ private:
     void selectPreviousRow();
     void selectNextRow();
 
+    // The settings that specify the behavior for this Popup window.
+    PopupContainerSettings m_settings;
+
     // This is the index of the item marked as "selected" - i.e. displayed in the widget on the
     // page. 
     int m_originalIndex;
@@ -237,15 +233,10 @@ private:
     // enter yet however.
     int m_selectedIndex;
 
-    // Whether we should accept the selectedIndex as chosen when the popup is
-    // "abandoned".  This value is set through its setter and is useful as
-    // select popup menu and form autofill popup menu have different behaviors.
-    bool m_shouldAcceptOnAbandon;
-
     // True if we should accept the selectedIndex as chosen, even if the popup
     // is "abandoned".  This is used for keyboard navigation, where we want the
-    // selection to change immediately, and is only used if
-    // m_shouldAcceptOnAbandon is true.
+    // selection to change immediately, and is only used if the settings
+    // acceptOnAbandon field is true.
     bool m_willAcceptOnAbandon;
 
     // This is the number of rows visible in the popup. The maximum number visible at a time is
@@ -277,10 +268,6 @@ private:
 
     // The last time the user hit a key.  Used for typeAheadFind.
     TimeStamp m_lastCharTime;
-
-    bool m_setTextOnIndexChange;
-
-    bool m_loopSelectionNavigation;
 };
 
 static PlatformMouseEvent constructRelativeMouseEvent(const PlatformMouseEvent& e,
@@ -316,14 +303,14 @@ static PlatformWheelEvent constructRelativeWheelEvent(const PlatformWheelEvent& 
 
 // static
 PassRefPtr<PopupContainer> PopupContainer::create(PopupMenuClient* client,
-                                                  bool focusOnShow)
+                                                  const PopupContainerSettings& settings)
 {
-    return adoptRef(new PopupContainer(client, focusOnShow));
+    return adoptRef(new PopupContainer(client, settings));
 }
 
-PopupContainer::PopupContainer(PopupMenuClient* client, bool focusOnShow)
-    : m_listBox(new PopupListBox(client)),
-      m_focusOnShow(focusOnShow)
+PopupContainer::PopupContainer(PopupMenuClient* client, const PopupContainerSettings& settings)
+    : m_listBox(new PopupListBox(client, settings))
+    , m_settings(settings)
 {
     // FrameViews are created with a refcount of 1 so it needs releasing after we
     // assign it to a RefPtr.
@@ -357,7 +344,7 @@ void PopupContainer::showPopup(FrameView* view)
         if (widgetRect.bottom() > static_cast<int>(screen.bottom()))
             widgetRect.move(0, -(widgetRect.height() + selectHeight));
 
-        chromeClient->popupOpened(this, widgetRect, m_focusOnShow);
+        chromeClient->popupOpened(this, widgetRect, m_settings.focusOnShow);
     }
 
     // Must get called after we have a client and containingWindow.
@@ -493,21 +480,6 @@ void PopupContainer::show(const IntRect& r, FrameView* v, int index)
     IntRect popupRect(location, r.size());
     setFrameRect(popupRect);
     showPopup(v);
-}
-
-void PopupContainer::setTextOnIndexChange(bool value)
-{
-    listBox()->setTextOnIndexChange(value);
-}
-
-void PopupContainer::setAcceptOnAbandon(bool value)
-{
-    listBox()->setAcceptOnAbandon(value);
-}
-
-void PopupContainer::setLoopSelectionNavigation(bool value)
-{
-    listBox()->setLoopSelectionNavigation(value);
 }
 
 void PopupContainer::refresh()
@@ -658,13 +630,14 @@ bool PopupListBox::handleKeyEvent(const PlatformKeyboardEvent& event)
         // want to fire the onchange event until the popup is closed, to match
         // IE).  We change the original index so we revert to that when the
         // popup is closed.
-        if (m_shouldAcceptOnAbandon)
+        if (m_settings.acceptOnAbandon)
             m_willAcceptOnAbandon = true;
 
         setOriginalIndex(m_selectedIndex);
-        if (m_setTextOnIndexChange)
+        if (m_settings.setTextOnIndexChange)
             m_popupClient->setTextFromItem(m_selectedIndex);
-    } else if (!m_setTextOnIndexChange && event.windowsVirtualKeyCode() == VKEY_TAB) {
+    } else if (!m_settings.setTextOnIndexChange &&
+               event.windowsVirtualKeyCode() == VKEY_TAB) {
         // TAB is a special case as it should select the current item if any and
         // advance focus.
         if (m_selectedIndex >= 0)
@@ -959,7 +932,8 @@ void PopupListBox::scrollToRevealRow(int index)
     }
 }
 
-bool PopupListBox::isSelectableItem(int index) {
+bool PopupListBox::isSelectableItem(int index)
+{
     return m_items[index]->type == TypeOption && m_popupClient->itemIsEnabled(index);
 }
 
@@ -973,7 +947,7 @@ void PopupListBox::clearSelection()
 
 void PopupListBox::selectNextRow()
 {
-    if (!m_loopSelectionNavigation || m_selectedIndex != numItems() - 1) {
+    if (!m_settings.loopSelectionNavigation || m_selectedIndex != numItems() - 1) {
         adjustSelectedIndex(1);
         return;
     }
@@ -984,7 +958,7 @@ void PopupListBox::selectNextRow()
 
 void PopupListBox::selectPreviousRow()
 {
-    if (!m_loopSelectionNavigation || m_selectedIndex > 0) {
+    if (!m_settings.loopSelectionNavigation || m_selectedIndex > 0) {
         adjustSelectedIndex(-1);
         return;
     }
@@ -1156,7 +1130,7 @@ PopupMenu::~PopupMenu()
 
 void PopupMenu::show(const IntRect& r, FrameView* v, int index) 
 {
-    p.popup = PopupContainer::create(client(), true);
+    p.popup = PopupContainer::create(client(), dropDownSettings);
     p.popup->show(r, v, index);
 }
 
