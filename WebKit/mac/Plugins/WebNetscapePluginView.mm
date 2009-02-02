@@ -59,7 +59,8 @@
 #import <WebCore/Element.h>
 #import <WebCore/Frame.h> 
 #import <WebCore/FrameLoader.h> 
-#import <WebCore/FrameTree.h> 
+#import <WebCore/FrameTree.h>
+#import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/Page.h> 
 #import <WebCore/PluginMainThreadScheduler.h>
 #import <WebCore/ScriptController.h>
@@ -1205,9 +1206,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values
        loadManually:(BOOL)loadManually
-         DOMElement:(DOMElement *)element
+            element:(PassRefPtr<WebCore::HTMLPlugInElement>)element
 {
-    self = [super initWithFrame:frame pluginPackage:pluginPackage URL:URL baseURL:baseURL MIMEType:MIME attributeKeys:keys attributeValues:values loadManually:loadManually DOMElement:element];
+    self = [super initWithFrame:frame pluginPackage:pluginPackage URL:URL baseURL:baseURL MIMEType:MIME attributeKeys:keys attributeValues:values loadManually:loadManually element:element];
     if (!self)
         return nil;
  
@@ -2009,7 +2010,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
             if (!_element)
                 return NPERR_GENERIC_ERROR;
             
-            NPObject *plugInScriptObject = (NPObject *)[_element.get() _NPObject];
+            NPObject *plugInScriptObject = _element->getNPObject();
 
             // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
             if (plugInScriptObject)

@@ -115,7 +115,7 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values
        loadManually:(BOOL)loadManually
-         DOMElement:(DOMElement *)anElement;
+            element:(PassRefPtr<WebCore::HTMLPlugInElement>)element;
 
 
 - (NPP)plugin;

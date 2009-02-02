@@ -34,6 +34,7 @@
 #import "WebUIDelegate.h"
 
 #import <CoreFoundation/CoreFoundation.h>
+#import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/runtime.h>
 #import <WebCore/runtime_root.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -66,9 +67,9 @@ extern "C" {
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values
        loadManually:(BOOL)loadManually
-         DOMElement:(DOMElement *)element
+            element:(PassRefPtr<WebCore::HTMLPlugInElement>)element
 {
-    self = [super initWithFrame:frame pluginPackage:pluginPackage URL:URL baseURL:baseURL MIMEType:MIME attributeKeys:keys attributeValues:values loadManually:loadManually DOMElement:element];
+    self = [super initWithFrame:frame pluginPackage:pluginPackage URL:URL baseURL:baseURL MIMEType:MIME attributeKeys:keys attributeValues:values loadManually:loadManually element:element];
     if (!self)
         return nil;
     

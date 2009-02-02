@@ -303,8 +303,6 @@
 		A7D3C5BC0B5773C5002CA450 /* WebPasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */; };
 		A7D3C5BD0B5773C5002CA450 /* WebPasteboardHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */; };
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
-		BCDFA8F90C10B6F500D3A10C /* WebKitPluginContainerView.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDFA8F80C10B6F500D3A10C /* WebKitPluginContainerView.h */; };
-		BCDFA9130C10B93E00D3A10C /* WebKitPluginContainerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */; };
 		C0167BF80D7F5DD00028696E /* WebScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = C0167BF60D7F5DD00028696E /* WebScriptDebugger.h */; };
 		C0167BF90D7F5DD00028696E /* WebScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0167BF70D7F5DD00028696E /* WebScriptDebugger.mm */; };
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
@@ -547,8 +545,6 @@
 		A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardHelper.h; sourceTree = "<group>"; };
 		A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPasteboardHelper.mm; sourceTree = "<group>"; };
 		ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDownloadInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BCDFA8F80C10B6F500D3A10C /* WebKitPluginContainerView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebKitPluginContainerView.h; sourceTree = "<group>"; };
-		BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitPluginContainerView.mm; sourceTree = "<group>"; };
 		BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebEditingDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39904C62C4E004D0EF6 /* WebNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSURLExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -979,8 +975,6 @@
 			isa = PBXGroup;
 			children = (
 				51863EFC065419EB00E9E8DD /* WebJavaPlugIn.h */,
-				BCDFA8F80C10B6F500D3A10C /* WebKitPluginContainerView.h */,
-				BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */,
 				848DFF840365FE6A00CA2ACA /* WebPlugin.h */,
 				848DFF850365FE6A00CA2ACA /* WebPluginContainer.h */,
 				65E1150307EFFEBF009B8BF7 /* WebPluginContainerCheck.h */,
@@ -1315,7 +1309,6 @@
 				1AAF58940EDCCF15008D883D /* WebKitPluginAgent.defs in Headers */,
 				1AAF58950EDCCF15008D883D /* WebKitPluginAgentReply.defs in Headers */,
 				1AAF58960EDCCF15008D883D /* WebKitPluginClient.defs in Headers */,
-				BCDFA8F90C10B6F500D3A10C /* WebKitPluginContainerView.h in Headers */,
 				1AAF58970EDCCF15008D883D /* WebKitPluginHost.defs in Headers */,
 				1AAF58980EDCCF15008D883D /* WebKitPluginHostTypes.defs in Headers */,
 				1AAF5D090EDDE71D008D883D /* WebKitPluginHostTypes.h in Headers */,
@@ -1647,7 +1640,6 @@
 				939810C40824BF01008DF038 /* WebKitNSStringExtras.m in Sources */,
 				1AAF5D0F0EDDE7A7008D883D /* WebKitPluginAgent.defs in Sources */,
 				1AAF5D000EDDE604008D883D /* WebKitPluginClient.defs in Sources */,
-				BCDFA9130C10B93E00D3A10C /* WebKitPluginContainerView.mm in Sources */,
 				1AAF5CF10EDDE586008D883D /* WebKitPluginHost.defs in Sources */,
 				939810C50824BF01008DF038 /* WebKitStatistics.m in Sources */,
 				9398110E0824BF01008DF038 /* WebKitSystemBits.m in Sources */,

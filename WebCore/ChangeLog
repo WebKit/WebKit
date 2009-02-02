@@ -1,3 +1,16 @@
+2009-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        More plug-in cleanup.
+        
+        * WebCore.NPAPI.exp:
+        Add new symbols.
+        
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMPrivate.h:
+        Remove methods that WebKit doesn't use anymore.
+
 2009-02-02  Jay Campan  <jcampan@chromium.org>
 
         Reviewed by Eric Seidel.

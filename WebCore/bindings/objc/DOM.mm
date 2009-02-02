@@ -524,18 +524,6 @@ static NSArray *kit(const Vector<IntRect>& rects)
     return nil;
 }
 
-- (NSRect)_windowClipRect
-{
-    WebCore::RenderObject* renderer = [self _element]->renderer();
-    if (renderer && renderer->view()) {
-        WebCore::FrameView* frameView = renderer->view()->frameView();
-        if (!frameView)
-            return WebCore::IntRect();
-        return frameView->windowClipRectForLayer(renderer->enclosingLayer(), true);
-    }
-    return WebCore::IntRect();
-}
-
 // FIXME: this should be implemented in the implementation
 - (NSURL *)_getURLAttribute:(NSString *)name
 {
@@ -543,17 +531,6 @@ static NSArray *kit(const Vector<IntRect>& rects)
     WebCore::Element* element = [self _element];
     ASSERT(element);
     return element->document()->completeURL(parseURL(element->getAttribute(name)));
-}
-
-// FIXME: this should be implemented in the implementation
-- (void *)_NPObject
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    WebCore::Element* element = [self _element];
-    if (element->hasTagName(WebCore::HTMLNames::appletTag) || element->hasTagName(WebCore::HTMLNames::embedTag) || element->hasTagName(WebCore::HTMLNames::objectTag))
-        return static_cast<WebCore::HTMLPlugInElement*>(element)->getNPObject();
-#endif
-    return 0;
 }
 
 // FIXME: this should be implemented in the implementation

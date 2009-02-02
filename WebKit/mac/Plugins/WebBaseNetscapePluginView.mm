@@ -44,7 +44,9 @@
 #import <WebCore/Element.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/Page.h>
+#import <WebCore/RenderView.h>
 #import <WebKit/DOMPrivate.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
@@ -73,14 +75,14 @@ using namespace WebCore;
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values
        loadManually:(BOOL)loadManually
-         DOMElement:(DOMElement *)anElement
+            element:(PassRefPtr<WebCore::HTMLPlugInElement>)element
 {
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
     
     _pluginPackage = pluginPackage;
-    _element = anElement;
+    _element = element;
     _sourceURL.adoptNS([URL copy]);
     _baseURL.adoptNS([baseURL copy]);
     _MIMEType.adoptNS([MIME copy]);
@@ -237,11 +239,23 @@ using namespace WebCore;
     [self startTimers];
 }
 
+- (NSRect)_windowClipRect
+{
+    RenderObject* renderer = _element->renderer();
+    
+    if (renderer && renderer->view()) {
+        if (FrameView* frameView = renderer->view()->frameView())
+            return frameView->windowClipRectForLayer(renderer->enclosingLayer(), true);
+    }
+    
+    return NSZeroRect;
+}
+
 - (NSRect)visibleRect
 {
     // WebCore may impose an additional clip (via CSS overflow or clip properties).  Fetch
     // that clip now.    
-    return NSIntersectionRect([self convertRect:[_element.get() _windowClipRect] fromView:nil], [super visibleRect]);
+    return NSIntersectionRect([self convertRect:[self _windowClipRect] fromView:nil], [super visibleRect]);
 }
 
 - (BOOL)acceptsFirstResponder
@@ -558,7 +572,7 @@ using namespace WebCore;
 
 - (WebDataSource *)dataSource
 {
-    WebFrame *webFrame = kit(core(_element.get())->document()->frame());
+    WebFrame *webFrame = kit(_element->document()->frame());
     return [webFrame _dataSource];
 }
 

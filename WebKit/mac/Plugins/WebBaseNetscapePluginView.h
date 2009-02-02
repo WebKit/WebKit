@@ -31,12 +31,18 @@
 
 #import "WebNetscapePluginPackage.h"
 
+#import <wtf/PassRefPtr.h>
+#import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
 @class DOMElement;
 @class WebDataSource;
 @class WebFrame;
 @class WebView;
+
+namespace WebCore {
+    class HTMLPlugInElement;
+}
 
 @interface WebBaseNetscapePluginView : NSView
 {
@@ -52,7 +58,7 @@
     BOOL _hasFocus;
     BOOL _isCompletelyObscured;
     
-    RetainPtr<DOMElement> _element;
+    RefPtr<WebCore::HTMLPlugInElement> _element;
     RetainPtr<NSString> _MIMEType;
     RetainPtr<NSURL> _baseURL;
     RetainPtr<NSURL> _sourceURL;
@@ -68,7 +74,7 @@
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values
        loadManually:(BOOL)loadManually
-         DOMElement:(DOMElement *)anElement;
+            element:(PassRefPtr<WebCore::HTMLPlugInElement>)element;
 
 - (WebNetscapePluginPackage *)pluginPackage;
 

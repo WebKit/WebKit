@@ -1438,7 +1438,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElemen
                 attributeKeys:kit(paramNames)
                 attributeValues:kit(paramValues)
                 loadManually:loadManually
-                DOMElement:kit(element)] autorelease];
+                element:element] autorelease];
             
             return new NetscapePluginWidget(pluginView);
         } 
@@ -1530,7 +1530,7 @@ Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAp
                 attributeKeys:kit(paramNames)
                 attributeValues:kit(paramValues)
                 loadManually:NO
-                DOMElement:kit(element)] autorelease];
+                element:element] autorelease];
         } else {
             ASSERT_NOT_REACHED();
         }
