@@ -1,4 +1,8 @@
 var _recordedEvents = new Array();
+// Number of events we're supposed to receive.
+var _expectedEventCount = 0;
+// Function invoked when we've received _expectedEventCount events.
+var _endFunction;
 
 /* Call this function to record manually transition end events:
 
@@ -16,6 +20,8 @@ function recordTransitionEndEvent(event)
     event.target.id,
     Math.round(event.elapsedTime * 1000) / 1000 // round to ms to avoid floating point imprecision
     ]);
+  if (_recordedEvents.length == _expectedEventCount)
+    _endFunction();
 }
 
 /* This is the helper function to run transition end event tests:
@@ -39,7 +45,8 @@ Function parameters:
 */
 function runTransitionTest(expected, timeout, callback)
 {
-  
+  _expectedEventCount = expected.length;
+
   if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
@@ -133,7 +140,8 @@ function runTransitionTest(expected, timeout, callback)
       }
     }
     
-    window.setTimeout(function() { processEndEvents(expected); }, timeout * 1000);
+    _endFunction = function() { processEndEvents(expected); };
+    window.setTimeout(_endFunction, timeout * 1000);
   }
   
   window.addEventListener('load', function() { startTest(expected, timeout, callback) }, false);
