@@ -402,14 +402,29 @@ void ApplicationCacheGroup::update(Frame* frame, ApplicationCacheUpdateOption up
     ASSERT(m_completionType == None);
 
     // FIXME: Handle defer loading
-    
-    ResourceRequest request(m_manifestURL);
-    m_frame->loader()->applyUserAgent(request);
-    // FIXME: Should ask to revalidate from origin.
-    
-    m_manifestHandle = ResourceHandle::create(request, this, m_frame, false, true, false);
+    m_manifestHandle = createResourceHandle(m_manifestURL, m_newestCache ? m_newestCache->manifestResource() : 0);
 }
- 
+
+PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const KURL& url, ApplicationCacheResource* newestCachedResource)
+{
+    ResourceRequest request(url);
+    m_frame->loader()->applyUserAgent(request);
+    request.setHTTPHeaderField("Cache-Control", "max-age=0");
+
+    if (newestCachedResource) {
+        const String& lastModified = newestCachedResource->response().httpHeaderField("Last-Modified");
+        const String& eTag = newestCachedResource->response().httpHeaderField("ETag");
+        if (!lastModified.isEmpty() || !eTag.isEmpty()) {
+            if (!lastModified.isEmpty())
+                request.setHTTPHeaderField("If-Modified-Since", lastModified);
+            if (!eTag.isEmpty())
+                request.setHTTPHeaderField("If-None-Match", eTag);
+        }
+    }
+    
+    return ResourceHandle::create(request, this, m_frame, false, true, false);
+}
+
 void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
 {
     if (handle == m_manifestHandle) {
@@ -430,7 +445,20 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
     if (!m_newestCache)
         ASSERT(!(type & ApplicationCacheResource::Master));
 
-    if (response.httpStatusCode() / 100 != 2  || response.url() != m_currentHandle->request().url()) {
+    if (m_newestCache && response.httpStatusCode() == 304) { // Not modified.
+        ApplicationCacheResource* newestCachedResource = m_newestCache->resourceForURL(handle->request().url());
+        if (newestCachedResource) {
+            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, newestCachedResource->data()));
+            m_currentHandle->cancel();
+            m_currentHandle = 0;
+            // Load the next resource, if any.
+            startLoadingEntry();
+            return;
+        }
+        // The server could return 304 for an unconditional request - in this case, we handle the response as a normal error.
+    }
+
+    if (response.httpStatusCode() / 100 != 2 || response.url() != m_currentHandle->request().url()) {
         if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
             // Note that cacheUpdateFailed() can cause the cache group to be deleted.
             cacheUpdateFailed();
@@ -445,12 +473,12 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
             // Copy the resource and its metadata from the newest application cache in cache group whose completeness flag is complete, and act
             // as if that was the fetched resource, ignoring the resource obtained from the network.
             ASSERT(m_newestCache);
-            ApplicationCacheResource* resource = m_newestCache->resourceForURL(handle->request().url());
-            ASSERT(resource);
-            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(handle->request().url(), resource->response(), resource->type(), resource->data()));
-            // Load the next resource, if any.
+            ApplicationCacheResource* newestCachedResource = m_newestCache->resourceForURL(handle->request().url());
+            ASSERT(newestCachedResource);
+            m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, newestCachedResource->data()));
             m_currentHandle->cancel();
             m_currentHandle = 0;
+            // Load the next resource, if any.
             startLoadingEntry();
         }
         return;
@@ -501,10 +529,11 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
     }
 
     unsigned type = m_currentResource ? m_currentResource->type() : m_pendingEntries.get(handle->request().url());
+    const KURL& url = handle->request().url();
 
-    ASSERT(!m_currentResource || !m_pendingEntries.contains(handle->request().url()));
+    ASSERT(!m_currentResource || !m_pendingEntries.contains(url));
     m_currentResource = 0;
-    m_pendingEntries.remove(handle->request().url());
+    m_pendingEntries.remove(url);
 
     if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
         // Note that cacheUpdateFailed() can cause the cache group to be deleted.
@@ -513,9 +542,9 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
         // Copy the resource and its metadata from the newest application cache in cache group whose completeness flag is complete, and act
         // as if that was the fetched resource, ignoring the resource obtained from the network.
         ASSERT(m_newestCache);
-        ApplicationCacheResource* resource = m_newestCache->resourceForURL(handle->request().url());
-        ASSERT(resource);
-        m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(handle->request().url(), resource->response(), resource->type(), resource->data()));
+        ApplicationCacheResource* newestCachedResource = m_newestCache->resourceForURL(url);
+        ASSERT(newestCachedResource);
+        m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, newestCachedResource->data()));
         // Load the next resource, if any.
         startLoadingEntry();
     }
@@ -531,6 +560,9 @@ void ApplicationCacheGroup::didReceiveManifestResponse(const ResourceResponse& r
         return;
     }
 
+    if (response.httpStatusCode() == 304)
+        return;
+
     if (response.httpStatusCode() / 100 != 2 || response.url() != m_manifestHandle->request().url() || !equalIgnoringCase(response.mimeType(), "text/cache-manifest")) {
         cacheUpdateFailed();
         return;
@@ -542,28 +574,29 @@ void ApplicationCacheGroup::didReceiveManifestResponse(const ResourceResponse& r
 
 void ApplicationCacheGroup::didReceiveManifestData(const char* data, int length)
 {
-    ASSERT(m_manifestResource);
-    m_manifestResource->data()->append(data, length);
+    if (m_manifestResource)
+        m_manifestResource->data()->append(data, length);
 }
 
 void ApplicationCacheGroup::didFinishLoadingManifest()
 {
-    if (!m_manifestResource) {
+    bool isUpgradeAttempt = m_newestCache;
+
+    if (!isUpgradeAttempt && !m_manifestResource) {
+        // The server returned 304 Not Modified even though we didn't send a conditional request.
         cacheUpdateFailed();
         return;
     }
 
-    bool isUpgradeAttempt = m_newestCache;
-    
     m_manifestHandle = 0;
 
-    // Check if the manifest is byte-for-byte identical.
+    // Check if the manifest was not modified.
     if (isUpgradeAttempt) {
         ApplicationCacheResource* newestManifest = m_newestCache->manifestResource();
         ASSERT(newestManifest);
     
-        if (newestManifest->data()->size() == m_manifestResource->data()->size() &&
-            !memcmp(newestManifest->data()->data(), m_manifestResource->data()->data(), newestManifest->data()->size())) {
+        if (!m_manifestResource || // The resource will be null if HTTP response was 304 Not Modified.
+            newestManifest->data()->size() == m_manifestResource->data()->size() && !memcmp(newestManifest->data()->data(), m_manifestResource->data()->data(), newestManifest->data()->size())) {
 
             m_completionType = NoUpdate;
             m_manifestResource = 0;
@@ -724,15 +757,9 @@ void ApplicationCacheGroup::startLoadingEntry()
 
     postListenerTask(&DOMApplicationCache::callProgressListener, m_associatedDocumentLoaders);
 
-    // FIXME: If this is an upgrade attempt, the newest cache should be used as an HTTP cache.
-    
     ASSERT(!m_currentHandle);
     
-    ResourceRequest request(it->first);
-    m_frame->loader()->applyUserAgent(request);
-    // FIXME: Should ask to revalidate from origin.
-
-    m_currentHandle = ResourceHandle::create(request, this, m_frame, false, true, false);
+    m_currentHandle = createResourceHandle(KURL(it->first), m_newestCache ? m_newestCache->resourceForURL(it->first) : 0);
 }
 
 void ApplicationCacheGroup::deliverDelayedMainResources()

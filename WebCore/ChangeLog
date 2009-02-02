@@ -1,3 +1,29 @@
+2009-02-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6451610> Reloading a AppCache page doesn't ever hit the server
+
+        Not easily testable.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::createResourceHandle): A new method that creates a resource
+        handle in a manner that is closer to what CachedResource does. We now make conditional
+        requests for better performance, and set max-age to ensure that stale responses are not used.
+        (WebCore::ApplicationCacheGroup::update): Use the new createResourceHandle() method.
+        (WebCore::ApplicationCacheGroup::didReceiveResponse): If the response code for the resource
+        is 304, take it from the newest cache.
+        (WebCore::ApplicationCacheGroup::didFail): Pre-compute request URL.
+        (WebCore::ApplicationCacheGroup::didReceiveManifestResponse): Don't create a resource for
+        the manifest if the response code was 304 - it won't be needed.
+        (WebCore::ApplicationCacheGroup::didReceiveManifestData): Replaced an assertion that
+        m_manifestResource is not null with a check.
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest): Treat null m_manifestResource as
+        an indication that the response was 304.
+        (WebCore::ApplicationCacheGroup::startLoadingEntry): Use createResourceHandle().
+
+        * loader/appcache/ApplicationCacheGroup.h: Added createResourceHandle().
+
 2009-02-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.
