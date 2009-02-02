@@ -1,5 +1,11 @@
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+        
+        * WebView/WebHTMLView.mm:
+
+2009-02-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Make WebBaseNetscapePluginView hold a reference to a HTMLPlugInElement instead of a DOMElement.

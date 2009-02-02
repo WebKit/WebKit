@@ -48,7 +48,6 @@
 #import "WebHTMLViewInternal.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
-#import "WebKitPluginContainerView.h"
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
 #import "WebNodeHighlight.h"
