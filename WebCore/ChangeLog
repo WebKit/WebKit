@@ -8,6 +8,14 @@
         * page/win/FrameWin.cpp: Correct access for adjustPageHeight.
         (WebCore::computePageRectsForFrame):
 
+2009-02-02  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Fix WML enabled builds.
+        FrameLoader::urlSelected() got a new parameter: lockBackForwardList. Pass 'false', as HTMLAnchorElement does.
+
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::defaultEventHandler):
+
 2009-02-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
