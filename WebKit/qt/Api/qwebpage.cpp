@@ -1580,7 +1580,7 @@ void QWebPage::setFixedLayoutSize(const QSize &size) const
     if (frame->d->frame && frame->d->frame->view()) {
         WebCore::FrameView* view = frame->d->frame->view();
         view->setFixedLayoutSize(size);
-        frame->d->frame->forceLayout();
+        view->forceLayout();
     }
 }
 
@@ -1602,7 +1602,7 @@ void QWebPage::setUseFixedLayout(bool useFixedLayout)
     if (frame->d->frame && frame->d->frame->view()) {
         WebCore::FrameView* view = frame->d->frame->view();
         view->setUseFixedLayout(useFixedLayout);
-        frame->d->frame->forceLayout();
+        view->forceLayout();
     }
 }
 

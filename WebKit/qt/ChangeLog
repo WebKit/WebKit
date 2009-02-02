@@ -1,3 +1,11 @@
+2009-02-02  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix the Qt build to call forceLayout on the view instead.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setFixedLayoutSize):
+        (QWebPage::setUseFixedLayout):
+
 2009-02-02  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.
