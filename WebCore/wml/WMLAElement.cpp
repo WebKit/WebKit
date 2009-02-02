@@ -147,7 +147,7 @@ void WMLAElement::defaultEventHandler(Event* event)
  
         if (!event->defaultPrevented() && document()->frame()) {
             KURL url = document()->completeURL(parseURL(getAttribute(HTMLNames::hrefAttr)));
-            document()->frame()->loader()->urlSelected(url, target(), event, false, true);
+            document()->frame()->loader()->urlSelected(url, target(), event, false, false, true);
         }
 
         event->setDefaultHandled();
