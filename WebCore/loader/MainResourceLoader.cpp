@@ -186,7 +186,11 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
 
 static bool shouldLoadAsEmptyDocument(const KURL& url)
 {
-    return url.isEmpty() || equalIgnoringCase(String(url.protocol()), "about");
+#if PLATFORM(TORCHMOBILE)
+    return url.isEmpty() || (url.protocolIs("about") && equalIgnoringRef(url, blankURL()));
+#else 
+    return url.isEmpty() || url.protocolIs("about");
+#endif
 }
 
 void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, const ResourceResponse& r)

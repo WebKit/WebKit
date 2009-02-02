@@ -1,3 +1,12 @@
+2009-02-02  Genevieve Mak  <gen@staikos.net>
+
+        Reviewed by George Staikos.
+
+        Fix shouldLoadAsEmptyDocument() to return a blank page for an empty
+        url or about:blank
+
+        * loader/MainResourceLoader.cpp:
+
 2009-02-02  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by George Staikos.
