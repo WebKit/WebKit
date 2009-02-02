@@ -2838,12 +2838,14 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
         return;
     }
 
-    if (minPageWidth > 0.0)
-        coreFrame->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth, adjustViewSize);
-    else {
-        coreFrame->forceLayout(!adjustViewSize);
-        if (adjustViewSize)
-            coreFrame->view()->adjustViewSize();
+    if (FrameView* coreView = coreFrame->view()) {
+        if (minPageWidth > 0.0)
+            coreView->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth, adjustViewSize);
+        else {
+            coreView->forceLayout(!adjustViewSize);
+            if (adjustViewSize)
+                coreView->adjustViewSize();
+        }
     }
     _private->needsLayout = NO;
     
@@ -3470,7 +3472,8 @@ noPromisedData:
         [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
 
     float newBottomFloat = *newBottom;
-    core([self _frame])->adjustPageHeight(&newBottomFloat, oldTop, oldBottom, bottomLimit);
+    if (FrameView* view = core([self _frame])->view())
+        view->adjustPageHeight(&newBottomFloat, oldTop, oldBottom, bottomLimit);
 
 #ifdef __LP64__
     // If the new bottom is equal to the old bottom (when both are treated as floats), we just copy

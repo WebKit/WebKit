@@ -1,3 +1,21 @@
+2009-02-02  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin Adler.
+
+        Move Frame::forceLayout, Frame::adjustPageHeight and Frame::forceLayoutWithPageWidthRange to FrameView
+
+        https://bugs.webkit.org/show_bug.cgi?id=23428
+
+        FrameView::forceLayout could be killed but the comment might
+        contain a value over the the plain FrameView::layout...
+
+        Adjust the WebCore/WebKit consumers of these methods.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setViewportSize):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::forceLayout):
+
 2009-01-30  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

@@ -85,7 +85,7 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
     float printedPagesHeight = 0.0;
     do {
         float proposedBottom = std::min(docHeight, printedPagesHeight + pageHeight);
-        m_frame->adjustPageHeight(&proposedBottom, printedPagesHeight, proposedBottom, printedPagesHeight);
+        m_frame->view()->adjustPageHeight(&proposedBottom, printedPagesHeight, proposedBottom, printedPagesHeight);
         currPageHeight = max(1.0f, proposedBottom - printedPagesHeight);
 
         m_pageRects.append(IntRect(0, (int)printedPagesHeight, (int)currPageWidth, (int)currPageHeight));

@@ -536,7 +536,7 @@ static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allo
         return;
 
     frame->view()->resize(allocation->width, allocation->height);
-    frame->forceLayout();
+    frame->view()->forceLayout();
     frame->view()->adjustViewSize();
 }
 

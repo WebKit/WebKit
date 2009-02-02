@@ -179,11 +179,6 @@ private:
 // === to be moved into FrameView
 
 public: 
-    void forceLayout(bool allowSubtree = false);
-    void forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth, bool adjustViewSize);
-
-    void adjustPageHeight(float* newBottom, float oldTop, float oldBottom, float bottomLimit);
-
     void setZoomFactor(float scale, bool isTextOnly);
     float zoomFactor() const;
     bool isZoomFactorTextOnly() const;

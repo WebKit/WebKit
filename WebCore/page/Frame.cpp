@@ -753,7 +753,7 @@ void Frame::setPrinting(bool printing, float minPageWidth, float maxPageWidth, b
     m_doc->setPrinting(printing);
     view()->setMediaType(printing ? "print" : "screen");
     m_doc->updateStyleSelector();
-    forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth, adjustViewSize);
+    view()->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth, adjustViewSize);
 
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
         child->setPrinting(printing, minPageWidth, maxPageWidth, adjustViewSize);
@@ -1294,22 +1294,6 @@ void Frame::revealCaret(const RenderLayer::ScrollAlignment& alignment) const
     }
 }
 
-void Frame::adjustPageHeight(float* newBottom, float oldTop, float oldBottom, float /*bottomLimit*/)
-{
-    RenderView* root = contentRenderer();
-    if (root) {
-        // Use a context with painting disabled.
-        GraphicsContext context((PlatformGraphicsContext*)0);
-        root->setTruncatedAt((int)floorf(oldBottom));
-        IntRect dirtyRect(0, (int)floorf(oldTop), root->docWidth(), (int)ceilf(oldBottom - oldTop));
-        root->layer()->paint(&context, dirtyRect);
-        *newBottom = root->bestTruncatedAt();
-        if (*newBottom == 0)
-            *newBottom = oldBottom;
-    } else
-        *newBottom = oldBottom;
-}
-
 Frame* Frame::frameForWidget(const Widget* widget)
 {
     ASSERT_ARG(widget, widget);
@@ -1322,49 +1306,6 @@ Frame* Frame::frameForWidget(const Widget* widget)
     // FIXME: That assumption is not right for scroll bars!
     ASSERT(widget->isFrameView());
     return static_cast<const FrameView*>(widget)->frame();
-}
-
-void Frame::forceLayout(bool allowSubtree)
-{
-    FrameView *v = m_view.get();
-    if (v) {
-        v->layout(allowSubtree);
-        // We cannot unschedule a pending relayout, since the force can be called with
-        // a tiny rectangle from a drawRect update.  By unscheduling we in effect
-        // "validate" and stop the necessary full repaint from occurring.  Basically any basic
-        // append/remove DHTML is broken by this call.  For now, I have removed the optimization
-        // until we have a better invalidation stategy. -dwh
-        //v->unscheduleRelayout();
-    }
-}
-
-void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth, bool adjustViewSize)
-{
-    // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
-    // the state of things before and after the layout
-    RenderView *root = toRenderView(document()->renderer());
-    if (root) {
-        // This magic is basically copied from khtmlview::print
-        int pageW = (int)ceilf(minPageWidth);
-        root->setWidth(pageW);
-        root->setNeedsLayoutAndPrefWidthsRecalc();
-        forceLayout();
-        
-        // If we don't fit in the minimum page width, we'll lay out again. If we don't fit in the
-        // maximum page width, we will lay out to the maximum page width and clip extra content.
-        // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
-        // implementation should not do this!
-        int rightmostPos = root->rightmostPosition();
-        if (rightmostPos > minPageWidth) {
-            pageW = min(rightmostPos, (int)ceilf(maxPageWidth));
-            root->setWidth(pageW);
-            root->setNeedsLayoutAndPrefWidthsRecalc();
-            forceLayout();
-        }
-    }
-
-    if (adjustViewSize && view())
-        view()->adjustViewSize();
 }
 
 void Frame::clearTimers(FrameView *view, Document *document)

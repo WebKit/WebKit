@@ -611,7 +611,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // We need to give the part the opportunity to adjust the page height at each step.
     for (float i = 0; i < docHeight; i += currPageHeight) {
         float proposedBottom = min(docHeight, i + printHeight);
-        _private->coreFrame->adjustPageHeight(&proposedBottom, i, proposedBottom, i);
+        view->adjustPageHeight(&proposedBottom, i, proposedBottom, i);
         currPageHeight = max(1.0f, proposedBottom - i);
         for (float j = 0; j < docWidth; j += printWidth) {
             NSValue* val = [NSValue valueWithRect: NSMakeRect(j, i, printWidth, currPageHeight)];

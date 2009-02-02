@@ -1239,4 +1239,60 @@ void FrameView::layoutIfNeededRecursive()
             static_cast<FrameView*>(*current)->layoutIfNeededRecursive();
 }
 
+void FrameView::forceLayout(bool allowSubtree)
+{
+    layout(allowSubtree);
+    // We cannot unschedule a pending relayout, since the force can be called with
+    // a tiny rectangle from a drawRect update.  By unscheduling we in effect
+    // "validate" and stop the necessary full repaint from occurring.  Basically any basic
+    // append/remove DHTML is broken by this call.  For now, I have removed the optimization
+    // until we have a better invalidation stategy. -dwh
+    //unscheduleRelayout();
+}
+
+void FrameView::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth, bool _adjustViewSize)
+{
+    // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
+    // the state of things before and after the layout
+    RenderView *root = toRenderView(m_frame->document()->renderer());
+    if (root) {
+        // This magic is basically copied from khtmlview::print
+        int pageW = (int)ceilf(minPageWidth);
+        root->setWidth(pageW);
+        root->setNeedsLayoutAndPrefWidthsRecalc();
+        forceLayout();
+
+        // If we don't fit in the minimum page width, we'll lay out again. If we don't fit in the
+        // maximum page width, we will lay out to the maximum page width and clip extra content.
+        // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
+        // implementation should not do this!
+        int rightmostPos = root->rightmostPosition();
+        if (rightmostPos > minPageWidth) {
+            pageW = std::min(rightmostPos, (int)ceilf(maxPageWidth));
+            root->setWidth(pageW);
+            root->setNeedsLayoutAndPrefWidthsRecalc();
+            forceLayout();
+        }
+    }
+
+    if (_adjustViewSize)
+        adjustViewSize();
+}
+
+void FrameView::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float /*bottomLimit*/)
+{
+    RenderView* root = m_frame->contentRenderer();
+    if (root) {
+        // Use a context with painting disabled.
+        GraphicsContext context((PlatformGraphicsContext*)0);
+        root->setTruncatedAt((int)floorf(oldBottom));
+        IntRect dirtyRect(0, (int)floorf(oldTop), root->docWidth(), (int)ceilf(oldBottom - oldTop));
+        root->layer()->paint(&context, dirtyRect);
+        *newBottom = root->bestTruncatedAt();
+        if (*newBottom == 0)
+            *newBottom = oldBottom;
+    } else
+        *newBottom = oldBottom;
+}
+
 } // namespace WebCore

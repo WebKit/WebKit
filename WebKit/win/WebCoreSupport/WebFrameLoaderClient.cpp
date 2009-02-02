@@ -91,7 +91,9 @@ bool WebFrameLoaderClient::hasWebView() const
 
 void WebFrameLoaderClient::forceLayout()
 {
-    core(m_webFrame)->forceLayout(true);
+    FrameView* view = core(m_webFrame)->view();
+    if (view)
+        view->forceLayout(true);
 }
 
 void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)

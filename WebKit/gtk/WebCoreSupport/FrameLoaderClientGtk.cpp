@@ -524,7 +524,9 @@ void FrameLoaderClient::makeRepresentation(DocumentLoader*)
 
 void FrameLoaderClient::forceLayout()
 {
-    core(m_frame)->forceLayout(true);
+    FrameView* view = core(m_frame)->view();
+    if (view)
+        view->forceLayout(true);
 }
 
 void FrameLoaderClient::forceLayoutForNonHTML()
