@@ -933,7 +933,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
             (s->hovered() == m_element->hovered()) &&
             (s->active() == m_element->active()) &&
             (s->focused() == m_element->focused()) &&
-            (s != s->document()->getCSSTarget() && m_element != m_element->document()->getCSSTarget()) &&
+            (s != s->document()->cssTarget() && m_element != m_element->document()->cssTarget()) &&
             (s->getAttribute(typeAttr) == m_element->getAttribute(typeAttr)) &&
             (s->getAttribute(XMLNames::langAttr) == m_element->getAttribute(XMLNames::langAttr)) &&
             (s->getAttribute(langAttr) == m_element->getAttribute(langAttr)) &&
@@ -2209,7 +2209,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 break;
             }
             case CSSSelector::PseudoTarget:
-                if (e == e->document()->getCSSTarget())
+                if (e == e->document()->cssTarget())
                     return true;
                 break;
             case CSSSelector::PseudoAnyLink:

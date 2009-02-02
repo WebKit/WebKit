@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,13 +45,6 @@ typedef Vector<std::pair<NodeCallback, RefPtr<Node> > > NodeCallbackQueue;
 static NodeCallbackQueue* s_postAttachCallbackQueue = 0;
 
 static size_t s_attachDepth = 0;
-
-ContainerNode::ContainerNode(Document* doc, bool isElement)
-    : EventTargetNode(doc, isElement, true)
-    , m_firstChild(0)
-    , m_lastChild(0)
-{
-}
 
 void ContainerNode::removeAllChildren()
 {
@@ -594,34 +587,36 @@ void ContainerNode::detach()
 
 void ContainerNode::insertedIntoDocument()
 {
-    EventTargetNode::insertedIntoDocument();
-    for (Node *child = m_firstChild; child; child = child->nextSibling())
+    setInDocument(true);
+    insertedIntoTree(false);
+    for (Node* child = m_firstChild; child; child = child->nextSibling())
         child->insertedIntoDocument();
 }
 
 void ContainerNode::removedFromDocument()
 {
-    EventTargetNode::removedFromDocument();
-    for (Node *child = m_firstChild; child; child = child->nextSibling())
+    if (document()->cssTarget() == this)
+        document()->setCSSTarget(0);
+    setInDocument(false);
+    removedFromTree(false);
+    for (Node* child = m_firstChild; child; child = child->nextSibling())
         child->removedFromDocument();
 }
 
 void ContainerNode::insertedIntoTree(bool deep)
 {
-    EventTargetNode::insertedIntoTree(deep);
-    if (deep) {
-        for (Node *child = m_firstChild; child; child = child->nextSibling())
-            child->insertedIntoTree(deep);
-    }
+    if (!deep)
+        return;
+    for (Node* child = m_firstChild; child; child = child->nextSibling())
+        child->insertedIntoTree(true);
 }
 
 void ContainerNode::removedFromTree(bool deep)
 {
-    EventTargetNode::removedFromTree(deep);
-    if (deep) {
-        for (Node *child = m_firstChild; child; child = child->nextSibling())
-            child->removedFromTree(deep);
-    }
+    if (!deep)
+        return;
+    for (Node* child = m_firstChild; child; child = child->nextSibling())
+        child->removedFromTree(true);
 }
 
 void ContainerNode::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

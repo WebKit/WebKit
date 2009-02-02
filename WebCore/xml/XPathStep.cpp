@@ -192,9 +192,9 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
                 return;
 
             for (unsigned long i = 0; i < attrs->length(); ++i) {
-                RefPtr<Node> n = attrs->item(i);
-                if (nodeMatches(n.get()))
-                    nodes.append(n.release());
+                Attribute* attribute = attrs->attributeItem(i);
+                if (nodeMatches(attribute->attr()))
+                    nodes.append(attribute->attr());
             }
             return;
         }

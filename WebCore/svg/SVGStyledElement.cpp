@@ -240,7 +240,7 @@ PassRefPtr<RenderStyle> SVGStyledElement::resolveStyle(RenderStyle* parentStyle)
 
 PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& name)
 {
-    Attribute* attr = mappedAttributes()->getAttributeItem(name, false);
+    Attribute* attr = mappedAttributes()->getAttributeItem(QualifiedName(nullAtom, name, nullAtom));
     if (!attr || !attr->isMappedAttribute() || !attr->style())
         return 0;
 

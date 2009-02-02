@@ -4,7 +4,7 @@
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,32 +27,33 @@
 #define NamedMappedAttrMap_h
 
 #include "ClassNames.h"
-#include "MappedAttribute.h"
+#include "MappedAttribute.h" // This header is not required for the NamedMappedAttrMap definition. Should remove it.
 #include "NamedAttrMap.h"
 
 namespace WebCore {
 
 class NamedMappedAttrMap : public NamedAttrMap {
-private:
-    NamedMappedAttrMap(Element* element) : NamedAttrMap(element), m_mappedAttributeCount(0) { }
 public:
     static PassRefPtr<NamedMappedAttrMap> create(Element* element = 0) { return adoptRef(new NamedMappedAttrMap(element)); }
-
-    virtual void clearAttributes();
-    virtual bool isMappedAttributeMap() const;
 
     void clearClass() { m_classNames.clear(); }
     void setClass(const String&);
     const ClassNames& classNames() const { return m_classNames; }
 
-    virtual bool hasMappedAttributes() const { return m_mappedAttributeCount > 0; }
+    bool hasMappedAttributes() const { return m_mappedAttributeCount > 0; }
     void declRemoved() { m_mappedAttributeCount--; }
     void declAdded() { m_mappedAttributeCount++; }
-    
+
     bool mapsEquivalent(const NamedMappedAttrMap*) const;
-    int declCount() const;
 
 private:
+    NamedMappedAttrMap(Element* element) : NamedAttrMap(element), m_mappedAttributeCount(0) { }
+
+    virtual void clearAttributes();
+    virtual bool isMappedAttributeMap() const;
+
+    int declCount() const;
+
     ClassNames m_classNames;
     int m_mappedAttributeCount;
 };

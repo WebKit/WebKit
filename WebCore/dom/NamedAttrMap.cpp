@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -39,9 +39,18 @@ static inline bool shouldIgnoreAttributeCase(const Element* e)
     return e && e->document()->isHTMLDocument() && e->isHTMLElement();
 }
 
+inline void NamedAttrMap::detachAttributesFromElement()
+{
+    size_t size = m_attributes.size();
+    for (size_t i = 0; i < size; i++) {
+        if (Attr* attr = m_attributes[i]->attr())
+            attr->m_element = 0;
+    }
+}
+
 NamedAttrMap::~NamedAttrMap()
 {
-    NamedAttrMap::clearAttributes(); // virtual function, qualify to be explicit and slightly faster
+    detachAttributesFromElement();
 }
 
 bool NamedAttrMap::isMappedAttributeMap() const
@@ -190,11 +199,7 @@ Attribute* NamedAttrMap::getAttributeItem(const QualifiedName& name) const
 
 void NamedAttrMap::clearAttributes()
 {
-    unsigned len = length();
-    for (unsigned i = 0; i < len; i++)
-        if (Attr* attr = m_attributes[i]->attr())
-            attr->m_element = 0;
-
+    detachAttributesFromElement();
     m_attributes.clear();
 }
 
@@ -203,7 +208,7 @@ void NamedAttrMap::detachFromElement()
     // we allow a NamedAttrMap w/o an element in case someone still has a reference
     // to if after the element gets deleted - but the map is now invalid
     m_element = 0;
-    clearAttributes();
+    detachAttributesFromElement();
 }
 
 void NamedAttrMap::setAttributes(const NamedAttrMap& other)
@@ -308,6 +313,11 @@ bool NamedAttrMap::mapsEquivalent(const NamedAttrMap* otherMap) const
     }
     
     return true;
+}
+
+size_t NamedAttrMap::virtualLength() const
+{
+    return length();
 }
 
 }

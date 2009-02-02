@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008 David Levin (levin@chromium.org)
  *
@@ -1338,11 +1338,9 @@ void Document::removeAllEventListenersFromAllNodes()
         m_windowEventListeners[i]->setRemoved(true);
     m_windowEventListeners.clear();
     removeAllDisconnectedNodeEventListeners();
-    for (Node *n = this; n; n = n->traverseNextNode()) {
-        if (!n->isEventTargetNode())
-            continue;
-        EventTargetNodeCast(n)->removeAllEventListeners();
-    }
+    Element* documentElement = this->documentElement();
+    for (Node* node = documentElement; node; node = node->traverseNextNode(documentElement))
+        toEventTargetNode(node)->removeAllEventListeners();
 }
 
 void Document::registerDisconnectedNodeWithEventListeners(Node* node)
@@ -2557,18 +2555,13 @@ SetFocusedNodeDone:
     return !focusChangeBlocked;
   }
   
-void Document::setCSSTarget(Node* n)
+void Document::setCSSTarget(Element* n)
 {
     if (m_cssTarget)
         m_cssTarget->setChanged();
     m_cssTarget = n;
     if (n)
         n->setChanged();
-}
-
-Node* Document::getCSSTarget() const
-{
-    return m_cssTarget;
 }
 
 void Document::attachNodeIterator(NodeIterator *ni)

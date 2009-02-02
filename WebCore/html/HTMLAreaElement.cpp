@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,8 +35,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document *doc)
-    : HTMLAnchorElement(tagName, doc)
+HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document* document)
+    : HTMLAnchorElement(tagName, document)
     , m_coords(0)
     , m_coordsLen(0)
     , m_lastSize(-1, -1)
@@ -73,11 +73,11 @@ void HTMLAreaElement::parseMappedAttribute(MappedAttribute *attr)
 bool HTMLAreaElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& result)
 {
     if (m_lastSize != size) {
-        region = getRegion(size);
+        m_region.set(new Path(getRegion(size)));
         m_lastSize = size;
     }
 
-    if (!region.contains(IntPoint(x, y)))
+    if (!m_region->contains(IntPoint(x, y)))
         return false;
     
     result.setInnerNode(this);
@@ -150,32 +150,32 @@ Path HTMLAreaElement::getRegion(const IntSize& size) const
     return path;
 }
 
-String HTMLAreaElement::accessKey() const
+const AtomicString& HTMLAreaElement::accessKey() const
 {
     return getAttribute(accesskeyAttr);
 }
 
-void HTMLAreaElement::setAccessKey(const String& value)
+void HTMLAreaElement::setAccessKey(const AtomicString& value)
 {
     setAttribute(accesskeyAttr, value);
 }
 
-String HTMLAreaElement::alt() const
+const AtomicString& HTMLAreaElement::alt() const
 {
     return getAttribute(altAttr);
 }
 
-void HTMLAreaElement::setAlt(const String& value)
+void HTMLAreaElement::setAlt(const AtomicString& value)
 {
     setAttribute(altAttr, value);
 }
 
-String HTMLAreaElement::coords() const
+const AtomicString& HTMLAreaElement::coords() const
 {
     return getAttribute(coordsAttr);
 }
 
-void HTMLAreaElement::setCoords(const String& value)
+void HTMLAreaElement::setCoords(const AtomicString& value)
 {
     setAttribute(coordsAttr, value);
 }
@@ -185,7 +185,7 @@ KURL HTMLAreaElement::href() const
     return document()->completeURL(getAttribute(hrefAttr));
 }
 
-void HTMLAreaElement::setHref(const String& value)
+void HTMLAreaElement::setHref(const AtomicString& value)
 {
     setAttribute(hrefAttr, value);
 }
@@ -200,12 +200,12 @@ void HTMLAreaElement::setNoHref(bool noHref)
     setAttribute(nohrefAttr, noHref ? "" : 0);
 }
 
-String HTMLAreaElement::shape() const
+const AtomicString& HTMLAreaElement::shape() const
 {
     return getAttribute(shapeAttr);
 }
 
-void HTMLAreaElement::setShape(const String& value)
+void HTMLAreaElement::setShape(const AtomicString& value)
 {
     setAttribute(shapeAttr, value);
 }
@@ -220,7 +220,7 @@ String HTMLAreaElement::target() const
     return getAttribute(targetAttr);
 }
 
-void HTMLAreaElement::setTarget(const String& value)
+void HTMLAreaElement::setTarget(const AtomicString& value)
 {
     setAttribute(targetAttr, value);
 }

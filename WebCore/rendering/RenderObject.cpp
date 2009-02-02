@@ -2186,11 +2186,6 @@ void RenderObject::removeFromObjectLists()
     }
 }
 
-bool RenderObject::documentBeingDestroyed() const
-{
-    return !document()->renderer();
-}
-
 void RenderObject::destroy()
 {
     // Destroy any leftover anonymous children.
@@ -2436,27 +2431,25 @@ void RenderObject::deleteLineBoxWrapper()
 {
 }
 
-RenderStyle* RenderObject::firstLineStyle() const
+RenderStyle* RenderObject::firstLineStyleSlowCase() const
 {
-    if (!document()->usesFirstLineRules())
-        return m_style.get();
+    ASSERT(document()->usesFirstLineRules());
 
-    RenderStyle* s = m_style.get();
-    const RenderObject* obj = isText() ? parent() : this;
-    if (obj->isBlockFlow()) {
-        RenderBlock* firstLineBlock = obj->firstLineBlock();
-        if (firstLineBlock)
-            s = firstLineBlock->getCachedPseudoStyle(RenderStyle::FIRST_LINE, style());
-    } else if (!obj->isAnonymous() && obj->isRenderInline()) {
-        RenderStyle* parentStyle = obj->parent()->firstLineStyle();
-        if (parentStyle != obj->parent()->style()) {
-            // A first-line style is in effect. We need to cache a first-line style
-            // for ourselves.
-            style()->setHasPseudoStyle(RenderStyle::FIRST_LINE_INHERITED);
-            s = obj->getCachedPseudoStyle(RenderStyle::FIRST_LINE_INHERITED, parentStyle);
+    RenderStyle* style = m_style.get();
+    const RenderObject* renderer = isText() ? parent() : this;
+    if (renderer->isBlockFlow()) {
+        if (RenderBlock* firstLineBlock = renderer->firstLineBlock())
+            style = firstLineBlock->getCachedPseudoStyle(RenderStyle::FIRST_LINE, style);
+    } else if (!renderer->isAnonymous() && renderer->isRenderInline()) {
+        RenderStyle* parentStyle = renderer->parent()->firstLineStyle();
+        if (parentStyle != renderer->parent()->style()) {
+            // A first-line style is in effect. Cache a first-line style for ourselves.
+            style->setHasPseudoStyle(RenderStyle::FIRST_LINE_INHERITED);
+            style = renderer->getCachedPseudoStyle(RenderStyle::FIRST_LINE_INHERITED, parentStyle);
         }
     }
-    return s;
+
+    return style;
 }
 
 RenderStyle* RenderObject::getCachedPseudoStyle(RenderStyle::PseudoId pseudo, RenderStyle* parentStyle) const

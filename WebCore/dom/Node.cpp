@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -1078,17 +1078,16 @@ void Node::detach()
 
 void Node::insertedIntoDocument()
 {
+    // Note: ContainerNode::insertedIntoDocument does not call through here, so if you
+    // change this function, change that one as well.
     setInDocument(true);
-    insertedIntoTree(false);
 }
 
 void Node::removedFromDocument()
 {
-    if (m_document && m_document->getCSSTarget() == this)
-        m_document->setCSSTarget(0);
-
+    // Note: ContainerNode::insertedIntoDocument does not call through here, so if you
+    // change this function, change that one as well.
     setInDocument(false);
-    removedFromTree(false);
 }
 
 Node *Node::previousEditable() const

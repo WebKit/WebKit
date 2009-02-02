@@ -27,8 +27,6 @@
 
 #include "StringImpl.h"
 
-#include <wtf/PassRefPtr.h>
-
 #if USE(JSC)
 #include <runtime/Identifier.h>
 #else

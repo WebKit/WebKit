@@ -559,7 +559,7 @@ public:
     virtual int maxPrefWidth() const { return 0; }
 
     RenderStyle* style() const { return m_style.get(); }
-    RenderStyle* firstLineStyle() const;
+    RenderStyle* firstLineStyle() const { return document()->usesFirstLineRules() ? firstLineStyleSlowCase() : style(); }
     RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
     
     // Anonymous blocks that are part of of a continuation chain will return their inline continuation's outline style instead.
@@ -835,6 +835,8 @@ protected:
     };
     
 private:
+    RenderStyle* firstLineStyleSlowCase() const;
+
     RefPtr<RenderStyle> m_style;
 
     Node* m_node;
@@ -897,6 +899,11 @@ private:
     // Store state between styleWillChange and styleDidChange
     static bool s_affectsParentBlock;
 };
+
+inline bool RenderObject::documentBeingDestroyed() const
+{
+    return !document()->renderer();
+}
 
 inline void RenderObject::setNeedsLayout(bool b, bool markParents)
 {

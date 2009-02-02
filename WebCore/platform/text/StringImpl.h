@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,7 @@
 
 #include <limits.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
@@ -167,6 +167,8 @@ public:
 #endif
 
 private:
+    static PassRefPtr<StringImpl> createStrippingNullCharactersSlowCase(const UChar*, unsigned length);
+
     unsigned m_length;
     const UChar* m_data;
     mutable unsigned m_hash;
@@ -272,6 +274,29 @@ static inline bool isSpaceOrNewline(UChar c)
     // Use isASCIISpace() for basic Latin-1.
     // This will include newlines, which aren't included in Unicode DirWS.
     return c <= 0x7F ? WTF::isASCIISpace(c) : WTF::Unicode::direction(c) == WTF::Unicode::WhiteSpaceNeutral;
+}
+
+// This is a hot function because it's used when parsing HTML.
+inline PassRefPtr<StringImpl> StringImpl::createStrippingNullCharacters(const UChar* characters, unsigned length)
+{
+    ASSERT(characters);
+    ASSERT(length);
+
+    // Optimize for the case where there are no Null characters by quickly
+    // searching for nulls, and then using StringImpl::create, which will
+    // memcpy the whole buffer.  This is faster than assigning character by
+    // character during the loop. 
+
+    // Fast case.
+    int foundNull = 0;
+    for (unsigned i = 0; !foundNull && i < length; i++) {
+        int c = characters[i]; // more efficient than using UChar here (at least on Intel Mac OS)
+        foundNull |= !c;
+    }
+    if (!foundNull)
+        return StringImpl::create(characters, length);
+
+    return StringImpl::createStrippingNullCharactersSlowCase(characters, length);
 }
 
 }

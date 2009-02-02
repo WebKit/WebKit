@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,43 +29,22 @@
 #include "config.h"
 #include "GlyphWidthMap.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
-float GlyphWidthMap::widthForGlyph(Glyph g)
-{
-    unsigned pageNumber = (g / GlyphWidthPage::size);
-    GlyphWidthPage* page = locatePage(pageNumber);
-    if (page)
-        return page->widthForGlyph(g);
-    return cGlyphWidthUnknown;
-}
-
-void GlyphWidthMap::setWidthForGlyph(Glyph glyph, float width)
-{
-    unsigned pageNumber = (glyph / GlyphWidthPage::size);
-    GlyphWidthPage* page = locatePage(pageNumber);
-    if (page)
-        page->setWidthForGlyph(glyph, width);
-}
-
-inline GlyphWidthMap::GlyphWidthPage* GlyphWidthMap::locatePage(unsigned pageNumber)
+GlyphWidthMap::GlyphWidthPage* GlyphWidthMap::locatePageSlowCase(unsigned pageNumber)
 {
     GlyphWidthPage* page;
     if (pageNumber == 0) {
-        if (m_filledPrimaryPage)
-            return &m_primaryPage;
+        ASSERT(!m_filledPrimaryPage);
         page = &m_primaryPage;
         m_filledPrimaryPage = true;
     } else {
         if (m_pages) {
-            GlyphWidthPage* result = m_pages->get(pageNumber);
-            if (result)
-                return result;
-        }
+            if ((page = m_pages->get(pageNumber)))
+                return page;
+        } else
+            m_pages.set(new HashMap<int, GlyphWidthPage*>);
         page = new GlyphWidthPage;
-        if (!m_pages)
-            m_pages = new HashMap<int, GlyphWidthPage*>;
         m_pages->set(pageNumber, page);
     }
 

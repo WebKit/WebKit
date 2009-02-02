@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -907,26 +907,8 @@ WTF::Unicode::Direction StringImpl::defaultWritingDirection()
 }
 
 // This is a hot function because it's used when parsing HTML.
-PassRefPtr<StringImpl> StringImpl::createStrippingNullCharacters(const UChar* characters, unsigned length)
+PassRefPtr<StringImpl> StringImpl::createStrippingNullCharactersSlowCase(const UChar* characters, unsigned length)
 {
-    ASSERT(characters);
-    ASSERT(length);
-
-    // Optimize for the case where there are no Null characters by quickly
-    // searching for nulls, and then using StringImpl::create, which will
-    // memcpy the whole buffer.  This is faster than assigning character by
-    // character during the loop. 
-
-    // Fast case.
-    int foundNull = 0;
-    for (unsigned i = 0; !foundNull && i < length; i++) {
-        int c = characters[i]; // more efficient than using UChar here (at least on Intel Mac OS)
-        foundNull |= !c;
-    }
-    if (!foundNull)
-        return StringImpl::create(characters, length);
-    
-    // Slow case.
     StringBuffer strippedCopy(length);
     unsigned strippedLength = 0;
     for (unsigned i = 0; i < length; i++) {

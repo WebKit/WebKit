@@ -1,3 +1,148 @@
+2009-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Bug 23674: Speed up some things based on profiling the page load test
+        https://bugs.webkit.org/show_bug.cgi?id=23674
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): Use the newly named cssTarget instead
+        of the old name, getCSSTarget.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Ditto.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertedIntoDocument): Moved code from Node in here rather than
+        calling through to EventTargetNode::insertedIntoDocument.
+        (WebCore::ContainerNode::removedFromDocument): Ditto.
+        (WebCore::ContainerNode::insertedIntoTree): Tweaked a bit.
+        (WebCore::ContainerNode::removedFromTree): Ditto.
+
+        * dom/ContainerNode.h: Moved the constructor definition here and made it inline.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeAllEventListenersFromAllNodes): Iterate the document element and
+        its contents only to avoid the document type node. This allows us to remove the virtual
+        function call to isEventTargetNode from the loop.
+        (WebCore::Document::setCSSTarget): Changed argument to be an Element rather than Node.
+
+        * dom/Document.h: Changed CSS target to be an Element rather than a Node. Renamed
+        getCSSTarget to cssTarget.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::removeAllEventListenersSlowCase): Renamed and turned the
+        rare data check into an assertion.
+
+        * dom/EventTargetNode.h: Made the fast case of removeAllEventListeners be inline.
+        Also moved the constructor definition here and made it inline. And added toEventTargetNode,
+        matching the design of the render tree checked casts. Later we can migrate all callers
+        from EventTargetNodeCast to toEventTargetNode.
+
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::detachAttributesFromElement): Added. Factored out from
+        clearAttributes, so we could use this loop in cases where we're not clearing the attributes.
+        (WebCore::NamedAttrMap::~NamedAttrMap): Call detachAttributesFromElement instead of
+        clearAttributes here.
+        (WebCore::NamedAttrMap::clearAttributes): Call detachAttributesFromElement here.
+        (WebCore::NamedAttrMap::detachFromElement): Call detachAttributesFromElement instead of
+        clearAttributes. We don't need to clear the attributes array just because the element is
+        going away, so don't.
+        (WebCore::NamedAttrMap::virtualLength): Added.
+
+        * dom/NamedAttrMap.h: Made all the virtual functions inherited from NamedNodeMap be private.
+        These are all unnecessarily inefficient for use outside the DOM. Changed length to be a
+        non-virtual function. This was a fairly hot function.
+
+        * dom/NamedMappedAttrMap.cpp:
+        (WebCore::NamedMappedAttrMap::setClass): Changed to use element() function now that the
+        m_element data member is private.
+
+        * dom/NamedMappedAttrMap.h: Made a few functions private. Made the
+        hasMappedAttributes function non-virtual.
+
+        * dom/NamedNodeMap.h: Made length a non-virtual inline function that calls a virtual
+        function, name virtualLength. This lets NamedAttrMap::length be a non-virtual function.
+
+        * dom/Node.cpp:
+        (WebCore::Node::insertedIntoDocument): Removed call to insertedIntoTree, since it's
+        only non-empty in subclasses of ContainerNode.
+        (WebCore::Node::removedFromDocument): Ditto. Also removed setCSSTarget. Since a CSS
+        target has to be an Element, this can be moved down to ContainerNode (or it could be
+        moved down to Element for that matter).
+
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::QualifiedName): Removed double initialization of m_impl.
+
+        * dom/QualifiedName.h: Moved the destructor, copy constructor, assignment operator, and
+        setPrefix function definitions into the header and made them inline.
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::mapMouseEvent): Updated since the stored region is now
+        an OwnPtr.
+        (WebCore::HTMLAreaElement::accessKey): Use AtomicString.
+        (WebCore::HTMLAreaElement::setAccessKey): Ditto.
+        (WebCore::HTMLAreaElement::alt): Ditto.
+        (WebCore::HTMLAreaElement::setAlt): Ditto.
+        (WebCore::HTMLAreaElement::coords): Ditto.
+        (WebCore::HTMLAreaElement::setCoords): Ditto.
+        (WebCore::HTMLAreaElement::setHref): Ditto.
+        (WebCore::HTMLAreaElement::shape): Ditto.
+        (WebCore::HTMLAreaElement::setShape): Ditto.
+        (WebCore::HTMLAreaElement::setTarget): Ditto.
+
+        * html/HTMLAreaElement.h: Use AtomicString in the getter and setter DOM operations.
+        Change the region data member to be an OwnPtr<Path> instead of a Path to optimize
+        the common case where an area element is parsed but never hit-tested. This could
+        also have been done by changing the Path class's null case to be more efficient,
+        but this seems fine.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable): Use addAttribute instead
+        of insertAttribute.
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName): Ditto.
+        (WebCore::HTMLViewSourceDocument::addLine): Ditto.
+        (WebCore::HTMLViewSourceDocument::addLink): Ditto.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::gotoAnchor): Use cssTarget under its new name instead
+        of its old name getCSSTarget.
+
+        * platform/graphics/GlyphWidthMap.cpp:
+        (WebCore::GlyphWidthMap::locatePageSlowCase): Refactored from locatePage.
+
+        * platform/graphics/GlyphWidthMap.h: Made most of this class inline.
+        Changed m_pages to use OwnPtr.
+
+        * platform/text/PlatformString.h: Remove include no longer needed since
+        StringImpl.h includes it.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::createStrippingNullCharactersSlowCase): Refactored
+        from createStrippingNullCharacters.
+        * platform/text/StringImpl.h: Moved the definition of
+        createStrippingNullCharacters here and made it inline.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::firstLineStyleSlowCase): Refactored from
+        firstLineStyle.
+
+        * rendering/RenderObject.h: Moved the definition of the firstLineStyle
+        function here and made it inline. Moved the definition of the
+        documentBeingDestroyed function here and made it inline.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getCTM): Use getAttributeItem instead of
+        getNamedItem here since it accomplishes the same thing but is more efficient.
+        (WebCore::SVGSVGElement::getScreenCTM): Ditto.
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute): Ditto.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLang::evaluate): Use getAttributeItem instead of
+        getNamedItemNS.
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis): Use attributeItem instead of item here.
+
 2009-02-02  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.
