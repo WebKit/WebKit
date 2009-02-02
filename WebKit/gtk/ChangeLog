@@ -1,5 +1,11 @@
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+        
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
+2009-02-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Update for changes to WebCore.
