@@ -1,3 +1,19 @@
+2009-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Niko Zimmermann.
+
+        Bug 23686: REGRESSION (r40475): Failure in fast/xpath/4XPath/Core/test_core_functions.html
+        https://bugs.webkit.org/show_bug.cgi?id=23686
+        rdar://problem/6547971
+
+        Also fix other XPath tests that are crashing.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLang::evaluate): Fix order of arguments when creating QualifiedName.
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis): Use createAttrIfNeeded() rather than attr() since we
+        need to make Attr nodes here. Yuck!
+
 2009-02-02  Yichao Yin  <yichao.yin@torchmobile.com.cn>
 
         Reviewed by Niko Zimmermann.

@@ -191,10 +191,10 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
             if (!attrs)
                 return;
 
-            for (unsigned long i = 0; i < attrs->length(); ++i) {
-                Attribute* attribute = attrs->attributeItem(i);
-                if (nodeMatches(attribute->attr()))
-                    nodes.append(attribute->attr());
+            for (unsigned i = 0; i < attrs->length(); ++i) {
+                RefPtr<Attr> attr = attrs->attributeItem(i)->createAttrIfNeeded(static_cast<Element*>(context));
+                if (nodeMatches(attr.get()))
+                    nodes.append(attr.release());
             }
             return;
         }
