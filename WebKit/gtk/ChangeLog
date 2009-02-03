@@ -1,5 +1,12 @@
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createFrame):
+
+2009-02-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         Track redirects in global history.
