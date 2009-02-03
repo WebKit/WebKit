@@ -53,6 +53,7 @@ namespace WebCore {
 
 class TransformationMatrix;
 class CachedResource;
+class HitTestRequest;
 class HitTestResult;
 class RenderFrameSet;
 class RenderMarquee;
@@ -63,8 +64,6 @@ class RenderTable;
 class RenderText;
 class RenderView;
 class Scrollbar;
-
-struct HitTestRequest;
 
 class ClipRects {
 public:

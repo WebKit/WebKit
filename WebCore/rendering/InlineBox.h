@@ -26,10 +26,10 @@
 
 namespace WebCore {
 
+class HitTestRequest;
 class HitTestResult;
 class RootInlineBox;
 
-struct HitTestRequest;
 
 // InlineBox represents a rectangle that occurs on a line.  It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).

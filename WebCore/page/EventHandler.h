@@ -54,6 +54,7 @@ class Event;
 class FloatPoint;
 class FloatRect;
 class Frame;
+class HitTestRequest;
 class HitTestResult;
 class HTMLFrameSetElement;
 class KeyboardEvent;
@@ -71,8 +72,6 @@ class TextEvent;
 class VisiblePosition;
 class Widget;
     
-struct HitTestRequest;
-
 extern const int LinkDragHysteresis;
 extern const int ImageDragHysteresis;
 extern const int TextDragHysteresis;

@@ -26,9 +26,8 @@
 
 namespace WebCore {
 
+class HitTestRequest;
 class HitTestResult;
-
-struct HitTestRequest;
 
 class EllipsisBox : public InlineBox {
 public:

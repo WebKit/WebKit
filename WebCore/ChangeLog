@@ -1,3 +1,16 @@
+2009-02-26  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Build fix after r40486.
+
+        Rubber-stamped by Ada Chan.
+
+        * dom/Document.h:
+        * page/EventHandler.h:
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderLayer.h:
+
 2009-02-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.
