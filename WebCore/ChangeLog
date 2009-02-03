@@ -2,6 +2,13 @@
 
         Build fix.
 
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::performRequest):
+
+2009-02-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
         * WebCore.base.exp:
 
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>
