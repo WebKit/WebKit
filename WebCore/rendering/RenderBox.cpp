@@ -393,16 +393,26 @@ int RenderBox::clientHeight() const
     return height() - borderTop() - borderBottom() - horizontalScrollbarHeight();
 }
 
-// scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
+// scrollWidth/scrollHeight will be the same as overflowWidth/overflowHeight unless the
 // object has overflow:hidden/scroll/auto specified and also has overflow.
+// FIXME: It's not completely clear how scrollWidth/Height should behave for 
+// objects with visible overflow.
 int RenderBox::scrollWidth() const
 {
-    return hasOverflowClip() ? m_layer->scrollWidth() : overflowWidth();
+    if (hasOverflowClip())
+        return m_layer->scrollWidth();
+    if (isRenderInline())
+        return 0;
+    return overflowWidth();
 }
 
 int RenderBox::scrollHeight() const
 {
-    return hasOverflowClip() ? m_layer->scrollHeight() : overflowHeight();
+    if (hasOverflowClip())
+        return m_layer->scrollHeight();
+    if (isRenderInline())
+        return 0;
+    return overflowHeight();
 }
 
 int RenderBox::scrollLeft() const
