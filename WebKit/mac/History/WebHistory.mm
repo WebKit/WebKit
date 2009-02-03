@@ -60,6 +60,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     NSMutableDictionary *_entriesByURL;
     DateToEntriesMap* _entriesByDate;
     NSMutableArray *_orderedLastVisitedDays;
+    WebHistoryItem *_lastVisitedEntry;
     BOOL itemLimitSet;
     int itemLimit;
     BOOL ageInDaysLimitSet;
@@ -93,6 +94,9 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
 - (void)addVisitedLinksToPageGroup:(PageGroup&)group;
 
+- (WebHistoryItem *)lastVisitedEntry;
+- (void)setLastVisitedEntry:(WebHistoryItem *)lastVisitedEntry;
+
 @end
 
 @implementation WebHistoryPrivate
@@ -123,6 +127,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 {
     [_entriesByURL release];
     [_orderedLastVisitedDays release];
+    [_lastVisitedEntry release];
     delete _entriesByDate;
     [super dealloc];
 }
@@ -634,6 +639,19 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     }
 }
 
+- (WebHistoryItem *)lastVisitedEntry
+{
+    return _lastVisitedEntry;
+}
+
+- (void)setLastVisitedEntry:(WebHistoryItem *)lastVisitedEntry
+{
+    if (_lastVisitedEntry == lastVisitedEntry)
+        return;
+    [_lastVisitedEntry release];
+    _lastVisitedEntry = [lastVisitedEntry retain];
+}
+
 @end
 
 @implementation WebHistory
@@ -794,18 +812,37 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 @implementation WebHistory (WebInternal)
 
-- (void)_visitedURL:(NSURL *)URL withTitle:(NSString *)title method:(NSString *)method wasFailure:(BOOL)wasFailure
+- (void)_visitedURL:(NSURL *)url withTitle:(NSString *)title method:(NSString *)method wasFailure:(BOOL)wasFailure serverRedirectURL:(NSString *)serverRedirectURL isClientRedirect:(BOOL)isClientRedirect
 {
-    WebHistoryItem *entry = [_historyPrivate visitedURL:URL withTitle:title];
+    if (isClientRedirect) {
+        ASSERT(!serverRedirectURL);
+        if (WebHistoryItem *lastVisitedEntry = [_historyPrivate lastVisitedEntry])
+            core(lastVisitedEntry)->addRedirectURL([url _web_originalDataAsString]);
+    }
+
+    WebHistoryItem *entry = [_historyPrivate visitedURL:url withTitle:title];
+    [_historyPrivate setLastVisitedEntry:entry];
+
     HistoryItem* item = core(entry);
     item->setLastVisitWasFailure(wasFailure);
 
     if ([method length])
         item->setLastVisitWasHTTPNonGet([method caseInsensitiveCompare:@"GET"]);
 
+    if (serverRedirectURL) {
+        ASSERT(!isClientRedirect);
+        item->addRedirectURL(serverRedirectURL);
+    }
+
     NSArray *entries = [[NSArray alloc] initWithObjects:entry, nil];
     [self _sendNotification:WebHistoryItemsAddedNotification entries:entries];
     [entries release];
+}
+
+- (void)_visitedURLForRedirectWithoutHistoryItem:(NSURL *)url
+{
+    if (WebHistoryItem *lastVisitedEntry = [_historyPrivate lastVisitedEntry])
+        core(lastVisitedEntry)->addRedirectURL([url _web_originalDataAsString]);
 }
 
 - (void)_addVisitedLinksToPageGroup:(WebCore::PageGroup&)group

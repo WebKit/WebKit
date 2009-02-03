@@ -459,8 +459,29 @@ void WebFrameLoaderClient::updateGlobalHistory()
     WebHistory* history = WebHistory::sharedHistory();
     if (!history)
         return;
+
     DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
-    history->visitedURL(loader->urlForHistory(), loader->title(), loader->request().httpMethod(), loader->urlForHistoryReflectsFailure());                 
+
+    if (loader->urlForHistoryReflectsServerRedirect()) {
+        history->visitedURL(loader->urlForHistory(), loader->title(), loader->request().httpMethod(), loader->urlForHistoryReflectsFailure(), loader->url(), false);                 
+        return;
+    }
+
+    if (loader->urlForHistoryReflectsClientRedirect()) {
+        history->visitedURL(loader->urlForHistory(), loader->title(), loader->request().httpMethod(), loader->urlForHistoryReflectsFailure(), KURL(), true);
+        return;
+    }
+
+    history->visitedURL(loader->urlForHistory(), loader->title(), loader->request().httpMethod(), loader->urlForHistoryReflectsFailure(), KURL(), false);
+}
+
+void WebFrameLoaderClient::updateGlobalHistoryForRedirectWithoutHistoryItem()
+{
+    WebHistory* history = WebHistory::sharedHistory();
+    if (!history)
+        return;
+    DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
+    history->visitedURLForRedirectWithoutHistoryItem(loader->url());
 }
 
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const
@@ -580,7 +601,7 @@ void WebFrameLoaderClient::loadURLIntoChild(const KURL& originalURL, const Strin
 
     HistoryItem* parentItem = coreFrame->loader()->currentHistoryItem();
     FrameLoadType loadType = coreFrame->loader()->loadType();
-    FrameLoadType childLoadType = FrameLoadTypeRedirect;
+    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedBackForwardList;
 
     KURL url = originalURL;
 

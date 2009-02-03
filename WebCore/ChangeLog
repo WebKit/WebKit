@@ -1,3 +1,99 @@
+2009-02-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Track redirects in global history.
+
+        * WebCore.base.exp: Renamed some exports.
+        
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::createWindow):
+        (windowProtoFuncOpen):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::setLocation):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::submit):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::setHref):
+        (WebCore::JSLocation::setProtocol):
+        (WebCore::JSLocation::setHost):
+        (WebCore::JSLocation::setHostname):
+        (WebCore::JSLocation::setPort):
+        (WebCore::JSLocation::setPathname):
+        (WebCore::JSLocation::setSearch):
+        (WebCore::JSLocation::setHash):
+        (WebCore::JSLocation::assign): Treat any navigation that is not initiated
+        by the user as a redirect from the perspective of global history.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::addRedirectURL): Store the last URL in the redirect
+        chain.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::urlForHistoryReflectsServerRedirect):
+        (WebCore::DocumentLoader::urlForHistoryReflectsClientRedirect):
+        (WebCore::DocumentLoader::setURLForHistoryReflectsClientRedirect): Sadly,
+        added yet another way to track redirect state during loading, since none
+        of the others did what I wanted, and I didn't want to cause behavior
+        changes in existing code.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::updateGlobalHistoryForRedirectWithoutHistoryItem):
+        Stubbed out a client function to keep things building.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::isBackForwardLoadType):
+        (WebCore::FrameLoader::restoreDocumentState): Renamed FrameLoadTypeRedirect =>
+        FrameLoadTypeRedirectWithLockedBackForwardList, to distinguish from all
+        the other meanings of "redirect" in the loading code.
+
+        (WebCore::FrameLoader::scheduleHTTPRedirection): Treat any HTTP refresh
+        redirect as a redirect from the perspective of global history.
+
+        (WebCore::FrameLoader::loadURLIntoChildFrame): Updated for rename and extra
+        parameter.
+
+        (WebCore::FrameLoader::startRedirectionTimer): Removed unused parameter.
+
+        (WebCore::FrameLoader::loadFrameRequestWithFormAndValues):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load): Updated for rename and extra parameter.
+
+        (WebCore::FrameLoader::loadWithNavigationAction): Track redirect status
+        in the DocumentLoader, so it's accessible to WebKit's global history code.
+
+        (WebCore::FrameLoader::clientRedirected): Ignore lockHistory, since it
+        only has meaning to global history, and m_quickRedirectComing pertains
+        to other kinds of history.
+
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::loadEmptyDocumentSynchronously):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::loadItem): Updated for extra parameter and rename.
+        
+        (WebCore::FrameLoader::updateHistory*): Notify WebKit about redirect
+        navigations even if they don't create new history items, so we can track
+        the redirect in the existing history item.
+
+        * loader/FrameLoader.h: See above.
+        
+        * loader/FrameLoaderClient.h: New client interface used by
+        FrameLoader::updateHistory* to record a redirect even if it doesn't create
+        a new history item of its own.
+
+        * loader/FrameLoaderTypes.h: See above.
+        (WebCore::):
+
+        * page/DragController.cpp:
+        (WebCore::DragController::performDrag):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged): Updated for extra parameter.
+
 2009-02-02  David Hyatt  <hyatt@apple.com>
 
         Make calcPrefWidths non-abstract on RenderBox and just give it RenderContainer's implementation.

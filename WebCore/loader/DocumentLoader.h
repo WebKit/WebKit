@@ -156,6 +156,9 @@ namespace WebCore {
 
         KURL urlForHistory() const;
         bool urlForHistoryReflectsFailure() const;
+        bool urlForHistoryReflectsServerRedirect() const { return urlForHistory() != url(); }
+        bool urlForHistoryReflectsClientRedirect() const { return m_urlForHistoryReflectsClientRedirect; }
+        void setURLForHistoryReflectsClientRedirect(bool b) { m_urlForHistoryReflectsClientRedirect = b; }
         
         void loadFromCachedPage(PassRefPtr<CachedPage>);
         void setLoadingFromCachedPage(bool loading) { m_loadingFromCachedPage = loading; }
@@ -287,6 +290,8 @@ namespace WebCore {
 
         HashSet<String> m_resourcesClientKnowsAbout;
         Vector<String> m_resourcesLoadedFromMemoryCacheForClientNotification;
+        
+        bool m_urlForHistoryReflectsClientRedirect;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)  
         // The application cache that the document loader is associated with (if any).

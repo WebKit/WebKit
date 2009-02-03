@@ -628,6 +628,10 @@ void FrameLoaderClientQt::updateGlobalHistory()
         history->addHistoryEntry(m_frame->loader()->documentLoader()->urlForHistory().prettyURL());
 }
 
+void FrameLoaderClientQt::updateGlobalHistoryForRedirectWithoutHistoryItem()
+{
+}
+
 bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *item) const
 {
     return true;
@@ -966,7 +970,7 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     // ### set override encoding if we have one
 
     FrameLoadType loadType = m_frame->loader()->loadType();
-    FrameLoadType childLoadType = FrameLoadTypeRedirect;
+    FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedBackForwardList;
 
     childFrame->loader()->loadURL(frameData.url, frameData.referrer, String(), childLoadType, 0, 0);
 

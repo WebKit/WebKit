@@ -240,7 +240,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         m_frame->setView(m_frameView.get());
         m_frame->init();
         ResourceRequest fakeRequest(KURL(""));
-        m_frame->loader()->load(fakeRequest); // Make sure the DocumentLoader is created
+        m_frame->loader()->load(fakeRequest, false); // Make sure the DocumentLoader is created
         m_frame->loader()->cancelContentPolicyCheck(); // cancel any policy checks
         m_frame->loader()->commitProvisionalLoad(0);
         m_frame->loader()->setResponseMIMEType("image/svg+xml");

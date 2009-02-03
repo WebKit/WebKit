@@ -788,10 +788,39 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 void WebFrameLoaderClient::updateGlobalHistory()
 {
     DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
-    const KURL& url = loader->urlForHistory();
-    const String& title = loader->title();
-    bool wasFailure = loader->urlForHistoryReflectsFailure();
-    [[WebHistory optionalSharedHistory] _visitedURL:url withTitle:title method:loader->request().httpMethod() wasFailure:wasFailure];
+
+    if (loader->urlForHistoryReflectsServerRedirect()) {
+        [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory()
+                                              withTitle:loader->title()
+                                                 method:loader->request().httpMethod()
+                                             wasFailure:loader->urlForHistoryReflectsFailure()
+                                      serverRedirectURL:loader->url()
+                                       isClientRedirect:NO];
+        return;
+    }
+
+    if (loader->urlForHistoryReflectsClientRedirect()) {
+        [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() 
+                                              withTitle:loader->title()
+                                                 method:loader->request().httpMethod()
+                                             wasFailure:loader->urlForHistoryReflectsFailure()
+                                      serverRedirectURL:nil
+                                       isClientRedirect:YES];
+        return;
+    }
+
+    [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() 
+                                          withTitle:loader->title()
+                                             method:loader->request().httpMethod()
+                                         wasFailure:loader->urlForHistoryReflectsFailure()
+                                  serverRedirectURL:nil
+                                   isClientRedirect:NO];
+}
+
+void WebFrameLoaderClient::updateGlobalHistoryForRedirectWithoutHistoryItem()
+{
+    DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
+    [[WebHistory optionalSharedHistory] _visitedURLForRedirectWithoutHistoryItem:loader->url()];
 }
 
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const

@@ -668,8 +668,14 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry)
     return hr;
 }
 
-void WebHistory::visitedURL(const KURL& url, const String& title, const String& httpMethod, bool wasFailure)
+void WebHistory::visitedURL(const KURL& url, const String& title, const String& httpMethod, bool wasFailure, const KURL& serverRedirectURL, bool isClientRedirect)
 {
+    if (isClientRedirect) {
+        ASSERT(serverRedirectURL.isEmpty());
+        if (m_lastVisitedEntry)
+            m_lastVisitedEntry->historyItem()->addRedirectURL(url.string());
+    }
+
     RetainPtr<CFStringRef> urlString(AdoptCF, url.string().createCFString());
 
     IWebHistoryItem* entry = (IWebHistoryItem*) CFDictionaryGetValue(m_entriesByURL.get(), urlString.get());
@@ -705,6 +711,8 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
 
     addItemToDateCaches(entry);
 
+    m_lastVisitedEntry = entry;
+
     COMPtr<IWebHistoryItemPrivate> entryPrivate(Query, entry);
     if (!entryPrivate)
         return;
@@ -713,10 +721,21 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
     if (!httpMethod.isEmpty())
         entryPrivate->setLastVisitWasHTTPNonGet(!equalIgnoringCase(httpMethod, "GET"));
 
+    if (!serverRedirectURL.isEmpty()) {
+        ASSERT(!isClientRedirect);
+        entry->historyItem()->addRedirectURL(serverRedirectURL);
+    }
+
     CFDictionaryPropertyBag* userInfo = createUserInfoFromHistoryItem(
         getNotificationString(kWebHistoryItemsAddedNotification), entry);
     postNotification(kWebHistoryItemsAddedNotification, userInfo);
     releaseUserInfo(userInfo);
+}
+
+void WebHistory::visitedURLForRedirectWithoutHistoryItem(const KURL& url)
+{
+    if (m_lastVisitedEntry)
+        m_lastVisitedEntry->historyItem()->addRedirectURL(url.string());
 }
 
 HRESULT WebHistory::itemForURLString(

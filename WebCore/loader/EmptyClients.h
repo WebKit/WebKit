@@ -244,6 +244,7 @@ public:
     virtual void transitionToCommittedForNewPage() { }    
 
     virtual void updateGlobalHistory() { }
+    virtual void updateGlobalHistoryForRedirectWithoutHistoryItem() { }
     virtual bool shouldGoToHistoryItem(HistoryItem*) const { return false; }
     virtual void saveViewStateToItem(HistoryItem*) { }
     virtual bool canCachePage() const { return false; }

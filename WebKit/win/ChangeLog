@@ -1,3 +1,31 @@
+2009-02-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Track redirects in global history.
+
+        * Interfaces/IWebFramePrivate.idl: Updated for WebCore rename.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (WebFrameLoaderClient::updateGlobalHistoryForRedirectWithoutHistoryItem):
+        Store redirect information in global history.
+
+        (WebFrameLoaderClient::loadURLIntoChild): Updated for extra parameter.
+
+        * WebCoreSupport/WebFrameLoaderClient.h: See above.
+
+        * WebFrame.cpp:
+        (WebFrame::loadRequest):
+        (WebFrame::loadData): Updated for extra parameter.
+
+        * WebHistory.cpp:
+        (WebHistory::visitedURL):
+        (WebHistory::visitedURLForRedirectWithoutHistoryItem): Store redirect
+        information in global history.
+
+        * WebHistory.h: See above.
+
 2009-02-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein

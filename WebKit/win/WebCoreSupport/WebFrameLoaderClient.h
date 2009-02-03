@@ -86,6 +86,7 @@ public:
     virtual void finishedLoading(WebCore::DocumentLoader*);
 
     virtual void updateGlobalHistory();
+    virtual void updateGlobalHistoryForRedirectWithoutHistoryItem();
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
 
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);

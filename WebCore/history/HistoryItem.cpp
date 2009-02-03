@@ -408,7 +408,10 @@ void HistoryItem::addRedirectURL(const String& url)
     if (!m_redirectURLs)
         m_redirectURLs.set(new Vector<String>);
 
-    m_redirectURLs->append(url);
+    // Our API allows us to store all the URLs in the redirect chain, but for
+    // now we only have a use for the final URL.
+    (*m_redirectURLs).resize(1);
+    (*m_redirectURLs)[0] = url;
 }
 
 Vector<String>* HistoryItem::redirectURLs() const

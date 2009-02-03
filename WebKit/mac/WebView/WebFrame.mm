@@ -1309,7 +1309,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)loadRequest:(NSURLRequest *)request
 {
-    _private->coreFrame->loader()->load(request);
+    _private->coreFrame->loader()->load(request, false);
 }
 
 static NSURL *createUniqueWebDataURL()
@@ -1337,7 +1337,7 @@ static NSURL *createUniqueWebDataURL()
 
     SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData(data), MIMEType, encodingName, [unreachableURL absoluteURL], responseURL);
 
-    _private->coreFrame->loader()->load(request, substituteData);
+    _private->coreFrame->loader()->load(request, substituteData, false);
 }
 
 
