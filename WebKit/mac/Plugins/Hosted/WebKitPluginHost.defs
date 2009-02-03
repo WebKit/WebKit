@@ -27,10 +27,10 @@
 
 subsystem WebKitPluginHost 300;
 
-serverprefix WKPH;
-userprefix _WKPH;
+serverprefix WK;
+userprefix _WK;
 
-routine CheckInWithPluginHost(pluginHostPort :mach_port_t;
+routine PHCheckInWithPluginHost(pluginHostPort :mach_port_t;
                               options :plist_bytes_t;
                               clientPort :mach_port_make_send_t;
                               clientPSNHigh :uint32_t;
@@ -39,23 +39,23 @@ routine CheckInWithPluginHost(pluginHostPort :mach_port_t;
                               out pluginHostPSNHigh :uint32_t;
                               out pluginHostPSNLow :uint32_t);
 
-simpleroutine InstantiatePlugin(pluginHostPort :mach_port_t;
+simpleroutine PHInstantiatePlugin(pluginHostPort :mach_port_t;
                                 options :plist_bytes_t;
                                 pluginID :uint32_t);
                                 
-simpleroutine ResizePluginInstance(pluginHostPort :mach_port_t;
+simpleroutine PHResizePluginInstance(pluginHostPort :mach_port_t;
                                    pluginID :uint32_t;
                                    x :double;
                                    y :double;
                                    width :double;
                                    height :double);
-simpleroutine PluginInstanceFocusChanged(pluginHostPort :mach_port_t;
+simpleroutine PHPluginInstanceFocusChanged(pluginHostPort :mach_port_t;
                                          pluginID :uint32_t;
                                          hasFocus :boolean_t);
-simpleroutine PluginInstanceWindowFocusChanged(pluginHostPort :mach_port_t;
+simpleroutine PHPluginInstanceWindowFocusChanged(pluginHostPort :mach_port_t;
                                          pluginID :uint32_t;
                                          hasFocus :boolean_t);
-simpleroutine PluginInstanceWindowFrameChanged(pluginHostPort :mach_port_t;
+simpleroutine PHPluginInstanceWindowFrameChanged(pluginHostPort :mach_port_t;
                                                pluginID :uint32_t;
                                                x :double;
                                                y :double;
@@ -63,7 +63,7 @@ simpleroutine PluginInstanceWindowFrameChanged(pluginHostPort :mach_port_t;
                                                height :double;
                                                maxScreenY :double);
 
-simpleroutine PluginInstanceMouseEvent(pluginHostPort :mach_port_t;
+simpleroutine PHPluginInstanceMouseEvent(pluginHostPort :mach_port_t;
                                        pluginID :uint32_t;
                                        timestamp :double;
                                        eventType :uint32_t;
@@ -79,7 +79,7 @@ simpleroutine PluginInstanceMouseEvent(pluginHostPort :mach_port_t;
                                        deltaY :double;
                                        deltaZ: double);
 
-simpleroutine PluginInstanceKeyboardEvent(pluginHostPort :mach_port_t;
+simpleroutine PHPluginInstanceKeyboardEvent(pluginHostPort :mach_port_t;
                                           pluginID :uint32_t;
                                           timestamp :double;
                                           eventType :uint32_t;
@@ -89,18 +89,18 @@ simpleroutine PluginInstanceKeyboardEvent(pluginHostPort :mach_port_t;
                                           isARepeat :boolean_t;
                                           keyCode :uint16_t);
                                           
-simpleroutine PluginInstanceStartTimers(pluginHostPort :mach_port_t;
+simpleroutine PHPluginInstanceStartTimers(pluginHostPort :mach_port_t;
                                         pluginID :uint32_t;
                                         throttleTimers :boolean_t);
-simpleroutine PluginInstanceStopTimers(pluginHostPort :mach_port_t;
+simpleroutine PHPluginInstanceStopTimers(pluginHostPort :mach_port_t;
                                        pluginID :uint32_t);
 
-simpleroutine DestroyPluginInstance(pluginHostPort :mach_port_t;
+simpleroutine PHDestroyPluginInstance(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t);
 
 
 // Streams
-simpleroutine StartStream(pluginHostPort :mach_port_t;
+simpleroutine PHStartStream(pluginHostPort :mach_port_t;
                           pluginID :uint32_t;
                           streamID :uint32_t;
                           responseURL :data_t;
@@ -109,73 +109,73 @@ simpleroutine StartStream(pluginHostPort :mach_port_t;
                           mimeType :data_t;
                           headers :data_t);
 
-simpleroutine StreamDidReceiveData(pluginHostPort :mach_port_t;
+simpleroutine PHStreamDidReceiveData(pluginHostPort :mach_port_t;
                                    pluginID :uint32_t;
                                    streamID :uint32_t;
                                    data :data_t);
 
-simpleroutine StreamDidFinishLoading(pluginHostPort :mach_port_t;
+simpleroutine PHStreamDidFinishLoading(pluginHostPort :mach_port_t;
                                      pluginID :uint32_t;
                                      streamID :uint32_t);
 
-simpleroutine StreamDidFail(pluginHostPort :mach_port_t;
+simpleroutine PHStreamDidFail(pluginHostPort :mach_port_t;
                             pluginID :uint32_t;
                             streamID :uint32_t;
                             reason :int16_t);
 
-simpleroutine LoadURLNotify(pluginHostPort :mach_port_t;
+simpleroutine PHLoadURLNotify(pluginHostPort :mach_port_t;
                             pluginID :uint32_t;
                             requestID :uint32_t;
                             reason :int16_t);
 
 // NPRuntime
 
-simpleroutine GetScriptableNPObject(pluginHostPort :mach_port_t;
+simpleroutine PHGetScriptableNPObject(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t);
 
-simpleroutine NPObjectHasProperty(pluginHostPort :mach_port_t;
+simpleroutine PHNPObjectHasProperty(pluginHostPort :mach_port_t;
                                   pluginID :uint32_t;
                                   objectID :uint32_t;
                                   propertyName :uint64_t);
 
-simpleroutine NPObjectHasMethod(pluginHostPort :mach_port_t;
+simpleroutine PHNPObjectHasMethod(pluginHostPort :mach_port_t;
                                 pluginID :uint32_t;
                                 objectID :uint32_t;
                                 methodName :uint64_t);
 
-simpleroutine NPObjectInvoke(pluginHostPort :mach_port_t;
+simpleroutine PHNPObjectInvoke(pluginHostPort :mach_port_t;
                              pluginID :uint32_t;
                              objectID :uint32_t;
                              invokeType :uint32_t;
                              methodName :uint64_t;
                              arguments :data_t);
 
-simpleroutine NPObjectHasInvokeDefaultMethod(pluginHostPort :mach_port_t;
+simpleroutine PHNPObjectHasInvokeDefaultMethod(pluginHostPort :mach_port_t;
                                              pluginID :uint32_t;
                                              objectID :uint32_t);
 
-simpleroutine NPObjectHasConstructMethod(pluginHostPort :mach_port_t;
+simpleroutine PHNPObjectHasConstructMethod(pluginHostPort :mach_port_t;
                                          pluginID :uint32_t;
                                          objectID :uint32_t);
                                        
-simpleroutine NPObjectGetProperty(pluginHostPort :mach_port_t;
+simpleroutine PHNPObjectGetProperty(pluginHostPort :mach_port_t;
                                   pluginID :uint32_t;
                                   objectID :uint32_t;
                                   propertyName :uint64_t);
 
-simpleroutine NPObjectSetProperty(pluginHostPort :mach_port_t;
+simpleroutine PHNPObjectSetProperty(pluginHostPort :mach_port_t;
                                   pluginID :uint32_t;
                                   objectID :uint32_t;
                                   propertyName :uint64_t;
                                   value :data_t);
                                   
-simpleroutine NPObjectRelease(pluginHostPort :mach_port_t;
+simpleroutine PHNPObjectRelease(pluginHostPort :mach_port_t;
                               pluginID :uint32_t;
                               objectID :uint32_t);
 
 // Replies
 
-simpleroutine EvaluateReply(pluginHostPort :mach_port_t;
+simpleroutine PHEvaluateReply(pluginHostPort :mach_port_t;
                             pluginID :uint32_t;
                             returnValue :boolean_t;
                             result :data_t);

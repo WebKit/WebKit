@@ -28,14 +28,14 @@
 // FIXME: Come up with a better name.
 subsystem WebKitPluginClient 300;
 
-serverprefix WKPC;
-userprefix _WKPC;
+serverprefix WK;
+userprefix _WK;
 
-simpleroutine StatusText(clientPort :mach_port_t;
+simpleroutine PCStatusText(clientPort :mach_port_t;
                          pluginID :uint32_t;
                          text :data_t);
 
-routine LoadURL(clientPort :mach_port_t;
+routine PCLoadURL(clientPort :mach_port_t;
                       pluginID :uint32_t;
                       url :data_t;
                       target :data_t;
@@ -44,12 +44,12 @@ routine LoadURL(clientPort :mach_port_t;
                       out resultCode :uint16_t;
                       out requestID :uint32_t);
 
-simpleroutine CancelLoadURL(clientPort :mach_port_t;
+simpleroutine PCCancelLoadURL(clientPort :mach_port_t;
                             pluginID :uint32_t;
                             streamID :uint32_t;
                             reason :int16_t);
 
-simpleroutine InvalidateRect(clientPort :mach_port_t;
+simpleroutine PCInvalidateRect(clientPort :mach_port_t;
                              pluginID :uint32_t;
                              x :double;
                              y :double;
@@ -58,112 +58,112 @@ simpleroutine InvalidateRect(clientPort :mach_port_t;
 
 // NPRuntime
 
-routine GetStringIdentifier(clientPort :mach_port_t;
+routine PCGetStringIdentifier(clientPort :mach_port_t;
                             name :data_t;
                             out identifier :uint64_t);
 
-routine GetIntIdentifier(clientPort :mach_port_t;
+routine PCGetIntIdentifier(clientPort :mach_port_t;
                          value :int32_t;
                          out identifier: uint64_t);
 
-routine GetWindowNPObject(clientPort :mach_port_t;
+routine PCGetWindowNPObject(clientPort :mach_port_t;
                           pluginID :uint32_t;
                           out objectID :uint32_t);
-routine GetPluginElementNPObject(clientPort :mach_port_t;
+routine PCGetPluginElementNPObject(clientPort :mach_port_t;
                                  pluginID :uint32_t;
                                  out objectID :uint32_t);
                       
-routine ReleaseObject(clientPort :mach_port_t;
+routine PCReleaseObject(clientPort :mach_port_t;
                       pluginID :uint32_t;
                       objectID :uint32_t);
                       
-simpleroutine Evaluate(clientPort :mach_port_t;
+simpleroutine PCEvaluate(clientPort :mach_port_t;
                        pluginID :uint32_t;
                        objectID :uint32_t;
                        script :data_t);
 
-simpleroutine Invoke(clientPort :mach_port_t;
+simpleroutine PCInvoke(clientPort :mach_port_t;
                      pluginID :uint32_t;
                      objectID :uint32_t;
                      methodNameIdentifier :uint64_t;
                      arguments :data_t);
 
-routine InvokeDefault(clientPort :mach_port_t;
+routine PCInvokeDefault(clientPort :mach_port_t;
                pluginID :uint32_t;
                objectID :uint32_t;
                arguments :data_t;
                out returnValue :boolean_t;
                out result :data_t, dealloc);
 
-routine Construct(clientPort :mach_port_t;
+routine PCConstruct(clientPort :mach_port_t;
                   pluginID :uint32_t;
                   objectID :uint32_t;
                   arguments :data_t;
                   out returnValue :boolean_t;
                   out result :data_t, dealloc);
 
-routine GetProperty(clientPort :mach_port_t;
+routine PCGetProperty(clientPort :mach_port_t;
                     pluginID :uint32_t;
                     objectID :uint32_t;
                     propertyNameIdentifier :uint64_t;
                     out returnValue :boolean_t;
                     out result :data_t, dealloc);
 
-routine SetProperty(clientPort :mach_port_t;
+routine PCSetProperty(clientPort :mach_port_t;
                     pluginID :uint32_t;
                     objectID :uint32_t;
                     propertyNameIdentifier :uint64_t;
                     value :data_t;
                     out returnValue :boolean_t);
 
-routine RemoveProperty(clientPort :mach_port_t;
+routine PCRemoveProperty(clientPort :mach_port_t;
                        pluginID :uint32_t;
                        objectID :uint32_t;
                        propertyNameIdentifier :uint64_t;
                        out returnValue :boolean_t);
 
-routine HasProperty(clientPort :mach_port_t;
+routine PCHasProperty(clientPort :mach_port_t;
                     pluginID :uint32_t;
                     objectID :uint32_t;
                     propertyNameIdentifier :uint64_t;
                     out returnValue :boolean_t);
 
-routine HasMethod(clientPort :mach_port_t;
+routine PCHasMethod(clientPort :mach_port_t;
                     pluginID :uint32_t;
                     objectID :uint32_t;
                     methodNameIdentifier :uint64_t;
                     out returnValue :boolean_t);
 
-routine IdentifierInfo(clientPort :mach_port_t;
+routine PCIdentifierInfo(clientPort :mach_port_t;
                        identifier :uint64_t;
                        out info :data_t, dealloc);
 
 // Misc
 
-simpleroutine SetMenuBarVisible(clientPort :mach_port_t;
+simpleroutine PCSetMenuBarVisible(clientPort :mach_port_t;
                                 visible :boolean_t);
 
-simpleroutine SetModal(clientPort :mach_port_t;
+simpleroutine PCSetModal(clientPort :mach_port_t;
                        modal :boolean_t);
 
 // Replies
-simpleroutine InstantiatePluginReply(clientPort :mach_port_t;
+simpleroutine PCInstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;
                                      result :kern_return_t;
                                      renderContextID :uint32_t;
                                      useSoftwareRenderer :boolean_t);
 
-simpleroutine GetScriptableNPObjectReply(clientPort :mach_port_t;
+simpleroutine PCGetScriptableNPObjectReply(clientPort :mach_port_t;
                                          pluginID :uint32_t;
                                          objectID :uint32_t);
 
-simpleroutine BooleanReply(clientPort :mach_port_t;
-                           pluginID :uint32_t;
-                           result :boolean_t);
+simpleroutine PCBooleanReply(clientPort :mach_port_t;
+                             pluginID :uint32_t;
+                             result :boolean_t);
                            
-simpleroutine BooleanAndDataReply(clientPort :mach_port_t;
-                                  pluginID :uint32_t;
-                                  returnValue :boolean_t;
-                                  result :data_t);  
+simpleroutine PCBooleanAndDataReply(clientPort :mach_port_t;
+                                    pluginID :uint32_t;
+                                    returnValue :boolean_t;
+                                    result :data_t);  
 
 

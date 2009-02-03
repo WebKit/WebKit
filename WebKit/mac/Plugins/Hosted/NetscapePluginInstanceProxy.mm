@@ -467,7 +467,7 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
 void NetscapePluginInstanceProxy::processRequestsAndWaitForReply()
 {
     while (!m_currentReply.get()) {
-        kern_return_t kr = mach_msg_server_once(WebKitPluginClient_server, WKPCWebKitPluginClient_subsystem.maxsize + MAX_TRAILER_SIZE, m_pluginHostProxy->clientPort(), 0);
+        kern_return_t kr = mach_msg_server_once(WebKitPluginClient_server, WKWebKitPluginClient_subsystem.maxsize + MAX_TRAILER_SIZE, m_pluginHostProxy->clientPort(), 0);
         if (kr != KERN_SUCCESS) {
             m_currentReply.reset();
             break;
