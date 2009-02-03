@@ -2,6 +2,16 @@
 
         Build fix.
 
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::updateGlobalHistoryForRedirectWithoutHistoryItem):
+        (WebCore::FrameLoaderClientWx::createPlugin):
+        (WebCore::FrameLoaderClientWx::createJavaAppletWidget):
+        * WebKitSupport/FrameLoaderClientWx.h:
+
+2009-02-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
         * WebFrame.cpp:
         (wxWebFrame::LoadURL):
 
