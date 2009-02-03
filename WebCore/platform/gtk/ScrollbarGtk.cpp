@@ -78,10 +78,22 @@ ScrollbarGtk::~ScrollbarGtk()
 
 void ScrollbarGtk::frameRectsChanged()
 {
-    if (!parent() || !parent()->isScrollViewScrollbar(this))
+    if (!parent())
         return;
 
-    IntPoint loc = parent()->convertToContainingWindow(frameRect().location());
+    IntPoint loc;
+
+    /*
+     * The same scrollbars are used for ScrollViews and 'floating divs'/
+     * RenderLayout. We need to take this into account to decide which
+     * function to use to transform the location coordinates.
+     * The basic difference is that RenderLayout scrollbars need to have
+     * substracted the scrollOffset() from their location.
+     */
+    if (parent()->isScrollViewScrollbar(this))
+        loc = parent()->convertToContainingWindow(frameRect().location());
+    else
+        loc = parent()->contentsToWindow(frameRect().location());
 
     // Don't allow the allocation size to be negative
     IntSize sz = frameRect().size();
