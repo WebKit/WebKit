@@ -4,6 +4,16 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=23711
 
+        Add manual test for floating divs with scrollbars.
+
+        * manual-tests/gtk/floatingdiv.html: Added.
+
+2009-02-03  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23711
+
         There's no need to hold an extra ref to the scrollbar, calling
         setPlatformWidget takes ownership of it.
 
