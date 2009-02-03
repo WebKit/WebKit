@@ -39,6 +39,7 @@
 #include <wtf/Vector.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/HistoryItem.h>
 #pragma warning( pop )
 
 using namespace WebCore;
@@ -723,7 +724,8 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
 
     if (!serverRedirectURL.isEmpty()) {
         ASSERT(!isClientRedirect);
-        entry->historyItem()->addRedirectURL(serverRedirectURL);
+        COMPtr<WebHistoryItem> item(Query, entry);
+        item->historyItem()->addRedirectURL(serverRedirectURL);
     }
 
     CFDictionaryPropertyBag* userInfo = createUserInfoFromHistoryItem(
