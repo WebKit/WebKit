@@ -2,6 +2,16 @@
 
         Build fix.
 
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+        (QWebFrame::load):
+        (QWebFrame::setHtml):
+        (QWebFrame::setContent):
+
+2009-02-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
         * WebCoreSupport/FrameLoaderClientQt.cpp:
         (WebCore::FrameLoaderClientQt::createFrame):
 

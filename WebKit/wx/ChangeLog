@@ -1,3 +1,10 @@
+2009-02-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * WebFrame.cpp:
+        (wxWebFrame::LoadURL):
+
 2009-01-31  Darin Adler  <darin@apple.com>
 
         Build fix.
