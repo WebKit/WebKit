@@ -44,7 +44,6 @@
 #include "SecurityOrigin.h"
 #include "WorkerContext.h"
 #include "WorkerMessagingProxy.h"
-#include "WorkerTask.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 

@@ -33,7 +33,7 @@
 
 #if ENABLE(WORKERS)
 
-#include "WorkerTask.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/MessageQueue.h>
 #include <wtf/PassRefPtr.h>
 
@@ -51,10 +51,10 @@ namespace WebCore {
         void terminate();
         bool terminated() { return m_messageQueue.killed(); }
 
-        void postTask(PassRefPtr<WorkerTask>);
+        void postTask(PassRefPtr<ScriptExecutionContext::Task>);
         
     private:
-        MessageQueue<RefPtr<WorkerTask> > m_messageQueue;
+        MessageQueue<RefPtr<ScriptExecutionContext::Task> > m_messageQueue;
     };
 
 } // namespace WebCore

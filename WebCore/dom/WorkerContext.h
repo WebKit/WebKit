@@ -78,7 +78,7 @@ namespace WebCore {
 
         void postMessage(const String& message);
         virtual void postTask(PassRefPtr<Task>); // Executes the task on context's thread asynchronously.
-        void postTaskToParentContext(PassRefPtr<Task>); // Executes the task in the parent's context (and thread) asynchronously.
+        void postTaskToWorkerObject(PassRefPtr<Task>); // Executes the task on the worker object's thread asynchronously.
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);

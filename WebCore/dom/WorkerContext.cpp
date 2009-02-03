@@ -40,7 +40,6 @@
 #include "WorkerLocation.h"
 #include "WorkerMessagingProxy.h"
 #include "WorkerNavigator.h"
-#include "WorkerTask.h"
 #include "WorkerThread.h"
 #include <wtf/RefPtr.h>
 
@@ -120,7 +119,7 @@ static void addMessageTask(ScriptExecutionContext* context, WorkerMessagingProxy
 
 void WorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
-    postTaskToParentContext(createCallbackTask(&addMessageTask, m_thread->messagingProxy(), destination, source, level, message, lineNumber, sourceURL));
+    postTaskToWorkerObject(createCallbackTask(&addMessageTask, m_thread->messagingProxy(), destination, source, level, message, lineNumber, sourceURL));
 }
 
 void WorkerContext::resourceRetrievedByXMLHttpRequest(unsigned long, const ScriptString&)
@@ -185,35 +184,14 @@ bool WorkerContext::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
     return !event->defaultPrevented();
 }
 
-class ScriptExecutionContextTaskWorkerTask : public WorkerTask {
-public:
-    static PassRefPtr<ScriptExecutionContextTaskWorkerTask> create(PassRefPtr<ScriptExecutionContext::Task> task)
-    {
-        return adoptRef(new ScriptExecutionContextTaskWorkerTask(task));
-    }
-
-private:
-    ScriptExecutionContextTaskWorkerTask(PassRefPtr<ScriptExecutionContext::Task> task)
-        : m_task(task)
-    {
-    }
-
-    virtual void performTask(WorkerContext* context)
-    {
-        m_task->performTask(context);
-    }
-
-    RefPtr<ScriptExecutionContext::Task> m_task;
-};
-
 void WorkerContext::postTask(PassRefPtr<Task> task)
 {
-    thread()->runLoop().postTask(ScriptExecutionContextTaskWorkerTask::create(task));
+    thread()->runLoop().postTask(task);
 }
 
-void WorkerContext::postTaskToParentContext(PassRefPtr<Task> task)
+void WorkerContext::postTaskToWorkerObject(PassRefPtr<Task> task)
 {
-    thread()->messagingProxy()->postTaskToParentContext(task);
+    thread()->messagingProxy()->postTaskToWorkerObject(task);
 }
 
 } // namespace WebCore

@@ -40,7 +40,6 @@ namespace WebCore {
     class ScriptExecutionContext;
     class String;
     class Worker;
-    class WorkerTask;
     class WorkerThread;
 
     class WorkerMessagingProxy : Noncopyable {
@@ -49,7 +48,9 @@ namespace WebCore {
 
         void postMessageToWorkerObject(const String& message);
         void postMessageToWorkerContext(const String& message);
-        void postTaskToParentContext(PassRefPtr<ScriptExecutionContext::Task>);
+
+        void postTaskToWorkerObject(PassRefPtr<ScriptExecutionContext::Task>);
+        void postTaskToWorkerContext(PassRefPtr<ScriptExecutionContext::Task>);
 
         void postWorkerException(const String& errorMessage, int lineNumber, const String& sourceURL);
 
@@ -85,7 +86,7 @@ namespace WebCore {
 
         bool m_askedToTerminate;
 
-        Vector<RefPtr<WorkerTask> > m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
+        Vector<RefPtr<ScriptExecutionContext::Task> > m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
     };
 
 } // namespace WebCore

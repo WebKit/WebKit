@@ -32,9 +32,9 @@
 
 #if ENABLE(WORKERS)
 
+#include "ScriptExecutionContext.h"
 #include "WorkerRunLoop.h"
 #include "WorkerContext.h"
-#include "WorkerTask.h"
 #include "WorkerThread.h"
 
 namespace WebCore {
@@ -46,7 +46,7 @@ void WorkerRunLoop::run(WorkerContext* context)
     ASSERT(context->thread()->threadID() == currentThread());
     
     while (true) {
-        RefPtr<WorkerTask> task;
+        RefPtr<ScriptExecutionContext::Task> task;
         if (!m_messageQueue.waitForMessage(task))
             break;
 
@@ -59,7 +59,7 @@ void WorkerRunLoop::terminate()
     m_messageQueue.kill();
 }
 
-void WorkerRunLoop::postTask(PassRefPtr<WorkerTask> task)
+void WorkerRunLoop::postTask(PassRefPtr<ScriptExecutionContext::Task> task)
 {
     m_messageQueue.append(task);
 }

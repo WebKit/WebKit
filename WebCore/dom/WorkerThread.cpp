@@ -37,7 +37,6 @@
 #include "Worker.h"
 #include "WorkerContext.h"
 #include "WorkerMessagingProxy.h"
-#include "WorkerTask.h"
 
 #include <utility>
 #include <wtf/Noncopyable.h>

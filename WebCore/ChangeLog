@@ -2,6 +2,48 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Bug 23636: Make the async api of ThreadableLoader functional for the worker context.
+        <https://bugs.webkit.org/show_bug.cgi?id=23636>
+
+        No observable change in behavior, so no test.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Worker.cpp:
+        * dom/Worker.h:
+        * dom/WorkerContext.cpp:
+        (WebCore::WorkerContext::addMessage):
+        (WebCore::WorkerContext::postTask):
+        (WebCore::WorkerContext::postTaskToWorkerObject):
+        * dom/WorkerContext.h:
+        * dom/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerContextTask::performTask):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerContext):
+        (WebCore::WorkerMessagingProxy::postTaskToWorkerContext):
+        Expose postTaskToWorkerContext for use by the worker object thread.
+
+        (WebCore::WorkerMessagingProxy::postTaskToWorkerObject):
+        Change the name of postTaskToParentContext to postTaskToWorkerObject for consistency
+        with postMessageToWorkerObject.
+
+        * dom/WorkerMessagingProxy.h:
+        * dom/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::run):
+        (WebCore::WorkerRunLoop::postTask):
+        * dom/WorkerRunLoop.h:
+        * dom/WorkerTask.cpp: Removed.
+        * dom/WorkerTask.h: Removed.
+        Removed WorkerTask and replaced with the existing ScriptExecutionContext::Task.
+
+        The resulted in the class going away along with an adapter that made
+        a ScriptExecutionContext::Task look like a WorkerTask.
+
+        * dom/WorkerThread.cpp:
+        * dom/WorkerThread.h:
+
+2009-02-02  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Bug 23618: Templated worker tasks should be more error proof to use.
         <https://bugs.webkit.org/show_bug.cgi?id=23618>
 
