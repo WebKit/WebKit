@@ -628,7 +628,7 @@ void WebFrameLoaderClient::loadURLIntoChild(const KURL& originalURL, const Strin
 
     // FIXME: Handle loading WebArchives here
     String frameName = core(childFrame)->tree()->name();
-    core(childFrame)->loader()->loadURL(url, referrer, frameName, childLoadType, 0, 0);
+    core(childFrame)->loader()->loadURL(url, referrer, frameName, false, childLoadType, 0, 0);
 }
 
 Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
