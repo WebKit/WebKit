@@ -58,8 +58,6 @@ public:
     // change in parentage is not going to affect anything.
     virtual void moveChildNode(RenderObject* child) { appendChildNode(child->parent()->removeChildNode(child, false), false); }
 
-    virtual void calcPrefWidths() { setPrefWidthsDirty(false); }
-
     // Some containers do not want it's children
     // to be drawn, because they may be 'referenced'
     // Example: <marker> children in SVG

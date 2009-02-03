@@ -1,3 +1,18 @@
+2009-02-02  David Hyatt  <hyatt@apple.com>
+
+        Make calcPrefWidths non-abstract on RenderBox and just give it RenderContainer's implementation.
+        Remove RenderSVGContainer's implementation, since it was never called.
+
+        Reviewed by Beth Dakin
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::minPrefWidth):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::calcPrefWidths):
+        * rendering/RenderContainer.h:
+        (WebCore::RenderContainer::moveChildNode):
+        * rendering/RenderSVGContainer.h:
+
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

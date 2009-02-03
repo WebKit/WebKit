@@ -47,8 +47,6 @@ public:
     // Designed for speed.  Don't waste time doing a bunch of work like layer updating and repainting when we know that our
     // change in parentage is not going to affect anything.
     virtual void moveChildNode(RenderObject* child) { appendChildNode(child->parent()->removeChildNode(child, false), false); }
-    
-    virtual void calcPrefWidths() { setPrefWidthsDirty(false); }
 
     RenderObject* beforeAfterContainer(RenderStyle::PseudoId);
     virtual void updateBeforeAfterContent(RenderStyle::PseudoId);
