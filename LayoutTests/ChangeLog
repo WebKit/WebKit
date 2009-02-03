@@ -1,3 +1,11 @@
+2009-02-03  Grace Kloba  <klobag@gmail.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=23178
+        Added a case to test the offsetTop of table cell's children.
+
+        * fast/dom/Element/offsetTop-table-cell-expected.txt:
+        * fast/dom/Element/offsetTop-table-cell.html:
+
 2009-02-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Brady Eidson.

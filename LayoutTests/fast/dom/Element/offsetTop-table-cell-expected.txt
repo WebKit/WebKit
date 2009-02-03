@@ -7,6 +7,7 @@ Table 2 cell 1 top offset:0
 Table 2 cell 2 top offset:0
 Table 2 cell 3 top offset:0
 Table 3 cell 1 top offset:0
+Table 4 div 1 top offset:50
 Test result: PASS
 x	
 This

@@ -28,9 +28,12 @@ function test()
     console.innerText += "\n";
     console.innerText += "Table 3 cell 1 top offset:" + td4Offset;
     console.innerText += "\n";
+    div5Offset = document.getElementById("div5").offsetTop;
+    console.innerText += "Table 4 div 1 top offset:" + div5Offset;
+    console.innerText += "\n";
     console.innerText += "Test result: "
     console.innerText += (rowOffset == 50 && cellOffset == 50 && tr1Offset == 0 
-        && tr1Offset == td2Offset && tr1Offset == td3Offset && td4Offset == 0 ? "PASS" : "FAIL");
+        && tr1Offset == td2Offset && tr1Offset == td3Offset && td4Offset == 0 && div5Offset == 50 ? "PASS" : "FAIL");
 }
 </script>
 </head>
@@ -57,6 +60,15 @@ function test()
 <table cellspacing="0" cellpadding="0" style="background-color: orange;"><tr style="background-color:
 blue;"><td id="td4" style="width: 100px; height:
 500px;background-color: red"></td></tr></table>
+
+    <table cellspacing="0" cellpadding="0"><tbody><tr>
+        <td style="height: 100px;">
+            <div style="margin: 50px 0px;"></div>
+        </td>
+        <td>
+            <div id='div5'>
+        </td>
+    </tr></tbody></table>
 
 </body>
 </html>
