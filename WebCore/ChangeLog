@@ -1,3 +1,14 @@
+2009-02-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Alder.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23697
+        Leaks seen on Worker tests
+
+        * dom/WorkerMessagingProxy.cpp: (WebCore::WorkerMessagingProxy::workerContextDestroyedInternal):
+        Zero out m_workerThread, so that the proxy could be deleted once workerObjectDestroyed()
+        is called.
+
 2009-02-02  David Hyatt  <hyatt@apple.com>
 
         Move positionForCoordinates up from RenderContainer into RenderBox.
