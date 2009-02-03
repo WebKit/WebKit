@@ -1,3 +1,16 @@
+2009-02-03  Dan Bernstein  <mitz@apple.com>
+
+        - fix -Wmissing-prototypes builds
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::workerContextDidSendData): Marked this function static.
+        (WebCore::workerContextDidReceiveResponse): Ditto.
+        (WebCore::workerContextDidReceiveData): Ditto.
+        (WebCore::workerContextDidFinishLoading): Ditto.
+        (WebCore::workerContextDidFail): Ditto.
+        (WebCore::workerContextDidGetCancelled): Ditto.
+        (WebCore::workerContextDidReceiveAuthenticationCancellation): Ditto.
+
 2009-02-03  David Kilzer  <ddkilzer@apple.com>
 
         CrashTracer: [REGRESSION] 53 crashes in Safari at com.apple.WebCore: WebCore::LegacyWebArchive::create + 2706

@@ -137,7 +137,7 @@ void WorkerThreadableLoader::MainThreadBridge::clearClientWrapper()
     static_cast<ThreadableLoaderClientWrapper*>(m_workerClientWrapper.get())->clearClient();
 }
 
-void workerContextDidSendData(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+static void workerContextDidSendData(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     workerClientWrapper->didSendData(bytesSent, totalBytesToBeSent);
@@ -148,7 +148,7 @@ void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long by
     m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidSendData, m_workerClientWrapper, bytesSent, totalBytesToBeSent));
 }
 
-void workerContextDidReceiveResponse(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
+static void workerContextDidReceiveResponse(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     OwnPtr<ResourceResponse> response(ResourceResponse::adopt(responseData));
@@ -160,7 +160,7 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(const Resource
     m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidReceiveResponse, m_workerClientWrapper, response));
 }
 
-void workerContextDidReceiveData(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<Vector<char> > vectorData)
+static void workerContextDidReceiveData(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<Vector<char> > vectorData)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     workerClientWrapper->didReceiveData(vectorData->data(), vectorData->size());
@@ -173,7 +173,7 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, 
     m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector));
 }
 
-void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, int identifier)
+static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, int identifier)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     workerClientWrapper->didFinishLoading(identifier);
@@ -184,7 +184,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(int identifier)
     m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidFinishLoading, m_workerClientWrapper, identifier));
 }
 
-void workerContextDidFail(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper)
+static void workerContextDidFail(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     workerClientWrapper->didFail();
@@ -195,7 +195,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFail()
     m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidFail, m_workerClientWrapper));
 }
 
-void workerContextDidGetCancelled(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper)
+static void workerContextDidGetCancelled(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     workerClientWrapper->didGetCancelled();
@@ -206,7 +206,7 @@ void WorkerThreadableLoader::MainThreadBridge::didGetCancelled()
     m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidGetCancelled, m_workerClientWrapper));
 }
 
-void workerContextDidReceiveAuthenticationCancellation(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
+static void workerContextDidReceiveAuthenticationCancellation(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     OwnPtr<ResourceResponse> response(ResourceResponse::adopt(responseData));
