@@ -12222,14 +12222,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\WorkerTask.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\WorkerTask.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\WorkerThread.cpp"
 				>
 			</File>
