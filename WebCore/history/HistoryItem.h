@@ -28,6 +28,7 @@
 
 #include "IntPoint.h"
 #include "PlatformString.h"
+#include <wtf/OwnPtr.h>
 
 #if PLATFORM(MAC)
 #import <wtf/RetainPtr.h>

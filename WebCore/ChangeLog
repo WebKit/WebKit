@@ -1,3 +1,15 @@
+2009-02-02  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23661
+        Fix Chromium build.
+
+        * history/HistoryItem.h: need to include <wtf/OwnPtr.h>
+
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::adjustMenuListStyle): isEnabled() is now on FormControlElement.
+
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.
