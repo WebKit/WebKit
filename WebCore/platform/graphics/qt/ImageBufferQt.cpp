@@ -35,6 +35,8 @@
 #include "StillImageQt.h"
 
 #include <QBuffer>
+#include <QColor>
+#include <QImage>
 #include <QImageWriter>
 #include <QPainter>
 #include <QPixmap>
@@ -79,10 +81,59 @@ Image* ImageBuffer::image() const
     return m_image.get();
 }
 
-PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect&) const
+PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
 {
-    notImplemented();
-    return 0;
+    PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
+    unsigned char* data = result->data()->data()->data();
+
+    if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > m_size.width() || (rect.y() + rect.height()) > m_size.height())
+        memset(data, 0, result->data()->length());
+
+    int originx = rect.x();
+    int destx = 0;
+    if (originx < 0) {
+        destx = -originx;
+        originx = 0;
+    }
+    int endx = rect.x() + rect.width();
+    if (endx > m_size.width())
+        endx = m_size.width();
+    int numColumns = endx - originx;
+
+    int originy = rect.y();
+    int desty = 0;
+    if (originy < 0) {
+        desty = -originy;
+        originy = 0;
+    }
+    int endy = rect.y() + rect.height();
+    if (endy > m_size.height())
+        endy = m_size.height();
+    int numRows = endy - originy;
+
+    QImage image;
+    if (m_data.m_pixmap.toImage().format() != QImage::Format_ARGB32)
+        image = m_data.m_pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
+    else
+        image = m_data.m_pixmap.toImage();
+    ASSERT(image);
+
+    unsigned destBytesPerRow = 4 * rect.width();
+    unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
+    for (int y = 0; y < numRows; ++y) {
+        for (int x = 0; x < numColumns; x++) {
+            QRgb value = image.pixel(x + originx, y + originy);
+            int basex = x * 4;
+
+            destRows[basex] = qRed(value);
+            destRows[basex + 1] = qGreen(value);
+            destRows[basex + 2] = qBlue(value);
+            destRows[basex + 3] = qAlpha(value);
+        }
+        destRows += destBytesPerRow;
+    }
+
+    return result;
 }
 
 void ImageBuffer::putImageData(ImageData*, const IntRect&, const IntPoint&)

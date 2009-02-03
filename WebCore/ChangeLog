@@ -1,3 +1,15 @@
+2009-02-03  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Sam Weinig and Oliver Hunt.
+
+        Added getImageData() support for QtWebKit.
+
+        [QT] lacks getImageData / putImageData support in Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=22186
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::getImageData):
+
 2009-02-03  Eric Roman  <eroman@chromium.org>
 
         Reviewed by Holger Freyther.
