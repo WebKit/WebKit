@@ -363,10 +363,10 @@ void Generator::generateCharacterClassInvertedRange(JumpList& failures, JumpList
             if (which)
                 generateCharacterClassInvertedRange(failures, matchDest, ranges, which, matchIndex, matches, matchCount);
             
-            do {
+            while ((*matchIndex < matchCount) && (matches[*matchIndex] < lo)) {
                 matchDest.append(je32(character, Imm32((unsigned short)matches[*matchIndex])));
                 ++*matchIndex;
-            } while ((*matchIndex < matchCount) && (matches[*matchIndex] < lo));
+            }
             failures.append(jump());
 
             loOrAbove.link(this);

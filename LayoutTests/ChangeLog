@@ -1,3 +1,16 @@
+2009-02-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=21414> REGRESSION: Regular Expressions and character classes, shorthands and ranges
+        <rdar://problem/6543487>
+
+        Testcase for regex codegen emitting checks out of correct order.
+
+        * fast/js/regexp-character-match-out-of-order-expected.txt: Added.
+        * fast/js/regexp-character-match-out-of-order.html: Added.
+        * fast/js/resources/regexp-character-match-out-of-order.js: Added.
+
 2009-02-02  Yichao Yin  <yichao.yin@torchmobile.com.cn>
 
         Reviewed by Niko Zimmermann.

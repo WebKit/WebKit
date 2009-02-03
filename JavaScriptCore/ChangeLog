@@ -1,3 +1,19 @@
+2009-02-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=21414> REGRESSION: Regular Expressions and character classes, shorthands and ranges
+        <rdar://problem/6543487>
+
+        In certain circumstances when WREC::Generator::generateCharacterClassInvertedRange invokes
+        itself recursively, it will incorrectly emit (and thus consume) the next single character
+        match in the current character class.  As WREC uses a binary search this out of sequence
+        codegen could result in a character match being missed and so cause the regex to produce
+        incorrect results.
+
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateCharacterClassInvertedRange):
+
 2009-02-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.
