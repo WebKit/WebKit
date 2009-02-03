@@ -2795,7 +2795,7 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
     Vector<FloatQuad> lineBoxQuads;
     if (renderer->isInline() || (renderer->isText() && !m_highlightedNode->isSVGElement())) {
         // FIXME: We should show margins/padding/border for inlines.
-        renderer->collectAbsoluteLineBoxQuads(lineBoxQuads);
+        renderer->absoluteQuadsForRange(lineBoxQuads);
     }
 
     for (unsigned i = 0; i < lineBoxQuads.size(); ++i)

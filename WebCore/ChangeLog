@@ -1,3 +1,27 @@
+2009-02-03  David Hyatt  <hyatt@apple.com>
+
+        Rename addLineBoxRects to absoluteRectsForRange, and do the same thing for the corresponding quads methods.  Move the RenderContainer implementations
+        of these methods up to RenderObject.
+        
+        Reviewed by Beth Dakin
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode lineBoxRects]):
+        * dom/Range.cpp:
+        (WebCore::Range::addLineBoxRects):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::drawNodeHighlight):
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderContainer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteRectsForRange):
+        (WebCore::RenderObject::absoluteQuadsForRange):
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        * rendering/RenderText.h:
+
 2009-02-03  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Sam Weinig and Oliver Hunt.

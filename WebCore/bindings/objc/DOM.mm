@@ -400,7 +400,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
     WebCore::RenderObject *renderer = [self _node]->renderer();
     if (renderer) {
         Vector<WebCore::IntRect> rects;
-        renderer->addLineBoxRects(rects);
+        renderer->absoluteRectsForRange(rects);
         return kit(rects);
     }
     return nil;

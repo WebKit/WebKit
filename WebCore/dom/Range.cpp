@@ -1598,7 +1598,7 @@ void Range::addLineBoxRects(Vector<IntRect>& rects, bool useSelectionHeight)
         if (!r->firstChild()) {
             int startOffset = r == start ? m_start.offset() : 0;
             int endOffset = r == end ? m_end.offset() : INT_MAX;
-            r->addLineBoxRects(rects, startOffset, endOffset, useSelectionHeight);
+            r->absoluteRectsForRange(rects, startOffset, endOffset, useSelectionHeight);
         }
     }
 }

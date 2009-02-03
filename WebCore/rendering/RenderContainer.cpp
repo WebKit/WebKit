@@ -115,43 +115,6 @@ void RenderContainer::removeChild(RenderObject* oldChild)
     m_children.removeChildNode(this, oldChild);
 }
 
-void RenderContainer::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigned end, bool)
-{
-    if (!children()->firstChild() && (isInline() || isAnonymousBlock())) {
-        FloatPoint absPos = localToAbsolute(FloatPoint());
-        absoluteRects(rects, absPos.x(), absPos.y());
-        return;
-    }
-
-    if (!children()->firstChild())
-        return;
-
-    unsigned offset = start;
-    for (RenderObject* child = childAt(start); child && offset < end; child = child->nextSibling(), ++offset) {
-        if (child->isText() || child->isInline() || child->isAnonymousBlock()) {
-            FloatPoint absPos = child->localToAbsolute(FloatPoint());
-            child->absoluteRects(rects, absPos.x(), absPos.y());
-        }
-    }
-}
-
-void RenderContainer::collectAbsoluteLineBoxQuads(Vector<FloatQuad>& quads, unsigned start, unsigned end, bool /*useSelectionHeight*/)
-{
-    if (!children()->firstChild() && (isInline() || isAnonymousBlock())) {
-        absoluteQuads(quads);
-        return;
-    }
-
-    if (!children()->firstChild())
-        return;
-
-    unsigned offset = start;
-    for (RenderObject* child = childAt(start); child && offset < end; child = child->nextSibling(), ++offset) {
-        if (child->isText() || child->isInline() || child->isAnonymousBlock())
-            child->absoluteQuads(quads);
-    }
-}
-
 #undef DEBUG_LAYOUT
 
 } // namespace WebCore
