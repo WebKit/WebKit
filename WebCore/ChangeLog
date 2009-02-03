@@ -5,6 +5,72 @@
         Bug 23636: Make the async api of ThreadableLoader functional for the worker context.
         <https://bugs.webkit.org/show_bug.cgi?id=23636>
 
+        Enable the async portion of ThreadableLoader for workers.
+
+        No observable change in behavior, so no test.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * dom/CrossThreadCopier.h:
+        * dom/GenericWorkerTask.h:
+        * dom/WorkerThread.cpp:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::create):
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didFinishLoading):
+        * loader/ThreadableLoaderClientWrapper.h: Added.
+        (WebCore::ThreadableLoaderClientWrapper::create):
+        (WebCore::ThreadableLoaderClientWrapper::clearClient):
+        (WebCore::ThreadableLoaderClientWrapper::didSendData):
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveResponse):
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveData):
+        (WebCore::ThreadableLoaderClientWrapper::didFinishLoading):
+        (WebCore::ThreadableLoaderClientWrapper::didFail):
+        (WebCore::ThreadableLoaderClientWrapper::didGetCancelled):
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveAuthenticationCancellation):
+        (WebCore::ThreadableLoaderClientWrapper::ThreadableLoaderClientWrapper):
+        * loader/WorkerThreadableLoader.cpp: Added.
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::~WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::cancel):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadDestroy):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::destroy):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCancel):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::cancel):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::clearClientWrapper):
+        (WebCore::workerContextDidSendData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didSendData):
+        (WebCore::workerContextDidReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::workerContextDidReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::workerContextDidFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        (WebCore::workerContextDidFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::workerContextDidGetCancelled):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didGetCancelled):
+        (WebCore::workerContextDidReceiveAuthenticationCancellation):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveAuthenticationCancellation):
+        * loader/WorkerThreadableLoader.h: Added.
+        (WebCore::WorkerThreadableLoader::create):
+        (WebCore::WorkerThreadableLoader::refThreadableLoader):
+        (WebCore::WorkerThreadableLoader::derefThreadableLoader):
+
+2009-02-02  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23636: Make the async api of ThreadableLoader functional for the worker context.
+        <https://bugs.webkit.org/show_bug.cgi?id=23636>
+
         No observable change in behavior, so no test.
 
         * WebCore.xcodeproj/project.pbxproj:

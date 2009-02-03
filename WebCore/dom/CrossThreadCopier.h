@@ -34,6 +34,9 @@
 #if ENABLE(WORKERS)
 
 #include <memory>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Threading.h>
 #include <wtf/TypeTraits.h>
 
 namespace WebCore {
@@ -64,6 +67,22 @@ namespace WebCore {
     };
 
     // Custom copy methods.
+    template<typename T> struct CrossThreadCopierBase<false, RefPtr<ThreadSafeShared<T> > > {
+        typedef PassRefPtr<T> Type;
+        static Type copy(const RefPtr<ThreadSafeShared<T> >& refPtr)
+        {
+            return PassRefPtr<T>(static_cast<T*>(refPtr.get()));
+        }
+    };
+
+    template<typename T> struct CrossThreadCopierBase<false, std::auto_ptr<T> > {
+        typedef std::auto_ptr<T> Type;
+        static Type copy(const std::auto_ptr<T>& autoPtr)
+        {
+            return std::auto_ptr<T>(*const_cast<std::auto_ptr<T>*>(&autoPtr));
+        }
+    };
+
     template<> struct CrossThreadCopierBase<false, String> {
         typedef String Type;
         static Type copy(const String&);

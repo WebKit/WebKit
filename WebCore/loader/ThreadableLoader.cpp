@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +36,8 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "ScriptExecutionContext.h"
+#include "WorkerContext.h"
+#include "WorkerThreadableLoader.h"
 
 namespace WebCore {
 
@@ -43,8 +45,13 @@ PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* co
 {
     ASSERT(client);
     ASSERT(context);
-    ASSERT(context->isDocument());
 
+#if ENABLE(WORKERS)
+    if (context->isWorkerContext())
+        return WorkerThreadableLoader::create(static_cast<WorkerContext*>(context), client, request, callbacksSetting, contentSniff);
+#endif // ENABLE(WORKERS)
+
+    ASSERT(context->isDocument());
     return DocumentThreadableLoader::create(static_cast<Document*>(context), client, request, callbacksSetting, contentSniff);
 }
 

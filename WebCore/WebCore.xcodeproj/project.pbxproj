@@ -139,6 +139,8 @@
 		0B90561B0F2578BF0095FF6A /* ThreadableLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056170F2578BE0095FF6A /* ThreadableLoader.h */; settings = {ATTRIBUTES = (); }; };
 		0B90561C0F2578BF0095FF6A /* ThreadableLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056180F2578BE0095FF6A /* ThreadableLoaderClient.h */; settings = {ATTRIBUTES = (); }; };
 		0B90561E0F257E930095FF6A /* ThreadableLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B90561D0F257E930095FF6A /* ThreadableLoader.cpp */; };
+		0B9056F80F2685F30095FF6A /* WorkerThreadableLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B9056F60F2685F30095FF6A /* WorkerThreadableLoader.cpp */; };
+		0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056F70F2685F30095FF6A /* WorkerThreadableLoader.h */; settings = {ATTRIBUTES = (); }; };
 		0BA5D3860F240FB4009B870B /* GenericWorkerTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BA5D3850F240FB4009B870B /* GenericWorkerTask.h */; };
 		0BB4DBE20F2EE29800354619 /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BB4DBE10F2EE29800354619 /* CrossThreadCopier.cpp */; };
 		0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5001,6 +5003,8 @@
 		0B9056170F2578BE0095FF6A /* ThreadableLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableLoader.h; sourceTree = "<group>"; };
 		0B9056180F2578BE0095FF6A /* ThreadableLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableLoaderClient.h; sourceTree = "<group>"; };
 		0B90561D0F257E930095FF6A /* ThreadableLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableLoader.cpp; sourceTree = "<group>"; };
+		0B9056F60F2685F30095FF6A /* WorkerThreadableLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerThreadableLoader.cpp; sourceTree = "<group>"; };
+		0B9056F70F2685F30095FF6A /* WorkerThreadableLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerThreadableLoader.h; sourceTree = "<group>"; };
 		0BA5D3850F240FB4009B870B /* GenericWorkerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericWorkerTask.h; sourceTree = "<group>"; };
 		0BB4DBE10F2EE29800354619 /* CrossThreadCopier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadCopier.cpp; sourceTree = "<group>"; };
 		0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLineBoxList.h; sourceTree = "<group>"; };
@@ -13644,6 +13648,8 @@
 				0B9056180F2578BE0095FF6A /* ThreadableLoaderClient.h */,
 				7284ADDB0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp */,
 				7284ADDC0E6FEB31002EEFBD /* UserStyleSheetLoader.h */,
+				0B9056F60F2685F30095FF6A /* WorkerThreadableLoader.cpp */,
+				0B9056F70F2685F30095FF6A /* WorkerThreadableLoader.h */,
 				BCB16C130979C3BD00467741 /* loader.cpp */,
 				BCB16C140979C3BD00467741 /* loader.h */,
 			);
@@ -16656,6 +16662,7 @@
 				18A0537D0F26859C00A51705 /* WorkerRunLoop.h in Headers */,
 				E1A643F20EC0972500779668 /* WorkerScriptController.h in Headers */,
 				E1C2C4240EACE0BC007E61FB /* WorkerThread.h in Headers */,
+				0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */,
 				93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */,
 				6565820209D1508D000E61D7 /* XLinkNames.h in Headers */,
 				BC772C470C4EB2C60083285F /* XMLHttpRequest.h in Headers */,
@@ -18645,6 +18652,7 @@
 				18A0537C0F26859C00A51705 /* WorkerRunLoop.cpp in Sources */,
 				E1A643FD0EC097A000779668 /* WorkerScriptController.cpp in Sources */,
 				E1C2C4290EACE0E0007E61FB /* WorkerThread.cpp in Sources */,
+				0B9056F80F2685F30095FF6A /* WorkerThreadableLoader.cpp in Sources */,
 				93309E23099E64920056E581 /* WrapContentsInDummySpanCommand.cpp in Sources */,
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
 				BC772C460C4EB2C60083285F /* XMLHttpRequest.cpp in Sources */,

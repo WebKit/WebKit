@@ -2939,6 +2939,14 @@
 				RelativePath="..\loader\ThreadableLoaderClient.h"
 				>
 			</File>
+			<File
+				RelativePath="..\loader\WorkerThreadableLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\WorkerThreadableLoader.h"
+				>
+			</File>
 			<Filter
 				Name="icon"
 				>

@@ -1091,6 +1091,8 @@ webcore_sources += \
 	WebCore/loader/ThreadableLoader.cpp \
 	WebCore/loader/ThreadableLoader.h \
 	WebCore/loader/ThreadableLoaderClient.h \
+	WebCore/loader/WorkerThreadableLoader.cpp \
+	WebCore/loader/WorkerThreadableLoader.h \
 	WebCore/loader/archive/Archive.h \
 	WebCore/loader/archive/ArchiveFactory.cpp \
 	WebCore/loader/archive/ArchiveFactory.h \

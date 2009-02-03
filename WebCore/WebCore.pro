@@ -813,6 +813,7 @@ SOURCES += \
     loader/TextDocument.cpp \
     loader/TextResourceDecoder.cpp \
     loader/ThreadableLoader.cpp \
+    loader/WorkerThreadableLoader.cpp \
     page/AccessibilityImageMapLink.cpp \
     page/AccessibilityObject.cpp \    
     page/AccessibilityList.cpp \    

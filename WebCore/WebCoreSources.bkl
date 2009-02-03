@@ -658,6 +658,7 @@ This file contains the list of files needed to build WebCore.
         loader/TextDocument.cpp
         loader/TextResourceDecoder.cpp
         loader/ThreadableLoader.cpp
+        loader/WorkerThreadableLoader.cpp
         loader/loader.cpp
     </set>
     
