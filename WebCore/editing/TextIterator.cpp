@@ -1059,7 +1059,7 @@ void CharacterIterator::advance(int count)
 String CharacterIterator::string(int numChars)
 {
     Vector<UChar> result;
-    result.reserveCapacity(numChars);
+    result.reserveInitialCapacity(numChars);
     while (numChars > 0 && !atEnd()) {
         int runSize = min(numChars, length());
         result.append(characters(), runSize);
@@ -1227,7 +1227,7 @@ inline SearchBuffer::SearchBuffer(const String& target, bool isCaseSensitive)
     ASSERT(!m_target.isEmpty());
 
     size_t targetLength = target.length();
-    m_buffer.reserveCapacity(max(targetLength * 8, minimumSearchBufferSize));
+    m_buffer.reserveInitialCapacity(max(targetLength * 8, minimumSearchBufferSize));
     m_overlap = m_buffer.capacity() / 4;
 
     // Grab the single global searcher.
@@ -1544,7 +1544,7 @@ UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength, 
     typedef pair<UChar*, unsigned> TextSegment;
     Vector<TextSegment>* textSegments = 0;
     Vector<UChar> textBuffer;
-    textBuffer.reserveCapacity(cMaxSegmentSize);
+    textBuffer.reserveInitialCapacity(cMaxSegmentSize);
     for (TextIterator it(r); !it.atEnd(); it.advance()) {
         if (textBuffer.size() && textBuffer.size() + it.length() > cMaxSegmentSize) {
             UChar* newSegmentBuffer = static_cast<UChar*>(malloc(textBuffer.size() * sizeof(UChar)));

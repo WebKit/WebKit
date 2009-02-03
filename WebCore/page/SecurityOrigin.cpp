@@ -221,7 +221,7 @@ String SecurityOrigin::toString() const
         return String("file://");
 
     Vector<UChar> result;
-    result.reserveCapacity(m_protocol.length() + m_host.length() + 10);
+    result.reserveInitialCapacity(m_protocol.length() + m_host.length() + 10);
     append(result, m_protocol);
     append(result, "://");
     append(result, m_host);

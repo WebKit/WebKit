@@ -304,7 +304,7 @@ void FontCache::purgeInactiveFontData(int count)
     }
 
     Vector<FontPlatformDataCacheKey> keysToRemove;
-    keysToRemove.reserveCapacity(gFontPlatformDataCache->size());
+    keysToRemove.reserveInitialCapacity(gFontPlatformDataCache->size());
     FontPlatformDataCache::iterator platformDataEnd = gFontPlatformDataCache->end();
     for (FontPlatformDataCache::iterator platformData = gFontPlatformDataCache->begin(); platformData != platformDataEnd; ++platformData) {
         if (platformData->second && !gFontDataCache->contains(*platformData->second))
@@ -424,7 +424,7 @@ void FontCache::invalidate()
 
     Vector<RefPtr<FontSelector> > clients;
     size_t numClients = gClients->size();
-    clients.reserveCapacity(numClients);
+    clients.reserveInitialCapacity(numClients);
     HashSet<FontSelector*>::iterator end = gClients->end();
     for (HashSet<FontSelector*>::iterator it = gClients->begin(); it != end; ++it)
         clients.append(*it);

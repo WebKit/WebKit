@@ -204,7 +204,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
 
     // Append in reverse order since we remove elements from the end.
     size_t size = formData->elements().size();
-    newInfo->remainingElements.reserveCapacity(size);
+    newInfo->remainingElements.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i)
         newInfo->remainingElements.append(formData->elements()[size - i - 1]);
 

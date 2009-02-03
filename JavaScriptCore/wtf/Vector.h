@@ -503,6 +503,7 @@ namespace WTF {
         void grow(size_t size);
         void resize(size_t size);
         void reserveCapacity(size_t newCapacity);
+        void reserveInitialCapacity(size_t initialCapacity);
         void shrinkCapacity(size_t newCapacity);
         void shrinkToFit() { shrinkCapacity(size()); }
 
@@ -730,6 +731,15 @@ namespace WTF {
         if (begin())
             TypeOperations::move(oldBuffer, oldEnd, begin());
         m_buffer.deallocateBuffer(oldBuffer);
+    }
+    
+    template<typename T, size_t inlineCapacity>
+    inline void Vector<T, inlineCapacity>::reserveInitialCapacity(size_t initialCapacity)
+    {
+        ASSERT(!m_size);
+        ASSERT(capacity() == inlineCapacity);
+        if (initialCapacity > inlineCapacity)
+            m_buffer.allocateBuffer(initialCapacity);
     }
     
     template<typename T, size_t inlineCapacity>

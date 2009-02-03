@@ -753,7 +753,7 @@ void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
     // We have to merge sort.  Ensure our merge buffer is big enough to hold
     // all the items.
     Vector<CSSRuleData*> rulesMergeBuffer;
-    rulesMergeBuffer.reserveCapacity(end - start); 
+    rulesMergeBuffer.reserveInitialCapacity(end - start); 
 
     unsigned i1 = start;
     unsigned i2 = mid;

@@ -125,7 +125,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
         m_formData = item.m_formData->copy();
         
     unsigned size = item.m_subItems.size();
-    m_subItems.reserveCapacity(size);
+    m_subItems.reserveInitialCapacity(size);
     for (unsigned i = 0; i < size; ++i)
         m_subItems.append(item.m_subItems[i]->copy());
 

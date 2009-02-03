@@ -41,7 +41,7 @@ namespace WebCore {
 auto_ptr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
 {
     auto_ptr<CrossThreadHTTPHeaderMapData> data(new CrossThreadHTTPHeaderMapData());
-    data->reserveCapacity(size());
+    data->reserveInitialCapacity(size());
 
     HTTPHeaderMap::const_iterator end_it = end();
     for (HTTPHeaderMap::const_iterator it = begin(); it != end_it; ++it) {

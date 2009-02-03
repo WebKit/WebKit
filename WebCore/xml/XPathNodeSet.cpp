@@ -162,7 +162,7 @@ void NodeSet::sort() const
     
     // It is not possible to just assign the result to m_nodes, because some nodes may get dereferenced and destroyed.
     Vector<RefPtr<Node> > sortedNodes;
-    sortedNodes.reserveCapacity(nodeCount);
+    sortedNodes.reserveInitialCapacity(nodeCount);
     for (unsigned i = 0; i < nodeCount; ++i)
         sortedNodes.append(parentMatrix[i][0]);
     

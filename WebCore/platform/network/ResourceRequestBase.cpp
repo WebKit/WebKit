@@ -76,7 +76,7 @@ auto_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
     data->m_httpMethod = httpMethod().copy();
     data->m_httpHeaders.adopt(httpHeaderFields().copyData());
 
-    data->m_responseContentDispositionEncodingFallbackArray.reserveCapacity(m_responseContentDispositionEncodingFallbackArray.size());
+    data->m_responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(m_responseContentDispositionEncodingFallbackArray.size());
     size_t encodingArraySize = m_responseContentDispositionEncodingFallbackArray.size();
     for (size_t index = 0; index < encodingArraySize; ++index) {
         data->m_responseContentDispositionEncodingFallbackArray.append(m_responseContentDispositionEncodingFallbackArray[index].copy());

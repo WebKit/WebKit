@@ -77,7 +77,7 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
         return String();
 
     Vector<UChar> name;
-    name.reserveCapacity(length);
+    name.reserveInitialCapacity(length);
 
     unsigned i = 0;
 

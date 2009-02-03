@@ -1,15 +1,69 @@
+2009-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Bug 23676: Speed up uses of reserveCapacity on new vectors by adding a new reserveInitialCapacity
+        https://bugs.webkit.org/show_bug.cgi?id=23676
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::cssPropertyName):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::copyPropertiesInSet):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::sortMatchedRules):
+        * dom/Document.cpp:
+        (WebCore::Document::formElementsState):
+        * dom/NamedAttrMap.h:
+        (WebCore::NamedAttrMap::reserveInitialCapacity):
+        * editing/TextIterator.cpp:
+        (WebCore::CharacterIterator::string):
+        (WebCore::SearchBuffer::SearchBuffer):
+        (WebCore::plainTextToMallocAllocatedBuffer):
+        * editing/markup.cpp:
+        (WebCore::joinMarkups):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::Token::addAttribute):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::items):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::toString):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (convertToVector):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontData):
+        (WebCore::FontCache::invalidate):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::deepCopy):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::copyData):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::copyData):
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::formCreate):
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::NodeSet::sort):
+        Use reserveInitialCapacity instead of of reserveCapacity in all these call sites,
+        which are working on new vectors that are guaranteed not to be empty.
+
 2009-02-26  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Build fix after r40486.
 
         Rubber-stamped by Ada Chan.
 
-        * dom/Document.h:
-        * page/EventHandler.h:
-        * rendering/EllipsisBox.h:
-        * rendering/InlineBox.h:
-        * rendering/InlineFlowBox.h:
-        * rendering/RenderLayer.h:
+        * dom/Document.h: Chnaged HitTestRequest to a class from a struct.
+        * page/EventHandler.h: Ditto.
+        * rendering/EllipsisBox.h: Ditto.
+        * rendering/InlineBox.h: Ditto.
+        * rendering/InlineFlowBox.h: Ditto.
+        * rendering/RenderLayer.h: Ditto.
 
 2009-02-02  Darin Adler  <darin@apple.com>
 

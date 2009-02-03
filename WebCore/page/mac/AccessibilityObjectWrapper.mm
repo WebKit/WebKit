@@ -873,7 +873,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityChildrenVector& vector)
 {
     unsigned length = [array count];
-    vector.reserveCapacity(length);
+    vector.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
         AccessibilityObject* obj = [[array objectAtIndex:i] accessibilityObject];
         if (obj)

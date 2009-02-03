@@ -52,7 +52,7 @@ public:
     Attribute* getAttributeItem(const QualifiedName&) const;
 
     void shrinkToLength() { m_attributes.shrinkCapacity(length()); }
-    void reserveCapacity(unsigned capacity) { m_attributes.reserveCapacity(capacity); }
+    void reserveInitialCapacity(unsigned capacity) { m_attributes.reserveInitialCapacity(capacity); }
 
     // used during parsing: only inserts if not already there
     // no error checking!

@@ -3905,7 +3905,7 @@ void Document::finishedParsing()
 Vector<String> Document::formElementsState() const
 {
     Vector<String> stateVector;
-    stateVector.reserveCapacity(m_formElementsWithState.size() * 3);
+    stateVector.reserveInitialCapacity(m_formElementsWithState.size() * 3);
     typedef ListHashSet<FormControlElementWithState*>::const_iterator Iterator;
     Iterator end = m_formElementsWithState.end();
     for (Iterator it = m_formElementsWithState.begin(); it != end; ++it) {
