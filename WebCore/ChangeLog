@@ -1,3 +1,9 @@
+2009-02-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Build fix.
+
+        * GNUmakefile.am: Removed WorkerTask.{h,cpp}.
+
 2009-02-03  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
