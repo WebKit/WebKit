@@ -1,3 +1,28 @@
+2009-02-03  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23560
+        Implement SharedTimer for Workers.
+
+        * dom/WorkerRunLoop.cpp:
+        Added private class WorkerSharedTimer that implements SharedTimer interface for worker threads.
+        (WebCore::WorkerSharedTimer::WorkerSharedTimer):
+        (WebCore::WorkerSharedTimer::setFiredFunction):
+        (WebCore::WorkerSharedTimer::setFireTime):
+        (WebCore::WorkerSharedTimer::stop):
+        (WebCore::WorkerSharedTimer::isActive):
+        (WebCore::WorkerSharedTimer::fireTime):
+        (WebCore::WorkerSharedTimer::fire):
+        (WebCore::WorkerRunLoop::WorkerRunLoop):
+        Initializes a WorkerSharedTimer instance.
+        (WebCore::WorkerRunLoop::~WorkerRunLoop):
+        The destructor is here so compiler is ok with having OwnPtr<WorkerSharedTimer> in .h file w/o defining WorkerSharedTimer.
+        (WebCore::WorkerRunLoop::run):
+        Set/reset shared timer interface on ThreadTimers, use MessageQueue::waitForMessageTimed() if timer is active.
+        * dom/WorkerRunLoop.h:
+        Add member of type OwnPtr<WorkerSharedTimer>
+
 2009-02-03  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.
