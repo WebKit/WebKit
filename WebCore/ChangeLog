@@ -1,3 +1,20 @@
+2009-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Bug 23694: REGRESSION: Running svg/custom tests crashes, randomly, depending on the order of tests
+        https://bugs.webkit.org/show_bug.cgi?id=23694
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertedIntoDocument): Added back the call through to EventTargetNode.
+        (WebCore::ContainerNode::removedFromDocument): Ditto.
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::insertedIntoDocument): Changed this to not call through to Node.
+        (WebCore::EventTargetNode::removedFromDocument): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::insertedIntoDocument): Updated comment.
+        (WebCore::Node::removedFromDocument): Ditto.
+
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

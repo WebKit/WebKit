@@ -1078,14 +1078,14 @@ void Node::detach()
 
 void Node::insertedIntoDocument()
 {
-    // Note: ContainerNode::insertedIntoDocument does not call through here, so if you
+    // Note: EventTargetNode::insertedIntoDocument does not call through here, so if you
     // change this function, change that one as well.
     setInDocument(true);
 }
 
 void Node::removedFromDocument()
 {
-    // Note: ContainerNode::insertedIntoDocument does not call through here, so if you
+    // Note: EventTargetNode::insertedIntoDocument does not call through here, so if you
     // change this function, change that one as well.
     setInDocument(false);
 }
