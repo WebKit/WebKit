@@ -52,7 +52,6 @@ ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orienta
                            gtk_hscrollbar_new(m_adjustment):
                            gtk_vscrollbar_new(m_adjustment);
     gtk_widget_show(scrollBar);
-    g_object_ref(scrollBar);
     g_signal_connect(scrollBar, "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
     g_signal_connect(scrollBar, "scroll-event", G_CALLBACK(gtkScrollEventCallback), this);
 
@@ -64,16 +63,6 @@ ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orienta
      */
     resize(ScrollbarTheme::nativeTheme()->scrollbarThickness(),
            ScrollbarTheme::nativeTheme()->scrollbarThickness());
-}
-
-ScrollbarGtk::~ScrollbarGtk()
-{
-    /*
-     * the Widget does not take over ownership.
-     */
-    g_signal_handlers_disconnect_by_func(platformWidget(), (gpointer)ScrollbarGtk::gtkValueChanged, this);
-    g_signal_handlers_disconnect_by_func(platformWidget(), (gpointer)gtkScrollEventCallback, this);
-    g_object_unref(platformWidget());
 }
 
 void ScrollbarGtk::frameRectsChanged()

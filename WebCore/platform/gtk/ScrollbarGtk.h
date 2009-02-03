@@ -37,8 +37,6 @@ class ScrollbarGtk : public Scrollbar {
 public:
     friend class Scrollbar;
 
-    virtual ~ScrollbarGtk();
-
     virtual void setFrameRect(const IntRect&);
     
     virtual bool handleMouseMoveEvent(const PlatformMouseEvent&) { return false; }

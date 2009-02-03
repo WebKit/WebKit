@@ -4,6 +4,22 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=23711
 
+        There's no need to hold an extra ref to the scrollbar, calling
+        setPlatformWidget takes ownership of it.
+
+        Also do not disconnect the signals when destroying the widget,
+        it's superfluous.
+
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::ScrollbarGtk):
+        * platform/gtk/ScrollbarGtk.h:
+
+2009-02-03  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23711
+
         Declare scrollBar as GtkWidget* to avoid needless
         casting.
 
