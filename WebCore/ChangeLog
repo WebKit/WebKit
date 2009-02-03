@@ -1,3 +1,24 @@
+2009-02-02  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel (and Ojan Vafai).
+
+        https://bugs.webkit.org/show_bug.cgi?id=23696
+        Select element doesn't show new value when focus is switched in
+        onchange event.
+
+        Fix PopupMenuChromium to hide itself before calling valueChanged.  This
+        better matches the behavior of the other ports.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::create):
+        (WebCore::PopupContainer::PopupContainer):
+        (WebCore::PopupContainer::showPopup):
+        (WebCore::PopupContainer::hidePopup):
+        (WebCore::PopupListBox::abandon):
+        (WebCore::PopupListBox::acceptIndex):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+
 2009-02-02  David Hyatt  <hyatt@apple.com>
 
         Make sure scrollWidth/Height just return 0 for inline flows.
