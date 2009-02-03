@@ -569,6 +569,7 @@ SOURCES += \
     dom/ClipboardEvent.cpp \
     dom/Comment.cpp \
     dom/ContainerNode.cpp \
+    dom/CrossThreadCopier.cpp \
     dom/CSSMappedAttributeDeclaration.cpp \
     dom/Document.cpp \
     dom/DocumentFragment.cpp \

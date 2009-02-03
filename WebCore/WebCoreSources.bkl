@@ -398,6 +398,7 @@ This file contains the list of files needed to build WebCore.
         dom/ClipboardEvent.cpp
         dom/Comment.cpp
         dom/ContainerNode.cpp
+        dom/CrossThreadCopier.cpp
         dom/DOMImplementation.cpp
         dom/DOMStringList.cpp
         dom/Document.cpp

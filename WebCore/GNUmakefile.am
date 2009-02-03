@@ -2186,6 +2186,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSWorkerCustom.cpp \
 	WebCore/bindings/js/WorkerScriptController.cpp \
 	WebCore/bindings/js/WorkerScriptController.h \
+	WebCore/dom/CrossThreadCopier.cpp \
+	WebCore/dom/CrossThreadCopier.h \
 	WebCore/dom/GenericWorkerTask.h \
 	WebCore/dom/Worker.cpp \
 	WebCore/dom/Worker.h \

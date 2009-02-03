@@ -111,18 +111,16 @@ void WorkerContext::reportException(const String& errorMessage, int lineNumber, 
     m_thread->messagingProxy()->postWorkerException(errorMessage, lineNumber, sourceURL);
 }
 
-static void addMessageTask(ScriptExecutionContext* context, MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+static void addMessageTask(ScriptExecutionContext* context, WorkerMessagingProxy* messagingProxy, MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
+    if (messagingProxy->askedToTerminate())
+        return;
     context->addMessage(destination, source, level, message, lineNumber, sourceURL);
 }
 
 void WorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
-    // createCallbackTask has to be a separate statement from postTaskToParentContext to make the destructor
-    // for message.copy() get called before postTaskToParentContext.  (If they are one statement, the destructor
-    // gets called after postTaskToParentContext which causes a race condition.) 
-    RefPtr<Task> task = createCallbackTask(m_thread->messagingProxy(), &addMessageTask, destination, source, level, message.copy(), lineNumber, sourceURL.copy());
-    postTaskToParentContext(task.release());
+    postTaskToParentContext(createCallbackTask(&addMessageTask, m_thread->messagingProxy(), destination, source, level, message, lineNumber, sourceURL));
 }
 
 void WorkerContext::resourceRetrievedByXMLHttpRequest(unsigned long, const ScriptString&)

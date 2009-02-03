@@ -1,3 +1,55 @@
+2009-02-02  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23618: Templated worker tasks should be more error proof to use.
+        <https://bugs.webkit.org/show_bug.cgi?id=23618>
+
+        Add the generic worker tasks templates needed for the WorkerThreadableLoader.
+
+        No observable change in behavior, so no test.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * dom/CrossThreadCopier.cpp: Added.
+        * dom/CrossThreadCopier.h: Added.
+        (WebCore::CrossThreadCopierPassThrough::copy):
+        * dom/GenericWorkerTask.h:
+        Stop doing the WorkerMessagingProxy::askedToTerminate call automatically
+        in performTask because was not obvious that it would be done and not always needed.
+
+        (WebCore::GenericWorkerTask1::create):
+        (WebCore::GenericWorkerTask1::GenericWorkerTask1):
+        (WebCore::GenericWorkerTask1::performTask):
+        (WebCore::GenericWorkerTask2::create):
+        (WebCore::GenericWorkerTask2::GenericWorkerTask2):
+        (WebCore::GenericWorkerTask2::performTask):
+        (WebCore::GenericWorkerTask3::create):
+        (WebCore::GenericWorkerTask3::GenericWorkerTask3):
+        (WebCore::GenericWorkerTask3::performTask):
+        (WebCore::GenericWorkerTask4::create):
+        (WebCore::GenericWorkerTask4::GenericWorkerTask4):
+        (WebCore::GenericWorkerTask4::performTask):
+        (WebCore::GenericWorkerTask5::create):
+        (WebCore::GenericWorkerTask5::GenericWorkerTask5):
+        (WebCore::GenericWorkerTask5::performTask):
+        (WebCore::GenericWorkerTask6::create):
+        (WebCore::GenericWorkerTask6::GenericWorkerTask6):
+        (WebCore::GenericWorkerTask6::performTask):
+        (WebCore::GenericWorkerTask7::create):
+        (WebCore::GenericWorkerTask7::GenericWorkerTask7):
+        (WebCore::GenericWorkerTask7::performTask):
+        (WebCore::createCallbackTask):
+        * dom/WorkerContext.cpp:
+        (WebCore::addMessageTask):
+        (WebCore::WorkerContext::addMessage):
+        * dom/WorkerMessagingProxy.h:
+        (WebCore::WorkerMessagingProxy::askedToTerminate):
+
 2009-02-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David "The Barnabas Jones" Hyatt.
