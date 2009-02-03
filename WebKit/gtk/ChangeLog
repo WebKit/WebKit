@@ -2,6 +2,12 @@
 
         Build fix.
 
+        * webkit/webkitwebview.cpp:
+
+2009-02-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
         * webkit/webkitwebframe.cpp:
 
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>

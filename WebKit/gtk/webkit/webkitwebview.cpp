@@ -2054,7 +2054,7 @@ void webkit_web_view_open(WebKitWebView* webView, const gchar* uri)
     g_return_if_fail(uri);
 
     Frame* frame = core(webView)->mainFrame();
-    frame->loader()->load(ResourceRequest(KURL(String::fromUTF8(uri))));
+    frame->loader()->load(ResourceRequest(KURL(String::fromUTF8(uri))), false);
 }
 
 void webkit_web_view_reload(WebKitWebView* webView)
@@ -2090,7 +2090,7 @@ void webkit_web_view_load_string(WebKitWebView* webView, const gchar* content, c
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(content, strlen(content));
     SubstituteData substituteData(sharedBuffer.release(), contentMimeType ? String(contentMimeType) : "text/html", contentEncoding ? String(contentEncoding) : "UTF-8", KURL("about:blank"), url);
 
-    frame->loader()->load(ResourceRequest(url), substituteData);
+    frame->loader()->load(ResourceRequest(url), substituteData, false);
 }
 
 void webkit_web_view_load_html_string(WebKitWebView* webView, const gchar* content, const gchar* baseUri)
