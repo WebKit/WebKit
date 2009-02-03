@@ -1,5 +1,12 @@
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix.
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]):
+
+2009-02-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Track redirects in global history.

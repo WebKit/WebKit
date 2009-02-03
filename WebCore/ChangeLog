@@ -1,5 +1,11 @@
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix.
+
+        * WebCore.base.exp:
+
+2009-02-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Track redirects in global history.
