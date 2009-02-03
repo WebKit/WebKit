@@ -1,3 +1,59 @@
+2009-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23365
+        
+        Hook up accelerated compositing layers the native
+        view system on Mac.
+
+        * WebCore.base.exp:
+        Export new Page methods.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::attachRootGraphicsLayer):
+        (WebCore::ChromeClient::setNeedsOneShotDrawingSynchronization):
+        New methods for attaching/detaching the root GraphicsLayer, and
+        synchronizing layer changes with window drawing.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateCompositingLayers):
+        (WebCore::FrameView::setNeedsOneShotDrawingSynchronization):
+        (WebCore::FrameView::didMoveOnscreen):
+        (WebCore::FrameView::willMoveOffscreen):
+        New methods to update the compositing layer hierarchy,
+        and pass-throughs to the RenderLayerCompositor.
+
+        (WebCore::FrameView::layout):
+        Update compositing layers after layout() and updateLayerPositions().
+
+        * page/Page.cpp:
+        (WebCore::Page::didMoveOnscreen):
+        (WebCore::Page::willMoveOffscreen):
+        * page/Page.h:
+        New methods to allow the native view system to tell the Page when it 
+        starts to be presented on-screen, and when it will be hidden.
+
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        (WebCore::RenderLayerCompositor::didMoveOnscreen):
+        (WebCore::RenderLayerCompositor::willMoveOffscreen):
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+        Rename 'attached' methods to 'moveOnscreen/moveOffscreen' to match
+        the calls through from Page, FrameView.
+
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        Dont' try to repaint or update layers if the document is being torn
+        down.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::didMoveOnscreen):
+        (WebCore::RenderView::willMoveOffscreen):
+        * rendering/RenderView.h:
+        New methods.
+
 2009-02-03  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Holger Hans Peter Freyther.

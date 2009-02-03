@@ -145,6 +145,11 @@ typedef WebCore::Page WebCorePage;
 
 + (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame;
 
+#if USE(ACCELERATED_COMPOSITING)
+- (BOOL)_needsOneShotDrawingSynchronization;
+- (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
+#endif    
+
 @end
 
 typedef struct _WebResourceDelegateImplementationCache {

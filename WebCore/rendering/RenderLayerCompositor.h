@@ -83,8 +83,9 @@ public:
     RenderLayer* rootRenderLayer() const;
     GraphicsLayer* rootPlatformLayer() const;
 
-    void willBeDetached();
-    void wasAttached();
+    void didMoveOnscreen();
+    void willMoveOffscreen();
+
     void updateRootLayerPosition();
 
 private:

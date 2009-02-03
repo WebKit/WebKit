@@ -1,3 +1,58 @@
+2009-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23365
+        
+        Hook up accelerated compositing layers the native
+        view system on Mac.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::attachRootGraphicsLayer):
+        (WebChromeClient::setNeedsOneShotDrawingSynchronization):
+        New methods to hook up the root GraphicsLayer to the native
+        view system, and to synchronize layer changes with view-based
+        drawing when layers come and go.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate clear]):
+        Clear the pointer to layerHostingView.
+
+        (-[WebHTMLView _setAsideSubviews]):
+        (-[WebHTMLView willRemoveSubview:]):
+        Keep the special layer-hosting view in the subviews even 
+        when the rest of the subviews are ripped out for
+        painting.
+
+        (-[WebHTMLView _isUsingAcceleratedCompositing]):
+        New utility method for DumpRenderTree to know if we're
+        hosting layers.
+
+        (-[WebHTMLView drawRect:]):
+        Call -disableScreenUpdatesUntilFlush if we have to
+        synchronize layer changes with painting.
+
+        (-[WebHTMLView attachRootLayer:]):
+        (-[WebHTMLView detachRootLayer]):
+        Attach and detach the root GraphicsLayer.
+
+        * WebView/WebViewInternal.h:
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebHTMLViewPrivate.h:
+        New method declarations.
+        
+        * WebView/WebView.mm:
+        (-[WebView _needsOneShotDrawingSynchronization]):
+        (-[WebView _setNeedsOneShotDrawingSynchronization:]):
+        Set the flag to say if we need to synchronize layer
+        changes and painting on the next -drawRect: call.
+
+        (-[WebView viewWillMoveToWindow:]):
+        (-[WebView viewDidMoveToWindow]):
+        Call new notifications that the view was added to or removed from
+        the window, which are required by the layer hosting mechanism.
+
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

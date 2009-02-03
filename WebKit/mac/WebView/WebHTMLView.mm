@@ -113,6 +113,10 @@
 #import <limits>
 #import <runtime/InitializeThreading.h>
 
+#if USE(ACCELERATED_COMPOSITING)
+#import <QuartzCore/QuartzCore.h>
+#endif
+
 using namespace WebCore;
 using namespace HTMLNames;
 using namespace WTF;
@@ -380,6 +384,10 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     
     id savedSubviews;
     BOOL subviewsSetAside;
+    
+#if USE(ACCELERATED_COMPOSITING)
+    NSView *layerHostingView;
+#endif
 
     NSEvent *mouseDownEvent; // Kept after handling the event.
     BOOL handlingMouseDownEvent;
@@ -528,6 +536,10 @@ static NSCellStateValue kit(TriState state)
     dataSource = nil;
     highlighters = nil;
     promisedDragTIFFDataSource = 0;
+
+#if USE(ACCELERATED_COMPOSITING)
+    layerHostingView = nil;
+#endif    
 }
 
 @end
@@ -1136,15 +1148,34 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     ASSERT(!_private->subviewsSetAside);
     ASSERT(_private->savedSubviews == nil);
     _private->savedSubviews = _subviews;
+#if USE(ACCELERATED_COMPOSITING)
+    // We need to keep the layer-hosting view in the subviews, otherwise the layers flash.
+    if (_private->layerHostingView) {
+        NSArray* newSubviews = [[NSArray alloc] initWithObjects:_private->layerHostingView, nil];
+        _subviews = newSubviews;
+    } else
+        _subviews = nil;
+#else
     _subviews = nil;
+#endif    
     _private->subviewsSetAside = YES;
  }
  
  - (void)_restoreSubviews
  {
     ASSERT(_private->subviewsSetAside);
+#if USE(ACCELERATED_COMPOSITING)
+    if (_private->layerHostingView) {
+        [_subviews release];
+        _subviews = _private->savedSubviews;
+    } else {
+        ASSERT(_subviews == nil);
+        _subviews = _private->savedSubviews;
+    }
+#else
     ASSERT(_subviews == nil);
     _subviews = _private->savedSubviews;
+#endif    
     _private->savedSubviews = nil;
     _private->subviewsSetAside = NO;
 }
@@ -1159,7 +1190,9 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
 - (void)willRemoveSubview:(NSView *)subview
 {
-    if (_private->enumeratingSubviews)
+    // Have to null-check _private, since this can be called via -dealloc when
+    // cleaning up the the layerHostingView.
+    if (_private && _private->enumeratingSubviews)
         LOG(View, "A view of class %s was removed during subview enumeration for layout or printing mode change. We will still do layout or the printing mode change even though this view is no longer in the view hierarchy.", object_getClassName([subview class]));
 }
 
@@ -2070,6 +2103,15 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     } 
 } 
 #endif 
+
+- (BOOL)_isUsingAcceleratedCompositing
+{
+#if USE(ACCELERATED_COMPOSITING)
+    return _private->layerHostingView != nil;
+#else
+    return NO;
+#endif
+}
 
 @end
 
@@ -3021,6 +3063,16 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
     if (subviewsWereSetAside)
         [self _setAsideSubviews];
+        
+#if USE(ACCELERATED_COMPOSITING)
+    if ([[self _webView] _needsOneShotDrawingSynchronization]) {
+        // Disable screen updates so that drawing into the NSView and
+        // CALayer updates appear on the screen at the same time.
+        [[self window] disableScreenUpdatesUntilFlush];
+        [CATransaction flush];
+        [[self _webView] _setNeedsOneShotDrawingSynchronization:NO];
+    }
+#endif
 }
 
 // Turn off the additional clip while computing our visibleRect.
@@ -4972,6 +5024,38 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 {
     [[self _pluginController] destroyAllPlugins];
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+- (void)attachRootLayer:(CALayer*)layer
+{
+    if (!_private->layerHostingView) {
+        NSView* hostingView = [[NSView alloc] initWithFrame:[self bounds]];
+        [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+        [self addSubview:hostingView];
+        [hostingView release];
+        // hostingView is owned by being a subview of self
+        _private->layerHostingView = hostingView;
+    }
+
+    // Make a container layer, which will get sized/positioned by AppKit and CA
+    CALayer* viewLayer = [CALayer layer];
+    [_private->layerHostingView setLayer:viewLayer];
+    [_private->layerHostingView setWantsLayer:YES];
+    
+    // Parent our root layer in the container layer
+    [viewLayer addSublayer:layer];
+}
+
+- (void)detachRootLayer
+{
+    if (_private->layerHostingView) {
+        [_private->layerHostingView setLayer:nil];
+        [_private->layerHostingView setWantsLayer:NO];
+        [_private->layerHostingView removeFromSuperview];
+        _private->layerHostingView = nil;
+    }
+}
+#endif
 
 @end
 

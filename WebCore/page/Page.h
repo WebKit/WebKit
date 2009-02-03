@@ -153,6 +153,10 @@ namespace WebCore {
         float mediaVolume() const { return m_mediaVolume; }
         void setMediaVolume(float volume);
 
+        // Notifications when the Page starts and stops being presented via a native window.
+        void didMoveOnscreen();
+        void willMoveOffscreen();
+
         void userStyleSheetLocationChanged();
         const String& userStyleSheet() const;
         

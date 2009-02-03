@@ -97,6 +97,18 @@ public:
 
     bool needsFullRepaint() const { return m_doFullRepaint; }
 
+#if USE(ACCELERATED_COMPOSITING)
+    enum CompositingUpdate { NormalCompositingUpdate, ForcedCompositingUpdate };
+    void updateCompositingLayers(CompositingUpdate updateType = NormalCompositingUpdate);
+
+    // Called when changes to the GraphicsLayer hierarchy have to be synchronized with
+    // content rendered via the normal painting path.
+    void setNeedsOneShotDrawingSynchronization();
+#endif
+
+    void didMoveOnscreen();
+    void willMoveOffscreen();
+
     void resetScrollbars();
 
     void clear();

@@ -51,6 +51,10 @@
 #include "Settings.h"
 #include <wtf/CurrentTime.h>
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerCompositor.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -363,6 +367,41 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
     m_viewportRenderer = o;
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void FrameView::updateCompositingLayers(CompositingUpdate updateType)
+{
+    RenderView* view = m_frame->contentRenderer();
+    if (!view || !view->usesCompositing())
+        return;
+
+    if (updateType == ForcedUpdate)
+        view->compositor()->setCompositingLayersNeedUpdate();
+    
+    view->compositor()->updateCompositingLayers();
+}
+
+void FrameView::setNeedsOneShotDrawingSynchronization()
+{
+    Page* page = frame() ? frame()->page() : 0;
+    if (page)
+        page->chrome()->client()->setNeedsOneShotDrawingSynchronization();
+}
+#endif // USE(ACCELERATED_COMPOSITING)
+
+void FrameView::didMoveOnscreen()
+{
+    RenderView* view = m_frame->contentRenderer();
+    if (view)
+        view->didMoveOnscreen();
+}
+
+void FrameView::willMoveOffscreen()
+{
+    RenderView* view = m_frame->contentRenderer();
+    if (view)
+        view->willMoveOffscreen();
+}
+
 RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
 {
     return onlyDuringLayout && layoutPending() ? 0 : m_layoutRoot;
@@ -537,6 +576,10 @@ void FrameView::layout(bool allowSubtree)
     beginDeferredRepaints();
     layer->updateLayerPositions(m_doFullRepaint);
     endDeferredRepaints();
+
+#if USE(ACCELERATED_COMPOSITING)
+    updateCompositingLayers();
+#endif
     
     m_layoutCount++;
 

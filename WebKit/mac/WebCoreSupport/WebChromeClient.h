@@ -135,6 +135,11 @@ public:
     virtual void disableSuddenTermination();
     virtual void formStateDidChange(const WebCore::Node*) { }
 
+#if USE(ACCELERATED_COMPOSITING)
+    virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
+    virtual void setNeedsOneShotDrawingSynchronization();
+#endif
+
 private:
     WebView *m_webView;
 };

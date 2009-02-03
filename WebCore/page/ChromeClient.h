@@ -52,6 +52,10 @@ namespace WebCore {
     struct FrameLoadRequest;
     struct WindowFeatures;
 
+#if USE(ACCELERATED_COMPOSITING)
+    class GraphicsLayer;
+#endif
+
     class ChromeClient {
     public:
         virtual void chromeDestroyed() = 0;
@@ -153,6 +157,14 @@ namespace WebCore {
         // Notification that the given form element has changed. This function
         // will be called frequently, so handling should be very fast.
         virtual void formStateDidChange(const Node*) = 0;
+
+#if USE(ACCELERATED_COMPOSITING)
+        // Pass 0 as the GraphicsLayer to detatch the root layer.
+        virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) { }
+        // Sets a flag to specify that the next time content is drawn to the window,
+        // the changes appear on the screen in synchrony with updates to GraphicsLayers.
+        virtual void setNeedsOneShotDrawingSynchronization() { }
+#endif
 
 #if PLATFORM(MAC)
         virtual KeyboardUIMode keyboardUIMode() { return KeyboardAccessDefault; }

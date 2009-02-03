@@ -61,6 +61,10 @@
 #import <wtf/PassRefPtr.h>
 #import <wtf/Vector.h>
 
+#if USE(ACCELERATED_COMPOSITING)
+#import <WebCore/GraphicsLayer.h>
+#endif
+
 @interface NSView (WebNSViewDetails)
 - (NSView *)_findLastViewInKeyViewLoop;
 @end
@@ -642,6 +646,23 @@ void WebChromeClient::enableSuddenTermination()
     [[NSProcessInfo processInfo] enableSuddenTermination];
 #endif
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
+{
+    WebFrameView *frameView = [kit(frame) frameView];
+    WebHTMLView *docView = (WebHTMLView *)[frameView documentView];
+    if (graphicsLayer)
+        [docView attachRootLayer:graphicsLayer->nativeLayer()];
+    else
+        [docView detachRootLayer];
+}
+
+void WebChromeClient::setNeedsOneShotDrawingSynchronization()
+{
+    [m_webView _setNeedsOneShotDrawingSynchronization:YES];
+}
+#endif
 
 @implementation WebOpenPanelResultListener
 

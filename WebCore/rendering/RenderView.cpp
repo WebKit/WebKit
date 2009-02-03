@@ -626,4 +626,14 @@ void RenderView::updateHitTestResult(HitTestResult& result, const IntPoint& poin
     }
 }
 
+void RenderView::didMoveOnscreen()
+{
+    // FIXME: will call into RenderLayerCompositor
+}
+
+void RenderView::willMoveOffscreen()
+{
+    // FIXME: will call into RenderLayerCompositor
+}
+
 } // namespace WebCore

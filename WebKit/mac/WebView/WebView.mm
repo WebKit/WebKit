@@ -406,6 +406,12 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     
     // When this flag is set, we will not make any subviews underneath this WebView.  This means no WebFrameViews and no WebHTMLViews.
     BOOL useDocumentViews;
+
+#if USE(ACCELERATED_COMPOSITING)
+    // When this flag is set, next time a WebHTMLView draws, it needs to temporarily disable screen updates
+    // so that the NSView drawing is visually synchronized with CALayer updates.
+    BOOL needsOneShotDrawingSynchronization;
+#endif    
 }
 @end
 
@@ -2069,6 +2075,18 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     return _private->page->areMemoryCacheClientCallsEnabled();
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+- (BOOL)_needsOneShotDrawingSynchronization
+{
+    return _private->needsOneShotDrawingSynchronization;
+}
+
+- (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization
+{
+    _private->needsOneShotDrawingSynchronization = needsSynchronization;
+}
+#endif    
+
 @end
 
 @implementation _WebSafeForwarder
@@ -2498,7 +2516,8 @@ static bool needsWebViewInitThreadWorkaround()
         
         [self removeWindowObservers];
         [self removeSizeObservers];
-    }
+    } else
+        _private->page->willMoveOffscreen();
 }
 
 - (void)viewDidMoveToWindow
@@ -2513,6 +2532,7 @@ static bool needsWebViewInitThreadWorkaround()
     if ([self window]) {
         [self addWindowObservers];
         [self addSizeObservers];
+        _private->page->didMoveOnscreen();
     }
 }
 

@@ -179,7 +179,7 @@ bool RenderLayerCompositor::updateLayerCompositingState(RenderLayer* layer, Rend
             // The contents of this layer may be moving between the window
             // and a GraphicsLayer, so we need to make sure the window system
             // synchronizes those changes on the screen.
-            m_renderView->frameView()->setNeedsSynchronizedGraphicsFlush();
+            m_renderView->frameView()->setNeedsOneShotDrawingSynchronization();
         }
 
         layer->renderer()->compositingStateChanged();
@@ -267,13 +267,18 @@ void RenderLayerCompositor::layerWillBeRemoved(RenderLayer* parent, RenderLayer*
     if (child->isComposited())
         setCompositingParent(child, 0);
     
+    // If the document is being torn down (document's renderer() is null), then there's
+    // no need to do any layer updating.
+    if (parent->renderer()->documentBeingDestroyed())
+        return;
+
     RenderLayer* compLayer = enclosingCompositingLayer(parent, false);
     if (compLayer) {
         IntRect ancestorRect = calculateCompositedBounds(child, compLayer);
         compLayer->setBackingNeedsRepaintInRect(ancestorRect);
         // The contents of this layer may be moving from a GraphicsLayer to the window,
         // so we need to make sure the window system synchronizes those changes on the screen.
-        m_renderView->frameView()->setNeedsSynchronizedGraphicsFlush();
+        m_renderView->frameView()->setNeedsOneShotDrawingSynchronization();
     }
 
     setCompositingLayersNeedUpdate();
@@ -585,21 +590,7 @@ GraphicsLayer* RenderLayerCompositor::rootPlatformLayer() const
     return m_rootPlatformLayer;
 }
 
-void RenderLayerCompositor::willBeDetached()
-{
-    if (!m_rootPlatformLayer ||! m_rootLayerAttached)
-        return;
-
-    Frame* frame = m_renderView->frameView()->frame();
-    Page* page = frame ? frame->page() : 0;
-    if (!page)
-        return;
-
-    page->chrome()->client()->attachRootGraphicsLayer(frame, 0);
-    m_rootLayerAttached = false;
-}
-
-void RenderLayerCompositor::wasAttached()
+void RenderLayerCompositor::didMoveOnscreen()
 {
     if (!m_rootPlatformLayer)
         return;
@@ -611,6 +602,20 @@ void RenderLayerCompositor::wasAttached()
 
     page->chrome()->client()->attachRootGraphicsLayer(frame, m_rootPlatformLayer);
     m_rootLayerAttached = true;
+}
+
+void RenderLayerCompositor::willMoveOffscreen()
+{
+    if (!m_rootPlatformLayer || !m_rootLayerAttached)
+        return;
+
+    Frame* frame = m_renderView->frameView()->frame();
+    Page* page = frame ? frame->page() : 0;
+    if (!page)
+        return;
+
+    page->chrome()->client()->attachRootGraphicsLayer(frame, 0);
+    m_rootLayerAttached = false;
 }
 
 void RenderLayerCompositor::updateRootLayerPosition()
@@ -742,7 +747,7 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
     // Need to clip to prevent transformed content showing outside this frame
     m_rootPlatformLayer->setMasksToBounds(true);
     
-    wasAttached();
+    didMoveOnscreen();
 }
 
 } // namespace WebCore

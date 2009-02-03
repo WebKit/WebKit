@@ -409,6 +409,22 @@ void Page::setMediaVolume(float volume)
     }
 }
 
+void Page::didMoveOnscreen()
+{
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->view())
+            frame->view()->didMoveOnscreen();
+    }
+}
+
+void Page::willMoveOffscreen()
+{
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->view())
+            frame->view()->willMoveOffscreen();
+    }
+}
+
 void Page::userStyleSheetLocationChanged()
 {
 #if !FRAME_LOADS_USER_STYLESHEET
