@@ -577,6 +577,7 @@ private slots:
     void metaData();
     void popupFocus();
     void hitTestContent();
+    void jsByteArray();
 private:
     QString  evalJS(const QString&s) {
         // Convert an undefined return variant to the string "undefined"
@@ -2283,6 +2284,20 @@ void tst_QWebFrame::hitTestContent()
     page.setViewportSize(QSize(200, 0)); //no height so link is not visible
     QWebHitTestResult result = frame->hitTestContent(QPoint(10, 100));
     QCOMPARE(result.linkText(), QString("link text"));
+}
+
+void tst_QWebFrame::jsByteArray()
+{
+    QByteArray ba("hello world");
+    m_myObject->setByteArrayProperty(ba);
+
+    // read-only property
+    QCOMPARE(m_myObject->byteArrayProperty(), ba);
+    QString type;
+    QVariant v = evalJSV("myObject.byteArrayProperty");
+    QCOMPARE(int(v.type()), int(QVariant::ByteArray));
+
+    QCOMPARE(v.toByteArray(), ba);
 }
 
 QTEST_MAIN(tst_QWebFrame)

@@ -1,3 +1,18 @@
+2009-02-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix conversion of QByteArray to JavaScript and back. Instead of
+        converting it to a String (data loss!) we now map it to JSByteArray.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::):
+        (JSC::Bindings::valueRealType): Added JSByteArray as converstion type.
+        (JSC::Bindings::convertValueToQVariant): Convert from JSByteArray to
+        QVariant(QByteArray).
+        (JSC::Bindings::convertQVariantToValue): Convert from
+        QVariant::ByteArray to jsByteArray.
+
 2009-02-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Build fix.

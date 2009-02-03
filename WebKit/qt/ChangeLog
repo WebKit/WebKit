@@ -1,3 +1,12 @@
+2009-02-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Added a unit test to verify the succesful conversion from QByteArray to
+        JSByteArray and back to QByteArray.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.
