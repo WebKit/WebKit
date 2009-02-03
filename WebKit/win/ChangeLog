@@ -1,3 +1,10 @@
+2009-02-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * WebHistory.cpp:
+        (WebHistory::visitedURL):
+
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.
