@@ -668,33 +668,55 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry)
     return hr;
 }
 
-void WebHistory::addItem(const KURL& url, const String& title, const String& httpMethod, bool wasFailure)
+void WebHistory::visitedURL(const KURL& url, const String& title, const String& httpMethod, bool wasFailure)
 {
-    COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance());
-    if (!item)
+    RetainPtr<CFStringRef> urlString(AdoptCF, url.string().createCFString());
+
+    IWebHistoryItem* entry = (IWebHistoryItem*) CFDictionaryGetValue(m_entriesByURL.get(), urlString.get());
+
+    if (entry) {
+        COMPtr<IWebHistoryItemPrivate> entryPrivate(Query, entry);
+        if (!entryPrivate)
+            return;
+
+        entryPrivate->visitedWithTitle(BString(title));
+
+        removeItemFromDateCaches(entry);
+    } else {
+        COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance());
+        if (!item)
+            return;
+
+        entry = item.get();
+
+        SYSTEMTIME currentTime;
+        GetSystemTime(&currentTime);
+        DATE lastVisited;
+        if (!SystemTimeToVariantTime(&currentTime, &lastVisited))
+            return;
+
+        if (FAILED(entry->initWithURLString(BString(url.string()), BString(title), lastVisited)))
+            return;
+        
+        item->setVisitCount(1);
+
+        CFDictionarySetValue(m_entriesByURL.get(), urlString.get(), entry);
+    }
+
+    addItemToDateCaches(entry);
+
+    COMPtr<IWebHistoryItemPrivate> entryPrivate(Query, entry);
+    if (!entryPrivate)
         return;
 
-    SYSTEMTIME currentTime;
-    GetSystemTime(&currentTime);
-    DATE lastVisited;
-    if (!SystemTimeToVariantTime(&currentTime, &lastVisited))
-        return;
+    entryPrivate->setLastVisitWasFailure(wasFailure);
+    if (!httpMethod.isEmpty())
+        entryPrivate->setLastVisitWasHTTPNonGet(!equalIgnoringCase(httpMethod, "GET"));
 
-    HRESULT hr = item->initWithURLString(BString(url.string()), BString(title), 0);
-    if (FAILED(hr))
-        return;
-
-    hr = item->setLastVisitedTimeInterval(lastVisited); // also increments visitedCount
-    if (FAILED(hr))
-        return;
-
-    if (wasFailure)
-        item->setLastVisitWasFailure(true);
-    
-    if (!httpMethod.isEmpty() && !equalIgnoringCase(httpMethod, "GET"))
-        item->setLastVisitWasHTTPNonGet(true);
-
-    addItem(item.get());
+    CFDictionaryPropertyBag* userInfo = createUserInfoFromHistoryItem(
+        getNotificationString(kWebHistoryItemsAddedNotification), entry);
+    postNotification(kWebHistoryItemsAddedNotification, userInfo);
+    releaseUserInfo(userInfo);
 }
 
 HRESULT WebHistory::itemForURLString(

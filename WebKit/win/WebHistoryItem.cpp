@@ -419,6 +419,12 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::redirectURLs(IEnumVARIANT** urls)
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebHistoryItem::visitedWithTitle(BSTR title)
+{
+    m_historyItem->visited(title, CFAbsoluteTimeGetCurrent());
+    return S_OK;
+}
+
 // IUnknown -------------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::QueryInterface(REFIID riid, void** ppvObject)

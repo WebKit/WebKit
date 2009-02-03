@@ -1,3 +1,21 @@
+2009-02-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Transition Windows WebHistory to using the same "update already existing History Items" technique that Mac does.
+
+        * Interfaces/IWebHistoryItemPrivate.idl:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory):
+
+        * WebHistory.cpp:
+        (WebHistory::visitedURL):
+        * WebHistory.h:
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::visitedWithTitle):
+        * WebHistoryItem.h:
+
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
