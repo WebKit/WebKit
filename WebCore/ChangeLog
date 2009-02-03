@@ -1,3 +1,88 @@
+2009-02-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23358
+
+        Hook accelerated compositing into RenderLayer.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        Init and clean up backing and the hasCompositingDescendant bit.
+        
+        (WebCore::RenderLayer::compositor):
+        Shortcut to get to the RenderLayerCompositor.
+
+        (WebCore::RenderLayer::updateLayerPositions):
+        We need to let full repaints propagate to all compositing layers, and 
+        update the backing after layout here.
+        
+        (WebCore::RenderLayer::transparentAncestor):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        Account for the fact that opacity may be rendered via the compositing
+        layer sometimes.
+        
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        Tell the compositor when the RenderLayer hierarchy changes.
+        
+        (WebCore::RenderLayer::scrollToOffset):
+        Update layer geometry after scrolling.
+        
+        (WebCore::RenderLayer::paintLayer):
+        We short-circuit painting on composited layers, because these layers
+        are painted on a callback from the compositing system.
+        
+        (WebCore::RenderLayer::hitTestLayer):
+        Only apply transforms if we are rendering them in software.
+        
+        (WebCore::RenderLayer::localBoundingBox):
+        (WebCore::RenderLayer::boundingBox):
+        (WebCore::RenderLayer::absoluteBoundingBox):
+        Refactor bounding box code that we can compute local, and ancestor-relative
+        bounding box, as well as absolute.
+        
+        (WebCore::RenderLayer::ensureBacking):
+        (WebCore::RenderLayer::clearBacking):
+        RenderLayerBacking creation and destruction.
+        
+        (WebCore::RenderLayer::setParent):
+        Tell the compositor when the RenderLayer hierarchy changes.
+
+        (WebCore::RenderLayer::dirtyZOrderLists):
+        (WebCore::RenderLayer::dirtyStackingContextZOrderLists):
+        (WebCore::RenderLayer::dirtyOverflowList):
+        When the z-order and overflow lists change, we need to tell the
+        compositor that the composited layers need to be rejiggered soon.
+        
+        (WebCore::RenderLayer::updateZOrderLists):
+        Whitespace cleanup.
+        
+        (WebCore::RenderLayer::setBackingNeedsRepaint):
+        (WebCore::RenderLayer::setBackingNeedsRepaintInRect):
+        Dirty composited layer contents for painting.
+        
+        (WebCore::RenderLayer::styleChanged):
+        Update the layer backing after style changes.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isComposited):
+        (WebCore::RenderLayer::backing):
+        Accessors for testing and getting the backing for this RenderLayer.
+        
+        (WebCore::RenderLayer::paintsWithTransparency):
+        (WebCore::RenderLayer::paintsWithTransform):
+        Transform and opacity can be applied via the compositing layer, or rendered
+        in software. These methods tell us if we need to account for them in the
+        non-compositing path.
+        
+        (WebCore::RenderLayer::hasCompositingDescendant):
+        (WebCore::RenderLayer::setHasCompositingDescendant):
+        Maintain a bit to tell if this layer has composited descendants.
+
 2009-02-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
