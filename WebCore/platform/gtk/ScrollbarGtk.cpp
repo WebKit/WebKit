@@ -44,19 +44,19 @@ static gboolean gtkScrollEventCallback(GtkWidget* widget, GdkEventScroll* event,
 }
 
 ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orientation,
-                                     ScrollbarControlSize controlSize)
+                           ScrollbarControlSize controlSize)
     : Scrollbar(client, orientation, controlSize)
     , m_adjustment(GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)))
 {
-    GtkScrollbar* scrollBar = orientation == HorizontalScrollbar ?
-                              GTK_SCROLLBAR(::gtk_hscrollbar_new(m_adjustment)) :
-                              GTK_SCROLLBAR(::gtk_vscrollbar_new(m_adjustment));
-    gtk_widget_show(GTK_WIDGET(scrollBar));
-    g_object_ref(G_OBJECT(scrollBar));
-    g_signal_connect(G_OBJECT(scrollBar), "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
-    g_signal_connect(G_OBJECT(scrollBar), "scroll-event", G_CALLBACK(gtkScrollEventCallback), this);
+    GtkWidget* scrollBar = orientation == HorizontalScrollbar ?
+                           gtk_hscrollbar_new(m_adjustment):
+                           gtk_vscrollbar_new(m_adjustment);
+    gtk_widget_show(scrollBar);
+    g_object_ref(scrollBar);
+    g_signal_connect(scrollBar, "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
+    g_signal_connect(scrollBar, "scroll-event", G_CALLBACK(gtkScrollEventCallback), this);
 
-    setPlatformWidget(GTK_WIDGET(scrollBar));
+    setPlatformWidget(scrollBar);
 
     /*
      * assign a sane default width and height to the Scrollbar, otherwise
@@ -71,9 +71,9 @@ ScrollbarGtk::~ScrollbarGtk()
     /*
      * the Widget does not take over ownership.
      */
-    g_signal_handlers_disconnect_by_func(G_OBJECT(platformWidget()), (gpointer)ScrollbarGtk::gtkValueChanged, this);
-    g_signal_handlers_disconnect_by_func(G_OBJECT(platformWidget()), (gpointer)gtkScrollEventCallback, this);
-    g_object_unref(G_OBJECT(platformWidget()));
+    g_signal_handlers_disconnect_by_func(platformWidget(), (gpointer)ScrollbarGtk::gtkValueChanged, this);
+    g_signal_handlers_disconnect_by_func(platformWidget(), (gpointer)gtkScrollEventCallback, this);
+    g_object_unref(platformWidget());
 }
 
 void ScrollbarGtk::frameRectsChanged()

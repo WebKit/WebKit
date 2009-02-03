@@ -4,6 +4,19 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=23711
 
+        Declare scrollBar as GtkWidget* to avoid needless
+        casting.
+
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::ScrollbarGtk):
+        (ScrollbarGtk::~ScrollbarGtk):
+
+2009-02-03  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23711
+
         Properly calculate the scrollbar location for their
         usage in RenderLayout.
 
