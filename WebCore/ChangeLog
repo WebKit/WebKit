@@ -1,3 +1,10 @@
+2009-02-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Windows build fix.
+
+        * dom/CrossThreadCopier.h: Changed forward declarations to use struct instead of class where
+        appropriate.
+
 2009-02-02  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

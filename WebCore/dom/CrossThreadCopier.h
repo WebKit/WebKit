@@ -41,12 +41,12 @@
 
 namespace WebCore {
 
-    class CrossThreadResourceResponseData;
-    class CrossThreadResourceRequestData;
     class ResourceError;
     class ResourceRequest;
     class ResourceResponse;
     class String;
+    struct CrossThreadResourceResponseData;
+    struct CrossThreadResourceRequestData;
 
     template<typename T> struct CrossThreadCopierPassThrough {
         typedef T Type;
