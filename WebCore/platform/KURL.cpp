@@ -289,6 +289,7 @@ inline bool KURL::protocolIs(const String& string, const char* protocol)
 void KURL::invalidate()
 {
     m_isValid = false;
+    m_protocolInHTTPFamily = false;
     m_schemeEnd = 0;
     m_userStart = 0;
     m_userEnd = 0;
@@ -1047,7 +1048,7 @@ void KURL::parse(const char* url, const String* originalString)
         && matchLetter(url[2], 'l')
         && matchLetter(url[3], 'e');
 
-    bool isHTTPorHTTPS = matchLetter(url[0], 'h')
+    m_protocolInHTTPFamily = matchLetter(url[0], 'h')
         && matchLetter(url[1], 't')
         && matchLetter(url[2], 't')
         && matchLetter(url[3], 'p')
@@ -1129,7 +1130,7 @@ void KURL::parse(const char* url, const String* originalString)
             return;
         }
 
-        if (userStart == portEnd && !isHTTPorHTTPS && !isFile) {
+        if (userStart == portEnd && !m_protocolInHTTPFamily && !isFile) {
             // No authority found, which means that this is not a net_path, but rather an abs_path whose first two
             // path segments are empty. For file, http and https only, an empty authority is allowed.
             userStart -= 2;
@@ -1253,7 +1254,7 @@ void KURL::parse(const char* url, const String* originalString)
 
     // For canonicalization, ensure we have a '/' for no path.
     // Only do this for http and https.
-    if (isHTTPorHTTPS && pathEnd - pathStart == 0)
+    if (m_protocolInHTTPFamily && pathEnd - pathStart == 0)
         *p++ = '/';
 
     // add path, escaping bad characters

@@ -3581,6 +3581,10 @@ void FrameLoader::addExtraFieldsToMainResourceRequest(ResourceRequest& request)
 
 void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadType loadType, bool mainResource, bool cookiePolicyURLFromRequest)
 {
+    // These modifications are only necessary for HTTP and HTTPS.
+    if (!request.url().protocolInHTTPFamily())
+        return;
+
     applyUserAgent(request);
     
     if (loadType == FrameLoadTypeReload) {

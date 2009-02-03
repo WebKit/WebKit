@@ -1,3 +1,28 @@
+2009-02-03  David Hyatt  <hyatt@apple.com>
+
+        Avoid creating extra copies of NSURLRequests for non-HTTP URLs.  Only mark platform requests
+        as needing updating when HTTP fields change if the scheme of the URL is actually HTTP or HTTPS.
+        Thus cuts down significantly on the number of copied NSURLRequests and is about a 1% gain on the PLT.
+
+        Reviewed by Darin Adler
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        * platform/KURL.cpp:
+        (WebCore::KURL::invalidate):
+        (WebCore::KURL::KURL):
+        * platform/KURL.h:
+        (WebCore::KURL::isHTTPOrHTTPS):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setCachePolicy):
+        (WebCore::ResourceRequestBase::setTimeoutInterval):
+        (WebCore::ResourceRequestBase::setMainDocumentURL):
+        (WebCore::ResourceRequestBase::setHTTPMethod):
+        (WebCore::ResourceRequestBase::setHTTPHeaderField):
+        (WebCore::ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray):
+        (WebCore::ResourceRequestBase::setHTTPBody):
+        (WebCore::ResourceRequestBase::setAllowHTTPCookies):
+
 2009-02-03  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.

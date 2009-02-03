@@ -129,6 +129,7 @@ public:
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
     bool protocolIs(const char*) const;
+    bool protocolInHTTPFamily() const { return m_protocolInHTTPFamily; }
     bool isLocalFile() const;
 
     void setProtocol(const String&);
@@ -218,7 +219,9 @@ private:
     void parse(const char* url, const String* originalString);
 
     String m_string;
-    bool m_isValid;
+    bool m_isValid : 1;
+    bool m_protocolInHTTPFamily : 1;
+
     int m_schemeEnd;
     int m_userStart;
     int m_userEnd;
