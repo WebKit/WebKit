@@ -37,6 +37,7 @@
 namespace WebCore {
 
     class ActiveDOMObject;
+    class DOMTimer;
     class MessagePort;
     class SecurityOrigin;
     class ScriptString;
@@ -94,6 +95,10 @@ namespace WebCore {
 
         virtual void postTask(PassRefPtr<Task>) = 0; // Executes the task on context's thread asynchronously.
 
+        void addTimeout(int timeoutId, DOMTimer*);
+        void removeTimeout(int timeoutId);
+        DOMTimer* findTimeout(int timeoutId);
+
     protected:
         // Explicitly override the security origin for this script context.
         // Note: It is dangerous to change the security origin of a script context
@@ -109,6 +114,8 @@ namespace WebCore {
         HashSet<MessagePort*> m_messagePorts;
 
         HashMap<ActiveDOMObject*, void*> m_activeDOMObjects;
+
+        HashMap<int, DOMTimer*> m_timeouts;
 
         virtual void refScriptExecutionContext() = 0;
         virtual void derefScriptExecutionContext() = 0;

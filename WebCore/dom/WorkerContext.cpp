@@ -31,6 +31,7 @@
 #include "WorkerContext.h"
 
 #include "ActiveDOMObject.h"
+#include "DOMTimer.h"
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"
@@ -192,6 +193,16 @@ void WorkerContext::postTask(PassRefPtr<Task> task)
 void WorkerContext::postTaskToWorkerObject(PassRefPtr<Task> task)
 {
     thread()->messagingProxy()->postTaskToWorkerObject(task);
+}
+
+int WorkerContext::installTimeout(ScheduledAction* action, int timeout, bool singleShot)
+{
+    return DOMTimer::install(scriptExecutionContext(), action, timeout, singleShot);
+}
+
+void WorkerContext::removeTimeout(int timeoutId)
+{
+    DOMTimer::removeById(scriptExecutionContext(), timeoutId);
 }
 
 } // namespace WebCore

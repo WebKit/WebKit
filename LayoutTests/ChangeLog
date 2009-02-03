@@ -1,3 +1,17 @@
+2009-02-03  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22718
+        Implement WindowTimers interface in Workers.
+
+        First layout test for timeouts in a Worker.
+
+        * fast/workers/resources/worker-timeout.js: Added.
+        (checkCompletion):
+        * fast/workers/worker-timeout-expected.txt: Added.
+        * fast/workers/worker-timeout.html: Added.
+
 2009-02-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

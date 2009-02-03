@@ -27,7 +27,6 @@
 #include "config.h"
 #include "DOMTimer.h"
 
-#include "Document.h"
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/HashSet.h>
@@ -58,10 +57,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action, int
     
     m_nestingLevel = timerNestingLevel + 1;
 
-    // FIXME: Move the timeout map and API to ScriptExecutionContext to be able
-    // to create timeouts from Workers.
-    ASSERT(scriptExecutionContext() && scriptExecutionContext()->isDocument());
-    static_cast<Document*>(scriptExecutionContext())->addTimeout(m_timeoutId, this);
+    scriptExecutionContext()->addTimeout(m_timeoutId, this);
 
     double intervalMilliseconds = max(oneMillisecond, timeout * oneMillisecond);
 
@@ -79,8 +75,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action, int
 DOMTimer::~DOMTimer()
 {
     if (scriptExecutionContext()) {
-        ASSERT(scriptExecutionContext()->isDocument());
-        static_cast<Document*>(scriptExecutionContext())->removeTimeout(m_timeoutId);
+        scriptExecutionContext()->removeTimeout(m_timeoutId);
     }
 }
     
@@ -100,8 +95,7 @@ void DOMTimer::removeById(ScriptExecutionContext* context, int timeoutId)
     // respectively
     if (timeoutId <= 0)
         return;
-    ASSERT(context && context->isDocument());
-    delete static_cast<Document*>(context)->findTimeout(timeoutId);
+    delete context->findTimeout(timeoutId);
 }
 
 void DOMTimer::fired()

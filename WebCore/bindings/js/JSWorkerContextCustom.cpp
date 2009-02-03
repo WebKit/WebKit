@@ -31,6 +31,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSEventListener.h"
+#include "ScheduledAction.h"
 #include "WorkerContext.h"
 
 using namespace JSC;
@@ -90,6 +91,42 @@ JSValuePtr JSWorkerContext::removeEventListener(ExecState* exec, const ArgList& 
     if (!listener)
         return jsUndefined();
     impl()->removeEventListener(args.at(exec, 0).toString(exec), listener, args.at(exec, 2).toBoolean(exec));
+    return jsUndefined();
+}
+
+static JSValuePtr setTimeoutOrInterval(ExecState* exec, WorkerContext* workerContext, const ArgList& args, bool singleShot)
+{
+    JSValuePtr v = args.at(exec, 0);
+    int delay = args.at(exec, 1).toInt32(exec);
+    if (v.isString())
+        return jsNumber(exec, workerContext->installTimeout(new ScheduledAction(asString(v)->value()), delay, singleShot));
+    CallData callData;
+    if (v.getCallData(callData) == CallTypeNone)
+        return jsUndefined();
+    ArgList argsTail;
+    args.getSlice(2, argsTail);
+    return jsNumber(exec, workerContext->installTimeout(new ScheduledAction(exec, v, argsTail), delay, singleShot));
+}
+
+JSValuePtr JSWorkerContext::setTimeout(ExecState* exec, const ArgList& args)
+{
+    return setTimeoutOrInterval(exec, impl(), args, true);
+}
+
+JSValuePtr JSWorkerContext::clearTimeout(ExecState* exec, const ArgList& args)
+{
+    impl()->removeTimeout(args.at(exec, 0).toInt32(exec));
+    return jsUndefined();
+}
+
+JSValuePtr JSWorkerContext::setInterval(ExecState* exec, const ArgList& args)
+{
+    return setTimeoutOrInterval(exec, impl(), args, false);
+}
+
+JSValuePtr JSWorkerContext::clearInterval(ExecState* exec, const ArgList& args)
+{
+    impl()->removeTimeout(args.at(exec, 0).toInt32(exec));
     return jsUndefined();
 }
 

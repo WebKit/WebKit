@@ -175,6 +175,22 @@ void ScriptExecutionContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securi
     m_securityOrigin = securityOrigin;
 }
 
+void ScriptExecutionContext::addTimeout(int timeoutId, DOMTimer* timer)
+{
+    ASSERT(!m_timeouts.contains(timeoutId));
+    m_timeouts.set(timeoutId, timer);
+}
+
+void ScriptExecutionContext::removeTimeout(int timeoutId)
+{
+    m_timeouts.remove(timeoutId);
+}
+
+DOMTimer* ScriptExecutionContext::findTimeout(int timeoutId)
+{
+    return m_timeouts.get(timeoutId);
+}
+
 ScriptExecutionContext::Task::~Task()
 {
 }

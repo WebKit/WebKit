@@ -1,0 +1,24 @@
+<body>
+<p>Test Timeouts (setTimeout, setInterval, clearTimeout, clearInterval).</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var worker = new Worker('resources/worker-timeout.js');
+
+worker.onmessage = function(evt) {
+    log(evt.data);
+    if (evt.data == "DONE" && window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</body>
+</html>

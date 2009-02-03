@@ -2,6 +2,51 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        https://bugs.webkit.org/show_bug.cgi?id=22718
+        Implement WindowTimers interface in Workers.
+
+        This patch moves timeoutID from Document to ScriptExecutionContext
+        and exposes JS methods setTimeout/setInterval/clearTimeout/clearInterval inside of a Worker.
+        Also added a test for those methods.
+
+        Test: fast/workers/worker-timeout.html
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::setTimeoutOrInterval):
+        Creates ScheduledAction and calls WorkerContext::installTimeout to actually add a timer.
+
+        (WebCore::JSWorkerContext::setTimeout):
+        (WebCore::JSWorkerContext::clearTimeout):
+        (WebCore::JSWorkerContext::setInterval):
+        (WebCore::JSWorkerContext::clearInterval):
+        Added methods exposed to JS.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::addTimeout):
+        (WebCore::ScriptExecutionContext::removeTimeout):
+        (WebCore::ScriptExecutionContext::findTimeout):
+        * dom/ScriptExecutionContext.h:
+        The timerID map moves from Document to ScriptExecutionContext,
+        to be available to Document and to WorkerContext.
+
+        * dom/WorkerContext.cpp:
+        (WebCore::WorkerContext::installTimeout): Adds a DOMTimeout.
+        (WebCore::WorkerContext::removeTimeout): Removes a DOMTimeout.
+        * dom/WorkerContext.h:
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::~DOMTimer):
+        (WebCore::DOMTimer::removeById):
+        Code change here reflects move of timeoutID map to the ScriptExecutionContext.
+        Some checks and casts are no longer needed.
+
+2009-02-03  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         https://bugs.webkit.org/show_bug.cgi?id=23560
         Implement SharedTimer for Workers.
 
