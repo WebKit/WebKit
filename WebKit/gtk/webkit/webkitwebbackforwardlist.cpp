@@ -389,6 +389,23 @@ void webkit_web_back_forward_list_set_limit(WebKitWebBackForwardList* webBackFor
         backForwardList->setCapacity(limit);
 }
 
+/**
+ * webkit_web_back_forward_list_add_item:
+ * @web_back_forward_list: a #WebKitWebBackForwardList
+ * @history_item: the #WebKitWebHistoryItem to add
+ *
+ * Adds the item to the #WebKitWebBackForwardList.
+ */
+void webkit_web_back_forward_list_add_item(WebKitWebBackForwardList *webBackForwardList, WebKitWebHistoryItem *webHistoryItem)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList));
+
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
+    WebCore::HistoryItem* historyItem = core(webHistoryItem);
+
+    backForwardList->addItem(historyItem);
+}
+
 } /* end extern "C" */
 
 WebCore::BackForwardList* WebKit::core(WebKitWebBackForwardList* webBackForwardList)

@@ -1,3 +1,20 @@
+2009-02-03  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22988
+        [GTK] Need a public method to add a WebKitWebHistoryItem to
+        WebKitWebBackForwardList.
+
+        Wrap WebCore::BackForwardList::addItem.
+
+        * tests/main.c:
+        (test_webkit_web_back_forward_list_add_item):
+        (main):
+        * webkit/webkitwebbackforwardlist.cpp:
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_add_item):
+        * webkit/webkitwebbackforwardlist.h:
+
 2009-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

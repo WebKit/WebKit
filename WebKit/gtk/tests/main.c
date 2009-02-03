@@ -62,6 +62,78 @@ static void test_webkit_web_frame_lifetime(void)
     g_object_unref(webFrame);
 }
 
+static void
+test_webkit_web_back_forward_list_add_item(void)
+{
+    WebKitWebView* webView;
+    WebKitWebBackForwardList* webBackForwardList;
+    WebKitWebHistoryItem* addItem1;
+    WebKitWebHistoryItem* addItem2;
+    WebKitWebHistoryItem* backItem;
+    WebKitWebHistoryItem* currentItem;
+    g_test_bug("22988");
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+
+    webkit_web_view_set_maintains_back_forward_list(webView, TRUE);
+    webBackForwardList = webkit_web_view_get_back_forward_list(webView);
+    g_assert(webBackForwardList);
+
+    // Check that there is no item.
+    g_assert(!webkit_web_back_forward_list_get_current_item(webBackForwardList));
+    g_assert_cmpint(webkit_web_back_forward_list_get_forward_length(webBackForwardList), ==, 0);
+    g_assert_cmpint(webkit_web_back_forward_list_get_back_length(webBackForwardList), ==, 0);
+    g_assert(!webkit_web_view_can_go_forward(webView));
+    g_assert(!webkit_web_view_can_go_back(webView));
+
+    // Add a new item
+    addItem1 = webkit_web_history_item_new_with_data("http://example.com/", "Added site");
+    webkit_web_back_forward_list_add_item(webBackForwardList, addItem1);
+    g_assert(webkit_web_back_forward_list_contains_item(webBackForwardList, addItem1));
+
+    // Check that the added item is the current item.
+    currentItem = webkit_web_back_forward_list_get_current_item(webBackForwardList);
+    g_assert(currentItem);
+    g_assert_cmpint(webkit_web_back_forward_list_get_forward_length(webBackForwardList), ==, 0);
+    g_assert_cmpint(webkit_web_back_forward_list_get_back_length(webBackForwardList), ==, 0);
+    g_assert(!webkit_web_view_can_go_forward(webView));
+    g_assert(!webkit_web_view_can_go_back(webView));
+    g_assert_cmpstr(webkit_web_history_item_get_uri(currentItem), ==, "http://example.com/");
+    g_assert_cmpstr(webkit_web_history_item_get_title(currentItem), ==, "Added site");
+
+    // Add another item.
+    addItem2 = webkit_web_history_item_new_with_data("http://example.com/2/", "Added site 2");
+    webkit_web_back_forward_list_add_item(webBackForwardList, addItem2);
+    g_assert(webkit_web_back_forward_list_contains_item(webBackForwardList, addItem2));
+    g_object_unref(addItem2);
+
+    // Check that the added item is new current item.
+    currentItem = webkit_web_back_forward_list_get_current_item(webBackForwardList);
+    g_assert(currentItem);
+    g_assert_cmpint(webkit_web_back_forward_list_get_forward_length(webBackForwardList), ==, 0);
+    g_assert_cmpint(webkit_web_back_forward_list_get_back_length(webBackForwardList), ==, 1);
+    g_assert(!webkit_web_view_can_go_forward(webView));
+    g_assert(webkit_web_view_can_go_back(webView));
+    g_assert_cmpstr(webkit_web_history_item_get_uri(currentItem), ==, "http://example.com/2/");
+    g_assert_cmpstr(webkit_web_history_item_get_title(currentItem), ==, "Added site 2");
+
+    backItem = webkit_web_back_forward_list_get_back_item(webBackForwardList);
+    g_assert(backItem);
+    g_assert_cmpstr(webkit_web_history_item_get_uri(backItem), ==, "http://example.com/");
+    g_assert_cmpstr(webkit_web_history_item_get_title(backItem), ==, "Added site");
+
+    // Go to the first added item.
+    g_assert(webkit_web_view_go_to_back_forward_item(webView, addItem1));
+    g_assert_cmpint(webkit_web_back_forward_list_get_forward_length(webBackForwardList), ==, 1);
+    g_assert_cmpint(webkit_web_back_forward_list_get_back_length(webBackForwardList), ==, 0);
+    g_assert(webkit_web_view_can_go_forward(webView));
+    g_assert(!webkit_web_view_can_go_back(webView));
+
+    g_object_unref(addItem1);
+    g_object_unref(webView);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -70,6 +142,7 @@ int main(int argc, char** argv)
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/webview/create_destroy", test_webkit_web_frame_create_destroy);
     g_test_add_func("/webkit/webframe/lifetime", test_webkit_web_frame_lifetime);
+    g_test_add_func("/webkit/webbackforwardlist/add_item", test_webkit_web_back_forward_list_add_item);
 
     return g_test_run ();
 }
