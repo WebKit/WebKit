@@ -1,3 +1,12 @@
+2009-02-03  Eric Roman  <eroman@chromium.org>
+
+        Reviewed by Holger Freyther.
+
+        Fix FrameChromium.cpp following r40473 which moved Frame::adjustPageHeight to FrameView::adjustPageHeight.
+
+        * page/chromium/FrameChromium.cpp:
+        (WebCore::computePageRectsForFrame):
+
 2009-02-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
