@@ -1,3 +1,12 @@
+2009-02-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        - test for <rdar://problem/6550530> REGRESSION (r40508): Window opened with window.open has no initial history item (global and back/forward)
+
+        * fast/history/window-open-expected.txt: Added.
+        * fast/history/window-open.html: Added.
+
 2009-02-03  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -1,3 +1,15 @@
+2009-02-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        - fix <rdar://problem/6550530> REGRESSION (r40508): Window opened with window.open has no initial history item (global and back/forward)
+
+        Test: fast/history/window-open.html
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::createWindow): Pass the missing lockBackForwardList parameter
+        to FrameLoader::changeLocation().
+
 2009-02-03  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix the Qt build after r40536.

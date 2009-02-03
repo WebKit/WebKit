@@ -248,7 +248,7 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
         bool userGesture = activeFrame->script()->processingUserGesture();
 
         if (created)
-            newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
+            newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, false, userGesture);
         else if (!url.isEmpty())
             newFrame->loader()->scheduleLocationChange(completedURL.string(), activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
     }
