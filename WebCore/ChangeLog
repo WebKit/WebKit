@@ -1,3 +1,15 @@
+2009-02-02  David Hyatt  <hyatt@apple.com>
+
+        Move positionForCoordinates up from RenderContainer into RenderBox.
+
+        Reviewed by Sam Weinig
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionForCoordinates):
+        * rendering/RenderBox.h:
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderContainer.h:
+
 2009-02-02  Hiroaki Nakamura <hnakamur@gmail.com>
 
         Reviewed by Adam Roben.

@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
@@ -3133,6 +3134,94 @@ int RenderBox::leftmostPosition(bool /*includeOverflowInterior*/, bool includeSe
 bool RenderBox::isAfterContent(RenderObject* child) const
 {
     return (child && child->style()->styleType() == RenderStyle::AFTER && (!child->isText() || child->isBR()));
+}
+
+VisiblePosition RenderBox::positionForCoordinates(int xPos, int yPos)
+{
+    // no children...return this render object's element, if there is one, and offset 0
+    if (!firstChild())
+        return VisiblePosition(element(), 0, DOWNSTREAM);
+        
+    if (isTable() && element()) {
+        int right = contentWidth() + borderRight() + paddingRight() + borderLeft() + paddingLeft();
+        int bottom = contentHeight() + borderTop() + paddingTop() + borderBottom() + paddingBottom();
+        
+        if (xPos < 0 || xPos > right || yPos < 0 || yPos > bottom) {
+            if (xPos <= right / 2)
+                return VisiblePosition(Position(element(), 0));
+            else
+                return VisiblePosition(Position(element(), maxDeepOffset(element())));
+        }
+    }
+
+    // Pass off to the closest child.
+    int minDist = INT_MAX;
+    RenderBox* closestRenderer = 0;
+    int newX = xPos;
+    int newY = yPos;
+    if (isTableRow()) {
+        newX += x();
+        newY += y();
+    }
+    for (RenderObject* renderObject = firstChild(); renderObject; renderObject = renderObject->nextSibling()) {
+        if (!renderObject->firstChild() && !renderObject->isInline() && !renderObject->isBlockFlow() 
+            || renderObject->style()->visibility() != VISIBLE)
+            continue;
+        
+        if (!renderObject->isBox())
+            continue;
+        
+        RenderBox* renderer = toRenderBox(renderObject);
+
+        int top = borderTop() + paddingTop() + (isTableRow() ? 0 : renderer->y());
+        int bottom = top + renderer->contentHeight();
+        int left = borderLeft() + paddingLeft() + (isTableRow() ? 0 : renderer->x());
+        int right = left + renderer->contentWidth();
+        
+        if (xPos <= right && xPos >= left && yPos <= top && yPos >= bottom) {
+            if (renderer->isTableRow())
+                return renderer->positionForCoordinates(xPos + newX - renderer->x(), yPos + newY - renderer->y());
+            return renderer->positionForCoordinates(xPos - renderer->x(), yPos - renderer->y());
+        }
+
+        // Find the distance from (x, y) to the box.  Split the space around the box into 8 pieces
+        // and use a different compare depending on which piece (x, y) is in.
+        IntPoint cmp;
+        if (xPos > right) {
+            if (yPos < top)
+                cmp = IntPoint(right, top);
+            else if (yPos > bottom)
+                cmp = IntPoint(right, bottom);
+            else
+                cmp = IntPoint(right, yPos);
+        } else if (xPos < left) {
+            if (yPos < top)
+                cmp = IntPoint(left, top);
+            else if (yPos > bottom)
+                cmp = IntPoint(left, bottom);
+            else
+                cmp = IntPoint(left, yPos);
+        } else {
+            if (yPos < top)
+                cmp = IntPoint(xPos, top);
+            else
+                cmp = IntPoint(xPos, bottom);
+        }
+        
+        int x1minusx2 = cmp.x() - xPos;
+        int y1minusy2 = cmp.y() - yPos;
+        
+        int dist = x1minusx2 * x1minusx2 + y1minusy2 * y1minusy2;
+        if (dist < minDist) {
+            closestRenderer = renderer;
+            minDist = dist;
+        }
+    }
+    
+    if (closestRenderer)
+        return closestRenderer->positionForCoordinates(newX - closestRenderer->x(), newY - closestRenderer->y());
+    
+    return VisiblePosition(element(), 0, DOWNSTREAM);
 }
 
 #if ENABLE(SVG)
