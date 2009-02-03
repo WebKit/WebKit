@@ -131,12 +131,16 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
             uint32_t *pixel = (uint32_t *) row + x + originx;
             int basex = x * 4;
             if (unsigned int alpha = (*pixel & 0xff000000) >> 24) {
+                destRows[basex] = ((*pixel & 0x00ff0000) >> 16) * 255 / alpha;
+                destRows[basex + 1] = ((*pixel & 0x0000ff00) >> 8) * 255 / alpha;
+                destRows[basex + 2] = (*pixel & 0x000000ff) * 255 / alpha;
+                destRows[basex + 3] = alpha;
+            } else {
                 destRows[basex] = (*pixel & 0x00ff0000) >> 16;
                 destRows[basex + 1] = (*pixel & 0x0000ff00) >> 8;
                 destRows[basex + 2] = (*pixel & 0x000000ff);
                 destRows[basex + 3] = alpha;
-            } else
-                reinterpret_cast<uint32_t*>(destRows + basex)[0] = pixel[0];
+            }
         }
         destRows += destBytesPerRow;
     }
@@ -185,10 +189,14 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
         for (int x = 0; x < numColumns; x++) {
             uint32_t *pixel = (uint32_t *) row + x + destx;
             int basex = x * 4;
-            if (unsigned int alpha = srcRows[basex + 3]) {
-                *pixel = alpha << 24 | srcRows[basex] << 16 | srcRows[basex + 1] << 8 | srcRows[basex + 2];
+            unsigned int alpha = srcRows[basex + 3];
+            if (alpha != 255) {
+                *pixel = alpha << 24 | 
+                         ((srcRows[basex] * alpha + 254) / 255) << 16 | 
+                         ((srcRows[basex + 1] * alpha + 254) / 255) << 8 | 
+                         ((srcRows[basex + 2] * alpha + 254) / 255);
             } else
-                pixel[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+                *pixel = alpha << 24 | srcRows[basex] << 16 | srcRows[basex + 1] << 8 | srcRows[basex + 2];
         }
         srcRows += srcBytesPerRow;
     }

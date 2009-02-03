@@ -1,3 +1,17 @@
+2009-02-03  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Holger Hans Peter Freyther.
+
+        Fixed getImageData and putImageData and respect pre-
+        multiplied colors.
+
+        Cairo's ImageBuffer::getImageData() does not handle alpha=0 case correctly
+        https://bugs.webkit.org/show_bug.cgi?id=21575
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+
 2009-02-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Brady Eidson.
