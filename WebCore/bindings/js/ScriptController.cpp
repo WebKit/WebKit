@@ -318,21 +318,30 @@ NPObject* ScriptController::windowScriptNPObject()
 
 NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement* plugin)
 {
-    // Can't create NPObjects when JavaScript is disabled
-    if (!isEnabled())
+    JSObject* object = jsObjectForPluginElement(plugin);
+    if (!object)
         return _NPN_CreateNoScriptObject();
+
+    // Wrap the JSObject in an NPObject
+    return _NPN_CreateScriptObject(0, object, bindingRootObject());
+}
+#endif
+
+JSObject* ScriptController::jsObjectForPluginElement(HTMLPlugInElement* plugin)
+{
+    // Can't create JSObjects when JavaScript is disabled
+    if (!isEnabled())
+        return 0;
 
     // Create a JSObject bound to this element
     JSLock lock(false);
     ExecState* exec = globalObject()->globalExec();
     JSValuePtr jsElementValue = toJS(exec, plugin);
     if (!jsElementValue || !jsElementValue.isObject())
-        return _NPN_CreateNoScriptObject();
-
-    // Wrap the JSObject in an NPObject
-    return _NPN_CreateScriptObject(0, jsElementValue.getObject(), bindingRootObject());
+        return 0;
+    
+    return jsElementValue.getObject();
 }
-#endif
 
 #if !PLATFORM(MAC)
 void ScriptController::updatePlatformScriptObjects()

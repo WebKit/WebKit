@@ -368,6 +368,24 @@ kern_return_t WKPCGetWindowNPObject(mach_port_t clientPort, uint32_t pluginID, u
     return KERN_SUCCESS;
 }
 
+kern_return_t WKPCGetPluginElementNPObject(mach_port_t clientPort, uint32_t pluginID, uint32_t* outObjectID)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+    
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+    
+    uint32_t objectID;
+    if (!instanceProxy->getPluginElementNPObject(objectID))
+        return KERN_FAILURE;
+    
+    *outObjectID = objectID;    
+    return KERN_SUCCESS;
+}
+
 kern_return_t WKPCReleaseObject(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);

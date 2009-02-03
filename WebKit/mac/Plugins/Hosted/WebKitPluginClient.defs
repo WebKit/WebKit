@@ -69,6 +69,9 @@ routine GetIntIdentifier(clientPort :mach_port_t;
 routine GetWindowNPObject(clientPort :mach_port_t;
                           pluginID :uint32_t;
                           out objectID :uint32_t);
+routine GetPluginElementNPObject(clientPort :mach_port_t;
+                                 pluginID :uint32_t;
+                                 out objectID :uint32_t);
                       
 routine ReleaseObject(clientPort :mach_port_t;
                       pluginID :uint32_t;

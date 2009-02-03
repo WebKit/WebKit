@@ -92,6 +92,7 @@ public:
     
     // NPRuntime
     bool getWindowNPObject(uint32_t& objectID);
+    bool getPluginElementNPObject(uint32_t& objectID);
     void releaseObject(uint32_t objectID);
     
     bool evaluate(uint32_t objectID, const WebCore::String& script, data_t& resultData, mach_msg_type_number_t& resultLength);

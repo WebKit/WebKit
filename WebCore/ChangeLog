@@ -1,3 +1,15 @@
+2009-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add jsObjectForPluginElement to ScriptController, and have createScriptObjectForPluginElement call it.
+        
+        * WebCore.LP64.exp:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createScriptObjectForPluginElement):
+        (WebCore::ScriptController::jsObjectForPluginElement):
+        * bindings/js/ScriptController.h:
+
 2009-02-02  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel (and Ojan Vafai).

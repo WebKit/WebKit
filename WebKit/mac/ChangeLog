@@ -1,5 +1,21 @@
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Implement WKPCGetPluginElementObject.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCGetPluginElementNPObject):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::getPluginElementNPObject):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView WebCore::]):
+
+2009-02-02  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
         
         * WebView/WebHTMLView.mm:

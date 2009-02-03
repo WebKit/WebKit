@@ -503,7 +503,21 @@ bool NetscapePluginInstanceProxy::getWindowNPObject(uint32_t& objectID)
         
     return true;
 }
+
+bool NetscapePluginInstanceProxy::getPluginElementNPObject(uint32_t& objectID)
+{
+    Frame* frame = core([m_pluginView webFrame]);
+    if (!frame)
+        return false;
     
+    if (JSObject* object = frame->script()->jsObjectForPluginElement([m_pluginView element]))
+        objectID = idForObject(object);
+    else
+        objectID = 0;
+    
+    return true;
+}
+
 void NetscapePluginInstanceProxy::releaseObject(uint32_t objectID)
 {
     m_objects.remove(objectID);

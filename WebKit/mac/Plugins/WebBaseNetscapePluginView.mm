@@ -591,6 +591,11 @@ using namespace WebCore;
     return [self window] ? [self window] : [[self webView] hostWindow];
 }
 
+- (WebCore::HTMLPlugInElement*)element
+{
+    return _element.get();
+}
+
 // We want to treat these as regular keyboard events.
 
 - (void)cut:(id)sender

@@ -127,6 +127,8 @@ public:
     WebScriptObject* windowScriptObject();
 #endif
 
+    JSC::JSObject* jsObjectForPluginElement(HTMLPlugInElement*);
+    
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* createScriptObjectForPluginElement(HTMLPlugInElement*);
     NPObject* windowScriptNPObject();
