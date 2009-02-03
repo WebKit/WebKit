@@ -1,3 +1,13 @@
+2009-02-03  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23560
+        Implement SharedTimer on WorkerRunLoop
+
+        * JavaScriptCore.exp:
+        Forgot to expose ThreadCondition::timedWait() in one of previous patches.
+
 2009-02-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
