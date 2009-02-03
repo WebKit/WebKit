@@ -24,7 +24,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 1 (set EnablePREfast=&quot;true&quot;) else (set EnablePREfast=&quot;false&quot;)&#x0D;&#x0A;if ERRORLEVEL 1 (set AnalyzeWithLargeStack=&quot;/analyze:65536&quot;) else (set AnalyzeWithLargeStack=&quot;&quot;)&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -85,7 +85,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 1 (set EnablePREfast=&quot;true&quot;) else (set EnablePREfast=&quot;false&quot;)&#x0D;&#x0A;if ERRORLEVEL 1 (set AnalyzeWithLargeStack=&quot;/analyze:65536&quot;) else (set AnalyzeWithLargeStack=&quot;&quot;)&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -145,7 +145,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 1 (set EnablePREfast=&quot;true&quot;) else (set EnablePREfast=&quot;false&quot;)&#x0D;&#x0A;if ERRORLEVEL 1 (set AnalyzeWithLargeStack=&quot;/analyze:65536&quot;) else (set AnalyzeWithLargeStack=&quot;&quot;)&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -206,7 +206,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 1 (set EnablePREfast=&quot;true&quot;) else (set EnablePREfast=&quot;false&quot;)&#x0D;&#x0A;if ERRORLEVEL 1 (set AnalyzeWithLargeStack=&quot;/analyze:65536&quot;) else (set AnalyzeWithLargeStack=&quot;&quot;)&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -268,7 +268,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 1 (set EnablePREfast=&quot;true&quot;) else (set EnablePREfast=&quot;false&quot;)&#x0D;&#x0A;if ERRORLEVEL 1 (set AnalyzeWithLargeStack=&quot;/analyze:65536&quot;) else (set AnalyzeWithLargeStack=&quot;&quot;)&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -329,7 +329,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 0 set EnablePREfast=&quot;false&quot; else set EnablePREfast=&quot;true&quot;&#x0D;&#x0A;if ERRORLEVEL 0 set AnalyzeWithLargeStack=&quot;&quot; AnalyzeWithLargeStack=&quot;/analyze:65536&quot;&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
+				CommandLine="set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;if exist &quot;$(WebKitOutputDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;touch &quot;$(WebKitOutputDir)\tmp.cpp&quot;&#x0D;&#x0A;cl /analyze /nologo /c &quot;$(WebKitOutputDir)\tmp.cpp&quot; 2&gt;&amp;1 | findstr D9040&#x0D;&#x0A;if ERRORLEVEL 1 (set EnablePREfast=&quot;true&quot;) else (set EnablePREfast=&quot;false&quot;)&#x0D;&#x0A;if ERRORLEVEL 1 (set AnalyzeWithLargeStack=&quot;/analyze:65536&quot;) else (set AnalyzeWithLargeStack=&quot;&quot;)&#x0D;&#x0A;exit /b&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -9225,7 +9225,7 @@
 				RelativePath="..\rendering\RenderLegend.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\rendering\RenderLineBoxList.cpp"
 				>
 				<FileConfiguration
@@ -9353,7 +9353,7 @@
 				RelativePath="..\rendering\RenderObject.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\rendering\RenderObjectChildList.cpp"
 				>
 				<FileConfiguration
@@ -11414,22 +11414,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\FormControlElementWithState.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="true"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\dom\FormControlElementWithState.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\FormControlElement.cpp"
 				>
 				<FileConfiguration
@@ -11443,6 +11427,22 @@
 			</File>
 			<File
 				RelativePath="..\dom\FormControlElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\FormControlElementWithState.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\FormControlElementWithState.h"
 				>
 			</File>
 			<File
@@ -11714,22 +11714,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\OptionGroupElement.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="true"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\dom\OptionGroupElement.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\OptionElement.cpp"
 				>
 				<FileConfiguration
@@ -11743,6 +11727,22 @@
 			</File>
 			<File
 				RelativePath="..\dom\OptionElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\OptionGroupElement.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\OptionGroupElement.h"
 				>
 			</File>
 			<File
@@ -16366,6 +16366,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\bridge\IdentifierRep.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\bridge\IdentifierRep.h"
+				>
+			</File>
+			<File
 				RelativePath="..\bridge\NP_jsobject.cpp"
 				>
 			</File>
@@ -16383,14 +16391,6 @@
 			</File>
 			<File
 				RelativePath="..\bridge\npruntime.h"
-				>
-			</File>
-			<File
-				RelativePath="..\bridge\IdentifierRep.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\bridge\IdentifierRep.h"
 				>
 			</File>
 			<File
@@ -16766,19 +16766,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\wml\WMLFormControlElement.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\wml\WMLFormControlElement.h"
-				>
-			</File>
-			<File
 				RelativePath="..\wml\WMLFieldSetElement.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\wml\WMLFieldSetElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLFormControlElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLFormControlElement.h"
 				>
 			</File>
 			<File

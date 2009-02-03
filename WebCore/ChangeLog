@@ -1,3 +1,15 @@
+2009-02-02  Hiroaki Nakamura <hnakamur@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes https://bugs.webkit.org/show_bug.cgi?id=15813
+        Modify pre-build step to properly handle the errorlevel
+        shell command.
+
+        * WebCore.vcproj/WebCore.vcproj: Change errorlevel handling
+        for all targets so prefast is only enabled in builds
+        where /analyze is available.
+
 2009-02-02  David Hyatt  <hyatt@apple.com>
 
         Refactor the handling of before/after content and generated content.  Move most of the functions from
