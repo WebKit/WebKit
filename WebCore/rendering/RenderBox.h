@@ -356,6 +356,9 @@ private:
     // These include tables, positioned objects, floats and flexible boxes.
     virtual void calcPrefWidths() { setPrefWidthsDirty(false); }
 
+protected:
+    bool isAfterContent(RenderObject* child) const;
+
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
     IntRect m_frameRect;

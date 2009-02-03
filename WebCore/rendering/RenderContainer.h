@@ -48,12 +48,6 @@ public:
     // change in parentage is not going to affect anything.
     virtual void moveChildNode(RenderObject* child) { appendChildNode(child->parent()->removeChildNode(child, false), false); }
 
-    RenderObject* beforeAfterContainer(RenderStyle::PseudoId);
-    virtual void updateBeforeAfterContent(RenderStyle::PseudoId);
-    void updateBeforeAfterContentForContainer(RenderStyle::PseudoId, RenderContainer*);
-    bool isAfterContent(RenderObject* child) const;
-    virtual void invalidateCounters();
-
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
     virtual void addLineBoxRects(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);

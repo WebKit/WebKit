@@ -3130,6 +3130,11 @@ int RenderBox::leftmostPosition(bool /*includeOverflowInterior*/, bool includeSe
     return left;
 }
 
+bool RenderBox::isAfterContent(RenderObject* child) const
+{
+    return (child && child->style()->styleType() == RenderStyle::AFTER && (!child->isText() || child->isBR()));
+}
+
 #if ENABLE(SVG)
 
 TransformationMatrix RenderBox::localTransform() const

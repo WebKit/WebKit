@@ -245,6 +245,14 @@ void RenderBlock::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldS
     updateFirstLetter();
 }
 
+void RenderBlock::updateBeforeAfterContent(RenderStyle::PseudoId pseudoId)
+{
+    // If this is an anonymous wrapper, then the parent applies its own pseudo-element style to it.
+    if (parent() && parent()->createsAnonymousWrapper())
+        return;
+    return children()->updateBeforeAfterContent(this, pseudoId);
+}
+    
 void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.

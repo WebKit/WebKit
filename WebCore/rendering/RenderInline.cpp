@@ -118,8 +118,8 @@ void RenderInline::styleDidChange(RenderStyle::Diff diff, const RenderStyle* old
 
     // Update pseudos for :before and :after now.
     if (!isAnonymous() && document()->usesBeforeAfterRules()) {
-        updateBeforeAfterContent(RenderStyle::BEFORE);
-        updateBeforeAfterContent(RenderStyle::AFTER);
+        children()->updateBeforeAfterContent(this, RenderStyle::BEFORE);
+        children()->updateBeforeAfterContent(this, RenderStyle::AFTER);
     }
 }
 
@@ -199,7 +199,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         // content gets properly destroyed.
         bool isLastChild = (beforeChild == lastChild());
         if (document()->usesBeforeAfterRules())
-            updateBeforeAfterContent(RenderStyle::AFTER);
+            children()->updateBeforeAfterContent(this, RenderStyle::AFTER);
         if (isLastChild && beforeChild != lastChild())
             beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
                              // point to be 0.  It's just a straight append now.
@@ -273,7 +273,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that the inline's :after
             // content gets properly destroyed.
             if (document()->usesBeforeAfterRules())
-                curr->updateBeforeAfterContent(RenderStyle::AFTER);
+                inlineCurr->children()->updateBeforeAfterContent(this, RenderStyle::AFTER);
 
             // Now we need to take all of the children starting from the first child
             // *after* currChild and append them all to the clone.

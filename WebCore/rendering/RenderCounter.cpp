@@ -278,7 +278,11 @@ static void destroyCounterNodeChildren(AtomicStringImpl* identifier, CounterNode
         child->parent()->removeChild(child);
         ASSERT(counterMaps().get(child->renderer())->get(identifier) == child);
         counterMaps().get(child->renderer())->remove(identifier);
-        child->renderer()->invalidateCounters();
+        if (!child->renderer()->documentBeingDestroyed()) {
+            RenderObjectChildList* children = child->renderer()->virtualChildren();
+            if (children)
+                children->invalidateCounters(child->renderer());
+        }
         delete child;
     }
 }

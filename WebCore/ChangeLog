@@ -1,3 +1,35 @@
+2009-02-02  David Hyatt  <hyatt@apple.com>
+
+        Refactor the handling of before/after content and generated content.  Move most of the functions from
+        RenderContainer into RenderObjectChildList.
+
+        Reviewed by Sam Weinig
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateBeforeAfterContent):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::isAfterContent):
+        * rendering/RenderBox.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updateBeforeAfterContent):
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderContainer.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::destroyCounterNodeChildren):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::splitInlines):
+        * rendering/RenderObject.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::beforeAfterContainer):
+        (WebCore::findBeforeAfterParent):
+        (WebCore::invalidateCountersInContainer):
+        (WebCore::RenderObjectChildList::invalidateCounters):
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        * rendering/RenderObjectChildList.h:
+
 2009-02-02  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.

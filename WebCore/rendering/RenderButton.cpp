@@ -164,9 +164,9 @@ void RenderButton::setText(const String& str)
 void RenderButton::updateBeforeAfterContent(RenderStyle::PseudoId type)
 {
     if (m_inner)
-        m_inner->updateBeforeAfterContentForContainer(type, this);
+        m_inner->children()->updateBeforeAfterContent(m_inner, type, this);
     else
-        updateBeforeAfterContentForContainer(type, this);
+        children()->updateBeforeAfterContent(this, type);
 }
 
 IntRect RenderButton::controlClipRect(int tx, int ty) const
