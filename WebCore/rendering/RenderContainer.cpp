@@ -96,7 +96,7 @@ void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild
         table->addChild(newChild);
     } else {
         // just add it...
-        insertChildNode(newChild, beforeChild);
+        children()->insertChildNode(this, newChild, beforeChild);
     }
     
     if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE) {
@@ -106,181 +106,13 @@ void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild
     }
 }
 
-RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild, bool fullRemove)
-{
-    ASSERT(oldChild->parent() == this);
-
-    // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
-    // that a positioned child got yanked).  We also repaint, so that the area exposed when the child
-    // disappears gets repainted properly.
-    if (!documentBeingDestroyed() && fullRemove && oldChild->m_everHadLayout) {
-        oldChild->setNeedsLayoutAndPrefWidthsRecalc();
-        oldChild->repaint();
-    }
-        
-    // If we have a line box wrapper, delete it.
-    oldChild->deleteLineBoxWrapper();
-
-    if (!documentBeingDestroyed() && fullRemove) {
-        // if we remove visible child from an invisible parent, we don't know the layer visibility any more
-        RenderLayer* layer = 0;
-        if (m_style->visibility() != VISIBLE && oldChild->style()->visibility() == VISIBLE && !oldChild->hasLayer()) {
-            layer = enclosingLayer();
-            layer->dirtyVisibleContentStatus();
-        }
-
-         // Keep our layer hierarchy updated.
-        if (oldChild->firstChild() || oldChild->hasLayer()) {
-            if (!layer) layer = enclosingLayer();            
-            oldChild->removeLayers(layer);
-        }
-        
-        // renumber ordered lists
-        if (oldChild->isListItem())
-            updateListMarkerNumbers(oldChild->nextSibling());
-        
-        if (oldChild->isPositioned() && childrenInline())
-            dirtyLinesFromChangedChild(oldChild);
-    }
-    
-    // If oldChild is the start or end of the selection, then clear the selection to
-    // avoid problems of invalid pointers.
-    // FIXME: The SelectionController should be responsible for this when it
-    // is notified of DOM mutations.
-    if (!documentBeingDestroyed() && oldChild->isSelectionBorder())
-        view()->clearSelection();
-
-    // remove the child
-    if (oldChild->previousSibling())
-        oldChild->previousSibling()->setNextSibling(oldChild->nextSibling());
-    if (oldChild->nextSibling())
-        oldChild->nextSibling()->setPreviousSibling(oldChild->previousSibling());
-
-    if (children()->firstChild() == oldChild)
-        children()->setFirstChild(oldChild->nextSibling());
-    if (children()->lastChild() == oldChild)
-        children()->setLastChild(oldChild->previousSibling());
-
-    oldChild->setPreviousSibling(0);
-    oldChild->setNextSibling(0);
-    oldChild->setParent(0);
-
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->childrenChanged(this);
-
-    return oldChild;
-}
-
 void RenderContainer::removeChild(RenderObject* oldChild)
 {
     // We do this here instead of in removeChildNode, since the only extremely low-level uses of remove/appendChildNode
     // cannot affect the positioned object list, and the floating object list is irrelevant (since the list gets cleared on
     // layout anyway).
     oldChild->removeFromObjectLists();
-    
-    removeChildNode(oldChild);
-}
-
-void RenderContainer::appendChildNode(RenderObject* newChild, bool fullAppend)
-{
-    ASSERT(newChild->parent() == 0);
-    ASSERT(!isBlockFlow() || (!newChild->isTableSection() && !newChild->isTableRow() && !newChild->isTableCell()));
-
-    newChild->setParent(this);
-    RenderObject* lChild = children()->lastChild();
-
-    if (lChild) {
-        newChild->setPreviousSibling(lChild);
-        lChild->setNextSibling(newChild);
-    } else
-        children()->setFirstChild(newChild);
-
-    children()->setLastChild(newChild);
-    
-    if (fullAppend) {
-        // Keep our layer hierarchy updated.  Optimize for the common case where we don't have any children
-        // and don't have a layer attached to ourselves.
-        RenderLayer* layer = 0;
-        if (newChild->firstChild() || newChild->hasLayer()) {
-            layer = enclosingLayer();
-            newChild->addLayers(layer, newChild);
-        }
-
-        // if the new child is visible but this object was not, tell the layer it has some visible content
-        // that needs to be drawn and layer visibility optimization can't be used
-        if (style()->visibility() != VISIBLE && newChild->style()->visibility() == VISIBLE && !newChild->hasLayer()) {
-            if (!layer)
-                layer = enclosingLayer();
-            if (layer)
-                layer->setHasVisibleContent(true);
-        }
-        
-        if (!newChild->isFloatingOrPositioned() && childrenInline())
-            dirtyLinesFromChangedChild(newChild);
-    }
-
-    newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
-    if (!normalChildNeedsLayout())
-        setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
-    
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->childrenChanged(this);
-}
-
-void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild, bool fullInsert)
-{
-    if (!beforeChild) {
-        appendChildNode(child);
-        return;
-    }
-
-    ASSERT(!child->parent());
-    while (beforeChild->parent() != this && beforeChild->parent()->isAnonymousBlock())
-        beforeChild = beforeChild->parent();
-    ASSERT(beforeChild->parent() == this);
-
-    ASSERT(!isBlockFlow() || (!child->isTableSection() && !child->isTableRow() && !child->isTableCell()));
-
-    if (beforeChild == children()->firstChild())
-        children()->setFirstChild(child);
-
-    RenderObject* prev = beforeChild->previousSibling();
-    child->setNextSibling(beforeChild);
-    beforeChild->setPreviousSibling(child);
-    if(prev) prev->setNextSibling(child);
-    child->setPreviousSibling(prev);
-
-    child->setParent(this);
-    
-    if (fullInsert) {
-        // Keep our layer hierarchy updated.  Optimize for the common case where we don't have any children
-        // and don't have a layer attached to ourselves.
-        RenderLayer* layer = 0;
-        if (child->firstChild() || child->hasLayer()) {
-            layer = enclosingLayer();
-            child->addLayers(layer, child);
-        }
-
-        // if the new child is visible but this object was not, tell the layer it has some visible content
-        // that needs to be drawn and layer visibility optimization can't be used
-        if (style()->visibility() != VISIBLE && child->style()->visibility() == VISIBLE && !child->hasLayer()) {
-            if (!layer)
-                layer = enclosingLayer();
-            if (layer)
-                layer->setHasVisibleContent(true);
-        }
-
-        
-        if (!child->isFloating() && childrenInline())
-            dirtyLinesFromChangedChild(child);
-    }
-
-    child->setNeedsLayoutAndPrefWidthsRecalc();
-    if (!normalChildNeedsLayout())
-        setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
-    
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->childrenChanged(this);
+    m_children.removeChildNode(this, oldChild);
 }
 
 void RenderContainer::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigned end, bool)

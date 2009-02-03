@@ -51,7 +51,7 @@ RenderSVGContainer::~RenderSVGContainer()
 
 void RenderSVGContainer::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
-    insertChildNode(newChild, beforeChild);
+    children()->insertChildNode(this, newChild, beforeChild);
 }
 
 void RenderSVGContainer::removeChild(RenderObject* oldChild)
@@ -61,113 +61,13 @@ void RenderSVGContainer::removeChild(RenderObject* oldChild)
     // layout anyway).
     oldChild->removeFromObjectLists();
 
-    removeChildNode(oldChild);
+    children()->removeChildNode(this, oldChild);
 }
 
 void RenderSVGContainer::destroy()
 {
     children()->destroyLeftoverChildren();
     RenderObject::destroy();
-}
-
-RenderObject* RenderSVGContainer::removeChildNode(RenderObject* oldChild, bool fullRemove)
-{
-    ASSERT(oldChild->parent() == this);
-
-    // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
-    // that a positioned child got yanked).  We also repaint, so that the area exposed when the child
-    // disappears gets repainted properly.
-    if (!documentBeingDestroyed() && fullRemove) {
-        oldChild->setNeedsLayoutAndPrefWidthsRecalc();
-        oldChild->repaint();
-    }
-
-    // If we have a line box wrapper, delete it.
-    oldChild->deleteLineBoxWrapper();
-
-    if (!documentBeingDestroyed() && fullRemove) {
-        // If oldChild is the start or end of the selection, then clear the selection to
-        // avoid problems of invalid pointers.
-        // FIXME: The SelectionController should be responsible for this when it
-        // is notified of DOM mutations.
-        if (oldChild->isSelectionBorder())
-            view()->clearSelection();
-    }
-
-    // remove the child
-    if (oldChild->previousSibling())
-        oldChild->previousSibling()->setNextSibling(oldChild->nextSibling());
-    if (oldChild->nextSibling())
-        oldChild->nextSibling()->setPreviousSibling(oldChild->previousSibling());
-
-    if (children()->firstChild() == oldChild)
-        children()->setFirstChild(oldChild->nextSibling());
-    if (children()->lastChild() == oldChild)
-        children()->setLastChild(oldChild->previousSibling());
-
-    oldChild->setPreviousSibling(0);
-    oldChild->setNextSibling(0);
-    oldChild->setParent(0);
-
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->childrenChanged(this);
-
-    return oldChild;
-}
-
-void RenderSVGContainer::appendChildNode(RenderObject* newChild, bool)
-{
-    ASSERT(!newChild->parent());
-    ASSERT(newChild->element()->isSVGElement());
-
-    newChild->setParent(this);
-    RenderObject* lChild = children()->lastChild();
-
-    if (lChild) {
-        newChild->setPreviousSibling(lChild);
-        lChild->setNextSibling(newChild);
-    } else
-        children()->setFirstChild(newChild);
-
-    children()->setLastChild(newChild);
-
-    newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
-    if (!normalChildNeedsLayout())
-        setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
-
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->childrenChanged(this);
-}
-
-void RenderSVGContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild, bool)
-{
-    if (!beforeChild) {
-        appendChildNode(child);
-        return;
-    }
-
-    ASSERT(!child->parent());
-    ASSERT(beforeChild->parent() == this);
-    ASSERT(child->element()->isSVGElement());
-
-    if (beforeChild == children()->firstChild())
-        children()->setFirstChild(child);
-
-    RenderObject* prev = beforeChild->previousSibling();
-    child->setNextSibling(beforeChild);
-    beforeChild->setPreviousSibling(child);
-    if (prev)
-        prev->setNextSibling(child);
-    child->setPreviousSibling(prev);
-
-    child->setParent(this);
-
-    child->setNeedsLayoutAndPrefWidthsRecalc();
-    if (!normalChildNeedsLayout())
-        setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
-
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->childrenChanged(this);
 }
 
 bool RenderSVGContainer::drawsContents() const

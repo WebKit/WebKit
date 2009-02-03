@@ -234,28 +234,7 @@ void RenderObject::addChild(RenderObject*, RenderObject*)
     ASSERT_NOT_REACHED();
 }
 
-RenderObject* RenderObject::removeChildNode(RenderObject*, bool)
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 void RenderObject::removeChild(RenderObject*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void RenderObject::moveChildNode(RenderObject*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void RenderObject::appendChildNode(RenderObject*, bool)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void RenderObject::insertChildNode(RenderObject*, RenderObject*, bool)
 {
     ASSERT_NOT_REACHED();
 }
@@ -1880,12 +1859,13 @@ void RenderObject::handleDynamicFloatPositionChange()
     setInline(style()->isDisplayInlineType());
     if (isInline() != parent()->childrenInline()) {
         if (!isInline())
-            static_cast<RenderBox*>(parent())->childBecameNonInline(this);
+            toRenderBox(parent())->childBecameNonInline(this);
         else {
             // An anonymous block must be made to wrap this inline.
-            RenderBlock* box = createAnonymousBlock();
-            parent()->insertChildNode(box, this);
-            box->appendChildNode(parent()->removeChildNode(this));
+            RenderBlock* block = createAnonymousBlock();
+            RenderObjectChildList* childlist = parent()->virtualChildren();
+            childlist->insertChildNode(parent(), block, this);
+            block->children()->appendChildNode(block, childlist->removeChildNode(parent(), this));
         }
     }
 }

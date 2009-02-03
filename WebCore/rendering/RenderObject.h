@@ -115,6 +115,7 @@ class RenderObject : public CachedResourceClient {
     friend class RenderBlock;
     friend class RenderContainer;
     friend class RenderLayer;
+    friend class RenderObjectChildList;
     friend class RenderSVGContainer;
 public:
     // Anonymous objects should pass the document as their node, and they will then automatically be
@@ -213,14 +214,6 @@ public:
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
     virtual bool createsAnonymousWrapper() const { return false; }
-
-    // raw tree manipulation
-    virtual RenderObject* removeChildNode(RenderObject*, bool fullRemove = true);
-    virtual void appendChildNode(RenderObject*, bool fullAppend = true);
-    virtual void insertChildNode(RenderObject* child, RenderObject* before, bool fullInsert = true);
-    // Designed for speed.  Don't waste time doing a bunch of work like layer updating and repainting when we know that our
-    // change in parentage is not going to affect anything.
-    virtual void moveChildNode(RenderObject*);
     //////////////////////////////////////////
 
 protected:

@@ -201,6 +201,12 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     section->addChild(child);
 }
 
+void RenderTable::removeChild(RenderObject* oldChild)
+{
+    RenderContainer::removeChild(oldChild);
+    setNeedsSectionRecalc();
+}
+
 void RenderTable::calcWidth()
 {
     if (isPositioned())
@@ -708,12 +714,6 @@ void RenderTable::recalcSections() const
     ASSERT(selfNeedsLayout());
 
     m_needsSectionRecalc = false;
-}
-
-RenderObject* RenderTable::removeChildNode(RenderObject* child, bool fullRemove)
-{
-    setNeedsSectionRecalc();
-    return RenderContainer::removeChildNode(child, fullRemove);
 }
 
 int RenderTable::calcBorderLeft() const

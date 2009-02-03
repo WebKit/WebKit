@@ -55,6 +55,12 @@ const int verticalLineClickFudgeFactor= 3;
 
 using namespace HTMLNames;
 
+static void moveChild(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* from, RenderObjectChildList* fromChildList, RenderObject* child)
+{
+    ASSERT(from == child->parent());
+    toChildList->appendChildNode(to, fromChildList->removeChildNode(from, child, false), false);
+}
+
 struct ColumnInfo {
     ColumnInfo()
         : m_desiredColumnWidth(0)
@@ -430,16 +436,16 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
 
         child = inlineRunEnd->nextSibling();
 
-        RenderBlock* box = createAnonymousBlock();
-        insertChildNode(box, inlineRunStart);
+        RenderBlock* block = createAnonymousBlock();
+        children()->insertChildNode(this, block, inlineRunStart);
         RenderObject* o = inlineRunStart;
-        while(o != inlineRunEnd)
-        {
+        while (o != inlineRunEnd) {
             RenderObject* no = o;
             o = no->nextSibling();
-            box->moveChildNode(no);
+            
+            moveChild(block, block->children(), this, children(), no);
         }
-        box->moveChildNode(inlineRunEnd);
+        moveChild(block, block->children(), this, children(), inlineRunEnd);
     }
 
 #ifndef NDEBUG
@@ -508,13 +514,15 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // the |prev| block.
         prev->setNeedsLayoutAndPrefWidthsRecalc();
         RenderObject* o = next->firstChild();
+    
+        RenderBlock* nextBlock = toRenderBlock(next);
+        RenderBlock* prevBlock = toRenderBlock(prev);
         while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
-            prev->moveChildNode(no);
+            moveChild(prevBlock, prevBlock->children(), nextBlock, nextBlock->children(), no);
         }
  
-        RenderBlock* nextBlock = toRenderBlock(next);
         nextBlock->deleteLineBoxTree();
         
         // Nuke the now-empty block.
@@ -529,13 +537,13 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // box.  We can go ahead and pull the content right back up into our
         // box.
         setNeedsLayoutAndPrefWidthsRecalc();
-        RenderBlock* anonBlock = toRenderBlock(removeChildNode(child, false));
+        RenderBlock* anonBlock = toRenderBlock(children()->removeChildNode(this, child, false));
         setChildrenInline(true);
         RenderObject* o = anonBlock->firstChild();
         while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
-            moveChildNode(no);
+            moveChild(this, children(), anonBlock, anonBlock->children(), no);
         }
 
         // Delete the now-empty block's lines and nuke it.
@@ -971,24 +979,27 @@ RenderBox* RenderBlock::handleFloatingChild(RenderBox* child, const MarginInfo& 
     return 0;
 }
 
-RenderBox* RenderBlock::handleRunInChild(RenderBox* blockRunIn, bool& handled)
+RenderBox* RenderBlock::handleRunInChild(RenderBox* child, bool& handled)
 {
     // See if we have a run-in element with inline children.  If the
     // children aren't inline, then just treat the run-in as a normal
     // block.
-    if (blockRunIn->isRunIn() && (blockRunIn->childrenInline() || blockRunIn->isReplaced())) {
+    if (child->isRunIn() && (child->childrenInline() || child->isReplaced())) {
+        RenderBlock* blockRunIn = toRenderBlock(child);
         // Get the next non-positioned/non-floating RenderBlock.
         RenderObject* curr = blockRunIn->nextSibling();
         while (curr && curr->isFloatingOrPositioned())
             curr = curr->nextSibling();
         if (curr && (curr->isRenderBlock() && curr->childrenInline() && !curr->isRunIn())) {
+            RenderBlock* currBlock = toRenderBlock(curr);
+        
             // The block acts like an inline, so just null out its
             // position.
             handled = true;
             
             // Remove the old child.
             RenderBox* next = blockRunIn->nextSiblingBox();
-            removeChildNode(blockRunIn);
+            children()->removeChildNode(this, blockRunIn);
 
             // Create an inline.
             RenderInline* inlineRunIn = new (renderArena()) RenderInline(blockRunIn->node());
@@ -996,10 +1007,10 @@ RenderBox* RenderBlock::handleRunInChild(RenderBox* blockRunIn, bool& handled)
 
             // Move the nodes from the old child to the new child.
             for (RenderObject* runInChild = blockRunIn->firstChild(); runInChild; runInChild = runInChild->nextSibling())
-                inlineRunIn->moveChildNode(runInChild);
+                moveChild(inlineRunIn, inlineRunIn->children(), blockRunIn, blockRunIn->children(), runInChild);
 
-            // Now insert the new child under |curr|.
-            curr->insertChildNode(inlineRunIn, curr->firstChild());
+            // Now insert the new child under |currBlock|.
+            currBlock->children()->insertChildNode(currBlock, inlineRunIn, currBlock->firstChild());
             
             // If the run-in had an element, we need to set the new renderer.
             if (blockRunIn->element())

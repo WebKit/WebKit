@@ -1,3 +1,45 @@
+2009-02-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David "The Barnabas Jones" Hyatt.
+
+        Move removeChildNode, appendChildNode and insertChildNode from 
+        RenderContainer into RenderObjectChildList.  Make moveChildNode
+        static in RenderBlock, as that was the only user.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::moveChild):
+        (WebCore::RenderBlock::makeChildrenNonInline):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::handleRunInChild):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::addChild):
+        (WebCore::RenderContainer::removeChild):
+        * rendering/RenderContainer.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::splitFlow):
+        (WebCore::RenderInline::childBecameNonInline):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::handleDynamicFloatPositionChange):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::createsAnonymousWrapper):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::updateListMarkerNumbers):
+        (WebCore::RenderObjectChildList::removeChildNode):
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+        * rendering/RenderObjectChildList.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::addChild):
+        (WebCore::RenderSVGContainer::removeChild):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::removeChild):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::removeChild):
+        * rendering/RenderTableSection.h:
+
 2009-02-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Alder.

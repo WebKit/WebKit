@@ -50,14 +50,6 @@ public:
 
     virtual void destroy();
 
-    virtual RenderObject* removeChildNode(RenderObject*, bool fullRemove = true);
-    virtual void appendChildNode(RenderObject*, bool fullAppend = true);
-    virtual void insertChildNode(RenderObject* child, RenderObject* before, bool fullInsert = true);
-
-    // Designed for speed.  Don't waste time doing a bunch of work like layer updating and repainting when we know that our
-    // change in parentage is not going to affect anything.
-    virtual void moveChildNode(RenderObject* child) { appendChildNode(child->parent()->removeChildNode(child, false), false); }
-
     // Some containers do not want it's children
     // to be drawn, because they may be 'referenced'
     // Example: <marker> children in SVG

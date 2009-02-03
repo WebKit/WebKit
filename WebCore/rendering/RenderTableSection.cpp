@@ -147,6 +147,12 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
     RenderContainer::addChild(child, beforeChild);
 }
 
+void RenderTableSection::removeChild(RenderObject* oldChild)
+{
+    setNeedsCellRecalc();
+    RenderContainer::removeChild(oldChild);
+}
+
 bool RenderTableSection::ensureRows(int numRows)
 {
     int nRows = m_gridRows;
@@ -1080,12 +1086,6 @@ void RenderTableSection::splitColumn(int pos, int newSize)
         r[pos + 1].cell = 0;
         r[pos + 1].inColSpan = r[pos].inColSpan || r[pos].cell;
     }
-}
-
-RenderObject* RenderTableSection::removeChildNode(RenderObject* child, bool fullRemove)
-{
-    setNeedsCellRecalc();
-    return RenderContainer::removeChildNode(child, fullRemove);
 }
 
 // Hit Testing
