@@ -839,7 +839,7 @@ JSValuePtr convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, 
         QByteArray qtByteArray = variant.value<QByteArray>();
         WTF::RefPtr<WTF::ByteArray> wtfByteArray = WTF::ByteArray::create(qtByteArray.length());
         qMemCopy(wtfByteArray->data(), qtByteArray.constData(), qtByteArray.length());
-        return new (exec) JSC::JSByteArray(exec, JSByteArray::createStructure(jsNull()), wtfByteArray.get());
+        return new (exec) JSC::JSByteArray(exec, JSC::JSByteArray::createStructure(jsNull()), wtfByteArray.get());
     }
 
     if (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar) {
