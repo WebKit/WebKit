@@ -12,7 +12,7 @@
         (WebCore::InlineTextBox::paintDecoration): Correctly draw decorations
         for rtl truncation.
 
-2009-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
+2009-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
 
