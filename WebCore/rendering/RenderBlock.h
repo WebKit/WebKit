@@ -262,31 +262,11 @@ public:
 
     virtual void setSelectionState(SelectionState s);
 
-    struct BlockSelectionInfo {
-        RenderBlock* m_block;
-        GapRects m_rects;
-        SelectionState m_state;
-
-        BlockSelectionInfo()
-            : m_block(0)
-            , m_state(SelectionNone)
-        {
-        }
-
-        BlockSelectionInfo(RenderBlock* b)
-            : m_block(b)
-            , m_rects(b->needsLayout() ? GapRects() : b->selectionGapRects())
-            , m_state(b->selectionState())
-        { 
-        }
-
-        RenderBlock* block() const { return m_block; }
-        GapRects rects() const { return m_rects; }
-        SelectionState state() const { return m_state; }
-    };
-
-    virtual IntRect selectionRect(bool) { return selectionGapRects(); }
-    GapRects selectionGapRects();
+    virtual IntRect selectionRectForRepaint(RenderBox* repaintContainer, bool /*clipToVisibleContent*/)
+    {
+        return selectionGapRectsForRepaint(repaintContainer);
+    }
+    GapRects selectionGapRectsForRepaint(RenderBox* repaintContainer);
     virtual bool shouldPaintSelectionGaps() const;
     bool isSelectionRoot() const;
     GapRects fillSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,

@@ -1962,14 +1962,14 @@ bool RenderBlock::isSelectionRoot() const
     return false;
 }
 
-GapRects RenderBlock::selectionGapRects()
+GapRects RenderBlock::selectionGapRectsForRepaint(RenderBox* /*repaintContainer*/)
 {
     ASSERT(!needsLayout());
 
     if (!shouldPaintSelectionGaps())
         return GapRects();
 
-    // FIXME: this is broken with transforms
+    // FIXME: this is broken with transforms and a non-null repaintContainer
     FloatPoint absContentPoint = localToAbsolute(FloatPoint());
     if (hasOverflowClip())
         absContentPoint -= layer()->scrolledContentOffset();

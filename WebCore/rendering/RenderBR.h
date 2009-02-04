@@ -40,7 +40,7 @@ public:
 
     virtual const char* renderName() const { return "RenderBR"; }
  
-    virtual IntRect selectionRect(bool) { return IntRect(); }
+    virtual IntRect selectionRectForRepaint(RenderBox* /*repaintContainer*/, bool /*clipToVisibleContent*/) { return IntRect(); }
 
     virtual unsigned width(unsigned /*from*/, unsigned /*len*/, const Font&, int /*xpos*/) const { return 0; }
     virtual unsigned width(unsigned /*from*/, unsigned /*len*/, int /*xpos*/, bool /*firstLine = false*/) const { return 0; }

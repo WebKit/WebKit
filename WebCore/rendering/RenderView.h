@@ -152,10 +152,6 @@ public:
 protected:
     virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBox* repaintContainer, bool fixed = false) const;
 
-private:
-    // selectionRect should never be called on a RenderView
-    virtual IntRect selectionRect(bool);
-
 protected:
     FrameView* m_frameView;
 

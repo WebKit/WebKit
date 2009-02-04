@@ -61,7 +61,7 @@ public:
     bool isInside() const;
 
     virtual void setSelectionState(SelectionState);
-    virtual IntRect selectionRect(bool clipToVisibleContent = true);
+    virtual IntRect selectionRectForRepaint(RenderBox* repaintContainer, bool clipToVisibleContent = true);
     virtual bool canBeSelectionLeaf() const { return true; }
 
     void updateMargins();

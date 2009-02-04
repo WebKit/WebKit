@@ -659,7 +659,8 @@ public:
 
     // A single rectangle that encompasses all of the selected objects within this object.  Used to determine the tightest
     // possible bounding box for the selection.
-    virtual IntRect selectionRect(bool) { return IntRect(); }
+    IntRect selectionRect(bool clipToVisibleContent = true) { return selectionRectForRepaint(0, clipToVisibleContent); }
+    virtual IntRect selectionRectForRepaint(RenderBox* /*repaintContainer*/, bool /*clipToVisibleContent*/ = true) { return IntRect(); }
 
     // Whether or not an object can be part of the leaf elements of the selection.
     virtual bool canBeSelectionLeaf() const { return false; }
@@ -673,30 +674,6 @@ public:
 
     // Whether or not a given block needs to paint selection gaps.
     virtual bool shouldPaintSelectionGaps() const { return false; }
-
-    // This struct is used when the selection changes to cache the old and new state of the selection for each RenderObject.
-    struct SelectionInfo {
-        SelectionInfo()
-            : m_object(0)
-            , m_state(SelectionNone)
-        {
-        }
-
-        SelectionInfo(RenderObject* o, bool clipToVisibleContent)
-            : m_object(o)
-            , m_rect(o->needsLayout() ? IntRect() : o->selectionRect(clipToVisibleContent))
-            , m_state(o->selectionState())
-        {
-        }
-
-        RenderObject* object() const { return m_object; }
-        IntRect rect() const { return m_rect; }
-        SelectionState state() const { return m_state; }
-
-        RenderObject* m_object;
-        IntRect m_rect;
-        SelectionState m_state;
-    };
 
     Node* draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& dhtmlWillDrag) const;
 

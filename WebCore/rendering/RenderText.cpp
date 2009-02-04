@@ -1073,16 +1073,15 @@ IntRect RenderText::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
     return cb->clippedOverflowRectForRepaint(repaintContainer);
 }
 
-IntRect RenderText::selectionRect(bool clipToVisibleContent)
+IntRect RenderText::selectionRectForRepaint(RenderBox* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 
-    IntRect rect;
     if (selectionState() == SelectionNone)
-        return rect;
+        return IntRect();
     RenderBlock* cb =  containingBlock();
     if (!cb)
-        return rect;
+        return IntRect();
 
     // Now calculate startPos and endPos for painting selection.
     // We include a selection while endPos > 0
@@ -1100,19 +1099,19 @@ IntRect RenderText::selectionRect(bool clipToVisibleContent)
     }
 
     if (startPos == endPos)
-        return rect;
+        return IntRect();
 
+    IntRect rect;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
         rect.unite(box->selectionRect(0, 0, startPos, endPos));
 
     if (clipToVisibleContent)
-        computeAbsoluteRepaintRect(rect);
+        computeRectForRepaint(repaintContainer, rect);
     else {
         if (cb->hasColumns())
             cb->adjustRectForColumns(rect);
-        // FIXME: This doesn't work correctly with transforms.
-        FloatPoint absPos = localToAbsolute();
-        rect.move(absPos.x(), absPos.y());
+
+        rect = localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
     }
 
     return rect;

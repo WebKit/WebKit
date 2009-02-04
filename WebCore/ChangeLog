@@ -1,3 +1,66 @@
+2009-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23628
+
+        Fix selection repainting to do container-relative repaints. RenderView now
+        repaints the seleciton using the containerForRepaint() for each RenderSelectionInfo.
+        selectionRect() is now a wrapper for selectionRectForRepaint() with no container.
+        
+        Pull SelectionInfo out of RenderObject.h, and BlockSelectionInfo out
+        of RenderBlock.h and move them into RenderSelectionInfo.h, with some
+        sharing and refactoring.
+        
+        RenderBlock::selectionGapRectsForRepaint() is not yet container-aware.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBR.h:
+        (WebCore::RenderBR::selectionRectForRepaint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::selectionRectForRepaint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::selectionRectForRepaint):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::selectionRect):
+        (WebCore::RenderObject::selectionRectForRepaint):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::selectionRectForRepaint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::absoluteRects):
+        (WebCore::RenderSVGInlineText::absoluteQuads):
+        (WebCore::RenderSVGInlineText::selectionRectForRepaint):
+        (WebCore::RenderSVGInlineText::computeRepaintRectForRange):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderSelectionInfo.h: Added.
+        (WebCore::RenderSelectionInfoBase::RenderSelectionInfoBase):
+        (WebCore::RenderSelectionInfoBase::object):
+        (WebCore::RenderSelectionInfoBase::repaintContainer):
+        (WebCore::RenderSelectionInfoBase::state):
+        (WebCore::RenderSelectionInfo::RenderSelectionInfo):
+        (WebCore::RenderSelectionInfo::repaint):
+        (WebCore::RenderSelectionInfo::rect):
+        (WebCore::RenderBlockSelectionInfo::RenderBlockSelectionInfo):
+        (WebCore::RenderBlockSelectionInfo::repaint):
+        (WebCore::RenderBlockSelectionInfo::block):
+        (WebCore::RenderBlockSelectionInfo::rects):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::selectionRectForRepaint):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionBounds):
+        (WebCore::RenderView::setSelection):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2009-02-03  David Hyatt  <hyatt@apple.com>
 
         Add inline capacity back to CSSMutableStyleDeclaration now that the bug in Vector has been fixed.

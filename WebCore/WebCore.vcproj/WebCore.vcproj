@@ -9506,6 +9506,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderSelectionInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSlider.cpp"
 				>
 				<FileConfiguration

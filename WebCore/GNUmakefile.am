@@ -1579,6 +1579,7 @@ webcore_sources += \
 	WebCore/rendering/RenderScrollbarPart.h \
 	WebCore/rendering/RenderScrollbarTheme.cpp \
 	WebCore/rendering/RenderScrollbarTheme.h \
+	WebCore/rendering/RenderSelectionInfo.h \
 	WebCore/rendering/RenderSlider.cpp \
 	WebCore/rendering/RenderSlider.h \
 	WebCore/rendering/RenderTable.cpp \

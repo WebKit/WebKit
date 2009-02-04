@@ -62,7 +62,7 @@ public:
     
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual void setSelectionState(SelectionState);
-    virtual IntRect selectionRect(bool clipToVisibleContent = true);
+    virtual IntRect selectionRectForRepaint(RenderBox* repaintContainer, bool clipToVisibleContent = true);
 
     bool isSelected() const;
 
