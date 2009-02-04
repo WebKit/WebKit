@@ -377,7 +377,8 @@ namespace WTF {
         VectorBuffer(size_t capacity)
             : Base(inlineBuffer(), inlineCapacity)
         {
-            allocateBuffer(capacity);
+            if (capacity > inlineCapacity)
+                Base::allocateBuffer(capacity);
         }
 
         ~VectorBuffer()
@@ -389,6 +390,10 @@ namespace WTF {
         {
             if (newCapacity > inlineCapacity)
                 Base::allocateBuffer(newCapacity);
+            else {
+                m_buffer = inlineBuffer();
+                m_capacity = inlineCapacity;
+            }
         }
 
         void deallocateBuffer(T* bufferToDeallocate)

@@ -1,3 +1,14 @@
+2009-02-03  David Hyatt  <hyatt@apple.com>
+
+        Fix a bug in Vector's shrinkCapacity method.  It did not properly copy elements into the inline buffer
+        when shrinking down from a size that was greater than the inline capacity.
+
+        Reviewed by Maciej
+
+        * wtf/Vector.h:
+        (WTF::VectorBuffer::VectorBuffer):
+        (WTF::VectorBuffer::allocateBuffer):
+
 2009-02-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
