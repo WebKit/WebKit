@@ -313,7 +313,7 @@ public:
 #if ENABLE(WML)
     virtual bool isWMLDocument() const { return false; }
 #endif
-    bool isFrameSet() const;
+    virtual bool isFrameSet() const { return false; }
     
     CSSStyleSelector* styleSelector() const { return m_styleSelector; }
 

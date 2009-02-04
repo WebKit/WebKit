@@ -1,3 +1,19 @@
+2009-02-04  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23426
+
+        Make isFrameSet virtual and by default return false. Reimplement
+        it in HTMLDocument.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        (WebCore::Document::isFrameSet):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::isFrameSet):
+        * html/HTMLDocument.h:
+
 2009-02-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by John Sullivan.

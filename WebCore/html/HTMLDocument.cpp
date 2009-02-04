@@ -421,5 +421,11 @@ void HTMLDocument::clear()
     // We've long had a comment saying that IE doesn't support this.
     // But I do see it in the documentation for Mozilla.
 }
-    
+
+bool HTMLDocument::isFrameSet() const
+{
+    HTMLElement* bodyElement = body();
+    return bodyElement && bodyElement->renderer() && bodyElement->hasTagName(framesetTag);
+}
+
 }

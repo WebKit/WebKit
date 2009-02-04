@@ -88,6 +88,7 @@ protected:
 
 private:
     virtual bool isHTMLDocument() const { return true; }
+    virtual bool isFrameSet() const;
     virtual Tokenizer* createTokenizer();
     virtual void determineParseMode();
 
