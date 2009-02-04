@@ -1,3 +1,12 @@
+2009-02-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Qt build fix.
+
+        Changed ASSERT(image) to ASSERT(!image.isNull()).
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::getImageData):
+
 2009-02-04  Trenton Schulz <trenton.schulz@nokia.com>
 
         Reviewed by Simon Hausmann.
