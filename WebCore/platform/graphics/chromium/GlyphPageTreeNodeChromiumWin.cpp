@@ -147,27 +147,17 @@ static bool fillBMPGlyphs(unsigned offset,
         // When this character should be a space, we ignore whatever the font
         // says and use a space. Otherwise, if fonts don't map one of these
         // space or zero width glyphs, we will get a box.
-        if (Font::treatAsSpace(c))
+        if (Font::treatAsSpace(c)) {
             // Hard code the glyph indices for characters that should be
             // treated like spaces.
             glyph = initSpaceGlyph(dc, &spaceGlyph);
-        else if (Font::treatAsZeroWidthSpace(c) || c == 0x200B) {
-            // FIXME: change Font::treatAsZeroWidthSpace to use
-            // u_hasBinaryProperty, per jungshik's comment here:
-            // https://bugs.webkit.org/show_bug.cgi?id=20237#c6.
-            // Then the additional OR above won't be necessary.
-            glyph = initSpaceGlyph(dc, &spaceGlyph);
-            glyphFontData = fontData->zeroWidthFontData();
         } else if (glyph == invalidGlyph) {
             // WebKit expects both the glyph index and FontData
             // pointer to be 0 if the glyph is not present
             glyph = 0;
             glyphFontData = 0;
-        } else {
-            if (SimpleFontData::isCJKCodePoint(c))
-                glyphFontData = fontData->cjkWidthFontData();
+        } else
             haveGlyphs = true;
-        }
         page->setGlyphDataForCharacter(offset + i, glyph, glyphFontData);
     }
 

@@ -1,3 +1,14 @@
+2009-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23700
+        Upstream local changes to due to unforking of SimpleFontData
+        (corresponds to Chromium check-in http://src.chromium.org/viewvc/chrome?view=rev&revision=8646).
+
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        (WebCore::fillBMPGlyphs): Removed extra checks for ZWS chars.
+
 2009-02-04  David Hyatt  <hyatt@apple.com>
 
         <rdar://problem/6554115> REGRESSION (r40475): World leak (JS global object) after viewing a photo on Facebook
