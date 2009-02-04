@@ -1,3 +1,12 @@
+2009-02-03  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        This is a follow up of r40546. Call toImage() once speeds up ImageBuffer::getImageData()
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::getImageData):
+
 2009-02-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

@@ -111,11 +111,9 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
         endy = m_size.height();
     int numRows = endy - originy;
 
-    QImage image;
-    if (m_data.m_pixmap.toImage().format() != QImage::Format_ARGB32)
-        image = m_data.m_pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
-    else
-        image = m_data.m_pixmap.toImage();
+    QImage image = m_data.m_pixmap.toImage();
+    if (image.format() != QImage::Format_ARGB32)
+        image = image.convertToFormat(QImage::Format_ARGB32);
     ASSERT(image);
 
     unsigned destBytesPerRow = 4 * rect.width();
