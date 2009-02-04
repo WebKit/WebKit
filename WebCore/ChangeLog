@@ -1,3 +1,15 @@
+2009-02-04  David Hyatt  <hyatt@apple.com>
+
+        <rdar://problem/6554115> REGRESSION (r40475): World leak (JS global object) after viewing a photo on Facebook
+
+        Fix a ginormous leak. (GINORMOUS!) Make sure to disconnect the event listeners attached to the Document,
+        because, like, they point to a lot of stuff... like ... everything...
+
+        Reviewed by Darin Adler
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeAllEventListenersFromAllNodes):
+
 2009-02-04  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.
