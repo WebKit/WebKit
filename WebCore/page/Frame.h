@@ -65,7 +65,6 @@ class Editor;
 class EventHandler;
 class FrameLoader;
 class FrameLoaderClient;
-class FramePrivate;
 class FrameTree;
 class HTMLFrameOwnerElement;
 class HTMLTableCellElement;
@@ -125,8 +124,6 @@ public:
     void createView(const IntSize&, const Color&, bool, const IntSize &, bool,
                     ScrollbarMode = ScrollbarAuto, ScrollbarMode = ScrollbarAuto);
 
-
-    friend class FramePrivate;
 
 private:
     Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
