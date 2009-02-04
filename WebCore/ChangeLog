@@ -1,3 +1,13 @@
+2009-02-04  Trenton Schulz <trenton.schulz@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix implementation of PluginViewMac::invalidateRect to update only the
+        specified rect, not the entire browser window.
+
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::invalidateRect):
+
 2009-02-04  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber stamped by Mark Rowe.

@@ -445,11 +445,8 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
 void PluginView::invalidateRect(const IntRect& rect)
 {
-    if (platformPluginWidget()) {
-        // TODO: optimize
-        platformPluginWidget()->update();
-        return;
-    }
+    if (platformPluginWidget())
+        platformPluginWidget()->update(convertToContainingWindow(rect));
 }
 
 void PluginView::invalidateRect(NPRect* rect)
