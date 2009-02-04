@@ -553,9 +553,8 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
     if (iconDatabase() && iconDatabase()->isEnabled()) {
         const String& iconURL = iconDatabase()->iconURLForPageURL(responseURL);
         if (!iconURL.isEmpty() && iconDatabase()->iconDataKnownForIconURL(iconURL)) {
-            RefPtr<SharedBuffer> data = iconDatabase()->iconForPageURL(responseURL, IntSize(16, 16))->data();
-            if (data) {
-                RefPtr<ArchiveResource> resource = ArchiveResource::create(data.release(), KURL(iconURL), "image/x-icon", "", "");
+            if (Image* iconImage = iconDatabase()->iconForPageURL(responseURL, IntSize(16, 16))) {
+                RefPtr<ArchiveResource> resource = ArchiveResource::create(iconImage->data(), KURL(iconURL), "image/x-icon", "", "");
                 subresources.append(resource.release());
             }
         }
