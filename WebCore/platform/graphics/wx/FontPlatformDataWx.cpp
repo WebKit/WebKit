@@ -78,30 +78,45 @@ FontPlatformData::FontPlatformData(const FontDescription& desc, const AtomicStri
 // this is a moot issue on Linux and Mac as they only accept the point argument. So,
 // we use the pixel size constructor on Windows, but we use point size on Linux and Mac.
 #if __WXMSW__
-    m_font = wxFont(   wxSize(0, -desc.computedPixelSize()), 
+    m_font = new FontHolder(new wxFont(   wxSize(0, -desc.computedPixelSize()), 
                                 fontFamilyToWxFontFamily(desc.genericFamily()), 
                                 italicToWxFontStyle(desc.italic()),
                                 fontWeightToWxFontWeight(desc.weight()),
                                 false,
                                 family.string()
-                            ); 
+                            )
+                        ); 
 #else
-    m_font = wxFont(   desc.computedPixelSize(), 
+    m_font = new FontHolder(new wxFont(   desc.computedPixelSize(), 
                                 fontFamilyToWxFontFamily(desc.genericFamily()), 
                                 italicToWxFontStyle(desc.italic()),
                                 fontWeightToWxFontWeight(desc.weight()),
                                 false,
                                 family.string()
-                            ); 
+                            )
+                        ); 
 #endif
     m_fontState = VALID;
-    m_fontHash = computeHash();
      
 }
-    
+
+unsigned FontPlatformData::computeHash() const {
+        wxFont* thisFont = m_font->font();
+        ASSERT(thisFont && thisFont->IsOk());
+        
+        // make a hash that is unique for this font, but not globally unique - that is,
+        // a font whose properties are equal should generate the same hash
+        uintptr_t hashCodes[6] = { thisFont->GetPointSize(), thisFont->GetFamily(), thisFont->GetStyle(), 
+                                    thisFont->GetWeight(), thisFont->GetUnderlined(), 
+                                    StringImpl::computeHash(thisFont->GetFaceName().mb_str(wxConvUTF8)) };
+        
+        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
+}
+
 FontPlatformData::~FontPlatformData()
 {
     m_fontState = UNINITIALIZED;
+    m_font = 0;
 }
 
 }

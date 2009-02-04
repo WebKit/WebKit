@@ -1,3 +1,30 @@
+2009-02-04  miggilin  <mr.diggilin@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Switch to using a ref-counted wxFont pointer for FontPlatformData to fix a crash
+        with assigning to uninitialized HashTable buckets.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23669
+
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::getWxFont):
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::font):
+        (WebCore::FontPlatformData::operator==):
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::computeHash):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/wx/wxcode/gtk/non-kerned-drawing.cpp:
+        (WebCore::drawTextWithSpacing):
+
 2009-02-04  David Hyatt  <hyatt@apple.com>
 
         Fix a crash in generated content when a generated image with an already-cached background image gets

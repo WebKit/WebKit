@@ -101,7 +101,9 @@ void drawTextWithSpacing(GraphicsContext* graphicsContext, const SimpleFontData*
     for (unsigned i = 0; i < numGlyphs; ++i)
         spacing[i] = advances[i].width();
 
-    ::SelectObject(hdc, GetHfontOf(font->getWxFont()));
+    wxFont* wxfont = font->getWxFont();
+    if (wxfont && wxfont->IsOk())
+        ::SelectObject(hdc, GetHfontOf(*wxfont));
 
     if (color.Ok())
         ::SetTextColor(hdc, color.GetPixel());

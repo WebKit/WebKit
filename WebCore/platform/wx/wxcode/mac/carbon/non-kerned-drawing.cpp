@@ -30,6 +30,7 @@
 
 #include <wx/defs.h>
 #include <wx/dcclient.h>
+#include <wx/dcgraph.h>
 #include <wx/gdicmn.h>
 #include <vector>
 
@@ -43,9 +44,9 @@ void drawTextWithSpacing(GraphicsContext* graphicsContext, const SimpleFontData*
     wxDC* dc = graphicsContext->platformContext();
 #endif
 
-    wxFont wxfont = font->getWxFont();
-    if (wxfont.IsOk())
-        dc->SetFont(wxfont);
+    wxFont* wxfont = font->getWxFont();
+    if (wxfont->IsOk())
+        dc->SetFont(*wxfont);
     dc->SetTextForeground(color);
 
     // convert glyphs to wxString
