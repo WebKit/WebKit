@@ -123,15 +123,11 @@ checkRequiredSystemConfig();
 setConfiguration();
 chdirWebKit();
 
-# FIXME: Migrate build-wxwebkit commands into build-webkit.
 if (isWx()) {
-    my @opts = ();
     $ENV{"WEBKITOUTPUTDIR"} = productDir();
-    foreach (@ARGV) {
-        if ($_ eq "wxgc" || $_ eq "wxpython") {
-            push(@opts, $_);
-        }
-    }
+
+    my @opts = getWxArgs();
+
     if ($clean) {
         push(@opts, "clean");
     }

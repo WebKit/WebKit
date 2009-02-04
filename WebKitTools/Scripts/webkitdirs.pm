@@ -56,6 +56,7 @@ my $osXVersion;
 my $isQt;
 my $isGtk;
 my $isWx;
+my @wxArgs;
 my $isChromium;
 my $forceRun64Bit;
 
@@ -525,8 +526,8 @@ sub checkForArgumentAndRemoveFromARGV
 {
     my $argToCheck = shift;
     foreach my $opt (@ARGV) {
-        if ($opt =~ /^$argToCheck/i ) {
-            @ARGV = grep(!/^$argToCheck/i, @ARGV);
+        if ($opt =~ /^$argToCheck$/i ) {
+            @ARGV = grep(!/^$argToCheck$/i, @ARGV);
             return 1;
         }
     }
@@ -574,6 +575,23 @@ sub determineIsWx()
 {
     return if defined($isWx);
     $isWx = checkForArgumentAndRemoveFromARGV("--wx");
+}
+
+sub getWxArgs()
+{
+    if (!@wxArgs) {
+        @wxArgs = ("");
+        my $rawWxArgs = "";
+        foreach my $opt (@ARGV) {
+            if ($opt =~ /^--wx-args/i ) {
+                @ARGV = grep(!/^--wx-args/i, @ARGV);
+                $rawWxArgs = $opt;
+                $rawWxArgs =~ s/--wx-args=//i;
+            }
+        }
+        @wxArgs = split(/,/, $rawWxArgs);
+    }
+    return @wxArgs;
 }
 
 # Determine if this is debian, ubuntu, linspire, or something similar.
