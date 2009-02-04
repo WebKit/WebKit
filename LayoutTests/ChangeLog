@@ -1,3 +1,14 @@
+2009-02-04  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Regression test for https://bugs.webkit.org/show_bug.cgi?id=22753
+
+        * fast/dom/Window/cached-timeout-stopped-on-close-expected.txt: Added.
+        * fast/dom/Window/cached-timeout-stopped-on-close.html: Added.
+        * fast/dom/Window/resources/cached-timeout-page-1.html: Added.
+        * fast/dom/Window/resources/cached-timeout-page-2.html: Added.
+
 2009-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Sam Weinig.

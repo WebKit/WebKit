@@ -1,0 +1,50 @@
+<html>
+<script>
+var objectCount = 0;
+
+function finish()
+{
+    GCController.collect();
+    var remainingObjects = GCController.getJSObjectCount() - objectCount;
+    // The leaked page allocates 1000 strings. They should be gone.
+    document.getElementById("result").innerText = 
+        (remainingObjects < 1000 ? "PASS" : "FAIL");
+    layoutTestController.notifyDone();
+}
+
+function scheduleFinish()
+{
+    // Note: the timeout here must be more then 10ms to ensure that this timeout will
+    // expire after an internal one which releases cached pages.
+    window.setTimeout(finish, 100);
+}
+function test()
+{
+    if (!window.layoutTestController || !GCController) {
+        document.getElementById("result").innerText = "FAIL: this test can only run in DumpRenderTree.";
+        return;
+    }
+
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.overridePreference("UsesPageCache", true);
+
+    GCController.collect();
+    objectCount = GCController.getJSObjectCount();
+    // The page in this new window will change its location (to place itself in the page cache),
+    // call scheduleFinish() on this page and then close itself. Shortly thereafter, the page cache
+    // should be released and JS object count reduced.
+    window.open("resources/cached-timeout-page-1.html");
+}
+</script>
+<body onload="test()">
+<p>This is a test for bug <a href="https://bugs.webkit.org/show_bug.cgi?id=22753">22753</a>.
+This test verifies that if a page with non-expired timeout is pushed into the page cache and then
+a window is closed, the resulting cache purge will stop the timer. Stopping the timer releases the
+JS global object. If bug is not fixed, JS global object and all the objects it holds onto are not released
+and memory leak occurs.<br>Test is passed if you see "PASS" below. This test can only run in DumpRenderTree
+since it needs access to GCController.
+<div id="result">FAIL</div>
+</body>
+</html>
