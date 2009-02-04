@@ -64,15 +64,15 @@ module core {
         readonly attribute NamedNodeMap     attributes;
         readonly attribute Document         ownerDocument;
 
-        [OldStyleObjC, Custom] Node insertBefore(in [Return] Node newChild, 
+        [OldStyleObjC, JSCCustom] Node insertBefore(in [Return] Node newChild, 
                                                  in Node refChild)
             raises(DOMException);
-        [OldStyleObjC, Custom] Node replaceChild(in Node newChild, 
+        [OldStyleObjC, JSCCustom] Node replaceChild(in Node newChild, 
                                                  in [Return] Node oldChild)
+            raises(DOMExceptionJSC);
+        [JSCCustom] Node               removeChild(in [Return] Node oldChild)
             raises(DOMException);
-        [Custom] Node               removeChild(in [Return] Node oldChild)
-            raises(DOMException);
-        [Custom] Node               appendChild(in [Return] Node newChild)
+        [JSCCustom] Node               appendChild(in [Return] Node newChild)
             raises(DOMException);
 
         boolean            hasChildNodes();
