@@ -159,6 +159,7 @@ RenderObject::RenderObject(Node* node)
     , m_next(0)
 #ifndef NDEBUG
     , m_hasAXObject(false)
+    , m_setNeedsLayoutForbidden(false)
 #endif
     , m_verticalPosition(PositionUndefined)
     , m_needsLayout(false)

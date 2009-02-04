@@ -303,6 +303,12 @@ void RenderTableSection::setCellWidths()
 
 int RenderTableSection::calcRowHeight()
 {
+#ifndef NDEBUG
+    setNeedsLayoutIsForbidden(true);
+#endif
+
+    ASSERT(!needsLayout());
+
     RenderTableCell* cell;
 
     int spacing = table()->vBorderSpacing();
@@ -382,6 +388,12 @@ int RenderTableSection::calcRowHeight()
         m_rowPos[r + 1] = max(m_rowPos[r + 1], m_rowPos[r]);
     }
 
+#ifndef NDEBUG
+    setNeedsLayoutIsForbidden(false);
+#endif
+
+    ASSERT(!needsLayout());
+
     statePusher.pop();
 
     return m_rowPos[m_gridRows];
@@ -404,6 +416,12 @@ void RenderTableSection::layout()
 
 int RenderTableSection::layoutRows(int toAdd)
 {
+#ifndef NDEBUG
+    setNeedsLayoutIsForbidden(true);
+#endif
+
+    ASSERT(!needsLayout());
+
     int rHeight;
     int rindx;
     int totalRows = m_gridRows;
@@ -607,6 +625,10 @@ int RenderTableSection::layoutRows(int toAdd)
                 cell->repaintDuringLayoutIfMoved(oldCellRect);
         }
     }
+
+#ifndef NDEBUG
+    setNeedsLayoutIsForbidden(false);
+#endif
 
     ASSERT(!needsLayout());
 

@@ -1,3 +1,32 @@
+2009-02-04  David Hyatt  <hyatt@apple.com>
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23734, blank content on blogs.msdn.com.
+        
+        Add debugging code that will catch the incorrect dirtying of a table section immediately if it happens
+        during calcRowHeight or layoutRows.  This should make it possible to discover future bugs where table sections don't
+        paint.
+
+        The bug in blogs.msdn.com, which was caused by a bad setNeedsLayout in RenderLayer::updateScrollInfoAtferLayout.  Make
+        sure to do only a local setNeedsLayout inside that function.
+
+        Reviewed by Beth Dakin
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSetNeedsLayoutForbidden):
+        (WebCore::RenderObject::setNeedsLayoutIsForbidden):
+        (WebCore::RenderObject::setNeedsLayout):
+        (WebCore::RenderObject::setChildNeedsLayout):
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowHeight):
+        (WebCore::RenderTableSection::layoutRows):
+
 2009-02-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.
