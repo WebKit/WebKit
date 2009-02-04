@@ -1,5 +1,16 @@
 2009-02-03  David Hyatt  <hyatt@apple.com>
 
+        Back this change out since it is causing layout tests to crash.  There is something subtle going on
+        here.
+
+        Reviewed by Darin Adler
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet):
+        * css/CSSMutableStyleDeclaration.h:
+
+2009-02-03  David Hyatt  <hyatt@apple.com>
+
         Give the properties vector of mutable style declarations an initial inline capacity to reduce malloc churn.
 
         Reviewed by Sam Weinig

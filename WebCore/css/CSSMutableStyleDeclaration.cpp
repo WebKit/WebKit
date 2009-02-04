@@ -701,7 +701,7 @@ void CSSMutableStyleDeclaration::removePropertiesInSet(const int* set, unsigned 
     for (unsigned i = 0; i < length; ++i)
         toRemove.add(set[i]);
     
-    Vector<CSSProperty, 4> newProperties;
+    Vector<CSSProperty> newProperties;
     newProperties.reserveInitialCapacity(m_properties.size());
     
     unsigned size = m_properties.size();
