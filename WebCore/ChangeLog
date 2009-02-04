@@ -5,7 +5,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=23628
 
         Fix selection repainting to do container-relative repaints. RenderView now
-        repaints the seleciton using the containerForRepaint() for each RenderSelectionInfo.
+        repaints the selection using the containerForRepaint() for each RenderSelectionInfo.
         selectionRect() is now a wrapper for selectionRectForRepaint() with no container.
         
         Pull SelectionInfo out of RenderObject.h, and BlockSelectionInfo out
