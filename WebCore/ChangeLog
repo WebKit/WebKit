@@ -1,3 +1,13 @@
+2009-02-04  David Hyatt  <hyatt@apple.com>
+
+        Fix a crash in generated content when a generated image with an already-cached background image gets
+        created.  It's not completely clear how to reproduce this crash.
+
+        Reviewed by Adam Roben
+
+        * rendering/RenderImageGeneratedContent.h:
+        (WebCore::RenderImageGeneratedContent::imagePtr):
+
 2009-02-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Qt build fix.

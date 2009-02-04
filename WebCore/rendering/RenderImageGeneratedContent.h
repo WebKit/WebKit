@@ -53,7 +53,9 @@ protected:
     virtual bool imageHasRelativeWidth() const { return m_styleImage->imageHasRelativeWidth(); }
     virtual bool imageHasRelativeHeight() const { return m_styleImage->imageHasRelativeHeight(); }
     virtual IntSize imageSize(float multiplier) const { return m_styleImage->imageSize(this, multiplier); }
-    virtual WrappedImagePtr imagePtr() const { return m_styleImage->data(); }
+    
+    |m_styleImage| can be 0 if we get a callback for a background image from RenderObject::setStyle.
+    virtual WrappedImagePtr imagePtr() const { return m_styleImage ? m_styleImage->data() : 0; }
 
 private:
     RefPtr<StyleImage> m_styleImage;
