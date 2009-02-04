@@ -306,6 +306,8 @@ public:
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
+    void removeFloatingOrPositionedChildFromBlockLists();
+
 #if ENABLE(SVG)
     virtual TransformationMatrix localTransform() const;
 #endif

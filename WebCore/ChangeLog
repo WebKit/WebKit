@@ -1,3 +1,21 @@
+2009-02-04  David Hyatt  <hyatt@apple.com>
+
+        Rename removeFromObjectLists and move it into RenderBox, since it only applies to boxes.
+
+        Reviewed by Adam Roben
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::removeFloatingOrPositionedChildFromBlockLists):
+        (WebCore::RenderBox::styleWillChange):
+        * rendering/RenderBox.h:
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChild):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+        * rendering/RenderObject.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::removeChild):
+
 2009-02-04  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dave Hyatt.

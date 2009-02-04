@@ -695,8 +695,6 @@ public:
     void setTopMarginQuirk(bool b = true) { m_topMarginQuirk = b; }
     void setBottomMarginQuirk(bool b = true) { m_bottomMarginQuirk = b; }
 
-    void removeFromObjectLists();
-
     // When performing a global document tear-down, the renderer of the document is cleared.  We use this
     // as a hook to detect the case of document destruction and don't waste time doing unnecessary work.
     bool documentBeingDestroyed() const;
