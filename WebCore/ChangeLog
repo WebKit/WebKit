@@ -1,3 +1,15 @@
+2009-02-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/6554092> Slow script dialog starts coming up over and over again
+
+        Work around <rdar://problem/6554067> by consuming any exceptions that are
+        thrown by _web_localizedDescription        
+
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::platformLazyInit):
+
 2009-02-03  David Hyatt  <hyatt@apple.com>
 
         Move the isRenderInline checks for clientWidth/Height and scrollWidth/Height to the DOM element
