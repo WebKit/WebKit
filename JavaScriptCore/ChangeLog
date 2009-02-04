@@ -1,3 +1,18 @@
+2009-02-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23681
+        Worker tests crash in debug builds if run --singly
+
+        The crash happened because worker threads continued running while debug-only static objects
+        were already being destroyed on main thread.
+
+        * runtime/Structure.cpp: Create static debug-only sets in heap, so that they don't get
+        destroyed.
+
+        * wtf/ThreadingPthreads.cpp: Changed assertions to conventional form.
+
 2009-02-03  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

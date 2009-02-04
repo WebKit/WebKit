@@ -195,8 +195,8 @@ Mutex::~Mutex()
 
 void Mutex::lock()
 {
-    if (pthread_mutex_lock(&m_mutex) != 0)
-        ASSERT(false);
+    int result = pthread_mutex_lock(&m_mutex);
+    ASSERT_UNUSED(result, !result);
 }
     
 bool Mutex::tryLock()
@@ -205,17 +205,17 @@ bool Mutex::tryLock()
     
     if (result == 0)
         return true;
-    else if (result == EBUSY)
+    if (result == EBUSY)
         return false;
 
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return false;
 }
 
 void Mutex::unlock()
 {
-    if (pthread_mutex_unlock(&m_mutex) != 0)
-        ASSERT(false);
+    int result = pthread_mutex_unlock(&m_mutex);
+    ASSERT_UNUSED(result, !result);
 }
 
 ThreadCondition::ThreadCondition()
@@ -230,8 +230,8 @@ ThreadCondition::~ThreadCondition()
     
 void ThreadCondition::wait(Mutex& mutex)
 {
-    if (pthread_cond_wait(&m_condition, &mutex.impl()) != 0)
-        ASSERT(false);
+    int result = pthread_cond_wait(&m_condition, &mutex.impl());
+    ASSERT_UNUSED(result, !result);
 }
 
 bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
@@ -256,14 +256,14 @@ bool ThreadCondition::timedWait(Mutex& mutex, double absoluteTime)
 
 void ThreadCondition::signal()
 {
-    if (pthread_cond_signal(&m_condition) != 0)
-        ASSERT(false);
+    int result = pthread_cond_signal(&m_condition);
+    ASSERT_UNUSED(result, !result);
 }
 
 void ThreadCondition::broadcast()
 {
-    if (pthread_cond_broadcast(&m_condition) != 0)
-        ASSERT(false);
+    int result = pthread_cond_broadcast(&m_condition);
+    ASSERT_UNUSED(result, !result);
 }
     
 } // namespace WTF

@@ -65,15 +65,15 @@ static const unsigned newTableSize = 16;
 static WTF::RefCountedLeakCounter structureCounter("Structure");
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
-static Mutex ignoreSetMutex;
+static Mutex& ignoreSetMutex = *(new Mutex);
 #endif
 
 static bool shouldIgnoreLeaks;
-static HashSet<Structure*> ignoreSet;
+static HashSet<Structure*>& ignoreSet = *(new HashSet<Structure*>);
 #endif
 
 #if DUMP_STRUCTURE_ID_STATISTICS
-static HashSet<Structure*> liveStructureSet;
+static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 #endif
 
 void Structure::dumpStatistics()
