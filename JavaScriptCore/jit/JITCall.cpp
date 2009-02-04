@@ -133,7 +133,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
         compileOpCallEvalSetupArgs(instruction);
 
         emitCTICall(Interpreter::cti_op_call_eval);
-        wasEval = jnePtr(X86::eax, ImmPtr(JSValuePtr::encode(jsImpossibleValue())));
+        wasEval = branchPtr(NotEqual, X86::eax, ImmPtr(JSValuePtr::encode(jsImpossibleValue())));
     }
 
     emitGetVirtualRegister(callee, X86::ecx);
@@ -145,7 +145,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
 
     // Check for JSFunctions.
     emitJumpSlowCaseIfNotJSCell(X86::ecx);
-    addSlowCase(jnePtr(Address(X86::ecx), ImmPtr(m_interpreter->m_jsFunctionVptr)));
+    addSlowCase(branchPtr(NotEqual, Address(X86::ecx), ImmPtr(m_interpreter->m_jsFunctionVptr)));
 
     // First, in the case of a construct, allocate the new object.
     if (opcodeID == op_construct) {
@@ -207,14 +207,14 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         compileOpCallEvalSetupArgs(instruction);
 
         emitCTICall(Interpreter::cti_op_call_eval);
-        wasEval = jnePtr(X86::eax, ImmPtr(JSValuePtr::encode(jsImpossibleValue())));
+        wasEval = branchPtr(NotEqual, X86::eax, ImmPtr(JSValuePtr::encode(jsImpossibleValue())));
     }
 
     // This plants a check for a cached JSFunction value, so we can plant a fast link to the callee.
     // This deliberately leaves the callee in ecx, used when setting up the stack frame below
     emitGetVirtualRegister(callee, X86::ecx);
     DataLabelPtr addressOfLinkedFunctionCheck;
-    Jump jumpToSlow = jnePtrWithPatch(X86::ecx, addressOfLinkedFunctionCheck, ImmPtr(JSValuePtr::encode(jsImpossibleValue())));
+    Jump jumpToSlow = branchPtrWithPatch(NotEqual, X86::ecx, addressOfLinkedFunctionCheck, ImmPtr(JSValuePtr::encode(jsImpossibleValue())));
     addSlowCase(jumpToSlow);
     ASSERT(differenceBetween(addressOfLinkedFunctionCheck, jumpToSlow) == patchOffsetOpCallCompareToJump);
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
@@ -272,7 +272,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     // Fast check for JS function.
     Jump callLinkFailNotObject = emitJumpIfNotJSCell(X86::ecx);
-    Jump callLinkFailNotJSFunction = jnePtr(Address(X86::ecx), ImmPtr(m_interpreter->m_jsFunctionVptr));
+    Jump callLinkFailNotJSFunction = branchPtr(NotEqual, Address(X86::ecx), ImmPtr(m_interpreter->m_jsFunctionVptr));
 
     // First, in the case of a construct, allocate the new object.
     if (opcodeID == op_construct) {
@@ -304,7 +304,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     // Check for JSFunctions.
     Jump isNotObject = emitJumpIfNotJSCell(X86::ecx);
-    Jump isJSFunction = jePtr(Address(X86::ecx), ImmPtr(m_interpreter->m_jsFunctionVptr));
+    Jump isJSFunction = branchPtr(Equal, Address(X86::ecx), ImmPtr(m_interpreter->m_jsFunctionVptr));
 
     // This handles host functions
     isNotObject.link(this);

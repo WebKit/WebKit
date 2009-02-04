@@ -123,6 +123,7 @@ int RegExp::match(const UString& s, int startOffset, OwnArrayPtr<int>* ovector)
     if (m_wrecFunction) {
         int offsetVectorSize = (m_numSubpatterns + 1) * 2;
         int* offsetVector = new int [offsetVectorSize];
+        ASSERT(offsetVector);
         for (int j = 0; j < offsetVectorSize; ++j)
             offsetVector[j] = -1;
 

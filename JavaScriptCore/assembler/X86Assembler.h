@@ -84,6 +84,29 @@ public:
     typedef X86::XMMRegisterID XMMRegisterID;
 
     typedef enum {
+        ConditionO,
+        ConditionNO,
+        ConditionB,
+        ConditionAE,
+        ConditionE,
+        ConditionNE,
+        ConditionBE,
+        ConditionA,
+        ConditionS,
+        ConditionNS,
+        ConditionP,
+        ConditionNP,
+        ConditionL,
+        ConditionGE,
+        ConditionLE,
+        ConditionG,
+
+        ConditionC  = ConditionB,
+        ConditionNC = ConditionAE,
+    } Condition;
+
+private:
+    typedef enum {
         OP_ADD_EvGv                     = 0x01,
         OP_ADD_GvEv                     = 0x03,
         OP_OR_EvGv                      = 0x09,
@@ -147,26 +170,23 @@ public:
         OP2_SUBSD_VsdWsd    = 0x5C,
         OP2_MOVD_VdEd       = 0x6E,
         OP2_MOVD_EdVd       = 0x7E,
-        OP2_JO_rel32        = 0x80,
-        OP2_JB_rel32        = 0x82,
-        OP2_JAE_rel32       = 0x83,
-        OP2_JE_rel32        = 0x84,
-        OP2_JNE_rel32       = 0x85,
-        OP2_JBE_rel32       = 0x86,
-        OP2_JA_rel32        = 0x87,
-        OP2_JS_rel32        = 0x88,
-        OP2_JP_rel32        = 0x8A,
-        OP2_JL_rel32        = 0x8C,
-        OP2_JGE_rel32       = 0x8D,
-        OP2_JLE_rel32       = 0x8E,
-        OP2_JG_rel32        = 0x8F,
-        OP_SETE             = 0x94,
-        OP_SETNE            = 0x95,
+        OP2_JCC_rel32       = 0x80,
+        OP_SETCC            = 0x90,
         OP2_IMUL_GvEv       = 0xAF,
         OP2_MOVZX_GvEb      = 0xB6,
         OP2_MOVZX_GvEw      = 0xB7,
         OP2_PEXTRW_GdUdIb   = 0xC5,
     } TwoByteOpcodeID;
+
+    TwoByteOpcodeID jccRel32(Condition cond)
+    {
+        return (TwoByteOpcodeID)(OP2_JCC_rel32 + cond);
+    }
+
+    TwoByteOpcodeID setccOpcode(Condition cond)
+    {
+        return (TwoByteOpcodeID)(OP_SETCC + cond);
+    }
 
     typedef enum {
         GROUP1_OP_ADD = 0,
@@ -192,9 +212,6 @@ public:
         GROUP11_MOV = 0,
     } GroupOpcodeID;
     
-    // Opaque label types
-    
-private:
     class X86InstructionFormatter;
 public:
 
@@ -640,6 +657,11 @@ public:
         m_formatter.oneByteOp64(OP_CMP_EvGv, src, base, offset);
     }
 
+    void cmpq_mr(int offset, RegisterID base, RegisterID src)
+    {
+        m_formatter.oneByteOp64(OP_CMP_GvEv, src, base, offset);
+    }
+
     void cmpq_ir(int imm, RegisterID dst)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -750,9 +772,14 @@ public:
         m_formatter.immediate8(imm);
     }
 
+    void setCC_r(Condition cond, RegisterID dst)
+    {
+        m_formatter.twoByteOp8(setccOpcode(cond), (GroupOpcodeID)0, dst);
+    }
+
     void sete_r(RegisterID dst)
     {
-        m_formatter.twoByteOp8(OP_SETE, (GroupOpcodeID)0, dst);
+        m_formatter.twoByteOp8(setccOpcode(ConditionE), (GroupOpcodeID)0, dst);
     }
 
     void setz_r(RegisterID dst)
@@ -762,7 +789,7 @@ public:
 
     void setne_r(RegisterID dst)
     {
-        m_formatter.twoByteOp8(OP_SETNE, (GroupOpcodeID)0, dst);
+        m_formatter.twoByteOp8(setccOpcode(ConditionNE), (GroupOpcodeID)0, dst);
     }
 
     void setnz_r(RegisterID dst)
@@ -981,7 +1008,7 @@ public:
 
     JmpSrc jne()
     {
-        m_formatter.twoByteOp(OP2_JNE_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionNE));
         return m_formatter.immediateRel32();
     }
     
@@ -992,73 +1019,79 @@ public:
 
     JmpSrc je()
     {
-        m_formatter.twoByteOp(OP2_JE_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionE));
         return m_formatter.immediateRel32();
     }
     
     JmpSrc jl()
     {
-        m_formatter.twoByteOp(OP2_JL_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionL));
         return m_formatter.immediateRel32();
     }
     
     JmpSrc jb()
     {
-        m_formatter.twoByteOp(OP2_JB_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionB));
         return m_formatter.immediateRel32();
     }
     
     JmpSrc jle()
     {
-        m_formatter.twoByteOp(OP2_JLE_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionLE));
         return m_formatter.immediateRel32();
     }
     
     JmpSrc jbe()
     {
-        m_formatter.twoByteOp(OP2_JBE_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionBE));
         return m_formatter.immediateRel32();
     }
     
     JmpSrc jge()
     {
-        m_formatter.twoByteOp(OP2_JGE_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionGE));
         return m_formatter.immediateRel32();
     }
 
     JmpSrc jg()
     {
-        m_formatter.twoByteOp(OP2_JG_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionG));
         return m_formatter.immediateRel32();
     }
 
     JmpSrc ja()
     {
-        m_formatter.twoByteOp(OP2_JA_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionA));
         return m_formatter.immediateRel32();
     }
     
     JmpSrc jae()
     {
-        m_formatter.twoByteOp(OP2_JAE_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionAE));
         return m_formatter.immediateRel32();
     }
     
     JmpSrc jo()
     {
-        m_formatter.twoByteOp(OP2_JO_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionO));
         return m_formatter.immediateRel32();
     }
 
     JmpSrc jp()
     {
-        m_formatter.twoByteOp(OP2_JP_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionP));
         return m_formatter.immediateRel32();
     }
     
     JmpSrc js()
     {
-        m_formatter.twoByteOp(OP2_JS_rel32);
+        m_formatter.twoByteOp(jccRel32(ConditionS));
+        return m_formatter.immediateRel32();
+    }
+
+    JmpSrc jCC(Condition cond)
+    {
+        m_formatter.twoByteOp(jccRel32(cond));
         return m_formatter.immediateRel32();
     }
 
@@ -1601,13 +1634,8 @@ private:
         {
             ASSERT(mode != ModRmRegister);
 
-            // Encode sacle of (1,2,4,8) -> (0,1,2,3)
-            int shift = 0;
-            while (scale >>= 1)
-                shift++;
-
             putModRm(mode, reg, hasSib);
-            m_buffer.putByteUnchecked((shift << 6) | ((index & 7) << 3) | (base & 7));
+            m_buffer.putByteUnchecked((scale << 6) | ((index & 7) << 3) | (base & 7));
         }
 
         void registerModRM(int reg, RegisterID rm)

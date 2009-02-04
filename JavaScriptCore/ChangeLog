@@ -1,3 +1,117 @@
+2009-02-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23715
+
+        Simplify MacroAssembler interface, by combining comparison methods.
+        Seprate operations are combined as follows:
+            jz32/jnz32/jzPtr/jnzPtr -> branchTest32/branchTestPtr,
+            j*(Add|Mul|Sub)32/j*(Add|Mul|Sub)Ptr -> branch(Add|Mul|Sub)32/branch(Add|Mul|Sub)Ptr
+            j*32/j*Ptr (all other two op combparisons) -> branch32/brnachPtr
+            set*32 -> set32
+
+        Also, represent the Scale of BaseIndex addresses as a plain enum (0,1,2,3),
+        instead of as multiplicands (1,2,4,8).
+
+        This patch singificantly reduces replication of code, and increases functionality supported
+        by the MacroAssembler.  No performance impact.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::):
+        (JSC::MacroAssembler::branchPtr):
+        (JSC::MacroAssembler::branchPtrWithPatch):
+        (JSC::MacroAssembler::branch32):
+        (JSC::MacroAssembler::branch16):
+        (JSC::MacroAssembler::branchTestPtr):
+        (JSC::MacroAssembler::branchTest32):
+        (JSC::MacroAssembler::branchAddPtr):
+        (JSC::MacroAssembler::branchAdd32):
+        (JSC::MacroAssembler::branchMul32):
+        (JSC::MacroAssembler::branchSubPtr):
+        (JSC::MacroAssembler::branchSub32):
+        (JSC::MacroAssembler::set32):
+        (JSC::MacroAssembler::setTest32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::jccRel32):
+        (JSC::X86Assembler::setccOpcode):
+        (JSC::X86Assembler::cmpq_mr):
+        (JSC::X86Assembler::setcc_r):
+        (JSC::X86Assembler::sete_r):
+        (JSC::X86Assembler::setne_r):
+        (JSC::X86Assembler::jne):
+        (JSC::X86Assembler::je):
+        (JSC::X86Assembler::jl):
+        (JSC::X86Assembler::jb):
+        (JSC::X86Assembler::jle):
+        (JSC::X86Assembler::jbe):
+        (JSC::X86Assembler::jge):
+        (JSC::X86Assembler::jg):
+        (JSC::X86Assembler::ja):
+        (JSC::X86Assembler::jae):
+        (JSC::X86Assembler::jo):
+        (JSC::X86Assembler::jp):
+        (JSC::X86Assembler::js):
+        (JSC::X86Assembler::jcc):
+        (JSC::X86Assembler::X86InstructionFormatter::putModRmSib):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emitSlowScriptCheck):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_lshift):
+        (JSC::JIT::compileFastArith_op_mod):
+        (JSC::JIT::compileFastArith_op_post_inc):
+        (JSC::JIT::compileFastArith_op_post_dec):
+        (JSC::JIT::compileFastArith_op_pre_inc):
+        (JSC::JIT::compileFastArith_op_pre_dec):
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::compileFastArith_op_add):
+        (JSC::JIT::compileFastArith_op_mul):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::checkStructure):
+        (JSC::JIT::emitJumpIfJSCell):
+        (JSC::JIT::emitJumpIfNotJSCell):
+        (JSC::JIT::emitJumpIfImmediateNumber):
+        (JSC::JIT::emitJumpIfNotImmediateNumber):
+        (JSC::JIT::emitJumpIfImmediateInteger):
+        (JSC::JIT::emitJumpIfNotImmediateInteger):
+        (JSC::JIT::emitFastArithDeTagImmediateJumpIfZero):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateEnter):
+        (JSC::WREC::Generator::generateIncrementIndex):
+        (JSC::WREC::Generator::generateLoadCharacter):
+        (JSC::WREC::Generator::generateJumpIfNotEndOfInput):
+        (JSC::WREC::Generator::generateBackreferenceQuantifier):
+        (JSC::WREC::Generator::generateNonGreedyQuantifier):
+        (JSC::WREC::Generator::generateGreedyQuantifier):
+        (JSC::WREC::Generator::generatePatternCharacterPair):
+        (JSC::WREC::Generator::generatePatternCharacter):
+        (JSC::WREC::Generator::generateCharacterClassInvertedRange):
+        (JSC::WREC::Generator::generateCharacterClassInverted):
+        (JSC::WREC::Generator::generateAssertionBOL):
+        (JSC::WREC::Generator::generateAssertionEOL):
+        (JSC::WREC::Generator::generateAssertionWordBoundary):
+        (JSC::WREC::Generator::generateBackreference):
+
 2009-02-03  David Hyatt  <hyatt@apple.com>
 
         Fix a bug in Vector's shrinkCapacity method.  It did not properly copy elements into the inline buffer

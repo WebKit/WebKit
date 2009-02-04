@@ -258,15 +258,15 @@ ALWAYS_INLINE JIT::Jump JIT::emitCTICall_internal(void* helper)
 
 ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)
 {
-    return jnePtr(Address(reg, FIELD_OFFSET(JSCell, m_structure)), ImmPtr(structure));
+    return branchPtr(NotEqual, Address(reg, FIELD_OFFSET(JSCell, m_structure)), ImmPtr(structure));
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfJSCell(RegisterID reg)
 {
 #if USE(ALTERNATE_JSIMMEDIATE)
-    return jzPtr(reg, tagMaskRegister);
+    return branchTestPtr(Zero, reg, tagMaskRegister);
 #else
-    return jz32(reg, Imm32(JSImmediate::TagMask));
+    return branchTest32(Zero, reg, Imm32(JSImmediate::TagMask));
 #endif
 }
 
@@ -285,9 +285,9 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg)
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotJSCell(RegisterID reg)
 {
 #if USE(ALTERNATE_JSIMMEDIATE)
-    return jnzPtr(reg, tagMaskRegister);
+    return branchTestPtr(NonZero, reg, tagMaskRegister);
 #else
-    return jnz32(reg, Imm32(JSImmediate::TagMask));
+    return branchTest32(NonZero, reg, Imm32(JSImmediate::TagMask));
 #endif
 }
 
@@ -311,29 +311,29 @@ ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&
 #if USE(ALTERNATE_JSIMMEDIATE)
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfImmediateNumber(RegisterID reg)
 {
-    return jnzPtr(reg, tagTypeNumberRegister);
+    return branchTestPtr(NonZero, reg, tagTypeNumberRegister);
 }
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateNumber(RegisterID reg)
 {
-    return jzPtr(reg, tagTypeNumberRegister);
+    return branchTestPtr(Zero, reg, tagTypeNumberRegister);
 }
 #endif
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfImmediateInteger(RegisterID reg)
 {
 #if USE(ALTERNATE_JSIMMEDIATE)
-    return jaePtr(reg, tagTypeNumberRegister);
+    return branchPtr(AboveOrEqual, reg, tagTypeNumberRegister);
 #else
-    return jnz32(reg, Imm32(JSImmediate::TagTypeNumber));
+    return branchTest32(NonZero, reg, Imm32(JSImmediate::TagTypeNumber));
 #endif
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateInteger(RegisterID reg)
 {
 #if USE(ALTERNATE_JSIMMEDIATE)
-    return jbPtr(reg, tagTypeNumberRegister);
+    return branchPtr(Below, reg, tagTypeNumberRegister);
 #else
-    return jz32(reg, Imm32(JSImmediate::TagTypeNumber));
+    return branchTest32(Zero, reg, Imm32(JSImmediate::TagTypeNumber));
 #endif
 }
 
@@ -362,7 +362,7 @@ ALWAYS_INLINE void JIT::emitFastArithDeTagImmediate(RegisterID reg)
 
 ALWAYS_INLINE JIT::Jump JIT::emitFastArithDeTagImmediateJumpIfZero(RegisterID reg)
 {
-    return jzSubPtr(Imm32(JSImmediate::TagTypeNumber), reg);
+    return branchSubPtr(Zero, Imm32(JSImmediate::TagTypeNumber), reg);
 }
 #endif
 

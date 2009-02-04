@@ -47,10 +47,10 @@ public:
 
     // Note: do not rely on values in this enum, these will change (to 0..3).
     enum Scale {
-        TimesOne = 1,
-        TimesTwo = 2,
-        TimesFour = 4,
-        TimesEight = 8,
+        TimesOne,
+        TimesTwo,
+        TimesFour,
+        TimesEight,
 #if PLATFORM(X86)
         ScalePtr = TimesFour
 #endif
@@ -58,6 +58,21 @@ public:
         ScalePtr = TimesEight
 #endif
     };
+
+    typedef X86Assembler::Condition Condition;
+    static const Condition Equal = X86Assembler::ConditionE;
+    static const Condition NotEqual = X86Assembler::ConditionNE;
+    static const Condition Above = X86Assembler::ConditionA;
+    static const Condition AboveOrEqual = X86Assembler::ConditionAE;
+    static const Condition Below = X86Assembler::ConditionB;
+    static const Condition BelowOrEqual = X86Assembler::ConditionBE;
+    static const Condition GreaterThan = X86Assembler::ConditionG;
+    static const Condition GreaterThanOrEqual = X86Assembler::ConditionGE;
+    static const Condition LessThan = X86Assembler::ConditionL;
+    static const Condition LessThanOrEqual = X86Assembler::ConditionLE;
+    static const Condition Overflow = X86Assembler::ConditionO;
+    static const Condition Zero = X86Assembler::ConditionE;
+    static const Condition NonZero = X86Assembler::ConditionNE;
 
     MacroAssembler()
     {
@@ -1092,68 +1107,163 @@ public:
     // jz and jnz test whether the first operand is equal to zero, and take
     // an optional second operand of a mask under which to perform the test.
 
-private:
-    void compareImm32ForBranch(RegisterID left, int32_t right)
+public:
+    Jump branchPtr(Condition cond, RegisterID left, RegisterID right)
     {
-        m_assembler.cmpl_ir(right, left);
-    }
-
-    void compareImm32ForBranchEquality(RegisterID reg, int32_t imm)
-    {
-        if (!imm)
-            m_assembler.testl_rr(reg, reg);
-        else
-            m_assembler.cmpl_ir(imm, reg);
-    }
-
-    void compareImm32ForBranchEquality(Address address, int32_t imm)
-    {
-        m_assembler.cmpl_im(imm, address.offset, address.base);
-    }
-
-    void testImm32(RegisterID reg, Imm32 mask)
-    {
-        // if we are only interested in the low seven bits, this can be tested with a testb
-        if (mask.m_value == -1)
-            m_assembler.testl_rr(reg, reg);
-        else if ((mask.m_value & ~0x7f) == 0)
-            m_assembler.testb_i8r(mask.m_value, reg);
-        else
-            m_assembler.testl_i32r(mask.m_value, reg);
-    }
-
-    void testImm32(Address address, Imm32 mask)
-    {
-        if (mask.m_value == -1)
-            m_assembler.cmpl_im(0, address.offset, address.base);
-        else
-            m_assembler.testl_i32m(mask.m_value, address.offset, address.base);
-    }
-
-    void testImm32(BaseIndex address, Imm32 mask)
-    {
-        if (mask.m_value == -1)
-            m_assembler.cmpl_im(0, address.offset, address.base, address.index, address.scale);
-        else
-            m_assembler.testl_i32m(mask.m_value, address.offset, address.base, address.index, address.scale);
-    }
-
 #if PLATFORM(X86_64)
-    void compareImm64ForBranch(RegisterID left, int32_t right)
-    {
-        m_assembler.cmpq_ir(right, left);
+        m_assembler.cmpq_rr(right, left);
+        return Jump(m_assembler.jCC(cond));
+#else
+        return branch32(cond, left, right);
+#endif
     }
 
-    void compareImm64ForBranchEquality(RegisterID reg, int32_t imm)
+    Jump branchPtr(Condition cond, RegisterID left, ImmPtr right)
     {
-        if (!imm)
-            m_assembler.testq_rr(reg, reg);
+#if PLATFORM(X86_64)
+        intptr_t imm = right.asIntptr();
+        if (CAN_SIGN_EXTEND_32_64(imm)) {
+            if (!imm)
+                m_assembler.testq_rr(left, left);
+            else
+                m_assembler.cmpq_ir(imm, left);
+            return Jump(m_assembler.jCC(cond));
+        } else {
+            move(right, scratchRegister);
+            return branchPtr(cond, left, scratchRegister);
+        }
+#else
+        return branch32(cond, left, Imm32(right));
+#endif
+    }
+
+    Jump branchPtr(Condition cond, RegisterID left, Address right)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.cmpq_mr(right.offset, right.base, left);
+        return Jump(m_assembler.jCC(cond));
+#else
+        return branch32(cond, left, right);
+#endif
+    }
+
+    Jump branchPtr(Condition cond, AbsoluteAddress left, RegisterID right)
+    {
+#if PLATFORM(X86_64)
+        move(ImmPtr(left.m_ptr), scratchRegister);
+        return branchPtr(cond, Address(scratchRegister), right);
+#else
+        m_assembler.cmpl_rm(right, left.m_ptr);
+        return Jump(m_assembler.jCC(cond));
+#endif
+    }
+
+    Jump branchPtr(Condition cond, Address left, RegisterID right)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.cmpq_rm(right, left.offset, left.base);
+        return Jump(m_assembler.jCC(cond));
+#else
+        return branch32(cond, left, right);
+#endif
+    }
+
+    Jump branchPtr(Condition cond, Address left, ImmPtr right)
+    {
+#if PLATFORM(X86_64)
+        move(right, scratchRegister);
+        return branchPtr(cond, left, scratchRegister);
+#else
+        return branch32(cond, left, Imm32(right));
+#endif
+    }
+
+#if !PLATFORM(X86_64)
+    Jump branchPtr(Condition cond, AbsoluteAddress left, ImmPtr right)
+    {
+        m_assembler.cmpl_im(right.asIntptr(), left.m_ptr);
+        return Jump(m_assembler.jCC(cond));
+    }
+#endif
+
+    Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
+    {
+#if PLATFORM(X86_64)
+        m_assembler.movq_i64r(initialRightValue.asIntptr(), scratchRegister);
+        dataLabel = DataLabelPtr(this);
+        return branchPtr(cond, left, scratchRegister);
+#else
+        m_assembler.cmpl_ir_force32(initialRightValue.asIntptr(), left);
+        dataLabel = DataLabelPtr(this);
+        return Jump(m_assembler.jCC(cond));
+#endif
+    }
+
+    Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
+    {
+#if PLATFORM(X86_64)
+        m_assembler.movq_i64r(initialRightValue.asIntptr(), scratchRegister);
+        dataLabel = DataLabelPtr(this);
+        return branchPtr(cond, left, scratchRegister);
+#else
+        m_assembler.cmpl_im_force32(initialRightValue.asIntptr(), left.offset, left.base);
+        dataLabel = DataLabelPtr(this);
+        return Jump(m_assembler.jCC(cond));
+#endif
+    }
+
+    Jump branch32(Condition cond, RegisterID left, RegisterID right)
+    {
+        m_assembler.cmpl_rr(right, left);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branch32(Condition cond, RegisterID left, Imm32 right)
+    {
+        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
+            m_assembler.testl_rr(left, left);
         else
-            m_assembler.cmpq_ir(imm, reg);
+            m_assembler.cmpl_ir(right.m_value, left);
+        return Jump(m_assembler.jCC(cond));
+    }
+    
+    Jump branch32(Condition cond, RegisterID left, Address right)
+    {
+        m_assembler.cmpl_mr(right.offset, right.base, left);
+        return Jump(m_assembler.jCC(cond));
+    }
+    
+    Jump branch32(Condition cond, Address left, RegisterID right)
+    {
+        m_assembler.cmpl_rm(right, left.offset, left.base);
+        return Jump(m_assembler.jCC(cond));
+    }
+    
+    Jump branch32(Condition cond, Address left, Imm32 right)
+    {
+        m_assembler.cmpl_im(right.m_value, left.offset, left.base);
+        return Jump(m_assembler.jCC(cond));
     }
 
-    void testImm64(RegisterID reg, Imm32 mask)
+    Jump branch16(Condition cond, BaseIndex left, RegisterID right)
     {
+        m_assembler.cmpw_rm(right, left.offset, left.base, left.index, left.scale);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchTestPtr(Condition cond, RegisterID reg, RegisterID mask)
+    {
+#if PLATFORM(X86_64)
+        m_assembler.testq_rr(reg, mask);
+        return Jump(m_assembler.jCC(cond));
+#else
+        return branchTest32(cond, reg, mask);
+#endif
+    }
+
+    Jump branchTestPtr(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
+    {
+#if PLATFORM(X86_64)
         // if we are only interested in the low seven bits, this can be tested with a testb
         if (mask.m_value == -1)
             m_assembler.testq_rr(reg, reg);
@@ -1161,575 +1271,76 @@ private:
             m_assembler.testb_i8r(mask.m_value, reg);
         else
             m_assembler.testq_i32r(mask.m_value, reg);
+        return Jump(m_assembler.jCC(cond));
+#else
+        return branchTest32(cond, reg, mask);
+#endif
     }
 
-    void testImm64(Address address, Imm32 mask)
+    Jump branchTestPtr(Condition cond, Address address, Imm32 mask = Imm32(-1))
     {
+#if PLATFORM(X86_64)
         if (mask.m_value == -1)
             m_assembler.cmpq_im(0, address.offset, address.base);
         else
             m_assembler.testq_i32m(mask.m_value, address.offset, address.base);
+        return Jump(m_assembler.jCC(cond));
+#else
+        return branchTest32(cond, address, mask);
+#endif
     }
 
-    void testImm64(BaseIndex address, Imm32 mask)
+    Jump branchTestPtr(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
     {
+#if PLATFORM(X86_64)
         if (mask.m_value == -1)
             m_assembler.cmpq_im(0, address.offset, address.base, address.index, address.scale);
         else
             m_assembler.testq_i32m(mask.m_value, address.offset, address.base, address.index, address.scale);
-    }
-#endif
-
-public:
-    Jump ja32(RegisterID left, Imm32 right)
-    {
-        compareImm32ForBranch(left, right.m_value);
-        return Jump(m_assembler.ja());
-    }
-    
-    Jump jaePtr(RegisterID left, RegisterID right)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rr(right, left);
-        return Jump(m_assembler.jae());
+        return Jump(m_assembler.jCC(cond));
 #else
-        return jae32(left, right);
+        return branchTest32(cond, address, mask);
 #endif
     }
 
-    Jump jaePtr(RegisterID reg, ImmPtr ptr)
+    Jump branchTest32(Condition cond, RegisterID reg, RegisterID mask)
     {
-#if PLATFORM(X86_64)
-        intptr_t imm = ptr.asIntptr();
-        if (CAN_SIGN_EXTEND_32_64(imm)) {
-            compareImm64ForBranch(reg, imm);
-            return Jump(m_assembler.jae());
-        } else {
-            move(ptr, scratchRegister);
-            return jaePtr(reg, scratchRegister);
-        }
-#else
-        return jae32(reg, Imm32(ptr));
-#endif
-    }
-
-    Jump jae32(RegisterID left, RegisterID right)
-    {
-        m_assembler.cmpl_rr(right, left);
-        return Jump(m_assembler.jae());
-    }
-
-    Jump jae32(RegisterID left, Imm32 right)
-    {
-        compareImm32ForBranch(left, right.m_value);
-        return Jump(m_assembler.jae());
-    }
-    
-    Jump jae32(RegisterID left, Address right)
-    {
-        m_assembler.cmpl_mr(right.offset, right.base, left);
-        return Jump(m_assembler.jae());
-    }
-    
-    Jump jae32(Address left, RegisterID right)
-    {
-        m_assembler.cmpl_rm(right, left.offset, left.base);
-        return Jump(m_assembler.jae());
-    }
-    
-    Jump jbPtr(RegisterID left, RegisterID right)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rr(right, left);
-        return Jump(m_assembler.jb());
-#else
-        return jb32(left, right);
-#endif
-    }
-
-    Jump jbPtr(RegisterID reg, ImmPtr ptr)
-    {
-#if PLATFORM(X86_64)
-        intptr_t imm = ptr.asIntptr();
-        if (CAN_SIGN_EXTEND_32_64(imm)) {
-            compareImm64ForBranch(reg, imm);
-            return Jump(m_assembler.jb());
-        } else {
-            move(ptr, scratchRegister);
-            return jbPtr(reg, scratchRegister);
-        }
-#else
-        return jb32(reg, Imm32(ptr));
-#endif
-    }
-
-    Jump jb32(RegisterID left, RegisterID right)
-    {
-        m_assembler.cmpl_rr(right, left);
-        return Jump(m_assembler.jb());
-    }
-
-    Jump jb32(RegisterID left, Imm32 right)
-    {
-        compareImm32ForBranch(left, right.m_value);
-        return Jump(m_assembler.jb());
-    }
-    
-    Jump jb32(RegisterID left, Address right)
-    {
-        m_assembler.cmpl_mr(right.offset, right.base, left);
-        return Jump(m_assembler.jb());
-    }
-    
-    Jump jePtr(RegisterID op1, RegisterID op2)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rr(op1, op2);
-        return Jump(m_assembler.je());
-#else
-        return je32(op1, op2);
-#endif
-    }
-
-    Jump jePtr(RegisterID reg, Address address)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rm(reg, address.offset, address.base);
-#else
-        m_assembler.cmpl_rm(reg, address.offset, address.base);
-#endif
-        return Jump(m_assembler.je());
-    }
-
-    Jump jePtr(RegisterID reg, ImmPtr ptr)
-    {
-#if PLATFORM(X86_64)
-        intptr_t imm = ptr.asIntptr();
-        if (CAN_SIGN_EXTEND_32_64(imm)) {
-            compareImm64ForBranchEquality(reg, imm);
-            return Jump(m_assembler.je());
-        } else {
-            move(ptr, scratchRegister);
-            return jePtr(scratchRegister, reg);
-        }
-#else
-        return je32(reg, Imm32(ptr));
-#endif
-    }
-
-    Jump jePtr(Address address, ImmPtr imm)
-    {
-#if PLATFORM(X86_64)
-        move(imm, scratchRegister);
-        return jePtr(scratchRegister, address);
-#else
-        return je32(address, Imm32(imm));
-#endif
-    }
-
-    Jump je32(RegisterID op1, RegisterID op2)
-    {
-        m_assembler.cmpl_rr(op1, op2);
-        return Jump(m_assembler.je());
-    }
-    
-    Jump je32(Address op1, RegisterID op2)
-    {
-        m_assembler.cmpl_mr(op1.offset, op1.base, op2);
-        return Jump(m_assembler.je());
-    }
-    
-    Jump je32(RegisterID reg, Imm32 imm)
-    {
-        compareImm32ForBranchEquality(reg, imm.m_value);
-        return Jump(m_assembler.je());
-    }
-
-    Jump je32(Address address, Imm32 imm)
-    {
-        compareImm32ForBranchEquality(address, imm.m_value);
-        return Jump(m_assembler.je());
-    }
-    
-    Jump je16(RegisterID op1, BaseIndex op2)
-    {
-        m_assembler.cmpw_rm(op1, op2.offset, op2.base, op2.index, op2.scale);
-        return Jump(m_assembler.je());
-    }
-    
-    Jump jg32(RegisterID left, RegisterID right)
-    {
-        m_assembler.cmpl_rr(right, left);
-        return Jump(m_assembler.jg());
-    }
-
-    Jump jg32(RegisterID reg, Address address)
-    {
-        m_assembler.cmpl_mr(address.offset, address.base, reg);
-        return Jump(m_assembler.jg());
-    }
-
-    Jump jgePtr(RegisterID left, RegisterID right)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rr(right, left);
-        return Jump(m_assembler.jge());
-#else
-        return jge32(left, right);
-#endif
-    }
-
-    Jump jgePtr(RegisterID reg, ImmPtr ptr)
-    {
-#if PLATFORM(X86_64)
-        intptr_t imm = ptr.asIntptr();
-        if (CAN_SIGN_EXTEND_32_64(imm)) {
-            compareImm64ForBranch(reg, imm);
-            return Jump(m_assembler.jge());
-        } else {
-            move(ptr, scratchRegister);
-            return jgePtr(reg, scratchRegister);
-        }
-#else
-        return jge32(reg, Imm32(ptr));
-#endif
-    }
-
-    Jump jge32(RegisterID left, RegisterID right)
-    {
-        m_assembler.cmpl_rr(right, left);
-        return Jump(m_assembler.jge());
-    }
-
-    Jump jge32(RegisterID left, Imm32 right)
-    {
-        compareImm32ForBranch(left, right.m_value);
-        return Jump(m_assembler.jge());
-    }
-
-    Jump jlPtr(RegisterID left, RegisterID right)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rr(right, left);
-        return Jump(m_assembler.jl());
-#else
-        return jl32(left, right);
-#endif
-    }
-
-    Jump jlPtr(RegisterID reg, ImmPtr ptr)
-    {
-#if PLATFORM(X86_64)
-        intptr_t imm = ptr.asIntptr();
-        if (CAN_SIGN_EXTEND_32_64(imm)) {
-            compareImm64ForBranch(reg, imm);
-            return Jump(m_assembler.jl());
-        } else {
-            move(ptr, scratchRegister);
-            return jlPtr(reg, scratchRegister);
-        }
-#else
-        return jl32(reg, Imm32(ptr));
-#endif
-    }
-
-    Jump jl32(RegisterID left, RegisterID right)
-    {
-        m_assembler.cmpl_rr(right, left);
-        return Jump(m_assembler.jl());
-    }
-    
-    Jump jl32(RegisterID left, Imm32 right)
-    {
-        compareImm32ForBranch(left, right.m_value);
-        return Jump(m_assembler.jl());
-    }
-
-    Jump jlePtr(RegisterID left, RegisterID right)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rr(right, left);
-        return Jump(m_assembler.jle());
-#else
-        return jle32(left, right);
-#endif
-    }
-
-    Jump jlePtr(RegisterID reg, ImmPtr ptr)
-    {
-#if PLATFORM(X86_64)
-        intptr_t imm = ptr.asIntptr();
-        if (CAN_SIGN_EXTEND_32_64(imm)) {
-            compareImm64ForBranch(reg, imm);
-            return Jump(m_assembler.jle());
-        } else {
-            move(ptr, scratchRegister);
-            return jlePtr(reg, scratchRegister);
-        }
-#else
-        return jle32(reg, Imm32(ptr));
-#endif
-    }
-
-    Jump jle32(RegisterID left, RegisterID right)
-    {
-        m_assembler.cmpl_rr(right, left);
-        return Jump(m_assembler.jle());
-    }
-    
-    Jump jle32(RegisterID left, Imm32 right)
-    {
-        compareImm32ForBranch(left, right.m_value);
-        return Jump(m_assembler.jle());
-    }
-
-    Jump jnePtr(RegisterID op1, RegisterID op2)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rr(op1, op2);
-        return Jump(m_assembler.jne());
-#else
-        return jne32(op1, op2);
-#endif
-    }
-
-    Jump jnePtr(RegisterID reg, Address address)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rm(reg, address.offset, address.base);
-#else
-        m_assembler.cmpl_rm(reg, address.offset, address.base);
-#endif
-        return Jump(m_assembler.jne());
-    }
-
-    Jump jnePtr(RegisterID reg, AbsoluteAddress address)
-    {
-#if PLATFORM(X86_64)
-        move(ImmPtr(address.m_ptr), scratchRegister);
-        return jnePtr(reg, Address(scratchRegister));
-#else
-        m_assembler.cmpl_rm(reg, address.m_ptr);
-        return Jump(m_assembler.jne());
-#endif
-    }
-
-    Jump jnePtr(RegisterID reg, ImmPtr ptr)
-    {
-#if PLATFORM(X86_64)
-        intptr_t imm = ptr.asIntptr();
-        if (CAN_SIGN_EXTEND_32_64(imm)) {
-            compareImm64ForBranchEquality(reg, imm);
-            return Jump(m_assembler.jne());
-        } else {
-            move(ptr, scratchRegister);
-            return jnePtr(scratchRegister, reg);
-        }
-#else
-        return jne32(reg, Imm32(ptr));
-#endif
-    }
-
-    Jump jnePtr(Address address, ImmPtr imm)
-    {
-#if PLATFORM(X86_64)
-        move(imm, scratchRegister);
-        return jnePtr(scratchRegister, address);
-#else
-        return jne32(address, Imm32(imm));
-#endif
-    }
-
-#if !PLATFORM(X86_64)
-    Jump jnePtr(AbsoluteAddress address, ImmPtr imm)
-    {
-        m_assembler.cmpl_im(imm.asIntptr(), address.m_ptr);
-        return Jump(m_assembler.jne());
-    }
-#endif
-
-    Jump jnePtrWithPatch(RegisterID reg, DataLabelPtr& dataLabel, ImmPtr initialValue = ImmPtr(0))
-    {
-#if PLATFORM(X86_64)
-        m_assembler.movq_i64r(initialValue.asIntptr(), scratchRegister);
-        dataLabel = DataLabelPtr(this);
-        return jnePtr(scratchRegister, reg);
-#else
-        m_assembler.cmpl_ir_force32(initialValue.asIntptr(), reg);
-        dataLabel = DataLabelPtr(this);
-        return Jump(m_assembler.jne());
-#endif
-    }
-
-    Jump jnePtrWithPatch(Address address, DataLabelPtr& dataLabel, ImmPtr initialValue = ImmPtr(0))
-    {
-#if PLATFORM(X86_64)
-        m_assembler.movq_i64r(initialValue.asIntptr(), scratchRegister);
-        dataLabel = DataLabelPtr(this);
-        return jnePtr(scratchRegister, address);
-#else
-        m_assembler.cmpl_im_force32(initialValue.asIntptr(), address.offset, address.base);
-        dataLabel = DataLabelPtr(this);
-        return Jump(m_assembler.jne());
-#endif
-    }
-
-    Jump jne32(RegisterID op1, RegisterID op2)
-    {
-        m_assembler.cmpl_rr(op1, op2);
-        return Jump(m_assembler.jne());
-    }
-
-    Jump jne32(RegisterID reg, Imm32 imm)
-    {
-        compareImm32ForBranchEquality(reg, imm.m_value);
-        return Jump(m_assembler.jne());
-    }
-
-    Jump jne32(Address address, Imm32 imm)
-    {
-        compareImm32ForBranchEquality(address, imm.m_value);
-        return Jump(m_assembler.jne());
-    }
-    
-    Jump jne32(Address address, RegisterID reg)
-    {
-        m_assembler.cmpl_rm(reg, address.offset, address.base);
-        return Jump(m_assembler.jne());
-    }
-    
-    Jump jnzPtr(RegisterID reg, RegisterID mask)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.testq_rr(reg, mask);
-        return Jump(m_assembler.jne());
-#else
-        return jnz32(reg, mask);
-#endif
-    }
-
-    Jump jnzPtr(RegisterID reg, Imm32 mask = Imm32(-1))
-    {
-#if PLATFORM(X86_64)
-        testImm64(reg, mask);
-        return Jump(m_assembler.jne());
-#else
-        return jnz32(reg, mask);
-#endif
-    }
-
-    Jump jnzPtr(RegisterID reg, ImmPtr mask)
-    {
-#if PLATFORM(X86_64)
-        move(mask, scratchRegister);
-        m_assembler.testq_rr(scratchRegister, reg);
-        return Jump(m_assembler.jne());
-#else
-        return jnz32(reg, Imm32(mask));
-#endif
-    }
-
-    Jump jnzPtr(Address address, Imm32 mask = Imm32(-1))
-    {
-#if PLATFORM(X86_64)
-        testImm64(address, mask);
-        return Jump(m_assembler.jne());
-#else
-        return jnz32(address, mask);
-#endif
-    }
-
-    Jump jnz32(RegisterID reg, RegisterID mask)
-    {
+        ASSERT((cond == Zero) || (cond == NonZero));
         m_assembler.testl_rr(reg, mask);
-        return Jump(m_assembler.jne());
+        return Jump(m_assembler.jCC(cond));
     }
 
-    Jump jnz32(RegisterID reg, Imm32 mask = Imm32(-1))
+    Jump branchTest32(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
     {
-        testImm32(reg, mask);
-        return Jump(m_assembler.jne());
+        ASSERT((cond == Zero) || (cond == NonZero));
+        // if we are only interested in the low seven bits, this can be tested with a testb
+        if (mask.m_value == -1)
+            m_assembler.testl_rr(reg, reg);
+        else if ((mask.m_value & ~0x7f) == 0)
+            m_assembler.testb_i8r(mask.m_value, reg);
+        else
+            m_assembler.testl_i32r(mask.m_value, reg);
+        return Jump(m_assembler.jCC(cond));
     }
 
-    Jump jnz32(Address address, Imm32 mask = Imm32(-1))
+    Jump branchTest32(Condition cond, Address address, Imm32 mask = Imm32(-1))
     {
-        testImm32(address, mask);
-        return Jump(m_assembler.jne());
+        ASSERT((cond == Zero) || (cond == NonZero));
+        if (mask.m_value == -1)
+            m_assembler.cmpl_im(0, address.offset, address.base);
+        else
+            m_assembler.testl_i32m(mask.m_value, address.offset, address.base);
+        return Jump(m_assembler.jCC(cond));
     }
 
-    Jump jzPtr(RegisterID reg, RegisterID mask)
+    Jump branchTest32(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
     {
-#if PLATFORM(X86_64)
-        m_assembler.testq_rr(reg, mask);
-        return Jump(m_assembler.je());
-#else
-        return jz32(reg, mask);
-#endif
-    }
-
-    Jump jzPtr(RegisterID reg, Imm32 mask = Imm32(-1))
-    {
-#if PLATFORM(X86_64)
-        testImm64(reg, mask);
-        return Jump(m_assembler.je());
-#else
-        return jz32(reg, mask);
-#endif
-    }
-
-    Jump jzPtr(RegisterID reg, ImmPtr mask)
-    {
-#if PLATFORM(X86_64)
-        move(mask, scratchRegister);
-        m_assembler.testq_rr(scratchRegister, reg);
-        return Jump(m_assembler.je());
-#else
-        return jz32(reg, Imm32(mask));
-#endif
-    }
-
-    Jump jzPtr(Address address, Imm32 mask = Imm32(-1))
-    {
-#if PLATFORM(X86_64)
-        testImm64(address, mask);
-        return Jump(m_assembler.je());
-#else
-        return jz32(address, mask);
-#endif
-    }
-
-    Jump jzPtr(BaseIndex address, Imm32 mask = Imm32(-1))
-    {
-#if PLATFORM(X86_64)
-        testImm64(address, mask);
-        return Jump(m_assembler.je());
-#else
-        return jz32(address, mask);
-#endif
-    }
-
-    Jump jz32(RegisterID reg, RegisterID mask)
-    {
-        m_assembler.testl_rr(reg, mask);
-        return Jump(m_assembler.je());
-    }
-
-    Jump jz32(RegisterID reg, Imm32 mask = Imm32(-1))
-    {
-        testImm32(reg, mask);
-        return Jump(m_assembler.je());
-    }
-
-    Jump jz32(Address address, Imm32 mask = Imm32(-1))
-    {
-        testImm32(address, mask);
-        return Jump(m_assembler.je());
-    }
-
-    Jump jz32(BaseIndex address, Imm32 mask = Imm32(-1))
-    {
-        testImm32(address, mask);
-        return Jump(m_assembler.je());
+        ASSERT((cond == Zero) || (cond == NonZero));
+        if (mask.m_value == -1)
+            m_assembler.cmpl_im(0, address.offset, address.base, address.index, address.scale);
+        else
+            m_assembler.testl_i32m(mask.m_value, address.offset, address.base, address.index, address.scale);
+        return Jump(m_assembler.jCC(cond));
     }
 
     Jump jump()
@@ -1758,49 +1369,34 @@ public:
     //     // ...
     //     jne32(reg1, reg2).linkTo(topOfLoop);
 
-    void jae32(RegisterID left, Address right, Label target)
+    void branchPtr(Condition cond, RegisterID op1, ImmPtr imm, Label target)
     {
-        jae32(left, right).linkTo(target, this);
+        branchPtr(cond, op1, imm).linkTo(target, this);
     }
 
-    void je32(RegisterID op1, Imm32 imm, Label target)
+    void branch32(Condition cond, RegisterID op1, RegisterID op2, Label target)
     {
-        je32(op1, imm).linkTo(target, this);
+        branch32(cond, op1, op2).linkTo(target, this);
     }
 
-    void je16(RegisterID op1, BaseIndex op2, Label target)
+    void branch32(Condition cond, RegisterID op1, Imm32 imm, Label target)
     {
-        je16(op1, op2).linkTo(target, this);
+        branch32(cond, op1, imm).linkTo(target, this);
+    }
+
+    void branch32(Condition cond, RegisterID left, Address right, Label target)
+    {
+        branch32(cond, left, right).linkTo(target, this);
+    }
+
+    void branch16(Condition cond, BaseIndex left, RegisterID right, Label target)
+    {
+        branch16(cond, left, right).linkTo(target, this);
     }
     
-    void jl32(RegisterID left, Imm32 right, Label target)
+    void branchTestPtr(Condition cond, RegisterID reg, Label target)
     {
-        jl32(left, right).linkTo(target, this);
-    }
-    
-    void jle32(RegisterID left, RegisterID right, Label target)
-    {
-        jle32(left, right).linkTo(target, this);
-    }
-    
-    void jnePtr(RegisterID op1, ImmPtr imm, Label target)
-    {
-        jnePtr(op1, imm).linkTo(target, this);
-    }
-
-    void jne32(RegisterID op1, RegisterID op2, Label target)
-    {
-        jne32(op1, op2).linkTo(target, this);
-    }
-
-    void jne32(RegisterID op1, Imm32 imm, Label target)
-    {
-        jne32(op1, imm).linkTo(target, this);
-    }
-
-    void jzPtr(RegisterID reg, Label target)
-    {
-        jzPtr(reg).linkTo(target, this);
+        branchTestPtr(cond, reg).linkTo(target, this);
     }
 
     void jump(Label target)
@@ -1830,70 +1426,60 @@ public:
     // * jo operations branch if the (signed) arithmetic
     //   operation caused an overflow to occur.
 
-    Jump jnzSubPtr(Imm32 imm, RegisterID dest)
+    Jump branchAddPtr(Condition cond, RegisterID src, RegisterID dest)
     {
-        subPtr(imm, dest);
-        return Jump(m_assembler.jne());
-    }
-    
-    Jump jnzSub32(Imm32 imm, RegisterID dest)
-    {
-        sub32(imm, dest);
-        return Jump(m_assembler.jne());
-    }
-    
-    Jump joAddPtr(RegisterID src, RegisterID dest)
-    {
+        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         addPtr(src, dest);
-        return Jump(m_assembler.jo());
+        return Jump(m_assembler.jCC(cond));
     }
     
-    Jump joAdd32(RegisterID src, RegisterID dest)
+    Jump branchAdd32(Condition cond, RegisterID src, RegisterID dest)
     {
+        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         add32(src, dest);
-        return Jump(m_assembler.jo());
+        return Jump(m_assembler.jCC(cond));
     }
     
-    Jump joAdd32(Imm32 imm, RegisterID dest)
+    Jump branchAdd32(Condition cond, Imm32 imm, RegisterID dest)
     {
+        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         add32(imm, dest);
-        return Jump(m_assembler.jo());
+        return Jump(m_assembler.jCC(cond));
     }
     
-    Jump joMul32(RegisterID src, RegisterID dest)
+    Jump branchMul32(Condition cond, RegisterID src, RegisterID dest)
     {
+        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         mul32(src, dest);
-        return Jump(m_assembler.jo());
+        return Jump(m_assembler.jCC(cond));
     }
     
-    Jump joMul32(Imm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(Condition cond, Imm32 imm, RegisterID src, RegisterID dest)
     {
+        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         mul32(imm, src, dest);
-        return Jump(m_assembler.jo());
+        return Jump(m_assembler.jCC(cond));
     }
     
-    Jump joSub32(RegisterID src, RegisterID dest)
+    Jump branchSubPtr(Condition cond, Imm32 imm, RegisterID dest)
     {
-        sub32(src, dest);
-        return Jump(m_assembler.jo());
-    }
-    
-    Jump joSub32(Imm32 imm, RegisterID dest)
-    {
-        sub32(imm, dest);
-        return Jump(m_assembler.jo());
-    }
-    
-    Jump jzSubPtr(Imm32 imm, RegisterID dest)
-    {
+        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         subPtr(imm, dest);
-        return Jump(m_assembler.je());
+        return Jump(m_assembler.jCC(cond));
     }
     
-    Jump jzSub32(Imm32 imm, RegisterID dest)
+    Jump branchSub32(Condition cond, RegisterID src, RegisterID dest)
     {
+        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
+        sub32(src, dest);
+        return Jump(m_assembler.jCC(cond));
+    }
+    
+    Jump branchSub32(Condition cond, Imm32 imm, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         sub32(imm, dest);
-        return Jump(m_assembler.je());
+        return Jump(m_assembler.jCC(cond));
     }
     
 
@@ -1965,49 +1551,34 @@ public:
         m_assembler.ret();
     }
 
-    void sete32(RegisterID src, RegisterID srcDest)
+    void set32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
-        m_assembler.cmpl_rr(srcDest, src);
-        m_assembler.sete_r(srcDest);
-        m_assembler.movzbl_rr(srcDest, srcDest);
+        m_assembler.cmpl_rr(right, left);
+        m_assembler.setCC_r(cond, dest);
+        m_assembler.movzbl_rr(dest, dest);
     }
 
-    void sete32(Imm32 imm, RegisterID srcDest)
+    void set32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
     {
-        compareImm32ForBranchEquality(srcDest, imm.m_value);
-        m_assembler.sete_r(srcDest);
-        m_assembler.movzbl_rr(srcDest, srcDest);
-    }
-
-    void setne32(RegisterID src, RegisterID srcDest)
-    {
-        m_assembler.cmpl_rr(srcDest, src);
-        m_assembler.setne_r(srcDest);
-        m_assembler.movzbl_rr(srcDest, srcDest);
-    }
-
-    void setne32(Imm32 imm, RegisterID srcDest)
-    {
-        compareImm32ForBranchEquality(srcDest, imm.m_value);
-        m_assembler.setne_r(srcDest);
-        m_assembler.movzbl_rr(srcDest, srcDest);
+        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
+            m_assembler.testl_rr(left, left);
+        else
+            m_assembler.cmpl_ir(right.m_value, left);
+        m_assembler.setCC_r(cond, dest);
+        m_assembler.movzbl_rr(dest, dest);
     }
 
     // FIXME:
     // The mask should be optional... paerhaps the argument order should be
     // dest-src, operations always have a dest? ... possibly not true, considering
     // asm ops like test, or pseudo ops like pop().
-    void setnz32(Address address, Imm32 mask, RegisterID dest)
+    void setTest32(Condition cond, Address address, Imm32 mask, RegisterID dest)
     {
-        testImm32(address, mask);
-        m_assembler.setnz_r(dest);
-        m_assembler.movzbl_rr(dest, dest);
-    }
-
-    void setz32(Address address, Imm32 mask, RegisterID dest)
-    {
-        testImm32(address, mask);
-        m_assembler.setz_r(dest);
+        if (mask.m_value == -1)
+            m_assembler.cmpl_im(0, address.offset, address.base);
+        else
+            m_assembler.testl_i32m(mask.m_value, address.offset, address.base);
+        m_assembler.setCC_r(cond, dest);
         m_assembler.movzbl_rr(dest, dest);
     }
 };
