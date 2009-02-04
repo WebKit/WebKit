@@ -991,7 +991,8 @@ void QWebFrame::print(QPrinter *printer) const
 #endif // QT_NO_PRINTER
 
 /*!
-    Evaluate JavaScript defined by \a scriptSource using this frame as context.
+    Evaluates the JavaScript defined by \a scriptSource using this frame as context
+    and returns the result of the last executed statement.
 
     \sa addToJavaScriptWindowObject(), javaScriptWindowObjectCleared()
 */

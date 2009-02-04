@@ -1,3 +1,11 @@
+2009-02-04  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc: Documented the return value of the evaluateJavaScript() function.
+
+        * Api/qwebframe.cpp:
+
 2009-02-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
