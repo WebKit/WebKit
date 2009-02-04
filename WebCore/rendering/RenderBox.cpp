@@ -3152,7 +3152,7 @@ int RenderBox::leftmostPosition(bool /*includeOverflowInterior*/, bool includeSe
 
 bool RenderBox::isAfterContent(RenderObject* child) const
 {
-    return (child && child->style()->styleType() == RenderStyle::AFTER && (!child->isText() || child->isBR()));
+    return (child && child->style()->styleType() == AFTER && (!child->isText() || child->isBR()));
 }
 
 VisiblePosition RenderBox::positionForCoordinates(int xPos, int yPos)

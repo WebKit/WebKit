@@ -180,7 +180,7 @@ void RenderSlider::styleDidChange(RenderStyle::Diff diff, const RenderStyle* old
 PassRefPtr<RenderStyle> RenderSlider::createThumbStyle(const RenderStyle* parentStyle, const RenderStyle* oldStyle)
 {
     RefPtr<RenderStyle> style;
-    RenderStyle* pseudoStyle = getCachedPseudoStyle(RenderStyle::SLIDER_THUMB);
+    RenderStyle* pseudoStyle = getCachedPseudoStyle(SLIDER_THUMB);
     if (pseudoStyle)
         // We may be sharing style with another slider, but we must not share the thumb style.
         style = RenderStyle::clone(pseudoStyle);

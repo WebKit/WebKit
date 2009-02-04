@@ -71,7 +71,7 @@ public:
     int minimumThumbLength();
 
 private:
-    PassRefPtr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, RenderStyle::PseudoId);
+    PassRefPtr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId);
     void updateScrollbarPart(ScrollbarPart, bool destroy = false);
 
     RenderBox* m_owner;

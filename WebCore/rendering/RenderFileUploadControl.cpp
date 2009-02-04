@@ -153,7 +153,7 @@ int RenderFileUploadControl::maxFilenameWidth() const
 
 PassRefPtr<RenderStyle> RenderFileUploadControl::createButtonStyle(const RenderStyle* parentStyle) const
 {
-    RefPtr<RenderStyle> style = getCachedPseudoStyle(RenderStyle::FILE_UPLOAD_BUTTON);
+    RefPtr<RenderStyle> style = getCachedPseudoStyle(FILE_UPLOAD_BUTTON);
     if (!style) {
         style = RenderStyle::create();
         if (parentStyle)

@@ -83,11 +83,11 @@ public:
         ~CSSStyleSelector();
 
         void initElementAndPseudoState(Element*);
-        void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, RenderStyle::PseudoId = RenderStyle::NOPSEUDO);
+        void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
         PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false);
         void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList& list);
 
-        PassRefPtr<RenderStyle> pseudoStyleForElement(RenderStyle::PseudoId, Element*, RenderStyle* parentStyle = 0);
+        PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0);
 
     private:
         RenderStyle* locateSharedStyle();
@@ -186,10 +186,10 @@ public:
             SelectorChecker(Document*, bool strictParsing);
 
             bool checkSelector(CSSSelector*, Element*) const;
-            SelectorMatch checkSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, RenderStyle::PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
-            bool checkOneSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, RenderStyle::PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle*, RenderStyle* elementParentStyle) const;
+            SelectorMatch checkSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
+            bool checkOneSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle*, RenderStyle* elementParentStyle) const;
             PseudoState checkPseudoState(Element*, bool checkVisited = true) const;
-            bool checkScrollbarPseudoClass(CSSSelector*, RenderStyle::PseudoId& dynamicPseudo) const;
+            bool checkScrollbarPseudoClass(CSSSelector*, PseudoId& dynamicPseudo) const;
 
             void allVisitedStateChanged();
             void visitedStateChanged(LinkHash visitedHash);
@@ -197,7 +197,7 @@ public:
             Document* m_document;
             bool m_strictParsing;
             bool m_collectRulesOnly;
-            RenderStyle::PseudoId m_pseudoStyle;
+            PseudoId m_pseudoStyle;
             bool m_documentIsHTML;
             mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
         };
@@ -254,7 +254,7 @@ public:
         MediaQueryEvaluator* m_medium;
         RefPtr<RenderStyle> m_rootDefaultStyle;
 
-        RenderStyle::PseudoId m_dynamicPseudo;
+        PseudoId m_dynamicPseudo;
 
         SelectorChecker m_checker;
 

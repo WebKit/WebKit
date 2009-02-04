@@ -66,7 +66,7 @@ private:
 class MediaTextDisplayElement : public HTMLDivElement
 {
 public:
-    MediaTextDisplayElement(Document*, RenderStyle::PseudoId, HTMLMediaElement*);
+    MediaTextDisplayElement(Document*, PseudoId, HTMLMediaElement*);
     void attachToParent(Element*);
     void update();
 protected:
@@ -84,7 +84,7 @@ public:
 
 class MediaControlInputElement : public HTMLInputElement {
 public:
-    MediaControlInputElement(Document*, RenderStyle::PseudoId, const String& type, HTMLMediaElement*);
+    MediaControlInputElement(Document*, PseudoId, const String& type, HTMLMediaElement*);
     void attachToParent(Element*);
     void update();
     bool hitTest(const IntPoint& absPoint);

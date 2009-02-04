@@ -250,9 +250,9 @@ Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 )
     // style in cases where you need to.
     StyleChange ch = NoInherit;
     EDisplay display1 = s1 ? s1->display() : NONE;
-    bool fl1 = s1 && s1->hasPseudoStyle(RenderStyle::FIRST_LETTER);
+    bool fl1 = s1 && s1->hasPseudoStyle(FIRST_LETTER);
     EDisplay display2 = s2 ? s2->display() : NONE;
-    bool fl2 = s2 && s2->hasPseudoStyle(RenderStyle::FIRST_LETTER);
+    bool fl2 = s2 && s2->hasPseudoStyle(FIRST_LETTER);
         
     if (display1 != display2 || fl1 != fl2 || (s1 && s2 && !s1->contentDataEquivalent(s2)))
         ch = Detach;
@@ -265,21 +265,21 @@ Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 )
     
     // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
     // because setStyle will do the right thing with anything else.
-    if (ch == NoChange && s1->hasPseudoStyle(RenderStyle::BEFORE)) {
-        RenderStyle* ps2 = s2->getCachedPseudoStyle(RenderStyle::BEFORE);
+    if (ch == NoChange && s1->hasPseudoStyle(BEFORE)) {
+        RenderStyle* ps2 = s2->getCachedPseudoStyle(BEFORE);
         if (!ps2)
             ch = NoInherit;
         else {
-            RenderStyle* ps1 = s1->getCachedPseudoStyle(RenderStyle::BEFORE);
+            RenderStyle* ps1 = s1->getCachedPseudoStyle(BEFORE);
             ch = ps1 && *ps1 == *ps2 ? NoChange : NoInherit;
         }
     }
-    if (ch == NoChange && s1->hasPseudoStyle(RenderStyle::AFTER)) {
-        RenderStyle* ps2 = s2->getCachedPseudoStyle(RenderStyle::AFTER);
+    if (ch == NoChange && s1->hasPseudoStyle(AFTER)) {
+        RenderStyle* ps2 = s2->getCachedPseudoStyle(AFTER);
         if (!ps2)
             ch = NoInherit;
         else {
-            RenderStyle* ps1 = s1->getCachedPseudoStyle(RenderStyle::AFTER);
+            RenderStyle* ps1 = s1->getCachedPseudoStyle(AFTER);
             ch = ps2 && *ps1 == *ps2 ? NoChange : NoInherit;
         }
     }

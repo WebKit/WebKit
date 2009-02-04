@@ -161,7 +161,7 @@ void RenderButton::setText(const String& str)
     }
 }
 
-void RenderButton::updateBeforeAfterContent(RenderStyle::PseudoId type)
+void RenderButton::updateBeforeAfterContent(PseudoId type)
 {
     if (m_inner)
         m_inner->children()->updateBeforeAfterContent(m_inner, type, this);

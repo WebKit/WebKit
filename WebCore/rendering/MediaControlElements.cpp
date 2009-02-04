@@ -70,7 +70,7 @@ MediaControlShadowRootElement::MediaControlShadowRootElement(Document* doc, HTML
 
 // ----------------------------
 
-MediaTextDisplayElement::MediaTextDisplayElement(Document* doc, RenderStyle::PseudoId pseudo, HTMLMediaElement* mediaElement) 
+MediaTextDisplayElement::MediaTextDisplayElement(Document* doc, PseudoId pseudo, HTMLMediaElement* mediaElement) 
     : HTMLDivElement(divTag, doc)
     , m_mediaElement(mediaElement)
 {
@@ -98,13 +98,13 @@ void MediaTextDisplayElement::update()
 }
 
 MediaTimeDisplayElement::MediaTimeDisplayElement(Document* doc, HTMLMediaElement* element, bool currentTime)
-    : MediaTextDisplayElement(doc, currentTime ? RenderStyle::MEDIA_CONTROLS_CURRENT_TIME_DISPLAY : RenderStyle::MEDIA_CONTROLS_TIME_REMAINING_DISPLAY, element)
+    : MediaTextDisplayElement(doc, currentTime ? MEDIA_CONTROLS_CURRENT_TIME_DISPLAY : MEDIA_CONTROLS_TIME_REMAINING_DISPLAY, element)
 {
 }
 
 // ----------------------------
 
-MediaControlInputElement::MediaControlInputElement(Document* doc, RenderStyle::PseudoId pseudo, const String& type, HTMLMediaElement* mediaElement) 
+MediaControlInputElement::MediaControlInputElement(Document* doc, PseudoId pseudo, const String& type, HTMLMediaElement* mediaElement) 
     : HTMLInputElement(inputTag, doc)
     , m_mediaElement(mediaElement)
 {
@@ -142,7 +142,7 @@ bool MediaControlInputElement::hitTest(const IntPoint& absPoint)
 // ----------------------------
 
 MediaControlMuteButtonElement::MediaControlMuteButtonElement(Document* doc, HTMLMediaElement* element)
-    : MediaControlInputElement(doc, RenderStyle::MEDIA_CONTROLS_MUTE_BUTTON, "button", element)
+    : MediaControlInputElement(doc, MEDIA_CONTROLS_MUTE_BUTTON, "button", element)
 {
 }
 
@@ -158,7 +158,7 @@ void MediaControlMuteButtonElement::defaultEventHandler(Event* event)
 // ----------------------------
 
 MediaControlPlayButtonElement::MediaControlPlayButtonElement(Document* doc, HTMLMediaElement* element)
-    : MediaControlInputElement(doc, RenderStyle::MEDIA_CONTROLS_PLAY_BUTTON, "button", element)
+    : MediaControlInputElement(doc, MEDIA_CONTROLS_PLAY_BUTTON, "button", element)
 {
 }
 
@@ -178,7 +178,7 @@ void MediaControlPlayButtonElement::defaultEventHandler(Event* event)
 // ----------------------------
 
 MediaControlSeekButtonElement::MediaControlSeekButtonElement(Document* doc, HTMLMediaElement* element, bool forward)
-    : MediaControlInputElement(doc, forward ? RenderStyle::MEDIA_CONTROLS_SEEK_FORWARD_BUTTON : RenderStyle::MEDIA_CONTROLS_SEEK_BACK_BUTTON, "button", element)
+    : MediaControlInputElement(doc, forward ? MEDIA_CONTROLS_SEEK_FORWARD_BUTTON : MEDIA_CONTROLS_SEEK_BACK_BUTTON, "button", element)
     , m_forward(forward)
     , m_seeking(false)
     , m_capturing(false)
@@ -228,7 +228,7 @@ void MediaControlSeekButtonElement::seekTimerFired(Timer<MediaControlSeekButtonE
 // ----------------------------
 
 MediaControlTimelineElement::MediaControlTimelineElement(Document* doc, HTMLMediaElement* element)
-    : MediaControlInputElement(doc, RenderStyle::MEDIA_CONTROLS_TIMELINE, "range", element)
+    : MediaControlInputElement(doc, MEDIA_CONTROLS_TIMELINE, "range", element)
 { 
     setAttribute(precisionAttr, "float");
 }
@@ -276,7 +276,7 @@ void MediaControlTimelineElement::update(bool updateDuration)
 // ----------------------------
 
 MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(Document* doc, HTMLMediaElement* element)
-    : MediaControlInputElement(doc, RenderStyle::MEDIA_CONTROLS_FULLSCREEN_BUTTON, "button", element)
+    : MediaControlInputElement(doc, MEDIA_CONTROLS_FULLSCREEN_BUTTON, "button", element)
 {
 }
 

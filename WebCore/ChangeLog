@@ -1,3 +1,98 @@
+2009-02-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Move PseudoId enum out of RenderStyle and into RenderStyleConstants.h
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::SelectorChecker::SelectorChecker):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaTextDisplayElement::MediaTextDisplayElement):
+        (WebCore::MediaTimeDisplayElement::MediaTimeDisplayElement):
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        (WebCore::MediaControlMuteButtonElement::MediaControlMuteButtonElement):
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement):
+        (WebCore::MediaControlSeekButtonElement::MediaControlSeekButtonElement):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement):
+        * rendering/MediaControlElements.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::updateBeforeAfterContent):
+        (WebCore::RenderBlock::firstLineBlock):
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::isAfterContent):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updateBeforeAfterContent):
+        * rendering/RenderButton.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::createButtonStyle):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::isAfterContent):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::splitInlines):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::updateScrollCornerStyle):
+        (WebCore::RenderLayer::updateResizerStyle):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::createScrollbar):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createPanel):
+        (WebCore::RenderMedia::createTimelineContainer):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::createScrollbar):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionBackgroundColor):
+        (WebCore::RenderObject::selectionForegroundColor):
+        (WebCore::RenderObject::firstLineStyleSlowCase):
+        (WebCore::RenderObject::getCachedPseudoStyle):
+        (WebCore::RenderObject::getUncachedPseudoStyle):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAnonymousBlock):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::destroyLeftoverChildren):
+        (WebCore::beforeAfterContainer):
+        (WebCore::RenderObjectChildList::invalidateCounters):
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        * rendering/RenderObjectChildList.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle):
+        (WebCore::pseudoForScrollbarPart):
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::createThumbStyle):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        (WebCore::RenderTextControlSingleLine::createResultsButtonStyle):
+        (WebCore::RenderTextControlSingleLine::createCancelButtonStyle):
+        (WebCore::RenderTextControlSingleLine::createScrollbar):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::pseudoBit):
+        * rendering/style/RenderStyle.h:
+        (WebCore::):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2009-02-04  David Kilzer  <ddkilzer@apple.com>
 
         CrashTracer: [REGRESSION] 53 crashes in Safari at com.apple.WebCore: WebCore::LegacyWebArchive::create + 2706

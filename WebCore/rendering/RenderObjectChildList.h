@@ -26,7 +26,7 @@
 #ifndef RenderObjectChildList_h
 #define RenderObjectChildList_h
 
-#include "RenderStyle.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 
@@ -54,7 +54,7 @@ public:
     void appendChildNode(RenderObject* owner, RenderObject*, bool fullAppend = true);
     void insertChildNode(RenderObject* owner, RenderObject* child, RenderObject* before, bool fullInsert = true);
 
-    void updateBeforeAfterContent(RenderObject* owner, RenderStyle::PseudoId type, RenderObject* styledObject = 0);
+    void updateBeforeAfterContent(RenderObject* owner, PseudoId type, RenderObject* styledObject = 0);
     void invalidateCounters(RenderObject* owner);
 
 private:

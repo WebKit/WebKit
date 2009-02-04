@@ -185,7 +185,7 @@ bool RenderStyle::isStyleAvailable() const
     return this != CSSStyleSelector::styleNotYetAvailable();
 }
 
-static inline int pseudoBit(RenderStyle::PseudoId pseudo)
+static inline int pseudoBit(PseudoId pseudo)
 {
     return 1 << (pseudo - 1);
 }

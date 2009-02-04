@@ -48,7 +48,7 @@ public:
     void setupInnerStyle(RenderStyle*);
     virtual void updateFromElement();
 
-    virtual void updateBeforeAfterContent(RenderStyle::PseudoId);
+    virtual void updateBeforeAfterContent(PseudoId);
 
     virtual bool hasControlClip() const { return true; }
     virtual IntRect controlClipRect(int /*tx*/, int /*ty*/) const;

@@ -378,7 +378,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
             selectionFillColor = foreground;
         }
 
-        if (RenderStyle* pseudoStyle = object()->getCachedPseudoStyle(RenderStyle::SELECTION)) {
+        if (RenderStyle* pseudoStyle = object()->getCachedPseudoStyle(SELECTION)) {
             ShadowData* shadow = paintInfo.forceBlackText ? 0 : pseudoStyle->textShadow();
             if (shadow != selectionShadow) {
                 if (!paintSelectedTextOnly)
