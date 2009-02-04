@@ -1,3 +1,34 @@
+2009-02-04  Timothy Hatcher  <timothy@apple.com>
+
+        Switched over from using the WebSafeForwarder for the Script Debug
+        delegate and added high performance CallScriptDebugDelegate functions.
+
+        <rdar://problem/6508457> Launching widget in Dashcode debugger is
+        super-slow due forwardInvocation: calling debug delegate
+
+        Reviewed by Oliver Hunt.
+
+        * DefaultDelegates/WebDefaultScriptDebugDelegate.h: Removed.
+        * DefaultDelegates/WebDefaultScriptDebugDelegate.m: Removed.
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::initGlobalCallFrame): Use CallScriptDebugDelegate.
+        (WebScriptDebugger::sourceParsed): Ditto.
+        (WebScriptDebugger::callEvent): Ditto.
+        (WebScriptDebugger::atStatement): Ditto.
+        (WebScriptDebugger::returnEvent): Ditto.
+        (WebScriptDebugger::exception): Ditto.
+        * WebView/WebView.mm:
+        (-[WebViewPrivate dealloc]): Removed scriptDebugDelegateForwarder.
+        (-[WebView _cacheScriptDebugDelegateImplementations]): Added. Gets the
+        method implementations for the script debug delegate. Also caches what
+        didParseSource method to use.
+        (WebViewGetScriptDebugDelegateImplementations): Added. Returns the
+        WebScriptDebugDelegateImplementations structure.
+        (-[WebView setScriptDebugDelegate:]): Call _cacheScriptDebugDelegateImplementations.
+        (CallDelegate): Added more overloaded versions that take different arguments.
+        (CallScriptDebugDelegate): Added overloaded versions that take different arguments.
+        * WebView/WebViewInternal.h:
+
 2009-02-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

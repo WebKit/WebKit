@@ -39,7 +39,6 @@
 #import "WebDatabaseManagerInternal.h"
 #import "WebDefaultEditingDelegate.h"
 #import "WebDefaultPolicyDelegate.h"
-#import "WebDefaultScriptDebugDelegate.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDocument.h"
 #import "WebDocumentInternal.h"
@@ -84,6 +83,7 @@
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
+#import "WebScriptDebugDelegate.h"
 #import "WebTextIterator.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
@@ -340,7 +340,6 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     id editingDelegate;
     id editingDelegateForwarder;
     id scriptDebugDelegate;
-    id scriptDebugDelegateForwarder;
 
     WebInspector *inspector;
     WebNodeHighlight *currentNodeHighlight;
@@ -362,6 +361,7 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     
     WebResourceDelegateImplementationCache resourceLoadDelegateImplementations;
     WebFrameLoadDelegateImplementationCache frameLoadDelegateImplementations;
+    WebScriptDebugDelegateImplementationCache scriptDebugDelegateImplementations;
 
     void *observationInfo;
     
@@ -541,7 +541,6 @@ static BOOL grammarCheckingEnabled;
     [UIDelegateForwarder release];
     [frameLoadDelegateForwarder release];
     [editingDelegateForwarder release];
-    [scriptDebugDelegateForwarder release];
     
     [mediaStyle release];
     
@@ -1422,6 +1421,37 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     return &webView->_private->frameLoadDelegateImplementations;
 }
 
+- (void)_cacheScriptDebugDelegateImplementations
+{
+    WebScriptDebugDelegateImplementationCache *cache = &_private->scriptDebugDelegateImplementations;
+    id delegate = _private->scriptDebugDelegate;
+
+    if (!delegate) {
+        bzero(cache, sizeof(WebScriptDebugDelegateImplementationCache));
+        return;
+    }
+
+    cache->didParseSourceFunc = getMethod(delegate, @selector(webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:));
+    if (cache->didParseSourceFunc)
+        cache->didParseSourceExpectsBaseLineNumber = YES;
+    else
+        cache->didParseSourceFunc = getMethod(delegate, @selector(webView:didParseSource:fromURL:sourceId:forWebFrame:));
+
+    cache->failedToParseSourceFunc = getMethod(delegate, @selector(webView:failedToParseSource:baseLineNumber:fromURL:withError:forWebFrame:));
+    cache->didEnterCallFrameFunc = getMethod(delegate, @selector(webView:didEnterCallFrame:sourceId:line:forWebFrame:));
+    cache->willExecuteStatementFunc = getMethod(delegate, @selector(webView:willExecuteStatement:sourceId:line:forWebFrame:));
+    cache->willLeaveCallFrameFunc = getMethod(delegate, @selector(webView:willLeaveCallFrame:sourceId:line:forWebFrame:));
+    cache->exceptionWasRaisedFunc = getMethod(delegate, @selector(webView:exceptionWasRaised:sourceId:line:forWebFrame:));
+}
+
+WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplementations(WebView *webView)
+{
+    static WebScriptDebugDelegateImplementationCache empty;
+    if (!webView)
+        return &empty;
+    return &webView->_private->scriptDebugDelegateImplementations;
+}
+
 - (id)_policyDelegateForwarder
 {
     if (!_private->policyDelegateForwarder)
@@ -1446,13 +1476,6 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     if (!_private->editingDelegateForwarder)
         _private->editingDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->editingDelegate defaultTarget:[WebDefaultEditingDelegate sharedEditingDelegate] catchExceptions:_private->catchesDelegateExceptions];
     return _private->editingDelegateForwarder;
-}
-
-- (id)_scriptDebugDelegateForwarder
-{
-    if (!_private->scriptDebugDelegateForwarder)
-        _private->scriptDebugDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget:_private->scriptDebugDelegate defaultTarget:[WebDefaultScriptDebugDelegate sharedScriptDebugDelegate] catchExceptions:_private->catchesDelegateExceptions];
-    return _private->scriptDebugDelegateForwarder;
 }
 
 - (void)_closeWindow
@@ -3678,8 +3701,8 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)setScriptDebugDelegate:(id)delegate
 {
     _private->scriptDebugDelegate = delegate;
-    [_private->scriptDebugDelegateForwarder release];
-    _private->scriptDebugDelegateForwarder = nil;
+    [self _cacheScriptDebugDelegateImplementations];
+
     if (delegate)
         [self _attachScriptDebuggerToAllFrames];
     else
@@ -5166,6 +5189,20 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     return nil;
 }
 
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object1, NSInteger integer1, NSInteger integer2, id object2)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self, object1, integer1, integer2, object2);
+    @try {
+        return implementation(delegate, selector, self, object1, integer1, integer2, object2);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
 static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object1, id object2, NSInteger integer, id object3)
 {
     if (!delegate)
@@ -5174,6 +5211,34 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
         return implementation(delegate, selector, self, object1, object2, integer, object3);
     @try {
         return implementation(delegate, selector, self, object1, object2, integer, object3);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object1, NSInteger integer1, id object2, NSInteger integer2, id object3)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self, object1, integer1, object2, integer2, object3);
+    @try {
+        return implementation(delegate, selector, self, object1, integer1, object2, integer2, object3);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object1, NSInteger integer, id object2, id object3, id object4)
+{
+    if (!delegate)
+        return nil;
+    if (!self->_private->catchesDelegateExceptions)
+        return implementation(delegate, selector, self, object1, integer, object2, object3, object4);
+    @try {
+        return implementation(delegate, selector, self, object1, integer, object2, object3, object4);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -5319,6 +5384,26 @@ BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, W
         ReportDiscardedDelegateException(selector, exception);
     }
     return result;
+}
+
+id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, NSInteger integer, id object3)
+{
+    return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, object2, integer, object3);
+}
+
+id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id object1, NSInteger integer1, id object2, NSInteger integer2, id object3)
+{
+    return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer1, object2, integer2, object3);
+}
+
+id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id object1, NSInteger integer, id object2, id object3, id object4)
+{
+    return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer, object2, object3, object4);
+}
+
+id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id object1, NSInteger integer1, NSInteger integer2, id object2)
+{
+    return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, integer1, integer2, object2);
 }
 
 // The form delegate needs to have it's own implementation, because the first argument is never the WebView

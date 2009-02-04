@@ -1,3 +1,14 @@
+2009-02-04  Timothy Hatcher  <timothy@apple.com>
+
+        Removed the WebDefaultScriptDebugDelegate now that we have CallScriptDebugDelegate.
+
+        <rdar://problem/6508457> Launching widget in Dashcode debugger is
+        super-slow due forwardInvocation: calling debug delegate
+
+        Reviewed by Oliver Hunt.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-02-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
