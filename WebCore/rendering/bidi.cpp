@@ -103,9 +103,9 @@ static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
     int extraWidth = 0;
     RenderObject* parent = child->parent();
     while (parent->isBox() && parent->isInline() && !parent->isInlineBlockOrInlineTable() && lineDepth++ < cMaxLineDepth) {
-        if (start && parent->firstChild() == child)
+        if (start && !child->previousSibling())
             extraWidth += getBorderPaddingMargin(toRenderBox(parent), false);
-        if (end && parent->lastChild() == child)
+        if (end && !child->nextSibling())
             extraWidth += getBorderPaddingMargin(toRenderBox(parent), true);
         child = parent;
         parent = child->parent();
@@ -173,7 +173,7 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
 
     while (current) {
         next = 0;
-        if (!oldEndOfInline && !current->isFloating() && !current->isReplaced() && !current->isPositioned()) {
+        if (!oldEndOfInline && !current->isFloating() && !current->isReplaced() && !current->isPositioned() && !current->isText()) {
             next = current->firstChild();
             if (next && resolver && next->isRenderInline()) {
                 EUnicodeBidi ub = next->style()->unicodeBidi();

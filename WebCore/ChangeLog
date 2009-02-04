@@ -1,3 +1,14 @@
+2009-02-03  David Hyatt  <hyatt@apple.com>
+
+        Reduce the number of calls to virtualChildren (indirectly made via RenderObject::firstChild()).
+        This is a small gain on the PLT.
+
+        Reviewed by Mark Rowe
+
+        * rendering/bidi.cpp:
+        (WebCore::inlineWidth):
+        (WebCore::bidiNext):
+
 2009-02-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
