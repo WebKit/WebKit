@@ -1,3 +1,13 @@
+2009-02-03  David Hyatt  <hyatt@apple.com>
+
+        Add inline capacity back to CSSMutableStyleDeclaration now that the bug in Vector has been fixed.
+
+        Reviewed by Darin Adler & Sam Weinig
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet):
+        * css/CSSMutableStyleDeclaration.h:
+
 2009-02-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
