@@ -137,36 +137,40 @@ int InlineTextBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
 
     int ellipsisX = ltr ? blockEdge - ellipsisWidth : blockEdge + ellipsisWidth;
     
-    // For LTR, if the left edge of the ellipsis is to the left of our text run, then we are the run that will get truncated.
-    if (ltr) {
-        if (ellipsisX <= m_x) {
-            // Too far.  Just set full truncation, but return -1 and let the ellipsis just be placed at the edge of the box.
-            m_truncation = cFullTruncation;
-            foundBox = true;
-            return -1;
-        }
-
-        if (ellipsisX < m_x + m_width) {
-            if (direction() == RTL)
-                return -1; // FIXME: Support LTR truncation when the last run is RTL someday.
-
-            foundBox = true;
-
-            int offset = offsetForPosition(ellipsisX, false);
-            if (offset == 0) {
-                // No characters should be rendered.  Set ourselves to full truncation and place the ellipsis at the min of our start
-                // and the ellipsis edge.
-                m_truncation = cFullTruncation;
-                return min(ellipsisX, m_x);
-            }
-            
-            // Set the truncation index on the text run.  The ellipsis needs to be placed just after the last visible character.
-            m_truncation = offset;
-            return m_x + toRenderText(m_object)->width(m_start, offset, textPos(), m_firstLine);
-        }
+    // Criteria for full truncation:
+    // LTR: the left edge of the ellipsis is to the left of our text run.
+    // RTL: the right edge of the ellipsis is to the right of our text run.
+    bool ltrFullTruncation = ltr && ellipsisX <= m_x;
+    bool rtlFullTruncation = !ltr && ellipsisX >= (m_x + m_width);
+    if (ltrFullTruncation || rtlFullTruncation) {
+        // Too far.  Just set full truncation, but return -1 and let the ellipsis just be placed at the edge of the box.
+        m_truncation = cFullTruncation;
+        foundBox = true;
+        return -1;
     }
-    else {
-        // FIXME: Support RTL truncation someday, including both modes (when the leftmost run on the line is either RTL or LTR)
+
+    bool ltrEllipsisWithinBox = ltr && (ellipsisX < m_x + m_width);
+    bool rtlEllipsisWithinBox = !ltr && (ellipsisX > m_x);
+    if (ltrEllipsisWithinBox || rtlEllipsisWithinBox) {
+        if (ltr && direction() == RTL || !ltr && direction() == LTR)
+            return -1; // FIXME: Support cases in which the last run's directionality differs from the context.
+
+        foundBox = true;
+
+        int offset = offsetForPosition(ellipsisX, false);
+        if (offset == 0) {
+            // No characters should be rendered.  Set ourselves to full truncation and place the ellipsis at the min of our start
+            // and the ellipsis edge.
+            m_truncation = cFullTruncation;
+            return min(ellipsisX, m_x);
+        }
+
+        // Set the truncation index on the text run.  The ellipsis needs to be placed just after the last visible character.
+        m_truncation = offset;
+        if (ltr)
+            return m_x + toRenderText(m_object)->width(m_start, offset, textPos(), m_firstLine);
+        else
+            return m_x + (m_width - toRenderText(m_object)->width(m_start, offset, textPos(), m_firstLine)) - ellipsisWidth;
     }
     return -1;
 }
@@ -570,9 +574,13 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
 
     if (m_truncation == cFullTruncation)
         return;
-    
-    int width = (m_truncation == cNoTruncation) ? m_width
-        : toRenderText(m_object)->width(m_start, m_truncation, textPos(), m_firstLine);
+
+    int width = m_width;
+    if (m_truncation != cNoTruncation) {
+        width = toRenderText(m_object)->width(m_start, m_truncation, textPos(), m_firstLine);
+        if (direction() == RTL)
+            tx += (m_width - width);
+    }
     
     // Get the text decoration colors.
     Color underline, overline, linethrough;

@@ -1,3 +1,17 @@
+2009-02-04  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23471
+        Fix text-overflow:ellipsis; for RTL case.
+
+        Test: fast/css/text-overflow-ellipses.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::placeEllipsisBox): Add support for rtl placement.
+        (WebCore::InlineTextBox::paintDecoration): Correctly draw decorations
+        for rtl truncation.
+
 2009-02-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

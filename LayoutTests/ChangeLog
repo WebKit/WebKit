@@ -1,3 +1,19 @@
+2009-02-04  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23471
+        Fix text-overflow:ellipsis; for RTL case.
+
+        Rebaseline LayoutTests/editing/spelling/inline_spelling_markers.html to reflect correct behavior.
+
+        * fast/css/text-overflow-ellipses.html: Added.
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.checksum:
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.png:
+        * platform/mac/fast/css/text-overflow-ellipses-expected.checksum: Added.
+        * platform/mac/fast/css/text-overflow-ellipses-expected.png: Added.
+        * platform/mac/fast/css/text-overflow-ellipses-expected.txt: Added.
+
 2009-02-03  Brad Garcia  <bgarcia@google.com>
 
         Reviewed by Eric Seidel.

@@ -1,0 +1,60 @@
+<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="TEXT/HTML; CHARSET=utf8">
+<head>
+<style>
+.testDiv {
+    width: 180px;
+    height: 20px;
+    border: 1px solid black;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 0 0 20px 0;
+}
+
+.rtl {
+    direction: rtl;
+}
+
+.forcertl {
+    direction: rtl;
+    unicode-bidi: bidi-override;
+}
+
+.ellipses {
+    text-overflow:ellipsis;
+}
+</style>
+</head>
+<body>
+
+This tests checks that the text-overflow:ellipses property is handled correctly
+for bidi text.<br><br>
+
+Pass if the ellipses do not overlap the text and the underlines for the links are
+placed under the text and not the ellipses.
+<br><br>
+
+LTR:
+<div class="testDiv ellipses">
+Lorem ipsum dolor sit amet, consectetur adipiscing
+</div>
+
+RTL:
+<div class="testDiv rtl ellipses">
+כשהטקסט ערוך מדי נרצה להוסיף אליפסות בסוף שורה
+</div>
+
+RTL Override:
+<div class="testDiv forcertl ellipses">
+Lorem ipsum dolor sit amet, consectetur adipiscing
+</div>
+
+
+LTR link:
+<div class="testDiv ellipses">
+<a href=#>Lorem ipsum dolor sit amet, consectetur adipiscing</a>
+</div>
+
+RTL link:
+<div class="testDiv forcertl ellipses">
+<a href=#>Lorem ipsum dolor sit amet, consectetur adipiscing</a>
+</div>
