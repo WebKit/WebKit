@@ -1,3 +1,74 @@
+2009-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23360
+        
+        When using accelerated compositing, make repaints use the correct
+        repaint container. Hook up the RenderLayerCompositor in RenderView,
+        and add to RenderView a method that repaints both the view
+        contents, and any intersecting composited layers.
+        
+        Make enclosingCompositingLayer() a method on RenderObject, and update
+        the compositor to use that. Add a helper method on the compositor to
+        get the non-self compositing ancestor: ancestorCompositingLayer().
+        
+        Call repaintRectangleInViewAndCompositedLayers() in places that don't do
+        container-relative repainting: selection redraw on focus change, caret,
+        and widget updates.
+        
+        Fix a bug in RenderLayerCompositor where the m_compositingLayersNeedUpdate flag
+        would get cleared for partial updates, thus preventing subsequent full updates.
+        
+        Fix a bug in RenderLayer::ensureBacking() that made new backing every time.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::recomputeCaretRect):
+        (WebCore::SelectionController::invalidateCaretRect):
+        (WebCore::SelectionController::focusedOrActiveStateChanged):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::compositor):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::ensureBacking):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::backing):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::notifyTransitionStarted):
+        (WebCore::RenderLayerBacking::notifyAnimationStarted):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        (WebCore::RenderLayerCompositor::ancestorCompositingLayer):
+        (WebCore::RenderLayerCompositor::clippedByAncestor):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingCompositingLayer):
+        (WebCore::RenderObject::containingBlockWidth):
+        (WebCore::RenderObject::containingBlockHeight):
+        (WebCore::RenderObject::containerForRepaint):
+        (WebCore::RenderObject::repaintUsingContainer):
+        * rendering/RenderObject.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::shouldRepaint):
+        (WebCore::RenderView::repaintViewRectangle):
+        (WebCore::RenderView::repaintRectangleInViewAndCompositedLayers):
+        (WebCore::RenderView::setMaximalOutlineSize):
+        (WebCore::RenderView::usesCompositing):
+        (WebCore::RenderView::compositor):
+        (WebCore::RenderView::didMoveOnscreen):
+        (WebCore::RenderView::willMoveOffscreen):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::updateWidgetPosition):
+
 2009-02-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.

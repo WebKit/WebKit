@@ -558,8 +558,10 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
         IntRect repaintRect(x, y, r.width(), r.height());
         r = intersection(repaintRect, boxRect);
     }
-    ASSERT(repaintContainer != this);
-    cb->computeRectForRepaint(repaintContainer, r);
+    // FIXME: need to ensure that we compute the correct repaint rect when the repaint container
+    // is an inline.
+    if (repaintContainer != this)
+        cb->computeRectForRepaint(repaintContainer, r);
 
     if (ow) {
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {

@@ -30,6 +30,7 @@
 
 #include "AnimationController.h"
 #include "ChromeClient.h"
+#include "CSSPropertyNames.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
 #include "HitTestRequest.h"
@@ -115,12 +116,13 @@ void RenderLayerCompositor::updateCompositingLayers(RenderLayer* updateRoot)
     if (!m_compositingLayersNeedUpdate)
         return;
 
-    m_compositingLayersNeedUpdate = false;
-
     ASSERT(inCompositingMode());
 
-    if (!updateRoot)
+    if (!updateRoot) {
+        // Only clear the flag if we're updating the entire hierarchy
+        m_compositingLayersNeedUpdate = false;
         updateRoot = rootRenderLayer();
+    }
 
 #if PROFILE_LAYER_REBUILD
     ++m_rootLayerUpdateCount;
@@ -149,7 +151,7 @@ void RenderLayerCompositor::updateCompositingLayers(RenderLayer* updateRoot)
         fprintf(stderr, "Update %d: computeCompositingRequirements for the world took %fms\n"
                     m_rootLayerUpdateCount, 1000.0 * (endTime - startTime));
 #endif
-    ASSERT(!m_compositingLayersNeedUpdate);
+    ASSERT(updateRoot || !m_compositingLayersNeedUpdate);
 }
 
 bool RenderLayerCompositor::updateLayerCompositingState(RenderLayer* layer, StyleDifference diff)
@@ -170,8 +172,8 @@ bool RenderLayerCompositor::updateLayerCompositingState(RenderLayer* layer, Styl
     }
     
     if (layerChanged) {
-        // invalidate the parent in this region
-        RenderLayer* compLayer = enclosingCompositingLayer(layer, false);
+        // Invalidate the parent in this region.
+        RenderLayer* compLayer = ancestorCompositingLayer(layer);
         if (compLayer) {
             // We can't reliably compute a dirty rect, because style may have changed already, 
             // so just dirty the whole parent layer
@@ -272,7 +274,7 @@ void RenderLayerCompositor::layerWillBeRemoved(RenderLayer* parent, RenderLayer*
     if (parent->renderer()->documentBeingDestroyed())
         return;
 
-    RenderLayer* compLayer = enclosingCompositingLayer(parent, false);
+    RenderLayer* compLayer = parent->renderer()->enclosingCompositingLayer();
     if (compLayer) {
         IntRect ancestorRect = calculateCompositedBounds(child, compLayer);
         compLayer->setBackingNeedsRepaintInRect(ancestorRect);
@@ -282,25 +284,6 @@ void RenderLayerCompositor::layerWillBeRemoved(RenderLayer* parent, RenderLayer*
     }
 
     setCompositingLayersNeedUpdate();
-}
-
-RenderLayer* RenderLayerCompositor::enclosingCompositingLayer(RenderLayer* layer, bool includeSelf) const
-{
-    if (includeSelf && layer->isComposited())
-        return layer;
-
-    bool childOverflowOnly = layer->isOverflowOnly();
-    for (RenderLayer* curr = layer->parent(); curr; curr = curr->parent()) {
-        // Compositing layers are parented according to stacking order and overflow list,
-        // so we have to check whether the parent is a stacking context, or whether 
-        // the child is overflow-only.
-        if (curr->isComposited() && (childOverflowOnly || curr->isStackingContext()))
-            return curr;
-        
-        childOverflowOnly = curr->isOverflowOnly();
-    }
-         
-    return 0;
 }
 
 RenderLayer* RenderLayerCompositor::enclosingNonStackingClippingLayer(const RenderLayer* layer) const
@@ -414,6 +397,14 @@ void RenderLayerCompositor::setForcedCompositingLayer(RenderLayer* layer, bool f
         if (layer->backing())
             layer->backing()->forceCompositingLayer(false);
     }
+}
+
+RenderLayer* RenderLayerCompositor::ancestorCompositingLayer(const RenderLayer* layer) const
+{
+    if (!layer->parent())
+        return 0;
+
+    return layer->parent()->renderer()->enclosingCompositingLayer();
 }
 
 void RenderLayerCompositor::setCompositingParent(RenderLayer* childLayer, RenderLayer* parentLayer)
@@ -687,7 +678,7 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer* layer) const
     if (!layer->isComposited() || !layer->parent())
         return false;
 
-    RenderLayer* compositingAncestor = enclosingCompositingLayer(layer, false);
+    RenderLayer* compositingAncestor = ancestorCompositingLayer(layer);
 
     // We need ancestor clipping if something clips between this layer and its compositing, stacking context ancestor
     for (RenderLayer* curLayer = layer->parent(); curLayer && curLayer != compositingAncestor; curLayer = curLayer->parent()) {

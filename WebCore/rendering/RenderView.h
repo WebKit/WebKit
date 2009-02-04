@@ -28,8 +28,13 @@
 #include "Frame.h"
 #include "LayoutState.h"
 #include "RenderBlock.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
+    
+#if USE(ACCELERATED_COMPOSITING)
+class RenderLayerCompositor;
+#endif
 
 class RenderView : public RenderBlock {
 public:
@@ -62,6 +67,9 @@ public:
 
     virtual void computeRectForRepaint(RenderBox* repaintContainer, IntRect&, bool fixed = false);
     virtual void repaintViewRectangle(const IntRect&, bool immediate = false);
+    // Repaint the view, and all composited layers that intersect the given absolute rectangle.
+    // FIXME: ideally we'd never have to do this, if all repaints are container-relative.
+    virtual void repaintRectangleInViewAndCompositedLayers(const IntRect&, bool immediate = false);
 
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
@@ -85,7 +93,11 @@ public:
 
     IntRect selectionBounds(bool clipToVisibleContent = true) const;
 
+#if USE(ACCELERATED_COMPOSITING)
+    void setMaximalOutlineSize(int o);
+#else
     void setMaximalOutlineSize(int o) { m_maximalOutlineSize = o; }
+#endif
     int maximalOutlineSize() const { return m_maximalOutlineSize; }
 
     virtual IntRect viewRect() const;
@@ -146,11 +158,21 @@ public:
 
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
 
+    // Notifications that this view became visible in a window, or will be
+    // removed from the window.
     void didMoveOnscreen();
     void willMoveOffscreen();
 
+#if USE(ACCELERATED_COMPOSITING)
+    RenderLayerCompositor* compositor();
+    bool usesCompositing() const;
+#endif
+
 protected:
     virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBox* repaintContainer, bool fixed = false) const;
+
+private:
+    bool shouldRepaint(const IntRect& r) const;
 
 protected:
     FrameView* m_frameView;
@@ -177,6 +199,9 @@ private:
     bool m_forcedPageBreak;
     LayoutState* m_layoutState;
     unsigned m_layoutStateDisableCount;
+#if USE(ACCELERATED_COMPOSITING)
+    OwnPtr<RenderLayerCompositor> m_compositor;
+#endif
 };
 
 inline RenderView* toRenderView(RenderObject* o)

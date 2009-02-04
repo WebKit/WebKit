@@ -457,6 +457,20 @@ RenderLayer* RenderObject::enclosingLayer() const
     return 0;
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+RenderLayer* RenderObject::enclosingCompositingLayer() const
+{
+    const RenderObject* curr = this;
+    while (curr) {
+        RenderLayer* layer = curr->hasLayer() ? toRenderBox(curr)->layer() : 0;
+        if (layer && layer->isComposited())
+            return layer;
+        curr = curr->parent();
+    }
+    return 0;
+}
+#endif
+
 RenderBox* RenderObject::enclosingBox() const
 {
     RenderObject* curr = const_cast<RenderObject*>(this);
@@ -558,13 +572,11 @@ RenderBlock* RenderObject::containingBlock() const
 
 int RenderObject::containingBlockWidth() const
 {
-    // FIXME ?
     return containingBlock()->availableWidth();
 }
 
 int RenderObject::containingBlockHeight() const
 {
-    // FIXME ?
     return containingBlock()->contentHeight();
 }
 
@@ -1563,7 +1575,15 @@ void RenderObject::paint(PaintInfo& /*paintInfo*/, int /*tx*/, int /*ty*/)
 
 RenderBox* RenderObject::containerForRepaint() const
 {
-    // For now, all repaints are root-relative.
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* v = view()) {
+        if (v->usesCompositing()) {
+            RenderLayer* compLayer = enclosingCompositingLayer();
+            return compLayer ? compLayer->renderer() : 0;
+        }
+    }
+#endif
+    // Do root-relative repaint.
     return 0;
 }
 
@@ -1573,8 +1593,15 @@ void RenderObject::repaintUsingContainer(RenderBox* repaintContainer, const IntR
         RenderView* v = repaintContainer ? toRenderView(repaintContainer) : view();
         v->repaintViewRectangle(r, immediate);
     } else {
-        // Handle container-relative repaints eventually.
+#if USE(ACCELERATED_COMPOSITING)
+        RenderView* v = view();
+        if (v->usesCompositing()) {
+            ASSERT(repaintContainer->hasLayer() && repaintContainer->layer()->isComposited());
+            repaintContainer->layer()->setBackingNeedsRepaintInRect(r);
+        }
+#else
         ASSERT_NOT_REACHED();
+#endif
     }
 }
 

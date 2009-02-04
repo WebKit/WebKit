@@ -31,6 +31,10 @@
 #include "RenderLayer.h"
 #include "RenderSelectionInfo.h"
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerCompositor.h"
+#endif
+
 namespace WebCore {
 
 RenderView::RenderView(Node* node, FrameView* view)
@@ -214,12 +218,20 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
     }
 }
 
-void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
+bool RenderView::shouldRepaint(const IntRect& r) const
 {
-    if (printing() || ur.width() == 0 || ur.height() == 0)
-        return;
+    if (printing() || r.width() == 0 || r.height() == 0)
+        return false;
 
     if (!m_frameView)
+        return false;
+    
+    return true;
+}
+
+void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
+{
+    if (!shouldRepaint(ur))
         return;
 
     // We always just invalidate the root view, since we could be an iframe that is clipped out
@@ -240,6 +252,24 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
                obj->borderTop() + obj->paddingTop());
         obj->repaintRectangle(r, immediate);
     }
+}
+
+void RenderView::repaintRectangleInViewAndCompositedLayers(const IntRect& ur, bool immediate)
+{
+    if (!shouldRepaint(ur))
+        return;
+
+    repaintViewRectangle(ur, immediate);
+    
+#if USE(ACCELERATED_COMPOSITING)
+    // If we're a frame, repaintViewRectangle will have repainted via a RenderObject in the
+    // parent document.
+    if (document()->ownerElement())
+        return;
+
+    if (compositor()->inCompositingMode())
+        compositor()->repaintCompositedLayersAbsoluteRect(ur);
+#endif
 }
 
 void RenderView::computeRectForRepaint(RenderBox* repaintContainer, IntRect& rect, bool fixed)
@@ -314,6 +344,21 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
     }
     return selRect;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+// Compositing layer dimensions take outline size into account, so we have to recompute layer
+// bounds when it changes.
+// FIXME: This is ugly; it would be nice to have a better way to do this.
+void RenderView::setMaximalOutlineSize(int o)
+{
+    if (o != m_maximalOutlineSize) {
+        m_maximalOutlineSize = o;
+
+        if (m_frameView)
+            m_frameView->updateCompositingLayers(FrameView::ForcedCompositingUpdate);
+    }
+}
+#endif
 
 void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos)
 {
@@ -617,14 +662,35 @@ void RenderView::updateHitTestResult(HitTestResult& result, const IntPoint& poin
     }
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+bool RenderView::usesCompositing() const
+{
+    return m_compositor && m_compositor->inCompositingMode();
+}
+
+RenderLayerCompositor* RenderView::compositor()
+{
+    if (!m_compositor)
+        m_compositor.set(new RenderLayerCompositor(this));
+
+    return m_compositor.get();
+}
+#endif
+
 void RenderView::didMoveOnscreen()
 {
-    // FIXME: will call into RenderLayerCompositor
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_compositor)
+        m_compositor->didMoveOnscreen();
+#endif
 }
 
 void RenderView::willMoveOffscreen()
 {
-    // FIXME: will call into RenderLayerCompositor
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_compositor)
+        m_compositor->willMoveOffscreen();
+#endif
 }
 
 } // namespace WebCore

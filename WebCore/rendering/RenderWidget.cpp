@@ -235,8 +235,9 @@ void RenderWidget::updateWidgetPosition()
         if (checkForRepaintDuringLayout()) {
             RenderView* v = view();
             if (!v->printing()) {
-                v->repaintViewRectangle(oldBounds);
-                v->repaintViewRectangle(newBounds);
+                // FIXME: do container-relative repaint
+                v->repaintRectangleInViewAndCompositedLayers(oldBounds);
+                v->repaintRectangleInViewAndCompositedLayers(newBounds);
             }
         }
 
