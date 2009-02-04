@@ -195,6 +195,7 @@ static bool fillNonBMPGlyphs(unsigned offset,
                                  fontData->m_font.scriptCache(),
                                  fontData->m_font.scriptFontProperties());
     state.setInhibitLigate(true);
+    state.setDisableFontFallback(true);
     state.init();
 
     for (unsigned i = 0; i < length; i++) {

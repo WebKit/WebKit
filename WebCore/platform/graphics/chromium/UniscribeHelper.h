@@ -145,6 +145,16 @@ public:
         m_ascent = ascent;
     }
 
+    // When set to true, this class is used only to look up glyph
+    // indices for a range of Unicode characters without glyph placement.
+    // By default, it's false. This should be set to true when this
+    // class is used for glyph index look-up for non-BMP characters
+    // in GlyphPageNodeChromiumWin.cpp.
+    void setDisableFontFallback(bool disableFontFallback)
+    {
+        m_disableFontFallback = true;
+    }
+
     // You must call this after setting any options but before doing any
     // other calls like asking for widths or drawing.
     void init()
@@ -378,6 +388,7 @@ private:
     int m_letterSpacing;
     int m_spaceWidth;
     int m_wordSpacing;
+    bool m_disableFontFallback;
 
     // Uniscribe breaks the text into Runs. These are one length of text that is
     // in one script and one direction. This array is in reading order.

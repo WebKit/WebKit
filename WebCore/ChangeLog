@@ -1,3 +1,31 @@
+2009-02-04  Jungshik Shin <jshin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        This comes from Chromium patch (http://codereview.chromium.org/17624).
+
+        Add m_disableFontFallback to UniscriberHelper class and set it
+        to true when filling up glyph pages for non-BMP code points.
+        When it's set true, UniscriberHelper does not do its own font
+        fallback. Neither does it do glyph placement. Font fallback
+        will be taken care of in the simple script font path and glyph
+        placement is not necessary for simple scripts.
+
+        Layout test is missing at the moment due to the lack of freely
+        distributable font covering a non-BMP code page. A test page
+        is available at http://i18nl10n.com/webkit/nonbmp2.html
+
+        See also https://bugs.webkit.org/show_bug.cgi?id=23602
+
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        (WebCore::fillNonBMPGlyphs):
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::UniscribeHelper):
+        (WebCore::UniscribeHelper::shape):
+        (WebCore::UniscribeHelper::fillShapes):
+        * platform/graphics/chromium/UniscribeHelper.h:
+        (WebCore::UniscribeHelper::setDisableFontFallback):
+
 2009-02-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.
