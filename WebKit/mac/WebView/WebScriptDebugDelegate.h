@@ -37,7 +37,7 @@
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
 typedef int WebSourceId;
 #else
-typedef int WebSourceId; // FIXME <rdar://problem/6263293>: Turn this int into an intptr_t once <rdar://problem/6263297> is fixed.
+typedef intptr_t WebSourceId;
 #endif
 
 @class WebView;

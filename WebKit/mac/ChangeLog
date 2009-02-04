@@ -1,5 +1,15 @@
 2009-02-04  Timothy Hatcher  <timothy@apple.com>
 
+        Change the WebSourceId typedef from int to intptr_t now that <rdar://problem/6263297> is fixed.
+
+        <rdar://problem/6263293> WebScriptDebugDelegate should use intptr_t for sourceId, not int
+
+        Reviewed by Oliver Hunt.
+
+        * WebView/WebScriptDebugDelegate.h:
+
+2009-02-04  Timothy Hatcher  <timothy@apple.com>
+
         Switched over from using the WebSafeForwarder for the Script Debug
         delegate and added high performance CallScriptDebugDelegate functions.
 
