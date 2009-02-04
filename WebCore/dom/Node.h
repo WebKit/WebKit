@@ -47,6 +47,7 @@ class KeyboardEvent;
 class NSResolver;
 class NamedAttrMap;
 class NodeList;
+class NodeRareData;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
@@ -56,7 +57,6 @@ class RenderBox;
 class RenderObject;
 class RenderStyle;
 class StringBuilder;
-class NodeRareData;
 
 typedef int ExceptionCode;
 

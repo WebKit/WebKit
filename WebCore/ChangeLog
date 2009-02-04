@@ -1,3 +1,17 @@
+2009-02-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Remove some unnecessary #includes of RenderStyle.h
+
+        * css/CSSPrimitiveValueMappings.h:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        * dom/Node.h:
+        * rendering/PointerEventsHitRules.h:
+        * rendering/RenderImageGeneratedContent.h:
+        * rendering/RenderMarquee.h:
+        * rendering/RenderScrollbar.h:
+
 2009-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Sam Weinig.

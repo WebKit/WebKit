@@ -26,13 +26,14 @@
 #ifndef RenderScrollbar_h
 #define RenderScrollbar_h
 
+#include "RenderStyleConstants.h"
 #include "Scrollbar.h"
-#include "RenderStyle.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
 class RenderBox;
+class RenderStyle;
 class RenderScrollbarPart;
 class RenderStyle;
 

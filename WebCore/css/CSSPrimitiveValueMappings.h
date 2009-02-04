@@ -29,7 +29,12 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
-#include "RenderStyle.h"
+#include "GraphicsTypes.h"
+#include "Path.h"
+#include "RenderStyleConstants.h"
+#include "SVGRenderStyleDefs.h"
+#include "TextDirection.h"
+#include "ThemeTypes.h"
 
 namespace WebCore {
 

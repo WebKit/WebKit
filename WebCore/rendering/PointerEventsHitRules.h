@@ -22,7 +22,7 @@
 #ifndef PointerEventsHitRules_h
 #define PointerEventsHitRules_h
 
-#include "RenderStyle.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 
