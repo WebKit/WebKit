@@ -122,8 +122,8 @@ public:
     void checkConsistency() const;
 
 protected:
-    virtual void styleWillChange(RenderStyle::Diff, const RenderStyle*) { }
-    virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
+    virtual void styleWillChange(StyleDifference, const RenderStyle*) { }
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual void setTextInternal(PassRefPtr<StringImpl>);
     virtual void calcPrefWidths(int leadWidth);

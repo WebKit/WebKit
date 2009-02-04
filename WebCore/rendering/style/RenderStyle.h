@@ -974,13 +974,7 @@ public:
 
     bool inheritedNotEqual(RenderStyle*) const;
 
-    // The difference between two styles.  The following values are used:
-    // (1) Equal - The two styles are identical
-    // (2) Repaint - The object just needs to be repainted.
-    // (3) RepaintLayer - The layer and its descendant layers needs to be repainted.
-    // (4) Layout - A layout is required.
-    enum Diff { Equal, Repaint, RepaintLayer, LayoutPositionedMovementOnly, Layout };
-    Diff diff(const RenderStyle*) const;
+    StyleDifference diff(const RenderStyle*) const;
 
     bool isDisplayReplacedType() const
     {

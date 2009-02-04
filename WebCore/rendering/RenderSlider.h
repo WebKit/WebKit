@@ -59,7 +59,7 @@ namespace WebCore {
         bool inDragMode() const;
 
     protected:
-        virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
+        virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     
     private:
         PassRefPtr<RenderStyle> createThumbStyle(const RenderStyle* parentStyle, const RenderStyle* oldStyle = 0);

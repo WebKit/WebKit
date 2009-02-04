@@ -127,7 +127,7 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
     }
 }
 
-void RenderBox::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newStyle)
+void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     s_wasFloating = isFloating();
     s_hadOverflowClip = hasOverflowClip();
@@ -147,21 +147,21 @@ void RenderBox::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newSt
         
         // The background of the root element or the body element could propagate up to
         // the canvas.  Just dirty the entire canvas when our style changes substantially.
-        if (diff >= RenderStyle::Repaint && element() &&
+        if (diff >= StyleDifferenceRepaint && element() &&
                 (element()->hasTagName(htmlTag) || element()->hasTagName(bodyTag)))
             view()->repaint();
         else if (parent() && !isText()) {
             // Do a repaint with the old style first, e.g., for example if we go from
             // having an outline to not having an outline.
-            if (diff == RenderStyle::RepaintLayer) {
+            if (diff == StyleDifferenceRepaintLayer) {
                 layer()->repaintIncludingDescendants();
                 if (!(style()->clip() == newStyle->clip()))
                     layer()->clearClipRectsIncludingDescendants();
-            } else if (diff == RenderStyle::Repaint || newStyle->outlineSize() < style()->outlineSize())
+            } else if (diff == StyleDifferenceRepaint || newStyle->outlineSize() < style()->outlineSize())
                 repaint();
         }
 
-        if (diff == RenderStyle::Layout) {
+        if (diff == StyleDifferenceLayout) {
             // When a layout hint happens, we go ahead and do a repaint of the layer, since the layer could
             // end up being destroyed.
             if (hasLayer()) {
@@ -194,7 +194,7 @@ void RenderBox::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newSt
     RenderObject::styleWillChange(diff, newStyle);
 }
 
-void RenderBox::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
     // during the style change (it's used by clippedOverflowRectForRepaint()).

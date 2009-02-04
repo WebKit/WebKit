@@ -36,7 +36,20 @@ namespace WebCore {
  * and produce invalid results.
  */
 
-// static pseudo styles. Dynamic ones are produced on the fly.
+// The difference between two styles.  The following values are used:
+// (1) StyleDifferenceEqual - The two styles are identical
+// (2) StyleDifferenceRepaint - The object just needs to be repainted.
+// (3) StyleDifferenceRepaintLayer - The layer and its descendant layers needs to be repainted.
+// (4) StyleDifferenceLayout - A layout is required.
+enum StyleDifference {
+    StyleDifferenceEqual,
+    StyleDifferenceRepaint,
+    StyleDifferenceRepaintLayer,
+    StyleDifferenceLayoutPositionedMovementOnly,
+    StyleDifferenceLayout
+};
+
+// Static pseudo styles. Dynamic ones are produced on the fly.
 enum PseudoId {
     NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION, FIRST_LINE_INHERITED, SCROLLBAR, FILE_UPLOAD_BUTTON, INPUT_PLACEHOLDER,
     SLIDER_THUMB, SEARCH_CANCEL_BUTTON, SEARCH_DECORATION, SEARCH_RESULTS_DECORATION, SEARCH_RESULTS_BUTTON, MEDIA_CONTROLS_PANEL,

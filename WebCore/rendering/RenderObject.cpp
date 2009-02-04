@@ -1914,13 +1914,13 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
     if (m_style == style)
         return;
 
-    RenderStyle::Diff diff = RenderStyle::Equal;
+    StyleDifference diff = StyleDifferenceEqual;
     if (m_style)
         diff = m_style->diff(style.get());
 
     // If we have no layer(), just treat a RepaintLayer hint as a normal Repaint.
-    if (diff == RenderStyle::RepaintLayer && !hasLayer())
-        diff = RenderStyle::Repaint;
+    if (diff == StyleDifferenceRepaintLayer && !hasLayer())
+        diff = StyleDifferenceRepaint;
 
     styleWillChange(diff, style.get());
     
@@ -1941,7 +1941,7 @@ void RenderObject::setStyleInternal(PassRefPtr<RenderStyle> style)
     m_style = style;
 }
 
-void RenderObject::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newStyle)
+void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     if (m_style) {
         // If our z-index changes value or our visibility changes,
@@ -1961,14 +1961,14 @@ void RenderObject::styleWillChange(RenderStyle::Diff diff, const RenderStyle* ne
                         l->setHasVisibleContent(true);
                     else if (l->hasVisibleContent() && (this == l->renderer() || l->renderer()->style()->visibility() != VISIBLE)) {
                         l->dirtyVisibleContentStatus();
-                        if (diff > RenderStyle::RepaintLayer)
+                        if (diff > StyleDifferenceRepaintLayer)
                             repaint();
                     }
                 }
             }
         }
 
-        if (m_parent && (diff == RenderStyle::Repaint || newStyle->outlineSize() < m_style->outlineSize()))
+        if (m_parent && (diff == StyleDifferenceRepaint || newStyle->outlineSize() < m_style->outlineSize()))
             repaint();
         if (isFloating() && (m_style->floating() != newStyle->floating()))
             // For changes in float styles, we need to conceivably remove ourselves
@@ -1984,7 +1984,7 @@ void RenderObject::styleWillChange(RenderStyle::Diff diff, const RenderStyle* ne
             && parent() && (parent()->isBlockFlow() || parent()->isRenderInline());
 
         // reset style flags
-        if (diff == RenderStyle::Layout || diff == RenderStyle::LayoutPositionedMovementOnly) {
+        if (diff == StyleDifferenceLayout || diff == StyleDifferenceLayoutPositionedMovementOnly) {
             m_floating = false;
             m_positioned = false;
             m_relPositioned = false;
@@ -2010,7 +2010,7 @@ void RenderObject::styleWillChange(RenderStyle::Diff diff, const RenderStyle* ne
     }
 }
 
-void RenderObject::styleDidChange(RenderStyle::Diff diff, const RenderStyle*)
+void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle*)
 {
     setHasBoxDecorations(m_style->hasBorder() || m_style->hasBackground() || m_style->hasAppearance() || m_style->boxShadow());
 
@@ -2020,11 +2020,11 @@ void RenderObject::styleDidChange(RenderStyle::Diff diff, const RenderStyle*)
     if (!m_parent)
         return;
     
-    if (diff == RenderStyle::Layout)
+    if (diff == StyleDifferenceLayout)
         setNeedsLayoutAndPrefWidthsRecalc();
-    else if (diff == RenderStyle::LayoutPositionedMovementOnly)
+    else if (diff == StyleDifferenceLayoutPositionedMovementOnly)
         setNeedsPositionedMovementLayout();
-    else if (diff == RenderStyle::RepaintLayer || diff == RenderStyle::Repaint)
+    else if (diff == StyleDifferenceRepaintLayer || diff == StyleDifferenceRepaint)
         // Do a repaint with the new style now, e.g., for example if we go from
         // not having an outline to having an outline.
         repaint();

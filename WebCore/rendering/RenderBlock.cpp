@@ -198,11 +198,11 @@ void RenderBlock::destroy()
     RenderContainer::destroy();
 }
 
-void RenderBlock::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newStyle)
+void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     setReplaced(newStyle->isDisplayReplacedType());
     
-    if (style() && parent() && diff == RenderStyle::Layout && style()->position() != newStyle->position()) {
+    if (style() && parent() && diff == StyleDifferenceLayout && style()->position() != newStyle->position()) {
         if (newStyle->position() == StaticPosition)
             // Clear our positioned objects list. Our absolutely positioned descendants will be
             // inserted into our containing block's positioned objects list during layout.
@@ -227,7 +227,7 @@ void RenderBlock::styleWillChange(RenderStyle::Diff diff, const RenderStyle* new
     RenderContainer::styleWillChange(diff, newStyle);
 }
 
-void RenderBlock::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderContainer::styleDidChange(diff, oldStyle);
 

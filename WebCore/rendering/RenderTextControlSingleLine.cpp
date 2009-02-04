@@ -332,7 +332,7 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
         RenderTextControl::forwardEvent(event);
 }
 
-void RenderTextControlSingleLine::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderTextControl::styleDidChange(diff, oldStyle);
 

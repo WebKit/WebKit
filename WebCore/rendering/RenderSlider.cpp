@@ -167,7 +167,7 @@ void RenderSlider::calcPrefWidths()
     setPrefWidthsDirty(false); 
 }
 
-void RenderSlider::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderSlider::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     

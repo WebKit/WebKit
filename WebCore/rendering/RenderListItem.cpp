@@ -49,7 +49,7 @@ RenderListItem::RenderListItem(Node* node)
     setInline(false);
 }
 
-void RenderListItem::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 

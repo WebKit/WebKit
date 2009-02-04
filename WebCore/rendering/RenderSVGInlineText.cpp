@@ -56,7 +56,7 @@ RenderSVGInlineText::RenderSVGInlineText(Node* n, PassRefPtr<StringImpl> str)
 }
 
 
-void RenderSVGInlineText::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     // Skip RenderText's work.
     RenderObject::styleDidChange(diff, oldStyle);

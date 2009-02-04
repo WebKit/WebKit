@@ -94,7 +94,7 @@ RenderInline* RenderInline::inlineContinuation() const
     return toRenderBlock(m_continuation)->inlineContinuation();
 }
 
-void RenderInline::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderContainer::styleDidChange(diff, oldStyle);
 

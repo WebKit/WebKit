@@ -267,7 +267,7 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, in
     }
 }
 
-void RenderFieldset::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderFieldset::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 

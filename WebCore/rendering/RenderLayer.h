@@ -211,7 +211,7 @@ public:
     void setBackingNeedsRepaintInRect(const IntRect& r); // r is in the coordinate space of the layer's render object
 #endif
 
-    void styleChanged(RenderStyle::Diff, const RenderStyle*);
+    void styleChanged(StyleDifference, const RenderStyle*);
 
     RenderMarquee* marquee() const { return m_marquee; }
     void suspendMarquees();

@@ -260,7 +260,7 @@ int RenderTableCell::baselinePosition(bool /*firstLine*/, bool /*isRootLineBox*/
     return paddingTop() + borderTop() + contentHeight();
 }
 
-void RenderTableCell::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newStyle)
+void RenderTableCell::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     if (parent() && section() && style() && style()->height() != newStyle->height())
         section()->setNeedsCellRecalc();
@@ -270,7 +270,7 @@ void RenderTableCell::styleWillChange(RenderStyle::Diff diff, const RenderStyle*
     RenderBlock::styleWillChange(diff, newStyle);
 }
 
-void RenderTableCell::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     setHasBoxDecorations(true);

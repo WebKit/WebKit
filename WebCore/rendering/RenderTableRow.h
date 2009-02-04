@@ -58,7 +58,7 @@ private:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
-    virtual void styleWillChange(RenderStyle::Diff, const RenderStyle* newStyle);
+    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
 
 };
 

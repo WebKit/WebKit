@@ -80,7 +80,7 @@ RenderTextControl::~RenderTextControl()
         m_innerText->detach();
 }
 
-void RenderTextControl::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 

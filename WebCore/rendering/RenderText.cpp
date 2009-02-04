@@ -97,13 +97,13 @@ bool RenderText::isWordBreak() const
     return false;
 }
 
-void RenderText::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     // There is no need to ever schedule repaints from a style change of a text run, since
     // we already did this for the parent of the text run.
     // We do have to schedule layouts, though, since a style change can force us to
     // need to relayout.
-    if (diff == RenderStyle::Layout)
+    if (diff == StyleDifferenceLayout)
         setNeedsLayoutAndPrefWidthsRecalc();
 
     ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;

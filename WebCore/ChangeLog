@@ -1,3 +1,105 @@
+2009-02-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Rename RenderStyle::Diff to StyleDifference and move it to
+        RenderStyleConstants.h.
+
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::styleDidChange):
+        * rendering/RenderBR.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::styleDidChange):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderBox.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::styleWillChange):
+        (WebCore::RenderButton::styleDidChange):
+        * rendering/RenderButton.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::styleDidChange):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::styleDidChange):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::styleDidChange):
+        * rendering/RenderListBox.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::styleDidChange):
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::styleWillChange):
+        (WebCore::RenderListMarker::styleDidChange):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::styleDidChange):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::styleDidChange):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::styleDidChange):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::styleDidChange):
+        * rendering/RenderSVGGradientStop.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::styleDidChange):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::styleWillChange):
+        (WebCore::RenderScrollbarPart::styleDidChange):
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::styleDidChange):
+        * rendering/RenderSlider.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::styleDidChange):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleWillChange):
+        (WebCore::RenderTableCell::styleDidChange):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleWillChange):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::styleDidChange):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::styleWillChange):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::styleDidChange):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::styleDidChange):
+        * rendering/RenderWidget.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::setClip):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2009-02-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.

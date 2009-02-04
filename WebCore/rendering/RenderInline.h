@@ -115,7 +115,7 @@ public:
     }
     
 protected:
-    virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     static RenderInline* cloneInline(RenderInline* src);
 

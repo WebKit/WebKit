@@ -122,20 +122,20 @@ void RenderScrollbarPart::calcPrefWidths()
     setPrefWidthsDirty(false);
 }
 
-void RenderScrollbarPart::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newStyle)
+void RenderScrollbarPart::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     RenderBlock::styleWillChange(diff, newStyle);
     setInline(false);
 }
 
-void RenderScrollbarPart::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+void RenderScrollbarPart::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     setInline(false);
     setPositioned(false);
     setFloating(false);
     setHasOverflowClip(false);
-    if (oldStyle && m_scrollbar && m_part != NoPart && diff >= RenderStyle::Repaint)
+    if (oldStyle && m_scrollbar && m_part != NoPart && diff >= StyleDifferenceRepaint)
         m_scrollbar->theme()->invalidatePart(m_scrollbar, m_part);
 }
 

@@ -48,7 +48,7 @@ namespace WebCore {
         virtual IntRect clippedOverflowRectForRepaint(RenderBox*) { return IntRect(); }
     
     protected:
-        virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
+        virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     private:
         SVGGradientElement* gradientElement() const;
