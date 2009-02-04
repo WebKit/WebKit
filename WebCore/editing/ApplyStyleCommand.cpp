@@ -32,6 +32,8 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
+#include "Editor.h"
+#include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
@@ -50,12 +52,7 @@ using namespace HTMLNames;
 
 class StyleChange {
 public:
-    enum ELegacyHTMLStyles { DoNotUseLegacyHTMLStyles, UseLegacyHTMLStyles };
-
-    explicit StyleChange(CSSStyleDeclaration*, ELegacyHTMLStyles usesLegacyStyles=UseLegacyHTMLStyles);
-    StyleChange(CSSStyleDeclaration*, const Position&, ELegacyHTMLStyles usesLegacyStyles=UseLegacyHTMLStyles);
-
-    static ELegacyHTMLStyles styleModeForParseMode(bool);
+    explicit StyleChange(CSSStyleDeclaration*, const Position&);
 
     String cssStyle() const { return m_cssStyle; }
     bool applyBold() const { return m_applyBold; }
@@ -70,8 +67,6 @@ public:
     String fontFace() { return m_applyFontFace; }
     String fontSize() { return m_applyFontSize; }
 
-    bool usesLegacyStyles() const { return m_usesLegacyStyles; }
-
 private:
     void init(PassRefPtr<CSSStyleDeclaration>, const Position&);
     bool checkForLegacyHTMLStyleChange(const CSSProperty*);
@@ -85,33 +80,26 @@ private:
     String m_applyFontColor;
     String m_applyFontFace;
     String m_applyFontSize;
-    bool m_usesLegacyStyles;
 };
 
 
-
-StyleChange::StyleChange(CSSStyleDeclaration* style, ELegacyHTMLStyles usesLegacyStyles)
+StyleChange::StyleChange(CSSStyleDeclaration* style, const Position& position)
     : m_applyBold(false)
     , m_applyItalic(false)
     , m_applySubscript(false)
     , m_applySuperscript(false)
-    , m_usesLegacyStyles(usesLegacyStyles)
-{
-    init(style, Position());
-}
-
-StyleChange::StyleChange(CSSStyleDeclaration* style, const Position& position, ELegacyHTMLStyles usesLegacyStyles)
-    : m_applyBold(false)
-    , m_applyItalic(false)
-    , m_applySubscript(false)
-    , m_applySuperscript(false)
-    , m_usesLegacyStyles(usesLegacyStyles)
 {
     init(style, position);
 }
 
-void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position &position)
+void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position& position)
 {
+    Document* document = position.node() ? position.node()->document() : 0;
+    if (!document || !document->frame())
+        return;
+        
+    bool useHTMLFormattingTags = !document->frame()->editor()->shouldStyleWithCSS();
+            
     RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
     
     String styleText("");
@@ -131,7 +119,7 @@ void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position &po
             continue;
         
         // If needed, figure out if this change is a legacy HTML style change.
-        if (m_usesLegacyStyles && checkForLegacyHTMLStyleChange(property))
+        if (useHTMLFormattingTags && checkForLegacyHTMLStyleChange(property))
             continue;
 
         if (property->id() == CSSPropertyDirection) {
@@ -158,11 +146,6 @@ void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position &po
 
     // Save the result for later
     m_cssStyle = styleText.stripWhiteSpace();
-}
-
-StyleChange::ELegacyHTMLStyles StyleChange::styleModeForParseMode(bool isQuirksMode)
-{
-    return isQuirksMode ? UseLegacyHTMLStyles : DoNotUseLegacyHTMLStyles;
 }
 
 // This function is the mapping from CSS styles to styling tags (like font-weight: bold to <b>)
@@ -442,7 +425,7 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
     VisiblePosition nextParagraphStart(endOfParagraph(paragraphStart).next());
     VisiblePosition beyondEnd(endOfParagraph(visibleEnd).next());
     while (paragraphStart.isNotNull() && paragraphStart != beyondEnd) {
-        StyleChange styleChange(style, paragraphStart.deepEquivalent(), StyleChange::styleModeForParseMode(document()->inCompatMode()));
+        StyleChange styleChange(style, paragraphStart.deepEquivalent());
         if (styleChange.cssStyle().length() > 0 || m_removeOnly) {
             RefPtr<Node> block = enclosingBlock(paragraphStart.deepEquivalent().node());
             RefPtr<Node> newBlock = moveParagraphContentsToNewBlockIfNecessary(paragraphStart.deepEquivalent());
@@ -1147,7 +1130,7 @@ void ApplyStyleCommand::applyTextDecorationStyle(Node *node, CSSMutableStyleDecl
 
     HTMLElement *element = static_cast<HTMLElement *>(node);
         
-    StyleChange styleChange(style, Position(element, 0), StyleChange::styleModeForParseMode(document()->inCompatMode()));
+    StyleChange styleChange(style, Position(element, 0));
     if (styleChange.cssStyle().length() > 0) {
         String cssText = styleChange.cssStyle();
         CSSMutableStyleDeclaration *decl = element->inlineStyleDecl();
@@ -1546,7 +1529,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
     if (m_removeOnly)
         return;
 
-    StyleChange styleChange(style, Position(startNode, 0), StyleChange::styleModeForParseMode(document()->inCompatMode()));
+    StyleChange styleChange(style, Position(startNode, 0));
 
     //
     // Font tags need to go outside of CSS so that CSS font sizes override leagcy font sizes.

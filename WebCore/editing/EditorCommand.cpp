@@ -914,6 +914,15 @@ static bool executeStrikethrough(Frame* frame, Event*, EditorCommandSource sourc
     return executeToggleStyle(frame, source, EditActionChangeAttributes, CSSPropertyWebkitTextDecorationsInEffect, "none", "line-through");
 }
 
+static bool executeStyleWithCSS(Frame* frame, Event*, EditorCommandSource, const String& value)
+{
+    if (value != "false" && value != "true")
+        return false;
+    
+    frame->editor()->setShouldStyleWithCSS(value == "true" ? true : false);
+    return true;
+}
+
 static bool executeSubscript(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
     return executeToggleStyle(frame, source, EditActionSubscript, CSSPropertyVerticalAlign, "baseline", "sub");
@@ -1138,6 +1147,11 @@ static TriState stateStrikethrough(Frame* frame, Event*)
     return stateStyle(frame, CSSPropertyTextDecoration, "line-through");
 }
 
+static TriState stateStyleWithCSS(Frame* frame, Event*)
+{
+    return frame->editor()->shouldStyleWithCSS() ? TrueTriState : FalseTriState;
+}
+
 static TriState stateSubscript(Frame* frame, Event*)
 {
     return stateStyle(frame, CSSPropertyVerticalAlign, "sub");
@@ -1320,6 +1334,7 @@ static const CommandMap& createCommandMap()
         { "SelectWord", { executeSelectWord, supportedFromMenuOrKeyBinding, enabledVisibleSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "SetMark", { executeSetMark, supportedFromMenuOrKeyBinding, enabledVisibleSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Strikethrough", { executeStrikethrough, supported, enabledInRichlyEditableText, stateStrikethrough, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "StyleWithCSS", { executeStyleWithCSS, supported, enabledInRichlyEditableText, stateStyleWithCSS, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Subscript", { executeSubscript, supported, enabledInRichlyEditableText, stateSubscript, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Superscript", { executeSuperscript, supported, enabledInRichlyEditableText, stateSuperscript, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "SwapWithMark", { executeSwapWithMark, supportedFromMenuOrKeyBinding, enabledVisibleSelectionAndMark, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

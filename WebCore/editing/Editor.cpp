@@ -936,6 +936,8 @@ Editor::Editor(Frame* frame)
     , m_deleteButtonController(new DeleteButtonController(frame))
     , m_ignoreCompositionSelectionChange(false)
     , m_shouldStartNewKillRingSequence(false)
+    // This is off by default, since most editors want this behavior (this matches IE but not FF).
+    , m_shouldStyleWithCSS(false)
 { 
 }
 
@@ -947,6 +949,7 @@ void Editor::clear()
 {
     m_compositionNode = 0;
     m_customCompositionUnderlines.clear();
+    m_shouldStyleWithCSS = false;
 }
 
 bool Editor::insertText(const String& text, Event* triggeringEvent)
