@@ -16,7 +16,8 @@ function executeEmptyStatement(transaction)
         layoutTestController.notifyDone();
 }
 
-function runTest() {
+function runTest()
+{
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();

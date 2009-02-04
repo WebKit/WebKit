@@ -14,7 +14,7 @@ function finishTest()
         layoutTestController.notifyDone();
 }
 
-function errorFunction(tx, error)
+function errorFunction(error)
 {
     log("Test failed - " + error.message);
     finishTest();
@@ -29,7 +29,8 @@ function successFunction(message)
         finishTest();
 }
 
-function runTest() {
+function runTest()
+{
     if (window.layoutTestController) {
         layoutTestController.clearAllDatabases();
         layoutTestController.dumpAsText();

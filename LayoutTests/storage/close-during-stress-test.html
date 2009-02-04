@@ -9,7 +9,8 @@ if (window.layoutTestController) {
     layoutTestController.dumpAsText();
 }
 
-function startTest() {
+function startTest()
+{
     setTimeout("document.getElementsByTagName('iframe')[0].src = 'about:blank'", 100);
     if (window.layoutTestController)
         setTimeout("layoutTestController.notifyDone()", 500);

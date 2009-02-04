@@ -1,3 +1,19 @@
+2009-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23655
+        Clean up storage layout tests a bit.
+
+        * storage/close-during-stress-test.html: Moved brace to new line.
+        * storage/empty-statement.html: Moved brace to new line.
+        * storage/execute-sql-args.html: Moved brace to new line.
+        * storage/quota-tracking.html: Moved brace to new line.
+        * storage/success-callback.html: Moved brace to new line, removed erroneous callback argument.
+        * storage/transaction-callback-exception-crash.html: Added.
+        * storage/transaction-callback-exception-crash.txt: Renamed from LayoutTests/storage/transaction_callback_exception_crash-expected.txt.
+        * storage/transaction_callback_exception_crash.html: Removed.
+
 2009-02-04  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dave Hyatt.

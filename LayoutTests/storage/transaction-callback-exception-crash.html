@@ -7,7 +7,7 @@ if (window.layoutTestController) {
 }
 
 var db = openDatabase("15976Test", "1.0", "Test for http://bugs.webkit.org/show_bug.cgi?id=15976", 1);
-db.transaction(function(tx) { 
+db.transaction(function(tx) {
    if (window.layoutTestController)
        window.setTimeout(function() { layoutTestController.notifyDone() }, 0);
    throw "TransactionCallbackError";
