@@ -728,6 +728,11 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
         item->historyItem()->addRedirectURL(serverRedirectURL);
     }
 
+    if (serverRedirectURL.isEmpty() && !isClientRedirect) {
+        COMPtr<WebHistoryItem> item(Query, entry);
+        item->setRedirectURLs(std::auto_ptr<Vector<String> >());
+    }
+
     CFDictionaryPropertyBag* userInfo = createUserInfoFromHistoryItem(
         getNotificationString(kWebHistoryItemsAddedNotification), entry);
     postNotification(kWebHistoryItemsAddedNotification, userInfo);

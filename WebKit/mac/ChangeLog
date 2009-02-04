@@ -1,3 +1,16 @@
+2009-02-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        Part I of <rdar://problem/6552272>.
+
+        Clear the redirectURLs entry when first visiting a site, so sites that
+        only redirect you the first time you visit them can later learn that
+        they don't redirect.
+
+        * History/WebHistory.mm:
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:serverRedirectURL:isClientRedirect:]):
+
 2009-02-04  Timothy Hatcher  <timothy@apple.com>
 
         Change the WebSourceId typedef from int to intptr_t now that <rdar://problem/6263297> is fixed.

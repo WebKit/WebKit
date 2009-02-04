@@ -833,6 +833,9 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
         ASSERT(!isClientRedirect);
         item->addRedirectURL(serverRedirectURL);
     }
+    
+    if (!serverRedirectURL && !isClientRedirect)
+        item->setRedirectURLs(std::auto_ptr<Vector<String> >());
 
     NSArray *entries = [[NSArray alloc] initWithObjects:entry, nil];
     [self _sendNotification:WebHistoryItemsAddedNotification entries:entries];
