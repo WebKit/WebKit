@@ -31,8 +31,8 @@ module storage {
     interface SQLResultSet {
         readonly attribute SQLResultSetRowList rows;
 
-        readonly attribute int insertId
+        readonly attribute long insertId
             getter raises(DOMException);
-        readonly attribute int rowsAffected;
+        readonly attribute long rowsAffected;
     };
 }

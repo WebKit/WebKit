@@ -29,7 +29,7 @@
 module storage {
 
     interface SQLError {
-        readonly attribute unsigned int code;
+        readonly attribute unsigned long code;
         readonly attribute DOMString message;
     };
 }

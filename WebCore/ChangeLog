@@ -1,3 +1,17 @@
+2009-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23657
+        Clean up WebCore/storage IDLs.
+
+        * storage/SQLError.idl: Changed to match spec.
+        * storage/SQLResultSet.idl: Changed to match spec.
+        * storage/SQLStatementCallback.idl: Removed.
+        * storage/SQLStatementErrorCallback.idl: Removed.
+        * storage/SQLTransactionCallback.idl: Removed.
+        * storage/SQLTransactionErrorCallback.idl: Removed.
+
 2009-02-04  David Hyatt  <hyatt@apple.com>
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=23734, blank content on blogs.msdn.com.
