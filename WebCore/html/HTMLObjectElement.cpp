@@ -156,7 +156,7 @@ void HTMLObjectElement::attach()
             return;
 
         if (renderer())
-            static_cast<RenderImage*>(renderer())->setCachedImage(m_imageLoader->image());
+            toRenderImage(renderer())->setCachedImage(m_imageLoader->image());
     }
 }
 

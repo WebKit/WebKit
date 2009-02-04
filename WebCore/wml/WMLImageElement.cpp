@@ -70,7 +70,7 @@ void WMLImageElement::parseMappedAttribute(MappedAttribute* attr)
 
     if (attrName == HTMLNames::altAttr) {
         if (renderer() && renderer()->isImage())
-            static_cast<RenderImage*>(renderer())->updateAltText();
+            toRenderImage(renderer())->updateAltText();
     } else if (attrName == HTMLNames::srcAttr || attrName == localsrcAttr)
         m_imageLoader.updateFromElementIgnoringPreviousError();
     else if (attrName == HTMLNames::widthAttr)
@@ -94,7 +94,7 @@ void WMLImageElement::attach()
     WMLElement::attach();
 
     if (renderer() && renderer()->isImage()) {
-        RenderImage* imageObj = static_cast<RenderImage*>(renderer());
+        RenderImage* imageObj = toRenderImage(renderer());
         if (imageObj->hasImage())
             return;
 

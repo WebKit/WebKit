@@ -1,3 +1,43 @@
+2009-02-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Add toRenderImage methods for casting RenderObjects to RenderImages.  The methods will assert if the object
+        is not a RenderImage.  Also add a toRenderImage method that takes a RenderImage but returns void and that
+        is unimplemented.  This method will catch anyone trying to do a cast when the object is already a RenderImage.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::attach):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        (WebCore::HTMLImageElement::attach):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::attach):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::attach):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::attach):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::setImage):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::notifyFinished):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * page/DragController.cpp:
+        (WebCore::getCachedImage):
+        (WebCore::getImage):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage):
+        * rendering/RenderImage.h:
+        (WebCore::toRenderImage):
+        * wml/WMLImageElement.cpp:
+        (WebCore::WMLImageElement::parseMappedAttribute):
+        (WebCore::WMLImageElement::attach):
+
 2009-02-04  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Eric Seidel and Dave Hyatt.

@@ -164,7 +164,7 @@ void HTMLEmbedElement::attach()
         m_imageLoader->updateFromElement();
 
         if (renderer())
-            static_cast<RenderImage*>(renderer())->setCachedImage(m_imageLoader->image());
+            toRenderImage(renderer())->setCachedImage(m_imageLoader->image());
     }
 }
 

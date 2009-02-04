@@ -65,7 +65,7 @@ void ImageLoader::setImage(CachedImage* newImage)
         if (!renderer->isImage())
             return;
 
-        static_cast<RenderImage*>(renderer)->resetAnimation();
+        toRenderImage(renderer)->resetAnimation();
     }
 }
 
@@ -123,7 +123,7 @@ void ImageLoader::updateFromElement()
         if (!renderer->isImage())
             return;
 
-        static_cast<RenderImage*>(renderer)->resetAnimation();
+        toRenderImage(renderer)->resetAnimation();
     }
 }
 
@@ -146,7 +146,7 @@ void ImageLoader::notifyFinished(CachedResource*)
         if (!renderer->isImage())
             return;
 
-        static_cast<RenderImage*>(renderer)->setCachedImage(m_image.get());
+        toRenderImage(renderer)->setCachedImage(m_image.get());
     }
 }
 

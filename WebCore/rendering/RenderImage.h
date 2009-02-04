@@ -102,6 +102,21 @@ protected:
     friend class RenderImageScaleObserver;
 };
 
+inline RenderImage* toRenderImage(RenderObject* o)
+{ 
+    ASSERT(!o || o->isRenderImage());
+    return static_cast<RenderImage*>(o);
+}
+
+inline const RenderImage* toRenderImage(const RenderObject* o)
+{ 
+    ASSERT(!o || o->isRenderImage());
+    return static_cast<const RenderImage*>(o);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderImage(const RenderImage*);
+
 } // namespace WebCore
 
 #endif // RenderImage_h

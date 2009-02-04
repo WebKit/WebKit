@@ -562,7 +562,7 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         InputElement::parseSizeAttribute(m_data, attr);
     else if (attr->name() == altAttr) {
         if (renderer() && inputType() == IMAGE)
-            static_cast<RenderImage*>(renderer())->updateAltText();
+            toRenderImage(renderer())->updateAltText();
     } else if (attr->name() == srcAttr) {
         if (renderer() && inputType() == IMAGE) {
             if (!m_imageLoader)
@@ -692,7 +692,7 @@ void HTMLInputElement::attach()
             m_imageLoader.set(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
         if (renderer()) {
-            RenderImage* imageObj = static_cast<RenderImage*>(renderer());
+            RenderImage* imageObj = toRenderImage(renderer());
             imageObj->setCachedImage(m_imageLoader->image()); 
             
             // If we have no image at all because we have no src attribute, set

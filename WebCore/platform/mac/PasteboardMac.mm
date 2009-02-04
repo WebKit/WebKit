@@ -278,7 +278,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     ASSERT(cocoaURL);
 
     ASSERT(node->renderer() && node->renderer()->isImage());
-    RenderImage* renderer = static_cast<RenderImage*>(node->renderer());
+    RenderImage* renderer = toRenderImage(node->renderer());
     CachedImage* cachedImage = static_cast<CachedImage*>(renderer->cachedImage());
     ASSERT(cachedImage);
     

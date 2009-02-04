@@ -68,7 +68,7 @@ void HTMLVideoElement::attach()
             m_imageLoader.set(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
         if (renderer() && renderer()->isImage()) {
-            RenderImage* imageRenderer = static_cast<RenderImage*>(renderer());
+            RenderImage* imageRenderer = toRenderImage(renderer());
             imageRenderer->setCachedImage(m_imageLoader->image()); 
         }
     }

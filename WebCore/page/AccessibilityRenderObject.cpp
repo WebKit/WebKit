@@ -1203,7 +1203,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         }
         
         // check for one-dimensional image
-        RenderImage* image = static_cast<RenderImage*>(m_renderer);
+        RenderImage* image = toRenderImage(m_renderer);
         if (image->height() <= 1 || image->width() <= 1)
             return true;
         
@@ -2332,7 +2332,7 @@ void AccessibilityRenderObject::addChildren()
     
     // for a RenderImage, add the <area> elements as individual accessibility objects
     if (m_renderer->isRenderImage()) {
-        HTMLMapElement* map = static_cast<RenderImage*>(m_renderer)->imageMap();
+        HTMLMapElement* map = toRenderImage(m_renderer)->imageMap();
         if (map) {
             for (Node* current = map->firstChild(); current; current = current->traverseNextNode(map)) {
 
