@@ -1,3 +1,23 @@
+2009-02-03  David Hyatt  <hyatt@apple.com>
+
+        Move the isRenderInline checks for clientWidth/Height and scrollWidth/Height to the DOM element
+        versions of the functions.  Since internal render tree usage doesn't ever (incorrectly) call these
+        functions on RenderInlines, this manages to get virtual function calls out of contentWidth/Height and
+        availableWidth/Height.
+
+        Reviewed by Mark Rowe
+
+        * dom/Element.cpp:
+        (WebCore::Element::clientWidth):
+        (WebCore::Element::clientHeight):
+        (WebCore::Element::scrollWidth):
+        (WebCore::Element::scrollHeight):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clientWidth):
+        (WebCore::RenderBox::clientHeight):
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::scrollHeight):
+
 2009-02-03  Brad Garcia  <bgarcia@google.com>
 
         Reviewed by Eric Seidel.

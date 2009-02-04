@@ -382,15 +382,11 @@ RenderBox* RenderBox::offsetParent() const
 // excluding border and scrollbar.
 int RenderBox::clientWidth() const
 {
-    if (isRenderInline())
-        return 0;
     return width() - borderLeft() - borderRight() - verticalScrollbarWidth();
 }
 
 int RenderBox::clientHeight() const
 {
-    if (isRenderInline())
-        return 0;
     return height() - borderTop() - borderBottom() - horizontalScrollbarHeight();
 }
 
@@ -402,8 +398,6 @@ int RenderBox::scrollWidth() const
 {
     if (hasOverflowClip())
         return m_layer->scrollWidth();
-    if (isRenderInline())
-        return 0;
     return overflowWidth();
 }
 
@@ -411,8 +405,6 @@ int RenderBox::scrollHeight() const
 {
     if (hasOverflowClip())
         return m_layer->scrollHeight();
-    if (isRenderInline())
-        return 0;
     return overflowHeight();
 }
 
