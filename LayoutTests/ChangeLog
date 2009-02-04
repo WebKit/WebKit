@@ -1,3 +1,13 @@
+2009-02-03  Brad Garcia  <bgarcia@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=20443
+
+        * fast/frames/frame-dead-region-expected.txt: Added.
+        * fast/frames/frame-dead-region.html: Added.
+        * fast/frames/resources/frame-dead-region-left.html: Added.
+
 2009-02-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

@@ -162,7 +162,7 @@ bool RenderFrameSet::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         return false;
 
     bool inside = RenderContainer::nodeAtPoint(request, result, x, y, tx, ty, action)
-        || m_isResizing || canResize(IntPoint(x, y));
+        || m_isResizing;
 
     if (inside && frameSet()->noResize()
             && !request.readOnly() && !result.innerNode()) {
@@ -605,11 +605,6 @@ bool RenderFrameSet::isResizingRow() const
 bool RenderFrameSet::isResizingColumn() const
 {
     return m_isResizing && m_cols.m_splitBeingResized != noSplit;
-}
-
-bool RenderFrameSet::canResize(const IntPoint& p) const
-{
-    return hitTestSplit(m_cols, p.x()) != noSplit || hitTestSplit(m_rows, p.y()) != noSplit;
 }
 
 bool RenderFrameSet::canResizeRow(const IntPoint& p) const

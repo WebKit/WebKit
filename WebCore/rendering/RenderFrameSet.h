@@ -93,7 +93,6 @@ private:
 
     inline HTMLFrameSetElement* frameSet() const;
 
-    bool canResize(const IntPoint&) const;
     void setIsResizing(bool);
 
     void layOutAxis(GridAxis&, const Length*, int availableSpace);

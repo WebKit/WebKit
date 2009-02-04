@@ -1,3 +1,18 @@
+2009-02-03  Brad Garcia  <bgarcia@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20443
+        Remove call to canResize when trying to determine if pointer
+        is within a frame.
+        Also removed the implementation of canResize as it is no longer used.
+
+        Test: fast/frames/frame-dead-region.html
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::nodeAtPoint):
+        * rendering/RenderFrameSet.h:
+
 2009-02-03  David Hyatt  <hyatt@apple.com>
 
         Reduce the number of calls to virtualChildren (indirectly made via RenderObject::firstChild()).
