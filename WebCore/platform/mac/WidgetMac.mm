@@ -26,6 +26,10 @@
 #import "config.h"
 #import "Widget.h"
 
+#ifdef BUILDING_ON_TIGER
+#import "AutodrainedPool.h"
+#endif
+
 #import "BlockExceptions.h"
 #import "Cursor.h"
 #import "Document.h"
@@ -217,8 +221,13 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         CGContextScaleCTM(cgContext, 1, -1);
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
-        [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]] inContext:nsContext];
+        {
+#ifdef BUILDING_ON_TIGER
+            AutodrainedPool pool;
+#endif
+            NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
+            [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]] inContext:nsContext];
+        }
         END_BLOCK_OBJC_EXCEPTIONS;
 
         CGContextRestoreGState(cgContext);

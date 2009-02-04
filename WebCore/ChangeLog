@@ -1,3 +1,15 @@
+2009-02-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        - Fix for <rdar://problem/6549743>
+
+        On Tiger, create an autorelease pool before creating the NSGraphicsContext and drain it immediately
+        after the call to -[NSView displayRectIgnoringOpacity:inContext:].
+        
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+
 2009-02-03  David Hyatt  <hyatt@apple.com>
 
         Back this change out since it is causing layout tests to crash.  There is something subtle going on
