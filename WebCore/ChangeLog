@@ -1,3 +1,16 @@
+2009-02-04  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22917
+
+        Add ENABLE_ON_FIRST_TEXTAREA_FOCUS_SELECT_ALL to permit the ANDROID
+        platform to select all when focusing on a textarea. This matches
+        the user interface guidelines other applications on the platform.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updateFocusAppearance):
+
 2009-02-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -229,10 +229,17 @@ void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
     ASSERT(renderer());
     
     if (!restorePreviousSelection || m_cachedSelectionStart < 0) {
+#if ENABLE(ON_FIRST_TEXTAREA_FOCUS_SELECT_ALL)
+        // Devices with trackballs or d-pads may focus on a textarea in route
+        // to another focusable node. By selecting all text, the next movement
+        // can more readily be interpreted as moving to the next node.
+        select();
+#else
         // If this is the first focus, set a caret at the beginning of the text.  
         // This matches some browsers' behavior; see bug 11746 Comment #15.
         // http://bugs.webkit.org/show_bug.cgi?id=11746#c15
         setSelectionRange(0, 0);
+#endif
     } else {
         // Restore the cached selection.  This matches other browsers' behavior.
         setSelectionRange(m_cachedSelectionStart, m_cachedSelectionEnd);
