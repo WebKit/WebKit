@@ -1,3 +1,14 @@
+2009-02-04  Feng Qian  <feng@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add Android-specific files to WebCore/editing directory.
+        https://bugs.webkit.org/show_bug.cgi?id=23294
+
+        * editing/android: Added.
+        * editing/android/EditorAndroid.cpp: Added.
+        (WebCore::Editor::newGeneralClipboard):
+
 2009-02-04  Dean Jackson  <dino@apple.com>
 
         Reviewed by Darin Adler.
