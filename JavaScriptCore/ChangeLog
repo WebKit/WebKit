@@ -1,5 +1,14 @@
 2009-02-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Sam 'Big Mac' Weinig.
+
+        * assembler/AbstractMacroAssembler.h: Copied from assembler/MacroAssembler.h.
+        * assembler/MacroAssemblerX86.h: Copied from assembler/MacroAssembler.h.
+        * assembler/MacroAssemblerX86Common.h: Copied from assembler/MacroAssembler.h.
+        * assembler/MacroAssemblerX86_64.h: Copied from assembler/MacroAssembler.h.
+
+2009-02-04  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         This patch tidies up the MacroAssembler, cleaning up the code and refactoring out the
