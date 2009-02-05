@@ -49,28 +49,6 @@ RenderSVGContainer::~RenderSVGContainer()
 {
 }
 
-void RenderSVGContainer::addChild(RenderObject* newChild, RenderObject* beforeChild)
-{
-    children()->insertChildNode(this, newChild, beforeChild);
-}
-
-void RenderSVGContainer::removeChild(RenderObject* oldChild)
-{
-    // We do this here instead of in removeChildNode, since the only extremely low-level uses of remove/appendChildNode
-    // cannot affect the positioned object list, and the floating object list is irrelevant (since the list gets cleared on
-    // layout anyway).
-    if (oldChild->isFloatingOrPositioned())
-        toRenderBox(oldChild)->removeFloatingOrPositionedChildFromBlockLists();
-
-    children()->removeChildNode(this, oldChild);
-}
-
-void RenderSVGContainer::destroy()
-{
-    children()->destroyLeftoverChildren();
-    RenderObject::destroy();
-}
-
 bool RenderSVGContainer::drawsContents() const
 {
     return m_drawsContents;

@@ -230,14 +230,83 @@ bool RenderObject::isHTMLMarquee() const
     return element() && element()->renderer() == this && element()->hasTagName(marqueeTag);
 }
 
-void RenderObject::addChild(RenderObject*, RenderObject*)
+
+static void updateListMarkerNumbers(RenderObject* child)
 {
-    ASSERT_NOT_REACHED();
+    for (RenderObject* r = child; r; r = r->nextSibling())
+        if (r->isListItem())
+            static_cast<RenderListItem*>(r)->updateValue();
 }
 
-void RenderObject::removeChild(RenderObject*)
+void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
-    ASSERT_NOT_REACHED();
+    RenderObjectChildList* children = virtualChildren();
+    ASSERT(children);
+    if (!children)
+        return;
+
+    bool needsTable = false;
+
+    if (newChild->isListItem())
+        updateListMarkerNumbers(beforeChild ? beforeChild : children->lastChild());
+    else if (newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
+        needsTable = !isTable();
+    else if (newChild->isRenderBlock() && newChild->style()->display() == TABLE_CAPTION)
+        needsTable = !isTable();
+    else if (newChild->isTableSection())
+        needsTable = !isTable();
+    else if (newChild->isTableRow())
+        needsTable = !isTableSection();
+    else if (newChild->isTableCell()) {
+        needsTable = !isTableRow();
+        // I'm not 100% sure this is the best way to fix this, but without this
+        // change we recurse infinitely when trying to render the CSS2 test page:
+        // http://www.bath.ac.uk/%7Epy8ieh/internet/eviltests/htmlbodyheadrendering2.html.
+        // See Radar 2925291.
+        if (needsTable && isTableCell() && !children->firstChild() && !newChild->isTableCell())
+            needsTable = false;
+    }
+
+    if (needsTable) {
+        RenderTable* table;
+        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : children->lastChild();
+        if (afterChild && afterChild->isAnonymous() && afterChild->isTable())
+            table = static_cast<RenderTable*>(afterChild);
+        else {
+            table = new (renderArena()) RenderTable(document() /* is anonymous */);
+            RefPtr<RenderStyle> newStyle = RenderStyle::create();
+            newStyle->inheritFrom(style());
+            newStyle->setDisplay(TABLE);
+            table->setStyle(newStyle.release());
+            addChild(table, beforeChild);
+        }
+        table->addChild(newChild);
+    } else {
+        // Just add it...
+        children->insertChildNode(this, newChild, beforeChild);
+    }
+    
+    if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE) {
+        RefPtr<StringImpl> textToTransform = toRenderText(newChild)->originalText();
+        if (textToTransform)
+            toRenderText(newChild)->setText(textToTransform.release(), true);
+    }
+}
+
+void RenderObject::removeChild(RenderObject* oldChild)
+{
+    RenderObjectChildList* children = virtualChildren();
+    ASSERT(children);
+    if (!children)
+        return;
+
+    // We do this here instead of in removeChildNode, since the only extremely low-level uses of remove/appendChildNode
+    // cannot affect the positioned object list, and the floating object list is irrelevant (since the list gets cleared on
+    // layout anyway).
+    if (oldChild->isFloatingOrPositioned())
+        toRenderBox(oldChild)->removeFloatingOrPositionedChildFromBlockLists();
+        
+    children->removeChildNode(this, oldChild);
 }
 
 RenderObject* RenderObject::nextInPreOrder() const

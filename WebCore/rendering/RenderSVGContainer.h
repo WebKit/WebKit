@@ -45,11 +45,6 @@ public:
     int width() const { return m_width; }
     int height() const { return m_height; }
 
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
-    virtual void removeChild(RenderObject*);
-
-    virtual void destroy();
-
     // Some containers do not want it's children
     // to be drawn, because they may be 'referenced'
     // Example: <marker> children in SVG

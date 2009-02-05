@@ -1,3 +1,20 @@
+2009-02-04  David Hyatt  <hyatt@apple.com>
+
+        Move addChild/removeChild from RenderContainer to RenderObject.
+
+        Reviewed by Sam Weinig
+
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderContainer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::updateListMarkerNumbers):
+        (WebCore::RenderObject::addChild):
+        (WebCore::RenderObject::removeChild):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::addChildIgnoringContinuation):
+        * rendering/RenderSVGContainer.cpp:
+        * rendering/RenderSVGContainer.h:
+
 2009-02-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
