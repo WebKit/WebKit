@@ -102,12 +102,10 @@ routine PCConstruct(clientPort :mach_port_t;
                   out returnValue :boolean_t;
                   out result :data_t, dealloc);
 
-routine PCGetProperty(clientPort :mach_port_t;
-                    pluginID :uint32_t;
-                    objectID :uint32_t;
-                    propertyNameIdentifier :uint64_t;
-                    out returnValue :boolean_t;
-                    out result :data_t, dealloc);
+simpleroutine PCGetProperty(clientPort :mach_port_t;
+                            pluginID :uint32_t;
+                            objectID :uint32_t;
+                            propertyNameIdentifier :uint64_t);
 
 routine PCSetProperty(clientPort :mach_port_t;
                     pluginID :uint32_t;
@@ -122,17 +120,15 @@ routine PCRemoveProperty(clientPort :mach_port_t;
                        propertyNameIdentifier :uint64_t;
                        out returnValue :boolean_t);
 
-routine PCHasProperty(clientPort :mach_port_t;
-                    pluginID :uint32_t;
-                    objectID :uint32_t;
-                    propertyNameIdentifier :uint64_t;
-                    out returnValue :boolean_t);
+simpleroutine PCHasProperty(clientPort :mach_port_t;
+                            pluginID :uint32_t;
+                            objectID :uint32_t;
+                            propertyNameIdentifier :uint64_t);
 
-routine PCHasMethod(clientPort :mach_port_t;
-                    pluginID :uint32_t;
-                    objectID :uint32_t;
-                    methodNameIdentifier :uint64_t;
-                    out returnValue :boolean_t);
+simpleroutine PCHasMethod(clientPort :mach_port_t;
+                           pluginID :uint32_t;
+                           objectID :uint32_t;
+                           methodNameIdentifier :uint64_t);
 
 routine PCIdentifierInfo(clientPort :mach_port_t;
                        identifier :uint64_t;

@@ -1,5 +1,22 @@
 2009-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Change PCHasProperty, PCHasMethod and PCGetProperty into simpleroutines.
+        
+        Rename PHEvaluateReply to PHBooleanAndDataReply and add PHBooleanReply.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEvaluate):
+        (WKPCInvoke):
+        (WKPCGetProperty):
+        (WKPCHasProperty):
+        (WKPCHasMethod):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
+2009-02-04  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Mark Rowe.
 
         Fix 64-bit build.
