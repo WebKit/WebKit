@@ -34,56 +34,22 @@
 
 namespace JSC {
 
-class MacroAssembler {
+template <class AssemblerType>
+class AbstractMacroAssembler {
 protected:
-    X86Assembler m_assembler;
-
-#if PLATFORM(X86_64)
-    static const X86::RegisterID scratchRegister = X86::r11;
-#endif
+    AssemblerType m_assembler;
 
 public:
-    typedef X86::RegisterID RegisterID;
+    typedef typename AssemblerType::RegisterID RegisterID;
+    typedef typename AssemblerType::JmpSrc JmpSrc;
+    typedef typename AssemblerType::JmpDst JmpDst;
 
-    // Note: do not rely on values in this enum, these will change (to 0..3).
     enum Scale {
         TimesOne,
         TimesTwo,
         TimesFour,
         TimesEight,
-#if PLATFORM(X86)
-        ScalePtr = TimesFour
-#endif
-#if PLATFORM(X86_64)
-        ScalePtr = TimesEight
-#endif
     };
-
-    typedef X86Assembler::Condition Condition;
-    static const Condition Equal = X86Assembler::ConditionE;
-    static const Condition NotEqual = X86Assembler::ConditionNE;
-    static const Condition Above = X86Assembler::ConditionA;
-    static const Condition AboveOrEqual = X86Assembler::ConditionAE;
-    static const Condition Below = X86Assembler::ConditionB;
-    static const Condition BelowOrEqual = X86Assembler::ConditionBE;
-    static const Condition GreaterThan = X86Assembler::ConditionG;
-    static const Condition GreaterThanOrEqual = X86Assembler::ConditionGE;
-    static const Condition LessThan = X86Assembler::ConditionL;
-    static const Condition LessThanOrEqual = X86Assembler::ConditionLE;
-    static const Condition Overflow = X86Assembler::ConditionO;
-    static const Condition Zero = X86Assembler::ConditionE;
-    static const Condition NonZero = X86Assembler::ConditionNE;
-
-    MacroAssembler()
-    {
-    }
-    
-    size_t size() { return m_assembler.size(); }
-    void* copyCode(ExecutablePool* allocator)
-    {
-        return m_assembler.executableCopy(allocator);
-    }
-
 
     // Address:
     //
@@ -170,7 +136,8 @@ public:
     // A DataLabelPtr is used to refer to a location in the code containing a pointer to be
     // patched after the code has been generated.
     class DataLabelPtr {
-        friend class MacroAssembler;
+        template<class AssemblerType_T>
+        friend class AbstractMacroAssembler;
         friend class PatchBuffer;
 
     public:
@@ -178,18 +145,18 @@ public:
         {
         }
 
-        DataLabelPtr(MacroAssembler* masm)
+        DataLabelPtr(AbstractMacroAssembler<AssemblerType>* masm)
             : m_label(masm->m_assembler.label())
         {
         }
 
         static void patch(void* address, void* value)
         {
-            X86Assembler::patchPointer(reinterpret_cast<intptr_t>(address), reinterpret_cast<intptr_t>(value));
+            AssemblerType::patchPointer(reinterpret_cast<intptr_t>(address), reinterpret_cast<intptr_t>(value));
         }
         
     private:
-        X86Assembler::JmpDst m_label;
+        JmpDst m_label;
     };
 
     // DataLabel32:
@@ -197,7 +164,8 @@ public:
     // A DataLabelPtr is used to refer to a location in the code containing a pointer to be
     // patched after the code has been generated.
     class DataLabel32 {
-        friend class MacroAssembler;
+        template<class AssemblerType_T>
+        friend class AbstractMacroAssembler;
         friend class PatchBuffer;
 
     public:
@@ -205,18 +173,18 @@ public:
         {
         }
 
-        DataLabel32(MacroAssembler* masm)
+        DataLabel32(AbstractMacroAssembler<AssemblerType>* masm)
             : m_label(masm->m_assembler.label())
         {
         }
 
         static void patch(void* address, int32_t value)
         {
-            X86Assembler::patchImmediate(reinterpret_cast<intptr_t>(address), value);
+            AssemblerType::patchImmediate(reinterpret_cast<intptr_t>(address), value);
         }
 
     private:
-        X86Assembler::JmpDst m_label;
+        JmpDst m_label;
     };
 
     // Label:
@@ -225,7 +193,8 @@ public:
     // it may be used as a destination for a jump.
     class Label {
         friend class Jump;
-        friend class MacroAssembler;
+        template<class AssemblerType_T>
+        friend class AbstractMacroAssembler;
         friend class PatchBuffer;
 
     public:
@@ -233,19 +202,13 @@ public:
         {
         }
 
-        Label(MacroAssembler* masm)
+        Label(AbstractMacroAssembler<AssemblerType>* masm)
             : m_label(masm->m_assembler.label())
         {
         }
         
-        // FIXME: transitionary method, while we replace JmpSrces with Jumps.
-        operator X86Assembler::JmpDst()
-        {
-            return m_label;
-        }
-
     private:
-        X86Assembler::JmpDst m_label;
+        JmpDst m_label;
     };
 
 
@@ -266,42 +229,36 @@ public:
     // Jumps may also be linked to a Label.
     class Jump {
         friend class PatchBuffer;
-        friend class MacroAssembler;
+        template<class AssemblerType_T>
+        friend class AbstractMacroAssembler;
 
     public:
         Jump()
         {
         }
         
-        // FIXME: transitionary method, while we replace JmpSrces with Jumps.
-        Jump(X86Assembler::JmpSrc jmp)
+        Jump(JmpSrc jmp)
             : m_jmp(jmp)
         {
         }
         
-        void link(MacroAssembler* masm)
+        void link(AbstractMacroAssembler<AssemblerType>* masm)
         {
             masm->m_assembler.link(m_jmp, masm->m_assembler.label());
         }
         
-        void linkTo(Label label, MacroAssembler* masm)
+        void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm)
         {
             masm->m_assembler.link(m_jmp, label.m_label);
         }
         
-        // FIXME: transitionary method, while we replace JmpSrces with Jumps.
-        operator X86Assembler::JmpSrc()
-        {
-            return m_jmp;
-        }
-
         static void patch(void* address, void* destination)
         {
-            X86Assembler::patchBranchOffset(reinterpret_cast<intptr_t>(address), destination);
+            AssemblerType::patchBranchOffset(reinterpret_cast<intptr_t>(address), destination);
         }
 
     private:
-        X86Assembler::JmpSrc m_jmp;
+        JmpSrc m_jmp;
     };
 
     // JumpList:
@@ -312,7 +269,7 @@ public:
         friend class PatchBuffer;
 
     public:
-        void link(MacroAssembler* masm)
+        void link(AbstractMacroAssembler<AssemblerType>* masm)
         {
             size_t size = m_jumps.size();
             for (size_t i = 0; i < size; ++i)
@@ -320,7 +277,7 @@ public:
             m_jumps.clear();
         }
         
-        void linkTo(Label label, MacroAssembler* masm)
+        void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm)
         {
             size_t size = m_jumps.size();
             for (size_t i = 0; i < size; ++i)
@@ -374,38 +331,38 @@ public:
 
         void link(Jump jump, void* target)
         {
-            X86Assembler::link(m_code, jump.m_jmp, target);
+            AssemblerType::link(m_code, jump.m_jmp, target);
         }
 
         void link(JumpList list, void* target)
         {
             for (unsigned i = 0; i < list.m_jumps.size(); ++i)
-                X86Assembler::link(m_code, list.m_jumps[i], target);
+                AssemblerType::link(m_code, list.m_jumps[i].m_jmp, target);
         }
 
         void* addressOf(Jump jump)
         {
-            return X86Assembler::getRelocatedAddress(m_code, jump.m_jmp);
+            return AssemblerType::getRelocatedAddress(m_code, jump.m_jmp);
         }
 
         void* addressOf(Label label)
         {
-            return X86Assembler::getRelocatedAddress(m_code, label.m_label);
+            return AssemblerType::getRelocatedAddress(m_code, label.m_label);
         }
 
         void* addressOf(DataLabelPtr label)
         {
-            return X86Assembler::getRelocatedAddress(m_code, label.m_label);
+            return AssemblerType::getRelocatedAddress(m_code, label.m_label);
         }
 
         void* addressOf(DataLabel32 label)
         {
-            return X86Assembler::getRelocatedAddress(m_code, label.m_label);
+            return AssemblerType::getRelocatedAddress(m_code, label.m_label);
         }
 
         void setPtr(DataLabelPtr label, void* value)
         {
-            X86Assembler::patchAddress(m_code, label.m_label, value);
+            AssemblerType::patchAddress(m_code, label.m_label, value);
         }
 
     private:
@@ -432,7 +389,6 @@ public:
         void* m_value;
     };
 
-
     // Imm32:
     //
     // A 32bit immediate operand to an instruction - this is wrapped in a
@@ -445,7 +401,7 @@ public:
         {
         }
 
-#if PLATFORM(X86)
+#if !PLATFORM(X86_64)
         explicit Imm32(ImmPtr ptr)
             : m_value(ptr.asIntptr())
         {
@@ -455,45 +411,80 @@ public:
         int32_t m_value;
     };
 
+    size_t size()
+    {
+        return m_assembler.size();
+    }
+
+    void* copyCode(ExecutablePool* allocator)
+    {
+        return m_assembler.executableCopy(allocator);
+    }
+
+    Label label()
+    {
+        return Label(this);
+    }
+    
+    Label align()
+    {
+        m_assembler.align(16);
+        return Label(this);
+    }
+
+    ptrdiff_t differenceBetween(Label from, Jump to)
+    {
+        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
+    }
+
+    ptrdiff_t differenceBetween(Label from, Label to)
+    {
+        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
+    }
+
+    ptrdiff_t differenceBetween(Label from, DataLabelPtr to)
+    {
+        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
+    }
+
+    ptrdiff_t differenceBetween(Label from, DataLabel32 to)
+    {
+        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
+    }
+
+    ptrdiff_t differenceBetween(DataLabelPtr from, Jump to)
+    {
+        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
+    }
+
+};
+
+class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler> {
+public:
+
+    typedef X86Assembler::Condition Condition;
+    static const Condition Equal = X86Assembler::ConditionE;
+    static const Condition NotEqual = X86Assembler::ConditionNE;
+    static const Condition Above = X86Assembler::ConditionA;
+    static const Condition AboveOrEqual = X86Assembler::ConditionAE;
+    static const Condition Below = X86Assembler::ConditionB;
+    static const Condition BelowOrEqual = X86Assembler::ConditionBE;
+    static const Condition GreaterThan = X86Assembler::ConditionG;
+    static const Condition GreaterThanOrEqual = X86Assembler::ConditionGE;
+    static const Condition LessThan = X86Assembler::ConditionL;
+    static const Condition LessThanOrEqual = X86Assembler::ConditionLE;
+    static const Condition Overflow = X86Assembler::ConditionO;
+    static const Condition Zero = X86Assembler::ConditionE;
+    static const Condition NonZero = X86Assembler::ConditionNE;
+
+    static const RegisterID stackPointerRegister = X86::esp;
+
     // Integer arithmetic operations:
     //
     // Operations are typically two operand - operation(source, srcDst)
     // For many operations the source may be an Imm32, the srcDst operand
     // may often be a memory location (explictly described using an Address
     // object).
-
-    void addPtr(RegisterID src, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.addq_rr(src, dest);
-#else
-        add32(src, dest);
-#endif
-    }
-
-    void addPtr(Imm32 imm, RegisterID srcDest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.addq_ir(imm.m_value, srcDest);
-#else
-        add32(imm, srcDest);
-#endif
-    }
-
-    void addPtr(ImmPtr imm, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        move(imm, scratchRegister);
-        m_assembler.addq_rr(scratchRegister, dest);
-#else
-        add32(Imm32(imm), dest);
-#endif
-    }
-
-    void addPtr(Imm32 imm, RegisterID src, RegisterID dest)
-    {
-        m_assembler.leal_mr(imm.m_value, src, dest);
-    }
 
     void add32(RegisterID src, RegisterID dest)
     {
@@ -510,39 +501,11 @@ public:
         m_assembler.addl_ir(imm.m_value, dest);
     }
     
-    void add32(Imm32 imm, AbsoluteAddress address)
-    {
-#if PLATFORM(X86_64)
-        move(ImmPtr(address.m_ptr), scratchRegister);
-        add32(imm, Address(scratchRegister));
-#else
-        m_assembler.addl_im(imm.m_value, address.m_ptr);
-#endif
-    }
-    
     void add32(Address src, RegisterID dest)
     {
         m_assembler.addl_mr(src.offset, src.base, dest);
     }
     
-    void andPtr(RegisterID src, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.andq_rr(src, dest);
-#else
-        and32(src, dest);
-#endif
-    }
-
-    void andPtr(Imm32 imm, RegisterID srcDest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.andq_ir(imm.m_value, srcDest);
-#else
-        and32(imm, srcDest);
-#endif
-    }
-
     void and32(RegisterID src, RegisterID dest)
     {
         m_assembler.andl_rr(src, dest);
@@ -614,34 +577,6 @@ public:
         m_assembler.notl_r(srcDest);
     }
     
-    void orPtr(RegisterID src, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.orq_rr(src, dest);
-#else
-        or32(src, dest);
-#endif
-    }
-
-    void orPtr(ImmPtr imm, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        move(imm, scratchRegister);
-        m_assembler.orq_rr(scratchRegister, dest);
-#else
-        or32(Imm32(imm), dest);
-#endif
-    }
-
-    void orPtr(Imm32 imm, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.orq_ir(imm.m_value, dest);
-#else
-        or32(imm, dest);
-#endif
-    }
-
     void or32(RegisterID src, RegisterID dest)
     {
         m_assembler.orl_rr(src, dest);
@@ -650,41 +585,6 @@ public:
     void or32(Imm32 imm, RegisterID dest)
     {
         m_assembler.orl_ir(imm.m_value, dest);
-    }
-
-    void rshiftPtr(RegisterID shift_amount, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        // On x86 we can only shift by ecx; if asked to shift by another register we'll
-        // need rejig the shift amount into ecx first, and restore the registers afterwards.
-        if (shift_amount != X86::ecx) {
-            swap(shift_amount, X86::ecx);
-
-            // E.g. transform "shll %eax, %eax" -> "xchgl %eax, %ecx; shll %ecx, %ecx; xchgl %eax, %ecx"
-            if (dest == shift_amount)
-                m_assembler.sarq_CLr(X86::ecx);
-            // E.g. transform "shll %eax, %ecx" -> "xchgl %eax, %ecx; shll %ecx, %eax; xchgl %eax, %ecx"
-            else if (dest == X86::ecx)
-                m_assembler.sarq_CLr(shift_amount);
-            // E.g. transform "shll %eax, %ebx" -> "xchgl %eax, %ecx; shll %ecx, %ebx; xchgl %eax, %ecx"
-            else
-                m_assembler.sarq_CLr(dest);
-        
-            swap(shift_amount, X86::ecx);
-        } else
-            m_assembler.sarq_CLr(dest);
-#else
-        rshift32(shift_amount, dest);
-#endif
-    }
-
-    void rshiftPtr(Imm32 imm, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.sarq_i8r(imm.m_value, dest);
-#else
-        rshift32(imm, dest);
-#endif
     }
 
     void rshift32(RegisterID shift_amount, RegisterID dest)
@@ -714,34 +614,6 @@ public:
         m_assembler.sarl_i8r(imm.m_value, dest);
     }
 
-    void subPtr(RegisterID src, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.subq_rr(src, dest);
-#else
-        sub32(src, dest);
-#endif
-    }
-    
-    void subPtr(Imm32 imm, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.subq_ir(imm.m_value, dest);
-#else
-        sub32(imm, dest);
-#endif
-    }
-    
-    void subPtr(ImmPtr imm, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        move(imm, scratchRegister);
-        m_assembler.subq_rr(scratchRegister, dest);
-#else
-        sub32(Imm32(imm), dest);
-#endif
-    }
-
     void sub32(RegisterID src, RegisterID dest)
     {
         m_assembler.subl_rr(src, dest);
@@ -757,37 +629,9 @@ public:
         m_assembler.subl_im(imm.m_value, address.offset, address.base);
     }
 
-    void sub32(Imm32 imm, AbsoluteAddress address)
-    {
-#if PLATFORM(X86_64)
-        move(ImmPtr(address.m_ptr), scratchRegister);
-        sub32(imm, Address(scratchRegister));
-#else
-        m_assembler.subl_im(imm.m_value, address.m_ptr);
-#endif
-    }
-
     void sub32(Address src, RegisterID dest)
     {
         m_assembler.subl_mr(src.offset, src.base, dest);
-    }
-
-    void xorPtr(RegisterID src, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.xorq_rr(src, dest);
-#else
-        xor32(src, dest);
-#endif
-    }
-
-    void xorPtr(Imm32 imm, RegisterID srcDest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.xorq_ir(imm.m_value, srcDest);
-#else
-        xor32(imm, srcDest);
-#endif
     }
 
     void xor32(RegisterID src, RegisterID dest)
@@ -808,50 +652,6 @@ public:
     // operand objects to loads and store will be implicitly constructed if a
     // register is passed.
 
-    void loadPtr(ImplicitAddress address, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.movq_mr(address.offset, address.base, dest);
-#else
-        load32(address, dest);
-#endif
-    }
-
-    DataLabel32 loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.movq_mr_disp32(address.offset, address.base, dest);
-        return DataLabel32(this);
-#else
-        m_assembler.movl_mr_disp32(address.offset, address.base, dest);
-        return DataLabel32(this);
-#endif
-    }
-
-    void loadPtr(BaseIndex address, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.movq_mr(address.offset, address.base, address.index, address.scale, dest);
-#else
-        load32(address, dest);
-#endif
-    }
-
-    void loadPtr(void* address, RegisterID dest)
-    {
-#if PLATFORM(X86_64)
-        if (dest == X86::eax)
-            m_assembler.movq_mEAX(address);
-        else {
-            move(X86::eax, dest);
-            m_assembler.movq_mEAX(address);
-            swap(X86::eax, dest);
-        }
-#else
-        load32(address, dest);
-#endif
-    }
-
     void load32(ImplicitAddress address, RegisterID dest)
     {
         m_assembler.movl_mr(address.offset, address.base, dest);
@@ -862,19 +662,10 @@ public:
         m_assembler.movl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
-    void load32(void* address, RegisterID dest)
+    DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
     {
-#if PLATFORM(X86_64)
-        if (dest == X86::eax)
-            m_assembler.movl_mEAX(address);
-        else {
-            move(X86::eax, dest);
-            m_assembler.movl_mEAX(address);
-            swap(X86::eax, dest);
-        }
-#else
-        m_assembler.movl_mr(address, dest);
-#endif
+        m_assembler.movl_mr_disp32(address.offset, address.base, dest);
+        return DataLabel32(this);
     }
 
     void load16(BaseIndex address, RegisterID dest)
@@ -882,63 +673,10 @@ public:
         m_assembler.movzwl_mr(address.offset, address.base, address.index, address.scale, dest);
     }
 
-    void storePtr(RegisterID src, ImplicitAddress address)
+    DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {
-#if PLATFORM(X86_64)
-        m_assembler.movq_rm(src, address.offset, address.base);
-#else
-        store32(src, address);
-#endif
-    }
-
-    DataLabel32 storePtrWithAddressOffsetPatch(RegisterID src, Address address)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.movq_rm_disp32(src, address.offset, address.base);
-        return DataLabel32(this);
-#else
         m_assembler.movl_rm_disp32(src, address.offset, address.base);
         return DataLabel32(this);
-#endif
-    }
-
-    void storePtr(RegisterID src, BaseIndex address)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.movq_rm(src, address.offset, address.base, address.index, address.scale);
-#else
-        store32(src, address);
-#endif
-    }
-
-    void storePtr(ImmPtr imm, ImplicitAddress address)
-    {
-#if PLATFORM(X86_64)
-        move(imm, scratchRegister);
-        storePtr(scratchRegister, address);
-#else
-        m_assembler.movl_i32m(imm.asIntptr(), address.offset, address.base);
-#endif
-    }
-
-#if !PLATFORM(X86_64)
-    void storePtr(ImmPtr imm, void* address)
-    {
-        store32(Imm32(imm), address);
-    }
-#endif
-
-    DataLabelPtr storePtrWithPatch(Address address)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.movq_i64r(0, scratchRegister);
-        DataLabelPtr label(this);
-        storePtr(scratchRegister, address);
-        return label;
-#else
-        m_assembler.movl_i32m(0, address.offset, address.base);
-        return DataLabelPtr(this);
-#endif
     }
 
     void store32(RegisterID src, ImplicitAddress address)
@@ -956,18 +694,6 @@ public:
         m_assembler.movl_i32m(imm.m_value, address.offset, address.base);
     }
     
-    void store32(Imm32 imm, void* address)
-    {
-#if PLATFORM(X86_64)
-        move(X86::eax, scratchRegister);
-        move(imm, X86::eax);
-        m_assembler.movl_EAXm(address);
-        move(scratchRegister, X86::eax);
-#else
-        m_assembler.movl_i32m(imm.m_value, address);
-#endif
-    }
-
 
     // Stack manipulation operations:
     //
@@ -997,31 +723,6 @@ public:
         m_assembler.push_i32(imm.m_value);
     }
 
-    void pop()
-    {
-        addPtr(Imm32(sizeof(void*)), X86::esp);
-    }
-    
-    void peek(RegisterID dest, int index = 0)
-    {
-        loadPtr(Address(X86::esp, (index * sizeof(void *))), dest);
-    }
-
-    void poke(RegisterID src, int index = 0)
-    {
-        storePtr(src, Address(X86::esp, (index * sizeof(void *))));
-    }
-
-    void poke(Imm32 value, int index = 0)
-    {
-        store32(value, Address(X86::esp, (index * sizeof(void *))));
-    }
-
-    void poke(ImmPtr imm, int index = 0)
-    {
-        storePtr(imm, Address(X86::esp, (index * sizeof(void *))));
-    }
-
     // Register move operations:
     //
     // Move values in registers.
@@ -1036,57 +737,64 @@ public:
             m_assembler.movl_i32r(imm.m_value, dest);
     }
 
+#if PLATFORM(X86_64)
     void move(RegisterID src, RegisterID dest)
     {
         // Note: on 64-bit this is is a full register move; perhaps it would be
         // useful to have separate move32 & movePtr, with move32 zero extending?
-#if PLATFORM(X86_64)
         m_assembler.movq_rr(src, dest);
-#else
-        m_assembler.movl_rr(src, dest);
-#endif
     }
 
     void move(ImmPtr imm, RegisterID dest)
     {
-#if PLATFORM(X86_64)
         if (CAN_SIGN_EXTEND_U32_64(imm.asIntptr()))
             m_assembler.movl_i32r(static_cast<int32_t>(imm.asIntptr()), dest);
         else
             m_assembler.movq_i64r(imm.asIntptr(), dest);
-#else
-        m_assembler.movl_i32r(imm.asIntptr(), dest);
-#endif
     }
 
     void swap(RegisterID reg1, RegisterID reg2)
     {
-#if PLATFORM(X86_64)
         m_assembler.xchgq_rr(reg1, reg2);
-#else
-        m_assembler.xchgl_rr(reg1, reg2);
-#endif
     }
 
     void signExtend32ToPtr(RegisterID src, RegisterID dest)
     {
-#if PLATFORM(X86_64)
         m_assembler.movsxd_rr(src, dest);
-#else
-        if (src != dest)
-            move(src, dest);
-#endif
     }
 
     void zeroExtend32ToPtr(RegisterID src, RegisterID dest)
     {
-#if PLATFORM(X86_64)
         m_assembler.movl_rr(src, dest);
+    }
 #else
+    void move(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movl_rr(src, dest);
+    }
+
+    void move(ImmPtr imm, RegisterID dest)
+    {
+        m_assembler.movl_i32r(imm.asIntptr(), dest);
+    }
+
+    void swap(RegisterID reg1, RegisterID reg2)
+    {
+        m_assembler.xchgl_rr(reg1, reg2);
+    }
+
+    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    {
         if (src != dest)
             move(src, dest);
-#endif
     }
+
+    void zeroExtend32ToPtr(RegisterID src, RegisterID dest)
+    {
+        if (src != dest)
+            move(src, dest);
+    }
+#endif
 
 
     // Forwards / external control flow operations:
@@ -1108,110 +816,6 @@ public:
     // an optional second operand of a mask under which to perform the test.
 
 public:
-    Jump branchPtr(Condition cond, RegisterID left, RegisterID right)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rr(right, left);
-        return Jump(m_assembler.jCC(cond));
-#else
-        return branch32(cond, left, right);
-#endif
-    }
-
-    Jump branchPtr(Condition cond, RegisterID left, ImmPtr right)
-    {
-#if PLATFORM(X86_64)
-        intptr_t imm = right.asIntptr();
-        if (CAN_SIGN_EXTEND_32_64(imm)) {
-            if (!imm)
-                m_assembler.testq_rr(left, left);
-            else
-                m_assembler.cmpq_ir(imm, left);
-            return Jump(m_assembler.jCC(cond));
-        } else {
-            move(right, scratchRegister);
-            return branchPtr(cond, left, scratchRegister);
-        }
-#else
-        return branch32(cond, left, Imm32(right));
-#endif
-    }
-
-    Jump branchPtr(Condition cond, RegisterID left, Address right)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_mr(right.offset, right.base, left);
-        return Jump(m_assembler.jCC(cond));
-#else
-        return branch32(cond, left, right);
-#endif
-    }
-
-    Jump branchPtr(Condition cond, AbsoluteAddress left, RegisterID right)
-    {
-#if PLATFORM(X86_64)
-        move(ImmPtr(left.m_ptr), scratchRegister);
-        return branchPtr(cond, Address(scratchRegister), right);
-#else
-        m_assembler.cmpl_rm(right, left.m_ptr);
-        return Jump(m_assembler.jCC(cond));
-#endif
-    }
-
-    Jump branchPtr(Condition cond, Address left, RegisterID right)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.cmpq_rm(right, left.offset, left.base);
-        return Jump(m_assembler.jCC(cond));
-#else
-        return branch32(cond, left, right);
-#endif
-    }
-
-    Jump branchPtr(Condition cond, Address left, ImmPtr right)
-    {
-#if PLATFORM(X86_64)
-        move(right, scratchRegister);
-        return branchPtr(cond, left, scratchRegister);
-#else
-        return branch32(cond, left, Imm32(right));
-#endif
-    }
-
-#if !PLATFORM(X86_64)
-    Jump branchPtr(Condition cond, AbsoluteAddress left, ImmPtr right)
-    {
-        m_assembler.cmpl_im(right.asIntptr(), left.m_ptr);
-        return Jump(m_assembler.jCC(cond));
-    }
-#endif
-
-    Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
-    {
-#if PLATFORM(X86_64)
-        m_assembler.movq_i64r(initialRightValue.asIntptr(), scratchRegister);
-        dataLabel = DataLabelPtr(this);
-        return branchPtr(cond, left, scratchRegister);
-#else
-        m_assembler.cmpl_ir_force32(initialRightValue.asIntptr(), left);
-        dataLabel = DataLabelPtr(this);
-        return Jump(m_assembler.jCC(cond));
-#endif
-    }
-
-    Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
-    {
-#if PLATFORM(X86_64)
-        m_assembler.movq_i64r(initialRightValue.asIntptr(), scratchRegister);
-        dataLabel = DataLabelPtr(this);
-        return branchPtr(cond, left, scratchRegister);
-#else
-        m_assembler.cmpl_im_force32(initialRightValue.asIntptr(), left.offset, left.base);
-        dataLabel = DataLabelPtr(this);
-        return Jump(m_assembler.jCC(cond));
-#endif
-    }
-
     Jump branch32(Condition cond, RegisterID left, RegisterID right)
     {
         m_assembler.cmpl_rr(right, left);
@@ -1238,7 +842,7 @@ public:
         m_assembler.cmpl_rm(right, left.offset, left.base);
         return Jump(m_assembler.jCC(cond));
     }
-    
+
     Jump branch32(Condition cond, Address left, Imm32 right)
     {
         m_assembler.cmpl_im(right.m_value, left.offset, left.base);
@@ -1249,58 +853,6 @@ public:
     {
         m_assembler.cmpw_rm(right, left.offset, left.base, left.index, left.scale);
         return Jump(m_assembler.jCC(cond));
-    }
-
-    Jump branchTestPtr(Condition cond, RegisterID reg, RegisterID mask)
-    {
-#if PLATFORM(X86_64)
-        m_assembler.testq_rr(reg, mask);
-        return Jump(m_assembler.jCC(cond));
-#else
-        return branchTest32(cond, reg, mask);
-#endif
-    }
-
-    Jump branchTestPtr(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
-    {
-#if PLATFORM(X86_64)
-        // if we are only interested in the low seven bits, this can be tested with a testb
-        if (mask.m_value == -1)
-            m_assembler.testq_rr(reg, reg);
-        else if ((mask.m_value & ~0x7f) == 0)
-            m_assembler.testb_i8r(mask.m_value, reg);
-        else
-            m_assembler.testq_i32r(mask.m_value, reg);
-        return Jump(m_assembler.jCC(cond));
-#else
-        return branchTest32(cond, reg, mask);
-#endif
-    }
-
-    Jump branchTestPtr(Condition cond, Address address, Imm32 mask = Imm32(-1))
-    {
-#if PLATFORM(X86_64)
-        if (mask.m_value == -1)
-            m_assembler.cmpq_im(0, address.offset, address.base);
-        else
-            m_assembler.testq_i32m(mask.m_value, address.offset, address.base);
-        return Jump(m_assembler.jCC(cond));
-#else
-        return branchTest32(cond, address, mask);
-#endif
-    }
-
-    Jump branchTestPtr(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
-    {
-#if PLATFORM(X86_64)
-        if (mask.m_value == -1)
-            m_assembler.cmpq_im(0, address.offset, address.base, address.index, address.scale);
-        else
-            m_assembler.testq_i32m(mask.m_value, address.offset, address.base, address.index, address.scale);
-        return Jump(m_assembler.jCC(cond));
-#else
-        return branchTest32(cond, address, mask);
-#endif
     }
 
     Jump branchTest32(Condition cond, RegisterID reg, RegisterID mask)
@@ -1348,62 +900,6 @@ public:
         return Jump(m_assembler.jmp());
     }
 
-
-    // Backwards, local control flow operations:
-    //
-    // These operations provide a shorter notation for local
-    // backwards branches, which may be both more convenient
-    // for the user, and for the programmer, and for the
-    // assembler (allowing shorter values to be used in
-    // relative offsets).
-    //
-    // The code sequence:
-    //
-    //     Label topOfLoop(this);
-    //     // ...
-    //     jne32(reg1, reg2, topOfLoop);
-    //
-    // Is equivalent to the longer, potentially less efficient form:
-    //
-    //     Label topOfLoop(this);
-    //     // ...
-    //     jne32(reg1, reg2).linkTo(topOfLoop);
-
-    void branchPtr(Condition cond, RegisterID op1, ImmPtr imm, Label target)
-    {
-        branchPtr(cond, op1, imm).linkTo(target, this);
-    }
-
-    void branch32(Condition cond, RegisterID op1, RegisterID op2, Label target)
-    {
-        branch32(cond, op1, op2).linkTo(target, this);
-    }
-
-    void branch32(Condition cond, RegisterID op1, Imm32 imm, Label target)
-    {
-        branch32(cond, op1, imm).linkTo(target, this);
-    }
-
-    void branch32(Condition cond, RegisterID left, Address right, Label target)
-    {
-        branch32(cond, left, right).linkTo(target, this);
-    }
-
-    void branch16(Condition cond, BaseIndex left, RegisterID right, Label target)
-    {
-        branch16(cond, left, right).linkTo(target, this);
-    }
-    
-    void branchTestPtr(Condition cond, RegisterID reg, Label target)
-    {
-        branchTestPtr(cond, reg).linkTo(target, this);
-    }
-
-    void jump(Label target)
-    {
-        m_assembler.link(m_assembler.jmp(), target.m_label);
-    }
-
     void jump(RegisterID target)
     {
         m_assembler.jmp_r(target);
@@ -1425,13 +921,6 @@ public:
     // * jz operations branch if the result is zero.
     // * jo operations branch if the (signed) arithmetic
     //   operation caused an overflow to occur.
-
-    Jump branchAddPtr(Condition cond, RegisterID src, RegisterID dest)
-    {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
-        addPtr(src, dest);
-        return Jump(m_assembler.jCC(cond));
-    }
     
     Jump branchAdd32(Condition cond, RegisterID src, RegisterID dest)
     {
@@ -1458,13 +947,6 @@ public:
     {
         ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         mul32(imm, src, dest);
-        return Jump(m_assembler.jCC(cond));
-    }
-    
-    Jump branchSubPtr(Condition cond, Imm32 imm, RegisterID dest)
-    {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
-        subPtr(imm, dest);
         return Jump(m_assembler.jCC(cond));
     }
     
@@ -1510,42 +992,6 @@ public:
         return Jump(m_assembler.call(target));
     }
 
-    Label label()
-    {
-        return Label(this);
-    }
-    
-    Label align()
-    {
-        m_assembler.align(16);
-        return Label(this);
-    }
-
-    ptrdiff_t differenceBetween(Label from, Jump to)
-    {
-        return X86Assembler::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
-    }
-
-    ptrdiff_t differenceBetween(Label from, Label to)
-    {
-        return X86Assembler::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(Label from, DataLabelPtr to)
-    {
-        return X86Assembler::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(Label from, DataLabel32 to)
-    {
-        return X86Assembler::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(DataLabelPtr from, Jump to)
-    {
-        return X86Assembler::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
-    }
-
     void ret()
     {
         m_assembler.ret();
@@ -1581,6 +1027,678 @@ public:
         m_assembler.setCC_r(cond, dest);
         m_assembler.movzbl_rr(dest, dest);
     }
+};
+
+
+#if PLATFORM(X86_64)
+
+class MacroAssemblerX86_64 : public MacroAssemblerX86Common {
+protected:
+    static const X86::RegisterID scratchRegister = X86::r11;
+
+public:
+    static const Scale ScalePtr = TimesEight;
+
+    using MacroAssemblerX86Common::add32;
+    using MacroAssemblerX86Common::sub32;
+    using MacroAssemblerX86Common::load32;
+    using MacroAssemblerX86Common::store32;
+
+    void add32(Imm32 imm, AbsoluteAddress address)
+    {
+        move(ImmPtr(address.m_ptr), scratchRegister);
+        add32(imm, Address(scratchRegister));
+    }
+    
+    void sub32(Imm32 imm, AbsoluteAddress address)
+    {
+        move(ImmPtr(address.m_ptr), scratchRegister);
+        sub32(imm, Address(scratchRegister));
+    }
+
+    void load32(void* address, RegisterID dest)
+    {
+        if (dest == X86::eax)
+            m_assembler.movl_mEAX(address);
+        else {
+            move(X86::eax, dest);
+            m_assembler.movl_mEAX(address);
+            swap(X86::eax, dest);
+        }
+    }
+
+    void store32(Imm32 imm, void* address)
+    {
+        move(X86::eax, scratchRegister);
+        move(imm, X86::eax);
+        m_assembler.movl_EAXm(address);
+        move(scratchRegister, X86::eax);
+    }
+
+
+
+    void addPtr(RegisterID src, RegisterID dest)
+    {
+        m_assembler.addq_rr(src, dest);
+    }
+
+    void addPtr(Imm32 imm, RegisterID srcDest)
+    {
+        m_assembler.addq_ir(imm.m_value, srcDest);
+    }
+
+    void addPtr(ImmPtr imm, RegisterID dest)
+    {
+        move(imm, scratchRegister);
+        m_assembler.addq_rr(scratchRegister, dest);
+    }
+
+    void addPtr(Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        m_assembler.leal_mr(imm.m_value, src, dest);
+    }
+
+    void andPtr(RegisterID src, RegisterID dest)
+    {
+        m_assembler.andq_rr(src, dest);
+    }
+
+    void andPtr(Imm32 imm, RegisterID srcDest)
+    {
+        m_assembler.andq_ir(imm.m_value, srcDest);
+    }
+
+    void orPtr(RegisterID src, RegisterID dest)
+    {
+        m_assembler.orq_rr(src, dest);
+    }
+
+    void orPtr(ImmPtr imm, RegisterID dest)
+    {
+        move(imm, scratchRegister);
+        m_assembler.orq_rr(scratchRegister, dest);
+    }
+
+    void orPtr(Imm32 imm, RegisterID dest)
+    {
+        m_assembler.orq_ir(imm.m_value, dest);
+    }
+
+    void rshiftPtr(RegisterID shift_amount, RegisterID dest)
+    {
+        // On x86 we can only shift by ecx; if asked to shift by another register we'll
+        // need rejig the shift amount into ecx first, and restore the registers afterwards.
+        if (shift_amount != X86::ecx) {
+            swap(shift_amount, X86::ecx);
+
+            // E.g. transform "shll %eax, %eax" -> "xchgl %eax, %ecx; shll %ecx, %ecx; xchgl %eax, %ecx"
+            if (dest == shift_amount)
+                m_assembler.sarq_CLr(X86::ecx);
+            // E.g. transform "shll %eax, %ecx" -> "xchgl %eax, %ecx; shll %ecx, %eax; xchgl %eax, %ecx"
+            else if (dest == X86::ecx)
+                m_assembler.sarq_CLr(shift_amount);
+            // E.g. transform "shll %eax, %ebx" -> "xchgl %eax, %ecx; shll %ecx, %ebx; xchgl %eax, %ecx"
+            else
+                m_assembler.sarq_CLr(dest);
+        
+            swap(shift_amount, X86::ecx);
+        } else
+            m_assembler.sarq_CLr(dest);
+    }
+
+    void rshiftPtr(Imm32 imm, RegisterID dest)
+    {
+        m_assembler.sarq_i8r(imm.m_value, dest);
+    }
+
+    void subPtr(RegisterID src, RegisterID dest)
+    {
+        m_assembler.subq_rr(src, dest);
+    }
+    
+    void subPtr(Imm32 imm, RegisterID dest)
+    {
+        m_assembler.subq_ir(imm.m_value, dest);
+    }
+    
+    void subPtr(ImmPtr imm, RegisterID dest)
+    {
+        move(imm, scratchRegister);
+        m_assembler.subq_rr(scratchRegister, dest);
+    }
+
+    void xorPtr(RegisterID src, RegisterID dest)
+    {
+        m_assembler.xorq_rr(src, dest);
+    }
+
+    void xorPtr(Imm32 imm, RegisterID srcDest)
+    {
+        m_assembler.xorq_ir(imm.m_value, srcDest);
+    }
+
+
+    void loadPtr(ImplicitAddress address, RegisterID dest)
+    {
+        m_assembler.movq_mr(address.offset, address.base, dest);
+    }
+
+    void loadPtr(BaseIndex address, RegisterID dest)
+    {
+        m_assembler.movq_mr(address.offset, address.base, address.index, address.scale, dest);
+    }
+
+    void loadPtr(void* address, RegisterID dest)
+    {
+        if (dest == X86::eax)
+            m_assembler.movq_mEAX(address);
+        else {
+            move(X86::eax, dest);
+            m_assembler.movq_mEAX(address);
+            swap(X86::eax, dest);
+        }
+    }
+
+    DataLabel32 loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        m_assembler.movq_mr_disp32(address.offset, address.base, dest);
+        return DataLabel32(this);
+    }
+
+    void storePtr(RegisterID src, ImplicitAddress address)
+    {
+        m_assembler.movq_rm(src, address.offset, address.base);
+    }
+
+    void storePtr(RegisterID src, BaseIndex address)
+    {
+        m_assembler.movq_rm(src, address.offset, address.base, address.index, address.scale);
+    }
+
+    void storePtr(ImmPtr imm, ImplicitAddress address)
+    {
+        move(imm, scratchRegister);
+        storePtr(scratchRegister, address);
+    }
+
+    DataLabel32 storePtrWithAddressOffsetPatch(RegisterID src, Address address)
+    {
+        m_assembler.movq_rm_disp32(src, address.offset, address.base);
+        return DataLabel32(this);
+    }
+
+
+    Jump branchPtr(Condition cond, RegisterID left, RegisterID right)
+    {
+        m_assembler.cmpq_rr(right, left);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchPtr(Condition cond, RegisterID left, ImmPtr right)
+    {
+        intptr_t imm = right.asIntptr();
+        if (CAN_SIGN_EXTEND_32_64(imm)) {
+            if (!imm)
+                m_assembler.testq_rr(left, left);
+            else
+                m_assembler.cmpq_ir(imm, left);
+            return Jump(m_assembler.jCC(cond));
+        } else {
+            move(right, scratchRegister);
+            return branchPtr(cond, left, scratchRegister);
+        }
+    }
+
+    Jump branchPtr(Condition cond, RegisterID left, Address right)
+    {
+        m_assembler.cmpq_mr(right.offset, right.base, left);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchPtr(Condition cond, AbsoluteAddress left, RegisterID right)
+    {
+        move(ImmPtr(left.m_ptr), scratchRegister);
+        return branchPtr(cond, Address(scratchRegister), right);
+    }
+
+    Jump branchPtr(Condition cond, Address left, RegisterID right)
+    {
+        m_assembler.cmpq_rm(right, left.offset, left.base);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchPtr(Condition cond, Address left, ImmPtr right)
+    {
+        move(right, scratchRegister);
+        return branchPtr(cond, left, scratchRegister);
+    }
+
+    Jump branchTestPtr(Condition cond, RegisterID reg, RegisterID mask)
+    {
+        m_assembler.testq_rr(reg, mask);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchTestPtr(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
+    {
+        // if we are only interested in the low seven bits, this can be tested with a testb
+        if (mask.m_value == -1)
+            m_assembler.testq_rr(reg, reg);
+        else if ((mask.m_value & ~0x7f) == 0)
+            m_assembler.testb_i8r(mask.m_value, reg);
+        else
+            m_assembler.testq_i32r(mask.m_value, reg);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchTestPtr(Condition cond, Address address, Imm32 mask = Imm32(-1))
+    {
+        if (mask.m_value == -1)
+            m_assembler.cmpq_im(0, address.offset, address.base);
+        else
+            m_assembler.testq_i32m(mask.m_value, address.offset, address.base);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchTestPtr(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
+    {
+        if (mask.m_value == -1)
+            m_assembler.cmpq_im(0, address.offset, address.base, address.index, address.scale);
+        else
+            m_assembler.testq_i32m(mask.m_value, address.offset, address.base, address.index, address.scale);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+
+    Jump branchAddPtr(Condition cond, RegisterID src, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
+        addPtr(src, dest);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchSubPtr(Condition cond, Imm32 imm, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
+        subPtr(imm, dest);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
+    {
+        m_assembler.movq_i64r(initialRightValue.asIntptr(), scratchRegister);
+        dataLabel = DataLabelPtr(this);
+        return branchPtr(cond, left, scratchRegister);
+    }
+
+    Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
+    {
+        m_assembler.movq_i64r(initialRightValue.asIntptr(), scratchRegister);
+        dataLabel = DataLabelPtr(this);
+        return branchPtr(cond, left, scratchRegister);
+    }
+
+    DataLabelPtr storePtrWithPatch(Address address)
+    {
+        m_assembler.movq_i64r(0, scratchRegister);
+        DataLabelPtr label(this);
+        storePtr(scratchRegister, address);
+        return label;
+    }
+};
+
+typedef MacroAssemblerX86_64 MacroAssemblerBase;
+
+#else
+
+class MacroAssemblerX86 : public MacroAssemblerX86Common {
+public:
+    static const Scale ScalePtr = TimesFour;
+
+    using MacroAssemblerX86Common::add32;
+    using MacroAssemblerX86Common::sub32;
+    using MacroAssemblerX86Common::load32;
+    using MacroAssemblerX86Common::store32;
+    using MacroAssemblerX86Common::branch32;
+
+    void add32(Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        m_assembler.leal_mr(imm.m_value, src, dest);
+    }
+
+    void add32(Imm32 imm, AbsoluteAddress address)
+    {
+        m_assembler.addl_im(imm.m_value, address.m_ptr);
+    }
+    
+    void sub32(Imm32 imm, AbsoluteAddress address)
+    {
+        m_assembler.subl_im(imm.m_value, address.m_ptr);
+    }
+
+    void load32(void* address, RegisterID dest)
+    {
+        m_assembler.movl_mr(address, dest);
+    }
+
+    void store32(Imm32 imm, void* address)
+    {
+        m_assembler.movl_i32m(imm.m_value, address);
+    }
+
+    Jump branch32(Condition cond, AbsoluteAddress left, RegisterID right)
+    {
+        m_assembler.cmpl_rm(right, left.m_ptr);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branch32(Condition cond, AbsoluteAddress left, Imm32 right)
+    {
+        m_assembler.cmpl_im(right.m_value, left.m_ptr);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
+    {
+        m_assembler.cmpl_ir_force32(initialRightValue.asIntptr(), left);
+        dataLabel = DataLabelPtr(this);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
+    {
+        m_assembler.cmpl_im_force32(initialRightValue.asIntptr(), left.offset, left.base);
+        dataLabel = DataLabelPtr(this);
+        return Jump(m_assembler.jCC(cond));
+    }
+
+    DataLabelPtr storePtrWithPatch(Address address)
+    {
+        m_assembler.movl_i32m(0, address.offset, address.base);
+        return DataLabelPtr(this);
+    }
+};
+
+typedef MacroAssemblerX86 MacroAssemblerBase;
+
+#endif
+
+
+class MacroAssembler : public MacroAssemblerBase {
+public:
+
+    using MacroAssemblerBase::pop;
+    using MacroAssemblerBase::jump;
+    using MacroAssemblerBase::branch32;
+    using MacroAssemblerBase::branch16;
+#if PLATFORM(X86_64)
+    using MacroAssemblerBase::branchPtr;
+    using MacroAssemblerBase::branchTestPtr;
+#endif
+
+
+    // Platform agnostic onvenience functions,
+    // described in terms of other macro assembly methods.
+    void pop()
+    {
+        addPtr(Imm32(sizeof(void*)), stackPointerRegister);
+    }
+    
+    void peek(RegisterID dest, int index = 0)
+    {
+        loadPtr(Address(stackPointerRegister, (index * sizeof(void*))), dest);
+    }
+
+    void poke(RegisterID src, int index = 0)
+    {
+        storePtr(src, Address(stackPointerRegister, (index * sizeof(void*))));
+    }
+
+    void poke(Imm32 value, int index = 0)
+    {
+        store32(value, Address(stackPointerRegister, (index * sizeof(void*))));
+    }
+
+    void poke(ImmPtr imm, int index = 0)
+    {
+        storePtr(imm, Address(stackPointerRegister, (index * sizeof(void*))));
+    }
+
+
+    // Backwards banches, these are currently all implemented using existing forwards branch mechanisms.
+    void branchPtr(Condition cond, RegisterID op1, ImmPtr imm, Label target)
+    {
+        branchPtr(cond, op1, imm).linkTo(target, this);
+    }
+
+    void branch32(Condition cond, RegisterID op1, RegisterID op2, Label target)
+    {
+        branch32(cond, op1, op2).linkTo(target, this);
+    }
+
+    void branch32(Condition cond, RegisterID op1, Imm32 imm, Label target)
+    {
+        branch32(cond, op1, imm).linkTo(target, this);
+    }
+
+    void branch32(Condition cond, RegisterID left, Address right, Label target)
+    {
+        branch32(cond, left, right).linkTo(target, this);
+    }
+
+    void branch16(Condition cond, BaseIndex left, RegisterID right, Label target)
+    {
+        branch16(cond, left, right).linkTo(target, this);
+    }
+    
+    void branchTestPtr(Condition cond, RegisterID reg, Label target)
+    {
+        branchTestPtr(cond, reg).linkTo(target, this);
+    }
+
+    void jump(Label target)
+    {
+        jump().linkTo(target, this);
+    }
+
+
+    // Ptr methods
+    // On 32-bit platforms (i.e. x86), these methods directly map onto their 32-bit equivalents.
+#if !PLATFORM(X86_64)
+    void addPtr(RegisterID src, RegisterID dest)
+    {
+        add32(src, dest);
+    }
+
+    void addPtr(Imm32 imm, RegisterID srcDest)
+    {
+        add32(imm, srcDest);
+    }
+
+    void addPtr(ImmPtr imm, RegisterID dest)
+    {
+        add32(Imm32(imm), dest);
+    }
+
+    void addPtr(Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        add32(imm, src, dest);
+    }
+
+    void andPtr(RegisterID src, RegisterID dest)
+    {
+        and32(src, dest);
+    }
+
+    void andPtr(Imm32 imm, RegisterID srcDest)
+    {
+        and32(imm, srcDest);
+    }
+
+    void orPtr(RegisterID src, RegisterID dest)
+    {
+        or32(src, dest);
+    }
+
+    void orPtr(ImmPtr imm, RegisterID dest)
+    {
+        or32(Imm32(imm), dest);
+    }
+
+    void orPtr(Imm32 imm, RegisterID dest)
+    {
+        or32(imm, dest);
+    }
+
+    void rshiftPtr(RegisterID shift_amount, RegisterID dest)
+    {
+        rshift32(shift_amount, dest);
+    }
+
+    void rshiftPtr(Imm32 imm, RegisterID dest)
+    {
+        rshift32(imm, dest);
+    }
+
+    void subPtr(RegisterID src, RegisterID dest)
+    {
+        sub32(src, dest);
+    }
+    
+    void subPtr(Imm32 imm, RegisterID dest)
+    {
+        sub32(imm, dest);
+    }
+    
+    void subPtr(ImmPtr imm, RegisterID dest)
+    {
+        sub32(Imm32(imm), dest);
+    }
+
+    void xorPtr(RegisterID src, RegisterID dest)
+    {
+        xor32(src, dest);
+    }
+
+    void xorPtr(Imm32 imm, RegisterID srcDest)
+    {
+        xor32(imm, srcDest);
+    }
+
+
+    void loadPtr(ImplicitAddress address, RegisterID dest)
+    {
+        load32(address, dest);
+    }
+
+    void loadPtr(BaseIndex address, RegisterID dest)
+    {
+        load32(address, dest);
+    }
+
+    void loadPtr(void* address, RegisterID dest)
+    {
+        load32(address, dest);
+    }
+
+    DataLabel32 loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        return load32WithAddressOffsetPatch(address, dest);
+    }
+
+    void storePtr(RegisterID src, ImplicitAddress address)
+    {
+        store32(src, address);
+    }
+
+    void storePtr(RegisterID src, BaseIndex address)
+    {
+        store32(src, address);
+    }
+
+    void storePtr(ImmPtr imm, ImplicitAddress address)
+    {
+        store32(Imm32(imm), address);
+    }
+
+    void storePtr(ImmPtr imm, void* address)
+    {
+        store32(Imm32(imm), address);
+    }
+
+    DataLabel32 storePtrWithAddressOffsetPatch(RegisterID src, Address address)
+    {
+        return store32WithAddressOffsetPatch(src, address);
+    }
+
+
+    Jump branchPtr(Condition cond, RegisterID left, RegisterID right)
+    {
+        return branch32(cond, left, right);
+    }
+
+    Jump branchPtr(Condition cond, RegisterID left, ImmPtr right)
+    {
+        return branch32(cond, left, Imm32(right));
+    }
+
+    Jump branchPtr(Condition cond, RegisterID left, Address right)
+    {
+        return branch32(cond, left, right);
+    }
+
+    Jump branchPtr(Condition cond, Address left, RegisterID right)
+    {
+        return branch32(cond, left, right);
+    }
+
+    Jump branchPtr(Condition cond, AbsoluteAddress left, RegisterID right)
+    {
+        return branch32(cond, left, right);
+    }
+
+    Jump branchPtr(Condition cond, Address left, ImmPtr right)
+    {
+        return branch32(cond, left, Imm32(right));
+    }
+
+    Jump branchPtr(Condition cond, AbsoluteAddress left, ImmPtr right)
+    {
+        return branch32(cond, left, Imm32(right));
+    }
+
+    Jump branchTestPtr(Condition cond, RegisterID reg, RegisterID mask)
+    {
+        return branchTest32(cond, reg, mask);
+    }
+
+    Jump branchTestPtr(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
+    {
+        return branchTest32(cond, reg, mask);
+    }
+
+    Jump branchTestPtr(Condition cond, Address address, Imm32 mask = Imm32(-1))
+    {
+        return branchTest32(cond, address, mask);
+    }
+
+    Jump branchTestPtr(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
+    {
+        return branchTest32(cond, address, mask);
+    }
+
+
+    Jump branchAddPtr(Condition cond, RegisterID src, RegisterID dest)
+    {
+        return branchAdd32(cond, src, dest);
+    }
+
+    Jump branchSubPtr(Condition cond, Imm32 imm, RegisterID dest)
+    {
+        return branchSub32(cond, imm, dest);
+    }
+#endif
+
 };
 
 } // namespace JSC

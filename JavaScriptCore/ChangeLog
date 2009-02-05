@@ -1,3 +1,106 @@
+2009-02-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        This patch tidies up the MacroAssembler, cleaning up the code and refactoring out the
+        platform-specific parts.  The MacroAssembler gets split up like a beef burger, with the
+        platform-agnostic data types being the lower bun (in the form of the class AbstractMacroAssembler),
+        the plaform-specific code generation forming a big meaty patty of methods like 'add32',
+        'branch32', etc (MacroAssemblerX86), and finally topped off with the bun-lid of the
+        MacroAssembler class itself, providing covenience methods such as the stack peek & poke,
+        and backwards branch methods, all of which can be described in a platform independent
+        way using methods from the base class.  The AbstractMacroAssembler is templated on the
+        type of the assembler class that will be used for code generation, and the three layers
+        are held together with the cocktail stick of inheritance.
+
+        The above description is a slight simplification since the MacroAssemblerX86 is actually
+        formed from two layers (in effect giving us a kind on bacon double cheeseburger) - with the
+        bulk of methods that are common between x86 & x86-64 implemented in MacroAssemblerX86Common,
+        which forms a base class for MacroAssemblerX86 and MacroAssemblerX86_64 (which add the methods
+        specific to the given platform).
+
+        I'm landing these changes first without splitting the classes across multiple files,
+        I will follow up with a second patch to split up the file MacroAssembler.h.
+
+        * assembler/MacroAssembler.h:
+        (JSC::AbstractMacroAssembler::):
+        (JSC::AbstractMacroAssembler::DataLabelPtr::DataLabelPtr):
+        (JSC::AbstractMacroAssembler::DataLabelPtr::patch):
+        (JSC::AbstractMacroAssembler::DataLabel32::DataLabel32):
+        (JSC::AbstractMacroAssembler::DataLabel32::patch):
+        (JSC::AbstractMacroAssembler::Label::Label):
+        (JSC::AbstractMacroAssembler::Jump::Jump):
+        (JSC::AbstractMacroAssembler::Jump::link):
+        (JSC::AbstractMacroAssembler::Jump::linkTo):
+        (JSC::AbstractMacroAssembler::Jump::patch):
+        (JSC::AbstractMacroAssembler::JumpList::link):
+        (JSC::AbstractMacroAssembler::JumpList::linkTo):
+        (JSC::AbstractMacroAssembler::PatchBuffer::link):
+        (JSC::AbstractMacroAssembler::PatchBuffer::addressOf):
+        (JSC::AbstractMacroAssembler::PatchBuffer::setPtr):
+        (JSC::AbstractMacroAssembler::size):
+        (JSC::AbstractMacroAssembler::copyCode):
+        (JSC::AbstractMacroAssembler::label):
+        (JSC::AbstractMacroAssembler::align):
+        (JSC::AbstractMacroAssembler::differenceBetween):
+        (JSC::MacroAssemblerX86Common::xor32):
+        (JSC::MacroAssemblerX86Common::load32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86Common::store32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86Common::move):
+        (JSC::MacroAssemblerX86Common::swap):
+        (JSC::MacroAssemblerX86Common::signExtend32ToPtr):
+        (JSC::MacroAssemblerX86Common::zeroExtend32ToPtr):
+        (JSC::MacroAssemblerX86Common::branch32):
+        (JSC::MacroAssemblerX86Common::jump):
+        (JSC::MacroAssemblerX86_64::add32):
+        (JSC::MacroAssemblerX86_64::sub32):
+        (JSC::MacroAssemblerX86_64::load32):
+        (JSC::MacroAssemblerX86_64::store32):
+        (JSC::MacroAssemblerX86_64::addPtr):
+        (JSC::MacroAssemblerX86_64::andPtr):
+        (JSC::MacroAssemblerX86_64::orPtr):
+        (JSC::MacroAssemblerX86_64::rshiftPtr):
+        (JSC::MacroAssemblerX86_64::subPtr):
+        (JSC::MacroAssemblerX86_64::xorPtr):
+        (JSC::MacroAssemblerX86_64::loadPtr):
+        (JSC::MacroAssemblerX86_64::loadPtrWithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86_64::storePtr):
+        (JSC::MacroAssemblerX86_64::storePtrWithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86_64::branchPtr):
+        (JSC::MacroAssemblerX86_64::branchTestPtr):
+        (JSC::MacroAssemblerX86_64::branchAddPtr):
+        (JSC::MacroAssemblerX86_64::branchSubPtr):
+        (JSC::MacroAssemblerX86_64::branchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::storePtrWithPatch):
+        (JSC::MacroAssemblerX86::add32):
+        (JSC::MacroAssemblerX86::sub32):
+        (JSC::MacroAssemblerX86::load32):
+        (JSC::MacroAssemblerX86::store32):
+        (JSC::MacroAssemblerX86::branch32):
+        (JSC::MacroAssemblerX86::branchPtrWithPatch):
+        (JSC::MacroAssemblerX86::storePtrWithPatch):
+        (JSC::MacroAssembler::pop):
+        (JSC::MacroAssembler::peek):
+        (JSC::MacroAssembler::poke):
+        (JSC::MacroAssembler::branchPtr):
+        (JSC::MacroAssembler::branch32):
+        (JSC::MacroAssembler::branch16):
+        (JSC::MacroAssembler::branchTestPtr):
+        (JSC::MacroAssembler::addPtr):
+        (JSC::MacroAssembler::andPtr):
+        (JSC::MacroAssembler::orPtr):
+        (JSC::MacroAssembler::rshiftPtr):
+        (JSC::MacroAssembler::subPtr):
+        (JSC::MacroAssembler::xorPtr):
+        (JSC::MacroAssembler::loadPtr):
+        (JSC::MacroAssembler::loadPtrWithAddressOffsetPatch):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::storePtrWithAddressOffsetPatch):
+        (JSC::MacroAssembler::branchAddPtr):
+        (JSC::MacroAssembler::branchSubPtr):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOp):
+
 2009-02-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

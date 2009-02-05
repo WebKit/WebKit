@@ -782,10 +782,10 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         ASSERT(opcodeID == op_mul);
         // convert eax & edx from JSImmediates to ints, and check if either are zero
         emitFastArithImmToInt(X86::edx);
-        JmpSrc op1Zero = emitFastArithDeTagImmediateJumpIfZero(X86::eax);
+        Jump op1Zero = emitFastArithDeTagImmediateJumpIfZero(X86::eax);
         __ testl_rr(X86::edx, X86::edx);
         JmpSrc op2NonZero = __ jne();
-        __ link(op1Zero, __ label());
+        op1Zero.link(this);
         // if either input is zero, add the two together, and check if the result is < 0.
         // If it is, we have a problem (N < 0), (N * 0) == -0, not representatble as a JSImmediate. 
         __ movl_rr(X86::eax, X86::ecx);
