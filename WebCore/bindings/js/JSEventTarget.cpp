@@ -28,17 +28,29 @@
 
 #include "Document.h"
 #include "JSEventListener.h"
-#include "JSEventTargetNode.h"
 #include "JSMessagePort.h"
-#include "JSWorker.h"
-#include "JSWorkerContext.h"
+#include "JSNode.h"
+#include "JSXMLHttpRequest.h"
 #include "JSXMLHttpRequestUpload.h"
-#include "Worker.h"
-#include "WorkerContext.h"
+#include "MessagePort.h"
+#include "XMLHttpRequest.h"
+#include "XMLHttpRequestUpload.h"
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "DOMApplicationCache.h"
+#include "JSDOMApplicationCache.h"
+#endif
 
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"
 #include "JSSVGElementInstance.h"
+#endif
+
+#if ENABLE(WORKERS)
+#include "JSWorker.h"
+#include "JSWorkerContext.h"
+#include "Worker.h"
+#include "WorkerContext.h"
 #endif
 
 using namespace JSC;
@@ -85,6 +97,33 @@ JSValuePtr toJS(ExecState* exec, EventTarget* target)
 
     ASSERT_NOT_REACHED();
     return jsNull();
+}
+
+EventTarget* toEventTarget(JSC::JSValuePtr value)
+{
+    #define CONVERT_TO_EVENT_TARGET(type) \
+        if (value.isObject(&JS##type::s_info)) \
+            return static_cast<JS##type*>(asObject(value))->impl();
+
+    CONVERT_TO_EVENT_TARGET(Node)
+    CONVERT_TO_EVENT_TARGET(XMLHttpRequest)
+    CONVERT_TO_EVENT_TARGET(XMLHttpRequestUpload)
+    CONVERT_TO_EVENT_TARGET(MessagePort)
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    CONVERT_TO_EVENT_TARGET(DOMApplicationCache)
+#endif
+
+#if ENABLE(SVG)
+    CONVERT_TO_EVENT_TARGET(SVGElementInstance)
+#endif
+
+#if ENABLE(WORKERS)
+    CONVERT_TO_EVENT_TARGET(Worker)
+    CONVERT_TO_EVENT_TARGET(WorkerContext)
+#endif
+
+    return 0;
 }
 
 } // namespace WebCore

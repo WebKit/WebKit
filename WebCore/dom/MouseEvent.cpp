@@ -36,7 +36,7 @@ MouseEvent::MouseEvent()
 MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
                        int detail, int screenX, int screenY, int pageX, int pageY,
                        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-                       unsigned short button, PassRefPtr<EventTargetNode> relatedTarget,
+                       unsigned short button, PassRefPtr<EventTarget> relatedTarget,
                        PassRefPtr<Clipboard> clipboard, bool isSimulated)
     : MouseRelatedEvent(eventType, canBubble, cancelable, view, detail, screenX, screenY,
                         pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, isSimulated)
@@ -54,7 +54,7 @@ MouseEvent::~MouseEvent()
 void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
                                 int detail, int screenX, int screenY, int clientX, int clientY,
                                 bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-                                unsigned short button, PassRefPtr<EventTargetNode> relatedTarget)
+                                unsigned short button, PassRefPtr<EventTarget> relatedTarget)
 {
     if (dispatched())
         return;
@@ -101,7 +101,7 @@ Node* MouseEvent::toElement() const
 {
     // MSIE extension - "the object toward which the user is moving the mouse pointer"
     if (type() == eventNames().mouseoutEvent) 
-        return relatedTarget();
+        return relatedTarget() ? relatedTarget()->toNode() : 0;
     
     return target() ? target()->toNode() : 0;
 }
@@ -110,7 +110,7 @@ Node* MouseEvent::fromElement() const
 {
     // MSIE extension - "object from which activation or the mouse pointer is exiting during the event" (huh?)
     if (type() != eventNames().mouseoutEvent)
-        return relatedTarget();
+        return relatedTarget() ? relatedTarget()->toNode() : 0;
     
     return target() ? target()->toNode() : 0;
 }

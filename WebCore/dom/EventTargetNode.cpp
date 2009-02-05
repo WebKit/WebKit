@@ -61,18 +61,12 @@ namespace WebCore {
     
 static HashSet<EventTargetNode*>* gNodesDispatchingSimulatedClicks = 0; 
 
-EventTargetNode::~EventTargetNode()
-{
-    if (!eventListeners().isEmpty() && !inDocument())
-        document()->unregisterDisconnectedNodeWithEventListeners(this);
-}
-
-ScriptExecutionContext* EventTargetNode::scriptExecutionContext() const
+ScriptExecutionContext* Node::scriptExecutionContext() const
 {
     return document();
 }
 
-const RegisteredEventListenerVector& EventTargetNode::eventListeners() const
+const RegisteredEventListenerVector& Node::eventListeners() const
 {
     if (hasRareData()) {
         if (RegisteredEventListenerVector* listeners = rareData()->listeners())
@@ -82,7 +76,7 @@ const RegisteredEventListenerVector& EventTargetNode::eventListeners() const
     return *emptyListenersVector;
 }
 
-void EventTargetNode::insertedIntoDocument()
+void Node::insertedIntoDocument()
 {
     if (!eventListeners().isEmpty())
         document()->unregisterDisconnectedNodeWithEventListeners(this);
@@ -90,7 +84,7 @@ void EventTargetNode::insertedIntoDocument()
     setInDocument(true);
 }
 
-void EventTargetNode::removedFromDocument()
+void Node::removedFromDocument()
 {
     if (!eventListeners().isEmpty())
         document()->registerDisconnectedNodeWithEventListeners(this);
@@ -98,20 +92,16 @@ void EventTargetNode::removedFromDocument()
     setInDocument(false);
 }
 
-void EventTargetNode::willMoveToNewOwnerDocument()
+void Node::willMoveToNewOwnerDocument()
 {
     if (!eventListeners().isEmpty())
         document()->unregisterDisconnectedNodeWithEventListeners(this);
-
-    Node::willMoveToNewOwnerDocument();
 }
 
-void EventTargetNode::didMoveToNewOwnerDocument()
+void Node::didMoveToNewOwnerDocument()
 {
     if (!eventListeners().isEmpty())
         document()->registerDisconnectedNodeWithEventListeners(this);
-
-    Node::didMoveToNewOwnerDocument();
 }
 
 static inline void updateSVGElementInstancesAfterEventListenerChange(EventTargetNode* referenceNode)
@@ -138,7 +128,7 @@ static inline void updateSVGElementInstancesAfterEventListenerChange(EventTarget
 #endif
 }
 
-void EventTargetNode::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
+void Node::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     Document* document = this->document();
     if (!document->attached())
@@ -160,7 +150,7 @@ void EventTargetNode::addEventListener(const AtomicString& eventType, PassRefPtr
     updateSVGElementInstancesAfterEventListenerChange(this);
 }
 
-void EventTargetNode::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
+void Node::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
 {
     if (!hasRareData())
         return;
@@ -186,7 +176,7 @@ void EventTargetNode::removeEventListener(const AtomicString& eventType, EventLi
     }
 }
 
-void EventTargetNode::removeAllEventListenersSlowCase()
+void Node::removeAllEventListenersSlowCase()
 {
     ASSERT(hasRareData());
 
@@ -200,7 +190,7 @@ void EventTargetNode::removeAllEventListenersSlowCase()
     listeners->clear();
 }
 
-void EventTargetNode::handleLocalEvents(Event* event, bool useCapture)
+void Node::handleLocalEvents(Event* event, bool useCapture)
 {
     if (disabled() && event->isMouseEvent())
         return;
@@ -252,7 +242,7 @@ static inline EventTarget* eventTargetRespectingSVGTargetRules(EventTargetNode* 
     return referenceNode;
 }
 
-bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec)
+bool Node::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec)
 {
     RefPtr<Event> evt(e);
     ASSERT(!eventDispatchForbidden());
@@ -267,7 +257,7 @@ bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec)
     return dispatchGenericEvent(evt.release());
 }
 
-bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
+bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
 {
     RefPtr<Event> event(prpEvent);
 
@@ -391,7 +381,7 @@ doneWithDefault:
     return !event->defaultPrevented();
 }
 
-bool EventTargetNode::dispatchSubtreeModifiedEvent()
+bool Node::dispatchSubtreeModifiedEvent()
 {
     ASSERT(!eventDispatchForbidden());
     
@@ -405,7 +395,7 @@ bool EventTargetNode::dispatchSubtreeModifiedEvent()
     return dispatchEvent(MutationEvent::create(eventNames().DOMSubtreeModifiedEvent, true, false, 0, String(), String(), String(), 0), ec);
 }
 
-void EventTargetNode::dispatchWindowEvent(PassRefPtr<Event> e)
+void Node::dispatchWindowEvent(PassRefPtr<Event> e)
 {
     ASSERT(!eventDispatchForbidden());
     RefPtr<Event> evt(e);
@@ -415,7 +405,7 @@ void EventTargetNode::dispatchWindowEvent(PassRefPtr<Event> e)
     doc->handleWindowEvent(evt.get(), false);
 }
 
-void EventTargetNode::dispatchWindowEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
+void Node::dispatchWindowEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
 {
     ASSERT(!eventDispatchForbidden());
     RefPtr<Document> doc = document();
@@ -434,7 +424,7 @@ void EventTargetNode::dispatchWindowEvent(const AtomicString& eventType, bool ca
     }
 }
 
-bool EventTargetNode::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent)
+bool Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent)
 {
     ASSERT(!eventDispatchForbidden());
     ASSERT(eventType == eventNames().DOMFocusInEvent || eventType == eventNames().DOMFocusOutEvent || eventType == eventNames().DOMActivateEvent);
@@ -447,7 +437,7 @@ bool EventTargetNode::dispatchUIEvent(const AtomicString& eventType, int detail,
     return dispatchEvent(evt.release(), ec);
 }
 
-bool EventTargetNode::dispatchKeyEvent(const PlatformKeyboardEvent& key)
+bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& key)
 {
     ASSERT(!eventDispatchForbidden());
     ExceptionCode ec = 0;
@@ -463,7 +453,7 @@ bool EventTargetNode::dispatchKeyEvent(const PlatformKeyboardEvent& key)
     return r;
 }
 
-bool EventTargetNode::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType,
+bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType,
     int detail, Node* relatedTarget)
 {
     ASSERT(!eventDispatchForbidden());
@@ -482,7 +472,7 @@ bool EventTargetNode::dispatchMouseEvent(const PlatformMouseEvent& event, const 
         false, relatedTarget);
 }
 
-void EventTargetNode::dispatchSimulatedMouseEvent(const AtomicString& eventType,
+void Node::dispatchSimulatedMouseEvent(const AtomicString& eventType,
     PassRefPtr<Event> underlyingEvent)
 {
     ASSERT(!eventDispatchForbidden());
@@ -504,7 +494,7 @@ void EventTargetNode::dispatchSimulatedMouseEvent(const AtomicString& eventType,
         ctrlKey, altKey, shiftKey, metaKey, true, 0, underlyingEvent);
 }
 
-void EventTargetNode::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents, bool showPressedLook)
+void Node::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents, bool showPressedLook)
 {
     if (!gNodesDispatchingSimulatedClicks)
         gNodesDispatchingSimulatedClicks = new HashSet<EventTargetNode*>;
@@ -527,7 +517,7 @@ void EventTargetNode::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendM
     gNodesDispatchingSimulatedClicks->remove(this);
 }
 
-bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int button, int detail,
+bool Node::dispatchMouseEvent(const AtomicString& eventType, int button, int detail,
     int pageX, int pageY, int screenX, int screenY,
     bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, 
     bool isSimulated, Node* relatedTargetArg, PassRefPtr<Event> underlyingEvent)
@@ -596,7 +586,7 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     return swallowEvent;
 }
 
-void EventTargetNode::dispatchWheelEvent(PlatformWheelEvent& e)
+void Node::dispatchWheelEvent(PlatformWheelEvent& e)
 {
     ASSERT(!eventDispatchForbidden());
     if (e.deltaX() == 0 && e.deltaY() == 0)
@@ -627,7 +617,7 @@ void EventTargetNode::dispatchWheelEvent(PlatformWheelEvent& e)
         e.accept();
 }
 
-bool EventTargetNode::dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime)
+bool Node::dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime)
 {
     ASSERT(!eventDispatchForbidden());
     
@@ -635,7 +625,7 @@ bool EventTargetNode::dispatchWebKitAnimationEvent(const AtomicString& eventType
     return dispatchEvent(WebKitAnimationEvent::create(eventType, animationName, elapsedTime), ec);
 }
 
-bool EventTargetNode::dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime)
+bool Node::dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime)
 {
     ASSERT(!eventDispatchForbidden());
     
@@ -643,31 +633,31 @@ bool EventTargetNode::dispatchWebKitTransitionEvent(const AtomicString& eventTyp
     return dispatchEvent(WebKitTransitionEvent::create(eventType, propertyName, elapsedTime), ec);
 }
 
-void EventTargetNode::dispatchFocusEvent()
+void Node::dispatchFocusEvent()
 {
     dispatchEventForType(eventNames().focusEvent, false, false);
 }
 
-void EventTargetNode::dispatchBlurEvent()
+void Node::dispatchBlurEvent()
 {
     dispatchEventForType(eventNames().blurEvent, false, false);
 }
 
-bool EventTargetNode::dispatchEventForType(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
+bool Node::dispatchEventForType(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
 {
     ASSERT(!eventDispatchForbidden());
     ExceptionCode ec = 0;
     return dispatchEvent(Event::create(eventType, canBubbleArg, cancelableArg), ec);
 }
 
-bool EventTargetNode::dispatchProgressEvent(const AtomicString &eventType, bool lengthComputableArg, unsigned loadedArg, unsigned totalArg)
+bool Node::dispatchProgressEvent(const AtomicString &eventType, bool lengthComputableArg, unsigned loadedArg, unsigned totalArg)
 {
     ASSERT(!eventDispatchForbidden());
     ExceptionCode ec = 0;
     return dispatchEvent(ProgressEvent::create(eventType, lengthComputableArg, loadedArg, totalArg), ec);
 }
 
-void EventTargetNode::dispatchStorageEvent(const AtomicString &eventType, const String& key, const String& oldValue, const String& newValue, Frame* source)
+void Node::dispatchStorageEvent(const AtomicString &eventType, const String& key, const String& oldValue, const String& newValue, Frame* source)
 {
 #if ENABLE(DOM_STORAGE)
     ASSERT(!eventDispatchForbidden());
@@ -676,7 +666,7 @@ void EventTargetNode::dispatchStorageEvent(const AtomicString &eventType, const 
 #endif
 }
 
-void EventTargetNode::removeInlineEventListenerForType(const AtomicString& eventType)
+void Node::removeInlineEventListenerForType(const AtomicString& eventType)
 {
     if (!hasRareData())
         return;
@@ -703,7 +693,7 @@ void EventTargetNode::removeInlineEventListenerForType(const AtomicString& event
     }
 }
 
-void EventTargetNode::setInlineEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener> listener)
+void Node::setInlineEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener> listener)
 {
     // In case we are the only one holding a reference to it, we don't want removeInlineEventListenerForType to destroy it.
     removeInlineEventListenerForType(eventType);
@@ -711,12 +701,12 @@ void EventTargetNode::setInlineEventListenerForType(const AtomicString& eventTyp
         addEventListener(eventType, listener, false);
 }
 
-void EventTargetNode::setInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute* attr)
+void Node::setInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute* attr)
 {
     setInlineEventListenerForType(eventType, document()->createEventListener(attr->localName().string(), attr->value(), this));
 }
 
-EventListener* EventTargetNode::inlineEventListenerForType(const AtomicString& eventType) const
+EventListener* Node::inlineEventListenerForType(const AtomicString& eventType) const
 {
     const RegisteredEventListenerVector& listeners = eventListeners();
     size_t size = listeners.size();
@@ -728,12 +718,12 @@ EventListener* EventTargetNode::inlineEventListenerForType(const AtomicString& e
     return 0;
 }
 
-bool EventTargetNode::disabled() const
+bool Node::disabled() const
 {
     return false;
 }
 
-void EventTargetNode::defaultEventHandler(Event* event)
+void Node::defaultEventHandler(Event* event)
 {
     if (event->target() != this)
         return;
@@ -756,402 +746,402 @@ void EventTargetNode::defaultEventHandler(Event* event)
     }
 }
 
-EventListener* EventTargetNode::onabort() const
+EventListener* Node::onabort() const
 {
     return inlineEventListenerForType(eventNames().abortEvent);
 }
 
-void EventTargetNode::setOnabort(PassRefPtr<EventListener> eventListener)
+void Node::setOnabort(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().abortEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onblur() const
+EventListener* Node::onblur() const
 {
     return inlineEventListenerForType(eventNames().blurEvent);
 }
 
-void EventTargetNode::setOnblur(PassRefPtr<EventListener> eventListener)
+void Node::setOnblur(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().blurEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onchange() const
+EventListener* Node::onchange() const
 {
     return inlineEventListenerForType(eventNames().changeEvent);
 }
 
-void EventTargetNode::setOnchange(PassRefPtr<EventListener> eventListener)
+void Node::setOnchange(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().changeEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onclick() const
+EventListener* Node::onclick() const
 {
     return inlineEventListenerForType(eventNames().clickEvent);
 }
 
-void EventTargetNode::setOnclick(PassRefPtr<EventListener> eventListener)
+void Node::setOnclick(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().clickEvent, eventListener);
 }
 
-EventListener* EventTargetNode::oncontextmenu() const
+EventListener* Node::oncontextmenu() const
 {
     return inlineEventListenerForType(eventNames().contextmenuEvent);
 }
 
-void EventTargetNode::setOncontextmenu(PassRefPtr<EventListener> eventListener)
+void Node::setOncontextmenu(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().contextmenuEvent, eventListener);
 }
 
-EventListener* EventTargetNode::ondblclick() const
+EventListener* Node::ondblclick() const
 {
     return inlineEventListenerForType(eventNames().dblclickEvent);
 }
 
-void EventTargetNode::setOndblclick(PassRefPtr<EventListener> eventListener)
+void Node::setOndblclick(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().dblclickEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onerror() const
+EventListener* Node::onerror() const
 {
     return inlineEventListenerForType(eventNames().errorEvent);
 }
 
-void EventTargetNode::setOnerror(PassRefPtr<EventListener> eventListener)
+void Node::setOnerror(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().errorEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onfocus() const
+EventListener* Node::onfocus() const
 {
     return inlineEventListenerForType(eventNames().focusEvent);
 }
 
-void EventTargetNode::setOnfocus(PassRefPtr<EventListener> eventListener)
+void Node::setOnfocus(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().focusEvent, eventListener);
 }
 
-EventListener* EventTargetNode::oninput() const
+EventListener* Node::oninput() const
 {
     return inlineEventListenerForType(eventNames().inputEvent);
 }
 
-void EventTargetNode::setOninput(PassRefPtr<EventListener> eventListener)
+void Node::setOninput(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().inputEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onkeydown() const
+EventListener* Node::onkeydown() const
 {
     return inlineEventListenerForType(eventNames().keydownEvent);
 }
 
-void EventTargetNode::setOnkeydown(PassRefPtr<EventListener> eventListener)
+void Node::setOnkeydown(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().keydownEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onkeypress() const
+EventListener* Node::onkeypress() const
 {
     return inlineEventListenerForType(eventNames().keypressEvent);
 }
 
-void EventTargetNode::setOnkeypress(PassRefPtr<EventListener> eventListener)
+void Node::setOnkeypress(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().keypressEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onkeyup() const
+EventListener* Node::onkeyup() const
 {
     return inlineEventListenerForType(eventNames().keyupEvent);
 }
 
-void EventTargetNode::setOnkeyup(PassRefPtr<EventListener> eventListener)
+void Node::setOnkeyup(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().keyupEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onload() const
+EventListener* Node::onload() const
 {
     return inlineEventListenerForType(eventNames().loadEvent);
 }
 
-void EventTargetNode::setOnload(PassRefPtr<EventListener> eventListener)
+void Node::setOnload(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().loadEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onmousedown() const
+EventListener* Node::onmousedown() const
 {
     return inlineEventListenerForType(eventNames().mousedownEvent);
 }
 
-void EventTargetNode::setOnmousedown(PassRefPtr<EventListener> eventListener)
+void Node::setOnmousedown(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().mousedownEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onmousemove() const
+EventListener* Node::onmousemove() const
 {
     return inlineEventListenerForType(eventNames().mousemoveEvent);
 }
 
-void EventTargetNode::setOnmousemove(PassRefPtr<EventListener> eventListener)
+void Node::setOnmousemove(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().mousemoveEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onmouseout() const
+EventListener* Node::onmouseout() const
 {
     return inlineEventListenerForType(eventNames().mouseoutEvent);
 }
 
-void EventTargetNode::setOnmouseout(PassRefPtr<EventListener> eventListener)
+void Node::setOnmouseout(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().mouseoutEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onmouseover() const
+EventListener* Node::onmouseover() const
 {
     return inlineEventListenerForType(eventNames().mouseoverEvent);
 }
 
-void EventTargetNode::setOnmouseover(PassRefPtr<EventListener> eventListener)
+void Node::setOnmouseover(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().mouseoverEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onmouseup() const
+EventListener* Node::onmouseup() const
 {
     return inlineEventListenerForType(eventNames().mouseupEvent);
 }
 
-void EventTargetNode::setOnmouseup(PassRefPtr<EventListener> eventListener)
+void Node::setOnmouseup(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().mouseupEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onmousewheel() const
+EventListener* Node::onmousewheel() const
 {
     return inlineEventListenerForType(eventNames().mousewheelEvent);
 }
 
-void EventTargetNode::setOnmousewheel(PassRefPtr<EventListener> eventListener)
+void Node::setOnmousewheel(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().mousewheelEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onbeforecut() const
+EventListener* Node::onbeforecut() const
 {
     return inlineEventListenerForType(eventNames().beforecutEvent);
 }
 
-void EventTargetNode::setOnbeforecut(PassRefPtr<EventListener> eventListener)
+void Node::setOnbeforecut(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().beforecutEvent, eventListener);
 }
 
-EventListener* EventTargetNode::oncut() const
+EventListener* Node::oncut() const
 {
     return inlineEventListenerForType(eventNames().cutEvent);
 }
 
-void EventTargetNode::setOncut(PassRefPtr<EventListener> eventListener)
+void Node::setOncut(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().cutEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onbeforecopy() const
+EventListener* Node::onbeforecopy() const
 {
     return inlineEventListenerForType(eventNames().beforecopyEvent);
 }
 
-void EventTargetNode::setOnbeforecopy(PassRefPtr<EventListener> eventListener)
+void Node::setOnbeforecopy(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().beforecopyEvent, eventListener);
 }
 
-EventListener* EventTargetNode::oncopy() const
+EventListener* Node::oncopy() const
 {
     return inlineEventListenerForType(eventNames().copyEvent);
 }
 
-void EventTargetNode::setOncopy(PassRefPtr<EventListener> eventListener)
+void Node::setOncopy(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().copyEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onbeforepaste() const
+EventListener* Node::onbeforepaste() const
 {
     return inlineEventListenerForType(eventNames().beforepasteEvent);
 }
 
-void EventTargetNode::setOnbeforepaste(PassRefPtr<EventListener> eventListener)
+void Node::setOnbeforepaste(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().beforepasteEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onpaste() const
+EventListener* Node::onpaste() const
 {
     return inlineEventListenerForType(eventNames().pasteEvent);
 }
 
-void EventTargetNode::setOnpaste(PassRefPtr<EventListener> eventListener)
+void Node::setOnpaste(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().pasteEvent, eventListener);
 }
 
-EventListener* EventTargetNode::ondragenter() const
+EventListener* Node::ondragenter() const
 {
     return inlineEventListenerForType(eventNames().dragenterEvent);
 }
 
-void EventTargetNode::setOndragenter(PassRefPtr<EventListener> eventListener)
+void Node::setOndragenter(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().dragenterEvent, eventListener);
 }
 
-EventListener* EventTargetNode::ondragover() const
+EventListener* Node::ondragover() const
 {
     return inlineEventListenerForType(eventNames().dragoverEvent);
 }
 
-void EventTargetNode::setOndragover(PassRefPtr<EventListener> eventListener)
+void Node::setOndragover(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().dragoverEvent, eventListener);
 }
 
-EventListener* EventTargetNode::ondragleave() const
+EventListener* Node::ondragleave() const
 {
     return inlineEventListenerForType(eventNames().dragleaveEvent);
 }
 
-void EventTargetNode::setOndragleave(PassRefPtr<EventListener> eventListener)
+void Node::setOndragleave(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().dragleaveEvent, eventListener);
 }
 
-EventListener* EventTargetNode::ondrop() const
+EventListener* Node::ondrop() const
 {
     return inlineEventListenerForType(eventNames().dropEvent);
 }
 
-void EventTargetNode::setOndrop(PassRefPtr<EventListener> eventListener)
+void Node::setOndrop(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().dropEvent, eventListener);
 }
 
-EventListener* EventTargetNode::ondragstart() const
+EventListener* Node::ondragstart() const
 {
     return inlineEventListenerForType(eventNames().dragstartEvent);
 }
 
-void EventTargetNode::setOndragstart(PassRefPtr<EventListener> eventListener)
+void Node::setOndragstart(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().dragstartEvent, eventListener);
 }
 
-EventListener* EventTargetNode::ondrag() const
+EventListener* Node::ondrag() const
 {
     return inlineEventListenerForType(eventNames().dragEvent);
 }
 
-void EventTargetNode::setOndrag(PassRefPtr<EventListener> eventListener)
+void Node::setOndrag(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().dragEvent, eventListener);
 }
 
-EventListener* EventTargetNode::ondragend() const
+EventListener* Node::ondragend() const
 {
     return inlineEventListenerForType(eventNames().dragendEvent);
 }
 
-void EventTargetNode::setOndragend(PassRefPtr<EventListener> eventListener)
+void Node::setOndragend(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().dragendEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onreset() const
+EventListener* Node::onreset() const
 {
     return inlineEventListenerForType(eventNames().resetEvent);
 }
 
-void EventTargetNode::setOnreset(PassRefPtr<EventListener> eventListener)
+void Node::setOnreset(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().resetEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onresize() const
+EventListener* Node::onresize() const
 {
     return inlineEventListenerForType(eventNames().resizeEvent);
 }
 
-void EventTargetNode::setOnresize(PassRefPtr<EventListener> eventListener)
+void Node::setOnresize(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().resizeEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onscroll() const
+EventListener* Node::onscroll() const
 {
     return inlineEventListenerForType(eventNames().scrollEvent);
 }
 
-void EventTargetNode::setOnscroll(PassRefPtr<EventListener> eventListener)
+void Node::setOnscroll(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().scrollEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onsearch() const
+EventListener* Node::onsearch() const
 {
     return inlineEventListenerForType(eventNames().searchEvent);
 }
 
-void EventTargetNode::setOnsearch(PassRefPtr<EventListener> eventListener)
+void Node::setOnsearch(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().searchEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onselect() const
+EventListener* Node::onselect() const
 {
     return inlineEventListenerForType(eventNames().selectEvent);
 }
 
-void EventTargetNode::setOnselect(PassRefPtr<EventListener> eventListener)
+void Node::setOnselect(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().selectEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onselectstart() const
+EventListener* Node::onselectstart() const
 {
     return inlineEventListenerForType(eventNames().selectstartEvent);
 }
 
-void EventTargetNode::setOnselectstart(PassRefPtr<EventListener> eventListener)
+void Node::setOnselectstart(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().selectstartEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onsubmit() const
+EventListener* Node::onsubmit() const
 {
     return inlineEventListenerForType(eventNames().submitEvent);
 }
 
-void EventTargetNode::setOnsubmit(PassRefPtr<EventListener> eventListener)
+void Node::setOnsubmit(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().submitEvent, eventListener);
 }
 
-EventListener* EventTargetNode::onunload() const
+EventListener* Node::onunload() const
 {
     return inlineEventListenerForType(eventNames().unloadEvent);
 }
 
-void EventTargetNode::setOnunload(PassRefPtr<EventListener> eventListener)
+void Node::setOnunload(PassRefPtr<EventListener> eventListener)
 {
     setInlineEventListenerForType(eventNames().unloadEvent, eventListener);
 }

@@ -26,13 +26,13 @@ module events {
         PureInterface,
         InterfaceUUID=1D71C7EC-0BA0-4044-BDFD-56B3E8F5F9D4
     ] EventTarget {
-        [OldStyleObjC, EventTargetNodeCast] void addEventListener(in DOMString type, 
+        [OldStyleObjC] void addEventListener(in DOMString type, 
                                              in EventListener listener, 
                                              in boolean useCapture);
-        [OldStyleObjC, EventTargetNodeCast] void removeEventListener(in DOMString type, 
+        [OldStyleObjC] void removeEventListener(in DOMString type, 
                                                 in EventListener listener, 
                                                 in boolean useCapture);
-        [EventTargetNodeCast] boolean dispatchEvent(in Event event)
+        boolean dispatchEvent(in Event event)
             raises(EventException);
     };
 

@@ -343,6 +343,9 @@ Node::~Node()
     liveNodeSet.remove(this);
 #endif
 
+    if (!eventListeners().isEmpty() && !inDocument())
+        document()->unregisterDisconnectedNodeWithEventListeners(this);
+
     if (!hasRareData())
         ASSERT(!NodeRareData::rareDataMap().contains(this));
     else {
@@ -1074,20 +1077,6 @@ void Node::detach()
     m_inActiveChain = false;
     m_attached = false;
     m_inDetach = false;
-}
-
-void Node::insertedIntoDocument()
-{
-    // Note: EventTargetNode::insertedIntoDocument does not call through here, so if you
-    // change this function, change that one as well.
-    setInDocument(true);
-}
-
-void Node::removedFromDocument()
-{
-    // Note: EventTargetNode::insertedIntoDocument does not call through here, so if you
-    // change this function, change that one as well.
-    setInDocument(false);
 }
 
 Node *Node::previousEditable() const

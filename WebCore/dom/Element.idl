@@ -26,7 +26,7 @@ module core {
         InlineGetOwnPropertySlot,
         InterfaceUUID=FEFE9C21-E58C-4b5b-821A-61A514613763,
         ImplementationUUID=12E5B08E-A680-4baf-9D1E-108AEF7ABBFB
-    ] Element : EventTargetNode {
+    ] Element : Node {
 
         // DOM Level 1 Core
 

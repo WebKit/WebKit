@@ -3872,8 +3872,6 @@
 		BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BC348BD20DB7F804004ABAB9 /* JSXMLHttpRequest.h */; };
 		BC348BE90DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC348BE70DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp */; };
 		BC348BEA0DB80354004ABAB9 /* JSXMLHttpRequestConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC348BE80DB80354004ABAB9 /* JSXMLHttpRequestConstructor.h */; };
-		BC3B7AF30E919CA900D54065 /* JSEventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3B7AF10E919CA900D54065 /* JSEventTargetNode.cpp */; };
-		BC3B7AF40E919CA900D54065 /* JSEventTargetNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B7AF20E919CA900D54065 /* JSEventTargetNode.h */; };
 		BC3B7B210E91AAF400D54065 /* JSEventTargetNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3B7B200E91AAF400D54065 /* JSEventTargetNodeCustom.cpp */; };
 		BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BC29B0E91AB0F00835588 /* HostWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3BE12B0E98092F00835588 /* PopupMenuStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8650,8 +8648,6 @@
 		BC348BE70DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestConstructor.cpp; sourceTree = "<group>"; };
 		BC348BE80DB80354004ABAB9 /* JSXMLHttpRequestConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestConstructor.h; sourceTree = "<group>"; };
 		BC3B7AEF0E919ADA00D54065 /* EventTargetNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventTargetNode.idl; sourceTree = "<group>"; };
-		BC3B7AF10E919CA900D54065 /* JSEventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventTargetNode.cpp; sourceTree = "<group>"; };
-		BC3B7AF20E919CA900D54065 /* JSEventTargetNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventTargetNode.h; sourceTree = "<group>"; };
 		BC3B7B200E91AAF400D54065 /* JSEventTargetNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventTargetNodeCustom.cpp; sourceTree = "<group>"; };
 		BC3BC29B0E91AB0F00835588 /* HostWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostWindow.h; sourceTree = "<group>"; };
 		BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupMenuStyle.h; sourceTree = "<group>"; };
@@ -12307,8 +12303,6 @@
 				14E8378D09F85D4F00B85AE4 /* JSEvent.h */,
 				BC60D9BD0D2A269A00B9918F /* JSEventException.cpp */,
 				BC60D9BE0D2A269A00B9918F /* JSEventException.h */,
-				BC3B7AF10E919CA900D54065 /* JSEventTargetNode.cpp */,
-				BC3B7AF20E919CA900D54065 /* JSEventTargetNode.h */,
 				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
 				A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */,
 				E107400B0E77BDC00033AF24 /* JSMessageChannel.cpp */,
@@ -15725,7 +15719,6 @@
 				93B70D6A09EB0C7C009D8468 /* JSEventListener.h in Headers */,
 				BC60901F0E91B8EC000C68B5 /* JSEventTarget.h in Headers */,
 				B25BE5110D06B70800B524C6 /* JSEventTargetBase.h in Headers */,
-				BC3B7AF40E919CA900D54065 /* JSEventTargetNode.h in Headers */,
 				BC00F0150E0A189500FD04E3 /* JSFile.h in Headers */,
 				BC00F0170E0A189500FD04E3 /* JSFileList.h in Headers */,
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
@@ -17727,7 +17720,6 @@
 				BC60D9BF0D2A269A00B9918F /* JSEventException.cpp in Sources */,
 				93B70D6909EB0C7C009D8468 /* JSEventListener.cpp in Sources */,
 				BC6090200E91B8EC000C68B5 /* JSEventTarget.cpp in Sources */,
-				BC3B7AF30E919CA900D54065 /* JSEventTargetNode.cpp in Sources */,
 				BC3B7B210E91AAF400D54065 /* JSEventTargetNodeCustom.cpp in Sources */,
 				BC00F0140E0A189500FD04E3 /* JSFile.cpp in Sources */,
 				BC00F0160E0A189500FD04E3 /* JSFileList.cpp in Sources */,

@@ -24,23 +24,23 @@
  */
 
 #include "config.h"
-#include "JSEventTargetNode.h"
+#include "JSNode.h"
 
 #include "AtomicString.h"
 #include "Document.h"
 #include "Event.h"
-#include "EventTargetNode.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
+#include "Node.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr JSEventTargetNode::addEventListener(ExecState* exec, const ArgList& args)
+JSValuePtr JSNode::addEventListener(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)
@@ -52,7 +52,7 @@ JSValuePtr JSEventTargetNode::addEventListener(ExecState* exec, const ArgList& a
     return jsUndefined();
 }
 
-JSValuePtr JSEventTargetNode::removeEventListener(ExecState* exec, const ArgList& args)
+JSValuePtr JSNode::removeEventListener(ExecState* exec, const ArgList& args)
 {
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
     if (!globalObject)
@@ -64,7 +64,7 @@ JSValuePtr JSEventTargetNode::removeEventListener(ExecState* exec, const ArgList
     return jsUndefined();
 }
 
-void JSEventTargetNode::pushEventHandlerScope(ExecState*, ScopeChain&) const
+void JSNode::pushEventHandlerScope(ExecState*, ScopeChain&) const
 {
 }
 

@@ -345,7 +345,6 @@ sub GetParentImplClassName
     my $parent = $codeGenerator->StripModule($dataNode->parents(0));
 
     # special cases
-    return "Node" if $parent eq "EventTargetNode";
     return "Object" if $parent eq "HTMLCollection";
 
     return $parent;
@@ -373,8 +372,6 @@ sub GetParentAndProtocols
         } else {
             if (IsProtocolType($parentName)) {
                 push(@protocols, "DOM" . $parentName);
-            } elsif ($parentName eq "EventTargetNode") {
-                $parent = "DOMNode";
             } elsif ($parentName eq "HTMLCollection") {
                 $parent = "DOMObject";
             } else {
@@ -507,7 +504,7 @@ sub GetObjCTypeGetter
     my $type = $codeGenerator->StripModule(shift);
 
     return $argName if $codeGenerator->IsPrimitiveType($type) or $codeGenerator->IsStringType($type) or IsNativeObjCType($type);
-    return $argName . "EventTarget" if $type eq "EventTarget";
+    return $argName . "Node" if $type eq "EventTarget";
     return "static_cast<WebCore::Range::CompareHow>($argName)" if $type eq "CompareHow";
     return "static_cast<WebCore::SVGPaint::SVGPaintType>($argName)" if $type eq "SVGPaintType";
 
@@ -623,7 +620,7 @@ sub AddIncludesForType
     }
 
     if ($type eq "EventTarget") {
-        $implIncludes{"EventTargetNode.h"} = 1;
+        $implIncludes{"Node.h"} = 1;
         $implIncludes{"DOM$type.h"} = 1;
         return;
     }
@@ -1406,7 +1403,6 @@ sub GenerateImplementation
                 my $paramName = $needsCustom{"EventTarget"};
                 push(@functionContent, "    DOMNode* ${paramName}ObjC = $paramName;\n");
                 push(@functionContent, "    WebCore::Node* ${paramName}Node = [${paramName}ObjC _node];\n");
-                push(@functionContent, "    WebCore::EventTargetNode* ${paramName}EventTarget = (${paramName}Node && ${paramName}Node->isEventTargetNode()) ? static_cast<WebCore::EventTargetNode*>(${paramName}Node) : 0;\n\n");
                 $implIncludes{"DOMNode.h"} = 1;
                 $implIncludes{"Node.h"} = 1;
             }
@@ -1417,16 +1413,6 @@ sub GenerateImplementation
                 push(@functionContent, "        return nil;\n");
                 $implIncludes{"DOMWindow.h"} = 1;
                 $caller = "dv";
-            }
-
-            if ($function->signature->extendedAttributes->{"EventTargetNodeCast"}) {
-                if ($dataNode->name =~ /^SVG/) {
-                    $caller = "static_cast<WebCore::SVGElementInstance*>($caller)";
-                } else {
-                    push(@functionContent, "    if (!$caller->isEventTargetNode())\n");
-                    $caller = "WebCore::EventTargetNodeCast($caller)";
-                    push(@functionContent, "        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);\n");
-                }
             }
 
             # special case the EventListener

@@ -35,7 +35,6 @@ namespace WebCore {
 
 class Color;
 class Event;
-class EventTargetNode;
 class Frame;
 class FrameViewPrivate;
 class IntRect;

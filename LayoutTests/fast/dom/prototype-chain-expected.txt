@@ -2,25 +2,21 @@ This page prints out the prototype chains of select DOM objects. Older versions 
 
 NOTE: This test will start failing if you change the layout of a related prototype chain in WebCore. That does not necessarily mean that you have done something wrong; you may just need to check in new results.
 
------ [object HTMLDocument] (5 prototypes) -----
+----- [object HTMLDocument] (4 prototypes) -----
 
 [object Object]
 
 [object NodePrototype]
-
-[object EventTargetNodePrototype]
 
 [object DocumentPrototype]
 
 [object HTMLDocumentPrototype]
 
------ [object HTMLDivElement] (6 prototypes) -----
+----- [object HTMLDivElement] (5 prototypes) -----
 
 [object Object]
 
 [object NodePrototype]
-
-[object EventTargetNodePrototype]
 
 [object ElementPrototype]
 
@@ -28,13 +24,11 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object HTMLDivElementPrototype]
 
------ [object HTMLFormElement] (6 prototypes) -----
+----- [object HTMLFormElement] (5 prototypes) -----
 
 [object Object]
 
 [object NodePrototype]
-
-[object EventTargetNodePrototype]
 
 [object ElementPrototype]
 

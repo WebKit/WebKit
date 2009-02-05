@@ -28,7 +28,7 @@ module core {
         InlineGetOwnPropertySlot,
         InterfaceUUID=48BB95FC-2D08-4c54-BE65-7558736A4CAE,
         ImplementationUUID=FF5CBE81-F817-429c-A6C2-0CCCD2328062
-    ] Document : EventTargetNode {
+    ] Document : Node {
 
         // DOM Level 1 Core
         readonly attribute DocumentType doctype;

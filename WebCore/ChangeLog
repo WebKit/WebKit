@@ -1,3 +1,181 @@
+2009-02-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        First stage of merging EventTargetNode up into Node. The intent of this change
+        is to both simplify the inheritance hierarchy (at the same time making it more
+        closely match the spec which states that all Nodes are EventTargets) and save
+        4 bytes per Node that the polymorphic multiple-inheritance was costing us.
+
+        This does the bare minimum to get things compiling, the next patch will clean 
+
+        * DerivedSources.make:
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::mark):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toEventTarget):
+        * bindings/js/JSEventTarget.h:
+        * bindings/js/JSEventTargetNodeCustom.cpp:
+        (WebCore::JSNode::addEventListener):
+        (WebCore::JSNode::removeEventListener):
+        (WebCore::JSNode::pushEventHandlerScope):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/Attr.idl:
+        * dom/CharacterData.h:
+        * dom/CharacterData.idl:
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/Element.idl:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toNode):
+        * dom/EventTarget.h:
+        * dom/EventTarget.idl:
+        * dom/EventTargetNode.cpp:
+        (WebCore::Node::scriptExecutionContext):
+        (WebCore::Node::eventListeners):
+        (WebCore::Node::insertedIntoDocument):
+        (WebCore::Node::removedFromDocument):
+        (WebCore::Node::willMoveToNewOwnerDocument):
+        (WebCore::Node::didMoveToNewOwnerDocument):
+        (WebCore::Node::addEventListener):
+        (WebCore::Node::removeEventListener):
+        (WebCore::Node::removeAllEventListenersSlowCase):
+        (WebCore::Node::handleLocalEvents):
+        (WebCore::Node::dispatchEvent):
+        (WebCore::Node::dispatchGenericEvent):
+        (WebCore::Node::dispatchSubtreeModifiedEvent):
+        (WebCore::Node::dispatchWindowEvent):
+        (WebCore::Node::dispatchUIEvent):
+        (WebCore::Node::dispatchKeyEvent):
+        (WebCore::Node::dispatchMouseEvent):
+        (WebCore::Node::dispatchSimulatedMouseEvent):
+        (WebCore::Node::dispatchSimulatedClick):
+        (WebCore::Node::dispatchWheelEvent):
+        (WebCore::Node::dispatchWebKitAnimationEvent):
+        (WebCore::Node::dispatchWebKitTransitionEvent):
+        (WebCore::Node::dispatchFocusEvent):
+        (WebCore::Node::dispatchBlurEvent):
+        (WebCore::Node::dispatchEventForType):
+        (WebCore::Node::dispatchProgressEvent):
+        (WebCore::Node::dispatchStorageEvent):
+        (WebCore::Node::removeInlineEventListenerForType):
+        (WebCore::Node::setInlineEventListenerForType):
+        (WebCore::Node::setInlineEventListenerForTypeAndAttribute):
+        (WebCore::Node::inlineEventListenerForType):
+        (WebCore::Node::disabled):
+        (WebCore::Node::defaultEventHandler):
+        (WebCore::Node::onabort):
+        (WebCore::Node::setOnabort):
+        (WebCore::Node::onblur):
+        (WebCore::Node::setOnblur):
+        (WebCore::Node::onchange):
+        (WebCore::Node::setOnchange):
+        (WebCore::Node::onclick):
+        (WebCore::Node::setOnclick):
+        (WebCore::Node::oncontextmenu):
+        (WebCore::Node::setOncontextmenu):
+        (WebCore::Node::ondblclick):
+        (WebCore::Node::setOndblclick):
+        (WebCore::Node::onerror):
+        (WebCore::Node::setOnerror):
+        (WebCore::Node::onfocus):
+        (WebCore::Node::setOnfocus):
+        (WebCore::Node::oninput):
+        (WebCore::Node::setOninput):
+        (WebCore::Node::onkeydown):
+        (WebCore::Node::setOnkeydown):
+        (WebCore::Node::onkeypress):
+        (WebCore::Node::setOnkeypress):
+        (WebCore::Node::onkeyup):
+        (WebCore::Node::setOnkeyup):
+        (WebCore::Node::onload):
+        (WebCore::Node::setOnload):
+        (WebCore::Node::onmousedown):
+        (WebCore::Node::setOnmousedown):
+        (WebCore::Node::onmousemove):
+        (WebCore::Node::setOnmousemove):
+        (WebCore::Node::onmouseout):
+        (WebCore::Node::setOnmouseout):
+        (WebCore::Node::onmouseover):
+        (WebCore::Node::setOnmouseover):
+        (WebCore::Node::onmouseup):
+        (WebCore::Node::setOnmouseup):
+        (WebCore::Node::onmousewheel):
+        (WebCore::Node::setOnmousewheel):
+        (WebCore::Node::onbeforecut):
+        (WebCore::Node::setOnbeforecut):
+        (WebCore::Node::oncut):
+        (WebCore::Node::setOncut):
+        (WebCore::Node::onbeforecopy):
+        (WebCore::Node::setOnbeforecopy):
+        (WebCore::Node::oncopy):
+        (WebCore::Node::setOncopy):
+        (WebCore::Node::onbeforepaste):
+        (WebCore::Node::setOnbeforepaste):
+        (WebCore::Node::onpaste):
+        (WebCore::Node::setOnpaste):
+        (WebCore::Node::ondragenter):
+        (WebCore::Node::setOndragenter):
+        (WebCore::Node::ondragover):
+        (WebCore::Node::setOndragover):
+        (WebCore::Node::ondragleave):
+        (WebCore::Node::setOndragleave):
+        (WebCore::Node::ondrop):
+        (WebCore::Node::setOndrop):
+        (WebCore::Node::ondragstart):
+        (WebCore::Node::setOndragstart):
+        (WebCore::Node::ondrag):
+        (WebCore::Node::setOndrag):
+        (WebCore::Node::ondragend):
+        (WebCore::Node::setOndragend):
+        (WebCore::Node::onreset):
+        (WebCore::Node::setOnreset):
+        (WebCore::Node::onresize):
+        (WebCore::Node::setOnresize):
+        (WebCore::Node::onscroll):
+        (WebCore::Node::setOnscroll):
+        (WebCore::Node::onsearch):
+        (WebCore::Node::setOnsearch):
+        (WebCore::Node::onselect):
+        (WebCore::Node::setOnselect):
+        (WebCore::Node::onselectstart):
+        (WebCore::Node::setOnselectstart):
+        (WebCore::Node::onsubmit):
+        (WebCore::Node::setOnsubmit):
+        (WebCore::Node::onunload):
+        (WebCore::Node::setOnunload):
+        * dom/EventTargetNode.h:
+        (WebCore::toEventTargetNode):
+        (WebCore::EventTargetNodeCast):
+        * dom/EventTargetNode.idl: Removed.
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent):
+        (WebCore::MouseEvent::toElement):
+        (WebCore::MouseEvent::fromElement):
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::relatedTarget):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        * dom/Node.h:
+        (WebCore::Node::isEventTargetNode):
+        (WebCore::Node::toNode):
+        (WebCore::Node::removeAllEventListeners):
+        (WebCore::Node::refEventTarget):
+        (WebCore::Node::derefEventTarget):
+        * dom/Node.idl:
+        * page/EventHandler.h:
+        * page/FrameView.h:
+        * xml/XPathResult.h:
+        (WebCore::XPathResult::create):
+
 2009-02-04  David Hyatt  <hyatt@apple.com>
 
         Convert RenderLayer from having a RenderBox* m_renderer to having a RenderBoxModelObject*.  The
