@@ -1,3 +1,9 @@
+2009-02-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Build fix.
+
+        * page/animation/KeyframeAnimation.h: A function prototype had two "fromStyle" arguments.
+
 2009-02-05  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Alexey Proskuryakov.
