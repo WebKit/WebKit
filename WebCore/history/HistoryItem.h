@@ -79,8 +79,7 @@ public:
     const String& urlString() const;
     const String& title() const;
     
-    void setInPageCache(bool inPageCache) { m_isInPageCache = inPageCache; }
-    bool isInPageCache() const { return m_isInPageCache; }
+    bool isInPageCache() const { return m_cachedPage; }
     
     double lastVisitedTime() const;
     
@@ -191,7 +190,6 @@ private:
     HistoryItemVector m_subItems;
     
     bool m_lastVisitWasFailure;
-    bool m_isInPageCache;
     bool m_isTargetItem;
     int m_visitCount;
 

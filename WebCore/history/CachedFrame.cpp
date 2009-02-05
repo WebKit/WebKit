@@ -60,6 +60,8 @@ CachedFrame::CachedFrame(Frame* frame)
     cachedFrameCounter().increment();
 #endif
     ASSERT(m_document);
+    ASSERT(m_documentLoader);
+    ASSERT(m_view);
 
     // Active DOM objects must be suspended before we cached the frame script data
     m_document->suspendActiveDOMObjects();
@@ -70,11 +72,11 @@ CachedFrame::CachedFrame(Frame* frame)
     m_document->setInPageCache(true);
     
     frame->loader()->client()->savePlatformDataToCachedFrame(this);
-                
+
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
         m_childFrames.append(CachedFrame::create(child));
 
-    LOG(PageCache, "Finished creating CachedFrame with url %s\n", m_url.string().utf8().data());
+    LOG(PageCache, "Finished creating CachedFrame with url %s and documentloader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
 }
 
 CachedFrame::~CachedFrame()
@@ -86,10 +88,11 @@ CachedFrame::~CachedFrame()
     clear();
 }
 
-void CachedFrame::restore(Frame* frame)
+void CachedFrame::restore()
 {
     ASSERT(m_document->view() == m_view);
     
+    Frame* frame = m_view->frame();
     m_cachedFrameScriptData->restore(frame);
 
 #if ENABLE(SVG)

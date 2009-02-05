@@ -1,3 +1,28 @@
+2009-02-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        <rdar://problem/3541409> - Further HistoryItem / BF cache cleanup
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        (WebCore::CachedFrame::restore):
+        * history/CachedFrame.h:
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        * history/CachedPage.h:
+        (WebCore::CachedPage::mainFrameView):
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::~HistoryItem):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::isInPageCache):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open):
+
 2009-02-04  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.

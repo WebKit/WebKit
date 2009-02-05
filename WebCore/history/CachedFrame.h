@@ -48,7 +48,7 @@ public:
     static PassRefPtr<CachedFrame> create(Frame* frame) { return adoptRef(new CachedFrame(frame)); }
     ~CachedFrame();
 
-    void restore(Frame*);
+    void restore();
     void clear();
 
     Document* document() const { return m_document.get(); }

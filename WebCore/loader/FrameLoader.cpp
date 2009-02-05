@@ -3089,7 +3089,7 @@ void FrameLoader::open(CachedPage& cachedPage)
     m_didCallImplicitClose = false;
     m_outgoingReferrer = url.string();
 
-    FrameView* view = cachedPage.view();
+    FrameView* view = cachedPage.mainFrameView();
     if (view)
         view->setWasScrolledByUser(false);
     m_frame->setView(view);
