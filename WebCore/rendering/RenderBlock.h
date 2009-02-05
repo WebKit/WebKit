@@ -300,6 +300,7 @@ public:
     unsigned desiredColumnCount() const;
     Vector<IntRect>* columnRects() const;
     void setDesiredColumnCountAndWidth(int count, int width);
+    int columnGap() const;
     
     void adjustRectForColumns(IntRect&) const;
 
@@ -334,7 +335,6 @@ private:
     // Adjust tx and ty from painting offsets to the local coords of this renderer
     void offsetForContents(int& tx, int& ty) const;
 
-    int columnGap() const;
     void calcColumnWidth();
     int layoutColumns(int endOfContent = -1);
 
