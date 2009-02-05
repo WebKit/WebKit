@@ -166,7 +166,6 @@ static const AtomicString& alternateFamilyName(const AtomicString& familyName)
 #if PLATFORM(WIN_OS)
     // On Windows, bitmap fonts are blocked altogether so that we have to 
     // alias MS Sans Serif (bitmap font) -> Microsoft Sans Serif (truetype font)
-    static AtomicString msSans("MS Sans Serif");
     DEFINE_STATIC_LOCAL(AtomicString, msSans, ("MS Sans Serif"));
     DEFINE_STATIC_LOCAL(AtomicString, microsoftSans, ("Microsoft Sans Serif"));
     if (equalIgnoringCase(familyName, msSans))
