@@ -236,7 +236,6 @@ sub GetParentInterface
 {
     my ($dataNode) = @_;
     return "I" . $TEMP_PREFIX . "DOMObject" if (@{$dataNode->parents} == 0);
-    return "I" . $TEMP_PREFIX . "DOMNode" if $codeGenerator->StripModule($dataNode->parents(0)) eq "EventTargetNode";
     return GetInterfaceName($codeGenerator->StripModule($dataNode->parents(0)));
 }
 
@@ -244,7 +243,6 @@ sub GetParentClass
 {
     my ($dataNode) = @_;
     return $TEMP_PREFIX . "DOMObject" if (@{$dataNode->parents} == 0);
-    return $TEMP_PREFIX . "DOMNode" if $codeGenerator->StripModule($dataNode->parents(0)) eq "EventTargetNode";
     return GetClassName($codeGenerator->StripModule($dataNode->parents(0)));
 }
 
@@ -316,7 +314,6 @@ sub AddIncludesForTypeInCPPImplementation
     }
 
     # Special casing
-    $CPPImplementationWebCoreIncludes{"EventTargetNode.h"} = 1 if $type eq "Node";
     $CPPImplementationWebCoreIncludes{"NameNodeList.h"} = 1 if $type eq "NodeList";
     $CPPImplementationWebCoreIncludes{"CSSMutableStyleDeclaration.h"} = 1 if $type eq "CSSStyleDeclaration";
 
@@ -706,7 +703,6 @@ sub GenerateCPPFunction
     my $functionName = $function->signature->name;
     my $returnIDLType = $function->signature->type;
     my $noReturn = ($returnIDLType eq "void");
-    my $requiresEventTargetNodeCast = $function->signature->extendedAttributes->{"EventTargetNodeCast"};
     my $raisesExceptions = @{$function->raisesExceptions};
 
     AddIncludesForTypeInCPPImplementation($returnIDLType);
@@ -756,9 +752,6 @@ sub GenerateCPPFunction
     push(@parameterList, "ec") if $raisesExceptions;
 
     my $implementationGetter = "impl${implementationClassWithoutNamespace}()";
-    if ($requiresEventTargetNodeCast) {
-        $implementationGetter = "WebCore::EventTargetNodeCast(${implementationGetter})";
-    }
 
     my $callSigBegin = "    ";
     my $callSigMiddle = "${implementationGetter}->" . $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterList) . ")";
@@ -801,10 +794,6 @@ sub GenerateCPPFunction
     }
     push(@functionImplementation, "    WebCore::ExceptionCode ec = 0;\n") if $raisesExceptions; # FIXME: CHECK EXCEPTION AND DO SOMETHING WITH IT
     push(@functionImplementation, join("\n", @parameterInitialization) . (@parameterInitialization > 0 ? "\n" : ""));
-    if ($requiresEventTargetNodeCast) {
-        push(@functionImplementation, "    if (!impl${implementationClassWithoutNamespace}()->isEventTargetNode())\n");
-        push(@functionImplementation, "        return E_FAIL;\n");
-    }
     push(@functionImplementation, $callSigBegin . $callSigMiddle . $callSigEnd . "\n");
     push(@functionImplementation, "    return S_OK;\n");
     push(@functionImplementation, "}\n\n");

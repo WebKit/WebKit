@@ -134,6 +134,7 @@ module core {
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
+#if !defined(LANGUAGE_COM)
         attribute [DontEnum, ProtectedListener] EventListener onabort;
         attribute [DontEnum, ProtectedListener] EventListener onblur;
         attribute [DontEnum, ProtectedListener] EventListener onchange;
@@ -183,6 +184,7 @@ module core {
                                           in boolean useCapture);
         boolean dispatchEvent(in Event event)
             raises(EventException);
+#endif
 #endif
     };
 
