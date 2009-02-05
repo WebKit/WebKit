@@ -1,5 +1,28 @@
 2009-02-05  Scott Violet  <sky@google.com>
 
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23625
+        Additional fix: Skia platform doesn't render text to a canvas or support clipping to an image buffer
+
+        Fixes three bugs in PlatformContextSkia:
+
+        * When a new layer was started clipped to an image we used the
+          assignment operator to copy the SkBitmap. If the SkBitmap owns it's
+          pixels, this is not the right thing to do. Instead we need to create
+          a copy of the image.
+        * State holds an SkBitmap by value. State's copy constructor does a
+          memcpy. This is confusing and subtle, I've converted to use a member
+          initializer list which I think is clearer and less error prone.
+        * When creating a new layer there is no need to copy the clip image.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::State::State):
+        (PlatformContextSkia::save):
+        (PlatformContextSkia::beginLayerClippedToImage):
+
+2009-02-05  Scott Violet  <sky@google.com>
+
         Reviewed by George Staikos.
 
         https://bugs.webkit.org/show_bug.cgi?id=23462

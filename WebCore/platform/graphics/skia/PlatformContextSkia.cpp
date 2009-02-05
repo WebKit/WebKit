@@ -121,9 +121,28 @@ PlatformContextSkia::State::State()
 }
 
 PlatformContextSkia::State::State(const State& other)
+    : m_alpha(other.m_alpha)
+    , m_porterDuffMode(other.m_porterDuffMode)
+    , m_gradient(other.m_gradient)
+    , m_pattern(other.m_pattern)
+    , m_useAntialiasing(other.m_useAntialiasing)
+    , m_looper(other.m_looper)
+    , m_fillColor(other.m_fillColor)
+    , m_strokeStyle(other.m_strokeStyle)
+    , m_strokeColor(other.m_strokeColor)
+    , m_strokeThickness(other.m_strokeThickness)
+    , m_dashRatio(other.m_dashRatio)
+    , m_miterLimit(other.m_miterLimit)
+    , m_lineCap(other.m_lineCap)
+    , m_lineJoin(other.m_lineJoin)
+    , m_dash(other.m_dash)
+    , m_textDrawingMode(other.m_textDrawingMode)
+#if defined(__linux__) || PLATFORM(WIN_OS)
+    , m_imageBufferClip(other.m_imageBufferClip)
+    , m_clip(other.m_clip)
+#endif
 {
-    memcpy(this, &other, sizeof(State));
-
+    // Up the ref count of these. saveRef does nothing if 'this' is NULL.
     m_looper->safeRef();
     m_dash->safeRef();
     m_gradient->safeRef();
@@ -199,6 +218,12 @@ void PlatformContextSkia::save()
     m_stateStack.append(*m_state);
     m_state = &m_stateStack.last();
 
+#if defined(__linux__) || PLATFORM(WIN_OS)
+    // The clip image only needs to be applied once. Reset the image so that we
+    // don't attempt to clip multiple times.
+    m_state->m_imageBufferClip.reset();
+#endif
+
     // Save our native canvas.
     canvas()->save();
 }
@@ -217,9 +242,22 @@ void PlatformContextSkia::beginLayerClippedToImage(const WebCore::FloatRect& rec
     canvas()->saveLayerAlpha(&bounds, 255,
                              static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag));
     // Copy off the image as |imageBuffer| may be deleted before restore is invoked.
-    m_state->m_imageBufferClip = *(imageBuffer->context()->platformContext()->bitmap());
+    const SkBitmap* bitmap = imageBuffer->context()->platformContext()->bitmap();
+    if (!bitmap->pixelRef()) {
+        // The bitmap owns it's pixels. This happens when we've allocated the
+        // pixels in some way and assigned them directly to the bitmap (as
+        // happens when we allocate a DIB). In this case the assignment operator
+        // does not copy the pixels, rather the copied bitmap ends up
+        // referencing the same pixels. As the pixels may not live as long as we
+        // need it to, we copy the image.
+        bitmap->copyTo(&m_state->m_imageBufferClip, SkBitmap::kARGB_8888_Config);
+    } else {
+        // If there is a pixel ref, we can safely use the assignment operator.
+        m_state->m_imageBufferClip = *bitmap;
+    }
 }
 #endif
+
 void PlatformContextSkia::restore()
 {
 #if defined(__linux__) || PLATFORM(WIN_OS)
