@@ -1,5 +1,12 @@
 2009-02-04  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix.
+
+        * WebHistory.cpp:
+        (WebHistory::visitedURL):
+
+2009-02-04  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Mark Rowe.
         
         Part I of <rdar://problem/6552272>.
