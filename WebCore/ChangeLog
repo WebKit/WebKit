@@ -1,3 +1,15 @@
+2009-02-05  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+        Landed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23733
+
+        Use a 2 arguments constructor for KURL to avoid ASSERT failure.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::createFromDatabaseIdentifier):
+
 2009-02-04  Feng Qian  <feng@chromium.org>
 
         Reviewed by Darin Adler.
