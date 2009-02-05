@@ -256,7 +256,7 @@ public:
 
     bool inRootBlockContext() const;
 
-    virtual IntRect rectWithOutlineForRepaint(RenderBox* repaintContainer, int outlineWidth);
+    virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
     virtual RenderStyle* outlineStyleForRepaint() const;
     
     virtual RenderObject* hoverAncestor() const;
@@ -267,11 +267,11 @@ public:
 
     virtual void setSelectionState(SelectionState s);
 
-    virtual IntRect selectionRectForRepaint(RenderBox* repaintContainer, bool /*clipToVisibleContent*/)
+    virtual IntRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool /*clipToVisibleContent*/)
     {
         return selectionGapRectsForRepaint(repaintContainer);
     }
-    GapRects selectionGapRectsForRepaint(RenderBox* repaintContainer);
+    GapRects selectionGapRectsForRepaint(RenderBoxModelObject* repaintContainer);
     virtual bool shouldPaintSelectionGaps() const;
     bool isSelectionRoot() const;
     GapRects fillSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,

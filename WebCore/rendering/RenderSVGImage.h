@@ -43,7 +43,7 @@ namespace WebCore {
         virtual TransformationMatrix localTransform() const { return m_localTransform; }
         
         virtual FloatRect relativeBBox(bool includeStroke = true) const;
-        virtual IntRect clippedOverflowRectForRepaint(RenderBox* repaintContainer);
+        virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
         virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
         virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
         virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);

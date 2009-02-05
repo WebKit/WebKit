@@ -1962,7 +1962,7 @@ bool RenderBlock::isSelectionRoot() const
     return false;
 }
 
-GapRects RenderBlock::selectionGapRectsForRepaint(RenderBox* /*repaintContainer*/)
+GapRects RenderBlock::selectionGapRectsForRepaint(RenderBoxModelObject* /*repaintContainer*/)
 {
     ASSERT(!needsLayout());
 
@@ -4809,7 +4809,7 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
         quads.append(RenderBox::localToAbsoluteQuad(FloatRect(0, 0, width(), height())));
 }
 
-IntRect RenderBlock::rectWithOutlineForRepaint(RenderBox* repaintContainer, int outlineWidth)
+IntRect RenderBlock::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth)
 {
     IntRect r(RenderBox::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
     if (inlineContinuation())

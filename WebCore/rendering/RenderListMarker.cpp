@@ -884,7 +884,7 @@ void RenderListMarker::setSelectionState(SelectionState state)
     containingBlock()->setSelectionState(state);
 }
 
-IntRect RenderListMarker::selectionRectForRepaint(RenderBox* repaintContainer, bool clipToVisibleContent)
+IntRect RenderListMarker::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 

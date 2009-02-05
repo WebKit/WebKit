@@ -153,7 +153,7 @@ void RenderTableCell::setOverrideSize(int size)
     RenderBlock::setOverrideSize(size);
 }
 
-IntRect RenderTableCell::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
+IntRect RenderTableCell::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
     // If the table grid is dirty, we cannot get reliable information about adjoining cells,
     // so we ignore outside borders. This should not be a problem because it means that
@@ -205,7 +205,7 @@ IntRect RenderTableCell::clippedOverflowRectForRepaint(RenderBox* repaintContain
     return r;
 }
 
-void RenderTableCell::computeRectForRepaint(RenderBox* repaintContainer, IntRect& r, bool fixed)
+void RenderTableCell::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& r, bool fixed)
 {
     if (repaintContainer == this)
         return;
@@ -236,7 +236,7 @@ FloatPoint RenderTableCell::absoluteToLocal(FloatPoint containerPoint, bool fixe
     return localPoint;
 }
 
-FloatQuad RenderTableCell::localToContainerQuad(const FloatQuad& localQuad, RenderBox* repaintContainer, bool fixed) const
+FloatQuad RenderTableCell::localToContainerQuad(const FloatQuad& localQuad, RenderBoxModelObject* repaintContainer, bool fixed) const
 {
     if (repaintContainer == this)
         return localQuad;

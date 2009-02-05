@@ -1,3 +1,141 @@
+2009-02-04  David Hyatt  <hyatt@apple.com>
+
+        Convert RenderLayer from having a RenderBox* m_renderer to having a RenderBoxModelObject*.  The
+        container-relative repaint methods all had to be changed as a result to use RenderBoxModelObject* also.
+
+        All of RenderLayer.cpp now uses what will be the new style for dealing with an object that can be a block
+        or an inline flow.  x()/y()/width()/height() can't be queried on an inline flow, nor can many other
+        properties (like scrollWidth() / scrollHeight()), so the code has to be tightened up to convert to RenderBox
+        under the right conditions.
+
+        There was a bogus subtraction of renderer()->y() in localBounding box for RenderInlines.  Since y was always
+        0, this subtraction wasn't necessary.  It has been removed.
+
+        Reviewed by Adam Roben
+
+        * page/animation/AnimationBase.cpp:
+        * rendering/RenderBR.h:
+        (WebCore::RenderBR::selectionRectForRepaint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        (WebCore::RenderBlock::rectWithOutlineForRepaint):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::selectionRectForRepaint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::outlineBoundsForRepaint):
+        (WebCore::RenderBox::localToContainerQuad):
+        (WebCore::RenderBox::clippedOverflowRectForRepaint):
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::relativePositionOffsetX):
+        (WebCore::RenderBoxModelObject::relativePositionOffsetY):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::relativePositionOffset):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::computeRectForRepaint):
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderInline::rectWithOutlineForRepaint):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::setHasVisibleContent):
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::resizerCornerRect):
+        (WebCore::RenderLayer::scrollbarCornerPresent):
+        (WebCore::RenderLayer::invalidateScrollbarRect):
+        (WebCore::RenderLayer::positionOverflowControls):
+        (WebCore::RenderLayer::computeScrollDimensions):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::isPointInResizeControl):
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::localBoundingBox):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::renderer):
+        (WebCore::RenderLayer::renderBox):
+        (WebCore::RenderLayer::renderBoxX):
+        (WebCore::RenderLayer::renderBoxY):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::selectionRectForRepaint):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::computePosition):
+        (WebCore::RenderMarquee::timerFired):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint):
+        (WebCore::RenderObject::repaintUsingContainer):
+        (WebCore::RenderObject::repaint):
+        (WebCore::RenderObject::repaintRectangle):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::rectWithOutlineForRepaint):
+        (WebCore::RenderObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderObject::computeRectForRepaint):
+        (WebCore::RenderObject::localToContainerQuad):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::selectionRectForRepaint):
+        (WebCore::RenderObject::outlineBoundsForRepaint):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::clippedOverflowRectForRepaint):
+        (WebCore::RenderPath::outlineBoundsForRepaint):
+        * rendering/RenderPath.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::selectionRectForRepaint):
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGContainer::outlineBoundsForRepaint):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::selectionRectForRepaint):
+        (WebCore::RenderSVGInlineText::computeRepaintRectForRange):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGText.h:
+        * rendering/RenderSelectionInfo.h:
+        (WebCore::RenderSelectionInfoBase::repaintContainer):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        (WebCore::RenderTableCell::computeRectForRepaint):
+        (WebCore::RenderTableCell::localToContainerQuad):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::clippedOverflowRectForRepaint):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::clippedOverflowRectForRepaint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::clippedOverflowRectForRepaint):
+        (WebCore::RenderText::selectionRectForRepaint):
+        * rendering/RenderText.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::localToContainerQuad):
+        (WebCore::RenderView::computeRectForRepaint):
+        * rendering/RenderView.h:
+
 2009-02-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Build fix.

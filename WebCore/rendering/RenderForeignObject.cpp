@@ -70,7 +70,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
     paintInfo.context->restore();
 }
 
-void RenderForeignObject::computeRectForRepaint(RenderBox* repaintContainer, IntRect& rect, bool fixed)
+void RenderForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)
 {
     TransformationMatrix transform = translationForAttributes() * localTransform();
     rect = transform.mapRect(rect);

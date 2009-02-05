@@ -55,14 +55,14 @@ public:
     virtual int overflowTop(bool includeInterior = true) const;
     virtual IntRect overflowRect(bool includeInterior = true) const;
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBox* repaintContainer);
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
 
     virtual unsigned caretMaxRenderedOffset() const;
     virtual VisiblePosition positionForCoordinates(int x, int y);
     
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual void setSelectionState(SelectionState);
-    virtual IntRect selectionRectForRepaint(RenderBox* repaintContainer, bool clipToVisibleContent = true);
+    virtual IntRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
 
     bool isSelected() const;
 

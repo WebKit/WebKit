@@ -21,6 +21,8 @@
 #include "config.h"
 #include "RenderBoxModelObject.h"
 
+#include "RenderBlock.h"
+
 namespace WebCore {
 
 RenderBoxModelObject::RenderBoxModelObject(Node* node)
@@ -30,6 +32,30 @@ RenderBoxModelObject::RenderBoxModelObject(Node* node)
 
 RenderBoxModelObject::~RenderBoxModelObject()
 {
+}
+
+int RenderBoxModelObject::relativePositionOffsetX() const
+{
+    if (!style()->left().isAuto()) {
+        if (!style()->right().isAuto() && containingBlock()->style()->direction() == RTL)
+            return -style()->right().calcValue(containingBlockWidth());
+        return style()->left().calcValue(containingBlockWidth());
+    }
+    if (!style()->right().isAuto())
+        return -style()->right().calcValue(containingBlockWidth());
+    return 0;
+}
+
+int RenderBoxModelObject::relativePositionOffsetY() const
+{
+    if (!style()->top().isAuto()) {
+        if (!style()->top().isPercent() || containingBlock()->style()->height().isFixed())
+            return style()->top().calcValue(containingBlockHeight());
+    } else if (!style()->bottom().isAuto()) {
+        if (!style()->bottom().isPercent() || containingBlock()->style()->height().isFixed())
+            return -style()->bottom().calcValue(containingBlockHeight());
+    }
+    return 0;
 }
 
 } // namespace WebCore

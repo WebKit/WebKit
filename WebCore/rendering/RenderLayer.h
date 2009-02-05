@@ -186,10 +186,11 @@ public:
     static ScrollBehavior getPartialBehavior(const ScrollAlignment& s) { return s.m_rectPartial; }
     static ScrollBehavior getHiddenBehavior(const ScrollAlignment& s) { return s.m_rectHidden; }
 
-    RenderLayer(RenderBox*);
+    RenderLayer(RenderBoxModelObject*);
     ~RenderLayer();
 
-    RenderBox* renderer() const { return m_renderer; }
+    RenderBoxModelObject* renderer() const { return m_renderer; }
+    RenderBox* renderBox() const { return m_renderer && m_renderer->isBox() ? toRenderBox(m_renderer) : 0; }
     RenderLayer* parent() const { return m_parent; }
     RenderLayer* previousSibling() const { return m_previous; }
     RenderLayer* nextSibling() const { return m_next; }
@@ -429,6 +430,9 @@ private:
     void setFirstChild(RenderLayer* first) { m_first = first; }
     void setLastChild(RenderLayer* last) { m_last = last; }
 
+    int renderBoxX() const { return renderer()->isBox() ? toRenderBox(renderer())->x() : 0; }
+    int renderBoxY() const { return renderer()->isBox() ? toRenderBox(renderer())->y() : 0; }
+
     void collectLayers(Vector<RenderLayer*>*&, Vector<RenderLayer*>*&);
 
     void updateLayerListsIfNeeded();
@@ -477,7 +481,7 @@ private:
     friend class RenderLayerCompositor;
 
 protected:
-    RenderBox* m_renderer;
+    RenderBoxModelObject* m_renderer;
 
     RenderLayer* m_parent;
     RenderLayer* m_previous;

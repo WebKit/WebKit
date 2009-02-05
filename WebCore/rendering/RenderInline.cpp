@@ -519,7 +519,7 @@ IntRect RenderInline::linesBoundingBox() const
     return result;
 }
 
-IntRect RenderInline::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
+IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
     // Only run-ins are allowed in here during layout.
     ASSERT(!view() || !view()->layoutStateEnabled() || isRunIn());
@@ -582,7 +582,7 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
     return r;
 }
 
-IntRect RenderInline::rectWithOutlineForRepaint(RenderBox* repaintContainer, int outlineWidth)
+IntRect RenderInline::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth)
 {
     IntRect r(RenderBox::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {

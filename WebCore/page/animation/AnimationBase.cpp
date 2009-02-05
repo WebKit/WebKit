@@ -43,7 +43,7 @@
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
 #include "MatrixTransformOperation.h"
-#include "RenderObject.h"
+#include "RenderBox.h"
 #include "RenderStyle.h"
 #include "UnitBezier.h"
 

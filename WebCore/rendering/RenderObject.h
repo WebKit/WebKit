@@ -37,6 +37,7 @@ class AnimationController;
 class HitTestResult;
 class InlineBox;
 class InlineFlowBox;
+class RenderBoxModelObject;
 class RenderInline;
 class RenderBlock;
 class RenderFlow;
@@ -537,7 +538,7 @@ public:
         return localToContainerQuad(quad, 0, fixed);
     }
     // Convert a local quad into the coordinate system of container, taking transforms into account.
-    virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBox* repaintContainer, bool fixed = false) const;
+    virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBoxModelObject* repaintContainer, bool fixed = false) const;
 
     // Return the offset from the container() renderer (excluding transforms)
     virtual IntSize offsetFromContainer(RenderObject*) const;
@@ -584,10 +585,10 @@ public:
     // Return the RenderBox in the container chain which is responsible for painting this object, or 0
     // if painting is root-relative. This is the container that should be passed to the 'forRepaint'
     // methods.
-    RenderBox* containerForRepaint() const;
+    RenderBoxModelObject* containerForRepaint() const;
     // Actually do the repaint of rect r for this object which has been computed in the coordinate space
     // of repaintContainer. If repaintContainer is 0, repaint via the view.
-    void repaintUsingContainer(RenderBox* repaintContainer, const IntRect& r, bool immediate = false);
+    void repaintUsingContainer(RenderBoxModelObject* repaintContainer, const IntRect& r, bool immediate = false);
     
     // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
     // style changes.
@@ -597,7 +598,7 @@ public:
     void repaintRectangle(const IntRect&, bool immediate = false);
 
     // Repaint only if our old bounds and new bounds are different.
-    bool repaintAfterLayoutIfNeeded(RenderBox* repaintContainer, const IntRect& oldBounds, const IntRect& oldOutlineBox);
+    bool repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintContainer, const IntRect& oldBounds, const IntRect& oldOutlineBox);
 
     // Repaint only if the object moved.
     virtual void repaintDuringLayoutIfMoved(const IntRect& rect);
@@ -613,8 +614,8 @@ public:
     {
         return clippedOverflowRectForRepaint(0);
     }
-    virtual IntRect clippedOverflowRectForRepaint(RenderBox* repaintContainer);    
-    virtual IntRect rectWithOutlineForRepaint(RenderBox* repaintContainer, int outlineWidth);
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);    
+    virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
 
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in view coordinates.
@@ -624,7 +625,7 @@ public:
     }
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in the coordinate space of repaintContainer.
-    virtual void computeRectForRepaint(RenderBox* repaintContainer, IntRect&, bool fixed = false);
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
 
     virtual unsigned int length() const { return 1; }
 
@@ -668,7 +669,7 @@ public:
     // A single rectangle that encompasses all of the selected objects within this object.  Used to determine the tightest
     // possible bounding box for the selection.
     IntRect selectionRect(bool clipToVisibleContent = true) { return selectionRectForRepaint(0, clipToVisibleContent); }
-    virtual IntRect selectionRectForRepaint(RenderBox* /*repaintContainer*/, bool /*clipToVisibleContent*/ = true) { return IntRect(); }
+    virtual IntRect selectionRectForRepaint(RenderBoxModelObject* /*repaintContainer*/, bool /*clipToVisibleContent*/ = true) { return IntRect(); }
 
     // Whether or not an object can be part of the leaf elements of the selection.
     virtual bool canBeSelectionLeaf() const { return false; }
@@ -777,7 +778,7 @@ protected:
 
     void arenaDelete(RenderArena*, void* objectBase);
 
-    virtual IntRect outlineBoundsForRepaint(RenderBox* /*repaintContainer*/) const { return IntRect(); }
+    virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/) const { return IntRect(); }
 
     class LayoutRepainter {
     public:
@@ -803,7 +804,7 @@ protected:
         
     private:
         RenderObject& m_object;
-        RenderBox* m_repaintContainer;
+        RenderBoxModelObject* m_repaintContainer;
         IntRect m_oldBounds;
         IntRect m_oldOutlineBox;
         bool m_checkForRepaint;

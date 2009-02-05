@@ -1067,13 +1067,13 @@ IntRect RenderText::linesBoundingBox() const
     return result;
 }
 
-IntRect RenderText::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
+IntRect RenderText::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
     RenderObject* cb = containingBlock();
     return cb->clippedOverflowRectForRepaint(repaintContainer);
 }
 
-IntRect RenderText::selectionRectForRepaint(RenderBox* repaintContainer, bool clipToVisibleContent)
+IntRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 

@@ -212,7 +212,7 @@ TransformationMatrix RenderSVGContainer::viewportTransform() const
      return TransformationMatrix();
 }
 
-IntRect RenderSVGContainer::clippedOverflowRectForRepaint(RenderBox* repaintContainer)
+IntRect RenderSVGContainer::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
     FloatRect repaintRect;
 
@@ -280,7 +280,7 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
     return false;
 }
 
-IntRect RenderSVGContainer::outlineBoundsForRepaint(RenderBox* /*repaintContainer*/) const
+IntRect RenderSVGContainer::outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/) const
 {
     // FIXME: handle non-root repaintContainer
     IntRect result = m_absoluteBounds;

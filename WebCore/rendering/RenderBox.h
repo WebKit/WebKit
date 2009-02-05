@@ -72,7 +72,7 @@ public:
     FloatQuad absoluteContentQuad() const;
 
     // Bounds of the outline box in absolute coords. Respects transforms
-    virtual IntRect outlineBoundsForRepaint(RenderBox* /*repaintContainer*/) const;
+    virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/) const;
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
     // Use this with caution! No type checking is done!
@@ -207,9 +207,9 @@ public:
     virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
     virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBox* repaintContainer);
-    virtual void computeRectForRepaint(RenderBox* repaintContainer, IntRect&, bool fixed = false);
-    virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBox* repaintContainer, bool fixed = false) const;
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
+    virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBoxModelObject* repaintContainer, bool fixed = false) const;
 
     virtual void repaintDuringLayoutIfMoved(const IntRect&);
 
@@ -247,10 +247,6 @@ public:
 
     void calcVerticalMargins();
 
-    int relativePositionOffsetX() const;
-    int relativePositionOffsetY() const;
-    IntSize relativePositionOffset() const { return IntSize(relativePositionOffsetX(), relativePositionOffsetY()); }
-    
     RenderLayer* layer() const { return m_layer; }
     virtual bool requiresLayer() const { return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasReflection(); }
 

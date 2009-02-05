@@ -25,10 +25,18 @@
 
 namespace WebCore {
 
+// This class is the base for all objects that adhere to the CSS box model as described
+// at http://www.w3.org/TR/CSS21/box.html
+
 class RenderBoxModelObject : public RenderObject {
 public:
     RenderBoxModelObject(Node*);
     virtual ~RenderBoxModelObject();
+    
+    int relativePositionOffsetX() const;
+    int relativePositionOffsetY() const;
+    IntSize relativePositionOffset() const { return IntSize(relativePositionOffsetX(), relativePositionOffsetY()); }
+
 };
 
 } // namespace WebCore

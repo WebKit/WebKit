@@ -49,7 +49,7 @@ RenderSVGText::RenderSVGText(SVGTextElement* node)
 {
 }
 
-IntRect RenderSVGText::clippedOverflowRectForRepaint(RenderBox* /*repaintContainer*/)
+IntRect RenderSVGText::clippedOverflowRectForRepaint(RenderBoxModelObject* /*repaintContainer*/)
 {
     // FIXME: handle non-root repaintContainer
     FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
