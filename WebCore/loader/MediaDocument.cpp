@@ -147,7 +147,7 @@ void MediaDocument::defaultEventHandler(Event* event)
 {
     // Match the default Quicktime plugin behavior to allow 
     // clicking and double-clicking to pause and play the media.
-    EventTargetNode* targetNode = event->target()->toNode();
+    Node* targetNode = event->target()->toNode();
     if (targetNode && targetNode->hasTagName(videoTag)) {
         HTMLVideoElement* video = static_cast<HTMLVideoElement*>(targetNode);
         ExceptionCode ec;

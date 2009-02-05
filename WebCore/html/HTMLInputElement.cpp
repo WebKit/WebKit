@@ -1115,7 +1115,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         return;
     }
     
-    // Let the key handling done in EventTargetNode take precedence over the event handling here for editable text fields
+    // Let the key handling done in Node take precedence over the event handling here for editable text fields
     if (!clickDefaultFormButton) {
         HTMLFormControlElementWithState::defaultEventHandler(evt);
         if (evt->defaultHandled())

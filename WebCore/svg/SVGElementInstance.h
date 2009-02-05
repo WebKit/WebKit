@@ -55,7 +55,7 @@ namespace WebCore {
 
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-        virtual EventTargetNode* toNode() { return shadowTreeElement(); }
+        virtual Node* toNode() { return shadowTreeElement(); }
         virtual SVGElementInstance* toSVGElementInstance() { return this; }
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);

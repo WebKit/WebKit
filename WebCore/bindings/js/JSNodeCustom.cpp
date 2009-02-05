@@ -43,6 +43,7 @@
 #include "JSDocumentType.h"
 #include "JSEntity.h"
 #include "JSEntityReference.h"
+#include "JSEventListener.h"
 #include "JSHTMLElement.h"
 #include "JSHTMLElementWrapperFactory.h"
 #include "JSNotation.h"
@@ -104,6 +105,34 @@ JSValuePtr JSNode::appendChild(ExecState* exec, const ArgList& args)
     if (ok)
         return args.at(exec, 0);
     return jsNull();
+}
+
+JSValuePtr JSNode::addEventListener(ExecState* exec, const ArgList& args)
+{
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
+    if (!globalObject)
+        return jsUndefined();
+
+    if (RefPtr<JSEventListener> listener = globalObject->findOrCreateJSEventListener(exec, args.at(exec, 1)))
+        impl()->addEventListener(args.at(exec, 0).toString(exec), listener.release(), args.at(exec, 2).toBoolean(exec));
+
+    return jsUndefined();
+}
+
+JSValuePtr JSNode::removeEventListener(ExecState* exec, const ArgList& args)
+{
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
+    if (!globalObject)
+        return jsUndefined();
+
+    if (JSEventListener* listener = globalObject->findJSEventListener(args.at(exec, 1)))
+        impl()->removeEventListener(args.at(exec, 0).toString(exec), listener, args.at(exec, 2).toBoolean(exec));
+
+    return jsUndefined();
+}
+
+void JSNode::pushEventHandlerScope(ExecState*, ScopeChain&) const
+{
 }
 
 void JSNode::mark()

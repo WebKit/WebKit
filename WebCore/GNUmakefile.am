@@ -115,7 +115,6 @@ IDL_BINDINGS += \
 	WebCore/dom/EntityReference.idl \
 	WebCore/dom/Event.idl \
 	WebCore/dom/EventException.idl \
-	WebCore/dom/EventTargetNode.idl \
 	WebCore/dom/KeyboardEvent.idl \
 	WebCore/dom/MessageChannel.idl \
 	WebCore/dom/MessageEvent.idl \
@@ -277,7 +276,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSEventTarget.cpp \
 	WebCore/bindings/js/JSEventTarget.h \
 	WebCore/bindings/js/JSEventTargetBase.h \
-	WebCore/bindings/js/JSEventTargetNodeCustom.cpp \
 	WebCore/bindings/js/JSGeolocationCustom.cpp \
 	WebCore/bindings/js/JSHTMLAllCollection.cpp \
 	WebCore/bindings/js/JSHTMLAllCollection.h \
@@ -591,8 +589,6 @@ webcore_sources += \
 	WebCore/dom/EventNames.h \
 	WebCore/dom/EventTarget.cpp \
 	WebCore/dom/EventTarget.h \
-	WebCore/dom/EventTargetNode.cpp \
-	WebCore/dom/EventTargetNode.h \
 	WebCore/dom/ExceptionBase.cpp \
 	WebCore/dom/ExceptionBase.h \
 	WebCore/dom/ExceptionCode.cpp \

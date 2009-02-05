@@ -131,9 +131,6 @@ sub AddMethodsConstantsAndAttributesFromParentClasses
     my $functionsRef = $dataNode->functions;
     my $attributesRef = $dataNode->attributes;
 
-    # Exception: For the DOM 'Node' is our topmost baseclass, not EventTargetNode.
-    return if $parentsMax eq 1 and $parents[0] eq "EventTargetNode";
-
     foreach (@{$dataNode->parents}) {
         if ($ignoreParent) {
             # Ignore first parent class, already handled by the generation itself.
@@ -196,9 +193,6 @@ sub GetMethodsAndAttributesFromParentClasses
 
     foreach (@{$dataNode->parents}) {
         my $interface = $object->StripModule($_);
-        if ($interface eq "EventTargetNode") {
-            $interface = "Node";
-        }
 
         # Step #1: Find the IDL file associated with 'interface'
         $endCondition = 0;

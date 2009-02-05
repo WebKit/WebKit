@@ -938,7 +938,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     // Schedule the scroll DOM event.
     if (view) {
         if (FrameView* frameView = view->frameView())
-            frameView->scheduleEvent(Event::create(eventNames().scrollEvent, false, false), EventTargetNodeCast(renderer()->element()));
+            frameView->scheduleEvent(Event::create(eventNames().scrollEvent, false, false), renderer()->element());
     }
 }
 
@@ -1454,7 +1454,7 @@ void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOve
         
         if (FrameView* frameView = renderer()->document()->view()) {
             frameView->scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
-                EventTargetNodeCast(renderer()->element()));
+                renderer()->element());
         }
     }
 }

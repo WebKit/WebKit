@@ -31,7 +31,7 @@
 
 #include "EventListener.h"
 #include "EventNames.h"
-#include "EventTargetNode.h"
+#include "Node.h"
 #include "ExceptionCode.h"
 #include "XPathEvaluator.h"
 #include "XPathException.h"
@@ -50,7 +50,7 @@ private:
     XPathResult* m_result;
 };
 
-XPathResult::XPathResult(EventTargetNode* eventTarget, const Value& value)
+XPathResult::XPathResult(Node* eventTarget, const Value& value)
     : m_value(value)
     , m_eventTarget(eventTarget)
 {

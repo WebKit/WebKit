@@ -23,7 +23,7 @@
 #ifndef CharacterData_h
 #define CharacterData_h
 
-#include "EventTargetNode.h"
+#include "Node.h"
 
 namespace WebCore {
 

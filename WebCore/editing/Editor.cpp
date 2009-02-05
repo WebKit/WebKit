@@ -699,7 +699,7 @@ bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPoli
 
     ExceptionCode ec = 0;
     RefPtr<Event> evt = ClipboardEvent::create(eventType, true, true, clipboard);
-    EventTargetNodeCast(target)->dispatchEvent(evt, ec);
+    target->dispatchEvent(evt, ec);
     bool noDefaultProcessing = evt->defaultPrevented();
 
     // invalidate clipboard here for security

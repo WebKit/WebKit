@@ -109,8 +109,8 @@ private:
     RefPtr<HTMLElement> m_timelineContainer;
     RefPtr<MediaTimeDisplayElement> m_currentTimeDisplay;
     RefPtr<MediaTimeDisplayElement> m_timeRemainingDisplay;
-    EventTargetNode* m_lastUnderNode;
-    EventTargetNode* m_nodeUnderMouse;
+    Node* m_lastUnderNode;
+    Node* m_nodeUnderMouse;
     
     Timer<RenderMedia> m_timeUpdateTimer;
     Timer<RenderMedia> m_opacityAnimationTimer;

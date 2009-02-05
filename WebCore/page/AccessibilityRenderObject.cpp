@@ -553,15 +553,15 @@ Element* AccessibilityRenderObject::mouseButtonListener() const
     Node* node = m_renderer->element();
     if (!node)
         return 0;
-    if (!node->isEventTargetNode())
+    if (!node->isElementNode())
         return 0;
-    
+
     // FIXME: Do the continuation search like anchorElement does
-    for (EventTargetNode* elt = static_cast<EventTargetNode*>(node); elt; elt = static_cast<EventTargetNode*>(elt->parentNode())) {
-        if (elt->inlineEventListenerForType(eventNames().clickEvent) || elt->inlineEventListenerForType(eventNames().mousedownEvent) || elt->inlineEventListenerForType(eventNames().mouseupEvent))
-            return static_cast<Element*>(elt);
+    for (Element* element = static_cast<Element*>(node); element; element = element->parentElement()) {
+        if (element->inlineEventListenerForType(eventNames().clickEvent) || element->inlineEventListenerForType(eventNames().mousedownEvent) || element->inlineEventListenerForType(eventNames().mouseupEvent))
+            return element;
     }
-    
+
     return 0;
 }
 

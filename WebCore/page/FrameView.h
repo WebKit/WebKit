@@ -157,7 +157,7 @@ public:
 
     void restoreScrollbar();
 
-    void scheduleEvent(PassRefPtr<Event>, PassRefPtr<EventTargetNode>);
+    void scheduleEvent(PassRefPtr<Event>, PassRefPtr<Node>);
     void pauseScheduledEvents();
     void resumeScheduledEvents();
     void postLayoutTimerFired(Timer<FrameView>*);

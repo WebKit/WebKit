@@ -1345,7 +1345,7 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Node* dragTa
         0, 0, clipboard);
 
     ExceptionCode ec = 0;
-    EventTargetNodeCast(dragTarget)->dispatchEvent(me.get(), ec);
+    dragTarget->dispatchEvent(me.get(), ec);
     return me->defaultPrevented();
 }
 
@@ -1532,10 +1532,10 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         if (m_lastNodeUnderMouse != m_nodeUnderMouse) {
             // send mouseout event to the old node
             if (m_lastNodeUnderMouse)
-                EventTargetNodeCast(m_lastNodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, eventNames().mouseoutEvent, 0, m_nodeUnderMouse.get());
+                m_lastNodeUnderMouse->dispatchMouseEvent(mouseEvent, eventNames().mouseoutEvent, 0, m_nodeUnderMouse.get());
             // send mouseover event to the new node
             if (m_nodeUnderMouse)
-                EventTargetNodeCast(m_nodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, eventNames().mouseoverEvent, 0, m_lastNodeUnderMouse.get());
+                m_nodeUnderMouse->dispatchMouseEvent(mouseEvent, eventNames().mouseoverEvent, 0, m_lastNodeUnderMouse.get());
         }
         m_lastNodeUnderMouse = m_nodeUnderMouse;
 #if ENABLE(SVG)
@@ -1551,7 +1551,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
     bool swallowEvent = false;
 
     if (m_nodeUnderMouse)
-        swallowEvent = EventTargetNodeCast(m_nodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, eventType, clickCount);
+        swallowEvent = m_nodeUnderMouse->dispatchMouseEvent(mouseEvent, eventType, clickCount);
     
     if (!swallowEvent && eventType == eventNames().mousedownEvent) {
         // Blur current focus node when a link/button is clicked; this
@@ -1628,7 +1628,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         }
 
         node = node->shadowAncestorNode();
-        EventTargetNodeCast(node)->dispatchWheelEvent(e);
+        node->dispatchWheelEvent(e);
         if (e.isAccepted())
             return true;
             
@@ -1693,10 +1693,11 @@ bool EventHandler::canMouseDownStartSelect(Node* node)
     if (!node->canStartSelection())
         return false;
             
-    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent())    
+    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
         if (Node* node = curr->element())
-            return EventTargetNodeCast(node)->dispatchEventForType(eventNames().selectstartEvent, true, true);
-    
+            return node->dispatchEventForType(eventNames().selectstartEvent, true, true);
+    }
+
     return true;
 }
 
@@ -1705,10 +1706,11 @@ bool EventHandler::canMouseDragExtendSelect(Node* node)
     if (!node || !node->renderer())
         return true;
             
-    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent())    
+    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
         if (Node* node = curr->element())
-            return EventTargetNodeCast(node)->dispatchEventForType(eventNames().selectstartEvent, true, true);
-    
+            return node->dispatchEventForType(eventNames().selectstartEvent, true, true);
+    }
+
     return true;
 }
 
@@ -1738,7 +1740,7 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>*)
     }
 }
 
-static EventTargetNode* eventTargetNodeForDocument(Document* doc)
+static Node* eventTargetNodeForDocument(Document* doc)
 {
     if (!doc)
         return 0;
@@ -1751,7 +1753,7 @@ static EventTargetNode* eventTargetNodeForDocument(Document* doc)
         if (!node)
             return 0;
     }
-    return EventTargetNodeCast(node);
+    return node;
 }
 
 bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& evt)
@@ -1794,7 +1796,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
-    RefPtr<EventTargetNode> node = eventTargetNodeForDocument(m_frame->document());
+    RefPtr<Node> node = eventTargetNodeForDocument(m_frame->document());
     if (!node)
         return false;
 
