@@ -596,7 +596,7 @@ RenderBlock* RenderObject::containingBlock() const
     }
 
     if (isRenderView())
-        return const_cast<RenderBlock*>(static_cast<const RenderBlock*>(this));
+        return const_cast<RenderView*>(toRenderView(this));
 
     RenderObject* o = parent();
     if (!isText() && m_style->position() == FixedPosition) {

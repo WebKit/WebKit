@@ -1,3 +1,12 @@
+2009-02-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix missing checked cast.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+
 2009-02-05  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Fix WML enabled builds.
