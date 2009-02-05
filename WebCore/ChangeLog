@@ -2,9 +2,9 @@
 
         Reviewed by Adam Roben.
 
-        Add toRenderButton methods for casting RenderObjects to RenderButtons.  The methods will assert if the object
-        is not a RenderButton.  Also add a toRenderButton method that takes a RenderButton but returns void and that
-        is unimplemented.  This method will catch anyone trying to do a cast when the object is already a RenderButton.
+        Add toRenderButton methods for casting RenderObjects to RenderButtons. The methods will assert if the object
+        is not a RenderButton. Also add a toRenderButton method that takes a RenderButton but returns void and that
+        is unimplemented. This method will catch anyone trying to do a cast when the object is already a RenderButton.
 
         * rendering/RenderButton.h:
         (WebCore::RenderButton::isRenderButton):
