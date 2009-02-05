@@ -1,3 +1,10 @@
+2009-02-05  Dan Bernstein  <mitz@apple.com>
+
+        - build fix
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::initGlobalCallFrame):
+
 2009-02-05  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan and Brady Eidson.

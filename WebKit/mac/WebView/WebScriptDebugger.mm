@@ -96,7 +96,7 @@ void WebScriptDebugger::initGlobalCallFrame(const DebuggerCallFrame& debuggerCal
     WebView *webView = [webFrame webView];
     WebScriptDebugDelegateImplementationCache* implementations = WebViewGetScriptDebugDelegateImplementations(webView);
     if (implementations->didEnterCallFrameFunc)
-        CallScriptDebugDelegate(implementations->didEnterCallFrameFunc, webView, @selector(webView:didEnterCallFrame:sourceId:line:forWebFrame:), m_topCallFrame.get(), static_cast<WebSourceId>(0), -1, webFrame);
+        CallScriptDebugDelegate(implementations->didEnterCallFrameFunc, webView, @selector(webView:didEnterCallFrame:sourceId:line:forWebFrame:), m_topCallFrame.get(), static_cast<NSInteger>(0), -1, webFrame);
 
     m_callingDelegate = false;
 }
