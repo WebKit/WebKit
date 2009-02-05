@@ -101,7 +101,7 @@ bool ImplicitAnimation::startAnimation(double beginTime)
     
 #if USE(ACCELERATED_COMPOSITING)
     if (m_object && m_object->hasLayer()) {
-        RenderLayer* layer = toRenderBox(m_object)->layer();
+        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
         if (layer->isComposited())
             return layer->backing()->startTransition(beginTime, m_animatingProperty, m_fromStyle.get(), m_toStyle.get());
     }
@@ -113,7 +113,7 @@ void ImplicitAnimation::endAnimation(bool /*reset*/)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (m_object && m_object->hasLayer()) {
-        RenderLayer* layer = toRenderBox(m_object)->layer();
+        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
         if (layer->isComposited())
             layer->backing()->transitionFinished(m_animatingProperty);
     }

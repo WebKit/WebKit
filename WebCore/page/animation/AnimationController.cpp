@@ -190,7 +190,7 @@ void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPr
     updateAnimationTimer(true);
 }
 
-bool AnimationControllerPrivate::isAnimatingPropertyOnRenderer(RenderObject* renderer, int property, bool isRunningNow) const
+bool AnimationControllerPrivate::isAnimatingPropertyOnRenderer(RenderObject* renderer, CSSPropertyID property, bool isRunningNow) const
 {
     RefPtr<CompositeAnimation> animation = m_compositeAnimations.get(renderer);
     if (!animation)
@@ -480,7 +480,7 @@ bool AnimationController::pauseTransitionAtTime(RenderObject* renderer, const St
     return m_data->pauseTransitionAtTime(renderer, property, t);
 }
 
-bool AnimationController::isAnimatingPropertyOnRenderer(RenderObject* renderer, int property, bool isRunningNow) const
+bool AnimationController::isAnimatingPropertyOnRenderer(RenderObject* renderer, CSSPropertyID property, bool isRunningNow) const
 {
     return m_data->isAnimatingPropertyOnRenderer(renderer, property, isRunningNow);
 }
@@ -503,6 +503,16 @@ void AnimationController::beginAnimationUpdate()
 void AnimationController::endAnimationUpdate()
 {
     m_data->endAnimationUpdate();
+}
+
+bool AnimationController::supportsAcceleratedAnimationOfProperty(CSSPropertyID property)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    return AnimationBase::animationOfPropertyIsAccelerated(property);
+#else
+    UNUSED_PARAM(property);
+    return false;
+#endif
 }
 
 } // namespace WebCore

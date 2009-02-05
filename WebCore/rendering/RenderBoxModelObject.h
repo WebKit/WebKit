@@ -47,6 +47,8 @@ public:
     virtual bool requiresLayer() const { return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasReflection(); }
 
 private:
+    virtual bool isBoxModelObject() const { return true; }
+
     friend class RenderView;
 
     RenderLayer* m_layer;
@@ -54,6 +56,21 @@ private:
     // Used to store state between styleWillChange and styleDidChange
     static bool s_wasFloating;
 };
+
+inline RenderBoxModelObject* toRenderBoxModelObject(RenderObject* o)
+{ 
+    ASSERT(!o || o->isBoxModelObject());
+    return static_cast<RenderBoxModelObject*>(o);
+}
+
+inline const RenderBoxModelObject* toRenderBoxModelObject(const RenderObject* o)
+{ 
+    ASSERT(!o || o->isBoxModelObject());
+    return static_cast<const RenderBoxModelObject*>(o);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderBoxModelObject(const RenderBox*);
 
 } // namespace WebCore
 

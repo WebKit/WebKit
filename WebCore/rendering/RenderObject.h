@@ -251,6 +251,7 @@ public:
     virtual bool isApplet() const { return false; }
     virtual bool isBR() const { return false; }
     virtual bool isBlockFlow() const { return false; }
+    virtual bool isBoxModelObject() const { return false; }
     virtual bool isCounter() const { return false; }
     virtual bool isFieldset() const { return false; }
     virtual bool isFrame() const { return false; }

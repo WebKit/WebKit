@@ -185,7 +185,7 @@ bool KeyframeAnimation::startAnimation(double beginTime)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (m_object && m_object->hasLayer()) {
-        RenderLayer* layer = toRenderBox(m_object)->layer();
+        RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
         if (layer->isComposited())
             return layer->backing()->startAnimation(beginTime, m_animation.get(), m_keyframes);
     }
@@ -200,7 +200,7 @@ void KeyframeAnimation::endAnimation(bool reset)
     if (m_object) {
 #if USE(ACCELERATED_COMPOSITING)
         if (m_object->hasLayer()) {
-            RenderLayer* layer = toRenderBox(m_object)->layer();
+            RenderLayer* layer = toRenderBoxModelObject(m_object)->layer();
             if (layer->isComposited())
                 layer->backing()->animationFinished(m_keyframes.animationName(), 0, reset);
         }

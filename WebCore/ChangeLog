@@ -1,3 +1,50 @@
+2009-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23765
+
+        Add toRenderBoxModelObject() so that we can cast objects that
+        can have layers.
+        
+        Fix getComputedStyle to return the current value of style
+        properties that are undergoing accelerated animations, by
+        asking the AnimationController if the property has accelerated
+        animations, and, if so, asking it to generate an appropriate
+        style.
+        
+        Tightened up some type safety (CSSPropertyID), and code clarity
+        (replace bool with enum).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::hasCompositedLayer):
+        (WebCore::computedTransform):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::isAnimatingPropertyOnRenderer):
+        (WebCore::AnimationController::isAnimatingPropertyOnRenderer):
+        (WebCore::AnimationController::supportsAcceleratedAnimationOfProperty):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::startAnimation):
+        (WebCore::ImplicitAnimation::endAnimation):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::startAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::isBoxModelObject):
+        (WebCore::toRenderBoxModelObject):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateLayerTransform):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isBoxModelObject):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::applyTransform):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::):
+
 2009-02-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
