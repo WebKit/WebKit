@@ -198,7 +198,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         else
             textX = contentLeft + contentWidth() - buttonAndIconWidth - style()->font().width(textRun);
         // We want to match the button's baseline
-        RenderButton* buttonRenderer = static_cast<RenderButton*>(m_button->renderer());
+        RenderButton* buttonRenderer = toRenderButton(m_button->renderer());
         int textY = buttonRenderer->absoluteBoundingBoxRect().y()
             + buttonRenderer->marginTop() + buttonRenderer->borderTop() + buttonRenderer->paddingTop()
             + buttonRenderer->baselinePosition(true, false);

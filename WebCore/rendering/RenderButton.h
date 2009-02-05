@@ -39,6 +39,7 @@ public:
     RenderButton(Node*);
 
     virtual const char* renderName() const { return "RenderButton"; }
+    virtual bool isRenderButton() const { return true; }
 
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
     virtual void removeChild(RenderObject*);
@@ -71,6 +72,21 @@ protected:
     OwnPtr<Timer<RenderButton> > m_timer;
     bool m_default;
 };
+
+inline RenderButton* toRenderButton(RenderObject* o)
+{ 
+    ASSERT(!o || o->isRenderButton());
+    return static_cast<RenderButton*>(o);
+}
+
+inline const RenderButton* toRenderButton(const RenderObject* o)
+{ 
+    ASSERT(!o || o->isRenderButton());
+    return static_cast<const RenderButton*>(o);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderButton(const RenderButton*);
 
 } // namespace WebCore
 
