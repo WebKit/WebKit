@@ -113,7 +113,7 @@ struct DashboardRegionValue {
 // Base class for all rendering tree objects.
 class RenderObject : public CachedResourceClient {
     friend class RenderBlock;
-    friend class RenderContainer;
+    friend class RenderBox;
     friend class RenderLayer;
     friend class RenderObjectChildList;
     friend class RenderSVGContainer;

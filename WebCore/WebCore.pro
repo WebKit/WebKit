@@ -970,7 +970,6 @@ SOURCES += \
     rendering/RenderBox.cpp \
     rendering/RenderBR.cpp \
     rendering/RenderButton.cpp \
-    rendering/RenderContainer.cpp \
     rendering/RenderCounter.cpp \
     rendering/RenderFieldset.cpp \
     rendering/RenderFileUploadControl.cpp \

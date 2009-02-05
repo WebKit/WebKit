@@ -127,7 +127,7 @@ IntRect RenderSVGInlineText::computeRepaintRectForRange(RenderBox* /*repaintCont
 
     // Remove HTML parent translation offsets here! These need to be retrieved from the RenderSVGRoot object.
     // But do take the containingBlocks's container position into account, ie. SVG text in scrollable <div>.
-    TransformationMatrix htmlParentCtm = root->RenderContainer::absoluteTransform();
+    TransformationMatrix htmlParentCtm = root->RenderBox::absoluteTransform();
 
     FloatRect fixedRect(narrowPrecisionToFloat(rect.x() + absPos.x() - htmlParentCtm.e()),
                         narrowPrecisionToFloat(rect.y() + absPos.y() - htmlParentCtm.f()), rect.width(), rect.height());

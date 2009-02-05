@@ -35,10 +35,15 @@ namespace WebCore {
 class RenderTableCell;
 class RenderTableRow;
 
-class RenderTableSection : public RenderContainer {
+class RenderTableSection : public RenderBox {
 public:
     RenderTableSection(Node*);
     ~RenderTableSection();
+
+    virtual RenderObjectChildList* virtualChildren() { return children(); }
+    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+    const RenderObjectChildList* children() const { return &m_children; }
+    RenderObjectChildList* children() { return &m_children; }
 
     virtual const char* renderName() const { return isAnonymous() ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
 
@@ -130,6 +135,8 @@ private:
 
     bool ensureRows(int);
     void clearGrid();
+
+    RenderObjectChildList m_children;
 
     Vector<RowStruct> m_grid;
     int m_gridRows;

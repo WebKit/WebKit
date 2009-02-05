@@ -1,3 +1,114 @@
+2009-02-04  David Hyatt  <hyatt@apple.com>
+
+        Eliminate RenderContainer.
+
+        Reviewed by Sam and Anders
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::destroy):
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::addChild):
+        (WebCore::RenderBlock::dirtyLineBoxes):
+        (WebCore::RenderBlock::createInlineBox):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::setSelectionState):
+        (WebCore::RenderBlock::avoidsFloats):
+        (WebCore::RenderBlock::positionForCoordinates):
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        (WebCore::RenderBlock::baselinePosition):
+        (WebCore::RenderBlock::getBaselineOfFirstLineBox):
+        (WebCore::RenderBlock::getBaselineOfLastLineBox):
+        (WebCore::RenderBlock::rectWithOutlineForRepaint):
+        (WebCore::RenderBlock::hoverAncestor):
+        (WebCore::RenderBlock::updateDragState):
+        (WebCore::RenderBlock::localCaretRect):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::virtualChildren):
+        (WebCore::RenderBlock::children):
+        * rendering/RenderContainer.cpp: Removed.
+        * rendering/RenderContainer.h: Removed.
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::RenderFrameSet):
+        (WebCore::RenderFrameSet::nodeAtPoint):
+        (WebCore::RenderFrameSet::layout):
+        * rendering/RenderFrameSet.h:
+        (WebCore::RenderFrameSet::virtualChildren):
+        (WebCore::RenderFrameSet::children):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        (WebCore::RenderInline::destroy):
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::nextContinuation):
+        (WebCore::RenderInline::continuationBefore):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::splitFlow):
+        (WebCore::RenderInline::addChildToContinuation):
+        (WebCore::RenderInline::offsetLeft):
+        (WebCore::RenderInline::offsetTop):
+        (WebCore::RenderInline::positionForCoordinates):
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderInline::rectWithOutlineForRepaint):
+        (WebCore::RenderInline::updateDragState):
+        (WebCore::RenderInline::childBecameNonInline):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::virtualChildren):
+        (WebCore::RenderInline::children):
+        (WebCore::RenderInline::continuation):
+        (WebCore::RenderInline::setContinuation):
+        * rendering/RenderLineBoxList.h:
+        * rendering/RenderObject.h:
+        * rendering/RenderObjectChildList.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeRepaintRectForRange):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::applyContentTransforms):
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::absoluteTransform):
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        (WebCore::RenderSVGRoot::position):
+        * rendering/RenderSVGRoot.h:
+        (WebCore::RenderSVGRoot::virtualChildren):
+        (WebCore::RenderSVGRoot::children):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteRects):
+        (WebCore::RenderSVGText::absoluteQuads):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::removeChild):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::RenderTableCol):
+        * rendering/RenderTableCol.h:
+        (WebCore::RenderTableCol::virtualChildren):
+        (WebCore::RenderTableCol::children):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::RenderTableRow):
+        (WebCore::RenderTableRow::destroy):
+        (WebCore::RenderTableRow::styleWillChange):
+        (WebCore::RenderTableRow::addChild):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::virtualChildren):
+        (WebCore::RenderTableRow::children):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::destroy):
+        (WebCore::RenderTableSection::addChild):
+        (WebCore::RenderTableSection::removeChild):
+        (WebCore::RenderTableSection::lowestPosition):
+        (WebCore::RenderTableSection::rightmostPosition):
+        (WebCore::RenderTableSection::leftmostPosition):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::virtualChildren):
+        (WebCore::RenderTableSection::children):
+
 2009-02-04  Mads Adger  <mad@chromium.org>
 
         Reviewed by Antti Koivisto.

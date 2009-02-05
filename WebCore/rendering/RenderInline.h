@@ -25,17 +25,22 @@
 #ifndef RenderInline_h
 #define RenderInline_h
 
-#include "RenderContainer.h"
+#include "RenderBox.h"
 #include "RenderLineBoxList.h"
 
 namespace WebCore {
 
 class Position;
 
-class RenderInline : public RenderContainer {
+class RenderInline : public RenderBox {
 public:
     RenderInline(Node*);
     virtual ~RenderInline();
+
+    virtual RenderObjectChildList* virtualChildren() { return children(); }
+    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+    const RenderObjectChildList* children() const { return &m_children; }
+    RenderObjectChildList* children() { return &m_children; }
 
     virtual void destroy();
 
@@ -48,9 +53,9 @@ public:
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0);
 
     void splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock,
-                      RenderObject* beforeChild, RenderContainer* oldCont);
+                      RenderObject* beforeChild, RenderBox* oldCont);
     void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
-                   RenderObject* newChild, RenderContainer* oldCont);
+                   RenderObject* newChild, RenderBox* oldCont);
 
     virtual void layout() { ASSERT_NOT_REACHED(); } // Do nothing for layout()
 
@@ -93,9 +98,9 @@ public:
 
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
-    RenderContainer* continuation() const { return m_continuation; }
+    RenderBox* continuation() const { return m_continuation; }
     RenderInline* inlineContinuation() const;
-    void setContinuation(RenderContainer* c) { m_continuation = c; }
+    void setContinuation(RenderBox* c) { m_continuation = c; }
     
     virtual void updateDragState(bool dragOn);
     
@@ -125,13 +130,14 @@ protected:
 
 private:
     void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine, const IntRect& nextLine);
-    RenderContainer* continuationBefore(RenderObject* beforeChild);
+    RenderBox* continuationBefore(RenderObject* beforeChild);
 
 protected:
+    RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
 
 private:
-    RenderContainer* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the
+    RenderBox* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the
                                      // <b> will just have an inline as its continuation.
     mutable int m_lineHeight;
 };

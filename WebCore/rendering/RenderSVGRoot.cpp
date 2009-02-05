@@ -44,7 +44,7 @@ using namespace std;
 namespace WebCore {
 
 RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
-    : RenderContainer(node)
+    : RenderBox(node)
 {
     setReplaced(true);
 }
@@ -131,7 +131,7 @@ void RenderSVGRoot::applyContentTransforms(PaintInfo& paintInfo, int parentX, in
     }
 
     // Respect scroll offset caused by html parents
-    TransformationMatrix ctm = RenderContainer::absoluteTransform();
+    TransformationMatrix ctm = RenderBox::absoluteTransform();
     paintInfo.rect.move(static_cast<int>(ctm.e()), static_cast<int>(ctm.f()));
 
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
@@ -185,7 +185,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
         prepareToRenderSVGContent(this, childPaintInfo, boundingBox, filter);        
 
     childPaintInfo.context->concatCTM(svg->viewBoxToViewTransform(width(), height()));
-    RenderContainer::paint(childPaintInfo, 0, 0);
+    RenderBox::paint(childPaintInfo, 0, 0);
 
     if (childPaintInfo.phase == PaintPhaseForeground)
         finishRenderSVGContent(this, childPaintInfo, boundingBox, filter, paintInfo.context);
@@ -263,7 +263,7 @@ void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool)
 
 TransformationMatrix RenderSVGRoot::absoluteTransform() const
 {
-    TransformationMatrix ctm = RenderContainer::absoluteTransform();
+    TransformationMatrix ctm = RenderBox::absoluteTransform();
     ctm.translate(x(), y());
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
     ctm.scale(svg->currentScale());
@@ -296,7 +296,7 @@ TransformationMatrix RenderSVGRoot::localTransform() const
 
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    TransformationMatrix ctm = RenderContainer::absoluteTransform();
+    TransformationMatrix ctm = RenderBox::absoluteTransform();
 
     int sx = (_tx - static_cast<int>(ctm.e())); // scroll offset
     int sy = (_ty - static_cast<int>(ctm.f())); // scroll offset
@@ -331,7 +331,7 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
 void RenderSVGRoot::position(InlineBox* box)
 {
-    RenderContainer::position(box);
+    RenderBox::position(box);
     if (m_absoluteBounds.isEmpty())
         setNeedsLayout(true, false);
 }

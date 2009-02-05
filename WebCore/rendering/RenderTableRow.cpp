@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderTableRow::RenderTableRow(Node* node)
-    : RenderContainer(node)
+    : RenderBox(node)
 {
     // init RenderObject attributes
     setInline(false);   // our object is not Inline
@@ -52,7 +52,7 @@ void RenderTableRow::destroy()
 {
     RenderTableSection* recalcSection = section();
     
-    RenderContainer::destroy();
+    RenderBox::destroy();
     
     if (recalcSection)
         recalcSection->setNeedsCellRecalc();
@@ -65,7 +65,7 @@ void RenderTableRow::styleWillChange(StyleDifference diff, const RenderStyle* ne
 
     ASSERT(newStyle->display() == TABLE_ROW);
 
-    RenderContainer::styleWillChange(diff, newStyle);
+    RenderBox::styleWillChange(diff, newStyle);
 }
 
 void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
@@ -83,7 +83,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 
     if (!child->isTableCell()) {
         if (isTableRow && child->element() && child->element()->hasTagName(formTag) && document()->isHTMLDocument()) {
-            RenderContainer::addChild(child, beforeChild);
+            RenderBox::addChild(child, beforeChild);
             return;
         }
 
@@ -122,7 +122,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
         section()->addCell(cell, this);
 
     ASSERT(!beforeChild || beforeChild->isTableCell() || isTableRow && beforeChild->element() && beforeChild->element()->hasTagName(formTag) && document()->isHTMLDocument());
-    RenderContainer::addChild(cell, beforeChild);
+    RenderBox::addChild(cell, beforeChild);
 
     if (beforeChild || nextSibling())
         section()->setNeedsCellRecalc();

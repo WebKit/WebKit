@@ -1524,8 +1524,6 @@ webcore_sources += \
 	WebCore/rendering/RenderBox.h \
 	WebCore/rendering/RenderButton.cpp \
 	WebCore/rendering/RenderButton.h \
-	WebCore/rendering/RenderContainer.cpp \
-	WebCore/rendering/RenderContainer.h \
 	WebCore/rendering/RenderCounter.cpp \
 	WebCore/rendering/RenderCounter.h \
 	WebCore/rendering/RenderFieldset.cpp \

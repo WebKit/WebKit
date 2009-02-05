@@ -42,7 +42,7 @@
 namespace WebCore {
 
 RenderFrameSet::RenderFrameSet(HTMLFrameSetElement* frameSet)
-    : RenderContainer(frameSet)
+    : RenderBox(frameSet)
     , m_isResizing(false)
     , m_isChildResizing(false)
 {
@@ -161,7 +161,7 @@ bool RenderFrameSet::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     if (action != HitTestForeground)
         return false;
 
-    bool inside = RenderContainer::nodeAtPoint(request, result, x, y, tx, ty, action)
+    bool inside = RenderBox::nodeAtPoint(request, result, x, y, tx, ty, action)
         || m_isResizing;
 
     if (inside && frameSet()->noResize()
@@ -475,7 +475,7 @@ void RenderFrameSet::layout()
 
     positionFrames();
 
-    RenderContainer::layout();
+    RenderBox::layout();
 
     computeEdgeInfo();
 

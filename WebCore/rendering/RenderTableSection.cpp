@@ -43,7 +43,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderTableSection::RenderTableSection(Node* node)
-    : RenderContainer(node)
+    : RenderBox(node)
     , m_gridRows(0)
     , m_cCol(0)
     , m_cRow(-1)
@@ -71,7 +71,7 @@ void RenderTableSection::destroy()
 {
     RenderTable* recalcTable = table();
     
-    RenderContainer::destroy();
+    RenderBox::destroy();
     
     // recalc cell info because RenderTable has unguarded pointers
     // stored that point to this RenderTableSection.
@@ -89,7 +89,7 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
 
     if (!child->isTableRow()) {
         if (isTableSection && child->element() && child->element()->hasTagName(formTag) && document()->isHTMLDocument()) {
-            RenderContainer::addChild(child, beforeChild);
+            RenderBox::addChild(child, beforeChild);
             return;
         }
 
@@ -144,13 +144,13 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
         beforeChild = beforeChild->parent();
 
     ASSERT(!beforeChild || beforeChild->isTableRow() || isTableSection && beforeChild->element() && beforeChild->element()->hasTagName(formTag) && document()->isHTMLDocument());
-    RenderContainer::addChild(child, beforeChild);
+    RenderBox::addChild(child, beforeChild);
 }
 
 void RenderTableSection::removeChild(RenderObject* oldChild)
 {
     setNeedsCellRecalc();
-    RenderContainer::removeChild(oldChild);
+    RenderBox::removeChild(oldChild);
 }
 
 bool RenderTableSection::ensureRows(int numRows)
@@ -641,7 +641,7 @@ int RenderTableSection::layoutRows(int toAdd)
 
 int RenderTableSection::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    int bottom = RenderContainer::lowestPosition(includeOverflowInterior, includeSelf);
+    int bottom = RenderBox::lowestPosition(includeOverflowInterior, includeSelf);
     if (!includeOverflowInterior && hasOverflowClip())
         return bottom;
 
@@ -657,7 +657,7 @@ int RenderTableSection::lowestPosition(bool includeOverflowInterior, bool includ
 
 int RenderTableSection::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    int right = RenderContainer::rightmostPosition(includeOverflowInterior, includeSelf);
+    int right = RenderBox::rightmostPosition(includeOverflowInterior, includeSelf);
     if (!includeOverflowInterior && hasOverflowClip())
         return right;
 
@@ -673,7 +673,7 @@ int RenderTableSection::rightmostPosition(bool includeOverflowInterior, bool inc
 
 int RenderTableSection::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    int left = RenderContainer::leftmostPosition(includeOverflowInterior, includeSelf);
+    int left = RenderBox::leftmostPosition(includeOverflowInterior, includeSelf);
     if (!includeOverflowInterior && hasOverflowClip())
         return left;
     

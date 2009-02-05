@@ -28,14 +28,19 @@
 #ifndef RenderTableCol_h
 #define RenderTableCol_h
 
-#include "RenderContainer.h"
+#include "RenderBox.h"
 
 namespace WebCore {
 
-class RenderTableCol : public RenderContainer
+class RenderTableCol : public RenderBox
 {
 public:
     RenderTableCol(Node*);
+
+    virtual RenderObjectChildList* virtualChildren() { return children(); }
+    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+    const RenderObjectChildList* children() const { return &m_children; }
+    RenderObjectChildList* children() { return &m_children; }
 
     virtual const char* renderName() const { return "RenderTableCol"; }
     virtual bool isTableCol() const { return true; }
@@ -53,6 +58,7 @@ public:
     void setSpan(int s) { m_span = s; }
     
 private:
+    RenderObjectChildList m_children;
     int m_span;
 };
 

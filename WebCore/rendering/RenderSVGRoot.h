@@ -24,7 +24,7 @@
 #define RenderSVGRoot_h
 
 #if ENABLE(SVG)
-#include "RenderContainer.h"
+#include "RenderBox.h"
 #include "FloatRect.h"
 
 namespace WebCore {
@@ -32,10 +32,15 @@ namespace WebCore {
 class SVGStyledElement;
 class TransformationMatrix;
 
-class RenderSVGRoot : public RenderContainer {
+class RenderSVGRoot : public RenderBox {
 public:
     RenderSVGRoot(SVGStyledElement*);
     ~RenderSVGRoot();
+
+    virtual RenderObjectChildList* virtualChildren() { return children(); }
+    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+    const RenderObjectChildList* children() const { return &m_children; }
+    RenderObjectChildList* children() { return &m_children; }
 
     virtual bool isSVGRoot() const { return true; }
     virtual const char* renderName() const { return "RenderSVGRoot"; }
@@ -70,6 +75,7 @@ private:
     void calcViewport(); 
     void applyContentTransforms(PaintInfo&, int parentX, int parentY);
 
+    RenderObjectChildList m_children;
     FloatRect m_viewport;
     IntRect m_absoluteBounds;
 };
