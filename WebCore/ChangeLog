@@ -1,3 +1,19 @@
+2009-02-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for <rdar://problem/6386112> Some inline-elements are not 
+        becoming proper dashboard-regions
+
+        RenderInline needs its own implementation of addDashboardRegions 
+        because otherwise all of the coordinate calculations are 
+        inaccurate. 
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addDashboardRegions):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.h:
+
 2009-02-04  David Hyatt  <hyatt@apple.com>
 
         Move addChild/removeChild from RenderContainer to RenderObject.

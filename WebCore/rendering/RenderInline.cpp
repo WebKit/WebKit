@@ -28,6 +28,7 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "Page.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
 #include "RenderView.h"
@@ -840,5 +841,57 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    (!nextline.isEmpty() && l - ow < tx + nextline.right()) ? -ow : ow,
                    ow);
 }
+
+#if ENABLE(DASHBOARD_SUPPORT)
+void RenderInline::addDashboardRegions(Vector<DashboardRegionValue>& regions)
+{
+    // Convert the style regions to absolute coordinates.
+    if (style()->visibility() != VISIBLE)
+        return;
+
+    const Vector<StyleDashboardRegion>& styleRegions = style()->dashboardRegions();
+    unsigned i, count = styleRegions.size();
+    for (i = 0; i < count; i++) {
+        StyleDashboardRegion styleRegion = styleRegions[i];
+
+        IntRect linesBoundingBox = this->linesBoundingBox();
+        int w = linesBoundingBox.width();
+        int h = linesBoundingBox.height();
+
+        DashboardRegionValue region;
+        region.label = styleRegion.label;
+        region.bounds = IntRect(linesBoundingBox.x() + styleRegion.offset.left().value(),
+                                linesBoundingBox.y() + styleRegion.offset.top().value(),
+                                w - styleRegion.offset.left().value() - styleRegion.offset.right().value(),
+                                h - styleRegion.offset.top().value() - styleRegion.offset.bottom().value());
+        region.type = styleRegion.type;
+
+        RenderObject* container = containingBlock();
+        if (!container)
+            container = this;
+
+        region.clip = region.bounds;
+        container->computeAbsoluteRepaintRect(region.clip);
+        if (region.clip.height() < 0) {
+            region.clip.setHeight(0);
+            region.clip.setWidth(0);
+        }
+
+        FloatPoint absPos = container->localToAbsolute();
+        region.bounds.setX(absPos.x() + region.bounds.x());
+        region.bounds.setY(absPos.y() + region.bounds.y());
+
+        if (document()->frame()) {
+            float pageScaleFactor = document()->frame()->page()->chrome()->scaleFactor();
+            if (pageScaleFactor != 1.0f) {
+                region.bounds.scale(pageScaleFactor);
+                region.clip.scale(pageScaleFactor);
+            }
+        }
+
+        regions.append(region);
+    }
+}
+#endif
 
 } // namespace WebCore

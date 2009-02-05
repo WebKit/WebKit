@@ -114,6 +114,10 @@ public:
         m_marginRight = style()->marginRight().calcMinValue(containerWidth);
     }
     
+#if ENABLE(DASHBOARD_SUPPORT)
+    virtual void addDashboardRegions(Vector<DashboardRegionValue>&);
+#endif
+    
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
