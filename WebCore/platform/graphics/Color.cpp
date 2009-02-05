@@ -116,6 +116,15 @@ RGBA32 makeRGBAFromHSLA(double hue, double saturation, double lightness, double 
                     static_cast<int>(alpha * scaleFactor));
 }
 
+RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a)
+{
+    double colors = 1 - k;
+    int r = static_cast<int>(nextafter(256, 0) * (colors * (1 - c)));
+    int g = static_cast<int>(nextafter(256, 0) * (colors * (1 - m)));
+    int b = static_cast<int>(nextafter(256, 0) * (colors * (1 - y)));
+    return makeRGBA(r, g, b, static_cast<float>(nextafter(256, 0) * a));
+}
+
 // originally moved here from the CSS parser
 bool Color::parseHexColor(const String& name, RGBA32& rgb)
 {

@@ -1,3 +1,19 @@
+2009-02-05  Scott Violet  <sky@google.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23462: Add RGB -> CMYK conversion algorithm
+        <https://bugs.webkit.org/show_bug.cgi?id=23462>
+
+        Adds an RGB -> CMYK converter. This isn't perfect, but better than
+        nothing.
+
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        (WebCore::CanvasStyle::cmykToRGB):
+        * html/CanvasStyle.h:
+
 2009-02-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

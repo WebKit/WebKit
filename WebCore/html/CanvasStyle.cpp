@@ -146,8 +146,8 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
             clr.setCmykF(m_cyan, m_magenta, m_yellow, m_black, m_alpha);
             currentPen.setColor(clr);
             context->platformContext()->setPen(currentPen);
-#elif PLATFORM(CAIRO)
-            notImplemented();
+#else
+            context->setFillColor(Color(m_cyan, m_magenta, m_yellow, m_black, m_alpha));
 #endif
             break;
         }
@@ -207,6 +207,8 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
             clr.setCmykF(m_cyan, m_magenta, m_yellow, m_black, m_alpha);
             currentBrush.setColor(clr);
             context->platformContext()->setBrush(currentBrush);
+#else
+            context->setFillColor(Color(m_cyan, m_magenta, m_yellow, m_black, m_alpha));
 #endif
             break;
         }
