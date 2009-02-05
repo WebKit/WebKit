@@ -41,11 +41,10 @@ namespace WebCore {
 
         virtual void layout();
 
-        // This override is needed to prevent crashing on <svg><stop /></svg>
-        // RenderObject's default impl asks the parent Object and RenderSVGRoot
-        // asks all child RenderObjects for overflow rects, thus infinite loop.
+        // This override is needed to prevent an assert on <svg><stop /></svg>
+        // RenderObject's default impl asserts.
         // https://bugs.webkit.org/show_bug.cgi?id=20400
-        virtual IntRect clippedOverflowRectForRepaint(RenderBox*) { return IntRect(); }
+        virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) { return IntRect(); }
     
     protected:
         virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

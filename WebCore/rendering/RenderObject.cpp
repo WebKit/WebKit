@@ -1831,10 +1831,9 @@ IntRect RenderObject::rectWithOutlineForRepaint(RenderBoxModelObject* repaintCon
     return r;
 }
 
-IntRect RenderObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
+IntRect RenderObject::clippedOverflowRectForRepaint(RenderBoxModelObject*)
 {
-    if (parent())
-        return parent()->clippedOverflowRectForRepaint(repaintContainer);
+    ASSERT_NOT_REACHED();
     return IntRect();
 }
 
