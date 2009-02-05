@@ -1,3 +1,12 @@
+2009-02-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23747
+        Add Chromium threading-related files.
+
+        * platform/chromium/TemporaryLinkStubs.cpp: Removed theading-related stubs.
+
 2009-02-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

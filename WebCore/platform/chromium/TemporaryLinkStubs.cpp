@@ -44,11 +44,3 @@ String KURL::fileSystemPath() const { notImplemented(); return String(); }
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String&) { notImplemented(); return 0; }
 
 } // namespace WebCore
-
-namespace WTF {
-
-#if !defined(__linux__)
-void scheduleDispatchFunctionsOnMainThread() { notImplemented(); }
-#endif
-
-} // namespace WTF

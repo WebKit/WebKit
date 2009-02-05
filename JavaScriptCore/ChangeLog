@@ -1,3 +1,16 @@
+2009-02-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23747
+        Add Chromium threading-related files.
+
+        * wtf/MainThread.cpp: Added platform guard to initializeMainThread.
+        * wtf/chromium/ChromiumThreading.h: Added.
+        * wtf/chromium/MainThreadChromium.cpp: Added.
+        (WTF::initializeMainThread):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2009-02-05  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.
