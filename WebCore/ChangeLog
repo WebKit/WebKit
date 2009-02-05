@@ -1,3 +1,13 @@
+2009-02-05  Scott Violet  <sky@google.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23462
+        Changes call from setFillColor to setStrokeColor.
+
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+
 2009-02-05  David Hyatt  <hyatt@apple.com>
 
         Fix crash on svg custom stop test.  A virtual function didn't get patched properly.
