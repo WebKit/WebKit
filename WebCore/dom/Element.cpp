@@ -1111,8 +1111,11 @@ void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
             frame->selection()->setSelection(newSelection);
             frame->revealSelection();
         }
-    } else if (renderer() && !renderer()->isWidget())
+    } 
+#if ENABLE(DIRECTIONAL_PAD_NAVIGATION)
+    else if (renderer() && !renderer()->isWidget())
         renderer()->enclosingLayer()->scrollRectToVisible(getRect());
+#endif
 }
 
 void Element::blur()

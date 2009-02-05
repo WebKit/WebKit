@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23163
+        Don't scroll to show current focus on devices that use
+        directional pads for navigation.
+
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance):
+
+2009-02-04  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Darin Adler.
+
         Change RenderBlock::columnGap() access permissions from protected to
         public. ANDROID creates an array of focus rectangles for navigation 
         with a trackball or directional pad, and needs access to the column gap 
