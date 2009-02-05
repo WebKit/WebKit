@@ -8981,6 +8981,22 @@
 				RelativePath="..\rendering\RenderBox.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\rendering\RenderBoxModelObject.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderBoxModelObject.h"
+				>
+			</File>
 			<File
 				RelativePath="..\rendering\RenderBR.cpp"
 				>

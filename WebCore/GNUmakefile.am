@@ -1522,7 +1522,9 @@ webcore_sources += \
 	WebCore/rendering/RenderBlock.cpp \
 	WebCore/rendering/RenderBlock.h \
 	WebCore/rendering/RenderBox.cpp \
-	WebCore/rendering/RenderBox.h \
+        WebCore/rendering/RenderBox.h \
+        WebCore/rendering/RenderBoxModelObject.cpp \
+	WebCore/rendering/RenderBoxModelObject.h \
 	WebCore/rendering/RenderButton.cpp \
 	WebCore/rendering/RenderButton.h \
 	WebCore/rendering/RenderCounter.cpp \

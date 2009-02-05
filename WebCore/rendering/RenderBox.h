@@ -23,19 +23,17 @@
 #ifndef RenderBox_h
 #define RenderBox_h
 
-#include "RenderObject.h"
+#include "RenderBoxModelObject.h"
 #include "ScrollTypes.h"
 
 namespace WebCore {
 
 enum WidthType { Width, MinWidth, MaxWidth };
 
-class RenderBox : public RenderObject {
+class RenderBox : public RenderBoxModelObject {
 public:
     RenderBox(Node*);
     virtual ~RenderBox();
-
-    virtual const char* renderName() const { return "RenderBox"; }
 
     // Use this with caution! No type checking is done!
     RenderBox* firstChildBox() const;

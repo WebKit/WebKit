@@ -968,6 +968,7 @@ SOURCES += \
     rendering/RenderArena.cpp \
     rendering/RenderBlock.cpp \
     rendering/RenderBox.cpp \
+    rendering/RenderBoxModelObject.cpp \
     rendering/RenderBR.cpp \
     rendering/RenderButton.cpp \
     rendering/RenderCounter.cpp \

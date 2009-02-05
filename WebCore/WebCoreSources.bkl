@@ -884,6 +884,7 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderBR.cpp
         rendering/RenderBlock.cpp
         rendering/RenderBox.cpp
+        rendering/RenderBoxModelObject.cpp
         rendering/RenderButton.cpp
         rendering/RenderCounter.cpp
         rendering/RenderFieldset.cpp
