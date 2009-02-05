@@ -2024,6 +2024,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\animation\AnimationControllerPrivate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\AXObjectCache.cpp"
 				>
 			</File>

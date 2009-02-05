@@ -145,6 +145,7 @@
 		0BB4DBE20F2EE29800354619 /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BB4DBE10F2EE29800354619 /* CrossThreadCopier.cpp */; };
 		0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */; };
+		0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */; };
 		0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56028D0E4B76580065B038 /* RenderMarquee.h */; };
 		0F5602900E4B76580065B038 /* RenderMarquee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F56028E0E4B76580065B038 /* RenderMarquee.cpp */; };
 		0F580B050F12A2550051D689 /* GraphicsLayerCA.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F580B030F12A2540051D689 /* GraphicsLayerCA.mm */; };
@@ -5008,6 +5009,7 @@
 		0BB4DBE10F2EE29800354619 /* CrossThreadCopier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadCopier.cpp; sourceTree = "<group>"; };
 		0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLineBoxList.h; sourceTree = "<group>"; };
 		0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSelectionInfo.h; sourceTree = "<group>"; };
+		0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationControllerPrivate.h; path = animation/AnimationControllerPrivate.h; sourceTree = "<group>"; };
 		0F56028D0E4B76580065B038 /* RenderMarquee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMarquee.h; sourceTree = "<group>"; };
 		0F56028E0E4B76580065B038 /* RenderMarquee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMarquee.cpp; sourceTree = "<group>"; };
 		0F580B030F12A2540051D689 /* GraphicsLayerCA.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsLayerCA.mm; sourceTree = "<group>"; };
@@ -9699,6 +9701,7 @@
 				316FE1080E6E1DA700BF6088 /* AnimationBase.h */,
 				316FE1090E6E1DA700BF6088 /* AnimationController.cpp */,
 				316FE10A0E6E1DA700BF6088 /* AnimationController.h */,
+				0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */,
 				316FE10B0E6E1DA700BF6088 /* CompositeAnimation.cpp */,
 				316FE10C0E6E1DA700BF6088 /* CompositeAnimation.h */,
 				316FE10D0E6E1DA700BF6088 /* ImplicitAnimation.cpp */,
@@ -14155,7 +14158,6 @@
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				BCA846D40DC67A350026C309 /* RenderReplica.cpp */,
 				BCA846D50DC67A350026C309 /* RenderReplica.h */,
-				0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */,
 				A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */,
 				A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */,
 				853CA9CA0AEEC5E9002372DC /* RenderSVGContainer.cpp */,
@@ -14188,6 +14190,7 @@
 				BC3BE9920E9C1C7C00835588 /* RenderScrollbarPart.h */,
 				BC3BE9A40E9C239600835588 /* RenderScrollbarTheme.cpp */,
 				BC3BE9980E9C1E5D00835588 /* RenderScrollbarTheme.h */,
+				0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */,
 				AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */,
 				AB247A6B0AFD6383003FA5FD /* RenderSlider.h */,
 				A8DF4AE20980C42C0052981B /* RenderTable.cpp */,
@@ -14518,6 +14521,7 @@
 				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
 				316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */,
+				0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */,
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				1A8F6BBD0DB55CDC001DB794 /* ApplicationCache.h in Headers */,
@@ -16197,6 +16201,7 @@
 				BC3BE9940E9C1C7C00835588 /* RenderScrollbar.h in Headers */,
 				BC3BE9950E9C1C7C00835588 /* RenderScrollbarPart.h in Headers */,
 				BC3BE9990E9C1E5D00835588 /* RenderScrollbarTheme.h in Headers */,
+				0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */,
 				AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */,
 				BC8C8FAE0DDCD31B00B592F4 /* RenderStyle.h in Headers */,
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,
@@ -16722,7 +16727,6 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18200,6 +18204,7 @@
 				E4C279580CF9741900E97B98 /* RenderMedia.cpp in Sources */,
 				ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */,
 				BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */,
+				BC60EFB70F33A0E700812A93 /* RenderObjectChildList.cpp in Sources */,
 				A871DED00A1530C700B12A68 /* RenderPart.cpp in Sources */,
 				A871DED60A1530C700B12A68 /* RenderPartObject.cpp in Sources */,
 				853CA9F00AEEC657002372DC /* RenderPath.cpp in Sources */,
@@ -18704,7 +18709,6 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
-				BC60EFB70F33A0E700812A93 /* RenderObjectChildList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

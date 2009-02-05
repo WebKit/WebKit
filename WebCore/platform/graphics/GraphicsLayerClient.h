@@ -54,7 +54,6 @@ public:
     virtual ~GraphicsLayerClient() {}
 
     // Callbacks for when hardware-accelerated transitions and animation started
-    virtual void notifyTransitionStarted(const GraphicsLayer*, AnimatedPropertyID, double time) = 0;
     virtual void notifyAnimationStarted(const GraphicsLayer*, double time) = 0;
     
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) = 0;

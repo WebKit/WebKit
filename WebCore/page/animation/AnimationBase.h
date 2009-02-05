@@ -94,7 +94,10 @@ public:
     void updateStateMachine(AnimStateInput, double param);
 
     // Animation has actually started, at passed time
-    void onAnimationStartResponse(double startTime);
+    void onAnimationStartResponse(double startTime)
+    {
+        updateStateMachine(AnimationBase::AnimationStateInputStartTimeSet, startTime);
+    }
 
     // Called to change to or from paused state
     void updatePlayState(bool running);
@@ -117,12 +120,13 @@ public:
     // "animating" means that something is running that requires a timer to keep firing
     // (e.g. a software animation)
     void setAnimating(bool inAnimating = true) { m_isAnimating = inAnimating; }
-    double willNeedService() const;
+    virtual double willNeedService();
 
     double progress(double scale, double offset, const TimingFunction*) const;
 
     virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* /*currentStyle*/, 
         const RenderStyle* /*targetStyle*/, RefPtr<RenderStyle>& /*animatedStyle*/) { }
+    virtual void getAnimatedStyle(RefPtr<RenderStyle>& /*animatedStyle*/) { }
 
     virtual bool shouldFireEvents() const { return false; }
 
@@ -142,6 +146,9 @@ public:
     virtual bool affectsProperty(int /*property*/) const { return false; }
     bool isAnimatingProperty(int property, bool isRunningNow) const
     {
+        if (m_fallbackAnimating)
+            return false;
+            
         if (isRunningNow)
             return (!waitingToStart() && !postActive()) && affectsProperty(property);
 
@@ -176,9 +183,11 @@ protected:
     virtual void onAnimationIteration(double /*elapsedTime*/) { }
     virtual void onAnimationEnd(double /*elapsedTime*/) { }
     virtual bool startAnimation(double /*beginTime*/) { return false; }
-    virtual void endAnimation(bool /*reset*/) { }
+    virtual void endAnimation(bool /*reset*/, double /*forcePauseTime*/ = -1) { }
 
     void goIntoEndingOrLoopingState();
+
+    bool isFallbackAnimating() const { return m_fallbackAnimating; }
 
     static bool propertiesEqual(int prop, const RenderStyle* a, const RenderStyle* b);
     static int getPropertyAtIndex(int, bool& isShorthand);
@@ -186,13 +195,18 @@ protected:
 
     // Return true if we need to start software animation timers
     static bool blendProperties(const AnimationBase* anim, int prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress);
-    
+
+#if USE(ACCELERATED_COMPOSITING)
+    static bool animationOfPropertyIsAccelerated(int prop);
+#endif
+
     static void setChanged(Node*);
+    
+    void getTimeToNextEvent(double& time, bool& isLooping) const;
 
     AnimState m_animState;
 
     bool m_isAnimating;       // transition/animation requires continual timer firing
-    bool m_waitedForResponse;
     double m_startTime;
     double m_pauseTime;
     double m_requestedStartTime;
@@ -200,6 +214,7 @@ protected:
 
     RefPtr<Animation> m_animation;
     CompositeAnimation* m_compAnim;
+    bool m_fallbackAnimating;       // true if any animation returned false from startAnimation()
     bool m_transformFunctionListValid;
     double m_totalDuration, m_nextIterationDuration;
     

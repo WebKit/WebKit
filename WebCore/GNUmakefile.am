@@ -1199,6 +1199,7 @@ webcore_sources += \
 	WebCore/page/animation/AnimationBase.h \
 	WebCore/page/animation/AnimationController.cpp \
 	WebCore/page/animation/AnimationController.h \
+	WebCore/page/animation/AnimationControllerPrivate.h \
 	WebCore/page/animation/CompositeAnimation.cpp \
 	WebCore/page/animation/CompositeAnimation.h \
 	WebCore/page/animation/ImplicitAnimation.cpp \

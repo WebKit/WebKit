@@ -1,3 +1,107 @@
+2009-02-04  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Added accelerated animation support to AnimationController and friends. The primary
+        changes are:
+        * accelerated animations get their start time from the compositing engine, so we
+          wait for a callback (notifyAnimationStarted()) in order to get the start time.
+        * if software and accelerated animations start in the same cycle, they all need
+          to use the same start time, which is that of the accelerated animations.
+          
+        Added AnimationControllerPrivate to preserve the encapsulation under
+        AnimationController.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperBase::animationIsAccelerated):
+        (WebCore::PropertyWrapperAcceleratedOpacity::PropertyWrapperAcceleratedOpacity):
+        (WebCore::PropertyWrapperAcceleratedOpacity::animationIsAccelerated):
+        (WebCore::PropertyWrapperAcceleratedOpacity::blend):
+        (WebCore::PropertyWrapperAcceleratedTransform::PropertyWrapperAcceleratedTransform):
+        (WebCore::PropertyWrapperAcceleratedTransform::animationIsAccelerated):
+        (WebCore::PropertyWrapperAcceleratedTransform::blend):
+        (WebCore::ensurePropertyMap):
+        (WebCore::AnimationBase::AnimationBase):
+        (WebCore::AnimationBase::~AnimationBase):
+        (WebCore::AnimationBase::blendProperties):
+        (WebCore::AnimationBase::animationOfPropertyIsAccelerated):
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        (WebCore::AnimationBase::willNeedService):
+        (WebCore::AnimationBase::getTimeToNextEvent):
+        (WebCore::AnimationBase::goIntoEndingOrLoopingState):
+        (WebCore::AnimationBase::beginAnimationUpdateTime):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::onAnimationStartResponse):
+        (WebCore::AnimationBase::getAnimatedStyle):
+        (WebCore::AnimationBase::isAnimatingProperty):
+        (WebCore::AnimationBase::endAnimation):
+        (WebCore::AnimationBase::isFallbackAnimating):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate):
+        (WebCore::AnimationControllerPrivate::accessCompositeAnimation):
+        (WebCore::AnimationControllerPrivate::addNodeChangeToDispatch):
+        (WebCore::AnimationControllerPrivate::animationTimerFired):
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationControllerPrivate::beginAnimationUpdateTime):
+        (WebCore::AnimationControllerPrivate::getAnimatedStyleForRenderer):
+        (WebCore::AnimationControllerPrivate::styleAvailable):
+        (WebCore::AnimationControllerPrivate::addToStartTimeResponseWaitList):
+        (WebCore::AnimationControllerPrivate::removeFromStartTimeResponseWaitList):
+        (WebCore::AnimationControllerPrivate::startTimeResponse):
+        (WebCore::AnimationController::getAnimatedStyleForRenderer):
+        (WebCore::AnimationController::notifyAnimationStarted):
+        (WebCore::AnimationController::endAnimationUpdate):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h: Added.
+        (WebCore::AnimationControllerPrivate::hasAnimations):
+        (WebCore::AnimationControllerPrivate::setBeginAnimationUpdateTime):
+        (WebCore::AnimationControllerPrivate::endAnimationUpdate):
+        (WebCore::AnimationControllerPrivate::receivedStartTimeResponse):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::CompositeAnimationPrivate):
+        (WebCore::CompositeAnimationPrivate::animationControllerPriv):
+        (WebCore::CompositeAnimationPrivate::updateTransitions):
+        (WebCore::CompositeAnimationPrivate::updateKeyframeAnimations):
+        (WebCore::CompositeAnimationPrivate::animate):
+        (WebCore::CompositeAnimationPrivate::getAnimatedStyle):
+        (WebCore::CompositeAnimationPrivate::addToStartTimeResponseWaitList):
+        (WebCore::CompositeAnimationPrivate::removeFromStartTimeResponseWaitList):
+        (WebCore::CompositeAnimation::CompositeAnimation):
+        (WebCore::CompositeAnimation::animationControllerPriv):
+        (WebCore::CompositeAnimation::getAnimatedStyle):
+        (WebCore::CompositeAnimation::addToStartTimeResponseWaitList):
+        (WebCore::CompositeAnimation::removeFromStartTimeResponseWaitList):
+        * page/animation/CompositeAnimation.h:
+        (WebCore::CompositeAnimation::create):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::shouldSendEventForListener):
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::getAnimatedStyle):
+        (WebCore::ImplicitAnimation::startAnimation):
+        (WebCore::ImplicitAnimation::endAnimation):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        (WebCore::ImplicitAnimation::willNeedService):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::getKeyframeAnimationInterval):
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::getAnimatedStyle):
+        (WebCore::KeyframeAnimation::startAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::shouldSendEventForListener):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        (WebCore::KeyframeAnimation::willNeedService):
+        * page/animation/KeyframeAnimation.h:
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (-[WebAnimationDelegate animationDidStart:]):
+        * rendering/RenderLayerBacking.h:
+
 2009-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Not reviewed, build fix.

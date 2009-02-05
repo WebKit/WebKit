@@ -100,11 +100,7 @@ static NSString* const WebAnimationCSSPropertyKey = @"GraphicsLayerCA_property";
         return;
 
     double startTime = WebCore::mediaTimeToCurrentTime([animation beginTime]);
-    WebCore::AnimatedPropertyID prop = static_cast<WebCore::AnimatedPropertyID>([[animation valueForKey:WebAnimationCSSPropertyKey] intValue]);
-    if (prop != WebCore::AnimatedPropertyInvalid)
-        m_graphicsLayer->client()->notifyTransitionStarted(m_graphicsLayer, prop, startTime);
-    else
-        m_graphicsLayer->client()->notifyAnimationStarted(m_graphicsLayer, startTime);
+    m_graphicsLayer->client()->notifyAnimationStarted(m_graphicsLayer, startTime);
 }
 
 - (WebCore::GraphicsLayerCA*)graphicsLayer
