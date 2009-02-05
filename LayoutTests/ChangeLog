@@ -1,3 +1,11 @@
+2009-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename layout test result to the correct name.
+
+        * storage/transaction-callback-exception-crash-expected.txt: Renamed from LayoutTests/storage/transaction-callback-exception-crash.txt.
+
 2009-02-04  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.
