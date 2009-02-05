@@ -288,6 +288,9 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
     Request* request = i->second;
     m_requestsLoading.remove(i);
     DocLoader* docLoader = request->docLoader();
+    // Prevent the document from being destroyed before we are done with
+    // the docLoader that it will delete when the document gets deleted.
+    DocPtr<Document> protector(docLoader->doc());
     if (!request->isMultipart())
         docLoader->decrementRequestCount();
 
@@ -333,6 +336,9 @@ void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
     Request* request = i->second;
     m_requestsLoading.remove(i);
     DocLoader* docLoader = request->docLoader();
+    // Prevent the document from being destroyed before we are done with
+    // the docLoader that it will delete when the document gets deleted.
+    DocPtr<Document> protector(docLoader->doc());
     if (!request->isMultipart())
         docLoader->decrementRequestCount();
 

@@ -1,3 +1,16 @@
+2009-02-04  Mads Adger  <mad@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        Bug 23180 Reading freed memory at DocumentLoader::checkForPendingPreloads
+        https://bugs.webkit.org/show_bug.cgi?id=23180
+
+        Added a protector for the document potentially holding on the last reference to the loader we are interating with.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::didFinishLoading):
+        (WebCore::Loader::Host::didFail):
+
 2009-02-04  Cary Clark  <caryclark@google.com>
 
         Reviewed by Darin Adler.
@@ -4078,7 +4091,7 @@
         Move localCaretRect from RenderFlow into RenderBlock, since it only applied to blocks anyway and
         was misplaced from the start.
 
-        Reviewed by anttik
+        Reviewed by Antti Koivisto.
 
         * rendering/RenderBlock.cpp:
         (WebCore::RenderBlock::localCaretRect):
