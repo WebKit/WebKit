@@ -1,5 +1,12 @@
 2009-02-04  Anders Carlsson  <andersca@apple.com>
 
+        Build fix fix.
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::initGlobalCallFrame):
+
+2009-02-04  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
         
         Change PCHasProperty, PCHasMethod and PCGetProperty into simpleroutines.
