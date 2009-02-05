@@ -57,12 +57,11 @@ public:
 
     void clear() {
       m_bytes.clear();
-      m_rect = IntRect();
-      m_height = 0;
       m_status = FrameEmpty;
-      m_duration = 0;
-      m_disposalMethod = DisposeNotSpecified;
-      m_hasAlpha = false;
+      // NOTE: Do not reset other members here; clearFrameBufferCache() calls
+      // this to free the bitmap data, but other functions like
+      // initFrameBuffer() and frameComplete() may still need to read other
+      // metadata out of this frame later.
     }
 
     const RGBA32Array& bytes() const { return m_bytes; }

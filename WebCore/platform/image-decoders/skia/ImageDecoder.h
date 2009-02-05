@@ -129,10 +129,11 @@ namespace WebCore {
         void clear()
         {
             m_bitmapRef = RefCountedNativeImageSkia::create();
-            m_rect = IntRect();
             m_status = FrameEmpty;
-            m_duration = 0;
-            m_disposalMethod = DisposeNotSpecified;
+            // NOTE: Do not reset other members here; clearFrameBufferCache()
+            // calls this to free the bitmap data, but other functions like
+            // initFrameBuffer() and frameComplete() may still need to read
+            // other metadata out of this frame later.
         }
 
         // This function creates a new copy of the image data in |other|, so the

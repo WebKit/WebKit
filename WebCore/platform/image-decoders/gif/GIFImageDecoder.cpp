@@ -188,7 +188,8 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     // In some cases, like if the decoder was destroyed while animating, we
     // can be asked to clear more frames than we currently have.
     if (m_frameBufferCache.isEmpty())
-        return;  // Nothing to do.
+        return; // Nothing to do.
+
     // The "-1" here is tricky.  It does not mean that |clearBeforeFrame| is the
     // last frame we wish to preserve, but rather that we never want to clear
     // the very last frame in the cache: it's empty (so clearing it is
@@ -199,21 +200,36 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     // this case.
     clearBeforeFrame = std::min(clearBeforeFrame, m_frameBufferCache.size() - 1);
     const Vector<RGBA32Buffer>::iterator end(m_frameBufferCache.begin() + clearBeforeFrame);
-    for (Vector<RGBA32Buffer>::iterator i(m_frameBufferCache.begin()); i != end; ++i) {
-        if (i->status() == RGBA32Buffer::FrameEmpty)
-            continue;  // Nothing to do.
 
-        // The layout of frames is:
-        // [empty frames][complete frames][partial frame][empty frames]
-        // ...where each of these groups may be empty.  We should not clear a
-        // partial frame since that's what's being decoded right now, and we
-        // also should not clear the last complete frame, since it may be needed
-        // when constructing the next frame.  Note that "i + 1" is safe since
-        // i < end < m_frameBufferCache.end().
-        if ((i->status() == RGBA32Buffer::FramePartial) || ((i + 1)->status() != RGBA32Buffer::FrameComplete))
-            break;
+    // We need to preserve frames such that:
+    //   * We don't clear |end|
+    //   * We don't clear the frame we're currently decoding
+    //   * We don't clear any frame from which a future initFrameBuffer() call
+    //     will copy bitmap data
+    // All other frames can be cleared.  Because of the constraints on when
+    // ImageSource::clear() can be called (see ImageSource.h), we're guaranteed
+    // not to have non-empty frames after the frame we're currently decoding.
+    // So, scan backwards from |end| as follows:
+    //   * If the frame is empty, we're still past any frames we care about.
+    //   * If the frame is complete, but is DisposeOverwritePrevious, we'll
+    //     skip over it in future initFrameBuffer() calls.  We can clear it
+    //     unless it's |end|, and keep scanning.  For any other disposal method,
+    //     stop scanning, as we've found the frame initFrameBuffer() will need
+    //     next.
+    //   * If the frame is partial, we're decoding it, so don't clear it; if it
+    //     has a disposal method other than DisposeOverwritePrevious, stop
+    //     scanning, as we'll only need this frame when decoding the next one.
+    Vector<RGBA32Buffer>::iterator i(end);
+    for (; (i != m_frameBufferCache.begin()) && ((i->status() == RGBA32Buffer::FrameEmpty) || (i->disposalMethod() == RGBA32Buffer::DisposeOverwritePrevious)); --i) {
+        if ((i->status() == RGBA32Buffer::FrameComplete) && (i != end))
+            i->clear();
+    }
 
-        i->clear();
+    // Now |i| holds the last frame we need to preserve; clear prior frames.
+    for (Vector<RGBA32Buffer>::iterator j(m_frameBufferCache.begin()); j != i; ++j) {
+        ASSERT(j->status() != RGBA32Buffer::FramePartial);
+        if (j->status() != RGBA32Buffer::FrameEmpty)
+            j->clear();
     }
 }
 
