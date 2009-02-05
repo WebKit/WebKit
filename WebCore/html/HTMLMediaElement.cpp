@@ -137,10 +137,10 @@ void HTMLMediaElement::insertedIntoDocument()
 
 void HTMLMediaElement::removedFromDocument()
 {
-    // FIXME: pause() may invoke load() which seem like a strange thing to do as a side effect
-    // of removing an element. This might need to be fixed in the spec.
-    ExceptionCode ec;
-    pause(ec);
+    if (networkState() != EMPTY) {
+        ExceptionCode ec;
+        pause(ec);
+    }
     HTMLElement::removedFromDocument();
 }
 

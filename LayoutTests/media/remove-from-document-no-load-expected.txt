@@ -1,0 +1,7 @@
+Test that removing a media element from the tree when no media has been loaded does not generate a load event.
+
+TEST(video.networkState == HTMLMediaElement.EMPTY) OK
+RUN(document.body.removeChild(video))
+TEST(didReceiveLoadStartEvent == false;) OK
+END OF TEST
+

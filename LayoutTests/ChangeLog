@@ -1,3 +1,13 @@
+2009-02-04  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Darin Adler.
+
+        Make sure we don't load on removing the media element from the document
+        https://bugs.webkit.org/show_bug.cgi?id=22105.
+
+        * media/remove-from-document-no-load-expected.txt: Added.
+        * media/remove-from-document-no-load.html: Added.
+
 2009-02-04  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, build fix.

@@ -1,3 +1,15 @@
+2009-02-04  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Darin Adler.
+
+        Make sure we don't load on removing the media element from the document
+        https://bugs.webkit.org/show_bug.cgi?id=22105
+
+        Test: media/remove-from-document-no-load.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removedFromDocument):
+
 2009-02-04  David Hyatt  <hyatt@apple.com>
 
         Add a new RenderBoxModelObject class that will eventually act as the direct base class for RenderInlines.  For
