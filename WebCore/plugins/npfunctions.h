@@ -63,6 +63,10 @@ typedef void* (*NPN_GetJavaPeerProcPtr)(NPP instance);
 typedef void  (*NPN_PushPopupsEnabledStateProcPtr)(NPP instance, NPBool enabled);
 typedef void  (*NPN_PopPopupsEnabledStateProcPtr)(NPP instance);
 typedef void (*NPN_PluginThreadAsyncCallProcPtr)(NPP npp, void (*func)(void *), void *userData);
+typedef NPError (*NPN_GetValueForURLProcPtr)(NPP npp, NPNURLVariable variable, const char* url, char** value, uint32_t* len);
+typedef NPError (*NPN_SetValueForURLProcPtr)(NPP npp, NPNURLVariable variable, const char* url, const char* value, uint32_t* len);
+typedef NPError (*NPN_GetAuthenticationInfoPtr)(NPP npp, const char* protocol, const char* host, int32_t port, const char* scheme, const char *realm, char** username, uint32_t* ulen, char** password, uint32_t* plen);
+
 typedef uint32 (*NPN_ScheduleTimerProcPtr)(NPP npp, uint32 interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32 timerID));
 typedef void (*NPN_UnscheduleTimerProcPtr)(NPP npp, uint32 timerID);
 typedef NPError (*NPN_PopUpContextMenuProcPtr)(NPP instance, NPMenu* menu);
@@ -158,6 +162,9 @@ typedef struct _NPNetscapeFuncs {
     NPN_EnumerateProcPtr enumerate;
     NPN_PluginThreadAsyncCallProcPtr pluginthreadasynccall;
     NPN_ConstructProcPtr construct;
+    NPN_GetValueForURLProcPtr getvalueforurl;
+    NPN_SetValueForURLProcPtr setvalueforurl;
+    NPN_GetAuthenticationInfoPtr getauthenticationinfo;
     NPN_ScheduleTimerProcPtr scheduletimer;
     NPN_UnscheduleTimerProcPtr unscheduletimer;
     NPN_PopUpContextMenuProcPtr popupcontextmenu;

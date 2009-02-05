@@ -1,3 +1,12 @@
+2009-02-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+        
+        Update to match Gecko.
+        
+        * bridge/npapi.h:
+        * plugins/npfunctions.h:
+
 2009-02-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
