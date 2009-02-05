@@ -1,3 +1,17 @@
+2009-02-05  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John Sullivan and Brady Eidson.
+
+        Fix for <rdar://problem/6557595> REGRESSION: In Mail, selecting a 
+        mail note message doesn't display it in Mail's preview pane
+
+        This was failing because revision 36962 removed a version of 
+        setVerticalScrollingMode that mail calls. This patch simply adds 
+        that method back.
+
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView setVerticalScrollingMode:]):
+
 2009-02-04  Anders Carlsson  <andersca@apple.com>
 
         Build fix fix.

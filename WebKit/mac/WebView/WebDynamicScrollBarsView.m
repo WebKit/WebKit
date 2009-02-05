@@ -224,6 +224,12 @@ const int WebCoreScrollbarAlwaysOn = ScrollbarAlwaysOn;
     [self setScrollingModes:[self horizontalScrollingMode] vertical:verticalMode andLock:lock];
 }
 
+// Mail uses this method, so we cannot remove it. 
+- (void)setVerticalScrollingMode:(ScrollbarMode)verticalMode 
+{ 
+    [self setScrollingModes:[self horizontalScrollingMode] vertical:verticalMode andLock:NO]; 
+} 
+
 - (void)setScrollingModes:(ScrollbarMode)horizontalMode vertical:(ScrollbarMode)verticalMode andLock:(BOOL)lock
 {
     BOOL update = NO;
