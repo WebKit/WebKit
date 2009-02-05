@@ -1,3 +1,15 @@
+2009-02-05  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23708
+        Adds documentElementAvailable() callback to FrameLoaderClient.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        Stub out documentElementAvailable().
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        Ditto.
+
 2009-02-05  Dan Bernstein  <mitz@apple.com>
 
         - build fix

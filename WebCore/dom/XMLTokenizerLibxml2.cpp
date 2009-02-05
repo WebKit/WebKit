@@ -706,7 +706,8 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
                                                          nb_attributes, nb_defaulted, libxmlAttributes);
         return;
     }
-    
+
+    bool isFirstElement = !m_sawFirstElement;
     m_sawFirstElement = true;
 
     exitText();
@@ -763,6 +764,9 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
     setCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
         newElement->attach();
+
+    if (isFirstElement && m_doc->frame())
+        m_doc->frame()->loader()->dispatchDocumentElementAvailable();
 }
 
 void XMLTokenizer::endElementNs()

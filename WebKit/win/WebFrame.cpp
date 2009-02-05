@@ -1595,6 +1595,10 @@ void WebFrame::windowObjectCleared()
     }
 }
 
+void WebFrame::documentElementAvailable()
+{
+}
+
 void WebFrame::didPerformFirstNavigation() const
 {
     COMPtr<IWebPreferences> preferences;

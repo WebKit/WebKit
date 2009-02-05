@@ -821,6 +821,10 @@ void FrameLoaderClientWx::windowObjectCleared()
     notImplemented();
 }
 
+void FrameLoaderClientWx::documentElementAvailable()
+{
+}
+
 void FrameLoaderClientWx::didPerformFirstNavigation() const
 {
     notImplemented();

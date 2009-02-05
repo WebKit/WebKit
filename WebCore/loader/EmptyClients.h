@@ -258,6 +258,7 @@ public:
 
     virtual void redirectDataToPlugin(Widget*) { }
     virtual void windowObjectCleared() { }
+    virtual void documentElementAvailable() { }
     virtual void didPerformFirstNavigation() const { }
 
     virtual void registerForIconNotification(bool) { }

@@ -353,6 +353,9 @@ bool HTMLParser::insertNode(Node* n, bool flat)
         n->finishParsingChildren();
     }
 
+    if (localName == htmlTag && document->frame())
+        document->frame()->loader()->dispatchDocumentElementAvailable();
+
     return true;
 }
 

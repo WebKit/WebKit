@@ -188,6 +188,7 @@ private:
     virtual WebCore::String overrideMediaType() const;
     
     virtual void windowObjectCleared();
+    virtual void documentElementAvailable();
     virtual void didPerformFirstNavigation() const;
 
     virtual void registerForIconNotification(bool listen);

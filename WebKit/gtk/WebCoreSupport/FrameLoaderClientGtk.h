@@ -114,6 +114,7 @@ namespace WebKit {
         virtual WebCore::Widget* createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::KURL& baseURL, const WTF::Vector<WebCore::String>& paramNames, const WTF::Vector<WebCore::String>& paramValues);
         virtual WebCore::String overrideMediaType() const;
         virtual void windowObjectCleared();
+        virtual void documentElementAvailable();
         virtual void didPerformFirstNavigation() const;
 
         virtual void registerForIconNotification(bool);

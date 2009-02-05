@@ -1593,6 +1593,9 @@ String WebFrameLoaderClient::overrideMediaType() const
     return String();
 }
 
+void WebFrameLoaderClient::documentElementAvailable() {
+}
+
 void WebFrameLoaderClient::windowObjectCleared()
 {
     Frame *frame = core(m_webFrame.get());
