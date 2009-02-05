@@ -10,7 +10,6 @@
         -webkit-animation-name: anim1;
         -webkit-animation-duration: 10s;
         -webkit-animation-iteration-count: 10;
-        -webkit-animation-play-state: paused;
         -webkit-animation-timing-function: linear;
         -webkit-animation-direction: normal;
     }
@@ -22,7 +21,6 @@
         -webkit-animation-name: anim2, anim3;
         -webkit-animation-duration: 5s, 2500ms;
         -webkit-animation-iteration-count: 10, infinite;
-        -webkit-animation-play-state: paused, running;
         -webkit-animation-timing-function: linear, ease-in-out;
         -webkit-animation-direction: normal, alternate;
     }
@@ -64,9 +62,6 @@ shouldBe("test2Style.webkitAnimationDuration", "'5s, 2.5s'");
 
 shouldBe("test1Style.webkitAnimationIterationCount", "'10'");
 shouldBe("test2Style.webkitAnimationIterationCount", "'10, infinite'");
-
-shouldBe("test1Style.webkitAnimationPlayState", "'paused'");
-shouldBe("test2Style.webkitAnimationPlayState", "'paused, running'");
 
 shouldBe("test1Style.webkitAnimationTimingFunction", "'cubic-bezier(0, 0, 1, 1)'");
 shouldBe("test2Style.webkitAnimationTimingFunction", "'cubic-bezier(0, 0, 1, 1), cubic-bezier(0.42, 0, 0.58, 1)'");

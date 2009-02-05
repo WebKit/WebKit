@@ -172,8 +172,6 @@ rect: style.getPropertyValue(-webkit-animation-iteration-count) : 1
 rect: style.getPropertyCSSValue(-webkit-animation-iteration-count) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-animation-name) : none
 rect: style.getPropertyCSSValue(-webkit-animation-name) : [object CSSValueList]
-rect: style.getPropertyValue(-webkit-animation-play-state) : running
-rect: style.getPropertyCSSValue(-webkit-animation-play-state) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-animation-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
 rect: style.getPropertyCSSValue(-webkit-animation-timing-function) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-appearance) : none
@@ -560,8 +558,6 @@ g: style.getPropertyValue(-webkit-animation-iteration-count) : 1
 g: style.getPropertyCSSValue(-webkit-animation-iteration-count) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-animation-name) : none
 g: style.getPropertyCSSValue(-webkit-animation-name) : [object CSSValueList]
-g: style.getPropertyValue(-webkit-animation-play-state) : running
-g: style.getPropertyCSSValue(-webkit-animation-play-state) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-animation-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
 g: style.getPropertyCSSValue(-webkit-animation-timing-function) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-appearance) : none

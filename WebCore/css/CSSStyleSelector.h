@@ -226,7 +226,6 @@ public:
         void mapAnimationDuration(Animation*, CSSValue*);
         void mapAnimationIterationCount(Animation*, CSSValue*);
         void mapAnimationName(Animation*, CSSValue*);
-        void mapAnimationPlayState(Animation*, CSSValue*);
         void mapAnimationProperty(Animation*, CSSValue*);
         void mapAnimationTimingFunction(Animation*, CSSValue*);
 

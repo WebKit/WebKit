@@ -87,7 +87,6 @@ zoom: 1;
 -webkit-animation-duration: 0s;
 -webkit-animation-iteration-count: 1;
 -webkit-animation-name: none;
--webkit-animation-play-state: running;
 -webkit-animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
 -webkit-appearance: none;
 -webkit-background-clip: border;

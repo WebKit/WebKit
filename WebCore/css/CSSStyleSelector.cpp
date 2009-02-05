@@ -5033,9 +5033,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitAnimationName:
         HANDLE_ANIMATION_VALUE(name, Name, value)
         return;
-    case CSSPropertyWebkitAnimationPlayState:
-        HANDLE_ANIMATION_VALUE(playState, PlayState, value)
-        return;
     case CSSPropertyWebkitAnimationTimingFunction:
         HANDLE_ANIMATION_VALUE(timingFunction, TimingFunction, value)
         return;
@@ -5377,17 +5374,6 @@ void CSSStyleSelector::mapAnimationName(Animation* layer, CSSValue* value)
         layer->setIsNoneAnimation(true);
     else
         layer->setName(primitiveValue->getStringValue());
-}
-
-void CSSStyleSelector::mapAnimationPlayState(Animation* layer, CSSValue* value)
-{
-    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        layer->setPlayState(Animation::initialAnimationPlayState());
-        return;
-    }
-
-    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    layer->setPlayState((primitiveValue->getIdent() == CSSValuePaused) ? AnimPlayStatePaused : AnimPlayStatePlaying);
 }
 
 void CSSStyleSelector::mapAnimationProperty(Animation* animation, CSSValue* value)

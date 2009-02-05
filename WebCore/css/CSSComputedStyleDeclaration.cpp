@@ -137,7 +137,6 @@ static const int computedProperties[] = {
     CSSPropertyWebkitAnimationDuration,
     CSSPropertyWebkitAnimationIterationCount,
     CSSPropertyWebkitAnimationName,
-    CSSPropertyWebkitAnimationPlayState,
     CSSPropertyWebkitAnimationTimingFunction,
     CSSPropertyWebkitAppearance,
     CSSPropertyWebkitBackgroundClip,
@@ -1097,21 +1096,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 }
             } else
                 list->append(CSSPrimitiveValue::createIdentifier(CSSValueNone));
-            return list.release();
-        }
-        case CSSPropertyWebkitAnimationPlayState: {
-            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-            const AnimationList* t = style->animations();
-            if (t) {
-                for (size_t i = 0; i < t->size(); ++i) {
-                    int prop = t->animation(i)->playState();
-                    if (prop == AnimPlayStatePlaying)
-                        list->append(CSSPrimitiveValue::createIdentifier(CSSValueRunning));
-                    else
-                        list->append(CSSPrimitiveValue::createIdentifier(CSSValuePaused));
-                }
-            } else
-                list->append(CSSPrimitiveValue::createIdentifier(CSSValueRunning));
             return list.release();
         }
         case CSSPropertyWebkitAnimationTimingFunction:

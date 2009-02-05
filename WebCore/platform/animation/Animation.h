@@ -35,6 +35,12 @@ namespace WebCore {
 const int cAnimateNone = 0;
 const int cAnimateAll = -2;
 
+// These were in RenderStyle, but have been moved here as
+// animation-play-state is in the process of being removed.
+
+const unsigned AnimPlayStatePlaying = 0;
+const unsigned AnimPlayStatePaused = 1;
+
 class Animation : public RefCounted<Animation> {
 public:
     ~Animation();

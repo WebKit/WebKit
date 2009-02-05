@@ -1,3 +1,26 @@
+2009-02-04  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove -webkit-animation-play-state
+        The AnimationController still has the code to execute the property, but
+        it is no longer parsed or recorded.
+        https://bugs.webkit.org/show_bug.cgi?id=22907
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseAnimationProperty):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+        * platform/animation/Animation.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2009-02-04  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Darin Adler.
