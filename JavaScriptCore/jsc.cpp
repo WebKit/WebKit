@@ -76,6 +76,17 @@ static JSValuePtr functionLoad(ExecState*, JSObject*, JSValuePtr, const ArgList&
 static JSValuePtr functionReadline(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 static NO_RETURN JSValuePtr functionQuit(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 
+struct Script {
+    bool isFile;
+    char *argument;
+    
+    Script(bool isFile, char *argument)
+        : isFile(isFile)
+        , argument(argument)
+    {
+    }
+};
+
 struct Options {
     Options()
         : interactive(false)
@@ -85,7 +96,7 @@ struct Options {
 
     bool interactive;
     bool dump;
-    Vector<UString> fileNames;
+    Vector<Script> scripts;
     Vector<UString> arguments;
 };
 
@@ -311,9 +322,11 @@ static void cleanupGlobalData(JSGlobalData* globalData)
     globalData->deref();
 }
 
-static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fileNames, bool dump)
+static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scripts, bool dump)
 {
-    Vector<char> script;
+    UString script;
+    UString fileName;
+    Vector<char> scriptBuffer;
 
     if (dump)
         BytecodeGenerator::setDumpsGeneratedCode(true);
@@ -324,16 +337,21 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
 #endif
 
     bool success = true;
-    for (size_t i = 0; i < fileNames.size(); i++) {
-        UString fileName = fileNames[i];
-
-        if (!fillBufferWithContentsOfFile(fileName, script))
-            return false; // fail early so we can catch missing files
+    for (size_t i = 0; i < scripts.size(); i++) {
+        if (scripts[i].isFile) {
+            fileName = scripts[i].argument;
+            if (!fillBufferWithContentsOfFile(fileName, scriptBuffer))
+                return false; // fail early so we can catch missing files
+            script = scriptBuffer.data();
+        } else {
+            script = scripts[i].argument;
+            fileName = "[Command Line]";
+        }
 
 #if ENABLE(OPCODE_SAMPLING)
         interpreter->sampler()->start();
 #endif
-        Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
+        Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script, fileName));
         success = success && completion.complType() != Throw;
         if (dump) {
             if (completion.complType() == Throw)
@@ -390,15 +408,16 @@ static void runInteractive(GlobalObject* globalObject)
     printf("\n");
 }
 
-static NO_RETURN void printUsageStatement()
+static NO_RETURN void printUsageStatement(bool help = false)
 {
     fprintf(stderr, "Usage: jsc [options] [files] [-- arguments]\n");
     fprintf(stderr, "  -d         Dumps bytecode (debug builds only)\n");
+    fprintf(stderr, "  -e         Evaluate argument as script code\n");
     fprintf(stderr, "  -f         Specifies a source file (deprecated)\n");
     fprintf(stderr, "  -h|--help  Prints this help message\n");
     fprintf(stderr, "  -i         Enables interactive mode (default if no files are specified)\n");
     fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only)\n");
-    exit(EXIT_FAILURE);
+    exit(help ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 static void parseArguments(int argc, char** argv, Options& options)
@@ -409,11 +428,17 @@ static void parseArguments(int argc, char** argv, Options& options)
         if (strcmp(arg, "-f") == 0) {
             if (++i == argc)
                 printUsageStatement();
-            options.fileNames.append(argv[i]);
+            options.scripts.append(Script(true, argv[i]));
+            continue;
+        }
+        if (strcmp(arg, "-e") == 0) {
+            if (++i == argc)
+                printUsageStatement();
+            options.scripts.append(Script(false, argv[i]));
             continue;
         }
         if (strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0) {
-            printUsageStatement();
+            printUsageStatement(true);
         }
         if (strcmp(arg, "-i") == 0) {
             options.interactive = true;
@@ -436,10 +461,10 @@ static void parseArguments(int argc, char** argv, Options& options)
             ++i;
             break;
         }
-        options.fileNames.append(argv[i]);
+        options.scripts.append(Script(true, argv[i]));
     }
     
-    if (options.fileNames.isEmpty())
+    if (options.scripts.isEmpty())
         options.interactive = true;
     
     for (; i < argc; ++i)
@@ -454,7 +479,7 @@ int jscmain(int argc, char** argv, JSGlobalData* globalData)
     parseArguments(argc, argv, options);
 
     GlobalObject* globalObject = new (globalData) GlobalObject(options.arguments);
-    bool success = runWithScripts(globalObject, options.fileNames, options.dump);
+    bool success = runWithScripts(globalObject, options.scripts, options.dump);
     if (options.interactive && success)
         runInteractive(globalObject);
 

@@ -1,5 +1,18 @@
 2009-02-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver 'the nun' Hunt.
+
+        Add -e switch to jsc to enable evaluation of scripts passed on the command line.
+
+        * jsc.cpp:
+        (Script::Script):
+        (runWithScripts):
+        (printUsageStatement):
+        (parseArguments):
+        (jscmain):
+
+2009-02-04  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber stamped by Sam 'Big Mac' Weinig.
 
         * assembler/AbstractMacroAssembler.h: Copied from assembler/MacroAssembler.h.
