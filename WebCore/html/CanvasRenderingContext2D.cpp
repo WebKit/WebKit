@@ -867,7 +867,6 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     GraphicsContext* dc = drawingContext();
     if (!dc)
         return;
-    // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
     const CGFloat components[5] = { c, m, y, k, a };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceCMYK();
@@ -875,6 +874,8 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
     CGColorSpaceRelease(colorSpace);
     CGContextSetShadowWithColor(dc->platformContext(), adjustedShadowSize(width, -height), blur, shadowColor);
     CGColorRelease(shadowColor);
+#else
+    dc->setShadow(IntSize(width, -height), blur, Color(c, m, y, k, a));
 #endif
 }
 

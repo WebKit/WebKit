@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23766
+        CanvasRenderingContext2D::setShadow needs else for other platforms.
+
+        Implements the CMYK variant of CanvasRenderingContext2D::setShadow for
+        other platforms using the CMYK color constructor.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadow):
+
+2009-02-05  Scott Violet  <sky@google.com>
+
+        Reviewed by Eric Seidel.
+
         https://bugs.webkit.org/show_bug.cgi?id=23687
         Wires up Skia'a ImageBuffer::toDataURL to support pngs.
         This helps Chromium pass a couple of layout tests.
