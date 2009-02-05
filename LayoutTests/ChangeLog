@@ -1,3 +1,16 @@
+2009-02-04  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, build fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22806
+        Reverting the test that should not yet be landed since it depends on
+        changes in DRT which were not yet landed.
+
+        * fast/dom/Window/cached-timeout-stopped-on-close-expected.txt: Removed.
+        * fast/dom/Window/cached-timeout-stopped-on-close.html: Removed.
+        * fast/dom/Window/resources/cached-timeout-page-1.html: Removed.
+        * fast/dom/Window/resources/cached-timeout-page-2.html: Removed.
+
 2009-02-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
