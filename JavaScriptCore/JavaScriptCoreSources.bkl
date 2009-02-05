@@ -169,6 +169,7 @@ Source files for JSCore.
         wtf/TCSystemAlloc.cpp
         wtf/Threading.cpp
         wtf/ThreadingNone.cpp
+        wtf/TypeTraits.cpp
         wtf/wx/MainThreadWx.cpp
         wtf/unicode/CollatorDefault.cpp
         wtf/unicode/icu/CollatorICU.cpp

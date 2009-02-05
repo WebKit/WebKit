@@ -21,7 +21,6 @@
 #ifndef WTF_HashTraits_h
 #define WTF_HashTraits_h
 
-#include "Assertions.h"
 #include "HashFunctions.h"
 #include "TypeTraits.h"
 #include <utility>

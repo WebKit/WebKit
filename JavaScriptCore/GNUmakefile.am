@@ -247,6 +247,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/Threading.cpp \
 	JavaScriptCore/wtf/ThreadingGtk.cpp \
 	JavaScriptCore/wtf/ThreadingPthreads.cpp \
+	JavaScriptCore/wtf/TypeTraits.cpp \
 	JavaScriptCore/wtf/TypeTraits.h \
 	JavaScriptCore/wtf/UnusedParam.h \
 	JavaScriptCore/wtf/Vector.h \

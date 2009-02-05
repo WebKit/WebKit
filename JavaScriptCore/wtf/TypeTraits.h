@@ -22,8 +22,6 @@
 #ifndef TypeTraits_h
 #define TypeTraits_h
 
-#include "Assertions.h"
-
 namespace WTF {
 
     // The following are provided in this file:
@@ -39,7 +37,7 @@ namespace WTF {
     //   RemoveVolatile<T>::Type
     //   RemoveConstVolatile<T>::Type
     //
-    //   Each is followed by COMPILE_ASSERT's which illustrate their usage and what they do.
+    //   COMPILE_ASSERT's in TypeTraits.cpp illustrate their usage and what they do.
 
     template<typename T> struct IsInteger           { static const bool value = false; };
     template<> struct IsInteger<bool>               { static const bool value = true; };
@@ -58,27 +56,6 @@ namespace WTF {
     template<> struct IsInteger<wchar_t>            { static const bool value = true; };
 #endif
 
-    COMPILE_ASSERT(IsInteger<bool>::value, WTF_IsInteger_bool_true);
-    COMPILE_ASSERT(IsInteger<char>::value, WTF_IsInteger_char_true);
-    COMPILE_ASSERT(IsInteger<signed char>::value, WTF_IsInteger_signed_char_true);
-    COMPILE_ASSERT(IsInteger<unsigned char>::value, WTF_IsInteger_unsigned_char_true);
-    COMPILE_ASSERT(IsInteger<short>::value, WTF_IsInteger_short_true);
-    COMPILE_ASSERT(IsInteger<unsigned short>::value, WTF_IsInteger_unsigned_short_true);
-    COMPILE_ASSERT(IsInteger<int>::value, WTF_IsInteger_int_true);
-    COMPILE_ASSERT(IsInteger<unsigned int>::value, WTF_IsInteger_unsigned_int_true);
-    COMPILE_ASSERT(IsInteger<long>::value, WTF_IsInteger_long_true);
-    COMPILE_ASSERT(IsInteger<unsigned long>::value, WTF_IsInteger_unsigned_long_true);
-    COMPILE_ASSERT(IsInteger<long long>::value, WTF_IsInteger_long_long_true);
-    COMPILE_ASSERT(IsInteger<unsigned long long>::value, WTF_IsInteger_unsigned_long_long_true);
-#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
-    COMPILE_ASSERT(IsInteger<wchar_t>::value, WTF_IsInteger_wchar_t_true);
-#endif
-    COMPILE_ASSERT(!IsInteger<char*>::value, WTF_IsInteger_char_pointer_false);
-    COMPILE_ASSERT(!IsInteger<const char*>::value, WTF_IsInteger_const_char_pointer_false);
-    COMPILE_ASSERT(!IsInteger<volatile char*>::value, WTF_IsInteger_volatile_char_pointer_false);
-    COMPILE_ASSERT(!IsInteger<double>::value, WTF_IsInteger_double_false);
-    COMPILE_ASSERT(!IsInteger<float>::value, WTF_IsInteger_float_false);
-
     // IsPod is misnamed as it doesn't cover all plain old data (pod) types.
     // Specifically, it doesn't allow for enums or for structs.
     template <typename T> struct IsPod           { static const bool value = IsInteger<T>::value; };
@@ -86,29 +63,6 @@ namespace WTF {
     template <> struct IsPod<double>             { static const bool value = true; };
     template <> struct IsPod<long double>        { static const bool value = true; };
     template <typename P> struct IsPod<P*>       { static const bool value = true; };
-
-    COMPILE_ASSERT(IsPod<bool>::value, WTF_IsPod_bool_true);
-    COMPILE_ASSERT(IsPod<char>::value, WTF_IsPod_char_true);
-    COMPILE_ASSERT(IsPod<signed char>::value, WTF_IsPod_signed_char_true);
-    COMPILE_ASSERT(IsPod<unsigned char>::value, WTF_IsPod_unsigned_char_true);
-    COMPILE_ASSERT(IsPod<short>::value, WTF_IsPod_short_true);
-    COMPILE_ASSERT(IsPod<unsigned short>::value, WTF_IsPod_unsigned_short_true);
-    COMPILE_ASSERT(IsPod<int>::value, WTF_IsPod_int_true);
-    COMPILE_ASSERT(IsPod<unsigned int>::value, WTF_IsPod_unsigned_int_true);
-    COMPILE_ASSERT(IsPod<long>::value, WTF_IsPod_long_true);
-    COMPILE_ASSERT(IsPod<unsigned long>::value, WTF_IsPod_unsigned_long_true);
-    COMPILE_ASSERT(IsPod<long long>::value, WTF_IsPod_long_long_true);
-    COMPILE_ASSERT(IsPod<unsigned long long>::value, WTF_IsPod_unsigned_long_long_true);
-#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
-    COMPILE_ASSERT(IsPod<wchar_t>::value, WTF_IsPod_wchar_t_true);
-#endif
-    COMPILE_ASSERT(IsPod<char*>::value, WTF_IsPod_char_pointer_true);
-    COMPILE_ASSERT(IsPod<const char*>::value, WTF_IsPod_const_char_pointer_true);
-    COMPILE_ASSERT(IsPod<volatile char*>::value, WTF_IsPod_volatile_char_pointer_true);
-    COMPILE_ASSERT(IsPod<double>::value, WTF_IsPod_double_true);
-    COMPILE_ASSERT(IsPod<long double>::value, WTF_IsPod_long_double_true);
-    COMPILE_ASSERT(IsPod<float>::value, WTF_IsPod_float_true);
-    COMPILE_ASSERT(!IsPod<IsPod<bool> >::value, WTF_IsPod_struct_false);
 
     template<typename T> class IsConvertibleToInteger {
         // Avoid "possible loss of data" warning when using Microsoft's C++ compiler
@@ -136,31 +90,6 @@ namespace WTF {
         static const bool value = IsInteger<T>::value || IsConvertibleToDouble<!IsInteger<T>::value, T>::value;
     };
 
-    enum IsConvertibleToIntegerCheck { };
-    COMPILE_ASSERT(IsConvertibleToInteger<IsConvertibleToIntegerCheck>::value, WTF_IsConvertibleToInteger_enum_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<bool>::value, WTF_IsConvertibleToInteger_bool_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<char>::value, WTF_IsConvertibleToInteger_char_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<signed char>::value, WTF_IsConvertibleToInteger_signed_char_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<unsigned char>::value, WTF_IsConvertibleToInteger_unsigned_char_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<short>::value, WTF_IsConvertibleToInteger_short_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<unsigned short>::value, WTF_IsConvertibleToInteger_unsigned_short_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<int>::value, WTF_IsConvertibleToInteger_int_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<unsigned int>::value, WTF_IsConvertibleToInteger_unsigned_int_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<long>::value, WTF_IsConvertibleToInteger_long_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<unsigned long>::value, WTF_IsConvertibleToInteger_unsigned_long_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<long long>::value, WTF_IsConvertibleToInteger_long_long_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<unsigned long long>::value, WTF_IsConvertibleToInteger_unsigned_long_long_true);
-#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
-    COMPILE_ASSERT(IsConvertibleToInteger<wchar_t>::value, WTF_IsConvertibleToInteger_wchar_t_true);
-#endif
-    COMPILE_ASSERT(IsConvertibleToInteger<double>::value, WTF_IsConvertibleToInteger_double_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<long double>::value, WTF_IsConvertibleToInteger_long_double_true);
-    COMPILE_ASSERT(IsConvertibleToInteger<float>::value, WTF_IsConvertibleToInteger_float_true);
-    COMPILE_ASSERT(!IsConvertibleToInteger<char*>::value, WTF_IsConvertibleToInteger_char_pointer_false);
-    COMPILE_ASSERT(!IsConvertibleToInteger<const char*>::value, WTF_IsConvertibleToInteger_const_char_pointer_false);
-    COMPILE_ASSERT(!IsConvertibleToInteger<volatile char*>::value, WTF_IsConvertibleToInteger_volatile_char_pointer_false);
-    COMPILE_ASSERT(!IsConvertibleToInteger<IsConvertibleToInteger<bool> >::value, WTF_IsConvertibleToInteger_struct_false);
-
     template <typename T, typename U> struct IsSameType {
         static const bool value = false;
     };
@@ -168,12 +97,6 @@ namespace WTF {
     template <typename T> struct IsSameType<T, T> {
         static const bool value = true;
     };
-
-    COMPILE_ASSERT((IsSameType<bool, bool>::value), WTF_IsSameType_bool_true);
-    COMPILE_ASSERT((IsSameType<int*, int*>::value), WTF_IsSameType_int_pointer_true);
-    COMPILE_ASSERT((!IsSameType<int, int*>::value), WTF_IsSameType_int_int_pointer_false);
-    COMPILE_ASSERT((!IsSameType<bool, const bool>::value), WTF_IsSameType_const_change_false);
-    COMPILE_ASSERT((!IsSameType<bool, volatile bool>::value), WTF_IsSameType_volatile_change_false);
 
     template <typename T> struct RemoveConst {
         typedef T Type;
@@ -183,9 +106,6 @@ namespace WTF {
         typedef T Type;
     };
 
-    COMPILE_ASSERT((IsSameType<bool, RemoveConst<const bool>::Type>::value), WTF_test_RemoveConst_const_bool);
-    COMPILE_ASSERT((!IsSameType<bool, RemoveConst<volatile bool>::Type>::value), WTF_test_RemoveConst_volatile_bool);
-
     template <typename T> struct RemoveVolatile {
         typedef T Type;
     };
@@ -194,18 +114,9 @@ namespace WTF {
         typedef T Type;
     };
 
-    COMPILE_ASSERT((IsSameType<bool, RemoveVolatile<bool>::Type>::value), WTF_test_RemoveVolatile_bool);
-    COMPILE_ASSERT((!IsSameType<bool, RemoveVolatile<const bool>::Type>::value), WTF_test_RemoveVolatile_const_bool);
-    COMPILE_ASSERT((IsSameType<bool, RemoveVolatile<volatile bool>::Type>::value), WTF_test_RemoveVolatile_volatile_bool);
-
     template <typename T> struct RemoveConstVolatile {
         typedef typename RemoveVolatile<typename RemoveConst<T>::Type>::Type Type;
     };
-
-    COMPILE_ASSERT((IsSameType<bool, RemoveConstVolatile<bool>::Type>::value), WTF_test_RemoveConstVolatile_bool);
-    COMPILE_ASSERT((IsSameType<bool, RemoveConstVolatile<const bool>::Type>::value), WTF_test_RemoveConstVolatile_const_bool);
-    COMPILE_ASSERT((IsSameType<bool, RemoveConstVolatile<volatile bool>::Type>::value), WTF_test_RemoveConstVolatile_volatile_bool);
-    COMPILE_ASSERT((IsSameType<bool, RemoveConstVolatile<const volatile bool>::Type>::value), WTF_test_RemoveConstVolatile_const_volatile_bool);
 
     template <typename T> struct RemovePointer {
         typedef T Type;
@@ -214,10 +125,6 @@ namespace WTF {
     template <typename T> struct RemovePointer<T*> {
         typedef T Type;
     };
-
-    COMPILE_ASSERT((IsSameType<int, RemovePointer<int>::Type>::value), WTF_Test_RemovePointer_int);
-    COMPILE_ASSERT((IsSameType<int, RemovePointer<int*>::Type>::value), WTF_Test_RemovePointer_int_pointer);
-    COMPILE_ASSERT((!IsSameType<int, RemovePointer<int**>::Type>::value), WTF_Test_RemovePointer_int_pointer_pointer);
 
 } // namespace WTF
 

@@ -51,6 +51,7 @@ SOURCES += \
     wtf/MainThread.cpp \
     wtf/RandomNumber.cpp \
     wtf/RefCountedLeakCounter.cpp \
+    wtf/TypeTraits.cpp \
     wtf/unicode/CollatorDefault.cpp \
     wtf/unicode/icu/CollatorICU.cpp \
     wtf/unicode/UTF8.cpp \

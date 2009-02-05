@@ -149,6 +149,7 @@ sources['wtf'] = [
     'wtf/RandomNumber.cpp',
     'wtf/RefCountedLeakCounter.cpp',
     'wtf/Threading.cpp',
+    'wtf/TypeTraits.cpp',
     'wtf/dtoa.cpp',
 ]
 sources['wtf/unicode'] = [

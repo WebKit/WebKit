@@ -459,6 +459,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\TypeTraits.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\TypeTraits.h"
 			>
 		</File>
