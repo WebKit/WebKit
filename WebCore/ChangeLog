@@ -1,3 +1,12 @@
+2009-02-05  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Fix WML enabled builds.
+
+        FrameLoader::load() got an additional 'lockHistory' parameter, pass 'false'.
+
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::executeTask):
+
 2009-02-05  Scott Violet  <sky@google.com>
 
         Reviewed by Eric Seidel.
