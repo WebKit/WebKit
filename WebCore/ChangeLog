@@ -1,3 +1,24 @@
+2009-02-05  Scott Violet  <sky@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23687
+        Wires up Skia'a ImageBuffer::toDataURL to support pngs.
+        This helps Chromium pass a couple of layout tests.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/image-encoders: Added.
+        * platform/image-encoders/skia: Added.
+        * platform/image-encoders/skia/PNGImageEncoder.cpp: Added.
+        (WebCore::):
+        (WebCore::PngEncoderState::EncoderWriteCallback):
+        (WebCore::PngEncoderState::ConvertBGRAtoRGB):
+        (WebCore::PngEncoderState::PngWriteStructDestroyer::PngWriteStructDestroyer):
+        (WebCore::PngEncoderState::PngWriteStructDestroyer::~PngWriteStructDestroyer):
+        (WebCore::PNGImageEncoder::encode):
+        * platform/image-encoders/skia/PNGImageEncoder.h: Added.
+
 2009-02-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
