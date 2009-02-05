@@ -108,7 +108,7 @@ public:
 
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
 
-    IntSize relativePositionedInlineOffset(const RenderObject* child) const;
+    IntSize relativePositionedInlineOffset(const RenderBox* child) const;
 
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
     void paintOutline(GraphicsContext*, int tx, int ty);
@@ -125,6 +125,7 @@ public:
     
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void updateBoxModelInfoFromStyle();
 
     static RenderInline* cloneInline(RenderInline* src);
 

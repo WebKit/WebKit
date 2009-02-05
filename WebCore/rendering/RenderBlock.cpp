@@ -773,9 +773,9 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     // For overflow:scroll blocks, ensure we have both scrollbars in place always.
     if (scrollsOverflow()) {
         if (style()->overflowX() == OSCROLL)
-            m_layer->setHasHorizontalScrollbar(true);
+            layer()->setHasHorizontalScrollbar(true);
         if (style()->overflowY() == OSCROLL)
-            m_layer->setHasVerticalScrollbar(true);
+            layer()->setHasVerticalScrollbar(true);
     }
 
     int repaintTop = 0;
@@ -851,7 +851,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.
     if (hasOverflowClip())
-        m_layer->updateScrollInfoAfterLayout();
+        layer()->updateScrollInfoAfterLayout();
 
     // Repaint with our new bounds if they are different from our old bounds.
     bool didFullRepaint = repainter.repaintAfterLayout();
@@ -892,14 +892,14 @@ bool RenderBlock::expandsToEncloseOverhangingFloats() const
 
 void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marginInfo)
 {
-    if (child->hasStaticX()) {
+    if (child->style()->hasStaticX()) {
         if (style()->direction() == LTR)
-            child->setStaticX(borderLeft() + paddingLeft());
+            child->layer()->setStaticX(borderLeft() + paddingLeft());
         else
-            child->setStaticX(borderRight() + paddingRight());
+            child->layer()->setStaticX(borderRight() + paddingRight());
     }
 
-    if (child->hasStaticY()) {
+    if (child->style()->hasStaticY()) {
         int y = height();
         if (!marginInfo.canCollapseWithTop()) {
             child->calcVerticalMargins();
@@ -915,7 +915,7 @@ void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marg
             }
             y += (collapsedTopPos - collapsedTopNeg) - marginTop;
         }
-        child->setStaticY(y);
+        child->layer()->setStaticY(y);
     }
 }
 
@@ -1485,7 +1485,7 @@ bool RenderBlock::layoutOnlyPositionedObjects()
     statePusher.pop();
 
     if (hasOverflowClip())
-        m_layer->updateScrollInfoAfterLayout();
+        layer()->updateScrollInfoAfterLayout();
 
     setNeedsLayout(false);
     return true;
@@ -1502,7 +1502,7 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
             // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
             // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
             // positioned explicitly) this should not incur a performance penalty.
-            if (relayoutChildren || (r->hasStaticY() && r->parent() != this && r->parent()->isBlockFlow()))
+            if (relayoutChildren || (r->style()->hasStaticY() && r->parent() != this && r->parent()->isBlockFlow()))
                 r->setChildNeedsLayout(true, false);
                 
             // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
@@ -1760,7 +1760,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     int scrolledX = tx;
     int scrolledY = ty;
     if (hasOverflowClip())
-        m_layer->subtractScrolledContentOffset(scrolledX, scrolledY);
+        layer()->subtractScrolledContentOffset(scrolledX, scrolledY);
 
     // 2. paint contents
     if (paintPhase != PaintPhaseSelfOutline) {
@@ -3247,7 +3247,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         int scrolledX = tx;
         int scrolledY = ty;
         if (hasOverflowClip())
-            m_layer->subtractScrolledContentOffset(scrolledX, scrolledY);
+            layer()->subtractScrolledContentOffset(scrolledX, scrolledY);
 
         // Hit test contents if we don't have columns.
         if (!hasColumns() && hitTestContents(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
@@ -3503,7 +3503,7 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
 void RenderBlock::offsetForContents(int& tx, int& ty) const
 {
     if (hasOverflowClip())
-        m_layer->addScrolledContentOffset(tx, ty);
+        layer()->addScrolledContentOffset(tx, ty);
 
     if (hasColumns()) {
         IntPoint contentsPoint(tx, ty);
@@ -3816,7 +3816,7 @@ void RenderBlock::calcPrefWidths()
             m_minPrefWidth = m_maxPrefWidth;
             
             // A horizontal marquee with inline children has no minimum width.
-            if (m_layer && m_layer->marquee() && m_layer->marquee()->isHorizontal())
+            if (layer() && layer()->marquee() && layer()->marquee()->isHorizontal())
                 m_minPrefWidth = 0;
         }
 
@@ -4356,7 +4356,7 @@ int RenderBlock::baselinePosition(bool b, bool isRootLineBox) const
         // We also give up on finding a baseline if we have a vertical scrollbar, or if we are scrolled
         // vertically (e.g., an overflow:hidden block that has had scrollTop moved) or if the baseline is outside
         // of our content box.
-        int baselinePos = (m_layer && (m_layer->marquee() || m_layer->verticalScrollbar() || m_layer->scrollYOffset() != 0)) ? -1 : getBaselineOfLastLineBox();
+        int baselinePos = (layer() && (layer()->marquee() || layer()->verticalScrollbar() || layer()->scrollYOffset() != 0)) ? -1 : getBaselineOfLastLineBox();
         if (baselinePos != -1 && baselinePos <= borderTop() + paddingTop() + contentHeight())
             return marginTop() + baselinePos;
         return height() + marginTop() + marginBottom();

@@ -33,10 +33,26 @@ public:
     RenderBoxModelObject(Node*);
     virtual ~RenderBoxModelObject();
     
+    virtual void destroy();
+
     int relativePositionOffsetX() const;
     int relativePositionOffsetY() const;
     IntSize relativePositionOffset() const { return IntSize(relativePositionOffsetX(), relativePositionOffsetY()); }
 
+    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void updateBoxModelInfoFromStyle();
+
+    RenderLayer* layer() const { return m_layer; }
+    virtual bool requiresLayer() const { return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasReflection(); }
+
+private:
+    friend class RenderView;
+
+    RenderLayer* m_layer;
+    
+    // Used to store state between styleWillChange and styleDidChange
+    static bool s_wasFloating;
 };
 
 } // namespace WebCore

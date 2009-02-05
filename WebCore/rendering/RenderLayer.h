@@ -385,7 +385,7 @@ public:
     int staticX() const { return m_staticX; }
     int staticY() const { return m_staticY; }
     void setStaticX(int staticX) { m_staticX = staticX; }
-    void setStaticY(int staticY) { m_staticY = staticY; }
+    void setStaticY(int staticY);
 
     bool hasTransform() const { return renderer()->hasTransform(); }
     // Note that this transform has the transform-origin baked in.

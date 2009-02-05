@@ -155,6 +155,10 @@ public:
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
     
+    virtual FloatPoint localToAbsolute(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
+    virtual FloatPoint absoluteToLocal(FloatPoint containerPoint, bool fixed = false, bool useTransforms = false) const;
+    virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBoxModelObject* repaintContainer, bool fixed = false) const;
+
     IntRect reflectionBox() const;
     int reflectionOffset() const;
     // Given a rect in the object's coordinate space, returns the corresponding rect in the reflection.
@@ -173,9 +177,6 @@ public:
     virtual int overrideWidth() const;
     virtual int overrideHeight() const;
     virtual void setOverrideSize(int);
-
-    virtual FloatPoint localToAbsolute(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
-    virtual FloatPoint absoluteToLocal(FloatPoint containerPoint, bool fixed = false, bool useTransforms = false) const;
 
     virtual IntSize offsetFromContainer(RenderObject*) const;
     
@@ -209,7 +210,6 @@ public:
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
-    virtual FloatQuad localToContainerQuad(const FloatQuad&, RenderBoxModelObject* repaintContainer, bool fixed = false) const;
 
     virtual void repaintDuringLayoutIfMoved(const IntRect&);
 
@@ -247,9 +247,6 @@ public:
 
     void calcVerticalMargins();
 
-    RenderLayer* layer() const { return m_layer; }
-    virtual bool requiresLayer() const { return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasReflection(); }
-
     virtual int verticalScrollbarWidth() const;
     int horizontalScrollbarHeight() const;
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
@@ -268,11 +265,6 @@ public:
     virtual void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight,
                                         int tx, int ty, int width, int height, InlineFlowBox* = 0, CompositeOperator = CompositeSourceOver);
     IntSize calculateBackgroundSize(const FillLayer*, int scaledWidth, int scaledHeight) const;
-
-    virtual int staticX() const;
-    virtual int staticY() const;
-    virtual void setStaticX(int staticX);
-    virtual void setStaticY(int staticY);
 
     virtual IntRect getOverflowClipRect(int tx, int ty);
     virtual IntRect getClipRect(int tx, int ty);
@@ -309,6 +301,7 @@ public:
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void updateBoxModelInfoFromStyle();
 
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver);
@@ -373,15 +366,11 @@ protected:
     // The preferred width of the element if it never breaks any lines at all.
     int m_maxPrefWidth;
 
-    // A pointer to our layer if we have one.
-    RenderLayer* m_layer;
-
     // For inline replaced elements, the inline box that owns us.
     InlineBox* m_inlineBoxWrapper;
 
 private:
     // Used to store state between styleWillChange and styleDidChange
-    static bool s_wasFloating;
     static bool s_hadOverflowClip;
 };
 

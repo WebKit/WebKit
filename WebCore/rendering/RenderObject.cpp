@@ -558,16 +558,6 @@ RenderBlock* RenderObject::firstLineBlock() const
     return 0;
 }
 
-bool RenderObject::hasStaticX() const
-{
-    return (style()->left().isAuto() && style()->right().isAuto()) || style()->left().isStatic() || style()->right().isStatic();
-}
-
-bool RenderObject::hasStaticY() const
-{
-    return (style()->top().isAuto() && style()->bottom().isAuto()) || style()->top().isStatic();
-}
-
 void RenderObject::setPrefWidthsDirty(bool b, bool markParents)
 {
     bool alreadyDirty = m_prefWidthsDirty;
@@ -2030,6 +2020,11 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
     updateImage(oldStyle ? oldStyle->borderImage().image() : 0, m_style ? m_style->borderImage().image() : 0);
     updateImage(oldStyle ? oldStyle->maskBoxImage().image() : 0, m_style ? m_style->maskBoxImage().image() : 0);
 
+    // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
+    // during styleDidChange (it's used by clippedOverflowRectForRepaint()).
+    if (m_style->outlineWidth() > 0 && m_style->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
+        toRenderView(document()->renderer())->setMaximalOutlineSize(m_style->outlineSize());
+
     styleDidChange(diff, oldStyle.get());
 }
 
@@ -2109,8 +2104,6 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
 
 void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle*)
 {
-    setHasBoxDecorations(m_style->hasBorder() || m_style->hasBackground() || m_style->hasAppearance() || m_style->boxShadow());
-
     if (s_affectsParentBlock)
         handleDynamicFloatPositionChange();
 

@@ -1,3 +1,91 @@
+2009-02-05  David Hyatt  <hyatt@apple.com>
+
+        Move the m_layer member variable of RenderBox up into RenderBoxModelObject.  Refactor styleDidChange'
+        of RenderObject, RenderBoxModelObject and RenderBox to get more of the code in the correct subclass.  
+        In order to set the various RenderObject bits properly prior to the test for whether a layer is 
+        required, I added an additional method, updateBoxModelInfoAfterStyleChange, that is responsible
+        for setting all of the bits.
+        
+        Eliminate hasStaticX/Y, staticX/Y, and setStaticX/Y from the render tree.  Move hasStaticX/Y to
+        RenderStyle, and just use the corresponding layer() methods for the
+        staticX/Y getters/setters.
+
+        Reviewed by Sam Weinig
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        (WebCore::RenderBlock::layoutOnlyPositionedObjects):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::offsetForContents):
+        (WebCore::RenderBlock::calcPrefWidths):
+        (WebCore::RenderBlock::baselinePosition):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox):
+        (WebCore::RenderBox::destroy):
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::updateBoxModelInfoFromStyle):
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::scrollHeight):
+        (WebCore::RenderBox::scrollLeft):
+        (WebCore::RenderBox::scrollTop):
+        (WebCore::RenderBox::setScrollLeft):
+        (WebCore::RenderBox::setScrollTop):
+        (WebCore::RenderBox::getOverflowClipRect):
+        (WebCore::RenderBox::localToAbsolute):
+        (WebCore::RenderBox::absoluteToLocal):
+        (WebCore::RenderBox::localToContainerQuad):
+        (WebCore::RenderBox::position):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::RenderBoxModelObject):
+        (WebCore::RenderBoxModelObject::destroy):
+        (WebCore::RenderBoxModelObject::styleWillChange):
+        (WebCore::RenderBoxModelObject::styleDidChange):
+        (WebCore::RenderBoxModelObject::updateBoxModelInfoFromStyle):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::layer):
+        (WebCore::RenderBoxModelObject::requiresLayer):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateBoxModelInfoFromStyle):
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::relativePositionedInlineOffset):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setStaticY):
+        (WebCore::RenderLayer::updateLayerPosition):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::styleDidChange):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::paint):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+        * rendering/bidi.cpp:
+        (WebCore::appendRunsForObject):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::skipTrailingWhitespace):
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasStaticX):
+        (WebCore::InheritedFlags::hasStaticY):
+
 2009-02-05  Sam Weinig  <sam@webkit.org>
 
         Fix the windows build.

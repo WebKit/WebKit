@@ -226,6 +226,14 @@ RenderLayerCompositor* RenderLayer::compositor() const
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
+void RenderLayer::setStaticY(int staticY)
+{
+    if (m_staticY == staticY)
+        return;
+    m_staticY = staticY;
+    renderer()->setChildNeedsLayout(true, false);
+}
+
 void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
 {
     if (doFullRepaint) {
@@ -460,7 +468,7 @@ void RenderLayer::updateLayerPosition()
         positionedParent->subtractScrolledContentOffset(x, y);
         
         if (renderer()->isPositioned() && positionedParent->renderer()->isRelPositioned() && positionedParent->renderer()->isRenderInline()) {
-            IntSize offset = toRenderInline(positionedParent->renderer())->relativePositionedInlineOffset(renderer());
+            IntSize offset = toRenderInline(positionedParent->renderer())->relativePositionedInlineOffset(toRenderBox(renderer()));
             x += offset.width();
             y += offset.height();
         }

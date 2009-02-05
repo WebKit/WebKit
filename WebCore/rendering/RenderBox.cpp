@@ -61,7 +61,6 @@ using namespace HTMLNames;
 typedef WTF::HashMap<const RenderBox*, int> OverrideSizeMap;
 static OverrideSizeMap* gOverrideSizeMap = 0;
 
-bool RenderBox::s_wasFloating = false;
 bool RenderBox::s_hadOverflowClip = false;
 
 RenderBox::RenderBox(Node* node)
@@ -72,7 +71,6 @@ RenderBox::RenderBox(Node* node)
     , m_marginBottom(0)
     , m_minPrefWidth(-1)
     , m_maxPrefWidth(-1)
-    , m_layer(0)
     , m_inlineBoxWrapper(0)
 {
     setIsBox();
@@ -89,10 +87,6 @@ void RenderBox::destroy()
     // be sure to fix RenderWidget::destroy() as well.
     if (hasOverrideSize())
         gOverrideSizeMap->remove(this);
-
-    // This must be done before we destroy the RenderObject.
-    if (m_layer)
-        m_layer->clearClipRects();
 
     if (style() && (style()->height().isPercent() || style()->minHeight().isPercent() || style()->maxHeight().isPercent()))
         RenderBlock::removePercentHeightDescendant(this);
@@ -129,7 +123,6 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
 
 void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
-    s_wasFloating = isFloating();
     s_hadOverflowClip = hasOverflowClip();
 
     if (style()) {
@@ -196,15 +189,34 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
 
 void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
-    // during the style change (it's used by clippedOverflowRectForRepaint()).
-    if (style()->outlineWidth() > 0 && style()->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
-        toRenderView(document()->renderer())->setMaximalOutlineSize(style()->outlineSize());
-
     RenderBoxModelObject::styleDidChange(diff, oldStyle);
 
     if (needsLayout() && oldStyle && (oldStyle->height().isPercent() || oldStyle->minHeight().isPercent() || oldStyle->maxHeight().isPercent()))
         RenderBlock::removePercentHeightDescendant(this);
+
+    // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
+    // new zoomed coordinate space.
+    if (hasOverflowClip() && oldStyle && style() && oldStyle->effectiveZoom() != style()->effectiveZoom()) {
+        int left = scrollLeft();
+        if (left) {
+            left = (left / oldStyle->effectiveZoom()) * style()->effectiveZoom();
+            setScrollLeft(left);
+        }
+        int top = scrollTop();
+        if (top) {
+            top = (top / oldStyle->effectiveZoom()) * style()->effectiveZoom();
+            setScrollTop(top);
+        }
+    }
+
+    // Set the text color if we're the body.
+    if (isBody())
+        document()->setTextColor(style()->color());
+}
+
+void RenderBox::updateBoxModelInfoFromStyle()
+{
+    RenderBoxModelObject::updateBoxModelInfoFromStyle();
 
     bool isRootObject = isRoot();
     bool isViewObject = isRenderView();
@@ -213,23 +225,8 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     if (isRootObject || isViewObject)
         setHasBoxDecorations(true);
 
-    setInline(style()->isDisplayInlineType());
-
-    switch (style()->position()) {
-        case AbsolutePosition:
-        case FixedPosition:
-            setPositioned(true);
-            break;
-        default:
-            setPositioned(false);
-
-            if (style()->isFloating())
-                setFloating(true);
-
-            if (style()->position() == RelativePosition)
-                setRelPositioned(true);
-            break;
-    }
+    setPositioned(style()->position() == AbsolutePosition || style()->position() == FixedPosition);
+    setFloating(!isPositioned() && style()->isFloating());
 
     // We also handle <body> and <html>, whose overflow applies to the viewport.
     if (style()->overflowX() != OVISIBLE && !isRootObject && (isRenderBlock() || isTableRow() || isTableSection())) {
@@ -255,54 +252,8 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         }
     }
 
-    // FIXME: we should make transforms really work on inline flows eventually.
-    if (!isInline() || isReplaced())
-        setHasTransform(style()->hasTransform());
+    setHasTransform(style()->hasTransform());
     setHasReflection(style()->boxReflect());
-
-    if (requiresLayer()) {
-        if (!m_layer) {
-            if (s_wasFloating && isFloating())
-                setChildNeedsLayout(true);
-            m_layer = new (renderArena()) RenderLayer(this);
-            setHasLayer(true);
-            m_layer->insertOnlyThisLayer();
-            if (parent() && !needsLayout() && containingBlock())
-                m_layer->updateLayerPositions();
-        }
-    } else if (m_layer && !isRootObject && !isViewObject) {
-        ASSERT(m_layer->parent());
-        RenderLayer* layer = m_layer;
-        m_layer = 0;
-        setHasLayer(false);
-        setHasTransform(false); // Either a transform wasn't specified or the object doesn't support transforms, so just null out the bit.
-        setHasReflection(false);
-        layer->removeOnlyThisLayer();
-        if (s_wasFloating && isFloating())
-            setChildNeedsLayout(true);
-    }
-
-    // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
-    // new zoomed coordinate space.
-    if (hasOverflowClip() && oldStyle && style() && oldStyle->effectiveZoom() != style()->effectiveZoom()) {
-        int left = scrollLeft();
-        if (left) {
-            left = (left / oldStyle->effectiveZoom()) * style()->effectiveZoom();
-            setScrollLeft(left);
-        }
-        int top = scrollTop();
-        if (top) {
-            top = (top / oldStyle->effectiveZoom()) * style()->effectiveZoom();
-            setScrollTop(top);
-        }
-    }
-
-    if (m_layer)
-        m_layer->styleChanged(diff, oldStyle);
-
-    // Set the text color if we're the body.
-    if (isBody())
-        document()->setTextColor(style()->color());
 }
 
 void RenderBox::layout()
@@ -424,37 +375,37 @@ int RenderBox::clientHeight() const
 int RenderBox::scrollWidth() const
 {
     if (hasOverflowClip())
-        return m_layer->scrollWidth();
+        return layer()->scrollWidth();
     return overflowWidth();
 }
 
 int RenderBox::scrollHeight() const
 {
     if (hasOverflowClip())
-        return m_layer->scrollHeight();
+        return layer()->scrollHeight();
     return overflowHeight();
 }
 
 int RenderBox::scrollLeft() const
 {
-    return hasOverflowClip() ? m_layer->scrollXOffset() : 0;
+    return hasOverflowClip() ? layer()->scrollXOffset() : 0;
 }
 
 int RenderBox::scrollTop() const
 {
-    return hasOverflowClip() ? m_layer->scrollYOffset() : 0;
+    return hasOverflowClip() ? layer()->scrollYOffset() : 0;
 }
 
 void RenderBox::setScrollLeft(int newLeft)
 {
     if (hasOverflowClip())
-        m_layer->scrollToXOffset(newLeft);
+        layer()->scrollToXOffset(newLeft);
 }
 
 void RenderBox::setScrollTop(int newTop)
 {
     if (hasOverflowClip())
-        m_layer->scrollToYOffset(newTop);
+        layer()->scrollToYOffset(newTop);
 }
 
 int RenderBox::paddingTop(bool) const
@@ -1321,9 +1272,9 @@ IntRect RenderBox::getOverflowClipRect(int tx, int ty)
     int clipHeight = height() - bTop - borderBottom();
 
     // Subtract out scrollbars if we have them.
-    if (m_layer) {
-        clipWidth -= m_layer->verticalScrollbarWidth();
-        clipHeight -= m_layer->horizontalScrollbarHeight();
+    if (layer()) {
+        clipWidth -= layer()->verticalScrollbarWidth();
+        clipHeight -= layer()->horizontalScrollbarHeight();
     }
 
     return IntRect(clipX, clipY, clipWidth, clipHeight);
@@ -1375,8 +1326,8 @@ FloatPoint RenderBox::localToAbsolute(FloatPoint localPoint, bool fixed, bool us
             IntSize offset = layoutState->m_offset;
             offset.expand(x(), y());
             localPoint += offset;
-            if (style()->position() == RelativePosition && m_layer)
-                localPoint += m_layer->relativePositionOffset();
+            if (style()->position() == RelativePosition && layer())
+                localPoint += layer()->relativePositionOffset();
             return localPoint;
         }
     }
@@ -1386,9 +1337,9 @@ FloatPoint RenderBox::localToAbsolute(FloatPoint localPoint, bool fixed, bool us
 
     RenderObject* o = container();
     if (o) {
-        if (useTransforms && m_layer && m_layer->transform()) {
+        if (useTransforms && layer() && layer()->transform()) {
             fixed = false;  // Elements with transforms act as a containing block for fixed position descendants
-            localPoint = m_layer->transform()->mapPoint(localPoint);
+            localPoint = layer()->transform()->mapPoint(localPoint);
         }
 
         localPoint += offsetFromContainer(o);
@@ -1407,15 +1358,15 @@ FloatPoint RenderBox::absoluteToLocal(FloatPoint containerPoint, bool fixed, boo
     if (style()->position() == FixedPosition)
         fixed = true;
 
-    if (useTransforms && m_layer && m_layer->transform())
+    if (useTransforms && layer() && layer()->transform())
         fixed = false;
     
     RenderObject* o = container();
     if (o) {
         FloatPoint localPoint = o->absoluteToLocal(containerPoint, fixed, useTransforms);
         localPoint -= offsetFromContainer(o);
-        if (useTransforms && m_layer && m_layer->transform())
-            localPoint = m_layer->transform()->inverse().mapPoint(localPoint);
+        if (useTransforms && layer() && layer()->transform())
+            localPoint = layer()->transform()->inverse().mapPoint(localPoint);
         return localPoint;
     }
     
@@ -1433,9 +1384,9 @@ FloatQuad RenderBox::localToContainerQuad(const FloatQuad& localQuad, RenderBoxM
     RenderObject* o = container();
     if (o) {
         FloatQuad quad = localQuad;
-        if (m_layer && m_layer->transform()) {
+        if (layer() && layer()->transform()) {
             fixed = false;  // Elements with transforms act as a containing block for fixed position descendants
-            quad = m_layer->transform()->mapQuad(quad);
+            quad = layer()->transform()->mapQuad(quad);
         }
         quad += offsetFromContainer(o);
         return o->localToContainerQuad(quad, repaintContainer, fixed);
@@ -1488,18 +1439,18 @@ void RenderBox::position(InlineBox* box)
     if (isPositioned()) {
         // Cache the x position only if we were an INLINE type originally.
         bool wasInline = style()->isOriginalDisplayInlineType();
-        if (wasInline && hasStaticX()) {
+        if (wasInline && style()->hasStaticX()) {
             // The value is cached in the xPos of the box.  We only need this value if
             // our object was inline originally, since otherwise it would have ended up underneath
             // the inlines.
-            setStaticX(box->xPos());
+            layer()->setStaticX(box->xPos());
             setChildNeedsLayout(true, false); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
-        } else if (!wasInline && hasStaticY()) {
+        } else if (!wasInline && style()->hasStaticY()) {
             // Our object was a block originally, so we make our normal flow position be
             // just below the line box (as though all the inlines that came before us got
             // wrapped in an anonymous block, which is what would have happened had we been
             // in flow).  This value was cached in the yPos() of the box.
-            setStaticY(box->yPos());
+            layer()->setStaticY(box->yPos());
             setChildNeedsLayout(true, false); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
         }
 
@@ -1558,8 +1509,8 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
         // LayoutState is only valid for root-relative repainting
         if (v->layoutStateEnabled() && !repaintContainer) {
             LayoutState* layoutState = v->layoutState();
-            if (style()->position() == RelativePosition && m_layer)
-                rect.move(m_layer->relativePositionOffset());
+            if (style()->position() == RelativePosition && layer())
+                rect.move(layer()->relativePositionOffset());
 
             rect.move(x(), y());
             rect.move(layoutState->m_offset);
@@ -1597,9 +1548,9 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
 
     // We are now in our parent container's coordinate space.  Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
-    if (m_layer && m_layer->transform()) {
+    if (layer() && layer()->transform()) {
         fixed = false;
-        rect = m_layer->transform()->mapRect(rect);
+        rect = layer()->transform()->mapRect(rect);
         // FIXME: this clobbers topLeft adjustment done for multicol above
         topLeft = rect.location();
         topLeft.move(x(), y());
@@ -1607,12 +1558,12 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
 
     if (style()->position() == AbsolutePosition && o->isRelPositioned() && o->isRenderInline())
         topLeft += toRenderInline(o)->relativePositionedInlineOffset(this);
-    else if (style()->position() == RelativePosition && m_layer) {
+    else if (style()->position() == RelativePosition && layer()) {
         // Apply the relative position offset when invalidating a rectangle.  The layer
         // is translated, but the render box isn't, so we need to do this to get the
         // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position
         // flag on the RenderObject has been cleared, so use the one on the style().
-        topLeft += m_layer->relativePositionOffset();
+        topLeft += layer()->relativePositionOffset();
     }
     
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
@@ -2123,33 +2074,6 @@ void RenderBox::calcVerticalMargins()
     m_marginBottom = style()->marginBottom().calcMinValue(cw);
 }
 
-int RenderBox::staticX() const
-{
-    return m_layer ? m_layer->staticX() : 0;
-}
-
-int RenderBox::staticY() const
-{
-    return m_layer ? m_layer->staticY() : 0;
-}
-
-void RenderBox::setStaticX(int staticX)
-{
-    ASSERT(isPositioned() || isRelPositioned());
-    m_layer->setStaticX(staticX);
-}
-
-void RenderBox::setStaticY(int staticY)
-{
-    ASSERT(isPositioned() || isRelPositioned());
-    
-    if (staticY == m_layer->staticY())
-        return;
-    
-    m_layer->setStaticY(staticY);
-    setChildNeedsLayout(true, false);
-}
-
 int RenderBox::containingBlockWidthForPositioned(const RenderObject* containingBlock) const
 {
     if (containingBlock->isRenderInline()) {
@@ -2271,14 +2195,14 @@ void RenderBox::calcAbsoluteHorizontal()
     if (left.isAuto() && right.isAuto()) {
         if (containerDirection == LTR) {
             // 'staticX' should already have been set through layout of the parent.
-            int staticPosition = staticX() - containerBlock->borderLeft();
+            int staticPosition = layer()->staticX() - containerBlock->borderLeft();
             for (RenderBox* po = parentBox(); po && po != containerBlock; po = po->parentBox())
                 staticPosition += po->x();
             left.setValue(Fixed, staticPosition);
         } else {
             RenderBox* po = parentBox();
             // 'staticX' should already have been set through layout of the parent.
-            int staticPosition = staticX() + containerWidth + containerBlock->borderRight() - po->width();
+            int staticPosition = layer()->staticX() + containerWidth + containerBlock->borderRight() - po->width();
             for (; po && po != containerBlock; po = po->parentBox())
                 staticPosition -= po->x();
             right.setValue(Fixed, staticPosition);
@@ -2566,7 +2490,7 @@ void RenderBox::calcAbsoluteVertical()
     // Calculate the static distance if needed.
     if (top.isAuto() && bottom.isAuto()) {
         // staticY should already have been set through layout of the parent()
-        int staticTop = staticY() - containerBlock->borderTop();
+        int staticTop = layer()->staticY() - containerBlock->borderTop();
         for (RenderBox* po = parentBox(); po && po != containerBlock; po = po->parentBox()) {
             if (!po->isTableRow())
                 staticTop += po->y();
@@ -2793,14 +2717,14 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
         // see FIXME 1
         if (containerDirection == LTR) {
             // 'staticX' should already have been set through layout of the parent.
-            int staticPosition = staticX() - containerBlock->borderLeft();
+            int staticPosition = layer()->staticX() - containerBlock->borderLeft();
             for (RenderBox* po = parentBox(); po && po != containerBlock; po = po->parentBox())
                 staticPosition += po->x();
             left.setValue(Fixed, staticPosition);
         } else {
             RenderBox* po = parentBox();
             // 'staticX' should already have been set through layout of the parent.
-            int staticPosition = staticX() + containerWidth + containerBlock->borderRight() - po->width();
+            int staticPosition = layer()->staticX() + containerWidth + containerBlock->borderRight() - po->width();
             for (; po && po != containerBlock; po = po->parentBox())
                 staticPosition -= po->x();
             right.setValue(Fixed, staticPosition);
@@ -2959,7 +2883,7 @@ void RenderBox::calcAbsoluteVerticalReplaced()
     // see FIXME 2
     if (top.isAuto() && bottom.isAuto()) {
         // staticY should already have been set through layout of the parent().
-        int staticTop = staticY() - containerBlock->borderTop();
+        int staticTop = layer()->staticY() - containerBlock->borderTop();
         for (RenderBox* po = parentBox(); po && po != containerBlock; po = po->parentBox()) {
             if (!po->isTableRow())
                 staticTop += po->y();

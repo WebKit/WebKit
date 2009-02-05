@@ -22,16 +22,75 @@
 #include "RenderBoxModelObject.h"
 
 #include "RenderBlock.h"
+#include "RenderLayer.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
+bool RenderBoxModelObject::s_wasFloating = false;
+
 RenderBoxModelObject::RenderBoxModelObject(Node* node)
     : RenderObject(node)
+    , m_layer(0)
 {
 }
 
 RenderBoxModelObject::~RenderBoxModelObject()
 {
+}
+
+void RenderBoxModelObject::destroy()
+{
+    // This must be done before we destroy the RenderObject.
+    if (m_layer)
+        m_layer->clearClipRects();
+    RenderObject::destroy();
+}
+
+void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+{
+    s_wasFloating = isFloating();
+    RenderObject::styleWillChange(diff, newStyle);
+}
+
+void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderObject::styleDidChange(diff, oldStyle);
+    updateBoxModelInfoFromStyle();
+    
+    if (requiresLayer()) {
+        if (!layer()) {
+            if (s_wasFloating && isFloating())
+                setChildNeedsLayout(true);
+            m_layer = new (renderArena()) RenderLayer(this);
+            setHasLayer(true);
+            m_layer->insertOnlyThisLayer();
+            if (parent() && !needsLayout() && containingBlock())
+                m_layer->updateLayerPositions();
+        }
+    } else if (layer() && layer()->parent()) {
+        
+        RenderLayer* layer = m_layer;
+        m_layer = 0;
+        setHasLayer(false);
+        setHasTransform(false); // Either a transform wasn't specified or the object doesn't support transforms, so just null out the bit.
+        setHasReflection(false);
+        layer->removeOnlyThisLayer();
+        if (s_wasFloating && isFloating())
+            setChildNeedsLayout(true);
+    }
+
+    if (m_layer)
+        m_layer->styleChanged(diff, oldStyle);
+}
+
+void RenderBoxModelObject::updateBoxModelInfoFromStyle()
+{
+    // Set the appropriate bits for a box model object.  Since all bits are cleared in styleWillChange,
+    // we only check for bits that could possibly be set to true.
+    setHasBoxDecorations(style()->hasBorder() || style()->hasBackground() || style()->hasAppearance() || style()->boxShadow());
+    setInline(style()->isDisplayInlineType());
+    setRelPositioned(style()->position() == RelativePosition);
 }
 
 int RenderBoxModelObject::relativePositionOffsetX() const
