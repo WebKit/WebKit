@@ -28,6 +28,16 @@
 
 2009-02-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Eric Seidel
+
+        Make RenderStyle::transitionForProperty() const.
+        
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::transitionForProperty):
+        * rendering/style/RenderStyle.h:
+
+2009-02-06  Simon Fraser  <simon.fraser@apple.com>
+
         Fix build when ACCELERATED_COMPOSITING is turned on.
 
         Remove font smoothing changes that will be committed

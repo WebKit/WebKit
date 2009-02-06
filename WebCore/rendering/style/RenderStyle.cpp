@@ -818,7 +818,7 @@ AnimationList* RenderStyle::accessTransitions()
     return rareNonInheritedData->m_transitions.get();
 }
 
-const Animation* RenderStyle::transitionForProperty(int property)
+const Animation* RenderStyle::transitionForProperty(int property) const
 {
     if (transitions()) {
         for (size_t i = 0; i < transitions()->size(); ++i) {
