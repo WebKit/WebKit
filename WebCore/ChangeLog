@@ -1,5 +1,16 @@
 2009-02-05  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoffrey Garen.
+
+        Fix missing checked toRenderBlock casts.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::availableHeightUsing):
+
+2009-02-05  Sam Weinig  <sam@webkit.org>
+
         Patch from Darin Adler.
         Reviewed by Sam Weinig.
 

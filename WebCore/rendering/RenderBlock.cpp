@@ -2965,7 +2965,7 @@ void RenderBlock::clearFloats()
     // First add in floats from the parent.
     int offset = y();
     if (parentHasFloats) {
-        RenderBlock* parentBlock = static_cast<RenderBlock *>(parent());
+        RenderBlock* parentBlock = toRenderBlock(parent());
         addIntrudingFloats(parentBlock, parentBlock->borderLeft() + parentBlock->paddingLeft(), offset);
     }
     
@@ -2981,7 +2981,7 @@ void RenderBlock::clearFloats()
     if (!prev || !prev->isRenderBlock())
         return;
     
-    RenderBlock* block = static_cast<RenderBlock *>(prev);
+    RenderBlock* block = toRenderBlock(prev);
     if (block->m_floatingObjects && block->floatBottom() > offset)
         addIntrudingFloats(block, xoffset, offset);
 
