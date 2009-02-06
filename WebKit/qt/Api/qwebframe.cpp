@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008,2009 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2007 Staikos Computing Services Inc.
 
     This library is free software; you can redistribute it and/or
@@ -255,24 +255,48 @@ QWebFrame::~QWebFrame()
     If you want to ensure that your QObjects remain accessible after loading a
     new URL, you should add them in a slot connected to the
     javaScriptWindowObjectCleared() signal.
+
+    The \a object will never be explicitly deleted by QtWebKit.
 */
 void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object)
 {
-      JSC::JSLock lock(false);
-      JSDOMWindow *window = toJSDOMWindow(d->frame);
-      JSC::Bindings::RootObject *root = d->frame->script()->bindingRootObject();
-      if (!window) {
-          qDebug() << "Warning: couldn't get window object";
-          return;
-      }
+    addToJavaScriptWindowObject(name, object, QScriptEngine::QtOwnership);
+}
 
-      JSC::ExecState* exec = window->globalExec();
+/*!
+    \fn void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object, QScriptEngine::ValueOwnership own)
+    \overload
 
-      JSC::JSObject *runtimeObject =
-          JSC::Bindings::QtInstance::getQtInstance(object, root)->createRuntimeObject(exec);
+    Make \a object available under \a name from within the frame's JavaScript
+    context. The \a object will be inserted as a child of the frame's window
+    object.
 
-      JSC::PutPropertySlot slot;
-      window->put(exec, JSC::Identifier(exec, (const UChar *) name.constData(), name.length()), runtimeObject, slot);
+    Qt properties will be exposed as JavaScript properties and slots as
+    JavaScript methods.
+
+    If you want to ensure that your QObjects remain accessible after loading a
+    new URL, you should add them in a slot connected to the
+    javaScriptWindowObjectCleared() signal.
+
+    The ownership of \a object is specified using \a own.
+*/
+void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object, QScriptEngine::ValueOwnership ownership)
+{
+    JSC::JSLock lock(false);
+    JSDOMWindow* window = toJSDOMWindow(d->frame);
+    JSC::Bindings::RootObject* root = d->frame->script()->bindingRootObject();
+    if (!window) {
+        qDebug() << "Warning: couldn't get window object";
+        return;
+    }
+
+    JSC::ExecState* exec = window->globalExec();
+
+    JSC::JSObject* runtimeObject =
+            JSC::Bindings::QtInstance::getQtInstance(object, root, ownership)->createRuntimeObject(exec);
+
+    JSC::PutPropertySlot slot;
+    window->put(exec, JSC::Identifier(exec, (const UChar *) name.constData(), name.length()), runtimeObject, slot);
 }
 
 /*!

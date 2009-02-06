@@ -20,6 +20,7 @@
 #ifndef BINDINGS_QT_INSTANCE_H_
 #define BINDINGS_QT_INSTANCE_H_
 
+#include <QtScript/qscriptengine.h>
 #include "runtime.h"
 #include "runtime_root.h"
 #include <qpointer.h>
@@ -59,7 +60,7 @@ public:
 
     QObject* getObject() const { return m_object; }
 
-    static PassRefPtr<QtInstance> getQtInstance(QObject*, PassRefPtr<RootObject>);
+    static PassRefPtr<QtInstance> getQtInstance(QObject*, PassRefPtr<RootObject>, QScriptEngine::ValueOwnership ownership);
 
     virtual bool getOwnPropertySlot(JSObject*, ExecState*, const Identifier&, PropertySlot&);
     virtual void put(JSObject*, ExecState*, const Identifier&, JSValuePtr, PutPropertySlot&);
@@ -67,14 +68,14 @@ public:
     static QtInstance* getInstance(JSObject*);
 
 private:
-    static PassRefPtr<QtInstance> create(QObject *instance, PassRefPtr<RootObject> rootObject)
+    static PassRefPtr<QtInstance> create(QObject *instance, PassRefPtr<RootObject> rootObject, QScriptEngine::ValueOwnership ownership)
     {
-        return adoptRef(new QtInstance(instance, rootObject));
+        return adoptRef(new QtInstance(instance, rootObject, ownership));
     }
 
     friend class QtClass;
     friend class QtField;
-    QtInstance(QObject*, PassRefPtr<RootObject>); // Factory produced only..
+    QtInstance(QObject*, PassRefPtr<RootObject>, QScriptEngine::ValueOwnership ownership); // Factory produced only..
     mutable QtClass* m_class;
     QPointer<QObject> m_object;
     QObject* m_hashkey;
@@ -82,6 +83,7 @@ private:
     mutable QHash<QString, QtField*> m_fields;
     mutable QSet<JSValuePtr> m_children;
     mutable QtRuntimeMetaMethod* m_defaultMethod;
+    QScriptEngine::ValueOwnership m_ownership;
 };
 
 } // namespace Bindings

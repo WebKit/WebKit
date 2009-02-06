@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008,2009 Nokia Corporation and/or its subsidiary(-ies)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -578,6 +578,7 @@ private slots:
     void popupFocus();
     void hitTestContent();
     void jsByteArray();
+    void ownership();
 private:
     QString  evalJS(const QString&s) {
         // Convert an undefined return variant to the string "undefined"
@@ -2298,6 +2299,69 @@ void tst_QWebFrame::jsByteArray()
     QCOMPARE(int(v.type()), int(QVariant::ByteArray));
 
     QCOMPARE(v.toByteArray(), ba);
+}
+
+void tst_QWebFrame::ownership()
+{
+    // test ownership
+    {
+        QPointer<QObject> ptr = new QObject();
+        QVERIFY(ptr != 0);
+        {
+            QWebPage page;
+            QWebFrame* frame = page.mainFrame();
+            frame->addToJavaScriptWindowObject("test", ptr, QScriptEngine::ScriptOwnership);
+        }
+        QVERIFY(ptr == 0);
+    }
+    {
+        QPointer<QObject> ptr = new QObject();
+        QVERIFY(ptr != 0);
+        QObject* before = ptr;
+        {
+            QWebPage page;
+            QWebFrame* frame = page.mainFrame();
+            frame->addToJavaScriptWindowObject("test", ptr, QScriptEngine::QtOwnership);
+        }
+        QVERIFY(ptr == before);
+        delete ptr;
+    }
+    {
+        QObject* parent = new QObject();
+        QObject* child = new QObject(parent);
+        QWebPage page;
+        QWebFrame* frame = page.mainFrame();
+        frame->addToJavaScriptWindowObject("test", child, QScriptEngine::QtOwnership);
+        QVariant v = frame->evaluateJavaScript("test");
+        QCOMPARE(qvariant_cast<QObject*>(v), child);
+        delete parent;
+        v = frame->evaluateJavaScript("test");
+        QCOMPARE(qvariant_cast<QObject*>(v), (QObject *)0);
+    }
+    {
+        QPointer<QObject> ptr = new QObject();
+        QVERIFY(ptr != 0);
+        {
+            QWebPage page;
+            QWebFrame* frame = page.mainFrame();
+            frame->addToJavaScriptWindowObject("test", ptr, QScriptEngine::AutoOwnership);
+        }
+        // no parent, so it should be like ScriptOwnership
+        QVERIFY(ptr == 0);
+    }
+    {
+        QObject* parent = new QObject();
+        QPointer<QObject> child = new QObject(parent);
+        QVERIFY(child != 0);
+        {
+            QWebPage page;
+            QWebFrame* frame = page.mainFrame();
+            frame->addToJavaScriptWindowObject("test", child, QScriptEngine::AutoOwnership);
+        }
+        // has parent, so it should be like QtOwnership
+        QVERIFY(child != 0);
+        delete parent;
+    }
 }
 
 QTEST_MAIN(tst_QWebFrame)

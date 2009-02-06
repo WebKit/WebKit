@@ -1,3 +1,30 @@
+2009-02-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Added support for different ownership models for wrapped QObjects in
+        the JavaScript environment.
+
+        * bindings/js/ScriptControllerQt.cpp:
+        (WebCore::ScriptController::createScriptInstanceForWidget): Specify
+        QtOwnership for scriptable widgets.
+        * bridge/npruntime_internal.h: Add "NormalState" to the list of
+        undef'ed macros as an included Qt header uses "NormalState" as value
+        in an enum.
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::QtInstance): Save and initialize ownership
+        member.
+        (JSC::Bindings::QtInstance::~QtInstance): Respect
+        QScriptEngine::ValueOwnership policy with regards to wrapped m_object.
+        (JSC::Bindings::QtInstance::getQtInstance): Pass the ownership down to
+        the instance.
+        * bridge/qt/qt_instance.h:
+        (JSC::Bindings::QtInstance::create): Ditto.
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertQVariantToValue): Use QtOwnership for
+        automatically wrapped QObjects.
+        (JSC::Bindings::QtConnectionObject::execute): Ditto.
+
 2009-02-05  Maciej Stachowiak  <mjs@apple.com> and Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein and Geoff Garen.

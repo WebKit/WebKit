@@ -47,4 +47,5 @@
     #undef Bool
     #undef FontChange
     #undef GrayScale
+    #undef NormalState
 #endif
