@@ -22,6 +22,8 @@
 #ifndef TypeTraits_h
 #define TypeTraits_h
 
+#include "Platform.h"
+
 namespace WTF {
 
     // The following are provided in this file:

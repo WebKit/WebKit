@@ -1,3 +1,12 @@
+2009-02-05  Adam Roben  <aroben@apple.com>
+
+        Build fix
+
+        Rubberstamped by Sam Weinig.
+
+        * wtf/TypeTraits.h: Include Platform.h, since this header uses macros
+        defined there.
+
 2009-02-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
