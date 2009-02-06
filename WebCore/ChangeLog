@@ -1,8 +1,51 @@
+2009-02-06  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23741>
+
+        Bug 23798: KURLGoogle needs support for protocolInHTTPFamily
+        <https://bugs.webkit.org/show_bug.cgi?id=23798>
+
+        Add protocolInHTTPFamily() to the KURLGoogle implementation.
+        This is another chromium build fix to mirror r40553.
+
+        While in this file, I did some style fixes and consistency fixes:
+        + fixed many_occurences_of_underscoring_naming
+        + usages of NULL
+        + comparisons to 0
+        + changed the copyright remove an extraneous , and capitalize the (C)
+          which was suggested for other files that I've submitted.
+
+        No observable change in behavior, so no test.
+
+        * platform/KURL.h:
+        (WebCore::KURL::protocolInHTTPFamily):
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURLCharsetConverter::ConvertFromUTF16):
+        (WebCore::lowerCaseEqualsASCII):
+        (WebCore::KURLGooglePrivate::KURLGooglePrivate):
+        (WebCore::KURLGooglePrivate::setUtf8):
+        (WebCore::KURLGooglePrivate::setAscii):
+        (WebCore::KURLGooglePrivate::init):
+        (WebCore::KURLGooglePrivate::initProtocolInHTTPFamily):
+        (WebCore::KURLGooglePrivate::copyTo):
+        (WebCore::KURLGooglePrivate::replaceComponents):
+        (WebCore::KURL::KURL):
+        (WebCore::KURL::createCFURL):
+        (WebCore::KURL::isEmpty):
+        (WebCore::KURL::protocolInHTTPFamily):
+        (WebCore::KURL::query):
+        (WebCore::decodeURLEscapeSequences):
+        (WebCore::KURL::protocolIs):
+        (WebCore::encodeWithURLEscapeSequences):
+        (WebCore::KURL::invalidate):
+        (WebCore::equalIgnoringRef):
+        * platform/KURLGooglePrivate.h:
+
 2009-02-06  David Kilzer  <ddkilzer@apple.com>
 
         Bug 23741: StyleRareNonInheritedData::operator==() should not compare ContentData objects by pointer
-
-        <https://bugs.webkit.org/show_bug.cgi?id=23741>
 
         Reviewed by Darin Adler.
 

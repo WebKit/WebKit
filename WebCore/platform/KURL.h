@@ -129,7 +129,7 @@ public:
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
     bool protocolIs(const char*) const;
-    bool protocolInHTTPFamily() const { return m_protocolInHTTPFamily; }
+    bool protocolInHTTPFamily() const;
     bool isLocalFile() const;
 
     void setProtocol(const String&);
@@ -312,6 +312,11 @@ inline bool KURL::isEmpty() const
 inline bool KURL::isValid() const
 {
     return m_isValid;
+}
+
+inline bool KURL::protocolInHTTPFamily() const
+{
+    return m_protocolInHTTPFamily;
 }
 
 inline unsigned KURL::hostStart() const

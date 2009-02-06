@@ -59,9 +59,9 @@ namespace WebCore {
         // be NULL (this implies UTF-8). These initializers require that the object
         // has just been created and the strings are NULL. Do not call on an
         // already-constructed object.
-        void init(const KURL& base, const char* rel, int relLen,
+        void init(const KURL& base, const char* rel, int relLength,
                   const TextEncoding* queryEncoding);
-        void init(const KURL& base, const UChar* rel, int relLen,
+        void init(const KURL& base, const UChar* rel, int relLength,
                   const TextEncoding* queryEncoding);
 
         // Does a deep copy to the given output object.
@@ -78,8 +78,8 @@ namespace WebCore {
         // Setters for the data. Using the ASCII version when you know the
         // data is ASCII will be slightly more efficient. The UTF-8 version
         // will always be correct if the caller is unsure.
-        void setUtf8(const char* data, int dataLen);
-        void setAscii(const char* data, int dataLen);
+        void setUtf8(const char* data, int dataLength);
+        void setAscii(const char* data, int dataLength);
 
         // TODO(brettw) we can support an additional optimization.  Make this
         // buffer support both optinal Strings and UTF-8 data. This way, we can use
@@ -92,9 +92,12 @@ namespace WebCore {
         const String& string() const;
 
         bool m_isValid;
+        bool m_protocolInHTTPFamily;
         url_parse::Parsed m_parsed; // Indexes into the UTF-8 version of the string.
 
     private:
+        void initProtocolInHTTPFamily();
+
         CString m_utf8;
 
         // Set to true when the caller set us using the ASCII setter. We can
