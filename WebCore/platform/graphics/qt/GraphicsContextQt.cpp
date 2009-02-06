@@ -797,7 +797,7 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     QPainter::CompositionMode currentCompositionMode = p->compositionMode();
     if (p->paintEngine()->hasFeature(QPaintEngine::PorterDuff))
         p->setCompositionMode(QPainter::CompositionMode_Source);
-    p->eraseRect(rect);
+    p->fillRect(rect, Qt::transparent);
     if (p->paintEngine()->hasFeature(QPaintEngine::PorterDuff))
         p->setCompositionMode(currentCompositionMode);
 }

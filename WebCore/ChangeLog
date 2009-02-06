@@ -1,3 +1,16 @@
+2009-02-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Fix bug in clearRect(). Use fillRect() instead of eraseRect() to get
+        the context transparent.
+
+        [QT] clearRect fill's a given rect with white
+        https://bugs.webkit.org/show_bug.cgi?id=23728
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clearRect):
+
 2009-02-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
