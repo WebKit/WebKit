@@ -1,3 +1,18 @@
+2009-02-06  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23801
+        Add custom V8 bindings for SVG.
+
+        * bindings/v8/custom/V8SVGElementInstanceCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8SVGLengthCustom.cpp: Added.
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8SVGMatrixCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-02-06  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.
