@@ -1,3 +1,10 @@
+2009-02-06  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix.  
+
+        * WebKit.vcproj/WebKit.vcproj: Re-enable missing file in Release
+          target of Cairo.
+
 2009-02-06  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Dan Bernstein.

@@ -1448,7 +1448,6 @@
 				>
 				<FileConfiguration
 					Name="Release_Cairo|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
