@@ -1,3 +1,13 @@
+2009-02-05  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Rubber-stamped by George Staikos.
+
+        Regenerate input.wml result on mac, it was generated with Qt before.
+
+        * platform/mac/fast/wml/input-expected.checksum:
+        * platform/mac/fast/wml/input-expected.png:
+        * platform/mac/fast/wml/input-expected.txt:
+
 2009-02-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Layer.

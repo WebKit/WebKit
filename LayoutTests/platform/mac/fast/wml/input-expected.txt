@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x77
-  RenderBlock {wml} at (0,0) size 800x77
-    RenderBlock {card} at (8,16) size 784x53
+layer at (0,0) size 800x81
+  RenderBlock {wml} at (0,0) size 800x81
+    RenderBlock {card} at (8,16) size 784x57
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 430x18
           text run at (0,0) width 430: "Very simple test, checking that input elements are rendered correctly"
-      RenderBlock (anonymous) at (0,34) size 784x19
-        RenderTextControl {input} at (0,0) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (148,0) size 4x18
-          text run at (148,0) width 4: " "
-        RenderTextControl {input} at (152,0) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBlock (anonymous) at (0,34) size 784x23
+        RenderTextControl {input} at (2,2) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (152,2) size 4x18
+          text run at (152,2) width 4: " "
+        RenderTextControl {input} at (158,2) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-layer at (11,53) size 142x13
+layer at (13,55) size 142x13
   RenderBlock {div} at (3,3) size 142x13
     RenderText {#text} at (1,0) size 23x13
       text run at (1,0) width 23: "Test"
-layer at (163,53) size 142x13
+layer at (169,55) size 142x13
   RenderBlock {div} at (3,3) size 142x13
     RenderText {#text} at (1,0) size 50x13
       text run at (1,0) width 50: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
