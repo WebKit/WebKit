@@ -54,17 +54,11 @@ using namespace WebCore;
 
         GraphicsContext graphicsContext(context);
 
-        // When drawing into CALayers, we need to turn off font smoothing (aka LCD antialiasing).
-        bool wasSmoothing = graphicsContext.usingFontSmoothing();
-        graphicsContext.setUseFontSmoothing(false);
-
         // It's important to get the clip from the context, because it may be significantly
         // smaller than the layer bounds (e.g. tiled layers)
         CGRect clipBounds = CGContextGetClipBoundingBox(context);
         IntRect clip(enclosingIntRect(clipBounds));
         layerContents->paintGraphicsLayerContents(graphicsContext, clip);
-
-        graphicsContext.setUseFontSmoothing(wasSmoothing);
 
         [NSGraphicsContext restoreGraphicsState];
     }

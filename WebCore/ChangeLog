@@ -1,3 +1,13 @@
+2009-02-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix build when ACCELERATED_COMPOSITING is turned on.
+
+        Remove font smoothing changes that will be committed
+        separately.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (WebCore::if):
+
 2009-02-06  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
