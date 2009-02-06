@@ -1,3 +1,16 @@
+2009-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=23362
+
+        If the WebHTMLView uses accelerated compositing, we need for force
+        the on-screen capture path and also force animations to start with -display
+        since the DRT window has autodisplay disabled.
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+
 2009-02-03  miggilin  <mr.diggilin@gmail.com>
 
         Reviewed by Darin Adler.
