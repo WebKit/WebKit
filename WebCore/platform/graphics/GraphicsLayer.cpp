@@ -445,7 +445,7 @@ void GraphicsLayer::setZPosition(float position)
 }
 #endif
 
-void writeIndent(TextStream& ts, int indent)
+static void writeIndent(TextStream& ts, int indent)
 {
     for (int i = 0; i != indent; ++i)
         ts << "  ";

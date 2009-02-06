@@ -122,11 +122,6 @@ inline void copyTransform(CATransform3D& toT3D, const TransformationMatrix& t)
     toT3D = CATransform3DMakeAffineTransform(t);
 }
 
-TransformationMatrix CAToTransform3D(const CATransform3D& fromT3D)
-{
-    return TransformationMatrix(CATransform3DGetAffineTransform(fromT3D));
-}
-
 static NSValue* getTransformFunctionValue(const GraphicsLayer::TransformValue& transformValue, size_t index, const IntSize& size, TransformOperation::OperationType transformType)
 {
     TransformOperation* op = (index >= transformValue.value()->operations().size()) ? 0 : transformValue.value()->operations()[index].get();

@@ -1,5 +1,16 @@
 2009-02-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix build when ACCELERATED_COMPOSITING is turned on.
+        
+        writeIndent() needs to be static to avoid warnings on some OSes,
+        and remove unused CAToTransform3D() method.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::writeIndent):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+
+2009-02-05  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Anders Carlsson
 
         Add some methods to the TransformOperation classes that are required
