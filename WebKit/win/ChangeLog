@@ -1,3 +1,11 @@
+2009-02-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Sam Weinig <sam@webkit.org>
+
+        Build fix.  Update file for recently removed EventTargetNodeCast.
+        * DOMCoreClasses.cpp:
+        (DOMNode::dispatchEvent):
+
 2009-02-05  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Dave Hyatt.

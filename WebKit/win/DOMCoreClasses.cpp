@@ -381,7 +381,7 @@ HRESULT STDMETHODCALLTYPE DOMNode::dispatchEvent(
         return hr;
 
     WebCore::ExceptionCode ec = 0;
-    *result = WebCore::EventTargetNodeCast(m_node)->dispatchEvent(domEvent->coreEvent(), ec) ? TRUE : FALSE;
+    *result = m_node->dispatchEvent(domEvent->coreEvent(), ec) ? TRUE : FALSE;
 #if 0   // FIXME - raise dom exceptions
     WebCore::raiseOnDOMError(ec);
 #endif
