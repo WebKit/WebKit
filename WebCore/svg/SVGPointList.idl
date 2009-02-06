@@ -32,7 +32,7 @@ module svg {
             raises(DOMException);
         [JSCCustom] SVGPoint initialize(in SVGPoint item)
             raises(DOMException, SVGException);
-        [Custom] SVGPoint getItem(in unsigned long index)
+        [JSCCustom] SVGPoint getItem(in unsigned long index)
             raises(DOMException);
         [JSCCustom] SVGPoint insertItemBefore(in SVGPoint item, in unsigned long index)
             raises(DOMException, SVGException);
