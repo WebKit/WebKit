@@ -1,5 +1,15 @@
 2009-02-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Minor clenaup: fix brace style in CompositeAnimationPrivate::updateTransitions(),
+        and correct a usage of UNUSED_PARAM().
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::updateTransitions):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::startAnimation):
+
+2009-02-05  Simon Fraser  <simon.fraser@apple.com>
+
         Fix build when ACCELERATED_COMPOSITING is turned on.
         
         animationOfPropertyIsAccelerated() needs to be public because

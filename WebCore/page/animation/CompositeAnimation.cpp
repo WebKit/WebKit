@@ -183,8 +183,7 @@ void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, Render
 #if USE(ACCELERATED_COMPOSITING)
                     // For accelerated animations we need to return a new RenderStyle with the _current_ value
                     // of the property, so that restarted transitions use the correct starting point.
-                    if (AnimationBase::animationOfPropertyIsAccelerated(prop))
-                    {
+                    if (AnimationBase::animationOfPropertyIsAccelerated(prop)) {
                         if (!modifiedCurrentStyle)
                             modifiedCurrentStyle = RenderStyle::clone(currentStyle);
 
