@@ -711,7 +711,7 @@ qint64 QWebSettings::offlineStorageDefaultQuota()
 }
 
 /*!
-    \since 4.5
+    \internal
 
     Sets the path for HTML5 offline web application cache storage to \a path.
 
@@ -729,7 +729,7 @@ void QWEBKIT_EXPORT qt_websettings_setOfflineWebApplicationCachePath(const QStri
 }
 
 /*!
-    \since 4.5
+    \internal
 
     Returns the path of the HTML5 offline web application cache storage
     or an empty string if the feature is disabled.

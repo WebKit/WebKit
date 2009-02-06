@@ -1,3 +1,11 @@
+2009-02-06  Kavindra Palaraja  <kavindra.palaraja@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc - made 2 functions internal as they are not part of the API anymore (and this fixes 2 qdoc warnings)
+
+        * Api/qwebsettings.cpp:
+
 2009-02-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
