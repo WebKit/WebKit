@@ -311,8 +311,9 @@ void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValuePt
 
 void ProxyInstance::invalidate()
 {
-    _WKPHNPObjectRelease(m_instanceProxy->hostProxy()->port(),
-                         m_instanceProxy->pluginID(), m_objectID);
+    if (NetscapePluginHostProxy* hostProxy = m_instanceProxy->hostProxy())
+        _WKPHNPObjectRelease(hostProxy->port(),
+                             m_instanceProxy->pluginID(), m_objectID);
     m_instanceProxy = 0;
 }
 

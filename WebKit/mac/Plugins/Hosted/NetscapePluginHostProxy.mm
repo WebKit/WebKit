@@ -61,6 +61,7 @@ static PluginProxyMap& pluginProxyMap()
 
 NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort, const ProcessSerialNumber& pluginHostPSN)
     : m_clientPort(clientPort)
+    , m_portSet(MACH_PORT_NULL)
     , m_pluginHostPort(pluginHostPort)
     , m_isModal(false)
     , m_menuBarIsVisible(true)
@@ -94,6 +95,13 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
 NetscapePluginHostProxy::~NetscapePluginHostProxy()
 {
     pluginProxyMap().remove(m_clientPort);
+
+    // Free the port set
+    if (m_portSet) {
+        mach_port_extract_member(mach_task_self(), m_clientPort, m_portSet);
+        mach_port_extract_member(mach_task_self(), CFMachPortGetPort(m_deadNameNotificationPort.get()), m_portSet);
+        mach_port_destroy(mach_task_self(), m_portSet);
+    }
     
     ASSERT(m_clientPortSource);
 #ifdef USE_LIBDISPATCH
@@ -220,6 +228,51 @@ void NetscapePluginHostProxy::setModal(bool modal)
         endModal();
 }
     
+bool NetscapePluginHostProxy::processRequests()
+{
+    if (!m_portSet) {
+        mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_PORT_SET, &m_portSet);
+        mach_port_insert_member(mach_task_self(), m_clientPort, m_portSet);
+        mach_port_insert_member(mach_task_self(), CFMachPortGetPort(m_deadNameNotificationPort.get()), m_portSet);
+    }
+    
+    char buffer[4096];
+    
+    mach_msg_header_t* msg = reinterpret_cast<mach_msg_header_t*>(buffer);
+    
+    kern_return_t kr = mach_msg(msg, MACH_RCV_MSG, 0, sizeof(buffer), m_portSet, 0, MACH_PORT_NULL);
+    
+    if (kr != KERN_SUCCESS) {
+        LOG_ERROR("Could not receive mach message, error %x", kr);
+        return false;
+    }
+    
+    if (msg->msgh_local_port == m_clientPort) {
+        __ReplyUnion__WKWebKitPluginClient_subsystem reply;
+        mach_msg_header_t* replyHeader = reinterpret_cast<mach_msg_header_t*>(&reply);
+        
+        if (WebKitPluginClient_server(msg, replyHeader) && replyHeader->msgh_remote_port != MACH_PORT_NULL) {
+            kr = mach_msg(replyHeader, MACH_SEND_MSG, replyHeader->msgh_size, 0, MACH_PORT_NULL, 0, MACH_PORT_NULL);
+            
+            if (kr != KERN_SUCCESS) {
+                LOG_ERROR("Could not send mach message, error %x", kr);
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    if (msg->msgh_local_port == CFMachPortGetPort(m_deadNameNotificationPort.get())) {
+        ASSERT(msg->msgh_id == MACH_NOTIFY_DEAD_NAME);
+        pluginHostDied();
+        return false;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 } // namespace WebKit
 
 using namespace WebKit;

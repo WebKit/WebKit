@@ -126,16 +126,14 @@ void NetscapePluginInstanceProxy::stopAllStreams()
         streamsCopy[i]->stop();
 }
 
-void NetscapePluginInstanceProxy::destroy()
+void NetscapePluginInstanceProxy::cleanup()
 {
     stopAllStreams();
-    
-    _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID);
     
     // Clear the object map, this will cause any outstanding JS objects that the plug-in had a reference to 
     // to go away when the next garbage collection takes place.
     m_objects.clear();
-
+    
     if (Frame* frame = core([m_pluginView webFrame]))
         frame->script()->cleanupScriptObjectsForPlugin(m_pluginView);
     
@@ -146,7 +144,14 @@ void NetscapePluginInstanceProxy::destroy()
     ProxyInstanceSet::const_iterator end = instances.end();
     for (ProxyInstanceSet::const_iterator it = instances.begin(); it != end; ++it)
         (*it)->invalidate();
-    
+}
+
+void NetscapePluginInstanceProxy::destroy()
+{
+    _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID);
+
+    cleanup();
+
     m_pluginHostProxy->removePluginInstance(this);
     m_pluginHostProxy = 0;
 }
@@ -163,9 +168,9 @@ void NetscapePluginInstanceProxy::disconnectStream(HostedNetscapePluginStream* s
     
 void NetscapePluginInstanceProxy::pluginHostDied()
 {
-    stopAllStreams();
-
     m_pluginHostProxy = 0;
+
+    cleanup();
     
     [m_pluginView pluginHostDied];
     m_pluginView = nil;
@@ -467,8 +472,7 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
 void NetscapePluginInstanceProxy::processRequestsAndWaitForReply()
 {
     while (!m_currentReply.get()) {
-        kern_return_t kr = mach_msg_server_once(WebKitPluginClient_server, WKWebKitPluginClient_subsystem.maxsize + MAX_TRAILER_SIZE, m_pluginHostProxy->clientPort(), 0);
-        if (kr != KERN_SUCCESS) {
+        if (!m_pluginHostProxy->processRequests()) {
             m_currentReply.reset();
             break;
         }

@@ -1,3 +1,44 @@
+2009-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6562220> 
+        CrashTracer: [USER] 21 crashes in Safari at com.apple.WebKit • WebKit::NetscapePluginHostProxy::port
+        
+        Make the handling of crashes in the plug-in host more robust.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        Add m_portSet.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        Initialize m_portSet.
+        
+        (WebKit::NetscapePluginHostProxy::~NetscapePluginHostProxy):
+        Free m_portSet.
+        
+        (WebKit::NetscapePluginHostProxy::processRequests):
+        Listen for messages on the port set. If we get a message to the port death notification port,
+        then call pluginHostDied. Otherwise, process the message.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::cleanup):
+        Factor code that should be shared between destroy() and pluginHostDied() into cleanup.
+        
+        (WebKit::NetscapePluginInstanceProxy::destroy):
+        Call cleanup().
+        
+        (WebKit::NetscapePluginInstanceProxy::pluginHostDied):
+        Call cleanup().
+        
+        (WebKit::NetscapePluginInstanceProxy::processRequestsAndWaitForReply):
+        Call NetscapePluginHostProxy::processRequests.
+        
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invalidate):
+        Add a null check for the host proxy.
+
 2009-02-06  Dan Bernstein  <mitz@apple.com>
 
         - try to fix the Tiger build
