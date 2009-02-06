@@ -270,11 +270,16 @@ double AnimationControllerPrivate::beginAnimationUpdateTime()
 
 PassRefPtr<RenderStyle> AnimationControllerPrivate::getAnimatedStyleForRenderer(RenderObject* renderer)
 {
-    // Make sure animationUpdateTime is updated, so that it is current even if no
-    // styleChange has happened (e.g. accelerated animations)
-    setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
+    if (!renderer)
+        return 0;
 
-    RefPtr<CompositeAnimation> rendererAnimations = accessCompositeAnimation(renderer);
+    RefPtr<CompositeAnimation> rendererAnimations = m_compositeAnimations.get(renderer);
+    if (!rendererAnimations)
+        return renderer->style();
+    
+    // Make sure animationUpdateTime is updated, so that it is current even if no
+    // styleChange has happened (e.g. accelerated animations).
+    setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
     return rendererAnimations->getAnimatedStyle();
 }
 

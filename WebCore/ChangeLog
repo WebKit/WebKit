@@ -1,5 +1,16 @@
 2009-02-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Anders Carlsson
+
+        getAnimatedStyleForRenderer() should not create a new
+        CompositeAnimation if the object isn't already animating, and
+        it should just fall back to returning renderer->style().
+        
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::getAnimatedStyleForRenderer):
+
+2009-02-05  Simon Fraser  <simon.fraser@apple.com>
+
         Fix build when ACCELERATED_COMPOSITING is turned on.
        
         Give RenderLayerBacking some love after the great
