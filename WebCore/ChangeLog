@@ -1,3 +1,13 @@
+2009-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        Fix mis-typed enum value which is hidden inside #ifdefs so didn't break
+        the build.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateCompositingLayers):
+
 2009-02-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

@@ -374,7 +374,7 @@ void FrameView::updateCompositingLayers(CompositingUpdate updateType)
     if (!view || !view->usesCompositing())
         return;
 
-    if (updateType == ForcedUpdate)
+    if (updateType == ForcedCompositingUpdate)
         view->compositor()->setCompositingLayersNeedUpdate();
     
     view->compositor()->updateCompositingLayers();
