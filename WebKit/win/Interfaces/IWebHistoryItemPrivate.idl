@@ -62,4 +62,8 @@ interface IWebHistoryItemPrivate : IUnknown
 
     HRESULT redirectURLs([out, retval] IEnumVARIANT** result);
     HRESULT visitedWithTitle([in] BSTR title);
+
+    HRESULT getDailyVisitCounts([out] int* number, [out, retval] int** counts);
+    HRESULT getWeeklyVisitCounts([out] int* number, [out, retval] int** counts);
+    HRESULT recordInitialVisit();
 }

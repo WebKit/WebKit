@@ -103,7 +103,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setLastVisitWasHTTPNonGet(BOOL HTTPNonGet);
     virtual HRESULT STDMETHODCALLTYPE redirectURLs(IEnumVARIANT**);
     virtual HRESULT STDMETHODCALLTYPE visitedWithTitle(BSTR title);
-
+    virtual HRESULT STDMETHODCALLTYPE getDailyVisitCounts(int* number, int** counts);
+    virtual HRESULT STDMETHODCALLTYPE getWeeklyVisitCounts(int* number, int** counts);
+    virtual HRESULT STDMETHODCALLTYPE recordInitialVisit();
     // WebHistoryItem
     WebCore::HistoryItem* historyItem() const;
 

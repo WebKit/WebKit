@@ -1,3 +1,38 @@
+2009-02-05  Maciej Stachowiak  <mjs@apple.com> and Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein and Geoff Garen.
+
+        - WebCore code to track per-day and per-week visit counts in history
+
+        The basic idea is as follows: we track daily visits for up to 13
+        days, and weekly visits for up to 5 weeks past the end of the
+        current daily visits. As soon as the number of daily counts goes
+        over 13, we squish them down into weeks, and then prune the excess weeks.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem): Remove bogus whitespace.
+        (WebCore::timeToDay): Helper function: convert time to days from the epoch.
+        (WebCore::HistoryItem::padDailyCountsForNewVisit): Insert 0 counts if
+        a site is visited after a span of days.
+        (WebCore::HistoryItem::collapseDailyVisitsToWeekly): Core day/week upgrade
+        algorithm as described above.
+        (WebCore::HistoryItem::recordVisitAtTime): Use above helpers to record all
+        info about a visit to this history item.
+        (WebCore::HistoryItem::setLastVisitedTime): Updated.
+        (WebCore::HistoryItem::visited): Updated.
+        (WebCore::HistoryItem::recordInitialVisit): New function to
+        handle recording data about the very first visit, replacing the
+        prior practice of explicitly setting visit count to 1.
+        (WebCore::HistoryItem::adoptVisitCounts): Take ownership of
+        daily and weekly visit count vectors.
+        (WebCore::HistoryItem::mergeAutoCompleteHints): Added a comment
+        noting that this function doesn't work properly now (though
+        this shouldn't matter much in practice.)
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::dailyVisitCounts): Accessor for daily counts.
+        (WebCore::HistoryItem::weeklyVisitCounts): Ditto for weekly counts.
+        * WebCore.base.exp: Add new symbols and sort.
+
 2009-02-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

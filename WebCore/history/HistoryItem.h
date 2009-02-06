@@ -122,6 +122,7 @@ public:
     
     void setFormInfoFromRequest(const ResourceRequest&);
 
+    void recordInitialVisit();
 
     void setVisitCount(int);
     void setLastVisitWasFailure(bool wasFailure) { m_lastVisitWasFailure = wasFailure; }
@@ -165,6 +166,10 @@ public:
     int showTreeWithIndent(unsigned indentLevel) const;
 #endif
 
+    void adoptVisitCounts(Vector<int>& dailyCounts, Vector<int>& weeklyCounts);
+    const Vector<int>& dailyVisitCounts() { return m_dailyVisitCounts; }
+    const Vector<int>& weeklyVisitCounts() { return m_weeklyVisitCounts; }
+
 private:
     HistoryItem();
     HistoryItem(const String& urlString, const String& title, double lastVisited);
@@ -172,6 +177,10 @@ private:
     HistoryItem(const KURL& url, const String& target, const String& parent, const String& title);
 
     HistoryItem(const HistoryItem&);
+
+    void padDailyCountsForNewVisit(double time);
+    void collapseDailyVisitsToWeekly();
+    void recordVisitAtTime(double);
 
     String m_urlString;
     String m_originalURLString;
@@ -192,6 +201,8 @@ private:
     bool m_lastVisitWasFailure;
     bool m_isTargetItem;
     int m_visitCount;
+    Vector<int> m_dailyVisitCounts;
+    Vector<int> m_weeklyVisitCounts;
 
     OwnPtr<Vector<String> > m_redirectURLs;
 

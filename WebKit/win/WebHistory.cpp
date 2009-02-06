@@ -705,7 +705,7 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
         if (FAILED(entry->initWithURLString(BString(url.string()), BString(title), lastVisited)))
             return;
         
-        item->setVisitCount(1);
+        item->recordInitialVisit();
 
         CFDictionarySetValue(m_entriesByURL.get(), urlString.get(), entry);
     }

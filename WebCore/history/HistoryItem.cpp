@@ -74,7 +74,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
-{    
+{
     iconDatabase()->retainIconForPageURL(m_urlString);
 }
 
@@ -114,6 +114,8 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_lastVisitWasFailure(item.m_lastVisitWasFailure)
     , m_isTargetItem(item.m_isTargetItem)
     , m_visitCount(item.m_visitCount)
+    , m_dailyVisitCounts(item.m_dailyVisitCounts)
+    , m_weeklyVisitCounts(item.m_weeklyVisitCounts)
     , m_formContentType(item.m_formContentType)
 {
     ASSERT(!item.m_cachedPage);
@@ -246,19 +248,67 @@ void HistoryItem::setParent(const String& parent)
     m_parent = parent;
 }
 
+static inline int timeToDay(double time)
+{
+    static const double secondsPerDay = 60 * 60 * 24;
+    return static_cast<int>(ceil(time / secondsPerDay));
+}
+
+void HistoryItem::padDailyCountsForNewVisit(double time)
+{
+    if (m_dailyVisitCounts.isEmpty())
+        m_dailyVisitCounts.prepend(m_visitCount);
+
+    int daysElapsed = timeToDay(time) - timeToDay(m_lastVisitedTime);
+
+    if (daysElapsed < 0)
+      daysElapsed = 0;
+
+    Vector<int> padding;
+    padding.fill(0, daysElapsed);
+    m_dailyVisitCounts.prepend(padding);
+}
+
+static const size_t daysPerWeek = 7;
+static const size_t maxDailyCounts = 2 * daysPerWeek - 1;
+static const size_t maxWeeklyCounts = 5;
+
+void HistoryItem::collapseDailyVisitsToWeekly()
+{
+    while (m_dailyVisitCounts.size() > maxDailyCounts) {
+        int oldestWeekTotal = 0;
+        for (size_t i = 0; i < daysPerWeek; i++)
+            oldestWeekTotal += m_dailyVisitCounts[m_dailyVisitCounts.size() - daysPerWeek + i];
+        m_dailyVisitCounts.shrink(m_dailyVisitCounts.size() - daysPerWeek);
+        m_weeklyVisitCounts.prepend(oldestWeekTotal);
+    }
+
+    if (m_weeklyVisitCounts.size() > maxWeeklyCounts)
+        m_weeklyVisitCounts.shrink(maxWeeklyCounts);
+}
+
+void HistoryItem::recordVisitAtTime(double time)
+{
+    padDailyCountsForNewVisit(time);
+
+    m_lastVisitedTime = time;
+    m_visitCount++;
+
+    m_dailyVisitCounts[0]++;
+
+    collapseDailyVisitsToWeekly();
+}
+
 void HistoryItem::setLastVisitedTime(double time)
 {
-    if (m_lastVisitedTime != time) {
-        m_lastVisitedTime = time;
-        m_visitCount++;
-    }
+    if (m_lastVisitedTime != time)
+        recordVisitAtTime(time);
 }
 
 void HistoryItem::visited(const String& title, double time)
 {
     m_title = title;
-    m_lastVisitedTime = time;
-    m_visitCount++;
+    recordVisitAtTime(time);
 }
 
 int HistoryItem::visitCount() const
@@ -266,9 +316,23 @@ int HistoryItem::visitCount() const
     return m_visitCount;
 }
 
+void HistoryItem::recordInitialVisit()
+{
+    ASSERT(!m_visitCount);
+    recordVisitAtTime(m_lastVisitedTime);
+}
+
 void HistoryItem::setVisitCount(int count)
 {
     m_visitCount = count;
+}
+
+void HistoryItem::adoptVisitCounts(Vector<int>& dailyCounts, Vector<int>& weeklyCounts)
+{
+  m_dailyVisitCounts.clear();
+  m_dailyVisitCounts.swap(dailyCounts);
+  m_weeklyVisitCounts.clear();
+  m_weeklyVisitCounts.swap(weeklyCounts);
 }
 
 const IntPoint& HistoryItem::scrollPoint() const
@@ -395,6 +459,9 @@ bool HistoryItem::isCurrentDocument(Document* doc) const
 
 void HistoryItem::mergeAutoCompleteHints(HistoryItem* otherItem)
 {
+    // FIXME: this is broken - we should be merging the daily counts
+    // somehow.  but this is to support API that's not really used in
+    // practice so leave it broken for now.
     ASSERT(otherItem);
     if (otherItem != this)
         m_visitCount += otherItem->m_visitCount;
