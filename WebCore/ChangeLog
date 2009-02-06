@@ -1,6 +1,23 @@
 2009-02-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix build when ACCELERATED_COMPOSITING is turned on.
+       
+        Give RenderLayerBacking some love after the great
+        RenderBoxModelObject split.
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateLayerTransform):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::contentsBox):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::renderer):
+
+2009-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix build when ACCELERATED_COMPOSITING is turned on.
         
         writeIndent() needs to be static to avoid warnings on some OSes,
         and remove unused CAToTransform3D() method.
