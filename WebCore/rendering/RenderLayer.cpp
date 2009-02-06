@@ -78,6 +78,7 @@
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/UnusedParam.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerBacking.h"
