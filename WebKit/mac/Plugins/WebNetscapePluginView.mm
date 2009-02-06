@@ -35,6 +35,7 @@
 #import "WebFrameInternal.h" 
 #import "WebFrameView.h"
 #import "WebGraphicsExtras.h"
+#import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitSystemInterface.h"
@@ -92,6 +93,7 @@ static inline bool isDrawingModelQuickDraw(NPDrawingModel drawingModel)
 - (void)_destroyPlugin;
 - (NSBitmapImageRep *)_printedPluginBitmap;
 - (void)_redeliverStream;
+- (BOOL)_shouldCancelSrcStream;
 @end
 
 static WebNetscapePluginView *currentPluginView = nil;
@@ -1087,6 +1089,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)loadStream
 {
+    if ([self _shouldCancelSrcStream])
+        return;
+    
     if (_loadManually) {
         [self _redeliverStream];
         return;
@@ -1361,7 +1366,20 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return;
 
     if (!_manualStream->plugin()) {
-
+        // Check if the load should be cancelled
+        if ([self _shouldCancelSrcStream]) {
+            NSURLResponse *response = [[self dataSource] response];
+            
+            NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
+                                                            contentURL:[response URL]
+                                                         pluginPageURL:nil
+                                                            pluginName:nil // FIXME: Get this from somewhere
+                                                              MIMEType:[response MIMEType]];
+            [[self dataSource] _documentLoader]->cancelMainResourceLoad(error);
+            [error release];
+            return;
+        }
+        
         _manualStream->setRequestURL([[[self dataSource] request] URL]);
         _manualStream->setPlugin([self plugin]);
         ASSERT(_manualStream->plugin());
@@ -2193,6 +2211,19 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
 @end
 
 @implementation WebNetscapePluginView (Internal)
+
+- (BOOL)_shouldCancelSrcStream
+{
+    ASSERT(_isStarted);
+    
+    // Check if we should cancel the load
+    NPBool cancelSrcStream = 0;
+    if ([_pluginPackage.get() pluginFuncs]->getvalue &&
+        [_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginCancelSrcStream, &cancelSrcStream) == NPERR_NO_ERROR && cancelSrcStream)
+        return YES;
+    
+    return NO;
+}
 
 - (NPError)_createPlugin
 {

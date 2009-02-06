@@ -1,3 +1,15 @@
+2009-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6563650> 
+        Add Netscape plug-in API to tell the browser not to load streams (some plug-ins handle network loading manually)
+                
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView loadStream]):
+        (-[WebNetscapePluginView pluginView:receivedData:]):
+        (-[WebNetscapePluginView _shouldCancelSrcStream]):
+
 2009-02-05  Maciej Stachowiak  <mjs@apple.com> and Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein and Geoff Garen.
