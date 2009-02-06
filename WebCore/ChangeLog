@@ -1,3 +1,20 @@
+2009-02-06  Anantanarayanan Iyengar  <ananta@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23309
+        Fix whitespace indent errors. The rest of the original patch has already
+        landed.
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::clear):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::clear):
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::clear):
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::ImageSource::clear):
+
 2009-02-06  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Simon Hausmann.

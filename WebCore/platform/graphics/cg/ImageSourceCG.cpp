@@ -58,7 +58,7 @@ void ImageSource::clear(bool, size_t, SharedBuffer* data, bool allDataReceived)
         m_decoder = 0;
     }
     if (data)
-      setData(data, allDataReceived);
+        setData(data, allDataReceived);
 }
 
 static CFDictionaryRef imageSourceOptions()
