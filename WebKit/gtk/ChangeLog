@@ -1,3 +1,24 @@
+2009-02-06  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23761
+
+        Use two-arg KURL ctor.
+
+        We are using the one-arg ctor currently, but:
+
+        - It assumes the strings are already encoded, which is not
+        necesarily the case for us.
+
+        - The single-argument KURL ctors expect their input to already be
+        the output of a previous KURL::parse call, so for the general
+        case (ie, random user input) we need to use the two-arg ctor
+        anyway.
+
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebview.cpp:
+
 2009-02-05  Aaron Boodman <aa@chromium.org> 
 
         Reviewed by Dave Hyatt.

@@ -394,7 +394,7 @@ void webkit_web_frame_load_request(WebKitWebFrame* frame, WebKitNetworkRequest* 
 
     // TODO: Use the ResourceRequest carried by WebKitNetworkRequest when it is implemented.
     String string = String::fromUTF8(webkit_network_request_get_uri(request));
-    coreFrame->loader()->load(ResourceRequest(KURL(string)), false);
+    coreFrame->loader()->load(ResourceRequest(KURL(KURL(), string)), false);
 }
 
 /**
