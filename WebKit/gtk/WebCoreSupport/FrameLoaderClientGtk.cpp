@@ -762,43 +762,45 @@ void FrameLoaderClient::download(ResourceHandle*, const ResourceRequest&, const 
 ResourceError FrameLoaderClient::cancelledError(const ResourceRequest&)
 {
     notImplemented();
-    return ResourceError();
+    ResourceError error("", 0, "", "");
+    error.setIsCancellation(true);
+    return error;
 }
 
 ResourceError FrameLoaderClient::blockedError(const ResourceRequest&)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError("", 0, "", "");
 }
 
 ResourceError FrameLoaderClient::cannotShowURLError(const ResourceRequest&)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError("", 0, "", "");
 }
 
 ResourceError FrameLoaderClient::interruptForPolicyChangeError(const ResourceRequest&)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError("", 0, "", "");
 }
 
 ResourceError FrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse&)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError("", 0, "", "");
 }
 
 ResourceError FrameLoaderClient::fileDoesNotExistError(const ResourceResponse&)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError("", 0, "", "");
 }
 
 ResourceError FrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse&)
 {
     notImplemented();
-    return ResourceError();
+    return ResourceError("", 0, "", "");
 }
 
 bool FrameLoaderClient::shouldFallBack(const ResourceError&)
