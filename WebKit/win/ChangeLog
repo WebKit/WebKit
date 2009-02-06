@@ -1,3 +1,15 @@
+2009-02-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - fix an assertion failure in Vector::at() beneath
+          WebHistoryItem::dictionaryRepresentation.
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::dictionaryRepresentation): Give the numbers vector initial
+        size. Also reduced the inline capacity of the vector used for weekly visit
+        counts to 5, which is the expected maximum size.
+
 2009-02-06  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix.  

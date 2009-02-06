@@ -248,7 +248,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
 
     const Vector<int>& dailyVisitCount(m_historyItem->dailyVisitCounts());
     if (size_t size = dailyVisitCount.size()) {
-        Vector<CFNumberRef, 13> numbers;
+        Vector<CFNumberRef, 13> numbers(size);
         for (size_t i = 0; i < size; ++i)
             numbers[i] = CFNumberCreate(0, kCFNumberIntType, &dailyVisitCount[i]);
 
@@ -263,7 +263,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
 
     const Vector<int>& weeklyVisitCount(m_historyItem->weeklyVisitCounts());
     if (size_t size = weeklyVisitCount.size()) {
-        Vector<CFNumberRef, 13> numbers;
+        Vector<CFNumberRef, 5> numbers(size);
         for (size_t i = 0; i < size; ++i)
             numbers[i] = CFNumberCreate(0, kCFNumberIntType, &weeklyVisitCount[i]);
 
