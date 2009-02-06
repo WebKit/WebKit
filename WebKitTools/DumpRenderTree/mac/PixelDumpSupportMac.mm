@@ -42,8 +42,8 @@
 #include <wtf/RefPtr.h>
 
 #import <WebKit/WebDocumentPrivate.h>
-#import <WebKit/WebKit.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebKit.h>
 
 // To ensure pixel tests consistency, we need to always render in the same colorspace.
 // Unfortunately, because of AppKit / WebKit constraints, we can't render directly in the colorspace of our choice.
