@@ -1,3 +1,31 @@
+2009-02-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6552338> FontCache::releaseFontData() called on a small caps font that is not in the cache
+
+        Most platforms do not retrieve the small caps font from the FontCache,
+        but cross-platform code in ~SimpleFontData() assumes the the small caps
+        font data did come from the cache and therefore calls releaseFontData()
+        on it.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::~SimpleFontData): Reordered to call
+        platformDestroy() before releasing the small caps font and pruning the
+        glyph page tree. This allows platformDestroy() to reset
+        m_smallCapsFontData to 0 if it was not obtained from the cache.
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformDestroy): Set m_smallCapsFontData to
+        0 after deleting it.
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        (WebCore::SimpleFontData::platformDestroy): Ditto.
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::platformDestroy): Ditto.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::platformCommonDestroy): Ditto.
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformDestroy): Ditto.
+
 2009-02-06  Simon Fraser  <simon.fraser@apple.com>
 
         Fix build when ACCELERATED_COMPOSITING is turned on.

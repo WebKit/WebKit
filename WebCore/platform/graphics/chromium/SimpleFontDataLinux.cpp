@@ -101,6 +101,7 @@ void SimpleFontData::platformInit()
 void SimpleFontData::platformDestroy()
 {
     delete m_smallCapsFontData;
+    m_smallCapsFontData = 0;
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
