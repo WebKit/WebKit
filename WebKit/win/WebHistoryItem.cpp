@@ -145,10 +145,10 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
     }
 
     CFArrayRef dailyCounts = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionaryRef, dailyVisitCountKey));
-    if (dailyCounts || CFGetTypeID(dailyCounts) != CFArrayGetTypeID())
+    if (dailyCounts && CFGetTypeID(dailyCounts) != CFArrayGetTypeID())
         dailyCounts = 0;
     CFArrayRef weeklyCounts = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionaryRef, weeklyVisitCountKey));
-    if (weeklyCounts || CFGetTypeID(weeklyCounts) != CFArrayGetTypeID())
+    if (weeklyCounts && CFGetTypeID(weeklyCounts) != CFArrayGetTypeID())
         weeklyCounts = 0;
 
     std::auto_ptr<Vector<int> > dailyVector, weeklyVector;
