@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel
 
+        Factor code that checks whether the object is rooted in
+        repaint() and repaintRectangle() into a common isRooted()
+        method.
+        
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaint):
+        (WebCore::RenderObject::repaintRectangle):
+        (WebCore::RenderObject::isRooted):
+        * rendering/RenderObject.h:
+
+2009-02-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+
         Expose an isRootLayer() method on RenderLayer that works whether the
         layer is rooted or not, and use that in a few places in the
         accelerated compositing code.

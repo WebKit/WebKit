@@ -357,6 +357,9 @@ public:
 
     RenderView* view() const;
 
+    // Returns true if this renderer is rooted, and optionally returns the hosting view (the root of the hierarchy).
+    bool isRooted(RenderView** = 0);
+
     // don't even think about making this method virtual!
     Node* element() const { return m_isAnonymous ? 0 : m_node; }
     Document* document() const { return m_node->document(); }
