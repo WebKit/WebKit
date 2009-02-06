@@ -713,6 +713,7 @@ public:
     virtual unsigned caretMaxRenderedOffset() const;
 
     virtual int previousOffset(int current) const;
+    virtual int previousOffsetForBackwardDeletion(int current) const;
     virtual int nextOffset(int current) const;
 
     virtual void imageChanged(CachedImage*, const IntRect* = 0);

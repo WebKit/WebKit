@@ -2744,6 +2744,11 @@ int RenderObject::previousOffset(int current) const
     return current - 1;
 }
 
+int RenderObject::previousOffsetForBackwardDeletion(int current) const
+{
+    return current - 1;
+}
+
 int RenderObject::nextOffset(int current) const
 {
     return current + 1;

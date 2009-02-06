@@ -417,15 +417,9 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 
             selectionToDelete = selection.selection();
 
-            if (granularity == CharacterGranularity && selectionToDelete.end().offset() - selectionToDelete.start().offset() > 1) {
-                // When we delete a ligature consisting of multiple Unicode characters with a backspace key,
-                // we should not delete the ligature but delete only its last characeter. To check we are deleting
-                // a ligature, we retrieve the previous position of the caret and count the number of
-                // characters to be deleted.
-                // To prevent from calculating the previous position every time when pressing a backspace key,
-                // we retrieve the previous position only when the given selection consists of two or more characters.
-                if (selectionToDelete.end().offset() - selectionToDelete.end().previous(UsingComposedCharacters).offset() > 1)
-                    selectionToDelete.setWithoutValidation(selectionToDelete.end(), selectionToDelete.end().previous(NotUsingComposedCharacters));
+            if (granularity == CharacterGranularity && selectionToDelete.end().node() == selectionToDelete.start().node() && selectionToDelete.end().offset() - selectionToDelete.start().offset() > 1) {
+                // If there are multiple Unicode code points to be deleted, adjust the range to match platform conventions.
+                selectionToDelete.setWithoutValidation(selectionToDelete.end(), selectionToDelete.end().previous(BackwardDeletion));
             }
 
             if (!startingSelection().isRange() || selectionToDelete.base() != startingSelection().start())

@@ -97,9 +97,9 @@ PassRefPtr<CSSComputedStyleDeclaration> Position::computedStyle() const
     return WebCore::computedStyle(elem);
 }
 
-Position Position::previous(EUsingComposedCharacters usingComposedCharacters) const
+Position Position::previous(PositionMoveType moveType) const
 {
-    Node *n = node();
+    Node* n = node();
     if (!n)
         return *this;
     
@@ -108,28 +108,37 @@ Position Position::previous(EUsingComposedCharacters usingComposedCharacters) co
     ASSERT(o >= 0);
 
     if (o > 0) {
-        Node *child = n->childNode(o - 1);
-        if (child) {
+        Node* child = n->childNode(o - 1);
+        if (child)
             return Position(child, maxDeepOffset(child));
-        }
+
         // There are two reasons child might be 0:
         //   1) The node is node like a text node that is not an element, and therefore has no children.
         //      Going backward one character at a time is correct.
         //   2) The old offset was a bogus offset like (<br>, 1), and there is no child.
         //      Going from 1 to 0 is correct.
-        return Position(n, usingComposedCharacters ? uncheckedPreviousOffset(n, o) : o - 1);
+        switch (moveType) {
+        case CodePoint:
+            return Position(n, o - 1);
+        case Character:
+            return Position(n, uncheckedPreviousOffset(n, o));
+        case BackwardDeletion:
+            return Position(n, uncheckedPreviousOffsetForBackwardDeletion(n, o));
+        }
     }
 
-    Node *parent = n->parentNode();
+    Node* parent = n->parentNode();
     if (!parent)
         return *this;
 
     return Position(parent, n->nodeIndex());
 }
 
-Position Position::next(EUsingComposedCharacters usingComposedCharacters) const
+Position Position::next(PositionMoveType moveType) const
 {
-    Node *n = node();
+    ASSERT(moveType != BackwardDeletion);
+
+    Node* n = node();
     if (!n)
         return *this;
     
@@ -147,10 +156,10 @@ Position Position::next(EUsingComposedCharacters usingComposedCharacters) const
         //      Going forward one character at a time is correct.
         //   2) The new offset is a bogus offset like (<br>, 1), and there is no child.
         //      Going from 0 to 1 is correct.
-        return Position(n, usingComposedCharacters ? uncheckedNextOffset(n, o) : o + 1);
+        return Position(n, (moveType == Character) ? uncheckedNextOffset(n, o) : o + 1);
     }
 
-    Node *parent = n->parentNode();
+    Node* parent = n->parentNode();
     if (!parent)
         return *this;
 
@@ -160,6 +169,11 @@ Position Position::next(EUsingComposedCharacters usingComposedCharacters) const
 int Position::uncheckedPreviousOffset(const Node* n, int current)
 {
     return n->renderer() ? n->renderer()->previousOffset(current) : current - 1;
+}
+
+int Position::uncheckedPreviousOffsetForBackwardDeletion(const Node* n, int current)
+{
+    return n->renderer() ? n->renderer()->previousOffsetForBackwardDeletion(current) : current - 1;
 }
 
 int Position::uncheckedNextOffset(const Node* n, int current)

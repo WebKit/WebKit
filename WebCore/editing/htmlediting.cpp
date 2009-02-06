@@ -222,7 +222,7 @@ Position nextVisuallyDistinctCandidate(const Position& position)
     Position p = position;
     Position downstreamStart = p.downstream();
     while (!p.atEnd()) {
-        p = p.next(UsingComposedCharacters);
+        p = p.next(Character);
         if (p.isCandidate() && p.downstream() != downstreamStart)
             return p;
     }
@@ -245,7 +245,7 @@ Position previousVisuallyDistinctCandidate(const Position& position)
     Position p = position;
     Position downstreamStart = p.downstream();
     while (!p.atStart()) {
-        p = p.previous(UsingComposedCharacters);
+        p = p.previous(Character);
         if (p.isCandidate() && p.downstream() != downstreamStart)
             return p;
     }

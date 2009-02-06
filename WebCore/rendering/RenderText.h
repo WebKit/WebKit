@@ -111,6 +111,7 @@ public:
     virtual unsigned caretMaxRenderedOffset() const;
 
     virtual int previousOffset(int current) const;
+    virtual int previousOffsetForBackwardDeletion(int current) const;
     virtual int nextOffset(int current) const;
 
     bool containsReversedText() const { return m_containsReversedText; }

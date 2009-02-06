@@ -1168,6 +1168,106 @@ int RenderText::previousOffset(int current) const
     return result;
 }
 
+#define HANGUL_CHOSEONG_START (0x1100)
+#define HANGUL_CHOSEONG_END (0x115F)
+#define HANGUL_JUNGSEONG_START (0x1160)
+#define HANGUL_JUNGSEONG_END (0x11A2)
+#define HANGUL_JONGSEONG_START (0x11A8)
+#define HANGUL_JONGSEONG_END (0x11F9)
+#define HANGUL_SYLLABLE_START (0xAC00)
+#define HANGUL_SYLLABLE_END (0xD7AF)
+#define HANGUL_JONGSEONG_COUNT (28)
+
+enum HangulState {
+    HangulStateL,
+    HangulStateV,
+    HangulStateT,
+    HangulStateLV,
+    HangulStateLVT,
+    HangulStateBreak
+};
+
+inline bool isHangulLVT(UChar32 character)
+{
+    return (character - HANGUL_SYLLABLE_START) % HANGUL_JONGSEONG_COUNT;
+}
+
+int RenderText::previousOffsetForBackwardDeletion(int current) const
+{
+#if PLATFORM(MAC)
+    UChar32 character;
+    while (current > 0) {
+        if (U16_IS_TRAIL((*m_text)[--current]))
+            --current;
+        if (current < 0)
+            break;
+
+        UChar32 character = m_text->characterStartingAt(current);
+
+        // We don't combine characters in Armenian ... Limbu range for backward deletion.
+        if ((character >= 0x0530) && (character < 0x1950))
+            break;
+
+        if (u_isbase(character) && (character != 0xFF9E) && (character != 0xFF9F))
+            break;
+    }
+
+    if (current <= 0)
+        return current;
+
+    // Hangul
+    character = m_text->characterStartingAt(current);
+    if (((character >= HANGUL_CHOSEONG_START) && (character <= HANGUL_JONGSEONG_END)) || ((character >= HANGUL_SYLLABLE_START) && (character <= HANGUL_SYLLABLE_END))) {
+        HangulState state;
+        HangulState initialState;
+
+        if (character < HANGUL_JUNGSEONG_START)
+            state = HangulStateL;
+        else if (character < HANGUL_JONGSEONG_START)
+            state = HangulStateV;
+        else if (character < HANGUL_SYLLABLE_START)
+            state = HangulStateT;
+        else
+            state = isHangulLVT(character) ? HangulStateLVT : HangulStateLV;
+
+        initialState = state;
+
+        while (current > 0 && ((character = m_text->characterStartingAt(current - 1)) >= HANGUL_CHOSEONG_START) && (character <= HANGUL_SYLLABLE_END) && ((character <= HANGUL_JONGSEONG_END) || (character >= HANGUL_SYLLABLE_START))) {
+            switch (state) {
+            case HangulStateV:
+                if (character <= HANGUL_CHOSEONG_END)
+                    state = HangulStateL;
+                else if ((character >= HANGUL_SYLLABLE_START) && (character <= HANGUL_SYLLABLE_END) && !isHangulLVT(character))
+                    state = HangulStateLV;
+                else if (character > HANGUL_JUNGSEONG_END)
+                    state = HangulStateBreak;
+                break;
+            case HangulStateT:
+                if ((character >= HANGUL_JUNGSEONG_START) && (character <= HANGUL_JUNGSEONG_END))
+                    state = HangulStateV;
+                else if ((character >= HANGUL_SYLLABLE_START) && (character <= HANGUL_SYLLABLE_END))
+                    state = (isHangulLVT(character) ? HangulStateLVT : HangulStateLV);
+                else if (character < HANGUL_JUNGSEONG_START)
+                    state = HangulStateBreak;
+                break;
+            default:
+                state = (character < HANGUL_JUNGSEONG_START) ? HangulStateL : HangulStateBreak;
+                break;
+            }
+            if (state == HangulStateBreak)
+                break;
+
+            --current;
+        }
+    }
+
+    return current;
+#else
+    // Platforms other than Mac delete by one code point.
+    return current - 1;
+#endif
+}
+
 int RenderText::nextOffset(int current) const
 {
     StringImpl* si = m_text.get();

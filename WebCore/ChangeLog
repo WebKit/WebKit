@@ -1,3 +1,39 @@
+2009-02-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6438271> Improve backspace handling of accented characters
+
+        Test: platform/mac/editing/deleting/backward-delete.html
+
+        This change makes WebKit behave like AppKit on the Mac. Other platforms are not affected,
+        because the current behavior matches their standards (tested on Windows, assumed elsewhere).
+
+        * dom/Position.cpp:
+        (WebCore::Position::previous):
+        (WebCore::Position::next):
+        (WebCore::Position::uncheckedPreviousOffsetForBackwardDeletion):
+        * dom/Position.h:
+        Added a new option for previous(), used to move to a next position for backward deletion.
+        Renamed EUsingComposedCharacters to PositionMoveType.
+
+        * editing/TypingCommand.cpp: (WebCore::TypingCommand::deleteKeyPressed):
+        Use previous(BackwardDeletion) to find a proper range to delete. Also, simplified a check
+        surrounding this code a little.
+
+        * editing/htmlediting.cpp:
+        (WebCore::nextVisuallyDistinctCandidate):
+        (WebCore::previousVisuallyDistinctCandidate):
+        Adjusted for renamed enum values.
+
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderText.h:
+        Added previousOffsetForBackwardDeletion().
+
+        * rendering/RenderText.cpp: (WebCore::RenderText::previousOffsetForBackwardDeletion):
+        On PLATFORM(MAC), use an algorithm that matches the one AppKit has for backward deletion.
+
 2009-02-05  Adam Roben  <aroben@apple.com>
 
         Fix a crash in RenderWidget::destroy when navigating away from a page
