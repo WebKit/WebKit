@@ -1,3 +1,25 @@
+2009-02-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23781
+        
+        When the document is attached and detached, and when it becomes active/inactive
+        (e.g. coming out or going into the page cache) we need to call
+        RenderView::didMoveOnscreen()/willMoveOffscreen() to hook and unhook the composited
+        layers.
+        
+        Also, if Document::recalcStyle() does not do a layout, it needs to
+        update the compositing layers.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::updateRendering):
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::attach):
+        (WebCore::Document::detach):
+        (WebCore::Document::documentWillBecomeInactive):
+        (WebCore::Document::documentDidBecomeActive):
+
 2009-02-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

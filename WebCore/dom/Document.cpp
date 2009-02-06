@@ -1155,8 +1155,16 @@ void Document::recalcStyle(StyleChange change)
         if (change >= Inherit || n->hasChangedChild() || n->changed())
             n->recalcStyle(change);
 
-    if (changed() && view())
-        view()->layout();
+    if (view()) {
+        if (changed())
+            view()->layout();
+#if USE(ACCELERATED_COMPOSITING)
+        else {
+            // If we didn't update compositing layers because of layout(), we need to do so here.
+            view()->updateCompositingLayers();
+        }
+#endif
+    }
 
 bail_out:
     setChanged(NoStyleChange);
@@ -1208,7 +1216,6 @@ void Document::updateLayout()
     if (Element* oe = ownerElement())
         oe->document()->updateLayout();
 
-    // FIXME: Dave Hyatt's pretty sure we can remove this because layout calls recalcStyle as needed.
     updateRendering();
 
     // Only do a layout if changes have occurred that make it necessary.      
@@ -1261,6 +1268,9 @@ void Document::attach()
     
     // Create the rendering tree
     setRenderer(new (m_renderArena) RenderView(this, view()));
+#if USE(ACCELERATED_COMPOSITING)
+    renderView()->didMoveOnscreen();
+#endif
 
     if (!m_styleSelector) {
         bool matchAuthorAndUserStyles = true;
@@ -1288,6 +1298,11 @@ void Document::detach()
     stopActiveDOMObjects();
     
     RenderObject* render = renderer();
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (render)
+        renderView()->willMoveOffscreen();
+#endif
 
     // indicate destruction mode,  i.e. attached() but renderer == 0
     setRenderer(0);
@@ -3179,6 +3194,11 @@ void Document::setInPageCache(bool flag)
 
 void Document::documentWillBecomeInactive() 
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (renderer())
+        renderView()->willMoveOffscreen();
+#endif
+
     HashSet<Element*>::iterator end = m_documentActivationCallbackElements.end();
     for (HashSet<Element*>::iterator i = m_documentActivationCallbackElements.begin(); i != end; ++i)
         (*i)->documentWillBecomeInactive();
@@ -3189,6 +3209,11 @@ void Document::documentDidBecomeActive()
     HashSet<Element*>::iterator end = m_documentActivationCallbackElements.end();
     for (HashSet<Element*>::iterator i = m_documentActivationCallbackElements.begin(); i != end; ++i)
         (*i)->documentDidBecomeActive();
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (renderer())
+        renderView()->didMoveOnscreen();
+#endif
 }
 
 void Document::registerForDocumentActivationCallbacks(Element* e)
