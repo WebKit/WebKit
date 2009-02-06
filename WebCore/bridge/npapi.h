@@ -108,7 +108,7 @@
 /*----------------------------------------------------------------------*/
 
 #define NP_VERSION_MAJOR 0
-#define NP_VERSION_MINOR 23
+#define NP_VERSION_MINOR 24
 
 /*----------------------------------------------------------------------*/
 /*             Definition of Basic Types                                */
@@ -343,6 +343,9 @@ typedef enum {
 
     NPPVpluginPrivateModeBool = 19,
     
+    /* Checks to see if the plug-in would like the browser to load the "src" attribute. */
+    NPPVpluginCancelSrcStream = 20,
+
 #ifdef XP_MACOSX
     /* Used for negotiating drawing models */
     NPPVpluginDrawingModel = 1000,
@@ -737,7 +740,7 @@ typedef struct NP_Port
 #define NPVERS_HAS_URL_AND_AUTH_INFO      21
 #define NPVERS_HAS_PRIVATE_MODE           22
 #define NPVERS_MACOSX_HAS_EVENT_MODELS    23
-
+#define NPVERS_HAS_CANCEL_SRC_STREAM      24
 
 /*----------------------------------------------------------------------*/
 /*             Function Prototypes                */
