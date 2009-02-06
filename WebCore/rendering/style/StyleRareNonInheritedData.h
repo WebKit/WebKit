@@ -69,7 +69,8 @@ public:
 
     bool operator==(const StyleRareNonInheritedData&) const;
     bool operator!=(const StyleRareNonInheritedData& o) const { return !(*this == o); }
- 
+
+    bool contentDataEquivalent(const StyleRareNonInheritedData& o) const;
     bool shadowDataEquivalent(const StyleRareNonInheritedData& o) const;
     bool reflectionDataEquivalent(const StyleRareNonInheritedData& o) const;
     bool animationDataEquivalent(const StyleRareNonInheritedData&) const;

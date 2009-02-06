@@ -1,3 +1,27 @@
+2009-02-06  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 23741: StyleRareNonInheritedData::operator==() should not compare ContentData objects by pointer
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23741>
+
+        Reviewed by Darin Adler.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::contentDataEquivalent): Moved method to
+        WebCore::StyleRareNonInheritedData class.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::contentDataEquivalent): Replaced declaration
+        with inline method that calls contentDataEquivalent() on
+        WebCore::StyleRareNonInheritedData instead.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::operator==): This is the bug fix!
+        Replaced pointer comparison of ContentData objects with call to
+        StyleRareNonInheritedData::contentDataEquivalent().
+        (WebCore::StyleRareNonInheritedData::contentDataEquivalent): Added.
+        * rendering/style/StyleRareNonInheritedData.h:
+        (WebCore::StyleRareNonInheritedData::contentDataEquivalent): Added
+        declaration.
+
 2009-02-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel

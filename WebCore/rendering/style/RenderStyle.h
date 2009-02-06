@@ -971,7 +971,7 @@ public:
 #endif
 
     const ContentData* contentData() const { return rareNonInheritedData->m_content.get(); }
-    bool contentDataEquivalent(const RenderStyle* otherStyle) const;
+    bool contentDataEquivalent(const RenderStyle* otherStyle) const { return const_cast<RenderStyle*>(this)->rareNonInheritedData->contentDataEquivalent(*const_cast<RenderStyle*>(otherStyle)->rareNonInheritedData); }
     void clearContent();
     void setContent(StringImpl*, bool add = false);
     void setContent(PassRefPtr<StyleImage>, bool add = false);

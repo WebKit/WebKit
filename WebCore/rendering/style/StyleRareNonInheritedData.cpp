@@ -23,7 +23,10 @@
 #include "StyleRareNonInheritedData.h"
 
 #include "CSSStyleSelector.h"
+#include "ContentData.h"
+#include "RenderCounter.h"
 #include "RenderStyle.h"
+#include "StyleImage.h"
 
 namespace WebCore {
 
@@ -105,7 +108,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && marquee == o.marquee
         && m_multiCol == o.m_multiCol
         && m_transform == o.m_transform
-        && m_content == o.m_content
+        && contentDataEquivalent(o)
         && m_counterDirectives == o.m_counterDirectives
         && userDrag == o.userDrag
         && textOverflow == o.textOverflow
@@ -124,6 +127,39 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && bindingsEquivalent(o)
 #endif
         ;
+}
+
+bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& o) const
+{
+    ContentData* c1 = m_content.get();
+    ContentData* c2 = o.m_content.get();
+
+    while (c1 && c2) {
+        if (c1->m_type != c2->m_type)
+            return false;
+
+        switch (c1->m_type) {
+            case CONTENT_NONE:
+                break;
+            case CONTENT_TEXT:
+                if (!equal(c1->m_content.m_text, c2->m_content.m_text))
+                    return false;
+                break;
+            case CONTENT_OBJECT:
+                if (!StyleImage::imagesEquivalent(c1->m_content.m_image, c2->m_content.m_image))
+                    return false;
+                break;
+            case CONTENT_COUNTER:
+                if (*c1->m_content.m_counter != *c2->m_content.m_counter)
+                    return false;
+                break;
+        }
+
+        c1 = c1->m_next;
+        c2 = c2->m_next;
+    }
+
+    return !c1 && !c2;
 }
 
 bool StyleRareNonInheritedData::shadowDataEquivalent(const StyleRareNonInheritedData& o) const
