@@ -301,6 +301,9 @@ public:
     bool inResizeMode() const { return m_inResizeMode; }
     void setInResizeMode(bool b) { m_inResizeMode = b; }
 
+    // Can't just check !parent() because we might be unrooted.
+    bool isRootLayer() const { return renderer()->node()->isDocumentNode(); }
+    
 #if USE(ACCELERATED_COMPOSITING)
     RenderLayerCompositor* compositor() const;
 #endif

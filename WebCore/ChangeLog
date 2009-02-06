@@ -1,3 +1,19 @@
+2009-02-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+
+        Expose an isRootLayer() method on RenderLayer that works whether the
+        layer is rooted or not, and use that in a few places in the
+        accelerated compositing code.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isRootLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintingGoesToWindow):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+
 2009-02-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
