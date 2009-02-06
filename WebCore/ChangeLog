@@ -1,5 +1,14 @@
 2009-02-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix build when ACCELERATED_COMPOSITING is turned on.
+        
+        animationOfPropertyIsAccelerated() needs to be public because
+        it is called from AnimationController.
+
+        * page/animation/AnimationBase.h:
+
+2009-02-05  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Anders Carlsson
 
         Fix mis-typed enum value which is hidden inside #ifdefs so didn't break

@@ -171,7 +171,11 @@ public:
         ASSERT(waitingForStyleAvailable());
         updateStateMachine(AnimationBase::AnimationStateInputStyleAvailable, -1);
     }
-    
+
+#if USE(ACCELERATED_COMPOSITING)
+    static bool animationOfPropertyIsAccelerated(int prop);
+#endif
+
 protected:
     virtual void overrideAnimations() { }
     virtual void resumeOverriddenAnimations() { }
@@ -195,10 +199,6 @@ protected:
 
     // Return true if we need to start software animation timers
     static bool blendProperties(const AnimationBase* anim, int prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress);
-
-#if USE(ACCELERATED_COMPOSITING)
-    static bool animationOfPropertyIsAccelerated(int prop);
-#endif
 
     static void setChanged(Node*);
     
