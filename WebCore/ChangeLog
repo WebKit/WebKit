@@ -1,5 +1,22 @@
 2009-02-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Anders Carlsson
+
+        Add some methods to the TransformOperation classes that are required
+        by GraphicsLayer when ACCELERATED_COMPOSITING is turned on.
+
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        (WebCore::MatrixTransformOperation::create):
+        (WebCore::MatrixTransformOperation::MatrixTransformOperation):
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        (WebCore::ScaleTransformOperation::x):
+        (WebCore::ScaleTransformOperation::y):
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+        (WebCore::TranslateTransformOperation::x):
+        (WebCore::TranslateTransformOperation::y):
+
+2009-02-05  Simon Fraser  <simon.fraser@apple.com>
+
         Minor clenaup: fix brace style in CompositeAnimationPrivate::updateTransitions(),
         and correct a usage of UNUSED_PARAM().
 

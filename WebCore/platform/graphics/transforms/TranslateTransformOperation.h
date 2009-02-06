@@ -37,6 +37,10 @@ public:
         return adoptRef(new TranslateTransformOperation(tx, ty, type));
     }
 
+    double x(const IntSize& borderBoxSize) const { return m_x.calcFloatValue(borderBoxSize.width()); }
+    double y(const IntSize& borderBoxSize) const { return m_y.calcFloatValue(borderBoxSize.height()); }
+
+private:
     virtual bool isIdentity() const { return m_x.calcFloatValue(1) == 0 && m_y.calcFloatValue(1) == 0; }
     virtual OperationType getOperationType() const { return m_type; }
     virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == m_type; }
@@ -57,7 +61,6 @@ public:
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
 
-private:
     TranslateTransformOperation(const Length& tx, const Length& ty, OperationType type)
         : m_x(tx)
         , m_y(ty)
