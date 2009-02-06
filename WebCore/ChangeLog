@@ -1,3 +1,18 @@
+2009-02-05  Adam Roben  <aroben@apple.com>
+
+        Fix a crash in RenderWidget::destroy when navigating away from a page
+        with an <iframe>
+
+        This was a regression caused by r40679
+
+        Reviewed by Dave Hyatt.
+
+        Tested by many many tests.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy): Only deref the RenderWidget after we
+        finish accessing its members.
+
 2009-02-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson

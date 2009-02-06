@@ -100,10 +100,11 @@ void RenderWidget::destroy()
         RenderBlock::removePercentHeightDescendant(this);
 
     setNode(0);
-    deref(arena);
 
     if (hasLayer())
         layer()->destroy(arena);
+
+    deref(arena);
 }
 
 RenderWidget::~RenderWidget()
