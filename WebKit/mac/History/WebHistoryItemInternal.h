@@ -53,6 +53,7 @@ extern void WKNotifyHistoryItemChanged();
 - (void)setTitle:(NSString *)title;
 - (void)_visitedWithTitle:(NSString *)title;
 - (void)_setVisitCount:(int)count;
+- (void)_recordInitialVisit;
 
 @end
 

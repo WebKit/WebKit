@@ -35,6 +35,7 @@
 #import "WebIconDatabase.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
+#import "WebNSArrayExtras.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
@@ -63,6 +64,8 @@ static NSString *displayTitleKey = @"displayTitle";
 static NSString *lastVisitWasFailureKey = @"lastVisitWasFailure";
 static NSString *lastVisitWasHTTPNonGetKey = @"lastVisitWasHTTPNonGet";
 static NSString *redirectURLsKey = @"redirectURLs";
+static NSString *dailyVisitCountKey = @"D"; // short key to save space
+static NSString *weeklyVisitCountKey = @"W"; // short key to save space
 
 // Notification strings.
 NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotification";
@@ -369,8 +372,22 @@ static WebWindowWatcher *_windowWatcher = nil;
         NSUInteger size = [redirectURLs count];
         std::auto_ptr<Vector<String> > redirectURLsVector(new Vector<String>(size));
         for (NSUInteger i = 0; i < size; ++i)
-            (*redirectURLsVector)[i] = String([redirectURLs objectAtIndex:i]);
+            (*redirectURLsVector)[i] = String([redirectURLs _webkit_stringAtIndex:i]);
         core(_private)->setRedirectURLs(redirectURLsVector);
+    }
+
+    NSArray *dailyCounts = [dict _webkit_arrayForKey:dailyVisitCountKey];
+    NSArray *weeklyCounts = [dict _webkit_arrayForKey:weeklyVisitCountKey];
+    if (dailyCounts || weeklyCounts) {
+        Vector<int> coreDailyCounts([dailyCounts count]);
+        Vector<int> coreWeeklyCounts([weeklyCounts count]);
+
+        for (size_t i = 0; i < coreDailyCounts.size(); ++i)
+            coreDailyCounts[i] = [[dailyCounts _webkit_numberAtIndex:i] intValue];
+        for (size_t i = 0; i < coreWeeklyCounts.size(); ++i)
+            coreWeeklyCounts[i] = [[weeklyCounts _webkit_numberAtIndex:i] intValue];
+    
+        core(_private)->adoptVisitCounts(coreDailyCounts, coreWeeklyCounts);
     }
 
     NSArray *childDicts = [dict objectForKey:childrenKey];
@@ -401,6 +418,11 @@ static WebWindowWatcher *_windowWatcher = nil;
     core(_private)->setVisitCount(count);
 }
 
+- (void)_recordInitialVisit
+{
+    core(_private)->recordInitialVisit();
+}
+
 @end
 
 @implementation WebHistoryItem (WebPrivate)
@@ -413,7 +435,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 - (NSDictionary *)dictionaryRepresentation
 {
     ASSERT_MAIN_THREAD();
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:6];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:8];
 
     HistoryItem* coreItem = core(_private);
     
@@ -445,6 +467,24 @@ static WebWindowWatcher *_windowWatcher = nil;
         [dict setObject:result forKey:redirectURLsKey];
         [result release];
     }
+    
+    const Vector<int>& dailyVisitCounts = coreItem->dailyVisitCounts();
+    if (dailyVisitCounts.size()) {
+        NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:13];
+        for (size_t i = 0; i < dailyVisitCounts.size(); ++i)
+            [array addObject:[NSNumber numberWithInt:dailyVisitCounts[i]]];
+        [dict setObject:array forKey:dailyVisitCountKey];
+        [array release];
+    }
+    
+    const Vector<int>& weeklyVisitCounts = coreItem->weeklyVisitCounts();
+    if (weeklyVisitCounts.size()) {
+        NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:5];
+        for (size_t i = 0; i < weeklyVisitCounts.size(); ++i)
+            [array addObject:[NSNumber numberWithInt:weeklyVisitCounts[i]]];
+        [dict setObject:array forKey:weeklyVisitCountKey];
+        [array release];
+    }    
     
     if (coreItem->children().size()) {
         const HistoryItemVector& children = coreItem->children();
@@ -581,6 +621,20 @@ static WebWindowWatcher *_windowWatcher = nil;
     for (size_t i = 0; i < size; ++i)
         [result addObject:(NSString*)redirectURLs->at(i)];
     return [result autorelease];
+}
+
+- (size_t)_getDailyVisitCounts:(const int**)counts
+{
+    HistoryItem* coreItem = core(_private);
+    *counts = coreItem->dailyVisitCounts().data();
+    return coreItem->dailyVisitCounts().size();
+}
+
+- (size_t)_getWeeklyVisitCounts:(const int**)counts
+{
+    HistoryItem* coreItem = core(_private);
+    *counts = coreItem->weeklyVisitCounts().data();
+    return coreItem->weeklyVisitCounts().size();
 }
 
 @end

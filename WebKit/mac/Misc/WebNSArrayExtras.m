@@ -30,7 +30,23 @@
 
 #import <wtf/Assertions.h>
 
-@implementation NSMutableArray (WebExtras)
+@implementation NSArray (WebNSArrayExtras)
+
+-(NSNumber *)_webkit_numberAtIndex:(NSUInteger)index
+{
+    id object = [self objectAtIndex:index];
+    return [object isKindOfClass:[NSNumber class]] ? object : nil;
+}
+
+-(NSString *)_webkit_stringAtIndex:(NSUInteger)index
+{
+    id object = [self objectAtIndex:index];
+    return [object isKindOfClass:[NSString class]] ? object : nil;
+}
+
+@end
+
+@implementation NSMutableArray (WebNSArrayExtras)
 
 - (void)_webkit_removeUselessMenuItemSeparators
 {

@@ -276,7 +276,7 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     } else {
         LOG(History, "Adding new global history entry for %@", url);
         entry = [[WebHistoryItem alloc] initWithURLString:URLString title:title lastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
-        [entry _setVisitCount:1];
+        [entry _recordInitialVisit];
         [_entriesByURL setObject:entry forKey:URLString];
         [entry release];
     }

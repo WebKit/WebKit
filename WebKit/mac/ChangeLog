@@ -1,3 +1,30 @@
+2009-02-05  Maciej Stachowiak  <mjs@apple.com> and Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein and Geoff Garen.
+
+        - WebKit code to track per-day and per-week visit counts in history
+
+        For now this data is only exposed via SPI for performance reasons.
+        
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]): Add parsing support
+        for new data.
+        (-[WebHistoryItem _recordInitialVisit]): Tell WebCore to record an initial visit.
+        (-[WebHistoryItem dictionaryRepresentation]): Add saving support for new data.
+        (-[WebHistoryItem _getDailyVisitCounts:]): SPI accessor.
+        (-[WebHistoryItem _getWeeklyVisitCounts:]): SPI accessor.
+        * History/WebHistoryItemInternal.h: Declare new methods.
+        * History/WebHistoryItemPrivate.h: Ditto.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate visitedURL:withTitle:]): For the initial visit, use
+        the new _recordInitialVisit method instead of setting visit count to 1.
+
+        * Misc/WebNSArrayExtras.h:
+        * Misc/WebNSArrayExtras.m:
+        (-[NSArray _webkit_numberAtIndex:]): Helper to retrieve an NSNumber or nil from an NSArray
+        (-[NSArray _webkit_stringAtIndex:]): Helper to retrieve an NSString of nil from an NSArray
+        
 2009-02-05  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Dave Hyatt.

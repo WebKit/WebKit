@@ -61,4 +61,7 @@
 - (id)_transientPropertyForKey:(NSString *)key;
 - (void)_setTransientProperty:(id)property forKey:(NSString *)key;
 
+- (size_t)_getDailyVisitCounts:(const int**)counts;
+- (size_t)_getWeeklyVisitCounts:(const int**)counts;
+
 @end
