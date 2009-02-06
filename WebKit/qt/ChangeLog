@@ -1,3 +1,11 @@
+2009-02-06  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Holger Freyther.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::documentElementAvailable):)
+        Fix compile error in Qt build introduced by the below change (r40694).
+
 2009-02-05  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Dave Hyatt.
