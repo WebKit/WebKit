@@ -27,42 +27,41 @@
 #import "SelectionController.h"
 
 #import "AXObjectCache.h"
-#import "Document.h"
 #import "Frame.h"
-#import "FrameView.h"
 #import "RenderView.h"
-#import "Selection.h"
 #import "WebCoreViewFactory.h"
-
-#import <ApplicationServices/ApplicationServices.h> 
 
 namespace WebCore {
 
 void SelectionController::notifyAccessibilityForSelectionChange()
 {
+    Document* document = m_frame->document();
+
     if (AXObjectCache::accessibilityEnabled() && m_sel.start().isNotNull() && m_sel.end().isNotNull())
-        m_frame->document()->axObjectCache()->postNotification(m_sel.start().node()->renderer(), "AXSelectedTextChanged");
-    
+        document->axObjectCache()->postNotification(m_sel.start().node()->renderer(), "AXSelectedTextChanged");
+
     // if zoom feature is enabled, insertion point changes should update the zoom
-    if (UAZoomEnabled() && m_sel.isCaret() && m_sel.start().node()) {
-        RenderView* renderView = toRenderView(m_sel.start().node()->renderer());
-        if (renderView) {
-            IntRect selectionRect = absoluteCaretBounds();
-            IntRect viewRect = renderView->viewRect();
-            FrameView* frameView = renderView->view()->frameView(); 
-            if (frameView) {
-                selectionRect = frameView->contentsToScreen(selectionRect);
-                viewRect = frameView->contentsToScreen(viewRect);
-                CGRect cgCaretRect = CGRectMake(selectionRect.x(), selectionRect.y(), selectionRect.width(), selectionRect.height());
-                CGRect cgViewRect = CGRectMake(viewRect.x(), viewRect.y(), viewRect.width(), viewRect.height());
-                cgCaretRect = [[WebCoreViewFactory sharedFactory] accessibilityConvertScreenRect:cgCaretRect];
-                cgViewRect = [[WebCoreViewFactory sharedFactory] accessibilityConvertScreenRect:cgViewRect];              
+    if (!UAZoomEnabled() || !m_sel.isCaret())
+        return;
 
-                (void)UAZoomChangeFocus(&cgViewRect, &cgCaretRect, kUAZoomFocusTypeInsertionPoint);
-            }
-        }
-    }
+    RenderView* renderView = document->renderView();
+    if (!renderView)
+        return;
+    FrameView* frameView = m_frame->view();
+    if (!frameView)
+        return;
+
+    IntRect selectionRect = absoluteCaretBounds();
+    IntRect viewRect = renderView->viewRect();
+
+    selectionRect = frameView->contentsToScreen(selectionRect);
+    viewRect = frameView->contentsToScreen(viewRect);
+    CGRect cgCaretRect = CGRectMake(selectionRect.x(), selectionRect.y(), selectionRect.width(), selectionRect.height());
+    CGRect cgViewRect = CGRectMake(viewRect.x(), viewRect.y(), viewRect.width(), viewRect.height());
+    cgCaretRect = [[WebCoreViewFactory sharedFactory] accessibilityConvertScreenRect:cgCaretRect];
+    cgViewRect = [[WebCoreViewFactory sharedFactory] accessibilityConvertScreenRect:cgViewRect];
+
+    UAZoomChangeFocus(&cgViewRect, &cgCaretRect, kUAZoomFocusTypeInsertionPoint);
 }
-
 
 } // namespace WebCore

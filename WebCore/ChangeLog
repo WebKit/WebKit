@@ -1,3 +1,15 @@
+2009-02-05  Sam Weinig  <sam@webkit.org>
+
+        Patch from Darin Adler.
+        Reviewed by Sam Weinig.
+
+        Fix case where we were casting to RenderView.
+
+        No test case possible.
+
+        * editing/mac/SelectionControllerMac.mm:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+
 2009-02-05  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Dave Hyatt.
