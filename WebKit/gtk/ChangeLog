@@ -1,3 +1,10 @@
+2009-02-07  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix Use toNormalizedRange().
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::clipboard_get_contents_cb):
+
 2009-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

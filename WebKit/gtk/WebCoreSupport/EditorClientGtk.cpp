@@ -169,7 +169,7 @@ static void clipboard_get_contents_cb(GtkClipboard* clipboard, GtkSelectionData*
 {
     WebKitWebView* webView = reinterpret_cast<WebKitWebView*>(data);
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    PassRefPtr<Range> selectedRange = frame->selection()->toRange();
+    PassRefPtr<Range> selectedRange = frame->selection()->toNormalizedRange();
 
     if (static_cast<gint>(info) == WEBKIT_WEB_VIEW_TARGET_INFO_HTML) {
         String markup = createMarkup(selectedRange.get(), 0, AnnotateForInterchange);
