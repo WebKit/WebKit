@@ -1,3 +1,22 @@
+2009-02-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        For the Qt port implement Image::drawPattern via
+        BitmapImage::drawPatterns' implementation and implement
+        Gradient::fill.
+
+        This partially fixes rendering of generated gradient content.
+
+        * platform/graphics/BitmapImage.h: Remove the drawPattern
+        implementation for the Qt port in BitmapImage, it's been moved to
+        Image::drawPattern.
+        * platform/graphics/qt/GradientQt.cpp:
+        (WebCore::Gradient::fill): Implement using a simple fillRect.
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::drawPattern): Moved implementation from
+        BitmapImage::drawPattern.
+
 2009-02-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin Garcia.
