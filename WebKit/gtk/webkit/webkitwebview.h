@@ -49,8 +49,8 @@ typedef enum {
 
 typedef enum
 {
-    WEBKIT_WEB_VIEW_TARGET_INFO_HTML = - 1,
-    WEBKIT_WEB_VIEW_TARGET_INFO_TEXT = - 2
+    WEBKIT_WEB_VIEW_TARGET_INFO_HTML,
+    WEBKIT_WEB_VIEW_TARGET_INFO_TEXT
 } WebKitWebViewTargetInfo;
 
 struct _WebKitWebView {
