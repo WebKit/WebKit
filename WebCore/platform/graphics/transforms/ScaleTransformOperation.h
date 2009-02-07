@@ -54,7 +54,7 @@ private:
 
     virtual bool apply(TransformationMatrix& transform, const IntSize&) const
     {
-        transform.scale(m_x, m_y);
+        transform.scaleNonUniform(m_x, m_y);
         return false;
     }
 

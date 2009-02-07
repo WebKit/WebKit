@@ -82,7 +82,7 @@ layer at (0,0) size 480x360
           RenderSVGContainer {g} at (50,90) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
             RenderPath {rect} at (50,90) size 20x2 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L20.00,0.00 L20.00,2.00 L0.00,2.00 Z"]
             RenderPath {rect} at (50,90) size 2x20 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L2.00,0.00 L2.00,20.00 L0.00,20.00 Z"]
-          RenderSVGContainer {g} at (150,90) size 20x20 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(150.00,70.00)}]
+          RenderSVGContainer {g} at (150,90) size 20x20 [transform={m=((0.00,-1.00)(1.00,0.00)) t=(150.00,70.00)}]
             RenderPath {rect} at (150,90) size 2x20 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L20.00,0.00 L20.00,2.00 L0.00,2.00 Z"]
             RenderPath {rect} at (150,108) size 20x2 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L2.00,0.00 L2.00,20.00 L0.00,20.00 Z"]
           RenderSVGContainer {g} at (250,90) size 40x20 [transform={m=((1.00,0.00)(1.00,1.00)) t=(250.00,50.00)}]
@@ -127,8 +127,8 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (208,198) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [data="M208.00,158.00 L213.00,158.00 L213.00,163.00 L208.00,163.00 Z"]
       RenderSVGContainer {g} at (40,216) size 402x67
         RenderSVGContainer {g} at (50,240) size 260x40
-          RenderSVGContainer {g} at (50,240) size 60x40 [transform={m=((3.00,0.00)(0.00,2.00)) t=(50.00,210.00)}]
-            RenderPath {rect} at (50,240) size 60x2 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L20.00,0.00 L20.00,1.00 L0.00,1.00 Z"]
+          RenderSVGContainer {g} at (50,240) size 60.00x40 [transform={m=((3.00,0.00)(0.00,2.00)) t=(50.00,210.00)}]
+            RenderPath {rect} at (50,240) size 60.00x2 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L20.00,0.00 L20.00,1.00 L0.00,1.00 Z"]
             RenderPath {rect} at (50,240) size 2.01x40 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L0.67,0.00 L0.67,20.00 L0.00,20.00 Z"]
           RenderSVGContainer {g} at (250,240) size 60x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
             RenderSVGContainer {g} at (250,240) size 60x40 [transform={m=((3.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]

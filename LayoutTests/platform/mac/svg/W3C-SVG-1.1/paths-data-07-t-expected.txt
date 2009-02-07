@@ -22,7 +22,7 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (230.40,176.40) size 7.20x7.20 [fill={[type=SOLID] [color=#0000FF]}] [data="M328.00,248.00 L332.00,248.00 L332.00,252.00 L328.00,252.00 Z"]
         RenderPath {rect} at (230.40,230.40) size 7.20x7.20 [fill={[type=SOLID] [color=#0000FF]}] [data="M328.00,278.00 L332.00,278.00 L332.00,282.00 L328.00,282.00 Z"]
         RenderPath {rect} at (68.40,230.40) size 7.20x7.20 [fill={[type=SOLID] [color=#0000FF]}] [data="M238.00,278.00 L242.00,278.00 L242.00,282.00 L238.00,282.00 Z"]
-        RenderPath {path} at (270.00,72.00) size 162x162 [fill={[type=SOLID] [color=#FFFF00]}] [data="M350.00,190.00 L380.00,190.00 L380.00,220.00 L410.00,220.00 L410.00,250.00 L440.00,250.00 L440.00,280.00 L350.00,280.00 L350.00,190.00 Z"]
+        RenderPath {path} at (270,72) size 162x162 [fill={[type=SOLID] [color=#FFFF00]}] [data="M350.00,190.00 L380.00,190.00 L380.00,220.00 L410.00,220.00 L410.00,250.00 L440.00,250.00 L440.00,280.00 L350.00,280.00 L350.00,190.00 Z"]
         RenderPath {rect} at (266.40,68.40) size 7.20x7.20 [fill={[type=SOLID] [color=#0000FF]}] [data="M348.00,188.00 L352.00,188.00 L352.00,192.00 L348.00,192.00 Z"]
         RenderPath {rect} at (320.40,68.40) size 7.20x7.20 [fill={[type=SOLID] [color=#0000FF]}] [data="M378.00,188.00 L382.00,188.00 L382.00,192.00 L378.00,192.00 Z"]
         RenderPath {rect} at (320.40,122.40) size 7.20x7.20 [fill={[type=SOLID] [color=#0000FF]}] [data="M378.00,218.00 L382.00,218.00 L382.00,222.00 L378.00,222.00 Z"]

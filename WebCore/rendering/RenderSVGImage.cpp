@@ -198,7 +198,7 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest&, HitTestResult& result, i
     bool isVisible = (style()->visibility() == VISIBLE);
     if (isVisible || !hitRules.requireVisible) {
         double localX, localY;
-        absoluteTransform().inverse().map(_x, _y, &localX, &localY);
+        absoluteTransform().inverse().map(_x, _y, localX, localY);
 
         if (hitRules.canHitFill) {
             if (m_localBounds.contains(narrowPrecisionToFloat(localX), narrowPrecisionToFloat(localY))) {

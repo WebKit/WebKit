@@ -907,7 +907,8 @@ void GraphicsContext::concatCTM(const TransformationMatrix& transform)
 
 TransformationMatrix GraphicsContext::getCTM() const
 {
-    return CGContextGetCTM(platformContext());
+    CGAffineTransform t = CGContextGetCTM(platformContext());
+    return TransformationMatrix(t.a, t.b, t.c, t.d, t.tx, t.ty);
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)

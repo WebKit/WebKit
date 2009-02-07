@@ -357,7 +357,7 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
         return;
 
     TransformationMatrix newTransform = state().m_transform;
-    newTransform.scale(sx, sy);
+    newTransform.scaleNonUniform(sx, sy);
     if (!newTransform.isInvertible()) {
         state().m_invertibleCTM = false;
         return;
@@ -365,7 +365,7 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
 
     state().m_transform = newTransform;
     c->scale(FloatSize(sx, sy));
-    m_path.transform(TransformationMatrix().scale(1.0/sx, 1.0/sy));
+    m_path.transform(TransformationMatrix().scaleNonUniform(1.0/sx, 1.0/sy));
 }
 
 void CanvasRenderingContext2D::rotate(float angleInRadians)

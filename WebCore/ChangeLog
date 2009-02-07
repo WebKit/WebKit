@@ -1,3 +1,154 @@
+2009-02-06  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=6868
+
+        I have not only made TransformationMatrix platform independent
+        but I've also added 3D methods, which will be used when I update
+        WebKitCSSMatrix to include 3D (see https://bugs.webkit.org/show_bug.cgi?id=23689).
+        I am now keeping a full 4x4 matrix in TransformationMatrix. I'm also doing all
+        the math as doubles rather than floats. This makes a TransformationMatrix
+        go from 24 bytes to 128 bytes, but I don't think this class is used enough to
+        make this overhead will be significant.
+
+        The change from floats to doubles has caused some differences in rounding and
+        display (sometimes things that displayed as -0.0 now display as 0.0 or vice versa),
+        so I've had to change some LayoutTest results in the SVG tests.
+
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::FloatPoint::matrixTransform):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/cg/TransformationMatrixCG.cpp:
+        (WebCore::TransformationMatrix::operator CGAffineTransform):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::determinant2x2):
+        (WebCore::determinant3x3):
+        (WebCore::determinant4x4):
+        (WebCore::adjoint):
+        (WebCore::inverse):
+        (WebCore::transposeMatrix4):
+        (WebCore::v4MulPointByMatrix):
+        (WebCore::v3Length):
+        (WebCore::v3Scale):
+        (WebCore::v3Dot):
+        (WebCore::v3Combine):
+        (WebCore::v3Cross):
+        (WebCore::decompose):
+        (WebCore::slerp):
+        (WebCore::TransformationMatrix::scale):
+        (WebCore::TransformationMatrix::rotateFromVector):
+        (WebCore::TransformationMatrix::flipX):
+        (WebCore::TransformationMatrix::flipY):
+        (WebCore::makeMapBetweenRects):
+        (WebCore::TransformationMatrix::projectPoint):
+        (WebCore::TransformationMatrix::mapPoint):
+        (WebCore::TransformationMatrix::mapRect):
+        (WebCore::TransformationMatrix::mapQuad):
+        (WebCore::TransformationMatrix::scale3d):
+        (WebCore::TransformationMatrix::rotate3d):
+        (WebCore::TransformationMatrix::translate):
+        (WebCore::TransformationMatrix::translate3d):
+        (WebCore::TransformationMatrix::skew):
+        (WebCore::TransformationMatrix::applyPerspective):
+        (WebCore::TransformationMatrix::multLeft):
+        (WebCore::TransformationMatrix::multVecMatrix):
+        (WebCore::TransformationMatrix::isInvertible):
+        (WebCore::TransformationMatrix::inverse):
+        (WebCore::blendFloat):
+        (WebCore::TransformationMatrix::blend):
+        (WebCore::TransformationMatrix::decompose):
+        (WebCore::TransformationMatrix::recompose):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::TransformationMatrix):
+        (WebCore::TransformationMatrix::setMatrix):
+        (WebCore::TransformationMatrix::operator =):
+        (WebCore::TransformationMatrix::makeIdentity):
+        (WebCore::TransformationMatrix::isIdentity):
+        (WebCore::TransformationMatrix::map):
+        (WebCore::TransformationMatrix::m11):
+        (WebCore::TransformationMatrix::setM11):
+        (WebCore::TransformationMatrix::m12):
+        (WebCore::TransformationMatrix::setM12):
+        (WebCore::TransformationMatrix::m13):
+        (WebCore::TransformationMatrix::setM13):
+        (WebCore::TransformationMatrix::m14):
+        (WebCore::TransformationMatrix::setM14):
+        (WebCore::TransformationMatrix::m21):
+        (WebCore::TransformationMatrix::setM21):
+        (WebCore::TransformationMatrix::m22):
+        (WebCore::TransformationMatrix::setM22):
+        (WebCore::TransformationMatrix::m23):
+        (WebCore::TransformationMatrix::setM23):
+        (WebCore::TransformationMatrix::m24):
+        (WebCore::TransformationMatrix::setM24):
+        (WebCore::TransformationMatrix::m31):
+        (WebCore::TransformationMatrix::setM31):
+        (WebCore::TransformationMatrix::m32):
+        (WebCore::TransformationMatrix::setM32):
+        (WebCore::TransformationMatrix::m33):
+        (WebCore::TransformationMatrix::setM33):
+        (WebCore::TransformationMatrix::m34):
+        (WebCore::TransformationMatrix::setM34):
+        (WebCore::TransformationMatrix::m41):
+        (WebCore::TransformationMatrix::setM41):
+        (WebCore::TransformationMatrix::m42):
+        (WebCore::TransformationMatrix::setM42):
+        (WebCore::TransformationMatrix::m43):
+        (WebCore::TransformationMatrix::setM43):
+        (WebCore::TransformationMatrix::m44):
+        (WebCore::TransformationMatrix::setM44):
+        (WebCore::TransformationMatrix::a):
+        (WebCore::TransformationMatrix::setA):
+        (WebCore::TransformationMatrix::b):
+        (WebCore::TransformationMatrix::setB):
+        (WebCore::TransformationMatrix::c):
+        (WebCore::TransformationMatrix::setC):
+        (WebCore::TransformationMatrix::d):
+        (WebCore::TransformationMatrix::setD):
+        (WebCore::TransformationMatrix::e):
+        (WebCore::TransformationMatrix::setE):
+        (WebCore::TransformationMatrix::f):
+        (WebCore::TransformationMatrix::setF):
+        (WebCore::TransformationMatrix::multiply):
+        (WebCore::TransformationMatrix::rotate):
+        (WebCore::TransformationMatrix::skewX):
+        (WebCore::TransformationMatrix::skewY):
+        (WebCore::TransformationMatrix::hasPerspective):
+        (WebCore::TransformationMatrix::):
+        (WebCore::TransformationMatrix::isAffine):
+        (WebCore::TransformationMatrix::operator==):
+        (WebCore::TransformationMatrix::operator*=):
+        (WebCore::TransformationMatrix::operator*):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::nodeAtPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransform):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::mapAbsolutePointToLocal):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtPoint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtPoint):
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::nodeAtPoint):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::resetToBaseValue):
+        (WebCore::SVGAnimateMotionElement::calculateAnimatedValue):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::viewport):
+        * svg/SVGTransform.cpp:
+        (SVGTransform::setTranslate):
+        (SVGTransform::setScale):
+        (SVGTransform::setRotate):
+        (SVGTransform::setSkewX):
+        (SVGTransform::setSkewY):
+        * svg/graphics/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::draw):
+
 2009-02-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

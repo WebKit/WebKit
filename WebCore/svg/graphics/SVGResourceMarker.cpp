@@ -82,14 +82,14 @@ void SVGResourceMarker::draw(GraphicsContext* context, const FloatRect& rect, do
     // the translation performed on the viewport itself.
     TransformationMatrix viewportTransform;
     if (m_useStrokeWidth)
-        viewportTransform.scale(strokeWidth, strokeWidth);
+        viewportTransform.scaleNonUniform(strokeWidth, strokeWidth);
     viewportTransform *= m_marker->viewportTransform();
     double refX, refY;
-    viewportTransform.map(m_refX, m_refY, &refX, &refY);
+    viewportTransform.map(m_refX, m_refY, refX, refY);
     transform.translate(-refX, -refY);
 
     if (m_useStrokeWidth)
-        transform.scale(strokeWidth, strokeWidth);
+        transform.scaleNonUniform(strokeWidth, strokeWidth);
 
     // FIXME: PaintInfo should be passed into this method instead of being created here
     // FIXME: bounding box fractions are lost

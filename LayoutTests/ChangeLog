@@ -1,3 +1,66 @@
+2009-02-06  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+       https://bugs.webkit.org/show_bug.cgi?id=6868
+
+        Fixed results of several svg tests because of differences
+        in rounding caused by TransformationMatrix changing from
+        single to double precision math.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-30-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-81-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-82-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-marker-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-09-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-15-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-group-03-t-expected.txt:
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/mac/svg/batik/text/textProperties-expected.txt:
+        * platform/mac/svg/batik/text/verticalText-expected.txt:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/mac/svg/carto.net/slider-expected.txt:
+        * platform/mac/svg/carto.net/tabgroup-expected.txt:
+        * platform/mac/svg/custom/glyph-selection-lang-attribute-expected.txt:
+        * platform/mac/svg/custom/invalid-css-expected.txt:
+        * platform/mac/svg/custom/js-late-marker-and-object-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-marker-creation-expected.txt:
+        * platform/mac/svg/custom/preserve-aspect-ratio-syntax-expected.txt:
+        * platform/mac/svg/custom/shapes-supporting-markers-expected.txt:
+        * platform/mac/svg/custom/use-css-no-effect-on-shadow-tree-expected.txt:
+        * platform/mac/svg/custom/viewbox-syntax-expected.txt:
+        * platform/mac/svg/hixie/perf/001-expected.txt:
+        * platform/mac/svg/hixie/perf/002-expected.txt:
+        * platform/mac/svg/hixie/perf/007-expected.txt:
+        * platform/mac/svg/text/text-align-01-b-expected.txt:
+        * platform/mac/svg/text/text-align-05-b-expected.txt:
+        * platform/mac/svg/text/text-fonts-01-t-expected.txt:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.txt:
+        * platform/mac/svg/text/text-text-06-t-expected.txt:
+        * platform/mac/svg/text/text-tref-01-b-expected.txt:
+        * svg/custom/getTransformToElement.svg:
+
 2009-02-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Eric Seidel.

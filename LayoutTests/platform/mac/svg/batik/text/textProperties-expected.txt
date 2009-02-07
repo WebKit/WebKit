@@ -78,9 +78,9 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,-13) size 164x17
           chunk 1 (middle anchor) text run 1 at (143.50,280.00) startOffset 0 endOffset 25 width 163.00: "Text Rendering Properties"
       RenderSVGContainer {g} at (24,297) size 152x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,305.00)}]
-        RenderSVGContainer {g} at (58.00,297) size 84x36 [transform={m=((-1.00,-0.00)(0.00,-1.00)) t=(0.00,0.00)}]
-          RenderSVGContainer {use} at (58.00,297) size 84x36
-            RenderSVGContainer {g} at (58.00,297) size 84x36
+        RenderSVGContainer {g} at (58,297) size 84x36 [transform={m=((-1.00,0.00)(-0.00,-1.00)) t=(0.00,0.00)}]
+          RenderSVGContainer {use} at (58,297) size 84x36
+            RenderSVGContainer {g} at (58,297) size 84x36
               RenderSVGText {text} at (-42,0) size 84x36 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,-28) size 84x36
                   chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"

@@ -12,7 +12,7 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (49.85,81.85) size 144.30x144.30 [stroke={[type=SOLID] [color=#000000]}] [data="M0.00,-60.00 L480.00,-60.00 L480.00,420.00 L0.00,420.00 Z"]
         RenderPath {line} at (50,151) size 144x6 [stroke={[type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFFFFF)]] [start=(0,0)] [end=(1,0)] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,180.00 L480.00,180.00"]
         RenderPath {line} at (68.97,100.97) size 106.07x106.07 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(197.57,-116.98)}] [stroke={[type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFFFFF)]] [start=(0,0)] [end=(1,0)] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,180.00 L480.00,180.00"]
-        RenderPath {line} at (119.00,82) size 6x144 [transform={m=((-0.00,1.00)(-1.00,-0.00)) t=(420.00,-60.00)}] [stroke={[type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFFFFF)]] [start=(0,0)] [end=(1,0)] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,180.00 L480.00,180.00"]
+        RenderPath {line} at (119,82) size 6x144 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(420.00,-60.00)}] [stroke={[type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFFFFF)]] [start=(0,0)] [end=(1,0)] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,180.00 L480.00,180.00"]
         RenderPath {line} at (68.88,100.88) size 106.24x106.24 [stroke={[type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFFFFF)]] [start=(0,0)] [end=(1,0)] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M410.00,10.00 L70.00,350.00"]
       RenderSVGText {text} at (84,250) size 72x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 72x18
@@ -21,7 +21,7 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (279.85,81.85) size 144.30x144.30 [stroke={[type=SOLID] [color=#000000]}] [data="M0.00,-60.00 L480.00,-60.00 L480.00,420.00 L0.00,420.00 Z"]
         RenderPath {rect} at (280,151) size 144x6 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,170.00 L480.00,170.00 L480.00,190.00 L0.00,190.00 Z"]
         RenderPath {rect} at (298.97,100.97) size 106.07x106.07 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(197.57,-116.98)}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,170.00 L480.00,170.00 L480.00,190.00 L0.00,190.00 Z"]
-        RenderPath {rect} at (349,82) size 6x144 [transform={m=((-0.00,1.00)(-1.00,-0.00)) t=(420.00,-60.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,170.00 L480.00,170.00 L480.00,190.00 L0.00,190.00 Z"]
+        RenderPath {rect} at (349,82) size 6x144 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(420.00,-60.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,170.00 L480.00,170.00 L480.00,190.00 L0.00,190.00 Z"]
         RenderPath {rect} at (298.97,100.97) size 106.07x106.07 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(-56.98,222.43)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFFFFF)]] [start=(0,0)] [end=(1,0)]}] [data="M0.00,170.00 L480.00,170.00 L480.00,190.00 L0.00,190.00 Z"]
       RenderSVGText {text} at (314,250) size 72x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 72x18

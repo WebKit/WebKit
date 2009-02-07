@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0.50,0.50) size 479x359
-    RenderSVGContainer {g} at (10.00,11) size 430x282
+    RenderSVGContainer {g} at (10,11) size 430x282
       RenderSVGText {text} at (10,25) size 194x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 194x17
           chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 31 width 194.00: "Testing gradientUnits attribute"
@@ -32,7 +32,7 @@ layer at (0,0) size 480x360
       RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
-      RenderPath {rect} at (10.00,210.00) size 430x50 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(10.00,260.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,0)] [end=(0,430)]}] [data="M0.00,0.00 L50.00,0.00 L50.00,430.00 L0.00,430.00 Z"]
+      RenderPath {rect} at (10,210) size 430x50 [transform={m=((0.00,-1.00)(1.00,0.00)) t=(10.00,260.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,0)] [end=(0,430)]}] [data="M0.00,0.00 L50.00,0.00 L50.00,430.00 L0.00,430.00 Z"]
       RenderSVGText {text} at (10,275) size 177x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 177x14
           chunk 1 text run 1 at (10.00,275.00) startOffset 0 endOffset 28 width 177.00: "gradientUnits=userSpaceOnUse"

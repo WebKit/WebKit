@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text}
         RenderSVGInline {tref} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderPath {rect} at (120.83,304.17) size 435x38.33 [stroke={[type=SOLID] [color=#000000]}] [data="M73.00,183.00 L333.00,183.00 L333.00,205.00 L73.00,205.00 Z"]
+      RenderPath {rect} at (120.83,304.17) size 435.00x38.33 [stroke={[type=SOLID] [color=#000000]}] [data="M73.00,183.00 L333.00,183.00 L333.00,205.00 L73.00,205.00 Z"]
       RenderSVGText {text} at (73,217) size 154x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 154x14
           chunk 1 text run 1 at (73.00,217.00) startOffset 0 endOffset 34 width 154.00: "'tref' to a string in another file"

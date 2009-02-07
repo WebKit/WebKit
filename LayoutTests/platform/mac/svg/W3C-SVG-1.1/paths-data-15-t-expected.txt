@@ -7,7 +7,7 @@ layer at (0,0) size 480x360
         RenderPath {path} at (71.15,111.25) size 325.71x29.49 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M20.00,20.00 C40.00,13.33,60.00,13.33,80.00,20.00 C100.00,26.67,120.00,26.67,140.00,20.00 C160.00,13.33,180.00,13.33,200.00,20.00"]
         RenderPath {path} at (72,177.30) size 108x5.40 [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [data="M20.00,50.00 C20.00,50.00,30.00,50.00,50.00,50.00 C70.00,50.00,80.00,50.00,80.00,50.00"]
         RenderPath {rect} at (71.10,179.10) size 9x9 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M20.00,50.00 L24.00,50.00 L24.00,54.00 L20.00,54.00 Z"]
-        RenderPath {rect} at (125.10,179.10) size 9x9 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M50.00,50.00 L54.00,50.00 L54.00,54.00 L50.00,54.00 Z"]
+        RenderPath {rect} at (125.10,179.10) size 9.00x9 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M50.00,50.00 L54.00,50.00 L54.00,54.00 L50.00,54.00 Z"]
         RenderPath {rect} at (179.10,179.10) size 9x9 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M80.00,50.00 L84.00,50.00 L84.00,54.00 L80.00,54.00 Z"]
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46

@@ -125,7 +125,7 @@ PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::scale(float scaleX, float scaleY)
         scaleX = 1; 
     if (isnan(scaleY))
         scaleY = scaleX; 
-    return WebKitCSSMatrix::create(m_matrix.scale(scaleX,scaleY));
+    return WebKitCSSMatrix::create(m_matrix.scaleNonUniform(scaleX,scaleY));
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotate(float rot)

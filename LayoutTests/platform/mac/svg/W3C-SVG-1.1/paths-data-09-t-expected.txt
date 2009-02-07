@@ -17,7 +17,7 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (108,95.40) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M60.00,203.00 L64.00,203.00 L64.00,207.00 L60.00,207.00 Z"]
         RenderPath {rect} at (178.15,216.90) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M98.97,270.50 L102.97,270.50 L102.97,274.50 L98.97,274.50 Z"]
         RenderPath {rect} at (37.85,216.90) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M21.03,270.50 L25.03,270.50 L25.03,274.50 L21.03,274.50 Z"]
-        RenderPath {path} at (225.07,72.00) size 187.06x162 [fill={[type=SOLID] [color=#00C000] [fill rule=EVEN-ODD]}] [data="M177.00,190.00 L228.96,280.00 L125.04,280.00 L177.00,190.00 Z M177.00,205.00 L215.97,272.50 L138.06,272.50 L177.03,205.00 Z"]
+        RenderPath {path} at (225.07,72) size 187.06x162 [fill={[type=SOLID] [color=#00C000] [fill rule=EVEN-ODD]}] [data="M177.00,190.00 L228.96,280.00 L125.04,280.00 L177.00,190.00 Z M177.00,205.00 L215.97,272.50 L138.06,272.50 L177.03,205.00 Z"]
         RenderPath {rect} at (315,68.40) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M175.00,188.00 L179.00,188.00 L179.00,192.00 L175.00,192.00 Z"]
         RenderPath {rect} at (408.53,230.40) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M226.96,278.00 L230.96,278.00 L230.96,282.00 L226.96,282.00 Z"]
         RenderPath {rect} at (221.47,230.40) size 7.20x7.20 [fill={[type=SOLID] [color=#FF0000]}] [data="M123.04,278.00 L127.04,278.00 L127.04,282.00 L123.04,282.00 Z"]

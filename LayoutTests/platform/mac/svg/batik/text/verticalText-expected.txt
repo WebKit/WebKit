@@ -26,20 +26,20 @@ layer at (0,0) size 450x500
         RenderPath {line} at (299.50,75) size 1x375 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M300.00,75.00 L300.00,450.00"]
         RenderPath {line} at (349.50,75) size 1x375 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M350.00,75.00 L350.00,450.00"]
         RenderPath {line} at (399.50,75) size 1x375 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M400.00,75.00 L400.00,450.00"]
-      RenderSVGText {text} at (33,79) size 18x165 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (8,0) size 18x165
+      RenderSVGText {text} at (33,79) size 17x165 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (9,0) size 17x165
           chunk 1 (vertical) text run 1 at (33.00,79.00) startOffset 0 endOffset 23 height 391.00: "Writing top to bottom\x{753B}\x{50CF}"
-      RenderSVGText {text} at (83,79) size 18x174 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (8,0) size 18x174
+      RenderSVGText {text} at (83,79) size 17x174 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (9,0) size 17x174
           chunk 1 (vertical) text run 1 at (83.00,79.00) startOffset 0 endOffset 24 height 408.00: "Glyph Orientation:auto\x{753B}\x{50CF}"
       RenderSVGText {text} at (142,88) size 16x357 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-13) size 16x357
           chunk 1 (vertical) text run 1 at (142.50,88.00) startOffset 0 endOffset 21 height 357.00: "Glyph Orientation:0\x{753B}\x{50CF}"
-      RenderSVGText {text} at (183,79) size 18x163 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (8,0) size 18x163
+      RenderSVGText {text} at (183,79) size 17x163 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (9,0) size 17x163
           chunk 1 (vertical) text run 1 at (183.00,79.00) startOffset 0 endOffset 22 height 374.00: "Glyph Orientation:90\x{753B}\x{50CF}"
-      RenderSVGText {text} at (250,88) size 16x392 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (-8,-14) size 16x392
+      RenderSVGText {text} at (250,88) size 16x391 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (-8,-13) size 16x391
           chunk 1 (vertical) text run 1 at (250.00,88.00) startOffset 0 endOffset 23 height 391.00: "Glyph Orientation:180\x{753B}\x{50CF}"
       RenderSVGText {text} at (317,79) size 17x171 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (-26,0) size 17x171
@@ -52,13 +52,13 @@ layer at (0,0) size 450x500
             chunk 1 (vertical) text run 2 at (333.00,150.00) startOffset 0 endOffset 7 height 119.00: "<tspan>"
         RenderSVGInlineText {#text} at (9,120) size 17x53
           chunk 1 (vertical) text run 3 at (333.00,199.00) startOffset 0 endOffset 8 height 136.00: " element"
-      RenderSVGText {text} at (383,79) size 18x294 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (8,0) size 18x71
+      RenderSVGText {text} at (383,79) size 17x294 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (9,0) size 17x71
           chunk 1 (vertical) text run 1 at (383.00,79.00) startOffset 0 endOffset 9 height 153.00: "Embedded "
         RenderSVGTSpan {tspan} at (0,0) size 8x170
           RenderSVGInlineText {#text} at (13,67) size 8x170
             chunk 1 (vertical) text run 2 at (396.00,159.00) startOffset 0 endOffset 10 height 170.00: "orientated"
-        RenderSVGInlineText {#text} at (8,241) size 18x53
+        RenderSVGInlineText {#text} at (9,241) size 17x53
           chunk 1 (vertical) text run 3 at (383.00,320.00) startOffset 0 endOffset 8 height 136.00: " element"
       RenderSVGContainer {g} at (51,455) size 319.11x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,450.00)}]
         RenderSVGContainer {use} at (54.89,457.29) size 315.21x30.43

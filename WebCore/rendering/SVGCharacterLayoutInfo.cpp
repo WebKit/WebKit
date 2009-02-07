@@ -521,7 +521,7 @@ TransformationMatrix SVGChar::characterTransform() const
     ctm.rotate(angle);
 
     if (pathData) {
-        ctm.scale(pathData->xScale, pathData->yScale);
+        ctm.scaleNonUniform(pathData->xScale, pathData->yScale);
         ctm.translate(pathData->xShift, pathData->yShift);
         ctm.rotate(pathData->orientationAngle);
     }

@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (546.88,44.92) size 15.62x89.84
       RenderPath {line} at (548.83,44.92) size 11.72x89.84 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M710.00,65.00 L710.00,165.00"]
       RenderPath {line} at (553.52,50.78) size 2.34x78.12 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M710.00,65.00 L710.00,165.00"]
-      RenderSVGContainer {use} at (546.88,87.89) size 15.62x3.91 [transform={m=((-0.00,1.00)(-1.00,-0.00)) t=(710.00,115.00)}]
+      RenderSVGContainer {use} at (546.88,87.89) size 15.62x3.91 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(710.00,115.00)}]
         RenderSVGContainer {g} at (546.88,87.89) size 15.62x3.91
           RenderSVGViewportContainer {svg} at (546.88,87.89) size 15.62x3.91
             RenderPath {line} at (546.88,87.89) size 15.62x3.91 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]

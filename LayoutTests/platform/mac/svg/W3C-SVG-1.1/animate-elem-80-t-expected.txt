@@ -23,9 +23,9 @@ layer at (0,0) size 480x360
               RenderPath {line} at (15,89.50) size 90x1 [stroke={[type=SOLID] [color=#C0C0C0]}] [data="M-45.00,0.00 L45.00,0.00"]
               RenderPath {line} at (59.50,45) size 1x90 [stroke={[type=SOLID] [color=#C0C0C0]}] [data="M0.00,-45.00 L0.00,45.00"]
         RenderPath {line} at (60,90) size 0x0 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
-        RenderPath {line} at (60,90) size 0x0 [transform={m=((-0.00,1.00)(-1.00,-0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
-        RenderPath {line} at (60,90) size 0x0 [transform={m=((-1.00,-0.00)(0.00,-1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
-        RenderPath {line} at (60,90) size 0x0 [transform={m=((0.00,-1.00)(1.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
+        RenderPath {line} at (60,90) size 0x0 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
+        RenderPath {line} at (60,90) size 0x0 [transform={m=((-1.00,0.00)(-0.00,-1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
+        RenderPath {line} at (60,90) size 0x0 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
         RenderPath {line} at (55,85) size 50x10 [stroke={[type=SOLID] [color=#C85050] [stroke width=10.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L40.00,0.00"]
         RenderSVGText {text} at (-36,60) size 72x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 72x18
@@ -67,9 +67,9 @@ layer at (0,0) size 480x360
               RenderPath {line} at (15,219.50) size 90x1 [stroke={[type=SOLID] [color=#C0C0C0]}] [data="M-45.00,0.00 L45.00,0.00"]
               RenderPath {line} at (59.50,175) size 1x90 [stroke={[type=SOLID] [color=#C0C0C0]}] [data="M0.00,-45.00 L0.00,45.00"]
         RenderPath {line} at (20,180) size 0x0 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
-        RenderPath {line} at (100,180) size 0x0 [transform={m=((-0.00,1.00)(-1.00,-0.00)) t=(80.00,0.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
-        RenderPath {line} at (100,260) size 0x0 [transform={m=((-1.00,-0.00)(0.00,-1.00)) t=(80.00,80.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
-        RenderPath {line} at (20,260) size 0x0 [transform={m=((0.00,-1.00)(1.00,0.00)) t=(-0.00,80.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
+        RenderPath {line} at (100,180) size 0x0 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(80.00,-0.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
+        RenderPath {line} at (100,260) size 0x0 [transform={m=((-1.00,0.00)(-0.00,-1.00)) t=(80.00,80.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
+        RenderPath {line} at (20,260) size 0x0 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(0.00,80.00)}] [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=15.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data=""]
         RenderPath {line} at (55,215) size 50x10 [stroke={[type=SOLID] [color=#C85050] [stroke width=10.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [data="M40.00,40.00 L80.00,40.00"]
         RenderSVGText {text} at (4,100) size 72x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 72x18

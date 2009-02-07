@@ -56,7 +56,7 @@ CGPatternRef Pattern::createPlatformPattern(const TransformationMatrix& userSpac
 
     TransformationMatrix patternTransform = m_patternSpaceTransformation;
     patternTransform.multiply(userSpaceTransformation);
-    patternTransform.scale(1, -1);
+    patternTransform.scaleNonUniform(1, -1);
     patternTransform.translate(0, -tileRect.height());
 
     // If FLT_MAX should also be used for xStep or yStep, nothing is rendered. Using fractions of FLT_MAX also

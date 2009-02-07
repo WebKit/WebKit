@@ -125,8 +125,8 @@ FloatRect SVGSVGElement::viewport() const
     TransformationMatrix viewBox = viewBoxToViewTransform(w, h);
     double wDouble = w;
     double hDouble = h;
-    viewBox.map(_x, _y, &_x, &_y);
-    viewBox.map(w, h, &wDouble, &hDouble);
+    viewBox.map(_x, _y, _x, _y);
+    viewBox.map(w, h, wDouble, hDouble);
     return FloatRect::narrowPrecision(_x, _y, wDouble, hDouble);
 }
 

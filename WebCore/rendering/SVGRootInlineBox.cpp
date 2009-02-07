@@ -820,9 +820,9 @@ static float calculateTextLengthCorrectionForTextChunk(SVGTextChunk& chunk, ELen
 
     if (lengthAdjust == SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS) {
         if (chunk.isVerticalText)
-            chunk.ctm.scale(1.0f, chunk.textLength / computedLength);
+            chunk.ctm.scaleNonUniform(1.0f, chunk.textLength / computedLength);
         else
-            chunk.ctm.scale(chunk.textLength / computedLength, 1.0f);
+            chunk.ctm.scaleNonUniform(chunk.textLength / computedLength, 1.0f);
 
         return 0.0f;
     }

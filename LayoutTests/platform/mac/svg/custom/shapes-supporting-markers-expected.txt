@@ -19,4 +19,4 @@ layer at (0,0) size 800x600
       RenderPath {line} at (-0.83,200) size 1.67x83.33 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [data="M0.00,120.00 L0.00,170.00"]
       RenderPath {polyline} at (50,199.17) size 84.68x84.54 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [data="M30.00,120.00 L80.00,120.00 L55.00,170.00"]
       RenderPath {polygon} at (165.32,199.17) size 86.03x86.03 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [data="M100.00,120.00 L150.00,120.00 L125.00,170.00 Z"]
-      RenderPath {path} at (282.50,199.17) size 85.52x85 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [data="M170.00,120.00 L220.00,120.00 L195.00,170.00 C185.00,170.00,170.00,140.00,170.00,120.00"]
+      RenderPath {path} at (282.50,199.17) size 85.52x85.00 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [data="M170.00,120.00 L220.00,120.00 L195.00,170.00 C185.00,170.00,170.00,140.00,170.00,120.00"]

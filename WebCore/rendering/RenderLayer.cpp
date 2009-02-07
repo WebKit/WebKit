@@ -325,7 +325,7 @@ void RenderLayer::updateTransform()
     if (hasTransform) {
         RenderBox* box = renderBox();
         ASSERT(box);
-        m_transform->reset();
+        m_transform->makeIdentity();
         box->style()->applyTransform(*m_transform, box->borderBoxRect().size());
     }
 }

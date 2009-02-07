@@ -280,7 +280,7 @@ TransformationMatrix HTMLCanvasElement::baseTransform() const
     IntSize size = convertLogicalToDevice(unscaledSize);
     TransformationMatrix transform;
     if (size.width() && size.height())
-        transform.scale(size.width() / unscaledSize.width(), size.height() / unscaledSize.height());
+        transform.scaleNonUniform(size.width() / unscaledSize.width(), size.height() / unscaledSize.height());
     transform.multiply(m_imageBuffer->baseTransform());
     return transform;
 }

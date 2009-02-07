@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
           RenderSVGContainer {g} at (95,165) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
             RenderPath {rect} at (95,165) size 50x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L20.00,0.00 L20.00,2.00 L0.00,2.00 Z"]
             RenderPath {rect} at (95,165) size 5x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L2.00,0.00 L2.00,20.00 L0.00,20.00 Z"]
-          RenderSVGContainer {g} at (345,165) size 50x50 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(150.00,70.00)}]
+          RenderSVGContainer {g} at (345,165) size 50x50 [transform={m=((0.00,-1.00)(1.00,0.00)) t=(150.00,70.00)}]
             RenderPath {rect} at (345,165) size 5x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L20.00,0.00 L20.00,2.00 L0.00,2.00 Z"]
             RenderPath {rect} at (345,210) size 50x5 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L2.00,0.00 L2.00,20.00 L0.00,20.00 Z"]
         RenderSVGContainer {g} at (70,105) size 415x117.50 [transform={m=((2.50,0.00)(0.00,2.50)) t=(-30.00,0.00)}]
