@@ -579,6 +579,29 @@ void RenderListBox::setScrollTop(int newTop)
         m_vBar->setValue(index);
 }
 
+bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+{
+    if (!RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, hitTestAction))
+        return false;
+    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node())->listItems();
+    int size = numItems();
+    tx += this->x();
+    ty += this->y();
+    for (int i = 0; i < size; ++i) {
+        if (itemBoundingBoxRect(tx, ty, i).contains(x, y)) {
+            if (HTMLElement* node = listItems[i]) {
+                result.setInnerNode(node);
+                if (!result.innerNonSharedNode())
+                    result.setInnerNonSharedNode(node);
+                result.setLocalPoint(IntPoint(x - tx, y - ty));
+                break;
+            }
+        }
+    }
+
+    return true;
+}
+
 IntRect RenderListBox::controlClipRect(int tx, int ty) const
 {
     IntRect clipRect = contentBoxRect();

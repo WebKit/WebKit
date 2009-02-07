@@ -1,3 +1,14 @@
+2009-02-05  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Darin.
+
+        Test for:
+        https://bugs.webkit.org/show_bug.cgi?id=3248
+        Bug 3248: Mouse events on OPTION element seem to be ignored
+
+        * fast/forms/option-mouseevents-expected.txt: Added.
+        * fast/forms/option-mouseevents.html: Added.
+
 2009-02-06  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

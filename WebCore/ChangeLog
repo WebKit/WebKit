@@ -1,3 +1,20 @@
+2009-02-07  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=3248
+        Bug 3248: Mouse events on OPTION element seem to be ignored
+
+        Support mouse events on options in a select when it forms a list box.
+
+        Test: fast/forms/option-mouseevents.html
+
+        * html/HTMLSelectElement.cpp: Convert to coords relative to the list box.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * rendering/RenderListBox.cpp: Handle hit testing for option elements.
+        (WebCore::RenderListBox::nodeAtPoint):
+        * rendering/RenderListBox.h:
+
 2009-02-07  Adam Treat  <adam.treat@torchmobile.com>
 
         Prospective build fix for all non-Apple platforms.

@@ -711,9 +711,18 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
 {
     if (evt->type() == eventNames().mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         focus();
-        
-        MouseEvent* mEvt = static_cast<MouseEvent*>(evt);
-        int listIndex = static_cast<RenderListBox*>(renderer())->listIndexAtOffset(mEvt->offsetX(), mEvt->offsetY());
+
+        // Convert to coords relative to the list box if needed.
+        MouseEvent* mouseEvent = static_cast<MouseEvent*>(evt);
+        int offsetX = mouseEvent->offsetX();
+        int offsetY = mouseEvent->offsetY();
+        Node* target = evt->target()->toNode();
+        if (target != this) {
+            FloatPoint absPos = renderer()->absoluteToLocal(FloatPoint(offsetX, offsetY), false, true);
+            offsetX = absPos.x();
+            offsetY = absPos.y();
+        }
+        int listIndex = static_cast<RenderListBox*>(renderer())->listIndexAtOffset(offsetX, offsetY);
         if (listIndex >= 0) {
             // Save the selection so it can be compared to the new selection when we call onChange during mouseup, or after autoscroll finishes.
             saveLastSelection();
@@ -722,13 +731,13 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
             
             bool multiSelectKeyPressed = false;
 #if PLATFORM(MAC)
-            multiSelectKeyPressed = mEvt->metaKey();
+            multiSelectKeyPressed = mouseEvent->metaKey();
 #else
-            multiSelectKeyPressed = mEvt->ctrlKey();
+            multiSelectKeyPressed = mouseEvent->ctrlKey();
 #endif
 
-            bool shiftSelect = multiple() && mEvt->shiftKey();
-            bool multiSelect = multiple() && multiSelectKeyPressed && !mEvt->shiftKey();
+            bool shiftSelect = multiple() && mouseEvent->shiftKey();
+            bool multiSelect = multiple() && multiSelectKeyPressed && !mouseEvent->shiftKey();
             
             HTMLElement* clickedElement = listItems()[listIndex];            
             HTMLOptionElement* option = 0;
