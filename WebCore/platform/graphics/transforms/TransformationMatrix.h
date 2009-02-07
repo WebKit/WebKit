@@ -30,6 +30,8 @@
 #include <CoreGraphics/CGAffineTransform.h>
 #endif
 
+#include <string.h> //for memcpy
+
 namespace WebCore {
 
 class IntPoint;
