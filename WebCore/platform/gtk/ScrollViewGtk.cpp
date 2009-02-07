@@ -154,7 +154,7 @@ bool ScrollView::platformHandleHorizontalAdjustment(const IntSize& scroll)
         m_horizontalAdjustment->upper = contentsWidth();
         gtk_adjustment_changed(m_horizontalAdjustment);
 
-        if (m_scrollOffset.width() != scroll.width()) {
+        if (m_horizontalAdjustment->value != scroll.width()) {
             m_horizontalAdjustment->value = scroll.width();
             gtk_adjustment_value_changed(m_horizontalAdjustment);
         }
@@ -173,7 +173,7 @@ bool ScrollView::platformHandleVerticalAdjustment(const IntSize& scroll)
         m_verticalAdjustment->upper = contentsHeight();
         gtk_adjustment_changed(m_verticalAdjustment);
 
-        if (m_scrollOffset.height() != scroll.height()) {
+        if (m_verticalAdjustment->value != scroll.height()) {
             m_verticalAdjustment->value = scroll.height();
             gtk_adjustment_value_changed(m_verticalAdjustment);
         }

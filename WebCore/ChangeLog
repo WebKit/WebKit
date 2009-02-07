@@ -1,3 +1,22 @@
+2009-02-06  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23621
+
+        Do not use m_scrollOffset to check if we are setting the same
+        value than we already have.
+
+        m_scrollOffset starts at 0 for ScrollView, so when opening a new
+        page and scrolling to 0 (the usual case) the check will fail and
+        we won't update the adjustment value, resulting in a possibly
+        mispositioned scrollbar. Use the adjustment value directly
+        instead, which is what we are updating anyway.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::platformHandleHorizontalAdjustment):
+        (WebCore::ScrollView::platformHandleVerticalAdjustment):
+
 2009-02-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.
