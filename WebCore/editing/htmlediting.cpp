@@ -309,27 +309,32 @@ Node* enclosingBlock(Node* node)
     return static_cast<Element*>(enclosingNodeOfType(Position(node, 0), isBlock));
 }
 
+// Internally editing uses "invalid" positions for historical reasons.  For
+// example, in <div><img /></div>, Editing might use (img, 1) for the position
+// after <img>, but we have to convert that to (div, 1) before handing the
+// position to a Range object.  Ideally all internal positions should
+// be "range compliant" for simplicity.
 Position rangeCompliantEquivalent(const Position& pos)
 {
     if (pos.isNull())
         return Position();
 
-    Node *node = pos.node();
-    
+    Node* node = pos.node();
+
     if (pos.offset() <= 0) {
         if (node->parentNode() && (editingIgnoresContent(node) || isTableElement(node)))
             return positionBeforeNode(node);
         return Position(node, 0);
     }
-    
+
     if (node->offsetInCharacters())
         return Position(node, min(node->maxCharacterOffset(), pos.offset()));
-    
+
     int maxCompliantOffset = node->childNodeCount();
     if (pos.offset() > maxCompliantOffset) {
         if (node->parentNode())
             return positionAfterNode(node);
-        
+
         // there is no other option at this point than to
         // use the highest allowed position in the node
         return Position(node, maxCompliantOffset);

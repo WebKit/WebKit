@@ -1,3 +1,25 @@
+2009-02-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        DOMSelection.getRangeAt() returns a different range than the selection
+        https://bugs.webkit.org/show_bug.cgi?id=23601
+
+        Rename toRange to toNormalizedRange and add new firstRange which returns an unmodified range
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _rangeByAlteringCurrentSelection:SelectionController::direction:SelectionController::granularity:]):
+        (-[WebFrame _markDOMRange]):
+        (-[WebFrame _replaceSelectionWithText:selectReplacement:smartReplace:]):
+        (-[WebFrame _selectedNSRange]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectedRange]):
+        (-[WebTextCompleteController doCompletion]):
+        (-[WebHTMLView selectedAttributedString]):
+        * WebView/WebView.mm:
+        (-[WebView textIteratorForRect:]):
+        (-[WebView selectedDOMRange]):
+
 2009-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

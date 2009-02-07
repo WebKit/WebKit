@@ -122,7 +122,16 @@ void Selection::setExtent(const VisiblePosition& visiblePosition)
     validate();
 }
 
-PassRefPtr<Range> Selection::toRange() const
+PassRefPtr<Range> Selection::firstRange() const
+{
+    if (isNone())
+        return 0;
+    Position start = rangeCompliantEquivalent(m_start);
+    Position end = rangeCompliantEquivalent(m_end);
+    return Range::create(start.node()->document(), start, end);
+}
+
+PassRefPtr<Range> Selection::toNormalizedRange() const
 {
     if (isNone())
         return 0;
@@ -170,19 +179,9 @@ PassRefPtr<Range> Selection::toRange() const
         e = rangeCompliantEquivalent(e);
     }
 
-    ExceptionCode ec = 0;
-    RefPtr<Range> result(Range::create(s.node()->document()));
-    result->setStart(s.node(), s.offset(), ec);
-    if (ec) {
-        LOG_ERROR("Exception setting Range start from Selection: %d", ec);
-        return 0;
-    }
-    result->setEnd(e.node(), e.offset(), ec);
-    if (ec) {
-        LOG_ERROR("Exception setting Range end from Selection: %d", ec);
-        return 0;
-    }
-    return result.release();
+    // Selections are supposed to always be valid.  This constructor will ASSERT
+    // if a valid range could not be created, which is fine for this callsite.
+    return Range::create(s.node()->document(), s, e);
 }
 
 bool Selection::expandUsingGranularity(TextGranularity granularity)

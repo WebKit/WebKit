@@ -106,7 +106,7 @@ static HTMLElement* enclosingDeletableElement(const Selection& selection)
     if (!selection.isContentEditable())
         return 0;
 
-    RefPtr<Range> range = selection.toRange();
+    RefPtr<Range> range = selection.toNormalizedRange();
     if (!range)
         return 0;
 

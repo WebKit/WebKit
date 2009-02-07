@@ -849,7 +849,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 - (DOMRange *)_selectedRange
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame ? kit(coreFrame->selection()->toRange().get()) : nil;
+    return coreFrame ? kit(coreFrame->selection()->toNormalizedRange().get()) : nil;
 }
 
 - (BOOL)_shouldDeleteRange:(DOMRange *)range
@@ -5587,7 +5587,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
         // Get preceeding word stem
         WebFrame *frame = [_view _frame];
-        DOMRange *selection = kit(core(frame)->selection()->toRange().get());
+        DOMRange *selection = kit(core(frame)->selection()->toNormalizedRange().get());
         DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:SelectionController::EXTEND
             direction:SelectionController::BACKWARD granularity:WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];
@@ -5857,7 +5857,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (!attributedString) {
         Frame* coreFrame = core([self _frame]);
         if (coreFrame) {
-            RefPtr<Range> range = coreFrame->selection()->selection().toRange();
+            RefPtr<Range> range = coreFrame->selection()->selection().toNormalizedRange();
             attributedString = [NSAttributedString _web_attributedStringFromRange:range.get()];
         }
     }

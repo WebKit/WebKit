@@ -298,8 +298,11 @@ PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
         return 0;
     }
 
+    // If you're hitting this, you've added broken multi-range selection support
+    ASSERT(rangeCount() == 1);
+
     const Selection& selection = m_frame->selection()->selection();
-    return selection.toRange();
+    return selection.firstRange();
 }
 
 void DOMSelection::removeAllRanges()
@@ -323,7 +326,7 @@ void DOMSelection::addRange(Range* r)
         return;
     }
 
-    RefPtr<Range> range = selection->selection().toRange();
+    RefPtr<Range> range = selection->selection().toNormalizedRange();
     ExceptionCode ec = 0;
     if (r->compareBoundaryPoints(Range::START_TO_START, range.get(), ec) == -1) {
         // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
@@ -361,7 +364,7 @@ void DOMSelection::deleteFromDocument()
     if (isCollapsed())
         selection->modify(SelectionController::EXTEND, SelectionController::BACKWARD, CharacterGranularity);
 
-    RefPtr<Range> selectedRange = selection->selection().toRange();
+    RefPtr<Range> selectedRange = selection->selection().toNormalizedRange();
 
     ExceptionCode ec = 0;
     selectedRange->deleteContents(ec);
@@ -383,7 +386,7 @@ bool DOMSelection::containsNode(const Node* n, bool allowPartial) const
 
     Node* parentNode = n->parentNode();
     unsigned nodeIndex = n->nodeIndex();
-    RefPtr<Range> selectedRange = selection->selection().toRange();
+    RefPtr<Range> selectedRange = selection->selection().toNormalizedRange();
 
     if (!parentNode)
         return false;
@@ -418,7 +421,7 @@ String DOMSelection::toString()
     if (!m_frame)
         return String();
 
-    return plainText(m_frame->selection()->selection().toRange().get());
+    return plainText(m_frame->selection()->selection().toNormalizedRange().get());
 }
 
 } // namespace WebCore

@@ -1272,7 +1272,7 @@ PassRefPtr<Range> AccessibilityRenderObject::ariaSelectedTextDOMRange() const
     if (!node)
         return 0;
     
-    RefPtr<Range> currentSelectionRange = selection().toRange();
+    RefPtr<Range> currentSelectionRange = selection().toNormalizedRange();
     if (!currentSelectionRange)
         return 0;
     

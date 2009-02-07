@@ -218,7 +218,7 @@ void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, Documen
     // Make sure that the text to be inserted will not violate the maxLength.
     int oldLength = numGraphemeClusters(data.inputElement()->value().impl());
     ASSERT(oldLength <= data.maxLength());
-    int selectionLength = numGraphemeClusters(plainText(document->frame()->selection()->selection().toRange().get()).impl());
+    int selectionLength = numGraphemeClusters(plainText(document->frame()->selection()->selection().toNormalizedRange().get()).impl());
     ASSERT(oldLength >= selectionLength);
     int maxNewLength = data.maxLength() - (oldLength - selectionLength);
 

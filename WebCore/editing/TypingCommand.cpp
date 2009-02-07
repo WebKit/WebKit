@@ -438,7 +438,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
     
     if (selectionToDelete.isCaretOrRange() && document()->frame()->shouldDeleteSelection(selectionToDelete)) {
         if (killRing)
-            document()->frame()->editor()->addToKillRing(selectionToDelete.toRange().get(), false);
+            document()->frame()->editor()->addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
         // Make undo select everything that has been deleted, unless an undo will undo more than just this deletion.
         // FIXME: This behaves like TextEdit except for the case where you open with text insertion and then delete
         // more text than you insert.  In that case all of the text that was around originally should be selected.
@@ -516,7 +516,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
     
     if (selectionToDelete.isCaretOrRange() && document()->frame()->shouldDeleteSelection(selectionToDelete)) {
         if (killRing)
-            document()->frame()->editor()->addToKillRing(selectionToDelete.toRange().get(), false);
+            document()->frame()->editor()->addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
         // make undo select what was deleted
         setStartingSelection(selectionAfterUndo);
         CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);

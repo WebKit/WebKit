@@ -1,3 +1,80 @@
+2009-02-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        DOMSelection.getRangeAt() returns a different range than the selection
+        https://bugs.webkit.org/show_bug.cgi?id=23601
+
+        Rename toRange to toNormalizedRange and add new firstRange which returns an unmodified range
+
+        Test: fast/dom/Selection/getRangeAt.html
+
+        * WebCore.base.exp:
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::handleBeforeTextInsertedEvent):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::enclosingDeletableElement):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectedRange):
+        (WebCore::Editor::fontForSelection):
+        (WebCore::Editor::applyStyleToSelection):
+        (WebCore::Editor::applyParagraphStyleToSelection):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::insertLineBreak):
+        (WebCore::Editor::insertParagraphSeparator):
+        (WebCore::Editor::ignoreSpelling):
+        (WebCore::Editor::isSelectionUngrammatical):
+        (WebCore::Editor::guessesForUngrammaticalSelection):
+        (WebCore::markMisspellingsOrBadGrammar):
+        (WebCore::Editor::rangeForPoint):
+        * editing/EditorCommand.cpp:
+        (WebCore::expandSelectionToGranularity):
+        (WebCore::executeDeleteToMark):
+        (WebCore::executeSelectToMark):
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * editing/Selection.cpp:
+        (WebCore::Selection::firstRange):
+        (WebCore::Selection::toNormalizedRange):
+        * editing/Selection.h:
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::toNormalizedRange):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createFromSelection):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaSelectedTextDOMRange):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::getRangeAt):
+        (WebCore::DOMSelection::addRange):
+        (WebCore::DOMSelection::deleteFromDocument):
+        (WebCore::DOMSelection::containsNode):
+        (WebCore::DOMSelection::toString):
+        * page/DragController.cpp:
+        (WebCore::setSelectionToDragCaret):
+        (WebCore::DragController::concludeEditDrag):
+        (WebCore::DragController::startDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectedText):
+        (WebCore::Frame::shouldChangeSelection):
+        (WebCore::Frame::shouldDeleteSelection):
+        (WebCore::Frame::selectionComputedStyle):
+        (WebCore::Frame::selectionTextRects):
+        (WebCore::Frame::findString):
+        (WebCore::Frame::respondToChangedSelection):
+        * platform/ContextMenu.cpp:
+        (WebCore::selectionContainsPossibleWord):
+
 2009-02-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein

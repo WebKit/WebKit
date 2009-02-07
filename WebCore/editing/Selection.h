@@ -81,7 +81,13 @@ public:
     bool expandUsingGranularity(TextGranularity granularity);
     TextGranularity granularity() const { return m_granularity; }
 
-    PassRefPtr<Range> toRange() const;
+    // We don't yet support multi-range selections, so we only ever have one range to return.
+    PassRefPtr<Range> firstRange() const;
+
+    // FIXME: Most callers probably don't want this function, but are using it
+    // for historical reasons.  toNormalizedRange contracts the range around
+    // text, and moves the caret upstream before returning the range.
+    PassRefPtr<Range> toNormalizedRange() const;
     
     Element* rootEditableElement() const;
     bool isContentEditable() const;

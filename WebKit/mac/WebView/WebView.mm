@@ -2023,7 +2023,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
     
     Selection selectionInsideRect(coreFrame->visiblePositionForPoint(rectStart), coreFrame->visiblePositionForPoint(rectEnd));
     
-    return [[[WebTextIterator alloc] initWithRange:[DOMRange _wrapRange:selectionInsideRect.toRange().get()]] autorelease];
+    return [[[WebTextIterator alloc] initWithRange:[DOMRange _wrapRange:selectionInsideRect.toNormalizedRange().get()]] autorelease];
 }
 
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource 
@@ -4137,7 +4137,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValuePtr jsV
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return nil;
-    return kit(coreFrame->selection()->toRange().get());
+    return kit(coreFrame->selection()->toNormalizedRange().get());
 }
 
 - (NSSelectionAffinity)selectionAffinity

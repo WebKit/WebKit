@@ -715,7 +715,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     SelectionController selection;
     selection.setSelection(_private->coreFrame->selection()->selection());
     selection.modify(alteration, direction, granularity);
-    return [DOMRange _wrapRange:selection.toRange().get()];
+    return [DOMRange _wrapRange:selection.toNormalizedRange().get()];
 }
 
 - (TextGranularity)_selectionGranularity
@@ -793,7 +793,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (DOMRange *)_markDOMRange
 {
-    return [DOMRange _wrapRange:_private->coreFrame->mark().toRange().get()];
+    return [DOMRange _wrapRange:_private->coreFrame->mark().toNormalizedRange().get()];
 }
 
 // Given proposedRange, returns an extended range that includes adjacent whitespace that should
@@ -933,7 +933,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
-    [self _replaceSelectionWithFragment:kit(createFragmentFromText(_private->coreFrame->selection()->toRange().get(), text).get())
+    [self _replaceSelectionWithFragment:kit(createFragmentFromText(_private->coreFrame->selection()->toNormalizedRange().get(), text).get())
         selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 
@@ -1110,7 +1110,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSRange)_selectedNSRange
 {
-    return [self _convertToNSRange:_private->coreFrame->selection()->toRange().get()];
+    return [self _convertToNSRange:_private->coreFrame->selection()->toNormalizedRange().get()];
 }
 
 - (void)_selectNSRange:(NSRange)range

@@ -315,7 +315,7 @@ static bool setSelectionToDragCaret(Frame* frame, Selection& dragCaret, RefPtr<R
     if (frame->selection()->isNone()) {
         dragCaret = frame->visiblePositionForPoint(point);
         frame->selection()->setSelection(dragCaret);
-        range = dragCaret.toRange();
+        range = dragCaret.toNormalizedRange();
     }
     return !frame->selection()->isNone() && frame->selection()->isContentEditable();
 }
@@ -340,7 +340,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
             return false;
         if (!innerFrame)
             return false;
-        RefPtr<Range> innerRange = innerFrame->selection()->toRange();
+        RefPtr<Range> innerRange = innerFrame->selection()->toNormalizedRange();
         RefPtr<CSSStyleDeclaration> style = m_document->createCSSStyleDeclaration();
         ExceptionCode ec;
         style->setProperty("color", color.name(), ec);
@@ -383,7 +383,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
 
     Selection dragCaret(m_page->dragCaretController()->selection());
     m_page->dragCaretController()->clear();
-    RefPtr<Range> range = dragCaret.toRange();
+    RefPtr<Range> range = dragCaret.toNormalizedRange();
     
     // For range to be null a WebKit client must have done something bad while
     // manually controlling drag behaviour
@@ -673,7 +673,7 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
         } 
         doSystemDrag(dragImage, dragLoc, mouseDraggedPoint, clipboard, src, true);
     } else if (isSelected && (m_dragSourceAction & DragSourceActionSelection)) {
-        RefPtr<Range> selectionRange = src->selection()->toRange();
+        RefPtr<Range> selectionRange = src->selection()->toNormalizedRange();
         ASSERT(selectionRange);
         if (!clipboard->hasData()) 
             clipboard->writeRange(selectionRange.get(), src);

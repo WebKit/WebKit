@@ -49,7 +49,7 @@ void RemoveFormatCommand::doApply()
     Frame* frame = document()->frame();
     
     // Make a plain text string from the selection to remove formatting like tables and lists.
-    String string = plainText(frame->selection()->selection().toRange().get());
+    String string = plainText(frame->selection()->selection().toNormalizedRange().get());
 
     // Get the default style for this editable root, it's the style that we'll give the
     // content that we're operating on.

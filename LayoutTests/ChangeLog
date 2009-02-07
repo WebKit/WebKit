@@ -1,3 +1,16 @@
+2009-02-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        DOMSelection.getRangeAt() returns a different range than the selection
+        https://bugs.webkit.org/show_bug.cgi?id=23601
+
+        Rename toRange to toNormalizedRange and add new firstRange which returns an unmodified range
+
+        * fast/dom/Selection/getRangeAt.html: Added.
+        * fast/dom/Selection/resources/TEMPLATE.html: Copied from LayoutTests/fast/dom/CSSStyleDeclaration/resources/TEMPLATE.html.
+        * fast/dom/Selection/resources/getRangeAt.js: Added.
+
 2009-02-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver Hunt.
