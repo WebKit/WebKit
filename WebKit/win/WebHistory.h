@@ -118,6 +118,8 @@ public:
     void visitedURL(const WebCore::KURL&, const WebCore::String& title, const WebCore::String& httpMethod, bool wasFailure);
     void addVisitedLinksToPageGroup(WebCore::PageGroup&);
 
+    COMPtr<IWebHistoryItem> itemForURLString(const WebCore::String&) const;
+
 private:
     enum NotificationType
     {
@@ -143,7 +145,7 @@ private:
     bool findIndex(int* index, CFAbsoluteTime forDay);
     static CFAbsoluteTime timeToDate(CFAbsoluteTime time);
     BSTR getNotificationString(NotificationType notifyType);
-    HRESULT itemForURLString(CFStringRef urlString, IWebHistoryItem** item);
+    HRESULT itemForURLString(CFStringRef urlString, IWebHistoryItem** item) const;
 
     ULONG m_refCount;
     RetainPtr<CFMutableDictionaryRef> m_entriesByURL;

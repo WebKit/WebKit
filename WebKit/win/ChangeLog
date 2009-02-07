@@ -1,3 +1,28 @@
+2009-02-06  Adam Roben  <aroben@apple.com>
+
+        Build fix
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp: Added missing #include.
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks): Removed
+        incorrect .get(), and changed to use the new overload of
+        WebHistory::itemForURLString.
+
+        * WebHistory.cpp:
+        (WebHistory::itemForURLString): Made this const.
+        (WebHistory::itemForURLString): Added an overload that takes a
+        WebCore::String and returns the IWebHistoryItem instead of using an
+        out parameter.
+
+        * WebHistory.h: Added public overload of itemForURLString.
+
+        * WebView.cpp:
+        (WebView::prepareCandidateWindow):
+        (WebView::onIMERequestCharPosition):
+        (WebView::onIMERequestReconvertString):
+        Updated for toRange -> toNormalizedRange rename.
+
 2009-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

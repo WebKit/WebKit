@@ -724,7 +724,7 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
 
 HRESULT WebHistory::itemForURLString(
     /* [in] */ CFStringRef urlString,
-    /* [retval][out] */ IWebHistoryItem** item)
+    /* [retval][out] */ IWebHistoryItem** item) const
 {
     if (!item)
         return E_FAIL;
@@ -760,6 +760,17 @@ HRESULT WebHistory::removeItemForURLString(CFStringRef urlString)
         PageGroup::removeAllVisitedLinks();
 
     return hr;
+}
+
+COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) const
+{
+    RetainPtr<CFStringRef> urlCFString(AdoptCF, urlString.createCFString());
+    if (!urlCFString)
+        return 0;
+    COMPtr<IWebHistoryItem> item;
+    if (FAILED(itemForURLString(urlCFString.get(), &item)))
+        return 0;
+    return item;
 }
 
 HRESULT WebHistory::addItemToDateCaches(IWebHistoryItem* entry)
