@@ -115,8 +115,7 @@ public:
 
     // WebHistory
     static WebHistory* sharedHistory();
-    void visitedURL(const WebCore::KURL&, const WebCore::String& title, const WebCore::String& httpMethod, bool wasFailure, const WebCore::KURL& serverRedirectURL, bool isClientRedirect);
-    void visitedURLForRedirectWithoutHistoryItem(const WebCore::KURL&);
+    void visitedURL(const WebCore::KURL&, const WebCore::String& title, const WebCore::String& httpMethod, bool wasFailure);
     void addVisitedLinksToPageGroup(WebCore::PageGroup&);
 
 private:
@@ -151,7 +150,6 @@ private:
     RetainPtr<CFMutableArrayRef> m_datesWithEntries;
     RetainPtr<CFMutableArrayRef> m_entriesByDate;
     COMPtr<WebPreferences> m_preferences;
-    COMPtr<WebHistoryItem> m_lastVisitedEntry;
 };
 
 #endif

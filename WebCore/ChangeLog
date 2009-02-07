@@ -1,3 +1,51 @@
+2009-02-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Part III of <rdar://problem/6552272>.
+        
+        Make redirect data available to WebKit. (I tried having WebKit track this
+        data for itself, but that went wrong -- it's just too hard to figure
+        out the weird corners of the WebCore loader from within another framework.)
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        * loader/DocumentLoader.h: Store a flag indicating whether we created
+        a global history entry. If we didn't, then we know that the next redirect
+        should not link to us, since we're not in history.
+        
+        (WebCore::DocumentLoader::clientRedirectSourceForHistory):
+        (WebCore::DocumentLoader::clientRedirectDestinationForHistory):
+        (WebCore::DocumentLoader::setClientRedirectSourceForHistory):
+        (WebCore::DocumentLoader::serverRedirectSourceForHistory):
+        (WebCore::DocumentLoader::serverRedirectDestinationForHistory):
+        (WebCore::DocumentLoader::didCreateGlobalHistoryEntry):
+        (WebCore::DocumentLoader::setDidCreateGlobalHistoryEntry): Added accessors
+        to help WebKit wade through the muck of WebCore history.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::updateGlobalHistoryRedirectLinks): Renamed
+        this client function to say what it does, instead of when it's called.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithNavigationAction): In the case of a redirect,
+        store a link to the previous history URL in the new DocumentLoader, so
+        it can update WebKit with that link when the load commits.
+
+        (WebCore::FrameLoader::updateHistory*): Use our new flags and names,
+        described above.
+
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::documentLoader):
+        (WebCore::FrameLoader::policyDocumentLoader):
+        (WebCore::FrameLoader::provisionalDocumentLoader):
+        (WebCore::FrameLoader::state): Inlined a few trivial functions because
+        performance mistakes give me the itches.
+        
+        * loader/FrameLoaderClient.h: Renamed this client function to say what
+        it does, instead of when it's called.
+
 2009-02-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin Garcia.

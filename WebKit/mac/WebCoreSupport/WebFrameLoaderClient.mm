@@ -788,39 +788,27 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 void WebFrameLoaderClient::updateGlobalHistory()
 {
     DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
-
-    if (loader->urlForHistoryReflectsServerRedirect()) {
-        [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory()
-                                              withTitle:loader->title()
-                                                 method:loader->request().httpMethod()
-                                             wasFailure:loader->urlForHistoryReflectsFailure()
-                                      serverRedirectURL:loader->url()
-                                       isClientRedirect:NO];
-        return;
-    }
-
-    if (loader->urlForHistoryReflectsClientRedirect()) {
-        [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() 
-                                              withTitle:loader->title()
-                                                 method:loader->request().httpMethod()
-                                             wasFailure:loader->urlForHistoryReflectsFailure()
-                                      serverRedirectURL:nil
-                                       isClientRedirect:YES];
-        return;
-    }
-
     [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() 
                                           withTitle:loader->title()
                                              method:loader->request().httpMethod()
-                                         wasFailure:loader->urlForHistoryReflectsFailure()
-                                  serverRedirectURL:nil
-                                   isClientRedirect:NO];
+                                         wasFailure:loader->urlForHistoryReflectsFailure()];
+
+    updateGlobalHistoryRedirectLinks();
 }
 
-void WebFrameLoaderClient::updateGlobalHistoryForRedirectWithoutHistoryItem()
+void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 {
     DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
-    [[WebHistory optionalSharedHistory] _visitedURLForRedirectWithoutHistoryItem:loader->url()];
+
+    if (!loader->clientRedirectSourceForHistory().isNull()) {
+        if (WebHistoryItem *item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->clientRedirectSourceForHistory()])
+            core(item)->addRedirectURL(loader->clientRedirectDestinationForHistory());
+    }
+
+    if (!loader->serverRedirectSourceForHistory().isNull()) {
+        if (WebHistoryItem *item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->serverRedirectSourceForHistory()])
+            core(item)->addRedirectURL(loader->serverRedirectDestinationForHistory());
+    }
 }
 
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const

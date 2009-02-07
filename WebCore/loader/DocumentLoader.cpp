@@ -152,7 +152,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_loadingFromCachedPage(false)
     , m_stopRecordingResponses(false)
     , m_substituteResourceDeliveryTimer(this, &DocumentLoader::substituteResourceDeliveryTimerFired)
-    , m_urlForHistoryReflectsClientRedirect(false)
+    , m_didCreateGlobalHistoryEntry(false)
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     , m_candidateApplicationCacheGroup(0)
 #endif

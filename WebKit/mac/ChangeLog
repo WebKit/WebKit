@@ -1,3 +1,22 @@
+2009-02-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Part III of <rdar://problem/6552272>.
+        
+        Refactored to use the redirect data WebCore makes available, instead of
+        tracking loading state in WebKit.
+        
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate dealloc]):
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:]):
+        (-[WebHistory _visitedURLForRedirectWithoutHistoryItem:]):
+        * History/WebHistoryInternal.h:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+
 2009-02-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

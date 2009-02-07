@@ -461,27 +461,33 @@ void WebFrameLoaderClient::updateGlobalHistory()
         return;
 
     DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
-
-    if (loader->urlForHistoryReflectsServerRedirect()) {
-        history->visitedURL(loader->urlForHistory(), loader->title(), loader->request().httpMethod(), loader->urlForHistoryReflectsFailure(), loader->url(), false);                 
-        return;
-    }
-
-    if (loader->urlForHistoryReflectsClientRedirect()) {
-        history->visitedURL(loader->urlForHistory(), loader->title(), loader->request().httpMethod(), loader->urlForHistoryReflectsFailure(), KURL(), true);
-        return;
-    }
-
-    history->visitedURL(loader->urlForHistory(), loader->title(), loader->request().httpMethod(), loader->urlForHistoryReflectsFailure(), KURL(), false);
+    history->visitedURL(loader->urlForHistory(), loader->title(), loader->request().httpMethod(), loader->urlForHistoryReflectsFailure());
+    updateGlobalHistoryRedirectLinks();
 }
 
-void WebFrameLoaderClient::updateGlobalHistoryForRedirectWithoutHistoryItem()
+void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 {
     WebHistory* history = WebHistory::sharedHistory();
     if (!history)
         return;
-    DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
-    history->visitedURLForRedirectWithoutHistoryItem(loader->url());
+
+    DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
+
+    if (!loader->clientRedirectSourceForHistory().isNull()) {
+        COMPtr<IWebHistoryItem> iWebHistoryItem;
+        if (!FAILED(history->itemForURLString(loader->clientRedirectSourceForHistory(), &iWebHistoryItem))) {
+            COMPtr<WebHistoryItem> webHistoryItem(Query, iWebHistoryItem);
+            webHistoryItem->historyItem()->addRedirectURL(loader->clientRedirectDestinationForHistory());
+        }
+    }
+
+    if (!loader->serverRedirectSourceForHistory().isNull()) {
+        COMPtr<IWebHistoryItem> iWebHistoryItem;
+        if (!FAILED(history->itemForURLString(loader->serverRedirectSourceForHistory(), &iWebHistoryItem))) {
+            COMPtr<WebHistoryItem> webHistoryItem(Query, iWebHistoryItem);
+            webHistoryItem->historyItem()->addRedirectURL(loader->serverRedirectDestinationForHistory());
+        }
+    }
 }
 
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const

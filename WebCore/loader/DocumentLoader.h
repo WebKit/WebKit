@@ -156,9 +156,21 @@ namespace WebCore {
 
         KURL urlForHistory() const;
         bool urlForHistoryReflectsFailure() const;
-        bool urlForHistoryReflectsServerRedirect() const { return urlForHistory() != url(); }
-        bool urlForHistoryReflectsClientRedirect() const { return m_urlForHistoryReflectsClientRedirect; }
-        void setURLForHistoryReflectsClientRedirect(bool b) { m_urlForHistoryReflectsClientRedirect = b; }
+
+        // These accessors accomodate WebCore's somewhat fickle custom of creating history
+        // items for redirects, but only sometimes. For "source" and "destination",
+        // these accessors return the URL that would have been used if a history
+        // item were created. This allows WebKit to link history items reflecting
+        // redirects into a chain from start to finish.
+        String clientRedirectSourceForHistory() const { return m_clientRedirectSourceForHistory; } // null if no client redirect occurred.
+        String clientRedirectDestinationForHistory() const { return urlForHistory(); }
+        void setClientRedirectSourceForHistory(const String& clientedirectSourceForHistory) { m_clientRedirectSourceForHistory = clientedirectSourceForHistory; }
+        
+        String serverRedirectSourceForHistory() const { return urlForHistory() == url() ? String() : urlForHistory(); } // null if no server redirect occurred.
+        String serverRedirectDestinationForHistory() const { return url(); }
+
+        bool didCreateGlobalHistoryEntry() const { return m_didCreateGlobalHistoryEntry; }
+        void setDidCreateGlobalHistoryEntry(bool didCreateGlobalHistoryEntry) { m_didCreateGlobalHistoryEntry = didCreateGlobalHistoryEntry; }
         
         void loadFromCachedPage(PassRefPtr<CachedPage>);
         void setLoadingFromCachedPage(bool loading) { m_loadingFromCachedPage = loading; }
@@ -291,7 +303,8 @@ namespace WebCore {
         HashSet<String> m_resourcesClientKnowsAbout;
         Vector<String> m_resourcesLoadedFromMemoryCacheForClientNotification;
         
-        bool m_urlForHistoryReflectsClientRedirect;
+        String m_clientRedirectSourceForHistory;
+        bool m_didCreateGlobalHistoryEntry;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)  
         // The application cache that the document loader is associated with (if any).

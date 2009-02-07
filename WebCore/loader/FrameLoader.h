@@ -184,10 +184,10 @@ namespace WebCore {
         void loadEmptyDocumentSynchronously();
 
         DocumentLoader* activeDocumentLoader() const;
-        DocumentLoader* documentLoader() const;
-        DocumentLoader* policyDocumentLoader() const;
-        DocumentLoader* provisionalDocumentLoader() const;
-        FrameState state() const;
+        DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
+        DocumentLoader* policyDocumentLoader() const { return m_policyDocumentLoader.get(); }
+        DocumentLoader* provisionalDocumentLoader() const { return m_provisionalDocumentLoader.get(); }
+        FrameState state() const { return m_state; }
         static double timeOfLastCompletedLoad();
 
         bool shouldUseCredentialStorage(ResourceLoader*);
