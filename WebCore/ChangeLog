@@ -1,3 +1,9 @@
+2009-02-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * WebCore.base.exp:
+
 2009-02-06  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.
