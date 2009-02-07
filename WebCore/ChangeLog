@@ -1,3 +1,18 @@
+2009-02-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        <rdar://problem/6563402> - Workaround a case where ::didReceiveData() might be called on a ResourceHandleClient 
+        before ::didReceiveResponse().
+
+        No layout test, as we don't have a concrete way to reproduce these conditions.  To that effect, I've added an ASSERT
+        to catch the conditions before the workaround takes effect in case any WebKit Debug-build developer runs across
+        this case and can come up with something more reproducible.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveData): If the response is null create a dummy response.  This is much 
+          like the FrameLoader::init() response that is used for initial document creation.
+
 2009-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

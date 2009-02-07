@@ -323,6 +323,17 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
     ASSERT(data);
     ASSERT(length != 0);
 
+    ASSERT(!m_response.isNull());
+
+#if USE(CFNETWORK) || (PLATFORM(MAC) && !defined(BUILDING_ON_TIGER))
+    // Workaround for <rdar://problem/6060782>
+    if (m_response.isNull()) {
+        m_response = ResourceResponse(KURL(), "text/html", 0, String(), String());
+        if (DocumentLoader* documentLoader = frameLoader()->activeDocumentLoader())
+            documentLoader->setResponse(m_response);
+    }
+#endif
+
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
 #if !PLATFORM(CF)
