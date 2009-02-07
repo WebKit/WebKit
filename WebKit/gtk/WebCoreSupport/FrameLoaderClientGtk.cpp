@@ -852,7 +852,7 @@ void FrameLoaderClient::updateGlobalHistory()
     notImplemented();
 }
 
-void FrameLoaderClient::updateGlobalHistoryForRedirectWithoutHistoryItem()
+void FrameLoaderClient::updateGlobalHistoryRedirectLinks()
 {
     notImplemented();
 }

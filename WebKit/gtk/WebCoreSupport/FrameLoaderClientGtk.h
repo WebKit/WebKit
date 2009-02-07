@@ -132,7 +132,7 @@ namespace WebKit {
         virtual void finishedLoading(WebCore::DocumentLoader*);
 
         virtual void updateGlobalHistory();
-        virtual void updateGlobalHistoryForRedirectWithoutHistoryItem();
+        virtual void updateGlobalHistoryRedirectLinks();
         virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
 
         virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);

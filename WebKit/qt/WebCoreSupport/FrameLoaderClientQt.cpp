@@ -633,7 +633,7 @@ void FrameLoaderClientQt::updateGlobalHistory()
         history->addHistoryEntry(m_frame->loader()->documentLoader()->urlForHistory().prettyURL());
 }
 
-void FrameLoaderClientQt::updateGlobalHistoryForRedirectWithoutHistoryItem()
+void FrameLoaderClientQt::updateGlobalHistoryRedirectLinks()
 {
 }
 

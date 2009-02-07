@@ -1,3 +1,11 @@
+2009-02-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::updateGlobalHistoryRedirectLinks):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2009-02-06  Kavindra Palaraja  <kavindra.palaraja@nokia.com>
 
         Reviewed by Simon Hausmann.

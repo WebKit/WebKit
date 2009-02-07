@@ -145,7 +145,7 @@ namespace WebCore {
         virtual void transitionToCommittedForNewPage();
         
         virtual void updateGlobalHistory();
-        virtual void updateGlobalHistoryForRedirectWithoutHistoryItem();
+        virtual void updateGlobalHistoryRedirectLinks();
         virtual bool shouldGoToHistoryItem(HistoryItem*) const;
         virtual void saveScrollPositionAndViewStateToItem(HistoryItem*);
         virtual bool canCachePage() const;

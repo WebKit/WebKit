@@ -520,7 +520,7 @@ void FrameLoaderClientWx::updateGlobalHistory()
     notImplemented();
 }
 
-void FrameLoaderClientWx::updateGlobalHistoryForRedirectWithoutHistoryItem()
+void FrameLoaderClientWx::updateGlobalHistoryRedirectLinks()
 {
     notImplemented();
 }

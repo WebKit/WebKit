@@ -1,3 +1,11 @@
+2009-02-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2009-02-06  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.

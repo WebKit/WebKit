@@ -147,7 +147,7 @@ namespace WebCore {
         virtual void finishedLoading(DocumentLoader*);
 
         virtual void updateGlobalHistory();
-        virtual void updateGlobalHistoryForRedirectWithoutHistoryItem();
+        virtual void updateGlobalHistoryRedirectLinks();
         virtual bool shouldGoToHistoryItem(HistoryItem*) const;
 
         virtual ResourceError cancelledError(const ResourceRequest&);
