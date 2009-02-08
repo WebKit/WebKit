@@ -1,3 +1,20 @@
+2009-02-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Simon Fraser.
+
+        [CAIRO] build broken by TransformationMatrix rework
+        https://bugs.webkit.org/show_bug.cgi?id=23831
+
+        Fixed cairo build after the TransformationMatrix rework done in
+        revision 40761.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::concatCTM):
+        * platform/graphics/cairo/TransformationMatrixCairo.cpp:
+        (WebCore::TransformationMatrix::operator cairo_matrix_t):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2009-02-07  David Hyatt  <hyatt@apple.com>
 
         Shrink the size of all InlineTextBoxes and all InlineBoxes (for images and replaced elements) by four bytes.

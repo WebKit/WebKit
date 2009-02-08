@@ -106,7 +106,7 @@ TransformationMatrix GraphicsContext::getCTM() const
     cairo_t* cr = platformContext();
     cairo_matrix_t m;
     cairo_get_matrix(cr, &m);
-    return m;
+    return TransformationMatrix(m.xx, m.yx, m.xy, m.yy, m.x0, m.y0);
 }
 
 cairo_t* GraphicsContext::platformContext() const
@@ -732,8 +732,8 @@ void GraphicsContext::concatCTM(const TransformationMatrix& transform)
         return;
 
     cairo_t* cr = m_data->cr;
-    const cairo_matrix_t* matrix = reinterpret_cast<const cairo_matrix_t*>(&transform);
-    cairo_transform(cr, matrix);
+    const cairo_matrix_t matrix = cairo_matrix_t(transform);
+    cairo_transform(cr, &matrix);
     m_data->concatCTM(transform);
 }
 
