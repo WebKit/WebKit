@@ -46,6 +46,7 @@
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "History.h"
+#include "InspectorController.h"
 #include "Location.h"
 #include "MessageEvent.h"
 #include "Navigator.h"
@@ -327,6 +328,8 @@ Storage* DOMWindow::sessionStorage() const
         return 0;
 
     RefPtr<StorageArea> storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
+    page->inspectorController()->didUseDOMStorage(storageArea.get(), false, m_frame);
+
     m_sessionStorage = Storage::create(m_frame, storageArea.release());
     return m_sessionStorage.get();
 }
@@ -347,8 +350,10 @@ Storage* DOMWindow::localStorage() const
 
     LocalStorage* localStorage = page->group().localStorage();
     RefPtr<StorageArea> storageArea = localStorage ? localStorage->storageArea(document->securityOrigin()) : 0; 
-    if (storageArea)
+    if (storageArea) {
+        page->inspectorController()->didUseDOMStorage(storageArea.get(), true, m_frame);
         m_localStorage = Storage::create(m_frame, storageArea.release());
+    }
 
     return m_localStorage.get();
 }

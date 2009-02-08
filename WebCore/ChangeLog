@@ -1,3 +1,67 @@
+2009-02-07  Yael Aharon <yael.aharon@nokia.com>
+
+        Reviewed by Timothy Hatcher <timothy@hatcher.name>
+
+        Partial fix for <https://bugs.webkit.org/show_bug.cgi?id=21051>
+        Include localStorage and sessionStorage in DatabasesPanel.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorDOMStorageResource::create):
+        (WebCore::InspectorDOMStorageResource::setScriptObject):
+        (WebCore::InspectorDOMStorageResource::InspectorDOMStorageResource):
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::addDOMStorageScriptResource):
+        (WebCore::InspectorController::removeDOMStorageScriptResource):
+        (WebCore::InspectorController::resetScriptObjects):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::didUseDOMStorage):
+        * inspector/InspectorController.h:
+        * inspector/front-end/DOMStorage.js: Added.
+        (WebInspector.DOMStorage):
+        (WebInspector.DOMStorage.prototype.get domStorage):
+        (WebInspector.DOMStorage.prototype.set domStorage):
+        (WebInspector.DOMStorage.prototype.get domain):
+        (WebInspector.DOMStorage.prototype.set domain):
+        (WebInspector.DOMStorage.prototype.get isLocalStorage):
+        (WebInspector.DOMStorage.prototype.set isLocalStorage):
+        * inspector/front-end/DOMStorageItemsView.js: Added.
+        (WebInspector.DOMStorageItemsView):
+        (WebInspector.DOMStorageItemsView.prototype.show):
+        (WebInspector.DOMStorageItemsView.prototype.update):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView):
+        (WebInspector.DatabaseTableView.prototype._queryFinished):
+        (WebInspector.DatabaseTableView.prototype._queryError):
+        * inspector/front-end/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel):
+        (WebInspector.DatabasesPanel.prototype.reset):
+        (WebInspector.DatabasesPanel.prototype.addDatabase):
+        (WebInspector.DatabasesPanel.prototype.addDOMStorage):
+        (WebInspector.DatabasesPanel.prototype.showDatabase):
+        (WebInspector.DatabasesPanel.prototype.showDOMStorage):
+        (WebInspector.DatabasesPanel.prototype.closeVisibleView):
+        (WebInspector.DatabasesPanel.prototype.updateDatabaseTables):
+        (WebInspector.DatabasesPanel.prototype.dataGridForDOMStorage):
+        (WebInspector.DatabasesPanel.prototype._updateSidebarWidth):
+        (WebInspector.DOMStorageSidebarTreeElement):
+        (WebInspector.DOMStorageSidebarTreeElement.prototype.onselect):
+        (WebInspector.DOMStorageSidebarTreeElement.prototype.get mainTitle):
+        (WebInspector.DOMStorageSidebarTreeElement.prototype.set mainTitle):
+        (WebInspector.DOMStorageSidebarTreeElement.prototype.get subtitle):
+        (WebInspector.DOMStorageSidebarTreeElement.prototype.set subtitle):
+        * inspector/front-end/Images/domStorage.png: Added.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.addDOMStorage):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+
 2009-02-07  Feng Qian <feng@chromium.org>
 
         Reviewed by Eric Seidel <eric@webkit.org>

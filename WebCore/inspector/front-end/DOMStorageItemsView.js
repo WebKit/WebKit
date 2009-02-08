@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008 Nokia Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
@@ -23,18 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseTableView = function(database, tableName)
+WebInspector.DOMStorageItemsView = function(domStorage)
 {
     WebInspector.View.call(this);
 
-    this.database = database;
-    this.tableName = tableName;
+    this.domStorage = domStorage;
 
     this.element.addStyleClass("storage-view");
     this.element.addStyleClass("table");
 }
 
-WebInspector.DatabaseTableView.prototype = {
+WebInspector.DOMStorageItemsView.prototype = {
     show: function(parentElement)
     {
         WebInspector.View.prototype.show.call(this, parentElement);
@@ -43,40 +42,26 @@ WebInspector.DatabaseTableView.prototype = {
 
     update: function()
     {
-        function queryTransaction(tx)
-        {
-            tx.executeSql("SELECT * FROM " + this.tableName, null, InspectorController.wrapCallback(this._queryFinished.bind(this)), InspectorController.wrapCallback(this._queryError.bind(this)));
-        }
-
-        this.database.database.transaction(InspectorController.wrapCallback(queryTransaction.bind(this)), InspectorController.wrapCallback(this._queryError.bind(this)));
-    },
-
-    _queryFinished: function(tx, result)
-    {
         this.element.removeChildren();
-
-        var dataGrid = WebInspector.panels.databases.dataGridForResult(result);
-        if (!dataGrid) {
+        var hasDOMStorage = this.domStorage;
+        if (hasDOMStorage)
+            hasDOMStorage = this.domStorage.domStorage;
+        
+        if (hasDOMStorage) {
+            var dataGrid = WebInspector.panels.databases.dataGridForDOMStorage(this.domStorage.domStorage);
+            if (!dataGrid)
+                hasDOMStorage = 0;
+            else
+                this.element.appendChild(dataGrid.element);
+        }
+        if (!hasDOMStorage) {
             var emptyMsgElement = document.createElement("div");
             emptyMsgElement.className = "storage-table-empty";
-            emptyMsgElement.textContent = WebInspector.UIString("The “%s”\ntable is empty.", this.tableName);
+            if (this.domStorage)
+            emptyMsgElement.textContent = WebInspector.UIString("This storage is empty.");
             this.element.appendChild(emptyMsgElement);
-            return;
         }
-
-        this.element.appendChild(dataGrid.element);
-    },
-
-    _queryError: function(tx, error)
-    {
-        this.element.removeChildren();
-
-        var errorMsgElement = document.createElement("div");
-        errorMsgElement.className = "storage-table-error";
-        errorMsgElement.textContent = WebInspector.UIString("An error occurred trying to\nread the “%s” table.", this.tableName);
-        this.element.appendChild(errorMsgElement);
-    },
-
+    }
 }
 
-WebInspector.DatabaseTableView.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.DOMStorageItemsView.prototype.__proto__ = WebInspector.View.prototype;

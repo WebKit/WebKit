@@ -1532,7 +1532,11 @@ body.inactive .sidebar {
     content: url(Images/databaseTable.png);
 }
 
-#database-views {
+.domstorage-sidebar-tree-item .icon {
+    content: url(Images/domStorage.png);
+}
+
+#storage-views {
     position: absolute;
     top: 0;
     right: 0;
@@ -1540,7 +1544,7 @@ body.inactive .sidebar {
     bottom: 0;
 }
 
-.database-view {
+.storage-view {
     display: none;
     overflow: hidden;
     position: absolute;
@@ -1550,20 +1554,20 @@ body.inactive .sidebar {
     bottom: 0;
 }
 
-.database-view.visible {
+.storage-view.visible {
     display: block;
 }
 
-.database-view.table {
+.storage-view.table {
     overflow: hidden;
 }
 
-.database-view.table .data-grid {
+.storage-view.table .data-grid {
     border: none;
     height: 100%;
 }
 
-.database-view.table .database-table-empty, .database-view.table .database-table-error {
+.storage-view.table .storage-table-empty, .storage-view.table .storage-table-error {
     position: absolute;
     top: 0;
     bottom: 25%;
@@ -1581,7 +1585,7 @@ body.inactive .sidebar {
     white-space: pre-wrap;
 }
 
-.database-view.table .database-table-error {
+.storage-view.table .storage-table-error {
     color: rgb(66%, 33%, 33%);
 }
 
@@ -1773,7 +1777,7 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     text-indent: 10px;
 }
 
-.database-view.query {
+.storage-view.query {
     font-size: 10px;
     font-family: Monaco, Lucida Console, monospace;
     padding: 2px 0;
@@ -2495,6 +2499,10 @@ button.enable-toggle-status-bar-item.toggled-on:active {
 }
 
 .sidebar-tree > .children > .sidebar-tree-item {
+    padding-left: 37px;
+}
+
+.sidebar-tree > .children > .children > .sidebar-tree-item {
     padding-left: 37px;
 }
 

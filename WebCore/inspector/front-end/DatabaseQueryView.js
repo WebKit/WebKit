@@ -29,7 +29,7 @@ WebInspector.DatabaseQueryView = function(database)
 
     this.database = database;
 
-    this.element.addStyleClass("database-view");
+    this.element.addStyleClass("storage-view");
     this.element.addStyleClass("query");
     this.element.tabIndex = 0;
 

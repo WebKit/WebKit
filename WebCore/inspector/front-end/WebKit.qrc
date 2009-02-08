@@ -10,6 +10,8 @@
     <file>DatabasesPanel.js</file>
     <file>DatabaseTableView.js</file>
     <file>DataGrid.js</file>
+    <file>DOMStorage.js</file>
+    <file>DOMStorageItemsView.js</file>
     <file>ElementsPanel.js</file>
     <file>ElementsTreeOutline.js</file>
     <file>FontView.js</file>
@@ -66,6 +68,7 @@
     <file>Images/disclosureTriangleSmallRightDownWhite.png</file>
     <file>Images/disclosureTriangleSmallRightWhite.png</file>
     <file>Images/dockButtons.png</file>
+    <file>Images/domStorage.png</file>
     <file>Images/elementsIcon.png</file>
     <file>Images/enableButtons.png</file>
     <file>Images/errorIcon.png</file>

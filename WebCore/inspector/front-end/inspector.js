@@ -795,6 +795,11 @@ WebInspector.addDatabase = function(database)
     this.panels.databases.addDatabase(database);
 }
 
+WebInspector.addDOMStorage = function(domStorage)
+{
+    this.panels.databases.addDOMStorage(domStorage);
+}
+
 WebInspector.debuggerWasEnabled = function()
 {
     this.panels.scripts.debuggerWasEnabled();
