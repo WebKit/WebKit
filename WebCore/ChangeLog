@@ -1,3 +1,13 @@
+2009-02-07  Dean Jackson  <dino@apple.com>
+
+        Attempted build fix for Qt. Not reviewed.
+
+        TransformationMatrix changes in r40761 broke non-Apple builds.
+
+        * platform/graphics/qt/TransformationMatrixQt.cpp:
+        (WebCore::TransformationMatrix::operator QMatrix):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2009-02-07  David Hyatt  <hyatt@apple.com>
 
         This patch changes the base class of RenderInline from RenderBox to RenderBoxModelObject.  This shift
