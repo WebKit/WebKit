@@ -625,6 +625,7 @@ void EventHandler::autoscrollTimerFired(Timer<EventHandler>*)
     }
 }
 
+#if ENABLE(PAN_SCROLLING)
 void EventHandler::setPanScrollCursor()
 {
     // At the original click location we draw a 4 arrowed icon. Over this icon there won't be any scroll
@@ -656,6 +657,7 @@ void EventHandler::setPanScrollCursor()
     else
         m_frame->view()->setCursor(middlePanningCursor());
 }
+#endif  // ENABLE(PAN_SCROLLING)
 
 RenderObject* EventHandler::autoscrollRenderer() const
 {

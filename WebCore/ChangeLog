@@ -1,3 +1,13 @@
+2009-02-07  Feng Qian <feng@chromium.org>
+
+        Reviewed by Eric Seidel <eric@webkit.org>
+
+        Put #if ENABLE(PAN_SCROLLING) around EventHandler::setPanScrollCursor. 
+        https://bugs.webkit.org/show_bug.cgi?id=23574
+
+        * page/EventHandler.cpp:
+        * page/EventHandler.h:
+
 2009-02-07  Zalan Bujtas  <zbujtas@gmail.com>
 
         Reviewed by Rob Buis <rwlbuis@gmail.com>
