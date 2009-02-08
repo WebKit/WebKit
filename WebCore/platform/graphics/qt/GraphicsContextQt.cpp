@@ -266,7 +266,8 @@ PlatformGraphicsContext* GraphicsContext::platformContext() const
 
 TransformationMatrix GraphicsContext::getCTM() const
 {
-    return platformContext()->combinedMatrix();
+    QMatrix matrix(platformContext()->combinedMatrix());
+    return TransformationMatrix(matrix.m11(), matrix.m12(), matrix.m21(), matrix.m22(), matrix.dx(), matrix.dy());
 }
 
 void GraphicsContext::savePlatformState()
@@ -956,7 +957,7 @@ void GraphicsContext::scale(const FloatSize& s)
     if (!m_data->currentPath.isEmpty()) {
         QMatrix matrix;
         m_data->currentPath = m_data->currentPath * matrix.scale(1 / s.width(), 1 / s.height());
-        m_common->state.pathTransform.scale(s.width(), s.height());
+        m_common->state.pathTransform.scaleNonUniform(s.width(), s.height());
     }
 }
 

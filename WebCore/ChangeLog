@@ -1,5 +1,15 @@
 2009-02-08  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed Qt build fix.
+        
+        TransformationMatrix changes in r40761 broke QT build.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::scale):
+
+2009-02-08  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Holger Freyther.
 
         This is a follow up of the last commit. It cleans up TransformationMatrix.h
