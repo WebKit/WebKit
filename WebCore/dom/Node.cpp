@@ -613,7 +613,12 @@ bool Node::shouldUseInputMethod() const
 
 RenderBox* Node::renderBox() const
 {
-    return m_renderer && m_renderer->isBox() ? static_cast<RenderBox*>(m_renderer) : 0;
+    return m_renderer && m_renderer->isBox() ? toRenderBox(m_renderer) : 0;
+}
+
+RenderBoxModelObject* Node::renderBoxModelObject() const
+{
+    return m_renderer && m_renderer->isBoxModelObject() ? toRenderBoxModelObject(m_renderer) : 0;
 }
 
 IntRect Node::getRect() const

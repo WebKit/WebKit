@@ -83,7 +83,7 @@ public:
     void setPrintImages(bool enable) { m_printImages = enable; }
     bool printImages() const { return m_printImages; }
     void setTruncatedAt(int y) { m_truncatedAt = y; m_bestTruncatedAt = m_truncatorWidth = 0; m_forcedPageBreak = false; }
-    void setBestTruncatedAt(int y, RenderBox* forRenderer, bool forcedBreak = false);
+    void setBestTruncatedAt(int y, RenderBoxModelObject* forRenderer, bool forcedBreak = false);
     int bestTruncatedAt() const { return m_bestTruncatedAt; }
 
     int truncatedAt() const { return m_truncatedAt; }

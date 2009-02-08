@@ -3918,7 +3918,7 @@ static int getBPMWidth(int childValue, Length cssUnit)
     return 0;
 }
 
-static int getBorderPaddingMargin(const RenderBox* child, bool endOfInline)
+static int getBorderPaddingMargin(const RenderBoxModelObject* child, bool endOfInline)
 {
     RenderStyle* cstyle = child->style();
     int result = 0;
@@ -4021,7 +4021,7 @@ void RenderBlock::calcInlinePrefWidths()
                 if (child->isRenderInline()) {
                     // Add in padding/border/margin from the appropriate side of
                     // the element.
-                    int bpm = getBorderPaddingMargin(static_cast<RenderBox*>(child), childIterator.endOfInline);
+                    int bpm = getBorderPaddingMargin(toRenderInline(child), childIterator.endOfInline);
                     childMin += bpm;
                     childMax += bpm;
 

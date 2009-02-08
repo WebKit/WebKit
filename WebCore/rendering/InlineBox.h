@@ -21,7 +21,7 @@
 #ifndef InlineBox_h
 #define InlineBox_h
 
-#include "RenderBox.h"
+#include "RenderBoxModelObject.h"
 #include "TextDirection.h"
 
 namespace WebCore {
@@ -240,7 +240,12 @@ public:
     bool visibleToHitTesting() const { return object()->style()->visibility() == VISIBLE && object()->style()->pointerEvents() != PE_NONE; }
     
     // Use with caution! The type is not checked!
-    RenderBox* renderBox() const { return toRenderBox(m_object); }
+    RenderBoxModelObject* boxModelObject() const
+    { 
+        if (!m_object->isText())
+            return static_cast<RenderBoxModelObject*>(m_object);
+        return 0;
+    }
 
 public:
     RenderObject* m_object;

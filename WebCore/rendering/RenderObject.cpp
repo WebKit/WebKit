@@ -429,7 +429,7 @@ static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*
             beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
             newObject = 0;
         }
-        parentLayer->addChild(toRenderBox(obj)->layer(), beforeChild);
+        parentLayer->addChild(toRenderBoxModelObject(obj)->layer(), beforeChild);
         return;
     }
 
@@ -453,7 +453,7 @@ void RenderObject::removeLayers(RenderLayer* parentLayer)
         return;
 
     if (hasLayer()) {
-        parentLayer->removeChild(toRenderBox(this)->layer());
+        parentLayer->removeChild(toRenderBoxModelObject(this)->layer());
         return;
     }
 
@@ -467,7 +467,7 @@ void RenderObject::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
         return;
 
     if (hasLayer()) {
-        RenderLayer* layer = toRenderBox(this)->layer();
+        RenderLayer* layer = toRenderBoxModelObject(this)->layer();
         if (oldParent)
             oldParent->removeChild(layer);
         newParent->addChild(layer);
@@ -486,7 +486,7 @@ RenderLayer* RenderObject::findNextLayer(RenderLayer* parentLayer, RenderObject*
         return 0;
 
     // Step 1: If our layer is a child of the desired parent, then return our layer.
-    RenderLayer* ourLayer = hasLayer() ? toRenderBox(this)->layer() : 0;
+    RenderLayer* ourLayer = hasLayer() ? toRenderBoxModelObject(this)->layer() : 0;
     if (ourLayer && ourLayer->parent() == parentLayer)
         return ourLayer;
 
@@ -518,7 +518,7 @@ RenderLayer* RenderObject::enclosingLayer() const
 {
     const RenderObject* curr = this;
     while (curr) {
-        RenderLayer* layer = curr->hasLayer() ? toRenderBox(curr)->layer() : 0;
+        RenderLayer* layer = curr->hasLayer() ? toRenderBoxModelObject(curr)->layer() : 0;
         if (layer)
             return layer;
         curr = curr->parent();
@@ -531,7 +531,7 @@ RenderLayer* RenderObject::enclosingCompositingLayer() const
 {
     const RenderObject* curr = this;
     while (curr) {
-        RenderLayer* layer = curr->hasLayer() ? toRenderBox(curr)->layer() : 0;
+        RenderLayer* layer = curr->hasLayer() ? toRenderBoxModelObject(curr)->layer() : 0;
         if (layer && layer->isComposited())
             return layer;
         curr = curr->parent();
@@ -583,7 +583,8 @@ void RenderObject::invalidateContainerPrefWidths()
 
 void RenderObject::setLayerNeedsFullRepaint()
 {
-    toRenderBox(this)->layer()->setNeedsFullRepaint(true);
+    ASSERT(hasLayer());
+    toRenderBoxModelObject(this)->layer()->setNeedsFullRepaint(true);
 }
 
 RenderBlock* RenderObject::containingBlock() const
@@ -1970,7 +1971,7 @@ void RenderObject::handleDynamicFloatPositionChange()
     setInline(style()->isDisplayInlineType());
     if (isInline() != parent()->childrenInline()) {
         if (!isInline())
-            toRenderBox(parent())->childBecameNonInline(this);
+            toRenderBoxModelObject(parent())->childBecameNonInline(this);
         else {
             // An anonymous block must be made to wrap this inline.
             RenderBlock* block = createAnonymousBlock();
@@ -2296,11 +2297,11 @@ void RenderObject::destroy()
 
     remove();
 
-    // FIXME: Would like to do this in RenderBox, but the timing is so complicated that this can't easily
-    // be moved into RenderBox::destroy.
+    // FIXME: Would like to do this in RenderBoxModelObject, but the timing is so complicated that this can't easily
+    // be moved into RenderBoxModelObject::destroy.
     RenderArena* arena = renderArena();
     if (hasLayer())
-        toRenderBox(this)->layer()->destroy(arena);
+        toRenderBoxModelObject(this)->layer()->destroy(arena);
     arenaDelete(arena, this);
 }
 
@@ -2796,6 +2797,56 @@ AnimationController* RenderObject::animation() const
 void RenderObject::imageChanged(CachedImage* image, const IntRect* rect)
 {
     imageChanged(static_cast<WrappedImagePtr>(image), rect);
+}
+
+RenderBoxModelObject* RenderObject::offsetParent() const
+{
+    // If any of the following holds true return null and stop this algorithm:
+    // A is the root element.
+    // A is the HTML body element.
+    // The computed value of the position property for element A is fixed.
+    if (isRoot() || isBody() || (isPositioned() && style()->position() == FixedPosition))
+        return 0;
+
+    // If A is an area HTML element which has a map HTML element somewhere in the ancestor
+    // chain return the nearest ancestor map HTML element and stop this algorithm.
+    // FIXME: Implement!
+    
+    // Return the nearest ancestor element of A for which at least one of the following is
+    // true and stop this algorithm if such an ancestor is found:
+    //     * The computed value of the position property is not static.
+    //     * It is the HTML body element.
+    //     * The computed value of the position property of A is static and the ancestor
+    //       is one of the following HTML elements: td, th, or table.
+    //     * Our own extension: if there is a difference in the effective zoom
+    bool skipTables = isPositioned() || isRelPositioned();
+    float currZoom = style()->effectiveZoom();
+    RenderObject* curr = parent();
+    while (curr && (!curr->element() ||
+                    (!curr->isPositioned() && !curr->isRelPositioned() && !curr->isBody()))) {
+        Node* element = curr->element();
+        if (!skipTables && element) {
+            bool isTableElement = element->hasTagName(tableTag) ||
+                                  element->hasTagName(tdTag) ||
+                                  element->hasTagName(thTag);
+
+#if ENABLE(WML)
+            if (!isTableElement && element->isWMLElement())
+                isTableElement = element->hasTagName(WMLNames::tableTag) ||
+                                 element->hasTagName(WMLNames::tdTag);
+#endif
+
+            if (isTableElement)
+                break;
+        }
+
+        float newZoom = curr->style()->effectiveZoom();
+        if (currZoom != newZoom)
+            break;
+        currZoom = newZoom;
+        curr = curr->parent();
+    }
+    return curr && curr->isBox() ? toRenderBox(curr) : 0;
 }
 
 #if ENABLE(SVG)

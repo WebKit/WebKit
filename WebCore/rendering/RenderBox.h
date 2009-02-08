@@ -62,8 +62,8 @@ public:
     void setFrameRect(const IntRect& rect) { m_frameRect = rect; }
 
     IntRect borderBoxRect() const { return IntRect(0, 0, width(), height()); }
-    virtual IntRect borderBoundingBox() const { return borderBoxRect(); } // This will work on inlines to return the bounding box of all of the lines' border boxes.
-
+    virtual IntRect borderBoundingBox() const { return borderBoxRect(); } 
+    
     // The content area of the box (excludes padding and border).
     IntRect contentBoxRect() const { return IntRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()); }
     // The content box in absolute coords. Ignores transforms.
@@ -98,9 +98,6 @@ public:
     // to return the remaining width on a given line (and the height of a single line).
     virtual int offsetWidth() const { return width(); }
     virtual int offsetHeight() const { return height(); }
-    virtual int offsetLeft() const;
-    virtual int offsetTop() const;
-    virtual RenderBox* offsetParent() const;
 
     // More IE extensions.  clientWidth and clientHeight represent the interior of an object
     // excluding border and scrollbar.  clientLeft/Top are just the borderLeftWidth and borderTopWidth.
@@ -121,24 +118,10 @@ public:
     virtual void setScrollLeft(int);
     virtual void setScrollTop(int);
 
-    bool hasHorizontalBordersPaddingOrMargin() const { return hasHorizontalBordersOrPadding() || marginLeft() != 0 || marginRight() != 0; }
-    bool hasHorizontalBordersOrPadding() const { return borderLeft() != 0 || borderRight() != 0 || paddingLeft() != 0 || paddingRight() != 0; }
-
-    int marginTop() const { return m_marginTop; }
-    int marginBottom() const { return m_marginBottom; }
-    int marginLeft() const { return m_marginLeft; }
-    int marginRight() const { return m_marginRight; }
-
-    // Virtual since table cells override
-    virtual int paddingTop(bool includeIntrinsicPadding = true) const;
-    virtual int paddingBottom(bool includeIntrinsicPadding = true) const;
-    virtual int paddingLeft(bool includeIntrinsicPadding = true) const;
-    virtual int paddingRight(bool includeIntrinsicPadding = true) const;
-
-    virtual int borderTop() const { return style()->borderTopWidth(); }
-    virtual int borderBottom() const { return style()->borderBottomWidth(); }
-    virtual int borderLeft() const { return style()->borderLeftWidth(); }
-    virtual int borderRight() const { return style()->borderRightWidth(); }
+    virtual int marginTop() const { return m_marginTop; }
+    virtual int marginBottom() const { return m_marginBottom; }
+    virtual int marginLeft() const { return m_marginLeft; }
+    virtual int marginRight() const { return m_marginRight; }
 
     // The following five functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The
@@ -262,10 +245,6 @@ public:
     
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
-    virtual void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight,
-                                        int tx, int ty, int width, int height, InlineFlowBox* = 0, CompositeOperator = CompositeSourceOver);
-    IntSize calculateBackgroundSize(const FillLayer*, int scaledWidth, int scaledHeight) const;
-
     virtual IntRect getOverflowClipRect(int tx, int ty);
     virtual IntRect getClipRect(int tx, int ty);
 
@@ -287,8 +266,6 @@ public:
     }
 
     IntRect maskClipRect();
-
-    virtual void childBecameNonInline(RenderObject* /*child*/) { }
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
@@ -323,18 +300,16 @@ private:
     void paintRootBoxDecorations(PaintInfo&, int tx, int ty);
     // Returns true if we did a full repaint
     bool repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer* layers, bool drawingBackground);
-
-    void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
-    
-    int containingBlockWidthForPositioned(const RenderObject* containingBlock) const;
-    int containingBlockHeightForPositioned(const RenderObject* containingBlock) const;
+   
+    int containingBlockWidthForPositioned(const RenderBoxModelObject* containingBlock) const;
+    int containingBlockHeightForPositioned(const RenderBoxModelObject* containingBlock) const;
 
     void calcAbsoluteVertical();
-    void calcAbsoluteHorizontalValues(Length width, const RenderBox* cb, TextDirection containerDirection,
+    void calcAbsoluteHorizontalValues(Length width, const RenderBoxModelObject* cb, TextDirection containerDirection,
                                       int containerWidth, int bordersPlusPadding,
                                       Length left, Length right, Length marginLeft, Length marginRight,
                                       int& widthValue, int& marginLeftValue, int& marginRightValue, int& xPos);
-    void calcAbsoluteVerticalValues(Length height, const RenderBox* cb,
+    void calcAbsoluteVerticalValues(Length height, const RenderBoxModelObject* cb,
                                     int containerHeight, int bordersPlusPadding,
                                     Length top, Length bottom, Length marginTop, Length marginBottom,
                                     int& heightValue, int& marginTopValue, int& marginBottomValue, int& yPos);

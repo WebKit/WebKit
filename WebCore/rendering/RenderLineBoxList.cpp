@@ -144,7 +144,7 @@ void RenderLineBoxList::dirtyLineBoxes()
         curr->dirtyLineBoxes();
 }
 
-void RenderLineBoxList::paint(RenderBox* renderer, RenderObject::PaintInfo& paintInfo, int tx, int ty) const
+void RenderLineBoxList::paint(RenderBoxModelObject* renderer, RenderObject::PaintInfo& paintInfo, int tx, int ty) const
 {
     // Only paint during the foreground/selection phases.
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseOutline 
@@ -214,7 +214,7 @@ void RenderLineBoxList::paint(RenderBox* renderer, RenderObject::PaintInfo& pain
 }
 
 
-bool RenderLineBoxList::hitTest(RenderBox* renderer, const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction) const
+bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction) const
 {
     if (hitTestAction != HitTestForeground)
         return false;

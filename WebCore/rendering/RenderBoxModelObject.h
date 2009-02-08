@@ -39,6 +39,13 @@ public:
     int relativePositionOffsetY() const;
     IntSize relativePositionOffset() const { return IntSize(relativePositionOffsetX(), relativePositionOffsetY()); }
 
+    // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
+    // to return the remaining width on a given line (and the height of a single line).
+    virtual int offsetLeft() const;
+    virtual int offsetTop() const;
+    virtual int offsetWidth() const = 0;
+    virtual int offsetHeight() const = 0;
+
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateBoxModelInfoFromStyle();
@@ -46,9 +53,39 @@ public:
     RenderLayer* layer() const { return m_layer; }
     virtual bool requiresLayer() const { return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasReflection(); }
 
+    // This will work on inlines to return the bounding box of all of the lines' border boxes.
+    virtual IntRect borderBoundingBox() const = 0;
+
+    // Virtual since table cells override
+    virtual int paddingTop(bool includeIntrinsicPadding = true) const;
+    virtual int paddingBottom(bool includeIntrinsicPadding = true) const;
+    virtual int paddingLeft(bool includeIntrinsicPadding = true) const;
+    virtual int paddingRight(bool includeIntrinsicPadding = true) const;
+
+    virtual int borderTop() const { return style()->borderTopWidth(); }
+    virtual int borderBottom() const { return style()->borderBottomWidth(); }
+    virtual int borderLeft() const { return style()->borderLeftWidth(); }
+    virtual int borderRight() const { return style()->borderRightWidth(); }
+
+    virtual int marginTop() const = 0;
+    virtual int marginBottom() const = 0;
+    virtual int marginLeft() const = 0;
+    virtual int marginRight() const = 0;
+
+    bool hasHorizontalBordersPaddingOrMargin() const { return hasHorizontalBordersOrPadding() || marginLeft() != 0 || marginRight() != 0; }
+    bool hasHorizontalBordersOrPadding() const { return borderLeft() != 0 || borderRight() != 0 || paddingLeft() != 0 || paddingRight() != 0; }
+
+    virtual void childBecameNonInline(RenderObject* /*child*/) { }
+
+    virtual void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight,
+                                        int tx, int ty, int width, int height, InlineFlowBox* = 0, CompositeOperator = CompositeSourceOver);
+
+protected:
+    void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
+    IntSize calculateBackgroundSize(const FillLayer*, int scaledWidth, int scaledHeight) const;
+
 private:
     virtual bool isBoxModelObject() const { return true; }
-
     friend class RenderView;
 
     RenderLayer* m_layer;

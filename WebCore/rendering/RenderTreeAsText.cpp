@@ -192,21 +192,19 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
         r = IntRect(text.firstRunX(), text.firstRunY(), linesBox.width(), linesBox.height());
         if (adjustForTableCells && !text.firstTextBox())
             adjustForTableCells = false;
-    } else if (o.isBox()) {
-        if (o.isRenderInline()) {
-            // FIXME: Would be better not to just dump 0, 0 as the x and y here.
-            const RenderInline& inlineFlow = *toRenderInline(&o);
-            r = IntRect(0, 0, inlineFlow.linesBoundingBox().width(), inlineFlow.linesBoundingBox().height());
-            adjustForTableCells = false;
-        } else if (o.isTableCell()) {
-            // FIXME: Deliberately dump the "inner" box of table cells, since that is what current results reflect.  We'd like
-            // to clean up the results to dump both the outer box and the intrinsic padding so that both bits of information are
-            // captured by the results.
-            const RenderTableCell& cell = static_cast<const RenderTableCell&>(o);
-            r = IntRect(cell.x(), cell.y() + cell.intrinsicPaddingTop(), cell.width(), cell.height() - cell.intrinsicPaddingTop() - cell.intrinsicPaddingBottom());
-        } else
-            r = toRenderBox(&o)->frameRect();
-    }
+    } else if (o.isRenderInline()) {
+        // FIXME: Would be better not to just dump 0, 0 as the x and y here.
+        const RenderInline& inlineFlow = *toRenderInline(&o);
+        r = IntRect(0, 0, inlineFlow.linesBoundingBox().width(), inlineFlow.linesBoundingBox().height());
+        adjustForTableCells = false;
+    } else if (o.isTableCell()) {
+        // FIXME: Deliberately dump the "inner" box of table cells, since that is what current results reflect.  We'd like
+        // to clean up the results to dump both the outer box and the intrinsic padding so that both bits of information are
+        // captured by the results.
+        const RenderTableCell& cell = static_cast<const RenderTableCell&>(o);
+        r = IntRect(cell.x(), cell.y() + cell.intrinsicPaddingTop(), cell.width(), cell.height() - cell.intrinsicPaddingTop() - cell.intrinsicPaddingBottom());
+    } else if (o.isBox())
+        r = toRenderBox(&o)->frameRect();
 
     // FIXME: Temporary in order to ensure compatibility with existing layout test results.
     if (adjustForTableCells)
@@ -237,10 +235,10 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
             o.style()->textStrokeWidth() > 0)
             ts << " [textStrokeWidth=" << o.style()->textStrokeWidth() << "]";
 
-        if (!o.isBox())
+        if (!o.isBoxModelObject())
             return ts;
 
-        const RenderBox& box = *toRenderBox(&o);
+        const RenderBoxModelObject& box = *toRenderBoxModelObject(&o);
         if (box.borderTop() || box.borderRight() || box.borderBottom() || box.borderLeft()) {
             ts << " [border:";
 

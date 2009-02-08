@@ -1,3 +1,151 @@
+2009-02-07  David Hyatt  <hyatt@apple.com>
+
+        This patch changes the base class of RenderInline from RenderBox to RenderBoxModelObject.  This shift
+        in base class knocks 32 bytes off the size of every RenderInline.  All of the necessary functions
+        for both RenderInline and RenderBox have either been pulled up into RenderBoxModelObject for sharing
+        or split into two functions (one in each derived class).
+
+        Reviewed by Anders and Antti
+
+        * dom/Element.cpp:
+        (WebCore::Element::offsetLeft):
+        (WebCore::Element::offsetTop):
+        (WebCore::Element::offsetWidth):
+        (WebCore::Element::offsetHeight):
+        (WebCore::Element::offsetParent):
+        (WebCore::Element::clientWidth):
+        (WebCore::Element::clientHeight):
+        (WebCore::Element::scrollWidth):
+        (WebCore::Element::scrollHeight):
+        * dom/Node.cpp:
+        (WebCore::Node::renderBox):
+        (WebCore::Node::renderBoxModelObject):
+        * dom/Node.h:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::boxModelObject):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::marginLeft):
+        (WebCore::InlineFlowBox::marginRight):
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        (WebCore::InlineFlowBox::shrinkBoxesWithNoTextChildren):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::borderLeft):
+        (WebCore::InlineFlowBox::borderRight):
+        (WebCore::InlineFlowBox::paddingLeft):
+        (WebCore::InlineFlowBox::paddingRight):
+        * rendering/RenderBlock.cpp:
+        (WebCore::getBorderPaddingMargin):
+        (WebCore::RenderBlock::calcInlinePrefWidths):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::imageChanged):
+        (WebCore::RenderBox::calcReplacedWidthUsing):
+        (WebCore::RenderBox::calcReplacedHeightUsing):
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        (WebCore::RenderBox::containingBlockHeightForPositioned):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        (WebCore::RenderBox::calcAbsoluteVerticalValues):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced):
+        (WebCore::RenderBox::positionForCoordinates):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::borderBoundingBox):
+        (WebCore::RenderBox::offsetHeight):
+        (WebCore::RenderBox::marginTop):
+        (WebCore::RenderBox::marginBottom):
+        (WebCore::RenderBox::marginLeft):
+        (WebCore::RenderBox::marginRight):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::offsetLeft):
+        (WebCore::RenderBoxModelObject::offsetTop):
+        (WebCore::RenderBoxModelObject::paddingTop):
+        (WebCore::RenderBoxModelObject::paddingBottom):
+        (WebCore::RenderBoxModelObject::paddingLeft):
+        (WebCore::RenderBoxModelObject::paddingRight):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateBackgroundSize):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::borderTop):
+        (WebCore::RenderBoxModelObject::borderBottom):
+        (WebCore::RenderBoxModelObject::borderLeft):
+        (WebCore::RenderBoxModelObject::borderRight):
+        (WebCore::RenderBoxModelObject::hasHorizontalBordersPaddingOrMargin):
+        (WebCore::RenderBoxModelObject::hasHorizontalBordersOrPadding):
+        (WebCore::RenderBoxModelObject::childBecameNonInline):
+        (WebCore::RenderBoxModelObject::isBoxModelObject):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        (WebCore::RenderInline::destroy):
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::nextContinuation):
+        (WebCore::RenderInline::continuationBefore):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::splitFlow):
+        (WebCore::RenderInline::addChildToContinuation):
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::offsetLeft):
+        (WebCore::RenderInline::offsetTop):
+        (WebCore::RenderInline::marginLeft):
+        (WebCore::RenderInline::marginRight):
+        (WebCore::RenderInline::positionForCoordinates):
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderInline::rectWithOutlineForRepaint):
+        (WebCore::RenderInline::computeRectForRepaint):
+        (WebCore::RenderInline::updateDragState):
+        (WebCore::RenderInline::childBecameNonInline):
+        (WebCore::RenderInline::updateHitTestResult):
+        (WebCore::RenderInline::imageChanged):
+        (WebCore::RenderInline::addFocusRingRects):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::marginTop):
+        (WebCore::RenderInline::marginBottom):
+        (WebCore::RenderInline::continuation):
+        (WebCore::RenderInline::setContinuation):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderLineBoxList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::addLayers):
+        (WebCore::RenderObject::removeLayers):
+        (WebCore::RenderObject::moveLayers):
+        (WebCore::RenderObject::findNextLayer):
+        (WebCore::RenderObject::enclosingLayer):
+        (WebCore::RenderObject::enclosingCompositingLayer):
+        (WebCore::RenderObject::setLayerNeedsFullRepaint):
+        (WebCore::RenderObject::handleDynamicFloatPositionChange):
+        (WebCore::RenderObject::destroy):
+        (WebCore::RenderObject::offsetParent):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isInlineContinuation):
+        * rendering/RenderSVGTSpan.cpp:
+        (WebCore::RenderSVGTSpan::absoluteRects):
+        (WebCore::RenderSVGTSpan::absoluteQuads):
+        * rendering/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::absoluteRects):
+        (WebCore::RenderSVGTextPath::absoluteQuads):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setBestTruncatedAt):
+        * rendering/RenderView.h:
+        * rendering/bidi.cpp:
+        (WebCore::getBorderPaddingMargin):
+        (WebCore::inlineWidth):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::inlineFlowRequiresLineBox):
+        (WebCore::requiresLineBox):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::isKeyboardFocusable):
+
 2009-02-07  Yael Aharon <yael.aharon@nokia.com>
 
         Reviewed by Timothy Hatcher <timothy@hatcher.name>

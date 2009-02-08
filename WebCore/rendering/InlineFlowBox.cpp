@@ -55,26 +55,14 @@ int InlineFlowBox::marginLeft()
 {
     if (!includeLeftEdge())
         return 0;
-    
-    Length margin = object()->style()->marginLeft();
-    if (margin.isAuto())
-        return 0;
-    if (margin.isFixed())
-        return margin.value();
-    return renderBox()->marginLeft();
+    return boxModelObject()->marginLeft();
 }
 
 int InlineFlowBox::marginRight()
 {
     if (!includeRightEdge())
         return 0;
-    
-    Length margin = object()->style()->marginRight();
-    if (margin.isAuto())
-        return 0;
-    if (margin.isFixed())
-        return margin.value();
-    return renderBox()->marginRight();
+    return boxModelObject()->marginRight();
 }
 
 int InlineFlowBox::marginBorderPaddingLeft()
@@ -349,11 +337,11 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
                 x = flow->placeBoxesHorizontally(x, leftPosition, rightPosition, needsWordSpacing);
                 x += flow->marginRight();
             } else if (!curr->object()->isListMarker() || static_cast<RenderListMarker*>(curr->object())->isInside()) {
-                x += curr->renderBox()->marginLeft();
+                x += curr->boxModelObject()->marginLeft();
                 curr->setXPos(x);
-                leftPosition = min(x + curr->renderBox()->overflowLeft(false), leftPosition);
-                rightPosition = max(x + curr->renderBox()->overflowWidth(false), rightPosition);
-                x += curr->width() + curr->renderBox()->marginRight();
+                leftPosition = min(x + toRenderBox(curr->object())->overflowLeft(false), leftPosition);
+                rightPosition = max(x + toRenderBox(curr->object())->overflowWidth(false), rightPosition);
+                x += curr->width() + curr->boxModelObject()->marginRight();
             }
         }
     }
@@ -468,7 +456,7 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
             if (maxPositionBottom < curr->height())
                 maxPositionBottom = curr->height();
         }
-        else if (curr->hasTextChildren() || curr->renderBox()->hasHorizontalBordersOrPadding() || strictMode) {
+        else if (curr->hasTextChildren() || curr->boxModelObject()->hasHorizontalBordersOrPadding() || strictMode) {
             int ascent = curr->baseline() - curr->yPos();
             int descent = curr->height() - ascent;
             if (maxAscent < ascent)
@@ -503,7 +491,7 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
         else if (curr->yPos() == PositionBottom)
             curr->setYPos(y + maxHeight - curr->height());
         else {
-            if (!curr->hasTextChildren() && !curr->renderBox()->hasHorizontalBordersOrPadding() && !strictMode)
+            if (!curr->hasTextChildren() && !curr->boxModelObject()->hasHorizontalBordersOrPadding() && !strictMode)
                 childAffectsTopBottomPos = false;
             curr->setYPos(curr->yPos() + y + maxAscent - curr->baseline());
         }
@@ -534,21 +522,23 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
             }
 
             if (curr->object()->hasReflection()) {
-                overflowTop = min(overflowTop, curr->renderBox()->reflectionBox().y());
-                overflowBottom = max(overflowBottom, curr->renderBox()->reflectionBox().bottom());
+                RenderBox* box = toRenderBox(curr->object());
+                overflowTop = min(overflowTop, box->reflectionBox().y());
+                overflowBottom = max(overflowBottom, box->reflectionBox().bottom());
             }
 
             if (curr->isInlineFlowBox()) {
-                newHeight += curr->renderBox()->borderTop() + curr->renderBox()->paddingTop() +
-                            curr->renderBox()->borderBottom() + curr->renderBox()->paddingBottom();
-                newY -= curr->renderBox()->borderTop() + curr->renderBox()->paddingTop();
-                newBaseline += curr->renderBox()->borderTop() + curr->renderBox()->paddingTop();
+                newHeight += curr->boxModelObject()->borderTop() + curr->boxModelObject()->paddingTop() +
+                            curr->boxModelObject()->borderBottom() + curr->boxModelObject()->paddingBottom();
+                newY -= curr->boxModelObject()->borderTop() + curr->boxModelObject()->paddingTop();
+                newBaseline += curr->boxModelObject()->borderTop() + curr->boxModelObject()->paddingTop();
             }
         } else if (!curr->object()->isBR()) {
-            newY += curr->renderBox()->marginTop();
-            newHeight = curr->height() - (curr->renderBox()->marginTop() + curr->renderBox()->marginBottom());
-            overflowTop = curr->renderBox()->overflowTop(false);
-            overflowBottom = curr->renderBox()->overflowHeight(false) - newHeight;
+            RenderBox* box = toRenderBox(curr->object());
+            newY += box->marginTop();
+            newHeight = curr->height() - (box->marginTop() + box->marginBottom());
+            overflowTop = box->overflowTop(false);
+            overflowBottom = box->overflowHeight(false) - newHeight;
         }
 
         curr->setYPos(newY);
@@ -587,7 +577,7 @@ void InlineFlowBox::shrinkBoxesWithNoTextChildren(int topPos, int bottomPos)
     }
 
     // See if we have text children. If not, then we need to shrink ourselves to fit on the line.
-    if (!hasTextChildren() && !renderBox()->hasHorizontalBordersOrPadding()) {
+    if (!hasTextChildren() && !boxModelObject()->hasHorizontalBordersOrPadding()) {
         if (yPos() < topPos)
             setYPos(topPos);
         if (yPos() + height() > bottomPos)

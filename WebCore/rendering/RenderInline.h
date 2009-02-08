@@ -25,14 +25,14 @@
 #ifndef RenderInline_h
 #define RenderInline_h
 
-#include "RenderBox.h"
+#include "RenderBoxModelObject.h"
 #include "RenderLineBoxList.h"
 
 namespace WebCore {
 
 class Position;
 
-class RenderInline : public RenderBox {
+class RenderInline : public RenderBoxModelObject {
 public:
     RenderInline(Node*);
     virtual ~RenderInline();
@@ -53,9 +53,9 @@ public:
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0);
 
     void splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock,
-                      RenderObject* beforeChild, RenderBox* oldCont);
+                      RenderObject* beforeChild, RenderBoxModelObject* oldCont);
     void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
-                   RenderObject* newChild, RenderBox* oldCont);
+                   RenderObject* newChild, RenderBoxModelObject* oldCont);
 
     virtual void layout() { ASSERT_NOT_REACHED(); } // Do nothing for layout()
 
@@ -70,11 +70,18 @@ public:
     virtual int offsetWidth() const { return linesBoundingBox().width(); }
     virtual int offsetHeight() const { return linesBoundingBox().height(); }
 
+    // Just ignore top/bottom margins on RenderInlines.
+    virtual int marginTop() const { return 0; }
+    virtual int marginBottom() const { return 0; }
+    virtual int marginLeft() const;
+    virtual int marginRight() const;
+    
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
@@ -98,9 +105,9 @@ public:
 
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
-    RenderBox* continuation() const { return m_continuation; }
+    RenderBoxModelObject* continuation() const { return m_continuation; }
     RenderInline* inlineContinuation() const;
-    void setContinuation(RenderBox* c) { m_continuation = c; }
+    void setContinuation(RenderBoxModelObject* c) { m_continuation = c; }
     
     virtual void updateDragState(bool dragOn);
     
@@ -113,12 +120,8 @@ public:
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
     void paintOutline(GraphicsContext*, int tx, int ty);
 
-    void calcMargins(int containerWidth)
-    {
-        m_marginLeft = style()->marginLeft().calcMinValue(containerWidth);
-        m_marginRight = style()->marginRight().calcMinValue(containerWidth);
-    }
-    
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
+
 #if ENABLE(DASHBOARD_SUPPORT)
     virtual void addDashboardRegions(Vector<DashboardRegionValue>&);
 #endif
@@ -131,15 +134,15 @@ protected:
 
 private:
     void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine, const IntRect& nextLine);
-    RenderBox* continuationBefore(RenderObject* beforeChild);
+    RenderBoxModelObject* continuationBefore(RenderObject* beforeChild);
 
 protected:
     RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
 
 private:
-    RenderBox* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the
-                                     // <b> will just have an inline as its continuation.
+    RenderBoxModelObject* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the
+                                          // <b> will just have an inline as its continuation.
     mutable int m_lineHeight;
 };
 

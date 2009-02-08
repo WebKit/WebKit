@@ -89,7 +89,7 @@ static bool betweenMidpoints;
 static bool isLineEmpty = true;
 static bool previousLineBrokeCleanly = true;
 
-static int getBorderPaddingMargin(RenderBox* child, bool endOfInline)
+static int getBorderPaddingMargin(RenderBoxModelObject* child, bool endOfInline)
 {
     bool leftSide = (child->style()->direction() == LTR) ? !endOfInline : endOfInline;
     if (leftSide)
@@ -102,11 +102,11 @@ static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
     unsigned lineDepth = 1;
     int extraWidth = 0;
     RenderObject* parent = child->parent();
-    while (parent->isBox() && parent->isInline() && !parent->isInlineBlockOrInlineTable() && lineDepth++ < cMaxLineDepth) {
+    while (parent->isInline() && !parent->isInlineBlockOrInlineTable() && lineDepth++ < cMaxLineDepth) {
         if (start && !child->previousSibling())
-            extraWidth += getBorderPaddingMargin(toRenderBox(parent), false);
+            extraWidth += getBorderPaddingMargin(toRenderBoxModelObject(parent), false);
         if (end && !child->nextSibling())
-            extraWidth += getBorderPaddingMargin(toRenderBox(parent), true);
+            extraWidth += getBorderPaddingMargin(toRenderBoxModelObject(parent), true);
         child = parent;
         parent = child->parent();
     }
@@ -796,7 +796,6 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         bool endOfInline = false;
         RenderObject* o = bidiFirst(this, 0, false);
         Vector<FloatWithRect> floats;
-        int containerWidth = max(0, containingBlockWidth());
         while (o) {
             o->invalidateVerticalPosition();
             if (o->isReplaced() || o->isFloating() || o->isPositioned()) {
@@ -822,10 +821,6 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             } else if (o->isText() || (o->isRenderInline() && !endOfInline)) {
                 if (fullLayout || o->selfNeedsLayout())
                     o->dirtyLineBoxes(fullLayout);
-                
-                // Calculate margins of inline flows so that they can be used later by line layout.
-                if (o->isRenderInline())
-                    toRenderInline(o)->calcMargins(containerWidth);
                 o->setNeedsLayout(false);
             }
             o = bidiNext(this, o, 0, false, &endOfInline);
@@ -1384,12 +1379,12 @@ static inline bool shouldPreserveNewline(RenderObject* object)
     return object->style()->preserveNewline();
 }
 
-static bool inlineFlowRequiresLineBox(RenderBox* flow)
+static bool inlineFlowRequiresLineBox(RenderInline* flow)
 {
     // FIXME: Right now, we only allow line boxes for inlines that are truly empty.
     // We need to fix this, though, because at the very least, inlines containing only
     // ignorable whitespace should should also have line boxes. 
-    return flow->isRenderInline() && !flow->firstChild() && flow->hasHorizontalBordersPaddingOrMargin();
+    return !flow->firstChild() && flow->hasHorizontalBordersPaddingOrMargin();
 }
 
 static inline bool requiresLineBox(const InlineIterator& it)
@@ -1397,7 +1392,7 @@ static inline bool requiresLineBox(const InlineIterator& it)
     if (it.obj->isFloatingOrPositioned())
         return false;
 
-    if (it.obj->isRenderInline() && !inlineFlowRequiresLineBox(toRenderBox(it.obj)))
+    if (it.obj->isRenderInline() && !inlineFlowRequiresLineBox(toRenderInline(it.obj)))
         return false;
 
     if (!shouldCollapseWhiteSpace(it.obj->style()) || it.obj->isBR())
@@ -1684,7 +1679,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             // Right now, we should only encounter empty inlines here.
             ASSERT(!o->firstChild());
     
-            RenderBox* flowBox = toRenderBox(o);
+            RenderInline* flowBox = toRenderInline(o);
             
             // Now that some inline flows have line boxes, if we are already ignoring spaces, we need 
             // to make sure that we stop to include this object and then start ignoring spaces again. 

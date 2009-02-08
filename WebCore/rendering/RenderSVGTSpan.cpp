@@ -48,8 +48,8 @@ void RenderSVGTSpan::absoluteRects(Vector<IntRect>& rects, int, int, bool)
     if (!object)
         return;
 
-    int xRef = object->x() + x();
-    int yRef = object->y() + y();
+    int xRef = object->x();
+    int yRef = object->y();
  
     for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
         FloatRect rect(xRef + curr->xPos(), yRef + curr->yPos(), curr->width(), curr->height());
@@ -68,8 +68,8 @@ void RenderSVGTSpan::absoluteQuads(Vector<FloatQuad>& quads, bool)
     if (!object)
         return;
 
-    int xRef = object->x() + x();
-    int yRef = object->y() + y();
+    int xRef = object->x();
+    int yRef = object->y();
  
     for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
         FloatRect rect(xRef + curr->xPos(), yRef + curr->yPos(), curr->width(), curr->height());

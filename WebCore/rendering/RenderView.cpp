@@ -619,7 +619,7 @@ int RenderView::viewWidth() const
 
 // The idea here is to take into account what object is moving the pagination point, and
 // thus choose the best place to chop it.
-void RenderView::setBestTruncatedAt(int y, RenderBox* forRenderer, bool forcedBreak)
+void RenderView::setBestTruncatedAt(int y, RenderBoxModelObject* forRenderer, bool forcedBreak)
 {
     // Nobody else can set a page break once we have a forced break.
     if (m_forcedPageBreak)
@@ -632,9 +632,10 @@ void RenderView::setBestTruncatedAt(int y, RenderBox* forRenderer, bool forcedBr
         return;
     }
 
-    // prefer the widest object who tries to move the pagination point
-    if (forRenderer->width() > m_truncatorWidth) {
-        m_truncatorWidth = forRenderer->width();
+    // Prefer the widest object that tries to move the pagination point
+    IntRect boundingBox = forRenderer->borderBoundingBox();
+    if (boundingBox.width() > m_truncatorWidth) {
+        m_truncatorWidth = boundingBox.width();
         m_bestTruncatedAt = y;
     }
 }

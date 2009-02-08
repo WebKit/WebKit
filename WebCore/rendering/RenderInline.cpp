@@ -39,7 +39,7 @@ using namespace std;
 namespace WebCore {
 
 RenderInline::RenderInline(Node* node)
-    : RenderBox(node)
+    : RenderBoxModelObject(node)
     , m_continuation(0)
     , m_lineHeight(-1)
 {
@@ -63,7 +63,7 @@ void RenderInline::destroy()
 
     if (!documentBeingDestroyed()) {
         if (firstLineBox()) {
-            // We can't wait for RenderBox::destroy to clear the selection,
+            // We can't wait for RenderBoxModelObject::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
             // FIXME: The SelectionController should be responsible for this when it
             // is notified of DOM mutations.
@@ -85,7 +85,7 @@ void RenderInline::destroy()
 
     m_lineBoxes.deleteLineBoxes(renderArena());
 
-    RenderBox::destroy();
+    RenderBoxModelObject::destroy();
 }
 
 RenderInline* RenderInline::inlineContinuation() const
@@ -108,7 +108,7 @@ void RenderInline::updateBoxModelInfoFromStyle()
 
 void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBox::styleDidChange(diff, oldStyle);
+    RenderBoxModelObject::styleDidChange(diff, oldStyle);
 
     // Ensure that all of the split inlines pick up the new style. We
     // only do this if we're an inline, since we don't want to propagate
@@ -117,7 +117,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     // and after the block share the same style, but the block doesn't
     // need to pass its style on to anyone else.
     for (RenderInline* currCont = inlineContinuation(); currCont; currCont = currCont->inlineContinuation()) {
-        RenderBox* nextCont = currCont->continuation();
+        RenderBoxModelObject* nextCont = currCont->continuation();
         currCont->setContinuation(0);
         currCont->setStyle(style());
         currCont->setContinuation(nextCont);
@@ -151,21 +151,21 @@ void RenderInline::addChild(RenderObject* newChild, RenderObject* beforeChild)
     return addChildIgnoringContinuation(newChild, beforeChild);
 }
 
-static RenderBox* nextContinuation(RenderObject* renderer)
+static RenderBoxModelObject* nextContinuation(RenderObject* renderer)
 {
     if (renderer->isInline() && !renderer->isReplaced())
         return toRenderInline(renderer)->continuation();
     return toRenderBlock(renderer)->inlineContinuation();
 }
 
-RenderBox* RenderInline::continuationBefore(RenderObject* beforeChild)
+RenderBoxModelObject* RenderInline::continuationBefore(RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() == this)
         return this;
 
-    RenderBox* curr = nextContinuation(this);
-    RenderBox* nextToLast = this;
-    RenderBox* last = this;
+    RenderBoxModelObject* curr = nextContinuation(this);
+    RenderBoxModelObject* nextToLast = this;
+    RenderBoxModelObject* last = this;
     while (curr) {
         if (beforeChild && beforeChild->parent() == curr) {
             if (curr->firstChild() == beforeChild)
@@ -200,7 +200,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
 
         RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
         newBox->setStyle(newStyle.release());
-        RenderBox* oldContinuation = continuation();
+        RenderBoxModelObject* oldContinuation = continuation();
         setContinuation(newBox);
 
         // Someone may have put a <p> inside a <q>, causing a split.  When this happens, the :after content
@@ -217,7 +217,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         return;
     }
 
-    RenderBox::addChild(newChild, beforeChild);
+    RenderBoxModelObject::addChild(newChild, beforeChild);
 
     newChild->setNeedsLayoutAndPrefWidthsRecalc();
 }
@@ -231,7 +231,7 @@ RenderInline* RenderInline::cloneInline(RenderInline* src)
 
 void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
                                 RenderBlock* middleBlock,
-                                RenderObject* beforeChild, RenderBox* oldCont)
+                                RenderObject* beforeChild, RenderBoxModelObject* oldCont)
 {
     // Create a clone of this inline.
     RenderInline* clone = cloneInline(this);
@@ -253,8 +253,8 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     // We have been reparented and are now under the fromBlock.  We need
     // to walk up our inline parent chain until we hit the containing block.
     // Once we hit the containing block we're done.
-    RenderBox* curr = static_cast<RenderBox*>(parent());
-    RenderBox* currChild = this;
+    RenderBoxModelObject* curr = static_cast<RenderBoxModelObject*>(parent());
+    RenderBoxModelObject* currChild = this;
     
     // FIXME: Because splitting is O(n^2) as tags nest pathologically, we cap the depth at which we're willing to clone.
     // There will eventually be a better approach to this problem that will let us nest to a much
@@ -297,7 +297,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         
         // Keep walking up the chain.
         currChild = curr;
-        curr = static_cast<RenderBox*>(curr->parent());
+        curr = static_cast<RenderBoxModelObject*>(curr->parent());
         splitDepth++;
     }
 
@@ -315,7 +315,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
 }
 
 void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
-                             RenderObject* newChild, RenderBox* oldCont)
+                             RenderObject* newChild, RenderBoxModelObject* oldCont)
 {
     RenderBlock* pre = 0;
     RenderBlock* block = containingBlock();
@@ -374,13 +374,13 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
 
 void RenderInline::addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild)
 {
-    RenderBox* flow = continuationBefore(beforeChild);
+    RenderBoxModelObject* flow = continuationBefore(beforeChild);
     ASSERT(!beforeChild || beforeChild->parent()->isRenderBlock() || beforeChild->parent()->isRenderInline());
-    RenderBox* beforeChildParent = 0;
+    RenderBoxModelObject* beforeChildParent = 0;
     if (beforeChild)
-        beforeChildParent = static_cast<RenderBox*>(beforeChild->parent());
+        beforeChildParent = static_cast<RenderBoxModelObject*>(beforeChild->parent());
     else {
-        RenderBox* cont = nextContinuation(flow);
+        RenderBoxModelObject* cont = nextContinuation(flow);
         if (cont)
             beforeChildParent = cont;
         else
@@ -424,14 +424,20 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool to
         if (curr->isBox()) {
             RenderBox* box = toRenderBox(curr);
             curr->absoluteRects(rects, tx + box->x(), ty + box->y(), false);
-        }
+        } else
+            curr->absoluteRects(rects, tx, ty, false);
     }
 
-    if (continuation() && topLevel)
-        continuation()->absoluteRects(rects, 
-                                      tx - containingBlock()->x() + continuation()->x(),
-                                      ty - containingBlock()->y() + continuation()->y(),
-                                      topLevel);
+    if (continuation() && topLevel) {
+        if (continuation()->isBox()) {
+            RenderBox* box = toRenderBox(continuation());
+            continuation()->absoluteRects(rects, 
+                                          tx - containingBlock()->x() + box->x(),
+                                          ty - containingBlock()->y() + box->y(),
+                                          topLevel);
+        } else
+            continuation()->absoluteRects(rects, tx - containingBlock()->x(), ty - containingBlock()->y(), topLevel);
+    }
 }
 
 void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
@@ -452,7 +458,7 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
 
 int RenderInline::offsetLeft() const
 {
-    int x = RenderBox::offsetLeft();
+    int x = RenderBoxModelObject::offsetLeft();
     if (firstLineBox())
         x += firstLineBox()->xPos();
     return x;
@@ -460,10 +466,34 @@ int RenderInline::offsetLeft() const
 
 int RenderInline::offsetTop() const
 {
-    int y = RenderBox::offsetTop();
+    int y = RenderBoxModelObject::offsetTop();
     if (firstLineBox())
         y += firstLineBox()->yPos();
     return y;
+}
+
+int RenderInline::marginLeft() const
+{
+    Length margin = style()->marginLeft();
+    if (margin.isAuto())
+        return 0;
+    if (margin.isFixed())
+        return margin.value();
+    if (margin.isPercent())
+        return margin.calcMinValue(max(0, containingBlockWidth()));
+    return 0;
+}
+
+int RenderInline::marginRight() const
+{
+    Length margin = style()->marginRight();
+    if (margin.isAuto())
+        return 0;
+    if (margin.isFixed())
+        return margin.value();
+    if (margin.isPercent())
+        return margin.calcMinValue(max(0, containingBlockWidth()));
+    return 0;
 }
 
 const char* RenderInline::renderName() const
@@ -485,19 +515,26 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 
 VisiblePosition RenderInline::positionForCoordinates(int x, int y)
 {
-    // Translate the coords from the pre-anonymous block to the post-anonymous block.
+    // FIXME: Does not deal with relative positioned inlines (should it?)
     RenderBlock* cb = containingBlock();
+    if (firstLineBox()) {
+        // This inline actually has a line box.  We must have clicked in the border/padding of one of these boxes.  We
+        // should try to find a result by asking our containing block.
+        return cb->positionForCoordinates(x, y);
+    }
+
+    // Translate the coords from the pre-anonymous block to the post-anonymous block.
     int parentBlockX = cb->x() + x;
     int parentBlockY = cb->y() + y;
-    RenderBox* c = continuation();
+    RenderBoxModelObject* c = continuation();
     while (c) {
-        RenderBox* contBlock = c;
+        RenderBox* contBlock = c->isInline() ? c->containingBlock() : toRenderBlock(c);
         if (c->isInline() || c->firstChild())
             return c->positionForCoordinates(parentBlockX - contBlock->x(), parentBlockY - contBlock->y());
         c = toRenderBlock(c)->inlineContinuation();
     }
     
-    return RenderBox::positionForCoordinates(x, y);
+    return RenderBoxModelObject::positionForCoordinates(x, y);
 }
 
 IntRect RenderInline::linesBoundingBox() const
@@ -549,7 +586,7 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
     for (RenderObject* inlineFlow = this; inlineFlow && inlineFlow->isRenderInline() && inlineFlow != cb; 
          inlineFlow = inlineFlow->parent()) {
          if (inlineFlow->style()->position() == RelativePosition && inlineFlow->hasLayer())
-            toRenderBox(inlineFlow)->layer()->relativePositionOffset(left, top);
+            toRenderInline(inlineFlow)->layer()->relativePositionOffset(left, top);
     }
 
     IntRect r(-ow + left, -ow + top, boundingBox.width() + ow * 2, boundingBox.height() + ow * 2);
@@ -592,7 +629,7 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
 
 IntRect RenderInline::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth)
 {
-    IntRect r(RenderBox::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
+    IntRect r(RenderBoxModelObject::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isText())
             r.unite(curr->rectWithOutlineForRepaint(repaintContainer, outlineWidth));
@@ -600,9 +637,72 @@ IntRect RenderInline::rectWithOutlineForRepaint(RenderBoxModelObject* repaintCon
     return r;
 }
 
+void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)
+{
+    if (RenderView* v = view()) {
+        // LayoutState is only valid for root-relative repainting
+        if (v->layoutStateEnabled() && !repaintContainer) {
+            LayoutState* layoutState = v->layoutState();
+            if (style()->position() == RelativePosition && layer())
+                rect.move(layer()->relativePositionOffset());
+            rect.move(layoutState->m_offset);
+            if (layoutState->m_clipped)
+                rect.intersect(layoutState->m_clipRect);
+            return;
+        }
+    }
+
+    if (repaintContainer == this)
+        return;
+
+    RenderObject* o = container();
+    if (!o)
+        return;
+
+    IntPoint topLeft = rect.location();
+
+    if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
+        RenderBlock* cb = toRenderBlock(o);
+        if (cb->hasColumns()) {
+            IntRect repaintRect(topLeft, rect.size());
+            cb->adjustRectForColumns(repaintRect);
+            topLeft = repaintRect.location();
+            rect = repaintRect;
+        }
+    }
+
+    if (style()->position() == RelativePosition && layer()) {
+        // Apply the relative position offset when invalidating a rectangle.  The layer
+        // is translated, but the render box isn't, so we need to do this to get the
+        // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position
+        // flag on the RenderObject has been cleared, so use the one on the style().
+        topLeft += layer()->relativePositionOffset();
+    }
+    
+    // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
+    // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
+    if (o->hasOverflowClip()) {
+        RenderBox* containerBox = toRenderBox(o);
+
+        // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
+        // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
+        // anyway if its size does change.
+        topLeft -= containerBox->layer()->scrolledContentOffset(); // For overflow:auto/scroll/hidden.
+
+        IntRect repaintRect(topLeft, rect.size());
+        IntRect boxRect(0, 0, containerBox->layer()->width(), containerBox->layer()->height());
+        rect = intersection(repaintRect, boxRect);
+        if (rect.isEmpty())
+            return;
+    } else
+        rect.setLocation(topLeft);
+    
+    o->computeRectForRepaint(repaintContainer, rect, fixed);
+}
+
 void RenderInline::updateDragState(bool dragOn)
 {
-    RenderBox::updateDragState(dragOn);
+    RenderBoxModelObject::updateDragState(dragOn);
     if (continuation())
         continuation()->updateDragState(dragOn);
 }
@@ -611,7 +711,7 @@ void RenderInline::childBecameNonInline(RenderObject* child)
 {
     // We have to split the parent flow.
     RenderBlock* newBox = createAnonymousBlock();
-    RenderBox* oldContinuation = continuation();
+    RenderBoxModelObject* oldContinuation = continuation();
     setContinuation(newBox);
     RenderObject* beforeChild = child->nextSibling();
     children()->removeChildNode(this, child);
@@ -632,10 +732,7 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const IntPoint& po
             RenderBlock* firstBlock = node->renderer()->containingBlock();
             
             // Get our containing block.
-            RenderBox* block = this;
-            if (isInline())
-                block = containingBlock();
-        
+            RenderBox* block = containingBlock();
             localPoint.move(block->x() - firstBlock->x(), block->y() - firstBlock->y());
         }
 
@@ -712,28 +809,42 @@ IntSize RenderInline::relativePositionedInlineOffset(const RenderBox* child) con
     return offset;
 }
 
+void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
+{
+    if (!parent())
+        return;
+        
+    // FIXME: We can do better.
+    repaint();
+}
+
 void RenderInline::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
 {
     for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
         graphicsContext->addFocusRingRect(IntRect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height()));
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-        if (!curr->isText() && !curr->isListMarker() && curr->isBox()) {
-            RenderBox* box = toRenderBox(curr);
-            FloatPoint pos;
+        if (!curr->isText() && !curr->isListMarker()) {
+            FloatPoint pos(tx, ty);
             // FIXME: This doesn't work correctly with transforms.
-            if (box->layer()) 
+            if (curr->hasLayer()) 
                 pos = curr->localToAbsolute();
-            else
-                pos = FloatPoint(tx + box->x(), ty + box->y());
-            box->addFocusRingRects(graphicsContext, pos.x(), pos.y());
+            else if (curr->isBox())
+                pos.move(toRenderBox(curr)->x(), toRenderBox(curr)->y());
+           curr->addFocusRingRects(graphicsContext, pos.x(), pos.y());
         }
     }
 
-    if (continuation())
-        continuation()->addFocusRingRects(graphicsContext, 
-                                          tx - containingBlock()->x() + continuation()->x(),
-                                          ty - containingBlock()->y() + continuation()->y());
+    if (continuation()) {
+        if (continuation()->isInline())
+            continuation()->addFocusRingRects(graphicsContext, 
+                                              tx - containingBlock()->x() + continuation()->containingBlock()->x(),
+                                              ty - containingBlock()->y() + continuation()->containingBlock()->y());
+        else
+            continuation()->addFocusRingRects(graphicsContext, 
+                                              tx - containingBlock()->x() + toRenderBox(continuation())->x(),
+                                              ty - containingBlock()->y() + toRenderBox(continuation())->y());
+    }
 }
 
 void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty)
