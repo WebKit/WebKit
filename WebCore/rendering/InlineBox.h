@@ -50,9 +50,6 @@ public:
         , m_bidiEmbeddingLevel(0)
         , m_dirty(false)
         , m_extracted(false)
-        , m_includeLeftEdge(false)
-        , m_includeRightEdge(false)
-        , m_hasTextChildren(true)
         , m_endsWithBreak(false)
         , m_hasSelectedChildren(false)
         , m_hasEllipsisBox(false)
@@ -85,9 +82,6 @@ public:
         , m_bidiEmbeddingLevel(0)
         , m_dirty(dirty)
         , m_extracted(extracted)
-        , m_includeLeftEdge(false)
-        , m_includeRightEdge(false)
-        , m_hasTextChildren(true)
         , m_endsWithBreak(false)
         , m_hasSelectedChildren(false)   
         , m_hasEllipsisBox(false)
@@ -204,8 +198,6 @@ public:
     void setBaseline(int b) { m_baseline = b; }
     int baseline() const { return m_baseline; }
 
-    bool hasTextChildren() const { return m_hasTextChildren; }
-
     virtual int topOverflow() { return yPos(); }
     virtual int bottomOverflow() { return yPos() + height(); }
     virtual int leftOverflow() { return xPos(); }
@@ -273,11 +265,6 @@ private:
 protected:
     bool m_dirty : 1;
     bool m_extracted : 1;
-
-    // for InlineFlowBox
-    bool m_includeLeftEdge : 1;
-    bool m_includeRightEdge : 1;
-    bool m_hasTextChildren : 1;
 
     // for RootInlineBox
     bool m_endsWithBreak : 1;  // Whether the line ends with a <br>.
