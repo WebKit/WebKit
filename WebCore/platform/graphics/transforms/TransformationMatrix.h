@@ -30,9 +30,7 @@
 #include <CoreGraphics/CGAffineTransform.h>
 #elif PLATFORM(CAIRO)
 #include <cairo.h>
-#endif
-
-#if PLATFORM(QT)
+#elif PLATFORM(QT)
 #include <QMatrix>
 #endif
 
@@ -281,9 +279,7 @@ public:
     operator CGAffineTransform() const;
 #elif PLATFORM(CAIRO)
     operator cairo_matrix_t() const;
-#endif
-
-#if PLATFORM(QT)
+#elif PLATFORM(QT)
     operator QMatrix() const;
 #endif
 

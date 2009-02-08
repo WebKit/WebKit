@@ -1,3 +1,12 @@
+2009-02-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        This is a follow up of the last commit. It cleans up TransformationMatrix.h
+        and convert to a series of #elif.
+
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2009-02-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Simon Fraser.
