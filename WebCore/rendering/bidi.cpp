@@ -1480,7 +1480,7 @@ int RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool firstL
     
             RenderBox* box = toRenderBox(object);
             if (box->style()->hasStaticX()) {
-                if (object->style()->isOriginalDisplayInlineType())
+                if (box->style()->isOriginalDisplayInlineType())
                     box->layer()->setStaticX(style()->direction() == LTR ? leftOffset(height(), firstLine) : width() - rightOffset(height(), firstLine));
                 else
                     box->layer()->setStaticX(style()->direction() == LTR ? borderLeft() + paddingLeft() : borderRight() + paddingRight());

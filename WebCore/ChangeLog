@@ -1,3 +1,13 @@
+2009-02-07  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Reviewed by Rob Buis <rwlbuis@gmail.com>
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23788
+        call style()->isOriginalDisplayInlineType() on RenderBox instead of RenderObject. 
+        
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+
 2009-02-07  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Darin.
