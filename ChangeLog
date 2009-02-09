@@ -1,3 +1,16 @@
+2009-02-09  Calvin Walton  <calvin.walton@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23823
+
+        [Gtk] Fix build with recent autotools
+
+        Current versions of automake/libtool don't assume you want C++ enabled
+        by default any more, so explicitly check for a C++ compiler.
+
+        * configure.ac: Add AC_PROG_CXX macro
+
 2009-02-02  Christian Dywan  <christian@twotoasts.de>
 
         Rubber-stamped by Holger Freyther.
