@@ -1,5 +1,19 @@
 2009-02-08  David Hyatt  <hyatt@apple.com>
 
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23839
+
+        Make sure that generated content is properly handled when content is moved from a block run-in
+        to an inline run-in.
+
+        Reviewed by Sam Weinig
+
+        Added fast/runin/002.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleRunInChild):
+
+2009-02-08  David Hyatt  <hyatt@apple.com>
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=23832, crash when inspecting an image using the
         Web inspector.
 
