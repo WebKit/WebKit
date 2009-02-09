@@ -1,3 +1,15 @@
+2009-02-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23845
+        editing/deleting/backward-deletion.html fails on Tiger
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::previousOffset):
+        (WebCore::RenderText::nextOffset):
+        Work around a bug in older ICU versions by hardcoding narrow voiced marks.
+
 2009-02-09  Adam Roben  <aroben@apple.com>
 
         Windows build fix
