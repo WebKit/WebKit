@@ -27,8 +27,8 @@
 #define SelectionController_h
 
 #include "IntRect.h"
-#include "Selection.h"
 #include "Range.h"
+#include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -56,8 +56,8 @@ public:
     void moveTo(const Position&, EAffinity, bool userTriggered = false);
     void moveTo(const Position&, const Position&, EAffinity, bool userTriggered = false);
 
-    const Selection& selection() const { return m_sel; }
-    void setSelection(const Selection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false);
+    const VisibleSelection& selection() const { return m_sel; }
+    void setSelection(const VisibleSelection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false);
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
     void clear();
@@ -67,7 +67,7 @@ public:
 
     bool contains(const IntPoint&);
 
-    Selection::SelectionType selectionType() const { return m_sel.selectionType(); }
+    VisibleSelection::SelectionType selectionType() const { return m_sel.selectionType(); }
 
     EAffinity affinity() const { return m_sel.affinity(); }
 
@@ -154,7 +154,7 @@ private:
     Frame* m_frame;
     int m_xPosForVerticalArrowNavigation;
 
-    Selection m_sel;
+    VisibleSelection m_sel;
 
     IntRect m_caretRect;        // caret rect in coords local to the renderer responsible for painting the caret
     IntRect m_absCaretBounds;   // absolute bounding rect for the caret

@@ -280,7 +280,7 @@ DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinatio
         Frame* innerFrame = element->document()->frame();
         ASSERT(innerFrame);
         if (!asFileInput(element)) {
-            Selection dragCaret;
+            VisibleSelection dragCaret;
             if (Frame* frame = m_document->frame())
                 dragCaret = frame->visiblePositionForPoint(point);
             m_page->dragCaretController()->setSelection(dragCaret);
@@ -309,7 +309,7 @@ DragOperation DragController::operationForLoad(DragData* dragData)
     return dragOperation(dragData);
 }
 
-static bool setSelectionToDragCaret(Frame* frame, Selection& dragCaret, RefPtr<Range>& range, const IntPoint& point)
+static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, RefPtr<Range>& range, const IntPoint& point)
 {
     frame->selection()->setSelection(dragCaret);
     if (frame->selection()->isNone()) {
@@ -381,7 +381,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         return true;
     }
 
-    Selection dragCaret(m_page->dragCaretController()->selection());
+    VisibleSelection dragCaret(m_page->dragCaretController()->selection());
     m_page->dragCaretController()->clear();
     RefPtr<Range> range = dragCaret.toNormalizedRange();
     
@@ -554,7 +554,7 @@ static void prepareClipboardForImageDrag(Frame* src, Clipboard* clipboard, Eleme
     ExceptionCode ec = 0;
     range->selectNode(node, ec);
     ASSERT(ec == 0);
-    src->selection()->setSelection(Selection(range.get(), DOWNSTREAM));           
+    src->selection()->setSelection(VisibleSelection(range.get(), DOWNSTREAM));           
     clipboard->declareAndWriteDragImage(node, !linkURL.isEmpty() ? linkURL : imageURL, label, src);
 }
     
@@ -661,7 +661,7 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
             Position pos = src->selection()->base();
             Node* node = enclosingAnchorElement(pos);
             if (node)
-                src->selection()->setSelection(Selection::selectionFromContentsOfNode(node));
+                src->selection()->setSelection(VisibleSelection::selectionFromContentsOfNode(node));
         }
 
         m_client->willPerformDragSourceAction(DragSourceActionLink, dragOrigin, clipboard);
@@ -771,7 +771,7 @@ void DragController::placeDragCaret(const IntPoint& windowPoint)
     if (!frameView)
         return;
     IntPoint framePoint = frameView->windowToContents(windowPoint);
-    Selection dragCaret(frame->visiblePositionForPoint(framePoint));  
+    VisibleSelection dragCaret(frame->visiblePositionForPoint(framePoint));  
     m_page->dragCaretController()->setSelection(dragCaret);
 }
     

@@ -46,7 +46,7 @@ bool ModifySelectionListLevelCommand::preservesTypingStyle() const
 }
 
 // This needs to be static so it can be called by canIncreaseSelectionListLevel and canDecreaseSelectionListLevel
-static bool getStartEndListChildren(const Selection& selection, Node*& start, Node*& end)
+static bool getStartEndListChildren(const VisibleSelection& selection, Node*& start, Node*& end)
 {
     if (selection.isNone())
         return false;
@@ -141,7 +141,7 @@ IncreaseSelectionListLevelCommand::IncreaseSelectionListLevelCommand(Document* d
 }
 
 // This needs to be static so it can be called by canIncreaseSelectionListLevel
-static bool canIncreaseListLevel(const Selection& selection, Node*& start, Node*& end)
+static bool canIncreaseListLevel(const VisibleSelection& selection, Node*& start, Node*& end)
 {
     if (!getStartEndListChildren(selection, start, end))
         return false;
@@ -239,7 +239,7 @@ DecreaseSelectionListLevelCommand::DecreaseSelectionListLevelCommand(Document* d
 }
 
 // This needs to be static so it can be called by canDecreaseSelectionListLevel
-static bool canDecreaseListLevel(const Selection& selection, Node*& start, Node*& end)
+static bool canDecreaseListLevel(const VisibleSelection& selection, Node*& start, Node*& end)
 {
     if (!getStartEndListChildren(selection, start, end))
         return false;

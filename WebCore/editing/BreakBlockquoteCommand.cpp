@@ -72,7 +72,7 @@ void BreakBlockquoteCommand::doApply()
     insertNodeAfter(breakNode.get(), topBlockquote);
     
     if (isLastVisiblePositionInNode(visiblePos, topBlockquote)) {
-        setEndingSelection(Selection(Position(breakNode.get(), 0), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(Position(breakNode.get(), 0), DOWNSTREAM));
         rebalanceWhitespace();   
         return;
     }
@@ -97,7 +97,7 @@ void BreakBlockquoteCommand::doApply()
     
     // If there's nothing inside topBlockquote to move, we're finished.
     if (!startNode->isDescendantOf(topBlockquote)) {
-        setEndingSelection(Selection(VisiblePosition(Position(startNode, 0))));
+        setEndingSelection(VisibleSelection(VisiblePosition(Position(startNode, 0))));
         return;
     }
     
@@ -168,7 +168,7 @@ void BreakBlockquoteCommand::doApply()
     addBlockPlaceholderIfNeeded(clonedBlockquote.get());
     
     // Put the selection right before the break.
-    setEndingSelection(Selection(Position(breakNode.get(), 0), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(Position(breakNode.get(), 0), DOWNSTREAM));
     rebalanceWhitespace();
 }
 

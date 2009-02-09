@@ -12518,14 +12518,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\editing\Selection.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\editing\Selection.h"
-				>
-			</File>
-			<File
 				RelativePath="..\editing\SelectionController.cpp"
 				>
 			</File>
@@ -12623,6 +12615,14 @@
 			</File>
 			<File
 				RelativePath="..\editing\VisiblePosition.h"
+				>
+			</File>
+			<File
+				RelativePath="..\editing\VisibleSelection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\editing\VisibleSelection.h"
 				>
 			</File>
 			<File

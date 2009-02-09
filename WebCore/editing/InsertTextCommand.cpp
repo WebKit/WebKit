@@ -96,12 +96,12 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     // We could have inserted a part of composed character sequence,
     // so we are basically treating ending selection as a range to avoid validation.
     // <http://bugs.webkit.org/show_bug.cgi?id=15781>
-    Selection forcedEndingSelection;
+    VisibleSelection forcedEndingSelection;
     forcedEndingSelection.setWithoutValidation(start, endPosition);
     setEndingSelection(forcedEndingSelection);
     
     if (!selectInsertedText)
-        setEndingSelection(Selection(endingSelection().visibleEnd()));
+        setEndingSelection(VisibleSelection(endingSelection().visibleEnd()));
     
     return true;
 }
@@ -172,7 +172,7 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
     // We could have inserted a part of composed character sequence,
     // so we are basically treating ending selection as a range to avoid validation.
     // <http://bugs.webkit.org/show_bug.cgi?id=15781>
-    Selection forcedEndingSelection;
+    VisibleSelection forcedEndingSelection;
     forcedEndingSelection.setWithoutValidation(startPosition, endPosition);
     setEndingSelection(forcedEndingSelection);
 
@@ -199,7 +199,7 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
         applyStyle(typingStyle);
 
     if (!selectInsertedText)
-        setEndingSelection(Selection(endingSelection().end(), endingSelection().affinity()));
+        setEndingSelection(VisibleSelection(endingSelection().end(), endingSelection().affinity()));
 }
 
 Position InsertTextCommand::insertTab(const Position& pos)

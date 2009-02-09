@@ -1096,7 +1096,7 @@ void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
             return;
 
         // FIXME: We should restore the previous selection if there is one.
-        Selection newSelection = hasTagName(htmlTag) || hasTagName(bodyTag) ? Selection(Position(this, 0), DOWNSTREAM) : Selection::selectionFromContentsOfNode(this);
+        VisibleSelection newSelection = hasTagName(htmlTag) || hasTagName(bodyTag) ? VisibleSelection(Position(this, 0), DOWNSTREAM) : VisibleSelection::selectionFromContentsOfNode(this);
         
         if (frame->shouldChangeSelection(newSelection)) {
             frame->selection()->setSelection(newSelection);

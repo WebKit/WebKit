@@ -2096,7 +2096,7 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
     }
 
     if (containsStart && !lastSelectedLine)
-        // Selection must start just after our last line.
+        // VisibleSelection must start just after our last line.
         lastSelectedLine = lastRootBox();
 
     if (lastSelectedLine && selectionState() != SelectionEnd && selectionState() != SelectionBoth) {

@@ -249,7 +249,7 @@ void RenderTextControl::setSelectionRange(int start, int end)
     ASSERT(startPosition.isNotNull() && endPosition.isNotNull());
     ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node() && endPosition.deepEquivalent().node()->shadowAncestorNode() == node());
 
-    Selection newSelection = Selection(startPosition, endPosition);
+    VisibleSelection newSelection = VisibleSelection(startPosition, endPosition);
 
     if (Frame* frame = document()->frame())
         frame->selection()->setSelection(newSelection);
@@ -260,9 +260,9 @@ void RenderTextControl::setSelectionRange(int start, int end)
         frame->setSelectionGranularity(CharacterGranularity);
 }
 
-Selection RenderTextControl::selection(int start, int end) const
+VisibleSelection RenderTextControl::selection(int start, int end) const
 {
-    return Selection(VisiblePosition(m_innerText.get(), start, VP_DEFAULT_AFFINITY),
+    return VisibleSelection(VisiblePosition(m_innerText.get(), start, VP_DEFAULT_AFFINITY),
                      VisiblePosition(m_innerText.get(), end, VP_DEFAULT_AFFINITY));
 }
 

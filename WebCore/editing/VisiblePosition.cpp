@@ -399,7 +399,7 @@ VisiblePosition VisiblePosition::honorEditableBoundaryAtOrBefore(const VisiblePo
         
     // Return pos itself if the two are from the very same editable region, or both are non-editable
     // FIXME: In the non-editable case, just because the new position is non-editable doesn't mean movement
-    // to it is allowed.  Selection::adjustForEditableContent has this problem too.
+    // to it is allowed.  VisibleSelection::adjustForEditableContent has this problem too.
     if (highestEditableRoot(pos.deepEquivalent()) == highestRoot)
         return pos;
   
@@ -425,7 +425,7 @@ VisiblePosition VisiblePosition::honorEditableBoundaryAtOrAfter(const VisiblePos
     
     // Return pos itself if the two are from the very same editable region, or both are non-editable
     // FIXME: In the non-editable case, just because the new position is non-editable doesn't mean movement
-    // to it is allowed.  Selection::adjustForEditableContent has this problem too.
+    // to it is allowed.  VisibleSelection::adjustForEditableContent has this problem too.
     if (highestEditableRoot(pos.deepEquivalent()) == highestRoot)
         return pos;
 

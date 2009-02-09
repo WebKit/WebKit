@@ -88,7 +88,7 @@ bool InsertLineBreakCommand::shouldUseBreakElement(const Position& insertionPos)
 void InsertLineBreakCommand::doApply()
 {
     deleteSelection();
-    Selection selection = endingSelection();
+    VisibleSelection selection = endingSelection();
     if (selection.isNone())
         return;
     
@@ -116,7 +116,7 @@ void InsertLineBreakCommand::doApply()
             insertNodeBefore(nodeToInsert->cloneNode(false), nodeToInsert);
         
         VisiblePosition endingPosition(Position(nodeToInsert.get(), 0));
-        setEndingSelection(Selection(endingPosition));
+        setEndingSelection(VisibleSelection(endingPosition));
     } else if (pos.offset() <= caretMinOffset(pos.node())) {
         insertNodeAt(nodeToInsert.get(), pos);
         
@@ -124,12 +124,12 @@ void InsertLineBreakCommand::doApply()
         if (!isStartOfParagraph(VisiblePosition(Position(nodeToInsert.get(), 0))))
             insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
         
-        setEndingSelection(Selection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
     // If we're inserting after all of the rendered text in a text node, or into a non-text node,
     // a simple insertion is sufficient.
     } else if (pos.offset() >= caretMaxOffset(pos.node()) || !pos.node()->isTextNode()) {
         insertNodeAt(nodeToInsert.get(), pos);
-        setEndingSelection(Selection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(positionAfterNode(nodeToInsert.get()), DOWNSTREAM));
     } else {
         // Split a text node
         ASSERT(pos.node()->isTextNode());
@@ -157,7 +157,7 @@ void InsertLineBreakCommand::doApply()
             }
         }
         
-        setEndingSelection(Selection(endingPosition, DOWNSTREAM));
+        setEndingSelection(VisibleSelection(endingPosition, DOWNSTREAM));
     }
 
     // Handle the case where there is a typing style.
@@ -172,7 +172,7 @@ void InsertLineBreakCommand::doApply()
         applyStyle(typingStyle, Position(nodeToInsert.get(), 0),
                                 Position(nodeToInsert.get(), maxDeepOffset(nodeToInsert.get())));
         // Even though this applyStyle operates on a Range, it still sets an endingSelection().
-        // It tries to set a Selection around the content it operated on. So, that Selection
+        // It tries to set a VisibleSelection around the content it operated on. So, that VisibleSelection
         // will either (a) select the line break we inserted, or it will (b) be a caret just 
         // before the line break (if the line break is at the end of a block it isn't selectable).
         // So, this next call sets the endingSelection() to a caret just after the line break 

@@ -1505,10 +1505,10 @@ void HTMLInputElement::onSearch()
     dispatchEventForType(eventNames().searchEvent, true, false);
 }
 
-Selection HTMLInputElement::selection() const
+VisibleSelection HTMLInputElement::selection() const
 {
    if (!renderer() || !isTextField() || m_data.cachedSelectionStart() == -1 || m_data.cachedSelectionEnd() == -1)
-        return Selection();
+        return VisibleSelection();
    return static_cast<RenderTextControl*>(renderer())->selection(m_data.cachedSelectionStart(), m_data.cachedSelectionEnd());
 }
 

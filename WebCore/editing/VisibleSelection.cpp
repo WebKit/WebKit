@@ -24,7 +24,7 @@
  */
   
 #include "config.h"
-#include "Selection.h"
+#include "VisibleSelection.h"
 
 #include "CharacterNames.h"
 #include "CString.h"
@@ -35,12 +35,13 @@
 #include "VisiblePosition.h"
 #include "visible_units.h"
 #include "Range.h"
+
 #include <wtf/Assertions.h>
 #include <stdio.h>
 
 namespace WebCore {
 
-Selection::Selection()
+VisibleSelection::VisibleSelection()
     : m_affinity(DOWNSTREAM)
     , m_granularity(CharacterGranularity)
     , m_selectionType(NoSelection)
@@ -48,7 +49,7 @@ Selection::Selection()
 {
 }
 
-Selection::Selection(const Position& pos, EAffinity affinity)
+VisibleSelection::VisibleSelection(const Position& pos, EAffinity affinity)
     : m_base(pos)
     , m_extent(pos)
     , m_affinity(affinity)
@@ -57,7 +58,7 @@ Selection::Selection(const Position& pos, EAffinity affinity)
     validate();
 }
 
-Selection::Selection(const Position& base, const Position& extent, EAffinity affinity)
+VisibleSelection::VisibleSelection(const Position& base, const Position& extent, EAffinity affinity)
     : m_base(base)
     , m_extent(extent)
     , m_affinity(affinity)
@@ -66,7 +67,7 @@ Selection::Selection(const Position& base, const Position& extent, EAffinity aff
     validate();
 }
 
-Selection::Selection(const VisiblePosition& pos)
+VisibleSelection::VisibleSelection(const VisiblePosition& pos)
     : m_base(pos.deepEquivalent())
     , m_extent(pos.deepEquivalent())
     , m_affinity(pos.affinity())
@@ -75,7 +76,7 @@ Selection::Selection(const VisiblePosition& pos)
     validate();
 }
 
-Selection::Selection(const VisiblePosition& base, const VisiblePosition& extent)
+VisibleSelection::VisibleSelection(const VisiblePosition& base, const VisiblePosition& extent)
     : m_base(base.deepEquivalent())
     , m_extent(extent.deepEquivalent())
     , m_affinity(base.affinity())
@@ -84,7 +85,7 @@ Selection::Selection(const VisiblePosition& base, const VisiblePosition& extent)
     validate();
 }
 
-Selection::Selection(const Range* range, EAffinity affinity)
+VisibleSelection::VisibleSelection(const Range* range, EAffinity affinity)
     : m_base(range->startPosition())
     , m_extent(range->endPosition())
     , m_affinity(affinity)
@@ -93,36 +94,36 @@ Selection::Selection(const Range* range, EAffinity affinity)
     validate();
 }
 
-Selection Selection::selectionFromContentsOfNode(Node* node)
+VisibleSelection VisibleSelection::selectionFromContentsOfNode(Node* node)
 {
-    return Selection(Position(node, 0), Position(node, maxDeepOffset(node)), DOWNSTREAM);
+    return VisibleSelection(Position(node, 0), Position(node, maxDeepOffset(node)), DOWNSTREAM);
 }
 
-void Selection::setBase(const Position& position)
+void VisibleSelection::setBase(const Position& position)
 {
     m_base = position;
     validate();
 }
 
-void Selection::setBase(const VisiblePosition& visiblePosition)
+void VisibleSelection::setBase(const VisiblePosition& visiblePosition)
 {
     m_base = visiblePosition.deepEquivalent();
     validate();
 }
 
-void Selection::setExtent(const Position& position)
+void VisibleSelection::setExtent(const Position& position)
 {
     m_extent = position;
     validate();
 }
 
-void Selection::setExtent(const VisiblePosition& visiblePosition)
+void VisibleSelection::setExtent(const VisiblePosition& visiblePosition)
 {
     m_extent = visiblePosition.deepEquivalent();
     validate();
 }
 
-PassRefPtr<Range> Selection::firstRange() const
+PassRefPtr<Range> VisibleSelection::firstRange() const
 {
     if (isNone())
         return 0;
@@ -131,7 +132,7 @@ PassRefPtr<Range> Selection::firstRange() const
     return Range::create(start.node()->document(), start, end);
 }
 
-PassRefPtr<Range> Selection::toNormalizedRange() const
+PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
 {
     if (isNone())
         return 0;
@@ -179,12 +180,12 @@ PassRefPtr<Range> Selection::toNormalizedRange() const
         e = rangeCompliantEquivalent(e);
     }
 
-    // Selections are supposed to always be valid.  This constructor will ASSERT
+    // VisibleSelections are supposed to always be valid.  This constructor will ASSERT
     // if a valid range could not be created, which is fine for this callsite.
     return Range::create(s.node()->document(), s, e);
 }
 
-bool Selection::expandUsingGranularity(TextGranularity granularity)
+bool VisibleSelection::expandUsingGranularity(TextGranularity granularity)
 {
     if (isNone())
         return false;
@@ -221,7 +222,7 @@ static PassRefPtr<Range> makeSearchRange(const Position& pos)
     return searchRange.release();
 }
 
-void Selection::appendTrailingWhitespace()
+void VisibleSelection::appendTrailingWhitespace()
 {
     RefPtr<Range> searchRange = makeSearchRange(m_end);
     if (!searchRange)
@@ -237,7 +238,7 @@ void Selection::appendTrailingWhitespace()
     }
 }
 
-void Selection::setBaseAndExtentToDeepEquivalents()
+void VisibleSelection::setBaseAndExtentToDeepEquivalents()
 {
     // Move the selection to rendered positions, if possible.
     bool baseAndExtentEqual = m_base == m_extent;
@@ -262,7 +263,7 @@ void Selection::setBaseAndExtentToDeepEquivalents()
         m_baseIsFirst = comparePositions(m_base, m_extent) <= 0;
 }
 
-void Selection::setStartAndEndFromBaseAndExtentRespectingGranularity()
+void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity()
 {
     if (m_baseIsFirst) {
         m_start = m_base;
@@ -387,7 +388,7 @@ void Selection::setStartAndEndFromBaseAndExtentRespectingGranularity()
         m_end = m_start;
 }
 
-void Selection::updateSelectionType()
+void VisibleSelection::updateSelectionType()
 {
     if (m_start.isNull()) {
         ASSERT(m_end.isNull());
@@ -402,7 +403,7 @@ void Selection::updateSelectionType()
         m_affinity = DOWNSTREAM;
 }
 
-void Selection::validate()
+void VisibleSelection::validate()
 {
     setBaseAndExtentToDeepEquivalents();
     setStartAndEndFromBaseAndExtentRespectingGranularity();
@@ -424,12 +425,12 @@ void Selection::validate()
 }
 
 // FIXME: This function breaks the invariant of this class.
-// But because we use Selection to store values in editing commands for use when
+// But because we use VisibleSelection to store values in editing commands for use when
 // undoing the command, we need to be able to create a selection that while currently
 // invalid, will be valid once the changes are undone. This is a design problem.
-// To fix it we either need to change the invariants of Selection or create a new
+// To fix it we either need to change the invariants of VisibleSelection or create a new
 // class for editing to use that can manipulate selections that are not currently valid.
-void Selection::setWithoutValidation(const Position& base, const Position& extent)
+void VisibleSelection::setWithoutValidation(const Position& base, const Position& extent)
 {
     ASSERT(!base.isNull());
     ASSERT(!extent.isNull());
@@ -449,7 +450,7 @@ void Selection::setWithoutValidation(const Position& base, const Position& exten
     m_selectionType = RangeSelection;
 }
 
-void Selection::adjustSelectionToAvoidCrossingEditingBoundaries()
+void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
 {
     if (m_base.isNull() || m_start.isNull() || m_end.isNull())
         return;
@@ -558,32 +559,32 @@ void Selection::adjustSelectionToAvoidCrossingEditingBoundaries()
         m_extent = m_baseIsFirst ? m_end : m_start;
 }
 
-bool Selection::isContentEditable() const
+bool VisibleSelection::isContentEditable() const
 {
     return isEditablePosition(start());
 }
 
-bool Selection::isContentRichlyEditable() const
+bool VisibleSelection::isContentRichlyEditable() const
 {
     return isRichlyEditablePosition(start());
 }
 
-Element* Selection::rootEditableElement() const
+Element* VisibleSelection::rootEditableElement() const
 {
     return editableRootForPosition(start());
 }
 
-Node* Selection::shadowTreeRootNode() const
+Node* VisibleSelection::shadowTreeRootNode() const
 {
     return start().node() ? start().node()->shadowTreeRootNode() : 0;
 }
 
-void Selection::debugPosition() const
+void VisibleSelection::debugPosition() const
 {
     if (!m_start.node())
         return;
 
-    fprintf(stderr, "Selection =================\n");
+    fprintf(stderr, "VisibleSelection =================\n");
 
     if (m_start == m_end) {
         Position pos = m_start;
@@ -602,7 +603,7 @@ void Selection::debugPosition() const
 
 #ifndef NDEBUG
 
-void Selection::formatForDebugger(char* buffer, unsigned length) const
+void VisibleSelection::formatForDebugger(char* buffer, unsigned length) const
 {
     String result;
     String s;
@@ -623,7 +624,7 @@ void Selection::formatForDebugger(char* buffer, unsigned length) const
     strncpy(buffer, result.utf8().data(), length - 1);
 }
 
-void Selection::showTreeForThis() const
+void VisibleSelection::showTreeForThis() const
 {
     if (start().node()) {
         start().node()->showTreeAndMark(start().node(), "S", end().node(), "E");
@@ -637,12 +638,12 @@ void Selection::showTreeForThis() const
 
 #ifndef NDEBUG
 
-void showTree(const WebCore::Selection& sel)
+void showTree(const WebCore::VisibleSelection& sel)
 {
     sel.showTreeForThis();
 }
 
-void showTree(const WebCore::Selection* sel)
+void showTree(const WebCore::VisibleSelection* sel)
 {
     if (sel)
         sel->showTreeForThis();

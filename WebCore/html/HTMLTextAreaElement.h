@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class Selection;
+class VisibleSelection;
 
 class HTMLTextAreaElement : public HTMLFormControlElementWithState {
 public:
@@ -87,7 +87,7 @@ public:
     void setRows(int);
     
     void cacheSelection(int s, int e) { m_cachedSelectionStart = s; m_cachedSelectionEnd = e; };
-    Selection selection() const;
+    VisibleSelection selection() const;
 
     virtual bool shouldUseInputMethod() const;
 

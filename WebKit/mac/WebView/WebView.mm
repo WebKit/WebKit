@@ -2021,7 +2021,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
     if (!coreFrame)
         return nil;
     
-    Selection selectionInsideRect(coreFrame->visiblePositionForPoint(rectStart), coreFrame->visiblePositionForPoint(rectEnd));
+    VisibleSelection selectionInsideRect(coreFrame->visiblePositionForPoint(rectStart), coreFrame->visiblePositionForPoint(rectEnd));
     
     return [[[WebTextIterator alloc] initWithRange:[DOMRange _wrapRange:selectionInsideRect.toNormalizedRange().get()]] autorelease];
 }

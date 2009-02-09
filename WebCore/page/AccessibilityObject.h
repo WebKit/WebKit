@@ -83,7 +83,7 @@ class IntPoint;
 class IntSize;
 class Node;
 class RenderObject;
-class Selection;
+class VisibleSelection;
 class String;
 class Widget;
 
@@ -285,7 +285,7 @@ public:
     
     virtual KURL url() const;
     virtual PlainTextRange selectedTextRange() const;
-    virtual Selection selection() const;
+    virtual VisibleSelection selection() const;
     unsigned selectionStart() const;
     unsigned selectionEnd() const;
     virtual String stringValue() const;

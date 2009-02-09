@@ -36,14 +36,14 @@ public:
     {
         return adoptRef(new DeleteSelectionCommand(document, smartDelete, mergeBlocksAfterDelete, replace, expandForSpecialElements));
     }
-    static PassRefPtr<DeleteSelectionCommand> create(const Selection& selection, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = false)
+    static PassRefPtr<DeleteSelectionCommand> create(const VisibleSelection& selection, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = false)
     {
         return adoptRef(new DeleteSelectionCommand(selection, smartDelete, mergeBlocksAfterDelete, replace, expandForSpecialElements));
     }
 
 private:
     DeleteSelectionCommand(Document*, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements);
-    DeleteSelectionCommand(const Selection&, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements);
+    DeleteSelectionCommand(const VisibleSelection&, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements);
 
     virtual void doApply();
     virtual EditAction editingAction() const;
@@ -74,7 +74,7 @@ private:
     bool m_pruneStartBlockIfNecessary;
 
     // This data is transient and should be cleared at the end of the doApply function.
-    Selection m_selectionToDelete;
+    VisibleSelection m_selectionToDelete;
     Position m_upstreamStart;
     Position m_downstreamStart;
     Position m_upstreamEnd;

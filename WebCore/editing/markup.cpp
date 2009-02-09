@@ -52,7 +52,7 @@
 #include "ProcessingInstruction.h"
 #include "QualifiedName.h"
 #include "Range.h"
-#include "Selection.h"
+#include "VisibleSelection.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -901,7 +901,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     // FIXME: Only include markup for a fully selected root (and ancestors of lastClosed up to that root) if
     // there are styles/attributes on those nodes that need to be included to preserve the appearance of the copied markup.
     // FIXME: Do this for all fully selected blocks, not just the body.
-    Node* fullySelectedRoot = body && *Selection::selectionFromContentsOfNode(body).toNormalizedRange() == *updatedRange ? body : 0;
+    Node* fullySelectedRoot = body && *VisibleSelection::selectionFromContentsOfNode(body).toNormalizedRange() == *updatedRange ? body : 0;
     if (annotate && fullySelectedRoot)
         specialCommonAncestor = fullySelectedRoot;
         

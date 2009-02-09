@@ -74,9 +74,9 @@ using namespace HTMLNames;
 
 // When an event handler has moved the selection outside of a text control
 // we should use the target control's selection for this editing operation.
-Selection Editor::selectionForCommand(Event* event)
+VisibleSelection Editor::selectionForCommand(Event* event)
 {
-    Selection selection = m_frame->selection()->selection();
+    VisibleSelection selection = m_frame->selection()->selection();
     if (!event)
         return selection;
     // If the target is a text control, and the current selection is outside of its shadow tree,
@@ -376,14 +376,14 @@ bool Editor::shouldShowDeleteInterface(HTMLElement* element) const
     return client() && client()->shouldShowDeleteInterface(element);
 }
 
-void Editor::respondToChangedSelection(const Selection& oldSelection)
+void Editor::respondToChangedSelection(const VisibleSelection& oldSelection)
 {
     if (client())
         client()->respondToChangedSelection();
     m_deleteButtonController->respondToChangedSelection(oldSelection);
 }
 
-void Editor::respondToChangedContents(const Selection& endingSelection)
+void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
 {
     if (AXObjectCache::accessibilityEnabled()) {
         Node* node = endingSelection.start().node();
@@ -711,13 +711,13 @@ bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPoli
 void Editor::applyStyle(CSSStyleDeclaration* style, EditAction editingAction)
 {
     switch (m_frame->selection()->selectionType()) {
-        case Selection::NoSelection:
+        case VisibleSelection::NoSelection:
             // do nothing
             break;
-        case Selection::CaretSelection:
+        case VisibleSelection::CaretSelection:
             m_frame->computeAndSetTypingStyle(style, editingAction);
             break;
-        case Selection::RangeSelection:
+        case VisibleSelection::RangeSelection:
             if (m_frame->document() && style)
                 applyCommand(ApplyStyleCommand::create(m_frame->document(), style, editingAction));
             break;
@@ -732,11 +732,11 @@ bool Editor::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
 void Editor::applyParagraphStyle(CSSStyleDeclaration* style, EditAction editingAction)
 {
     switch (m_frame->selection()->selectionType()) {
-        case Selection::NoSelection:
+        case VisibleSelection::NoSelection:
             // do nothing
             break;
-        case Selection::CaretSelection:
-        case Selection::RangeSelection:
+        case VisibleSelection::CaretSelection:
+        case VisibleSelection::RangeSelection:
             if (m_frame->document() && style)
                 applyCommand(ApplyStyleCommand::create(m_frame->document(), style, editingAction, ApplyStyleCommand::ForceBlockProperties));
             break;
@@ -870,7 +870,7 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
 {
     dispatchEditableContentChangedEvents(*cmd);
     
-    Selection newSelection(cmd->endingSelection());
+    VisibleSelection newSelection(cmd->endingSelection());
     // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
     // because there is work that it must do in this situation.
     // The old selection can be invalid here and calling shouldChangeSelection can produce some strange calls.
@@ -899,7 +899,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
 {
     dispatchEditableContentChangedEvents(*cmd);
     
-    Selection newSelection(cmd->startingSelection());
+    VisibleSelection newSelection(cmd->startingSelection());
     // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
     // because there is work that it must do in this situation.
     // The old selection can be invalid here and calling shouldChangeSelection can produce some strange calls.
@@ -917,7 +917,7 @@ void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
 {
     dispatchEditableContentChangedEvents(*cmd);
     
-    Selection newSelection(cmd->endingSelection());
+    VisibleSelection newSelection(cmd->endingSelection());
     // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
     // because there is work that it must do in this situation.
     // The old selection can be invalid here and calling shouldChangeSelection can produce some strange calls.
@@ -962,7 +962,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     if (text.isEmpty())
         return false;
 
-    Selection selection = selectionForCommand(triggeringEvent);
+    VisibleSelection selection = selectionForCommand(triggeringEvent);
     if (!selection.isContentEditable())
         return false;
     RefPtr<Range> range = selection.toNormalizedRange();
@@ -1229,7 +1229,7 @@ void Editor::selectComposition()
     
     // The composition can start inside a composed character sequence, so we have to override checks.
     // See <http://bugs.webkit.org/show_bug.cgi?id=15781>
-    Selection selection;
+    VisibleSelection selection;
     selection.setWithoutValidation(range->startPosition(), range->endPosition());
     m_frame->selection()->setSelection(selection, false, false);
 }
@@ -1257,7 +1257,7 @@ void Editor::confirmComposition(const String& text, bool preserveSelection)
 {
     setIgnoreCompositionSelectionChange(true);
 
-    Selection oldSelection = m_frame->selection()->selection();
+    VisibleSelection oldSelection = m_frame->selection()->selection();
 
     selectComposition();
 
@@ -1560,7 +1560,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     
     // Start at the end of the selection, search to edge of document.  Starting at the selection end makes
     // repeated "check spelling" commands work.
-    Selection selection(frame()->selection()->selection());
+    VisibleSelection selection(frame()->selection()->selection());
     RefPtr<Range> spellingSearchRange(rangeOfContents(frame()->document()));
     bool startedWithSelection = false;
     if (selection.start().node()) {
@@ -1674,7 +1674,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         
         // FIXME 4859190: This gets confused with doubled punctuation at the end of a paragraph
         RefPtr<Range> badGrammarRange = TextIterator::subrange(grammarSearchRange.get(), grammarPhraseOffset + grammarDetail.location, grammarDetail.length);
-        frame()->selection()->setSelection(Selection(badGrammarRange.get(), SEL_DEFAULT_AFFINITY));
+        frame()->selection()->setSelection(VisibleSelection(badGrammarRange.get(), SEL_DEFAULT_AFFINITY));
         frame()->revealSelection();
         
         client()->updateSpellingUIWithGrammarString(badGrammarPhrase, grammarDetail);
@@ -1685,7 +1685,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         // a marker so we draw the red squiggle later.
         
         RefPtr<Range> misspellingRange = TextIterator::subrange(spellingSearchRange.get(), misspellingOffset, misspelledWord.length());
-        frame()->selection()->setSelection(Selection(misspellingRange.get(), DOWNSTREAM));
+        frame()->selection()->setSelection(VisibleSelection(misspellingRange.get(), DOWNSTREAM));
         frame()->revealSelection();
         
         client()->updateSpellingUIWithMisspelledWord(misspelledWord);
@@ -1833,13 +1833,13 @@ void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
         return;
     
     // Check spelling of one word
-    markMisspellings(Selection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
+    markMisspellings(VisibleSelection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
     
     if (!isGrammarCheckingEnabled())
         return;
     
     // Check grammar of entire sentence
-    markBadGrammar(Selection(startOfSentence(p), endOfSentence(p)));
+    markBadGrammar(VisibleSelection(startOfSentence(p), endOfSentence(p)));
 }
 
 static void markAllMisspellingsInRange(EditorClient* client, Range* searchRange)
@@ -1861,7 +1861,7 @@ static void markAllBadGrammarInRange(EditorClient* client, Range* searchRange)
 }
 #endif
     
-static void markMisspellingsOrBadGrammar(Editor* editor, const Selection& selection, bool checkSpelling)
+static void markMisspellingsOrBadGrammar(Editor* editor, const VisibleSelection& selection, bool checkSpelling)
 {
     // This function is called with a selection already expanded to word boundaries.
     // Might be nice to assert that here.
@@ -1896,12 +1896,12 @@ static void markMisspellingsOrBadGrammar(Editor* editor, const Selection& select
     }    
 }
 
-void Editor::markMisspellings(const Selection& selection)
+void Editor::markMisspellings(const VisibleSelection& selection)
 {
     markMisspellingsOrBadGrammar(this, selection, true);
 }
     
-void Editor::markBadGrammar(const Selection& selection)
+void Editor::markBadGrammar(const VisibleSelection& selection)
 {
 #ifndef BUILDING_ON_TIGER
     markMisspellingsOrBadGrammar(this, selection, false);
@@ -1922,7 +1922,7 @@ PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
     if (!frameView)
         return 0;
     IntPoint framePoint = frameView->windowToContents(windowPoint);
-    Selection selection(frame->visiblePositionForPoint(framePoint));
+    VisibleSelection selection(frame->visiblePositionForPoint(framePoint));
     return avoidIntersectionWithNode(selection.toNormalizedRange().get(), deleteButtonController() ? deleteButtonController()->containerElement() : 0);
 }
 
@@ -1982,7 +1982,7 @@ void Editor::transpose()
     if (!canEdit())
         return;
 
-     Selection selection = m_frame->selection()->selection();
+     VisibleSelection selection = m_frame->selection()->selection();
      if (!selection.isCaret())
          return;
 
@@ -1998,7 +1998,7 @@ void Editor::transpose()
     RefPtr<Range> range = makeRange(previous, next);
     if (!range)
         return;
-    Selection newSelection(range.get(), DOWNSTREAM);
+    VisibleSelection newSelection(range.get(), DOWNSTREAM);
 
     // Transpose the two characters.
     String text = plainText(range.get());

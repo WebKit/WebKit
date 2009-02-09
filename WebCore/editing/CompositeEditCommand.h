@@ -52,7 +52,7 @@ protected:
     void applyStyledElement(PassRefPtr<Element>);
     void removeStyledElement(PassRefPtr<Element>);
     void deleteSelection(bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
-    void deleteSelection(const Selection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
+    void deleteSelection(const VisibleSelection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
     virtual void deleteTextFromNode(PassRefPtr<Text>, unsigned offset, unsigned count);
     void inputText(const String&, bool selectInsertedText = false);
     void insertNodeAfter(PassRefPtr<Node>, PassRefPtr<Node> refChild);

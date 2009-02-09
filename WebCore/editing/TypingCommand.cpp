@@ -125,14 +125,14 @@ void TypingCommand::insertText(Document* document, const String& text, bool sele
     insertText(document, text, frame->selection()->selection(), selectInsertedText, insertedTextIsComposition);
 }
 
-void TypingCommand::insertText(Document* document, const String& text, const Selection& selectionForInsertion, bool selectInsertedText, bool insertedTextIsComposition)
+void TypingCommand::insertText(Document* document, const String& text, const VisibleSelection& selectionForInsertion, bool selectInsertedText, bool insertedTextIsComposition)
 {
     ASSERT(document);
     
     RefPtr<Frame> frame = document->frame();
     ASSERT(frame);
     
-    Selection currentSelection = frame->selection()->selection();
+    VisibleSelection currentSelection = frame->selection()->selection();
     bool changeSelection = currentSelection != selectionForInsertion;
     
     String newText = text;
@@ -370,15 +370,15 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent()
 
 void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 {
-    Selection selectionToDelete;
-    Selection selectionAfterUndo;
+    VisibleSelection selectionToDelete;
+    VisibleSelection selectionAfterUndo;
     
     switch (endingSelection().selectionType()) {
-        case Selection::RangeSelection:
+        case VisibleSelection::RangeSelection:
             selectionToDelete = endingSelection();
             selectionAfterUndo = selectionToDelete;
             break;
-        case Selection::CaretSelection: {
+        case VisibleSelection::CaretSelection: {
             if (breakOutOfEmptyMailBlockquotedParagraph()) {
                 typingAddedToOpenCommand();
                 return;
@@ -410,7 +410,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
                 selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
             // If the caret is just after a table, select the table and don't delete anything.
             } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
-                setEndingSelection(Selection(Position(table, 0), endingSelection().start(), DOWNSTREAM));
+                setEndingSelection(VisibleSelection(Position(table, 0), endingSelection().start(), DOWNSTREAM));
                 typingAddedToOpenCommand();
                 return;
             }
@@ -426,12 +426,12 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
                 selectionAfterUndo = selectionToDelete;
             else
                 // It's a little tricky to compute what the starting selection would have been in the original document.
-                // We can't let the Selection class's validation kick in or it'll adjust for us based on
+                // We can't let the VisibleSelection class's validation kick in or it'll adjust for us based on
                 // the current state of the document and we'll get the wrong result.
                 selectionAfterUndo.setWithoutValidation(startingSelection().end(), selectionToDelete.extent());
             break;
         }
-        case Selection::NoSelection:
+        case VisibleSelection::NoSelection:
             ASSERT_NOT_REACHED();
             break;
     }
@@ -452,15 +452,15 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 
 void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool killRing)
 {
-    Selection selectionToDelete;
-    Selection selectionAfterUndo;
+    VisibleSelection selectionToDelete;
+    VisibleSelection selectionAfterUndo;
 
     switch (endingSelection().selectionType()) {
-        case Selection::RangeSelection:
+        case VisibleSelection::RangeSelection:
             selectionToDelete = endingSelection();
             selectionAfterUndo = selectionToDelete;
             break;
-        case Selection::CaretSelection: {
+        case VisibleSelection::CaretSelection: {
             m_smartDelete = false;
 
             // Handle delete at beginning-of-block case.
@@ -478,7 +478,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
                 downstreamEnd = visibleEnd.next(true).deepEquivalent().downstream();
             // When deleting tables: Select the table first, then perform the deletion
             if (downstreamEnd.node() && downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && downstreamEnd.offset() == 0) {
-                setEndingSelection(Selection(endingSelection().end(), Position(downstreamEnd.node(), maxDeepOffset(downstreamEnd.node())), DOWNSTREAM));
+                setEndingSelection(VisibleSelection(endingSelection().end(), Position(downstreamEnd.node(), maxDeepOffset(downstreamEnd.node())), DOWNSTREAM));
                 typingAddedToOpenCommand();
                 return;
             }
@@ -492,7 +492,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
                 selectionAfterUndo = selectionToDelete;
             else {
                 // It's a little tricky to compute what the starting selection would have been in the original document.
-                // We can't let the Selection class's validation kick in or it'll adjust for us based on
+                // We can't let the VisibleSelection class's validation kick in or it'll adjust for us based on
                 // the current state of the document and we'll get the wrong result.
                 Position extent = startingSelection().end();
                 if (extent.node() != selectionToDelete.end().node())
@@ -509,7 +509,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
             }
             break;
         }
-        case Selection::NoSelection:
+        case VisibleSelection::NoSelection:
             ASSERT_NOT_REACHED();
             break;
     }

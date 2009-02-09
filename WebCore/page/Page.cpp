@@ -364,7 +364,7 @@ void Page::unmarkAllTextMatches()
     } while (frame);
 }
 
-const Selection& Page::selection() const
+const VisibleSelection& Page::selection() const
 {
     return focusController()->focusedOrMainFrame()->selection()->selection();
 }

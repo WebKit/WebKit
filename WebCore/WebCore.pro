@@ -665,7 +665,6 @@ SOURCES += \
     editing/RemoveNodePreservingChildrenCommand.cpp \
     editing/ReplaceSelectionCommand.cpp \
     editing/SelectionController.cpp \
-    editing/Selection.cpp \
     editing/SetNodeAttributeCommand.cpp \
     editing/SmartReplace.cpp \
     editing/SmartReplaceICU.cpp \
@@ -676,6 +675,7 @@ SOURCES += \
     editing/TypingCommand.cpp \
     editing/UnlinkCommand.cpp \
     editing/VisiblePosition.cpp \
+    editing/VisibleSelection.cpp \
     editing/visible_units.cpp \
     editing/WrapContentsInDummySpanCommand.cpp \
     history/BackForwardList.cpp \

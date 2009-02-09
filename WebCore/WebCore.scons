@@ -180,7 +180,6 @@ sources['editing'] = [
     'editing/RemoveNodeCommand.cpp',
     'editing/RemoveNodePreservingChildrenCommand.cpp',
     'editing/ReplaceSelectionCommand.cpp',
-    'editing/Selection.cpp',
     'editing/SelectionController.cpp',
     'editing/SetNodeAttributeCommand.cpp',
     'editing/SmartReplace.cpp',
@@ -194,6 +193,7 @@ sources['editing'] = [
     'editing/UnlinkCommand.cpp',
     'editing/visible_units.cpp',
     'editing/VisiblePosition.cpp',
+    'editing/VisibleSelection.cpp',
     'editing/WrapContentsInDummySpanCommand.cpp',
 ]
 sources['history'] = [

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Selection_h
-#define Selection_h
+#ifndef VisibleSelection_h
+#define VisibleSelection_h
 
 #include "TextGranularity.h"
 #include "VisiblePosition.h"
@@ -35,21 +35,21 @@ class Position;
 
 const EAffinity SEL_DEFAULT_AFFINITY = DOWNSTREAM;
 
-class Selection {
+class VisibleSelection {
 public:
     enum SelectionType { NoSelection, CaretSelection, RangeSelection };
 
-    Selection();
+    VisibleSelection();
 
-    Selection(const Position&, EAffinity);
-    Selection(const Position&, const Position&, EAffinity);
+    VisibleSelection(const Position&, EAffinity);
+    VisibleSelection(const Position&, const Position&, EAffinity);
 
-    Selection(const Range*, EAffinity = SEL_DEFAULT_AFFINITY);
+    VisibleSelection(const Range*, EAffinity = SEL_DEFAULT_AFFINITY);
     
-    Selection(const VisiblePosition&);
-    Selection(const VisiblePosition&, const VisiblePosition&);
+    VisibleSelection(const VisiblePosition&);
+    VisibleSelection(const VisiblePosition&, const VisiblePosition&);
 
-    static Selection selectionFromContentsOfNode(Node*);
+    static VisibleSelection selectionFromContentsOfNode(Node*);
 
     SelectionType selectionType() const { return m_selectionType; }
 
@@ -112,6 +112,7 @@ private:
     void adjustSelectionToAvoidCrossingEditingBoundaries();
     void updateSelectionType();
 
+    // FIXME: These should all be VisiblePositions
     Position m_base;   // Where the first click happened
     Position m_extent; // Where the end click happened
     Position m_start;  // Leftmost position when expanded to respect granularity
@@ -125,12 +126,12 @@ private:
     bool m_baseIsFirst;               // true if base is before the extent
 };
 
-inline bool operator==(const Selection& a, const Selection& b)
+inline bool operator==(const VisibleSelection& a, const VisibleSelection& b)
 {
     return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity() && a.granularity() == b.granularity() && a.isBaseFirst() == b.isBaseFirst();
 }
 
-inline bool operator!=(const Selection& a, const Selection& b)
+inline bool operator!=(const VisibleSelection& a, const VisibleSelection& b)
 {
     return !(a == b);
 }
@@ -139,8 +140,8 @@ inline bool operator!=(const Selection& a, const Selection& b)
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
-void showTree(const WebCore::Selection&);
-void showTree(const WebCore::Selection*);
+void showTree(const WebCore::VisibleSelection&);
+void showTree(const WebCore::VisibleSelection*);
 #endif
 
-#endif // Selection_h
+#endif // VisibleSelection_h

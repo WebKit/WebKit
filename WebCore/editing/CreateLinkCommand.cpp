@@ -53,7 +53,7 @@ void CreateLinkCommand::doApply()
         insertNodeAt(anchorElement.get(), endingSelection().start());
         RefPtr<Text> textNode = new Text(document(), m_url);
         appendNode(textNode.get(), anchorElement.get());
-        setEndingSelection(Selection(positionBeforeNode(anchorElement.get()), positionAfterNode(anchorElement.get()), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(positionBeforeNode(anchorElement.get()), positionAfterNode(anchorElement.get()), DOWNSTREAM));
     }
 }
 

@@ -60,7 +60,7 @@ namespace WebCore {
     class PageGroup;
     class PluginData;
     class ProgressTracker;
-    class Selection;
+    class VisibleSelection;
     class SelectionController;
 #if ENABLE(DOM_STORAGE)
     class SessionStorage;
@@ -137,7 +137,7 @@ namespace WebCore {
         OwnPtr<SchedulePairHashSet> m_scheduledRunLoopPairs;
 #endif
 
-        const Selection& selection() const;
+        const VisibleSelection& selection() const;
 
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }

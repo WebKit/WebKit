@@ -63,7 +63,7 @@ bool FormatBlockCommand::modifyRange()
     setEndingSelection(visibleEnd);
     doApply();
     visibleEnd = endingSelection().visibleEnd();
-    setEndingSelection(Selection(visibleStart.deepEquivalent(), visibleEnd.deepEquivalent(), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(visibleStart.deepEquivalent(), visibleEnd.deepEquivalent(), DOWNSTREAM));
 
     return true;
 }
@@ -87,7 +87,7 @@ void FormatBlockCommand::doApply()
     // margin/padding, but not others.  We should make the gap painting more consistent and 
     // then use a left margin/padding rule here.
     if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd))
-        setEndingSelection(Selection(visibleStart, visibleEnd.previous(true)));
+        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(true)));
 
     if (endingSelection().isRange() && modifyRange())
         return;

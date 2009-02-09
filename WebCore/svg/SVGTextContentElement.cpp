@@ -480,7 +480,7 @@ void SVGTextContentElement::selectSubString(long charnum, long nchars, Exception
     for (long i = 0; i < nchars; ++i)
         end = end.next();
 
-    controller->setSelection(Selection(start, end));
+    controller->setSelection(VisibleSelection(start, end));
 }
 
 void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)

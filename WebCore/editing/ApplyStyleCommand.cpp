@@ -342,7 +342,7 @@ void ApplyStyleCommand::updateStartEnd(const Position& newStart, const Position&
     if (!m_useEndingSelection && (newStart != m_start || newEnd != m_end))
         m_useEndingSelection = true;
 
-    setEndingSelection(Selection(newStart, newEnd, VP_DEFAULT_AFFINITY));
+    setEndingSelection(VisibleSelection(newStart, newEnd, VP_DEFAULT_AFFINITY));
     m_start = newStart;
     m_end = newEnd;
 }
@@ -1480,7 +1480,7 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(Node* startNode, Node* endN
     }
     // FIXME: We should probably call updateStartEnd if the start or end was in the node
     // range so that the endingSelection() is canonicalized.  See the comments at the end of
-    // Selection::validate().
+    // VisibleSelection::validate().
 }
 
 void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElement* block)

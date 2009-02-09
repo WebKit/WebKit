@@ -109,7 +109,7 @@ PassRefPtr<Element> IndentOutdentCommand::prepareBlockquoteLevelForInsertion(Vis
 
 void IndentOutdentCommand::indentRegion()
 {
-    Selection selection = selectionForParagraphIteration(endingSelection());
+    VisibleSelection selection = selectionForParagraphIteration(endingSelection());
     VisiblePosition startOfSelection = selection.visibleStart();
     VisiblePosition endOfSelection = selection.visibleEnd();
     int startIndex = indexForVisiblePosition(startOfSelection);
@@ -126,7 +126,7 @@ void IndentOutdentCommand::indentRegion()
         insertNodeAt(blockquote, start);
         RefPtr<Element> placeholder = createBreakElement(document());
         appendNode(placeholder, blockquote);
-        setEndingSelection(Selection(Position(placeholder.get(), 0), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(Position(placeholder.get(), 0), DOWNSTREAM));
         return;
     }
     
@@ -191,7 +191,7 @@ void IndentOutdentCommand::indentRegion()
     RefPtr<Range> startRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), startIndex, 0, true);
     RefPtr<Range> endRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), endIndex, 0, true);
     if (startRange && endRange)
-        setEndingSelection(Selection(startRange->startPosition(), endRange->startPosition(), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(startRange->startPosition(), endRange->startPosition(), DOWNSTREAM));
 }
 
 void IndentOutdentCommand::outdentParagraph()
@@ -262,13 +262,13 @@ void IndentOutdentCommand::outdentRegion()
     while (endOfCurrentParagraph != endAfterSelection) {
         VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
         if (endOfCurrentParagraph == endOfLastParagraph)
-            setEndingSelection(Selection(originalSelectionEnd, DOWNSTREAM));
+            setEndingSelection(VisibleSelection(originalSelectionEnd, DOWNSTREAM));
         else
             setEndingSelection(endOfCurrentParagraph);
         outdentParagraph();
         endOfCurrentParagraph = endOfNextParagraph;
     }
-    setEndingSelection(Selection(originalSelectionStart, endingSelection().end(), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(originalSelectionStart, endingSelection().end(), DOWNSTREAM));
 }
 
 void IndentOutdentCommand::doApply()
@@ -290,7 +290,7 @@ void IndentOutdentCommand::doApply()
     // margin/padding, but not others.  We should make the gap painting more consistent and 
     // then use a left margin/padding rule here.
     if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd))
-        setEndingSelection(Selection(visibleStart, visibleEnd.previous(true)));
+        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(true)));
 
     if (m_typeOfAction == Indent)
         indentRegion();

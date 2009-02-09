@@ -158,7 +158,7 @@ EditAction EditCommand::editingAction() const
     return EditActionUnspecified;
 }
 
-void EditCommand::setStartingSelection(const Selection& s)
+void EditCommand::setStartingSelection(const VisibleSelection& s)
 {
     Element* root = s.rootEditableElement();
     for (EditCommand* cmd = this; ; cmd = cmd->m_parent) {
@@ -169,7 +169,7 @@ void EditCommand::setStartingSelection(const Selection& s)
     }
 }
 
-void EditCommand::setEndingSelection(const Selection &s)
+void EditCommand::setEndingSelection(const VisibleSelection &s)
 {
     Element* root = s.rootEditableElement();
     for (EditCommand* cmd = this; cmd; cmd = cmd->m_parent) {

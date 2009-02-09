@@ -30,7 +30,7 @@
 #include "Editor.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "Selection.h"
+#include "VisibleSelection.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"

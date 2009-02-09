@@ -40,7 +40,7 @@
 #include "PositionIterator.h"
 #include "RenderObject.h"
 #include "Range.h"
-#include "Selection.h"
+#include "VisibleSelection.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
@@ -915,9 +915,9 @@ bool lineBreakExistsAtPosition(const VisiblePosition& visiblePosition)
 // Modifies selections that have an end point at the edge of a table
 // that contains the other endpoint so that they don't confuse
 // code that iterates over selected paragraphs.
-Selection selectionForParagraphIteration(const Selection& original)
+VisibleSelection selectionForParagraphIteration(const VisibleSelection& original)
 {
-    Selection newSelection(original);
+    VisibleSelection newSelection(original);
     VisiblePosition startOfSelection(newSelection.visibleStart());
     VisiblePosition endOfSelection(newSelection.visibleEnd());
     
@@ -927,7 +927,7 @@ Selection selectionForParagraphIteration(const Selection& original)
     // (a table is itself a paragraph).
     if (Node* table = isFirstPositionAfterTable(endOfSelection))
         if (startOfSelection.deepEquivalent().node()->isDescendantOf(table))
-            newSelection = Selection(startOfSelection, endOfSelection.previous(true));
+            newSelection = VisibleSelection(startOfSelection, endOfSelection.previous(true));
     
     // If the start of the selection to modify is just before a table,
     // and if the end of the selection is inside that table, then the first paragraph
@@ -935,7 +935,7 @@ Selection selectionForParagraphIteration(const Selection& original)
     // containing the table itself.
     if (Node* table = isLastPositionBeforeTable(startOfSelection))
         if (endOfSelection.deepEquivalent().node()->isDescendantOf(table))
-            newSelection = Selection(startOfSelection.next(true), endOfSelection);
+            newSelection = VisibleSelection(startOfSelection.next(true), endOfSelection);
     
     return newSelection;
 }
@@ -981,12 +981,12 @@ PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
     return Range::create(document, startContainer, startOffset, endContainer, endOffset);
 }
 
-Selection avoidIntersectionWithNode(const Selection& selection, Node* node)
+VisibleSelection avoidIntersectionWithNode(const VisibleSelection& selection, Node* node)
 {
     if (selection.isNone())
-        return Selection(selection);
+        return VisibleSelection(selection);
         
-    Selection updatedSelection(selection);
+    VisibleSelection updatedSelection(selection);
     Node* base = selection.base().node();
     Node* extent = selection.extent().node();
     ASSERT(base);

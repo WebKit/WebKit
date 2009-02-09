@@ -902,7 +902,7 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
 
 - (WebCoreTextMarkerRange*)textMarkerRangeForSelection
 {
-    Selection selection = m_object->selection();
+    VisibleSelection selection = m_object->selection();
     if (selection.isNone())
         return nil;
     return textMarkerRangeFromVisiblePositions(selection.visibleStart(), selection.visibleEnd());

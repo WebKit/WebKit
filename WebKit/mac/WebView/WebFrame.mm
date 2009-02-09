@@ -1117,7 +1117,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     RefPtr<Range> domRange = [self _convertToDOMRange:range];
     if (domRange)
-        _private->coreFrame->selection()->setSelection(Selection(domRange.get(), SEL_DEFAULT_AFFINITY));
+        _private->coreFrame->selection()->setSelection(VisibleSelection(domRange.get(), SEL_DEFAULT_AFFINITY));
 }
 
 - (BOOL)_isDisplayingStandaloneImage

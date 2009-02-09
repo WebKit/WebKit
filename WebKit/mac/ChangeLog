@@ -1,3 +1,17 @@
+2009-02-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Rename Selection to VisibleSelection to allow us to separate
+        the selections the user works with from the ones used by
+        the JS editing APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=23852
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _selectNSRange:]):
+        * WebView/WebView.mm:
+        (-[WebView textIteratorForRect:]):
+
 2009-02-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

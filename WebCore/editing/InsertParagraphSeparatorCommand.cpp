@@ -186,7 +186,7 @@ void InsertParagraphSeparatorCommand::doApply()
             insertNodeAfter(blockToInsert, startBlock);
 
         appendBlockPlaceholder(blockToInsert);
-        setEndingSelection(Selection(Position(blockToInsert.get(), 0), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(Position(blockToInsert.get(), 0), DOWNSTREAM));
         applyStyleAfterInsertion(startBlock);
         return;
     }
@@ -209,9 +209,9 @@ void InsertParagraphSeparatorCommand::doApply()
         
         insertNodeBefore(blockToInsert, refNode);
         appendBlockPlaceholder(blockToInsert.get());
-        setEndingSelection(Selection(Position(blockToInsert.get(), 0), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(Position(blockToInsert.get(), 0), DOWNSTREAM));
         applyStyleAfterInsertion(startBlock);
-        setEndingSelection(Selection(pos, DOWNSTREAM));
+        setEndingSelection(VisibleSelection(pos, DOWNSTREAM));
         return;
     }
 
@@ -331,7 +331,7 @@ void InsertParagraphSeparatorCommand::doApply()
         }
     }
 
-    setEndingSelection(Selection(Position(blockToInsert.get(), 0), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(Position(blockToInsert.get(), 0), DOWNSTREAM));
     applyStyleAfterInsertion(startBlock);
 }
 

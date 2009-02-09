@@ -500,12 +500,12 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
     return String();
 }
 
-const Selection& Frame::mark() const
+const VisibleSelection& Frame::mark() const
 {
     return m_mark;
 }
 
-void Frame::setMark(const Selection& s)
+void Frame::setMark(const VisibleSelection& s)
 {
     ASSERT(!s.base().node() || s.base().node()->document() == document());
     ASSERT(!s.extent().node() || s.extent().node()->document() == document());
@@ -624,7 +624,7 @@ void Frame::selectionLayoutChanged()
     if (!view)
         return;
 
-    Selection selection = this->selection()->selection();
+    VisibleSelection selection = this->selection()->selection();
         
     if (!selection.isRange())
         view->clearSelection();
@@ -827,18 +827,18 @@ void Frame::reapplyStyles()
         m_doc->updateStyleSelector();
 }
 
-bool Frame::shouldChangeSelection(const Selection& newSelection) const
+bool Frame::shouldChangeSelection(const VisibleSelection& newSelection) const
 {
     return shouldChangeSelection(selection()->selection(), newSelection, newSelection.affinity(), false);
 }
 
-bool Frame::shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity affinity, bool stillSelecting) const
+bool Frame::shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity affinity, bool stillSelecting) const
 {
     return editor()->client()->shouldChangeSelectedRange(oldSelection.toNormalizedRange().get(), newSelection.toNormalizedRange().get(),
                                                          affinity, stillSelecting);
 }
 
-bool Frame::shouldDeleteSelection(const Selection& selection) const
+bool Frame::shouldDeleteSelection(const VisibleSelection& selection) const
 {
     return editor()->client()->shouldDeleteRange(selection.toNormalizedRange().get());
 }
@@ -1255,12 +1255,12 @@ void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
     IntRect rect;
 
     switch (selection()->selectionType()) {
-        case Selection::NoSelection:
+        case VisibleSelection::NoSelection:
             return;
-        case Selection::CaretSelection:
+        case VisibleSelection::CaretSelection:
             rect = selection()->absoluteCaretBounds();
             break;
-        case Selection::RangeSelection:
+        case VisibleSelection::RangeSelection:
             rect = enclosingIntRect(selectionBounds(false));
             break;
     }
@@ -1371,7 +1371,7 @@ void Frame::setSelectionFromNone()
     while (node && !node->hasTagName(bodyTag))
         node = node->traverseNextNode();
     if (node)
-        selection()->setSelection(Selection(Position(node, 0), DOWNSTREAM));
+        selection()->setSelection(VisibleSelection(Position(node, 0), DOWNSTREAM));
 }
 
 bool Frame::inViewSourceMode() const
@@ -1396,7 +1396,7 @@ bool Frame::findString(const String& target, bool forward, bool caseFlag, bool w
     // Start from an edge of the selection, if there's a selection that's not in shadow content. Which edge
     // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
     RefPtr<Range> searchRange(rangeOfContents(document()));
-    Selection selection = this->selection()->selection();
+    VisibleSelection selection = this->selection()->selection();
 
     if (forward)
         setStart(searchRange.get(), startInSelection ? selection.visibleStart() : selection.visibleEnd());
@@ -1416,7 +1416,7 @@ bool Frame::findString(const String& target, bool forward, bool caseFlag, bool w
     // If we started in the selection and the found range exactly matches the existing selection, find again.
     // Build a selection with the found range to remove collapsed whitespace.
     // Compare ranges instead of selection objects to ignore the way that the current selection was made.
-    if (startInSelection && *Selection(resultRange.get()).toNormalizedRange() == *selection.toNormalizedRange()) {
+    if (startInSelection && *VisibleSelection(resultRange.get()).toNormalizedRange() == *selection.toNormalizedRange()) {
         searchRange = rangeOfContents(document());
         if (forward)
             setStart(searchRange.get(), selection.visibleEnd());
@@ -1466,7 +1466,7 @@ bool Frame::findString(const String& target, bool forward, bool caseFlag, bool w
     if (resultRange->collapsed(exception))
         return false;
 
-    this->selection()->setSelection(Selection(resultRange.get(), DOWNSTREAM));
+    this->selection()->setSelection(VisibleSelection(resultRange.get(), DOWNSTREAM));
     revealSelection();
     return true;
 }
@@ -1682,19 +1682,19 @@ void Frame::scheduleClose()
         chrome->closeWindowSoon();
 }
 
-void Frame::respondToChangedSelection(const Selection& oldSelection, bool closeTyping)
+void Frame::respondToChangedSelection(const VisibleSelection& oldSelection, bool closeTyping)
 {
     if (document()) {
         bool isContinuousSpellCheckingEnabled = editor()->isContinuousSpellCheckingEnabled();
         bool isContinuousGrammarCheckingEnabled = isContinuousSpellCheckingEnabled && editor()->isGrammarCheckingEnabled();
         if (isContinuousSpellCheckingEnabled) {
-            Selection newAdjacentWords;
-            Selection newSelectedSentence;
+            VisibleSelection newAdjacentWords;
+            VisibleSelection newSelectedSentence;
             if (selection()->selection().isContentEditable()) {
                 VisiblePosition newStart(selection()->selection().visibleStart());
-                newAdjacentWords = Selection(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
+                newAdjacentWords = VisibleSelection(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
                 if (isContinuousGrammarCheckingEnabled)
-                    newSelectedSentence = Selection(startOfSentence(newStart), endOfSentence(newStart));
+                    newSelectedSentence = VisibleSelection(startOfSentence(newStart), endOfSentence(newStart));
             }
 
             // When typing we check spelling elsewhere, so don't redo it here.
@@ -1702,11 +1702,11 @@ void Frame::respondToChangedSelection(const Selection& oldSelection, bool closeT
             // oldSelection may no longer be in the document.
             if (closeTyping && oldSelection.isContentEditable() && oldSelection.start().node() && oldSelection.start().node()->inDocument()) {
                 VisiblePosition oldStart(oldSelection.visibleStart());
-                Selection oldAdjacentWords = Selection(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));   
+                VisibleSelection oldAdjacentWords = VisibleSelection(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));   
                 if (oldAdjacentWords != newAdjacentWords) {
                     editor()->markMisspellings(oldAdjacentWords);
                     if (isContinuousGrammarCheckingEnabled) {
-                        Selection oldSelectedSentence = Selection(startOfSentence(oldStart), endOfSentence(oldStart));   
+                        VisibleSelection oldSelectedSentence = VisibleSelection(startOfSentence(oldStart), endOfSentence(oldStart));   
                         if (oldSelectedSentence != newSelectedSentence)
                             editor()->markBadGrammar(oldSelectedSentence);
                     }

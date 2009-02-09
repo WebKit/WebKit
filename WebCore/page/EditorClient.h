@@ -50,7 +50,7 @@ class HTMLElement;
 class KeyboardEvent;
 class Node;
 class Range;
-class Selection;
+class VisibleSelection;
 class String;
 class VisiblePosition;
 

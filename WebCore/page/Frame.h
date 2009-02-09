@@ -71,7 +71,7 @@ class HTMLTableCellElement;
 class ScriptController;
 class RegularExpression;
 class RenderPart;
-class Selection;
+class VisibleSelection;
 class SelectionController;
 class Widget;
 
@@ -203,8 +203,8 @@ public:
     String selectedText() const;  
     bool findString(const String&, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection);
 
-    const Selection& mark() const; // Mark, to be used as emacs uses it.
-    void setMark(const Selection&);
+    const VisibleSelection& mark() const; // Mark, to be used as emacs uses it.
+    void setMark(const VisibleSelection&);
 
     void computeAndSetTypingStyle(CSSStyleDeclaration* , EditAction = EditActionUnspecified);
     String selectionStartStylePropertyValue(int stylePropertyID) const;
@@ -215,8 +215,8 @@ public:
 
     IntRect firstRectForRange(Range*) const;
     
-    void respondToChangedSelection(const Selection& oldSelection, bool closeTyping);
-    bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity, bool stillSelecting) const;
+    void respondToChangedSelection(const VisibleSelection& oldSelection, bool closeTyping);
+    bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;
 
     RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;
 
@@ -241,8 +241,8 @@ public:
     TextGranularity selectionGranularity() const;
     void setSelectionGranularity(TextGranularity);
 
-    bool shouldChangeSelection(const Selection&) const;
-    bool shouldDeleteSelection(const Selection&) const;
+    bool shouldChangeSelection(const VisibleSelection&) const;
+    bool shouldDeleteSelection(const VisibleSelection&) const;
     void clearCaretRectIfNeeded();
     void setFocusedNodeIfNeeded();
     void selectionLayoutChanged();
@@ -344,7 +344,7 @@ private:
     TextGranularity m_selectionGranularity;
 
     mutable SelectionController m_selectionController;
-    mutable Selection m_mark;
+    mutable VisibleSelection m_mark;
     Timer<Frame> m_caretBlinkTimer;
     mutable Editor m_editor;
     mutable EventHandler m_eventHandler;
