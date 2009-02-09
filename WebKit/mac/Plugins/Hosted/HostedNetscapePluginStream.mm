@@ -167,7 +167,8 @@ static NPReason reasonForError(NSError *error)
 
 void HostedNetscapePluginStream::didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError& error)
 {
-    _WKPHStreamDidFail(m_instance->hostProxy()->port(), m_instance->pluginID(), m_streamID, reasonForError(error));
+    if (NetscapePluginHostProxy* hostProxy = m_instance->hostProxy())
+        _WKPHStreamDidFail(hostProxy->port(), m_instance->pluginID(), m_streamID, reasonForError(error));
 }
     
 bool HostedNetscapePluginStream::wantsAllStreams() const

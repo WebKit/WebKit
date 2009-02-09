@@ -1,3 +1,12 @@
+2009-02-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+        
+        Fix crash when plug-in host dies.
+        
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::didFail):
+
 2009-02-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin Garcia.
