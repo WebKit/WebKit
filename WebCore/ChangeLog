@@ -42,6 +42,12 @@
 
 2009-02-09  Eric Seidel  <eric@webkit.org>
 
+        Fix the gtk build by adding VisibleSelection and removing Selection.
+
+        * GNUmakefile.am:
+
+2009-02-09  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         Rename Selection to VisibleSelection to allow us to separate

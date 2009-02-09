@@ -759,8 +759,6 @@ webcore_sources += \
 	WebCore/editing/RemoveNodePreservingChildrenCommand.h \
 	WebCore/editing/ReplaceSelectionCommand.cpp \
 	WebCore/editing/ReplaceSelectionCommand.h \
-	WebCore/editing/Selection.cpp \
-	WebCore/editing/Selection.h \
 	WebCore/editing/SelectionController.cpp \
 	WebCore/editing/SelectionController.h \
 	WebCore/editing/SetNodeAttributeCommand.cpp \
@@ -784,6 +782,8 @@ webcore_sources += \
 	WebCore/editing/UnlinkCommand.h \
 	WebCore/editing/VisiblePosition.cpp \
 	WebCore/editing/VisiblePosition.h \
+	WebCore/editing/VisibleSelection.cpp \
+	WebCore/editing/VisibleSelection.h \
 	WebCore/editing/WrapContentsInDummySpanCommand.cpp \
 	WebCore/editing/WrapContentsInDummySpanCommand.h \
 	WebCore/editing/htmlediting.cpp \
