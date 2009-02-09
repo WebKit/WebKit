@@ -1,3 +1,14 @@
+2009-02-06  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23809
+        Return CanvasRenderingContext2D instead of DOMObject in IDL to avoid V8 #ifdefs
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.idl:
+        * html/HTMLCanvasElement.idl:
+
 2009-02-09  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Eric Seidel.

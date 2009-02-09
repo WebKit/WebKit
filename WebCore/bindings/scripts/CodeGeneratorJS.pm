@@ -1699,9 +1699,7 @@ sub NativeToJSValue
         $implIncludes{"NameNodeList.h"} = 1;
     }
 
-    if ($type eq "DOMObject") {
-        $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
-    } elsif ($type =~ /SVGPathSeg/) {
+    if ($type =~ /SVGPathSeg/) {
         $implIncludes{"JS$type.h"} = 1;
         $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
