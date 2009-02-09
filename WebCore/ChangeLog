@@ -1,3 +1,17 @@
+2009-02-09  Dan Bernstein  <mitz@apple.com>
+
+        - fix -Wmissing-prototypes builds
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isHeaderElement): Marked this function static.
+        (WebCore::haveSameTagName): Ditto.
+        * editing/markup.cpp:
+        (WebCore::isSpecialAncestorBlock): Ditto.
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::makeMapBetweenRects): Removed unused function.
+        * platform/graphics/transforms/TransformationMatrix.h: Removed unused
+        declaration of private member makeMapBetweenRects().
+
 2009-02-09  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Sam Weinig.

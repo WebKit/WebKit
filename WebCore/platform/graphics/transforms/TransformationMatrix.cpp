@@ -513,14 +513,6 @@ TransformationMatrix& TransformationMatrix::flipY()
     return scaleNonUniform(1.0f, -1.0f);
 }
 
-TransformationMatrix makeMapBetweenRects(const FloatRect& source, const FloatRect& dest)
-{
-    TransformationMatrix transform;
-    transform.translate(dest.x() - source.x(), dest.y() - source.y());
-    transform.scaleNonUniform(dest.width() / source.width(), dest.height() / source.height());
-    return transform;
-}
-
 FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p) const
 {
     // This is basically raytracing. We have a point in the destination

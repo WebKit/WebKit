@@ -284,8 +284,6 @@ public:
 #endif
 
 private:
-    TransformationMatrix makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
-
     // multiply passed 2D point by matrix (assume z=0)
     void multVecMatrix(double x, double y, double& dstX, double& dstY) const;
     

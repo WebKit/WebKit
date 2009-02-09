@@ -701,7 +701,7 @@ static String joinMarkups(const Vector<String>& preMarkups, const Vector<String>
     return String::adopt(result);
 }
 
-bool isSpecialAncestorBlock(Node* node)
+static bool isSpecialAncestorBlock(Node* node)
 {
     if (!node || !isBlock(node))
         return false;
