@@ -1,3 +1,14 @@
+2009-02-08  David Hyatt  <hyatt@apple.com>
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23832, crash when inspecting an image using the
+        Web inspector.
+
+        Reviewed by Mark Rowe
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteRectsForRange):
+        (WebCore::RenderObject::absoluteQuadsForRange):
+
 2009-02-08  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed Qt build fix.

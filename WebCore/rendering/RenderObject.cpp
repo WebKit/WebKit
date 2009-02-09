@@ -1550,7 +1550,7 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
 
 void RenderObject::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, unsigned end, bool)
 {
-    if (!virtualChildren()->firstChild()) {
+    if (!firstChild()) {
         if ((isInline() || isAnonymousBlock())) {
             FloatPoint absPos = localToAbsolute(FloatPoint());
             absoluteRects(rects, absPos.x(), absPos.y());
@@ -1569,7 +1569,7 @@ void RenderObject::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start,
 
 void RenderObject::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start, unsigned end, bool)
 {
-    if (!virtualChildren()->firstChild()) {
+    if (!firstChild()) {
         if (isInline() || isAnonymousBlock())
             absoluteQuads(quads);
         return;
