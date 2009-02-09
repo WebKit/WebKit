@@ -12186,6 +12186,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\WorkerContextProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\WorkerLocation.cpp"
 				>
 			</File>
@@ -12199,6 +12203,10 @@
 			</File>
 			<File
 				RelativePath="..\dom\WorkerMessagingProxy.h"
+				>
+			</File>
+			<File>
+				RelativePath="..\dom\WorkerObjectProxy.h"
 				>
 			</File>
 			<File

@@ -551,6 +551,8 @@
 		29FFBB830E7C5A3D00407730 /* AccessibilityList.h in Headers */ = {isa = PBXBuildFile; fileRef = 29FFBB810E7C5A3D00407730 /* AccessibilityList.h */; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
 		2D9066070BE141D400956998 /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2E3AC84E0F3D06D100633F04 /* WorkerContextProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3AC84D0F3D06D100633F04 /* WorkerContextProxy.h */; };
+		2E3AC8500F3D06F700633F04 /* WorkerObjectProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3AC84F0F3D06F700633F04 /* WorkerObjectProxy.h */; };
 		31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */; };
 		31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */; };
 		31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */; };
@@ -5456,6 +5458,8 @@
 		2D9066050BE141D400956998 /* LayoutState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		2E3AC84D0F3D06D100633F04 /* WorkerContextProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerContextProxy.h; sourceTree = "<group>"; };
+		2E3AC84F0F3D06F700633F04 /* WorkerObjectProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerObjectProxy.h; sourceTree = "<group>"; };
 		31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSKeyframeRule.h; sourceTree = "<group>"; };
 		31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -14468,11 +14472,13 @@
 				E1C2C4410EAD017B007E61FB /* WorkerContext.cpp */,
 				E1C2C43D0EAD0133007E61FB /* WorkerContext.h */,
 				E182564F0EF2ACE600933242 /* WorkerContext.idl */,
+				2E3AC84D0F3D06D100633F04 /* WorkerContextProxy.h */,
 				E1C363050EAF2D07007410BC /* WorkerLocation.cpp */,
 				E1C363000EAF2CC6007410BC /* WorkerLocation.h */,
 				E1C362BB0EAF29FB007410BC /* WorkerLocation.idl */,
 				E14799B30ECDE9D800292BF3 /* WorkerMessagingProxy.cpp */,
 				E14799A60ECDE3A400292BF3 /* WorkerMessagingProxy.h */,
+				2E3AC84F0F3D06F700633F04 /* WorkerObjectProxy.h */,
 				18A0537A0F26859C00A51705 /* WorkerRunLoop.cpp */,
 				18A0537B0F26859C00A51705 /* WorkerRunLoop.h */,
 				E1C2C4280EACE0E0007E61FB /* WorkerThread.cpp */,
@@ -16715,6 +16721,8 @@
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
 				BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */,
+				2E3AC84E0F3D06D100633F04 /* WorkerContextProxy.h in Headers */,
+				2E3AC8500F3D06F700633F04 /* WorkerObjectProxy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

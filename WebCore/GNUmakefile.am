@@ -2193,10 +2193,12 @@ webcore_sources += \
 	WebCore/dom/Worker.h \
 	WebCore/dom/WorkerContext.cpp \
 	WebCore/dom/WorkerContext.h \
+	WebCore/dom/WorkerContextProxy.h \
 	WebCore/dom/WorkerLocation.cpp \
 	WebCore/dom/WorkerLocation.h \
 	WebCore/dom/WorkerMessagingProxy.cpp \
 	WebCore/dom/WorkerMessagingProxy.h \
+	WebCore/dom/WorkerObjectProxy.h \
 	WebCore/dom/WorkerRunLoop.cpp \
 	WebCore/dom/WorkerRunLoop.h \
 	WebCore/dom/WorkerThread.cpp \
