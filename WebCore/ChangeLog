@@ -1,3 +1,16 @@
+2009-02-09  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23816
+        Clean up RenderSVGRoot.cpp
+
+        Clean up RenderSVGRoot.cpp.
+
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::calcViewport):
+
 2009-02-09  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti Koivisto
