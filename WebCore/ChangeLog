@@ -1,3 +1,17 @@
+2009-02-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti Koivisto
+
+        Change RenderPart and RenderPartObject constructors to take a Node*
+        instead of a HTMLFrameOwnerElement* since that is all then need.
+
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::RenderPart): take Node* instead of HTMLFrameOwnerElement*
+        * rendering/RenderPart.h:
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::RenderPartObject):  take Node* instead of HTMLFrameOwnerElement*
+        * rendering/RenderPartObject.h:
+
 2009-02-09  Dan Bernstein  <mitz@apple.com>
 
         - fix -Wmissing-prototypes builds

@@ -44,7 +44,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderPartObject::RenderPartObject(HTMLFrameOwnerElement* element)
+RenderPartObject::RenderPartObject(Node* element)
     : RenderPart(element)
 {
     // init RenderObject attributes
