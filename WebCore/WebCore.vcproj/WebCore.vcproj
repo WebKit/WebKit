@@ -12205,7 +12205,7 @@
 				RelativePath="..\dom\WorkerMessagingProxy.h"
 				>
 			</File>
-			<File>
+			<File
 				RelativePath="..\dom\WorkerObjectProxy.h"
 				>
 			</File>
