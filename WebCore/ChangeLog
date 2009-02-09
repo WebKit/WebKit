@@ -1,3 +1,56 @@
+2009-02-09  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23850
+        Code cleanup of HTMLParser class which was using a mix of m_* and bare
+        class member variable names which helps to obfuscate the code.  Also
+        changed a few of the static helper functions to take a const pointer type
+        as they should not be modifying the node.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser):
+        (WebCore::HTMLParser::~HTMLParser):
+        (WebCore::HTMLParser::reset):
+        (WebCore::HTMLParser::setCurrent):
+        (WebCore::HTMLParser::parseToken):
+        (WebCore::HTMLParser::parseDoctypeToken):
+        (WebCore::isTableSection):
+        (WebCore::isTablePart):
+        (WebCore::isTableRelated):
+        (WebCore::HTMLParser::insertNode):
+        (WebCore::HTMLParser::handleError):
+        (WebCore::HTMLParser::textCreateErrorCheck):
+        (WebCore::HTMLParser::commentCreateErrorCheck):
+        (WebCore::HTMLParser::headCreateErrorCheck):
+        (WebCore::HTMLParser::bodyCreateErrorCheck):
+        (WebCore::HTMLParser::framesetCreateErrorCheck):
+        (WebCore::HTMLParser::formCreateErrorCheck):
+        (WebCore::HTMLParser::isindexCreateErrorCheck):
+        (WebCore::HTMLParser::noscriptCreateErrorCheck):
+        (WebCore::HTMLParser::pCloserStrictCreateErrorCheck):
+        (WebCore::HTMLParser::mapCreateErrorCheck):
+        (WebCore::HTMLParser::getNode):
+        (WebCore::HTMLParser::allowNestedRedundantTag):
+        (WebCore::HTMLParser::processCloseTag):
+        (WebCore::HTMLParser::isInline):
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (WebCore::HTMLParser::reopenResidualStyleTags):
+        (WebCore::HTMLParser::pushBlock):
+        (WebCore::HTMLParser::popBlock):
+        (WebCore::HTMLParser::popOneBlockCommon):
+        (WebCore::HTMLParser::popOneBlock):
+        (WebCore::HTMLParser::moveOneBlockToStack):
+        (WebCore::HTMLParser::checkIfHasPElementInScope):
+        (WebCore::HTMLParser::popInlineBlocks):
+        (WebCore::HTMLParser::freeBlock):
+        (WebCore::HTMLParser::createHead):
+        (WebCore::HTMLParser::handleIsindex):
+        (WebCore::HTMLParser::startBody):
+        (WebCore::HTMLParser::finished):
+        (WebCore::HTMLParser::reportErrorToConsole):
+        * html/HTMLParser.h:
+
 2009-02-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Applying review comment on a second location.

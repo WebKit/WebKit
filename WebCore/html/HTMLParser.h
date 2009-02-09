@@ -150,33 +150,33 @@ private:
 
     void reportErrorToConsole(HTMLParserErrorCode, const AtomicString* tagName1, const AtomicString* tagName2, bool closeTags);
     
-    Document* document;
+    Document* m_document;
 
     // The currently active element (the one new elements will be added to). Can be a document fragment, a document or an element.
-    Node* current;
+    Node* m_current;
     // We can't ref a document, but we don't want to constantly check if a node is a document just to decide whether to deref.
-    bool didRefCurrent;
+    bool m_didRefCurrent;
 
-    HTMLStackElem* blockStack;
+    HTMLStackElem* m_blockStack;
 
     enum ElementInScopeState { NotInScope, InScope, Unknown }; 
     ElementInScopeState m_hasPElementInScope;
 
     RefPtr<HTMLFormElement> m_currentFormElement; // currently active form
     RefPtr<HTMLMapElement> m_currentMapElement; // current map
-    HTMLHeadElement* head; // head element; needed for HTML which defines <base> after </head>
+    HTMLHeadElement* m_head; // head element; needed for HTML which defines <base> after </head>
     RefPtr<Node> m_isindexElement; // a possible <isindex> element in the head
 
-    bool inBody;
-    bool haveContent;
-    bool haveFrameSet;
+    bool m_inBody;
+    bool m_haveContent;
+    bool m_haveFrameSet;
 
     AtomicString m_skipModeTag; // tells the parser to discard all tags until it reaches the one specified
 
     bool m_isParsingFragment;
     bool m_reportErrors;
     bool m_handlingResidualStyleAcrossBlocks;
-    int inStrayTableContent;
+    int m_inStrayTableContent;
 };
 
 }
