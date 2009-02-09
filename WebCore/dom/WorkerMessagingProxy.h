@@ -30,6 +30,8 @@
 #if ENABLE(WORKERS)
 
 #include "ScriptExecutionContext.h"
+#include "WorkerContextProxy.h"
+#include "WorkerObjectProxy.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -42,28 +44,32 @@ namespace WebCore {
     class Worker;
     class WorkerThread;
 
-    class WorkerMessagingProxy : Noncopyable {
+    class WorkerMessagingProxy : public WorkerContextProxy, public WorkerObjectProxy, Noncopyable {
     public:
         WorkerMessagingProxy(PassRefPtr<ScriptExecutionContext>, Worker*);
 
-        void postMessageToWorkerObject(const String& message);
-        void postMessageToWorkerContext(const String& message);
+        // Implementations of WorkerContextProxy.
+        // (Only use these methods in the worker object thread.)
+        virtual void terminateWorkerContext();
+        virtual void postMessageToWorkerContext(const String& message);
+        virtual bool hasPendingActivity() const;
+
+        // Implementations of WorkerObjectProxy.
+        // (Only use these methods in the worker context thread.)
+        virtual void postMessageToWorkerObject(const String& message);
+        virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
+        virtual void reportPendingActivity(bool hasPendingActivity);
+        virtual void workerContextDestroyed();
 
         void postTaskToWorkerObject(PassRefPtr<ScriptExecutionContext::Task>);
         void postTaskToWorkerContext(PassRefPtr<ScriptExecutionContext::Task>);
 
-        void postWorkerException(const String& errorMessage, int lineNumber, const String& sourceURL);
-
         void workerThreadCreated(PassRefPtr<WorkerThread>);
         void workerObjectDestroyed();
-        void workerContextDestroyed();
 
         void confirmWorkerThreadMessage(bool hasPendingActivity);
-        void reportWorkerThreadActivity(bool hasPendingActivity);
-        bool workerThreadHasPendingActivity() const;
 
-        // Only use these methods on the worker object thread.
-        void terminate();
+        // Only use this method on the worker object thread.
         bool askedToTerminate() const { return m_askedToTerminate; }
 
     private:
@@ -71,10 +77,10 @@ namespace WebCore {
         friend class WorkerContextDestroyedTask;
         friend class WorkerThreadActivityReportTask;
 
-        ~WorkerMessagingProxy();
+        virtual ~WorkerMessagingProxy();
 
         void workerContextDestroyedInternal();
-        void reportWorkerThreadActivityInternal(bool confirmingMessage, bool hasPendingActivity);
+        void reportPendingActivityInternal(bool confirmingMessage, bool hasPendingActivity);
         Worker* workerObject() const { return m_workerObject; }
 
         RefPtr<ScriptExecutionContext> m_scriptExecutionContext;

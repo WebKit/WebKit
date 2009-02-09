@@ -89,7 +89,7 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
     Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper);
     m_workerContextWrapper->stopTimeoutCheck();
 
-    m_workerContext->thread()->messagingProxy()->reportWorkerThreadActivity(m_workerContext->hasPendingActivity());
+    m_workerContext->thread()->messagingProxy()->reportPendingActivity(m_workerContext->hasPendingActivity());
 
     if (comp.complType() == Normal || comp.complType() == ReturnValue)
         return comp.value();

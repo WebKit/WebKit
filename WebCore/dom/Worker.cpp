@@ -94,7 +94,7 @@ void Worker::postMessage(const String& message)
 
 void Worker::terminate()
 {
-    m_messagingProxy->terminate();
+    m_messagingProxy->terminateWorkerContext();
 }
 
 bool Worker::canSuspend() const
@@ -110,7 +110,7 @@ void Worker::stop()
 
 bool Worker::hasPendingActivity() const
 {
-    return m_messagingProxy->workerThreadHasPendingActivity() || ActiveDOMObject::hasPendingActivity();
+    return m_messagingProxy->hasPendingActivity() || ActiveDOMObject::hasPendingActivity();
 }
 
 void Worker::notifyFinished(CachedResource* unusedResource)

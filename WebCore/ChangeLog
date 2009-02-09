@@ -2,6 +2,31 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Make WorkerMessagingProxy derive from two base proxy classes.
+        https://bugs.webkit.org/show_bug.cgi?id=23777
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * dom/Worker.cpp:
+        (WebCore::Worker::terminate):
+        (WebCore::Worker::hasPendingActivity):
+        * dom/WorkerContext.cpp:
+        (WebCore::WorkerContext::reportException):
+        * dom/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerThreadActivityReportTask::performTask):
+        (WebCore::WorkerMessagingProxy::postExceptionToWorkerObject):
+        (WebCore::WorkerMessagingProxy::workerObjectDestroyed):
+        (WebCore::WorkerMessagingProxy::terminateWorkerContext):
+        (WebCore::WorkerMessagingProxy::confirmWorkerThreadMessage):
+        (WebCore::WorkerMessagingProxy::reportPendingActivity):
+        (WebCore::WorkerMessagingProxy::reportPendingActivityInternal):
+        (WebCore::WorkerMessagingProxy::hasPendingActivity):
+        * dom/WorkerMessagingProxy.h:
+
+2009-02-09  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Introduce 2 base classes to split WorkerMessagingProxy.
         https://bugs.webkit.org/show_bug.cgi?id=23776
 

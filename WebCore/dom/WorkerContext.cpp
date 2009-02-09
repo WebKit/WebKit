@@ -108,7 +108,7 @@ bool WorkerContext::hasPendingActivity() const
 
 void WorkerContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)
 {
-    m_thread->messagingProxy()->postWorkerException(errorMessage, lineNumber, sourceURL);
+    m_thread->messagingProxy()->postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
 }
 
 static void addMessageTask(ScriptExecutionContext* context, WorkerMessagingProxy* messagingProxy, MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
