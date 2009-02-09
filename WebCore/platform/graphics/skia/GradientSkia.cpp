@@ -165,6 +165,9 @@ SkShader* Gradient::platformGradient()
             static_cast<int>(countUsed), tile);
     }
 
+    SkMatrix matrix = m_gradientSpaceTransformation;
+    m_gradient->setLocalMatrix(matrix);
+
     return m_gradient;
 }
 

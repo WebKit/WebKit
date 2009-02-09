@@ -504,6 +504,7 @@ void GraphicsContext::fillPath()
             CGContextEOClip(context);
         else
             CGContextClip(context);
+        CGContextConcatCTM(context, m_common->state.fillGradient->gradientSpaceTransform());
         CGContextDrawShading(context, m_common->state.fillGradient->platformGradient());
         CGContextRestoreGState(context);
         break;
@@ -529,6 +530,7 @@ void GraphicsContext::strokePath()
         CGContextSaveGState(context);
         CGContextReplacePathWithStrokedPath(context);
         CGContextClip(context);
+        CGContextConcatCTM(context, m_common->state.strokeGradient->gradientSpaceTransform());
         CGContextDrawShading(context, m_common->state.strokeGradient->platformGradient());
         CGContextRestoreGState(context);
         break;
@@ -552,6 +554,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     case GradientColorSpace:
         CGContextSaveGState(context);
         CGContextClipToRect(context, rect);
+        CGContextConcatCTM(context, m_common->state.fillGradient->gradientSpaceTransform());
         CGContextDrawShading(context, m_common->state.fillGradient->platformGradient());
         CGContextRestoreGState(context);
         break;

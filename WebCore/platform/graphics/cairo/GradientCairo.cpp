@@ -69,6 +69,10 @@ cairo_pattern_t* Gradient::platformGradient()
         break;
     }
 
+    cairo_matrix_t matrix = m_gradientSpaceTransformation;
+    cairo_matrix_invert(&matrix);
+    cairo_pattern_set_matrix(m_gradient, &matrix);
+
     return m_gradient;
 }
 

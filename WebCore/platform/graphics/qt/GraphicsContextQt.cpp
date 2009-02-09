@@ -538,8 +538,9 @@ void GraphicsContext::fillPath()
         break;
     }
     case GradientColorSpace:
-        QGradient* gradient = m_common->state.fillGradient->platformGradient();
-        p->fillPath(path, QBrush(*gradient));
+        QBrush brush(*m_common->state.fillGradient->platformGradient());
+        brush.setMatrix(m_common->state.fillGradient->gradientSpaceTransform());
+        p->fillPath(path, brush);
         break;
     }
     m_data->currentPath = QPainterPath();
@@ -567,8 +568,9 @@ void GraphicsContext::strokePath()
         break;
     }
     case GradientColorSpace: {
-        QGradient* gradient = m_common->state.strokeGradient->platformGradient();
-        pen.setBrush(QBrush(*gradient));
+        QBrush brush(*m_common->state.strokeGradient->platformGradient());
+        brush.setMatrix(m_common->state.strokeGradient->gradientSpaceTransform());
+        pen.setBrush(brush);
         p->setPen(pen);
         p->strokePath(path, pen);
         break;
@@ -595,7 +597,9 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         break;
     }
     case GradientColorSpace:
-        p->fillRect(rect, QBrush(*(m_common->state.fillGradient.get()->platformGradient())));
+        QBrush brush(*m_common->state.fillGradient->platformGradient());
+        brush.setMatrix(m_common->state.fillGradient->gradientSpaceTransform());
+        p->fillRect(rect, brush);
         break;
     }
     m_data->currentPath = QPainterPath();
