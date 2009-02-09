@@ -1288,7 +1288,7 @@ int RenderText::nextOffset(int current) const
     if (result == TextBreakDone)
         result = current + 1;
 
-#if BUILDING_ON_TIGER
+#ifdef BUILDING_ON_TIGER
     // ICU 3.2 allows character breaks before a half-width Katakana voiced mark.
     if (static_cast<unsigned>(result) < si->length()) {
         UChar character = (*si)[result];
