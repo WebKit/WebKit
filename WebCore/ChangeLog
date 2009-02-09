@@ -1,6 +1,37 @@
 2009-02-09  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti Koivisto
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23737
+        Make it possible to control media element playback without knowing so many
+        internal implementation details.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::togglePlayState): New, toggle between playing and paused state.
+        (WebCore::HTMLMediaElement::beginScrubbing): New, pause as necessary for scrubbing mode.
+        (WebCore::HTMLMediaElement::endScrubbing): New, resume playback if paused for scrubbing mode.
+        * html/HTMLMediaElement.h:
+
+        (WebCore::HTMLMediaElement::hasVideo): New, added so clients don't need to access MediaPlayer directly.
+        * html/HTMLVideoElement.h:
+
+        (WebCore::HTMLVideoElement::hasVideo): New.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlPlayButtonElement::defaultEventHandler): Use new media element 
+        togglePlayState method.
+        (WebCore::MediaControlTimelineElement::defaultEventHandler): Tell media element when scrubbing
+        begins and ends so it can deal with pausing logic. Don't call setCurrentTime unless the time
+        will change.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::updateControls): Ask media element if it is able to play instead of including
+        internal logic here.
+        (WebCore::RenderMedia::updateControlVisibility): Ditto.
+
+2009-02-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti Koivisto
 
         Change RenderPart and RenderPartObject constructors to take a Node*
         instead of a HTMLFrameOwnerElement* since that is all then need.

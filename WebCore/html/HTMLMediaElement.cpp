@@ -807,6 +807,39 @@ void HTMLMediaElement::setMuted(bool muted)
     }
 }
 
+void HTMLMediaElement::togglePlayState(ExceptionCode& ec)
+{
+    if (canPlay())
+        play(ec);
+    else 
+        pause(ec);
+}
+
+void HTMLMediaElement::beginScrubbing()
+{
+    if (!paused()) {
+        if (ended()) {
+            // because a media element stays in non-paused state when it reaches end, playback resumes 
+            //  when the slider is dragged from the end to another position unless we pause first. do 
+            //  a "hard pause" so an event is generated, since we want to stay paused after scrubbing finishes
+            ExceptionCode ec;
+            pause(ec);
+        } else {
+            // not at the end but we still want to pause playback so the media engine doesn't try to
+            //  continue playing during scrubbing. pause without generating an event as we will 
+            //  unpause after scrubbing finishes
+            setPausedInternal(true);
+        }
+    }
+}
+
+void HTMLMediaElement::endScrubbing()
+{
+    if (m_pausedInternal) {
+        setPausedInternal(false);
+    }
+}
+
 bool HTMLMediaElement::canPlay() const
 {
     return paused() || ended() || networkState() < LOADED_METADATA;

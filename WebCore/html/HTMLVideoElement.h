@@ -47,6 +47,7 @@ public:
     virtual void detach();
     virtual void parseMappedAttribute(MappedAttribute* attr);
     virtual bool isVideo() const { return true; }
+    virtual bool hasVideo() const { return player() && player()->hasVideo(); }
     virtual bool isURLAttribute(Attribute*) const;
     virtual const QualifiedName& imageSourceAttributeName() const;
 

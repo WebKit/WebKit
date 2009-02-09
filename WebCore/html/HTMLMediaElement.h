@@ -58,6 +58,7 @@ public:
     MediaPlayer* player() const { return m_player.get(); }
     
     virtual bool isVideo() const { return false; }
+    virtual bool hasVideo() const { return false; }
     
     void scheduleLoad();
     
@@ -126,6 +127,9 @@ public:
     void setVolume(float, ExceptionCode&);
     bool muted() const;
     void setMuted(bool);
+    void togglePlayState(ExceptionCode& ec);
+    void beginScrubbing();
+    void endScrubbing();
 
     bool canPlay() const;
 

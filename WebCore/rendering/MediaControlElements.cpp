@@ -166,10 +166,7 @@ void MediaControlPlayButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         ExceptionCode ec;
-        if (m_mediaElement->canPlay())
-            m_mediaElement->play(ec);
-        else 
-            m_mediaElement->pause(ec);
+        m_mediaElement->togglePlayState(ec);
         event->setDefaultHandled();
     }
     HTMLInputElement::defaultEventHandler(event);
@@ -235,33 +232,27 @@ MediaControlTimelineElement::MediaControlTimelineElement(Document* doc, HTMLMedi
 
 void MediaControlTimelineElement::defaultEventHandler(Event* event)
 {
-    RenderSlider* slider = static_cast<RenderSlider*>(renderer());
-    bool oldInDragMode = slider && slider->inDragMode();
-    float oldTime = narrowPrecisionToFloat(value().toDouble());
-    bool oldEnded = m_mediaElement->ended();
+    if (event->type() == eventNames().mousedownEvent)
+        m_mediaElement->beginScrubbing();
 
     HTMLInputElement::defaultEventHandler(event);
 
+     if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mousemoveEvent ) {
+        return;
+    }
+
     float time = narrowPrecisionToFloat(value().toDouble());
-    if (oldTime != time || event->type() == eventNames().inputEvent) {
+    if (time != m_mediaElement->currentTime()) {
         ExceptionCode ec;
         m_mediaElement->setCurrentTime(time, ec);
     }
 
-    // Media element stays in non-paused state when it reaches end. If the slider is now dragged
-    // to some other position the playback resumes which does not match usual media player UIs.
-    // Get the expected behavior by pausing explicitly in this case.
-    if (oldEnded && !m_mediaElement->ended() && !m_mediaElement->paused()) {
-        ExceptionCode ec;
-        m_mediaElement->pause(ec);
-    }
-
-    // Pause playback during drag, but do it without using DOM API which would generate events 
-    bool inDragMode = slider && slider->inDragMode();
-    if (inDragMode != oldInDragMode)
-        m_mediaElement->setPausedInternal(inDragMode);
-    if (inDragMode)
+    RenderSlider* slider = static_cast<RenderSlider*>(renderer());
+    if (slider && slider->inDragMode())
         static_cast<RenderMedia*>(m_mediaElement->renderer())->updateTimeDisplay();
+
+    if (event->type() == eventNames().mouseupEvent)
+        m_mediaElement->endScrubbing();
 }
 
 void MediaControlTimelineElement::update(bool updateDuration) 

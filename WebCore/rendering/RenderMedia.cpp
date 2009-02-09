@@ -279,7 +279,7 @@ void RenderMedia::updateControls()
         createFullscreenButton();
     }
 
-    if (media->paused() || media->ended() || media->networkState() < HTMLMediaElement::LOADED_METADATA) {
+    if (media->canPlay()) {
         if (m_timeUpdateTimer.isActive())
             m_timeUpdateTimer.stop();
     } else if (style()->visibility() == VISIBLE && m_timeline && m_timeline->renderer() && m_timeline->renderer()->style()->display() != NONE ) {
@@ -351,11 +351,11 @@ void RenderMedia::updateControlVisibility()
 
     // Don't fade for audio controls.
     HTMLMediaElement* media = mediaElement();
-    if (player() && !player()->hasVideo() || !media->isVideo())
+    if (!media->hasVideo())
         return;
 
     // do fading manually, css animations don't work well with shadow trees
-    bool visible = style()->visibility() == VISIBLE && (m_mouseOver || media->paused() || media->ended() || media->networkState() < HTMLMediaElement::LOADED_METADATA);
+    bool visible = style()->visibility() == VISIBLE && (m_mouseOver || media->canPlay());
     if (visible == (m_opacityAnimationTo > 0))
         return;
 
