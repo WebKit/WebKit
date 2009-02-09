@@ -1,3 +1,17 @@
+2009-02-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23806
+        Fix a regression crash where an empty src value and a "text/html" type
+        on an EMBED element did not finish ResourceRequest initialization due to
+        an early return.
+
+        Test: fast/loader/empty-embed-src-attribute.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+
 2009-02-09  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Eric Seidel.

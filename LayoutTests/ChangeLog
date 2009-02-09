@@ -1,3 +1,14 @@
+2009-02-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23806
+        New test for the crash with an embed element with an empty src and
+        "text/html" type.
+
+        * fast/loader/empty-embed-src-attribute-expected.txt: Added.
+        * fast/loader/empty-embed-src-attribute.html: Added.
+
 2009-02-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Land results for a recently added test (https://bugs.webkit.org/show_bug.cgi?id=23601).
