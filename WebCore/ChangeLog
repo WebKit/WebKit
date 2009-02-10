@@ -2,6 +2,14 @@
 
         Reviewed by George Staikos.
 
+        Attempt to fix the Qt build after r40791.
+
+        * rendering/RenderSVGRoot.cpp:
+
+2009-02-10  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         Minor code cleanup.
 
         * dom/ContainerNode.cpp:

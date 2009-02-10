@@ -34,6 +34,10 @@
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
 
+#if ENABLE(SVG_FILTERS)
+#include "SVGResourceFilter.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
