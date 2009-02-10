@@ -1708,9 +1708,9 @@ void JIT::privateCompile()
     }
 
     if (m_codeBlock->hasExceptionInfo()) {
-        m_codeBlock->pcVector().reserveCapacity(m_calls.size());
+        m_codeBlock->callReturnIndexVector().reserveCapacity(m_calls.size());
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter)
-            m_codeBlock->pcVector().append(PC(reinterpret_cast<void**>(patchBuffer.addressOf(iter->from)) - reinterpret_cast<void**>(code), iter->bytecodeIndex));
+            m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeIndex(patchBuffer.returnAddressOffset(iter->from), iter->bytecodeIndex));
     }
 
     // Link absolute addresses for jsr

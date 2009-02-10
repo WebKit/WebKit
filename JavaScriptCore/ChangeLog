@@ -1,3 +1,43 @@
+2009-02-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Provide a class type for a generated block of JIT code.
+        Also changes the return address -> bytecode index map to
+        track the return addess as an unsigned offset into the code
+        instead of a ptrdiff_t in terms of void**s - the latter is
+        equal to the actual offset / sizeof(void*), making it a
+        potentially lossy representation.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::PatchBuffer::returnAddressOffset):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::getCallReturnOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::CallReturnOffsetToBytecodeIndex::CallReturnOffsetToBytecodeIndex):
+        (JSC::getCallReturnOffset):
+        (JSC::CodeBlock::getBytecodeIndex):
+        (JSC::CodeBlock::jitCode):
+        (JSC::CodeBlock::callReturnIndexVector):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::cti_vm_dontLazyLinkCall):
+        (JSC::Interpreter::cti_vm_lazyLinkCall):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::):
+        * jit/JITCall.cpp:
+        (JSC::JIT::linkCall):
+        * jit/JITCode.h: Added.
+        (JSC::):
+        (JSC::JITCode::JITCode):
+        (JSC::JITCode::operator bool):
+        (JSC::JITCode::addressForCall):
+        (JSC::JITCode::offsetOf):
+        (JSC::JITCode::execute):
+
 2009-02-09  John Grabowski  <jrg@chromium.org>
 
         Reviewed by Darin Adler.

@@ -358,6 +358,11 @@ public:
             return AssemblerType::getRelocatedAddress(m_code, label.m_label);
         }
 
+        ptrdiff_t returnAddressOffset(Jump call)
+        {
+            return AssemblerType::getCallReturnOffset(call.m_jmp);
+        }
+
         void setPtr(DataLabelPtr label, void* value)
         {
             AssemblerType::patchAddress(m_code, label.m_label, value);
