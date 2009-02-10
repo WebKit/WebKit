@@ -1,3 +1,11 @@
+2009-02-10  Adam Roben  <aroben@apple.com>
+
+        Add Michael(tm) Smith's blog to Planet WebKit
+
+        Rubberstamped by Alexey Proskuryakov.
+
+        * config.ini:
+
 2008-09-07  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Tim Hatcher.
