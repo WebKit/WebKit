@@ -1,3 +1,10 @@
+2009-02-10  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix the Qt build as class Selection is now VisibleSelection.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::inputMethodQuery):
+
 2009-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.

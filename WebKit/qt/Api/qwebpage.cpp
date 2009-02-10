@@ -1052,7 +1052,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     case Qt::ImCursorPosition: {
         Frame *frame = d->page->focusController()->focusedFrame();
         if (frame) {
-            Selection selection = frame->selection()->selection();
+            VisibleSelection selection = frame->selection()->selection();
             if (selection.isCaret()) {
                 return QVariant(selection.start().offset());
             }
