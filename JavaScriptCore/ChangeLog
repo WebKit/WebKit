@@ -1,3 +1,21 @@
+2009-02-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        A more sensible register allocation for x86-64.
+
+        When WREC was ported to x86-64 it stuck with the same register allocation as x86.
+        This requires registers to be reordered on entry into WREC generated code, since
+        argument passing is different on x86-64 and x86 (regparm(3)).  This patch switches
+        x86-64 to use a native register allocation, that does not require argument registers
+        to be reordered.
+
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateEnter):
+        (JSC::WREC::Generator::generateReturnSuccess):
+        (JSC::WREC::Generator::generateReturnFailure):
+        * wrec/WRECGenerator.h:
+
 2009-02-05  Adam Roben  <aroben@apple.com>
 
         Build fix

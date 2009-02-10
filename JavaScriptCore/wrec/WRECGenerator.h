@@ -62,13 +62,29 @@ namespace JSC {
         {
         }
 
+#if PLATFORM(X86)
         static const RegisterID input = X86::eax;
-        static const RegisterID length = X86::ecx;
         static const RegisterID index = X86::edx;
-        static const RegisterID character = X86::esi;
+        static const RegisterID length = X86::ecx;
         static const RegisterID output = X86::edi;
+
+        static const RegisterID character = X86::esi;
         static const RegisterID repeatCount = X86::ebx; // How many times the current atom repeats in the current match.
-        
+
+        static const RegisterID returnRegister = X86::eax;
+#endif
+#if PLATFORM(X86_64)
+        static const RegisterID input = X86::edi;
+        static const RegisterID index = X86::esi;
+        static const RegisterID length = X86::edx;
+        static const RegisterID output = X86::ecx;
+
+        static const RegisterID character = X86::eax;
+        static const RegisterID repeatCount = X86::ebx; // How many times the current atom repeats in the current match.
+
+        static const RegisterID returnRegister = X86::eax;
+#endif
+
         void generateEnter();
         void generateSaveIndex();
         void generateIncrementIndex(Jump* failure = 0);

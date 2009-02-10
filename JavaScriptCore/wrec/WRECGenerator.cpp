@@ -40,16 +40,7 @@ namespace JSC { namespace WREC {
 
 void Generator::generateEnter()
 {
-#if PLATFORM(X86_64)
-    // On x86-64 edi and esi are caller preserved, so nothing to do here.
-    // The four arguments have been passed in the registers %rdi, %rsi,
-    // %rdx, %rcx - shuffle these into the expected locations.
-    move(X86::edi, input); // (arg 1) edi -> eax
-    move(X86::ecx, output); // (arg 4) ecx -> edi
-    move(X86::edx, length); // (arg 3) edx -> ecx
-    move(X86::esi, index); // (arg 2) esi -> edx
-
-#else
+#if PLATFORM(X86)
     // On x86 edi & esi are callee preserved registers.
     push(X86::edi);
     push(X86::esi);
@@ -71,13 +62,16 @@ void Generator::generateEnter()
 
 void Generator::generateReturnSuccess()
 {
+    ASSERT(returnRegister != index);
+    ASSERT(returnRegister != output);
+
     // Set return value.
-    pop(X86::eax); // match begin
-    store32(X86::eax, output);
+    pop(returnRegister); // match begin
+    store32(returnRegister, output);
     store32(index, Address(output, 4)); // match end
     
     // Restore callee save registers.
-#if !PLATFORM(X86_64)
+#if PLATFORM(X86)
     pop(X86::esi);
     pop(X86::edi);
 #endif
@@ -114,8 +108,9 @@ void Generator::generateJumpIfNotEndOfInput(Label target)
 void Generator::generateReturnFailure()
 {
     pop();
-    move(Imm32(-1), X86::eax);
-#if !PLATFORM(X86_64)
+    move(Imm32(-1), returnRegister);
+
+#if PLATFORM(X86)
     pop(X86::esi);
     pop(X86::edi);
 #endif
