@@ -791,7 +791,13 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect,
 
 TransformationMatrix GraphicsContext::getCTM() const
 {
-    return platformContext()->canvas()->getTotalMatrix();
+    const SkMatrix& m = platformContext()->canvas()->getTotalMatrix();
+    return TransformationMatrix(SkScalarToDouble(m.getScaleX()),      // a
+                                SkScalarToDouble(m.getSkewY()),       // b
+                                SkScalarToDouble(m.getSkewX()),       // c
+                                SkScalarToDouble(m.getScaleY()),      // d
+                                SkScalarToDouble(m.getTranslateX()),  // e
+                                SkScalarToDouble(m.getTranslateY())); // f
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)

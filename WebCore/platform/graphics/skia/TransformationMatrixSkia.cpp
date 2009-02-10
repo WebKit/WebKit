@@ -30,193 +30,28 @@
 #include "config.h"
 #include "TransformationMatrix.h"
 
-#include "FloatRect.h"
-#include "IntRect.h"
-
 #include "SkiaUtils.h"
 
 namespace WebCore {
 
-TransformationMatrix::TransformationMatrix()
-{
-    m_transform.reset();
-}
-
-TransformationMatrix::TransformationMatrix(double a, double b, double c, double d, double e, double f)
-{
-    setMatrix(a, b, c, d, e, f);
-}
-
-TransformationMatrix::TransformationMatrix(const SkMatrix& matrix)
-    : m_transform(matrix)
-{
-}
-
-void TransformationMatrix::setMatrix(double a, double b, double c, double d, double e, double f)
-{
-    m_transform.reset();
-
-    m_transform.setScaleX(WebCoreDoubleToSkScalar(a));
-    m_transform.setSkewX(WebCoreDoubleToSkScalar(c));
-    m_transform.setTranslateX(WebCoreDoubleToSkScalar(e));
-
-    m_transform.setScaleY(WebCoreDoubleToSkScalar(d));
-    m_transform.setSkewY(WebCoreDoubleToSkScalar(b));
-    m_transform.setTranslateY(WebCoreDoubleToSkScalar(f));
-}
-
-void TransformationMatrix::map(double x, double y, double* x2, double* y2) const
-{
-    SkPoint src, dst;
-    src.set(WebCoreDoubleToSkScalar(x), WebCoreDoubleToSkScalar(y));
-    m_transform.mapPoints(&dst, &src, 1);
-
-    *x2 = SkScalarToDouble(dst.fX);
-    *y2 = SkScalarToDouble(dst.fY);
-}
-
-IntRect TransformationMatrix::mapRect(const IntRect& src) const
-{
-    SkRect dst;
-    m_transform.mapRect(&dst, src);
-    return enclosingIntRect(dst);
-}
-
-FloatRect TransformationMatrix::mapRect(const FloatRect& src) const
-{
-    SkRect dst;
-    m_transform.mapRect(&dst, src);
-    return dst;
-}
-
-bool TransformationMatrix::isIdentity() const
-{
-    return m_transform.isIdentity();
-}
-
-void TransformationMatrix::reset()
-{
-    m_transform.reset();
-}
-
-TransformationMatrix &TransformationMatrix::scale(double sx, double sy)
-{
-    m_transform.preScale(WebCoreDoubleToSkScalar(sx), WebCoreDoubleToSkScalar(sy), 0, 0);
-    return *this;
-}
-
-TransformationMatrix &TransformationMatrix::rotate(double d)
-{
-    m_transform.preRotate(WebCoreDoubleToSkScalar(d), 0, 0);
-    return *this;
-}
-
-TransformationMatrix &TransformationMatrix::translate(double tx, double ty)
-{
-    m_transform.preTranslate(WebCoreDoubleToSkScalar(tx), WebCoreDoubleToSkScalar(ty));
-    return *this;
-}
-
-TransformationMatrix &TransformationMatrix::shear(double sx, double sy)
-{
-    m_transform.preSkew(WebCoreDoubleToSkScalar(sx), WebCoreDoubleToSkScalar(sy), 0, 0);
-    return *this;
-}
-
-double TransformationMatrix::det() const
-{
-    return SkScalarToDouble(m_transform.getScaleX()) * SkScalarToDouble(m_transform.getScaleY()) -
-           SkScalarToDouble(m_transform.getSkewY()) * SkScalarToDouble(m_transform.getSkewX());
-}
-
-TransformationMatrix TransformationMatrix::inverse() const
-{
-    TransformationMatrix inverse;
-    m_transform.invert(&inverse.m_transform);
-    return inverse;
-}
-
 TransformationMatrix::operator SkMatrix() const
 {
-    return m_transform;
-}
+    SkMatrix result;
 
-bool TransformationMatrix::operator==(const TransformationMatrix& m2) const
-{
-    return m_transform == m2.m_transform;
-}
+    result.setScaleX(WebCoreDoubleToSkScalar(a()));
+    result.setSkewX(WebCoreDoubleToSkScalar(c()));
+    result.setTranslateX(WebCoreDoubleToSkScalar(e()));
 
-TransformationMatrix &TransformationMatrix::operator*=(const TransformationMatrix& m2)
-{
-    m_transform.setConcat(m2.m_transform, m_transform);
-    return *this;
-}
+    result.setScaleY(WebCoreDoubleToSkScalar(d()));
+    result.setSkewY(WebCoreDoubleToSkScalar(b()));
+    result.setTranslateY(WebCoreDoubleToSkScalar(f()));
 
-TransformationMatrix TransformationMatrix::operator*(const TransformationMatrix& m2)
-{
-    TransformationMatrix cat;
-    cat.m_transform.setConcat(m2.m_transform, m_transform);
-    return cat;
-}
+    // FIXME: Set perspective properly.
+    result.setPerspX(0);
+    result.setPerspY(0);
+    result.set(SkMatrix::kMPersp2, SK_Scalar1);
 
-double TransformationMatrix::a() const
-{
-    return SkScalarToDouble(m_transform.getScaleX());
-}
-
-void TransformationMatrix::setA(double a)
-{
-    m_transform.setScaleX(WebCoreDoubleToSkScalar(a));
-}
-
-double TransformationMatrix::b() const
-{
-    return SkScalarToDouble(m_transform.getSkewY());
-}
-
-void TransformationMatrix::setB(double b)
-{
-    m_transform.setSkewY(WebCoreDoubleToSkScalar(b));
-}
-
-double TransformationMatrix::c() const
-{
-    return SkScalarToDouble(m_transform.getSkewX());
-}
-
-void TransformationMatrix::setC(double c)
-{
-    m_transform.setSkewX(WebCoreDoubleToSkScalar(c));
-}
-
-double TransformationMatrix::d() const
-{
-    return SkScalarToDouble(m_transform.getScaleY());
-}
-
-void TransformationMatrix::setD(double d)
-{
-    m_transform.setScaleY(WebCoreDoubleToSkScalar(d));
-}
-
-double TransformationMatrix::e() const
-{
-    return SkScalarToDouble(m_transform.getTranslateX());
-}
-
-void TransformationMatrix::setE(double e)
-{
-    m_transform.setTranslateX(WebCoreDoubleToSkScalar(e));
-}
-
-double TransformationMatrix::f() const
-{
-    return SkScalarToDouble(m_transform.getTranslateY());
-}
-
-void TransformationMatrix::setF(double f)
-{
-    m_transform.setTranslateY(WebCoreDoubleToSkScalar(f));
+    return result;
 }
 
 } // namespace WebCore
