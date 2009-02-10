@@ -1,3 +1,13 @@
+2009-02-09  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Fix Bug 23851: Add my blog's webkit category to Planet
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23851>
+
+        Reviewed by Mark Rowe.
+
+        * config.ini: Add Gustavo Noronha's blog webkit category.
+
 2009-02-10  Adam Roben  <aroben@apple.com>
 
         Add Michael(tm) Smith's blog to Planet WebKit
