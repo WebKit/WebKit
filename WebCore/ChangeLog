@@ -1,3 +1,13 @@
+2009-02-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Sam Weinig.
+
+        Remove the SVG checks from FloatPoint3D as it is used
+        by TransformationMatrix.
+
+        * platform/graphics/FloatPoint3D.cpp:
+        * platform/graphics/FloatPoint3D.h:
+
 2009-02-10  David Hyatt  <hyatt@apple.com>
 
         Remove the m_baseline member variable from all line boxes, since it can easily be computed when needed and did not need to be cached.

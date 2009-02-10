@@ -22,8 +22,6 @@
 #ifndef FloatPoint3D_h
 #define FloatPoint3D_h
 
-#if ENABLE(SVG)
-
 namespace WebCore {
 
 class FloatPoint;
@@ -52,7 +50,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SVG)
 
 #endif // FloatPoint3D_h
