@@ -215,7 +215,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         if (Node* oldParent = child->parentNode())
             oldParent->removeChild(child.get(), ec);
         if (ec)
-            return 0;
+            return false;
 
         // Due to arbitrary code running in response to a DOM mutation event it's
         // possible that "prev" is no longer a child of "this".
