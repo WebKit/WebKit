@@ -1,3 +1,14 @@
+2009-02-10  Karsten Heimrich  <kheimric@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fixes missing navigation/url update while clicking on anchor inside
+        webpage.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidChangeLocationWithinPage):
+        update and emit in case we navigate inside a webpage
+
 2009-02-10  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix the Qt build as class Selection is now VisibleSelection.
