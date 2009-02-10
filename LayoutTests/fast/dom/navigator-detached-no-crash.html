@@ -1,0 +1,72 @@
+<html>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.waitUntilDone();
+}
+
+function log(msg) {
+  document.getElementById('result').innerHTML += msg + '<br>';
+}
+
+function gc()
+{
+    if (window.GCController) {
+        GCController.collect();
+    } else {
+        for (var i = 0; i < 10000; i++) {
+            var s = new String("abc");
+        }
+    }
+}
+
+var old_nav;
+
+function test() {
+  // remember the old navigator
+  old_nav = window.frames[0].navigator;
+  // detach the old navigator
+  var p = document.getElementById("subframe");
+  p.parentNode.removeChild(p);
+  if (window.GCController)
+    window.GCController.collect();
+
+  // Check once immediately
+  check_navigator();
+
+  gc();
+
+  // Check one more time later, when the frame is likely to be destroyed.
+  setTimeout(check_navigator_and_done, 200);
+}
+
+function check_navigator_and_done() {
+  check_navigator();
+  if (window.layoutTestController)
+    layoutTestController.notifyDone();
+}
+
+function check_navigator() {
+  for (p in old_nav) {
+    if (typeof old_nav[p] == 'function') {
+      var v = old_nav[p]();
+      // no crash, it is ok
+      log("navigator."+p+"() is OK");
+    } else {
+      var v = old_nav[p];
+      // no crash, it is ok.
+      log("navigator."+p+" is OK");
+    }
+  }
+}
+
+</script>
+<body onload="test()">
+This tests that the navigator object of a deleted frame is disconnected
+properly. Accessing fields or methods shouldn't crash the browser.
+<br>
+<iframe id="subframe" src="about:blank"></iframe>
+<button onclick="check_navigator()">Check Navigator</button><br>
+<div id="result"></div>
+</body>
+</html>

@@ -1,3 +1,15 @@
+2009-02-10  Feng Qian <feng@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix crashes when accessing navigator object of a deleted frame.
+        https://bugs.webkit.org/show_bug.cgi?id=23626
+        A layout test is added: fast/dom/navigator-detached-no-crash.html
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::cookieEnabled):
+        (WebCore::Navigator::javaEnabled):
+
 2009-02-10  Sverrir Berg  <sverrir@chromium.org>
 
         Reviewed by Eric Seidel.
