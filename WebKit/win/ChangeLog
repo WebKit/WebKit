@@ -1,3 +1,27 @@
+2009-02-10  Adam Roben  <aroben@apple.com>
+
+        Fix recursive WebView destruction when running DumpRenderTree
+
+        DumpRenderTree would call DestroyWindow on a WebView's host window,
+        which would send a WM_DESTROY message to the WebView's window. Inside
+        the WebView's WndProc, we would hold a ref to the WebView, then call
+        close() and revokeDragDrop(), which would release all remaining
+        references to the WebView other than the ref we held in the WndProc.
+        When the WndProc exited, the final ref to the WebView would be
+        released, invoking WebView's destructor. At this point,
+        IsWindow(m_viewWindow) would return true, since we were still in the
+        process of handling WM_DESTROY, so we would call DestroyWindow on the
+        WebView's window again, re-entering the WndProc and re-reffing the
+        WebView, leading to recursive destruction.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebView.cpp:
+        (WebView::~WebView): Don't call DestroyWindow if our window is already
+        being destroyed.
+        (WebViewWndProc): Only hold an extra ref to the WebView when we're not
+        being destroyed.
+
 2009-02-06  Adam Roben  <aroben@apple.com>
 
         Build fix

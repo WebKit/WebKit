@@ -328,7 +328,7 @@ WebView::~WebView()
     // <rdar://4958382> m_viewWindow will be destroyed when m_hostWindow is destroyed, but if
     // setHostWindow was never called we will leak our HWND. If we still have a valid HWND at
     // this point, we should just destroy it ourselves.
-    if (::IsWindow(m_viewWindow))
+    if (!isBeingDestroyed() && ::IsWindow(m_viewWindow))
         ::DestroyWindow(m_viewWindow);
 
     // the tooltip window needs to be explicitly destroyed since it isn't a WS_CHILD
@@ -1682,11 +1682,13 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 {
     LRESULT lResult = 0;
     LONG_PTR longPtr = GetWindowLongPtr(hWnd, 0);
-    COMPtr<WebView> webView = reinterpret_cast<WebView*>(longPtr); // hold a ref, since the WebView could go away in an event handler.
+    WebView* webView = reinterpret_cast<WebView*>(longPtr);
     WebFrame* mainFrameImpl = webView ? webView->topLevelFrame() : 0;
     if (!mainFrameImpl || webView->isBeingDestroyed())
         return DefWindowProc(hWnd, message, wParam, lParam);
 
+    // hold a ref, since the WebView could go away in an event handler.
+    COMPtr<WebView> protector(webView);
     ASSERT(webView);
 
     // Windows Media Player has a modal message loop that will deliver messages
@@ -1778,7 +1780,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             COMPtr<IWebUIDelegatePrivate> uiDelegatePrivate;
             if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
-                uiDelegatePrivate->webViewReceivedFocus(webView.get());
+                uiDelegatePrivate->webViewReceivedFocus(webView);
 
             FocusController* focusController = webView->page()->focusController();
             if (Frame* frame = focusController->focusedFrame()) {
@@ -1796,7 +1798,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             HWND newFocusWnd = reinterpret_cast<HWND>(wParam);
             if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
-                uiDelegatePrivate->webViewLostFocus(webView.get(), (OLE_HANDLE)(ULONG64)newFocusWnd);
+                uiDelegatePrivate->webViewLostFocus(webView, (OLE_HANDLE)(ULONG64)newFocusWnd);
 
             FocusController* focusController = webView->page()->focusController();
             Frame* frame = focusController->focusedOrMainFrame();
@@ -1872,7 +1874,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             }
             if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate &&
                 SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate &&
-                SUCCEEDED(uiDelegatePrivate->webViewGetDlgCode(webView.get(), keyCode, &dlgCode)))
+                SUCCEEDED(uiDelegatePrivate->webViewGetDlgCode(webView, keyCode, &dlgCode)))
                 return dlgCode;
             handled = false;
             break;
