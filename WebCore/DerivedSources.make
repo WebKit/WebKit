@@ -67,6 +67,8 @@ DOM_CLASSES = \
     CanvasPattern \
     CanvasRenderingContext2D \
     CharacterData \
+    ClientRect \
+    ClientRectList \
     Clipboard \
     Comment \
     Console \

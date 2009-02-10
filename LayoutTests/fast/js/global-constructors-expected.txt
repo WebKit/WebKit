@@ -23,6 +23,8 @@ PASS CSSVariablesDeclaration.toString() is '[object CSSVariablesDeclarationConst
 PASS CSSVariablesRule.toString() is '[object CSSVariablesRuleConstructor]'
 PASS CanvasRenderingContext2D.toString() is '[object CanvasRenderingContext2DConstructor]'
 PASS CharacterData.toString() is '[object CharacterDataConstructor]'
+PASS ClientRect.toString() is '[object ClientRectConstructor]'
+PASS ClientRectList.toString() is '[object ClientRectListConstructor]'
 PASS Clipboard.toString() is '[object ClipboardConstructor]'
 PASS Comment.toString() is '[object CommentConstructor]'
 PASS Counter.toString() is '[object CounterConstructor]'

@@ -229,6 +229,8 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSCanvasPattern.cpp
         DerivedSources/WebCore/JSCanvasRenderingContext2D.cpp
         DerivedSources/WebCore/JSCharacterData.cpp
+        DerivedSources/WebCore/JSClientRect.cpp
+        DerivedSources/WebCore/JSClientRectList.cpp
         DerivedSources/WebCore/JSClipboard.cpp
         DerivedSources/WebCore/JSComment.cpp
         DerivedSources/WebCore/JSConsole.cpp
@@ -392,6 +394,8 @@ This file contains the list of files needed to build WebCore.
         dom/ChildNodeList.cpp
         dom/ClassNames.cpp
         dom/ClassNodeList.cpp
+        dom/ClientRect.cpp
+        dom/ClientRectList.cpp
         dom/Clipboard.cpp
         dom/ClipboardEvent.cpp
         dom/Comment.cpp

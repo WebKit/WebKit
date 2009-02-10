@@ -1,3 +1,53 @@
+2009-02-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=15897
+        Please implement getBoundingClientRect and getClientRects
+        <rdar://problem/6139669>
+
+        Cursory implementation of Element.getBoundingClientRect and
+        Element.getClientRects. Adds necessary infrastructure classes
+        ClientRect and ClientRectList.
+
+        Tests: fast/dom/getBoundingClientRect.html
+               fast/dom/getClientRects.html
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * dom/ClientRect.cpp: Added.
+        (WebCore::ClientRect::ClientRect):
+        * dom/ClientRect.h: Added.
+        (WebCore::ClientRect::create):
+        (WebCore::ClientRect::top):
+        (WebCore::ClientRect::right):
+        (WebCore::ClientRect::bottom):
+        (WebCore::ClientRect::left):
+        (WebCore::ClientRect::width):
+        (WebCore::ClientRect::height):
+        * dom/ClientRect.idl: Added.
+        * dom/ClientRectList.cpp: Added.
+        (WebCore::ClientRectList::ClientRectList):
+        (WebCore::ClientRectList::~ClientRectList):
+        (WebCore::ClientRectList::length):
+        (WebCore::ClientRectList::item):
+        * dom/ClientRectList.h: Added.
+        (WebCore::ClientRectList::create):
+        * dom/ClientRectList.idl: Added.
+        * dom/Element.cpp:
+        (WebCore::Element::getClientRects):
+        (WebCore::Element::getBoundingClientRect):
+        * dom/Element.h:
+        * dom/Element.idl:
+        * page/DOMWindow.idl:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::absoluteQuads):
+
 2009-02-10  David Hyatt  <hyatt@apple.com>
 
         Get rid of capsLockStateMayHaveChanged on RenderObject.  It is only implemented by one class (text fields),

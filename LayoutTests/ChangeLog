@@ -1,3 +1,20 @@
+2009-02-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=15897
+        Please implement getBoundingClientRect and getClientRects
+        <rdar://problem/6139669>
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/getBoundingClientRect-expected.txt: Added.
+        * fast/dom/getBoundingClientRect.html: Added.
+        * fast/dom/getClientRects-expected.txt: Added.
+        * fast/dom/getClientRects.html: Added.
+        * fast/dom/resources/domListEnumeration.js:
+        * fast/js/global-constructors-expected.txt:
+
 2009-02-10  Feng Qian <feng@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

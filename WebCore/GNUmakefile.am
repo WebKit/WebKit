@@ -102,6 +102,8 @@ IDL_BINDINGS += \
 	WebCore/dom/Attr.idl \
 	WebCore/dom/CDATASection.idl \
 	WebCore/dom/CharacterData.idl \
+	WebCore/dom/ClientRect.idl \
+	WebCore/dom/ClientRectList.idl \
 	WebCore/dom/Clipboard.idl \
 	WebCore/dom/Comment.idl \
 	WebCore/dom/DOMCoreException.idl \
@@ -547,6 +549,10 @@ webcore_sources += \
 	WebCore/dom/ClassNames.h \
 	WebCore/dom/ClassNodeList.cpp \
 	WebCore/dom/ClassNodeList.h \
+	WebCore/dom/ClientRect.cpp \
+	WebCore/dom/ClientRect.h \
+	WebCore/dom/ClientRectList.cpp \
+	WebCore/dom/ClientRectList.h \
 	WebCore/dom/Clipboard.cpp \
 	WebCore/dom/Clipboard.h \
 	WebCore/dom/ClipboardAccessPolicy.h \

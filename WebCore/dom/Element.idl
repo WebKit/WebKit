@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -109,13 +109,19 @@ module core {
         NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
 
-        // ElementTraversal API
 #if !defined(LANGUAGE_COM)
+        // ElementTraversal API
         readonly attribute Element firstElementChild;
         readonly attribute Element lastElementChild;
         readonly attribute Element previousElementSibling;
         readonly attribute Element nextElementSibling;
         readonly attribute unsigned long childElementCount;
+#endif
+
+#if defined(LANGUAGE_JAVASCRIPT)
+        // CSSOM View Module API
+        ClientRectList getClientRects();
+        ClientRect getBoundingClientRect();
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)

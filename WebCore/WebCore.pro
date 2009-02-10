@@ -265,6 +265,8 @@ IDL_BINDINGS += \
     css/WebKitCSSTransformValue.idl \
     dom/Attr.idl \
     dom/CharacterData.idl \
+    dom/ClientRect.idl \
+    dom/ClientRectList.idl \
     dom/Clipboard.idl \
     dom/CDATASection.idl \
     dom/Comment.idl \
@@ -563,6 +565,8 @@ SOURCES += \
     dom/ChildNodeList.cpp \
     dom/ClassNames.cpp \
     dom/ClassNodeList.cpp \
+    dom/ClientRect.cpp \
+    dom/ClientRectList.cpp \
     dom/Clipboard.cpp \
     dom/ClipboardEvent.cpp \
     dom/Comment.cpp \

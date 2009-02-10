@@ -1,0 +1,217 @@
+Client bounding rect for #1
+testRect.top 42
+testRect.left 8
+testRect.width 300
+testRect.height 100
+testRect.bottom 142
+testRect.right 308
+
+PASS testRect.top is 42
+PASS testRect.left is 8
+PASS testRect.width is 300
+PASS testRect.height is 100
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #2
+testRect.top 192
+testRect.left 8
+testRect.width 320
+testRect.height 120
+testRect.bottom 312
+testRect.right 328
+
+PASS testRect.top is 192
+PASS testRect.left is 8
+PASS testRect.width is 320
+PASS testRect.height is 120
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #3
+testRect.top 362
+testRect.left 18
+testRect.width 300
+testRect.height 100
+testRect.bottom 462
+testRect.right 318
+
+PASS testRect.top is 362
+PASS testRect.left is 18
+PASS testRect.width is 300
+PASS testRect.height is 100
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #4
+testRect.top 491
+testRect.left 37
+testRect.width 142
+testRect.height 142
+testRect.bottom 633
+testRect.right 179
+
+PASS testRect.top is 491
+PASS testRect.left is 37
+PASS testRect.width is 142
+PASS testRect.height is 142
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #5
+testRect.top 662
+testRect.left 8
+testRect.width 300
+testRect.height 234
+testRect.bottom 896
+testRect.right 308
+
+PASS testRect.top is 662
+PASS testRect.left is 8
+PASS testRect.width is 300
+PASS testRect.height is 234
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #6
+Known failure. Skipping.
+
+Client bounding rect for #7
+testRect.top 1230
+testRect.left 8
+testRect.width 299
+testRect.height 180
+testRect.bottom 1410
+testRect.right 307
+
+PASS testRect.top is 1230
+PASS testRect.left is 8
+PASS testRect.width is 299
+PASS testRect.height is 180
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #8
+testRect.top 1460
+testRect.left 8
+testRect.width 300
+testRect.height 46
+testRect.bottom 1506
+testRect.right 308
+
+PASS testRect.top is 1460
+PASS testRect.left is 8
+PASS testRect.width is 300
+PASS testRect.height is 46
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #9
+testRect.top 1556
+testRect.left 8
+testRect.width 300
+testRect.height 64
+testRect.bottom 1620
+testRect.right 308
+
+PASS testRect.top is 1556
+PASS testRect.left is 8
+PASS testRect.width is 300
+PASS testRect.height is 64
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #10
+testRect.top 1672
+testRect.left 8
+testRect.width 300
+testRect.height 20
+testRect.bottom 1692
+testRect.right 308
+
+PASS testRect.top is 1672
+PASS testRect.left is 8
+PASS testRect.width is 300
+PASS testRect.height is 20
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #11
+testRect.top 1768
+testRect.left 10
+testRect.width 147
+testRect.height 20
+testRect.bottom 1788
+testRect.right 157
+
+PASS testRect.top is 1768
+PASS testRect.left is 10
+PASS testRect.width is 147
+PASS testRect.height is 20
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #12
+testRect.top 1862
+testRect.left 8
+testRect.width 100
+testRect.height 100
+testRect.bottom 1962
+testRect.right 108
+
+PASS testRect.top is 1862
+PASS testRect.left is 8
+PASS testRect.width is 100
+PASS testRect.height is 100
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #13
+testRect.top 2098
+testRect.left 8
+testRect.width 180
+testRect.height 18
+testRect.bottom 2116
+testRect.right 188
+
+PASS testRect.top is 2098
+PASS testRect.left is 8
+PASS testRect.width is 180
+PASS testRect.height is 18
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #14
+testRect.top 2166
+testRect.left 8
+testRect.width 300
+testRect.height 236
+testRect.bottom 2402
+testRect.right 308
+
+PASS testRect.top is 2166
+PASS testRect.left is 8
+FAIL testRect.width should be 200. Was 300.
+PASS testRect.height is 236
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+Client bounding rect for #15
+testRect.top 0
+testRect.left 0
+testRect.width 0
+testRect.height 0
+testRect.bottom 0
+testRect.right 0
+
+FAIL testRect.top should be 2452. Was 0.
+FAIL testRect.left should be 8. Was 0.
+PASS testRect.width is 0
+PASS testRect.height is 0
+PASS testRect.bottom is testRect.top + testRect.height
+PASS testRect.right is testRect.left + testRect.width
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

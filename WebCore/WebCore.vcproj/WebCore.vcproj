@@ -616,6 +616,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSClientRect.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSClientRectList.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCSSVariablesRule.h"
 				>
 			</File>
@@ -11063,6 +11071,38 @@
 			</File>
 			<File
 				RelativePath="..\dom\ClassNodeList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ClientRect.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\ClientRect.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ClientRectList.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\ClientRectList.h"
 				>
 			</File>
 			<File

@@ -379,6 +379,9 @@ module window {
         attribute MimeTypeConstructor MimeType;
         attribute MimeTypeArrayConstructor MimeTypeArray;
 
+        attribute ClientRectConstructor ClientRect;
+        attribute ClientRectListConstructor ClientRectList;
+
 #if ENABLE_DOM_STORAGE
         attribute StorageConstructor Storage;
         attribute StorageEventConstructor StorageEvent;

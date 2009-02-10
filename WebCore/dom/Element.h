@@ -36,6 +36,8 @@ class Attribute;
 class CSSStyleDeclaration;
 class ElementRareData;
 class IntSize;
+class ClientRect;
+class ClientRectList;
 
 class Element : public ContainerNode {
 public:
@@ -81,6 +83,9 @@ public:
     void setScrollTop(int);
     int scrollWidth();
     int scrollHeight();
+
+    PassRefPtr<ClientRectList> getClientRects() const;
+    PassRefPtr<ClientRect> getBoundingClientRect() const;
 
     void removeAttribute(const String& name, ExceptionCode&);
     void removeAttributeNS(const String& namespaceURI, const String& localName, ExceptionCode&);
