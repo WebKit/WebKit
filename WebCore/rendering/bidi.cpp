@@ -765,8 +765,6 @@ static inline bool isCollapsibleSpace(UChar character, RenderText* renderer)
 void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, int& repaintBottom)
 {
     bool useRepaintBounds = false;
-
-    invalidateVerticalPosition();
     
     m_overflowHeight = 0;
         
@@ -797,7 +795,6 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         RenderObject* o = bidiFirst(this, 0, false);
         Vector<FloatWithRect> floats;
         while (o) {
-            o->invalidateVerticalPosition();
             if (o->isReplaced() || o->isFloating() || o->isPositioned()) {
                 RenderBox* box = toRenderBox(o);
                 
@@ -822,6 +819,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 if (fullLayout || o->selfNeedsLayout())
                     o->dirtyLineBoxes(fullLayout);
                 o->setNeedsLayout(false);
+                if (!o->isText())
+                    toRenderInline(o)->invalidateVerticalPosition(); // FIXME: Should do better here and not always invalidate everything.
             }
             o = bidiNext(this, o, 0, false, &endOfInline);
         }

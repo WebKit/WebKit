@@ -42,6 +42,7 @@ RenderInline::RenderInline(Node* node)
     : RenderBoxModelObject(node)
     , m_continuation(0)
     , m_lineHeight(-1)
+    , m_verticalPosition(PositionUndefined)
 {
     setChildrenInline(true);
 }
@@ -770,6 +771,19 @@ int RenderInline::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
         m_lineHeight = style()->computedLineHeight();
     
     return m_lineHeight;
+}
+
+int RenderInline::verticalPositionFromCache(bool firstLine) const
+{
+    if (firstLine) // We're only really a first-line style if the document actually uses first-line rules.
+        firstLine = document()->usesFirstLineRules();
+    int vpos = m_verticalPosition;
+    if (m_verticalPosition == PositionUndefined || firstLine) {
+        vpos = verticalPosition(firstLine);
+        if (!firstLine)
+            m_verticalPosition = vpos;
+    }
+    return vpos;
 }
 
 IntSize RenderInline::relativePositionedInlineOffset(const RenderBox* child) const

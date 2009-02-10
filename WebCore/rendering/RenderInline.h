@@ -122,6 +122,9 @@ public:
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
+    int verticalPositionFromCache(bool firstLine) const;
+    void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
+
 #if ENABLE(DASHBOARD_SUPPORT)
     virtual void addDashboardRegions(Vector<DashboardRegionValue>&);
 #endif
@@ -144,6 +147,7 @@ private:
     RenderBoxModelObject* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the
                                           // <b> will just have an inline as its continuation.
     mutable int m_lineHeight;
+    mutable int m_verticalPosition;
 };
 
 inline RenderInline* toRenderInline(RenderObject* o)

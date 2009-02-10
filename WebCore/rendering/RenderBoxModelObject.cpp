@@ -26,6 +26,7 @@
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "RenderBlock.h"
+#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 
@@ -498,6 +499,50 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* bgL
     destRect.intersect(IntRect(tx, ty, w, h));
     phase = IntPoint(sx, sy);
     tileSize = IntSize(scaledImageWidth, scaledImageHeight);
+}
+
+int RenderBoxModelObject::verticalPosition(bool firstLine) const
+{
+    // This method determines the vertical position for inline elements.
+    ASSERT(isInline());
+    if (!isInline())
+        return 0;
+
+    int vpos = 0;
+    EVerticalAlign va = style()->verticalAlign();
+    if (va == TOP)
+        vpos = PositionTop;
+    else if (va == BOTTOM)
+        vpos = PositionBottom;
+    else {
+        bool checkParent = parent()->isRenderInline() && parent()->style()->verticalAlign() != TOP && parent()->style()->verticalAlign() != BOTTOM;
+        vpos = checkParent ? toRenderInline(parent())->verticalPositionFromCache(firstLine) : 0;
+        // don't allow elements nested inside text-top to have a different valignment.
+        if (va == BASELINE)
+            return vpos;
+
+        const Font& f = parent()->style(firstLine)->font();
+        int fontsize = f.pixelSize();
+
+        if (va == SUB)
+            vpos += fontsize / 5 + 1;
+        else if (va == SUPER)
+            vpos -= fontsize / 3 + 1;
+        else if (va == TEXT_TOP)
+            vpos += baselinePosition(firstLine) - f.ascent();
+        else if (va == MIDDLE)
+            vpos += -static_cast<int>(f.xHeight() / 2) - lineHeight(firstLine) / 2 + baselinePosition(firstLine);
+        else if (va == TEXT_BOTTOM) {
+            vpos += f.descent();
+            if (!isReplaced())
+                vpos -= style(firstLine)->font().descent();
+        } else if (va == BASELINE_MIDDLE)
+            vpos += -lineHeight(firstLine) / 2 + baselinePosition(firstLine);
+        else if (va == LENGTH)
+            vpos -= style()->verticalAlignLength().calcValue(lineHeight(firstLine));
+    }
+
+    return vpos;
 }
 
 } // namespace WebCore

@@ -88,11 +88,6 @@ enum HitTestAction {
     HitTestForeground
 };
 
-// Values for verticalPosition.
-const int PositionTop = -0x7fffffff;
-const int PositionBottom = 0x7fffffff;
-const int PositionUndefined = 0x80000000;
-
 #if ENABLE(DASHBOARD_SUPPORT)
 struct DashboardRegionValue {
     bool operator==(const DashboardRegionValue& o) const
@@ -423,8 +418,6 @@ public:
     // for discussion of lineHeight see CSS2 spec
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
     // for the vertical-align property of inline elements
-    // the difference between this objects baseline position and the lines baseline position.
-    virtual int verticalPositionHint(bool firstLine) const;
     // the offset of baseline from the top of the object.
     virtual int baselinePosition(bool firstLine, bool isRootLineBox = false) const;
 
@@ -744,8 +737,6 @@ public:
     
     void remove() { if (parent()) parent()->removeChild(this); }
 
-    void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
-
     virtual void capsLockStateMayHaveChanged() { }
 
     AnimationController* animation() const;
@@ -774,8 +765,6 @@ protected:
     void addPDFURLRect(GraphicsContext*, const IntRect&);
 
     virtual IntRect viewRect() const;
-
-    int getVerticalPosition(bool firstLine) const;
 
     void adjustRectForOutlineAndShadow(IntRect&) const;
 
@@ -828,7 +817,6 @@ private:
     bool m_hasAXObject;
     bool m_setNeedsLayoutForbidden : 1;
 #endif
-    mutable int m_verticalPosition;
 
     // 32 bits have been used here. THERE ARE NO FREE BITS AVAILABLE.
     bool m_needsLayout               : 1;

@@ -1,3 +1,29 @@
+2009-02-10  David Hyatt  <hyatt@apple.com>
+
+        Shrink the size of all RenderObjects (except for RenderInlines) by 4 bytes.  This patch moves the cached vertical position member to RenderInlines,
+        since they were the only objects being queried across multiple lines.
+        
+        Reviewed by Sam Weinig
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::verticalPositionForBox):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::verticalPosition):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        (WebCore::RenderInline::verticalPositionFromCache):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::invalidateVerticalPosition):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        * rendering/RenderText.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2009-02-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Mark Rowe.

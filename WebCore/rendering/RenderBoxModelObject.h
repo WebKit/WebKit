@@ -25,6 +25,11 @@
 
 namespace WebCore {
 
+// Values for vertical alignment.
+const int PositionTop = -0x7fffffff;
+const int PositionBottom = 0x7fffffff;
+const int PositionUndefined = 0x80000000;
+
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
 
@@ -79,6 +84,9 @@ public:
 
     virtual void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight,
                                         int tx, int ty, int width, int height, InlineFlowBox* = 0, CompositeOperator = CompositeSourceOver);
+
+    // The difference between this inline's baseline position and the line's baseline position.
+    int verticalPosition(bool firstLine) const;
 
 protected:
     void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
