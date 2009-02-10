@@ -74,6 +74,19 @@ void RootInlineBox::detachEllipsisBox(RenderArena* arena)
     }
 }
 
+int RootInlineBox::height() const
+{
+    const Font& font = m_object->style(m_firstLine)->font();
+    int result = font.height();
+    bool strictMode = m_object->document()->inStrictMode();
+    if (!strictMode && !hasTextChildren() && !boxModelObject()->hasHorizontalBordersOrPadding()) {
+        int bottom = bottomOverflow();
+        if (yPos() + result > bottom)
+            result = bottom - yPos();
+    }
+    return result;
+}
+
 RenderLineBoxList* RootInlineBox::rendererLineBoxes() const
 {
     return block()->lineBoxes();
@@ -104,8 +117,8 @@ void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, in
 {
     // Create an ellipsis box.
     EllipsisBox* ellipsisBox = new (m_object->renderArena()) EllipsisBox(m_object, ellipsisStr, this,
-                                                              ellipsisWidth - (markupBox ? markupBox->width() : 0),
-                                                              yPos(), height(), baseline(), !prevRootBox(),
+                                                              ellipsisWidth - (markupBox ? markupBox->width() : 0), height(),
+                                                              yPos(), baseline(), !prevRootBox(),
                                                               markupBox);
     
     if (!gEllipsisBoxMap)
@@ -409,7 +422,8 @@ EllipsisBox* RootInlineBox::ellipsisBox() const
 void RootInlineBox::setVerticalOverflowPositions(int top, int bottom) 
 { 
     if (!m_overflow) {
-        if (top == m_y && bottom == m_y + m_height)
+        const Font& font = m_object->style(m_firstLine)->font();
+        if (top == m_y && bottom == m_y + font.height())
             return;
         m_overflow = new (m_object->renderArena()) Overflow(this);
     }

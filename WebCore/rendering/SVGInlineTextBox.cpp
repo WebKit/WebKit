@@ -44,6 +44,7 @@ namespace WebCore {
 
 SVGInlineTextBox::SVGInlineTextBox(RenderObject* obj)
     : InlineTextBox(obj)
+    , m_height(0)
 {
 }
 

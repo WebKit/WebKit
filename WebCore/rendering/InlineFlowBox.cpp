@@ -51,6 +51,21 @@ InlineFlowBox::~InlineFlowBox()
 
 #endif
 
+int InlineFlowBox::height() const
+{
+    const Font& font = m_object->style(m_firstLine)->font();
+    int result = font.height();
+    bool strictMode = m_object->document()->inStrictMode();
+    RenderBoxModelObject* box = boxModelObject();
+    result += box->borderTop() + box->paddingTop() + box->borderBottom() + box->paddingBottom();
+    if (!strictMode && !hasTextChildren() && !box->hasHorizontalBordersOrPadding()) {
+        int bottomOverflow = root()->bottomOverflow();
+        if (yPos() + result > bottomOverflow)
+            result = bottomOverflow - yPos();
+    }
+    return result;
+}
+
 int InlineFlowBox::marginLeft()
 {
     if (!includeLeftEdge())
@@ -400,13 +415,14 @@ void InlineFlowBox::adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
         if (curr->object()->isPositioned())
             continue; // Positioned placeholders don't affect calculations.
         if (curr->yPos() == PositionTop || curr->yPos() == PositionBottom) {
+            int lineHeight = curr->object()->lineHeight(m_firstLine);
             if (curr->yPos() == PositionTop) {
-                if (maxAscent + maxDescent < curr->height())
-                    maxDescent = curr->height() - maxAscent;
+                if (maxAscent + maxDescent < lineHeight)
+                    maxDescent = lineHeight - maxAscent;
             }
             else {
-                if (maxAscent + maxDescent < curr->height())
-                    maxAscent = curr->height() - maxDescent;
+                if (maxAscent + maxDescent < lineHeight)
+                    maxAscent = lineHeight - maxDescent;
             }
 
             if (maxAscent + maxDescent >= max(maxPositionTop, maxPositionBottom))
@@ -423,7 +439,7 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
 {
     if (isRootInlineBox()) {
         // Examine our root box.
-        setHeight(object()->lineHeight(m_firstLine, true));
+        int lineHeight = object()->lineHeight(m_firstLine, true);
         bool isTableCell = object()->isTableCell();
         if (isTableCell) {
             RenderTableCell* tableCell = static_cast<RenderTableCell*>(object());
@@ -433,7 +449,7 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
             setBaseline(object()->baselinePosition(m_firstLine, true));
         if (hasTextChildren() || strictMode) {
             int ascent = baseline();
-            int descent = height() - ascent;
+            int descent = lineHeight - ascent;
             if (maxAscent < ascent)
                 maxAscent = ascent;
             if (maxDescent < descent)
@@ -447,20 +463,20 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
         
         bool isInlineFlow = curr->isInlineFlowBox();
 
-        curr->setHeight(curr->object()->lineHeight(m_firstLine));
+        int lineHeight = curr->object()->lineHeight(m_firstLine);
         curr->setBaseline(curr->object()->baselinePosition(m_firstLine));
         curr->setYPos(curr->object()->verticalPositionHint(m_firstLine));
         if (curr->yPos() == PositionTop) {
-            if (maxPositionTop < curr->height())
-                maxPositionTop = curr->height();
+            if (maxPositionTop < lineHeight)
+                maxPositionTop = lineHeight;
         }
         else if (curr->yPos() == PositionBottom) {
-            if (maxPositionBottom < curr->height())
-                maxPositionBottom = curr->height();
+            if (maxPositionBottom < lineHeight)
+                maxPositionBottom = lineHeight;
         }
         else if ((!isInlineFlow || static_cast<InlineFlowBox*>(curr)->hasTextChildren()) || curr->boxModelObject()->hasHorizontalBordersOrPadding() || strictMode) {
             int ascent = curr->baseline() - curr->yPos();
-            int descent = curr->height() - ascent;
+            int descent = lineHeight - ascent;
             if (maxAscent < ascent)
                 maxAscent = ascent;
             if (maxDescent < descent)
@@ -492,7 +508,7 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
         if (curr->yPos() == PositionTop)
             curr->setYPos(y);
         else if (curr->yPos() == PositionBottom)
-            curr->setYPos(y + maxHeight - curr->height());
+            curr->setYPos(y + maxHeight - curr->object()->lineHeight(m_firstLine));
         else {
             if ((isInlineFlow && !static_cast<InlineFlowBox*>(curr)->hasTextChildren()) && !curr->boxModelObject()->hasHorizontalBordersOrPadding() && !strictMode)
                 childAffectsTopBottomPos = false;
@@ -500,7 +516,6 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
         }
         
         int newY = curr->yPos();
-        int newHeight = curr->height();
         int newBaseline = curr->baseline();
         int overflowTop = 0;
         int overflowBottom = 0;
@@ -508,7 +523,6 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
             const Font& font = curr->object()->style(m_firstLine)->font();
             newBaseline = font.ascent();
             newY += curr->baseline() - newBaseline;
-            newHeight = newBaseline + font.descent();
             for (ShadowData* shadow = curr->object()->style()->textShadow(); shadow; shadow = shadow->next) {
                 overflowTop = min(overflowTop, shadow->y - shadow->blur);
                 overflowBottom = max(overflowBottom, shadow->y + shadow->blur);
@@ -531,34 +545,29 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
             }
 
             if (curr->isInlineFlowBox()) {
-                newHeight += curr->boxModelObject()->borderTop() + curr->boxModelObject()->paddingTop() +
-                            curr->boxModelObject()->borderBottom() + curr->boxModelObject()->paddingBottom();
                 newY -= curr->boxModelObject()->borderTop() + curr->boxModelObject()->paddingTop();
                 newBaseline += curr->boxModelObject()->borderTop() + curr->boxModelObject()->paddingTop();
             }
         } else if (!curr->object()->isBR()) {
             RenderBox* box = toRenderBox(curr->object());
             newY += box->marginTop();
-            newHeight = curr->height() - (box->marginTop() + box->marginBottom());
             overflowTop = box->overflowTop(false);
-            overflowBottom = box->overflowHeight(false) - newHeight;
+            overflowBottom = box->overflowHeight(false) - box->height();
         }
 
         curr->setYPos(newY);
-        curr->setHeight(newHeight);
         curr->setBaseline(newBaseline);
 
         if (childAffectsTopBottomPos) {
             selectionTop = min(selectionTop, newY);
-            selectionBottom = max(selectionBottom, newY + newHeight);
+            selectionBottom = max(selectionBottom, newY + curr->height());
             topPosition = min(topPosition, newY + overflowTop);
-            bottomPosition = max(bottomPosition, newY + newHeight + overflowBottom);
+            bottomPosition = max(bottomPosition, newY + curr->height() + overflowBottom);
         }
     }
 
     if (isRootInlineBox()) {
         const Font& font = object()->style(m_firstLine)->font();
-        setHeight(font.ascent() + font.descent());
         setYPos(yPos() + baseline() - font.ascent());
         setBaseline(font.ascent());
         if (hasTextChildren() || strictMode) {
@@ -583,8 +592,6 @@ void InlineFlowBox::shrinkBoxesWithNoTextChildren(int topPos, int bottomPos)
     if (!hasTextChildren() && !boxModelObject()->hasHorizontalBordersOrPadding()) {
         if (yPos() < topPos)
             setYPos(topPos);
-        if (yPos() + height() > bottomPos)
-            setHeight(bottomPos - yPos());
         if (baseline() > height())
             setBaseline(height());
     }
@@ -601,7 +608,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     }
 
     // Now check ourselves.
-    IntRect rect(tx + m_x, ty + m_y, m_width, m_height);
+    IntRect rect(tx + m_x, ty + m_y, m_width, height());
     if (visibleToHitTesting() && rect.contains(x, y)) {
         object()->updateHitTestResult(result, IntPoint(x - tx, y - ty)); // Don't add in m_x or m_y here, we want coords in the containing block's space.
         return true;

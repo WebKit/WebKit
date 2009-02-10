@@ -29,6 +29,7 @@
 
 #if ENABLE(SVG)
 #include "RenderSVGInlineText.h"
+#include "SVGNames.h"
 #endif
 
 #if ENABLE(WML)
@@ -233,7 +234,11 @@ bool Text::rendererIsNeeded(RenderStyle *style)
 RenderObject *Text::createRenderer(RenderArena* arena, RenderStyle*)
 {
 #if ENABLE(SVG)
-    if (parentNode()->isSVGElement())
+    if (parentNode()->isSVGElement()
+#if ENABLE(SVG_FOREIGN_OBJECT)
+        && !parentNode()->hasTagName(SVGNames::foreignObjectTag)
+#endif
+    )
         return new (arena) RenderSVGInlineText(this, m_data);
 #endif
     

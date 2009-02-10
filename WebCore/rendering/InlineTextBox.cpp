@@ -41,6 +41,11 @@ using namespace std;
 
 namespace WebCore {
 
+int InlineTextBox::height() const
+{
+    return m_treatAsText ? m_object->style(m_firstLine)->font().height() : 0;
+}
+
 int InlineTextBox::selectionTop()
 {
     return root()->selectionTop();
@@ -228,7 +233,7 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, in
     if (isLineBreak())
         return false;
 
-    IntRect rect(tx + m_x, ty + m_y, m_width, m_height);
+    IntRect rect(tx + m_x, ty + m_y, m_width, height());
     if (m_truncation != cFullTruncation && visibleToHitTesting() && rect.contains(x, y)) {
         object()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
         return true;
@@ -695,11 +700,11 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, in
     // So, we generally place the underline at the bottom of the text, but in larger fonts that's not so good so
     // we pin to two pixels under the baseline.
     int lineThickness = cMisspellingLineThickness;
-    int descent = m_height - m_baseline;
+    int descent = height() - m_baseline;
     int underlineOffset;
     if (descent <= (2 + lineThickness)) {
         // place the underline at the very bottom of the text in small/medium fonts
-        underlineOffset = m_height - lineThickness;
+        underlineOffset = height() - lineThickness;
     } else {
         // in larger fonts, tho, place the underline up near the baseline to prevent big gap
         underlineOffset = m_baseline + 2;
@@ -823,7 +828,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, int tx, int 
     // All other marked text underlines are 1px thick.
     // If there's not enough space the underline will touch or overlap characters.
     int lineThickness = 1;
-    if (underline.thick && m_height - m_baseline >= 2)
+    if (underline.thick && height() - m_baseline >= 2)
         lineThickness = 2;
 
     // We need to have some space between underlines of subsequent clauses, because some input methods do not use different underline styles for those.
@@ -833,7 +838,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, int tx, int 
 
     ctx->setStrokeColor(underline.color);
     ctx->setStrokeThickness(lineThickness);
-    ctx->drawLineForText(IntPoint(tx + start, ty + m_height - lineThickness), width, textObject()->document()->printing());
+    ctx->drawLineForText(IntPoint(tx + start, ty + height() - lineThickness), width, textObject()->document()->printing());
 }
 
 int InlineTextBox::caretMinOffset() const

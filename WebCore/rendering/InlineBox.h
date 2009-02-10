@@ -40,7 +40,6 @@ public:
         , m_x(0)
         , m_y(0)
         , m_width(0)
-        , m_height(0)
         , m_baseline(0)
         , m_next(0)
         , m_prev(0)
@@ -66,13 +65,12 @@ public:
     {
     }
 
-    InlineBox(RenderObject* obj, int x, int y, int width, int height, int baseline, bool firstLine, bool constructed,
+    InlineBox(RenderObject* obj, int x, int y, int width, int baseline, bool firstLine, bool constructed,
               bool dirty, bool extracted, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
         : m_object(obj)
         , m_x(x)
         , m_y(y)
         , m_width(width)
-        , m_height(height)
         , m_baseline(baseline)
         , m_next(next)
         , m_prev(prev)
@@ -128,10 +126,9 @@ public:
     void showTreeForThis() const;
 #endif
     virtual bool isInlineBox() { return false; }
-    virtual bool isInlineFlowBox() { return false; }
-    virtual bool isContainer() { return false; }
+    virtual bool isInlineFlowBox() const { return false; }
     virtual bool isInlineTextBox() { return false; }
-    virtual bool isRootInlineBox() { return false; }
+    virtual bool isRootInlineBox() const { return false; }
 #if ENABLE(SVG) 
     virtual bool isSVGRootInlineBox() { return false; }
 #endif
@@ -181,8 +178,9 @@ public:
     }
     void setParent(InlineFlowBox* par) { m_parent = par; }
 
+    const RootInlineBox* root() const;
     RootInlineBox* root();
-    
+
     void setWidth(int w) { m_width = w; }
     int width() const { return m_width; }
 
@@ -192,16 +190,15 @@ public:
     void setYPos(int y) { m_y = y; }
     int yPos() const { return m_y; }
 
-    void setHeight(int h) { m_height = h; }
-    int height() const { return m_height; }
+    virtual int height() const;
     
     void setBaseline(int b) { m_baseline = b; }
     int baseline() const { return m_baseline; }
 
-    virtual int topOverflow() { return yPos(); }
-    virtual int bottomOverflow() { return yPos() + height(); }
-    virtual int leftOverflow() { return xPos(); }
-    virtual int rightOverflow() { return xPos() + width(); }
+    virtual int topOverflow() const { return yPos(); }
+    virtual int bottomOverflow() const { return yPos() + height(); }
+    virtual int leftOverflow() const { return xPos(); }
+    virtual int rightOverflow() const { return xPos() + width(); }
 
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
@@ -245,7 +242,6 @@ public:
     int m_x;
     int m_y;
     int m_width;
-    int m_height;
     int m_baseline;
 
 private:

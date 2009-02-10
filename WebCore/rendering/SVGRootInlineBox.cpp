@@ -791,7 +791,7 @@ static void applyTextAnchorToTextChunk(SVGTextChunk& chunk)
 
         InlineBox* curBox = range.box;
         ASSERT(curBox->isInlineTextBox());
-        ASSERT(curBox->parent() && (curBox->parent()->isRootInlineBox() || curBox->parent()->isInlineFlowBox()));
+        ASSERT(curBox->parent() && curBox->parent()->isRootInlineBox());
 
         // Move target box
         if (chunk.isVerticalText)
@@ -1044,7 +1044,7 @@ void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::
 
             curr->setYPos(minY - block()->y());
             curr->setBaseline(font.ascent());
-            curr->setHeight(enclosedStringRect.height());
+            textBox->setHeight(enclosedStringRect.height());
 
             if (minX < lowX)
                 lowX = minX;
@@ -1077,7 +1077,7 @@ void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::
 
             curr->setYPos(minY - block()->y());
             curr->setBaseline(font.ascent());
-            curr->setHeight(maxY - minY);
+            static_cast<SVGInlineFlowBox*>(curr)->setHeight(maxY - minY);
 
             if (minX < lowX)
                 lowX = minX;
@@ -1093,7 +1093,7 @@ void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::
         }
     }
 
-    if (start->isRootInlineBox()) {
+    if (start->isSVGRootInlineBox()) {
         int top = lowY - block()->y();
         int bottom = highY - block()->y();
 
@@ -1101,7 +1101,7 @@ void SVGRootInlineBox::layoutInlineBoxes(InlineFlowBox* start, Vector<SVGChar>::
         start->setYPos(top);
 
         start->setWidth(highX - lowX);
-        start->setHeight(highY - lowY);
+        static_cast<SVGRootInlineBox*>(start)->setHeight(highY - lowY);
 
         start->setVerticalOverflowPositions(top, bottom);
         start->setVerticalSelectionPositions(top, bottom);

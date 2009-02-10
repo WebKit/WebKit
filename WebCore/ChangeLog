@@ -1,3 +1,74 @@
+2009-02-09  David Hyatt  <hyatt@apple.com>
+
+        Remove the m_height member from InlineBox.  This shaves 4 bytes off of all inline boxes.  Unfortunately SVG
+        sets heights that are independent of the renderer or of the font, and so all SVG boxes have to retain m_height
+        member variables.
+
+        height() on InlineBox is now a virtual function that does a dynamic computation (including shrinking boxes
+        with no text children).  For SVG boxes there is also a non-virtual setHeight function for updating the
+        m_height member variable like before.
+    
+        Reviewed by Darin Adler
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        (WebCore::EllipsisBox::EllipsisBox):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::height):
+        (WebCore::InlineBox::root):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::isInlineFlowBox):
+        (WebCore::InlineBox::isRootInlineBox):
+        (WebCore::InlineBox::topOverflow):
+        (WebCore::InlineBox::bottomOverflow):
+        (WebCore::InlineBox::leftOverflow):
+        (WebCore::InlineBox::rightOverflow):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::height):
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        (WebCore::InlineFlowBox::shrinkBoxesWithNoTextChildren):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::isInlineFlowBox):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::height):
+        (WebCore::InlineTextBox::nodeAtPoint):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintCompositionUnderline):
+        * rendering/InlineTextBox.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::height):
+        (WebCore::RootInlineBox::placeEllipsis):
+        (WebCore::RootInlineBox::setVerticalOverflowPositions):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::isRootInlineBox):
+        (WebCore::RootInlineBox::topOverflow):
+        (WebCore::RootInlineBox::bottomOverflow):
+        (WebCore::RootInlineBox::leftOverflow):
+        (WebCore::RootInlineBox::rightOverflow):
+        (WebCore::RootInlineBox::selectionBottom):
+        (WebCore::RootInlineBox::Overflow::Overflow):
+        (WebCore::RootInlineBox::setVerticalSelectionPositions):
+        * rendering/SVGInlineFlowBox.h:
+        (WebCore::SVGInlineFlowBox::SVGInlineFlowBox):
+        (WebCore::SVGInlineFlowBox::height):
+        (WebCore::SVGInlineFlowBox::setHeight):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::SVGInlineTextBox):
+        * rendering/SVGInlineTextBox.h:
+        (WebCore::SVGInlineTextBox::height):
+        (WebCore::SVGInlineTextBox::setHeight):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutInlineBoxes):
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::SVGRootInlineBox):
+        (WebCore::SVGRootInlineBox::height):
+        (WebCore::SVGRootInlineBox::setHeight):
+
 2009-02-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam Weinig.

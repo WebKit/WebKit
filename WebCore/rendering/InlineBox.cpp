@@ -85,6 +85,11 @@ void InlineBox::showTreeForThis() const
 }
 #endif
 
+int InlineBox::height() const
+{
+    return toRenderBox(m_object)->height();
+}
+
 int InlineBox::caretMinOffset() const 
 { 
     return m_object->caretMinOffset(); 
@@ -166,6 +171,14 @@ bool InlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
     // specification.)
     return object()->hitTest(request, result, IntPoint(x, y), tx, ty);
+}
+
+const RootInlineBox* InlineBox::root() const
+{ 
+    if (m_parent)
+        return m_parent->root(); 
+    ASSERT(isRootInlineBox());
+    return static_cast<const RootInlineBox*>(this);
 }
 
 RootInlineBox* InlineBox::root()
