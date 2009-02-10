@@ -1,3 +1,9 @@
+2009-02-10  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix Qt build following r40793.
+
+        * editing/qt/EditorQt.cpp:
+
 2009-02-10  Feng Qian <feng@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
