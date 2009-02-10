@@ -1,5 +1,15 @@
 2009-02-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23868
+        Fix code style issues: removed 80-col wrapping, incorrect include style, if statement body on same line.
+
+        * bindings/v8/custom/V8HTMLInputElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+
+2009-02-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=23868

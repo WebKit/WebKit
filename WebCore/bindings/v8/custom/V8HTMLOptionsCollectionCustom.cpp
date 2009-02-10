@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <config.h>
-
+#include "config.h"
 #include "HTMLOptionsCollection.h"
 
 #include "ExceptionCode.h"
@@ -43,9 +42,7 @@ namespace WebCore {
 ACCESSOR_GETTER(HTMLOptionsCollectionLength)
 {
     INC_STATS("DOM.HTMLOptionsCollection.length._get");
-    HTMLOptionsCollection* imp =
-        V8Proxy::ToNativeObject<HTMLOptionsCollection>(
-        V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
+    HTMLOptionsCollection* imp = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
     int v = imp->length();
     return v8::Integer::New(v);
 }
@@ -53,9 +50,7 @@ ACCESSOR_GETTER(HTMLOptionsCollectionLength)
 ACCESSOR_SETTER(HTMLOptionsCollectionLength)
 {
     INC_STATS("DOM.HTMLOptionsCollection.length._set");
-    HTMLOptionsCollection* imp =
-        V8Proxy::ToNativeObject<HTMLOptionsCollection>(
-        V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
+    HTMLOptionsCollection* imp = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
     double v = value->NumberValue();
     unsigned newLength = 0;
     ExceptionCode ec = 0;
@@ -67,7 +62,8 @@ ACCESSOR_SETTER(HTMLOptionsCollectionLength)
         else
             newLength = static_cast<unsigned>(v);
     }
-    if (!ec) imp->setLength(value->Uint32Value(), ec);
+    if (!ec)
+        imp->setLength(value->Uint32Value(), ec);
     V8Proxy::SetDOMException(ec);
 }
 
