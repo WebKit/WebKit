@@ -49,6 +49,10 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23856
+        Change the definition of "main thread" for Chromium on OSX.
+        It does not match the DARWIN definition.
+
         * wtf/ThreadingPthreads.cpp:
         (WTF::initializeThreading):
         (WTF::isMainThread):
