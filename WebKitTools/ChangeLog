@@ -1,3 +1,21 @@
+2009-02-10  Adam Roben  <aroben@apple.com>
+
+        Robustify DumpRenderTree/win a little
+
+        DumpRenderTree was previously not holding a ref to the WebViews it
+        created via window.open. It was getting away with this because
+        WebViews get reffed by being preference notification observers and by
+        registering for drag-n-drop messages. Now DRT does hold a ref, in case
+        this situation changes in the future.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dumpBackForwardListForAllWindows): Added a .get().
+        (windowToWebViewMap): Changed to use the WindowToWebViewMap typedef.
+        * DumpRenderTree/win/DumpRenderTreeWin.h: Changed the
+        windowToWebViewMap() to hold a ref to the WebViews it contains.
+
 2009-02-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the #include file order, per review comments.

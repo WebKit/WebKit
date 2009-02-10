@@ -41,6 +41,7 @@ extern PolicyDelegate* policyDelegate;
 
 extern HWND webViewWindow;
 
+#include <WebCore/COMPtr.h>
 #include <string>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -48,7 +49,8 @@ extern HWND webViewWindow;
 std::wstring urlSuitableForTestResult(const std::wstring& url);
 IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow = 0);
 Vector<HWND>& openWindows();
-HashMap<HWND, IWebView*>& windowToWebViewMap();
+typedef HashMap<HWND, COMPtr<IWebView> > WindowToWebViewMap;
+WindowToWebViewMap& windowToWebViewMap();
 
 void setPersistentUserStyleSheetLocation(CFStringRef);
 
