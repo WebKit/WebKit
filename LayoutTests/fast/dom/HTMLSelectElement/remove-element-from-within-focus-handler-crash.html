@@ -1,0 +1,14 @@
+<select id="bomb" onfocus="this.parentNode.removeChild(this)">
+    <option>Clicking on this select element should not crash</option>
+</select>
+<h2>Layout test for <a href='https://bugs.webkit.org/show_bug.cgi?id=23858'>bug 23858</a></h2>
+<p>If this page is displayed without crashing then the test has passed.</p>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var select = document.getElementById('bomb');
+    var mouseEvent = document.createEvent("MouseEvents");
+    mouseEvent.initMouseEvent("mousedown", true, true, document.defaultView, 1, select.offsetLeft + 1, select.offsetTop + 1, select.offsetLeft + 1, select.offsetTop + 1, false, false, false, false, 0, document);
+    select.dispatchEvent(mouseEvent);
+</script>

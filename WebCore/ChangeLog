@@ -1,3 +1,15 @@
+2009-02-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=23858>
+        Bug 23858: Crash when removing a HTMLSelectElement from the document from inside its focus event handler
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Don't store the renderer in a local variable
+        as it can be invalidated by any of the calls to focus() within the function.  Instead, retrieve it and
+        null-check it when it is needed.
+
 2009-02-09  David Hyatt  <hyatt@apple.com>
 
         Remove the m_height member from InlineBox.  This shaves 4 bytes off of all inline boxes.  Unfortunately SVG

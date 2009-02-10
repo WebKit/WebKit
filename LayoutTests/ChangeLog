@@ -1,3 +1,13 @@
+2009-02-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Test for <https://bugs.webkit.org/show_bug.cgi?id=23858>
+        Bug 23858: Crash when removing a HTMLSelectElement from the document from inside its focus event handler
+
+        * fast/dom/HTMLSelectElement/remove-element-from-within-focus-handler-crash-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/remove-element-from-within-focus-handler-crash.html: Added.
+
 2009-02-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Dave Hyatt.

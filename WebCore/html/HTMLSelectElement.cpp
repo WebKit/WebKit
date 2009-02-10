@@ -617,8 +617,6 @@ void HTMLSelectElement::defaultEventHandler(Event* evt)
 
 void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
 {
-    RenderMenuList* menuList = static_cast<RenderMenuList*>(renderer());
-
     if (evt->type() == eventNames().keydownEvent) {
         if (!renderer() || !evt->isKeyboardEvent())
             return;
@@ -630,7 +628,8 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
             // Save the selection so it can be compared to the new selection when we call onChange during setSelectedIndex,
             // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
             saveLastSelection();
-            menuList->showPopup();
+            if (RenderMenuList* menuList = static_cast<RenderMenuList*>(renderer()))
+                menuList->showPopup();
             handled = true;
         }
 #else
@@ -672,7 +671,8 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
             // Save the selection so it can be compared to the new selection when we call onChange during setSelectedIndex,
             // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
             saveLastSelection();
-            menuList->showPopup();
+            if (RenderMenuList* menuList = static_cast<RenderMenuList*>(renderer()))
+                menuList->showPopup();
             handled = true;
         }
         if (keyCode == '\r') {
@@ -695,13 +695,15 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* evt)
 
     if (evt->type() == eventNames().mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         focus();
-        if (menuList->popupIsVisible())
-            menuList->hidePopup();
-        else {
-            // Save the selection so it can be compared to the new selection when we call onChange during setSelectedIndex,
-            // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
-            saveLastSelection();
-            menuList->showPopup();
+        if (RenderMenuList* menuList = static_cast<RenderMenuList*>(renderer())) {
+            if (menuList->popupIsVisible())
+                menuList->hidePopup();
+            else {
+                // Save the selection so it can be compared to the new selection when we call onChange during setSelectedIndex,
+                // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
+                saveLastSelection();
+                menuList->showPopup();
+            }
         }
         evt->setDefaultHandled();
     }
