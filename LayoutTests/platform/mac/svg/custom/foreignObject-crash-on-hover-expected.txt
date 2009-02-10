@@ -9,6 +9,8 @@ layer at (0,0) size 800x800
           RenderText {#text} at (0,0) size 108x18
             text run at (0,0) width 108: "Absolute Lineto"
         RenderBR {html:br} at (108,0) size 0x18
-        RenderSVGInlineText {#text} at (0,18) size 246x36
+        RenderText {#text} at (0,18) size 246x36
+          text run at (0,18) width 246: "<path d=\"M50,80 L250,80 150,280 z\""
+          text run at (0,36) width 187: "style=\"fill:red; stroke:blue;\"/>"
       RenderPath {path} at (99.19,129.50) size 201.62x201.62 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M50.00,80.00 L250.00,80.00 L150.00,280.00 Z"]
-caret: position 7 of child 3 {#text} of child 5 {foreignObject} of child 1 {g} of child 1 {svg} of document
+caret: position 66 of child 3 {#text} of child 5 {foreignObject} of child 1 {g} of child 1 {svg} of document
