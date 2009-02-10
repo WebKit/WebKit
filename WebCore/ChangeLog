@@ -1,3 +1,15 @@
+2009-02-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6568942> REGRESSION: Font rendering in Wikipedia input field is incorrect (default GDI text mode)
+
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::widthForGDIGlyph): Make sure that the DC is
+        in the advanced graphics mode before calling GetCharWidthI(), because
+        otherwise that function returns incorrect results for the default UI
+        font at a certain size.
+
 2009-02-09  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser

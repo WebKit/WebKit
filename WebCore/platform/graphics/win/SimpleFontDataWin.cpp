@@ -177,6 +177,7 @@ void SimpleFontData::determinePitch()
 float SimpleFontData::widthForGDIGlyph(Glyph glyph) const
 {
     HDC hdc = GetDC(0);
+    SetGraphicsMode(hdc, GM_ADVANCED);
     HGDIOBJ oldFont = SelectObject(hdc, m_font.hfont());
     int width;
     GetCharWidthI(hdc, glyph, 1, 0, &width);
