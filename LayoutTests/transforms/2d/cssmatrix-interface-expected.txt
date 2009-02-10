@@ -8,6 +8,16 @@ PASS default constructor
 PASS object constructor
 PASS string constructor
 
+Test toString
+PASS a[0] is "matrix"
+PASS parseFloat(a2[0]) is 1
+PASS parseFloat(a2[1]) is 0
+PASS parseFloat(a2[2]) is 0
+PASS parseFloat(a2[3]) is 1
+PASS parseFloat(a2[4]) is 0
+PASS parseFloat(a3[0]) is 0
+PASS a3[1] is ""
+
 Test bad input to string constructor
 PASS new WebKitCSSMatrix("banana") threw exception Error: SYNTAX_ERR: DOM Exception 12.
 
@@ -56,6 +66,17 @@ PASS parseFloat(m3.d) is 64
 PASS parseFloat(m3.e) is 100
 PASS parseFloat(m3.f) is 112
 
+Test multiply with missing argument
+PASS m2 is null
+
+Test immutability of multiply
+PASS parseFloat(m.a) is 1
+PASS parseFloat(m.b) is 2
+PASS parseFloat(m.c) is 3
+PASS parseFloat(m.d) is 4
+PASS parseFloat(m.e) is 5
+PASS parseFloat(m.f) is 6
+
 Test inverse
 PASS parseFloat(m2.a) is 0.5
 PASS parseFloat(m2.b) is 0
@@ -64,32 +85,64 @@ PASS parseFloat(m2.d) is 0.5
 PASS parseFloat(m2.e) is -5
 PASS parseFloat(m2.f) is -10
 
+Test immutability of inverse
+PASS parseFloat(m.a) is 2
+PASS parseFloat(m.b) is 0
+PASS parseFloat(m.c) is 0
+PASS parseFloat(m.d) is 2
+PASS parseFloat(m.e) is 10
+PASS parseFloat(m.f) is 20
+
 Test throwing exception from inverse
 PASS m.inverse() threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 
 Test translate
-PASS m.a is 1
-PASS m.b is 0
-PASS m.c is 0
-PASS m.d is 1
-PASS m.e is 10
-PASS m.f is 20
+PASS m2.a is 1
+PASS m2.b is 0
+PASS m2.c is 0
+PASS m2.d is 1
+PASS m2.e is 10
+PASS m2.f is 20
+
+Test immutability of translate
+PASS parseFloat(m.a) is 1
+PASS parseFloat(m.b) is 0
+PASS parseFloat(m.c) is 0
+PASS parseFloat(m.d) is 1
+PASS parseFloat(m.e) is 0
+PASS parseFloat(m.f) is 0
 
 Test scale
-PASS m.a is 10
-PASS m.b is 0
-PASS m.c is 0
-PASS m.d is 20
+PASS m2.a is 10
+PASS m2.b is 0
+PASS m2.c is 0
+PASS m2.d is 20
+PASS m2.e is 0
+PASS m2.f is 0
+
+Test immutability of scale
+PASS parseFloat(m.a) is 1
+PASS parseFloat(m.b) is 0
+PASS parseFloat(m.c) is 0
+PASS parseFloat(m.d) is 1
+PASS parseFloat(m.e) is 0
+PASS parseFloat(m.f) is 0
+
+Test rotate
+PASS parseFloat(m2.a.toPrecision(6)) is 0.984808
+PASS parseFloat(m2.b.toPrecision(6)) is 0.173648
+PASS parseFloat(m2.c.toPrecision(6)) is -0.173648
+PASS parseFloat(m2.d.toPrecision(6)) is 0.984808
 PASS m.e is 0
 PASS m.f is 0
 
-Test rotate
-PASS Math.round(m.a*1000000)/1000000 is 0.984808
-PASS Math.round(m.b*1000000)/1000000 is 0.173648
-PASS Math.round(m.c*1000000)/1000000 is -0.173648
-PASS Math.round(m.d*1000000)/1000000 is 0.984808
-PASS m.e is 0
-PASS m.f is 0
+Test immutability of rotate
+PASS parseFloat(m.a) is 1
+PASS parseFloat(m.b) is 0
+PASS parseFloat(m.c) is 0
+PASS parseFloat(m.d) is 1
+PASS parseFloat(m.e) is 0
+PASS parseFloat(m.f) is 0
 
 PASS successfullyParsed is true
 

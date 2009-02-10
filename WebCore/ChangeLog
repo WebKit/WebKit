@@ -1,3 +1,18 @@
+2009-02-09  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser
+
+        https://bugs.webkit.org/show_bug.cgi?id=23689
+
+        Added 3D functions to WebKitCSSMatrix. This depends on the 3D functions
+        added to TransformationMatrix in https://bugs.webkit.org/show_bug.cgi?id=6868
+
+        Test: transforms/3d/cssmatrix-3d-interface.xhtml
+
+        * css/WebKitCSSMatrix.cpp:
+        * css/WebKitCSSMatrix.h:
+        * css/WebKitCSSMatrix.idl:
+
 2009-02-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

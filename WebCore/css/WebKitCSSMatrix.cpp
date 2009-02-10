@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "WebKitCSSMatrix.h"
 
 #include "CSSParser.h"
 #include "CSSStyleSelector.h"
@@ -31,7 +32,7 @@
 #include "CSSPropertyNames.h"
 #include "ExceptionCode.h"
 #include "RenderStyle.h"
-#include "WebKitCSSMatrix.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -93,14 +94,17 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
 }
 
 // This is a multRight (this = this * secondMatrix)
-PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::multiply(WebKitCSSMatrix* secondMatrix)
+PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::multiply(WebKitCSSMatrix* secondMatrix) const
 {
+    if (!secondMatrix)
+        return 0;
+
     TransformationMatrix tmp(m_matrix);
     tmp.multiply(secondMatrix->m_matrix);
     return WebKitCSSMatrix::create(tmp);
 }
 
-PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::inverse(ExceptionCode& ec)
+PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::inverse(ExceptionCode& ec) const
 {
     if (!m_matrix.isInvertible()) {
         ec = NOT_SUPPORTED_ERR;
@@ -110,35 +114,73 @@ PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::inverse(ExceptionCode& ec)
     return WebKitCSSMatrix::create(m_matrix.inverse());
 }
 
-PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::translate(float x, float y)
+PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::translate(double x, double y, double z) const
 {
     if (isnan(x))
-        x = 0; 
+        x = 0;
     if (isnan(y))
-        y = 0; 
-    return WebKitCSSMatrix::create(m_matrix.translate(x, y));
+        y = 0;
+    if (isnan(z))
+        z = 0;
+    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).translate3d(x, y, z));
 }
 
-PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::scale(float scaleX, float scaleY)
+PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::scale(double scaleX, double scaleY, double scaleZ) const
 {
     if (isnan(scaleX))
-        scaleX = 1; 
+        scaleX = 1;
     if (isnan(scaleY))
-        scaleY = scaleX; 
-    return WebKitCSSMatrix::create(m_matrix.scaleNonUniform(scaleX,scaleY));
+        scaleY = scaleX;
+    if (isnan(scaleZ))
+        scaleZ = 1;
+    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).scale3d(scaleX, scaleY, scaleZ));
 }
 
-PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotate(float rot)
+PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotate(double rotX, double rotY, double rotZ) const
 {
-    if (isnan(rot))
-        rot = 0;
-    return WebKitCSSMatrix::create(m_matrix.rotate(rot));
+    if (isnan(rotX))
+        rotX = 0;
+        
+    if (isnan(rotY) && isnan(rotZ)) {
+        rotZ = rotX;
+        rotX = 0;
+        rotY = 0;
+    }
+
+    if (isnan(rotY))
+        rotY = 0;
+    if (isnan(rotZ))
+        rotZ = 0;
+    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).rotate3d(rotX, rotY, rotZ));
 }
 
-String WebKitCSSMatrix::toString()
+PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotateAxisAngle(double x, double y, double z, double angle) const
 {
-    return String::format("matrix(%f, %f, %f, %f, %f, %f)",
-                            m_matrix.a(), m_matrix.b(), m_matrix.c(), m_matrix.d(), m_matrix.e(), m_matrix.f());
+    if (isnan(x))
+        x = 0;
+    if (isnan(y))
+        y = 0;
+    if (isnan(z))
+        z = 0;
+    if (isnan(angle))
+        angle = 0;
+    if (x == 0 && y == 0 && z == 0)
+        z = 1;
+    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).rotate3d(x, y, z, angle));
+}
+
+
+String WebKitCSSMatrix::toString() const
+{
+    // FIXME - Need to ensure valid CSS floating point values (https://bugs.webkit.org/show_bug.cgi?id=20674)
+    if (m_matrix.isAffine())
+        return String::format("matrix(%f, %f, %f, %f, %f, %f)",
+                                m_matrix.a(), m_matrix.b(), m_matrix.c(), m_matrix.d(), m_matrix.e(), m_matrix.f());
+    return String::format("matrix3d(%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f)",
+                            m_matrix.m11(), m_matrix.m12(), m_matrix.m13(), m_matrix.m14(),
+                            m_matrix.m21(), m_matrix.m22(), m_matrix.m23(), m_matrix.m24(),
+                            m_matrix.m31(), m_matrix.m32(), m_matrix.m33(), m_matrix.m34(),
+                            m_matrix.m41(), m_matrix.m42(), m_matrix.m43(), m_matrix.m44());
 }
 
 } // namespace WebCore

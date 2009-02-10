@@ -34,6 +34,22 @@ else
   testFailed("string constructor");
 
 debug("");
+debug("Test toString");
+var m = new WebKitCSSMatrix("matrix(1, 0, 0, 1, 0, 0)");
+var s = m.toString();
+var a = s.split('(');
+shouldBe('a[0]', '"matrix"');
+var a2 = a[1].split(',');
+shouldBe('parseFloat(a2[0])', '1');
+shouldBe('parseFloat(a2[1])', '0');
+shouldBe('parseFloat(a2[2])', '0');
+shouldBe('parseFloat(a2[3])', '1');
+shouldBe('parseFloat(a2[4])', '0');
+var a3 = a2[5].split(")");
+shouldBe('parseFloat(a3[0])', '0');
+shouldBe('a3[1]', '""');
+
+debug("");
 debug("Test bad input to string constructor");
 shouldThrow('new WebKitCSSMatrix("banana")');
 
@@ -98,6 +114,21 @@ shouldBe('parseFloat(m3.e)', '100');
 shouldBe('parseFloat(m3.f)', '112');
 
 debug("");
+debug("Test multiply with missing argument");
+m = new WebKitCSSMatrix("matrix(1, 2, 3, 4, 5, 6)");
+m2 = m.multiply();
+shouldBe('m2', 'null');
+
+debug("");
+debug("Test immutability of multiply");
+shouldBe('parseFloat(m.a)', '1');
+shouldBe('parseFloat(m.b)', '2');
+shouldBe('parseFloat(m.c)', '3');
+shouldBe('parseFloat(m.d)', '4');
+shouldBe('parseFloat(m.e)', '5');
+shouldBe('parseFloat(m.f)', '6');
+
+debug("");
 debug("Test inverse");
 m = new WebKitCSSMatrix("matrix(2, 0, 0, 2, 10, 20)");
 m2 = m.inverse();
@@ -110,6 +141,15 @@ shouldBe('parseFloat(m2.e)', '-5');
 shouldBe('parseFloat(m2.f)', '-10');
 
 debug("");
+debug("Test immutability of inverse");
+shouldBe('parseFloat(m.a)', '2');
+shouldBe('parseFloat(m.b)', '0');
+shouldBe('parseFloat(m.c)', '0');
+shouldBe('parseFloat(m.d)', '2');
+shouldBe('parseFloat(m.e)', '10');
+shouldBe('parseFloat(m.f)', '20');
+
+debug("");
 debug("Test throwing exception from inverse");
 m = new WebKitCSSMatrix("matrix(0, 0, 0, 0, 0, 0)"); // not invertible
 shouldThrow('m.inverse()');
@@ -117,35 +157,62 @@ shouldThrow('m.inverse()');
 debug("");
 debug("Test translate");
 m = new WebKitCSSMatrix();
-m = m.translate(10, 20);
-shouldBe('m.a', '1');
-shouldBe('m.b', '0');
-shouldBe('m.c', '0');
-shouldBe('m.d', '1');
-shouldBe('m.e', '10');
-shouldBe('m.f', '20');
+m2 = m.translate(10, 20);
+shouldBe('m2.a', '1');
+shouldBe('m2.b', '0');
+shouldBe('m2.c', '0');
+shouldBe('m2.d', '1');
+shouldBe('m2.e', '10');
+shouldBe('m2.f', '20');
+
+debug("");
+debug("Test immutability of translate");
+shouldBe('parseFloat(m.a)', '1');
+shouldBe('parseFloat(m.b)', '0');
+shouldBe('parseFloat(m.c)', '0');
+shouldBe('parseFloat(m.d)', '1');
+shouldBe('parseFloat(m.e)', '0');
+shouldBe('parseFloat(m.f)', '0');
 
 debug("");
 debug("Test scale");
 m = new WebKitCSSMatrix();
-m = m.scale(10, 20);
-shouldBe('m.a', '10');
-shouldBe('m.b', '0');
-shouldBe('m.c', '0');
-shouldBe('m.d', '20');
-shouldBe('m.e', '0');
-shouldBe('m.f', '0');
+m2 = m.scale(10, 20);
+shouldBe('m2.a', '10');
+shouldBe('m2.b', '0');
+shouldBe('m2.c', '0');
+shouldBe('m2.d', '20');
+shouldBe('m2.e', '0');
+shouldBe('m2.f', '0');
+
+debug("");
+debug("Test immutability of scale");
+shouldBe('parseFloat(m.a)', '1');
+shouldBe('parseFloat(m.b)', '0');
+shouldBe('parseFloat(m.c)', '0');
+shouldBe('parseFloat(m.d)', '1');
+shouldBe('parseFloat(m.e)', '0');
+shouldBe('parseFloat(m.f)', '0');
 
 debug("");
 debug("Test rotate");
 m = new WebKitCSSMatrix();
-m = m.rotate(10);
-shouldBe('Math.round(m.a*1000000)/1000000', '0.984808');
-shouldBe('Math.round(m.b*1000000)/1000000', '0.173648');
-shouldBe('Math.round(m.c*1000000)/1000000', '-0.173648');
-shouldBe('Math.round(m.d*1000000)/1000000', '0.984808');
+m2 = m.rotate(10);
+shouldBe('parseFloat(m2.a.toPrecision(6))', '0.984808');
+shouldBe('parseFloat(m2.b.toPrecision(6))', '0.173648');
+shouldBe('parseFloat(m2.c.toPrecision(6))', '-0.173648');
+shouldBe('parseFloat(m2.d.toPrecision(6))', '0.984808');
 shouldBe('m.e', '0');
 shouldBe('m.f', '0');
+
+debug("");
+debug("Test immutability of rotate");
+shouldBe('parseFloat(m.a)', '1');
+shouldBe('parseFloat(m.b)', '0');
+shouldBe('parseFloat(m.c)', '0');
+shouldBe('parseFloat(m.d)', '1');
+shouldBe('parseFloat(m.e)', '0');
+shouldBe('parseFloat(m.f)', '0');
 
 debug("");
 successfullyParsed = true;
