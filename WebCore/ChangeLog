@@ -1,3 +1,25 @@
+2009-02-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23870
+        Make it possible for a port to require a user gesture for an <audio> or <video> element
+        to load a url.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_loadRestrictions.
+        (WebCore::HTMLMediaElement::attributeChanged): Only one attribute can change so put an "else" between tests.
+        (WebCore::HTMLMediaElement::load): Return INVALID_STATE_ERR if RequireUserGestureLoadRestriction is set 
+        and we are not preocessing a user gesture.
+        (WebCore::HTMLMediaElement::mediaPlayerNetworkStateChanged): Remove unnecessary white space.
+        (WebCore::HTMLMediaElement::play): Ditto.
+        (WebCore::HTMLMediaElement::endScrubbing): Remove unnecessary braces added in r40789.
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Cache currentTime() in a local instead of calling it
+        multiple times.
+        (WebCore::HTMLMediaElement::processingUserGesture): New.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::): Define LoadRestrictions, add m_loadRestrictions.
+
 2009-02-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Sam Weinig.

@@ -34,6 +34,8 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
@@ -82,6 +84,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_pausedInternal(false)
     , m_inActiveDocument(true)
     , m_player(0)
+    , m_loadRestrictions(NoLoadRestriction)
 {
     document()->registerForDocumentActivationCallbacks(this);
     document()->registerForMediaVolumeCallbacks(this);
@@ -108,7 +111,7 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
         // change to src attribute triggers load()
         if (inDocument() && m_networkState == EMPTY)
             scheduleLoad();
-    } if (attrName == controlsAttr) {
+    } else if (attrName == controlsAttr) {
         if (!isVideo() && attached() && (controls() != (renderer() != 0))) {
             detach();
             attach();
@@ -270,8 +273,13 @@ float HTMLMediaElement::bufferingRate()
 
 void HTMLMediaElement::load(ExceptionCode& ec)
 {
+    if ((m_loadRestrictions & RequireUserGestureLoadRestriction) && !processingUserGesture()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
     String mediaSrc;
-    
+
     // 3.14.9.4. Loading the media resource
     // 1
     // if an event generated during load() ends up re-entering load(), terminate previous instances
@@ -297,7 +305,7 @@ void HTMLMediaElement::load(ExceptionCode& ec)
     m_error = 0;
     m_loadedFirstFrame = false;
     m_autoplaying = true;
-    
+
     // 4
     setPlaybackRate(defaultPlaybackRate(), ec);
     
@@ -329,7 +337,7 @@ void HTMLMediaElement::load(ExceptionCode& ec)
     
     // 8
     m_currentSrc = mediaSrc;
-    
+
     // 9
     m_begun = true;        
     dispatchProgressEvent(eventNames().loadstartEvent, false, 0, 0);
@@ -383,7 +391,7 @@ void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
             return;
         
         m_networkState = EMPTY;
-        
+
         if (isVideo())
             static_cast<HTMLVideoElement*>(this)->updatePosterImage();
 
@@ -668,7 +676,7 @@ void HTMLMediaElement::play(ExceptionCode& ec)
     }
 
     m_autoplaying = false;
-    
+
     updatePlayState();
 }
 
@@ -835,9 +843,8 @@ void HTMLMediaElement::beginScrubbing()
 
 void HTMLMediaElement::endScrubbing()
 {
-    if (m_pausedInternal) {
+    if (m_pausedInternal)
         setPausedInternal(false);
-    }
 }
 
 bool HTMLMediaElement::canPlay() const
@@ -921,14 +928,15 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
     if (readyState() >= CAN_PLAY)
         m_seeking = false;
     
-    if (m_currentLoop < playCount() - 1 && currentTime() >= effectiveLoopEnd()) {
+    float now = currentTime();
+    if (m_currentLoop < playCount() - 1 && now >= effectiveLoopEnd()) {
         ExceptionCode ec;
         seek(effectiveLoopStart(), ec);
         m_currentLoop++;
         dispatchEventForType(eventNames().timeupdateEvent, false, true);
     }
     
-    if (m_currentLoop == playCount() - 1 && currentTime() >= effectiveEnd()) {
+    if (m_currentLoop == playCount() - 1 && now >= effectiveEnd()) {
         dispatchEventForType(eventNames().timeupdateEvent, false, true);
         dispatchEventForType(eventNames().endedEvent, false, true);
     }
@@ -1099,6 +1107,15 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
     if (event->defaultHandled())
         return;
     HTMLElement::defaultEventHandler(event);
+}
+
+bool HTMLMediaElement::processingUserGesture() const
+{
+    Frame* frame = document()->frame();
+    FrameLoader* loader = frame ? frame->loader() : 0;
+
+    // return 'true' for safety if we don't know the answer 
+    return loader ? loader->userGestureHint() : true;
 }
 
 }
