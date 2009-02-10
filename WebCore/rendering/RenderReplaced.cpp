@@ -42,7 +42,6 @@ const int cDefaultHeight = 150;
 RenderReplaced::RenderReplaced(Node* node)
     : RenderBox(node)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
-    , m_hasOverflow(false)
 {
     setReplaced(true);
 }
@@ -50,14 +49,13 @@ RenderReplaced::RenderReplaced(Node* node)
 RenderReplaced::RenderReplaced(Node* node, const IntSize& intrinsicSize)
     : RenderBox(node)
     , m_intrinsicSize(intrinsicSize)
-    , m_hasOverflow(false)
 {
     setReplaced(true);
 }
 
 RenderReplaced::~RenderReplaced()
 {
-    if (m_hasOverflow)
+    if (replacedHasOverflow())
         gOverflowRectMap->remove(this);
 }
 
@@ -327,16 +325,16 @@ void RenderReplaced::adjustOverflowForBoxShadow()
             gOverflowRectMap = new OverflowRectMap();
         overflow.unite(borderBoxRect());
         gOverflowRectMap->set(this, overflow);
-        m_hasOverflow = true;
-    } else if (m_hasOverflow) {
+        setReplacedHasOverflow(true);
+    } else if (replacedHasOverflow()) {
         gOverflowRectMap->remove(this);
-        m_hasOverflow = false;
+        setReplacedHasOverflow(false);
     }
 }
 
 int RenderReplaced::overflowHeight(bool) const
 {
-    if (m_hasOverflow) {
+    if (replacedHasOverflow()) {
         IntRect *r = &gOverflowRectMap->find(this)->second;
         return r->height() + r->y();
     }
@@ -346,7 +344,7 @@ int RenderReplaced::overflowHeight(bool) const
 
 int RenderReplaced::overflowWidth(bool) const
 {
-    if (m_hasOverflow) {
+    if (replacedHasOverflow()) {
         IntRect *r = &gOverflowRectMap->find(this)->second;
         return r->width() + r->x();
     }
@@ -356,7 +354,7 @@ int RenderReplaced::overflowWidth(bool) const
 
 int RenderReplaced::overflowLeft(bool) const
 {
-    if (m_hasOverflow)
+    if (replacedHasOverflow())
         return gOverflowRectMap->get(this).x();
 
     return 0;
@@ -364,7 +362,7 @@ int RenderReplaced::overflowLeft(bool) const
 
 int RenderReplaced::overflowTop(bool) const
 {
-    if (m_hasOverflow)
+    if (replacedHasOverflow())
         return gOverflowRectMap->get(this).y();
 
     return 0;
@@ -372,7 +370,7 @@ int RenderReplaced::overflowTop(bool) const
 
 IntRect RenderReplaced::overflowRect(bool) const
 {
-    if (m_hasOverflow)
+    if (replacedHasOverflow())
         return gOverflowRectMap->find(this)->second;
 
     return borderBoxRect();

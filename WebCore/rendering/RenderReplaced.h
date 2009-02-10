@@ -78,7 +78,6 @@ protected:
 
 private:
     IntSize m_intrinsicSize;
-    bool m_hasOverflow;
 };
 
 }

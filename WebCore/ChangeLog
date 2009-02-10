@@ -1,3 +1,26 @@
+2009-02-10  David Hyatt  <hyatt@apple.com>
+
+        Shrink the size of all replaced elements (images, form controls, plugins) by 4 bytes by packing the
+        overflow boolean into the RenderObject base class.
+
+        Reviewed by Sam Weinig
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::replacedHasOverflow):
+        (WebCore::RenderObject::setReplacedHasOverflow):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::RenderReplaced):
+        (WebCore::RenderReplaced::~RenderReplaced):
+        (WebCore::RenderReplaced::adjustOverflowForBoxShadow):
+        (WebCore::RenderReplaced::overflowHeight):
+        (WebCore::RenderReplaced::overflowWidth):
+        (WebCore::RenderReplaced::overflowLeft):
+        (WebCore::RenderReplaced::overflowTop):
+        (WebCore::RenderReplaced::overflowRect):
+        * rendering/RenderReplaced.h:
+
 2009-02-10  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
