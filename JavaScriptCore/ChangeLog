@@ -2,6 +2,16 @@
 
         Reviewed by Oliver Hunt.
 
+        Minor bugfix, incorrect check meant that subtraction causing integer overflow
+        would be missed on x86-64 JIT.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOp):
+
+2009-02-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         A more sensible register allocation for x86-64.
 
         When WREC was ported to x86-64 it stuck with the same register allocation as x86.
