@@ -509,10 +509,11 @@ void SVGInlineTextBox::paintDecoration(ETextDecoration decoration, GraphicsConte
     if (!isFilled && !isStroked)
         return;
 
+    int baseline = object()->style(m_firstLine)->font().ascent();
     if (decoration == UNDERLINE)
-        ty += m_baseline;
+        ty += baseline;
     else if (decoration == LINE_THROUGH)
-        ty += 2 * m_baseline / 3;
+        ty += 2 * baseline / 3;
 
     context->save();
     context->beginPath();

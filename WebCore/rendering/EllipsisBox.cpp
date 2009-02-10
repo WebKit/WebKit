@@ -43,7 +43,7 @@ void EllipsisBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     }
 
     const String& str = m_str;
-    context->drawText(style->font(), TextRun(str.characters(), str.length(), false, 0, 0, false, style->visuallyOrdered()), IntPoint(m_x + tx, m_y + ty + m_baseline));
+    context->drawText(style->font(), TextRun(str.characters(), str.length(), false, 0, 0, false, style->visuallyOrdered()), IntPoint(m_x + tx, m_y + ty + style->font().ascent()));
 
     if (setShadow)
         context->clearShadow();
@@ -51,7 +51,7 @@ void EllipsisBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     if (m_markupBox) {
         // Paint the markup box
         tx += m_x + m_width - m_markupBox->xPos();
-        ty += m_y + m_baseline - (m_markupBox->yPos() + m_markupBox->baseline());
+        ty += m_y + style->font().ascent() - (m_markupBox->yPos() + m_markupBox->object()->style(m_firstLine)->font().ascent());
         m_markupBox->paint(paintInfo, tx, ty);
     }
 }
@@ -63,8 +63,9 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     // Hit test the markup box.
     if (m_markupBox) {
+        RenderStyle* style = m_object->style(m_firstLine);
         int mtx = tx + m_width - m_markupBox->xPos();
-        int mty = ty + m_baseline - (m_markupBox->yPos() + m_markupBox->baseline());
+        int mty = ty + style->font().ascent() - (m_markupBox->yPos() + m_markupBox->object()->style(m_firstLine)->font().ascent());
         if (m_markupBox->nodeAtPoint(request, result, x, y, mtx, mty)) {
             object()->updateHitTestResult(result, IntPoint(x - mtx, y - mty));
             return true;

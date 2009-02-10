@@ -40,7 +40,6 @@ public:
         , m_x(0)
         , m_y(0)
         , m_width(0)
-        , m_baseline(0)
         , m_next(0)
         , m_prev(0)
         , m_parent(0)
@@ -65,13 +64,12 @@ public:
     {
     }
 
-    InlineBox(RenderObject* obj, int x, int y, int width, int baseline, bool firstLine, bool constructed,
+    InlineBox(RenderObject* obj, int x, int y, int width, bool firstLine, bool constructed,
               bool dirty, bool extracted, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
         : m_object(obj)
         , m_x(x)
         , m_y(y)
         , m_width(width)
-        , m_baseline(baseline)
         , m_next(next)
         , m_prev(prev)
         , m_parent(parent)
@@ -191,9 +189,6 @@ public:
     int yPos() const { return m_y; }
 
     virtual int height() const;
-    
-    void setBaseline(int b) { m_baseline = b; }
-    int baseline() const { return m_baseline; }
 
     virtual int topOverflow() const { return yPos(); }
     virtual int bottomOverflow() const { return yPos() + height(); }
@@ -242,7 +237,6 @@ public:
     int m_x;
     int m_y;
     int m_width;
-    int m_baseline;
 
 private:
     InlineBox* m_next; // The next element on the same line as us.

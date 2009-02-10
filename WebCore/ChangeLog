@@ -1,3 +1,55 @@
+2009-02-10  David Hyatt  <hyatt@apple.com>
+
+        Remove the m_baseline member variable from all line boxes, since it can easily be computed when needed and did not need to be cached.
+
+        Reviewed by Sam Weinig
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        (WebCore::EllipsisBox::EllipsisBox):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::verticallyAlignBoxes):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::marginBorderPaddingLeft):
+        (WebCore::InlineFlowBox::marginBorderPaddingRight):
+        (WebCore::InlineFlowBox::marginLeft):
+        (WebCore::InlineFlowBox::marginRight):
+        (WebCore::InlineFlowBox::borderLeft):
+        (WebCore::InlineFlowBox::borderRight):
+        (WebCore::InlineFlowBox::borderTop):
+        (WebCore::InlineFlowBox::borderBottom):
+        (WebCore::InlineFlowBox::paddingLeft):
+        (WebCore::InlineFlowBox::paddingRight):
+        (WebCore::InlineFlowBox::paddingTop):
+        (WebCore::InlineFlowBox::paddingBottom):
+        (WebCore::InlineFlowBox::includeLeftEdge):
+        (WebCore::InlineFlowBox::includeRightEdge):
+        (WebCore::InlineFlowBox::baseline):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintCompositionUnderline):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::getBaselineOfFirstLineBox):
+        (WebCore::RenderBlock::getBaselineOfLastLineBox):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::baselinePosition):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::placeEllipsis):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintDecoration):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::applyTextAnchorToTextChunk):
+        (WebCore::SVGRootInlineBox::layoutInlineBoxes):
+
 2009-02-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

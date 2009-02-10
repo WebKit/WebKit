@@ -4376,7 +4376,7 @@ int RenderBlock::getBaselineOfFirstLineBox() const
 
     if (childrenInline()) {
         if (firstLineBox())
-            return firstLineBox()->yPos() + firstLineBox()->baseline();
+            return firstLineBox()->yPos() + style(true)->font().ascent();
         else
             return -1;
     }
@@ -4402,7 +4402,7 @@ int RenderBlock::getBaselineOfLastLineBox() const
         if (!firstLineBox() && hasLineIfEmpty())
             return RenderBox::baselinePosition(true, true) + borderTop() + paddingTop();
         if (lastLineBox())
-            return lastLineBox()->yPos() + lastLineBox()->baseline();
+            return lastLineBox()->yPos() + style(lastLineBox() == firstLineBox())->font().ascent();
         return -1;
     }
     else {

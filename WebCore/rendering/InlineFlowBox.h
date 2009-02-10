@@ -100,22 +100,28 @@ public:
 
     virtual RenderLineBoxList* rendererLineBoxes() const;
 
-    int marginBorderPaddingLeft();
-    int marginBorderPaddingRight();
-    int marginLeft();
-    int marginRight();
-    int borderLeft() { if (includeLeftEdge()) return object()->style()->borderLeftWidth(); return 0; }
-    int borderRight() { if (includeRightEdge()) return object()->style()->borderRightWidth(); return 0; }
-    int paddingLeft() { if (includeLeftEdge()) return boxModelObject()->paddingLeft(); return 0; }
-    int paddingRight() { if (includeRightEdge()) return boxModelObject()->paddingRight(); return 0; }
+    int marginBorderPaddingLeft() const { return marginLeft() + borderLeft() + paddingLeft(); }
+    int marginBorderPaddingRight() const { return marginRight() + borderRight() + paddingRight(); }
+    int marginLeft() const { if (includeLeftEdge()) return boxModelObject()->marginLeft(); return 0; }
+    int marginRight() const { if (includeRightEdge()) return boxModelObject()->marginRight(); return 0; }
+    int borderLeft() const { if (includeLeftEdge()) return object()->style()->borderLeftWidth(); return 0; }
+    int borderRight() const { if (includeRightEdge()) return object()->style()->borderRightWidth(); return 0; }
+    int borderTop() const { return object()->style()->borderTopWidth(); }
+    int borderBottom() const { return object()->style()->borderBottomWidth(); }
+    int paddingLeft() const { if (includeLeftEdge()) return boxModelObject()->paddingLeft(); return 0; }
+    int paddingRight() const { if (includeRightEdge()) return boxModelObject()->paddingRight(); return 0; }
+    int paddingTop() const { return boxModelObject()->paddingTop(); }
+    int paddingBottom() const { return boxModelObject()->paddingBottom(); }
 
-    bool includeLeftEdge() { return m_includeLeftEdge; }
-    bool includeRightEdge() { return m_includeRightEdge; }
+    bool includeLeftEdge() const { return m_includeLeftEdge; }
+    bool includeRightEdge() const { return m_includeRightEdge; }
     void setEdges(bool includeLeft, bool includeRight)
     {
         m_includeLeftEdge = includeLeft;
         m_includeRightEdge = includeRight;
     }
+
+    int baseline() const { return object()->style(m_firstLine)->font().ascent() + borderTop() + paddingTop(); }
 
     // Helper functions used during line construction and placement.
     void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);
@@ -129,7 +135,6 @@ public:
                                    int maxPositionTop, int maxPositionBottom);
     void placeBoxesVertically(int y, int maxHeight, int maxAscent, bool strictMode,
                               int& topPosition, int& bottomPosition, int& selectionTop, int& selectionBottom);
-    void shrinkBoxesWithNoTextChildren(int topPosition, int bottomPosition);
     
     virtual void setVerticalOverflowPositions(int /*top*/, int /*bottom*/) { }
     virtual void setVerticalSelectionPositions(int /*top*/, int /*bottom*/) { }

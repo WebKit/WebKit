@@ -118,7 +118,7 @@ void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, in
     // Create an ellipsis box.
     EllipsisBox* ellipsisBox = new (m_object->renderArena()) EllipsisBox(m_object, ellipsisStr, this,
                                                               ellipsisWidth - (markupBox ? markupBox->width() : 0), height(),
-                                                              yPos(), baseline(), !prevRootBox(),
+                                                              yPos(), !prevRootBox(),
                                                               markupBox);
     
     if (!gEllipsisBoxMap)

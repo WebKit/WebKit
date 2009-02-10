@@ -409,7 +409,8 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         }
     }
 
-    IntPoint textOrigin(m_x + tx, m_y + ty + m_baseline);
+    int baseline = object()->style(m_firstLine)->font().ascent();
+    IntPoint textOrigin(m_x + tx, m_y + ty + baseline);
     TextRun textRun(textObject()->text()->characters() + m_start, m_len, textObject()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || styleToUse->visuallyOrdered());
 
     int sPos = 0;
@@ -597,13 +598,15 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
 
     bool linesAreOpaque = !isPrinting && (!(deco & UNDERLINE) || underline.alpha() == 255) && (!(deco & OVERLINE) || overline.alpha() == 255) && (!(deco & LINE_THROUGH) || linethrough.alpha() == 255);
 
+    int baseline = object()->style(m_firstLine)->font().ascent();
+
     bool setClip = false;
     int extraOffset = 0;
     if (!linesAreOpaque && shadow && shadow->next) {
         context->save();
-        IntRect clipRect(tx, ty, width, m_baseline + 2);
+        IntRect clipRect(tx, ty, width, baseline + 2);
         for (ShadowData* s = shadow; s; s = s->next) {
-            IntRect shadowRect(tx, ty, width, m_baseline + 2);
+            IntRect shadowRect(tx, ty, width, baseline + 2);
             shadowRect.inflate(s->blur);
             shadowRect.move(s->x, s->y);
             clipRect.unite(shadowRect);
@@ -611,12 +614,13 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
         }
         context->save();
         context->clip(clipRect);
-        extraOffset += m_baseline + 2;
+        extraOffset += baseline + 2;
         ty += extraOffset;
         setClip = true;
     }
 
     bool setShadow = false;
+    
     do {
         if (shadow) {
             if (!shadow->next) {
@@ -632,7 +636,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
         if (deco & UNDERLINE) {
             context->setStrokeColor(underline);
             // Leave one pixel of white between the baseline and the underline.
-            context->drawLineForText(IntPoint(tx, ty + m_baseline + 1), width, isPrinting);
+            context->drawLineForText(IntPoint(tx, ty + baseline + 1), width, isPrinting);
         }
         if (deco & OVERLINE) {
             context->setStrokeColor(overline);
@@ -640,7 +644,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
         }
         if (deco & LINE_THROUGH) {
             context->setStrokeColor(linethrough);
-            context->drawLineForText(IntPoint(tx, ty + 2 * m_baseline / 3), width, isPrinting);
+            context->drawLineForText(IntPoint(tx, ty + 2 * baseline / 3), width, isPrinting);
         }
     } while (shadow);
 
@@ -700,14 +704,15 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, in
     // So, we generally place the underline at the bottom of the text, but in larger fonts that's not so good so
     // we pin to two pixels under the baseline.
     int lineThickness = cMisspellingLineThickness;
-    int descent = height() - m_baseline;
+    int baseline = object()->style(m_firstLine)->font().ascent();
+    int descent = height() - baseline;
     int underlineOffset;
     if (descent <= (2 + lineThickness)) {
-        // place the underline at the very bottom of the text in small/medium fonts
+        // Place the underline at the very bottom of the text in small/medium fonts.
         underlineOffset = height() - lineThickness;
     } else {
-        // in larger fonts, tho, place the underline up near the baseline to prevent big gap
-        underlineOffset = m_baseline + 2;
+        // In larger fonts, though, place the underline up near the baseline to prevent a big gap.
+        underlineOffset = baseline + 2;
     }
     pt->drawLineForMisspellingOrBadGrammar(IntPoint(tx + m_x + start, ty + m_y + underlineOffset), width, grammar);
 }
@@ -828,7 +833,8 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, int tx, int 
     // All other marked text underlines are 1px thick.
     // If there's not enough space the underline will touch or overlap characters.
     int lineThickness = 1;
-    if (underline.thick && height() - m_baseline >= 2)
+    int baseline = object()->style(m_firstLine)->font().ascent();
+    if (underline.thick && height() - baseline >= 2)
         lineThickness = 2;
 
     // We need to have some space between underlines of subsequent clauses, because some input methods do not use different underline styles for those.
