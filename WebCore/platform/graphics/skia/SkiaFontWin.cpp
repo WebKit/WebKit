@@ -31,8 +31,10 @@
 #include "config.h"
 #include "SkiaFontWin.h"
 
+#include "PlatformContextSkia.h"
 #include "SkCanvas.h"
 #include "SkPaint.h"
+#include "TransformationMatrix.h"
 
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
@@ -213,6 +215,124 @@ void SkiaWinOutlineCache::removePathsForFont(HFONT hfont)
     for (Vector<CachedOutlineKey>::iterator i = outlinesToDelete.begin();
          i != outlinesToDelete.end(); ++i)
         deleteOutline(outlineCache.find(*i));
+}
+
+bool windowsCanHandleTextDrawing(GraphicsContext* context)
+{
+    // Check for non-translation transforms. Sometimes zooms will look better in
+    // Skia, and sometimes better in Windows. The main problem is that zooming
+    // in using Skia will show you the hinted outlines for the smaller size,
+    // which look weird. All else being equal, it's better to use Windows' text
+    // drawing, so we don't check for zooms.
+    const TransformationMatrix& matrix = context->getCTM();
+    if (matrix.b() != 0 || matrix.c() != 0)  // Check for skew.
+        return false;
+
+    // Check for stroke effects.
+    if (context->platformContext()->getTextDrawingMode() != cTextFill)
+        return false;
+
+    // Check for shadow effects.
+    if (context->platformContext()->getDrawLooper())
+        return false;
+
+    return true;
+}
+
+static bool skiaDrawText(HFONT hfont,
+                         HDC dc,
+                         SkCanvas* canvas,
+                         const SkPoint& point,
+                         SkPaint* paint,
+                         const WORD* glyphs,
+                         const int* advances,
+                         const GOFFSET* offsets,
+                         int numGlyphs)
+{
+    canvas->save();
+    canvas->translate(point.fX, point.fY);
+
+    for (int i = 0; i < numGlyphs; i++) {
+        const SkPath* path = SkiaWinOutlineCache::lookupOrCreatePathForGlyph(dc, hfont, glyphs[i]);
+        if (!path)
+            return false;
+
+        bool offset = false;
+        if (offsets && (offsets[i].du != 0 || offsets[i].dv != 0)) {
+            offset = true;
+            canvas->translate(offsets[i].du, offsets[i].dv);
+        }
+
+        canvas->drawPath(*path, *paint);
+        
+        if (offset) {
+            canvas->translate(advances[i] - offsets[i].du, -offsets[i].dv);
+        } else {
+            canvas->translate(advances[i], 0);
+        }
+    }
+
+    canvas->restore();
+
+    return true;
+}
+
+bool paintSkiaText(PlatformContextSkia* platformContext,
+                   HFONT hfont,
+                   int numGlyphs,
+                   const WORD* glyphs,
+                   const int* advances,
+                   const GOFFSET* offsets,
+                   const SkPoint* origin)
+{
+    HDC dc = GetDC(0);
+    HGDIOBJ oldFont = SelectObject(dc, hfont);
+
+    int textMode = platformContext->getTextDrawingMode();
+
+    // Filling (if necessary). This is the common case.
+    SkPaint paint;
+    platformContext->setupPaintForFilling(&paint);
+    paint.setFlags(SkPaint::kAntiAlias_Flag);
+    bool didFill = false;
+
+    if ((textMode & cTextFill) && SkColorGetA(paint.getColor())) {
+        if (!skiaDrawText(hfont, dc, platformContext->canvas(), *origin, &paint,
+                          &glyphs[0], &advances[0], &offsets[0], numGlyphs))
+            return false;
+        didFill = true;
+    }
+
+    // Stroking on top (if necessary).
+    if ((textMode & WebCore::cTextStroke)
+        && platformContext->getStrokeStyle() != NoStroke
+        && platformContext->getStrokeThickness() > 0) {
+
+        paint.reset();
+        platformContext->setupPaintForStroking(&paint, 0, 0);
+        paint.setFlags(SkPaint::kAntiAlias_Flag);
+        if (didFill) {
+            // If there is a shadow and we filled above, there will already be
+            // a shadow. We don't want to draw it again or it will be too dark
+            // and it will go on top of the fill.
+            //
+            // Note that this isn't strictly correct, since the stroke could be
+            // very thick and the shadow wouldn't account for this. The "right"
+            // thing would be to draw to a new layer and then draw that layer
+            // with a shadow. But this is a lot of extra work for something
+            // that isn't normally an issue.
+            paint.setLooper(0)->safeUnref();
+        }
+
+        if (!skiaDrawText(hfont, dc, platformContext->canvas(), *origin, &paint,
+                          &glyphs[0], &advances[0], &offsets[0], numGlyphs))
+            return false;
+    }
+
+    SelectObject(dc, oldFont);
+    ReleaseDC(0, dc);
+
+    return true;
 }
 
 }  // namespace WebCore

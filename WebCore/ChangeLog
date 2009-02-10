@@ -1,3 +1,26 @@
+2009-02-10  Sverrir Berg  <sverrir@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23630
+        Add complex font rendering using Skia instead of Windows ScriptTextOut.
+        This adds support for enhanced webkit styles when drawing complex
+        glyphs.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::containsMissingGlyphs):
+        (WebCore::UniscribeHelper::draw):
+        (WebCore::UniscribeHelper::shape):
+        * platform/graphics/chromium/UniscribeHelper.h:
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleTextDrawing):
+        (WebCore::skiaDrawText):
+        (WebCore::paintSkiaText):
+        * platform/graphics/skia/SkiaFontWin.h:
+
 2009-02-10  Darin Fisher  <darin@chromium.org>
 
         Revert r40797 as requested by Sam Weinig.

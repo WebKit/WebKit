@@ -32,7 +32,6 @@
 #include "config.h"
 #include "Font.h"
 
-#include "TransformationMatrix.h"
 #include "ChromiumBridge.h"
 #include "FontFallbackList.h"
 #include "GlyphBuffer.h"
@@ -48,122 +47,6 @@
 #include <windows.h>
 
 namespace WebCore {
-
-static bool windowsCanHandleTextDrawing(GraphicsContext* context)
-{
-    // Check for non-translation transforms. Sometimes zooms will look better in
-    // Skia, and sometimes better in Windows. The main problem is that zooming
-    // in using Skia will show you the hinted outlines for the smaller size,
-    // which look weird. All else being equal, it's better to use Windows' text
-    // drawing, so we don't check for zooms.
-    const TransformationMatrix& matrix = context->getCTM();
-    if (matrix.b() != 0 || matrix.c() != 0)  // Check for skew.
-        return false;
-
-    // Check for stroke effects.
-    if (context->platformContext()->getTextDrawingMode() != cTextFill)
-        return false;
-
-    // Check for shadow effects.
-    if (context->platformContext()->getDrawLooper())
-        return false;
-
-    return true;
-}
-
-// Skia equivalents to Windows text drawing functions. They
-// will get the outlines from Windows and draw then using Skia using the given
-// parameters in the paint arguments. This allows more complex effects and
-// transforms to be drawn than Windows allows.
-//
-// These functions will be significantly slower than Windows GDI, and the text
-// will look different (no ClearType), so use only when necessary.
-//
-// When you call a Skia* text drawing function, various glyph outlines will be
-// cached. As a result, you should call SkiaWinOutlineCache::removePathsForFont 
-// when the font is destroyed so that the cache does not outlive the font (since
-// the HFONTs are recycled).
-
-// Analog of the Windows GDI function DrawText, except using the given SkPaint
-// attributes for the text. See above for more.
-//
-// Returns true of the text was drawn successfully. False indicates an error
-// from Windows.
-static bool skiaDrawText(HFONT hfont,
-                  SkCanvas* canvas,
-                  const SkPoint& point,
-                  SkPaint* paint,
-                  const WORD* glyphs,
-                  const int* advances,
-                  int numGlyphs)
-{
-    HDC dc = GetDC(0);
-    HGDIOBJ oldFont = SelectObject(dc, hfont);
-
-    canvas->save();
-    canvas->translate(point.fX, point.fY);
-
-    for (int i = 0; i < numGlyphs; i++) {
-        const SkPath* path = SkiaWinOutlineCache::lookupOrCreatePathForGlyph(dc, hfont, glyphs[i]);
-        if (!path)
-            return false;
-        canvas->drawPath(*path, *paint);
-        canvas->translate(advances[i], 0);
-    }
-
-    canvas->restore();
-
-    SelectObject(dc, oldFont);
-    ReleaseDC(0, dc);
-    return true;
-}
-
-static bool paintSkiaText(PlatformContextSkia* platformContext,
-                          HFONT hfont,
-                          int numGlyphs,
-                          const WORD* glyphs,
-                          const int* advances,
-                          const SkPoint& origin)
-{
-    int textMode = platformContext->getTextDrawingMode();
-
-    // Filling (if necessary). This is the common case.
-    SkPaint paint;
-    platformContext->setupPaintForFilling(&paint);
-    paint.setFlags(SkPaint::kAntiAlias_Flag);
-    bool didFill = false;
-    if ((textMode & cTextFill) && SkColorGetA(paint.getColor())) {
-        if (!skiaDrawText(hfont, platformContext->canvas(), origin, &paint, &glyphs[0], &advances[0], numGlyphs))
-            return false;
-        didFill = true;
-    }
-
-    // Stroking on top (if necessary).
-    if ((textMode & WebCore::cTextStroke)
-        && platformContext->getStrokeStyle() != NoStroke
-        && platformContext->getStrokeThickness() > 0) {
-
-        paint.reset();
-        platformContext->setupPaintForStroking(&paint, 0, 0);
-        paint.setFlags(SkPaint::kAntiAlias_Flag);
-        if (didFill) {
-            // If there is a shadow and we filled above, there will already be
-            // a shadow. We don't want to draw it again or it will be too dark
-            // and it will go on top of the fill.
-            //
-            // Note that this isn't strictly correct, since the stroke could be
-            // very thick and the shadow wouldn't account for this. The "right"
-            // thing would be to draw to a new layer and then draw that layer
-            // with a shadow. But this is a lot of extra work for something
-            // that isn't normally an issue.
-            paint.setLooper(0)->safeUnref();
-        }
-
-        if (!skiaDrawText(hfont, platformContext->canvas(), origin, &paint, &glyphs[0], &advances[0], numGlyphs))
-            return false;
-    }
-    return true;
-}
 
 void Font::drawGlyphs(GraphicsContext* graphicsContext,
                       const SimpleFontData* font,
@@ -241,12 +124,16 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
         bool success = false;
         for (int executions = 0; executions < 2; ++executions) {
             if (canUseGDI)
-                success = !!ExtTextOut(hdc, x, lineTop, ETO_GLYPH_INDEX, 0, reinterpret_cast<const wchar_t*>(&glyphs[0]), curLen, &advances[0]);
+                success = !!ExtTextOut(hdc, x, lineTop, ETO_GLYPH_INDEX, 0,
+                        reinterpret_cast<const wchar_t*>(&glyphs[0]),
+                        curLen, &advances[0]);
             else {
-                // Skia's text draing origin is the baseline, like WebKit, not
+                // Skia's text drawing origin is the baseline, like WebKit, not
                 // the top, like Windows.
                 SkPoint origin = { x, point.y() };
-                success = paintSkiaText(context, font->platformData().hfont(), numGlyphs, reinterpret_cast<const WORD*>(&glyphs[0]), &advances[0], origin);
+                success = paintSkiaText(context, font->platformData().hfont(),
+                        numGlyphs, reinterpret_cast<const WORD*>(&glyphs[0]),
+                        &advances[0], 0, &origin);
             }
 
             if (!success && executions == 0) {
@@ -312,7 +199,9 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
 
     // Uniscribe counts the coordinates from the upper left, while WebKit uses
     // the baseline, so we have to subtract off the ascent.
-    state.draw(hdc, static_cast<int>(point.x()), static_cast<int>(point.y() - ascent()), from, to);
+    state.draw(graphicsContext, hdc, static_cast<int>(point.x()),
+               static_cast<int>(point.y() - ascent()), from, to);
+
     context->canvas()->endPlatformPaint();
 }
 

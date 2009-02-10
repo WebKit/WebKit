@@ -44,6 +44,8 @@ class UniscribeTest_TooBig_Test;  // A gunit test for UniscribeHelper.
 
 namespace WebCore {
 
+class GraphicsContext;
+
 #define UNISCRIBE_HELPER_STACK_RUNS 8
 #define UNISCRIBE_HELPER_STACK_CHARS 32
 
@@ -187,7 +189,8 @@ public:
     // be pre-set.
     //
     // The y position is the upper left corner, NOT the baseline.
-    void draw(HDC, int x, int y, int from, int to);
+    void draw(GraphicsContext* graphicsContext, HDC dc, int x, int y, int from,
+              int to);
 
     // Returns the first glyph assigned to the character at the given offset.
     // This function is used to retrieve glyph information when Uniscribe is
