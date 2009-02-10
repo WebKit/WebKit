@@ -142,6 +142,9 @@ String DOMSelection::type() const
 
     SelectionController* selection = m_frame->selection();
 
+    // This is a WebKit DOM extension, incompatible with an IE extension
+    // IE has this same attribute, but returns "none", "text" and "control"
+    // http://msdn.microsoft.com/en-us/library/ms534692(VS.85).aspx
     if (selection->isNone())
         return "None";
     if (selection->isCaret())

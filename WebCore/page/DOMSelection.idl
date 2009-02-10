@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,35 +29,30 @@
 
 module window {
 
+    // This is based off of Mozilla's Selection interface
+    // https://developer.mozilla.org/En/DOM/Selection
     interface DOMSelection {
         readonly attribute Node anchorNode;
         readonly attribute long anchorOffset;
         readonly attribute Node focusNode;
         readonly attribute long focusOffset;
-        readonly attribute Node baseNode;
-        readonly attribute long baseOffset;
-        readonly attribute Node extentNode;
-        readonly attribute long extentOffset;
+
         readonly attribute boolean isCollapsed;
-        readonly attribute DOMString type;
         readonly attribute long rangeCount;
 
         void collapse(in Node node, in long index)
             raises(DOMException);
         void collapseToEnd();
         void collapseToStart();
+
         void deleteFromDocument();
         boolean containsNode(in Node node, in boolean allowPartial);
         void selectAllChildren(in Node node)
             raises(DOMException);
-        void empty();
-        void setBaseAndExtent(in Node baseNode, in long baseOffset, in Node extentNode, in long extentOffset)
-            raises(DOMException);
-        void setPosition(in Node node, in long offset)
-            raises(DOMException);
-        void modify(in DOMString alter, in DOMString direction, in DOMString granularity);
+
         void extend(in Node node, in long offset)
             raises(DOMException);
+
         Range getRangeAt(in long index)
             raises(DOMException);
         void removeAllRanges();
@@ -65,6 +61,26 @@ module window {
 #if defined(LANGUAGE_JAVASCRIPT)
         [DontEnum] DOMString toString();
 #endif
+
+        // WebKit extensions
+        readonly attribute Node baseNode;
+        readonly attribute long baseOffset;
+        readonly attribute Node extentNode;
+        readonly attribute long extentOffset;
+
+        // WebKit's "type" accessor returns "None", "Range" and "Caret"
+        // IE's type accessor returns "none", "text" and "control"
+        readonly attribute DOMString type;
+
+        void modify(in DOMString alter, in DOMString direction, in DOMString granularity);
+        void setBaseAndExtent(in Node baseNode, in long baseOffset, in Node extentNode, in long extentOffset)
+            raises(DOMException);
+        void setPosition(in Node node, in long offset)
+            raises(DOMException);
+
+        // IE extentions
+        // http://msdn.microsoft.com/en-us/library/ms535869(VS.85).aspx
+        void empty();
     };
 
 }

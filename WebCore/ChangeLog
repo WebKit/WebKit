@@ -1,5 +1,17 @@
 2009-02-09  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        Document our Selection DOM extensions
+        (in preparation for re-writing Selection to work with ranges)
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::type):
+        * page/DOMSelection.h:
+        * page/DOMSelection.idl:
+
+2009-02-09  Eric Seidel  <eric@webkit.org>
+
         Attempt to fix wx build
 
         * WebCoreSources.bkl: change Selection to VisibleSelection
