@@ -1,3 +1,19 @@
+2009-02-10  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 23871: Assertion failure beneath WebCore::openFunc when
+        running http/tests/security/xss-DENIED-xsl-document-redirect.xml
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23871>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Covered by existing tests.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::openFunc): Use the two-parameter KURL constructor so that
+        the string will be parsed. libxml2 gives us a UTF-8-encoded string
+        that needs to be parsed.
+
 2009-02-10  David Hyatt  <hyatt@apple.com>
 
         Shrink the size of all replaced elements (images, form controls, plugins) by 4 bytes by packing the

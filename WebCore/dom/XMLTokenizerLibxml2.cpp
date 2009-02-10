@@ -395,7 +395,7 @@ static void* openFunc(const char* uri)
     ASSERT(globalDocLoader);
     ASSERT(currentThread() == libxmlLoaderThread);
 
-    KURL url(uri);
+    KURL url(KURL(), uri);
 
     if (!shouldAllowExternalLoad(url))
         return &globalDescriptor;
