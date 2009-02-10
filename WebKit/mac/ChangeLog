@@ -1,3 +1,15 @@
+2009-02-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=23863> / <rdar://problem/6571390>.
+        Bug 23863: Reproducible crash in Mail with TOT WebKit when creating a new message
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _removeMouseMovedObserverUnconditionally]): Nil-check _private as it may have not
+        yet been initialized if this WebHTMLView was loaded from a nib.
+        (-[WebHTMLView _removeSuperviewObservers]): Ditto.
+
 2009-02-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dave Hyatt.

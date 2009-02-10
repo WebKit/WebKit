@@ -774,7 +774,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_removeMouseMovedObserverUnconditionally
 {
-    if (!_private->observingMouseMovedNotifications)
+    if (!_private || !_private->observingMouseMovedNotifications)
         return;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:WKMouseMovedNotification() object:nil];
@@ -783,7 +783,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_removeSuperviewObservers
 {
-    if (!_private->observingSuperviewNotifications)
+    if (!_private || !_private->observingSuperviewNotifications)
         return;
     
     NSView *superview = [self superview];
