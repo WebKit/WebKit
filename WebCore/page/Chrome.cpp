@@ -457,10 +457,8 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
                 m_deferredFrames.append(otherPage->mainFrame());
 
 #if !PLATFORM(MAC)
-            for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-                if (Document* document = frame->document())
-                    document->suspendActiveDOMObjects();
-            }
+            for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext())
+                frame->document()->suspendActiveDOMObjects();
 #endif
         }
     }
@@ -478,10 +476,8 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
             page->setDefersLoading(false);
 
 #if !PLATFORM(MAC)
-            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-                if (Document* document = frame->document())
-                    document->resumeActiveDOMObjects();
-            }
+            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
+                frame->document()->resumeActiveDOMObjects();
 #endif
         }
     }

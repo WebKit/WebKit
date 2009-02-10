@@ -132,7 +132,7 @@ FrameView::~FrameView()
     ASSERT(!m_enqueueEvents);
 
     if (m_frame) {
-        ASSERT(m_frame->view() != this || !m_frame->document() || !m_frame->contentRenderer());
+        ASSERT(m_frame->view() != this || !m_frame->contentRenderer());
         RenderPart* renderer = m_frame->ownerRenderer();
         if (renderer && renderer->widget() == this)
             renderer->setWidget(0);
@@ -286,8 +286,6 @@ PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientatio
 {
     // FIXME: We need to update the scrollbar dynamically as documents change (or as doc elements and bodies get discovered that have custom styles).
     Document* doc = m_frame->document();
-    if (!doc)
-        return ScrollView::createScrollbar(orientation);
 
     // Try the <body> element first as a scrollbar source.
     Element* body = doc->body();
@@ -443,11 +441,6 @@ void FrameView::layout(bool allowSubtree)
         return;
 
     Document* document = m_frame->document();
-    if (!document) {
-        // FIXME: Should we set m_size.height here too?
-        m_size.setWidth(layoutWidth());
-        return;
-    }
 
     m_layoutSchedulingEnabled = false;
 
@@ -765,7 +758,7 @@ void FrameView::endDeferredRepaints()
 void FrameView::layoutTimerFired(Timer<FrameView>*)
 {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (m_frame->document() && !m_frame->document()->ownerElement())
+    if (!m_frame->document()->ownerElement())
         printf("Layout timer fired at %d\n", m_frame->document()->elapsedTime());
 #endif
     layout();
@@ -773,7 +766,7 @@ void FrameView::layoutTimerFired(Timer<FrameView>*)
 
 void FrameView::scheduleRelayout()
 {
-    ASSERT(!m_frame->document() || !m_frame->document()->inPageCache());
+    ASSERT(!m_frame->document()->inPageCache());
     ASSERT(m_frame->view() == this);
 
     if (m_layoutRoot) {
@@ -784,7 +777,7 @@ void FrameView::scheduleRelayout()
         return;
     if (!needsLayout())
         return;
-    if (!m_frame->document() || !m_frame->document()->shouldScheduleLayout())
+    if (!m_frame->document()->shouldScheduleLayout())
         return;
 
     int delay = m_frame->document()->minimumLayoutDelay();
@@ -865,7 +858,7 @@ bool FrameView::needsLayout() const
     return layoutPending()
         || (root && root->needsLayout())
         || m_layoutRoot
-        || (document && document->hasChangedChild()) // can occur when using WebKit ObjC interface
+        || document->hasChangedChild() // can occur when using WebKit ObjC interface
         || m_frame->needsReapplyStyles();
 }
 
@@ -882,7 +875,7 @@ void FrameView::unscheduleRelayout()
         return;
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (m_frame->document() && !m_frame->document()->ownerElement())
+    if (!m_frame->document()->ownerElement())
         printf("Layout timer unscheduled at %d\n", m_frame->document()->elapsedTime());
 #endif
     
@@ -1065,7 +1058,7 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
 
     // Set our clip rect to be our contents.
     IntRect clipRect = contentsToWindow(visibleContentRect(!clipToContents));
-    if (!m_frame || !m_frame->document() || !m_frame->document()->ownerElement())
+    if (!m_frame || !m_frame->document()->ownerElement())
         return clipRect;
 
     // Take our owner element and get the clip rect from the enclosing layer.
@@ -1191,12 +1184,10 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         return;
     
     Document* document = frame()->document();
-    if (!document)
-        return;
 
 #ifndef NDEBUG
     bool fillWithRed;
-    if (document || document->printing())
+    if (document->printing())
         fillWithRed = false; // Printing, don't fill with red (can't remember why).
     else if (document->ownerElement())
         fillWithRed = false; // Subframe, don't fill with red.

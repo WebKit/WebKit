@@ -685,7 +685,7 @@ void EventHandler::setAutoscrollRenderer(RenderObject* renderer)
 
 void EventHandler::allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const
 {
-    if (!m_frame || !m_frame->document()) {
+    if (!m_frame) {
         flagDHTML = false;
         flagUA = false;
         return;
@@ -791,9 +791,6 @@ void EventHandler::setMousePressNode(PassRefPtr<Node> node)
 
 bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity granularity)
 {
-    if (!m_frame->document())
-        return false;
-    
     Node* node = m_frame->document()->focusedNode();
     if (!node)
         node = m_mousePressNode.get();
@@ -1002,9 +999,6 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scr
 
 bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 {
-    if (!m_frame->document())
-        return false;
-
     RefPtr<FrameView> protector(m_frame->view());
 
     m_mousePressed = true;
@@ -1126,9 +1120,6 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 // This method only exists for platforms that don't know how to deliver 
 bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEvent)
 {
-    if (!m_frame->document())
-        return false;
-
     RefPtr<FrameView> protector(m_frame->view());
 
     // We get this instead of a second mouse-up 
@@ -1185,7 +1176,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     // but also assert so that we can try to figure this out in debug
     // builds, if it happens.
     ASSERT(m_frame);
-    if (!m_frame || !m_frame->document())
+    if (!m_frame)
         return false;
 
     RefPtr<FrameView> protector(m_frame->view());
@@ -1283,9 +1274,6 @@ void EventHandler::invalidateClick()
 
 bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 {
-    if (!m_frame->document())
-        return false;
-
     RefPtr<FrameView> protector(m_frame->view());
 
     m_mousePressed = false;
@@ -1354,9 +1342,6 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Node* dragTa
 bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     bool accept = false;
-
-    if (!m_frame->document())
-        return false;
 
     if (!m_frame->view())
         return false;
@@ -1600,8 +1585,6 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
 bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
 {
     Document* doc = m_frame->document();
-    if (!doc)
-        return false;
 
     RenderObject* docRenderer = doc->renderer();
     if (!docRenderer)
@@ -1652,7 +1635,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
 {
     Document* doc = m_frame->document();
     FrameView* v = m_frame->view();
-    if (!doc || !v)
+    if (!v)
         return false;
     
     bool swallowEvent;
@@ -2237,10 +2220,10 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
 
 void EventHandler::capsLockStateMayHaveChanged()
 {
-    if (Document* d = m_frame->document())
-        if (Node* node = d->focusedNode())
-            if (RenderObject* r = node->renderer())
-                r->capsLockStateMayHaveChanged();
+    Document* d = m_frame->document();
+    if (Node* node = d->focusedNode())
+        if (RenderObject* r = node->renderer())
+            r->capsLockStateMayHaveChanged();
 }
 
 unsigned EventHandler::pendingFrameUnloadEventCount()
@@ -2272,8 +2255,7 @@ void EventHandler::clearPendingFrameUnloadEventCount()
 
 void EventHandler::sendResizeEvent()
 {
-    if (Document* doc = m_frame->document())
-        doc->dispatchWindowEvent(eventNames().resizeEvent, false, false);
+    m_frame->document()->dispatchWindowEvent(eventNames().resizeEvent, false, false);
 }
 
 void EventHandler::sendScrollEvent()
@@ -2282,10 +2264,7 @@ void EventHandler::sendScrollEvent()
     if (!v)
         return;
     v->setWasScrolledByUser(true);
-    Document* doc = m_frame->document();
-    if (!doc)
-        return;
-    doc->dispatchEventForType(eventNames().scrollEvent, true, false);
+    m_frame->document()->dispatchEventForType(eventNames().scrollEvent, true, false);
 }
 
 unsigned EventHandler::pendingFrameBeforeUnloadEventCount()

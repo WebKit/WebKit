@@ -830,7 +830,7 @@ IntRect SelectionController::caretRepaintRect() const
 
 bool SelectionController::recomputeCaretRect()
 {
-    if (!m_frame || !m_frame->document())
+    if (!m_frame)
         return false;
         
     FrameView* v = m_frame->document()->view();
@@ -1043,8 +1043,6 @@ void SelectionController::selectFrameElementInParentIfFullySelected()
 
     // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
     Document* doc = m_frame->document();
-    if (!doc)
-        return;
     Element* ownerElement = doc->ownerElement();
     if (!ownerElement)
         return;
@@ -1072,8 +1070,6 @@ void SelectionController::selectFrameElementInParentIfFullySelected()
 void SelectionController::selectAll()
 {
     Document* document = m_frame->document();
-    if (!document)
-        return;
     
     if (document->focusedNode() && document->focusedNode()->canSelectAll()) {
         document->focusedNode()->selectAll();
@@ -1207,8 +1203,7 @@ void SelectionController::setFocused(bool flag)
 
     focusedOrActiveStateChanged();
 
-    if (Document* doc = m_frame->document())
-        doc->dispatchWindowEvent(flag ? eventNames().focusEvent : eventNames().blurEvent, false, false);
+    m_frame->document()->dispatchWindowEvent(flag ? eventNames().focusEvent : eventNames().blurEvent, false, false);
 }
 
 bool SelectionController::isFocusedAndActive() const

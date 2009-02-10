@@ -83,10 +83,10 @@ PassRefPtr<KeyboardEvent> EventHandler::currentKeyboardEvent() const
         case NSKeyDown: {
             PlatformKeyboardEvent platformEvent(event);
             platformEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
-            return KeyboardEvent::create(platformEvent, m_frame->document() ? m_frame->document()->defaultView() : 0);
+            return KeyboardEvent::create(platformEvent, m_frame->document()->defaultView());
         }
         case NSKeyUp:
-            return KeyboardEvent::create(event, m_frame->document() ? m_frame->document()->defaultView() : 0);
+            return KeyboardEvent::create(event, m_frame->document()->defaultView());
         default:
             return 0;
     }
@@ -140,8 +140,6 @@ bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
     }
     
     Document* document = m_frame->document();
-    if (!document)
-        return false;
 
     // RSS view needs arrow key keypress events.
     if (isSafari && document->url().protocolIs("feed") || document->url().protocolIs("feeds"))

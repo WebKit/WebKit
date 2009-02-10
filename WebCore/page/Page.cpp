@@ -93,9 +93,6 @@ static void networkStateChanged()
     for (unsigned i = 0; i < frames.size(); i++) {
         Document* document = frames[i]->document();
         
-        if (!document)
-            continue;
-
         // If the document does not have a body the event should be dispatched to the document
         Node* eventTarget = document->body();
         if (!eventTarget)
@@ -158,8 +155,7 @@ Page::~Page()
     allPages->remove(this);
     
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (frame->document())
-            frame->document()->documentWillBecomeInactive();
+        frame->document()->documentWillBecomeInactive();
         frame->pageDestroyed();
     }
     m_editorClient->pageDestroyed();
@@ -358,8 +354,7 @@ void Page::unmarkAllTextMatches()
 
     Frame* frame = mainFrame();
     do {
-        if (Document* document = frame->document())
-            document->removeMarkers(DocumentMarker::TextMatch);
+        frame->document()->removeMarkers(DocumentMarker::TextMatch);
         frame = incrementFrame(frame, true, false);
     } while (frame);
 }
@@ -404,8 +399,7 @@ void Page::setMediaVolume(float volume)
 
     m_mediaVolume = volume;
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (frame->document())
-            frame->document()->mediaVolumeDidChange();
+        frame->document()->mediaVolumeDidChange();
     }
 }
 

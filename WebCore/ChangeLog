@@ -1,3 +1,174 @@
+2009-02-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23867
+        Eliminate obsolete frame->document() checks
+
+        * page/FrameView.cpp: (WebCore::FrameView::paintContents): Apparently due to a typo
+        (document vs. !document), fillWithRed was always set to false, and other branches were
+        never taken. Removing the check for document restores debug-only red color filling.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::begin): Only call dispatchWindowObjectAvailable()
+        after a document is created. A client can do anything in its delegate method, so we'd need
+        to have frame->document() checks otherwise. DumpRenderTree uses this delegate to add its
+        custom property, and it was crashing due to null document in JSDOMWindowBase::getOwnPropertySlot().
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::getOwnPropertySlot):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::needsYouTubeQuirk):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::updateRenderingForBindings):
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteWithDirection):
+        (WebCore::Editor::dispatchCPPEvent):
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+        * editing/EditorCommand.cpp:
+        (WebCore::Editor::Command::execute):
+        (WebCore::Editor::Command::isEnabled):
+        (WebCore::Editor::Command::state):
+        (WebCore::Editor::Command::value):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::recomputeCaretRect):
+        (WebCore::SelectionController::selectFrameElementInParentIfFullySelected):
+        (WebCore::SelectionController::selectAll):
+        (WebCore::SelectionController::setFocused):
+        * inspector/InspectorController.cpp:
+        (WebCore::getResourceDocumentNode):
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::setJavaScriptPaused):
+        * loader/DocumentLoader.cpp:
+        (WebCore::canonicalizedTitle):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        (WebCore::DocumentLoader::subresource):
+        (WebCore::DocumentLoader::getSubresources):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::stop):
+        (WebCore::FrameLoader::iconURL):
+        (WebCore::FrameLoader::executeIfJavaScriptURL):
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::endIfNotLoadingMainResource):
+        (WebCore::FrameLoader::restoreDocumentState):
+        (WebCore::FrameLoader::gotoAnchor):
+        (WebCore::FrameLoader::loadDone):
+        (WebCore::FrameLoader::checkCompleted):
+        (WebCore::FrameLoader::checkCallImplicitClose):
+        (WebCore::FrameLoader::scheduleRefresh):
+        (WebCore::FrameLoader::outgoingOrigin):
+        (WebCore::FrameLoader::canCachePageContainingThisFrame):
+        (WebCore::FrameLoader::logCanCacheFrameDecision):
+        (WebCore::FrameLoader::updatePolicyBaseURL):
+        (WebCore::FrameLoader::setPolicyBaseURL):
+        (WebCore::FrameLoader::frameDetached):
+        (WebCore::FrameLoader::shouldScrollToAnchor):
+        (WebCore::FrameLoader::saveDocumentState):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        * loader/icon/IconFetcher.cpp:
+        (WebCore::IconFetcher::create):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        * page/Chrome.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::alert):
+        (WebCore::DOMWindow::confirm):
+        (WebCore::DOMWindow::prompt):
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+        (WebCore::DOMWindow::getMatchedCSSRules):
+        (WebCore::DOMWindow::openDatabase):
+        (WebCore::DOMWindow::scrollBy):
+        (WebCore::DOMWindow::scrollTo):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::allowDHTMLDrag):
+        (WebCore::EventHandler::scrollOverflow):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::capsLockStateMayHaveChanged):
+        (WebCore::EventHandler::sendResizeEvent):
+        (WebCore::EventHandler::sendScrollEvent):
+        * page/FocusController.cpp:
+        (WebCore::deepFocusableNode):
+        (WebCore::FocusController::advanceFocus):
+        * page/Frame.cpp:
+        (WebCore::Frame::setFocusedNodeIfNeeded):
+        (WebCore::Frame::shouldApplyTextZoom):
+        (WebCore::Frame::shouldApplyPageZoom):
+        (WebCore::Frame::setZoomFactor):
+        (WebCore::Frame::setPrinting):
+        (WebCore::Frame::reapplyStyles):
+        (WebCore::Frame::isContentEditable):
+        (WebCore::Frame::computeAndSetTypingStyle):
+        (WebCore::Frame::selectionComputedStyle):
+        (WebCore::Frame::applyEditingStyleToBodyElement):
+        (WebCore::Frame::removeEditingStyleFromBodyElement):
+        (WebCore::Frame::contentRenderer):
+        (WebCore::Frame::styleForSelectionStart):
+        (WebCore::Frame::setSelectionFromNone):
+        (WebCore::Frame::findString):
+        (WebCore::Frame::markAllMatchesForText):
+        (WebCore::Frame::setMarkedTextMatchesAreHighlighted):
+        (WebCore::Frame::documentTypeString):
+        (WebCore::Frame::shouldClose):
+        (WebCore::Frame::respondToChangedSelection):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::createScrollbar):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::layoutTimerFired):
+        (WebCore::FrameView::scheduleRelayout):
+        (WebCore::FrameView::needsLayout):
+        (WebCore::FrameView::unscheduleRelayout):
+        (WebCore::FrameView::windowClipRect):
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::disconnectFrame):
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        (WebCore::Page::~Page):
+        (WebCore::Page::unmarkAllTextMatches):
+        (WebCore::Page::setMediaVolume):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateRenderingDispatcherFired):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::currentKeyboardEvent):
+        (WebCore::EventHandler::needsKeyboardEventDisambiguationQuirks):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::dashboardRegionsDictionary):
+        (WebCore::Frame::setUserStyleSheetLocation):
+        (WebCore::Frame::setUserStyleSheet):
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::dispatchStorageEvent):
+        * storage/SessionStorageArea.cpp:
+        (WebCore::SessionStorageArea::dispatchStorageEvent):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::setContainerSize):
+        (WebCore::SVGImage::usesContainerSize):
+        (WebCore::SVGImage::size):
+        (WebCore::SVGImage::hasRelativeWidth):
+        (WebCore::SVGImage::hasRelativeHeight):
+        Removed frame->document() checks.
+
 2009-02-10  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.

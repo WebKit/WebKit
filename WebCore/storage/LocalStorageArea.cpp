@@ -219,9 +219,8 @@ void LocalStorageArea::dispatchStorageEvent(const String& key, const String& old
     HashSet<Page*>::const_iterator end = pages.end();
     for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            if (Document* document = frame->document())
-                if (document->securityOrigin()->equal(securityOrigin()))
-                    frames.append(frame);
+            if (frame->document()->securityOrigin()->equal(securityOrigin()))
+                frames.append(frame);
         }
     }
 

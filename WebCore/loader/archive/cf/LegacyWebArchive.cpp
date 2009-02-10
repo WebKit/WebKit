@@ -506,10 +506,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
         if (((*it)->hasTagName(HTMLNames::frameTag) || (*it)->hasTagName(HTMLNames::iframeTag) || (*it)->hasTagName(HTMLNames::objectTag)) &&
              (childFrame = static_cast<HTMLFrameOwnerElement*>(*it)->contentFrame())) {
             RefPtr<LegacyWebArchive> subframeArchive;
-            if (Document* document = childFrame->document())
-                subframeArchive = LegacyWebArchive::create(document);
-            else
-                subframeArchive = create(childFrame);
+            subframeArchive = LegacyWebArchive::create(childFrame->document());
             
             if (subframeArchive)
                 subframeArchives.append(subframeArchive);

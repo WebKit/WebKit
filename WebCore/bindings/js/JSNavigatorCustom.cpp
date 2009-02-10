@@ -76,10 +76,6 @@ static bool needsYouTubeQuirk(ExecState* exec, Frame* frame)
         return false;
 
     Document* document = frame->document();
-    // FIXME: The document is never null, so we should remove this check along with the
-    // other similar ones in this file when we are absolutely sure it's safe.
-    if (!document)
-        return false;
 
     // Do the quirk only on the front page of the global version of YouTube.
     const KURL& url = document->url();

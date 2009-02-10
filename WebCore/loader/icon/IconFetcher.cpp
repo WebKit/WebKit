@@ -101,8 +101,6 @@ static void parseIconLink(HTMLLinkElement* link, Vector<IconLinkEntry>& entries)
 PassRefPtr<IconFetcher> IconFetcher::create(Frame* frame, IconFetcherClient* client)
 {
     Document* document = frame->document();
-    if (!document)
-        return 0;
     
     HTMLHeadElement* head = document->head();
     if (!head)

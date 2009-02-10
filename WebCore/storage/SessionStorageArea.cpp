@@ -75,9 +75,8 @@ void SessionStorageArea::dispatchStorageEvent(const String& key, const String& o
     // For SessionStorage events, each frame in the page's frametree with the same origin as this StorageArea needs to be notified of the change
     Vector<RefPtr<Frame> > frames;
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (Document* document = frame->document())
-            if (document->securityOrigin()->equal(securityOrigin()))
-                frames.append(frame);
+        if (frame->document()->securityOrigin()->equal(securityOrigin()))
+            frames.append(frame);
     }
         
     for (unsigned i = 0; i < frames.size(); ++i) {

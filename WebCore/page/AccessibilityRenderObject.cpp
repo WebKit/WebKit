@@ -1770,10 +1770,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
         Frame* frame = static_cast<FrameView*>(widget)->frame();
         if (!frame)
             break;
-        Document* document = frame->document();
-        if (!document)
-            break;
-        renderView = document->renderView();
+        renderView = frame->document()->renderView();
         frameView = static_cast<FrameView*>(widget);
     }
     

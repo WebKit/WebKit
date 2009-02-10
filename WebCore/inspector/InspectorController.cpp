@@ -668,8 +668,6 @@ static JSValueRef getResourceDocumentNode(JSContextRef ctx, JSObjectRef /*functi
     Frame* frame = resource->frame.get();
 
     Document* document = frame->document();
-    if (!document)
-        return undefined;
 
     if (document->isPluginDocument() || document->isImageDocument() || document->isMediaDocument())
         return undefined;

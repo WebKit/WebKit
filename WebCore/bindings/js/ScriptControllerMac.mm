@@ -157,11 +157,7 @@ static void updateRenderingForBindings(JSC::ExecState*, JSC::JSObject* rootObjec
     if (!frame)
         return;
 
-    Document* document = frame->document();
-    if (!document)
-        return;
-
-    document->updateRendering();
+    frame->document()->updateRendering();
 }
 
 void ScriptController::initJavaJSBindings()

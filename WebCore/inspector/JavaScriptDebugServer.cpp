@@ -363,12 +363,11 @@ void JavaScriptDebugServer::setJavaScriptPaused(Frame* frame, bool paused)
 
     frame->script()->setPaused(paused);
 
-    if (Document* document = frame->document()) {
-        if (paused)
-            document->suspendActiveDOMObjects();
-        else
-            document->resumeActiveDOMObjects();
-    }
+    Document* document = frame->document();
+    if (paused)
+        document->suspendActiveDOMObjects();
+    else
+        document->resumeActiveDOMObjects();
 
     setJavaScriptPaused(frame->view(), paused);
 }

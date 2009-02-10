@@ -1443,7 +1443,7 @@ bool Editor::Command::execute(const String& parameter, Event* triggeringEvent) c
 {
     if (!isEnabled(triggeringEvent)) {
         // Let certain commands be executed when performed explicitly even if they are disabled.
-        if (!isSupported() || !m_frame || !m_frame->document() || !m_command->allowExecutionWhenDisabled)
+        if (!isSupported() || !m_frame || !m_command->allowExecutionWhenDisabled)
             return false;
     }
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
@@ -1462,21 +1462,21 @@ bool Editor::Command::isSupported() const
 
 bool Editor::Command::isEnabled(Event* triggeringEvent) const
 {
-    if (!isSupported() || !m_frame || !m_frame->document())
+    if (!isSupported() || !m_frame)
         return false;
     return m_command->isEnabled(m_frame.get(), triggeringEvent, m_source);
 }
 
 TriState Editor::Command::state(Event* triggeringEvent) const
 {
-    if (!isSupported() || !m_frame || !m_frame->document())
+    if (!isSupported() || !m_frame)
         return FalseTriState;
     return m_command->state(m_frame.get(), triggeringEvent);
 }
 
 String Editor::Command::value(Event* triggeringEvent) const
 {
-    if (!isSupported() || !m_frame || !m_frame->document())
+    if (!isSupported() || !m_frame)
         return String();
     return m_command->value(m_frame.get(), triggeringEvent);
 }

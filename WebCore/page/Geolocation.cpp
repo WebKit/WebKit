@@ -62,8 +62,7 @@ Geolocation::Geolocation(Frame* frame)
 void Geolocation::disconnectFrame()
 {
     m_service->stopUpdating();
-    if (m_frame->document())
-        m_frame->document()->setUsingGeolocation(false);
+    m_frame->document()->setUsingGeolocation(false);
     m_frame = 0;
 }
 

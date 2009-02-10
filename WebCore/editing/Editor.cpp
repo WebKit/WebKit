@@ -222,7 +222,7 @@ bool Editor::isSelectTrailingWhitespaceEnabled()
 
 bool Editor::deleteWithDirection(SelectionController::EDirection direction, TextGranularity granularity, bool killRing, bool isTypingAction)
 {
-    if (!canEdit() || !m_frame->document())
+    if (!canEdit())
         return false;
 
     if (m_frame->selection()->isRange()) {
@@ -689,7 +689,7 @@ void Editor::clearLastEditCommand()
 bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPolicy policy)
 {
     Node* target = m_frame->selection()->start().element();
-    if (!target && m_frame->document())
+    if (!target)
         target = m_frame->document()->body();
     if (!target)
         return true;
@@ -718,7 +718,7 @@ void Editor::applyStyle(CSSStyleDeclaration* style, EditAction editingAction)
             m_frame->computeAndSetTypingStyle(style, editingAction);
             break;
         case VisibleSelection::RangeSelection:
-            if (m_frame->document() && style)
+            if (style)
                 applyCommand(ApplyStyleCommand::create(m_frame->document(), style, editingAction));
             break;
     }
@@ -737,7 +737,7 @@ void Editor::applyParagraphStyle(CSSStyleDeclaration* style, EditAction editingA
             break;
         case VisibleSelection::CaretSelection:
         case VisibleSelection::RangeSelection:
-            if (m_frame->document() && style)
+            if (style)
                 applyCommand(ApplyStyleCommand::create(m_frame->document(), style, editingAction, ApplyStyleCommand::ForceBlockProperties));
             break;
     }

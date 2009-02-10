@@ -132,8 +132,7 @@ void ScheduledAction::execute(Document* document)
     // FIXME: Is this really the right point to do the update? We need a place that works
     // for all possible entry points that might possibly execute script, but this seems
     // to be a bit too low-level.
-    if (Document* document = frame->document())
-        document->updateRendering();
+    frame->document()->updateRendering();
 
     frame->script()->setProcessingTimerCallback(false);
 }

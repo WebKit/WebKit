@@ -90,8 +90,6 @@ static Node* deepFocusableNode(FocusDirection direction, Node* node, KeyboardEve
             break;
 
         Document* document = owner->contentFrame()->document();
-        if (!document)
-            break;
 
         node = (direction == FocusDirectionForward)
             ? document->nextFocusableNode(0, event)
@@ -115,8 +113,6 @@ bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* even
     Frame* frame = focusedOrMainFrame();
     ASSERT(frame);
     Document* document = frame->document();
-    if (!document)
-        return false;
 
     Node* node = (direction == FocusDirectionForward)
         ? document->nextFocusableNode(document->focusedNode(), event)
@@ -129,8 +125,6 @@ bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* even
             break;
 
         Document* parentDocument = parentFrame->document();
-        if (!parentDocument)
-            break;
 
         HTMLFrameOwnerElement* owner = frame->ownerElement();
         if (!owner)
@@ -155,10 +149,10 @@ bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* even
         }
 
         // Chrome doesn't want focus, so we should wrap focus.
-        if (Document* d = m_page->mainFrame()->document())
-            node = (direction == FocusDirectionForward)
-                ? d->nextFocusableNode(0, event)
-                : d->previousFocusableNode(0, event);
+        Document* d = m_page->mainFrame()->document();
+        node = (direction == FocusDirectionForward)
+            ? d->nextFocusableNode(0, event)
+            : d->previousFocusableNode(0, event);
 
         node = deepFocusableNode(direction, node, event);
 
