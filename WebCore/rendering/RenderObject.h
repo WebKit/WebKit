@@ -737,8 +737,6 @@ public:
     
     void remove() { if (parent()) parent()->removeChild(this); }
 
-    virtual void capsLockStateMayHaveChanged() { }
-
     AnimationController* animation() const;
 
     bool visibleToHitTesting() const { return style()->visibility() == VISIBLE && style()->pointerEvents() != PE_NONE; }

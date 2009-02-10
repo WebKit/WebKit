@@ -1,5 +1,17 @@
 2009-02-10  David Hyatt  <hyatt@apple.com>
 
+        Get rid of capsLockStateMayHaveChanged on RenderObject.  It is only implemented by one class (text fields),
+        so devirtualize and just query at the single call site.
+
+        Reviewed by Eric Seidel
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::capsLockStateMayHaveChanged):
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControlSingleLine.h:
+
+2009-02-10  David Hyatt  <hyatt@apple.com>
+
         Shrink the size of all RenderObjects (except for RenderInlines) by 4 bytes.  This patch moves the cached vertical position member to RenderInlines,
         since they were the only objects being queried across multiple lines.
         

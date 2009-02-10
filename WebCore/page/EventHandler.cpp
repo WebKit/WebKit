@@ -57,6 +57,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "RenderFrameSet.h"
+#include "RenderTextControlSingleLine.h"
 #include "RenderWidget.h"
 #include "RenderView.h"
 #include "Scrollbar.h"
@@ -2221,9 +2222,12 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
 void EventHandler::capsLockStateMayHaveChanged()
 {
     Document* d = m_frame->document();
-    if (Node* node = d->focusedNode())
-        if (RenderObject* r = node->renderer())
-            r->capsLockStateMayHaveChanged();
+    if (Node* node = d->focusedNode()) {
+        if (RenderObject* r = node->renderer()) {
+            if (r->isTextField())
+                static_cast<RenderTextControlSingleLine*>(r)->capsLockStateMayHaveChanged();
+        }
+    }
 }
 
 unsigned EventHandler::pendingFrameUnloadEventCount()
