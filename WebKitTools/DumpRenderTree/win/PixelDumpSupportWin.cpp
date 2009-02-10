@@ -34,7 +34,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>
 
-PassRefPtr<BitmapContext> getBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
+PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
     RECT frame;
     if (!GetWindowRect(webViewWindow, &frame))

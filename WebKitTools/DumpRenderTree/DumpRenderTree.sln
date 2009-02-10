@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual C++ Express 2005
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DumpRenderTree", "win\DumpRenderTree.vcproj", "{6567DFD4-D6DE-4CD5-825D-17E353D160E1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNetscapePlugin", "win\TestNetscapePlugin\TestNetscapePlugin.vcproj", "{C0737398-3565-439E-A2B8-AB2BE4D5430C}"
@@ -34,8 +34,8 @@ Global
 		{DA31DA52-6675-48D4-89E0-333A7144397C}.Debug|Win32.Build.0 = Debug|Win32
 		{DA31DA52-6675-48D4-89E0-333A7144397C}.Release|Win32.ActiveCfg = Release|Win32
 		{DA31DA52-6675-48D4-89E0-333A7144397C}.Release|Win32.Build.0 = Release|Win32
-		{59CC0547-70AC-499C-9B19-EC01C6F61137}.Debug_Internal|Win32.ActiveCfg = Debug|Win32
-		{59CC0547-70AC-499C-9B19-EC01C6F61137}.Debug_Internal|Win32.Build.0 = Debug|Win32
+		{59CC0547-70AC-499C-9B19-EC01C6F61137}.Debug_Internal|Win32.ActiveCfg = Debug_Internal|Win32
+		{59CC0547-70AC-499C-9B19-EC01C6F61137}.Debug_Internal|Win32.Build.0 = Debug_Internal|Win32
 		{59CC0547-70AC-499C-9B19-EC01C6F61137}.Debug|Win32.ActiveCfg = Debug|Win32
 		{59CC0547-70AC-499C-9B19-EC01C6F61137}.Debug|Win32.Build.0 = Debug|Win32
 		{59CC0547-70AC-499C-9B19-EC01C6F61137}.Release|Win32.ActiveCfg = Release|Win32

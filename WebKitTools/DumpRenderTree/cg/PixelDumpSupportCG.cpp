@@ -49,6 +49,8 @@
 #include <CommonCrypto/CommonDigest.h>
 #endif
 
+using namespace std;
+
 #if PLATFORM(WIN)
 static const CFStringRef kUTTypePNG = CFSTR("public.png");
 #endif
@@ -60,10 +62,22 @@ static void printPNG(CGImageRef image)
     CGImageDestinationAddImage(imageDest.get(), image, 0);
     CGImageDestinationFinalize(imageDest.get());
 
-    printf("Content-Type: %s\n", "image/png");
-    printf("Content-Length: %lu\n", CFDataGetLength(imageData.get()));
+    const UInt8* data = CFDataGetBytePtr(imageData.get());
+    CFIndex dataLength = CFDataGetLength(imageData.get());
 
-    fwrite(CFDataGetBytePtr(imageData.get()), 1, CFDataGetLength(imageData.get()), stdout);
+    printf("Content-Type: %s\n", "image/png");
+    printf("Content-Length: %lu\n", static_cast<unsigned long>(dataLength));
+
+    const size_t bytesToWriteInOneChunk = 1 << 15;
+    size_t dataRemainingToWrite = dataLength;
+    while (dataRemainingToWrite) {
+        size_t bytesToWriteInThisChunk = min(dataRemainingToWrite, bytesToWriteInOneChunk);
+        size_t bytesWritten = fwrite(data, 1, bytesToWriteInThisChunk, stdout);
+        if (bytesWritten != bytesToWriteInThisChunk)
+            break;
+        dataRemainingToWrite -= bytesWritten;
+        data += bytesWritten;
+    }
 }
 
 static void computeMD5HashStringForBitmapContext(CGContextRef bitmapContext, char hashString[33])
@@ -106,9 +120,7 @@ void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
 {
     RefPtr<BitmapContext> context;
     
-#if PLATFORM(MAC)
     context = createBitmapContextFromWebView(gLayoutTestController->testOnscreen(), gLayoutTestController->testRepaint(), gLayoutTestController->testRepaintSweepHorizontally(), gLayoutTestController->dumpSelectionRect());
-#endif
     ASSERT(context);
     
     // Compute the hash of the bitmap context pixels

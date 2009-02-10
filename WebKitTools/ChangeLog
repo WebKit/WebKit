@@ -1,5 +1,34 @@
 2009-02-10  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 23869: Pixel tests can't be run on Windows
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23869>
+
+        This patch gets the pixel tests limping along on Windows again.
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/DumpRenderTree.sln: Changed to use the new
+        Debug_Internal configuration of ImageDiff in the Debug_Internal
+        configuration of this solution.
+
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (printPNG): Changed to call fwrite in a loop, since this call was
+        failing due to the buffer being too large on Windows.
+        (dumpWebViewAsPixelsAndCompareWithExpected): Removed an unnecessary
+        #if PLATFORM(MAC)/#endif.
+
+        * DumpRenderTree/win/ImageDiff.vcproj: Added a Debug_Internal
+        configuration that matches the Debug configuration but also references
+        debug_internal.vsprops.
+
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView): Renamed from
+        getBitmapContextFromWebView to match the name used in the
+        cross-platform code.
+
+2009-02-10  Adam Roben  <aroben@apple.com>
+
         Robustify DumpRenderTree/win a little
 
         DumpRenderTree was previously not holding a ref to the WebViews it
