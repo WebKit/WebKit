@@ -1,3 +1,11 @@
+2009-02-09  John Grabowski  <jrg@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        (WTF::isMainThread):
+
 2009-02-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -48,7 +48,7 @@ typedef HashMap<ThreadIdentifier, pthread_t> ThreadMap;
 
 static Mutex* atomicallyInitializedStaticMutex;
 
-#if !PLATFORM(DARWIN)
+#if !PLATFORM(DARWIN) || PLATFORM(CHROMIUM)
 static ThreadIdentifier mainThreadIdentifier; // The thread that was the first to call initializeThreading(), which must be the main thread.
 #endif
 
@@ -64,7 +64,7 @@ void initializeThreading()
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
         initializeRandomNumberGenerator();
-#if !PLATFORM(DARWIN)
+#if !PLATFORM(DARWIN) || PLATFORM(CHROMIUM)
         mainThreadIdentifier = currentThread();
 #endif
         initializeMainThread();
@@ -176,7 +176,7 @@ ThreadIdentifier currentThread()
 
 bool isMainThread()
 {
-#if PLATFORM(DARWIN)
+#if PLATFORM(DARWIN) && !PLATFORM(CHROMIUM)
     return pthread_main_np();
 #else
     return currentThread() == mainThreadIdentifier;
