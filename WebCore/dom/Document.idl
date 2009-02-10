@@ -226,7 +226,7 @@ module core {
 
 #if !defined(LANGUAGE_COM)
 #if !defined(LANGUAGE_OBJECTIVE_C)
-        CanvasRenderingContext2D getCSSCanvasContext(in DOMString contextId, in DOMString name, in long width, in long height);
+        DOMObject getCSSCanvasContext(in DOMString contextId, in DOMString name, in long width, in long height);
 #endif
 #endif
 

@@ -1,3 +1,13 @@
+2009-02-10  Darin Fisher  <darin@chromium.org>
+
+        Revert r40797 as requested by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23809
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.idl:
+        * html/HTMLCanvasElement.idl:
+
 2009-02-09  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
