@@ -1,3 +1,9 @@
+2009-02-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/AbstractMacroAssembler.h: Fix comments.
+
 2009-02-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Trying to fix wx build.

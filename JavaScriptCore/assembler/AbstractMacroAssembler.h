@@ -263,15 +263,6 @@ public:
     // into the code buffer - it is typically used to link the call, setting the
     // relative offset such that when executed it will call to the desired
     // destination.
-    //
-    // Call objects retain a pointer to the assembler for syntactic purposes -
-    // to allow the Call object to be able to link itself, e.g.:
-    //
-    //     Call forwardsBranch = jne32(Imm32(0), reg1);
-    //     // ...
-    //     forwardsBranch.link();
-    //
-    // Calls may also be linked to a Label.
     class Call {
         friend class PatchBuffer;
         template<class AssemblerType_T>
@@ -318,15 +309,6 @@ public:
     // into the code buffer - it is typically used to link the jump, setting the
     // relative offset such that when executed it will jump to the desired
     // destination.
-    //
-    // Jump objects retain a pointer to the assembler for syntactic purposes -
-    // to allow the jump object to be able to link itself, e.g.:
-    //
-    //     Jump forwardsBranch = jne32(Imm32(0), reg1);
-    //     // ...
-    //     forwardsBranch.link();
-    //
-    // Jumps may also be linked to a Label.
     class Jump {
         friend class PatchBuffer;
         template<class AssemblerType_T>
@@ -402,12 +384,12 @@ public:
 
     // Section 3: MacroAssembler JIT instruction stream handles.
     //
-    // The MacroAssembler supported facilities to modify an JIT generated
+    // The MacroAssembler supported facilities to modify a JIT generated
     // instruction stream after it has been generated (relinking calls and
     // jumps, and repatching data values).  The following types are used
     // to store handles into the underlying instruction stream, the type
     // providing semantic information as to what it is that is in the
-    // instruction stream at this point, and thus wha operations my be
+    // instruction stream at this point, and thus what operations may be
     // performed on it.
 
 
