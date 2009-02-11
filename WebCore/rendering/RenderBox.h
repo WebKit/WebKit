@@ -41,8 +41,8 @@ public:
 
     int x() const { return m_frameRect.x(); }
     int y() const { return m_frameRect.y(); }
-    int width() const { ASSERT(!isRenderInline()); return m_frameRect.width(); }
-    int height() const { ASSERT(!isRenderInline()); return m_frameRect.height(); }
+    int width() const { return m_frameRect.width(); }
+    int height() const { return m_frameRect.height(); }
     
     void setX(int x) { m_frameRect.setX(x); }
     void setY(int y) { m_frameRect.setY(y); }
@@ -50,7 +50,7 @@ public:
     void setHeight(int height) { m_frameRect.setHeight(height); }
     
     IntPoint location() const { return m_frameRect.location(); }
-    IntSize size() const { ASSERT(!isRenderInline()); return m_frameRect.size(); }
+    IntSize size() const { return m_frameRect.size(); }
 
     void setLocation(const IntPoint& location) { m_frameRect.setLocation(location); }
     void setLocation(int x, int y) { setLocation(IntPoint(x, y)); }
@@ -58,7 +58,7 @@ public:
     void setSize(const IntSize& size) { m_frameRect.setSize(size); }
     void move(int dx, int dy) { m_frameRect.move(dx, dy); }
 
-    IntRect frameRect() const { ASSERT(!isRenderInline()); return m_frameRect; }
+    IntRect frameRect() const { return m_frameRect; }
     void setFrameRect(const IntRect& rect) { m_frameRect = rect; }
 
     IntRect borderBoxRect() const { return IntRect(0, 0, width(), height()); }

@@ -1,3 +1,15 @@
+2009-02-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Remove unneeded ASSERTS.
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::width):
+        (WebCore::RenderBox::height):
+        (WebCore::RenderBox::size):
+        (WebCore::RenderBox::frameRect):
+
 2009-02-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
