@@ -228,7 +228,6 @@ sources['html'] = [
     'html/HTMLDListElement.cpp',
     'html/HTMLDocument.cpp',
     'html/HTMLElement.cpp',
-    'html/HTMLElementFactory.cpp',
     'html/HTMLEmbedElement.cpp',
     'html/HTMLFieldSetElement.cpp',
     'html/HTMLFontElement.cpp',

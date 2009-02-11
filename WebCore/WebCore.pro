@@ -711,7 +711,6 @@ SOURCES += \
     html/HTMLDListElement.cpp \
     html/HTMLDocument.cpp \
     html/HTMLElement.cpp \
-    html/HTMLElementFactory.cpp \
     html/HTMLEmbedElement.cpp \
     html/HTMLFieldSetElement.cpp \
     html/HTMLFontElement.cpp \
@@ -1948,12 +1947,21 @@ addExtraCompilerWithHeader(cssbison)
 
 # GENERATOR 5-A:
 htmlnames.output = $$GENERATED_SOURCES_DIR/HTMLNames.cpp
-htmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\"  --wrapperFactory --outputDir $$GENERATED_SOURCES_DIR
+htmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\"  --factory --wrapperFactory --outputDir $$GENERATED_SOURCES_DIR
 htmlnames.input = HTML_NAMES
 htmlnames.dependency_type = TYPE_C
 htmlnames.CONFIG = target_predeps
 htmlnames.variable_out = GENERATED_SOURCES
 addExtraCompilerWithHeader(htmlnames)
+
+htmlelementfactory.output = $$GENERATED_SOURCES_DIR/HTMLElementFactory.cpp
+htmlelementfactory.commands = @echo -n ''
+htmlelementfactory.input = HTML_NAMES
+htmlelementfactory.depends = $$GENERATED_SOURCES_DIR/HTMLNames.cpp
+htmlelementfactory.CONFIG = target_predeps
+htmlelementfactory.variable_out = GENERATED_SOURCES
+htmlelementfactory.clean += ${QMAKE_FILE_OUT}
+addExtraCompilerWithHeader(htmlelementfactory)
 
 elementwrapperfactory.output = $$GENERATED_SOURCES_DIR/JSHTMLElementWrapperFactory.cpp
 elementwrapperfactory.commands = @echo -n ''

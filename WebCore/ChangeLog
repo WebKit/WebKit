@@ -1,3 +1,20 @@
+2009-02-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 23536: Auto-generate HTMLElementFactory
+
+        Make the platform auto-generate the HTMLElementFactory.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * webcore-base.bkl:
+
 2009-02-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.

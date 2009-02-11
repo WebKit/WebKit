@@ -205,6 +205,7 @@ This file contains the list of files needed to build WebCore.
     <set append="1" var="WEBCORE_SOURCES_DERIVEDSOURCES">
         DerivedSources/WebCore/CSSGrammar.cpp
         DerivedSources/WebCore/ColorData.c
+        DerivedSources/WebCore/HTMLElementFactory.cpp
         DerivedSources/WebCore/HTMLEntityNames.c
         DerivedSources/WebCore/HTMLNames.cpp
         DerivedSources/WebCore/JSAttr.cpp
@@ -548,7 +549,6 @@ This file contains the list of files needed to build WebCore.
         html/HTMLDivElement.cpp
         html/HTMLDocument.cpp
         html/HTMLElement.cpp
-        html/HTMLElementFactory.cpp
         html/HTMLEmbedElement.cpp
         html/HTMLFieldSetElement.cpp
         html/HTMLFontElement.cpp
