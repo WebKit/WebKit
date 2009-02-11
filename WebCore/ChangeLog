@@ -1,5 +1,17 @@
 2009-02-11  David Hyatt  <hyatt@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=23895
+
+        Remove two complete nonsense lines that I accidentally added from a cut and paste error.  This
+        restores the original logic.
+
+        Reviewed by Simon Fraser
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+
+2009-02-11  David Hyatt  <hyatt@apple.com>
+
         Rename getBaselineOfFirstLineBox to firstLineBoxBaseline.  Rename getBaselineOfLastLineBox to
         lastLineBoxBaseline.  Remove the functions from RenderObject and add them to RenderBox instead.
 
