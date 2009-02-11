@@ -544,6 +544,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSClientRect.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSClientRectList.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSClipboard.h"
 				>
 			</File>
@@ -613,14 +621,6 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSCSSVariablesDeclaration.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSClientRect.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSClientRectList.h"
 				>
 			</File>
 			<File
@@ -1789,6 +1789,10 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\kjs_navigator.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\SVGElementFactory.cpp"
 				>
 			</File>
 			<File
@@ -8985,7 +8989,7 @@
 				RelativePath="..\rendering\RenderBox.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\rendering\RenderBoxModelObject.cpp"
 				>
 				<FileConfiguration
@@ -16608,15 +16612,15 @@
 					RelativePath="..\inspector\front-end\DataGrid.js"
 					>
 				</File>
-                <File
-                    RelativePath="..\inspector\front-end\DOMStorage.js"
-                    >
-                </File>
-                <File
-                    RelativePath="..\inspector\front-end\DOMStorageItemsView.js"
-                    >
-                </File>
-                <File
+				<File
+					RelativePath="..\inspector\front-end\DOMStorage.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\DOMStorageItemsView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ElementsPanel.js"
 					>
 				</File>

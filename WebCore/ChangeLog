@@ -1,3 +1,14 @@
+2009-02-11  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * DerivedSources.cpp: Removed SVGElementFactory.cpp, since including
+        it leads to ambiguities for symbols like "aTag", which exist in both
+        the HTMLNames and SVGNames namespaces.
+
+        * WebCore.vcproj/WebCore.vcproj: Added SVGElementFactory.cpp to the
+        project directly. VS also decided to reformat this file a little bit.
+
 2009-02-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.
