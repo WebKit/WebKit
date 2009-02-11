@@ -151,8 +151,8 @@ void MouseRelatedEvent::receivedTarget()
         RenderLayer* layer = n->renderer()->enclosingLayer();
         layer->updateLayerPosition();
         for (; layer; layer = layer->parent()) {
-            m_layerX -= layer->xPos();
-            m_layerY -= layer->yPos();
+            m_layerX -= layer->x();
+            m_layerY -= layer->y();
         }
     }
 }
