@@ -1,3 +1,16 @@
+2009-02-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser
+
+        https://bugs.webkit.org/show_bug.cgi?id=23877
+        Allow port to disable progress events from <video> and <audio> elements
+
+        * html/HTMLMediaElement.cpp: Initialize m_sendProgressEvents.
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Don't post progress events if m_sendProgressEvents is false.
+        (WebCore::HTMLMediaElement::initAndDispatchProgressEvent): Ditto.
+        (WebCore::HTMLMediaElement::load): Ditto.
+        * html/HTMLMediaElement.h: Add m_sendProgressEvents
+
 2009-02-11  Adam Roben  <aroben@apple.com>
 
         Windows build fix
