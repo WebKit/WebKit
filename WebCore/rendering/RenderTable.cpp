@@ -1105,7 +1105,7 @@ void RenderTable::updateFirstLetter()
 {
 }
 
-int RenderTable::getBaselineOfFirstLineBox() const
+int RenderTable::firstLineBoxBaseline() const
 {
     RenderTableSection* firstNonEmptySection = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
     if (firstNonEmptySection && !firstNonEmptySection->numRows())
@@ -1114,7 +1114,7 @@ int RenderTable::getBaselineOfFirstLineBox() const
     if (!firstNonEmptySection)
         return -1;
 
-    return firstNonEmptySection->y() + firstNonEmptySection->getBaselineOfFirstLineBox();
+    return firstNonEmptySection->y() + firstNonEmptySection->firstLineBoxBaseline();
 }
 
 IntRect RenderTable::getOverflowClipRect(int tx, int ty)

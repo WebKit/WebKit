@@ -1,3 +1,30 @@
+2009-02-11  David Hyatt  <hyatt@apple.com>
+
+        Rename getBaselineOfFirstLineBox to firstLineBoxBaseline.  Rename getBaselineOfLastLineBox to
+        lastLineBoxBaseline.  Remove the functions from RenderObject and add them to RenderBox instead.
+
+        Reviewed by Eric Seidel
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::baselinePosition):
+        (WebCore::RenderBlock::firstLineBoxBaseline):
+        (WebCore::RenderBlock::lastLineBoxBaseline):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::firstLineBoxBaseline):
+        (WebCore::RenderBox::lastLineBoxBaseline):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        * rendering/RenderObject.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::firstLineBoxBaseline):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::baselinePosition):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::firstLineBoxBaseline):
+        * rendering/RenderTableSection.h:
+
 2009-02-11  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser

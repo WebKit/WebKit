@@ -270,6 +270,9 @@ public:
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
     void removeFloatingOrPositionedChildFromBlockLists();
+    
+    virtual int firstLineBoxBaseline() const { return -1; }
+    virtual int lastLineBoxBaseline() const { return -1; }
 
 #if ENABLE(SVG)
     virtual TransformationMatrix localTransform() const;

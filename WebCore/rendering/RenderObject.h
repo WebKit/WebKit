@@ -169,9 +169,6 @@ public:
     virtual IntRect getClipRect(int /*tx*/, int /*ty*/) { return IntRect(0, 0, 0, 0); }
     bool hasClip() { return isPositioned() && style()->hasClip(); }
 
-    virtual int getBaselineOfFirstLineBox() const { return -1; }
-    virtual int getBaselineOfLastLineBox() const { return -1; }
-
     virtual bool isEmpty() const { return firstChild() == 0; }
 
     virtual bool isEdited() const { return false; }

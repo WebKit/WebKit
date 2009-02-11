@@ -896,7 +896,7 @@ void RenderTableSection::recalcOuterBorder()
     m_outerBorderRight = calcOuterBorderRight(rtl);
 }
 
-int RenderTableSection::getBaselineOfFirstLineBox() const
+int RenderTableSection::firstLineBoxBaseline() const
 {
     if (!m_gridRows)
         return -1;

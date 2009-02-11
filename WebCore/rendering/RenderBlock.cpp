@@ -4361,7 +4361,7 @@ int RenderBlock::baselinePosition(bool b, bool isRootLineBox) const
         // We also give up on finding a baseline if we have a vertical scrollbar, or if we are scrolled
         // vertically (e.g., an overflow:hidden block that has had scrollTop moved) or if the baseline is outside
         // of our content box.
-        int baselinePos = (layer() && (layer()->marquee() || layer()->verticalScrollbar() || layer()->scrollYOffset() != 0)) ? -1 : getBaselineOfLastLineBox();
+        int baselinePos = (layer() && (layer()->marquee() || layer()->verticalScrollbar() || layer()->scrollYOffset() != 0)) ? -1 : lastLineBoxBaseline();
         if (baselinePos != -1 && baselinePos <= borderTop() + paddingTop() + contentHeight())
             return marginTop() + baselinePos;
         return height() + marginTop() + marginBottom();
@@ -4369,10 +4369,10 @@ int RenderBlock::baselinePosition(bool b, bool isRootLineBox) const
     return RenderBox::baselinePosition(b, isRootLineBox);
 }
 
-int RenderBlock::getBaselineOfFirstLineBox() const
+int RenderBlock::firstLineBoxBaseline() const
 {
     if (!isBlockFlow())
-        return RenderBox::getBaselineOfFirstLineBox();
+        return -1;
 
     if (childrenInline()) {
         if (firstLineBox())
@@ -4383,7 +4383,7 @@ int RenderBlock::getBaselineOfFirstLineBox() const
     else {
         for (RenderBox* curr = firstChildBox(); curr; curr = curr->nextSiblingBox()) {
             if (!curr->isFloatingOrPositioned()) {
-                int result = curr->getBaselineOfFirstLineBox();
+                int result = curr->firstLineBoxBaseline();
                 if (result != -1)
                     return curr->y() + result; // Translate to our coordinate space.
             }
@@ -4393,10 +4393,10 @@ int RenderBlock::getBaselineOfFirstLineBox() const
     return -1;
 }
 
-int RenderBlock::getBaselineOfLastLineBox() const
+int RenderBlock::lastLineBoxBaseline() const
 {
     if (!isBlockFlow())
-        return RenderBox::getBaselineOfLastLineBox();
+        return -1;
 
     if (childrenInline()) {
         if (!firstLineBox() && hasLineIfEmpty())
@@ -4410,7 +4410,7 @@ int RenderBlock::getBaselineOfLastLineBox() const
         for (RenderBox* curr = lastChildBox(); curr; curr = curr->previousSiblingBox()) {
             if (!curr->isFloatingOrPositioned()) {
                 haveNormalFlowChild = true;
-                int result = curr->getBaselineOfLastLineBox();
+                int result = curr->lastLineBoxBaseline();
                 if (result != -1)
                     return curr->y() + result; // Translate to our coordinate space.
             }
