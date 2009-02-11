@@ -1,3 +1,10 @@
+2009-02-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Trying to fix wx build.
+
+        * bytecode/JumpTable.h: Include "MacroAssembler.h", not <MacroAssembler.h>.
+        * jscore.bkl: Added assembler directory to search paths.
+
 2009-02-10  Gavin Barraclough  <barraclough@apple.com>
 
         Build

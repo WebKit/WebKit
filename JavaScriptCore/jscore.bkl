@@ -55,6 +55,7 @@ JavaScriptCore Bakefile project file.
         <include>$(SRCDIR)</include>
         <include>$(SRCDIR)/..</include>
         <include>$(SRCDIR)/API</include>
+        <include>$(SRCDIR)/assembler</include>
         <include>$(SRCDIR)/bytecompiler</include>
         <include>$(SRCDIR)/DerivedSources/JavaScriptCore</include>
         <include>$(SRCDIR)/ForwardingHeaders</include>
@@ -95,6 +96,7 @@ JavaScriptCore Bakefile project file.
         <depends>jscore</depends>
         <include>$(SRCDIR)</include>
         <include>$(WK_ROOT)/JavaScriptCore</include>
+        <include>$(WK_ROOT)/JavaScriptCore/assembler</include>
         <include>$(WK_ROOT)/JavaScriptCore/bytecompiler</include>
         <include>$(WK_ROOT)/JavaScriptCore/debugger</include>
         <include>$(WK_ROOT)/JavaScriptCore/parser</include>
