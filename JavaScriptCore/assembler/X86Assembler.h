@@ -1246,8 +1246,9 @@ public:
         reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(code) + from.m_offset)[-1] = reinterpret_cast<ptrdiff_t>(to) - (reinterpret_cast<ptrdiff_t>(code) + from.m_offset);
     }
     
-    static ptrdiff_t getCallReturnOffset(JmpSrc call)
+    static unsigned getCallReturnOffset(JmpSrc call)
     {
+        ASSERT(call.m_offset >= 0);
         return call.m_offset;
     }
 

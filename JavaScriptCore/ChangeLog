@@ -1,3 +1,119 @@
+2009-02-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Reduce use of void* / reinterpret_cast in JIT repatching code,
+        add strong types for Calls and for the various types of pointers
+        we retain into the JIT generated instruction stream.
+
+        No performance impact.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::ImmPtr::ImmPtr):
+        (JSC::AbstractMacroAssembler::ImmPtr::asIntptr):
+        (JSC::AbstractMacroAssembler::Imm32::Imm32):
+        (JSC::AbstractMacroAssembler::Label::Label):
+        (JSC::AbstractMacroAssembler::DataLabelPtr::DataLabelPtr):
+        (JSC::AbstractMacroAssembler::Call::Call):
+        (JSC::AbstractMacroAssembler::Call::link):
+        (JSC::AbstractMacroAssembler::Call::linkTo):
+        (JSC::AbstractMacroAssembler::Jump::Jump):
+        (JSC::AbstractMacroAssembler::Jump::linkTo):
+        (JSC::AbstractMacroAssembler::CodeLocationCommon::CodeLocationCommon):
+        (JSC::AbstractMacroAssembler::CodeLocationCommon::operator bool):
+        (JSC::AbstractMacroAssembler::CodeLocationCommon::reset):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::CodeLocationLabel):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::addressForSwitch):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::addressForExceptionHandler):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::addressForJSR):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::getJumpDestination):
+        (JSC::AbstractMacroAssembler::CodeLocationJump::CodeLocationJump):
+        (JSC::AbstractMacroAssembler::CodeLocationJump::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::CodeLocationCall):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::calleeReturnAddressValue):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabel32::CodeLocationDataLabel32):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabel32::repatch):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabelPtr::CodeLocationDataLabelPtr):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabelPtr::repatch):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::ProcessorReturnAddress):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkCallerToFunction):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::operator void*):
+        (JSC::AbstractMacroAssembler::PatchBuffer::entry):
+        (JSC::AbstractMacroAssembler::PatchBuffer::trampolineAt):
+        (JSC::AbstractMacroAssembler::PatchBuffer::link):
+        (JSC::AbstractMacroAssembler::PatchBuffer::linkTailRecursive):
+        (JSC::AbstractMacroAssembler::PatchBuffer::patch):
+        (JSC::AbstractMacroAssembler::PatchBuffer::locationOf):
+        (JSC::AbstractMacroAssembler::PatchBuffer::returnAddressOffset):
+        (JSC::AbstractMacroAssembler::differenceBetween):
+        (JSC::::CodeLocationCommon::labelAtOffset):
+        (JSC::::CodeLocationCommon::jumpAtOffset):
+        (JSC::::CodeLocationCommon::callAtOffset):
+        (JSC::::CodeLocationCommon::dataLabelPtrAtOffset):
+        (JSC::::CodeLocationCommon::dataLabel32AtOffset):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::call):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::getCallReturnOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::getStructureStubInfoReturnLocation):
+        (JSC::getCallLinkInfoReturnLocation):
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        (JSC::PolymorphicAccessStructureList::PolymorphicAccessStructureList):
+        * bytecode/JumpTable.h:
+        (JSC::StringJumpTable::ctiForValue):
+        (JSC::SimpleJumpTable::ctiForValue):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCatch):
+        (JSC::prepareJumpTableForStringSwitch):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::cti_op_get_by_id_self_fail):
+        (JSC::getPolymorphicAccessStructureListSlot):
+        (JSC::Interpreter::cti_op_throw):
+        (JSC::Interpreter::cti_op_switch_imm):
+        (JSC::Interpreter::cti_op_switch_char):
+        (JSC::Interpreter::cti_op_switch_string):
+        (JSC::Interpreter::cti_vm_throw):
+        * jit/JIT.cpp:
+        (JSC::ctiSetReturnAddress):
+        (JSC::ctiPatchCallByReturnAddress):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        (JSC::CallRecord::CallRecord):
+        (JSC::JIT::compileGetByIdSelf):
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compilePutByIdReplace):
+        (JSC::JIT::compilePutByIdTransition):
+        (JSC::JIT::compilePatchGetArrayLength):
+        (JSC::JIT::emitCTICall):
+        * jit/JITCall.cpp:
+        (JSC::JIT::unlinkCall):
+        (JSC::JIT::linkCall):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::emitCTICall_internal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::compilePutByIdSlowCase):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePutByIdReplace):
+
 2009-02-10  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r40813

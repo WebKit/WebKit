@@ -29,6 +29,7 @@
 #ifndef Instruction_h
 #define Instruction_h
 
+#include "MacroAssembler.h"
 #include "Opcode.h"
 #include "Structure.h"
 #include <wtf/VectorTraits.h>
@@ -45,14 +46,14 @@ namespace JSC {
     struct PolymorphicAccessStructureList {
         struct PolymorphicStubInfo {
             bool isChain;
-            void* stubRoutine;
+            MacroAssembler::CodeLocationLabel stubRoutine;
             Structure* base;
             union {
                 Structure* proto;
                 StructureChain* chain;
             } u;
 
-            void set(void* _stubRoutine, Structure* _base)
+            void set(MacroAssembler::CodeLocationLabel _stubRoutine, Structure* _base)
             {
                 stubRoutine = _stubRoutine;
                 base = _base;
@@ -60,7 +61,7 @@ namespace JSC {
                 isChain = false;
             }
             
-            void set(void* _stubRoutine, Structure* _base, Structure* _proto)
+            void set(MacroAssembler::CodeLocationLabel _stubRoutine, Structure* _base, Structure* _proto)
             {
                 stubRoutine = _stubRoutine;
                 base = _base;
@@ -68,7 +69,7 @@ namespace JSC {
                 isChain = false;
             }
             
-            void set(void* _stubRoutine, Structure* _base, StructureChain* _chain)
+            void set(MacroAssembler::CodeLocationLabel _stubRoutine, Structure* _base, StructureChain* _chain)
             {
                 stubRoutine = _stubRoutine;
                 base = _base;
@@ -77,17 +78,17 @@ namespace JSC {
             }
         } list[POLYMORPHIC_LIST_CACHE_SIZE];
         
-        PolymorphicAccessStructureList(void* stubRoutine, Structure* firstBase)
+        PolymorphicAccessStructureList(MacroAssembler::CodeLocationLabel stubRoutine, Structure* firstBase)
         {
             list[0].set(stubRoutine, firstBase);
         }
 
-        PolymorphicAccessStructureList(void* stubRoutine, Structure* firstBase, Structure* firstProto)
+        PolymorphicAccessStructureList(MacroAssembler::CodeLocationLabel stubRoutine, Structure* firstBase, Structure* firstProto)
         {
             list[0].set(stubRoutine, firstBase, firstProto);
         }
 
-        PolymorphicAccessStructureList(void* stubRoutine, Structure* firstBase, StructureChain* firstChain)
+        PolymorphicAccessStructureList(MacroAssembler::CodeLocationLabel stubRoutine, Structure* firstBase, StructureChain* firstChain)
         {
             list[0].set(stubRoutine, firstBase, firstChain);
         }

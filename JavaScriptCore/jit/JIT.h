@@ -114,7 +114,7 @@ namespace JSC {
     typedef VoidPtrPair (JIT_STUB *CTIHelper_2)(STUB_ARGS);
 
     struct CallRecord {
-        MacroAssembler::Jump from;
+        MacroAssembler::Call from;
         unsigned bytecodeIndex;
         void* to;
 
@@ -122,7 +122,7 @@ namespace JSC {
         {
         }
 
-        CallRecord(MacroAssembler::Jump from, unsigned bytecodeIndex, void* to = 0)
+        CallRecord(MacroAssembler::Call from, unsigned bytecodeIndex, void* to = 0)
             : from(from)
             , bytecodeIndex(bytecodeIndex)
             , to(to)
@@ -189,14 +189,14 @@ namespace JSC {
     };
 
     struct PropertyStubCompilationInfo {
-        MacroAssembler::Jump callReturnLocation;
+        MacroAssembler::Call callReturnLocation;
         MacroAssembler::Label hotPathBegin;
     };
 
     struct StructureStubCompilationInfo {
         MacroAssembler::DataLabelPtr hotPathBegin;
-        MacroAssembler::Jump hotPathOther;
-        MacroAssembler::Jump callReturnLocation;
+        MacroAssembler::Call hotPathOther;
+        MacroAssembler::Call callReturnLocation;
         MacroAssembler::Label coldPathOther;
     };
 
@@ -204,8 +204,8 @@ namespace JSC {
         void ctiVMThrowTrampoline();
     };
 
-    void ctiSetReturnAddress(void** where, void* what);
-    void ctiPatchCallByReturnAddress(void* where, void* what);
+    void ctiSetReturnAddress(void** addressOfReturnAddress, void* newDestinationToReturnTo);
+    void ctiPatchCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, void* newCalleeFunction);
 
     class JIT : private MacroAssembler {
         using MacroAssembler::Jump;
@@ -278,13 +278,13 @@ namespace JSC {
             jit.privateCompile();
         }
 
-        static void compileGetByIdSelf(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, void* returnAddress)
+        static void compileGetByIdSelf(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ProcessorReturnAddress returnAddress)
         {
             JIT jit(globalData, codeBlock);
             jit.privateCompileGetByIdSelf(stubInfo, structure, cachedOffset, returnAddress);
         }
 
-        static void compileGetByIdProto(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, size_t cachedOffset, void* returnAddress)
+        static void compileGetByIdProto(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, size_t cachedOffset, ProcessorReturnAddress returnAddress)
         {
             JIT jit(globalData, codeBlock);
             jit.privateCompileGetByIdProto(stubInfo, structure, prototypeStructure, cachedOffset, returnAddress, callFrame);
@@ -308,19 +308,19 @@ namespace JSC {
         }
 #endif
 
-        static void compileGetByIdChain(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, void* returnAddress)
+        static void compileGetByIdChain(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, ProcessorReturnAddress returnAddress)
         {
             JIT jit(globalData, codeBlock);
             jit.privateCompileGetByIdChain(stubInfo, structure, chain, count, cachedOffset, returnAddress, callFrame);
         }
 
-        static void compilePutByIdReplace(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, void* returnAddress)
+        static void compilePutByIdReplace(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ProcessorReturnAddress returnAddress)
         {
             JIT jit(globalData, codeBlock);
             jit.privateCompilePutByIdReplace(stubInfo, structure, cachedOffset, returnAddress);
         }
         
-        static void compilePutByIdTransition(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, void* returnAddress)
+        static void compilePutByIdTransition(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ProcessorReturnAddress returnAddress)
         {
             JIT jit(globalData, codeBlock);
             jit.privateCompilePutByIdTransition(stubInfo, oldStructure, newStructure, cachedOffset, chain, returnAddress);
@@ -332,10 +332,10 @@ namespace JSC {
             jit.privateCompileCTIMachineTrampolines();
         }
 
-        static void patchGetByIdSelf(StructureStubInfo*, Structure*, size_t cachedOffset, void* returnAddress);
-        static void patchPutByIdReplace(StructureStubInfo*, Structure*, size_t cachedOffset, void* returnAddress);
+        static void patchGetByIdSelf(StructureStubInfo*, Structure*, size_t cachedOffset, ProcessorReturnAddress returnAddress);
+        static void patchPutByIdReplace(StructureStubInfo*, Structure*, size_t cachedOffset, ProcessorReturnAddress returnAddress);
 
-        static void compilePatchGetArrayLength(JSGlobalData* globalData, CodeBlock* codeBlock, void* returnAddress)
+        static void compilePatchGetArrayLength(JSGlobalData* globalData, CodeBlock* codeBlock, ProcessorReturnAddress returnAddress)
         {
             JIT jit(globalData, codeBlock);
             return jit.privateCompilePatchGetArrayLength(returnAddress);
@@ -351,19 +351,19 @@ namespace JSC {
         void privateCompileLinkPass();
         void privateCompileSlowCases();
         void privateCompile();
-        void privateCompileGetByIdSelf(StructureStubInfo*, Structure*, size_t cachedOffset, void* returnAddress);
-        void privateCompileGetByIdProto(StructureStubInfo*, Structure*, Structure* prototypeStructure, size_t cachedOffset, void* returnAddress, CallFrame* callFrame);
+        void privateCompileGetByIdSelf(StructureStubInfo*, Structure*, size_t cachedOffset, ProcessorReturnAddress returnAddress);
+        void privateCompileGetByIdProto(StructureStubInfo*, Structure*, Structure* prototypeStructure, size_t cachedOffset, ProcessorReturnAddress returnAddress, CallFrame* callFrame);
 #if USE(CTI_REPATCH_PIC)
         void privateCompileGetByIdSelfList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, size_t cachedOffset);
         void privateCompileGetByIdProtoList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, Structure* prototypeStructure, size_t cachedOffset, CallFrame* callFrame);
         void privateCompileGetByIdChainList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, StructureChain* chain, size_t count, size_t cachedOffset, CallFrame* callFrame);
 #endif
-        void privateCompileGetByIdChain(StructureStubInfo*, Structure*, StructureChain*, size_t count, size_t cachedOffset, void* returnAddress, CallFrame* callFrame);
-        void privateCompilePutByIdReplace(StructureStubInfo*, Structure*, size_t cachedOffset, void* returnAddress);
-        void privateCompilePutByIdTransition(StructureStubInfo*, Structure*, Structure*, size_t cachedOffset, StructureChain*, void* returnAddress);
+        void privateCompileGetByIdChain(StructureStubInfo*, Structure*, StructureChain*, size_t count, size_t cachedOffset, ProcessorReturnAddress returnAddress, CallFrame* callFrame);
+        void privateCompilePutByIdReplace(StructureStubInfo*, Structure*, size_t cachedOffset, ProcessorReturnAddress returnAddress);
+        void privateCompilePutByIdTransition(StructureStubInfo*, Structure*, Structure*, size_t cachedOffset, StructureChain*, ProcessorReturnAddress returnAddress);
 
         void privateCompileCTIMachineTrampolines();
-        void privateCompilePatchGetArrayLength(void* returnAddress);
+        void privateCompilePatchGetArrayLength(ProcessorReturnAddress returnAddress);
 
         void addSlowCase(Jump);
         void addJump(Jump, int);
@@ -477,16 +477,16 @@ namespace JSC {
         void restoreArgumentReference();
         void restoreArgumentReferenceForTrampoline();
 
-        Jump emitNakedCall(RegisterID);
-        Jump emitNakedCall(void* function);
-        Jump emitCTICall_internal(void*);
-        Jump emitCTICall(CTIHelper_j helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Jump emitCTICall(CTIHelper_o helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Jump emitCTICall(CTIHelper_p helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Jump emitCTICall(CTIHelper_v helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Jump emitCTICall(CTIHelper_s helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Jump emitCTICall(CTIHelper_b helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
-        Jump emitCTICall(CTIHelper_2 helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Call emitNakedCall(RegisterID);
+        Call emitNakedCall(void* function);
+        Call emitCTICall_internal(void*);
+        Call emitCTICall(CTIHelper_j helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Call emitCTICall(CTIHelper_o helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Call emitCTICall(CTIHelper_p helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Call emitCTICall(CTIHelper_v helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Call emitCTICall(CTIHelper_s helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Call emitCTICall(CTIHelper_b helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
+        Call emitCTICall(CTIHelper_2 helper) { return emitCTICall_internal(reinterpret_cast<void*>(helper)); }
 
         void emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst);
         void emitPutVariableObjectRegister(RegisterID src, RegisterID variableObject, int index);

@@ -26,19 +26,18 @@
 #ifndef StructureStubInfo_h
 #define StructureStubInfo_h
 
+#if ENABLE(JIT)
+
 #include "Instruction.h"
+#include "MacroAssembler.h"
 #include "Opcode.h"
 #include "Structure.h"
 
 namespace JSC {
 
-#if ENABLE(JIT)
     struct StructureStubInfo {
         StructureStubInfo(OpcodeID opcodeID)
             : opcodeID(opcodeID)
-            , stubRoutine(0)
-            , callReturnLocation(0)
-            , hotPathBegin(0)
         {
         }
 
@@ -145,12 +144,13 @@ namespace JSC {
             } putByIdReplace;
         } u;
 
-        void* stubRoutine;
-        void* callReturnLocation;
-        void* hotPathBegin;
+        MacroAssembler::CodeLocationLabel stubRoutine;
+        MacroAssembler::CodeLocationCall callReturnLocation;
+        MacroAssembler::CodeLocationLabel hotPathBegin;
     };
-#endif
 
 } // namespace JSC
+
+#endif
 
 #endif // StructureStubInfo_h

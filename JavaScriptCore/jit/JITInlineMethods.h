@@ -187,20 +187,20 @@ ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
-ALWAYS_INLINE JIT::Jump JIT::emitNakedCall(X86::RegisterID r)
+ALWAYS_INLINE JIT::Call JIT::emitNakedCall(X86::RegisterID r)
 {
     ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
-    Jump nakedCall = call(r);
+    Call nakedCall = call(r);
     m_calls.append(CallRecord(nakedCall, m_bytecodeIndex));
     return nakedCall;
 }
 
-ALWAYS_INLINE JIT::Jump JIT::emitNakedCall(void* function)
+ALWAYS_INLINE JIT::Call JIT::emitNakedCall(void* function)
 {
     ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
-    Jump nakedCall = call();
+    Call nakedCall = call();
     m_calls.append(CallRecord(nakedCall, m_bytecodeIndex, function));
     return nakedCall;
 }
@@ -238,7 +238,7 @@ ALWAYS_INLINE void JIT::restoreArgumentReference()
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
 #endif
 
-ALWAYS_INLINE JIT::Jump JIT::emitCTICall_internal(void* helper)
+ALWAYS_INLINE JIT::Call JIT::emitCTICall_internal(void* helper)
 {
     ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
@@ -246,7 +246,7 @@ ALWAYS_INLINE JIT::Jump JIT::emitCTICall_internal(void* helper)
     sampleInstruction(m_codeBlock->instructions().begin() + m_bytecodeIndex, true);
 #endif
     restoreArgumentReference();
-    Jump ctiCall = call();
+    Call ctiCall = call();
     m_calls.append(CallRecord(ctiCall, m_bytecodeIndex, helper));
 #if ENABLE(OPCODE_SAMPLING)
     sampleInstruction(m_codeBlock->instructions().begin() + m_bytecodeIndex, false);

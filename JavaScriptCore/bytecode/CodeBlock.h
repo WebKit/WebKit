@@ -59,7 +59,7 @@ namespace JSC {
         uint32_t target;
         uint32_t scopeDepth;
 #if ENABLE(JIT)
-        void* nativeCode;
+        MacroAssembler::CodeLocationLabel nativeCode;
 #endif
     };
 
@@ -118,19 +118,15 @@ namespace JSC {
 #if ENABLE(JIT)
     struct CallLinkInfo {
         CallLinkInfo()
-            : callReturnLocation(0)
-            , hotPathBegin(0)
-            , hotPathOther(0)
-            , coldPathOther(0)
-            , callee(0)
+            : callee(0)
         {
         }
     
         unsigned bytecodeIndex;
-        void* callReturnLocation;
-        void* hotPathBegin;
-        void* hotPathOther;
-        void* coldPathOther;
+        MacroAssembler::CodeLocationCall callReturnLocation;
+        MacroAssembler::CodeLocationDataLabelPtr hotPathBegin;
+        MacroAssembler::CodeLocationCall hotPathOther;
+        MacroAssembler::CodeLocationLabel coldPathOther;
         CodeBlock* callee;
         unsigned position;
         
@@ -181,12 +177,12 @@ namespace JSC {
 
     inline void* getStructureStubInfoReturnLocation(StructureStubInfo* structureStubInfo)
     {
-        return structureStubInfo->callReturnLocation;
+        return structureStubInfo->callReturnLocation.calleeReturnAddressValue();
     }
 
     inline void* getCallLinkInfoReturnLocation(CallLinkInfo* callLinkInfo)
     {
-        return callLinkInfo->callReturnLocation;
+        return callLinkInfo->callReturnLocation.calleeReturnAddressValue();
     }
 
     inline unsigned getCallReturnOffset(CallReturnOffsetToBytecodeIndex* pc)
