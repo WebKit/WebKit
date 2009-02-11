@@ -1,3 +1,30 @@
+2009-02-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6156755> onMouseOver events do not fire properly for cross frame drag and drop
+
+        This problem was caused by incorrectly ignoring whether or not the
+        default behaviour of the mousedown event was suppressed.  If a
+        mousedown handler in a frame prevents default handling then the
+        subsequent mousemove events fired for the drag should not be
+        captured by that frame, should the mouse move out of its bounds.
+
+        Test: fast/events/mouse-drag-from-frame.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+            Reset new m_capturesDragging flag
+
+        (WebCore::EventHandler::handleMousePressEvent):
+            Respect the m_capturesDragging flag when we propagate
+            a mousedown event to a subframe.
+
+        * page/EventHandler.h:
+        (WebCore::EventHandler::capturesDragging):
+
 2009-02-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes for recent changes to TransformationMatrix and DOMElement.

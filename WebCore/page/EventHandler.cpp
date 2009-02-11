@@ -122,6 +122,7 @@ static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDir
 EventHandler::EventHandler(Frame* frame)
     : m_frame(frame)
     , m_mousePressed(false)
+    , m_capturesDragging(false)
     , m_mouseDownMayStartSelect(false)
     , m_mouseDownMayStartDrag(false)
     , m_mouseDownWasSingleClickInSelection(false)
@@ -179,6 +180,7 @@ void EventHandler::clear()
     m_currentMousePosition = IntPoint();
     m_mousePressNode = 0;
     m_mousePressed = false;
+    m_capturesDragging = false;
     m_capturingMouseEventsNode = 0;
 }
 
@@ -546,6 +548,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
     // the mouse is pressed again.
     m_frame->selection()->setCaretBlinkingSuspended(false);
     m_mousePressed = false;
+    m_capturesDragging = false;
     m_mouseDownMayStartDrag = false;
     m_mouseDownMayStartSelect = false;
     m_mouseDownMayStartAutoscroll = false;
@@ -1003,6 +1006,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     RefPtr<FrameView> protector(m_frame->view());
 
     m_mousePressed = true;
+    m_capturesDragging = true;
     m_currentMousePosition = mouseEvent.pos();
     m_mouseDownTimestamp = mouseEvent.timestamp();
     m_mouseDownMayStartDrag = false;
@@ -1032,7 +1036,8 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     if (subframe && passMousePressEventToSubframe(mev, subframe)) {
         // Start capturing future events for this frame.  We only do this if we didn't clear
         // the m_mousePressed flag, which may happen if an AppKit widget entered a modal event loop.
-        if (m_mousePressed)
+        m_capturesDragging = subframe->eventHandler()->capturesDragging();
+        if (m_mousePressed && m_capturesDragging)
             m_capturingMouseEventsNode = mev.targetNode();
         invalidateClick();
         return true;
@@ -1078,6 +1083,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     }
 
     bool swallowEvent = dispatchMouseEvent(eventNames().mousedownEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
+    m_capturesDragging = !swallowEvent;
 
     // If the hit testing originally determined the event was in a scrollbar, refetch the MouseEventWithHitTestResults
     // in case the scrollbar widget was destroyed when the mouse event was handled.

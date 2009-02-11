@@ -1,3 +1,16 @@
+2009-02-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6156755> onMouseOver events do not fire properly for cross frame drag and drop
+
+        Simple testcase to ensure that a subframe does not incorrectly capture mousemove events
+        when the mousedown handler has prevented default handling.
+
+        * fast/events/mouse-drag-from-frame-expected.txt: Added.
+        * fast/events/mouse-drag-from-frame.html: Added.
+        * fast/events/resources/mouse-drag-from-frame-subframe.html: Added.
+
 2009-02-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Hyatt.
