@@ -271,8 +271,10 @@ static bool positionedObjectMoved(const LengthBox& a, const LengthBox& b)
   optimisations are unimplemented, and currently result in the
   worst case result causing a relayout of the containing block.
 */
-StyleDifference RenderStyle::diff(const RenderStyle* other) const
+StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedContextSensitiveProperties) const
 {
+    changedContextSensitiveProperties = ContextSensitivePropertyNone;
+
 #if ENABLE(SVG)
     // This is horribly inefficient.  Eventually we'll have to integrate
     // this more directly by calling: Diff svgDiff = svgStyle->diff(other)
@@ -324,8 +326,14 @@ StyleDifference RenderStyle::diff(const RenderStyle* other) const
             return StyleDifferenceLayout;
 
         if (rareNonInheritedData->m_transform.get() != other->rareNonInheritedData->m_transform.get() &&
-            *rareNonInheritedData->m_transform.get() != *other->rareNonInheritedData->m_transform.get())
+            *rareNonInheritedData->m_transform.get() != *other->rareNonInheritedData->m_transform.get()) {
+#if USE(ACCELERATED_COMPOSITING)
+            changedContextSensitiveProperties |= ContextSensitivePropertyTransform;
+            // Don't return; keep looking for another change
+#else
             return StyleDifferenceLayout;
+#endif
+        }
 
 #if ENABLE(DASHBOARD_SUPPORT)
         // If regions change, trigger a relayout to re-calc regions.
@@ -445,8 +453,16 @@ StyleDifference RenderStyle::diff(const RenderStyle* other) const
             return StyleDifferenceRepaintLayer;
     }
 
-    if (rareNonInheritedData->opacity != other->rareNonInheritedData->opacity ||
-        rareNonInheritedData->m_mask != other->rareNonInheritedData->m_mask ||
+    if (rareNonInheritedData->opacity != other->rareNonInheritedData->opacity) {
+#if USE(ACCELERATED_COMPOSITING)
+        changedContextSensitiveProperties |= ContextSensitivePropertyOpacity;
+        // Don't return; keep looking for another change.
+#else
+        return StyleDifferenceRepaintLayer;
+#endif
+    }
+
+    if (rareNonInheritedData->m_mask != other->rareNonInheritedData->m_mask ||
         rareNonInheritedData->m_maskBoxImage != other->rareNonInheritedData->m_maskBoxImage)
         return StyleDifferenceRepaintLayer;
 

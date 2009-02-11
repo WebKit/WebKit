@@ -38,15 +38,29 @@ namespace WebCore {
 
 // The difference between two styles.  The following values are used:
 // (1) StyleDifferenceEqual - The two styles are identical
-// (2) StyleDifferenceRepaint - The object just needs to be repainted.
-// (3) StyleDifferenceRepaintLayer - The layer and its descendant layers needs to be repainted.
-// (4) StyleDifferenceLayout - A layout is required.
+// (2) StyleDifferenceRecompositeLayer - The layer needs its position and transform updated, but no repaint
+// (3) StyleDifferenceRepaint - The object just needs to be repainted.
+// (4) StyleDifferenceRepaintLayer - The layer and its descendant layers needs to be repainted.
+// (5) StyleDifferenceLayout - A layout is required.
 enum StyleDifference {
     StyleDifferenceEqual,
+#if USE(ACCELERATED_COMPOSITING)
+    StyleDifferenceRecompositeLayer,
+#endif
     StyleDifferenceRepaint,
     StyleDifferenceRepaintLayer,
     StyleDifferenceLayoutPositionedMovementOnly,
     StyleDifferenceLayout
+};
+
+// When some style properties change, different amounts of work have to be done depending on
+// context (e.g. whether the property is changing on an element which has a compositing layer).
+// A simple StyleDifference does not provide enough information so we return a bit mask of
+// StyleDifferenceContextSensitiveProperties from RenderStyle::diff() too.
+enum StyleDifferenceContextSensitiveProperty {
+    ContextSensitivePropertyNone = 0,
+    ContextSensitivePropertyTransform = (1 << 0),
+    ContextSensitivePropertyOpacity = (1 << 1)
 };
 
 // Static pseudo styles. Dynamic ones are produced on the fly.

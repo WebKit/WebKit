@@ -791,7 +791,8 @@ protected:
     
 private:
     RenderStyle* firstLineStyleSlowCase() const;
-
+    StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
+    
     RefPtr<RenderStyle> m_style;
 
     Node* m_node;

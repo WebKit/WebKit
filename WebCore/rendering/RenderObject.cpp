@@ -48,6 +48,10 @@
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerCompositor.h"
+#endif
+
 #if ENABLE(WML)
 #include "WMLNames.h"
 #endif
@@ -1965,18 +1969,48 @@ void RenderObject::setAnimatableStyle(PassRefPtr<RenderStyle> style)
         setStyle(style);
 }
 
+StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsigned contextSensitiveProperties) const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    // If transform changed, and we are not composited, need to do a layout.
+    if (contextSensitiveProperties & ContextSensitivePropertyTransform)
+        // Text nodes share style with their parents but transforms don't apply to them,
+        // hence the !isText() check.
+        // FIXME: when transforms are taken into account for overflow, we will need to do a layout.
+        if (!isText() && (!hasLayer() || !toRenderBoxModelObject(this)->layer()->isComposited()))
+            diff = StyleDifferenceLayout;
+        else if (diff < StyleDifferenceRecompositeLayer)
+            diff = StyleDifferenceRecompositeLayer;
+
+    // If opacity changed, and we are not composited, need to repaint (also
+    // ignoring text nodes)
+    if (contextSensitiveProperties & ContextSensitivePropertyOpacity)
+        if (!isText() && (!hasLayer() || !toRenderBoxModelObject(this)->layer()->isComposited()))
+            diff = StyleDifferenceRepaintLayer;
+        else if (diff < StyleDifferenceRecompositeLayer)
+            diff = StyleDifferenceRecompositeLayer;
+#else
+    UNUSED_PARAM(contextSensitiveProperties);
+#endif
+
+    // If we have no layer(), just treat a RepaintLayer hint as a normal Repaint.
+    if (diff == StyleDifferenceRepaintLayer && !hasLayer())
+        diff = StyleDifferenceRepaint;
+
+    return diff;
+}
+
 void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
 {
     if (m_style == style)
         return;
 
     StyleDifference diff = StyleDifferenceEqual;
+    unsigned contextSensitiveProperties = ContextSensitivePropertyNone;
     if (m_style)
-        diff = m_style->diff(style.get());
+        diff = m_style->diff(style.get(), contextSensitiveProperties);
 
-    // If we have no layer(), just treat a RepaintLayer hint as a normal Repaint.
-    if (diff == StyleDifferenceRepaintLayer && !hasLayer())
-        diff = StyleDifferenceRepaint;
+    diff = adjustStyleDifference(diff, contextSensitiveProperties);
 
     styleWillChange(diff, style.get());
     
@@ -1995,6 +2029,26 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
         toRenderView(document()->renderer())->setMaximalOutlineSize(m_style->outlineSize());
 
     styleDidChange(diff, oldStyle.get());
+
+    if (!m_parent || isText())
+        return;
+
+    // Now that the layer (if any) has been updated, we need to adjust the diff again,
+    // check whether we should layout now, and decide if we need to repaint.
+    StyleDifference updatedDiff = adjustStyleDifference(diff, contextSensitiveProperties);
+    
+    if (diff <= StyleDifferenceLayoutPositionedMovementOnly) {
+        if (updatedDiff == StyleDifferenceLayout)
+            setNeedsLayoutAndPrefWidthsRecalc();
+        else if (updatedDiff == StyleDifferenceLayoutPositionedMovementOnly)
+            setNeedsPositionedMovementLayout();
+    }
+    
+    if (updatedDiff == StyleDifferenceRepaintLayer || updatedDiff == StyleDifferenceRepaint) {
+        // Do a repaint with the new style now, e.g., for example if we go from
+        // not having an outline to having an outline.
+        repaint();
+    }
 }
 
 void RenderObject::setStyleInternal(PassRefPtr<RenderStyle> style)
@@ -2083,10 +2137,9 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle*)
         setNeedsLayoutAndPrefWidthsRecalc();
     else if (diff == StyleDifferenceLayoutPositionedMovementOnly)
         setNeedsPositionedMovementLayout();
-    else if (diff == StyleDifferenceRepaintLayer || diff == StyleDifferenceRepaint)
-        // Do a repaint with the new style now, e.g., for example if we go from
-        // not having an outline to having an outline.
-        repaint();
+
+    // Don't check for repaint here; we need to wait until the layer has been
+    // updated by subclasses before we know if we have to repaint (in setStyle()).
 }
 
 void RenderObject::updateFillImages(const FillLayer* oldLayers, const FillLayer* newLayers)

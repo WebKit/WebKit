@@ -982,7 +982,7 @@ public:
 
     bool inheritedNotEqual(RenderStyle*) const;
 
-    StyleDifference diff(const RenderStyle*) const;
+    StyleDifference diff(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
 
     bool isDisplayReplacedType() const
     {
