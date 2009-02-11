@@ -121,8 +121,6 @@ public:
         m_includeRightEdge = includeRight;
     }
 
-    int baseline() const { return renderer()->style(m_firstLine)->font().ascent() + borderTop() + paddingTop(); }
-
     // Helper functions used during line construction and placement.
     void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);
     int getFlowSpacingWidth();

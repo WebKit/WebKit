@@ -1,3 +1,15 @@
+2009-02-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for pixel test regression in fast/text.  Make sure not to add in
+        the borderTop and paddingTop of the block to the baseline when painting
+        strict mode text decorations.
+        
+        Reviewed by Mark Rowe
+    
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineFlowBox.h:
+
 2009-02-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://6349412> REGRESSION(r37204): Page is not repainted during and

@@ -893,8 +893,10 @@ void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int
 
         bool linesAreOpaque = !isPrinting && (!paintUnderline || underline.alpha() == 255) && (!paintOverline || overline.alpha() == 255) && (!paintLineThrough || linethrough.alpha() == 255);
 
-        int baselinePos = baseline();
-        
+        int baselinePos = renderer()->style(m_firstLine)->font().ascent();
+        if (!isRootInlineBox())
+            baselinePos += borderTop() + paddingTop();
+
         bool setClip = false;
         int extraOffset = 0;
         ShadowData* shadow = styleToUse->textShadow();
