@@ -526,20 +526,6 @@ RenderLayer* RenderObject::enclosingLayer() const
     return 0;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
-RenderLayer* RenderObject::enclosingCompositingLayer() const
-{
-    const RenderObject* curr = this;
-    while (curr) {
-        RenderLayer* layer = curr->hasLayer() ? toRenderBoxModelObject(curr)->layer() : 0;
-        if (layer && layer->isComposited())
-            return layer;
-        curr = curr->parent();
-    }
-    return 0;
-}
-#endif
-
 RenderBox* RenderObject::enclosingBox() const
 {
     RenderObject* curr = const_cast<RenderObject*>(this);
@@ -1638,7 +1624,7 @@ RenderBoxModelObject* RenderObject::containerForRepaint() const
 #if USE(ACCELERATED_COMPOSITING)
     if (RenderView* v = view()) {
         if (v->usesCompositing()) {
-            RenderLayer* compLayer = enclosingCompositingLayer();
+            RenderLayer* compLayer = enclosingLayer()->enclosingCompositingLayer();
             return compLayer ? compLayer->renderer() : 0;
         }
     }

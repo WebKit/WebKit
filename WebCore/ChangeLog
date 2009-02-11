@@ -1,3 +1,37 @@
+2009-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Move enclosingCompositingLayer() from RenderObject to RenderLayer, since it
+        relates to the RenderLayer z-order/overflow structure, rather than the render tree
+        parent chain. Add a convenience method, ancestorCompositingLayer(), which finds
+        the enclosing layer excluding self.
+        
+        Fix enclosingCompositingLayer() to correctly look at stacking context and overflow
+        lists.
+        
+        Check for documentBeingDestroyed() in a few places to avoid work on document
+        teardown.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::enclosingCompositingLayer):
+        (WebCore::RenderLayer::setParent):
+        (WebCore::RenderLayer::dirtyZOrderLists):
+        (WebCore::RenderLayer::dirtyOverflowList):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::ancestorCompositingLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        (WebCore::RenderLayerCompositor::clippedByAncestor):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint):
+        * rendering/RenderObject.h:
+
 2009-02-10  David Hyatt  <hyatt@apple.com>
 
         Rename xPos() and yPos() on RenderLayer to x() and y() to match RenderBox.  Rename setPos to setLocation.

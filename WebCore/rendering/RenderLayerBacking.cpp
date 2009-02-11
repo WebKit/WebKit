@@ -175,7 +175,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     m_compositingContentOffsetDirty = true;
     
-    RenderLayer* compAncestor = compositor()->ancestorCompositingLayer(m_owningLayer);
+    RenderLayer* compAncestor = m_owningLayer->ancestorCompositingLayer();
     
     // We compute everything relative to the enclosing compositing layer.
     IntRect ancestorCompositingBounds;

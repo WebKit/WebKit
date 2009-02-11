@@ -342,6 +342,13 @@ public:
     // the <html> layer and the root layer).
     RenderLayer* enclosingPositionedAncestor() const;
 
+#if USE(ACCELERATED_COMPOSITING)
+    // Enclosing compositing layer; if includeSelf is true, may return this.
+    RenderLayer* enclosingCompositingLayer(bool includeSelf = true) const;
+    // Ancestor compositing layer, excluding this.
+    RenderLayer* ancestorCompositingLayer() const { return enclosingCompositingLayer(false); }
+#endif
+
     void convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int& y) const;
 
     bool hasAutoZIndex() const { return renderer()->style()->hasAutoZIndex(); }

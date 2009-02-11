@@ -71,9 +71,6 @@ public:
     void layerWasAdded(RenderLayer* parent, RenderLayer* child);
     void layerWillBeRemoved(RenderLayer* parent, RenderLayer* child);
 
-    // Ancestor layer of the given layer that is composited, excluding the layer itself.
-    RenderLayer* ancestorCompositingLayer(const RenderLayer*) const;
-
     // Get the nearest ancestor layer that has overflow or clip, but is not a stacking context
     RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer* layer) const;
 

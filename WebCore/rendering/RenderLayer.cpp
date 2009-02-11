@@ -523,6 +523,27 @@ RenderLayer* RenderLayer::enclosingTransformedAncestor() const
     return curr;
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+RenderLayer* RenderLayer::enclosingCompositingLayer(bool includeSelf) const
+{
+    if (includeSelf && isComposited())
+        return const_cast<RenderLayer*>(this);
+
+    // Compositing layers are parented according to stacking order and overflow list,
+    // so we have to check whether the parent is a stacking context, or whether 
+    // the child is overflow-only.
+    bool inOverflowList = isOverflowOnly();
+    for (RenderLayer* curr = parent(); curr; curr = curr->parent()) {
+        if (curr->isComposited() && (inOverflowList || curr->isStackingContext()))
+            return curr;
+        
+        inOverflowList = curr->isOverflowOnly();
+    }
+         
+    return 0;
+}
+#endif
+
 IntPoint RenderLayer::absoluteToContents(const IntPoint& absolutePoint) const
 {
     // We don't use convertToLayerCoords because it doesn't know about transforms
@@ -2438,14 +2459,14 @@ void RenderLayer::setParent(RenderLayer* parent)
         return;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_parent && compositor())
+    if (m_parent && !renderer()->documentBeingDestroyed())
         compositor()->layerWillBeRemoved(m_parent, this);
 #endif
     
     m_parent = parent;
     
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_parent)
+    if (m_parent && !renderer()->documentBeingDestroyed())
         compositor()->layerWasAdded(m_parent, this);
 #endif
 }
@@ -2547,7 +2568,7 @@ void RenderLayer::dirtyZOrderLists()
     m_zOrderListsDirty = true;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (compositor())
+    if (!renderer()->documentBeingDestroyed())
         compositor()->setCompositingLayersNeedUpdate();
 #endif
 }
@@ -2566,7 +2587,7 @@ void RenderLayer::dirtyOverflowList()
     m_overflowListDirty = true;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (compositor())
+    if (!renderer()->documentBeingDestroyed())
         compositor()->setCompositingLayersNeedUpdate();
 #endif
 }
