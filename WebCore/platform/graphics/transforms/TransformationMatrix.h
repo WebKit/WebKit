@@ -32,6 +32,8 @@
 #include <cairo.h>
 #elif PLATFORM(QT)
 #include <QMatrix>
+#elif PLATFORM(SKIA)
+#include <SkMatrix.h>
 #endif
 
 #include <string.h> //for memcpy
@@ -281,6 +283,8 @@ public:
     operator cairo_matrix_t() const;
 #elif PLATFORM(QT)
     operator QMatrix() const;
+#elif PLATFORM(SKIA)
+    operator SkMatrix() const;
 #endif
 
 private:
