@@ -41,6 +41,7 @@
 #include <WebCore/PageGroup.h>
 #include <WebCore/HistoryItem.h>
 #pragma warning( pop )
+#include <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 
@@ -176,7 +177,7 @@ ULONG STDMETHODCALLTYPE WebHistory::Release(void)
 
 static inline COMPtr<WebHistory>& sharedHistoryStorage()
 {
-    static COMPtr<WebHistory> sharedHistory;
+    DEFINE_STATIC_LOCAL(COMPtr<WebHistory>, sharedHistory, ());
     return sharedHistory;
 }
 

@@ -1,3 +1,16 @@
+2009-02-11  Adam Roben  <aroben@apple.com>
+
+        Don't release the shared WebHistory instance on quit
+
+        This matches Mac, and prevents a race condition when the process exits
+        that depends on the order in which global destructors are invoked.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebHistory.cpp:
+        (sharedHistoryStorage): Changed to use DEFINE_STATIC_LOCAL so the
+        destructor is never called.
+
 2009-02-10  Adam Roben  <aroben@apple.com>
 
         Fix recursive WebView destruction when running DumpRenderTree

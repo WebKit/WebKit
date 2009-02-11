@@ -1,3 +1,14 @@
+2009-02-11  Adam Roben  <aroben@apple.com>
+
+        Fix crashes in http/tests/history/redirect-301.pl and friends on
+        Windows
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::webHistoryItemCount): Null-check the shared
+        WebHistory instance before dereferencing it.
+
 2009-02-10  Adam Roben  <aroben@apple.com>
 
         Fix Bug 23869: Pixel tests can't be run on Windows
