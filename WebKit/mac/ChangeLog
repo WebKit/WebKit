@@ -1,3 +1,18 @@
+2009-02-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein
+        
+        <https://bugs.webkit.org/show_bug.cgi?id=23891>
+        [WebHistoryItem _setVisitCount:] is unused and should be removed
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem _setVisitCount:]):
+        removed this unused method, which is a synonym for setVisitCount: that was introduced
+        recently and abandoned even more recently
+
+        * History/WebHistoryItemInternal.h:
+        removed declaration of _setVisitCount:
+
 2009-02-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark Rowe.
