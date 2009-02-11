@@ -1,3 +1,78 @@
+2009-02-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23883
+
+        Added new TransformOperation subclasses and methods to existing ones
+        to support 3D.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/transforms/IdentityTransformOperation.h:
+        (WebCore::IdentityTransformOperation::isAffine):
+        * platform/graphics/transforms/Matrix3DTransformOperation.cpp: Added.
+        (WebCore::Matrix3DTransformOperation::blend):
+        * platform/graphics/transforms/Matrix3DTransformOperation.h: Added.
+        (WebCore::Matrix3DTransformOperation::create):
+        (WebCore::Matrix3DTransformOperation::isIdentity):
+        (WebCore::Matrix3DTransformOperation::isAffine):
+        (WebCore::Matrix3DTransformOperation::getOperationType):
+        (WebCore::Matrix3DTransformOperation::isSameType):
+        (WebCore::Matrix3DTransformOperation::operator==):
+        (WebCore::Matrix3DTransformOperation::apply):
+        (WebCore::Matrix3DTransformOperation::Matrix3DTransformOperation):
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        (WebCore::MatrixTransformOperation::isAffine):
+        (WebCore::MatrixTransformOperation::apply):
+        * platform/graphics/transforms/PerspectiveTransformOperation.cpp: Added.
+        (WebCore::PerspectiveTransformOperation::blend):
+        * platform/graphics/transforms/PerspectiveTransformOperation.h: Added.
+        (WebCore::PerspectiveTransformOperation::create):
+        (WebCore::PerspectiveTransformOperation::isIdentity):
+        (WebCore::PerspectiveTransformOperation::isAffine):
+        (WebCore::PerspectiveTransformOperation::getOperationType):
+        (WebCore::PerspectiveTransformOperation::isSameType):
+        (WebCore::PerspectiveTransformOperation::operator==):
+        (WebCore::PerspectiveTransformOperation::apply):
+        (WebCore::PerspectiveTransformOperation::PerspectiveTransformOperation):
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::RotateTransformOperation::blend):
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        (WebCore::RotateTransformOperation::create):
+        (WebCore::RotateTransformOperation::angle):
+        (WebCore::RotateTransformOperation::isAffine):
+        (WebCore::RotateTransformOperation::operator==):
+        (WebCore::RotateTransformOperation::apply):
+        (WebCore::RotateTransformOperation::RotateTransformOperation):
+        * platform/graphics/transforms/ScaleTransformOperation.cpp:
+        (WebCore::ScaleTransformOperation::blend):
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        (WebCore::ScaleTransformOperation::create):
+        (WebCore::ScaleTransformOperation::z):
+        (WebCore::ScaleTransformOperation::isIdentity):
+        (WebCore::ScaleTransformOperation::isAffine):
+        (WebCore::ScaleTransformOperation::operator==):
+        (WebCore::ScaleTransformOperation::apply):
+        (WebCore::ScaleTransformOperation::ScaleTransformOperation):
+        * platform/graphics/transforms/SkewTransformOperation.h:
+        (WebCore::SkewTransformOperation::isAffine):
+        * platform/graphics/transforms/TransformOperation.h:
+        (WebCore::TransformOperation::):
+        (WebCore::TransformOperation::is3DOperation):
+        * platform/graphics/transforms/TransformOperations.h:
+        (WebCore::TransformOperations::isAffine):
+        (WebCore::TransformOperations::has3DOperation):
+        * platform/graphics/transforms/TranslateTransformOperation.cpp:
+        (WebCore::TranslateTransformOperation::blend):
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+        (WebCore::TranslateTransformOperation::create):
+        (WebCore::TranslateTransformOperation::z):
+        (WebCore::TranslateTransformOperation::isIdentity):
+        (WebCore::TranslateTransformOperation::isAffine):
+        (WebCore::TranslateTransformOperation::operator==):
+        (WebCore::TranslateTransformOperation::apply):
+        (WebCore::TranslateTransformOperation::TranslateTransformOperation):
+
 2009-02-11  David Hyatt  <hyatt@apple.com>
 
         Move createAnonymousBlock() to RenderBlock.  Since anonymous blocks are always parented to some other block,

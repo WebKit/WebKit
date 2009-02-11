@@ -1,3 +1,13 @@
+2009-02-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/build-webkit:
+
+        https://bugs.webkit.org/show_bug.cgi?id=23883
+
+        Added support --3d-transforms. Defaults to off
+
 2009-02-11  Adam Roben  <aroben@apple.com>
 
         Fix crashes in http/tests/history/redirect-301.pl and friends on

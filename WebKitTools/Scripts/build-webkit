@@ -61,6 +61,7 @@ my $showHelp = 0;
 my $clean = 0;
 my $buildUniversal = 0;
 my $buildSixtyFourBit = 0;
+my $threeDTransformsSupport = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -71,6 +72,7 @@ Usage: $programName [options] [options to pass to build system]
   --clean                       Cleanup the build directory
   --universal                   Build 2-way universal (PPC and Intel 32-bit)
   --64-bit                      Build 64-bit, combine with --universal to build 4-way universal
+  --[no-]3d-transforms          Toggle 3D Transforms support (default: $threeDTransformsSupport)
   --[no-]channel-messaging          Toggle MessageChannel and MessagePort support (default: $channelMessagingSupport)
   --[no-]offline-web-applications   Toggle Offline Web Application Support (default : $offlineWebApplicationSupport)
   --[no-]database               Toggle Database Support (default: $databaseSupport)
@@ -91,7 +93,9 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
 EOF
 
-GetOptions('channel-messaging!' => \$channelMessagingSupport,
+GetOptions(
+           '3d-transforms!' => \$threeDTransformsSupport,
+           'channel-messaging!' => \$channelMessagingSupport,
            'database!' => \$databaseSupport,
            'dom-storage!' => \$domStorageSupport,
            'icon-database!' => \$iconDatabaseSupport,
@@ -139,6 +143,7 @@ if (isWx()) {
 my $productDir = productDir();
 my @overrideFeatureDefinesOption = ();
 
+push @overrideFeatureDefinesOption, "ENABLE_3D_TRANSFORMS" if $threeDTransformsSupport;
 push @overrideFeatureDefinesOption, "ENABLE_CHANNEL_MESSAGING" if $channelMessagingSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DOM_STORAGE" if $domStorageSupport;

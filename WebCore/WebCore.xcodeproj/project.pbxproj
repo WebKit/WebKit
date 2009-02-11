@@ -655,6 +655,10 @@
 		498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 498391560F1E776900C23782 /* WebKitCSSMatrix.h */; };
 		498391630F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498391610F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp */; };
 		498391640F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 498391620F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h */; };
+		49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */; };
+		49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */; };
+		49D5DC2D0F423A73008F20FD /* PerspectiveTransformOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */; };
+		49D5DC2E0F423A73008F20FD /* PerspectiveTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D5DC2A0F423A73008F20FD /* PerspectiveTransformOperation.h */; };
 		49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E911B30EF86D47009D0CAF /* TransformationMatrix.cpp */; };
 		49E911C40EF86D47009D0CAF /* TransformationMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911B40EF86D47009D0CAF /* TransformationMatrix.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */; };
@@ -5579,6 +5583,10 @@
 		498391570F1E776900C23782 /* WebKitCSSMatrix.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSMatrix.idl; sourceTree = "<group>"; };
 		498391610F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMatrixConstructor.cpp; sourceTree = "<group>"; };
 		498391620F1E8EE100C23782 /* JSWebKitCSSMatrixConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSMatrixConstructor.h; sourceTree = "<group>"; };
+		49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix3DTransformOperation.cpp; path = transforms/Matrix3DTransformOperation.cpp; sourceTree = "<group>"; };
+		49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix3DTransformOperation.h; path = transforms/Matrix3DTransformOperation.h; sourceTree = "<group>"; };
+		49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PerspectiveTransformOperation.cpp; path = transforms/PerspectiveTransformOperation.cpp; sourceTree = "<group>"; };
+		49D5DC2A0F423A73008F20FD /* PerspectiveTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PerspectiveTransformOperation.h; path = transforms/PerspectiveTransformOperation.h; sourceTree = "<group>"; };
 		49E911B30EF86D47009D0CAF /* TransformationMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformationMatrix.cpp; path = transforms/TransformationMatrix.cpp; sourceTree = "<group>"; };
 		49E911B40EF86D47009D0CAF /* TransformationMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformationMatrix.h; path = transforms/TransformationMatrix.h; sourceTree = "<group>"; };
 		49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IdentityTransformOperation.h; path = transforms/IdentityTransformOperation.h; sourceTree = "<group>"; };
@@ -9733,8 +9741,12 @@
 			isa = PBXGroup;
 			children = (
 				49E911B50EF86D47009D0CAF /* IdentityTransformOperation.h */,
+				49D5DC270F423A73008F20FD /* Matrix3DTransformOperation.cpp */,
+				49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */,
 				49E911B60EF86D47009D0CAF /* MatrixTransformOperation.cpp */,
 				49E911B70EF86D47009D0CAF /* MatrixTransformOperation.h */,
+				49D5DC290F423A73008F20FD /* PerspectiveTransformOperation.cpp */,
+				49D5DC2A0F423A73008F20FD /* PerspectiveTransformOperation.h */,
 				49E911B80EF86D47009D0CAF /* RotateTransformOperation.cpp */,
 				49E911B90EF86D47009D0CAF /* RotateTransformOperation.h */,
 				49E911BA0EF86D47009D0CAF /* ScaleTransformOperation.cpp */,
@@ -12205,12 +12217,6 @@
 		A83B790E0CCAFF97000B0825 /* CSS */ = {
 			isa = PBXGroup;
 			children = (
-				BCC065830F3CE2A700CD2D87 /* JSClientRect.cpp */,
-				BCC065840F3CE2A700CD2D87 /* JSClientRect.h */,
-				BCC065850F3CE2A700CD2D87 /* JSClientRectList.cpp */,
-				BCC065860F3CE2A700CD2D87 /* JSClientRectList.h */,
-				930705D709E0C9B700B17FE4 /* JSCounter.cpp */,
-				930705D909E0C9BF00B17FE4 /* JSCounter.h */,
 				BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */,
 				BC46C1F10C0DDC8F0020CFC3 /* JSCSSCharsetRule.h */,
 				BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */,
@@ -12241,11 +12247,17 @@
 				BC686C790E0C330100DE8A08 /* JSCSSVariablesDeclaration.h */,
 				BC686C7A0E0C330100DE8A08 /* JSCSSVariablesRule.cpp */,
 				BC686C7B0E0C330100DE8A08 /* JSCSSVariablesRule.h */,
+				BCC065830F3CE2A700CD2D87 /* JSClientRect.cpp */,
+				BCC065840F3CE2A700CD2D87 /* JSClientRect.h */,
+				BCC065850F3CE2A700CD2D87 /* JSClientRectList.cpp */,
+				BCC065860F3CE2A700CD2D87 /* JSClientRectList.h */,
+				930705D709E0C9B700B17FE4 /* JSCounter.cpp */,
+				930705D909E0C9BF00B17FE4 /* JSCounter.h */,
 				BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */,
 				BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */,
+				BC3452550D7E02850016574A /* JSRGBColor.lut.h */,
 				BCFE2F0F0C1B58370020235F /* JSRect.cpp */,
 				BCFE2F100C1B58370020235F /* JSRect.h */,
-				BC3452550D7E02850016574A /* JSRGBColor.lut.h */,
 				BCE013980C0BEF180043860A /* JSStyleSheet.cpp */,
 				BCE013990C0BEF180043860A /* JSStyleSheet.h */,
 				A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */,
@@ -14302,6 +14314,12 @@
 				BC4BF9E30D11E133007D247F /* ClassNames.h */,
 				BC904B720D10998F00680D32 /* ClassNodeList.cpp */,
 				BC904B730D10998F00680D32 /* ClassNodeList.h */,
+				BCC065770F3CE1B700CD2D87 /* ClientRect.cpp */,
+				BCC065780F3CE1B700CD2D87 /* ClientRect.h */,
+				BCC065790F3CE1B700CD2D87 /* ClientRect.idl */,
+				BCC0657A0F3CE1B700CD2D87 /* ClientRectList.cpp */,
+				BCC0657B0F3CE1B700CD2D87 /* ClientRectList.h */,
+				BCC0657C0F3CE1B700CD2D87 /* ClientRectList.idl */,
 				A784941A0B5FE507001E237A /* Clipboard.cpp */,
 				85031B280A44EFC700F992E0 /* Clipboard.h */,
 				BCA83E360D7CDC4E003421A8 /* Clipboard.idl */,
@@ -14510,12 +14528,6 @@
 				F523D30902DE4476018635CA /* XMLTokenizer.cpp */,
 				F523D30A02DE4476018635CA /* XMLTokenizer.h */,
 				54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */,
-				BCC065770F3CE1B700CD2D87 /* ClientRect.cpp */,
-				BCC065780F3CE1B700CD2D87 /* ClientRect.h */,
-				BCC065790F3CE1B700CD2D87 /* ClientRect.idl */,
-				BCC0657A0F3CE1B700CD2D87 /* ClientRectList.cpp */,
-				BCC0657B0F3CE1B700CD2D87 /* ClientRectList.h */,
-				BCC0657C0F3CE1B700CD2D87 /* ClientRectList.idl */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -14666,6 +14678,8 @@
 				14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */,
 				BC4BF9E50D11E133007D247F /* ClassNames.h in Headers */,
 				BC904B770D10998F00680D32 /* ClassNodeList.h in Headers */,
+				BCC0657E0F3CE1B700CD2D87 /* ClientRect.h in Headers */,
+				BCC065810F3CE1B700CD2D87 /* ClientRectList.h in Headers */,
 				85031B3E0A44EFC700F992E0 /* Clipboard.h in Headers */,
 				4B8AF4AA0B1CE02B00687690 /* ClipboardAccessPolicy.h in Headers */,
 				85031B400A44EFC700F992E0 /* ClipboardEvent.h in Headers */,
@@ -15706,6 +15720,8 @@
 				65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */,
 				65DF323E09D1DE65000BE325 /* JSCanvasRenderingContext2D.h in Headers */,
 				65DF31F409D1CC60000BE325 /* JSCharacterData.h in Headers */,
+				BCC065880F3CE2A700CD2D87 /* JSClientRect.h in Headers */,
+				BCC0658A0F3CE2A700CD2D87 /* JSClientRectList.h in Headers */,
 				BCA83E500D7CE1E9003421A8 /* JSClipboard.h in Headers */,
 				93F9B6E10BA0FB7200854064 /* JSComment.h in Headers */,
 				BC98543E0CD3D98C00069BC1 /* JSConsole.h in Headers */,
@@ -16067,6 +16083,7 @@
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
 				A8C4A80509D563270003AC8D /* MappedAttribute.h in Headers */,
 				A8C4A84C09D5649D0003AC8D /* MappedAttributeEntry.h in Headers */,
+				49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */,
 				49E911C70EF86D47009D0CAF /* MatrixTransformOperation.h in Headers */,
 				ABFE7E130D32FAF60066F4D2 /* MediaControlElements.h in Headers */,
 				AB40484E0E083FA8007D6920 /* MediaDocument.h in Headers */,
@@ -16133,6 +16150,7 @@
 				A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */,
 				B22279710D00BF220071B782 /* PatternAttributes.h in Headers */,
 				B27535820B053814002CE64F /* Pen.h in Headers */,
+				49D5DC2E0F423A73008F20FD /* PerspectiveTransformOperation.h in Headers */,
 				935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */,
 				932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */,
 				935C476909AC4D4300A6AAB4 /* PlatformMouseEvent.h in Headers */,
@@ -16178,6 +16196,7 @@
 				BCEA4864097D93020094C9E4 /* RenderBR.h in Headers */,
 				BCEA4860097D93020094C9E4 /* RenderBlock.h in Headers */,
 				BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */,
+				BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */,
 				BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */,
 				9392F1420AD185F400691BD4 /* RenderCounter.h in Headers */,
 				A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */,
@@ -16596,6 +16615,7 @@
 				656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */,
 				7284ADDE0E6FEB31002EEFBD /* UserStyleSheetLoader.h in Headers */,
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
+				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,
 				E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */,
 				B25599490D00D8BA00BB825C /* WKArithmeticFilter.h in Headers */,
 				B255994C0D00D8BA00BB825C /* WKComponentMergeFilter.h in Headers */,
@@ -16679,9 +16699,11 @@
 				BC8243E90D0CFD7500460C8F /* WindowFeatures.h in Headers */,
 				E1CA5CA00E8CD73B00E8EF90 /* Worker.h in Headers */,
 				E1C2C43E0EAD0133007E61FB /* WorkerContext.h in Headers */,
+				2E3AC84E0F3D06D100633F04 /* WorkerContextProxy.h in Headers */,
 				E1C363010EAF2CC6007410BC /* WorkerLocation.h in Headers */,
 				E14799A70ECDE3A400292BF3 /* WorkerMessagingProxy.h in Headers */,
 				E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */,
+				2E3AC8500F3D06F700633F04 /* WorkerObjectProxy.h in Headers */,
 				18A0537D0F26859C00A51705 /* WorkerRunLoop.h in Headers */,
 				E1A643F20EC0972500779668 /* WorkerScriptController.h in Headers */,
 				E1C2C4240EACE0BC007E61FB /* WorkerThread.h in Headers */,
@@ -16749,14 +16771,6 @@
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
-				BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */,
-				BCC0657E0F3CE1B700CD2D87 /* ClientRect.h in Headers */,
-				BCC065810F3CE1B700CD2D87 /* ClientRectList.h in Headers */,
-				BCC065880F3CE2A700CD2D87 /* JSClientRect.h in Headers */,
-				BCC0658A0F3CE2A700CD2D87 /* JSClientRectList.h in Headers */,
-				2E3AC84E0F3D06D100633F04 /* WorkerContextProxy.h in Headers */,
-				2E3AC8500F3D06F700633F04 /* WorkerObjectProxy.h in Headers */,
-				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16826,6 +16840,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7094AFC0F27AEE300596CEC /* CanvasPixelArray.idl in Resources */,
+				BCC0657F0F3CE1B700CD2D87 /* ClientRect.idl in Resources */,
+				BCC065820F3CE1B700CD2D87 /* ClientRectList.idl in Resources */,
 				B25599480D00D8BA00BB825C /* WKArithmeticFilter.cikernel in Resources */,
 				B255994B0D00D8BA00BB825C /* WKComponentMergeFilter.cikernel in Resources */,
 				B255994E0D00D8BA00BB825C /* WKDiffuseLightingFilter.cikernel in Resources */,
@@ -16872,8 +16888,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				BCC0657F0F3CE1B700CD2D87 /* ClientRect.idl in Resources */,
-				BCC065820F3CE1B700CD2D87 /* ClientRectList.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17142,6 +17156,8 @@
 				ABAF22080C03B1C700B0BCF0 /* ChromeMac.mm in Sources */,
 				BC4BF9E40D11E133007D247F /* ClassNames.cpp in Sources */,
 				BC904B760D10998F00680D32 /* ClassNodeList.cpp in Sources */,
+				BCC0657D0F3CE1B700CD2D87 /* ClientRect.cpp in Sources */,
+				BCC065800F3CE1B700CD2D87 /* ClientRectList.cpp in Sources */,
 				A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */,
 				85031B3F0A44EFC700F992E0 /* ClipboardEvent.cpp in Sources */,
 				93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */,
@@ -17707,6 +17723,8 @@
 				65DF323D09D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp in Sources */,
 				1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */,
 				65DF31F309D1CC60000BE325 /* JSCharacterData.cpp in Sources */,
+				BCC065870F3CE2A700CD2D87 /* JSClientRect.cpp in Sources */,
+				BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */,
 				BCA83E4F0D7CE1E9003421A8 /* JSClipboard.cpp in Sources */,
 				BCA83E520D7CE205003421A8 /* JSClipboardCustom.cpp in Sources */,
 				93F9B6E00BA0FB7200854064 /* JSComment.cpp in Sources */,
@@ -18119,6 +18137,7 @@
 				93E227E10AF589AD00D48324 /* MainResourceLoader.cpp in Sources */,
 				1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */,
 				A8C4A80609D563270003AC8D /* MappedAttribute.cpp in Sources */,
+				49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */,
 				49E911C60EF86D47009D0CAF /* MatrixTransformOperation.cpp in Sources */,
 				ABFE7E120D32FAF60066F4D2 /* MediaControlElements.cpp in Sources */,
 				AB40484D0E083FA8007D6920 /* MediaDocument.cpp in Sources */,
@@ -18178,6 +18197,7 @@
 				A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */,
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,
 				B27535810B053814002CE64F /* Pen.cpp in Sources */,
+				49D5DC2D0F423A73008F20FD /* PerspectiveTransformOperation.cpp in Sources */,
 				935C477109AC4D7300A6AAB4 /* PlatformMouseEventMac.mm in Sources */,
 				BC94D1080C274F88006BC617 /* PlatformScreenMac.mm in Sources */,
 				A9C6E4EB0D745E2B006442E9 /* Plugin.cpp in Sources */,
@@ -18209,6 +18229,7 @@
 				BCEA4863097D93020094C9E4 /* RenderBR.cpp in Sources */,
 				BCEA485F097D93020094C9E4 /* RenderBlock.cpp in Sources */,
 				BCEA4861097D93020094C9E4 /* RenderBox.cpp in Sources */,
+				BC96DB460F3A882200573CB3 /* RenderBoxModelObject.cpp in Sources */,
 				BCEA4865097D93020094C9E4 /* RenderButton.cpp in Sources */,
 				9392F1440AD185FE00691BD4 /* RenderCounter.cpp in Sources */,
 				A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */,
@@ -18597,6 +18618,7 @@
 				65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */,
 				7284ADDD0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp in Sources */,
 				93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */,
+				A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */,
 				B255994A0D00D8BA00BB825C /* WKArithmeticFilter.m in Sources */,
 				B255994D0D00D8BA00BB825C /* WKComponentMergeFilter.m in Sources */,
 				B25599500D00D8BA00BB825C /* WKDiffuseLightingFilter.m in Sources */,
@@ -18737,12 +18759,6 @@
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
-				BC96DB460F3A882200573CB3 /* RenderBoxModelObject.cpp in Sources */,
-				BCC0657D0F3CE1B700CD2D87 /* ClientRect.cpp in Sources */,
-				BCC065800F3CE1B700CD2D87 /* ClientRectList.cpp in Sources */,
-				BCC065870F3CE2A700CD2D87 /* JSClientRect.cpp in Sources */,
-				BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */,
-				A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

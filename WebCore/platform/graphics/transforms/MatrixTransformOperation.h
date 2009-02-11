@@ -44,6 +44,7 @@ public:
 
 private:
     virtual bool isIdentity() const { return m_a == 1 && m_b == 0 && m_c == 0 && m_d == 1 && m_e == 0 && m_f == 0; }
+
     virtual OperationType getOperationType() const { return MATRIX; }
     virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == MATRIX; }
 
@@ -59,7 +60,7 @@ private:
     virtual bool apply(TransformationMatrix& transform, const IntSize&) const
     {
         TransformationMatrix matrix(m_a, m_b, m_c, m_d, m_e, m_f);
-        transform = matrix * transform;
+        transform.multLeft(TransformationMatrix(matrix));
         return false;
     }
 
