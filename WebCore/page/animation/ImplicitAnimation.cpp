@@ -79,8 +79,19 @@ void ImplicitAnimation::animate(CompositeAnimation*, RenderObject*, RenderStyle*
         animatedStyle = RenderStyle::clone(targetStyle);
 
     bool needsAnim = blendProperties(this, m_animatingProperty, animatedStyle.get(), m_fromStyle.get(), m_toStyle.get(), progress(1, 0, 0));
+    // FIXME: we also need to detect cases where we have to software animate for other reasons,
+    // such as a child using inheriting the transform. https://bugs.webkit.org/show_bug.cgi?id=23902
     if (needsAnim)
         setAnimating();
+    else {
+#if USE(ACCELERATED_COMPOSITING)
+        // If we are running an accelerated animation, set a flag in the style which causes the style
+        // to compare as different to any other style. This ensures that changes to the property
+        // that is animating are correctly detected during the animation (e.g. when a transition
+        // gets interrupted).
+        animatedStyle->setIsRunningAcceleratedAnimation();
+#endif
+    }
 
     // Fire the start timeout if needed
     fireAnimationEventsIfNeeded();

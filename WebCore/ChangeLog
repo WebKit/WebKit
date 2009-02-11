@@ -1,3 +1,24 @@
+2009-02-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23862
+        
+        Add a bit on RenderStyle that gets set when running accelerated
+        transitions of transform or opacity. These ensure that styles
+        compare as different during the transition, so that interruption
+        can be detected reliably.
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::isRunningAcceleratedAnimation):
+        (WebCore::InheritedFlags::setIsRunningAcceleratedAnimation):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2009-02-11  David Hyatt  <hyatt@apple.com>
 
         Eliminate the virtual position() function from RenderObject.  Rename the position() overrides
