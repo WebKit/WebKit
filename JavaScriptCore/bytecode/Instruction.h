@@ -38,6 +38,16 @@
 
 namespace JSC {
 
+    // *Sigh*, If the JIT is enabled we need to track the stubRountine (of type MacroAssembler::CodeLocationLabel),
+    // If the JIT is not in use we don't actually need the variable (that said, if the JIT is not in use we don't
+    // curently actually use PolymorphicAccessStructureLists, which we should).  Anyway, this seems like the best
+    // solution for now - will need to something smarter if/when we actually want mixed-mode operation.
+#if ENABLE(JIT)
+    typedef MacroAssembler::CodeLocationLabel PolymorphicAccessStructureListStubRoutineType;
+#else
+    typedef void* PolymorphicAccessStructureListStubRoutineType;
+#endif
+
     class JSCell;
     class Structure;
     class StructureChain;
@@ -46,14 +56,14 @@ namespace JSC {
     struct PolymorphicAccessStructureList {
         struct PolymorphicStubInfo {
             bool isChain;
-            MacroAssembler::CodeLocationLabel stubRoutine;
+            PolymorphicAccessStructureListStubRoutineType stubRoutine;
             Structure* base;
             union {
                 Structure* proto;
                 StructureChain* chain;
             } u;
 
-            void set(MacroAssembler::CodeLocationLabel _stubRoutine, Structure* _base)
+            void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base)
             {
                 stubRoutine = _stubRoutine;
                 base = _base;
@@ -61,7 +71,7 @@ namespace JSC {
                 isChain = false;
             }
             
-            void set(MacroAssembler::CodeLocationLabel _stubRoutine, Structure* _base, Structure* _proto)
+            void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, Structure* _proto)
             {
                 stubRoutine = _stubRoutine;
                 base = _base;
@@ -69,7 +79,7 @@ namespace JSC {
                 isChain = false;
             }
             
-            void set(MacroAssembler::CodeLocationLabel _stubRoutine, Structure* _base, StructureChain* _chain)
+            void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, StructureChain* _chain)
             {
                 stubRoutine = _stubRoutine;
                 base = _base;
@@ -78,17 +88,17 @@ namespace JSC {
             }
         } list[POLYMORPHIC_LIST_CACHE_SIZE];
         
-        PolymorphicAccessStructureList(MacroAssembler::CodeLocationLabel stubRoutine, Structure* firstBase)
+        PolymorphicAccessStructureList(PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase)
         {
             list[0].set(stubRoutine, firstBase);
         }
 
-        PolymorphicAccessStructureList(MacroAssembler::CodeLocationLabel stubRoutine, Structure* firstBase, Structure* firstProto)
+        PolymorphicAccessStructureList(PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, Structure* firstProto)
         {
             list[0].set(stubRoutine, firstBase, firstProto);
         }
 
-        PolymorphicAccessStructureList(MacroAssembler::CodeLocationLabel stubRoutine, Structure* firstBase, StructureChain* firstChain)
+        PolymorphicAccessStructureList(PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, StructureChain* firstChain)
         {
             list[0].set(stubRoutine, firstBase, firstChain);
         }

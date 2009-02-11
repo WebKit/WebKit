@@ -1,5 +1,18 @@
 2009-02-10  Gavin Barraclough  <barraclough@apple.com>
 
+        Build
+        fix.
+        (Narrow
+        changelog
+        for
+        dhyatt).
+
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        (JSC::PolymorphicAccessStructureList::PolymorphicAccessStructureList):
+
+2009-02-10  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Reduce use of void* / reinterpret_cast in JIT repatching code,
