@@ -4,6 +4,17 @@
 
         Bug 23536: Auto-generate HTMLElementFactory
 
+        Remove the HTMLElementFactory files. Farewell.
+
+        * html/HTMLElementFactory.cpp: Removed.
+        * html/HTMLElementFactory.h: Removed.
+
+2009-02-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 23536: Auto-generate HTMLElementFactory
+
         Make the platform auto-generate the HTMLElementFactory.
 
         * DerivedSources.make:
