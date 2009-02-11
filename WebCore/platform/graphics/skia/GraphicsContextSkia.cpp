@@ -777,6 +777,17 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect,
         // See fillRect().
         ClipRectToCanvas(*platformContext()->canvas(), r, &r);
 
+    if (topLeft.width() + topRight.width() > rect.width()
+            || bottomLeft.width() + bottomRight.width() > rect.width()
+            || topLeft.height() + bottomLeft.height() > rect.height()
+            || topRight.height() + bottomRight.height() > rect.height()) {
+        // Not all the radii fit, return a rect. This matches the behavior of
+        // Path::createRoundedRectangle. Without this we attempt to draw a round
+        // shadow for a square box.
+        fillRect(rect, color);
+        return;
+    }
+
     SkPath path;
     addCornerArc(&path, r, topRight, 270);
     addCornerArc(&path, r, bottomRight, 0);
@@ -786,7 +797,6 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect,
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
     platformContext()->canvas()->drawPath(path, paint);
-    return fillRect(rect, color);
 }
 
 TransformationMatrix GraphicsContext::getCTM() const

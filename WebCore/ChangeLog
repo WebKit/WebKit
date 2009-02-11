@@ -1,3 +1,22 @@
+2009-02-11  Scott Violet  <sky@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23882
+        GraphicsContextSkia draws round rects as solid rects
+
+        Fixes two bugs in Skia's GraphicsContext::fillRoundedRect:
+        . fillRoundedRect had an extra call to fillRect, resulting in always
+          drawing a solid rectangle.
+        . if the total radius along a given axis is greater than the size of
+          the axis to draw, a solid rect should be drawn.
+
+        The layout tests LayoutTests/fast/css/shadow-multiple.html and
+        LayoutTests/fast/box-shadow/basic-shadows.html cover this.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect):
+
 2009-02-11  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.
