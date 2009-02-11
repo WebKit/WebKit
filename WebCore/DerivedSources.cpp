@@ -32,6 +32,8 @@
 #include "JSCanvasRenderingContext2D.cpp"
 #include "JSCDATASection.cpp"
 #include "JSCharacterData.cpp"
+#include "JSClientRect.cpp"
+#include "JSClientRectList.cpp"
 #include "JSClipboard.cpp"
 #include "JSComment.cpp"
 #include "JSConsole.cpp"

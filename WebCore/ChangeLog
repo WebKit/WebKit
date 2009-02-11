@@ -12,6 +12,14 @@
 
 2009-02-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Windows build fix after r40837.
+
+        Not reviewed.
+
+        * DerivedSources.cpp:
+
+2009-02-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
         <rdar://6349412> REGRESSION(r37204): Page is not repainted during and
         after pan scrolling
 
