@@ -1,3 +1,22 @@
+2009-02-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6573916> 
+        CrashTracer: [USER] 1 crash in Safari at com.apple.WebKit • WebKit::NetscapePluginInstanceProxy::pluginHostDied + 25.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        If we failed to instantiate the plug-in, invalidate the instance proxy.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::invalidate):
+        Remove the instance from the plug-in host's set.
+        
+        (WebKit::NetscapePluginInstanceProxy::destroy):
+        Call invalidate().
+
 2009-02-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

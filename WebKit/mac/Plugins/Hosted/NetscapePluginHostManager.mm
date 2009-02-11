@@ -222,11 +222,10 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     }
 
     auto_ptr<NetscapePluginInstanceProxy::InstantiatePluginReply> reply = instance->waitForReply<NetscapePluginInstanceProxy::InstantiatePluginReply>();
-    if (!reply.get())
+    if (!reply.get() || reply->m_resultCode != KERN_SUCCESS) {
+        instance->invalidate();
         return 0;
-    
-    if (reply->m_resultCode != KERN_SUCCESS)
-        return 0;
+    }
     
     instance->setRenderContextID(reply->m_renderContextID);
     instance->setUseSoftwareRenderer(reply->m_useSoftwareRenderer);

@@ -121,6 +121,8 @@ public:
     void addInstance(ProxyInstance*);
     void removeInstance(ProxyInstance*);
     
+    void invalidate();
+    
     // Reply structs
     struct Reply {
         enum Type {

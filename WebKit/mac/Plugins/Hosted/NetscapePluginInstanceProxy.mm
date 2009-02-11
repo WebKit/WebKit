@@ -146,14 +146,18 @@ void NetscapePluginInstanceProxy::cleanup()
         (*it)->invalidate();
 }
 
+void NetscapePluginInstanceProxy::invalidate()
+{
+    m_pluginHostProxy->removePluginInstance(this);
+    m_pluginHostProxy = 0;
+}
+
 void NetscapePluginInstanceProxy::destroy()
 {
     _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID);
 
     cleanup();
-
-    m_pluginHostProxy->removePluginInstance(this);
-    m_pluginHostProxy = 0;
+    invalidate();
 }
 
 HostedNetscapePluginStream *NetscapePluginInstanceProxy::pluginStream(uint32_t streamID)
