@@ -71,6 +71,7 @@ static NSString *weeklyVisitCountKey = @"W"; // short key to save space
 NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotification";
 
 using namespace WebCore;
+using namespace std;
 
 typedef HashMap<HistoryItem*, WebHistoryItem*> HistoryItemMap;
 
@@ -358,7 +359,14 @@ static WebWindowWatcher *_windowWatcher = nil;
         core(_private)->setOriginalURLString(newURLString);
     } 
 
-    core(_private)->setVisitCount([dict _webkit_intForKey:visitCountKey]);
+    int visitCount = [dict _webkit_intForKey:visitCountKey];
+    
+    // Can't trust data on disk, and we've had at least one report of this (<rdar://6572300>).
+    if (visitCount < 0) {
+        LOG_ERROR("visit count for history item \"%@\" is negative (%d), will be reset to 1", URLString, visitCount);
+        visitCount = 1;
+    }
+    core(_private)->setVisitCount(visitCount);
 
     if ([dict _webkit_boolForKey:lastVisitWasFailureKey])
         core(_private)->setLastVisitWasFailure(true);
@@ -382,10 +390,11 @@ static WebWindowWatcher *_windowWatcher = nil;
         Vector<int> coreDailyCounts([dailyCounts count]);
         Vector<int> coreWeeklyCounts([weeklyCounts count]);
 
+        // Daily and weekly counts < 0 are errors in the data read from disk, so reset to 0.
         for (size_t i = 0; i < coreDailyCounts.size(); ++i)
-            coreDailyCounts[i] = [[dailyCounts _webkit_numberAtIndex:i] intValue];
+            coreDailyCounts[i] = max([[dailyCounts _webkit_numberAtIndex:i] intValue], 0);
         for (size_t i = 0; i < coreWeeklyCounts.size(); ++i)
-            coreWeeklyCounts[i] = [[weeklyCounts _webkit_numberAtIndex:i] intValue];
+            coreWeeklyCounts[i] = max([[weeklyCounts _webkit_numberAtIndex:i] intValue], 0);
     
         core(_private)->adoptVisitCounts(coreDailyCounts, coreWeeklyCounts);
     }

@@ -2,6 +2,23 @@
 
         Reviewed by Dan Bernstein
         
+        <https://bugs.webkit.org/show_bug.cgi?id=23889>, <rdar://problem/6572300>
+        Negative visit counts stored in History.plist aren't corrected.
+        
+        It's not clear how a huge negative visit count ended up in History.plist, but we can't
+        trust data read from disk so we can at least reset this to something sane. WebCore has
+        no guard against a visit count overflowing an int, but that seems very unlikely to have
+        caused this.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        If a negative visit count is in the dictionary, replace it with 1. If a negative daily or
+        weekly visit count is in the dictionary, replace it with 0. 
+
+2009-02-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein
+        
         <https://bugs.webkit.org/show_bug.cgi?id=23891>
         [WebHistoryItem _setVisitCount:] is unused and should be removed
 
