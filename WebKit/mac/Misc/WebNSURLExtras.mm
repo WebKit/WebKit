@@ -571,6 +571,7 @@ static CFStringRef createStringWithEscapedUnsafeCharacters(CFStringRef string)
     free(after);
 
     result = mapHostNames(result, !needsHostNameDecoding);
+    result = [result precomposedStringWithCanonicalMapping];
     return WebCFAutorelease(createStringWithEscapedUnsafeCharacters((CFStringRef)result));
 }
 

@@ -1,3 +1,14 @@
+2009-02-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6562920> Pasted text should be normalized to NFC
+
+        Testing requires putting non-HTML content in pasteboard, so it cannot be done with WebKit alone.
+
+        * platform/mac/PasteboardMac.mm: (WebCore::Pasteboard::plainText): Route the text through
+        -[NSString precomposedStringWithCanonicalMapping].
+
 2009-02-10  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

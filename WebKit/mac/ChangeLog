@@ -1,3 +1,20 @@
+2009-02-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6562920> Pasted text should be normalized to NFC
+
+        * Misc/WebNSURLExtras.mm: (-[NSURL _web_userVisibleString]): Route the URL string through
+        -[NSString precomposedStringWithCanonicalMapping].
+
+        * WebCoreSupport/WebPasteboardHelper.mm:
+        (WebPasteboardHelper::plainTextFromPasteboard): Ditto. 
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+        Ditto. The affected cases are all plain text ones - RTF, RTFD and HTML are assumed to be
+        precomposed already, and the conversion is performed outside WebKit for those anyway.
+
 2009-02-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dan Bernstein

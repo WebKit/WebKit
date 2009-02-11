@@ -53,7 +53,7 @@ String WebPasteboardHelper::plainTextFromPasteboard(const NSPasteboard *pasteboa
     NSArray *types = [pasteboard types];
     
     if ([types containsObject:NSStringPboardType])
-        return [pasteboard stringForType:NSStringPboardType];
+        return [[pasteboard stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping];
     
     NSAttributedString *attributedString = nil;
     NSString *string;
@@ -63,15 +63,15 @@ String WebPasteboardHelper::plainTextFromPasteboard(const NSPasteboard *pasteboa
     if (!attributedString && [types containsObject:NSRTFPboardType])
         attributedString = [[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:nil];
     if (attributedString) {
-        string = [[attributedString string] copy];
+        string = [[attributedString string] precomposedStringWithCanonicalMapping];
         [attributedString release];
-        return [string autorelease];
+        return string;
     }
     
     if ([types containsObject:NSFilenamesPboardType]) {
         string = [[pasteboard propertyListForType:NSFilenamesPboardType] componentsJoinedByString:@"\n"];
         if (string)
-            return string;
+            return [string precomposedStringWithCanonicalMapping];
     }
     
     NSURL *URL;

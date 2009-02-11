@@ -2058,10 +2058,10 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         if (!document)
             return nil;
         DOMHTMLAnchorElement *anchor = (DOMHTMLAnchorElement *)[document createElement:@"a"];
-        NSString *URLString = [URL _web_originalDataAsString];
+        NSString *URLString = [URL _web_originalDataAsString]; // Original data is ASCII-only, so there is no need to precompose.
         if ([URLString length] == 0)
             return nil;
-        NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType];
+        NSString *URLTitleString = [[pasteboard stringForType:WebURLNamePboardType] precomposedStringWithCanonicalMapping];
         DOMText *text = [document createTextNode:URLTitleString];
         [anchor setHref:URLString];
         [anchor appendChild:text];
@@ -2070,7 +2070,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         return fragment;
     }
     if (pboardType == NSStringPboardType)
-        return kit(createFragmentFromText(core(context), [pasteboard stringForType:NSStringPboardType]).get());
+        return kit(createFragmentFromText(core(context), [[pasteboard stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping]).get());
     return nil;
 }
 

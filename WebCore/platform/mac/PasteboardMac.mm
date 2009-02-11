@@ -310,7 +310,7 @@ String Pasteboard::plainText(Frame* frame)
     NSArray *types = [m_pasteboard.get() types];
     
     if ([types containsObject:NSStringPboardType])
-        return [m_pasteboard.get() stringForType:NSStringPboardType];
+        return [[m_pasteboard.get() stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping];
     
     NSAttributedString *attributedString = nil;
     NSString *string;
@@ -320,13 +320,13 @@ String Pasteboard::plainText(Frame* frame)
     if (attributedString == nil && [types containsObject:NSRTFPboardType])
         attributedString = [[NSAttributedString alloc] initWithRTF:[m_pasteboard.get() dataForType:NSRTFPboardType] documentAttributes:NULL];
     if (attributedString != nil) {
-        string = [[attributedString string] copy];
+        string = [[attributedString string] precomposedStringWithCanonicalMapping];
         [attributedString release];
-        return [string autorelease];
+        return string;
     }
     
     if ([types containsObject:NSFilenamesPboardType]) {
-        string = [[m_pasteboard.get() propertyListForType:NSFilenamesPboardType] componentsJoinedByString:@"\n"];
+        string = [[[m_pasteboard.get() propertyListForType:NSFilenamesPboardType] componentsJoinedByString:@"\n"] precomposedStringWithCanonicalMapping];
         if (string != nil)
             return string;
     }
@@ -338,7 +338,7 @@ String Pasteboard::plainText(Frame* frame)
         // helper code that should either be done in a separate patch or figured out in another way.
         string = frame->editor()->client()->userVisibleString(url);
         if ([string length] > 0)
-            return string;
+            return [string precomposedStringWithCanonicalMapping];
     }
 
     
