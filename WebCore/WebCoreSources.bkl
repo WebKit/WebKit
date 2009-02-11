@@ -729,6 +729,7 @@ This file contains the list of files needed to build WebCore.
         platform/DragImage.cpp
         platform/FileChooser.cpp
         platform/GeolocationService.cpp
+        platform/graphics/FloatPoint3D.cpp
         platform/graphics/Font.cpp
         platform/graphics/FontCache.cpp
         platform/graphics/FontData.cpp

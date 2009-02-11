@@ -46,7 +46,9 @@
 #include "Page.h"
 #include "PlatformString.h"
 #include "RenderBlock.h"
+#if ENABLE(SVG)
 #include "SVGNames.h"
+#endif
 #include "SelectionController.h"
 #include "TextIterator.h"
 #include "XMLNames.h"

@@ -1,3 +1,13 @@
+2009-02-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes for recent changes to TransformationMatrix and DOMElement.
+
+        * WebCoreSources.bkl:
+        * dom/Element.cpp:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/graphics/wx/TransformationMatrixWx.cpp:
+        (WebCore::TransformationMatrix::operator wxGraphicsMatrix):
+
 2009-02-10  David Hyatt  <hyatt@apple.com>
 
         Some renames on line boxes.  xPos()/yPos() -> x()/y().  setXPos()/setYPos() -> setX()/setY().  m_object/object() -> m_renderer/renderer().  textObject() -> textRenderer().
