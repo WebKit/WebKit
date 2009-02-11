@@ -1938,17 +1938,6 @@ void RenderObject::selectionStartEnd(int& spos, int& epos) const
     view()->selectionStartEnd(spos, epos);
 }
 
-RenderBlock* RenderObject::createAnonymousBlock()
-{
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(m_style.get());
-    newStyle->setDisplay(BLOCK);
-
-    RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
-    newBox->setStyle(newStyle.release());
-    return newBox;
-}
-
 void RenderObject::handleDynamicFloatPositionChange()
 {
     // We have gone from not affecting the inline status of the parent flow to suddenly
@@ -1960,7 +1949,7 @@ void RenderObject::handleDynamicFloatPositionChange()
             toRenderBoxModelObject(parent())->childBecameNonInline(this);
         else {
             // An anonymous block must be made to wrap this inline.
-            RenderBlock* block = createAnonymousBlock();
+            RenderBlock* block = toRenderBlock(parent())->createAnonymousBlock();
             RenderObjectChildList* childlist = parent()->virtualChildren();
             childlist->insertChildNode(parent(), block, this);
             block->children()->appendChildNode(block, childlist->removeChildNode(parent(), this));

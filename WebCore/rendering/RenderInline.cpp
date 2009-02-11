@@ -698,7 +698,7 @@ void RenderInline::updateDragState(bool dragOn)
 void RenderInline::childBecameNonInline(RenderObject* child)
 {
     // We have to split the parent flow.
-    RenderBlock* newBox = createAnonymousBlock();
+    RenderBlock* newBox = containingBlock()->createAnonymousBlock();
     RenderBoxModelObject* oldContinuation = continuation();
     setContinuation(newBox);
     RenderObject* beforeChild = child->nextSibling();

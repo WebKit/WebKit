@@ -1,5 +1,21 @@
 2009-02-11  David Hyatt  <hyatt@apple.com>
 
+        Move createAnonymousBlock() to RenderBlock.  Since anonymous blocks are always parented to some other block,
+        we can move this function to RenderBlock.  Fix a couple of call sites as a result of this restriction.
+
+        Reviewed by Simon Fraser
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::createAnonymousBlock):
+        * rendering/RenderBlock.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::childBecameNonInline):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::handleDynamicFloatPositionChange):
+        * rendering/RenderObject.h:
+
+2009-02-11  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=23895
 
         Remove two complete nonsense lines that I accidentally added from a cut and paste error.  This

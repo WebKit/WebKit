@@ -4987,6 +4987,17 @@ void RenderBlock::addFocusRingRects(GraphicsContext* graphicsContext, int tx, in
                                                 ty - y() + inlineContinuation()->containingBlock()->y());
 }
 
+RenderBlock* RenderBlock::createAnonymousBlock() const
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::create();
+    newStyle->inheritFrom(style());
+    newStyle->setDisplay(BLOCK);
+
+    RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
+    newBox->setStyle(newStyle.release());
+    return newBox;
+}
+
 const char* RenderBlock::renderName() const
 {
     if (isBody())

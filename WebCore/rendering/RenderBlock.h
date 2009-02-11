@@ -319,6 +319,10 @@ public:
 
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
+    // This function is a convenience helper for creating an anonymous block that inherits its
+    // style from this RenderBlock.
+    RenderBlock* createAnonymousBlock() const;
+
 private:
     void adjustPointToColumnContents(IntPoint&) const;
     void adjustForBorderFit(int x, int& left, int& right) const; // Helper function for borderFitAdjust
