@@ -451,7 +451,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
         IntPoint panIconDirtySquareLocation = IntPoint(m_panScrollIconPoint.x() - (panIconDirtySquareSizeLength / 2), m_panScrollIconPoint.y() - (panIconDirtySquareSizeLength / 2));
         IntRect panScrollIconDirtyRect = IntRect(panIconDirtySquareLocation , IntSize(panIconDirtySquareSizeLength, panIconDirtySquareSizeLength));
         panScrollIconDirtyRect.intersect(clipRect);
-        hostWindow()->repaint(panScrollIconDirtyRect, true, true);
+        hostWindow()->repaint(panScrollIconDirtyRect, true);
     }
 
     if (canBlitOnScroll() && !rootPreventsBlitting()) { // The main frame can just blit the WebView window

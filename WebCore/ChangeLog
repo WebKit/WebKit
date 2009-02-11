@@ -1,3 +1,14 @@
+2009-02-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://6349412> REGRESSION(r37204): Page is not repainted during and
+        after pan scrolling
+
+        Reviewed by Steve Falkenburg.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents): Don't repaint the pan scroll
+        icon rect immediately; we will paint after the view has been scrolled.
+
 2009-02-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele Peterson.
