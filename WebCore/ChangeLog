@@ -1,3 +1,35 @@
+2009-02-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23901
+        Add HTML options/collections V8 custom bindings.
+
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp: Added.
+        (WebCore::getNamedItems):
+        (WebCore::getItem):
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp: Added.
+        (WebCore::NAMED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8HTMLInputElementCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::ACCESSOR_SETTER):
+        * bindings/v8/custom/V8HTMLSelectElementCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::removeElement):
+        * bindings/v8/custom/V8HTMLSelectElementCustom.h: Added.
+        * bindings/v8/custom/V8NamedNodesCollection.cpp: Added.
+        (WebCore::V8NamedNodesCollection::item):
+        (WebCore::V8NamedNodesCollection::itemWithName):
+        * bindings/v8/custom/V8NamedNodesCollection.h: Added.
+        (WebCore::V8NamedNodesCollection::V8NamedNodesCollection):
+        (WebCore::V8NamedNodesCollection::length):
+
 2009-02-11  Dimitri Dupuis-latour  <dupuislatour@apple.com>
 
         Added a preference to disable some Inspector's panels (rdar://6419624, rdar://6419645).

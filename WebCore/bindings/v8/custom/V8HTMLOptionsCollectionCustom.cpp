@@ -31,13 +31,58 @@
 #include "config.h"
 #include "HTMLOptionsCollection.h"
 
+#include "HTMLOptionElement.h"
+#include "HTMLSelectElement.h"
 #include "ExceptionCode.h"
 
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
+#include "V8HTMLOptionElement.h"
+#include "V8HTMLSelectElementCustom.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
+
+CALLBACK_FUNC_DECL(HTMLOptionsCollectionRemove)
+{
+    INC_STATS("DOM.HTMLOptionsCollection.remove()");
+    HTMLOptionsCollection* imp = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, args.Holder());
+    HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->base());
+    return removeElement(base, args);
+}
+
+CALLBACK_FUNC_DECL(HTMLOptionsCollectionAdd)
+{
+    INC_STATS("DOM.HTMLOptionsCollection.add()");
+    if (!V8HTMLOptionElement::HasInstance(args[0])) {
+        V8Proxy::SetDOMException(TYPE_MISMATCH_ERR);
+        return v8::Undefined();
+    }
+    HTMLOptionsCollection* imp = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, args.Holder());
+    HTMLOptionElement* option = V8Proxy::DOMWrapperToNode<HTMLOptionElement>(args[0]);
+
+    ExceptionCode ec = 0;
+    if (args.Length() < 2)
+        imp->add(option, ec);
+    else {
+        bool ok;
+        v8::TryCatch try_catch;
+        int index = ToInt32(args[1], ok);
+
+        if (try_catch.HasCaught())
+            return v8::Undefined();
+
+        if (!ok)
+            ec = TYPE_MISMATCH_ERR;
+        else
+            imp->add(option, index, ec);
+    }
+
+    if (ec != 0)
+        V8Proxy::SetDOMException(ec);
+
+    return v8::Undefined();
+}
 
 ACCESSOR_GETTER(HTMLOptionsCollectionLength)
 {
@@ -64,6 +109,7 @@ ACCESSOR_SETTER(HTMLOptionsCollectionLength)
     }
     if (!ec)
         imp->setLength(value->Uint32Value(), ec);
+
     V8Proxy::SetDOMException(ec);
 }
 
