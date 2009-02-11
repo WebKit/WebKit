@@ -143,6 +143,7 @@ public:
     void setSetting(const String& key, const Setting&);
 
     String localizedStringsURL();
+    String hiddenPanels();
 
     void inspect(Node*);
     void highlight(Node*);

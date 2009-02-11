@@ -48,6 +48,8 @@ public:
     virtual WebCore::Page* createPage();
     virtual WebCore::String localizedStringsURL();
 
+    virtual WebCore::String hiddenPanels();
+
     virtual void showWindow();
     virtual void closeWindow();
 

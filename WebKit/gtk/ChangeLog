@@ -1,3 +1,13 @@
+2009-02-11  Dimitri Dupuis-latour  <dupuislatour@apple.com>
+
+        Stub out InspectorClient::hiddenPanels.
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::hiddenPanels):
+        * WebCoreSupport/InspectorClientGtk.h:
+
 2009-02-07  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed build fix Use toNormalizedRange().

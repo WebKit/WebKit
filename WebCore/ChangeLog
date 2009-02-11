@@ -1,3 +1,21 @@
+2009-02-11  Dimitri Dupuis-latour  <dupuislatour@apple.com>
+
+        Added a preference to disable some Inspector's panels (rdar://6419624, rdar://6419645).
+        This is controlled via the 'WebKitInspectorHiddenPanels' key; if nothing is specified, all panels are shown.
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorClient.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::hiddenPanels):
+        (WebCore::InspectorController::hiddenPanels):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        * inspector/InspectorController.h:
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyInspectorClient::hiddenPanels):
+
 2009-02-11  David Hyatt  <hyatt@apple.com>
 
         Combine RenderObject::element() and RenderObject::node() into a single function.  

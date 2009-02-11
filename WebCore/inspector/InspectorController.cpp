@@ -940,6 +940,19 @@ static JSValueRef localizedStrings(JSContextRef ctx, JSObjectRef /*function*/, J
     return JSValueMakeString(ctx, jsStringRef(url).get());
 }
 
+static JSValueRef hiddenPanels(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    String hiddenPanels = controller->hiddenPanels();
+    if (hiddenPanels.isNull())
+        return JSValueMakeNull(ctx);
+
+    return JSValueMakeString(ctx, jsStringRef(hiddenPanels).get());
+}
+
 static JSValueRef platform(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef /*thisObject*/, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
 {
 #if PLATFORM(MAC)
@@ -1267,6 +1280,13 @@ String InspectorController::localizedStringsURL()
     if (!enabled())
         return String();
     return m_client->localizedStringsURL();
+}
+
+String InspectorController::hiddenPanels()
+{
+    if (!enabled())
+        return String();
+    return m_client->hiddenPanels();
 }
 
 // Trying to inspect something in a frame with JavaScript disabled would later lead to
@@ -1615,6 +1635,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "setSetting", WebCore::setSetting, kJSPropertyAttributeNone },
         { "inspectedWindow", WebCore::inspectedWindow, kJSPropertyAttributeNone },
         { "localizedStringsURL", WebCore::localizedStrings, kJSPropertyAttributeNone },
+        { "hiddenPanels", WebCore::hiddenPanels, kJSPropertyAttributeNone },
         { "platform", WebCore::platform, kJSPropertyAttributeNone },
         { "moveByUnrestricted", WebCore::moveByUnrestricted, kJSPropertyAttributeNone },
         { "setAttachedWindowHeight", WebCore::setAttachedWindowHeight, kJSPropertyAttributeNone },

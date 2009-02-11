@@ -45,6 +45,8 @@ public:
 
     virtual String localizedStringsURL();
 
+    virtual String hiddenPanels();
+
     virtual void showWindow();
     virtual void closeWindow();
 

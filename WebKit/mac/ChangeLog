@@ -1,3 +1,14 @@
+2009-02-11  Dimitri Dupuis-latour  <dupuislatour@apple.com>
+
+        Added a preference to disable some Inspector's panels (rdar://6419624, rdar://6419645).
+        This is controlled via the 'WebKitInspectorHiddenPanels' key; if nothing is specified, all panels are shown.
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::hiddenPanels):
+
 2009-02-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

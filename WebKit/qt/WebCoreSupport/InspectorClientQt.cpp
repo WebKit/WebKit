@@ -114,6 +114,12 @@ String InspectorClientQt::localizedStringsURL()
     return String();
 }
 
+String InspectorClientQt::hiddenPanels()
+{
+    notImplemented();
+    return String();
+}
+
 void InspectorClientQt::showWindow()
 {
     if (!m_webPage)

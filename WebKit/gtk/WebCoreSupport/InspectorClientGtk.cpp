@@ -104,6 +104,12 @@ String InspectorClient::localizedStringsURL()
     return String();
 }
 
+String InspectorClient::hiddenPanels()
+{
+    notImplemented();
+    return String();
+}
+
 void InspectorClient::showWindow()
 {
     if (!m_webView)

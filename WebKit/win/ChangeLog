@@ -1,3 +1,13 @@
+2009-02-11  Dimitri Dupuis-latour  <dupuislatour@apple.com>
+
+        Stub out WebInspectorClient::hiddenPanels.
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::hiddenPanels):
+        * WebCoreSupport/WebInspectorClient.h:
+
 2009-02-11  Adam Roben  <aroben@apple.com>
 
         Don't release the shared WebHistory instance on quit

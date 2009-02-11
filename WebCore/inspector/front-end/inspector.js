@@ -287,10 +287,14 @@ WebInspector.loaded = function()
         databases: new WebInspector.DatabasesPanel()
     };
 
+    var hiddenPanels = (InspectorController.hiddenPanels() || "").split(',');
+
     var toolbarElement = document.getElementById("toolbar");
     var previousToolbarItem = toolbarElement.children[0];
 
     for (var panelName in this.panels) {
+        if (hiddenPanels.indexOf(panelName) !== -1)
+            continue;
         var panel = this.panels[panelName];
         var panelToolbarItem = panel.toolbarItem;
         panelToolbarItem.addEventListener("click", this._toolbarItemClicked.bind(this));
