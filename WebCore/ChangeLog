@@ -1,3 +1,28 @@
+2009-02-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        <rdar://problem/3541409> - Further FrameLoader and page cache cleanup
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::restore): Moved updatePlatformScriptObjects() here.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad): Rolled opened() into this method.  This method was
+          the only caller and - in the future - will benefit from doing parts of opened()'s work differently.
+        (WebCore::FrameLoader::open): Split off per-frame logic into open(CachedFrame&) method.
+        (WebCore::FrameLoader::closeAndRemoveChild): Added.  Do the non-tree related cleanup that
+          FrameTree::removeChild() used to do.
+        (WebCore::FrameLoader::detachFromParent): Call ::closeAndRemoveChild() instead.
+        (WebCore::FrameLoader::cachePageForHistoryItem): Perform the "can cache page" check here.
+        * loader/FrameLoader.h:
+
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::removeChild): Just remove the Frame from the tree.  Closing it and other
+          cleanup is the responsibility of the FrameLoader.
+        * page/FrameTree.h:
+        (WebCore::FrameTree::detachFromParent): Added to just clear a Frame's parent pointer
+
 2009-02-11  Scott Violet  <sky@google.com>
 
         Reviewed by Eric Seidel.

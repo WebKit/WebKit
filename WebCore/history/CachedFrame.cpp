@@ -103,6 +103,10 @@ void CachedFrame::restore()
     frame->animation()->resumeAnimations(m_document.get());
     frame->eventHandler()->setMousePressNode(mousePressNode());
     m_document->resumeActiveDOMObjects();
+
+    // It is necessary to update any platform script objects after restoring the
+    // cached page.
+    frame->script()->updatePlatformScriptObjects();
 }
 
 void CachedFrame::clear()

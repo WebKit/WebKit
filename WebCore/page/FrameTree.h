@@ -56,6 +56,7 @@ namespace WebCore {
         Frame* traversePreviousWithWrap(bool) const;
         
         void appendChild(PassRefPtr<Frame>);
+        void detachFromParent() { m_parent = 0; }
         void removeChild(Frame*);
 
         Frame* child(unsigned index) const;

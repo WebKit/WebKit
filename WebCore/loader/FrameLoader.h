@@ -44,6 +44,7 @@ namespace WebCore {
 
     class Archive;
     class AuthenticationChallenge;
+    class CachedFrame;
     class CachedPage;
     class CachedResource;
     class Document;
@@ -271,6 +272,7 @@ namespace WebCore {
         void checkLoadComplete();
         void detachFromParent();
         void detachChildren();
+        void closeAndRemoveChild(Frame*);
 
         void addExtraFieldsToSubresourceRequest(ResourceRequest&);
         void addExtraFieldsToMainResourceRequest(ResourceRequest&);
@@ -552,7 +554,8 @@ namespace WebCore {
 
         void closeOldDataSources();
         void open(CachedPage&);
-        void opened();
+        void open(CachedFrame&);
+
         void updateHistoryAfterClientRedirect();
 
         void clear(bool clearWindowProperties = true, bool clearScriptObjects = true);
