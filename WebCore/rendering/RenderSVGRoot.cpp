@@ -321,13 +321,6 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-void RenderSVGRoot::position(InlineBox* box)
-{
-    RenderBox::position(box);
-    if (m_absoluteBounds.isEmpty())
-        setNeedsLayout(true, false);
-}
-
 }
 
 #endif // ENABLE(SVG)

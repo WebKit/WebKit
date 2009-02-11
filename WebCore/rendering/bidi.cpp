@@ -738,7 +738,10 @@ void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox, BidiRu
 
         // Position is used to properly position both replaced elements and
         // to update the static normal flow x/y of positioned elements.
-        r->m_object->position(r->m_box);
+        if (r->m_object->isText())
+            toRenderText(r->m_object)->positionLineBox(r->m_box);
+        else if (r->m_object->isBox())
+            toRenderBox(r->m_object)->positionLineBox(r->m_box);
     }
     // Positioned objects and zero-length text nodes destroy their boxes in
     // position(), which unnecessarily dirties the line.

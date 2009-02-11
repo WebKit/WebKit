@@ -1028,7 +1028,7 @@ void RenderBox::dirtyLineBoxes(bool fullLayout, bool /*isRootLineBox*/)
     }
 }
 
-void RenderBox::position(InlineBox* box)
+void RenderBox::positionLineBox(InlineBox* box)
 {
     if (isPositioned()) {
         // Cache the x position only if we were an INLINE type originally.

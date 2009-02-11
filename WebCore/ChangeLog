@@ -1,3 +1,30 @@
+2009-02-11  David Hyatt  <hyatt@apple.com>
+
+        Eliminate the virtual position() function from RenderObject.  Rename the position() overrides
+        in RenderText and RenderBox to positionLineBox and devirtualize them.
+        
+        Patch the one call site to just check for isText() and isBox() and call the methods directly.
+        
+        Remove some unnecessary overrides of position() on table sections and rows.
+    
+        Reviewed by Simon Fraser
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionLineBox):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.h:
+        * rendering/RenderSVGRoot.cpp:
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::lineHeight):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::lineHeight):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionLineBox):
+        * rendering/RenderText.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeVerticalPositionsForLine):
+
 2009-02-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

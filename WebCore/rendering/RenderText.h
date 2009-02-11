@@ -66,7 +66,7 @@ public:
 
     const UChar* characters() const { return m_text->characters(); }
     unsigned textLength() const { return m_text->length(); } // non virtual implementation of length()
-    virtual void position(InlineBox*);
+    void positionLineBox(InlineBox*);
 
     virtual unsigned width(unsigned from, unsigned len, const Font&, int xPos) const;
     virtual unsigned width(unsigned from, unsigned len, int xPos, bool firstLine = false) const;

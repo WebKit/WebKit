@@ -131,7 +131,6 @@ public:
 
 private:
     virtual int lineHeight(bool, bool) const { return 0; }
-    virtual void position(InlineBox*) { }
 
     bool ensureRows(int);
     void clearGrid();

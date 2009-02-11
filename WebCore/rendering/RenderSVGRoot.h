@@ -68,8 +68,6 @@ public:
     FloatRect viewport() const;
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-
-    virtual void position(InlineBox*);
     
 private:
     void calcViewport(); 

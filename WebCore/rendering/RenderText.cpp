@@ -998,7 +998,7 @@ InlineBox* RenderText::createInlineBox(bool, bool unusedIsRootLineBox, bool)
     return textBox;
 }
 
-void RenderText::position(InlineBox* box)
+void RenderText::positionLineBox(InlineBox* box)
 {
     InlineTextBox* s = static_cast<InlineTextBox*>(box);
 

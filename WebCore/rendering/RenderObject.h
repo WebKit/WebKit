@@ -616,9 +616,6 @@ public:
     virtual bool avoidsFloats() const;
     bool shrinkToAvoidFloats() const;
 
-    // positioning of inline children (bidi)
-    virtual void position(InlineBox*) { }
-
     bool isTransparent() const { return style()->opacity() < 1.0f; }
     float opacity() const { return style()->opacity(); }
 
