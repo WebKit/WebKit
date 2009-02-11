@@ -214,7 +214,7 @@ protected:
 
     RefPtr<Animation> m_animation;
     CompositeAnimation* m_compAnim;
-    bool m_fallbackAnimating;       // true if any animation returned false from startAnimation()
+    bool m_fallbackAnimating;       // true when animating an accelerated property but have to fall back to software
     bool m_transformFunctionListValid;
     double m_totalDuration, m_nextIterationDuration;
     

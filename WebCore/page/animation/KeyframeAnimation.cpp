@@ -145,7 +145,7 @@ void KeyframeAnimation::animate(CompositeAnimation*, RenderObject*, const Render
     HashSet<int>::const_iterator endProperties = m_keyframes.endProperties();
     for (HashSet<int>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {
         bool needsAnim = blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
-        if (needsAnim || m_fallbackAnimating)
+        if (needsAnim)
             setAnimating();
     }
 }

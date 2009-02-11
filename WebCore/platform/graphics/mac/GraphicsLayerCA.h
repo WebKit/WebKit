@@ -109,8 +109,8 @@ private:
         return (property == AnimatedPropertyBackgroundColor) ? m_contentsLayer.get() : primaryLayer();
     }
 
-    void setBasicAnimation(AnimatedPropertyID, const String& component, short index, void* fromVal, void* toVal, bool isTransition, const Animation*, double time);
-    void setKeyframeAnimation(AnimatedPropertyID, const String& component, short index, void* keys, void* values, void* timingFunctions, bool isTransition, const Animation*, double time);
+    void setBasicAnimation(AnimatedPropertyID, TransformOperation::OperationType, short index, void* fromVal, void* toVal, bool isTransition, const Animation*, double time);
+    void setKeyframeAnimation(AnimatedPropertyID, TransformOperation::OperationType, short index, void* keys, void* values, void* timingFunctions, bool isTransition, const Animation*, double time);
 
     virtual void removeAnimation(int index, bool reset);
 

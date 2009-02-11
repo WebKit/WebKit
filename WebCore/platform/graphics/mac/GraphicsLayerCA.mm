@@ -29,10 +29,6 @@
 
 #import "GraphicsLayerCA.h"
 
-// Temporary
-#import <QuartzCore/CAAnimationPrivate.h>
-#import <QuartzCore/CAValueFunction.h>
-
 #import "Animation.h"
 #import "BlockExceptions.h"
 #import "CString.h"
@@ -160,21 +156,22 @@ static NSValue* getTransformFunctionValue(const GraphicsLayer::TransformValue& t
     return 0;
 }
 
-static String getAnimationValueFunction(TransformOperation::OperationType transformType)
+static NSString* getValueFunctionNameForTransformOperation(TransformOperation::OperationType transformType)
 {
+    // Use literal strings to avoid link-time dependency on those symbols.
     switch (transformType) {
         case TransformOperation::ROTATE:
-            return "rotateZ";
+            return @"rotateZ"; // kCAValueFunctionRotateZ;
         case TransformOperation::SCALE_X:
-            return "scaleX";
+            return @"scaleX"; // kCAValueFunctionScaleX;
         case TransformOperation::SCALE_Y:
-            return "scaleY";
+            return @"scaleY"; // kCAValueFunctionScaleY;
         case TransformOperation::TRANSLATE_X:
-            return "translateX";
+            return @"translateX"; // kCAValueFunctionTranslateX;
         case TransformOperation::TRANSLATE_Y:
-            return "translateY";
+            return @"translateY"; // kCAValueFunctionTranslateY;
         default:
-            return String();
+            return nil;
     }
 }
 
@@ -223,6 +220,12 @@ static CALayer* getPresentationLayer(CALayer* layer)
         presLayer = layer;
 
     return presLayer;
+}
+
+static bool caValueFunctionSupported()
+{
+    static bool sHaveValueFunction = [[CALayer class] instancesRespondToSelector:@selector(setValueFunction:)];
+    return sHaveValueFunction;
 }
 
 bool GraphicsLayer::graphicsContextsFlipped()
@@ -719,7 +722,7 @@ void GraphicsLayerCA::setBackgroundColor(const Color& color, const Animation* tr
         CGColorRef fromBackgroundColor = [presLayer backgroundColor];
 
         CGColorRef bgColor = cgColor(color);
-        setBasicAnimation(AnimatedPropertyBackgroundColor, "", 0, fromBackgroundColor, bgColor, true, transition, beginTime);
+        setBasicAnimation(AnimatedPropertyBackgroundColor, TransformOperation::NONE, 0, fromBackgroundColor, bgColor, true, transition, beginTime);
         CGColorRelease(bgColor);
     } else {
         removeAllAnimationsForProperty(AnimatedPropertyBackgroundColor);    
@@ -819,7 +822,7 @@ bool GraphicsLayerCA::setOpacity(float opacity, const Animation* transition, dou
         CALayer* presLayer = getPresentationLayer(primaryLayer());
         float fromOpacity = [presLayer opacity];
         fromOpacityValue = [NSNumber numberWithFloat:fromOpacity];
-        setBasicAnimation(AnimatedPropertyOpacity, "", 0, fromOpacityValue, toOpacityValue, true, transition, beginTime);
+        setBasicAnimation(AnimatedPropertyOpacity, TransformOperation::NONE, 0, fromOpacityValue, toOpacityValue, true, transition, beginTime);
         didAnimate = true;
     }
 
@@ -858,6 +861,11 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
     bool isValid, hasBigRotation;
     valueList.makeFunctionList(functionList, isValid, hasBigRotation);
 
+    // We need to fall back to software animation if we don't have setValueFunction:, and
+    // we have a > 180deg rotation mixed with another transform.
+    if (hasBigRotation && functionList.size() > 1 && !caValueFunctionSupported())
+        return false;
+    
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     // Rules for animation:
@@ -925,7 +933,7 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
             // We toss the last tfArray value because it has to one shorter than the others.
             [tfArray removeLastObject];
             
-            setKeyframeAnimation(AnimatedPropertyWebkitTransform, getAnimationValueFunction(opType), functionIndex, timesArray, valArray, tfArray, isTransition, anim, beginTime);
+            setKeyframeAnimation(AnimatedPropertyWebkitTransform, opType, functionIndex, timesArray, valArray, tfArray, isTransition, anim, beginTime);
             
             [timesArray release];
             [valArray release];
@@ -949,7 +957,7 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
                 toValue = getTransformFunctionValue(valueList.at(1), functionIndex, size, opType);
             }
             
-            setBasicAnimation(AnimatedPropertyWebkitTransform, getAnimationValueFunction(opType), functionIndex, fromValue, toValue, isTransition, anim, beginTime);
+            setBasicAnimation(AnimatedPropertyWebkitTransform, opType, functionIndex, fromValue, toValue, isTransition, anim, beginTime);
         }
         
         if (isMatrixAnimation)
@@ -980,7 +988,7 @@ bool GraphicsLayerCA::animateFloat(AnimatedPropertyID property, const FloatValue
     
         // initialize the property to 0
         [animatedLayer(property) setValue:0 forKeyPath:propertyIdToString(property)];
-        setBasicAnimation(property, "", 0, isnan(fromVal) ? nil : [NSNumber numberWithFloat:fromVal], isnan(toVal) ? nil : [NSNumber numberWithFloat:toVal], false, animation, beginTime);
+        setBasicAnimation(property, TransformOperation::NONE, 0, isnan(fromVal) ? nil : [NSNumber numberWithFloat:fromVal], isnan(toVal) ? nil : [NSNumber numberWithFloat:toVal], false, animation, beginTime);
         return true;
     }
 
@@ -1011,7 +1019,7 @@ bool GraphicsLayerCA::animateFloat(AnimatedPropertyID property, const FloatValue
     // Initialize the property to 0.
     [animatedLayer(property) setValue:0 forKeyPath:propertyIdToString(property)];
     // Then set the animation.
-    setKeyframeAnimation(property, "", 0, timesArray, valArray, tfArray, false, animation, beginTime);
+    setKeyframeAnimation(property, TransformOperation::NONE, 0, timesArray, valArray, tfArray, false, animation, beginTime);
 
     [timesArray release];
     [valArray release];
@@ -1090,7 +1098,7 @@ void GraphicsLayerCA::updateContentsRect()
     }
 }
 
-void GraphicsLayerCA::setBasicAnimation(AnimatedPropertyID property, const String& valueFunction, short index, void* fromVal, void* toVal, bool isTransition, const Animation* transition, double beginTime)
+void GraphicsLayerCA::setBasicAnimation(AnimatedPropertyID property, TransformOperation::OperationType operationType, short index, void* fromVal, void* toVal, bool isTransition, const Animation* transition, double beginTime)
 {
     ASSERT(fromVal || toVal);
 
@@ -1125,7 +1133,10 @@ void GraphicsLayerCA::setBasicAnimation(AnimatedPropertyID property, const Strin
     // with an index > 0.
     [basicAnim setAdditive:property == AnimatedPropertyWebkitTransform];
     [basicAnim setFillMode:@"extended"];
-    [basicAnim setValueFunction:[CAValueFunction functionWithName:valueFunction]];
+    if (caValueFunctionSupported()) {
+        if (NSString* valueFunctionName = getValueFunctionNameForTransformOperation(operationType))
+            [basicAnim setValueFunction:[CAValueFunction functionWithName:valueFunctionName]];
+    }
     
     // Set the delegate (and property value).
     int prop = isTransition ? property : AnimatedPropertyInvalid;
@@ -1154,7 +1165,7 @@ void GraphicsLayerCA::setBasicAnimation(AnimatedPropertyID property, const Strin
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void GraphicsLayerCA::setKeyframeAnimation(AnimatedPropertyID property, const String& valueFunction, short index, void* keys, void* values, void* timingFunctions, 
+void GraphicsLayerCA::setKeyframeAnimation(AnimatedPropertyID property, TransformOperation::OperationType operationType, short index, void* keys, void* values, void* timingFunctions, 
                                     bool isTransition, const Animation* anim, double beginTime)
 {
     PlatformLayer* layer = animatedLayer(property);
@@ -1189,8 +1200,11 @@ void GraphicsLayerCA::setKeyframeAnimation(AnimatedPropertyID property, const St
     // with an index > 0.
     [keyframeAnim setAdditive:(property == AnimatedPropertyWebkitTransform) ? YES : NO];
     [keyframeAnim setFillMode:@"extended"];
-    [keyframeAnim setValueFunction:[CAValueFunction functionWithName:valueFunction]];
-    
+    if (caValueFunctionSupported()) {
+        if (NSString* valueFunctionName = getValueFunctionNameForTransformOperation(operationType))
+            [keyframeAnim setValueFunction:[CAValueFunction functionWithName:valueFunctionName]];
+    }
+
     [keyframeAnim setKeyTimes:reinterpret_cast<id>(keys)];
     [keyframeAnim setValues:reinterpret_cast<id>(values)];
     

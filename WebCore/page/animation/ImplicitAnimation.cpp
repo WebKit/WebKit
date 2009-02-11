@@ -79,7 +79,7 @@ void ImplicitAnimation::animate(CompositeAnimation*, RenderObject*, RenderStyle*
         animatedStyle = RenderStyle::clone(targetStyle);
 
     bool needsAnim = blendProperties(this, m_animatingProperty, animatedStyle.get(), m_fromStyle.get(), m_toStyle.get(), progress(1, 0, 0));
-    if (needsAnim || m_fallbackAnimating)
+    if (needsAnim)
         setAnimating();
 
     // Fire the start timeout if needed

@@ -213,6 +213,34 @@
 
         Reviewed by Dave Hyatt
 
+        Clean up "fallbackAnimating" logic in AnimationBase. This flag indicates
+        that animation of an accelerated property must run in software for some reason.
+        
+        Also remove use of private headers in GraphicsLayerCA related to a case
+        where we may have to fall back on software animation of transform.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::blendProperties):
+        * page/animation/AnimationBase.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::getValueFunctionNameForTransformOperation):
+        (WebCore::caValueFunctionSupported):
+        (WebCore::GraphicsLayerCA::setBackgroundColor):
+        (WebCore::GraphicsLayerCA::setOpacity):
+        (WebCore::GraphicsLayerCA::animateTransform):
+        (WebCore::GraphicsLayerCA::animateFloat):
+        (WebCore::GraphicsLayerCA::setBasicAnimation):
+        (WebCore::GraphicsLayerCA::setKeyframeAnimation):
+
+2009-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
         Move enclosingCompositingLayer() from RenderObject to RenderLayer, since it
         relates to the RenderLayer z-order/overflow structure, rather than the render tree
         parent chain. Add a convenience method, ancestorCompositingLayer(), which finds
