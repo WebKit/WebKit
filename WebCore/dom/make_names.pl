@@ -93,6 +93,7 @@ sub initializeTagPropertyHash
             'interfaceName' => defaultInterfaceName($_[0]),
             # By default, the JSInterfaceName is the same as the interfaceName.
             'JSInterfaceName' => defaultInterfaceName($_[0]),
+            'mapToTagName' => '',
             'wrapperOnlyIfMediaIsAvailable' => 0);
 }
 
@@ -217,47 +218,148 @@ sub printMacros
     }
 }
 
+sub usesDefaultWrapper
+{
+    my $tagName = shift;
+    return $tagName eq $parameters{'namespace'} . "Element";
+}
+
+# Build a direct mapping from the tags to the Element to create, excluding
+# Element that have not constructor.
+sub buildConstructorMap
+{
+    my %tagConstructorMap = ();
+    for my $tagName (keys %tags) {
+        my $interfaceName = $tags{$tagName}{'interfaceName'};
+        next if (usesDefaultWrapper($interfaceName));
+
+        if ($tags{$tagName}{'mapToTagName'}) {
+            die "Cannot handle multiple mapToTagName for $tagName\n" if $tags{$tags{$tagName}{'mapToTagName'}}{'mapToTagName'};
+            $interfaceName = $tags{ $tags{$tagName}{'mapToTagName'} }{'interfaceName'};
+        }
+
+        # Chop the string to keep the interesting part.
+        $interfaceName =~ s/$parameters{'namespace'}(.*)Element/$1/;
+        $tagConstructorMap{$tagName} = lc($interfaceName);
+    }
+
+    return %tagConstructorMap;
+}
+
+# Helper method that print the constructor's signature avoiding
+# unneeded arguments.
+sub printConstructorSignature
+{
+    my ($F, $tagName, $constructorName, $constructorTagName) = @_;
+
+    print F "static PassRefPtr<$parameters{'namespace'}Element> ${constructorName}Constructor(const QualifiedName& $constructorTagName, Document* doc";
+    if ($parameters{'namespace'} eq "HTML") {
+        print F ", HTMLFormElement*";
+        if ($tags{$tagName}{'constructorNeedsFormElement'}) {
+            print F " formElement";
+        }
+    }
+    print F ", bool";
+    if ($tags{$tagName}{'constructorNeedsCreatedByParser'}) {
+        print F " createdByParser"; 
+    }
+    print F ")\n{\n";
+}
+
+# Helper method to dump the constructor interior and call the 
+# Element constructor with the right arguments.
+# The variable names should be kept in sync with the previous method.
+sub printConstructorInterior
+{
+    my ($F, $tagName, $interfaceName, $constructorTagName) = @_;
+
+    # Handle media elements.
+    if ($tags{$tagName}{'wrapperOnlyIfMediaIsAvailable'}) {
+        print F <<END
+    if (!MediaPlayer::isAvailable())
+        return new HTMLElement($constructorTagName, doc);
+END
+;
+    }
+
+    # Now call the constructor with the right parameters.
+    print F "    return new ${interfaceName}($constructorTagName, doc";
+    if ($tags{$tagName}{'constructorNeedsFormElement'}) {
+        print F ", formElement";
+    }
+    if ($tags{$tagName}{'constructorNeedsCreatedByParser'}) {
+        print F ", createdByParser";
+    }
+    print F ");\n}\n\n";
+}
+
 sub printConstructors
 {
-    my $F = shift;
+    my ($F, $tagConstructorMapRef) = @_;
+    my %tagConstructorMap = %$tagConstructorMapRef;
 
     print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
-    for my $name (sort keys %tags) {
-        my $ucName = $tags{$name}{'interfaceName'};
 
-        # Print the method signature avoiding unused arguments' name.
-        print F "static PassRefPtr<$parameters{'namespace'}Element> ${name}Constructor(Document* doc";
-        if ($parameters{'namespace'} eq "HTML") {
-            print F ", HTMLFormElement* formElement";
-            if ($tags{$name}{'constructorNeedsFormElement'}) {
-                print F " formElement";
-            }
-        }
-        print F ", bool";
-        if ($tags{$name}{'constructorNeedsCreatedByParser'}) {
-            print F " createdByParser"; 
-        }
-        print F ")\n{\n";
+    # FIXME: This should be removed when we pass the tagName directly as it only
+    # serves to see which constructors are shared.
+    my %constructorCount = ();
+    for my $tagName (sort keys %tagConstructorMap) {
+        # Do not count mapToTagName as they use a custom constructor.
+        next if ($tags{$tagName}{'mapToTagName'} ne '');
 
-        # Now call the constructor with the right parameters.
-        print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, doc";
-        if ($tags{$name}{'constructorNeedsFormElement'}) {
-            print F ", formElement";
+        my $interfaceName = $tags{$tagName}{'interfaceName'};
+        if (!$constructorCount{$interfaceName}) {
+            $constructorCount{$interfaceName} = 1;
+        } else {
+            $constructorCount{$interfaceName} += 1;
         }
-        if ($tags{$name}{'constructorNeedsCreatedByParser'}) {
-            print F ", createdByParser";
-        }
-        print F ");\n}\n\n";
     }
+
+    # This is to avoid generating the same constructor several times.
+    my %uniqueTags = ();
+    for my $tagName (sort keys %tagConstructorMap) {
+        my $interfaceName = $tags{$tagName}{'interfaceName'};
+
+        # Ignore the mapped tag
+        # FIXME: It could be moved inside this loop but was split for readibility.
+        next if (defined($uniqueTags{$interfaceName}) || $tags{$tagName}{'mapToTagName'});
+
+        $uniqueTags{$interfaceName} = '1';
+
+        # FIXME: we should always pass the tagName to both these methods.
+        if ($constructorCount{$interfaceName} > 1) {
+             printConstructorSignature($F, $tagName, $tagConstructorMap{$tagName}, "tagName");
+             printConstructorInterior($F, $tagName, $interfaceName, "tagName");
+        } else {
+            printConstructorSignature($F, $tagName, $tagConstructorMap{$tagName}, "");
+            printConstructorInterior($F, $tagName, $interfaceName, "${tagName}Tag");
+        }
+    }
+
+    # Mapped tag name uses a special wrapper to keep their prefix and namespaceURI while using the mapped localname.
+    for my $tagName (sort keys %tagConstructorMap) {
+        if ($tags{$tagName}{'mapToTagName'}) {
+            my $mappedName = $tags{$tagName}{'mapToTagName'};
+            # FIXME: we should also pass the tagName to both these methods.
+            printConstructorSignature($F, $mappedName, $mappedName . "To" . $tagName, "");
+            printConstructorInterior($F, $mappedName, $tags{$mappedName}{'interfaceName'}, "${mappedName}Tag");
+        }
+    }
+
     print F "#endif\n" if $parameters{'guardFactoryWith'};
 }
 
 sub printFunctionInits
 {
-    my $F = shift;
+    my ($F, $tagConstructorMap) = @_;
+    my %tagConstructorMap = %$tagConstructorMap;
 
-    for my $name (sort keys %tags) {
-        print F "    gFunctionMap->set($parameters{'namespace'}Names::${name}Tag.localName().impl(), ${name}Constructor);\n";
+    for my $tagName (sort keys %tagConstructorMap) {
+        if ($tags{$tagName}{'mapToTagName'}) {
+            print F "    addTag(${tagName}Tag, $tags{$tagName}{'mapToTagName'}To${tagName}Constructor);\n";
+        } else {
+            print F "    addTag(${tagName}Tag, $tagConstructorMap{$tagName}Constructor);\n";
+        }
     }
 }
 
@@ -568,34 +670,40 @@ printElementIncludes($F);
 print F <<END
 #include <wtf/HashMap.h>
 
-using namespace WebCore;
+namespace WebCore {
+
+using namespace $parameters{'namespace'}Names;
 
 END
 ;
 
-print F "typedef PassRefPtr<$parameters{'namespace'}Element> (*ConstructorFunction)(Document*";
+print F "typedef PassRefPtr<$parameters{'namespace'}Element> (*ConstructorFunction)(const QualifiedName&, Document*";
 
 if ($parameters{'namespace'} eq "HTML") {
-    print F ", HTMLFormElement* formElement";
+    print F ", HTMLFormElement*";
 }
 
 print F ", bool createdByParser);\n";
-
 print F <<END
-typedef WTF::HashMap<AtomicStringImpl*, ConstructorFunction> FunctionMap;
+typedef HashMap<AtomicStringImpl*, ConstructorFunction> FunctionMap;
 
 static FunctionMap* gFunctionMap = 0;
-
-namespace WebCore {
 
 END
 ;
 
-printConstructors($F);
+my %tagConstructorMap = buildConstructorMap();
+
+printConstructors($F, \%tagConstructorMap);
 
 print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
 
 print F <<END
+static void addTag(const QualifiedName& tag, ConstructorFunction func)
+{
+    gFunctionMap->set(tag.localName().impl(), func);
+}
+
 static inline void createFunctionMapIfNecessary()
 {
     if (gFunctionMap)
@@ -607,7 +715,7 @@ static inline void createFunctionMapIfNecessary()
 END
 ;
 
-printFunctionInits($F);
+printFunctionInits($F, \%tagConstructorMap);
 
 print F "}\n";
 print F "#endif\n" if $parameters{'guardFactoryWith'};
@@ -627,12 +735,22 @@ print F <<END
     if (!doc)
         return 0;
 
+END
+;
+
+if ($parameters{'namespace'} ne "HTML") {
+print F <<END
 #if ENABLE(DASHBOARD_SUPPORT)
     Settings* settings = doc->settings();
     if (settings && settings->usesDashboardBackwardCompatibilityMode())
         return 0;
 #endif
+END
+;
 
+}
+
+print F <<END
     createFunctionMapIfNecessary();
     ConstructorFunction func = gFunctionMap->get(qName.localName().impl());
     if (func)
@@ -640,9 +758,9 @@ END
 ;
 
 if ($parameters{"namespace"} eq "HTML") {
-    print F "        return func(doc, formElement, createdByParser);\n";
+    print F "        return func(qName, doc, formElement, createdByParser);\n";
 } else {
-    print F "        return func(doc, createdByParser);\n";
+    print F "        return func(qName, doc, createdByParser);\n";
 }
 
 print F "    return new $parameters{'namespace'}Element(qName, doc);\n";

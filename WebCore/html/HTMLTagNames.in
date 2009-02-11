@@ -52,7 +52,7 @@ hr interfaceName=HTMLHRElement
 html
 i interfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement, constructorNeedsCreatedByParser
-image
+image mapToTagName=img
 img interfaceName=HTMLImageElement, constructorNeedsFormElement
 input constructorNeedsFormElement
 ins interfaceName=HTMLModElement

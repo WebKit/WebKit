@@ -1,3 +1,30 @@
+2009-02-10  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 23536: Auto-generate HTMLElementFactory
+
+        Those are the last auto-generation bits needed to have a working generated HTMLElementFactory:
+
+        - Added a new option mapToTagName that enables a tag to use another's options and tagName (<image>
+          uses imgTag for example) and wired the code generation to be consistent with the current factory.
+
+        - Disabled dashboard compatibility check for HTMLElementFactory as it would make at least one test case fail.
+
+        - Pass the QualifiedName down to the Element constructor for shared constructors to make the generated code as
+          close as possible to the current one. We will pass the QualifiedName for all Element in a forthcoming patch.
+
+        * dom/make_names.pl: Did all the above points and tweaked the code generation to match the current HTMLElementFactory
+          as closely as possible.
+
+        * html/HTMLElementFactory.cpp:
+        (WebCore::quoteConstructor):
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::HTMLQuoteElement): Moved setUsesBeforeAfterRules to HTMLQuoteElement' constructor because some
+        part of the code creates elements without using the HTMLElementFactory. Also added a FIXME as it is not the right place.
+
+        * html/HTMLTagNames.in: Corrected <image> parameters.
+
 2009-02-10  David Hyatt  <hyatt@apple.com>
 
         Fix for pixel test regression in fast/text.  Make sure not to add in
