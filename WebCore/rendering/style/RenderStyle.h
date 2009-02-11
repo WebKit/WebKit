@@ -324,6 +324,7 @@ public:
             return true;
         return background->m_background.hasImage();
     }
+    bool hasBackgroundImage() const { return background->m_background.hasImage(); }
     bool hasFixedBackgroundImage() const { return background->m_background.hasFixedImage(); }
     bool hasAppearance() const { return appearance() != NoControlPart; }
 

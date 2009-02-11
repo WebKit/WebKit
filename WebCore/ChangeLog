@@ -42,6 +42,15 @@
 
         Reviewed by Dave Hyatt
 
+        Add function to RenderStyle to ask whether a background image has been specified.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasBackgroundImage):
+
+2009-02-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
         https://bugs.webkit.org/show_bug.cgi?id=23548
 
         When opacity or transform change on an object which has a compositing layer,
