@@ -432,7 +432,7 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
                     ts << " override";
             }
 
-            ts << ": " << quoteAndEscapeNonPrintables(String(textBox->textObject()->text()).substring(textBox->start() + range.startOffset, offset)) << "\n";
+            ts << ": " << quoteAndEscapeNonPrintables(String(textBox->textRenderer()->text()).substring(textBox->start() + range.startOffset, offset)) << "\n";
 
             j++;
         }

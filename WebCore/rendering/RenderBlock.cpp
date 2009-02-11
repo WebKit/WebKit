@@ -1852,8 +1852,8 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
     if (style()->visibility() == VISIBLE && paintInfo.phase == PaintPhaseForeground) {
         // We can check the first box and last box and avoid painting if we don't
         // intersect.
-        int yPos = ty + firstLineBox()->yPos();
-        int h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
+        int yPos = ty + firstLineBox()->y();
+        int h = lastLineBox()->y() + lastLineBox()->height() - firstLineBox()->y();
         if (yPos >= paintInfo.rect.bottom() || yPos + h <= paintInfo.rect.y())
             return;
 
@@ -1861,7 +1861,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
         // them.  Note that boxes can easily overlap, so we can't make any assumptions
         // based off positions of our first line box or our last line box.
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-            yPos = ty + curr->yPos();
+            yPos = ty + curr->y();
             h = curr->height();
             if (curr->ellipsisBox() && yPos < paintInfo.rect.bottom() && yPos + h > paintInfo.rect.y())
                 curr->paintEllipsisBox(paintInfo, tx, ty);
@@ -2729,7 +2729,7 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
     }
 
     if (!includeSelf && lastLineBox()) {
-        int lp = lastLineBox()->yPos() + lastLineBox()->height();
+        int lp = lastLineBox()->y() + lastLineBox()->height();
         bottom = max(bottom, lp);
     }
     
@@ -2804,7 +2804,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
 
     if (!includeSelf && firstLineBox()) {
         for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox()) {
-            int rp = currBox->xPos() + currBox->width();
+            int rp = currBox->x() + currBox->width();
             // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
             // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
             if (node()->isContentEditable() && node() == node()->rootEditableElement() && style()->direction() == LTR)
@@ -2883,7 +2883,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
 
     if (!includeSelf && firstLineBox()) {
         for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox())
-            left = min(left, (int)currBox->xPos());
+            left = min(left, (int)currBox->x());
     }
     
     return left;
@@ -3361,14 +3361,14 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
     if (!box)
         return Position();
 
-    if (!box->object()->element())
+    if (!box->renderer()->element())
         return Position(element(), start ? caretMinOffset() : caretMaxOffset());
 
     if (!box->isInlineTextBox())
-        return Position(box->object()->element(), start ? box->object()->caretMinOffset() : box->object()->caretMaxOffset());
+        return Position(box->renderer()->element(), start ? box->renderer()->caretMinOffset() : box->renderer()->caretMaxOffset());
 
     InlineTextBox *textBox = static_cast<InlineTextBox *>(box);
-    return Position(box->object()->element(), start ? textBox->start() : textBox->start() + textBox->len());
+    return Position(box->renderer()->element(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 
 Position RenderBlock::positionForRenderer(RenderObject* renderer, bool start) const
@@ -3474,7 +3474,7 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
                 InlineBox* closestBox = root->closestLeafChildForXPos(x);
                 if (closestBox)
                     // pass the box a y position that is inside it
-                    return closestBox->object()->positionForCoordinates(contentsX, closestBox->m_y);
+                    return closestBox->renderer()->positionForCoordinates(contentsX, closestBox->m_y);
             }
         }
 
@@ -4376,7 +4376,7 @@ int RenderBlock::getBaselineOfFirstLineBox() const
 
     if (childrenInline()) {
         if (firstLineBox())
-            return firstLineBox()->yPos() + style(true)->font().ascent();
+            return firstLineBox()->y() + style(true)->font().ascent();
         else
             return -1;
     }
@@ -4402,7 +4402,7 @@ int RenderBlock::getBaselineOfLastLineBox() const
         if (!firstLineBox() && hasLineIfEmpty())
             return RenderBox::baselinePosition(true, true) + borderTop() + paddingTop();
         if (lastLineBox())
-            return lastLineBox()->yPos() + style(lastLineBox() == firstLineBox())->font().ascent();
+            return lastLineBox()->y() + style(lastLineBox() == firstLineBox())->font().ascent();
         return -1;
     }
     else {
@@ -4689,9 +4689,9 @@ void RenderBlock::adjustForBorderFit(int x, int& left, int& right) const
         if (childrenInline()) {
             for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox()) {
                 if (box->firstChild())
-                    left = min(left, x + box->firstChild()->xPos());
+                    left = min(left, x + box->firstChild()->x());
                 if (box->lastChild())
-                    right = max(right, x + box->lastChild()->xPos() + box->lastChild()->width());
+                    right = max(right, x + box->lastChild()->x() + box->lastChild()->width());
             }
         }
         else {
@@ -4965,7 +4965,7 @@ void RenderBlock::addFocusRingRects(GraphicsContext* graphicsContext, int tx, in
 
     if (!hasOverflowClip() && !hasControlClip()) {
         for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-            graphicsContext->addFocusRingRect(IntRect(tx + curr->xPos(), ty + curr->yPos(), curr->width(), curr->height()));
+            graphicsContext->addFocusRingRect(IntRect(tx + curr->x(), ty + curr->y(), curr->width(), curr->height()));
 
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
             if (!curr->isText() && !curr->isListMarker() && curr->isBox()) {

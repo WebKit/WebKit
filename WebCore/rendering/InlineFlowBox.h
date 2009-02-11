@@ -104,10 +104,10 @@ public:
     int marginBorderPaddingRight() const { return marginRight() + borderRight() + paddingRight(); }
     int marginLeft() const { if (includeLeftEdge()) return boxModelObject()->marginLeft(); return 0; }
     int marginRight() const { if (includeRightEdge()) return boxModelObject()->marginRight(); return 0; }
-    int borderLeft() const { if (includeLeftEdge()) return object()->style()->borderLeftWidth(); return 0; }
-    int borderRight() const { if (includeRightEdge()) return object()->style()->borderRightWidth(); return 0; }
-    int borderTop() const { return object()->style()->borderTopWidth(); }
-    int borderBottom() const { return object()->style()->borderBottomWidth(); }
+    int borderLeft() const { if (includeLeftEdge()) return renderer()->style()->borderLeftWidth(); return 0; }
+    int borderRight() const { if (includeRightEdge()) return renderer()->style()->borderRightWidth(); return 0; }
+    int borderTop() const { return renderer()->style()->borderTopWidth(); }
+    int borderBottom() const { return renderer()->style()->borderBottomWidth(); }
     int paddingLeft() const { if (includeLeftEdge()) return boxModelObject()->paddingLeft(); return 0; }
     int paddingRight() const { if (includeRightEdge()) return boxModelObject()->paddingRight(); return 0; }
     int paddingTop() const { return boxModelObject()->paddingTop(); }
@@ -121,7 +121,7 @@ public:
         m_includeRightEdge = includeRight;
     }
 
-    int baseline() const { return object()->style(m_firstLine)->font().ascent() + borderTop() + paddingTop(); }
+    int baseline() const { return renderer()->style(m_firstLine)->font().ascent() + borderTop() + paddingTop(); }
 
     // Helper functions used during line construction and placement.
     void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);

@@ -410,7 +410,7 @@ Position Position::upstream() const
                     otherBox = otherBox->nextLeafChild();
                     if (!otherBox)
                         break;
-                    if (otherBox == lastTextBox || otherBox->object() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() > textOffset)
+                    if (otherBox == lastTextBox || otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() > textOffset)
                         continuesOnNextLine = false;
                 }
 
@@ -419,7 +419,7 @@ Position Position::upstream() const
                     otherBox = otherBox->prevLeafChild();
                     if (!otherBox)
                         break;
-                    if (otherBox == lastTextBox || otherBox->object() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() > textOffset)
+                    if (otherBox == lastTextBox || otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() > textOffset)
                         continuesOnNextLine = false;
                 }
 
@@ -522,7 +522,7 @@ Position Position::downstream() const
                     otherBox = otherBox->nextLeafChild();
                     if (!otherBox)
                         break;
-                    if (otherBox == lastTextBox || otherBox->object() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() >= textOffset)
+                    if (otherBox == lastTextBox || otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() >= textOffset)
                         continuesOnNextLine = false;
                 }
 
@@ -531,7 +531,7 @@ Position Position::downstream() const
                     otherBox = otherBox->prevLeafChild();
                     if (!otherBox)
                         break;
-                    if (otherBox == lastTextBox || otherBox->object() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() >= textOffset)
+                    if (otherBox == lastTextBox || otherBox->renderer() == textRenderer && static_cast<InlineTextBox*>(otherBox)->start() >= textOffset)
                         continuesOnNextLine = false;
                 }
 

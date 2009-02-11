@@ -742,9 +742,9 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 InlineBox* anchorBox = lastLine->lastChild();
                 if (!anchorBox)
                     continue;
-                if (!anchorBox->object()->element())
+                if (!anchorBox->renderer()->element())
                     continue;
-                if (!anchorBox->object()->element()->isLink())
+                if (!anchorBox->renderer()->element()->isLink())
                     continue;
                 
                 RootInlineBox* lastVisibleLine = blockChild->lineAtIndex(numVisibleLines-1);
@@ -761,8 +761,8 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 int totalWidth = ellipsisAndSpaceWidth + anchorBox->width();
                 
                 // See if this width can be accommodated on the last visible line
-                RenderBlock* destBlock = toRenderBlock(lastVisibleLine->object());
-                RenderBlock* srcBlock = toRenderBlock(lastLine->object());
+                RenderBlock* destBlock = toRenderBlock(lastVisibleLine->renderer());
+                RenderBlock* srcBlock = toRenderBlock(lastLine->renderer());
                 
                 // FIXME: Directions of src/destBlock could be different from our direction and from one another.
                 if (srcBlock->style()->direction() != LTR)
@@ -770,9 +770,9 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 if (destBlock->style()->direction() != LTR)
                     continue;
 
-                int blockEdge = destBlock->rightOffset(lastVisibleLine->yPos(), false);
+                int blockEdge = destBlock->rightOffset(lastVisibleLine->y(), false);
                 if (!lastVisibleLine->canAccommodateEllipsis(true, blockEdge, 
-                                                             lastVisibleLine->xPos() + lastVisibleLine->width(),
+                                                             lastVisibleLine->x() + lastVisibleLine->width(),
                                                              totalWidth))
                     continue;
 

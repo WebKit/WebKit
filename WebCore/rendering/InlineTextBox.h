@@ -24,7 +24,7 @@
 #define InlineTextBox_h
 
 #include "InlineRunBox.h"
-#include "RenderText.h" // so textObject() can be inline
+#include "RenderText.h" // so textRenderer() can be inline
 
 namespace WebCore {
 
@@ -75,7 +75,7 @@ private:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
 
 public:
-    RenderText* textObject() const;
+    RenderText* textRenderer() const;
 
 private:
     virtual void deleteLine(RenderArena*);
@@ -137,9 +137,9 @@ private:
     void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font&);
 };
 
-inline RenderText* InlineTextBox::textObject() const
+inline RenderText* InlineTextBox::textRenderer() const
 {
-    return toRenderText(m_object);
+    return toRenderText(renderer());
 }
 
 } // namespace WebCore

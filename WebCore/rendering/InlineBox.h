@@ -36,7 +36,7 @@ class RootInlineBox;
 class InlineBox {
 public:
     InlineBox(RenderObject* obj)
-        : m_object(obj)
+        : m_renderer(obj)
         , m_x(0)
         , m_y(0)
         , m_width(0)
@@ -66,7 +66,7 @@ public:
 
     InlineBox(RenderObject* obj, int x, int y, int width, bool firstLine, bool constructed,
               bool dirty, bool extracted, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
-        : m_object(obj)
+        : m_renderer(obj)
         , m_x(x)
         , m_y(y)
         , m_width(width)
@@ -167,7 +167,7 @@ public:
     InlineBox* nextLeafChild();
     InlineBox* prevLeafChild();
         
-    RenderObject* object() const { return m_object; }
+    RenderObject* renderer() const { return m_renderer; }
 
     InlineFlowBox* parent() const
     {
@@ -182,18 +182,18 @@ public:
     void setWidth(int w) { m_width = w; }
     int width() const { return m_width; }
 
-    void setXPos(int x) { m_x = x; }
-    int xPos() const { return m_x; }
+    void setX(int x) { m_x = x; }
+    int x() const { return m_x; }
 
-    void setYPos(int y) { m_y = y; }
-    int yPos() const { return m_y; }
+    void setY(int y) { m_y = y; }
+    int y() const { return m_y; }
 
     virtual int height() const;
 
-    virtual int topOverflow() const { return yPos(); }
-    virtual int bottomOverflow() const { return yPos() + height(); }
-    virtual int leftOverflow() const { return xPos(); }
-    virtual int rightOverflow() const { return xPos() + width(); }
+    virtual int topOverflow() const { return y(); }
+    virtual int bottomOverflow() const { return y() + height(); }
+    virtual int leftOverflow() const { return x(); }
+    virtual int rightOverflow() const { return x() + width(); }
 
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
@@ -221,18 +221,18 @@ public:
 
     int toAdd() const { return m_toAdd; }
     
-    bool visibleToHitTesting() const { return object()->style()->visibility() == VISIBLE && object()->style()->pointerEvents() != PE_NONE; }
+    bool visibleToHitTesting() const { return renderer()->style()->visibility() == VISIBLE && renderer()->style()->pointerEvents() != PE_NONE; }
     
     // Use with caution! The type is not checked!
     RenderBoxModelObject* boxModelObject() const
     { 
-        if (!m_object->isText())
-            return static_cast<RenderBoxModelObject*>(m_object);
+        if (!m_renderer->isText())
+            return static_cast<RenderBoxModelObject*>(m_renderer);
         return 0;
     }
 
 public:
-    RenderObject* m_object;
+    RenderObject* m_renderer;
 
     int m_x;
     int m_y;

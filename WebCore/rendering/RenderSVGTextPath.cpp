@@ -92,7 +92,7 @@ void RenderSVGTextPath::absoluteRects(Vector<IntRect>& rects, int, int)
     int yRef = object->y();
 
     for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
-        FloatRect rect(xRef + curr->xPos(), yRef + curr->yPos(), curr->width(), curr->height());
+        FloatRect rect(xRef + curr->x(), yRef + curr->y(), curr->width(), curr->height());
         // FIXME: broken with CSS transforms
         rects.append(enclosingIntRect(absoluteTransform().mapRect(rect)));
     }
@@ -112,7 +112,7 @@ void RenderSVGTextPath::absoluteQuads(Vector<FloatQuad>& quads, bool)
     int yRef = object->y();
 
     for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
-        FloatRect rect(xRef + curr->xPos(), yRef + curr->yPos(), curr->width(), curr->height());
+        FloatRect rect(xRef + curr->x(), yRef + curr->y(), curr->width(), curr->height());
         // FIXME: broken with CSS transforms
         quads.append(absoluteTransform().mapRect(rect));
     }

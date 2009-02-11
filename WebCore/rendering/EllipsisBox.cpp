@@ -31,7 +31,7 @@ namespace WebCore {
 void EllipsisBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
     GraphicsContext* context = paintInfo.context;
-    RenderStyle* style = m_object->style(m_firstLine);
+    RenderStyle* style = m_renderer->style(m_firstLine);
     Color textColor = style->color();
     if (textColor != context->fillColor())
         context->setFillColor(textColor);
@@ -50,8 +50,8 @@ void EllipsisBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 
     if (m_markupBox) {
         // Paint the markup box
-        tx += m_x + m_width - m_markupBox->xPos();
-        ty += m_y + style->font().ascent() - (m_markupBox->yPos() + m_markupBox->object()->style(m_firstLine)->font().ascent());
+        tx += m_x + m_width - m_markupBox->x();
+        ty += m_y + style->font().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->font().ascent());
         m_markupBox->paint(paintInfo, tx, ty);
     }
 }
@@ -63,17 +63,17 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     // Hit test the markup box.
     if (m_markupBox) {
-        RenderStyle* style = m_object->style(m_firstLine);
-        int mtx = tx + m_width - m_markupBox->xPos();
-        int mty = ty + style->font().ascent() - (m_markupBox->yPos() + m_markupBox->object()->style(m_firstLine)->font().ascent());
+        RenderStyle* style = m_renderer->style(m_firstLine);
+        int mtx = tx + m_width - m_markupBox->x();
+        int mty = ty + style->font().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->font().ascent());
         if (m_markupBox->nodeAtPoint(request, result, x, y, mtx, mty)) {
-            object()->updateHitTestResult(result, IntPoint(x - mtx, y - mty));
+            renderer()->updateHitTestResult(result, IntPoint(x - mtx, y - mty));
             return true;
         }
     }
 
     if (visibleToHitTesting() && IntRect(tx, ty, m_width, m_height).contains(x, y)) {
-        object()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
+        renderer()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
         return true;
     }
 

@@ -2365,9 +2365,9 @@ IntRect RenderLayer::localBoundingBox() const
             return result;
         int top = firstBox->root()->topOverflow();
         int bottom = inlineFlow->lastLineBox()->root()->bottomOverflow();
-        int left = firstBox->xPos();
+        int left = firstBox->x();
         for (InlineRunBox* curr = firstBox->nextLineBox(); curr; curr = curr->nextLineBox())
-            left = min(left, curr->xPos());
+            left = min(left, curr->x());
         result = IntRect(left, top, width(), bottom - top);
     } else if (renderer()->isTableRow()) {
         // Our bounding box is just the union of all of our cells' border/overflow rects.

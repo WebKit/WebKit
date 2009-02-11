@@ -144,7 +144,7 @@ void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
 
         InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(runBox);
         for (InlineBox* box = flowBox->firstChild(); box; box = box->nextOnLine()) {
-            FloatRect boxRect(box->xPos(), box->yPos(), box->width(), box->height());
+            FloatRect boxRect(box->x(), box->y(), box->width(), box->height());
             boxRect.move(narrowPrecisionToFloat(absPos.x() - htmlParentCtm.e()), narrowPrecisionToFloat(absPos.y() - htmlParentCtm.f()));
             // FIXME: broken with CSS transforms
             rects.append(enclosingIntRect(absoluteTransform().mapRect(boxRect)));
@@ -169,7 +169,7 @@ void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads, bool)
 
         InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(runBox);
         for (InlineBox* box = flowBox->firstChild(); box; box = box->nextOnLine()) {
-            FloatRect boxRect(box->xPos(), box->yPos(), box->width(), box->height());
+            FloatRect boxRect(box->x(), box->y(), box->width(), box->height());
             boxRect.move(narrowPrecisionToFloat(absPos.x() - htmlParentCtm.e()), narrowPrecisionToFloat(absPos.y() - htmlParentCtm.f()));
             // FIXME: broken with CSS transforms
             quads.append(absoluteTransform().mapRect(boxRect));
@@ -193,7 +193,7 @@ FloatRect RenderSVGText::relativeBBox(bool includeStroke) const
 
         InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(runBox);
         for (InlineBox* box = flowBox->firstChild(); box; box = box->nextOnLine())
-            repaintRect.unite(FloatRect(box->xPos(), box->yPos(), box->width(), box->height()));
+            repaintRect.unite(FloatRect(box->x(), box->y(), box->width(), box->height()));
     }
 
     // SVG needs to include the strokeWidth(), not the textStrokeWidth().

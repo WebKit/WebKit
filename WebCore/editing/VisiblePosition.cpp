@@ -125,7 +125,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
         if (!box)
             return primaryDirection == LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
 
-        RenderObject* renderer = box->object();
+        RenderObject* renderer = box->renderer();
 
         while (true) {
             if ((renderer->isReplaced() || renderer->isBR()) && offset == box->caretRightmostOffset())
@@ -147,7 +147,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
 
                 // Reposition at the other logical position corresponding to our edge's visual position and go for another round.
                 box = prevBox;
-                renderer = box->object();
+                renderer = box->renderer();
                 offset = prevBox->caretRightmostOffset();
                 continue;
             }
@@ -176,7 +176,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                         break;
                     box = prevBox;
                 }
-                renderer = box->object();
+                renderer = box->renderer();
                 offset = box->caretRightmostOffset();
                 if (box->direction() == primaryDirection)
                     break;
@@ -185,7 +185,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
 
             if (prevBox) {
                 box = prevBox;
-                renderer = box->object();
+                renderer = box->renderer();
                 offset = box->caretRightmostOffset();
                 if (box->bidiLevel() > level) {
                     do {
@@ -215,7 +215,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                         break;
                     level = box->bidiLevel();
                 }
-                renderer = box->object();
+                renderer = box->renderer();
                 offset = primaryDirection == LTR ? box->caretMinOffset() : box->caretMaxOffset();
             }
             break;
@@ -266,7 +266,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
         if (!box)
             return primaryDirection == LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
 
-        RenderObject* renderer = box->object();
+        RenderObject* renderer = box->renderer();
 
         while (true) {
             if ((renderer->isReplaced() || renderer->isBR()) && offset == box->caretLeftmostOffset())
@@ -288,7 +288,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
 
                 // Reposition at the other logical position corresponding to our edge's visual position and go for another round.
                 box = nextBox;
-                renderer = box->object();
+                renderer = box->renderer();
                 offset = nextBox->caretLeftmostOffset();
                 continue;
             }
@@ -318,7 +318,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                         break;
                     box = nextBox;
                 }
-                renderer = box->object();
+                renderer = box->renderer();
                 offset = box->caretLeftmostOffset();
                 if (box->direction() == primaryDirection)
                     break;
@@ -327,7 +327,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
 
             if (nextBox) {
                 box = nextBox;
-                renderer = box->object();
+                renderer = box->renderer();
                 offset = box->caretLeftmostOffset();
                 if (box->bidiLevel() > level) {
                     do {
@@ -357,7 +357,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                         break;
                     level = box->bidiLevel();
                 }
-                renderer = box->object();
+                renderer = box->renderer();
                 offset = primaryDirection == LTR ? box->caretMaxOffset() : box->caretMinOffset();
             }
             break;
@@ -541,7 +541,7 @@ IntRect VisiblePosition::localCaretRect(RenderObject*& renderer) const
     getInlineBoxAndOffset(inlineBox, caretOffset);
 
     if (inlineBox)
-        renderer = inlineBox->object();
+        renderer = inlineBox->renderer();
 
     return renderer->localCaretRect(inlineBox, caretOffset);
 }

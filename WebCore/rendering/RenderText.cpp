@@ -206,7 +206,7 @@ PassRefPtr<StringImpl> RenderText::originalText() const
 void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        rects.append(IntRect(tx + box->xPos(), ty + box->yPos(), box->width(), box->height()));
+        rects.append(IntRect(tx + box->x(), ty + box->y(), box->width(), box->height()));
 }
 
 void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight)
@@ -226,7 +226,7 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
-            IntRect r = IntRect(absPos.x() + box->xPos(), absPos.y() + box->yPos(), box->width(), box->height());
+            IntRect r = IntRect(absPos.x() + box->x(), absPos.y() + box->y(), box->width(), box->height());
             if (useSelectionHeight) {
                 IntRect selectionRect = box->selectionRect(absPos.x(), absPos.y(), start, end);
                 r.setHeight(selectionRect.height());
@@ -240,7 +240,7 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
                 if (!useSelectionHeight) {
                     // change the height and y position because selectionRect uses selection-specific values
                     r.setHeight(box->height());
-                    r.setY(absPos.y() + box->yPos());
+                    r.setY(absPos.y() + box->y());
                 }
                 rects.append(r);
             }
@@ -251,7 +251,7 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
 void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool)
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        quads.append(localToAbsoluteQuad(FloatRect(box->xPos(), box->yPos(), box->width(), box->height())));
+        quads.append(localToAbsoluteQuad(FloatRect(box->x(), box->y(), box->width(), box->height())));
 }
 
 void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start, unsigned end, bool useSelectionHeight)
@@ -269,7 +269,7 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
-            IntRect r = IntRect(box->xPos(), box->yPos(), box->width(), box->height());
+            IntRect r = IntRect(box->x(), box->y(), box->width(), box->height());
             if (useSelectionHeight) {
                 IntRect selectionRect = box->selectionRect(0, 0, start, end);
                 r.setHeight(selectionRect.height());
@@ -283,7 +283,7 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
                 if (!useSelectionHeight) {
                     // change the height and y position because selectionRect uses selection-specific values
                     r.setHeight(box->height());
-                    r.setY(box->yPos());
+                    r.setY(box->y());
                 }
                 quads.append(localToAbsoluteQuad(FloatRect(r)));
             }
@@ -385,7 +385,7 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
 
     int left = box->positionForOffset(caretOffset);
 
-    int rootLeft = box->root()->xPos();
+    int rootLeft = box->root()->x();
     // FIXME: should we use the width of the root inline box or the
     // width of the containing block for this?
     if (extraWidthToEndOfLine)
@@ -1053,15 +1053,15 @@ IntRect RenderText::linesBoundingBox() const
         int leftSide = 0;
         int rightSide = 0;
         for (InlineTextBox* curr = firstTextBox(); curr; curr = curr->nextTextBox()) {
-            if (curr == firstTextBox() || curr->xPos() < leftSide)
-                leftSide = curr->xPos();
-            if (curr == firstTextBox() || curr->xPos() + curr->width() > rightSide)
-                rightSide = curr->xPos() + curr->width();
+            if (curr == firstTextBox() || curr->x() < leftSide)
+                leftSide = curr->x();
+            if (curr == firstTextBox() || curr->x() + curr->width() > rightSide)
+                rightSide = curr->x() + curr->width();
         }
         result.setWidth(rightSide - leftSide);
         result.setX(leftSide);
-        result.setHeight(lastTextBox()->yPos() + lastTextBox()->height() - firstTextBox()->yPos());
-        result.setY(firstTextBox()->yPos());
+        result.setHeight(lastTextBox()->y() + lastTextBox()->height() - firstTextBox()->y());
+        result.setY(firstTextBox()->y());
     }
 
     return result;

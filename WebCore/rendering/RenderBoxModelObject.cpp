@@ -261,7 +261,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         // InlineTextBoxes that they should just add their contents to the clip.
         PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, true, 0, 0);
         if (box)
-            box->paint(info, tx - box->xPos(), ty - box->yPos());
+            box->paint(info, tx - box->x(), ty - box->y());
         else
             paint(info, tx, ty);
             
