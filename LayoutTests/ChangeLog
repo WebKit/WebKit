@@ -1,3 +1,12 @@
+2009-02-11  Scott Violet  <sky@google.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23805 
+        The test transitions/transition-end-event-multiple-03.html occasionally fails.
+
+        * transitions/transition-end-event-multiple-03.html: Upped the timeout.
+
 2009-02-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele Peterson.
