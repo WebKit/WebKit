@@ -225,7 +225,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
 
 RenderInline* RenderInline::cloneInline(RenderInline* src)
 {
-    RenderInline* o = new (src->renderArena()) RenderInline(src->element());
+    RenderInline* o = new (src->renderArena()) RenderInline(src->node());
     o->setStyle(src->style());
     return o;
 }
@@ -711,22 +711,22 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const IntPoint& po
     if (result.innerNode())
         return;
 
-    Node* node = element();
+    Node* n = node();
     IntPoint localPoint(point);
-    if (node) {
+    if (n) {
         if (isInlineContinuation()) {
             // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space
             // of the principal renderer's containing block.  This will end up being the innerNonSharedNode.
-            RenderBlock* firstBlock = node->renderer()->containingBlock();
+            RenderBlock* firstBlock = n->renderer()->containingBlock();
             
             // Get our containing block.
             RenderBox* block = containingBlock();
             localPoint.move(block->x() - firstBlock->x(), block->y() - firstBlock->y());
         }
 
-        result.setInnerNode(node);
+        result.setInnerNode(n);
         if (!result.innerNonSharedNode())
-            result.setInnerNonSharedNode(node);
+            result.setInnerNonSharedNode(n);
         result.setLocalPoint(localPoint);
     }
 }

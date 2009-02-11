@@ -1,3 +1,315 @@
+2009-02-11  David Hyatt  <hyatt@apple.com>
+
+        Combine RenderObject::element() and RenderObject::node() into a single function.  
+        node() now has the "anonymous bit" checking behavior of element() and will
+        return 0 for anonymous content.  This patch switches all callers of element() 
+        to node() and patches old callers of node() to deal with situations where they
+        did not expect node() to be 0.  A bunch of node() calls were calling stuff on 
+        Document that they clearly didn't intend, so overall this is a nice improvement.
+    
+        Reviewed by Sam Weinig
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        * dom/Element.cpp:
+        (WebCore::Element::offsetParent):
+        * dom/Position.cpp:
+        (WebCore::Position::hasRenderedNonAnonymousDescendantsWithHeight):
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::getStartEndListChildren):
+        (WebCore::IncreaseSelectionListLevelCommand::doApply):
+        (WebCore::DecreaseSelectionListLevelCommand::doApply):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate):
+        * editing/visible_units.cpp:
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        * page/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::get):
+        * page/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::isUnorderedList):
+        (WebCore::AccessibilityList::isOrderedList):
+        (WebCore::AccessibilityList::isDefinitionList):
+        * page/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::doAccessibilityHitTest):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isPasswordField):
+        (WebCore::AccessibilityRenderObject::isFileUploadButton):
+        (WebCore::AccessibilityRenderObject::isInputImage):
+        (WebCore::AccessibilityRenderObject::isMultiSelect):
+        (WebCore::AccessibilityRenderObject::isControl):
+        (WebCore::AccessibilityRenderObject::getAttribute):
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::actionElement):
+        (WebCore::AccessibilityRenderObject::mouseButtonListener):
+        (WebCore::AccessibilityRenderObject::helpText):
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::AccessibilityRenderObject::hasIntValue):
+        (WebCore::AccessibilityRenderObject::intValue):
+        (WebCore::AccessibilityRenderObject::labelElementContainer):
+        (WebCore::AccessibilityRenderObject::title):
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        (WebCore::AccessibilityRenderObject::checkboxOrRadioRect):
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::text):
+        (WebCore::AccessibilityRenderObject::ariaSelectedTextDOMRange):
+        (WebCore::AccessibilityRenderObject::accessKey):
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        (WebCore::AccessibilityRenderObject::url):
+        (WebCore::AccessibilityRenderObject::isFocused):
+        (WebCore::AccessibilityRenderObject::setFocused):
+        (WebCore::AccessibilityRenderObject::setValue):
+        (WebCore::AccessibilityRenderObject::isEnabled):
+        (WebCore::AccessibilityRenderObject::visiblePositionRange):
+        (WebCore::AccessibilityRenderObject::index):
+        (WebCore::AccessibilityRenderObject::activeDescendant):
+        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
+        (WebCore::AccessibilityRenderObject::observableObject):
+        (WebCore::AccessibilityRenderObject::roleValue):
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        (WebCore::AccessibilityRenderObject::ariaListboxSelectedChildren):
+        * page/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+        (WebCore::AccessibilityTable::title):
+        * page/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::titleUIElement):
+        * page/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+        * page/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::headerObject):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::canMouseDownStartSelect):
+        (WebCore::EventHandler::canMouseDragExtendSelect):
+        (WebCore::EventHandler::shouldDragAutoNode):
+        * page/Frame.cpp:
+        (WebCore::Frame::searchForLabelsAboveCell):
+        (WebCore::Frame::setFocusedNodeIfNeeded):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateOverflowStatus):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateAnimationTimer):
+        (WebCore::AnimationController::cancelAnimations):
+        (WebCore::AnimationController::updateAnimations):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (blockquoteLevel):
+        (AXAttributeStringSetHeadingLevel):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::searchForNSLabelsAboveCell):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::verticallyAlignBoxes):
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::shouldDrawTextDecoration):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::positionForCoordinates):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::handleRunInChild):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::isSelectionRoot):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::positionForBox):
+        (WebCore::RenderBlock::positionForRenderer):
+        (WebCore::RenderBlock::positionForCoordinates):
+        (WebCore::RenderBlock::hasLineIfEmpty):
+        (WebCore::RenderBlock::updateFirstLetter):
+        (WebCore::RenderBlock::updateHitTestResult):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::RenderBox::updateBoxModelInfoFromStyle):
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::positionForCoordinates):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updateFromElement):
+        (WebCore::RenderButton::canHaveChildren):
+        * rendering/RenderCounter.cpp:
+        (WebCore::planCounter):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::findLegend):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::translationForAttributes):
+        (WebCore::RenderForeignObject::calculateLocalTransform):
+        * rendering/RenderFrame.h:
+        (WebCore::RenderFrame::element):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::imageMap):
+        (WebCore::RenderImage::nodeAtPoint):
+        (WebCore::RenderImage::updateAltText):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::cloneInline):
+        (WebCore::RenderInline::updateHitTestResult):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isTransparent):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::updateOverflowStatus):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::enclosingElement):
+        (WebCore::RenderLayer::updateHoverActiveState):
+        (WebCore::RenderLayer::updateScrollCornerStyle):
+        (WebCore::RenderLayer::updateResizerStyle):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isRootLayer):
+        * rendering/RenderListItem.cpp:
+        (WebCore::getParentOfFirstLineBox):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::marqueeSpeed):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::isBody):
+        (WebCore::RenderObject::isHR):
+        (WebCore::RenderObject::isHTMLMarquee):
+        (WebCore::RenderObject::isEditable):
+        (WebCore::RenderObject::addPDFURLRect):
+        (WebCore::RenderObject::showTreeForThis):
+        (WebCore::RenderObject::draggableNode):
+        (WebCore::RenderObject::hasOutlineAnnotation):
+        (WebCore::RenderObject::positionForCoordinates):
+        (WebCore::RenderObject::updateDragState):
+        (WebCore::RenderObject::updateHitTestResult):
+        (WebCore::RenderObject::getUncachedPseudoStyle):
+        (WebCore::RenderObject::getTextDecorationColors):
+        (WebCore::RenderObject::caretMaxOffset):
+        (WebCore::RenderObject::offsetParent):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRoot):
+        (WebCore::RenderObject::isInlineContinuation):
+        (WebCore::RenderObject::node):
+        (WebCore::RenderObject::setNode):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::destroyLeftoverChildren):
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::updateWidgetPosition):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        (WebCore::RenderPartObject::viewCleared):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::calculateLocalTransform):
+        (WebCore::RenderPath::layout):
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForCoordinates):
+        (WebCore::RenderReplaced::isSelected):
+        * rendering/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::gradientElement):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::calculateLocalTransform):
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForCoordinates):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::applyContentTransforms):
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::calcViewport):
+        (WebCore::RenderSVGRoot::absoluteTransform):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::calculateLocalTransform):
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::layoutPath):
+        (WebCore::RenderSVGTextPath::startOffset):
+        (WebCore::RenderSVGTextPath::exactAlignment):
+        (WebCore::RenderSVGTextPath::stretchMethod):
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::calcViewport):
+        (WebCore::RenderSVGViewportContainer::viewportTransform):
+        (WebCore::RenderSVGViewportContainer::nodeAtPoint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::updateFromElement):
+        (WebCore::RenderTableCell::calcPrefWidths):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::updateFromElement):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::originalText):
+        (WebCore::RenderText::positionForCoordinates):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::originalText):
+        (WebCore::RenderTextFragment::previousCharacter):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isActive):
+        (WebCore::RenderTheme::isChecked):
+        (WebCore::RenderTheme::isIndeterminate):
+        (WebCore::RenderTheme::isEnabled):
+        (WebCore::RenderTheme::isFocused):
+        (WebCore::RenderTheme::isPressed):
+        (WebCore::RenderTheme::isReadOnlyControl):
+        (WebCore::RenderTheme::isHovered):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::updatePressedState):
+        (WebCore::RenderThemeMac::paintMediaFullscreenButton):
+        (WebCore::RenderThemeMac::paintMediaMuteButton):
+        (WebCore::RenderThemeMac::paintMediaPlayButton):
+        (WebCore::RenderThemeMac::paintMediaSeekBackButton):
+        (WebCore::RenderThemeMac::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeMac::paintMediaSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaSliderThumb):
+        (WebCore::RenderThemeMac::paintMediaTimelineContainer):
+        (WebCore::RenderThemeMac::paintMediaCurrentTime):
+        (WebCore::RenderThemeMac::paintMediaTimeRemaining):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMediaMuteButton):
+        (WebCore::RenderThemeSafari::paintMediaPlayButton):
+        (WebCore::RenderThemeSafari::paintMediaSliderTrack):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::writeSelection):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry):
+        (WebCore::RenderWidget::updateWidgetPosition):
+        (WebCore::RenderWidget::nodeAtPoint):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::isEditableLeaf):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::prepareToRenderSVGContent):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::buildLayoutInformation):
+        (WebCore::SVGRootInlineBox::layoutInlineBoxes):
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::cssPrimitiveToLength):
+        * svg/SVGFont.cpp:
+        (WebCore::SVGTextRunWalker::walk):
+        (WebCore::floatWidthOfSubStringUsingSVGFont):
+        (WebCore::Font::drawTextUsingSVGFont):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::findInlineTextBoxInTextChunks):
+        * svg/graphics/SVGPaintServer.cpp:
+        (WebCore::SVGPaintServer::fillPaintServer):
+        (WebCore::SVGPaintServer::strokePaintServer):
+
 2009-02-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

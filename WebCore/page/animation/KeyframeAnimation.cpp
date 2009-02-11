@@ -47,8 +47,8 @@ KeyframeAnimation::KeyframeAnimation(const Animation* animation, RenderObject* r
     , m_unanimatedStyle(unanimatedStyle)
 {
     // Get the keyframe RenderStyles
-    if (m_object && m_object->element() && m_object->element()->isElementNode())
-        m_object->document()->styleSelector()->keyframeStylesForAnimation(static_cast<Element*>(m_object->element()), unanimatedStyle, m_keyframes);
+    if (m_object && m_object->node() && m_object->node()->isElementNode())
+        m_object->document()->styleSelector()->keyframeStylesForAnimation(static_cast<Element*>(m_object->node()), unanimatedStyle, m_keyframes);
 
     // Update the m_transformFunctionListValid flag based on whether the function lists in the keyframes match.
     validateTransformFunctionList();
@@ -208,7 +208,7 @@ void KeyframeAnimation::endAnimation(bool reset)
         UNUSED_PARAM(reset);
 #endif
         // Restore the original (unanimated) style
-        setChanged(m_object->element());
+        setChanged(m_object->node());
     }
 }
 

@@ -313,7 +313,7 @@ Element* Element::offsetParent()
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
         if (RenderObject* offsetParent = rend->offsetParent())
-            return static_cast<Element*>(offsetParent->element());
+            return static_cast<Element*>(offsetParent->node());
     return 0;
 }
 

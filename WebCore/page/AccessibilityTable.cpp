@@ -93,7 +93,7 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
     // Unfortunately, there is no good way to determine the difference
     // between a "layout" table and a "data" table
     
-    Node* tableNode = table->element();
+    Node* tableNode = table->node();
     if (!tableNode || !tableNode->hasTagName(tableTag))
         return false;
     
@@ -139,7 +139,7 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
             RenderTableCell* cell = firstBody->cellAt(row, col).cell;
             if (!cell)
                 continue;
-            Node* cellNode = cell->element();
+            Node* cellNode = cell->node();
             if (!cellNode)
                 continue;
             
@@ -464,7 +464,7 @@ String AccessibilityTable::title() const
         return title;
     
     // see if there is a caption
-    Node *tableElement = m_renderer->element();
+    Node* tableElement = m_renderer->node();
     if (tableElement) {
         HTMLTableCaptionElement* caption = static_cast<HTMLTableElement*>(tableElement)->caption();
         if (caption)

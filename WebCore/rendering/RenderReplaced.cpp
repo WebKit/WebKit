@@ -208,7 +208,7 @@ VisiblePosition RenderReplaced::positionForCoordinates(int xPos, int yPos)
 {
     InlineBox* box = inlineBoxWrapper();
     if (!box)
-        return VisiblePosition(element(), 0, DOWNSTREAM);
+        return VisiblePosition(node(), 0, DOWNSTREAM);
 
     // FIXME: This code is buggy if the replaced element is relative positioned.
 
@@ -218,15 +218,15 @@ VisiblePosition RenderReplaced::positionForCoordinates(int xPos, int yPos)
     int bottom = root->nextRootBox() ? root->nextRootBox()->topOverflow() : root->bottomOverflow();
 
     if (yPos + y() < top)
-        return VisiblePosition(element(), caretMinOffset(), DOWNSTREAM); // coordinates are above
+        return VisiblePosition(node(), caretMinOffset(), DOWNSTREAM); // coordinates are above
     
     if (yPos + y() >= bottom)
-        return VisiblePosition(element(), caretMaxOffset(), DOWNSTREAM); // coordinates are below
+        return VisiblePosition(node(), caretMaxOffset(), DOWNSTREAM); // coordinates are below
     
-    if (element()) {
+    if (node()) {
         if (xPos <= width() / 2)
-            return VisiblePosition(element(), 0, DOWNSTREAM);
-        return VisiblePosition(element(), 1, DOWNSTREAM);
+            return VisiblePosition(node(), 0, DOWNSTREAM);
+        return VisiblePosition(node(), 1, DOWNSTREAM);
     }
 
     return RenderBox::positionForCoordinates(xPos, yPos);
@@ -290,7 +290,7 @@ bool RenderReplaced::isSelected() const
     if (s == SelectionStart)
         return selectionStart == 0;
         
-    int end = element()->hasChildNodes() ? element()->childNodeCount() : 1;
+    int end = node()->hasChildNodes() ? node()->childNodeCount() : 1;
     if (s == SelectionEnd)
         return selectionEnd == end;
     if (s == SelectionBoth)

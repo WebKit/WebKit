@@ -157,13 +157,13 @@ AccessibilityObject* AccessibilityListBox::doAccessibilityHitTest(const IntPoint
     if (!m_renderer)
         return 0;
     
-    Node* element = m_renderer->element();
-    if (!element)
+    Node* node = m_renderer->node();
+    if (!node)
         return 0;
     
     IntRect parentRect = boundingBoxRect();
     
-    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(element)->listItems();
+    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node)->listItems();
     unsigned length = listItems.size();
     for (unsigned i = 0; i < length; i++) {
         IntRect rect = static_cast<RenderListBox*>(m_renderer)->itemBoundingBoxRect(parentRect.x(), parentRect.y(), i);

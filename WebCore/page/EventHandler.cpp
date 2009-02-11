@@ -1557,7 +1557,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
         // Walk up the render tree to search for a node to focus.
         // Walking up the DOM tree wouldn't work for shadow trees, like those behind the engine-based text fields.
         while (renderer) {
-            node = renderer->element();
+            node = renderer->node();
             if (node && node->isFocusable()) {
                 // To fix <rdar://problem/4895428> Can't drag selected ToDo, we don't focus a 
                 // node on mouse down if it's selected and inside a focused node. It will be 
@@ -1686,7 +1686,7 @@ bool EventHandler::canMouseDownStartSelect(Node* node)
         return false;
             
     for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
-        if (Node* node = curr->element())
+        if (Node* node = curr->node())
             return node->dispatchEventForType(eventNames().selectstartEvent, true, true);
     }
 
@@ -1699,7 +1699,7 @@ bool EventHandler::canMouseDragExtendSelect(Node* node)
         return true;
             
     for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
-        if (Node* node = curr->element())
+        if (Node* node = curr->node())
             return node->dispatchEventForType(eventNames().selectstartEvent, true, true);
     }
 
@@ -1948,8 +1948,7 @@ void EventHandler::freeClipboard()
 
 bool EventHandler::shouldDragAutoNode(Node* node, const IntPoint& point) const
 {
-    ASSERT(node);
-    if (node->hasChildNodes() || !m_frame->view())
+    if (!node || node->hasChildNodes() || !m_frame->view())
         return false;
     return m_frame->page() && m_frame->page()->dragController()->mayStartDragAtEventLocation(m_frame, point);
 }

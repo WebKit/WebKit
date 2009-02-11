@@ -40,7 +40,7 @@ RenderForeignObject::RenderForeignObject(SVGForeignObjectElement* node)
 
 TransformationMatrix RenderForeignObject::translationForAttributes()
 {
-    SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(element());
+    SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(node());
     return TransformationMatrix().translate(foreign->x().value(foreign), foreign->y().value(foreign));
 }
 
@@ -81,7 +81,7 @@ void RenderForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintCon
 bool RenderForeignObject::calculateLocalTransform()
 {
     TransformationMatrix oldTransform = m_localTransform;
-    m_localTransform = static_cast<SVGForeignObjectElement*>(element())->animatedLocalTransform();
+    m_localTransform = static_cast<SVGForeignObjectElement*>(node())->animatedLocalTransform();
     return (oldTransform != m_localTransform);
 }
 

@@ -73,11 +73,11 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
     if (axID)
         obj = m_objects.get(axID).get();
 
-    Node* element = renderer->element();
+    Node* node = renderer->node();
     if (!obj) {
         if (renderer->isListBox())
             obj = AccessibilityListBox::create(renderer);
-        else if (element && (element->hasTagName(ulTag) || element->hasTagName(olTag) || element->hasTagName(dlTag)))
+        else if (node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))
             obj = AccessibilityList::create(renderer);
         else if (renderer->isTable())
             obj = AccessibilityTable::create(renderer);

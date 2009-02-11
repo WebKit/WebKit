@@ -47,9 +47,9 @@ RenderTableCol::RenderTableCol(Node* node)
 void RenderTableCol::updateFromElement()
 {
     int oldSpan = m_span;
-    Node* node = element();
-    if (node && (node->hasTagName(colTag) || node->hasTagName(colgroupTag))) {
-        HTMLTableColElement* tc = static_cast<HTMLTableColElement*>(node);
+    Node* n = node();
+    if (n && (n->hasTagName(colTag) || n->hasTagName(colgroupTag))) {
+        HTMLTableColElement* tc = static_cast<HTMLTableColElement*>(n);
         m_span = tc->span();
     } else
         m_span = !(style() && style()->display() == TABLE_COLUMN_GROUP);

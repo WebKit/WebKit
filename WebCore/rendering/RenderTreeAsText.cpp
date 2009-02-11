@@ -170,13 +170,13 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
     if (o.style() && o.style()->zIndex())
         ts << " zI: " << o.style()->zIndex();
 
-    if (o.element()) {
-        String tagName = getTagName(o.element());
+    if (o.node()) {
+        String tagName = getTagName(o.node());
         if (!tagName.isEmpty()) {
             ts << " {" << tagName << "}";
             // flag empty or unstyled AppleStyleSpan because we never
             // want to leave them in the DOM
-            if (isEmptyOrUnstyledAppleStyleSpan(o.element()))
+            if (isEmptyOrUnstyledAppleStyleSpan(o.node()))
                 ts << " *empty or unstyled AppleStyleSpan*";
         }
     }
@@ -507,7 +507,7 @@ static String nodePosition(Node* node)
 
 static void writeSelection(TextStream& ts, const RenderObject* o)
 {
-    Node* n = o->element();
+    Node* n = o->node();
     if (!n || !n->isDocumentNode())
         return;
 

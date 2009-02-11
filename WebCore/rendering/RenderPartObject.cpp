@@ -142,8 +142,8 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
     Vector<String> paramValues;
     Frame* frame = m_view->frame();
 
-    if (element()->hasTagName(objectTag)) {
-        HTMLObjectElement* o = static_cast<HTMLObjectElement*>(element());
+    if (node()->hasTagName(objectTag)) {
+        HTMLObjectElement* o = static_cast<HTMLObjectElement*>(node());
 
         o->setNeedWidgetUpdate(false);
         if (!o->isFinishedParsingChildren())
@@ -257,8 +257,8 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
         bool success = frame->loader()->requestObject(this, url, AtomicString(o->name()), serviceType, paramNames, paramValues);
         if (!success && m_hasFallbackContent)
             o->renderFallbackContent();
-    } else if (element()->hasTagName(embedTag)) {
-        HTMLEmbedElement *o = static_cast<HTMLEmbedElement*>(element());
+    } else if (node()->hasTagName(embedTag)) {
+        HTMLEmbedElement *o = static_cast<HTMLEmbedElement*>(node());
         o->setNeedWidgetUpdate(false);
         url = o->url();
         serviceType = o->serviceType();
@@ -310,12 +310,12 @@ void RenderPartObject::layout()
 
 void RenderPartObject::viewCleared()
 {
-    if (element() && m_widget && m_widget->isFrameView()) {
+    if (node() && m_widget && m_widget->isFrameView()) {
         FrameView* view = static_cast<FrameView*>(m_widget);
         int marginw = -1;
         int marginh = -1;
-        if (element()->hasTagName(iframeTag)) {
-            HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(element());
+        if (node()->hasTagName(iframeTag)) {
+            HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(node());
             marginw = frame->getMarginWidth();
             marginh = frame->getMarginHeight();
         }

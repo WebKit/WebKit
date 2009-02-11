@@ -394,7 +394,7 @@ String Frame::searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellE
 
         if (cellAboveRenderer) {
             HTMLTableCellElement* aboveCell =
-                static_cast<HTMLTableCellElement*>(cellAboveRenderer->element());
+                static_cast<HTMLTableCellElement*>(cellAboveRenderer->node());
 
             if (aboveCell) {
                 // search within the above cell we found for a match
@@ -585,7 +585,7 @@ void Frame::setFocusedNodeIfNeeded()
             }
             renderer = renderer->parent();
             if (renderer)
-                target = renderer->element();
+                target = renderer->node();
         }
         document()->setFocusedNode(0);
     }

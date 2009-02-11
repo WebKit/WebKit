@@ -124,7 +124,7 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
         if ((testCell->col() + (testCell->colSpan()-1)) < m_columnIndex)
             break;
         
-        Node* node = testCell->element();
+        Node* node = testCell->node();
         if (!node)
             continue;
         

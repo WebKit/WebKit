@@ -116,7 +116,7 @@ static bool planCounter(RenderObject* object, const AtomicString& counterName, b
             isReset = false;
             return true;
         }
-        if (Node* e = object->element()) {
+        if (Node* e = object->node()) {
             if (e->hasTagName(olTag)) {
                 value = static_cast<HTMLOListElement*>(e)->start();
                 isReset = true;

@@ -68,8 +68,8 @@ bool AccessibilityList::isUnorderedList() const
     if (!m_renderer)
         return false;
     
-    Node* element = m_renderer->element();
-    return element && element->hasTagName(ulTag);
+    Node* node = m_renderer->node();
+    return node && node->hasTagName(ulTag);
 }
 
 bool AccessibilityList::isOrderedList() const
@@ -77,8 +77,8 @@ bool AccessibilityList::isOrderedList() const
     if (!m_renderer)
         return false;
     
-    Node* element = m_renderer->element();
-    return element && element->hasTagName(olTag);    
+    Node* node = m_renderer->node();
+    return node && node->hasTagName(olTag);    
 }
 
 bool AccessibilityList::isDefinitionList() const
@@ -86,8 +86,8 @@ bool AccessibilityList::isDefinitionList() const
     if (!m_renderer)
         return false;
     
-    Node* element = m_renderer->element();
-    return element && element->hasTagName(dlTag);    
+    Node* node = m_renderer->node();
+    return node && node->hasTagName(dlTag);    
 }
     
     

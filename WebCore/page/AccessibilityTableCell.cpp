@@ -147,7 +147,7 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     if (!headerCell || headerCell == renderCell)
         return 0;
 
-    Node* cellElement = headerCell->element();
+    Node* cellElement = headerCell->node();
     if (!cellElement || !cellElement->hasTagName(thTag))
         return 0;
     

@@ -97,9 +97,9 @@ void RenderPart::updateWidgetPosition()
     if (boundsChanged) {
         // The widget changed positions.  Update the frame geometry.
         RenderArena *arena = ref();
-        element()->ref();
+        node()->ref();
         m_widget->setFrameRect(newBounds);
-        element()->deref();
+        node()->deref();
         deref(arena);
     }
 

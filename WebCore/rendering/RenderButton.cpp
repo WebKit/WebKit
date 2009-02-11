@@ -115,16 +115,16 @@ void RenderButton::setupInnerStyle(RenderStyle* innerStyle)
 void RenderButton::updateFromElement()
 {
     // If we're an input element, we may need to change our button text.
-    if (element()->hasTagName(inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(element());
+    if (node()->hasTagName(inputTag)) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
         String value = input->valueWithDefault();
         setText(value);
     }
 
 
 #if ENABLE(WML)
-    else if (element()->hasTagName(WMLNames::doTag)) {
-        WMLDoElement* doElement = static_cast<WMLDoElement*>(element());
+    else if (node()->hasTagName(WMLNames::doTag)) {
+        WMLDoElement* doElement = static_cast<WMLDoElement*>(node());
 
         String value = doElement->label();
         if (value.isEmpty())
@@ -140,7 +140,7 @@ bool RenderButton::canHaveChildren() const
     // Input elements can't have children, but button elements can.  We'll
     // write the code assuming any other button types that might emerge in the future
     // can also have children.
-    return !element()->hasTagName(inputTag);
+    return !node()->hasTagName(inputTag);
 }
 
 void RenderButton::setText(const String& str)

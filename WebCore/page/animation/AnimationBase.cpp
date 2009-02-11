@@ -742,7 +742,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
 
                 // Trigger a render so we can start the animation
                 if (m_object)
-                    m_compAnim->animationControllerPriv()->addNodeChangeToDispatch(m_object->element());
+                    m_compAnim->animationControllerPriv()->addNodeChangeToDispatch(m_object->node());
             } else {
                 ASSERT(!paused());
                 // We're waiting for the start timer to fire and we got a pause. Cancel the timer, pause and wait
@@ -789,7 +789,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
 
                 // Dispatch updateRendering so we can start the animation
                 if (m_object)
-                    m_compAnim->animationControllerPriv()->addNodeChangeToDispatch(m_object->element());
+                    m_compAnim->animationControllerPriv()->addNodeChangeToDispatch(m_object->node());
             } else {
                 // We are pausing while waiting for a start response. Cancel the animation and wait. When 
                 // we unpause, we will act as though the start timer just fired
@@ -829,7 +829,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                     resumeOverriddenAnimations();
 
                     // Fire off another style change so we can set the final value
-                    m_compAnim->animationControllerPriv()->addNodeChangeToDispatch(m_object->element());
+                    m_compAnim->animationControllerPriv()->addNodeChangeToDispatch(m_object->node());
                 }
             } else {
                 // We are pausing while running. Cancel the animation and wait

@@ -199,7 +199,7 @@ void RenderText::deleteTextBoxes()
 
 PassRefPtr<StringImpl> RenderText::originalText() const
 {
-    Node* e = element();
+    Node* e = node();
     return e ? static_cast<Text*>(e)->string() : 0;
 }
 
@@ -315,7 +315,7 @@ InlineTextBox* RenderText::findNextInlineTextBox(int offset, int& pos) const
 VisiblePosition RenderText::positionForCoordinates(int x, int y)
 {
     if (!firstTextBox() || textLength() == 0)
-        return VisiblePosition(element(), 0, DOWNSTREAM);
+        return VisiblePosition(node(), 0, DOWNSTREAM);
 
     // Get the offset for the position, since this will take rtl text into account.
     int offset;
@@ -325,13 +325,13 @@ VisiblePosition RenderText::positionForCoordinates(int x, int y)
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left of the first text box left edge
         offset = firstTextBox()->offsetForPosition(x);
-        return VisiblePosition(element(), offset + firstTextBox()->start(), DOWNSTREAM);
+        return VisiblePosition(node(), offset + firstTextBox()->start(), DOWNSTREAM);
     }
     if (lastTextBox() && y >= lastTextBox()->root()->topOverflow() && x >= lastTextBox()->m_x + lastTextBox()->m_width) {
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right of the last text box right edge
         offset = lastTextBox()->offsetForPosition(x);
-        return VisiblePosition(element(), offset + lastTextBox()->start(), DOWNSTREAM);
+        return VisiblePosition(node(), offset + lastTextBox()->start(), DOWNSTREAM);
     }
 
     InlineTextBox* lastBoxAbove = 0;
@@ -344,29 +344,29 @@ VisiblePosition RenderText::positionForCoordinates(int x, int y)
                 if (x == box->m_x)
                     // the x coordinate is equal to the left edge of this box
                     // the affinity must be downstream so the position doesn't jump back to the previous line
-                    return VisiblePosition(element(), offset + box->start(), DOWNSTREAM);
+                    return VisiblePosition(node(), offset + box->start(), DOWNSTREAM);
 
                 if (x < box->m_x + box->m_width)
                     // and the x coordinate is to the left of the right edge of this box
                     // check to see if position goes in this box
-                    return VisiblePosition(element(), offset + box->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
+                    return VisiblePosition(node(), offset + box->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
 
                 if (!box->prevOnLine() && x < box->m_x)
                     // box is first on line
                     // and the x coordinate is to the left of the first text box left edge
-                    return VisiblePosition(element(), offset + box->start(), DOWNSTREAM);
+                    return VisiblePosition(node(), offset + box->start(), DOWNSTREAM);
 
                 if (!box->nextOnLine())
                     // box is last on line
                     // and the x coordinate is to the right of the last text box right edge
                     // generate VisiblePosition, use UPSTREAM affinity if possible
-                    return VisiblePosition(element(), offset + box->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
+                    return VisiblePosition(node(), offset + box->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
             }
             lastBoxAbove = box;
         }
     }
 
-    return VisiblePosition(element(), lastBoxAbove ? lastBoxAbove->start() + lastBoxAbove->len() : 0, DOWNSTREAM);
+    return VisiblePosition(node(), lastBoxAbove ? lastBoxAbove->start() + lastBoxAbove->len() : 0, DOWNSTREAM);
 }
 
 IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)

@@ -153,8 +153,8 @@ static RenderObject* getParentOfFirstLineBox(RenderBlock* curr, RenderObject* ma
         if (currChild->isTable() || !currChild->isRenderBlock())
             break;
 
-        if (curr->isListItem() && currChild->style()->htmlHacks() && currChild->element() &&
-            (currChild->element()->hasTagName(ulTag)|| currChild->element()->hasTagName(olTag)))
+        if (curr->isListItem() && currChild->style()->htmlHacks() && currChild->node() &&
+            (currChild->node()->hasTagName(ulTag)|| currChild->node()->hasTagName(olTag)))
             break;
 
         RenderObject* lineBox = getParentOfFirstLineBox(toRenderBlock(currChild), marker);

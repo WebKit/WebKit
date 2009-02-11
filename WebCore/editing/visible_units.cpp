@@ -305,7 +305,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c)
         if (!startRenderer)
             return VisiblePosition();
 
-        startNode = startRenderer->element();
+        startNode = startRenderer->node();
         if (startNode)
             break;
         
@@ -372,7 +372,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c)
         if (!endRenderer)
             return VisiblePosition();
 
-        endNode = endRenderer->element();
+        endNode = endRenderer->node();
         if (endNode)
             break;
         

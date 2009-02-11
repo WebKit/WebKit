@@ -100,7 +100,7 @@ AccessibilityObject* AccessibilityTableRow::headerObject()
     if (!cellRenderer)
         return 0;
     
-    Node* cellNode = cellRenderer->element();
+    Node* cellNode = cellRenderer->node();
     if (!cellNode || !cellNode->hasTagName(thTag))
         return 0;
     

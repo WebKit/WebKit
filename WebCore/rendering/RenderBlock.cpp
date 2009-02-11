@@ -762,8 +762,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         setTopMarginQuirk(style()->marginTop().quirk());
         setBottomMarginQuirk(style()->marginBottom().quirk());
 
-        Node* node = element();
-        if (node && node->hasTagName(formTag) && static_cast<HTMLFormElement*>(node)->isMalformed()) {
+        Node* n = node();
+        if (n && n->hasTagName(formTag) && static_cast<HTMLFormElement*>(n)->isMalformed()) {
             // See if this form is malformed (i.e., unclosed). If so, don't give the form
             // a bottom margin.
             setMaxBottomMargins(0, 0);
@@ -1018,8 +1018,8 @@ RenderBox* RenderBlock::handleRunInChild(RenderBox* child, bool& handled)
             currBlock->children()->insertChildNode(currBlock, inlineRunIn, currBlock->firstChild());
             
             // If the run-in had an element, we need to set the new renderer.
-            if (blockRunIn->element())
-                blockRunIn->element()->setRenderer(inlineRunIn);
+            if (blockRunIn->node())
+                blockRunIn->node()->setRenderer(inlineRunIn);
             
             // Destroy the block run-in.
             blockRunIn->destroy();
@@ -1796,7 +1796,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     // 6. paint continuation outlines.
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseChildOutlines)) {
         if (inlineContinuation() && inlineContinuation()->hasOutline() && inlineContinuation()->style()->visibility() == VISIBLE) {
-            RenderInline* inlineRenderer = toRenderInline(inlineContinuation()->element()->renderer());
+            RenderInline* inlineRenderer = toRenderInline(inlineContinuation()->node()->renderer());
             if (!inlineRenderer->hasLayer())
                 containingBlock()->addContinuationWithOutline(inlineRenderer);
             else if (!inlineRenderer->firstLineBox())
@@ -1946,7 +1946,7 @@ bool RenderBlock::shouldPaintSelectionGaps() const
 
 bool RenderBlock::isSelectionRoot() const
 {
-    if (!element())
+    if (!node())
         return false;
         
     // FIXME: Eventually tables should have to learn how to fill gaps between cells, at least in simple non-spanning cases.
@@ -1959,8 +1959,8 @@ bool RenderBlock::isSelectionRoot() const
         return true;
     
     if (view() && view()->selectionStart()) {
-        Node* startElement = view()->selectionStart()->element();
-        if (startElement && startElement->rootEditableElement() == element())
+        Node* startElement = view()->selectionStart()->node();
+        if (startElement && startElement->rootEditableElement() == node())
             return true;
     }
     
@@ -2807,7 +2807,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
             int rp = currBox->x() + currBox->width();
             // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
             // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
-            if (node()->isContentEditable() && node() == node()->rootEditableElement() && style()->direction() == LTR)
+            if (node() && node()->isContentEditable() && node() == node()->rootEditableElement() && style()->direction() == LTR)
                 rp += 1;
             right = max(right, rp);
         }
@@ -3361,33 +3361,33 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
     if (!box)
         return Position();
 
-    if (!box->renderer()->element())
-        return Position(element(), start ? caretMinOffset() : caretMaxOffset());
+    if (!box->renderer()->node())
+        return Position(node(), start ? caretMinOffset() : caretMaxOffset());
 
     if (!box->isInlineTextBox())
-        return Position(box->renderer()->element(), start ? box->renderer()->caretMinOffset() : box->renderer()->caretMaxOffset());
+        return Position(box->renderer()->node(), start ? box->renderer()->caretMinOffset() : box->renderer()->caretMaxOffset());
 
     InlineTextBox *textBox = static_cast<InlineTextBox *>(box);
-    return Position(box->renderer()->element(), start ? textBox->start() : textBox->start() + textBox->len());
+    return Position(box->renderer()->node(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 
 Position RenderBlock::positionForRenderer(RenderObject* renderer, bool start) const
 {
     if (!renderer)
-        return Position(element(), 0);
+        return Position(node(), 0);
 
-    Node* node = renderer->element() ? renderer->element() : element();
-    if (!node)
+    Node* n = renderer->node() ? renderer->node() : node();
+    if (!n)
         return Position();
 
-    ASSERT(renderer == node->renderer());
+    ASSERT(renderer == n->renderer());
 
     int offset = start ? renderer->caretMinOffset() : renderer->caretMaxOffset();
 
     // FIXME: This was a runtime check that seemingly couldn't fail; changed it to an assertion for now.
-    ASSERT(!node->isCharacterDataNode() || renderer->isText());
+    ASSERT(!n->isCharacterDataNode() || renderer->isText());
 
-    return Position(node, offset);
+    return Position(n, offset);
 }
 
 VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
@@ -3401,7 +3401,7 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     int left = borderLeft();
     int right = left + paddingLeft() + contentWidth() + paddingRight();
 
-    Node* n = element();
+    Node* n = node();
     
     int contentsX = x;
     int contentsY = y;
@@ -4317,8 +4317,8 @@ void RenderBlock::calcBlockPrefWidths()
 
 bool RenderBlock::hasLineIfEmpty() const
 {
-    return element() && (element()->isContentEditable() && element()->rootEditableElement() == element() ||
-                         element()->isShadowNode() && element()->shadowParentNode()->hasTagName(inputTag));
+    return node() && (node()->isContentEditable() && node()->rootEditableElement() == node() ||
+                         node()->isShadowNode() && node()->shadowParentNode()->hasTagName(inputTag));
 }
 
 int RenderBlock::lineHeight(bool firstLine, bool isRootLineBox) const
@@ -4560,10 +4560,10 @@ void RenderBlock::updateFirstLetter()
             // construct text fragment for the text after the first letter
             // NOTE: this might empty
             RenderTextFragment* remainingText = 
-                new (renderArena()) RenderTextFragment(textObj->node(), oldText.get(), length, oldText->length() - length);
+                new (renderArena()) RenderTextFragment(textObj->node() ? textObj->node() : textObj->document(), oldText.get(), length, oldText->length() - length);
             remainingText->setStyle(textObj->style());
-            if (remainingText->element())
-                remainingText->element()->setRenderer(remainingText);
+            if (remainingText->node())
+                remainingText->node()->setRenderer(remainingText);
             
             RenderObject* nextObj = textObj->nextSibling();
             firstLetterContainer->removeChild(textObj);
@@ -4572,7 +4572,7 @@ void RenderBlock::updateFirstLetter()
             
             // construct text fragment for the first letter
             RenderTextFragment* letter = 
-                new (renderArena()) RenderTextFragment(remainingText->node(), oldText.get(), 0, length);
+                new (renderArena()) RenderTextFragment(remainingText->node() ? remainingText->node() : remainingText->document(), oldText.get(), 0, length);
             RefPtr<RenderStyle> newStyle = RenderStyle::create();
             newStyle->inheritFrom(pseudoStyle);
             letter->setStyle(newStyle.release());
@@ -4852,17 +4852,17 @@ void RenderBlock::updateHitTestResult(HitTestResult& result, const IntPoint& poi
     if (result.innerNode())
         return;
 
-    Node* node = element();
+    Node* n = node();
     if (inlineContinuation())
         // We are in the margins of block elements that are part of a continuation.  In
         // this case we're actually still inside the enclosing inline element that was
         // split.  Go ahead and set our inner node accordingly.
-        node = inlineContinuation()->element();
+        n = inlineContinuation()->node();
 
-    if (node) {
-        result.setInnerNode(node);
+    if (n) {
+        result.setInnerNode(n);
         if (!result.innerNonSharedNode())
-            result.setInnerNonSharedNode(node);
+            result.setInnerNonSharedNode(n);
         result.setLocalPoint(point);
     }
 }
@@ -4955,7 +4955,7 @@ void RenderBlock::addFocusRingRects(GraphicsContext* graphicsContext, int tx, in
         // FIXME: This check really isn't accurate. 
         bool nextInlineHasLineBox = inlineContinuation()->firstLineBox();
         // FIXME: This is wrong. The principal renderer may not be the continuation preceding this block.
-        bool prevInlineHasLineBox = toRenderInline(inlineContinuation()->element()->renderer())->firstLineBox(); 
+        bool prevInlineHasLineBox = toRenderInline(inlineContinuation()->node()->renderer())->firstLineBox(); 
         int topMargin = prevInlineHasLineBox ? collapsedMarginTop() : 0;
         int bottomMargin = nextInlineHasLineBox ? collapsedMarginBottom() : 0;
         graphicsContext->addFocusRingRect(IntRect(tx, ty - topMargin, 

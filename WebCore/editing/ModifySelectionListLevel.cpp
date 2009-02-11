@@ -79,8 +79,8 @@ static bool getStartEndListChildren(const VisibleSelection& selection, Node*& st
     // if the selection ends on a list item with a sublist, include the entire sublist
     if (endListChild->renderer()->isListItem()) {
         RenderObject* r = endListChild->renderer()->nextSibling();
-        if (r && isListElement(r->element()))
-            endListChild = r->element();
+        if (r && isListElement(r->node()))
+            endListChild = r->node();
     }
 
     start = startListChild;
@@ -175,7 +175,7 @@ void IncreaseSelectionListLevelCommand::doApply()
     if (!canIncreaseListLevel(endingSelection(), startListChild, endListChild))
         return;
 
-    Node* previousItem = startListChild->renderer()->previousSibling()->element();
+    Node* previousItem = startListChild->renderer()->previousSibling()->node();
     if (isListElement(previousItem)) {
         // move nodes up into preceding list
         appendSiblingNodeRange(startListChild, endListChild, static_cast<Element*>(previousItem));
@@ -258,8 +258,8 @@ void DecreaseSelectionListLevelCommand::doApply()
     if (!canDecreaseListLevel(endingSelection(), startListChild, endListChild))
         return;
 
-    Node* previousItem = startListChild->renderer()->previousSibling() ? startListChild->renderer()->previousSibling()->element() : 0;
-    Node* nextItem = endListChild->renderer()->nextSibling() ? endListChild->renderer()->nextSibling()->element() : 0;
+    Node* previousItem = startListChild->renderer()->previousSibling() ? startListChild->renderer()->previousSibling()->node() : 0;
+    Node* nextItem = endListChild->renderer()->nextSibling() ? endListChild->renderer()->nextSibling()->node() : 0;
     Element* listNode = startListChild->parentElement();
 
     if (!previousItem) {

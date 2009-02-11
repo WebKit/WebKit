@@ -68,9 +68,9 @@ RenderMarquee::RenderMarquee(RenderLayer* l)
 int RenderMarquee::marqueeSpeed() const
 {
     int result = m_layer->renderer()->style()->marqueeSpeed();
-    Node* elt = m_layer->renderer()->element();
-    if (elt && elt->hasTagName(marqueeTag)) {
-        HTMLMarqueeElement* marqueeElt = static_cast<HTMLMarqueeElement*>(elt);
+    Node* n = m_layer->renderer()->node();
+    if (n && n->hasTagName(marqueeTag)) {
+        HTMLMarqueeElement* marqueeElt = static_cast<HTMLMarqueeElement*>(n);
         result = max(result, marqueeElt->minimumDelay());
     }
     return result;

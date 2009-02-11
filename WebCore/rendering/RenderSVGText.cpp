@@ -70,7 +70,7 @@ IntRect RenderSVGText::clippedOverflowRectForRepaint(RenderBoxModelObject* /*rep
 bool RenderSVGText::calculateLocalTransform()
 {
     TransformationMatrix oldTransform = m_localTransform;
-    m_localTransform = static_cast<SVGTextElement*>(element())->animatedLocalTransform();
+    m_localTransform = static_cast<SVGTextElement*>(node())->animatedLocalTransform();
     return (oldTransform != m_localTransform);
 }
 
@@ -85,7 +85,7 @@ void RenderSVGText::layout()
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout(), &m_absoluteBounds);
 
     // Best guess for a relative starting point
-    SVGTextElement* text = static_cast<SVGTextElement*>(element());
+    SVGTextElement* text = static_cast<SVGTextElement*>(node());
     int xOffset = (int)(text->x()->getFirst().value(text));
     int yOffset = (int)(text->y()->getFirst().value(text));
     setLocation(xOffset, yOffset);

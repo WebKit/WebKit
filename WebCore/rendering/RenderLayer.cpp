@@ -562,7 +562,7 @@ bool RenderLayer::requiresSlowRepaints() const
 bool RenderLayer::isTransparent() const
 {
 #if ENABLE(SVG)
-    if (renderer()->node()->namespaceURI() == SVGNames::svgNamespaceURI)
+    if (renderer()->node() && renderer()->node()->namespaceURI() == SVGNames::svgNamespaceURI)
         return false;
 #endif
     return renderer()->isTransparent() || renderer()->hasMask();
@@ -968,7 +968,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     // Schedule the scroll DOM event.
     if (view) {
         if (FrameView* frameView = view->frameView())
-            frameView->scheduleEvent(Event::create(eventNames().scrollEvent, false, false), renderer()->element());
+            frameView->scheduleEvent(Event::create(eventNames().scrollEvent, false, false), renderer()->node());
     }
 }
 
@@ -1142,7 +1142,8 @@ void RenderLayer::autoscroll()
 
 void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset)
 {
-    if (!inResizeMode() || !renderer()->hasOverflowClip())
+    // FIXME: This should be possible on generated content but is not right now.
+    if (!inResizeMode() || !renderer()->hasOverflowClip() || !renderer()->node())
         return;
 
     // Set the width and height of the shadow ancestor node if there is one.
@@ -1304,9 +1305,10 @@ void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& r
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar> widget;
-    bool hasCustomScrollbarStyle = renderer()->node()->shadowAncestorNode()->renderer()->style()->hasPseudoStyle(SCROLLBAR);
+    RenderObject* actualRenderer = renderer()->node() ? renderer()->node()->shadowAncestorNode()->renderer() : renderer();
+    bool hasCustomScrollbarStyle = actualRenderer->isBox() && actualRenderer->style()->hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(this, orientation, renderer()->node()->shadowAncestorNode()->renderBox());
+        widget = RenderScrollbar::createCustomScrollbar(this, orientation, toRenderBox(actualRenderer));
     else
         widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
     renderer()->document()->view()->addChild(widget.get());        
@@ -1484,7 +1486,7 @@ void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOve
         
         if (FrameView* frameView = renderer()->document()->view()) {
             frameView->scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
-                renderer()->element());
+                renderer()->node());
         }
     }
 }
@@ -1590,7 +1592,7 @@ RenderLayer::updateScrollInfoAfterLayout()
         m_vBar->setProportion(clientHeight, m_scrollHeight);
     }
  
-    if (renderer()->element() && renderer()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
+    if (renderer()->node() && renderer()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(horizontalOverflow, verticalOverflow);
 }
 
@@ -2024,7 +2026,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
 Node* RenderLayer::enclosingElement() const
 {
     for (RenderObject* r = renderer(); r; r = r->parent()) {
-        if (Node* e = r->element())
+        if (Node* e = r->node())
             return e;
     }
     ASSERT_NOT_REACHED();
@@ -2496,8 +2498,8 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
     if (activeNode && !request.active()) {
         // We are clearing the :active chain because the mouse has been released.
         for (RenderObject* curr = activeNode->renderer(); curr; curr = curr->parent()) {
-            if (curr->element() && !curr->isText())
-                curr->element()->setInActiveChain(false);
+            if (curr->node() && !curr->isText())
+                curr->node()->setInActiveChain(false);
         }
         doc->setActiveNode(0);
     } else {
@@ -2506,8 +2508,8 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
             // We are setting the :active chain and freezing it. If future moves happen, they
             // will need to reference this chain.
             for (RenderObject* curr = newActiveNode->renderer(); curr; curr = curr->parent()) {
-                if (curr->element() && !curr->isText()) {
-                    curr->element()->setInActiveChain(true);
+                if (curr->node() && !curr->isText()) {
+                    curr->node()->setInActiveChain(true);
                 }
             }
             doc->setActiveNode(newActiveNode);
@@ -2537,18 +2539,18 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
     if (oldHoverObj != newHoverObj) {
         // The old hover path only needs to be cleared up to (and not including) the common ancestor;
         for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = curr->hoverAncestor()) {
-            if (curr->element() && !curr->isText() && (!mustBeInActiveChain || curr->element()->inActiveChain())) {
-                curr->element()->setActive(false);
-                curr->element()->setHovered(false);
+            if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain())) {
+                curr->node()->setActive(false);
+                curr->node()->setHovered(false);
             }
         }
     }
 
     // Now set the hover state for our new object up to the root.
     for (RenderObject* curr = newHoverObj; curr; curr = curr->hoverAncestor()) {
-        if (curr->element() && !curr->isText() && (!mustBeInActiveChain || curr->element()->inActiveChain())) {
-            curr->element()->setActive(request.active());
-            curr->element()->setHovered(true);
+        if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain())) {
+            curr->node()->setActive(request.active());
+            curr->node()->setHovered(true);
         }
     }
 }
@@ -2770,7 +2772,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle*)
 
 void RenderLayer::updateScrollCornerStyle()
 {
-    RenderObject* actualRenderer = renderer()->node()->isElementNode() ? renderer()->node()->shadowAncestorNode()->renderer() : renderer();
+    RenderObject* actualRenderer = renderer()->node() ? renderer()->node()->shadowAncestorNode()->renderer() : renderer();
     RefPtr<RenderStyle> corner = renderer()->hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(SCROLLBAR_CORNER, actualRenderer->style()) : 0;
     if (corner) {
         if (!m_scrollCorner) {
@@ -2786,7 +2788,7 @@ void RenderLayer::updateScrollCornerStyle()
 
 void RenderLayer::updateResizerStyle()
 {
-    RenderObject* actualRenderer = renderer()->node()->isElementNode() ? renderer()->node()->shadowAncestorNode()->renderer() : renderer();
+    RenderObject* actualRenderer = renderer()->node() ? renderer()->node()->shadowAncestorNode()->renderer() : renderer();
     RefPtr<RenderStyle> resizer = renderer()->hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(RESIZER, actualRenderer->style()) : 0;
     if (resizer) {
         if (!m_resizer) {

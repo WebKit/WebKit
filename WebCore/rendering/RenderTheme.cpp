@@ -577,7 +577,7 @@ ControlStates RenderTheme::controlStatesForRenderer(const RenderObject* o) const
 
 bool RenderTheme::isActive(const RenderObject* o) const
 {
-    Node* node = o->element();
+    Node* node = o->node();
     if (!node)
         return false;
 
@@ -594,10 +594,10 @@ bool RenderTheme::isActive(const RenderObject* o) const
 
 bool RenderTheme::isChecked(const RenderObject* o) const
 {
-    if (!o->element() || !o->element()->isElementNode())
+    if (!o->node() || !o->node()->isElementNode())
         return false;
 
-    InputElement* inputElement = toInputElement(static_cast<Element*>(o->element()));
+    InputElement* inputElement = toInputElement(static_cast<Element*>(o->node()));
     if (!inputElement)
         return false;
 
@@ -606,10 +606,10 @@ bool RenderTheme::isChecked(const RenderObject* o) const
 
 bool RenderTheme::isIndeterminate(const RenderObject* o) const
 {
-    if (!o->element() || !o->element()->isElementNode())
+    if (!o->node() || !o->node()->isElementNode())
         return false;
 
-    InputElement* inputElement = toInputElement(static_cast<Element*>(o->element()));
+    InputElement* inputElement = toInputElement(static_cast<Element*>(o->node()));
     if (!inputElement)
         return false;
 
@@ -618,10 +618,10 @@ bool RenderTheme::isIndeterminate(const RenderObject* o) const
 
 bool RenderTheme::isEnabled(const RenderObject* o) const
 {
-    if (!o->element() || !o->element()->isElementNode())
+    if (!o->node() || !o->node()->isElementNode())
         return true;
 
-    FormControlElement* formControlElement = toFormControlElement(static_cast<Element*>(o->element()));
+    FormControlElement* formControlElement = toFormControlElement(static_cast<Element*>(o->node()));
     if (!formControlElement)
         return true;
 
@@ -630,7 +630,7 @@ bool RenderTheme::isEnabled(const RenderObject* o) const
 
 bool RenderTheme::isFocused(const RenderObject* o) const
 {
-    Node* node = o->element();
+    Node* node = o->node();
     if (!node)
         return false;
     Document* document = node->document();
@@ -640,17 +640,17 @@ bool RenderTheme::isFocused(const RenderObject* o) const
 
 bool RenderTheme::isPressed(const RenderObject* o) const
 {
-    if (!o->element())
+    if (!o->node())
         return false;
-    return o->element()->active();
+    return o->node()->active();
 }
 
 bool RenderTheme::isReadOnlyControl(const RenderObject* o) const
 {
-    if (!o->element() || !o->element()->isElementNode())
+    if (!o->node() || !o->node()->isElementNode())
         return false;
 
-    FormControlElement* formControlElement = toFormControlElement(static_cast<Element*>(o->element()));
+    FormControlElement* formControlElement = toFormControlElement(static_cast<Element*>(o->node()));
     if (!formControlElement)
         return false;
 
@@ -659,9 +659,9 @@ bool RenderTheme::isReadOnlyControl(const RenderObject* o) const
 
 bool RenderTheme::isHovered(const RenderObject* o) const
 {
-    if (!o->element())
+    if (!o->node())
         return false;
-    return o->element()->hovered();
+    return o->node()->hovered();
 }
 
 bool RenderTheme::isDefault(const RenderObject* o) const

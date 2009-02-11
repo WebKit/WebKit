@@ -140,8 +140,8 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
         
         // The background of the root element or the body element could propagate up to
         // the canvas.  Just dirty the entire canvas when our style changes substantially.
-        if (diff >= StyleDifferenceRepaint && element() &&
-                (element()->hasTagName(htmlTag) || element()->hasTagName(bodyTag)))
+        if (diff >= StyleDifferenceRepaint && node() &&
+                (node()->hasTagName(htmlTag) || node()->hasTagName(bodyTag)))
             view()->repaint();
         else if (parent() && !isText()) {
             // Do a repaint with the old style first, e.g., for example if we go from
@@ -237,7 +237,7 @@ void RenderBox::updateBoxModelInfoFromStyle()
             // (2) We are the primary <body> (can be checked by looking at document.body).
             // (3) The root element has visible overflow.
             if (document()->documentElement()->hasTagName(htmlTag) &&
-                document()->body() == element() &&
+                document()->body() == node() &&
                 document()->documentElement()->renderer()->style()->overflowX() == OVISIBLE)
                 boxHasOverflowClip = false;
         }
@@ -593,7 +593,7 @@ void RenderBox::paintRootBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
     const FillLayer* bgLayer = style()->backgroundLayers();
     Color bgColor = style()->backgroundColor();
-    if (!style()->hasBackground() && element() && element()->hasTagName(HTMLNames::htmlTag)) {
+    if (!style()->hasBackground() && node() && node()->hasTagName(HTMLNames::htmlTag)) {
         // Locate the <body> element using the DOM.  This is easier than trying
         // to crawl around a render tree with potential :before/:after content and
         // anonymous blocks created by inline <body> tags etc.  We can locate the <body>
@@ -2661,17 +2661,17 @@ VisiblePosition RenderBox::positionForCoordinates(int xPos, int yPos)
 {
     // no children...return this render object's element, if there is one, and offset 0
     if (!firstChild())
-        return VisiblePosition(element(), 0, DOWNSTREAM);
+        return VisiblePosition(node(), 0, DOWNSTREAM);
         
-    if (isTable() && element()) {
+    if (isTable() && node()) {
         int right = contentWidth() + borderRight() + paddingRight() + borderLeft() + paddingLeft();
         int bottom = contentHeight() + borderTop() + paddingTop() + borderBottom() + paddingBottom();
         
         if (xPos < 0 || xPos > right || yPos < 0 || yPos > bottom) {
             if (xPos <= right / 2)
-                return VisiblePosition(Position(element(), 0));
+                return VisiblePosition(Position(node(), 0));
             else
-                return VisiblePosition(Position(element(), maxDeepOffset(element())));
+                return VisiblePosition(Position(node(), maxDeepOffset(node())));
         }
     }
 
@@ -2742,7 +2742,7 @@ VisiblePosition RenderBox::positionForCoordinates(int xPos, int yPos)
     if (closestRenderer)
         return closestRenderer->positionForCoordinates(newX - closestRenderer->x(), newY - closestRenderer->y());
     
-    return VisiblePosition(element(), 0, DOWNSTREAM);
+    return VisiblePosition(node(), 0, DOWNSTREAM);
 }
 
 #if ENABLE(SVG)

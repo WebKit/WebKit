@@ -38,7 +38,7 @@ RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGStyledTransf
 bool RenderSVGTransformableContainer::calculateLocalTransform()
 {
     TransformationMatrix oldTransform = m_localTransform;
-    m_localTransform = static_cast<SVGStyledTransformableElement*>(element())->animatedLocalTransform();
+    m_localTransform = static_cast<SVGStyledTransformableElement*>(node())->animatedLocalTransform();
     return (m_localTransform != oldTransform);
 }
 

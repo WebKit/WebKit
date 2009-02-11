@@ -85,10 +85,10 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
     if (!beforeChild && isAfterContent(lastChild()))
         beforeChild = lastChild();
 
-    bool isTableSection = element() && (element()->hasTagName(theadTag) || element()->hasTagName(tbodyTag) || element()->hasTagName(tfootTag));
+    bool isTableSection = node() && (node()->hasTagName(theadTag) || node()->hasTagName(tbodyTag) || node()->hasTagName(tfootTag));
 
     if (!child->isTableRow()) {
-        if (isTableSection && child->element() && child->element()->hasTagName(formTag) && document()->isHTMLDocument()) {
+        if (isTableSection && child->node() && child->node()->hasTagName(formTag) && document()->isHTMLDocument()) {
             RenderBox::addChild(child, beforeChild);
             return;
         }
@@ -143,7 +143,7 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
     while (beforeChild && beforeChild->parent() != this)
         beforeChild = beforeChild->parent();
 
-    ASSERT(!beforeChild || beforeChild->isTableRow() || isTableSection && beforeChild->element() && beforeChild->element()->hasTagName(formTag) && document()->isHTMLDocument());
+    ASSERT(!beforeChild || beforeChild->isTableRow() || isTableSection && beforeChild->node() && beforeChild->node()->hasTagName(formTag) && document()->isHTMLDocument());
     RenderBox::addChild(child, beforeChild);
 }
 

@@ -156,7 +156,7 @@ NSString* Frame::searchForNSLabelsAboveCell(RegularExpression* regExp, HTMLTable
 
         if (cellAboveRenderer) {
             HTMLTableCellElement* aboveCell =
-                static_cast<HTMLTableCellElement*>(cellAboveRenderer->element());
+                static_cast<HTMLTableCellElement*>(cellAboveRenderer->node());
 
             if (aboveCell) {
                 // search within the above cell we found for a match

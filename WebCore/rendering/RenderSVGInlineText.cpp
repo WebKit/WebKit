@@ -152,13 +152,13 @@ VisiblePosition RenderSVGInlineText::positionForCoordinates(int x, int y)
     SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(firstTextBox());
 
     if (!textBox || textLength() == 0)
-        return VisiblePosition(element(), 0, DOWNSTREAM);
+        return VisiblePosition(node(), 0, DOWNSTREAM);
 
     SVGRootInlineBox* rootBox = textBox->svgRootInlineBox();
     RenderBlock* object = rootBox ? rootBox->block() : 0;
 
     if (!object)
-        return VisiblePosition(element(), 0, DOWNSTREAM);
+        return VisiblePosition(node(), 0, DOWNSTREAM);
 
     int offset = 0;
 
@@ -175,7 +175,7 @@ VisiblePosition RenderSVGInlineText::positionForCoordinates(int x, int y)
         }
     }
 
-    return VisiblePosition(element(), offset, DOWNSTREAM);
+    return VisiblePosition(node(), offset, DOWNSTREAM);
 }
 
 void RenderSVGInlineText::destroy()

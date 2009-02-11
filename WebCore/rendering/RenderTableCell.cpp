@@ -63,9 +63,9 @@ void RenderTableCell::destroy()
 
 void RenderTableCell::updateFromElement()
 {
-    Node* node = element();
-    if (node && (node->hasTagName(tdTag) || node->hasTagName(thTag))) {
-        HTMLTableCellElement* tc = static_cast<HTMLTableCellElement*>(node);
+    Node* n = node();
+    if (n && (n->hasTagName(tdTag) || n->hasTagName(thTag))) {
+        HTMLTableCellElement* tc = static_cast<HTMLTableCellElement*>(n);
         int oldRSpan = m_rowSpan;
         int oldCSpan = m_columnSpan;
 
@@ -105,10 +105,10 @@ void RenderTableCell::calcPrefWidths()
     table()->recalcSectionsIfNeeded();
 
     RenderBlock::calcPrefWidths();
-    if (element() && style()->autoWrap()) {
+    if (node() && style()->autoWrap()) {
         // See if nowrap was set.
         Length w = styleOrColWidth();
-        String nowrap = static_cast<Element*>(element())->getAttribute(nowrapAttr);
+        String nowrap = static_cast<Element*>(node())->getAttribute(nowrapAttr);
         if (!nowrap.isNull() && w.isFixed())
             // Nowrap is set, but we didn't actually use it because of the
             // fixed width set on the cell.  Even so, it is a WinIE/Moz trait
