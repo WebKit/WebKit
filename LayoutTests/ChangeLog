@@ -1,5 +1,12 @@
 2009-02-12  Adam Roben  <aroben@apple.com>
 
+        Add some tests that fail due to using the wrong font for Hebrew to the
+        Windows Skipped list
+
+        * platform/win/Skipped:
+
+2009-02-12  Adam Roben  <aroben@apple.com>
+
         Remove some passing tests from the Windows Skipped list
 
         * platform/win/Skipped: Removed two tests in http/tests/incremental

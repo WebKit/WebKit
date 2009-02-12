@@ -73,6 +73,10 @@ css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html
 fast/lists/w3-list-styles.html
 
+# Lucida Grande is not used for Hebrew text <https://bugs.webkit.org/show_bug.cgi?id=23925>
+editing/selection/extend-selection-bidi.html
+fast/css/text-overflow-ellipsis.html
+
 # <rdar://problem/5720592> Width of certain complex text is off by one
 fast/text/atsui-pointtooffset-calls-cg.html
 fast/text/cg-vs-atsui.html
