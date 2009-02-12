@@ -758,6 +758,55 @@ JSValuePtr stringProtoFuncFontsize(ExecState* exec, JSObject*, JSValuePtr thisVa
 {
     UString s = thisValue.toThisString(exec);
     JSValuePtr a0 = args.at(exec, 0);
+
+    uint32_t smallInteger;
+    if (a0.getUInt32(smallInteger)) {
+        switch (smallInteger) {
+            case 1: {
+                UString result = "<font size=\"1\">";
+                result.append(s);
+                result.append("</font>");
+                return jsString(exec, result);
+            }
+            case 2: {
+                UString result = "<font size=\"2\">";
+                result.append(s);
+                result.append("</font>");
+                return jsString(exec, result);
+            }
+            case 3: {
+                UString result = "<font size=\"3\">";
+                result.append(s);
+                result.append("</font>");
+                return jsString(exec, result);
+            }
+            case 4: {
+                UString result = "<font size=\"4\">";
+                result.append(s);
+                result.append("</font>");
+                return jsString(exec, result);
+            }
+            case 5: {
+                UString result = "<font size=\"5\">";
+                result.append(s);
+                result.append("</font>");
+                return jsString(exec, result);
+            }
+            case 6: {
+                UString result = "<font size=\"6\">";
+                result.append(s);
+                result.append("</font>");
+                return jsString(exec, result);
+            }
+            case 7: {
+                UString result = "<font size=\"7\">";
+                result.append(s);
+                result.append("</font>");
+                return jsString(exec, result);
+            }
+        }
+    }
+
     return jsString(exec, "<font size=\"" + a0.toString(exec) + "\">" + s + "</font>");
 }
 

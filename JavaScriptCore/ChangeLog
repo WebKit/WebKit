@@ -1,3 +1,12 @@
+2009-02-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Speed up String.prototype.fontsize.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncFontsize): Specialize for defined/commonly used values.
+
 2009-02-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
