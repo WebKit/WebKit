@@ -1,3 +1,41 @@
+2009-02-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23705
+        Fix the UI freeze caused by Worker generating a flood of messages.
+        Measure time we spend in executing posted work items. If too much time is spent
+        without returning to the run loop, exit and reschedule.
+
+        * wtf/MainThread.h:
+        Added initializeMainThreadPlatform() to initialize low-level mechanism for posting
+        work items from thread to thread. This removes #ifdefs for WIN and CHROMIUM from platform-independent code.
+
+        * wtf/MainThread.cpp:
+        (WTF::initializeMainThread):
+        (WTF::dispatchFunctionsFromMainThread):
+        Instead of dispatching all work items in the queue, dispatch them one by one
+        and measure elapsed time. After a threshold, reschedule and quit.
+
+        (WTF::callOnMainThread):
+        (WTF::callOnMainThreadAndWait):
+        Only schedule dispatch if the queue was empty - to avoid many posted messages in the run loop queue.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        Use static instance of the mainThreadCaller instead of allocating and releasing it each time.
+        (WTF::initializeMainThreadPlatform):
+        * wtf/gtk/MainThreadChromium.cpp:
+        (WTF::initializeMainThreadPlatform):
+        * wtf/gtk/MainThreadGtk.cpp:
+        (WTF::initializeMainThreadPlatform):
+        * wtf/qt/MainThreadQt.cpp:
+        (WTF::initializeMainThreadPlatform):
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform):
+        * wtf/wx/MainThreadWx.cpp:
+        (WTF::initializeMainThreadPlatform):
+
 2009-02-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

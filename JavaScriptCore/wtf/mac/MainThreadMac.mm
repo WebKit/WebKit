@@ -30,6 +30,7 @@
 #import "MainThread.h"
 
 #import <Foundation/NSThread.h>
+#import <wtf/Assertions.h>
 
 @interface WTFMainThreadCaller : NSObject {
 }
@@ -47,11 +48,18 @@
 
 namespace WTF {
 
+static WTFMainThreadCaller* staticMainThreadCaller = nil;
+
+void initializeMainThreadPlatform()
+{
+    ASSERT(!staticMainThreadCaller);
+    staticMainThreadCaller = [[WTFMainThreadCaller alloc] init];
+}
+
 void scheduleDispatchFunctionsOnMainThread()
 {
-    WTFMainThreadCaller *caller = [[WTFMainThreadCaller alloc] init];
-    [caller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
-    [caller release];
+    ASSERT(staticMainThreadCaller);
+    [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
 }
 
 } // namespace WTF

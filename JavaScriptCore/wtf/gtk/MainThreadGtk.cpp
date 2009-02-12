@@ -34,6 +34,10 @@
 
 namespace WTF {
 
+void initializeMainThreadPlatform()
+{
+}
+
 static gboolean timeoutFired(gpointer)
 {
     dispatchFunctionsFromMainThread();
@@ -45,5 +49,4 @@ void scheduleDispatchFunctionsOnMainThread()
     g_timeout_add(0, timeoutFired, 0);
 }
 
-
-}
+} // namespace WTF

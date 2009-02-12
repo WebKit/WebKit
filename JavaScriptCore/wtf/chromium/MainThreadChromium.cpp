@@ -35,7 +35,7 @@
 
 namespace WTF {
 
-void initializeMainThread()
+void initializeMainThreadPlatform()
 {
     ChromiumThreading::initializeMainThread();
 }
