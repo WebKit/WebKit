@@ -1,3 +1,17 @@
+2009-02-12  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17176
+        [GTK] API: hovering-over-link and webkit_web_view_open /_load_foo
+
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h: Introduce webkit_web_frame_load_uri,
+        webkit_web_frame_load_string, webkit_web_view_load_uri and
+        webkit_web_view_load_request and unify implementations.
+
 2009-02-11  Dimitri Dupuis-latour  <dupuislatour@apple.com>
 
         Stub out InspectorClient::hiddenPanels.

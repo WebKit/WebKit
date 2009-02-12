@@ -43,6 +43,7 @@
 #include "RenderTreeAsText.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
+#include "SubstituteData.h"
 
 #include <JavaScriptCore/APICast.h>
 
@@ -370,6 +371,60 @@ WebKitWebFrame* webkit_web_frame_get_parent(WebKitWebFrame* frame)
         return NULL;
 
     return kit(coreFrame->tree()->parent());
+}
+
+/**
+ * webkit_web_frame_load_uri:
+ * @frame: a #WebKitWebFrame
+ * @uri: an URI string
+ *
+ * Requests loading of the specified URI string.
+ *
+ * Since: 1.1.1
+ */
+void webkit_web_frame_load_uri(WebKitWebFrame* frame, const gchar* uri)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
+    g_return_if_fail(uri);
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return;
+
+    coreFrame->loader()->load(ResourceRequest(KURL(String::fromUTF8(uri))), false);
+}
+
+/**
+ * webkit_web_frame_load_string:
+ * @frame: a #WebKitWebFrame
+ * @content: an URI string
+ * @mime_type: the MIME type, or %NULL
+ * @encoding: the encoding, or %NULL
+ * @base_uri: the base URI for relative locations
+ *
+ * Requests loading of the given @content with the specified @mime_type,
+ * @encoding and @base_uri.
+ *
+ * If @mime_type is %NULL, "text/html" is assumed.
+ *
+ * If @encoding is %NULL, "UTF-8" is assumed.
+ *
+ * Since: 1.1.1
+ */
+void webkit_web_frame_load_string(WebKitWebFrame* frame, const gchar* content, const gchar* contentMimeType, const gchar* contentEncoding, const gchar* baseUri)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
+    g_return_if_fail(content);
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return;
+
+    KURL url(baseUri ? String::fromUTF8(baseUri) : "");
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(content, strlen(content));
+    SubstituteData substituteData(sharedBuffer.release(), contentMimeType ? String(contentMimeType) : "text/html", contentEncoding ? String(contentEncoding) : "UTF-8", KURL("about:blank"), url);
+
+    coreFrame->loader()->load(ResourceRequest(url), substituteData, false);
 }
 
 /**

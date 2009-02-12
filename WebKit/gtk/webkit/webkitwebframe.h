@@ -81,6 +81,17 @@ WEBKIT_API WebKitWebFrame*
 webkit_web_frame_get_parent         (WebKitWebFrame       *frame);
 
 WEBKIT_API void
+webkit_web_frame_load_uri           (WebKitWebFrame       *frame,
+                                     const gchar          *uri);
+
+WEBKIT_API void
+webkit_web_frame_load_string        (WebKitWebFrame       *frame,
+                                     const gchar          *content,
+                                     const gchar          *mime_type,
+                                     const gchar          *encoding,
+                                     const gchar          *base_uri);
+
+WEBKIT_API void
 webkit_web_frame_load_request       (WebKitWebFrame       *frame,
                                      WebKitNetworkRequest *request);
 

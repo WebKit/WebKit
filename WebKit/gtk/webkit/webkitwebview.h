@@ -171,16 +171,24 @@ WEBKIT_API void
 webkit_web_view_reload_bypass_cache             (WebKitWebView        *web_view);
 
 WEBKIT_API void
+webkit_web_view_load_uri                        (WebKitWebView        *web_view,
+                                                 const gchar          *uri);
+
+WEBKIT_API void
 webkit_web_view_load_string                     (WebKitWebView        *web_view,
                                                  const gchar          *content,
-                                                 const gchar          *content_mime_type,
-                                                 const gchar          *content_encoding,
+                                                 const gchar          *mime_type,
+                                                 const gchar          *encoding,
                                                  const gchar          *base_uri);
 
 WEBKIT_API void
 webkit_web_view_load_html_string                (WebKitWebView        *web_view,
                                                  const gchar          *content,
                                                  const gchar          *base_uri);
+
+WEBKIT_API void
+webkit_web_view_load_request                    (WebKitWebView        *web_view,
+                                                 WebKitNetworkRequest *request);
 
 WEBKIT_API gboolean
 webkit_web_view_search_text                     (WebKitWebView        *web_view,

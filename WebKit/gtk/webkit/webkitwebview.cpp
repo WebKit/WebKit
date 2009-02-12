@@ -62,7 +62,6 @@
 #include "PlatformWheelEvent.h"
 #include "ScriptValue.h"
 #include "Scrollbar.h"
-#include "SubstituteData.h"
 #include <wtf/GOwnPtr.h>
 
 #include <gdk/gdkkeysyms.h>
@@ -2048,13 +2047,20 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
     return TRUE;
 }
 
+/**
+ * webkit_web_view_open:
+ * @web_view: a #WebKitWebView
+ *
+ * Requests loading of the specified URI string.
+ *
+ * Deprecated: 1.1.1: Use webkit_web_view_load_uri() instead.
+  */
 void webkit_web_view_open(WebKitWebView* webView, const gchar* uri)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(uri);
 
-    Frame* frame = core(webView)->mainFrame();
-    frame->loader()->load(ResourceRequest(KURL(KURL(), String::fromUTF8(uri))), false);
+    webkit_web_view_load_uri(webView, uri);
 }
 
 void webkit_web_view_reload(WebKitWebView* webView)
@@ -2079,26 +2085,85 @@ void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
     core(webView)->mainFrame()->loader()->reload(true);
 }
 
-void webkit_web_view_load_string(WebKitWebView* webView, const gchar* content, const gchar* contentMimeType, const gchar* contentEncoding, const gchar* baseUri)
+/**
+ * webkit_web_view_load_uri:
+ * @web_view: a #WebKitWebView
+ * @uri: an URI string
+ *
+ * Requests loading of the specified URI string.
+ *
+ * Since: 1.1.1
+ */
+void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(uri);
+
+    WebKitWebFrame* frame = webView->priv->mainFrame;
+    webkit_web_frame_load_uri(frame, uri);
+}
+
+/**
++  * webkit_web_view_load_string:
++  * @web_view: a #WebKitWebView
++  * @content: an URI string
++  * @mime_type: the MIME type, or %NULL
++  * @encoding: the encoding, or %NULL
++  * @base_uri: the base URI for relative locations
++  *
++  * Requests loading of the given @content with the specified @mime_type,
++  * @encoding and @base_uri.
++  *
++  * If @mime_type is %NULL, "text/html" is assumed.
++  *
++  * If @encoding is %NULL, "UTF-8" is assumed.
++  */
+void webkit_web_view_load_string(WebKitWebView* webView, const gchar* content, const gchar* mimeType, const gchar* encoding, const gchar* baseUri)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(content);
 
-    Frame* frame = core(webView)->mainFrame();
-
-    KURL url(KURL(), baseUri ? String::fromUTF8(baseUri) : "");
-    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(content, strlen(content));
-    SubstituteData substituteData(sharedBuffer.release(), contentMimeType ? String(contentMimeType) : "text/html", contentEncoding ? String(contentEncoding) : "UTF-8", blankURL(), url);
-
-    frame->loader()->load(ResourceRequest(url), substituteData, false);
+    WebKitWebFrame* frame = webView->priv->mainFrame;
+    webkit_web_frame_load_string(frame, content, mimeType, encoding, baseUri);
 }
-
+/**
+ * webkit_web_view_load_html_string:
+ * @web_view: a #WebKitWebView
+ * @content: an URI string
+ * @base_uri: the base URI for relative locations
+ *
+ * Requests loading of the given @content with the specified @base_uri.
+ *
+ * Deprecated: 1.1.1: Use webkit_web_view_load_string() instead.
+ */
 void webkit_web_view_load_html_string(WebKitWebView* webView, const gchar* content, const gchar* baseUri)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(content);
 
     webkit_web_view_load_string(webView, content, NULL, NULL, baseUri);
+}
+
+/**
+ * webkit_web_view_load_request:
+ * @web_view: a #WebKitWebView
+ * @request: a #WebKitNetworkRequest
+ *
+ * Requests loading of the specified asynchronous client request.
+ *
+ * Creates a provisional data source that will transition to a committed data
+ * source once any data has been received. Use webkit_web_view_stop_loading() to
+ * stop the load.
+ *
+ * Since: 1.1.1
+ */
+void webkit_web_view_load_request(WebKitWebView* webView, WebKitNetworkRequest* request)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(WEBKIT_IS_NETWORK_REQUEST(request));
+
+    WebKitWebFrame* frame = webView->priv->mainFrame;
+    webkit_web_frame_load_request(frame, request);
 }
 
 void webkit_web_view_stop_loading(WebKitWebView* webView)
