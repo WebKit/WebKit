@@ -438,12 +438,6 @@ public:
 
     virtual void paint(PaintInfo&, int tx, int ty);
 
-    /*
-     * Calculates the actual width of the object (only for non inline
-     * objects)
-     */
-    virtual void calcWidth() { }
-
     // Recursive function that computes the size and position of this object and all its descendants.
     virtual void layout();
 

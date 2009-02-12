@@ -1,5 +1,13 @@
 2009-02-12  David Hyatt  <hyatt@apple.com>
 
+        Remove calcWidth from RenderObject.  Nobody ever called it on RenderObjects.
+
+        Reviewed by Sam Weinig
+
+        * rendering/RenderObject.h:
+
+2009-02-12  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Mark Rowe
 
         Fix for regression where form controls would paint yellow highlights.  The containsComposition check needs to
