@@ -1,3 +1,11 @@
+2009-02-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Lars.
+
+        Re-enable the JIT in the Qt build with -fno-stack-protector on Linux.
+
+        * JavaScriptCore.pri:
+
 2009-02-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

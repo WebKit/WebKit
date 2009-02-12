@@ -14,18 +14,18 @@ win32-* {
 }
 
 # Disable the JIT due to numerous observed miscompilations :(
-#CONFIG(release):isEqual(QT_ARCH,i386) {
-#     JIT_DEFINES = ENABLE_JIT ENABLE_WREC ENABLE_JIT_OPTIMIZE_CALL ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS ENABLE_JIT_OPTIMIZE_ARITHMETIC
-#     # gcc <= 4.1 is known to miscompile, so require >= 4.2, written as major > 3 and minor > 1
-#     linux-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,1) {
-#         DEFINES += $$JIT_DEFINES
-#         SOURCES += wtf/TCSystemAlloc.cpp
-#         DEFINES -= USE_SYSTEM_MALLOC
-#     }
-#     win32-msvc* {
-#         DEFINES += $$JIT_DEFINES
-#     }
-#}
+CONFIG(release):isEqual(QT_ARCH,i386) {
+     JIT_DEFINES = ENABLE_JIT ENABLE_WREC ENABLE_JIT_OPTIMIZE_CALL ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS ENABLE_JIT_OPTIMIZE_ARITHMETIC
+     # Require gcc >= 4.1
+     linux-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {
+         DEFINES += $$JIT_DEFINES WTF_USE_JIT_STUB_ARGUMENT_VA_LIST
+         QMAKE_CXXFLAGS += -fno-stack-protector
+         QMAKE_CFLAGS += -fno-stack-protector
+     }
+     win32-msvc* {
+         DEFINES += $$JIT_DEFINES WTF_USE_JIT_STUB_ARGUMENT_REGISTER
+     }
+}
 
 include(pcre/pcre.pri)
 
