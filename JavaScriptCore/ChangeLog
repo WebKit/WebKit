@@ -1,5 +1,15 @@
 2009-02-12  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Correctness fix.
+
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber): Divide by the maximum representable value, which
+        is different on each platform now, to get values between 0 and 1.
+
+2009-02-12  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix.
 
         * wtf/RandomNumber.cpp:
