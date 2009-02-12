@@ -22,6 +22,7 @@
 #include "config.h"
 #include "RotateTransformOperation.h"
 
+#include <algorithm>
 #include <wtf/MathExtras.h>
 
 using namespace std;
