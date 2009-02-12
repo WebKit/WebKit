@@ -380,13 +380,6 @@ if (!checkWebCore3DTransformsSupport(0)) {
     $ignoredDirectories{'transforms/3d'} = 1;
 }
 
-{
-    my @temp = %ignoredDirectories;
-    my $list = join("\n", @temp);
-    print $list;
-    exit;
-}
-
 if ($ignoreTests) {
     processIgnoreTests($ignoreTests, "ignore-tests");
 }

@@ -1,5 +1,13 @@
 2009-02-12  Simon Fraser  <simon.fraser@apple.com>
 
+        No review.
+        
+        Remove debugging code which was committed by mistake.
+
+        * Scripts/run-webkit-tests:
+
+2009-02-12  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Adam Roben
 
         https://bugs.webkit.org/show_bug.cgi?id=23928
