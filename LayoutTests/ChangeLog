@@ -4,6 +4,16 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=23927
 
+        Skip 16 SVG tests that fail on PPC, until problem is resolved
+
+        * platform/mac/Skipped:
+
+2009-02-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23927
+
         This fixes one testcase on PPC Mac
 
         * svg/custom/getTransformToElement.svg:

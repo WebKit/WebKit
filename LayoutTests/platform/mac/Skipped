@@ -46,3 +46,21 @@ tables/mozilla_expected_failures/bugs/bug178855.xml
 
 # https://bugs.webkit.org/show_bug.cgi?id=21913 Repaint pixel test failure
 fast/repaint/body-background-image.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=23927 LayoutTests for svg fail after TransformationMatrix changes
+svg/W3C-SVG-1.1/animate-elem-36-t.svg
+svg/W3C-SVG-1.1/animate-elem-80-t.svg
+svg/W3C-SVG-1.1/animate-elem-81-t.svg
+svg/W3C-SVG-1.1/animate-elem-82-t.svg
+svg/W3C-SVG-1.1/coords-trans-01-b.svg
+svg/W3C-SVG-1.1/coords-trans-02-t.svg
+svg/W3C-SVG-1.1/painting-marker-01-f.svg
+svg/W3C-SVG-1.1/pservers-grad-09-b.svg
+svg/W3C-SVG-1.1/pservers-grad-12-b.svg
+svg/W3C-SVG-1.1/pservers-grad-17-b.svg
+svg/W3C-SVG-1.1/struct-group-03-t.svg
+svg/carto.net/slider.svg
+svg/carto.net/tabgroup.svg
+svg/hixie/perf/001.xml
+svg/hixie/perf/002.xml
+
