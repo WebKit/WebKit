@@ -1,3 +1,33 @@
+2009-02-12  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 23688: ThreadableLoader needs a sync implementation for Workers.
+        <https://bugs.webkit.org/show_bug.cgi?id=23688>
+
+        Add ResourceError to ThreadableLoaderClient.
+
+        No observable change in behavior, so no test.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::create):
+        (WebCore::DocumentThreadableLoader::willSendRequest):
+        (WebCore::DocumentThreadableLoader::didFail):
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didFail):
+        (WebCore::ThreadableLoaderClient::didFailWillSendRequestCheck):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::didFail):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader):
+        (WebCore::workerContextDidFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        * loader/WorkerThreadableLoader.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFail):
+        (WebCore::XMLHttpRequest::didFailWillSendRequestCheck):
+        * xml/XMLHttpRequest.h:
+
 2009-02-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

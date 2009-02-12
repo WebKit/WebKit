@@ -129,8 +129,8 @@ private:
     virtual void didReceiveResponse(const ResourceResponse&);
     virtual void didReceiveData(const char* data, int lengthReceived);
     virtual void didFinishLoading(unsigned long identifier);
-    virtual void didFail();
-    virtual void didGetCancelled();
+    virtual void didFail(const ResourceError&);
+    virtual void didFailWillSendRequestCheck();
     virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);
 
     // Special versions for the preflight

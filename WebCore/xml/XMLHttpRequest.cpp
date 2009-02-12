@@ -1154,23 +1154,24 @@ void XMLHttpRequest::processSyncLoadResults(unsigned long identifier, const Vect
         ec = XMLHttpRequestException::NETWORK_ERR;
 }
 
-void XMLHttpRequest::didFail()
+void XMLHttpRequest::didFail(const ResourceError& error)
 {
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)
         return;
 
-    internalAbort();
+    if (error.isCancellation()) {
+        abortError();
+        return;
+    }
+
     networkError();
 }
 
-void XMLHttpRequest::didGetCancelled()
+void XMLHttpRequest::didFailWillSendRequestCheck()
 {
-    // If we are already in an error state, for instance we called abort(), bail out early.
-    if (m_error)
-        return;
-
-    abortError();
+    internalAbort();
+    networkError();
 }
 
 void XMLHttpRequest::didFinishLoading(unsigned long identifier)

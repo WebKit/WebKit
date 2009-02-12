@@ -35,6 +35,7 @@
 #include "WorkerThreadableLoader.h"
 
 #include "GenericWorkerTask.h"
+#include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ThreadableLoader.h"
@@ -92,11 +93,13 @@ void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExec
 
     // FIXME: the created loader has no knowledge of the origin of the worker doing the load request.
     // Basically every setting done in SubresourceLoader::create (including the contents of addExtraFieldsToRequest)
-    // needs to be examined for how it should be take into account a different originator.
+    // needs to be examined for how it should take into account a different originator.
     OwnPtr<ResourceRequest> request(ResourceRequest::adopt(requestData));
+    // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
+    // will return a 0 value.  Either this should return 0 or the other code path should do a callback with
+    // a failure.
     thisPtr->m_mainThreadLoader = ThreadableLoader::create(context, thisPtr, *request, callbacksSetting, contentSniff);
-    if (!thisPtr->m_mainThreadLoader)
-        thisPtr->didFail();
+    ASSERT(thisPtr->m_mainThreadLoader);
 }
 
 void WorkerThreadableLoader::MainThreadBridge::mainThreadDestroy(ScriptExecutionContext* context, MainThreadBridge* thisPtr)
@@ -184,26 +187,15 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(int identifier)
     m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidFinishLoading, m_workerClientWrapper, identifier));
 }
 
-static void workerContextDidFail(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper)
+static void workerContextDidFail(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, const ResourceError& error)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
-    workerClientWrapper->didFail();
+    workerClientWrapper->didFail(error);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didFail()
+void WorkerThreadableLoader::MainThreadBridge::didFail(const ResourceError& error)
 {
-    m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidFail, m_workerClientWrapper));
-}
-
-static void workerContextDidGetCancelled(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper)
-{
-    ASSERT_UNUSED(context, context->isWorkerContext());
-    workerClientWrapper->didGetCancelled();
-}
-
-void WorkerThreadableLoader::MainThreadBridge::didGetCancelled()
-{
-    m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidGetCancelled, m_workerClientWrapper));
+    m_messagingProxy.postTaskToWorkerContext(createCallbackTask(&workerContextDidFail, m_workerClientWrapper, error));
 }
 
 static void workerContextDidReceiveAuthenticationCancellation(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
