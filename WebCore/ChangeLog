@@ -1,3 +1,9 @@
+2009-02-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix.
+
+        * webcore-base.bkl:
+
 2009-02-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler

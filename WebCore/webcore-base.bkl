@@ -67,6 +67,7 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/bridge/c</include>
         <include>$(SRCDIR)/bridge/jni</include>
         <include>$(SRCDIR)/css</include>
+        <include>$(SRCDIR)/DerivedSources/WebCore</include>
         <include>$(SRCDIR)/dom</include>
         <include>$(SRCDIR)/editing</include>
         <include>$(SRCDIR)/history</include>
