@@ -1,3 +1,19 @@
+2009-02-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Kevin Decker
+
+        <rdar://problem/6579750> - Crash in WebArchivePrivate in Tiger TextEdit
+
+        NSHTMLReader tries to create a WebArchive from a random chunk of data.  Previously, WebArchive creation would
+        fail and return nil and NSHTMLReader would try something else.  When we changed the behavior to return an invalid
+        WebArchive object, things started getting weird.
+
+        * WebView/WebArchive.mm:
+        (-[WebArchivePrivate setCoreArchive:]): Null check the pointer before calling ->deref()
+        (-[WebArchivePrivate dealloc]): Remove the ASSERT which is now invalid, and null check the pointer before ->deref().
+        (-[WebArchivePrivate finalize]): Ditto
+        (-[WebArchive initWithData:]): If the LegacyWebArchive cannot be created, return nil instead of an invalid object.
+
 2009-02-11  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.

@@ -100,7 +100,8 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 {
     ASSERT(coreArchive);
     ASSERT(newCoreArchive);
-    coreArchive->deref();
+    if (coreArchive)
+        coreArchive->deref();
     coreArchive = newCoreArchive.releaseRef();
 }
 
@@ -109,9 +110,10 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebArchivePrivate class], self))
         return;
 
-    ASSERT(coreArchive);
-    coreArchive->deref();
-    coreArchive = 0;
+    if (coreArchive) {
+        coreArchive->deref();
+        coreArchive = 0;
+    }
     
     [cachedMainResource release];
     [cachedSubresources release];
@@ -122,9 +124,10 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 
 - (void)finalize
 {
-    ASSERT(coreArchive);
-    coreArchive->deref();
-    coreArchive = 0;
+    if (coreArchive) {
+        coreArchive->deref();
+        coreArchive = 0;
+    }
     
     [super finalize];
 }
@@ -227,7 +230,13 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 #endif
 
     _private = [[WebArchivePrivate alloc] init];
-    [_private setCoreArchive:LegacyWebArchive::create(SharedBuffer::wrapNSData(data).get())];
+    RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(SharedBuffer::wrapNSData(data).get());
+    if (!coreArchive) {
+        [self release];
+        return nil;
+    }
+        
+    [_private setCoreArchive:coreArchive.release()];
         
 #if !LOG_DISABLED
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
