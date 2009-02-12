@@ -1,5 +1,18 @@
 2009-02-12  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Simon Fraser
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23912
+
+        I have no idea why this broke.  As far as I can tell the old code never should have worked in
+        the first place.  Add code to handleWheelEvent that will find an enclosing renderer for a node
+        in order to attempt a wheel scroll.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+
+2009-02-12  David Hyatt  <hyatt@apple.com>
+
         Move the functions that paint borders, box shadows and border images into RenderBoxModelObject.  drawBorder and drawBorderArc, because they are used
         for outlines as well as borders, need to stay in RenderObject.  Rename them to drawLineForBoxSide and drawArcForBoxSide in order to reflect their
         more generic use.  Rename the BorderSide struct to BoxSide, since the concept of "side" is just a rectangle concept and not a border concept.
