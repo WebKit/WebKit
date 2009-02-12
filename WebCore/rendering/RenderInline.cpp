@@ -905,7 +905,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
     int r = tx + thisline.right() + offset;
     
     // left edge
-    drawBorder(graphicsContext,
+    drawLineForBoxSide(graphicsContext,
                l - ow,
                t - (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.right() - 1) <= thisline.x() ? ow : 0),
                l,
@@ -916,7 +916,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.right() - 1) <= thisline.x() ? ow : -ow));
     
     // right edge
-    drawBorder(graphicsContext,
+    drawLineForBoxSide(graphicsContext,
                r,
                t - (lastline.isEmpty() || lastline.right() < thisline.right() || (thisline.right() - 1) <= lastline.x() ? ow : 0),
                r + ow,
@@ -927,7 +927,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                (nextline.isEmpty() || nextline.right() <= thisline.right() || (thisline.right() - 1) <= nextline.x() ? ow : -ow));
     // upper edge
     if (thisline.x() < lastline.x())
-        drawBorder(graphicsContext,
+        drawLineForBoxSide(graphicsContext,
                    l - ow,
                    t - ow,
                    min(r+ow, (lastline.isEmpty() ? 1000000 : tx + lastline.x())),
@@ -937,7 +937,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow);
     
     if (lastline.right() < thisline.right())
-        drawBorder(graphicsContext,
+        drawLineForBoxSide(graphicsContext,
                    max(lastline.isEmpty() ? -1000000 : tx + lastline.right(), l - ow),
                    t - ow,
                    r + ow,
@@ -948,7 +948,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
     
     // lower edge
     if (thisline.x() < nextline.x())
-        drawBorder(graphicsContext,
+        drawLineForBoxSide(graphicsContext,
                    l - ow,
                    b,
                    min(r + ow, !nextline.isEmpty() ? tx + nextline.x() + 1 : 1000000),
@@ -958,7 +958,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow);
     
     if (nextline.right() < thisline.right())
-        drawBorder(graphicsContext,
+        drawLineForBoxSide(graphicsContext,
                    max(!nextline.isEmpty() ? tx + nextline.right() : -1000000, l - ow),
                    b,
                    r + ow,

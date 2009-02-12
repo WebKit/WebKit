@@ -1,3 +1,38 @@
+2009-02-12  David Hyatt  <hyatt@apple.com>
+
+        Move the functions that paint borders, box shadows and border images into RenderBoxModelObject.  drawBorder and drawBorderArc, because they are used
+        for outlines as well as borders, need to stay in RenderObject.  Rename them to drawLineForBoxSide and drawArcForBoxSide in order to reflect their
+        more generic use.  Rename the BorderSide struct to BoxSide, since the concept of "side" is just a rectangle concept and not a border concept.
+
+        Reviewed by Simon Fraser
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayer):
+        (WebCore::InlineFlowBox::paintBoxShadow):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumns):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBorderMinusLegend):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        (WebCore::RenderObject::drawArcForBoxSide):
+        (WebCore::RenderObject::paintOutline):
+        * rendering/RenderObject.h:
+        (WebCore::):
+        (WebCore::RenderObject::hasBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::CollapsedBorders::addBorder):
+        (WebCore::RenderTableCell::paintCollapsedBorder):
+
 2009-02-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser

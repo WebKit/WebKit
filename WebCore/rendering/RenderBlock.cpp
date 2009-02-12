@@ -1661,8 +1661,8 @@ void RenderBlock::paintColumns(PaintInfo& paintInfo, int tx, int ty, bool painti
         if (renderRule && paintInfo.phase == PaintPhaseForeground && i < colCount - 1) {
             int ruleStart = ruleX - ruleWidth / 2 + ruleAdd;
             int ruleEnd = ruleStart + ruleWidth;
-            drawBorder(paintInfo.context, tx + ruleStart, ty + borderTop() + paddingTop(), tx + ruleEnd, ty + borderTop() + paddingTop() + contentHeight(),
-                       style()->direction() == LTR ? BSLeft : BSRight, ruleColor, style()->color(), ruleStyle, 0, 0);
+            drawLineForBoxSide(paintInfo.context, tx + ruleStart, ty + borderTop() + paddingTop(), tx + ruleEnd, ty + borderTop() + paddingTop() + contentHeight(),
+                               style()->direction() == LTR ? BSLeft : BSRight, ruleColor, style()->color(), ruleStyle, 0, 0);
         }
         
         ruleX = currXOffset;
