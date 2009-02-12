@@ -1,3 +1,10 @@
+2009-02-11  Brady Eidson  <beidson@apple.com>
+
+        Fix my last checkin for more effect.
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):
+
 2009-02-11  Adam Roben  <aroben@apple.com>
 
         Windows fix for Bug 22239: Implement missing animation & transition
