@@ -101,6 +101,8 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
     HashSet<RefPtr<WebNetscapePluginStream> > streams;
     RetainPtr<NSMutableDictionary> _pendingFrameLoads;
     
+    BOOL _isSilverlight;
+    
     NPPluginTextInputFuncs *textInputFuncs;
 }
 

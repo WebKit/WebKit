@@ -1928,7 +1928,16 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (const char *)userAgent
 {
-    return [[[self webView] userAgentForURL:_baseURL.get()] UTF8String];
+    NSString *userAgent = [[self webView] userAgentForURL:_baseURL.get()];
+    
+    if (_isSilverlight) {
+        // Silverlight has a workaround for a leak in Safari 2. This workaround is 
+        // applied when the user agent does not contain "Version/3" so we append it
+        // at the end of the user agent.
+        userAgent = [userAgent stringByAppendingString:@" Version/3.2.1"];
+    }        
+        
+    return [userAgent UTF8String];
 }
 
 -(void)status:(const char *)message
@@ -2237,6 +2246,8 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
 
     PluginMainThreadScheduler::scheduler().registerPlugin(plugin);
     
+    _isSilverlight = [[[_pluginPackage.get() bundle] bundleIdentifier] isEqualToString:@"com.microsoft.SilverlightPlugin"];
+
     [[self class] setCurrentPluginView:self];
     NPError npErr = [_pluginPackage.get() pluginFuncs]->newp((char *)[_MIMEType.get() cString], plugin, _mode, argsCount, cAttributes, cValues, NULL);
     [[self class] setCurrentPluginView:nil];

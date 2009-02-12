@@ -1,3 +1,18 @@
+2009-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/6579412> 
+        REGRESSION (3.2.1-ToT): Crash in Silverlight viewing streaming lecture
+        
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView userAgent]):
+        Apply workaround for Silverlight workaround.
+        
+        (-[WebNetscapePluginView _createPlugin]):
+        Check if the plug-in that we're creating is the silverlight plug-in.
+
 2009-02-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler
