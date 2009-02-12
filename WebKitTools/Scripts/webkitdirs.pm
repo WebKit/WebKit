@@ -466,6 +466,64 @@ sub checkWebCoreSVGSupport
     return $hasSVG;
 }
 
+sub hasAcceleratedCompositingSupport
+{
+    return 0 if isCygwin();
+    
+    my $path = shift;
+
+    my $useAcceleratedCompositing = 0;
+    if (-e $path) {
+        open NM, "-|", "nm", $path or die;
+        while (<NM>) {
+            $useAcceleratedCompositing = 1 if /GraphicsLayer/;
+        }
+        close NM;
+    }
+    return $useAcceleratedCompositing;
+}
+
+sub checkWebCoreAcceleratedCompositingSupport
+{
+    my $required = shift;
+    my $framework = "WebCore";
+    my $path = builtDylibPathForName($framework);
+    my $hasAcceleratedCompositing = hasAcceleratedCompositingSupport($path);
+    if ($required && !$hasAcceleratedCompositing) {
+        die "$framework at \"$path\" does not use accelerated compositing\n";
+    }
+    return $hasAcceleratedCompositing;
+}
+
+sub has3DTransformsSupport
+{
+    return 0 if isCygwin();
+    
+    my $path = shift;
+
+    my $has3DTransformsSupport = 0;
+    if (-e $path) {
+        open NM, "-|", "nm", $path or die;
+        while (<NM>) {
+            $has3DTransformsSupport = 1 if /WebCoreHas3DTransforms/;
+        }
+        close NM;
+    }
+    return $has3DTransformsSupport;
+}
+
+sub checkWebCore3DTransformsSupport
+{
+    my $required = shift;
+    my $framework = "WebCore";
+    my $path = builtDylibPathForName($framework);
+    my $has3DTransforms = has3DTransformsSupport($path);
+    if ($required && !$has3DTransforms) {
+        die "$framework at \"$path\" does not include 3D Transforms Support, please run build-webkit --3d-transforms\n";
+    }
+    return $has3DTransforms;
+}
+
 sub hasWMLSupport
 {
     return 0 if isCygwin();
