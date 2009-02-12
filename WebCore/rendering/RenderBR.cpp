@@ -40,15 +40,6 @@ RenderBR::~RenderBR()
 {
 }
 
-InlineBox* RenderBR::createInlineBox(bool makePlaceholder, bool isRootLineBox, bool isOnlyRun)
-{
-    // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
-    // (Note the use of strict mode.  In "almost strict" mode, we don't treat the box for <br> as text.)
-    InlineTextBox* box = static_cast<InlineTextBox*>(RenderText::createInlineBox(makePlaceholder, isRootLineBox, isOnlyRun));
-    box->setIsText(isOnlyRun || document()->inStrictMode());
-    return box;
-}
-
 int RenderBR::baselinePosition(bool firstLine, bool isRootLineBox) const
 {
     if (firstTextBox() && !firstTextBox()->isText())

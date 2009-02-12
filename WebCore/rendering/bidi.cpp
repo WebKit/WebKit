@@ -456,6 +456,36 @@ void InlineBidiResolver::appendRun()
     m_status.eor = OtherNeutral;
 }
 
+static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRootLineBox, bool isOnlyRun = false)
+{
+    if (isRootLineBox)
+        return toRenderBlock(obj)->createRootInlineBox();
+    
+    if (obj->isText()) {
+        InlineTextBox* textBox = toRenderText(obj)->createInlineTextBox();
+        // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
+        // (Note the use of strict mode.  In "almost strict" mode, we don't treat the box for <br> as text.)
+        if (obj->isBR())
+            textBox->setIsText(isOnlyRun || obj->document()->inStrictMode());
+        return textBox;
+    }
+    
+    if (obj->isBox())
+        return toRenderBox(obj)->createInlineBox();
+    
+    return toRenderInline(obj)->createInlineFlowBox();
+}
+
+static inline void dirtyLineBoxesForRenderer(RenderObject* o, bool fullLayout)
+{
+    if (o->isText()) {
+        if (o->prefWidthsDirty() && o->isCounter())
+            toRenderText(o)->calcPrefWidths(0); // FIXME: Counters depend on this hack. No clue why. Should be investigated and removed.
+        toRenderText(o)->dirtyLineBoxes(fullLayout);
+    } else
+        toRenderInline(o)->dirtyLineBoxes(fullLayout);
+}
+
 InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine)
 {
     // See if we have an unconstructed line box for this object that is also
@@ -479,7 +509,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine)
         if (!parentBox || parentBox->isConstructed() || parentBox->nextOnLine()) {
             // We need to make a new box for this render object.  Once
             // made, we need to place it at the end of the current line.
-            InlineBox* newBox = obj->createInlineBox(false, obj == this);
+            InlineBox* newBox = createInlineBoxForRenderer(obj, obj == this);
             ASSERT(newBox->isInlineFlowBox());
             parentBox = static_cast<InlineFlowBox*>(newBox);
             parentBox->setFirstLineStyleBit(firstLine);
@@ -520,7 +550,7 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
         if (runCount == 2 && !r->m_object->isListMarker())
             isOnlyRun = ((style()->direction() == RTL) ? lastRun : firstRun)->m_object->isListMarker();
 
-        InlineBox* box = r->m_object->createInlineBox(r->m_object->isPositioned(), false, isOnlyRun);
+        InlineBox* box = createInlineBoxForRenderer(r->m_object, false, isOnlyRun);
         r->m_box = box;
 
         if (box) {
@@ -814,13 +844,13 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                     if (o->isFloating())
                         floats.append(FloatWithRect(box));
                     else if (fullLayout || o->needsLayout()) // Replaced elements
-                        o->dirtyLineBoxes(fullLayout);
+                        toRenderBox(o)->dirtyLineBoxes(fullLayout);
 
                     o->layoutIfNeeded();
                 }
             } else if (o->isText() || (o->isRenderInline() && !endOfInline)) {
                 if (fullLayout || o->selfNeedsLayout())
-                    o->dirtyLineBoxes(fullLayout);
+                    dirtyLineBoxesForRenderer(o, fullLayout);
                 o->setNeedsLayout(false);
                 if (!o->isText())
                     toRenderInline(o)->invalidateVerticalPosition(); // FIXME: Should do better here and not always invalidate everything.

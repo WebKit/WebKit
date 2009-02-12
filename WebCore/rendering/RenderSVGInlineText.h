@@ -43,7 +43,6 @@ public:
     virtual bool requiresLayer() const { return false; }
     virtual IntRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
     virtual bool isSVGText() const { return true; }
-    virtual InlineTextBox* createInlineTextBox();
 
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
     virtual VisiblePosition positionForCoordinates(int x, int y);
@@ -51,6 +50,7 @@ public:
     virtual void destroy();
 
 private:
+    virtual InlineTextBox* createTextBox();
     IntRect computeRepaintRectForRange(RenderBoxModelObject* repaintContainer, int startPos, int endPos);
 };
 

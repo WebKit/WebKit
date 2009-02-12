@@ -101,12 +101,9 @@ void RenderSVGText::layout()
     setNeedsLayout(false);
 }
 
-InlineBox* RenderSVGText::createInlineBox(bool, bool, bool)
+RootInlineBox* RenderSVGText::createRootBox()
 {
-    ASSERT(!isRenderInline());
-    InlineFlowBox* flowBox = new (renderArena()) SVGRootInlineBox(this);
-    m_lineBoxes.appendLineBox(flowBox);
-    return flowBox;
+    return new (renderArena()) SVGRootInlineBox(this);
 }
 
 bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)

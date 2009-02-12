@@ -77,7 +77,6 @@ public:
     InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
 
     void deleteLineBoxTree();
-    virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
     virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
 
     // The height (and width) of a block when you include overflow spillage out of the bottom
@@ -139,7 +138,7 @@ public:
 
     virtual void updateBeforeAfterContent(PseudoId);
 
-    virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun=false);
+    RootInlineBox* createRootInlineBox();
 
     // Called to lay out the legend for a fieldset.
     virtual RenderObject* layoutLegend(bool /*relayoutChildren*/) { return 0; }
@@ -337,6 +336,8 @@ protected:
     virtual bool hasLineIfEmpty() const;
     bool layoutOnlyPositionedObjects();
 
+    virtual RootInlineBox* createRootBox(); // Subclassed by SVG.
+    
 private:
     Position positionForBox(InlineBox*, bool start = true) const;
     Position positionForRenderer(RenderObject*, bool start = true) const;

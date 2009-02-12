@@ -28,13 +28,17 @@
 #include "RenderInline.h"
 
 namespace WebCore {
+
 class RenderSVGInline : public RenderInline {
 public:
-        RenderSVGInline(Node*);
-        virtual const char* renderName() const { return "RenderSVGInline"; }
-        virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun = false);
-        virtual bool requiresLayer() const { return false; }
-    };
+    RenderSVGInline(Node*);
+    virtual const char* renderName() const { return "RenderSVGInline"; }
+    virtual bool requiresLayer() const { return false; }
+    
+private:
+    virtual InlineFlowBox* createFlowBox();
+};
+
 }
 
 #endif // ENABLE(SVG)

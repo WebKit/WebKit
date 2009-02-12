@@ -1,3 +1,41 @@
+2009-02-11  David Hyatt  <hyatt@apple.com>
+
+        Eliminate createInlineBox and dirtyLineBoxes from RenderObject.  These functions have been devirtualized.
+        The single call site now calls a helper function that just bit checks and casts before calling the correct
+        type.  RenderBlock's dirtyLineBoxes function was dead code (caused by the RenderFlow deletion), so it has
+        just been removed.
+
+        Reviewed by Eric Seidel
+
+        * rendering/RenderBR.cpp:
+        * rendering/RenderBR.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::createRootInlineBox):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::createInlineBox):
+        * rendering/RenderBox.h:
+        * rendering/RenderCounter.cpp:
+        * rendering/RenderCounter.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::createInlineFlowBox):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::createTextBox):
+        * rendering/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::isSVGText):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::createTextBox):
+        (WebCore::RenderText::createInlineTextBox):
+        * rendering/RenderText.h:
+        * rendering/bidi.cpp:
+        (WebCore::createInlineBoxForRenderer):
+        (WebCore::RenderBlock::createLineBoxes):
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2009-02-11  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt.

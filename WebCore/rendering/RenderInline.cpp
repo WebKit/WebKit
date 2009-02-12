@@ -731,7 +731,7 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const IntPoint& po
     }
 }
 
-void RenderInline::dirtyLineBoxes(bool fullLayout, bool)
+void RenderInline::dirtyLineBoxes(bool fullLayout)
 {
     if (fullLayout)
         m_lineBoxes.deleteLineBoxes(renderArena());
@@ -739,9 +739,14 @@ void RenderInline::dirtyLineBoxes(bool fullLayout, bool)
         m_lineBoxes.dirtyLineBoxes();
 }
 
-InlineBox* RenderInline::createInlineBox(bool, bool, bool)
+InlineFlowBox* RenderInline::createFlowBox()
 {
-    InlineFlowBox* flowBox = new (renderArena()) InlineFlowBox(this);
+    return new (renderArena()) InlineFlowBox(this);
+}
+
+InlineFlowBox* RenderInline::createInlineFlowBox()
+{
+    InlineFlowBox* flowBox = createFlowBox();
     m_lineBoxes.appendLineBox(flowBox);
     return flowBox;
 }

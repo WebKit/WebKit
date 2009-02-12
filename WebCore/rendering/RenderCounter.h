@@ -37,7 +37,6 @@ public:
     virtual bool isCounter() const;
     virtual PassRefPtr<StringImpl> originalText() const;
     
-    virtual void dirtyLineBoxes(bool, bool);
     virtual void calcPrefWidths(int leadWidth);
 
     void invalidate();

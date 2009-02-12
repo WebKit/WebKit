@@ -93,8 +93,8 @@ public:
         return IntRect(0, 0, boundingBox.width(), boundingBox.height());
     }
 
-    virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun=false);    
-    virtual void dirtyLineBoxes(bool fullLayout, bool isRootLineBox = false);
+    InlineFlowBox* createInlineFlowBox();    
+    void dirtyLineBoxes(bool fullLayout);
     virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
 
     RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
@@ -132,7 +132,8 @@ public:
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateBoxModelInfoFromStyle();
-
+    virtual InlineFlowBox* createFlowBox(); // Subclassed by SVG
+    
     static RenderInline* cloneInline(RenderInline* src);
 
 private:

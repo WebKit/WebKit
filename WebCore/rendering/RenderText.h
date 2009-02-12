@@ -52,9 +52,8 @@ public:
 
     StringImpl* text() const { return m_text.get(); }
 
-    virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun = false);
-    virtual InlineTextBox* createInlineTextBox();
-    virtual void dirtyLineBoxes(bool fullLayout, bool isRootInlineBox = false);
+    InlineTextBox* createInlineTextBox();
+    void dirtyLineBoxes(bool fullLayout);
 
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual void absoluteRectsForRange(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false);
@@ -120,13 +119,16 @@ public:
 
     void checkConsistency() const;
 
+    virtual void calcPrefWidths(int leadWidth);
+
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle*) { }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual void setTextInternal(PassRefPtr<StringImpl>);
-    virtual void calcPrefWidths(int leadWidth);
     virtual UChar previousCharacter();
+    
+    virtual InlineTextBox* createTextBox(); // Subclassed by SVG.
 
 private:
     // Make length() private so that callers that have a RenderText*

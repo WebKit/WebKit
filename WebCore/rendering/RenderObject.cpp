@@ -2464,16 +2464,6 @@ void RenderObject::layout()
     setNeedsLayout(false);
 }
 
-InlineBox* RenderObject::createInlineBox(bool, bool unusedIsRootLineBox, bool)
-{
-    ASSERT_UNUSED(unusedIsRootLineBox, !unusedIsRootLineBox);
-    return new (renderArena()) InlineBox(this);
-}
-
-void RenderObject::dirtyLineBoxes(bool, bool)
-{
-}
-
 InlineBox* RenderObject::inlineBoxWrapper() const
 {
     return 0;
