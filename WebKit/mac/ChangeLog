@@ -1,3 +1,21 @@
+2009-02-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        <rdar://problem/6570573> Some visit counts in History.plist have insanely high values, can roll over to negative
+
+        Remove the item from the date caches before registering the visit.  Otherwise it might not be successfully removed 
+        and when we add it back later it will exist in the list twice.  This will cause the entry to be written out twice,
+        which would lead to doubling (or more!) the visit count on next launch when these multiple items are merged.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate visitedURL:withTitle:]): Swap the removeItemFromDateCaches and visitedWithTitle calls.
+        (-[WebHistoryPrivate addItem:discardDuplicate:]): Add a mode that allows the entry being added to be discarded
+          if an entry for the URL already exists.  Use that mode when reading the History.plist so only the most
+          recent entry for a given URL will be used.
+        (-[WebHistoryPrivate addItems:]):
+        (-[WebHistoryPrivate loadHistoryGutsFromURL:savedItemsCount:collectDiscardedItemsInto:error:]): 
+
 2009-02-11  Dimitri Dupuis-latour  <dupuislatour@apple.com>
 
         Added a preference to disable some Inspector's panels (rdar://6419624, rdar://6419645).

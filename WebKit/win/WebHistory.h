@@ -135,7 +135,7 @@ private:
     HRESULT saveHistoryGuts(CFURLRef url, IWebError** error);
     HRESULT postNotification(NotificationType notifyType, IPropertyBag* userInfo = 0);
     HRESULT removeItem(IWebHistoryItem* entry);
-    HRESULT addItem(IWebHistoryItem* entry);
+    HRESULT addItem(IWebHistoryItem* entry, bool discardDuplicate, bool* added);
     HRESULT removeItemForURLString(CFStringRef urlString);
     HRESULT addItemToDateCaches(IWebHistoryItem* entry);
     HRESULT removeItemFromDateCaches(IWebHistoryItem* entry);

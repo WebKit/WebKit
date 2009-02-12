@@ -34,6 +34,7 @@
 
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
+#include <WebCore/CString.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/KURL.h>
 #pragma warning(pop)
@@ -126,6 +127,12 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
     if (!CFNumberGetValue(visitCountRef, kCFNumberIntType, &visitedCount))
         return E_FAIL;
 
+    // Can't trust data on disk, and we've had at least one report of this (<rdar://6572300>).
+    if (visitedCount < 0) {
+        LOG_ERROR("visit count for history item \"%s\" is negative (%d), will be reset to 1", String(urlStringRef).utf8().data(), visitedCount);
+        visitedCount = 1;
+    }
+
     CFBooleanRef lastVisitWasFailureRef = static_cast<CFBooleanRef>(CFDictionaryGetValue(dictionaryRef, lastVisitWasFailureKey));
     if (lastVisitWasFailureRef && CFGetTypeID(lastVisitWasFailureRef) != CFBooleanGetTypeID())
         return E_FAIL;
@@ -158,15 +165,20 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void*
         dailyVector.reset(new Vector<int>(dailySize));
         weeklyVector.reset(new Vector<int>(weeklySize));
 
+        // Daily and weekly counts < 0 are errors in the data read from disk, so reset to 0.
         for (CFIndex i = 0; i < dailySize; ++i) {
             CFNumberRef dailyCount = static_cast<CFNumberRef>(CFArrayGetValueAtIndex(dailyCounts, i));        
             if (CFGetTypeID(dailyCount) == CFNumberGetTypeID())
                 CFNumberGetValue(dailyCount, kCFNumberIntType, &(*dailyVector)[i]);
+            if ((*dailyVector)[i] < 0)
+                (*dailyVector)[i];
         }
         for (CFIndex i = 0; i < weeklySize; ++i) {
             CFNumberRef weeklyCount = static_cast<CFNumberRef>(CFArrayGetValueAtIndex(weeklyCounts, i));        
             if (CFGetTypeID(weeklyCount) == CFNumberGetTypeID())
                 CFNumberGetValue(weeklyCount, kCFNumberIntType, &(*weeklyVector)[i]);
+            if ((*weeklyVector)[i] < 0)
+                (*weeklyVector)[i];
         }
     }
 

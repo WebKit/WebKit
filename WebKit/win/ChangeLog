@@ -1,3 +1,25 @@
+2009-02-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        <rdar://problem/6570573> Some visit counts in History.plist have insanely high values, can roll over to negative
+
+        Remove the item from the date caches before registering the visit.  Otherwise it might not be successfully removed 
+        and when we add it back later it will exist in the list twice.  This will cause the entry to be written out twice,
+        which would lead to doubling (or more!) the visit count on next launch when these multiple items are merged.
+
+        * WebHistory.cpp:
+        (WebHistory::loadHistoryGutsFromURL):
+        (WebHistory::addItems):
+        (WebHistory::addItem): Add a mode that allows the entry being added to be discarded if an entry for the URL already 
+          exists.  Use that mode when reading the History.plist so only the most recent entry for a given URL will be used.
+        (WebHistory::visitedURL): Swap the removeItemFromDateCaches and visitedWithTitle calls.
+        * WebHistory.h:
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):  Add the negative-visit-count-correction-logic as implemented
+          for Mac in http://trac.webkit.org/changeset/40851.
+
 2009-02-11  Dimitri Dupuis-latour  <dupuislatour@apple.com>
 
         Stub out WebInspectorClient::hiddenPanels.

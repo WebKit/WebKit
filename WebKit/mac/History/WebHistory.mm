@@ -68,7 +68,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
 - (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title;
 
-- (void)addItem:(WebHistoryItem *)entry;
+- (BOOL)addItem:(WebHistoryItem *)entry discardDuplicate:(BOOL)discardDuplicate;
 - (void)addItems:(NSArray *)newEntries;
 - (BOOL)removeItem:(WebHistoryItem *)entry;
 - (BOOL)removeItems:(NSArray *)entries;
@@ -266,8 +266,15 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
     if (entry) {
         LOG(History, "Updating global history entry %@", entry);
-        [entry _visitedWithTitle:title];
+        // Remove the item from date caches before changing its last visited date.  Otherwise we might get duplicate entries
+        // as seen in <rdar://problem/6570573>.
+#if ASSERT_UNUSED
         [self removeItemFromDateCaches:entry];
+#else
+        BOOL itemWasInDateCaches = [self removeItemFromDateCaches:entry];
+        ASSERT(itemWasInDateCaches);
+#endif
+        [entry _visitedWithTitle:title];
     } else {
         LOG(History, "Adding new global history entry for %@", url);
         entry = [[WebHistoryItem alloc] initWithURLString:URLString title:title lastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
@@ -281,7 +288,7 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     return entry;
 }
 
-- (void)addItem:(WebHistoryItem *)entry
+- (BOOL)addItem:(WebHistoryItem *)entry discardDuplicate:(BOOL)discardDuplicate
 {
     ASSERT_ARG(entry, entry);
     ASSERT_ARG(entry, [entry lastVisitedTimeInterval] != 0);
@@ -290,6 +297,9 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
     WebHistoryItem *oldEntry = [_entriesByURL objectForKey:URLString];
     if (oldEntry) {
+        if (discardDuplicate)
+            return NO;
+
         // The last reference to oldEntry might be this dictionary, so we hold onto a reference
         // until we're done with oldEntry.
         [oldEntry retain];
@@ -303,6 +313,8 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
     [self addItemToDateCaches:entry];
     [_entriesByURL setObject:entry forKey:URLString];
+    
+    return YES;
 }
 
 - (BOOL)removeItem:(WebHistoryItem *)entry
@@ -359,7 +371,7 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     // faster (fewer compares) by inserting them from oldest to newest.
     NSEnumerator *enumerator = [newEntries reverseObjectEnumerator];
     while (WebHistoryItem *entry = [enumerator nextObject])
-        [self addItem:entry];
+        [self addItem:entry discardDuplicate:NO];
 }
 
 #pragma mark DATE-BASED RETRIEVAL
@@ -544,8 +556,8 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
             if (ageLimitPassed || itemLimitPassed)
                 [discardedItems addObject:item];
             else {
-                [self addItem:item];
-                ++(*numberOfItemsLoaded);
+                if ([self addItem:item discardDuplicate:YES])
+                    ++(*numberOfItemsLoaded);
                 if (*numberOfItemsLoaded == itemCountLimit)
                     itemLimitPassed = YES;
 

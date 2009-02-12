@@ -314,8 +314,10 @@ HRESULT WebHistory::loadHistoryGutsFromURL(CFURLRef url, CFMutableArrayRef disca
             if (ageLimitPassed || itemLimitPassed)
                 CFArrayAppendValue(discardedItems, item.get());
             else {
-                addItem(item.get()); // ref is added inside addItem
-                ++numberOfItemsLoaded;
+                bool added;
+                addItem(item.get(), true, &added); // ref is added inside addItem
+                if (added)
+                    ++numberOfItemsLoaded;
                 if (numberOfItemsLoaded == itemCountLimit)
                     itemLimitPassed = true;
             }
@@ -432,7 +434,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::addItems(
 
     HRESULT hr;
     for (int i = itemCount - 1; i >= 0; --i) {
-        hr = addItem(items[i]);
+        hr = addItem(items[i], false, 0);
         if (FAILED(hr))
             return hr;
     }
@@ -625,7 +627,7 @@ HRESULT WebHistory::removeItem(IWebHistoryItem* entry)
     return hr;
 }
 
-HRESULT WebHistory::addItem(IWebHistoryItem* entry)
+HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool* added)
 {
     HRESULT hr = S_OK;
 
@@ -644,6 +646,12 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry)
         m_entriesByURL.get(), urlString.get()));
     
     if (oldEntry) {
+        if (discardDuplicate) {
+            if (added)
+                *added = false;
+            return S_OK;
+        }
+        
         removeItemForURLString(urlString.get());
 
         // If we already have an item with this URL, we need to merge info that drives the
@@ -667,6 +675,9 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry)
     hr = postNotification(kWebHistoryItemsAddedNotification, userInfo);
     releaseUserInfo(userInfo);
 
+    if (added)
+        *added = true;
+
     return hr;
 }
 
@@ -680,9 +691,10 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
         if (!entryPrivate)
             return;
 
-        entryPrivate->visitedWithTitle(BString(title));
-
+        // Remove the item from date caches before changing its last visited date.  Otherwise we might get duplicate entries
+        // as seen in <rdar://problem/6570573>.
         removeItemFromDateCaches(entry);
+        entryPrivate->visitedWithTitle(BString(title));
     } else {
         COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance());
         if (!item)
