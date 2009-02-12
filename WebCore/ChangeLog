@@ -1,3 +1,14 @@
+2009-02-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser
+
+        Bug 18322: video element should have ui when scripting is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=18322
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::controls): always return 'true' when JavaScript is disabled.
+        * manual-tests/media-controls-when-javascript-disabled.html: Added.
+
 2009-02-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

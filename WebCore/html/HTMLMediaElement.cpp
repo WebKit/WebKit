@@ -783,6 +783,12 @@ void HTMLMediaElement::setCurrentLoop(unsigned currentLoop)
 
 bool HTMLMediaElement::controls() const
 {
+    Frame* frame = document()->frame();
+
+    // always show controls when scripting is disabled
+    if (frame && !frame->script()->isEnabled())
+        return true;
+
     return hasAttribute(controlsAttr);
 }
 
