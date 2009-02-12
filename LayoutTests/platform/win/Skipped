@@ -333,6 +333,9 @@ fast/loader/simultaneous-reloads-assert.html
 # <rdar://problem/5539822> REGRESSION (Leopard): svg/custom/stroke-width-click.svg test failing
 svg/custom/stroke-width-click.svg
 
+# Assertion failure in FrameLoader::loadWithDocumentLoader <https://bugs.webkit.org/show_bug.cgi?id=23921>
+fast/loader/frame-creation-removal.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

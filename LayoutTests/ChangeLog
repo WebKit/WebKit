@@ -1,5 +1,11 @@
 2009-02-12  Adam Roben  <aroben@apple.com>
 
+        Add a failing loader test to the Windows Skipped list
+
+        * platform/win/Skipped: Added fast/loader/frame-creation-removal.html.
+
+2009-02-12  Adam Roben  <aroben@apple.com>
+
         Add another failing drag-n-drop test to the Windows Skipped list
 
         * platform/win/Skipped: Added editing/selection/drag-in-iframe.html.
