@@ -367,7 +367,8 @@ bool ResourceHandle::startHttp(String urlString)
                      * mapping for uploaded files code inspired by technique used in
                      * libsoup's simple-httpd test
                      */
-                    int fd = open(element.m_filename.utf8().data(), O_CLOEXEC|O_RDONLY);
+                    /* FIXME: Since Linux 2.6.23 we should also use O_CLOEXEC */
+                    int fd = open(element.m_filename.utf8().data(), O_RDONLY);
 
                     if (fd == -1) {
                         ResourceError error("webkit-network-error", ERROR_UNABLE_TO_OPEN_FILE, urlString, strerror(errno));

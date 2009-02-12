@@ -1,3 +1,10 @@
+2009-02-12  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Holger Freyther.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::startHttp): Don't use O_CLOEXEC for now.
+
 2009-02-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.
