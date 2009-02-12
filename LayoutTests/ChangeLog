@@ -1,3 +1,29 @@
+2009-02-12  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 23918: Mac-specific results for
+        fast/css/computed-style[-without-renderer] are sitting in
+        cross-platform location
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23918>
+
+        Move Mac-specific results for
+        fast/css/computed-style[-without-renderer] to platform/mac
+
+        Reviewed by John Sullivan.
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        Made these results correct for non-Mac platforms by removing the
+        -webkit-dashboard-region references.
+
+        * platform/mac/fast/css/computed-style-expected.txt: Copied from LayoutTests/fast/css/computed-style-expected.txt.
+        * platform/mac/fast/css/computed-style-without-renderer-expected.txt: Copied from LayoutTests/fast/css/computed-style-without-renderer-expected.txt.
+
+        * platform/win/fast/css/computed-style-expected.txt:
+        * platform/win/fast/css/computed-style-without-renderer-expected.txt:
+        Copied the non-Mac results here, too, since on Windows we first check
+        for Mac-specific results before checking for cross-platform results.
+
 2009-02-11  Adam Roben  <aroben@apple.com>
 
         Windows fix for Bug 22239: Implement missing animation & transition

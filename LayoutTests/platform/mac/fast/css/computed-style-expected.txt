@@ -151,6 +151,7 @@ zoom: 1;
 -webkit-user-drag: auto;
 -webkit-user-modify: read-only;
 -webkit-user-select: text;
+-webkit-dashboard-region: null;
 -webkit-border-bottom-left-radius: 0px;
 -webkit-border-bottom-right-radius: 0px;
 -webkit-border-top-left-radius: 0px;
