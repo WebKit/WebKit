@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +36,7 @@
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"
-#include "GenericWorkerTask.h"
+#include "MessageEvent.h"
 #include "NotImplemented.h"
 #include "SecurityOrigin.h"
 #include "WorkerLocation.h"
@@ -60,7 +61,7 @@ WorkerContext::~WorkerContext()
 {
     ASSERT(currentThread() == m_thread->threadID());
 
-    m_thread->messagingProxy()->workerContextDestroyed();
+    m_thread->workerObjectProxy()->workerContextDestroyed();
 }
 
 ScriptExecutionContext* WorkerContext::scriptExecutionContext() const
@@ -108,19 +109,12 @@ bool WorkerContext::hasPendingActivity() const
 
 void WorkerContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)
 {
-    m_thread->messagingProxy()->postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
-}
-
-static void addMessageTask(ScriptExecutionContext* context, WorkerMessagingProxy* messagingProxy, MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
-{
-    if (messagingProxy->askedToTerminate())
-        return;
-    context->addMessage(destination, source, level, message, lineNumber, sourceURL);
+    m_thread->workerObjectProxy()->postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
 }
 
 void WorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
-    postTaskToWorkerObject(createCallbackTask(&addMessageTask, m_thread->messagingProxy(), destination, source, level, message, lineNumber, sourceURL));
+    m_thread->workerObjectProxy()->postConsoleMessageToWorkerObject(destination, source, level, message, lineNumber, sourceURL);
 }
 
 void WorkerContext::resourceRetrievedByXMLHttpRequest(unsigned long, const ScriptString&)
@@ -131,7 +125,7 @@ void WorkerContext::resourceRetrievedByXMLHttpRequest(unsigned long, const Scrip
 
 void WorkerContext::postMessage(const String& message)
 {
-    m_thread->messagingProxy()->postMessageToWorkerObject(message);
+    m_thread->workerObjectProxy()->postMessageToWorkerObject(message);
 }
 
 void WorkerContext::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
@@ -190,11 +184,6 @@ void WorkerContext::postTask(PassRefPtr<Task> task)
     thread()->runLoop().postTask(task);
 }
 
-void WorkerContext::postTaskToWorkerObject(PassRefPtr<Task> task)
-{
-    thread()->messagingProxy()->postTaskToWorkerObject(task);
-}
-
 int WorkerContext::installTimeout(ScheduledAction* action, int timeout, bool singleShot)
 {
     return DOMTimer::install(scriptExecutionContext(), action, timeout, singleShot);
@@ -203,6 +192,21 @@ int WorkerContext::installTimeout(ScheduledAction* action, int timeout, bool sin
 void WorkerContext::removeTimeout(int timeoutId)
 {
     DOMTimer::removeById(scriptExecutionContext(), timeoutId);
+}
+
+void WorkerContext::dispatchMessage(const String& message)
+{
+    RefPtr<Event> evt = MessageEvent::create(message, "", "", 0, 0);
+
+    if (m_onmessageListener.get()) {
+        evt->setTarget(this);
+        evt->setCurrentTarget(this);
+        m_onmessageListener->handleEvent(evt.get(), false);
+    }
+
+    ExceptionCode ec = 0;
+    dispatchEvent(evt.release(), ec);
+    ASSERT(!ec);
 }
 
 } // namespace WebCore

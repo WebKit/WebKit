@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,8 +43,7 @@
 #include "FrameLoader.h"
 #include "MessageEvent.h"
 #include "SecurityOrigin.h"
-#include "WorkerContext.h"
-#include "WorkerMessagingProxy.h"
+#include "WorkerContextProxy.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 
@@ -51,7 +51,7 @@ namespace WebCore {
 
 Worker::Worker(const String& url, Document* doc, ExceptionCode& ec)
     : ActiveDOMObject(doc, this)
-    , m_messagingProxy(new WorkerMessagingProxy(doc, this))
+    , m_contextProxy(WorkerContextProxy::create(this))
 {
     m_scriptURL = doc->completeURL(url);
     if (url.isEmpty() || !m_scriptURL.isValid()) {
@@ -77,8 +77,8 @@ Worker::Worker(const String& url, Document* doc, ExceptionCode& ec)
 Worker::~Worker()
 {
     ASSERT(isMainThread());
-    ASSERT(scriptExecutionContext()); // The context is protected by messaging proxy, so it cannot be destroyed while a Worker exists.
-    m_messagingProxy->workerObjectDestroyed();
+    ASSERT(scriptExecutionContext()); // The context is protected by worker context proxy, so it cannot be destroyed while a Worker exists.
+    m_contextProxy->workerObjectDestroyed();
 }
 
 Document* Worker::document() const
@@ -89,12 +89,12 @@ Document* Worker::document() const
 
 void Worker::postMessage(const String& message)
 {
-    m_messagingProxy->postMessageToWorkerContext(message);
+    m_contextProxy->postMessageToWorkerContext(message);
 }
 
 void Worker::terminate()
 {
-    m_messagingProxy->terminateWorkerContext();
+    m_contextProxy->terminateWorkerContext();
 }
 
 bool Worker::canSuspend() const
@@ -110,7 +110,7 @@ void Worker::stop()
 
 bool Worker::hasPendingActivity() const
 {
-    return m_messagingProxy->hasPendingActivity() || ActiveDOMObject::hasPendingActivity();
+    return m_contextProxy->hasPendingActivity() || ActiveDOMObject::hasPendingActivity();
 }
 
 void Worker::notifyFinished(CachedResource* unusedResource)
@@ -121,9 +121,7 @@ void Worker::notifyFinished(CachedResource* unusedResource)
         dispatchErrorEvent();
     else {
         String userAgent = document()->frame() ? document()->frame()->loader()->userAgent(m_scriptURL) : String();
-        RefPtr<WorkerThread> thread = WorkerThread::create(m_scriptURL, userAgent, m_cachedScript->script(), m_messagingProxy);
-        m_messagingProxy->workerThreadCreated(thread);
-        thread->start();
+        m_contextProxy->startWorkerContext(m_scriptURL, userAgent, m_cachedScript->script());
     }
 
     m_cachedScript->removeClient(this);
@@ -195,6 +193,21 @@ bool Worker::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
     }
 
     return !event->defaultPrevented();
+}
+
+void Worker::dispatchMessage(const String& message)
+{
+    RefPtr<Event> evt = MessageEvent::create(message, "", "", 0, 0);
+
+    if (m_onMessageListener.get()) {
+        evt->setTarget(this);
+        evt->setCurrentTarget(this);
+        m_onMessageListener->handleEvent(evt.get(), false);
+    }
+
+    ExceptionCode ec = 0;
+    dispatchEvent(evt.release(), ec);
+    ASSERT(!ec);
 }
 
 } // namespace WebCore

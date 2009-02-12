@@ -39,12 +39,12 @@ namespace WebCore {
     class KURL;
     class String;
     class WorkerContext;
-    class WorkerMessagingProxy;
+    class WorkerObjectProxy;
     struct WorkerThreadStartupData;
 
     class WorkerThread : public RefCounted<WorkerThread> {
     public:
-        static PassRefPtr<WorkerThread> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerMessagingProxy*);
+        static PassRefPtr<WorkerThread> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerObjectProxy*);
         ~WorkerThread();
 
         bool start();
@@ -52,17 +52,17 @@ namespace WebCore {
 
         ThreadIdentifier threadID() const { return m_threadID; }
         WorkerRunLoop& runLoop() { return m_runLoop; }
-        WorkerMessagingProxy* messagingProxy() const { return m_messagingProxy; }
+        WorkerObjectProxy* workerObjectProxy() const { return m_workerObjectProxy; }
 
     private:
-        WorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerMessagingProxy*);
+        WorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerObjectProxy*);
 
         static void* workerThreadStart(void*);
         void* workerThread();
 
         ThreadIdentifier m_threadID;
         WorkerRunLoop m_runLoop;
-        WorkerMessagingProxy* m_messagingProxy;
+        WorkerObjectProxy* m_workerObjectProxy;
 
         RefPtr<WorkerContext> m_workerContext;
         Mutex m_threadCreationMutex;
@@ -75,3 +75,4 @@ namespace WebCore {
 #endif // ENABLE(WORKERS)
 
 #endif // WorkerThread_h
+

@@ -46,18 +46,21 @@ namespace WebCore {
 
     class WorkerMessagingProxy : public WorkerContextProxy, public WorkerObjectProxy, Noncopyable {
     public:
-        WorkerMessagingProxy(PassRefPtr<ScriptExecutionContext>, Worker*);
+        WorkerMessagingProxy(Worker*);
 
         // Implementations of WorkerContextProxy.
         // (Only use these methods in the worker object thread.)
+        virtual void startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode);
         virtual void terminateWorkerContext();
         virtual void postMessageToWorkerContext(const String& message);
         virtual bool hasPendingActivity() const;
+        virtual void workerObjectDestroyed();
 
         // Implementations of WorkerObjectProxy.
         // (Only use these methods in the worker context thread.)
         virtual void postMessageToWorkerObject(const String& message);
         virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
+        virtual void postConsoleMessageToWorkerObject(MessageDestination, MessageSource, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
         virtual void reportPendingActivity(bool hasPendingActivity);
         virtual void workerContextDestroyed();
 
@@ -65,7 +68,6 @@ namespace WebCore {
         void postTaskToWorkerContext(PassRefPtr<ScriptExecutionContext::Task>);
 
         void workerThreadCreated(PassRefPtr<WorkerThread>);
-        void workerObjectDestroyed();
 
         void confirmWorkerThreadMessage(bool hasPendingActivity);
 

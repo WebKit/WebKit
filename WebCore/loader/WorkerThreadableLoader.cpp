@@ -51,9 +51,10 @@ using namespace std;
 
 namespace WebCore {
 
+// FIXME: The assumption that we can upcast worker object proxy to WorkerMessagingProxy will not be true in multi-process implementation.
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerContext* workerContext, ThreadableLoaderClient* client, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff)
     : m_workerContext(workerContext)
-    , m_bridge(*(new MainThreadBridge(client, *m_workerContext->thread()->messagingProxy(), request, callbacksSetting, contentSniff)))
+    , m_bridge(*(new MainThreadBridge(client, *(static_cast<WorkerMessagingProxy*>(m_workerContext->thread()->workerObjectProxy())), request, callbacksSetting, contentSniff)))
 {
 }
 

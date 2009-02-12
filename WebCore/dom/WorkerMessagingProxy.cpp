@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,7 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "GenericWorkerTask.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
@@ -58,19 +60,9 @@ private:
         ASSERT(scriptContext->isWorkerContext());
         WorkerContext* context = static_cast<WorkerContext*>(scriptContext);
 
-        RefPtr<Event> evt = MessageEvent::create(m_message, "", "", 0, 0);
+        context->dispatchMessage(m_message);
 
-        if (context->onmessage()) {
-            evt->setTarget(context);
-            evt->setCurrentTarget(context);
-            context->onmessage()->handleEvent(evt.get(), false);
-        }
-
-        ExceptionCode ec = 0;
-        context->dispatchEvent(evt.release(), ec);
-        ASSERT(!ec);
-
-        context->thread()->messagingProxy()->confirmWorkerThreadMessage(context->hasPendingActivity());
+        static_cast<WorkerMessagingProxy*>(context->thread()->workerObjectProxy())->confirmWorkerThreadMessage(context->hasPendingActivity());
     }
 
 private:
@@ -97,17 +89,7 @@ private:
         if (!workerObject || m_messagingProxy->askedToTerminate())
             return;
 
-        RefPtr<Event> evt = MessageEvent::create(m_message, "", "", 0, 0);
-
-        if (workerObject->onmessage()) {
-            evt->setTarget(workerObject);
-            evt->setCurrentTarget(workerObject);
-            workerObject->onmessage()->handleEvent(evt.get(), false);
-        }
-
-        ExceptionCode ec = 0;
-        workerObject->dispatchEvent(evt.release(), ec);
-        ASSERT(!ec);
+        workerObject->dispatchMessage(m_message);
     }
 
 private:
@@ -190,8 +172,13 @@ private:
 };
 
 
-WorkerMessagingProxy::WorkerMessagingProxy(PassRefPtr<ScriptExecutionContext> scriptExecutionContext, Worker* workerObject)
-    : m_scriptExecutionContext(scriptExecutionContext)
+WorkerContextProxy* WorkerContextProxy::create(Worker* worker)
+{
+    return new WorkerMessagingProxy(worker);
+}
+
+WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
+    : m_scriptExecutionContext(workerObject->scriptExecutionContext())
     , m_workerObject(workerObject)
     , m_unconfirmedMessageCount(0)
     , m_workerThreadHadPendingActivity(false)
@@ -199,14 +186,21 @@ WorkerMessagingProxy::WorkerMessagingProxy(PassRefPtr<ScriptExecutionContext> sc
 {
     ASSERT(m_workerObject);
     ASSERT((m_scriptExecutionContext->isDocument() && isMainThread())
-        || (m_scriptExecutionContext->isWorkerContext() && currentThread() == static_cast<WorkerContext*>(m_scriptExecutionContext.get())->thread()->threadID()));
+           || (m_scriptExecutionContext->isWorkerContext() && currentThread() == static_cast<WorkerContext*>(m_scriptExecutionContext.get())->thread()->threadID()));
 }
 
 WorkerMessagingProxy::~WorkerMessagingProxy()
 {
     ASSERT(!m_workerObject);
     ASSERT((m_scriptExecutionContext->isDocument() && isMainThread())
-        || (m_scriptExecutionContext->isWorkerContext() && currentThread() == static_cast<WorkerContext*>(m_scriptExecutionContext.get())->thread()->threadID()));
+           || (m_scriptExecutionContext->isWorkerContext() && currentThread() == static_cast<WorkerContext*>(m_scriptExecutionContext.get())->thread()->threadID()));
+}
+
+void WorkerMessagingProxy::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
+{
+    RefPtr<WorkerThread> thread = WorkerThread::create(scriptURL, userAgent, sourceCode, this);
+    workerThreadCreated(thread);
+    thread->start();
 }
 
 void WorkerMessagingProxy::postMessageToWorkerObject(const String& message)
@@ -240,6 +234,18 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
 {
     m_scriptExecutionContext->postTask(WorkerExceptionTask::create(errorMessage, lineNumber, sourceURL, this));
 }
+    
+static void postConsoleMessageTask(ScriptExecutionContext* context, WorkerMessagingProxy* messagingProxy, MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+{
+    if (messagingProxy->askedToTerminate())
+        return;
+    context->addMessage(destination, source, level, message, lineNumber, sourceURL);
+}
+
+void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageDestination destination, MessageSource source, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
+{
+    m_scriptExecutionContext->postTask(createCallbackTask(&postConsoleMessageTask, this, destination, source, level, message, lineNumber, sourceURL));
+}
 
 void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<WorkerThread> workerThread)
 {
@@ -251,7 +257,8 @@ void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<WorkerThread> workerTh
     } else {
         unsigned taskCount = m_queuedEarlyTasks.size();
         ASSERT(!m_unconfirmedMessageCount);
-        m_unconfirmedMessageCount = taskCount + 1; // Worker initialization counts as a pending message.
+        m_unconfirmedMessageCount = taskCount;
+        m_workerThreadHadPendingActivity = true; // Worker initialization means a pending activity.
 
         for (unsigned i = 0; i < taskCount; ++i)
             m_workerThread->runLoop().postTask(m_queuedEarlyTasks[i]);

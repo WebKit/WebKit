@@ -46,7 +46,7 @@ namespace WebCore {
     class Document;
     class ScriptExecutionContext;
     class String;
-    class WorkerMessagingProxy;
+    class WorkerContextProxy;
 
     typedef int ExceptionCode;
 
@@ -63,6 +63,9 @@ namespace WebCore {
         void postMessage(const String& message);
 
         void terminate();
+
+        void dispatchMessage(const String&);
+        void dispatchErrorEvent();
 
         virtual bool canSuspend() const;
         virtual void stop();
@@ -90,15 +93,13 @@ namespace WebCore {
 
         virtual void notifyFinished(CachedResource*);
 
-        void dispatchErrorEvent();
-
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
 
         KURL m_scriptURL;
         CachedResourceHandle<CachedScript> m_cachedScript;
 
-        WorkerMessagingProxy* m_messagingProxy; // The proxy outlives the worker to perform thread shutdown.
+        WorkerContextProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
 
         RefPtr<EventListener> m_onMessageListener;
         RefPtr<EventListener> m_onErrorListener;
