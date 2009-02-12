@@ -29,7 +29,7 @@ export SDKROOT
 
 export BUILT_PRODUCTS_DIR="$XDSTROOT/obj/JavaScriptCore"
 
-mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources"
+mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/docs"
 cd "${BUILT_PRODUCTS_DIR}/DerivedSources"
 
 export JavaScriptCore="${XSRCROOT}"

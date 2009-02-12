@@ -1,3 +1,14 @@
+2009-02-12  Adam Roben  <aroben@apple.com>
+
+        Fix lots of Perl warnings when building JavaScriptCoreGenerated on
+        Windows
+
+        Reviewed by John Sullivan.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh:
+        Create the docs/ directory so that we can write bytecode.html into it.
+        This matches what JavaScriptCore.xcodeproj does.
+
 2009-02-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Lars.
