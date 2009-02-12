@@ -1,3 +1,16 @@
+2009-02-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Mark Rowe.
+
+        [GTK] Soup backend must handle upload of multiple files
+        https://bugs.webkit.org/show_bug.cgi?id=18343
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::):
+        (WebCore::freeFileMapping):
+        (WebCore::ResourceHandle::startHttp): Support multipart request bodies
+        mmap'ing files to be uploaded.
+
 2009-02-12  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix the Qt build following r40871 which changed RenderObject::element()

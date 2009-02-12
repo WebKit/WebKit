@@ -3,6 +3,7 @@
  * Copyright (C) 2008 Xan Lopez <xan@gnome.org>
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2009 Holger Hans Peter Freyther
+ * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,11 +22,11 @@
  */
 
 #include "config.h"
-#include "CString.h"
 #include "ResourceHandle.h"
 
 #include "Base64.h"
 #include "CookieJarSoup.h"
+#include "CString.h"
 #include "DocLoader.h"
 #include "Frame.h"
 #include "HTTPParsers.h"
@@ -37,9 +38,14 @@
 #include "ResourceResponse.h"
 #include "TextEncoding.h"
 
+#include <errno.h>
+#include <fcntl.h>
 #include <gio/gio.h>
 #include <libsoup/soup.h>
 #include <libsoup/soup-message.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #if PLATFORM(GTK)
     #if GLIB_CHECK_VERSION(2,12,0)
@@ -55,8 +61,23 @@ enum
 {
     ERROR_TRANSPORT,
     ERROR_UNKNOWN_PROTOCOL,
-    ERROR_BAD_NON_HTTP_METHOD
+    ERROR_BAD_NON_HTTP_METHOD,
+    ERROR_UNABLE_TO_OPEN_FILE,
 };
+
+struct FileMapping
+{
+    gpointer ptr;
+    gsize length;
+};
+
+static void freeFileMapping(gpointer data)
+{
+    FileMapping* fileMapping = static_cast<FileMapping*>(data);
+    if (fileMapping->ptr != MAP_FAILED)
+        munmap(fileMapping->ptr, fileMapping->length);
+    g_slice_free(FileMapping, fileMapping);
+}
 
 static void cleanupGioOperation(ResourceHandleInternal* handle);
 
@@ -315,17 +336,70 @@ bool ResourceHandle::startHttp(String urlString)
 
     FormData* httpBody = d->m_request.httpBody();
     if (httpBody && !httpBody->isEmpty()) {
-        // Making a copy of the request body isn't the most efficient way to
-        // serialize it, but by far the most simple. Dealing with individual
-        // FormData elements and shared buffers should be more memory
-        // efficient.
-        //
-        // This possibly isn't handling file uploads/attachments, for which
-        // shared buffers or streaming should definitely be used.
-        Vector<char> body;
-        httpBody->flatten(body);
-        soup_message_set_request(msg, d->m_request.httpContentType().utf8().data(),
-                                 SOUP_MEMORY_COPY, body.data(), body.size());
+        size_t numElements = httpBody->elements().size();
+
+        // handle the most common case (i.e. no file upload)
+        if (numElements < 2) {
+            Vector<char> body;
+            httpBody->flatten(body);
+            soup_message_set_request(msg, d->m_request.httpContentType().utf8().data(),
+                                     SOUP_MEMORY_COPY, body.data(), body.size());
+        } else {
+            /*
+             * we have more than one element to upload, and some may
+             * be (big) files, which we will want to mmap instead of
+             * copying into memory; TODO: support upload of non-local
+             * (think sftp://) files by using GIO?
+             *
+             * TODO: we can avoid appending all the buffers to the
+             * request_body variable with the following call, but we
+             * need to depend on libsoup > 2.25.4
+             *
+             * soup_message_body_set_accumulate(msg->request_body, FALSE);
+             */
+            for (size_t i = 0; i < numElements; i++) {
+                const FormDataElement& element = httpBody->elements()[i];
+
+                if (element.m_type == FormDataElement::data)
+                    soup_message_body_append(msg->request_body, SOUP_MEMORY_TEMPORARY, element.m_data.data(), element.m_data.size());
+                else {
+                    /*
+                     * mapping for uploaded files code inspired by technique used in
+                     * libsoup's simple-httpd test
+                     */
+                    int fd = open(element.m_filename.utf8().data(), O_CLOEXEC|O_RDONLY);
+
+                    if (fd == -1) {
+                        ResourceError error("webkit-network-error", ERROR_UNABLE_TO_OPEN_FILE, urlString, strerror(errno));
+                        d->client()->didFail(this, error);
+                        g_object_unref(msg);
+                        return false;
+                    }
+
+                    struct stat statBuf;
+                    fstat(fd, &statBuf);
+
+                    FileMapping* fileMapping = g_slice_new(FileMapping);
+
+                    fileMapping->ptr = mmap(NULL, statBuf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+                    if (fileMapping->ptr == MAP_FAILED) {
+                        ResourceError error("webkit-network-error", ERROR_UNABLE_TO_OPEN_FILE, urlString, strerror(errno));
+                        d->client()->didFail(this, error);
+                        freeFileMapping(fileMapping);
+                        g_object_unref(msg);
+                        close(fd);
+                        return false;
+                    }
+                    fileMapping->length = statBuf.st_size;
+
+                    close(fd);
+
+                    SoupBuffer* soupBuffer = soup_buffer_new_with_owner(fileMapping->ptr, fileMapping->length, fileMapping, freeFileMapping);
+                    soup_message_body_append_buffer(msg->request_body, soupBuffer);
+                    soup_buffer_free(soupBuffer);
+                }
+            }
+        }
     }
 
     d->m_msg = static_cast<SoupMessage*>(g_object_ref(msg));
