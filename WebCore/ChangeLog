@@ -1,3 +1,29 @@
+2009-02-12  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Move containsFloats, hasOverhangingFloats, shrinkToAvoidFloats and avoidsFloats down to
+        RenderBox, since these methods only apply to boxes.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::markAllDescendantsWithFloatsForLayout):
+        (WebCore::RenderBlock::calcBlockPrefWidths):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::containsFloats):
+        (WebCore::RenderBlock::hasOverhangingFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::shrinkToAvoidFloats):
+        (WebCore::RenderBox::avoidsFloats):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isFloatingOrPositioned):
+        * rendering/RenderView.h:
+
 2009-02-12  Chris Marrin  <cmarrin@apple.com>        
 
         Reviewed by Dave Hyatt

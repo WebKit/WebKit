@@ -2130,23 +2130,6 @@ void RenderObject::collectDashboardRegions(Vector<DashboardRegionValue>& regions
 }
 #endif
 
-bool RenderObject::avoidsFloats() const
-{
-    return isReplaced() || hasOverflowClip() || isHR();
-}
-
-bool RenderObject::shrinkToAvoidFloats() const
-{
-    // FIXME: Technically we should be able to shrink replaced elements on a line, but this is difficult to accomplish, since this
-    // involves doing a relayout during findNextLineBreak and somehow overriding the containingBlockWidth method to return the
-    // current remaining width on a line.
-    if (isInline() && !isHTMLMarquee() || !avoidsFloats())
-        return false;
-
-    // All auto-width objects that avoid floats should always use lineWidth.
-    return style()->width().isAuto();
-}
-
 bool RenderObject::willRenderImage(CachedImage*)
 {
     // Without visibility we won't render (and therefore don't care about animation).

@@ -275,6 +275,9 @@ public:
     virtual int firstLineBoxBaseline() const { return -1; }
     virtual int lastLineBoxBaseline() const { return -1; }
 
+    bool shrinkToAvoidFloats() const;
+    virtual bool avoidsFloats() const;
+
 #if ENABLE(SVG)
     virtual TransformationMatrix localTransform() const;
 #endif

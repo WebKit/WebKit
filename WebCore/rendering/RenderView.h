@@ -63,8 +63,6 @@ public:
 
     FrameView* frameView() const { return m_frameView; }
 
-    virtual bool hasOverhangingFloats() { return false; }
-
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
     virtual void repaintViewRectangle(const IntRect&, bool immediate = false);
     // Repaint the view, and all composited layers that intersect the given absolute rectangle.

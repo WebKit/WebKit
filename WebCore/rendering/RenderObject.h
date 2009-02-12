@@ -579,12 +579,6 @@ public:
     virtual unsigned int length() const { return 1; }
 
     bool isFloatingOrPositioned() const { return (isFloating() || isPositioned()); }
-    virtual bool containsFloats() { return false; }
-    virtual bool containsFloat(RenderObject*) { return false; }
-    virtual bool hasOverhangingFloats() { return false; }
-
-    virtual bool avoidsFloats() const;
-    bool shrinkToAvoidFloats() const;
 
     bool isTransparent() const { return style()->opacity() < 1.0f; }
     float opacity() const { return style()->opacity(); }

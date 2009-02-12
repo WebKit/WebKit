@@ -2750,6 +2750,23 @@ VisiblePosition RenderBox::positionForCoordinates(int xPos, int yPos)
     return VisiblePosition(node(), 0, DOWNSTREAM);
 }
 
+bool RenderBox::shrinkToAvoidFloats() const
+{
+    // FIXME: Technically we should be able to shrink replaced elements on a line, but this is difficult to accomplish, since this
+    // involves doing a relayout during findNextLineBreak and somehow overriding the containingBlockWidth method to return the
+    // current remaining width on a line.
+    if (isInline() && !isHTMLMarquee() || !avoidsFloats())
+        return false;
+
+    // All auto-width objects that avoid floats should always use lineWidth.
+    return style()->width().isAuto();
+}
+
+bool RenderBox::avoidsFloats() const
+{
+    return isReplaced() || hasOverflowClip() || isHR();
+}
+
 #if ENABLE(SVG)
 
 TransformationMatrix RenderBox::localTransform() const
