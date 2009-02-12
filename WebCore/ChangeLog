@@ -1,3 +1,132 @@
+2009-02-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Darin Adler, Antti Koivisto, Holger Hans Peter Freyther
+        
+        Bug 23797: A platform should be able to use more than one media engine for <video> and <audio>
+        https://bugs.webkit.org/show_bug.cgi?id=23797
+
+        * WebCore.xcodeproj/project.pbxproj: add MediaPlayerPrivate.h
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load): selectMediaURL now also returns a MIME type, pass it to
+        MediaPlayer::load so it can choose the right media engine
+        (WebCore::HTMLMediaElement::selectMediaURL): renamed from pickMedia. use MIMETypeRegistry
+        functions to strip params from the url and extract the codecs parameter. call 
+        MediaPlayer::supportsType to see if we can open the file since only a media engine can
+        answer questions about supported type+codecs.
+        * html/HTMLMediaElement.h:
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::getParameterFromMIMEType): New, find and return a MIME type parameter
+        (WebCore::MIMETypeRegistry::stripParametersFromMIMEType): New, strip all parameters from a MIME type
+        * platform/MIMETypeRegistry.h:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::NullMediaPlayerPrivate):
+        (WebCore::NullMediaPlayerPrivate::load):
+        (WebCore::NullMediaPlayerPrivate::cancelLoad):
+        (WebCore::NullMediaPlayerPrivate::play):
+        (WebCore::NullMediaPlayerPrivate::pause):
+        (WebCore::NullMediaPlayerPrivate::naturalSize):
+        (WebCore::NullMediaPlayerPrivate::hasVideo):
+        (WebCore::NullMediaPlayerPrivate::setVisible):
+        (WebCore::NullMediaPlayerPrivate::duration):
+        (WebCore::NullMediaPlayerPrivate::currentTime):
+        (WebCore::NullMediaPlayerPrivate::seek):
+        (WebCore::NullMediaPlayerPrivate::seeking):
+        (WebCore::NullMediaPlayerPrivate::setEndTime):
+        (WebCore::NullMediaPlayerPrivate::setRate):
+        (WebCore::NullMediaPlayerPrivate::paused):
+        (WebCore::NullMediaPlayerPrivate::setVolume):
+        (WebCore::NullMediaPlayerPrivate::networkState):
+        (WebCore::NullMediaPlayerPrivate::readyState):
+        (WebCore::NullMediaPlayerPrivate::maxTimeSeekable):
+        (WebCore::NullMediaPlayerPrivate::maxTimeBuffered):
+        (WebCore::NullMediaPlayerPrivate::dataRate):
+        (WebCore::NullMediaPlayerPrivate::totalBytesKnown):
+        (WebCore::NullMediaPlayerPrivate::totalBytes):
+        (WebCore::NullMediaPlayerPrivate::bytesLoaded):
+        (WebCore::NullMediaPlayerPrivate::setRect):
+        (WebCore::NullMediaPlayerPrivate::paint):
+        (WebCore::createNullMediaPlayer):
+        Do nothing media player so MediaPlayer doesn't have to NULL check before calling current engine.
+
+        (WebCore::MediaPlayerFactory::MediaPlayerFactory): New, factory constructor.
+        (WebCore::installedMediaEngines): New, returns vector of all installed engines.
+        (WebCore::addMediaEngine): New, add a media engine to the cache.
+        (WebCore::chooseBestEngineForTypeAndCodecs): New, return an engine that might support a MIME type.
+        (WebCore::MediaPlayer::MediaPlayer): create NULL media player so we have a default. Initialize m_currentMediaEngine.
+        (WebCore::MediaPlayer::~MediaPlayer): don't need to delete m_private, it is now an OwnPtr.
+        (WebCore::MediaPlayer::load): Take MIME type as well as url, since we need it to find the right
+          media engine. If no MIME type is provided, try to devine one from the url. Choose a media engine
+          based on the MIME type and codecs parameter.
+        (WebCore::MediaPlayer::currentTime): Remove excess white space.
+        (WebCore::MediaPlayer::supportsType): Take codecs param as well as MIME type. Return enum so we can
+        indicate "maybe" condition.
+        (WebCore::MediaPlayer::getSupportedTypes): Build up list of MIME types by consulting all engines.
+        (WebCore::MediaPlayer::isAvailable): return true if any media engine is installed.
+
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::):
+        (WebCore::MediaPlayer::frameView): accessor function.
+
+        * platform/graphics/MediaPlayerPrivate.h: New, declares abstract interface for media engines.
+        (WebCore::MediaPlayerPrivateInterface::~MediaPlayerPrivateInterface):
+        (WebCore::MediaPlayerPrivateInterface::totalBytesKnown):
+
+        * platform/graphics/chromium/MediaPlayerPrivateChromium.h: Add support for engine factory 
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::create): New, media engine factory function
+        (WebCore::MediaPlayerPrivate::registerMediaEngine): Register engine with MediaPlayer factory
+        (WebCore::MediaPlayerPrivate::load): URL is a const String.
+        (WebCore::MediaPlayerPrivate::duration): Declare const.
+        (WebCore::MediaPlayerPrivate::naturalSize): Ditto.
+        (WebCore::MediaPlayerPrivate::hasVideo): Ditto.
+        (WebCore::MediaPlayerPrivate::networkState): Ditto.
+        (WebCore::MediaPlayerPrivate::readyState): Ditto.
+        (WebCore::MediaPlayerPrivate::maxTimeBuffered): Ditto.
+        (WebCore::MediaPlayerPrivate::maxTimeSeekable): Ditto.
+        (WebCore::MediaPlayerPrivate::maxTimeLoaded): Ditto.
+        (WebCore::MediaPlayerPrivate::bytesLoaded): Ditto.
+        (WebCore::MediaPlayerPrivate::totalBytesKnown): Ditto.
+        (WebCore::MediaPlayerPrivate::totalBytes): Ditto.
+        (WebCore::MediaPlayerPrivate::supportsType): Return MediaPlayer::SupportsType enum instead of bool.
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivate::isAvailable):
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::create): New, media engine factory function
+        (WebCore::MediaPlayerPrivateQTKit::registerMediaEngine): Register engine with MediaPlayer factory
+        (WebCore::MediaPlayerPrivate::createQTMovieView): don't access MediaPlayer->m_frameView directly,
+        use accessor function.
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering): Ditto.
+        (WebCore::MediaPlayerPrivate::paint): Ditto.
+        (WebCore::mimeTypeCache): New.
+        (WebCore::MediaPlayerPrivate::getSupportedTypes): New, media engine factory function.
+        (WebCore::MediaPlayerPrivate::supportsType): return MediaPlayer::SupportsType enum instead of bool
+        (-[WebCoreMovieObserver initWithCallback:]): fix formatting
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::create):
+        (WebCore::MediaPlayerPrivate::registerMediaEngine):
+        (WebCore::MediaPlayerPrivate::supportsType):
+        (WebCore::MediaPlayerPrivate::load): URL is a const String.
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h:
+        (WebCore::MediaPlayerPrivate::isAvailable):
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::create): New, media engine factory function
+        (WebCore::MediaPlayerPrivate::registerMediaEngine): New, register engine with MediaPlayer factory
+        (WebCore::MediaPlayerPrivate::load): URL is a const String.
+        (WebCore::MediaPlayerPrivate::paint): don't access MediaPlayer->m_frameView directly,
+        use accessor function.
+        (WebCore::mimeTypeCache): New.
+        (WebCore::MediaPlayerPrivateQTWin::getSupportedTypes): New, media engine factory function.
+        (WebCore::MediaPlayerPrivateQTWin::supportsType): return MediaPlayer::SupportsType enum instead of bool
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+
 2009-02-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

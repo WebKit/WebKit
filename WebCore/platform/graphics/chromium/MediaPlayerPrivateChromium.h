@@ -33,13 +33,13 @@
 
 #if ENABLE(VIDEO)
 
-#include "MediaPlayer.h"
+#include "MediaPlayerPrivate.h"
 
 namespace WebCore {
 
-class MediaPlayerPrivate : public Noncopyable {
+class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
 public:
-    MediaPlayerPrivate(MediaPlayer*);
+    static void registerMediaEngine(MediaEngineRegistrar);
     ~MediaPlayerPrivate();
 
     IntSize naturalSize() const;
@@ -78,9 +78,6 @@ public:
 
     void paint(GraphicsContext*, const IntRect&);
 
-    static void getSupportedTypes(HashSet<String>&);
-    static bool isAvailable();
-
     // Public methods to be called by WebMediaPlayer
     FrameView* frameView();
     void networkStateChanged();
@@ -90,6 +87,12 @@ public:
     void repaint();
 
 private:
+    MediaPlayerPrivate(MediaPlayer*);
+    static MediaPlayerPrivateInterface* create(MediaPlayer* player);
+    static void getSupportedTypes(HashSet<String>&);
+    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
+    static bool isAvailable();
+
     MediaPlayer* m_player;
     void* m_data;
 };

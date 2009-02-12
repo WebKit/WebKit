@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "MediaPlayer.h"
+#include "MediaPlayerPrivate.h"
 #include "Timer.h"
 #include <QTMovieWin.h>
 #include <wtf/OwnPtr.h>
@@ -44,9 +44,10 @@ class IntSize;
 class IntRect;
 class String;
 
-class MediaPlayerPrivate : QTMovieWinClient, Noncopyable {
+class MediaPlayerPrivate : public MediaPlayerPrivateInterface, public QTMovieWinClient {
 public:
-    MediaPlayerPrivate(MediaPlayer*);
+    static void registerMediaEngine(MediaEngineRegistrar);
+
     ~MediaPlayerPrivate();
     
     IntSize naturalSize() const;
@@ -88,10 +89,10 @@ public:
     
     void paint(GraphicsContext*, const IntRect&);
     
-    static void getSupportedTypes(HashSet<String>& types);
-    static bool isAvailable();
 
 private:
+    MediaPlayerPrivate(MediaPlayer*);
+
     void updateStates();
     void doSeek();
     void cancelSeek();
@@ -104,7 +105,13 @@ private:
     virtual void movieLoadStateChanged(QTMovieWin*);
     virtual void movieTimeChanged(QTMovieWin*);
     virtual void movieNewImageAvailable(QTMovieWin*);
-      
+
+    // engine support
+    static MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer*);
+    static void getSupportedTypes(HashSet<String>& types);
+    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
+    static bool isAvailable();
+
     MediaPlayer* m_player;
     OwnPtr<QTMovieWin> m_qtMovie;
     float m_seekTo;

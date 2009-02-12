@@ -161,7 +161,7 @@ private:
     
     bool processingUserGesture() const;
 
-    String pickMedia();
+    String selectMediaURL(String& mediaMIMEType);
     void updateVolume();
     void updatePlayState();
     float effectiveStart() const;

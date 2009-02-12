@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2009 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -110,6 +111,18 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     connect(m_mediaObject, SIGNAL(totalTimeChanged(qint64)), this, SLOT(totalTimeChanged(qint64)));
 }
 
+MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer* player) 
+{ 
+    return new MediaPlayerPrivate(player);
+}
+
+void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
+{
+    if (isAvailable())
+        registrar(create, getSupportedTypes, supportsType);
+}
+
+
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
     LOG(Media, "MediaPlayerPrivatePhonon::dtor deleting videowidget");
@@ -131,6 +144,13 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<String>&)
     notImplemented();
 }
 
+MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs)
+{
+    // FIXME: do the real thing
+    notImplemented();
+    return MediaPlayer::IsNotSupported;
+}
+
 bool MediaPlayerPrivate::hasVideo() const
 {
     bool hasVideo = m_mediaObject->hasVideo();
@@ -138,7 +158,7 @@ bool MediaPlayerPrivate::hasVideo() const
     return hasVideo;
 }
 
-void MediaPlayerPrivate::load(String url)
+void MediaPlayerPrivate::load(const String& url)
 {
     LOG(Media, "MediaPlayerPrivatePhonon::load(\"%s\")", url.utf8().data());
 

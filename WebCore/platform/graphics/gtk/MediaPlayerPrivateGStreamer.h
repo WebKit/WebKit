@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Collabora Ltd. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
@@ -24,7 +24,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "MediaPlayer.h"
+#include "MediaPlayerPrivate.h"
 #include "Timer.h"
 
 #include <gtk/gtk.h>
@@ -44,20 +44,21 @@ namespace WebCore {
     gboolean mediaPlayerPrivateEOSCallback(GstBus* bus, GstMessage* message, gpointer data);
     gboolean mediaPlayerPrivateStateCallback(GstBus* bus, GstMessage* message, gpointer data);
 
-    class MediaPlayerPrivate : Noncopyable
+    class MediaPlayerPrivate : public MediaPlayerPrivateInterface
     {
     friend gboolean mediaPlayerPrivateErrorCallback(GstBus* bus, GstMessage* message, gpointer data);
     friend gboolean mediaPlayerPrivateEOSCallback(GstBus* bus, GstMessage* message, gpointer data);
     friend gboolean mediaPlayerPrivateStateCallback(GstBus* bus, GstMessage* message, gpointer data);
 
     public:
-        MediaPlayerPrivate(MediaPlayer*);
+
+        static void registerMediaEngine(MediaEngineRegistrar);
         ~MediaPlayerPrivate();
 
-        IntSize naturalSize();
-        bool hasVideo();
+        IntSize naturalSize() const;
+        bool hasVideo() const;
 
-        void load(String url);
+        void load(const String &url);
         void cancelLoad();
 
         void play();
@@ -66,7 +67,7 @@ namespace WebCore {
         bool paused() const;
         bool seeking() const;
 
-        float duration();
+        float duration() const;
         float currentTime() const;
         void seek(float);
         void setEndTime(float);
@@ -77,14 +78,14 @@ namespace WebCore {
 
         int dataRate() const;
 
-        MediaPlayer::NetworkState networkState();
-        MediaPlayer::ReadyState readyState();
+        MediaPlayer::NetworkState networkState() const;
+        MediaPlayer::ReadyState readyState() const;
 
-        float maxTimeBuffered();
-        float maxTimeSeekable();
-        unsigned bytesLoaded();
-        bool totalBytesKnown();
-        unsigned totalBytes();
+        float maxTimeBuffered() const;
+        float maxTimeSeekable() const;
+        unsigned bytesLoaded() const;
+        bool totalBytesKnown() const;
+        unsigned totalBytes() const;
 
         void setVisible(bool);
         void setRect(const IntRect&);
@@ -99,15 +100,20 @@ namespace WebCore {
 
         void repaint();
         void paint(GraphicsContext*, const IntRect&);
-        static void getSupportedTypes(HashSet<String>&);
-        static bool isAvailable() { return true; }
 
     private:
+
+        MediaPlayerPrivate(MediaPlayer*);
+        static MediaPlayerPrivateInterface* create(MediaPlayer* player);
+
+        static void getSupportedTypes(HashSet<String>&);
+        static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
+        static bool isAvailable() { return true; }
 
         void updateStates();
         void cancelSeek();
         void endPointTimerFired(Timer<MediaPlayerPrivate>*);
-        float maxTimeLoaded();
+        float maxTimeLoaded() const;
         void startEndPointTimerIfNeeded();
 
         void createGSTPlayBin(String url);
@@ -124,7 +130,7 @@ namespace WebCore {
         MediaPlayer::NetworkState m_networkState;
         MediaPlayer::ReadyState m_readyState;
         bool m_startedPlaying;
-        bool m_isStreaming;
+        mutable bool m_isStreaming;
         IntRect m_rect;
         bool m_visible;
         cairo_surface_t* m_surface;

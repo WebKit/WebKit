@@ -32,7 +32,10 @@
 #include "KURL.h"
 #include "QTMovieWin.h"
 #include "ScrollView.h"
+#include "StringHash.h"
+#include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 
 #if DRAW_FRAME_RATE
 #include "Font.h"
@@ -48,8 +51,19 @@ using namespace std;
 
 namespace WebCore {
 
+MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer* player) 
+{ 
+    return new MediaPlayerPrivate(player);
+}
+
+void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
+{
+    if (isAvailable())
+        registrar(create, getSupportedTypes, supportsType);
+}
+
 static const double endPointTimerInterval = 0.020;
-    
+
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_player(player)
     , m_seekTo(-1)
@@ -93,8 +107,8 @@ void MediaPlayerPrivate::load(const String& url)
 
     m_qtMovie.set(new QTMovieWin(this));
     m_qtMovie->load(url.characters(), url.length());
-    m_qtMovie->setVolume(m_player->m_volume);
-    m_qtMovie->setVisible(m_player->m_visible);
+    m_qtMovie->setVolume(m_player->volume());
+    m_qtMovie->setVisible(m_player->visible());
 }
 
 void MediaPlayerPrivate::play()
@@ -403,7 +417,7 @@ void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
 
 #if DRAW_FRAME_RATE
     if (m_frameCountWhilePlaying > 10) {
-        Frame* frame = m_player->m_frameView ? m_player->m_frameView->frame() : NULL;
+        Frame* frame = m_player->frameView() ? m_player->frameView()->frame() : NULL;
         Document* document = frame ? frame->document() : NULL;
         RenderObject* renderer = document ? document->renderer() : NULL;
         RenderStyle* styleToUse = renderer ? renderer->style() : NULL;
@@ -427,21 +441,42 @@ void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
 #endif
 }
 
+static HashSet<String> mimeTypeCache()
+{
+    DEFINE_STATIC_LOCAL(HashSet<String>, typeCache, ());
+    static bool typeListInitialized = false;
+
+    if (!typeListInitialized) {
+        unsigned count = QTMovieWin::countSupportedTypes();
+        for (unsigned n = 0; n < count; n++) {
+            const UChar* character;
+            unsigned len;
+            QTMovieWin::getSupportedType(n, character, len);
+            if (len)
+                typeCache.add(String(character, len));
+        }
+
+        typeListInitialized = true;
+    }
+    
+    return typeCache;
+} 
+
 void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
 {
-    unsigned count = QTMovieWin::countSupportedTypes();
-    for (unsigned n = 0; n < count; n++) {
-        const UChar* character;
-        unsigned len;
-        QTMovieWin::getSupportedType(n, character, len);
-        if (len)
-            types.add(String(character, len));
-    }
+    types = mimeTypeCache();
 } 
 
 bool MediaPlayerPrivate::isAvailable()
 {
     return QTMovieWin::initializeQuickTime();
+}
+
+MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs)
+{
+    // only return "IsSupported" if there is no codecs parameter for now as there is no way to ask QT if it supports an
+    //  extended MIME type
+    return mimeTypeCache().contains(type) ? (!codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported) : MediaPlayer::IsNotSupported;
 }
 
 void MediaPlayerPrivate::movieEnded(QTMovieWin* movie)

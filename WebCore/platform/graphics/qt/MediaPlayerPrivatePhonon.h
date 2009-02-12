@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2009 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,8 +21,7 @@
 #ifndef MediaPlayerPrivatePhonon_h
 #define MediaPlayerPrivatePhonon_h
 
-#include "MediaPlayer.h"
-#include <wtf/Noncopyable.h>
+#include "MediaPlayerPrivate.h"
 
 #include <QObject>
 #include <phononnamespace.h>
@@ -40,12 +40,12 @@ QT_END_NAMESPACE
 
 namespace WebCore {
 
-    class MediaPlayerPrivate : public QObject, Noncopyable {
+    class MediaPlayerPrivate : public QObject, public MediaPlayerPrivateInterface {
 
         Q_OBJECT
 
     public:
-        MediaPlayerPrivate(MediaPlayer*);
+        static void registerMediaEngine(MediaEngineRegistrar);
         ~MediaPlayerPrivate();
 
         // These enums are used for debugging
@@ -79,7 +79,7 @@ namespace WebCore {
         IntSize naturalSize() const;
         bool hasVideo() const;
 
-        void load(String url);
+        void load(const String &url);
         void cancelLoad();
 
         void play();
@@ -112,8 +112,6 @@ namespace WebCore {
         void setRect(const IntRect&);
 
         void paint(GraphicsContext*, const IntRect&);
-        static void getSupportedTypes(HashSet<String>&);
-        static bool isAvailable()   { return true; }
 
     protected:
         bool eventFilter(QObject*, QEvent*);
@@ -130,6 +128,13 @@ namespace WebCore {
         void totalTimeChanged(qint64);
 
     private:
+        MediaPlayerPrivate(MediaPlayer*);
+        static MediaPlayerPrivateInterface* create(MediaPlayer* player);
+
+        static void getSupportedTypes(HashSet<String>&);
+        static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
+        static bool isAvailable() { return true; }
+
         void updateStates();
 
         MediaPlayer* m_player;

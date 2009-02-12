@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "MediaPlayer.h"
+#include "MediaPlayerPrivate.h"
 #include "Timer.h"
 #include <wtf/RetainPtr.h>
 
@@ -52,11 +52,28 @@ class WebCoreMovieObserver;
 
 namespace WebCore {
 
-class MediaPlayerPrivate : Noncopyable {
+class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
 public:
-    MediaPlayerPrivate(MediaPlayer*);
+    static void registerMediaEngine(MediaEngineRegistrar);
+
     ~MediaPlayerPrivate();
-    
+
+    void repaint();
+    void loadStateChanged();
+    void rateChanged();
+    void sizeChanged();
+    void timeChanged();
+    void didEnd();
+
+private:
+    MediaPlayerPrivate(MediaPlayer*);
+
+    // engine support
+    static MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer* player);
+    static void getSupportedTypes(HashSet<String>& types);
+    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
+    static bool isAvailable();
+
     IntSize naturalSize() const;
     bool hasVideo() const;
     
@@ -91,19 +108,8 @@ public:
     void setVisible(bool);
     void setRect(const IntRect& r);
     
-    void loadStateChanged();
-    void rateChanged();
-    void sizeChanged();
-    void timeChanged();
-    void didEnd();
-    
-    void repaint();
     void paint(GraphicsContext*, const IntRect&);
-    
-    static void getSupportedTypes(HashSet<String>& types);
-    static bool isAvailable();
-    
-private:
+
     void createQTMovie(const String& url);
     void setUpVideoRendering();
     void tearDownVideoRendering();
