@@ -44,6 +44,18 @@
 
 2009-02-11  Simon Fraser  <simon.fraser@apple.com>
 
+        No review.
+
+        Fix ACCELERATED_COMPOSITING build.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+
+2009-02-11  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt
 
         https://bugs.webkit.org/show_bug.cgi?id=23862

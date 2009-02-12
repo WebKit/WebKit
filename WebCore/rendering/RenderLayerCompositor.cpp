@@ -183,8 +183,6 @@ bool RenderLayerCompositor::updateLayerCompositingState(RenderLayer* layer, Styl
             // synchronizes those changes on the screen.
             m_renderView->frameView()->setNeedsOneShotDrawingSynchronization();
         }
-
-        layer->renderer()->compositingStateChanged();
     }
 
     if (!needsLayer)
