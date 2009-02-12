@@ -1,5 +1,11 @@
 2009-02-12  Adam Roben  <aroben@apple.com>
 
+        Add another failing drag-n-drop test to the Windows Skipped list
+
+        * platform/win/Skipped: Added editing/selection/drag-in-iframe.html.
+
+2009-02-12  Adam Roben  <aroben@apple.com>
+
         Fix Bug 23919: Mac-specific test fast/css/dashboard-region-parser is
         in cross-platform location
 
