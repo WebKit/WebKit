@@ -46,24 +46,23 @@ double randomNumber()
     }
 #endif
     
-    uint32_t part1;
-    uint32_t part2;
     uint64_t fullRandom;
 #if COMPILER(MSVC) && defined(_CRT_RAND_S)
+    uint32_t part1;
     rand_s(&part1);
     fullRandom = part1;
 #elif PLATFORM(DARWIN)
     fullRandom = arc4random();
 #elif PLATFORM(UNIX)
-    part1 = random() & (RAND_MAX - 1);
-    part2 = random() & (RAND_MAX - 1);
+    uint32_t part1 = random() & (RAND_MAX - 1);
+    uint32_t part2 = random() & (RAND_MAX - 1);
     // random only provides 31 bits
     fullRandom = part1;
     fullRandom <<= 31;
     fullRandom |= part2;
 #else
-    part1 = rand() & (RAND_MAX - 1);
-    part2 = rand() & (RAND_MAX - 1);
+    uint32_t part1 = rand() & (RAND_MAX - 1);
+    uint32_t part2 = rand() & (RAND_MAX - 1);
     // rand only provides 31 bits, and the low order bits of that aren't very random
     // so we take the high 26 bits of part 1, and the high 27 bits of part2.
     part1 >>= 5; // drop the low 5 bits
