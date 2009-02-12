@@ -1142,7 +1142,7 @@ void GraphicsLayerCA::setBasicAnimation(AnimatedPropertyID property, TransformOp
     float repeatCount = transition->iterationCount();
     if (repeatCount == Animation::IterationCountInfinite)
         repeatCount = FLT_MAX;
-    else if (anim->direction() == Animation::AnimationDirectionAlternate)
+    else if (transition->direction() == Animation::AnimationDirectionAlternate)
         repeatCount /= 2;
         
     [basicAnim setDuration:duration];

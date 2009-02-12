@@ -1,3 +1,10 @@
+2009-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix build with ACCELERATED_COMPOSITING turned on (simple copy/paste error)
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setBasicAnimation):
+
 2009-02-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Not reviewed.
