@@ -10,7 +10,7 @@
         ctm = referenceElement.getTransformToElement(document.getElementById("group2"));
         if (ctm.a.toFixed(3) == 0.354 && ctm.b.toFixed(3) == -0.354 &&
             ctm.c.toFixed(3) == 0.354 && ctm.d.toFixed(3) == 0.354 &&
-            ctm.e.toFixed(3) == -7.071 && ctm.f.toFixed(15) == 0.0) {
+            ctm.e.toFixed(3) == -7.071 && ctm.f.toFixed(8) == 0.0) {
             ctm = referenceElement.getTransformToElement(document.getElementById("redRect"));
             if (ctm.a.toFixed(3) == 0.354 && ctm.b.toFixed(3) == -0.354 &&
                 ctm.c.toFixed(3) == 0.354 && ctm.d.toFixed(3) == 0.354 &&
