@@ -309,7 +309,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     GraphicsContext* context = paintInfo.context;
 
     // Determine whether or not we have composition underlines to draw.
-    bool containsComposition = renderer()->document()->frame()->editor()->compositionNode() == renderer()->node();
+    bool containsComposition = renderer()->node() && renderer()->document()->frame()->editor()->compositionNode() == renderer()->node();
     bool useCustomUnderlines = containsComposition && renderer()->document()->frame()->editor()->compositionUsesCustomUnderlines();
 
     // Set our font.
