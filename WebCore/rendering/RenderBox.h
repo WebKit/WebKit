@@ -246,8 +246,10 @@ public:
     
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
-    virtual IntRect getOverflowClipRect(int tx, int ty);
-    virtual IntRect getClipRect(int tx, int ty);
+    virtual IntRect overflowClipRect(int tx, int ty);
+    IntRect clipRect(int tx, int ty);
+    virtual bool hasControlClip() const { return false; }
+    virtual IntRect controlClipRect(int /*tx*/, int /*ty*/) const { return IntRect(); }
 
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
     virtual void paintMask(PaintInfo& paintInfo, int tx, int ty);

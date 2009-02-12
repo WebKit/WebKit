@@ -53,7 +53,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
     paintInfo.context->concatCTM(TransformationMatrix().translate(parentX, parentY));
     paintInfo.context->concatCTM(localTransform());
     paintInfo.context->concatCTM(translationForAttributes());
-    paintInfo.context->clip(getClipRect(parentX, parentY));
+    paintInfo.context->clip(clipRect(parentX, parentY));
 
     float opacity = style()->opacity();
     if (opacity < 1.0f)

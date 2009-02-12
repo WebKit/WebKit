@@ -1,3 +1,32 @@
+2009-02-12  David Hyatt  <hyatt@apple.com>
+
+        Rename getOverflowClipRect and getClipRect to overflowClipRect and clipRect.  Move them to RenderBox, since these methods
+        only apply to boxes.  Devirtualize clipRect, since it was not subclassed.  Move controlClip stuff to RenderBox also.
+
+        Reviewed by Simon Fraser
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insideVisibleArea):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::overflowClipRect):
+        (WebCore::RenderBox::clipRect):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::hasControlClip):
+        (WebCore::RenderBox::controlClipRect):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasClip):
+        (WebCore::RenderObject::hasOverflowClip):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::overflowClipRect):
+        * rendering/RenderTable.h:
+
 2009-02-12  Simon Fraser  <simon.fraser@apple.com>
 
         Fix build with ACCELERATED_COMPOSITING turned on (simple copy/paste error)

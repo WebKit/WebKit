@@ -2073,7 +2073,7 @@ bool Editor::insideVisibleArea(const IntPoint& point) const
     if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
         return true;
 
-    IntRect rectInPageCoords = container->getOverflowClipRect(0, 0);
+    IntRect rectInPageCoords = container->overflowClipRect(0, 0);
     IntRect rectInFrameCoords = IntRect(renderer->x() * -1, renderer->y() * -1,
                                     rectInPageCoords.width(), rectInPageCoords.height());
 
@@ -2099,7 +2099,7 @@ bool Editor::insideVisibleArea(Range* range) const
     if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
         return true;
 
-    IntRect rectInPageCoords = container->getOverflowClipRect(0, 0);
+    IntRect rectInPageCoords = container->overflowClipRect(0, 0);
     IntRect rectInFrameCoords = IntRect(renderer->x() * -1, renderer->y() * -1,
                                     rectInPageCoords.width(), rectInPageCoords.height());
     IntRect resultRect = range->boundingBox();

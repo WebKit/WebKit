@@ -2231,13 +2231,13 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, ClipRects& cl
         }
         
         if (renderer()->hasOverflowClip()) {
-            IntRect newOverflowClip = renderer()->getOverflowClipRect(x,y);
+            IntRect newOverflowClip = toRenderBox(renderer())->overflowClipRect(x,y);
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer()->isPositioned() || renderer()->isRelPositioned())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
         }
         if (renderer()->hasClip()) {
-            IntRect newPosClip = renderer()->getClipRect(x,y);
+            IntRect newPosClip = toRenderBox(renderer())->clipRect(x,y);
             clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
@@ -2281,10 +2281,10 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
     if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
         // This layer establishes a clip of some kind.
         if (renderer()->hasOverflowClip())
-            foregroundRect.intersect(renderer()->getOverflowClipRect(x,y));
+            foregroundRect.intersect(toRenderBox(renderer())->overflowClipRect(x,y));
         if (renderer()->hasClip()) {
             // Clip applies to *us* as well, so go ahead and update the damageRect.
-            IntRect newPosClip = renderer()->getClipRect(x,y);
+            IntRect newPosClip = toRenderBox(renderer())->clipRect(x,y);
             backgroundRect.intersect(newPosClip);
             foregroundRect.intersect(newPosClip);
             outlineRect.intersect(newPosClip);
