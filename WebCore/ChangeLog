@@ -1,3 +1,17 @@
+2009-02-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23906
+        Add custom V8 bindings for HTMLPlugInElement.
+
+        * bindings/v8/custom/V8HTMLPlugInElementCustom.cpp: Added.
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::NAMED_PROPERTY_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+
 2009-02-12  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Mark Rowe.
