@@ -658,6 +658,12 @@ void QTMovieWin::disableUnsupportedTracks(unsigned& enabledTrackCount)
             continue;
         
         if (!allowedTrackTypes->contains(mediaType)) {
+
+            // Different mpeg variants import as different track types so check for the "mpeg 
+            // characteristic" instead of hard coding the (current) list of mpeg media types.
+            if (GetMovieIndTrackType(m_private->m_movie, 1, 'mpeg', movieTrackCharacteristic | movieTrackEnabledOnly))
+                continue;
+
             SetTrackEnabled(currentTrack, false);
             --enabledTrackCount;
         }

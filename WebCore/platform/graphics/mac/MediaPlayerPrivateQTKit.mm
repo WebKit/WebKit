@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,7 @@ SOFT_LINK_CLASS(QTKit, QTMovieView)
 
 SOFT_LINK_POINTER(QTKit, QTMediaTypeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeBase, NSString *)
+SOFT_LINK_POINTER(QTKit, QTMediaTypeMPEG, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeSound, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeText, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeVideo, NSString *)
@@ -91,6 +92,7 @@ SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification,
 
 #define QTMediaTypeAttribute getQTMediaTypeAttribute()
 #define QTMediaTypeBase getQTMediaTypeBase()
+#define QTMediaTypeMPEG getQTMediaTypeMPEG()
 #define QTMediaTypeSound getQTMediaTypeSound()
 #define QTMediaTypeText getQTMediaTypeText()
 #define QTMediaTypeVideo getQTMediaTypeVideo()
@@ -896,6 +898,7 @@ void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
         allowedTrackTypes->add(QTMediaTypeSound);
         allowedTrackTypes->add(QTMediaTypeText);
         allowedTrackTypes->add(QTMediaTypeBase);
+        allowedTrackTypes->add(QTMediaTypeMPEG);
         allowedTrackTypes->add("clcp");
         allowedTrackTypes->add("sbtl");
     }

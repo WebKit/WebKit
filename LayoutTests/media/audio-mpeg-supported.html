@@ -1,0 +1,36 @@
+<html>
+    <body>
+
+    <p>Test that the audio element supports MPEG files.</p>
+
+    <audio controls></audio>
+    
+    <script src=video-test.js></script>
+    <script>
+        media = document.getElementsByTagName('audio')[0];
+    
+        media.addEventListener('error', function() { 
+            consoleWrite("<span style='color:red'>FAIL</span> : caught 'error' event, audio.error = " + media.error.code);
+            endTest();
+        });
+    
+        media.addEventListener('load', function() { 
+            consoleWrite("EVENT(load)");
+            testExpected("media.currentTime", 0);
+            media.play(); 
+            setTimeout(testCurrentTime, 500) 
+        });
+
+        function testCurrentTime() 
+        {
+            test("media.currentTime > 0")
+            endTest();
+        }
+    
+        waitForEvent('play');
+    
+        media.src = "content/silence.mpg";
+    </script>
+
+    </body>
+</html>

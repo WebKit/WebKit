@@ -1,3 +1,15 @@
+2009-02-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        Support MPEG content on Mac and Windows.
+        <rdar://problem/5917509>
+        https://bugs.webkit.org/show_bug.cgi?id=23495
+
+        * media/audio-mpeg-supported-expected.txt: Added.
+        * media/audio-mpeg-supported.html: Added.
+        * media/content/silence.mpg: Added.
+
 2009-02-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt

@@ -1,0 +1,8 @@
+Test that the audio element supports MPEG files.
+
+EVENT(load)
+expected media.currentTime=='0', observed '0' - OK
+EVENT(play)
+TEST(media.currentTime > 0) OK
+END OF TEST
+
