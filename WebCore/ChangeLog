@@ -1,3 +1,13 @@
+2009-02-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=23910
+        <rdar://problem/6160546> REGRESSION: In Full page mode, movie controller hides when I drag the knob if movie is playing
+
+        * rendering/RenderMedia.cpp: (WebCore::RenderMedia::forwardEvent):
+        When we get a mouseOut event, consider the mouse as still within the RenderMedia if the relatedTarget is a descendant.
+
 2009-02-11  David Hyatt  <hyatt@apple.com>
 
         Remove all of the inline box wrapper functions from RenderObject, since they only apply to RenderBox.  Devirtualize the functions.

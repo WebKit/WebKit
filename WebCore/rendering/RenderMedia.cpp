@@ -39,7 +39,6 @@
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
 #include "MediaPlayer.h"
-#include "RenderSlider.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 
@@ -428,8 +427,10 @@ void RenderMedia::forwardEvent(Event* event)
             updateControlVisibility();
         }
         if (event->type() == eventNames().mouseoutEvent) {
-            // FIXME: moving over scrollbar thumb generates mouseout for the ancestor media element for some reason
-            m_mouseOver = absoluteBoundingBoxRect().contains(point);
+            // When the scrollbar thumb captures mouse events, we should treat the mouse as still being over our renderer if the new target is a descendant
+            Node* mouseOverNode = mouseEvent->relatedTarget() ? mouseEvent->relatedTarget()->toNode() : 0;
+            RenderObject* mouseOverRenderer = mouseOverNode ? mouseOverNode->renderer() : 0;
+            m_mouseOver = mouseOverRenderer && mouseOverRenderer->isDescendantOf(this);
             updateControlVisibility();
         }
     }
