@@ -1,5 +1,19 @@
 2009-02-12  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 23919: Mac-specific test fast/css/dashboard-region-parser is
+        in cross-platform location
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23919>
+
+        Moved the test and its results to platform/mac.
+
+        Reviewed by Dan Bernstein.
+
+        * platform/mac/fast/css/dashboard-region-parser-expected.txt: Renamed from LayoutTests/fast/css/dashboard-region-parser-expected.txt.
+        * platform/mac/fast/css/dashboard-region-parser.html: Renamed from LayoutTests/fast/css/dashboard-region-parser.html.
+
+2009-02-12  Adam Roben  <aroben@apple.com>
+
         Fix Bug 23918: Mac-specific results for
         fast/css/computed-style[-without-renderer] are sitting in
         cross-platform location
