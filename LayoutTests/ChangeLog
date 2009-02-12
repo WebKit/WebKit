@@ -1,3 +1,10 @@
+2009-02-12  Adam Roben  <aroben@apple.com>
+
+        Try to fix dashboard-region-parser
+
+        * platform/mac/fast/css/dashboard-region-parser.html: Fixed relative
+        paths now that this test has moved.
+
 2009-02-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
