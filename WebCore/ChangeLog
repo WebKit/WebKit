@@ -1,3 +1,47 @@
+2009-02-11  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23905
+
+        Adds support for 3D CSS properties (transform-style-3d, perspective, 
+        perspective-origin, and backface-visibility) to RenderStyle and friends
+
+        * platform/graphics/transforms/TransformOperation.h
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::applyTransform):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::transformOriginZ):
+        (WebCore::InheritedFlags::hasTransformRelatedProperty):
+        (WebCore::InheritedFlags::transformStyle3D):
+        (WebCore::InheritedFlags::backfaceVisibility):
+        (WebCore::InheritedFlags::perspective):
+        (WebCore::InheritedFlags::perspectiveOriginX):
+        (WebCore::InheritedFlags::perspectiveOriginY):
+        (WebCore::InheritedFlags::setTransformOriginZ):
+        (WebCore::InheritedFlags::setTransformStyle3D):
+        (WebCore::InheritedFlags::setBackfaceVisibility):
+        (WebCore::InheritedFlags::setPerspective):
+        (WebCore::InheritedFlags::setPerspectiveOriginX):
+        (WebCore::InheritedFlags::setPerspectiveOriginY):
+        (WebCore::InheritedFlags::initialTransformOriginZ):
+        (WebCore::InheritedFlags::initialTransformStyle3D):
+        (WebCore::InheritedFlags::initialBackfaceVisibility):
+        (WebCore::InheritedFlags::initialPerspective):
+        (WebCore::InheritedFlags::initialPerspectiveOriginX):
+        (WebCore::InheritedFlags::initialPerspectiveOriginY):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/style/StyleTransformData.cpp:
+        (WebCore::StyleTransformData::StyleTransformData):
+        (WebCore::StyleTransformData::operator==):
+        * rendering/style/StyleTransformData.h:
+
 2009-02-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

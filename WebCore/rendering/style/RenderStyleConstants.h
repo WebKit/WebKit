@@ -296,6 +296,14 @@ enum EPointerEvents {
     PE_VISIBLE_STROKE, PE_VISIBLE_FILL, PE_VISIBLE_PAINTED, PE_ALL
 };
 
+enum ETransformStyle3D {
+    TransformStyle3DFlat, TransformStyle3DPreserve3D
+};
+
+enum EBackfaceVisibility {
+    BackfaceVisibilityVisible, BackfaceVisibilityHidden
+};
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

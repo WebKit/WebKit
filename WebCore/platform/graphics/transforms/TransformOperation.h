@@ -43,13 +43,11 @@ public:
         ROTATE_Z = ROTATE,
         SKEW_X, SKEW_Y, SKEW, 
         MATRIX,
-#if ENABLE(3D_TRANSFORMS)
         SCALE_Z, SCALE_3D,
         TRANSLATE_Z, TRANSLATE_3D,
         ROTATE_X, ROTATE_Y, ROTATE_3D,
         MATRIX_3D,
         PERSPECTIVE,
-#endif
         IDENTITY, NONE
     };
 

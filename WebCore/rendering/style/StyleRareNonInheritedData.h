@@ -30,6 +30,7 @@
 #include "DataRef.h"
 #include "FillLayer.h"
 #include "NinePieceImage.h"
+#include "StyleTransformData.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -109,6 +110,12 @@ public:
 
     FillLayer m_mask;
     NinePieceImage m_maskBoxImage;
+
+    ETransformStyle3D m_transformStyle3D;
+    EBackfaceVisibility m_backfaceVisibility;
+    float m_perspective;
+    Length m_perspectiveOriginX;
+    Length m_perspectiveOriginY;
 
 #if ENABLE(XBL)
     OwnPtr<BindingURI> bindingURI; // The XBL binding URI list.

@@ -335,6 +335,17 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
 #endif
         }
 
+#if !USE(ACCELERATED_COMPOSITING)
+        if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
+            if (rareNonInheritedData->m_transformStyle3D != other->rareNonInheritedData->m_transformStyle3D ||
+                rareNonInheritedData->m_backfaceVisibility != other->rareNonInheritedData->m_backfaceVisibility ||
+                rareNonInheritedData->m_perspective != other->rareNonInheritedData->m_perspective ||
+                rareNonInheritedData->m_perspectiveOriginX != other->rareNonInheritedData->m_perspectiveOriginX ||
+                rareNonInheritedData->m_perspectiveOriginY != other->rareNonInheritedData->m_perspectiveOriginY)
+                return StyleDifferenceLayout;
+        }
+#endif
+
 #if ENABLE(DASHBOARD_SUPPORT)
         // If regions change, trigger a relayout to re-calc regions.
         if (rareNonInheritedData->m_dashboardRegions != other->rareNonInheritedData->m_dashboardRegions)
@@ -480,6 +491,17 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         rareInheritedData->textFillColor != other->rareInheritedData->textFillColor ||
         rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor)
         return StyleDifferenceRepaint;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
+        if (rareNonInheritedData->m_transformStyle3D != other->rareNonInheritedData->m_transformStyle3D ||
+            rareNonInheritedData->m_backfaceVisibility != other->rareNonInheritedData->m_backfaceVisibility ||
+            rareNonInheritedData->m_perspective != other->rareNonInheritedData->m_perspective ||
+            rareNonInheritedData->m_perspectiveOriginX != other->rareNonInheritedData->m_perspectiveOriginX ||
+            rareNonInheritedData->m_perspectiveOriginY != other->rareNonInheritedData->m_perspectiveOriginY)
+            return StyleDifferenceRecompositeLayer;
+    }
+#endif
 
     // Cursors are not checked, since they will be set appropriately in response to mouse events,
     // so they don't need to cause any repaint or layout.
@@ -633,21 +655,26 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const IntSize&
             TransformOperation::OperationType type = rareNonInheritedData->m_transform->m_operations.operations()[i]->getOperationType();
             if (type != TransformOperation::TRANSLATE_X &&
                     type != TransformOperation::TRANSLATE_Y &&
-                    type != TransformOperation::TRANSLATE) {
+                    type != TransformOperation::TRANSLATE && 
+                    type != TransformOperation::TRANSLATE_Z && 
+                    type != TransformOperation::TRANSLATE_3D
+                    ) {
                 applyTransformOrigin = true;
                 break;
             }
         }
     }
 
-    if (applyTransformOrigin)
-        transform.translate(transformOriginX().calcFloatValue(borderBoxSize.width()), transformOriginY().calcFloatValue(borderBoxSize.height()));
+    if (applyTransformOrigin) {
+        transform.translate3d(transformOriginX().calcFloatValue(borderBoxSize.width()), transformOriginY().calcFloatValue(borderBoxSize.height()), transformOriginZ());
+    }
 
     for (i = 0; i < s; i++)
         rareNonInheritedData->m_transform->m_operations.operations()[i]->apply(transform, borderBoxSize);
 
-    if (applyTransformOrigin)
-        transform.translate(-transformOriginX().calcFloatValue(borderBoxSize.width()), -transformOriginY().calcFloatValue(borderBoxSize.height()));
+    if (applyTransformOrigin) {
+        transform.translate3d(-transformOriginX().calcFloatValue(borderBoxSize.width()), -transformOriginY().calcFloatValue(borderBoxSize.height()), -transformOriginZ());
+    }
 }
 
 #if ENABLE(XBL)

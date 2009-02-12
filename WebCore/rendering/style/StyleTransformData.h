@@ -46,6 +46,7 @@ public:
     TransformOperations m_operations;
     Length m_x;
     Length m_y;
+    float m_z;
 
 private:
     StyleTransformData();
