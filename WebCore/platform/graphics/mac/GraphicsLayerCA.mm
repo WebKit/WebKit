@@ -43,8 +43,11 @@
 #import "WebLayer.h"
 #import "WebTiledLayer.h"
 #import <wtf/CurrentTime.h>
+#import <wtf/UnusedParam.h>
 
 using namespace std;
+
+#define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
 
 namespace WebCore {
 
@@ -124,24 +127,32 @@ static NSValue* getTransformFunctionValue(const GraphicsLayer::TransformValue& t
     
     switch (transformType) {
         case TransformOperation::ROTATE:
-            return [NSNumber numberWithDouble:op ? (float) (static_cast<RotateTransformOperation*>(op)->angle() * M_PI / 180) : 0];
-
+        case TransformOperation::ROTATE_X:
+        case TransformOperation::ROTATE_Y:
+            return [NSNumber numberWithDouble:op ? deg2rad(static_cast<RotateTransformOperation*>(op)->angle()) : 0];
         case TransformOperation::SCALE_X:
             return [NSNumber numberWithDouble:op ? static_cast<ScaleTransformOperation*>(op)->x() : 0];
         case TransformOperation::SCALE_Y:
             return [NSNumber numberWithDouble:op ? static_cast<ScaleTransformOperation*>(op)->y() : 0];
-
+        case TransformOperation::SCALE_Z:
+            return [NSNumber numberWithDouble:op ? static_cast<ScaleTransformOperation*>(op)->z() : 0];
         case TransformOperation::TRANSLATE_X:
             return [NSNumber numberWithDouble:op ? static_cast<TranslateTransformOperation*>(op)->x(size) : 0];
         case TransformOperation::TRANSLATE_Y:
-            return [NSNumber numberWithDouble:op ? static_cast<TranslateTransformOperation*>(op)->x(size) : 0];
-        
+            return [NSNumber numberWithDouble:op ? static_cast<TranslateTransformOperation*>(op)->y(size) : 0];
+        case TransformOperation::TRANSLATE_Z:
+            return [NSNumber numberWithDouble:op ? static_cast<TranslateTransformOperation*>(op)->z(size) : 0];
         case TransformOperation::SCALE:
         case TransformOperation::TRANSLATE:
         case TransformOperation::SKEW_X:
         case TransformOperation::SKEW_Y:
         case TransformOperation::SKEW:
         case TransformOperation::MATRIX:
+        case TransformOperation::SCALE_3D:
+        case TransformOperation::TRANSLATE_3D:
+        case TransformOperation::ROTATE_3D:
+        case TransformOperation::MATRIX_3D:
+        case TransformOperation::PERSPECTIVE:
         case TransformOperation::IDENTITY:
         case TransformOperation::NONE: {
             TransformationMatrix t;
@@ -156,6 +167,7 @@ static NSValue* getTransformFunctionValue(const GraphicsLayer::TransformValue& t
     return 0;
 }
 
+#if HAVE_MODERN_QUARTZCORE
 static NSString* getValueFunctionNameForTransformOperation(TransformOperation::OperationType transformType)
 {
     // Use literal strings to avoid link-time dependency on those symbols.
@@ -174,6 +186,7 @@ static NSString* getValueFunctionNameForTransformOperation(TransformOperation::O
             return nil;
     }
 }
+#endif
 
 static CAMediaTimingFunction* getCAMediaTimingFunction(const TimingFunction& timingFunction)
 {
@@ -224,7 +237,7 @@ static CALayer* getPresentationLayer(CALayer* layer)
 
 static bool caValueFunctionSupported()
 {
-    static bool sHaveValueFunction = [[CALayer class] instancesRespondToSelector:@selector(setValueFunction:)];
+    static bool sHaveValueFunction = [CAPropertyAnimation instancesRespondToSelector:@selector(setValueFunction:)];
     return sHaveValueFunction;
 }
 
@@ -473,8 +486,11 @@ void GraphicsLayerCA::setAnchorPoint(const FloatPoint3D& point)
     // set the value on the layer to the new transform.
     [primaryLayer() setAnchorPoint:FloatPoint(point.x(), point.y())];
 
-    if (zChanged) 
+    if (zChanged) {
+#if HAVE_MODERN_QUARTZCORE
         [primaryLayer() setAnchorPointZ:m_anchorPoint.z()];
+#endif
+    }
 
     // Position depends on anchor point, so update it now.
     setPosition(m_position);
@@ -601,9 +617,10 @@ void GraphicsLayerCA::setPreserves3D(bool preserves3D)
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    if (preserves3D && !m_transformLayer) {
+    Class transformLayerClass = NSClassFromString(@"CATransformLayer");
+    if (preserves3D && !m_transformLayer && transformLayerClass) {
         // Create the transform layer.
-        m_transformLayer.adoptNS([[CATransformLayer alloc] init]);
+        m_transformLayer.adoptNS([[transformLayerClass alloc] init]);
 
         // Turn off default animations.
         [m_transformLayer.get() setStyle:[NSDictionary dictionaryWithObject:nullActionsDictionary() forKey:@"actions"]];
@@ -615,7 +632,9 @@ void GraphicsLayerCA::setPreserves3D(bool preserves3D)
         [m_transformLayer.get() setBounds:[m_layer.get() bounds]];
         [m_transformLayer.get() setPosition:[m_layer.get() position]];
         [m_transformLayer.get() setAnchorPoint:[m_layer.get() anchorPoint]];
+#if HAVE_MODERN_QUARTZCORE
         [m_transformLayer.get() setAnchorPointZ:[m_layer.get() anchorPointZ]];
+#endif
         [m_transformLayer.get() setContentsRect:[m_layer.get() contentsRect]];
 #ifndef NDEBUG
         [m_transformLayer.get() setZPosition:[m_layer.get() zPosition]];
@@ -654,7 +673,9 @@ void GraphicsLayerCA::setPreserves3D(bool preserves3D)
         // Reset the layer position and transform.
         [m_layer.get() setPosition:[m_transformLayer.get() position]];
         [m_layer.get() setAnchorPoint:[m_transformLayer.get() anchorPoint]];
+#if HAVE_MODERN_QUARTZCORE
         [m_layer.get() setAnchorPointZ:[m_transformLayer.get() anchorPointZ]];
+#endif
         [m_layer.get() setContentsRect:[m_transformLayer.get() contentsRect]];
         [m_layer.get() setTransform:[m_transformLayer.get() transform]];
         [m_layer.get() setOpacity:[m_transformLayer.get() opacity]];
@@ -1043,7 +1064,7 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
             CGImageRef theImage = image->nativeImageForCurrentFrame();
             // FIXME: maybe only do trilinear if the image is being scaled down,
             // but then what if the layer size changes?
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if HAVE_MODERN_QUARTZCORE
             [m_contentsLayer.get() setMinificationFilter:kCAFilterTrilinear];
 #endif
             if (needToFlip) {
@@ -1133,10 +1154,12 @@ void GraphicsLayerCA::setBasicAnimation(AnimatedPropertyID property, TransformOp
     // with an index > 0.
     [basicAnim setAdditive:property == AnimatedPropertyWebkitTransform];
     [basicAnim setFillMode:@"extended"];
-    if (caValueFunctionSupported()) {
-        if (NSString* valueFunctionName = getValueFunctionNameForTransformOperation(operationType))
-            [basicAnim setValueFunction:[CAValueFunction functionWithName:valueFunctionName]];
-    }
+#if HAVE_MODERN_QUARTZCORE
+    if (NSString* valueFunctionName = getValueFunctionNameForTransformOperation(operationType))
+        [basicAnim setValueFunction:[CAValueFunction functionWithName:valueFunctionName]];
+#else
+    UNUSED_PARAM(operationType);
+#endif
     
     // Set the delegate (and property value).
     int prop = isTransition ? property : AnimatedPropertyInvalid;
@@ -1200,10 +1223,12 @@ void GraphicsLayerCA::setKeyframeAnimation(AnimatedPropertyID property, Transfor
     // with an index > 0.
     [keyframeAnim setAdditive:(property == AnimatedPropertyWebkitTransform) ? YES : NO];
     [keyframeAnim setFillMode:@"extended"];
-    if (caValueFunctionSupported()) {
-        if (NSString* valueFunctionName = getValueFunctionNameForTransformOperation(operationType))
-            [keyframeAnim setValueFunction:[CAValueFunction functionWithName:valueFunctionName]];
-    }
+#if HAVE_MODERN_QUARTZCORE
+    if (NSString* valueFunctionName = getValueFunctionNameForTransformOperation(operationType))
+        [keyframeAnim setValueFunction:[CAValueFunction functionWithName:valueFunctionName]];
+#else
+    UNUSED_PARAM(operationType);
+#endif
 
     [keyframeAnim setKeyTimes:reinterpret_cast<id>(keys)];
     [keyframeAnim setValues:reinterpret_cast<id>(values)];

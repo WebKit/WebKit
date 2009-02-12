@@ -301,7 +301,7 @@ public:
     bool inResizeMode() const { return m_inResizeMode; }
     void setInResizeMode(bool b) { m_inResizeMode = b; }
 
-    bool isRootLayer() const { return renderer()->isRoot(); }
+    bool isRootLayer() const { return renderer()->isRenderView(); }
     
 #if USE(ACCELERATED_COMPOSITING)
     RenderLayerCompositor* compositor() const;

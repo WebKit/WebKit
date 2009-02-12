@@ -3551,7 +3551,7 @@
 		B2CCEC480C6CA9F1006A5424 /* RenderSVGViewportContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CCEC460C6CA9F1006A5424 /* RenderSVGViewportContainer.h */; };
 		B2D3FC8A0C2212CB00CF3618 /* JSSVGTransformListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D3FC890C2212CB00CF3618 /* JSSVGTransformListCustom.cpp */; };
 		B2E27C9F0B0F2B0900F17C7B /* FloatPoint3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */; };
-		B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */; };
+		B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E4EC940D00C22B00432643 /* SVGZoomEvent.cpp */; };
 		B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E4EC950D00C22B00432643 /* SVGZoomEvent.h */; };
 		B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */; };
