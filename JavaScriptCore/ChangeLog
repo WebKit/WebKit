@@ -1,3 +1,15 @@
+2009-02-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed <rdar://problem/6582048>.
+
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber): Make only one call to the random number generator
+        on platforms where the generator is cryptographically secure. The value
+        of randomness over and above cryptographically secure randomness is not
+        clear, and it caused some performance problems.
+
 2009-02-12  Adam Roben  <aroben@apple.com>
 
         Fix lots of Perl warnings when building JavaScriptCoreGenerated on

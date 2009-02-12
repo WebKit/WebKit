@@ -51,16 +51,9 @@ double randomNumber()
     uint64_t fullRandom;
 #if COMPILER(MSVC) && defined(_CRT_RAND_S)
     rand_s(&part1);
-    rand_s(&part2);
     fullRandom = part1;
-    fullRandom <<= 32;
-    fullRandom |= part2;
 #elif PLATFORM(DARWIN)
-    part1 = arc4random();
-    part2 = arc4random();
-    fullRandom = part1;
-    fullRandom <<= 32;
-    fullRandom |= part2;
+    fullRandom = arc4random();
 #elif PLATFORM(UNIX)
     part1 = random() & (RAND_MAX - 1);
     part2 = random() & (RAND_MAX - 1);
