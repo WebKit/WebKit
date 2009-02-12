@@ -182,8 +182,8 @@ fi
 AC_MSG_CHECKING([the HTTP backend to use])
 AC_ARG_WITH(http_backend,
             AC_HELP_STRING([--with-http-backend=@<:@curl/soup@:>@],
-                           [Select HTTP backend [default=curl]]),
-            [],[with_http_backend="curl"])
+                           [Select HTTP backend [default=soup]]),
+            [],[with_http_backend="soup"])
 
 case "$with_http_backend" in
      curl|soup) ;;

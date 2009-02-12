@@ -1,3 +1,9 @@
+2009-02-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Eric Seidel.
+
+        * configure.ac: Make soup the default HTTP backend for the Gtk port.
+
 2009-02-09  Calvin Walton  <calvin.walton@gmail.com>
 
         Reviewed by Holger Freyther.
