@@ -2,6 +2,32 @@
 
         Reviewed by Simon Fraser.
 
+        https://bugs.webkit.org/show_bug.cgi?id=23923
+        Implement mediaPlayerVolumeChanged so a media engine can report autonomous volume changes.
+        Supporting this requires that we know when we are processing a media engine callback so
+        we don't turn around and tell the media player to change the volume when it is reporting
+        a volume change.
+        
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): initialize m_processingMediaPlayerCallback
+        (WebCore::HTMLMediaElement::mediaPlayerNetworkStateChanged): call begin/endProcessingMediaPlayerCallback
+        (WebCore::HTMLMediaElement::setNetworkState): logic split out of mediaPlayerNetworkStateChanged 
+        to make it easier to maintain m_processingMediaPlayerCallback.
+        (WebCore::HTMLMediaElement::mediaPlayerReadyStateChanged): call begin/endProcessingMediaPlayerCallback
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerRepaint): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerVolumeChanged): New
+        (WebCore::HTMLMediaElement::updateVolume): Don't change media engine volume if we are processing
+        a callback from the engine.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::processingMediaPlayerCallback): New, return true if (m_processingMediaPlayerCallback>0)
+        (WebCore::HTMLMediaElement::beginProcessingMediaPlayerCallback): New, increment m_processingMediaPlayerCallback
+        (WebCore::HTMLMediaElement::endProcessingMediaPlayerCallback): New, decrement m_processingMediaPlayerCallback
+
+2009-02-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
         Support MPEG content on Mac and Windows.
         <rdar://problem/5917509>
         https://bugs.webkit.org/show_bug.cgi?id=23495
