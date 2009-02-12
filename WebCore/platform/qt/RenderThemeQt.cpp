@@ -796,7 +796,7 @@ private:
 
 HTMLMediaElement* RenderThemeQt::getMediaElementFromRenderObject(RenderObject* o) const
 {
-    Node* node = o->element();
+    Node* node = o->node();
     Node* mediaNode = node ? node->shadowAncestorNode() : 0;
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
         return 0;
@@ -815,7 +815,7 @@ void RenderThemeQt::paintMediaBackground(QPainter* painter, const IntRect& r) co
 QColor RenderThemeQt::getMediaControlForegroundColor(RenderObject* o) const
 {
     QColor fgColor = platformActiveSelectionBackgroundColor();
-    if (o && o->element()->active())
+    if (o && o->node()->active())
         fgColor = fgColor.lighter();
     return fgColor;
 }
