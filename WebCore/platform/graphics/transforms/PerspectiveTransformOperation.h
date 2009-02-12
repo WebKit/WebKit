@@ -28,8 +28,6 @@
 
 #include "TransformOperation.h"
 
-#if ENABLE(3D_TRANSFORMS)
-
 namespace WebCore {
 
 class PerspectiveTransformOperation : public TransformOperation {
@@ -69,7 +67,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(3D_TRANSFORMS)
 
 #endif // PerspectiveTransformOperation_h

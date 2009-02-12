@@ -97,6 +97,7 @@ namespace WebCore {
         PassRefPtr<CSSValue> parseAnimationProperty();
         PassRefPtr<CSSValue> parseAnimationTimingFunction();
 
+        void parseTransformOriginShorthand(RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         bool parseTimingFunctionValue(CSSParserValueList*& args, double& result);
         bool parseAnimationProperty(int propId, RefPtr<CSSValue>&);
         bool parseTransitionShorthand(bool important);
@@ -144,8 +145,8 @@ namespace WebCore {
         bool parseGradient(RefPtr<CSSValue>&);
 
         PassRefPtr<CSSValueList> parseTransform();
-        bool parseTransformOrigin(int propId, int& propId1, int& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
-
+        bool parseTransformOrigin(int propId, int& propId1, int& propId2, int& propId3, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
+        bool parsePerspectiveOrigin(int propId, int& propId1, int& propId,  RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         bool parseVariable(CSSVariablesDeclaration*, const String& variableName, const String& variableValue);
         void parsePropertyWithResolvedVariables(int propId, bool important, CSSMutableStyleDeclaration*, CSSParserValueList*);
 

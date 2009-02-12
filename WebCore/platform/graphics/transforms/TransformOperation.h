@@ -66,7 +66,6 @@ public:
     virtual OperationType getOperationType() const = 0;
     virtual bool isSameType(const TransformOperation&) const { return false; }
     
-#if ENABLE(3D_TRANSFORMS)
     bool is3DOperation() const
     {
         OperationType opType = getOperationType();
@@ -80,7 +79,6 @@ public:
                opType == MATRIX_3D ||
                opType == PERSPECTIVE;
     }
-#endif
 };
 
 } // namespace WebCore

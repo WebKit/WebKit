@@ -48,6 +48,16 @@ module css {
         const unsigned short CSS_SKEWX       = 9;
         const unsigned short CSS_SKEWY       = 10;
         const unsigned short CSS_MATRIX      = 11;
+        const unsigned short CSS_TRANSLATEZ  = 12;
+        const unsigned short CSS_TRANSLATE3D = 13;
+        const unsigned short CSS_ROTATEX     = 14;
+        const unsigned short CSS_ROTATEY     = 15;
+        const unsigned short CSS_ROTATEZ     = 16;
+        const unsigned short CSS_ROTATE3D    = 17;
+        const unsigned short CSS_SCALEZ      = 18;
+        const unsigned short CSS_SCALE3D     = 19;
+        const unsigned short CSS_PERSPECTIVE = 20;
+        const unsigned short CSS_MATRIX3D    = 21;
 
         readonly attribute unsigned short operationType;
     };

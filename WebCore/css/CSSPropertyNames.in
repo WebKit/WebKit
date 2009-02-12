@@ -151,6 +151,7 @@ zoom
 -webkit-animation-name
 -webkit-animation-timing-function
 -webkit-appearance
+-webkit-backface-visibility
 -webkit-background-clip
 -webkit-background-composite
 -webkit-background-origin
@@ -216,6 +217,10 @@ zoom
 -webkit-match-nearest-mail-blockquote-color
 -webkit-nbsp-mode
 -webkit-padding-start
+-webkit-perspective
+-webkit-perspective-origin
+-webkit-perspective-origin-x
+-webkit-perspective-origin-y
 -webkit-rtl-ordering
 -webkit-text-decorations-in-effect
 -webkit-text-fill-color
@@ -228,6 +233,8 @@ zoom
 -webkit-transform-origin
 -webkit-transform-origin-x
 -webkit-transform-origin-y
+-webkit-transform-origin-z
+-webkit-transform-style
 -webkit-transition
 -webkit-transition-delay
 -webkit-transition-duration

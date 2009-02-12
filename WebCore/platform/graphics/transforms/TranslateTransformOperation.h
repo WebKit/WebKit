@@ -74,11 +74,7 @@ private:
         , m_z(tz)
         , m_type(type)
     {
-#if ENABLE(3D_TRANSFORMS)
         ASSERT(type == TRANSLATE_X || type == TRANSLATE_Y || type == TRANSLATE_Z || type == TRANSLATE || type == TRANSLATE_3D);
-#else
-        ASSERT(type == TRANSLATE_X || type == TRANSLATE_Y || type == TRANSLATE);
-#endif
     }
 
     Length m_x;

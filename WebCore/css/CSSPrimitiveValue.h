@@ -81,6 +81,8 @@ public:
         // This unit is in CSS 3, but that isn't a finished standard yet
         CSS_TURN = 108
     };
+    
+    static bool isUnitTypeLength(int type) { return type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG; }
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int ident);
     static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue);

@@ -72,12 +72,7 @@ private:
         , m_angle(angle)
         , m_type(type)
     {
-#if ENABLE(3D_TRANSFORMS)
         ASSERT(type == ROTATE_X || type == ROTATE_Y || type == ROTATE_Z || type == ROTATE_3D);
-#else
-        ASSERT(type == ROTATE_Z);
-        ASSERT(x == 0 && y == 0);
-#endif
     }
 
     double m_x;

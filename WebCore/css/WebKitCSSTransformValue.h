@@ -47,7 +47,17 @@ public:
         SkewTransformOperation,
         SkewXTransformOperation,
         SkewYTransformOperation,
-        MatrixTransformOperation
+        MatrixTransformOperation,
+        TranslateZTransformOperation,
+        Translate3DTransformOperation,
+        RotateXTransformOperation,
+        RotateYTransformOperation,
+        RotateZTransformOperation,
+        Rotate3DTransformOperation,
+        ScaleZTransformOperation,
+        Scale3DTransformOperation,
+        PerspectiveTransformOperation,
+        Matrix3DTransformOperation
     };
 
     static PassRefPtr<WebKitCSSTransformValue> create(TransformOperationType type)

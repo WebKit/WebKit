@@ -26,8 +26,6 @@
 #include "config.h"
 #include "Matrix3DTransformOperation.h"
 
-#if ENABLE(3D_TRANSFORMS)
-
 #include <algorithm>
 
 using namespace std;
@@ -56,5 +54,3 @@ PassRefPtr<TransformOperation> Matrix3DTransformOperation::blend(const Transform
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(3D_TRANSFORMS)

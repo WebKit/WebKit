@@ -1,3 +1,15 @@
+2009-02-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23908
+
+        Added test for parsing 3d functions in webkit-transform
+
+        * transforms/3d: Added.
+        * transforms/3d/cssmatrix-3d-interface-expected.txt: Added.
+        * transforms/3d/cssmatrix-3d-interface.xhtml: Added.
+
 2009-02-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

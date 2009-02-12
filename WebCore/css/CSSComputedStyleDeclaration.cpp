@@ -142,6 +142,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitAnimationName,
     CSSPropertyWebkitAnimationTimingFunction,
     CSSPropertyWebkitAppearance,
+    CSSPropertyWebkitBackfaceVisibility,
     CSSPropertyWebkitBackgroundClip,
     CSSPropertyWebkitBackgroundComposite,
     CSSPropertyWebkitBackgroundOrigin,
@@ -189,6 +190,8 @@ static const int computedProperties[] = {
     CSSPropertyWebkitMaskOrigin,
     CSSPropertyWebkitMaskSize,
     CSSPropertyWebkitNbspMode,
+    CSSPropertyWebkitPerspective,
+    CSSPropertyWebkitPerspectiveOrigin,
     CSSPropertyWebkitRtlOrdering,
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyWebkitTextFillColor,
@@ -197,6 +200,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitTextStrokeWidth,
     CSSPropertyWebkitTransform,
     CSSPropertyWebkitTransformOrigin,
+    CSSPropertyWebkitTransformStyle,
     CSSPropertyWebkitTransitionDelay,
     CSSPropertyWebkitTransitionDuration,
     CSSPropertyWebkitTransitionProperty,
@@ -419,14 +423,41 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const Rend
     TransformationMatrix transform;
     style->applyTransform(transform, box.size(), RenderStyle::ExcludeTransformOrigin);
 
-    RefPtr<WebKitCSSTransformValue> transformVal = WebKitCSSTransformValue::create(WebKitCSSTransformValue::MatrixTransformOperation);
+    RefPtr<WebKitCSSTransformValue> transformVal;
 
-    transformVal->append(CSSPrimitiveValue::create(transform.a(), CSSPrimitiveValue::CSS_NUMBER));
-    transformVal->append(CSSPrimitiveValue::create(transform.b(), CSSPrimitiveValue::CSS_NUMBER));
-    transformVal->append(CSSPrimitiveValue::create(transform.c(), CSSPrimitiveValue::CSS_NUMBER));
-    transformVal->append(CSSPrimitiveValue::create(transform.d(), CSSPrimitiveValue::CSS_NUMBER));
-    transformVal->append(CSSPrimitiveValue::create(transform.e(), CSSPrimitiveValue::CSS_NUMBER));
-    transformVal->append(CSSPrimitiveValue::create(transform.f(), CSSPrimitiveValue::CSS_NUMBER));
+    // FIXME: Need to print out individual functions (https://bugs.webkit.org/show_bug.cgi?id=23924)
+    if (transform.isAffine()) {
+        transformVal = WebKitCSSTransformValue::create(WebKitCSSTransformValue::MatrixTransformOperation);
+
+        transformVal->append(CSSPrimitiveValue::create(transform.a(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.b(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.c(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.d(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.e(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.f(), CSSPrimitiveValue::CSS_NUMBER));
+    } else {
+        transformVal = WebKitCSSTransformValue::create(WebKitCSSTransformValue::Matrix3DTransformOperation);
+
+        transformVal->append(CSSPrimitiveValue::create(transform.m11(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m12(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m13(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m14(), CSSPrimitiveValue::CSS_NUMBER));
+
+        transformVal->append(CSSPrimitiveValue::create(transform.m21(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m22(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m23(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m24(), CSSPrimitiveValue::CSS_NUMBER));
+
+        transformVal->append(CSSPrimitiveValue::create(transform.m31(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m32(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m33(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m34(), CSSPrimitiveValue::CSS_NUMBER));
+
+        transformVal->append(CSSPrimitiveValue::create(transform.m41(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m42(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m43(), CSSPrimitiveValue::CSS_NUMBER));
+        transformVal->append(CSSPrimitiveValue::create(transform.m44(), CSSPrimitiveValue::CSS_NUMBER));
+    }
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     list->append(transformVal);
@@ -1114,6 +1145,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return getTimingFunctionValue(style->animations());
         case CSSPropertyWebkitAppearance:
             return CSSPrimitiveValue::create(style->appearance());
+        case CSSPropertyWebkitBackfaceVisibility:
+            return CSSPrimitiveValue::createIdentifier((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyWebkitBorderImage:
             return valueForNinePieceImage(style->borderImage());
         case CSSPropertyWebkitMaskBoxImage:
@@ -1125,6 +1158,23 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->marginBottomCollapse());
         case CSSPropertyWebkitMarginTopCollapse:
             return CSSPrimitiveValue::create(style->marginTopCollapse());
+        case CSSPropertyWebkitPerspective:
+            if (style->perspective() == 0)
+                return CSSPrimitiveValue::createIdentifier(CSSValueNone);
+            return CSSPrimitiveValue::create(style->perspective(), CSSPrimitiveValue::CSS_NUMBER);
+        case CSSPropertyWebkitPerspectiveOrigin: {
+            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+            if (renderer) {
+                IntRect box = sizingBox(renderer);
+                list->append(CSSPrimitiveValue::create(style->perspectiveOriginX().calcMinValue(box.width()), CSSPrimitiveValue::CSS_PX));
+                list->append(CSSPrimitiveValue::create(style->perspectiveOriginY().calcMinValue(box.height()), CSSPrimitiveValue::CSS_PX));
+            }
+            else {
+                list->append(CSSPrimitiveValue::create(style->perspectiveOriginX()));
+                list->append(CSSPrimitiveValue::create(style->perspectiveOriginY()));
+            }
+            return list.release();
+        }
         case CSSPropertyWebkitRtlOrdering:
             if (style->visuallyOrdered())
                 return CSSPrimitiveValue::createIdentifier(CSSValueVisual);
@@ -1161,12 +1211,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 IntRect box = sizingBox(renderer);
                 list->append(CSSPrimitiveValue::create(style->transformOriginX().calcMinValue(box.width()), CSSPrimitiveValue::CSS_PX));
                 list->append(CSSPrimitiveValue::create(style->transformOriginY().calcMinValue(box.height()), CSSPrimitiveValue::CSS_PX));
+                if (style->transformOriginZ() != 0)
+                    list->append(CSSPrimitiveValue::create(style->transformOriginZ(), CSSPrimitiveValue::CSS_PX));
             } else {
                 list->append(CSSPrimitiveValue::create(style->transformOriginX()));
                 list->append(CSSPrimitiveValue::create(style->transformOriginY()));
+                if (style->transformOriginZ() != 0)
+                    list->append(CSSPrimitiveValue::create(style->transformOriginZ(), CSSPrimitiveValue::CSS_PX));
             }
             return list.release();
         }
+        case CSSPropertyWebkitTransformStyle:
+            return CSSPrimitiveValue::createIdentifier((style->transformStyle3D() == TransformStyle3DPreserve3D) ? CSSValuePreserve3d : CSSValueFlat);
         case CSSPropertyWebkitTransitionDelay:
             return getDelayValue(style->transitions());
         case CSSPropertyWebkitTransitionDuration:

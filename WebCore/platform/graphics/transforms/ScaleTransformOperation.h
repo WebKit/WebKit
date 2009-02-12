@@ -73,12 +73,7 @@ private:
         , m_z(sz)
         , m_type(type)
     {
-#if ENABLE(3D_TRANSFORMS)
         ASSERT(type == SCALE_X || type == SCALE_Y || type == SCALE_Z || type == SCALE || type == SCALE_3D);
-#else
-        ASSERT(type == SCALE_X || type == SCALE_Y || type == SCALE);
-        ASSERT(sz == 1);
-#endif
     }
         
     double m_x;

@@ -1,3 +1,65 @@
+2009-02-12  Chris Marrin  <cmarrin@apple.com>        
+
+        Reviewed by Dave Hyatt
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23908
+        
+        Added parsing of 3d transform functions and properties
+        (perspective, perspective-origin, transform-style-3d, 
+        and backface-visibility).   
+        
+        Test: transforms/3d/cssmatrix-3d-interface.xhtml
+        
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::computedTransform):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseTransformOriginShorthand):
+        (WebCore::TransformOperationInfo::TransformOperationInfo):
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::parseTransformOrigin):
+        (WebCore::CSSParser::parsePerspectiveOrigin):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isUnitTypeLength):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::convertToLength):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapFillSize):
+        (WebCore::CSSStyleSelector::mapFillXPosition):
+        (WebCore::CSSStyleSelector::mapFillYPosition):
+        (WebCore::getTransformOperationType):
+        (WebCore::CSSStyleSelector::createTransformOperations):
+        * css/CSSValueKeywords.in:
+        * css/WebKitCSSTransformValue.cpp:
+        (WebCore::WebKitCSSTransformValue::cssText):
+        * css/WebKitCSSTransformValue.h:
+        (WebCore::WebKitCSSTransformValue::):
+        * css/WebKitCSSTransformValue.idl:
+        * platform/graphics/transforms/Matrix3DTransformOperation.cpp:
+        * platform/graphics/transforms/Matrix3DTransformOperation.h:
+        * platform/graphics/transforms/PerspectiveTransformOperation.cpp:
+        * platform/graphics/transforms/PerspectiveTransformOperation.h:
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::RotateTransformOperation::blend):
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        (WebCore::RotateTransformOperation::RotateTransformOperation):
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        (WebCore::ScaleTransformOperation::ScaleTransformOperation):
+        * platform/graphics/transforms/TransformOperation.h:
+        (WebCore::TransformOperation::is3DOperation):
+        * platform/graphics/transforms/TransformOperations.h:
+        (WebCore::TransformOperations::has3DOperation):
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+        (WebCore::TranslateTransformOperation::TranslateTransformOperation):
+        
 2009-02-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix.

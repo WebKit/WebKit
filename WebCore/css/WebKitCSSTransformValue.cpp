@@ -79,6 +79,36 @@ String WebKitCSSTransformValue::cssText() const
         case MatrixTransformOperation:
             result += "matrix(";
             break;
+        case TranslateZTransformOperation:
+            result += "translateZ(";
+            break;
+        case Translate3DTransformOperation:
+            result += "translate3d(";
+            break;
+        case RotateXTransformOperation:
+            result += "rotateX(";
+            break;
+        case RotateYTransformOperation:
+            result += "rotateY(";
+            break;
+        case RotateZTransformOperation:
+            result += "rotateZ(";
+            break;
+        case Rotate3DTransformOperation:
+            result += "rotate3d(";
+            break;
+        case ScaleZTransformOperation:
+            result += "scaleZ(";
+            break;
+        case Scale3DTransformOperation:
+            result += "scale3d(";
+            break;
+        case PerspectiveTransformOperation:
+            result += "perspective(";
+            break;
+        case Matrix3DTransformOperation:
+            result += "matrix3d(";
+            break;
         default:
             break;
     }

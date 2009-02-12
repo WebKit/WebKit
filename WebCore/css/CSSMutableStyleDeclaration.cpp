@@ -217,9 +217,10 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
             return getLayeredShorthandValue(properties, 6);
         }
         case CSSPropertyWebkitTransformOrigin: {
-            const int properties[2] = { CSSPropertyWebkitTransformOriginX,
-                                        CSSPropertyWebkitTransformOriginY };
-            return getShorthandValue(properties, 2);
+            const int properties[3] = { CSSPropertyWebkitTransformOriginX,
+                                        CSSPropertyWebkitTransformOriginY,
+                                        CSSPropertyWebkitTransformOriginZ };
+            return getShorthandValue(properties, 3);
         }
         case CSSPropertyWebkitTransition: {
             const int properties[4] = { CSSPropertyWebkitTransitionProperty, CSSPropertyWebkitTransitionDuration,
