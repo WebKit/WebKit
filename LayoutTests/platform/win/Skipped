@@ -425,14 +425,3 @@ http/tests/xmlhttprequest/upload-onload-event.html
 http/tests/xmlhttprequest/upload-onloadstart-event.html
 http/tests/xmlhttprequest/upload-progress-events.html
 http/tests/xmlhttprequest/upload-onprogress-event.html
-
-# No transition / animation LayoutController APIs on Windows DRT (https://bugs.webkit.org/show_bug.cgi?id=22239)
-animations/animation-controller-drt-api.html
-animations/animation-drt-api.html
-animations/animation-drt-api-multiple-keyframes.html
-animations/keyframes-from-missing.html
-animations/keyframes-to-missing.html
-transitions/transition-drt-api.html
-transitions/transition-drt-api-delay.html
-transitions/transition-shorthand-delay.html
-transitions/zero-duration-non-zero-delay-end.html

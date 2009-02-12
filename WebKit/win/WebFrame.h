@@ -223,7 +223,11 @@ public:
     virtual HRESULT STDMETHODCALLTYPE elementDoesAutoComplete(
         /* [in] */ IDOMElement* element, 
         /* [retval][out] */ BOOL* result);
-    
+
+    virtual HRESULT STDMETHODCALLTYPE pauseAnimation(BSTR animationName, IDOMNode*, double secondsFromNow, BOOL* animationWasRunning);
+    virtual HRESULT STDMETHODCALLTYPE pauseTransition(BSTR propertyName, IDOMNode*, double secondsFromNow, BOOL* transitionWasRunning);
+    virtual HRESULT STDMETHODCALLTYPE numberOfActiveAnimations(UINT*);
+
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
         /* [retval][out] */ BOOL* result);

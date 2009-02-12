@@ -1051,6 +1051,71 @@ HRESULT WebFrame::elementDoesAutoComplete(IDOMElement *element, BOOL *result)
     return S_OK;
 }
 
+HRESULT WebFrame::pauseAnimation(BSTR animationName, IDOMNode* node, double secondsFromNow, BOOL* animationWasRunning)
+{
+    if (!node || !animationWasRunning)
+        return E_POINTER;
+
+    *animationWasRunning = FALSE;
+
+    Frame* frame = core(this);
+    if (!frame)
+        return E_FAIL;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return E_FAIL;
+
+    COMPtr<DOMNode> domNode(Query, node);
+    if (!domNode)
+        return E_FAIL;
+
+    *animationWasRunning = controller->pauseAnimationAtTime(domNode->node()->renderer(), String(animationName, SysStringLen(animationName)), secondsFromNow);
+    return S_OK;
+}
+
+HRESULT WebFrame::pauseTransition(BSTR propertyName, IDOMNode* node, double secondsFromNow, BOOL* transitionWasRunning)
+{
+    if (!node || !transitionWasRunning)
+        return E_POINTER;
+
+    *transitionWasRunning = FALSE;
+
+    Frame* frame = core(this);
+    if (!frame)
+        return E_FAIL;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return E_FAIL;
+
+    COMPtr<DOMNode> domNode(Query, node);
+    if (!domNode)
+        return E_FAIL;
+
+    *transitionWasRunning = controller->pauseTransitionAtTime(domNode->node()->renderer(), String(propertyName, SysStringLen(propertyName)), secondsFromNow);
+    return S_OK;
+}
+
+HRESULT WebFrame::numberOfActiveAnimations(UINT* number)
+{
+    if (!number)
+        return E_POINTER;
+
+    *number = 0;
+
+    Frame* frame = core(this);
+    if (!frame)
+        return E_FAIL;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return E_FAIL;
+
+    *number = controller->numberOfActiveAnimations();
+    return S_OK;
+}
+
 HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int* cControls)
 {
     if (!form)

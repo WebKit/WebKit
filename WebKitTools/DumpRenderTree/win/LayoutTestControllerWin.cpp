@@ -41,6 +41,7 @@
 #include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefBSTR.h>
 #include <WebKit/WebKit.h>
 #include <string>
 #include <CoreFoundation/CoreFoundation.h>
@@ -685,15 +686,63 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
 
 bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
 {
-    return false; // FIXME: Implement this on Windows
+    COMPtr<IDOMDocument> document;
+    if (FAILED(frame->DOMDocument(&document)))
+        return false;
+
+    BSTR idBSTR = JSStringCopyBSTR(elementId);
+    COMPtr<IDOMElement> element;
+    HRESULT hr = document->getElementById(idBSTR, &element);
+    SysFreeString(idBSTR);
+    if (FAILED(hr))
+        return false;
+
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return false;
+
+    BSTR nameBSTR = JSStringCopyBSTR(animationName);
+    BOOL wasRunning = FALSE;
+    hr = framePrivate->pauseAnimation(nameBSTR, element.get(), time, &wasRunning);
+    SysFreeString(nameBSTR);
+
+    return SUCCEEDED(hr) && wasRunning;
 }
 
 bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
 {
-    return false; // FIXME: Implement this on Windows
+    COMPtr<IDOMDocument> document;
+    if (FAILED(frame->DOMDocument(&document)))
+        return false;
+
+    BSTR idBSTR = JSStringCopyBSTR(elementId);
+    COMPtr<IDOMElement> element;
+    HRESULT hr = document->getElementById(idBSTR, &element);
+    SysFreeString(idBSTR);
+    if (FAILED(hr))
+        return false;
+
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return false;
+
+    BSTR nameBSTR = JSStringCopyBSTR(propertyName);
+    BOOL wasRunning = FALSE;
+    hr = framePrivate->pauseTransition(nameBSTR, element.get(), time, &wasRunning);
+    SysFreeString(nameBSTR);
+
+    return SUCCEEDED(hr) && wasRunning;
 }
 
 unsigned LayoutTestController::numberOfActiveAnimations() const
 {
-    return 0; // FIXME: Implement this on Windows
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return 0;
+
+    UINT number = 0;
+    if (FAILED(framePrivate->numberOfActiveAnimations(&number)))
+        return 0;
+
+    return number;
 }
