@@ -1,3 +1,12 @@
+2009-02-12  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser
+
+        Remove the overrideSize methods from RenderObject.  Devirtualize all of the accessors on RenderBox.
+
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.h:
+
 2009-02-12  Eric Carlson  <eric.carlson@apple.com>
 
         Darin Adler, Antti Koivisto, Holger Hans Peter Freyther

@@ -494,12 +494,6 @@ public:
     // return just the height of the containing block
     virtual int containingBlockHeight() const;
 
-    // used by flexible boxes to impose a flexed width/height override
-    virtual int overrideSize() const { return 0; }
-    virtual int overrideWidth() const { return 0; }
-    virtual int overrideHeight() const { return 0; }
-    virtual void setOverrideSize(int /*overrideSize*/) { }
-
     // Convert the given local point to absolute coordinates
     // FIXME: Temporary. If useTransforms is true, take transforms into account. Eventually localToAbsolute() will always be transform-aware.
     virtual FloatPoint localToAbsolute(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
