@@ -76,7 +76,7 @@ sub fileNameWithNumber($$);
 sub numericcmp($$);
 sub openHTTPDIfNeeded();
 sub pathcmp($$);
-sub processIgnoreTests($);
+sub processIgnoreTests($$);
 sub slowestcmp($$);
 sub splitpath($);
 sub stripExtension($);
@@ -372,7 +372,7 @@ if (!$testMedia) {
 }
 
 if ($ignoreTests) {
-    processIgnoreTests($ignoreTests);
+    processIgnoreTests($ignoreTests, "ignore-tests");
 }
 
 if (!$ignoreSkipped) {
@@ -395,7 +395,7 @@ if (!$ignoreSkipped) {
                         if ($verbose) {
                             print "    $skipped\n";
                         }
-                        processIgnoreTests($skipped);
+                        processIgnoreTests($skipped, "Skipped");
                     }
                 }
             }
@@ -1386,8 +1386,12 @@ sub fileNameWithNumber($$)
     return $base;
 }
 
-sub processIgnoreTests($) {
+sub processIgnoreTests($$) {
     my @ignoreList = split(/\s*,\s*/, shift);
+    my $listName = shift;
+
+    my $disabledSuffix = "-disabled";
+
     my $addIgnoredDirectories = sub {
         return () if exists $ignoredLocalDirectories{basename($File::Find::dir)};
         $ignoredDirectories{File::Spec->abs2rel($File::Find::dir, $testDirectory)} = 1;
@@ -1401,9 +1405,10 @@ sub processIgnoreTests($) {
         }
         elsif (-f $path) {
             $ignoredFiles{$item} = 1;
-        }
-        else {
-            print "ignoring '$item' on ignore-tests list\n";
+        } elsif (-f $path . $disabledSuffix) {
+            # The test is disabled, so do nothing.
+        } else {
+            print "$listName list contained '$item', but no file of that name could be found\n";
         }
     }
 }
