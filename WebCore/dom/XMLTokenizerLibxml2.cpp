@@ -723,14 +723,14 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
             uri = m_defaultNamespaceURI;
     }
 
-    ExceptionCode ec = 0;
     QualifiedName qName(prefix, localName, uri);
-    RefPtr<Element> newElement = m_doc->createElement(qName, true, ec);
+    RefPtr<Element> newElement = m_doc->createElement(qName, true);
     if (!newElement) {
         stopParsing();
         return;
     }
     
+    ExceptionCode ec = 0;
     handleElementNamespaces(newElement.get(), libxmlNamespaces, nb_namespaces, ec);
     if (ec) {
         stopParsing();

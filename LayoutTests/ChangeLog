@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        Bug 23915: Remove setPrefix work-around in Document::createElement(QualifiedName, bool)
+
+        The test validates the <image> special treatment (using <img> tag) and see whether
+        it validates the previous behaviour and we do not ASSERT.
+
+        * fast/dom/prefixed-image-tag-expected.txt: Added.
+        * fast/dom/prefixed-image-tag.xhtml: Added.
+
+2009-02-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Bug 23826: Potential bug with before/after rule while moving element from one document to another
 
         * fast/css-generated-content/beforeAfter-interdocument.html: Added.

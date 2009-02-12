@@ -1,3 +1,30 @@
+2009-02-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/dom/prefixed-image-tag.xhtml
+
+        Bug 23915: Remove setPrefix work-around in Document::createElement(QualifiedName, bool)
+
+        Instead we now directly propage the QualifiedName inside the generated Factory.
+
+        Test: fast/dom/prefixed-image-tag.xhtml
+
+        * dom/Document.cpp:
+        (WebCore::Document::createElement): Removed the setPrefix work-around
+        and replaced it with an ASSERT to catch mistakes inside the Factory code.
+        Remove the unneeded ExceptionCode argument.
+
+        (WebCore::Document::createElementNS): Removed ExceptionCode argument.
+        * dom/Document.h: Updated the signature.
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::startElementNs): Removed ExceptionCode argument.
+        * dom/XMLTokenizerQt.cpp: Ditto.
+        (WebCore::XMLTokenizer::parseStartElement): Ditto.
+
+        * dom/make_names.pl: Implemented the QualifiedName propogation logic
+        in the Factory.
+
 2009-02-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

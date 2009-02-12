@@ -533,7 +533,7 @@ PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionC
     if (m_isXHTML)
         return HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, name, xhtmlNamespaceURI), this, 0, false);
 
-    return createElement(QualifiedName(nullAtom, name, nullAtom), false, ec);
+    return createElement(QualifiedName(nullAtom, name, nullAtom), false);
 }
 
 PassRefPtr<DocumentFragment> Document::createDocumentFragment()
@@ -750,7 +750,7 @@ bool Document::hasPrefixNamespaceMismatch(const QualifiedName& qName)
 }
 
 // FIXME: This should really be in a possible ElementFactory class
-PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool createdByParser, ExceptionCode& ec)
+PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool createdByParser)
 {
     RefPtr<Element> e;
 
@@ -768,19 +768,10 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
     
     if (!e)
         e = new Element(qName, document());
-    
-    // FIXME: The element factories should be fixed to not ignore qName.prefix()
-    // Instead they should pass the entire qName into element creation so we don't
-    // need to manually set the prefix after creation.
-    // Then this code can become ASSERT(qName == e.qname());
-    // and Document::createElement can stop taking ExceptionCode& as well.
-    if (e && !qName.prefix().isNull()) {
-        ec = 0;
-        e->setPrefix(qName.prefix(), ec);
-        if (ec)
-            return 0;
-    }
-    
+
+    // <image> uses imgTag so we need a special rule.
+    ASSERT((qName.matches(imageTag) && e->tagQName().matches(imgTag) && e->tagQName().prefix() == qName.prefix()) || qName == e->tagQName());
+
     return e.release();
 }
 
@@ -796,7 +787,7 @@ PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const 
         return 0;
     }
 
-    return createElement(qName, false, ec);
+    return createElement(qName, false);
 }
 
 Element* Document::getElementById(const AtomicString& elementId) const

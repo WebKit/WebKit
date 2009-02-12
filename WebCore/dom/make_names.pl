@@ -300,21 +300,6 @@ sub printConstructors
 
     print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
 
-    # FIXME: This should be removed when we pass the tagName directly as it only
-    # serves to see which constructors are shared.
-    my %constructorCount = ();
-    for my $tagName (sort keys %tagConstructorMap) {
-        # Do not count mapToTagName as they use a custom constructor.
-        next if ($tags{$tagName}{'mapToTagName'} ne '');
-
-        my $interfaceName = $tags{$tagName}{'interfaceName'};
-        if (!$constructorCount{$interfaceName}) {
-            $constructorCount{$interfaceName} = 1;
-        } else {
-            $constructorCount{$interfaceName} += 1;
-        }
-    }
-
     # This is to avoid generating the same constructor several times.
     my %uniqueTags = ();
     for my $tagName (sort keys %tagConstructorMap) {
@@ -326,23 +311,16 @@ sub printConstructors
 
         $uniqueTags{$interfaceName} = '1';
 
-        # FIXME: we should always pass the tagName to both these methods.
-        if ($constructorCount{$interfaceName} > 1) {
-             printConstructorSignature($F, $tagName, $tagConstructorMap{$tagName}, "tagName");
-             printConstructorInterior($F, $tagName, $interfaceName, "tagName");
-        } else {
-            printConstructorSignature($F, $tagName, $tagConstructorMap{$tagName}, "");
-            printConstructorInterior($F, $tagName, $interfaceName, "${tagName}Tag");
-        }
+        printConstructorSignature($F, $tagName, $tagConstructorMap{$tagName}, "tagName");
+        printConstructorInterior($F, $tagName, $interfaceName, "tagName");
     }
 
     # Mapped tag name uses a special wrapper to keep their prefix and namespaceURI while using the mapped localname.
     for my $tagName (sort keys %tagConstructorMap) {
         if ($tags{$tagName}{'mapToTagName'}) {
             my $mappedName = $tags{$tagName}{'mapToTagName'};
-            # FIXME: we should also pass the tagName to both these methods.
-            printConstructorSignature($F, $mappedName, $mappedName . "To" . $tagName, "");
-            printConstructorInterior($F, $mappedName, $tags{$mappedName}{'interfaceName'}, "${mappedName}Tag");
+            printConstructorSignature($F, $mappedName, $mappedName . "To" . $tagName, "tagName");
+            printConstructorInterior($F, $mappedName, $tags{$mappedName}{'interfaceName'}, "QualifiedName(tagName.prefix(), ${mappedName}Tag.localName(), tagName.namespaceURI())");
         }
     }
 
