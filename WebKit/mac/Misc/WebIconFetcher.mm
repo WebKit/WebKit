@@ -71,14 +71,16 @@ private:
 
 - (void)dealloc
 {
-    reinterpret_cast<IconFetcher*>(_private)->deref();
+    if (_private)
+        reinterpret_cast<IconFetcher*>(_private)->deref();
     
     [super dealloc];
 }
 
 - (void)finalize
 {
-    reinterpret_cast<IconFetcher*>(_private)->deref();
+    if (_private)
+        reinterpret_cast<IconFetcher*>(_private)->deref();
     
     [super finalize];
 }

@@ -39,7 +39,7 @@ using namespace WebCore;
 
 @interface WebCoreSharedBufferData : NSData
 {
-    SharedBuffer* sharedBuffer;
+    RefPtr<SharedBuffer> sharedBuffer;
 }
 
 - (id)initWithSharedBuffer:(SharedBuffer*)buffer;
@@ -59,16 +59,12 @@ using namespace WebCore;
 {
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebCoreSharedBufferData class], self))
         return;
-
-    sharedBuffer->deref();
     
     [super dealloc];
 }
 
 - (void)finalize
 {
-    sharedBuffer->deref();
-    
     [super finalize];
 }
 
@@ -76,10 +72,8 @@ using namespace WebCore;
 {
     self = [super init];
     
-    if (self) {
+    if (self)
         sharedBuffer = buffer;
-        sharedBuffer->ref();
-    }
     
     return self;
 }

@@ -88,9 +88,12 @@ using namespace WebCore;
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebDataSourcePrivate class], self))
         return;
 
-    ASSERT(!loader->isLoading());
-    loader->detachDataSource();
-    loader->deref();
+    ASSERT(loader);
+    if (loader) {
+        ASSERT(!loader->isLoading());
+        loader->detachDataSource();
+        loader->deref();
+    }
     
     [representation release];
 
@@ -101,9 +104,12 @@ using namespace WebCore;
 {
     ASSERT_MAIN_THREAD();
 
-    ASSERT(!loader->isLoading());
-    loader->detachDataSource();
-    loader->deref();
+    ASSERT(loader);
+    if (loader) {
+        ASSERT(!loader->isLoading());
+        loader->detachDataSource();
+        loader->deref();
+    }
 
     [super finalize];
 }

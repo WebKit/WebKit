@@ -1,5 +1,37 @@
 2009-02-12  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Darin Adler
+
+        Fix potential ref-count or null-deref problems with C++ objects as Obj-C members.
+
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList dealloc]): Null check before deref()'ing.
+        (-[WebBackForwardList finalize]): Ditto.
+
+        * Misc/WebIconFetcher.mm:
+        (-[WebIconFetcher dealloc]): Null check before deref()'ing.
+        (-[WebIconFetcher finalize]): Ditto.
+
+        * WebCoreSupport/WebEditorClient.mm: Change to use RefPtr<> instead of ref()/deref().
+        (-[WebEditCommand initWithEditCommand:]):
+        (-[WebEditCommand dealloc]):
+        (-[WebEditCommand finalize]):
+        (-[WebEditCommand command]):
+
+        * WebView/WebArchive.mm: Change to use RefPtr<> instead of ref()/deref().
+        (-[WebArchivePrivate init]):
+        (-[WebArchivePrivate initWithCoreArchive:]):
+        (-[WebArchivePrivate coreArchive]):
+        (-[WebArchivePrivate setCoreArchive:]):
+        (-[WebArchivePrivate dealloc]):
+        (-[WebArchivePrivate finalize]):
+
+        * WebView/WebDataSource.mm: 
+        (-[WebDataSourcePrivate dealloc]): Null check before deref()'ing.
+        (-[WebDataSourcePrivate finalize]): Ditto.
+
+2009-02-12  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Kevin Decker
 
         <rdar://problem/6579750> - Crash in WebArchivePrivate in Tiger TextEdit

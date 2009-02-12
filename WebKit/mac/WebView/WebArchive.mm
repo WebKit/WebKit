@@ -53,7 +53,7 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     NSArray *cachedSubresources;
     NSArray *cachedSubframeArchives;
 @private
-    LegacyWebArchive* coreArchive;
+    RefPtr<LegacyWebArchive> coreArchive;
 }
 
 - (id)initWithCoreArchive:(PassRefPtr<LegacyWebArchive>)coreArchive;
@@ -76,7 +76,7 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     self = [super init];
     if (!self)
         return nil;
-    coreArchive = LegacyWebArchive::create().releaseRef();
+    coreArchive = LegacyWebArchive::create();
     return self;
 }
 
@@ -87,49 +87,32 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
         [self release];
         return nil;
     }
-    coreArchive = _coreArchive.releaseRef();
+    coreArchive = _coreArchive;
     return self;
 }
 
 - (LegacyWebArchive*)coreArchive
 {
-    return coreArchive;
+    return coreArchive.get();
 }
 
 - (void)setCoreArchive:(PassRefPtr<LegacyWebArchive>)newCoreArchive
 {
     ASSERT(coreArchive);
     ASSERT(newCoreArchive);
-    if (coreArchive)
-        coreArchive->deref();
-    coreArchive = newCoreArchive.releaseRef();
+    coreArchive = newCoreArchive;
 }
 
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebArchivePrivate class], self))
         return;
-
-    if (coreArchive) {
-        coreArchive->deref();
-        coreArchive = 0;
-    }
     
     [cachedMainResource release];
     [cachedSubresources release];
     [cachedSubframeArchives release];
     
     [super dealloc];
-}
-
-- (void)finalize
-{
-    if (coreArchive) {
-        coreArchive->deref();
-        coreArchive = 0;
-    }
-    
-    [super finalize];
 }
 
 @end

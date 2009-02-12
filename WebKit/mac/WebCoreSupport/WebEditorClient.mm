@@ -80,7 +80,7 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
 
 @interface WebEditCommand : NSObject
 {
-    EditCommand *m_command;   
+    RefPtr<EditCommand> m_command;   
 }
 
 + (WebEditCommand *)commandWithEditCommand:(PassRefPtr<EditCommand>)command;
@@ -102,7 +102,7 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
 {
     ASSERT(command);
     [super init];
-    m_command = command.releaseRef();
+    m_command = command;
     return self;
 }
 
@@ -110,15 +110,14 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
 {
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebEditCommand class], self))
         return;
-    
-    m_command->deref();
+
     [super dealloc];
 }
 
 - (void)finalize
 {
     ASSERT_MAIN_THREAD();
-    m_command->deref();
+
     [super finalize];
 }
 
@@ -129,7 +128,7 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
 
 - (EditCommand *)command
 {
-    return m_command;
+    return m_command.get();
 }
 
 @end

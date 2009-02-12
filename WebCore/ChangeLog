@@ -1,3 +1,14 @@
+2009-02-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler
+
+        Fix potential ref-count or null-deref problems with C++ objects as Obj-C members.
+
+        * platform/mac/SharedBufferMac.mm: Change to use RefPtr<> instead of ref()/deref().
+        (-[WebCoreSharedBufferData dealloc]):
+        (-[WebCoreSharedBufferData finalize]):
+        (-[WebCoreSharedBufferData initWithSharedBuffer:]):
+
 2009-02-12  David Hyatt  <hyatt@apple.com>
 
         Remove calcWidth from RenderObject.  Nobody ever called it on RenderObjects.

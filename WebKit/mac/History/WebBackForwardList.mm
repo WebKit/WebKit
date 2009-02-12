@@ -115,10 +115,13 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
         return;
 
     BackForwardList* backForwardList = core(self);
-    ASSERT(backForwardList->closed());
-    backForwardLists().remove(backForwardList);
-    backForwardList->deref();
-        
+    ASSERT(backForwardList);
+    if (backForwardList) {
+        ASSERT(backForwardList->closed());
+        backForwardLists().remove(backForwardList);
+        backForwardList->deref();
+    }
+
     [super dealloc];
 }
 
@@ -126,9 +129,12 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 {
     WebCoreThreadViolationCheck();
     BackForwardList* backForwardList = core(self);
-    ASSERT(backForwardList->closed());
-    backForwardLists().remove(backForwardList);
-    backForwardList->deref();
+    ASSERT(backForwardList);
+    if (backForwardList) {
+        ASSERT(backForwardList->closed());
+        backForwardLists().remove(backForwardList);
+        backForwardList->deref();
+    }
         
     [super finalize];
 }
