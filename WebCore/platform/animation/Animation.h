@@ -97,7 +97,7 @@ public:
     const TimingFunction& timingFunction() const { return m_timingFunction; }
 
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
-    void setDirection(bool d) { m_direction = d; m_directionSet = true; }
+    void setDirection(AnimationDirection d) { m_direction = d; m_directionSet = true; }
     void setDuration(double d) { ASSERT(d >= 0); m_duration = d; m_durationSet = true; }
     void setIterationCount(int c) { m_iterationCount = c; m_iterationCountSet = true; }
     void setName(const String& n) { m_name = n; m_nameSet = true; }

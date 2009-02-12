@@ -69,7 +69,7 @@ private:
     MediaPlayerPrivate(MediaPlayer*);
 
     // engine support
-    static MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer* player);
+    static MediaPlayerPrivateInterface* create(MediaPlayer* player);
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
     static bool isAvailable();
