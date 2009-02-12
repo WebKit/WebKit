@@ -385,8 +385,6 @@ editing/selection/4975120.html
 editing/selection/designmode-no-caret.html
 fast/encoding/char-encoding.html
 fast/frames/frame-navigation.html
-http/tests/incremental/slow-utf8-css.pl
-http/tests/incremental/slow-utf8-text.pl
 
 # Random sizing issues (Renderblock, RenderTableCells)
 fast/forms/searchfield-heights.html

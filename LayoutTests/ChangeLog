@@ -1,5 +1,12 @@
 2009-02-12  Adam Roben  <aroben@apple.com>
 
+        Remove some passing tests from the Windows Skipped list
+
+        * platform/win/Skipped: Removed two tests in http/tests/incremental
+        (one of which had been renamed and so was running anyway).
+
+2009-02-12  Adam Roben  <aroben@apple.com>
+
         Add a failing loader test to the Windows Skipped list
 
         * platform/win/Skipped: Added fast/loader/frame-creation-removal.html.
