@@ -1,3 +1,18 @@
+2009-02-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 23826: Potential bug with before/after rule while moving element from one document to another
+
+        Moved the document before/after toggle from the constructor to insertedIntoDocument.
+
+        Test: fast/css-generated-content/beforeAfter-interdocument.html
+
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::HTMLQuoteElement):
+        (WebCore::HTMLQuoteElement::insertedIntoDocument):
+        * html/HTMLQuoteElement.h:
+
 2009-02-12  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser

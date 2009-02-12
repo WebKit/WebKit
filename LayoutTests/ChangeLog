@@ -1,3 +1,12 @@
+2009-02-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 23826: Potential bug with before/after rule while moving element from one document to another
+
+        * fast/css-generated-content/beforeAfter-interdocument.html: Added.
+        * platform/mac/fast/css-generated-content/beforeAfter-interdocument-expected.txt: Added.
+
 2009-02-12  Adam Roben  <aroben@apple.com>
 
         Try to fix dashboard-region-parser
