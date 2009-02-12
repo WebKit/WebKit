@@ -377,7 +377,7 @@ String RenderTextControl::textWithHardLineBreaks()
     if (!renderer)
         return "";
 
-    InlineBox* box = renderer->isText() ? toRenderText(renderer)->firstTextBox() : renderer->inlineBoxWrapper();
+    InlineBox* box = renderer->isText() ? toRenderText(renderer)->firstTextBox() : toRenderBox(renderer)->inlineBoxWrapper();
     if (!box)
         return "";
 

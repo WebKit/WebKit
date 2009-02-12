@@ -392,13 +392,6 @@ public:
     void updateFillImages(const FillLayer*, const FillLayer*);
     void updateImage(StyleImage*, StyleImage*);
 
-    // For inline replaced elements, this function returns the inline box that owns us.  Enables
-    // the replaced RenderObject to quickly determine what line it is contained on and to easily
-    // iterate over structures on the line.
-    virtual InlineBox* inlineBoxWrapper() const;
-    virtual void setInlineBoxWrapper(InlineBox*);
-    virtual void deleteLineBoxWrapper();
-
     // for discussion of lineHeight see CSS2 spec
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
     // for the vertical-align property of inline elements

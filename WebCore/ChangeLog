@@ -1,5 +1,29 @@
 2009-02-11  David Hyatt  <hyatt@apple.com>
 
+        Remove all of the inline box wrapper functions from RenderObject, since they only apply to RenderBox.  Devirtualize the functions.
+        Patch all of the call sites to convert to a RenderBox.
+
+        Reviewed by Simon Fraser
+
+        * dom/Position.cpp:
+        (WebCore::nextRenderedEditable):
+        (WebCore::previousRenderedEditable):
+        (WebCore::Position::getInlineBoxAndOffset):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::deleteLine):
+        (WebCore::InlineBox::extractLine):
+        (WebCore::InlineBox::attachLine):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textWithHardLineBreaks):
+
+2009-02-11  David Hyatt  <hyatt@apple.com>
+
         Eliminate createInlineBox and dirtyLineBoxes from RenderObject.  These functions have been devirtualized.
         The single call site now calls a helper function that just bit checks and casts before calling the correct
         type.  RenderBlock's dirtyLineBoxes function was dead code (caused by the RenderFlow deletion), so it has

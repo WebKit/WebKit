@@ -114,21 +114,23 @@ void InlineBox::dirtyLineBoxes()
 
 void InlineBox::deleteLine(RenderArena* arena)
 {
-    if (!m_extracted)
-        m_renderer->setInlineBoxWrapper(0);
+    if (!m_extracted && m_renderer->isBox())
+        toRenderBox(m_renderer)->setInlineBoxWrapper(0);
     destroy(arena);
 }
 
 void InlineBox::extractLine()
 {
     m_extracted = true;
-    m_renderer->setInlineBoxWrapper(0);
+    if (m_renderer->isBox())
+        toRenderBox(m_renderer)->setInlineBoxWrapper(0);
 }
 
 void InlineBox::attachLine()
 {
     m_extracted = false;
-    m_renderer->setInlineBoxWrapper(this);
+    if (m_renderer->isBox())
+        toRenderBox(m_renderer)->setInlineBoxWrapper(this);
 }
 
 void InlineBox::adjustPosition(int dx, int dy)
