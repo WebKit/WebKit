@@ -2,6 +2,39 @@
 
         Reviewed by Gavin Barraclough.
 
+        Style cleanup.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CodeLocationCommon::CodeLocationCommon):
+        (JSC::AbstractMacroAssembler::CodeLocationCommon::operator bool):
+        (JSC::AbstractMacroAssembler::CodeLocationCommon::reset):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::addressForSwitch):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::addressForExceptionHandler):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::addressForJSR):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::getJumpDestination):
+        (JSC::AbstractMacroAssembler::CodeLocationJump::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationJump::CodeLocationJump):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::calleeReturnAddressValue):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::CodeLocationCall):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabel32::repatch):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabel32::CodeLocationDataLabel32):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabelPtr::repatch):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabelPtr::CodeLocationDataLabelPtr):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::ProcessorReturnAddress):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkCallerToFunction):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::operator void*):
+        (JSC::AbstractMacroAssembler::PatchBuffer::link):
+        (JSC::::CodeLocationCommon::labelAtOffset):
+        (JSC::::CodeLocationCommon::jumpAtOffset):
+        (JSC::::CodeLocationCommon::callAtOffset):
+        (JSC::::CodeLocationCommon::dataLabelPtrAtOffset):
+        (JSC::::CodeLocationCommon::dataLabel32AtOffset):
+
+2009-02-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
         * assembler/AbstractMacroAssembler.h: Fix comments.
 
 2009-02-11  Alexey Proskuryakov  <ap@webkit.org>
