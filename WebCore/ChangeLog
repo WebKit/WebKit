@@ -1,3 +1,16 @@
+2009-02-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Not reviewed.
+
+        Release build fix when VIDEO is disabled (it should also
+        help the builds with WORKERS or XSLT disabled).
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (jsDOMWindowBaseAudio): Added an UNUSED_PARAM for exec and slot when
+        VIDEO is disabled.
+        (jsDOMWindowBaseWorker): Ditto for WORKERS.
+        (jsDOMWindowBaseXSLTProcessor): Ditto for XSLT.
+
 2009-02-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
