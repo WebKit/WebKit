@@ -83,8 +83,13 @@ public:
     void clearTimingFunction() { m_timingFunctionSet = false; }
 
     double delay() const { return m_delay; }
-    bool direction() const { return m_direction; }
+
+    enum AnimationDirection { AnimationDirectionNormal, AnimationDirectionAlternate };
+    AnimationDirection direction() const { return m_direction; }
+
     double duration() const { return m_duration; }
+
+    enum { IterationCountInfinite = -1 };
     int iterationCount() const { return m_iterationCount; }
     const String& name() const { return m_name; }
     unsigned playState() const { return m_playState; }
@@ -115,13 +120,13 @@ private:
     Animation();
     Animation(const Animation& o);
     
-    double m_delay;
-    bool m_direction;
-    double m_duration;
-    int m_iterationCount;
     String m_name;
     int m_property;
+    int m_iterationCount;
+    double m_delay;
+    double m_duration;
     TimingFunction m_timingFunction;
+    AnimationDirection m_direction : 1;
 
     unsigned m_playState     : 2;
 
@@ -138,7 +143,7 @@ private:
 
 public:
     static float initialAnimationDelay() { return 0; }
-    static bool initialAnimationDirection() { return false; }
+    static AnimationDirection initialAnimationDirection() { return AnimationDirectionNormal; }
     static double initialAnimationDuration() { return 0; }
     static int initialAnimationIterationCount() { return 1; }
     static String initialAnimationName() { return String("none"); }

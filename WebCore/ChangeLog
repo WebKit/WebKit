@@ -1,3 +1,28 @@
+2009-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=23188
+        
+        Define enum values for Animation::direction(), and one for
+        IterationCountInfinite to make the code more self-documenting.
+        
+        Order the member vars of Animation to optimize packing.
+        
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::Animation):
+        (WebCore::Animation::operator=):
+        (WebCore::Animation::animationsMatch):
+        * platform/animation/Animation.h:
+        (WebCore::Animation::):
+        (WebCore::Animation::direction):
+        (WebCore::Animation::initialAnimationDirection):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setBasicAnimation):
+        (WebCore::GraphicsLayerCA::setKeyframeAnimation):
+
 2009-02-12  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Holger Freyther.

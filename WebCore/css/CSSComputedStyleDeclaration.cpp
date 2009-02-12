@@ -1090,7 +1090,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i) {
                     int iterationCount = t->animation(i)->iterationCount();
-                    if (iterationCount < 0)
+                    if (iterationCount == Animation::IterationCountInfinite)
                         list->append(CSSPrimitiveValue::createIdentifier(CSSValueInfinite));
                     else
                         list->append(CSSPrimitiveValue::create(iterationCount, CSSPrimitiveValue::CSS_NUMBER));

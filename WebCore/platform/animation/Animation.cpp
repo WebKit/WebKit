@@ -25,13 +25,13 @@
 namespace WebCore {
 
 Animation::Animation()
-    : m_delay(initialAnimationDelay())
-    , m_direction(initialAnimationDirection())
-    , m_duration(initialAnimationDuration())
-    , m_iterationCount(initialAnimationIterationCount())
-    , m_name(initialAnimationName())
+    : m_name(initialAnimationName())
     , m_property(initialAnimationProperty())
+    , m_iterationCount(initialAnimationIterationCount())
+    , m_delay(initialAnimationDelay())
+    , m_duration(initialAnimationDuration())
     , m_timingFunction(initialAnimationTimingFunction())
+    , m_direction(initialAnimationDirection())
     , m_playState(initialAnimationPlayState())
     , m_delaySet(false)
     , m_directionSet(false)
@@ -47,13 +47,13 @@ Animation::Animation()
 
 Animation::Animation(const Animation& o)
     : RefCounted<Animation>()
-    , m_delay(o.m_delay)
-    , m_direction(o.m_direction)
-    , m_duration(o.m_duration)
-    , m_iterationCount(o.m_iterationCount)
     , m_name(o.m_name)
     , m_property(o.m_property)
+    , m_iterationCount(o.m_iterationCount)
+    , m_delay(o.m_delay)
+    , m_duration(o.m_duration)
     , m_timingFunction(o.m_timingFunction)
+    , m_direction(o.m_direction)
     , m_playState(o.m_playState)
     , m_delaySet(o.m_delaySet)
     , m_directionSet(o.m_directionSet)
@@ -69,14 +69,14 @@ Animation::Animation(const Animation& o)
 
 Animation& Animation::operator=(const Animation& o)
 {
-    m_delay = o.m_delay;
-    m_direction = o.m_direction;
-    m_duration = o.m_duration;
-    m_iterationCount = o.m_iterationCount;
     m_name = o.m_name;
-    m_playState = o.m_playState;
     m_property = o.m_property;
+    m_iterationCount = o.m_iterationCount;
+    m_delay = o.m_delay;
+    m_duration = o.m_duration;
     m_timingFunction = o.m_timingFunction;
+    m_direction = o.m_direction;
+    m_playState = o.m_playState;
 
     m_delaySet = o.m_delaySet;
     m_directionSet = o.m_directionSet;
@@ -86,7 +86,6 @@ Animation& Animation::operator=(const Animation& o)
     m_playStateSet = o.m_playStateSet;
     m_propertySet = o.m_propertySet;
     m_timingFunctionSet = o.m_timingFunctionSet;
-
     m_isNone = o.m_isNone;
 
     return *this;
@@ -101,13 +100,13 @@ bool Animation::animationsMatch(const Animation* o, bool matchPlayStates) const
     if (!o)
         return false;
     
-    bool result = m_delay == o->m_delay &&
-                  m_direction == o->m_direction &&
-                  m_duration == o->m_duration &&
-                  m_iterationCount == o->m_iterationCount &&
-                  m_name == o->m_name &&
+    bool result = m_name == o->m_name &&
                   m_property == o->m_property && 
+                  m_iterationCount == o->m_iterationCount &&
+                  m_delay == o->m_delay &&
+                  m_duration == o->m_duration &&
                   m_timingFunction == o->m_timingFunction &&
+                  m_direction == o->m_direction &&
                   m_delaySet == o->m_delaySet &&
                   m_directionSet == o->m_directionSet &&
                   m_durationSet == o->m_durationSet &&

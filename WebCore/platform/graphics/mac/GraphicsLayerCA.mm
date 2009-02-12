@@ -1140,9 +1140,9 @@ void GraphicsLayerCA::setBasicAnimation(AnimatedPropertyID property, TransformOp
         duration = cAnimationAlmostZeroDuration;
         
     float repeatCount = transition->iterationCount();
-    if (repeatCount < 0)
+    if (repeatCount == Animation::IterationCountInfinite)
         repeatCount = FLT_MAX;
-    else if (transition->direction())   // If we alternate, the number of cycles is halved
+    else if (anim->direction() == Animation::AnimationDirectionAlternate)
         repeatCount /= 2;
         
     [basicAnim setDuration:duration];
@@ -1208,9 +1208,9 @@ void GraphicsLayerCA::setKeyframeAnimation(AnimatedPropertyID property, Transfor
         duration = cAnimationAlmostZeroDuration;
 
     float repeatCount = anim->iterationCount();
-    if (repeatCount < 0)
+    if (repeatCount == Animation::IterationCountInfinite)
         repeatCount = FLT_MAX;
-    else if (anim->direction())
+    else if (anim->direction() == Animation::AnimationDirectionAlternate)
         repeatCount /= 2;
 
     [keyframeAnim setDuration:duration];
