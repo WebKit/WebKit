@@ -268,12 +268,9 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
         LOG(History, "Updating global history entry %@", entry);
         // Remove the item from date caches before changing its last visited date.  Otherwise we might get duplicate entries
         // as seen in <rdar://problem/6570573>.
-#if ASSERT_UNUSED
-        [self removeItemFromDateCaches:entry];
-#else
         BOOL itemWasInDateCaches = [self removeItemFromDateCaches:entry];
-        ASSERT(itemWasInDateCaches);
-#endif
+        ASSERT_UNUSED(itemWasInDateCaches, itemWasInDateCaches);
+
         [entry _visitedWithTitle:title];
     } else {
         LOG(History, "Adding new global history entry for %@", url);
