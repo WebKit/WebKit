@@ -1688,26 +1688,22 @@ int Document::elapsedTime() const
     return static_cast<int>((currentTime() - m_startTime) * 1000);
 }
 
-void Document::prepareToWrite(Document* ownerDocument)
-{
-    if (m_tokenizer)
-        return;
-    open(ownerDocument);
-    ASSERT(m_tokenizer);
-    if (!m_tokenizer)
-        return;
-    UChar documentPrefix[] = { '<', 'h', 't', 'm', 'l', '>' };
-    m_tokenizer->write(SegmentedString(documentPrefix, sizeof(documentPrefix) / sizeof(documentPrefix[0])), false);
-}
-
-void Document::write(const String& text, Document* ownerDocument)
+void Document::write(const SegmentedString& text, Document* ownerDocument)
 {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
         printf("Beginning a document.write at %d\n", elapsedTime());
 #endif
 
-    prepareToWrite(ownerDocument);
+    if (!m_tokenizer) {
+        open(ownerDocument);
+        ASSERT(m_tokenizer);
+        if (!m_tokenizer)
+            return;
+        UChar documentPrefix[] = { '<', 'h', 't', 'm', 'l', '>' };
+        m_tokenizer->write(SegmentedString(documentPrefix, sizeof(documentPrefix) / sizeof(documentPrefix[0])), false);
+    }
+
     if (m_tokenizer)
         m_tokenizer->write(text, false);
 
@@ -1715,6 +1711,11 @@ void Document::write(const String& text, Document* ownerDocument)
     if (!ownerElement())
         printf("Ending a document.write at %d\n", elapsedTime());
 #endif    
+}
+
+void Document::write(const String& text, Document* ownerDocument)
+{
+    write(SegmentedString(text), ownerDocument);
 }
 
 void Document::writeln(const String& text, Document* ownerDocument)

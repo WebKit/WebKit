@@ -98,6 +98,7 @@ namespace WebCore {
     class RenderArena;
     class RenderView;
     class SecurityOrigin;
+    class SegmentedString;
     class Settings;
     class StyleSheet;
     class StyleSheetList;
@@ -426,7 +427,7 @@ public:
     void implicitClose();
     void cancelParsing();
 
-    void prepareToWrite(Document* ownerDocument);
+    void write(const SegmentedString& text, Document* ownerDocument = 0);
     void write(const String& text, Document* ownerDocument = 0);
     void writeln(const String& text, Document* ownerDocument = 0);
     void finishParsing();
