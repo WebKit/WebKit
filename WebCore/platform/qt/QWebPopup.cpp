@@ -22,7 +22,9 @@
 #include "QWebPopup.h"
 #include "PopupMenuStyle.h"
 
-#include <QCoreApplication>
+#include <QAbstractItemView>
+#include <QApplication>
+#include <QInputContext>
 #include <QMouseEvent>
 
 namespace WebCore {
@@ -54,6 +56,16 @@ void QWebPopup::showPopup()
 
 void QWebPopup::hidePopup()
 {
+    QWidget* activeFocus = QApplication::focusWidget();
+    if (activeFocus && activeFocus == view()
+        && activeFocus->testAttribute(Qt::WA_InputMethodEnabled)) {
+        QInputContext* qic = activeFocus->inputContext();
+        if (qic) {
+            qic->reset();
+            qic->setFocusWidget(0);
+        }
+    }
+
     QComboBox::hidePopup();
     if (!m_popupVisible)
         return;

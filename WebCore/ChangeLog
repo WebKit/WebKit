@@ -1,3 +1,17 @@
+2009-02-13  Prasanth Ullattil  <pullatti@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fixes crash in the Qt port on Windows with comboboxes
+
+        The focusWidget in the input context is not reset properly.
+        The QApplication::setFocusWidget() wont reset the IC if the reason is
+        PopupFocusReason, this is not ideal. For the time being we are going
+        to do this from webkit itself.
+
+        * platform/qt/QWebPopup.cpp:
+        (WebCore::QWebPopup::hidePopup):
+
 2009-02-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, typo while tweaking last patch for commit.
