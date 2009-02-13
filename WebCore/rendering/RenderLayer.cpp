@@ -1482,7 +1482,7 @@ void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
     int rightPos = ltr ?
                     box->rightmostPosition(true, false) - box->borderLeft() :
                     clientWidth - m_scrollLeftOverflow;
-    int bottomPos = renderer()->lowestPosition(true, false) - box->borderTop();
+    int bottomPos = box->lowestPosition(true, false) - box->borderTop();
 
     m_scrollWidth = max(rightPos, clientWidth);
     m_scrollHeight = max(bottomPos, clientHeight);

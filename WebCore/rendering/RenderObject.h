@@ -624,10 +624,6 @@ public:
      */
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
-    virtual int lowestPosition(bool /*includeOverflowInterior*/ = true, bool /*includeSelf*/ = true) const { return 0; }
-    virtual int rightmostPosition(bool /*includeOverflowInterior*/ = true, bool /*includeSelf*/ = true) const { return 0; }
-    virtual int leftmostPosition(bool /*includeOverflowInterior*/ = true, bool /*includeSelf*/ = true) const { return 0; }
-
     virtual void calcVerticalMargins() { }
     bool isTopMarginQuirk() const { return m_topMarginQuirk; }
     bool isBottomMarginQuirk() const { return m_bottomMarginQuirk; }
