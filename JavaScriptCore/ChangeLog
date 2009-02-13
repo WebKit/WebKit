@@ -1,3 +1,13 @@
+2009-02-13  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 23926: Race condition in callOnMainThreadAndWait
+        <https://bugs.webkit.org/show_bug.cgi?id=23926>
+
+        * wtf/MainThread.cpp:
+        Removed callOnMainThreadAndWait since it isn't used.
+
 2009-02-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Jon Honeycutt.

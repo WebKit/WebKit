@@ -37,7 +37,6 @@ class Mutex;
 typedef void MainThreadFunction(void*);
 
 void callOnMainThread(MainThreadFunction*, void* context);
-void callOnMainThreadAndWait(MainThreadFunction*, void* context);
 
 void setMainThreadCallbacksPaused(bool paused);
 

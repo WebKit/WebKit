@@ -39,12 +39,10 @@ namespace WTF {
 struct FunctionWithContext {
     MainThreadFunction* function;
     void* context;
-    ThreadCondition* syncFlag;
 
-    FunctionWithContext(MainThreadFunction* function = 0, void* context = 0, ThreadCondition* syncFlag = 0)
+    FunctionWithContext(MainThreadFunction* function = 0, void* context = 0)
         : function(function)
         , context(context)
-        , syncFlag(syncFlag)
     { 
     }
 };
@@ -94,9 +92,7 @@ void dispatchFunctionsFromMainThread()
         }
 
         invocation.function(invocation.context);
-        if (invocation.syncFlag)
-            invocation.syncFlag->signal();
-        
+
         // If we are running accumulated functions for too long so UI may become unresponsive, we need to
         // yield so the user input can be processed. Otherwise user may not be able to even close the window.
         // This code has effect only in case the scheduleDispatchFunctionsOnMainThread() is implemented in a way that
@@ -119,30 +115,6 @@ void callOnMainThread(MainThreadFunction* function, void* context)
     }
     if (needToSchedule)
         scheduleDispatchFunctionsOnMainThread();
-}
-
-void callOnMainThreadAndWait(MainThreadFunction* function, void* context)
-{
-    ASSERT(function);
-
-    if (isMainThread()) {
-        function(context);
-        return;
-    }
-
-    ThreadCondition syncFlag;
-    Mutex conditionMutex;
-    bool needToSchedule = false;
-    {
-        MutexLocker locker(mainThreadFunctionQueueMutex());
-        needToSchedule = functionQueue().size() == 0;
-        functionQueue().append(FunctionWithContext(function, context, &syncFlag));
-        conditionMutex.lock();
-    }
-
-    if (needToSchedule)
-        scheduleDispatchFunctionsOnMainThread();
-    syncFlag.wait(conditionMutex);
 }
 
 void setMainThreadCallbacksPaused(bool paused)
