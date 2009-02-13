@@ -149,6 +149,10 @@ bool RenderLayerBacking::updateGraphicsLayers(bool needsContentsLayer, bool need
     if (!renderer()->animation()->isAnimatingPropertyOnRenderer(renderer(), CSSPropertyOpacity))
         updateLayerOpacity();
     
+    RenderStyle* style = renderer()->style();
+    m_graphicsLayer->setPreserves3D(style->transformStyle3D() == TransformStyle3DPreserve3D);
+    m_graphicsLayer->setBackfaceVisibility(style->backfaceVisibility() == BackfaceVisibilityVisible);
+
     updateGraphicsLayerGeometry();
     
     m_graphicsLayer->updateContentsRect();
@@ -253,6 +257,31 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
                             relativeCompositingBounds.height() != 0.0f ? ((layerBounds.y() - relativeCompositingBounds.y()) + transformOrigin.y()) / relativeCompositingBounds.height() : 0.5f,
                             transformOrigin.z());
         m_graphicsLayer->setAnchorPoint(anchor);
+
+        RenderStyle* style = renderer()->style();
+        if (style->perspective() > 0) {
+            FloatPoint perspectiveOrigin = computePerspectiveOrigin(borderBox);
+            
+            float xOffset = perspectiveOrigin.x() - (float)borderBox.width() / 2.0f;
+            float yOffset = perspectiveOrigin.y() - (float)borderBox.height() / 2.0f;
+
+            TransformationMatrix t;
+            t.translate(xOffset, yOffset);
+            t.applyPerspective(style->perspective());
+            t.translate(-xOffset, -yOffset);
+            
+            if (m_clippingLayer) {
+                m_clippingLayer->setChildrenTransform(t);
+                m_graphicsLayer->setChildrenTransform(TransformationMatrix());
+            }
+            else
+                m_graphicsLayer->setChildrenTransform(t);
+        } else {
+            if (m_clippingLayer)
+                m_clippingLayer->setChildrenTransform(TransformationMatrix());
+            else
+                m_graphicsLayer->setChildrenTransform(TransformationMatrix());
+        }
     } else {
         m_graphicsLayer->setAnchorPoint(FloatPoint3D(0.5f, 0.5f, 0));
     }
@@ -568,13 +597,28 @@ void RenderLayerBacking::forceCompositingLayer(bool force)
     m_forceCompositingLayer = force;
 }
 
-FloatPoint RenderLayerBacking::computeTransformOrigin(const IntRect& borderBox) const
+FloatPoint3D RenderLayerBacking::computeTransformOrigin(const IntRect& borderBox) const
 {
     RenderStyle* style = renderer()->style();
 
-    FloatPoint origin;
+    FloatPoint3D origin;
     origin.setX(style->transformOriginX().calcFloatValue(borderBox.width()));
     origin.setY(style->transformOriginY().calcFloatValue(borderBox.height()));
+    origin.setZ(style->transformOriginZ());
+
+    return origin;
+}
+
+FloatPoint RenderLayerBacking::computePerspectiveOrigin(const IntRect& borderBox) const
+{
+    RenderStyle* style = renderer()->style();
+
+    float boxWidth = borderBox.width();
+    float boxHeight = borderBox.height();
+
+    FloatPoint origin;
+    origin.setX(style->perspectiveOriginX().calcFloatValue(boxWidth));
+    origin.setY(style->perspectiveOriginY().calcFloatValue(boxHeight));
 
     return origin;
 }

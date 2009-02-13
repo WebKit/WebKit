@@ -155,7 +155,10 @@ void GraphicsLayer::TransformValueList::makeFunctionList(FunctionList& list, boo
         list[j] = type;
         
         // if this is a rotation entry, we need to see if any angle differences are >= 180 deg
-        if (type == TransformOperation::ROTATE) {
+        if (type == TransformOperation::ROTATE_X ||
+            type == TransformOperation::ROTATE_Y ||
+            type == TransformOperation::ROTATE_Z ||
+            type == TransformOperation::ROTATE_3D) {
             lastRotAngle = static_cast<RotateTransformOperation*>(firstVal->operations().at(j).get())->angle();
             
             if (maxRotAngle < 0)
@@ -508,9 +511,10 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent) const
     if (m_transform.isIdentity())
         ts << "identity";
     else {
-        ts << "[" << m_transform.a() << " " << m_transform.b() << "] ";
-        ts << "[" << m_transform.c() << " " << m_transform.d() << "] ";
-        ts << "[" << m_transform.e() << " " << m_transform.f() << "] ";
+        ts << "[" << m_transform.m11() << " " << m_transform.m12() << " " << m_transform.m13() << " " << m_transform.m14() << "] ";
+        ts << "[" << m_transform.m21() << " " << m_transform.m22() << " " << m_transform.m23() << " " << m_transform.m24() << "] ";
+        ts << "[" << m_transform.m31() << " " << m_transform.m32() << " " << m_transform.m33() << " " << m_transform.m34() << "] ";
+        ts << "[" << m_transform.m41() << " " << m_transform.m42() << " " << m_transform.m43() << " " << m_transform.m44() << "]";
     }
     ts << ")\n";
 
@@ -519,9 +523,10 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent) const
     if (m_childrenTransform.isIdentity())
         ts << "identity";
     else {
-        ts << "[" << m_childrenTransform.a() << " " << m_childrenTransform.b() << "] ";
-        ts << "[" << m_childrenTransform.c() << " " << m_childrenTransform.d() << "] ";
-        ts << "[" << m_childrenTransform.e() << " " << m_childrenTransform.f() << "] ";
+        ts << "[" << m_childrenTransform.m11() << " " << m_childrenTransform.m12() << " " << m_childrenTransform.m13() << " " << m_childrenTransform.m14() << "] ";
+        ts << "[" << m_childrenTransform.m21() << " " << m_childrenTransform.m22() << " " << m_childrenTransform.m23() << " " << m_childrenTransform.m24() << "] ";
+        ts << "[" << m_childrenTransform.m31() << " " << m_childrenTransform.m32() << " " << m_childrenTransform.m33() << " " << m_childrenTransform.m34() << "] ";
+        ts << "[" << m_childrenTransform.m41() << " " << m_childrenTransform.m42() << " " << m_childrenTransform.m43() << " " << m_childrenTransform.m44() << "]";
     }
     ts << ")\n";
 

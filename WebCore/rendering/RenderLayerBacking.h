@@ -125,7 +125,9 @@ private:
 
     IntSize contentOffsetInCompostingLayer();
     // Result is transform origin in pixels.
-    FloatPoint computeTransformOrigin(const IntRect& borderBox) const;
+    FloatPoint3D computeTransformOrigin(const IntRect& borderBox) const;
+    // Result is perspective origin in pixels.
+    FloatPoint computePerspectiveOrigin(const IntRect& borderBox) const;
 
     void updateLayerOpacity();
     void updateLayerTransform();

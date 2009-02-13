@@ -32,6 +32,7 @@
 #import "Animation.h"
 #import "BlockExceptions.h"
 #import "CString.h"
+#import "FloatConversion.h"
 #import "FloatRect.h"
 #import "Image.h"
 #import "PlatformString.h"
@@ -116,9 +117,24 @@ static NSString* const WebAnimationCSSPropertyKey = @"GraphicsLayerCA_property";
 
 namespace WebCore {
 
-inline void copyTransform(CATransform3D& toT3D, const TransformationMatrix& t)
+static inline void copyTransform(CATransform3D& toT3D, const TransformationMatrix& t)
 {
-    toT3D = CATransform3DMakeAffineTransform(t);
+    toT3D.m11 = narrowPrecisionToFloat(t.m11());
+    toT3D.m12 = narrowPrecisionToFloat(t.m12());
+    toT3D.m13 = narrowPrecisionToFloat(t.m13());
+    toT3D.m14 = narrowPrecisionToFloat(t.m14());
+    toT3D.m21 = narrowPrecisionToFloat(t.m21());
+    toT3D.m22 = narrowPrecisionToFloat(t.m22());
+    toT3D.m23 = narrowPrecisionToFloat(t.m23());
+    toT3D.m24 = narrowPrecisionToFloat(t.m24());
+    toT3D.m31 = narrowPrecisionToFloat(t.m31());
+    toT3D.m32 = narrowPrecisionToFloat(t.m32());
+    toT3D.m33 = narrowPrecisionToFloat(t.m33());
+    toT3D.m34 = narrowPrecisionToFloat(t.m34());
+    toT3D.m41 = narrowPrecisionToFloat(t.m41());
+    toT3D.m42 = narrowPrecisionToFloat(t.m42());
+    toT3D.m43 = narrowPrecisionToFloat(t.m43());
+    toT3D.m44 = narrowPrecisionToFloat(t.m44());
 }
 
 static NSValue* getTransformFunctionValue(const GraphicsLayer::TransformValue& transformValue, size_t index, const IntSize& size, TransformOperation::OperationType transformType)
@@ -172,16 +188,24 @@ static NSString* getValueFunctionNameForTransformOperation(TransformOperation::O
 {
     // Use literal strings to avoid link-time dependency on those symbols.
     switch (transformType) {
+        case TransformOperation::ROTATE_X:
+            return @"rotateX"; // kCAValueFunctionRotateX;
+        case TransformOperation::ROTATE_Y:
+            return @"rotateY"; // kCAValueFunctionRotateY;
         case TransformOperation::ROTATE:
             return @"rotateZ"; // kCAValueFunctionRotateZ;
         case TransformOperation::SCALE_X:
             return @"scaleX"; // kCAValueFunctionScaleX;
         case TransformOperation::SCALE_Y:
             return @"scaleY"; // kCAValueFunctionScaleY;
+        case TransformOperation::SCALE_Z:
+            return @"scaleZ"; // kCAValueFunctionScaleZ;
         case TransformOperation::TRANSLATE_X:
             return @"translateX"; // kCAValueFunctionTranslateX;
         case TransformOperation::TRANSLATE_Y:
             return @"translateY"; // kCAValueFunctionTranslateY;
+        case TransformOperation::TRANSLATE_Z:
+            return @"translateZ"; // kCAValueFunctionTranslateZ;
         default:
             return nil;
     }
@@ -883,8 +907,9 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
     valueList.makeFunctionList(functionList, isValid, hasBigRotation);
 
     // We need to fall back to software animation if we don't have setValueFunction:, and
-    // we have a > 180deg rotation mixed with another transform.
-    if (hasBigRotation && functionList.size() > 1 && !caValueFunctionSupported())
+    // we would need to animate each incoming transform function separately. This is the
+    // case if we have a rotation >= 180 or we have more than one transform function.
+    if ((hasBigRotation || functionList.size() > 1) && !caValueFunctionSupported())
         return false;
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS

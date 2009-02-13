@@ -48,6 +48,11 @@
 #include "RenderTreeAsText.h"
 #endif
 
+#if ENABLE(3D_TRANSFORMS)
+// This symbol is used to determine from a script whether 3D transforms are enabled (via 'nm').
+bool WebCoreHas3DTransforms = true;
+#endif
+
 namespace WebCore {
 
 struct CompositingState {
@@ -605,15 +610,22 @@ void RenderLayerCompositor::updateRootLayerPosition()
         m_rootPlatformLayer->setSize(FloatSize(m_renderView->docWidth(), m_renderView->docHeight()));
 }
 
+bool RenderLayerCompositor::has3DContent() const
+{
+    return layerHas3DContent(rootRenderLayer());
+}
+
 bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer) const
 {
     return requiresCompositingLayer(layer) || (layer->backing() && layer->backing()->forcedCompositingLayer());
 }
 
-static bool requiresCompositingLayerForTransform(RenderObject*)
+static bool requiresCompositingLayerForTransform(RenderObject* renderer)
 {
-    // 2D transforms are rendered in software, unless animating (which is tested separately).
-    return false;
+    RenderStyle* style = renderer->style();
+    // Note that we ask the renderer if it has a transform, because the style may have transforms,
+    // but the renderer may be an inline that doesn't suppport them.
+    return renderer->hasTransform() && (style->transform().has3DOperation() || style->transformStyle3D() == TransformStyle3DPreserve3D || style->perspective() > 0);
 }
 
 #define VERBOSE_COMPOSITINGLAYER    0
@@ -637,6 +649,11 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
         gotReason = true;
     }
 
+    if (!gotReason && layer->renderer()->style()->backfaceVisibility() == BackfaceVisibilityHidden) {
+        fprintf(stderr, "RenderLayer %p requires compositing layer because: it has backface-visibility: hidden\n", layer);
+        gotReason = true;
+    }
+
     if (!gotReason && clipsCompositingDescendants(layer)) {
         fprintf(stderr, "RenderLayer %p requires compositing layer because: it has overflow clip\n", layer);
         gotReason = true;
@@ -654,6 +671,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
     // The root layer always has a compositing layer, but it may not have backing.
     return (inCompositingMode() && layer->isRootLayer()) ||
              requiresCompositingLayerForTransform(layer->renderer()) ||
+             layer->renderer()->style()->backfaceVisibility() == BackfaceVisibilityHidden ||
              clipsCompositingDescendants(layer) ||
              requiresCompositingForAnimation(layer);
 }
@@ -729,6 +747,47 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
     m_rootPlatformLayer->setMasksToBounds(true);
     
     didMoveOnscreen();
+}
+
+bool RenderLayerCompositor::layerHas3DContent(const RenderLayer* layer) const
+{
+    const RenderStyle* style = layer->renderer()->style();
+
+    if (style && 
+        (style->transformStyle3D() == TransformStyle3DPreserve3D ||
+         style->perspective() > 0 ||
+         style->transform().has3DOperation()))
+        return true;
+
+    if (layer->isStackingContext()) {
+        Vector<RenderLayer*>* negZOrderList = layer->negZOrderList();
+        if (negZOrderList) {
+            for (Vector<RenderLayer*>::iterator it = negZOrderList->begin(); it != negZOrderList->end(); ++it) {
+                RenderLayer* curLayer = (*it);
+                if (layerHas3DContent(curLayer))
+                    return true;
+            }
+        }
+
+        Vector<RenderLayer*>* posZOrderList = layer->posZOrderList();
+        if (posZOrderList) {
+            for (Vector<RenderLayer*>::iterator it = posZOrderList->begin(); it != posZOrderList->end(); ++it) {
+                RenderLayer* curLayer = (*it);
+                if (layerHas3DContent(curLayer))
+                    return true;
+            }
+        }
+    }
+
+    Vector<RenderLayer*>* overflowList = layer->overflowList();
+    if (overflowList) {
+        for (Vector<RenderLayer*>::iterator it = overflowList->begin(); it != overflowList->end(); ++it) {
+            RenderLayer* curLayer = (*it);
+            if (layerHas3DContent(curLayer))
+                return true;
+        }
+    }
+    return false;
 }
 
 } // namespace WebCore

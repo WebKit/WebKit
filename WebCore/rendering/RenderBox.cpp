@@ -252,7 +252,7 @@ void RenderBox::updateBoxModelInfoFromStyle()
         }
     }
 
-    setHasTransform(style()->hasTransform());
+    setHasTransform(style()->hasTransformRelatedProperty());
     setHasReflection(style()->boxReflect());
 }
 

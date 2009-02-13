@@ -643,8 +643,7 @@ public:
     // indicates that we are transforming
     bool hasTransformRelatedProperty() const
     {
-        return hasTransform() || rareNonInheritedData->m_transformStyle3D == TransformStyle3DPreserve3D || rareNonInheritedData->m_perspective > 0
-        ;
+        return hasTransform() || rareNonInheritedData->m_transformStyle3D == TransformStyle3DPreserve3D || rareNonInheritedData->m_perspective > 0;
     }
 
     enum ApplyTransformOrigin { IncludeTransformOrigin, ExcludeTransformOrigin };

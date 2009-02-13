@@ -1,3 +1,49 @@
+2009-02-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser
+
+        https://bugs.webkit.org/show_bug.cgi?id=23942
+
+        Hook up 3D CSS transforms to the accelerated compositor backend.
+        Not enabled by default.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        (WebCore::ensurePropertyMap):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::updateTransitions):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::willNeedService):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::willNeedService):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::TransformValueList::makeFunctionList):
+        (WebCore::GraphicsLayer::dumpProperties):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::copyTransform):
+        (WebCore::getValueFunctionNameForTransformOperation):
+        (WebCore::GraphicsLayerCA::animateTransform):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateBoxModelInfoFromStyle):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::hasTransformStyle3D):
+        (WebCore::RenderLayer::hasPerspective):
+        (WebCore::RenderLayer::perspectiveTransform):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayers):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::computeTransformOrigin):
+        (WebCore::RenderLayerBacking::computePerspectiveOrigin):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::has3DContent):
+        (WebCore::requiresCompositingLayerForTransform):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::layerHas3DContent):
+        * rendering/RenderLayerCompositor.h:
+
 2009-02-12  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Eric Seidel

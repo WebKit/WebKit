@@ -265,7 +265,7 @@ double ImplicitAnimation::willNeedService()
         
     // A return value of 0 means we need service. But if this is an accelerated animation we 
     // only need service at the end of the transition.
-    if (animationOfPropertyIsAccelerated(m_animatingProperty)) {
+    if (animationOfPropertyIsAccelerated(m_animatingProperty) && !isFallbackAnimating()) {
         bool isLooping;
         getTimeToNextEvent(t, isLooping);
     }

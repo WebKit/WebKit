@@ -399,6 +399,10 @@ public:
     bool hasTransform() const { return renderer()->hasTransform(); }
     // Note that this transform has the transform-origin baked in.
     TransformationMatrix* transform() const { return m_transform.get(); }
+    // Get the perspective transform, which is applied to transformed sublayers.
+    // Returns true if the layer has a -webkit-perspective.
+    // Note that this transform has the perspective-origin baked in.
+    TransformationMatrix perspectiveTransform() const;
 
     void destroy(RenderArena*);
 
