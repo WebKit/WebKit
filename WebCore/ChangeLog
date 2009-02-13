@@ -1,3 +1,12 @@
+2009-02-13  Lyon Chen  <lyon.chen@torchmobile.com>
+
+        Reviewed by Dave Hyatt.
+
+        Take into account y() + height() when calculating getLowerRightCorner.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getLowerRightCorner):
+
 2009-02-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.
