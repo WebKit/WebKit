@@ -136,17 +136,14 @@ static inline void documentWrite(ExecState* exec, const ArgList& args, HTMLDocum
     size_t size = args.size();
 
     UString firstString = args.at(exec, 0).toString(exec);
-    SegmentedString segmentedString(firstString.data(), firstString.size());
-    Vector<UString> subsequentStrings; // Keeps strings alive until Tokenizer::write is called on them.
+    SegmentedString segmentedString = String(firstString);
     if (size != 1) {
         if (!size)
             segmentedString.clear();
         else {
-            subsequentStrings.reserveInitialCapacity(size - 1);
             for (size_t i = 1; i < size; ++i) {
                 UString subsequentString = args.at(exec, i).toString(exec);
-                segmentedString.append(SegmentedString(subsequentString.data(), subsequentString.size()));
-                subsequentStrings.append(subsequentString);
+                segmentedString.append(SegmentedString(String(subsequentString)));
             }
         }
     }

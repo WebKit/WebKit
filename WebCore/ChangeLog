@@ -1,3 +1,19 @@
+2009-02-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix broken tokenizer regression test that reflected a lifetime bug
+        in the document.write optimization. The test failure was trivial to
+        reproduce in COLLECT_ON_EVERY_ALLOCATION mode.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::documentWrite): Convert strings to String rather than passing
+        the pointer and length to SegmentedString. The optimization is thus
+        mostly gone. However, there are two ways to bring it back: 1) Apply
+        the patch that makes UString and String share the same buffers.
+        2) Add a UString feature to SegmentedString; simple to do but might
+        risk slowing down normal document parsing.
+
 2009-02-13  Adam Treat  <adam.treat@torchmobile.com>
 
         Caught by Darin Adler.
