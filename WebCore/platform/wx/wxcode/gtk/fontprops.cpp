@@ -93,8 +93,6 @@ m_ascent(0), m_descent(0), m_lineGap(0), m_lineSpacing(0), m_xHeight(0)
 void GetTextExtent( const wxFont& font, const wxString& str, wxCoord *width, wxCoord *height,
                             wxCoord *descent, wxCoord *externalLeading )
 {
-    ASSERT(font && font->Ok());
-
     if ( width )
         *width = 0;
     if ( height )
@@ -110,12 +108,12 @@ void GetTextExtent( const wxFont& font, const wxString& str, wxCoord *width, wxC
 // FIXME: Doesn't support height, descent or external leading, though we don't need this for WebKit
 // it will need to be implemented before merging into wx unless we craft a new API.
 #if USE(WXGC)
-    PangoFont* pangoFont = WebCore::createPangoFontForFont(font);
+    PangoFont* pangoFont = WebCore::createPangoFontForFont(&font);
     PangoContext* pangoContext = pango_cairo_font_map_create_context(PANGO_CAIRO_FONT_MAP(WebCore::pangoFontMap()));
     PangoGlyph pangoGlyph = WebCore::pango_font_get_glyph(pangoFont, pangoContext, (gunichar)g_utf8_get_char(str.ToUTF8()));
     cairo_glyph_t cglyph = { pangoGlyph, 0, 0 };
     cairo_text_extents_t extents;
-    cairo_scaled_font_t* scaled_font = WebCore::createScaledFontForFont(font);
+    cairo_scaled_font_t* scaled_font = WebCore::createScaledFontForFont(&font);
     cairo_scaled_font_glyph_extents(scaled_font, &cglyph, 1, &extents);
 
     if (cairo_scaled_font_status(scaled_font) == CAIRO_STATUS_SUCCESS && extents.x_advance != 0)

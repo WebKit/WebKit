@@ -1,3 +1,10 @@
+2009-02-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, typo while tweaking last patch for commit.
+
+        * platform/wx/wxcode/gtk/fontprops.cpp:
+        (GetTextExtent):
+
 2009-02-12  miggilin  <mr.diggilin@gmail.com>
 
         Reviewed by Kevin Ollivier.
