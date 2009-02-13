@@ -137,7 +137,13 @@ public:
     void addPath(const SkPath&);
     const SkPath* currentPath() const { return &m_path; }
 
-    SkColor fillColor() const;
+    // Returns the fill color. The returned color has it's alpha adjusted
+    // by the current alpha.
+    SkColor effectiveFillColor() const;
+
+    // Returns the stroke color. The returned color has it's alpha adjusted
+    // by the current alpha.
+    SkColor effectiveStrokeColor() const;
 
     skia::PlatformCanvas* canvas() { return m_canvas; }
 

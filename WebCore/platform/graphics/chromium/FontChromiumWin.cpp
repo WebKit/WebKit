@@ -75,7 +75,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
     // Default size for the buffer. It should be enough for most of cases.
     const int kDefaultBufferLength = 256;
 
-    SkColor color = context->fillColor();
+    SkColor color = context->effectiveFillColor();
     unsigned char alpha = SkColorGetA(color);
     // Skip 100% transparent text; no need to draw anything.
     if (!alpha && context->getStrokeStyle() == NoStroke)
@@ -183,7 +183,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
     PlatformGraphicsContext* context = graphicsContext->platformContext();
     UniscribeHelperTextRun state(run, *this);
 
-    SkColor color = context->fillColor();
+    SkColor color = context->effectiveFillColor();
     unsigned char alpha = SkColorGetA(color);
     // Skip 100% transparent text; no need to draw anything.
     if (!alpha)

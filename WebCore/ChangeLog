@@ -1,3 +1,27 @@
+2009-02-13  Scott Violet  <sky@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23934
+        Skia platform doesn't render text decoration shadows.
+
+        Makes Skia render text decoration shadows correctly. We weren't
+        preparing the SkPaint correctly and didn't have a couple of checks
+        CG has. Additionally makes the fillColor/strokeColor methods
+        consistent.
+
+        This behavior is covered by existing layout tests (see bug for list).
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::effectiveFillColor):
+        (PlatformContextSkia::effectiveStrokeColor):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2009-02-12  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
