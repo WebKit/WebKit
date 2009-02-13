@@ -1,3 +1,11 @@
+2009-02-13  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Removed documentation for internal functions.
+
+        * Api/qwebsettings.cpp:
+
 2009-02-13  Martin Smith  <msmith@trolltech.com>
 
         Reviewed by Simon Hausmann.
