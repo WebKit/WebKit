@@ -1,3 +1,11 @@
+2009-02-13  Martin Smith  <msmith@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Corrected some minor qdoc errors.
+
+        * Api/qwebsettings.cpp:
+
 2009-02-11  Dimitri Dupuis-latour  <dupuislatour@apple.com>
 
         Stub out InspectorClientQt::hiddenPanels.
