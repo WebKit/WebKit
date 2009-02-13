@@ -1,3 +1,17 @@
+2009-02-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23936
+
+        Fixed test results
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * fast/dom/Window/window-properties-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.checksum:
+        * platform/mac/svg/text/text-text-05-t-expected.png:
+
 2009-02-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
