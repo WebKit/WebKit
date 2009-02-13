@@ -1,3 +1,19 @@
+2009-02-12  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23944
+        KURLGoogle's pre-parsed canonicalSpec constructor should take a CString
+
+        * platform/KURL.h:
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURLGooglePrivate::setUtf8):
+        (WebCore::KURLGooglePrivate::setAscii):
+        (WebCore::KURLGooglePrivate::init):
+        (WebCore::KURLGooglePrivate::replaceComponents):
+        (WebCore::KURL::KURL):
+        * platform/KURLGooglePrivate.h:
+
 2009-02-13  David Hyatt  <hyatt@apple.com>
 
         Remove leftmost/rightmost/lowestPosition from RenderObject.  They only need to be called on boxes.

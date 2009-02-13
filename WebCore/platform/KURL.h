@@ -84,7 +84,7 @@ public:
     // For conversions for other structures that have already parsed and
     // canonicalized the URL. The input must be exactly what KURL would have
     // done with the same input.
-    KURL(const char* canonicalSpec, int canonicalSpecLen,
+    KURL(const CString& canonicalSpec,
          const url_parse::Parsed& parsed, bool isValid);
 #endif
 

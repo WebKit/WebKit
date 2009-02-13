@@ -78,8 +78,8 @@ namespace WebCore {
         // Setters for the data. Using the ASCII version when you know the
         // data is ASCII will be slightly more efficient. The UTF-8 version
         // will always be correct if the caller is unsure.
-        void setUtf8(const char* data, int dataLength);
-        void setAscii(const char* data, int dataLength);
+        void setUtf8(const CString&);
+        void setAscii(const CString&);
 
         // TODO(brettw) we can support an additional optimization.  Make this
         // buffer support both optinal Strings and UTF-8 data. This way, we can use

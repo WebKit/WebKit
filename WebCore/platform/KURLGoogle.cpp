@@ -134,28 +134,31 @@ KURLGooglePrivate::KURLGooglePrivate(const url_parse::Parsed& parsed, bool isVal
 // Setters for the data. Using the ASCII version when you know the
 // data is ASCII will be slightly more efficient. The UTF-8 version
 // will always be correct if the caller is unsure.
-void KURLGooglePrivate::setUtf8(const char* data, int dataLength)
+void KURLGooglePrivate::setUtf8(const CString& str)
 {
+    const char* data = str.data();
+    unsigned dataLength = str.length();
+
     // The m_utf8IsASCII must always be correct since the DeprecatedString
     // getter must create it with the proper constructor. This test can be
     // removed when DeprecatedString is gone, but it still might be a
     // performance win.
     m_utf8IsASCII = true;
-    for (int i = 0; i < dataLength; i++) {
+    for (unsigned i = 0; i < dataLength; i++) {
         if (static_cast<unsigned char>(data[i]) >= 0x80) {
             m_utf8IsASCII = false;
             break;
         }
     }
 
-    m_utf8 = CString(data, dataLength);
+    m_utf8 = str;
     m_stringIsValid = false;
     initProtocolInHTTPFamily();
 }
 
-void KURLGooglePrivate::setAscii(const char* data, int dataLength)
+void KURLGooglePrivate::setAscii(const CString& str)
 {
-    m_utf8 = CString(data, dataLength);
+    m_utf8 = str;
     m_utf8IsASCII = true;
     m_stringIsValid = false;
     initProtocolInHTTPFamily();
@@ -203,12 +206,12 @@ void KURLGooglePrivate::init(const KURL& base, const char* rel, int relLength,
     if (m_isValid || output.length()) {
         // Without ref, the whole url is guaranteed to be ASCII-only.
         if (m_parsed.ref.is_nonempty())
-            setUtf8(output.data(), output.length());
+            setUtf8(CString(output.data(), output.length()));
         else
-            setAscii(output.data(), output.length());
+            setAscii(CString(output.data(), output.length()));
     } else {
         // WebCore expects resolved URLs to be empty rather than NULL.
-        setUtf8("", 0);
+        setUtf8(CString("", 0));
     }
 }
 
@@ -230,11 +233,11 @@ void KURLGooglePrivate::init(const KURL& base, const UChar* rel, int relLength,
 
     if (m_isValid || output.length()) {
         if (m_parsed.ref.is_nonempty())
-            setUtf8(output.data(), output.length());
+            setUtf8(CString(output.data(), output.length()));
         else
-            setAscii(output.data(), output.length());
+            setAscii(CString(output.data(), output.length()));
     } else
-        setUtf8("", 0);
+        setUtf8(CString("", 0));
 }
 
 void KURLGooglePrivate::initProtocolInHTTPFamily()
@@ -295,9 +298,9 @@ void KURLGooglePrivate::replaceComponents(const Replacements& replacements)
 
     m_parsed = newParsed;
     if (m_parsed.ref.is_nonempty())
-        setUtf8(output.data(), output.length());
+        setUtf8(CString(output.data(), output.length()));
     else
-        setAscii(output.data(), output.length());
+        setAscii(CString(output.data(), output.length()));
 }
 
 const String& KURLGooglePrivate::string() const
@@ -332,7 +335,7 @@ KURL::KURL(const char *url)
     // The one-argument constructors should never generate a NULL string.
     // This is a funny quirk of KURL.cpp (probably a bug) which we preserve.
     if (m_url.utf8String().isNull())
-        m_url.setAscii("", 0);
+        m_url.setAscii(CString("", 0));
 }
 
 // Initializes with a string representing an absolute URL. No encoding
@@ -369,16 +372,16 @@ KURL::KURL(const KURL& base,
     m_url.init(base, relative, &encoding.encodingForFormSubmission());
 }
 
-KURL::KURL(const char* canonicalSpec, int canonicalSpecLen,
+KURL::KURL(const CString& canonicalSpec,
            const url_parse::Parsed& parsed, bool isValid)
     : m_url(parsed, isValid)
 {
     // We know the reference fragment is the only part that can be UTF-8, so
     // we know it's ASCII when there is no ref.
     if (parsed.ref.is_nonempty())
-        m_url.setUtf8(canonicalSpec, canonicalSpecLen);
+        m_url.setUtf8(canonicalSpec);
     else
-        m_url.setAscii(canonicalSpec, canonicalSpecLen);
+        m_url.setAscii(canonicalSpec);
 }
 
 #if PLATFORM(CF)
