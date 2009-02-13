@@ -32,6 +32,7 @@
 #include "ArgList.h"
 #include "Collector.h"
 #include "CommonIdentifiers.h"
+#include "FunctionConstructor.h"
 #include "Interpreter.h"
 #include "JSActivation.h"
 #include "JSClassRef.h"
@@ -64,7 +65,8 @@ extern const HashTable regExpConstructorTable;
 extern const HashTable stringTable;
 
 JSGlobalData::JSGlobalData(bool isShared)
-    : interpreter(new Interpreter)
+    : initializingLazyNumericCompareFunction(false)
+    , interpreter(new Interpreter)
     , exception(noValue())
     , arrayTable(new HashTable(JSC::arrayTable))
     , dateTable(new HashTable(JSC::dateTable))
@@ -184,8 +186,22 @@ JSGlobalData*& JSGlobalData::sharedInstanceInternal()
     return sharedInstance;
 }
 
+// FIXME: We can also detect forms like v1 < v2 ? -1 : 0, reverse comparison, etc.
+const Vector<Instruction>& JSGlobalData::numericCompareFunction(ExecState* exec)
+{
+    if (!lazyNumericCompareFunction.size() && !initializingLazyNumericCompareFunction) {
+        initializingLazyNumericCompareFunction = true;
+        RefPtr<ProgramNode> programNode = parser->parse<ProgramNode>(exec, 0, makeSource(UString("(function (v1, v2) { return v1 - v2; })")), 0, 0);
+        RefPtr<FunctionBodyNode> functionBody = extractFunctionBody(programNode.get());
+        lazyNumericCompareFunction = functionBody->bytecode(exec->scopeChain()).instructions();
+        initializingLazyNumericCompareFunction = false;
+    }
+
+    return lazyNumericCompareFunction;
+}
+
 JSGlobalData::ClientData::~ClientData()
 {
 }
 
-}
+} // namespace JSC

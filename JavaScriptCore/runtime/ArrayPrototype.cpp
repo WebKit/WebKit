@@ -24,6 +24,7 @@
 #include "config.h"
 #include "ArrayPrototype.h"
 
+#include "CodeBlock.h"
 #include "Interpreter.h"
 #include "ObjectPrototype.h"
 #include "Lookup.h"
@@ -61,6 +62,14 @@ static JSValuePtr arrayProtoFuncLastIndexOf(ExecState*, JSObject*, JSValuePtr, c
 #include "ArrayPrototype.lut.h"
 
 namespace JSC {
+
+static inline bool isNumericCompareFunction(CallType callType, const CallData& callData)
+{
+    if (callType != CallTypeJS)
+        return false;
+    
+    return callData.js.functionBody->bytecode(callData.js.scopeChain).isNumericCompareFunction();
+}
 
 // ------------------------------ ArrayPrototype ----------------------------
 
@@ -426,7 +435,9 @@ JSValuePtr arrayProtoFuncSort(ExecState* exec, JSObject*, JSValuePtr thisValue, 
     CallType callType = function.getCallData(callData);
 
     if (thisObj->classInfo() == &JSArray::info) {
-        if (callType != CallTypeNone)
+        if (isNumericCompareFunction(callType, callData))
+            asArray(thisObj)->sortNumeric(exec, function, callType, callData);
+        else if (callType != CallTypeNone)
             asArray(thisObj)->sort(exec, function, callType, callData);
         else
             asArray(thisObj)->sort(exec);

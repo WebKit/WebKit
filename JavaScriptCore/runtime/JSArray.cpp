@@ -617,13 +617,51 @@ void JSArray::mark()
     }
 }
 
-typedef std::pair<JSValuePtr, UString> ArrayQSortPair;
+static int compareNumbersForQSort(const void* a, const void* b)
+{
+    double da = static_cast<const JSValuePtr*>(a)->uncheckedGetNumber();
+    double db = static_cast<const JSValuePtr*>(b)->uncheckedGetNumber();
+    return (da > db) - (da < db);
+}
+
+typedef std::pair<JSValuePtr, UString> ValueStringPair;
 
 static int compareByStringPairForQSort(const void* a, const void* b)
 {
-    const ArrayQSortPair* va = static_cast<const ArrayQSortPair*>(a);
-    const ArrayQSortPair* vb = static_cast<const ArrayQSortPair*>(b);
+    const ValueStringPair* va = static_cast<const ValueStringPair*>(a);
+    const ValueStringPair* vb = static_cast<const ValueStringPair*>(b);
     return compare(va->second, vb->second);
+}
+
+void JSArray::sortNumeric(ExecState* exec, JSValuePtr compareFunction, CallType callType, const CallData& callData)
+{
+    unsigned lengthNotIncludingUndefined = compactForSorting();
+    if (m_storage->m_sparseValueMap) {
+        throwOutOfMemoryError(exec);
+        return;
+    }
+
+    if (!lengthNotIncludingUndefined)
+        return;
+        
+    bool allValuesAreNumbers = true;
+    size_t size = m_storage->m_numValuesInVector;
+    for (size_t i = 0; i < size; ++i) {
+        if (!m_storage->m_vector[i].isNumber()) {
+            allValuesAreNumbers = false;
+            break;
+        }
+    }
+
+    if (!allValuesAreNumbers)
+        return sort(exec, compareFunction, callType, callData);
+
+    // For numeric comparison, which is fast, qsort is faster than mergesort. We
+    // also don't require mergesort's stability, since there's no user visible
+    // side-effect from swapping the order of equal primitive values.
+    qsort(m_storage->m_vector, size, sizeof(JSValuePtr), compareNumbersForQSort);
+
+    checkConsistency(SortConsistencyCheck);
 }
 
 void JSArray::sort(ExecState* exec)
@@ -642,7 +680,7 @@ void JSArray::sort(ExecState* exec)
     // buffer. Besides, this protects us from crashing if some objects have custom toString methods that return
     // random or otherwise changing results, effectively making compare function inconsistent.
 
-    Vector<ArrayQSortPair> values(lengthNotIncludingUndefined);
+    Vector<ValueStringPair> values(lengthNotIncludingUndefined);
     if (!values.begin()) {
         throwOutOfMemoryError(exec);
         return;
@@ -670,11 +708,11 @@ void JSArray::sort(ExecState* exec)
     // than O(N log N).
 
 #if HAVE(MERGESORT)
-    mergesort(values.begin(), values.size(), sizeof(ArrayQSortPair), compareByStringPairForQSort);
+    mergesort(values.begin(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
 #else
     // FIXME: The qsort library function is likely to not be a stable sort.
     // ECMAScript-262 does not specify a stable sort, but in practice, browsers perform a stable sort.
-    qsort(values.begin(), values.size(), sizeof(ArrayQSortPair), compareByStringPairForQSort);
+    qsort(values.begin(), values.size(), sizeof(ValueStringPair), compareByStringPairForQSort);
 #endif
 
     // FIXME: If the toString function changed the length of the array, this might be

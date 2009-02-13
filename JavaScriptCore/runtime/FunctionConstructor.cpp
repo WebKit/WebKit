@@ -66,7 +66,7 @@ CallType FunctionConstructor::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-static FunctionBodyNode* functionBody(ProgramNode* program)
+FunctionBodyNode* extractFunctionBody(ProgramNode* program)
 {
     if (!program)
         return 0;
@@ -110,7 +110,7 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
     SourceCode source = makeSource(program, sourceURL, lineNumber);
     RefPtr<ProgramNode> programNode = exec->globalData().parser->parse<ProgramNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
 
-    FunctionBodyNode* body = functionBody(programNode.get());
+    FunctionBodyNode* body = extractFunctionBody(programNode.get());
     if (!body)
         return throwError(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
 

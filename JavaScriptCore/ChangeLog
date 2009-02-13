@@ -1,3 +1,52 @@
+2009-02-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed <rdar://problem/6584057> Optimize sort by JS numeric comparison
+        function not to run the comparison function
+        
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setIsNumericCompareFunction):
+        (JSC::CodeBlock::isNumericCompareFunction): Added the ability to track
+        whether a CodeBlock performs a sort-like numeric comparison.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate): Set the isNumericCompareFunction bit
+        after compiling.
+
+        * parser/Nodes.cpp:
+        (JSC::FunctionBodyNode::emitBytecode): Fixed a bug that caused us to
+        codegen an extra return at the end of all functions (eek!), since this
+        made it harder / weirder to detect the numeric comparison pattern in
+        bytecode.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSort): Use the isNumericCompareFunction bit to do
+        a faster sort if we can.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::extractFunctionBody):
+        (JSC::constructFunction):
+        * runtime/FunctionConstructor.h: Renamed and exported extractFunctionBody for
+        use in initializing lazyNumericCompareFunction.
+
+        * runtime/JSArray.cpp:
+        (JSC::compareNumbersForQSort):
+        (JSC::compareByStringPairForQSort):
+        (JSC::JSArray::sortNumeric):
+        (JSC::JSArray::sort):
+        * runtime/JSArray.h: Added a fast numeric sort. Renamed ArrayQSortPair
+        to be more specific since we do different kinds of qsort now.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::numericCompareFunction):
+        (JSC::JSGlobalData::ClientData::~ClientData):
+        * runtime/JSGlobalData.h: Added helper data for computing the
+        isNumericCompareFunction bit.
+
 2009-02-13  Darin Adler  <darin@apple.com>
 
         * Configurations/JavaScriptCore.xcconfig: Undo accidental commit of this file.

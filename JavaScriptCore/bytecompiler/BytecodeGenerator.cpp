@@ -145,14 +145,14 @@ void BytecodeGenerator::generate()
 #ifndef NDEBUG
     m_codeBlock->setInstructionCount(m_codeBlock->instructions().size());
 
-    if (s_dumpsGeneratedCode) {
-        JSGlobalObject* globalObject = m_scopeChain->globalObject();
-        m_codeBlock->dump(globalObject->globalExec());
-    }
+    if (s_dumpsGeneratedCode)
+        m_codeBlock->dump(m_scopeChain->globalObject()->globalExec());
 #endif
 
     if ((m_codeType == FunctionCode && !m_codeBlock->needsFullScopeChain() && !m_codeBlock->usesArguments()) || m_codeType == EvalCode)
         symbolTable().clear();
+        
+    m_codeBlock->setIsNumericCompareFunction(instructions() == m_globalData->numericCompareFunction(m_scopeChain->globalObject()->globalExec()));
 
 #if !ENABLE(OPCODE_SAMPLING)
     if (!m_regeneratingForExceptionInfo && (m_codeType == FunctionCode || m_codeType == EvalCode))

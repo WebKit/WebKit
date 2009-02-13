@@ -56,6 +56,7 @@ namespace JSC {
 
         void sort(ExecState*);
         void sort(ExecState*, JSValuePtr compareFunction, CallType, const CallData&);
+        void sortNumeric(ExecState*, JSValuePtr compareFunction, CallType, const CallData&);
 
         void push(ExecState*, JSValuePtr);
         JSValuePtr pop();

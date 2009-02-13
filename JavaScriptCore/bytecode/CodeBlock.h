@@ -314,6 +314,9 @@ namespace JSC {
             reparseForExceptionInfoIfNecessary(callFrame);
             return binaryChop<CallReturnOffsetToBytecodeIndex, unsigned, getCallReturnOffset>(m_exceptionInfo->m_callReturnIndexVector.begin(), m_exceptionInfo->m_callReturnIndexVector.size(), m_jitCode.code.offsetOf(nativePC))->bytecodeIndex;
         }
+        
+        void setIsNumericCompareFunction(bool isNumericCompareFunction) { m_isNumericCompareFunction = isNumericCompareFunction; }
+        bool isNumericCompareFunction() { return m_isNumericCompareFunction; }
 
         bool functionRegisterForBytecodeOffset(unsigned bytecodeOffset, int& functionRegisterIndex);
 #endif
@@ -479,6 +482,7 @@ namespace JSC {
         bool m_needsFullScopeChain;
         bool m_usesEval;
         bool m_usesArguments;
+        bool m_isNumericCompareFunction;
 
         CodeType m_codeType;
 

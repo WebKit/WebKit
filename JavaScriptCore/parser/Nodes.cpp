@@ -2648,11 +2648,15 @@ RegisterID* FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, Registe
 {
     generator.emitDebugHook(DidEnterCallFrame, firstLine(), lastLine());
     statementListEmitCode(children(), generator, generator.ignoredResult());
-    if (!children().size() || !children().last()->isReturnNode()) {
-        RegisterID* r0 = generator.emitLoad(0, jsUndefined());
-        generator.emitDebugHook(WillLeaveCallFrame, firstLine(), lastLine());
-        generator.emitReturn(r0);
+    if (children().size() && children().last()->isBlock()) {
+        BlockNode* blockNode = static_cast<BlockNode*>(children().last().get());
+        if (blockNode->children().size() && blockNode->children().last()->isReturnNode())
+            return 0;
     }
+
+    RegisterID* r0 = generator.emitLoad(0, jsUndefined());
+    generator.emitDebugHook(WillLeaveCallFrame, firstLine(), lastLine());
+    generator.emitReturn(r0);
     return 0;
 }
 

@@ -1,3 +1,13 @@
+2009-02-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added a test for an edge case in <rdar://problem/6584057>.
+
+        * fast/js/resources/sort-non-numbers.js: Added.
+        * fast/js/sort-non-numbers.html: Added.
+        * fast/js/sort-non-numbers-expected.txt: Added.
+
 2009-02-13  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.
