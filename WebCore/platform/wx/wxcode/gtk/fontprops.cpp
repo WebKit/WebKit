@@ -28,12 +28,35 @@
 #include <wx/font.h>
 #include <wx/fontutil.h>
 #include "fontprops.h"
+#include "non-kerned-drawing.h"
 
 #include <gdk/gdk.h>
+
+#include <cairo.h>
+#include <pango/pango.h>
+#include <pango/pangocairo.h>
 
 wxFontProperties::wxFontProperties(wxFont* font):
 m_ascent(0), m_descent(0), m_lineGap(0), m_lineSpacing(0), m_xHeight(0)
 {
+    ASSERT(font && font->Ok());
+
+#if USE(WXGC)
+    cairo_font_extents_t font_extents;
+    cairo_text_extents_t text_extents;
+    cairo_scaled_font_t* scaled_font = WebCore::createScaledFontForFont(font);
+    
+    cairo_scaled_font_extents(scaled_font, &font_extents);
+    m_ascent = static_cast<int>(font_extents.ascent);
+    m_descent = static_cast<int>(font_extents.descent);
+    m_lineSpacing = static_cast<int>(font_extents.height);
+    cairo_scaled_font_text_extents(scaled_font, "x", &text_extents);
+    m_xHeight = text_extents.height;
+    cairo_scaled_font_text_extents(scaled_font, " ", &text_extents);
+    m_lineGap = m_lineSpacing - m_ascent - m_descent;
+    
+    cairo_scaled_font_destroy(scaled_font);
+#else
     PangoContext* context = gdk_pango_context_get_for_screen( gdk_screen_get_default() );
     PangoLayout* layout = pango_layout_new(context);
     // and use it if it's valid
@@ -64,11 +87,14 @@ m_ascent(0), m_descent(0), m_lineGap(0), m_lineSpacing(0), m_xHeight(0)
     m_lineSpacing = m_ascent + m_descent;
 
     pango_font_metrics_unref(metrics);
+#endif
 }
 
 void GetTextExtent( const wxFont& font, const wxString& str, wxCoord *width, wxCoord *height,
                             wxCoord *descent, wxCoord *externalLeading )
 {
+    ASSERT(font && font->Ok());
+
     if ( width )
         *width = 0;
     if ( height )
@@ -80,16 +106,34 @@ void GetTextExtent( const wxFont& font, const wxString& str, wxCoord *width, wxC
 
     if (str.empty())
         return;
-        
+
+// FIXME: Doesn't support height, descent or external leading, though we don't need this for WebKit
+// it will need to be implemented before merging into wx unless we craft a new API.
+#if USE(WXGC)
+    PangoFont* pangoFont = WebCore::createPangoFontForFont(font);
+    PangoContext* pangoContext = pango_cairo_font_map_create_context(PANGO_CAIRO_FONT_MAP(WebCore::pangoFontMap()));
+    PangoGlyph pangoGlyph = WebCore::pango_font_get_glyph(pangoFont, pangoContext, (gunichar)g_utf8_get_char(str.ToUTF8()));
+    cairo_glyph_t cglyph = { pangoGlyph, 0, 0 };
+    cairo_text_extents_t extents;
+    cairo_scaled_font_t* scaled_font = WebCore::createScaledFontForFont(font);
+    cairo_scaled_font_glyph_extents(scaled_font, &cglyph, 1, &extents);
+
+    if (cairo_scaled_font_status(scaled_font) == CAIRO_STATUS_SUCCESS && extents.x_advance != 0)
+        *width = (wxCoord)extents.x_advance;
+
+    cairo_scaled_font_destroy(scaled_font);
+    g_object_unref(pangoContext);
+    g_object_unref(pangoFont);
+#else
     PangoContext* context = gdk_pango_context_get_for_screen( gdk_screen_get_default() );
     PangoLayout* m_layout = pango_layout_new(context);
     // and use it if it's valid
-    if ( font != wxNullFont )
+    if ( font && font->IsOk() )
     {
         pango_layout_set_font_description
         (
             m_layout,
-            font.GetNativeFontInfo()->description
+            font->GetNativeFontInfo()->description
         );
     }
 
@@ -103,24 +147,19 @@ void GetTextExtent( const wxFont& font, const wxString& str, wxCoord *width, wxC
 
     pango_layout_set_text( m_layout, dataUTF8, strlen(dataUTF8) );
 
+    int h = 0;
+    pango_layout_get_pixel_size( m_layout, width, &h );
+
     if (descent)
     {
-        int h;
-        pango_layout_get_pixel_size( m_layout, width, &h );
         PangoLayoutIter *iter = pango_layout_get_iter(m_layout);
         int baseline = pango_layout_iter_get_baseline(iter);
         pango_layout_iter_free(iter);
         *descent = h - PANGO_PIXELS(baseline);
-
-        if (height)
-            *height = (wxCoord) h;
-    }
-    else
-    {
-        pango_layout_get_pixel_size( m_layout, width, height );
     }
 
-    // Reset old font description
-    //if (font != wxNullFont)
-    //    pango_layout_set_font_description( m_layout, m_fontdesc );
+    if (height)
+        *height = (wxCoord) h;
+#endif
 }
+

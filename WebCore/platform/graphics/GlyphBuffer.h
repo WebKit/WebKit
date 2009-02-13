@@ -37,7 +37,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-#if PLATFORM(CAIRO)
+#if PLATFORM(CAIRO) || (PLATFORM(WX) && defined(__WXGTK__))
 #include <cairo.h>
 #endif
 

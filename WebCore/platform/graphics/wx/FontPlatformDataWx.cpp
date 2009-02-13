@@ -58,6 +58,9 @@ static wxFontWeight fontWeightToWxFontWeight(FontWeight weight)
 {
     if (weight >= FontWeight600)
         return wxFONTWEIGHT_BOLD;
+
+    if (weight <= FontWeight300)
+        return wxFONTWEIGHT_LIGHT;
     
     return wxFONTWEIGHT_NORMAL;
 } 

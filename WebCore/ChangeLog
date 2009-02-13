@@ -1,3 +1,29 @@
+2009-02-12  miggilin  <mr.diggilin@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Use Cairo/PANGO to fix text measurements and implement proper
+        non-kerned text drawing on wxGTK.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17727
+
+        * platform/graphics/GlyphBuffer.h:
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::fontWeightToWxFontWeight):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/wx/wxcode/fontprops.h:
+        * platform/wx/wxcode/gtk/fontprops.cpp:
+        (wxFontProperties::wxFontProperties):
+        (GetTextExtent):
+        * platform/wx/wxcode/gtk/non-kerned-drawing.cpp:
+        (WebCore::pangoFontMap):
+        (WebCore::createPangoFontForFont):
+        (WebCore::createScaledFontForFont):
+        (WebCore::pango_font_get_glyph):
+        (WebCore::drawTextWithSpacing):
+        * platform/wx/wxcode/non-kerned-drawing.h:
+
 2009-02-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser
