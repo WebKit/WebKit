@@ -1,5 +1,27 @@
 2009-02-13  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Simon Fraser
+
+        Remove updateWidgetPosition on RenderObject.  Change RenderView's set of widgets
+        to have a tighter type: RenderWidget instead of RenderObject.  Devirtualize
+        updateWidgetPosition, since all RenderWidgets (except for applets) are now
+        RenderParts also.
+        
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderPart.cpp:
+        * rendering/RenderPart.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::updateWidgetPositions):
+        (WebCore::RenderView::addWidget):
+        (WebCore::RenderView::removeWidget):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::updateWidgetPosition):
+        * rendering/RenderWidget.h:
+
+2009-02-13  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Eric Seidel
 
         Remove isEditable() on RenderObject.  It is dead code.

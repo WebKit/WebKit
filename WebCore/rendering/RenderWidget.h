@@ -50,7 +50,7 @@ public:
 
     virtual void setSelectionState(SelectionState);
 
-    virtual void updateWidgetPosition();
+    void updateWidgetPosition();
 
     virtual void setWidget(Widget*);
 

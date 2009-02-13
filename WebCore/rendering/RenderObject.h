@@ -443,8 +443,6 @@ public:
     // repaint and do not need a relayout
     virtual void updateFromElement() { }
 
-    virtual void updateWidgetPosition();
-
 #if ENABLE(DASHBOARD_SUPPORT)
     virtual void addDashboardRegions(Vector<DashboardRegionValue>&);
     void collectDashboardRegions(Vector<DashboardRegionValue>&);

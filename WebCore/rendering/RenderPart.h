@@ -42,10 +42,6 @@ public:
 
     virtual void setWidget(Widget*);
 
-    // FIXME: This should not be necessary.
-    // Remove this once WebKit knows to properly schedule layouts using WebCore when objects resize.
-    virtual void updateWidgetPosition();
-
     bool hasFallbackContent() const { return m_hasFallbackContent; }
 
     virtual void viewCleared();

@@ -81,35 +81,4 @@ void RenderPart::deleteWidget()
         delete m_widget;
 }
 
-// FIXME: This should not be necessary.  Remove this once WebKit knows to properly schedule
-// layouts using WebCore when objects resize.
-void RenderPart::updateWidgetPosition()
-{
-    if (!m_widget)
-        return;
-    
-    FloatPoint absPos = localToAbsolute();
-    absPos.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
-    int w = width() - borderLeft() - borderRight() - paddingLeft() - paddingRight();
-    int h = height() - borderTop() - borderBottom() - paddingTop() - paddingBottom();
-    IntRect newBounds(absPos.x(), absPos.y(), w, h);
-    bool boundsChanged = newBounds != m_widget->frameRect();
-    if (boundsChanged) {
-        // The widget changed positions.  Update the frame geometry.
-        RenderArena *arena = ref();
-        node()->ref();
-        m_widget->setFrameRect(newBounds);
-        node()->deref();
-        deref(arena);
-    }
-
-    // if the frame bounds got changed, or if view needs layout (possibly indicating
-    // content size is wrong) we have to do a layout to set the right widget size
-    if (m_widget && m_widget->isFrameView()) {
-        FrameView* frameView = static_cast<FrameView*>(m_widget);
-        if (boundsChanged || frameView->needsLayout())
-            frameView->layout();
-    }
-}
-
 }

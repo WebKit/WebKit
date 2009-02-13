@@ -2041,10 +2041,6 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
     }
 }
 
-void RenderObject::updateWidgetPosition()
-{
-}
-
 #if ENABLE(DASHBOARD_SUPPORT)
 void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
 {

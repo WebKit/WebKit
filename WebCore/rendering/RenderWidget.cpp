@@ -230,22 +230,21 @@ void RenderWidget::updateWidgetPosition()
 
     IntRect newBounds(absPos.x(), absPos.y(), w, h);
     IntRect oldBounds(m_widget->frameRect());
-    if (newBounds != oldBounds) {
-        // The widget changed positions.  Update the frame geometry.
-        if (checkForRepaintDuringLayout()) {
-            RenderView* v = view();
-            if (!v->printing()) {
-                // FIXME: do container-relative repaint
-                v->repaintRectangleInViewAndCompositedLayers(oldBounds);
-                v->repaintRectangleInViewAndCompositedLayers(newBounds);
-            }
-        }
-
+    bool boundsChanged = newBounds != oldBounds;
+    if (boundsChanged) {
         RenderArena* arena = ref();
         node()->ref();
         m_widget->setFrameRect(newBounds);
         node()->deref();
         deref(arena);
+    }
+    
+    // if the frame bounds got changed, or if view needs layout (possibly indicating
+    // content size is wrong) we have to do a layout to set the right widget size
+    if (m_widget->isFrameView()) {
+        FrameView* frameView = static_cast<FrameView*>(m_widget);
+        if (boundsChanged || frameView->needsLayout())
+            frameView->layout();
     }
 }
 
