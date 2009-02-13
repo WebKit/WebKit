@@ -1,3 +1,29 @@
+2009-02-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Math.random is really slow on windows.
+
+        Math.random calls WTF::randomNumber which is implemented as
+        the secure rand_s on windows.  Unfortunately rand_s is an order
+        of magnitude slower than arc4random.  For this reason I've
+        added "weakRandomNumber" for use by JavaScript's Math Object.
+        In the long term we should look at using our own secure PRNG
+        in place of the system, but this will do for now.
+
+        30% win on SunSpider on Windows, resolving most of the remaining
+        disparity vs. Mac.
+
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::MathObject):
+        (JSC::mathProtoFuncRandom):
+        * wtf/RandomNumber.cpp:
+        (WTF::weakRandomNumber):
+        (WTF::randomNumber):
+        * wtf/RandomNumber.h:
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeWeakRandomNumberGenerator):
+
 2009-02-12  Mark Rowe  <mrowe@apple.com>
 
         Fix the build for other platforms.

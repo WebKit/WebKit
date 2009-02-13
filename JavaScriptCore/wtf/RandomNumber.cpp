@@ -36,6 +36,16 @@
 
 namespace WTF {
 
+double weakRandomNumber()
+{
+#if COMPILER(MSVC) && defined(_CRT_RAND_S)
+    // rand_s is incredibly slow on windows so we fall back on rand for Math.random
+    return (rand() + (rand() / (RAND_MAX + 1.0))) / (RAND_MAX + 1.0);
+#else
+    return randomNumber();
+#endif
+}
+
 double randomNumber()
 {
 #if !ENABLE(JSC_MULTIPLE_THREADS)
