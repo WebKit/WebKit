@@ -382,20 +382,6 @@ RenderObject* RenderObject::childAt(unsigned index) const
     return child;
 }
 
-bool RenderObject::isEditable() const
-{
-    RenderText* textRenderer = 0;
-    if (isText())
-        textRenderer = toRenderText(const_cast<RenderObject*>(this));
-
-    return style()->visibility() == VISIBLE &&
-        node() && node()->isContentEditable() &&
-        ((isBlockFlow() && !firstChild()) ||
-        isReplaced() ||
-        isBR() ||
-        (textRenderer && textRenderer->firstTextBox()));
-}
-
 RenderObject* RenderObject::firstLeafChild() const
 {
     RenderObject* r = firstChild();

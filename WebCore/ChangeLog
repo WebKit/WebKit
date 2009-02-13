@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel
 
+        Remove isEditable() on RenderObject.  It is dead code.
+
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+
+2009-02-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Seidel
+
         Add isTextControl() to RenderObject.  Patch call sites thats asked isTextField() || isTextArea() to just use
         isTextControl() instead.
         
