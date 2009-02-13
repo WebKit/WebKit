@@ -1704,8 +1704,7 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
         m_tokenizer->write(SegmentedString(documentPrefix, sizeof(documentPrefix) / sizeof(documentPrefix[0])), false);
     }
 
-    if (m_tokenizer)
-        m_tokenizer->write(text, false);
+    m_tokenizer->write(text, false);
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
