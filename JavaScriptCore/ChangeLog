@@ -1,3 +1,20 @@
+2009-02-12  Horia Olaru  <olaru@adobe.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23400
+
+        When throwing an exception within an eval argument string, the dst parameter was
+        modified in the functions below and the return value for eval was altered. Changed
+        the emitNode call in JSC::ThrowNode::emitBytecode to use a temporary register
+        to store its results instead of dst. The JSC::FunctionCallResolveNode::emitBytecode
+        would load the function within the dst registry, also altering the result returned
+        by eval. Replaced it with another temporary.
+
+        * parser/Nodes.cpp:
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+
 2009-02-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
