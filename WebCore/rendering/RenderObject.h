@@ -684,8 +684,6 @@ protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     // Overrides should call the superclass at the start
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-    
-    virtual void printBoxDecorations(GraphicsContext*, int /*x*/, int /*y*/, int /*w*/, int /*h*/, int /*tx*/, int /*ty*/) { }
 
     void paintOutline(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*);
     void addPDFURLRect(GraphicsContext*, const IntRect&);

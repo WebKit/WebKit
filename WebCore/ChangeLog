@@ -1,3 +1,11 @@
+2009-02-13  David Hyatt  <hyatt@apple.com>
+
+        Get rid of printBoxDecorations, since it is dead code.
+
+        Reviewed by Dan Bernstein
+
+        * rendering/RenderObject.h:
+
 2009-02-13  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Darin Adler.
