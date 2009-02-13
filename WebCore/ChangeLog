@@ -1,5 +1,64 @@
 2009-02-13  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Eric Seidel
+
+        Add isTextControl() to RenderObject.  Patch call sites thats asked isTextField() || isTextArea() to just use
+        isTextControl() instead.
+        
+        Add a toRenderTextControl converter for doing checked casting to RenderTextControls.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::updateSelectionRange):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleReplacedElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::selectionStart):
+        (WebCore::HTMLInputElement::selectionEnd):
+        (WebCore::HTMLInputElement::setSelectionStart):
+        (WebCore::HTMLInputElement::setSelectionEnd):
+        (WebCore::HTMLInputElement::select):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        (WebCore::HTMLInputElement::selection):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::selectionStart):
+        (WebCore::HTMLTextAreaElement::selectionEnd):
+        (WebCore::HTMLTextAreaElement::setSelectionStart):
+        (WebCore::HTMLTextAreaElement::setSelectionEnd):
+        (WebCore::HTMLTextAreaElement::select):
+        (WebCore::HTMLTextAreaElement::setSelectionRange):
+        (WebCore::HTMLTextAreaElement::appendFormData):
+        (WebCore::HTMLTextAreaElement::updateValue):
+        (WebCore::HTMLTextAreaElement::selection):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isNativeTextControl):
+        (WebCore::AccessibilityRenderObject::text):
+        (WebCore::AccessibilityRenderObject::selectedText):
+        (WebCore::AccessibilityRenderObject::selectedTextRange):
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        (WebCore::AccessibilityRenderObject::visiblePositionForIndex):
+        (WebCore::AccessibilityRenderObject::indexForVisiblePosition):
+        (WebCore::AccessibilityRenderObject::observableObject):
+        * page/Frame.cpp:
+        (WebCore::Frame::notifyRendererOfSelectionChange):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isTextControl):
+        (WebCore::objectIsRelayoutBoundary):
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::isTextControl):
+        (WebCore::toRenderTextControl):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerTextElement::defaultEventHandler):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::select):
+        (WebCore::WMLInputElement::defaultEventHandler):
+        (WebCore::WMLInputElement::isConformedToInputMask):
+
+2009-02-13  David Hyatt  <hyatt@apple.com>
+
         Get rid of isEdited/setEdited on RenderObject.  Devirtualize isEdited/setEdited on RenderTextControl.
         Callers were already asking if the renderer was a text field (or a text area), so it was especially
         pointless to waste a second virtual function call after making one just to determine the object type.

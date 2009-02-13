@@ -431,7 +431,7 @@ int HTMLInputElement::selectionStart() const
         return m_data.cachedSelectionStart();
     if (!renderer())
         return 0;
-    return static_cast<RenderTextControl*>(renderer())->selectionStart();
+    return toRenderTextControl(renderer())->selectionStart();
 }
 
 int HTMLInputElement::selectionEnd() const
@@ -442,7 +442,7 @@ int HTMLInputElement::selectionEnd() const
         return m_data.cachedSelectionEnd();
     if (!renderer())
         return 0;
-    return static_cast<RenderTextControl*>(renderer())->selectionEnd();
+    return toRenderTextControl(renderer())->selectionEnd();
 }
 
 void HTMLInputElement::setSelectionStart(int start)
@@ -451,7 +451,7 @@ void HTMLInputElement::setSelectionStart(int start)
         return;
     if (!renderer())
         return;
-    static_cast<RenderTextControl*>(renderer())->setSelectionStart(start);
+    toRenderTextControl(renderer())->setSelectionStart(start);
 }
 
 void HTMLInputElement::setSelectionEnd(int end)
@@ -460,7 +460,7 @@ void HTMLInputElement::setSelectionEnd(int end)
         return;
     if (!renderer())
         return;
-    static_cast<RenderTextControl*>(renderer())->setSelectionEnd(end);
+    toRenderTextControl(renderer())->setSelectionEnd(end);
 }
 
 void HTMLInputElement::select()
@@ -469,7 +469,7 @@ void HTMLInputElement::select()
         return;
     if (!renderer())
         return;
-    static_cast<RenderTextControl*>(renderer())->select();
+    toRenderTextControl(renderer())->select();
 }
 
 void HTMLInputElement::setSelectionRange(int start, int end)
@@ -1305,12 +1305,12 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         }
         // Fire onChange for text fields.
         RenderObject* r = renderer();
-        if (r && r->isTextField() && static_cast<RenderTextControl*>(r)->isEdited()) {
+        if (r && r->isTextField() && toRenderTextControl(r)->isEdited()) {
             onChange();
             // Refetch the renderer since arbitrary JS code run during onchange can do anything, including destroying it.
             r = renderer();
             if (r && r->isTextField())
-                static_cast<RenderTextControl*>(r)->setEdited(false);
+                toRenderTextControl(r)->setEdited(false);
         }
         // Form may never have been present, or may have been destroyed by the change event.
         if (form())
@@ -1509,7 +1509,7 @@ VisibleSelection HTMLInputElement::selection() const
 {
    if (!renderer() || !isTextField() || m_data.cachedSelectionStart() == -1 || m_data.cachedSelectionEnd() == -1)
         return VisibleSelection();
-   return static_cast<RenderTextControl*>(renderer())->selection(m_data.cachedSelectionStart(), m_data.cachedSelectionEnd());
+   return toRenderTextControl(renderer())->selection(m_data.cachedSelectionStart(), m_data.cachedSelectionEnd());
 }
 
 void HTMLInputElement::documentDidBecomeActive()

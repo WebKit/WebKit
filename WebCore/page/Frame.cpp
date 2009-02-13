@@ -522,8 +522,8 @@ void Frame::notifyRendererOfSelectionChange(bool userTriggered)
         renderer = selection()->rootEditableElement()->shadowAncestorNode()->renderer();
 
     // If the current selection is in a textfield or textarea, notify the renderer that the selection has changed
-    if (renderer && (renderer->isTextArea() || renderer->isTextField()))
-        static_cast<RenderTextControl*>(renderer)->selectionChanged(userTriggered);
+    if (renderer && renderer->isTextControl())
+        toRenderTextControl(renderer)->selectionChanged(userTriggered);
 }
 
 void Frame::invalidateSelection()

@@ -261,6 +261,7 @@ public:
     virtual bool isTableCol() const { return false; }
     virtual bool isTableRow() const { return false; }
     virtual bool isTableSection() const { return false; }
+    virtual bool isTextControl() const { return false; }
     virtual bool isTextArea() const { return false; }
     virtual bool isTextField() const { return false; }
     virtual bool isWidget() const { return false; }
@@ -856,7 +857,7 @@ inline bool objectIsRelayoutBoundary(const RenderObject *obj)
     // FIXME: In future it may be possible to broaden this condition in order to improve performance.
     // Table cells are excluded because even when their CSS height is fixed, their height()
     // may depend on their contents.
-    return obj->isTextField() || obj->isTextArea()
+    return obj->isTextControl()
         || obj->hasOverflowClip() && !obj->style()->width().isIntrinsicOrAuto() && !obj->style()->height().isIntrinsicOrAuto() && !obj->style()->height().isPercent() && !obj->isTableCell()
 #if ENABLE(SVG)
            || obj->isSVGRoot()

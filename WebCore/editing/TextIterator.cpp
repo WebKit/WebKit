@@ -416,8 +416,8 @@ bool TextIterator::handleReplacedElement()
         return false;
     }
 
-    if (m_enterTextControls && (renderer->isTextArea() || renderer->isTextField())) {
-        m_node = static_cast<RenderTextControl*>(renderer)->innerTextElement();
+    if (m_enterTextControls && renderer->isTextControl()) {
+        m_node = toRenderTextControl(renderer)->innerTextElement();
         m_offset = 0;
         m_inShadowContent = true;
         return false;

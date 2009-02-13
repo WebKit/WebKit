@@ -92,7 +92,7 @@ int HTMLTextAreaElement::selectionStart()
         return 0;
     if (document()->focusedNode() != this && m_cachedSelectionStart >= 0)
         return m_cachedSelectionStart;
-    return static_cast<RenderTextControl*>(renderer())->selectionStart();
+    return toRenderTextControl(renderer())->selectionStart();
 }
 
 int HTMLTextAreaElement::selectionEnd()
@@ -101,35 +101,35 @@ int HTMLTextAreaElement::selectionEnd()
         return 0;
     if (document()->focusedNode() != this && m_cachedSelectionEnd >= 0)
         return m_cachedSelectionEnd;
-    return static_cast<RenderTextControl*>(renderer())->selectionEnd();
+    return toRenderTextControl(renderer())->selectionEnd();
 }
 
 void HTMLTextAreaElement::setSelectionStart(int start)
 {
     if (!renderer())
         return;
-    static_cast<RenderTextControl*>(renderer())->setSelectionStart(start);
+    toRenderTextControl(renderer())->setSelectionStart(start);
 }
 
 void HTMLTextAreaElement::setSelectionEnd(int end)
 {
     if (!renderer())
         return;
-    static_cast<RenderTextControl*>(renderer())->setSelectionEnd(end);
+    toRenderTextControl(renderer())->setSelectionEnd(end);
 }
 
 void HTMLTextAreaElement::select()
 {
     if (!renderer())
         return;
-    static_cast<RenderTextControl*>(renderer())->select();
+    toRenderTextControl(renderer())->select();
 }
 
 void HTMLTextAreaElement::setSelectionRange(int start, int end)
 {
     if (!renderer())
         return;
-    static_cast<RenderTextControl*>(renderer())->setSelectionRange(start, end);
+    toRenderTextControl(renderer())->setSelectionRange(start, end);
 }
 
 void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -202,7 +202,7 @@ bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
 
     // FIXME: It's not acceptable to ignore the HardWrap setting when there is no renderer.
     // While we have no evidence this has ever been a practical problem, it would be best to fix it some day.
-    RenderTextControl* control = static_cast<RenderTextControl*>(renderer());
+    RenderTextControl* control = toRenderTextControl(renderer());
     const String& text = (m_wrap == HardWrap && control) ? control->textWithHardLineBreaks() : value();
     encoding.appendData(name(), text);
     return true;
@@ -268,7 +268,7 @@ void HTMLTextAreaElement::updateValue() const
         return;
 
     ASSERT(renderer());
-    m_value = static_cast<RenderTextControl*>(renderer())->text();
+    m_value = toRenderTextControl(renderer())->text();
     const_cast<HTMLTextAreaElement*>(this)->setValueMatchesRenderer();
     notifyFormStateChanged(this);
 }
@@ -385,7 +385,7 @@ VisibleSelection HTMLTextAreaElement::selection() const
 {
     if (!renderer() || m_cachedSelectionStart < 0 || m_cachedSelectionEnd < 0)
         return VisibleSelection();
-    return static_cast<RenderTextControl*>(renderer())->selection(m_cachedSelectionStart, m_cachedSelectionEnd);
+    return toRenderTextControl(renderer())->selection(m_cachedSelectionStart, m_cachedSelectionEnd);
 }
 
 bool HTMLTextAreaElement::shouldUseInputMethod() const

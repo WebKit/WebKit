@@ -199,7 +199,7 @@ bool AccessibilityRenderObject::isAnchor() const
 
 bool AccessibilityRenderObject::isNativeTextControl() const
 {
-    return m_renderer->isTextField() || m_renderer->isTextArea();
+    return m_renderer->isTextControl();
 }
     
 bool AccessibilityRenderObject::isTextControl() const
@@ -1245,7 +1245,7 @@ String AccessibilityRenderObject::text() const
         return String();
     
     if (isNativeTextControl())
-        return static_cast<RenderTextControl*>(m_renderer)->text();
+        return toRenderTextControl(m_renderer)->text();
     
     Node* node = m_renderer->node();
     if (!node)
@@ -1305,7 +1305,7 @@ String AccessibilityRenderObject::selectedText() const
         return String(); // need to return something distinct from empty string
     
     if (isNativeTextControl()) {
-        RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+        RenderTextControl* textControl = toRenderTextControl(m_renderer);
         return textControl->text().substring(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart());
     }
     
@@ -1342,7 +1342,7 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
     
     AccessibilityRole ariaRole = ariaRoleAttribute();
     if (isNativeTextControl() && ariaRole == UnknownRole) {
-        RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+        RenderTextControl* textControl = toRenderTextControl(m_renderer);
         return PlainTextRange(textControl->selectionStart(), textControl->selectionEnd() - textControl->selectionStart());
     }
     
@@ -1358,7 +1358,7 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
 void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range)
 {
     if (isNativeTextControl()) {
-        RenderTextControl* textControl = static_cast<RenderTextControl*>(m_renderer);
+        RenderTextControl* textControl = toRenderTextControl(m_renderer);
         textControl->setSelectionRange(range.start, range.start + range.length);
         return;
     }
@@ -1632,7 +1632,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
         return VisiblePosition();
     
     if (isNativeTextControl())
-        return static_cast<RenderTextControl*>(m_renderer)->visiblePositionForIndex(index);
+        return toRenderTextControl(m_renderer)->visiblePositionForIndex(index);
     
     if (!isTextControl() && !m_renderer->isText())
         return VisiblePosition();
@@ -1655,7 +1655,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
 int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& pos) const
 {
     if (isNativeTextControl())
-        return static_cast<RenderTextControl*>(m_renderer)->indexForVisiblePosition(pos);
+        return toRenderTextControl(m_renderer)->indexForVisiblePosition(pos);
     
     if (!isTextControl())
         return 0;
@@ -2027,7 +2027,7 @@ void AccessibilityRenderObject::handleActiveDescendantChanged()
 AccessibilityObject* AccessibilityRenderObject::observableObject() const
 {
     for (RenderObject* renderer = m_renderer; renderer && renderer->node(); renderer = renderer->parent()) {
-        if (renderer->isTextField() || renderer->isTextArea())
+        if (renderer->isTextControl())
             return renderer->document()->axObjectCache()->get(renderer);
     }
     
