@@ -902,6 +902,8 @@ SOURCES += \
     platform/graphics/SimpleFontData.cpp \
     platform/graphics/transforms/TransformationMatrix.cpp \
     platform/graphics/transforms/MatrixTransformOperation.cpp \
+    platform/graphics/transforms/Matrix3DTransformOperation.cpp \
+    platform/graphics/transforms/PerspectiveTransformOperation.cpp \
     platform/graphics/transforms/RotateTransformOperation.cpp \
     platform/graphics/transforms/ScaleTransformOperation.cpp \
     platform/graphics/transforms/SkewTransformOperation.cpp \

@@ -1,3 +1,14 @@
+2009-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix non-Mac builds by adding Matrix3DTransformOperation.* and
+        PerspectiveTransformOperation.*. Cleaned out some cruft in 
+        the WebCore.vcproj fle.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.scons:
+        * WebCore.vcproj/WebCore.vcproj:
+
 2009-02-12  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Dave Hyatt.

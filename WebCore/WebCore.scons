@@ -517,20 +517,14 @@ sources['rendering'] = [
     'rendering/TextControlInnerElements.cpp'
 ]
 sources['rendering/style'] = [
-    'rendering/style/Animation.cpp',
-    'rendering/style/AnimationList.cpp',
     'rendering/style/BindingURI.cpp',
     'rendering/style/ContentData.cpp',
     'rendering/style/CounterDirectives.cpp',
     'rendering/style/FillLayer.cpp',
     'rendering/style/KeyframeList.cpp',
-    'rendering/style/MatrixTransformOperation.cpp',
     'rendering/style/NinePieceImage.cpp',
     'rendering/style/RenderStyle.cpp',
-    'rendering/style/RotateTransformOperation.cpp',
-    'rendering/style/ScaleTransformOperation.cpp',
     'rendering/style/ShadowData.cpp',
-    'rendering/style/SkewTransformOperation.cpp',
     'rendering/style/StyleBackgroundData.cpp',
     'rendering/style/StyleBoxData.cpp',
     'rendering/style/StyleCachedImage.cpp',
@@ -546,8 +540,6 @@ sources['rendering/style'] = [
     'rendering/style/StyleVisualData.cpp',
     'rendering/style/SVGRenderStyle.cpp',
     'rendering/style/SVGRenderStyleDefs.cpp',
-    'rendering/style/TransformOperations.cpp',
-    'rendering/style/TranslateTransformOperation.cpp',
 ]
 sources['storage'] = [
     'storage/ChangeVersionWrapper.cpp',
@@ -790,7 +782,9 @@ sources['platform/graphics'] = [
 ]
 sources['platform/graphics/transforms'] = [
     'platform/graphics/transforms/MatrixTransformOperation.cpp',
+    'platform/graphics/transforms/Matrix3DTransformOperation.cpp',
     'platform/graphics/transforms/RotateTransformOperation.cpp',
+    'platform/graphics/transforms/PerspectiveTransformOperation.cpp',
     'platform/graphics/transforms/ScaleTransformOperation.cpp',
     'platform/graphics/transforms/SkewTransformOperation.cpp',
     'platform/graphics/transforms/TransformOperations.cpp',

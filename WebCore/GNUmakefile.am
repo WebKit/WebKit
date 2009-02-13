@@ -1374,6 +1374,10 @@ webcore_sources += \
 	WebCore/platform/graphics/transforms/IdentityTransformOperation.h \
 	WebCore/platform/graphics/transforms/MatrixTransformOperation.cpp \
 	WebCore/platform/graphics/transforms/MatrixTransformOperation.h \
+	WebCore/platform/graphics/transforms/Matrix3DTransformOperation.cpp \
+	WebCore/platform/graphics/transforms/Matrix3DTransformOperation.h \
+	WebCore/platform/graphics/transforms/PerspectiveTransformOperation.cpp \
+	WebCore/platform/graphics/transforms/PerspectiveTransformOperation.h \
 	WebCore/platform/graphics/transforms/RotateTransformOperation.cpp \
 	WebCore/platform/graphics/transforms/RotateTransformOperation.h \
 	WebCore/platform/graphics/transforms/ScaleTransformOperation.cpp \
