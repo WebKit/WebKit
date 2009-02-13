@@ -1,3 +1,30 @@
+2009-02-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt and Alexey Proskuryakov.
+
+        Speed up a couple string functions.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncIndexOf): Added a fast path for cases where the second
+        argument is either missing or an integer.
+        (JSC::stringProtoFuncBig): Use jsNontrivialString since the string is guaranteed
+        to be 2 or more characters long.
+        (JSC::stringProtoFuncSmall): Ditto.
+        (JSC::stringProtoFuncBlink): Ditto.
+        (JSC::stringProtoFuncBold): Ditto.
+        (JSC::stringProtoFuncItalics): Ditto.
+        (JSC::stringProtoFuncStrike): Ditto.
+        (JSC::stringProtoFuncSub): Ditto.
+        (JSC::stringProtoFuncSup): Ditto.
+        (JSC::stringProtoFuncFontcolor): Ditto.
+        (JSC::stringProtoFuncFontsize): Make the fast path Sam recently added even faster
+        by avoiding all but the minimum memory allocation.
+        (JSC::stringProtoFuncAnchor): Use jsNontrivialString.
+        (JSC::stringProtoFuncLink): Added a fast path.
+
+        * runtime/UString.cpp:
+        (JSC::UString::find): Added a fast path for single-character search strings.
+
 2009-02-13  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

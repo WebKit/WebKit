@@ -1419,12 +1419,24 @@ uint32_t UString::toStrictUInt32(bool* ok) const
 
 int UString::find(const UString& f, int pos) const
 {
-    int sz = size();
     int fsz = f.size();
-    if (sz < fsz)
-        return -1;
+
     if (pos < 0)
         pos = 0;
+
+    if (fsz == 1) {
+        UChar ch = f[0];
+        const UChar* end = data() + size();
+        for (const UChar* c = data() + pos; c < end; c++) {
+            if (*c == ch)
+                return static_cast<int>(c - data());
+        }
+        return -1;
+    }
+
+    int sz = size();
+    if (sz < fsz)
+        return -1;
     if (fsz == 0)
         return pos;
     const UChar* end = data() + sz - fsz;

@@ -374,12 +374,21 @@ JSValuePtr stringProtoFuncIndexOf(ExecState* exec, JSObject*, JSValuePtr thisVal
     JSValuePtr a0 = args.at(exec, 0);
     JSValuePtr a1 = args.at(exec, 1);
     UString u2 = a0.toString(exec);
-    double dpos = a1.toInteger(exec);
-    if (dpos < 0)
-        dpos = 0;
-    else if (dpos > len)
-        dpos = len;
-    return jsNumber(exec, s.find(u2, static_cast<int>(dpos)));
+    int pos;
+    if (a1.isUndefined())
+        pos = 0;
+    else if (a1.isUInt32Fast())
+        pos = min<uint32_t>(a1.getUInt32Fast(), len);
+    else {
+        double dpos = a1.toInteger(exec);
+        if (dpos < 0)
+            dpos = 0;
+        else if (dpos > len)
+            dpos = len;
+        pos = static_cast<int>(dpos);
+    }
+
+    return jsNumber(exec, s.find(u2, pos));
 }
 
 JSValuePtr stringProtoFuncLastIndexOf(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
@@ -696,25 +705,25 @@ JSValuePtr stringProtoFuncLocaleCompare(ExecState* exec, JSObject*, JSValuePtr t
 JSValuePtr stringProtoFuncBig(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsString(exec, "<big>" + s + "</big>");
+    return jsNontrivialString(exec, "<big>" + s + "</big>");
 }
 
 JSValuePtr stringProtoFuncSmall(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsString(exec, "<small>" + s + "</small>");
+    return jsNontrivialString(exec, "<small>" + s + "</small>");
 }
 
 JSValuePtr stringProtoFuncBlink(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsString(exec, "<blink>" + s + "</blink>");
+    return jsNontrivialString(exec, "<blink>" + s + "</blink>");
 }
 
 JSValuePtr stringProtoFuncBold(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsString(exec, "<b>" + s + "</b>");
+    return jsNontrivialString(exec, "<b>" + s + "</b>");
 }
 
 JSValuePtr stringProtoFuncFixed(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
@@ -726,32 +735,32 @@ JSValuePtr stringProtoFuncFixed(ExecState* exec, JSObject*, JSValuePtr thisValue
 JSValuePtr stringProtoFuncItalics(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsString(exec, "<i>" + s + "</i>");
+    return jsNontrivialString(exec, "<i>" + s + "</i>");
 }
 
 JSValuePtr stringProtoFuncStrike(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsString(exec, "<strike>" + s + "</strike>");
+    return jsNontrivialString(exec, "<strike>" + s + "</strike>");
 }
 
 JSValuePtr stringProtoFuncSub(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsString(exec, "<sub>" + s + "</sub>");
+    return jsNontrivialString(exec, "<sub>" + s + "</sub>");
 }
 
 JSValuePtr stringProtoFuncSup(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsString(exec, "<sup>" + s + "</sup>");
+    return jsNontrivialString(exec, "<sup>" + s + "</sup>");
 }
 
 JSValuePtr stringProtoFuncFontcolor(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
     UString s = thisValue.toThisString(exec);
     JSValuePtr a0 = args.at(exec, 0);
-    return jsString(exec, "<font color=\"" + a0.toString(exec) + "\">" + s + "</font>");
+    return jsNontrivialString(exec, "<font color=\"" + a0.toString(exec) + "\">" + s + "</font>");
 }
 
 JSValuePtr stringProtoFuncFontsize(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
@@ -760,68 +769,78 @@ JSValuePtr stringProtoFuncFontsize(ExecState* exec, JSObject*, JSValuePtr thisVa
     JSValuePtr a0 = args.at(exec, 0);
 
     uint32_t smallInteger;
-    if (a0.getUInt32(smallInteger)) {
-        switch (smallInteger) {
-            case 1: {
-                UString result = "<font size=\"1\">";
-                result.append(s);
-                result.append("</font>");
-                return jsString(exec, result);
-            }
-            case 2: {
-                UString result = "<font size=\"2\">";
-                result.append(s);
-                result.append("</font>");
-                return jsString(exec, result);
-            }
-            case 3: {
-                UString result = "<font size=\"3\">";
-                result.append(s);
-                result.append("</font>");
-                return jsString(exec, result);
-            }
-            case 4: {
-                UString result = "<font size=\"4\">";
-                result.append(s);
-                result.append("</font>");
-                return jsString(exec, result);
-            }
-            case 5: {
-                UString result = "<font size=\"5\">";
-                result.append(s);
-                result.append("</font>");
-                return jsString(exec, result);
-            }
-            case 6: {
-                UString result = "<font size=\"6\">";
-                result.append(s);
-                result.append("</font>");
-                return jsString(exec, result);
-            }
-            case 7: {
-                UString result = "<font size=\"7\">";
-                result.append(s);
-                result.append("</font>");
-                return jsString(exec, result);
-            }
-        }
+    if (a0.getUInt32(smallInteger) && smallInteger <= 9) {
+        unsigned stringSize = s.size();
+        unsigned bufferSize = 22 + stringSize;
+        UChar* buffer = static_cast<UChar*>(tryFastMalloc(bufferSize * sizeof(UChar)));
+        if (!buffer)
+            return jsUndefined();
+        buffer[0] = '<';
+        buffer[1] = 'f';
+        buffer[2] = 'o';
+        buffer[3] = 'n';
+        buffer[4] = 't';
+        buffer[5] = ' ';
+        buffer[6] = 's';
+        buffer[7] = 'i';
+        buffer[8] = 'z';
+        buffer[9] = 'e';
+        buffer[10] = '=';
+        buffer[11] = '"';
+        buffer[12] = '0' + smallInteger;
+        buffer[13] = '"';
+        buffer[14] = '>';
+        memcpy(&buffer[15], s.data(), stringSize * sizeof(UChar));
+        buffer[15 + stringSize] = '<';
+        buffer[16 + stringSize] = '/';
+        buffer[17 + stringSize] = 'f';
+        buffer[18 + stringSize] = 'o';
+        buffer[19 + stringSize] = 'n';
+        buffer[20 + stringSize] = 't';
+        buffer[21 + stringSize] = '>';
+        return jsNontrivialString(exec, UString(buffer, bufferSize, false));
     }
 
-    return jsString(exec, "<font size=\"" + a0.toString(exec) + "\">" + s + "</font>");
+    return jsNontrivialString(exec, "<font size=\"" + a0.toString(exec) + "\">" + s + "</font>");
 }
 
 JSValuePtr stringProtoFuncAnchor(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
     UString s = thisValue.toThisString(exec);
     JSValuePtr a0 = args.at(exec, 0);
-    return jsString(exec, "<a name=\"" + a0.toString(exec) + "\">" + s + "</a>");
+    return jsNontrivialString(exec, "<a name=\"" + a0.toString(exec) + "\">" + s + "</a>");
 }
 
 JSValuePtr stringProtoFuncLink(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
     UString s = thisValue.toThisString(exec);
     JSValuePtr a0 = args.at(exec, 0);
-    return jsString(exec, "<a href=\"" + a0.toString(exec) + "\">" + s + "</a>");
+    UString linkText = a0.toString(exec);
+
+    unsigned linkTextSize = linkText.size();
+    unsigned stringSize = s.size();
+    unsigned bufferSize = 15 + linkTextSize + stringSize;
+    UChar* buffer = static_cast<UChar*>(tryFastMalloc(bufferSize * sizeof(UChar)));
+    if (!buffer)
+        return jsUndefined();
+    buffer[0] = '<';
+    buffer[1] = 'a';
+    buffer[2] = ' ';
+    buffer[3] = 'h';
+    buffer[4] = 'r';
+    buffer[5] = 'e';
+    buffer[6] = 'f';
+    buffer[7] = '=';
+    buffer[8] = '"';
+    memcpy(&buffer[9], linkText.data(), linkTextSize * sizeof(UChar));
+    buffer[9 + linkTextSize] = '"';
+    buffer[10 + linkTextSize] = '>';
+    memcpy(&buffer[11 + linkTextSize], s.data(), stringSize * sizeof(UChar));
+    buffer[11 + linkTextSize + stringSize] = '<';
+    buffer[12 + linkTextSize + stringSize] = '/';
+    buffer[13 + linkTextSize + stringSize] = 'a';
+    buffer[14 + linkTextSize + stringSize] = '>';
+    return jsNontrivialString(exec, UString(buffer, bufferSize, false));
 }
 
 } // namespace JSC
