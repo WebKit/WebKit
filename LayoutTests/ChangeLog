@@ -1,5 +1,17 @@
 2009-02-13  Chris Marrin  <cmarrin@apple.com>
 
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23936
+
+        Fixed 3 more test cases
+
+        * platform/win/fast/css/computed-style-expected.txt:
+        * platform/win/fast/css/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
+2009-02-13  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=23936

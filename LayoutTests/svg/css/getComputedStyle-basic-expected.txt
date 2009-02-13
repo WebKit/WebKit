@@ -176,6 +176,8 @@ rect: style.getPropertyValue(-webkit-animation-timing-function) : cubic-bezier(0
 rect: style.getPropertyCSSValue(-webkit-animation-timing-function) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-appearance) : none
 rect: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-backface-visibility) : visible
+rect: style.getPropertyCSSValue(-webkit-backface-visibility) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-clip) : border
 rect: style.getPropertyCSSValue(-webkit-background-clip) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-composite) : source-over
@@ -270,6 +272,10 @@ rect: style.getPropertyValue(-webkit-mask-size) : auto auto
 rect: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-nbsp-mode) : normal
 rect: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-perspective) : none
+rect: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px
+rect: style.getPropertyCSSValue(-webkit-perspective-origin) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-rtl-ordering) : logical
 rect: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
@@ -286,6 +292,8 @@ rect: style.getPropertyValue(-webkit-transform) : none
 rect: style.getPropertyCSSValue(-webkit-transform) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-transform-origin) : 0px 0px
 rect: style.getPropertyCSSValue(-webkit-transform-origin) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-transform-style) : flat
+rect: style.getPropertyCSSValue(-webkit-transform-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-transition-delay) : 0s
 rect: style.getPropertyCSSValue(-webkit-transition-delay) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-transition-duration) : 0s
@@ -562,6 +570,8 @@ g: style.getPropertyValue(-webkit-animation-timing-function) : cubic-bezier(0.25
 g: style.getPropertyCSSValue(-webkit-animation-timing-function) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-appearance) : none
 g: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-backface-visibility) : visible
+g: style.getPropertyCSSValue(-webkit-backface-visibility) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-clip) : border
 g: style.getPropertyCSSValue(-webkit-background-clip) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-composite) : source-over
@@ -656,6 +666,10 @@ g: style.getPropertyValue(-webkit-mask-size) : auto auto
 g: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-nbsp-mode) : normal
 g: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-perspective) : none
+g: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px
+g: style.getPropertyCSSValue(-webkit-perspective-origin) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-rtl-ordering) : logical
 g: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
@@ -672,6 +686,8 @@ g: style.getPropertyValue(-webkit-transform) : none
 g: style.getPropertyCSSValue(-webkit-transform) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-transform-origin) : 0px 0px
 g: style.getPropertyCSSValue(-webkit-transform-origin) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-transform-style) : flat
+g: style.getPropertyCSSValue(-webkit-transform-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-transition-delay) : 0s
 g: style.getPropertyCSSValue(-webkit-transition-delay) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-transition-duration) : 0s
