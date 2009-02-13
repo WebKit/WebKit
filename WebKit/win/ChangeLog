@@ -1,3 +1,13 @@
+2009-02-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Kevin Decker
+
+        <rdar://problem/6582180> - Wrong HTTP method applied to history item.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory): Check the original request, not any
+          redirected request.
+
 2009-02-11  Brady Eidson  <beidson@apple.com>
 
         Fix my last checkin for more effect.

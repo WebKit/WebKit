@@ -790,7 +790,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
     [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() 
                                           withTitle:loader->title()
-                                             method:loader->request().httpMethod()
+                                             method:loader->originalRequestCopy().httpMethod()
                                          wasFailure:loader->urlForHistoryReflectsFailure()];
 
     updateGlobalHistoryRedirectLinks();
