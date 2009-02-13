@@ -78,6 +78,7 @@ public:
     QUrl linkUrl() const;
     QUrl linkTitle() const;
     QWebFrame *linkTargetFrame() const;
+    QString linkTarget() const;
 
     QString alternateText() const; // for img, area, input and applet
 

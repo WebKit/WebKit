@@ -1,3 +1,19 @@
+2009-02-13  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23738
+        Expose the url elements target frame string.  This is the sister function
+        to the existing linkTargetFrame which returns the QWebFrame*.  When the
+        linkTargetFrame is 0 it is useful to know what the target was to be.
+
+        * Api/qwebframe.cpp:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+        (QWebHitTestResult::linkTarget):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-02-13  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon Hausmann.
