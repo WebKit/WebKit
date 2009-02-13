@@ -1,3 +1,9 @@
+2009-02-12  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by David Hyatt.
+
+        * fast/dom/SelectorAPI/resig-SelectorsAPI-test-expected.txt: Updated results now that we pass a few more
+
 2009-02-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

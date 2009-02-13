@@ -1,3 +1,14 @@
+2009-02-12  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Dave Hyatt.
+        
+        Fix https://bugs.webkit.org/show_bug.cgi?id=23935
+        Nested :not() and non-simple selectors in :not() should be invalid
+
+        * css/CSSGrammar.y: Reject nested :not()
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): ASSERT() rather than checking, since the parser enforces it now
+
 2009-02-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes.
