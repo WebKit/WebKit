@@ -1,3 +1,11 @@
+2009-02-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Fix windows build.
+
+        * css/CSSParser.h:
+
 2009-02-12  David Hyatt  <hyatt@apple.com>
 
         Rename getOverflowClipRect and getClipRect to overflowClipRect and clipRect.  Move them to RenderBox, since these methods
