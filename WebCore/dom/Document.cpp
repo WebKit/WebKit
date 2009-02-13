@@ -95,6 +95,7 @@
 #include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
 #include "RenderArena.h"
+#include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
@@ -2476,10 +2477,12 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
                 
         // Dispatch a change event for text fields or textareas that have been edited
         RenderObject* r = static_cast<RenderObject*>(oldFocusedNode.get()->renderer());
-        if (r && (r->isTextArea() || r->isTextField()) && r->isEdited()) {
+        if (r && (r->isTextArea() || r->isTextField()) && static_cast<RenderTextControl*>(r)->isEdited()) {
             oldFocusedNode->dispatchEventForType(eventNames().changeEvent, true, false);
-            if ((r = static_cast<RenderObject*>(oldFocusedNode.get()->renderer())))
-                r->setEdited(false);
+            if ((r = static_cast<RenderObject*>(oldFocusedNode.get()->renderer()))) {
+                if (r->isTextArea() || r->isTextField())
+                    static_cast<RenderTextControl*>(r)->setEdited(false);
+            }
         }
 
         // Dispatch the blur event and let the node do any other blur related activities (important for text fields)

@@ -1,3 +1,20 @@
+2009-02-13  David Hyatt  <hyatt@apple.com>
+
+        Get rid of isEdited/setEdited on RenderObject.  Devirtualize isEdited/setEdited on RenderTextControl.
+        Callers were already asking if the renderer was a text field (or a text area), so it was especially
+        pointless to waste a second virtual function call after making one just to determine the object type.
+    
+        Reviewed by Simon Fraser
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::isEdited):
+        (WebCore::RenderTextControl::setEdited):
+
 2009-02-13  Scott Violet  <sky@google.com>
 
         Reviewed by Eric Seidel.

@@ -1305,12 +1305,12 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         }
         // Fire onChange for text fields.
         RenderObject* r = renderer();
-        if (r && r->isTextField() && r->isEdited()) {
+        if (r && r->isTextField() && static_cast<RenderTextControl*>(r)->isEdited()) {
             onChange();
             // Refetch the renderer since arbitrary JS code run during onchange can do anything, including destroying it.
             r = renderer();
-            if (r)
-                r->setEdited(false);
+            if (r && r->isTextField())
+                static_cast<RenderTextControl*>(r)->setEdited(false);
         }
         // Form may never have been present, or may have been destroyed by the change event.
         if (form())

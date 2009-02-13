@@ -45,8 +45,8 @@ public:
     virtual bool canHaveChildren() const { return false; }
     virtual bool avoidsFloats() const { return true; }
     
-    virtual bool isEdited() const { return m_edited; }
-    virtual void setEdited(bool isEdited) { m_edited = isEdited; }
+    bool isEdited() const { return m_edited; }
+    void setEdited(bool isEdited) { m_edited = isEdited; }
 
     bool isUserEdited() const { return m_userEdited; }
     void setUserEdited(bool isUserEdited);

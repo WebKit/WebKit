@@ -176,9 +176,6 @@ public:
     
     virtual bool isEmpty() const { return firstChild() == 0; }
 
-    virtual bool isEdited() const { return false; }
-    virtual void setEdited(bool) { }
-
 #ifndef NDEBUG
     void setHasAXObject(bool flag) { m_hasAXObject = flag; }
     bool hasAXObject() const { return m_hasAXObject; }
