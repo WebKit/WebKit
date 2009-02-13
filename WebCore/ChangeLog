@@ -1,3 +1,13 @@
+2009-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix build with ACCELERATED_COMPOSITING turned on.
+
+        toRenderBox()->x() asserts for a layer on an inline; use
+        m_owningLayer->renderBoxX() instead.
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
 2009-02-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
