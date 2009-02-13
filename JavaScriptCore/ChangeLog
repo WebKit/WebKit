@@ -1,3 +1,78 @@
+2009-02-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove (/reduce) use of hard-wired register names from the JIT.
+        Currently there is no abstraction of registers used in the JIT,
+        which has a number of negative consequences.  Hard-wiring x86
+        register names makes the JIT less portable to other platforms,
+        and prevents us from performing dynamic register allocation to
+        attempt to maintain more temporary values in machine registers.
+        (The latter will be more important on x86-64, where we have more
+        registers to make use of).
+
+        Also, remove MacroAssembler::mod32.  This was not providing a
+        useful abstraction, and was not in keeping with the rest of the
+        MacroAssembler interface, in having specific register requirements.
+
+        * assembler/MacroAssemblerX86Common.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emitSlowScriptCheck):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileFastArith_op_lshift):
+        (JSC::JIT::compileFastArithSlow_op_lshift):
+        (JSC::JIT::compileFastArith_op_rshift):
+        (JSC::JIT::compileFastArithSlow_op_rshift):
+        (JSC::JIT::compileFastArith_op_bitand):
+        (JSC::JIT::compileFastArithSlow_op_bitand):
+        (JSC::JIT::compileFastArith_op_mod):
+        (JSC::JIT::compileFastArithSlow_op_mod):
+        (JSC::JIT::compileFastArith_op_post_inc):
+        (JSC::JIT::compileFastArithSlow_op_post_inc):
+        (JSC::JIT::compileFastArith_op_post_dec):
+        (JSC::JIT::compileFastArithSlow_op_post_dec):
+        (JSC::JIT::compileFastArith_op_pre_inc):
+        (JSC::JIT::compileFastArithSlow_op_pre_inc):
+        (JSC::JIT::compileFastArith_op_pre_dec):
+        (JSC::JIT::compileFastArithSlow_op_pre_dec):
+        (JSC::JIT::compileFastArith_op_add):
+        (JSC::JIT::compileFastArith_op_mul):
+        (JSC::JIT::compileFastArith_op_sub):
+        (JSC::JIT::compileBinaryArithOp):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpCallEvalSetupArgs):
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::emitPutVirtualRegister):
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::restoreArgumentReference):
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::compilePutByIdSlowCase):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePutByIdReplace):
+
 2009-02-12  Horia Olaru  <olaru@adobe.com>
 
         Reviewed by Oliver Hunt.

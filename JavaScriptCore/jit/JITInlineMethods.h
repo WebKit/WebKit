@@ -69,8 +69,8 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
 
         if (!atJumpTarget) {
             // The argument we want is already stored in eax
-            if (dst != X86::eax)
-                move(X86::eax, dst);
+            if (dst != cachedResultRegister)
+                move(cachedResultRegister, dst);
             killLastResultRegister();
             return;
         }
@@ -177,7 +177,7 @@ ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader(RegisterFile::CallFrameHeader
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(unsigned dst, RegisterID from)
 {
     storePtr(from, Address(callFrameRegister, dst * sizeof(Register)));
-    m_lastResultBytecodeRegister = (from == X86::eax) ? dst : std::numeric_limits<int>::max();
+    m_lastResultBytecodeRegister = (from == cachedResultRegister) ? dst : std::numeric_limits<int>::max();
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
@@ -187,7 +187,7 @@ ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
-ALWAYS_INLINE JIT::Call JIT::emitNakedCall(X86::RegisterID r)
+ALWAYS_INLINE JIT::Call JIT::emitNakedCall(RegisterID r)
 {
     ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
@@ -208,25 +208,21 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(void* function)
 #if USE(JIT_STUB_ARGUMENT_REGISTER)
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
-#if PLATFORM(X86_64)
-    move(X86::esp, X86::edi);
-#else
-    move(X86::esp, X86::ecx);
-#endif
+    move(stackPointerRegister, firstArgumentRegister);
     emitPutCTIParam(callFrameRegister, STUB_ARGS_callFrame);
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {
     // In the trampoline on x86-64, the first argument register is not overwritten.
 #if !PLATFORM(X86_64)
-    move(X86::esp, X86::ecx);
-    addPtr(Imm32(sizeof(void*)), X86::ecx);
+    move(stackPointerRegister, firstArgumentRegister);
+    addPtr(Imm32(sizeof(void*)), firstArgumentRegister);
 #endif
 }
 #elif USE(JIT_STUB_ARGUMENT_STACK)
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
-    storePtr(X86::esp, X86::esp);
+    poke(stackPointerRegister);
     emitPutCTIParam(callFrameRegister, STUB_ARGS_callFrame);
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}

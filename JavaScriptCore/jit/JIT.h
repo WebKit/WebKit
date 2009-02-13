@@ -212,14 +212,49 @@ namespace JSC {
         using MacroAssembler::JumpList;
         using MacroAssembler::Label;
 
+        // NOTES:
+        //
+        // regT0 has two special meanings.  The return value from a stub
+        // call will always be in regT0, and by default (unless
+        // a register is specified) emitPutVirtualRegister() will store
+        // the value from regT0.
+        //
+        // tempRegister2 is has no such dependencies.  It is important that
+        // on x86/x86-64 it is ecx for performance reasons, since the
+        // MacroAssembler will need to plant register swaps if it is not -
+        // however the code will still function correctly.
 #if PLATFORM(X86_64)
+        static const RegisterID returnValueRegister = X86::eax;
+        static const RegisterID cachedResultRegister = X86::eax;
+        static const RegisterID firstArgumentRegister = X86::edi;
+
         static const RegisterID timeoutCheckRegister = X86::r12;
         static const RegisterID callFrameRegister = X86::r13;
         static const RegisterID tagTypeNumberRegister = X86::r14;
         static const RegisterID tagMaskRegister = X86::r15;
-#else
+
+        static const RegisterID regT0 = X86::eax;
+        static const RegisterID regT1 = X86::edx;
+        static const RegisterID regT2 = X86::ecx;
+        // NOTE: privateCompileCTIMachineTrampolines() relies on this being callee preserved; this should be considered non-interface.
+        static const RegisterID regT3 = X86::ebx;
+#elif PLATFORM(X86)
+        static const RegisterID returnValueRegister = X86::eax;
+        static const RegisterID cachedResultRegister = X86::eax;
+        // On x86 we always use fastcall conventions = but on
+        // OS X if might make more sense to just use regparm.
+        static const RegisterID firstArgumentRegister = X86::ecx;
+
         static const RegisterID timeoutCheckRegister = X86::esi;
         static const RegisterID callFrameRegister = X86::edi;
+
+        static const RegisterID regT0 = X86::eax;
+        static const RegisterID regT1 = X86::edx;
+        static const RegisterID regT2 = X86::ecx;
+        // NOTE: privateCompileCTIMachineTrampolines() relies on this being callee preserved; this should be considered non-interface.
+        static const RegisterID regT3 = X86::ebx;
+#else
+    #error "JIT not supported on this platform."
 #endif
 
         static const int patchGetByIdDefaultStructure = -1;
@@ -412,7 +447,7 @@ namespace JSC {
 
         void emitGetVirtualRegister(int src, RegisterID dst);
         void emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2);
-        void emitPutVirtualRegister(unsigned dst, RegisterID from = X86::eax);
+        void emitPutVirtualRegister(unsigned dst, RegisterID from = regT0);
 
         void emitPutJITStubArg(RegisterID src, unsigned argumentNumber);
         void emitPutJITStubArgFromVirtualRegister(unsigned src, unsigned argumentNumber, RegisterID scratch);

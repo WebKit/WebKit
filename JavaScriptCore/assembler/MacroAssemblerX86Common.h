@@ -119,25 +119,6 @@ public:
             m_assembler.shll_CLr(dest);
     }
     
-    // Take the value from dividend, divide it by divisor, and put the remainder in remainder.
-    // For now, this operation has specific register requirements, and the three register must
-    // be unique.  It is unfortunate to expose this in the MacroAssembler interface, however
-    // given the complexity to fix, the fact that it is not uncommmon  for processors to have
-    // specific register requirements on this operation (e.g. Mips result in 'hi'), or to not
-    // support a hardware divide at all, it may not be 
-    void mod32(RegisterID divisor, RegisterID dividend, RegisterID remainder)
-    {
-#ifdef NDEBUG
-#pragma unused(dividend,remainder)
-#else
-        ASSERT((dividend == X86::eax) && (remainder == X86::edx));
-        ASSERT((dividend != divisor) && (remainder != divisor));
-#endif
-
-        m_assembler.cdq();
-        m_assembler.idivl_r(divisor);
-    }
-
     void mul32(RegisterID src, RegisterID dest)
     {
         m_assembler.imull_rr(src, dest);

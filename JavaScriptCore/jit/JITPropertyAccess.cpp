@@ -53,9 +53,9 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident,
     // to array-length / prototype access tranpolines, and finally we also the the property-map access offset as a label
     // to jump back to if one of these trampolies finds a match.
 
-    emitGetVirtualRegister(baseVReg, X86::eax);
+    emitGetVirtualRegister(baseVReg, regT0);
 
-    emitPutJITStubArg(X86::eax, 1);
+    emitPutJITStubArg(regT0, 1);
     emitPutJITStubArgConstant(ident, 2);
     emitCTICall(Interpreter::cti_op_get_by_id_generic);
     emitPutVirtualRegister(resultVReg);
@@ -73,11 +73,11 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, 
     // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code
     // such that the Structure & offset are always at the same distance from this.
 
-    emitGetVirtualRegisters(baseVReg, X86::eax, valueVReg, X86::edx);
+    emitGetVirtualRegisters(baseVReg, regT0, valueVReg, regT1);
 
     emitPutJITStubArgConstant(ident, 2);
-    emitPutJITStubArg(X86::eax, 1);
-    emitPutJITStubArg(X86::edx, 3);
+    emitPutJITStubArg(regT0, 1);
+    emitPutJITStubArg(regT1, 3);
     emitCTICall(Interpreter::cti_op_put_by_id_generic);
 }
 
@@ -95,21 +95,21 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier*, unsig
     // to array-length / prototype access tranpolines, and finally we also the the property-map access offset as a label
     // to jump back to if one of these trampolies finds a match.
 
-    emitGetVirtualRegister(baseVReg, X86::eax);
+    emitGetVirtualRegister(baseVReg, regT0);
 
-    emitJumpSlowCaseIfNotJSCell(X86::eax, baseVReg);
+    emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
     Label hotPathBegin(this);
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].hotPathBegin = hotPathBegin;
 
     DataLabelPtr structureToCompare;
-    Jump structureCheck = branchPtrWithPatch(NotEqual, Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)), structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
+    Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, FIELD_OFFSET(JSCell, m_structure)), structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
     addSlowCase(structureCheck);
     ASSERT(differenceBetween(hotPathBegin, structureToCompare) == patchOffsetGetByIdStructure);
     ASSERT(differenceBetween(hotPathBegin, structureCheck) == patchOffsetGetByIdBranchToSlowCase);
 
-    loadPtr(Address(X86::eax, FIELD_OFFSET(JSObject, m_propertyStorage)), X86::eax);
-    DataLabel32 displacementLabel = loadPtrWithAddressOffsetPatch(Address(X86::eax, patchGetByIdDefaultOffset), X86::eax);
+    loadPtr(Address(regT0, FIELD_OFFSET(JSObject, m_propertyStorage)), regT0);
+    DataLabel32 displacementLabel = loadPtrWithAddressOffsetPatch(Address(regT0, patchGetByIdDefaultOffset), regT0);
     ASSERT(differenceBetween(hotPathBegin, displacementLabel) == patchOffsetGetByIdPropertyMapOffset);
 
     Label putResult(this);
@@ -132,7 +132,7 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
 #ifndef NDEBUG
     Label coldPathBegin(this);
 #endif
-    emitPutJITStubArg(X86::eax, 1);
+    emitPutJITStubArg(regT0, 1);
     emitPutJITStubArgConstant(ident, 2);
     Call call = emitCTICall(Interpreter::cti_op_get_by_id);
     emitPutVirtualRegister(resultVReg);
@@ -149,22 +149,22 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier*, int valueVReg, unsign
     // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code
     // such that the Structure & offset are always at the same distance from this.
 
-    emitGetVirtualRegisters(baseVReg, X86::eax, valueVReg, X86::edx);
+    emitGetVirtualRegisters(baseVReg, regT0, valueVReg, regT1);
 
     // Jump to a slow case if either the base object is an immediate, or if the Structure does not match.
-    emitJumpSlowCaseIfNotJSCell(X86::eax, baseVReg);
+    emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
     Label hotPathBegin(this);
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].hotPathBegin = hotPathBegin;
 
     // It is important that the following instruction plants a 32bit immediate, in order that it can be patched over.
     DataLabelPtr structureToCompare;
-    addSlowCase(branchPtrWithPatch(NotEqual, Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)), structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
+    addSlowCase(branchPtrWithPatch(NotEqual, Address(regT0, FIELD_OFFSET(JSCell, m_structure)), structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
     ASSERT(differenceBetween(hotPathBegin, structureToCompare) == patchOffsetPutByIdStructure);
 
     // Plant a load from a bogus ofset in the object's property map; we will patch this later, if it is to be used.
-    loadPtr(Address(X86::eax, FIELD_OFFSET(JSObject, m_propertyStorage)), X86::eax);
-    DataLabel32 displacementLabel = storePtrWithAddressOffsetPatch(X86::edx, Address(X86::eax, patchGetByIdDefaultOffset));
+    loadPtr(Address(regT0, FIELD_OFFSET(JSObject, m_propertyStorage)), regT0);
+    DataLabel32 displacementLabel = storePtrWithAddressOffsetPatch(regT1, Address(regT0, patchGetByIdDefaultOffset));
     ASSERT(differenceBetween(hotPathBegin, displacementLabel) == patchOffsetPutByIdPropertyMapOffset);
 }
 
@@ -174,8 +174,8 @@ void JIT::compilePutByIdSlowCase(int baseVReg, Identifier* ident, int, Vector<Sl
     linkSlowCase(iter);
 
     emitPutJITStubArgConstant(ident, 2);
-    emitPutJITStubArg(X86::eax, 1);
-    emitPutJITStubArg(X86::edx, 3);
+    emitPutJITStubArg(regT0, 1);
+    emitPutJITStubArg(regT1, 3);
     Call call = emitCTICall(Interpreter::cti_op_put_by_id);
 
     // Track the location of the call; this will be used to recover patch information.
@@ -197,28 +197,28 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
 {
     JumpList failureCases;
     // Check eax is an object of the right Structure.
-    failureCases.append(emitJumpIfNotJSCell(X86::eax));
-    failureCases.append(branchPtr(NotEqual, Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)), ImmPtr(oldStructure)));
+    failureCases.append(emitJumpIfNotJSCell(regT0));
+    failureCases.append(branchPtr(NotEqual, Address(regT0, FIELD_OFFSET(JSCell, m_structure)), ImmPtr(oldStructure)));
     JumpList successCases;
 
     //  ecx = baseObject
-    loadPtr(Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)), X86::ecx);
+    loadPtr(Address(regT0, FIELD_OFFSET(JSCell, m_structure)), regT2);
     // proto(ecx) = baseObject->structure()->prototype()
-    failureCases.append(branch32(NotEqual, Address(X86::ecx, FIELD_OFFSET(Structure, m_typeInfo) + FIELD_OFFSET(TypeInfo, m_type)), Imm32(ObjectType)));
+    failureCases.append(branch32(NotEqual, Address(regT2, FIELD_OFFSET(Structure, m_typeInfo) + FIELD_OFFSET(TypeInfo, m_type)), Imm32(ObjectType)));
 
-    loadPtr(Address(X86::ecx, FIELD_OFFSET(Structure, m_prototype)), X86::ecx);
+    loadPtr(Address(regT2, FIELD_OFFSET(Structure, m_prototype)), regT2);
     
     // ecx = baseObject->m_structure
     for (RefPtr<Structure>* it = chain->head(); *it; ++it) {
         // null check the prototype
-        successCases.append(branchPtr(Equal, X86::ecx, ImmPtr(JSValuePtr::encode(jsNull()))));
+        successCases.append(branchPtr(Equal, regT2, ImmPtr(JSValuePtr::encode(jsNull()))));
 
         // Check the structure id
-        failureCases.append(branchPtr(NotEqual, Address(X86::ecx, FIELD_OFFSET(JSCell, m_structure)), ImmPtr(it->get())));
+        failureCases.append(branchPtr(NotEqual, Address(regT2, FIELD_OFFSET(JSCell, m_structure)), ImmPtr(it->get())));
         
-        loadPtr(Address(X86::ecx, FIELD_OFFSET(JSCell, m_structure)), X86::ecx);
-        failureCases.append(branch32(NotEqual, Address(X86::ecx, FIELD_OFFSET(Structure, m_typeInfo) + FIELD_OFFSET(TypeInfo, m_type)), Imm32(ObjectType)));
-        loadPtr(Address(X86::ecx, FIELD_OFFSET(Structure, m_prototype)), X86::ecx);
+        loadPtr(Address(regT2, FIELD_OFFSET(JSCell, m_structure)), regT2);
+        failureCases.append(branch32(NotEqual, Address(regT2, FIELD_OFFSET(Structure, m_typeInfo) + FIELD_OFFSET(TypeInfo, m_type)), Imm32(ObjectType)));
+        loadPtr(Address(regT2, FIELD_OFFSET(Structure, m_prototype)), regT2);
     }
 
     successCases.link(this);
@@ -229,18 +229,18 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     if (transitionWillNeedStorageRealloc(oldStructure, newStructure)) {
         pop(X86::ebx);
 #if PLATFORM(X86_64)
-        move(Imm32(newStructure->propertyStorageCapacity()), X86::edx);
+        move(Imm32(newStructure->propertyStorageCapacity()), regT1);
         move(Imm32(oldStructure->propertyStorageCapacity()), X86::esi);
-        move(X86::eax, X86::edi);
+        move(regT0, X86::edi);
         callTarget = call();
 #else
         push(Imm32(newStructure->propertyStorageCapacity()));
         push(Imm32(oldStructure->propertyStorageCapacity()));
-        push(X86::eax);
+        push(regT0);
         callTarget = call();
         addPtr(Imm32(3 * sizeof(void*)), X86::esp);
 #endif
-        emitGetJITStubArg(3, X86::edx);
+        emitGetJITStubArg(3, regT1);
         push(X86::ebx);
     }
 
@@ -248,11 +248,11 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     // codeblock should ensure oldStructure->m_refCount > 0
     sub32(Imm32(1), AbsoluteAddress(oldStructure->addressOfCount()));
     add32(Imm32(1), AbsoluteAddress(newStructure->addressOfCount()));
-    storePtr(ImmPtr(newStructure), Address(X86::eax, FIELD_OFFSET(JSCell, m_structure)));
+    storePtr(ImmPtr(newStructure), Address(regT0, FIELD_OFFSET(JSCell, m_structure)));
 
     // write the value
-    loadPtr(Address(X86::eax, FIELD_OFFSET(JSObject, m_propertyStorage)), X86::eax);
-    storePtr(X86::edx, Address(X86::eax, cachedOffset * sizeof(JSValuePtr)));
+    loadPtr(Address(regT0, FIELD_OFFSET(JSObject, m_propertyStorage)), regT0);
+    storePtr(regT1, Address(regT0, cachedOffset * sizeof(JSValuePtr)));
 
     ret();
     
@@ -309,15 +309,15 @@ void JIT::privateCompilePatchGetArrayLength(ProcessorReturnAddress returnAddress
     returnAddress.relinkCallerToFunction(Interpreter::cti_op_get_by_id_array_fail);
 
     // Check eax is an array
-    Jump failureCases1 = branchPtr(NotEqual, Address(X86::eax), ImmPtr(m_interpreter->m_jsArrayVptr));
+    Jump failureCases1 = branchPtr(NotEqual, Address(regT0), ImmPtr(m_interpreter->m_jsArrayVptr));
 
     // Checks out okay! - get the length from the storage
-    loadPtr(Address(X86::eax, FIELD_OFFSET(JSArray, m_storage)), X86::ecx);
-    load32(Address(X86::ecx, FIELD_OFFSET(ArrayStorage, m_length)), X86::ecx);
+    loadPtr(Address(regT0, FIELD_OFFSET(JSArray, m_storage)), regT2);
+    load32(Address(regT2, FIELD_OFFSET(ArrayStorage, m_length)), regT2);
 
-    Jump failureCases2 = branch32(Above, X86::ecx, Imm32(JSImmediate::maxImmediateInt));
+    Jump failureCases2 = branch32(Above, regT2, Imm32(JSImmediate::maxImmediateInt));
 
-    emitFastArithIntToImmNoCheck(X86::ecx, X86::eax);
+    emitFastArithIntToImmNoCheck(regT2, regT0);
     Jump success = jump();
 
     void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
@@ -343,12 +343,12 @@ void JIT::privateCompilePatchGetArrayLength(ProcessorReturnAddress returnAddress
 void JIT::privateCompileGetByIdSelf(StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ProcessorReturnAddress returnAddress)
 {
     // Check eax is an object of the right Structure.
-    Jump failureCases1 = emitJumpIfNotJSCell(X86::eax);
-    Jump failureCases2 = checkStructure(X86::eax, structure);
+    Jump failureCases1 = emitJumpIfNotJSCell(regT0);
+    Jump failureCases2 = checkStructure(regT0, structure);
 
     // Checks out okay! - getDirectOffset
-    loadPtr(Address(X86::eax, FIELD_OFFSET(JSObject, m_propertyStorage)), X86::eax);
-    loadPtr(Address(X86::eax, cachedOffset * sizeof(JSValuePtr)), X86::eax);
+    loadPtr(Address(regT0, FIELD_OFFSET(JSObject, m_propertyStorage)), regT0);
+    loadPtr(Address(regT0, cachedOffset * sizeof(JSValuePtr)), regT0);
     ret();
 
     void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
@@ -372,22 +372,22 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     // referencing the prototype object - let's speculatively load it's table nice and early!)
     JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
     PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
-    loadPtr(static_cast<void*>(protoPropertyStorage), X86::edx);
+    loadPtr(static_cast<void*>(protoPropertyStorage), regT1);
 
     // Check eax is an object of the right Structure.
-    Jump failureCases1 = checkStructure(X86::eax, structure);
+    Jump failureCases1 = checkStructure(regT0, structure);
 
     // Check the prototype object's Structure had not changed.
     Structure** prototypeStructureAddress = &(protoObject->m_structure);
 #if PLATFORM(X86_64)
-    move(ImmPtr(prototypeStructure), X86::ebx);
-    Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), X86::ebx);
+    move(ImmPtr(prototypeStructure), regT3);
+    Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3);
 #else
     Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(prototypeStructure));
 #endif
 
     // Checks out okay! - getDirectOffset
-    loadPtr(Address(X86::edx, cachedOffset * sizeof(JSValuePtr)), X86::eax);
+    loadPtr(Address(regT1, cachedOffset * sizeof(JSValuePtr)), regT0);
 
     Jump success = jump();
 
@@ -414,18 +414,18 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     // referencing the prototype object - let's speculatively load it's table nice and early!)
     JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
     PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
-    loadPtr(protoPropertyStorage, X86::edx);
+    loadPtr(protoPropertyStorage, regT1);
 
     // Check eax is an object of the right Structure.
-    Jump failureCases1 = emitJumpIfNotJSCell(X86::eax);
-    Jump failureCases2 = checkStructure(X86::eax, structure);
+    Jump failureCases1 = emitJumpIfNotJSCell(regT0);
+    Jump failureCases2 = checkStructure(regT0, structure);
 
     // Check the prototype object's Structure had not changed.
     Structure** prototypeStructureAddress = &(protoObject->m_structure);
     Jump failureCases3 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(prototypeStructure));
 
     // Checks out okay! - getDirectOffset
-    loadPtr(Address(X86::edx, cachedOffset * sizeof(JSValuePtr)), X86::eax);
+    loadPtr(Address(regT1, cachedOffset * sizeof(JSValuePtr)), regT0);
 
     ret();
 
@@ -445,9 +445,9 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
 #if USE(CTI_REPATCH_PIC)
 void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, size_t cachedOffset)
 {
-    Jump failureCase = checkStructure(X86::eax, structure);
-    loadPtr(Address(X86::eax, FIELD_OFFSET(JSObject, m_propertyStorage)), X86::eax);
-    loadPtr(Address(X86::eax, cachedOffset * sizeof(JSValuePtr)), X86::eax);
+    Jump failureCase = checkStructure(regT0, structure);
+    loadPtr(Address(regT0, FIELD_OFFSET(JSObject, m_propertyStorage)), regT0);
+    loadPtr(Address(regT0, cachedOffset * sizeof(JSValuePtr)), regT0);
     Jump success = jump();
 
     void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
@@ -480,22 +480,22 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     // referencing the prototype object - let's speculatively load it's table nice and early!)
     JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
     PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
-    loadPtr(protoPropertyStorage, X86::edx);
+    loadPtr(protoPropertyStorage, regT1);
 
     // Check eax is an object of the right Structure.
-    Jump failureCases1 = checkStructure(X86::eax, structure);
+    Jump failureCases1 = checkStructure(regT0, structure);
 
     // Check the prototype object's Structure had not changed.
     Structure** prototypeStructureAddress = &(protoObject->m_structure);
 #if PLATFORM(X86_64)
-    move(ImmPtr(prototypeStructure), X86::ebx);
-    Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), X86::ebx);
+    move(ImmPtr(prototypeStructure), regT3);
+    Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3);
 #else
     Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(prototypeStructure));
 #endif
 
     // Checks out okay! - getDirectOffset
-    loadPtr(Address(X86::edx, cachedOffset * sizeof(JSValuePtr)), X86::eax);
+    loadPtr(Address(regT1, cachedOffset * sizeof(JSValuePtr)), regT0);
 
     Jump success = jump();
 
@@ -528,7 +528,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     JumpList bucketsOfFail;
 
     // Check eax is an object of the right Structure.
-    Jump baseObjectCheck = checkStructure(X86::eax, structure);
+    Jump baseObjectCheck = checkStructure(regT0, structure);
     bucketsOfFail.append(baseObjectCheck);
 
     Structure* currStructure = structure;
@@ -541,8 +541,8 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
         // Check the prototype object's Structure had not changed.
         Structure** prototypeStructureAddress = &(protoObject->m_structure);
 #if PLATFORM(X86_64)
-        move(ImmPtr(currStructure), X86::ebx);
-        bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), X86::ebx));
+        move(ImmPtr(currStructure), regT3);
+        bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3));
 #else
         bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(currStructure)));
 #endif
@@ -550,8 +550,8 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     ASSERT(protoObject);
 
     PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
-    loadPtr(protoPropertyStorage, X86::edx);
-    loadPtr(Address(X86::edx, cachedOffset * sizeof(JSValuePtr)), X86::eax);
+    loadPtr(protoPropertyStorage, regT1);
+    loadPtr(Address(regT1, cachedOffset * sizeof(JSValuePtr)), regT0);
     Jump success = jump();
 
     void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
@@ -589,7 +589,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     JumpList bucketsOfFail;
 
     // Check eax is an object of the right Structure.
-    bucketsOfFail.append(checkStructure(X86::eax, structure));
+    bucketsOfFail.append(checkStructure(regT0, structure));
 
     Structure* currStructure = structure;
     RefPtr<Structure>* chainEntries = chain->head();
@@ -601,8 +601,8 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
         // Check the prototype object's Structure had not changed.
         Structure** prototypeStructureAddress = &(protoObject->m_structure);
 #if PLATFORM(X86_64)
-        move(ImmPtr(currStructure), X86::ebx);
-        bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), X86::ebx));
+        move(ImmPtr(currStructure), regT3);
+        bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3));
 #else
         bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(currStructure)));
 #endif
@@ -610,8 +610,8 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     ASSERT(protoObject);
 
     PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
-    loadPtr(protoPropertyStorage, X86::edx);
-    loadPtr(Address(X86::edx, cachedOffset * sizeof(JSValuePtr)), X86::eax);
+    loadPtr(protoPropertyStorage, regT1);
+    loadPtr(Address(regT1, cachedOffset * sizeof(JSValuePtr)), regT0);
     Jump success = jump();
 
     void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
@@ -636,8 +636,8 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     JumpList bucketsOfFail;
 
     // Check eax is an object of the right Structure.
-    bucketsOfFail.append(emitJumpIfNotJSCell(X86::eax));
-    bucketsOfFail.append(checkStructure(X86::eax, structure));
+    bucketsOfFail.append(emitJumpIfNotJSCell(regT0));
+    bucketsOfFail.append(checkStructure(regT0, structure));
 
     Structure* currStructure = structure;
     RefPtr<Structure>* chainEntries = chain->head();
@@ -649,8 +649,8 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
         // Check the prototype object's Structure had not changed.
         Structure** prototypeStructureAddress = &(protoObject->m_structure);
 #if PLATFORM(X86_64)
-        move(ImmPtr(currStructure), X86::ebx);
-        bucketsOfFail.append(branchPtr(NotEqual, X86::ebx, AbsoluteAddress(prototypeStructureAddress)));
+        move(ImmPtr(currStructure), regT3);
+        bucketsOfFail.append(branchPtr(NotEqual, regT3, AbsoluteAddress(prototypeStructureAddress)));
 #else
         bucketsOfFail.append(branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(currStructure)));
 #endif
@@ -658,8 +658,8 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     ASSERT(protoObject);
 
     PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
-    loadPtr(protoPropertyStorage, X86::edx);
-    loadPtr(Address(X86::edx, cachedOffset * sizeof(JSValuePtr)), X86::eax);
+    loadPtr(protoPropertyStorage, regT1);
+    loadPtr(Address(regT1, cachedOffset * sizeof(JSValuePtr)), regT0);
     ret();
 
     void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
@@ -675,12 +675,12 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
 void JIT::privateCompilePutByIdReplace(StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ProcessorReturnAddress returnAddress)
 {
     // Check eax is an object of the right Structure.
-    Jump failureCases1 = emitJumpIfNotJSCell(X86::eax);
-    Jump failureCases2 = checkStructure(X86::eax, structure);
+    Jump failureCases1 = emitJumpIfNotJSCell(regT0);
+    Jump failureCases2 = checkStructure(regT0, structure);
 
     // checks out okay! - putDirectOffset
-    loadPtr(Address(X86::eax, FIELD_OFFSET(JSObject, m_propertyStorage)), X86::eax);
-    storePtr(X86::edx, Address(X86::eax, cachedOffset * sizeof(JSValuePtr)));
+    loadPtr(Address(regT0, FIELD_OFFSET(JSObject, m_propertyStorage)), regT0);
+    storePtr(regT1, Address(regT0, cachedOffset * sizeof(JSValuePtr)));
     ret();
 
     void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
