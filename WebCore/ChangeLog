@@ -1,3 +1,12 @@
+2009-02-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix build with ACCELERATED_COMPOSITING turned on.
+        
+        Need to cast toRenderBox() in order to call overflowClipRect().
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2009-02-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
