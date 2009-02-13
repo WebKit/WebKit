@@ -71,7 +71,7 @@ double randomNumber()
     // so we take the high 26 bits of part 1, and the high 27 bits of part2.
     part1 >>= 5; // drop the low 5 bits
     part2 >>= 4; // drop the low 4 bits
-    fullRandom = part1;
+    uint64_t fullRandom = part1;
     fullRandom <<= 27;
     fullRandom |= part2;
 
