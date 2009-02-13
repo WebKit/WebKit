@@ -1,3 +1,9 @@
+2009-02-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes.
+
+        * WebCoreSources.bkl:
+
 2009-02-12  Simon Fraser  <simon.fraser@apple.com>
 
         Fix build with ACCELERATED_COMPOSITING turned on.
