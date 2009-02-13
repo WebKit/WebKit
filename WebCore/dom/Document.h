@@ -426,6 +426,7 @@ public:
     void implicitClose();
     void cancelParsing();
 
+    void prepareToWrite(Document* ownerDocument);
     void write(const String& text, Document* ownerDocument = 0);
     void writeln(const String& text, Document* ownerDocument = 0);
     void finishParsing();

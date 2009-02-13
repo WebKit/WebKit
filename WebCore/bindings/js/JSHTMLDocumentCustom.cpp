@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSHTMLDocument.h"
 
+#include "CharacterNames.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCollection.h"
@@ -37,6 +38,8 @@
 #include "JSDOMWindowCustom.h"
 #include "JSDOMWindowShell.h"
 #include "JSHTMLCollection.h"
+#include "SegmentedString.h"
+#include "Tokenizer.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
@@ -124,32 +127,47 @@ JSValuePtr JSHTMLDocument::open(ExecState* exec, const ArgList& args)
     return this;
 }
 
-static String writeHelper(ExecState* exec, const ArgList& args)
+enum NewlineRequirement { DoNotAddNewline, DoAddNewline };
+
+static inline void documentWrite(ExecState* exec, const ArgList& args, HTMLDocument* document, NewlineRequirement addNewline)
 {
-    // DOM only specifies single string argument, but NS & IE allow multiple
-    // or no arguments.
+    // DOM only specifies single string argument, but browsers allow multiple or no arguments.
 
-    unsigned size = args.size();
-    if (size == 1)
-        return args.at(exec, 0).toString(exec);
+    size_t size = args.size();
 
-    Vector<UChar> result;
-    for (unsigned i = 0; i < size; ++i)
-        append(result, args.at(exec, i).toString(exec));
-    return String::adopt(result);
+    UString firstString = args.at(exec, 0).toString(exec);
+    SegmentedString segmentedString(firstString.data(), firstString.size());
+    Vector<UString> subsequentStrings; // Keeps strings alive until Tokenizer::write is called on them.
+    if (size != 1) {
+        if (!size)
+            segmentedString.clear();
+        else {
+            subsequentStrings.reserveInitialCapacity(size - 1);
+            for (size_t i = 1; i < size; ++i) {
+                UString subsequentString = args.at(exec, i).toString(exec);
+                segmentedString.append(SegmentedString(subsequentString.data(), subsequentString.size()));
+                subsequentStrings.append(subsequentString);
+            }
+        }
+    }
+    if (addNewline)
+        segmentedString.append(SegmentedString(&newlineCharacter, 1));
+
+    Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
+    document->prepareToWrite(activeDocument);
+    if (Tokenizer* tokenizer = document->tokenizer())
+        tokenizer->write(segmentedString, false);
 }
 
 JSValuePtr JSHTMLDocument::write(ExecState* exec, const ArgList& args)
 {
-    Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
-    static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args), activeDocument);
+    documentWrite(exec, args, static_cast<HTMLDocument*>(impl()), DoNotAddNewline);
     return jsUndefined();
 }
 
 JSValuePtr JSHTMLDocument::writeln(ExecState* exec, const ArgList& args)
 {
-    Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
-    static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args) + "\n", activeDocument);
+    documentWrite(exec, args, static_cast<HTMLDocument*>(impl()), DoAddNewline);
     return jsUndefined();
 }
 

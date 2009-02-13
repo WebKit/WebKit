@@ -1,3 +1,23 @@
+2009-02-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Speed up document.write a bit.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::documentWrite): Added. Uses SegmentedString to avoid conversion from
+        UString to String and to avoid appending strings. Also added code to handle
+        newlines efficiently.
+        (WebCore::JSHTMLDocument::write): Changed to use documentWrite.
+        (WebCore::JSHTMLDocument::writeln): Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareToWrite): Added. Refactored the initialization part
+        of write into a separate function for use in the JavaScript binding.
+        (WebCore::Document::write): Changed to call prepareToWrite.
+
+        * dom/Document.h: Added declaration for prepareToWrite.
+
 2009-02-13  Prasanth Ullattil  <pullatti@trolltech.com>
 
         Reviewed by Simon Hausmann.

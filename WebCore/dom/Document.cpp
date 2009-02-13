@@ -1687,22 +1687,29 @@ int Document::elapsedTime() const
     return static_cast<int>((currentTime() - m_startTime) * 1000);
 }
 
+void Document::prepareToWrite(Document* ownerDocument)
+{
+    if (m_tokenizer)
+        return;
+    open(ownerDocument);
+    ASSERT(m_tokenizer);
+    if (!m_tokenizer)
+        return;
+    UChar documentPrefix[] = { '<', 'h', 't', 'm', 'l', '>' };
+    m_tokenizer->write(SegmentedString(documentPrefix, sizeof(documentPrefix) / sizeof(documentPrefix[0])), false);
+}
+
 void Document::write(const String& text, Document* ownerDocument)
 {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
         printf("Beginning a document.write at %d\n", elapsedTime());
 #endif
-    
-    if (!m_tokenizer) {
-        open(ownerDocument);
-        ASSERT(m_tokenizer);
-        if (!m_tokenizer)
-            return;
-        write("<html>", ownerDocument);
-    }
-    m_tokenizer->write(text, false);
-    
+
+    prepareToWrite(ownerDocument);
+    if (m_tokenizer)
+        m_tokenizer->write(text, false);
+
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
         printf("Ending a document.write at %d\n", elapsedTime());
