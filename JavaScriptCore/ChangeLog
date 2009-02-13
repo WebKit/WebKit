@@ -1,3 +1,7 @@
+2009-02-13  Darin Adler  <darin@apple.com>
+
+        * Configurations/JavaScriptCore.xcconfig: Undo accidental commit of this file.
+
 2009-02-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt and Alexey Proskuryakov.
