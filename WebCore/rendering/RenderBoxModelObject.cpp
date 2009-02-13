@@ -106,11 +106,11 @@ int RenderBoxModelObject::relativePositionOffsetX() const
 {
     if (!style()->left().isAuto()) {
         if (!style()->right().isAuto() && containingBlock()->style()->direction() == RTL)
-            return -style()->right().calcValue(containingBlockWidth());
-        return style()->left().calcValue(containingBlockWidth());
+            return -style()->right().calcValue(containingBlockWidthForContent());
+        return style()->left().calcValue(containingBlockWidthForContent());
     }
     if (!style()->right().isAuto())
-        return -style()->right().calcValue(containingBlockWidth());
+        return -style()->right().calcValue(containingBlockWidthForContent());
     return 0;
 }
 
@@ -118,10 +118,10 @@ int RenderBoxModelObject::relativePositionOffsetY() const
 {
     if (!style()->top().isAuto()) {
         if (!style()->top().isPercent() || containingBlock()->style()->height().isFixed())
-            return style()->top().calcValue(containingBlockHeight());
+            return style()->top().calcValue(containingBlock()->availableHeight());
     } else if (!style()->bottom().isAuto()) {
         if (!style()->bottom().isPercent() || containingBlock()->style()->height().isFixed())
-            return -style()->bottom().calcValue(containingBlockHeight());
+            return -style()->bottom().calcValue(containingBlock()->availableHeight());
     }
     return 0;
 }
@@ -1056,6 +1056,11 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
         }
         context->restore();
     }
+}
+
+int RenderBoxModelObject::containingBlockWidthForContent() const
+{
+    return containingBlock()->availableWidth();
 }
 
 } // namespace WebCore

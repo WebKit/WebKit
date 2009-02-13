@@ -620,16 +620,6 @@ RenderBlock* RenderObject::containingBlock() const
     return toRenderBlock(o);
 }
 
-int RenderObject::containingBlockWidth() const
-{
-    return containingBlock()->availableWidth();
-}
-
-int RenderObject::containingBlockHeight() const
-{
-    return containingBlock()->contentHeight();
-}
-
 static bool mustRepaintFillLayers(const RenderObject* renderer, const FillLayer* layer)
 {
     // Nobody will use multiple layers without wanting fancy positioning.

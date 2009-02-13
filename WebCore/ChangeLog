@@ -1,3 +1,31 @@
+2009-02-12  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Eric Seidel
+
+        Get rid of containingBlockHeight(), since it had only one implementation (despite being virtual) and just returned
+        containingBlock()->availableHeight().  The latter reads better anyway.  Rename containingBlockWidth() to
+        containingBlockWidthForContent() and move it to RenderBoxModelObject.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::localCaretRect):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockWidthForContent):
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcReplacedWidthUsing):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::relativePositionOffsetX):
+        (WebCore::RenderBoxModelObject::relativePositionOffsetY):
+        (WebCore::RenderBoxModelObject::containingBlockWidthForContent):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::marginLeft):
+        (WebCore::RenderInline::marginRight):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::calcReplacedWidth):
+
 2009-02-12  Simon Fraser  <simon.fraser@apple.com>
 
         Fix non-Mac builds by adding Matrix3DTransformOperation.* and

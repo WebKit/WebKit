@@ -119,7 +119,7 @@ int RenderSVGContainer::calcReplacedWidth() const
         return max(0, style()->width().value());
     case Percent:
     {
-        const int cw = containingBlockWidth();
+        const int cw = containingBlock()->availableWidth();
         return cw > 0 ? max(0, style()->width().calcMinValue(cw)) : 0;
     }
     default:
