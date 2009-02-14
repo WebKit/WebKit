@@ -315,11 +315,11 @@ namespace JSC {
             return binaryChop<CallReturnOffsetToBytecodeIndex, unsigned, getCallReturnOffset>(m_exceptionInfo->m_callReturnIndexVector.begin(), m_exceptionInfo->m_callReturnIndexVector.size(), m_jitCode.code.offsetOf(nativePC))->bytecodeIndex;
         }
         
-        void setIsNumericCompareFunction(bool isNumericCompareFunction) { m_isNumericCompareFunction = isNumericCompareFunction; }
-        bool isNumericCompareFunction() { return m_isNumericCompareFunction; }
-
         bool functionRegisterForBytecodeOffset(unsigned bytecodeOffset, int& functionRegisterIndex);
 #endif
+
+        void setIsNumericCompareFunction(bool isNumericCompareFunction) { m_isNumericCompareFunction = isNumericCompareFunction; }
+        bool isNumericCompareFunction() { return m_isNumericCompareFunction; }
 
         Vector<Instruction>& instructions() { return m_instructions; }
 #ifndef NDEBUG

@@ -1,5 +1,13 @@
 2009-02-13  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix for non_JIT platforms.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setIsNumericCompareFunction):
+        (JSC::CodeBlock::isNumericCompareFunction):
+
+2009-02-13  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
         
         Fixed <rdar://problem/6584057> Optimize sort by JS numeric comparison
