@@ -1,3 +1,16 @@
+2009-02-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23954
+        Add V8 custom bindings for CanvasRenderingContext2D.
+
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp: Added.
+        (WebCore::toV8):
+        (WebCore::toCanvasStyle):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+
 2009-02-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler and Dan Bernstein.
