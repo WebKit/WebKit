@@ -64,7 +64,12 @@ public:
     }
     ~NetscapePluginInstanceProxy();
     
-    uint32_t pluginID() const { return m_pluginID; }
+    uint32_t pluginID() const 
+    {
+        ASSERT(m_pluginID);
+        
+        return m_pluginID;
+    }
     uint32_t renderContextID() const { return m_renderContextID; }
     void setRenderContextID(uint32_t renderContextID) { m_renderContextID = renderContextID; }
     
@@ -122,6 +127,10 @@ public:
     void removeInstance(ProxyInstance*);
     
     void invalidate();
+    
+    void willCallPluginFunction();
+    void didCallPluginFunction();
+    bool shouldStop();
     
     // Reply structs
     struct Reply {
@@ -258,6 +267,9 @@ private:
     
     typedef HashSet<ProxyInstance*> ProxyInstanceSet;
     ProxyInstanceSet m_instances;
+    
+    unsigned m_pluginFunctionCallDepth;
+    bool m_shouldStopSoon;
 };
     
 } // namespace WebKit

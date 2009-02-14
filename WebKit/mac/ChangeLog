@@ -1,3 +1,52 @@
+2009-02-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/6584834> ESPN radio live stream link hangs Safari 
+
+        When a plug-in invokes JavaScript code that will destroy the plug-in, we need to
+        defer destruction until we're done executing the script.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::PluginDestroyDeferrer::PluginDestroyDeferrer):
+        (WebKit::PluginDestroyDeferrer::~PluginDestroyDeferrer):
+        Add a simple RAII object for deferring destruction of the plug-in instance.
+        
+        (WKPCEvaluate):
+        (WKPCInvoke):
+        (WKPCInvokeDefault):
+        (WKPCConstruct):
+        (WKPCGetProperty):
+        (WKPCSetProperty):
+        (WKPCRemoveProperty):
+        (WKPCHasProperty):
+        (WKPCHasMethod):
+        Use the PluginDestroyDeferrer.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::pluginID):
+        Assert that the plug-in ID is not 0 here.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy):
+        Initialize the call depth.
+        
+        (WebKit::NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy):
+        Set the plug-in ID to 0 to aid debugging.
+        
+        (WebKit::NetscapePluginInstanceProxy::willCallPluginFunction):
+        Increment the call depth.
+        
+        (WebKit::NetscapePluginInstanceProxy::didCallPluginFunction):
+        Decrement the call depth, if it's 0 and we should stop the plug-in, do so.
+        
+        (WebKit::NetscapePluginInstanceProxy::shouldStop):
+        If we're called this with a non-zero call depth, set shouldStopSoon to true.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView shouldStop]):
+        Call the proxy.
+
 2009-02-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Kevin Decker

@@ -150,7 +150,10 @@ extern "C" {
 
 - (BOOL)shouldStop
 {
-    return YES;
+    if (!_proxy)
+        return YES;
+    
+    return _proxy->shouldStop();
 }
 
 - (void)destroyPlugin

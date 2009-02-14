@@ -51,6 +51,23 @@ using namespace WebCore;
 
 namespace WebKit {
 
+class PluginDestroyDeferrer {
+public:
+    PluginDestroyDeferrer(NetscapePluginInstanceProxy* proxy)
+        : m_proxy(proxy)
+    {
+        m_proxy->willCallPluginFunction();
+    }
+    
+    ~PluginDestroyDeferrer()
+    {
+        m_proxy->didCallPluginFunction();
+    }
+
+private:
+    NetscapePluginInstanceProxy* m_proxy;
+};
+
 typedef HashMap<mach_port_t, NetscapePluginHostProxy*> PluginProxyMap;
 static PluginProxyMap& pluginProxyMap()
 {
@@ -463,6 +480,8 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t o
     if (!instanceProxy)
         return KERN_FAILURE;
 
+    PluginDestroyDeferrer deferrer(instanceProxy);
+    
     String script = String::fromUTF8WithLatin1Fallback(scriptData, scriptLength);
     
     data_t resultData;
@@ -512,6 +531,8 @@ kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t obj
     if (!instanceProxy)
         return KERN_FAILURE;
 
+    PluginDestroyDeferrer deferrer(instanceProxy);
+    
     IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>(serverIdentifier);
     if (!IdentifierRep::isValid(identifier)) {
         _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), false, 0, 0);
@@ -543,6 +564,8 @@ kern_return_t WKPCInvokeDefault(mach_port_t clientPort, uint32_t pluginID, uint3
     if (!instanceProxy)
         return KERN_FAILURE;
 
+    PluginDestroyDeferrer deferrer(instanceProxy);
+
     *returnValue = instanceProxy->invokeDefault(objectID, argumentsData, argumentsLength, *resultData, *resultLength);
     
     return KERN_SUCCESS;
@@ -559,6 +582,8 @@ kern_return_t WKPCConstruct(mach_port_t clientPort, uint32_t pluginID, uint32_t 
     NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
     if (!instanceProxy)
         return KERN_FAILURE;
+
+    PluginDestroyDeferrer deferrer(instanceProxy);
 
     *returnValue = instanceProxy->construct(objectID, argumentsData, argumentsLength, *resultData, *resultLength);
     
@@ -579,6 +604,8 @@ kern_return_t WKPCGetProperty(mach_port_t clientPort, uint32_t pluginID, uint32_
     if (!IdentifierRep::isValid(identifier))
         return KERN_FAILURE;
     
+    PluginDestroyDeferrer deferrer(instanceProxy);
+
     data_t resultData;
     mach_msg_type_number_t resultLength;
     boolean_t returnValue;
@@ -605,6 +632,8 @@ kern_return_t WKPCSetProperty(mach_port_t clientPort, uint32_t pluginID, uint32_
     if (!instanceProxy)
         return KERN_FAILURE;
 
+    PluginDestroyDeferrer deferrer(instanceProxy);
+
     IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>(serverIdentifier);
     if (!IdentifierRep::isValid(identifier))
         *returnValue = false;
@@ -628,6 +657,8 @@ kern_return_t WKPCRemoveProperty(mach_port_t clientPort, uint32_t pluginID, uint
     if (!instanceProxy)
         return KERN_FAILURE;
     
+    PluginDestroyDeferrer deferrer(instanceProxy);
+
     IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>(serverIdentifier);
     if (!IdentifierRep::isValid(identifier))
         return KERN_FAILURE;
@@ -651,6 +682,8 @@ kern_return_t WKPCHasProperty(mach_port_t clientPort, uint32_t pluginID, uint32_
     if (!instanceProxy)
         return KERN_FAILURE;
     
+    PluginDestroyDeferrer deferrer(instanceProxy);
+
     IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>(serverIdentifier);
     if (!IdentifierRep::isValid(identifier)) {
         _WKPHBooleanReply(hostProxy->port(), instanceProxy->pluginID(), false);
@@ -679,6 +712,8 @@ kern_return_t WKPCHasMethod(mach_port_t clientPort, uint32_t pluginID, uint32_t 
     if (!instanceProxy)
         return KERN_FAILURE;
     
+    PluginDestroyDeferrer deferrer(instanceProxy);
+
     IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>(serverIdentifier);
     if (!IdentifierRep::isValid(identifier)) {
         _WKPHBooleanReply(hostProxy->port(), instanceProxy->pluginID(), false);

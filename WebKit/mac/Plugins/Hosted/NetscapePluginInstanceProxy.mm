@@ -97,6 +97,8 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     , m_useSoftwareRenderer(false)
     , m_waitingForReply(false)
     , m_objectIDCounter(0)
+    , m_pluginFunctionCallDepth(0)
+    , m_shouldStopSoon(false)
 {
     ASSERT(m_pluginView);
     
@@ -111,6 +113,8 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
 NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy()
 {
     ASSERT(!m_pluginHostProxy);
+    
+    m_pluginID = 0;
 }
 
 void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect)
@@ -989,7 +993,35 @@ void NetscapePluginInstanceProxy::removeInstance(ProxyInstance* instance)
     
     m_instances.remove(instance);
 }
+ 
+void NetscapePluginInstanceProxy::willCallPluginFunction()
+{
+    m_pluginFunctionCallDepth++;
+}
     
+void NetscapePluginInstanceProxy::didCallPluginFunction()
+{
+    ASSERT(m_pluginFunctionCallDepth > 0);
+    m_pluginFunctionCallDepth--;
+    
+    // If -stop was called while we were calling into a plug-in function, and we're no longer
+    // inside a plug-in function, stop now.
+    if (!m_pluginFunctionCallDepth && m_shouldStopSoon) {
+        m_shouldStopSoon = false;
+        [m_pluginView stop];
+    }
+}
+    
+bool NetscapePluginInstanceProxy::shouldStop()
+{
+    if (m_pluginFunctionCallDepth) {
+        m_shouldStopSoon = true;
+        return false;
+    }
+    
+    return true;
+}
+
 } // namespace WebKit
 
 #endif // USE(PLUGIN_HOST_PROCESS)
