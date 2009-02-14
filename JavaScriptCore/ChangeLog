@@ -1,3 +1,20 @@
+2009-02-13  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23960
+        Crash Fix.
+
+        Don't depend on 'initializeThreading()' to come before a call to 'isMainThread()'
+        as QtWebKit only calls 'initializeThreading()' during QWebPage construction.
+
+        A client app may well make a call to QWebSettings::iconForUrl() for instance
+        before creating a QWebPage and that call to QWebSettings triggers an
+        ASSERT(isMainThread()) deep within WebCore.
+
+        * wtf/ThreadingQt.cpp:
+        (WTF::isMainThread):
+
 2009-02-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

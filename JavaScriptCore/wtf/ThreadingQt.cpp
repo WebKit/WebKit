@@ -191,7 +191,7 @@ ThreadIdentifier currentThread()
 
 bool isMainThread()
 {
-    return currentThread() == mainThreadIdentifier;
+    return QThread::currentThread() == QCoreApplication::instance()->thread();
 }
 
 Mutex::Mutex()
