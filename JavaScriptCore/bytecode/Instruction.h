@@ -122,11 +122,20 @@ namespace JSC {
     };
 
     struct Instruction {
-        Instruction(Opcode opcode) { u.opcode = opcode; }
+        Instruction(Opcode opcode)
+        {
+#if !HAVE(COMPUTED_GOTO)
+            // We have to initialize one of the pointer members to ensure that
+            // the entire struct is initialized, when opcode is not a pointer.
+            u.jsCell = 0;
+#endif
+            u.opcode = opcode;
+        }
+
         Instruction(int operand)
         {
             // We have to initialize one of the pointer members to ensure that
-            // the entire struct is initialised in 64-bit.
+            // the entire struct is initialized in 64-bit.
             u.jsCell = 0;
             u.operand = operand;
         }

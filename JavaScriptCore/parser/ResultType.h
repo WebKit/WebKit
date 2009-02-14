@@ -135,6 +135,9 @@ namespace JSC {
     {
         OperandTypes(ResultType first = ResultType::unknownType(), ResultType second = ResultType::unknownType())
         {
+            // We have to initialize one of the int to ensure that
+            // the entire struct is initialized.
+            m_u.i = 0;
             m_u.rds.first = first.m_type;
             m_u.rds.second = second.m_type;
         }

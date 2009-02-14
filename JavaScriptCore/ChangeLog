@@ -1,3 +1,19 @@
+2009-02-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Some data in the instruction stream is potentially uninitialized - fix this.
+
+        Change the OperandTypes constructor so that uninitialized memory in the int
+        is zeroed, and modify the Instruction constructor taking an Opcode so that
+        if !HAVE(COMPUTED_GOTO) (i.e. when Opcode is an enum, and is potentially only
+        a byte) it zeros the Instruction first before writing the opcode.
+
+        * bytecode/Instruction.h:
+        (JSC::Instruction::Instruction):
+        * parser/ResultType.h:
+        (JSC::OperandTypes::OperandTypes):
+
 2009-02-13  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix for non_JIT platforms.
