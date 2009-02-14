@@ -1,3 +1,12 @@
+2009-02-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6583187>
+        
+        * page/NavigatorBase.cpp:
+        Handle PPC64 and X86_64 as well.
+
 2009-02-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.
