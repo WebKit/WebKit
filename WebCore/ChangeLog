@@ -1,3 +1,19 @@
+2009-02-15  David Kilzer  <ddkilzer@apple.com>
+
+        Move duplicate caretWidth constants to RenderObject.h
+
+        Reviewed by Dan Bernstein.
+
+        No test since no change in behavior.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::localCaretRect): Removed caretWidth.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localCaretRect): Ditto.
+        * rendering/RenderObject.h: Added caretWidth definition.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect): Removed caretWidth.
+
 2009-02-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

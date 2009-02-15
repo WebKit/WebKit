@@ -4883,7 +4883,6 @@ IntRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, int* 
     // of an empty :first-line'd block is wrong. I think we can live with that.
     RenderStyle* currentStyle = firstLineStyle();
     int height = lineHeight(true);
-    const int caretWidth = 1;
 
     enum CaretAlignment { alignLeft, alignRight, alignCenter };
 

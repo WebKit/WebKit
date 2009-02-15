@@ -97,6 +97,8 @@ enum BoxSide {
     BSRight
 };
 
+const int caretWidth = 1;
+
 #if ENABLE(DASHBOARD_SUPPORT)
 struct DashboardRegionValue {
     bool operator==(const DashboardRegionValue& o) const

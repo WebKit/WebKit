@@ -2591,7 +2591,6 @@ IntRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, int* extraWid
     // FIXME: Paint the carets inside empty blocks differently than the carets before/after elements.
 
     // FIXME: What about border and padding?
-    const int caretWidth = 1;
     IntRect rect(x(), y(), caretWidth, height());
     TextDirection direction = box ? box->direction() : style()->direction();
 
