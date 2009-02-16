@@ -52,6 +52,7 @@
 #include "QNetworkReplyHandler.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceHandle.h"
+#include "Settings.h"
 
 #include "qwebpage.h"
 #include "qwebframe.h"
@@ -516,7 +517,8 @@ bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(MIMEType))
         return true;
 
-    if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(MIMEType))
+    if (m_frame && m_frame->settings()  && m_frame->settings()->arePluginsEnabled()
+        && PluginDatabase::installedPlugins()->isMIMETypeRegistered(MIMEType))
         return true;
 
     return false;
