@@ -1,3 +1,15 @@
+2009-02-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Adele Peterson.
+ 
+        Bug 23979: AX: alt tag not returned for <input type="image">
+        https://bugs.webkit.org/show_bug.cgi?id=23979
+
+        Test: accessibility/input-image-alt.html
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+
 2009-02-16  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

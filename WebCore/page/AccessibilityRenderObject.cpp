@@ -926,9 +926,10 @@ String AccessibilityRenderObject::accessibilityDescription() const
     if (!ariaDescription.isEmpty())
         return ariaDescription;
     
-    if (isImage()) {
-        if (m_renderer->node() && m_renderer->node()->isHTMLElement()) {
-            const AtomicString& alt = static_cast<HTMLElement*>(m_renderer->node())->getAttribute(altAttr);
+    if (isImage() || isInputImage()) {
+        Node* node = m_renderer->node();
+        if (node && node->isHTMLElement()) {
+            const AtomicString& alt = static_cast<HTMLElement*>(node)->getAttribute(altAttr);
             if (alt.isEmpty())
                 return String();
             return alt;
